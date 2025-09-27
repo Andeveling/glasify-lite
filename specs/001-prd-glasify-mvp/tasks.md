@@ -60,7 +60,7 @@ Prerequisites: plan.md (required), research.md, data-model.md, contracts/
 - [X] T021 Performance bench: price calculation <200ms
   - Path: /home/andres/Proyectos/glasify-lite/tests/perf/price.bench.ts
   - Dependency: T011
-- [ ] T022 [P] Update docs: API and quickstart validation
+- [x] T022 [P] Update docs: API and quickstart validation
   - Path: /home/andres/Proyectos/glasify-lite/specs/001-prd-glasify-mvp/quickstart.md
 
 ## Dependencies Summary
