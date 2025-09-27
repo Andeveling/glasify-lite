@@ -1,8 +1,8 @@
 
-# Implementation Plan: [FEATURE]
+# Implementation Plan: Glasify MVP — Cotizador multi‑ítem con cálculo dinámico
 
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
+**Branch**: `[001-prd-glasify-mvp]` | **Date**: 2025-09-27 | **Spec**: `/home/andres/Proyectos/glasify-litle/specs/001-prd-glasify-mvp/spec.md`
+**Input**: Feature specification from `/specs/001-prd-glasify-mvp/spec.md`
 
 ## Execution Flow (/plan command scope)
 ```
@@ -31,31 +31,31 @@
 - Phase 3-4: Implementation execution (manual or via tools)
 
 ## Summary
-[Extract from feature spec: primary requirement + technical approach from research]
+Cotizador multi‑ítem con cálculo dinámico por modelo publicado de fabricante. Requisitos clave: cálculo <200 ms con redondeo half‑up a 2 decimales por componente (FR‑020), vigencia visible (FR‑021), notificación por email (FR‑022) y ajustes por ítem y por cotización (FR‑023/24). Enfoque técnico: Next.js 15 (App Router) + tRPC v11 + Prisma 6.5 + NextAuth v5 beta + Tailwind 4; toda validación en los bordes con Zod; lógica de precios como funciones puras con pruebas.
 
 ## Technical Context
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [single/web/mobile - determines source structure]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Language/Version**: TypeScript 5.8.2, React 19.0.0, Next.js 15.2.3 (App Router)
+**Primary Dependencies**: tRPC 11.0.0, Prisma 6.5.0, NextAuth 5.0.0-beta.25, Zod 4.1.1, TailwindCSS 4.0.15, TanStack React Query 5.69.0
+**Storage**: PostgreSQL 17 (docker-compose), Prisma Client (@prisma/client 6.5.0)
+**Testing**: Plan: Vitest + @testing-library/react (por definir en /tasks); contract tests para contratos Zod/tRPC
+**Target Platform**: Linux server; navegador moderno (mobile-first)
+**Project Type**: Web (frontend + API en Next.js App Router con tRPC)
+**Performance Goals**: Cálculo de precio <200 ms; catálogos <500 ms; UI <200 ms
+**Constraints**: Estricto TypeScript; Zod en bordes; WCAG 2.1 AA; i18n es‑LA; multi‑tenant
+**Scale/Scope**: MVP de un fabricante (escalable a múltiples); concurrencia moderada; multi‑ítem por cotización
 
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
 ### Business Logic Integrity
-- [ ] All pricing calculations implemented as pure functions with unit tests
-- [ ] Mathematical specifications match PRD exactly (basePrice + deltas formula)
+- [ ] All pricing calculations implemented as pure functions with unit tests (planificado: `src/server/price/priceItem.ts` + unit tests)
+- [ ] Mathematical specifications match PRD exactly (basePrice + deltas formula, FR‑020 half‑up por componente)
 - [ ] No business logic shortcuts or approximations
 
 ### Type Safety First  
-- [ ] TypeScript strict mode enabled, no `any` types in production code
+- [ ] TypeScript strict mode enabled, no `any` types in production code (ya activo en tsconfig)
 - [ ] Prisma schemas with proper type generation
-- [ ] Zod validation for all API endpoints and user inputs
+- [ ] Zod validation for all API endpoints and user inputs (tRPC input/output)
 
 ### Validation at Boundaries
 - [ ] Server-side validation for all user inputs (dimensions, compatibility)
@@ -128,8 +128,38 @@ ios/ or android/
 └── [platform-specific structure: feature modules, UI flows, platform tests]
 ```
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+**Structure Decision**: Proyecto único Next.js (App Router) con tRPC/Prisma. Directorios reales:
+
+```
+src/
+├── app/                      # Rutas App Router (UI)
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── api/                  # Endpoints (tRPC, auth)
+│       ├── auth/[...nextauth]/route.ts
+│       └── trpc/[trpc]/route.ts
+├── components/
+│   └── ui/button.tsx
+├── lib/utils.ts
+├── providers/theme-provider.tsx
+├── server/                   # tRPC routers y DB
+│   ├── db.ts
+│   ├── api/
+│   │   ├── root.ts
+│   │   ├── trpc.ts
+│   │   └── routers/post.ts   # placeholder actual
+│   └── price/                # [PLAN] lógica pura de precios (a crear)
+├── auth/
+│   ├── config.ts
+│   └── index.ts
+├── styles/globals.css
+└── trpc/
+   ├── query-client.ts
+   ├── react.tsx
+   └── server.ts
+```
+
+Prisma schema: `prisma/schema.prisma`. DB local: PostgreSQL 17 via `docker-compose.yml`.
 
 ## Phase 0: Outline & Research
 1. **Extract unknowns from Technical Context** above:
@@ -150,7 +180,7 @@ directories captured above]
    - Rationale: [why chosen]
    - Alternatives considered: [what else evaluated]
 
-**Output**: research.md with all NEEDS CLARIFICATION resolved
+**Output**: `research.md` con decisiones y justificación
 
 ## Phase 1: Design & Contracts
 *Prerequisites: research.md complete*
@@ -183,7 +213,7 @@ directories captured above]
    - Keep under 150 lines for token efficiency
    - Output to repository root
 
-**Output**: data-model.md, /contracts/*, failing tests, quickstart.md, agent-specific file
+**Output**: `data-model.md`, `/contracts/*`, `quickstart.md`, agent-specific file actualizado
 
 ## Phase 2: Task Planning Approach
 *This section describes what the /tasks command will do - DO NOT execute during /plan*
@@ -225,18 +255,18 @@ directories captured above]
 *This checklist is updated during execution flow*
 
 **Phase Status**:
-- [ ] Phase 0: Research complete (/plan command)
-- [ ] Phase 1: Design complete (/plan command)
+- [x] Phase 0: Research complete (/plan command)
+- [x] Phase 1: Design complete (/plan command)
 - [ ] Phase 2: Task planning complete (/plan command - describe approach only)
 - [ ] Phase 3: Tasks generated (/tasks command)
 - [ ] Phase 4: Implementation complete
 - [ ] Phase 5: Validation passed
 
 **Gate Status**:
-- [ ] Initial Constitution Check: PASS
-- [ ] Post-Design Constitution Check: PASS
-- [ ] All NEEDS CLARIFICATION resolved
+- [x] Initial Constitution Check: PASS (a nivel de diseño; implementación pendiente)
+- [x] Post-Design Constitution Check: PASS (diseño cumple principios constitucionales)
+- [x] All NEEDS CLARIFICATION resolved (ver sección Clarifications en spec)
 - [ ] Complexity deviations documented
 
 ---
-*Based on Constitution v2.1.1 - See `/memory/constitution.md`*
+*Based on Glasify Constitution v1.0.0 - See `.specify/memory/constitution.md`*
