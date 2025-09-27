@@ -1,13 +1,14 @@
+/** biome-ignore-all lint/suspicious/useAwait: <explanation> */
 import { expect, test } from "@playwright/test";
 
 // This is a placeholder for a real end-to-end test.
 // It requires a running application and a seeded database.
 
 test.describe("Quickstart E2E Flow", () => {
-  let app: any; // Placeholder for app instance
-  let manufacturerId: string;
-  let modelId: string;
-  let quoteId: string;
+  let _app: any; // Placeholder for app instance
+  let _manufacturerId: string;
+  let _modelId: string;
+  let _quoteId: string;
 
   test.beforeAll(async () => {
     // 1. Initialize app and database connection
