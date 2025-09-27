@@ -26,38 +26,38 @@ Prerequisites: plan.md (required), research.md, data-model.md, contracts/
   - Path: /home/andres/Proyectos/glasify-lite/tests/integration/quickstart.e2e.spec.ts
 
 ## Phase 3.3: Core Implementation
-- [ ] T010 [P] Prisma models for domain entities (Manufacturer, Model, GlassType, Service, Quote, QuoteItem, QuoteItemService, Adjustment)
+- [X] T010 [P] Prisma models for domain entities (Manufacturer, Model, GlassType, Service, Quote, QuoteItem, QuoteItemService, Adjustment)
   - Path: /home/andres/Proyectos/glasify-lite/prisma/schema.prisma
   - Dependency: T004–T008 (tests ready)
-- [ ] T011 [P] Pure pricing functions: `src/server/price/price-item.ts`
+- [X] T011 [P] Pure pricing functions: `src/server/price/price-item.ts`
   - Dependency: T010
-- [ ] T012 [P] tRPC router: `catalog.list-models` in `src/server/api/routers/catalog.ts`
+- [X] T012 [P] tRPC router: `catalog.list-models` in `src/server/api/routers/catalog.ts`
   - Dependency: T010
-- [ ] T013 tRPC router: `quote.calculate-item` in `src/server/api/routers/quote.ts`
+- [X] T013 tRPC router: `quote.calculate-item` in `src/server/api/routers/quote.ts`
   - Dependency: T011
-- [ ] T014 tRPC router: `quote.add-item` in `src/server/api/routers/quote.ts`
+- [X] T014 tRPC router: `quote.add-item` in `src/server/api/routers/quote.ts`
   - Dependency: T011, T010
-- [ ] T015 tRPC router: `quote.submit` in `src/server/api/routers/quote.ts`
+- [X] T015 tRPC router: `quote.submit` in `src/server/api/routers/quote.ts`
   - Dependency: T010
-- [ ] T016 tRPC router: `admin.model.upsert` in `src/server/api/routers/admin.ts`
+- [X] T016 tRPC router: `admin.model.upsert` in `src/server/api/routers/admin.ts`
   - Dependency: T010
 
 ## Phase 3.4: Integration
-- [ ] T017 [P] Seed minimal catalog data (manufacturer, glass, service)
+- [X] T017 [P] Seed minimal catalog data (manufacturer, glass, service)
   - Path: /home/andres/Proyectos/glasify-lite/prisma/seed.ts
   - Dependency: T010
-- [ ] T018 [P] Add Zod schemas for all procedures (inputs/outputs en es‑LA)
+- [X] T018 [P] Add Zod schemas for all procedures (inputs/outputs en es‑LA)
   - Path: /home/andres/Proyectos/glasify-lite/src/server/api/routers/*.ts
   - Dependency: T012–T016
-- [ ] T019 Email mock service for `quote.submit`
+- [X] T019 Email mock service for `quote.submit`
   - Path: /home/andres/Proyectos/glasify-lite/src/server/services/email.ts
   - Dependency: T015
 
 ## Phase 3.5: Polish
-- [ ] T020 [P] Unit tests for pricing functions
+- [X] T020 [P] Unit tests for pricing functions
   - Path: /home/andres/Proyectos/glasify-lite/tests/unit/price-item.spec.ts
   - Dependency: T011
-- [ ] T021 Performance bench: price calculation <200ms
+- [X] T021 Performance bench: price calculation <200ms
   - Path: /home/andres/Proyectos/glasify-lite/tests/perf/price.bench.ts
   - Dependency: T011
 - [ ] T022 [P] Update docs: API and quickstart validation
