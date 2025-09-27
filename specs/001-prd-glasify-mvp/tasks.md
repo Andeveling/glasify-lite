@@ -1,0 +1,77 @@
+# Tasks: Glasify MVP — Cotizador multi‑ítem
+
+Input: design docs from `/home/andres/Proyectos/glasify-litle/specs/001-prd-glasify-mvp/`
+Prerequisites: plan.md (required), research.md, data-model.md, contracts/
+
+## Phase 3.1: Setup
+- [X] T001 Ensure local Postgres is running via `start-database.sh` [P]
+  - Path: /home/andres/Proyectos/glasify-litle/start-database.sh
+- [X] T002 [P] Initialize Prisma and generate client
+  - Command: npx prisma generate
+- [X] T003 [P] Update agent file with latest tech
+  - Command: `.specify/scripts/bash/update-agent-context.sh copilot`
+
+## Phase 3.2: Tests First (TDD)
+- [ ] T004 [P] Contract test for `catalog.listModels`
+  - Path: /home/andres/Proyectos/glasify-litle/tests/contract/catalog.listModels.spec.ts
+- [ ] T005 [P] Contract test for `quote.calculateItem`
+  - Path: /home/andres/Proyectos/glasify-litle/tests/contract/quote.calculateItem.spec.ts
+- [ ] T006 [P] Contract test for `quote.addItem`
+  - Path: /home/andres/Proyectos/glasify-litle/tests/contract/quote.addItem.spec.ts
+- [ ] T007 [P] Contract test for `quote.submit`
+  - Path: /home/andres/Proyectos/glasify-litle/tests/contract/quote.submit.spec.ts
+- [ ] T008 [P] Contract test for `admin.model.upsert`
+  - Path: /home/andres/Proyectos/glasify-litle/tests/contract/admin.model.upsert.spec.ts
+- [ ] T009 Integration test: quickstart end-to-end (publicar modelo, agregar ítem, enviar)
+  - Path: /home/andres/Proyectos/glasify-litle/tests/integration/quickstart.e2e.spec.ts
+
+## Phase 3.3: Core Implementation
+- [ ] T010 [P] Prisma models for domain entities (Manufacturer, Model, GlassType, Service, Quote, QuoteItem, QuoteItemService, Adjustment)
+  - Path: /home/andres/Proyectos/glasify-litle/prisma/schema.prisma
+  - Dependency: T004–T008 (tests ready)
+- [ ] T011 [P] Pure pricing functions: `src/server/price/priceItem.ts`
+  - Dependency: T010
+- [ ] T012 [P] tRPC router: `catalog.listModels` in `src/server/api/routers/catalog.ts`
+  - Dependency: T010
+- [ ] T013 tRPC router: `quote.calculateItem` in `src/server/api/routers/quote.ts`
+  - Dependency: T011
+- [ ] T014 tRPC router: `quote.addItem` in `src/server/api/routers/quote.ts`
+  - Dependency: T011, T010
+- [ ] T015 tRPC router: `quote.submit` in `src/server/api/routers/quote.ts`
+  - Dependency: T010
+- [ ] T016 tRPC router: `admin.model.upsert` in `src/server/api/routers/admin.ts`
+  - Dependency: T010
+
+## Phase 3.4: Integration
+- [ ] T017 [P] Seed minimal catalog data (manufacturer, glass, service)
+  - Path: /home/andres/Proyectos/glasify-litle/prisma/seed.ts
+  - Dependency: T010
+- [ ] T018 [P] Add Zod schemas for all procedures (inputs/outputs en es‑LA)
+  - Path: /home/andres/Proyectos/glasify-litle/src/server/api/routers/*.ts
+  - Dependency: T012–T016
+- [ ] T019 Email mock service for `quote.submit`
+  - Path: /home/andres/Proyectos/glasify-litle/src/server/services/email.ts
+  - Dependency: T015
+
+## Phase 3.5: Polish
+- [ ] T020 [P] Unit tests for pricing functions
+  - Path: /home/andres/Proyectos/glasify-litle/tests/unit/priceItem.spec.ts
+  - Dependency: T011
+- [ ] T021 Performance bench: price calculation <200ms
+  - Path: /home/andres/Proyectos/glasify-litle/tests/perf/price.bench.ts
+  - Dependency: T011
+- [ ] T022 [P] Update docs: API and quickstart validation
+  - Path: /home/andres/Proyectos/glasify-litle/specs/001-prd-glasify-mvp/quickstart.md
+
+## Dependencies Summary
+- Tests (T004–T009) before implementation (T010–T016)
+- Models (T010) before services/routers (T011–T016)
+- Pricing (T011) before quote.* (T013–T014)
+- Implementation before polish (T020–T022)
+
+## Parallel Execution Examples
+- Run in parallel [P] tasks across different files:
+  - T004, T005, T006, T007, T008 (contract tests)
+  - T010, T011, T012 (after tests are created)
+  - T017, T018 (after routers exist)
+
