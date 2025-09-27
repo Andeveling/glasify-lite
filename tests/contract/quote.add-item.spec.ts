@@ -1,57 +1,247 @@
-import type { inferProcedureInput } from "@trpc/server";
 import { describe, expect, it } from "vitest";
-import type { AppRouter } from "../../src/server/api/root";
-import {
-  addItemInput,
-  addItemOutput,
-} from "../../src/server/api/routers/quote";
+import { testServer } from "../integration-setup";
 
-describe("Contract: quote.addItem", () => {
-  it("should have the correct input schema", () => {
-    const validInput: inferProcedureInput<AppRouter["quote"]["addItem"]> = {
-      quoteId: "quote_abc",
-      modelId: "model_123",
-      widthMm: 500,
-      heightMm: 1000,
-      glassTypeId: "glass_456",
-      services: [{ serviceId: "service_789", quantity: 2 }],
+describe("Contract: quote.add-item", () => {
+  it("should add item to new quote when no quoteId provided", async () => {
+    // Arrange: Valid input without quoteId (creates new quote)
+    const validInput = {
+      modelId: "cm1model123def456ghi789jkl",
+      widthMm: 1000,
+      heightMm: 800,
+      glassTypeId: "cm1glass123def456ghi789jkl",
+      services: [],
+      adjustments: [],
     };
 
-    expect(() => addItemInput.parse(validInput)).not.toThrow();
+    // Act: Call the procedure
+    const result = await testServer.quote["add-item"](validInput);
 
-    // Test without optional quoteId
-    const validInputWithoutQuote: inferProcedureInput<
-      AppRouter["quote"]["addItem"]
-    > = {
-      modelId: "model_123",
-      widthMm: 500,
-      heightMm: 1000,
-      glassTypeId: "glass_456",
-    };
-    expect(() => addItemInput.parse(validInputWithoutQuote)).not.toThrow();
+    // Assert: Output schema validation
+    expect(result).toMatchObject({
+      quoteId: expect.any(String),
+      itemId: expect.any(String),
+      subtotal: expect.any(Number),
+    });
 
-    const invalidInput = {
-      widthMm: 500,
-      // Missing required fields
-    };
+    // IDs should be valid CUIDs
+    expect(result.quoteId).toMatch(/^c[a-z0-9]{24}$/);
+    expect(result.itemId).toMatch(/^c[a-z0-9]{24}$/);
 
-    expect(() => addItemInput.parse(invalidInput)).toThrow();
+    // Subtotal should be non-negative
+    expect(result.subtotal).toBeGreaterThanOrEqual(0);
   });
 
-  it("should have the correct output schema", () => {
-    const validOutput: ReturnType<typeof addItemOutput.parse> = {
-      quoteId: "quote_def",
-      itemId: "item_xyz",
-      subtotal: 350.5,
+  it("should add item to existing quote when quoteId provided", async () => {
+    // Arrange: First create a quote by adding an item
+    const firstItemInput = {
+      modelId: "cm1model123def456ghi789jkl",
+      widthMm: 800,
+      heightMm: 600,
+      glassTypeId: "cm1glass123def456ghi789jkl",
+      services: [],
+      adjustments: [],
     };
 
-    expect(() => addItemOutput.parse(validOutput)).not.toThrow();
+    const firstResult = await testServer.quote["add-item"](firstItemInput);
+    const existingQuoteId = firstResult.quoteId;
 
-    const invalidOutput = {
-      quoteId: "quote_def",
-      // Missing itemId and subtotal
+    // Now add second item to existing quote
+    const secondItemInput = {
+      ...firstItemInput,
+      quoteId: existingQuoteId,
+      widthMm: 1200, // Different dimensions
+      heightMm: 1000,
     };
 
-    expect(() => addItemOutput.parse(invalidOutput)).toThrow();
+    // Act: Call the procedure for second item
+    const result = await testServer.quote["add-item"](secondItemInput);
+
+    // Assert: Should use the same quote ID
+    expect(result).toMatchObject({
+      quoteId: existingQuoteId,
+      itemId: expect.any(String),
+      subtotal: expect.any(Number),
+    });
+
+    // Item ID should be different from the first one
+    expect(result.itemId).not.toBe(firstResult.itemId);
+  });
+
+  it("should add item with services and adjustments", async () => {
+    // Arrange: Input with services and adjustments
+    const complexInput = {
+      modelId: "cm1model123def456ghi789jkl",
+      widthMm: 1500,
+      heightMm: 1200,
+      glassTypeId: "cm1glass123def456ghi789jkl",
+      services: [
+        {
+          serviceId: "cm1service123def456ghi789",
+          quantity: 2,
+        },
+      ],
+      adjustments: [
+        {
+          concept: "Descuento cliente frecuente",
+          unit: "unit" as const,
+          sign: "negative" as const,
+          value: 100,
+        },
+      ],
+    };
+
+    // Act: Call the procedure
+    const result = await testServer.quote["add-item"](complexInput);
+
+    // Assert: Should create quote item successfully
+    expect(result).toMatchObject({
+      quoteId: expect.any(String),
+      itemId: expect.any(String),
+      subtotal: expect.any(Number),
+    });
+
+    // Subtotal should reflect the services and adjustments
+    expect(result.subtotal).toBeGreaterThan(0); // Should have some positive value even with discount
+  });
+
+  it("should validate input schema - invalid modelId", async () => {
+    // Arrange: Invalid model ID
+    const invalidInput = {
+      modelId: "invalid-model-id", // Not a valid CUID
+      widthMm: 1000,
+      heightMm: 800,
+      glassTypeId: "cm1glass123def456ghi789jkl",
+      services: [],
+      adjustments: [],
+    };
+
+    // Act & Assert: Should throw validation error
+    await expect(async () => {
+      await testServer.quote["add-item"](invalidInput);
+    }).rejects.toThrow(/ID del modelo debe ser válido/);
+  });
+
+  it("should validate input schema - invalid dimensions", async () => {
+    // Arrange: Invalid height (negative)
+    const invalidInput = {
+      modelId: "cm1model123def456ghi789jkl",
+      widthMm: 1000,
+      heightMm: -100, // Invalid: must be > 0
+      glassTypeId: "cm1glass123def456ghi789jkl",
+      services: [],
+      adjustments: [],
+    };
+
+    // Act & Assert: Should throw validation error
+    await expect(async () => {
+      await testServer.quote["add-item"](invalidInput);
+    }).rejects.toThrow(/Alto debe ser mayor a 0/);
+  });
+
+  it("should validate input schema - invalid quoteId when provided", async () => {
+    // Arrange: Invalid quote ID format
+    const invalidInput = {
+      quoteId: "invalid-quote-id", // Not a valid CUID
+      modelId: "cm1model123def456ghi789jkl",
+      widthMm: 1000,
+      heightMm: 800,
+      glassTypeId: "cm1glass123def456ghi789jkl",
+      services: [],
+      adjustments: [],
+    };
+
+    // Act & Assert: Should throw validation error
+    await expect(async () => {
+      await testServer.quote["add-item"](invalidInput);
+    }).rejects.toThrow(/ID de la cotización debe ser válido/);
+  });
+
+  it("should handle model dimension constraints", async () => {
+    // Arrange: Dimensions that might exceed model limits
+    const inputWithLargeDimensions = {
+      modelId: "cm1model123def456ghi789jkl",
+      widthMm: 5000, // Large width that might exceed model max
+      heightMm: 4000, // Large height that might exceed model max
+      glassTypeId: "cm1glass123def456ghi789jkl",
+      services: [],
+      adjustments: [],
+    };
+
+    // Act & Assert: Should either succeed or throw a descriptive error
+    try {
+      const result = await testServer.quote["add-item"](
+        inputWithLargeDimensions
+      );
+      expect(result).toMatchObject({
+        quoteId: expect.any(String),
+        itemId: expect.any(String),
+        subtotal: expect.any(Number),
+      });
+    } catch (error) {
+      // If it fails, it should be due to dimension constraints with Spanish message
+      expect((error as Error).message).toMatch(/dimensión|tamaño|límite/i);
+    }
+  });
+
+  it("should handle glass type compatibility", async () => {
+    // Arrange: Glass type that might not be compatible with model
+    const inputWithIncompatibleGlass = {
+      modelId: "cm1model123def456ghi789jkl",
+      widthMm: 1000,
+      heightMm: 800,
+      glassTypeId: "cm1incompatible123456789", // Potentially incompatible glass type
+      services: [],
+      adjustments: [],
+    };
+
+    // Act & Assert: Should either succeed or throw compatibility error
+    try {
+      const result = await testServer.quote["add-item"](
+        inputWithIncompatibleGlass
+      );
+      expect(result).toMatchObject({
+        quoteId: expect.any(String),
+        itemId: expect.any(String),
+        subtotal: expect.any(Number),
+      });
+    } catch (error) {
+      // If it fails, it should be due to compatibility with Spanish message
+      expect((error as Error).message).toMatch(/compatible|vidrio|tipo/i);
+    }
+  });
+
+  it("should generate unique item IDs for multiple items in same quote", async () => {
+    // Arrange: Create first item to get quote ID
+    const firstItemInput = {
+      modelId: "cm1model123def456ghi789jkl",
+      widthMm: 1000,
+      heightMm: 800,
+      glassTypeId: "cm1glass123def456ghi789jkl",
+      services: [],
+      adjustments: [],
+    };
+
+    const firstResult = await testServer.quote["add-item"](firstItemInput);
+
+    // Add multiple items to the same quote
+    const secondItemInput = { ...firstItemInput, quoteId: firstResult.quoteId };
+    const thirdItemInput = { ...firstItemInput, quoteId: firstResult.quoteId };
+
+    // Act: Add multiple items
+    const secondResult = await testServer.quote["add-item"](secondItemInput);
+    const thirdResult = await testServer.quote["add-item"](thirdItemInput);
+
+    // Assert: All items should have same quote ID but different item IDs
+    expect(secondResult.quoteId).toBe(firstResult.quoteId);
+    expect(thirdResult.quoteId).toBe(firstResult.quoteId);
+
+    expect(firstResult.itemId).not.toBe(secondResult.itemId);
+    expect(firstResult.itemId).not.toBe(thirdResult.itemId);
+    expect(secondResult.itemId).not.toBe(thirdResult.itemId);
+
+    // All item IDs should be valid CUIDs
+    [firstResult, secondResult, thirdResult].forEach((result) => {
+      expect(result.itemId).toMatch(/^c[a-z0-9]{24}$/);
+    });
   });
 });

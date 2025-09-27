@@ -1,57 +1,102 @@
-import type { inferProcedureInput } from "@trpc/server";
 import { describe, expect, it } from "vitest";
-import type { AppRouter } from "../../src/server/api/root";
-import {
-  listModelsInput,
-  listModelsOutput,
-} from "../../src/server/api/routers/catalog";
+import { testServer } from "../integration-setup";
 
-describe("Contract: catalog.listModels", () => {
-  it("should have the correct input schema", () => {
-    // Mock input that satisfies the schema
-    const validInput: inferProcedureInput<AppRouter["catalog"]["listModels"]> =
-      {
-        manufacturerId: "cl_12345",
-      };
+// Type for the model summary output
+type ModelSummaryType = {
+  id: string;
+  name: string;
+  status: "draft" | "published";
+  minWidthMm: number;
+  maxWidthMm: number;
+  minHeightMm: number;
+  maxHeightMm: number;
+  basePrice: number;
+  costPerMmWidth: number;
+  costPerMmHeight: number;
+  accessoryPrice: number | null;
+  compatibleGlassTypeIds: string[];
+  createdAt: Date;
+  updatedAt: Date;
+};
 
-    // Validation should pass
-    expect(() => listModelsInput.parse(validInput)).not.toThrow();
-
-    // Mock input that does NOT satisfy the schema
-    const invalidInput = {
-      // manufacturerId is missing
+describe("Contract: catalog.list-models", () => {
+  it("should list published models for a valid manufacturer", async () => {
+    // Arrange: Input schema validation
+    const validInput = {
+      manufacturerId: "cm1abc123def456ghi789jkl0", // Valid CUID
     };
 
-    // Validation should throw an error
-    expect(() => listModelsInput.parse(invalidInput)).toThrow();
+    // Act: Call the procedure
+    const result = await testServer.catalog["list-models"](validInput);
+
+    // Assert: Output schema validation
+    expect(Array.isArray(result)).toBe(true);
+
+    // Each model should have the expected structure
+    result.forEach((model: ModelSummaryType) => {
+      expect(model).toMatchObject({
+        id: expect.any(String),
+        name: expect.any(String),
+        status: expect.stringMatching(/^(draft|published)$/),
+        minWidthMm: expect.any(Number),
+        maxWidthMm: expect.any(Number),
+        minHeightMm: expect.any(Number),
+        maxHeightMm: expect.any(Number),
+        basePrice: expect.any(Number),
+        costPerMmWidth: expect.any(Number),
+        costPerMmHeight: expect.any(Number),
+        compatibleGlassTypeIds: expect.any(Array),
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+      });
+
+      // Validate dimension constraints
+      expect(model.minWidthMm).toBeLessThan(model.maxWidthMm);
+      expect(model.minHeightMm).toBeLessThan(model.maxHeightMm);
+      expect(model.basePrice).toBeGreaterThanOrEqual(0);
+      expect(model.costPerMmWidth).toBeGreaterThanOrEqual(0);
+      expect(model.costPerMmHeight).toBeGreaterThanOrEqual(0);
+    });
   });
 
-  it("should have the correct output schema", () => {
-    // Mock output that satisfies the schema
-    const validOutput: ReturnType<typeof listModelsOutput.parse> = [
-      {
-        id: "model_1",
-        name: "Model A",
-        status: "published",
-        minWidthMm: 100,
-        maxWidthMm: 1000,
-        minHeightMm: 100,
-        maxHeightMm: 2000,
-      },
-    ];
+  it("should validate input schema - invalid manufacturerId", async () => {
+    // Arrange: Invalid manufacturer ID
+    const invalidInput = {
+      manufacturerId: "invalid-id", // Not a valid CUID
+    };
 
-    // Validation should pass
-    expect(() => listModelsOutput.parse(validOutput)).not.toThrow();
+    // Act & Assert: Should throw validation error
+    await expect(async () => {
+      await testServer.catalog["list-models"](invalidInput);
+    }).rejects.toThrow(/ID del fabricante debe ser válido/);
+  });
 
-    // Mock output that does NOT satisfy the schema
-    const invalidOutput = [
-      {
-        id: "model_1",
-        // name is missing
-      },
-    ];
+  it("should return empty array for manufacturer with no published models", async () => {
+    // Arrange: Manufacturer with no published models
+    const input = {
+      manufacturerId: "cm1nonexistent123456789abc", // Non-existent manufacturer
+    };
 
-    // Validation should throw an error
-    expect(() => listModelsOutput.parse(invalidOutput)).toThrow();
+    // Act: Call the procedure
+    const result = await testServer.catalog["list-models"](input);
+
+    // Assert: Should return empty array
+    expect(Array.isArray(result)).toBe(true);
+    expect(result).toHaveLength(0);
+  });
+
+  it("should only return published models, not drafts", async () => {
+    // Arrange: Input for manufacturer that might have draft models
+    const input = {
+      manufacturerId: "cm1abc123def456ghi789jkl0",
+    };
+
+    // Act: Call the procedure
+    const result = await testServer.catalog["list-models"](input);
+
+    // Assert: All returned models should be published
+    result.forEach((model: ModelSummaryType) => {
+      expect(model.status).toBe("published");
+    });
   });
 });
