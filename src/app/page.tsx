@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { LatestPost } from "@/app/_components/post";
 import { auth } from "@/server/auth";
-import { HydrateClient, api } from "@/trpc/server";
+import { api, HydrateClient } from "@/trpc/server";
 
 export default async function Home() {
 	const hello = await api.post.hello({ text: "from tRPC" });
@@ -53,8 +53,8 @@ export default async function Home() {
 								{session && <span>Logged in as {session.user?.name}</span>}
 							</p>
 							<Link
-								href={session ? "/api/auth/signout" : "/api/auth/signin"}
 								className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
+								href={session ? "/api/auth/signout" : "/api/auth/signin"}
 							>
 								{session ? "Sign out" : "Sign in"}
 							</Link>

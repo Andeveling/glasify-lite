@@ -21,13 +21,13 @@ export default function RootLayout({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
 	return (
-		<html lang="en" className={`${geist.variable}`}>
+		<html className={`${geist.variable}`} lang="en">
 			<body>
 				<ThemeProvider
 					attribute="class"
 					defaultTheme="system"
-					enableSystem
 					disableTransitionOnChange
+					enableSystem
 				>
 					<TRPCReactProvider>{children}</TRPCReactProvider>
 				</ThemeProvider>
