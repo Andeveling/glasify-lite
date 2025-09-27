@@ -2,7 +2,91 @@
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["ultracite"],
   "files": {
-    "maxSize": 1048576
+    "maxSize": 1048576,
+    "ignore": [
+      "node_modules",
+      ".next",
+      "coverage",
+      "dist",
+      "build",
+      "**/*.snap",
+      "**/*.d.ts"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 120
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      // Reglas que promueven un código más simple y legible.
+      "complexity": {
+        // Advierte sobre funciones que son demasiado difíciles de entender.
+        "noExcessiveCognitiveComplexity": "warn",
+        // Evita el uso del operador `void`, que puede ser confuso.
+        "noVoid": "off",
+        // Fomenta el uso de claves de objeto simples y legibles.
+        "useSimpleNumberKeys": "error"
+      },
+      // Reglas para mantener la consistencia y prevenir errores comunes.
+      "correctness": {
+        // Advierte sobre parámetros de función no utilizados.
+        "noUnusedFunctionParameters": "warn",
+        // Marca el código inalcanzable como un error.
+        "noUnreachable": "error",
+        // Advierte sobre variables no utilizadas.
+        "noUnusedVariables": "warn"
+      },
+      // Reglas que detectan código potencialmente problemático o confuso.
+      "suspicious": {
+        // Advierte sobre el uso de `any`, fomentando un tipado más seguro.
+        "noExplicitAny": "warn",
+        // Advierte sobre el uso de `await` dentro de bucles, que puede afectar el rendimiento.
+        // Permite el uso de `console` pero con una advertencia para evitar dejar logs en producción.
+        "noConsole": "warn",
+        // Evita la redeclaración de variables en el mismo ámbito.
+        "noRedeclare": "error",
+        // Advierte sobre bloques de código vacíos.
+        "noEmptyBlockStatements": "warn",
+        "noUnknownAtRules": "off"
+      },
+      // Reglas que aseguran un estilo de código consistente.
+      "style": {
+        // Advierte sobre el uso de convenciones de nomenclatura incorrectas.
+        "useNamingConvention": {
+          "level": "warn",
+          "options": { "strictCase": false }
+        },
+        // Advierte sobre el uso de convenciones de nomenclatura de archivos incorrectas.
+        "useFilenamingConvention": {
+          "level": "warn",
+          "options": { "filenameCases": ["kebab-case"] }
+        },
+        // Requiere el uso de bloques de sentencias para mayor claridad.
+        "useBlockStatements": "error",
+        // Fomenta el uso de la sintaxis de fragmentos de React.
+        "useFragmentSyntax": "error"
+      },
+      // Reglas de accesibilidad para asegurar que las aplicaciones sean utilizables por todos.
+      "a11y": {
+        "useKeyWithClickEvents": "warn",
+        "useKeyWithMouseEvents": "warn",
+        "useAnchorContent": "warn",
+        "useHeadingContent": "warn"
+      }
+    }
+  },
+  "javascript": {
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    },
+    "formatter": {
+      "quoteStyle": "single"
+    }
   },
   "overrides": [
     {
@@ -15,40 +99,5 @@
         }
       }
     }
-  ],
-  "linter": {
-    "rules": {
-      "style": {
-        "useNamingConvention": {
-          "level": "warn",
-          "options": {
-            "strictCase": false
-          }
-        },
-        "useFilenamingConvention": {
-          "level": "warn",
-          "options": {
-            "filenameCases": ["kebab-case"]
-          }
-        }
-      },
-      "complexity": {
-        "noVoid": "off"
-      },
-      "correctness": {
-        "noUnusedFunctionParameters": {
-          "level": "warn"
-        }
-      },
-      "suspicious": {
-        "noEmptyBlockStatements": {
-          "level": "warn"
-        },
-        "noConsole": {
-          "level": "warn"
-        },
-        "noUnknownAtRules": "off"
-      }
-    }
-  }
+  ]
 }
