@@ -42,6 +42,14 @@ All UI components must comply with WCAG 2.1 AA standards. Text content must be i
 
 **Rationale**: Latin American market requires Spanish interface and accessibility compliance ensures broad user accessibility.
 
+### VI. Observability & Monitoring
+- All event, error, and trace logging in the backend must be performed using a professional logging library.
+- The use of console.log, console.error, and similar methods is prohibited in production code.
+- Logger configuration must be centralized in a single file and imported wherever required.
+- Logs must be structured by level (info, error, debug, etc.) and include relevant metadata.
+  
+**Rationale**: This ensures traceability, security, and ease of auditing in production and development environments.
+
 ## Business Requirements
 
 ### Multi-Tenant Architecture

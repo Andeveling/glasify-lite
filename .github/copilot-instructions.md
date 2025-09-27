@@ -316,6 +316,11 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - `npx ultracite fix` - Format and fix code automatically
 - `npx ultracite check` - Check for issues without fixing
 
+## Logging
+- Use a logging library like Winston for structured logging.
+- Use singleton pattern for logger instance `/src/lib/logger.ts`.
+- Log at appropriate levels: info, warn, error, debug.
+
 ## Testing & Tooling
 - Use Vitest for unit/contract/integration tests with jsdom and @testing-library/react.
 - Use Playwright for E2E tests. Start the Next.js dev server automatically in Playwright config.
