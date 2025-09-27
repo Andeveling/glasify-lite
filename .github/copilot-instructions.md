@@ -310,6 +310,7 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Don't use focused tests.
 - Make sure the assertion function, like expect, is placed inside an it() function call.
 - Don't use disabled tests.
+- Use ultracite in package json commands for consistency.
 
 ## Common Tasks
 - `npx ultracite init` - Initialize Ultracite in your project
