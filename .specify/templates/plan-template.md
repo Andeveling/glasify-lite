@@ -47,7 +47,30 @@
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+### Business Logic Integrity
+- [ ] All pricing calculations implemented as pure functions with unit tests
+- [ ] Mathematical specifications match PRD exactly (basePrice + deltas formula)
+- [ ] No business logic shortcuts or approximations
+
+### Type Safety First  
+- [ ] TypeScript strict mode enabled, no `any` types in production code
+- [ ] Prisma schemas with proper type generation
+- [ ] Zod validation for all API endpoints and user inputs
+
+### Validation at Boundaries
+- [ ] Server-side validation for all user inputs (dimensions, compatibility)
+- [ ] Validation errors provide clear Spanish (es-LA) messages
+- [ ] Business rule compliance enforced regardless of client state
+
+### Performance Targets
+- [ ] Price calculations <200ms target defined and testable
+- [ ] API catalog responses <500ms target defined and testable  
+- [ ] Client-side updates <200ms target defined and testable
+
+### Accessibility & Internationalization
+- [ ] WCAG 2.1 AA compliance planned for all UI components
+- [ ] Spanish (es-LA) interface with proper number formatting
+- [ ] Mobile-first responsive design approach defined
 
 ## Project Structure
 
@@ -192,10 +215,10 @@ directories captured above]
 ## Complexity Tracking
 *Fill ONLY if Constitution Check has violations that must be justified*
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+| Violation                  | Why Needed         | Simpler Alternative Rejected Because |
+| -------------------------- | ------------------ | ------------------------------------ |
+| [e.g., 4th project]        | [current need]     | [why 3 projects insufficient]        |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient]  |
 
 
 ## Progress Tracking
