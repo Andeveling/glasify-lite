@@ -1,17 +1,32 @@
 {
-	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-	"root": true,
-	"formatter": {
-		"enabled": true
-	},
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"suspicious": {
-				// Tailwind CSS v4 custom at-rules (e.g., @theme, @custom-variant)
-				// can trigger false positives. Turn this off globally.
-				"noUnknownAtRules": "off"
-			}
-		}
-	}
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["ultracite"],
+  "files": {
+    "maxSize": 1048576
+  },
+  "linter": {
+    "rules": {
+      "style": {
+        "useNamingConvention": {
+          "level": "warn",
+          "options": {
+            "strictCase": false
+          }
+        }
+      },
+      "complexity": {
+        "noVoid": "off"
+      },
+      "correctness": {
+        "noUnusedFunctionParameters": {
+          "level": "warn"
+        }
+      },
+      "suspicious": {
+        "noEmptyBlockStatements": {
+          "level": "warn"
+        }
+      }
+    }
+  }
 }

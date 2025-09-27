@@ -1,0 +1,32 @@
+# Biome ignore file
+# CSS files with Tailwind directives that use non-standard at-rules
+# These are necessary for Tailwind CSS to work properly
+
+# Build outputs and generated files
+.next/
+dist/
+build/
+out/
+coverage/
+
+# Dependencies
+node_modules/
+
+# Generated files
+*.generated.*
+*.bundle.*
+
+# Environment and cache
+.cache/
+.turbo/
+.vercel/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Database
+*.db
+*.sqlite
