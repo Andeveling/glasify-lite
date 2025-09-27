@@ -39,5 +39,12 @@
     {
       "file": "commitlint.config.js"
     }
+  ],
+  "cSpell.words": [
+    "bloqueante",
+    "Cotizador",
+    "glasify",
+    "underspecified",
+    "WCAG"
   ]
 }
