@@ -12,12 +12,12 @@ Prerequisites: plan.md (required), research.md, data-model.md, contracts/
   - Command: `.specify/scripts/bash/update-agent-context.sh copilot`
 
 ## Phase 3.2: Tests First (TDD)
-- [X] T004 [P] Contract test for `catalog.listModels`
-  - Path: /home/andres/Proyectos/glasify-lite/tests/contract/catalog.listModels.spec.ts
-- [X] T005 [P] Contract test for `quote.calculateItem`
-  - Path: /home/andres/Proyectos/glasify-lite/tests/contract/quote.calculateItem.spec.ts
-- [X] T006 [P] Contract test for `quote.addItem`
-  - Path: /home/andres/Proyectos/glasify-lite/tests/contract/quote.addItem.spec.ts
+- [X] T004 [P] Contract test for `catalog.list-models`
+  - Path: /home/andres/Proyectos/glasify-lite/tests/contract/catalog.list-models.spec.ts
+- [X] T005 [P] Contract test for `quote.calculate-item`
+  - Path: /home/andres/Proyectos/glasify-lite/tests/contract/quote.calculate-item.spec.ts
+- [X] T006 [P] Contract test for `quote.add-item`
+  - Path: /home/andres/Proyectos/glasify-lite/tests/contract/quote.add-item.spec.ts
 - [X] T007 [P] Contract test for `quote.submit`
   - Path: /home/andres/Proyectos/glasify-lite/tests/contract/quote.submit.spec.ts
 - [X] T008 [P] Contract test for `admin.model.upsert`
@@ -29,13 +29,13 @@ Prerequisites: plan.md (required), research.md, data-model.md, contracts/
 - [ ] T010 [P] Prisma models for domain entities (Manufacturer, Model, GlassType, Service, Quote, QuoteItem, QuoteItemService, Adjustment)
   - Path: /home/andres/Proyectos/glasify-lite/prisma/schema.prisma
   - Dependency: T004–T008 (tests ready)
-- [ ] T011 [P] Pure pricing functions: `src/server/price/priceItem.ts`
+- [ ] T011 [P] Pure pricing functions: `src/server/price/price-item.ts`
   - Dependency: T010
-- [ ] T012 [P] tRPC router: `catalog.listModels` in `src/server/api/routers/catalog.ts`
+- [ ] T012 [P] tRPC router: `catalog.list-models` in `src/server/api/routers/catalog.ts`
   - Dependency: T010
-- [ ] T013 tRPC router: `quote.calculateItem` in `src/server/api/routers/quote.ts`
+- [ ] T013 tRPC router: `quote.calculate-item` in `src/server/api/routers/quote.ts`
   - Dependency: T011
-- [ ] T014 tRPC router: `quote.addItem` in `src/server/api/routers/quote.ts`
+- [ ] T014 tRPC router: `quote.add-item` in `src/server/api/routers/quote.ts`
   - Dependency: T011, T010
 - [ ] T015 tRPC router: `quote.submit` in `src/server/api/routers/quote.ts`
   - Dependency: T010
@@ -55,7 +55,7 @@ Prerequisites: plan.md (required), research.md, data-model.md, contracts/
 
 ## Phase 3.5: Polish
 - [ ] T020 [P] Unit tests for pricing functions
-  - Path: /home/andres/Proyectos/glasify-lite/tests/unit/priceItem.spec.ts
+  - Path: /home/andres/Proyectos/glasify-lite/tests/unit/price-item.spec.ts
   - Dependency: T011
 - [ ] T021 Performance bench: price calculation <200ms
   - Path: /home/andres/Proyectos/glasify-lite/tests/perf/price.bench.ts
