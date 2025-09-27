@@ -25,6 +25,9 @@
       "suspicious": {
         "noEmptyBlockStatements": {
           "level": "warn"
+        },
+        "noConsole": {
+          "level": "warn"
         }
       }
     }
