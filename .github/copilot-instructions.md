@@ -316,6 +316,13 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - `npx ultracite fix` - Format and fix code automatically
 - `npx ultracite check` - Check for issues without fixing
 
+## Testing & Tooling
+- Use Vitest for unit/contract/integration tests with jsdom and @testing-library/react.
+- Use Playwright for E2E tests. Start the Next.js dev server automatically in Playwright config.
+- Provide package.json scripts: `test`, `test:watch`, `test:ui`, `test:e2e`, `test:e2e:ui`.
+- Organize tests under `tests/{unit,contract,integration,perf}` and E2E under `e2e/`.
+- Ensure CI runs lint (Biome), typecheck (tsc), unit tests (Vitest) and E2E (Playwright) on PRs.
+
 ## Example: Error Handling
 ```typescript
 // ✅ Good: Comprehensive error handling

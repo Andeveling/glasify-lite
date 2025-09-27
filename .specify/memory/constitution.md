@@ -1,14 +1,16 @@
 <!--
 Sync Impact Report:
-- Version change: new → 1.0.0
-- New constitution based on PRD requirements and T3 stack foundation
-- Added sections: Business Logic Integrity, Performance Standards, Development Workflow
-- Modified principles: All new principles aligned with Glasify MVP requirements
+- Version change: 1.0.0 → 1.1.0
+- Modified sections:
+  - Development Workflow → added explicit Testing & Tooling guidance (Vitest + Playwright)
+  - Code Quality Gates → clarified CI requirements and coverage threshold rule
+- Added sections:
+  - Testing & Tooling (unit, contract, integration, E2E)
 - Templates requiring updates:
-  ✅ plan-template.md - Constitution Check section updated
-  ✅ spec-template.md - Compatible with new requirements
-  ✅ tasks-template.md - Will align with new principle-driven task types
-- Follow-up TODOs: None - all placeholders filled
+  ✅ .specify/templates/plan-template.md – Constitution Check aligns (no changes required)
+  ✅ .specify/templates/spec-template.md – Requirements format compatible
+  ✅ .specify/templates/tasks-template.md – Already supports test-first and parallel markers
+- Follow-up TODOs: None
 -->
 
 # Glasify Constitution
@@ -54,10 +56,22 @@ Google OAuth integration is mandatory for quote submission. User personal data (
 ## Development Workflow
 
 ### Code Quality Gates
-All code must pass Biome linting and formatting without warnings. TypeScript compilation must succeed without errors. All tests must pass before merge. Code coverage for business logic functions must be ≥90%.
+All code MUST pass Biome linting and formatting without warnings. TypeScript compilation MUST succeed without errors. All tests MUST pass before merge (CI required). Code coverage for business logic functions MUST be ≥90% lines and branches. No skipped or focused tests are allowed in CI.
 
-### Testing Strategy  
-Unit tests are mandatory for all pricing calculation functions. Integration tests required for complete quote workflows (create → add items → submit). API contract tests must verify request/response schemas. Performance tests must validate response time targets.
+### Testing Strategy
+Testing is a first‑class discipline and MUST follow TDD when practical:
+- Unit tests (Vitest + jsdom) for pure pricing functions and utilities.
+- Contract tests (Vitest) for tRPC/Zod procedures: validate input/output schemas.
+- Integration tests (Vitest) for quote flows (create → add items → submit) hitting the server in-memory where possible.
+- E2E tests (Playwright) for critical user journeys in App Router.
+- Performance tests ensure: pricing <200ms p95; catalog <500ms p95.
+
+### Testing & Tooling
+- Unit test runner: Vitest with jsdom environment and @testing-library/react.
+- E2E runner: Playwright with Chromium at minimum; dev server auto‑started.
+- Test commands MUST exist in package.json: `test`, `test:watch`, `test:ui`, `test:e2e`, `test:e2e:ui`.
+- Test directories: `tests/{unit,contract,integration,perf}`, E2E in `e2e/`.
+- Linting: Biome; Type checks: tsc strict.
 
 ### Deployment Requirements
 Database migrations must be reversible and tested in staging. Environment-specific configuration must use proper secret management. All deployed code must match the exact commit in version control.
@@ -74,4 +88,4 @@ Amendments to this constitution require:
 
 Use `GEMINI.md` for detailed runtime development guidance and coding standards.
 
-**Version**: 1.0.0 | **Ratified**: 2025-09-27 | **Last Amended**: 2025-09-27
+**Version**: 1.1.0 | **Ratified**: 2025-09-27 | **Last Amended**: 2025-09-27
