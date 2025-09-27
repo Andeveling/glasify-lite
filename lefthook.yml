@@ -1,15 +1,8 @@
 pre-commit:
   jobs:
-    - run: |
-        STAGED_FILES=$(git diff --cached --name-only | grep -v "src/styles/globals.css" | tr '\n' ' ')
-        if [ -n "$STAGED_FILES" ]; then
-          pnpm dlx ultracite fix $STAGED_FILES
-        fi
-      glob:
-        - "src/**/*.{js,jsx,ts,tsx,json,jsonc}"
-        - "src/components/**/*.css"
-        - "src/lib/**/*.css"
-        - "*.{js,jsx,ts,tsx,json,jsonc,css,md,mdx}"
+    - run: pnpm dlx ultracite fix
+      glob: "**/*.{js,jsx,ts,tsx,json,jsonc,css,md,mdx}"
+      exclude: "src/styles/globals.css"
       stage_fixed: true
 
 commit-msg:
