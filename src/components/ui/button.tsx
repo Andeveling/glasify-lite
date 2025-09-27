@@ -34,22 +34,27 @@ const buttonVariants = cva(
 	},
 );
 
+type ButtonProps = React.ComponentProps<"button"> &
+	VariantProps<typeof buttonVariants> & {
+		asChild?: boolean;
+	};
+
 function Button({
 	className,
 	variant,
 	size,
 	asChild = false,
+	type,
 	...props
-}: React.ComponentProps<"button"> &
-	VariantProps<typeof buttonVariants> & {
-		asChild?: boolean;
-	}) {
+}: ButtonProps) {
 	const Comp = asChild ? Slot : "button";
 
 	return (
 		<Comp
 			className={cn(buttonVariants({ variant, size, className }))}
 			data-slot="button"
+			// Ensure native button has an explicit type for a11y and to avoid defaulting to "submit"
+			{...(asChild ? {} : { type: type ?? "button" })}
 			{...props}
 		/>
 	);
