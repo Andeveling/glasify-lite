@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/suspicious/useAwait: <explanation> */
+/** biome-ignore-all lint/suspicious/useAwait: true */
 import { expect, test } from "@playwright/test";
 
 // This is a placeholder for a real end-to-end test.
