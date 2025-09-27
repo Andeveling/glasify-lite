@@ -4,6 +4,18 @@
   "files": {
     "maxSize": 1048576
   },
+  "overrides": [
+    {
+      "includes": ["src/env.js"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useNamingConvention": "off"
+          }
+        }
+      }
+    }
+  ],
   "linter": {
     "rules": {
       "style": {
@@ -11,6 +23,12 @@
           "level": "warn",
           "options": {
             "strictCase": false
+          }
+        },
+        "useFilenamingConvention": {
+          "level": "warn",
+          "options": {
+            "filenameCases": ["kebab-case"]
           }
         }
       },
@@ -28,7 +46,8 @@
         },
         "noConsole": {
           "level": "warn"
-        }
+        },
+        "noUnknownAtRules": "off"
       }
     }
   }
