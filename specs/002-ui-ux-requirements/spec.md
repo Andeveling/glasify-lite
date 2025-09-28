@@ -109,11 +109,21 @@ Como Admin (fabricante) quiero una interfaz administrativa clara que me permita 
 
 ### Functional Requirements
 
-#### Navegación y Estructura General
-- **FR-001**: El sistema DEBE proporcionar una página de inicio que explique el propósito del cotizador y ofrezca opciones claras para acceder al catálogo y al login.
-- **FR-002**: El sistema DEBE mostrar una navegación consistente que indique la ubicación actual del usuario (breadcrumbs) y permita regresar a secciones anteriores.
-- **FR-003**: El sistema DEBE mantener un carrito de cotización visible que muestre la cantidad de ítems agregados y permita acceso rápido al resumen.
-- **FR-004**: El sistema DEBE diferenciar la navegación según el rol: Cliente (catálogo, cotización, historial) vs Admin (catálogo, cotizaciones, usuarios, panel admin).
+#### Navegación y Estructura General (Route Groups)
+- **FR-001**: El sistema DEBE proporcionar una página de inicio (`/`) que explique el propósito del cotizador y redirija automáticamente al catálogo (`/catalog`).
+- **FR-002**: El sistema DEBE organizar la navegación en tres dominios principales:
+  - **Rutas Públicas** (`(public)`): Catálogo de modelos (`/catalog`), configuración de cotización (`/quote`) y revisión (`/quote/review`) - sin autenticación requerida
+  - **Rutas de Autenticación** (`(auth)`): Login (`/signin`) con diseño centrado y minimal
+  - **Rutas del Dashboard** (`(dashboard)`): Panel administrativo (`/dashboard`) con gestión de modelos (`/dashboard/models`), cotizaciones (`/dashboard/quotes`) y configuración (`/dashboard/settings`) - requiere autenticación
+- **FR-003**: El sistema DEBE mantener un estado de cotización visible que muestre la cantidad de ítems agregados y permita acceso rápido al resumen desde cualquier página pública.
+- **FR-004**: El sistema DEBE proporcionar manejo de estados específicos por dominio:
+  - **Estados de carga** (`loading.tsx`): Por route group y páginas específicas
+  - **Estados de error** (`error.tsx`): Con opciones de recuperación contextuales por dominio
+  - **Estados 404** (`not-found.tsx`): Con navegación apropiada según el contexto (público/admin)
+- **FR-005**: El sistema DEBE diferenciar layouts según el dominio:
+  - **Layout público**: Navegación principal, footer, breadcrumbs
+  - **Layout de auth**: Diseño centrado, minimal, solo formularios
+  - **Layout de dashboard**: Sidebar de administración, contexto de admin
 
 #### Catálogo de Modelos
 - **FR-004**: El sistema DEBE presentar el catálogo de modelos en un formato visual organizado con filtros por fabricante, tipo de modelo y estado de disponibilidad, soportando hasta 100 modelos por fabricante.

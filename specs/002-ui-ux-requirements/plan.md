@@ -85,19 +85,51 @@ specs/[###-feature]/
 └── tasks.md             # Phase 2 output (/tasks command - NOT created by /plan)
 ```
 
-### Source Code (repository root)
+### Source Code (repository root) - Next.js App Router Structure
 ```
 src/
 ├── app/
-│  ├── (auth)/
-│  │  ├── signin/
-│  │  └── signup/
-│  ├── (dashboard)/
-│  │  └── admin/
-│  └── _components/           # componentes compartidos de la app (privados)
+│  ├── layout.tsx             # Root layout con providers, metadata
+│  ├── page.tsx               # Home redirect a /catalog
+│  ├── global-error.tsx       # Error boundary global
+│  ├── not-found.tsx          # 404 global
+│  ├── (public)/              # Rutas públicas (sin auth)
+│  │  ├── layout.tsx          # Layout con navegación principal
+│  │  ├── loading.tsx         # Loading states públicos
+│  │  ├── error.tsx           # Error handling público
+│  │  ├── not-found.tsx       # 404 público
+│  │  ├── _components/        # Componentes específicos de rutas públicas
+│  │  │  ├── catalog/         # Dominio catálogo
+│  │  │  └── quote/           # Dominio cotización
+│  │  ├── catalog/            # Navegación de catálogo
+│  │  │  ├── page.tsx         # Listado de modelos
+│  │  │  ├── loading.tsx      # Loading específico catálogo
+│  │  │  └── [modelId]/       # Rutas dinámicas de modelo
+│  │  └── quote/              # Cotización
+│  │     ├── page.tsx         # Configuración de cotización
+│  │     ├── loading.tsx      # Loading específico cotización
+│  │     └── review/          # Revisión de cotización
+│  ├── (auth)/                # Rutas de autenticación
+│  │  ├── layout.tsx          # Layout centrado para forms
+│  │  ├── loading.tsx         # Loading states de auth
+│  │  ├── error.tsx           # Error handling de auth
+│  │  ├── _components/        # Componentes específicos de auth
+│  │  └── signin/             # Login
+│  ├── (dashboard)/           # Rutas protegidas admin
+│  │  ├── layout.tsx          # Layout con sidebar admin
+│  │  ├── loading.tsx         # Loading states admin
+│  │  ├── error.tsx           # Error handling admin
+│  │  ├── not-found.tsx       # 404 admin
+│  │  ├── page.tsx            # Dashboard principal
+│  │  ├── _components/        # Componentes específicos admin
+│  │  ├── models/             # Gestión de modelos
+│  │  ├── quotes/             # Gestión de cotizaciones
+│  │  └── settings/           # Configuración admin
+│  └── _components/           # Componentes globales compartidos
 ├── components/
-│  └── ui/                    # shadcn/ui tokens + wrappers
+│  └── ui/                    # shadcn/ui primitivos + wrappers
 ├── lib/                      # utilidades (logger, utils)
+├── middleware.ts             # NextAuth middleware para rutas protegidas
 ├── server/                   # backend (tRPC, Prisma, servicios)
 │  ├── api/
 │  │  ├── routers/
