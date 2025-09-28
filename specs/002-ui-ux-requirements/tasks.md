@@ -97,13 +97,13 @@ src/app/
 
 ## Phase 3.3: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.4
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
-- [ ] T011 [P] Contract test `catalog.list-models` tRPC endpoint in `tests/contract/catalog.list-models.spec.ts`
-- [ ] T012 [P] Contract test `quote.calculate-item` tRPC endpoint in `tests/contract/quote.calculate-item.spec.ts`  
-- [ ] T013 [P] Contract test `quote.add-item` tRPC endpoint in `tests/contract/quote.add-item.spec.ts`
-- [ ] T014 [P] Contract test `quote.submit` tRPC endpoint in `tests/contract/quote.submit.spec.ts`
-- [ ] T015 [P] Integration test catalog navigation flow in `tests/integration/catalog-flow.spec.ts`
-- [ ] T016 [P] Integration test quote creation flow in `tests/integration/quote-flow.spec.ts`
-- [ ] T017 [P] Integration test admin panel access in `tests/integration/admin-flow.spec.ts`
+- [x] T011 [P] Contract test `catalog.list-models` tRPC endpoint in `tests/contract/catalog.list-models.spec.ts`
+- [x] T012 [P] Contract test `quote.calculate-item` tRPC endpoint in `tests/contract/quote.calculate-item.spec.ts`  
+- [x] T013 [P] Contract test `quote.add-item` tRPC endpoint in `tests/contract/quote.add-item.spec.ts`
+- [x] T014 [P] Contract test `quote.submit` tRPC endpoint in `tests/contract/quote.submit.spec.ts`
+- [x] T015 [P] Integration test catalog navigation flow in `tests/integration/catalog-flow.spec.ts`
+- [x] T016 [P] Integration test quote creation flow in `tests/integration/quote-flow.spec.ts`
+- [x] T017 [P] Integration test admin panel access in `tests/integration/admin-flow.spec.ts`
 
 ## Phase 3.4: Shared UI Components (ONLY after tests are failing)
 - [ ] T018 [P] `EmptyState` component in `src/components/ui/empty-state.tsx` with Spanish messages

@@ -98,131 +98,128 @@ src/
 │  │  ├── loading.tsx         # Loading states públicos
 │  │  ├── error.tsx           # Error handling público
 │  │  ├── not-found.tsx       # 404 público
-│  │  ├── _components/        # Componentes específicos de rutas públicas
-│  │  │  ├── catalog/         # Dominio catálogo
-│  │  │  └── quote/           # Dominio cotización
-│  │  ├── catalog/            # Navegación de catálogo
-│  │  │  ├── page.tsx         # Listado de modelos
-│  │  │  ├── loading.tsx      # Loading específico catálogo
-│  │  │  └── [modelId]/       # Rutas dinámicas de modelo
-│  │  └── quote/              # Cotización
-│  │     ├── page.tsx         # Configuración de cotización
-│  │     ├── loading.tsx      # Loading específico cotización
-│  │     └── review/          # Revisión de cotización
-│  ├── (auth)/                # Rutas de autenticación
-│  │  ├── layout.tsx          # Layout centrado para forms
-│  │  ├── loading.tsx         # Loading states de auth
-│  │  ├── error.tsx           # Error handling de auth
-│  │  ├── _components/        # Componentes específicos de auth
-│  │  └── signin/             # Login
-│  ├── (dashboard)/           # Rutas protegidas admin
-│  │  ├── layout.tsx          # Layout con sidebar admin
-│  │  ├── loading.tsx         # Loading states admin
-│  │  ├── error.tsx           # Error handling admin
-│  │  ├── not-found.tsx       # 404 admin
-│  │  ├── page.tsx            # Dashboard principal
-│  │  ├── _components/        # Componentes específicos admin
-│  │  ├── models/             # Gestión de modelos
-│  │  ├── quotes/             # Gestión de cotizaciones
-│  │  └── settings/           # Configuración admin
-│  └── _components/           # Componentes globales compartidos
-├── components/
-│  └── ui/                    # shadcn/ui primitivos + wrappers
-├── lib/                      # utilidades (logger, utils)
-├── middleware.ts             # NextAuth middleware para rutas protegidas
-├── server/                   # backend (tRPC, Prisma, servicios)
-│  ├── api/
-│  │  ├── routers/
-│  │  ├── root.ts
-│  │  └── trpc.ts
-│  ├── auth/
-│  ├── price/
-│  └── services/
-└── styles/
-    └── globals.css           # origen de variables de tema
+│  │  ├── _components/        # Componentes compartidos públicos
+│  │  ├── catalog/            # Catálogo de vidrios
+│  │  │  ├── page.tsx         # Lista de catálogo
+│  │  │  ├── loading.tsx      # Loading catálogo
+│  │  │  ├── [modelId]/       # Rutas dinámicas modelo
+│  │  │  │  └── page.tsx      # Detalle modelo
+│  │  │  └── _components/     # Componentes específicos catálogo
+│  │  └── quote/              # Creación de cotización
+│  │     ├── page.tsx         # Configuración cotización
+│  │     ├── review/          # Revisión cotización
+│  │     │  └── page.tsx      
+│  │     ├── loading.tsx      # Loading states cotización
+│  │     └── _components/     # Componentes específicos cotización
+│  ├── (auth)/                # Rutas de autenticación  
+│  │  ├── layout.tsx          # Layout auth (formularios centrados)
+│  │  ├── loading.tsx         # Loading states auth
+│  │  ├── error.tsx           # Error handling auth
+│  │  ├── signin/             # Página sign in
+│  │  │  └── page.tsx
+│  │  └── _components/        # Componentes específicos auth
+│  └── (dashboard)/           # Rutas admin protegidas
+│     ├── layout.tsx          # Layout dashboard con sidebar
+│     ├── loading.tsx         # Loading states dashboard
+│     ├── error.tsx           # Error handling dashboard
+│     ├── not-found.tsx       # 404 protegido
+│     ├── page.tsx            # Home dashboard
+│     ├── _components/        # Componentes específicos dashboard
+│     ├── models/             # Gestión modelos
+│     │  └── page.tsx
+│     ├── quotes/             # Gestión cotizaciones  
+│     │  └── page.tsx
+│     └── settings/           # Configuración
+│        └── page.tsx
+├── components/               # Componentes globales reutilizables
+│  └── ui/                   # Componentes shadcn/ui
+├── lib/                     # Utilidades y configuraciones
+├── server/                  # Lógica backend (tRPC, Prisma)
+│  ├── api/                  # Routers tRPC
+│  ├── auth/                 # Configuración NextAuth
+│  └── services/             # Lógica de negocio
+└── trpc/                    # Configuración cliente tRPC
 
 tests/
-├── contract/
-├── integration/
-├── perf/
-└── unit/
+├── contract/                # Tests de contrato tRPC
+├── integration/             # Tests de integración
+├── unit/                   # Tests unitarios
+└── perf/                   # Tests de performance
+
+e2e/                        # Tests E2E Playwright
 ```
 
-**Structure Decision**: Next.js App Router con Route Groups por dominio (`(catalog)`, `(quote)`, `(admin)`), carpetas privadas prefijadas con `_` para utilidades internas por grupo y alias por vista (p.ej., `@views/auth/*`, `@views/dashboard/*`).
+**Structure Decision**: Web application usando Next.js 15 App Router con route groups para separar dominios de negocio (público, auth, dashboard). Cada route group tiene su propio layout, loading, error y componentes específicos. Componentes reutilizables globales en `/components` y lógica de negocio en `/server`.
 
-## Phase 0: Outline & Research
-1. **Extract unknowns from Technical Context** above:
-   - For each NEEDS CLARIFICATION → research task
-   - For each dependency → best practices task
-   - For each integration → patterns task
+## Phase 0: Outline & Research ✅ COMPLETED
+Investigación técnica completada en `research.md`:
+- **Next.js 15 App Router** con route groups para separación de dominios
+- **shadcn/ui v3 + Tailwind v4** para componentes accesibles con variables CSS
+- **tRPC + Zod** para contratos tipados end-to-end
+- **Prisma + PostgreSQL** manteniendo esquema existente
+- **NextAuth v5** para autenticación admin
+- **TanStack Query v5** para estado y caché de datos
+- **Vitest + Playwright** para testing completo
 
-2. **Generate and dispatch research agents**:
-   ```
-   For each unknown in Technical Context:
-     Task: "Research {unknown} for {feature context}"
-   For each technology choice:
-     Task: "Find best practices for {tech} in {domain}"
-   ```
+**Output**: ✅ research.md completado con decisiones técnicas justificadas
 
-3. **Consolidate findings** in `research.md` using format:
-   - Decision: [what was chosen]
-   - Rationale: [why chosen]
-   - Alternatives considered: [what else evaluated]
-
-**Output**: research.md with all NEEDS CLARIFICATION resolved (generado)
-
-## Phase 1: Design & Contracts
+## Phase 1: Design & Contracts ✅ COMPLETED
 *Prerequisites: research.md complete*
 
-1. **Extract entities from feature spec** → `data-model.md`:
-   - Entity name, fields, relationships
-   - Validation rules from requirements
-   - State transitions if applicable
+Artefactos de diseño completados:
 
-2. **Generate API contracts** from functional requirements:
-   - For each user action → endpoint
-   - Use standard REST/GraphQL patterns
-   - Output OpenAPI/GraphQL schema to `/contracts/`
+1. **Data Model** → `data-model.md`: ✅
+   - Entidades: Modelo, GlassType, Service, Quote, QuoteItem
+   - Validaciones y reglas de negocio
+   - Relaciones entre entidades
 
-3. **Generate contract tests** from contracts:
-   - One test file per endpoint
-   - Assert request/response schemas
-   - Tests must fail (no implementation yet)
+2. **API Contracts** → `/contracts/`: ✅  
+   - `trpc-contracts.md`: Contratos tRPC (catalog.list-models, quote.calculate-item, etc.)
+   - `ui-navigation.md`: Patrones de navegación y estado UI
+   - Schemas de request/response con SLAs (<200ms pricing, <500ms catalog)
 
-4. **Extract test scenarios** from user stories:
-   - Each story → integration test scenario
-   - Quickstart test = story validation steps
+3. **Contract Tests**: ✅ Referenciados en tasks.md
+   - Tests que fallan para cada endpoint tRPC
+   - Validación de schemas request/response
+   - Tests de integración para flujos de usuario
 
-5. **Update agent file incrementally** (O(1) operation):
-   - Run `.specify/scripts/bash/update-agent-context.sh copilot`
-     **IMPORTANT**: Execute it exactly as specified above. Do not add or remove any arguments.
-   - If exists: Add only NEW tech from current plan
-   - Preserve manual additions between markers
-   - Update recent changes (keep last 3)
-   - Keep under 150 lines for token efficiency
-   - Output to repository root
+4. **Quickstart**: ✅ `quickstart.md`
+   - Criterios de validación end-to-end
+   - Métricas de performance y accesibilidad
+   - Pasos de verificación manual
 
-**Output**: data-model.md, /contracts/* (tRPC + navegación UI), quickstart.md, archivo de agente actualizado
+5. **Agent Context**: ✅ Actualizado en `.github/copilot-instructions.md`
+   - Stack técnico actual integrado
+   - Convenciones del proyecto documentadas
+   - Reglas de arquitectura Next.js App Router
 
-## Phase 2: Task Planning Approach
-*This section describes what the /tasks command will do - DO NOT execute during /plan*
+**Output**: ✅ data-model.md, /contracts/*, tests preparados, quickstart.md, contexto de agente actualizado
 
-**Task Generation Strategy**:
-- Load `.specify/templates/tasks-template.md` as base
-- Generate tasks from Phase 1 design docs (contracts, data model, quickstart)
-- Each contract → contract test task [P]
-- Each entity → model creation task [P] 
-- Each user story → integration test task
-- Implementation tasks to make tests pass
+## Phase 2: Task Planning Approach ✅ COMPLETED 
+*tasks.md ha sido generado con 70 tareas estructuradas*
 
-**Ordering Strategy**:
-- TDD order: Tests before implementation 
-- Dependency order: Models before services before UI
-- Mark [P] for parallel execution (independent files)
+**Task Generation Strategy Implemented**:
+- Base: Next.js App Router estructura con route groups por dominio
+- **TDD Approach**: Tests (T011-T017) antes de implementación (T018-T041)
+- **Route Group Separation**: Tareas paralelas [P] por dominios diferentes
+- **Component Co-location**: Componentes cerca de su uso específico
+- **Next.js Special Files**: loading.tsx, error.tsx, not-found.tsx explícitos
 
-**Estimated Output**: 25-30 numbered, ordered tasks in tasks.md
+**Ordering Strategy Applied**:
+- **Phase 3.1-3.2**: Setup y layouts base (T001-T010)
+- **Phase 3.3**: Tests contractuales que DEBEN fallar (T011-T017) ⚠️
+- **Phase 3.4-3.7**: Componentes y páginas por route group (T018-T041)
+- **Phase 3.8-3.10**: Next.js special files por contexto (T042-T048)
+- **Phase 3.11-3.13**: Estado, integración y accesibilidad (T049-T060)
+- **Phase 3.14-3.15**: Características avanzadas y testing final (T061-T070)
 
-**IMPORTANT**: This phase is executed by the /tasks command, NOT by /plan
+**Parallel Execution Strategy**:
+- Route groups diferentes = [P] (pueden ejecutarse en paralelo)
+- Mismo archivo/componente = secuencial
+- Tests contractuales = todos [P] (archivos diferentes)
+- Loading/error states = [P] por route group
+
+**Output Delivered**: ✅ 70 tareas numeradas y ordenadas en tasks.md con dependencias claras y marcadores [P] para ejecución paralela
 
 ## Phase 3+: Future Implementation
 *These phases are beyond the scope of the /plan command*
@@ -241,21 +238,26 @@ tests/
 
 
 ## Progress Tracking
-*This checklist is updated during execution flow*
+*Este checklist se actualiza durante el flujo de ejecución*
 
 **Phase Status**:
-- [x] Phase 0: Research complete (/plan command)
-- [x] Phase 1: Design complete (/plan command)
-- [x] Phase 2: Task planning complete (/plan command - describe approach only)
-- [ ] Phase 3: Tasks generated (/tasks command)
+- [x] Phase 0: Research complete (/plan command) - ✅ research.md
+- [x] Phase 1: Design complete (/plan command) - ✅ data-model.md, contracts/, quickstart.md
+- [x] Phase 2: Task planning complete (/tasks command) - ✅ tasks.md con 70 tareas
+- [ ] Phase 3: Tasks execution in progress - **CURRENT PHASE** (implementación de tareas)
 - [ ] Phase 4: Implementation complete
 - [ ] Phase 5: Validation passed
 
 **Gate Status**:
-- [x] Initial Constitution Check: PASS
-- [x] Post-Design Constitution Check: PASS
-- [x] All NEEDS CLARIFICATION resolved
-- [ ] Complexity deviations documented
+- [x] Initial Constitution Check: PASS - Todos los principios constitucionales alineados
+- [x] Post-Design Constitution Check: PASS - Design respeta performance, a11y, type safety
+- [x] All NEEDS CLARIFICATION resolved - ✅ Clarificaciones completadas en spec.md
+- [x] Complexity deviations documented - Sin desviaciones encontradas
+
+**Current Implementation Status** (from tasks.md):
+- ✅ **Phases 3.1-3.3 COMPLETE**: Setup, layouts, tests contractuales
+- 🔄 **Phase 3.4 IN PROGRESS**: Componentes UI compartidos (línea 115 seleccionada)
+- ⏳ **Phases 3.5+**: Pending - Componentes por route group, states, testing final
 
 ---
 *Based on Constitution v2.1.1 - See `/memory/constitution.md`*
