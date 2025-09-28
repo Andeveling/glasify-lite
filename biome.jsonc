@@ -3,14 +3,13 @@
   "extends": ["ultracite"],
   "files": {
     "maxSize": 1048576,
-    "ignore": [
-      "node_modules",
-      ".next",
-      "coverage",
-      "dist",
-      "build",
-      "**/*.snap",
-      "**/*.d.ts"
+    "includes": [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx",
+      "**/*.json",
+      "**/*.jsonc"
     ]
   },
   "formatter": {
@@ -56,6 +55,7 @@
       },
       // Reglas que aseguran un estilo de código consistente.
       "style": {
+        "noMagicNumbers": "warn",
         // Advierte sobre el uso de convenciones de nomenclatura incorrectas.
         "useNamingConvention": {
           "level": "warn",
@@ -77,6 +77,9 @@
         "useKeyWithMouseEvents": "warn",
         "useAnchorContent": "warn",
         "useHeadingContent": "warn"
+      },
+      "performance": {
+        "useTopLevelRegex": "warn"
       }
     }
   },

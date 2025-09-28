@@ -1,17 +1,17 @@
-import { z } from "zod";
-import logger from "@/lib/logger";
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { z } from 'zod';
+import logger from '@/lib/logger';
+import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
 
 // Input schemas
 export const listModelsInput = z.object({
-  manufacturerId: z.string().cuid("ID del fabricante debe ser válido"),
+  manufacturerId: z.string().cuid('ID del fabricante debe ser válido'),
 });
 
 // Output schemas
 export const modelSummaryOutput = z.object({
   id: z.string(),
   name: z.string(),
-  status: z.enum(["draft", "published"]),
+  status: z.enum(['draft', 'published']),
   minWidthMm: z.number(),
   maxWidthMm: z.number(),
   minHeightMm: z.number(),
@@ -28,19 +28,19 @@ export const modelSummaryOutput = z.object({
 export const listModelsOutput = z.array(modelSummaryOutput);
 
 export const catalogRouter = createTRPCRouter({
-  "list-models": publicProcedure
+  'list-models': publicProcedure
     .input(listModelsInput)
     .output(listModelsOutput)
     .query(async ({ ctx, input }) => {
       try {
-        logger.info("Listing models for manufacturer", {
+        logger.info('Listing models for manufacturer', {
           manufacturerId: input.manufacturerId,
         });
 
         const models = await ctx.db.model.findMany({
           where: {
             manufacturerId: input.manufacturerId,
-            status: "published", // Only show published models
+            status: 'published', // Only show published models
           },
           select: {
             id: true,
@@ -59,7 +59,7 @@ export const catalogRouter = createTRPCRouter({
             updatedAt: true,
           },
           orderBy: {
-            name: "asc",
+            name: 'asc',
           },
         });
 
@@ -72,21 +72,19 @@ export const catalogRouter = createTRPCRouter({
           accessoryPrice: model.accessoryPrice?.toNumber() ?? null,
         }));
 
-        logger.info("Successfully retrieved models", {
+        logger.info('Successfully retrieved models', {
           manufacturerId: input.manufacturerId,
           count: serializedModels.length,
         });
 
         return serializedModels;
       } catch (error) {
-        logger.error("Error listing models", {
+        logger.error('Error listing models', {
           manufacturerId: input.manufacturerId,
-          error: error instanceof Error ? error.message : "Unknown error",
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
 
-        throw new Error(
-          "No se pudieron cargar los modelos. Intente nuevamente."
-        );
+        throw new Error('No se pudieron cargar los modelos. Intente nuevamente.');
       }
     }),
 });

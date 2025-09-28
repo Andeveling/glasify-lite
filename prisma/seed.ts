@@ -1,55 +1,58 @@
 /** biome-ignore-all lint/suspicious/noConsole: simplemente es un seed de prueba */
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 const seedData = {
   manufacturer: {
-    name: "Vidrios del Norte",
-    currency: "CLP",
+    name: 'Vidrios del Norte',
+    currency: 'CLP',
     quoteValidityDays: 15,
   },
   glassTypes: [
     {
-      name: "Vidrio Templado 6mm",
-      purpose: "security" as const,
+      name: 'Vidrio Templado 6mm',
+      purpose: 'security' as const,
       thicknessMm: 6,
+      pricePerSqm: 65_000,
     },
     {
-      name: "Vidrio Simple 4mm",
-      purpose: "general" as const,
+      name: 'Vidrio Simple 4mm',
+      purpose: 'general' as const,
       thicknessMm: 4,
+      pricePerSqm: 28_000,
     },
     {
-      name: "Vidrio DVH 20mm",
-      purpose: "insulation" as const,
+      name: 'Vidrio DVH 20mm',
+      purpose: 'insulation' as const,
       thicknessMm: 20,
+      pricePerSqm: 120_000,
     },
   ],
   services: [
     {
-      name: "Instalación",
-      type: "fixed" as const,
-      unit: "unit" as const,
+      name: 'Instalación',
+      type: 'fixed' as const,
+      unit: 'unit' as const,
       rate: 25_000,
     },
     {
-      name: "Sellado perimetral",
-      type: "perimeter" as const,
-      unit: "ml" as const,
+      name: 'Sellado perimetral',
+      type: 'perimeter' as const,
+      unit: 'ml' as const,
       rate: 1500,
     },
     {
-      name: "Tratamiento superficie",
-      type: "area" as const,
-      unit: "sqm" as const,
+      name: 'Tratamiento superficie',
+      type: 'area' as const,
+      unit: 'sqm' as const,
       rate: 8000,
     },
   ],
   models: [
     {
-      name: "Ventana Corrediza Estándar",
-      status: "published" as const,
+      name: 'Ventana Corrediza Estándar',
+      status: 'published' as const,
       minWidthMm: 600,
       maxWidthMm: 2000,
       minHeightMm: 400,
@@ -60,8 +63,8 @@ const seedData = {
       accessoryPrice: 15_000,
     },
     {
-      name: "Ventana Proyectante Premium",
-      status: "published" as const,
+      name: 'Ventana Proyectante Premium',
+      status: 'published' as const,
       minWidthMm: 400,
       maxWidthMm: 1500,
       minHeightMm: 300,
@@ -76,15 +79,13 @@ const seedData = {
 
 const main = async () => {
   try {
-    console.log("🌱 Seeding database...");
+    console.log('🌱 Seeding database...');
 
     const manufacturer = await prisma.manufacturer.create({
       data: seedData.manufacturer,
     });
 
-    console.log(
-      `✅ Created manufacturer: ${manufacturer.name} (${manufacturer.id})`
-    );
+    console.log(`✅ Created manufacturer: ${manufacturer.name} (${manufacturer.id})`);
 
     const glassTypes = await Promise.all(
       seedData.glassTypes.map((glassData) =>
@@ -127,22 +128,13 @@ const main = async () => {
 
     console.log(`✅ Created ${models.length} models`);
 
-    console.log("\n🎉 Seed data created successfully!");
+    console.log('\n🎉 Seed data created successfully!');
     console.log(`Manufacturer ID: ${manufacturer.id}`);
-    console.log(
-      "Available models:",
-      models.map((m) => `${m.name} (${m.id})`).join(", ")
-    );
-    console.log(
-      "Available glass types:",
-      glassTypes.map((gt) => `${gt.name} (${gt.id})`).join(", ")
-    );
-    console.log(
-      "Available services:",
-      services.map((s) => `${s.name} (${s.id})`).join(", ")
-    );
+    console.log('Available models:', models.map((m) => `${m.name} (${m.id})`).join(', '));
+    console.log('Available glass types:', glassTypes.map((gt) => `${gt.name} (${gt.id})`).join(', '));
+    console.log('Available services:', services.map((s) => `${s.name} (${s.id})`).join(', '));
   } catch (error) {
-    console.error("❌ Error seeding database:");
+    console.error('❌ Error seeding database:');
     console.error(error);
     process.exit(1);
   } finally {

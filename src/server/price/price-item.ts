@@ -1,5 +1,5 @@
-import type { AdjustmentSign, ServiceType, ServiceUnit } from "@prisma/client";
-import { Decimal } from "@prisma/client/runtime/library";
+import type { AdjustmentSign, ServiceType, ServiceUnit } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime/library';
 
 const MILLIMETERS_PER_METER = 1000;
 const MILLIMETERS_IN_METER = new Decimal(MILLIMETERS_PER_METER);
@@ -9,28 +9,20 @@ const FIXED_QUANTITY_SCALE = 4;
 const toDecimal = (value: Decimal | number | string | null | undefined) =>
   value instanceof Decimal ? value : new Decimal(value ?? 0);
 
-const roundHalfUp = (value: Decimal, scale = ROUND_SCALE) =>
-  value.toDecimalPlaces(scale, Decimal.ROUND_HALF_UP);
+const roundHalfUp = (value: Decimal, scale = ROUND_SCALE) => value.toDecimalPlaces(scale, Decimal.ROUND_HALF_UP);
 
-const toRoundedNumber = (value: Decimal, scale = ROUND_SCALE) =>
-  Number(roundHalfUp(value, scale).toFixed(scale));
+const toRoundedNumber = (value: Decimal, scale = ROUND_SCALE) => Number(roundHalfUp(value, scale).toFixed(scale));
 
-const mmToMeters = (valueMm: number) =>
-  new Decimal(valueMm).dividedBy(MILLIMETERS_IN_METER);
+const mmToMeters = (valueMm: number) => new Decimal(valueMm).dividedBy(MILLIMETERS_IN_METER);
 
-const unitQuantity = (
-  unit: ServiceUnit,
-  dimensions: { widthMeters: Decimal; heightMeters: Decimal }
-) => {
+const unitQuantity = (unit: ServiceUnit, dimensions: { widthMeters: Decimal; heightMeters: Decimal }) => {
   switch (unit) {
-    case "sqm": {
+    case 'sqm': {
       const area = dimensions.widthMeters.mul(dimensions.heightMeters);
       return roundHalfUp(area);
     }
-    case "ml": {
-      const perimeter = dimensions.widthMeters
-        .plus(dimensions.heightMeters)
-        .mul(2);
+    case 'ml': {
+      const perimeter = dimensions.widthMeters.plus(dimensions.heightMeters).mul(2);
       return roundHalfUp(perimeter);
     }
     default:
@@ -42,28 +34,23 @@ const computeServiceQuantity = (
   service: PriceServiceInput,
   dimensions: { widthMeters: Decimal; heightMeters: Decimal }
 ) => {
-  if (service.type === "fixed") {
+  if (service.type === 'fixed') {
     const quantity =
-      typeof service.quantityOverride === "number"
-        ? new Decimal(service.quantityOverride)
-        : new Decimal(1);
+      typeof service.quantityOverride === 'number' ? new Decimal(service.quantityOverride) : new Decimal(1);
     return roundHalfUp(quantity, FIXED_QUANTITY_SCALE);
   }
 
   const baseQuantity = unitQuantity(service.unit, dimensions);
-  if (typeof service.quantityOverride === "number") {
+  if (typeof service.quantityOverride === 'number') {
     return roundHalfUp(new Decimal(service.quantityOverride));
   }
   return baseQuantity;
 };
 
-const adjustmentQuantity = (
-  unit: ServiceUnit,
-  dimensions: { widthMeters: Decimal; heightMeters: Decimal }
-) => unitQuantity(unit, dimensions);
+const adjustmentQuantity = (unit: ServiceUnit, dimensions: { widthMeters: Decimal; heightMeters: Decimal }) =>
+  unitQuantity(unit, dimensions);
 
-const signedAmount = (amount: Decimal, sign: AdjustmentSign) =>
-  sign === "negative" ? amount.negated() : amount;
+const signedAmount = (amount: Decimal, sign: AdjustmentSign) => (sign === 'negative' ? amount.negated() : amount);
 
 const ensurePositiveNumber = (value: number) => (value > 0 ? value : 0);
 
@@ -91,6 +78,16 @@ export type PriceItemCalculationInput = {
     costPerMmHeight: Decimal | number | string;
     accessoryPrice?: Decimal | number | string | null;
   };
+  /**
+   * Configuración opcional de vidrio. Cuando se provee, el cálculo incluye:
+   *  - Descuentos fijos por lado para el área facturable del vidrio (en mm)
+   *  - Precio adicional por m² de vidrio facturable
+   */
+  glass?: {
+    pricePerSqm: Decimal | number | string;
+    discountWidthMm?: number;
+    discountHeightMm?: number;
+  };
   includeAccessory?: boolean;
   services?: PriceServiceInput[];
   adjustments?: PriceAdjustmentInput[];
@@ -116,9 +113,7 @@ export type PriceItemCalculationResult = {
   subtotal: number;
 };
 
-export const calculatePriceItem = (
-  input: PriceItemCalculationInput
-): PriceItemCalculationResult => {
+export const calculatePriceItem = (input: PriceItemCalculationInput): PriceItemCalculationResult => {
   const widthMm = ensurePositiveNumber(input.widthMm);
   const heightMm = ensurePositiveNumber(input.heightMm);
 
@@ -128,13 +123,24 @@ export const calculatePriceItem = (
   const basePrice = toDecimal(input.model.basePrice);
   const widthCost = toDecimal(input.model.costPerMmWidth).mul(widthMm);
   const heightCost = toDecimal(input.model.costPerMmHeight).mul(heightMm);
-  const rawDimPrice = basePrice.plus(widthCost).plus(heightCost);
+  // Cálculo opcional de vidrio
+  let glassPriceDecimal = new Decimal(0);
+  if (input.glass && toDecimal(input.glass.pricePerSqm).greaterThan(0)) {
+    const dW = Math.max(input.glass.discountWidthMm ?? 0, 0);
+    const dH = Math.max(input.glass.discountHeightMm ?? 0, 0);
+    const effWidthMm = Math.max(widthMm - dW, 0);
+    const effHeightMm = Math.max(heightMm - dH, 0);
+    const effWidthM = mmToMeters(effWidthMm);
+    const effHeightM = mmToMeters(effHeightMm);
+    const areaSqm = effWidthM.mul(effHeightM);
+    glassPriceDecimal = roundHalfUp(toDecimal(input.glass.pricePerSqm).mul(areaSqm));
+  }
+
+  const rawDimPrice = basePrice.plus(widthCost).plus(heightCost).plus(glassPriceDecimal);
   const dimPriceDecimal = roundHalfUp(rawDimPrice);
 
   const includeAccessory = Boolean(input.includeAccessory);
-  const rawAccessoryPrice = includeAccessory
-    ? toDecimal(input.model.accessoryPrice)
-    : new Decimal(0);
+  const rawAccessoryPrice = includeAccessory ? toDecimal(input.model.accessoryPrice) : new Decimal(0);
   const accPriceDecimal = roundHalfUp(rawAccessoryPrice);
 
   const dimensions = { widthMeters, heightMeters };
@@ -162,9 +168,7 @@ export const calculatePriceItem = (
     for (const adjustment of input.adjustments) {
       const quantityDecimal = adjustmentQuantity(adjustment.unit, dimensions);
       const valueDecimal = toDecimal(adjustment.value);
-      const amountDecimal = roundHalfUp(
-        signedAmount(quantityDecimal.mul(valueDecimal), adjustment.sign)
-      );
+      const amountDecimal = roundHalfUp(signedAmount(quantityDecimal.mul(valueDecimal), adjustment.sign));
       adjustmentsTotal = adjustmentsTotal.plus(amountDecimal);
       adjustmentBreakdown.push({
         concept: adjustment.concept,
@@ -173,10 +177,7 @@ export const calculatePriceItem = (
     }
   }
 
-  const subtotalDecimal = dimPriceDecimal
-    .plus(accPriceDecimal)
-    .plus(servicesTotal)
-    .plus(adjustmentsTotal);
+  const subtotalDecimal = dimPriceDecimal.plus(accPriceDecimal).plus(servicesTotal).plus(adjustmentsTotal);
 
   return {
     dimPrice: toRoundedNumber(dimPriceDecimal),
