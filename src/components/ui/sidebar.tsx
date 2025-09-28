@@ -19,6 +19,7 @@ const MINUTES_IN_AN_HOUR = 60;
 const HOURS_IN_A_DAY = 24;
 const DAYS_IN_A_WEEK = 7;
 const SECONDS_IN_A_WEEK = SECONDS_IN_A_MINUTE * MINUTES_IN_AN_HOUR * HOURS_IN_A_DAY * DAYS_IN_A_WEEK;
+const MILLISECONDS_PER_SECOND = 1000;
 const SIDEBAR_COOKIE_MAX_AGE = SECONDS_IN_A_WEEK;
 const SIDEBAR_WIDTH = '16rem';
 const SIDEBAR_WIDTH_MOBILE = '18rem';
@@ -31,30 +32,51 @@ const SKELETON_WIDTH_RANGE = 40;
 
 // Cookie utility functions
 function setCookie(name: string, value: string, maxAge: number) {
-  // Use the modern CookieStore API if available
-  if (typeof window !== 'undefined' && 'cookieStore' in window) {
-    // @ts-expect-error: cookieStore is not yet in all TS DOM types
-    window.cookieStore.set({
-      maxAge,
-      name,
-      path: '/',
-      sameSite: 'lax',
-      value,
-    });
-  } else if (typeof document !== 'undefined') {
-    // Fallback using a function wrapper to avoid direct document.cookie linting issues
-    const setCookieString = (cookieStr: string) => {
-      (document as Document).cookie = cookieStr;
-    };
+  // Use the modern CookieStore API if available, with fallback to document.cookie
+  if (typeof window !== 'undefined') {
+    try {
+      // Try modern CookieStore API (experimental)
+      if ('cookieStore' in window && window.cookieStore) {
+        const expires = new Date(Date.now() + maxAge * MILLISECONDS_PER_SECOND);
+        void (
+          window.cookieStore as {
+            set: (options: {
+              name: string;
+              value: string;
+              expires?: number;
+              path?: string;
+              sameSite?: string;
+            }) => Promise<void>;
+          }
+        ).set({
+          expires: expires.getTime(),
+          name,
+          path: '/',
+          sameSite: 'lax',
+          value,
+        });
+        return;
+      }
+    } catch {
+      // Fall through to document.cookie approach
+    }
 
-    const cookieString = [
-      `${encodeURIComponent(name)}=${encodeURIComponent(value)}`,
-      'path=/',
-      `max-age=${maxAge}`,
-      'SameSite=Lax',
-    ].join('; ');
+    // Fallback to document.cookie
+    if (typeof document !== 'undefined') {
+      // Fallback using a function wrapper to avoid direct document.cookie linting issues
+      const setCookieString = (cookieStr: string) => {
+        (document as Document).cookie = cookieStr;
+      };
 
-    setCookieString(cookieString);
+      const cookieString = [
+        `${encodeURIComponent(name)}=${encodeURIComponent(value)}`,
+        'path=/',
+        `max-age=${maxAge}`,
+        'SameSite=Lax',
+      ].join('; ');
+
+      setCookieString(cookieString);
+    }
   }
 }
 
