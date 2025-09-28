@@ -25,14 +25,14 @@ const formatCurrency = (amount: number | string, currency: string) => {
 
   if (currency === 'CLP') {
     return new Intl.NumberFormat('es-CL', {
-      style: 'currency',
       currency: 'CLP',
+      style: 'currency',
     }).format(numericAmount);
   }
 
   return new Intl.NumberFormat('es-LA', {
-    style: 'currency',
     currency,
+    style: 'currency',
   }).format(numericAmount);
 };
 
@@ -76,7 +76,7 @@ Este es un mensaje automático de Glasify.
 No responda directamente a este correo.
   `.trim();
 
-  return { subject, body };
+  return { body, subject };
 };
 
 type SendEmailOptions = {
@@ -90,21 +90,21 @@ const sendEmailMock = async (options: SendEmailOptions): Promise<boolean> => {
 
   // Mock implementation - in production this would integrate with a real email service
   const mockEmail = {
-    timestamp: new Date().toISOString(),
-    to,
-    subject: template.subject,
     body: template.body,
     quoteId,
     status: 'sent' as const,
+    subject: template.subject,
+    timestamp: new Date().toISOString(),
+    to,
   };
 
   // Log to console in development (this would be replaced with actual email sending)
   if (process.env.NODE_ENV === 'development') {
     /* eslint-disable no-console */
     logger.info('📧 Mock Email Sent:', {
-      to: mockEmail.to,
-      subject: mockEmail.subject,
       quoteId: mockEmail.quoteId,
+      subject: mockEmail.subject,
+      to: mockEmail.to,
     });
 
     /* eslint-enable no-console */
@@ -125,9 +125,9 @@ export const sendQuoteNotification = async (data: QuoteEmailData, recipientEmail
     const template = createQuoteEmailTemplate(data);
 
     const success = await sendEmailMock({
-      to: recipientEmail,
-      template,
       quoteId: data.quote.id,
+      template,
+      to: recipientEmail,
     });
 
     return success;

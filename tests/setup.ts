@@ -57,15 +57,15 @@ type ModelSeed = {
 
 const BASE_MANUFACTURERS: readonly ManufacturerSeed[] = [
   {
+    currency: 'COP',
     id: 'cm1manufacturer123456789ab',
     name: 'Cristales Modernos',
-    currency: 'COP',
     quoteValidityDays: 30,
   },
   {
+    currency: 'COP',
     id: 'cm1abc123def456ghi789jkl0',
     name: 'Ventanas Andinas',
-    currency: 'COP',
     quoteValidityDays: 20,
   },
 ];
@@ -73,39 +73,39 @@ const BASE_MANUFACTURERS: readonly ManufacturerSeed[] = [
 const BASE_GLASS_TYPES: readonly GlassTypeSeed[] = [
   {
     id: 'cm1glass123def456ghi789jkl',
+    isLaminated: true,
+    isTempered: true,
     manufacturerId: 'cm1manufacturer123456789ab',
     name: 'Vidrio Laminado 6mm',
+    pricePerSqm: '185000.00',
     purpose: 'security',
     thicknessMm: 6,
-    pricePerSqm: '185000.00',
-    isTempered: true,
-    isLaminated: true,
   },
   {
     id: 'cm1glasstype123456789abc1',
+    isTempered: true,
     manufacturerId: 'cm1manufacturer123456789ab',
     name: 'Vidrio Templado 8mm',
+    pricePerSqm: '210000.00',
     purpose: 'security',
     thicknessMm: 8,
-    pricePerSqm: '210000.00',
-    isTempered: true,
   },
   {
     id: 'cm1glasstype123456789abc2',
+    isLowE: true,
     manufacturerId: 'cm1manufacturer123456789ab',
     name: 'Vidrio Bajo Emisivo 6mm',
+    pricePerSqm: '240000.00',
     purpose: 'insulation',
     thicknessMm: 6,
-    pricePerSqm: '240000.00',
-    isLowE: true,
   },
   {
     id: 'cm1catalogglasstype123456789',
     manufacturerId: 'cm1abc123def456ghi789jkl0',
     name: 'Vidrio Aislante 6mm',
+    pricePerSqm: '190000.00',
     purpose: 'insulation',
     thicknessMm: 6,
-    pricePerSqm: '190000.00',
   },
 ];
 
@@ -114,103 +114,103 @@ const BASE_SERVICES: readonly ServiceSeed[] = [
     id: 'cm1service123def456ghi789',
     manufacturerId: 'cm1manufacturer123456789ab',
     name: 'Instalación profesional',
+    rate: '75000.0000',
     type: 'fixed',
     unit: 'unit',
-    rate: '75000.0000',
   },
   {
     id: 'cm1service1def456ghi789',
     manufacturerId: 'cm1manufacturer123456789ab',
     name: 'Sellado perimetral premium',
+    rate: '15000.0000',
     type: 'perimeter',
     unit: 'ml',
-    rate: '15000.0000',
   },
   {
     id: 'cm1service2def456ghi789',
     manufacturerId: 'cm1manufacturer123456789ab',
     name: 'Transporte especializado',
+    rate: '25000.0000',
     type: 'area',
     unit: 'sqm',
-    rate: '25000.0000',
   },
 ];
 
 const BASE_MODELS: readonly ModelSeed[] = [
   {
+    accessoryPrice: '45000.00',
+    basePrice: '285000.00',
+    compatibleGlassTypeIds: ['cm1glass123def456ghi789jkl', 'cm1glasstype123456789abc1'],
+    costPerMmHeight: '110.0000',
+    costPerMmWidth: '120.0000',
+    glassDiscountHeightMm: 10,
+    glassDiscountWidthMm: 10,
     id: 'cm1model123def456ghi789jkl',
     manufacturerId: 'cm1manufacturer123456789ab',
-    name: 'Ventana Termoacústica Elite',
-    status: 'published',
-    minWidthMm: 600,
+    maxHeightMm: 2100,
     maxWidthMm: 2000,
     minHeightMm: 500,
-    maxHeightMm: 2100,
-    basePrice: '285000.00',
-    costPerMmWidth: '120.0000',
-    costPerMmHeight: '110.0000',
-    accessoryPrice: '45000.00',
-    compatibleGlassTypeIds: ['cm1glass123def456ghi789jkl', 'cm1glasstype123456789abc1'],
-    glassDiscountWidthMm: 10,
-    glassDiscountHeightMm: 10,
+    minWidthMm: 600,
+    name: 'Ventana Termoacústica Elite',
+    status: 'published',
   },
   {
+    accessoryPrice: '50000.00',
+    basePrice: '320000.00',
+    compatibleGlassTypeIds: ['cm1catalogglasstype123456789'],
+    costPerMmHeight: '125.0000',
+    costPerMmWidth: '130.0000',
     id: 'cm1catalogmodelpublished123',
     manufacturerId: 'cm1abc123def456ghi789jkl0',
-    name: 'Ventana Panorama 2024',
-    status: 'published',
-    minWidthMm: 800,
+    maxHeightMm: 2200,
     maxWidthMm: 2400,
     minHeightMm: 700,
-    maxHeightMm: 2200,
-    basePrice: '320000.00',
-    costPerMmWidth: '130.0000',
-    costPerMmHeight: '125.0000',
-    accessoryPrice: '50000.00',
-    compatibleGlassTypeIds: ['cm1catalogglasstype123456789'],
+    minWidthMm: 800,
+    name: 'Ventana Panorama 2024',
+    status: 'published',
   },
   {
+    accessoryPrice: null,
+    basePrice: '260000.00',
+    compatibleGlassTypeIds: ['cm1catalogglasstype123456789'],
+    costPerMmHeight: '100.0000',
+    costPerMmWidth: '95.0000',
     id: 'cm1catalogmodeldraft123',
     manufacturerId: 'cm1abc123def456ghi789jkl0',
-    name: 'Ventana Minimal Draft',
-    status: 'draft',
-    minWidthMm: 600,
+    maxHeightMm: 2000,
     maxWidthMm: 2000,
     minHeightMm: 600,
-    maxHeightMm: 2000,
-    basePrice: '260000.00',
-    costPerMmWidth: '95.0000',
-    costPerMmHeight: '100.0000',
-    accessoryPrice: null,
-    compatibleGlassTypeIds: ['cm1catalogglasstype123456789'],
+    minWidthMm: 600,
+    name: 'Ventana Minimal Draft',
+    status: 'draft',
   },
 ];
 
 const seedManufacturers = async () => {
   for (const manufacturer of BASE_MANUFACTURERS) {
     await db.manufacturer.upsert({
-      where: { id: manufacturer.id },
+      create: manufacturer,
       update: {
-        name: manufacturer.name,
         currency: manufacturer.currency,
+        name: manufacturer.name,
         quoteValidityDays: manufacturer.quoteValidityDays,
       },
-      create: manufacturer,
+      where: { id: manufacturer.id },
     });
   }
 };
 
 const buildGlassTypeData = (glassType: GlassTypeSeed) => ({
-  manufacturerId: glassType.manufacturerId,
-  name: glassType.name,
-  purpose: glassType.purpose,
-  thicknessMm: glassType.thicknessMm,
-  pricePerSqm: glassType.pricePerSqm,
-  uValue: glassType.uValue ?? null,
-  isTempered: glassType.isTempered ?? false,
   isLaminated: glassType.isLaminated ?? false,
   isLowE: glassType.isLowE ?? false,
+  isTempered: glassType.isTempered ?? false,
   isTripleGlazed: glassType.isTripleGlazed ?? false,
+  manufacturerId: glassType.manufacturerId,
+  name: glassType.name,
+  pricePerSqm: glassType.pricePerSqm,
+  purpose: glassType.purpose,
+  thicknessMm: glassType.thicknessMm,
+  uValue: glassType.uValue ?? null,
 });
 
 const seedGlassTypes = async () => {
@@ -218,9 +218,9 @@ const seedGlassTypes = async () => {
     const data = buildGlassTypeData(glassType);
 
     await db.glassType.upsert({
-      where: { id: glassType.id },
-      update: data,
       create: { id: glassType.id, ...data },
+      update: data,
+      where: { id: glassType.id },
     });
   }
 };
@@ -228,33 +228,33 @@ const seedGlassTypes = async () => {
 const seedServices = async () => {
   for (const service of BASE_SERVICES) {
     await db.service.upsert({
-      where: { id: service.id },
+      create: service,
       update: {
         manufacturerId: service.manufacturerId,
         name: service.name,
+        rate: service.rate,
         type: service.type,
         unit: service.unit,
-        rate: service.rate,
       },
-      create: service,
+      where: { id: service.id },
     });
   }
 };
 
 const buildModelData = (model: ModelSeed) => ({
+  accessoryPrice: model.accessoryPrice,
+  basePrice: model.basePrice,
+  costPerMmHeight: model.costPerMmHeight,
+  costPerMmWidth: model.costPerMmWidth,
+  glassDiscountHeightMm: model.glassDiscountHeightMm ?? 0,
+  glassDiscountWidthMm: model.glassDiscountWidthMm ?? 0,
   manufacturerId: model.manufacturerId,
-  name: model.name,
-  status: model.status,
-  minWidthMm: model.minWidthMm,
+  maxHeightMm: model.maxHeightMm,
   maxWidthMm: model.maxWidthMm,
   minHeightMm: model.minHeightMm,
-  maxHeightMm: model.maxHeightMm,
-  basePrice: model.basePrice,
-  costPerMmWidth: model.costPerMmWidth,
-  costPerMmHeight: model.costPerMmHeight,
-  accessoryPrice: model.accessoryPrice,
-  glassDiscountWidthMm: model.glassDiscountWidthMm ?? 0,
-  glassDiscountHeightMm: model.glassDiscountHeightMm ?? 0,
+  minWidthMm: model.minWidthMm,
+  name: model.name,
+  status: model.status,
 });
 
 const seedModels = async () => {
@@ -263,16 +263,16 @@ const seedModels = async () => {
     const baseData = buildModelData(model);
 
     await db.model.upsert({
-      where: { id: model.id },
-      update: {
-        ...baseData,
-        compatibleGlassTypeIds: { set: compatibilityIds },
-      },
       create: {
         id: model.id,
         ...baseData,
         compatibleGlassTypeIds: compatibilityIds,
       },
+      update: {
+        ...baseData,
+        compatibleGlassTypeIds: { set: compatibilityIds },
+      },
+      where: { id: model.id },
     });
   }
 };

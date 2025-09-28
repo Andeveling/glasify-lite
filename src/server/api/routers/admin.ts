@@ -37,31 +37,31 @@ async function validateGlassTypesExist(
 
 // Input schemas
 export const modelUpsertInput = z.object({
+  accessoryPrice: z.number().min(0).optional().nullable(),
+  basePrice: z.number().min(0, 'Precio base debe ser mayor o igual a 0'),
+  compatibleGlassTypeIds: z
+    .array(z.string().cuid('ID del tipo de vidrio debe ser válido'))
+    .min(1, 'Debe seleccionar al menos un tipo de vidrio compatible'),
+  costPerMmHeight: z.number().min(0, 'Costo por mm de alto debe ser mayor o igual a 0'),
+  costPerMmWidth: z.number().min(0, 'Costo por mm de ancho debe ser mayor o igual a 0'),
   id: z.string().cuid().optional(), // If provided, update; otherwise, create
   manufacturerId: z.string().cuid('ID del fabricante debe ser válido'),
+  maxHeightMm: z.number().int().min(1, 'Alto máximo debe ser mayor a 0 mm'),
+  maxWidthMm: z.number().int().min(1, 'Ancho máximo debe ser mayor a 0 mm'),
+  minHeightMm: z.number().int().min(1, 'Alto mínimo debe ser mayor a 0 mm'),
+  minWidthMm: z.number().int().min(1, 'Ancho mínimo debe ser mayor a 0 mm'),
   name: z.preprocess(
     (value) => (typeof value === 'string' ? value.trim() : ''),
     z.string().min(1, 'Nombre del modelo es requerido')
   ),
   status: z.enum(['draft', 'published']).default('draft'),
-  minWidthMm: z.number().int().min(1, 'Ancho mínimo debe ser mayor a 0 mm'),
-  maxWidthMm: z.number().int().min(1, 'Ancho máximo debe ser mayor a 0 mm'),
-  minHeightMm: z.number().int().min(1, 'Alto mínimo debe ser mayor a 0 mm'),
-  maxHeightMm: z.number().int().min(1, 'Alto máximo debe ser mayor a 0 mm'),
-  basePrice: z.number().min(0, 'Precio base debe ser mayor o igual a 0'),
-  costPerMmWidth: z.number().min(0, 'Costo por mm de ancho debe ser mayor o igual a 0'),
-  costPerMmHeight: z.number().min(0, 'Costo por mm de alto debe ser mayor o igual a 0'),
-  accessoryPrice: z.number().min(0).optional().nullable(),
-  compatibleGlassTypeIds: z
-    .array(z.string().cuid('ID del tipo de vidrio debe ser válido'))
-    .min(1, 'Debe seleccionar al menos un tipo de vidrio compatible'),
 });
 
 // Output schemas
 export const modelUpsertOutput = z.object({
+  message: z.string(),
   modelId: z.string(),
   status: z.enum(['draft', 'published']),
-  message: z.string(),
 });
 
 export const adminRouter = createTRPCRouter({
@@ -71,8 +71,8 @@ export const adminRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       try {
         logger.info('Starting model upsert', {
-          modelId: input.id,
           manufacturerId: input.manufacturerId,
+          modelId: input.id,
           name: input.name,
         });
 
@@ -92,18 +92,18 @@ export const adminRouter = createTRPCRouter({
           await validateGlassTypesExist(tx, input.compatibleGlassTypeIds, input.manufacturerId);
 
           const modelData = {
+            accessoryPrice: input.accessoryPrice,
+            basePrice: input.basePrice,
+            compatibleGlassTypeIds: input.compatibleGlassTypeIds,
+            costPerMmHeight: input.costPerMmHeight,
+            costPerMmWidth: input.costPerMmWidth,
             manufacturerId: input.manufacturerId,
-            name: input.name,
-            status: input.status,
-            minWidthMm: input.minWidthMm,
+            maxHeightMm: input.maxHeightMm,
             maxWidthMm: input.maxWidthMm,
             minHeightMm: input.minHeightMm,
-            maxHeightMm: input.maxHeightMm,
-            basePrice: input.basePrice,
-            costPerMmWidth: input.costPerMmWidth,
-            costPerMmHeight: input.costPerMmHeight,
-            accessoryPrice: input.accessoryPrice,
-            compatibleGlassTypeIds: input.compatibleGlassTypeIds,
+            minWidthMm: input.minWidthMm,
+            name: input.name,
+            status: input.status,
           };
 
           let modelRecord: Model;
@@ -124,8 +124,8 @@ export const adminRouter = createTRPCRouter({
             }
 
             modelRecord = await tx.model.update({
-              where: { id: input.id },
               data: modelData,
+              where: { id: input.id },
             });
           } else {
             // Create new model
@@ -149,28 +149,28 @@ export const adminRouter = createTRPCRouter({
           }
 
           return {
-            modelId: modelRecord.id,
-            status: modelRecord.status,
             message: isCreating
               ? `Modelo "${input.name}" creado exitosamente`
               : `Modelo "${input.name}" actualizado exitosamente`,
+            modelId: modelRecord.id,
+            status: modelRecord.status,
           };
         });
 
         logger.info('Model upsert completed successfully', {
-          modelId: result.modelId,
-          manufacturerId: input.manufacturerId,
-          name: input.name,
           isUpdate: Boolean(input.id),
+          manufacturerId: input.manufacturerId,
+          modelId: result.modelId,
+          name: input.name,
         });
 
         return result;
       } catch (error) {
         logger.error('Error during model upsert', {
-          modelId: input.id,
-          manufacturerId: input.manufacturerId,
-          name: input.name,
           error: error instanceof Error ? error.message : 'Unknown error',
+          manufacturerId: input.manufacturerId,
+          modelId: input.id,
+          name: input.name,
         });
 
         const errorMessage =

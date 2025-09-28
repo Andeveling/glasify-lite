@@ -143,7 +143,7 @@ export const calculatePriceItem = (input: PriceItemCalculationInput): PriceItemC
   const rawAccessoryPrice = includeAccessory ? toDecimal(input.model.accessoryPrice) : new Decimal(0);
   const accPriceDecimal = roundHalfUp(rawAccessoryPrice);
 
-  const dimensions = { widthMeters, heightMeters };
+  const dimensions = { heightMeters, widthMeters };
 
   const serviceBreakdown: PriceItemServiceResult[] = [];
   let servicesTotal = new Decimal(0);
@@ -154,10 +154,10 @@ export const calculatePriceItem = (input: PriceItemCalculationInput): PriceItemC
       const amountDecimal = roundHalfUp(rate.mul(quantityDecimal));
       servicesTotal = servicesTotal.plus(amountDecimal);
       serviceBreakdown.push({
+        amount: toRoundedNumber(amountDecimal),
+        quantity: toRoundedNumber(quantityDecimal, ROUND_SCALE),
         serviceId: service.serviceId,
         unit: service.unit,
-        quantity: toRoundedNumber(quantityDecimal, ROUND_SCALE),
-        amount: toRoundedNumber(amountDecimal),
       });
     }
   }
@@ -171,8 +171,8 @@ export const calculatePriceItem = (input: PriceItemCalculationInput): PriceItemC
       const amountDecimal = roundHalfUp(signedAmount(quantityDecimal.mul(valueDecimal), adjustment.sign));
       adjustmentsTotal = adjustmentsTotal.plus(amountDecimal);
       adjustmentBreakdown.push({
-        concept: adjustment.concept,
         amount: toRoundedNumber(amountDecimal),
+        concept: adjustment.concept,
       });
     }
   }
@@ -180,10 +180,10 @@ export const calculatePriceItem = (input: PriceItemCalculationInput): PriceItemC
   const subtotalDecimal = dimPriceDecimal.plus(accPriceDecimal).plus(servicesTotal).plus(adjustmentsTotal);
 
   return {
-    dimPrice: toRoundedNumber(dimPriceDecimal),
     accPrice: toRoundedNumber(accPriceDecimal),
-    services: serviceBreakdown,
     adjustments: adjustmentBreakdown,
+    dimPrice: toRoundedNumber(dimPriceDecimal),
+    services: serviceBreakdown,
     subtotal: toRoundedNumber(subtotalDecimal),
   };
 };

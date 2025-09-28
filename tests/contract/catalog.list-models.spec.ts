@@ -39,18 +39,18 @@ describe('Contract: catalog.list-models', () => {
     // Each model should have the expected structure
     for (const model of result) {
       expect(model).toMatchObject({
+        basePrice: expect.any(Number),
+        compatibleGlassTypeIds: expect.any(Array),
+        costPerMmHeight: expect.any(Number),
+        costPerMmWidth: expect.any(Number),
+        createdAt: expect.any(Date),
         id: expect.any(String),
-        name: expect.any(String),
-        status: expect.stringMatching(STATUS_REGEX),
-        minWidthMm: expect.any(Number),
+        maxHeightMm: expect.any(Number),
         maxWidthMm: expect.any(Number),
         minHeightMm: expect.any(Number),
-        maxHeightMm: expect.any(Number),
-        basePrice: expect.any(Number),
-        costPerMmWidth: expect.any(Number),
-        costPerMmHeight: expect.any(Number),
-        compatibleGlassTypeIds: expect.any(Array),
-        createdAt: expect.any(Date),
+        minWidthMm: expect.any(Number),
+        name: expect.any(String),
+        status: expect.stringMatching(STATUS_REGEX),
         updatedAt: expect.any(Date),
       });
 

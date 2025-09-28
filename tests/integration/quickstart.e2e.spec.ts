@@ -15,8 +15,8 @@ describe('Integration: Quickstart E2E Flow', () => {
     // 1. Create a test manufacturer
     const manufacturer = await db.manufacturer.create({
       data: {
-        name: 'E2E Test Manufacturer',
         currency: 'COP',
+        name: 'E2E Test Manufacturer',
         quoteValidityDays: 15,
       },
     });
@@ -25,11 +25,11 @@ describe('Integration: Quickstart E2E Flow', () => {
     // 2. Create a test glass type
     const glassType = await db.glassType.create({
       data: {
+        manufacturerId,
         name: 'Vidrio Templado Test',
+        pricePerSqm: 50_000,
         purpose: 'general',
         thicknessMm: 6,
-        pricePerSqm: 50_000,
-        manufacturerId,
       },
     });
     glassTypeId = glassType.id;
@@ -37,11 +37,11 @@ describe('Integration: Quickstart E2E Flow', () => {
     // 3. Create a test service
     const service = await db.service.create({
       data: {
+        manufacturerId,
         name: 'Corte Especial Test',
+        rate: 2500,
         type: 'perimeter',
         unit: 'ml',
-        rate: 2500,
-        manufacturerId,
       },
     });
     serviceId = service.id;
@@ -81,18 +81,18 @@ describe('Integration: Quickstart E2E Flow', () => {
   it('Step 1: Admin publishes a new glass model', async () => {
     // Arrange: Model data for creation
     const modelPayload = {
+      accessoryPrice: 20_000,
+      basePrice: 150_000,
+      compatibleGlassTypeIds: [glassTypeId],
+      costPerMmHeight: 45,
+      costPerMmWidth: 60,
       manufacturerId,
-      name: 'Ventana Premium E2E Test',
-      status: 'published' as const,
-      minWidthMm: 300,
+      maxHeightMm: 1800,
       maxWidthMm: 2000,
       minHeightMm: 400,
-      maxHeightMm: 1800,
-      basePrice: 150_000,
-      costPerMmWidth: 60,
-      costPerMmHeight: 45,
-      accessoryPrice: 20_000,
-      compatibleGlassTypeIds: [glassTypeId],
+      minWidthMm: 300,
+      name: 'Ventana Premium E2E Test',
+      status: 'published' as const,
     };
 
     // Act: Create and publish the model
@@ -110,24 +110,24 @@ describe('Integration: Quickstart E2E Flow', () => {
   it('Step 2: User calculates price and adds item to new quote', async () => {
     // Arrange: Item calculation payload
     const calculatePayload = {
-      modelId,
-      widthMm: 1000,
-      heightMm: 800,
-      glassTypeId,
-      services: [
-        {
-          serviceId,
-          quantity: 1,
-        },
-      ],
       adjustments: [
         {
           concept: 'Descuento cliente nuevo',
-          unit: 'unit' as const,
           sign: 'negative' as const,
+          unit: 'unit' as const,
           value: 10_000,
         },
       ],
+      glassTypeId,
+      heightMm: 800,
+      modelId,
+      services: [
+        {
+          quantity: 1,
+          serviceId,
+        },
+      ],
+      widthMm: 1000,
     };
 
     // Act: Calculate the item price first
@@ -157,13 +157,13 @@ describe('Integration: Quickstart E2E Flow', () => {
   it('Step 3: User adds another item to existing quote', async () => {
     // Arrange: Second item with different dimensions
     const secondItemPayload = {
-      quoteId,
-      modelId,
-      widthMm: 1200,
-      heightMm: 1000,
-      glassTypeId,
-      services: [], // No additional services
       adjustments: [],
+      glassTypeId,
+      heightMm: 1000,
+      modelId,
+      quoteId,
+      services: [], // No additional services
+      widthMm: 1200,
     };
 
     // Act: Add second item to existing quote
@@ -178,11 +178,11 @@ describe('Integration: Quickstart E2E Flow', () => {
   it('Step 4: User submits the complete quote', async () => {
     // Arrange: Contact information for quote submission
     const submitPayload = {
-      quoteId,
       contact: {
-        phone: '+57 300 123 4567',
         address: 'Calle 123 #45-67, Bogotá, Colombia',
+        phone: '+57 300 123 4567',
       },
+      quoteId,
     };
 
     // Act: Submit the quote
@@ -213,19 +213,19 @@ describe('Integration: Quickstart E2E Flow', () => {
   it('Integration Performance: Complete flow should complete quickly', async () => {
     // Arrange: Performance test data
     const performancePayload = {
-      modelId,
-      widthMm: 1500,
-      heightMm: 1200,
-      glassTypeId,
-      services: [{ serviceId, quantity: 2 }],
       adjustments: [
         {
           concept: 'Test adjustment',
-          unit: 'sqm' as const,
           sign: 'positive' as const,
+          unit: 'sqm' as const,
           value: 5000,
         },
       ],
+      glassTypeId,
+      heightMm: 1200,
+      modelId,
+      services: [{ quantity: 2, serviceId }],
+      widthMm: 1500,
     };
 
     // Act: Measure time for complete calculate -> add -> submit flow
@@ -239,11 +239,11 @@ describe('Integration: Quickstart E2E Flow', () => {
 
     // Step 3: Submit quote
     const submitResult = await testServer.quote.submit({
-      quoteId: addResult.quoteId,
       contact: {
-        phone: '+57 300 999 8888',
         address: 'Performance Test Address',
+        phone: '+57 300 999 8888',
       },
+      quoteId: addResult.quoteId,
     });
 
     const endTime = Date.now();

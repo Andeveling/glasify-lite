@@ -5,8 +5,8 @@ import { db } from '@/server/db';
 // Create a test context for tRPC procedures
 export const createTestContext = () => ({
   db,
-  session: null, // For unauthenticated tests
   headers: new Headers(),
+  session: null, // For unauthenticated tests
 });
 
 // Create a server-side caller for testing

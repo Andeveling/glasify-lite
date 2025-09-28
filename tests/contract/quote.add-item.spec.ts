@@ -13,12 +13,12 @@ describe('Contract: quote.add-item', () => {
   it('should add item to new quote when no quoteId provided', async () => {
     // Arrange: Valid input without quoteId (creates new quote)
     const validInput = {
-      modelId: 'cm1model123def456ghi789jkl',
-      widthMm: 1000,
-      heightMm: 800,
-      glassTypeId: 'cm1glass123def456ghi789jkl',
-      services: [],
       adjustments: [],
+      glassTypeId: 'cm1glass123def456ghi789jkl',
+      heightMm: 800,
+      modelId: 'cm1model123def456ghi789jkl',
+      services: [],
+      widthMm: 1000,
     };
 
     // Act: Call the procedure
@@ -26,8 +26,8 @@ describe('Contract: quote.add-item', () => {
 
     // Assert: Output schema validation
     expect(result).toMatchObject({
-      quoteId: expect.any(String),
       itemId: expect.any(String),
+      quoteId: expect.any(String),
       subtotal: expect.any(Number),
     });
 
@@ -42,12 +42,12 @@ describe('Contract: quote.add-item', () => {
   it('should add item to existing quote when quoteId provided', async () => {
     // Arrange: First create a quote by adding an item
     const firstItemInput = {
-      modelId: 'cm1model123def456ghi789jkl',
-      widthMm: 800,
-      heightMm: 600,
-      glassTypeId: 'cm1glass123def456ghi789jkl',
-      services: [],
       adjustments: [],
+      glassTypeId: 'cm1glass123def456ghi789jkl',
+      heightMm: 600,
+      modelId: 'cm1model123def456ghi789jkl',
+      services: [],
+      widthMm: 800,
     };
 
     const firstResult = await testServer.quote['add-item'](firstItemInput);
@@ -56,9 +56,9 @@ describe('Contract: quote.add-item', () => {
     // Now add second item to existing quote
     const secondItemInput = {
       ...firstItemInput,
+      heightMm: 1000,
       quoteId: existingQuoteId,
       widthMm: 1200, // Different dimensions
-      heightMm: 1000,
     };
 
     // Act: Call the procedure for second item
@@ -66,8 +66,8 @@ describe('Contract: quote.add-item', () => {
 
     // Assert: Should use the same quote ID
     expect(result).toMatchObject({
-      quoteId: existingQuoteId,
       itemId: expect.any(String),
+      quoteId: existingQuoteId,
       subtotal: expect.any(Number),
     });
 
@@ -78,24 +78,24 @@ describe('Contract: quote.add-item', () => {
   it('should add item with services and adjustments', async () => {
     // Arrange: Input with services and adjustments
     const complexInput = {
-      modelId: 'cm1model123def456ghi789jkl',
-      widthMm: 1500,
-      heightMm: 1200,
-      glassTypeId: 'cm1glass123def456ghi789jkl',
-      services: [
-        {
-          serviceId: 'cm1service123def456ghi789',
-          quantity: 2,
-        },
-      ],
       adjustments: [
         {
           concept: 'Descuento cliente frecuente',
-          unit: 'unit' as const,
           sign: 'negative' as const,
+          unit: 'unit' as const,
           value: 100,
         },
       ],
+      glassTypeId: 'cm1glass123def456ghi789jkl',
+      heightMm: 1200,
+      modelId: 'cm1model123def456ghi789jkl',
+      services: [
+        {
+          quantity: 2,
+          serviceId: 'cm1service123def456ghi789',
+        },
+      ],
+      widthMm: 1500,
     };
 
     // Act: Call the procedure
@@ -103,8 +103,8 @@ describe('Contract: quote.add-item', () => {
 
     // Assert: Should create quote item successfully
     expect(result).toMatchObject({
-      quoteId: expect.any(String),
       itemId: expect.any(String),
+      quoteId: expect.any(String),
       subtotal: expect.any(Number),
     });
 
@@ -115,12 +115,12 @@ describe('Contract: quote.add-item', () => {
   it('should validate input schema - invalid modelId', async () => {
     // Arrange: Invalid model ID
     const invalidInput = {
-      modelId: 'invalid-model-id', // Not a valid CUID
-      widthMm: 1000,
-      heightMm: 800,
-      glassTypeId: 'cm1glass123def456ghi789jkl',
-      services: [],
       adjustments: [],
+      glassTypeId: 'cm1glass123def456ghi789jkl',
+      heightMm: 800,
+      modelId: 'invalid-model-id', // Not a valid CUID
+      services: [],
+      widthMm: 1000,
     };
 
     // Act & Assert: Should throw validation error
@@ -132,12 +132,12 @@ describe('Contract: quote.add-item', () => {
   it('should validate input schema - invalid dimensions', async () => {
     // Arrange: Invalid height (negative)
     const invalidInput = {
-      modelId: 'cm1model123def456ghi789jkl',
-      widthMm: 1000,
-      heightMm: -100, // Invalid: must be > 0
-      glassTypeId: 'cm1glass123def456ghi789jkl',
-      services: [],
       adjustments: [],
+      glassTypeId: 'cm1glass123def456ghi789jkl',
+      heightMm: -100, // Invalid: must be > 0
+      modelId: 'cm1model123def456ghi789jkl',
+      services: [],
+      widthMm: 1000,
     };
 
     // Act & Assert: Should throw validation error
@@ -149,13 +149,13 @@ describe('Contract: quote.add-item', () => {
   it('should validate input schema - invalid quoteId when provided', async () => {
     // Arrange: Invalid quote ID format
     const invalidInput = {
-      quoteId: 'invalid-quote-id', // Not a valid CUID
-      modelId: 'cm1model123def456ghi789jkl',
-      widthMm: 1000,
-      heightMm: 800,
-      glassTypeId: 'cm1glass123def456ghi789jkl',
-      services: [],
       adjustments: [],
+      glassTypeId: 'cm1glass123def456ghi789jkl',
+      heightMm: 800,
+      modelId: 'cm1model123def456ghi789jkl',
+      quoteId: 'invalid-quote-id', // Not a valid CUID
+      services: [],
+      widthMm: 1000,
     };
 
     // Act & Assert: Should throw validation error
@@ -167,20 +167,20 @@ describe('Contract: quote.add-item', () => {
   it('should handle model dimension constraints', async () => {
     // Arrange: Dimensions that might exceed model limits
     const inputWithLargeDimensions = {
-      modelId: 'cm1model123def456ghi789jkl',
-      widthMm: 5000, // Large width that might exceed model max
-      heightMm: 4000, // Large height that might exceed model max
-      glassTypeId: 'cm1glass123def456ghi789jkl',
-      services: [],
       adjustments: [],
+      glassTypeId: 'cm1glass123def456ghi789jkl',
+      heightMm: 4000, // Large height that might exceed model max
+      modelId: 'cm1model123def456ghi789jkl',
+      services: [],
+      widthMm: 5000, // Large width that might exceed model max
     };
 
     // Act & Assert: Should either succeed or throw a descriptive error
     try {
       const result = await testServer.quote['add-item'](inputWithLargeDimensions);
       expect(result).toMatchObject({
-        quoteId: expect.any(String),
         itemId: expect.any(String),
+        quoteId: expect.any(String),
         subtotal: expect.any(Number),
       });
     } catch (error) {
@@ -192,20 +192,20 @@ describe('Contract: quote.add-item', () => {
   it('should handle glass type compatibility', async () => {
     // Arrange: Glass type that might not be compatible with model
     const inputWithIncompatibleGlass = {
-      modelId: 'cm1model123def456ghi789jkl',
-      widthMm: 1000,
-      heightMm: 800,
-      glassTypeId: 'cm1incompatible123456789', // Potentially incompatible glass type
-      services: [],
       adjustments: [],
+      glassTypeId: 'cm1incompatible123456789', // Potentially incompatible glass type
+      heightMm: 800,
+      modelId: 'cm1model123def456ghi789jkl',
+      services: [],
+      widthMm: 1000,
     };
 
     // Act & Assert: Should either succeed or throw compatibility error
     try {
       const result = await testServer.quote['add-item'](inputWithIncompatibleGlass);
       expect(result).toMatchObject({
-        quoteId: expect.any(String),
         itemId: expect.any(String),
+        quoteId: expect.any(String),
         subtotal: expect.any(Number),
       });
     } catch (error) {
@@ -217,12 +217,12 @@ describe('Contract: quote.add-item', () => {
   it('should generate unique item IDs for multiple items in same quote', async () => {
     // Arrange: Create first item to get quote ID
     const firstItemInput = {
-      modelId: 'cm1model123def456ghi789jkl',
-      widthMm: 1000,
-      heightMm: 800,
-      glassTypeId: 'cm1glass123def456ghi789jkl',
-      services: [],
       adjustments: [],
+      glassTypeId: 'cm1glass123def456ghi789jkl',
+      heightMm: 800,
+      modelId: 'cm1model123def456ghi789jkl',
+      services: [],
+      widthMm: 1000,
     };
 
     const firstResult = await testServer.quote['add-item'](firstItemInput);

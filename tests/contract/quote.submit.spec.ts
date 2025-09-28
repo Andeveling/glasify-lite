@@ -18,12 +18,12 @@ describe('Contract: quote.submit', () => {
   // Helper function to create a test quote with an item
   const createTestQuote = async () => {
     const itemInput = {
-      modelId: 'cm1model123def456ghi789jkl',
-      widthMm: 1000,
-      heightMm: 800,
-      glassTypeId: 'cm1glass123def456ghi789jkl',
-      services: [],
       adjustments: [],
+      glassTypeId: 'cm1glass123def456ghi789jkl',
+      heightMm: 800,
+      modelId: 'cm1model123def456ghi789jkl',
+      services: [],
+      widthMm: 1000,
     };
 
     const result = await testServer.quote['add-item'](itemInput);
@@ -35,11 +35,11 @@ describe('Contract: quote.submit', () => {
     testQuoteId = await createTestQuote();
 
     const validInput = {
-      quoteId: testQuoteId,
       contact: {
-        phone: '+57 300 123 4567',
         address: 'Calle 123 #45-67, Bogotá, Colombia',
+        phone: '+57 300 123 4567',
       },
+      quoteId: testQuoteId,
     };
 
     // Act: Submit the quote
@@ -59,11 +59,11 @@ describe('Contract: quote.submit', () => {
   it('should validate input schema - invalid quoteId', async () => {
     // Arrange: Invalid quote ID
     const invalidInput = {
-      quoteId: 'invalid-quote-id', // Not a valid CUID
       contact: {
-        phone: '+57 300 123 4567',
         address: 'Calle 123 #45-67, Bogotá, Colombia',
+        phone: '+57 300 123 4567',
       },
+      quoteId: 'invalid-quote-id', // Not a valid CUID
     };
 
     // Act & Assert: Should throw validation error
@@ -77,11 +77,11 @@ describe('Contract: quote.submit', () => {
     testQuoteId = await createTestQuote();
 
     const invalidInput = {
-      quoteId: testQuoteId,
       contact: {
-        phone: '', // Empty phone
         address: 'Calle 123 #45-67, Bogotá, Colombia',
+        phone: '', // Empty phone
       },
+      quoteId: testQuoteId,
     };
 
     // Act & Assert: Should throw validation error
@@ -95,11 +95,11 @@ describe('Contract: quote.submit', () => {
     testQuoteId = await createTestQuote();
 
     const invalidInput = {
-      quoteId: testQuoteId,
       contact: {
-        phone: '+57 300 123 4567',
         address: '', // Empty address
+        phone: '+57 300 123 4567',
       },
+      quoteId: testQuoteId,
     };
 
     // Act & Assert: Should throw validation error
@@ -113,11 +113,11 @@ describe('Contract: quote.submit', () => {
     const nonExistentQuoteId = 'cm1nonexistent123456789abc';
 
     const input = {
-      quoteId: nonExistentQuoteId,
       contact: {
-        phone: '+57 300 123 4567',
         address: 'Calle 123 #45-67, Bogotá, Colombia',
+        phone: '+57 300 123 4567',
       },
+      quoteId: nonExistentQuoteId,
     };
 
     // Act & Assert: Should throw error for non-existent quote
@@ -135,11 +135,11 @@ describe('Contract: quote.submit', () => {
     testQuoteId = await createTestQuote();
 
     const input = {
-      quoteId: testQuoteId,
       contact: {
-        phone: '+57 300 123 4567',
         address: 'Calle 123 #45-67, Bogotá, Colombia',
+        phone: '+57 300 123 4567',
       },
+      quoteId: testQuoteId,
     };
 
     // Act & Assert: Should succeed since we have items
@@ -163,11 +163,11 @@ describe('Contract: quote.submit', () => {
       const quoteId = await createTestQuote();
 
       const input = {
-        quoteId,
         contact: {
-          phone,
           address: 'Calle 123 #45-67, Bogotá, Colombia',
+          phone,
         },
+        quoteId,
       };
 
       // Act: Should not throw for valid phone formats
@@ -196,11 +196,11 @@ describe('Contract: quote.submit', () => {
       const quoteId = await createTestQuote();
 
       const input = {
-        quoteId,
         contact: {
-          phone: '+57 300 123 4567',
           address,
+          phone: '+57 300 123 4567',
         },
+        quoteId,
       };
 
       // Act: Should not throw for valid addresses
@@ -214,11 +214,11 @@ describe('Contract: quote.submit', () => {
     testQuoteId = await createTestQuote();
 
     const input = {
-      quoteId: testQuoteId,
       contact: {
-        phone: '+57 300 123 4567',
         address: 'Calle 123 #45-67, Bogotá, Colombia',
+        phone: '+57 300 123 4567',
       },
+      quoteId: testQuoteId,
     };
 
     // Act: Submit the quote
@@ -238,11 +238,11 @@ describe('Contract: quote.submit', () => {
     testQuoteId = await createTestQuote();
 
     const input = {
-      quoteId: testQuoteId,
       contact: {
-        phone: '+57 300 123 4567',
         address: 'Calle 123 #45-67, Bogotá, Colombia',
+        phone: '+57 300 123 4567',
       },
+      quoteId: testQuoteId,
     };
 
     // First submission
@@ -265,13 +265,13 @@ describe('Contract: quote.submit', () => {
     testQuoteId = await createTestQuote();
 
     const invalidInput = {
-      quoteId: testQuoteId,
       contact: {
-        // Missing required fields or wrong structure
-        email: 'test@example.com', // Wrong field
         // phone: "+57 300 123 4567", // Missing required phone
         address: 'Calle 123 #45-67, Bogotá, Colombia',
+        // Missing required fields or wrong structure
+        email: 'test@example.com', // Wrong field
       },
+      quoteId: testQuoteId,
     } as any;
 
     // Act & Assert: Should throw validation error for missing phone

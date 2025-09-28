@@ -4,75 +4,75 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const seedData = {
-  manufacturer: {
-    name: 'Vidrios del Norte',
-    currency: 'CLP',
-    quoteValidityDays: 15,
-  },
   glassTypes: [
     {
       name: 'Vidrio Templado 6mm',
+      pricePerSqm: 65_000,
       purpose: 'security' as const,
       thicknessMm: 6,
-      pricePerSqm: 65_000,
     },
     {
       name: 'Vidrio Simple 4mm',
+      pricePerSqm: 28_000,
       purpose: 'general' as const,
       thicknessMm: 4,
-      pricePerSqm: 28_000,
     },
     {
       name: 'Vidrio DVH 20mm',
+      pricePerSqm: 120_000,
       purpose: 'insulation' as const,
       thicknessMm: 20,
-      pricePerSqm: 120_000,
+    },
+  ],
+  manufacturer: {
+    currency: 'CLP',
+    name: 'Vidrios del Norte',
+    quoteValidityDays: 15,
+  },
+  models: [
+    {
+      accessoryPrice: 15_000,
+      basePrice: 120_000,
+      costPerMmHeight: 55,
+      costPerMmWidth: 45,
+      maxHeightMm: 1800,
+      maxWidthMm: 2000,
+      minHeightMm: 400,
+      minWidthMm: 600,
+      name: 'Ventana Corrediza Estándar',
+      status: 'published' as const,
+    },
+    {
+      accessoryPrice: 22_000,
+      basePrice: 180_000,
+      costPerMmHeight: 75,
+      costPerMmWidth: 65,
+      maxHeightMm: 1200,
+      maxWidthMm: 1500,
+      minHeightMm: 300,
+      minWidthMm: 400,
+      name: 'Ventana Proyectante Premium',
+      status: 'published' as const,
     },
   ],
   services: [
     {
       name: 'Instalación',
+      rate: 25_000,
       type: 'fixed' as const,
       unit: 'unit' as const,
-      rate: 25_000,
     },
     {
       name: 'Sellado perimetral',
+      rate: 1500,
       type: 'perimeter' as const,
       unit: 'ml' as const,
-      rate: 1500,
     },
     {
       name: 'Tratamiento superficie',
+      rate: 8000,
       type: 'area' as const,
       unit: 'sqm' as const,
-      rate: 8000,
-    },
-  ],
-  models: [
-    {
-      name: 'Ventana Corrediza Estándar',
-      status: 'published' as const,
-      minWidthMm: 600,
-      maxWidthMm: 2000,
-      minHeightMm: 400,
-      maxHeightMm: 1800,
-      basePrice: 120_000,
-      costPerMmWidth: 45,
-      costPerMmHeight: 55,
-      accessoryPrice: 15_000,
-    },
-    {
-      name: 'Ventana Proyectante Premium',
-      status: 'published' as const,
-      minWidthMm: 400,
-      maxWidthMm: 1500,
-      minHeightMm: 300,
-      maxHeightMm: 1200,
-      basePrice: 180_000,
-      costPerMmWidth: 65,
-      costPerMmHeight: 75,
-      accessoryPrice: 22_000,
     },
   ],
 };
@@ -119,8 +119,8 @@ const main = async () => {
         prisma.model.create({
           data: {
             ...modelData,
-            manufacturerId: manufacturer.id,
             compatibleGlassTypeIds: glassTypeIds,
+            manufacturerId: manufacturer.id,
           },
         })
       )

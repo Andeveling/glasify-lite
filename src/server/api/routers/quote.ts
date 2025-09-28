@@ -7,44 +7,44 @@ import { sendQuoteNotification } from '@/server/services/email';
 
 // Input schemas
 export const calculateItemServiceInput = z.object({
-  serviceId: z.string().cuid('ID del servicio debe ser válido'),
   quantity: z.number().optional(),
+  serviceId: z.string().cuid('ID del servicio debe ser válido'),
 });
 
 export const calculateItemAdjustmentInput = z.object({
   concept: z.string().min(1, 'El concepto del ajuste es requerido'),
-  unit: z.enum(['unit', 'sqm', 'ml']),
   sign: z.enum(['positive', 'negative']),
+  unit: z.enum(['unit', 'sqm', 'ml']),
   value: z.number().min(0, 'El valor debe ser mayor o igual a 0'),
 });
 
 export const calculateItemInput = z.object({
-  modelId: z.string().cuid('ID del modelo debe ser válido'),
-  widthMm: z.number().int().min(1, 'Ancho debe ser mayor a 0 mm'),
-  heightMm: z.number().int().min(1, 'Alto debe ser mayor a 0 mm'),
-  glassTypeId: z.string().cuid('ID del tipo de vidrio debe ser válido'),
-  services: z.array(calculateItemServiceInput).default([]),
   adjustments: z.array(calculateItemAdjustmentInput).default([]),
+  glassTypeId: z.string().cuid('ID del tipo de vidrio debe ser válido'),
+  heightMm: z.number().int().min(1, 'Alto debe ser mayor a 0 mm'),
+  modelId: z.string().cuid('ID del modelo debe ser válido'),
+  services: z.array(calculateItemServiceInput).default([]),
+  widthMm: z.number().int().min(1, 'Ancho debe ser mayor a 0 mm'),
 });
 
 // Output schemas
 export const calculateItemServiceOutput = z.object({
+  amount: z.number(),
+  quantity: z.number(),
   serviceId: z.string(),
   unit: z.enum(['unit', 'sqm', 'ml']),
-  quantity: z.number(),
-  amount: z.number(),
 });
 
 export const calculateItemAdjustmentOutput = z.object({
-  concept: z.string(),
   amount: z.number(),
+  concept: z.string(),
 });
 
 export const calculateItemOutput = z.object({
-  dimPrice: z.number(),
   accPrice: z.number(),
-  services: z.array(calculateItemServiceOutput),
   adjustments: z.array(calculateItemAdjustmentOutput),
+  dimPrice: z.number(),
+  services: z.array(calculateItemServiceOutput),
   subtotal: z.number(),
 });
 
@@ -53,17 +53,17 @@ export const addItemInput = calculateItemInput.extend({
 });
 
 export const addItemOutput = z.object({
-  quoteId: z.string(),
   itemId: z.string(),
+  quoteId: z.string(),
   subtotal: z.number(),
 });
 
 export const submitInput = z.object({
-  quoteId: z.string().cuid('ID de la cotización debe ser válido'),
   contact: z.object({
-    phone: z.string().min(1, 'Teléfono es requerido'),
     address: z.string().min(1, 'Dirección es requerida'),
+    phone: z.string().min(1, 'Teléfono es requerido'),
   }),
+  quoteId: z.string().cuid('ID de la cotización debe ser válido'),
 });
 
 export const submitOutput = z.object({
@@ -72,137 +72,23 @@ export const submitOutput = z.object({
 });
 
 export const quoteRouter = createTRPCRouter({
-  'calculate-item': publicProcedure
-    .input(calculateItemInput)
-    .output(calculateItemOutput)
-    .mutation(async ({ ctx, input }) => {
-      try {
-        logger.info('Starting item price calculation', {
-          modelId: input.modelId,
-          dimensions: { widthMm: input.widthMm, heightMm: input.heightMm },
-          glassTypeId: input.glassTypeId,
-        });
-
-        // Get model data (needed for ranges, pricing and discounts)
-        const model = await ctx.db.model.findUnique({
-          where: { id: input.modelId },
-          include: { manufacturer: true },
-        });
-
-        if (!model || model.status !== 'published') {
-          throw new Error('Modelo no encontrado o no disponible');
-        }
-
-        // Validate glass type compatibility
-        if (!model.compatibleGlassTypeIds.includes(input.glassTypeId)) {
-          throw new Error('Tipo de vidrio no compatible con este modelo');
-        }
-
-        // Validate dimensions
-        if (input.widthMm < model.minWidthMm || input.widthMm > model.maxWidthMm) {
-          throw new Error(`Ancho debe estar entre ${model.minWidthMm}mm y ${model.maxWidthMm}mm`);
-        }
-        if (input.heightMm < model.minHeightMm || input.heightMm > model.maxHeightMm) {
-          throw new Error(`Alto debe estar entre ${model.minHeightMm}mm y ${model.maxHeightMm}mm`);
-        }
-
-        // Get services data
-        const serviceInputs: PriceServiceInput[] = [];
-        if (input.services.length > 0) {
-          const serviceIds = input.services.map((s) => s.serviceId);
-          const services = await ctx.db.service.findMany({
-            where: {
-              id: { in: serviceIds },
-              manufacturerId: model.manufacturerId,
-            },
-          });
-
-          for (const serviceInput of input.services) {
-            const service = services.find((s) => s.id === serviceInput.serviceId);
-            if (!service) {
-              throw new Error(`Servicio ${serviceInput.serviceId} no encontrado`);
-            }
-            serviceInputs.push({
-              serviceId: service.id,
-              type: service.type,
-              unit: service.unit,
-              rate: service.rate,
-              quantityOverride: serviceInput.quantity,
-            });
-          }
-        }
-
-        // Convert adjustments
-        const adjustmentInputs: PriceAdjustmentInput[] = input.adjustments.map((adj) => ({
-          concept: adj.concept,
-          unit: adj.unit,
-          sign: adj.sign,
-          value: adj.value,
-        }));
-
-        // Fetch glass type for price per m²
-        const glassType = await ctx.db.glassType.findUnique({
-          where: { id: input.glassTypeId },
-        });
-        if (!glassType) {
-          throw new Error('Tipo de vidrio no encontrado');
-        }
-
-        // Calculate price including glass area pricing
-        const itemCalculation = calculatePriceItem({
-          widthMm: input.widthMm,
-          heightMm: input.heightMm,
-          model: {
-            basePrice: model.basePrice,
-            costPerMmWidth: model.costPerMmWidth,
-            costPerMmHeight: model.costPerMmHeight,
-            accessoryPrice: model.accessoryPrice,
-          },
-          glass: {
-            pricePerSqm: glassType.pricePerSqm,
-            discountWidthMm: model.glassDiscountWidthMm,
-            discountHeightMm: model.glassDiscountHeightMm,
-          },
-          includeAccessory: Boolean(model.accessoryPrice),
-          services: serviceInputs,
-          adjustments: adjustmentInputs,
-        });
-
-        logger.info('Item price calculation completed', {
-          modelId: input.modelId,
-          subtotal: itemCalculation.subtotal,
-        });
-
-        return itemCalculation;
-      } catch (error) {
-        logger.error('Error calculating item price', {
-          modelId: input.modelId,
-          error: error instanceof Error ? error.message : 'Unknown error',
-        });
-
-        const errorMessage =
-          error instanceof Error ? error.message : 'No se pudo calcular el precio del ítem. Intente nuevamente.';
-        throw new Error(errorMessage);
-      }
-    }),
-
   'add-item': publicProcedure
     .input(addItemInput)
     .output(addItemOutput)
     .mutation(async ({ ctx, input }) => {
       try {
         logger.info('Adding item to quote', {
+          dimensions: { heightMm: input.heightMm, widthMm: input.widthMm },
           modelId: input.modelId,
           quoteId: input.quoteId,
-          dimensions: { widthMm: input.widthMm, heightMm: input.heightMm },
         });
 
         // First, calculate the item to get the subtotal
         const calculation = await ctx.db.$transaction(async (tx) => {
           // Get model data
           const model = await tx.model.findUnique({
-            where: { id: input.modelId },
             include: { manufacturer: true },
+            where: { id: input.modelId },
           });
 
           if (!model || model.status !== 'published') {
@@ -241,10 +127,10 @@ export const quoteRouter = createTRPCRouter({
 
             quote = await tx.quote.create({
               data: {
-                manufacturerId: model.manufacturerId,
                 currency: model.manufacturer.currency,
-                validUntil,
+                manufacturerId: model.manufacturerId,
                 status: 'draft',
+                validUntil,
               },
             });
           }
@@ -266,11 +152,11 @@ export const quoteRouter = createTRPCRouter({
                 throw new Error(`Servicio ${serviceInput.serviceId} no encontrado`);
               }
               serviceInputs.push({
+                quantityOverride: serviceInput.quantity,
+                rate: service.rate,
                 serviceId: service.id,
                 type: service.type,
                 unit: service.unit,
-                rate: service.rate,
-                quantityOverride: serviceInput.quantity,
               });
             }
           }
@@ -278,8 +164,8 @@ export const quoteRouter = createTRPCRouter({
           // Convert adjustments
           const adjustmentInputs: PriceAdjustmentInput[] = input.adjustments.map((adj) => ({
             concept: adj.concept,
-            unit: adj.unit,
             sign: adj.sign,
+            unit: adj.unit,
             value: adj.value,
           }));
 
@@ -293,34 +179,34 @@ export const quoteRouter = createTRPCRouter({
 
           // Calculate price including glass area pricing
           const itemCalculation = calculatePriceItem({
-            widthMm: input.widthMm,
-            heightMm: input.heightMm,
-            model: {
-              basePrice: model.basePrice,
-              costPerMmWidth: model.costPerMmWidth,
-              costPerMmHeight: model.costPerMmHeight,
-              accessoryPrice: model.accessoryPrice,
-            },
-            glass: {
-              pricePerSqm: glassType.pricePerSqm,
-              discountWidthMm: model.glassDiscountWidthMm,
-              discountHeightMm: model.glassDiscountHeightMm,
-            },
-            includeAccessory: Boolean(model.accessoryPrice),
-            services: serviceInputs,
             adjustments: adjustmentInputs,
+            glass: {
+              discountHeightMm: model.glassDiscountHeightMm,
+              discountWidthMm: model.glassDiscountWidthMm,
+              pricePerSqm: glassType.pricePerSqm,
+            },
+            heightMm: input.heightMm,
+            includeAccessory: Boolean(model.accessoryPrice),
+            model: {
+              accessoryPrice: model.accessoryPrice,
+              basePrice: model.basePrice,
+              costPerMmHeight: model.costPerMmHeight,
+              costPerMmWidth: model.costPerMmWidth,
+            },
+            services: serviceInputs,
+            widthMm: input.widthMm,
           });
 
           // Create quote item
           const quoteItem = await tx.quoteItem.create({
             data: {
-              quoteId: quote.id,
-              modelId: model.id,
-              glassTypeId: input.glassTypeId,
-              widthMm: input.widthMm,
-              heightMm: input.heightMm,
               accessoryApplied: Boolean(model.accessoryPrice),
+              glassTypeId: input.glassTypeId,
+              heightMm: input.heightMm,
+              modelId: model.id,
+              quoteId: quote.id,
               subtotal: itemCalculation.subtotal,
+              widthMm: input.widthMm,
             },
           });
 
@@ -328,11 +214,11 @@ export const quoteRouter = createTRPCRouter({
           for (const service of itemCalculation.services) {
             await tx.quoteItemService.create({
               data: {
+                amount: service.amount,
+                quantity: service.quantity,
                 quoteItemId: quoteItem.id,
                 serviceId: service.serviceId,
                 unit: service.unit,
-                quantity: service.quantity,
-                amount: service.amount,
               },
             });
           }
@@ -341,13 +227,13 @@ export const quoteRouter = createTRPCRouter({
           for (const adjustment of itemCalculation.adjustments) {
             await tx.adjustment.create({
               data: {
-                scope: 'item',
+                amount: adjustment.amount,
                 concept: adjustment.concept,
+                quoteItemId: quoteItem.id,
+                scope: 'item',
+                sign: adjustment.amount >= 0 ? 'positive' : 'negative',
                 unit: 'unit', // Default unit for item adjustments
                 value: 1, // Value is already calculated in amount
-                sign: adjustment.amount >= 0 ? 'positive' : 'negative',
-                quoteItemId: quoteItem.id,
-                amount: adjustment.amount,
               },
             });
           }
@@ -359,33 +245,146 @@ export const quoteRouter = createTRPCRouter({
           const newTotal = quoteItems.reduce((sum: number, item) => sum + item.subtotal.toNumber(), 0);
 
           await tx.quote.update({
-            where: { id: quote.id },
             data: { total: newTotal },
+            where: { id: quote.id },
           });
 
           return {
-            quoteId: quote.id,
             itemId: quoteItem.id,
+            quoteId: quote.id,
             subtotal: itemCalculation.subtotal,
           };
         });
 
         logger.info('Item added to quote successfully', {
-          quoteId: calculation.quoteId,
           itemId: calculation.itemId,
+          quoteId: calculation.quoteId,
           subtotal: calculation.subtotal,
         });
 
         return calculation;
       } catch (error) {
         logger.error('Error adding item to quote', {
+          error: error instanceof Error ? error.message : 'Unknown error',
           modelId: input.modelId,
           quoteId: input.quoteId,
-          error: error instanceof Error ? error.message : 'Unknown error',
         });
 
         const errorMessage =
           error instanceof Error ? error.message : 'No se pudo agregar el ítem a la cotización. Intente nuevamente.';
+        throw new Error(errorMessage);
+      }
+    }),
+  'calculate-item': publicProcedure
+    .input(calculateItemInput)
+    .output(calculateItemOutput)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        logger.info('Starting item price calculation', {
+          dimensions: { heightMm: input.heightMm, widthMm: input.widthMm },
+          glassTypeId: input.glassTypeId,
+          modelId: input.modelId,
+        });
+
+        // Get model data (needed for ranges, pricing and discounts)
+        const model = await ctx.db.model.findUnique({
+          include: { manufacturer: true },
+          where: { id: input.modelId },
+        });
+
+        if (!model || model.status !== 'published') {
+          throw new Error('Modelo no encontrado o no disponible');
+        }
+
+        // Validate glass type compatibility
+        if (!model.compatibleGlassTypeIds.includes(input.glassTypeId)) {
+          throw new Error('Tipo de vidrio no compatible con este modelo');
+        }
+
+        // Validate dimensions
+        if (input.widthMm < model.minWidthMm || input.widthMm > model.maxWidthMm) {
+          throw new Error(`Ancho debe estar entre ${model.minWidthMm}mm y ${model.maxWidthMm}mm`);
+        }
+        if (input.heightMm < model.minHeightMm || input.heightMm > model.maxHeightMm) {
+          throw new Error(`Alto debe estar entre ${model.minHeightMm}mm y ${model.maxHeightMm}mm`);
+        }
+
+        // Get services data
+        const serviceInputs: PriceServiceInput[] = [];
+        if (input.services.length > 0) {
+          const serviceIds = input.services.map((s) => s.serviceId);
+          const services = await ctx.db.service.findMany({
+            where: {
+              id: { in: serviceIds },
+              manufacturerId: model.manufacturerId,
+            },
+          });
+
+          for (const serviceInput of input.services) {
+            const service = services.find((s) => s.id === serviceInput.serviceId);
+            if (!service) {
+              throw new Error(`Servicio ${serviceInput.serviceId} no encontrado`);
+            }
+            serviceInputs.push({
+              quantityOverride: serviceInput.quantity,
+              rate: service.rate,
+              serviceId: service.id,
+              type: service.type,
+              unit: service.unit,
+            });
+          }
+        }
+
+        // Convert adjustments
+        const adjustmentInputs: PriceAdjustmentInput[] = input.adjustments.map((adj) => ({
+          concept: adj.concept,
+          sign: adj.sign,
+          unit: adj.unit,
+          value: adj.value,
+        }));
+
+        // Fetch glass type for price per m²
+        const glassType = await ctx.db.glassType.findUnique({
+          where: { id: input.glassTypeId },
+        });
+        if (!glassType) {
+          throw new Error('Tipo de vidrio no encontrado');
+        }
+
+        // Calculate price including glass area pricing
+        const itemCalculation = calculatePriceItem({
+          adjustments: adjustmentInputs,
+          glass: {
+            discountHeightMm: model.glassDiscountHeightMm,
+            discountWidthMm: model.glassDiscountWidthMm,
+            pricePerSqm: glassType.pricePerSqm,
+          },
+          heightMm: input.heightMm,
+          includeAccessory: Boolean(model.accessoryPrice),
+          model: {
+            accessoryPrice: model.accessoryPrice,
+            basePrice: model.basePrice,
+            costPerMmHeight: model.costPerMmHeight,
+            costPerMmWidth: model.costPerMmWidth,
+          },
+          services: serviceInputs,
+          widthMm: input.widthMm,
+        });
+
+        logger.info('Item price calculation completed', {
+          modelId: input.modelId,
+          subtotal: itemCalculation.subtotal,
+        });
+
+        return itemCalculation;
+      } catch (error) {
+        logger.error('Error calculating item price', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          modelId: input.modelId,
+        });
+
+        const errorMessage =
+          error instanceof Error ? error.message : 'No se pudo calcular el precio del ítem. Intente nuevamente.';
         throw new Error(errorMessage);
       }
     }),
@@ -396,31 +395,31 @@ export const quoteRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       try {
         logger.info('Submitting quote', {
-          quoteId: input.quoteId,
           contact: input.contact,
+          quoteId: input.quoteId,
         });
 
         const result = await ctx.db.$transaction(async (tx) => {
           // Get quote with all related data
           const quote = await tx.quote.findUnique({
-            where: { id: input.quoteId },
             include: {
+              items: {
+                select: {
+                  subtotal: true,
+                },
+              },
               manufacturer: {
                 select: {
-                  name: true,
                   currency: true,
+                  name: true,
                   users: {
                     select: { email: true },
                     take: 1, // Get first manufacturer user's email
                   },
                 },
               },
-              items: {
-                select: {
-                  subtotal: true,
-                },
-              },
             },
+            where: { id: input.quoteId },
           });
 
           if (!quote) {
@@ -437,29 +436,29 @@ export const quoteRouter = createTRPCRouter({
 
           // Update quote status and contact info
           const updatedQuote = await tx.quote.update({
-            where: { id: input.quoteId },
             data: {
-              status: 'sent',
-              contactPhone: input.contact.phone,
               contactAddress: input.contact.address,
+              contactPhone: input.contact.phone,
+              status: 'sent',
             },
             include: {
+              items: {
+                select: {
+                  subtotal: true,
+                },
+              },
               manufacturer: {
                 select: {
-                  name: true,
                   currency: true,
+                  name: true,
                   users: {
                     select: { email: true },
                     take: 1,
                   },
                 },
               },
-              items: {
-                select: {
-                  subtotal: true,
-                },
-              },
             },
+            where: { id: input.quoteId },
           });
 
           // Send email notification if manufacturer has email
@@ -468,14 +467,14 @@ export const quoteRouter = createTRPCRouter({
             try {
               await sendQuoteNotification(
                 {
+                  contactAddress: input.contact.address,
+                  contactPhone: input.contact.phone,
                   quote: {
                     ...updatedQuote,
                     items: updatedQuote.items.map((item) => ({
                       subtotal: item.subtotal.toNumber(),
                     })),
                   },
-                  contactPhone: input.contact.phone,
-                  contactAddress: input.contact.address,
                 },
                 manufacturerEmail
               );
@@ -485,9 +484,9 @@ export const quoteRouter = createTRPCRouter({
               });
             } catch (emailError) {
               logger.warn('Failed to send quote notification email', {
+                error: emailError instanceof Error ? emailError.message : 'Unknown error',
                 quoteId: input.quoteId,
                 recipientEmail: manufacturerEmail,
-                error: emailError instanceof Error ? emailError.message : 'Unknown error',
               });
               // Don't fail the transaction if email fails - quote is still submitted
             }
@@ -510,8 +509,8 @@ export const quoteRouter = createTRPCRouter({
         return result;
       } catch (error) {
         logger.error('Error submitting quote', {
-          quoteId: input.quoteId,
           error: error instanceof Error ? error.message : 'Unknown error',
+          quoteId: input.quoteId,
         });
 
         const errorMessage =

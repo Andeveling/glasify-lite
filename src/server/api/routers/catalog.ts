@@ -9,19 +9,19 @@ export const listModelsInput = z.object({
 
 // Output schemas
 export const modelSummaryOutput = z.object({
+  accessoryPrice: z.number().nullable(),
+  basePrice: z.number(),
+  compatibleGlassTypeIds: z.array(z.string()),
+  costPerMmHeight: z.number(),
+  costPerMmWidth: z.number(),
+  createdAt: z.date(),
   id: z.string(),
-  name: z.string(),
-  status: z.enum(['draft', 'published']),
-  minWidthMm: z.number(),
+  maxHeightMm: z.number(),
   maxWidthMm: z.number(),
   minHeightMm: z.number(),
-  maxHeightMm: z.number(),
-  basePrice: z.number(),
-  costPerMmWidth: z.number(),
-  costPerMmHeight: z.number(),
-  accessoryPrice: z.number().nullable(),
-  compatibleGlassTypeIds: z.array(z.string()),
-  createdAt: z.date(),
+  minWidthMm: z.number(),
+  name: z.string(),
+  status: z.enum(['draft', 'published']),
   updatedAt: z.date(),
 });
 
@@ -38,50 +38,50 @@ export const catalogRouter = createTRPCRouter({
         });
 
         const models = await ctx.db.model.findMany({
+          orderBy: {
+            name: 'asc',
+          },
+          select: {
+            accessoryPrice: true,
+            basePrice: true,
+            compatibleGlassTypeIds: true,
+            costPerMmHeight: true,
+            costPerMmWidth: true,
+            createdAt: true,
+            id: true,
+            maxHeightMm: true,
+            maxWidthMm: true,
+            minHeightMm: true,
+            minWidthMm: true,
+            name: true,
+            status: true,
+            updatedAt: true,
+          },
           where: {
             manufacturerId: input.manufacturerId,
             status: 'published', // Only show published models
-          },
-          select: {
-            id: true,
-            name: true,
-            status: true,
-            minWidthMm: true,
-            maxWidthMm: true,
-            minHeightMm: true,
-            maxHeightMm: true,
-            basePrice: true,
-            costPerMmWidth: true,
-            costPerMmHeight: true,
-            accessoryPrice: true,
-            compatibleGlassTypeIds: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-          orderBy: {
-            name: 'asc',
           },
         });
 
         // Convert Decimal fields to numbers for JSON serialization
         const serializedModels = models.map((model) => ({
           ...model,
-          basePrice: model.basePrice.toNumber(),
-          costPerMmWidth: model.costPerMmWidth.toNumber(),
-          costPerMmHeight: model.costPerMmHeight.toNumber(),
           accessoryPrice: model.accessoryPrice?.toNumber() ?? null,
+          basePrice: model.basePrice.toNumber(),
+          costPerMmHeight: model.costPerMmHeight.toNumber(),
+          costPerMmWidth: model.costPerMmWidth.toNumber(),
         }));
 
         logger.info('Successfully retrieved models', {
-          manufacturerId: input.manufacturerId,
           count: serializedModels.length,
+          manufacturerId: input.manufacturerId,
         });
 
         return serializedModels;
       } catch (error) {
         logger.error('Error listing models', {
-          manufacturerId: input.manufacturerId,
           error: error instanceof Error ? error.message : 'Unknown error',
+          manufacturerId: input.manufacturerId,
         });
 
         throw new Error('No se pudieron cargar los modelos. Intente nuevamente.');

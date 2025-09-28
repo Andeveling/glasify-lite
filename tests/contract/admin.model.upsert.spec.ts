@@ -19,18 +19,18 @@ describe('Contract: admin.model.upsert', () => {
   it('should create new model when no id provided', async () => {
     // Arrange: Valid input for creating a new model
     const createInput = {
+      accessoryPrice: 25_000,
+      basePrice: 150_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1', 'cm1glasstype123456789abc2'],
+      costPerMmHeight: 40,
+      costPerMmWidth: 50,
       manufacturerId: 'cm1manufacturer123456789ab',
-      name: 'Ventana Premium 2024',
-      status: 'draft' as const,
-      minWidthMm: 300,
+      maxHeightMm: 1800,
       maxWidthMm: 2000,
       minHeightMm: 400,
-      maxHeightMm: 1800,
-      basePrice: 150_000,
-      costPerMmWidth: 50,
-      costPerMmHeight: 40,
-      accessoryPrice: 25_000,
-      compatibleGlassTypeIds: ['cm1glasstype123456789abc1', 'cm1glasstype123456789abc2'],
+      minWidthMm: 300,
+      name: 'Ventana Premium 2024',
+      status: 'draft' as const,
     };
 
     // Act: Create the model
@@ -38,9 +38,9 @@ describe('Contract: admin.model.upsert', () => {
 
     // Assert: Output schema validation
     expect(result).toMatchObject({
+      message: expect.any(String),
       modelId: expect.any(String),
       status: expect.stringMatching(STATUS_REGEX),
-      message: expect.any(String),
     });
 
     // Model ID should be a valid CUID
@@ -52,17 +52,17 @@ describe('Contract: admin.model.upsert', () => {
   it('should update existing model when id provided', async () => {
     // Arrange: First create a model
     const createInput = {
+      basePrice: 120_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 35,
+      costPerMmWidth: 45,
       manufacturerId: 'cm1manufacturer123456789ab',
-      name: 'Ventana Standard',
-      status: 'draft' as const,
-      minWidthMm: 300,
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 120_000,
-      costPerMmWidth: 45,
-      costPerMmHeight: 35,
-      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      minWidthMm: 300,
+      name: 'Ventana Standard',
+      status: 'draft' as const,
     };
 
     const createResult = await testServer.admin['model-upsert'](createInput);
@@ -70,21 +70,21 @@ describe('Contract: admin.model.upsert', () => {
 
     // Now update the model
     const updateInput = {
-      id: modelId,
-      manufacturerId: 'cm1manufacturer123456789ab',
-      name: 'Ventana Standard Actualizada',
-      status: 'published' as const,
-      minWidthMm: 300,
-      maxWidthMm: 2000, // Updated max width
-      minHeightMm: 400,
-      maxHeightMm: 1800, // Updated max height
       basePrice: 140_000, // Updated price
-      costPerMmWidth: 50, // Updated cost
-      costPerMmHeight: 40, // Updated cost
       compatibleGlassTypeIds: [
         'cm1glasstype123456789abc1',
         'cm1glasstype123456789abc2', // Added compatible glass type
       ],
+      costPerMmHeight: 40, // Updated cost
+      costPerMmWidth: 50, // Updated cost
+      id: modelId,
+      manufacturerId: 'cm1manufacturer123456789ab',
+      maxHeightMm: 1800, // Updated max height
+      maxWidthMm: 2000, // Updated max width
+      minHeightMm: 400,
+      minWidthMm: 300,
+      name: 'Ventana Standard Actualizada',
+      status: 'published' as const,
     };
 
     // Act: Update the model
@@ -92,9 +92,9 @@ describe('Contract: admin.model.upsert', () => {
 
     // Assert: Should return same ID with updated status
     expect(result).toMatchObject({
+      message: expect.any(String),
       modelId, // Same ID as created model
       status: 'published', // Updated status
-      message: expect.any(String),
     });
 
     expect(result.message).toMatch(UPDATED_MESSAGE_REGEX);
@@ -103,16 +103,16 @@ describe('Contract: admin.model.upsert', () => {
   it('should validate input schema - invalid manufacturerId', async () => {
     // Arrange: Invalid manufacturer ID
     const invalidInput = {
+      basePrice: 100_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
       manufacturerId: 'invalid-manufacturer-id', // Not a valid CUID
-      name: 'Test Model',
-      minWidthMm: 300,
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      minWidthMm: 300,
+      name: 'Test Model',
     };
 
     // Act & Assert: Should throw validation error
@@ -124,16 +124,16 @@ describe('Contract: admin.model.upsert', () => {
   it('should validate dimension constraints - minWidth >= maxWidth', async () => {
     // Arrange: Invalid dimensions where min >= max
     const invalidInput = {
+      basePrice: 100_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
       manufacturerId: 'cm1manufacturer123456789ab',
-      name: 'Test Model',
-      minWidthMm: 2000,
+      maxHeightMm: 1600,
       maxWidthMm: 1800, // Invalid: max should be > min
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      minWidthMm: 2000,
+      name: 'Test Model',
     };
 
     // Act & Assert: Should throw validation error
@@ -145,16 +145,16 @@ describe('Contract: admin.model.upsert', () => {
   it('should validate dimension constraints - minHeight >= maxHeight', async () => {
     // Arrange: Invalid dimensions where min >= max
     const invalidInput = {
+      basePrice: 100_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
       manufacturerId: 'cm1manufacturer123456789ab',
-      name: 'Test Model',
-      minWidthMm: 300,
+      maxHeightMm: 1400, // Invalid: max should be > min
       maxWidthMm: 1800,
       minHeightMm: 1600,
-      maxHeightMm: 1400, // Invalid: max should be > min
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      minWidthMm: 300,
+      name: 'Test Model',
     };
 
     // Act & Assert: Should throw validation error
@@ -166,16 +166,16 @@ describe('Contract: admin.model.upsert', () => {
   it('should validate required fields', async () => {
     // Arrange: Missing required fields
     const invalidInput = {
+      basePrice: 100_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
       manufacturerId: 'cm1manufacturer123456789ab',
-      // name: "Test Model", // Missing required name
-      minWidthMm: 300,
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      // name: "Test Model", // Missing required name
+      minWidthMm: 300,
     } as any;
 
     // Act & Assert: Should throw validation error
@@ -187,16 +187,16 @@ describe('Contract: admin.model.upsert', () => {
   it('should validate negative prices and costs', async () => {
     // Arrange: Negative base price
     const invalidInput = {
+      basePrice: -50_000, // Invalid: negative price
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
       manufacturerId: 'cm1manufacturer123456789ab',
-      name: 'Test Model',
-      minWidthMm: 300,
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: -50_000, // Invalid: negative price
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      minWidthMm: 300,
+      name: 'Test Model',
     };
 
     // Act & Assert: Should throw validation error
@@ -208,16 +208,16 @@ describe('Contract: admin.model.upsert', () => {
   it('should validate compatible glass types - empty array', async () => {
     // Arrange: Empty compatible glass types array
     const invalidInput = {
+      basePrice: 100_000,
+      compatibleGlassTypeIds: [], // Invalid: empty array
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
       manufacturerId: 'cm1manufacturer123456789ab',
-      name: 'Test Model',
-      minWidthMm: 300,
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: [], // Invalid: empty array
+      minWidthMm: 300,
+      name: 'Test Model',
     };
 
     // Act & Assert: Should throw validation error
@@ -229,19 +229,19 @@ describe('Contract: admin.model.upsert', () => {
   it('should validate compatible glass types - invalid CUIDs', async () => {
     // Arrange: Invalid CUID in glass types
     const invalidInput = {
-      manufacturerId: 'cm1manufacturer123456789ab',
-      name: 'Test Model',
-      minWidthMm: 300,
-      maxWidthMm: 1800,
-      minHeightMm: 400,
-      maxHeightMm: 1600,
       basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
       compatibleGlassTypeIds: [
         'cm1glasstype123456789abc1', // Valid
         'invalid-glass-type-id', // Invalid CUID
       ],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
+      manufacturerId: 'cm1manufacturer123456789ab',
+      maxHeightMm: 1600,
+      maxWidthMm: 1800,
+      minHeightMm: 400,
+      minWidthMm: 300,
+      name: 'Test Model',
     };
 
     // Act & Assert: Should throw validation error
@@ -253,16 +253,16 @@ describe('Contract: admin.model.upsert', () => {
   it('should handle optional accessoryPrice field', async () => {
     // Arrange: Model without accessoryPrice
     const inputWithoutAccessory = {
+      basePrice: 100_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
       manufacturerId: 'cm1manufacturer123456789ab',
-      name: 'Model Sin Accesorios',
-      minWidthMm: 300,
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      minWidthMm: 300,
+      name: 'Model Sin Accesorios',
       // accessoryPrice is optional
     };
 
@@ -271,26 +271,26 @@ describe('Contract: admin.model.upsert', () => {
 
     // Assert: Should create successfully
     expect(result).toMatchObject({
+      message: expect.any(String),
       modelId: expect.any(String),
       status: 'draft', // Default status
-      message: expect.any(String),
     });
   });
 
   it('should handle null accessoryPrice', async () => {
     // Arrange: Model with explicitly null accessoryPrice
     const inputWithNullAccessory = {
+      accessoryPrice: null, // Explicitly null
+      basePrice: 100_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
       manufacturerId: 'cm1manufacturer123456789ab',
-      name: 'Model Con Accesorio Nulo',
-      minWidthMm: 300,
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
-      accessoryPrice: null, // Explicitly null
+      minWidthMm: 300,
+      name: 'Model Con Accesorio Nulo',
     };
 
     // Act: Should succeed with null accessoryPrice
@@ -298,25 +298,25 @@ describe('Contract: admin.model.upsert', () => {
 
     // Assert: Should create successfully
     expect(result).toMatchObject({
+      message: expect.any(String),
       modelId: expect.any(String),
       status: 'draft',
-      message: expect.any(String),
     });
   });
 
   it('should default to draft status when not specified', async () => {
     // Arrange: Model without explicit status
     const inputWithoutStatus = {
+      basePrice: 100_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
       manufacturerId: 'cm1manufacturer123456789ab',
-      name: 'Model Default Status',
-      minWidthMm: 300,
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      minWidthMm: 300,
+      name: 'Model Default Status',
       // status not specified, should default to "draft"
     };
 
@@ -330,17 +330,17 @@ describe('Contract: admin.model.upsert', () => {
   it('should validate update with non-existent model id', async () => {
     // Arrange: Valid format but non-existent model ID
     const updateInput = {
+      basePrice: 100_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
       id: 'cm1nonexistent123456789abc', // Non-existent model
       manufacturerId: 'cm1manufacturer123456789ab',
-      name: 'Updated Model',
-      minWidthMm: 300,
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      minWidthMm: 300,
+      name: 'Updated Model',
     };
 
     // Act & Assert: Should handle non-existent model appropriately

@@ -49,13 +49,13 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
             process.env.NODE_ENV === 'development' || (op.direction === 'down' && op.result instanceof Error),
         }),
         httpBatchStreamLink({
-          transformer: SuperJson,
-          url: `${getBaseUrl()}/api/trpc`,
           headers: () => {
             const headers = new Headers();
             headers.set('x-trpc-source', 'nextjs-react');
             return headers;
           },
+          transformer: SuperJson,
+          url: `${getBaseUrl()}/api/trpc`,
         }),
       ],
     })
