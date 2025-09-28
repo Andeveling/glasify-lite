@@ -3,6 +3,32 @@ import { describe, expect, it } from 'vitest';
 import type { PriceItemCalculationInput } from '@/server/price/price-item';
 import { calculatePriceItem } from '@/server/price/price-item';
 
+// Test Constants - Expected values for price calculations
+const EXPECTED_BASE_DIMENSION_PRICE = 182_000;
+const EXPECTED_ACCESSORY_PRICE = 25_000;
+const EXPECTED_DIMENSION_WITH_ACCESSORY_PRICE = 207_000;
+const EXPECTED_SERVICE_UNIT_AMOUNT = 10_000;
+const EXPECTED_SERVICE_SQM_AMOUNT = 15_000;
+const EXPECTED_DIMENSION_SERVICE_PRICE = 190_000;
+const EXPECTED_SERVICE_TOTAL = 197_000;
+const EXPECTED_DISCOUNT_AMOUNT = -10_000;
+const EXPECTED_SURCHARGE_AMOUNT = 15_000;
+const EXPECTED_DISCOUNTED_TOTAL = 162_000;
+const EXPECTED_BASE_PRICE_ONLY = 100_000;
+const EXPECTED_DECIMAL_BASE_PRICE = 100_000.5;
+const EXPECTED_DECIMAL_HEIGHT_COST = 40.75;
+const EXPECTED_DECIMAL_WIDTH_COST = 50.25;
+const EXPECTED_DECIMAL_RESULT = 182_850.5;
+const EXPECTED_ROUNDED_RESULT = 122_199.78;
+const EXPECTED_COMPLEX_DIM_PRICE = 264_000;
+const EXPECTED_COMPLEX_ACCESSORY = 30_000;
+const EXPECTED_COMPLEX_SERVICE_1 = 16_200;
+const EXPECTED_COMPLEX_SERVICE_2 = 50_000;
+const EXPECTED_COMPLEX_DISCOUNT = -15_000;
+const EXPECTED_COMPLEX_SURCHARGE = 14_400;
+const EXPECTED_COMPLEX_TOTAL = 359_600;
+const EXPECTED_NEGATIVE_TOTAL = -9800;
+
 describe('Unit Tests: Price Item Calculation', () => {
   describe('Basic Price Calculation', () => {
     it('should calculate basic dimension price correctly', () => {
@@ -23,11 +49,11 @@ describe('Unit Tests: Price Item Calculation', () => {
       // Assert
       // Expected: basePrice + (widthMm * costPerMmWidth) + (heightMm * costPerMmHeight)
       // Expected: 100000 + (1000 * 50) + (800 * 40) = 100000 + 50000 + 32000 = 182000
-      expect(result.dimPrice).toBe(182_000);
+      expect(result.dimPrice).toBe(EXPECTED_BASE_DIMENSION_PRICE);
       expect(result.accPrice).toBe(0); // No accessory
       expect(result.services).toHaveLength(0);
       expect(result.adjustments).toHaveLength(0);
-      expect(result.subtotal).toBe(182_000);
+      expect(result.subtotal).toBe(EXPECTED_BASE_DIMENSION_PRICE);
     });
 
     it('should handle accessory price when included', () => {
@@ -48,9 +74,9 @@ describe('Unit Tests: Price Item Calculation', () => {
       const result = calculatePriceItem(input);
 
       // Assert
-      expect(result.dimPrice).toBe(182_000); // Same as previous test
-      expect(result.accPrice).toBe(25_000); // Accessory included
-      expect(result.subtotal).toBe(207_000); // 182000 + 25000
+      expect(result.dimPrice).toBe(EXPECTED_BASE_DIMENSION_PRICE); // Same as previous test
+      expect(result.accPrice).toBe(EXPECTED_ACCESSORY_PRICE); // Accessory included
+      expect(result.subtotal).toBe(EXPECTED_DIMENSION_WITH_ACCESSORY_PRICE); // 182000 + 25000
     });
 
     it('should ignore accessory price when not included', () => {
@@ -72,7 +98,7 @@ describe('Unit Tests: Price Item Calculation', () => {
 
       // Assert
       expect(result.accPrice).toBe(0); // Accessory not included
-      expect(result.subtotal).toBe(182_000); // Only dimension price
+      expect(result.subtotal).toBe(EXPECTED_BASE_DIMENSION_PRICE); // Only dimension price
     });
 
     it('should handle null accessory price', () => {
@@ -94,7 +120,7 @@ describe('Unit Tests: Price Item Calculation', () => {
 
       // Assert
       expect(result.accPrice).toBe(0); // Null accessory treated as 0
-      expect(result.subtotal).toBe(182_000);
+      expect(result.subtotal).toBe(EXPECTED_BASE_DIMENSION_PRICE);
     });
   });
 
@@ -130,7 +156,7 @@ describe('Unit Tests: Price Item Calculation', () => {
         serviceId: 'service1',
         unit: 'unit',
       });
-      expect(result.subtotal).toBe(197_000); // 182000 + 15000
+      expect(result.subtotal).toBe(EXPECTED_SERVICE_TOTAL); // 182000 + 15000
     });
 
     it('should calculate sqm-based service correctly', () => {
@@ -262,10 +288,11 @@ describe('Unit Tests: Price Item Calculation', () => {
 
       // Assert
       expect(result.services).toHaveLength(2);
-      expect(result.services[0]?.amount).toBe(10_000); // 1 unit * 10000
-      expect(result.services[1]?.amount).toBe(15_000); // 1 sqm * 15000
+      expect(result.services[0]?.amount).toBe(EXPECTED_SERVICE_UNIT_AMOUNT); // 1 unit * 10000
+      expect(result.services[1]?.amount).toBe(EXPECTED_SERVICE_SQM_AMOUNT); // 1 sqm * 15000
 
-      const expectedSubtotal = 190_000 + 10_000 + 15_000; // dimPrice + services
+      const expectedSubtotal =
+        EXPECTED_DIMENSION_SERVICE_PRICE + EXPECTED_SERVICE_UNIT_AMOUNT + EXPECTED_SERVICE_SQM_AMOUNT; // dimPrice + services
       expect(result.subtotal).toBe(expectedSubtotal);
     });
   });
@@ -300,7 +327,7 @@ describe('Unit Tests: Price Item Calculation', () => {
         amount: 25_000, // Positive adjustment
         concept: 'Recargo especial',
       });
-      expect(result.subtotal).toBe(207_000); // 182000 + 25000
+      expect(result.subtotal).toBe(EXPECTED_DIMENSION_WITH_ACCESSORY_PRICE); // 182000 + 25000
     });
 
     it('should apply negative unit adjustment correctly', () => {
@@ -331,7 +358,7 @@ describe('Unit Tests: Price Item Calculation', () => {
         amount: -20_000, // Negative adjustment
         concept: 'Descuento cliente frecuente',
       });
-      expect(result.subtotal).toBe(162_000); // 182000 - 20000
+      expect(result.subtotal).toBe(EXPECTED_DISCOUNTED_TOTAL); // 182000 - 20000
     });
 
     it('should apply sqm-based adjustment correctly', () => {
@@ -427,10 +454,10 @@ describe('Unit Tests: Price Item Calculation', () => {
 
       // Assert
       expect(result.adjustments).toHaveLength(2);
-      expect(result.adjustments[0]?.amount).toBe(-10_000);
-      expect(result.adjustments[1]?.amount).toBe(15_000);
+      expect(result.adjustments[0]?.amount).toBe(EXPECTED_DISCOUNT_AMOUNT);
+      expect(result.adjustments[1]?.amount).toBe(EXPECTED_SURCHARGE_AMOUNT);
 
-      const expectedSubtotal = 190_000 - 10_000 + 15_000; // dimPrice + adjustments
+      const expectedSubtotal = EXPECTED_DIMENSION_SERVICE_PRICE + EXPECTED_DISCOUNT_AMOUNT + EXPECTED_SURCHARGE_AMOUNT; // dimPrice + adjustments
       expect(result.subtotal).toBe(expectedSubtotal);
     });
   });
@@ -453,8 +480,8 @@ describe('Unit Tests: Price Item Calculation', () => {
 
       // Assert
       // Should treat zero dimensions as positive (ensurePositiveNumber)
-      expect(result.dimPrice).toBe(100_000); // Only base price
-      expect(result.subtotal).toBe(100_000);
+      expect(result.dimPrice).toBe(EXPECTED_BASE_PRICE_ONLY); // Only base price
+      expect(result.subtotal).toBe(EXPECTED_BASE_PRICE_ONLY);
     });
 
     it('should handle negative dimensions', () => {
@@ -474,8 +501,8 @@ describe('Unit Tests: Price Item Calculation', () => {
 
       // Assert
       // Should treat negative dimensions as 0 (ensurePositiveNumber)
-      expect(result.dimPrice).toBe(100_000); // Only base price
-      expect(result.subtotal).toBe(100_000);
+      expect(result.dimPrice).toBe(EXPECTED_BASE_PRICE_ONLY); // Only base price
+      expect(result.subtotal).toBe(EXPECTED_BASE_PRICE_ONLY);
     });
 
     it('should handle Decimal inputs for prices', () => {
@@ -483,9 +510,9 @@ describe('Unit Tests: Price Item Calculation', () => {
       const input: PriceItemCalculationInput = {
         heightMm: 800,
         model: {
-          basePrice: new Decimal(100_000.5),
-          costPerMmHeight: new Decimal(40.75),
-          costPerMmWidth: new Decimal(50.25),
+          basePrice: new Decimal(EXPECTED_DECIMAL_BASE_PRICE),
+          costPerMmHeight: new Decimal(EXPECTED_DECIMAL_HEIGHT_COST),
+          costPerMmWidth: new Decimal(EXPECTED_DECIMAL_WIDTH_COST),
         },
         widthMm: 1000,
       };
@@ -496,7 +523,7 @@ describe('Unit Tests: Price Item Calculation', () => {
       // Assert
       // Should handle Decimal precision correctly
       // Expected: 100000.5 + (1000 * 50.25) + (800 * 40.75) = 100000.5 + 50250 + 32600 = 182850.5
-      expect(result.dimPrice).toBe(182_850.5);
+      expect(result.dimPrice).toBe(EXPECTED_DECIMAL_RESULT);
     });
 
     it('should round results correctly', () => {
@@ -517,7 +544,7 @@ describe('Unit Tests: Price Item Calculation', () => {
       // Assert
       // Should be properly rounded to 2 decimal places
       // Expected: 100000 + (333 * 33.333) + (333 * 33.333) = 100000 + 11099.889 + 11099.889 = 122199.778
-      expect(result.dimPrice).toBeCloseTo(122_199.78, 2);
+      expect(result.dimPrice).toBeCloseTo(EXPECTED_ROUNDED_RESULT, 2);
     });
 
     it('should handle empty services and adjustments arrays', () => {
@@ -540,7 +567,7 @@ describe('Unit Tests: Price Item Calculation', () => {
       // Assert
       expect(result.services).toHaveLength(0);
       expect(result.adjustments).toHaveLength(0);
-      expect(result.subtotal).toBe(182_000);
+      expect(result.subtotal).toBe(EXPECTED_BASE_DIMENSION_PRICE);
     });
   });
 
@@ -593,27 +620,27 @@ describe('Unit Tests: Price Item Calculation', () => {
 
       // Assert
       // Dimension price: 120000 + (1500 * 60) + (1200 * 45) = 120000 + 90000 + 54000 = 264000
-      expect(result.dimPrice).toBe(264_000);
+      expect(result.dimPrice).toBe(EXPECTED_COMPLEX_DIM_PRICE);
 
       // Accessory price: 30000
-      expect(result.accPrice).toBe(30_000);
+      expect(result.accPrice).toBe(EXPECTED_COMPLEX_ACCESSORY);
 
       // Services:
       // - Cutting (ml): perimeter = 2 * (1.5 + 1.2) = 5.4m * 3000 = 16200
       // - Polishing (fixed): 2 * 25000 = 50000
       expect(result.services).toHaveLength(2);
-      expect(result.services[0]?.amount).toBe(16_200);
-      expect(result.services[1]?.amount).toBe(50_000);
+      expect(result.services[0]?.amount).toBe(EXPECTED_COMPLEX_SERVICE_1);
+      expect(result.services[1]?.amount).toBe(EXPECTED_COMPLEX_SERVICE_2);
 
       // Adjustments:
       // - VIP discount: -15000
       // - Size surcharge: 1.5 * 1.2 = 1.8 sqm * 8000 = 14400
       expect(result.adjustments).toHaveLength(2);
-      expect(result.adjustments[0]?.amount).toBe(-15_000);
-      expect(result.adjustments[1]?.amount).toBe(14_400);
+      expect(result.adjustments[0]?.amount).toBe(EXPECTED_COMPLEX_DISCOUNT);
+      expect(result.adjustments[1]?.amount).toBe(EXPECTED_COMPLEX_SURCHARGE);
 
       // Subtotal: 264000 + 30000 + 16200 + 50000 - 15000 + 14400 = 359600
-      expect(result.subtotal).toBe(359_600);
+      expect(result.subtotal).toBe(EXPECTED_COMPLEX_TOTAL);
     });
 
     it('should handle calculation that results in negative subtotal', () => {
@@ -643,7 +670,7 @@ describe('Unit Tests: Price Item Calculation', () => {
       // Dimension price: 10000 + 100 + 100 = 10200
       // Adjustment: -20000
       // Subtotal: 10200 - 20000 = -9800 (negative result is valid)
-      expect(result.subtotal).toBe(-9800);
+      expect(result.subtotal).toBe(EXPECTED_NEGATIVE_TOTAL);
     });
   });
 });

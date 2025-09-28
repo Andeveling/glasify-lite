@@ -134,7 +134,9 @@ export const sendQuoteNotification = async (data: QuoteEmailData, recipientEmail
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
       /* eslint-disable no-console */
-      logger.error('❌ Error sending quote notification:', error);
+      logger.error('❌ Error sending quote notification:', {
+        error: error instanceof Error ? error.message : String(error),
+      });
       /* eslint-enable no-console */
     }
     return false;

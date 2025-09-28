@@ -89,11 +89,11 @@ src/app/
 - [x] T005 [P] Create home page `src/app/page.tsx` with redirect to `/catalog`
 
 ## Phase 3.2: Route Group Layouts & Global Files
-- [ ] T006 [P] Public layout `src/app/(public)/layout.tsx` with main navigation and footer
-- [ ] T007 [P] Auth layout `src/app/(auth)/layout.tsx` with centered form design
-- [ ] T008 [P] Dashboard layout `src/app/(dashboard)/layout.tsx` with sidebar navigation
-- [ ] T009 [P] Global error boundary `src/app/global-error.tsx` with Spanish messages
-- [ ] T010 [P] Global not-found page `src/app/not-found.tsx` with navigation options
+- [x] T006 [P] Public layout `src/app/(public)/layout.tsx` with main navigation and footer
+- [x] T007 [P] Auth layout `src/app/(auth)/layout.tsx` with centered form design
+- [x] T008 [P] Dashboard layout `src/app/(dashboard)/layout.tsx` with sidebar navigation
+- [x] T009 [P] Global error boundary `src/app/global-error.tsx` with Spanish messages
+- [x] T010 [P] Global not-found page `src/app/not-found.tsx` with navigation options
 
 ## Phase 3.3: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.4
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**

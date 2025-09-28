@@ -2,6 +2,10 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { db } from '@/server/db';
 import { testServer } from '../integration-setup';
 
+// Test constants
+const MAX_COMPLETE_FLOW_TIME_MS = 1000;
+const STATUS_MESSAGE_PATTERN = /creado|actualizado/i;
+
 describe('Integration: Quickstart E2E Flow', () => {
   let manufacturerId: string;
   let glassTypeId: string;
@@ -101,7 +105,7 @@ describe('Integration: Quickstart E2E Flow', () => {
     // Assert: Model should be created successfully
     expect(result.modelId).toBeDefined();
     expect(result.status).toBe('published');
-    expect(result.message).toMatch(/creado|actualizado/i);
+    expect(result.message).toMatch(STATUS_MESSAGE_PATTERN);
 
     // Store for next test
     modelId = result.modelId;
@@ -250,7 +254,7 @@ describe('Integration: Quickstart E2E Flow', () => {
     const totalTime = endTime - startTime;
 
     // Assert: Complete flow should be fast
-    expect(totalTime).toBeLessThan(1000); // Under 1 second for complete flow
+    expect(totalTime).toBeLessThan(MAX_COMPLETE_FLOW_TIME_MS); // Under 1 second for complete flow
     expect(calculation.subtotal).toBeGreaterThan(0);
     expect(addResult.quoteId).toBeDefined();
     expect(submitResult.status).toBe('sent');

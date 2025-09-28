@@ -5,24 +5,6 @@ import { testServer } from '../integration-setup';
 const STATUS_REGEX = /^(draft|published)$/;
 const MANUFACTURER_ERROR_REGEX = /ID del fabricante debe ser válido/;
 
-// Type for the model summary output
-type ModelSummaryType = {
-  id: string;
-  name: string;
-  status: 'draft' | 'published';
-  minWidthMm: number;
-  maxWidthMm: number;
-  minHeightMm: number;
-  maxHeightMm: number;
-  basePrice: number;
-  costPerMmWidth: number;
-  costPerMmHeight: number;
-  accessoryPrice: number | null;
-  compatibleGlassTypeIds: string[];
-  createdAt: Date;
-  updatedAt: Date;
-};
-
 describe('Contract: catalog.list-models', () => {
   it('should list published models for a valid manufacturer', async () => {
     // Arrange: Input schema validation

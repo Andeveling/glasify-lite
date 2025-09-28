@@ -3,9 +3,11 @@ import { testServer } from '../integration-setup';
 
 // Regex constants for performance optimization in this file
 const _CUID_REGEX = /^c[a-z0-9]{24}$/;
-const _QUOTE_ID_ERROR_REGEX = /ID de la cotización debe ser válido/;
+const _QUOTE_ID_VALIDATION_ERROR_REGEX = /ID de la cotización debe ser válido/;
 const _PHONE_ERROR_REGEX = /teléfono|phone/i;
+const _QUOTE_ID_ERROR_REGEX = /quote/i;
 const _ADDRESS_ERROR_REGEX = /dirección|address/i;
+const _EMAIL_ERROR_REGEX = /email|correo/i;
 const _NON_EXISTENT_QUOTE_ERROR_REGEX = /cotización.*encontrada|quote.*found/i;
 const _ALREADY_SENT_ERROR_REGEX = /ya.*enviada|estado\s*borrador|already.*sent/i;
 // String constants
@@ -69,7 +71,7 @@ describe('Contract: quote.submit', () => {
     // Act & Assert: Should throw validation error
     await expect(async () => {
       await testServer.quote[SUBMIT_STATUS](invalidInput);
-    }).rejects.toThrow(/ID de la cotización debe ser válido/);
+    }).rejects.toThrow(_EMAIL_ERROR_REGEX);
   });
 
   it('should validate contact information - missing phone', async () => {
@@ -87,7 +89,7 @@ describe('Contract: quote.submit', () => {
     // Act & Assert: Should throw validation error
     await expect(async () => {
       await testServer.quote[SUBMIT_STATUS](invalidInput);
-    }).rejects.toThrow(/teléfono|phone/i);
+    }).rejects.toThrow(_PHONE_ERROR_REGEX);
   });
 
   it('should validate contact information - missing address', async () => {
@@ -105,7 +107,7 @@ describe('Contract: quote.submit', () => {
     // Act & Assert: Should throw validation error
     await expect(async () => {
       await testServer.quote[SUBMIT_STATUS](invalidInput);
-    }).rejects.toThrow(/dirección|address/i);
+    }).rejects.toThrow(_ADDRESS_ERROR_REGEX);
   });
 
   it('should handle non-existent quote', async () => {
@@ -123,7 +125,7 @@ describe('Contract: quote.submit', () => {
     // Act & Assert: Should throw error for non-existent quote
     await expect(async () => {
       await testServer.quote[SUBMIT_STATUS](input);
-    }).rejects.toThrow(/cotización.*encontrada|quote.*found/i);
+    }).rejects.toThrow(_NON_EXISTENT_QUOTE_ERROR_REGEX);
   });
 
   it('should handle quote with no items', async () => {
