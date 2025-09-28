@@ -82,11 +82,11 @@ src/app/
 - Use Next.js special files explicitly: `loading.tsx`, `error.tsx`, `not-found.tsx`, etc.
 
 ## Phase 3.1: Setup & Next.js App Router Structure
-- [ ] T001 Create Next.js App Router structure with route groups: `(public)`, `(auth)`, `(dashboard)`
-- [ ] T002 Configure shadcn/ui v3 components with Tailwind v4 CSS variables from `src/styles/globals.css`
-- [ ] T003 [P] Set up root layout `src/app/layout.tsx` with providers, metadata, and Spanish locale
-- [ ] T004 [P] Configure NextAuth v5 middleware in `src/middleware.ts` for protected routes
-- [ ] T005 [P] Create home page `src/app/page.tsx` with redirect to `/catalog`
+- [x] T001 Create Next.js App Router structure with route groups: `(public)`, `(auth)`, `(dashboard)`
+- [x] T002 Configure shadcn/ui v3 components with Tailwind v4 CSS variables from `src/styles/globals.css`
+- [x] T003 [P] Set up root layout `src/app/layout.tsx` with providers, metadata, and Spanish locale
+- [x] T004 [P] Configure NextAuth v5 middleware in `src/middleware.ts` for protected routes
+- [x] T005 [P] Create home page `src/app/page.tsx` with redirect to `/catalog`
 
 ## Phase 3.2: Route Group Layouts & Global Files
 - [ ] T006 [P] Public layout `src/app/(public)/layout.tsx` with main navigation and footer
