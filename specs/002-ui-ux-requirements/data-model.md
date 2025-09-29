@@ -1,65 +1,65 @@
 # Data Model — UI/UX Glasify MVP
 
-Derivado de la especificación funcional. El modelo físico se mantiene en Prisma; aquí se listan entidades UI/servicio relevantes y reglas.
+Derived from functional specification. Physical model is maintained in Prisma; here we list relevant UI/service entities and rules. Code in English only, UI and feedback in Spanish.
 
-## Entidades
+## Entities
 
-### Modelo
+### Model
 - id: string (UUID)
-- nombre: string
-- fabricanteId: string
-- rangoAncho: { min: number; max: number } // mm
-- rangoAlto: { min: number; max: number } // mm
-- precioBase: decimal(12,2)
-- compatibilidadesVidrio: GlassType[] // por espesor, uso
+- name: string
+- manufacturerId: string
+- widthRange: { min: number; max: number } // mm
+- heightRange: { min: number; max: number } // mm
+- basePrice: decimal(12,2)
+- glassCompatibilities: GlassType[] // by thickness, usage
 
-Validaciones:
-- min <= max en ambos ejes
-- precioBase >= 0
+Validations:
+- min <= max on both axes
+- basePrice >= 0
 
-### GlassType (Vidrio)
+### GlassType
 - id: string
-- nombre: string
-- tipo: 'templado' | 'laminado' | 'float' | 'low-e' | 'dvh' | 'triple'
-- espesorMm: number
-- atributos: { termico?: boolean; acustico?: boolean; seguridad?: boolean }
+- name: string
+- type: 'tempered' | 'laminated' | 'float' | 'low-e' | 'dvh' | 'triple'
+- thicknessMm: number
+- attributes: { thermal?: boolean; acoustic?: boolean; security?: boolean }
 
-### Service (Servicio)
+### Service
 - id: string
-- nombre: string
-- tipo: 'area' | 'perimetro' | 'fijo'
-- precioUnitario: decimal(12,2)
+- name: string
+- type: 'area' | 'perimeter' | 'fixed'
+- unitPrice: decimal(12,2)
 
-### Quote (Cotización)
+### Quote
 - id: string
-- estado: 'borrador' | 'enviada' | 'confirmada'
-- clienteId?: string
+- status: 'draft' | 'sent' | 'confirmed'
+- clientId?: string
 - items: QuoteItem[]
-- ajustes: { porcentaje?: number; fijo?: number }
+- adjustments: { percentage?: number; fixed?: number }
 - total: decimal(12,2)
 
 ### QuoteItem
 - id: string
-- modeloId: string
-- anchoMm: number
-- altoMm: number
-- vidrioId: string
-- servicios: Array<{ serviceId: string; cantidad: number }>
-- cantidad: number
+- modelId: string
+- widthMm: number
+- heightMm: number
+- glassId: string
+- services: Array<{ serviceId: string; quantity: number }>
+- quantity: number
 - subtotal: decimal(12,2)
 
-Validaciones:
-- ancho/altoo dentro de rango del Modelo
-- vidrio compatible con Modelo
-- cantidad >= 1
+Validations:
+- width/height within Model range
+- glass compatible with Model
+- quantity >= 1
 
-## Reglas de cálculo
+## Calculation Rules
 
-P_item = basePrice + costPerMmWidth × deltaWidth + costPerMmHeight × deltaHeight + sum(servicios) + accesorios
-- Todos los montos en DECIMAL(12,2)
-- Tiempos objetivo: <200ms
+P_item = basePrice + costPerMmWidth × deltaWidth + costPerMmHeight × deltaHeight + sum(services) + accessories
+- All amounts in DECIMAL(12,2)
+- Target times: <200ms
 
-## Relaciones
-- Fabricante 1..N Modelos
-- Modelo N..N GlassType (compatibilidad)
+## Relationships
+- Manufacturer 1..N Models
+- Model N..N GlassType (compatibility)
 - Quote 1..N QuoteItem

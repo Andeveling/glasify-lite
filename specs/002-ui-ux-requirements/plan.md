@@ -31,7 +31,7 @@
 - Phase 3-4: Implementation execution (manual or via tools)
 
 ## Summary
-La interfaz debe permitir: explorar catálogo, configurar ítems con validaciones y compatibilidades, cotizar en tiempo real (<200ms), gestionar envío y ver historial; además, panel admin para gestionar catálogo, precios, servicios y usuarios. Técnica: Next.js 15 (App Router) + shadcn/ui v3 con Tailwind v4, tRPC + Zod, Prisma + PostgreSQL, NextAuth v5. Estructura por dominios usando route groups `(domain)` y carpetas privadas `_(privadas)`; alias por vista. Tokens de color tipografía y sombras provienen exclusivamente de `src/styles/globals.css` (sin colores hardcodeados).
+La interfaz debe permitir: explorar catálogo, configurar ítems con validaciones y compatibilidades, cotizar en tiempo real (<200ms), gestionar envío y ver historial; además, panel admin para gestionar catálogo, precios, servicios y usuarios. Técnica: Next.js 15 (App Router) + shadcn/ui v3 con Tailwind v4, tRPC + Zod, Prisma + PostgreSQL, NextAuth v5. Estructura por dominios usando route groups `(domain)` y carpetas privadas `_(private)`; alias por vista. Tokens de color tipografía y sombras provienen exclusivamente de `src/styles/globals.css` (sin colores hardcodeados).
 
 ## Technical Context
 **Language/Version**: TypeScript 5.8+ (strict)  
@@ -43,6 +43,8 @@ La interfaz debe permitir: explorar catálogo, configurar ítems con validacione
 **Performance Goals**: pricing <200ms p95; catálogo <500ms p95; updates UI <200ms p95  
 **Constraints**: Accesibilidad WCAG 2.1 AA; UI en español (es‑LA); no colores hardcodeados, usar variables CSS de `globals.css`  
 **Scale/Scope**: Hasta 100 modelos por fabricante; hasta 20 ítems por cotización
+**Forms**: React Hook Form + ZodResolver schemas backend and frontend only one source of truth  
+**Styling**: shadcn/ui components + Tailwind v4 + custom CSS variables
 
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
