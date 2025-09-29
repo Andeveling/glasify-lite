@@ -71,7 +71,7 @@ describe('Contract: quote.submit', () => {
     // Act & Assert: Should throw validation error
     await expect(async () => {
       await testServer.quote[SUBMIT_STATUS](invalidInput);
-    }).rejects.toThrow(_EMAIL_ERROR_REGEX);
+    }).rejects.toThrow(_QUOTE_ID_VALIDATION_ERROR_REGEX);
   });
 
   it('should validate contact information - missing phone', async () => {
