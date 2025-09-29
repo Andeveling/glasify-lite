@@ -28,7 +28,7 @@ describe('Integration: Admin Panel Access Flow', () => {
     const glassModelData = {
       accessoryPrice: ACCESSORY_PRICE,
       basePrice: TEST_BASE_PRICE,
-      compatibleGlassTypeIds: [ 'cm1glasstype1234567890abc' ],
+      compatibleGlassTypeIds: ['cm1glasstype1234567890abc'],
       costPerMmHeight: 10.0,
       costPerMmWidth: 12.5,
       manufacturerId: 'cm1manufacturer1234567890abc', // Using existing test manufacturer
@@ -41,7 +41,7 @@ describe('Integration: Admin Panel Access Flow', () => {
     };
 
     // Act 1: Create glass model through admin endpoint
-    const createResult = await testServer.admin[ 'model-upsert' ](glassModelData);
+    const createResult = await testServer.admin['model-upsert'](glassModelData);
 
     // Assert 1: Model created successfully
     expect(createResult).toBeDefined();
@@ -59,7 +59,7 @@ describe('Integration: Admin Panel Access Flow', () => {
       name: 'Elite 6mm Transparente ACTUALIZADO',
     };
 
-    const updateResult = await testServer.admin[ 'model-upsert' ](updateData);
+    const updateResult = await testServer.admin['model-upsert'](updateData);
 
     // Assert 2: Model updated successfully
     expect(updateResult).toBeDefined();
@@ -68,7 +68,7 @@ describe('Integration: Admin Panel Access Flow', () => {
     expect(updateResult.status).toBe('published');
 
     // Act 3: Verify model appears in catalog
-    const catalogModels = await testServer.catalog[ 'list-models' ]({
+    const catalogModels = await testServer.catalog['list-models']({
       manufacturerId: glassModelData.manufacturerId,
     });
 
@@ -91,7 +91,7 @@ describe('Integration: Admin Panel Access Flow', () => {
     const modelData = {
       accessoryPrice: null,
       basePrice: TEST_BASE_PRICE,
-      compatibleGlassTypeIds: [ 'cm1glasstype1234567890abc' ],
+      compatibleGlassTypeIds: ['cm1glasstype1234567890abc'],
       costPerMmHeight: 12.0,
       costPerMmWidth: 15.0,
       manufacturerId: 'cm1manufacturer1234567890abc',
@@ -104,7 +104,7 @@ describe('Integration: Admin Panel Access Flow', () => {
     };
 
     // Act: Create model with constraints
-    const result = await testServer.admin[ 'model-upsert' ](modelData);
+    const result = await testServer.admin['model-upsert'](modelData);
 
     // Assert: Model created with proper constraints
     expect(result).toBeDefined();
@@ -113,7 +113,7 @@ describe('Integration: Admin Panel Access Flow', () => {
     expect(result.message).toContain('creado exitosamente');
 
     // Verify model appears in catalog (even draft models should be testable)
-    const catalogModels = await testServer.catalog[ 'list-models' ]({
+    const catalogModels = await testServer.catalog['list-models']({
       manufacturerId: modelData.manufacturerId,
     });
 
@@ -142,7 +142,7 @@ describe('Integration: Admin Panel Access Flow', () => {
       const modelData = {
         accessoryPrice: i === 0 ? null : ACCESSORY_BASE_PRICE + i * ACCESSORY_INCREMENT,
         basePrice: TEST_BASE_PRICE + i * BULK_PRICE_INCREMENT,
-        compatibleGlassTypeIds: [ 'cm1glasstype1234567890abc' ],
+        compatibleGlassTypeIds: ['cm1glasstype1234567890abc'],
         costPerMmHeight: BASE_COST_HEIGHT + i,
         costPerMmWidth: BASE_COST_WIDTH + i,
         manufacturerId,
@@ -154,7 +154,7 @@ describe('Integration: Admin Panel Access Flow', () => {
         status: i % 2 === 0 ? ('published' as const) : ('draft' as const),
       };
 
-      const result = await testServer.admin[ 'model-upsert' ](modelData);
+      const result = await testServer.admin['model-upsert'](modelData);
       modelIds.push(result.modelId);
 
       // Assert each model created successfully
@@ -163,7 +163,7 @@ describe('Integration: Admin Panel Access Flow', () => {
     }
 
     // Verify all models exist in catalog
-    const catalogModels = await testServer.catalog[ 'list-models' ]({
+    const catalogModels = await testServer.catalog['list-models']({
       manufacturerId,
     });
 
@@ -174,7 +174,7 @@ describe('Integration: Admin Panel Access Flow', () => {
 
       if (catalogModel) {
         expect(catalogModel.basePrice).toBeGreaterThan(0);
-        expect([ 'published', 'draft' ]).toContain(catalogModel.status);
+        expect(['published', 'draft']).toContain(catalogModel.status);
       }
     }
 
@@ -183,10 +183,10 @@ describe('Integration: Admin Panel Access Flow', () => {
       const updatedData = {
         accessoryPrice: UPDATE_ACCESSORY_PRICE,
         basePrice: UPDATED_BASE_PRICE + i * UPDATE_PRICE_INCREMENT,
-        compatibleGlassTypeIds: [ 'cm1glasstype1234567890abc' ],
+        compatibleGlassTypeIds: ['cm1glasstype1234567890abc'],
         costPerMmHeight: 10.0,
         costPerMmWidth: 12.0,
-        id: modelIds[ i ],
+        id: modelIds[i],
         manufacturerId,
         maxHeightMm: MAX_DIMENSION_MM,
         maxWidthMm: MAX_DIMENSION_MM,
@@ -196,10 +196,10 @@ describe('Integration: Admin Panel Access Flow', () => {
         status: 'published' as const,
       };
 
-      const updateResult = await testServer.admin[ 'model-upsert' ](updatedData);
+      const updateResult = await testServer.admin['model-upsert'](updatedData);
 
       // Assert update successful
-      expect(updateResult.modelId).toBe(modelIds[ i ]);
+      expect(updateResult.modelId).toBe(modelIds[i]);
       expect(updateResult.message).toContain('actualizado exitosamente');
       expect(updateResult.status).toBe('published');
     }
@@ -213,7 +213,7 @@ describe('Integration: Admin Panel Access Flow', () => {
       {
         data: {
           basePrice: TEST_BASE_PRICE,
-          compatibleGlassTypeIds: [ 'cm1glasstype1234567890abc' ],
+          compatibleGlassTypeIds: ['cm1glasstype1234567890abc'],
           costPerMmHeight: 8.0,
           costPerMmWidth: 10.0,
           manufacturerId: 'invalid-manufacturer-id',
@@ -230,7 +230,7 @@ describe('Integration: Admin Panel Access Flow', () => {
       {
         data: {
           basePrice: TEST_BASE_PRICE,
-          compatibleGlassTypeIds: [ 'invalid-glass-type-id' ],
+          compatibleGlassTypeIds: ['invalid-glass-type-id'],
           costPerMmHeight: 8.0,
           costPerMmWidth: 10.0,
           manufacturerId: 'cm1manufacturer1234567890abc',
@@ -247,7 +247,7 @@ describe('Integration: Admin Panel Access Flow', () => {
       {
         data: {
           basePrice: TEST_BASE_PRICE,
-          compatibleGlassTypeIds: [ 'cm1glasstype1234567890abc' ],
+          compatibleGlassTypeIds: ['cm1glasstype1234567890abc'],
           costPerMmHeight: 8.0,
           costPerMmWidth: 10.0,
           manufacturerId: 'cm1manufacturer1234567890abc',
@@ -268,7 +268,7 @@ describe('Integration: Admin Panel Access Flow', () => {
       let operationError: unknown;
 
       try {
-        operationResult = await testServer.admin[ 'model-upsert' ](testCase.data);
+        operationResult = await testServer.admin['model-upsert'](testCase.data);
       } catch (error) {
         operationError = error;
       }

@@ -22,12 +22,12 @@ describe('Integration: Quote Creation Flow', () => {
       heightMm: 800,
       modelId,
       quantity: 1,
-      services: [ { quantity: 1, serviceId } ],
+      services: [{ quantity: 1, serviceId }],
       widthMm: 1000,
     };
 
     // Act 1: Calculate item price (first step in quote flow)
-    const calculation = await testServer.quote[ 'calculate-item' ](quoteItemData);
+    const calculation = await testServer.quote['calculate-item'](quoteItemData);
 
     // Assert 1: Calculation should return valid price structure
     expect(calculation).toBeDefined();
@@ -36,7 +36,7 @@ describe('Integration: Quote Creation Flow', () => {
     expect(calculation.subtotal).toBeGreaterThan(0);
 
     // Act 2: Add item to quote (second step in quote flow)
-    const addItemResult = await testServer.quote[ 'add-item' ](quoteItemData);
+    const addItemResult = await testServer.quote['add-item'](quoteItemData);
 
     // Assert 2: Item should be added successfully
     expect(addItemResult).toBeDefined();
@@ -55,7 +55,7 @@ describe('Integration: Quote Creation Flow', () => {
       widthMm: 1200,
     };
 
-    const secondItemResult = await testServer.quote[ 'add-item' ](secondItemPayload);
+    const secondItemResult = await testServer.quote['add-item'](secondItemPayload);
 
     // Assert 3: Should use same quote but different item
     expect(secondItemResult.quoteId).toBe(addItemResult.quoteId);
@@ -85,13 +85,13 @@ describe('Integration: Quote Creation Flow', () => {
       heightMm: 1200,
       modelId: 'cm1model123def456ghi789jkl',
       quantity: 1,
-      services: [ { quantity: 2, serviceId: 'cm1service123def456ghi789jkl' } ],
+      services: [{ quantity: 2, serviceId: 'cm1service123def456ghi789jkl' }],
       widthMm: 1500,
     };
 
     // Act: Measure calculation response time
     const startTime = performance.now();
-    const calculation = await testServer.quote[ 'calculate-item' ](quoteItemData);
+    const calculation = await testServer.quote['calculate-item'](quoteItemData);
     const endTime = performance.now();
     const responseTime = endTime - startTime;
 
@@ -125,14 +125,14 @@ describe('Integration: Quote Creation Flow', () => {
     };
 
     // Act: Calculate complex quote
-    const calculation = await testServer.quote[ 'calculate-item' ](complexQuoteData);
+    const calculation = await testServer.quote['calculate-item'](complexQuoteData);
 
     // Assert: Should handle complex pricing correctly
     expect(calculation).toBeDefined();
     expect(calculation.subtotal).toBeGreaterThan(0);
 
     // Act: Add complex item to quote
-    const result = await testServer.quote[ 'add-item' ](complexQuoteData);
+    const result = await testServer.quote['add-item'](complexQuoteData);
 
     // Assert: Should create quote with complex pricing
     expect(result.quoteId).toMatch(VALID_CUID_REGEX);
@@ -149,12 +149,12 @@ describe('Integration: Quote Creation Flow', () => {
       heightMm: 800,
       modelId: 'cm1model123def456ghi789jkl',
       quantity: 1,
-      services: [ { quantity: 1, serviceId: 'cm1service123def456ghi789jkl' } ],
+      services: [{ quantity: 1, serviceId: 'cm1service123def456ghi789jkl' }],
       widthMm: 1000,
     };
 
     // Step 1: Create initial quote
-    const firstItem = await testServer.quote[ 'add-item' ](baseItemData);
+    const firstItem = await testServer.quote['add-item'](baseItemData);
     const quoteId = firstItem.quoteId;
 
     // Step 2: Add multiple items to same quote
@@ -167,7 +167,7 @@ describe('Integration: Quote Creation Flow', () => {
         widthMm: BASE_WIDTH_MM + i * WIDTH_INCREMENT_MM,
       };
 
-      const result = await testServer.quote[ 'add-item' ](itemData);
+      const result = await testServer.quote['add-item'](itemData);
       items.push(result);
 
       // Assert: All items belong to same quote

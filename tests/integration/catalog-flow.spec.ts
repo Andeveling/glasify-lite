@@ -11,8 +11,8 @@ describe('Integration: Catalog Navigation Flow', () => {
     const manufacturerId = 'cm1manufacturer123456789ab';
 
     // Act 1: List available models in catalog
-    const catalogModels = await testServer.catalog[ 'list-models' ]({
-      manufacturerId
+    const catalogModels = await testServer.catalog['list-models']({
+      manufacturerId,
     });
 
     // Assert 1: Should return published models
@@ -21,7 +21,7 @@ describe('Integration: Catalog Navigation Flow', () => {
 
     // Act 2: Navigate to model details (simulate catalog navigation)
     if (catalogModels.length > 0) {
-      const firstModel = catalogModels[ 0 ];
+      const firstModel = catalogModels[0];
       if (!firstModel) {
         throw new Error('Model should exist');
       }
@@ -47,8 +47,8 @@ describe('Integration: Catalog Navigation Flow', () => {
     }
 
     // Act 3: Filter catalog (empty manufacturer - should return empty)
-    const emptyResults = await testServer.catalog[ 'list-models' ]({
-      manufacturerId: 'cm1nonexistent123456789abc'
+    const emptyResults = await testServer.catalog['list-models']({
+      manufacturerId: 'cm1nonexistent123456789abc',
     });
 
     // Assert 5: No models for non-existent manufacturer
@@ -60,7 +60,7 @@ describe('Integration: Catalog Navigation Flow', () => {
 
     // Act: Measure catalog response time
     const startTime = performance.now();
-    await testServer.catalog[ 'list-models' ]({ manufacturerId });
+    await testServer.catalog['list-models']({ manufacturerId });
     const endTime = performance.now();
     const responseTime = endTime - startTime;
 
@@ -75,8 +75,8 @@ describe('Integration: Catalog Navigation Flow', () => {
     const manufacturerId = 'cm1manufacturer123456789ab';
 
     // Act: Get all models for manufacturer
-    const allModels = await testServer.catalog[ 'list-models' ]({
-      manufacturerId
+    const allModels = await testServer.catalog['list-models']({
+      manufacturerId,
     });
 
     // Assert: Should return consistent results
