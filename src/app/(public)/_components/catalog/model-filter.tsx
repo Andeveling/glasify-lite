@@ -22,15 +22,17 @@ type ModelFilterProps = {
 
 export function ModelFilter({ manufacturers, types, initialFilters = {}, onFilterChange }: ModelFilterProps) {
   const [searchQuery, setSearchQuery] = useState(initialFilters.q || '');
-  const [selectedManufacturer, setSelectedManufacturer] = useState(initialFilters.manufacturerId || '');
-  const [selectedType, setSelectedType] = useState(initialFilters.type || '');
+  const [selectedManufacturer, setSelectedManufacturer] = useState(initialFilters.manufacturerId || 'all');
+  const [selectedType, setSelectedType] = useState(initialFilters.type || 'all');
 
-  const hasActiveFilters = Boolean(searchQuery || selectedManufacturer || selectedType);
+  const hasActiveFilters = Boolean(
+    searchQuery || (selectedManufacturer && selectedManufacturer !== 'all') || (selectedType && selectedType !== 'all')
+  );
 
   const clearAllFilters = () => {
     setSearchQuery('');
-    setSelectedManufacturer('');
-    setSelectedType('');
+    setSelectedManufacturer('all');
+    setSelectedType('all');
     onFilterChange({});
   };
 
@@ -42,10 +44,10 @@ export function ModelFilter({ manufacturers, types, initialFilters = {}, onFilte
     if (value.trim()) {
       filters.q = value.trim();
     }
-    if (selectedManufacturer) {
+    if (selectedManufacturer && selectedManufacturer !== 'all') {
       filters.manufacturerId = selectedManufacturer;
     }
-    if (selectedType) {
+    if (selectedType && selectedType !== 'all') {
       filters.type = selectedType;
     }
 
@@ -59,10 +61,10 @@ export function ModelFilter({ manufacturers, types, initialFilters = {}, onFilte
     if (searchQuery.trim()) {
       filters.q = searchQuery.trim();
     }
-    if (value) {
+    if (value && value !== 'all') {
       filters.manufacturerId = value;
     }
-    if (selectedType) {
+    if (selectedType && selectedType !== 'all') {
       filters.type = selectedType;
     }
     onFilterChange(filters);
@@ -70,39 +72,38 @@ export function ModelFilter({ manufacturers, types, initialFilters = {}, onFilte
 
   const handleTypeChange = (value: string) => {
     setSelectedType(value);
-    // Apply filters immediately when select changes
     const filters: FilterOptions = {};
     if (searchQuery.trim()) {
       filters.q = searchQuery.trim();
     }
-    if (selectedManufacturer) {
+    if (selectedManufacturer && selectedManufacturer !== 'all') {
       filters.manufacturerId = selectedManufacturer;
     }
-    if (value) {
+    if (value && value !== 'all') {
       filters.type = value;
     }
     onFilterChange(filters);
   };
 
   const removeManufacturerFilter = () => {
-    setSelectedManufacturer('');
+    setSelectedManufacturer('all');
     const filters: FilterOptions = {};
     if (searchQuery.trim()) {
       filters.q = searchQuery.trim();
     }
-    if (selectedType) {
+    if (selectedType && selectedType !== 'all') {
       filters.type = selectedType;
     }
     onFilterChange(filters);
   };
 
   const removeTypeFilter = () => {
-    setSelectedType('');
+    setSelectedType('all');
     const filters: FilterOptions = {};
     if (searchQuery.trim()) {
       filters.q = searchQuery.trim();
     }
-    if (selectedManufacturer) {
+    if (selectedManufacturer && selectedManufacturer !== 'all') {
       filters.manufacturerId = selectedManufacturer;
     }
     onFilterChange(filters);
@@ -145,7 +146,7 @@ export function ModelFilter({ manufacturers, types, initialFilters = {}, onFilte
             <SelectValue placeholder="Todos los manufacturer" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todos los manufacturer</SelectItem>
+            <SelectItem value="all">Todos los manufacturer</SelectItem>
             {manufacturers.map((manufacturer) => (
               <SelectItem key={manufacturer.id} value={manufacturer.id}>
                 {manufacturer.name}
@@ -160,7 +161,7 @@ export function ModelFilter({ manufacturers, types, initialFilters = {}, onFilte
             <SelectValue placeholder="Todos los types" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todos los types</SelectItem>
+            <SelectItem value="all">Todos los types</SelectItem>
             {types.map((tipo) => (
               <SelectItem key={tipo.value} value={tipo.value}>
                 {tipo.label}

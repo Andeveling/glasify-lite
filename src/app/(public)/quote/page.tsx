@@ -90,14 +90,41 @@ export default function QuotePage() {
     [models]
   );
 
+  // Adapter function to convert English PriceCalculator output to Spanish handleAddToQuote input
+  const handleAddToQuoteAdapter = useCallback(
+    (item: {
+      modelId: string;
+      widthMm: number;
+      heightMm: number;
+      glassTypeId: string;
+      services: Array<{ serviceId: string; quantity: number }>;
+      quantity: number;
+      subtotal: string;
+    }) => {
+      handleAddToQuote({
+        altoMm: item.heightMm,
+        anchoMm: item.widthMm,
+        cantidad: item.quantity,
+        modeloId: item.modelId,
+        servicios: item.services.map((s) => ({
+          cantidad: s.quantity,
+          serviceId: s.serviceId,
+        })),
+        subtotal: item.subtotal,
+        vidrioId: item.glassTypeId,
+      });
+    },
+    [handleAddToQuote]
+  );
+
   const totalQuoteAmount = quoteItems.reduce((sum, item) => sum + item.subtotal, 0);
   const selectedModel = models?.find((m) => m.id === selectedModelId);
 
   // Mock services data - in real app this would come from API
-  const mockServicios = [
-    { id: '1', nombre: 'Corte', precio: '$50', unidad: 'ml' as const },
-    { id: '2', nombre: 'Pulido', precio: '$100', unidad: 'm2' as const },
-    { id: '3', nombre: 'Templado', precio: '$200', unidad: 'unidad' as const },
+  const mockServices = [
+    { id: '1', name: 'Corte', price: '$50', unit: 'ml' as const },
+    { id: '2', name: 'Pulido', price: '$100', unit: 'm2' as const },
+    { id: '3', name: 'Templado', price: '$200', unit: 'unidad' as const },
   ];
 
   if (modelsLoading) {
@@ -192,14 +219,23 @@ export default function QuotePage() {
               <CardContent>
                 <PriceCalculator
                   model={{
-                    basePrice: selectedModel.basePrice,
-                    maxWidthMm: selectedModel.maxWidthMm,
-                    minHeightMm: selectedModel.minHeightMm,
-                    minWidthMm: selectedModel.minWidthMm,
+                    basePrice: String(selectedModel.basePrice),
+                    compatibleGlassTypes: [], // TODO: Transform compatibleGlassTypeIds
+                    id: selectedModel.id,
+                    manufacturer: 'Fabricante', // TODO: Get from manufacturer
                     name: selectedModel.name,
+                    range: {
+                      height: [selectedModel.minHeightMm, selectedModel.maxHeightMm],
+                      width: [selectedModel.minWidthMm, selectedModel.maxWidthMm],
+                    },
                   }}
-                  // onAddToQuote={handleAddToQuote}
-                  servicios={mockServicios}
+                  onAddToQuote={handleAddToQuoteAdapter}
+                  services={mockServices.map((s) => ({
+                    id: s.id,
+                    name: s.name,
+                    price: s.price,
+                    unit: s.unit,
+                  }))}
                 />
               </CardContent>
             </Card>
