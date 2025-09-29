@@ -40,11 +40,11 @@ export const modelUpsertInput = z.object({
   accessoryPrice: z.number().min(0).optional().nullable(),
   basePrice: z.number().min(0, 'Precio base debe ser mayor o igual a 0'),
   compatibleGlassTypeIds: z
-    .array(z.string().cuid('ID del tipo de vidrio debe ser válido'))
+    .array(z.cuid('ID del tipo de vidrio debe ser válido'))
     .min(1, 'Debe seleccionar al menos un tipo de vidrio compatible'),
   costPerMmHeight: z.number().min(0, 'Costo por mm de alto debe ser mayor o igual a 0'),
   costPerMmWidth: z.number().min(0, 'Costo por mm de ancho debe ser mayor o igual a 0'),
-  id: z.string().cuid().optional(), // If provided, update; otherwise, create
+  id: z.cuid().optional(), // If provided, update; otherwise, create
   manufacturerId: z.string().cuid('ID del fabricante debe ser válido'),
   maxHeightMm: z.number().int().min(1, 'Alto máximo debe ser mayor a 0 mm'),
   maxWidthMm: z.number().int().min(1, 'Ancho máximo debe ser mayor a 0 mm'),
