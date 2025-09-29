@@ -113,10 +113,10 @@ src/app/
 - [ ] T022 [P] `Footer` component in `src/app/_components/footer.tsx` with company info
 
 ## Phase 3.5: Public Route Components & Pages
-- [ ] T023 [P] `ModelCard` component in `src/app/(public)/_components/catalog/model-card.tsx`
-- [ ] T024 [P] `ModelFilter` component in `src/app/(public)/_components/catalog/model-filter.tsx`
-- [ ] T025 [P] `QuoteItem` component in `src/app/(public)/_components/quote/quote-item.tsx`
-- [ ] T026 [P] `PriceCalculator` component in `src/app/(public)/_components/quote/price-calculator.tsx`
+- [x] T023 [P] `ModelCard` component in `src/app/(public)/_components/catalog/model-card.tsx`
+- [x] T024 [P] `ModelFilter` component in `src/app/(public)/_components/catalog/model-filter.tsx`
+- [x] T025 [P] `QuoteItem` component in `src/app/(public)/_components/quote/quote-item.tsx`
+- [x] T026 [P] `PriceCalculator` component in `src/app/(public)/_components/quote/price-calculator.tsx`
 - [ ] T027 Public catalog page `src/app/(public)/catalog/page.tsx` with model filtering and search
 - [ ] T028 Public model detail page `src/app/(public)/catalog/[modelId]/page.tsx` with compatibility display
 - [ ] T029 Public quote page `src/app/(public)/quote/page.tsx` with real-time pricing (<200ms SLA)
