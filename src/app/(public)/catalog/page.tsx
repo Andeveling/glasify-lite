@@ -125,16 +125,16 @@ export default function CatalogPage() {
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredModels.map((model) => (
                 <ModelCard
-                  compatibilidadesVidrio={[]} // TODO: Get from glass types relationship
-                  fabricante="Fabricante" // TODO: Get from manufacturer relationship
+                  basePrice={formatCurrency(model.basePrice)} // TODO: Get from glass types relationship
+                  compatibleGlassTypes={[]} // TODO: Get from manufacturer relationship
                   id={model.id}
                   key={model.id}
-                  nombre={model.name}
+                  manufacturer="Fabricante"
+                  name={model.name}
                   onSelect={handleModelSelect}
-                  precioBase={formatCurrency(model.basePrice)}
-                  rango={{
-                    alto: [model.minHeightMm, model.maxHeightMm],
-                    ancho: [model.minWidthMm, model.maxWidthMm],
+                  range={{
+                    height: [model.minHeightMm, model.maxHeightMm],
+                    width: [model.minWidthMm, model.maxWidthMm],
                   }}
                 />
               ))}

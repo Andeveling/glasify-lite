@@ -10,25 +10,25 @@ import { formatCurrency } from '@/lib/utils';
 
 type QuoteItemProps = {
   id: string;
-  modelo: {
-    nombre: string;
-    fabricante: string;
+  model: {
+    name: string;
+    manufacturer: string;
   };
-  dimensiones: {
-    ancho: number;
-    alto: number;
+  dimensions: {
+    width: number;
+    height: number;
   };
-  vidrio: {
-    nombre: string;
-    tipo: string;
+  glassType: {
+    name: string;
+    type: string;
   };
-  servicios: Array<{
+  services: Array<{
     id: string;
-    nombre: string;
-    cantidad: number;
-    precio: string;
+    name: string;
+    quantity: number;
+    price: string;
   }>;
-  cantidad: number;
+  quantity: number;
   subtotal: string;
   isEditable?: boolean;
   onEdit?: (itemId: string) => void;
@@ -38,11 +38,11 @@ type QuoteItemProps = {
 
 export function QuoteItem({
   id,
-  modelo,
-  dimensiones,
-  vidrio,
-  servicios,
-  cantidad,
+  model,
+  dimensions,
+  glassType,
+  services,
+  quantity,
   subtotal,
   isEditable = false,
   onEdit,
@@ -73,13 +73,13 @@ export function QuoteItem({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
-            <CardTitle className="font-medium text-base text-foreground">{modelo.nombre}</CardTitle>
-            <p className="text-muted-foreground text-sm">{modelo.fabricante}</p>
+            <CardTitle className="font-medium text-base text-foreground">{model.name}</CardTitle>
+            <p className="text-muted-foreground text-sm">{model.manufacturer}</p>
           </div>
           {isEditable && (
             <div className="flex gap-1">
               <Button
-                aria-label={`Editar ítem ${modelo.nombre}`}
+                aria-label={`Editar ítem ${model.name}`}
                 className="h-8 w-8 p-0"
                 onClick={handleEdit}
                 size="sm"
@@ -88,7 +88,7 @@ export function QuoteItem({
                 <Edit3 className="h-4 w-4" />
               </Button>
               <Button
-                aria-label={`Eliminar ítem ${modelo.nombre}`}
+                aria-label={`Eliminar ítem ${model.name}`}
                 className="h-8 w-8 p-0 text-destructive hover:text-destructive"
                 onClick={handleDelete}
                 size="sm"
@@ -106,7 +106,7 @@ export function QuoteItem({
         <div>
           <Label className="font-medium text-muted-foreground text-xs">Dimensiones</Label>
           <p className="font-medium text-foreground text-sm">
-            {dimensiones.ancho}mm × {dimensiones.alto}mm
+            {dimensions.width}mm × {dimensions.height}mm
           </p>
         </div>
 
@@ -114,22 +114,22 @@ export function QuoteItem({
         <div>
           <Label className="font-medium text-muted-foreground text-xs">Vidrio</Label>
           <div className="flex items-center gap-2">
-            <p className="font-medium text-foreground text-sm">{vidrio.nombre}</p>
+            <p className="font-medium text-foreground text-sm">{glassType.name}</p>
             <Badge className="text-xs" variant="outline">
-              {vidrio.tipo}
+              {glassType.type}
             </Badge>
           </div>
         </div>
 
         {/* Servicios Adicionales */}
-        {servicios.length > 0 && (
+        {services.length > 0 && (
           <div>
             <Label className="font-medium text-muted-foreground text-xs">Servicios adicionales</Label>
             <div className="flex flex-wrap gap-1">
-              {servicios.map((servicio) => (
-                <Badge className="text-xs" key={servicio.id} variant="secondary">
+              {services.map((service) => (
+                <Badge className="text-xs" key={service.id} variant="secondary">
                   <Package className="mr-1 h-3 w-3" />
-                  {servicio.nombre} ({servicio.cantidad})
+                  {service.name} ({service.quantity})
                 </Badge>
               ))}
             </div>
@@ -144,16 +144,16 @@ export function QuoteItem({
             </Label>
             {isEditable ? (
               <Input
-                aria-label={`Cantidad de ${modelo.nombre}`}
+                aria-label={`Cantidad de ${model.name}`}
                 className="h-8 w-20 text-sm"
                 id={`quantity-${id}`}
                 min="1"
                 onChange={handleQuantityChange}
                 type="number"
-                value={cantidad}
+                value={quantity}
               />
             ) : (
-              <span className="font-medium text-sm">{cantidad}</span>
+              <span className="font-medium text-sm">{quantity}</span>
             )}
           </div>
           <div className="text-right">

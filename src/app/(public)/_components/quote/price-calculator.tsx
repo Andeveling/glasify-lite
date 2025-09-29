@@ -8,37 +8,38 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import logger from '@/lib/logger';
 import { formatCurrency } from '@/lib/utils';
 
 type PriceCalculatorProps = {
-  modelo: {
+  model: {
     id: string;
-    nombre: string;
-    fabricante: string;
-    rango: {
-      ancho: [number, number];
-      alto: [number, number];
+    name: string;
+    manufacturer: string;
+    range: {
+      width: [number, number];
+      height: [number, number];
     };
-    precioBase: string;
-    compatibilidadesVidrio: Array<{
+    basePrice: string;
+    compatibleGlassTypes: Array<{
       id: string;
-      nombre: string;
-      tipo: string;
+      name: string;
+      type: string;
     }>;
   };
-  servicios: Array<{
+  services: Array<{
     id: string;
-    nombre: string;
-    unidad: 'unidad' | 'm2' | 'ml';
-    precio: string;
+    name: string;
+    unit: 'unidad' | 'm2' | 'ml';
+    price: string;
   }>;
   onAddToQuote: (item: {
-    modeloId: string;
-    anchoMm: number;
-    altoMm: number;
-    vidrioId: string;
-    servicios: Array<{ serviceId: string; cantidad: number }>;
-    cantidad: number;
+    modelId: string;
+    widthMm: number;
+    heightMm: number;
+    glassTypeId: string;
+    services: Array<{ serviceId: string; quantity: number }>;
+    quantity: number;
     subtotal: string;
   }) => void;
 };
@@ -51,13 +52,13 @@ type CalculationResult = {
   detalles: Record<string, string>;
 };
 
-export function PriceCalculator({ modelo, servicios, onAddToQuote }: PriceCalculatorProps) {
+export function PriceCalculator({ model, services, onAddToQuote }: PriceCalculatorProps) {
   const [formData, setFormData] = useState({
-    altoMm: modelo.rango.alto[0],
-    anchoMm: modelo.rango.ancho[0],
-    cantidad: 1,
-    serviciosSeleccionados: [] as Array<{ serviceId: string; cantidad: number }>,
-    vidrioId: '',
+    glassTypeId: '',
+    heightMm: model.range.height[0],
+    quantity: 1,
+    selectedServices: [] as Array<{ serviceId: string; quantity: number }>,
+    widthMm: model.range.width[0],
   });
 
   const [calculation, setCalculation] = useState<CalculationResult | null>(null);
@@ -68,19 +69,19 @@ export function PriceCalculator({ modelo, servicios, onAddToQuote }: PriceCalcul
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (formData.anchoMm < modelo.rango.ancho[0] || formData.anchoMm > modelo.rango.ancho[1]) {
-      newErrors.ancho = `Ancho debe estar entre ${modelo.rango.ancho[0]}mm y ${modelo.rango.ancho[1]}mm`;
+    if (formData.widthMm < model.range.width[0] || formData.widthMm > model.range.width[1]) {
+      newErrors.ancho = `Ancho debe estar entre ${model.range.width[0]}mm y ${model.range.width[1]}mm`;
     }
 
-    if (formData.altoMm < modelo.rango.alto[0] || formData.altoMm > modelo.rango.alto[1]) {
-      newErrors.alto = `Alto debe estar entre ${modelo.rango.alto[0]}mm y ${modelo.rango.alto[1]}mm`;
+    if (formData.heightMm < model.range.height[0] || formData.heightMm > model.range.height[1]) {
+      newErrors.alto = `Alto debe estar entre ${model.range.height[0]}mm y ${model.range.height[1]}mm`;
     }
 
-    if (!formData.vidrioId) {
+    if (!formData.glassTypeId) {
       newErrors.vidrio = 'Debe seleccionar un tipo de vidrio';
     }
 
-    if (formData.cantidad < 1) {
+    if (formData.quantity < 1) {
       newErrors.cantidad = 'La cantidad debe ser mayor a 0';
     }
 
@@ -93,12 +94,12 @@ export function PriceCalculator({ modelo, servicios, onAddToQuote }: PriceCalcul
     setErrors((prev) => ({ ...prev, [field]: '' }));
   };
 
-  const handleServiceChange = (serviceId: string, cantidad: number) => {
+  const handleServiceChange = (serviceId: string, quantity: number) => {
     setFormData((prev) => ({
       ...prev,
-      serviciosSeleccionados: prev.serviciosSeleccionados
+      selectedServices: prev.selectedServices
         .filter((s) => s.serviceId !== serviceId)
-        .concat(cantidad > 0 ? [{ cantidad, serviceId }] : []),
+        .concat(quantity > 0 ? [{ quantity, serviceId }] : []),
     }));
   };
 
@@ -112,23 +113,23 @@ export function PriceCalculator({ modelo, servicios, onAddToQuote }: PriceCalcul
       // Simulated API call - in real implementation, use tRPC
       await new Promise((resolve) => setTimeout(resolve, MOCK_CALCULATION_DELAY));
 
-      const basePrice = Number.parseFloat(modelo.precioBase);
-      const area = (formData.anchoMm * formData.altoMm) / MM_TO_M2_CONVERSION; // Convert to m²
-      const serviceCost = formData.serviciosSeleccionados.reduce((total, servicio) => {
-        const service = servicios.find((s) => s.id === servicio.serviceId);
-        if (!service) {
+      const basePrice = Number.parseFloat(model.basePrice);
+      const area = (formData.widthMm * formData.heightMm) / MM_TO_M2_CONVERSION; // Convert to m²
+      const serviceCost = formData.selectedServices.reduce((total, service) => {
+        const serviceData = services.find((s) => s.id === service.serviceId);
+        if (!serviceData) {
           return total;
         }
-        return total + Number.parseFloat(service.precio) * servicio.cantidad;
+        return total + Number.parseFloat(serviceData.price) * service.quantity;
       }, 0);
 
-      const subtotal = (basePrice + serviceCost) * formData.cantidad;
+      const subtotal = (basePrice + serviceCost) * formData.quantity;
 
       setCalculation({
         detalles: {
-          cantidad: formData.cantidad.toString(),
-          dimensiones: `${formData.anchoMm}mm × ${formData.altoMm}mm (${area.toFixed(2)}m²)`,
-          precioBase: formatCurrency(modelo.precioBase),
+          cantidad: formData.quantity.toString(),
+          dimensiones: `${formData.widthMm}mm × ${formData.heightMm}mm (${area.toFixed(2)}m²)`,
+          precioBase: formatCurrency(model.basePrice),
           servicios: serviceCost > 0 ? formatCurrency(serviceCost.toFixed(2)) : '---',
         },
         subtotal: subtotal.toFixed(2),
@@ -136,6 +137,7 @@ export function PriceCalculator({ modelo, servicios, onAddToQuote }: PriceCalcul
     } catch (error) {
       // In a real app, use proper error reporting
       // console.error('Error calculating price:', error);
+      logger.error('Error calculating price:', { error: error instanceof Error ? error.message : error });
     } finally {
       setIsCalculating(false);
     }
@@ -149,13 +151,13 @@ export function PriceCalculator({ modelo, servicios, onAddToQuote }: PriceCalcul
     setIsAddingToQuote(true);
     try {
       await onAddToQuote({
-        altoMm: formData.altoMm,
-        anchoMm: formData.anchoMm,
-        cantidad: formData.cantidad,
-        modeloId: modelo.id,
-        servicios: formData.serviciosSeleccionados,
+        glassTypeId: formData.glassTypeId,
+        heightMm: formData.heightMm,
+        modelId: model.id,
+        quantity: formData.quantity,
+        services: formData.selectedServices,
         subtotal: calculation.subtotal,
-        vidrioId: formData.vidrioId,
+        widthMm: formData.widthMm,
       });
     } catch (error) {
       // In a real app, use proper error reporting
@@ -172,7 +174,7 @@ export function PriceCalculator({ modelo, servicios, onAddToQuote }: PriceCalcul
           <Calculator className="h-5 w-5" />
           Calcular Precio
         </CardTitle>
-        <CardDescription>Configure las especificaciones para obtener el precio del {modelo.nombre}</CardDescription>
+        <CardDescription>Configure las especificaciones para obtener el precio del {model.name}</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-6">
@@ -182,18 +184,18 @@ export function PriceCalculator({ modelo, servicios, onAddToQuote }: PriceCalcul
             <Label htmlFor="ancho">
               Ancho (mm)
               <span className="ml-1 text-muted-foreground text-xs">
-                ({modelo.rango.ancho[0]} - {modelo.rango.ancho[1]}mm)
+                ({model.range.width[0]} - {model.range.width[1]}mm)
               </span>
             </Label>
             <Input
               aria-describedby={errors.ancho ? 'ancho-error' : undefined}
               className={errors.ancho ? 'border-destructive' : ''}
               id="ancho"
-              max={modelo.rango.ancho[1]}
-              min={modelo.rango.ancho[0]}
-              onChange={(e) => handleInputChange('anchoMm', Number.parseInt(e.target.value, 10) || 0)}
+              max={model.range.width[1]}
+              min={model.range.width[0]}
+              onChange={(e) => handleInputChange('widthMm', Number.parseInt(e.target.value, 10) || 0)}
               type="number"
-              value={formData.anchoMm}
+              value={formData.widthMm}
             />
             {errors.ancho && (
               <p className="text-destructive text-sm" id="ancho-error">
@@ -206,18 +208,18 @@ export function PriceCalculator({ modelo, servicios, onAddToQuote }: PriceCalcul
             <Label htmlFor="alto">
               Alto (mm)
               <span className="ml-1 text-muted-foreground text-xs">
-                ({modelo.rango.alto[0]} - {modelo.rango.alto[1]}mm)
+                ({model.range.height[0]} - {model.range.height[1]}mm)
               </span>
             </Label>
             <Input
               aria-describedby={errors.alto ? 'alto-error' : undefined}
               className={errors.alto ? 'border-destructive' : ''}
               id="alto"
-              max={modelo.rango.alto[1]}
-              min={modelo.rango.alto[0]}
-              onChange={(e) => handleInputChange('altoMm', Number.parseInt(e.target.value, 10) || 0)}
+              max={model.range.height[1]}
+              min={model.range.height[0]}
+              onChange={(e) => handleInputChange('heightMm', Number.parseInt(e.target.value, 10) || 0)}
               type="number"
-              value={formData.altoMm}
+              value={formData.heightMm}
             />
             {errors.alto && (
               <p className="text-destructive text-sm" id="alto-error">
@@ -230,7 +232,7 @@ export function PriceCalculator({ modelo, servicios, onAddToQuote }: PriceCalcul
         {/* Tipo de Vidrio */}
         <div className="space-y-2">
           <Label htmlFor="vidrio">Tipo de Vidrio</Label>
-          <Select onValueChange={(value) => handleInputChange('vidrioId', value)} value={formData.vidrioId}>
+          <Select onValueChange={(value) => handleInputChange('glassTypeId', value)} value={formData.glassTypeId}>
             <SelectTrigger
               aria-describedby={errors.vidrio ? 'vidrio-error' : undefined}
               className={errors.vidrio ? 'border-destructive' : ''}
@@ -239,12 +241,12 @@ export function PriceCalculator({ modelo, servicios, onAddToQuote }: PriceCalcul
               <SelectValue placeholder="Seleccionar tipo de vidrio" />
             </SelectTrigger>
             <SelectContent>
-              {modelo.compatibilidadesVidrio.map((vidrio) => (
-                <SelectItem key={vidrio.id} value={vidrio.id}>
+              {model.compatibleGlassTypes.map((glassType) => (
+                <SelectItem key={glassType.id} value={glassType.id}>
                   <div className="flex items-center gap-2">
-                    <span>{vidrio.nombre}</span>
+                    <span>{glassType.name}</span>
                     <Badge className="text-xs" variant="outline">
-                      {vidrio.tipo}
+                      {glassType.type}
                     </Badge>
                   </div>
                 </SelectItem>
@@ -259,30 +261,30 @@ export function PriceCalculator({ modelo, servicios, onAddToQuote }: PriceCalcul
         </div>
 
         {/* Servicios Adicionales */}
-        {servicios.length > 0 && (
+        {services.length > 0 && (
           <div className="space-y-3">
             <Label>Servicios Adicionales (Opcional)</Label>
             <div className="space-y-2">
-              {servicios.map((servicio) => {
-                const selected = formData.serviciosSeleccionados.find((s) => s.serviceId === servicio.id);
+              {services.map((service) => {
+                const selected = formData.selectedServices.find((s) => s.serviceId === service.id);
                 return (
-                  <div className="flex items-center justify-between rounded-lg border p-3" key={servicio.id}>
+                  <div className="flex items-center justify-between rounded-lg border p-3" key={service.id}>
                     <div className="flex-1">
-                      <p className="font-medium text-sm">{servicio.nombre}</p>
+                      <p className="font-medium text-sm">{service.name}</p>
                       <p className="text-muted-foreground text-xs">
-                        {formatCurrency(servicio.precio)} por {servicio.unidad}
+                        {formatCurrency(service.price)} por {service.unit}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Input
                         className="h-8 w-20 text-sm"
                         min="0"
-                        onChange={(e) => handleServiceChange(servicio.id, Number.parseInt(e.target.value, 10) || 0)}
+                        onChange={(e) => handleServiceChange(service.id, Number.parseInt(e.target.value, 10) || 0)}
                         placeholder="0"
                         type="number"
-                        value={selected?.cantidad || 0}
+                        value={selected?.quantity || 0}
                       />
-                      <span className="w-8 text-muted-foreground text-xs">{servicio.unidad}</span>
+                      <span className="w-8 text-muted-foreground text-xs">{service.unit}</span>
                     </div>
                   </div>
                 );
@@ -299,9 +301,9 @@ export function PriceCalculator({ modelo, servicios, onAddToQuote }: PriceCalcul
             className={`w-32 ${errors.cantidad ? 'border-destructive' : ''}`}
             id="cantidad"
             min="1"
-            onChange={(e) => handleInputChange('cantidad', Number.parseInt(e.target.value, 10) || 1)}
+            onChange={(e) => handleInputChange('quantity', Number.parseInt(e.target.value, 10) || 1)}
             type="number"
-            value={formData.cantidad}
+            value={formData.quantity}
           />
           {errors.cantidad && (
             <p className="text-destructive text-sm" id="cantidad-error">

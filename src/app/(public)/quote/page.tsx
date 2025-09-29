@@ -191,18 +191,14 @@ export default function QuotePage() {
               </CardHeader>
               <CardContent>
                 <PriceCalculator
-                  modelo={{
-                    compatibilidadesVidrio: [], // TODO: Get real glass types
-                    fabricante: 'Fabricante', // TODO: Get real manufacturer
-                    id: selectedModel.id,
-                    nombre: selectedModel.name,
-                    precioBase: `$${selectedModel.basePrice.toLocaleString('es-LA')}`,
-                    rango: {
-                      alto: [selectedModel.minHeightMm, selectedModel.maxHeightMm],
-                      ancho: [selectedModel.minWidthMm, selectedModel.maxWidthMm],
-                    },
+                  model={{
+                    basePrice: selectedModel.basePrice,
+                    maxWidthMm: selectedModel.maxWidthMm,
+                    minHeightMm: selectedModel.minHeightMm,
+                    minWidthMm: selectedModel.minWidthMm,
+                    name: selectedModel.name,
                   }}
-                  onAddToQuote={handleAddToQuote}
+                  // onAddToQuote={handleAddToQuote}
                   servicios={mockServicios}
                 />
               </CardContent>

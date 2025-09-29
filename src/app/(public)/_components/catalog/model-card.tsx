@@ -5,39 +5,39 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils';
 
-const MAX_VISIBLE_VIDRIOS = 3;
+const MAX_VISIBLE_GLASS_TYPES = 3;
 
 type ModelCardProps = {
   id: string;
-  nombre: string;
-  fabricante: string;
-  rango: {
-    ancho: [number, number];
-    alto: [number, number];
+  name: string;
+  manufacturer: string;
+  range: {
+    width: [number, number];
+    height: [number, number];
   };
-  precioBase: string;
-  compatibilidadesVidrio: Array<{
+  basePrice: string;
+  compatibleGlassTypes: Array<{
     id: string;
-    nombre: string;
-    tipo: string;
+    name: string;
+    type: string;
   }>;
   onSelect?: (modelId: string) => void;
 };
 
 export function ModelCard({
   id,
-  nombre,
-  fabricante,
-  rango,
-  precioBase,
-  compatibilidadesVidrio,
+  name,
+  manufacturer,
+  range,
+  basePrice,
+  compatibleGlassTypes,
   onSelect,
 }: ModelCardProps) {
-  const formatRange = (range: [number, number]) => `${range[0]}mm - ${range[1]}mm`;
+  const formatRange = (rangeValues: [number, number]) => `${rangeValues[0]}mm - ${rangeValues[1]}mm`;
 
   return (
     <Card
-      aria-label={`Modelo ${nombre} de ${fabricante}`}
+      aria-label={`Modelo ${name} de ${manufacturer}`}
       className="group cursor-pointer border-primary/50 transition-all duration-200 hover:border-primary/50 hover:shadow-lg"
       onClick={() => onSelect?.(id)}
       onKeyDown={(e) => {
@@ -53,12 +53,12 @@ export function ModelCard({
         <div className="flex items-start justify-between">
           <div>
             <CardTitle className="font-semibold text-foreground text-lg transition-colors group-hover:text-primary">
-              {nombre}
+              {name}
             </CardTitle>
-            <CardDescription className="font-medium text-muted-foreground">{fabricante}</CardDescription>
+            <CardDescription className="font-medium text-muted-foreground">{manufacturer}</CardDescription>
           </div>
           <Badge className="ml-2 whitespace-nowrap font-medium" variant="secondary">
-            {formatCurrency(precioBase)} base
+            {formatCurrency(basePrice)} base
           </Badge>
         </div>
       </CardHeader>
@@ -67,25 +67,25 @@ export function ModelCard({
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="mb-1 font-medium text-muted-foreground text-sm">Ancho</p>
-            <p className="font-semibold text-foreground text-sm">{formatRange(rango.ancho)}</p>
+            <p className="font-semibold text-foreground text-sm">{formatRange(range.width)}</p>
           </div>
           <div>
             <p className="mb-1 font-medium text-muted-foreground text-sm">Alto</p>
-            <p className="font-semibold text-foreground text-sm">{formatRange(rango.alto)}</p>
+            <p className="font-semibold text-foreground text-sm">{formatRange(range.height)}</p>
           </div>
         </div>
 
         <div>
           <p className="mb-2 font-medium text-muted-foreground text-sm">Vidrios compatibles</p>
           <div className="flex flex-wrap gap-1.5">
-            {compatibilidadesVidrio.slice(0, MAX_VISIBLE_VIDRIOS).map((vidrio) => (
-              <Badge className="font-normal text-xs" key={vidrio.id} variant="outline">
-                {vidrio.nombre}
+            {compatibleGlassTypes.slice(0, MAX_VISIBLE_GLASS_TYPES).map((glassType) => (
+              <Badge className="font-normal text-xs" key={glassType.id} variant="outline">
+                {glassType.name}
               </Badge>
             ))}
-            {compatibilidadesVidrio.length > MAX_VISIBLE_VIDRIOS && (
+            {compatibleGlassTypes.length > MAX_VISIBLE_GLASS_TYPES && (
               <Badge className="font-normal text-xs" variant="outline">
-                +{compatibilidadesVidrio.length - MAX_VISIBLE_VIDRIOS} más
+                +{compatibleGlassTypes.length - MAX_VISIBLE_GLASS_TYPES} más
               </Badge>
             )}
           </div>

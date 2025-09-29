@@ -1,6 +1,6 @@
 'use client';
 
-// biome-ignore lint/performance/noNamespaceImport: <explanation>
+// biome-ignore lint/performance/noNamespaceImport: Is Shadcn UI pattern
 import * as LabelPrimitive from '@radix-ui/react-label';
 import type * as React from 'react';
 
