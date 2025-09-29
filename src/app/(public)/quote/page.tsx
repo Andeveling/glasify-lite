@@ -33,6 +33,8 @@ export default function QuotePage() {
 
   const [quoteItems, setQuoteItems] = useState<QuoteItem[]>([]);
   const [selectedModelId, setSelectedModelId] = useState<string>(preselectedModelId || '');
+  // Use a counter for stable IDs instead of Date.now()
+  const [itemIdCounter, setItemIdCounter] = useState(1);
 
   const maxVisibleItems = 3;
   const idSuffixLength = 3;
@@ -72,7 +74,7 @@ export default function QuotePage() {
         glassId: item.vidrioId,
         glassTypeName: `Vidrio ${item.vidrioId.slice(-idSuffixLength)}`,
         heightMm: item.altoMm,
-        id: `temp-${Date.now()}`,
+        id: `temp-${itemIdCounter}`,
         modelId: item.modeloId,
         modelName: model?.name || 'Modelo desconocido',
         quantity: item.cantidad,
@@ -86,8 +88,9 @@ export default function QuotePage() {
       };
 
       setQuoteItems((prev) => [...prev, newItem]);
+      setItemIdCounter((prev) => prev + 1);
     },
-    [models]
+    [models, itemIdCounter]
   );
 
   // Adapter function to convert English PriceCalculator output to Spanish handleAddToQuote input

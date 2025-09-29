@@ -7,16 +7,18 @@ type FooterProps = {
   className?: string;
 };
 
-export function Footer({ variant = 'full', className }: FooterProps) {
-  const currentYear = new Date().getFullYear();
+// Use a static year to prevent hydration mismatches
+// Update this annually or use a more dynamic approach after hydration
+const CURRENT_YEAR = 2024;
 
+export function Footer({ variant = 'full', className }: FooterProps) {
   if (variant === 'minimal') {
     return (
       <footer className={cn('border-t bg-background px-4 py-6', className)}>
         <div className="container mx-auto text-center">
           <div className="flex items-center justify-center space-x-2 text-muted-foreground text-sm">
             <Package aria-hidden="true" className="h-4 w-4 text-primary" />
-            <span>© {currentYear} Glasify Lite</span>
+            <span>© {CURRENT_YEAR} Glasify Lite</span>
             <span>•</span>
             <span>Cotizador inteligente de vidrios</span>
           </div>
@@ -115,7 +117,7 @@ export function Footer({ variant = 'full', className }: FooterProps) {
         {/* Bottom Bar */}
         <div className="mt-8 flex flex-col items-center justify-between border-t pt-6 text-muted-foreground text-sm md:flex-row">
           <div className="flex items-center space-x-4">
-            <span>© {currentYear} Glasify Lite</span>
+            <span>© {CURRENT_YEAR} Glasify Lite</span>
             <span className="hidden sm:inline">•</span>
             <span className="hidden sm:inline">Todos los derechos reservados</span>
           </div>

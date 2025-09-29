@@ -39,8 +39,12 @@ const firaCode = Fira_Code({
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html className={cn(geist.variable, inter.variable, lora.variable, firaCode.variable)} lang="es">
-      <body>
+    <html
+      className={cn(geist.variable, inter.variable, lora.variable, firaCode.variable)}
+      lang="es"
+      suppressHydrationWarning
+    >
+      <body suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
           <TRPCReactProvider>{children}</TRPCReactProvider>
         </ThemeProvider>

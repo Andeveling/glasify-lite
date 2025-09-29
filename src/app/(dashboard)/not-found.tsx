@@ -144,7 +144,9 @@ export default function DashboardNotFound() {
                     </div>
                     <div className="flex justify-between">
                       <span>Timestamp:</span>
-                      <span className="font-mono">{new Date().toLocaleString('es-AR')}</span>
+                      <span className="font-mono" suppressHydrationWarning>
+                        {typeof window !== 'undefined' ? new Date().toLocaleString('es-AR') : '---'}
+                      </span>
                     </div>
                   </div>
                 </div>

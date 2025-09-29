@@ -1,32 +1,35 @@
-import NextAuth from 'next-auth';
+import { type NextRequest, NextResponse } from 'next/server';
 
-import { authConfig } from '@/server/auth/config';
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
-const { auth } = NextAuth(authConfig);
+  // Check if user has auth session token
+  const sessionToken =
+    request.cookies.get('authjs.session-token') || request.cookies.get('__Secure-authjs.session-token');
 
-export default auth((req) => {
-  const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
+  const isLoggedIn = !!sessionToken;
 
   // Protected routes that require authentication
-  const isProtectedRoute = nextUrl.pathname.startsWith('/dashboard');
+  const isProtectedRoute = pathname.startsWith('/dashboard');
 
   // Auth routes
-  const isAuthRoute = nextUrl.pathname.startsWith('/signin');
+  const isAuthRoute = pathname.startsWith('/signin');
 
   // If trying to access protected route without being logged in
   if (isProtectedRoute && !isLoggedIn) {
-    return Response.redirect(new URL('/signin', nextUrl));
+    const signinUrl = new URL('/signin', request.url);
+    signinUrl.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(signinUrl);
   }
 
   // If logged in and trying to access signin page, redirect to dashboard
   if (isAuthRoute && isLoggedIn) {
-    return Response.redirect(new URL('/dashboard', nextUrl));
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
   // Allow all other requests to continue
-  return;
-});
+  return NextResponse.next();
+}
 
 // Configure which routes to run middleware on
 export const config = {
