@@ -56,6 +56,12 @@
 - [ ] TypeScript strict mode enabled, no `any` types in production code
 - [ ] Prisma schemas with proper type generation
 - [ ] Zod validation for all API endpoints and user inputs
+- [ ] Schemas centralized in tRPC routers, no frontend/backend duplication
+
+### Form State Management
+- [ ] React Hook Form with Zod resolvers planned for all complex forms
+- [ ] Form schemas derived from tRPC input schemas using z.infer/omit/pick
+- [ ] Native HTML submission limited to simple search/filter forms only
 
 ### Validation at Boundaries
 - [ ] Server-side validation for all user inputs (dimensions, compatibility)
