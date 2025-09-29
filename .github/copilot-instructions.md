@@ -12,6 +12,9 @@ Glasify Lite es una aplicación web para cotización inteligente de productos de
   - `fix: correct pricing formula for tempered glass`
   - `docs: update API documentation`
 
+### Important
+- Never use Spanish in code, comments, or commit messages only in UI text and user-facing content.
+
 ### Naming Conventions
 - **Files**: kebab-case (`quote-calculator.ts`, `glass-type-selector.tsx`)
 - **Components**: PascalCase (`QuoteForm`, `GlassTypeSelector`)  
@@ -38,9 +41,9 @@ UI text, error messages, and user-facing content must be in Spanish (es-LA):
 - **Database**: PostgreSQL with Prisma ORM
 - **API**: tRPC for type-safe APIs
 - **Authentication**: NextAuth.js v5
-- **Styling**: TailwindCSS v4 with shadcn/ui components
+- **Styling**: TailwindCSS v4 with Shadcn/ui components
 - **State**: TanStack Query (React Query) v5
-- **Forms**: Native React with Zod validation
+- **Forms**: React Hook Form use `/src/components/ui/form.tsx` Shadcn integration with ZodResolver validation
 
 ### Project Structure
 ```
