@@ -42,7 +42,7 @@ export const modelSummaryOutput = z.object({
   minHeightMm: z.number(),
   minWidthMm: z.number(),
   name: z.string(),
-  status: z.enum(['draft', 'published']),
+  status: z.enum([ 'draft', 'published' ]),
   updatedAt: z.date(),
 });
 
@@ -99,6 +99,12 @@ export const catalogRouter = createTRPCRouter({
             costPerMmWidth: true,
             createdAt: true,
             id: true,
+            manufacturer: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
             maxHeightMm: true,
             maxWidthMm: true,
             minHeightMm: true,
