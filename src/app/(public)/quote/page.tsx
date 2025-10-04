@@ -67,7 +67,7 @@ export default function QuotePage() {
       cantidad: number;
       subtotal: string;
     }) => {
-      const model = models?.find((m) => m.id === item.modeloId);
+      const model = models?.items.find((m) => m.id === item.modeloId);
       const subtotalNumber = Number.parseFloat(item.subtotal.replace(/[^0-9.-]+/g, ''));
 
       const newItem: QuoteItem = {
@@ -121,7 +121,7 @@ export default function QuotePage() {
   );
 
   const totalQuoteAmount = quoteItems.reduce((sum, item) => sum + item.subtotal, 0);
-  const selectedModel = models?.find((m) => m.id === selectedModelId);
+  const selectedModel = models?.items.find((m) => m.id === selectedModelId);
 
   // Mock services data - in real app this would come from API
   const mockServices = [
@@ -186,7 +186,7 @@ export default function QuotePage() {
             <CardContent>
               <div className="space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
-                  {models?.slice(0, maxModelPreview).map((model) => (
+                  {models?.items.slice(0, maxModelPreview).map((model) => (
                     <Card
                       className={`cursor-pointer transition-all ${
                         selectedModelId === model.id ? 'border-primary bg-primary/5' : 'hover:border-primary/50'
@@ -244,7 +244,7 @@ export default function QuotePage() {
             </Card>
           )}
 
-          {!selectedModel && models && models.length === 0 && (
+          {!selectedModel && models && models.items.length === 0 && (
             <Card>
               <CardContent className="py-8 text-center">
                 <p className="text-muted-foreground">No hay modelos disponibles para cotización en este momento.</p>

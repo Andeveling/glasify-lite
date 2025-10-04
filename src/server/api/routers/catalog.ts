@@ -2,12 +2,27 @@ import { z } from 'zod';
 import logger from '@/lib/logger';
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
 
+// Constants
+const DEFAULT_PAGE_LIMIT = 20;
+const MIN_PAGE_LIMIT = 1;
+const MAX_PAGE_LIMIT = 100;
+
 // Input schemas
 export const listModelsInput = z.object({
+  limit: z.number().min(MIN_PAGE_LIMIT).max(MAX_PAGE_LIMIT).default(DEFAULT_PAGE_LIMIT),
   manufacturerId: z.string().cuid('ID del fabricante debe ser válido'),
+  page: z.number().min(1).default(1),
+  search: z.string().optional(),
 });
 
 // Output schemas
+export const manufacturerOutput = z.object({
+  currency: z.string(),
+  id: z.string(),
+  name: z.string(),
+  quoteValidityDays: z.number(),
+});
+
 export const modelSummaryOutput = z.object({
   accessoryPrice: z.number().nullable(),
   basePrice: z.number(),
@@ -25,18 +40,82 @@ export const modelSummaryOutput = z.object({
   updatedAt: z.date(),
 });
 
-export const listModelsOutput = z.array(modelSummaryOutput);
+export const listModelsOutput = z.object({
+  items: z.array(modelSummaryOutput),
+  total: z.number(),
+});
 
 export const catalogRouter = createTRPCRouter({
+  'get-default-manufacturer': publicProcedure.output(manufacturerOutput).query(async ({ ctx }) => {
+    try {
+      logger.info('Fetching default manufacturer');
+
+      // Get the first manufacturer ordered by creation date
+      const manufacturer = await ctx.db.manufacturer.findFirst({
+        orderBy: {
+          createdAt: 'asc',
+        },
+        select: {
+          currency: true,
+          id: true,
+          name: true,
+          quoteValidityDays: true,
+        },
+      });
+
+      if (!manufacturer) {
+        logger.error('No manufacturers found in database');
+        throw new Error('No hay fabricantes disponibles en el sistema.');
+      }
+
+      logger.info('Successfully retrieved default manufacturer', {
+        id: manufacturer.id,
+        name: manufacturer.name,
+      });
+
+      return manufacturer;
+    } catch (error) {
+      logger.error('Error fetching default manufacturer', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+
+      throw new Error('No se pudo obtener el fabricante por defecto. Intente nuevamente.');
+    }
+  }),
+
   'list-models': publicProcedure
     .input(listModelsInput)
     .output(listModelsOutput)
     .query(async ({ ctx, input }) => {
       try {
         logger.info('Listing models for manufacturer', {
+          limit: input.limit,
           manufacturerId: input.manufacturerId,
+          page: input.page,
+          search: input.search,
         });
 
+        // Build where clause with filters
+        const whereClause = {
+          manufacturerId: input.manufacturerId,
+          ...(input.search && {
+            name: {
+              contains: input.search,
+              mode: 'insensitive' as const,
+            },
+          }),
+          status: 'published' as const, // Only show published models
+        };
+
+        // Get total count for pagination
+        const total = await ctx.db.model.count({
+          where: whereClause,
+        });
+
+        // Calculate skip based on page
+        const skip = (input.page - 1) * input.limit;
+
+        // Fetch models with offset-based pagination
         const models = await ctx.db.model.findMany({
           orderBy: {
             name: 'asc',
@@ -57,10 +136,9 @@ export const catalogRouter = createTRPCRouter({
             status: true,
             updatedAt: true,
           },
-          where: {
-            manufacturerId: input.manufacturerId,
-            status: 'published', // Only show published models
-          },
+          skip,
+          take: input.limit,
+          where: whereClause,
         });
 
         // Convert Decimal fields to numbers for JSON serialization
@@ -75,9 +153,14 @@ export const catalogRouter = createTRPCRouter({
         logger.info('Successfully retrieved models', {
           count: serializedModels.length,
           manufacturerId: input.manufacturerId,
+          page: input.page,
+          total,
         });
 
-        return serializedModels;
+        return {
+          items: serializedModels,
+          total,
+        };
       } catch (error) {
         logger.error('Error listing models', {
           error: error instanceof Error ? error.message : 'Unknown error',

@@ -2,6 +2,7 @@
 
 import { ArrowLeft, DollarSign, Eye, Ruler, Shield } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { use } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,24 +11,21 @@ import { formatCurrency } from '@/lib/utils';
 import { api } from '@/trpc/react';
 
 type ModelDetailPageProps = {
-  params: {
+  params: Promise<{
     modelId: string;
-  };
+  }>;
 };
 
 export default function ModelDetailPage({ params }: ModelDetailPageProps) {
   const router = useRouter();
-  const { modelId } = params;
+  const unwrappedParams = use(params);
+  const { modelId } = unwrappedParams;
 
   const glassTypeSuffixLength = 3;
 
   // For now, we'll mock the data since the API doesn't have a single model endpoint
   // In a real implementation, this would be api.catalog['get-model'].useQuery({ modelId })
-  const {
-    data: models,
-    isLoading,
-    error,
-  } = api.catalog['list-models'].useQuery(
+  const { data, isLoading, error } = api.catalog['list-models'].useQuery(
     { manufacturerId: 'cm1l7vnqj000012oxnbhg9abc' }, // Default manufacturer
     {
       refetchOnWindowFocus: false,
@@ -36,7 +34,7 @@ export default function ModelDetailPage({ params }: ModelDetailPageProps) {
   );
 
   // Find the specific model
-  const model = models?.find((m) => m.id === modelId);
+  const model = data?.items.find((m) => m.id === modelId);
 
   const handleGoBack = () => {
     router.back();
