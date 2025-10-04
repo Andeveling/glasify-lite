@@ -12,16 +12,20 @@ export function CatalogSkeleton() {
   const skeletonItemsCount = 8;
 
   return (
-    <main>
-      <div className="mb-6 flex items-center justify-between">
+    <div className="space-y-8">
+      {/* Results count skeleton - paridad visual */}
+      <div>
         <Skeleton className="h-6 w-32" />
       </div>
 
-      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Skeleton grid - igual que CatalogGrid */}
+      <ul aria-label="Cargando productos..." className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {generateStableKeyedArray(skeletonItemsCount, 'catalog-skeleton').map((item) => (
-          <ModelCardSkeleton key={item.key} />
+          <li key={item.key}>
+            <ModelCardSkeleton />
+          </li>
         ))}
-      </div>
-    </main>
+      </ul>
+    </div>
   );
 }

@@ -31,6 +31,12 @@ export const modelSummaryOutput = z.object({
   costPerMmWidth: z.number(),
   createdAt: z.date(),
   id: z.string(),
+  manufacturer: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+    })
+    .nullable(),
   maxHeightMm: z.number(),
   maxWidthMm: z.number(),
   minHeightMm: z.number(),
