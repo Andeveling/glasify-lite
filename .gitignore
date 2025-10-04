@@ -51,7 +51,7 @@ logs/
 
 # Testing - Playwright
 playwright-report/
-.playwright-mcp/glasify-catalog-new-design.png
 .playwright-mcp/
-playwright-report/
 test-results/
+**/test-results/
+**/playwright-report/

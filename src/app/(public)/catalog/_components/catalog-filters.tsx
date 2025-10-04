@@ -1,7 +1,7 @@
 'use client';
 
 import { ArrowDownAZ, ArrowDownZA, ArrowUpDown, Building2, Filter, SortAsc, SortDesc, X } from 'lucide-react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import ActiveFilterBadges from './active-filter-badges';
+import ActiveSearchParameters from './active-filter-badges';
 import { ResultCount } from './result-count';
 
 type CatalogFiltersProps = {
@@ -25,6 +25,10 @@ type CatalogFiltersProps = {
   showControls?: boolean;
   showBadges?: boolean;
   showResultCount?: boolean;
+  // Receive current search params as props to avoid multiple useSearchParams() calls
+  currentManufacturer?: string;
+  currentSort?: string;
+  currentSearchQuery?: string;
 };
 
 /**
@@ -38,8 +42,12 @@ type CatalogFiltersProps = {
  * - Dependency Inversion: Delegates to specialized components
  *
  * Composition with:
- * - ActiveFilterBadges: Displays active filter badges
+ * - ActiveSearchParameters: Displays ALL search parameters (q, sort, filters)
  * - ResultCount: Displays result count
+ *
+ * Memory Leak Fix:
+ * - Receives searchParams as props instead of calling useSearchParams()
+ * - Prevents EventEmitter memory leak warning
  *
  * Following UX best practices from Lollypop Design:
  * - Icon-first minimalist design
@@ -53,13 +61,12 @@ export function CatalogFilters({
   showControls = true,
   showBadges = true,
   showResultCount = true,
+  currentManufacturer = 'all',
+  currentSort = 'name-asc',
+  currentSearchQuery,
 }: CatalogFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  const currentManufacturer = searchParams.get('manufacturer') ?? 'all';
-  const currentSort = searchParams.get('sort') ?? 'name-asc';
 
   // Get manufacturer name for badge display
   const selectedManufacturerName = useMemo(() => {
@@ -70,10 +77,23 @@ export function CatalogFilters({
   }, [currentManufacturer, manufacturers]);
 
   // Utility to create query string following Next.js best practices
+  // Build params from current state instead of using useSearchParams()
   const createQueryString = useCallback(
     (updates: Record<string, string | null>) => {
-      const params = new URLSearchParams(searchParams?.toString());
+      const params = new URLSearchParams();
 
+      // Preserve current parameters
+      if (currentSearchQuery) {
+        params.set('q', currentSearchQuery);
+      }
+      if (currentManufacturer && currentManufacturer !== 'all') {
+        params.set('manufacturer', currentManufacturer);
+      }
+      if (currentSort && currentSort !== 'name-asc') {
+        params.set('sort', currentSort);
+      }
+
+      // Apply updates
       for (const [key, value] of Object.entries(updates)) {
         if (value === null || value === '') {
           params.delete(key);
@@ -84,7 +104,7 @@ export function CatalogFilters({
 
       return params.toString();
     },
-    [searchParams]
+    [currentSearchQuery, currentManufacturer, currentSort]
   );
 
   const handleManufacturerChange = useCallback(
@@ -115,21 +135,35 @@ export function CatalogFilters({
     handleManufacturerChange('all');
   }, [handleManufacturerChange]);
 
+  const handleRemoveSort = useCallback(() => {
+    handleSortChange('name-asc');
+  }, [handleSortChange]);
+
+  const handleRemoveSearch = useCallback(() => {
+    const queryString = createQueryString({
+      page: null, // Reset to page 1
+      q: null, // Remove search query
+    });
+
+    router.push(`${pathname}?${queryString}`);
+  }, [pathname, router, createQueryString]);
+
   const handleClearFilters = useCallback(() => {
     router.push(pathname);
   }, [pathname, router]);
 
-  const hasActiveFilters = currentManufacturer !== 'all' || currentSort !== 'name-asc';
+  const hasActiveParameters =
+    currentManufacturer !== 'all' || currentSort !== 'name-asc' || Boolean(currentSearchQuery);
 
   return (
     <div className="mb-4 space-y-4">
       {/* Filter Controls */}
       {showControls && (
         <div className="flex flex-wrap items-center justify-end gap-3">
-          {/* Clear all filters button */}
-          {hasActiveFilters && (
+          {/* Clear all parameters button */}
+          {hasActiveParameters && (
             <Button
-              aria-label="Limpiar todos los filtros"
+              aria-label="Limpiar todos los parámetros de búsqueda"
               className="gap-2"
               onClick={handleClearFilters}
               size="icon"
@@ -204,11 +238,15 @@ export function CatalogFilters({
         </div>
       )}
 
-      {/* Active Filters - Badges Section */}
+      {/* Active Search Parameters - Badges Section */}
       {showBadges && (
-        <ActiveFilterBadges
+        <ActiveSearchParameters
           onRemoveManufacturer={handleRemoveManufacturer}
+          onRemoveSearch={handleRemoveSearch}
+          onRemoveSort={handleRemoveSort}
+          searchQuery={currentSearchQuery}
           selectedManufacturerName={selectedManufacturerName}
+          sortType={currentSort}
         />
       )}
 

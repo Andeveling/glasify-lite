@@ -60,7 +60,13 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
         <CatalogHeader />
 
         {/* Nuevo layout armónico: barra de búsqueda y filtros + badges */}
-        <CatalogFilterBar manufacturers={manufacturers} searchQuery={searchQuery} totalResults={totalData.total} />
+        <CatalogFilterBar
+          currentManufacturer={manufacturerId ?? 'all'}
+          currentSort={sort}
+          manufacturers={manufacturers}
+          searchQuery={searchQuery}
+          totalResults={totalData.total}
+        />
 
         <Suspense fallback={<CatalogSkeleton />} key={`${searchQuery}-${page}-${manufacturerId}-${sort}`}>
           <CatalogContent manufacturerId={manufacturerId} page={page} searchQuery={searchQuery} sort={sort} />
