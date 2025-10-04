@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { api } from '@/trpc/react';
-import { PriceCalculator } from '../_components/quote/price-calculator';
+import { PriceCalculator } from './_components/price-calculator';
 
 type QuoteItem = {
   id: string;
