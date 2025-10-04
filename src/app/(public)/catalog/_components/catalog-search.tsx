@@ -2,7 +2,7 @@
 
 import { Search, X } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useState, useTransition } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group';
 import { Spinner } from '@/components/ui/spinner';
@@ -21,6 +21,12 @@ const TRANSITION_TIMEOUT = 300;
  * - Clean design, no visual clutter
  * - Debounced input for performance
  * - SEO-friendly URLs with Next.js navigation
+ * - Synced with URL search params (back/forward buttons)
+ *
+ * Following Next.js best practices:
+ * - useSearchParams for reading URL state
+ * - useEffect to sync input when URL changes externally
+ * - router.replace() for input changes (no history pollution)
  */
 export function CatalogSearch({ initialValue = '' }: CatalogSearchProps) {
   const router = useRouter();
@@ -28,6 +34,13 @@ export function CatalogSearch({ initialValue = '' }: CatalogSearchProps) {
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(initialValue);
   const [isPending, startTransition] = useTransition();
+
+  // Sync input value when URL search params change externally
+  // (e.g., browser back/forward buttons, direct URL changes)
+  useEffect(() => {
+    const urlQuery = searchParams.get('q') ?? '';
+    setQuery(urlQuery);
+  }, [searchParams]);
 
   // Utility to create query string following Next.js best practices
   const createQueryString = useCallback(
@@ -48,6 +61,7 @@ export function CatalogSearch({ initialValue = '' }: CatalogSearchProps) {
   );
 
   // Debounced search - wait 300ms after user stops typing
+  // Using router.replace() instead of push() to avoid polluting history
   const debouncedSearch = useDebouncedCallback((value: string) => {
     const queryString = createQueryString({
       page: null, // Reset to page 1 when searching
@@ -55,7 +69,7 @@ export function CatalogSearch({ initialValue = '' }: CatalogSearchProps) {
     });
 
     startTransition(() => {
-      router.push(`${pathname}?${queryString}`);
+      router.replace(`${pathname}?${queryString}`);
     });
   }, TRANSITION_TIMEOUT);
 
@@ -75,12 +89,12 @@ export function CatalogSearch({ initialValue = '' }: CatalogSearchProps) {
     });
 
     startTransition(() => {
-      router.push(`${pathname}?${queryString}`);
+      router.replace(`${pathname}?${queryString}`);
     });
   }, [pathname, router, createQueryString]);
 
   return (
-    <div className="mb-12">
+    <div>
       <div className="relative max-w-xl">
         <InputGroup>
           <InputGroupInput

@@ -36,14 +36,6 @@ type CatalogGridProps = {
 export function CatalogGrid({ models }: CatalogGridProps) {
   return (
     <div className="space-y-8">
-      {/* Results count - subtle and minimal */}
-      <div>
-        <h2 className="sr-only">Lista de productos</h2>
-        <p className="text-foreground/60 text-sm">
-          {models.length} {models.length === 1 ? 'producto' : 'productos'}
-        </p>
-      </div>
-
       {/* Models grid - responsive and clean */}
       <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {models.map((model) => (

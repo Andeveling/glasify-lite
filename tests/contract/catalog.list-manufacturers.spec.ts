@@ -13,7 +13,7 @@ import { testServer } from '../integration-setup';
 describe('Contract: catalog.list-manufacturers - Issue002', () => {
   it('Should_ReturnManufacturersList_When_Called_Issue002', async () => {
     // Act
-    const result = await testServer.catalog[ 'list-manufacturers' ]();
+    const result = await testServer.catalog['list-manufacturers']();
 
     // Assert
     expect(result).toBeDefined();
@@ -32,14 +32,14 @@ describe('Contract: catalog.list-manufacturers - Issue002', () => {
 
   it('Should_ReturnManufacturersSortedByName_When_Called_Issue002', async () => {
     // Act
-    const result = await testServer.catalog[ 'list-manufacturers' ]();
+    const result = await testServer.catalog['list-manufacturers']();
 
     // Assert
     if (result.length > 1) {
       // Verify ascending order by name
       for (let i = 0; i < result.length - 1; i++) {
-        const current = result[ i ];
-        const next = result[ i + 1 ];
+        const current = result[i];
+        const next = result[i + 1];
         if (current && next) {
           expect(current.name.localeCompare(next.name)).toBeLessThanOrEqual(0);
         }

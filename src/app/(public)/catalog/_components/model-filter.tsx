@@ -2,7 +2,6 @@
 
 import { Filter, Search, X } from 'lucide-react';
 import { useState } from 'react';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -170,55 +169,6 @@ export function ModelFilter({ manufacturers, types, initialFilters = {}, onFilte
           </SelectContent>
         </Select>
       </div>
-
-      {/* Active Filters Display */}
-      {hasActiveFilters && (
-        <div className="flex flex-wrap gap-2">
-          <span className="text-muted-foreground text-sm">Filtros activos:</span>
-          {searchQuery && (
-            <Badge className="text-xs" variant="secondary">
-              Búsqueda: "{searchQuery}"
-              <Button
-                aria-label="Quitar filtro de búsqueda"
-                className="ml-1 h-auto p-0 text-xs hover:bg-transparent"
-                onClick={() => handleSearchChange('')}
-                size="sm"
-                variant="ghost"
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </Badge>
-          )}
-          {selectedManufacturer && (
-            <Badge className="text-xs" variant="secondary">
-              {manufacturers.find((m) => m.id === selectedManufacturer)?.name}
-              <Button
-                aria-label="Quitar filtro de fabricante"
-                className="ml-1 h-auto p-0 text-xs hover:bg-transparent"
-                onClick={removeManufacturerFilter}
-                size="sm"
-                variant="ghost"
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </Badge>
-          )}
-          {selectedType && (
-            <Badge className="text-xs" variant="secondary">
-              {types.find((t) => t.value === selectedType)?.label}
-              <Button
-                aria-label="Quitar filtro de tipo"
-                className="ml-1 h-auto p-0 text-xs hover:bg-transparent"
-                onClick={removeTypeFilter}
-                size="sm"
-                variant="ghost"
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </Badge>
-          )}
-        </div>
-      )}
     </div>
   );
 }

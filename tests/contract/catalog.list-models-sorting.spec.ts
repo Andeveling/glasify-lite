@@ -18,7 +18,7 @@ import { testServer } from '../integration-setup';
 describe('Contract: catalog.list-models with sorting - Issue002', () => {
   it('Should_ReturnModelsSortedByName_When_SortNameAsc_Issue002', async () => {
     // Act
-    const result = await testServer.catalog[ 'list-models' ]({
+    const result = await testServer.catalog['list-models']({
       sort: 'name-asc',
     });
 
@@ -29,8 +29,8 @@ describe('Contract: catalog.list-models with sorting - Issue002', () => {
     if (result.items.length > 1) {
       // Verify ascending order by name
       for (let i = 0; i < result.items.length - 1; i++) {
-        const current = result.items[ i ];
-        const next = result.items[ i + 1 ];
+        const current = result.items[i];
+        const next = result.items[i + 1];
         if (current && next) {
           expect(current.name.localeCompare(next.name)).toBeLessThanOrEqual(0);
         }
@@ -40,7 +40,7 @@ describe('Contract: catalog.list-models with sorting - Issue002', () => {
 
   it('Should_ReturnModelsSortedByName_When_SortNameDesc_Issue002', async () => {
     // Act
-    const result = await testServer.catalog[ 'list-models' ]({
+    const result = await testServer.catalog['list-models']({
       sort: 'name-desc',
     });
 
@@ -51,8 +51,8 @@ describe('Contract: catalog.list-models with sorting - Issue002', () => {
     if (result.items.length > 1) {
       // Verify descending order by name
       for (let i = 0; i < result.items.length - 1; i++) {
-        const current = result.items[ i ];
-        const next = result.items[ i + 1 ];
+        const current = result.items[i];
+        const next = result.items[i + 1];
         if (current && next) {
           expect(current.name.localeCompare(next.name)).toBeGreaterThanOrEqual(0);
         }
@@ -62,7 +62,7 @@ describe('Contract: catalog.list-models with sorting - Issue002', () => {
 
   it('Should_ReturnModelsSortedByPrice_When_SortPriceAsc_Issue002', async () => {
     // Act
-    const result = await testServer.catalog[ 'list-models' ]({
+    const result = await testServer.catalog['list-models']({
       sort: 'price-asc',
     });
 
@@ -73,8 +73,8 @@ describe('Contract: catalog.list-models with sorting - Issue002', () => {
     if (result.items.length > 1) {
       // Verify ascending order by price
       for (let i = 0; i < result.items.length - 1; i++) {
-        const current = result.items[ i ];
-        const next = result.items[ i + 1 ];
+        const current = result.items[i];
+        const next = result.items[i + 1];
         if (current && next) {
           expect(current.basePrice).toBeLessThanOrEqual(next.basePrice);
         }
@@ -84,7 +84,7 @@ describe('Contract: catalog.list-models with sorting - Issue002', () => {
 
   it('Should_ReturnModelsSortedByPrice_When_SortPriceDesc_Issue002', async () => {
     // Act
-    const result = await testServer.catalog[ 'list-models' ]({
+    const result = await testServer.catalog['list-models']({
       sort: 'price-desc',
     });
 
@@ -95,8 +95,8 @@ describe('Contract: catalog.list-models with sorting - Issue002', () => {
     if (result.items.length > 1) {
       // Verify descending order by price
       for (let i = 0; i < result.items.length - 1; i++) {
-        const current = result.items[ i ];
-        const next = result.items[ i + 1 ];
+        const current = result.items[i];
+        const next = result.items[i + 1];
         if (current && next) {
           expect(current.basePrice).toBeGreaterThanOrEqual(next.basePrice);
         }
@@ -106,7 +106,7 @@ describe('Contract: catalog.list-models with sorting - Issue002', () => {
 
   it('Should_UseDefaultSort_When_NoSortProvided_Issue002', async () => {
     // Act
-    const result = await testServer.catalog[ 'list-models' ]({});
+    const result = await testServer.catalog['list-models']({});
 
     // Assert - default should be name-asc
     expect(result.items).toBeDefined();
@@ -115,8 +115,8 @@ describe('Contract: catalog.list-models with sorting - Issue002', () => {
     if (result.items.length > 1) {
       // Verify default ascending order by name
       for (let i = 0; i < result.items.length - 1; i++) {
-        const current = result.items[ i ];
-        const next = result.items[ i + 1 ];
+        const current = result.items[i];
+        const next = result.items[i + 1];
         if (current && next) {
           expect(current.name.localeCompare(next.name)).toBeLessThanOrEqual(0);
         }
@@ -126,16 +126,16 @@ describe('Contract: catalog.list-models with sorting - Issue002', () => {
 
   it('Should_CombineSortWithFilters_When_BothProvided_Issue002', async () => {
     // Arrange - get a manufacturer to filter by
-    const allModels = await testServer.catalog[ 'list-models' ]({});
-    if (allModels.items.length === 0 || !allModels.items[ 0 ]?.manufacturer) {
+    const allModels = await testServer.catalog['list-models']({});
+    if (allModels.items.length === 0 || !allModels.items[0]?.manufacturer) {
       // Skip test if no models or no manufacturer
       return;
     }
 
-    const manufacturerId = allModels.items[ 0 ].manufacturer.id;
+    const manufacturerId = allModels.items[0].manufacturer.id;
 
     // Act
-    const result = await testServer.catalog[ 'list-models' ]({
+    const result = await testServer.catalog['list-models']({
       manufacturerId,
       sort: 'price-desc',
     });
@@ -151,8 +151,8 @@ describe('Contract: catalog.list-models with sorting - Issue002', () => {
     // Items should be sorted by price descending
     if (result.items.length > 1) {
       for (let i = 0; i < result.items.length - 1; i++) {
-        const current = result.items[ i ];
-        const next = result.items[ i + 1 ];
+        const current = result.items[i];
+        const next = result.items[i + 1];
         if (current && next) {
           expect(current.basePrice).toBeGreaterThanOrEqual(next.basePrice);
         }

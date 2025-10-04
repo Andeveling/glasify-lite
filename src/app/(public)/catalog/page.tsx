@@ -1,9 +1,8 @@
 import { Suspense } from 'react';
 import { api } from '@/trpc/server';
 import { CatalogContent } from './_components/catalog-content';
-import { CatalogFilters } from './_components/catalog-filters';
+import { CatalogFilterBar } from './_components/catalog-filter-bar';
 import { CatalogHeader } from './_components/catalog-header';
-import { CatalogSearch } from './_components/catalog-search';
 import { CatalogSkeleton } from './_components/catalog-skeleton';
 import type { CatalogSearchParams } from './_types/catalog-params';
 import { validateCatalogParams } from './_types/catalog-params';
@@ -46,12 +45,23 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   // Fetch manufacturers for filter dropdown
   const manufacturers = await api.catalog['list-manufacturers']();
 
+  // Fetch total count for results display (lightweight query)
+  const totalData = await api.catalog['list-models']({
+    limit: 1,
+    manufacturerId,
+    page: 1,
+    search: searchQuery,
+    sort,
+  });
+
   return (
     <div className="min-h-screen">
       <div className="container mx-auto max-w-7xl px-4 py-4 md:px-6 md:py-8">
         <CatalogHeader />
-        <CatalogSearch initialValue={searchQuery} />
-        <CatalogFilters manufacturers={manufacturers} />
+
+        {/* Nuevo layout armónico: barra de búsqueda y filtros + badges */}
+        <CatalogFilterBar manufacturers={manufacturers} searchQuery={searchQuery} totalResults={totalData.total} />
+
         <Suspense fallback={<CatalogSkeleton />} key={`${searchQuery}-${page}-${manufacturerId}-${sort}`}>
           <CatalogContent manufacturerId={manufacturerId} page={page} searchQuery={searchQuery} sort={sort} />
         </Suspense>

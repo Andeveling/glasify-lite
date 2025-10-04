@@ -13,7 +13,7 @@ export const listModelsInput = z.object({
   manufacturerId: z.cuid('ID del fabricante debe ser válido').optional(),
   page: z.number().min(1).default(1),
   search: z.string().optional(),
-  sort: z.enum([ 'name-asc', 'name-desc', 'price-asc', 'price-desc' ]).default('name-asc'),
+  sort: z.enum(['name-asc', 'name-desc', 'price-asc', 'price-desc']).default('name-asc'),
 });
 
 // Output schemas
@@ -43,7 +43,7 @@ export const modelSummaryOutput = z.object({
   minHeightMm: z.number(),
   minWidthMm: z.number(),
   name: z.string(),
-  status: z.enum([ 'draft', 'published' ]),
+  status: z.enum(['draft', 'published']),
   updatedAt: z.date(),
 });
 
