@@ -47,7 +47,7 @@ export async function CatalogContent({ manufacturerId, manufacturerName, page, s
     // Render models grid
     return (
       <main>
-        <CatalogGrid manufacturer={manufacturerName} models={models} total={total} />
+        <CatalogGrid manufacturer={manufacturerName} models={models} />
 
         {/* Pagination - only show if more than one page */}
         {totalPages > 1 && <CatalogPagination currentPage={page} totalPages={totalPages} />}

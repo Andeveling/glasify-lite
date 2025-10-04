@@ -2,16 +2,16 @@
  * Catalog Header Component
  * Issue: #002-ui-ux-requirements
  *
- * Presentational component - displays catalog title and description.
- * Pure component with no business logic.
+ * Minimalist header inspired by Saleor Storefront
+ * Clean typography, generous spacing, professional tone
  */
 export function CatalogHeader() {
   return (
-    <header className="mb-8">
-      <h1 className="mb-2 font-bold text-3xl text-foreground">Catálogo de Vidrios</h1>
-      <p className="text-lg text-muted-foreground">
-        Explore nuestra amplia selección de modelos de vidrio para encontrar la solución perfecta para su proyecto.
+    <div className="mb-12 space-y-2">
+      <h2 className="font-semibold text-2xl tracking-tight">Catálogo de Vidrios</h2>
+      <p className="text-foreground/60 text-sm">
+        Explore nuestra selección de productos de vidrio para encontrar la solución perfecta para su proyecto.
       </p>
-    </header>
+    </div>
   );
 }

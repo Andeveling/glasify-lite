@@ -5,9 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
  * @returns A unique string suitable for React keys
  */
 export function generateKey() {
-  return uuidv4();  // Cambiado de Math.random() para mayor unicidad
+  return uuidv4(); // Cambiado de Math.random() para mayor unicidad
 }
-
 
 /**
  * Creates an array of a specific length with unique keys for React rendering

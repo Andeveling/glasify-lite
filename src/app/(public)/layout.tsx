@@ -3,29 +3,32 @@ import { Button } from '@/components/ui/button';
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col">
-      {/* Main Navigation */}
-      <header className="border-border border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
-          <div className="flex gap-6 md:gap-10">
-            <Link className="flex items-center space-x-2" href="/catalog">
-              <span className="inline-block font-bold">Glasify</span>
-            </Link>
-            <nav className="flex gap-6">
-              <Button asChild size="sm" variant="ghost">
-                <Link href="/catalog">Catálogo</Link>
-              </Button>
-              <Button asChild size="sm" variant="ghost">
-                <Link href="/quote">Cotizar</Link>
-              </Button>
-            </nav>
-          </div>
-          <div className="flex flex-1 items-center justify-end space-x-4">
-            <nav className="flex items-center space-x-2">
-              <Button asChild size="sm" variant="outline">
+    <div className="mx-auto flex min-h-screen flex-col">
+      {/* Minimalist Navigation - Saleor Style */}
+      <header className="sticky top-0 z-50 border-border border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto max-w-7xl">
+          <div className="flex h-16 items-center justify-between px-4 md:px-6">
+            {/* Logo & Navigation */}
+            <div className="flex items-center gap-8">
+              <Link className="flex items-center" href="/catalog">
+                <span className="font-bold text-xl tracking-tight">GLASIFY</span>
+              </Link>
+              <nav aria-label="Navegación principal" className="hidden items-center gap-6 md:flex">
+                <Link className="text-foreground/80 text-sm transition-colors hover:text-foreground" href="/catalog">
+                  Todos los productos
+                </Link>
+                <Link className="text-foreground/80 text-sm transition-colors hover:text-foreground" href="/quote">
+                  Cotizar
+                </Link>
+              </nav>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-4">
+              <Button asChild className="text-sm" size="sm" variant="ghost">
                 <Link href="/signin">Iniciar Sesión</Link>
               </Button>
-            </nav>
+            </div>
           </div>
         </div>
       </header>
@@ -33,21 +36,52 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       {/* Main Content */}
       <main className="flex-1">{children}</main>
 
-      {/* Footer */}
-      <footer className="border-border border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex flex-col items-center justify-between gap-4 py-10 md:h-24 md:flex-row md:py-0">
-          <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-            <p className="text-center text-muted-foreground text-sm leading-loose md:text-left">
-              © 2025 Glasify Lite. Cotizador inteligente de productos de vidrio.
-            </p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Button asChild size="sm" variant="ghost">
-              <Link href="/catalog">Catálogo</Link>
-            </Button>
-            <Button asChild size="sm" variant="ghost">
-              <Link href="/quote">Cotizar</Link>
-            </Button>
+      {/* Minimalist Footer - Saleor Style */}
+      <footer className="border-border border-t bg-background">
+        <div className="container mx-auto px-4 py-12 md:px-6">
+          <div className="grid gap-8 md:grid-cols-3">
+            {/* Company Info */}
+            <div>
+              <h3 className="mb-4 font-semibold text-sm">Glasify</h3>
+              <ul className="space-y-2 text-foreground/60 text-sm">
+                <li>
+                  <Link className="transition-colors hover:text-foreground" href="/catalog">
+                    Acerca de
+                  </Link>
+                </li>
+                <li>
+                  <Link className="transition-colors hover:text-foreground" href="/catalog">
+                    Documentación
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Products */}
+            <div>
+              <h3 className="mb-4 font-semibold text-sm">Productos</h3>
+              <ul className="space-y-2 text-foreground/60 text-sm">
+                <li>
+                  <Link className="transition-colors hover:text-foreground" href="/catalog">
+                    Catálogo completo
+                  </Link>
+                </li>
+                <li>
+                  <Link className="transition-colors hover:text-foreground" href="/quote">
+                    Cotizador
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div>
+              <p className="text-foreground/60 text-sm">
+                © 2025 Glasify Lite
+                <br />
+                Cotizador inteligente de productos de vidrio para arquitectos e ingenieros.
+              </p>
+            </div>
           </div>
         </div>
       </footer>

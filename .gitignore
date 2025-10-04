@@ -49,3 +49,5 @@ yarn-error.log*
 .github/instructions/codacy.instructions.md
 playwright-report/index.html
 playwright-report/data/80e203c93375b55b3e7be4445ecfa2f621bcef04.md
+.playwright-mcp/glasify-catalog-new-design.png
+.playwright-mcp/saleor-storefront-reference.png

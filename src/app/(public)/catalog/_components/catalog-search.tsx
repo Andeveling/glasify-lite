@@ -17,9 +17,10 @@ const TRANSITION_TIMEOUT = 300;
  * Catalog Search Component
  * Issue: #002-ui-ux-requirements
  *
- * Handles search input with debouncing.
- * Uses Next.js navigation for SEO-friendly URLs.
- * Only this component is interactive (client-side).
+ * Minimalist search bar inspired by Saleor Storefront
+ * - Clean design, no visual clutter
+ * - Debounced input for performance
+ * - SEO-friendly URLs with Next.js navigation
  */
 export function CatalogSearch({ initialValue = '' }: CatalogSearchProps) {
   const router = useRouter();
@@ -66,19 +67,19 @@ export function CatalogSearch({ initialValue = '' }: CatalogSearchProps) {
   }, [pathname, router, searchParams]);
 
   return (
-    <section aria-label="Búsqueda de modelos" className="mb-8">
-      <div className="relative max-w-md">
-        <Search className="-translate-y-1/2 absolute top-1/2 left-3 size-4 text-muted-foreground" />
+    <div className="mb-12">
+      <div className="relative max-w-xl">
+        <Search className="-translate-y-1/2 absolute top-1/2 left-3 size-4 text-foreground/40" />
         <Input
-          className="pr-9 pl-9"
+          className="h-11 border-foreground/20 pr-9 pl-10 transition-colors focus-visible:border-foreground/40 focus-visible:ring-0"
           onChange={(e) => handleSearch(e.target.value)}
-          placeholder="Buscar modelos..."
+          placeholder="Buscar productos..."
           type="search"
           value={query}
         />
         {query && (
           <Button
-            className="-translate-y-1/2 absolute top-1/2 right-1 size-7"
+            className="-translate-y-1/2 absolute top-1/2 right-1 size-8"
             onClick={handleClear}
             size="icon"
             variant="ghost"
@@ -88,11 +89,11 @@ export function CatalogSearch({ initialValue = '' }: CatalogSearchProps) {
           </Button>
         )}
         {isPending && (
-          <div className="-translate-y-1/2 absolute top-1/2 right-9">
-            <div className="size-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <div className="-translate-y-1/2 absolute top-1/2 right-10">
+            <div className="size-4 animate-spin rounded-full border-2 border-foreground/20 border-t-foreground" />
           </div>
         )}
       </div>
-    </section>
+    </div>
   );
 }

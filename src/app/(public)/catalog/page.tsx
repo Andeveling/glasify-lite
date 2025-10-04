@@ -18,6 +18,9 @@ type CatalogPageProps = {
  * Catalog Page - Server Component with ISR
  * Issue: #002-ui-ux-requirements
  *
+ * Minimalist design inspired by Saleor Storefront
+ * Clean layout, generous spacing, professional typography
+ *
  * SSG/ISR Strategy:
  * - Models are fetched server-side and rendered as static HTML
  * - Page revalidates every 3600 seconds (1 hour)
@@ -43,21 +46,23 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   const manufacturer = await api.catalog['get-default-manufacturer']();
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <CatalogHeader />
+    <div className="min-h-screen">
+      <div className="container mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-12">
+        <CatalogHeader />
 
-      {/* Search component - only interactive part */}
-      <CatalogSearch initialValue={searchQuery} />
+        {/* Search component - only interactive part */}
+        <CatalogSearch initialValue={searchQuery} />
 
-      {/* Content with Suspense for streaming */}
-      <Suspense fallback={<CatalogSkeleton />} key={`${searchQuery}-${page}`}>
-        <CatalogContent
-          manufacturerId={manufacturer.id}
-          manufacturerName={manufacturer.name}
-          page={page}
-          searchQuery={searchQuery}
-        />
-      </Suspense>
+        {/* Content with Suspense for streaming */}
+        <Suspense fallback={<CatalogSkeleton />} key={`${searchQuery}-${page}`}>
+          <CatalogContent
+            manufacturerId={manufacturer.id}
+            manufacturerName={manufacturer.name}
+            page={page}
+            searchQuery={searchQuery}
+          />
+        </Suspense>
+      </div>
     </div>
   );
 }

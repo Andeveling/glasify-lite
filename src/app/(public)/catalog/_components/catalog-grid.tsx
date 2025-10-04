@@ -28,36 +28,38 @@ type CatalogGridProps = {
  * Catalog Grid Component
  * Issue: #002-ui-ux-requirements
  *
- * Server Component that displays models in a responsive grid.
- * Pure presentation component with no client-side logic.
+ * Minimalist grid layout inspired by Saleor Storefront
+ * Clean spacing, clear hierarchy, professional presentation
  */
-export function CatalogGrid({ manufacturer, models, total }: CatalogGridProps) {
+export function CatalogGrid({ manufacturer, models }: Omit<CatalogGridProps, 'total'>) {
   return (
-    <>
-      {/* Results count */}
-      <div className="mb-6">
-        <p className="text-muted-foreground text-sm">
-          Mostrando {models.length} de {total} {total === 1 ? 'modelo' : 'modelos'}
+    <div className="space-y-8">
+      {/* Results count - subtle and minimal */}
+      <div>
+        <h2 className="sr-only">Lista de productos</h2>
+        <p className="text-foreground/60 text-sm">
+          {models.length} {models.length === 1 ? 'producto' : 'productos'}
         </p>
       </div>
 
-      {/* Models grid */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {/* Models grid - responsive and clean */}
+      <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {models.map((model) => (
-          <ModelCard
-            basePrice={formatCurrency(model.basePrice)}
-            compatibleGlassTypes={[]}
-            id={model.id}
-            key={model.id}
-            manufacturer={manufacturer}
-            name={model.name}
-            range={{
-              height: [model.minHeightMm, model.maxHeightMm],
-              width: [model.minWidthMm, model.maxWidthMm],
-            }}
-          />
+          <li key={model.id}>
+            <ModelCard
+              basePrice={formatCurrency(model.basePrice)}
+              compatibleGlassTypes={[]}
+              id={model.id}
+              manufacturer={manufacturer}
+              name={model.name}
+              range={{
+                height: [model.minHeightMm, model.maxHeightMm],
+                width: [model.minWidthMm, model.maxWidthMm],
+              }}
+            />
+          </li>
         ))}
-      </div>
-    </>
+      </ul>
+    </div>
   );
 }
