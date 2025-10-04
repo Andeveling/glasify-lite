@@ -204,14 +204,14 @@ describe('Integration: Quickstart E2E Flow', () => {
     };
 
     // Act: List available models
-    const models = await testServer.catalog['list-models'](listModelsPayload);
+    const result = await testServer.catalog['list-models'](listModelsPayload);
 
     // Assert: Should include our published model
-    expect(models).toHaveLength(1);
-    expect(models[0]?.id).toBe(modelId);
-    expect(models[0]?.name).toBe('Ventana Premium E2E Test');
-    expect(models[0]?.status).toBe('published');
-    expect(models[0]?.compatibleGlassTypeIds).toContain(glassTypeId);
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0]?.id).toBe(modelId);
+    expect(result.items[0]?.name).toBe('Ventana Premium E2E Test');
+    expect(result.items[0]?.status).toBe('published');
+    expect(result.items[0]?.compatibleGlassTypeIds).toContain(glassTypeId);
   });
 
   it('Integration Performance: Complete flow should complete quickly', async () => {

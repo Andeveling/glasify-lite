@@ -17,11 +17,12 @@ describe('Integration: Catalog Navigation Flow', () => {
 
     // Assert 1: Should return published models
     expect(catalogModels).toBeDefined();
-    expect(Array.isArray(catalogModels)).toBe(true);
+    expect(catalogModels.items).toBeDefined();
+    expect(Array.isArray(catalogModels.items)).toBe(true);
 
     // Act 2: Navigate to model details (simulate catalog navigation)
-    if (catalogModels.length > 0) {
-      const firstModel = catalogModels[0];
+    if (catalogModels.items.length > 0) {
+      const firstModel = catalogModels.items[0];
       if (!firstModel) {
         throw new Error('Model should exist');
       }
@@ -52,7 +53,7 @@ describe('Integration: Catalog Navigation Flow', () => {
     });
 
     // Assert 5: No models for non-existent manufacturer
-    expect(emptyResults).toEqual([]);
+    expect(emptyResults.items).toEqual([]);
   });
 
   it('should handle catalog performance requirements', async () => {
@@ -75,15 +76,16 @@ describe('Integration: Catalog Navigation Flow', () => {
     const manufacturerId = 'cm1manufacturer123456789ab';
 
     // Act: Get all models for manufacturer
-    const allModels = await testServer.catalog['list-models']({
+    const result = await testServer.catalog['list-models']({
       manufacturerId,
     });
 
     // Assert: Should return consistent results
-    expect(allModels).toBeDefined();
+    expect(result).toBeDefined();
+    expect(result.items).toBeDefined();
 
     // For each model, ensure it's properly formatted for UI display
-    for (const model of allModels) {
+    for (const model of result.items) {
       expect(model.id).toMatch(VALID_CUID_REGEX); // Valid CUID
       expect(typeof model.name).toBe('string');
       expect(model.name.length).toBeGreaterThan(0);

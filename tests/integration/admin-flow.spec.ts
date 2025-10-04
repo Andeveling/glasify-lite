@@ -68,15 +68,16 @@ describe('Integration: Admin Panel Access Flow', () => {
     expect(updateResult.status).toBe('published');
 
     // Act 3: Verify model appears in catalog
-    const catalogModels = await testServer.catalog['list-models']({
+    const catalogResult = await testServer.catalog['list-models']({
       manufacturerId: glassModelData.manufacturerId,
     });
 
     // Assert 3: Model available in public catalog with updated data
-    expect(catalogModels).toBeDefined();
-    expect(Array.isArray(catalogModels)).toBe(true);
+    expect(catalogResult).toBeDefined();
+    expect(catalogResult.items).toBeDefined();
+    expect(Array.isArray(catalogResult.items)).toBe(true);
 
-    const createdModel = catalogModels.find((model) => model.id === createResult.modelId);
+    const createdModel = catalogResult.items.find((model) => model.id === createResult.modelId);
     expect(createdModel).toBeDefined();
 
     if (createdModel) {
@@ -113,11 +114,11 @@ describe('Integration: Admin Panel Access Flow', () => {
     expect(result.message).toContain('creado exitosamente');
 
     // Verify model appears in catalog (even draft models should be testable)
-    const catalogModels = await testServer.catalog['list-models']({
+    const catalogResult = await testServer.catalog['list-models']({
       manufacturerId: modelData.manufacturerId,
     });
 
-    const constraintModel = catalogModels.find((model) => model.id === result.modelId);
+    const constraintModel = catalogResult.items.find((model) => model.id === result.modelId);
     expect(constraintModel).toBeDefined();
 
     if (constraintModel) {
@@ -163,13 +164,13 @@ describe('Integration: Admin Panel Access Flow', () => {
     }
 
     // Verify all models exist in catalog
-    const catalogModels = await testServer.catalog['list-models']({
+    const catalogResult = await testServer.catalog['list-models']({
       manufacturerId,
     });
 
     // Assert all created models are in catalog
     for (const modelId of modelIds) {
-      const catalogModel = catalogModels.find((model) => model.id === modelId);
+      const catalogModel = catalogResult.items.find((model) => model.id === modelId);
       expect(catalogModel).toBeDefined();
 
       if (catalogModel) {
