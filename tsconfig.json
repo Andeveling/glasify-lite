@@ -32,8 +32,7 @@
       "@server/*": ["./src/server/*"],
       "@styles/*": ["./src/styles/*"]
     },
-    "strictNullChecks": true,
-    "ignoreDeprecations": "6.0"
+    "strictNullChecks": true
   },
   "include": [
     "next-env.d.ts",

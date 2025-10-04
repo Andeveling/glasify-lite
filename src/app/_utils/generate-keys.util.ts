@@ -1,14 +1,13 @@
-import { randomBytes } from 'node:crypto';
-
-const RANDOM_SIZE = 4;
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Generates a unique random key for React components
  * @returns A unique string suitable for React keys
  */
 export function generateKey() {
-  return randomBytes(RANDOM_SIZE).toString('hex');
+  return uuidv4();  // Cambiado de Math.random() para mayor unicidad
 }
+
 
 /**
  * Creates an array of a specific length with unique keys for React rendering
