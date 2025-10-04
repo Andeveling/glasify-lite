@@ -13,6 +13,7 @@ export const listModelsInput = z.object({
   manufacturerId: z.cuid('ID del fabricante debe ser válido').optional(),
   page: z.number().min(1).default(1),
   search: z.string().optional(),
+  sort: z.enum([ 'name-asc', 'name-desc', 'price-asc', 'price-desc' ]).default('name-asc'),
 });
 
 // Output schemas
@@ -52,6 +53,34 @@ export const listModelsOutput = z.object({
 });
 
 export const catalogRouter = createTRPCRouter({
+  'list-manufacturers': publicProcedure.query(async ({ ctx }) => {
+    try {
+      logger.info('Listing manufacturers for filter');
+
+      const manufacturers = await ctx.db.manufacturer.findMany({
+        orderBy: {
+          name: 'asc',
+        },
+        select: {
+          id: true,
+          name: true,
+        },
+      });
+
+      logger.info('Successfully retrieved manufacturers', {
+        count: manufacturers.length,
+      });
+
+      return manufacturers;
+    } catch (error) {
+      logger.error('Error listing manufacturers', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+
+      throw new Error('No se pudieron cargar los fabricantes. Intente nuevamente.');
+    }
+  }),
+
   'list-models': publicProcedure
     .input(listModelsInput)
     .output(listModelsOutput)
@@ -62,6 +91,7 @@ export const catalogRouter = createTRPCRouter({
           manufacturerId: input.manufacturerId,
           page: input.page,
           search: input.search,
+          sort: input.sort,
         });
 
         // Build where clause with filters
@@ -78,6 +108,22 @@ export const catalogRouter = createTRPCRouter({
           status: 'published' as const, // Only show published models
         };
 
+        // Build orderBy clause based on sort parameter
+        const orderByClause = (() => {
+          switch (input.sort) {
+            case 'name-asc':
+              return { name: 'asc' as const };
+            case 'name-desc':
+              return { name: 'desc' as const };
+            case 'price-asc':
+              return { basePrice: 'asc' as const };
+            case 'price-desc':
+              return { basePrice: 'desc' as const };
+            default:
+              return { name: 'asc' as const };
+          }
+        })();
+
         // Get total count for pagination
         const total = await ctx.db.model.count({
           where: whereClause,
@@ -88,9 +134,7 @@ export const catalogRouter = createTRPCRouter({
 
         // Fetch models with offset-based pagination
         const models = await ctx.db.model.findMany({
-          orderBy: {
-            name: 'asc',
-          },
+          orderBy: orderByClause,
           select: {
             accessoryPrice: true,
             basePrice: true,
@@ -131,6 +175,7 @@ export const catalogRouter = createTRPCRouter({
           count: serializedModels.length,
           manufacturerId: input.manufacturerId,
           page: input.page,
+          sort: input.sort,
           total,
         });
 

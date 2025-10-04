@@ -1,14 +1,14 @@
 import { Suspense } from 'react';
+import { api } from '@/trpc/server';
 import { CatalogContent } from './_components/catalog-content';
+import { CatalogFilters } from './_components/catalog-filters';
 import { CatalogHeader } from './_components/catalog-header';
 import { CatalogSearch } from './_components/catalog-search';
 import { CatalogSkeleton } from './_components/catalog-skeleton';
+import type { CatalogSearchParams } from './_types/catalog-params';
+import { validateCatalogParams } from './_types/catalog-params';
 
-type SearchParams = Promise<{
-  q?: string;
-  page?: string;
-  manufacturer?: string;
-}>;
+type SearchParams = Promise<CatalogSearchParams>;
 
 type CatalogPageProps = {
   searchParams: SearchParams;
@@ -39,17 +39,21 @@ export const revalidate = 3600;
 
 export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   const params = await searchParams;
-  const searchQuery = params.q;
-  const page = params.page ? Number.parseInt(params.page, 10) : 1;
-  const manufacturerId = params.manufacturer;
+
+  // Validate and normalize parameters
+  const { searchQuery, page, manufacturerId, sort } = validateCatalogParams(params);
+
+  // Fetch manufacturers for filter dropdown
+  const manufacturers = await api.catalog['list-manufacturers']();
 
   return (
     <div className="min-h-screen">
       <div className="container mx-auto max-w-7xl px-4 py-4 md:px-6 md:py-8">
         <CatalogHeader />
         <CatalogSearch initialValue={searchQuery} />
-        <Suspense fallback={<CatalogSkeleton />} key={`${searchQuery}-${page}-${manufacturerId}`}>
-          <CatalogContent manufacturerId={manufacturerId} page={page} searchQuery={searchQuery} />
+        <CatalogFilters manufacturers={manufacturers} />
+        <Suspense fallback={<CatalogSkeleton />} key={`${searchQuery}-${page}-${manufacturerId}-${sort}`}>
+          <CatalogContent manufacturerId={manufacturerId} page={page} searchQuery={searchQuery} sort={sort} />
         </Suspense>
       </div>
     </div>

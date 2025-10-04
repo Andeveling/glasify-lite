@@ -8,6 +8,7 @@ type CatalogContentProps = {
   manufacturerId?: string;
   page: number;
   searchQuery?: string;
+  sort?: 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc';
 };
 
 const ITEMS_PER_PAGE = 20;
@@ -24,7 +25,7 @@ const ITEMS_PER_PAGE = 20;
  * - SEO-friendly (search engines see the content)
  * - No client-side JavaScript needed for rendering
  */
-export async function CatalogContent({ manufacturerId, page, searchQuery }: CatalogContentProps) {
+export async function CatalogContent({ manufacturerId, page, searchQuery, sort = 'name-asc' }: CatalogContentProps) {
   try {
     // Fetch models on the server - this is cached and revalidated
     const data = await api.catalog['list-models']({
@@ -32,6 +33,7 @@ export async function CatalogContent({ manufacturerId, page, searchQuery }: Cata
       manufacturerId,
       page,
       search: searchQuery,
+      sort,
     });
 
     const hasActiveFilters = Boolean(searchQuery || manufacturerId);
