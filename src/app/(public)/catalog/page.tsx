@@ -1,5 +1,4 @@
 import { Suspense } from 'react';
-import { api } from '@/trpc/server';
 import { CatalogContent } from './_components/catalog-content';
 import { CatalogHeader } from './_components/catalog-header';
 import { CatalogSearch } from './_components/catalog-search';
@@ -8,6 +7,7 @@ import { CatalogSkeleton } from './_components/catalog-skeleton';
 type SearchParams = Promise<{
   q?: string;
   page?: string;
+  manufacturer?: string;
 }>;
 
 type CatalogPageProps = {
@@ -41,22 +41,15 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   const params = await searchParams;
   const searchQuery = params.q;
   const page = params.page ? Number.parseInt(params.page, 10) : 1;
-
-  // Fetch manufacturer on the server (no hardcoded IDs)
-  const manufacturer = await api.catalog['get-default-manufacturer']();
+  const manufacturerId = params.manufacturer;
 
   return (
     <div className="min-h-screen">
       <div className="container mx-auto max-w-7xl px-4 py-4 md:px-6 md:py-8">
         <CatalogHeader />
         <CatalogSearch initialValue={searchQuery} />
-        <Suspense fallback={<CatalogSkeleton />} key={`${searchQuery}-${page}`}>
-          <CatalogContent
-            manufacturerId={manufacturer.id}
-            manufacturerName={manufacturer.name}
-            page={page}
-            searchQuery={searchQuery}
-          />
+        <Suspense fallback={<CatalogSkeleton />} key={`${searchQuery}-${page}-${manufacturerId}`}>
+          <CatalogContent manufacturerId={manufacturerId} page={page} searchQuery={searchQuery} />
         </Suspense>
       </div>
     </div>

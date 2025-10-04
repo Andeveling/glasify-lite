@@ -6,7 +6,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 type ModelCardProps = {
   id: string;
   name: string;
-  manufacturer: string;
+  manufacturer?: string;
   range: {
     width: [number, number];
     height: [number, number];
@@ -45,7 +45,7 @@ export function ModelCard({ id, name, manufacturer, basePrice }: ModelCardProps)
         <CardContent>
           <div>
             <h3 className="font-semibold text-foreground text-sm tracking-tight">{name}</h3>
-            <p className="text-foreground/60 text-xs">{manufacturer}</p>
+            {manufacturer && <p className="text-foreground/60 text-xs">{manufacturer}</p>}
           </div>
         </CardContent>
         <CardFooter>

@@ -5,8 +5,7 @@ import { CatalogGrid } from './catalog-grid';
 import { CatalogPagination } from './catalog-pagination';
 
 type CatalogContentProps = {
-  manufacturerId: string;
-  manufacturerName: string;
+  manufacturerId?: string;
   page: number;
   searchQuery?: string;
 };
@@ -25,7 +24,7 @@ const ITEMS_PER_PAGE = 20;
  * - SEO-friendly (search engines see the content)
  * - No client-side JavaScript needed for rendering
  */
-export async function CatalogContent({ manufacturerId, manufacturerName, page, searchQuery }: CatalogContentProps) {
+export async function CatalogContent({ manufacturerId, page, searchQuery }: CatalogContentProps) {
   try {
     // Fetch models on the server - this is cached and revalidated
     const data = await api.catalog['list-models']({
@@ -35,7 +34,7 @@ export async function CatalogContent({ manufacturerId, manufacturerName, page, s
       search: searchQuery,
     });
 
-    const hasActiveFilters = Boolean(searchQuery);
+    const hasActiveFilters = Boolean(searchQuery || manufacturerId);
     const { items: models, total } = data;
     const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
@@ -47,9 +46,7 @@ export async function CatalogContent({ manufacturerId, manufacturerName, page, s
     // Render models grid
     return (
       <main>
-        <CatalogGrid manufacturer={manufacturerName} models={models} />
-
-        {/* Pagination - only show if more than one page */}
+        <CatalogGrid models={models} />
         {totalPages > 1 && <CatalogPagination currentPage={page} totalPages={totalPages} />}
       </main>
     );

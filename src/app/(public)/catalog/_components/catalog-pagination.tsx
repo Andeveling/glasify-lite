@@ -52,7 +52,8 @@ export function CatalogPagination({ currentPage, totalPages }: CatalogPagination
             return page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1;
           })
           .map((page, index, array) => {
-            const showEllipsis = index > 0 && page - array[index - 1]! > 1;
+            const prevPage = array[index - 1];
+            const showEllipsis = index > 0 && prevPage !== undefined && page - prevPage > 1;
 
             return (
               <div className="flex items-center" key={page}>

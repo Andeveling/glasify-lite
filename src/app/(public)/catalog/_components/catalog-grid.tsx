@@ -19,9 +19,7 @@ type Model = {
 };
 
 type CatalogGridProps = {
-  manufacturer: string;
   models: Model[];
-  total: number;
 };
 
 /**
@@ -31,7 +29,7 @@ type CatalogGridProps = {
  * Minimalist grid layout inspired by Saleor Storefront
  * Clean spacing, clear hierarchy, professional presentation
  */
-export function CatalogGrid({ manufacturer, models }: Omit<CatalogGridProps, 'total'>) {
+export function CatalogGrid({ models }: CatalogGridProps) {
   return (
     <div className="space-y-8">
       {/* Results count - subtle and minimal */}
@@ -50,7 +48,6 @@ export function CatalogGrid({ manufacturer, models }: Omit<CatalogGridProps, 'to
               basePrice={formatCurrency(model.basePrice)}
               compatibleGlassTypes={[]}
               id={model.id}
-              manufacturer={manufacturer}
               name={model.name}
               range={{
                 height: [model.minHeightMm, model.maxHeightMm],
