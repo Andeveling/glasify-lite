@@ -1,4 +1,5 @@
 import { generateStableKeyedArray } from '@/app/_utils/generate-keys.util';
+import { ModelCardSkeleton } from '@/app/(public)/catalog/_components/model-card-skeleton';
 import { Skeleton } from '@/components/ui/skeleton';
 
 /**
@@ -12,23 +13,13 @@ export function CatalogSkeleton() {
 
   return (
     <main>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between">
         <Skeleton className="h-6 w-32" />
       </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {generateStableKeyedArray(skeletonItemsCount, 'catalog-skeleton').map((item) => (
-          <div className="overflow-hidden rounded-lg border bg-card" key={item.key}>
-            <Skeleton className="h-48" />
-            <div className="p-4">
-              <Skeleton className="mb-2 h-6" />
-              <Skeleton className="mb-4 h-4 w-3/4" />
-              <div className="flex items-center justify-between">
-                <Skeleton className="h-8 w-24" />
-                <Skeleton className="h-8 w-20" />
-              </div>
-            </div>
-          </div>
+          <ModelCardSkeleton key={item.key} />
         ))}
       </div>
     </main>

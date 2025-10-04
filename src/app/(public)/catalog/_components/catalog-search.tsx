@@ -4,8 +4,8 @@ import { Search, X } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useState, useTransition } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group';
+import { Spinner } from '@/components/ui/spinner';
 
 type CatalogSearchProps = {
   initialValue?: string;
@@ -29,21 +29,33 @@ export function CatalogSearch({ initialValue = '' }: CatalogSearchProps) {
   const [query, setQuery] = useState(initialValue);
   const [isPending, startTransition] = useTransition();
 
+  // Utility to create query string following Next.js best practices
+  const createQueryString = useCallback(
+    (updates: Record<string, string | null>) => {
+      const params = new URLSearchParams(searchParams?.toString());
+
+      for (const [key, value] of Object.entries(updates)) {
+        if (value === null) {
+          params.delete(key);
+        } else {
+          params.set(key, value);
+        }
+      }
+
+      return params.toString();
+    },
+    [searchParams]
+  );
+
   // Debounced search - wait 300ms after user stops typing
   const debouncedSearch = useDebouncedCallback((value: string) => {
-    const params = new URLSearchParams(searchParams?.toString());
-
-    if (value) {
-      params.set('q', value);
-    } else {
-      params.delete('q');
-    }
-
-    // Reset to page 1 when searching
-    params.delete('page');
+    const queryString = createQueryString({
+      page: null, // Reset to page 1 when searching
+      q: value || null,
+    });
 
     startTransition(() => {
-      router.push(`${pathname}?${params.toString()}`);
+      router.push(`${pathname}?${queryString}`);
     });
   }, TRANSITION_TIMEOUT);
 
@@ -57,42 +69,44 @@ export function CatalogSearch({ initialValue = '' }: CatalogSearchProps) {
 
   const handleClear = useCallback(() => {
     setQuery('');
-    const params = new URLSearchParams(searchParams?.toString());
-    params.delete('q');
-    params.delete('page');
+    const queryString = createQueryString({
+      page: null,
+      q: null,
+    });
 
     startTransition(() => {
-      router.push(`${pathname}?${params.toString()}`);
+      router.push(`${pathname}?${queryString}`);
     });
-  }, [pathname, router, searchParams]);
+  }, [pathname, router, createQueryString]);
 
   return (
     <div className="mb-12">
       <div className="relative max-w-xl">
-        <Search className="-translate-y-1/2 absolute top-1/2 left-3 size-4 text-foreground/40" />
-        <Input
-          className="h-11 border-foreground/20 pr-9 pl-10 transition-colors focus-visible:border-foreground/40 focus-visible:ring-0"
-          onChange={(e) => handleSearch(e.target.value)}
-          placeholder="Buscar productos..."
-          type="search"
-          value={query}
-        />
-        {query && (
-          <Button
-            className="-translate-y-1/2 absolute top-1/2 right-1 size-8"
-            onClick={handleClear}
-            size="icon"
-            variant="ghost"
-          >
-            <X className="size-4" />
-            <span className="sr-only">Limpiar búsqueda</span>
-          </Button>
-        )}
-        {isPending && (
-          <div className="-translate-y-1/2 absolute top-1/2 right-10">
-            <div className="size-4 animate-spin rounded-full border-2 border-foreground/20 border-t-foreground" />
-          </div>
-        )}
+        <InputGroup>
+          <InputGroupInput
+            className="h-11 border-foreground/20 pr-9 pl-10 transition-colors focus-visible:border-foreground/40 focus-visible:ring-0"
+            onChange={(e) => handleSearch(e.target.value)}
+            placeholder="Buscar productos..."
+            type="text"
+            value={query}
+          />
+          <InputGroupAddon>
+            <Search className="size-4 text-foreground/40" />
+          </InputGroupAddon>
+          {query && !isPending && (
+            <InputGroupAddon align="inline-end">
+              <InputGroupButton className="size-8" onClick={handleClear} size="icon-sm" variant="ghost">
+                <X className="size-4" />
+                <span className="sr-only">Limpiar búsqueda</span>
+              </InputGroupButton>
+            </InputGroupAddon>
+          )}
+          {isPending && (
+            <InputGroupAddon align="inline-end">
+              <Spinner />
+            </InputGroupAddon>
+          )}
+        </InputGroup>
       </div>
     </div>
   );

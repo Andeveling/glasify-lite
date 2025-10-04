@@ -1,5 +1,5 @@
 import { formatCurrency } from '@/lib/utils';
-import { ModelCard } from '../../_components/catalog/model-card';
+import { ModelCard } from './model-card';
 
 type Model = {
   accessoryPrice: number | null;
