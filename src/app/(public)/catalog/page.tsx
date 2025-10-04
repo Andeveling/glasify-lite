@@ -49,11 +49,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
     <div className="min-h-screen">
       <div className="container mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-12">
         <CatalogHeader />
-
-        {/* Search component - only interactive part */}
         <CatalogSearch initialValue={searchQuery} />
-
-        {/* Content with Suspense for streaming */}
         <Suspense fallback={<CatalogSkeleton />} key={`${searchQuery}-${page}`}>
           <CatalogContent
             manufacturerId={manufacturer.id}
