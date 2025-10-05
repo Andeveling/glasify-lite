@@ -1,9 +1,9 @@
 import { Suspense } from 'react';
 import { api } from '@/trpc/server';
-import { CatalogContent } from './_components/catalog-content';
-import { CatalogFilterBar } from './_components/catalog-filter-bar';
-import { CatalogHeader } from './_components/catalog-header';
-import { CatalogSkeleton } from './_components/catalog-skeleton';
+import { CatalogHeader } from './_components/molecules/catalog-header';
+import { CatalogContent } from './_components/organisms/catalog-content';
+import { CatalogFilterBar } from './_components/organisms/catalog-filter-bar';
+import { CatalogSkeleton } from './_components/organisms/catalog-skeleton';
 import type { CatalogSearchParams } from './_types/catalog-params';
 import { validateCatalogParams } from './_types/catalog-params';
 
