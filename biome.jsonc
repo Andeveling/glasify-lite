@@ -103,7 +103,10 @@
       }
     },
     {
-      "includes": ["src/server/api/routers/**/index.ts", "src/server/api/routers/**/catalog.ts"],
+      "includes": [
+        "src/server/api/routers/**/index.ts",
+        "src/server/api/routers/**/catalog.ts"
+      ],
       "linter": {
         "rules": {
           "performance": {
