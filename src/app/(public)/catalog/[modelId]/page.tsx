@@ -27,5 +27,10 @@
  * @returns Página de parametrización de modelo para cotización
  */
 export default function ModelFormPage() {
-  return <div>ModelFormPage</div>;
+  return (
+    <div className="container mx-auto max-w-7xl">
+      <div>columna 1: info del modelo</div>
+      <div>columna 2: formulario de parametrización</div>
+    </div>
+  );
 }
