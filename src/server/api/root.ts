@@ -1,7 +1,7 @@
-import { adminRouter } from "@/server/api/routers/admin";
-import { catalogRouter } from "@/server/api/routers/catalog";
-import { quoteRouter } from "@/server/api/routers/quote";
-import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
+import { adminRouter } from '@/server/api/routers/admin';
+import { catalogRouter } from '@/server/api/routers/catalog';
+import { quoteRouter } from '@/server/api/routers/quote';
+import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc';
 
 /**
  * This is the primary router for your server.

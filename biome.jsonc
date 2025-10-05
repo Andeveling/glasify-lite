@@ -3,14 +3,13 @@
   "extends": ["ultracite"],
   "files": {
     "maxSize": 1048576,
-    "ignore": [
-      "node_modules",
-      ".next",
-      "coverage",
-      "dist",
-      "build",
-      "**/*.snap",
-      "**/*.d.ts"
+    "includes": [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx",
+      "**/*.json",
+      "**/*.jsonc"
     ]
   },
   "formatter": {
@@ -56,6 +55,7 @@
       },
       // Reglas que aseguran un estilo de código consistente.
       "style": {
+        "noMagicNumbers": "warn",
         // Advierte sobre el uso de convenciones de nomenclatura incorrectas.
         "useNamingConvention": {
           "level": "warn",
@@ -67,7 +67,7 @@
           "options": { "filenameCases": ["kebab-case"] }
         },
         // Requiere el uso de bloques de sentencias para mayor claridad.
-        "useBlockStatements": "error",
+        "useBlockStatements": "off",
         // Fomenta el uso de la sintaxis de fragmentos de React.
         "useFragmentSyntax": "error"
       },
@@ -77,6 +77,9 @@
         "useKeyWithMouseEvents": "warn",
         "useAnchorContent": "warn",
         "useHeadingContent": "warn"
+      },
+      "performance": {
+        "useTopLevelRegex": "warn"
       }
     }
   },
@@ -98,6 +101,31 @@
           }
         }
       }
+    },
+    {
+      "includes": [
+        "src/server/api/routers/**/index.ts",
+        "src/server/api/routers/**/catalog.ts"
+      ],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off"
+          }
+        }
+      }
     }
-  ]
+  ],
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on",
+        "recommended": true,
+        "useSortedAttributes": "on",
+        "useSortedKeys": "on",
+        "useSortedProperties": "on"
+      }
+    }
+  }
 }

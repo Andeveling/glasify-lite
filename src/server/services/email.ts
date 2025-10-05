@@ -1,5 +1,5 @@
-import type { Quote } from "@prisma/client";
-import logger from "@/lib/logger";
+import type { Quote } from '@prisma/client';
+import logger from '@/lib/logger';
 
 type EmailTemplate = {
   subject: string;
@@ -21,19 +21,18 @@ type QuoteEmailData = {
 };
 
 const formatCurrency = (amount: number | string, currency: string) => {
-  const numericAmount =
-    typeof amount === "string" ? Number.parseFloat(amount) : amount;
+  const numericAmount = typeof amount === 'string' ? Number.parseFloat(amount) : amount;
 
-  if (currency === "CLP") {
-    return new Intl.NumberFormat("es-CL", {
-      style: "currency",
-      currency: "CLP",
+  if (currency === 'CLP') {
+    return new Intl.NumberFormat('es-CL', {
+      currency: 'CLP',
+      style: 'currency',
     }).format(numericAmount);
   }
 
-  return new Intl.NumberFormat("es-LA", {
-    style: "currency",
+  return new Intl.NumberFormat('es-LA', {
     currency,
+    style: 'currency',
   }).format(numericAmount);
 };
 
@@ -44,13 +43,13 @@ const createQuoteEmailTemplate = (data: QuoteEmailData): EmailTemplate => {
 
   const totalFormatted = formatCurrency(quote.total.toString(), quote.currency);
   const validUntilFormatted = quote.validUntil
-    ? new Intl.DateTimeFormat("es-LA", {
-        dateStyle: "long",
+    ? new Intl.DateTimeFormat('es-LA', {
+        dateStyle: 'long',
       }).format(quote.validUntil)
-    : "No especificada";
+    : 'No especificada';
 
   const itemCount = quote.items.length;
-  const itemsText = itemCount === 1 ? "ítem" : "ítems";
+  const itemsText = itemCount === 1 ? 'ítem' : 'ítems';
 
   const body = `
 Estimado/a,
@@ -77,7 +76,7 @@ Este es un mensaje automático de Glasify.
 No responda directamente a este correo.
   `.trim();
 
-  return { subject, body };
+  return { body, subject };
 };
 
 type SendEmailOptions = {
@@ -91,21 +90,21 @@ const sendEmailMock = async (options: SendEmailOptions): Promise<boolean> => {
 
   // Mock implementation - in production this would integrate with a real email service
   const mockEmail = {
-    timestamp: new Date().toISOString(),
-    to,
-    subject: template.subject,
     body: template.body,
     quoteId,
-    status: "sent" as const,
+    status: 'sent' as const,
+    subject: template.subject,
+    timestamp: new Date().toISOString(),
+    to,
   };
 
   // Log to console in development (this would be replaced with actual email sending)
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === 'development') {
     /* eslint-disable no-console */
-    logger.info("📧 Mock Email Sent:", {
-      to: mockEmail.to,
-      subject: mockEmail.subject,
+    logger.info('📧 Mock Email Sent:', {
       quoteId: mockEmail.quoteId,
+      subject: mockEmail.subject,
+      to: mockEmail.to,
     });
 
     /* eslint-enable no-console */
@@ -121,24 +120,23 @@ const sendEmailMock = async (options: SendEmailOptions): Promise<boolean> => {
   return true;
 };
 
-export const sendQuoteNotification = async (
-  data: QuoteEmailData,
-  recipientEmail: string
-): Promise<boolean> => {
+export const sendQuoteNotification = async (data: QuoteEmailData, recipientEmail: string): Promise<boolean> => {
   try {
     const template = createQuoteEmailTemplate(data);
 
     const success = await sendEmailMock({
-      to: recipientEmail,
-      template,
       quoteId: data.quote.id,
+      template,
+      to: recipientEmail,
     });
 
     return success;
   } catch (error) {
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === 'development') {
       /* eslint-disable no-console */
-      logger.error("❌ Error sending quote notification:", error);
+      logger.error('❌ Error sending quote notification:', {
+        error: error instanceof Error ? error.message : String(error),
+      });
       /* eslint-enable no-console */
     }
     return false;

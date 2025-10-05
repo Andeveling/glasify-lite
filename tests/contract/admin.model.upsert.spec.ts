@@ -1,352 +1,355 @@
-import { describe, expect, it } from "vitest";
-import { testServer } from "../integration-setup";
+import { describe, expect, it } from 'vitest';
+import { testServer } from '../integration-setup';
 
-describe("Contract: admin.model.upsert", () => {
-  it("should create new model when no id provided", async () => {
+// Regex constants for performance optimization
+const STATUS_REGEX = /^(draft|published)$/;
+const CUID_REGEX = /^c[a-z0-9]{24}$/;
+const CREATED_MESSAGE_REGEX = /creado|created/i;
+const UPDATED_MESSAGE_REGEX = /actualizado|updated/i;
+const MANUFACTURER_ERROR_REGEX = /ID del fabricante debe ser válido/;
+const WIDTH_ERROR_REGEX = /Ancho mínimo debe ser menor al ancho máximo/;
+const HEIGHT_ERROR_REGEX = /Alto mínimo debe ser menor al alto máximo/;
+const MODEL_NAME_ERROR_REGEX = /Nombre del modelo es requerido/;
+const BASE_PRICE_ERROR_REGEX = /Precio base debe ser mayor o igual a 0/;
+const GLASS_TYPES_ERROR_REGEX = /Debe seleccionar al menos un tipo de vidrio compatible/;
+const GLASS_TYPE_ID_ERROR_REGEX = /ID del tipo de vidrio debe ser válido/;
+const MODEL_NOT_FOUND_ERROR_REGEX = /modelo.*encontrado|model.*found/i;
+
+describe('Contract: admin.model.upsert', () => {
+  it('should create new model when no id provided', async () => {
     // Arrange: Valid input for creating a new model
     const createInput = {
-      manufacturerId: "cm1manufacturer123456789ab",
-      name: "Ventana Premium 2024",
-      status: "draft" as const,
-      minWidthMm: 300,
+      accessoryPrice: 25_000,
+      basePrice: 150_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1', 'cm1glasstype123456789abc2'],
+      costPerMmHeight: 40,
+      costPerMmWidth: 50,
+      manufacturerId: 'cm1manufacturer123456789ab',
+      maxHeightMm: 1800,
       maxWidthMm: 2000,
       minHeightMm: 400,
-      maxHeightMm: 1800,
-      basePrice: 150_000,
-      costPerMmWidth: 50,
-      costPerMmHeight: 40,
-      accessoryPrice: 25_000,
-      compatibleGlassTypeIds: [
-        "cm1glasstype123456789abc1",
-        "cm1glasstype123456789abc2",
-      ],
+      minWidthMm: 300,
+      name: 'Ventana Premium 2024',
+      status: 'draft' as const,
     };
 
     // Act: Create the model
-    const result = await testServer.admin["model-upsert"](createInput);
+    const result = await testServer.admin['model-upsert'](createInput);
 
     // Assert: Output schema validation
     expect(result).toMatchObject({
-      modelId: expect.any(String),
-      status: expect.stringMatching(/^(draft|published)$/),
       message: expect.any(String),
+      modelId: expect.any(String),
+      status: expect.stringMatching(STATUS_REGEX),
     });
 
     // Model ID should be a valid CUID
-    expect(result.modelId).toMatch(/^c[a-z0-9]{24}$/);
-    expect(result.status).toBe("draft"); // Should match input status
-    expect(result.message).toMatch(/creado|created/i);
+    expect(result.modelId).toMatch(CUID_REGEX);
+    expect(result.status).toBe('draft'); // Should match input status
+    expect(result.message).toMatch(CREATED_MESSAGE_REGEX);
   });
 
-  it("should update existing model when id provided", async () => {
+  it('should update existing model when id provided', async () => {
     // Arrange: First create a model
     const createInput = {
-      manufacturerId: "cm1manufacturer123456789ab",
-      name: "Ventana Standard",
-      status: "draft" as const,
-      minWidthMm: 300,
+      basePrice: 120_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 35,
+      costPerMmWidth: 45,
+      manufacturerId: 'cm1manufacturer123456789ab',
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 120_000,
-      costPerMmWidth: 45,
-      costPerMmHeight: 35,
-      compatibleGlassTypeIds: ["cm1glasstype123456789abc1"],
+      minWidthMm: 300,
+      name: 'Ventana Standard',
+      status: 'draft' as const,
     };
 
-    const createResult = await testServer.admin["model-upsert"](createInput);
+    const createResult = await testServer.admin['model-upsert'](createInput);
     const modelId = createResult.modelId;
 
     // Now update the model
     const updateInput = {
+      basePrice: 140_000, // Updated price
+      compatibleGlassTypeIds: [
+        'cm1glasstype123456789abc1',
+        'cm1glasstype123456789abc2', // Added compatible glass type
+      ],
+      costPerMmHeight: 40, // Updated cost
+      costPerMmWidth: 50, // Updated cost
       id: modelId,
-      manufacturerId: "cm1manufacturer123456789ab",
-      name: "Ventana Standard Actualizada",
-      status: "published" as const,
-      minWidthMm: 300,
+      manufacturerId: 'cm1manufacturer123456789ab',
+      maxHeightMm: 1800, // Updated max height
       maxWidthMm: 2000, // Updated max width
       minHeightMm: 400,
-      maxHeightMm: 1800, // Updated max height
-      basePrice: 140_000, // Updated price
-      costPerMmWidth: 50, // Updated cost
-      costPerMmHeight: 40, // Updated cost
-      compatibleGlassTypeIds: [
-        "cm1glasstype123456789abc1",
-        "cm1glasstype123456789abc2", // Added compatible glass type
-      ],
+      minWidthMm: 300,
+      name: 'Ventana Standard Actualizada',
+      status: 'published' as const,
     };
 
     // Act: Update the model
-    const result = await testServer.admin["model-upsert"](updateInput);
+    const result = await testServer.admin['model-upsert'](updateInput);
 
     // Assert: Should return same ID with updated status
     expect(result).toMatchObject({
-      modelId, // Same ID as created model
-      status: "published", // Updated status
       message: expect.any(String),
+      modelId, // Same ID as created model
+      status: 'published', // Updated status
     });
 
-    expect(result.message).toMatch(/actualizado|updated/i);
+    expect(result.message).toMatch(UPDATED_MESSAGE_REGEX);
   });
 
-  it("should validate input schema - invalid manufacturerId", async () => {
+  it('should validate input schema - invalid manufacturerId', async () => {
     // Arrange: Invalid manufacturer ID
     const invalidInput = {
-      manufacturerId: "invalid-manufacturer-id", // Not a valid CUID
-      name: "Test Model",
-      minWidthMm: 300,
+      basePrice: 100_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
+      manufacturerId: 'invalid-manufacturer-id', // Not a valid CUID
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: ["cm1glasstype123456789abc1"],
+      minWidthMm: 300,
+      name: 'Test Model',
     };
 
     // Act & Assert: Should throw validation error
     await expect(async () => {
-      await testServer.admin["model-upsert"](invalidInput);
-    }).rejects.toThrow(/ID del fabricante debe ser válido/);
+      await testServer.admin['model-upsert'](invalidInput);
+    }).rejects.toThrow(MANUFACTURER_ERROR_REGEX);
   });
 
-  it("should validate dimension constraints - minWidth >= maxWidth", async () => {
+  it('should validate dimension constraints - minWidth >= maxWidth', async () => {
     // Arrange: Invalid dimensions where min >= max
     const invalidInput = {
-      manufacturerId: "cm1manufacturer123456789ab",
-      name: "Test Model",
-      minWidthMm: 2000,
+      basePrice: 100_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
+      manufacturerId: 'cm1manufacturer123456789ab',
+      maxHeightMm: 1600,
       maxWidthMm: 1800, // Invalid: max should be > min
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: ["cm1glasstype123456789abc1"],
+      minWidthMm: 2000,
+      name: 'Test Model',
     };
 
     // Act & Assert: Should throw validation error
     await expect(async () => {
-      await testServer.admin["model-upsert"](invalidInput);
-    }).rejects.toThrow(/Ancho mínimo debe ser menor al ancho máximo/);
+      await testServer.admin['model-upsert'](invalidInput);
+    }).rejects.toThrow(WIDTH_ERROR_REGEX);
   });
 
-  it("should validate dimension constraints - minHeight >= maxHeight", async () => {
+  it('should validate dimension constraints - minHeight >= maxHeight', async () => {
     // Arrange: Invalid dimensions where min >= max
     const invalidInput = {
-      manufacturerId: "cm1manufacturer123456789ab",
-      name: "Test Model",
-      minWidthMm: 300,
+      basePrice: 100_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
+      manufacturerId: 'cm1manufacturer123456789ab',
+      maxHeightMm: 1400, // Invalid: max should be > min
       maxWidthMm: 1800,
       minHeightMm: 1600,
-      maxHeightMm: 1400, // Invalid: max should be > min
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: ["cm1glasstype123456789abc1"],
+      minWidthMm: 300,
+      name: 'Test Model',
     };
 
     // Act & Assert: Should throw validation error
     await expect(async () => {
-      await testServer.admin["model-upsert"](invalidInput);
-    }).rejects.toThrow(/Alto mínimo debe ser menor al alto máximo/);
+      await testServer.admin['model-upsert'](invalidInput);
+    }).rejects.toThrow(HEIGHT_ERROR_REGEX);
   });
 
-  it("should validate required fields", async () => {
+  it('should validate required fields', async () => {
     // Arrange: Missing required fields
     const invalidInput = {
-      manufacturerId: "cm1manufacturer123456789ab",
-      // name: "Test Model", // Missing required name
-      minWidthMm: 300,
+      basePrice: 100_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
+      manufacturerId: 'cm1manufacturer123456789ab',
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: ["cm1glasstype123456789abc1"],
+      // name: "Test Model", // Missing required name
+      minWidthMm: 300,
     } as any;
 
     // Act & Assert: Should throw validation error
     await expect(async () => {
-      await testServer.admin["model-upsert"](invalidInput);
-    }).rejects.toThrow(/Nombre del modelo es requerido/);
+      await testServer.admin['model-upsert'](invalidInput);
+    }).rejects.toThrow(MODEL_NAME_ERROR_REGEX);
   });
 
-  it("should validate negative prices and costs", async () => {
+  it('should validate negative prices and costs', async () => {
     // Arrange: Negative base price
     const invalidInput = {
-      manufacturerId: "cm1manufacturer123456789ab",
-      name: "Test Model",
-      minWidthMm: 300,
+      basePrice: -50_000, // Invalid: negative price
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
+      manufacturerId: 'cm1manufacturer123456789ab',
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: -50_000, // Invalid: negative price
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: ["cm1glasstype123456789abc1"],
+      minWidthMm: 300,
+      name: 'Test Model',
     };
 
     // Act & Assert: Should throw validation error
     await expect(async () => {
-      await testServer.admin["model-upsert"](invalidInput);
-    }).rejects.toThrow(/Precio base debe ser mayor o igual a 0/);
+      await testServer.admin['model-upsert'](invalidInput);
+    }).rejects.toThrow(BASE_PRICE_ERROR_REGEX);
   });
 
-  it("should validate compatible glass types - empty array", async () => {
+  it('should validate compatible glass types - empty array', async () => {
     // Arrange: Empty compatible glass types array
     const invalidInput = {
-      manufacturerId: "cm1manufacturer123456789ab",
-      name: "Test Model",
-      minWidthMm: 300,
+      basePrice: 100_000,
+      compatibleGlassTypeIds: [], // Invalid: empty array
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
+      manufacturerId: 'cm1manufacturer123456789ab',
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: [], // Invalid: empty array
+      minWidthMm: 300,
+      name: 'Test Model',
     };
 
     // Act & Assert: Should throw validation error
     await expect(async () => {
-      await testServer.admin["model-upsert"](invalidInput);
-    }).rejects.toThrow(
-      /Debe seleccionar al menos un tipo de vidrio compatible/
-    );
+      await testServer.admin['model-upsert'](invalidInput);
+    }).rejects.toThrow(GLASS_TYPES_ERROR_REGEX);
   });
 
-  it("should validate compatible glass types - invalid CUIDs", async () => {
+  it('should validate compatible glass types - invalid CUIDs', async () => {
     // Arrange: Invalid CUID in glass types
     const invalidInput = {
-      manufacturerId: "cm1manufacturer123456789ab",
-      name: "Test Model",
-      minWidthMm: 300,
+      basePrice: 100_000,
+      compatibleGlassTypeIds: [
+        'cm1glasstype123456789abc1', // Valid
+        'invalid-glass-type-id', // Invalid CUID
+      ],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
+      manufacturerId: 'cm1manufacturer123456789ab',
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: [
-        "cm1glasstype123456789abc1", // Valid
-        "invalid-glass-type-id", // Invalid CUID
-      ],
+      minWidthMm: 300,
+      name: 'Test Model',
     };
 
     // Act & Assert: Should throw validation error
     await expect(async () => {
-      await testServer.admin["model-upsert"](invalidInput);
-    }).rejects.toThrow(/ID del tipo de vidrio debe ser válido/);
+      await testServer.admin['model-upsert'](invalidInput);
+    }).rejects.toThrow(GLASS_TYPE_ID_ERROR_REGEX);
   });
 
-  it("should handle optional accessoryPrice field", async () => {
+  it('should handle optional accessoryPrice field', async () => {
     // Arrange: Model without accessoryPrice
     const inputWithoutAccessory = {
-      manufacturerId: "cm1manufacturer123456789ab",
-      name: "Model Sin Accesorios",
-      minWidthMm: 300,
+      basePrice: 100_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
+      manufacturerId: 'cm1manufacturer123456789ab',
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: ["cm1glasstype123456789abc1"],
+      minWidthMm: 300,
+      name: 'Model Sin Accesorios',
       // accessoryPrice is optional
     };
 
     // Act: Should succeed without accessoryPrice
-    const result = await testServer.admin["model-upsert"](
-      inputWithoutAccessory
-    );
+    const result = await testServer.admin['model-upsert'](inputWithoutAccessory);
 
     // Assert: Should create successfully
     expect(result).toMatchObject({
-      modelId: expect.any(String),
-      status: "draft", // Default status
       message: expect.any(String),
+      modelId: expect.any(String),
+      status: 'draft', // Default status
     });
   });
 
-  it("should handle null accessoryPrice", async () => {
+  it('should handle null accessoryPrice', async () => {
     // Arrange: Model with explicitly null accessoryPrice
     const inputWithNullAccessory = {
-      manufacturerId: "cm1manufacturer123456789ab",
-      name: "Model Con Accesorio Nulo",
-      minWidthMm: 300,
+      accessoryPrice: null, // Explicitly null
+      basePrice: 100_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
+      manufacturerId: 'cm1manufacturer123456789ab',
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: ["cm1glasstype123456789abc1"],
-      accessoryPrice: null, // Explicitly null
+      minWidthMm: 300,
+      name: 'Model Con Accesorio Nulo',
     };
 
     // Act: Should succeed with null accessoryPrice
-    const result = await testServer.admin["model-upsert"](
-      inputWithNullAccessory
-    );
+    const result = await testServer.admin['model-upsert'](inputWithNullAccessory);
 
     // Assert: Should create successfully
     expect(result).toMatchObject({
-      modelId: expect.any(String),
-      status: "draft",
       message: expect.any(String),
+      modelId: expect.any(String),
+      status: 'draft',
     });
   });
 
-  it("should default to draft status when not specified", async () => {
+  it('should default to draft status when not specified', async () => {
     // Arrange: Model without explicit status
     const inputWithoutStatus = {
-      manufacturerId: "cm1manufacturer123456789ab",
-      name: "Model Default Status",
-      minWidthMm: 300,
+      basePrice: 100_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
+      manufacturerId: 'cm1manufacturer123456789ab',
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: ["cm1glasstype123456789abc1"],
+      minWidthMm: 300,
+      name: 'Model Default Status',
       // status not specified, should default to "draft"
     };
 
     // Act: Create model
-    const result = await testServer.admin["model-upsert"](inputWithoutStatus);
+    const result = await testServer.admin['model-upsert'](inputWithoutStatus);
 
     // Assert: Should default to draft status
-    expect(result.status).toBe("draft");
+    expect(result.status).toBe('draft');
   });
 
-  it("should validate update with non-existent model id", async () => {
+  it('should validate update with non-existent model id', async () => {
     // Arrange: Valid format but non-existent model ID
     const updateInput = {
-      id: "cm1nonexistent123456789abc", // Non-existent model
-      manufacturerId: "cm1manufacturer123456789ab",
-      name: "Updated Model",
-      minWidthMm: 300,
+      basePrice: 100_000,
+      compatibleGlassTypeIds: ['cm1glasstype123456789abc1'],
+      costPerMmHeight: 30,
+      costPerMmWidth: 40,
+      id: 'cm1nonexistent123456789abc', // Non-existent model
+      manufacturerId: 'cm1manufacturer123456789ab',
+      maxHeightMm: 1600,
       maxWidthMm: 1800,
       minHeightMm: 400,
-      maxHeightMm: 1600,
-      basePrice: 100_000,
-      costPerMmWidth: 40,
-      costPerMmHeight: 30,
-      compatibleGlassTypeIds: ["cm1glasstype123456789abc1"],
+      minWidthMm: 300,
+      name: 'Updated Model',
     };
 
     // Act & Assert: Should handle non-existent model appropriately
     try {
-      await testServer.admin["model-upsert"](updateInput);
+      await testServer.admin['model-upsert'](updateInput);
       // If it doesn't throw, it should create a new model (depending on business logic)
     } catch (error) {
       // If it throws, should be a descriptive error in Spanish
-      expect((error as Error).message).toMatch(
-        /modelo.*encontrado|model.*found/i
-      );
+      expect((error as Error).message).toMatch(MODEL_NOT_FOUND_ERROR_REGEX);
     }
   });
 });

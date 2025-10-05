@@ -4,7 +4,7 @@
     "editor.defaultFormatter": "biomejs.biome"
   },
   "[typescript]": {
-    "editor.defaultFormatter": "biomejs.biome"
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   },
   "[javascriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
@@ -46,6 +46,7 @@
     "Cotizador",
     "cuid",
     "glasify",
+    "Medellín",
     "mysql",
     "underspecified",
     "WCAG"
