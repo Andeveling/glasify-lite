@@ -29,6 +29,7 @@
       "@views/dashboard/*": ["./src/app/(dashboard)/*"],
       "@views/components/*": ["./src/app/_components/*"],
       "@views/catalog/*": ["./src/app/(public)/catalog/*"],
+      "@views/quote/*": ["./src/app/(public)/quote/*"],
       "@ui/*": ["./src/components/ui/*"],
       "@server/*": ["./src/server/*"],
       "@styles/*": ["./src/styles/*"]
