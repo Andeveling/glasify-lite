@@ -25,21 +25,113 @@ Comprehensive refactoring of catalog components following **SOLID principles**, 
 
 ---
 
-## 📁 File Structure
+## 📁 File Structure (Atomic Design)
 
 ```
 src/app/(public)/catalog/
 ├── _components/
-│   ├── active-filter-badges.tsx          # Refactored: UI only (90 lines, -25%)
-│   └── result-count.tsx                  # Refactored: Uses text utilities
-└── _utils/
-    ├── search-parameters.utils.ts        # Pure business logic (220 lines)
-    └── text-formatting.utils.ts          # Pure text/number formatting (110 lines)
+│   ├── molecules/                        # Simple combinations of atoms
+│   │   ├── active-filter-badges.tsx      # Refactored: UI only (90 lines, -25%)
+│   │   ├── result-count.tsx              # Refactored: Uses text utilities
+│   │   ├── catalog-header.tsx            # Page header with title
+│   │   ├── catalog-search.tsx            # Search input with debounce
+│   │   ├── model-card.tsx                # Product card composition
+│   │   ├── model-card-atoms.tsx          # Atomic parts of model card
+│   │   └── model-card-skeleton.tsx       # Loading skeleton for card
+│   │
+│   ├── organisms/                        # Complex components with logic
+│   │   ├── catalog-content.tsx           # Main catalog content orchestrator
+│   │   ├── catalog-empty.tsx             # Empty state component
+│   │   ├── catalog-error.tsx             # Error state component
+│   │   ├── catalog-filter-bar.tsx        # Filter bar composition
+│   │   ├── catalog-filters.tsx           # Complete filter controls
+│   │   ├── catalog-grid.tsx              # Product grid with data
+│   │   ├── catalog-pagination.tsx        # Pagination controls
+│   │   ├── catalog-skeleton.tsx          # Loading skeleton for catalog
+│   │   └── model-filter.tsx              # Legacy filter (to review)
+│   │
+│   └── README.md                         # This file
+│
+├── _hooks/
+│   └── use-catalog.ts                    # Custom hooks (useQueryParams, etc.)
+│
+├── _types/
+│   └── catalog-params.ts                 # TypeScript types
+│
+├── _utils/
+│   ├── catalog.utils.ts                  # General catalog utilities
+│   ├── search-parameters.utils.ts        # Pure business logic (220 lines)
+│   └── text-formatting.utils.ts          # Pure text/number formatting (110 lines)
+│
+└── page.tsx                              # Catalog page (Template/Page layer)
 
 tests/unit/catalog/
 ├── search-parameters.utils.test.ts       # 38 tests, 100% coverage
 └── text-formatting.utils.test.ts         # 26 tests, 100% coverage
 ```
+
+---
+
+## 🎨 Atomic Design Classification
+
+### **Atoms** (Primitives from Shadcn UI)
+Located in `@/components/ui/`:
+- `Badge` - Filter badges
+- `Button` - Action buttons
+- `Card` - Container cards
+- `Input` - Text inputs
+- `Separator` - Visual dividers
+- `Skeleton` - Loading placeholders
+- `Select` - Dropdown selects
+
+### **Molecules** (Simple Combinations)
+Located in `_components/molecules/`:
+
+| Component                  | Description                        | Atoms Used                |
+| -------------------------- | ---------------------------------- | ------------------------- |
+| `active-filter-badges.tsx` | Removable filter badges            | Badge, X icon             |
+| `result-count.tsx`         | Results counter with pluralization | Separator, text           |
+| `catalog-header.tsx`       | Page title and description         | Headings, text            |
+| `catalog-search.tsx`       | Search input with clear button     | Input, Button, Spinner    |
+| `model-card.tsx`           | Product card composition           | Card, text, icons         |
+| `model-card-atoms.tsx`     | Card sub-components                | Images, dimensions, price |
+| `model-card-skeleton.tsx`  | Card loading state                 | Skeleton                  |
+
+**Characteristics**:
+- ✅ Combine 2-5 atoms
+- ✅ Minimal business logic
+- ✅ Reusable across features
+- ✅ Presentational focus
+
+### **Organisms** (Complex Compositions)
+Located in `_components/organisms/`:
+
+| Component                | Description                             | Complexity |
+| ------------------------ | --------------------------------------- | ---------- |
+| `catalog-filters.tsx`    | Complete filter controls with state     | High       |
+| `catalog-filter-bar.tsx` | Search + filters composition            | Medium     |
+| `catalog-grid.tsx`       | Product grid with data mapping          | Medium     |
+| `catalog-pagination.tsx` | Full pagination with logic              | Medium     |
+| `catalog-content.tsx`    | Content orchestrator (grid/empty/error) | High       |
+| `catalog-skeleton.tsx`   | Full catalog loading state              | Low        |
+| `catalog-empty.tsx`      | No results state                        | Low        |
+| `catalog-error.tsx`      | Error display state                     | Low        |
+
+**Characteristics**:
+- ✅ Combine molecules and atoms
+- ✅ Contain business logic
+- ✅ Feature-specific
+- ✅ Stateful components
+
+### **Templates** (Page Layouts)
+Not in `_components/` - handled by Next.js layouts:
+- `layout.tsx` - Route group layouts
+- Provide structure without data
+
+### **Pages** (Full Composition)
+- `page.tsx` - Orchestrates all organisms
+- Server Component by default
+- Fetches data and passes to organisms
 
 ---
 
@@ -371,19 +463,19 @@ type ActiveSearchParametersProps = {
 
 ### Code Reduction
 
-| Component | Before | After | Reduction |
-|-----------|--------|-------|-----------|
-| `active-filter-badges.tsx` | 120 lines | 90 lines | **-25%** |
-| `result-count.tsx` | 38 lines | 46 lines | +21% (added utility import) |
-| **Total Component Code** | 158 lines | 136 lines | **-14%** |
+| Component                  | Before    | After     | Reduction                   |
+| -------------------------- | --------- | --------- | --------------------------- |
+| `active-filter-badges.tsx` | 120 lines | 90 lines  | **-25%**                    |
+| `result-count.tsx`         | 38 lines  | 46 lines  | +21% (added utility import) |
+| **Total Component Code**   | 158 lines | 136 lines | **-14%**                    |
 
 ### New Utility Files (Pure Logic)
 
-| File | Lines | Tests | Coverage |
-|------|-------|-------|----------|
-| `search-parameters.utils.ts` | 220 | 38 | 100% |
-| `text-formatting.utils.ts` | 110 | 26 | 100% |
-| **Total Utility Code** | 330 | **64** | **100%** |
+| File                         | Lines | Tests  | Coverage |
+| ---------------------------- | ----- | ------ | -------- |
+| `search-parameters.utils.ts` | 220   | 38     | 100%     |
+| `text-formatting.utils.ts`   | 110   | 26     | 100%     |
+| **Total Utility Code**       | 330   | **64** | **100%** |
 
 ### Overall Project Impact
 
@@ -395,13 +487,13 @@ type ActiveSearchParametersProps = {
 
 ### Quality Metrics
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| **Testability** | ❌ Hard to test | ✅ Pure functions | 🎯 100% |
-| **Maintainability** | ⚠️ Mixed concerns | ✅ Separated | 🎯 High |
-| **Reusability** | ❌ Component-locked | ✅ Utilities reusable | 🎯 High |
-| **Type Safety** | ✅ Good | ✅ Excellent | 🎯 Strict mode |
-| **Code Duplication** | ⚠️ Some | ✅ None | 🎯 DRY |
+| Metric               | Before             | After                | Improvement   |
+| -------------------- | ------------------ | -------------------- | ------------- |
+| **Testability**      | ❌ Hard to test     | ✅ Pure functions     | 🎯 100%        |
+| **Maintainability**  | ⚠️ Mixed concerns   | ✅ Separated          | 🎯 High        |
+| **Reusability**      | ❌ Component-locked | ✅ Utilities reusable | 🎯 High        |
+| **Type Safety**      | ✅ Good             | ✅ Excellent          | 🎯 Strict mode |
+| **Code Duplication** | ⚠️ Some             | ✅ None               | 🎯 DRY         |
 
 ---
 

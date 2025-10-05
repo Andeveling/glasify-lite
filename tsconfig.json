@@ -28,6 +28,7 @@
       "@views/auth/*": ["./src/app/(auth)/*"],
       "@views/dashboard/*": ["./src/app/(dashboard)/*"],
       "@views/components/*": ["./src/app/_components/*"],
+      "@views/catalog/*": ["./src/app/(public)/catalog/*"],
       "@ui/*": ["./src/components/ui/*"],
       "@server/*": ["./src/server/*"],
       "@styles/*": ["./src/styles/*"]
