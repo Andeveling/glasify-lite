@@ -41,7 +41,8 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.js",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "src/app/(public)/catalog/[modelId]/page.tsx.bak"
   ],
   "exclude": [
     "node_modules",
