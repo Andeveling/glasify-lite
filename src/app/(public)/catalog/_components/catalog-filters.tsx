@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import type { CatalogSortOption } from '../_utils/search-parameters.utils';
 import ActiveSearchParameters from './active-filter-badges';
 import { ResultCount } from './result-count';
 
@@ -246,7 +247,7 @@ export function CatalogFilters({
           onRemoveSort={handleRemoveSort}
           searchQuery={currentSearchQuery}
           selectedManufacturerName={selectedManufacturerName}
-          sortType={currentSort}
+          sortType={currentSort as CatalogSortOption}
         />
       )}
 

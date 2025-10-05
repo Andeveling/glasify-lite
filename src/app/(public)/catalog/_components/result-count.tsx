@@ -1,6 +1,7 @@
 'use client';
 
 import { Separator } from '@/components/ui/separator';
+import { getResultCountParts } from '../_utils/text-formatting.utils';
 
 type ResultCountProps = {
   totalResults?: number;
@@ -11,26 +12,34 @@ type ResultCountProps = {
  * Issue: #002-ui-ux-requirements
  *
  * Displays the count of filtered results with proper Spanish pluralization.
- * Follows Single Responsibility Principle - only handles result count display.
+ *
+ * SOLID Principles Applied:
+ * - Single Responsibility: Only handles result count display (UI/presentation)
+ * - Dependency Inversion: Depends on utility function, not implementation details
+ *
+ * Business logic extracted to:
+ * - text-formatting.utils.ts (formatResultCount, getResultCountParts)
  */
 export function ResultCount({ totalResults }: ResultCountProps) {
   if (totalResults === undefined) {
     return null;
   }
 
+  const { count, hasResults } = getResultCountParts(totalResults);
+
   return (
     <>
       <Separator className="my-2" />
       <div className="text-muted-foreground text-sm">
-        {totalResults === 0 && <span>No se encontraron resultados</span>}
-        {totalResults === 1 && (
+        {!hasResults && <span>No se encontraron resultados</span>}
+        {hasResults && totalResults === 1 && (
           <span>
-            <strong className="font-medium text-foreground">1</strong> modelo encontrado
+            <strong className="font-medium text-foreground">{count}</strong> modelo encontrado
           </span>
         )}
-        {totalResults > 1 && (
+        {hasResults && totalResults > 1 && (
           <span>
-            <strong className="font-medium text-foreground">{totalResults}</strong> modelos encontrados
+            <strong className="font-medium text-foreground">{count}</strong> modelos encontrados
           </span>
         )}
       </div>
