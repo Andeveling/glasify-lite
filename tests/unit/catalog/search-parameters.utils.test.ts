@@ -196,9 +196,9 @@ describe('search-parameters.utils', () => {
 
       const expectedParameterCount = 3;
       expect(params).toHaveLength(expectedParameterCount);
-      expect(params[ 0 ]?.key).toBe('search');
-      expect(params[ 1 ]?.key).toBe('manufacturer');
-      expect(params[ 2 ]?.key).toBe('sort');
+      expect(params[0]?.key).toBe('search');
+      expect(params[1]?.key).toBe('manufacturer');
+      expect(params[2]?.key).toBe('sort');
     });
 
     it('should build parameters for search query only', () => {
@@ -207,7 +207,7 @@ describe('search-parameters.utils', () => {
       });
 
       expect(params).toHaveLength(1);
-      expect(params[ 0 ]).toEqual({
+      expect(params[0]).toEqual({
         ariaLabel: 'Quitar búsqueda: vidrio templado',
         icon: Search,
         key: 'search',
@@ -221,7 +221,7 @@ describe('search-parameters.utils', () => {
       });
 
       expect(params).toHaveLength(1);
-      expect(params[ 0 ]).toEqual({
+      expect(params[0]).toEqual({
         ariaLabel: 'Quitar filtro de VEKA',
         icon: Building2,
         key: 'manufacturer',
@@ -235,7 +235,7 @@ describe('search-parameters.utils', () => {
       });
 
       expect(params).toHaveLength(1);
-      expect(params[ 0 ]).toEqual({
+      expect(params[0]).toEqual({
         ariaLabel: 'Quitar ordenamiento: Z-A',
         icon: ArrowDownZA,
         key: 'sort',
@@ -250,7 +250,7 @@ describe('search-parameters.utils', () => {
       });
 
       expect(params).toHaveLength(1);
-      expect(params[ 0 ]?.key).toBe('search');
+      expect(params[0]?.key).toBe('search');
     });
 
     it('should handle null values correctly', () => {
@@ -281,7 +281,7 @@ describe('search-parameters.utils', () => {
       });
 
       expect(params).toHaveLength(1);
-      expect(params[ 0 ]?.key).toBe('manufacturer');
+      expect(params[0]?.key).toBe('manufacturer');
     });
 
     it('should preserve order: search, manufacturer, sort', () => {
@@ -291,9 +291,9 @@ describe('search-parameters.utils', () => {
         sortType: 'price-asc',
       });
 
-      expect(params[ 0 ]?.key).toBe('search');
-      expect(params[ 1 ]?.key).toBe('manufacturer');
-      expect(params[ 2 ]?.key).toBe('sort');
+      expect(params[0]?.key).toBe('search');
+      expect(params[1]?.key).toBe('manufacturer');
+      expect(params[2]?.key).toBe('sort');
     });
   });
 
