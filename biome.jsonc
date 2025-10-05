@@ -67,7 +67,7 @@
           "options": { "filenameCases": ["kebab-case"] }
         },
         // Requiere el uso de bloques de sentencias para mayor claridad.
-        "useBlockStatements": "error",
+        "useBlockStatements": "off",
         // Fomenta el uso de la sintaxis de fragmentos de React.
         "useFragmentSyntax": "error"
       },
