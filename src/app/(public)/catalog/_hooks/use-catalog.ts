@@ -26,7 +26,7 @@ export function useQueryParams() {
     (updates: Record<string, string | null>) => {
       const params = new URLSearchParams(searchParams?.toString());
 
-      for (const [ key, value ] of Object.entries(updates)) {
+      for (const [key, value] of Object.entries(updates)) {
         if (value === null) {
           params.delete(key);
         } else {
@@ -36,7 +36,7 @@ export function useQueryParams() {
 
       return params.toString();
     },
-    [ searchParams ]
+    [searchParams]
   );
 
   const updateQueryParams = useCallback(
@@ -50,10 +50,10 @@ export function useQueryParams() {
         router.push(url);
       }
     },
-    [ createQueryString, pathname, router ]
+    [createQueryString, pathname, router]
   );
 
-  const getParam = useCallback((key: string) => searchParams.get(key), [ searchParams ]);
+  const getParam = useCallback((key: string) => searchParams.get(key), [searchParams]);
 
   return {
     createQueryString,
@@ -73,15 +73,15 @@ export function useQueryParams() {
  * @returns Search state and handlers
  */
 export function useDebouncedSearch(initialValue = '', debounceMs = 300) {
-  const [ query, setQuery ] = useState(initialValue);
-  const [ isPending, startTransition ] = useTransition();
+  const [query, setQuery] = useState(initialValue);
+  const [isPending, startTransition] = useTransition();
   const { searchParams, updateQueryParams } = useQueryParams();
 
   // Sync input value when URL search params change externally
   useEffect(() => {
     const urlQuery = searchParams.get('q') ?? '';
     setQuery(urlQuery);
-  }, [ searchParams ]);
+  }, [searchParams]);
 
   // Debounced search handler
   const debouncedUpdate = useDebouncedCallback((value: string) => {
@@ -98,7 +98,7 @@ export function useDebouncedSearch(initialValue = '', debounceMs = 300) {
       setQuery(value);
       debouncedUpdate(value);
     },
-    [ debouncedUpdate ]
+    [debouncedUpdate]
   );
 
   const handleClear = useCallback(() => {
@@ -109,7 +109,7 @@ export function useDebouncedSearch(initialValue = '', debounceMs = 300) {
         q: null,
       });
     });
-  }, [ updateQueryParams ]);
+  }, [updateQueryParams]);
 
   return {
     handleClear,
@@ -139,7 +139,7 @@ export function usePagination(currentPage: number, totalPages: number) {
       });
       return queryString ? `?${queryString}` : '';
     },
-    [ createQueryString ]
+    [createQueryString]
   );
 
   const getVisiblePages = useCallback(() => {
@@ -147,7 +147,7 @@ export function usePagination(currentPage: number, totalPages: number) {
       // Show first page, last page, current page, and 1 page on each side
       return page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1;
     });
-  }, [ currentPage, totalPages ]);
+  }, [currentPage, totalPages]);
 
   const hasPrevious = currentPage > 1;
   const hasNext = currentPage < totalPages;
@@ -193,7 +193,7 @@ export function useCatalogFilters(
       return null;
     }
     return manufacturers.find((m) => m.id === currentManufacturer)?.name;
-  }, [ currentManufacturer, manufacturers ]);
+  }, [currentManufacturer, manufacturers]);
 
   // Utility to create query string following Next.js best practices
   // Build params from current state instead of using useSearchParams()
@@ -213,7 +213,7 @@ export function useCatalogFilters(
       }
 
       // Apply updates
-      for (const [ key, value ] of Object.entries(updates)) {
+      for (const [key, value] of Object.entries(updates)) {
         if (value === null || value === '') {
           urlParams.delete(key);
         } else {
@@ -223,7 +223,7 @@ export function useCatalogFilters(
 
       return urlParams.toString();
     },
-    [ currentSearchQuery, currentManufacturer, currentSort ]
+    [currentSearchQuery, currentManufacturer, currentSort]
   );
 
   const handleManufacturerChange = useCallback(
@@ -235,7 +235,7 @@ export function useCatalogFilters(
 
       router.push(`${pathname}?${queryString}`);
     },
-    [ pathname, router, createQueryString ]
+    [pathname, router, createQueryString]
   );
 
   const handleSortChange = useCallback(
@@ -247,16 +247,16 @@ export function useCatalogFilters(
 
       router.push(`${pathname}?${queryString}`);
     },
-    [ pathname, router, createQueryString ]
+    [pathname, router, createQueryString]
   );
 
   const handleRemoveManufacturer = useCallback(() => {
     handleManufacturerChange('all');
-  }, [ handleManufacturerChange ]);
+  }, [handleManufacturerChange]);
 
   const handleRemoveSort = useCallback(() => {
     handleSortChange('name-asc');
-  }, [ handleSortChange ]);
+  }, [handleSortChange]);
 
   const handleRemoveSearch = useCallback(() => {
     const queryString = createQueryString({
@@ -265,11 +265,11 @@ export function useCatalogFilters(
     });
 
     router.push(`${pathname}?${queryString}`);
-  }, [ pathname, router, createQueryString ]);
+  }, [pathname, router, createQueryString]);
 
   const handleClearFilters = useCallback(() => {
     router.push(pathname);
-  }, [ pathname, router ]);
+  }, [pathname, router]);
 
   const hasActiveParameters =
     currentManufacturer !== 'all' || currentSort !== 'name-asc' || Boolean(currentSearchQuery);

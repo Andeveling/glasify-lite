@@ -46,10 +46,10 @@ async function initializeWinston(): Promise<Logger> {
   if (!isServer) {
     // Return no-op logger for client-side
     return {
-      debug: () => {},
-      error: () => {},
-      info: () => {},
-      warn: () => {},
+      debug: () => { },
+      error: () => { },
+      info: () => { },
+      warn: () => { },
     };
   }
 
@@ -77,33 +77,24 @@ async function initializeWinston(): Promise<Logger> {
     const consoleFormat = winston.format.combine(
       winston.format.colorize(),
       winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-      winston.format.printf(
-        ({
-          timestamp,
-          level,
-          message,
-          service,
-          environment,
-          ...meta
-        }: {
+      winston.format.printf((info) => {
+        const { timestamp, level, message, ...meta } = info as {
           timestamp: string;
           level: string;
           message: string;
-          service?: string;
-          environment?: string;
-          [key: string]: unknown;
-        }) => {
-          let msg = `${timestamp} [${level}]: ${message}`;
+          [ key: string ]: unknown;
+        };
 
-          const metaKeys = Object.keys(meta).filter((key) => !['service', 'environment'].includes(key));
+        let msg = `${timestamp} [${level}]: ${message}`;
 
-          if (metaKeys.length > 0) {
-            msg += `\n${JSON.stringify(meta, null, 2)}`;
-          }
+        const metaKeys = Object.keys(meta).filter((key) => ![ 'service', 'environment' ].includes(key));
 
-          return msg;
+        if (metaKeys.length > 0) {
+          msg += `\n${JSON.stringify(meta, null, 2)}`;
         }
-      )
+
+        return msg;
+      })
     );
 
     // Custom format for file output (JSON for easy parsing)
