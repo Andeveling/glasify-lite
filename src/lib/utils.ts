@@ -17,10 +17,10 @@ export function formatCurrency(value: string | number): string {
     return '$0,00';
   }
 
-  return new Intl.NumberFormat('es-AR', {
-    currency: 'USD',
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 2,
+  return new Intl.NumberFormat('es-CO', {
+    currency: 'COP',
+    maximumFractionDigits: 0,
+    minimumFractionDigits: 0,
     style: 'currency',
   }).format(numericValue);
 }

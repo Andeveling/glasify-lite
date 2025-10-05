@@ -23,18 +23,18 @@ export default function ModelDetailPage({ params }: ModelDetailPageProps) {
 
   const glassTypeSuffixLength = 3;
 
-  // For now, we'll mock the data since the API doesn't have a single model endpoint
-  // In a real implementation, this would be api.catalog['get-model'].useQuery({ modelId })
-  const { data, isLoading, error } = api.catalog['list-models'].useQuery(
-    { manufacturerId: 'cm1l7vnqj000012oxnbhg9abc' }, // Default manufacturer
+  // Fetch the specific model directly by ID
+  const {
+    data: model,
+    isLoading,
+    error,
+  } = api.catalog['get-model-by-id'].useQuery(
+    { modelId },
     {
       refetchOnWindowFocus: false,
       retry: 2,
     }
   );
-
-  // Find the specific model
-  const model = data?.items.find((m) => m.id === modelId);
 
   const handleGoBack = () => {
     router.back();
@@ -98,10 +98,11 @@ export default function ModelDetailPage({ params }: ModelDetailPageProps) {
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
             <h1 className="mb-2 font-bold text-3xl text-foreground">{model.name}</h1>
-            <p className="text-lg text-muted-foreground">
-              Fabricante: <span className="font-medium text-foreground">Fabricante</span>
-              {/* TODO: Get real manufacturer name */}
-            </p>
+            {model.manufacturer && (
+              <p className="text-lg text-muted-foreground">
+                Fabricante: <span className="font-medium text-foreground">{model.manufacturer.name}</span>
+              </p>
+            )}
           </div>
           <div className="flex gap-3">
             <Button onClick={handleStartQuote} size="lg">

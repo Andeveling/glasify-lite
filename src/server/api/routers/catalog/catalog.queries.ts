@@ -1,66 +1,89 @@
-import { z } from 'zod';
+// src/server/api/routers/catalog/catalog.queries.ts
 import logger from '@/lib/logger';
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
+import { getModelByIdInput, listModelsInput, listModelsOutput, modelDetailOutput } from './catalog.schemas';
+import { serializeDecimalFields, serializeModel } from './catalog.utils';
 
-// Constants
-const DEFAULT_PAGE_LIMIT = 20;
-const MIN_PAGE_LIMIT = 1;
-const MAX_PAGE_LIMIT = 100;
+export const catalogQueries = createTRPCRouter({
+  /**
+   * Get a single model by ID
+   * @public
+   */
+  'get-model-by-id': publicProcedure
+    .input(getModelByIdInput)
+    .output(modelDetailOutput)
+    .query(async ({ ctx, input }) => {
+      try {
+        logger.info('Getting model by ID', { modelId: input.modelId });
 
-// Input schemas
-export const listModelsInput = z.object({
-  limit: z.number().min(MIN_PAGE_LIMIT).max(MAX_PAGE_LIMIT).default(DEFAULT_PAGE_LIMIT),
-  manufacturerId: z.cuid('ID del fabricante debe ser válido').optional(),
-  page: z.number().min(1).default(1),
-  search: z.string().optional(),
-  sort: z.enum(['name-asc', 'name-desc', 'price-asc', 'price-desc']).default('name-asc'),
-});
+        const model = await ctx.db.model.findUnique({
+          select: {
+            accessoryPrice: true,
+            basePrice: true,
+            compatibleGlassTypeIds: true,
+            costPerMmHeight: true,
+            costPerMmWidth: true,
+            createdAt: true,
+            id: true,
+            manufacturer: {
+              select: {
+                currency: true,
+                id: true,
+                name: true,
+                quoteValidityDays: true,
+              },
+            },
+            maxHeightMm: true,
+            maxWidthMm: true,
+            minHeightMm: true,
+            minWidthMm: true,
+            name: true,
+            status: true,
+            updatedAt: true,
+          },
+          where: {
+            id: input.modelId,
+            status: 'published',
+          },
+        });
 
-// Output schemas
-export const manufacturerOutput = z.object({
-  currency: z.string(),
-  id: z.string(),
-  name: z.string(),
-  quoteValidityDays: z.number(),
-});
+        if (!model) {
+          logger.warn('Model not found or not published', { modelId: input.modelId });
+          throw new Error('El modelo solicitado no existe o no está disponible.');
+        }
 
-export const modelSummaryOutput = z.object({
-  accessoryPrice: z.number().nullable(),
-  basePrice: z.number(),
-  compatibleGlassTypeIds: z.array(z.string()),
-  costPerMmHeight: z.number(),
-  costPerMmWidth: z.number(),
-  createdAt: z.date(),
-  id: z.string(),
-  manufacturer: z
-    .object({
-      id: z.string(),
-      name: z.string(),
-    })
-    .nullable(),
-  maxHeightMm: z.number(),
-  maxWidthMm: z.number(),
-  minHeightMm: z.number(),
-  minWidthMm: z.number(),
-  name: z.string(),
-  status: z.enum(['draft', 'published']),
-  updatedAt: z.date(),
-});
+        const serializedModel = serializeModel(model);
 
-export const listModelsOutput = z.object({
-  items: z.array(modelSummaryOutput),
-  total: z.number(),
-});
+        logger.info('Successfully retrieved model', {
+          modelId: input.modelId,
+          modelName: model.name,
+        });
 
-export const catalogRouter = createTRPCRouter({
+        return serializedModel;
+      } catch (error) {
+        logger.error('Error getting model by ID', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          modelId: input.modelId,
+        });
+
+        if (error instanceof Error && error.message.includes('no existe o no está disponible')) {
+          throw error;
+        }
+
+        throw new Error('No se pudo cargar el modelo. Intente nuevamente.');
+      }
+    }),
+
+  /**
+   * List manufacturers for filter dropdown
+   * @public
+   */
   'list-manufacturers': publicProcedure.query(async ({ ctx }) => {
     try {
       logger.info('Listing manufacturers for filter');
 
       const manufacturers = await ctx.db.manufacturer.findMany({
-        orderBy: {
-          name: 'asc',
-        },
+        orderBy: { name: 'asc' },
         select: {
           id: true,
           name: true,
@@ -81,6 +104,10 @@ export const catalogRouter = createTRPCRouter({
     }
   }),
 
+  /**
+   * List models with pagination, filtering, and sorting
+   * @public
+   */
   'list-models': publicProcedure
     .input(listModelsInput)
     .output(listModelsOutput)
@@ -94,21 +121,19 @@ export const catalogRouter = createTRPCRouter({
           sort: input.sort,
         });
 
-        // Build where clause with filters
+        // Build where clause
         const whereClause = {
-          ...(input.manufacturerId && {
-            manufacturerId: input.manufacturerId,
-          }),
+          ...(input.manufacturerId && { manufacturerId: input.manufacturerId }),
           ...(input.search && {
             name: {
               contains: input.search,
               mode: 'insensitive' as const,
             },
           }),
-          status: 'published' as const, // Only show published models
+          status: 'published' as const,
         };
 
-        // Build orderBy clause based on sort parameter
+        // Build orderBy clause
         const orderByClause = (() => {
           switch (input.sort) {
             case 'name-asc':
@@ -124,15 +149,13 @@ export const catalogRouter = createTRPCRouter({
           }
         })();
 
-        // Get total count for pagination
-        const total = await ctx.db.model.count({
-          where: whereClause,
-        });
+        // Get total count
+        const total = await ctx.db.model.count({ where: whereClause });
 
-        // Calculate skip based on page
+        // Calculate skip
         const skip = (input.page - 1) * input.limit;
 
-        // Fetch models with offset-based pagination
+        // Fetch models
         const models = await ctx.db.model.findMany({
           orderBy: orderByClause,
           select: {
@@ -162,14 +185,8 @@ export const catalogRouter = createTRPCRouter({
           where: whereClause,
         });
 
-        // Convert Decimal fields to numbers for JSON serialization
-        const serializedModels = models.map((model) => ({
-          ...model,
-          accessoryPrice: model.accessoryPrice?.toNumber() ?? null,
-          basePrice: model.basePrice.toNumber(),
-          costPerMmHeight: model.costPerMmHeight.toNumber(),
-          costPerMmWidth: model.costPerMmWidth.toNumber(),
-        }));
+        // Serialize Decimal fields
+        const serializedModels = models.map(serializeDecimalFields);
 
         logger.info('Successfully retrieved models', {
           count: serializedModels.length,

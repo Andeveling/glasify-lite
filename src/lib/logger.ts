@@ -46,10 +46,10 @@ async function initializeWinston(): Promise<Logger> {
   if (!isServer) {
     // Return no-op logger for client-side
     return {
-      debug: () => { },
-      error: () => { },
-      info: () => { },
-      warn: () => { },
+      debug: () => {},
+      error: () => {},
+      info: () => {},
+      warn: () => {},
     };
   }
 
@@ -82,12 +82,12 @@ async function initializeWinston(): Promise<Logger> {
           timestamp: string;
           level: string;
           message: string;
-          [ key: string ]: unknown;
+          [key: string]: unknown;
         };
 
         let msg = `${timestamp} [${level}]: ${message}`;
 
-        const metaKeys = Object.keys(meta).filter((key) => ![ 'service', 'environment' ].includes(key));
+        const metaKeys = Object.keys(meta).filter((key) => !['service', 'environment'].includes(key));
 
         if (metaKeys.length > 0) {
           msg += `\n${JSON.stringify(meta, null, 2)}`;
