@@ -2,8 +2,9 @@
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { usePagination } from '../_hooks/use-catalog';
+import { shouldShowEllipsis } from '../_utils/catalog.utils';
 
 type CatalogPaginationProps = {
   currentPage: number;
@@ -11,28 +12,24 @@ type CatalogPaginationProps = {
 };
 
 /**
- * CatalogPagination - Client Component
+ * CatalogPagination - Presentational Component
  * Issue: #002-ui-ux-requirements
  *
- * Handles pagination navigation.
- * Uses Link for better SEO and navigation.
+ * Clean pagination UI with SEO-friendly links.
+ *
+ * Responsibilities (Single Responsibility Principle):
+ * - Render pagination UI
+ * - Delegate URL generation to usePagination hook
+ * - Delegate ellipsis logic to utility function
+ *
+ * Benefits:
+ * - Pure presentation logic
+ * - Easy to test
+ * - Business logic separated to hook
  */
 export function CatalogPagination({ currentPage, totalPages }: CatalogPaginationProps) {
-  const searchParams = useSearchParams();
-
-  const createPageUrl = (page: number) => {
-    const params = new URLSearchParams(searchParams?.toString());
-    if (page === 1) {
-      params.delete('page');
-    } else {
-      params.set('page', page.toString());
-    }
-    const queryString = params.toString();
-    return queryString ? `?${queryString}` : '';
-  };
-
-  const hasPrevious = currentPage > 1;
-  const hasNext = currentPage < totalPages;
+  const { createPageUrl, getVisiblePages, hasPrevious, hasNext } = usePagination(currentPage, totalPages);
+  const visiblePages = getVisiblePages();
 
   return (
     <nav aria-label="Paginación del catálogo" className="mt-8 flex items-center justify-center gap-2">
@@ -46,31 +43,26 @@ export function CatalogPagination({ currentPage, totalPages }: CatalogPagination
 
       {/* Page numbers */}
       <div className="flex items-center gap-1">
-        {Array.from({ length: totalPages }, (_, i) => i + 1)
-          .filter((page) => {
-            // Show first page, last page, current page, and 1 page on each side
-            return page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1;
-          })
-          .map((page, index, array) => {
-            const prevPage = array[index - 1];
-            const showEllipsis = index > 0 && prevPage !== undefined && page - prevPage > 1;
+        {visiblePages.map((page, index, array) => {
+          const prevPage = array[index - 1];
+          const showEllipsis = shouldShowEllipsis(page, prevPage);
 
-            return (
-              <div className="flex items-center" key={page}>
-                {showEllipsis && <span className="px-2 text-muted-foreground">...</span>}
-                <Button
-                  aria-current={page === currentPage ? 'page' : undefined}
-                  asChild
-                  size="sm"
-                  variant={page === currentPage ? 'default' : 'outline'}
-                >
-                  <Link aria-label={`Ir a página ${page}`} href={createPageUrl(page)} scroll={false}>
-                    {page}
-                  </Link>
-                </Button>
-              </div>
-            );
-          })}
+          return (
+            <div className="flex items-center" key={page}>
+              {showEllipsis && <span className="px-2 text-muted-foreground">...</span>}
+              <Button
+                aria-current={page === currentPage ? 'page' : undefined}
+                asChild
+                size="sm"
+                variant={page === currentPage ? 'default' : 'outline'}
+              >
+                <Link aria-label={`Ir a página ${page}`} href={createPageUrl(page)} scroll={false}>
+                  {page}
+                </Link>
+              </Button>
+            </div>
+          );
+        })}
       </div>
 
       {/* Next button */}

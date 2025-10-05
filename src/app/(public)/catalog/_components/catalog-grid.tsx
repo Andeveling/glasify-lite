@@ -27,11 +27,21 @@ type CatalogGridProps = {
 };
 
 /**
- * Catalog Grid Component
+ * CatalogGrid - Pure Presentational Component
  * Issue: #002-ui-ux-requirements
  *
- * Minimalist grid layout inspired by Saleor Storefront
- * Clean spacing, clear hierarchy, professional presentation
+ * Minimalist grid layout inspired by Saleor Storefront.
+ *
+ * Responsibilities (Single Responsibility Principle):
+ * - Render grid layout
+ * - Map models to ModelCard components
+ * - Transform data for display
+ *
+ * Benefits:
+ * - Pure presentation
+ * - Easy to test
+ * - No side effects
+ * - Follows Open/Closed Principle (open for extension via props)
  */
 export function CatalogGrid({ models }: CatalogGridProps) {
   return (

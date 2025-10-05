@@ -1,4 +1,5 @@
 import { api } from '@/trpc/server';
+import { calculateTotalPages } from '../_utils/catalog.utils';
 import { CatalogEmpty } from './catalog-empty';
 import { CatalogError } from './catalog-error';
 import { CatalogGrid } from './catalog-grid';
@@ -17,13 +18,19 @@ const ITEMS_PER_PAGE = 20;
  * CatalogContent - Server Component
  * Issue: #002-ui-ux-requirements
  *
- * Server Component that fetches and renders catalog models.
- * This component is cached and revalidated via ISR.
+ * Fetches and renders catalog models server-side.
+ *
+ * Responsibilities (Single Responsibility Principle):
+ * - Fetch data from API
+ * - Handle loading/error states
+ * - Compose presentation components
+ * - Delegate pagination calculation to utility
  *
  * Benefits:
- * - Pre-rendered HTML for better performance
- * - SEO-friendly (search engines see the content)
- * - No client-side JavaScript needed for rendering
+ * - Server-side rendering (better SEO)
+ * - ISR caching (better performance)
+ * - Clean separation of concerns
+ * - Easy to test (mock API)
  */
 export async function CatalogContent({ manufacturerId, page, searchQuery, sort = 'name-asc' }: CatalogContentProps) {
   try {
@@ -38,7 +45,7 @@ export async function CatalogContent({ manufacturerId, page, searchQuery, sort =
 
     const hasActiveFilters = Boolean(searchQuery || manufacturerId);
     const { items: models, total } = data;
-    const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+    const totalPages = calculateTotalPages(total, ITEMS_PER_PAGE);
 
     // Empty state
     if (models.length === 0) {
