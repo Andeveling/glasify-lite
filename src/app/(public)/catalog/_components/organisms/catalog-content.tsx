@@ -35,7 +35,7 @@ const ITEMS_PER_PAGE = 20;
 export async function CatalogContent({ manufacturerId, page, searchQuery, sort = 'name-asc' }: CatalogContentProps) {
   try {
     // Fetch models on the server - this is cached and revalidated
-    const data = await api.catalog['list-models']({
+    const data = await api.catalog[ 'list-models' ]({
       limit: ITEMS_PER_PAGE,
       manufacturerId,
       page,

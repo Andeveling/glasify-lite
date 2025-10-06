@@ -15,11 +15,15 @@ export const listModelsInput = z.object({
   manufacturerId: z.cuid('ID del fabricante debe ser válido').optional(),
   page: z.number().min(1).default(1),
   search: z.string().optional(),
-  sort: z.enum(['name-asc', 'name-desc', 'price-asc', 'price-desc']).default('name-asc'),
+  sort: z.enum([ 'name-asc', 'name-desc', 'price-asc', 'price-desc' ]).default('name-asc'),
 });
 
 export const getModelByIdInput = z.object({
   modelId: z.cuid('ID del modelo debe ser válido'),
+});
+
+export const listServicesInput = z.object({
+  manufacturerId: z.cuid('ID del fabricante debe ser válido'),
 });
 
 // ========================================
@@ -52,7 +56,7 @@ export const modelSummaryOutput = z.object({
   minHeightMm: z.number(),
   minWidthMm: z.number(),
   name: z.string(),
-  status: z.enum(['draft', 'published']),
+  status: z.enum([ 'draft', 'published' ]),
   updatedAt: z.date(),
 });
 
@@ -82,9 +86,22 @@ export const modelDetailOutput = z.object({
   minHeightMm: z.number(),
   minWidthMm: z.number(),
   name: z.string(),
-  status: z.enum(['draft', 'published']),
+  status: z.enum([ 'draft', 'published' ]),
   updatedAt: z.date(),
 });
+
+export const serviceOutput = z.object({
+  createdAt: z.date(),
+  id: z.string(),
+  manufacturerId: z.string(),
+  name: z.string(),
+  rate: z.number(),
+  type: z.enum([ 'area', 'perimeter', 'fixed' ]),
+  unit: z.enum([ 'unit', 'sqm', 'ml' ]),
+  updatedAt: z.date(),
+});
+
+export const listServicesOutput = z.array(serviceOutput);
 
 // ========================================
 // TYPE EXPORTS (para reutilizar en forms)
@@ -92,5 +109,8 @@ export const modelDetailOutput = z.object({
 
 export type ListModelsInput = z.infer<typeof listModelsInput>;
 export type GetModelByIdInput = z.infer<typeof getModelByIdInput>;
+export type ListServicesInput = z.infer<typeof listServicesInput>;
 export type ModelSummaryOutput = z.infer<typeof modelSummaryOutput>;
 export type ModelDetailOutput = z.infer<typeof modelDetailOutput>;
+export type ServiceOutput = z.infer<typeof serviceOutput>;
+export type ListServicesOutput = z.infer<typeof listServicesOutput>;

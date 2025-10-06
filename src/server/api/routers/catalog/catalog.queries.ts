@@ -1,7 +1,14 @@
 // src/server/api/routers/catalog/catalog.queries.ts
 import logger from '@/lib/logger';
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
-import { getModelByIdInput, listModelsInput, listModelsOutput, modelDetailOutput } from './catalog.schemas';
+import {
+  getModelByIdInput,
+  listModelsInput,
+  listModelsOutput,
+  listServicesInput,
+  listServicesOutput,
+  modelDetailOutput,
+} from './catalog.schemas';
 import { serializeDecimalFields, serializeModel } from './catalog.utils';
 
 export const catalogQueries = createTRPCRouter({
@@ -207,6 +214,58 @@ export const catalogQueries = createTRPCRouter({
         });
 
         throw new Error('No se pudieron cargar los modelos. Intente nuevamente.');
+      }
+    }),
+
+  /**
+   * List services by manufacturer for parametrization form
+   * @public
+   */
+  'list-services': publicProcedure
+    .input(listServicesInput)
+    .output(listServicesOutput)
+    .query(async ({ ctx, input }) => {
+      try {
+        logger.info('Listing services for manufacturer', {
+          manufacturerId: input.manufacturerId,
+        });
+
+        const services = await ctx.db.service.findMany({
+          orderBy: { name: 'asc' },
+          select: {
+            createdAt: true,
+            id: true,
+            manufacturerId: true,
+            name: true,
+            rate: true,
+            type: true,
+            unit: true,
+            updatedAt: true,
+          },
+          where: {
+            manufacturerId: input.manufacturerId,
+          },
+        });
+
+        // Serialize Decimal fields (rate)
+        const serializedServices = services.map((service) => ({
+          ...service,
+          rate: service.rate.toNumber(),
+        }));
+
+        logger.info('Successfully retrieved services', {
+          count: serializedServices.length,
+          manufacturerId: input.manufacturerId,
+        });
+
+        return serializedServices;
+      } catch (error) {
+        logger.error('Error listing services', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          manufacturerId: input.manufacturerId,
+        });
+
+        throw new Error('No se pudieron cargar los servicios. Intente nuevamente.');
       }
     }),
 });
