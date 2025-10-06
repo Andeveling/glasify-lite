@@ -1,7 +1,20 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { api } from '@/';
-import { ModelForm } from '@/app/(public)/catalog/_components/model-form';
+
+// Mock tRPC hook (simula datos del modelo) - MUST be FIRST, before any imports that use it
+vi.mock('@/trpc/react', () => ({
+  api: {
+    catalog: {
+      'get-model-by-id': {
+        useQuery: vi.fn(),
+      },
+    },
+  },
+}));
+
+// Import after mocks to ensure the mock is applied
+import { ModelForm } from '@/app/(public)/catalog/[modelId]/_components/form/model-form';
+import { api } from '@/trpc/react';
 
 // Regex constants for performance (Biome rule)
 const MODEL_NAME_REGEX = /Ventana VEKA 70/i;
@@ -13,17 +26,7 @@ const SERVICES_LABEL_REGEX = /Servicios adicionales/i;
 const ADD_TO_QUOTE_BUTTON_REGEX = /añadir a cotización/i;
 const MODEL_NOT_FOUND_REGEX = /El modelo solicitado no existe/i;
 
-// Mock tRPC hook (simula datos del modelo) - MUST be before imports
-vi.mock('@/trpc/react', () => ({
-  api: {
-    catalog: {
-      'get-model-by-id': {
-        useQuery: vi.fn(),
-      },
-    },
-  },
-}));
-
+// Type the mock properly
 const mockUseQuery = api.catalog['get-model-by-id'].useQuery as ReturnType<typeof vi.fn>;
 
 describe('ModelFormPage', () => {
@@ -45,25 +48,25 @@ describe('ModelFormPage', () => {
       isLoading: false,
     });
   });
-
-  it('debe renderizar el nombre del modelo y fabricante', () => {
+  // English: messages
+  it('should render model name and manufacturer', () => {
     render(<ModelForm modelId="model-123" />);
-    expect(screen.getByText(MODEL_NAME_REGEX)).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: MODEL_NAME_REGEX })).toBeInTheDocument();
-    // Verifica que el fabricante aparece al menos una vez
+    expect(screen.getByText(MODEL_NAME_REGEX)).toBeInstanceOf(HTMLElement);
+    expect(screen.getByRole('heading', { name: MODEL_NAME_REGEX })).toBeInstanceOf(HTMLElement);
+    // Check that the manufacturer appears at least once
     expect(screen.getAllByText(MANUFACTURER_REGEX).length).toBeGreaterThan(0);
   });
 
-  it('debe renderizar los campos del formulario de parametrización', () => {
+  it('should render the parameterization form fields', () => {
     render(<ModelForm modelId="model-123" />);
-    expect(screen.getByLabelText(WIDTH_LABEL_REGEX)).toBeInTheDocument();
-    expect(screen.getByLabelText(HEIGHT_LABEL_REGEX)).toBeInTheDocument();
-    expect(screen.getByLabelText(QUANTITY_LABEL_REGEX)).toBeInTheDocument();
-    expect(screen.getByLabelText(SERVICES_LABEL_REGEX)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: ADD_TO_QUOTE_BUTTON_REGEX })).toBeInTheDocument();
+    expect(screen.getByLabelText(WIDTH_LABEL_REGEX)).toBeInstanceOf(HTMLElement);
+    expect(screen.getByLabelText(HEIGHT_LABEL_REGEX)).toBeInstanceOf(HTMLElement);
+    expect(screen.getByLabelText(QUANTITY_LABEL_REGEX)).toBeInstanceOf(HTMLElement);
+    expect(screen.getByLabelText(SERVICES_LABEL_REGEX)).toBeInstanceOf(HTMLElement);
+    expect(screen.getByRole('button', { name: ADD_TO_QUOTE_BUTTON_REGEX })).toBeInstanceOf(HTMLElement);
   });
 
-  it('debe mostrar mensaje de error si el modelo no existe', () => {
+  it('should show error message if model does not exist', () => {
     // Override mock for this test to simulate error
     mockUseQuery.mockReturnValueOnce({
       data: null,
@@ -72,6 +75,6 @@ describe('ModelFormPage', () => {
     });
 
     render(<ModelForm modelId="model-123" />);
-    expect(screen.getByText(MODEL_NOT_FOUND_REGEX)).toBeInTheDocument();
+    expect(screen.getByText(MODEL_NOT_FOUND_REGEX)).toBeInstanceOf(HTMLElement);
   });
 });

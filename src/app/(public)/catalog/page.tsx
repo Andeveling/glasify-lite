@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { api } from '@/trpc/server';
+import { api } from '@/trpc/server-client';
 import { CatalogHeader } from './_components/molecules/catalog-header';
 import { CatalogContent } from './_components/organisms/catalog-content';
 import { CatalogFilterBar } from './_components/organisms/catalog-filter-bar';

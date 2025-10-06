@@ -3,7 +3,7 @@ import { CatalogError } from '@views/catalog/_components/organisms/catalog-error
 import { CatalogGrid } from '@views/catalog/_components/organisms/catalog-grid';
 import { CatalogPagination } from '@views/catalog/_components/organisms/catalog-pagination';
 import { calculateTotalPages } from '@views/catalog/_utils/catalog.utils';
-import { api } from '@/trpc/server';
+import { api } from '@/trpc/server-client';
 
 type CatalogContentProps = {
   manufacturerId?: string;

@@ -31,7 +31,9 @@
       "@views/quote/*": ["./src/app/(public)/quote/*"],
       "@ui/*": ["./src/components/ui/*"],
       "@server/*": ["./src/server/*"],
-      "@styles/*": ["./src/styles/*"]
+      "@styles/*": ["./src/styles/*"],
+      "@trpc/server/*": ["./src/trpc/server/*"],
+      "@trpc/server-client/*": ["./src/trpc/server-client/*"]
     },
     "strictNullChecks": true
   },
@@ -50,7 +52,7 @@
     "**/*.test.tsx",
     "**/*.spec.ts",
     "**/*.spec.tsx",
-    "tests/**/*",
+    "src/tests/**/*",
     "__tests__/**/*",
     "e2e/**/*"
   ]
