@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  plugins: [ react() ],
+  plugins: [react()],
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
@@ -21,7 +21,7 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
-    exclude: [ '**/node_modules/**', '**/dist/**', '**/e2e/**' ],
+    exclude: ['**/node_modules/**', '**/dist/**', '**/e2e/**'],
     globals: true,
     pool: 'threads',
     poolOptions: {
@@ -29,6 +29,6 @@ export default defineConfig({
         singleThread: true,
       },
     },
-    setupFiles: [ './src/tests/setup.ts' ],
+    setupFiles: ['./src/tests/setup.ts'],
   },
 });
