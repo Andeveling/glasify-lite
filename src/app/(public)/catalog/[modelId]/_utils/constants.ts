@@ -3,53 +3,53 @@ import type { GlassOption, Model, PriceIndicator, Service, ServiceType } from '.
 
 export const glassOptions: GlassOption[] = [
   {
-    benefits: ['Claridad óptima', 'Resistencia básica', 'Ideal para clima templado'],
+    benefits: [ 'Claridad óptima', 'Resistencia básica', 'Ideal para clima templado' ],
     description: 'Perfecta para uso diario en espacios interiores y exteriores',
     icon: Home,
     id: 'general-6mm',
     priceIndicator: 'budget',
     purpose: 'general',
     technicalSpecs: {
-      features: ['Vidrio flotado'],
+      features: [ 'Vidrio flotado' ],
       thickness: '6mm',
     },
     title: 'Solución Estándar',
   },
   {
-    benefits: ['Reduce hasta 40% en costos de climatización', 'Aislamiento térmico superior', 'Reduce condensación'],
+    benefits: [ 'Reduce hasta 40% en costos de climatización', 'Aislamiento térmico superior', 'Reduce condensación' ],
     description: 'Mantén tu hogar fresco en verano y cálido en invierno',
     icon: Snowflake,
     id: 'insulation-6mm',
     priceIndicator: 'premium',
     purpose: 'insulation',
     technicalSpecs: {
-      features: ['Bajo emisivo (Low-E)', 'Doble acristalamiento'],
+      features: [ 'Bajo emisivo (Low-E)', 'Doble acristalamiento' ],
       thickness: '6mm',
     },
     title: 'Ahorro de Energía',
   },
   {
-    benefits: ['Resistente a impactos', 'Protección contra intrusos', 'Fragmentos seguros en caso de rotura'],
+    benefits: [ 'Resistente a impactos', 'Protección contra intrusos', 'Fragmentos seguros en caso de rotura' ],
     description: 'Máxima seguridad para tu familia y tu hogar',
     icon: Shield,
     id: 'security-8mm',
     priceIndicator: 'premium',
     purpose: 'security',
     technicalSpecs: {
-      features: ['Templado', 'Laminado'],
+      features: [ 'Templado', 'Laminado' ],
       thickness: '8mm',
     },
     title: 'Protección y Seguridad',
   },
   {
-    benefits: ['Privacidad sin perder luz natural', 'Diseño elegante', 'Fácil mantenimiento'],
+    benefits: [ 'Privacidad sin perder luz natural', 'Diseño elegante', 'Fácil mantenimiento' ],
     description: 'Combina estética moderna con privacidad',
     icon: Sparkles,
     id: 'decorative-6mm',
     priceIndicator: 'standard',
     purpose: 'decorative',
     technicalSpecs: {
-      features: ['Acabado especial', 'Filtro UV'],
+      features: [ 'Acabado especial', 'Filtro UV' ],
       thickness: '6mm',
     },
     title: 'Estilo y Privacidad',
@@ -136,5 +136,5 @@ export function getServiceTypeLabel(type: ServiceType): string {
     fixed: 'Precio fijo',
     perimeter: 'Por perímetro (ml)',
   };
-  return labels[type];
+  return labels[ type ];
 }
