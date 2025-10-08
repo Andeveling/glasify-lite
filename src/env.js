@@ -1,6 +1,9 @@
 import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 
+// Only one call process env
+const { AUTH_GOOGLE_ID, AUTH_GOOGLE_SECRET, AUTH_SECRET, DATABASE_URL, NODE_ENV } = process.env;
+
 export const env = createEnv({
   /**
    * Specify your client-side environment variables schema here. This way you can ensure the app
@@ -21,11 +24,11 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
-    AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID,
-    AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
-    AUTH_SECRET: process.env.AUTH_SECRET,
-    DATABASE_URL: process.env.DATABASE_URL,
-    NODE_ENV: process.env.NODE_ENV,
+    AUTH_GOOGLE_ID,
+    AUTH_GOOGLE_SECRET,
+    AUTH_SECRET,
+    DATABASE_URL,
+    NODE_ENV,
   },
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
@@ -35,7 +38,7 @@ export const env = createEnv({
     AUTH_GOOGLE_ID: z.string(),
     AUTH_GOOGLE_SECRET: z.string(),
     AUTH_SECRET: process.env.NODE_ENV === 'production' ? z.string() : z.string().optional(),
-    DATABASE_URL: z.string().url(),
+    DATABASE_URL: z.url(),
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   },
   /**
