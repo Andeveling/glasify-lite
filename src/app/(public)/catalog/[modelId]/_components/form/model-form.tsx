@@ -22,9 +22,9 @@ type ModelFormProps = {
 };
 
 export function ModelForm({ model, glassTypes, services, onSubmit }: ModelFormProps) {
-  const [submittedData, setSubmittedData] = useState<QuoteFormData | null>(null);
+  const [ submittedData, setSubmittedData ] = useState<QuoteFormData | null>(null);
 
-  const schema = useMemo(() => createQuoteFormSchema(model), [model]);
+  const schema = useMemo(() => createQuoteFormSchema(model), [ model ]);
 
   const form = useForm<QuoteFormValues>({
     defaultValues: {

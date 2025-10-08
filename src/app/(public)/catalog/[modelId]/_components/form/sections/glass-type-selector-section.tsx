@@ -1,7 +1,7 @@
 'use client';
 
 import { Home, Shield, Snowflake, Sparkles } from 'lucide-react';
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Badge } from '@/components/ui/badge';
 import { FieldContent, FieldDescription, FieldLegend, FieldSet } from '@/components/ui/field';
@@ -55,14 +55,14 @@ function buildGlassFeatures(glassType: GlassTypeOutput): string[] {
   return features;
 }
 
-export function GlassTypeSelectorSection({ glassTypes }: GlassTypeSelectorSectionProps) {
+export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ glassTypes }) => {
   const { control } = useFormContext();
 
   const glassOptions = useMemo(
     () =>
       glassTypes.map((glassType) => {
-        const icon = purposeIcons[glassType.purpose] ?? Home;
-        const title = purposeLabels[glassType.purpose] ?? glassType.name;
+        const icon = purposeIcons[ glassType.purpose ] ?? Home;
+        const title = purposeLabels[ glassType.purpose ] ?? glassType.name;
         const features = buildGlassFeatures(glassType);
         const priceIndicator = getPriceIndicator(glassType.pricePerSqm);
 
@@ -76,7 +76,7 @@ export function GlassTypeSelectorSection({ glassTypes }: GlassTypeSelectorSectio
           title,
         };
       }),
-    [glassTypes]
+    [ glassTypes ]
   );
 
   return (
@@ -119,7 +119,7 @@ export function GlassTypeSelectorSection({ glassTypes }: GlassTypeSelectorSectio
                               <div>
                                 <h4 className="font-semibold">{option.title}</h4>
                                 <Badge className="mt-1 text-xs" variant={isSelected ? 'default' : 'secondary'}>
-                                  {priceLabels[option.priceIndicator]}
+                                  {priceLabels[ option.priceIndicator ]}
                                 </Badge>
                               </div>
                             </div>
@@ -149,4 +149,6 @@ export function GlassTypeSelectorSection({ glassTypes }: GlassTypeSelectorSectio
       </FieldContent>
     </FieldSet>
   );
-}
+});
+
+GlassTypeSelectorSection.displayName = 'GlassTypeSelectorSection';
