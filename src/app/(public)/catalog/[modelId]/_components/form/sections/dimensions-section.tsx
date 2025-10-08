@@ -2,12 +2,12 @@ import { AlertCircle, Check, Package, Ruler } from 'lucide-react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { FieldContent, FieldDescription, FieldLegend, FieldSet } from '@/components/ui/field';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/input-group';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
-import { Window2DPreview } from './window-2d-preview';
 
 type ModelDimensions = {
   minWidth: number;
@@ -59,7 +59,8 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
       <FieldDescription>Especifica las dimensiones del vidrio requeridas.</FieldDescription>
 
       <FieldContent>
-        <Window2DPreview height={height} showControls={false} width={width} />
+        {/* <Window2DPreview height={height} showControls={false} width={width} />
+        <Separator className="my-4" /> */}
         <div className="grid gap-6 sm:grid-cols-2">
           {/* Ancho */}
           <FormField
@@ -256,14 +257,9 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
               {/* Botones rápidos de cantidad */}
               <div className="mt-2 flex flex-wrap gap-2">
                 {QUANTITY_PRESETS.map((q) => (
-                  <button
-                    className="rounded bg-secondary px-3 py-1 text-xs transition-colors hover:bg-secondary/80"
-                    key={q}
-                    onClick={() => field.onChange(q)}
-                    type="button"
-                  >
+                  <Button key={q} onClick={() => field.onChange(q)} size={'icon'} type="button">
                     {q}
-                  </button>
+                  </Button>
                 ))}
               </div>
 

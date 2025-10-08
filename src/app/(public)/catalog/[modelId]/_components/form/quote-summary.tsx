@@ -1,6 +1,7 @@
 'use client';
 
-import { AlertCircle, CheckCircle, DollarSign, Loader2 } from 'lucide-react';
+import { AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
+import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -79,7 +80,7 @@ export function QuoteSummary({ basePrice, calculatedPrice, currency, error, isCa
             hasValidCalculation ? 'text-primary' : 'text-foreground'
           )}
         >
-          ${displayPrice.toFixed(2)} {currency}
+          {formatCurrency(displayPrice, { currency, decimals: 0, locale: 'es-CO' })}
         </span>
         <span className="text-muted-foreground text-xs">
           {hasValidCalculation ? 'precio calculado' : 'precio base estimado'}
@@ -97,7 +98,7 @@ export function QuoteSummary({ basePrice, calculatedPrice, currency, error, isCa
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-3">
-            <DollarSign className="h-5 w-5 text-muted-foreground" />
+            {/* <DollarSign className="h-5 w-5 text-muted-foreground" /> */}
             {priceDisplay}
           </div>
           <div className="mt-2 flex items-center gap-2">

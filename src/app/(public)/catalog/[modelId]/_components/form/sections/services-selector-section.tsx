@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FieldContent, FieldDescription, FieldLegend, FieldSet } from '@/components/ui/field';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { cn } from '@/lib/utils';
+import { cn, formatCurrency } from '@/lib/utils';
 import type { ServiceOutput } from '@/server/api/routers/catalog';
 
 type ServicesSelectorSectionProps = {
@@ -25,12 +25,12 @@ const SERVICE_UNIT_LABELS = {
   unit: 'unidad',
 } as const;
 
-function getServiceTypeLabel(type: ServiceOutput['type']): string {
-  return SERVICE_TYPE_LABELS[type];
+function getServiceTypeLabel(type: ServiceOutput[ 'type' ]): string {
+  return SERVICE_TYPE_LABELS[ type ];
 }
 
-function getServiceUnitLabel(unit: ServiceOutput['unit']): string {
-  return SERVICE_UNIT_LABELS[unit];
+function getServiceUnitLabel(unit: ServiceOutput[ 'unit' ]): string {
+  return SERVICE_UNIT_LABELS[ unit ];
 }
 
 export function ServicesSelectorSection({ services }: ServicesSelectorSectionProps) {
@@ -48,7 +48,7 @@ export function ServicesSelectorSection({ services }: ServicesSelectorSectionPro
           name="additionalServices"
           render={() => (
             <FormItem>
-              <div className="space-y-2">
+              <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                 {services.map((service) => (
                   <FormField
                     control={control}
@@ -67,10 +67,11 @@ export function ServicesSelectorSection({ services }: ServicesSelectorSectionPro
                           <FormControl>
                             <Checkbox
                               checked={isChecked}
+                              className="size-6"
                               onCheckedChange={(checked) => {
                                 const currentValue = field.value || [];
                                 const newValue = checked
-                                  ? [...currentValue, service.id]
+                                  ? [ ...currentValue, service.id ]
                                   : currentValue.filter((id: string) => id !== service.id);
                                 field.onChange(newValue);
                               }}
@@ -84,7 +85,9 @@ export function ServicesSelectorSection({ services }: ServicesSelectorSectionPro
                               </Badge>
                             </FormLabel>
                             <div className="flex items-baseline gap-2 text-muted-foreground text-xs">
-                              <span className="font-semibold text-foreground text-sm">${service.rate.toFixed(2)}</span>
+                              <span className="font-semibold text-foreground text-sm">
+                                {formatCurrency(service.rate)}
+                              </span>
                               <span>por {getServiceUnitLabel(service.unit)}</span>
                             </div>
                           </div>
