@@ -26,13 +26,13 @@ formatCurrency(285000, { display: 'code' }) // "285.000 COP"
 
 #### Opciones
 
-| Opción | Tipo | Default | Descripción |
-|--------|------|---------|-------------|
-| `currency` | `string` | `'COP'` | Código de divisa ISO 4217 |
-| `locale` | `string` | `'es-CO'` | Locale para formateo |
-| `decimals` | `number` | `0` | Decimales a mostrar |
-| `display` | `'symbol' \| 'code' \| 'name'` | `'symbol'` | Modo de visualización |
-| `useGrouping` | `boolean` | `true` | Usar separadores de miles |
+| Opción        | Tipo                           | Default    | Descripción               |
+| ------------- | ------------------------------ | ---------- | ------------------------- |
+| `currency`    | `string`                       | `'COP'`    | Código de divisa ISO 4217 |
+| `locale`      | `string`                       | `'es-CO'`  | Locale para formateo      |
+| `decimals`    | `number`                       | `0`        | Decimales a mostrar       |
+| `display`     | `'symbol' \| 'code' \| 'name'` | `'symbol'` | Modo de visualización     |
+| `useGrouping` | `boolean`                      | `true`     | Usar separadores de miles |
 
 ### `formatCOP(value, showDecimals?)`
 
