@@ -35,7 +35,6 @@ function getServiceUnitLabel(unit: ServiceOutput['unit']): string {
 
 export function ServicesSelectorSection({ services }: ServicesSelectorSectionProps) {
   const { control } = useFormContext();
-
   return (
     <FieldSet>
       <div className="flex items-center gap-2">

@@ -61,8 +61,8 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
   const glassOptions = useMemo(
     () =>
       glassTypes.map((glassType) => {
-        const icon = purposeIcons[ glassType.purpose ] ?? Home;
-        const title = purposeLabels[ glassType.purpose ] ?? glassType.name;
+        const icon = purposeIcons[glassType.purpose] ?? Home;
+        const title = purposeLabels[glassType.purpose] ?? glassType.name;
         const features = buildGlassFeatures(glassType);
         const priceIndicator = getPriceIndicator(glassType.pricePerSqm);
 
@@ -76,7 +76,7 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
           title,
         };
       }),
-    [ glassTypes ]
+    [glassTypes]
   );
 
   return (
@@ -119,7 +119,7 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
                               <div>
                                 <h4 className="font-semibold">{option.title}</h4>
                                 <Badge className="mt-1 text-xs" variant={isSelected ? 'default' : 'secondary'}>
-                                  {priceLabels[ option.priceIndicator ]}
+                                  {priceLabels[option.priceIndicator]}
                                 </Badge>
                               </div>
                             </div>

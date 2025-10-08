@@ -15,12 +15,12 @@ const DEBOUNCE_DELAY_MS = 500;
  * Custom hook para calcular el precio del item con debounce
  */
 export function usePriceCalculation(params: UsePriceCalculationParams) {
-  const [ isCalculating, setIsCalculating ] = useState(false);
-  const [ calculatedPrice, setCalculatedPrice ] = useState<number | undefined>(undefined);
-  const [ error, setError ] = useState<string | undefined>(undefined);
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [calculatedPrice, setCalculatedPrice] = useState<number | undefined>(undefined);
+  const [error, setError] = useState<string | undefined>(undefined);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const calculateMutation = api.quote[ 'calculate-item' ].useMutation({
+  const calculateMutation = api.quote['calculate-item'].useMutation({
     onError: (err) => {
       // console.error('Error calculating price', { error: err.message });
       setIsCalculating(false);
@@ -91,7 +91,7 @@ export function usePriceCalculation(params: UsePriceCalculationParams) {
      * - params.additionalServices.map: excluded because it's a method, not a dependency
      */
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ params.modelId, params.glassTypeId, params.heightMm, params.widthMm, JSON.stringify(params.additionalServices) ]);
+  }, [params.modelId, params.glassTypeId, params.heightMm, params.widthMm, JSON.stringify(params.additionalServices)]);
 
   return {
     calculatedPrice,
