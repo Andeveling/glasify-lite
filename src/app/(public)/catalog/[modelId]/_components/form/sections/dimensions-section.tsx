@@ -1,7 +1,6 @@
 import { AlertCircle, Check, Package, Ruler } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { useDebouncedCallback } from 'use-debounce';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,6 +9,7 @@ import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessa
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/input-group';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
+import { useDebouncedDimension } from '../../../_hooks/use-debounced-dimension';
 
 type ModelDimensions = {
   minWidth: number;
@@ -40,7 +40,7 @@ function generateSuggestedValues(min: number, max: number, count = 5): number[] 
 }
 
 // biome-ignore lint/style/noMagicNumbers: valores predefinidos de cantidad para UX
-const QUANTITY_PRESETS = [1, 3, 5, 10, 20] as const;
+const QUANTITY_PRESETS = [ 1, 3, 5, 10, 20 ] as const;
 
 export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   const { control, setValue } = useFormContext();
@@ -49,63 +49,59 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   const width = useWatch({ control, name: 'width' });
   const height = useWatch({ control, name: 'height' });
 
-  // Estado local para sliders (optimización de rendimiento)
-  const [localWidth, setLocalWidth] = useState<number>(width || dimensions.minWidth);
-  const [localHeight, setLocalHeight] = useState<number>(height || dimensions.minHeight);
+  // ✅ Use custom debounced dimension hook for width
+  const { localValue: localWidth, setLocalValue: setLocalWidth } = useDebouncedDimension({
+    initialValue: width || dimensions.minWidth,
+    max: dimensions.maxWidth,
+    min: dimensions.minWidth,
+    setValue: (value) => setValue('width', value, { shouldValidate: true }),
+    value: width,
+  });
 
-  // Generar valores sugeridos dinámicamente
-  const suggestedWidths = generateSuggestedValues(dimensions.minWidth, dimensions.maxWidth);
-  const suggestedHeights = generateSuggestedValues(dimensions.minHeight, dimensions.maxHeight);
+  // ✅ Use custom debounced dimension hook for height
+  const { localValue: localHeight, setLocalValue: setLocalHeight } = useDebouncedDimension({
+    initialValue: height || dimensions.minHeight,
+    max: dimensions.maxHeight,
+    min: dimensions.minHeight,
+    setValue: (value) => setValue('height', value, { shouldValidate: true }),
+    value: height,
+  });
 
-  const isValidDimension = (value: number, min: number, max: number) => value >= min && value <= max;
+  // ✅ Memoize suggested values to avoid recalculation on every render
+  const suggestedWidths = useMemo(
+    () => generateSuggestedValues(dimensions.minWidth, dimensions.maxWidth),
+    [ dimensions.minWidth, dimensions.maxWidth ]
+  );
 
-  // Constante para debounce delay
-  const DebounceDelay = 300;
+  const suggestedHeights = useMemo(
+    () => generateSuggestedValues(dimensions.minHeight, dimensions.maxHeight),
+    [ dimensions.minHeight, dimensions.maxHeight ]
+  );
 
-  // Debounced callbacks para actualizar el form
-  const debouncedUpdateWidth = useDebouncedCallback((value: number) => {
-    setValue('width', value, { shouldValidate: true });
-  }, DebounceDelay);
+  // ✅ Memoize validation function to avoid recreation
+  const isValidDimension = useCallback((value: number, min: number, max: number) => value >= min && value <= max, []);
 
-  const debouncedUpdateHeight = useDebouncedCallback((value: number) => {
-    setValue('height', value, { shouldValidate: true });
-  }, DebounceDelay);
-
-  // Handlers optimizados para sliders
+  // ✅ Optimized handlers for sliders - no debounce needed (handled by hook)
   const handleWidthSliderChange = useCallback(
     (value: number[]) => {
-      const newValue = value[0];
+      const newValue = value[ 0 ];
       if (newValue !== undefined) {
-        setLocalWidth(newValue); // Update local state immediately (visual feedback)
-        debouncedUpdateWidth(newValue); // Update form state with debounce
+        setLocalWidth(newValue); // ✅ Update local state immediately (visual feedback)
+        // ✅ Form update is debounced automatically in the hook
       }
     },
-    [debouncedUpdateWidth]
+    [ setLocalWidth ]
   );
 
   const handleHeightSliderChange = useCallback(
     (value: number[]) => {
-      const newValue = value[0];
+      const newValue = value[ 0 ];
       if (newValue !== undefined) {
         setLocalHeight(newValue);
-        debouncedUpdateHeight(newValue);
       }
     },
-    [debouncedUpdateHeight]
+    [ setLocalHeight ]
   );
-
-  // Sincronizar estado local cuando el form cambia externamente
-  useEffect(() => {
-    if (width && width !== localWidth) {
-      setLocalWidth(width);
-    }
-  }, [width, localWidth]);
-
-  useEffect(() => {
-    if (height && height !== localHeight) {
-      setLocalHeight(height);
-    }
-  }, [height, localHeight]);
 
   return (
     <FieldSet>
@@ -171,7 +167,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
                       min={dimensions.minWidth}
                       onValueChange={handleWidthSliderChange}
                       step={10}
-                      value={[localWidth]}
+                      value={[ localWidth ]}
                     />
                   </div>
 
@@ -247,7 +243,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
                       min={dimensions.minHeight}
                       onValueChange={handleHeightSliderChange}
                       step={10}
-                      value={[localHeight]}
+                      value={[ localHeight ]}
                     />
                   </div>
 
@@ -279,11 +275,11 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
         {/* Alerta si hay dimensiones inválidas */}
         {((width && !isValidDimension(width, dimensions.minWidth, dimensions.maxWidth)) ||
           (height && !isValidDimension(height, dimensions.minHeight, dimensions.maxHeight))) && (
-          <Alert className="mt-4" variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>Una o más dimensiones están fuera del rango permitido.</AlertDescription>
-          </Alert>
-        )}
+            <Alert className="mt-4" variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>Una o más dimensiones están fuera del rango permitido.</AlertDescription>
+            </Alert>
+          )}
 
         {/* Cantidad */}
         <FormField

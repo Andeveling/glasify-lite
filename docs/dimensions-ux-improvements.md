@@ -1,9 +1,47 @@
 # Mejoras de UX en Sección de Dimensiones
 
-## 🎯 Objetivo
-Implementar las recomendaciones del equipo de diseño para mejorar la experiencia de usuario en la selección de dimensiones del vidrio, con énfasis en visualización intuitiva y valores sugeridos contextuales.
+> **📅 Última actualización**: 2025-01-08  
+> **🔄 Estado**: Refactorizado (v2.0 - Performance Optimized)
 
-## ✅ Mejoras Implementadas
+## 🎯 Objetivo
+Implementar las recomendaciones del equipo de diseño para mejorar la experiencia de usuario en la selección de dimensiones del vidrio, con énfasis en visualización intuitiva, valores sugeridos contextuales y **rendimiento optimizado**.
+
+## 🆕 Versión 2.0 - Performance Optimization (2025-01-08)
+
+### Refactorización Crítica: Prevención de Mutaciones Excesivas
+
+**Problema identificado**: 
+- 3-5+ mutaciones tRPC `quote.calculate-item` por interacción de slider
+- Loops infinitos de re-renderizado por sincronización de estado
+- Potenciales memory leaks por timers no limpiados
+
+**Solución implementada**:
+1. **Custom Hook `use-debounced-dimension`**:
+   - Patrón ref-based para callbacks estables
+   - Debounce de 300ms (probado óptimo en `use-price-calculation`)
+   - Validación integrada antes de actualizar formulario
+   - Cleanup automático de timers
+
+2. **Refactorización de `DimensionsSection`**:
+   - Eliminado `useDebouncedCallback` de librería externa
+   - Removidos `useEffect` de sincronización (fuente de loops)
+   - Memoización de `generateSuggestedValues` y `isValidDimension`
+   - Feedback visual inmediato mantenido (< 16ms)
+
+**Resultado**:
+- ✅ **1 mutación por interacción** (antes: 3-5+)
+- ✅ **0 loops infinitos** (antes: frecuentes)
+- ✅ **0 memory leaks** (antes: potenciales)
+- ✅ **UX preservada** (feedback inmediato + debounce inteligente)
+
+Ver documentación detallada en:
+- `/docs/dimensions-section-analysis.md` - Análisis de flujo de datos
+- `/docs/CHANGELOG-dimensions-refactor.md` - Changelog completo
+- `/plan/refactor-dimensions-section-debounce-1.md` - Plan de refactorización
+
+---
+
+## ✅ Mejoras Implementadas (v1.0)
 
 ### 1. Valores Sugeridos Dinámicos Basados en Rangos
 
