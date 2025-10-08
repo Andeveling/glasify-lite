@@ -3,6 +3,8 @@ import logger from '@/lib/logger';
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
 import {
   getModelByIdInput,
+  listGlassTypesInput,
+  listGlassTypesOutput,
   listModelsInput,
   listModelsOutput,
   listServicesInput,
@@ -78,6 +80,63 @@ export const catalogQueries = createTRPCRouter({
         }
 
         throw new Error('No se pudo cargar el modelo. Intente nuevamente.');
+      }
+    }),
+
+  /**
+   * List glass types by IDs
+   * Used to fetch glass type details for models
+   * @public
+   */
+  'list-glass-types': publicProcedure
+    .input(listGlassTypesInput)
+    .output(listGlassTypesOutput)
+    .query(async ({ ctx, input }) => {
+      try {
+        logger.info('Listing glass types by IDs', {
+          count: input.glassTypeIds.length,
+        });
+
+        const glassTypes = await ctx.db.glassType.findMany({
+          orderBy: { name: 'asc' },
+          select: {
+            createdAt: true,
+            id: true,
+            isLaminated: true,
+            isLowE: true,
+            isTempered: true,
+            isTripleGlazed: true,
+            manufacturerId: true,
+            name: true,
+            pricePerSqm: true,
+            purpose: true,
+            thicknessMm: true,
+            updatedAt: true,
+            uValue: true,
+          },
+          where: {
+            id: { in: input.glassTypeIds },
+          },
+        });
+
+        // Serialize Decimal fields (pricePerSqm, uValue)
+        const serializedGlassTypes = glassTypes.map((glassType) => ({
+          ...glassType,
+          pricePerSqm: glassType.pricePerSqm.toNumber(),
+          uValue: glassType.uValue?.toNumber() ?? null,
+        }));
+
+        logger.info('Successfully retrieved glass types', {
+          count: serializedGlassTypes.length,
+        });
+
+        return serializedGlassTypes;
+      } catch (error) {
+        logger.error('Error listing glass types', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+        });
+
+        throw new Error('No se pudieron cargar los tipos de vidrio. Intente nuevamente.');
       }
     }),
 

@@ -26,6 +26,10 @@ export const listServicesInput = z.object({
   manufacturerId: z.cuid('ID del fabricante debe ser válido'),
 });
 
+export const listGlassTypesInput = z.object({
+  glassTypeIds: z.array(z.cuid('ID del tipo de vidrio debe ser válido')),
+});
+
 // ========================================
 // OUTPUT SCHEMAS
 // ========================================
@@ -103,6 +107,24 @@ export const serviceOutput = z.object({
 
 export const listServicesOutput = z.array(serviceOutput);
 
+export const glassTypeOutput = z.object({
+  createdAt: z.date(),
+  id: z.string(),
+  isLaminated: z.boolean(),
+  isLowE: z.boolean(),
+  isTempered: z.boolean(),
+  isTripleGlazed: z.boolean(),
+  manufacturerId: z.string(),
+  name: z.string(),
+  pricePerSqm: z.number(),
+  purpose: z.enum(['general', 'insulation', 'security', 'decorative']),
+  thicknessMm: z.number(),
+  updatedAt: z.date(),
+  uValue: z.number().nullable(),
+});
+
+export const listGlassTypesOutput = z.array(glassTypeOutput);
+
 // ========================================
 // TYPE EXPORTS (para reutilizar en forms)
 // ========================================
@@ -110,7 +132,10 @@ export const listServicesOutput = z.array(serviceOutput);
 export type ListModelsInput = z.infer<typeof listModelsInput>;
 export type GetModelByIdInput = z.infer<typeof getModelByIdInput>;
 export type ListServicesInput = z.infer<typeof listServicesInput>;
+export type ListGlassTypesInput = z.infer<typeof listGlassTypesInput>;
 export type ModelSummaryOutput = z.infer<typeof modelSummaryOutput>;
 export type ModelDetailOutput = z.infer<typeof modelDetailOutput>;
 export type ServiceOutput = z.infer<typeof serviceOutput>;
 export type ListServicesOutput = z.infer<typeof listServicesOutput>;
+export type GlassTypeOutput = z.infer<typeof glassTypeOutput>;
+export type ListGlassTypesOutput = z.infer<typeof listGlassTypesOutput>;
