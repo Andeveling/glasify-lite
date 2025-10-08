@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/performance/noNamespaceImport: It is a Shadcn convention */
 'use client';
 
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';

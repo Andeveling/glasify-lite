@@ -38,9 +38,11 @@ function DialogOverlay({ className, ...props }: React.ComponentProps<typeof Over
 function DialogContent({
   className,
   children,
+  showCloseButton = true,
   ...props
 }: React.ComponentProps<typeof Content> & {
   children: React.ReactNode;
+  showCloseButton?: boolean;
 }) {
   return (
     <Portal data-slot="dialog-portal">
@@ -54,10 +56,12 @@ function DialogContent({
         {...props}
       >
         {children}
-        <Close className="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-          <XIcon className="size-4" />
-          <span className="sr-only">Close</span>
-        </Close>
+        {showCloseButton && (
+          <Close className="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+            <XIcon className="size-4" />
+            <span className="sr-only">Close</span>
+          </Close>
+        )}
       </Content>
     </Portal>
   );
