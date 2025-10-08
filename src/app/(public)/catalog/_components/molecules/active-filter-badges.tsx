@@ -3,7 +3,6 @@
 import { buildActiveParameters, type CatalogSortOption } from '@views/catalog/_utils/search-parameters.utils';
 import { X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 
 type ActiveSearchParametersProps = {
   searchQuery?: string | null;
@@ -72,13 +71,14 @@ export default function ActiveSearchParameters({
             <Icon className="size-3" />
             <span className="max-w-[200px] truncate">{param.label}</span>
             {handleRemove && (
-              <Button
+              <button
                 aria-label={param.ariaLabel}
                 className="ml-0.5 rounded-full opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 onClick={handleRemove}
+                type="button"
               >
                 <X className="size-3" />
-              </Button>
+              </button>
             )}
           </Badge>
         );

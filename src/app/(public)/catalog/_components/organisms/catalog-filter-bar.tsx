@@ -1,3 +1,5 @@
+'use client';
+
 import { CatalogSearch } from '@views/catalog/_components/molecules/catalog-search';
 import { CatalogFilters } from '@views/catalog/_components/organisms/catalog-filters';
 

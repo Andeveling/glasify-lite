@@ -50,5 +50,6 @@
     "mysql",
     "underspecified",
     "WCAG"
-  ]
+  ],
+  "dependi.npm.lockFileEnabled": true
 }

@@ -69,6 +69,14 @@ const config = {
   // Configure external packages for serverless
   serverExternalPackages: ['@prisma/client'],
 
+  // Enable experimental features for better Vercel performance
+  turbopack: {
+    root: '/home/andres/Proyectos/glasify-lite',
+    rules: {
+      '*.svg': ['@svgr/webpack'],
+    },
+  },
+
   // TypeScript optimization
   typescript: {
     ignoreBuildErrors: false,
