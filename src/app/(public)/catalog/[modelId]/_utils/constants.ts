@@ -9,5 +9,5 @@ export function getServiceTypeLabel(type: ServiceType): string {
     fixed: 'Precio fijo',
     perimeter: 'Por perímetro (ml)',
   };
-  return labels[type];
+  return labels[ type ];
 }

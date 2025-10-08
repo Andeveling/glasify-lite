@@ -21,7 +21,7 @@ export function Window2DPreview({
   const [ isExpanded, setIsExpanded ] = useState(false);
   const animationRef = useRef<number | null>(null);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Las dependencias están bien definidas, no es necesario agregar canvasRef ni animationRef
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!(canvas && width && height)) return;

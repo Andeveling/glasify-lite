@@ -1,5 +1,6 @@
 import { User } from 'lucide-react';
 import Link from 'next/link';
+import { ModeToggle } from '@/app/_components/mode-toggle';
 import { Button } from '@/components/ui/button';
 export default function Header() {
   return (
@@ -22,6 +23,7 @@ export default function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-4">
+            <ModeToggle />
             <Button aria-label="Iniciar sesión" asChild className="text-sm" size="icon" variant="outline">
               <Link href="/signin">
                 <User className="h-5 w-5" />
