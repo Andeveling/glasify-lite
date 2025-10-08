@@ -1,6 +1,5 @@
 'use client';
 
-// biome-ignore lint/performance/noNamespaceImport: It is a rule the shadcn/ui follows
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import { CheckIcon } from 'lucide-react';
 import type * as React from 'react';
