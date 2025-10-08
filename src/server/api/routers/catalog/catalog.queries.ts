@@ -11,7 +11,7 @@ import {
   listServicesOutput,
   modelDetailOutput,
 } from './catalog.schemas';
-import { serializeDecimalFields, serializeModel } from './catalog.utils';
+import { serializeDecimalFields } from './catalog.utils';
 
 export const catalogQueries = createTRPCRouter({
   /**
@@ -61,7 +61,7 @@ export const catalogQueries = createTRPCRouter({
           throw new Error('El modelo solicitado no existe o no está disponible.');
         }
 
-        const serializedModel = serializeModel(model);
+        const serializedModel = serializeDecimalFields(model);
 
         logger.info('Successfully retrieved model', {
           modelId: input.modelId,

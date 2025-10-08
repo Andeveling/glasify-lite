@@ -48,8 +48,11 @@
     "glasify",
     "Medellín",
     "mysql",
+    "newpassword",
+    "secretpassword",
     "underspecified",
-    "WCAG"
+    "WCAG",
+    "wrongpassword"
   ],
   "dependi.npm.lockFileEnabled": true
 }

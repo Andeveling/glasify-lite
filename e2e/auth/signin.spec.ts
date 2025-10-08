@@ -15,7 +15,6 @@ const PASSWORD_LENGTH_ERROR_REGEX = /la contraseña debe tener al menos 6 caract
 const SIGNIN_URL_REGEX = /signin/;
 const AUTH_ERROR_REGEX = /credenciales incorrectas/i;
 
-
 // Constants for performance thresholds
 const MAX_LOAD_TIME_MS = 3000;
 
