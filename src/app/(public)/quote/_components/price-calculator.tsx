@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import logger from '@/lib/logger';
 import { formatCurrency } from '@/lib/utils';
 
 type PriceCalculatorProps = {
@@ -201,7 +200,7 @@ function usePriceCalculatorController({ model, services, onAddToQuote }: PriceCa
       await sleep(MOCK_CALCULATION_DELAY);
       setCalculation(buildCalculationResult({ formData, model, services }));
     } catch (error) {
-      logger.error('Error calculating price', { error: error instanceof Error ? error.message : error });
+      console.error('Error calculating price', { error: error instanceof Error ? error.message : error });
     } finally {
       setIsCalculating(false);
     }
@@ -224,7 +223,7 @@ function usePriceCalculatorController({ model, services, onAddToQuote }: PriceCa
         widthMm: formData.widthMm,
       });
     } catch (error) {
-      logger.error('Error adding item to quote', { error: error instanceof Error ? error.message : error });
+      console.error('Error adding item to quote', { error: error instanceof Error ? error.message : error });
     } finally {
       setIsAddingToQuote(false);
     }

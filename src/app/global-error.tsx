@@ -6,7 +6,6 @@ import { useEffect } from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import logger from '@/lib/logger';
 
 type GlobalErrorProps = {
   error: Error & { digest?: string };
@@ -15,8 +14,8 @@ type GlobalErrorProps = {
 
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
   useEffect(() => {
-    // Log the error for monitoring
-    logger.error('Global error occurred', {
+    // Log the error to console in client-side (winston is server-only)
+    console.error('Global error occurred', {
       digest: error.digest,
       error: error.message,
       stack: error.stack,
