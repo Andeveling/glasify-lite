@@ -11,6 +11,10 @@ import { createQueryClient } from './query-client';
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
  * handling a tRPC call from a React Server Component.
+ *
+ * NOTE: We can safely use cache() here because auth() is no longer wrapped with cache(),
+ * which prevents the WeakMap key errors that occurred when multiple cache() wrappers
+ * were used with Headers objects.
  */
 const createContext = cache(async () => {
   const heads = new Headers(await headers());
