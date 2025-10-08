@@ -18,7 +18,7 @@ export function Window2DPreview({
   showMeasurements = true,
 }: Window2DPreviewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [ isExpanded, setIsExpanded ] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const animationRef = useRef<number | null>(null);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: Las dependencias están bien definidas, no es necesario agregar canvasRef ni animationRef
@@ -278,7 +278,7 @@ export function Window2DPreview({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [ width, height, showMeasurements, isExpanded ]);
+  }, [width, height, showMeasurements, isExpanded]);
 
   return (
     <div className={`relative ${className}`}>
@@ -290,12 +290,12 @@ export function Window2DPreview({
       {showControls && (
         <>
           {/* Info overlay */}
-          <div className='absolute top-4 left-4 rounded-lg border border-border bg-card/95 px-3 py-2 text-sm shadow-sm backdrop-blur-sm'>
-            <div className='mb-2 flex items-center gap-2 font-medium text-card-foreground'>
+          <div className="absolute top-4 left-4 rounded-lg border border-border bg-card/95 px-3 py-2 text-sm shadow-sm backdrop-blur-sm">
+            <div className="mb-2 flex items-center gap-2 font-medium text-card-foreground">
               <Ruler className="h-4 w-4 text-primary" />
               <span>Dimensiones</span>
             </div>
-            <div className='space-y-1 text-xs'>
+            <div className="space-y-1 text-xs">
               <div className="flex justify-between gap-6">
                 <span className="text-muted-foreground">Ancho:</span>
                 <span className="font-mono text-foreground">{width}mm</span>
@@ -304,7 +304,7 @@ export function Window2DPreview({
                 <span className="text-muted-foreground">Alto:</span>
                 <span className="font-mono text-foreground">{height}mm</span>
               </div>
-              <div className='flex justify-between gap-6 border-border border-t pt-1'>
+              <div className="flex justify-between gap-6 border-border border-t pt-1">
                 <span className="text-muted-foreground">Área:</span>
                 <span className="font-mono text-foreground">{((width * height) / 1_000_000).toFixed(2)}m²</span>
               </div>
@@ -314,35 +314,35 @@ export function Window2DPreview({
           {/* Control buttons */}
           <div className="absolute top-4 right-4">
             <button
-              className='group rounded-lg border border-border bg-card/95 p-2 shadow-sm backdrop-blur-sm transition-all hover:bg-accent hover:text-accent-foreground'
+              className="group rounded-lg border border-border bg-card/95 p-2 shadow-sm backdrop-blur-sm transition-all hover:bg-accent hover:text-accent-foreground"
               onClick={() => setIsExpanded(!isExpanded)}
               title={isExpanded ? 'Contraer' : 'Expandir'}
               type="button"
             >
               {isExpanded ? (
-                <Minimize2 className='h-4 w-4 transition-colors' />
+                <Minimize2 className="h-4 w-4 transition-colors" />
               ) : (
-                <Maximize2 className='h-4 w-4 transition-colors' />
+                <Maximize2 className="h-4 w-4 transition-colors" />
               )}
             </button>
           </div>
 
           {/* Material legend */}
-          <div className='absolute bottom-4 left-4 rounded-lg border border-border bg-card/95 px-3 py-2 shadow-sm backdrop-blur-sm'>
+          <div className="absolute bottom-4 left-4 rounded-lg border border-border bg-card/95 px-3 py-2 shadow-sm backdrop-blur-sm">
             <div className="flex items-center gap-4 text-xs">
               <div className="flex items-center gap-2">
-                <div className='h-3 w-3 rounded-sm border border-primary/50 bg-gradient-to-br from-primary/40 to-primary/20 shadow-xs' />
+                <div className="h-3 w-3 rounded-sm border border-primary/50 bg-gradient-to-br from-primary/40 to-primary/20 shadow-xs" />
                 <span className="text-muted-foreground">Vidrio</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className='h-3 w-3 rounded-sm border border-muted bg-muted shadow-xs' />
+                <div className="h-3 w-3 rounded-sm border border-muted bg-muted shadow-xs" />
                 <span className="text-muted-foreground">Marco</span>
               </div>
             </div>
           </div>
 
           {/* Aspect ratio info */}
-          <div className='absolute right-4 bottom-4 rounded-lg border border-border bg-card/95 px-3 py-2 text-muted-foreground text-xs shadow-sm backdrop-blur-sm'>
+          <div className="absolute right-4 bottom-4 rounded-lg border border-border bg-card/95 px-3 py-2 text-muted-foreground text-xs shadow-sm backdrop-blur-sm">
             Proporción: {(width / height).toFixed(2)}:1
           </div>
         </>

@@ -68,6 +68,7 @@
     "react-day-picker": "9.11.1",
     "react-dom": "19.2.0",
     "react-hook-form": "7.64.0",
+    "react-scan": "^0.4.3",
     "server-only": "0.0.1",
     "superjson": "2.2.2",
     "tailwind-merge": "3.3.1",

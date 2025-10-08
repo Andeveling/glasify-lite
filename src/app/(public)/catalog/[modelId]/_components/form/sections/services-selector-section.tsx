@@ -25,12 +25,12 @@ const SERVICE_UNIT_LABELS = {
   unit: 'unidad',
 } as const;
 
-function getServiceTypeLabel(type: ServiceOutput[ 'type' ]): string {
-  return SERVICE_TYPE_LABELS[ type ];
+function getServiceTypeLabel(type: ServiceOutput['type']): string {
+  return SERVICE_TYPE_LABELS[type];
 }
 
-function getServiceUnitLabel(unit: ServiceOutput[ 'unit' ]): string {
-  return SERVICE_UNIT_LABELS[ unit ];
+function getServiceUnitLabel(unit: ServiceOutput['unit']): string {
+  return SERVICE_UNIT_LABELS[unit];
 }
 
 export function ServicesSelectorSection({ services }: ServicesSelectorSectionProps) {
@@ -48,7 +48,7 @@ export function ServicesSelectorSection({ services }: ServicesSelectorSectionPro
           name="additionalServices"
           render={() => (
             <FormItem>
-              <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {services.map((service) => (
                   <FormField
                     control={control}
@@ -71,7 +71,7 @@ export function ServicesSelectorSection({ services }: ServicesSelectorSectionPro
                               onCheckedChange={(checked) => {
                                 const currentValue = field.value || [];
                                 const newValue = checked
-                                  ? [ ...currentValue, service.id ]
+                                  ? [...currentValue, service.id]
                                   : currentValue.filter((id: string) => id !== service.id);
                                 field.onChange(newValue);
                               }}

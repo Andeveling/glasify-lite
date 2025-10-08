@@ -1,5 +1,7 @@
 import { AlertCircle, Check, Package, Ruler } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { useDebouncedCallback } from 'use-debounce';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -41,17 +43,69 @@ function generateSuggestedValues(min: number, max: number, count = 5): number[] 
 const QUANTITY_PRESETS = [ 1, 3, 5, 10, 20 ] as const;
 
 export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
-  const { control } = useFormContext();
+  const { control, setValue } = useFormContext();
 
   // Watch values para el preview
   const width = useWatch({ control, name: 'width' });
   const height = useWatch({ control, name: 'height' });
+
+  // Estado local para sliders (optimización de rendimiento)
+  const [ localWidth, setLocalWidth ] = useState<number>(width || dimensions.minWidth);
+  const [ localHeight, setLocalHeight ] = useState<number>(height || dimensions.minHeight);
 
   // Generar valores sugeridos dinámicamente
   const suggestedWidths = generateSuggestedValues(dimensions.minWidth, dimensions.maxWidth);
   const suggestedHeights = generateSuggestedValues(dimensions.minHeight, dimensions.maxHeight);
 
   const isValidDimension = (value: number, min: number, max: number) => value >= min && value <= max;
+
+  // Constante para debounce delay
+  const DebounceDelay = 300;
+
+  // Debounced callbacks para actualizar el form
+  const debouncedUpdateWidth = useDebouncedCallback((value: number) => {
+    setValue('width', value, { shouldValidate: true });
+  }, DebounceDelay);
+
+  const debouncedUpdateHeight = useDebouncedCallback((value: number) => {
+    setValue('height', value, { shouldValidate: true });
+  }, DebounceDelay);
+
+  // Handlers optimizados para sliders
+  const handleWidthSliderChange = useCallback(
+    (value: number[]) => {
+      const newValue = value[ 0 ];
+      if (newValue !== undefined) {
+        setLocalWidth(newValue); // Update local state immediately (visual feedback)
+        debouncedUpdateWidth(newValue); // Update form state with debounce
+      }
+    },
+    [ debouncedUpdateWidth ]
+  );
+
+  const handleHeightSliderChange = useCallback(
+    (value: number[]) => {
+      const newValue = value[ 0 ];
+      if (newValue !== undefined) {
+        setLocalHeight(newValue);
+        debouncedUpdateHeight(newValue);
+      }
+    },
+    [ debouncedUpdateHeight ]
+  );
+
+  // Sincronizar estado local cuando el form cambia externamente
+  useEffect(() => {
+    if (width && width !== localWidth) {
+      setLocalWidth(width);
+    }
+  }, [ width, localWidth ]);
+
+  useEffect(() => {
+    if (height && height !== localHeight) {
+      setLocalHeight(height);
+    }
+  }, [ height, localHeight ]);
 
   return (
     <FieldSet>
@@ -115,9 +169,9 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
                       className="my-4 h-3 [&_[role=slider]]:h-5 [&_[role=slider]]:w-5"
                       max={dimensions.maxWidth}
                       min={dimensions.minWidth}
-                      onValueChange={([ value ]) => field.onChange(value)}
+                      onValueChange={handleWidthSliderChange}
                       step={10}
-                      value={[ field.value || dimensions.minWidth ]}
+                      value={[ localWidth ]}
                     />
                   </div>
 
@@ -191,9 +245,9 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
                       className="my-4 h-3 [&_[role=slider]]:h-5 [&_[role=slider]]:w-5"
                       max={dimensions.maxHeight}
                       min={dimensions.minHeight}
-                      onValueChange={([ value ]) => field.onChange(value)}
+                      onValueChange={handleHeightSliderChange}
                       step={10}
-                      value={[ field.value || dimensions.minHeight ]}
+                      value={[ localHeight ]}
                     />
                   </div>
 

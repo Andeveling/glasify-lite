@@ -6,6 +6,7 @@ import { Fira_Code, Geist, Inter, Lora } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { TRPCReactProvider } from '@/trpc/react';
+import { ReactScan } from './_components/react-scan';
 
 export const metadata: Metadata = {
   description: 'Cotización inteligente de productos de vidrio para fabricantes y distribuidores',
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       suppressHydrationWarning
     >
       <body suppressHydrationWarning>
+        <ReactScan />
         <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
           <TRPCReactProvider>{children}</TRPCReactProvider>
         </ThemeProvider>
