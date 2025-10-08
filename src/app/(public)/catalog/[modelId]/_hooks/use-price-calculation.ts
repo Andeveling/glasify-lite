@@ -46,6 +46,7 @@ export function usePriceCalculation(params: UsePriceCalculationParams) {
     },
   });
 
+  // biome-ignore lint: calculateMutation.mutate cambia en cada render (tRPC), params.additionalServices.map es método no dependencia, JSON.stringify compara array por valor no referencia
   useEffect(() => {
     // Solo calcular si tenemos todos los datos necesarios
     const isValid = params.modelId && params.glassTypeId && params.heightMm > 0 && params.widthMm > 0;
@@ -82,8 +83,15 @@ export function usePriceCalculation(params: UsePriceCalculationParams) {
         clearTimeout(debounceTimerRef.current);
       }
     };
+    /**
+     * ✅ Dependency array explanation:
+     * - primitives (modelId, glassTypeId, heightMm, widthMm): compared by value ✓
+     * - JSON.stringify(additionalServices): serializes array for value comparison ✓
+     * - calculateMutation.mutate: excluded because it changes on every render (tRPC behavior)
+     * - params.additionalServices.map: excluded because it's a method, not a dependency
+     */
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ params.modelId, params.glassTypeId, params.heightMm, params.widthMm, params.additionalServices, calculateMutation.mutate ]);
+  }, [ params.modelId, params.glassTypeId, params.heightMm, params.widthMm, JSON.stringify(params.additionalServices) ]);
 
   return {
     calculatedPrice,
