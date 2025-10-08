@@ -1,5 +1,4 @@
 import { AlertCircle, Check, Package, Ruler } from 'lucide-react';
-import { useEffect, useRef } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +7,7 @@ import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessa
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/input-group';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
+import { Window2DPreview } from './window-2d-preview';
 
 type ModelDimensions = {
   minWidth: number;
@@ -37,141 +37,11 @@ function generateSuggestedValues(min: number, max: number, count = 5): number[] 
   }).filter((value, index, arr) => arr.indexOf(value) === index); // Eliminar duplicados
 }
 
-/**
- * Dibuja una ventana en el canvas con una figura humana de referencia
- */
-function drawWindowPreview(
-  canvas: HTMLCanvasElement,
-  params: {
-    windowWidth: number;
-    windowHeight: number;
-    maxWidth: number;
-    maxHeight: number;
-  }
-) {
-  const { windowWidth, windowHeight, maxWidth, maxHeight } = params;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-
-  const canvasWidth = canvas.width;
-  const canvasHeight = canvas.height;
-
-  // Limpiar canvas
-  ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-
-  // Constantes para escala y proporciones
-  const HumanHeightMm = 1700; // Altura promedio humano: 1.7m
-  const Padding = 40;
-  const HumanWidthRatio = 0.35; // Proporción ancho/alto del humano
-  const HumanSpacing = 30; // Espacio entre ventana y humano
-  const HeadRatio = 0.08; // Tamaño de cabeza respecto a altura
-  const BodyRatio = 0.6; // Longitud del torso
-  const ArmPositionRatio = 0.3; // Posición de brazos en el torso
-  const LegLeftRatio = 0.3; // Posición pierna izquierda
-  const LegRightRatio = 0.7; // Posición pierna derecha
-
-  // Calcular escala para que todo quepa en el canvas
-  const scale = Math.min(
-    (canvasWidth - Padding * 2) / (maxWidth + HumanHeightMm / 2),
-    (canvasHeight - Padding * 2) / Math.max(maxHeight, HumanHeightMm)
-  );
-
-  // Dimensiones escaladas
-  const scaledWindowWidth = windowWidth * scale;
-  const scaledWindowHeight = windowHeight * scale;
-  const scaledHumanHeight = HumanHeightMm * scale;
-  const scaledHumanWidth = scaledHumanHeight * HumanWidthRatio;
-
-  // Posición de la ventana (centrada verticalmente)
-  const windowX = Padding;
-  const windowY = (canvasHeight - scaledWindowHeight) / 2;
-
-  // Posición del humano (a la derecha de la ventana)
-  const humanX = windowX + scaledWindowWidth + HumanSpacing;
-  const humanY = canvasHeight - Padding - scaledHumanHeight;
-
-  // Dibujar ventana
-  ctx.fillStyle = 'hsl(var(--primary) / 0.1)';
-  ctx.fillRect(windowX, windowY, scaledWindowWidth, scaledWindowHeight);
-
-  ctx.strokeStyle = 'hsl(var(--primary))';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(windowX, windowY, scaledWindowWidth, scaledWindowHeight);
-
-  // Dibujar marco de ventana (cruz central)
-  ctx.strokeStyle = 'hsl(var(--primary) / 0.5)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(windowX + scaledWindowWidth / 2, windowY);
-  ctx.lineTo(windowX + scaledWindowWidth / 2, windowY + scaledWindowHeight);
-  ctx.moveTo(windowX, windowY + scaledWindowHeight / 2);
-  ctx.lineTo(windowX + scaledWindowWidth, windowY + scaledWindowHeight / 2);
-  ctx.stroke();
-
-  // Dibujar figura humana estilizada
-  ctx.strokeStyle = 'hsl(var(--muted-foreground))';
-  ctx.fillStyle = 'hsl(var(--muted-foreground))';
-  ctx.lineWidth = 2;
-
-  // Cabeza
-  const headRadius = scaledHumanHeight * HeadRatio;
-  ctx.beginPath();
-  ctx.arc(humanX + scaledHumanWidth / 2, humanY + headRadius, headRadius, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // Cuerpo
-  const bodyTop = humanY + headRadius * 2;
-  const bodyBottom = humanY + scaledHumanHeight * BodyRatio;
-  ctx.beginPath();
-  ctx.moveTo(humanX + scaledHumanWidth / 2, bodyTop);
-  ctx.lineTo(humanX + scaledHumanWidth / 2, bodyBottom);
-  ctx.stroke();
-
-  // Brazos
-  const armY = bodyTop + (bodyBottom - bodyTop) * ArmPositionRatio;
-  ctx.beginPath();
-  ctx.moveTo(humanX, armY);
-  ctx.lineTo(humanX + scaledHumanWidth, armY);
-  ctx.stroke();
-
-  // Piernas
-  const legSplit = humanX + scaledHumanWidth / 2;
-  ctx.beginPath();
-  ctx.moveTo(legSplit, bodyBottom);
-  ctx.lineTo(humanX + scaledHumanWidth * LegLeftRatio, humanY + scaledHumanHeight);
-  ctx.moveTo(legSplit, bodyBottom);
-  ctx.lineTo(humanX + scaledHumanWidth * LegRightRatio, humanY + scaledHumanHeight);
-  ctx.stroke();
-
-  // Etiquetas de medidas
-  ctx.fillStyle = 'hsl(var(--foreground))';
-  ctx.font = '12px sans-serif';
-  ctx.textAlign = 'center';
-
-  // Medida de ancho
-  ctx.fillText(`${windowWidth}mm`, windowX + scaledWindowWidth / 2, windowY - 10);
-
-  // Medida de alto
-  ctx.save();
-  // biome-ignore lint/style/noMagicNumbers: offset visual para posicionar el texto
-  ctx.translate(windowX - 15, windowY + scaledWindowHeight / 2);
-  ctx.rotate(-Math.PI / 2);
-  ctx.fillText(`${windowHeight}mm`, 0, 0);
-  ctx.restore();
-
-  // Etiqueta de referencia humana
-  ctx.fillStyle = 'hsl(var(--muted-foreground))';
-  ctx.font = '10px sans-serif';
-  // biome-ignore lint/style/noMagicNumbers: offset visual para posicionar el texto
-  ctx.fillText('1.7m', humanX + scaledHumanWidth / 2, humanY + scaledHumanHeight + 15);
-}
-
 // biome-ignore lint/style/noMagicNumbers: valores predefinidos de cantidad para UX
 const QUANTITY_PRESETS = [ 1, 3, 5, 10, 20 ] as const;
 
 export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   const { control } = useFormContext();
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Watch values para el preview
   const width = useWatch({ control, name: 'width' });
@@ -183,37 +53,13 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
 
   const isValidDimension = (value: number, min: number, max: number) => value >= min && value <= max;
 
-  // Dibujar canvas cuando cambian las dimensiones
-  useEffect(() => {
-    if (canvasRef.current && width && height) {
-      drawWindowPreview(canvasRef.current, {
-        maxHeight: dimensions.maxHeight,
-        maxWidth: dimensions.maxWidth,
-        windowHeight: height,
-        windowWidth: width,
-      });
-    }
-  }, [ width, height, dimensions.maxWidth, dimensions.maxHeight ]);
-
   return (
     <FieldSet>
       <FieldLegend>Dimensiones</FieldLegend>
       <FieldDescription>Especifica las dimensiones del vidrio requeridas.</FieldDescription>
 
       <FieldContent>
-        {/* Preview Visual con Canvas */}
-        {width && height && (
-          <div className="mb-6 rounded-lg border bg-muted/30 p-4">
-            <p className="mb-3 font-medium text-sm">Vista previa a escala</p>
-            <div className="flex items-center justify-center">
-              <canvas className="max-w-full" height={300} ref={canvasRef} width={600} />
-            </div>
-            <p className="mt-2 text-center text-muted-foreground text-xs">
-              Figura humana de referencia: 1.7m de altura
-            </p>
-          </div>
-        )}
-
+        <Window2DPreview height={height} showControls={false} width={width} />
         <div className="grid gap-6 sm:grid-cols-2">
           {/* Ancho */}
           <FormField

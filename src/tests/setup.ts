@@ -2,6 +2,13 @@ import '@testing-library/jest-dom';
 import { afterAll, beforeAll, vi } from 'vitest';
 import { db } from '@/server/db';
 
+// Mock ResizeObserver for jsdom environment
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  disconnect: vi.fn(),
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+}));
+
 // Mock NextAuth for testing environment
 vi.mock('@/server/auth', () => ({
   auth: vi.fn(() => Promise.resolve(null)),
@@ -140,7 +147,7 @@ const BASE_MODELS: readonly ModelSeed[] = [
   {
     accessoryPrice: '45000.00',
     basePrice: '285000.00',
-    compatibleGlassTypeIds: ['cm1glass123def456ghi789jkl', 'cm1glasstype123456789abc1'],
+    compatibleGlassTypeIds: [ 'cm1glass123def456ghi789jkl', 'cm1glasstype123456789abc1' ],
     costPerMmHeight: '110.0000',
     costPerMmWidth: '120.0000',
     glassDiscountHeightMm: 10,
@@ -157,7 +164,7 @@ const BASE_MODELS: readonly ModelSeed[] = [
   {
     accessoryPrice: '50000.00',
     basePrice: '320000.00',
-    compatibleGlassTypeIds: ['cm1catalogglasstype123456789'],
+    compatibleGlassTypeIds: [ 'cm1catalogglasstype123456789' ],
     costPerMmHeight: '125.0000',
     costPerMmWidth: '130.0000',
     id: 'cm1catalogmodelpublished123',
@@ -172,7 +179,7 @@ const BASE_MODELS: readonly ModelSeed[] = [
   {
     accessoryPrice: null,
     basePrice: '260000.00',
-    compatibleGlassTypeIds: ['cm1catalogglasstype123456789'],
+    compatibleGlassTypeIds: [ 'cm1catalogglasstype123456789' ],
     costPerMmHeight: '100.0000',
     costPerMmWidth: '95.0000',
     id: 'cm1catalogmodeldraft123',
