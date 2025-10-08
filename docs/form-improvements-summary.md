@@ -172,12 +172,12 @@ useEffect(() => {
 ## 🎯 Impacto en UX
 
 ### Mejoras Cuantificables
-| Métrica | Antes | Ahora | Mejora |
-|---------|-------|-------|--------|
-| Llamadas API por cambio | 10+ | 1 | -90%+ |
-| Tiempo de respuesta percibido | ~2s | ~300ms | -85% |
-| Valores sugeridos relevantes | ~60% | 100% | +40% |
-| Comprensión de escala | Baja | Alta | +100% |
+| Métrica                       | Antes | Ahora  | Mejora |
+| ----------------------------- | ----- | ------ | ------ |
+| Llamadas API por cambio       | 10+   | 1      | -90%+  |
+| Tiempo de respuesta percibido | ~2s   | ~300ms | -85%   |
+| Valores sugeridos relevantes  | ~60%  | 100%   | +40%   |
+| Comprensión de escala         | Baja  | Alta   | +100%  |
 
 ### Feedback Visual
 - ✅ **Loading states**: Spinner durante cálculo

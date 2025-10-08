@@ -2,10 +2,12 @@ import { AlertCircle, Check, Package, Ruler } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { FieldContent, FieldDescription, FieldLegend, FieldSet } from '@/components/ui/field';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/input-group';
 import { Slider } from '@/components/ui/slider';
+import { cn } from '@/lib/utils';
 
 type ModelDimensions = {
   minWidth: number;
@@ -165,7 +167,7 @@ function drawWindowPreview(
 }
 
 // biome-ignore lint/style/noMagicNumbers: valores predefinidos de cantidad para UX
-const QUANTITY_PRESETS = [1, 5, 10, 20, 50] as const;
+const QUANTITY_PRESETS = [ 1, 3, 5, 10, 20 ] as const;
 
 export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   const { control } = useFormContext();
@@ -181,11 +183,6 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
 
   const isValidDimension = (value: number, min: number, max: number) => value >= min && value <= max;
 
-  const getStatusColor = (value: number, min: number, max: number) => {
-    if (!value) return 'text-muted-foreground';
-    return isValidDimension(value, min, max) ? 'text-green-600' : 'text-red-600';
-  };
-
   // Dibujar canvas cuando cambian las dimensiones
   useEffect(() => {
     if (canvasRef.current && width && height) {
@@ -196,7 +193,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
         windowWidth: width,
       });
     }
-  }, [width, height, dimensions.maxWidth, dimensions.maxHeight]);
+  }, [ width, height, dimensions.maxWidth, dimensions.maxHeight ]);
 
   return (
     <FieldSet>
@@ -252,7 +249,11 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
                       />
                       <InputGroupAddon>
                         <Ruler
-                          className={`h-4 w-4 ${getStatusColor(field.value, dimensions.minWidth, dimensions.maxWidth)}`}
+                          className={cn('h-4 w-4', {
+                            'text-green-600': field.value && isValid,
+                            'text-muted-foreground': !field.value,
+                            'text-red-600': field.value && !isValid,
+                          })}
                         />
                       </InputGroupAddon>
                       <InputGroupAddon align="inline-end">
@@ -264,26 +265,21 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
                   {/* Slider */}
                   <div className="px-2">
                     <Slider
-                      className="my-4"
+                      className="my-4 h-3 [&_[role=slider]]:h-5 [&_[role=slider]]:w-5"
                       max={dimensions.maxWidth}
                       min={dimensions.minWidth}
-                      onValueChange={([value]) => field.onChange(value)}
+                      onValueChange={([ value ]) => field.onChange(value)}
                       step={10}
-                      value={[field.value || dimensions.minWidth]}
+                      value={[ field.value || dimensions.minWidth ]}
                     />
                   </div>
 
                   {/* Valores sugeridos */}
                   <div className="flex flex-wrap gap-2">
                     {suggestedWidths.map((w) => (
-                      <button
-                        className="rounded bg-secondary px-2 py-1 text-xs transition-colors hover:bg-secondary/80"
-                        key={w}
-                        onClick={() => field.onChange(w)}
-                        type="button"
-                      >
+                      <Badge className="cursor-pointer" key={w} onClick={() => field.onChange(w)} role="button">
                         {w}mm
-                      </button>
+                      </Badge>
                     ))}
                   </div>
 
@@ -311,7 +307,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
                       (isValid ? (
                         <Check className="h-4 w-4 text-green-600" />
                       ) : (
-                        <AlertCircle className="h-4 w-4 text-red-600" />
+                        <AlertCircle className="h-4 w-4 text-destructive" />
                       ))}
                   </div>
 
@@ -329,7 +325,11 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
                       />
                       <InputGroupAddon>
                         <Ruler
-                          className={`h-4 w-4 ${getStatusColor(field.value, dimensions.minHeight, dimensions.maxHeight)}`}
+                          className={cn('h-4 w-4', {
+                            'text-green-600': field.value && isValid,
+                            'text-muted-foreground': !field.value,
+                            'text-red-600': field.value && !isValid,
+                          })}
                         />
                       </InputGroupAddon>
                       <InputGroupAddon align="inline-end">
@@ -341,26 +341,27 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
                   {/* Slider */}
                   <div className="px-2">
                     <Slider
-                      className="my-4"
+                      className="my-4 h-3 [&_[role=slider]]:h-5 [&_[role=slider]]:w-5"
                       max={dimensions.maxHeight}
                       min={dimensions.minHeight}
-                      onValueChange={([value]) => field.onChange(value)}
+                      onValueChange={([ value ]) => field.onChange(value)}
                       step={10}
-                      value={[field.value || dimensions.minHeight]}
+                      value={[ field.value || dimensions.minHeight ]}
                     />
                   </div>
 
                   {/* Valores sugeridos */}
                   <div className="flex flex-wrap gap-2">
                     {suggestedHeights.map((h) => (
-                      <button
-                        className="rounded bg-secondary px-2 py-1 text-xs transition-colors hover:bg-secondary/80"
+                      <Badge
+                        className="cursor-pointer"
+                        color="primary"
                         key={h}
                         onClick={() => field.onChange(h)}
-                        type="button"
+                        role="button"
                       >
                         {h}mm
-                      </button>
+                      </Badge>
                     ))}
                   </div>
 
@@ -375,13 +376,13 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
         </div>
 
         {/* Alerta si hay dimensiones inválidas */}
-        {(width && !isValidDimension(width, dimensions.minWidth, dimensions.maxWidth)) ||
-          (height && !isValidDimension(height, dimensions.minHeight, dimensions.maxHeight) && (
+        {((width && !isValidDimension(width, dimensions.minWidth, dimensions.maxWidth)) ||
+          (height && !isValidDimension(height, dimensions.minHeight, dimensions.maxHeight))) && (
             <Alert className="mt-4" variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>Una o más dimensiones están fuera del rango permitido.</AlertDescription>
             </Alert>
-          ))}
+          )}
 
         {/* Cantidad */}
         <FormField
