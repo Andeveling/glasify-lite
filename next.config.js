@@ -16,15 +16,6 @@ const config = {
     ignoreDuringBuilds: false,
   },
 
-  // Enable experimental features for better Vercel performance
-  experimental: {
-    turbo: {
-      rules: {
-        '*.svg': ['@svgr/webpack'],
-      },
-    },
-  },
-
   // Security headers
   headers() {
     return Promise.resolve([
@@ -63,6 +54,7 @@ const config = {
       },
     ],
   },
+
   poweredByHeader: false,
   reactStrictMode: true,
 
@@ -72,6 +64,12 @@ const config = {
   // Enable experimental features for better Vercel performance
   turbopack: {
     root: '/home/andres/Proyectos/glasify-lite',
+    rules: {
+      '*.svg': ['@svgr/webpack'],
+    },
+  },
+
+  turbopack: {
     rules: {
       '*.svg': ['@svgr/webpack'],
     },
