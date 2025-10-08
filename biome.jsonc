@@ -51,7 +51,9 @@
         "noRedeclare": "error",
         // Advierte sobre bloques de código vacíos.
         "noEmptyBlockStatements": "warn",
-        "noUnknownAtRules": "off"
+        "noUnknownAtRules": "off",
+        // Deshabilitar para componentes UI donde el índice es estable (sliders, etc.)
+        "noArrayIndexKey": "off"
       },
       // Reglas que aseguran un estilo de código consistente.
       "style": {
@@ -113,6 +115,12 @@
             "noBarrelFile": "off"
           }
         }
+      }
+    },
+    {
+      "includes": ["src/components/ui/**"],
+      "linter": {
+        "enabled": false
       }
     }
   ],

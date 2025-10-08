@@ -40,7 +40,7 @@ function generateSuggestedValues(min: number, max: number, count = 5): number[] 
 }
 
 // biome-ignore lint/style/noMagicNumbers: valores predefinidos de cantidad para UX
-const QUANTITY_PRESETS = [ 1, 3, 5, 10, 20 ] as const;
+const QUANTITY_PRESETS = [1, 3, 5, 10, 20] as const;
 
 export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   const { control, setValue } = useFormContext();
@@ -50,8 +50,8 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   const height = useWatch({ control, name: 'height' });
 
   // Estado local para sliders (optimización de rendimiento)
-  const [ localWidth, setLocalWidth ] = useState<number>(width || dimensions.minWidth);
-  const [ localHeight, setLocalHeight ] = useState<number>(height || dimensions.minHeight);
+  const [localWidth, setLocalWidth] = useState<number>(width || dimensions.minWidth);
+  const [localHeight, setLocalHeight] = useState<number>(height || dimensions.minHeight);
 
   // Generar valores sugeridos dinámicamente
   const suggestedWidths = generateSuggestedValues(dimensions.minWidth, dimensions.maxWidth);
@@ -74,24 +74,24 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   // Handlers optimizados para sliders
   const handleWidthSliderChange = useCallback(
     (value: number[]) => {
-      const newValue = value[ 0 ];
+      const newValue = value[0];
       if (newValue !== undefined) {
         setLocalWidth(newValue); // Update local state immediately (visual feedback)
         debouncedUpdateWidth(newValue); // Update form state with debounce
       }
     },
-    [ debouncedUpdateWidth ]
+    [debouncedUpdateWidth]
   );
 
   const handleHeightSliderChange = useCallback(
     (value: number[]) => {
-      const newValue = value[ 0 ];
+      const newValue = value[0];
       if (newValue !== undefined) {
         setLocalHeight(newValue);
         debouncedUpdateHeight(newValue);
       }
     },
-    [ debouncedUpdateHeight ]
+    [debouncedUpdateHeight]
   );
 
   // Sincronizar estado local cuando el form cambia externamente
@@ -99,13 +99,13 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
     if (width && width !== localWidth) {
       setLocalWidth(width);
     }
-  }, [ width, localWidth ]);
+  }, [width, localWidth]);
 
   useEffect(() => {
     if (height && height !== localHeight) {
       setLocalHeight(height);
     }
-  }, [ height, localHeight ]);
+  }, [height, localHeight]);
 
   return (
     <FieldSet>
@@ -171,7 +171,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
                       min={dimensions.minWidth}
                       onValueChange={handleWidthSliderChange}
                       step={10}
-                      value={[ localWidth ]}
+                      value={[localWidth]}
                     />
                   </div>
 
@@ -247,7 +247,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
                       min={dimensions.minHeight}
                       onValueChange={handleHeightSliderChange}
                       step={10}
-                      value={[ localHeight ]}
+                      value={[localHeight]}
                     />
                   </div>
 
@@ -279,11 +279,11 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
         {/* Alerta si hay dimensiones inválidas */}
         {((width && !isValidDimension(width, dimensions.minWidth, dimensions.maxWidth)) ||
           (height && !isValidDimension(height, dimensions.minHeight, dimensions.maxHeight))) && (
-            <Alert className="mt-4" variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>Una o más dimensiones están fuera del rango permitido.</AlertDescription>
-            </Alert>
-          )}
+          <Alert className="mt-4" variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>Una o más dimensiones están fuera del rango permitido.</AlertDescription>
+          </Alert>
+        )}
 
         {/* Cantidad */}
         <FormField
