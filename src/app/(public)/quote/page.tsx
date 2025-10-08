@@ -26,6 +26,9 @@ type QuoteItem = {
   subtotal: number;
 };
 
+// Force dynamic rendering (no SSG/ISR)
+export const dynamic = 'force-dynamic';
+
 export default function QuotePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
