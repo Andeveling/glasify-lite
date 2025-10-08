@@ -26,7 +26,14 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
                 <FormLabel>Ancho</FormLabel>
                 <FormControl>
                   <InputGroup>
-                    <InputGroupInput placeholder="1200" type="number" {...field} />
+                    <InputGroupInput
+                      {...field}
+                      max={dimensions.maxWidth}
+                      min={dimensions.minWidth}
+                      placeholder={String(dimensions.minWidth)}
+                      step="1"
+                      type="number"
+                    />
                     <InputGroupAddon>
                       <Ruler className="h-4 w-4 text-muted-foreground" />
                     </InputGroupAddon>
@@ -36,7 +43,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
                   </InputGroup>
                 </FormControl>
                 <FormDescription>
-                  {dimensions.minWidth}-{dimensions.maxWidth}mm
+                  Rango permitido: {dimensions.minWidth}-{dimensions.maxWidth}mm
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -51,7 +58,14 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
                 <FormLabel>Alto</FormLabel>
                 <FormControl>
                   <InputGroup>
-                    <InputGroupInput placeholder="1800" type="number" {...field} />
+                    <InputGroupInput
+                      {...field}
+                      max={dimensions.maxHeight}
+                      min={dimensions.minHeight}
+                      placeholder={String(dimensions.minHeight)}
+                      step="1"
+                      type="number"
+                    />
                     <InputGroupAddon>
                       <Ruler className="h-4 w-4 text-muted-foreground" />
                     </InputGroupAddon>
@@ -61,7 +75,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
                   </InputGroup>
                 </FormControl>
                 <FormDescription>
-                  {dimensions.minHeight}-{dimensions.maxHeight}mm
+                  Rango permitido: {dimensions.minHeight}-{dimensions.maxHeight}mm
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -77,7 +91,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
               <FormLabel>Cantidad</FormLabel>
               <FormControl>
                 <InputGroup>
-                  <InputGroupInput min="1" placeholder="1" type="number" {...field} />
+                  <InputGroupInput {...field} min="1" placeholder="1" step="1" type="number" />
                   <InputGroupAddon>
                     <Package className="h-4 w-4 text-muted-foreground" />
                   </InputGroupAddon>

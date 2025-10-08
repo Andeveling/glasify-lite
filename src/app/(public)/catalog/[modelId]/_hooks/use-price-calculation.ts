@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '@/trpc/react';
 
 type UsePriceCalculationParams = {
@@ -9,24 +9,29 @@ type UsePriceCalculationParams = {
   widthMm: number;
 };
 
-const DEBOUNCE_DELAY_MS = 500;
+const DEBOUNCE_DELAY_MS = 300; // ✅ Optimized for real-time responsiveness
 
 /**
- * Custom hook para calcular el precio del item con debounce
+ * Custom hook para calcular el precio del item con debounce optimizado
+ * ✅ Real-time UX Improvements:
+ * - Debounce a 300ms para balance óptimo entre responsiveness y performance
+ * - Estado de cálculo claro con isCalculating
+ * - Manejo robusto de errores con mensajes user-friendly
+ * - Prevención de loops infinitos usando refs y memoización estable
+ * - Serialización estable de arrays para evitar re-renders innecesarios
  */
 export function usePriceCalculation(params: UsePriceCalculationParams) {
-  const [isCalculating, setIsCalculating] = useState(false);
-  const [calculatedPrice, setCalculatedPrice] = useState<number | undefined>(undefined);
-  const [error, setError] = useState<string | undefined>(undefined);
+  const [ isCalculating, setIsCalculating ] = useState(false);
+  const [ calculatedPrice, setCalculatedPrice ] = useState<number | undefined>(undefined);
+  const [ error, setError ] = useState<string | undefined>(undefined);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const calculateMutation = api.quote['calculate-item'].useMutation({
+  const calculateMutation = api.quote[ 'calculate-item' ].useMutation({
     onError: (err) => {
-      // console.error('Error calculating price', { error: err.message });
       setIsCalculating(false);
       setCalculatedPrice(undefined);
 
-      // Set user-friendly error message
+      // ✅ User-friendly error messages in Spanish
       let errorMessage = 'Error al calcular el precio. Intenta nuevamente.';
 
       if (err.message.includes('no encontrado') || err.message.includes('no disponible')) {
@@ -46,13 +51,26 @@ export function usePriceCalculation(params: UsePriceCalculationParams) {
     },
   });
 
-  // biome-ignore lint: calculateMutation.mutate cambia en cada render (tRPC), params.additionalServices.map es método no dependencia, JSON.stringify compara array por valor no referencia
+  // ✅ Store mutate function in ref to avoid dependency issues
+  const mutateRef = useRef(calculateMutation.mutate);
+  mutateRef.current = calculateMutation.mutate;
+
+  // ✅ Create stable serialized dependency for services array
+  const servicesKey = useMemo(() => JSON.stringify(params.additionalServices), [ params.additionalServices ]);
+
+  // ✅ Store services in ref for stable access
+  const servicesRef = useRef(params.additionalServices);
+  servicesRef.current = params.additionalServices;
+
+  // ✅ Debounced calculation effect with stable dependencies
+  // biome-ignore lint/correctness/useExhaustiveDependencies: servicesKey is intentionally used to detect array changes
   useEffect(() => {
-    // Solo calcular si tenemos todos los datos necesarios
+    // Only calculate if we have all required data
     const isValid = params.modelId && params.glassTypeId && params.heightMm > 0 && params.widthMm > 0;
 
     if (!isValid) {
       setCalculatedPrice(undefined);
+      setError(undefined);
       return;
     }
 
@@ -61,16 +79,16 @@ export function usePriceCalculation(params: UsePriceCalculationParams) {
       clearTimeout(debounceTimerRef.current);
     }
 
-    // Set new timer
+    // Set new debounced timer
     debounceTimerRef.current = setTimeout(() => {
       setIsCalculating(true);
 
-      calculateMutation.mutate({
+      mutateRef.current({
         adjustments: [],
         glassTypeId: params.glassTypeId,
         heightMm: params.heightMm,
         modelId: params.modelId,
-        services: params.additionalServices.map((serviceId: string) => ({
+        services: servicesRef.current.map((serviceId: string) => ({
           serviceId,
         })),
         widthMm: params.widthMm,
@@ -83,15 +101,7 @@ export function usePriceCalculation(params: UsePriceCalculationParams) {
         clearTimeout(debounceTimerRef.current);
       }
     };
-    /**
-     * ✅ Dependency array explanation:
-     * - primitives (modelId, glassTypeId, heightMm, widthMm): compared by value ✓
-     * - JSON.stringify(additionalServices): serializes array for value comparison ✓
-     * - calculateMutation.mutate: excluded because it changes on every render (tRPC behavior)
-     * - params.additionalServices.map: excluded because it's a method, not a dependency
-     */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.modelId, params.glassTypeId, params.heightMm, params.widthMm, JSON.stringify(params.additionalServices)]);
+  }, [ params.modelId, params.glassTypeId, params.heightMm, params.widthMm, servicesKey ]);
 
   return {
     calculatedPrice,

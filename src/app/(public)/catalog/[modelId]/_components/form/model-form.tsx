@@ -22,18 +22,24 @@ type ModelFormProps = {
 };
 
 export function ModelForm({ model, glassTypes, services, onSubmit }: ModelFormProps) {
-  const [submittedData, setSubmittedData] = useState<QuoteFormData | null>(null);
+  const [ submittedData, setSubmittedData ] = useState<QuoteFormData | null>(null);
 
-  const schema = useMemo(() => createQuoteFormSchema(model), [model]);
+  const schema = useMemo(() => createQuoteFormSchema(model), [ model ]);
+
+  // ✅ UX Improvement: Pre-populate with minimum valid dimensions and first glass type
+  const defaultValues = useMemo(
+    () => ({
+      additionalServices: [],
+      glassType: glassTypes[ 0 ]?.id ?? '', // Pre-select first glass type (usually most common/budget)
+      height: model.minHeightMm, // Use minimum height as starting point
+      quantity: 1,
+      width: model.minWidthMm, // Use minimum width as starting point
+    }),
+    [ model.minWidthMm, model.minHeightMm, glassTypes ]
+  );
 
   const form = useForm<QuoteFormValues>({
-    defaultValues: {
-      additionalServices: [],
-      glassType: '',
-      height: 0,
-      quantity: 1,
-      width: 0,
-    },
+    defaultValues,
     mode: 'onChange',
     // @ts-expect-error - zodResolver with z.coerce has type inference issues
     resolver: zodResolver(schema),
