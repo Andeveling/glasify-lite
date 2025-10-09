@@ -43,11 +43,21 @@ enum AdjustmentSign {
   negative
 }
 
+/// @deprecated Use GlassSolution + GlassTypeSolution Many-to-Many instead.
+/// This enum will be removed in v2.0. Maintained for backward compatibility only.
 enum GlassPurpose {
   general
   insulation
   security
   decorative
+}
+
+enum PerformanceRating {
+  basic
+  standard
+  good
+  very_good
+  excellent
 }
 
 enum CostType {
@@ -163,6 +173,9 @@ model GlassType {
   manufacturerId String
   manufacturer   Manufacturer @relation(fields: [manufacturerId], references: [id], onDelete: Cascade)
   name           String
+  /// @deprecated Use solutions relationship instead. This field will be removed in v2.0.
+  /// Legacy single-purpose classification. Replaced by Many-to-Many GlassTypeSolution.
+  /// Maintained for backward compatibility only.
   purpose        GlassPurpose
   thicknessMm    Int
   /// Precio por metro cuadrado del vidrio (moneda de Manufacturer)
@@ -177,7 +190,10 @@ model GlassType {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   quoteItems     QuoteItem[]
+  solutions      GlassTypeSolution[]
 
+  @@index([manufacturerId])
+  /// @deprecated Index on deprecated purpose field. Will be removed in v2.0.
   @@index([manufacturerId, purpose])
 }
 
@@ -314,4 +330,53 @@ model ModelPriceHistory {
 
   @@index([modelId, effectiveFrom])
   @@index([createdBy])
+}
+
+/// Soluciones de vidrio (categorías de uso)
+/// Permite clasificar vidrios según su propósito principal (seguridad, térmico, acústico, etc.)
+model GlassSolution {
+  id          String              @id @default(cuid())
+  /// Clave única para identificar la solución (ej: 'security', 'thermal_insulation')
+  key         String              @unique
+  /// Nombre técnico en inglés
+  name        String
+  /// Nombre comercial en español
+  nameEs      String
+  /// Descripción de la solución
+  description String?
+  /// Icono de Lucide React (ej: 'Shield', 'Snowflake')
+  icon        String?
+  /// Orden de visualización (menor = más arriba)
+  sortOrder   Int                 @default(0)
+  /// Si la solución está activa para mostrarse a usuarios
+  isActive    Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  glassTypes  GlassTypeSolution[]
+
+  @@index([sortOrder])
+  @@index([isActive])
+}
+
+/// Tabla pivote: Relación Many-to-Many entre GlassType y GlassSolution
+/// Permite que un vidrio pertenezca a múltiples soluciones con calificación de rendimiento
+model GlassTypeSolution {
+  id                String            @id @default(cuid())
+  glassTypeId       String
+  glassType         GlassType         @relation(fields: [glassTypeId], references: [id], onDelete: Cascade)
+  solutionId        String
+  solution          GlassSolution     @relation(fields: [solutionId], references: [id], onDelete: Cascade)
+  /// Calificación de rendimiento para esta solución (1-5)
+  performanceRating PerformanceRating
+  /// Indica si esta es la solución principal del vidrio
+  isPrimary         Boolean           @default(false)
+  /// Notas adicionales sobre esta clasificación
+  notes             String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  @@unique([glassTypeId, solutionId])
+  @@index([glassTypeId])
+  @@index([solutionId])
+  @@index([isPrimary])
 }
