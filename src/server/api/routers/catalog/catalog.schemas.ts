@@ -30,6 +30,12 @@ export const listGlassTypesInput = z.object({
   glassTypeIds: z.array(z.cuid('ID del tipo de vidrio debe ser válido')),
 });
 
+export const listGlassSolutionsInput = z
+  .object({
+    modelId: z.cuid('ID del modelo debe ser válido').optional(),
+  })
+  .optional();
+
 // ========================================
 // OUTPUT SCHEMAS
 // ========================================
@@ -107,6 +113,39 @@ export const serviceOutput = z.object({
 
 export const listServicesOutput = z.array(serviceOutput);
 
+// ========================================
+// GLASS SOLUTIONS SCHEMAS
+// ========================================
+
+export const performanceRating = z.enum(['basic', 'standard', 'good', 'very_good', 'excellent']);
+
+export const glassSolutionOutput = z.object({
+  createdAt: z.date(),
+  description: z.string().nullable(),
+  icon: z.string().nullable(),
+  id: z.string(),
+  isActive: z.boolean(),
+  key: z.string(),
+  name: z.string(),
+  nameEs: z.string(),
+  sortOrder: z.number(),
+  updatedAt: z.date(),
+});
+
+export const glassTypeSolutionOutput = z.object({
+  createdAt: z.date(),
+  glassTypeId: z.string(),
+  id: z.string(),
+  isPrimary: z.boolean(),
+  notes: z.string().nullable(),
+  performanceRating,
+  solution: glassSolutionOutput,
+  solutionId: z.string(),
+  updatedAt: z.date(),
+});
+
+export const listGlassSolutionsOutput = z.array(glassSolutionOutput);
+
 export const glassTypeOutput = z.object({
   createdAt: z.date(),
   id: z.string(),
@@ -118,6 +157,7 @@ export const glassTypeOutput = z.object({
   name: z.string(),
   pricePerSqm: z.number(),
   purpose: z.enum(['general', 'insulation', 'security', 'decorative']),
+  solutions: z.array(glassTypeSolutionOutput).optional(),
   thicknessMm: z.number(),
   updatedAt: z.date(),
   uValue: z.number().nullable(),
@@ -137,5 +177,9 @@ export type ModelSummaryOutput = z.infer<typeof modelSummaryOutput>;
 export type ModelDetailOutput = z.infer<typeof modelDetailOutput>;
 export type ServiceOutput = z.infer<typeof serviceOutput>;
 export type ListServicesOutput = z.infer<typeof listServicesOutput>;
+export type PerformanceRating = z.infer<typeof performanceRating>;
+export type GlassSolutionOutput = z.infer<typeof glassSolutionOutput>;
+export type GlassTypeSolutionOutput = z.infer<typeof glassTypeSolutionOutput>;
+export type ListGlassSolutionsOutput = z.infer<typeof listGlassSolutionsOutput>;
 export type GlassTypeOutput = z.infer<typeof glassTypeOutput>;
 export type ListGlassTypesOutput = z.infer<typeof listGlassTypesOutput>;

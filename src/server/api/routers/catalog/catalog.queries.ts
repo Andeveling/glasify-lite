@@ -3,6 +3,8 @@ import logger from '@/lib/logger';
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
 import {
   getModelByIdInput,
+  listGlassSolutionsInput,
+  listGlassSolutionsOutput,
   listGlassTypesInput,
   listGlassTypesOutput,
   listModelsInput,
@@ -84,8 +86,86 @@ export const catalogQueries = createTRPCRouter({
     }),
 
   /**
+   * List all active glass solutions
+   * Used for solution selector UI
+   * @public
+   */
+  'list-glass-solutions': publicProcedure
+    .input(listGlassSolutionsInput)
+    .output(listGlassSolutionsOutput)
+    .query(async ({ ctx, input }) => {
+      try {
+        const params = input ?? {};
+        logger.info('Listing glass solutions', { modelId: params.modelId });
+
+        // If modelId is provided, filter solutions by compatible glass types
+        if (params.modelId) {
+          // First, get the model's compatible glass type IDs
+          const model = await ctx.db.model.findUnique({
+            select: { compatibleGlassTypeIds: true },
+            where: { id: params.modelId },
+          });
+
+          if (!model) {
+            throw new Error('Modelo no encontrado');
+          }
+
+          // Get solutions that have at least one glass type compatible with this model
+          const solutions = await ctx.db.glassSolution.findMany({
+            orderBy: { sortOrder: 'asc' },
+            where: {
+              AND: [
+                { isActive: true },
+                {
+                  glassTypes: {
+                    some: {
+                      glassTypeId: {
+                        in: model.compatibleGlassTypeIds,
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          });
+
+          logger.info('Successfully retrieved filtered glass solutions', {
+            count: solutions.length,
+            modelId: params.modelId,
+          });
+
+          return solutions;
+        }
+
+        // No filter: return all active solutions
+        const solutions = await ctx.db.glassSolution.findMany({
+          orderBy: { sortOrder: 'asc' },
+          where: { isActive: true },
+        });
+
+        logger.info('Successfully retrieved glass solutions', {
+          count: solutions.length,
+        });
+
+        return solutions;
+      } catch (error) {
+        logger.error('Error listing glass solutions', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          modelId: input?.modelId,
+        });
+
+        throw new Error('No se pudieron cargar las soluciones de vidrio. Intente nuevamente.');
+      }
+    }),
+
+  /**
    * List glass types by IDs
    * Used to fetch glass type details for models
+   *
+   * NOTE: All glass types currently have solutions assigned from seed data.
+   * The fallback logic (ensureGlassHasSolutions) is available but not actively used.
+   * See catalog.migration-utils.ts for backward compatibility helpers.
+   *
    * @public
    */
   'list-glass-types': publicProcedure
@@ -109,7 +189,13 @@ export const catalogQueries = createTRPCRouter({
             manufacturerId: true,
             name: true,
             pricePerSqm: true,
-            purpose: true,
+            purpose: true, // Kept for potential future fallback needs
+            solutions: {
+              include: {
+                solution: true,
+              },
+              orderBy: [ { isPrimary: 'desc' }, { solution: { sortOrder: 'asc' } } ],
+            },
             thicknessMm: true,
             updatedAt: true,
             uValue: true,
@@ -119,10 +205,16 @@ export const catalogQueries = createTRPCRouter({
           },
         });
 
-        // Serialize Decimal fields (pricePerSqm, uValue)
+        // Serialize Decimal fields (pricePerSqm, uValue) and nested solution relations
         const serializedGlassTypes = glassTypes.map((glassType) => ({
           ...glassType,
           pricePerSqm: glassType.pricePerSqm.toNumber(),
+          solutions: glassType.solutions?.map((sol) => ({
+            ...sol,
+            solution: {
+              ...sol.solution,
+            },
+          })),
           uValue: glassType.uValue?.toNumber() ?? null,
         }));
 
