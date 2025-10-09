@@ -1,7 +1,7 @@
 import { Ruler } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { FieldContent, FieldDescription, FieldLegend, FieldSet } from '@/components/ui/field';
+import { FormSection } from '@/components/form-section';
 import { useDebouncedDimension } from '../../../_hooks/use-debounced-dimension';
 import { DimensionField } from '../dimension-field';
 import { DimensionValidationAlert } from '../dimension-validation-alert';
@@ -108,44 +108,36 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
     (height && !isValidDimension(height, dimensions.minHeight, dimensions.maxHeight));
 
   return (
-    <FieldSet>
-      <FieldLegend>
-        <Ruler className="mr-2 mb-1 inline size-4 text-primary" />
-        Dimensiones
-      </FieldLegend>
-      <FieldDescription>Especifica las dimensiones del vidrio requeridas.</FieldDescription>
+    <FormSection description="Especifica las dimensiones del vidrio requeridas." icon={Ruler} legend="Dimensiones">
+      <div className="grid gap-6 sm:grid-cols-2">
+        <DimensionField
+          control={control}
+          generateSuggestedValues={generateSuggestedValuesMemo}
+          isValid={isWidthValid}
+          label="Ancho"
+          localValue={localWidth}
+          max={dimensions.maxWidth}
+          min={dimensions.minWidth}
+          name="width"
+          onSliderChange={handleWidthSliderChange}
+        />
 
-      <FieldContent>
-        <div className="grid gap-6 sm:grid-cols-2">
-          <DimensionField
-            control={control}
-            generateSuggestedValues={generateSuggestedValuesMemo}
-            isValid={isWidthValid}
-            label="Ancho"
-            localValue={localWidth}
-            max={dimensions.maxWidth}
-            min={dimensions.minWidth}
-            name="width"
-            onSliderChange={handleWidthSliderChange}
-          />
+        <DimensionField
+          control={control}
+          generateSuggestedValues={generateSuggestedValuesMemo}
+          isValid={isHeightValid}
+          label="Alto"
+          localValue={localHeight}
+          max={dimensions.maxHeight}
+          min={dimensions.minHeight}
+          name="height"
+          onSliderChange={handleHeightSliderChange}
+        />
+      </div>
 
-          <DimensionField
-            control={control}
-            generateSuggestedValues={generateSuggestedValuesMemo}
-            isValid={isHeightValid}
-            label="Alto"
-            localValue={localHeight}
-            max={dimensions.maxHeight}
-            min={dimensions.minHeight}
-            name="height"
-            onSliderChange={handleHeightSliderChange}
-          />
-        </div>
+      <DimensionValidationAlert showAlert={showValidationAlert} />
 
-        <DimensionValidationAlert showAlert={showValidationAlert} />
-
-        <QuantityField control={control} name="quantity" presets={QUANTITY_PRESETS} />
-      </FieldContent>
-    </FieldSet>
+      <QuantityField control={control} name="quantity" presets={QUANTITY_PRESETS} />
+    </FormSection>
   );
 }

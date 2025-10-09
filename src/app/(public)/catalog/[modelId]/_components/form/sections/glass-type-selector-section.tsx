@@ -4,8 +4,8 @@ import type { LucideIcon } from 'lucide-react';
 import { Gem, Home, Shield, Snowflake, Sparkles, Volume2, Zap } from 'lucide-react';
 import { memo, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { FormSection } from '@/components/form-section';
 import { Badge } from '@/components/ui/badge';
-import { FieldContent, FieldDescription, FieldLegend, FieldSet } from '@/components/ui/field';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { PerformanceRatingBadge } from '@/components/ui/performance-rating-badge';
@@ -72,7 +72,7 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
     if (!selectedSolutionId) return glassTypes;
 
     return glassTypes.filter((glassType) => glassType.solutions?.some((sol) => sol.solution.id === selectedSolutionId));
-  }, [glassTypes, selectedSolutionId]);
+  }, [ glassTypes, selectedSolutionId ]);
 
   const glassOptions = useMemo(
     () =>
@@ -85,7 +85,7 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
 
         // Use selected solution if available, otherwise fallback to primary solution
         const solutionData =
-          selectedSolutionData?.solution ?? primarySolution?.solution ?? glassType.solutions?.[0]?.solution;
+          selectedSolutionData?.solution ?? primarySolution?.solution ?? glassType.solutions?.[ 0 ]?.solution;
 
         // Get icon component using the mapping function
         const icon = getSolutionIcon(solutionData?.icon);
@@ -119,104 +119,97 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
           title,
         };
       }),
-    [filteredGlassTypes, selectedSolutionId]
+    [ filteredGlassTypes, selectedSolutionId ]
   );
 
   return (
-    <FieldSet>
-      <FieldLegend>
-        <Gem className="mr-2 mb-1 inline size-4 text-primary" />
-        Tipo de Cristal
-      </FieldLegend>
-      <FieldDescription>Selecciona la solución de cristal que mejor se adapte a tus necesidades.</FieldDescription>
-      <FieldContent>
-        <FormField
-          control={control}
-          name="glassType"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <RadioGroup className="grid gap-4 md:grid-cols-2" onValueChange={field.onChange} value={field.value}>
-                  {glassOptions.map((option) => {
-                    const Icon = option.icon;
-                    const isSelected = field.value === option.id;
+    <FormSection
+      description="Selecciona la solución de cristal que mejor se adapte a tus necesidades."
+      icon={Gem}
+      legend="Tipo de Cristal"
+    >
+      <FormField
+        control={control}
+        name="glassType"
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <RadioGroup className="grid gap-4 md:grid-cols-2" onValueChange={field.onChange} value={field.value}>
+                {glassOptions.map((option) => {
+                  const Icon = option.icon;
+                  const isSelected = field.value === option.id;
 
-                    return (
-                      <div className="relative" key={option.id}>
-                        <RadioGroupItem className="peer sr-only" id={option.id} value={option.id} />
-                        <Label
-                          className={cn(
-                            'flex cursor-pointer flex-col gap-4 rounded-lg border-2 p-6 transition-all hover:border-primary/50',
-                            'peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2',
-                            isSelected ? 'border-primary bg-primary/5' : 'border-border bg-card'
-                          )}
-                          htmlFor={option.id}
-                        >
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="flex items-center gap-3">
-                              <div
-                                className={cn(
-                                  'flex h-12 w-12 items-center justify-center rounded-lg',
-                                  isSelected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                  return (
+                    <div className="relative" key={option.id}>
+                      <RadioGroupItem className="peer sr-only" id={option.id} value={option.id} />
+                      <Label
+                        className={cn(
+                          'flex cursor-pointer flex-col gap-4 rounded-lg border-2 p-6 transition-all hover:border-primary/50',
+                          'peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2',
+                          isSelected ? 'border-primary bg-primary/5' : 'border-border bg-card'
+                        )}
+                        htmlFor={option.id}
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={cn(
+                                'flex h-12 w-12 items-center justify-center rounded-lg',
+                                isSelected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                              )}
+                            >
+                              <Icon className="h-6 w-6" />
+                            </div>
+                            <div>
+                              <h4 className="font-semibold">{option.title}</h4>
+                              <div className="mt-1 flex items-center gap-2">
+                                <Badge className="text-xs" variant={isSelected ? 'default' : 'secondary'}>
+                                  {priceLabels[ option.priceIndicator ]}
+                                </Badge>
+                                {option.performanceRating && (
+                                  <PerformanceRatingBadge rating={option.performanceRating as PerformanceRating} />
                                 )}
-                              >
-                                <Icon className="h-6 w-6" />
-                              </div>
-                              <div>
-                                <h4 className="font-semibold">{option.title}</h4>
-                                <div className="mt-1 flex items-center gap-2">
-                                  <Badge className="text-xs" variant={isSelected ? 'default' : 'secondary'}>
-                                    {priceLabels[option.priceIndicator]}
-                                  </Badge>
-                                  {option.performanceRating && (
-                                    <PerformanceRatingBadge rating={option.performanceRating as PerformanceRating} />
-                                  )}
-                                </div>
                               </div>
                             </div>
                           </div>
+                        </div>
 
-                          <p className="text-muted-foreground text-sm">{option.name}</p>
+                        <p className="text-muted-foreground text-sm">{option.name}</p>
 
-                          {/* Show all solutions this glass belongs to (if not filtered by solution) */}
-                          {!selectedSolutionId && option.allSolutions && option.allSolutions.length > 1 && (
-                            <div className="mt-2 border-t pt-3">
-                              <p className="font-medium text-muted-foreground text-xs">Soluciones disponibles</p>
-                              <div className="mt-1 flex flex-wrap gap-1">
-                                {option.allSolutions.map((sol, idx) => (
-                                  <Badge
-                                    className="text-xs"
-                                    key={idx}
-                                    variant={sol.isPrimary ? 'default' : 'secondary'}
-                                  >
-                                    {sol.name}
-                                  </Badge>
-                                ))}
-                              </div>
+                        {/* Show all solutions this glass belongs to (if not filtered by solution) */}
+                        {!selectedSolutionId && option.allSolutions && option.allSolutions.length > 1 && (
+                          <div className="mt-2 border-t pt-3">
+                            <p className="font-medium text-muted-foreground text-xs">Soluciones disponibles</p>
+                            <div className="mt-1 flex flex-wrap gap-1">
+                              {option.allSolutions.map((sol, idx) => (
+                                <Badge className="text-xs" key={idx} variant={sol.isPrimary ? 'default' : 'secondary'}>
+                                  {sol.name}
+                                </Badge>
+                              ))}
                             </div>
-                          )}
+                          </div>
+                        )}
 
-                          {option.features.length > 0 && (
-                            <div className="mt-2 border-t pt-3">
-                              <p className="font-medium text-muted-foreground text-xs">Especificaciones técnicas</p>
-                              <div className="mt-2 space-y-1 text-muted-foreground text-xs">
-                                <p>Grosor: {option.thicknessMm}mm</p>
-                                <p>Características: {option.features.join(', ')}</p>
-                              </div>
+                        {option.features.length > 0 && (
+                          <div className="mt-2 border-t pt-3">
+                            <p className="font-medium text-muted-foreground text-xs">Especificaciones técnicas</p>
+                            <div className="mt-2 space-y-1 text-muted-foreground text-xs">
+                              <p>Grosor: {option.thicknessMm}mm</p>
+                              <p>Características: {option.features.join(', ')}</p>
                             </div>
-                          )}
-                        </Label>
-                      </div>
-                    );
-                  })}
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </FieldContent>
-    </FieldSet>
+                          </div>
+                        )}
+                      </Label>
+                    </div>
+                  );
+                })}
+              </RadioGroup>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </FormSection>
   );
 });
 

@@ -2,9 +2,9 @@
 
 import { Wrench } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
+import { FormSection } from '@/components/form-section';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { FieldContent, FieldDescription, FieldLegend, FieldSet } from '@/components/ui/field';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { cn, formatCurrency } from '@/lib/utils';
 import type { ServiceOutput } from '@/server/api/routers/catalog';
@@ -36,74 +36,70 @@ function getServiceUnitLabel(unit: ServiceOutput[ 'unit' ]): string {
 export function ServicesSelectorSection({ services }: ServicesSelectorSectionProps) {
   const { control } = useFormContext();
   return (
-    <FieldSet>
-      <div className="space-y-2">
-        <FieldLegend>
-          <Wrench className="mr-3 mb-1 inline size-6 text-primary" />
-          Servicios Adicionales
-        </FieldLegend>
-        <FieldDescription className='text-base'>Selecciona los servicios extra que desees agregar a tu compra.</FieldDescription>
-      </div>
-      <FieldContent>
-        <FormField
-          control={control}
-          name="additionalServices"
-          render={() => (
-            <FormItem>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                {services.map((service) => (
-                  <FormField
-                    control={control}
-                    key={service.id}
-                    name="additionalServices"
-                    render={({ field }) => {
-                      const isChecked = field.value?.includes(service.id) ?? false;
+    <FormSection
+      description="Selecciona los servicios extra que desees agregar a tu compra."
+      descriptionClassName="text-base"
+      icon={Wrench}
+      legend="Servicios Adicionales"
+    >
+      <FormField
+        control={control}
+        name="additionalServices"
+        render={() => (
+          <FormItem>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {services.map((service) => (
+                <FormField
+                  control={control}
+                  key={service.id}
+                  name="additionalServices"
+                  render={({ field }) => {
+                    const isChecked = field.value?.includes(service.id) ?? false;
 
-                      return (
-                        <FormItem
-                          className={cn(
-                            'flex items-start gap-3 rounded-lg border p-4 transition-colors',
-                            isChecked && 'border-primary bg-primary/5'
-                          )}
-                        >
-                          <FormControl>
-                            <Checkbox
-                              checked={isChecked}
-                              className="size-6"
-                              onCheckedChange={(checked) => {
-                                const currentValue = field.value || [];
-                                const newValue = checked
-                                  ? [ ...currentValue, service.id ]
-                                  : currentValue.filter((id: string) => id !== service.id);
-                                field.onChange(newValue);
-                              }}
-                            />
-                          </FormControl>
-                          <div className="flex-1 space-y-2">
-                            <FormLabel className="flex cursor-pointer items-center gap-2 font-medium text-sm leading-none">
-                              {service.name}
-                              <Badge className="text-xs" variant="outline">
-                                {getServiceTypeLabel(service.type)}
-                              </Badge>
-                            </FormLabel>
-                            <div className="flex items-baseline gap-2 text-muted-foreground text-xs">
-                              <span className="font-semibold text-foreground text-sm">
-                                {formatCurrency(service.rate)}
-                              </span>
-                              <span>por {getServiceUnitLabel(service.unit)}</span>
-                            </div>
+                    return (
+                      <FormItem
+                        className={cn(
+                          'flex items-start gap-3 rounded-lg border p-4 transition-colors',
+                          isChecked && 'border-primary bg-primary/5'
+                        )}
+                      >
+                        <FormControl>
+                          <Checkbox
+                            checked={isChecked}
+                            className="size-6"
+                            onCheckedChange={(checked) => {
+                              const currentValue = field.value || [];
+                              const newValue = checked
+                                ? [ ...currentValue, service.id ]
+                                : currentValue.filter((id: string) => id !== service.id);
+                              field.onChange(newValue);
+                            }}
+                          />
+                        </FormControl>
+                        <div className="flex-1 space-y-2">
+                          <FormLabel className="flex cursor-pointer items-center gap-2 font-medium text-sm leading-none">
+                            {service.name}
+                            <Badge className="text-xs" variant="outline">
+                              {getServiceTypeLabel(service.type)}
+                            </Badge>
+                          </FormLabel>
+                          <div className="flex items-baseline gap-2 text-muted-foreground text-xs">
+                            <span className="font-semibold text-foreground text-sm">
+                              {formatCurrency(service.rate)}
+                            </span>
+                            <span>por {getServiceUnitLabel(service.unit)}</span>
                           </div>
-                        </FormItem>
-                      );
-                    }}
-                  />
-                ))}
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </FieldContent>
-    </FieldSet>
+                        </div>
+                      </FormItem>
+                    );
+                  }}
+                />
+              ))}
+            </div>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </FormSection>
   );
 }
