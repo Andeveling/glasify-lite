@@ -94,7 +94,7 @@ async function rollbackSolutionsToPurpose() {
     let errorCount = 0;
 
     for (const glass of glassTypes) {
-      const primarySolution = glass.solutions[ 0 ];
+      const primarySolution = glass.solutions[0];
 
       if (!primarySolution) {
         console.log(`  ⚠️  ${glass.name}: No primary solution found, keeping current purpose (${glass.purpose})`);
@@ -102,7 +102,7 @@ async function rollbackSolutionsToPurpose() {
         continue;
       }
 
-      const newPurpose = SOLUTION_TO_PURPOSE_MAP[ primarySolution.solution.key ];
+      const newPurpose = SOLUTION_TO_PURPOSE_MAP[primarySolution.solution.key];
 
       if (!newPurpose) {
         console.log(

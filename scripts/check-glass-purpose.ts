@@ -74,7 +74,7 @@ async function checkGlassPurposeData() {
 
     // 3. Display stats by purpose
     console.log('📈 Distribution by Purpose:\n');
-    for (const [ purpose, stats ] of purposeStats.entries()) {
+    for (const [purpose, stats] of purposeStats.entries()) {
       console.log(`  ${purpose}: ${stats.count} glasses`);
 
       const withSolutions = stats.glassTypes.filter((g) => g.hasSolutions).length;
