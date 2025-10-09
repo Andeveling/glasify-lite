@@ -200,13 +200,13 @@ describe('Contract Tests - Catalog Schemas', () => {
       if (result.success) {
         expect(result.data.id).toBe('gt_123');
         expect(result.data.solutions).toHaveLength(1);
-        expect(result.data.solutions?.[ 0 ]?.isPrimary).toBe(true);
-        expect(result.data.solutions?.[ 0 ]?.securityRating).toBe('good');
+        expect(result.data.solutions?.[0]?.isPrimary).toBe(true);
+        expect(result.data.solutions?.[0]?.securityRating).toBe('good');
       }
     });
 
     it('should validate all performance rating values', () => {
-      const performanceRatings = [ 'basic', 'standard', 'good', 'very_good', 'excellent' ];
+      const performanceRatings = ['basic', 'standard', 'good', 'very_good', 'excellent'];
 
       for (const rating of performanceRatings) {
         const validOutput = {
@@ -329,7 +329,7 @@ describe('Contract Tests - Catalog Schemas', () => {
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data).toHaveLength(2);
-        expect(result.data[ 0 ]?.key).toBe('security');
+        expect(result.data[0]?.key).toBe('security');
       }
     });
 

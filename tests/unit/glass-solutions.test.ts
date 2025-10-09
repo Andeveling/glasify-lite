@@ -58,7 +58,7 @@ describe('Glass Solutions - Migration Utilities', () => {
             glassTypeId: 'gt-1',
             id: 'gts-1',
             isPrimary: true,
-            solution: mockSolutions[ 0 ],
+            solution: mockSolutions[0],
             solutionId: 'sol-1',
           },
         ],
@@ -68,7 +68,7 @@ describe('Glass Solutions - Migration Utilities', () => {
 
       expect(result).toEqual(glassWithSolutions.solutions);
       expect(result).toHaveLength(1);
-      expect(result?.[ 0 ]?.solution.key).toBe('general');
+      expect(result?.[0]?.solution.key).toBe('general');
     });
 
     it('should create fallback solution from purpose if glass has no solutions', () => {
@@ -80,9 +80,9 @@ describe('Glass Solutions - Migration Utilities', () => {
       const result = ensureGlassHasSolutions(glassWithoutSolutions, mockSolutions);
 
       expect(result).toHaveLength(1);
-      expect(result?.[ 0 ]?.solution.key).toBe('security');
-      expect(result?.[ 0 ]?.id).toContain('fallback-');
-      expect(result?.[ 0 ]?.isPrimary).toBe(true);
+      expect(result?.[0]?.solution.key).toBe('security');
+      expect(result?.[0]?.id).toContain('fallback-');
+      expect(result?.[0]?.isPrimary).toBe(true);
     });
 
     it('should use general solution as ultimate fallback', () => {
@@ -94,7 +94,7 @@ describe('Glass Solutions - Migration Utilities', () => {
       const result = ensureGlassHasSolutions(glassWithUnknownPurpose, mockSolutions);
 
       expect(result).toHaveLength(1);
-      expect(result?.[ 0 ]?.solution.key).toBe('general');
+      expect(result?.[0]?.solution.key).toBe('general');
     });
 
     it('should return empty array if no solutions available at all', () => {
@@ -111,13 +111,13 @@ describe('Glass Solutions - Migration Utilities', () => {
 
   describe('isUsingFallbackSolutions', () => {
     it('should return true if solutions have fallback ID', () => {
-      const solutions = [ { id: 'fallback-security' } ];
+      const solutions = [{ id: 'fallback-security' }];
 
       expect(isUsingFallbackSolutions(solutions)).toBe(true);
     });
 
     it('should return false if solutions have real IDs', () => {
-      const solutions = [ { id: 'gts-123' }, { id: 'gts-456' } ];
+      const solutions = [{ id: 'gts-123' }, { id: 'gts-456' }];
 
       expect(isUsingFallbackSolutions(solutions)).toBe(false);
     });
@@ -131,7 +131,7 @@ describe('Glass Solutions - Migration Utilities', () => {
     });
 
     it('should return true if at least one solution is fallback', () => {
-      const solutions = [ { id: 'gts-123' }, { id: 'fallback-thermal' } ];
+      const solutions = [{ id: 'gts-123' }, { id: 'fallback-thermal' }];
 
       expect(isUsingFallbackSolutions(solutions)).toBe(true);
     });
