@@ -24,7 +24,7 @@ export function mapPurposeToSolutionKey(purpose: GlassPurpose): string {
     security: 'security',
   };
 
-  return mapping[ purpose ] ?? 'general';
+  return mapping[purpose] ?? 'general';
 }
 
 /**
@@ -52,7 +52,7 @@ export function ensureGlassHasSolutions<
       }
     >;
   },
->(glassType: T, availableSolutions: Array<{ id: string; key: string; nameEs: string; icon: string }>): T[ 'solutions' ] {
+>(glassType: T, availableSolutions: Array<{ id: string; key: string; nameEs: string; icon: string }>): T['solutions'] {
   // If glass already has solutions, return them
   if (glassType.solutions && glassType.solutions.length > 0) {
     return glassType.solutions;
@@ -67,7 +67,7 @@ export function ensureGlassHasSolutions<
     const generalSolution = availableSolutions.find((s) => s.key === 'general');
     if (!generalSolution) {
       // No solutions available at all - return empty array
-      return [] as T[ 'solutions' ];
+      return [] as T['solutions'];
     }
 
     return [
@@ -80,7 +80,7 @@ export function ensureGlassHasSolutions<
         solution: generalSolution,
         solutionId: generalSolution.id,
       },
-    ] as T[ 'solutions' ];
+    ] as T['solutions'];
   }
 
   // Return synthetic solution based on purpose
@@ -94,7 +94,7 @@ export function ensureGlassHasSolutions<
       solution: fallbackSolution,
       solutionId: fallbackSolution.id,
     },
-  ] as T[ 'solutions' ];
+  ] as T['solutions'];
 }
 
 /**

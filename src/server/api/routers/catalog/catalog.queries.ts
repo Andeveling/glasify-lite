@@ -194,7 +194,7 @@ export const catalogQueries = createTRPCRouter({
               include: {
                 solution: true,
               },
-              orderBy: [ { isPrimary: 'desc' }, { solution: { sortOrder: 'asc' } } ],
+              orderBy: [{ isPrimary: 'desc' }, { solution: { sortOrder: 'asc' } }],
             },
             thicknessMm: true,
             updatedAt: true,
