@@ -223,13 +223,23 @@ model Quote {
   total          Decimal      @default(0) @db.Decimal(12, 2)
   validUntil     DateTime?
   contactPhone   String?
+  /// @deprecated Use structured project fields instead. Will be removed in v2.0.
   contactAddress String?
+  
+  // Project information (structured address fields)
+  projectName       String? @db.VarChar(100)
+  projectStreet     String? @db.VarChar(200)
+  projectCity       String? @db.VarChar(100)
+  projectState      String? @db.VarChar(100)
+  projectPostalCode String? @db.VarChar(20)
+  
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   items          QuoteItem[]
   adjustments    Adjustment[]
 
   @@index([manufacturerId, status])
+  @@index([userId])
 }
 
 model QuoteItem {
@@ -240,6 +250,11 @@ model QuoteItem {
   model            Model              @relation(fields: [modelId], references: [id], onDelete: Restrict)
   glassTypeId      String
   glassType        GlassType          @relation(fields: [glassTypeId], references: [id], onDelete: Restrict)
+  
+  // User-editable item identification
+  name             String             @db.VarChar(50)
+  quantity         Int                @default(1)
+  
   widthMm          Int
   heightMm         Int
   accessoryApplied Boolean            @default(false)
