@@ -10,7 +10,7 @@ import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/f
 import { Label } from '@/components/ui/label';
 import { PerformanceRatingBadge } from '@/components/ui/performance-rating-badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { cn } from '@/lib/utils';
+import { cn, formatCurrency } from '@/lib/utils';
 import type { GlassTypeOutput, PerformanceRating } from '@/server/api/routers/catalog';
 
 type GlassTypeSelectorSectionProps = {
@@ -72,7 +72,7 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
     if (!selectedSolutionId) return glassTypes;
 
     return glassTypes.filter((glassType) => glassType.solutions?.some((sol) => sol.solution.id === selectedSolutionId));
-  }, [glassTypes, selectedSolutionId]);
+  }, [ glassTypes, selectedSolutionId ]);
 
   const glassOptions = useMemo(
     () =>
@@ -85,7 +85,7 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
 
         // Use selected solution if available, otherwise fallback to primary solution
         const solutionData =
-          selectedSolutionData?.solution ?? primarySolution?.solution ?? glassType.solutions?.[0]?.solution;
+          selectedSolutionData?.solution ?? primarySolution?.solution ?? glassType.solutions?.[ 0 ]?.solution;
 
         // Get icon component using the mapping function
         const icon = getSolutionIcon(solutionData?.icon);
@@ -115,11 +115,12 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
           name: glassType.name,
           performanceRating,
           priceIndicator,
+          pricePerSqm: glassType.pricePerSqm,
           thicknessMm: glassType.thicknessMm,
           title,
         };
       }),
-    [filteredGlassTypes, selectedSolutionId]
+    [ filteredGlassTypes, selectedSolutionId ]
   );
 
   return (
@@ -164,13 +165,19 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
                               <h4 className="font-semibold">{option.title}</h4>
                               <div className="mt-1 flex items-center gap-2">
                                 <Badge className="text-xs" variant={isSelected ? 'default' : 'secondary'}>
-                                  {priceLabels[option.priceIndicator]}
+                                  {priceLabels[ option.priceIndicator ]}
                                 </Badge>
                                 {option.performanceRating && (
                                   <PerformanceRatingBadge rating={option.performanceRating as PerformanceRating} />
                                 )}
                               </div>
                             </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-semibold text-primary text-sm">
+                              {formatCurrency(option.pricePerSqm)}
+                            </div>
+                            <div className="text-muted-foreground text-xs">por m²</div>
                           </div>
                         </div>
 

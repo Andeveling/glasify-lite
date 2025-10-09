@@ -38,8 +38,8 @@ export function QuoteSummary({ basePrice, calculatedPrice, currency, error, isCa
 
   // ✅ Enhanced UX: Extract form errors for explicit display
   const getFormErrors = (): Array<{ field: string; message: string }> =>
-    Object.entries(errors).map(([ field, fieldError ]) => ({
-      field: FIELD_LABELS[ field ] || field,
+    Object.entries(errors).map(([field, fieldError]) => ({
+      field: FIELD_LABELS[field] || field,
       message: fieldError?.message?.toString() || 'Campo inválido',
     }));
 
