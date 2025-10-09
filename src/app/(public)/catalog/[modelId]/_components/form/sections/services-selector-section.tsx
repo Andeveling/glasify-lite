@@ -37,10 +37,13 @@ export function ServicesSelectorSection({ services }: ServicesSelectorSectionPro
   const { control } = useFormContext();
   return (
     <FieldSet>
-      <FieldLegend>
-        <Wrench className='mr-2 mb-1 inline size-4 text-primary' />
-        Servicios Adicionales</FieldLegend>
-      <FieldDescription>Selecciona los servicios extra que desees agregar a tu compra.</FieldDescription>
+      <div className="space-y-2">
+        <FieldLegend>
+          <Wrench className="mr-3 mb-1 inline size-6 text-primary" />
+          Servicios Adicionales
+        </FieldLegend>
+        <FieldDescription className='text-base'>Selecciona los servicios extra que desees agregar a tu compra.</FieldDescription>
+      </div>
       <FieldContent>
         <FormField
           control={control}

@@ -1,18 +1,21 @@
 'use client';
 
-import { Gem, Home, Shield, Snowflake, Sparkles } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { Gem, Home, Shield, Snowflake, Sparkles, Volume2, Zap } from 'lucide-react';
 import { memo, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Badge } from '@/components/ui/badge';
 import { FieldContent, FieldDescription, FieldLegend, FieldSet } from '@/components/ui/field';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
+import { PerformanceRatingBadge } from '@/components/ui/performance-rating-badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
-import type { GlassTypeOutput } from '@/server/api/routers/catalog';
+import type { GlassTypeOutput, PerformanceRating } from '@/server/api/routers/catalog';
 
 type GlassTypeSelectorSectionProps = {
   glassTypes: GlassTypeOutput[];
+  selectedSolutionId?: string;
 };
 
 type PriceIndicator = 'budget' | 'standard' | 'premium';
@@ -20,19 +23,25 @@ type PriceIndicator = 'budget' | 'standard' | 'premium';
 const PRICE_THRESHOLD_STANDARD = 50;
 const PRICE_THRESHOLD_PREMIUM = 100;
 
-const purposeIcons = {
-  decorative: Sparkles,
-  general: Home,
-  insulation: Snowflake,
-  security: Shield,
-} as const;
-
-const purposeLabels = {
-  decorative: 'Estilo y Privacidad',
-  general: 'Solución Estándar',
-  insulation: 'Ahorro de Energía',
-  security: 'Protección y Seguridad',
-} as const;
+// Icon mapping for solutions - Maps Lucide component names (from DB) to icon components
+const getSolutionIcon = (iconName: string | null | undefined): LucideIcon => {
+  switch (iconName) {
+    case 'Home':
+      return Home;
+    case 'Shield':
+      return Shield;
+    case 'Snowflake':
+      return Snowflake;
+    case 'Sparkles':
+      return Sparkles;
+    case 'Volume2':
+      return Volume2;
+    case 'Zap':
+      return Zap;
+    default:
+      return Home;
+  }
+};
 
 const priceLabels: Record<PriceIndicator, string> = {
   budget: 'Económico',
@@ -55,35 +64,70 @@ function buildGlassFeatures(glassType: GlassTypeOutput): string[] {
   return features;
 }
 
-export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ glassTypes }) => {
+export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ glassTypes, selectedSolutionId }) => {
   const { control } = useFormContext();
+
+  // Filter glass types by selected solution
+  const filteredGlassTypes = useMemo(() => {
+    if (!selectedSolutionId) return glassTypes;
+
+    return glassTypes.filter((glassType) => glassType.solutions?.some((sol) => sol.solution.id === selectedSolutionId));
+  }, [glassTypes, selectedSolutionId]);
 
   const glassOptions = useMemo(
     () =>
-      glassTypes.map((glassType) => {
-        const icon = purposeIcons[ glassType.purpose ] ?? Home;
-        const title = purposeLabels[ glassType.purpose ] ?? glassType.name;
+      filteredGlassTypes.map((glassType) => {
+        // Get primary solution or first solution
+        const primarySolution = glassType.solutions?.find((s) => s.isPrimary);
+        const selectedSolutionData = selectedSolutionId
+          ? glassType.solutions?.find((s) => s.solution.id === selectedSolutionId)
+          : null;
+
+        // Use selected solution if available, otherwise fallback to primary solution
+        const solutionData =
+          selectedSolutionData?.solution ?? primarySolution?.solution ?? glassType.solutions?.[0]?.solution;
+
+        // Get icon component using the mapping function
+        const icon = getSolutionIcon(solutionData?.icon);
+
+        const title = solutionData?.nameEs ?? glassType.name;
         const features = buildGlassFeatures(glassType);
         const priceIndicator = getPriceIndicator(glassType.pricePerSqm);
 
+        // Get performance rating for selected solution
+        const performanceRating = selectedSolutionId
+          ? glassType.solutions?.find((s) => s.solution.id === selectedSolutionId)?.performanceRating
+          : primarySolution?.performanceRating;
+
+        // Get all solutions this glass belongs to
+        const allSolutions = glassType.solutions?.map((s) => ({
+          icon: s.solution.icon,
+          isPrimary: s.isPrimary,
+          name: s.solution.nameEs,
+          rating: s.performanceRating,
+        }));
+
         return {
+          allSolutions,
           features,
           icon,
           id: glassType.id,
           name: glassType.name,
+          performanceRating,
           priceIndicator,
           thicknessMm: glassType.thicknessMm,
           title,
         };
       }),
-    [ glassTypes ]
+    [filteredGlassTypes, selectedSolutionId]
   );
 
   return (
     <FieldSet>
       <FieldLegend>
-        <Gem className='mr-2 mb-1 inline size-4 text-primary' />
-        Tipo de Cristal</FieldLegend>
+        <Gem className="mr-2 mb-1 inline size-4 text-primary" />
+        Tipo de Cristal
+      </FieldLegend>
       <FieldDescription>Selecciona la solución de cristal que mejor se adapte a tus necesidades.</FieldDescription>
       <FieldContent>
         <FormField
@@ -120,14 +164,37 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
                               </div>
                               <div>
                                 <h4 className="font-semibold">{option.title}</h4>
-                                <Badge className="mt-1 text-xs" variant={isSelected ? 'default' : 'secondary'}>
-                                  {priceLabels[ option.priceIndicator ]}
-                                </Badge>
+                                <div className="mt-1 flex items-center gap-2">
+                                  <Badge className="text-xs" variant={isSelected ? 'default' : 'secondary'}>
+                                    {priceLabels[option.priceIndicator]}
+                                  </Badge>
+                                  {option.performanceRating && (
+                                    <PerformanceRatingBadge rating={option.performanceRating as PerformanceRating} />
+                                  )}
+                                </div>
                               </div>
                             </div>
                           </div>
 
                           <p className="text-muted-foreground text-sm">{option.name}</p>
+
+                          {/* Show all solutions this glass belongs to (if not filtered by solution) */}
+                          {!selectedSolutionId && option.allSolutions && option.allSolutions.length > 1 && (
+                            <div className="mt-2 border-t pt-3">
+                              <p className="font-medium text-muted-foreground text-xs">Soluciones disponibles</p>
+                              <div className="mt-1 flex flex-wrap gap-1">
+                                {option.allSolutions.map((sol, idx) => (
+                                  <Badge
+                                    className="text-xs"
+                                    key={idx}
+                                    variant={sol.isPrimary ? 'default' : 'secondary'}
+                                  >
+                                    {sol.name}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                          )}
 
                           {option.features.length > 0 && (
                             <div className="mt-2 border-t pt-3">

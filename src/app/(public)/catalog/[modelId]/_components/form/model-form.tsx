@@ -5,7 +5,12 @@ import { useMemo, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { Card } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
-import type { GlassTypeOutput, ModelDetailOutput, ServiceOutput } from '@/server/api/routers/catalog';
+import type {
+  GlassSolutionOutput,
+  GlassTypeOutput,
+  ModelDetailOutput,
+  ServiceOutput,
+} from '@/server/api/routers/catalog';
 import { usePriceCalculation } from '../../_hooks/use-price-calculation';
 import type { QuoteFormData } from '../../_types/model.types';
 import { createQuoteFormSchema, type QuoteFormValues } from '../../_utils/validation';
@@ -13,15 +18,17 @@ import { QuoteSummary } from './quote-summary';
 import { DimensionsSection } from './sections/dimensions-section';
 import { GlassTypeSelectorSection } from './sections/glass-type-selector-section';
 import { ServicesSelectorSection } from './sections/services-selector-section';
+import { SolutionSelectorSection } from './sections/solution-selector-section';
 
 type ModelFormProps = {
   model: ModelDetailOutput;
   glassTypes: GlassTypeOutput[];
   services: ServiceOutput[];
+  solutions: GlassSolutionOutput[];
   onSubmit?: (data: QuoteFormData) => void;
 };
 
-export function ModelForm({ model, glassTypes, services, onSubmit }: ModelFormProps) {
+export function ModelForm({ model, glassTypes, services, solutions, onSubmit }: ModelFormProps) {
   const [submittedData, setSubmittedData] = useState<QuoteFormData | null>(null);
 
   const schema = useMemo(() => createQuoteFormSchema(model), [model]);
@@ -33,6 +40,7 @@ export function ModelForm({ model, glassTypes, services, onSubmit }: ModelFormPr
       glassType: glassTypes[0]?.id ?? '', // Pre-select first glass type (usually most common/budget)
       height: model.minHeightMm, // Use minimum height as starting point
       quantity: 1,
+      solution: '', // No solution selected by default (optional field)
       width: model.minWidthMm, // Use minimum width as starting point
     }),
     [model.minWidthMm, model.minHeightMm, glassTypes]
@@ -51,6 +59,7 @@ export function ModelForm({ model, glassTypes, services, onSubmit }: ModelFormPr
   const height = useWatch({ control: form.control, name: 'height' });
   const glassType = useWatch({ control: form.control, name: 'glassType' });
   const additionalServices = useWatch({ control: form.control, name: 'additionalServices' });
+  const selectedSolution = useWatch({ control: form.control, name: 'solution' });
 
   // Calculate price in real-time
   const { calculatedPrice, error, isCalculating } = usePriceCalculation({
@@ -78,6 +87,18 @@ export function ModelForm({ model, glassTypes, services, onSubmit }: ModelFormPr
       <Form {...form}>
         {/* @ts-expect-error - zodResolver with z.coerce has type inference issues */}
         <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
+          {/* Solution Selector (Step 1) - Optional */}
+          {solutions.length > 0 && (
+            <Card className="p-6">
+              <SolutionSelectorSection solutions={solutions} />
+            </Card>
+          )}
+
+          {/* Glass Type Selector (Step 2) - Filtered by solution if selected */}
+          <Card className="p-6">
+            <GlassTypeSelectorSection glassTypes={glassTypes} selectedSolutionId={selectedSolution} />
+          </Card>
+
           <Card className="p-6">
             <DimensionsSection
               dimensions={{
@@ -87,10 +108,6 @@ export function ModelForm({ model, glassTypes, services, onSubmit }: ModelFormPr
                 minWidth: model.minWidthMm,
               }}
             />
-          </Card>
-
-          <Card className="p-6">
-            <GlassTypeSelectorSection glassTypes={glassTypes} />
           </Card>
 
           <Card className="p-6">

@@ -18,7 +18,13 @@ async function ModelFormData({ serverModel }: ModelFormWrapperProps) {
     manufacturerId: serverModel.manufacturer?.id ?? '',
   });
 
-  return <ModelForm glassTypes={glassTypes} model={serverModel} services={services} />;
+  // Fetch glass solutions filtered by model compatibility (UX: "Don't Make Me Think")
+  // Only show solutions that have at least one compatible glass type for this model
+  const solutions = await api.catalog['list-glass-solutions']({
+    modelId: serverModel.id,
+  });
+
+  return <ModelForm glassTypes={glassTypes} model={serverModel} services={services} solutions={solutions} />;
 }
 
 export function ModelFormWrapper({ serverModel }: ModelFormWrapperProps) {

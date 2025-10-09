@@ -36,7 +36,7 @@ function generateSuggestedValues(min: number, max: number, count = 5): number[] 
 }
 
 // biome-ignore lint/style/noMagicNumbers: valores predefinidos de cantidad para UX
-const QUANTITY_PRESETS = [ 1, 3, 5, 10, 20 ] as const;
+const QUANTITY_PRESETS = [1, 3, 5, 10, 20] as const;
 
 export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   const { control, setValue } = useFormContext();
@@ -69,34 +69,34 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   // ✅ Optimized handlers for sliders - no debounce needed (handled by hook)
   const handleWidthSliderChange = useCallback(
     (value: number[]) => {
-      const newValue = value[ 0 ];
+      const newValue = value[0];
       if (newValue !== undefined) {
         setLocalWidth(newValue); // ✅ Update local state immediately (visual feedback)
         // ✅ Form update is debounced automatically in the hook
       }
     },
-    [ setLocalWidth ]
+    [setLocalWidth]
   );
 
   const handleHeightSliderChange = useCallback(
     (value: number[]) => {
-      const newValue = value[ 0 ];
+      const newValue = value[0];
       if (newValue !== undefined) {
         setLocalHeight(newValue);
       }
     },
-    [ setLocalHeight ]
+    [setLocalHeight]
   );
 
   // ✅ Memoize validation check functions
   const isWidthValid = useCallback(
     (value: number) => isValidDimension(value, dimensions.minWidth, dimensions.maxWidth),
-    [ dimensions.minWidth, dimensions.maxWidth, isValidDimension ]
+    [dimensions.minWidth, dimensions.maxWidth, isValidDimension]
   );
 
   const isHeightValid = useCallback(
     (value: number) => isValidDimension(value, dimensions.minHeight, dimensions.maxHeight),
-    [ dimensions.minHeight, dimensions.maxHeight, isValidDimension ]
+    [dimensions.minHeight, dimensions.maxHeight, isValidDimension]
   );
 
   // ✅ Memoize generateSuggestedValues to prevent recreation on every render
@@ -110,7 +110,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   return (
     <FieldSet>
       <FieldLegend>
-        <Ruler className='mr-2 mb-1 inline size-4 text-primary' />
+        <Ruler className="mr-2 mb-1 inline size-4 text-primary" />
         Dimensiones
       </FieldLegend>
       <FieldDescription>Especifica las dimensiones del vidrio requeridas.</FieldDescription>
