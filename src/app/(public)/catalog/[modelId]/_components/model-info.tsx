@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { Card } from '@/components/ui/card';
+import { formatCurrency } from '@/lib/utils';
 import type { Model } from '../_types/model.types';
 
 type ModelInfoProps = {
@@ -25,7 +26,7 @@ export function ModelInfo({ model }: ModelInfoProps) {
         </div>
 
         <div className="flex items-baseline gap-2">
-          <span className="font-bold text-3xl">${model.basePrice.toFixed(2)}</span>
+          <span className="font-bold text-3xl">{formatCurrency(model.basePrice)}</span>
           <span className="text-muted-foreground text-sm">precio base</span>
         </div>
 

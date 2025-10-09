@@ -78,7 +78,7 @@ function isValidDimension(value: number, min: number, max: number): boolean {
  */
 export function useDebouncedDimension(params: UseDebouncedDimensionParams): UseDebouncedDimensionReturn {
   // ✅ Local state for immediate UI feedback (no debounce)
-  const [ localValue, setLocalValue ] = useState<number>(params.initialValue);
+  const [localValue, setLocalValue] = useState<number>(params.initialValue);
 
   // ✅ Ref to store timer ID for cleanup
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -110,7 +110,7 @@ export function useDebouncedDimension(params: UseDebouncedDimensionParams): UseD
         clearTimeout(debounceTimerRef.current);
       }
     };
-  }, [ localValue, params.value, params.min, params.max ]);
+  }, [localValue, params.value, params.min, params.max]);
 
   // ✅ Sync local state when form value changes externally (e.g., badge click, manual input)
   // Use a ref to track previous value to avoid circular dependency
@@ -122,7 +122,7 @@ export function useDebouncedDimension(params: UseDebouncedDimensionParams): UseD
       setLocalValue(params.value);
     }
     prevValueRef.current = params.value;
-  }, [ params.value, localValue ]);
+  }, [params.value, localValue]);
 
   return {
     localValue,

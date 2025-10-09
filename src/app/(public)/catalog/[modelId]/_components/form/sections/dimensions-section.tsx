@@ -1,15 +1,11 @@
-import { AlertCircle, Check, Package, Ruler } from 'lucide-react';
+import { Ruler } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { FieldContent, FieldDescription, FieldLegend, FieldSet } from '@/components/ui/field';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/input-group';
-import { Slider } from '@/components/ui/slider';
-import { cn } from '@/lib/utils';
 import { useDebouncedDimension } from '../../../_hooks/use-debounced-dimension';
+import { DimensionField } from '../dimension-field';
+import { DimensionValidationAlert } from '../dimension-validation-alert';
+import { QuantityField } from '../quantity-field';
 
 type ModelDimensions = {
   minWidth: number;
@@ -67,17 +63,6 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
     value: height,
   });
 
-  // ✅ Memoize suggested values to avoid recalculation on every render
-  const suggestedWidths = useMemo(
-    () => generateSuggestedValues(dimensions.minWidth, dimensions.maxWidth),
-    [ dimensions.minWidth, dimensions.maxWidth ]
-  );
-
-  const suggestedHeights = useMemo(
-    () => generateSuggestedValues(dimensions.minHeight, dimensions.maxHeight),
-    [ dimensions.minHeight, dimensions.maxHeight ]
-  );
-
   // ✅ Memoize validation function to avoid recreation
   const isValidDimension = useCallback((value: number, min: number, max: number) => value >= min && value <= max, []);
 
@@ -103,221 +88,63 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
     [ setLocalHeight ]
   );
 
+  // ✅ Memoize validation check functions
+  const isWidthValid = useCallback(
+    (value: number) => isValidDimension(value, dimensions.minWidth, dimensions.maxWidth),
+    [ dimensions.minWidth, dimensions.maxWidth, isValidDimension ]
+  );
+
+  const isHeightValid = useCallback(
+    (value: number) => isValidDimension(value, dimensions.minHeight, dimensions.maxHeight),
+    [ dimensions.minHeight, dimensions.maxHeight, isValidDimension ]
+  );
+
+  // ✅ Memoize generateSuggestedValues to prevent recreation on every render
+  const generateSuggestedValuesMemo = useMemo(() => generateSuggestedValues, []);
+
+  // Check if validation alert should show
+  const showValidationAlert =
+    (width && !isValidDimension(width, dimensions.minWidth, dimensions.maxWidth)) ||
+    (height && !isValidDimension(height, dimensions.minHeight, dimensions.maxHeight));
+
   return (
     <FieldSet>
-      <FieldLegend>Dimensiones</FieldLegend>
+      <FieldLegend>
+        <Ruler className='mr-2 mb-1 inline size-4 text-primary' />
+        Dimensiones
+      </FieldLegend>
       <FieldDescription>Especifica las dimensiones del vidrio requeridas.</FieldDescription>
 
       <FieldContent>
-        {/* <Window2DPreview height={height} showControls={false} width={width} />
-        <Separator className="my-4" /> */}
         <div className="grid gap-6 sm:grid-cols-2">
-          {/* Ancho */}
-          <FormField
+          <DimensionField
             control={control}
+            generateSuggestedValues={generateSuggestedValuesMemo}
+            isValid={isWidthValid}
+            label="Ancho"
+            localValue={localWidth}
+            max={dimensions.maxWidth}
+            min={dimensions.minWidth}
             name="width"
-            render={({ field }) => {
-              const isValid = isValidDimension(field.value, dimensions.minWidth, dimensions.maxWidth);
-
-              return (
-                <FormItem>
-                  <div className="flex items-center justify-between">
-                    <FormLabel>Ancho</FormLabel>
-                    {field.value &&
-                      (isValid ? (
-                        <Check className="h-4 w-4 text-green-600" />
-                      ) : (
-                        <AlertCircle className="h-4 w-4 text-red-600" />
-                      ))}
-                  </div>
-
-                  {/* Input con estado visual */}
-                  <FormControl>
-                    <InputGroup>
-                      <InputGroupInput
-                        {...field}
-                        className={!isValid && field.value ? 'border-red-500' : ''}
-                        max={dimensions.maxWidth}
-                        min={dimensions.minWidth}
-                        onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : '')}
-                        placeholder={String(dimensions.minWidth)}
-                        step="1"
-                        type="number"
-                      />
-                      <InputGroupAddon>
-                        <Ruler
-                          className={cn('h-4 w-4', {
-                            'text-green-600': field.value && isValid,
-                            'text-muted-foreground': !field.value,
-                            'text-red-600': field.value && !isValid,
-                          })}
-                        />
-                      </InputGroupAddon>
-                      <InputGroupAddon align="inline-end">
-                        <InputGroupText>mm</InputGroupText>
-                      </InputGroupAddon>
-                    </InputGroup>
-                  </FormControl>
-
-                  {/* Slider */}
-                  <div className="px-2">
-                    <Slider
-                      className="my-4 h-3 [&_[role=slider]]:h-5 [&_[role=slider]]:w-5"
-                      max={dimensions.maxWidth}
-                      min={dimensions.minWidth}
-                      onValueChange={handleWidthSliderChange}
-                      step={10}
-                      value={[ localWidth ]}
-                    />
-                  </div>
-
-                  {/* Valores sugeridos */}
-                  <div className="flex flex-wrap gap-2">
-                    {suggestedWidths.map((w) => (
-                      <Badge className="cursor-pointer" key={w} onClick={() => field.onChange(w)} role="button">
-                        {w}mm
-                      </Badge>
-                    ))}
-                  </div>
-
-                  <FormDescription>
-                    Rango: {dimensions.minWidth}-{dimensions.maxWidth}mm
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              );
-            }}
+            onSliderChange={handleWidthSliderChange}
           />
 
-          {/* Alto */}
-          <FormField
+          <DimensionField
             control={control}
+            generateSuggestedValues={generateSuggestedValuesMemo}
+            isValid={isHeightValid}
+            label="Alto"
+            localValue={localHeight}
+            max={dimensions.maxHeight}
+            min={dimensions.minHeight}
             name="height"
-            render={({ field }) => {
-              const isValid = isValidDimension(field.value, dimensions.minHeight, dimensions.maxHeight);
-
-              return (
-                <FormItem>
-                  <div className="flex items-center justify-between">
-                    <FormLabel>Alto</FormLabel>
-                    {field.value &&
-                      (isValid ? (
-                        <Check className="h-4 w-4 text-green-600" />
-                      ) : (
-                        <AlertCircle className="h-4 w-4 text-destructive" />
-                      ))}
-                  </div>
-
-                  <FormControl>
-                    <InputGroup>
-                      <InputGroupInput
-                        {...field}
-                        className={!isValid && field.value ? 'border-red-500' : ''}
-                        max={dimensions.maxHeight}
-                        min={dimensions.minHeight}
-                        onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : '')}
-                        placeholder={String(dimensions.minHeight)}
-                        step="1"
-                        type="number"
-                      />
-                      <InputGroupAddon>
-                        <Ruler
-                          className={cn('h-4 w-4', {
-                            'text-green-600': field.value && isValid,
-                            'text-muted-foreground': !field.value,
-                            'text-red-600': field.value && !isValid,
-                          })}
-                        />
-                      </InputGroupAddon>
-                      <InputGroupAddon align="inline-end">
-                        <InputGroupText>mm</InputGroupText>
-                      </InputGroupAddon>
-                    </InputGroup>
-                  </FormControl>
-
-                  {/* Slider */}
-                  <div className="px-2">
-                    <Slider
-                      className="my-4 h-3 [&_[role=slider]]:h-5 [&_[role=slider]]:w-5"
-                      max={dimensions.maxHeight}
-                      min={dimensions.minHeight}
-                      onValueChange={handleHeightSliderChange}
-                      step={10}
-                      value={[ localHeight ]}
-                    />
-                  </div>
-
-                  {/* Valores sugeridos */}
-                  <div className="flex flex-wrap gap-2">
-                    {suggestedHeights.map((h) => (
-                      <Badge
-                        className="cursor-pointer"
-                        color="primary"
-                        key={h}
-                        onClick={() => field.onChange(h)}
-                        role="button"
-                      >
-                        {h}mm
-                      </Badge>
-                    ))}
-                  </div>
-
-                  <FormDescription>
-                    Rango: {dimensions.minHeight}-{dimensions.maxHeight}mm
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              );
-            }}
+            onSliderChange={handleHeightSliderChange}
           />
         </div>
 
-        {/* Alerta si hay dimensiones inválidas */}
-        {((width && !isValidDimension(width, dimensions.minWidth, dimensions.maxWidth)) ||
-          (height && !isValidDimension(height, dimensions.minHeight, dimensions.maxHeight))) && (
-            <Alert className="mt-4" variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>Una o más dimensiones están fuera del rango permitido.</AlertDescription>
-            </Alert>
-          )}
+        <DimensionValidationAlert showAlert={showValidationAlert} />
 
-        {/* Cantidad */}
-        <FormField
-          control={control}
-          name="quantity"
-          render={({ field }) => (
-            <FormItem className="mt-6">
-              <FormLabel>Cantidad</FormLabel>
-              <FormControl>
-                <InputGroup>
-                  <InputGroupInput
-                    {...field}
-                    min="1"
-                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : '')}
-                    placeholder="1"
-                    step="1"
-                    type="number"
-                  />
-                  <InputGroupAddon>
-                    <Package className="h-4 w-4 text-muted-foreground" />
-                  </InputGroupAddon>
-                </InputGroup>
-              </FormControl>
-
-              {/* Botones rápidos de cantidad */}
-              <div className="mt-2 flex flex-wrap gap-2">
-                {QUANTITY_PRESETS.map((q) => (
-                  <Button key={q} onClick={() => field.onChange(q)} size={'icon'} type="button">
-                    {q}
-                  </Button>
-                ))}
-              </div>
-
-              <FormDescription>Número de unidades que deseas cotizar</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <QuantityField control={control} name="quantity" presets={QUANTITY_PRESETS} />
       </FieldContent>
     </FieldSet>
   );

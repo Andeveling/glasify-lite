@@ -25,22 +25,21 @@ const SERVICE_UNIT_LABELS = {
   unit: 'unidad',
 } as const;
 
-function getServiceTypeLabel(type: ServiceOutput['type']): string {
-  return SERVICE_TYPE_LABELS[type];
+function getServiceTypeLabel(type: ServiceOutput[ 'type' ]): string {
+  return SERVICE_TYPE_LABELS[ type ];
 }
 
-function getServiceUnitLabel(unit: ServiceOutput['unit']): string {
-  return SERVICE_UNIT_LABELS[unit];
+function getServiceUnitLabel(unit: ServiceOutput[ 'unit' ]): string {
+  return SERVICE_UNIT_LABELS[ unit ];
 }
 
 export function ServicesSelectorSection({ services }: ServicesSelectorSectionProps) {
   const { control } = useFormContext();
   return (
     <FieldSet>
-      <div className="flex items-center gap-2">
-        <Wrench className="h-5 w-5 text-primary" />
-        <FieldLegend>Servicios Adicionales</FieldLegend>
-      </div>
+      <FieldLegend>
+        <Wrench className='mr-2 mb-1 inline size-4 text-primary' />
+        Servicios Adicionales</FieldLegend>
       <FieldDescription>Selecciona los servicios extra que desees agregar a tu compra.</FieldDescription>
       <FieldContent>
         <FormField
@@ -71,7 +70,7 @@ export function ServicesSelectorSection({ services }: ServicesSelectorSectionPro
                               onCheckedChange={(checked) => {
                                 const currentValue = field.value || [];
                                 const newValue = checked
-                                  ? [...currentValue, service.id]
+                                  ? [ ...currentValue, service.id ]
                                   : currentValue.filter((id: string) => id !== service.id);
                                 field.onChange(newValue);
                               }}

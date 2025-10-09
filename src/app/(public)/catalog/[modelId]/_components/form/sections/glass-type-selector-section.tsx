@@ -1,6 +1,6 @@
 'use client';
 
-import { Home, Shield, Snowflake, Sparkles } from 'lucide-react';
+import { Gem, Home, Shield, Snowflake, Sparkles } from 'lucide-react';
 import { memo, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Badge } from '@/components/ui/badge';
@@ -61,8 +61,8 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
   const glassOptions = useMemo(
     () =>
       glassTypes.map((glassType) => {
-        const icon = purposeIcons[glassType.purpose] ?? Home;
-        const title = purposeLabels[glassType.purpose] ?? glassType.name;
+        const icon = purposeIcons[ glassType.purpose ] ?? Home;
+        const title = purposeLabels[ glassType.purpose ] ?? glassType.name;
         const features = buildGlassFeatures(glassType);
         const priceIndicator = getPriceIndicator(glassType.pricePerSqm);
 
@@ -76,12 +76,14 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
           title,
         };
       }),
-    [glassTypes]
+    [ glassTypes ]
   );
 
   return (
     <FieldSet>
-      <FieldLegend>Tipo de Cristal</FieldLegend>
+      <FieldLegend>
+        <Gem className='mr-2 mb-1 inline size-4 text-primary' />
+        Tipo de Cristal</FieldLegend>
       <FieldDescription>Selecciona la solución de cristal que mejor se adapte a tus necesidades.</FieldDescription>
       <FieldContent>
         <FormField
@@ -119,7 +121,7 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
                               <div>
                                 <h4 className="font-semibold">{option.title}</h4>
                                 <Badge className="mt-1 text-xs" variant={isSelected ? 'default' : 'secondary'}>
-                                  {priceLabels[option.priceIndicator]}
+                                  {priceLabels[ option.priceIndicator ]}
                                 </Badge>
                               </div>
                             </div>
