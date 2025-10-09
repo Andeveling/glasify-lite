@@ -53,7 +53,7 @@ export function SuggestedValueBadges({
               variant={isSelected ? 'default' : 'outline'}
             >
               {value}
-              <span className='text-[0.7rem] opacity-70'>{unit}</span>
+              <span className="text-[0.7rem] opacity-70">{unit}</span>
             </Button>
           );
         })}
