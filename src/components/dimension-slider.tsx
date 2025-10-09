@@ -40,13 +40,13 @@ export function DimensionSlider({
       <Slider
         className={cn(
           'my-4 h-3 rounded-2xl border-2 p-1 [&_[role=slider]]:h-5 [&_[role=slider]]:w-5',
-          trackColorMap[ trackColor ]
+          trackColorMap[trackColor]
         )}
         max={max}
         min={min}
         onValueChange={onChange}
         step={step}
-        value={[ value ]}
+        value={[value]}
       />
     </div>
   );

@@ -1,8 +1,8 @@
-import { Gem, Ruler, Wrench } from 'lucide-react';
+import { AlertCircle, Gem, Ruler, Wrench } from 'lucide-react';
 import { FormSection } from '@/components/form-section';
 
 /**
- * Ejemplos de uso del componente FormSection
+ * Ejemplos de uso del componente FormSection mejorado
  */
 
 // ✅ Ejemplo básico con icono
@@ -49,6 +49,58 @@ export function CustomStylingExample() {
           <input type="checkbox" />
           <span>Pulido</span>
         </label>
+      </div>
+    </FormSection>
+  );
+}
+
+// ✅ Ejemplo con errores
+export function WithErrorsExample() {
+  const errors = [{ message: 'El ancho debe ser mayor a 50cm' }, { message: 'El alto no puede exceder 300cm' }];
+
+  return (
+    <FormSection
+      description="Corrige los errores antes de continuar"
+      errors={errors}
+      icon={AlertCircle}
+      legend="Dimensiones con errores"
+    >
+      <div className="space-y-4">
+        <input className="w-full border-destructive" placeholder="Ancho (cm)" type="number" />
+        <input className="w-full border-destructive" placeholder="Alto (cm)" type="number" />
+      </div>
+    </FormSection>
+  );
+}
+
+// ✅ Ejemplo con orientación horizontal
+export function HorizontalOrientationExample() {
+  return (
+    <FormSection description="Datos de contacto del cliente" legend="Información de contacto" orientation="horizontal">
+      <div className="grid grid-cols-2 gap-4">
+        <input className="w-full" placeholder="Nombre" type="text" />
+        <input className="w-full" placeholder="Email" type="email" />
+      </div>
+    </FormSection>
+  );
+}
+
+// ✅ Ejemplo con separador
+export function WithSeparatorExample() {
+  return (
+    <FormSection
+      description="Selecciona la solución de cristal que mejor se adapte."
+      icon={Gem}
+      legend="Tipo de Cristal"
+      separatorText="Continuar con servicios"
+      showSeparator
+    >
+      <div className="space-y-4">
+        <select className="w-full">
+          <option>Templado</option>
+          <option>Laminado</option>
+          <option>Simple</option>
+        </select>
       </div>
     </FormSection>
   );

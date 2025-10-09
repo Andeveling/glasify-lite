@@ -1,91 +1,68 @@
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { FieldContent, FieldDescription, FieldLegend, FieldSet } from './ui/field';
+import {
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLegend,
+  FieldSeparator,
+  FieldSet,
+} from './ui/field';
 
 type FormSectionProps = {
-  /**
-   * Icono de Lucide React para mostrar junto al título
-   */
   icon?: LucideIcon;
-  /**
-   * Texto del título de la sección
-   */
   legend: string;
-  /**
-   * Descripción opcional de la sección
-   */
   description?: string;
-  /**
-   * Contenido de la sección (campos del formulario)
-   */
   children: ReactNode;
-  /**
-   * Clases CSS adicionales para el FieldSet
-   */
+  errors?: Array<{ message?: string } | undefined>;
   className?: string;
-  /**
-   * Clases CSS adicionales para el FieldLegend
-   */
   legendClassName?: string;
-  /**
-   * Clases CSS adicionales para el FieldDescription
-   */
   descriptionClassName?: string;
+  groupClassName?: string;
+  orientation?: 'vertical' | 'horizontal' | 'responsive';
+  showSeparator?: boolean;
+  separatorText?: string;
 };
 
 /**
- * Componente reusable para secciones de formularios
+ * FormSection component for consistent form section layout.
  *
- * Proporciona una estructura consistente para las secciones de formularios
- * con icono opcional, título, descripción y contenido.
- *
- * ## Uso básico
- * ```tsx
- * import { Ruler } from 'lucide-react';
- *
- * <FormSection
- *   icon={Ruler}
- *   legend="Dimensiones"
- *   description="Especifica las dimensiones requeridas"
- * >
- *   <input type="number" placeholder="Ancho" />
- *   <input type="number" placeholder="Alto" />
- * </FormSection>
- * ```
- *
- * ## Sin icono
- * ```tsx
- * <FormSection legend="Información básica">
- *   <input type="text" placeholder="Nombre" />
- * </FormSection>
- * ```
- *
- * @param props - Propiedades del componente
+ * @param props - FormSectionProps
  */
 export function FormSection({
   icon: Icon,
   legend,
   description,
   children,
+  errors,
   className,
   legendClassName,
   descriptionClassName,
+  groupClassName,
+  orientation = 'vertical',
+  showSeparator = false,
+  separatorText,
 }: FormSectionProps) {
   return (
     <FieldSet className={className}>
-      <div className="space-y-2">
-        <FieldLegend className={legendClassName}>
-          {Icon && <Icon className="mr-3 mb-1 inline size-6 text-primary" />}
-          {legend}
-        </FieldLegend>
-        {description && (
-          <FieldDescription className={descriptionClassName}>
-            {description}
-          </FieldDescription>
-        )}
-      </div>
+      <FieldGroup className={groupClassName} data-orientation={orientation}>
+        <div className="space-y-2">
+          <FieldLegend className={legendClassName}>
+            {Icon && <Icon className="mr-3 mb-1 inline size-6 text-primary" />}
+            {legend}
+          </FieldLegend>
+          {description && <FieldDescription className={descriptionClassName}>{description}</FieldDescription>}
+        </div>
 
-      <FieldContent>{children}</FieldContent>
+        <FieldContent>{children}</FieldContent>
+
+        <FieldError errors={errors} />
+      </FieldGroup>
+
+      {showSeparator && (
+        <FieldSeparator>{separatorText && <span className="font-medium text-xs">{separatorText}</span>}</FieldSeparator>
+      )}
     </FieldSet>
   );
 }

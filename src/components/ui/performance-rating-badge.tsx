@@ -96,7 +96,7 @@ const ratingConfig: Record<
  * @see [Glass Solutions Guide](../../../docs/glass-solutions-guide.md) - Rating standards
  */
 export function PerformanceRatingBadge({ className, rating, showLabel = false }: PerformanceRatingBadgeProps) {
-  const config = ratingConfig[ rating ];
+  const config = ratingConfig[rating];
 
   return (
     <Badge className={cn('gap-1', config.color, className)} variant="outline">
