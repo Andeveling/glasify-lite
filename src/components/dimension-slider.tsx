@@ -39,7 +39,7 @@ export function DimensionSlider({
     <div className={cn('px-2', className)}>
       <Slider
         className={cn(
-          'my-4 h-3 rounded-2xl border p-1 [&_[role=slider]]:h-5 [&_[role=slider]]:w-5',
+          'my-4 h-3 rounded-2xl border-2 p-1 [&_[role=slider]]:h-5 [&_[role=slider]]:w-5',
           trackColorMap[ trackColor ]
         )}
         max={max}

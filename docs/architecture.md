@@ -309,6 +309,108 @@ Task: "QuoteItem component in src/app/(public)/_components/quote/quote-item.tsx"
 /dashboard/settings         → Settings (Protected)
 ```
 
+## Data Model Architecture
+
+### Glass Classification System (Many-to-Many)
+
+Glasify uses a sophisticated **Many-to-Many relationship** between `GlassType` and `GlassSolution` to enable multi-dimensional glass classification beyond simple categories.
+
+#### Entity Relationship Diagram
+
+```
+┌──────────────────┐         ┌──────────────────────┐         ┌─────────────────┐
+│   GlassType      │         │ GlassTypeSolution    │         │  GlassSolution  │
+├──────────────────┤         ├──────────────────────┤         ├─────────────────┤
+│ id: string       │────────<│ glassTypeId: string  │>────────│ id: string      │
+│ name: string     │         │ solutionId: string   │         │ key: string     │
+│ thickness: float │         │ isPrimary: boolean   │         │ nameEs: string  │
+│ purpose: enum ⚠️ │         │ securityRating: enum │         │ nameEn: string  │
+│ manufacturerId   │         │ acousticRating: enum │         │ icon: string    │
+│                  │         │ thermalRating: enum  │         │ descriptionEs   │
+│                  │         │ energyRating: enum   │         │                 │
+└──────────────────┘         └──────────────────────┘         └─────────────────┘
+       1                              *                                *
+       │                              │                                │
+       └──────────────────────────────┴────────────────────────────────┘
+```
+
+⚠️ **Deprecated Field**: `purpose` is marked `@deprecated` and will be removed in v2.0. Use `solutions` relationship instead.
+
+#### Glass Solutions
+
+**Core Solutions** (from seed data):
+- `general` - Vidrio General (General-purpose glass)
+- `security` - Vidrio de Seguridad (Security glass, laminated)
+- `thermal_insulation` - Vidrio de Aislamiento Térmico (Low-E, double glazing)
+- `acoustic_insulation` - Vidrio de Aislamiento Acústico (Soundproof glass)
+- `decorative` - Vidrio Decorativo (Tinted, textured glass)
+- `solar_control` - Vidrio de Control Solar (Solar reflective)
+- `fire_resistant` - Vidrio Resistente al Fuego (Fire-rated glass)
+
+#### Performance Ratings
+
+Each glass solution is rated in **4 performance categories**:
+
+```typescript
+type PerformanceRating = 'basic' | 'standard' | 'good' | 'very_good' | 'excellent';
+
+interface GlassTypeSolution {
+  securityRating: PerformanceRating;    // Physical security (EN 356)
+  acousticRating: PerformanceRating;    // Sound insulation (ISO 140-3)
+  thermalRating: PerformanceRating;     // Thermal insulation (EN 673)
+  energyRating: PerformanceRating;      // Energy efficiency (EN 410)
+  isPrimary: boolean;                   // Primary classification
+}
+```
+
+**Rating Scale**:
+- `basic` (1⭐) - Minimal performance
+- `standard` (2⭐) - Standard performance
+- `good` (3⭐) - Good performance
+- `very_good` (4⭐) - Very good performance
+- `excellent` (5⭐) - Excellent/Maximum performance
+
+See [Glass Solutions Guide](./glass-solutions-guide.md) for detailed rating standards and calculation formulas.
+
+#### Data Flow
+
+```
+1. Seed Data (prisma/seed.ts)
+   └─> Create GlassSolution records (7 solutions)
+   └─> Create GlassType records (7 glass types)
+   └─> Create GlassTypeSolution records with ratings
+
+2. tRPC Backend (src/server/api/routers/catalog/)
+   ├─> catalog.queries['list-glass-types'] - Returns glasses with solutions
+   ├─> catalog.queries['list-solutions'] - Returns all available solutions
+   └─> Serializes Decimal fields (thickness, pricing) to strings
+
+3. React Query (src/trpc/react.tsx)
+   └─> Caches tRPC responses with TanStack Query v5
+
+4. UI Components (src/app/(public)/quote/_components/)
+   ├─> <SolutionSelector /> - Multi-select solution chips
+   ├─> <GlassTypeSelector /> - Filtered glass cards with ratings
+   └─> <PerformanceRatings /> - Star indicators per category
+```
+
+#### Migration Path
+
+**Current State (v1.x)**:
+- ✅ `solutions` relationship fully implemented (100% coverage)
+- ⚠️ `purpose` field deprecated but still present
+- ✅ Fallback logic available (unused, all glasses have solutions)
+
+**Future State (v2.0)** (6-12 months):
+- ❌ Remove `purpose` field completely
+- ❌ Remove `GlassPurpose` enum
+- ❌ Remove migration utilities
+- ✅ Only `solutions` relationship remains
+
+See [Migration Guide](./migrations/glass-solutions-migration.md) for complete migration documentation.
+
+---
+
 ## Architecture Benefits
 - **Screaming Architecture**: Route groups clearly separate domains (public, auth, dashboard)
 - **Component Co-location**: Components live close to where they're used
@@ -317,6 +419,8 @@ Task: "QuoteItem component in src/app/(public)/_components/quote/quote-item.tsx"
 - **Next.js Conventions**: Leverages all App Router features (special files, parallel routes, intercepting routes)
 - **Clear Boundaries**: Each route group has its own layout, loading, error states
 - **Scalable Structure**: Easy to add new features within existing route groups
+- **Multi-Dimensional Classification**: Many-to-Many relationships enable complex glass categorization
+- **Performance Transparency**: 4-category ratings provide users with detailed glass characteristics
 
 ## Performance & Accessibility Requirements
 - Price calculations must respond <200ms (SLA from contracts)

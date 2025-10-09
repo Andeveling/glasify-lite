@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/suspicious/noConsole: simplemente es un seed de prueba */
 import { PrismaClient } from '@prisma/client';
+import { seedGlassSolutions } from './seed-solutions';
 
 const prisma = new PrismaClient();
 
@@ -133,6 +134,12 @@ const main = async () => {
     console.log('Available models:', models.map((m) => `${m.name} (${m.id})`).join(', '));
     console.log('Available glass types:', glassTypes.map((gt) => `${gt.name} (${gt.id})`).join(', '));
     console.log('Available services:', services.map((s) => `${s.name} (${s.id})`).join(', '));
+
+    // Seed glass solutions
+    console.log('\n');
+    await seedGlassSolutions(prisma);
+
+    console.log('\n✨ All seed data completed!');
   } catch (error) {
     console.error('❌ Error seeding database:');
     console.error(error);

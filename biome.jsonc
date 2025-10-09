@@ -61,7 +61,15 @@
         // Advierte sobre el uso de convenciones de nomenclatura incorrectas.
         "useNamingConvention": {
           "level": "warn",
-          "options": { "strictCase": false }
+          "options": {
+            "strictCase": false,
+            "conventions": [
+              {
+                "selector": { "kind": "objectLiteralProperty" },
+                "formats": ["camelCase", "PascalCase", "CONSTANT_CASE"]
+              }
+            ]
+          }
         },
         // Advierte sobre el uso de convenciones de nomenclatura de archivos incorrectas.
         "useFilenamingConvention": {
