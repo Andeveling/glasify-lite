@@ -8,9 +8,9 @@
   },
   "scripts": {
     "build": "prisma generate && next build",
-    "ultra": "npx ultracite check",
-    "ultra:fix": "npx ultracite fix",
-    "ultra:unsafe": "npx ultracite fix --unsafe",
+    "lint": "npx ultracite check",
+    "lint:fix": "npx ultracite fix",
+    "lint:unsafe": "npx ultracite fix --unsafe",
     "ultra:doc": "npx ultracite doctor",
     "format": "npx biome format --write",
     "db:generate": "prisma migrate dev",

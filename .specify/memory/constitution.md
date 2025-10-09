@@ -1,116 +1,103 @@
 <!--
-Sync Impact Report:
-- Version change: 1.1.0 → 1.2.0  
-- Modified sections:
-  - Type Safety First → expanded with centralized schema management and form validation requirements
-- Added sections:  
-  - Form State Management (React Hook Form + Zod integration)
-  - Schema-Driven Development (centralized schemas in tRPC routers)
-- Templates requiring updates:
-  ✅ .specify/templates/plan-template.md – Constitution Check aligns with schema-first approach
-  ✅ .specify/templates/spec-template.md – Requirements format compatible with form validation patterns
-  ✅ .specify/templates/tasks-template.md – Supports schema-driven development tasks
-- Follow-up TODOs: None  
+Sync Impact Report
+
+- Version change: none → 1.0.0
+- Modified principles: (newly defined) Single Responsibility (SRP); Open/Closed (OCP); Test-First (NON-NEGOTIABLE); Integration & Contract Testing; Observability & Versioning
+- Added sections: "Technology & Compliance Requirements" and "Development Workflow & Quality Gates"
+- Removed sections: none
+- Templates requiring review: 
+	- /home/andres/Proyectos/glasify-lite/.specify/templates/plan-template.md ⚠ pending review (Constitution Check)
+	- /home/andres/Proyectos/glasify-lite/.specify/templates/spec-template.md ⚠ pending review (mandatory sections alignment)
+	- /home/andres/Proyectos/glasify-lite/.specify/templates/tasks-template.md ⚠ pending review (task categories alignment)
+- Follow-up TODOs:
+	- TODO(RATIFICATION_DATE): original ratification date unknown — please confirm historic adoption date if different from initial commit date.
 -->
 
-# Glasify Constitution
+# Glasify Lite Constitution
 
 ## Core Principles
 
-### I. Business Logic Integrity (NON-NEGOTIABLE)
-All pricing calculations MUST be implemented as pure functions with comprehensive unit tests. The `priceItem` function must be deterministic, reproducible, and return identical results for identical inputs. Price calculation logic must match the mathematical specifications in the PRD exactly: `P_item = basePrice + costPerMmWidth × deltaWidth + costPerMmHeight × deltaHeight + accessoryPrice + servicePrice`. No business logic shortcuts or approximations are permitted.
+### Single Responsibility (SRP)
+All modules, components and services MUST have a single, well-defined responsibility. Code that mixes concerns (UI + business logic + data access) MUST be refactored into smaller units. Rationale: SRP improves testability, maintainability and enables safe incremental refactors.
 
-**Rationale**: Pricing accuracy is critical for customer trust and business viability. Mathematical errors in quotations directly impact revenue and customer relationships.
+Rules:
+- Modules and components MUST not exceed one primary responsibility.
+- Tests and docs MUST exist for each public abstraction.
 
-### II. Type Safety First  
-All data models, API contracts, and business calculations MUST use TypeScript with strict mode enabled. No `any` types permitted in production code. All database schemas must use Prisma with proper type generation. Input validation using Zod is mandatory for all API endpoints and user inputs.
+### Open/Closed (OCP)
+Public interfaces and modules MUST be open for extension and closed for modification. Design for extension (plugins, strategies, adapters) rather than editing existing behavior when adding features.
 
-**Schema-Driven Development**: All data schemas MUST be centralized in tRPC routers using Zod. Frontend forms MUST derive their validation from backend schemas using `z.infer()`, `z.omit()`, `z.pick()` and related utilities. No schema duplication between frontend and backend is permitted.
+Rules:
+- New features SHOULD prefer extension patterns (hooks, procedures, adapters) over direct modifications of stable modules.
+- Backwards-incompatible API changes MUST follow versioning rules in Governance and include migration guidance.
 
-**Rationale**: Type safety prevents runtime errors in critical business logic and ensures API contract compliance between client and server. Centralized schemas eliminate validation inconsistencies and reduce maintenance overhead.
+### Test-First (NON-NEGOTIABLE)
+Testing is mandatory. For new features the test-first workflow MUST be followed: write failing tests → implement minimal code to pass → refactor. Tests define acceptable behavior and are treated as first-class artifacts.
 
-### III. Form State Management
-All forms MUST use React Hook Form with Zod resolvers (`@hookform/resolvers/zod`). Form validation schemas MUST be derived from tRPC router schemas using Zod utilities (`z.infer`, `z.omit`, `z.pick`). Native HTML form submission is prohibited except for simple search/filter forms.
+Rules:
+- All feature PRs MUST include tests covering happy paths and critical edge cases.
+- Unit tests MUST run in CI; integration and contract tests MUST be added for cross-service changes.
 
-**Schema Reuse Pattern**: Import tRPC input schemas and transform them for form use:
-```typescript
-// ✅ Correct: Derive from tRPC schema
-import { modelUpsertInput } from '@/server/api/routers/admin';
-type ModelFormData = z.infer<typeof modelUpsertInput>;
+### Integration & Contract Testing
+End-to-end integrations and contract tests are required where components cross service or boundary lines (e.g., server → DB, server → external API, client → server contracts). Contracts MUST be explicit and versioned.
 
-// ❌ Wrong: Duplicate schema definition  
-const modelFormSchema = z.object({ name: z.string(), ... });
-```
+Rules:
+- Any change to shared schemas or API contracts MUST include contract tests and migration notes.
+- Integration tests MUST run in CI for changes touching integration points.
 
-**Rationale**: React Hook Form provides superior performance and UX compared to controlled forms. Zod resolver integration ensures client-server validation consistency without code duplication.
+### Observability & Versioning
+All services and libraries MUST emit structured logs and follow the project's semantic versioning policy. Error handling, monitoring hooks and clear audit logs are required to diagnose issues in production.
 
-### IV. Validation at Boundaries
-All user inputs MUST be validated at system boundaries (API endpoints, form submissions, database operations). Dimension ranges, model compatibility, and business rule compliance must be enforced server-side regardless of client-side validation. Validation errors must provide clear, user-friendly messages in Spanish (es-LA).
+Rules:
+- Use structured logging and a consistent correlation id pattern for traces.
+- Versioning MUST follow MAJOR.MINOR.PATCH semantic rules; breaking changes require MAJOR bumps and a migration plan.
 
-**Rationale**: Server-side validation ensures data integrity and prevents invalid business states, even with compromised or modified clients.
+## Technology & Compliance Requirements
 
-### V. Performance Targets (NON-NEGOTIABLE)
-Price calculations must complete in <200ms. API responses for catalog data must complete in <500ms. Client-side price updates must render in <200ms. All performance targets must be verified with automated tests and monitoring.
+This project enforces a constrained stack to preserve compatibility and developer expectations. Mandatory technologies and conventions:
 
-**Rationale**: Real-time price calculation is essential for good user experience in quotation workflows.
+- Next.js (App Router) with React Server Components
+- TypeScript (strict), Zod for validation, tRPC for typed APIs, Prisma for DB access
+- React Hook Form + @hookform/resolvers for form validation
+- shadcn/ui + Radix for UI primitives; TailwindCSS for styling
+- Formatting and linting: Biome/Ultracite conventions (pnpm scripts provided)
+- UI text MUST be Spanish (es‑LA); code, comments and commits MUST be English
 
-### VI. Accessibility & Internationalization
-All UI components must comply with WCAG 2.1 AA standards. Text content must be in Spanish (es-LA) with proper number formatting (comma as decimal separator). Forms must be keyboard navigable with proper ARIA labels. Mobile-first responsive design is mandatory.
+Security & compliance:
 
-**Rationale**: Latin American market requires Spanish interface and accessibility compliance ensures broad user accessibility.
+- All inputs MUST be validated server-side (Zod schemas in tRPC .input())
+- Secrets MUST never be committed; use environment variables and @t3-oss/env-nextjs
+- Sensitive operations MUST include authorization checks and audit logging
 
-### VII. Observability & Monitoring
-- All event, error, and trace logging in the backend must be performed using a professional logging library.
-- The use of console.log, console.error, and similar methods is prohibited in production code.
-- Logger configuration must be centralized in a single file and imported wherever required.
-- Logs must be structured by level (info, error, debug, etc.) and include relevant metadata.
-  
-**Rationale**: This ensures traceability, security, and ease of auditing in production and development environments.
+## Development Workflow & Quality Gates
 
-## Business Requirements
+Process requirements for all contributions:
 
-### Multi-Tenant Architecture
-The system MUST support multiple manufacturers (starting with VitroRojas) with isolated catalogs, pricing rules, and branding. Each manufacturer's data must be completely isolated. No cross-manufacturer data leakage is permitted.
+- Pull requests MUST pass the following CI gates before merge:
+	- Type check (tsc --noEmit)
+	- Formatting / lint fix (pnpm ultra) or ultracite checks
+	- Unit tests (vitest) and relevant integration/contract tests
+	- E2E tests for changes affecting user flows (Playwright)
+- Code review: at least one approver with maintainer or reviewer role; large or risky changes SHOULD request two reviewers.
+- Commit messages MUST follow conventional commits; PR descriptions MUST reference affected principles and migration notes when applicable.
 
-### Data Integrity
-All measurements must be stored in millimeters as integers. Currency amounts must use DECIMAL(12,2) precision. All business entities must include proper audit trails (created_at, updated_at). Database constraints must enforce business rules (min <= max dimensions, positive prices).
+Quality expectations:
 
-### Authentication & Privacy
-Google OAuth integration is mandatory for quote submission. User personal data (phone, address) must be collected only when required for quote submission. All sensitive data must be encrypted in transit and properly sanitized on input.
-
-## Development Workflow
-
-### Code Quality Gates
-All code MUST pass Biome linting and formatting without warnings. TypeScript compilation MUST succeed without errors. All tests MUST pass before merge (CI required). Code coverage for business logic functions MUST be ≥90% lines and branches. No skipped or focused tests are allowed in CI.
-
-### Testing Strategy
-Testing is a first‑class discipline and MUST follow TDD when practical:
-- Unit tests (Vitest + jsdom) for pure pricing functions and utilities.
-- Contract tests (Vitest) for tRPC/Zod procedures: validate input/output schemas.
-- Integration tests (Vitest) for quote flows (create → add items → submit) hitting the server in-memory where possible.
-- E2E tests (Playwright) for critical user journeys in App Router.
-- Performance tests ensure: pricing <200ms p95; catalog <500ms p95.
-
-### Testing & Tooling
-- Unit test runner: Vitest with jsdom environment and @testing-library/react.
-- E2E runner: Playwright with Chromium at minimum; dev server auto‑started.
-- Test commands MUST exist in package.json: `test`, `test:watch`, `test:ui`, `test:e2e`, `test:e2e:ui`.
-- Test directories: `tests/{unit,contract,integration,perf}`, E2E in `e2e/`.
-- Linting: Biome; Type checks: tsc strict.
-
-### Deployment Requirements
-Database migrations must be reversible and tested in staging. Environment-specific configuration must use proper secret management. All deployed code must match the exact commit in version control.
+- Performance budgets and accessibility checks SHOULD be included for UI changes.
+- Changes that affect public or internal APIs MUST include examples, changelog entry and migration instructions.
 
 ## Governance
 
-This constitution supersedes all other development practices and coding standards. All pull requests must verify compliance with these principles. Any complexity that violates these principles must be justified in writing and approved by technical leadership.
+The constitution is the authoritative guide for engineering decisions. Amendments follow this procedure:
 
-Amendments to this constitution require:
-1. Written proposal with impact analysis
-2. Review of affected templates and documentation  
-3. Migration plan for existing code
-4. Approval from project maintainers
+1. Propose a change via a documented PR against `.specify/memory/constitution.md` with a clear rationale and impact analysis.
+2. Provide a migration plan for any breaking changes and a test plan that demonstrates compliance.
+3. Require approval by at least two maintainers (or one maintainer + one architect) for MAJOR changes; MINOR/PATCH changes require one maintainer review.
+4. Once merged, update the Sync Impact Report and notify the team in the project communication channel.
 
-Use `GEMINI.md` for detailed runtime development guidance and coding standards.
+Compliance:
 
-**Version**: 1.2.0 | **Ratified**: 2025-09-27 | **Last Amended**: 2025-09-28
+- All PRs MUST reference the constitution when changes touch governance principles.
+- Failure to comply with MUST-level rules constitutes a blocking issue for merge until resolved.
+
+**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE): original adoption date unknown | **Last Amended**: 2025-10-09

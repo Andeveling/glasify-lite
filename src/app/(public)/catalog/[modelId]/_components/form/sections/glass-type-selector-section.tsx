@@ -72,7 +72,7 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
     if (!selectedSolutionId) return glassTypes;
 
     return glassTypes.filter((glassType) => glassType.solutions?.some((sol) => sol.solution.id === selectedSolutionId));
-  }, [ glassTypes, selectedSolutionId ]);
+  }, [glassTypes, selectedSolutionId]);
 
   const glassOptions = useMemo(
     () =>
@@ -85,7 +85,7 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
 
         // Use selected solution if available, otherwise fallback to primary solution
         const solutionData =
-          selectedSolutionData?.solution ?? primarySolution?.solution ?? glassType.solutions?.[ 0 ]?.solution;
+          selectedSolutionData?.solution ?? primarySolution?.solution ?? glassType.solutions?.[0]?.solution;
 
         // Get icon component using the mapping function
         const icon = getSolutionIcon(solutionData?.icon);
@@ -120,7 +120,7 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
           title,
         };
       }),
-    [ filteredGlassTypes, selectedSolutionId ]
+    [filteredGlassTypes, selectedSolutionId]
   );
 
   return (
@@ -165,7 +165,7 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
                               <h4 className="font-semibold">{option.title}</h4>
                               <div className="mt-1 flex items-center gap-2">
                                 <Badge className="text-xs" variant={isSelected ? 'default' : 'secondary'}>
-                                  {priceLabels[ option.priceIndicator ]}
+                                  {priceLabels[option.priceIndicator]}
                                 </Badge>
                                 {option.performanceRating && (
                                   <PerformanceRatingBadge rating={option.performanceRating as PerformanceRating} />

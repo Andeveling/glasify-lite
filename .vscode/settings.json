@@ -1,58 +1,14 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "[javascript]": {
-    "editor.defaultFormatter": "biomejs.biome"
+  "chat.promptFilesRecommendations": {
+    "speckit.constitution": true,
+    "speckit.specify": true,
+    "speckit.plan": true,
+    "speckit.tasks": true,
+    "speckit.implement": true
   },
-  "[typescript]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
+  "chat.tools.terminal.autoApprove": {
+    ".specify/scripts/bash/": true,
+    ".specify/scripts/ps/": true
   },
-  "[javascriptreact]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[css]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[graphql]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "editor.formatOnSave": true,
-  "editor.formatOnPaste": true,
-  "emmet.showExpandedAbbreviation": "never",
-  "editor.codeActionsOnSave": {
-    "source.fixAll.biome": "explicit",
-    "source.organizeImports.biome": "explicit"
-  },
-  "github.copilot.chat.commitMessageGeneration.instructions": [
-    {
-      "text": "Use conventional commit message format in English."
-    },
-    {
-      "file": "commitlint.config.js"
-    }
-  ],
-  "cSpell.words": [
-    "andres",
-    "bloqueante",
-    "Cotizador",
-    "cuid",
-    "glasify",
-    "Medellín",
-    "mysql",
-    "newpassword",
-    "secretpassword",
-    "underspecified",
-    "WCAG",
-    "wrongpassword"
-  ],
-  "dependi.npm.lockFileEnabled": true
+  "chat.emptyState.history.enabled": true
 }
