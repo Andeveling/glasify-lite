@@ -34,7 +34,7 @@ export function DimensionField<T extends FieldValues>({
   isValid,
   generateSuggestedValues,
 }: DimensionFieldProps<T>) {
-  const suggestedValues = useMemo(() => generateSuggestedValues(min, max), [min, max, generateSuggestedValues]);
+  const suggestedValues = useMemo(() => generateSuggestedValues(min, max), [ min, max, generateSuggestedValues ]);
 
   // Determine dimension type based on label
   const dimensionType = label.toLowerCase().includes('ancho') ? 'width' : 'height';
@@ -74,7 +74,7 @@ export function DimensionField<T extends FieldValues>({
               value={localValue}
             />
 
-            <SuggestedValueBadges onSelect={field.onChange} values={suggestedValues} />
+            <SuggestedValueBadges currentValue={field.value} onSelect={field.onChange} values={suggestedValues} />
 
             <FormDescription>
               Rango: {min}-{max}mm
