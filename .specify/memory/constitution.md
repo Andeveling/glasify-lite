@@ -56,8 +56,8 @@ Rules:
 
 This project enforces a constrained stack to preserve compatibility and developer expectations. Mandatory technologies and conventions:
 
-- Next.js (App Router) with React Server Components
-- TypeScript (strict), Zod for validation, tRPC for typed APIs, Prisma for DB access
+- Next.js 15 (App Router) with React Server Components
+- TypeScript (strict), Zod 4 for validation, tRPC for typed APIs, Prisma for DB access
 - React Hook Form + @hookform/resolvers for form validation
 - shadcn/ui + Radix for UI primitives; TailwindCSS for styling
 - Formatting and linting: Biome/Ultracite conventions (pnpm scripts provided)
@@ -85,6 +85,12 @@ Quality expectations:
 
 - Performance budgets and accessibility checks SHOULD be included for UI changes.
 - Changes that affect public or internal APIs MUST include examples, changelog entry and migration instructions.
+
+## Conventions
+- Brach naming: always in English.
+- Commit messages: Use conventional commits format `/commitlint.config.js`.
+- Comments and JSDoc: English only.
+- UI text and feedback messages: Spanish (es-LA) only.
 
 ## Governance
 
