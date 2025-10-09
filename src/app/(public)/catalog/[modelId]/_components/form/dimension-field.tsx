@@ -65,7 +65,14 @@ export function DimensionField<T extends FieldValues>({
               />
             </FormControl>
 
-            <DimensionSlider max={max} min={min} onChange={onSliderChange} step={10} value={localValue} />
+            <DimensionSlider
+              max={max}
+              min={min}
+              onChange={onSliderChange}
+              step={10}
+              trackColor={fieldIsValid ? 'muted' : 'destructive'}
+              value={localValue}
+            />
 
             <SuggestedValueBadges onSelect={field.onChange} values={suggestedValues} />
 
