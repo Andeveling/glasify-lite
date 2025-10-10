@@ -76,7 +76,7 @@ export const envSeed = createEnv({
      * @example "ventas@glasify.com"
      * @optional
      */
-    TENANT_CONTACT_EMAIL: z.string().email().optional().or(z.literal('')),
+    TENANT_CONTACT_EMAIL: z.email().optional().or(z.literal('')),
 
     /**
      * Business contact phone number (any format)
