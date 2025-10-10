@@ -1,6 +1,6 @@
-import { adminRouter } from '@/server/api/routers/admin';
+import { adminRouter } from '@/server/api/routers/admin/admin';
 import { catalogRouter } from '@/server/api/routers/catalog';
-import { quoteRouter } from '@/server/api/routers/quote';
+import { quoteRouter } from '@/server/api/routers/quote/quote';
 import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc';
 
 /**
