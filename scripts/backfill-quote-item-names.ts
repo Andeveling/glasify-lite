@@ -2,11 +2,11 @@
 
 /**
  * Backfill Script: QuoteItem Names and Quantities
- * 
+ *
  * Purpose: Populate name and quantity fields for existing QuoteItem records
- * 
+ *
  * Usage: pnpm tsx scripts/backfill-quote-item-names.ts [--dry-run]
- * 
+ *
  * Safety: Run with --dry-run first to preview changes without committing
  */
 
@@ -21,7 +21,6 @@ function log(message: string, data?: Record<string, unknown>) {
 }
 
 async function backfillQuoteItemNames() {
-
   log('🔍 Starting QuoteItem names backfill', {
     dryRun: DRY_RUN,
     timestamp: new Date().toISOString(),
@@ -47,9 +46,7 @@ async function backfillQuoteItemNames() {
     }
 
     // Count items with default/empty names that might need updating
-    const itemsNeedingBetterNames = allQuoteItems.filter(item =>
-      !item.name || item.name.trim() === ''
-    );
+    const itemsNeedingBetterNames = allQuoteItems.filter((item) => !item.name || item.name.trim() === '');
 
     if (itemsNeedingBetterNames.length === 0) {
       log('✅ All quote items have valid names. Backfill not needed!');
@@ -59,7 +56,6 @@ async function backfillQuoteItemNames() {
     log(`⚠️  Found ${itemsNeedingBetterNames.length} items that might need better names`);
     log('Note: This script is for future use when there are items without names.');
     log('Current migration already handled the name field requirement.');
-
   } catch (error) {
     log('❌ Backfill failed:', {
       error: error instanceof Error ? error.message : 'Unknown error',

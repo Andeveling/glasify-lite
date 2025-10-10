@@ -40,7 +40,7 @@ async function backfillQuoteProjectFields() {
         userId: true,
       },
       where: {
-        AND: [ { contactAddress: { not: null } }, { projectStreet: null } ],
+        AND: [{ contactAddress: { not: null } }, { projectStreet: null }],
       },
     });
 
