@@ -11,7 +11,6 @@
  */
 
 import type { PrismaClient } from '@prisma/client';
-import { seedTenant } from '../seed-tenant';
 import type { GlassSolutionInput } from '../factories/glass-solution.factory';
 import { createGlassSolution } from '../factories/glass-solution.factory';
 import type { GlassTypeInput } from '../factories/glass-type.factory';
@@ -23,6 +22,7 @@ import type { ProfileSupplierInput } from '../factories/profile-supplier.factory
 import { createProfileSupplier } from '../factories/profile-supplier.factory';
 import type { ServiceInput } from '../factories/service.factory';
 import { createService } from '../factories/service.factory';
+import { seedTenant } from '../seed-tenant';
 
 /**
  * Preset configuration interface
