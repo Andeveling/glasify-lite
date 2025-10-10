@@ -2,13 +2,13 @@
 
 import { Calculator, Loader2, Plus } from 'lucide-react';
 import { useCallback, useState } from 'react';
+import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { formatCurrency } from '@/lib/utils';
 
 type PriceCalculatorProps = {
   model: {
@@ -151,7 +151,7 @@ function buildCalculationResult({
     detalles: {
       cantidad: formData.quantity.toString(),
       dimensiones: `${formData.widthMm}mm × ${formData.heightMm}mm (${area.toFixed(2)}m²)`,
-      precioBase: formatCurrency(model.basePrice),
+      precioBase: formatCurrency(Number(model.basePrice)),
       servicios: serviceCost > 0 ? formatCurrency(serviceCost) : '---',
     },
     subtotal: subtotal.toFixed(2),
@@ -369,7 +369,7 @@ function ServicesSection({ onServiceChange, selectedServices, services }: Servic
               <div className="flex-1">
                 <p className="font-medium text-sm">{service.name}</p>
                 <p className="text-muted-foreground text-xs">
-                  {formatCurrency(service.price)} por {service.unit}
+                  {formatCurrency(Number(service.price))} por {service.unit}
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -447,7 +447,7 @@ function CalculationResults({ calculation, isAddingToQuote, onAddToQuote }: Calc
       <div className="flex items-center justify-between border-t pt-4">
         <div>
           <p className="text-muted-foreground text-sm">Subtotal</p>
-          <p className="font-bold text-foreground text-lg">{formatCurrency(calculation.subtotal)}</p>
+          <p className="font-bold text-foreground text-lg">{formatCurrency(Number(calculation.subtotal))}</p>
         </div>
         <Button disabled={isAddingToQuote} onClick={onAddToQuote}>
           {isAddingToQuote ? (

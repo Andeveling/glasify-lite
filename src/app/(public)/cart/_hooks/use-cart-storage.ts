@@ -77,6 +77,7 @@ export function loadCartFromStorage(): CartItem[] {
  * Save cart items to sessionStorage
  *
  * Handles serialization and error recovery
+ * Emits custom event for cross-component synchronization
  *
  * @param items - Cart items to save
  * @returns True if save succeeded, false otherwise
@@ -96,6 +97,13 @@ export function saveCartToStorage(items: CartItem[]): boolean {
 
     const serialized = JSON.stringify(storageData);
     sessionStorage.setItem(CART_CONSTANTS.STORAGE_KEY, serialized);
+
+    // Emit custom event to notify all useCartStorage hooks about the change
+    window.dispatchEvent(
+      new CustomEvent('cart-updated', {
+        detail: { items },
+      })
+    );
 
     return true;
   } catch (error) {
@@ -120,6 +128,13 @@ export function clearCartStorage(): void {
 
   try {
     sessionStorage.removeItem(CART_CONSTANTS.STORAGE_KEY);
+
+    // Emit event to notify all hooks about cart clear
+    window.dispatchEvent(
+      new CustomEvent('cart-updated', {
+        detail: { items: [] },
+      })
+    );
   } catch (error) {
     logger.error('Failed to clear cart storage', { error });
   }
@@ -150,8 +165,8 @@ export function clearCartStorage(): void {
  * ```
  */
 export function useCartStorage() {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [isHydrated, setIsHydrated] = useState(false);
+  const [ items, setItems ] = useState<CartItem[]>([]);
+  const [ isHydrated, setIsHydrated ] = useState(false);
 
   // Hydrate from sessionStorage on mount
   useEffect(() => {
@@ -160,6 +175,19 @@ export function useCartStorage() {
     setIsHydrated(true);
 
     logger.info('Cart hydrated from storage', { itemCount: loadedItems.length });
+
+    // Listen for cart updates from other components
+    const handleCartUpdate = (event: Event) => {
+      const customEvent = event as CustomEvent<{ items: CartItem[] }>;
+      setItems(customEvent.detail.items);
+      logger.info('Cart updated via event', { itemCount: customEvent.detail.items.length });
+    };
+
+    window.addEventListener('cart-updated', handleCartUpdate);
+
+    return () => {
+      window.removeEventListener('cart-updated', handleCartUpdate);
+    };
   }, []);
 
   /**
@@ -197,7 +225,7 @@ export function useCartStorage() {
 
     try {
       const rawData = sessionStorage.getItem(CART_CONSTANTS.STORAGE_KEY);
-      return rawData ? new Blob([rawData]).size : 0;
+      return rawData ? new Blob([ rawData ]).size : 0;
     } catch {
       return 0;
     }

@@ -18,6 +18,7 @@
 
 import { Check, Minus, Pencil, Plus, Trash2, X } from 'lucide-react';
 import { memo, useState } from 'react';
+import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -41,7 +42,7 @@ export type CartItemProps = {
   /** Callback when item is removed */
   onRemove?: (itemId: string) => void;
 
-  /** Currency code (default: MXN) */
+  /** Currency code (COP for Colombia, USD for Panama) */
   currency?: string;
 
   /** Whether updates are in progress */
@@ -75,7 +76,7 @@ const CartItemComponent = ({
   onUpdateName,
   onUpdateQuantity,
   onRemove,
-  currency = 'MXN',
+  currency = 'COP',
   isUpdating = false,
 }: CartItemProps) => {
   const [editedName, setEditedName] = useState(item.name);
@@ -278,7 +279,12 @@ const CartItemComponent = ({
           </Button>
         </fieldset>
         <span className="text-muted-foreground text-xs">
-          Precio unitario: {currency} ${item.unitPrice.toFixed(2)}
+          Precio unitario:{' '}
+          {formatCurrency(item.unitPrice, {
+            currency,
+            decimals: currency === 'USD' ? 2 : 0,
+            locale: currency === 'USD' ? 'es-PA' : 'es-CO',
+          })}
         </span>
       </div>
 
@@ -287,7 +293,11 @@ const CartItemComponent = ({
         <div className="text-right">
           <p className="text-muted-foreground text-sm">Subtotal</p>
           <p className="font-semibold text-lg" data-testid="subtotal">
-            {currency} ${item.subtotal.toFixed(2)}
+            {formatCurrency(item.subtotal, {
+              currency,
+              decimals: currency === 'USD' ? 2 : 0,
+              locale: currency === 'USD' ? 'es-PA' : 'es-CO',
+            })}
           </p>
         </div>
       </div>

@@ -1,35 +1,36 @@
-import type { GlassType, Manufacturer, Model, Prisma } from '@prisma/client';
+import type { GlassType, Model, Prisma, ProfileSupplier } from '@prisma/client';
 import { z } from 'zod';
 import logger from '@/lib/logger';
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
 
 // Helper functions to reduce complexity
-async function validateManufacturerExists(tx: Prisma.TransactionClient, manufacturerId: string): Promise<Manufacturer> {
-  const manufacturer = await tx.manufacturer.findUnique({
-    where: { id: manufacturerId },
+async function validateProfileSupplierExists(
+  tx: Prisma.TransactionClient,
+  profileSupplierId: string
+): Promise<ProfileSupplier> {
+  const supplier = await tx.profileSupplier.findUnique({
+    where: { id: profileSupplierId },
   });
 
-  if (!manufacturer) {
-    throw new Error('Fabricante no encontrado');
+  if (!supplier) {
+    throw new Error('Proveedor de perfiles no encontrado');
   }
 
-  return manufacturer;
+  return supplier;
 }
 
 async function validateGlassTypesExist(
   tx: Prisma.TransactionClient,
-  glassTypeIds: string[],
-  manufacturerId: string
+  glassTypeIds: string[]
 ): Promise<GlassType[]> {
   const glassTypes = await tx.glassType.findMany({
     where: {
       id: { in: glassTypeIds },
-      manufacturerId,
     },
   });
 
   if (glassTypes.length !== glassTypeIds.length) {
-    throw new Error('Uno o más tipos de vidrio no encontrados o no pertenecen al fabricante');
+    throw new Error('Uno o más tipos de vidrio no encontrados');
   }
 
   return glassTypes;
@@ -45,7 +46,6 @@ export const modelUpsertInput = z.object({
   costPerMmHeight: z.number().min(0, 'Costo por mm de alto debe ser mayor o igual a 0'),
   costPerMmWidth: z.number().min(0, 'Costo por mm de ancho debe ser mayor o igual a 0'),
   id: z.cuid().optional(), // If provided, update; otherwise, create
-  manufacturerId: z.string().cuid('ID del fabricante debe ser válido'),
   maxHeightMm: z.number().int().min(1, 'Alto máximo debe ser mayor a 0 mm'),
   maxWidthMm: z.number().int().min(1, 'Ancho máximo debe ser mayor a 0 mm'),
   minHeightMm: z.number().int().min(1, 'Alto mínimo debe ser mayor a 0 mm'),
@@ -54,6 +54,7 @@ export const modelUpsertInput = z.object({
     (value) => (typeof value === 'string' ? value.trim() : ''),
     z.string().min(1, 'Nombre del modelo es requerido')
   ),
+  profileSupplierId: z.string().cuid('ID del proveedor de perfiles debe ser válido').optional().nullable(),
   status: z.enum(['draft', 'published']).default('draft'),
 });
 
@@ -71,9 +72,9 @@ export const adminRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       try {
         logger.info('Starting model upsert', {
-          manufacturerId: input.manufacturerId,
           modelId: input.id,
           name: input.name,
+          profileSupplierId: input.profileSupplierId,
         });
 
         // Validate dimension constraints
@@ -85,11 +86,13 @@ export const adminRouter = createTRPCRouter({
         }
 
         const result = await ctx.db.$transaction(async (tx) => {
-          // Verify manufacturer exists
-          await validateManufacturerExists(tx, input.manufacturerId);
+          // Verify profile supplier exists if provided
+          if (input.profileSupplierId) {
+            await validateProfileSupplierExists(tx, input.profileSupplierId);
+          }
 
-          // Verify all glass types exist and belong to the manufacturer
-          await validateGlassTypesExist(tx, input.compatibleGlassTypeIds, input.manufacturerId);
+          // Verify all glass types exist
+          await validateGlassTypesExist(tx, input.compatibleGlassTypeIds);
 
           const modelData = {
             accessoryPrice: input.accessoryPrice,
@@ -97,12 +100,12 @@ export const adminRouter = createTRPCRouter({
             compatibleGlassTypeIds: input.compatibleGlassTypeIds,
             costPerMmHeight: input.costPerMmHeight,
             costPerMmWidth: input.costPerMmWidth,
-            manufacturerId: input.manufacturerId,
             maxHeightMm: input.maxHeightMm,
             maxWidthMm: input.maxWidthMm,
             minHeightMm: input.minHeightMm,
             minWidthMm: input.minWidthMm,
             name: input.name,
+            profileSupplierId: input.profileSupplierId,
             status: input.status,
           };
 
@@ -119,10 +122,6 @@ export const adminRouter = createTRPCRouter({
               throw new Error('Modelo no encontrado');
             }
 
-            if (existingModel.manufacturerId !== input.manufacturerId) {
-              throw new Error('No puede modificar un modelo de otro fabricante');
-            }
-
             modelRecord = await tx.model.update({
               data: modelData,
               where: { id: input.id },
@@ -131,16 +130,16 @@ export const adminRouter = createTRPCRouter({
             // Create new model
             isCreating = true;
 
-            // Check if model name already exists for this manufacturer
+            // Check if model name already exists
             const existingModel = await tx.model.findFirst({
               where: {
-                manufacturerId: input.manufacturerId,
                 name: input.name,
+                ...(input.profileSupplierId && { profileSupplierId: input.profileSupplierId }),
               },
             });
 
             if (existingModel) {
-              throw new Error(`Ya existe un modelo con el nombre "${input.name}" para este fabricante`);
+              throw new Error(`Ya existe un modelo con el nombre "${input.name}"`);
             }
 
             modelRecord = await tx.model.create({
@@ -159,18 +158,18 @@ export const adminRouter = createTRPCRouter({
 
         logger.info('Model upsert completed successfully', {
           isUpdate: Boolean(input.id),
-          manufacturerId: input.manufacturerId,
           modelId: result.modelId,
           name: input.name,
+          profileSupplierId: input.profileSupplierId,
         });
 
         return result;
       } catch (error) {
         logger.error('Error during model upsert', {
           error: error instanceof Error ? error.message : 'Unknown error',
-          manufacturerId: input.manufacturerId,
           modelId: input.id,
           name: input.name,
+          profileSupplierId: input.profileSupplierId,
         });
 
         const errorMessage =

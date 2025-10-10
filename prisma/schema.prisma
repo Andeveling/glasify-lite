@@ -67,6 +67,13 @@ enum CostType {
   per_sqm
 }
 
+enum MaterialType {
+  PVC
+  ALUMINUM
+  WOOD
+  MIXED
+}
+
 // Necessary for Next auth
 model Account {
   id                       String  @id @default(cuid())
@@ -96,17 +103,15 @@ model Session {
 }
 
 model User {
-  id             String              @id @default(cuid())
-  name           String?
-  email          String?             @unique
-  emailVerified  DateTime?
-  image          String?
-  accounts       Account[]
-  sessions       Session[]
-  manufacturerId String?
-  manufacturer   Manufacturer?       @relation(fields: [manufacturerId], references: [id], onDelete: SetNull)
-  quotes         Quote[]
-  priceChanges   ModelPriceHistory[]
+  id            String              @id @default(cuid())
+  name          String?
+  email         String?             @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  quotes        Quote[]
+  priceChanges  ModelPriceHistory[]
 }
 
 model VerificationToken {
@@ -117,6 +122,55 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+/// Tenant Configuration (Singleton)
+/// Represents the carpentry shop owner's business configuration
+/// Only ONE record should exist in the database
+model TenantConfig {
+  id                String   @id @default(cuid())
+  /// Business name of the carpentry shop
+  businessName      String
+  /// ISO 4217 currency code (COP, USD, EUR, etc.)
+  currency          String   @db.Char(3)
+  /// Quote validity period in days
+  quoteValidityDays Int      @default(15)
+  /// Locale for formatting (es-CO, en-US, etc.)
+  locale            String   @default("es-CO") @db.VarChar(10)
+  /// IANA timezone (America/Bogota, America/New_York, etc.)
+  timezone          String   @default("America/Bogota") @db.VarChar(50)
+  /// Contact email for the business
+  contactEmail      String?
+  /// Contact phone for the business
+  contactPhone      String?
+  /// Business address
+  businessAddress   String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([currency])
+}
+
+/// Profile Supplier
+/// Represents manufacturers of window/door profiles (Rehau, Deceuninck, Azembla, etc.)
+model ProfileSupplier {
+  id           String       @id @default(cuid())
+  /// Supplier name (Rehau, Deceuninck, Azembla, etc.)
+  name         String       @unique
+  /// Type of material the supplier provides
+  materialType MaterialType
+  /// Whether this supplier is active for selection
+  isActive     Boolean      @default(true)
+  /// Additional notes about the supplier
+  notes        String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  models       Model[]
+
+  @@index([isActive])
+  @@index([materialType])
+}
+
+/// @deprecated This model will be removed in v2.0. Migrated to TenantConfig + ProfileSupplier.
+/// DO NOT use this model in new code. Use TenantConfig for business config and ProfileSupplier for profile manufacturers.
 model Manufacturer {
   id                String      @id @default(cuid())
   name              String
@@ -128,15 +182,18 @@ model Manufacturer {
   glassTypes        GlassType[]
   services          Service[]
   quotes            Quote[]
-  users             User[]
 
   @@index([currency])
 }
 
 model Model {
   id                     String              @id @default(cuid())
-  manufacturerId         String
-  manufacturer           Manufacturer        @relation(fields: [manufacturerId], references: [id], onDelete: Cascade)
+  profileSupplierId      String?
+  profileSupplier        ProfileSupplier?    @relation(fields: [profileSupplierId], references: [id], onDelete: SetNull)
+  /// @deprecated Use profileSupplierId instead. Will be removed after migration.
+  manufacturerId         String?
+  /// @deprecated Use profileSupplier instead. Will be removed after migration.
+  manufacturer           Manufacturer?       @relation(fields: [manufacturerId], references: [id], onDelete: Cascade)
   name                   String
   status                 ModelStatus         @default(draft)
   minWidthMm             Int
@@ -165,13 +222,16 @@ model Model {
   costBreakdown          ModelCostBreakdown[]
   priceHistory           ModelPriceHistory[]
 
+  @@index([profileSupplierId, status])
   @@index([manufacturerId, status])
 }
 
 model GlassType {
-  id             String       @id @default(cuid())
-  manufacturerId String
-  manufacturer   Manufacturer @relation(fields: [manufacturerId], references: [id], onDelete: Cascade)
+  id             String                @id @default(cuid())
+  /// @deprecated Use TenantConfig for currency. Will be removed after migration.
+  manufacturerId String?
+  /// @deprecated Use TenantConfig for currency. Will be removed after migration.
+  manufacturer   Manufacturer?         @relation(fields: [manufacturerId], references: [id], onDelete: Cascade)
   name           String
   /// @deprecated Use solutions relationship instead. This field will be removed in v2.0.
   /// Legacy single-purpose classification. Replaced by Many-to-Many GlassTypeSolution.
@@ -199,8 +259,10 @@ model GlassType {
 
 model Service {
   id             String             @id @default(cuid())
-  manufacturerId String
-  manufacturer   Manufacturer       @relation(fields: [manufacturerId], references: [id], onDelete: Cascade)
+  /// @deprecated Use TenantConfig for global services. Will be removed after migration.
+  manufacturerId String?
+  /// @deprecated Use TenantConfig for global services. Will be removed after migration.
+  manufacturer   Manufacturer?      @relation(fields: [manufacturerId], references: [id], onDelete: Cascade)
   name           String
   type           ServiceType
   unit           ServiceUnit
@@ -214,8 +276,10 @@ model Service {
 
 model Quote {
   id             String       @id @default(cuid())
-  manufacturerId String
-  manufacturer   Manufacturer @relation(fields: [manufacturerId], references: [id], onDelete: Cascade)
+  /// @deprecated Use TenantConfig for currency and validity. Will be removed after migration.
+  manufacturerId String?
+  /// @deprecated Use TenantConfig for currency and validity. Will be removed after migration.
+  manufacturer   Manufacturer? @relation(fields: [manufacturerId], references: [id], onDelete: Cascade)
   userId         String?
   user           User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
   status         QuoteStatus  @default(draft)

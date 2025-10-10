@@ -20,6 +20,7 @@
 import { ShoppingCart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import logger from '@/lib/logger';
@@ -124,7 +125,11 @@ export function CartSummary({ summary, onGenerateQuote, isGenerating = false, cl
           <span className="font-medium text-base">Total</span>
           <div className="text-right">
             <p className="font-bold text-2xl">
-              {summary.currency} ${summary.total.toFixed(2)}
+              {formatCurrency(summary.total, {
+                currency: summary.currency,
+                decimals: summary.currency === 'USD' ? 2 : 0,
+                locale: summary.currency === 'USD' ? 'es-PA' : 'es-CO',
+              })}
             </p>
             <p className="text-muted-foreground text-xs">IVA incluido</p>
           </div>

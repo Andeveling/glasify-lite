@@ -103,7 +103,7 @@ export const modelDetailOutput = z.object({
 export const serviceOutput = z.object({
   createdAt: z.date(),
   id: z.string(),
-  manufacturerId: z.string(),
+  manufacturerId: z.string().nullable(), // REFACTOR: Deprecated field, now optional
   name: z.string(),
   rate: z.number(),
   type: z.enum(['area', 'perimeter', 'fixed']),
@@ -153,9 +153,10 @@ export const glassTypeOutput = z.object({
   isLowE: z.boolean(),
   isTempered: z.boolean(),
   isTripleGlazed: z.boolean(),
-  manufacturerId: z.string(),
+  manufacturerId: z.string().nullable(), // REFACTOR: Deprecated field, now optional
   name: z.string(),
   pricePerSqm: z.number(),
+  profileSupplierId: z.string().nullable().optional(), // REFACTOR: New optional supplier reference
   purpose: z.enum(['general', 'insulation', 'security', 'decorative']),
   solutions: z.array(glassTypeSolutionOutput).optional(),
   thicknessMm: z.number(),

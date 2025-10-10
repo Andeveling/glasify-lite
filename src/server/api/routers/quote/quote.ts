@@ -5,6 +5,7 @@ import logger from '@/lib/logger';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc';
 import { calculatePriceItem, type PriceAdjustmentInput, type PriceServiceInput } from '@/server/price/price-item';
 import { sendQuoteNotification } from '@/server/services/email';
+import { getQuoteValidityDays, getTenantCurrency } from '@/server/utils/tenant';
 import { getQuoteByIdInput, getQuoteByIdOutput, listUserQuotesInput, listUserQuotesOutput } from './quote.schemas';
 
 // Input schemas
@@ -123,21 +124,22 @@ export const quoteRouter = createTRPCRouter({
               throw new Error('No se pueden agregar ítems a una cotización enviada o cancelada');
             }
           } else {
-            // Create new quote
+            // Create new quote using TenantConfig for currency and validity
+            const validityDays = await getQuoteValidityDays(tx);
+            const currency = await getTenantCurrency(tx);
+
             const validUntil = new Date();
-            validUntil.setDate(validUntil.getDate() + model.manufacturer.quoteValidityDays);
+            validUntil.setDate(validUntil.getDate() + validityDays);
 
             quote = await tx.quote.create({
               data: {
-                currency: model.manufacturer.currency,
-                manufacturerId: model.manufacturerId,
+                currency,
+                manufacturerId: model.manufacturerId, // REFACTOR: Deprecated field, will be removed
                 status: 'draft',
                 validUntil,
               },
             });
-          }
-
-          // Get services data
+          } // Get services data
           const serviceInputs: PriceServiceInput[] = [];
           if (input.services.length > 0) {
             const serviceIds = input.services.map((s) => s.serviceId);

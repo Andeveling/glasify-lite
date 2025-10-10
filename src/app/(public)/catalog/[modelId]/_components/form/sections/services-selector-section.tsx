@@ -4,11 +4,12 @@ import { CheckCircle2, Wrench } from 'lucide-react';
 import { useMemo } from 'react';
 import type { Control } from 'react-hook-form';
 import { useFormContext } from 'react-hook-form';
+import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { FormSection } from '@/components/form-section';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { cn, formatCurrency } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import type { ServiceOutput } from '@/server/api/routers/catalog';
 
 type ServicesSelectorSectionProps = {

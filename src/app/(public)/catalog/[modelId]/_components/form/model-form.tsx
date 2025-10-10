@@ -1,10 +1,13 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
+import { toast } from 'sonner';
+import { useCart } from '@/app/(public)/cart/_hooks/use-cart';
 import { Card } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
+import logger from '@/lib/logger';
 import type {
   GlassSolutionOutput,
   GlassTypeOutput,
@@ -13,27 +16,31 @@ import type {
 } from '@/server/api/routers/catalog';
 import type { CreateCartItemInput } from '@/types/cart.types';
 import { usePriceCalculation } from '../../_hooks/use-price-calculation';
-import type { QuoteFormData } from '../../_types/model.types';
 import { createQuoteFormSchema, type QuoteFormValues } from '../../_utils/validation';
-import { AddToCartButton } from './add-to-cart-button';
 import { QuoteSummary } from './quote-summary';
 import { DimensionsSection } from './sections/dimensions-section';
 import { GlassTypeSelectorSection } from './sections/glass-type-selector-section';
 import { ServicesSelectorSection } from './sections/services-selector-section';
 import { SolutionSelectorSection } from './sections/solution-selector-section';
 
+// ============================================================================
+// Types
+// ============================================================================
+
 type ModelFormProps = {
   model: ModelDetailOutput;
   glassTypes: GlassTypeOutput[];
   services: ServiceOutput[];
   solutions: GlassSolutionOutput[];
-  onSubmit?: (data: QuoteFormData) => void;
 };
 
-export function ModelForm({ model, glassTypes, services, solutions, onSubmit }: ModelFormProps) {
-  const [submittedData, setSubmittedData] = useState<QuoteFormData | null>(null);
+// ============================================================================
+// Component
+// ============================================================================
 
+export function ModelForm({ model, glassTypes, services, solutions }: ModelFormProps) {
   const schema = useMemo(() => createQuoteFormSchema(model), [model]);
+  const { addItem, summary } = useCart();
 
   // ✅ UX Improvement: Pre-populate with minimum valid dimensions and first glass type
   const defaultValues = useMemo(
@@ -72,18 +79,6 @@ export function ModelForm({ model, glassTypes, services, solutions, onSubmit }: 
     widthMm: Number(width) || 0,
   });
 
-  const handleSubmit = (data: QuoteFormValues) => {
-    const formData: QuoteFormData = {
-      additionalServices: data.additionalServices,
-      glassType: data.glassType,
-      height: String(data.height),
-      quantity: String(data.quantity),
-      width: String(data.width),
-    };
-    setSubmittedData(formData);
-    onSubmit?.(formData);
-  };
-
   // ✅ Prepare cart item data from form values
   const selectedGlassType = glassTypes.find((gt) => gt.id === glassType);
   const selectedSolutionData = solutions.find((s) => s.id === selectedSolution);
@@ -102,11 +97,41 @@ export function ModelForm({ model, glassTypes, services, solutions, onSubmit }: 
     widthMm: Number(width) || 0,
   };
 
+  // ✅ Form submit handler - Add item to cart
+  const handleFormSubmit = () => {
+    try {
+      // Add item to cart (client-side)
+      addItem(cartItemInput);
+
+      logger.info('Item added to cart from catalog', {
+        itemCount: summary.itemCount + 1,
+        modelId: model.id,
+        modelName: model.name,
+      });
+
+      // Show success toast
+      toast.success('Item agregado al carrito', {
+        description: `${model.name} ha sido agregado exitosamente`,
+      });
+    } catch (err) {
+      logger.error('Failed to add item to cart', { error: err, item: cartItemInput });
+
+      const errorMessage =
+        err instanceof Error && err.message.includes('no puedes agregar más')
+          ? 'Has alcanzado el límite de 20 items en el carrito'
+          : 'No se pudo agregar el item al carrito';
+
+      // Show error toast
+      toast.error('Error al agregar', {
+        description: errorMessage,
+      });
+    }
+  };
+
   return (
-    <>
-      <Form {...form}>
-        {/* @ts-expect-error - zodResolver with z.coerce has type inference issues */}
-        <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleFormSubmit)}>
+        <div className="space-y-6">
           {/* Solution Selector (Step 1) - Optional */}
           {solutions.length > 0 && (
             <Card className="p-6">
@@ -141,22 +166,8 @@ export function ModelForm({ model, glassTypes, services, solutions, onSubmit }: 
             error={error}
             isCalculating={isCalculating}
           />
-
-          {/* Add to Cart Button - Separate from quote summary */}
-          <AddToCartButton
-            isCalculating={isCalculating}
-            isValid={form.formState.isValid && !error}
-            item={cartItemInput}
-          />
-        </form>
-      </Form>
-
-      {submittedData && (
-        <Card className="p-6">
-          <h3 className="mb-3 font-semibold text-lg">Datos enviados (desarrollo):</h3>
-          <pre className="overflow-auto rounded-lg bg-muted p-4 text-xs">{JSON.stringify(submittedData, null, 2)}</pre>
-        </Card>
-      )}
-    </>
+        </div>
+      </form>
+    </Form>
   );
 }

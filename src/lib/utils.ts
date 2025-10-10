@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { formatCurrency as formatCurrencyUtil } from '@/app/_utils/format-currency.util';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -7,6 +8,10 @@ export function cn(...inputs: ClassValue[]) {
 
 /**
  * Formats a currency value for Spanish (Latin America) locale
+ *
+ * @deprecated Use formatCurrency from '@/app/_utils/format-currency.util' instead
+ * This function is kept for backward compatibility
+ *
  * @param value - The value to format (string or number)
  * @param currency - Optional currency code (defaults to 'COP')
  * @returns Formatted currency string
@@ -15,15 +20,14 @@ export function formatCurrency(value: string | number, currency = 'COP'): string
   const numericValue = typeof value === 'string' ? Number.parseFloat(value) : value;
 
   if (Number.isNaN(numericValue)) {
-    return '$0,00';
+    return formatCurrencyUtil(0, { currency });
   }
 
-  return new Intl.NumberFormat('es-CO', {
+  return formatCurrencyUtil(numericValue, {
     currency,
-    maximumFractionDigits: 0,
-    minimumFractionDigits: 0,
-    style: 'currency',
-  }).format(numericValue);
+    decimals: currency === 'USD' ? 2 : 0,
+    locale: currency === 'USD' ? 'es-PA' : 'es-CO',
+  });
 }
 
 /**

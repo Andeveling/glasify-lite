@@ -9,12 +9,12 @@
 
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-
+import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { formatCurrency, formatDate } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
 
 import type { QuoteDetailSchema } from '@/server/api/routers/quote/quote.schemas';
 
@@ -133,8 +133,20 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
                     {item.widthMm} × {item.heightMm}
                   </TableCell>
                   <TableCell className="text-right">{item.quantity}</TableCell>
-                  <TableCell className="text-right">{formatCurrency(item.unitPrice, quote.currency)}</TableCell>
-                  <TableCell className="text-right">{formatCurrency(item.subtotal, quote.currency)}</TableCell>
+                  <TableCell className="text-right">
+                    {formatCurrency(item.unitPrice, {
+                      currency: quote.currency,
+                      decimals: quote.currency === 'USD' ? 2 : 0,
+                      locale: quote.currency === 'USD' ? 'es-PA' : 'es-CO',
+                    })}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {formatCurrency(item.subtotal, {
+                      currency: quote.currency,
+                      decimals: quote.currency === 'USD' ? 2 : 0,
+                      locale: quote.currency === 'USD' ? 'es-PA' : 'es-CO',
+                    })}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -144,7 +156,13 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
           <div className="mt-4 flex justify-end">
             <div className="text-right">
               <p className="text-muted-foreground text-sm">Total</p>
-              <p className="font-bold text-2xl">{formatCurrency(quote.total, quote.currency)}</p>
+              <p className="font-bold text-2xl">
+                {formatCurrency(quote.total, {
+                  currency: quote.currency,
+                  decimals: quote.currency === 'USD' ? 2 : 0,
+                  locale: quote.currency === 'USD' ? 'es-PA' : 'es-CO',
+                })}
+              </p>
             </div>
           </div>
         </CardContent>

@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertCircle, CheckCircle, Loader2, XCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle, Loader2, ShoppingCart, XCircle } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { Button } from '@/components/ui/button';
@@ -157,7 +157,8 @@ export function QuoteSummary({ basePrice, calculatedPrice, currency, error, isCa
             size="lg"
             type="submit"
           >
-            {isCalculating ? 'Calculando...' : 'Añadir a Cotización'}
+            <ShoppingCart className="mr-2 size-5" />
+            {isCalculating ? 'Calculando...' : 'Agregar al carrito'}
           </Button>
         </div>
 

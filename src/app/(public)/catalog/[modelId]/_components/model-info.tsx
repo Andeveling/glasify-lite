@@ -1,6 +1,6 @@
 import Image from 'next/image';
+import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { Card } from '@/components/ui/card';
-import { formatCurrency } from '@/lib/utils';
 import type { Model } from '../_types/model.types';
 
 type ModelInfoProps = {

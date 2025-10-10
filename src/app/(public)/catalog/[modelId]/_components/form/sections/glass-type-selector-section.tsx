@@ -4,13 +4,14 @@ import type { LucideIcon } from 'lucide-react';
 import { Gem, Home, Shield, Snowflake, Sparkles, Volume2, Zap } from 'lucide-react';
 import { memo, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { FormSection } from '@/components/form-section';
 import { Badge } from '@/components/ui/badge';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { PerformanceRatingBadge } from '@/components/ui/performance-rating-badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { cn, formatCurrency } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import type { GlassTypeOutput, PerformanceRating } from '@/server/api/routers/catalog';
 
 type GlassTypeSelectorSectionProps = {

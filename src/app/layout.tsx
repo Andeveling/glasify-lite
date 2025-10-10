@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { Fira_Code, Geist, Inter, Lora } from 'next/font/google';
 import { Toaster } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
+import { SessionProvider } from '@/providers/session-provider';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { TRPCReactProvider } from '@/trpc/react';
 import { ReactScan } from './_components/react-scan';
@@ -47,10 +48,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     >
       <body suppressHydrationWarning>
         <ReactScan />
-        <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
-          <TRPCReactProvider>{children}</TRPCReactProvider>
-          <Toaster expand position="top-right" />
-        </ThemeProvider>
+        <SessionProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
+            <TRPCReactProvider>{children}</TRPCReactProvider>
+            <Toaster expand position="top-right" richColors />
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );

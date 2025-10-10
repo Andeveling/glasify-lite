@@ -10,11 +10,11 @@
 
 import { Eye } from 'lucide-react';
 import Link from 'next/link';
-
+import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { cn, formatCurrency, formatDate } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 
 import type { QuoteListItemSchema } from '@/server/api/routers/quote/quote.schemas';
 
@@ -74,7 +74,13 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
         <div className="flex items-center gap-4">
           <div className="text-right">
             <div className="text-muted-foreground text-sm">Total</div>
-            <div className="font-bold text-lg">{formatCurrency(quote.total, quote.currency)}</div>
+            <div className="font-bold text-lg">
+              {formatCurrency(quote.total, {
+                currency: quote.currency,
+                decimals: quote.currency === 'USD' ? 2 : 0,
+                locale: quote.currency === 'USD' ? 'es-PA' : 'es-CO',
+              })}
+            </div>
           </div>
 
           <Button asChild size="sm">

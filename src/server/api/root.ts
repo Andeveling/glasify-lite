@@ -1,4 +1,6 @@
 import { adminRouter } from '@/server/api/routers/admin/admin';
+import { profileSupplierRouter } from '@/server/api/routers/admin/profile-supplier';
+import { tenantConfigRouter } from '@/server/api/routers/admin/tenant-config';
 import { catalogRouter } from '@/server/api/routers/catalog';
 import { quoteRouter } from '@/server/api/routers/quote/quote';
 import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc';
@@ -11,7 +13,9 @@ import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc';
 export const appRouter = createTRPCRouter({
   admin: adminRouter,
   catalog: catalogRouter,
+  profileSupplier: profileSupplierRouter,
   quote: quoteRouter,
+  tenantConfig: tenantConfigRouter,
 });
 
 // export type definition of API

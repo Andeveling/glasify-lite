@@ -20,7 +20,8 @@ export function createQuoteFormSchema(model: ModelDetailOutput) {
       .int({ message: 'La cantidad debe ser un número entero' })
       .min(MIN_QUANTITY, { message: `La cantidad mínima es ${MIN_QUANTITY}` })
       .max(MAX_QUANTITY, { message: `La cantidad máxima es ${MAX_QUANTITY}` }),
-    solution: z.string({ message: 'Debes seleccionar una solución' }).min(1).optional(),
+    // ✅ Fix: Make solution truly optional - allows undefined or empty string
+    solution: z.string().optional(),
     width: z.coerce
       .number({ message: 'El ancho debe ser un número válido' })
       .min(model.minWidthMm, { message: `El ancho mínimo es ${model.minWidthMm}mm` })

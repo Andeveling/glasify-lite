@@ -100,6 +100,28 @@ export const formatCOP = (value: number, showDecimals = false): string =>
   });
 
 /**
+ * Formats a price specifically for US Dollars (USD) - Panama
+ * Optimized for the Panamanian market with default settings
+ *
+ * @param value - The numeric value to format
+ * @param showDecimals - Whether to show decimal places
+ * @returns Formatted USD currency string
+ *
+ * @example
+ * ```ts
+ * formatUSD(1250) // "$1,250.00"
+ * formatUSD(1250, false) // "$1,250"
+ * ```
+ */
+export const formatUSD = (value: number, showDecimals = true): string =>
+  formatCurrency(value, {
+    currency: 'USD',
+    decimals: showDecimals ? 2 : 0,
+    display: 'symbol',
+    locale: 'es-PA',
+  });
+
+/**
  * Formats a price with compact notation for large numbers
  *
  * @param value - The numeric value to format
@@ -173,6 +195,7 @@ export const CurrencyCodes = {
   cop: 'COP', // Colombian Peso
   eur: 'EUR', // Euro
   mxn: 'MXN', // Mexican Peso
+  pab: 'PAB', // Panamanian Balboa
   usd: 'USD', // US Dollar
 } as const;
 
@@ -184,4 +207,5 @@ export const LocaleCodes = {
   esCo: 'es-CO', // Spanish (Colombia)
   esEs: 'es-ES', // Spanish (Spain)
   esMx: 'es-MX', // Spanish (Mexico)
+  esPa: 'es-PA', // Spanish (Panama)
 } as const;
