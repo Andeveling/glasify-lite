@@ -147,13 +147,16 @@ export async function generateQuoteFromCartAction(
       };
     }
 
-    const manufacturerId = firstModel.manufacturerId;
+    // REFACTOR: manufacturerId is now optional (deprecated field)
+    // For backward compatibility, we pass it if available
+    // In the future, this will be removed entirely
+    const manufacturerId = firstModel.manufacturerId ?? '';
 
     // 4. Call quote service to generate quote
     const result = await generateQuoteFromCart(db, userId, {
       cartItems,
       contactPhone: formInput.contactPhone,
-      manufacturerId,
+      manufacturerId, // May be empty string if model has no manufacturerId
       projectAddress: {
         projectCity: formInput.projectCity,
         projectName: formInput.projectName ?? 'Sin nombre',
@@ -166,7 +169,7 @@ export async function generateQuoteFromCartAction(
     logger.info('[QuoteAction] Quote generation completed successfully', {
       correlationId,
       duration: `${Date.now() - startTime}ms`,
-      manufacturerId,
+      manufacturerId: manufacturerId || 'none',
       quoteId: result.quoteId,
       userId,
     });
