@@ -201,16 +201,16 @@ Model (Window/Door products)
 
 - GOAL-005: Update React components and forms to use new models
 
-| Task     | Description                                                                                             | Completed | Date |
-| -------- | ------------------------------------------------------------------------------------------------------- | --------- | ---- |
-| TASK-030 | Update `src/app/(dashboard)/_components/model-form.tsx` to use `ProfileSupplier` selector               |           |      |
-| TASK-031 | Update `src/app/(dashboard)/models/page.tsx` to display `ProfileSupplier` name                          |           |      |
-| TASK-032 | Update `src/app/(public)/catalog/_components/organisms/model-filter.tsx` for profile supplier filtering |           |      |
-| TASK-033 | Update `src/app/(public)/catalog/_utils/catalog.utils.ts` to map `profileSupplier` field                |           |      |
-| TASK-034 | Update `src/app/(public)/catalog/[modelId]/_utils/adapters.ts` to use `model.profileSupplier.name`      |           |      |
-| TASK-035 | Remove all `manufacturer` prop references from `CatalogGrid` and `ModelCard` components                 |           |      |
-| TASK-036 | Create admin UI for `TenantConfig` management at `src/app/(dashboard)/settings/tenant/page.tsx`         |           |      |
-| TASK-037 | Create admin UI for `ProfileSupplier` CRUD at `src/app/(dashboard)/settings/suppliers/page.tsx`         |           |      |
+| Task     | Description                                                                                             | Completed | Date       |
+| -------- | ------------------------------------------------------------------------------------------------------- | --------- | ---------- |
+| TASK-030 | Update `src/app/(dashboard)/_components/model-form.tsx` to use `ProfileSupplier` selector               | ✅         | 2025-10-10 |
+| TASK-031 | Update `src/app/(dashboard)/models/page.tsx` to display `ProfileSupplier` name                          | ✅         | 2025-10-10 |
+| TASK-032 | Update `src/app/(public)/catalog/_components/organisms/model-filter.tsx` for profile supplier filtering | ✅         | 2025-10-10 |
+| TASK-033 | Update `src/app/(public)/catalog/_utils/catalog.utils.ts` to map `profileSupplier` field                | ✅         | 2025-10-10 |
+| TASK-034 | Update `src/app/(public)/catalog/[modelId]/_utils/adapters.ts` to use `model.profileSupplier.name`      | ✅         | 2025-10-10 |
+| TASK-035 | Remove all `manufacturer` prop references from `CatalogGrid` and `ModelCard` components                 | ✅         | 2025-10-10 |
+| TASK-036 | Create admin UI for `TenantConfig` management at `src/app/(dashboard)/settings/tenant/page.tsx`         | ✅         | 2025-10-10 |
+| TASK-037 | Create admin UI for `ProfileSupplier` CRUD at `src/app/(dashboard)/settings/suppliers/page.tsx`         | ✅         | 2025-10-10 |
 
 ### Implementation Phase 6: Type Definitions & Validation
 
