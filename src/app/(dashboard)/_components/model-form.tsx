@@ -43,7 +43,6 @@ const modelFormSchema = z
       .min(0, 'El costo por mm de ancho debe ser mayor o igual a 0')
       .max(MAX_COST_PER_MM, `El costo por mm de ancho no debe exceder ${MAX_COST_PER_MM}`),
     id: z.string().cuid().optional(),
-    manufacturerId: z.string().cuid('ID del fabricante debe ser válido'),
     maxHeightMm: z
       .number()
       .int()
@@ -68,6 +67,7 @@ const modelFormSchema = z
       .string()
       .min(1, 'El nombre del modelo es requerido')
       .max(MAX_NAME_LENGTH, `El nombre no debe exceder ${MAX_NAME_LENGTH} caracteres`),
+    profileSupplierId: z.string().cuid('ID del proveedor de perfiles debe ser válido').optional().nullable(),
     status: z.enum(['draft', 'published']),
   })
   .refine((data) => data.minWidthMm < data.maxWidthMm, {
@@ -92,12 +92,6 @@ type ModelFormApi = UseFormReturn<ModelFormData, unknown, ModelFormData>;
 type ModelFormControllerArgs = Pick<ModelFormProps, 'modelData' | 'onSuccess'>;
 
 // Mock data for development - in a real app this would come from the API
-const MOCK_MANUFACTURERS = [
-  { id: 'cm1abc123def456ghi789jkl0', name: 'VEKA' },
-  { id: 'cm1def456ghi789jkl0mno123', name: 'Guardian Glass' },
-  { id: 'cm1ghi789jkl0mno123pqr456', name: 'Pilkington' },
-];
-
 const MOCK_GLASS_TYPES = [
   { id: 'cm1glass123456789abcdef01', name: 'Vidrio Templado 6mm' },
   { id: 'cm1glass234567890bcdef012', name: 'Vidrio Laminado 8mm' },
@@ -106,6 +100,11 @@ const MOCK_GLASS_TYPES = [
 
 function useModelFormController({ modelData, onSuccess }: ModelFormControllerArgs) {
   const [isLoading, setIsLoading] = useState(false);
+
+  // Fetch profile suppliers from tRPC
+  const { data: profileSuppliers, isLoading: isLoadingSuppliers } = api.profileSupplier.list.useQuery({
+    isActive: true,
+  });
 
   // Use the actual admin.model-upsert mutation
   const modelUpsertMutation = api.admin['model-upsert'].useMutation({
@@ -127,7 +126,7 @@ function useModelFormController({ modelData, onSuccess }: ModelFormControllerArg
       costPerMmHeight: modelData?.costPerMmHeight ?? 0,
       costPerMmWidth: modelData?.costPerMmWidth ?? 0,
       id: modelData?.id,
-      manufacturerId: modelData?.manufacturerId ?? '',
+      profileSupplierId: modelData?.profileSupplierId ?? null,
       maxHeightMm: modelData?.maxHeightMm ?? DEFAULT_MAX_DIMENSION,
       maxWidthMm: modelData?.maxWidthMm ?? DEFAULT_MAX_DIMENSION,
       minHeightMm: modelData?.minHeightMm ?? DEFAULT_MIN_DIMENSION,
@@ -150,11 +149,12 @@ function useModelFormController({ modelData, onSuccess }: ModelFormControllerArg
 
   const isEditing = Boolean(modelData?.id);
 
-  return { form, handleSubmit, isEditing, isLoading };
+  return { form, handleSubmit, isEditing, isLoading, isLoadingSuppliers, profileSuppliers };
 }
 
 export function ModelForm({ modelData, onSuccess, onCancel }: ModelFormProps) {
-  const { form, handleSubmit, isEditing, isLoading } = useModelFormController({ modelData, onSuccess });
+  const { form, handleSubmit, isEditing, isLoading, isLoadingSuppliers, profileSuppliers } =
+    useModelFormController({ modelData, onSuccess });
 
   return (
     <Card className="w-full max-w-2xl">
@@ -169,7 +169,11 @@ export function ModelForm({ modelData, onSuccess, onCancel }: ModelFormProps) {
       <CardContent>
         <Form {...form}>
           <form className="space-y-6" onSubmit={handleSubmit}>
-            <BasicInfoSection form={form} />
+            <BasicInfoSection
+              form={form}
+              isLoadingSuppliers={isLoadingSuppliers}
+              profileSuppliers={profileSuppliers}
+            />
 
             {/* Compatible Glass Types */}
             <GlassTypesSection form={form} />
@@ -200,7 +204,15 @@ export function ModelForm({ modelData, onSuccess, onCancel }: ModelFormProps) {
   );
 }
 
-function BasicInfoSection({ form }: { form: ModelFormApi }) {
+function BasicInfoSection({
+  form,
+  isLoadingSuppliers,
+  profileSuppliers,
+}: {
+  form: ModelFormApi;
+  isLoadingSuppliers: boolean;
+  profileSuppliers?: Array<{ id: string; name: string }>;
+}) {
   return (
     <div className="space-y-4">
       <h3 className="font-medium text-lg">Información Básica</h3>
@@ -222,25 +234,38 @@ function BasicInfoSection({ form }: { form: ModelFormApi }) {
 
       <FormField
         control={form.control}
-        name="manufacturerId"
+        name="profileSupplierId"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Fabricante</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value}>
+            <FormLabel>Proveedor de Perfiles (Opcional)</FormLabel>
+            <Select
+              onValueChange={field.onChange}
+              value={field.value ?? undefined}
+              disabled={isLoadingSuppliers}
+            >
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar fabricante" />
+                  <SelectValue
+                    placeholder={
+                      isLoadingSuppliers
+                        ? 'Cargando proveedores...'
+                        : 'Seleccionar proveedor (opcional)'
+                    }
+                  />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                {MOCK_MANUFACTURERS.map((manufacturer) => (
-                  <SelectItem key={manufacturer.id} value={manufacturer.id}>
-                    {manufacturer.name}
+                <SelectItem value="">Sin proveedor asignado</SelectItem>
+                {profileSuppliers?.map((supplier) => (
+                  <SelectItem key={supplier.id} value={supplier.id}>
+                    {supplier.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <FormDescription>Fabricante responsable de este modelo</FormDescription>
+            <FormDescription>
+              Proveedor de perfiles para este modelo. Puede dejarse sin asignar.
+            </FormDescription>
             <FormMessage />
           </FormItem>
         )}
