@@ -49,7 +49,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <ReactScan />
         <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
           <TRPCReactProvider>{children}</TRPCReactProvider>
-          <Toaster />
+          <Toaster expand position="top-right" />
         </ThemeProvider>
       </body>
     </html>
