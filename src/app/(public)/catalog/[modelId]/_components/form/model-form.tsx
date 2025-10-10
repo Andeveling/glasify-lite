@@ -11,9 +11,11 @@ import type {
   ModelDetailOutput,
   ServiceOutput,
 } from '@/server/api/routers/catalog';
+import type { CreateCartItemInput } from '@/types/cart.types';
 import { usePriceCalculation } from '../../_hooks/use-price-calculation';
 import type { QuoteFormData } from '../../_types/model.types';
 import { createQuoteFormSchema, type QuoteFormValues } from '../../_utils/validation';
+import { AddToCartButton } from './add-to-cart-button';
 import { QuoteSummary } from './quote-summary';
 import { DimensionsSection } from './sections/dimensions-section';
 import { GlassTypeSelectorSection } from './sections/glass-type-selector-section';
@@ -82,6 +84,24 @@ export function ModelForm({ model, glassTypes, services, solutions, onSubmit }: 
     onSubmit?.(formData);
   };
 
+  // ✅ Prepare cart item data from form values
+  const selectedGlassType = glassTypes.find((gt) => gt.id === glassType);
+  const selectedSolutionData = solutions.find((s) => s.id === selectedSolution);
+
+  const cartItemInput: CreateCartItemInput & { unitPrice: number } = {
+    additionalServiceIds: additionalServices,
+    glassTypeId: glassType,
+    glassTypeName: selectedGlassType?.name ?? '',
+    heightMm: Number(height) || 0,
+    modelId: model.id,
+    modelName: model.name,
+    quantity: 1, // Single item per add (user can increase in cart)
+    solutionId: selectedSolution || undefined,
+    solutionName: selectedSolutionData?.name || undefined,
+    unitPrice: calculatedPrice ?? model.basePrice,
+    widthMm: Number(width) || 0,
+  };
+
   return (
     <>
       <Form {...form}>
@@ -120,6 +140,13 @@ export function ModelForm({ model, glassTypes, services, solutions, onSubmit }: 
             currency={model.manufacturer?.currency ?? 'USD'}
             error={error}
             isCalculating={isCalculating}
+          />
+
+          {/* Add to Cart Button - Separate from quote summary */}
+          <AddToCartButton
+            isCalculating={isCalculating}
+            isValid={form.formState.isValid && !error}
+            item={cartItemInput}
           />
         </form>
       </Form>

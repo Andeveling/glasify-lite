@@ -1,11 +1,11 @@
-import { v4 as uuidv4 } from 'uuid';
+import { createId } from '@paralleldrive/cuid2';
 
 /**
  * Generates a unique random key for React components
  * @returns A unique string suitable for React keys
  */
 export function generateKey() {
-  return uuidv4(); // Cambiado de Math.random() para mayor unicidad
+  return createId();
 }
 
 /**
