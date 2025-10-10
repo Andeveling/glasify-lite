@@ -31,6 +31,9 @@
         // Fomenta el uso de claves de objeto simples y legibles.
         "useSimpleNumberKeys": "error"
       },
+      "nursery": {
+        "useConsistentTypeDefinitions": "off"
+      },
       // Reglas para mantener la consistencia y prevenir errores comunes.
       "correctness": {
         // Advierte sobre parámetros de función no utilizados.
@@ -65,7 +68,9 @@
             "strictCase": false,
             "conventions": [
               {
-                "selector": { "kind": "objectLiteralProperty" },
+                "selector": {
+                  "kind": "objectLiteralProperty"
+                },
                 "formats": ["camelCase", "PascalCase", "CONSTANT_CASE"]
               }
             ]
@@ -74,7 +79,9 @@
         // Advierte sobre el uso de convenciones de nomenclatura de archivos incorrectas.
         "useFilenamingConvention": {
           "level": "warn",
-          "options": { "filenameCases": ["kebab-case"] }
+          "options": {
+            "filenameCases": ["kebab-case"]
+          }
         },
         // Requiere el uso de bloques de sentencias para mayor claridad.
         "useBlockStatements": "off",
