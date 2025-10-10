@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noConsole: seed orchestrator requires console logging */
 /**
  * Seed Orchestrator - Centralized Seeding Logic
  *
@@ -10,6 +11,7 @@
  */
 
 import type { PrismaClient } from '@prisma/client';
+import { seedTenant } from '../seed-tenant';
 import type { GlassSolutionInput } from '../factories/glass-solution.factory';
 import { createGlassSolution } from '../factories/glass-solution.factory';
 import type { GlassTypeInput } from '../factories/glass-type.factory';
@@ -137,28 +139,32 @@ export class SeedOrchestrator {
     this.logger.info(preset.description);
 
     try {
+      // Step 0: Seed TenantConfig singleton (ALWAYS FIRST - business configuration)
+      this.logger.section('Step 0/7: TenantConfig Singleton');
+      await seedTenant(this.prisma);
+
       // Step 1: Seed profile suppliers (no dependencies)
-      this.logger.section('Step 1/6: Profile Suppliers');
+      this.logger.section('Step 1/7: Profile Suppliers');
       const suppliers = await this.seedProfileSuppliers(preset.profileSuppliers);
 
       // Step 2: Seed glass types (no dependencies)
-      this.logger.section('Step 2/6: Glass Types');
+      this.logger.section('Step 2/7: Glass Types');
       const glassTypes = await this.seedGlassTypes(preset.glassTypes);
 
       // Step 3: Seed models (depends on suppliers and glass types)
-      this.logger.section('Step 3/6: Window/Door Models');
+      this.logger.section('Step 3/7: Window/Door Models');
       await this.seedModels(preset.models, suppliers, glassTypes);
 
       // Step 4: Seed services (no dependencies)
-      this.logger.section('Step 4/6: Services');
+      this.logger.section('Step 4/7: Services');
       await this.seedServices(preset.services);
 
       // Step 5: Seed glass solutions (no dependencies)
-      this.logger.section('Step 5/6: Glass Solutions');
+      this.logger.section('Step 5/7: Glass Solutions');
       const solutions = await this.seedGlassSolutions(preset.glassSolutions);
 
       // Step 6: Assign solutions to glass types (depends on glass types and solutions)
-      this.logger.section('Step 6/6: Assign Solutions to Glass Types');
+      this.logger.section('Step 6/7: Assign Solutions to Glass Types');
       await this.assignSolutionsToGlassTypes(glassTypes, solutions);
 
       // Calculate final stats
@@ -593,6 +599,7 @@ export class SeedOrchestrator {
     this.logger.section('Seeding Summary');
 
     console.log('\n📊 Statistics:');
+    console.log('   TenantConfig: 1 singleton (always created)');
     console.log(
       `   Profile Suppliers: ${this.stats.profileSuppliers.created} created, ${this.stats.profileSuppliers.failed} failed`
     );
@@ -606,7 +613,7 @@ export class SeedOrchestrator {
       `   Glass-Solution Assignments: ${this.stats.glassTypeSolutions.created} created, ${this.stats.glassTypeSolutions.failed} failed`
     );
 
-    console.log(`\n✨ Total: ${this.stats.totalCreated} created, ${this.stats.totalFailed} failed`);
+    console.log(`\n✨ Total: ${this.stats.totalCreated + 1} created, ${this.stats.totalFailed} failed`);
     console.log(`⏱️  Duration: ${this.stats.durationMs}ms`);
 
     if (this.stats.totalFailed > 0) {
