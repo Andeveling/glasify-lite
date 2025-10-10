@@ -10,7 +10,8 @@ export function middleware(request: NextRequest) {
   const isLoggedIn = !!sessionToken;
 
   // Protected routes that require authentication
-  const isProtectedRoute = pathname.startsWith('/dashboard');
+  const isProtectedRoute =
+    pathname.startsWith('/dashboard') || pathname.startsWith('/quotes') || pathname.startsWith('/quote');
 
   // Auth routes
   const isAuthRoute = pathname.startsWith('/signin');
