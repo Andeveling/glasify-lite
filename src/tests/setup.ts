@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { afterAll, beforeAll, vi } from 'vitest';
-import { db } from '@/server/db';
+import { db } from '../server/db';
 
 // Mock ResizeObserver for jsdom environment
 global.ResizeObserver = vi.fn().mockImplementation(() => ({
@@ -14,16 +14,28 @@ vi.mock('@/server/auth', () => ({
   auth: vi.fn(() => Promise.resolve(null)),
 }));
 
-type ManufacturerSeed = {
+type TenantConfigSeed = {
+  readonly id: string;
+  readonly businessName: string;
+  readonly contactEmail: string;
+  readonly contactPhone: string;
+  readonly businessAddress: string;
+  readonly currency: string;
+  readonly locale: string;
+  readonly timezone: string;
+  readonly quoteValidityDays: number;
+};
+
+type ProfileSupplierSeed = {
   readonly id: string;
   readonly name: string;
-  readonly currency: string;
-  readonly quoteValidityDays: number;
+  readonly materialType: 'PVC' | 'ALUMINUM' | 'WOOD' | 'MIXED';
+  readonly isActive: boolean;
 };
 
 type GlassTypeSeed = {
   readonly id: string;
-  readonly manufacturerId: string;
+  readonly manufacturerId: string; // DEPRECATED: kept for backward compatibility
   readonly name: string;
   readonly purpose: 'general' | 'insulation' | 'security' | 'decorative';
   readonly thicknessMm: number;
@@ -37,7 +49,7 @@ type GlassTypeSeed = {
 
 type ServiceSeed = {
   readonly id: string;
-  readonly manufacturerId: string;
+  readonly manufacturerId: string; // DEPRECATED: kept for backward compatibility
   readonly name: string;
   readonly type: 'area' | 'perimeter' | 'fixed';
   readonly unit: 'unit' | 'sqm' | 'ml';
@@ -46,7 +58,7 @@ type ServiceSeed = {
 
 type ModelSeed = {
   readonly id: string;
-  readonly manufacturerId: string;
+  readonly profileSupplierId: string;
   readonly name: string;
   readonly status: 'draft' | 'published';
   readonly minWidthMm: number;
@@ -62,18 +74,30 @@ type ModelSeed = {
   readonly glassDiscountHeightMm?: number;
 };
 
-const BASE_MANUFACTURERS: readonly ManufacturerSeed[] = [
+const TENANT_CONFIG: TenantConfigSeed = {
+  businessAddress: 'Calle 123 #45-67, Bogotá',
+  businessName: 'Cristales Modernos SAS',
+  contactEmail: 'contacto@cristalesmodernos.com',
+  contactPhone: '+57 300 123 4567',
+  currency: 'COP',
+  id: 'cm1tenantconfig123456789ab',
+  locale: 'es-CO',
+  quoteValidityDays: 15,
+  timezone: 'America/Bogota',
+};
+
+const BASE_PROFILE_SUPPLIERS: readonly ProfileSupplierSeed[] = [
   {
-    currency: 'COP',
-    id: 'cm1manufacturer123456789ab',
-    name: 'Cristales Modernos',
-    quoteValidityDays: 30,
+    id: 'cm1profilesupplier123456ab',
+    isActive: true,
+    materialType: 'PVC',
+    name: 'Rehau Colombia',
   },
   {
-    currency: 'COP',
-    id: 'cm1abc123def456ghi789jkl0',
-    name: 'Ventanas Andinas',
-    quoteValidityDays: 20,
+    id: 'cm1profilesupplier234567bc',
+    isActive: true,
+    materialType: 'ALUMINUM',
+    name: 'Aluflex Andino',
   },
 ];
 
@@ -147,13 +171,13 @@ const BASE_MODELS: readonly ModelSeed[] = [
   {
     accessoryPrice: '45000.00',
     basePrice: '285000.00',
-    compatibleGlassTypeIds: ['cm1glass123def456ghi789jkl', 'cm1glasstype123456789abc1'],
+    compatibleGlassTypeIds: [ 'cm1glass123def456ghi789jkl', 'cm1glasstype123456789abc1' ],
     costPerMmHeight: '110.0000',
     costPerMmWidth: '120.0000',
     glassDiscountHeightMm: 10,
     glassDiscountWidthMm: 10,
     id: 'cm1model123def456ghi789jkl',
-    manufacturerId: 'cm1manufacturer123456789ab',
+    profileSupplierId: 'cm1profilesupplier123456ab',
     maxHeightMm: 2100,
     maxWidthMm: 2000,
     minHeightMm: 500,
@@ -164,11 +188,11 @@ const BASE_MODELS: readonly ModelSeed[] = [
   {
     accessoryPrice: '50000.00',
     basePrice: '320000.00',
-    compatibleGlassTypeIds: ['cm1catalogglasstype123456789'],
+    compatibleGlassTypeIds: [ 'cm1catalogglasstype123456789' ],
     costPerMmHeight: '125.0000',
     costPerMmWidth: '130.0000',
     id: 'cm1catalogmodelpublished123',
-    manufacturerId: 'cm1abc123def456ghi789jkl0',
+    profileSupplierId: 'cm1profilesupplier234567bc',
     maxHeightMm: 2200,
     maxWidthMm: 2400,
     minHeightMm: 700,
@@ -179,11 +203,11 @@ const BASE_MODELS: readonly ModelSeed[] = [
   {
     accessoryPrice: null,
     basePrice: '260000.00',
-    compatibleGlassTypeIds: ['cm1catalogglasstype123456789'],
+    compatibleGlassTypeIds: [ 'cm1catalogglasstype123456789' ],
     costPerMmHeight: '100.0000',
     costPerMmWidth: '95.0000',
     id: 'cm1catalogmodeldraft123',
-    manufacturerId: 'cm1abc123def456ghi789jkl0',
+    profileSupplierId: 'cm1profilesupplier234567bc',
     maxHeightMm: 2000,
     maxWidthMm: 2000,
     minHeightMm: 600,
@@ -193,16 +217,33 @@ const BASE_MODELS: readonly ModelSeed[] = [
   },
 ];
 
-const seedManufacturers = async () => {
-  for (const manufacturer of BASE_MANUFACTURERS) {
-    await db.manufacturer.upsert({
-      create: manufacturer,
+const seedTenantConfig = async () => {
+  await db.tenantConfig.upsert({
+    create: TENANT_CONFIG,
+    update: {
+      businessAddress: TENANT_CONFIG.businessAddress,
+      businessName: TENANT_CONFIG.businessName,
+      contactEmail: TENANT_CONFIG.contactEmail,
+      contactPhone: TENANT_CONFIG.contactPhone,
+      currency: TENANT_CONFIG.currency,
+      locale: TENANT_CONFIG.locale,
+      quoteValidityDays: TENANT_CONFIG.quoteValidityDays,
+      timezone: TENANT_CONFIG.timezone,
+    },
+    where: { id: TENANT_CONFIG.id },
+  });
+};
+
+const seedProfileSuppliers = async () => {
+  for (const supplier of BASE_PROFILE_SUPPLIERS) {
+    await db.profileSupplier.upsert({
+      create: supplier,
       update: {
-        currency: manufacturer.currency,
-        name: manufacturer.name,
-        quoteValidityDays: manufacturer.quoteValidityDays,
+        isActive: supplier.isActive,
+        materialType: supplier.materialType,
+        name: supplier.name,
       },
-      where: { id: manufacturer.id },
+      where: { id: supplier.id },
     });
   }
 };
@@ -255,7 +296,7 @@ const buildModelData = (model: ModelSeed) => ({
   costPerMmWidth: model.costPerMmWidth,
   glassDiscountHeightMm: model.glassDiscountHeightMm ?? 0,
   glassDiscountWidthMm: model.glassDiscountWidthMm ?? 0,
-  manufacturerId: model.manufacturerId,
+  profileSupplierId: model.profileSupplierId,
   maxHeightMm: model.maxHeightMm,
   maxWidthMm: model.maxWidthMm,
   minHeightMm: model.minHeightMm,
@@ -293,13 +334,15 @@ const cleanDatabase = async () => {
     db.model.deleteMany(),
     db.glassType.deleteMany(),
     db.service.deleteMany(),
-    db.manufacturer.deleteMany(),
+    db.profileSupplier.deleteMany(),
+    db.tenantConfig.deleteMany(),
   ]);
 };
 
 const seedBaseData = async () => {
   await cleanDatabase();
-  await seedManufacturers();
+  await seedTenantConfig();
+  await seedProfileSuppliers();
   await seedGlassTypes();
   await seedServices();
   await seedModels();

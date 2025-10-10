@@ -36,17 +36,17 @@ export const catalogQueries = createTRPCRouter({
             costPerMmWidth: true,
             createdAt: true,
             id: true,
+            maxHeightMm: true,
+            maxWidthMm: true,
+            minHeightMm: true,
+            minWidthMm: true,
+            name: true,
             profileSupplier: {
               select: {
                 id: true,
                 name: true,
               },
             },
-            maxHeightMm: true,
-            maxWidthMm: true,
-            minHeightMm: true,
-            minWidthMm: true,
-            name: true,
             status: true,
             updatedAt: true,
           },
@@ -274,8 +274,8 @@ export const catalogQueries = createTRPCRouter({
       try {
         logger.info('Listing models', {
           limit: input.limit,
-          profileSupplierId: input.manufacturerId,
           page: input.page,
+          profileSupplierId: input.manufacturerId,
           search: input.search,
           sort: input.sort,
         });

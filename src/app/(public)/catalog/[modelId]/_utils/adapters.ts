@@ -24,7 +24,7 @@ export function adaptModelFromServer(serverModel: ModelDetailOutput): Model {
     ],
     id: serverModel.id,
     imageUrl: '/modern-aluminum-sliding-window.jpg', // TODO: Add imageUrl to Model table
-    profileSupplier: serverModel.profileSupplier?.name ?? 'Proveedor desconocido',
     name: serverModel.name,
+    profileSupplier: serverModel.profileSupplier?.name ?? 'Proveedor desconocido',
   };
 }

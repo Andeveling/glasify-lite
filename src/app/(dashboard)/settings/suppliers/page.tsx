@@ -37,8 +37,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  createProfileSupplierSchema,
   type CreateProfileSupplierInput,
+  createProfileSupplierSchema,
   type UpdateProfileSupplierInput,
   updateProfileSupplierSchema,
 } from '@/server/schemas/supplier.schema';
@@ -254,9 +254,9 @@ export default function ProfileSuppliersPage() {
               <Input
                 className="pl-8"
                 id="search"
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Buscar por nombre..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           </div>
@@ -266,7 +266,10 @@ export default function ProfileSuppliersPage() {
             <label className="font-medium text-sm" htmlFor="materialType">
               Tipo de Material
             </label>
-            <Select value={materialTypeFilter} onValueChange={(value) => setMaterialTypeFilter(value as MaterialType | 'ALL')}>
+            <Select
+              onValueChange={(value) => setMaterialTypeFilter(value as MaterialType | 'ALL')}
+              value={materialTypeFilter}
+            >
               <SelectTrigger id="materialType">
                 <SelectValue />
               </SelectTrigger>
@@ -286,7 +289,10 @@ export default function ProfileSuppliersPage() {
             <label className="font-medium text-sm" htmlFor="isActive">
               Estado
             </label>
-            <Select value={isActiveFilter} onValueChange={(value) => setIsActiveFilter(value as 'ALL' | 'ACTIVE' | 'INACTIVE')}>
+            <Select
+              onValueChange={(value) => setIsActiveFilter(value as 'ALL' | 'ACTIVE' | 'INACTIVE')}
+              value={isActiveFilter}
+            >
               <SelectTrigger id="isActive">
                 <SelectValue />
               </SelectTrigger>
@@ -355,27 +361,15 @@ export default function ProfileSuppliersPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button size="icon" variant="ghost" onClick={() => handleEditClick(supplier)}>
+                        <Button onClick={() => handleEditClick(supplier)} size="icon" variant="ghost">
                           <Pencil className="size-4" />
                           <span className="sr-only">Editar</span>
                         </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => handleToggleActive(supplier.id)}
-                        >
-                          {supplier.isActive ? (
-                            <ToggleRight className="size-4" />
-                          ) : (
-                            <ToggleLeft className="size-4" />
-                          )}
+                        <Button onClick={() => handleToggleActive(supplier.id)} size="icon" variant="ghost">
+                          {supplier.isActive ? <ToggleRight className="size-4" /> : <ToggleLeft className="size-4" />}
                           <span className="sr-only">Cambiar estado</span>
                         </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => handleDelete(supplier.id, supplier.name)}
-                        >
+                        <Button onClick={() => handleDelete(supplier.id, supplier.name)} size="icon" variant="ghost">
                           <Trash2 className="size-4 text-destructive" />
                           <span className="sr-only">Eliminar</span>
                         </Button>
@@ -390,14 +384,12 @@ export default function ProfileSuppliersPage() {
       </Card>
 
       {/* Create/Edit Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>{formMode === 'create' ? 'Nuevo Proveedor' : 'Editar Proveedor'}</DialogTitle>
             <DialogDescription>
-              {formMode === 'create'
-                ? 'Crea un nuevo proveedor de perfiles'
-                : 'Actualiza la información del proveedor'}
+              {formMode === 'create' ? 'Crea un nuevo proveedor de perfiles' : 'Actualiza la información del proveedor'}
             </DialogDescription>
           </DialogHeader>
 
@@ -426,7 +418,7 @@ export default function ProfileSuppliersPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Tipo de Material</FormLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecciona un material" />
@@ -476,8 +468,8 @@ export default function ProfileSuppliersPage() {
                       <input
                         checked={field.value}
                         className="size-4"
-                        type="checkbox"
                         onChange={(e) => field.onChange(e.target.checked)}
+                        type="checkbox"
                       />
                     </FormControl>
                     <FormLabel className="!mt-0">Activo</FormLabel>
@@ -487,7 +479,7 @@ export default function ProfileSuppliersPage() {
               />
 
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                <Button onClick={() => setIsDialogOpen(false)} type="button" variant="outline">
                   Cancelar
                 </Button>
                 <Button disabled={createMutation.isPending || updateMutation.isPending} type="submit">
