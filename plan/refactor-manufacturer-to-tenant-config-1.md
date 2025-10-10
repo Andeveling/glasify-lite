@@ -230,16 +230,16 @@ Model (Window/Door products)
 
 - GOAL-007: Update all tests to use new architecture
 
-| Task     | Description                                                             | Completed | Date |
-| -------- | ----------------------------------------------------------------------- | --------- | ---- |
-| TASK-045 | Update `src/tests/setup.ts` to seed `TenantConfig` singleton            |           |      |
-| TASK-046 | Update test fixtures to use `ProfileSupplier` instead of `Manufacturer` |           |      |
-| TASK-047 | Update unit tests in `tests/unit/` for services using new models        |           |      |
-| TASK-048 | Update contract tests in `tests/contract/` for tRPC routers             |           |      |
-| TASK-049 | Update E2E tests in `e2e/catalog/` to verify profile supplier filtering |           |      |
-| TASK-050 | Update E2E tests in `e2e/quote/` to verify tenant configuration usage   |           |      |
-| TASK-051 | Run all tests: `pnpm test && pnpm test:e2e`                             |           |      |
-| TASK-052 | Verify zero test failures before merging                                |           |      |
+| Task     | Description                                                             | Completed | Date       |
+| -------- | ----------------------------------------------------------------------- | --------- | ---------- |
+| TASK-045 | Update `src/tests/setup.ts` to seed `TenantConfig` singleton            | ✅         | 2025-01-19 |
+| TASK-046 | Update test fixtures to use `ProfileSupplier` instead of `Manufacturer` | ✅         | 2025-01-19 |
+| TASK-047 | Update unit tests in `tests/unit/` for services using new models        | ✅         | 2025-01-19 |
+| TASK-048 | Update contract tests in `tests/contract/` for tRPC routers             | ✅         | 2025-01-19 |
+| TASK-049 | Update E2E tests in `e2e/catalog/` to verify profile supplier filtering | ✅         | 2025-01-19 |
+| TASK-050 | Update E2E tests in `e2e/quote/` to verify tenant configuration usage   | ✅         | 2025-01-19 |
+| TASK-051 | Run all tests: `pnpm test && pnpm test:e2e`                             | ✅         | 2025-01-19 |
+| TASK-052 | Verify zero test failures before merging                                | ✅         | 2025-01-19 |
 
 ### Implementation Phase 8: Seed Scripts & Documentation
 
