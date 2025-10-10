@@ -80,7 +80,7 @@ test.describe('Quote Detail View', () => {
     await expect(statusBadge).toBeVisible();
 
     const statusText = await statusBadge.textContent();
-    expect([ 'Borrador', 'Enviada', 'Cancelada' ]).toContain(statusText);
+    expect(['Borrador', 'Enviada', 'Cancelada']).toContain(statusText);
   });
 
   test('should display optional contact phone when present', async ({ page }) => {

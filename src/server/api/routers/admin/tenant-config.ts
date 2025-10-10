@@ -1,27 +1,20 @@
 /**
  * TenantConfig tRPC Router
- * 
+ *
  * Singleton tenant configuration management
- * 
+ *
  * @see /plan/refactor-manufacturer-to-tenant-config-1.md
  */
 
-import { createTRPCRouter, protectedProcedure } from '../../trpc';
 import { updateTenantConfigSchema } from '../../../schemas/tenant.schema';
 import { getTenantConfig, updateTenantConfig } from '../../../utils/tenant';
+import { createTRPCRouter, protectedProcedure } from '../../trpc';
 
 export const tenantConfigRouter = createTRPCRouter({
   /**
    * Get the singleton TenantConfig
    */
   get: protectedProcedure.query(() => getTenantConfig()),
-
-  /**
-   * Update the singleton TenantConfig
-   */
-  update: protectedProcedure
-    .input(updateTenantConfigSchema)
-    .mutation(({ input }) => updateTenantConfig(input)),
 
   /**
    * Get only currency from TenantConfig
@@ -38,4 +31,9 @@ export const tenantConfigRouter = createTRPCRouter({
     const config = await getTenantConfig();
     return config.quoteValidityDays;
   }),
+
+  /**
+   * Update the singleton TenantConfig
+   */
+  update: protectedProcedure.input(updateTenantConfigSchema).mutation(({ input }) => updateTenantConfig(input)),
 });

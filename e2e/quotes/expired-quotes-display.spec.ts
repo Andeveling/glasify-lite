@@ -131,7 +131,7 @@ test.describe('Expired Quotes Display', () => {
           const dateMatch = validUntilText.match(/\d{1,2}[/-]\d{1,2}[/-]\d{2,4}/);
 
           if (dateMatch) {
-            const [ dateStr ] = dateMatch;
+            const [dateStr] = dateMatch;
             const validUntilDate = new Date(dateStr);
             const today = new Date();
             const isExpired = validUntilDate < today;

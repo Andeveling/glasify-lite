@@ -51,8 +51,12 @@ export interface GenerateQuoteInput {
   /** Optional contact phone */
   contactPhone?: string;
 
-  /** Manufacturer ID (inherited from cart items, validated for consistency) */
-  manufacturerId: string;
+  /** 
+   * @deprecated Manufacturer ID (deprecated field, kept for backward compatibility)
+   * This field is no longer used for quote generation. Currency and validity
+   * are now obtained from TenantConfig singleton.
+   */
+  manufacturerId?: string;
 }
 
 // ============================================================================

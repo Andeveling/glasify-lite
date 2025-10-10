@@ -19,10 +19,7 @@ async function validateProfileSupplierExists(
   return supplier;
 }
 
-async function validateGlassTypesExist(
-  tx: Prisma.TransactionClient,
-  glassTypeIds: string[]
-): Promise<GlassType[]> {
+async function validateGlassTypesExist(tx: Prisma.TransactionClient, glassTypeIds: string[]): Promise<GlassType[]> {
   const glassTypes = await tx.glassType.findMany({
     where: {
       id: { in: glassTypeIds },

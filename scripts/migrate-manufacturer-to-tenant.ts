@@ -107,7 +107,7 @@ async function migrate(): Promise<MigrationStats> {
       }
 
       // 2. Create TenantConfig from first manufacturer (assumes it's the business owner)
-      const firstManufacturer = manufacturers[ 0 ];
+      const firstManufacturer = manufacturers[0];
       if (!firstManufacturer) {
         throw new Error('No manufacturers found to migrate');
       }
@@ -227,7 +227,7 @@ async function rollback(): Promise<void> {
  */
 async function main() {
   const args = process.argv.slice(2);
-  const command = args[ 0 ] ?? 'migrate';
+  const command = args[0] ?? 'migrate';
 
   try {
     if (command === 'rollback') {
@@ -254,7 +254,7 @@ async function main() {
 }
 
 // Only run if executed directly (ES module compatible)
-const isMainModule = process.argv[ 1 ]?.endsWith('migrate-manufacturer-to-tenant.ts') ?? false;
+const isMainModule = process.argv[1]?.endsWith('migrate-manufacturer-to-tenant.ts') ?? false;
 
 if (isMainModule) {
   main();

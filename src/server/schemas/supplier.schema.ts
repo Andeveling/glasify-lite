@@ -1,6 +1,6 @@
 /**
  * Zod Validation Schemas for ProfileSupplier
- * 
+ *
  * @see /plan/refactor-manufacturer-to-tenant-config-1.md
  */
 
@@ -22,17 +22,13 @@ export const materialTypeSchema = z.nativeEnum(MaterialType, {
  * Create ProfileSupplier Schema
  */
 export const createProfileSupplierSchema = z.object({
+  isActive: z.boolean().default(true),
+  materialType: materialTypeSchema,
   name: z
     .string()
     .min(1, 'Supplier name is required')
     .max(MAX_SUPPLIER_NAME_LENGTH, 'Supplier name cannot exceed 100 characters'),
-  materialType: materialTypeSchema,
-  isActive: z.boolean().default(true),
-  notes: z
-    .string()
-    .max(MAX_NOTES_LENGTH, 'Notes cannot exceed 500 characters')
-    .optional()
-    .nullable(),
+  notes: z.string().max(MAX_NOTES_LENGTH, 'Notes cannot exceed 500 characters').optional().nullable(),
 });
 
 /**
@@ -45,8 +41,8 @@ export const updateProfileSupplierSchema = createProfileSupplierSchema.partial()
  * ProfileSupplier Response Schema
  */
 export const profileSupplierResponseSchema = createProfileSupplierSchema.extend({
-  id: z.string().cuid(),
   createdAt: z.date(),
+  id: z.string().cuid(),
   updatedAt: z.date(),
 });
 

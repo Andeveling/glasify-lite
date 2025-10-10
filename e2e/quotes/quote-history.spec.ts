@@ -59,7 +59,7 @@ test.describe('Quote History', () => {
     const statusBadge = firstQuote.locator('[data-testid="quote-status-badge"]');
     if (await statusBadge.isVisible().catch(() => false)) {
       const statusText = await statusBadge.textContent();
-      expect([ 'Borrador', 'Enviada', 'Cancelada' ]).toContain(statusText?.trim());
+      expect(['Borrador', 'Enviada', 'Cancelada']).toContain(statusText?.trim());
     }
 
     // Verify "Ver detalles" button exists
@@ -117,9 +117,7 @@ test.describe('Quote History', () => {
 
     // Verify expired quote has muted styling
     const parentCard = expiredBadge.locator('xpath=ancestor::*[@data-testid="quote-list-item"]');
-    const hasOpacity = await parentCard.evaluate((el) =>
-      window.getComputedStyle(el).opacity === '0.6',
-    );
+    const hasOpacity = await parentCard.evaluate((el) => window.getComputedStyle(el).opacity === '0.6');
 
     expect(hasOpacity).toBe(true);
   });

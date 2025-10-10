@@ -1,6 +1,6 @@
 /**
  * Zod Validation Schemas for TenantConfig
- * 
+ *
  * @see /plan/refactor-manufacturer-to-tenant-config-1.md
  */
 
@@ -31,10 +31,7 @@ export const currencyCodeSchema = z
  */
 export const localeSchema = z
   .string()
-  .regex(
-    /^[a-z]{2}-[A-Z]{2}$/,
-    'Locale must follow format: language-COUNTRY (e.g., es-CO)'
-  )
+  .regex(/^[a-z]{2}-[A-Z]{2}$/, 'Locale must follow format: language-COUNTRY (e.g., es-CO)')
   .describe('Locale in format language-COUNTRY');
 
 /**
@@ -50,34 +47,22 @@ export const timezoneSchema = z
  * Create TenantConfig Schema
  */
 export const createTenantConfigSchema = z.object({
+  businessAddress: z.string().max(MAX_ADDRESS_LENGTH, 'Address cannot exceed 500 characters').optional().nullable(),
   businessName: z
     .string()
     .min(1, 'Business name is required')
     .max(MAX_BUSINESS_NAME_LENGTH, 'Business name cannot exceed 100 characters'),
+  contactEmail: z.string().email('Invalid email format').optional().nullable(),
+  contactPhone: z.string().max(MAX_PHONE_LENGTH, 'Phone number cannot exceed 20 characters').optional().nullable(),
   currency: currencyCodeSchema,
+  locale: localeSchema.default('es-CO'),
   quoteValidityDays: z
     .number()
     .int('Quote validity must be a whole number')
     .min(1, 'Quote validity must be at least 1 day')
     .max(MAX_QUOTE_VALIDITY_DAYS, 'Quote validity cannot exceed 365 days')
     .default(DEFAULT_QUOTE_VALIDITY_DAYS),
-  locale: localeSchema.default('es-CO'),
   timezone: timezoneSchema.default('America/Bogota'),
-  contactEmail: z
-    .string()
-    .email('Invalid email format')
-    .optional()
-    .nullable(),
-  contactPhone: z
-    .string()
-    .max(MAX_PHONE_LENGTH, 'Phone number cannot exceed 20 characters')
-    .optional()
-    .nullable(),
-  businessAddress: z
-    .string()
-    .max(MAX_ADDRESS_LENGTH, 'Address cannot exceed 500 characters')
-    .optional()
-    .nullable(),
 });
 
 /**
@@ -90,8 +75,8 @@ export const updateTenantConfigSchema = createTenantConfigSchema.partial();
  * TenantConfig Response Schema
  */
 export const tenantConfigResponseSchema = createTenantConfigSchema.extend({
-  id: z.string().cuid(),
   createdAt: z.date(),
+  id: z.string().cuid(),
   updatedAt: z.date(),
 });
 

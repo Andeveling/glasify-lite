@@ -50,7 +50,7 @@ async function rollback(): Promise<void> {
 }
 
 // Only run if executed directly (ES module compatible)
-const isMainModule = process.argv[ 1 ]?.endsWith('rollback-tenant-config.ts') ?? false;
+const isMainModule = process.argv[1]?.endsWith('rollback-tenant-config.ts') ?? false;
 
 if (isMainModule) {
   rollback()

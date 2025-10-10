@@ -12,6 +12,7 @@ import { TRPCError } from '@trpc/server';
 import logger from '@/lib/logger';
 import type { CartItem } from '@/types/cart.types';
 import type { GenerateQuoteInput } from '@/types/quote.types';
+import { getTenantCurrency, getQuoteValidityDays } from '@/server/utils/tenant';
 
 /** Correlation ID prefix length for userId truncation */
 const CORRELATION_ID_USER_PREFIX_LENGTH = 8;
@@ -30,7 +31,7 @@ export type GenerateQuoteResult = {
  * Generate a formal quote from cart items
  *
  * This function:
- * 1. Validates manufacturer exists and gets quote validity period
+ * 1. Gets tenant configuration for currency and quote validity period
  * 2. Calculates validUntil date (createdAt + quoteValidityDays)
  * 3. Creates Quote and QuoteItems in a single transaction
  * 4. Locks prices at quote generation time (not cart add time)
@@ -39,14 +40,13 @@ export type GenerateQuoteResult = {
  * @param userId - Authenticated user ID (required for quote ownership)
  * @param input - Cart items and project details
  * @returns Quote creation result with ID and metadata
- * @throws TRPCError - If manufacturer not found, cart empty, or transaction fails
+ * @throws TRPCError - If cart empty or transaction fails
  *
  * @example
  * ```typescript
  * const result = await generateQuoteFromCart(prisma, 'user123', {
  *   cartItems: [...],
  *   projectAddress: { ... },
- *   manufacturerId: 'mfg123',
  * });
  * ```
  */
@@ -62,7 +62,6 @@ export async function generateQuoteFromCart(
     logger.info('[QuoteService] Starting quote generation', {
       correlationId,
       itemCount: input.cartItems.length,
-      manufacturerId: input.manufacturerId,
       userId,
     });
 
@@ -76,40 +75,21 @@ export async function generateQuoteFromCart(
 
     // Execute quote creation in a transaction
     const result = await db.$transaction(async (tx) => {
-      // 1. Get manufacturer data (for currency and quote validity period)
-      const manufacturer = await tx.manufacturer.findUnique({
-        select: {
-          currency: true,
-          id: true,
-          name: true,
-          quoteValidityDays: true,
-        },
-        where: { id: input.manufacturerId },
-      });
-
-      if (!manufacturer) {
-        logger.error('[QuoteService] Manufacturer not found', {
-          correlationId,
-          manufacturerId: input.manufacturerId,
-        });
-
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Fabricante no encontrado',
-        });
-      }
+      // 1. Get tenant configuration for currency and quote validity period
+      const currency = await getTenantCurrency(tx);
+      const quoteValidityDays = await getQuoteValidityDays(tx);
 
       // 2. Calculate validUntil date
       const now = new Date();
       const validUntil = new Date(now);
-      validUntil.setDate(validUntil.getDate() + manufacturer.quoteValidityDays);
+      validUntil.setDate(validUntil.getDate() + quoteValidityDays);
 
       // 3. Calculate total from cart items
       const total = input.cartItems.reduce((sum, item) => sum + item.subtotal, 0);
 
       logger.info('[QuoteService] Quote metadata calculated', {
         correlationId,
-        currency: manufacturer.currency,
+        currency,
         total,
         validUntil: validUntil.toISOString(),
       });
@@ -118,8 +98,8 @@ export async function generateQuoteFromCart(
       const quote = await tx.quote.create({
         data: {
           contactPhone: input.contactPhone,
-          currency: manufacturer.currency,
-          manufacturerId: manufacturer.id,
+          currency,
+          manufacturerId: input.manufacturerId || null, // REFACTOR: Deprecated field, kept for backward compatibility
           projectCity: input.projectAddress.projectCity,
           projectName: input.projectAddress.projectName,
           projectPostalCode: input.projectAddress.projectPostalCode,
@@ -213,23 +193,22 @@ export async function generateQuoteFromCart(
 /**
  * Validate cart items consistency
  *
- * Ensures all cart items belong to the same manufacturer
- * (prevents mixing items from different manufacturers)
- *
+ * @deprecated This function is deprecated and will be removed in a future version.
+ * Manufacturer consistency validation is no longer needed with the new TenantConfig architecture.
+ * 
  * @param cartItems - Array of cart items to validate
- * @param expectedManufacturerId - Expected manufacturer ID
- * @throws TRPCError - If items from different manufacturers are detected
+ * @param expectedManufacturerId - Expected manufacturer ID (deprecated parameter)
  */
 export function validateCartManufacturerConsistency(cartItems: CartItem[], expectedManufacturerId: string): void {
-  // This function can be extended in the future to validate manufacturer consistency
-  // For now, we trust the manufacturerId from the input
-  // In a multi-manufacturer scenario, we would validate here
-
-  logger.info('[QuoteService] Cart manufacturer validation', {
-    expectedManufacturerId,
+  // REFACTOR: This function is deprecated
+  // With the new TenantConfig architecture, there's no manufacturer association
+  // All quotes use the tenant's configuration for currency and validity
+  
+  logger.info('[QuoteService] Cart validation (deprecated)', {
     itemCount: cartItems.length,
+    note: 'Manufacturer consistency validation is deprecated',
   });
 
-  // Future enhancement: Query all models and verify they belong to expectedManufacturerId
-  // For MVP, this is a placeholder
+  // Function kept for backward compatibility but does nothing
+  // Will be removed in Phase 5 when UI is updated
 }
