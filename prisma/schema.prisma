@@ -238,8 +238,12 @@ model Quote {
   items          QuoteItem[]
   adjustments    Adjustment[]
 
+  // Performance indexes for quote queries (T079)
   @@index([manufacturerId, status])
-  @@index([userId])
+  @@index([userId]) // Original index
+  @@index([userId, status]) // Composite index for filtering by user + status
+  @@index([userId, createdAt(sort: Desc)]) // Optimized for sorting by createdAt DESC
+  @@index([userId, validUntil]) // Optimized for expired quotes filtering
 }
 
 model QuoteItem {
