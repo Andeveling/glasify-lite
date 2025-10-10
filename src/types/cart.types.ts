@@ -64,8 +64,7 @@ export type CartItem = {
   dimensions: {
     widthMm: number;
     heightMm: number;
-
-  }
+  };
 };
 
 /**

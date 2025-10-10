@@ -152,16 +152,16 @@ export function validateCartItem(item: unknown): { valid: boolean; error?: strin
   ];
 
   for (const field of requiredStringFields) {
-    if (!cartItem[ field ] || typeof cartItem[ field ] !== 'string') {
+    if (!cartItem[field] || typeof cartItem[field] !== 'string') {
       return { error: `Campo requerido: ${field}`, valid: false };
     }
   }
 
   // Required number fields
-  const requiredNumberFields: Array<keyof CartItem> = [ 'widthMm', 'heightMm', 'quantity', 'unitPrice', 'subtotal' ];
+  const requiredNumberFields: Array<keyof CartItem> = ['widthMm', 'heightMm', 'quantity', 'unitPrice', 'subtotal'];
 
   for (const field of requiredNumberFields) {
-    if (typeof cartItem[ field ] !== 'number' || cartItem[ field ] === undefined) {
+    if (typeof cartItem[field] !== 'number' || cartItem[field] === undefined) {
       return { error: `Campo numérico requerido: ${field}`, valid: false };
     }
   }
