@@ -216,15 +216,15 @@ Model (Window/Door products)
 
 - GOAL-006: Update TypeScript types and Zod schemas
 
-| Task     | Description                                                                                   | Completed | Date |
-| -------- | --------------------------------------------------------------------------------------------- | --------- | ---- |
-| TASK-038 | Update `src/types/quote.types.ts` to remove `InconsistentManufacturer` error                  |           |      |
-| TASK-039 | Update `src/app/(public)/catalog/[modelId]/_types/model.types.ts` to use `profileSupplier`    |           |      |
-| TASK-040 | Generate Prisma Client types: `pnpm prisma generate`                                          |           |      |
-| TASK-041 | Update all type imports from `Manufacturer` to `TenantConfig` and `ProfileSupplier`           |           |      |
-| TASK-042 | Create Zod schema for `TenantConfig` validation in `src/server/schemas/tenant.schema.ts`      |           |      |
-| TASK-043 | Create Zod schema for `ProfileSupplier` validation in `src/server/schemas/supplier.schema.ts` |           |      |
-| TASK-044 | Run TypeScript type check: `pnpm typecheck`                                                   |           |      |
+| Task     | Description                                                                                   | Completed | Date       |
+| -------- | --------------------------------------------------------------------------------------------- | --------- | ---------- |
+| TASK-038 | Update `src/types/quote.types.ts` to remove `InconsistentManufacturer` error                  | ✅         | 2025-01-19 |
+| TASK-039 | Update `src/app/(public)/catalog/[modelId]/_types/model.types.ts` to use `profileSupplier`    | ✅         | 2025-01-19 |
+| TASK-040 | Generate Prisma Client types: `pnpm prisma generate`                                          | ✅         | 2025-01-19 |
+| TASK-041 | Update all type imports from `Manufacturer` to `TenantConfig` and `ProfileSupplier`           | ✅         | 2025-01-19 |
+| TASK-042 | Create Zod schema for `TenantConfig` validation in `src/server/schemas/tenant.schema.ts`      | ✅         | 2025-01-19 |
+| TASK-043 | Create Zod schema for `ProfileSupplier` validation in `src/server/schemas/supplier.schema.ts` | ✅         | 2025-01-19 |
+| TASK-044 | Run TypeScript type check: `pnpm typecheck`                                                   | ✅         | 2025-01-19 |
 
 ### Implementation Phase 7: Testing & Validation
 
