@@ -109,8 +109,9 @@ Model (Window/Door products)
 | TASK-016 | Validate data integrity post-migration (row counts, foreign keys)                                | ✅         | 2025-10-10 |
 
 ### Phase 3: tRPC Router Updates
-**Status**: 🔄 IN PROGRESS  
+**Status**: ✅ COMPLETE  
 **Estimated Time**: 3 hours  
+**Actual Time**: ~3.5 hours
 **Dependencies**: Phase 2 complete
 
 **Goal**: Update all tRPC routers to use TenantConfig and ProfileSupplier instead of Manufacturer.
@@ -119,22 +120,45 @@ Model (Window/Door products)
   - [x] `getTenantConfig()` - Get full TenantConfig (updated with transaction support)
   - [x] `getTenantCurrency()` - Get currency field (updated with transaction support)
   - [x] `getQuoteValidityDays()` - Get validity days (updated with transaction support)
+  - [x] Added optional `client` parameter for transaction compatibility
 - [x] **TASK-015**: Create Zod validation schemas for new models
-  - [x] `src/server/schemas/tenant.schema.ts` - TenantConfig schemas
+  - [x] `src/server/schemas/tenant.schema.ts` - TenantConfig schemas with constants
   - [x] `src/server/schemas/supplier.schema.ts` - ProfileSupplier schemas
 - [x] **TASK-016**: Create `src/server/api/routers/admin/tenant-config.ts` with CRUD procedures
+  - [x] `get` - Returns singleton TenantConfig
+  - [x] `update` - Updates singleton with validation
+  - [x] `getCurrency` - Returns currency field only
+  - [x] `getQuoteValidityDays` - Returns validity period only
 - [x] **TASK-017**: Create `src/server/api/routers/admin/profile-supplier.ts` with CRUD procedures
+  - [x] `list` - Query with filters (isActive, materialType, search)
+  - [x] `getById` - Fetch single supplier
+  - [x] `create` - Create with duplicate name check
+  - [x] `update` - Update with duplicate name check
+  - [x] `delete` - Delete with model association check
+  - [x] `toggleActive` - Toggle isActive flag
 - [x] **TASK-018**: Update `src/server/api/routers/admin/admin.ts` to use ProfileSupplier instead of Manufacturer
+  - [x] Created `validateProfileSupplierExists()` helper
+  - [x] Updated `modelUpsertInput` schema to use optional `profileSupplierId`
+  - [x] Refactored mutation logic to remove manufacturer dependency
+  - [x] Simplified validation (removed manufacturer ownership checks)
 - [x] **TASK-019**: Update catalog schemas in `src/server/api/routers/catalog/catalog.schemas.ts`
   - [x] Updated `glassTypeOutput` to have nullable manufacturerId and optional profileSupplierId
   - [x] Updated `serviceOutput` to have nullable manufacturerId
 - [x] **TASK-020**: Update tenant utilities to support transaction clients
   - [x] Added optional `client` parameter to all tenant utility functions
   - [x] Functions now work with both standalone and transaction contexts
-- [x] **TASK-021**: Update `src/server/api/routers/quote/quote.ts` to use TenantConfig (PARTIAL)
-  - [x] Added imports for `getTenantCurrency` and `getQuoteValidityDays`
-  - [x] Updated quote creation to use tenant utilities instead of model.manufacturer
-  - [ ] Fix remaining manufacturer references in quote procedures (IN PROGRESS)
+  - [x] Added TypeScript type `TransactionClient` for type safety
+- [x] **TASK-021**: Update `src/server/api/routers/quote/quote.ts` to use TenantConfig
+  - [x] Added imports for tenant utility functions
+  - [x] Updated `calculate-item` mutation to use `getTenantCurrency()` and `getQuoteValidityDays()`
+  - [x] Updated `get-by-id` query to fetch `businessName` from TenantConfig
+  - [x] Updated `submit` mutation to use TenantConfig (email notifications disabled temporarily)
+  - [x] Added TODO for admin email lookup from User table with admin role
+  - [x] Updated `quote.actions.ts` to handle nullable manufacturerId
+
+**Known Issues / TODOs**:
+- [ ] Email notifications in quote submission temporarily disabled (need admin user lookup implementation)
+- [ ] `quote.service.ts` still uses deprecated Manufacturer model (will be addressed in Phase 4)
 
 ### Implementation Phase 4: Service Layer Updates
 

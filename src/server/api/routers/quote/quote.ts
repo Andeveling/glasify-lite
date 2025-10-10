@@ -5,7 +5,7 @@ import logger from '@/lib/logger';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc';
 import { calculatePriceItem, type PriceAdjustmentInput, type PriceServiceInput } from '@/server/price/price-item';
 import { sendQuoteNotification } from '@/server/services/email';
-import { getTenantCurrency, getTenantConfigSelect, getQuoteValidityDays } from '@/server/utils/tenant';
+import { getQuoteValidityDays, getTenantConfigSelect, getTenantCurrency } from '@/server/utils/tenant';
 import { getQuoteByIdInput, getQuoteByIdOutput, listUserQuotesInput, listUserQuotesOutput } from './quote.schemas';
 
 // Input schemas
@@ -457,10 +457,7 @@ export const quoteRouter = createTRPCRouter({
         }
 
         // Get tenant business name for display
-        const tenant = await getTenantConfigSelect(
-          { businessName: true },
-          ctx.db
-        );
+        const tenant = await getTenantConfigSelect({ businessName: true }, ctx.db);
 
         const result = {
           contactPhone: quote.contactPhone ?? undefined,
@@ -677,15 +674,12 @@ export const quoteRouter = createTRPCRouter({
           });
 
           // Get tenant config for email notification
-          const tenant = await getTenantConfigSelect(
-            { businessName: true, currency: true },
-            tx
-          );
+          const tenant = await getTenantConfigSelect({ businessName: true, currency: true }, tx);
 
           // TODO: REFACTOR - Get admin email from User table with admin role
           // For now, email notification is disabled until we implement proper admin user lookup
           const manufacturerEmail: string | undefined = undefined;
-          
+
           if (manufacturerEmail) {
             try {
               await sendQuoteNotification(
@@ -694,13 +688,13 @@ export const quoteRouter = createTRPCRouter({
                   contactPhone: input.contact.phone,
                   quote: {
                     ...updatedQuote,
-                    manufacturer: {
-                      name: tenant.businessName,
-                      currency: tenant.currency,
-                    },
                     items: updatedQuote.items.map((item) => ({
                       subtotal: item.subtotal.toNumber(),
                     })),
+                    manufacturer: {
+                      currency: tenant.currency,
+                      name: tenant.businessName,
+                    },
                   },
                 },
                 manufacturerEmail
