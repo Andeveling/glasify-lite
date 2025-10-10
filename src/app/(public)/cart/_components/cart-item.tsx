@@ -17,7 +17,7 @@
 'use client';
 
 import { Check, Minus, Pencil, Plus, Trash2, X } from 'lucide-react';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -55,6 +55,10 @@ export type CartItemProps = {
 /**
  * Cart item row component
  *
+ * Performance: Wrapped with React.memo to prevent unnecessary re-renders
+ * when other cart items change. Only re-renders when item data, callbacks,
+ * or props actually change.
+ *
  * @example
  * ```tsx
  * <CartItem
@@ -66,14 +70,14 @@ export type CartItemProps = {
  * />
  * ```
  */
-export function CartItem({
+const CartItemComponent = ({
   item,
   onUpdateName,
   onUpdateQuantity,
   onRemove,
   currency = 'MXN',
   isUpdating = false,
-}: CartItemProps) {
+}: CartItemProps) => {
   const [editedName, setEditedName] = useState(item.name);
   const [editMode, setEditMode] = useState(false);
   const [nameError, setNameError] = useState<string | null>(null);
@@ -305,4 +309,40 @@ export function CartItem({
       </div>
     </div>
   );
-}
+};
+
+/**
+ * Memoized CartItem component for performance optimization
+ *
+ * Custom comparison function ensures component only re-renders when:
+ * - item.id changes
+ * - item.name changes
+ * - item.quantity changes
+ * - item.unitPrice changes
+ * - item.subtotal changes
+ * - isUpdating changes
+ * - currency changes
+ *
+ * Callback props (onUpdateName, onUpdateQuantity, onRemove) are assumed
+ * to be stable (wrapped with useCallback in parent).
+ */
+export const CartItem = memo(CartItemComponent, (prevProps, nextProps) => {
+  // Re-render if item data changed
+  if (
+    prevProps.item.id !== nextProps.item.id ||
+    prevProps.item.name !== nextProps.item.name ||
+    prevProps.item.quantity !== nextProps.item.quantity ||
+    prevProps.item.unitPrice !== nextProps.item.unitPrice ||
+    prevProps.item.subtotal !== nextProps.item.subtotal
+  ) {
+    return false; // Props changed, re-render
+  }
+
+  // Re-render if state props changed
+  if (prevProps.isUpdating !== nextProps.isUpdating || prevProps.currency !== nextProps.currency) {
+    return false; // Props changed, re-render
+  }
+
+  // Props are equal, skip re-render
+  return true;
+});

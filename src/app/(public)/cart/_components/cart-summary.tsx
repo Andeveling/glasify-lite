@@ -10,6 +10,7 @@
  * - Prominent "Generate Quote" CTA button
  * - Empty cart detection
  * - Loading/disabled states
+ * - Authentication check before quote generation
  *
  * @module app/(public)/cart/_components/cart-summary
  */
@@ -17,8 +18,11 @@
 'use client';
 
 import { ShoppingCart } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import logger from '@/lib/logger';
 import { cn } from '@/lib/utils';
 import type { CartSummary as CartSummaryType } from '@/types/cart.types';
 
@@ -30,7 +34,7 @@ export type CartSummaryProps = {
   /** Cart summary data */
   summary: CartSummaryType;
 
-  /** Callback when "Generate Quote" is clicked */
+  /** Callback when "Generate Quote" is clicked (only called if authenticated) */
   onGenerateQuote?: () => void;
 
   /** Whether quote generation is in progress */
@@ -56,6 +60,46 @@ export type CartSummaryProps = {
  * ```
  */
 export function CartSummary({ summary, onGenerateQuote, isGenerating = false, className }: CartSummaryProps) {
+  const router = useRouter();
+  const { data: session, status } = useSession();
+  const isAuthenticated = status === 'authenticated';
+  const isLoading = status === 'loading';
+
+  /**
+   * Handle "Generate Quote" button click
+   *
+   * Redirects to sign-in if unauthenticated, otherwise navigates to quote generation page
+   */
+  const handleGenerateQuote = () => {
+    // Check authentication before proceeding
+    if (!isAuthenticated) {
+      logger.info('User not authenticated, redirecting to sign-in', {
+        action: 'generate-quote-redirect',
+        cartItemCount: summary.itemCount,
+        correlationId: crypto.randomUUID(),
+      });
+
+      // Redirect to sign-in with callback to quote generation
+      router.push('/api/auth/signin?callbackUrl=/quote/new');
+      return;
+    }
+
+    // User is authenticated, navigate to quote generation page
+    logger.info('Navigating to quote generation page', {
+      action: 'generate-quote-navigate',
+      cartItemCount: summary.itemCount,
+      correlationId: crypto.randomUUID(),
+      userId: session?.user?.id,
+    });
+
+    // Use callback if provided, otherwise navigate to quote generation page
+    if (onGenerateQuote) {
+      onGenerateQuote();
+    } else {
+      router.push('/quote/new');
+    }
+  };
+
   return (
     <Card className={cn('sticky top-4', className)}>
       <CardHeader>
@@ -87,16 +131,23 @@ export function CartSummary({ summary, onGenerateQuote, isGenerating = false, cl
         </div>
       </CardContent>
 
-      <CardFooter>
+      <CardFooter className="flex-col gap-2">
         <Button
           className="w-full"
-          disabled={summary.isEmpty || isGenerating}
-          onClick={onGenerateQuote}
+          disabled={summary.isEmpty || isGenerating || isLoading}
+          onClick={handleGenerateQuote}
           size="lg"
           type="button"
         >
           {isGenerating ? 'Generando...' : 'Generar cotización'}
         </Button>
+
+        {/* Auth hint for unauthenticated users */}
+        {isAuthenticated || summary.isEmpty ? null : (
+          <p className="text-center text-muted-foreground text-xs">
+            Se requiere autenticación para generar cotizaciones
+          </p>
+        )}
       </CardFooter>
 
       {/* Empty cart helper text */}
