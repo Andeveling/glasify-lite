@@ -311,6 +311,117 @@ Task: "QuoteItem component in src/app/(public)/_components/quote/quote-item.tsx"
 
 ## Data Model Architecture
 
+### Tenant Configuration (Singleton Pattern)
+
+Glasify uses a **Singleton Pattern** for tenant configuration, representing the carpentry shop owner using the application. This pattern ensures there's only ONE business configuration across the entire application.
+
+#### TenantConfig Entity
+
+```
+┌────────────────────────────────┐
+│        TenantConfig            │  (Singleton - Always id: "1")
+├────────────────────────────────┤
+│ id: string                     │  Primary Key (always "1")
+│ businessName: string           │  Business legal name
+│ businessAddress: string?       │  Physical address
+│ contactEmail: string?          │  Contact email
+│ contactPhone: string?          │  Contact phone
+│ currency: string               │  Currency code (COP, USD, etc.)
+│ locale: string                 │  Locale code (es-CO, es-CL, etc.)
+│ timezone: string               │  Timezone (America/Bogota, etc.)
+│ quoteValidityDays: int         │  Quote expiration period
+│ createdAt: DateTime            │  Creation timestamp
+│ updatedAt: DateTime            │  Last update timestamp
+└────────────────────────────────┘
+```
+
+**Key Characteristics**:
+- **Singleton Constraint**: Database enforces only ONE record (`id: "1"`)
+- **Protected**: Cannot be deleted (application-level validation)
+- **Global Configuration**: Used across all quotes, models, and business logic
+- **No Foreign Keys**: Does not reference or link to other entities
+
+#### ProfileSupplier Entity (Window/Door Profile Manufacturers)
+
+ProfileSupplier represents the actual manufacturers of window/door profiles (Rehau, Deceuninck, Azembla, etc.).
+
+```
+┌────────────────────────────────┐
+│      ProfileSupplier           │
+├────────────────────────────────┤
+│ id: string                     │  Primary Key (cuid)
+│ name: string (unique)          │  Supplier name (Rehau, Deceuninck)
+│ materialType: MaterialType     │  PVC | ALUMINUM | WOOD | MIXED
+│ isActive: boolean              │  Active/Inactive status
+│ createdAt: DateTime            │  Creation timestamp
+│ updatedAt: DateTime            │  Last update timestamp
+│                                │
+│ models: Model[]                │  One-to-Many: related models
+└────────────────────────────────┘
+```
+
+**Relationships**:
+- **One ProfileSupplier → Many Models** (one-to-many)
+- **No direct relationship with TenantConfig** (separate concerns)
+
+#### Architecture Rationale
+
+**Before (❌ Incorrect)**:
+```
+Manufacturer (multipurpose, confusing)
+  ├─ id: "1" → "Carpintería El Sol" (tenant)
+  ├─ id: "2" → "Rehau" (profile supplier)
+  ├─ id: "3" → "Deceuninck" (profile supplier)
+  └─ id: "4" → "Azembla" (profile supplier)
+```
+**Problem**: Single entity with dual responsibility (violates Single Responsibility Principle)
+
+**After (✅ Correct)**:
+```
+TenantConfig (singleton)
+  └─ id: "1" → "Carpintería El Sol" (business configuration)
+
+ProfileSupplier (many records)
+  ├─ id: "abc123" → "Rehau" (PVC profile supplier)
+  ├─ id: "def456" → "Deceuninck" (PVC profile supplier)
+  └─ id: "ghi789" → "Azembla" (Aluminum profile supplier)
+
+Model (window/door products)
+  └─ profileSupplierId: "abc123" (links to Rehau)
+```
+**Benefits**: Clear separation of concerns, SOLID principles, semantic clarity
+
+#### Usage in Application
+
+**Accessing Tenant Configuration**:
+```typescript
+import { getTenantConfig } from '@/server/utils/tenant';
+
+// In tRPC router or Server Component
+const tenantConfig = await getTenantConfig();
+const currency = tenantConfig.currency; // "COP"
+const validityDays = tenantConfig.quoteValidityDays; // 15
+```
+
+**Querying Profile Suppliers**:
+```typescript
+// tRPC procedure
+const suppliers = await prisma.profileSupplier.findMany({
+  where: { isActive: true, materialType: 'PVC' },
+  include: { models: true },
+});
+```
+
+**Quote Generation Flow**:
+```
+1. User selects Model (references profileSupplierId)
+2. System fetches TenantConfig (for currency, quote validity)
+3. Quote created with:
+   ├─ currency: from TenantConfig
+   ├─ validUntil: today + TenantConfig.quoteValidityDays
+   └─ items: reference Models (which link to ProfileSuppliers)
+```
+
 ### Glass Classification System (Many-to-Many)
 
 Glasify uses a sophisticated **Many-to-Many relationship** between `GlassType` and `GlassSolution` to enable multi-dimensional glass classification beyond simple categories.
@@ -325,7 +436,7 @@ Glasify uses a sophisticated **Many-to-Many relationship** between `GlassType` a
 │ name: string     │         │ solutionId: string   │         │ key: string     │
 │ thickness: float │         │ isPrimary: boolean   │         │ nameEs: string  │
 │ purpose: enum ⚠️ │         │ securityRating: enum │         │ nameEn: string  │
-│ manufacturerId   │         │ acousticRating: enum │         │ icon: string    │
+│                  │         │ acousticRating: enum │         │ icon: string    │
 │                  │         │ thermalRating: enum  │         │ descriptionEs   │
 │                  │         │ energyRating: enum   │         │                 │
 └──────────────────┘         └──────────────────────┘         └─────────────────┘
@@ -335,6 +446,8 @@ Glasify uses a sophisticated **Many-to-Many relationship** between `GlassType` a
 ```
 
 ⚠️ **Deprecated Field**: `purpose` is marked `@deprecated` and will be removed in v2.0. Use `solutions` relationship instead.
+
+**Note**: GlassType no longer references `manufacturerId`. Glass types are global catalog items not tied to specific profile suppliers.
 
 #### Glass Solutions
 
