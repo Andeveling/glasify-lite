@@ -36,16 +36,16 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T008 Create shared TypeScript types in `src/types/cart.types.ts` - Define CartItem, CartState, CartSummary interfaces
-- [ ] T009 [P] Create shared TypeScript types in `src/types/quote.types.ts` - Define QuoteInput, QuoteOutput interfaces
-- [ ] T010 Create utility function in `src/lib/utils/generate-item-name.ts` - Implement auto-naming algorithm (model prefix + sequence)
-- [ ] T011 [P] Create utility functions in `src/lib/utils/cart.utils.ts` - Calculate totals, validate cart items
-- [ ] T012 Create sessionStorage wrapper hook in `src/app/(public)/cart/_hooks/use-cart-storage.ts` - Handle persistence and hydration
-- [ ] T013 Extend tRPC configuration in `src/server/api/trpc.ts` - Add `serverActionProcedure` and `protectedActionProcedure` builders
-- [ ] T014 [P] Create tRPC Server Action schemas in `src/server/api/schemas/cart-actions.schema.ts` - Import from contracts/cart-actions.schema.ts
-- [ ] T015 [P] Create tRPC query schemas in `src/server/api/schemas/quote-queries.schema.ts` - Import from contracts/quote-queries.schema.ts
+- [x] T008 Create shared TypeScript types in `src/types/cart.types.ts` - Define CartItem, CartState, CartSummary interfaces
+- [x] T009 [P] Create shared TypeScript types in `src/types/quote.types.ts` - Define QuoteInput, QuoteOutput interfaces
+- [x] T010 Create utility function in `src/lib/utils/generate-item-name.ts` - Implement auto-naming algorithm (model prefix + sequence)
+- [x] T011 [P] Create utility functions in `src/lib/utils/cart.utils.ts` - Calculate totals, validate cart items
+- [x] T012 Create sessionStorage wrapper hook in `src/app/(public)/cart/_hooks/use-cart-storage.ts` - Handle persistence and hydration
+- [x] T013 Extend tRPC configuration in `src/server/api/trpc.ts` - Add `serverActionProcedure` and `protectedActionProcedure` builders
+- [x] T014 [P] Create tRPC Server Action schemas in `src/server/api/routers/cart/cart.schemas.ts` - Cart operation schemas
+- [x] T015 [P] Create tRPC query schemas in `src/server/api/routers/quote/quote.schemas.ts` - Quote operation schemas
 
-**Checkpoint**: Foundation ready - user story implementation can now begin in parallel
+**Checkpoint**: Foundation ready - user story implementation can now begin in parallel ✅
 
 ---
 
@@ -95,29 +95,29 @@
 
 ### Contract Tests for User Story 2
 
-- [ ] T030 [P] [US2] Create contract test in `tests/contract/api/cart-queries.test.ts` - Test cart.listItems and cart.getTotals query schemas
+- [x] T030 [P] [US2] Create contract test in `tests/contract/api/cart-queries.test.ts` - Test cart.listItems and cart.getTotals query schemas
 
 ### Unit Tests for User Story 2
 
-- [ ] T031 [P] [US2] Create unit test in `tests/unit/hooks/use-debounced-cart-update.test.ts` - Test debounced quantity updates
-- [ ] T032 [P] [US2] Create unit test in `tests/unit/components/cart-item.test.ts` - Test inline name editing, quantity adjustment
+- [x] T031 [P] [US2] Create unit test in `tests/unit/hooks/use-debounced-cart-update.test.ts` - Test debounced quantity updates
+- [x] T032 [P] [US2] Create unit test in `tests/unit/components/cart-item.test.ts` - Test inline name editing, quantity adjustment
 
 ### Implementation for User Story 2
 
-- [ ] T033 [P] [US2] Create CartItem component in `src/app/(public)/cart/_components/cart-item.tsx` - Display item row with editable name, quantity controls, remove button
-- [ ] T034 [P] [US2] Create CartSummary component in `src/app/(public)/cart/_components/cart-summary.tsx` - Display totals and "Generate Quote" CTA
-- [ ] T035 [P] [US2] Create EmptyCartState component in `src/app/(public)/cart/_components/empty-cart-state.tsx` - Show message with link to catalog
-- [ ] T036 [US2] Create cart page in `src/app/(public)/cart/page.tsx` - Render cart items table, integrate components
-- [ ] T037 [P] [US2] Create tRPC Server Actions in `src/app/_actions/cart.actions.ts` - Add updateCartItemAction and removeFromCartAction
-- [ ] T038 [US2] Add real-time price recalculation hook in `src/app/(public)/cart/_hooks/use-cart-price-sync.ts` - Use catalog.calculate-price on quantity changes
-- [ ] T039 [US2] Add Winston logging for cart updates - Log edit, remove, recalculation events
+- [x] T033 [P] [US2] Create CartItem component in `src/app/(public)/cart/_components/cart-item.tsx` - Display item row with editable name, quantity controls, remove button
+- [x] T034 [P] [US2] Create CartSummary component in `src/app/(public)/cart/_components/cart-summary.tsx` - Display totals and "Generate Quote" CTA
+- [x] T035 [P] [US2] Create EmptyCartState component in `src/app/(public)/cart/_components/empty-cart-state.tsx` - Show message with link to catalog
+- [x] T036 [US2] Create cart page in `src/app/(public)/cart/page.tsx` - Render cart items table, integrate components
+- [x] T037 [P] [US2] Create tRPC Server Actions in `src/app/_actions/cart.actions.ts` - Add updateCartItemAction and removeFromCartAction (SKIPPED: Cart is client-side only, managed by useCart hook)
+- [x] T038 [US2] Add real-time price recalculation hook in `src/app/(public)/cart/_hooks/use-cart-price-sync.ts` - Use catalog.calculate-price on quantity changes
+- [x] T039 [US2] Add Winston logging for cart updates - Log edit, remove, recalculation events (Already implemented in useCart hook)
 
 ### E2E Tests for User Story 2
 
-- [ ] T040 [US2] Create E2E test in `e2e/cart/cart-management.spec.ts` - Test editing item names, adjusting quantities, removing items, verify totals update
-- [ ] T041 [US2] Create E2E test in `e2e/cart/empty-cart-state.spec.ts` - Test empty cart display, navigation to catalog
+- [x] T040 [US2] Create E2E test in `e2e/cart/cart-management.spec.ts` - Test editing item names, adjusting quantities, removing items, verify totals update
+- [x] T041 [US2] Create E2E test in `e2e/cart/empty-cart-state.spec.ts` - Test empty cart display, navigation to catalog
 
-**Checkpoint**: User Story 2 complete - users can manage cart items with real-time updates
+**Checkpoint**: User Story 2 complete - users can manage cart items with real-time updates ✅
 
 ---
 

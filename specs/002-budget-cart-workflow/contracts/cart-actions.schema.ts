@@ -124,7 +124,7 @@ export const cartActionResponse = z.discriminatedUnion('success', [
   }),
   z.object({
     error: z.object({
-      code: z.enum([ 'VALIDATION_ERROR', 'NOT_FOUND', 'LIMIT_EXCEEDED', 'UNKNOWN' ]),
+      code: z.enum(['VALIDATION_ERROR', 'NOT_FOUND', 'LIMIT_EXCEEDED', 'UNKNOWN']),
       message: z.string(),
     }),
     success: z.literal(false),

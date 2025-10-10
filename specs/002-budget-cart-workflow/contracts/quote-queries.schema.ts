@@ -38,9 +38,9 @@ export const listUserQuotesInput = z.object({
   limit: z.number().int().positive().max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE),
   page: z.number().int().positive().default(1),
   search: z.string().min(1).max(MAX_PROJECT_NAME_LENGTH).optional(),
-  sortBy: z.enum([ 'createdAt', 'total', 'projectName' ]).default('createdAt'),
-  sortOrder: z.enum([ 'asc', 'desc' ]).default('desc'),
-  status: z.enum([ 'PENDING', 'APPROVED', 'REJECTED', 'EXPIRED' ]).optional(),
+  sortBy: z.enum(['createdAt', 'total', 'projectName']).default('createdAt'),
+  sortOrder: z.enum(['asc', 'desc']).default('desc'),
+  status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'EXPIRED']).optional(),
 });
 
 export type ListUserQuotesInput = z.infer<typeof listUserQuotesInput>;
@@ -54,7 +54,7 @@ const quoteListItemSchema = z.object({
   itemCount: z.number().int().nonnegative(),
   projectAddress: z.string().nullable(),
   projectName: z.string(),
-  status: z.enum([ 'PENDING', 'APPROVED', 'REJECTED', 'EXPIRED' ]),
+  status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'EXPIRED']),
   total: z.number().nonnegative(),
   validUntil: z.date(),
 });
@@ -128,7 +128,7 @@ export const getQuoteByIdOutput = z.object({
   projectPostalCode: z.string().nullable(),
   projectState: z.string().nullable(),
   projectStreet: z.string().nullable(),
-  status: z.enum([ 'PENDING', 'APPROVED', 'REJECTED', 'EXPIRED' ]),
+  status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'EXPIRED']),
   total: z.number().nonnegative(),
   updatedAt: z.date(),
   user: z.object({
@@ -193,7 +193,7 @@ export const generateQuoteFromCartOutput = z.discriminatedUnion('success', [
   }),
   z.object({
     error: z.object({
-      code: z.enum([ 'VALIDATION_ERROR', 'UNAUTHORIZED', 'CART_EMPTY', 'PRICE_CHANGED', 'UNKNOWN' ]),
+      code: z.enum(['VALIDATION_ERROR', 'UNAUTHORIZED', 'CART_EMPTY', 'PRICE_CHANGED', 'UNKNOWN']),
       details: z.record(z.string(), z.unknown()).optional(),
       message: z.string(),
     }),
@@ -211,7 +211,7 @@ export type GenerateQuoteFromCartOutput = z.infer<typeof generateQuoteFromCartOu
  */
 export const updateQuoteStatusInput = z.object({
   id: z.string().cuid('ID de cotización debe ser válido'),
-  status: z.enum([ 'PENDING', 'APPROVED', 'REJECTED', 'EXPIRED' ]),
+  status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'EXPIRED']),
 });
 
 export type UpdateQuoteStatusInput = z.infer<typeof updateQuoteStatusInput>;
@@ -220,13 +220,13 @@ export const updateQuoteStatusOutput = z.discriminatedUnion('success', [
   z.object({
     data: z.object({
       id: z.string().cuid(),
-      status: z.enum([ 'PENDING', 'APPROVED', 'REJECTED', 'EXPIRED' ]),
+      status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'EXPIRED']),
     }),
     success: z.literal(true),
   }),
   z.object({
     error: z.object({
-      code: z.enum([ 'VALIDATION_ERROR', 'NOT_FOUND', 'UNAUTHORIZED', 'UNKNOWN' ]),
+      code: z.enum(['VALIDATION_ERROR', 'NOT_FOUND', 'UNAUTHORIZED', 'UNKNOWN']),
       message: z.string(),
     }),
     success: z.literal(false),
