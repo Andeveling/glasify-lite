@@ -5,6 +5,13 @@
 **Status**: Draft  
 **Input**: User description: "budget cart workflow with authentication and quote generation"
 
+## Clarifications
+
+### Session 2025-10-10
+
+- Q: Which shadcn/ui component should be used for displaying quote history tables in User Story 5? → A: Use shadcn/ui data-table component (https://ui.shadcn.com/docs/components/data-table) for quote history table display
+- Q: Cart Storage Strategy - sessionStorage vs localStorage fallback ambiguity → A: localStorage only - Cart persists indefinitely until manually cleared or quote generated
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Add configured window to budget cart (Priority: P1)
@@ -80,7 +87,7 @@ An authenticated user provides the project address/location and generates a form
 
 ### User Story 5 - Access and view quote history (Priority: P2)
 
-Authenticated users can access a "My Quotes" page to view all their generated quotes, sorted by date, with status and validity information.
+Authenticated users can access a "My Quotes" page to view all their generated quotes, sorted by date, with status and validity information. The quotes list will be displayed using shadcn/ui data-table component for proper table functionality (sorting, filtering, pagination).
 
 **Why this priority**: Important for user retention and quote management, but secondary to quote creation. Users need to track multiple quotes over time.
 
@@ -88,8 +95,8 @@ Authenticated users can access a "My Quotes" page to view all their generated qu
 
 **Acceptance Scenarios**:
 
-1. **Given** an authenticated user has generated 3 quotes, **When** they navigate to "My Quotes" page, **Then** all 3 quotes are listed in reverse chronological order (newest first)
-2. **Given** a user is viewing their quotes list, **When** they see each quote row, **Then** it displays: quote ID/name, creation date, total amount, status, validity end date, and a "View" action
+1. **Given** an authenticated user has generated 3 quotes, **When** they navigate to "My Quotes" page, **Then** all 3 quotes are listed in a data-table component in reverse chronological order (newest first)
+2. **Given** a user is viewing their quotes list, **When** they see each quote row in the data-table, **Then** it displays: quote ID/name, creation date, total amount, status, validity end date, and a "View" action
 3. **Given** a user's quote validity period has expired, **When** they view the quotes list, **Then** expired quotes are visually differentiated (e.g., grayed out or labeled "Expired")
 4. **Given** a user clicks "View" on a quote, **When** the quote detail page loads, **Then** they see all items, prices, project address, creation date, and validity information
 5. **Given** a user has never generated a quote, **When** they access "My Quotes" page, **Then** they see an empty state message with a link to browse catalog
@@ -131,7 +138,7 @@ Authenticated users can access a "My Quotes" page to view all their generated qu
 - **FR-019**: System MUST visually differentiate expired quotes (validUntil < today) in the quotes list
 - **FR-020**: System MUST provide a quote detail page showing all items, prices, address, creation date, and validity
 - **FR-021**: System MUST validate required address fields before creating quote
-- **FR-022**: System MUST persist cart data during authentication redirects (using session storage or server-side session)
+- **FR-022**: System MUST persist cart data using localStorage (survives browser close, cleared only on manual clear or quote generation)
 - **FR-023**: System MUST prevent quote generation when cart is empty
 
 ### Key Entities
@@ -160,7 +167,7 @@ Authenticated users can access a "My Quotes" page to view all their generated qu
 
 - Google OAuth is already configured and working (AUTH_GOOGLE_ID and AUTH_GOOGLE_SECRET environment variables exist)
 - NextAuth.js session management is functional for user authentication
-- Cart data will persist client-side using browser sessionStorage (cleared on browser close) with fallback to localStorage for longer persistence if needed
+- Cart data will persist client-side using browser localStorage (persists across browser sessions until manually cleared or quote generated)
 - Price calculations use existing tRPC procedure `catalog.calculate-price` which is already implemented
 - Model prefix for item naming will be extracted from the first word of the model name (e.g., "VEKA Premium" → "VEKA")
 - Sequential numbering resets per model type (each model has its own sequence)
