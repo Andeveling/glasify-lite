@@ -1,14 +1,46 @@
-/** biome-ignore-all lint/suspicious/noConsole: simplemente es un seed de prueba */
+/**
+ * ⚠️ DEPRECATED: Legacy Seed File
+ *
+ * This file is deprecated and should NOT be used for new projects.
+ *
+ * Please use the new Factory Pattern seeding system instead:
+ *
+ * ```bash
+ * # Minimal preset (10 records)
+ * pnpm seed:minimal
+ *
+ * # Demo client preset (30+ records)
+ * pnpm seed:demo
+ *
+ * # Full catalog preset (57+ records)
+ * pnpm seed:full
+ *
+ * # Custom preset with options
+ * pnpm seed --preset=minimal --verbose
+ * ```
+ *
+ * Migration Guide: See prisma/MIGRATION.md
+ *
+ * This file remains only for backward compatibility and will be removed
+ * in a future version.
+ *
+ * @deprecated Use prisma/seed-cli.ts with Factory Pattern presets
+ */
+
+/** biome-ignore-all lint/suspicious/noConsole: legacy seed script */
 import { PrismaClient } from '@prisma/client';
 import { seedGlassSolutions } from './seed-solutions';
 import { seedTenant } from './seed-tenant';
 
 const prisma = new PrismaClient();
 
+/**
+ * Seed data with Spanish UI text but English variable names
+ */
 const seedData = {
   glassTypes: [
     {
-      name: 'Vidrio Templado 6mm',
+      name: 'Vidrio Templado 6mm', // Spanish UI text
       pricePerSqm: 65_000,
       purpose: 'security' as const,
       thicknessMm: 6,
@@ -36,7 +68,7 @@ const seedData = {
       maxWidthMm: 2000,
       minHeightMm: 400,
       minWidthMm: 600,
-      name: 'Ventana Corrediza Estándar',
+      name: 'Ventana Corrediza Estándar', // Spanish UI text
       profileSupplierName: 'Rehau', // Will be linked to ProfileSupplier
       status: 'published' as const,
     },
@@ -49,26 +81,26 @@ const seedData = {
       maxWidthMm: 1500,
       minHeightMm: 300,
       minWidthMm: 400,
-      name: 'Ventana Proyectante Premium',
+      name: 'Ventana Proyectante Premium', // Spanish UI text
       profileSupplierName: 'Deceuninck', // Will be linked to ProfileSupplier
       status: 'published' as const,
     },
   ],
   services: [
     {
-      name: 'Instalación',
+      name: 'Instalación', // Spanish UI text
       rate: 25_000,
       type: 'fixed' as const,
       unit: 'unit' as const,
     },
     {
-      name: 'Sellado perimetral',
+      name: 'Sellado Perimetral', // Spanish UI text (fixed capitalization)
       rate: 1500,
       type: 'perimeter' as const,
       unit: 'ml' as const,
     },
     {
-      name: 'Tratamiento superficie',
+      name: 'Tratamiento de Superficie', // Spanish UI text (improved grammar)
       rate: 8000,
       type: 'area' as const,
       unit: 'sqm' as const,

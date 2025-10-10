@@ -9,6 +9,7 @@ dist/
 build/
 out/
 coverage/
+prisma/
 
 # Dependencies
 node_modules/

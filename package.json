@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed-cli.ts --preset=minimal"
   },
   "scripts": {
     "build": "prisma generate && next build",
@@ -17,6 +17,10 @@
     "db:migrate": "prisma migrate deploy",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
+    "seed": "tsx prisma/seed-cli.ts",
+    "seed:minimal": "tsx prisma/seed-cli.ts --preset=minimal",
+    "seed:demo": "tsx prisma/seed-cli.ts --preset=demo-client",
+    "seed:full": "tsx prisma/seed-cli.ts --preset=full-catalog",
     "dev": "next dev --turbo",
     "postinstall": "prisma generate",
     "preview": "next build && next start",

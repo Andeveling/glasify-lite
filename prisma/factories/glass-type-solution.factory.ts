@@ -1,10 +1,18 @@
-/** biome-ignore-all lint/suspicious/noConsole: simplemente es un seed de prueba */
-import type { GlassType, PerformanceRating, PrismaClient } from '@prisma/client';
-
 /**
- * Glass Solutions Seed Data
- * Based on international standards: EN 12600, ISO 717-1, ISO 10077, EN 356
+ * Glass Type Solution Factory
+ *
+ * Creates validated GlassTypeSolution relationships with performance ratings.
+ * Calculates ratings based on international standards:
+ * - EN 12600: Glass in building - Impact test
+ * - ISO 717-1: Acoustics - Sound insulation
+ * - ISO 10077: Thermal performance of windows/doors
+ * - EN 356: Glass in building - Security glazing
  */
+
+import type { PerformanceRating } from '@prisma/client';
+import { z } from 'zod';
+import type { FactoryOptions, FactoryResult } from './types';
+import { validateWithSchema } from './utils';
 
 // Rating thresholds
 const RATING_EXCELLENT = 5;
@@ -18,62 +26,40 @@ const THICKNESS_DVH_MIN = 10;
 const THICKNESS_DVH_THICK = 20;
 
 /**
- * Glass solution definitions
- * - key: English identifier for code
- * - name: English name for internal use
- * - nameEs: Spanish name for UI display
- * - description: Spanish text for user-facing content
+ * Glass characteristics for rating calculation
  */
-export const glassSolutions = [
-  {
-    description: 'Protección contra impactos, rotura y acceso no autorizado', // Spanish UI text
-    icon: 'Shield',
-    key: 'security', // English identifier
-    name: 'Security', // English name
-    nameEs: 'Seguridad', // Spanish UI text
-    sortOrder: 1,
-  },
-  {
-    description: 'Reducción de pérdida de calor y mejora de eficiencia térmica',
-    icon: 'Snowflake',
-    key: 'thermal_insulation',
-    name: 'Thermal Insulation',
-    nameEs: 'Aislamiento Térmico',
-    sortOrder: 2,
-  },
-  {
-    description: 'Reducción de ruido exterior para mayor confort acústico',
-    icon: 'Volume2',
-    key: 'sound_insulation',
-    name: 'Sound Insulation',
-    nameEs: 'Insonorización',
-    sortOrder: 3,
-  },
-  {
-    description: 'Ahorro energético mediante tecnología Low-E y doble/triple acristalamiento',
-    icon: 'Zap',
-    key: 'energy_efficiency',
-    name: 'Energy Efficiency',
-    nameEs: 'Eficiencia Energética',
-    sortOrder: 4,
-  },
-  {
-    description: 'Estética, privacidad y elementos decorativos',
-    icon: 'Sparkles',
-    key: 'decorative',
-    name: 'Decorative',
-    nameEs: 'Decorativo',
-    sortOrder: 5,
-  },
-  {
-    description: 'Solución estándar para uso general',
-    icon: 'Home',
-    key: 'general',
-    name: 'General Purpose',
-    nameEs: 'Uso General',
-    sortOrder: 6,
-  },
-] as const;
+export interface GlassCharacteristics {
+  isLaminated: boolean;
+  isLowE: boolean;
+  isTempered: boolean;
+  isTripleGlazed: boolean;
+  purpose: string;
+  thicknessMm: number;
+}
+
+/**
+ * Solution assignment result
+ */
+export interface SolutionAssignment {
+  isPrimary: boolean;
+  performanceRating: PerformanceRating;
+  solutionKey: string;
+}
+
+/**
+ * Zod schema for GlassTypeSolution input validation
+ */
+const glassTypeSolutionSchema = z.object({
+  glassTypeId: z.string().cuid(),
+  isPrimary: z.boolean(),
+  performanceRating: z.enum(['basic', 'standard', 'good', 'very_good', 'excellent']),
+  solutionId: z.string().cuid(),
+});
+
+/**
+ * GlassTypeSolution input type (inferred from schema)
+ */
+export type GlassTypeSolutionInput = z.infer<typeof glassTypeSolutionSchema>;
 
 /**
  * Calculate security rating based on EN 12600 and EN 356 standards
@@ -91,9 +77,7 @@ export const glassSolutions = [
  * - 4: Very Good (laminated tempered)
  * - 5: Excellent (multi-layer laminated tempered)
  */
-function calculateSecurityRating(
-  glass: Pick<GlassType, 'isTempered' | 'isLaminated' | 'thicknessMm'>
-): PerformanceRating {
+export function calculateSecurityRating(glass: GlassCharacteristics): PerformanceRating {
   let score = 1;
 
   if (glass.isTempered) score += 1;
@@ -119,15 +103,13 @@ function calculateSecurityRating(
  * - Laminated DVH: ~40-45 dB
  *
  * Rating thresholds:
- * - 1 (Poor): 25-29 dB
- * - 2 (Fair): 30-34 dB
+ * - 1 (Basic): 25-29 dB
+ * - 2 (Standard): 30-34 dB
  * - 3 (Good): 35-39 dB
  * - 4 (Very Good): 40-44 dB
  * - 5 (Excellent): 45+ dB
  */
-function calculateSoundInsulationRating(
-  glass: Pick<GlassType, 'isLaminated' | 'thicknessMm' | 'isTripleGlazed'>
-): PerformanceRating {
+export function calculateSoundInsulationRating(glass: GlassCharacteristics): PerformanceRating {
   let score = 1;
 
   // Base score from thickness
@@ -164,9 +146,7 @@ function calculateSoundInsulationRating(
  * - 4 (Very Good): U 1.2-1.9
  * - 5 (Excellent): U < 1.2
  */
-function calculateThermalInsulationRating(
-  glass: Pick<GlassType, 'isLowE' | 'isTripleGlazed' | 'thicknessMm'>
-): PerformanceRating {
+export function calculateThermalInsulationRating(glass: GlassCharacteristics): PerformanceRating {
   let score = 1;
 
   // Thicker glass or DVH configuration
@@ -194,9 +174,7 @@ function calculateThermalInsulationRating(
  * - Triple glazing: Enhanced performance
  * - DVH (double glazing): Standard improvement
  */
-function calculateEnergyEfficiencyRating(
-  glass: Pick<GlassType, 'isLowE' | 'isTripleGlazed' | 'thicknessMm'>
-): PerformanceRating {
+export function calculateEnergyEfficiencyRating(glass: GlassCharacteristics): PerformanceRating {
   let score = 1;
 
   if (glass.thicknessMm >= THICKNESS_DVH_MIN) score += 1; // DVH
@@ -212,13 +190,31 @@ function calculateEnergyEfficiencyRating(
 }
 
 /**
- * Assign solutions to a glass type based on its characteristics
+ * Calculate which solutions apply to a glass type and their ratings
+ *
  * Returns array of { solutionKey, performanceRating, isPrimary }
+ *
+ * @param glass - Glass type characteristics
+ * @returns Array of solution assignments with ratings
+ *
+ * @example
+ * ```typescript
+ * const assignments = calculateGlassSolutions({
+ *   purpose: 'security',
+ *   isTempered: true,
+ *   isLaminated: true,
+ *   isLowE: false,
+ *   isTripleGlazed: false,
+ *   thicknessMm: 6,
+ * });
+ * // Returns: [
+ * //   { solutionKey: 'security', performanceRating: 'very_good', isPrimary: true },
+ * //   { solutionKey: 'sound_insulation', performanceRating: 'good', isPrimary: false }
+ * // ]
+ * ```
  */
-export function calculateGlassSolutions(
-  glass: Pick<GlassType, 'purpose' | 'isTempered' | 'isLaminated' | 'isLowE' | 'isTripleGlazed' | 'thicknessMm'>
-): Array<{ isPrimary: boolean; performanceRating: PerformanceRating; solutionKey: string }> {
-  const solutions: Array<{ isPrimary: boolean; performanceRating: PerformanceRating; solutionKey: string }> = [];
+export function calculateGlassSolutions(glass: GlassCharacteristics): SolutionAssignment[] {
+  const solutions: SolutionAssignment[] = [];
 
   // Security rating (all glasses have some level of security)
   const securityRating = calculateSecurityRating(glass);
@@ -281,101 +277,51 @@ export function calculateGlassSolutions(
   // Ensure at least one solution is primary
   if (!solutions.some((s) => s.isPrimary) && solutions.length > 0) {
     // biome-ignore lint/style/noNonNullAssertion: we check length > 0
-    solutions[ 0 ]!.isPrimary = true;
+    solutions[0]!.isPrimary = true;
   }
 
   return solutions;
 }
 
 /**
- * Seed glass solutions and assign them to existing glass types
+ * Create a validated GlassTypeSolution relationship
+ *
+ * @param input - Glass type solution relationship data
+ * @param options - Factory options (skipValidation)
+ * @returns FactoryResult with validated data or validation errors
+ *
+ * @example
+ * ```typescript
+ * const result = createGlassTypeSolution({
+ *   glassTypeId: 'cm123abc',
+ *   solutionId: 'cm456def',
+ *   performanceRating: 'very_good',
+ *   isPrimary: true,
+ * });
+ *
+ * if (result.success) {
+ *   await prisma.glassTypeSolution.create({ data: result.data });
+ * }
+ * ```
  */
-export async function seedGlassSolutions(prisma: PrismaClient) {
-  console.log('🔄 Seeding glass solutions...');
-
-  // Create solution categories
-  const createdSolutions = await Promise.all(
-    glassSolutions.map((solution) =>
-      prisma.glassSolution.upsert({
-        create: solution,
-        update: solution,
-        where: { key: solution.key },
-      })
-    )
-  );
-
-  console.log(`✅ Created/updated ${createdSolutions.length} glass solutions`);
-
-  // Get all existing glass types
-  const glassTypes = await prisma.glassType.findMany({
-    select: {
-      id: true,
-      isLaminated: true,
-      isLowE: true,
-      isTempered: true,
-      isTripleGlazed: true,
-      name: true,
-      purpose: true,
-      thicknessMm: true,
-    },
-  });
-
-  console.log(`🔄 Assigning solutions to ${glassTypes.length} glass types...`);
-
-  let assignmentCount = 0;
-
-  // Assign solutions to each glass type
-  for (const glassType of glassTypes) {
-    const solutionAssignments = calculateGlassSolutions(glassType);
-
-    for (const assignment of solutionAssignments) {
-      const solution = createdSolutions.find((s) => s.key === assignment.solutionKey);
-      if (!solution) continue;
-
-      // Check if assignment already exists
-      const existing = await prisma.glassTypeSolution.findUnique({
-        where: {
-          // biome-ignore lint/style/useNamingConvention: Prisma generated unique constraint name
-          glassTypeId_solutionId: {
-            glassTypeId: glassType.id,
-            solutionId: solution.id,
-          },
-        },
-      });
-
-      if (existing) {
-        // Update existing
-        await prisma.glassTypeSolution.update({
-          data: {
-            isPrimary: assignment.isPrimary,
-            performanceRating: assignment.performanceRating,
-          },
-          where: { id: existing.id },
-        });
-      } else {
-        // Create new
-        await prisma.glassTypeSolution.create({
-          data: {
-            glassTypeId: glassType.id,
-            isPrimary: assignment.isPrimary,
-            performanceRating: assignment.performanceRating,
-            solutionId: solution.id,
-          },
-        });
-      }
-
-      assignmentCount++;
+export function createGlassTypeSolution(
+  input: GlassTypeSolutionInput,
+  options: FactoryOptions = {}
+): FactoryResult<GlassTypeSolutionInput> {
+  // Phase 1: Zod schema validation
+  if (!options.skipValidation) {
+    const schemaValidation = validateWithSchema(glassTypeSolutionSchema, input);
+    if (!schemaValidation.success) {
+      return schemaValidation;
     }
   }
 
-  console.log(`✅ Created/updated ${assignmentCount} glass-solution assignments`);
+  // Phase 2: Business logic validation
+  // No additional business rules needed beyond Zod schema
 
-  // Log summary
-  console.log('\n📊 Solutions Summary:');
-  for (const solution of createdSolutions) {
-    const count = await prisma.glassTypeSolution.count({
-      where: { solutionId: solution.id },
-    });
-    console.log(`   ${solution.nameEs} (${solution.key}): ${count} glasses`);
-  }
+  // Success: return validated data
+  return {
+    data: input,
+    success: true,
+  };
 }
