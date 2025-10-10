@@ -532,8 +532,8 @@ export function useQueryParams() {
 
 ## Common Development Tasks
 
-- `pnpm ultra:fix` - Format and fix code automatically with Ultracite
-- `pnpm ultra` - Check for issues without fixing
+- `pnpm lint:fix` - Format and fix code automatically with Ultracite
+- `pnpm lint` - Check for issues without fixing
 - `pnpm dev` - Start Next.js development server (with Turbo)
 - `pnpm db:generate` - Run Prisma migrations in development
 - `pnpm db:studio` - Open Prisma Studio for database management
