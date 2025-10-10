@@ -54,19 +54,19 @@ export function ProductImagePlaceholder({ productName }: ProductImagePlaceholder
 
 type ProductInfoProps = {
   name: string;
-  manufacturer?: string;
+  profileSupplier?: string;
 };
 
 /**
  * ProductInfo - Atomic Component
  *
- * Displays product name and manufacturer.
+ * Displays product name and profile supplier.
  */
-export function ProductInfo({ name, manufacturer }: ProductInfoProps) {
+export function ProductInfo({ name, profileSupplier }: ProductInfoProps) {
   return (
     <div>
       <h3 className="font-semibold text-foreground text-sm tracking-tight">{name}</h3>
-      {manufacturer && <p className="text-foreground/60 text-xs">{manufacturer}</p>}
+      {profileSupplier && <p className="text-foreground/60 text-xs">{profileSupplier}</p>}
     </div>
   );
 }

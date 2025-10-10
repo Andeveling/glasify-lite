@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/select';
 
 type CatalogFiltersProps = {
-  manufacturers?: Array<{
+  profileSuppliers?: Array<{
     id: string;
     name: string;
   }>;
@@ -26,7 +26,7 @@ type CatalogFiltersProps = {
   showBadges?: boolean;
   showResultCount?: boolean;
   // Receive current search params as props to avoid multiple useSearchParams() calls
-  currentManufacturer?: string;
+  currentProfileSupplier?: string;
   currentSort?: string;
   currentSearchQuery?: string;
 };
@@ -56,32 +56,32 @@ type CatalogFiltersProps = {
  * - Type-safe navigation with Next.js hooks
  */
 export function CatalogFilters({
-  manufacturers = [],
+  profileSuppliers = [],
   totalResults,
   showControls = true,
   showBadges = true,
   showResultCount = true,
-  currentManufacturer = 'all',
+  currentProfileSupplier = 'all',
   currentSort = 'name-asc',
   currentSearchQuery,
 }: CatalogFiltersProps) {
   // Delegate all logic to custom hook (SRP - Single Responsibility)
   const {
     handleClearFilters,
-    handleManufacturerChange,
-    handleRemoveManufacturer,
+    handleProfileSupplierChange,
+    handleRemoveProfileSupplier,
     handleRemoveSearch,
     handleRemoveSort,
     handleSortChange,
     hasActiveParameters,
-    selectedManufacturerName,
+    selectedProfileSupplierName,
   } = useCatalogFilters(
     {
-      currentManufacturer,
+      currentProfileSupplier,
       currentSearchQuery,
       currentSort,
     },
-    manufacturers
+    profileSuppliers
   );
 
   return (
@@ -107,20 +107,20 @@ export function CatalogFilters({
             <span className="sr-only hidden md:not-sr-only">Filtros</span>
           </div>
 
-          {/* Manufacturer filter */}
-          {manufacturers.length > 0 && (
-            <Select onValueChange={handleManufacturerChange} value={currentManufacturer}>
+          {/* Profile Supplier filter */}
+          {profileSuppliers.length > 0 && (
+            <Select onValueChange={handleProfileSupplierChange} value={currentProfileSupplier}>
               <SelectTrigger className="w-[160px] gap-2 md:w-[180px]">
                 <Building2 className="size-4 opacity-70" />
-                <SelectValue placeholder="Fabricante" />
+                <SelectValue placeholder="Proveedor" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>Fabricante</SelectLabel>
+                  <SelectLabel>Proveedor de Perfiles</SelectLabel>
                   <SelectItem value="all">Todos</SelectItem>
-                  {manufacturers.map((manufacturer) => (
-                    <SelectItem key={manufacturer.id} value={manufacturer.id}>
-                      {manufacturer.name}
+                  {profileSuppliers.map((supplier) => (
+                    <SelectItem key={supplier.id} value={supplier.id}>
+                      {supplier.name}
                     </SelectItem>
                   ))}
                 </SelectGroup>
@@ -170,11 +170,11 @@ export function CatalogFilters({
       {/* Active Search Parameters - Badges Section */}
       {showBadges && (
         <ActiveSearchParameters
-          onRemoveManufacturer={handleRemoveManufacturer}
+          onRemoveProfileSupplier={handleRemoveProfileSupplier}
           onRemoveSearch={handleRemoveSearch}
           onRemoveSort={handleRemoveSort}
           searchQuery={currentSearchQuery}
-          selectedManufacturerName={selectedManufacturerName}
+          selectedProfileSupplierName={selectedProfileSupplierName}
           sortType={currentSort as CatalogSortOption}
         />
       )}

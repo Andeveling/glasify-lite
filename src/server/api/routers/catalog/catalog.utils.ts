@@ -43,7 +43,7 @@ export function serializeDecimalFields<T extends ModelWithDecimalFields>(model: 
 }
 
 /**
- * Serialize a complete model with manufacturer info
+ * Serialize a complete model with profile supplier info
  *
  * @deprecated Use serializeDecimalFields directly. This function is redundant.
  * @template T - Model type extending ModelWithDecimalFields

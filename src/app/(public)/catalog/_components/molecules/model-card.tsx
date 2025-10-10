@@ -12,7 +12,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 type ModelCardProps = {
   id: string;
   name: string;
-  manufacturer?: string;
+  profileSupplier?: string;
   range: {
     width: [number, number];
     height: [number, number];
@@ -43,7 +43,7 @@ type ModelCardProps = {
  * - Composed from reusable atoms
  * - Follows Atomic Design methodology
  */
-export function ModelCard({ id, name, manufacturer, range, basePrice }: ModelCardProps) {
+export function ModelCard({ id, name, profileSupplier, range, basePrice }: ModelCardProps) {
   return (
     <Card aria-label={`Tarjeta del modelo ${name}`} className="group p-0 pb-2 transition-opacity hover:opacity-80">
       <Link className="block space-y-3" href={`/catalog/${id}`}>
@@ -52,7 +52,7 @@ export function ModelCard({ id, name, manufacturer, range, basePrice }: ModelCar
 
         {/* Product Info */}
         <CardContent className="space-y-2 px-3 py-0">
-          <ProductInfo manufacturer={manufacturer} name={name} />
+          <ProductInfo profileSupplier={profileSupplier} name={name} />
           <ProductDimensions heightRange={range.height} widthRange={range.width} />
         </CardContent>
 

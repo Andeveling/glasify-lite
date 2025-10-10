@@ -46,7 +46,7 @@ type SortConfiguration = {
 
 type BuildParametersInput = {
   searchQuery?: string | null;
-  manufacturerName?: string | null;
+  profileSupplierName?: string | null;
   sortType?: CatalogSortOption | null;
 };
 
@@ -140,21 +140,23 @@ export function buildSearchParameter(searchQuery: string | null | undefined): Se
 }
 
 /**
- * Build search parameter for manufacturer filter
+ * Build search parameter for profile supplier filter
  *
- * @param manufacturerName - The manufacturer name
- * @returns Search parameter or undefined if no manufacturer
+ * @param profileSupplierName - The profile supplier name
+ * @returns Search parameter or undefined if no profile supplier
  */
-export function buildManufacturerParameter(manufacturerName: string | null | undefined): SearchParameter | undefined {
-  if (!manufacturerName) {
+export function buildProfileSupplierParameter(
+  profileSupplierName: string | null | undefined
+): SearchParameter | undefined {
+  if (!profileSupplierName) {
     return;
   }
 
   return {
-    ariaLabel: `Quitar filtro de ${manufacturerName}`,
+    ariaLabel: `Quitar filtro de ${profileSupplierName}`,
     icon: Building2,
-    key: 'manufacturer',
-    label: manufacturerName,
+    key: 'profileSupplier',
+    label: profileSupplierName,
   };
 }
 
@@ -185,30 +187,30 @@ export function buildSortParameter(sortType: string | null | undefined): SearchP
  * Pure function that transforms search state into displayable parameters.
  * Follows functional programming principles - no side effects.
  *
- * @param input - Object containing search query, manufacturer, and sort
+ * @param input - Object containing search query, profile supplier, and sort
  * @returns Array of active search parameters
  *
  * @example
  * ```ts
  * const params = buildActiveParameters({
  *   searchQuery: 'vidrio',
- *   manufacturerName: 'Guardian',
+ *   profileSupplierName: 'Guardian',
  *   sortType: 'price-desc',
  * });
  * // => [
  * //   { key: 'search', label: 'vidrio', ... },
- * //   { key: 'manufacturer', label: 'Guardian', ... },
+ * //   { key: 'profileSupplier', label: 'Guardian', ... },
  * //   { key: 'sort', label: 'Precio ↓', ... }
  * // ]
  * ```
  */
 export function buildActiveParameters(input: BuildParametersInput): SearchParameter[] {
-  const { searchQuery, manufacturerName, sortType } = input;
+  const { searchQuery, profileSupplierName, sortType } = input;
 
   // Build parameters using individual builder functions
   const parameters = [
     buildSearchParameter(searchQuery),
-    buildManufacturerParameter(manufacturerName),
+    buildProfileSupplierParameter(profileSupplierName),
     buildSortParameter(sortType),
   ];
 
