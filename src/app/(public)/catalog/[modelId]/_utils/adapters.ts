@@ -3,11 +3,12 @@ import type { Model } from '../_types/model.types';
 
 /**
  * Adapts ModelDetailOutput from tRPC to Model type used in components
+ * Note: currency is now obtained from TenantConfig singleton, not from model
  */
 export function adaptModelFromServer(serverModel: ModelDetailOutput): Model {
   return {
     basePrice: serverModel.basePrice,
-    currency: serverModel.manufacturer?.currency ?? 'USD',
+    currency: 'USD', // TODO: Pass currency from TenantConfig as parameter
     description: 'Modelo de alta calidad con excelentes características', // TODO: Add description field to Model table
     dimensions: {
       maxHeight: serverModel.maxHeightMm,
@@ -23,7 +24,7 @@ export function adaptModelFromServer(serverModel: ModelDetailOutput): Model {
     ],
     id: serverModel.id,
     imageUrl: '/modern-aluminum-sliding-window.jpg', // TODO: Add imageUrl to Model table
-    manufacturer: serverModel.manufacturer?.name ?? 'Fabricante desconocido',
+    profileSupplier: serverModel.profileSupplier?.name ?? 'Proveedor desconocido',
     name: serverModel.name,
   };
 }

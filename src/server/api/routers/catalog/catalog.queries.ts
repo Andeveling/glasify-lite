@@ -36,12 +36,10 @@ export const catalogQueries = createTRPCRouter({
             costPerMmWidth: true,
             createdAt: true,
             id: true,
-            manufacturer: {
+            profileSupplier: {
               select: {
-                currency: true,
                 id: true,
                 name: true,
-                quoteValidityDays: true,
               },
             },
             maxHeightMm: true,
@@ -194,7 +192,7 @@ export const catalogQueries = createTRPCRouter({
               include: {
                 solution: true,
               },
-              orderBy: [{ isPrimary: 'desc' }, { solution: { sortOrder: 'asc' } }],
+              orderBy: [ { isPrimary: 'desc' }, { solution: { sortOrder: 'asc' } } ],
             },
             thicknessMm: true,
             updatedAt: true,
@@ -238,27 +236,30 @@ export const catalogQueries = createTRPCRouter({
    */
   'list-manufacturers': publicProcedure.query(async ({ ctx }) => {
     try {
-      logger.info('Listing manufacturers for filter');
+      logger.info('Listing profile suppliers for filter');
 
-      const manufacturers = await ctx.db.manufacturer.findMany({
+      const profileSuppliers = await ctx.db.profileSupplier.findMany({
         orderBy: { name: 'asc' },
         select: {
           id: true,
           name: true,
         },
+        where: {
+          isActive: true,
+        },
       });
 
-      logger.info('Successfully retrieved manufacturers', {
-        count: manufacturers.length,
+      logger.info('Successfully retrieved profile suppliers', {
+        count: profileSuppliers.length,
       });
 
-      return manufacturers;
+      return profileSuppliers;
     } catch (error) {
-      logger.error('Error listing manufacturers', {
+      logger.error('Error listing profile suppliers', {
         error: error instanceof Error ? error.message : 'Unknown error',
       });
 
-      throw new Error('No se pudieron cargar los fabricantes. Intente nuevamente.');
+      throw new Error('No se pudieron cargar los proveedores de perfiles. Intente nuevamente.');
     }
   }),
 
@@ -273,7 +274,7 @@ export const catalogQueries = createTRPCRouter({
       try {
         logger.info('Listing models', {
           limit: input.limit,
-          manufacturerId: input.manufacturerId,
+          profileSupplierId: input.manufacturerId,
           page: input.page,
           search: input.search,
           sort: input.sort,
@@ -281,7 +282,7 @@ export const catalogQueries = createTRPCRouter({
 
         // Build where clause
         const whereClause = {
-          ...(input.manufacturerId && { manufacturerId: input.manufacturerId }),
+          ...(input.manufacturerId && { profileSupplierId: input.manufacturerId }),
           ...(input.search && {
             name: {
               contains: input.search,
@@ -324,17 +325,17 @@ export const catalogQueries = createTRPCRouter({
             costPerMmWidth: true,
             createdAt: true,
             id: true,
-            manufacturer: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
             maxHeightMm: true,
             maxWidthMm: true,
             minHeightMm: true,
             minWidthMm: true,
             name: true,
+            profileSupplier: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
             status: true,
             updatedAt: true,
           },

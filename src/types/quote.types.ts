@@ -251,7 +251,6 @@ export interface QuoteListResponse {
  */
 export const QuoteErrorCode = {
   EmptyCart: 'EMPTY_CART',
-  InconsistentManufacturer: 'INCONSISTENT_MANUFACTURER',
   InvalidAddress: 'INVALID_ADDRESS',
   NotFound: 'NOT_FOUND',
   PriceCalculationFailed: 'PRICE_CALCULATION_FAILED',
@@ -260,23 +259,23 @@ export const QuoteErrorCode = {
   Unknown: 'UNKNOWN',
 } as const;
 
-export type QuoteErrorCode = (typeof QuoteErrorCode)[keyof typeof QuoteErrorCode];
+export type QuoteErrorCode = (typeof QuoteErrorCode)[ keyof typeof QuoteErrorCode ];
 
 /**
  * Quote operation result (discriminated union)
  */
 export type QuoteOperationResult<T = void> =
   | {
-      success: true;
-      data: T;
-    }
+    success: true;
+    data: T;
+  }
   | {
-      success: false;
-      error: {
-        code: QuoteErrorCode;
-        message: string;
-      };
+    success: false;
+    error: {
+      code: QuoteErrorCode;
+      message: string;
     };
+  };
 
 // ============================================================================
 // Quote Constants

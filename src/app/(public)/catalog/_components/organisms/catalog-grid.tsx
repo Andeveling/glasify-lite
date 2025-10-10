@@ -54,8 +54,8 @@ export function CatalogGrid({ models }: CatalogGridProps) {
               basePrice={formatCurrency(model.basePrice)}
               compatibleGlassTypes={[]}
               id={model.id}
-              profileSupplier={model.profileSupplier?.name}
               name={model.name}
+              profileSupplier={model.profileSupplier?.name}
               range={{
                 height: [model.minHeightMm, model.maxHeightMm],
                 width: [model.minWidthMm, model.maxWidthMm],

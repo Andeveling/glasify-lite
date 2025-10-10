@@ -13,9 +13,9 @@ async function ModelFormData({ serverModel }: ModelFormWrapperProps) {
     glassTypeIds: serverModel.compatibleGlassTypeIds,
   });
 
-  // Fetch services for this manufacturer
+  // Fetch services for this profile supplier
   const services = await api.catalog['list-services']({
-    manufacturerId: serverModel.manufacturer?.id ?? '',
+    manufacturerId: serverModel.profileSupplier?.id ?? '',
   });
 
   // Fetch glass solutions filtered by model compatibility (UX: "Don't Make Me Think")
@@ -24,7 +24,18 @@ async function ModelFormData({ serverModel }: ModelFormWrapperProps) {
     modelId: serverModel.id,
   });
 
-  return <ModelForm glassTypes={glassTypes} model={serverModel} services={services} solutions={solutions} />;
+  // Fetch tenant currency (now from TenantConfig singleton)
+  const currency = await api.tenantConfig.getCurrency();
+
+  return (
+    <ModelForm
+      currency={currency}
+      glassTypes={glassTypes}
+      model={serverModel}
+      services={services}
+      solutions={solutions}
+    />
+  );
 }
 
 export function ModelFormWrapper({ serverModel }: ModelFormWrapperProps) {

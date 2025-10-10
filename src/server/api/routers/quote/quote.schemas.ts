@@ -205,7 +205,6 @@ export const generateQuoteFromCartOutput = z.discriminatedUnion('success', [
       code: z.enum([
         'EMPTY_CART',
         'INVALID_ADDRESS',
-        'INCONSISTENT_MANUFACTURER',
         'PRICE_CALCULATION_FAILED',
         'TRANSACTION_FAILED',
         'UNAUTHORIZED',

@@ -52,7 +52,7 @@ export function ModelCard({ id, name, profileSupplier, range, basePrice }: Model
 
         {/* Product Info */}
         <CardContent className="space-y-2 px-3 py-0">
-          <ProductInfo profileSupplier={profileSupplier} name={name} />
+          <ProductInfo name={name} profileSupplier={profileSupplier} />
           <ProductDimensions heightRange={range.height} widthRange={range.width} />
         </CardContent>
 

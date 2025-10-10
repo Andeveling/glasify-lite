@@ -10,9 +10,9 @@
 import type { PrismaClient } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import logger from '@/lib/logger';
+import { getQuoteValidityDays, getTenantCurrency } from '@/server/utils/tenant';
 import type { CartItem } from '@/types/cart.types';
 import type { GenerateQuoteInput } from '@/types/quote.types';
-import { getTenantCurrency, getQuoteValidityDays } from '@/server/utils/tenant';
 
 /** Correlation ID prefix length for userId truncation */
 const CORRELATION_ID_USER_PREFIX_LENGTH = 8;
@@ -195,7 +195,7 @@ export async function generateQuoteFromCart(
  *
  * @deprecated This function is deprecated and will be removed in a future version.
  * Manufacturer consistency validation is no longer needed with the new TenantConfig architecture.
- * 
+ *
  * @param cartItems - Array of cart items to validate
  * @param expectedManufacturerId - Expected manufacturer ID (deprecated parameter)
  */
@@ -203,7 +203,7 @@ export function validateCartManufacturerConsistency(cartItems: CartItem[], expec
   // REFACTOR: This function is deprecated
   // With the new TenantConfig architecture, there's no manufacturer association
   // All quotes use the tenant's configuration for currency and validity
-  
+
   logger.info('[QuoteService] Cart validation (deprecated)', {
     itemCount: cartItems.length,
     note: 'Manufacturer consistency validation is deprecated',

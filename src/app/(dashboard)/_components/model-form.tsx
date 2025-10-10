@@ -126,12 +126,12 @@ function useModelFormController({ modelData, onSuccess }: ModelFormControllerArg
       costPerMmHeight: modelData?.costPerMmHeight ?? 0,
       costPerMmWidth: modelData?.costPerMmWidth ?? 0,
       id: modelData?.id,
-      profileSupplierId: modelData?.profileSupplierId ?? null,
       maxHeightMm: modelData?.maxHeightMm ?? DEFAULT_MAX_DIMENSION,
       maxWidthMm: modelData?.maxWidthMm ?? DEFAULT_MAX_DIMENSION,
       minHeightMm: modelData?.minHeightMm ?? DEFAULT_MIN_DIMENSION,
       minWidthMm: modelData?.minWidthMm ?? DEFAULT_MIN_DIMENSION,
       name: modelData?.name ?? '',
+      profileSupplierId: modelData?.profileSupplierId ?? null,
       status: modelData?.status ?? 'draft',
     },
     resolver: zodResolver(modelFormSchema),
@@ -153,8 +153,10 @@ function useModelFormController({ modelData, onSuccess }: ModelFormControllerArg
 }
 
 export function ModelForm({ modelData, onSuccess, onCancel }: ModelFormProps) {
-  const { form, handleSubmit, isEditing, isLoading, isLoadingSuppliers, profileSuppliers } =
-    useModelFormController({ modelData, onSuccess });
+  const { form, handleSubmit, isEditing, isLoading, isLoadingSuppliers, profileSuppliers } = useModelFormController({
+    modelData,
+    onSuccess,
+  });
 
   return (
     <Card className="w-full max-w-2xl">
@@ -169,11 +171,7 @@ export function ModelForm({ modelData, onSuccess, onCancel }: ModelFormProps) {
       <CardContent>
         <Form {...form}>
           <form className="space-y-6" onSubmit={handleSubmit}>
-            <BasicInfoSection
-              form={form}
-              isLoadingSuppliers={isLoadingSuppliers}
-              profileSuppliers={profileSuppliers}
-            />
+            <BasicInfoSection form={form} isLoadingSuppliers={isLoadingSuppliers} profileSuppliers={profileSuppliers} />
 
             {/* Compatible Glass Types */}
             <GlassTypesSection form={form} />
@@ -238,19 +236,11 @@ function BasicInfoSection({
         render={({ field }) => (
           <FormItem>
             <FormLabel>Proveedor de Perfiles (Opcional)</FormLabel>
-            <Select
-              onValueChange={field.onChange}
-              value={field.value ?? undefined}
-              disabled={isLoadingSuppliers}
-            >
+            <Select disabled={isLoadingSuppliers} onValueChange={field.onChange} value={field.value ?? undefined}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue
-                    placeholder={
-                      isLoadingSuppliers
-                        ? 'Cargando proveedores...'
-                        : 'Seleccionar proveedor (opcional)'
-                    }
+                    placeholder={isLoadingSuppliers ? 'Cargando proveedores...' : 'Seleccionar proveedor (opcional)'}
                   />
                 </SelectTrigger>
               </FormControl>
@@ -263,9 +253,7 @@ function BasicInfoSection({
                 ))}
               </SelectContent>
             </Select>
-            <FormDescription>
-              Proveedor de perfiles para este modelo. Puede dejarse sin asignar.
-            </FormDescription>
+            <FormDescription>Proveedor de perfiles para este modelo. Puede dejarse sin asignar.</FormDescription>
             <FormMessage />
           </FormItem>
         )}

@@ -101,7 +101,7 @@ export function getSortConfiguration(sortType: string | null | undefined): SortC
   if (!sortType) {
     return;
   }
-  return SORT_CONFIGURATIONS[sortType as CatalogSortOption];
+  return SORT_CONFIGURATIONS[ sortType as CatalogSortOption ];
 }
 
 /**

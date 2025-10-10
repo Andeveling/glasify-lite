@@ -32,13 +32,14 @@ type ModelFormProps = {
   glassTypes: GlassTypeOutput[];
   services: ServiceOutput[];
   solutions: GlassSolutionOutput[];
+  currency: string;
 };
 
 // ============================================================================
 // Component
 // ============================================================================
 
-export function ModelForm({ model, glassTypes, services, solutions }: ModelFormProps) {
+export function ModelForm({ model, glassTypes, services, solutions, currency }: ModelFormProps) {
   const schema = useMemo(() => createQuoteFormSchema(model), [model]);
   const { addItem, summary } = useCart();
 
@@ -162,7 +163,7 @@ export function ModelForm({ model, glassTypes, services, solutions }: ModelFormP
           <QuoteSummary
             basePrice={model.basePrice}
             calculatedPrice={calculatedPrice}
-            currency={model.manufacturer?.currency ?? 'USD'}
+            currency={currency}
             error={error}
             isCalculating={isCalculating}
           />
