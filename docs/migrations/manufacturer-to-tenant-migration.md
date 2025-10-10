@@ -142,24 +142,54 @@ Model (window/door products)
 model TenantConfig {
   id                 String   @id @default("1")
   businessName       String
-  businessAddress    String?
-  contactEmail       String?
-  contactPhone       String?
-  currency           String   @default("COP")
-  locale             String   @default("es-CO")
-  timezone           String   @default("America/Bogota")
-  quoteValidityDays  Int      @default(15)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+#### TenantConfig (NEW - Singleton Pattern)
 
-  @@unique([id], name: "single_tenant_config")
+```prisma
+model TenantConfig {
+  id String @id @default("1")  // Fixed ID enforces singleton
+  
+  // Business info
+  businessName    String
+  currency        String   @db.Char(3)
+  locale          String   @default("es-CO")
+  timezone        String   @default("America/Bogota")
+  quoteValidityDays Int    @default(15)
+  
+  // Optional contact info
+  contactEmail    String?
+  contactPhone    String?
+  businessAddress String?
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([currency])
 }
 ```
 
-**Constraints**:
-- Primary Key always `id: "1"` (singleton pattern)
-- Unique constraint enforces only one record
-- Cannot be deleted (application-level protection)
+**Singleton Enforcement**:
+- **Schema Level**: `@default("1")` ensures ID is always "1"
+- **Seed Level**: `upsert({ where: { id: "1" } })` safe to run multiple times
+- **Application Level**: Protected from deletion
+
+**Environment Configuration** (`.env` + `src/env-seed.ts`):
+```bash
+TENANT_BUSINESS_NAME="Glasify Demo"       # Required
+TENANT_CURRENCY="COP"                      # Required (ISO 4217)
+TENANT_LOCALE="es-CO"                      # Required (BCP 47)
+TENANT_TIMEZONE="America/Bogota"           # Required (IANA)
+TENANT_QUOTE_VALIDITY_DAYS="15"            # Required
+TENANT_CONTACT_EMAIL="demo@glasify.com"    # Optional
+TENANT_CONTACT_PHONE="+57 300 123 4567"    # Optional
+TENANT_BUSINESS_ADDRESS="Calle 123..."     # Optional
+```
+
+**Validation with @t3-oss/env-nextjs**:
+- Zod schemas validate all TENANT_* variables before seeding
+- Clear error messages for missing/invalid values
+- Prevents runtime errors from misconfiguration
+- See: `src/env-seed.ts` and https://env.t3.gg/docs/core
 
 #### ProfileSupplier
 
@@ -762,10 +792,10 @@ async function backfillSuppliers() {
 
 ## Changelog
 
-| Version | Date       | Author     | Changes                                    |
-| ------- | ---------- | ---------- | ------------------------------------------ |
-| 1.0     | 2025-01-19 | Andeveling | Initial migration guide created            |
-| 1.1     | 2025-01-19 | Andeveling | Added rollback procedures and validation   |
+| Version | Date       | Author     | Changes                                  |
+| ------- | ---------- | ---------- | ---------------------------------------- |
+| 1.0     | 2025-01-19 | Andeveling | Initial migration guide created          |
+| 1.1     | 2025-01-19 | Andeveling | Added rollback procedures and validation |
 
 ---
 

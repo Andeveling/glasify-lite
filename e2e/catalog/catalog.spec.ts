@@ -14,7 +14,7 @@ const SEARCH_PANORAMA_URL = /q=Panorama/;
 const PROFILE_SUPPLIER_FILTER_URL = /profileSupplier=/;
 const PRODUCT_DETAIL_URL = /\/catalog\/cm1catalogmodelpublished123/;
 const PANORAMA_PRODUCT_LINK = /Imagen del producto Ventana Panorama/;
-const TERMOACUSTICA_PRODUCT_LINK = /Imagen del producto Ventana Termoacústica/;
+const TERM_ACOUSTIC_PRODUCT_LINK = /Imagen del producto Ventana Termoacústica/;
 
 test.describe('Catalog Page', () => {
   test.beforeEach(async ({ page }) => {
@@ -220,7 +220,7 @@ test.describe('Catalog Page', () => {
     test('should have proper accessibility attributes on product cards', async ({ page }) => {
       // Verificar que los enlaces tienen texto descriptivo
       await expect(page.getByRole('link', { name: PANORAMA_PRODUCT_LINK })).toBeVisible();
-      await expect(page.getByRole('link', { name: TERMOACUSTICA_PRODUCT_LINK })).toBeVisible();
+      await expect(page.getByRole('link', { name: TERM_ACOUSTIC_PRODUCT_LINK })).toBeVisible();
 
       // Verificar que todos los productos están en una lista estructurada
       // Usar un selector más específico para la lista de productos (grid de productos)

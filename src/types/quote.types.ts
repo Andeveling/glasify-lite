@@ -51,7 +51,7 @@ export interface GenerateQuoteInput {
   /** Optional contact phone */
   contactPhone?: string;
 
-  /** 
+  /**
    * @deprecated Manufacturer ID (deprecated field, kept for backward compatibility)
    * This field is no longer used for quote generation. Currency and validity
    * are now obtained from TenantConfig singleton.
@@ -259,23 +259,23 @@ export const QuoteErrorCode = {
   Unknown: 'UNKNOWN',
 } as const;
 
-export type QuoteErrorCode = (typeof QuoteErrorCode)[ keyof typeof QuoteErrorCode ];
+export type QuoteErrorCode = (typeof QuoteErrorCode)[keyof typeof QuoteErrorCode];
 
 /**
  * Quote operation result (discriminated union)
  */
 export type QuoteOperationResult<T = void> =
   | {
-    success: true;
-    data: T;
-  }
+      success: true;
+      data: T;
+    }
   | {
-    success: false;
-    error: {
-      code: QuoteErrorCode;
-      message: string;
+      success: false;
+      error: {
+        code: QuoteErrorCode;
+        message: string;
+      };
     };
-  };
 
 // ============================================================================
 // Quote Constants

@@ -122,29 +122,36 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-/// Tenant Configuration (Singleton)
-/// Represents the carpentry shop owner's business configuration
-/// Only ONE record should exist in the database
+/// Multi-Tenant Configuration (Single Tenant per deployment)
+/// This is a singleton table that stores the tenant-level configuration.
+/// In the current implementation, there should only be ONE record in this table with id = "1".
+/// The fixed ID enforces the singleton pattern at the database level.
 model TenantConfig {
-  id                String   @id @default(cuid())
-  /// Business name of the carpentry shop
-  businessName      String
-  /// ISO 4217 currency code (COP, USD, EUR, etc.)
-  currency          String   @db.Char(3)
-  /// Quote validity period in days
-  quoteValidityDays Int      @default(15)
-  /// Locale for formatting (es-CO, en-US, etc.)
-  locale            String   @default("es-CO") @db.VarChar(10)
-  /// IANA timezone (America/Bogota, America/New_York, etc.)
-  timezone          String   @default("America/Bogota") @db.VarChar(50)
-  /// Contact email for the business
-  contactEmail      String?
-  /// Contact phone for the business
-  contactPhone      String?
-  /// Business address
-  businessAddress   String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id String @id @default("1")
+
+  /// Business/company name shown in quotes and invoices
+  businessName String
+
+  /// ISO 4217 currency code (3 characters): COP, USD, EUR, etc.
+  currency String @db.Char(3)
+
+  /// Number of days a quote is valid before expiring
+  quoteValidityDays Int @default(15)
+
+  /// IETF BCP 47 locale (es-CO, en-US, es-MX, etc.) for date/number formatting
+  locale String @default("es-CO")
+
+  /// IANA timezone identifier (America/Bogota, America/New_York, etc.)
+  timezone String @default("America/Bogota")
+
+  /// Optional contact information
+  contactEmail   String?
+  contactPhone   String?
+  businessAddress String?
+
+  /// Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([currency])
 }

@@ -1,16 +1,24 @@
 /** biome-ignore-all lint/suspicious/noConsole: seed script requires console logging */
 import type { MaterialType, PrismaClient } from '@prisma/client';
+import { envSeed } from '../src/env-seed';
 
 /**
  * TenantConfig Singleton - Business Configuration
- * Represents the carpentry shop owner using the application
+ * Populated from environment variables (validated by src/env-seed.ts)
+ *
+ * The data comes from TENANT_* environment variables in .env file
+ * Validation ensures all required fields are present and properly formatted
  */
 const tenantConfigData = {
-  businessName: 'Glasify Demo',
-  currency: 'COP' as const,
-  locale: 'es-CO' as const,
-  quoteValidityDays: 15,
-  timezone: 'America/Bogota' as const,
+  businessAddress: envSeed.TENANT_BUSINESS_ADDRESS || undefined,
+  businessName: envSeed.TENANT_BUSINESS_NAME,
+  // Optional contact fields (undefined if not provided)
+  contactEmail: envSeed.TENANT_CONTACT_EMAIL || undefined,
+  contactPhone: envSeed.TENANT_CONTACT_PHONE || undefined,
+  currency: envSeed.TENANT_CURRENCY,
+  locale: envSeed.TENANT_LOCALE,
+  quoteValidityDays: envSeed.TENANT_QUOTE_VALIDITY_DAYS,
+  timezone: envSeed.TENANT_TIMEZONE,
 } as const;
 
 /**
@@ -22,32 +30,32 @@ const profileSuppliers: Array<{
   materialType: MaterialType;
   name: string;
 }> = [
-  {
-    isActive: true,
-    materialType: 'PVC',
-    name: 'Rehau',
-  },
-  {
-    isActive: true,
-    materialType: 'PVC',
-    name: 'Deceuninck',
-  },
-  {
-    isActive: true,
-    materialType: 'ALUMINUM',
-    name: 'Azembla',
-  },
-  {
-    isActive: true,
-    materialType: 'ALUMINUM',
-    name: 'Aluflex',
-  },
-  {
-    isActive: false,
-    materialType: 'PVC',
-    name: 'VEKA', // Inactive supplier example
-  },
-];
+    {
+      isActive: true,
+      materialType: 'PVC',
+      name: 'Rehau',
+    },
+    {
+      isActive: true,
+      materialType: 'PVC',
+      name: 'Deceuninck',
+    },
+    {
+      isActive: true,
+      materialType: 'ALUMINUM',
+      name: 'Azembla',
+    },
+    {
+      isActive: true,
+      materialType: 'ALUMINUM',
+      name: 'Aluflex',
+    },
+    {
+      isActive: false,
+      materialType: 'PVC',
+      name: 'VEKA', // Inactive supplier example
+    },
+  ];
 
 /**
  * Seed TenantConfig singleton and ProfileSupplier records
@@ -78,6 +86,15 @@ export async function seedTenant(prisma: PrismaClient) {
   console.log(`   Locale: ${tenantConfig.locale}`);
   console.log(`   Quote Validity: ${tenantConfig.quoteValidityDays} days`);
   console.log(`   Timezone: ${tenantConfig.timezone}`);
+  if (tenantConfig.contactEmail) {
+    console.log(`   Email: ${tenantConfig.contactEmail}`);
+  }
+  if (tenantConfig.contactPhone) {
+    console.log(`   Phone: ${tenantConfig.contactPhone}`);
+  }
+  if (tenantConfig.businessAddress) {
+    console.log(`   Address: ${tenantConfig.businessAddress}`);
+  }
 
   // ==========================================
   // STEP 2: Create/Update ProfileSupplier Records

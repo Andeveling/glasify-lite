@@ -15,7 +15,7 @@ export const listModelsInput = z.object({
   manufacturerId: z.cuid('ID del fabricante debe ser válido').optional(),
   page: z.number().min(1).default(1),
   search: z.string().optional(),
-  sort: z.enum([ 'name-asc', 'name-desc', 'price-asc', 'price-desc' ]).default('name-asc'),
+  sort: z.enum(['name-asc', 'name-desc', 'price-asc', 'price-desc']).default('name-asc'),
 });
 
 export const getModelByIdInput = z.object({
@@ -66,7 +66,7 @@ export const modelSummaryOutput = z.object({
       name: z.string(),
     })
     .nullable(),
-  status: z.enum([ 'draft', 'published' ]),
+  status: z.enum(['draft', 'published']),
   updatedAt: z.date(),
 });
 
@@ -94,7 +94,7 @@ export const modelDetailOutput = z.object({
       name: z.string(),
     })
     .nullable(),
-  status: z.enum([ 'draft', 'published' ]),
+  status: z.enum(['draft', 'published']),
   updatedAt: z.date(),
 });
 
@@ -104,8 +104,8 @@ export const serviceOutput = z.object({
   manufacturerId: z.string().nullable(), // REFACTOR: Deprecated field, now optional
   name: z.string(),
   rate: z.number(),
-  type: z.enum([ 'area', 'perimeter', 'fixed' ]),
-  unit: z.enum([ 'unit', 'sqm', 'ml' ]),
+  type: z.enum(['area', 'perimeter', 'fixed']),
+  unit: z.enum(['unit', 'sqm', 'ml']),
   updatedAt: z.date(),
 });
 
@@ -115,7 +115,7 @@ export const listServicesOutput = z.array(serviceOutput);
 // GLASS SOLUTIONS SCHEMAS
 // ========================================
 
-export const performanceRating = z.enum([ 'basic', 'standard', 'good', 'very_good', 'excellent' ]);
+export const performanceRating = z.enum(['basic', 'standard', 'good', 'very_good', 'excellent']);
 
 export const glassSolutionOutput = z.object({
   createdAt: z.date(),
@@ -155,7 +155,7 @@ export const glassTypeOutput = z.object({
   name: z.string(),
   pricePerSqm: z.number(),
   profileSupplierId: z.string().nullable().optional(), // REFACTOR: New optional supplier reference
-  purpose: z.enum([ 'general', 'insulation', 'security', 'decorative' ]),
+  purpose: z.enum(['general', 'insulation', 'security', 'decorative']),
   solutions: z.array(glassTypeSolutionOutput).optional(),
   thicknessMm: z.number(),
   updatedAt: z.date(),

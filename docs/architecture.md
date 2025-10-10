@@ -327,19 +327,49 @@ Glasify uses a **Singleton Pattern** for tenant configuration, representing the 
 │ contactEmail: string?          │  Contact email
 │ contactPhone: string?          │  Contact phone
 │ currency: string               │  Currency code (COP, USD, etc.)
-│ locale: string                 │  Locale code (es-CO, es-CL, etc.)
-│ timezone: string               │  Timezone (America/Bogota, etc.)
-│ quoteValidityDays: int         │  Quote expiration period
+```
+┌────────────────────────────────┐
+│        TenantConfig            │  (Singleton - Always id: "1")
+├────────────────────────────────┤
+│ id: string                     │  Primary Key (always "1")
+│ businessName: string           │  Business/company name
+│ currency: string               │  ISO 4217 code (COP, USD, EUR)
+│ locale: string                 │  IETF BCP 47 locale (es-CO, en-US)
+│ timezone: string               │  IANA timezone (America/Bogota)
+│ quoteValidityDays: int         │  Quote expiration period (days)
+│ contactEmail?: string          │  Business contact email (optional)
+│ contactPhone?: string          │  Business contact phone (optional)
+│ businessAddress?: string       │  Business address (optional)
 │ createdAt: DateTime            │  Creation timestamp
 │ updatedAt: DateTime            │  Last update timestamp
 └────────────────────────────────┘
 ```
 
 **Key Characteristics**:
-- **Singleton Constraint**: Database enforces only ONE record (`id: "1"`)
+- **Singleton Pattern**: Fixed ID (`"1"`) enforced by schema `@default("1")`
+- **Environment-Driven**: Seeded from `TENANT_*` environment variables
+- **Validation**: Uses `@t3-oss/env-nextjs` + Zod for runtime validation
 - **Protected**: Cannot be deleted (application-level validation)
 - **Global Configuration**: Used across all quotes, models, and business logic
 - **No Foreign Keys**: Does not reference or link to other entities
+
+**Environment Variables Configuration** (see `.env`):
+```bash
+TENANT_BUSINESS_NAME="Glasify Demo"       # Required
+TENANT_CURRENCY="COP"                      # Required (ISO 4217)
+TENANT_LOCALE="es-CO"                      # Required (BCP 47)
+TENANT_TIMEZONE="America/Bogota"           # Required (IANA)
+TENANT_QUOTE_VALIDITY_DAYS="15"            # Required (days)
+TENANT_CONTACT_EMAIL="demo@glasify.com"    # Optional
+TENANT_CONTACT_PHONE="+57 300 123 4567"    # Optional
+TENANT_BUSINESS_ADDRESS="Calle 123..."     # Optional
+```
+
+**Validation** (`src/env-seed.ts`):
+- Ensures all required fields are present before seeding
+- Validates format (currency = 3 chars, locale = xx-XX pattern)
+- Provides clear error messages for missing/invalid values
+- See: https://env.t3.gg/docs/core
 
 #### ProfileSupplier Entity (Window/Door Profile Manufacturers)
 
