@@ -12,6 +12,7 @@
 import { useRouter } from 'next/navigation';
 import { Suspense } from 'react';
 import { useCart } from '../_hooks/use-cart';
+import { useCartItemActions } from '../_hooks/use-cart-item-actions';
 import { CartItem } from './cart-item';
 import { CartSummary } from './cart-summary';
 import { EmptyCartState } from './empty-cart-state';
@@ -34,6 +35,12 @@ const SKELETON_ITEMS_COUNT = 3;
 export function CartPageContent() {
   const router = useRouter();
   const { items, summary, updateItem, removeItem, hydrated } = useCart();
+
+  // Initialize cart item actions hook (SOLID - SRP)
+  const actions = useCartItemActions({
+    onRemoveItem: removeItem,
+    onUpdateItem: updateItem,
+  });
 
   // Show loading skeleton while hydrating
   if (!hydrated) {
@@ -70,21 +77,31 @@ export function CartPageContent() {
    * Handle name update
    */
   const handleUpdateName = (itemId: string, newName: string) => {
-    updateItem(itemId, { name: newName });
+    const item = items.find((i) => i.id === itemId);
+    if (item) {
+      actions.updateName(item, newName);
+    }
   };
 
   /**
    * Handle quantity update
    */
   const handleUpdateQuantity = (itemId: string, newQuantity: number) => {
-    updateItem(itemId, { quantity: newQuantity });
+    const item = items.find((i) => i.id === itemId);
+    if (item) {
+      actions.updateQuantity(item, newQuantity);
+    }
   };
 
   /**
    * Handle item removal
+   * Note: Confirmation is handled by the CartItem component's dialog
    */
   const handleRemoveItem = (itemId: string) => {
-    removeItem(itemId);
+    const item = items.find((i) => i.id === itemId);
+    if (item) {
+      actions.removeItem(item);
+    }
   };
 
   /**

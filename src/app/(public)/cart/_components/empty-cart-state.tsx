@@ -18,7 +18,7 @@
 import { ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 
 // ============================================================================
 // Types
@@ -53,28 +53,21 @@ export function EmptyCartState({
   catalogUrl = '/catalog',
 }: EmptyCartStateProps) {
   return (
-    <Card className="border-dashed">
-      <CardContent className="flex flex-col items-center justify-center gap-6 py-12">
-        {/* Icon */}
-        <div className="rounded-full bg-muted p-6">
-          <ShoppingCart className="size-12 text-muted-foreground" />
-        </div>
-
-        {/* Message */}
-        <div className="text-center">
-          <h3 className="font-semibold text-xl">{message}</h3>
-          <p className="mt-2 text-muted-foreground text-sm">
-            Agrega configuraciones de ventanas desde el catálogo
-            <br />
-            para comenzar a construir tu presupuesto
-          </p>
-        </div>
-
-        {/* CTA */}
-        <Button asChild size="lg">
-          <Link href={catalogUrl}>{ctaText}</Link>
-        </Button>
-      </CardContent>
-    </Card>
+    <Empty>
+      <EmptyHeader>
+        <EmptyMedia>
+          <ShoppingCart className="size-10 text-muted-foreground" />
+        </EmptyMedia>
+        <EmptyTitle className="font-bold text-2xl">{message}</EmptyTitle>
+        <EmptyDescription>
+          Agrega configuraciones de ventanas desde el catálogo
+          <br />
+          para comenzar a construir tu presupuesto
+        </EmptyDescription>
+      </EmptyHeader>
+      <Button asChild size="lg">
+        <Link href={catalogUrl}>{ctaText}</Link>
+      </Button>
+    </Empty>
   );
 }

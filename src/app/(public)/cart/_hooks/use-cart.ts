@@ -47,6 +47,9 @@ type UseCartReturn = {
   /** Remove item from cart */
   removeItem: (id: string) => void;
 
+  /** Restore a previously removed item */
+  restoreItem: (item: CartItem) => void;
+
   /** Clear all items */
   clearCart: () => void;
 
@@ -199,6 +202,38 @@ export function useCart(): UseCartReturn {
   );
 
   /**
+   * Restore a previously removed item
+   * Used for undo functionality after deletion
+   */
+  const restoreItem = useCallback(
+    (item: CartItem) => {
+      // Check if item already exists
+      const existingItem = findCartItem(items, item.id);
+      if (existingItem) {
+        // Item already in cart, just update it
+        const updatedItem = updateCartItem(existingItem, item);
+        const updatedItems = items.map((i) => (i.id === item.id ? updatedItem : i));
+        setItems(updatedItems);
+        saveItems(updatedItems);
+        return;
+      }
+
+      // Validate cart limit
+      const limitValidation = validateCartLimit(items.length);
+      if (!limitValidation.valid) {
+        const error = new Error(limitValidation.error);
+        throw error;
+      }
+
+      // Add item back to cart at the end
+      const updatedItems = [ ...items, item ];
+      setItems(updatedItems);
+      saveItems(updatedItems);
+    },
+    [ items, saveItems ]
+  );
+
+  /**
    * Clear entire cart
    */
   const clearCart = useCallback(() => {
@@ -224,6 +259,7 @@ export function useCart(): UseCartReturn {
     hydrated: isHydrated,
     items,
     removeItem,
+    restoreItem,
     summary,
     updateItem,
   };

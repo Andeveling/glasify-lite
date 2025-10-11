@@ -8,6 +8,7 @@
  * - Inline name editing (click to edit, blur/Enter to save)
  * - Quantity controls with min/max validation
  * - Remove button with confirmation
+ * - Smooth animations for better UX feedback
  * - Responsive layout
  * - Accessibility support (ARIA labels, keyboard navigation)
  *
@@ -17,13 +18,14 @@
 'use client';
 
 import { Check, Minus, Pencil, Plus, Trash2, X } from 'lucide-react';
-import { memo, useState } from 'react';
+import { memo, useState, useTransition } from 'react';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import type { CartItem as CartItemType } from '@/types/cart.types';
 import { CART_CONSTANTS } from '@/types/cart.types';
+import { DeleteCartItemDialog } from './delete-cart-item-dialog';
 
 // ============================================================================
 // Types
@@ -82,6 +84,8 @@ const CartItemComponent = ({
   const [editedName, setEditedName] = useState(item.name);
   const [editMode, setEditMode] = useState(false);
   const [nameError, setNameError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   // ============================================================================
   // Handlers
@@ -136,14 +140,24 @@ const CartItemComponent = ({
     }
 
     if (onUpdateQuantity) {
-      onUpdateQuantity(item.id, newQuantity);
+      // Use transition for smooth animation
+      startTransition(() => {
+        onUpdateQuantity(item.id, newQuantity);
+      });
     }
   };
 
   /**
-   * Handle item removal
+   * Handle item removal - show confirmation dialog
    */
   const handleRemove = () => {
+    setShowDeleteDialog(true);
+  };
+
+  /**
+   * Handle confirmed deletion
+   */
+  const handleConfirmDelete = () => {
     if (onRemove) {
       onRemove(item.id);
     }
@@ -153,11 +167,18 @@ const CartItemComponent = ({
   // Render
   // ============================================================================
 
+  const isInAction = isUpdating || isPending;
+
   return (
     <div
       className={cn(
-        'grid grid-cols-1 gap-4 rounded-lg border p-4 transition-opacity md:grid-cols-[2fr_3fr_1fr_1fr_auto]',
-        isUpdating && 'opacity-50'
+        'grid grid-cols-1 gap-4 rounded-lg border p-4',
+        'transition-all duration-150 ease-in-out',
+        // Updating animation: subtle opacity
+        isInAction && 'opacity-70',
+        // Default state
+        !isInAction && 'scale-100 opacity-100',
+        'md:grid-cols-[2fr_3fr_1fr_1fr_auto]'
       )}
       data-testid={`cart-item-${item.id}`}
     >
@@ -317,6 +338,14 @@ const CartItemComponent = ({
           <Trash2 className="size-5" />
         </Button>
       </div>
+
+      {/* Delete confirmation dialog */}
+      <DeleteCartItemDialog
+        itemName={item.name}
+        onConfirm={handleConfirmDelete}
+        onOpenChange={setShowDeleteDialog}
+        open={showDeleteDialog}
+      />
     </div>
   );
 };
