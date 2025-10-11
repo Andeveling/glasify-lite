@@ -2,7 +2,7 @@ import { Minus, Package, Plus } from 'lucide-react';
 import type { Control, FieldValues, Path } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/input-group';
 import { cn } from '@/lib/utils';
 
 type QuantityFieldProps<T extends FieldValues> = {
@@ -89,7 +89,7 @@ export function QuantityField<T extends FieldValues>({
                 {/* Decrement Button */}
                 <Button
                   className={cn(
-                    'h-11 w-11 shrink-0 rounded-lg transition-all duration-200',
+                    'shrink-0 rounded-lg transition-all duration-200',
                     canDecrement
                       ? 'hover:bg-primary/10 hover:text-primary hover:shadow-md'
                       : 'cursor-not-allowed opacity-40'
@@ -105,10 +105,11 @@ export function QuantityField<T extends FieldValues>({
                 </Button>
 
                 {/* Direct Input Field */}
-                <div className="relative flex-1">
-                  <Input
+                <InputGroup>
+                  <InputGroupInput
                     {...field}
-                    className="h-11 text-center font-semibold text-lg"
+                    className="text-center font-semibold text-lg"
+                    inputMode="numeric"
                     max={max}
                     min={min}
                     onChange={handleInputChange}
@@ -116,15 +117,18 @@ export function QuantityField<T extends FieldValues>({
                     type="number"
                     value={field.value || ''}
                   />
-                  <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                  <InputGroupAddon align="inline-end">
+                    <InputGroupText>Unidades</InputGroupText>
+                  </InputGroupAddon>
+                  {/* <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
                     <span className="text-muted-foreground text-sm">unidades</span>
-                  </div>
-                </div>
+                  </div> */}
+                </InputGroup>
 
                 {/* Increment Button */}
                 <Button
                   className={cn(
-                    'h-11 w-11 shrink-0 rounded-lg transition-all duration-200',
+                    'shrink-0 rounded-lg transition-all duration-200',
                     canIncrement
                       ? 'hover:bg-primary/10 hover:text-primary hover:shadow-md'
                       : 'cursor-not-allowed opacity-40'
