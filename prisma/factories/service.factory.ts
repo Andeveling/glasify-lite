@@ -26,8 +26,8 @@ const MAX_SERVICE_RATE_COP = 5_000_000; // 5M COP max rate
 const serviceInputSchema = z.object({
   name: z.string().min(MIN_SERVICE_NAME_LENGTH).max(MAX_SERVICE_NAME_LENGTH),
   rate: z.number().positive(),
-  type: z.enum([ 'area', 'perimeter', 'fixed' ]),
-  unit: z.enum([ 'unit', 'sqm', 'ml' ]),
+  type: z.enum(['area', 'perimeter', 'fixed']),
+  unit: z.enum(['unit', 'sqm', 'ml']),
 });
 
 /**
@@ -40,17 +40,17 @@ export type ServiceInput = z.infer<typeof serviceInputSchema>;
  */
 function validateServiceTypeUnit(type: string, unit: string): ValidationError | null {
   const validCombinations: Record<string, string[]> = {
-    area: [ 'sqm' ],
-    fixed: [ 'unit' ],
-    perimeter: [ 'ml' ],
+    area: ['sqm'],
+    fixed: ['unit'],
+    perimeter: ['ml'],
   };
 
-  if (!validCombinations[ type ]?.includes(unit)) {
+  if (!validCombinations[type]?.includes(unit)) {
     return {
       code: 'INVALID_TYPE_UNIT_COMBINATION',
-      context: { type, unit, validUnits: validCombinations[ type ] },
-      message: `Service type '${type}' requires unit to be one of: ${validCombinations[ type ]?.join(', ')}`,
-      path: [ 'unit' ],
+      context: { type, unit, validUnits: validCombinations[type] },
+      message: `Service type '${type}' requires unit to be one of: ${validCombinations[type]?.join(', ')}`,
+      path: ['unit'],
     };
   }
 
@@ -99,7 +99,7 @@ export function createService(input: ServiceInput, options?: FactoryOptions): Fa
   const validated = schemaResult.data;
   if (!validated) {
     return {
-      errors: [ { code: 'VALIDATION_ERROR', message: 'Validation failed', path: [] } ],
+      errors: [{ code: 'VALIDATION_ERROR', message: 'Validation failed', path: [] }],
       success: false,
     };
   }
@@ -172,6 +172,6 @@ export function getSuccessfulServices(
 export const serviceFactoryMetadata: FactoryMetadata = {
   description: 'Creates validated Service seed data for window/glass additional services',
   name: 'ServiceFactory',
-  sources: [ 'prisma/seed.ts' ],
+  sources: ['prisma/seed.ts'],
   version: '1.0.0',
 };

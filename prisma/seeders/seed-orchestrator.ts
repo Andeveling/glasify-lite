@@ -223,12 +223,12 @@ export class SeedOrchestrator {
         // Create or update
         const supplier = existing
           ? await this.prisma.profileSupplier.update({
-            data: result.data,
-            where: { id: existing.id },
-          })
+              data: result.data,
+              where: { id: existing.id },
+            })
           : await this.prisma.profileSupplier.create({
-            data: result.data,
-          });
+              data: result.data,
+            });
 
         supplierIdMap.set(supplier.name, supplier.id);
         this.stats.profileSuppliers.created++;
@@ -276,12 +276,12 @@ export class SeedOrchestrator {
         // Create or update
         const glassType = existing
           ? await this.prisma.glassType.update({
-            data: result.data,
-            where: { id: existing.id },
-          })
+              data: result.data,
+              where: { id: existing.id },
+            })
           : await this.prisma.glassType.create({
-            data: result.data,
-          });
+              data: result.data,
+            });
 
         glassTypeIdMap.set(glassType.name, glassType.id);
         this.stats.glassTypes.created++;
@@ -349,20 +349,20 @@ export class SeedOrchestrator {
         // Create or update
         const model = existingModel
           ? await this.prisma.model.update({
-            data: {
-              ...modelData,
-              compatibleGlassTypeIds,
-              profileSupplierId: supplierId,
-            },
-            where: { id: existingModel.id },
-          })
+              data: {
+                ...modelData,
+                compatibleGlassTypeIds,
+                profileSupplierId: supplierId,
+              },
+              where: { id: existingModel.id },
+            })
           : await this.prisma.model.create({
-            data: {
-              ...modelData,
-              compatibleGlassTypeIds,
-              profileSupplierId: supplierId,
-            },
-          });
+              data: {
+                ...modelData,
+                compatibleGlassTypeIds,
+                profileSupplierId: supplierId,
+              },
+            });
 
         this.stats.models.created++;
         this.logger.debug(`Created: ${model.name} (${model.id})`);
@@ -403,12 +403,12 @@ export class SeedOrchestrator {
         // Create or update
         const service = existingService
           ? await this.prisma.service.update({
-            data: result.data,
-            where: { id: existingService.id },
-          })
+              data: result.data,
+              where: { id: existingService.id },
+            })
           : await this.prisma.service.create({
-            data: result.data,
-          });
+              data: result.data,
+            });
 
         this.stats.services.created++;
         this.logger.debug(`Created: ${service.name} (${service.id})`);
@@ -451,12 +451,12 @@ export class SeedOrchestrator {
         // Create or update
         const solution = existing
           ? await this.prisma.glassSolution.update({
-            data: result.data,
-            where: { id: existing.id },
-          })
+              data: result.data,
+              where: { id: existing.id },
+            })
           : await this.prisma.glassSolution.create({
-            data: result.data,
-          });
+              data: result.data,
+            });
 
         // Store ID mapping for relationship resolution
         solutionIdMap.set(solution.key, solution.id);

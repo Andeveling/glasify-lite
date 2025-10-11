@@ -298,22 +298,22 @@ export const servicesCatalog: ServiceInput[] = [
  * Services grouped by category
  */
 export const servicesByCategory = {
-  accessories: [ mosquitoScreen, securityBars, motorizedSystem ],
-  demolition: [ oldWindowRemoval, wallOpeningResize ],
-  finishing: [ aluminumAnodizing, powderCoating, woodVarnishing ],
-  glassTreatment: [ safetyFilm, uvProtectionFilm, privacyFilm ],
-  installation: [ standardInstallation, premiumInstallation, highRiseInstallation ],
-  maintenance: [ hardwareAdjustment, glassReplacement, sealReplacement ],
-  sealing: [ perimeterSealing, advancedWaterproofing ],
+  accessories: [mosquitoScreen, securityBars, motorizedSystem],
+  demolition: [oldWindowRemoval, wallOpeningResize],
+  finishing: [aluminumAnodizing, powderCoating, woodVarnishing],
+  glassTreatment: [safetyFilm, uvProtectionFilm, privacyFilm],
+  installation: [standardInstallation, premiumInstallation, highRiseInstallation],
+  maintenance: [hardwareAdjustment, glassReplacement, sealReplacement],
+  sealing: [perimeterSealing, advancedWaterproofing],
 };
 
 /**
  * Recommended service bundles for common scenarios
  */
 export const serviceBundles = {
-  aluminumFinishing: [ 'Anodizado de Perfiles de Aluminio', 'Película de Control Solar/UV' ],
-  maintenance: [ 'Ajuste y Mantenimiento de Herrajes', 'Reemplazo de Sellos de Goma (EPDM)' ],
-  newInstallationBasic: [ 'Instalación Estándar de Ventana/Puerta', 'Sellado Perimetral con Silicona Estructural' ],
+  aluminumFinishing: ['Anodizado de Perfiles de Aluminio', 'Película de Control Solar/UV'],
+  maintenance: ['Ajuste y Mantenimiento de Herrajes', 'Reemplazo de Sellos de Goma (EPDM)'],
+  newInstallationBasic: ['Instalación Estándar de Ventana/Puerta', 'Sellado Perimetral con Silicona Estructural'],
   newInstallationPremium: [
     'Instalación Premium con Impermeabilización',
     'Sellado Perimetral con Silicona Estructural',
@@ -324,5 +324,5 @@ export const serviceBundles = {
     'Instalación Estándar de Ventana/Puerta',
     'Sellado Perimetral con Silicona Estructural',
   ],
-  securityUpgrade: [ 'Película de Seguridad Anti-Impacto', 'Reja de Seguridad Exterior' ],
+  securityUpgrade: ['Película de Seguridad Anti-Impacto', 'Reja de Seguridad Exterior'],
 };

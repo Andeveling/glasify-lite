@@ -278,10 +278,10 @@ export const glassTypesByPurpose = {
  * Recommended glass types for different applications
  */
 export const recommendedGlassTypes = {
-  budget: [ 'Vidrio Monolítico 4mm', 'Vidrio Monolítico 6mm', 'Vidrio Templado 6mm' ],
-  commercial: [ 'Vidrio Templado 10mm', 'DVH Low-E 28mm (6-16-6)', 'Vidrio Templado + Laminado 12mm (6+6)' ],
-  premium: [ 'DVH Low-E 28mm (6-16-6)', 'Vidrio Templado + Laminado 12mm (6+6)', 'DVH Control Solar 24mm (6-12-6)' ],
-  residential: [ 'Vidrio Templado 6mm', 'DVH 24mm (6-12-6)', 'Vidrio Laminado 6mm (3+3)' ],
+  budget: ['Vidrio Monolítico 4mm', 'Vidrio Monolítico 6mm', 'Vidrio Templado 6mm'],
+  commercial: ['Vidrio Templado 10mm', 'DVH Low-E 28mm (6-16-6)', 'Vidrio Templado + Laminado 12mm (6+6)'],
+  premium: ['DVH Low-E 28mm (6-16-6)', 'Vidrio Templado + Laminado 12mm (6+6)', 'DVH Control Solar 24mm (6-12-6)'],
+  residential: ['Vidrio Templado 6mm', 'DVH 24mm (6-12-6)', 'Vidrio Laminado 6mm (3+3)'],
 };
 
 /**

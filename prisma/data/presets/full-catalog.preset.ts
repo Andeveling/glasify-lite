@@ -72,7 +72,7 @@ export const fullCatalogPreset = {
       'Solar control',
       'Acoustic specialty',
     ],
-    profileMaterials: [ 'PVC (Premium European)', 'Aluminum (Local & Imported)', 'Wood (Limited)' ],
+    profileMaterials: ['PVC (Premium European)', 'Aluminum (Local & Imported)', 'Wood (Limited)'],
     serviceCategories: [
       'Installation (standard/premium/high-rise)',
       'Sealing & waterproofing',
@@ -91,8 +91,8 @@ export const fullCatalogPreset = {
       'General purpose',
     ],
     suppliers: {
-      aluminum: [ 'Alumina', 'Sistemas Europeos', 'Aluminio Económico' ],
-      pvc: [ 'Deceuninck', 'Rehau', 'VEKA' ],
+      aluminum: ['Alumina', 'Sistemas Europeos', 'Aluminio Económico'],
+      pvc: ['Deceuninck', 'Rehau', 'VEKA'],
     },
   },
   description: 'Catálogo completo con todos los datos del mercado colombiano disponibles',

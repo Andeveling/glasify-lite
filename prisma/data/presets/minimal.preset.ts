@@ -1,15 +1,15 @@
 /**
  * Minimal Preset - Basic Seed Configuration
- * 
+ *
  * Use case: Quick testing, CI/CD pipelines, minimal viable product
- * 
+ *
  * Contains:
  * - 3 essential glass types (simple, tempered, DVH)
  * - 2 active profile suppliers (PVC and Aluminum)
  * - 2 basic window models (sliding and casement)
  * - 3 core services (installation, sealing, removal)
  * - 3 glass solutions (security, thermal, general)
- * 
+ *
  * @version 1.0.0
  */
 
@@ -93,7 +93,7 @@ export const minimalModels: ModelInput[] = [
   {
     accessoryPrice: 65_000,
     basePrice: 350_000,
-    compatibleGlassTypeIds: [ 'PLACEHOLDER' ], // Will be populated during seeding
+    compatibleGlassTypeIds: ['PLACEHOLDER'], // Will be populated during seeding
     costPerMmHeight: 75,
     costPerMmWidth: 95,
     glassDiscountHeightMm: 45,
@@ -110,7 +110,7 @@ export const minimalModels: ModelInput[] = [
   {
     accessoryPrice: 55_000,
     basePrice: 280_000,
-    compatibleGlassTypeIds: [ 'PLACEHOLDER' ],
+    compatibleGlassTypeIds: ['PLACEHOLDER'],
     costPerMmHeight: 65,
     costPerMmWidth: 85,
     glassDiscountHeightMm: 35,

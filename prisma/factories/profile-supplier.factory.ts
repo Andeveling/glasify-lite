@@ -27,7 +27,7 @@ const MAX_NOTES_LENGTH = 500;
  */
 const profileSupplierInputSchema = z.object({
   isActive: z.boolean().default(true),
-  materialType: z.enum([ 'PVC', 'ALUMINUM', 'WOOD', 'MIXED' ]),
+  materialType: z.enum(['PVC', 'ALUMINUM', 'WOOD', 'MIXED']),
   name: z.string().min(MIN_SUPPLIER_NAME_LENGTH).max(MAX_SUPPLIER_NAME_LENGTH),
   notes: z.string().max(MAX_NOTES_LENGTH).optional(),
 });
@@ -82,7 +82,7 @@ export function createProfileSupplier(
   const validated = schemaResult.data;
   if (!validated) {
     return {
-      errors: [ { code: 'VALIDATION_ERROR', message: 'Validation failed', path: [] } ],
+      errors: [{ code: 'VALIDATION_ERROR', message: 'Validation failed', path: [] }],
       success: false,
     };
   }
@@ -135,6 +135,6 @@ export function getSuccessfulProfileSuppliers(
 export const profileSupplierFactoryMetadata: FactoryMetadata = {
   description: 'Creates validated ProfileSupplier seed data for window/door profile manufacturers',
   name: 'ProfileSupplierFactory',
-  sources: [ 'docs/context/alumina.info.md', 'docs/context/veka-example.info.md', 'https://www.deceuninck.co/' ],
+  sources: ['docs/context/alumina.info.md', 'docs/context/veka-example.info.md', 'https://www.deceuninck.co/'],
   version: '1.0.0',
 };

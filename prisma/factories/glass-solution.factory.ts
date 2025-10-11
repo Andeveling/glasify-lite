@@ -112,7 +112,7 @@ export function createGlassSolution(
     errors.push({
       code: 'INVALID_KEY',
       message: `Invalid key "${input.key}". Expected one of: ${validKeys.join(', ')}`,
-      path: [ 'key' ],
+      path: ['key'],
     });
   }
 
@@ -121,12 +121,12 @@ export function createGlassSolution(
     errors.push({
       code: 'INVALID_TRANSLATION',
       message: 'nameEs should be Spanish translation, not identical to English name',
-      path: [ 'nameEs' ],
+      path: ['nameEs'],
     });
   }
 
   // Validate description is in Spanish
-  const spanishIndicators = [ 'ción', 'dad', 'ento', 'ante', 'para', 'con', 'de', 'y' ];
+  const spanishIndicators = ['ción', 'dad', 'ento', 'ante', 'para', 'con', 'de', 'y'];
   const hasSpanishIndicator = spanishIndicators.some((indicator) =>
     input.description.toLowerCase().includes(indicator)
   );
@@ -134,7 +134,7 @@ export function createGlassSolution(
     errors.push({
       code: 'INVALID_LANGUAGE',
       message: 'description should be in Spanish (es-LA)',
-      path: [ 'description' ],
+      path: ['description'],
     });
   }
 

@@ -50,7 +50,7 @@ const modelInputSchema = z.object({
   name: z.string().min(MIN_MODEL_NAME_LENGTH).max(MAX_MODEL_NAME_LENGTH),
   profileSupplierName: z.string(), // Used to find ProfileSupplier
   profitMarginPercentage: z.number().nonnegative().max(MAX_PROFIT_MARGIN).optional(),
-  status: z.enum([ 'draft', 'published' ]).default('published'),
+  status: z.enum(['draft', 'published']).default('published'),
 });
 
 /**
@@ -89,7 +89,7 @@ function validateModelBusinessLogic(validated: z.infer<typeof modelInputSchema>)
       code: 'COST_TOO_HIGH',
       context: { costPerMmWidth: validated.costPerMmWidth, max: MAX_COST_PER_MM },
       message: `costPerMmWidth seems too high: ${validated.costPerMmWidth} COP/mm`,
-      path: [ 'costPerMmWidth' ],
+      path: ['costPerMmWidth'],
     });
   }
 
@@ -98,7 +98,7 @@ function validateModelBusinessLogic(validated: z.infer<typeof modelInputSchema>)
       code: 'COST_TOO_HIGH',
       context: { costPerMmHeight: validated.costPerMmHeight, max: MAX_COST_PER_MM },
       message: `costPerMmHeight seems too high: ${validated.costPerMmHeight} COP/mm`,
-      path: [ 'costPerMmHeight' ],
+      path: ['costPerMmHeight'],
     });
   }
 
@@ -126,7 +126,7 @@ function validateModelBusinessLogic(validated: z.infer<typeof modelInputSchema>)
         profitMarginPercentage: validated.profitMarginPercentage,
       },
       message: `profitMarginPercentage must be between ${MIN_PROFIT_MARGIN} and ${MAX_PROFIT_MARGIN}`,
-      path: [ 'profitMarginPercentage' ],
+      path: ['profitMarginPercentage'],
     });
   }
 
@@ -221,7 +221,7 @@ export function createModel(input: ModelInput, options?: FactoryOptions): Factor
   const validated = schemaResult.data;
   if (!validated) {
     return {
-      errors: [ { code: 'VALIDATION_ERROR', message: 'Validation failed', path: [] } ],
+      errors: [{ code: 'VALIDATION_ERROR', message: 'Validation failed', path: [] }],
       success: false,
     };
   }

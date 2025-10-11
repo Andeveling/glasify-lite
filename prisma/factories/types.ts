@@ -1,6 +1,6 @@
 /**
  * Factory Pattern Type Definitions
- * 
+ *
  * Provides base types for seed data factories with Zod validation support.
  * These types enable type-safe, validated object creation for database seeding.
  */
@@ -71,10 +71,7 @@ export type ValidationError = {
 /**
  * Base factory function type
  */
-export type Factory<TInput, TOutput> = (
-  input: TInput,
-  options?: FactoryOptions
-) => FactoryResult<TOutput>;
+export type Factory<TInput, TOutput> = (input: TInput, options?: FactoryOptions) => FactoryResult<TOutput>;
 
 /**
  * Helper type for Zod schema inference

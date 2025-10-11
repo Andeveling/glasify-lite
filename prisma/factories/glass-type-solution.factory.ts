@@ -52,7 +52,7 @@ export interface SolutionAssignment {
 const glassTypeSolutionSchema = z.object({
   glassTypeId: z.string().cuid(),
   isPrimary: z.boolean(),
-  performanceRating: z.enum([ 'basic', 'standard', 'good', 'very_good', 'excellent' ]),
+  performanceRating: z.enum(['basic', 'standard', 'good', 'very_good', 'excellent']),
   solutionId: z.string().cuid(),
 });
 
@@ -277,7 +277,7 @@ export function calculateGlassSolutions(glass: GlassCharacteristics): SolutionAs
   // Ensure at least one solution is primary
   if (!solutions.some((s) => s.isPrimary) && solutions.length > 0) {
     // biome-ignore lint/style/noNonNullAssertion: we check length > 0
-    solutions[ 0 ]!.isPrimary = true;
+    solutions[0]!.isPrimary = true;
   }
 
   return solutions;

@@ -33,7 +33,7 @@ const glassTypeInputSchema = z.object({
   isTripleGlazed: z.boolean().default(false),
   name: z.string().min(MIN_GLASS_NAME_LENGTH).max(MAX_GLASS_NAME_LENGTH),
   pricePerSqm: z.number().positive(),
-  purpose: z.enum([ 'general', 'insulation', 'security', 'decorative' ]),
+  purpose: z.enum(['general', 'insulation', 'security', 'decorative']),
   thicknessMm: z.number().int().min(MIN_THICKNESS_MM).max(MAX_THICKNESS_MM),
   uValue: z.number().positive().optional(),
 });
@@ -89,7 +89,7 @@ export function createGlassType(
   const validated = schemaResult.data;
   if (!validated) {
     return {
-      errors: [ { code: 'VALIDATION_ERROR', message: 'Validation failed', path: [] } ],
+      errors: [{ code: 'VALIDATION_ERROR', message: 'Validation failed', path: [] }],
       success: false,
     };
   }
@@ -109,7 +109,7 @@ export function createGlassType(
       code: 'INVALID_THICKNESS_FOR_TYPE',
       context: { isTripleGlazed: true, thicknessMm: validated.thicknessMm },
       message: 'Triple glazed glass should be at least 20mm thick',
-      path: [ 'thicknessMm' ],
+      path: ['thicknessMm'],
     });
   }
 
@@ -119,7 +119,7 @@ export function createGlassType(
       code: 'MISSING_U_VALUE',
       context: { isLowE: true },
       message: 'Low-E glass should have a U-value specified',
-      path: [ 'uValue' ],
+      path: ['uValue'],
     });
   }
 

@@ -111,18 +111,18 @@ export const activeProfileSuppliers = profileSuppliersCatalog.filter((s) => s.is
  */
 export const profileSuppliersByCountry = {
   Colombia: profileSuppliersCatalog.filter((s) =>
-    [ 'Alumina', 'Sistemas Europeos', 'Aluminio Económico' ].includes(s.name)
+    ['Alumina', 'Sistemas Europeos', 'Aluminio Económico'].includes(s.name)
   ),
-  Germany: profileSuppliersCatalog.filter((s) => [ 'Deceuninck', 'Rehau', 'VEKA' ].includes(s.name)),
+  Germany: profileSuppliersCatalog.filter((s) => ['Deceuninck', 'Rehau', 'VEKA'].includes(s.name)),
 };
 
 /**
  * Recommended suppliers by project type
  */
 export const recommendedSuppliers = {
-  budget: [ 'Aluminio Económico', 'Alumina' ],
-  commercial: [ 'Sistemas Europeos', 'Deceuninck', 'Alumina' ],
-  premium: [ 'Deceuninck', 'VEKA', 'Sistemas Europeos' ],
-  residential: [ 'Deceuninck', 'Rehau', 'Alumina' ],
-  tropical: [ 'Rehau', 'Deceuninck', 'Alumina' ], // UV resistance important
+  budget: ['Aluminio Económico', 'Alumina'],
+  commercial: ['Sistemas Europeos', 'Deceuninck', 'Alumina'],
+  premium: ['Deceuninck', 'VEKA', 'Sistemas Europeos'],
+  residential: ['Deceuninck', 'Rehau', 'Alumina'],
+  tropical: ['Rehau', 'Deceuninck', 'Alumina'], // UV resistance important
 };

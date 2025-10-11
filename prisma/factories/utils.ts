@@ -91,7 +91,7 @@ export function validateRange(value: number, min: number, max: number, fieldName
       code: 'OUT_OF_RANGE',
       context: { max, min, value },
       message: `${fieldName} must be between ${min} and ${max}, got ${value}`,
-      path: [ fieldName ],
+      path: [fieldName],
     };
   }
   return null;
@@ -111,7 +111,7 @@ export function validateMinMax(min: number, max: number, fieldPrefix: string): V
       code: 'INVALID_RANGE',
       context: { max, min },
       message: `${fieldPrefix} min (${min}) must be less than max (${max})`,
-      path: [ fieldPrefix ],
+      path: [fieldPrefix],
     };
   }
   return null;
@@ -150,7 +150,7 @@ export function validatePrice(
       code: 'INVALID_PRICE',
       context: { price },
       message: `${fieldName} must be positive, got ${price}`,
-      path: [ fieldName ],
+      path: [fieldName],
     };
   }
 
@@ -159,7 +159,7 @@ export function validatePrice(
       code: 'PRICE_TOO_HIGH',
       context: { maxPrice, price },
       message: `${fieldName} seems unreasonably high: ${formatPriceCOP(price)}`,
-      path: [ fieldName ],
+      path: [fieldName],
     };
   }
 
@@ -178,7 +178,7 @@ export function validateNonEmpty<T>(array: T[], fieldName: string): ValidationEr
     return {
       code: 'EMPTY_ARRAY',
       message: `${fieldName} must not be empty`,
-      path: [ fieldName ],
+      path: [fieldName],
     };
   }
   return null;

@@ -77,10 +77,10 @@ function parseCliArgs(): CliOptions {
   });
 
   return {
-    continueOnError: values[ 'continue-on-error' ] ?? false,
+    continueOnError: values['continue-on-error'] ?? false,
     help: values.help ?? false,
     preset: values.preset ?? 'minimal',
-    skipValidation: values[ 'skip-validation' ] ?? false,
+    skipValidation: values['skip-validation'] ?? false,
     verbose: values.verbose ?? false,
   };
 }
@@ -147,7 +147,7 @@ async function main(): Promise<void> {
   // Validate preset
   validatePreset(options.preset);
 
-  const preset = PRESETS[ options.preset ];
+  const preset = PRESETS[options.preset];
   if (!preset) {
     console.error(`\n❌ Error: Preset "${options.preset}" not found in registry\n`);
     process.exit(1);

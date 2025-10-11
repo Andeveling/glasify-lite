@@ -176,11 +176,11 @@ export const glassSolutionsCatalog: readonly GlassSolutionRecord[] = [
  * Grouped for easier filtering in UI
  */
 export const glassSolutionsByCategory = {
-  decorative: [ decorativeSolution ],
-  efficiency: [ energyEfficiencySolution ],
-  general: [ generalPurposeSolution ],
-  insulation: [ thermalInsulationSolution, soundInsulationSolution ],
-  security: [ securitySolution ],
+  decorative: [decorativeSolution],
+  efficiency: [energyEfficiencySolution],
+  general: [generalPurposeSolution],
+  insulation: [thermalInsulationSolution, soundInsulationSolution],
+  security: [securitySolution],
 } as const;
 
 /**

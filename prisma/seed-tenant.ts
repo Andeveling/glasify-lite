@@ -30,32 +30,32 @@ const profileSuppliers: Array<{
   materialType: MaterialType;
   name: string;
 }> = [
-    {
-      isActive: true,
-      materialType: 'PVC',
-      name: 'Rehau',
-    },
-    {
-      isActive: true,
-      materialType: 'PVC',
-      name: 'Deceuninck',
-    },
-    {
-      isActive: true,
-      materialType: 'ALUMINUM',
-      name: 'Azembla',
-    },
-    {
-      isActive: true,
-      materialType: 'ALUMINUM',
-      name: 'Aluflex',
-    },
-    {
-      isActive: false,
-      materialType: 'PVC',
-      name: 'VEKA', // Inactive supplier example
-    },
-  ];
+  {
+    isActive: true,
+    materialType: 'PVC',
+    name: 'Rehau',
+  },
+  {
+    isActive: true,
+    materialType: 'PVC',
+    name: 'Deceuninck',
+  },
+  {
+    isActive: true,
+    materialType: 'ALUMINUM',
+    name: 'Azembla',
+  },
+  {
+    isActive: true,
+    materialType: 'ALUMINUM',
+    name: 'Aluflex',
+  },
+  {
+    isActive: false,
+    materialType: 'PVC',
+    name: 'VEKA', // Inactive supplier example
+  },
+];
 
 /**
  * Seed TenantConfig singleton and ProfileSupplier records
