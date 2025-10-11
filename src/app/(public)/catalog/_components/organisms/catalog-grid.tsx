@@ -27,6 +27,33 @@ type CatalogGridProps = {
 };
 
 /**
+ * Generate mock highlighted solutions for demo purposes
+ * TODO: Replace with real data from tRPC query
+ */
+function getMockHighlightedSolutions(modelId: string) {
+  // Mock data - different solutions for different models
+  const mockSolutions = [
+    [
+      { icon: 'Shield', nameEs: 'Seguridad', rating: 'excellent' as const },
+      { icon: 'Snowflake', nameEs: 'Aislamiento Térmico', rating: 'very_good' as const },
+    ],
+    [
+      { icon: 'Volume2', nameEs: 'Aislamiento Acústico', rating: 'excellent' as const },
+      { icon: 'Shield', nameEs: 'Seguridad', rating: 'good' as const },
+    ],
+    [
+      { icon: 'Snowflake', nameEs: 'Aislamiento Térmico', rating: 'excellent' as const },
+      { icon: 'Sparkles', nameEs: 'Decorativo', rating: 'very_good' as const },
+      { icon: 'Volume2', nameEs: 'Aislamiento Acústico', rating: 'good' as const },
+    ],
+  ];
+
+  // Use model ID to pseudo-randomly assign solutions
+  const index = modelId.charCodeAt(0) % mockSolutions.length;
+  return mockSolutions[index];
+}
+
+/**
  * CatalogGrid - Pure Presentational Component
  * Issue: #002-ui-ux-requirements
  *
@@ -53,6 +80,7 @@ export function CatalogGrid({ models }: CatalogGridProps) {
             <ModelCard
               basePrice={formatCurrency(model.basePrice)}
               compatibleGlassTypes={[]}
+              highlightedSolutions={getMockHighlightedSolutions(model.id)}
               id={model.id}
               name={model.name}
               profileSupplier={model.profileSupplier?.name}
