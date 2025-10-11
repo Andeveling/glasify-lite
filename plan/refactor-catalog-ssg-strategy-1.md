@@ -53,63 +53,63 @@ Currently, the catalog page uses `force-dynamic` rendering, which means every re
 
 **GOAL-001**: Configure catalog page for Static Site Generation with Incremental Static Regeneration
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-001 | Remove `export const dynamic = 'force-dynamic'` from `src/app/(public)/catalog/page.tsx` | | |
-| TASK-002 | Add `export const revalidate = 3600` to enable ISR with 1-hour revalidation | | |
-| TASK-003 | Add metadata export for SEO (title, description, Open Graph tags) | | |
-| TASK-004 | Verify that page builds statically with `pnpm build` (check `.next/server/app` for static HTML) | | |
-| TASK-005 | Test that page serves cached HTML on first request and revalidates after 3600s | | |
+| Task     | Description                                                                                     | Completed | Date |
+| -------- | ----------------------------------------------------------------------------------------------- | --------- | ---- |
+| TASK-001 | Remove `export const dynamic = 'force-dynamic'` from `src/app/(public)/catalog/page.tsx`        |           |      |
+| TASK-002 | Add `export const revalidate = 3600` to enable ISR with 1-hour revalidation                     |           |      |
+| TASK-003 | Add metadata export for SEO (title, description, Open Graph tags)                               |           |      |
+| TASK-004 | Verify that page builds statically with `pnpm build` (check `.next/server/app` for static HTML) |           |      |
+| TASK-005 | Test that page serves cached HTML on first request and revalidates after 3600s                  |           |      |
 
 ### Implementation Phase 2: Optimize Data Fetching with React cache()
 
 **GOAL-002**: Deduplicate data fetching requests using React cache() to prevent multiple identical database queries
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-006 | Create cached version of `list-manufacturers` tRPC call in `src/app/(public)/catalog/_utils/cached-catalog-data.ts` | | |
-| TASK-007 | Create cached version of `list-models` tRPC call for initial data load | | |
-| TASK-008 | Wrap database queries with React `cache()` function to ensure single execution per request | | |
-| TASK-009 | Update `CatalogPage` component to use cached data fetching functions | | |
-| TASK-010 | Verify with logging that database queries are deduplicated (single query per request) | | |
+| Task     | Description                                                                                                         | Completed | Date |
+| -------- | ------------------------------------------------------------------------------------------------------------------- | --------- | ---- |
+| TASK-006 | Create cached version of `list-manufacturers` tRPC call in `src/app/(public)/catalog/_utils/cached-catalog-data.ts` |           |      |
+| TASK-007 | Create cached version of `list-models` tRPC call for initial data load                                              |           |      |
+| TASK-008 | Wrap database queries with React `cache()` function to ensure single execution per request                          |           |      |
+| TASK-009 | Update `CatalogPage` component to use cached data fetching functions                                                |           |      |
+| TASK-010 | Verify with logging that database queries are deduplicated (single query per request)                               |           |      |
 
 ### Implementation Phase 3: Maintain Client-Side Interactivity
 
 **GOAL-003**: Ensure search, filtering, and pagination continue to work with statically generated pages
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-011 | Verify that `CatalogSearch` client component maintains instant search functionality | | |
-| TASK-012 | Verify that `ManufacturerFilter` dropdown works with static initial data | | |
-| TASK-013 | Verify that `SortSelect` component updates URL params correctly | | |
-| TASK-014 | Test pagination component navigates between static pages properly | | |
-| TASK-015 | Ensure all Client Components (`'use client'`) maintain their interactivity | | |
+| Task     | Description                                                                         | Completed | Date |
+| -------- | ----------------------------------------------------------------------------------- | --------- | ---- |
+| TASK-011 | Verify that `CatalogSearch` client component maintains instant search functionality |           |      |
+| TASK-012 | Verify that `ManufacturerFilter` dropdown works with static initial data            |           |      |
+| TASK-013 | Verify that `SortSelect` component updates URL params correctly                     |           |      |
+| TASK-014 | Test pagination component navigates between static pages properly                   |           |      |
+| TASK-015 | Ensure all Client Components (`'use client'`) maintain their interactivity          |           |      |
 
 ### Implementation Phase 4: Build-Time Optimization
 
 **GOAL-004**: Optimize build process to pre-render catalog with all current data
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-016 | Run production build: `pnpm build` and verify catalog page is statically generated | | |
-| TASK-017 | Check build output for static HTML generation in `.next/server/app/(public)/catalog` | | |
-| TASK-018 | Verify build includes all current models from database seed | | |
-| TASK-019 | Test production server (`pnpm start`) serves static HTML on first load | | |
-| TASK-020 | Measure and document performance improvements (Lighthouse scores, Core Web Vitals) | | |
+| Task     | Description                                                                          | Completed | Date |
+| -------- | ------------------------------------------------------------------------------------ | --------- | ---- |
+| TASK-016 | Run production build: `pnpm build` and verify catalog page is statically generated   |           |      |
+| TASK-017 | Check build output for static HTML generation in `.next/server/app/(public)/catalog` |           |      |
+| TASK-018 | Verify build includes all current models from database seed                          |           |      |
+| TASK-019 | Test production server (`pnpm start`) serves static HTML on first load               |           |      |
+| TASK-020 | Measure and document performance improvements (Lighthouse scores, Core Web Vitals)   |           |      |
 
 ### Implementation Phase 5: Testing & Validation
 
 **GOAL-005**: Comprehensive testing to ensure SSG works correctly without breaking functionality
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-021 | Write E2E test in `e2e/catalog/catalog-ssg.spec.ts` to verify static page loads | | |
-| TASK-022 | Test that search filter works on statically generated page | | |
-| TASK-023 | Test that manufacturer filter updates results correctly | | |
-| TASK-024 | Test that pagination navigates between pages | | |
-| TASK-025 | Test that adding new model to database reflects after revalidation period (3600s) | | |
-| TASK-026 | Verify SEO metadata is present in static HTML source | | |
-| TASK-027 | Run Lighthouse audit and ensure Performance score > 90, SEO score > 95 | | |
+| Task     | Description                                                                       | Completed | Date |
+| -------- | --------------------------------------------------------------------------------- | --------- | ---- |
+| TASK-021 | Write E2E test in `e2e/catalog/catalog-ssg.spec.ts` to verify static page loads   |           |      |
+| TASK-022 | Test that search filter works on statically generated page                        |           |      |
+| TASK-023 | Test that manufacturer filter updates results correctly                           |           |      |
+| TASK-024 | Test that pagination navigates between pages                                      |           |      |
+| TASK-025 | Test that adding new model to database reflects after revalidation period (3600s) |           |      |
+| TASK-026 | Verify SEO metadata is present in static HTML source                              |           |      |
+| TASK-027 | Run Lighthouse audit and ensure Performance score > 90, SEO score > 95            |           |      |
 
 ## 3. Alternatives
 
