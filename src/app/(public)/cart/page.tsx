@@ -1,132 +1,45 @@
 /**
  * Cart Page
  *
- * Displays all cart items with management capabilities:
- * - List all cart items
- * - Edit item names inline
- * - Adjust quantities
- * - Remove items
- * - View cart summary with totals
- * - Generate quote CTA
+ * Server Component that renders the cart page.
+ * Delegates all client-side interactivity to CartPageContent.
+ *
+ * Benefits of Server Component:
+ * - Better SEO (pre-rendered HTML)
+ * - Smaller client bundle (no page-level JavaScript)
+ * - Faster initial page load
  *
  * @module app/(public)/cart/page
  */
 
-'use client';
-
-import { useRouter } from 'next/navigation';
-import { Suspense } from 'react';
-import { CartItem } from './_components/cart-item';
-import { CartSummary } from './_components/cart-summary';
-import { EmptyCartState } from './_components/empty-cart-state';
-import { useCart } from './_hooks/use-cart';
+import type { Metadata } from 'next';
+import { CartPageContent } from './_components/cart-page-content';
 
 // ============================================================================
-// Page Component
+// Route Segment Config
+// ============================================================================
+
+// Force dynamic rendering - cart data is client-side only (sessionStorage)
+export const dynamic = 'force-dynamic';
+
+// ============================================================================
+// Metadata
+// ============================================================================
+
+export const metadata: Metadata = {
+  description: 'Revisa y ajusta tus configuraciones de ventanas antes de generar una cotización formal',
+  title: 'Carrito de Presupuesto',
+};
+
+// ============================================================================
+// Page Component (Server Component)
 // ============================================================================
 
 /**
- * Cart page
+ * Cart page - Server Component
  *
- * Shows all cart items with inline editing and quote generation CTA
+ * Renders the cart page with metadata and delegates interactivity to client component
  */
 export default function CartPage() {
-  const router = useRouter();
-  const { items, summary, updateItem, removeItem, hydrated } = useCart();
-
-  // Show loading skeleton while hydrating
-  if (!hydrated) {
-    return (
-      <div className="container mx-auto max-w-7xl px-4 py-8">
-        <div className="mb-6">
-          <div className="h-8 w-48 animate-pulse rounded bg-muted" />
-        </div>
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div className="h-32 animate-pulse rounded-lg border bg-muted" key={i} />
-              ))}
-            </div>
-          </div>
-          <div className="h-64 animate-pulse rounded-lg border bg-muted" />
-        </div>
-      </div>
-    );
-  }
-
-  // Empty cart state
-  if (summary.isEmpty) {
-    return (
-      <div className="container mx-auto max-w-4xl px-4 py-12">
-        <h1 className="mb-8 font-bold text-3xl">Carrito de presupuesto</h1>
-        <EmptyCartState />
-      </div>
-    );
-  }
-
-  /**
-   * Handle name update
-   */
-  const handleUpdateName = (itemId: string, newName: string) => {
-    updateItem(itemId, { name: newName });
-  };
-
-  /**
-   * Handle quantity update
-   */
-  const handleUpdateQuantity = (itemId: string, newQuantity: number) => {
-    updateItem(itemId, { quantity: newQuantity });
-  };
-
-  /**
-   * Handle item removal
-   */
-  const handleRemoveItem = (itemId: string) => {
-    removeItem(itemId);
-  };
-
-  /**
-   * Handle quote generation (navigate to quote creation)
-   */
-  const handleGenerateQuote = () => {
-    router.push('/quote/new');
-  };
-
-  return (
-    <div className="container mx-auto max-w-7xl px-4 py-8">
-      {/* Page header */}
-      <div className="mb-6">
-        <h1 className="font-bold text-3xl">Carrito de presupuesto</h1>
-        <p className="mt-2 text-muted-foreground">
-          Revisa y ajusta tus configuraciones antes de generar una cotización formal
-        </p>
-      </div>
-
-      {/* Main content: Cart items + Summary */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Cart items list (2/3 width on desktop) */}
-        <div className="lg:col-span-2">
-          <div className="space-y-4">
-            {items.map((item) => (
-              <Suspense fallback={<div className="h-32 animate-pulse rounded-lg border bg-muted" />} key={item.id}>
-                <CartItem
-                  currency={summary.currency}
-                  item={item}
-                  onRemove={handleRemoveItem}
-                  onUpdateName={handleUpdateName}
-                  onUpdateQuantity={handleUpdateQuantity}
-                />
-              </Suspense>
-            ))}
-          </div>
-        </div>
-
-        {/* Cart summary (1/3 width on desktop, sticky) */}
-        <div>
-          <CartSummary onGenerateQuote={handleGenerateQuote} summary={summary} />
-        </div>
-      </div>
-    </div>
-  );
+  return <CartPageContent />;
 }

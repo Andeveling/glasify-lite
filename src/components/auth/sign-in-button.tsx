@@ -18,7 +18,6 @@
 import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import logger from '@/lib/logger';
 
 // ============================================================================
 // Types
@@ -79,12 +78,6 @@ export function SignInButton({
     try {
       setIsLoading(true);
 
-      logger.info('Initiating Google OAuth sign-in', {
-        action: 'signin-start',
-        callbackUrl,
-        correlationId: crypto.randomUUID(),
-      });
-
       // Trigger Google OAuth flow
       await signIn('google', {
         callbackUrl,
@@ -94,12 +87,6 @@ export function SignInButton({
       // Success callback (may not execute if redirect happens immediately)
       onSuccess?.();
     } catch (error) {
-      logger.error('Sign-in failed', {
-        action: 'signin-error',
-        correlationId: crypto.randomUUID(),
-        error,
-      });
-
       // Error callback
       const errorObj = error instanceof Error ? error : new Error('Sign-in failed');
       onError?.(errorObj);

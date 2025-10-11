@@ -10,7 +10,6 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import logger from '@/lib/logger';
 import type { CartItem, CartStorageData } from '@/types/cart.types';
 import { CART_CONSTANTS } from '@/types/cart.types';
 
@@ -48,10 +47,6 @@ export function loadCartFromStorage(): CartItem[] {
 
     // Version check (for future migrations)
     if (storageData.version !== STORAGE_VERSION) {
-      logger.warn('Cart storage version mismatch', {
-        current: storageData.version,
-        expected: STORAGE_VERSION,
-      });
       // Clear outdated storage
       clearCartStorage();
       return [];
@@ -59,14 +54,12 @@ export function loadCartFromStorage(): CartItem[] {
 
     // Validate items array
     if (!Array.isArray(storageData.items)) {
-      logger.error('Invalid cart items in storage');
       clearCartStorage();
       return [];
     }
 
     return storageData.items;
   } catch (error) {
-    logger.error('Failed to load cart from storage', { error });
     // Clear corrupted storage
     clearCartStorage();
     return [];
@@ -107,11 +100,9 @@ export function saveCartToStorage(items: CartItem[]): boolean {
 
     return true;
   } catch (error) {
-    logger.error('Failed to save cart to storage', { error });
-
     // Handle quota exceeded error
     if (error instanceof DOMException && error.name === 'QuotaExceededError') {
-      logger.error('sessionStorage quota exceeded', { itemCount: items.length });
+      // sessionStorage quota exceeded - could implement user notification here
     }
 
     return false;
@@ -135,8 +126,8 @@ export function clearCartStorage(): void {
         detail: { items: [] },
       })
     );
-  } catch (error) {
-    logger.error('Failed to clear cart storage', { error });
+  } catch {
+    // Silently fail - storage operations are non-critical
   }
 }
 
@@ -165,8 +156,8 @@ export function clearCartStorage(): void {
  * ```
  */
 export function useCartStorage() {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [isHydrated, setIsHydrated] = useState(false);
+  const [ items, setItems ] = useState<CartItem[]>([]);
+  const [ isHydrated, setIsHydrated ] = useState(false);
 
   // Hydrate from sessionStorage on mount
   useEffect(() => {
@@ -174,13 +165,10 @@ export function useCartStorage() {
     setItems(loadedItems);
     setIsHydrated(true);
 
-    logger.info('Cart hydrated from storage', { itemCount: loadedItems.length });
-
     // Listen for cart updates from other components
     const handleCartUpdate = (event: Event) => {
       const customEvent = event as CustomEvent<{ items: CartItem[] }>;
       setItems(customEvent.detail.items);
-      logger.info('Cart updated via event', { itemCount: customEvent.detail.items.length });
     };
 
     window.addEventListener('cart-updated', handleCartUpdate);
@@ -198,9 +186,6 @@ export function useCartStorage() {
 
     if (success) {
       setItems(newItems);
-      logger.info('Cart saved to storage', { itemCount: newItems.length });
-    } else {
-      logger.error('Failed to save cart items');
     }
 
     return success;
@@ -212,7 +197,6 @@ export function useCartStorage() {
   const clearItems = useCallback(() => {
     clearCartStorage();
     setItems([]);
-    logger.info('Cart cleared from storage');
   }, []);
 
   /**
@@ -225,7 +209,7 @@ export function useCartStorage() {
 
     try {
       const rawData = sessionStorage.getItem(CART_CONSTANTS.STORAGE_KEY);
-      return rawData ? new Blob([rawData]).size : 0;
+      return rawData ? new Blob([ rawData ]).size : 0;
     } catch {
       return 0;
     }

@@ -10,7 +10,6 @@ import { useCart } from '@/app/(public)/cart/_hooks/use-cart';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import logger from '@/lib/logger';
 import type { CartItem } from '@/types/cart.types';
 
 // Validation constants (aligned with contract schema)
@@ -85,7 +84,6 @@ export default function QuoteGenerationForm({ onSubmit, onSuccess }: QuoteGenera
   // Redirect if cart is empty
   useEffect(() => {
     if (cartItems.length === 0) {
-      logger.warn('[QuoteGenerationForm] Cart is empty, redirecting to catalog');
       toast.error('Carrito vacío', {
         description: 'Agrega items al carrito antes de generar una cotización',
       });
@@ -111,28 +109,17 @@ export default function QuoteGenerationForm({ onSubmit, onSuccess }: QuoteGenera
     try {
       setIsSubmitting(true);
 
-      logger.info('[QuoteGenerationForm] Submitting quote generation', {
-        itemCount: cartItems.length,
-        projectCity: values.projectCity,
-        projectName: values.projectName,
-      });
-
       // Call server action with form data and cart items
       // Server action will get manufacturerId from first cart item's model
       const result = await onSubmit(values, cartItems);
 
       if (result.success && result.quoteId) {
-        logger.info('[QuoteGenerationForm] Quote generated successfully', {
-          quoteId: result.quoteId,
-        });
-
         toast.success('Cotización Creada', {
           description: 'Tu cotización ha sido generada exitosamente',
         });
 
         // Clear cart after successful quote generation
         clearCart();
-        logger.info('[QuoteGenerationForm] Cart cleared after successful quote generation');
 
         // Call success callback if provided
         if (onSuccess) {
@@ -143,10 +130,6 @@ export default function QuoteGenerationForm({ onSubmit, onSuccess }: QuoteGenera
         }
       } else {
         // Handle error from server action
-        logger.error('[QuoteGenerationForm] Quote generation failed', {
-          error: result.error,
-        });
-
         toast.error('Error', {
           description: result.error ?? 'Error al generar la cotización. Por favor intenta nuevamente.',
         });
@@ -155,11 +138,7 @@ export default function QuoteGenerationForm({ onSubmit, onSuccess }: QuoteGenera
           message: result.error ?? 'Error al generar la cotización',
         });
       }
-    } catch (error) {
-      logger.error('[QuoteGenerationForm] Unexpected error during submission', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-      });
-
+    } catch {
       toast.error('Error', {
         description: 'Ocurrió un error inesperado. Por favor intenta nuevamente.',
       });

@@ -23,7 +23,6 @@ import { useSession } from 'next-auth/react';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import logger from '@/lib/logger';
 import { cn } from '@/lib/utils';
 import type { CartSummary as CartSummaryType } from '@/types/cart.types';
 
@@ -62,7 +61,7 @@ export type CartSummaryProps = {
  */
 export function CartSummary({ summary, onGenerateQuote, isGenerating = false, className }: CartSummaryProps) {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const isAuthenticated = status === 'authenticated';
   const isLoading = status === 'loading';
 
@@ -74,25 +73,12 @@ export function CartSummary({ summary, onGenerateQuote, isGenerating = false, cl
   const handleGenerateQuote = () => {
     // Check authentication before proceeding
     if (!isAuthenticated) {
-      logger.info('User not authenticated, redirecting to sign-in', {
-        action: 'generate-quote-redirect',
-        cartItemCount: summary.itemCount,
-        correlationId: crypto.randomUUID(),
-      });
-
       // Redirect to sign-in with callback to quote generation
       router.push('/api/auth/signin?callbackUrl=/quote/new');
       return;
     }
 
     // User is authenticated, navigate to quote generation page
-    logger.info('Navigating to quote generation page', {
-      action: 'generate-quote-navigate',
-      cartItemCount: summary.itemCount,
-      correlationId: crypto.randomUUID(),
-      userId: session?.user?.id,
-    });
-
     // Use callback if provided, otherwise navigate to quote generation page
     if (onGenerateQuote) {
       onGenerateQuote();

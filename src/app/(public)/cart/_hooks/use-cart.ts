@@ -11,7 +11,6 @@
 
 import { createId } from '@paralleldrive/cuid2';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import logger from '@/lib/logger';
 import {
   calculateItemSubtotal,
   findCartItem,
@@ -95,14 +94,14 @@ type UseCartReturn = {
 export function useCart(): UseCartReturn {
   const { items: storedItems, saveItems, clearItems, isHydrated } = useCartStorage();
   const { currency } = useTenantConfig();
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [ items, setItems ] = useState<CartItem[]>([]);
 
   // Sync with storage on hydration
   useEffect(() => {
     if (isHydrated) {
       setItems(storedItems);
     }
-  }, [isHydrated, storedItems]);
+  }, [ isHydrated, storedItems ]);
 
   /**
    * Add item to cart with auto-generated name
@@ -113,7 +112,6 @@ export function useCart(): UseCartReturn {
       const limitValidation = validateCartLimit(items.length);
       if (!limitValidation.valid) {
         const error = new Error(limitValidation.error);
-        logger.error('Cart limit exceeded', { currentCount: items.length });
         throw error;
       }
 
@@ -151,20 +149,11 @@ export function useCart(): UseCartReturn {
       };
 
       // Update state
-      const updatedItems = [...items, newItem];
+      const updatedItems = [ ...items, newItem ];
       setItems(updatedItems);
       saveItems(updatedItems);
-
-      logger.info('Item added to cart', {
-        itemId,
-        itemName,
-        modelId: input.modelId,
-        quantity,
-        subtotal,
-        totalItems: updatedItems.length,
-      });
     },
-    [items, saveItems]
+    [ items, saveItems ]
   );
 
   /**
@@ -176,7 +165,6 @@ export function useCart(): UseCartReturn {
 
       if (!item) {
         const error = new Error(`Item ${id} no encontrado en el carrito`);
-        logger.error('Item not found for update', { itemId: id });
         throw error;
       }
 
@@ -187,13 +175,8 @@ export function useCart(): UseCartReturn {
       const updatedItems = items.map((i) => (i.id === id ? updatedItem : i));
       setItems(updatedItems);
       saveItems(updatedItems);
-
-      logger.info('Item updated in cart', {
-        itemId: id,
-        updates,
-      });
     },
-    [items, saveItems]
+    [ items, saveItems ]
   );
 
   /**
@@ -205,21 +188,14 @@ export function useCart(): UseCartReturn {
 
       if (!item) {
         const error = new Error(`Item ${id} no encontrado en el carrito`);
-        logger.error('Item not found for removal', { itemId: id });
         throw error;
       }
 
       const updatedItems = removeCartItem(items, id);
       setItems(updatedItems);
       saveItems(updatedItems);
-
-      logger.info('Item removed from cart', {
-        itemId: id,
-        itemName: item.name,
-        totalItems: updatedItems.length,
-      });
     },
-    [items, saveItems]
+    [ items, saveItems ]
   );
 
   /**
@@ -228,20 +204,18 @@ export function useCart(): UseCartReturn {
   const clearCart = useCallback(() => {
     setItems([]);
     clearItems();
-
-    logger.info('Cart cleared', { previousCount: items.length });
-  }, [clearItems, items.length]);
+  }, [ clearItems ]);
 
   /**
    * Get item by ID
    */
-  const getItemById = useCallback((id: string): CartItem | undefined => findCartItem(items, id), [items]);
+  const getItemById = useCallback((id: string): CartItem | undefined => findCartItem(items, id), [ items ]);
 
   /**
    * Cart summary (memoized)
    * Uses tenant currency from config (single source of truth)
    */
-  const summary = useMemo((): CartSummary => generateCartSummary(items, currency), [items, currency]);
+  const summary = useMemo((): CartSummary => generateCartSummary(items, currency), [ items, currency ]);
 
   return {
     addItem,

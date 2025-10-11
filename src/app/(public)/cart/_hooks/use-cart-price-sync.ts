@@ -16,7 +16,6 @@
 'use client';
 
 import { useCallback, useEffect, useRef } from 'react';
-import logger from '@/lib/logger';
 import { api } from '@/trpc/react';
 import type { CartItem } from '@/types/cart.types';
 
@@ -78,7 +77,7 @@ export function useCartPriceSync({ items, onPriceUpdate, debounceMs = 500, enabl
   const previousQuantitiesRef = useRef<Map<string, number>>(new Map());
 
   // tRPC mutation for price calculation using quote.calculate-item
-  const calculatePriceMutation = api.quote['calculate-item'].useMutation();
+  const calculatePriceMutation = api.quote[ 'calculate-item' ].useMutation();
 
   // Track items in a ref to avoid dependency issues
   const itemsRef = useRef(items);
@@ -107,27 +106,13 @@ export function useCartPriceSync({ items, onPriceUpdate, debounceMs = 500, enabl
         const newSubtotal = newUnitPrice * item.quantity;
         const priceChanged = newUnitPrice !== item.unitPrice;
 
-        if (priceChanged) {
-          logger.warn('Price changed for cart item', {
-            expected: item.unitPrice,
-            itemId: item.id,
-            itemName: item.name,
-            received: newUnitPrice,
-          });
-        }
-
         return {
           itemId: item.id,
           newSubtotal,
           newUnitPrice,
           priceChanged,
         };
-      } catch (error) {
-        logger.error('Price recalculation error', {
-          error: error instanceof Error ? error.message : 'Unknown error',
-          itemId: item.id,
-        });
-
+      } catch {
         // Fallback: use cached price, just recalculate subtotal
         return {
           itemId: item.id,
@@ -137,7 +122,7 @@ export function useCartPriceSync({ items, onPriceUpdate, debounceMs = 500, enabl
         };
       }
     },
-    [calculatePriceMutation]
+    [ calculatePriceMutation ]
   );
 
   /**
@@ -169,7 +154,7 @@ export function useCartPriceSync({ items, onPriceUpdate, debounceMs = 500, enabl
         previousQuantitiesRef.current.set(item.id, item.quantity);
       }
     }, debounceMs);
-  }, [enabled, debounceMs, recalculateItemPrice, onPriceUpdate]);
+  }, [ enabled, debounceMs, recalculateItemPrice, onPriceUpdate ]);
 
   /**
    * Auto-sync on items change
@@ -184,7 +169,7 @@ export function useCartPriceSync({ items, onPriceUpdate, debounceMs = 500, enabl
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [enabled, syncPrices]); // Only depend on enabled and syncPrices, use ref for items
+  }, [ enabled, syncPrices ]); // Only depend on enabled and syncPrices, use ref for items
 
   /**
    * Initialize quantity tracking on mount and when items change
@@ -209,7 +194,7 @@ export function useCartPriceSync({ items, onPriceUpdate, debounceMs = 500, enabl
         previousQuantitiesRef.current.delete(trackedId);
       }
     }
-  }, [items]); // items dependency needed to detect cart changes for tracking
+  }, [ items ]); // items dependency needed to detect cart changes for tracking
 
   return {
     isSyncing: calculatePriceMutation.isPending,
