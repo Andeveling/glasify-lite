@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
 import {
   FieldContent,
   FieldDescription,
@@ -48,7 +49,7 @@ export function FormSection({
     <FieldSet className={className}>
       <FieldGroup className={groupClassName} data-orientation={orientation}>
         <div className="space-y-2">
-          <FieldLegend className={legendClassName}>
+          <FieldLegend className={cn('font-bold text-2xl tracking-tight', legendClassName)}>
             {Icon && <Icon className="mr-3 mb-1 inline size-6 text-primary" />}
             {legend}
           </FieldLegend>
