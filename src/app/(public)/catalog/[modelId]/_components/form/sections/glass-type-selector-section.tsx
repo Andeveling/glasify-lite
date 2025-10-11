@@ -213,7 +213,7 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
                     <div className="group relative" key={option.id}>
                       {/* Recommended badge */}
                       {option.isRecommended && (
-                        <div className="-top-2 -right-2 absolute z-10 flex items-center gap-1 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 px-3 py-1 font-bold text-white text-xs shadow-lg">
+                        <div className="-top-3 -right-2 absolute z-10 flex items-center gap-1 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 px-3 py-1 font-bold text-white text-xs shadow-lg">
                           <Sparkles className="size-3" />
                           Recomendado
                         </div>
@@ -252,9 +252,7 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
                             <h4 className={cn('font-semibold text-sm leading-tight', isSelected && 'text-primary')}>
                               {option.title}
                             </h4>
-                            <p className="line-clamp-1 text-muted-foreground text-xs">
-                              {option.thicknessMm}mm • {option.name}
-                            </p>
+                            <p className="line-clamp-1 text-muted-foreground text-xs">{option.name}</p>
                           </div>
                         </div>
 

@@ -156,9 +156,12 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
             />
           </Card>
 
-          <Card className="p-6">
-            <ServicesSelectorSection services={services} />
-          </Card>
+          {/* Services Section - Only show if services are available (Don't Make Me Think principle) */}
+          {services.length > 0 && (
+            <Card className="p-6">
+              <ServicesSelectorSection services={services} />
+            </Card>
+          )}
 
           <QuoteSummary
             basePrice={model.basePrice}
