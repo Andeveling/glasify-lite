@@ -99,7 +99,11 @@ Rules:
 
 This project enforces a constrained stack to preserve compatibility and developer expectations. Mandatory technologies and conventions:
 
-- Next.js 15 (App Router) with React Server Components
+- **Next.js 15 (App Router) with React Server Components**
+  - Server Components by default for pages (`page.tsx`)
+  - Client Components (`'use client'`) only for interactivity
+  - Metadata exports for SEO on public pages
+  - Dynamic rendering configuration (`export const dynamic = 'force-dynamic'`) when using browser APIs
 - TypeScript (strict), Zod 4 for validation, tRPC for typed APIs, Prisma for DB access
 - React Hook Form + @hookform/resolvers for form validation
 - shadcn/ui + Radix for UI primitives; TailwindCSS for styling
