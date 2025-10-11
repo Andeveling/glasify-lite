@@ -12,5 +12,10 @@
     ".specify/scripts/bash/": true,
     ".specify/scripts/ps/": true
   },
-  "chat.emptyState.history.enabled": true
+  "chat.emptyState.history.enabled": true,
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "text": "Use conventional commit message format, in English if necessary, use body and clarify and argument changes for good documentation."
+    }
+  ],
 }
