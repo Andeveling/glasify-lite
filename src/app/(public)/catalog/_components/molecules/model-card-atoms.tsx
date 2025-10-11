@@ -5,7 +5,23 @@
  * Following Atomic Design and Single Responsibility Principle.
  */
 
-import { ArrowLeftRight, ArrowUpDown } from 'lucide-react';
+import { ArrowLeftRight, ArrowUpDown, type LucideIcon, Shield, Snowflake, Sparkles, Volume2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+
+/**
+ * Map of icon names to Lucide icon components
+ * Used for dynamic icon rendering from database
+ */
+const ICON_MAP: Record<string, LucideIcon> = {
+  Shield,
+  Snowflake,
+  Sparkles,
+  Volume2,
+  // Add more icons as needed
+};
+
+/** Maximum number of solution badges to display on a card */
+const MAX_DISPLAYED_SOLUTIONS = 3;
 
 type DimensionDisplayProps = {
   icon: React.ReactNode;
@@ -42,7 +58,7 @@ type ProductImagePlaceholderProps = {
  * Can be easily replaced with actual image component.
  * TODO: Integrate real images later.
  */
-export function ProductImagePlaceholder({ productName }: ProductImagePlaceholderProps) {
+export function ProductImagePlaceholder({ productName: _productName }: ProductImagePlaceholderProps) {
   return (
     <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-muted">
       <div className="flex h-full items-center justify-center">
@@ -112,4 +128,82 @@ type ProductPriceProps = {
  */
 export function ProductPrice({ price }: ProductPriceProps) {
   return <p className="font-medium text-foreground text-sm">{price}</p>;
+}
+
+// ============================================================================
+// GLASS SOLUTIONS COMPONENTS
+// ============================================================================
+
+type PerformanceRating = 'basic' | 'standard' | 'good' | 'very_good' | 'excellent';
+
+type SolutionBadgeProps = {
+  /** Lucide icon name (e.g., 'Shield', 'Snowflake') */
+  icon?: string;
+  /** Solution name in Spanish (from GlassSolution.nameEs) */
+  label: string;
+  /** Performance rating (excellent > very_good > good) */
+  rating?: PerformanceRating;
+};
+
+/**
+ * SolutionBadge - Atomic Component
+ *
+ * Displays a single glass solution badge with icon and label.
+ * Visual importance based on performance rating.
+ */
+export function SolutionBadge({ icon, label, rating = 'good' }: SolutionBadgeProps) {
+  // Get icon component from map
+  const IconComponent = icon ? ICON_MAP[icon] : null;
+
+  // Visual variants based on performance rating
+  const ratingVariants = {
+    basic: 'bg-muted text-muted-foreground border-muted-foreground/30',
+    excellent: 'bg-primary/15 text-primary border-primary/30',
+    good: 'bg-green-500/15 text-green-700 border-green-500/30 dark:text-green-400',
+    standard: 'bg-muted text-muted-foreground border-muted-foreground/30',
+    veryGood: 'bg-blue-500/15 text-blue-700 border-blue-500/30 dark:text-blue-400',
+  };
+
+  // Map database snake_case to camelCase for variant lookup
+  const variantKey = rating === 'very_good' ? 'veryGood' : rating;
+  const variantClass = ratingVariants[variantKey as keyof typeof ratingVariants];
+
+  return (
+    <Badge className={`gap-1 px-2 py-0.5 text-xs ${variantClass}`} variant="outline">
+      {IconComponent && <IconComponent className="h-3 w-3" />}
+      <span>{label}</span>
+    </Badge>
+  );
+}
+
+type HighlightedSolution = {
+  icon?: string;
+  nameEs: string;
+  rating: PerformanceRating;
+};
+
+type ProductSolutionsProps = {
+  /** Top 2-3 highlighted solutions for this window model */
+  solutions: HighlightedSolution[];
+};
+
+/**
+ * ProductSolutions - Molecule Component
+ *
+ * Displays highlighted glass solutions for a window model.
+ * Shows top 2-3 solutions based on performance rating and compatibility.
+ */
+export function ProductSolutions({ solutions }: ProductSolutionsProps) {
+  if (solutions.length === 0) return null;
+
+  // Limit to top solutions to avoid clutter
+  const topSolutions = solutions.slice(0, MAX_DISPLAYED_SOLUTIONS);
+
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {topSolutions.map((solution) => (
+        <SolutionBadge icon={solution.icon} key={solution.nameEs} label={solution.nameEs} rating={solution.rating} />
+      ))}
+    </div>
+  );
 }
