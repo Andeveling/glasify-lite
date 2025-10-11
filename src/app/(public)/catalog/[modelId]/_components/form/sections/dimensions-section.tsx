@@ -36,7 +36,7 @@ function generateSuggestedValues(min: number, max: number, count = 5): number[] 
 }
 
 // biome-ignore lint/style/noMagicNumbers: valores predefinidos de cantidad para UX
-const QUANTITY_PRESETS = [1, 3, 5, 10, 20] as const;
+const QUANTITY_PRESETS = [1, 2, 3, 5, 8, 13, 21, 100] as const;
 
 export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   const { control, setValue } = useFormContext();
