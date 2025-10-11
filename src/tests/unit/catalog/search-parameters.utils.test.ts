@@ -9,13 +9,13 @@ import { ArrowDownAZ, ArrowDownZA, Building2, Search, SortAsc, SortDesc } from '
 import { describe, expect, it } from 'vitest';
 import {
   buildActiveParameters,
-  buildManufacturerParameter,
+  buildProfileSupplierParameter,
   buildSearchParameter,
   buildSortParameter,
   getSortConfiguration,
   isDefaultSort,
   SORT_CONFIGURATIONS,
-} from '@/app/(public)/catalog/_utils/search-parameters.utils';
+} from '../../../app/(public)/catalog/_utils/search-parameters.utils';
 
 describe('search-parameters.utils', () => {
   describe('getSortConfiguration', () => {
@@ -110,32 +110,32 @@ describe('search-parameters.utils', () => {
     });
   });
 
-  describe('buildManufacturerParameter', () => {
-    it('should build manufacturer parameter with correct properties', () => {
-      const param = buildManufacturerParameter('Guardian');
+  describe('buildProfileSupplierParameter', () => {
+    it('should build profile supplier parameter with correct properties', () => {
+      const param = buildProfileSupplierParameter('Guardian');
 
       expect(param).toEqual({
         ariaLabel: 'Quitar filtro de Guardian',
         icon: Building2,
-        key: 'manufacturer',
+        key: 'profileSupplier',
         label: 'Guardian',
       });
     });
 
     it('should return undefined for empty string', () => {
-      expect(buildManufacturerParameter('')).toBeUndefined();
+      expect(buildProfileSupplierParameter('')).toBeUndefined();
     });
 
     it('should return undefined for null', () => {
-      expect(buildManufacturerParameter(null)).toBeUndefined();
+      expect(buildProfileSupplierParameter(null)).toBeUndefined();
     });
 
     it('should return undefined for undefined', () => {
-      expect(buildManufacturerParameter(undefined)).toBeUndefined();
+      expect(buildProfileSupplierParameter(undefined)).toBeUndefined();
     });
 
-    it('should handle manufacturer names with accents', () => {
-      const param = buildManufacturerParameter('Fabricación Española');
+    it('should handle profile supplier names with accents', () => {
+      const param = buildProfileSupplierParameter('Fabricación Española');
 
       expect(param?.label).toBe('Fabricación Española');
     });
@@ -189,7 +189,7 @@ describe('search-parameters.utils', () => {
 
     it('should build parameters for all active filters', () => {
       const params = buildActiveParameters({
-        manufacturerName: 'Guardian',
+        profileSupplierName: 'Guardian',
         searchQuery: 'vidrio',
         sortType: 'price-desc',
       });
@@ -197,7 +197,7 @@ describe('search-parameters.utils', () => {
       const expectedParameterCount = 3;
       expect(params).toHaveLength(expectedParameterCount);
       expect(params[0]?.key).toBe('search');
-      expect(params[1]?.key).toBe('manufacturer');
+      expect(params[1]?.key).toBe('profileSupplier');
       expect(params[2]?.key).toBe('sort');
     });
 
@@ -215,16 +215,16 @@ describe('search-parameters.utils', () => {
       });
     });
 
-    it('should build parameters for manufacturer only', () => {
+    it('should build parameters for profile supplier only', () => {
       const params = buildActiveParameters({
-        manufacturerName: 'VEKA',
+        profileSupplierName: 'VEKA',
       });
 
       expect(params).toHaveLength(1);
       expect(params[0]).toEqual({
         ariaLabel: 'Quitar filtro de VEKA',
         icon: Building2,
-        key: 'manufacturer',
+        key: 'profileSupplier',
         label: 'VEKA',
       });
     });
@@ -255,7 +255,7 @@ describe('search-parameters.utils', () => {
 
     it('should handle null values correctly', () => {
       const params = buildActiveParameters({
-        manufacturerName: null,
+        profileSupplierName: null,
         searchQuery: null,
         sortType: null,
       });
@@ -265,7 +265,7 @@ describe('search-parameters.utils', () => {
 
     it('should handle undefined values correctly', () => {
       const params = buildActiveParameters({
-        manufacturerName: undefined,
+        profileSupplierName: undefined,
         searchQuery: undefined,
         sortType: undefined,
       });
@@ -275,24 +275,24 @@ describe('search-parameters.utils', () => {
 
     it('should handle mixed null, undefined, and valid values', () => {
       const params = buildActiveParameters({
-        manufacturerName: 'Guardian',
+        profileSupplierName: 'Guardian',
         searchQuery: null,
         sortType: undefined,
       });
 
       expect(params).toHaveLength(1);
-      expect(params[0]?.key).toBe('manufacturer');
+      expect(params[0]?.key).toBe('profileSupplier');
     });
 
-    it('should preserve order: search, manufacturer, sort', () => {
+    it('should preserve order: search, profileSupplier, sort', () => {
       const params = buildActiveParameters({
-        manufacturerName: 'Guardian',
+        profileSupplierName: 'Guardian',
         searchQuery: 'vidrio',
         sortType: 'price-asc',
       });
 
       expect(params[0]?.key).toBe('search');
-      expect(params[1]?.key).toBe('manufacturer');
+      expect(params[1]?.key).toBe('profileSupplier');
       expect(params[2]?.key).toBe('sort');
     });
   });

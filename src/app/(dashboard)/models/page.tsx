@@ -27,12 +27,12 @@ const MOCK_MODELS = [
     costPerMmWidth: 60,
     createdAt: '2024-01-10T10:00:00Z',
     id: 'cm1model123456789abcdef01',
-    manufacturer: 'VEKA',
     maxHeightMm: 1800,
     maxWidthMm: 2000,
     minHeightMm: 400,
     minWidthMm: 300,
     name: 'Ventana Premium 2024',
+    profileSupplier: 'VEKA',
     status: 'published' as const,
     updatedAt: '2024-01-15T14:30:00Z',
   },
@@ -43,12 +43,12 @@ const MOCK_MODELS = [
     costPerMmWidth: 120,
     createdAt: '2024-01-12T16:20:00Z',
     id: 'cm1model234567890bcdef012',
-    manufacturer: 'Guardian Glass',
     maxHeightMm: 2400,
     maxWidthMm: 1200,
     minHeightMm: 2000,
     minWidthMm: 800,
     name: 'Puerta Estándar',
+    profileSupplier: 'Guardian Glass',
     status: 'draft' as const,
     updatedAt: '2024-01-12T16:20:00Z',
   },
@@ -59,12 +59,12 @@ const MOCK_MODELS = [
     costPerMmWidth: 35,
     createdAt: '2024-01-08T09:45:00Z',
     id: 'cm1model345678901cdef0123',
-    manufacturer: 'Pilkington',
     maxHeightMm: 2500,
     maxWidthMm: 3000,
     minHeightMm: 500,
     minWidthMm: 500,
     name: 'Vitrina Comercial',
+    profileSupplier: 'Pilkington',
     status: 'published' as const,
     updatedAt: '2024-01-14T11:15:00Z',
   },
@@ -75,18 +75,18 @@ const MOCK_MODELS = [
     costPerMmWidth: 180,
     createdAt: '2024-01-05T14:10:00Z',
     id: 'cm1model456789012def01234',
-    manufacturer: 'VEKA',
     maxHeightMm: 2200,
     maxWidthMm: 1500,
     minHeightMm: 1800,
     minWidthMm: 600,
     name: 'Mampara de Baño',
+    profileSupplier: 'VEKA',
     status: 'published' as const,
     updatedAt: '2024-01-13T09:25:00Z',
   },
 ];
 
-const MANUFACTURERS = ['Todos', 'VEKA', 'Guardian Glass', 'Pilkington'];
+const PROFILE_SUPPLIERS = ['Todos', 'VEKA', 'Guardian Glass', 'Pilkington'];
 
 const STATUS_CONFIG = {
   draft: { label: 'Borrador', variant: 'secondary' as const },
@@ -141,7 +141,7 @@ function ModelsTable({
               <TableCell>
                 <div>
                   <div className="font-medium">{model.name}</div>
-                  <div className="text-muted-foreground text-sm">{model.manufacturer}</div>
+                  <div className="text-muted-foreground text-sm">{model.profileSupplier ?? 'Sin proveedor'}</div>
                 </div>
               </TableCell>
               <TableCell>
@@ -279,9 +279,9 @@ function ModelsPageContent() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {MANUFACTURERS.map((manufacturer) => (
-                    <SelectItem key={manufacturer} value={manufacturer.toLowerCase()}>
-                      {manufacturer}
+                  {PROFILE_SUPPLIERS.map((supplier) => (
+                    <SelectItem key={supplier} value={supplier.toLowerCase()}>
+                      {supplier}
                     </SelectItem>
                   ))}
                 </SelectContent>

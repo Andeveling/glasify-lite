@@ -3,35 +3,52 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
+import { toast } from 'sonner';
+import { useCart } from '@/app/(public)/cart/_hooks/use-cart';
 import { Card } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
+import { useScrollIntoView } from '@/hooks/use-scroll-into-view';
 import type {
   GlassSolutionOutput,
   GlassTypeOutput,
   ModelDetailOutput,
   ServiceOutput,
 } from '@/server/api/routers/catalog';
+import type { CreateCartItemInput } from '@/types/cart.types';
 import { usePriceCalculation } from '../../_hooks/use-price-calculation';
-import type { QuoteFormData } from '../../_types/model.types';
 import { createQuoteFormSchema, type QuoteFormValues } from '../../_utils/validation';
+import { AddedToCartActions } from './added-to-cart-actions';
 import { QuoteSummary } from './quote-summary';
 import { DimensionsSection } from './sections/dimensions-section';
 import { GlassTypeSelectorSection } from './sections/glass-type-selector-section';
 import { ServicesSelectorSection } from './sections/services-selector-section';
 import { SolutionSelectorSection } from './sections/solution-selector-section';
 
+// ============================================================================
+// Types
+// ============================================================================
+
 type ModelFormProps = {
   model: ModelDetailOutput;
   glassTypes: GlassTypeOutput[];
   services: ServiceOutput[];
   solutions: GlassSolutionOutput[];
-  onSubmit?: (data: QuoteFormData) => void;
+  currency: string;
 };
 
-export function ModelForm({ model, glassTypes, services, solutions, onSubmit }: ModelFormProps) {
-  const [submittedData, setSubmittedData] = useState<QuoteFormData | null>(null);
+// ============================================================================
+// Component
+// ============================================================================
 
+export function ModelForm({ model, glassTypes, services, solutions, currency }: ModelFormProps) {
   const schema = useMemo(() => createQuoteFormSchema(model), [model]);
+  const { addItem } = useCart();
+
+  // ✅ Track if item was just added to cart
+  const [justAddedToCart, setJustAddedToCart] = useState(false);
+
+  // ✅ Auto-scroll to success card when item is added
+  const successCardRef = useScrollIntoView(justAddedToCart);
 
   // ✅ UX Improvement: Pre-populate with minimum valid dimensions and first glass type
   const defaultValues = useMemo(
@@ -70,23 +87,73 @@ export function ModelForm({ model, glassTypes, services, solutions, onSubmit }: 
     widthMm: Number(width) || 0,
   });
 
-  const handleSubmit = (data: QuoteFormValues) => {
-    const formData: QuoteFormData = {
-      additionalServices: data.additionalServices,
-      glassType: data.glassType,
-      height: String(data.height),
-      quantity: String(data.quantity),
-      width: String(data.width),
-    };
-    setSubmittedData(formData);
-    onSubmit?.(formData);
+  // ✅ Prepare cart item data from form values
+  const selectedGlassType = glassTypes.find((gt) => gt.id === glassType);
+  const selectedSolutionData = solutions.find((s) => s.id === selectedSolution);
+
+  const cartItemInput: CreateCartItemInput & { unitPrice: number } = {
+    additionalServiceIds: additionalServices,
+    glassTypeId: glassType,
+    glassTypeName: selectedGlassType?.name ?? '',
+    heightMm: Number(height) || 0,
+    modelId: model.id,
+    modelName: model.name,
+    quantity: 1, // Single item per add (user can increase in cart)
+    solutionId: selectedSolution || undefined,
+    solutionName: selectedSolutionData?.name || undefined,
+    unitPrice: calculatedPrice ?? model.basePrice,
+    widthMm: Number(width) || 0,
+  };
+
+  // ✅ Form submit handler - Add item to cart
+  const handleFormSubmit = () => {
+    try {
+      // Add item to cart (client-side)
+      addItem(cartItemInput);
+
+      // ✅ UX Enhancement: Reset form to default values for next configuration
+      form.reset(defaultValues);
+
+      // ✅ UX Enhancement: Show success state (scroll handled by useScrollIntoView hook)
+      setJustAddedToCart(true);
+
+      // Show success toast
+      toast.success('Item agregado al carrito', {
+        description: `${model.name} ha sido agregado exitosamente`,
+      });
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error && err.message.includes('no puedes agregar más')
+          ? 'Has alcanzado el límite de 20 items en el carrito'
+          : 'No se pudo agregar el item al carrito';
+
+      // Show error toast
+      toast.error('Error al agregar', {
+        description: errorMessage,
+      });
+    }
+  };
+
+  // ✅ Handler to configure another item
+  const handleConfigureAnother = () => {
+    setJustAddedToCart(false);
+    form.reset(defaultValues);
+    // Scroll handled automatically by useScrollIntoView when justAddedToCart becomes true again
   };
 
   return (
-    <>
-      <Form {...form}>
-        {/* @ts-expect-error - zodResolver with z.coerce has type inference issues */}
-        <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleFormSubmit)}>
+        <div className="space-y-6">
+          {/* ✅ Show success actions after adding to cart */}
+          {justAddedToCart && (
+            <AddedToCartActions
+              modelName={model.name}
+              onConfigureAnother={handleConfigureAnother}
+              ref={successCardRef}
+            />
+          )}
+
           {/* Solution Selector (Step 1) - Optional */}
           {solutions.length > 0 && (
             <Card className="p-6">
@@ -110,26 +177,22 @@ export function ModelForm({ model, glassTypes, services, solutions, onSubmit }: 
             />
           </Card>
 
-          <Card className="p-6">
-            <ServicesSelectorSection services={services} />
-          </Card>
+          {/* Services Section - Only show if services are available (Don't Make Me Think principle) */}
+          {services.length > 0 && (
+            <Card className="p-6">
+              <ServicesSelectorSection services={services} />
+            </Card>
+          )}
 
           <QuoteSummary
             basePrice={model.basePrice}
             calculatedPrice={calculatedPrice}
-            currency={model.manufacturer?.currency ?? 'USD'}
+            currency={currency}
             error={error}
             isCalculating={isCalculating}
           />
-        </form>
-      </Form>
-
-      {submittedData && (
-        <Card className="p-6">
-          <h3 className="mb-3 font-semibold text-lg">Datos enviados (desarrollo):</h3>
-          <pre className="overflow-auto rounded-lg bg-muted p-4 text-xs">{JSON.stringify(submittedData, null, 2)}</pre>
-        </Card>
-      )}
-    </>
+        </div>
+      </form>
+    </Form>
   );
 }

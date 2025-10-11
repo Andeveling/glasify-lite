@@ -1,5 +1,6 @@
 import { User } from 'lucide-react';
 import Link from 'next/link';
+import { CartIndicator } from '@/app/_components/cart-indicator';
 import { ModeToggle } from '@/app/_components/mode-toggle';
 import { Button } from '@/components/ui/button';
 export default function Header() {
@@ -23,6 +24,7 @@ export default function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-4">
+            <CartIndicator variant="compact" />
             <ModeToggle />
             <Button aria-label="Iniciar sesión" asChild className="text-sm" size="icon" variant="outline">
               <Link href="/signin">

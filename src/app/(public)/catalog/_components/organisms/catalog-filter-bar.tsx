@@ -21,15 +21,15 @@ import { CatalogFilters } from '@views/catalog/_components/organisms/catalog-fil
  */
 export function CatalogFilterBar({
   searchQuery,
-  manufacturers,
+  profileSuppliers,
   totalResults,
-  currentManufacturer,
+  currentProfileSupplier,
   currentSort,
 }: {
   searchQuery?: string;
-  manufacturers?: Array<{ id: string; name: string }>;
+  profileSuppliers?: Array<{ id: string; name: string }>;
   totalResults?: number;
-  currentManufacturer?: string;
+  currentProfileSupplier?: string;
   currentSort?: string;
 }) {
   return (
@@ -40,10 +40,10 @@ export function CatalogFilterBar({
       </div>
       <div className="flex items-center justify-end md:col-span-7 lg:col-span-6">
         <CatalogFilters
-          currentManufacturer={currentManufacturer}
+          currentProfileSupplier={currentProfileSupplier}
           currentSearchQuery={searchQuery}
           currentSort={currentSort}
-          manufacturers={manufacturers}
+          profileSuppliers={profileSuppliers}
           showBadges={false}
           showResultCount={false}
           totalResults={undefined}
@@ -52,10 +52,10 @@ export function CatalogFilterBar({
       {/* Row 2: Search parameters badges + result count (full width) */}
       <div className="md:col-span-12 lg:col-span-12">
         <CatalogFilters
-          currentManufacturer={currentManufacturer}
+          currentProfileSupplier={currentProfileSupplier}
           currentSearchQuery={searchQuery}
           currentSort={currentSort}
-          manufacturers={manufacturers}
+          profileSuppliers={profileSuppliers}
           showControls={false}
           totalResults={totalResults}
         />

@@ -1,12 +1,12 @@
 'use client';
 
 import { Edit3, Package, Trash2 } from 'lucide-react';
+import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { formatCurrency } from '@/lib/utils';
 
 type QuoteItemProps = {
   id: string;
@@ -158,7 +158,7 @@ export function QuoteItem({
           </div>
           <div className="text-right">
             <p className="text-muted-foreground text-xs">Subtotal</p>
-            <p className="font-bold text-foreground text-lg">{formatCurrency(subtotal)}</p>
+            <p className="font-bold text-foreground text-lg">{formatCurrency(Number(subtotal))}</p>
           </div>
         </div>
       </CardContent>

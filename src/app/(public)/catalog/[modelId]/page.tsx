@@ -13,9 +13,7 @@ export default async function Page({ params }: PageProps) {
   // Fetch model data (critical data - no Suspense)
   const serverModel = await api.catalog['get-model-by-id']({ modelId }).catch(() => null);
 
-  if (!serverModel) {
-    notFound();
-  }
+  if (!serverModel) notFound();
 
   // Render with Suspense boundaries for secondary data
   return (

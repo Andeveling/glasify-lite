@@ -1,5 +1,5 @@
 import { ModelCard } from '@views/catalog/_components/molecules/model-card';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency } from '@/app/_utils/format-currency.util';
 
 type Model = {
   accessoryPrice: number | null;
@@ -9,7 +9,7 @@ type Model = {
   costPerMmWidth: number;
   createdAt: Date;
   id: string;
-  manufacturer: {
+  profileSupplier: {
     id: string;
     name: string;
   } | null;
@@ -25,6 +25,33 @@ type Model = {
 type CatalogGridProps = {
   models: Model[];
 };
+
+/**
+ * Generate mock highlighted solutions for demo purposes
+ * TODO: Replace with real data from tRPC query
+ */
+function getMockHighlightedSolutions(modelId: string) {
+  // Mock data - different solutions for different models
+  const mockSolutions = [
+    [
+      { icon: 'Shield', nameEs: 'Seguridad', rating: 'excellent' as const },
+      { icon: 'Snowflake', nameEs: 'Aislamiento Térmico', rating: 'very_good' as const },
+    ],
+    [
+      { icon: 'Volume2', nameEs: 'Aislamiento Acústico', rating: 'excellent' as const },
+      { icon: 'Shield', nameEs: 'Seguridad', rating: 'good' as const },
+    ],
+    [
+      { icon: 'Snowflake', nameEs: 'Aislamiento Térmico', rating: 'excellent' as const },
+      { icon: 'Sparkles', nameEs: 'Decorativo', rating: 'very_good' as const },
+      { icon: 'Volume2', nameEs: 'Aislamiento Acústico', rating: 'good' as const },
+    ],
+  ];
+
+  // Use model ID to pseudo-randomly assign solutions
+  const index = modelId.charCodeAt(0) % mockSolutions.length;
+  return mockSolutions[index];
+}
 
 /**
  * CatalogGrid - Pure Presentational Component
@@ -53,9 +80,10 @@ export function CatalogGrid({ models }: CatalogGridProps) {
             <ModelCard
               basePrice={formatCurrency(model.basePrice)}
               compatibleGlassTypes={[]}
+              highlightedSolutions={getMockHighlightedSolutions(model.id)}
               id={model.id}
-              manufacturer={model.manufacturer?.name}
               name={model.name}
+              profileSupplier={model.profileSupplier?.name}
               range={{
                 height: [model.minHeightMm, model.maxHeightMm],
                 width: [model.minWidthMm, model.maxWidthMm],

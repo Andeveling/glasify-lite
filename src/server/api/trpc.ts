@@ -130,3 +130,39 @@ export const protectedProcedure = t.procedure.use(timingMiddleware).use(({ ctx, 
     },
   });
 });
+
+/**
+ * Server Action procedure (public)
+ *
+ * Base procedure for tRPC Server Actions that work without JavaScript.
+ * Uses experimental_caller API for progressive enhancement.
+ *
+ * @see https://trpc.io/blog/trpc-actions
+ */
+export const serverActionProcedure = t.procedure.use(timingMiddleware).use(({ ctx, next }) => {
+  // Add Server Action context metadata
+  return next({
+    ctx: {
+      ...ctx,
+      actionType: 'server-action' as const,
+    },
+  });
+});
+
+/**
+ * Protected Server Action procedure
+ *
+ * Server Action that requires authentication.
+ * Combines auth check with Server Action context.
+ */
+export const protectedActionProcedure = serverActionProcedure.use(({ ctx, next }) => {
+  if (!ctx.session?.user) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  }
+  return next({
+    ctx: {
+      ...ctx,
+      session: { ...ctx.session, user: ctx.session.user },
+    },
+  });
+});

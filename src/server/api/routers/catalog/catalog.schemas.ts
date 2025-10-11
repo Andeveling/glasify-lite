@@ -55,17 +55,17 @@ export const modelSummaryOutput = z.object({
   costPerMmWidth: z.number(),
   createdAt: z.date(),
   id: z.string(),
-  manufacturer: z
-    .object({
-      id: z.string(),
-      name: z.string(),
-    })
-    .nullable(),
   maxHeightMm: z.number(),
   maxWidthMm: z.number(),
   minHeightMm: z.number(),
   minWidthMm: z.number(),
   name: z.string(),
+  profileSupplier: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+    })
+    .nullable(),
   status: z.enum(['draft', 'published']),
   updatedAt: z.date(),
 });
@@ -83,19 +83,17 @@ export const modelDetailOutput = z.object({
   costPerMmWidth: z.number(),
   createdAt: z.date(),
   id: z.string(),
-  manufacturer: z
-    .object({
-      currency: z.string(),
-      id: z.string(),
-      name: z.string(),
-      quoteValidityDays: z.number(),
-    })
-    .nullable(),
   maxHeightMm: z.number(),
   maxWidthMm: z.number(),
   minHeightMm: z.number(),
   minWidthMm: z.number(),
   name: z.string(),
+  profileSupplier: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+    })
+    .nullable(),
   status: z.enum(['draft', 'published']),
   updatedAt: z.date(),
 });
@@ -103,7 +101,7 @@ export const modelDetailOutput = z.object({
 export const serviceOutput = z.object({
   createdAt: z.date(),
   id: z.string(),
-  manufacturerId: z.string(),
+  manufacturerId: z.string().nullable(), // REFACTOR: Deprecated field, now optional
   name: z.string(),
   rate: z.number(),
   type: z.enum(['area', 'perimeter', 'fixed']),
@@ -153,9 +151,10 @@ export const glassTypeOutput = z.object({
   isLowE: z.boolean(),
   isTempered: z.boolean(),
   isTripleGlazed: z.boolean(),
-  manufacturerId: z.string(),
+  manufacturerId: z.string().nullable(), // REFACTOR: Deprecated field, now optional
   name: z.string(),
   pricePerSqm: z.number(),
+  profileSupplierId: z.string().nullable().optional(), // REFACTOR: New optional supplier reference
   purpose: z.enum(['general', 'insulation', 'security', 'decorative']),
   solutions: z.array(glassTypeSolutionOutput).optional(),
   thicknessMm: z.number(),

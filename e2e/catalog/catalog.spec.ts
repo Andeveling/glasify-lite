@@ -11,10 +11,10 @@ import { expect, test } from '@playwright/test';
 
 // Regex patterns defined at top level for performance
 const SEARCH_PANORAMA_URL = /q=Panorama/;
-const MANUFACTURER_FILTER_URL = /manufacturer=/;
+const PROFILE_SUPPLIER_FILTER_URL = /profileSupplier=/;
 const PRODUCT_DETAIL_URL = /\/catalog\/cm1catalogmodelpublished123/;
 const PANORAMA_PRODUCT_LINK = /Imagen del producto Ventana Panorama/;
-const TERMOACUSTICA_PRODUCT_LINK = /Imagen del producto Ventana Termoacústica/;
+const TERM_ACOUSTIC_PRODUCT_LINK = /Imagen del producto Ventana Termoacústica/;
 
 test.describe('Catalog Page', () => {
   test.beforeEach(async ({ page }) => {
@@ -33,7 +33,7 @@ test.describe('Catalog Page', () => {
       // Campo de búsqueda
       await expect(page.getByPlaceholder('Buscar productos...')).toBeVisible();
 
-      // Combobox de fabricantes
+      // Combobox de proveedores de perfiles
       await expect(page.getByRole('combobox').filter({ hasText: 'Todos' })).toBeVisible();
 
       // Combobox de ordenamiento
@@ -100,9 +100,9 @@ test.describe('Catalog Page', () => {
     });
   });
 
-  test.describe('Manufacturer Filter', () => {
-    test('should filter products by manufacturer', async ({ page }) => {
-      // Abrir dropdown de fabricantes
+  test.describe('Profile Supplier Filter', () => {
+    test('should filter products by profile supplier', async ({ page }) => {
+      // Abrir dropdown de proveedores de perfiles
       await page.getByRole('combobox').filter({ hasText: 'Todos' }).click();
 
       // Verificar opciones disponibles
@@ -110,11 +110,11 @@ test.describe('Catalog Page', () => {
       await expect(page.getByRole('option', { name: 'Cristales Modernos' })).toBeVisible();
       await expect(page.getByRole('option', { name: 'Ventanas Andinas' })).toBeVisible();
 
-      // Seleccionar fabricante específico
+      // Seleccionar proveedor específico
       await page.getByRole('option', { name: 'Ventanas Andinas' }).click();
 
       // Verificar URL actualizada
-      await expect(page).toHaveURL(MANUFACTURER_FILTER_URL);
+      await expect(page).toHaveURL(PROFILE_SUPPLIER_FILTER_URL);
 
       // Verificar badge de filtro activo - usar selector más específico
       await expect(page.locator('.max-w-\\[200px\\]').filter({ hasText: 'Ventanas Andinas' })).toBeVisible();
@@ -124,13 +124,13 @@ test.describe('Catalog Page', () => {
       await expect(page.getByText('Ventana Panorama 2024')).toBeVisible();
     });
 
-    test('should clear manufacturer filter using badge button', async ({ page }) => {
-      // Aplicar filtro de fabricante
+    test('should clear profile supplier filter using badge button', async ({ page }) => {
+      // Aplicar filtro de proveedor
       await page.getByRole('combobox').filter({ hasText: 'Todos' }).click();
       await page.getByRole('option', { name: 'Ventanas Andinas' }).click();
 
       // Verificar filtro aplicado
-      await expect(page).toHaveURL(MANUFACTURER_FILTER_URL);
+      await expect(page).toHaveURL(PROFILE_SUPPLIER_FILTER_URL);
 
       // Quitar filtro usando el badge
       await page.getByRole('button', { name: 'Quitar filtro de Ventanas Andinas' }).click();
@@ -220,7 +220,7 @@ test.describe('Catalog Page', () => {
     test('should have proper accessibility attributes on product cards', async ({ page }) => {
       // Verificar que los enlaces tienen texto descriptivo
       await expect(page.getByRole('link', { name: PANORAMA_PRODUCT_LINK })).toBeVisible();
-      await expect(page.getByRole('link', { name: TERMOACUSTICA_PRODUCT_LINK })).toBeVisible();
+      await expect(page.getByRole('link', { name: TERM_ACOUSTIC_PRODUCT_LINK })).toBeVisible();
 
       // Verificar que todos los productos están en una lista estructurada
       // Usar un selector más específico para la lista de productos (grid de productos)

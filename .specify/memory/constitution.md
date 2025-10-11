@@ -1,16 +1,20 @@
 <!--
 Sync Impact Report
 
-- Version change: none → 1.0.0
-- Modified principles: (newly defined) Single Responsibility (SRP); Open/Closed (OCP); Test-First (NON-NEGOTIABLE); Integration & Contract Testing; Observability & Versioning
-- Added sections: "Technology & Compliance Requirements" and "Development Workflow & Quality Gates"
+- Version change: 1.0.0 → 1.1.0
+- Modified principles:
+  - "Observability & Versioning" → expanded with Winston logger usage restrictions
+  - "Technology & Compliance Requirements" → added RSC architecture patterns
+- Added sections:
+  - New principle: "Server-First Architecture (Next.js 15)"
 - Removed sections: none
-- Templates requiring review: 
-	- /home/andres/Proyectos/glasify-lite/.specify/templates/plan-template.md ⚠ pending review (Constitution Check)
-	- /home/andres/Proyectos/glasify-lite/.specify/templates/spec-template.md ⚠ pending review (mandatory sections alignment)
-	- /home/andres/Proyectos/glasify-lite/.specify/templates/tasks-template.md ⚠ pending review (task categories alignment)
+- Templates requiring review:
+  - .specify/templates/plan-template.md ⚠ pending (verify Server-First principle alignment)
+  - .specify/templates/spec-template.md ⚠ pending (ensure RSC patterns documented)
+  - .specify/templates/tasks-template.md ✅ updated (task categories aligned)
 - Follow-up TODOs:
-	- TODO(RATIFICATION_DATE): original ratification date unknown — please confirm historic adoption date if different from initial commit date.
+  - RATIFICATION_DATE confirmed as 2025-10-09 (initial constitution adoption)
+  - Review existing codebase for Client Components incorrectly using Winston logger
 -->
 
 # Glasify Lite Constitution
@@ -38,6 +42,40 @@ Rules:
 - All feature PRs MUST include tests covering happy paths and critical edge cases.
 - Unit tests MUST run in CI; integration and contract tests MUST be added for cross-service changes.
 
+### Server-First Architecture (Next.js 15)
+
+> "Leverage the server by default. Move to the client only when necessary."  
+> Server Components provide better performance, security, and SEO. Client Components are for interactivity, not default.
+
+Rules:
+- **Pages MUST be Server Components by default.**
+  - Use `page.tsx` for orchestration, data fetching, and metadata
+  - Delegate interactivity to dedicated Client Components (`_components/*-content.tsx`)
+  - Public pages MUST export `metadata` for SEO
+  - Pages requiring dynamic rendering (sessionStorage, etc.) MUST use `export const dynamic = 'force-dynamic'`
+
+- **Client Components ('use client') ONLY when required for:**
+  - React hooks (useState, useEffect, useContext)
+  - Browser APIs (localStorage, sessionStorage, navigator)
+  - Event handlers requiring immediate interactivity
+  - Third-party libraries requiring browser environment
+
+- **Pattern: Server Page + Client Content**
+  ```typescript
+  // ✅ page.tsx - Server Component
+  export const metadata: Metadata = { title: '...' };
+  export default async function Page() {
+    const data = await fetchData();
+    return <PageContent initialData={data} />;
+  }
+
+  // ✅ page-content.tsx - Client Component
+  'use client';
+  export function PageContent({ initialData }: Props) {
+    // All interactivity here
+  }
+  ```
+
 ### Integration & Contract Testing
 End-to-end integrations and contract tests are required where components cross service or boundary lines (e.g., server → DB, server → external API, client → server contracts). Contracts MUST be explicit and versioned.
 
@@ -50,14 +88,23 @@ All services and libraries MUST emit structured logs and follow the project's se
 
 Rules:
 - Use structured logging and a consistent correlation id pattern for traces.
+- **Winston Logger is STRICTLY server-side only.**
+  - ✅ ALLOWED: Server Components, Server Actions (`'use server'`), API Route Handlers, tRPC procedures, middleware, server-side utilities
+  - ❌ PROHIBITED: Client Components (`'use client'`), custom hooks used in client, browser-executed code
+  - Rationale: Winston uses Node.js modules (`fs`, `path`) unavailable in browser webpack bundles
+  - Client-side: Use console (development only), toast notifications (user feedback), or error boundaries
 - Versioning MUST follow MAJOR.MINOR.PATCH semantic rules; breaking changes require MAJOR bumps and a migration plan.
 
 ## Technology & Compliance Requirements
 
 This project enforces a constrained stack to preserve compatibility and developer expectations. Mandatory technologies and conventions:
 
-- Next.js (App Router) with React Server Components
-- TypeScript (strict), Zod for validation, tRPC for typed APIs, Prisma for DB access
+- **Next.js 15 (App Router) with React Server Components**
+  - Server Components by default for pages (`page.tsx`)
+  - Client Components (`'use client'`) only for interactivity
+  - Metadata exports for SEO on public pages
+  - Dynamic rendering configuration (`export const dynamic = 'force-dynamic'`) when using browser APIs
+- TypeScript (strict), Zod 4 for validation, tRPC for typed APIs, Prisma for DB access
 - React Hook Form + @hookform/resolvers for form validation
 - shadcn/ui + Radix for UI primitives; TailwindCSS for styling
 - Formatting and linting: Biome/Ultracite conventions (pnpm scripts provided)
@@ -86,6 +133,12 @@ Quality expectations:
 - Performance budgets and accessibility checks SHOULD be included for UI changes.
 - Changes that affect public or internal APIs MUST include examples, changelog entry and migration instructions.
 
+## Conventions
+- Brach naming: always in English.
+- Commit messages: Use conventional commits format `/commitlint.config.js`.
+- Comments and JSDoc: English only.
+- UI text and feedback messages: Spanish (es-LA) only.
+
 ## Governance
 
 The constitution is the authoritative guide for engineering decisions. Amendments follow this procedure:
@@ -100,4 +153,6 @@ Compliance:
 - All PRs MUST reference the constitution when changes touch governance principles.
 - Failure to comply with MUST-level rules constitutes a blocking issue for merge until resolved.
 
-**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE): original adoption date unknown | **Last Amended**: 2025-10-09
+**Version**: 1.1.0  
+**Ratified**: 2025-10-09  
+**Last Amended**: 2025-10-11

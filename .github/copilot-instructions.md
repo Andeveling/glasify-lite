@@ -50,6 +50,96 @@ Antes de generar código, identifica las versiones exactas:
 
 ---
 
+## Winston Logger - Uso Correcto
+
+### ⚠️ IMPORTANTE: Winston es SOLO para Server-Side
+
+Winston usa módulos de Node.js (`fs`, `path`, etc.) que **NO están disponibles en el navegador**.
+
+**✅ PERMITIDO - Server-Side**:
+- ✅ Server Components
+- ✅ Server Actions (`'use server'`)
+- ✅ API Route Handlers (`/api/*`)
+- ✅ tRPC Procedures (routers en `/server/api/routers`)
+- ✅ Middleware (`middleware.ts`)
+- ✅ Server-side utilities (`/server/*`)
+
+**❌ PROHIBIDO - Client-Side**:
+- ❌ Client Components (`'use client'`)
+- ❌ Custom Hooks (`use*.ts`)
+- ❌ Client-side utilities usados por componentes
+- ❌ Cualquier código que se ejecute en el navegador
+
+### Patrón Correcto
+
+```typescript
+// ✅ BIEN: Server Component
+import logger from '@/lib/logger';
+
+export default async function ProductPage({ params }: Props) {
+  logger.info('Product page accessed', { productId: params.id });
+  const product = await db.product.findUnique({ where: { id: params.id } });
+  return <ProductDetail product={product} />;
+}
+
+// ✅ BIEN: Server Action
+'use server';
+import logger from '@/lib/logger';
+
+export async function createQuote(data: QuoteInput) {
+  logger.info('Creating quote', { data });
+  const quote = await db.quote.create({ data });
+  return { success: true, quoteId: quote.id };
+}
+
+// ✅ BIEN: tRPC Procedure
+import logger from '@/lib/logger';
+
+export const catalogRouter = createTRPCRouter({
+  'list-models': publicProcedure
+    .input(catalogInputSchema)
+    .query(async ({ input }) => {
+      logger.info('Listing models', { filters: input });
+      return await db.model.findMany({ where: input });
+    }),
+});
+
+// ❌ MAL: Client Component
+'use client';
+import logger from '@/lib/logger'; // ❌ ERROR: Winston no funciona en cliente
+
+export function ProductForm() {
+  const handleSubmit = () => {
+    logger.info('Form submitted'); // ❌ Causará error en build
+  };
+  return <form onSubmit={handleSubmit}>...</form>;
+}
+
+// ✅ BIEN: Client Component sin logger
+'use client';
+// En cliente, usa console (solo en desarrollo) o toast/error boundaries
+
+export function ProductForm() {
+  const handleSubmit = () => {
+    // Usuario ya recibe feedback con toast
+    toast.success('Producto agregado');
+    // Errores se capturan en DevTools automáticamente
+  };
+  return <form onSubmit={handleSubmit}>...</form>;
+}
+```
+
+### Por Qué No Usar Logger en Cliente
+
+1. **Build Error**: Winston usa módulos de Node.js que no existen en navegador
+2. **No es Necesario**: 
+   - Toasts informan al usuario (UX)
+   - DevTools capturan errores automáticamente
+   - No necesitas logs estructurados en cliente
+3. **Mejor Rendimiento**: Menos JavaScript en bundle del cliente
+
+---
+
 ## Convenciones del Proyecto
 
 ### Commits Messages
@@ -469,6 +559,171 @@ export function useQueryParams() {
 
 ---
 
+## Mejores Prácticas para Crear Pages
+
+### Regla de Oro: Pages SIEMPRE como Server Components
+
+Las páginas (`page.tsx`) deben ser **Server Components** por defecto. Solo crea Client Components cuando absolutamente necesites interactividad en el nivel de página.
+
+### ✅ Patrón Recomendado: Server Page + Client Content
+
+```typescript
+// ✅ EXCELENTE: page.tsx como Server Component
+// src/app/(public)/catalog/page.tsx
+
+import type { Metadata } from 'next';
+import { CatalogPageContent } from './_components/catalog-page-content';
+
+// SEO: Metadata estática o dinámica
+export const metadata: Metadata = {
+  title: 'Catálogo de Productos',
+  description: 'Explora nuestro catálogo completo',
+};
+
+// Opcional: Configuración del segmento de ruta
+export const revalidate = 3600; // ISR: revalidar cada hora
+
+export default async function CatalogPage({ searchParams }: Props) {
+  // Fetch de datos en el servidor (sin waterfalls)
+  const data = await api.catalog['list-models']({ ...searchParams });
+  
+  return <CatalogPageContent initialData={data} />;
+}
+```
+
+```typescript
+// ✅ BIEN: Client Component solo para interactividad
+// src/app/(public)/catalog/_components/catalog-page-content.tsx
+
+'use client';
+
+export function CatalogPageContent({ initialData }: Props) {
+  const [filters, setFilters] = useState({});
+  // Toda la lógica interactiva aquí
+  
+  return (
+    <div>
+      <CatalogFilters onChange={setFilters} />
+      <CatalogGrid items={initialData} />
+    </div>
+  );
+}
+```
+
+### ❌ Anti-patrón: Page como Client Component
+
+```typescript
+// ❌ MAL: Página completa como Client Component
+'use client';
+
+export default function CatalogPage() {
+  // ❌ Problemas:
+  // - Sin SEO (metadata no funciona en Client Components)
+  // - Bundle JavaScript más grande
+  // - Sin SSR/ISR benefits
+  // - Peor Core Web Vitals
+  
+  const [data, setData] = useState([]);
+  
+  return <div>...</div>;
+}
+```
+
+### Casos de Uso por Tipo de Página
+
+#### Páginas Públicas (SEO crítico)
+
+```typescript
+// ✅ SIEMPRE Server Component con metadata
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Tu Título',
+  description: 'Tu descripción para SEO',
+  openGraph: {
+    title: 'Título OG',
+    description: 'Descripción OG',
+  },
+};
+
+// Opcional: Dynamic metadata
+export async function generateMetadata({ params }): Promise<Metadata> {
+  const product = await fetchProduct(params.id);
+  return {
+    title: product.name,
+    description: product.description,
+  };
+}
+
+export default async function PublicPage() {
+  return <PageContent />;
+}
+```
+
+#### Páginas con sessionStorage/localStorage
+
+```typescript
+// ✅ Server Component + force-dynamic
+export const dynamic = 'force-dynamic'; // No static generation
+
+export default function CartPage() {
+  // Page sigue siendo Server Component
+  // Client logic delegado a componente hijo
+  return <CartPageContent />;
+}
+```
+
+#### Páginas Privadas (Dashboard)
+
+```typescript
+// ✅ Server Component + data fetching
+export default async function DashboardPage() {
+  const session = await auth();
+  if (!session) redirect('/signin');
+  
+  const data = await fetchUserData(session.user.id);
+  
+  return <DashboardContent data={data} />;
+}
+```
+
+### Configuración de Route Segments
+
+```typescript
+// Static generation (default)
+export default async function Page() { ... }
+
+// ISR - Revalidar cada X segundos
+export const revalidate = 3600; // 1 hora
+
+// Dynamic - Siempre server-side render
+export const dynamic = 'force-dynamic';
+
+// Static con params dinámicos
+export async function generateStaticParams() {
+  return [{ id: '1' }, { id: '2' }];
+}
+```
+
+### Checklist para Crear una Page
+
+- [ ] ¿Es Server Component? (debe serlo por defecto)
+- [ ] ¿Tiene metadata para SEO? (si es pública)
+- [ ] ¿Usa `dynamic` o `revalidate` correctamente?
+- [ ] ¿Delega interactividad a Client Components?
+- [ ] ¿Hace fetch de datos en el servidor?
+- [ ] ¿Usa Suspense para streaming?
+
+### Beneficios de Server Components en Pages
+
+1. **SEO**: Metadata y contenido pre-renderizado
+2. **Performance**: Menor JavaScript, mejor FCP/LCP
+3. **Security**: Código sensible no llega al cliente
+4. **DX**: TypeScript end-to-end sin serialización
+5. **Cost**: Menos procesamiento en cliente
+
+---
+
 ## Estándares de Calidad de Código
 
 ### Mantenibilidad
@@ -532,8 +787,8 @@ export function useQueryParams() {
 
 ## Common Development Tasks
 
-- `pnpm ultra:fix` - Format and fix code automatically with Ultracite
-- `pnpm ultra` - Check for issues without fixing
+- `pnpm lint:fix` - Format and fix code automatically with Ultracite
+- `pnpm lint` - Check for issues without fixing
 - `pnpm dev` - Start Next.js development server (with Turbo)
 - `pnpm db:generate` - Run Prisma migrations in development
 - `pnpm db:studio` - Open Prisma Studio for database management
@@ -554,15 +809,17 @@ export function useQueryParams() {
 ## Resumen de Patrones Clave
 
 1. **Next.js 15**: Server Components por defecto, ISR, Streaming
-2. **SOLID**: Responsabilidad única, composición, dependencias invertidas
-3. **Atomic Design**: atoms (ui/), molecules (components/), organisms (\_components/), templates (layout.tsx), pages (page.tsx)
-4. **tRPC**: Type-safe APIs con kebab-case naming
-5. **Prisma**: ORM con PostgreSQL, singleton client
-6. **Zod**: Validación de schemas end-to-end
-7. **Custom Hooks**: Lógica reutilizable separada de UI
-8. **Winston**: Logging estructurado con singleton
-9. **Testing**: Vitest (unit/integration), Playwright (E2E)
-10. **Ultracite**: Linting y formateo con Biome
+2. **Pages**: SIEMPRE Server Components, delegar interactividad a componentes hijos
+3. **Winston Logger**: Solo server-side (Server Components, Server Actions, API Routes, tRPC)
+4. **SEO**: Metadata en Server Components, `generateMetadata` para contenido dinámico
+5. **SOLID**: Responsabilidad única, composición, dependencias invertidas
+6. **Atomic Design**: atoms (ui/), molecules (components/), organisms (\_components/), templates (layout.tsx), pages (page.tsx)
+7. **tRPC**: Type-safe APIs con kebab-case naming
+8. **Prisma**: ORM con PostgreSQL, singleton client
+9. **Zod**: Validación de schemas end-to-end
+10. **Custom Hooks**: Lógica reutilizable separada de UI
+11. **Testing**: Vitest (unit/integration), Playwright (E2E)
+12. **Ultracite**: Linting y formateo con Biome
 
 ---
 
@@ -570,8 +827,12 @@ export function useQueryParams() {
 
 1. Detecta las versiones exactas del proyecto
 2. Sigue los patrones establecidos en el codebase
-3. Aplica principios SOLID y Atomic Design
-4. Usa la estructura de carpetas de Next.js App Router
-5. Prioriza Server Components sobre Client Components
-6. Escribe código testeable y bien documentado
-7. Usa español solo en UI text, todo lo demás en inglés
+3. **Crea pages como Server Components** (delega interactividad a Client Components)
+4. **No uses Winston logger en Client Components** (solo server-side)
+5. Aplica principios SOLID y Atomic Design
+6. Usa la estructura de carpetas de Next.js App Router
+7. Prioriza Server Components sobre Client Components
+8. Agrega metadata para SEO en páginas públicas
+9. Usa `dynamic` o `revalidate` según el caso de uso
+10. Escribe código testeable y bien documentado
+11. Usa español solo en UI text, todo lo demás en inglés

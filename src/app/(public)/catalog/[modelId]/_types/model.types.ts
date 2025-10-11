@@ -38,7 +38,9 @@ export type ModelDimensions = {
 export type Model = {
   id: string;
   name: string;
-  manufacturer: string;
+  /** @deprecated Use profileSupplier instead */
+  manufacturer?: string;
+  profileSupplier?: string;
   description: string;
   basePrice: number;
   currency: string;

@@ -6,10 +6,10 @@ import { Badge } from '@/components/ui/badge';
 
 type ActiveSearchParametersProps = {
   searchQuery?: string | null;
-  selectedManufacturerName?: string | null;
+  selectedProfileSupplierName?: string | null;
   sortType?: CatalogSortOption | null;
   onRemoveSearch?: () => void;
-  onRemoveManufacturer?: () => void;
+  onRemoveProfileSupplier?: () => void;
   onRemoveSort?: () => void;
 };
 
@@ -19,7 +19,7 @@ type ActiveSearchParametersProps = {
  *
  * Displays ALL active search parameters as removable badges:
  * - Search query (q)
- * - Manufacturer filter
+ * - Profile Supplier filter
  * - Sort order (when not default)
  *
  * Follows Single Responsibility Principle - only handles badge rendering.
@@ -33,22 +33,22 @@ type ActiveSearchParametersProps = {
  */
 export default function ActiveSearchParameters({
   searchQuery,
-  selectedManufacturerName,
+  selectedProfileSupplierName,
   sortType,
   onRemoveSearch,
-  onRemoveManufacturer,
+  onRemoveProfileSupplier,
   onRemoveSort,
 }: ActiveSearchParametersProps) {
   // Build active parameters using pure function
   const activeParameters = buildActiveParameters({
-    manufacturerName: selectedManufacturerName,
+    profileSupplierName: selectedProfileSupplierName,
     searchQuery,
     sortType,
   });
 
   // Map handlers to parameter keys
   const handlers: Record<string, (() => void) | undefined> = {
-    manufacturer: onRemoveManufacturer,
+    profileSupplier: onRemoveProfileSupplier,
     search: onRemoveSearch,
     sort: onRemoveSort,
   };

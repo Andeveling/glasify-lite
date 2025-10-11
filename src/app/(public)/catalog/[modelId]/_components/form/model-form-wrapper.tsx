@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { getTenantConfig } from '@/server/utils/tenant';
 import { api } from '@/trpc/server-client';
 import { ModelFormSkeleton } from '../model-form-skeleton';
 import { ModelForm } from './model-form';
@@ -13,9 +14,9 @@ async function ModelFormData({ serverModel }: ModelFormWrapperProps) {
     glassTypeIds: serverModel.compatibleGlassTypeIds,
   });
 
-  // Fetch services for this manufacturer
+  // Fetch services for this profile supplier
   const services = await api.catalog['list-services']({
-    manufacturerId: serverModel.manufacturer?.id ?? '',
+    manufacturerId: serverModel.profileSupplier?.id ?? '',
   });
 
   // Fetch glass solutions filtered by model compatibility (UX: "Don't Make Me Think")
@@ -24,7 +25,20 @@ async function ModelFormData({ serverModel }: ModelFormWrapperProps) {
     modelId: serverModel.id,
   });
 
-  return <ModelForm glassTypes={glassTypes} model={serverModel} services={services} solutions={solutions} />;
+  // Fetch tenant currency directly from utility (Server Component - no tRPC overhead)
+  // Public data - no authentication required
+  const tenantConfig = await getTenantConfig();
+  const currency = tenantConfig.currency;
+
+  return (
+    <ModelForm
+      currency={currency}
+      glassTypes={glassTypes}
+      model={serverModel}
+      services={services}
+      solutions={solutions}
+    />
+  );
 }
 
 export function ModelFormWrapper({ serverModel }: ModelFormWrapperProps) {

@@ -163,7 +163,7 @@ export function usePagination(currentPage: number, totalPages: number) {
 /**
  * Hook for managing catalog filters
  *
- * Encapsulates all filter logic (manufacturer, sort) and query string management.
+ * Encapsulates all filter logic (profile supplier, sort) and query string management.
  * Prevents code duplication and follows Single Responsibility Principle.
  *
  * Memory Leak Fix:
@@ -171,29 +171,29 @@ export function usePagination(currentPage: number, totalPages: number) {
  * - Prevents EventEmitter memory leak warning
  *
  * @param params - Current filter parameters
- * @param manufacturers - Available manufacturers for name lookup
+ * @param profileSuppliers - Available profile suppliers for name lookup
  * @returns Filter state and handlers
  */
 export function useCatalogFilters(
   params: {
-    currentManufacturer?: string;
+    currentProfileSupplier?: string;
     currentSort?: string;
     currentSearchQuery?: string;
   },
-  manufacturers: Array<{ id: string; name: string }> = []
+  profileSuppliers: Array<{ id: string; name: string }> = []
 ) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { currentManufacturer = 'all', currentSort = 'name-asc', currentSearchQuery } = params;
+  const { currentProfileSupplier = 'all', currentSort = 'name-asc', currentSearchQuery } = params;
 
-  // Get manufacturer name for badge display
-  const selectedManufacturerName = useMemo(() => {
-    if (currentManufacturer === 'all') {
+  // Get profile supplier name for badge display
+  const selectedProfileSupplierName = useMemo(() => {
+    if (currentProfileSupplier === 'all') {
       return null;
     }
-    return manufacturers.find((m) => m.id === currentManufacturer)?.name;
-  }, [currentManufacturer, manufacturers]);
+    return profileSuppliers.find((s) => s.id === currentProfileSupplier)?.name;
+  }, [currentProfileSupplier, profileSuppliers]);
 
   // Utility to create query string following Next.js best practices
   // Build params from current state instead of using useSearchParams()
@@ -205,8 +205,8 @@ export function useCatalogFilters(
       if (currentSearchQuery) {
         urlParams.set('q', currentSearchQuery);
       }
-      if (currentManufacturer && currentManufacturer !== 'all') {
-        urlParams.set('manufacturer', currentManufacturer);
+      if (currentProfileSupplier && currentProfileSupplier !== 'all') {
+        urlParams.set('profileSupplier', currentProfileSupplier);
       }
       if (currentSort && currentSort !== 'name-asc') {
         urlParams.set('sort', currentSort);
@@ -223,14 +223,14 @@ export function useCatalogFilters(
 
       return urlParams.toString();
     },
-    [currentSearchQuery, currentManufacturer, currentSort]
+    [currentSearchQuery, currentProfileSupplier, currentSort]
   );
 
-  const handleManufacturerChange = useCallback(
+  const handleProfileSupplierChange = useCallback(
     (value: string) => {
       const queryString = createQueryString({
-        manufacturer: value === 'all' ? null : value,
         page: null, // Reset to page 1 when filtering
+        profileSupplier: value === 'all' ? null : value,
       });
 
       router.push(`${pathname}?${queryString}`);
@@ -250,9 +250,9 @@ export function useCatalogFilters(
     [pathname, router, createQueryString]
   );
 
-  const handleRemoveManufacturer = useCallback(() => {
-    handleManufacturerChange('all');
-  }, [handleManufacturerChange]);
+  const handleRemoveProfileSupplier = useCallback(() => {
+    handleProfileSupplierChange('all');
+  }, [handleProfileSupplierChange]);
 
   const handleRemoveSort = useCallback(() => {
     handleSortChange('name-asc');
@@ -272,19 +272,19 @@ export function useCatalogFilters(
   }, [pathname, router]);
 
   const hasActiveParameters =
-    currentManufacturer !== 'all' || currentSort !== 'name-asc' || Boolean(currentSearchQuery);
+    currentProfileSupplier !== 'all' || currentSort !== 'name-asc' || Boolean(currentSearchQuery);
 
   return {
-    currentManufacturer,
+    currentProfileSupplier,
     currentSearchQuery,
     currentSort,
     handleClearFilters,
-    handleManufacturerChange,
-    handleRemoveManufacturer,
+    handleProfileSupplierChange,
+    handleRemoveProfileSupplier,
     handleRemoveSearch,
     handleRemoveSort,
     handleSortChange,
     hasActiveParameters,
-    selectedManufacturerName,
+    selectedProfileSupplierName,
   };
 }

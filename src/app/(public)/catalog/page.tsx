@@ -44,8 +44,8 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   // Validate and normalize parameters
   const { searchQuery, page, manufacturerId, sort } = validateCatalogParams(params);
 
-  // Fetch manufacturers for filter dropdown
-  const manufacturers = await api.catalog['list-manufacturers']();
+  // Fetch profile suppliers for filter dropdown
+  const profileSuppliers = await api.catalog['list-manufacturers']();
 
   // Fetch total count for results display (lightweight query)
   const totalData = await api.catalog['list-models']({
@@ -63,9 +63,9 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
 
         {/* Nuevo layout armónico: barra de búsqueda y filtros + badges */}
         <CatalogFilterBar
-          currentManufacturer={manufacturerId ?? 'all'}
+          currentProfileSupplier={manufacturerId ?? 'all'}
           currentSort={sort}
-          manufacturers={manufacturers}
+          profileSuppliers={profileSuppliers}
           searchQuery={searchQuery}
           totalResults={totalData.total}
         />

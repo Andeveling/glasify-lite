@@ -116,7 +116,6 @@ export const SolutionSelectorSection = memo<SolutionSelectorSectionProps>(({ sol
       descriptionClassName="text-base"
       icon={Sparkles}
       legend="¿Qué necesitas para tu ventana?"
-      legendClassName="font-bold text-2xl tracking-tight"
     >
       <FormField
         control={control}
@@ -172,7 +171,7 @@ export const SolutionSelectorSection = memo<SolutionSelectorSectionProps>(({ sol
                         </div>
 
                         {/* Solution Name */}
-                        <div className="space-y-1">
+                        <div className="space-y-1 text-center">
                           <h3
                             className={cn(
                               'font-semibold text-lg leading-tight',

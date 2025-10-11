@@ -1,5 +1,6 @@
 import type { Quote } from '@prisma/client';
 import logger from '@/lib/logger';
+import { getTenantConfig } from '../utils/tenant';
 
 type EmailTemplate = {
   subject: string;
@@ -20,30 +21,34 @@ type QuoteEmailData = {
   contactAddress: string;
 };
 
-const formatCurrency = (amount: number | string, currency: string) => {
+/**
+ * Format currency using tenant locale configuration
+ *
+ * @param amount - Amount to format
+ * @param currency - ISO 4217 currency code
+ * @param locale - IETF BCP 47 locale (from TenantConfig)
+ * @returns Formatted currency string
+ */
+const formatCurrency = (amount: number | string, currency: string, locale: string) => {
   const numericAmount = typeof amount === 'string' ? Number.parseFloat(amount) : amount;
 
-  if (currency === 'CLP') {
-    return new Intl.NumberFormat('es-CL', {
-      currency: 'CLP',
-      style: 'currency',
-    }).format(numericAmount);
-  }
-
-  return new Intl.NumberFormat('es-LA', {
+  return new Intl.NumberFormat(locale, {
     currency,
     style: 'currency',
   }).format(numericAmount);
 };
 
-const createQuoteEmailTemplate = (data: QuoteEmailData): EmailTemplate => {
+const createQuoteEmailTemplate = async (data: QuoteEmailData): Promise<EmailTemplate> => {
   const { quote, contactPhone, contactAddress } = data;
+
+  // Fetch tenant config for locale (single source of truth)
+  const tenantConfig = await getTenantConfig();
 
   const subject = `Nueva Cotización ${quote.id} - ${quote.manufacturer.name}`;
 
-  const totalFormatted = formatCurrency(quote.total.toString(), quote.currency);
+  const totalFormatted = formatCurrency(quote.total.toString(), quote.currency, tenantConfig.locale);
   const validUntilFormatted = quote.validUntil
-    ? new Intl.DateTimeFormat('es-LA', {
+    ? new Intl.DateTimeFormat(tenantConfig.locale, {
         dateStyle: 'long',
       }).format(quote.validUntil)
     : 'No especificada';
@@ -122,7 +127,7 @@ const sendEmailMock = async (options: SendEmailOptions): Promise<boolean> => {
 
 export const sendQuoteNotification = async (data: QuoteEmailData, recipientEmail: string): Promise<boolean> => {
   try {
-    const template = createQuoteEmailTemplate(data);
+    const template = await createQuoteEmailTemplate(data);
 
     const success = await sendEmailMock({
       quoteId: data.quote.id,
