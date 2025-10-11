@@ -77,7 +77,7 @@ export function useCartPriceSync({ items, onPriceUpdate, debounceMs = 500, enabl
   const previousQuantitiesRef = useRef<Map<string, number>>(new Map());
 
   // tRPC mutation for price calculation using quote.calculate-item
-  const calculatePriceMutation = api.quote[ 'calculate-item' ].useMutation();
+  const calculatePriceMutation = api.quote['calculate-item'].useMutation();
 
   // Track items in a ref to avoid dependency issues
   const itemsRef = useRef(items);
@@ -122,7 +122,7 @@ export function useCartPriceSync({ items, onPriceUpdate, debounceMs = 500, enabl
         };
       }
     },
-    [ calculatePriceMutation ]
+    [calculatePriceMutation]
   );
 
   /**
@@ -154,7 +154,7 @@ export function useCartPriceSync({ items, onPriceUpdate, debounceMs = 500, enabl
         previousQuantitiesRef.current.set(item.id, item.quantity);
       }
     }, debounceMs);
-  }, [ enabled, debounceMs, recalculateItemPrice, onPriceUpdate ]);
+  }, [enabled, debounceMs, recalculateItemPrice, onPriceUpdate]);
 
   /**
    * Auto-sync on items change
@@ -169,7 +169,7 @@ export function useCartPriceSync({ items, onPriceUpdate, debounceMs = 500, enabl
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [ enabled, syncPrices ]); // Only depend on enabled and syncPrices, use ref for items
+  }, [enabled, syncPrices]); // Only depend on enabled and syncPrices, use ref for items
 
   /**
    * Initialize quantity tracking on mount and when items change
@@ -194,7 +194,7 @@ export function useCartPriceSync({ items, onPriceUpdate, debounceMs = 500, enabl
         previousQuantitiesRef.current.delete(trackedId);
       }
     }
-  }, [ items ]); // items dependency needed to detect cart changes for tracking
+  }, [items]); // items dependency needed to detect cart changes for tracking
 
   return {
     isSyncing: calculatePriceMutation.isPending,

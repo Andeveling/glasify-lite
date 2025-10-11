@@ -97,14 +97,14 @@ type UseCartReturn = {
 export function useCart(): UseCartReturn {
   const { items: storedItems, saveItems, clearItems, isHydrated } = useCartStorage();
   const { currency } = useTenantConfig();
-  const [ items, setItems ] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartItem[]>([]);
 
   // Sync with storage on hydration
   useEffect(() => {
     if (isHydrated) {
       setItems(storedItems);
     }
-  }, [ isHydrated, storedItems ]);
+  }, [isHydrated, storedItems]);
 
   /**
    * Add item to cart with auto-generated name
@@ -152,11 +152,11 @@ export function useCart(): UseCartReturn {
       };
 
       // Update state
-      const updatedItems = [ ...items, newItem ];
+      const updatedItems = [...items, newItem];
       setItems(updatedItems);
       saveItems(updatedItems);
     },
-    [ items, saveItems ]
+    [items, saveItems]
   );
 
   /**
@@ -179,7 +179,7 @@ export function useCart(): UseCartReturn {
       setItems(updatedItems);
       saveItems(updatedItems);
     },
-    [ items, saveItems ]
+    [items, saveItems]
   );
 
   /**
@@ -198,7 +198,7 @@ export function useCart(): UseCartReturn {
       setItems(updatedItems);
       saveItems(updatedItems);
     },
-    [ items, saveItems ]
+    [items, saveItems]
   );
 
   /**
@@ -226,11 +226,11 @@ export function useCart(): UseCartReturn {
       }
 
       // Add item back to cart at the end
-      const updatedItems = [ ...items, item ];
+      const updatedItems = [...items, item];
       setItems(updatedItems);
       saveItems(updatedItems);
     },
-    [ items, saveItems ]
+    [items, saveItems]
   );
 
   /**
@@ -239,18 +239,18 @@ export function useCart(): UseCartReturn {
   const clearCart = useCallback(() => {
     setItems([]);
     clearItems();
-  }, [ clearItems ]);
+  }, [clearItems]);
 
   /**
    * Get item by ID
    */
-  const getItemById = useCallback((id: string): CartItem | undefined => findCartItem(items, id), [ items ]);
+  const getItemById = useCallback((id: string): CartItem | undefined => findCartItem(items, id), [items]);
 
   /**
    * Cart summary (memoized)
    * Uses tenant currency from config (single source of truth)
    */
-  const summary = useMemo((): CartSummary => generateCartSummary(items, currency), [ items, currency ]);
+  const summary = useMemo((): CartSummary => generateCartSummary(items, currency), [items, currency]);
 
   return {
     addItem,

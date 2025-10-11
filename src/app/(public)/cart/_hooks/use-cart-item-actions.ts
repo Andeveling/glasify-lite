@@ -70,10 +70,7 @@ type UseCartItemActionsReturn = {
  * }
  * ```
  */
-export function useCartItemActions({
-  onUpdateItem,
-  onRemoveItem,
-}: UseCartItemActionsParams): UseCartItemActionsReturn {
+export function useCartItemActions({ onUpdateItem, onRemoveItem }: UseCartItemActionsParams): UseCartItemActionsReturn {
   /**
    * Update item name
    */
@@ -94,7 +91,7 @@ export function useCartItemActions({
         duration: 2000,
       });
     },
-    [ onUpdateItem ]
+    [onUpdateItem]
   );
 
   /**
@@ -115,7 +112,7 @@ export function useCartItemActions({
         duration: 2000,
       });
     },
-    [ onUpdateItem ]
+    [onUpdateItem]
   );
 
   /**
@@ -135,7 +132,7 @@ export function useCartItemActions({
         duration: 2000,
       });
     },
-    [ onRemoveItem ]
+    [onRemoveItem]
   );
 
   return {
@@ -144,4 +141,3 @@ export function useCartItemActions({
     updateQuantity,
   };
 }
-

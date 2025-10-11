@@ -156,8 +156,8 @@ export function clearCartStorage(): void {
  * ```
  */
 export function useCartStorage() {
-  const [ items, setItems ] = useState<CartItem[]>([]);
-  const [ isHydrated, setIsHydrated ] = useState(false);
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   // Hydrate from sessionStorage on mount
   useEffect(() => {
@@ -209,7 +209,7 @@ export function useCartStorage() {
 
     try {
       const rawData = sessionStorage.getItem(CART_CONSTANTS.STORAGE_KEY);
-      return rawData ? new Blob([ rawData ]).size : 0;
+      return rawData ? new Blob([rawData]).size : 0;
     } catch {
       return 0;
     }
