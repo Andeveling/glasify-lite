@@ -8,6 +8,7 @@ import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { FormSection } from '@/components/form-section';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { cn } from '@/lib/utils';
 import type { ServiceOutput } from '@/server/api/routers/catalog';
@@ -195,10 +196,15 @@ export function ServicesSelectorSection({ services }: ServicesSelectorSectionPro
 
             {/* Empty state hint */}
             {services.length === 0 && (
-              <div className="rounded-lg border border-muted-foreground/20 border-dashed p-8 text-center">
-                <Wrench className="mx-auto mb-2 h-8 w-8 text-muted-foreground/40" />
-                <p className="text-muted-foreground text-sm">No hay servicios adicionales disponibles</p>
-              </div>
+              <Empty className="border border-muted-foreground/20 border-dashed">
+                <EmptyHeader>
+                  <EmptyMedia>
+                    <Wrench className="mx-auto mb-2 h-8 w-8 text-muted-foreground/40" />
+                  </EmptyMedia>
+                  <EmptyTitle>No hay servicios adicionales disponibles</EmptyTitle>
+                  <EmptyDescription>Si requieres más información, por favor contáctanos.</EmptyDescription>
+                </EmptyHeader>
+              </Empty>
             )}
           </FormItem>
         )}
