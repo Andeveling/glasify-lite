@@ -21,6 +21,7 @@ import {
   validateCartLimit,
 } from '@/lib/utils/cart.utils';
 import { generateItemName } from '@/lib/utils/generate-item-name';
+import { useTenantConfig } from '@/providers/tenant-config-provider';
 import type { CartItem, CartSummary, CreateCartItemInput, UpdateCartItemInput } from '@/types/cart.types';
 import { useCartStorage } from './use-cart-storage';
 
@@ -93,6 +94,7 @@ type UseCartReturn = {
  */
 export function useCart(): UseCartReturn {
   const { items: storedItems, saveItems, clearItems, isHydrated } = useCartStorage();
+  const { currency } = useTenantConfig();
   const [items, setItems] = useState<CartItem[]>([]);
 
   // Sync with storage on hydration
@@ -237,8 +239,9 @@ export function useCart(): UseCartReturn {
 
   /**
    * Cart summary (memoized)
+   * Uses tenant currency from config (single source of truth)
    */
-  const summary = useMemo((): CartSummary => generateCartSummary(items), [items]);
+  const summary = useMemo((): CartSummary => generateCartSummary(items, currency), [items, currency]);
 
   return {
     addItem,

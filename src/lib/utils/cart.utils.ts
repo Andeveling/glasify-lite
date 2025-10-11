@@ -67,10 +67,10 @@ export function calculateItemSubtotal(unitPrice: number, quantity: number): numb
  * Generate cart summary for display
  *
  * @param items - Cart items
- * @param currency - Currency code (default: CLP)
+ * @param currency - ISO 4217 currency code (from TenantConfig)
  * @returns Cart summary with totals and metadata
  */
-export function generateCartSummary(items: CartItem[], currency = 'CLP'): CartSummary {
+export function generateCartSummary(items: CartItem[], currency: string): CartSummary {
   const itemCount = calculateItemCount(items);
   const total = calculateCartTotal(items);
 

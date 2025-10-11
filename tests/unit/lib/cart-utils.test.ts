@@ -154,9 +154,9 @@ describe('calculateItemSubtotal', () => {
 
 describe('generateCartSummary', () => {
   it('should generate summary for empty cart', () => {
-    const summary = generateCartSummary([]);
+    const summary = generateCartSummary([], 'COP');
     expect(summary).toEqual({
-      currency: 'CLP',
+      currency: 'COP',
       isEmpty: true,
       itemCount: 0,
       total: 0,
@@ -168,18 +168,18 @@ describe('generateCartSummary', () => {
       createMockCartItem({ quantity: 2, subtotal: 20_000 }),
       createMockCartItem({ quantity: 3, subtotal: 30_000 }),
     ];
-    const summary = generateCartSummary(items);
+    const summary = generateCartSummary(items, 'COP');
     expect(summary).toEqual({
-      currency: 'CLP',
+      currency: 'COP',
       isEmpty: false,
       itemCount: 5,
       total: 50_000,
     });
   });
 
-  it('should use default currency CLP', () => {
-    const summary = generateCartSummary([]);
-    expect(summary.currency).toBe('CLP');
+  it('should use provided currency from TenantConfig', () => {
+    const summary = generateCartSummary([], 'COP');
+    expect(summary.currency).toBe('COP');
   });
 
   it('should accept custom currency', () => {
@@ -189,7 +189,7 @@ describe('generateCartSummary', () => {
 
   it('should mark isEmpty as false when items exist', () => {
     const items = [createMockCartItem()];
-    expect(generateCartSummary(items).isEmpty).toBe(false);
+    expect(generateCartSummary(items, 'COP').isEmpty).toBe(false);
   });
 });
 

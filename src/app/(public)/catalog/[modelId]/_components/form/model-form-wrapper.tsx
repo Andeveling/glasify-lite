@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { getTenantConfig } from '@/server/utils/tenant';
 import { api } from '@/trpc/server-client';
 import { ModelFormSkeleton } from '../model-form-skeleton';
 import { ModelForm } from './model-form';
@@ -24,8 +25,10 @@ async function ModelFormData({ serverModel }: ModelFormWrapperProps) {
     modelId: serverModel.id,
   });
 
-  // Fetch tenant currency (now from TenantConfig singleton)
-  const currency = await api.tenantConfig.getCurrency();
+  // Fetch tenant currency directly from utility (Server Component - no tRPC overhead)
+  // Public data - no authentication required
+  const tenantConfig = await getTenantConfig();
+  const currency = tenantConfig.currency;
 
   return (
     <ModelForm
