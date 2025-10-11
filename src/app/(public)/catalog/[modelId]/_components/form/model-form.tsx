@@ -103,13 +103,6 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
     try {
       // Add item to cart (client-side)
       addItem(cartItemInput);
-
-      logger.info('Item added to cart from catalog', {
-        itemCount: summary.itemCount + 1,
-        modelId: model.id,
-        modelName: model.name,
-      });
-
       // Show success toast
       toast.success('Item agregado al carrito', {
         description: `${model.name} ha sido agregado exitosamente`,

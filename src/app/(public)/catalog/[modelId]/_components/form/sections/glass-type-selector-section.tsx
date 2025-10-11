@@ -187,7 +187,7 @@ export const GlassTypeSelectorSection = memo<GlassTypeSelectorSectionProps>(({ g
           onClick={() => setShowAllDetails(!showAllDetails)}
           size="sm"
           type="button"
-          variant="ghost"
+          variant="link"
         >
           {showAllDetails ? 'Ocultar' : 'Mostrar'} especificaciones
           <ChevronDown className={cn('size-4 transition-transform', showAllDetails && 'rotate-180')} />
