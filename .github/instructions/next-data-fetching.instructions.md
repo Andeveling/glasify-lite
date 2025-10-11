@@ -617,6 +617,161 @@ export const getItem = cache(async (id) => {
 })
 ```
 
+## Glasify-Lite: tRPC Data Fetching Patterns
+
+### Server Components vs Client Components
+
+**tRPC is designed for Client Components**. In Server Components, prefer direct server utility access for better performance and simpler code.
+
+#### ❌ AVOID: Using tRPC in Server Components for server utilities
+
+```tsx
+// ❌ BAD: Unnecessary tRPC overhead in Server Component
+async function ModelFormData() {
+  // Don't use tRPC for server-side data that comes from utilities
+  const currency = await api.tenantConfig.getCurrency(); // ❌ Adds overhead
+  
+  return <ModelForm currency={currency} />;
+}
+```
+
+This causes issues:
+- **Performance overhead**: Unnecessary serialization/deserialization
+- **Authentication conflicts**: Protected procedures fail in public routes
+- **Complexity**: Extra layer that provides no value in Server Components
+
+#### ✅ PREFER: Direct utility access in Server Components
+
+```tsx
+// ✅ GOOD: Direct server utility access
+import { getTenantConfig } from '@/server/utils/tenant';
+
+async function ModelFormData() {
+  // Direct utility access - fast, simple, type-safe
+  const tenantConfig = await getTenantConfig();
+  const currency = tenantConfig.currency;
+  
+  return <ModelForm currency={currency} />;
+}
+```
+
+Benefits:
+- **Better performance**: No serialization overhead
+- **Simpler code**: Direct function calls
+- **No auth conflicts**: Utilities handle their own authorization
+- **Type-safe**: Full TypeScript inference
+
+#### ✅ USE: tRPC in Server Components for business logic routers
+
+```tsx
+// ✅ GOOD: tRPC for complex business logic
+async function CatalogContent({ searchQuery, page }: Props) {
+  // tRPC procedures encapsulate complex business logic
+  const { items: models } = await api.catalog['list-models']({
+    search: searchQuery,
+    page,
+    limit: 20,
+  });
+  
+  return <CatalogGrid models={models} />;
+}
+```
+
+Use tRPC in Server Components when:
+- Procedure encapsulates complex business logic
+- Multiple data sources are coordinated
+- Caching/revalidation strategy is needed
+- Data transformation is required
+
+#### ✅ ALWAYS: tRPC in Client Components
+
+```tsx
+'use client';
+
+// ✅ GOOD: tRPC React Query hooks for client interactivity
+export function CatalogSearch() {
+  const { data: models } = api.catalog['list-models'].useQuery({
+    search: searchQuery,
+  });
+  
+  return <SearchResults models={models} />;
+}
+```
+
+### Decision Tree
+
+```
+Need data in a component?
+│
+├─ Server Component?
+│  ├─ Simple utility data (config, single record)?
+│  │  └─ ✅ Import utility directly (e.g., getTenantConfig())
+│  │
+│  └─ Complex business logic (filtering, pagination, joins)?
+│     └─ ✅ Use tRPC procedure (e.g., api.catalog['list-models'])
+│
+└─ Client Component?
+   └─ ✅ Always use tRPC with React Query hooks
+      (e.g., api.catalog['list-models'].useQuery())
+```
+
+### Common Patterns
+
+#### Pattern 1: Public data in public routes
+
+```tsx
+// src/app/(public)/catalog/[modelId]/page.tsx
+import { getTenantConfig } from '@/server/utils/tenant';
+
+export default async function ModelPage() {
+  // Public config data - use utility directly
+  const config = await getTenantConfig();
+  
+  // Complex catalog logic - use tRPC
+  const model = await api.catalog['get-model-by-id']({ id });
+  
+  return <ModelDetails config={config} model={model} />;
+}
+```
+
+#### Pattern 2: Protected data in protected routes
+
+```tsx
+// src/app/(dashboard)/admin/config/page.tsx
+export default async function AdminConfigPage() {
+  // Protected route - use tRPC with protected procedures
+  const config = await api.tenantConfig.get();
+  
+  return <ConfigForm config={config} />;
+}
+```
+
+#### Pattern 3: Client-side mutations
+
+```tsx
+'use client';
+
+export function UpdateConfigForm() {
+  const mutation = api.tenantConfig.update.useMutation();
+  
+  const handleSubmit = (data) => {
+    mutation.mutate(data);
+  };
+  
+  return <Form onSubmit={handleSubmit} />;
+}
+```
+
+### Authentication Considerations
+
+- **Public procedures**: Use `publicProcedure` for data accessible to all
+- **Protected procedures**: Use `protectedProcedure` for authenticated users only
+- **Server utilities**: Handle their own authorization logic independently
+
+**NEVER call protected tRPC procedures from public Server Components**. This was the root cause of the UNAUTHORIZED error in this fix.
+
+---
+
 ## API Reference
 
 Learn more about the features mentioned in this page by reading the API Reference.
