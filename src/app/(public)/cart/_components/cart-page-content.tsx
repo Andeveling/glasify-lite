@@ -11,10 +11,10 @@
 
 import { useRouter } from 'next/navigation';
 import { Suspense } from 'react';
+import { useCart } from '../_hooks/use-cart';
 import { CartItem } from './cart-item';
 import { CartSummary } from './cart-summary';
 import { EmptyCartState } from './empty-cart-state';
-import { useCart } from '../_hooks/use-cart';
 
 // ============================================================================
 // Constants
