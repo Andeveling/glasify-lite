@@ -1,14 +1,14 @@
 'use client';
 
+import { CheckIcon, ChevronsUpDown } from 'lucide-react';
+import * as React from 'react';
+import * as RPNInput from 'react-phone-number-input';
+import flags from 'react-phone-number-input/flags';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { CheckIcon, ChevronsUpDown } from 'lucide-react';
-import * as React from 'react';
-import * as RPNInput from 'react-phone-number-input';
-import flags from 'react-phone-number-input/flags';
 import 'react-phone-number-input/style.css';
 
 // ============================================================================
@@ -84,11 +84,11 @@ const CountrySelect = React.memo(({ disabled, value, onChange, options }: Countr
     <Popover>
       <PopoverTrigger asChild>
         <Button
-          type="button"
-          variant="outline"
+          aria-label="Seleccionar país"
           className={cn('flex gap-1 rounded-e-none bg-primary-base rounded-s-lg px-3 justify-center')}
           disabled={disabled}
-          aria-label="Seleccionar país"
+          type="button"
+          variant="outline"
         >
           <div className="flex justify-center items-center text-center">
             <FlagComponent country={value} countryName={value} />
@@ -169,17 +169,17 @@ const PhoneInput = React.forwardRef<React.ElementRef<typeof RPNInput.default>, P
 
     return (
       <RPNInput.default
-        ref={ref}
         className={cn(
           'h-9 w-full min-w-0 rounded-md border border-input bg-transparent  py-1 text-base shadow-xs outline-none transition-[color,box-shadow] selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30',
           'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
           'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
           className
         )}
-        flagComponent={FlagComponent}
         countrySelectComponent={CountrySelect}
+        flagComponent={FlagComponent}
         inputComponent={InputComponent}
         onChange={handleChange}
+        ref={ref}
         {...props}
       />
     );

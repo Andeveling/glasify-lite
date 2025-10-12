@@ -90,20 +90,20 @@ test.describe('Quote Navigation from Cart', () => {
     // Add cart items via localStorage
     await page.evaluate(() => {
       const mockCartItem = {
+        additionalServiceIds: [],
+        createdAt: new Date().toISOString(),
+        dimensions: { heightMm: 1500, widthMm: 1000 },
+        glassTypeId: 'glass-123',
+        glassTypeName: 'Templado',
+        heightMm: 1500,
         id: 'test-item-1',
         modelId: 'model-123',
         modelName: 'VEKA Premium',
-        glassTypeId: 'glass-123',
-        glassTypeName: 'Templado',
-        widthMm: 1000,
-        heightMm: 1500,
-        dimensions: { widthMm: 1000, heightMm: 1500 },
-        quantity: 1,
-        unitPrice: 50000,
-        subtotal: 50000,
         name: 'Ventana 1',
-        createdAt: new Date().toISOString(),
-        additionalServiceIds: [],
+        quantity: 1,
+        subtotal: 50_000,
+        unitPrice: 50_000,
+        widthMm: 1000,
       };
 
       sessionStorage.setItem('glasify-cart', JSON.stringify([mockCartItem]));

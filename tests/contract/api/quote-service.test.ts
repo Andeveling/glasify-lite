@@ -61,7 +61,7 @@ const mockCartItems: CartItem[] = [
 
 describe('Contract: Quote Service Business Logic', () => {
   // Mock Prisma client
-  const mockPrisma = {
+  const _mockPrisma = {
     $transaction: vi.fn(),
     glassType: {
       findMany: vi.fn(),
@@ -77,7 +77,7 @@ describe('Contract: Quote Service Business Logic', () => {
     },
   } as unknown as PrismaClient;
 
-  const mockManufacturer: Manufacturer = {
+  const _mockManufacturer: Manufacturer = {
     createdAt: new Date('2025-01-01'),
     currency: 'COP',
     id: 'clx_manufacturer_123',

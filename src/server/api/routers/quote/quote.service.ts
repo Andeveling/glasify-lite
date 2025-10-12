@@ -199,7 +199,7 @@ export async function generateQuoteFromCart(
  * @param cartItems - Array of cart items to validate
  * @param expectedManufacturerId - Expected manufacturer ID (deprecated parameter)
  */
-export function validateCartManufacturerConsistency(cartItems: CartItem[], expectedManufacturerId: string): void {
+export function validateCartManufacturerConsistency(cartItems: CartItem[], _expectedManufacturerId: string): void {
   // REFACTOR: This function is deprecated
   // With the new TenantConfig architecture, there's no manufacturer association
   // All quotes use the tenant's configuration for currency and validity

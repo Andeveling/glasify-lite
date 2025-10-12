@@ -199,8 +199,7 @@ function usePriceCalculatorController({ model, services, onAddToQuote }: PriceCa
     try {
       await sleep(MOCK_CALCULATION_DELAY);
       setCalculation(buildCalculationResult({ formData, model, services }));
-    } catch (error) {
-      console.error('Error calculating price', { error: error instanceof Error ? error.message : error });
+    } catch (_error) {
     } finally {
       setIsCalculating(false);
     }
@@ -222,8 +221,7 @@ function usePriceCalculatorController({ model, services, onAddToQuote }: PriceCa
         subtotal: calculation.subtotal,
         widthMm: formData.widthMm,
       });
-    } catch (error) {
-      console.error('Error adding item to quote', { error: error instanceof Error ? error.message : error });
+    } catch (_error) {
     } finally {
       setIsAddingToQuote(false);
     }

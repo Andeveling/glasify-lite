@@ -202,22 +202,22 @@ const logger: Logger = {
   debug: (message: string, meta?: Record<string, unknown>) => {
     initializeWinston()
       .then((winston) => winston.debug(message, meta))
-      .catch((err) => getFallbackLogger().debug(message, meta));
+      .catch((_err) => getFallbackLogger().debug(message, meta));
   },
   error: (message: string, meta?: Record<string, unknown>) => {
     initializeWinston()
       .then((winston) => winston.error(message, meta))
-      .catch((err) => getFallbackLogger().error(message, meta));
+      .catch((_err) => getFallbackLogger().error(message, meta));
   },
   info: (message: string, meta?: Record<string, unknown>) => {
     initializeWinston()
       .then((winston) => winston.info(message, meta))
-      .catch((err) => getFallbackLogger().info(message, meta));
+      .catch((_err) => getFallbackLogger().info(message, meta));
   },
   warn: (message: string, meta?: Record<string, unknown>) => {
     initializeWinston()
       .then((winston) => winston.warn(message, meta))
-      .catch((err) => getFallbackLogger().warn(message, meta));
+      .catch((_err) => getFallbackLogger().warn(message, meta));
   },
 };
 

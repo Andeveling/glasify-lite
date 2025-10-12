@@ -13,14 +13,7 @@ type GlobalErrorProps = {
 };
 
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
-  useEffect(() => {
-    // Log the error to console in client-side (winston is server-only)
-    console.error('Global error occurred', {
-      digest: error.digest,
-      error: error.message,
-      stack: error.stack,
-    });
-  }, [error]);
+  useEffect(() => {}, []);
 
   return (
     <html lang="es">

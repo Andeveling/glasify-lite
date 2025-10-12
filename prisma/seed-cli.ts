@@ -88,36 +88,7 @@ function parseCliArgs(): CliOptions {
 /**
  * Print CLI help
  */
-function printHelp(): void {
-  console.log(`
-╔════════════════════════════════════════════════════════════════╗
-║                   Glasify Lite - Seed CLI                      ║
-╚════════════════════════════════════════════════════════════════╝
-
-USAGE:
-  pnpm seed [OPTIONS]
-
-OPTIONS:
-  -p, --preset <name>       Preset to use (default: minimal)
-  -v, --verbose             Enable verbose logging
-  --skip-validation         Skip factory validation (faster, risky)
-  --continue-on-error       Continue seeding even if some entities fail
-  -h, --help                Show this help message
-
-AVAILABLE PRESETS:
-  minimal                   10 records (CI/CD, quick testing)
-  demo-client               30 records (client demos, presentations)
-  full-catalog              57 records (production, complete catalog)
-
-EXAMPLES:
-  pnpm seed                            # Seed with minimal preset
-  pnpm seed --preset=demo-client       # Seed with demo-client preset
-  pnpm seed --preset=full-catalog -v   # Seed with full catalog (verbose)
-  pnpm seed --skip-validation          # Fast seed without validation
-
-For more info, see: prisma/data/presets/README.md
-  `);
-}
+function printHelp(): void {}
 
 /**
  * Validate preset name
@@ -126,8 +97,6 @@ function validatePreset(presetName: string): void {
   const availablePresets = Object.keys(PRESETS);
 
   if (!availablePresets.includes(presetName)) {
-    console.error(`\n❌ Error: Unknown preset "${presetName}"`);
-    console.error(`\nAvailable presets: ${availablePresets.join(', ')}\n`);
     process.exit(1);
   }
 }
@@ -149,25 +118,8 @@ async function main(): Promise<void> {
 
   const preset = PRESETS[options.preset];
   if (!preset) {
-    console.error(`\n❌ Error: Preset "${options.preset}" not found in registry\n`);
     process.exit(1);
   }
-
-  // Print banner
-  console.log(`
-╔════════════════════════════════════════════════════════════════╗
-║              Glasify Lite - Database Seeding                   ║
-╚════════════════════════════════════════════════════════════════╝
-  `);
-
-  console.log(`📦 Preset: ${preset.name}`);
-  console.log(`📝 Description: ${preset.description}`);
-  console.log('🔧 Options:', {
-    continueOnError: options.continueOnError,
-    skipValidation: options.skipValidation,
-    verbose: options.verbose,
-  });
-  console.log('');
 
   try {
     // Create orchestrator
@@ -182,15 +134,10 @@ async function main(): Promise<void> {
 
     // Exit with appropriate code
     if (stats.totalFailed > 0) {
-      console.error(`\n⚠️  Seeding completed with ${stats.totalFailed} failures\n`);
       process.exit(1);
     }
-
-    console.log('\n✨ Seeding completed successfully!\n');
     process.exit(0);
-  } catch (error) {
-    console.error('\n❌ Fatal error during seeding:\n');
-    console.error(error);
+  } catch (_error) {
     process.exit(1);
   } finally {
     await db.$disconnect();
@@ -198,7 +145,6 @@ async function main(): Promise<void> {
 }
 
 // Run CLI
-main().catch((error) => {
-  console.error('Unexpected error:', error);
+main().catch((_error) => {
   process.exit(1);
 });

@@ -59,7 +59,7 @@ export function loadCartFromStorage(): CartItem[] {
     }
 
     return storageData.items;
-  } catch (error) {
+  } catch (_error) {
     // Clear corrupted storage
     clearCartStorage();
     return [];

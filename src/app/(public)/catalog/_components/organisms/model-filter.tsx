@@ -84,7 +84,7 @@ export function ModelFilter({ manufacturers, types, initialFilters = {}, onFilte
     onFilterChange(filters);
   };
 
-  const removeManufacturerFilter = () => {
+  const _removeManufacturerFilter = () => {
     setSelectedManufacturer('all');
     const filters: FilterOptions = {};
     if (searchQuery.trim()) {
@@ -96,7 +96,7 @@ export function ModelFilter({ manufacturers, types, initialFilters = {}, onFilte
     onFilterChange(filters);
   };
 
-  const removeTypeFilter = () => {
+  const _removeTypeFilter = () => {
     setSelectedType('all');
     const filters: FilterOptions = {};
     if (searchQuery.trim()) {

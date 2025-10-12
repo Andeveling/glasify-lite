@@ -17,9 +17,16 @@
 
 'use client';
 
-import { useCart } from '@/app/(public)/cart/_hooks/use-cart';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 import { generateQuoteFromCartAction } from '@/app/_actions/quote.actions';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
+import { useCart } from '@/app/(public)/cart/_hooks/use-cart';
 import { Button } from '@/components/ui/button';
 import {
   Drawer,
@@ -37,13 +44,6 @@ import { PhoneInput } from '@/components/ui/phone-input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Spinner } from '@/components/ui/spinner';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, X } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
 
 // ============================================================================
 // Validation Schema
@@ -137,7 +137,7 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
           if (result.success && result.quoteId) {
             clearCart();
             setIsRedirecting(true);
-            
+
             // Close drawer
             setIsOpen(false);
 
@@ -148,21 +148,18 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
             router.push(`/my-quotes/${result.quoteId}`);
 
             return result.quoteId;
-          } else {
-            form.setError('root', {
-              message: result.error ?? 'Error al generar la cotización',
-            });
-
-            throw new Error(result.error ?? 'Error al generar la cotización');
           }
+          form.setError('root', {
+            message: result.error ?? 'Error al generar la cotización',
+          });
+
+          throw new Error(result.error ?? 'Error al generar la cotización');
         } finally {
           setIsSubmitting(false);
         }
       },
       {
-        error: (error) => {
-          return error instanceof Error ? error.message : 'Error al generar la cotización';
-        },
+        error: (error) => (error instanceof Error ? error.message : 'Error al generar la cotización'),
         loading: 'Generando cotización...',
         success: 'Cotización creada exitosamente. Redirigiendo...',
       }
@@ -270,77 +267,77 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
                 />
 
                 {/* City and State */}
-                  <FormField
-                    control={form.control}
-                    name="projectCity"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Ciudad *</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Bogotá"
-                            {...field}
-                            disabled={isSubmitting}
-                            maxLength={MAX_PROJECT_ADDRESS_LENGTH}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <FormField
+                  control={form.control}
+                  name="projectCity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ciudad *</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Bogotá"
+                          {...field}
+                          disabled={isSubmitting}
+                          maxLength={MAX_PROJECT_ADDRESS_LENGTH}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                  <FormField
-                    control={form.control}
-                    name="projectState"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Estado *</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Cundinamarca"
-                            {...field}
-                            disabled={isSubmitting}
-                            maxLength={MAX_PROJECT_ADDRESS_LENGTH}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <FormField
+                  control={form.control}
+                  name="projectState"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Estado *</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Cundinamarca"
+                          {...field}
+                          disabled={isSubmitting}
+                          maxLength={MAX_PROJECT_ADDRESS_LENGTH}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 {/* Postal Code and Phone */}
-                  <FormField
-                    control={form.control}
-                    name="projectPostalCode"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Código Postal *</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="110111"
-                            {...field}
-                            disabled={isSubmitting}
-                            maxLength={MAX_POSTAL_CODE_LENGTH}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <FormField
+                  control={form.control}
+                  name="projectPostalCode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Código Postal *</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="110111"
+                          {...field}
+                          disabled={isSubmitting}
+                          maxLength={MAX_POSTAL_CODE_LENGTH}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                  <FormField
-                    control={form.control}
-                    name="contactPhone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Teléfono (opcional)</FormLabel>
-                        <FormControl>
-                          <PhoneInput placeholder="+57 300 123 4567" {...field} disabled={isSubmitting} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <FormField
+                  control={form.control}
+                  name="contactPhone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Teléfono (opcional)</FormLabel>
+                      <FormControl>
+                        <PhoneInput placeholder="+57 300 123 4567" {...field} disabled={isSubmitting} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 {/* Root error display */}
                 {form.formState.errors.root && (
@@ -367,7 +364,7 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
               >
                 {isSubmitting ? (
                   <>
-                   <Spinner />
+                    <Spinner />
                     Generando...
                   </>
                 ) : (

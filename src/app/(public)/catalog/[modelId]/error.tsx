@@ -12,14 +12,7 @@ type ErrorProps = {
 };
 
 export default function ErrorPage({ error, reset }: ErrorProps) {
-  useEffect(() => {
-    // Log error to console (winston is server-only)
-    console.error('Model page error', {
-      digest: error.digest,
-      message: error.message,
-      stack: error.stack,
-    });
-  }, [error]);
+  useEffect(() => {}, []);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4">

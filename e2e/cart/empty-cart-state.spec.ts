@@ -141,7 +141,7 @@ test.describe('Empty Cart State', () => {
     await page.keyboard.press('Tab'); // Multiple tabs to reach the link
 
     // Verify catalog link has focus
-    const catalogLink = page.getByRole('link', { name: 'Explorar catálogo' });
+    const _catalogLink = page.getByRole('link', { name: 'Explorar catálogo' });
 
     // Activate with Enter key
     await page.keyboard.press('Enter');
