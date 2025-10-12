@@ -5,6 +5,8 @@
  * contact information, and validity dates.
  *
  * This version is for the public-facing user quote view.
+ *
+ * Updated with QuoteStatusBadge component (US1) for better status clarity.
  */
 
 import { ArrowLeft } from 'lucide-react';
@@ -15,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatDate } from '@/lib/utils';
+import { QuoteStatusBadge } from '../../_components/quote-status-badge';
 
 import type { QuoteDetailSchema } from '@/server/api/routers/quote/quote.schemas';
 
@@ -24,14 +27,7 @@ type QuoteDetailViewProps = {
   isPublicView?: boolean;
 };
 
-const statusConfig = {
-  canceled: { label: 'Cancelada', variant: 'destructive' as const },
-  draft: { label: 'Borrador', variant: 'secondary' as const },
-  sent: { label: 'Enviada', variant: 'default' as const },
-};
-
 export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailViewProps) {
-  const statusInfo = statusConfig[quote.status];
   const backLink = isPublicView ? '/my-quotes' : '/quotes';
   const backLabel = isPublicView ? 'Volver a mis cotizaciones' : 'Volver a cotizaciones';
 
@@ -55,8 +51,15 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
               <CardTitle>{quote.projectAddress.projectName}</CardTitle>
               <CardDescription>Creada el {formatDate(quote.createdAt)}</CardDescription>
             </div>
+            
+            {/* US1: New QuoteStatusBadge with icon and tooltip */}
             <div className="flex gap-2">
-              <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
+              <QuoteStatusBadge 
+                status={quote.status} 
+                showIcon={true} 
+                showTooltip={true}
+                size="default"
+              />
               {quote.isExpired && (
                 <Badge className="border-destructive text-destructive" variant="outline">
                   Vencida

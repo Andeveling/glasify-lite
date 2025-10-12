@@ -52,17 +52,17 @@
 
 ### Tests for User Story 1 (Test-First - MUST FAIL before implementation)
 
-- [ ] **T011** [P] [US1] Unit test for status config in `tests/unit/utils/status-config.test.ts` (test getStatusLabel, getStatusIcon, getStatusTooltip functions)
-- [ ] **T012** [P] [US1] Component test for QuoteStatusBadge in `tests/unit/components/quote-status-badge.test.tsx` (test tooltip, icon, label rendering)
-- [ ] **T013** [P] [US1] E2E test for status clarity in `e2e/my-quotes/quote-status-clarity.spec.ts` (test "En edición" displays for draft, tooltips appear on hover)
+- [X] **T011** [P] [US1] Unit test for status config in `tests/unit/utils/status-config.test.ts` (test getStatusLabel, getStatusIcon, getStatusTooltip functions) ✅ Created - tests designed to fail
+- [X] **T012** [P] [US1] Component test for QuoteStatusBadge in `tests/unit/components/quote-status-badge.test.tsx` (test tooltip, icon, label rendering) ✅ Created - tests designed to fail
+- [ ] **T013** [P] [US1] E2E test for status clarity in `e2e/my-quotes/quote-status-clarity.spec.ts` (test "En edición" displays for draft, tooltips appear on hover) ⏳ Deferred to Phase 7
 
 ### Implementation for User Story 1
 
-- [ ] **T014** [P] [US1] Create status configuration utility in `src/app/(public)/my-quotes/_utils/status-config.ts` (define statusConfig object with labels, icons, tooltips, colors, CTAs for draft/sent/canceled)
-- [ ] **T015** [P] [US1] Create QuoteStatusBadge component in `src/app/(public)/my-quotes/_components/quote-status-badge.tsx` (use statusConfig, render Badge with icon + tooltip from Radix UI)
-- [ ] **T016** [P] [US1] Create shared StatusBadge molecule in `src/components/quote/status-badge.tsx` (reusable version for other pages)
-- [ ] **T017** [US1] Modify QuoteListItem component in `src/app/(public)/my-quotes/_components/quote-list-item.tsx` (replace existing badge with QuoteStatusBadge, add CTA button based on status)
-- [ ] **T018** [US1] Modify QuoteDetailView component in `src/app/(public)/my-quotes/[quoteId]/_components/quote-detail-view.tsx` (use QuoteStatusBadge)
+- [X] **T014** [P] [US1] Create status configuration utility in `src/app/(public)/my-quotes/_utils/status-config.ts` (define statusConfig object with labels, icons, tooltips, colors, CTAs for draft/sent/canceled) ✅ Implemented
+- [X] **T015** [P] [US1] Create QuoteStatusBadge component in `src/app/(public)/my-quotes/_components/quote-status-badge.tsx` (use statusConfig, render Badge with icon + tooltip from Radix UI) ✅ Implemented
+- [X] **T016** [P] [US1] Create shared StatusBadge molecule in `src/components/quote/status-badge.tsx` (reusable version for other pages) ✅ Implemented
+- [X] **T017** [US1] Modify QuoteListItem component in `src/app/(public)/my-quotes/_components/quote-list-item.tsx` (replace existing badge with QuoteStatusBadge, add CTA button based on status) ✅ Modified - added QuoteStatusBadge and dynamic CTAs
+- [X] **T018** [US1] Modify QuoteDetailView component in `src/app/(public)/my-quotes/[quoteId]/_components/quote-detail-view.tsx` (use QuoteStatusBadge) ✅ Modified - integrated QuoteStatusBadge
 
 **Checkpoint**: User Story 1 complete - status labels are now clear and self-explanatory ✅
 

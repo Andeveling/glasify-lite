@@ -5,15 +5,23 @@
  * date, total amount, and item count.
  *
  * This version links to the public quote detail page, not the admin dashboard.
+ *
+ * Updated with QuoteStatusBadge component (US1) for better status clarity
+ * with icons, tooltips, and status-specific CTAs.
  */
 
-import { Eye } from 'lucide-react';
+'use client';
+
+import { Edit3, Eye, Copy } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn, formatDate } from '@/lib/utils';
+import { QuoteStatusBadge } from './quote-status-badge';
+import { getStatusCTA } from '../_utils/status-config';
 
 import type { QuoteListItemSchema } from '@/server/api/routers/quote/quote.schemas';
 
@@ -21,23 +29,41 @@ type QuoteListItemProps = {
   quote: QuoteListItemSchema;
 };
 
-const statusConfig = {
-  canceled: {
-    label: 'Cancelada',
-    variant: 'destructive' as const,
-  },
-  draft: {
-    label: 'Borrador',
-    variant: 'secondary' as const,
-  },
-  sent: {
-    label: 'Enviada',
-    variant: 'default' as const,
-  },
-} as const;
-
 export function QuoteListItem({ quote }: QuoteListItemProps) {
-  const statusInfo = statusConfig[quote.status];
+  const router = useRouter();
+  const cta = getStatusCTA(quote.status);
+  
+  // Handle CTA actions
+  const handleCTAClick = () => {
+    if (!cta) return;
+    
+    switch (cta.action) {
+      case 'edit':
+        router.push(`/my-quotes/${quote.id}`);
+        break;
+      case 'view':
+        router.push(`/my-quotes/${quote.id}`);
+        break;
+      case 'duplicate':
+        // TODO: Implement duplicate functionality in future US
+        router.push(`/my-quotes/${quote.id}`);
+        break;
+      case 'resend':
+        // TODO: Implement resend functionality in future US
+        router.push(`/my-quotes/${quote.id}`);
+        break;
+    }
+  };
+  
+  // Icon mapping for CTA actions
+  const ctaIcon = {
+    edit: Edit3,
+    view: Eye,
+    duplicate: Copy,
+    resend: Eye,
+  };
+  
+  const CTAIcon = cta ? ctaIcon[cta.action] : Eye;
 
   return (
     <Card className={cn('transition-opacity', quote.isExpired && 'opacity-60')} data-testid="quote-list-item">
@@ -45,9 +71,15 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
         <div className="flex-1 space-y-2">
           <div className="flex items-center gap-2">
             <h3 className="font-semibold text-lg">{quote.projectName}</h3>
-            <Badge data-testid="quote-status-badge" variant={statusInfo.variant}>
-              {statusInfo.label}
-            </Badge>
+            
+            {/* US1: New QuoteStatusBadge with icon and tooltip */}
+            <QuoteStatusBadge 
+              status={quote.status} 
+              showIcon={true} 
+              showTooltip={true}
+              size="default"
+            />
+            
             {quote.isExpired && (
               <Badge className="text-muted-foreground" data-testid="expired-badge" variant="outline">
                 Expirada
@@ -82,11 +114,10 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
             </div>
           </div>
 
-          <Button asChild size="sm">
-            <Link href={`/my-quotes/${quote.id}`}>
-              <Eye className="mr-2 h-4 w-4" />
-              Ver detalles
-            </Link>
+          {/* US1: Dynamic CTA button based on status */}
+          <Button onClick={handleCTAClick} size="sm">
+            <CTAIcon className="mr-2 h-4 w-4" />
+            {cta?.label ?? 'Ver detalles'}
           </Button>
         </div>
       </CardContent>
