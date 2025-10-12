@@ -83,7 +83,8 @@ export default function SignInForm({ onSubmit, onGoogleSignIn, isLoading = false
         await onGoogleSignIn();
       } else {
         // Default NextAuth Google sign in
-        await signIn('google', { callbackUrl: '/dashboard' });
+        // Redirect will be handled by middleware based on user role
+        await signIn('google', { callbackUrl: '/auth/callback' });
       }
     } catch {
       form.setError('root', {

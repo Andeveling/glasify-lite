@@ -2,6 +2,7 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import type { DefaultSession, NextAuthConfig } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 
+import { env } from '@/env';
 import { db } from '@/server/db';
 
 /**
@@ -14,16 +15,23 @@ declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession['user'];
+      role: 'admin' | 'user';
+    } & DefaultSession[ 'user' ];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    role?: 'admin' | 'user';
+  }
 }
+
+/**
+ * Determines if a user is an admin based on their email
+ * Compares against the ADMIN_EMAIL environment variable
+ */
+const isAdmin = (email: string | null | undefined): boolean => {
+  if (!email || !env.ADMIN_EMAIL) return false;
+  return email.toLowerCase() === env.ADMIN_EMAIL.toLowerCase();
+};
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -33,13 +41,31 @@ declare module 'next-auth' {
 export const authConfig = {
   adapter: PrismaAdapter(db),
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Allow relative callback URLs
+      if (url.startsWith('/')) return `${baseUrl}${url}`;
+
+      // Allow callback URLs on the same origin
+      if (new URL(url).origin === baseUrl) return url;
+
+      return baseUrl;
+    },
     session: ({ session, user }) => ({
       ...session,
       user: {
         ...session.user,
         id: user.id,
+        role: isAdmin(user.email) ? 'admin' : 'user',
       },
     }),
+    async signIn({ user }) {
+      // This callback is called after successful sign in
+      // We can't redirect here, but we can use the session callback
+      return true;
+    },
+  },
+  pages: {
+    signIn: '/signin',
   },
   providers: [
     GoogleProvider,

@@ -2,7 +2,7 @@ import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 
 // Only one call process env
-const { AUTH_GOOGLE_ID, AUTH_GOOGLE_SECRET, AUTH_SECRET, DATABASE_URL, NODE_ENV } = process.env;
+const { ADMIN_EMAIL, AUTH_GOOGLE_ID, AUTH_GOOGLE_SECRET, AUTH_SECRET, DATABASE_URL, NODE_ENV } = process.env;
 
 export const env = createEnv({
   /**
@@ -24,6 +24,7 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
+    ADMIN_EMAIL,
     AUTH_GOOGLE_ID,
     AUTH_GOOGLE_SECRET,
     AUTH_SECRET,
@@ -35,6 +36,7 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
+    ADMIN_EMAIL: z.string().email().optional(),
     AUTH_GOOGLE_ID: z.string(),
     AUTH_GOOGLE_SECRET: z.string(),
     AUTH_SECRET: process.env.NODE_ENV === 'production' ? z.string() : z.string().optional(),

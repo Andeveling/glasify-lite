@@ -16,6 +16,9 @@ export function middleware(request: NextRequest) {
   // Auth routes
   const isAuthRoute = pathname.startsWith('/signin');
 
+  // Auth callback route
+  const isAuthCallback = pathname === '/auth/callback';
+
   // If trying to access protected route without being logged in
   if (isProtectedRoute && !isLoggedIn) {
     const signinUrl = new URL('/signin', request.url);
@@ -23,9 +26,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(signinUrl);
   }
 
-  // If logged in and trying to access signin page, redirect to dashboard
-  if (isAuthRoute && isLoggedIn) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+  // If logged in and trying to access signin page, redirect to callback for role-based redirect
+  if (isAuthRoute && isLoggedIn && !isAuthCallback) {
+    return NextResponse.redirect(new URL('/auth/callback', request.url));
   }
 
   // Allow all other requests to continue
