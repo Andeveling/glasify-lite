@@ -20,9 +20,6 @@ export default async function Header() {
               <Link className="text-foreground/80 text-sm transition-colors hover:text-foreground" href="/catalog">
                 Catálogo
               </Link>
-              <Link className="text-foreground/80 text-sm transition-colors hover:text-foreground" href="/quote">
-                Cotizar
-              </Link>
               {session?.user && (
                 <Link className="text-foreground/80 text-sm transition-colors hover:text-foreground" href="/my-quotes">
                   Mis Cotizaciones
