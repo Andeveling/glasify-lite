@@ -864,14 +864,14 @@ EXPORT_MAX_ITEMS=100  # Limit for performance
 
 ## Risks & Mitigations
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| PDF generation takes >10s | High - Poor UX | Benchmark early, optimize (remove images option, pagination) |
-| Excel formulas break in Google Sheets | Medium - Excel-only users | Test in both Excel and Sheets, use compatible formula syntax |
-| Window diagrams don't cover all types | Medium - Fallback to generic | Create generic "window" diagram as ultimate fallback |
-| Image CDN slow/unavailable | Medium - Slow page loads | Implement aggressive lazy loading, timeout for image loads |
-| Export file too large | Low - Download issues | Compress images, limit PDF resolution, add file size warning |
-| Status labels still confusing | High - Defeats purpose | A/B test with users, iterate on wording before full rollout |
+| Risk                                  | Impact                       | Mitigation                                                   |
+| ------------------------------------- | ---------------------------- | ------------------------------------------------------------ |
+| PDF generation takes >10s             | High - Poor UX               | Benchmark early, optimize (remove images option, pagination) |
+| Excel formulas break in Google Sheets | Medium - Excel-only users    | Test in both Excel and Sheets, use compatible formula syntax |
+| Window diagrams don't cover all types | Medium - Fallback to generic | Create generic "window" diagram as ultimate fallback         |
+| Image CDN slow/unavailable            | Medium - Slow page loads     | Implement aggressive lazy loading, timeout for image loads   |
+| Export file too large                 | Low - Download issues        | Compress images, limit PDF resolution, add file size warning |
+| Status labels still confusing         | High - Defeats purpose       | A/B test with users, iterate on wording before full rollout  |
 
 ---
 
