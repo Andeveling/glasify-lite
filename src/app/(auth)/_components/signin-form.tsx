@@ -1,186 +1,198 @@
-'use client';
+"use client"
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { signIn } from 'next-auth/react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { zodResolver } from "@hookform/resolvers/zod"
+import { signIn } from "next-auth/react"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Icons } from '@/components/ui/icons';
-import { Input } from '@/components/ui/input';
+import { Button } from "@/components/ui/button"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Icons } from "@/components/ui/icons"
+import { Input } from "@/components/ui/input"
 
 // Constants
-const MIN_PASSWORD_LENGTH = 6;
+const MIN_PASSWORD_LENGTH = 6
 
 // Zod schema as single source of truth for form validation
 const signInFormSchema = z.object({
-  email: z.string().min(1, 'El email es requerido').email('Ingresa un email válido'),
+  email: z.string().min(1, "El email es requerido").email("Ingresa un email válido"),
   password: z
     .string()
-    .min(1, 'La contraseña es requerida')
+    .min(1, "La contraseña es requerida")
     .min(MIN_PASSWORD_LENGTH, `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres`),
-});
+})
 
-type SignInFormValues = z.infer<typeof signInFormSchema>;
+type SignInFormValues = z.infer<typeof signInFormSchema>
 
 type SignInFormProps = {
-  onSubmit?: (values: SignInFormValues) => Promise<void>;
-  onGoogleSignIn?: () => Promise<void>;
-  isLoading?: boolean;
-  error?: string | null;
-};
+  onSubmit?: (values: SignInFormValues) => Promise<void>
+  onGoogleSignIn?: () => Promise<void>
+  isLoading?: boolean
+  error?: string | null
+}
 
 export default function SignInForm({ onSubmit, onGoogleSignIn, isLoading = false, error }: SignInFormProps) {
-  const [isCredentialsLoading, setIsCredentialsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isCredentialsLoading, setIsCredentialsLoading] = useState(false)
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 
   // React Hook Form with Zod resolver as single source of truth
   const form = useForm<SignInFormValues>({
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
-    mode: 'onBlur',
+    mode: "onBlur",
     resolver: zodResolver(signInFormSchema),
-  });
+  })
 
   const handleCredentialsSubmit = async (values: SignInFormValues) => {
     try {
-      setIsCredentialsLoading(true);
+      setIsCredentialsLoading(true)
 
       if (onSubmit) {
-        await onSubmit(values);
+        await onSubmit(values)
       } else {
         // Default NextAuth credentials sign in
-        const result = await signIn('credentials', {
+        const result = await signIn("credentials", {
           email: values.email,
           password: values.password,
           redirect: false,
-        });
+        })
 
         if (result?.error) {
-          form.setError('root', {
-            message: 'Email o contraseña incorrectos',
-          });
+          form.setError("root", {
+            message: "Email o contraseña incorrectos",
+          })
         }
       }
     } catch {
-      form.setError('root', {
-        message: 'Error al iniciar sesión. Intenta nuevamente.',
-      });
+      form.setError("root", {
+        message: "Error al iniciar sesión. Intenta nuevamente.",
+      })
     } finally {
-      setIsCredentialsLoading(false);
+      setIsCredentialsLoading(false)
     }
-  };
+  }
 
   const handleGoogleSignIn = async () => {
     try {
-      setIsGoogleLoading(true);
+      setIsGoogleLoading(true)
 
       if (onGoogleSignIn) {
-        await onGoogleSignIn();
+        await onGoogleSignIn()
       } else {
         // Default NextAuth Google sign in
         // Redirect will be handled by middleware based on user role
-        await signIn('google', { callbackUrl: '/auth/callback' });
+        await signIn("google", { callbackUrl: "/auth/callback" })
       }
     } catch {
-      form.setError('root', {
-        message: 'Error al conectar con Google. Intenta nuevamente.',
-      });
+      form.setError("root", {
+        message: "Error al conectar con Google. Intenta nuevamente.",
+      })
     } finally {
-      setIsGoogleLoading(false);
+      setIsGoogleLoading(false)
     }
-  };
+  }
 
-  const isSubmitDisabled = isLoading || isCredentialsLoading || isGoogleLoading;
+  const isSubmitDisabled = isLoading || isCredentialsLoading || isGoogleLoading
 
   return (
-    <div className="grid gap-6">
+    <div className="space-y-6">
+      <Button
+        className="h-11 w-full font-medium bg-transparent"
+        disabled={isSubmitDisabled}
+        onClick={handleGoogleSignIn}
+        size="lg"
+        type="button"
+        variant="outline"
+      >
+        {isGoogleLoading ? (
+          <Icons.spinner className="mr-2 h-5 w-5 animate-spin" />
+        ) : (
+          <Icons.google className="mr-2 h-5 w-5" />
+        )}
+        Continuar con Google
+      </Button>
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t border-border" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-card px-3 text-muted-foreground">O con tu email</span>
+        </div>
+      </div>
+
       <Form {...form}>
         <form className="space-y-4" onSubmit={form.handleSubmit(handleCredentialsSubmit)}>
-          <div className="grid gap-2">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      autoCapitalize="none"
-                      autoComplete="email"
-                      autoCorrect="off"
-                      disabled={isSubmitDisabled}
-                      placeholder="tu@ejemplo.com"
-                      type="email"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="font-medium text-sm">Email</FormLabel>
+                <FormControl>
+                  <Input
+                    autoCapitalize="none"
+                    autoComplete="email"
+                    autoCorrect="off"
+                    className="h-11"
+                    disabled={isSubmitDisabled}
+                    placeholder="tu@ejemplo.com"
+                    type="email"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <div className="grid gap-2">
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Contraseña</FormLabel>
-                  <FormControl>
-                    <Input
-                      autoCapitalize="none"
-                      autoComplete="current-password"
-                      autoCorrect="off"
-                      disabled={isSubmitDisabled}
-                      placeholder="••••••••"
-                      type="password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex items-center justify-between">
+                  <FormLabel className="font-medium text-sm">Contraseña</FormLabel>
+                  <a className="text-primary text-sm hover:underline" href="#">
+                    ¿Olvidaste tu contraseña?
+                  </a>
+                </div>
+                <FormControl>
+                  <Input
+                    autoCapitalize="none"
+                    autoComplete="current-password"
+                    autoCorrect="off"
+                    className="h-11"
+                    disabled={isSubmitDisabled}
+                    placeholder="••••••••"
+                    type="password"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           {/* Form-level error message */}
           {(form.formState.errors.root || error) && (
-            <div className="text-destructive text-sm">{form.formState.errors.root?.message || error}</div>
+            <div className="rounded-md bg-destructive/10 p-3 text-destructive text-sm">
+              {form.formState.errors.root?.message || error}
+            </div>
           )}
 
-          <Button className="w-full" disabled={isSubmitDisabled} type="submit">
-            {isCredentialsLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
+          <Button className="h-11 w-full font-medium" disabled={isSubmitDisabled} size="lg" type="submit">
+            {isCredentialsLoading && <Icons.spinner className="mr-2 h-5 w-5 animate-spin" />}
             Iniciar Sesión
           </Button>
         </form>
       </Form>
-
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">O continúa con</span>
-        </div>
-      </div>
-
-      <Button disabled={isSubmitDisabled} onClick={handleGoogleSignIn} type="button" variant="outline">
-        {isGoogleLoading ? (
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <Icons.google className="mr-2 h-4 w-4" />
-        )}
-        Google
-      </Button>
     </div>
-  );
+  )
 }
 
 // Export the schema for reuse in server-side validation if needed
-export { signInFormSchema, type SignInFormValues };
+export { signInFormSchema, type SignInFormValues }

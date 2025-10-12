@@ -81,9 +81,11 @@ callbacks: {
 
 ### 3. Auth Callback Page
 
-**Archivo**: `src/app/(auth)/auth/callback/page.tsx`
+**Archivo**: `src/app/auth/callback/page.tsx` (fuera del grupo `(auth)`)
 
 **Propósito**: Redirigir usuarios según su rol después del login exitoso
+
+**Importante**: Esta página está **fuera** del grupo de rutas `(auth)` para evitar que el layout de autenticación (con el diseño púrpura/branding) se renderice antes del redirect.
 
 ```typescript
 export default async function AuthCallbackPage() {
@@ -101,9 +103,22 @@ export default async function AuthCallbackPage() {
 }
 ```
 
+**Layout Personalizado**: `src/app/auth/callback/layout.tsx`
+```typescript
+export default function AuthCallbackLayout({ children }) {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background">
+      {children}
+    </div>
+  );
+}
+```
+
 **Ventajas**:
 - ✅ Server Component (SSR, SEO-friendly)
 - ✅ Centraliza lógica de redirección
+- ✅ No muestra contenido innecesario (layout minimalista)
+- ✅ Redirección instantánea
 - ✅ Fácil de testear y mantener
 
 ---
