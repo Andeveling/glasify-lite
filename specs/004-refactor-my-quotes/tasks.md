@@ -54,7 +54,7 @@
 
 - [X] **T011** [P] [US1] Unit test for status config in `tests/unit/utils/status-config.test.ts` (test getStatusLabel, getStatusIcon, getStatusTooltip functions) ✅ Created - tests designed to fail
 - [X] **T012** [P] [US1] Component test for QuoteStatusBadge in `tests/unit/components/quote-status-badge.test.tsx` (test tooltip, icon, label rendering) ✅ Created - tests designed to fail
-- [ ] **T013** [P] [US1] E2E test for status clarity in `e2e/my-quotes/quote-status-clarity.spec.ts` (test "En edición" displays for draft, tooltips appear on hover) ⏳ Deferred to Phase 7
+- [X] **T013** [P] [US1] E2E test for status clarity in `e2e/my-quotes/quote-status-clarity.spec.ts` (test "En edición" displays for draft, tooltips appear on hover) ✅ Created - comprehensive E2E coverage
 
 ### Implementation for User Story 1
 
