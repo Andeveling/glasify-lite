@@ -65,7 +65,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           <SessionProvider>
             <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
               <TRPCReactProvider>{children}</TRPCReactProvider>
-              <Toaster expand position="top-right" richColors />
+              <Toaster expand position="bottom-right" richColors />
             </ThemeProvider>
           </SessionProvider>
         </TenantConfigProvider>

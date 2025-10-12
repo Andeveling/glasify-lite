@@ -79,19 +79,10 @@ type QuoteGenerationFormProps = {
 export default function QuoteGenerationForm({ onSubmit, onSuccess }: QuoteGenerationFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { items: cartItems, clearCart } = useCart();
+  const [hasCheckedCart, setHasCheckedCart] = useState(false);
+  const { items: cartItems, clearCart, hydrated } = useCart();
 
-  // Redirect if cart is empty
-  useEffect(() => {
-    if (cartItems.length === 0) {
-      toast.error('Carrito vacío', {
-        description: 'Agrega items al carrito antes de generar una cotización',
-      });
-      router.push('/catalog');
-    }
-  }, [cartItems.length, router]);
-
-  // React Hook Form with Zod resolver
+  // React Hook Form with Zod resolver (MUST be before any conditional returns)
   const form = useForm<QuoteGenerationFormValues>({
     defaultValues: {
       contactPhone: '',
@@ -104,6 +95,56 @@ export default function QuoteGenerationForm({ onSubmit, onSuccess }: QuoteGenera
     mode: 'onBlur', // Validate on blur for better UX
     resolver: zodResolver(quoteGenerationFormSchema),
   });
+
+  // Redirect if cart is empty (only after hydration completes and only once)
+  useEffect(() => {
+    // Only check after hydration is complete
+    if (!hydrated) {
+      return;
+    }
+
+    // Skip if already checked (prevents multiple redirects)
+    if (hasCheckedCart) {
+      return;
+    }
+
+    // Mark as checked immediately to prevent duplicate checks
+    setHasCheckedCart(true);
+
+    // Wait one more tick to ensure cartItems has been updated from storage
+    const timeoutId = setTimeout(() => {
+      if (cartItems.length === 0) {
+        toast.error('Carrito vacío', {
+          description: 'Agrega items al carrito antes de generar una cotización',
+        });
+        router.push('/catalog');
+      }
+    }, 100); // Small delay to allow cartItems to sync
+
+    return () => clearTimeout(timeoutId);
+  }, [hydrated, hasCheckedCart, cartItems.length, router]);
+
+  // Show loading state while cart is hydrating (AFTER all hooks)
+  if (!hydrated) {
+    return (
+      <div className="space-y-6">
+        <div className="h-20 animate-pulse rounded-lg bg-muted" />
+        <div className="h-20 animate-pulse rounded-lg bg-muted" />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="h-20 animate-pulse rounded-lg bg-muted" />
+          <div className="h-20 animate-pulse rounded-lg bg-muted" />
+        </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="h-20 animate-pulse rounded-lg bg-muted" />
+          <div className="h-20 animate-pulse rounded-lg bg-muted" />
+        </div>
+        <div className="flex justify-end gap-4">
+          <div className="h-10 w-24 animate-pulse rounded-lg bg-muted" />
+          <div className="h-10 w-40 animate-pulse rounded-lg bg-muted" />
+        </div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (values: QuoteGenerationFormValues) => {
     try {

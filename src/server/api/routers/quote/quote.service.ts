@@ -127,7 +127,7 @@ export async function generateQuoteFromCart(
         name: cartItem.name, // User-editable name from cart
         quantity: cartItem.quantity,
         quoteId: quote.id,
-        solutionId: cartItem.solutionId,
+        // Note: solutionId is not stored in QuoteItem - solution is associated with GlassType
         subtotal: cartItem.subtotal, // Price locked at quote generation time
         widthMm: cartItem.widthMm,
       }));
