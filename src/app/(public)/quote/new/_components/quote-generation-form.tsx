@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -70,16 +71,15 @@ type QuoteGenerationFormProps = {
  * @example
  * ```tsx
  * <QuoteGenerationForm
- *   cartItems={cartItems}
- *   manufacturerId={manufacturerId}
  *   onSubmit={generateQuoteAction}
- *   onSuccess={(quoteId) => router.push(`/quotes/${quoteId}`)}
+ *   onSuccess={(quoteId) => router.push(`/my-quotes/${quoteId}`)}
  * />
  * ```
  */
 export default function QuoteGenerationForm({ onSubmit, onSuccess }: QuoteGenerationFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const [hasCheckedCart, setHasCheckedCart] = useState(false);
   const { items: cartItems, clearCart, hydrated } = useCart();
 
@@ -148,54 +148,92 @@ export default function QuoteGenerationForm({ onSubmit, onSuccess }: QuoteGenera
   }
 
   const handleSubmit = async (values: QuoteGenerationFormValues) => {
-    try {
-      setIsSubmitting(true);
+    // Use toast.promise for better UX with loading, success, and error states
+    await toast.promise(
+      async () => {
+        setIsSubmitting(true);
 
-      // Call server action with form data and cart items
-      // Server action will get manufacturerId from first cart item's model
-      const result = await onSubmit(values, cartItems);
+        try {
+          // Call server action with form data and cart items
+          const result = await onSubmit(values, cartItems);
 
-      if (result.success && result.quoteId) {
-        toast.success('Cotización Creada', {
-          description: 'Tu cotización ha sido generada exitosamente',
-        });
+          if (result.success && result.quoteId) {
+            // Clear cart after successful quote generation
+            clearCart();
 
-        // Clear cart after successful quote generation
-        clearCart();
+            // Set redirecting state for visual feedback
+            setIsRedirecting(true);
 
-        // Call success callback if provided
-        if (onSuccess) {
-          onSuccess(result.quoteId);
-        } else {
-          // Default: redirect to quote detail
-          router.push(`/quotes/${result.quoteId}`);
+            // Call success callback or redirect
+            if (onSuccess) {
+              onSuccess(result.quoteId);
+            } else {
+              // Redirect to user's quotes page (not admin dashboard)
+              router.push(`/my-quotes/${result.quoteId}`);
+            }
+
+            return result.quoteId; // Return value for toast.promise success
+          } else {
+            // Handle error from server action
+            form.setError('root', {
+              message: result.error ?? 'Error al generar la cotización',
+            });
+
+            throw new Error(result.error ?? 'Error al generar la cotización');
+          }
+        } finally {
+          setIsSubmitting(false);
         }
-      } else {
-        // Handle error from server action
-        toast.error('Error', {
-          description: result.error ?? 'Error al generar la cotización. Por favor intenta nuevamente.',
-        });
-
-        form.setError('root', {
-          message: result.error ?? 'Error al generar la cotización',
-        });
+      },
+      {
+        error: (error) => {
+          // Error state handled by toast.promise
+          return error instanceof Error ? error.message : 'Error al generar la cotización';
+        },
+        loading: 'Generando cotización...',
+        success: 'Cotización creada exitosamente. Redirigiendo...',
       }
-    } catch {
-      toast.error('Error', {
-        description: 'Ocurrió un error inesperado. Por favor intenta nuevamente.',
-      });
-
-      form.setError('root', {
-        message: 'Error al generar la cotización. Por favor intenta nuevamente.',
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    );
   };
 
   return (
     <Form {...form}>
+      {/* Loading Overlay during redirect */}
+      {isRedirecting && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+            <div className="text-center">
+              <p className="font-semibold text-lg">Cotización Creada</p>
+              <p className="text-muted-foreground text-sm">Redirigiendo a tu cotización...</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
+        {/* Cart Summary Info Card */}
+        <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium text-sm">Items en el carrito</p>
+              <p className="text-muted-foreground text-xs">
+                {cartItems.length} {cartItems.length === 1 ? 'producto' : 'productos'} configurado
+                {cartItems.length === 1 ? '' : 's'}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="font-medium text-sm">Total</p>
+              <p className="font-bold text-lg">
+                {new Intl.NumberFormat('es-CO', {
+                  currency: 'COP',
+                  style: 'currency',
+                }).format(cartItems.reduce((sum, item) => sum + item.subtotal, 0))}
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Project Name (optional) */}
         <FormField
           control={form.control}
@@ -326,11 +364,23 @@ export default function QuoteGenerationForm({ onSubmit, onSuccess }: QuoteGenera
 
         {/* Submit button */}
         <div className="flex justify-end gap-4">
-          <Button disabled={isSubmitting} onClick={() => router.back()} type="button" variant="outline">
+          <Button disabled={isSubmitting || isRedirecting} onClick={() => router.back()} type="button" variant="outline">
             Cancelar
           </Button>
-          <Button disabled={isSubmitting || cartItems.length === 0} type="submit">
-            {isSubmitting ? 'Generando Cotización...' : 'Generar Cotización'}
+          <Button disabled={isSubmitting || isRedirecting || cartItems.length === 0} type="submit">
+            {isRedirecting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Redirigiendo...
+              </>
+            ) : isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generando...
+              </>
+            ) : (
+              'Generar Cotización'
+            )}
           </Button>
         </div>
       </form>

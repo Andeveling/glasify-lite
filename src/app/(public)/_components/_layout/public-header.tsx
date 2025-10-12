@@ -1,9 +1,13 @@
-import { User } from 'lucide-react';
+import { FileText, User } from 'lucide-react';
 import Link from 'next/link';
 import { CartIndicator } from '@/app/_components/cart-indicator';
 import { ModeToggle } from '@/app/_components/mode-toggle';
 import { Button } from '@/components/ui/button';
-export default function Header() {
+import { auth } from '@/server/auth';
+
+export default async function Header() {
+  const session = await auth();
+
   return (
     <header className="sticky top-0 z-50 border-border border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto max-w-7xl">
@@ -19,6 +23,11 @@ export default function Header() {
               <Link className="text-foreground/80 text-sm transition-colors hover:text-foreground" href="/quote">
                 Cotizar
               </Link>
+              {session?.user && (
+                <Link className="text-foreground/80 text-sm transition-colors hover:text-foreground" href="/my-quotes">
+                  Mis Cotizaciones
+                </Link>
+              )}
             </nav>
           </div>
 
@@ -26,11 +35,19 @@ export default function Header() {
           <div className="flex items-center gap-4">
             <CartIndicator variant="compact" />
             <ModeToggle />
-            <Button aria-label="Iniciar sesión" asChild className="text-sm" size="icon" variant="outline">
-              <Link href="/signin">
-                <User className="h-5 w-5" />
-              </Link>
-            </Button>
+            {session?.user ? (
+              <Button aria-label="Mis cotizaciones" asChild className="text-sm" size="icon" variant="outline">
+                <Link href="/my-quotes">
+                  <FileText className="h-5 w-5" />
+                </Link>
+              </Button>
+            ) : (
+              <Button aria-label="Iniciar sesión" asChild className="text-sm" size="icon" variant="outline">
+                <Link href="/signin">
+                  <User className="h-5 w-5" />
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       </div>
