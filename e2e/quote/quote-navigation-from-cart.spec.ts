@@ -106,7 +106,7 @@ test.describe('Quote Navigation from Cart', () => {
         additionalServiceIds: [],
       };
 
-      sessionStorage.setItem('glasify-cart', JSON.stringify([ mockCartItem ]));
+      sessionStorage.setItem('glasify-cart', JSON.stringify([mockCartItem]));
     });
 
     // Step 2: Navigate directly to quote/new

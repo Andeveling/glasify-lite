@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import type { CartItem } from '@/types/cart.types';
+import { PhoneInput } from '@/components/ui/phone-input';
 
 // Validation constants (aligned with contract schema)
 const MAX_PROJECT_NAME_LENGTH = 100;
@@ -308,13 +309,7 @@ export default function QuoteGenerationForm({ onSubmit, onSuccess }: QuoteGenera
               <FormItem>
                 <FormLabel>Teléfono de Contacto (opcional)</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Ej: +57 300 123 4567"
-                    {...field}
-                    disabled={isSubmitting}
-                    maxLength={MAX_PHONE_LENGTH}
-                    type="tel"
-                  />
+                  <PhoneInput placeholder="Ej: +57 300 123 4567" {...field} disabled={isSubmitting} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
