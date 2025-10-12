@@ -38,9 +38,9 @@
 - [X] **T007** [P] Create image utils in `src/lib/utils/image-utils.ts` (CDN helpers, fallback logic)
 - [X] **T008** [P] Create SVG diagrams directory structure: `public/diagrams/windows/`
 - [X] **T009** Design and export 10 basic SVG window diagrams to `public/diagrams/windows/` (french-2-panel, french-4-panel, sliding-2-panel, sliding-3-panel, fixed-single, awning, casement-left, casement-right, hopper, tilt-turn)
-- [ ] **T010** Create shared `WindowDiagram` component in `src/components/quote/window-diagram.tsx` (renders SVG by type)
+- [X] **T010** Create shared `WindowDiagram` component in `src/components/quote/window-diagram.tsx` (renders SVG by type)
 
-**Checkpoint**: Foundation ready - user story implementation can now begin in parallel
+**Checkpoint**: Foundation ready - user story implementation can now begin in parallel ✅
 
 ---
 

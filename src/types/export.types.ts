@@ -18,25 +18,25 @@ export type ExportFormat = 'pdf' | 'excel';
 export interface ExportOptions {
   /** Export format (PDF or Excel) */
   format: ExportFormat;
-  
+
   /** Company name override (falls back to NEXT_PUBLIC_COMPANY_NAME) */
   companyName?: string;
-  
+
   /** Company logo URL override (falls back to NEXT_PUBLIC_COMPANY_LOGO_URL) */
   logoUrl?: string;
-  
+
   /** Include item images in export (default: false for performance) */
   includeImages?: boolean;
-  
+
   /** Page size for PDF exports (default: 'A4') */
   pageSize?: 'A4' | 'LETTER' | 'LEGAL';
-  
+
   /** Locale for formatting (falls back to TENANT_LOCALE) */
   locale?: string;
-  
+
   /** Currency code (falls back to TENANT_CURRENCY) */
   currency?: string;
-  
+
   /** Timezone for date formatting (falls back to TENANT_TIMEZONE) */
   timezone?: string;
 }
@@ -50,14 +50,14 @@ export interface QuotePDFData {
   quote: {
     id: string;
     projectName: string;
-    status: Quote['status'];
+    status: Quote[ 'status' ];
     createdAt: Date;
     validUntil: Date;
     totalAmount: number;
     itemCount: number;
     notes?: string | null;
   };
-  
+
   /** Quote items with product details */
   items: Array<{
     id: string;
@@ -65,7 +65,7 @@ export interface QuotePDFData {
     quantity: number;
     unitPrice: number;
     subtotal: number;
-    
+
     /** Product/Model information */
     product?: {
       name: string;
@@ -73,7 +73,7 @@ export interface QuotePDFData {
       category?: string;
       imageUrl?: string;
     };
-    
+
     /** Window dimensions (if applicable) */
     dimensions?: {
       width: number;
@@ -81,7 +81,7 @@ export interface QuotePDFData {
       area: number;
       unit: 'm²' | 'cm²';
     };
-    
+
     /** Glass specifications (if applicable) */
     glass?: {
       type: string;
@@ -90,14 +90,14 @@ export interface QuotePDFData {
       treatment?: string;
     };
   }>;
-  
+
   /** Customer information */
   customer: {
     name: string;
     email: string;
     phone?: string | null;
   };
-  
+
   /** Company information (from TenantConfig + env vars) */
   company: {
     name: string;
@@ -106,14 +106,14 @@ export interface QuotePDFData {
     phone?: string;
     address?: string;
   };
-  
+
   /** Formatting configuration */
   formatting: {
     locale: string;
     currency: string;
     timezone: string;
   };
-  
+
   /** Computed totals */
   totals: {
     subtotal: number;
@@ -132,14 +132,14 @@ export interface QuoteExcelData {
   quote: {
     id: string;
     projectName: string;
-    status: Quote['status'];
+    status: Quote[ 'status' ];
     createdAt: Date;
     validUntil: Date;
     totalAmount: number;
     itemCount: number;
     notes?: string | null;
   };
-  
+
   /** Quote items (flat structure for Excel rows) */
   items: Array<{
     itemNumber: number; // Row number in Excel (1-based)
@@ -148,31 +148,31 @@ export interface QuoteExcelData {
     quantity: number;
     unitPrice: number;
     subtotal: number;
-    
+
     // Product columns
     productName?: string;
     manufacturer?: string;
     category?: string;
-    
+
     // Dimensions columns
     width?: number;
     height?: number;
     area?: number;
-    
+
     // Glass columns
     glassType?: string;
     glassThickness?: number;
     glassColor?: string;
     glassTreatment?: string;
   }>;
-  
+
   /** Customer information */
   customer: {
     name: string;
     email: string;
     phone?: string | null;
   };
-  
+
   /** Company information */
   company: {
     name: string;
@@ -180,14 +180,14 @@ export interface QuoteExcelData {
     phone?: string;
     address?: string;
   };
-  
+
   /** Formatting configuration */
   formatting: {
     locale: string;
     currency: string;
     timezone: string;
   };
-  
+
   /** Computed totals (for Summary sheet) */
   totals: {
     subtotal: number;
@@ -202,22 +202,22 @@ export interface QuoteExcelData {
  */
 export interface ExportResult {
   success: boolean;
-  
+
   /** Base64-encoded file data (for download) */
   data?: string;
-  
+
   /** Suggested filename with extension */
   filename?: string;
-  
+
   /** MIME type for download */
   mimeType?: string;
-  
+
   /** File size in bytes */
   fileSize?: number;
-  
+
   /** Error message if success=false */
   error?: string;
-  
+
   /** Generation duration in milliseconds (for logging) */
   duration?: number;
 }

@@ -38,8 +38,8 @@ const DEFAULT_PLACEHOLDER = '/images/placeholder-product.svg';
 /**
  * Image format preferences (modern formats first)
  */
-const SUPPORTED_FORMATS = ['webp', 'avif', 'png', 'jpg', 'jpeg'] as const;
-export type ImageFormat = typeof SUPPORTED_FORMATS[number];
+const SUPPORTED_FORMATS = [ 'webp', 'avif', 'png', 'jpg', 'jpeg' ] as const;
+export type ImageFormat = typeof SUPPORTED_FORMATS[ number ];
 
 /**
  * Get optimized image URL
@@ -67,10 +67,10 @@ export function getOptimizedImageUrl(
   if (!imageUrl) {
     return DEFAULT_PLACEHOLDER;
   }
-  
+
   // If CDN is configured, use it
   if (CDN_BASE_URL) {
-    const dimensions = IMAGE_SIZES[size];
+    const dimensions = IMAGE_SIZES[ size ];
     const params = new URLSearchParams({
       w: dimensions.width.toString(),
       h: dimensions.height.toString(),
@@ -78,11 +78,11 @@ export function getOptimizedImageUrl(
       fit: 'cover',
       q: '85', // Quality 85%
     });
-    
+
     const baseUrl = imageUrl.startsWith('http') ? imageUrl : `${CDN_BASE_URL}${imageUrl}`;
     return `${baseUrl}?${params.toString()}`;
   }
-  
+
   // No CDN: return original URL
   return imageUrl;
 }
@@ -117,12 +117,12 @@ export function getProductImageWithFallback(
   if (productImageUrl) {
     return getOptimizedImageUrl(productImageUrl, size);
   }
-  
+
   // Priority 2: Window diagram SVG
   if (windowType) {
     return getWindowDiagramPath(windowType);
   }
-  
+
   // Priority 3: Default placeholder
   return DEFAULT_PLACEHOLDER;
 }
@@ -169,19 +169,19 @@ export function generateSrcSet(
   if (!imageUrl || isSvgImage(imageUrl)) {
     return undefined; // SVGs don't need srcset
   }
-  
-  const dimensions = IMAGE_SIZES[size];
-  
+
+  const dimensions = IMAGE_SIZES[ size ];
+
   if (!CDN_BASE_URL) {
     return undefined; // No CDN, no optimization
   }
-  
+
   const variants = [
     { scale: 1, descriptor: '1x' },
     { scale: 2, descriptor: '2x' },
     { scale: 3, descriptor: '3x' },
   ];
-  
+
   return variants
     .map(({ scale, descriptor }) => {
       const params = new URLSearchParams({
@@ -191,7 +191,7 @@ export function generateSrcSet(
         fit: 'cover',
         q: '85',
       });
-      
+
       const baseUrl = imageUrl.startsWith('http') ? imageUrl : `${CDN_BASE_URL}${imageUrl}`;
       return `${baseUrl}?${params.toString()} ${descriptor}`;
     })
@@ -205,7 +205,7 @@ export function generateSrcSet(
  * @returns Width and height in pixels
  */
 export function getImageDimensions(size: ImageSize): { width: number; height: number } {
-  return IMAGE_SIZES[size];
+  return IMAGE_SIZES[ size ];
 }
 
 /**
@@ -219,8 +219,8 @@ export function getImageDimensions(size: ImageSize): { width: number; height: nu
  * @returns Preload link props
  */
 export function getImagePreloadProps(imageUrl: string, size: ImageSize = 'md') {
-  const dimensions = IMAGE_SIZES[size];
-  
+  const dimensions = IMAGE_SIZES[ size ];
+
   return {
     rel: 'preload',
     as: 'image',
@@ -238,13 +238,13 @@ export function getImagePreloadProps(imageUrl: string, size: ImageSize = 'md') {
  */
 export function isValidImageUrl(url: string | null | undefined): boolean {
   if (!url) return false;
-  
+
   // Allow relative paths
   if (url.startsWith('/')) return true;
-  
+
   // Allow data URIs
   if (url.startsWith('data:image/')) return true;
-  
+
   // Allow external URLs (http/https)
   try {
     const parsed = new URL(url);
@@ -290,17 +290,17 @@ export function formatImageAltText(
   if (!productName && !windowType) {
     return 'Imagen de producto';
   }
-  
+
   const parts: string[] = [];
-  
+
   if (productName) {
     parts.push(productName);
   }
-  
+
   if (windowType) {
     // Import WindowType labels if needed
     parts.push(`Tipo: ${windowType}`);
   }
-  
+
   return parts.join(' - ');
 }
