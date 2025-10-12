@@ -7,7 +7,7 @@
  * Features:
  * - Item count display
  * - Total price display
- * - Prominent "Generate Quote" CTA button
+ * - Prominent "Generate Quote" CTA button (opens drawer)
  * - Empty cart detection
  * - Loading/disabled states
  * - Authentication check before quote generation
@@ -25,6 +25,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import type { CartSummary as CartSummaryType } from '@/types/cart.types';
+import { QuoteGenerationDrawer } from './quote-generation-drawer';
 
 // ============================================================================
 // Types
@@ -55,7 +56,6 @@ export type CartSummaryProps = {
  * ```tsx
  * <CartSummary
  *   summary={{ itemCount: 5, total: 75000, currency: 'MXN', isEmpty: false }}
- *   onGenerateQuote={handleGenerateQuote}
  * />
  * ```
  */
@@ -68,22 +68,20 @@ export function CartSummary({ summary, onGenerateQuote, isGenerating = false, cl
   /**
    * Handle "Generate Quote" button click
    *
-   * Redirects to sign-in if unauthenticated, otherwise navigates to quote generation page
+   * Redirects to sign-in if unauthenticated, otherwise opens drawer
    */
   const handleGenerateQuote = () => {
     // Check authentication before proceeding
     if (!isAuthenticated) {
-      // Redirect to sign-in with callback to quote generation
-      router.push('/api/auth/signin?callbackUrl=/quote/new');
+      // Redirect to sign-in with callback to cart page
+      router.push('/api/auth/signin?callbackUrl=/cart');
       return;
     }
 
-    // User is authenticated, navigate to quote generation page
-    // Use callback if provided, otherwise navigate to quote generation page
+    // User is authenticated, trigger will open drawer
+    // Callback is optional and only used for custom behavior
     if (onGenerateQuote) {
       onGenerateQuote();
-    } else {
-      router.push('/quote/new');
     }
   };
 
@@ -123,15 +121,32 @@ export function CartSummary({ summary, onGenerateQuote, isGenerating = false, cl
       </CardContent>
 
       <CardFooter className="flex-col gap-2">
-        <Button
-          className="w-full"
-          disabled={summary.isEmpty || isGenerating || isLoading}
-          onClick={handleGenerateQuote}
-          size="lg"
-          type="button"
-        >
-          {isGenerating ? 'Generando...' : 'Generar cotización'}
-        </Button>
+        {isAuthenticated ? (
+          /* Authenticated: Show drawer trigger */
+          <QuoteGenerationDrawer
+            trigger={
+              <Button
+                className="w-full"
+                disabled={summary.isEmpty || isGenerating || isLoading}
+                size="lg"
+                type="button"
+              >
+                {isGenerating ? 'Generando...' : 'Generar cotización'}
+              </Button>
+            }
+          />
+        ) : (
+          /* Unauthenticated: Show regular button that redirects to sign-in */
+          <Button
+            className="w-full"
+            disabled={summary.isEmpty || isGenerating || isLoading}
+            onClick={handleGenerateQuote}
+            size="lg"
+            type="button"
+          >
+            {isGenerating ? 'Generando...' : 'Generar cotización'}
+          </Button>
+        )}
 
         {/* Auth hint for unauthenticated users */}
         {isAuthenticated || summary.isEmpty ? null : (
