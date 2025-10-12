@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200" fill="none" stroke="currentColor" stroke-width="2">
+  <!-- Large fixed frame -->
+  <rect x="10" y="10" width="280" height="180" rx="4" fill="none" stroke="currentColor" stroke-width="3"/>
+  
+  <!-- Single large pane -->
+  <rect x="15" y="15" width="270" height="170" rx="2" fill="none"/>
+  
+  <!-- Horizontal mullion -->
+  <line x1="15" y1="100" x2="285" y2="100" stroke-dasharray="6"/>
+  
+  <!-- Vertical mullion -->
+  <line x1="150" y1="15" x2="150" y2="185" stroke-dasharray="6"/>
+</svg>

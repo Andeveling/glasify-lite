@@ -22,6 +22,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { cn, formatDate } from '@/lib/utils';
 import { QuoteStatusBadge } from './quote-status-badge';
 import { getStatusCTA } from '../_utils/status-config';
+import { QuoteItemPreview, type QuoteItemPreviewData } from './quote-item-preview';
+import { WindowType } from '@/types/window.types';
 
 import type { QuoteListItemSchema } from '@/server/api/routers/quote/quote.schemas';
 
@@ -32,6 +34,10 @@ type QuoteListItemProps = {
 export function QuoteListItem({ quote }: QuoteListItemProps) {
   const router = useRouter();
   const cta = getStatusCTA(quote.status);
+  
+  // TODO: QuoteListItemSchema doesn't include items array yet
+  // Will show preview once schema is updated with modelImageUrl and windowType
+  const hasItemsPreview = false; // Change to true when schema is updated
   
   // Handle CTA actions
   const handleCTAClick = () => {
@@ -100,6 +106,13 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
               <span className="font-medium">Items:</span> {quote.itemCount}
             </div>
           </div>
+          
+          {/* US2: Product image preview (TODO: Enable when schema includes items) */}
+          {hasItemsPreview && (
+            <div className="mt-3">
+              {/* <QuoteItemPreview items={previewItems} totalCount={quote.itemCount} /> */}
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-4">

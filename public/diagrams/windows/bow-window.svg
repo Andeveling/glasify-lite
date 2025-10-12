@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 200" fill="none" stroke="currentColor" stroke-width="2">
+  <!-- Curved bow shape (approximated with arcs) -->
+  <path d="M 10 190 Q 80 10 160 10" fill="none" stroke="currentColor" stroke-width="3"/>
+  <path d="M 160 10 Q 240 5 320 10" fill="none" stroke="currentColor" stroke-width="3"/>
+  <path d="M 320 10 Q 400 10 470 190" fill="none" stroke="currentColor" stroke-width="3"/>
+  
+  <!-- Bottom frame -->
+  <line x1="10" y1="190" x2="470" y2="190" stroke="currentColor" stroke-width="3"/>
+  
+  <!-- Panel 1 -->
+  <path d="M 20 180 Q 85 20 150 20 L 150 180 Z" fill="none"/>
+  <line x1="85" y1="20" x2="85" y2="180" stroke-dasharray="4"/>
+  
+  <!-- Panel 2 -->
+  <rect x="155" y="15" width="70" height="165" rx="2" fill="none"/>
+  <line x1="190" y1="15" x2="190" y2="180" stroke-dasharray="4"/>
+  
+  <!-- Panel 3 -->
+  <rect x="230" y="15" width="70" height="165" rx="2" fill="none"/>
+  <line x1="265" y1="15" x2="265" y2="180" stroke-dasharray="4"/>
+  
+  <!-- Panel 4 -->
+  <path d="M 305 20 Q 375 20 460 180 L 305 180 Z" fill="none"/>
+  <line x1="382" y1="20" x2="382" y2="180" stroke-dasharray="4"/>
+</svg>

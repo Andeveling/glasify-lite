@@ -18,6 +18,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatDate } from '@/lib/utils';
 import { QuoteStatusBadge } from '../../_components/quote-status-badge';
+import { QuoteItemsGrid, type QuoteItemData } from './quote-items-grid';
+import { WindowType } from '@/types/window.types';
 
 import type { QuoteDetailSchema } from '@/server/api/routers/quote/quote.schemas';
 
@@ -30,6 +32,19 @@ type QuoteDetailViewProps = {
 export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailViewProps) {
   const backLink = isPublicView ? '/my-quotes' : '/quotes';
   const backLabel = isPublicView ? 'Volver a mis cotizaciones' : 'Volver a cotizaciones';
+
+  // Transform quote items for grid display
+  // TODO: Add modelImageUrl and windowType to QuoteItemDetailSchema
+  const gridItems: QuoteItemData[] = quote.items.map((item) => ({
+    id: item.id,
+    modelName: item.modelName,
+    modelImageUrl: null, // TODO: Add to schema
+    windowType: WindowType.FIXED_SINGLE, // TODO: Add to schema
+    width: item.widthMm ? Math.round(item.widthMm / 10) : null, // Convert mm to cm
+    height: item.heightMm ? Math.round(item.heightMm / 10) : null,
+    glassType: item.glassTypeName,
+    manufacturer: quote.manufacturerName,
+  }));
 
   return (
     <div className="space-y-6">
@@ -106,6 +121,21 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
           </div>
         </CardContent>
       </Card>
+
+      {/* US2: Visual product grid with thumbnails */}
+      {gridItems.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Vista de productos</CardTitle>
+            <CardDescription>
+              Haga clic en una imagen para ver detalles completos
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <QuoteItemsGrid items={gridItems} eager />
+          </CardContent>
+        </Card>
+      )}
 
       {/* Tabla de items */}
       <Card>

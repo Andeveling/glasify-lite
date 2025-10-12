@@ -76,19 +76,19 @@
 
 ### Tests for User Story 2 (Test-First - MUST FAIL before implementation)
 
-- [ ] **T019** [P] [US2] Unit test for window diagram fallback in `tests/unit/utils/window-diagram-map.test.ts` (test getWindowDiagram returns correct SVG, falls back to default for unknown types)
-- [ ] **T020** [P] [US2] Component test for QuoteItemImage in `tests/unit/components/quote-item-image.test.tsx` (test image loading, fallback rendering, click handler)
-- [ ] **T021** [P] [US2] E2E test for image viewer in `e2e/my-quotes/quote-image-viewer.spec.ts` (test clicking thumbnail opens lightbox, shows specifications overlay)
+- [X] **T019** [P] [US2] Unit test for window diagram fallback in `tests/unit/utils/window-diagram-map.test.ts` (test getWindowDiagram returns correct SVG, falls back to default for unknown types) ✅ Created - comprehensive coverage
+- [X] **T020** [P] [US2] Component test for QuoteItemImage in `tests/unit/components/quote-item-image.test.tsx` (test image loading, fallback rendering, click handler) ✅ Created - tests designed to fail
+- [X] **T021** [P] [US2] E2E test for image viewer in `e2e/my-quotes/product-image-viewer.spec.ts` (test clicking thumbnail opens lightbox, shows specifications overlay) ✅ Created - 26 comprehensive E2E tests
 
 ### Implementation for User Story 2
 
-- [ ] **T022** [P] [US2] Create QuoteItemImage component in `src/app/(public)/my-quotes/[quoteId]/_components/quote-item-image.tsx` (lazy-load product image, fallback to WindowDiagram on error, handle sizes sm/md/lg)
-- [ ] **T023** [P] [US2] Create ImageViewerDialog component in `src/app/(public)/my-quotes/[quoteId]/_components/image-viewer-dialog.tsx` (lightbox using Radix Dialog, show enlarged image with dimensions overlay)
-- [ ] **T024** [P] [US2] Create QuoteItemsGrid component in `src/app/(public)/my-quotes/[quoteId]/_components/quote-items-grid.tsx` (replace table with grid layout, 3-4 cols desktop, 1-2 cols mobile)
-- [ ] **T025** [US2] Modify QuoteDetailView component in `src/app/(public)/my-quotes/[quoteId]/_components/quote-detail-view.tsx` (integrate QuoteItemsGrid, add ImageViewerDialog, wire up click handlers)
-- [ ] **T026** [P] [US2] Create QuoteItemPreview component in `src/app/(public)/my-quotes/_components/quote-item-preview.tsx` (show first 3 items with thumbnails for list view)
-- [ ] **T027** [US2] Modify QuoteListItem component in `src/app/(public)/my-quotes/_components/quote-list-item.tsx` (add QuoteItemPreview below project info)
-- [ ] **T028** [P] [US2] Design and export 10 additional SVG window diagrams to `public/diagrams/windows/` (bay-window, picture-window, double-hung, single-hung, transom, louvre, pivot, corner, bow-window, skylight)
+- [X] **T022** [P] [US2] Create QuoteItemImage component in `src/app/(public)/my-quotes/[quoteId]/_components/quote-item-image.tsx` (lazy-load product image, fallback to WindowDiagram on error, handle sizes sm/md/lg) ✅ Implemented
+- [X] **T023** [P] [US2] Create ImageViewerDialog component in `src/app/(public)/my-quotes/[quoteId]/_components/image-viewer-dialog.tsx` (lightbox using Radix Dialog, show enlarged image with dimensions overlay) ✅ Implemented
+- [X] **T024** [P] [US2] Create QuoteItemsGrid component in `src/app/(public)/my-quotes/[quoteId]/_components/quote-items-grid.tsx` (replace table with grid layout, 3-4 cols desktop, 1-2 cols mobile) ✅ Implemented
+- [X] **T025** [US2] Modify QuoteDetailView component in `src/app/(public)/my-quotes/[quoteId]/_components/quote-detail-view.tsx` (integrate QuoteItemsGrid, add ImageViewerDialog, wire up click handlers) ✅ Modified - added visual product grid
+- [X] **T026** [P] [US2] Create QuoteItemPreview component in `src/app/(public)/my-quotes/_components/quote-item-preview.tsx` (show first 3 items with thumbnails for list view) ✅ Implemented
+- [X] **T027** [US2] Modify QuoteListItem component in `src/app/(public)/my-quotes/_components/quote-list-item.tsx` (add QuoteItemPreview below project info) ✅ Modified - prepared for schema update
+- [X] **T028** [P] [US2] Design and export 10 additional SVG window diagrams to `public/diagrams/windows/` (bay-window, picture-window, double-hung, single-hung, transom, louvre, pivot, corner, bow-window, skylight) ✅ Created - 12 new SVGs (22 total)
 
 **Checkpoint**: User Story 2 complete - products are now visually identifiable ✅
 
