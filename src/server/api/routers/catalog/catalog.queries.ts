@@ -192,7 +192,7 @@ export const catalogQueries = createTRPCRouter({
               include: {
                 solution: true,
               },
-              orderBy: [{ isPrimary: 'desc' }, { solution: { sortOrder: 'asc' } }],
+              orderBy: [ { isPrimary: 'desc' }, { solution: { sortOrder: 'asc' } } ],
             },
             thicknessMm: true,
             updatedAt: true,
@@ -232,11 +232,13 @@ export const catalogQueries = createTRPCRouter({
 
   /**
    * List manufacturers for filter dropdown
+   * Only returns suppliers that have at least one published model
+   * Following "Don't Make Me Think" principle - avoid showing empty options
    * @public
    */
   'list-manufacturers': publicProcedure.query(async ({ ctx }) => {
     try {
-      logger.info('Listing profile suppliers for filter');
+      logger.info('Listing profile suppliers with published models for filter');
 
       const profileSuppliers = await ctx.db.profileSupplier.findMany({
         orderBy: { name: 'asc' },
@@ -245,11 +247,20 @@ export const catalogQueries = createTRPCRouter({
           name: true,
         },
         where: {
-          isActive: true,
+          AND: [
+            { isActive: true },
+            {
+              models: {
+                some: {
+                  status: 'published',
+                },
+              },
+            },
+          ],
         },
       });
 
-      logger.info('Successfully retrieved profile suppliers', {
+      logger.info('Successfully retrieved profile suppliers with published models', {
         count: profileSuppliers.length,
       });
 
