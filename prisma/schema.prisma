@@ -310,6 +310,7 @@ model Quote {
 
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  sentAt      DateTime?    // Timestamp when quote was sent to vendor (Feature 005)
   items       QuoteItem[]
   adjustments Adjustment[]
 
