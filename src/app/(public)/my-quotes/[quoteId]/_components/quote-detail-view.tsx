@@ -22,14 +22,17 @@ import { WindowType } from '@/types/window.types';
 import { QuoteStatusBadge } from '../../_components/quote-status-badge';
 import { QuoteExportButtons } from './quote-export-buttons';
 import { type QuoteItemData, QuoteItemsGrid } from './quote-items-grid';
+import { SendQuoteButton } from './send-quote-button';
 
 type QuoteDetailViewProps = {
   quote: QuoteDetailSchema;
   /** Whether this is the public user view (vs admin dashboard view) */
   isPublicView?: boolean;
+  /** User email for pre-filling contact form */
+  userEmail?: string;
 };
 
-export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailViewProps) {
+export function QuoteDetailView({ isPublicView = false, quote, userEmail }: QuoteDetailViewProps) {
   const backLink = isPublicView ? '/my-quotes' : '/quotes';
   const backLabel = isPublicView ? 'Volver a mis cotizaciones' : 'Volver a cotizaciones';
 
@@ -57,8 +60,13 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
           </Link>
         </Button>
 
-        {/* Export buttons - US3 */}
-        {isPublicView && <QuoteExportButtons quoteId={quote.id} size="sm" variant="full" />}
+        <div className="flex items-center gap-2">
+          {/* Send button - US1: Only shows for draft quotes */}
+          {isPublicView && <SendQuoteButton quote={quote} userEmail={userEmail} />}
+
+          {/* Export buttons - US3 */}
+          {isPublicView && <QuoteExportButtons quoteId={quote.id} size="sm" variant="full" />}
+        </div>
       </div>
 
       {/* Información principal de la cotización */}
@@ -119,6 +127,28 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
           </div>
         </CardContent>
       </Card>
+
+      {/* US3: Confirmation message for sent quotes */}
+      {isPublicView && quote.status === 'sent' && quote.sentAt && (
+        <Card className="border-blue-500 bg-blue-50 dark:bg-blue-950">
+          <CardContent className="pt-6">
+            <div className="space-y-2">
+              <p className="font-semibold">✅ Cotización Enviada</p>
+              <p className="text-sm">
+                <strong>Enviada el:</strong> {formatDate(quote.sentAt)}
+              </p>
+              <p className="text-sm">
+                Recibirás respuesta del fabricante en <strong>24-48 horas hábiles</strong>.
+              </p>
+              {quote.vendorContactPhone && (
+                <p className="text-sm">
+                  <strong>Contacto del fabricante:</strong> {quote.vendorContactPhone}
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* US2: Visual product grid with thumbnails */}
       {gridItems.length > 0 && (
