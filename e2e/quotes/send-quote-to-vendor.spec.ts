@@ -38,9 +38,9 @@ test.describe('Send Quote to Vendor - US1', () => {
         items: {
           create: [
             {
-              glassTypeId: (await prisma.glassType.findFirst())?.id,
+              glassTypeId: (await prisma.glassType.findFirstOrThrow()).id,
               heightMm: 1500,
-              modelId: (await prisma.model.findFirst())?.id,
+              modelId: (await prisma.model.findFirstOrThrow()).id,
               name: 'Ventana 1',
               quantity: 2,
               subtotal: 250_000,
