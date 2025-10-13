@@ -68,7 +68,7 @@ export function ContactInfoModal({
   });
 
   const handleClose = () => {
-    if (!isLoading && !isRedirecting) {
+    if (!(isLoading || isRedirecting)) {
       form.reset();
       onClose();
     }

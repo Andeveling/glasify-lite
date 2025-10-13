@@ -1,8 +1,6 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "extends": [
-    "ultracite"
-  ],
+  "extends": ["ultracite"],
   "files": {
     "maxSize": 1048576,
     "includes": [
@@ -73,11 +71,7 @@
                 "selector": {
                   "kind": "objectLiteralProperty"
                 },
-                "formats": [
-                  "camelCase",
-                  "PascalCase",
-                  "CONSTANT_CASE"
-                ]
+                "formats": ["camelCase", "PascalCase", "CONSTANT_CASE"]
               }
             ]
           }
@@ -86,9 +80,7 @@
         "useFilenamingConvention": {
           "level": "warn",
           "options": {
-            "filenameCases": [
-              "kebab-case"
-            ]
+            "filenameCases": ["kebab-case"]
           }
         },
         // Requiere el uso de bloques de sentencias para mayor claridad.
@@ -118,9 +110,7 @@
   },
   "overrides": [
     {
-      "includes": [
-        "src/env.js"
-      ],
+      "includes": ["src/env.js"],
       "linter": {
         "rules": {
           "style": {
@@ -143,17 +133,13 @@
       }
     },
     {
-      "includes": [
-        "src/components/ui/**"
-      ],
+      "includes": ["src/components/ui/**"],
       "linter": {
         "enabled": false
       }
     },
     {
-      "includes": [
-        "src/components/quote/window-diagram.tsx"
-      ],
+      "includes": ["src/components/quote/window-diagram.tsx"],
       "linter": {
         "rules": {
           "nursery": {

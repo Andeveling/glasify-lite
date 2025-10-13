@@ -75,14 +75,14 @@ export function useSendQuote(options: UseSendQuoteOptions = {}) {
 
   const router = useRouter();
   const utils = api.useUtils();
-  const [ isPending, startTransition ] = useTransition();
-  const [ optimisticQuoteId, setOptimisticQuoteId ] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const [optimisticQuoteId, setOptimisticQuoteId] = useState<string | null>(null);
 
-  const mutation = api.quote[ 'send-to-vendor' ].useMutation<UseSendQuoteContext>({
+  const mutation = api.quote['send-to-vendor'].useMutation<UseSendQuoteContext>({
     onError: (error, input, context) => {
       // Rollback optimistic update
       if (context?.previousQuote) {
-        utils.quote[ 'get-by-id' ].setData({ id: input.quoteId }, context.previousQuote);
+        utils.quote['get-by-id'].setData({ id: input.quoteId }, context.previousQuote);
       }
 
       setOptimisticQuoteId(null);
@@ -104,16 +104,16 @@ export function useSendQuote(options: UseSendQuoteOptions = {}) {
     },
     onMutate: async (input) => {
       // Cancel outgoing refetches to avoid overwriting optimistic update
-      await utils.quote[ 'get-by-id' ].cancel({ id: input.quoteId });
+      await utils.quote['get-by-id'].cancel({ id: input.quoteId });
 
       // Store quote ID for rollback
       setOptimisticQuoteId(input.quoteId);
 
       // Snapshot the previous value
-      const previousQuote = utils.quote[ 'get-by-id' ].getData({ id: input.quoteId });
+      const previousQuote = utils.quote['get-by-id'].getData({ id: input.quoteId });
 
       // Optimistically update to 'sent' status
-      utils.quote[ 'get-by-id' ].setData({ id: input.quoteId }, (old) => {
+      utils.quote['get-by-id'].setData({ id: input.quoteId }, (old) => {
         if (!old) return old;
 
         return {
@@ -151,8 +151,8 @@ export function useSendQuote(options: UseSendQuoteOptions = {}) {
       // Invalidate related queries to refetch fresh data
       startTransition(async () => {
         await Promise.all([
-          utils.quote[ 'get-by-id' ].invalidate({ id: input.quoteId }),
-          utils.quote[ 'list-user-quotes' ].invalidate(),
+          utils.quote['get-by-id'].invalidate({ id: input.quoteId }),
+          utils.quote['list-user-quotes'].invalidate(),
         ]);
       });
 

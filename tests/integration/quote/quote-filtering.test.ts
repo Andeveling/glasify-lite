@@ -125,7 +125,7 @@ describe('Quote Filtering - Integration Tests', () => {
     await prisma.quoteItem.deleteMany({
       where: {
         quoteId: {
-          in: [ draftQuote.id, sentQuote.id, canceledQuote.id ],
+          in: [draftQuote.id, sentQuote.id, canceledQuote.id],
         },
       },
     });
@@ -133,7 +133,7 @@ describe('Quote Filtering - Integration Tests', () => {
     await prisma.quote.deleteMany({
       where: {
         id: {
-          in: [ draftQuote.id, sentQuote.id, canceledQuote.id ],
+          in: [draftQuote.id, sentQuote.id, canceledQuote.id],
         },
       },
     });
@@ -153,9 +153,9 @@ describe('Quote Filtering - Integration Tests', () => {
     });
 
     expect(quotes).toHaveLength(1);
-    expect(quotes[ 0 ]?.id).toBe(draftQuote.id);
-    expect(quotes[ 0 ]?.status).toBe('draft');
-    expect(quotes[ 0 ]?.projectName).toBe('Draft Quote');
+    expect(quotes[0]?.id).toBe(draftQuote.id);
+    expect(quotes[0]?.status).toBe('draft');
+    expect(quotes[0]?.projectName).toBe('Draft Quote');
   });
 
   it('should filter quotes by sent status', async () => {
@@ -168,10 +168,10 @@ describe('Quote Filtering - Integration Tests', () => {
     });
 
     expect(quotes).toHaveLength(1);
-    expect(quotes[ 0 ]?.id).toBe(sentQuote.id);
-    expect(quotes[ 0 ]?.status).toBe('sent');
-    expect(quotes[ 0 ]?.sentAt).toBeInstanceOf(Date);
-    expect(quotes[ 0 ]?.projectName).toBe('Sent Quote');
+    expect(quotes[0]?.id).toBe(sentQuote.id);
+    expect(quotes[0]?.status).toBe('sent');
+    expect(quotes[0]?.sentAt).toBeInstanceOf(Date);
+    expect(quotes[0]?.projectName).toBe('Sent Quote');
   });
 
   it('should filter quotes by canceled status', async () => {
@@ -184,9 +184,9 @@ describe('Quote Filtering - Integration Tests', () => {
     });
 
     expect(quotes).toHaveLength(1);
-    expect(quotes[ 0 ]?.id).toBe(canceledQuote.id);
-    expect(quotes[ 0 ]?.status).toBe('canceled');
-    expect(quotes[ 0 ]?.projectName).toBe('Canceled Quote');
+    expect(quotes[0]?.id).toBe(canceledQuote.id);
+    expect(quotes[0]?.status).toBe('canceled');
+    expect(quotes[0]?.projectName).toBe('Canceled Quote');
   });
 
   it('should return all quotes when no status filter applied', async () => {
@@ -198,7 +198,7 @@ describe('Quote Filtering - Integration Tests', () => {
     });
 
     expect(quotes).toHaveLength(3);
-    expect(quotes.map((q) => q.status).sort()).toEqual([ 'canceled', 'draft', 'sent' ].sort());
+    expect(quotes.map((q) => q.status).sort()).toEqual(['canceled', 'draft', 'sent'].sort());
   });
 
   it('should handle mixed status filter (multiple statuses)', async () => {
@@ -206,14 +206,14 @@ describe('Quote Filtering - Integration Tests', () => {
       orderBy: { createdAt: 'desc' },
       where: {
         status: {
-          in: [ 'draft', 'sent' ],
+          in: ['draft', 'sent'],
         },
         userId: testUser.id,
       },
     });
 
     expect(quotes).toHaveLength(2);
-    expect(quotes.map((q) => q.status).sort()).toEqual([ 'draft', 'sent' ]);
+    expect(quotes.map((q) => q.status).sort()).toEqual(['draft', 'sent']);
   });
 
   it('should sort sent quotes by sentAt descending', async () => {
@@ -253,8 +253,8 @@ describe('Quote Filtering - Integration Tests', () => {
     });
 
     expect(quotes).toHaveLength(2);
-    expect(quotes[ 0 ]?.id).toBe(sentQuote.id); // Most recent first
-    expect(quotes[ 1 ]?.id).toBe(olderSentQuote.id);
+    expect(quotes[0]?.id).toBe(sentQuote.id); // Most recent first
+    expect(quotes[1]?.id).toBe(olderSentQuote.id);
 
     // Cleanup
     await prisma.quoteItem.deleteMany({ where: { quoteId: olderSentQuote.id } });
@@ -291,7 +291,7 @@ describe('Quote Filtering - Integration Tests', () => {
     });
 
     expect(quotes).toHaveLength(1);
-    expect(quotes[ 0 ]?._count.items).toBe(1);
+    expect(quotes[0]?._count.items).toBe(1);
   });
 
   it('should combine status filter with date range filter', async () => {
@@ -310,6 +310,6 @@ describe('Quote Filtering - Integration Tests', () => {
     });
 
     expect(quotes).toHaveLength(1);
-    expect(quotes[ 0 ]?.id).toBe(sentQuote.id);
+    expect(quotes[0]?.id).toBe(sentQuote.id);
   });
 });

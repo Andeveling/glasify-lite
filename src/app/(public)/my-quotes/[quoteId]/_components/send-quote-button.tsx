@@ -21,10 +21,8 @@ interface SendQuoteButtonProps {
 export function SendQuoteButton({ quote, userEmail }: SendQuoteButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
-  
+
   const { mutate: sendQuote, isPending } = useSendQuote({
-    // Redirect to public user quote view, not admin dashboard
-    redirectUrl: (quoteId) => `/my-quotes/${quoteId}`,
     onSuccess: () => {
       // Show redirecting state briefly before redirect
       setIsRedirecting(true);
@@ -33,6 +31,8 @@ export function SendQuoteButton({ quote, userEmail }: SendQuoteButtonProps) {
         setIsModalOpen(false);
       }, 300);
     },
+    // Redirect to public user quote view, not admin dashboard
+    redirectUrl: (quoteId) => `/my-quotes/${quoteId}`,
   });
 
   // Only show button for draft quotes
@@ -54,7 +54,7 @@ export function SendQuoteButton({ quote, userEmail }: SendQuoteButtonProps) {
 
   return (
     <>
-      <Button className="gap-2" disabled={isPending || isRedirecting} size="sm" onClick={handleSendClick}>
+      <Button className="gap-2" disabled={isPending || isRedirecting} onClick={handleSendClick} size="sm">
         <Send className="h-4 w-4" />
         {isPending ? 'Enviando...' : 'Enviar Cotización'}
       </Button>
