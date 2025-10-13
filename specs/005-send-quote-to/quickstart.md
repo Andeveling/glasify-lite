@@ -1022,13 +1022,13 @@ pnpm prisma migrate dev
 
 **Estimated Effort**: 3-5 days
 
-| Day | Focus | Deliverables |
-|-----|-------|--------------|
-| 1 | Database + Backend | Migration, tRPC procedure, schemas |
-| 2 | Custom Hook + UI Components | useSendQuote, modal, button |
-| 3 | UI Integration | Update pages, status badges |
-| 4 | Testing | Unit, integration, E2E tests |
-| 5 | Documentation + PR | JSDoc, CHANGELOG, code review |
+| Day | Focus                       | Deliverables                       |
+| --- | --------------------------- | ---------------------------------- |
+| 1   | Database + Backend          | Migration, tRPC procedure, schemas |
+| 2   | Custom Hook + UI Components | useSendQuote, modal, button        |
+| 3   | UI Integration              | Update pages, status badges        |
+| 4   | Testing                     | Unit, integration, E2E tests       |
+| 5   | Documentation + PR          | JSDoc, CHANGELOG, code review      |
 
 **Key Success Metrics**:
 - ✅ Users can submit quotes in < 30 seconds

@@ -170,13 +170,13 @@ src/server/api/routers/quote/
 
 ## 🚀 Fases de Implementación
 
-| Día | Fase | Tareas | Checkpoint |
-|-----|------|--------|------------|
-| 1 | Database + Backend | Migración, tRPC procedure, schemas | Procedure funciona, DB actualizada |
-| 2 | Hook + UI | useSendQuote, modal, button | Hook compila, modal funciona |
-| 3 | Integración UI | Actualizar pages, status badges | UI completa, navegación funciona |
-| 4 | Testing | Unit, integration, E2E tests | Todos los tests pasan |
-| 5 | Documentación | JSDoc, CHANGELOG, PR | PR listo para review |
+| Día | Fase               | Tareas                             | Checkpoint                         |
+| --- | ------------------ | ---------------------------------- | ---------------------------------- |
+| 1   | Database + Backend | Migración, tRPC procedure, schemas | Procedure funciona, DB actualizada |
+| 2   | Hook + UI          | useSendQuote, modal, button        | Hook compila, modal funciona       |
+| 3   | Integración UI     | Actualizar pages, status badges    | UI completa, navegación funciona   |
+| 4   | Testing            | Unit, integration, E2E tests       | Todos los tests pasan              |
+| 5   | Documentación      | JSDoc, CHANGELOG, PR               | PR listo para review               |
 
 ---
 
@@ -215,13 +215,13 @@ src/server/api/routers/quote/
 
 ## 📈 Métricas de Éxito
 
-| Métrica | Objetivo | Medición |
-|---------|----------|----------|
-| Tiempo de envío | < 30 seg | User testing |
-| Tasa de éxito | 95% | Error logs |
-| Latencia mutación | < 200ms | Database metrics |
-| Claridad visual | 100% | User testing |
-| Reducción soporte | 70% | Ticket tracking |
+| Métrica           | Objetivo | Medición         |
+| ----------------- | -------- | ---------------- |
+| Tiempo de envío   | < 30 seg | User testing     |
+| Tasa de éxito     | 95%      | Error logs       |
+| Latencia mutación | < 200ms  | Database metrics |
+| Claridad visual   | 100%     | User testing     |
+| Reducción soporte | 70%      | Ticket tracking  |
 
 ---
 

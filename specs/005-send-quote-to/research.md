@@ -515,17 +515,17 @@ test('user can send draft quote', async ({ page }) => {
 
 ## Summary of Technical Decisions
 
-| Decision Area | Chosen Approach | Key Benefit |
-|--------------|-----------------|-------------|
-| Validation | Zod + React Hook Form | End-to-end type safety |
-| Status Transition | Immutable (draft → sent) | Data integrity, vendor trust |
-| Component Architecture | Server Components + Client interactions | SEO, performance, security |
-| Contact Info | Optional on create, required on send | User privacy, flexible UX |
-| Admin Portal | Out of scope (external system) | MVP focus, clear boundaries |
-| Logging | Winston server-side only | Constitution compliance |
-| Status Badges | Atomic UI component | Reusability, consistency |
-| Error Handling | Three-layer (client/server/db) | User clarity, security, debugging |
-| Performance | Optimistic updates + invalidation | Perceived speed, data consistency |
-| Testing | Pyramid (70% unit, 20% int, 10% E2E) | Speed, confidence, coverage |
+| Decision Area          | Chosen Approach                         | Key Benefit                       |
+| ---------------------- | --------------------------------------- | --------------------------------- |
+| Validation             | Zod + React Hook Form                   | End-to-end type safety            |
+| Status Transition      | Immutable (draft → sent)                | Data integrity, vendor trust      |
+| Component Architecture | Server Components + Client interactions | SEO, performance, security        |
+| Contact Info           | Optional on create, required on send    | User privacy, flexible UX         |
+| Admin Portal           | Out of scope (external system)          | MVP focus, clear boundaries       |
+| Logging                | Winston server-side only                | Constitution compliance           |
+| Status Badges          | Atomic UI component                     | Reusability, consistency          |
+| Error Handling         | Three-layer (client/server/db)          | User clarity, security, debugging |
+| Performance            | Optimistic updates + invalidation       | Perceived speed, data consistency |
+| Testing                | Pyramid (70% unit, 20% int, 10% E2E)    | Speed, confidence, coverage       |
 
 **All technical unknowns resolved. Ready for Phase 1: Data Model & Contracts.**

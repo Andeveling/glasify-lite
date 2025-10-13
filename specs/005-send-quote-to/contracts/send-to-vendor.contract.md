@@ -59,11 +59,11 @@ export type SendToVendorInput = z.infer<typeof sendToVendorInput>;
 
 ### 1.3 Validation Rules
 
-| Field | Required | Type | Constraints | Example |
-|-------|----------|------|-------------|---------|
-| `quoteId` | ✅ Yes | string (CUID) | Must be valid CUID format | `clx1a2b3c4d5e6f7g8h9i0j` |
-| `contactPhone` | ✅ Yes | string | Regex: `^\+?[1-9]\d{9,14}$` | `+573001234567` |
-| `contactEmail` | ❌ No | string | Valid email format (RFC 5322) | `user@example.com` |
+| Field          | Required | Type          | Constraints                   | Example                   |
+| -------------- | -------- | ------------- | ----------------------------- | ------------------------- |
+| `quoteId`      | ✅ Yes    | string (CUID) | Must be valid CUID format     | `clx1a2b3c4d5e6f7g8h9i0j` |
+| `contactPhone` | ✅ Yes    | string        | Regex: `^\+?[1-9]\d{9,14}$`   | `+573001234567`           |
+| `contactEmail` | ❌ No     | string        | Valid email format (RFC 5322) | `user@example.com`        |
 
 **Phone Number Format**:
 - Optional `+` prefix (international code)
@@ -145,15 +145,15 @@ export type SendToVendorOutput = z.infer<typeof sendToVendorOutput>;
 
 ### 3.1 Error Types
 
-| Error Code | HTTP Status | Condition | User Message (Spanish) |
-|-----------|-------------|-----------|------------------------|
-| `UNAUTHORIZED` | 401 | User not authenticated | `Debe iniciar sesión para enviar cotizaciones` |
-| `FORBIDDEN` | 403 | Quote doesn't belong to user | `No tiene permiso para enviar esta cotización` |
-| `BAD_REQUEST` | 400 | Quote status is not 'draft' | `Solo las cotizaciones en borrador pueden ser enviadas` |
-| `BAD_REQUEST` | 400 | Quote has no items | `La cotización debe tener al menos un producto` |
-| `BAD_REQUEST` | 400 | Invalid phone format | `Formato de teléfono inválido. Use formato internacional: +573001234567` |
-| `NOT_FOUND` | 404 | Quote doesn't exist | `Cotización no encontrada` |
-| `INTERNAL_SERVER_ERROR` | 500 | Database error | `Error al procesar la solicitud. Intente nuevamente` |
+| Error Code              | HTTP Status | Condition                    | User Message (Spanish)                                                   |
+| ----------------------- | ----------- | ---------------------------- | ------------------------------------------------------------------------ |
+| `UNAUTHORIZED`          | 401         | User not authenticated       | `Debe iniciar sesión para enviar cotizaciones`                           |
+| `FORBIDDEN`             | 403         | Quote doesn't belong to user | `No tiene permiso para enviar esta cotización`                           |
+| `BAD_REQUEST`           | 400         | Quote status is not 'draft'  | `Solo las cotizaciones en borrador pueden ser enviadas`                  |
+| `BAD_REQUEST`           | 400         | Quote has no items           | `La cotización debe tener al menos un producto`                          |
+| `BAD_REQUEST`           | 400         | Invalid phone format         | `Formato de teléfono inválido. Use formato internacional: +573001234567` |
+| `NOT_FOUND`             | 404         | Quote doesn't exist          | `Cotización no encontrada`                                               |
+| `INTERNAL_SERVER_ERROR` | 500         | Database error               | `Error al procesar la solicitud. Intente nuevamente`                     |
 
 ### 3.2 Error Response Format
 
@@ -323,12 +323,12 @@ queryClient.invalidateQueries(['quotes', 'user']);    // Refresh user quotes
 
 ### 6.1 Expected Latency
 
-| Operation | Target | Measured |
-|-----------|--------|----------|
-| Input validation | < 1ms | TBD |
-| Database query | < 50ms | TBD |
-| Database update | < 50ms | TBD |
-| Total request | < 200ms | TBD |
+| Operation        | Target  | Measured |
+| ---------------- | ------- | -------- |
+| Input validation | < 1ms   | TBD      |
+| Database query   | < 50ms  | TBD      |
+| Database update  | < 50ms  | TBD      |
+| Total request    | < 200ms | TBD      |
 
 ### 6.2 Database Operations
 

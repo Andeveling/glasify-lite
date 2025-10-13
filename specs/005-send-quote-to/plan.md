@@ -385,14 +385,14 @@ Documentation (P2)
 
 ### Estimated Effort
 
-| Task Category | Estimated Time | Risk Level |
-|---------------|----------------|------------|
-| Database Migration | 2-4 hours | Low |
-| Backend (tRPC) | 8-12 hours | Low |
-| Frontend (Hook + UI) | 12-16 hours | Medium |
-| Testing | 8-12 hours | Low |
-| Documentation | 4-6 hours | Low |
-| **Total** | **3-5 days** | **Low-Medium** |
+| Task Category        | Estimated Time | Risk Level     |
+| -------------------- | -------------- | -------------- |
+| Database Migration   | 2-4 hours      | Low            |
+| Backend (tRPC)       | 8-12 hours     | Low            |
+| Frontend (Hook + UI) | 12-16 hours    | Medium         |
+| Testing              | 8-12 hours     | Low            |
+| Documentation        | 4-6 hours      | Low            |
+| **Total**            | **3-5 days**   | **Low-Medium** |
 
 ---
 
@@ -400,29 +400,29 @@ Documentation (P2)
 
 ### Technical Risks
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Migration breaks existing quotes | Low | High | Test migration in staging first, nullable field is non-breaking |
-| Winston logger in Client Component | Low | High | Constitution check enforces this, TypeScript will catch |
-| Phone validation rejects valid numbers | Medium | Medium | Comprehensive unit tests, support multiple formats |
-| Optimistic update doesn't revert | Low | Medium | Proper onError handler with rollback logic |
-| E2E tests flaky | Medium | Low | Use Playwright best practices, proper waits |
+| Risk                                   | Likelihood | Impact | Mitigation                                                      |
+| -------------------------------------- | ---------- | ------ | --------------------------------------------------------------- |
+| Migration breaks existing quotes       | Low        | High   | Test migration in staging first, nullable field is non-breaking |
+| Winston logger in Client Component     | Low        | High   | Constitution check enforces this, TypeScript will catch         |
+| Phone validation rejects valid numbers | Medium     | Medium | Comprehensive unit tests, support multiple formats              |
+| Optimistic update doesn't revert       | Low        | Medium | Proper onError handler with rollback logic                      |
+| E2E tests flaky                        | Medium     | Low    | Use Playwright best practices, proper waits                     |
 
 ### Scope Risks
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Feature creep (add notifications) | Medium | High | Explicit out-of-scope section in spec |
-| Admin portal requests | High | Medium | Clear handoff to external system documented |
-| Quote withdrawal feature | Medium | Medium | Immutability decision documented, users contact vendor |
+| Risk                              | Likelihood | Impact | Mitigation                                             |
+| --------------------------------- | ---------- | ------ | ------------------------------------------------------ |
+| Feature creep (add notifications) | Medium     | High   | Explicit out-of-scope section in spec                  |
+| Admin portal requests             | High       | Medium | Clear handoff to external system documented            |
+| Quote withdrawal feature          | Medium     | Medium | Immutability decision documented, users contact vendor |
 
 ### Timeline Risks
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| UI design iterations | Medium | Low | Use existing shadcn/ui patterns |
-| Testing takes longer than expected | Low | Medium | Start testing early (test-first approach) |
-| Code review delays | Low | Low | Clear documentation, self-review checklist |
+| Risk                               | Likelihood | Impact | Mitigation                                 |
+| ---------------------------------- | ---------- | ------ | ------------------------------------------ |
+| UI design iterations               | Medium     | Low    | Use existing shadcn/ui patterns            |
+| Testing takes longer than expected | Low        | Medium | Start testing early (test-first approach)  |
+| Code review delays                 | Low        | Low    | Clear documentation, self-review checklist |
 
 **Overall Risk Level**: LOW ✅
 
@@ -442,18 +442,18 @@ All 17 functional requirements documented in [spec.md](./spec.md):
 
 ### Success Metrics (SC)
 
-| Metric | Target | How to Measure |
-|--------|--------|----------------|
-| SC-001: Submission time | < 30 seconds | User testing + analytics |
-| SC-002: Success rate | 95% | Error logs + mutation success rate |
-| SC-003: Status transition | < 2 seconds | Database query latency |
-| SC-004: Confirmation display | < 3 seconds | Frontend render time |
-| SC-005: Visual clarity | 100% | User testing + A/B testing |
-| SC-006: Invalid contacts | 0% | Zod validation prevents |
-| SC-007: Filter performance | < 2 seconds | Database query + index usage |
-| SC-008: Support reduction | 70% fewer | Support ticket tracking |
-| SC-009: Timestamp accuracy | ±1 second | Database timestamp precision |
-| SC-010: End-to-end journey | < 10 minutes | User flow analytics |
+| Metric                       | Target       | How to Measure                     |
+| ---------------------------- | ------------ | ---------------------------------- |
+| SC-001: Submission time      | < 30 seconds | User testing + analytics           |
+| SC-002: Success rate         | 95%          | Error logs + mutation success rate |
+| SC-003: Status transition    | < 2 seconds  | Database query latency             |
+| SC-004: Confirmation display | < 3 seconds  | Frontend render time               |
+| SC-005: Visual clarity       | 100%         | User testing + A/B testing         |
+| SC-006: Invalid contacts     | 0%           | Zod validation prevents            |
+| SC-007: Filter performance   | < 2 seconds  | Database query + index usage       |
+| SC-008: Support reduction    | 70% fewer    | Support ticket tracking            |
+| SC-009: Timestamp accuracy   | ±1 second    | Database timestamp precision       |
+| SC-010: End-to-end journey   | < 10 minutes | User flow analytics                |
 
 ---
 
@@ -521,11 +521,11 @@ Documented in [spec.md](./spec.md) - Out of Scope section:
 
 ## Plan Status Summary
 
-| Phase | Status | Output |
-|-------|--------|--------|
-| Phase 0: Research | ✅ COMPLETE | research.md |
+| Phase                       | Status     | Output                                   |
+| --------------------------- | ---------- | ---------------------------------------- |
+| Phase 0: Research           | ✅ COMPLETE | research.md                              |
 | Phase 1: Design & Contracts | ✅ COMPLETE | data-model.md, contracts/, quickstart.md |
-| Phase 2: Implementation | ⏳ PENDING | Generated with /speckit.tasks |
+| Phase 2: Implementation     | ⏳ PENDING  | Generated with /speckit.tasks            |
 
 **Constitution Check**: ✅ PASS (re-verified post-design)
 

@@ -611,38 +611,38 @@ Complete all tasks T001-T041 before deploying to production.
 
 ## Task Summary
 
-| Phase | Task Count | Parallelizable | Story Dependencies |
-|-------|-----------|----------------|-------------------|
-| Phase 1: Setup | 0 | N/A | None (infrastructure exists) |
-| Phase 2: Foundational | 6 | 2 (T005, T006) | Blocks all stories |
-| Phase 3: US1 (MVP) | 13 | 5 (tests + badge) | None |
-| Phase 4: US2 | 5 | 1 (test) | Depends on US1 |
-| Phase 5: US3 | 5 | 2 (test + badge) | Depends on US1 |
-| Phase 6: US4 | 5 | 1 (test) | Independent |
-| Phase 7: Polish | 7 | 2 (docs) | Depends on all stories |
-| **Total** | **41 tasks** | **13 parallelizable** | **4 user stories** |
+| Phase                 | Task Count   | Parallelizable        | Story Dependencies           |
+| --------------------- | ------------ | --------------------- | ---------------------------- |
+| Phase 1: Setup        | 0            | N/A                   | None (infrastructure exists) |
+| Phase 2: Foundational | 6            | 2 (T005, T006)        | Blocks all stories           |
+| Phase 3: US1 (MVP)    | 13           | 5 (tests + badge)     | None                         |
+| Phase 4: US2          | 5            | 1 (test)              | Depends on US1               |
+| Phase 5: US3          | 5            | 2 (test + badge)      | Depends on US1               |
+| Phase 6: US4          | 5            | 1 (test)              | Independent                  |
+| Phase 7: Polish       | 7            | 2 (docs)              | Depends on all stories       |
+| **Total**             | **41 tasks** | **13 parallelizable** | **4 user stories**           |
 
 ### Task Distribution by Type
 
-| Type | Count | Percentage |
-|------|-------|------------|
-| Tests | 10 | 24% |
-| Backend | 8 | 20% |
-| Frontend | 13 | 32% |
-| Database | 4 | 10% |
-| Documentation | 6 | 14% |
+| Type          | Count | Percentage |
+| ------------- | ----- | ---------- |
+| Tests         | 10    | 24%        |
+| Backend       | 8     | 20%        |
+| Frontend      | 13    | 32%        |
+| Database      | 4     | 10%        |
+| Documentation | 6     | 14%        |
 
 ### Estimated Effort
 
-| Phase | Estimated Time | Risk |
-|-------|---------------|------|
-| Phase 2: Foundation | 4 hours | Low |
-| Phase 3: US1 (MVP) | 16-20 hours | Medium |
-| Phase 4: US2 | 6-8 hours | Low |
-| Phase 5: US3 | 6-8 hours | Low |
-| Phase 6: US4 | 4-6 hours | Low |
-| Phase 7: Polish | 6-8 hours | Low |
-| **Total** | **42-54 hours (3-5 days)** | **Low-Medium** |
+| Phase               | Estimated Time             | Risk           |
+| ------------------- | -------------------------- | -------------- |
+| Phase 2: Foundation | 4 hours                    | Low            |
+| Phase 3: US1 (MVP)  | 16-20 hours                | Medium         |
+| Phase 4: US2        | 6-8 hours                  | Low            |
+| Phase 5: US3        | 6-8 hours                  | Low            |
+| Phase 6: US4        | 4-6 hours                  | Low            |
+| Phase 7: Polish     | 6-8 hours                  | Low            |
+| **Total**           | **42-54 hours (3-5 days)** | **Low-Medium** |
 
 ---
 
