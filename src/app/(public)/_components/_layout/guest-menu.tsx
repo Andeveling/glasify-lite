@@ -3,6 +3,7 @@
 import { LogIn, Moon, Sun, User } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useState } from 'react';
+import { SignInModal } from '@/components/signin-modal';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,7 +13,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { SignInModal } from '@/components/signin-modal';
 
 export function GuestMenu() {
   const { theme, setTheme } = useTheme();

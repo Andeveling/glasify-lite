@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 100" fill="none">
+  <title>Ventana Proyectante Inferior (Hopper)</title>
+  <!-- Frame -->
+  <rect x="10" y="10" width="160" height="80" fill="#f3f4f6" stroke="#374151" stroke-width="2"/>
+  <!-- Panel (hinged at bottom) -->
+  <rect x="15" y="15" width="150" height="70" fill="#fff" stroke="#374151" stroke-width="1.5"/>
+  <!-- Hinge at bottom -->
+  <line x1="20" y1="85" x2="160" y2="85" stroke="#6b7280" stroke-width="3"/>
+  <!-- Handle -->
+  <rect x="85" y="17" width="10" height="5" rx="2" fill="#6b7280"/>
+  <!-- Opening arc (inward) -->
+  <path d="M 90 20 Q 90 35 75 40" stroke="#3b82f6" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/>
+  <polygon points="75 40, 78 35, 72 37" fill="#3b82f6"/>
+</svg>
