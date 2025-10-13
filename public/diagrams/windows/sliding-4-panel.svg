@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 180" fill="none" stroke="currentColor" stroke-width="2">
+  <!-- Frame -->
+  <rect x="10" y="10" width="460" height="160" rx="4" fill="none" stroke="currentColor" stroke-width="3"/>
+  
+  <!-- Panel 1 (Fixed) -->
+  <rect x="15" y="15" width="110" height="150" rx="2" fill="none"/>
+  <line x1="70" y1="15" x2="70" y2="165" stroke-dasharray="4"/>
+  
+  <!-- Panel 2 (Sliding) -->
+  <rect x="130" y="15" width="110" height="150" rx="2" fill="none"/>
+  <line x1="185" y1="15" x2="185" y2="165" stroke-dasharray="4"/>
+  <circle cx="145" cy="90" r="4" fill="currentColor"/>
+  
+  <!-- Panel 3 (Sliding) -->
+  <rect x="245" y="15" width="110" height="150" rx="2" fill="none"/>
+  <line x1="300" y1="15" x2="300" y2="165" stroke-dasharray="4"/>
+  <circle cx="260" cy="90" r="4" fill="currentColor"/>
+  
+  <!-- Panel 4 (Fixed) -->
+  <rect x="360" y="15" width="105" height="150" rx="2" fill="none"/>
+  <line x1="412" y1="15" x2="412" y2="165" stroke-dasharray="4"/>
+</svg>

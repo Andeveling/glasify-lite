@@ -7,7 +7,7 @@ import { useState } from 'react';
  * Returns modal state and control functions
  */
 export const useSignInModal = () => {
-  const [ isOpen, setIsOpen ] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const open = () => setIsOpen(true);
   const close = () => setIsOpen(false);
@@ -21,4 +21,3 @@ export const useSignInModal = () => {
     toggle,
   };
 };
-

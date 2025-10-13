@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" fill="none">
+  <title>Puerta Francesa 4 Hojas</title>
+  <!-- Frame -->
+  <rect x="10" y="10" width="380" height="220" fill="#f3f4f6" stroke="#374151" stroke-width="2"/>
+  <!-- Panel 1 (left) -->
+  <rect x="15" y="15" width="90" height="210" fill="#fff" stroke="#374151" stroke-width="1.5"/>
+  <line x1="60" y1="15" x2="60" y2="225" stroke="#d1d5db" stroke-width="0.5"/>
+  <circle cx="95" cy="125" r="3" fill="#6b7280"/>
+  <!-- Panel 2 -->
+  <rect x="105" y="15" width="90" height="210" fill="#fff" stroke="#374151" stroke-width="1.5"/>
+  <line x1="150" y1="15" x2="150" y2="225" stroke="#d1d5db" stroke-width="0.5"/>
+  <circle cx="115" cy="125" r="3" fill="#6b7280"/>
+  <!-- Panel 3 -->
+  <rect x="195" y="15" width="90" height="210" fill="#fff" stroke="#374151" stroke-width="1.5"/>
+  <line x1="240" y1="15" x2="240" y2="225" stroke="#d1d5db" stroke-width="0.5"/>
+  <circle cx="285" cy="125" r="3" fill="#6b7280"/>
+  <!-- Panel 4 (right) -->
+  <rect x="285" y="15" width="90" height="210" fill="#fff" stroke="#374151" stroke-width="1.5"/>
+  <line x1="330" y1="15" x2="330" y2="225" stroke="#d1d5db" stroke-width="0.5"/>
+  <circle cx="295" cy="125" r="3" fill="#6b7280"/>
+  <!-- Opening arrows -->
+  <path d="M 70 120 L 60 125 L 70 130" stroke="#3b82f6" stroke-width="2" fill="none"/>
+  <path d="M 330 120 L 340 125 L 330 130" stroke="#3b82f6" stroke-width="2" fill="none"/>
+</svg>

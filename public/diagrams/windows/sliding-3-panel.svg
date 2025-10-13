@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 180" fill="none">
+  <title>Ventana Corrediza 3 Hojas</title>
+  <!-- Frame -->
+  <rect x="10" y="10" width="340" height="160" fill="#f3f4f6" stroke="#374151" stroke-width="2"/>
+  <!-- Panel 1 (back - fixed) -->
+  <rect x="15" y="15" width="110" height="150" fill="#e5e7eb" stroke="#374151" stroke-width="1.5"/>
+  <!-- Panel 3 (back - fixed) -->
+  <rect x="235" y="15" width="110" height="150" fill="#e5e7eb" stroke="#374151" stroke-width="1.5"/>
+  <!-- Panel 2 (front - sliding) -->
+  <rect x="125" y="15" width="110" height="150" fill="#fff" stroke="#374151" stroke-width="1.5"/>
+  <rect x="130" y="82" width="15" height="6" rx="3" fill="#6b7280"/>
+  <!-- Sliding arrows -->
+  <path d="M 160 90 L 150 90" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowL)"/>
+  <path d="M 200 90 L 210 90" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowR)"/>
+  <defs>
+    <marker id="arrowL" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowR" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6"/>
+    </marker>
+  </defs>
+</svg>
