@@ -482,7 +482,7 @@ export const quoteRouter = createTRPCRouter({
             name: item.name,
             quantity: item.quantity,
             serviceNames: item.services.map((s) => s.service.name),
-            solutionName: undefined, // TODO: Add solution support
+            // solutionName omitted (optional field) - TODO: Add solution support
             subtotal: Number(item.subtotal),
             unitPrice: Number(item.subtotal) / item.quantity,
             widthMm: item.widthMm,
@@ -499,7 +499,7 @@ export const quoteRouter = createTRPCRouter({
           status: quote.status,
           total: Number(quote.total),
           totalUnits: quote.items.reduce((sum, item) => sum + item.quantity, 0),
-          userEmail: undefined,
+          // userEmail omitted (optional field)
           validUntil: quote.validUntil,
           vendorContactPhone: tenant.contactPhone, // US3: Vendor contact for confirmation message
         };

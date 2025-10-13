@@ -44,7 +44,7 @@ export default async function MyQuoteDetailPage({ params }: MyQuoteDetailPagePro
 
     return (
       <div className="container mx-auto max-w-5xl py-8">
-        <QuoteDetailView isPublicView quote={quote} />
+        <QuoteDetailView isPublicView quote={quote} userEmail={session.user.email ?? undefined} />
       </div>
     );
   } catch (error) {
