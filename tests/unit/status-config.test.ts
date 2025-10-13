@@ -104,10 +104,10 @@ describe('Quote Status Configuration', () => {
     });
 
     it('should have consistent structure for all statuses', () => {
-      const statuses: Array<keyof typeof STATUS_CONFIG> = [ 'draft', 'sent', 'canceled' ];
+      const statuses: Array<keyof typeof STATUS_CONFIG> = ['draft', 'sent', 'canceled'];
 
       for (const status of statuses) {
-        const config = STATUS_CONFIG[ status ];
+        const config = STATUS_CONFIG[status];
 
         expect(config).toHaveProperty('label');
         expect(config).toHaveProperty('icon');
@@ -159,7 +159,7 @@ describe('Quote Status Configuration', () => {
     });
   });
 
-  describe('Semantic Clarity (Don\'t Make Me Think)', () => {
+  describe("Semantic Clarity (Don't Make Me Think)", () => {
     it('draft label should clearly indicate pending state', () => {
       const config = STATUS_CONFIG.draft;
       // "Pendiente" clearly means "waiting for action", not "in progress"
