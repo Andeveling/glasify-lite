@@ -9,12 +9,12 @@
  */
 
 import type { Quote } from '@prisma/client';
-import { Edit3, FileText, type LucideIcon, Send, XCircle } from 'lucide-react';
+import { FileText, type LucideIcon, Send, XCircle } from 'lucide-react';
 
 /**
  * Quote status type from Prisma schema
  */
-export type QuoteStatus = Quote[ 'status' ];
+export type QuoteStatus = Quote['status'];
 
 /**
  * Badge variant types (Shadcn/ui Badge component)
@@ -137,7 +137,7 @@ export function getStatusConfig(status: QuoteStatus | string): StatusConfig {
     return DEFAULT_STATUS_CONFIG;
   }
 
-  return STATUS_CONFIG[ status as QuoteStatus ] ?? DEFAULT_STATUS_CONFIG;
+  return STATUS_CONFIG[status as QuoteStatus] ?? DEFAULT_STATUS_CONFIG;
 }
 
 /**

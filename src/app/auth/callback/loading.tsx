@@ -1,4 +1,4 @@
-import { Spinner } from "@/components/ui/spinner";
+import { Spinner } from '@/components/ui/spinner';
 /**
  * Loading state for auth callback
  * Shown while the page determines where to redirect the user

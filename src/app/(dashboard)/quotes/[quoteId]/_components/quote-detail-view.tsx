@@ -7,7 +7,7 @@
  * @module app/(dashboard)/quotes/[quoteId]/_components/quote-detail-view
  */
 
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Clock, Phone } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { Badge } from '@/components/ui/badge';
@@ -15,33 +15,69 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatDate } from '@/lib/utils';
-
 import type { QuoteDetailSchema } from '@/server/api/routers/quote/quote.schemas';
+import { QuoteStatusBadge } from '../../_components/quote-status-badge';
+import { SendQuoteButton } from './send-quote-button';
 
 type QuoteDetailViewProps = {
   quote: QuoteDetailSchema;
 };
 
-const statusConfig = {
-  canceled: { label: 'Cancelada', variant: 'destructive' as const },
-  draft: { label: 'Borrador', variant: 'secondary' as const },
-  sent: { label: 'Enviada', variant: 'default' as const },
-};
-
 export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
-  const statusInfo = statusConfig[quote.status];
-
   return (
     <div className="space-y-6">
-      {/* Header con botón de regreso */}
-      <div className="flex items-center gap-4">
+      {/* Header con botón de regreso y acción de envío */}
+      <div className="flex items-center justify-between gap-4">
         <Button asChild size="sm" variant="outline">
           <Link href="/quotes">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Volver a cotizaciones
           </Link>
         </Button>
+
+        {/* Show send button only for draft quotes */}
+        <SendQuoteButton quote={quote} />
       </div>
+
+      {/* Enhanced confirmation message for sent quotes (US3) */}
+      {quote.status === 'sent' && quote.sentAt && (
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950">
+          <div className="space-y-3">
+            {/* Title with sent date */}
+            <div>
+              <p className="font-semibold text-blue-900 dark:text-blue-100">
+                Cotización enviada el {formatDate(quote.sentAt)}
+              </p>
+              <p className="text-blue-700 text-sm dark:text-blue-300">
+                El fabricante ha recibido tu solicitud y se pondrá en contacto contigo pronto.
+              </p>
+            </div>
+
+            {/* Timeline expectation */}
+            <div className="flex items-start gap-2 text-sm">
+              <Clock className="mt-0.5 h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <p className="text-blue-700 dark:text-blue-300">
+                <span className="font-medium">Tiempo de respuesta:</span> Recibirás una respuesta en 24-48 horas hábiles
+              </p>
+            </div>
+
+            {/* Vendor contact (if available) */}
+            {quote.vendorContactPhone && (
+              <div className="flex items-start gap-2 text-sm">
+                <Phone className="mt-0.5 h-4 w-4 text-blue-600 dark:text-blue-400" />
+                <p className="text-blue-700 dark:text-blue-300">
+                  <span className="font-medium">Contacto del fabricante:</span> {quote.vendorContactPhone}
+                </p>
+              </div>
+            )}
+
+            {/* Next steps */}
+            <p className="text-blue-600 text-xs dark:text-blue-400">
+              Mientras tanto, puedes revisar otras cotizaciones o crear una nueva.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Información principal de la cotización */}
       <Card>
@@ -52,7 +88,7 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
               <CardDescription>Creada el {formatDate(quote.createdAt)}</CardDescription>
             </div>
             <div className="flex gap-2">
-              <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
+              <QuoteStatusBadge status={quote.status} />
               {quote.isExpired && (
                 <Badge className="border-destructive text-destructive" variant="outline">
                   Vencida

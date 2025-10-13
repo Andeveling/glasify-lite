@@ -1,5 +1,6 @@
 import { api } from '@/trpc/server-client';
 import { EmptyQuotesState } from './_components/empty-quotes-state';
+import { QuoteFilters } from './_components/quote-filters';
 import { QuoteListItem } from './_components/quote-list-item';
 
 type QuotesPageProps = {
@@ -27,6 +28,8 @@ export default async function QuotesPage({ searchParams }: QuotesPageProps) {
         <h1 className="font-bold text-3xl">Mis Cotizaciones</h1>
         <p className="mt-2 text-muted-foreground">Gestiona y revisa todas tus cotizaciones</p>
       </div>
+
+      <QuoteFilters currentStatus={status} />
 
       {result.quotes.length === 0 ? (
         <EmptyQuotesState />
