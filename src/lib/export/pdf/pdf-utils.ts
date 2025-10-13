@@ -117,7 +117,7 @@ export function getGlassTypeName(type: string): string {
     tinted: 'Polarizado',
   };
 
-  return typeMap[ type.toLowerCase() ] || type;
+  return typeMap[type.toLowerCase()] || type;
 }
 
 /**
