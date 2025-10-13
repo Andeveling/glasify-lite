@@ -31,8 +31,12 @@ test.describe('Send Quote - Contact Info Pre-fill (US2)', () => {
     });
     testUserId = user.id;
 
-    const model = (await prisma.model.findFirst())!;
-    const glassType = (await prisma.glassType.findFirst())!;
+    const model = await prisma.model.findFirst();
+    const glassType = await prisma.glassType.findFirst();
+
+    if (!(model && glassType)) {
+      throw new Error('Database not seeded. Run: pnpm db:seed');
+    }
 
     // Quote WITH existing contactPhone
     const quoteWithPhone = await prisma.quote.create({
