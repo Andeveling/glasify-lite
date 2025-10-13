@@ -54,6 +54,9 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
         // TODO: Implement resend functionality in future US
         router.push(`/my-quotes/${quote.id}`);
         break;
+      default:
+        // Unknown action - do nothing
+        break;
     }
   };
 

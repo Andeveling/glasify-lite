@@ -43,10 +43,10 @@ interface UseQuoteExportReturn {
 export function useQuoteExport(options: UseQuoteExportOptions = {}): UseQuoteExportReturn {
   const { onSuccess, onError } = options;
 
-  const [isPendingPDF, startPDFTransition] = useTransition();
-  const [isPendingExcel, startExcelTransition] = useTransition();
-  const [isDownloadingPDF, setIsDownloadingPDF] = useState(false);
-  const [isDownloadingExcel, setIsDownloadingExcel] = useState(false);
+  const [ isPendingPDF, startPDFTransition ] = useTransition();
+  const [ isPendingExcel, startExcelTransition ] = useTransition();
+  const [ isDownloadingPDF, setIsDownloadingPDF ] = useState(false);
+  const [ isDownloadingExcel, setIsDownloadingExcel ] = useState(false);
 
   /**
    * Download file from base64 data
@@ -57,10 +57,10 @@ export function useQuoteExport(options: UseQuoteExportOptions = {}): UseQuoteExp
       const byteCharacters = atob(data);
       const byteNumbers = new Array(byteCharacters.length);
       for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
+        byteNumbers[ i ] = byteCharacters.charCodeAt(i);
       }
       const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: mimeType });
+      const blob = new Blob([ byteArray ], { type: mimeType });
 
       // Create download link
       const url = URL.createObjectURL(blob);
@@ -75,8 +75,7 @@ export function useQuoteExport(options: UseQuoteExportOptions = {}): UseQuoteExp
       // Cleanup
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Download error:', error);
+    } catch (_error) {
       throw new Error('Error al descargar el archivo');
     }
   };
@@ -84,72 +83,82 @@ export function useQuoteExport(options: UseQuoteExportOptions = {}): UseQuoteExp
   /**
    * Export quote to PDF
    */
-  const exportPDF = async (quoteId: string) => {
+  const exportPDF = async (quoteId: string): Promise<void> => {
     setIsDownloadingPDF(true);
 
-    startPDFTransition(async () => {
-      try {
-        const result = await exportQuotePDF({
-          format: 'pdf',
-          quoteId,
-        });
+    return new Promise((resolve) => {
+      startPDFTransition(async () => {
+        try {
+          const result = await exportQuotePDF({
+            format: 'pdf',
+            quoteId,
+          });
 
-        if (!result.success) {
-          const errorMessage = result.error || 'Error al exportar a PDF';
-          toast.error(errorMessage);
+          if (!result.success) {
+            const errorMessage = result.error || 'Error al exportar a PDF';
+            toast.error(errorMessage);
+            onError?.(errorMessage, 'pdf');
+            resolve();
+            return;
+          }
+
+          // Download file
+          if (result.data && result.filename && result.mimeType) {
+            downloadFile(result.data, result.filename, result.mimeType);
+            toast.success(`${result.filename} descargado exitosamente`);
+            onSuccess?.('pdf');
+          }
+          resolve();
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+          toast.error('Error al exportar la cotización a PDF');
           onError?.(errorMessage, 'pdf');
-          return;
+          resolve();
+        } finally {
+          setIsDownloadingPDF(false);
         }
-
-        // Download file
-        if (result.data && result.filename && result.mimeType) {
-          downloadFile(result.data, result.filename, result.mimeType);
-          toast.success(`${result.filename} descargado exitosamente`);
-          onSuccess?.('pdf');
-        }
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
-        toast.error('Error al exportar la cotización a PDF');
-        onError?.(errorMessage, 'pdf');
-      } finally {
-        setIsDownloadingPDF(false);
-      }
+      });
     });
   };
 
   /**
    * Export quote to Excel
    */
-  const exportExcel = async (quoteId: string) => {
+  const exportExcel = async (quoteId: string): Promise<void> => {
     setIsDownloadingExcel(true);
 
-    startExcelTransition(async () => {
-      try {
-        const result = await exportQuoteExcel({
-          format: 'excel',
-          quoteId,
-        });
+    return new Promise((resolve) => {
+      startExcelTransition(async () => {
+        try {
+          const result = await exportQuoteExcel({
+            format: 'excel',
+            quoteId,
+          });
 
-        if (!result.success) {
-          const errorMessage = result.error || 'Error al exportar a Excel';
-          toast.error(errorMessage);
+          if (!result.success) {
+            const errorMessage = result.error || 'Error al exportar a Excel';
+            toast.error(errorMessage);
+            onError?.(errorMessage, 'excel');
+            resolve();
+            return;
+          }
+
+          // Download file
+          if (result.data && result.filename && result.mimeType) {
+            downloadFile(result.data, result.filename, result.mimeType);
+            toast.success(`${result.filename} descargado exitosamente`);
+            onSuccess?.('excel');
+          }
+          resolve();
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+          toast.error('Error al exportar la cotización a Excel');
           onError?.(errorMessage, 'excel');
-          return;
+          resolve();
+        } finally {
+          setIsDownloadingExcel(false);
         }
-
-        // Download file
-        if (result.data && result.filename && result.mimeType) {
-          downloadFile(result.data, result.filename, result.mimeType);
-          toast.success(`${result.filename} descargado exitosamente`);
-          onSuccess?.('excel');
-        }
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
-        toast.error('Error al exportar la cotización a Excel');
-        onError?.(errorMessage, 'excel');
-      } finally {
-        setIsDownloadingExcel(false);
-      }
+      });
     });
   };
 

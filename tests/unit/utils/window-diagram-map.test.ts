@@ -16,9 +16,8 @@ import {
   getWindowDiagramsByCategory,
   hasWindowDiagram,
   WINDOW_DIAGRAM_MAP,
-  type WindowDiagram,
-} from '@/lib/utils/window-diagram-map';
-import { DEFAULT_WINDOW_TYPE, WindowType } from '@/types/window.types';
+} from '../../../src/lib/utils/window-diagram-map';
+import { DEFAULT_WINDOW_TYPE, type WindowDiagram, WindowType } from '../../../src/types/window.types';
 
 describe('Window Diagram Map Utility', () => {
   describe('getWindowDiagram', () => {
@@ -47,13 +46,13 @@ describe('Window Diagram Map Utility', () => {
         WindowType.TILT_TURN,
       ];
 
-      basicTypes.forEach((type) => {
+      for (const type of basicTypes) {
         const diagram = getWindowDiagram(type);
         expect(diagram).toBeDefined();
         expect(diagram.type).toBe(type);
         expect(diagram.svgPath).toContain('/diagrams/windows/');
         expect(diagram.svgPath).toContain('.svg');
-      });
+      }
     });
 
     it('should fall back to default diagram for unknown type', () => {
@@ -168,13 +167,13 @@ describe('Window Diagram Map Utility', () => {
     it('each diagram should have required properties', () => {
       const allDiagrams = getAllWindowDiagrams();
 
-      allDiagrams.forEach((diagram: WindowDiagram) => {
+      for (const diagram of allDiagrams) {
         expect(diagram).toHaveProperty('type');
         expect(diagram).toHaveProperty('svgPath');
         expect(diagram).toHaveProperty('viewBox');
         expect(diagram).toHaveProperty('aspectRatio');
         expect(diagram).toHaveProperty('altText');
-      });
+      }
     });
   });
 
@@ -240,25 +239,25 @@ describe('Window Diagram Map Utility', () => {
     it('should have entry for each WindowType', () => {
       const allTypes = Object.values(WindowType);
 
-      allTypes.forEach((type: WindowType) => {
+      for (const type of allTypes) {
         expect(WINDOW_DIAGRAM_MAP[type]).toBeDefined();
-      });
+      }
     });
 
     it('should have consistent viewBox dimensions', () => {
-      Object.values(WINDOW_DIAGRAM_MAP).forEach((diagram: WindowDiagram) => {
+      for (const diagram of Object.values(WINDOW_DIAGRAM_MAP)) {
         expect(diagram.viewBox.width).toBeGreaterThan(0);
         expect(diagram.viewBox.height).toBeGreaterThan(0);
         expect(diagram.aspectRatio).toBe(diagram.viewBox.width / diagram.viewBox.height);
-      });
+      }
     });
 
     it('should have SVG paths matching type names', () => {
-      Object.entries(WINDOW_DIAGRAM_MAP).forEach(([type, diagram]) => {
+      for (const [type, diagram] of Object.entries(WINDOW_DIAGRAM_MAP)) {
         if (type !== WindowType.UNKNOWN) {
           expect((diagram as WindowDiagram).svgPath).toContain(type);
         }
-      });
+      }
     });
   });
 
@@ -266,26 +265,26 @@ describe('Window Diagram Map Utility', () => {
     it('all SVG paths should start with /diagrams/windows/', () => {
       const allDiagrams = getAllWindowDiagrams();
 
-      allDiagrams.forEach((diagram: WindowDiagram) => {
+      for (const diagram of allDiagrams) {
         expect(diagram.svgPath).toMatch(/^\/diagrams\/windows\//);
-      });
+      }
     });
 
     it('all SVG paths should end with .svg', () => {
       const allDiagrams = getAllWindowDiagrams();
 
-      allDiagrams.forEach((diagram: WindowDiagram) => {
+      for (const diagram of allDiagrams) {
         expect(diagram.svgPath).toMatch(/\.svg$/);
-      });
+      }
     });
 
     it('SVG paths should use kebab-case', () => {
       const allDiagrams = getAllWindowDiagrams();
 
-      allDiagrams.forEach((diagram: WindowDiagram) => {
-        const filename = diagram.svgPath.split('/').pop()!.replace('.svg', '');
+      for (const diagram of allDiagrams) {
+        const filename = diagram.svgPath.split('/').pop()?.replace('.svg', '');
         expect(filename).toMatch(/^[a-z0-9-]+$/);
-      });
+      }
     });
   });
 
@@ -293,17 +292,17 @@ describe('Window Diagram Map Utility', () => {
     it('all alt texts should be in Spanish', () => {
       const allDiagrams = getAllWindowDiagrams();
 
-      allDiagrams.forEach((diagram: WindowDiagram) => {
+      for (const diagram of allDiagrams) {
         expect(diagram.altText).toMatch(/ventana|puerta|diagrama|tragaluz/i);
-      });
+      }
     });
 
     it('alt texts should be descriptive (>10 characters)', () => {
       const allDiagrams = getAllWindowDiagrams();
 
-      allDiagrams.forEach((diagram: WindowDiagram) => {
+      for (const diagram of allDiagrams) {
         expect(diagram.altText.length).toBeGreaterThan(10);
-      });
+      }
     });
   });
 });

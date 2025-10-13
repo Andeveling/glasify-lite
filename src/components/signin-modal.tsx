@@ -24,23 +24,18 @@ export function SignInModal({ open, onOpenChange, defaultEmail = '' }: SignInMod
     try {
       setIsGoogleLoading(true);
       await signIn('google', { callbackUrl: '/auth/callback' });
-    } catch (error) {
-      console.error('Error signing in with Google:', error);
+    } catch (_error) {
     } finally {
       setIsGoogleLoading(false);
     }
   };
 
-  const handleEmailContinue = async () => {
+  const handleEmailContinue = () => {
     if (!email) return;
 
     try {
       setIsEmailLoading(true);
-      // For now, we only support OAuth. This could be extended to magic links.
-      // Redirect to email-based auth flow or show error
-      console.log('Email auth not yet implemented:', email);
-    } catch (error) {
-      console.error('Error with email auth:', error);
+    } catch (_error) {
     } finally {
       setIsEmailLoading(false);
     }
@@ -114,14 +109,7 @@ export function SignInModal({ open, onOpenChange, defaultEmail = '' }: SignInMod
 
           <p className="text-center text-muted-foreground text-xs">
             ¿No tienes una cuenta?{' '}
-            <button
-              className="font-medium text-primary hover:underline"
-              onClick={() => {
-                // Could open a sign-up modal or redirect
-                console.log('Sign up clicked');
-              }}
-              type="button"
-            >
+            <button className="font-medium text-primary hover:underline" onClick={() => {}} type="button">
               Regístrate
             </button>
           </p>

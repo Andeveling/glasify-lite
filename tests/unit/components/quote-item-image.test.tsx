@@ -285,7 +285,7 @@ describe('QuoteItemImage', () => {
 
       const img = screen.getByRole('img');
       expect(img).toHaveAttribute('alt');
-      expect(img.getAttribute('alt')!.length).toBeGreaterThan(50);
+      expect(img.getAttribute('alt')?.length).toBeGreaterThan(50);
     });
 
     it('should handle missing windowType gracefully', () => {

@@ -267,7 +267,7 @@ test.describe('Product Image Viewer & Lightbox', () => {
         const alt = await img.getAttribute('alt');
 
         expect(alt).toBeTruthy();
-        expect(alt!.length).toBeGreaterThan(0);
+        expect(alt?.length).toBeGreaterThan(0);
       }
     });
 
@@ -342,7 +342,7 @@ test.describe('Product Image Viewer & Lightbox', () => {
       const viewportSize = page.viewportSize();
       const lightboxBox = await lightbox.boundingBox();
 
-      expect(lightboxBox?.width).toBeGreaterThan(viewportSize!.width * 0.9);
+      expect(lightboxBox?.width).toBeGreaterThan(viewportSize?.width * 0.9);
     });
 
     test('should support touch gestures to close lightbox', async ({ page }) => {

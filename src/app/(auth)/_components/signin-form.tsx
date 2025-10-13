@@ -156,9 +156,9 @@ export default function SignInForm({ onSubmit, onGoogleSignIn, isLoading = false
               <FormItem>
                 <div className="flex items-center justify-between">
                   <FormLabel className="font-medium text-sm">Contraseña</FormLabel>
-                  <a className="text-primary text-sm hover:underline" href="#">
+                  <button className="text-primary text-sm hover:underline" type="button">
                     ¿Olvidaste tu contraseña?
-                  </a>
+                  </button>
                 </div>
                 <FormControl>
                   <Input

@@ -125,5 +125,9 @@ export function QuoteStatusBadge({
 export type { QuoteStatus, StatusConfig, StatusCTA } from '../_utils/status-config';
 /**
  * Export status utilities for convenience
+ * 
+ * Note: This is intentionally a re-export (barrel) to provide a cleaner API.
+ * The utilities are closely related to the StatusBadge component.
  */
+// biome-ignore lint/performance/noBarrelFile: Intentional re-export of closely related utilities
 export { getStatusConfig, getStatusIconComponent } from '../_utils/status-config';

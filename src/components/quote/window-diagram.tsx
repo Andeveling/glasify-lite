@@ -91,6 +91,8 @@ export function WindowDiagram({
         className
       )}
     >
+      {/* biome-ignore lint/nursery/useImageSize: SVG diagrams don't need explicit dimensions */}
+      {/* biome-ignore lint/performance/noImgElement: SVG diagrams need direct img element for correct rendering */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         alt={alt ?? diagram.altText}
@@ -112,8 +114,11 @@ export function WindowDiagram({
 export function WindowDiagramSkeleton({ size = 'md', className }: Pick<WindowDiagramProps, 'size' | 'className'>) {
   return (
     <div
-      aria-label="Cargando diagrama..."
+      aria-busy="true"
       className={cn('animate-pulse rounded-md bg-gray-200', SIZE_CLASSES[size], className)}
-    />
+      role="status"
+    >
+      <span className="sr-only">Cargando diagrama...</span>
+    </div>
   );
 }

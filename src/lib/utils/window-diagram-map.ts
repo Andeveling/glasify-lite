@@ -28,7 +28,7 @@ const DEFAULT_DIAGRAM_PATH = `${DIAGRAMS_BASE_PATH}/fixed-single.svg`;
  */
 export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
   // French Doors
-  [WT.FRENCH_2_PANEL]: {
+  [ WT.FRENCH_2_PANEL ]: {
     altText: 'Diagrama de puerta francesa de 2 hojas',
     aspectRatio: 200 / 240,
     svgPath: `${DIAGRAMS_BASE_PATH}/french-2-panel.svg`,
@@ -36,7 +36,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
     viewBox: { height: 240, width: 200 },
   },
 
-  [WT.FRENCH_4_PANEL]: {
+  [ WT.FRENCH_4_PANEL ]: {
     altText: 'Diagrama de puerta francesa de 4 hojas',
     aspectRatio: 400 / 240,
     svgPath: `${DIAGRAMS_BASE_PATH}/french-4-panel.svg`,
@@ -45,7 +45,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
   },
 
   // Sliding Windows
-  [WT.SLIDING_2_PANEL]: {
+  [ WT.SLIDING_2_PANEL ]: {
     altText: 'Diagrama de ventana corrediza de 2 hojas',
     aspectRatio: 240 / 180,
     svgPath: `${DIAGRAMS_BASE_PATH}/sliding-2-panel.svg`,
@@ -53,7 +53,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
     viewBox: { height: 180, width: 240 },
   },
 
-  [WT.SLIDING_3_PANEL]: {
+  [ WT.SLIDING_3_PANEL ]: {
     altText: 'Diagrama de ventana corrediza de 3 hojas',
     aspectRatio: 360 / 180,
     svgPath: `${DIAGRAMS_BASE_PATH}/sliding-3-panel.svg`,
@@ -61,7 +61,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
     viewBox: { height: 180, width: 360 },
   },
 
-  [WT.SLIDING_4_PANEL]: {
+  [ WT.SLIDING_4_PANEL ]: {
     altText: 'Diagrama de ventana corrediza de 4 hojas',
     aspectRatio: 480 / 180,
     svgPath: `${DIAGRAMS_BASE_PATH}/sliding-4-panel.svg`,
@@ -70,7 +70,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
   },
 
   // Fixed Windows
-  [WT.FIXED_SINGLE]: {
+  [ WT.FIXED_SINGLE ]: {
     altText: 'Diagrama de ventana fija',
     aspectRatio: 120 / 150,
     svgPath: `${DIAGRAMS_BASE_PATH}/fixed-single.svg`,
@@ -78,7 +78,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
     viewBox: { height: 150, width: 120 },
   },
 
-  [WT.PICTURE_WINDOW]: {
+  [ WT.PICTURE_WINDOW ]: {
     altText: 'Diagrama de ventanal panorámico',
     aspectRatio: 300 / 200,
     svgPath: `${DIAGRAMS_BASE_PATH}/picture-window.svg`,
@@ -87,7 +87,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
   },
 
   // Casement Windows
-  [WT.CASEMENT_LEFT]: {
+  [ WT.CASEMENT_LEFT ]: {
     altText: 'Diagrama de ventana abatible izquierda',
     aspectRatio: 120 / 180,
     svgPath: `${DIAGRAMS_BASE_PATH}/casement-left.svg`,
@@ -95,7 +95,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
     viewBox: { height: 180, width: 120 },
   },
 
-  [WT.CASEMENT_RIGHT]: {
+  [ WT.CASEMENT_RIGHT ]: {
     altText: 'Diagrama de ventana abatible derecha',
     aspectRatio: 120 / 180,
     svgPath: `${DIAGRAMS_BASE_PATH}/casement-right.svg`,
@@ -103,7 +103,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
     viewBox: { height: 180, width: 120 },
   },
 
-  [WT.CASEMENT_DOUBLE]: {
+  [ WT.CASEMENT_DOUBLE ]: {
     altText: 'Diagrama de ventana abatible doble',
     aspectRatio: 240 / 180,
     svgPath: `${DIAGRAMS_BASE_PATH}/casement-double.svg`,
@@ -112,7 +112,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
   },
 
   // Awning & Hopper
-  [WT.AWNING]: {
+  [ WT.AWNING ]: {
     altText: 'Diagrama de ventana proyectante superior',
     aspectRatio: 180 / 100,
     svgPath: `${DIAGRAMS_BASE_PATH}/awning.svg`,
@@ -120,7 +120,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
     viewBox: { height: 100, width: 180 },
   },
 
-  [WT.HOPPER]: {
+  [ WT.HOPPER ]: {
     altText: 'Diagrama de ventana proyectante inferior',
     aspectRatio: 180 / 100,
     svgPath: `${DIAGRAMS_BASE_PATH}/hopper.svg`,
@@ -129,7 +129,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
   },
 
   // Specialty Windows
-  [WT.TILT_TURN]: {
+  [ WT.TILT_TURN ]: {
     altText: 'Diagrama de ventana oscilobatiente',
     aspectRatio: 120 / 180,
     svgPath: `${DIAGRAMS_BASE_PATH}/tilt-turn.svg`,
@@ -137,7 +137,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
     viewBox: { height: 180, width: 120 },
   },
 
-  [WT.BAY_WINDOW]: {
+  [ WT.BAY_WINDOW ]: {
     altText: 'Diagrama de ventana bahía',
     aspectRatio: 360 / 200,
     svgPath: `${DIAGRAMS_BASE_PATH}/bay-window.svg`,
@@ -145,7 +145,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
     viewBox: { height: 200, width: 360 },
   },
 
-  [WT.BOW_WINDOW]: {
+  [ WT.BOW_WINDOW ]: {
     altText: 'Diagrama de ventana arco',
     aspectRatio: 480 / 200,
     svgPath: `${DIAGRAMS_BASE_PATH}/bow-window.svg`,
@@ -153,7 +153,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
     viewBox: { height: 200, width: 480 },
   },
 
-  [WT.CORNER]: {
+  [ WT.CORNER ]: {
     altText: 'Diagrama de ventana esquinera',
     aspectRatio: 1,
     svgPath: `${DIAGRAMS_BASE_PATH}/corner.svg`,
@@ -162,7 +162,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
   },
 
   // Double/Single Hung
-  [WT.DOUBLE_HUNG]: {
+  [ WT.DOUBLE_HUNG ]: {
     altText: 'Diagrama de ventana guillotina doble',
     aspectRatio: 120 / 200,
     svgPath: `${DIAGRAMS_BASE_PATH}/double-hung.svg`,
@@ -170,7 +170,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
     viewBox: { height: 200, width: 120 },
   },
 
-  [WT.SINGLE_HUNG]: {
+  [ WT.SINGLE_HUNG ]: {
     altText: 'Diagrama de ventana guillotina simple',
     aspectRatio: 120 / 200,
     svgPath: `${DIAGRAMS_BASE_PATH}/single-hung.svg`,
@@ -179,7 +179,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
   },
 
   // Other Types
-  [WT.TRANSOM]: {
+  [ WT.TRANSOM ]: {
     altText: 'Diagrama de ventana montante',
     aspectRatio: 180 / 80,
     svgPath: `${DIAGRAMS_BASE_PATH}/transom.svg`,
@@ -187,7 +187,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
     viewBox: { height: 80, width: 180 },
   },
 
-  [WT.LOUVRE]: {
+  [ WT.LOUVRE ]: {
     altText: 'Diagrama de ventana celosía',
     aspectRatio: 120 / 180,
     svgPath: `${DIAGRAMS_BASE_PATH}/louvre.svg`,
@@ -195,7 +195,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
     viewBox: { height: 180, width: 120 },
   },
 
-  [WT.PIVOT]: {
+  [ WT.PIVOT ]: {
     altText: 'Diagrama de ventana pivotante',
     aspectRatio: 120 / 180,
     svgPath: `${DIAGRAMS_BASE_PATH}/pivot.svg`,
@@ -203,7 +203,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
     viewBox: { height: 180, width: 120 },
   },
 
-  [WT.SKYLIGHT]: {
+  [ WT.SKYLIGHT ]: {
     altText: 'Diagrama de tragaluz',
     aspectRatio: 200 / 120,
     svgPath: `${DIAGRAMS_BASE_PATH}/skylight.svg`,
@@ -212,7 +212,7 @@ export const WINDOW_DIAGRAM_MAP: Record<WindowType, WindowDiagram> = {
   },
 
   // Unknown/Default
-  [WT.UNKNOWN]: {
+  [ WT.UNKNOWN ]: {
     altText: 'Diagrama de ventana genérica',
     aspectRatio: 120 / 150,
     svgPath: DEFAULT_DIAGRAM_PATH,
@@ -237,7 +237,13 @@ export function getWindowDiagram(type: WindowType | string): WindowDiagram {
   // Type guard: check if valid WindowType
   const windowType = Object.values(WT).includes(type as WindowType) ? (type as WindowType) : DEFAULT_WINDOW_TYPE;
 
-  return WINDOW_DIAGRAM_MAP[windowType] ?? WINDOW_DIAGRAM_MAP[DEFAULT_WINDOW_TYPE]!;
+  const diagram = WINDOW_DIAGRAM_MAP[ windowType ] ?? WINDOW_DIAGRAM_MAP[ DEFAULT_WINDOW_TYPE ];
+
+  if (!diagram) {
+    throw new Error(`Window diagram not found for type: ${windowType}`);
+  }
+
+  return diagram;
 }
 
 /**
@@ -297,15 +303,21 @@ export function getWindowDiagramsByCategory(
   category: 'french' | 'sliding' | 'fixed' | 'casement' | 'projecting' | 'specialty' | 'hung' | 'other'
 ): WindowDiagram[] {
   const categories = {
-    casement: [WT.CASEMENT_LEFT, WT.CASEMENT_RIGHT, WT.CASEMENT_DOUBLE],
-    fixed: [WT.FIXED_SINGLE, WT.PICTURE_WINDOW],
-    french: [WT.FRENCH_2_PANEL, WT.FRENCH_4_PANEL],
-    hung: [WT.DOUBLE_HUNG, WT.SINGLE_HUNG],
-    other: [WT.TRANSOM, WT.LOUVRE, WT.PIVOT, WT.SKYLIGHT],
-    projecting: [WT.AWNING, WT.HOPPER],
-    sliding: [WT.SLIDING_2_PANEL, WT.SLIDING_3_PANEL, WT.SLIDING_4_PANEL],
-    specialty: [WT.TILT_TURN, WT.BAY_WINDOW, WT.BOW_WINDOW, WT.CORNER],
+    casement: [ WT.CASEMENT_LEFT, WT.CASEMENT_RIGHT, WT.CASEMENT_DOUBLE ],
+    fixed: [ WT.FIXED_SINGLE, WT.PICTURE_WINDOW ],
+    french: [ WT.FRENCH_2_PANEL, WT.FRENCH_4_PANEL ],
+    hung: [ WT.DOUBLE_HUNG, WT.SINGLE_HUNG ],
+    other: [ WT.TRANSOM, WT.LOUVRE, WT.PIVOT, WT.SKYLIGHT ],
+    projecting: [ WT.AWNING, WT.HOPPER ],
+    sliding: [ WT.SLIDING_2_PANEL, WT.SLIDING_3_PANEL, WT.SLIDING_4_PANEL ],
+    specialty: [ WT.TILT_TURN, WT.BAY_WINDOW, WT.BOW_WINDOW, WT.CORNER ],
   };
 
-  return categories[category].map((type) => WINDOW_DIAGRAM_MAP[type]!);
+  return categories[ category ].map((type) => {
+    const diagram = WINDOW_DIAGRAM_MAP[ type ];
+    if (!diagram) {
+      throw new Error(`Window diagram not found for type: ${type}`);
+    }
+    return diagram;
+  });
 }

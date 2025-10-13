@@ -225,7 +225,8 @@ function createItemsSheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
   }
 
   // Data Rows
-  data.items.forEach((item, index) => {
+  let index = 0;
+  for (const item of data.items) {
     const rowNumber = index + 2; // Start at row 2 (row 1 is header)
     const row = sheet.getRow(rowNumber);
     row.height = excelRowHeights.tableRow;
@@ -265,7 +266,9 @@ function createItemsSheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
       row.getCell(col).fill = fill;
       row.getCell(col).border = excelBorders.thin;
     }
-  });
+
+    index++;
+  }
 
   // Totals Row
   const totalsRowNumber = data.items.length + 2;
