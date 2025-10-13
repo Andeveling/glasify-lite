@@ -96,7 +96,7 @@
         "useHeadingContent": "warn"
       },
       "performance": {
-        "useTopLevelRegex": "warn"
+        "useTopLevelRegex": "info"
       }
     }
   },

@@ -7,6 +7,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Feature 005: Send Quote to Vendor (2025-10-13)
+
+#### Core User Journey Completion
+- **Feature**: Users can now send draft quotes to vendor for professional review and follow-up
+- **User Stories Implemented**:
+  1. **Submit Draft Quote for Review (P1 - MVP)**: Core submission flow with status transition (draft → sent)
+  2. **Include Contact Information (P1)**: Phone/email capture with Colombian format validation
+  3. **Understand Next Steps (P2)**: Post-submission confirmation with timeline and vendor contact
+  4. **View Submission History (P3)**: Filter and sort quotes by submission date
+- **Components Added**:
+  - `SendQuoteButton`: Client Component with modal trigger for draft quotes
+  - `ContactInfoModal`: React Hook Form with Zod validation for contact info
+  - `QuoteStatusBadge`: Atom component with icons and color variants (draft/sent/canceled)
+- **Backend Changes**:
+  - Database schema: Added `sentAt DateTime?` field to Quote model
+  - Service function: `sendQuoteToVendor` with ownership, status, and items validation
+  - tRPC procedure: `quote.send-to-vendor` with input/output schemas
+  - Zod schemas: `sendToVendorInput`, `sendToVendorOutput` with Colombian phone format support
+- **UX Improvements**:
+  - Optimistic updates with instant UI feedback
+  - Toast notifications for success/error states
+  - Pre-filled contact info if previously saved
+  - Status badges in quote list for quick identification
+  - Confirmation message with expected timeline (24-48h) and vendor contact
+- **Testing**:
+  - Unit tests: Schema validation, status transitions
+  - Integration tests: Quote submission flow, contact persistence, filtering
+  - Contract tests: Input/output schema adherence
+  - E2E tests: Complete user journey from catalog to submission
+- **Files Modified**:
+  - Database: `prisma/schema.prisma`, migration `20251013144059_add_quote_sent_at`
+  - Service: `src/server/api/routers/quote/quote.service.ts`
+  - Router: `src/server/api/routers/quote/quote.ts`
+  - Schemas: `src/server/api/routers/quote/quote.schemas.ts`
+  - Hook: `src/hooks/use-send-quote.ts`
+  - Components: `src/app/(dashboard)/quotes/[quoteId]/_components/` (SendQuoteButton, ContactInfoModal)
+  - Badge: `src/app/(dashboard)/quotes/_components/quote-status-badge.tsx`
+  - Page: `src/app/(dashboard)/quotes/[quoteId]/page.tsx` (added sentAt display)
+  - List: `src/app/(dashboard)/quotes/_components/quote-list.tsx` (status badges)
+  - Filters: `src/app/(dashboard)/quotes/_components/quote-filters.tsx` (status filter)
+- **Impact**: Completes core user journey - users can now generate, review, and submit quotes to vendor for follow-up
+- **Architecture**: Follows SOLID principles, Atomic Design, Server-First approach with Winston logging
+- **Documentation**: See `specs/005-send-quote-to/` for complete specification and implementation plan
+
 ### Fixed - Quote Status Semantic Clarification (2025-10-13)
 
 #### UX Improvement: "En edición" → "Pendiente"
