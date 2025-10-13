@@ -16,7 +16,7 @@ declare module 'next-auth' {
     user: {
       id: string;
       role: 'admin' | 'user';
-    } & DefaultSession['user'];
+    } & DefaultSession[ 'user' ];
   }
 
   interface User {
@@ -41,6 +41,7 @@ const isAdmin = (email: string | null | undefined): boolean => {
 export const authConfig = {
   adapter: PrismaAdapter(db),
   callbacks: {
+    // biome-ignore lint/suspicious/useAwait: NextAuth.js requires async callbacks
     async redirect({ url, baseUrl }) {
       // Allow relative callback URLs
       if (url.startsWith('/')) return `${baseUrl}${url}`;
@@ -58,6 +59,7 @@ export const authConfig = {
         role: isAdmin(user.email) ? 'admin' : 'user',
       },
     }),
+    // biome-ignore lint/suspicious/useAwait: NextAuth.js requires async callbacks
     async signIn({ user }) {
       // This callback is called after successful sign in
       // We can't redirect here, but we can use the session callback

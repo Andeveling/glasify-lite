@@ -372,7 +372,7 @@ export async function sendQuoteToVendor(
       contactPhone: updatedQuote.contactPhone ?? params.contactPhone,
       currency: updatedQuote.currency,
       id: updatedQuote.id,
-      sentAt: updatedQuote.sentAt!, // Non-null after update
+      sentAt: updatedQuote.sentAt ?? now, // Should be set by update, fallback to now
       status: updatedQuote.status as 'sent',
       total: Number(updatedQuote.total),
     };
