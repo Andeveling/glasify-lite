@@ -53,10 +53,28 @@ export default async function MyQuotesPage({ searchParams }: MyQuotesPageProps) 
   const searchQuery = params?.q ?? undefined;
   const sortBy = params?.sort as 'newest' | 'oldest' | 'price-high' | 'price-low' | undefined;
 
+  // Map frontend sort values to backend format
+  const getSortParams = (sortOption?: string) => {
+    switch (sortOption) {
+      case 'oldest':
+        return { sortBy: 'createdAt' as const, sortOrder: 'asc' as const };
+      case 'price-high':
+        return { sortBy: 'total' as const, sortOrder: 'desc' as const };
+      case 'price-low':
+        return { sortBy: 'total' as const, sortOrder: 'asc' as const };
+      case 'newest':
+      default:
+        return { sortBy: 'createdAt' as const, sortOrder: 'desc' as const };
+    }
+  };
+
+  const { sortBy: backendSortBy, sortOrder } = getSortParams(sortBy);
+
   logger.info('[MyQuotesPage] User accessing their quotes', {
     page,
     searchQuery: searchQuery ?? 'none',
-    sortBy: sortBy ?? 'newest',
+    sortBy: backendSortBy,
+    sortOrder,
     status: status ?? 'all',
     userId: session.user.id,
   });
@@ -66,9 +84,10 @@ export default async function MyQuotesPage({ searchParams }: MyQuotesPageProps) 
     includeExpired: false,
     limit: 10,
     page,
+    search: searchQuery,
+    sortBy: backendSortBy,
+    sortOrder,
     status,
-    // Note: Add searchQuery and sortBy to tRPC procedure if not already supported
-    // For now, filtering will happen client-side via the QuoteFilters component
   });
 
   // Check if filters are active

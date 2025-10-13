@@ -34,9 +34,10 @@ export const listUserQuotesInput = z.object({
   includeExpired: z.boolean().default(false),
   limit: z.number().int().positive().max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE),
   page: z.number().int().positive().default(1),
-  sortBy: z.enum(['createdAt', 'validUntil', 'total']).default('createdAt'),
-  sortOrder: z.enum(['asc', 'desc']).default('desc'),
-  status: z.enum(['draft', 'sent', 'canceled']).optional(),
+  search: z.string().optional(),
+  sortBy: z.enum([ 'createdAt', 'validUntil', 'total' ]).default('createdAt'),
+  sortOrder: z.enum([ 'asc', 'desc' ]).default('desc'),
+  status: z.enum([ 'draft', 'sent', 'canceled' ]).optional(),
 });
 
 export type ListUserQuotesInput = z.infer<typeof listUserQuotesInput>;
@@ -120,7 +121,7 @@ export const quoteListItemSchema = z.object({
   isExpired: z.boolean(),
   itemCount: z.number().int().nonnegative(),
   projectName: z.string(),
-  status: z.enum(['draft', 'sent', 'canceled']),
+  status: z.enum([ 'draft', 'sent', 'canceled' ]),
   total: z.number().nonnegative(),
   validUntil: z.date().nullable(),
 });
@@ -174,7 +175,7 @@ export const quoteDetailSchema = z.object({
   items: z.array(quoteItemDetailSchema),
   manufacturerName: z.string(),
   projectAddress: projectAddressSchema,
-  status: z.enum(['draft', 'sent', 'canceled']),
+  status: z.enum([ 'draft', 'sent', 'canceled' ]),
   total: z.number().nonnegative(),
   totalUnits: z.number().int().nonnegative(),
   userEmail: z.string().optional(),
