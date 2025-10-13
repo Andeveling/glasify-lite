@@ -28,7 +28,7 @@ import {
 /**
  * Create complete Excel workbook for quote
  */
-export async function createQuoteExcelWorkbook(data: QuoteExcelData): Promise<ExcelJS.Workbook> {
+export function createQuoteExcelWorkbook(data: QuoteExcelData): ExcelJS.Workbook {
   const workbook = new ExcelJS.Workbook();
 
   // Set workbook properties
@@ -52,11 +52,11 @@ function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
     properties: {
       defaultRowHeight: excelRowHeights.default,
     },
-    views: [{ showGridLines: false }],
+    views: [ { showGridLines: false } ],
   });
 
   // Set column widths
-  sheet.columns = [{ width: excelColumnWidths.summaryLabel }, { width: excelColumnWidths.summaryValue }];
+  sheet.columns = [ { width: excelColumnWidths.summaryLabel }, { width: excelColumnWidths.summaryValue } ];
 
   let currentRow = 1;
 
@@ -81,15 +81,15 @@ function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
 
   // Quote details
   const quoteDetails = [
-    ['Cotización #:', data.quote.id.slice(0, 8)],
-    ['Proyecto:', sanitizeExcelText(data.quote.projectName)],
-    ['Estado:', data.quote.status === 'draft' ? 'Borrador' : data.quote.status],
-    ['Fecha de creación:', formatDateForExcel(data.quote.createdAt)],
-    ['Válida hasta:', formatDateForExcel(data.quote.validUntil)],
-    ['Total de ítems:', data.quote.itemCount],
+    [ 'Cotización #:', data.quote.id.slice(0, 8) ],
+    [ 'Proyecto:', sanitizeExcelText(data.quote.projectName) ],
+    [ 'Estado:', data.quote.status === 'draft' ? 'Borrador' : data.quote.status ],
+    [ 'Fecha de creación:', formatDateForExcel(data.quote.createdAt) ],
+    [ 'Válida hasta:', formatDateForExcel(data.quote.validUntil) ],
+    [ 'Total de ítems:', data.quote.itemCount ],
   ];
 
-  for (const [label, value] of quoteDetails) {
+  for (const [ label, value ] of quoteDetails) {
     const row = sheet.getRow(currentRow);
     row.getCell(1).value = label;
     row.getCell(1).font = excelFonts.bold;
@@ -116,12 +116,12 @@ function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
 
   // Customer details
   const customerDetails = [
-    ['Nombre:', sanitizeExcelText(data.customer.name)],
-    ['Email:', data.customer.email || '-'],
-    ['Teléfono:', data.customer.phone || '-'],
+    [ 'Nombre:', sanitizeExcelText(data.customer.name) ],
+    [ 'Email:', data.customer.email || '-' ],
+    [ 'Teléfono:', data.customer.phone || '-' ],
   ];
 
-  for (const [label, value] of customerDetails) {
+  for (const [ label, value ] of customerDetails) {
     const row = sheet.getRow(currentRow);
     row.getCell(1).value = label;
     row.getCell(1).font = excelFonts.bold;
@@ -186,7 +186,7 @@ function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
   totalRow.getCell(2).border = excelBorders.thick;
 
   // Apply borders to summary sections
-  applyBordersToRange(sheet, 4, 1, currentRow - 1, 2);
+  applyBordersToRange(sheet, { endCol: 2, endRow: currentRow - 1, startCol: 1, startRow: 4 });
 }
 
 /**
@@ -213,7 +213,7 @@ function createItemsSheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
   // Header Row
   const headerRow = sheet.getRow(1);
   headerRow.height = excelRowHeights.tableHeader;
-  headerRow.values = ['#', 'Producto', 'Descripción', 'Dimensiones', 'Cantidad', 'Precio Unitario', 'Subtotal'];
+  headerRow.values = [ '#', 'Producto', 'Descripción', 'Dimensiones', 'Cantidad', 'Precio Unitario', 'Subtotal' ];
 
   // Apply header styles
   for (let col = 1; col <= 7; col++) {
@@ -294,7 +294,7 @@ function createItemsSheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
   totalsRow.getCell(7).border = excelBorders.thick;
 
   // Freeze header row
-  sheet.views = [{ state: 'frozen', ySplit: 1 }];
+  sheet.views = [ { state: 'frozen', ySplit: 1 } ];
 
   // Auto-filter
   sheet.autoFilter = {
@@ -308,11 +308,9 @@ function createItemsSheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
  */
 function applyBordersToRange(
   sheet: ExcelJS.Worksheet,
-  startRow: number,
-  startCol: number,
-  endRow: number,
-  endCol: number
+  range: { startRow: number; startCol: number; endRow: number; endCol: number }
 ) {
+  const { startRow, startCol, endRow, endCol } = range;
   for (let row = startRow; row <= endRow; row++) {
     for (let col = startCol; col <= endCol; col++) {
       const cell = sheet.getRow(row).getCell(col);
@@ -325,7 +323,7 @@ function applyBordersToRange(
  * Write workbook to buffer for Server Action
  */
 export async function writeQuoteExcel(data: QuoteExcelData): Promise<Buffer> {
-  const workbook = await createQuoteExcelWorkbook(data);
+  const workbook = createQuoteExcelWorkbook(data);
   const buffer = await workbook.xlsx.writeBuffer();
   return Buffer.from(buffer);
 }
