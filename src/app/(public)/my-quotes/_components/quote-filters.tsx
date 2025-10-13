@@ -38,6 +38,10 @@ const SORT_OPTIONS: Array<{ value: QuoteSortOption; label: string }> = [
  * - Clear filters button (shown when filters active)
  * - Active filters count badge
  *
+ * Memory Leak Fix:
+ * - Receives search params as props instead of calling useSearchParams()
+ * - Prevents EventEmitter memory leak warning
+ *
  * Features:
  * - URL synchronization via useQuoteFilters hook
  * - Debounced search (300ms)
@@ -47,10 +51,22 @@ const SORT_OPTIONS: Array<{ value: QuoteSortOption; label: string }> = [
  *
  * @example
  * ```tsx
- * <QuoteFilters />
+ * <QuoteFilters
+ *   currentStatus={status}
+ *   currentSort={sortBy}
+ *   currentSearchQuery={searchQuery}
+ * />
  * ```
  */
-export function QuoteFilters() {
+export function QuoteFilters({
+  currentStatus,
+  currentSort,
+  currentSearchQuery,
+}: {
+  currentStatus?: QuoteStatus;
+  currentSort?: QuoteSortOption;
+  currentSearchQuery?: string;
+}) {
   const {
     filters,
     setStatus,
@@ -60,7 +76,11 @@ export function QuoteFilters() {
     activeFiltersCount,
     hasActiveFilters,
     isPending,
-  } = useQuoteFilters();
+  } = useQuoteFilters({
+    currentSearchQuery,
+    currentSort,
+    currentStatus,
+  });
 
   /**
    * Handle status filter change

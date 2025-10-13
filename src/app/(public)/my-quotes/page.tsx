@@ -91,7 +91,7 @@ export default async function MyQuotesPage({ searchParams }: MyQuotesPageProps) 
 
       {/* Filters */}
       <div className="mb-6">
-        <QuoteFilters />
+        <QuoteFilters currentSearchQuery={searchQuery} currentSort={sortBy} currentStatus={status} />
       </div>
 
       {/* Quotes list or empty state */}

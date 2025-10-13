@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
 
 /**
@@ -19,6 +19,10 @@ export interface QuoteFilters {
 /**
  * Custom hook for managing quote filters with URL synchronization
  *
+ * Memory Leak Fix:
+ * - Receives current params as props instead of calling useSearchParams()
+ * - Prevents EventEmitter memory leak warning
+ *
  * Features:
  * - Manages filter state (status, search, sort)
  * - Syncs filters with URL search params
@@ -26,10 +30,15 @@ export interface QuoteFilters {
  * - Provides helper methods for filter updates
  * - Tracks active filters count
  *
+ * @param currentParams - Current URL search params from Server Component
  * @example
  * ```tsx
- * function QuoteFilters() {
- *   const { filters, setStatus, setSearchQuery, clearFilters } = useQuoteFilters();
+ * function QuoteFilters({ currentStatus, currentSort, currentSearchQuery }) {
+ *   const { filters, setStatus, setSearchQuery, clearFilters } = useQuoteFilters({
+ *     currentStatus,
+ *     currentSort,
+ *     currentSearchQuery,
+ *   });
  *
  *   return (
  *     <div>
@@ -41,71 +50,85 @@ export interface QuoteFilters {
  * }
  * ```
  */
-export function useQuoteFilters() {
+export function useQuoteFilters(currentParams: {
+  currentStatus?: QuoteStatus;
+  currentSort?: QuoteSortOption;
+  currentSearchQuery?: string;
+}) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
+  const [ isPending, startTransition ] = useTransition();
 
-  // Initialize filters from URL params
-  const [filters, setFilters] = useState<QuoteFilters>(() => {
-    const statusParam = searchParams.get('status');
-    const searchParam = searchParams.get('q') ?? '';
-    const sortParam = searchParams.get('sort') ?? 'newest';
+  const { currentStatus, currentSort = 'newest', currentSearchQuery = '' } = currentParams;
 
-    // Validate status param
-    const validStatuses: QuoteStatus[] = ['draft', 'sent', 'canceled'];
-    const status = validStatuses.includes(statusParam as QuoteStatus) ? (statusParam as QuoteStatus) : undefined;
-
-    // Validate sort param
-    const validSorts: QuoteSortOption[] = ['newest', 'oldest', 'price-high', 'price-low'];
-    const sortBy = validSorts.includes(sortParam as QuoteSortOption) ? (sortParam as QuoteSortOption) : 'newest';
-
-    return {
-      searchQuery: searchParam,
-      sortBy,
-      status,
-    };
+  // Initialize filters from props (received from Server Component)
+  const [ filters, setFilters ] = useState<QuoteFilters>({
+    searchQuery: currentSearchQuery,
+    sortBy: currentSort,
+    status: currentStatus,
   });
 
   // Debounce timer for search
-  const [searchDebounceTimer, setSearchDebounceTimer] = useState<NodeJS.Timeout | null>(null);
+  const [ searchDebounceTimer, setSearchDebounceTimer ] = useState<NodeJS.Timeout | null>(null);
+
+  /**
+   * Build query string from current state
+   * Avoids multiple useSearchParams() calls
+   */
+  const createQueryString = useCallback(
+    (updates: Record<string, string | null>) => {
+      const params = new URLSearchParams();
+
+      // Preserve current parameters
+      if (currentSearchQuery) {
+        params.set('q', currentSearchQuery);
+      }
+      if (currentStatus) {
+        params.set('status', currentStatus);
+      }
+      if (currentSort && currentSort !== 'newest') {
+        params.set('sort', currentSort);
+      }
+
+      // Apply updates
+      for (const [ key, value ] of Object.entries(updates)) {
+        if (value === null || value === '') {
+          params.delete(key);
+        } else {
+          params.set(key, value);
+        }
+      }
+
+      return params.toString();
+    },
+    [ currentSearchQuery, currentStatus, currentSort ]
+  );
 
   /**
    * Update URL with current filters
    */
   const updateURL = useCallback(
     (newFilters: QuoteFilters) => {
-      const params = new URLSearchParams(searchParams.toString());
+      const updates: Record<string, string | null> = {};
 
       // Update or remove status param
-      if (newFilters.status) {
-        params.set('status', newFilters.status);
-      } else {
-        params.delete('status');
-      }
+      updates.status = newFilters.status || null;
 
       // Update or remove search param
-      if (newFilters.searchQuery) {
-        params.set('q', newFilters.searchQuery);
-      } else {
-        params.delete('q');
-      }
+      updates.q = newFilters.searchQuery || null;
 
       // Update or remove sort param (don't add if default)
-      if (newFilters.sortBy && newFilters.sortBy !== 'newest') {
-        params.set('sort', newFilters.sortBy);
-      } else {
-        params.delete('sort');
-      }
+      updates.sort = newFilters.sortBy && newFilters.sortBy !== 'newest' ? newFilters.sortBy : null;
+
+      const queryString = createQueryString(updates);
+      const newURL = queryString ? `${pathname}?${queryString}` : pathname;
 
       // Use replace to avoid adding to browser history
-      const newURL = `${pathname}?${params.toString()}`;
       startTransition(() => {
         router.replace(newURL, { scroll: false });
       });
     },
-    [pathname, router, searchParams]
+    [ pathname, router, createQueryString ]
   );
 
   /**
@@ -117,7 +140,7 @@ export function useQuoteFilters() {
       setFilters(newFilters);
       updateURL(newFilters);
     },
-    [filters, updateURL]
+    [ filters, updateURL ]
   );
 
   /**
@@ -140,7 +163,7 @@ export function useQuoteFilters() {
 
       setSearchDebounceTimer(timer);
     },
-    [filters, searchDebounceTimer, updateURL]
+    [ filters, searchDebounceTimer, updateURL ]
   );
 
   /**
@@ -152,7 +175,7 @@ export function useQuoteFilters() {
       setFilters(newFilters);
       updateURL(newFilters);
     },
-    [filters, updateURL]
+    [ filters, updateURL ]
   );
 
   /**
@@ -166,7 +189,7 @@ export function useQuoteFilters() {
     };
     setFilters(newFilters);
     updateURL(newFilters);
-  }, [updateURL]);
+  }, [ updateURL ]);
 
   /**
    * Count active filters (excluding defaults)
@@ -179,12 +202,12 @@ export function useQuoteFilters() {
     if (filters.sortBy && filters.sortBy !== 'newest') count++;
 
     return count;
-  }, [filters]);
+  }, [ filters ]);
 
   /**
    * Check if any filters are active
    */
-  const hasActiveFilters = useMemo(() => activeFiltersCount > 0, [activeFiltersCount]);
+  const hasActiveFilters = useMemo(() => activeFiltersCount > 0, [ activeFiltersCount ]);
 
   // Cleanup debounce timer on unmount
   useEffect(
@@ -193,7 +216,7 @@ export function useQuoteFilters() {
         clearTimeout(searchDebounceTimer);
       }
     },
-    [searchDebounceTimer]
+    [ searchDebounceTimer ]
   );
 
   return {
