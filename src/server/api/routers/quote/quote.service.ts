@@ -105,7 +105,7 @@ export async function generateQuoteFromCart(
           projectPostalCode: input.projectAddress.projectPostalCode,
           projectState: input.projectAddress.projectState,
           projectStreet: input.projectAddress.projectStreet,
-          status: 'draft', // Initial status is draft
+          status: 'draft', // Initial status: pending review/send (read-only, not editable after creation)
           total,
           userId,
           validUntil,

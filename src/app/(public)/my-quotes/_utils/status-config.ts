@@ -14,7 +14,7 @@ import { Edit3, FileText, type LucideIcon, Send, XCircle } from 'lucide-react';
 /**
  * Quote status type from Prisma schema
  */
-export type QuoteStatus = Quote['status'];
+export type QuoteStatus = Quote[ 'status' ];
 
 /**
  * Badge variant types (Shadcn/ui Badge component)
@@ -80,15 +80,16 @@ export const STATUS_CONFIG: Record<QuoteStatus, StatusConfig> = {
     variant: 'destructive',
   },
   draft: {
-    color: 'secondary', // Yellow/Amber - work in progress
+    color: 'secondary', // Yellow/Amber - pending action
     cta: {
-      action: 'edit',
-      label: 'Continuar editando',
+      action: 'view',
+      label: 'Ver detalles',
     },
-    icon: Edit3,
-    iconName: 'edit',
-    label: 'En edición',
-    tooltip: 'Esta cotización está en edición. Puedes continuar modificándola.',
+    icon: FileText,
+    iconName: 'file-text',
+    label: 'Pendiente',
+    tooltip:
+      'Esta cotización fue generada desde el carrito y está lista para enviar. Revisa los detalles antes de enviarla.',
     variant: 'secondary',
   },
 
@@ -136,7 +137,7 @@ export function getStatusConfig(status: QuoteStatus | string): StatusConfig {
     return DEFAULT_STATUS_CONFIG;
   }
 
-  return STATUS_CONFIG[status as QuoteStatus] ?? DEFAULT_STATUS_CONFIG;
+  return STATUS_CONFIG[ status as QuoteStatus ] ?? DEFAULT_STATUS_CONFIG;
 }
 
 /**

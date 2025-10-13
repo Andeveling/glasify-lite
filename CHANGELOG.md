@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - Quote Status Semantic Clarification (2025-10-13)
+
+#### UX Improvement: "En edición" → "Pendiente"
+- **Problem**: Draft quote status labeled "En edición" (In edit) suggested editability, but quotes are immutable read-only snapshots
+- **User Confusion**: Users expected edit functionality that doesn't exist, causing frustration
+- **Root Cause**: Semantic mismatch between UI label and actual system behavior
+- **Solution Applied**:
+  - Changed label: "En edición" → "Pendiente" (Pending)
+  - Changed icon: Edit3 (pencil) → FileText (document)
+  - Updated tooltip: Removed "puedes modificar", added "lista para enviar"
+  - Updated CTA: "Continuar editando" → "Ver detalles"
+- **UX Principle Applied**: "Don't Make Me Think" - honest labels that match functionality
+- **Architecture Decision Documented**: Quotes are immutable by design (pricing snapshot, validity period, audit trail)
+- **Files Modified**:
+  - `src/app/(public)/my-quotes/_utils/status-config.ts` - Updated draft status config
+  - `prisma/schema.prisma` - Added JSDoc for QuoteStatus enum
+  - `src/server/api/routers/quote/quote.service.ts` - Updated comment for status assignment
+  - `docs/fixes/quote-status-semantic-clarification.md` - Complete problem/solution documentation
+  - `docs/fixes/quote-status-summary.md` - Visual before/after comparison
+  - `tests/unit/status-config.test.ts` - Validation tests for status configuration
+- **Impact**: Users now correctly understand that draft quotes are "pending send", not "in edit"
+- **Related**: Prepares ground for future "Send Quote" feature (draft → sent transition)
+
 ### Changed - Documentation Update (2025-10-12)
 
 #### PRD Modernization to v1.5

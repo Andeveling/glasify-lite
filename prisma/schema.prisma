@@ -27,6 +27,10 @@ enum ServiceUnit {
   ml
 }
 
+/// Quote lifecycle status
+/// - draft: Generated from cart, pending review/send (read-only, not editable)
+/// - sent: Sent to vendor/client, awaiting response
+/// - canceled: Canceled and no longer active
 enum QuoteStatus {
   draft
   sent
