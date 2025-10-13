@@ -16,7 +16,7 @@ declare module 'next-auth' {
     user: {
       id: string;
       role: 'admin' | 'user';
-    } & DefaultSession[ 'user' ];
+    } & DefaultSession['user'];
   }
 
   interface User {
@@ -29,7 +29,7 @@ declare module 'next-auth' {
  * Compares against the ADMIN_EMAIL environment variable
  */
 const isAdmin = (email: string | null | undefined): boolean => {
-  if (!email || !env.ADMIN_EMAIL) return false;
+  if (!(email && env.ADMIN_EMAIL)) return false;
   return email.toLowerCase() === env.ADMIN_EMAIL.toLowerCase();
 };
 

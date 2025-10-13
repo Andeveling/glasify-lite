@@ -1,6 +1,6 @@
 /**
  * QuoteItemImage Component
- * 
+ *
  * Displays product thumbnail image with SVG diagram fallback.
  * Features:
  * - Lazy loading for performance
@@ -8,14 +8,14 @@
  * - Automatic fallback to WindowDiagram on error/missing image
  * - Click handler for lightbox viewer
  * - Accessible keyboard navigation
- * 
+ *
  * @module QuoteItemImage
  */
 
 'use client';
 
-import { useState, useCallback, type KeyboardEvent } from 'react';
 import Image from 'next/image';
+import { type KeyboardEvent, useCallback, useState } from 'react';
 import { WindowDiagram } from '@/components/quote/window-diagram';
 import { getProductImageWithFallback } from '@/lib/utils/image-utils';
 import type { WindowType } from '@/types/window.types';
@@ -25,20 +25,20 @@ import { DEFAULT_WINDOW_TYPE } from '@/types/window.types';
  * Size configuration for responsive thumbnails
  */
 const SIZE_CONFIG = {
-  sm: {
-    container: 'h-16 w-16', // 64px
-    imageSize: 64,
-    sizes: '64px',
+  lg: {
+    container: 'h-32 w-32', // 128px
+    imageSize: 128,
+    sizes: '(max-width: 768px) 96px, 128px',
   },
   md: {
     container: 'h-24 w-24', // 96px
     imageSize: 96,
     sizes: '(max-width: 768px) 64px, 96px',
   },
-  lg: {
-    container: 'h-32 w-32', // 128px
-    imageSize: 128,
-    sizes: '(max-width: 768px) 96px, 128px',
+  sm: {
+    container: 'h-16 w-16', // 64px
+    imageSize: 64,
+    sizes: '64px',
   },
 } as const;
 
@@ -78,7 +78,7 @@ export interface QuoteItemImageProps {
 
 /**
  * QuoteItemImage Component
- * 
+ *
  * Renders product thumbnail with automatic fallback to SVG diagram.
  * Optimizes images via CDN and implements progressive loading.
  */
@@ -132,47 +132,29 @@ export function QuoteItemImage({
 
   return (
     <button
-      type="button"
+      aria-label={`Ver imagen de ${modelName}`}
+      className={`
+        ${sizeConfig.container}relative aspect-square cursor-pointer overflow-hidden rounded-lg bg-muted transition-all hover:ring-2 hover:ring-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${!isImageLoaded && shouldShowImage ? 'animate-pulse' : ''}
+      `}
       data-testid="quote-item-image"
       onClick={onClick}
       onKeyDown={handleKeyDown}
-      className={`
-        ${sizeConfig.container}
-        relative
-        aspect-square
-        overflow-hidden
-        rounded-lg
-        bg-muted
-        transition-all
-        hover:ring-2
-        hover:ring-primary/20
-        focus-visible:outline-none
-        focus-visible:ring-2
-        focus-visible:ring-primary
-        focus-visible:ring-offset-2
-        cursor-pointer
-        ${!isImageLoaded && shouldShowImage ? 'animate-pulse' : ''}
-      `}
-      aria-label={`Ver imagen de ${modelName}`}
+      type="button"
     >
       {shouldShowImage ? (
         <Image
-          src={optimizedImageUrl!}
           alt={modelName}
+          className="object-cover"
           fill
-          sizes={sizeConfig.sizes}
           loading={eager ? 'eager' : 'lazy'}
           onError={handleImageError}
           onLoad={handleImageLoad}
-          className="object-cover"
+          sizes={sizeConfig.sizes}
+          src={optimizedImageUrl!}
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center p-2">
-          <WindowDiagram
-            type={windowType || DEFAULT_WINDOW_TYPE}
-            size={size}
-            className="object-contain"
-          />
+          <WindowDiagram className="object-contain" size={size} type={windowType || DEFAULT_WINDOW_TYPE} />
         </div>
       )}
     </button>
@@ -181,7 +163,7 @@ export function QuoteItemImage({
 
 /**
  * Usage Examples:
- * 
+ *
  * ```tsx
  * // With product image
  * <QuoteItemImage
@@ -191,7 +173,7 @@ export function QuoteItemImage({
  *   size="md"
  *   onClick={() => openLightbox(item)}
  * />
- * 
+ *
  * // With SVG fallback
  * <QuoteItemImage
  *   modelName="Ventana Corrediza"
@@ -200,7 +182,7 @@ export function QuoteItemImage({
  *   size="lg"
  *   onClick={() => openLightbox(item)}
  * />
- * 
+ *
  * // Eager loading (above fold)
  * <QuoteItemImage
  *   modelName="Featured Product"

@@ -1,6 +1,6 @@
 /**
  * QuoteItemPreview Component
- * 
+ *
  * Displays preview of first 3 quote items with thumbnails.
  * Used in quote list cards to give visual context.
  * Features:
@@ -8,12 +8,12 @@
  * - Compact horizontal layout
  * - "+N more" indicator for remaining items
  * - Optimized with eager loading (above fold)
- * 
+ *
  * @module QuoteItemPreview
  */
 
-import { QuoteItemImage } from '../[quoteId]/_components/quote-item-image';
 import type { WindowType } from '@/types/window.types';
+import { QuoteItemImage } from '../[quoteId]/_components/quote-item-image';
 
 export interface QuoteItemPreviewData {
   id: string;
@@ -36,7 +36,7 @@ export interface QuoteItemPreviewProps {
 
 /**
  * QuoteItemPreview Component
- * 
+ *
  * Horizontal row of up to 3 product thumbnails.
  */
 export function QuoteItemPreview({ items, totalCount }: QuoteItemPreviewProps) {
@@ -48,38 +48,22 @@ export function QuoteItemPreview({ items, totalCount }: QuoteItemPreviewProps) {
   }
 
   return (
-    <div
-      data-testid="quote-item-preview"
-      className="flex items-center gap-2"
-    >
+    <div className="flex items-center gap-2" data-testid="quote-item-preview">
       {/* First 3 thumbnails */}
       {previewItems.map((item) => (
         <QuoteItemImage
+          eager
           key={item.id}
-          modelName={item.modelName}
           modelImageUrl={item.modelImageUrl}
-          windowType={item.windowType}
+          modelName={item.modelName}
           size="sm"
-          eager // Above fold in list
+          windowType={item.windowType} // Above fold in list
         />
       ))}
 
       {/* "+N more" indicator */}
       {remainingCount > 0 && (
-        <div
-          className="
-            flex
-            h-16
-            w-16
-            items-center
-            justify-center
-            rounded-lg
-            bg-muted
-            text-sm
-            font-medium
-            text-muted-foreground
-          "
-        >
+        <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-muted font-medium text-muted-foreground text-sm">
           +{remainingCount}
         </div>
       )}
@@ -89,7 +73,7 @@ export function QuoteItemPreview({ items, totalCount }: QuoteItemPreviewProps) {
 
 /**
  * Usage Example:
- * 
+ *
  * ```tsx
  * // In QuoteListItem
  * const previewItems = quote.items.map(item => ({
@@ -98,9 +82,9 @@ export function QuoteItemPreview({ items, totalCount }: QuoteItemPreviewProps) {
  *   modelImageUrl: item.modelImageUrl,
  *   windowType: item.windowType,
  * }));
- * 
- * <QuoteItemPreview 
- *   items={previewItems} 
+ *
+ * <QuoteItemPreview
+ *   items={previewItems}
  *   totalCount={quote.itemCount}
  * />
  * ```

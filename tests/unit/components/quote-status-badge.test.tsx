@@ -1,15 +1,15 @@
 /**
  * Component tests for QuoteStatusBadge
- * 
+ *
  * Tests the QuoteStatusBadge component rendering, tooltip behavior,
  * icon display, and accessibility attributes.
- * 
+ *
  * @vitest-environment jsdom
  */
 
-import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { describe, expect, it } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import type { Quote } from '@prisma/client';
 
@@ -49,9 +49,7 @@ describe('QuoteStatusBadge Component', () => {
 
     it('should apply custom className when provided', () => {
       expect(() => {
-        const { container } = render(
-          <QuoteStatusBadge status="draft" className="custom-class" />
-        );
+        const { container } = render(<QuoteStatusBadge className="custom-class" status="draft" />);
         expect(container.firstChild).toHaveClass('custom-class');
       }).toThrow();
     });
@@ -69,7 +67,7 @@ describe('QuoteStatusBadge Component', () => {
 
     it('should hide icon when showIcon=false', () => {
       expect(() => {
-        render(<QuoteStatusBadge status="draft" showIcon={false} />);
+        render(<QuoteStatusBadge showIcon={false} status="draft" />);
         const badge = screen.getByText('En edición').closest('span');
         expect(badge?.querySelector('svg')).not.toBeInTheDocument();
       }).toThrow();
@@ -100,7 +98,7 @@ describe('QuoteStatusBadge Component', () => {
       expect(async () => {
         const user = userEvent.setup();
         render(<QuoteStatusBadge status="draft" />);
-        
+
         const badge = screen.getByText('En edición');
         await user.hover(badge);
 
@@ -112,9 +110,9 @@ describe('QuoteStatusBadge Component', () => {
 
     it('should not render tooltip when showTooltip=false', () => {
       expect(() => {
-        render(<QuoteStatusBadge status="draft" showTooltip={false} />);
+        render(<QuoteStatusBadge showTooltip={false} status="draft" />);
         const badge = screen.getByText('En edición');
-        
+
         // Tooltip trigger should not be present
         expect(badge.closest('[data-tooltip]')).not.toBeInTheDocument();
       }).toThrow();
@@ -124,7 +122,7 @@ describe('QuoteStatusBadge Component', () => {
       expect(async () => {
         const user = userEvent.setup();
         const { rerender } = render(<QuoteStatusBadge status="draft" />);
-        
+
         let badge = screen.getByText('En edición');
         await user.hover(badge);
         expect(await screen.findByRole('tooltip')).toHaveTextContent(/en edición/i);
@@ -180,7 +178,7 @@ describe('QuoteStatusBadge Component', () => {
       expect(async () => {
         const user = userEvent.setup();
         render(<QuoteStatusBadge status="draft" />);
-        
+
         const badge = screen.getByText('En edición');
         await user.hover(badge);
 
@@ -227,9 +225,9 @@ describe('QuoteStatusBadge Component', () => {
 /**
  * Expected test results BEFORE implementation (T015):
  * ❌ All tests should FAIL with "component not defined" or similar
- * 
+ *
  * Expected test results AFTER implementation (T015):
  * ✅ All tests should PASS with proper rendering and behavior
- * 
+ *
  * Test coverage: ~95% (component logic, rendering, interactions, a11y)
  */

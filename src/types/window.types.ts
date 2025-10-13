@@ -1,18 +1,18 @@
 /**
  * Window Types and Diagram Mappings
- * 
+ *
  * Comprehensive type definitions for window configurations and their
  * corresponding SVG diagram representations.
- * 
+ *
  * @module WindowTypes
  */
 
 /**
  * Window type enumeration
- * 
+ *
  * Covers 20+ common window configurations used in glass/aluminum industry.
  * Each type maps to a specific SVG diagram in /public/diagrams/windows/
- * 
+ *
  * Naming convention: STYLE_PANELS_OPERATION
  * Examples:
  * - FRENCH_2_PANEL: French door with 2 panels
@@ -101,7 +101,7 @@ export enum WindowType {
 
 /**
  * Window type metadata
- * 
+ *
  * Provides human-readable labels and descriptions for each window type
  */
 export interface WindowTypeMetadata {
@@ -129,7 +129,7 @@ export interface WindowTypeMetadata {
 
 /**
  * Window diagram configuration
- * 
+ *
  * Maps WindowType to SVG file path and rendering options
  */
 export interface WindowDiagram {
@@ -154,7 +154,7 @@ export interface WindowDiagram {
 
 /**
  * Window dimension specifications
- * 
+ *
  * Used for quote items with dimensional data
  */
 export interface WindowDimensions {
@@ -179,7 +179,7 @@ export interface WindowDimensions {
 
 /**
  * Window product specification
- * 
+ *
  * Complete specification for a window product in a quote
  */
 export interface WindowProduct {
@@ -224,66 +224,47 @@ export const DEFAULT_WINDOW_TYPE = WindowType.FIXED_SINGLE;
  * Window type categories for grouping in UI
  */
 export const WINDOW_TYPE_CATEGORIES = {
-  french: [ WindowType.FRENCH_2_PANEL, WindowType.FRENCH_4_PANEL ],
+  casement: [WindowType.CASEMENT_LEFT, WindowType.CASEMENT_RIGHT, WindowType.CASEMENT_DOUBLE],
 
-  sliding: [
-    WindowType.SLIDING_2_PANEL,
-    WindowType.SLIDING_3_PANEL,
-    WindowType.SLIDING_4_PANEL,
-  ],
+  fixed: [WindowType.FIXED_SINGLE, WindowType.PICTURE_WINDOW],
+  french: [WindowType.FRENCH_2_PANEL, WindowType.FRENCH_4_PANEL],
 
-  fixed: [ WindowType.FIXED_SINGLE, WindowType.PICTURE_WINDOW ],
+  hung: [WindowType.DOUBLE_HUNG, WindowType.SINGLE_HUNG],
 
-  casement: [
-    WindowType.CASEMENT_LEFT,
-    WindowType.CASEMENT_RIGHT,
-    WindowType.CASEMENT_DOUBLE,
-  ],
+  other: [WindowType.TRANSOM, WindowType.LOUVRE, WindowType.PIVOT, WindowType.SKYLIGHT],
 
-  projecting: [ WindowType.AWNING, WindowType.HOPPER ],
+  projecting: [WindowType.AWNING, WindowType.HOPPER],
 
-  specialty: [
-    WindowType.TILT_TURN,
-    WindowType.BAY_WINDOW,
-    WindowType.BOW_WINDOW,
-    WindowType.CORNER,
-  ],
+  sliding: [WindowType.SLIDING_2_PANEL, WindowType.SLIDING_3_PANEL, WindowType.SLIDING_4_PANEL],
 
-  hung: [ WindowType.DOUBLE_HUNG, WindowType.SINGLE_HUNG ],
-
-  other: [
-    WindowType.TRANSOM,
-    WindowType.LOUVRE,
-    WindowType.PIVOT,
-    WindowType.SKYLIGHT,
-  ],
+  specialty: [WindowType.TILT_TURN, WindowType.BAY_WINDOW, WindowType.BOW_WINDOW, WindowType.CORNER],
 } as const;
 
 /**
  * Window type display labels (Spanish)
  */
 export const WINDOW_TYPE_LABELS: Record<WindowType, string> = {
-  [ WindowType.FRENCH_2_PANEL ]: 'Puerta Francesa 2 Hojas',
-  [ WindowType.FRENCH_4_PANEL ]: 'Puerta Francesa 4 Hojas',
-  [ WindowType.SLIDING_2_PANEL ]: 'Ventana Corrediza 2 Hojas',
-  [ WindowType.SLIDING_3_PANEL ]: 'Ventana Corrediza 3 Hojas',
-  [ WindowType.SLIDING_4_PANEL ]: 'Ventana Corrediza 4 Hojas',
-  [ WindowType.FIXED_SINGLE ]: 'Ventana Fija',
-  [ WindowType.PICTURE_WINDOW ]: 'Ventanal Panorámico',
-  [ WindowType.CASEMENT_LEFT ]: 'Ventana Abatible Izquierda',
-  [ WindowType.CASEMENT_RIGHT ]: 'Ventana Abatible Derecha',
-  [ WindowType.CASEMENT_DOUBLE ]: 'Ventana Abatible Doble',
-  [ WindowType.AWNING ]: 'Ventana Proyectante Superior',
-  [ WindowType.HOPPER ]: 'Ventana Proyectante Inferior',
-  [ WindowType.TILT_TURN ]: 'Ventana Oscilobatiente',
-  [ WindowType.BAY_WINDOW ]: 'Ventana Bahía',
-  [ WindowType.BOW_WINDOW ]: 'Ventana Arco',
-  [ WindowType.CORNER ]: 'Ventana Esquinera',
-  [ WindowType.DOUBLE_HUNG ]: 'Ventana Guillotina Doble',
-  [ WindowType.SINGLE_HUNG ]: 'Ventana Guillotina Simple',
-  [ WindowType.TRANSOM ]: 'Ventana Montante',
-  [ WindowType.LOUVRE ]: 'Ventana Celosía',
-  [ WindowType.PIVOT ]: 'Ventana Pivotante',
-  [ WindowType.SKYLIGHT ]: 'Tragaluz',
-  [ WindowType.UNKNOWN ]: 'Tipo Desconocido',
+  [WindowType.FRENCH_2_PANEL]: 'Puerta Francesa 2 Hojas',
+  [WindowType.FRENCH_4_PANEL]: 'Puerta Francesa 4 Hojas',
+  [WindowType.SLIDING_2_PANEL]: 'Ventana Corrediza 2 Hojas',
+  [WindowType.SLIDING_3_PANEL]: 'Ventana Corrediza 3 Hojas',
+  [WindowType.SLIDING_4_PANEL]: 'Ventana Corrediza 4 Hojas',
+  [WindowType.FIXED_SINGLE]: 'Ventana Fija',
+  [WindowType.PICTURE_WINDOW]: 'Ventanal Panorámico',
+  [WindowType.CASEMENT_LEFT]: 'Ventana Abatible Izquierda',
+  [WindowType.CASEMENT_RIGHT]: 'Ventana Abatible Derecha',
+  [WindowType.CASEMENT_DOUBLE]: 'Ventana Abatible Doble',
+  [WindowType.AWNING]: 'Ventana Proyectante Superior',
+  [WindowType.HOPPER]: 'Ventana Proyectante Inferior',
+  [WindowType.TILT_TURN]: 'Ventana Oscilobatiente',
+  [WindowType.BAY_WINDOW]: 'Ventana Bahía',
+  [WindowType.BOW_WINDOW]: 'Ventana Arco',
+  [WindowType.CORNER]: 'Ventana Esquinera',
+  [WindowType.DOUBLE_HUNG]: 'Ventana Guillotina Doble',
+  [WindowType.SINGLE_HUNG]: 'Ventana Guillotina Simple',
+  [WindowType.TRANSOM]: 'Ventana Montante',
+  [WindowType.LOUVRE]: 'Ventana Celosía',
+  [WindowType.PIVOT]: 'Ventana Pivotante',
+  [WindowType.SKYLIGHT]: 'Tragaluz',
+  [WindowType.UNKNOWN]: 'Tipo Desconocido',
 };

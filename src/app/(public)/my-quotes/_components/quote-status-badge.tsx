@@ -1,28 +1,19 @@
 /**
  * Quote Status Badge Component
- * 
+ *
  * Displays quote status with icon, tooltip, and color-coded badge.
  * Client Component with interactive tooltip behavior.
- * 
+ *
  * @module QuoteStatusBadge
  */
 
 'use client';
 
-import { Badge } from '@/components/ui/badge';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
 import type { Quote } from '@prisma/client';
-import {
-  getStatusConfig,
-  getStatusIconComponent,
-  type QuoteStatus,
-} from '../_utils/status-config';
+import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
+import { getStatusConfig, getStatusIconComponent, type QuoteStatus } from '../_utils/status-config';
 
 /**
  * QuoteStatusBadge props
@@ -30,16 +21,16 @@ import {
 export interface QuoteStatusBadgeProps {
   /** Quote status (draft, sent, canceled) */
   status: QuoteStatus | Quote['status'];
-  
+
   /** Show icon next to label (default: true) */
   showIcon?: boolean;
-  
+
   /** Enable tooltip on hover (default: true) */
   showTooltip?: boolean;
-  
+
   /** Additional CSS classes */
   className?: string;
-  
+
   /** Badge size variant */
   size?: 'sm' | 'default' | 'lg';
 }
@@ -48,38 +39,38 @@ export interface QuoteStatusBadgeProps {
  * Size variant classes for badge
  */
 const sizeVariants = {
-  sm: 'text-xs px-2 py-0.5',
   default: 'text-sm px-2.5 py-0.5',
   lg: 'text-base px-3 py-1',
+  sm: 'text-xs px-2 py-0.5',
 };
 
 /**
  * Icon size variants
  */
 const iconSizeVariants = {
-  sm: 'h-3 w-3',
   default: 'h-3.5 w-3.5',
   lg: 'h-4 w-4',
+  sm: 'h-3 w-3',
 };
 
 /**
  * Quote Status Badge
- * 
+ *
  * Renders a color-coded badge with icon and tooltip for quote status.
  * Automatically selects appropriate label, icon, color, and tooltip based
  * on status configuration.
- * 
+ *
  * @example
  * ```tsx
  * // Basic usage
  * <QuoteStatusBadge status="draft" />
- * 
+ *
  * // Without icon
  * <QuoteStatusBadge status="sent" showIcon={false} />
- * 
+ *
  * // Without tooltip
  * <QuoteStatusBadge status="canceled" showTooltip={false} />
- * 
+ *
  * // Custom size
  * <QuoteStatusBadge status="draft" size="lg" />
  * ```
@@ -93,48 +84,37 @@ export function QuoteStatusBadge({
 }: QuoteStatusBadgeProps) {
   const config = getStatusConfig(status);
   const IconComponent = getStatusIconComponent(status);
-  
+
   // Badge content
   const badgeContent = (
     <Badge
-      variant={config.variant}
-      className={cn(
-        'inline-flex items-center gap-1.5 font-medium',
-        sizeVariants[size],
-        className,
-      )}
-      data-testid="quote-status-badge"
+      className={cn('inline-flex items-center gap-1.5 font-medium', sizeVariants[size], className)}
       data-status={status}
+      data-testid="quote-status-badge"
+      variant={config.variant}
     >
       {showIcon && (
         <IconComponent
+          aria-hidden="true"
           className={cn('flex-shrink-0', iconSizeVariants[size])}
           data-testid="status-icon"
-          aria-hidden="true"
         />
       )}
       <span data-testid="status-label">{config.label}</span>
     </Badge>
   );
-  
+
   // Return without tooltip if disabled
   if (!showTooltip) {
     return badgeContent;
   }
-  
+
   // Wrap with tooltip
   return (
     <TooltipProvider delayDuration={200}>
       <Tooltip>
-        <TooltipTrigger asChild>
-          {badgeContent}
-        </TooltipTrigger>
-        <TooltipContent
-          side="bottom"
-          align="center"
-          className="max-w-xs"
-          data-testid="status-tooltip"
-        >
+        <TooltipTrigger asChild>{badgeContent}</TooltipTrigger>
+        <TooltipContent align="center" className="max-w-xs" data-testid="status-tooltip" side="bottom">
           <p>{config.tooltip}</p>
         </TooltipContent>
       </Tooltip>
@@ -142,8 +122,8 @@ export function QuoteStatusBadge({
   );
 }
 
+export type { QuoteStatus, StatusConfig, StatusCTA } from '../_utils/status-config';
 /**
  * Export status utilities for convenience
  */
 export { getStatusConfig, getStatusIconComponent } from '../_utils/status-config';
-export type { QuoteStatus, StatusConfig, StatusCTA } from '../_utils/status-config';

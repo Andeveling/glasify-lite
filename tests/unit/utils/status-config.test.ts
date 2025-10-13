@@ -1,14 +1,14 @@
 /**
  * Unit tests for status configuration utility
- * 
+ *
  * Tests the status configuration functions that map quote status
  * to labels, icons, tooltips, colors, and CTAs.
- * 
+ *
  * @vitest-environment jsdom
  */
 
-import { describe, expect, it } from 'vitest';
 import type { Quote } from '@prisma/client';
+import { describe, expect, it } from 'vitest';
 
 // Import types for the functions we'll implement
 type QuoteStatus = Quote['status'];
@@ -190,9 +190,9 @@ describe('Status Configuration Utility', () => {
 /**
  * Expected test results BEFORE implementation (T014):
  * ❌ All tests should FAIL with "function not defined" or similar
- * 
+ *
  * Expected test results AFTER implementation (T014):
  * ✅ All tests should PASS with correct values
- * 
+ *
  * This ensures we're following Test-Driven Development (TDD).
  */

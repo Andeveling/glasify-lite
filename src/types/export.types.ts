@@ -1,11 +1,11 @@
 /**
  * Export Types for Quote PDF/Excel Generation
- * 
+ *
  * Type definitions for quote export functionality including PDF and Excel formats.
  * Supports both @react-pdf/renderer and exceljs libraries.
  */
 
-import type { Quote, QuoteItem, User } from '@prisma/client';
+import type { Quote } from '@prisma/client';
 
 /**
  * Supported export formats
@@ -50,7 +50,7 @@ export interface QuotePDFData {
   quote: {
     id: string;
     projectName: string;
-    status: Quote[ 'status' ];
+    status: Quote['status'];
     createdAt: Date;
     validUntil: Date;
     totalAmount: number;
@@ -132,7 +132,7 @@ export interface QuoteExcelData {
   quote: {
     id: string;
     projectName: string;
-    status: Quote[ 'status' ];
+    status: Quote['status'];
     createdAt: Date;
     validUntil: Date;
     totalAmount: number;

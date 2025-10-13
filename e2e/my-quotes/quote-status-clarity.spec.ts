@@ -1,15 +1,15 @@
 /**
  * E2E Test: Quote Status Clarity (User Story 1)
- * 
+ *
  * Verifies that quote statuses are displayed with clear labels,
  * icons, and tooltips to eliminate user confusion.
- * 
+ *
  * Acceptance Criteria:
  * - Draft status shows "En edición" (not "Borrador")
  * - All statuses display appropriate icons
  * - Tooltips appear on hover with explanatory text
  * - Status-specific CTAs are visible and functional
- * 
+ *
  * @see specs/004-refactor-my-quotes/plan.md - User Story 1
  */
 
@@ -85,9 +85,12 @@ test.describe('Quote Status Clarity (US1)', () => {
 
   test('should navigate to quote detail when clicking CTA', async ({ page }) => {
     // Click on first CTA button
-    const ctaButton = page.getByRole('button').filter({
-      hasText: /continuar editando|ver detalles|duplicar/i
-    }).first();
+    const ctaButton = page
+      .getByRole('button')
+      .filter({
+        hasText: /continuar editando|ver detalles|duplicar/i,
+      })
+      .first();
 
     await ctaButton.click();
 
@@ -171,9 +174,12 @@ test.describe('Quote Status Clarity (US1)', () => {
     const listStatusText = await listStatusBadge.getByTestId('status-label').textContent();
 
     // Navigate to detail view
-    const viewButton = page.getByRole('button').filter({
-      hasText: /ver detalles|continuar editando/i
-    }).first();
+    const viewButton = page
+      .getByRole('button')
+      .filter({
+        hasText: /ver detalles|continuar editando/i,
+      })
+      .first();
     await viewButton.click();
 
     // Get status label from detail view
@@ -198,7 +204,7 @@ test.describe('Quote Status Configuration Edge Cases', () => {
   test('should render without JavaScript (progressive enhancement)', async ({ page }) => {
     // Disable JavaScript
     await page.context().addInitScript(() => {
-      window.addEventListener = () => { };
+      window.addEventListener = () => {};
     });
 
     await page.goto('/my-quotes');

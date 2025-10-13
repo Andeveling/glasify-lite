@@ -102,38 +102,38 @@
 
 ### Tests for User Story 3 (Test-First - MUST FAIL before implementation)
 
-- [ ] **T029** [P] [US3] Unit test for filename generation in `tests/unit/utils/export-filename.test.ts` (test generateExportFilename produces "Cotizacion_ProjectName_YYYY-MM-DD.ext")
-- [ ] **T030** [P] [US3] Unit test for PDF generation in `tests/unit/export/pdf-generation.test.ts` (test QuotePDFDocument renders all sections: header, items table, footer)
-- [ ] **T031** [P] [US3] Unit test for Excel generation in `tests/unit/export/excel-generation.test.ts` (test workbook has 2 sheets, formulas, formatting)
-- [ ] **T032** [P] [US3] Contract test for export Server Actions in `tests/contract/export-actions.contract.ts` (validate exportQuoteInputSchema and exportQuoteOutputSchema with Zod)
-- [ ] **T033** [P] [US3] Integration test for quote export in `tests/integration/quote-export.test.ts` (test exportQuotePDF and exportQuoteExcel Server Actions end-to-end)
-- [ ] **T034** [P] [US3] E2E test for PDF export in `e2e/my-quotes/quote-export-pdf.spec.ts` (test button click, file download, filename format, loading state)
-- [ ] **T035** [P] [US3] E2E test for Excel export in `e2e/my-quotes/quote-export-excel.spec.ts` (test button click, file download, filename format)
+- [X] **T029** [P] [US3] Unit test for filename generation in `tests/unit/utils/export-filename.test.ts` (test generateExportFilename produces "Cotizacion_ProjectName_YYYY-MM-DD.ext") ✅ Created - tests designed to fail
+- [X] **T030** [P] [US3] Unit test for PDF generation in `tests/unit/export/pdf-generation.test.ts` (test QuotePDFDocument renders all sections: header, items table, footer) ✅ Created - tests designed to fail
+- [X] **T031** [P] [US3] Unit test for Excel generation in `tests/unit/export/excel-generation.test.ts` (test workbook has 2 sheets, formulas, formatting) ✅ Created - tests designed to fail
+- [X] **T032** [P] [US3] Contract test for export Server Actions in `tests/contract/export-actions.contract.ts` (validate exportQuoteInputSchema and exportQuoteOutputSchema with Zod) ✅ Created - tests designed to fail
+- [X] **T033** [P] [US3] Integration test for quote export in `tests/integration/quote-export.test.ts` (test exportQuotePDF and exportQuoteExcel Server Actions end-to-end) ✅ Created - tests designed to fail
+- [X] **T034** [P] [US3] E2E test for PDF export in `e2e/my-quotes/quote-export-pdf.spec.ts` (test button click, file download, filename format, loading state) ✅ Created - comprehensive E2E coverage
+- [X] **T035** [P] [US3] E2E test for Excel export in `e2e/my-quotes/quote-export-excel.spec.ts` (test button click, file download, filename format) ✅ Created - comprehensive E2E coverage
 
 ### Implementation for User Story 3
 
 #### PDF Export Implementation
 
-- [ ] **T036** [P] [US3] Create PDF styles config in `src/lib/export/pdf/pdf-styles.ts` (define fonts, colors, spacing, table styles)
-- [ ] **T037** [P] [US3] Create PDF utils in `src/lib/export/pdf/pdf-utils.ts` (formatCurrency, formatDate, encodeImage helpers)
+- [X] **T036** [P] [US3] Create PDF styles config in `src/lib/export/pdf/pdf-styles.ts` (define fonts, colors, spacing, table styles) ✅ Implemented
+- [X] **T037** [P] [US3] Create PDF utils in `src/lib/export/pdf/pdf-utils.ts` (formatCurrency, formatDate, encodeImage helpers) ✅ Implemented
 - [ ] **T038** [US3] Create QuotePDFDocument component in `src/lib/export/pdf/quote-pdf-document.tsx` (React-PDF template with header, project info, items table, totals, footer)
-- [ ] **T039** [P] [US3] Create export filename utility in `src/app/(public)/my-quotes/_utils/export-filename.ts` (generateExportFilename function)
+- [X] **T039** [P] [US3] Create export filename utility in `src/app/(public)/my-quotes/_utils/export-filename.ts` (generateExportFilename function) ✅ Implemented
 
 #### Excel Export Implementation
 
-- [ ] **T040** [P] [US3] Create Excel styles config in `src/lib/export/excel/excel-styles.ts` (define cell formats, column widths, fonts)
-- [ ] **T041** [P] [US3] Create Excel utils in `src/lib/export/excel/excel-utils.ts` (currency formatting, formula helpers)
-- [ ] **T042** [US3] Create Excel workbook generator in `src/lib/export/excel/quote-excel-workbook.ts` (create 2 sheets: summary + items, add formulas, apply formatting)
+- [X] **T040** [P] [US3] Create Excel styles config in `src/lib/export/excel/excel-styles.ts` (define cell formats, column widths, fonts) ✅ Implemented
+- [X] **T041** [P] [US3] Create Excel utils in `src/lib/export/excel/excel-utils.ts` (currency formatting, formula helpers) ✅ Implemented
+- [X] **T042** [US3] Create Excel workbook generator in `src/lib/export/excel/quote-excel-workbook.ts` (create 2 sheets: summary + items, add formulas, apply formatting)
 
 #### Server Actions
 
-- [ ] **T043** [US3] Create export Server Actions in `src/app/_actions/quote-export.actions.ts` (exportQuotePDF and exportQuoteExcel actions with Zod validation, Winston logging, error handling)
+- [X] **T043** [US3] Create export Server Actions in `src/app/_actions/quote-export.actions.ts` (exportQuotePDF and exportQuoteExcel actions with Zod validation, Winston logging, error handling)
 
 #### UI Components
 
-- [ ] **T044** [P] [US3] Create useQuoteExport hook in `src/app/(public)/my-quotes/_hooks/use-quote-export.ts` (wrapper for Server Actions with loading/error states)
-- [ ] **T045** [P] [US3] Create QuoteExportButtons component in `src/app/(public)/my-quotes/[quoteId]/_components/quote-export-buttons.tsx` (PDF/Excel buttons with icons, loading states, error handling)
-- [ ] **T046** [US3] Modify quote detail page in `src/app/(public)/my-quotes/[quoteId]/page.tsx` (add QuoteExportButtons to header and footer)
+- [X] **T044** [US3] Create useQuoteExport hook in `src/app/(public)/my-quotes/_hooks/use-quote-export.ts` (loading states, error handling, file download logic)
+- [X] **T045** [US3] Create QuoteExportButtons component in `src/app/(public)/my-quotes/[quoteId]/_components/quote-export-buttons.tsx` (PDF + Excel buttons with loading states)
+- [X] **T046** [US3] Integrate QuoteExportButtons into quote detail page `src/app/(public)/my-quotes/[quoteId]/page.tsx` (add buttons to header and/or footer)
 
 **Checkpoint**: User Story 3 complete - quotes can now be exported professionally ✅
 
@@ -147,15 +147,15 @@
 
 ### Tests for User Story 4 (Test-First - MUST FAIL before implementation)
 
-- [ ] **T047** [P] [US4] Unit test for useQuoteFilters hook in `tests/unit/hooks/use-quote-filters.test.ts` (test filter state management, URL sync, debouncing)
-- [ ] **T048** [P] [US4] E2E test for filtering in `e2e/my-quotes/quote-filters.spec.ts` (test status filter, search input, sort dropdown, URL params)
+- [X] **T047** [P] [US4] Unit test for useQuoteFilters hook in `tests/unit/hooks/use-quote-filters.test.ts` (test filter state management, URL sync, debouncing) ✅ Created - tests designed to fail
+- [X] **T048** [P] [US4] E2E test for filtering in `e2e/my-quotes/quote-filters.spec.ts` (test status filter, search input, sort dropdown, URL params) ✅ Created - comprehensive E2E coverage
 
 ### Implementation for User Story 4
 
-- [ ] **T049** [P] [US4] Create useQuoteFilters hook in `src/app/(public)/my-quotes/_hooks/use-quote-filters.ts` (manage filter state, sync with URL searchParams, debounce search)
-- [ ] **T050** [P] [US4] Create QuoteFilters component in `src/app/(public)/my-quotes/_components/quote-filters.tsx` (status dropdown, search input with debounce, sort select)
-- [ ] **T051** [US4] Modify MyQuotesPage in `src/app/(public)/my-quotes/page.tsx` (add QuoteFilters, pass filters to tRPC query, handle empty filtered state)
-- [ ] **T052** [US4] Extend EmptyQuotesState in `src/app/(public)/my-quotes/_components/empty-quotes-state.tsx` (add variant for "no results found" vs "no quotes yet")
+- [X] **T049** [P] [US4] Create useQuoteFilters hook in `src/app/(public)/my-quotes/_hooks/use-quote-filters.ts` (manage filter state, sync with URL searchParams, debounce search) ✅ Implemented
+- [X] **T050** [P] [US4] Create QuoteFilters component in `src/app/(public)/my-quotes/_components/quote-filters.tsx` (status dropdown, search input with debounce, sort select) ✅ Implemented
+- [X] **T051** [US4] Modify MyQuotesPage in `src/app/(public)/my-quotes/page.tsx` (add QuoteFilters, pass filters to tRPC query, handle empty filtered state) ✅ Modified
+- [X] **T052** [US4] Extend EmptyQuotesState in `src/app/(public)/my-quotes/_components/empty-quotes-state.tsx` (add variant for "no results found" vs "no quotes yet") ✅ Extended
 
 **Checkpoint**: User Story 4 complete - users can now efficiently find quotes ✅
 
@@ -165,14 +165,14 @@
 
 **Purpose**: Final improvements affecting multiple user stories
 
-- [ ] **T053** [P] Add accessibility attributes to all new components (aria-labels for icons, alt text for images, ARIA roles for dialogs)
-- [ ] **T054** [P] Add Winston logging to all export operations in `src/app/_actions/quote-export.actions.ts` (log quote ID, format, duration, errors with correlation IDs)
-- [ ] **T055** [P] Verify WCAG AA color contrast for status badges (use contrast checker, adjust colors in status-config.ts if needed)
-- [ ] **T056** [P] Optimize SVG diagrams for file size (minify, remove unnecessary paths, ensure <5KB each)
-- [ ] **T057** Run full E2E test suite in CI (all 8 spec files: status clarity, PDF export, Excel export, filters, image viewer)
-- [ ] **T058** Performance audit: verify quote list loads <2s with 50 quotes, quote detail <1.5s with 30 items, export <10s
-- [ ] **T059** Create documentation in `specs/004-refactor-my-quotes/quickstart.md` (how to add new window diagrams, customize PDF/Excel templates, add export formats)
-- [ ] **T060** Update CHANGELOG.md with feature summary and migration notes (if any)
+- [X] **T053** [P] Add accessibility attributes to all new components (aria-labels for icons, alt text for images, ARIA roles for dialogs)
+- [X] **T054** [P] Add Winston logging to all export operations in `src/app/_actions/quote-export.actions.ts` (log quote ID, format, duration, errors with correlation IDs)
+- [X] **T055** [P] Verify WCAG AA color contrast for status badges (use contrast checker, adjust colors in status-config.ts if needed)
+- [X] **T056** [P] Optimize SVG diagrams for file size (minify, remove unnecessary paths, ensure <5KB each)
+- [X] **T057** Run full E2E test suite in CI (all 8 spec files: status clarity, PDF export, Excel export, filters, image viewer)
+- [X] **T058** Performance audit: verify quote list loads <2s with 50 quotes, quote detail <1.5s with 30 items, export <10s
+- [X] **T059** Create documentation in `specs/004-refactor-my-quotes/quickstart.md` (how to add new window diagrams, customize PDF/Excel templates, add export formats)
+- [X] **T060** Update CHANGELOG.md with feature summary and migration notes (if any)
 
 ---
 

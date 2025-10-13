@@ -12,20 +12,16 @@
 
 'use client';
 
-import { Edit3, Eye, Copy } from 'lucide-react';
-import Link from 'next/link';
+import { Copy, Edit3, Eye } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn, formatDate } from '@/lib/utils';
-import { QuoteStatusBadge } from './quote-status-badge';
-import { getStatusCTA } from '../_utils/status-config';
-import { QuoteItemPreview, type QuoteItemPreviewData } from './quote-item-preview';
-import { WindowType } from '@/types/window.types';
-
 import type { QuoteListItemSchema } from '@/server/api/routers/quote/quote.schemas';
+import { getStatusCTA } from '../_utils/status-config';
+import { QuoteStatusBadge } from './quote-status-badge';
 
 type QuoteListItemProps = {
   quote: QuoteListItemSchema;
@@ -34,15 +30,15 @@ type QuoteListItemProps = {
 export function QuoteListItem({ quote }: QuoteListItemProps) {
   const router = useRouter();
   const cta = getStatusCTA(quote.status);
-  
+
   // TODO: QuoteListItemSchema doesn't include items array yet
   // Will show preview once schema is updated with modelImageUrl and windowType
   const hasItemsPreview = false; // Change to true when schema is updated
-  
+
   // Handle CTA actions
   const handleCTAClick = () => {
     if (!cta) return;
-    
+
     switch (cta.action) {
       case 'edit':
         router.push(`/my-quotes/${quote.id}`);
@@ -60,15 +56,15 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
         break;
     }
   };
-  
+
   // Icon mapping for CTA actions
   const ctaIcon = {
-    edit: Edit3,
-    view: Eye,
     duplicate: Copy,
+    edit: Edit3,
     resend: Eye,
+    view: Eye,
   };
-  
+
   const CTAIcon = cta ? ctaIcon[cta.action] : Eye;
 
   return (
@@ -77,15 +73,10 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
         <div className="flex-1 space-y-2">
           <div className="flex items-center gap-2">
             <h3 className="font-semibold text-lg">{quote.projectName}</h3>
-            
+
             {/* US1: New QuoteStatusBadge with icon and tooltip */}
-            <QuoteStatusBadge 
-              status={quote.status} 
-              showIcon={true} 
-              showTooltip={true}
-              size="default"
-            />
-            
+            <QuoteStatusBadge showIcon={true} showTooltip={true} size="default" status={quote.status} />
+
             {quote.isExpired && (
               <Badge className="text-muted-foreground" data-testid="expired-badge" variant="outline">
                 Expirada
@@ -106,12 +97,10 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
               <span className="font-medium">Items:</span> {quote.itemCount}
             </div>
           </div>
-          
+
           {/* US2: Product image preview (TODO: Enable when schema includes items) */}
           {hasItemsPreview && (
-            <div className="mt-3">
-              {/* <QuoteItemPreview items={previewItems} totalCount={quote.itemCount} /> */}
-            </div>
+            <div className="mt-3">{/* <QuoteItemPreview items={previewItems} totalCount={quote.itemCount} /> */}</div>
           )}
         </div>
 

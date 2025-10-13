@@ -1,30 +1,30 @@
 /**
  * Unit tests for window diagram map utility
- * 
+ *
  * Tests the window diagram mapping functions that connect WindowType
  * enum values to their corresponding SVG diagram paths.
- * 
+ *
  * @vitest-environment node
  */
 
 import { describe, expect, it } from 'vitest';
 import {
-  type WindowDiagram,
-  getWindowDiagram,
-  getWindowDiagramPath,
-  getWindowDiagramAltText,
-  hasWindowDiagram,
   getAllWindowDiagrams,
+  getWindowDiagram,
+  getWindowDiagramAltText,
+  getWindowDiagramPath,
   getWindowDiagramsByCategory,
+  hasWindowDiagram,
   WINDOW_DIAGRAM_MAP,
+  type WindowDiagram,
 } from '@/lib/utils/window-diagram-map';
-import { WindowType, DEFAULT_WINDOW_TYPE } from '@/types/window.types';
+import { DEFAULT_WINDOW_TYPE, WindowType } from '@/types/window.types';
 
 describe('Window Diagram Map Utility', () => {
   describe('getWindowDiagram', () => {
     it('should return correct diagram for valid WindowType', () => {
       const diagram = getWindowDiagram(WindowType.SLIDING_2_PANEL);
-      
+
       expect(diagram).toBeDefined();
       expect(diagram.type).toBe(WindowType.SLIDING_2_PANEL);
       expect(diagram.svgPath).toBe('/diagrams/windows/sliding-2-panel.svg');
@@ -47,7 +47,7 @@ describe('Window Diagram Map Utility', () => {
         WindowType.TILT_TURN,
       ];
 
-      basicTypes.forEach(type => {
+      basicTypes.forEach((type) => {
         const diagram = getWindowDiagram(type);
         expect(diagram).toBeDefined();
         expect(diagram.type).toBe(type);
@@ -59,7 +59,7 @@ describe('Window Diagram Map Utility', () => {
     it('should fall back to default diagram for unknown type', () => {
       const unknownType = 'totally-unknown-type' as WindowType;
       const diagram = getWindowDiagram(unknownType);
-      
+
       expect(diagram).toBeDefined();
       expect(diagram.type).toBe(DEFAULT_WINDOW_TYPE);
       expect(diagram.svgPath).toContain('fixed-single.svg');
@@ -68,7 +68,7 @@ describe('Window Diagram Map Utility', () => {
     it('should fall back to default for null/undefined', () => {
       const nullDiagram = getWindowDiagram(null as unknown as WindowType);
       const undefinedDiagram = getWindowDiagram(undefined as unknown as WindowType);
-      
+
       expect(nullDiagram.type).toBe(DEFAULT_WINDOW_TYPE);
       expect(undefinedDiagram.type).toBe(DEFAULT_WINDOW_TYPE);
     });
@@ -112,7 +112,7 @@ describe('Window Diagram Map Utility', () => {
     it('should return different alt text for different types', () => {
       const french = getWindowDiagramAltText(WindowType.FRENCH_2_PANEL);
       const sliding = getWindowDiagramAltText(WindowType.SLIDING_2_PANEL);
-      
+
       expect(french).not.toBe(sliding);
       expect(french).toContain('francesa');
       expect(sliding).toContain('corrediza');
@@ -153,7 +153,7 @@ describe('Window Diagram Map Utility', () => {
   describe('getAllWindowDiagrams', () => {
     it('should return array of all diagrams', () => {
       const allDiagrams = getAllWindowDiagrams();
-      
+
       expect(Array.isArray(allDiagrams)).toBe(true);
       expect(allDiagrams.length).toBeGreaterThan(0);
     });
@@ -161,13 +161,13 @@ describe('Window Diagram Map Utility', () => {
     it('should include all WindowType enum values', () => {
       const allDiagrams = getAllWindowDiagrams();
       const allTypes = Object.values(WindowType);
-      
+
       expect(allDiagrams.length).toBe(allTypes.length);
     });
 
     it('each diagram should have required properties', () => {
       const allDiagrams = getAllWindowDiagrams();
-      
+
       allDiagrams.forEach((diagram: WindowDiagram) => {
         expect(diagram).toHaveProperty('type');
         expect(diagram).toHaveProperty('svgPath');
@@ -181,7 +181,7 @@ describe('Window Diagram Map Utility', () => {
   describe('getWindowDiagramsByCategory', () => {
     it('should return french category diagrams', () => {
       const french = getWindowDiagramsByCategory('french');
-      
+
       expect(Array.isArray(french)).toBe(true);
       expect(french.length).toBe(2); // FRENCH_2_PANEL, FRENCH_4_PANEL
       expect(french.some((d: WindowDiagram) => d.type === WindowType.FRENCH_2_PANEL)).toBe(true);
@@ -190,7 +190,7 @@ describe('Window Diagram Map Utility', () => {
 
     it('should return sliding category diagrams', () => {
       const sliding = getWindowDiagramsByCategory('sliding');
-      
+
       expect(sliding.length).toBeGreaterThanOrEqual(3); // At least 2, 3, 4 panel
       expect(sliding.some((d: WindowDiagram) => d.type === WindowType.SLIDING_2_PANEL)).toBe(true);
       expect(sliding.some((d: WindowDiagram) => d.type === WindowType.SLIDING_3_PANEL)).toBe(true);
@@ -198,7 +198,7 @@ describe('Window Diagram Map Utility', () => {
 
     it('should return casement category diagrams', () => {
       const casement = getWindowDiagramsByCategory('casement');
-      
+
       expect(casement.length).toBeGreaterThanOrEqual(2); // At least LEFT, RIGHT
       expect(casement.some((d: WindowDiagram) => d.type === WindowType.CASEMENT_LEFT)).toBe(true);
       expect(casement.some((d: WindowDiagram) => d.type === WindowType.CASEMENT_RIGHT)).toBe(true);
@@ -206,14 +206,14 @@ describe('Window Diagram Map Utility', () => {
 
     it('should return fixed category diagrams', () => {
       const fixed = getWindowDiagramsByCategory('fixed');
-      
+
       expect(fixed.length).toBeGreaterThanOrEqual(1);
       expect(fixed.some((d: WindowDiagram) => d.type === WindowType.FIXED_SINGLE)).toBe(true);
     });
 
     it('should return projecting category diagrams', () => {
       const projecting = getWindowDiagramsByCategory('projecting');
-      
+
       expect(projecting.length).toBe(2); // AWNING, HOPPER
       expect(projecting.some((d: WindowDiagram) => d.type === WindowType.AWNING)).toBe(true);
       expect(projecting.some((d: WindowDiagram) => d.type === WindowType.HOPPER)).toBe(true);
@@ -222,10 +222,10 @@ describe('Window Diagram Map Utility', () => {
     it('should not have overlapping categories', () => {
       const french = getWindowDiagramsByCategory('french');
       const sliding = getWindowDiagramsByCategory('sliding');
-      
+
       const frenchTypes = french.map((d: WindowDiagram) => d.type);
       const slidingTypes = sliding.map((d: WindowDiagram) => d.type);
-      
+
       const overlap = frenchTypes.filter((t: WindowType) => slidingTypes.includes(t));
       expect(overlap.length).toBe(0);
     });
@@ -239,7 +239,7 @@ describe('Window Diagram Map Utility', () => {
 
     it('should have entry for each WindowType', () => {
       const allTypes = Object.values(WindowType);
-      
+
       allTypes.forEach((type: WindowType) => {
         expect(WINDOW_DIAGRAM_MAP[type]).toBeDefined();
       });
@@ -265,7 +265,7 @@ describe('Window Diagram Map Utility', () => {
   describe('SVG Path Consistency', () => {
     it('all SVG paths should start with /diagrams/windows/', () => {
       const allDiagrams = getAllWindowDiagrams();
-      
+
       allDiagrams.forEach((diagram: WindowDiagram) => {
         expect(diagram.svgPath).toMatch(/^\/diagrams\/windows\//);
       });
@@ -273,7 +273,7 @@ describe('Window Diagram Map Utility', () => {
 
     it('all SVG paths should end with .svg', () => {
       const allDiagrams = getAllWindowDiagrams();
-      
+
       allDiagrams.forEach((diagram: WindowDiagram) => {
         expect(diagram.svgPath).toMatch(/\.svg$/);
       });
@@ -281,7 +281,7 @@ describe('Window Diagram Map Utility', () => {
 
     it('SVG paths should use kebab-case', () => {
       const allDiagrams = getAllWindowDiagrams();
-      
+
       allDiagrams.forEach((diagram: WindowDiagram) => {
         const filename = diagram.svgPath.split('/').pop()!.replace('.svg', '');
         expect(filename).toMatch(/^[a-z0-9-]+$/);
@@ -292,7 +292,7 @@ describe('Window Diagram Map Utility', () => {
   describe('Alt Text Accessibility', () => {
     it('all alt texts should be in Spanish', () => {
       const allDiagrams = getAllWindowDiagrams();
-      
+
       allDiagrams.forEach((diagram: WindowDiagram) => {
         expect(diagram.altText).toMatch(/ventana|puerta|diagrama|tragaluz/i);
       });
@@ -300,7 +300,7 @@ describe('Window Diagram Map Utility', () => {
 
     it('alt texts should be descriptive (>10 characters)', () => {
       const allDiagrams = getAllWindowDiagrams();
-      
+
       allDiagrams.forEach((diagram: WindowDiagram) => {
         expect(diagram.altText.length).toBeGreaterThan(10);
       });
@@ -311,6 +311,6 @@ describe('Window Diagram Map Utility', () => {
 /**
  * Expected test results:
  * ✅ All tests should PASS - utility is already implemented (T006)
- * 
+ *
  * Coverage: ~100% (all functions, edge cases, data validation)
  */

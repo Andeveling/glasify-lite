@@ -17,11 +17,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatDate } from '@/lib/utils';
-import { QuoteStatusBadge } from '../../_components/quote-status-badge';
-import { QuoteItemsGrid, type QuoteItemData } from './quote-items-grid';
-import { WindowType } from '@/types/window.types';
-
 import type { QuoteDetailSchema } from '@/server/api/routers/quote/quote.schemas';
+import { WindowType } from '@/types/window.types';
+import { QuoteStatusBadge } from '../../_components/quote-status-badge';
+import { QuoteExportButtons } from './quote-export-buttons';
+import { type QuoteItemData, QuoteItemsGrid } from './quote-items-grid';
 
 type QuoteDetailViewProps = {
   quote: QuoteDetailSchema;
@@ -36,26 +36,29 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
   // Transform quote items for grid display
   // TODO: Add modelImageUrl and windowType to QuoteItemDetailSchema
   const gridItems: QuoteItemData[] = quote.items.map((item) => ({
-    id: item.id,
-    modelName: item.modelName,
-    modelImageUrl: null, // TODO: Add to schema
-    windowType: WindowType.FIXED_SINGLE, // TODO: Add to schema
-    width: item.widthMm ? Math.round(item.widthMm / 10) : null, // Convert mm to cm
-    height: item.heightMm ? Math.round(item.heightMm / 10) : null,
     glassType: item.glassTypeName,
+    height: item.heightMm ? Math.round(item.heightMm / 10) : null,
+    id: item.id,
     manufacturer: quote.manufacturerName,
+    modelImageUrl: null, // TODO: Add to schema
+    modelName: item.modelName,
+    width: item.widthMm ? Math.round(item.widthMm / 10) : null, // Convert mm to cm
+    windowType: WindowType.FIXED_SINGLE, // TODO: Add to schema
   }));
 
   return (
     <div className="space-y-6">
-      {/* Header con botón de regreso */}
-      <div className="flex items-center gap-4">
+      {/* Header con botón de regreso y exportación */}
+      <div className="flex items-center justify-between gap-4">
         <Button asChild size="sm" variant="outline">
           <Link href={backLink}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             {backLabel}
           </Link>
         </Button>
+
+        {/* Export buttons - US3 */}
+        {isPublicView && <QuoteExportButtons quoteId={quote.id} size="sm" variant="full" />}
       </div>
 
       {/* Información principal de la cotización */}
@@ -66,15 +69,10 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
               <CardTitle>{quote.projectAddress.projectName}</CardTitle>
               <CardDescription>Creada el {formatDate(quote.createdAt)}</CardDescription>
             </div>
-            
+
             {/* US1: New QuoteStatusBadge with icon and tooltip */}
             <div className="flex gap-2">
-              <QuoteStatusBadge 
-                status={quote.status} 
-                showIcon={true} 
-                showTooltip={true}
-                size="default"
-              />
+              <QuoteStatusBadge showIcon={true} showTooltip={true} size="default" status={quote.status} />
               {quote.isExpired && (
                 <Badge className="border-destructive text-destructive" variant="outline">
                   Vencida
@@ -127,12 +125,10 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
         <Card>
           <CardHeader>
             <CardTitle>Vista de productos</CardTitle>
-            <CardDescription>
-              Haga clic en una imagen para ver detalles completos
-            </CardDescription>
+            <CardDescription>Haga clic en una imagen para ver detalles completos</CardDescription>
           </CardHeader>
           <CardContent>
-            <QuoteItemsGrid items={gridItems} eager />
+            <QuoteItemsGrid eager items={gridItems} />
           </CardContent>
         </Card>
       )}
