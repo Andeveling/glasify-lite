@@ -43,10 +43,10 @@ interface UseQuoteExportReturn {
 export function useQuoteExport(options: UseQuoteExportOptions = {}): UseQuoteExportReturn {
   const { onSuccess, onError } = options;
 
-  const [isPendingPDF, startPDFTransition] = useTransition();
-  const [isPendingExcel, startExcelTransition] = useTransition();
-  const [isDownloadingPDF, setIsDownloadingPDF] = useState(false);
-  const [isDownloadingExcel, setIsDownloadingExcel] = useState(false);
+  const [ isPendingPDF, startPDFTransition ] = useTransition();
+  const [ isPendingExcel, startExcelTransition ] = useTransition();
+  const [ isDownloadingPDF, setIsDownloadingPDF ] = useState(false);
+  const [ isDownloadingExcel, setIsDownloadingExcel ] = useState(false);
 
   /**
    * Download file from base64 data
@@ -57,10 +57,10 @@ export function useQuoteExport(options: UseQuoteExportOptions = {}): UseQuoteExp
       const byteCharacters = atob(data);
       const byteNumbers = new Array(byteCharacters.length);
       for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
+        byteNumbers[ i ] = byteCharacters.charCodeAt(i);
       }
       const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: mimeType });
+      const blob = new Blob([ byteArray ], { type: mimeType });
 
       // Create download link
       const url = URL.createObjectURL(blob);
@@ -83,6 +83,7 @@ export function useQuoteExport(options: UseQuoteExportOptions = {}): UseQuoteExp
   /**
    * Export quote to PDF
    */
+  // biome-ignore lint/suspicious/useAwait: Async needed for Promise return type
   const exportPDF = async (quoteId: string): Promise<void> => {
     setIsDownloadingPDF(true);
 
@@ -124,6 +125,7 @@ export function useQuoteExport(options: UseQuoteExportOptions = {}): UseQuoteExp
   /**
    * Export quote to Excel
    */
+  // biome-ignore lint/suspicious/useAwait: Async needed for Promise return type
   const exportExcel = async (quoteId: string): Promise<void> => {
     setIsDownloadingExcel(true);
 
