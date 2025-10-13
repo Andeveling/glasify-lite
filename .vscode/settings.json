@@ -17,5 +17,12 @@
     {
       "text": "Use conventional commit message format, in English if necessary, use body and clarify and argument changes for good documentation."
     }
+  ],
+  "cSpell.words": [
+    "andres",
+    "glasify",
+    "nullable",
+    "parallelizable",
+    "Parallelizable"
   ]
 }
