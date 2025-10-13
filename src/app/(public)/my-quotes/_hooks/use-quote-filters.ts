@@ -57,19 +57,19 @@ export function useQuoteFilters(currentParams: {
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [ isPending, startTransition ] = useTransition();
+  const [isPending, startTransition] = useTransition();
 
   const { currentStatus, currentSort = 'newest', currentSearchQuery = '' } = currentParams;
 
   // Initialize filters from props (received from Server Component)
-  const [ filters, setFilters ] = useState<QuoteFilters>({
+  const [filters, setFilters] = useState<QuoteFilters>({
     searchQuery: currentSearchQuery,
     sortBy: currentSort,
     status: currentStatus,
   });
 
   // Debounce timer for search
-  const [ searchDebounceTimer, setSearchDebounceTimer ] = useState<NodeJS.Timeout | null>(null);
+  const [searchDebounceTimer, setSearchDebounceTimer] = useState<NodeJS.Timeout | null>(null);
 
   /**
    * Build query string from current state
@@ -91,7 +91,7 @@ export function useQuoteFilters(currentParams: {
       }
 
       // Apply updates
-      for (const [ key, value ] of Object.entries(updates)) {
+      for (const [key, value] of Object.entries(updates)) {
         if (value === null || value === '') {
           params.delete(key);
         } else {
@@ -101,7 +101,7 @@ export function useQuoteFilters(currentParams: {
 
       return params.toString();
     },
-    [ currentSearchQuery, currentStatus, currentSort ]
+    [currentSearchQuery, currentStatus, currentSort]
   );
 
   /**
@@ -128,7 +128,7 @@ export function useQuoteFilters(currentParams: {
         router.replace(newURL, { scroll: false });
       });
     },
-    [ pathname, router, createQueryString ]
+    [pathname, router, createQueryString]
   );
 
   /**
@@ -140,7 +140,7 @@ export function useQuoteFilters(currentParams: {
       setFilters(newFilters);
       updateURL(newFilters);
     },
-    [ filters, updateURL ]
+    [filters, updateURL]
   );
 
   /**
@@ -163,7 +163,7 @@ export function useQuoteFilters(currentParams: {
 
       setSearchDebounceTimer(timer);
     },
-    [ filters, searchDebounceTimer, updateURL ]
+    [filters, searchDebounceTimer, updateURL]
   );
 
   /**
@@ -175,7 +175,7 @@ export function useQuoteFilters(currentParams: {
       setFilters(newFilters);
       updateURL(newFilters);
     },
-    [ filters, updateURL ]
+    [filters, updateURL]
   );
 
   /**
@@ -189,7 +189,7 @@ export function useQuoteFilters(currentParams: {
     };
     setFilters(newFilters);
     updateURL(newFilters);
-  }, [ updateURL ]);
+  }, [updateURL]);
 
   /**
    * Count active filters (excluding defaults)
@@ -202,12 +202,12 @@ export function useQuoteFilters(currentParams: {
     if (filters.sortBy && filters.sortBy !== 'newest') count++;
 
     return count;
-  }, [ filters ]);
+  }, [filters]);
 
   /**
    * Check if any filters are active
    */
-  const hasActiveFilters = useMemo(() => activeFiltersCount > 0, [ activeFiltersCount ]);
+  const hasActiveFilters = useMemo(() => activeFiltersCount > 0, [activeFiltersCount]);
 
   // Cleanup debounce timer on unmount
   useEffect(
@@ -216,7 +216,7 @@ export function useQuoteFilters(currentParams: {
         clearTimeout(searchDebounceTimer);
       }
     },
-    [ searchDebounceTimer ]
+    [searchDebounceTimer]
   );
 
   return {

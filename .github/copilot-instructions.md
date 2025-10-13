@@ -836,3 +836,5 @@ export async function generateStaticParams() {
 9. Usa `dynamic` o `revalidate` según el caso de uso
 10. Escribe código testeable y bien documentado
 11. Usa español solo en UI text, todo lo demás en inglés
+12. No crees Barrels (index.ts) o archivos barriles en ningún lugar, de NINGÚN tipo
+13. Sigue las convenciones de naming y organización del proyecto

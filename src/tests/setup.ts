@@ -35,7 +35,7 @@ type ProfileSupplierSeed = {
 
 type GlassTypeSeed = {
   readonly id: string;
-  readonly manufacturerId: string; // DEPRECATED: kept for backward compatibility
+  readonly manufacturerId: string | null; // DEPRECATED: kept for backward compatibility, nullable
   readonly name: string;
   readonly purpose: 'general' | 'insulation' | 'security' | 'decorative';
   readonly thicknessMm: number;
@@ -49,7 +49,7 @@ type GlassTypeSeed = {
 
 type ServiceSeed = {
   readonly id: string;
-  readonly manufacturerId: string; // DEPRECATED: kept for backward compatibility
+  readonly manufacturerId: string | null; // DEPRECATED: kept for backward compatibility, nullable
   readonly name: string;
   readonly type: 'area' | 'perimeter' | 'fixed';
   readonly unit: 'unit' | 'sqm' | 'ml';
@@ -106,7 +106,7 @@ const BASE_GLASS_TYPES: readonly GlassTypeSeed[] = [
     id: 'cm1glass123def456ghi789jkl',
     isLaminated: true,
     isTempered: true,
-    manufacturerId: 'cm1manufacturer123456789ab',
+    manufacturerId: null, // DEPRECATED: Use TenantConfig for global glass types
     name: 'Vidrio Laminado 6mm',
     pricePerSqm: '185000.00',
     purpose: 'security',
@@ -115,7 +115,7 @@ const BASE_GLASS_TYPES: readonly GlassTypeSeed[] = [
   {
     id: 'cm1glasstype123456789abc1',
     isTempered: true,
-    manufacturerId: 'cm1manufacturer123456789ab',
+    manufacturerId: null, // DEPRECATED: Use TenantConfig for global glass types
     name: 'Vidrio Templado 8mm',
     pricePerSqm: '210000.00',
     purpose: 'security',
@@ -124,7 +124,7 @@ const BASE_GLASS_TYPES: readonly GlassTypeSeed[] = [
   {
     id: 'cm1glasstype123456789abc2',
     isLowE: true,
-    manufacturerId: 'cm1manufacturer123456789ab',
+    manufacturerId: null, // DEPRECATED: Use TenantConfig for global glass types
     name: 'Vidrio Bajo Emisivo 6mm',
     pricePerSqm: '240000.00',
     purpose: 'insulation',
@@ -132,7 +132,7 @@ const BASE_GLASS_TYPES: readonly GlassTypeSeed[] = [
   },
   {
     id: 'cm1catalogglasstype123456789',
-    manufacturerId: 'cm1abc123def456ghi789jkl0',
+    manufacturerId: null, // DEPRECATED: Use TenantConfig for global glass types
     name: 'Vidrio Aislante 6mm',
     pricePerSqm: '190000.00',
     purpose: 'insulation',
@@ -143,7 +143,7 @@ const BASE_GLASS_TYPES: readonly GlassTypeSeed[] = [
 const BASE_SERVICES: readonly ServiceSeed[] = [
   {
     id: 'cm1service123def456ghi789',
-    manufacturerId: 'cm1manufacturer123456789ab',
+    manufacturerId: null, // DEPRECATED: Use TenantConfig for global services
     name: 'Instalación profesional',
     rate: '75000.0000',
     type: 'fixed',
@@ -151,7 +151,7 @@ const BASE_SERVICES: readonly ServiceSeed[] = [
   },
   {
     id: 'cm1service1def456ghi789',
-    manufacturerId: 'cm1manufacturer123456789ab',
+    manufacturerId: null, // DEPRECATED: Use TenantConfig for global services
     name: 'Sellado perimetral premium',
     rate: '15000.0000',
     type: 'perimeter',
@@ -159,7 +159,7 @@ const BASE_SERVICES: readonly ServiceSeed[] = [
   },
   {
     id: 'cm1service2def456ghi789',
-    manufacturerId: 'cm1manufacturer123456789ab',
+    manufacturerId: null, // DEPRECATED: Use TenantConfig for global services
     name: 'Transporte especializado',
     rate: '25000.0000',
     type: 'area',

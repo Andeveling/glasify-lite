@@ -62,7 +62,6 @@ export default async function MyQuotesPage({ searchParams }: MyQuotesPageProps) 
         return { sortBy: 'total' as const, sortOrder: 'desc' as const };
       case 'price-low':
         return { sortBy: 'total' as const, sortOrder: 'asc' as const };
-      case 'newest':
       default:
         return { sortBy: 'createdAt' as const, sortOrder: 'desc' as const };
     }

@@ -1,4 +1,4 @@
-import type { Quote } from '@prisma/client';
+import type { Prisma, Quote } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import logger from '@/lib/logger';
@@ -6,7 +6,15 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/
 import { calculatePriceItem, type PriceAdjustmentInput, type PriceServiceInput } from '@/server/price/price-item';
 import { sendQuoteNotification } from '@/server/services/email';
 import { getQuoteValidityDays, getTenantConfigSelect, getTenantCurrency } from '@/server/utils/tenant';
-import { getQuoteByIdInput, getQuoteByIdOutput, listUserQuotesInput, listUserQuotesOutput } from './quote.schemas';
+import {
+  getQuoteByIdInput,
+  getQuoteByIdOutput,
+  listUserQuotesInput,
+  listUserQuotesOutput,
+  sendToVendorInput,
+  sendToVendorOutput,
+} from './quote.schemas';
+import { sendQuoteToVendor } from './quote.service';
 
 // Input schemas
 export const calculateItemServiceInput = z.object({
@@ -456,11 +464,11 @@ export const quoteRouter = createTRPCRouter({
           });
         }
 
-        // Get tenant business name for display
-        const tenant = await getTenantConfigSelect({ businessName: true }, ctx.db);
+        // Get tenant business name and contact for display (US3)
+        const tenant = await getTenantConfigSelect({ businessName: true, contactPhone: true }, ctx.db);
 
         const result = {
-          contactPhone: quote.contactPhone ?? undefined,
+          contactPhone: quote.contactPhone,
           createdAt: quote.createdAt,
           currency: quote.currency,
           id: quote.id,
@@ -487,11 +495,13 @@ export const quoteRouter = createTRPCRouter({
             projectState: quote.projectState ?? '',
             projectStreet: quote.projectStreet ?? '',
           },
+          sentAt: quote.sentAt,
           status: quote.status,
           total: Number(quote.total),
           totalUnits: quote.items.reduce((sum, item) => sum + item.quantity, 0),
           userEmail: undefined,
           validUntil: quote.validUntil,
+          vendorContactPhone: tenant.contactPhone, // US3: Vendor contact for confirmation message
         };
 
         logger.info('[US5] Quote fetched successfully', {
@@ -552,7 +562,7 @@ export const quoteRouter = createTRPCRouter({
         };
 
         // Combine filters using AND
-        const andConditions = [];
+        const andConditions: Prisma.QuoteWhereInput[] = [];
 
         // Filter expired quotes if not including them
         if (!input.includeExpired) {
@@ -629,6 +639,7 @@ export const quoteRouter = createTRPCRouter({
             isExpired: quote.validUntil ? quote.validUntil < new Date() : false,
             itemCount: quote._count.items,
             projectName: quote.projectName ?? 'Sin nombre',
+            sentAt: quote.sentAt,
             status: quote.status,
             total: Number(quote.total),
             validUntil: quote.validUntil,
@@ -657,6 +668,42 @@ export const quoteRouter = createTRPCRouter({
           message: 'No se pudieron cargar las cotizaciones. Intente nuevamente.',
         });
       }
+    }),
+
+  // ============================================================================
+  // Feature 005: Send Quote to Vendor
+  // ============================================================================
+
+  /**
+   * Send draft quote to vendor for professional review
+   *
+   * **Protected**: Requires authentication
+   * **Status Transition**: draft → sent (immutable, no rollback)
+   * **Validation**: Quote must exist, belong to user, be in 'draft' status, and have items
+   *
+   * @example
+   * ```typescript
+   * // Client call
+   * const result = await trpc.quote['send-to-vendor'].mutate({
+   *   quoteId: 'cuid123',
+   *   contactPhone: '+573001234567',
+   *   contactEmail: 'user@example.com' // optional
+   * });
+   * ```
+   */
+  'send-to-vendor': protectedProcedure
+    .input(sendToVendorInput)
+    .output(sendToVendorOutput)
+    .mutation(async ({ ctx, input }) => {
+      // Delegate to service layer for business logic
+      const result = await sendQuoteToVendor(ctx.db, {
+        contactEmail: input.contactEmail,
+        contactPhone: input.contactPhone,
+        quoteId: input.quoteId,
+        userId: ctx.session.user.id,
+      });
+
+      return result;
     }),
 
   submit: publicProcedure

@@ -125,10 +125,12 @@ export function getGlassTypeName(type: string): string {
  * Removes special characters that might cause issues
  */
 export function sanitizeText(text: string): string {
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: Control characters removal is intentional for PDF security
-  return text
-    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
-    .trim();
+  return (
+    text
+      // biome-ignore lint/suspicious/noControlCharactersInRegex: Control characters removal is intentional for PDF security
+      .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
+      .trim()
+  );
 }
 
 /**

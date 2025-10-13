@@ -83,6 +83,7 @@ export function useQuoteExport(options: UseQuoteExportOptions = {}): UseQuoteExp
   /**
    * Export quote to PDF
    */
+  // biome-ignore lint/suspicious/useAwait: Async needed for Promise return type
   const exportPDF = async (quoteId: string): Promise<void> => {
     setIsDownloadingPDF(true);
 
@@ -124,6 +125,7 @@ export function useQuoteExport(options: UseQuoteExportOptions = {}): UseQuoteExp
   /**
    * Export quote to Excel
    */
+  // biome-ignore lint/suspicious/useAwait: Async needed for Promise return type
   const exportExcel = async (quoteId: string): Promise<void> => {
     setIsDownloadingExcel(true);
 
