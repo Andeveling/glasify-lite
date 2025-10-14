@@ -12,11 +12,11 @@
 
 **Options Evaluated**:
 
-| Option | Description | Pros | Cons | Decision |
-|--------|-------------|------|------|----------|
-| **A. Static TypeScript Object** | Hardcoded lookup in `material-benefits.ts` | ✅ Type-safe<br>✅ Zero runtime overhead<br>✅ Fast lookups<br>✅ Easy to test | ⚠️ Requires code deployment for changes | ✅ **SELECTED** |
-| B. Database-driven | Store benefits in `ProfileSupplier.notes` | ✅ Admin-editable<br>✅ Per-supplier customization | ❌ Complex parsing logic<br>❌ Performance overhead<br>❌ Weak typing | ❌ Rejected |
-| C. CMS-managed | External content management | ✅ Non-dev content updates | ❌ Adds external dependency<br>❌ Overkill for 2 materials<br>❌ Latency | ❌ Rejected |
+| Option                          | Description                                | Pros                                                                       | Cons                                                                  | Decision       |
+| ------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------- | --------------------------------------------------------------------- | -------------- |
+| **A. Static TypeScript Object** | Hardcoded lookup in `material-benefits.ts` | ✅ Type-safe<br>✅ Zero runtime overhead<br>✅ Fast lookups<br>✅ Easy to test | ⚠️ Requires code deployment for changes                                | ✅ **SELECTED** |
+| B. Database-driven              | Store benefits in `ProfileSupplier.notes`  | ✅ Admin-editable<br>✅ Per-supplier customization                           | ❌ Complex parsing logic<br>❌ Performance overhead<br>❌ Weak typing    | ❌ Rejected     |
+| C. CMS-managed                  | External content management                | ✅ Non-dev content updates                                                  | ❌ Adds external dependency<br>❌ Overkill for 2 materials<br>❌ Latency | ❌ Rejected     |
 
 **Final Decision**: **Static TypeScript Lookup Object**
 
@@ -60,11 +60,11 @@ export const MATERIAL_BENEFITS: Record<MaterialType, string[]> = {
 
 **Options Evaluated**:
 
-| Option | Description | Pros | Cons | Decision |
-|--------|-------------|------|------|----------|
-| **A. Generic Material-Based Ratings** | Display default ratings per material type | ✅ Works immediately<br>✅ No schema changes<br>✅ Consistent UX | ⚠️ Not supplier-specific<br>⚠️ Less accurate | ✅ **SELECTED** for Phase 1 |
-| B. Parse notes field | Extract ratings from free-text notes | ✅ Uses existing data | ❌ Fragile parsing<br>❌ Inconsistent format<br>❌ Maintenance burden | ❌ Rejected |
-| C. Extend ProfileSupplier schema | Add `thermalRating`, `acousticRating` fields | ✅ Precise data<br>✅ Queryable | ❌ Schema migration<br>❌ Data entry overhead<br>❌ Out of scope for P1 | ⏳ Future enhancement |
+| Option                                | Description                                  | Pros                                                          | Cons                                                                 | Decision                   |
+| ------------------------------------- | -------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------- |
+| **A. Generic Material-Based Ratings** | Display default ratings per material type    | ✅ Works immediately<br>✅ No schema changes<br>✅ Consistent UX | ⚠️ Not supplier-specific<br>⚠️ Less accurate                           | ✅ **SELECTED** for Phase 1 |
+| B. Parse notes field                  | Extract ratings from free-text notes         | ✅ Uses existing data                                          | ❌ Fragile parsing<br>❌ Inconsistent format<br>❌ Maintenance burden   | ❌ Rejected                 |
+| C. Extend ProfileSupplier schema      | Add `thermalRating`, `acousticRating` fields | ✅ Precise data<br>✅ Queryable                                 | ❌ Schema migration<br>❌ Data entry overhead<br>❌ Out of scope for P1 | ⏳ Future enhancement       |
 
 **Final Decision**: **Generic Material-Based Ratings (Phase 1)**
 
@@ -105,12 +105,12 @@ export const MATERIAL_PERFORMANCE: Record<MaterialType, {
 
 **Options Evaluated**:
 
-| Option | Description | Pros | Cons | Decision |
-|--------|-------------|------|------|----------|
-| **A. Stars + Descriptive Text** | "⭐⭐⭐⭐⭐ Excelente aislamiento térmico" | ✅ Instantly recognizable<br>✅ Cross-cultural understanding<br>✅ Accessible | ⚠️ Less precise | ✅ **SELECTED** |
-| B. Technical class numbers | "Clase 6 - Estanqueidad al Agua" | ✅ Technically accurate | ❌ Requires user education<br>❌ Cognitive load | ❌ Rejected |
-| C. Progress bars | Visual bar 0-100% | ✅ Visual clarity | ❌ Implies quantitative scale<br>❌ Misleading (Class 6 ≠ 100%) | ❌ Rejected |
-| D. Badges only | Icon badges (🛡️ 🔇 ❄️) | ✅ Clean design | ❌ Requires legend<br>❌ Not self-explanatory | ❌ Rejected |
+| Option                          | Description                           | Pros                                                                       | Cons                                                          | Decision       |
+| ------------------------------- | ------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------- | -------------- |
+| **A. Stars + Descriptive Text** | "⭐⭐⭐⭐⭐ Excelente aislamiento térmico" | ✅ Instantly recognizable<br>✅ Cross-cultural understanding<br>✅ Accessible | ⚠️ Less precise                                                | ✅ **SELECTED** |
+| B. Technical class numbers      | "Clase 6 - Estanqueidad al Agua"      | ✅ Technically accurate                                                     | ❌ Requires user education<br>❌ Cognitive load                 | ❌ Rejected     |
+| C. Progress bars                | Visual bar 0-100%                     | ✅ Visual clarity                                                           | ❌ Implies quantitative scale<br>❌ Misleading (Class 6 ≠ 100%) | ❌ Rejected     |
+| D. Badges only                  | Icon badges (🛡️ 🔇 ❄️)                   | ✅ Clean design                                                             | ❌ Requires legend<br>❌ Not self-explanatory                   | ❌ Rejected     |
 
 **Final Decision**: **Stars (1-5) + Descriptive Spanish Text**
 
@@ -160,12 +160,12 @@ function formatPerformanceRating(level: PerformanceLevel): {
 
 **Options Evaluated**:
 
-| Option | Description | Pros | Cons | Decision |
-|--------|-------------|------|------|----------|
-| **A. Vertical Stack (Reflow)** | Cards move above form in mobile | ✅ Maintains all content<br>✅ No interaction needed<br>✅ Scroll-friendly | ⚠️ Longer page | ✅ **SELECTED** |
-| B. Collapsible Accordion | Expand/collapse cards on mobile | ✅ Compact initially | ❌ Requires tap to reveal<br>❌ "Don't Make Me Think" violation | ❌ Rejected |
-| C. Bottom Sheet | Modal overlay with specs | ✅ Saves space | ❌ Disrupts flow<br>❌ Extra interaction<br>❌ Hides context | ❌ Rejected |
-| D. Horizontal Carousel | Swipeable cards | ✅ Compact | ❌ Discoverable issues<br>❌ Accessibility concerns | ❌ Rejected |
+| Option                         | Description                     | Pros                                                                    | Cons                                                          | Decision       |
+| ------------------------------ | ------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------- | -------------- |
+| **A. Vertical Stack (Reflow)** | Cards move above form in mobile | ✅ Maintains all content<br>✅ No interaction needed<br>✅ Scroll-friendly | ⚠️ Longer page                                                 | ✅ **SELECTED** |
+| B. Collapsible Accordion       | Expand/collapse cards on mobile | ✅ Compact initially                                                     | ❌ Requires tap to reveal<br>❌ "Don't Make Me Think" violation | ❌ Rejected     |
+| C. Bottom Sheet                | Modal overlay with specs        | ✅ Saves space                                                           | ❌ Disrupts flow<br>❌ Extra interaction<br>❌ Hides context     | ❌ Rejected     |
+| D. Horizontal Carousel         | Swipeable cards                 | ✅ Compact                                                               | ❌ Discoverable issues<br>❌ Accessibility concerns             | ❌ Rejected     |
 
 **Final Decision**: **Vertical Stack (Reflow)**
 
@@ -209,12 +209,12 @@ function formatPerformanceRating(level: PerformanceLevel): {
 
 **Options Evaluated**:
 
-| Option | Description | Pros | Cons | Decision |
-|--------|-------------|------|------|----------|
-| **A. Component-Level Null Checks** | Early return if data missing | ✅ Simple<br>✅ Performant<br>✅ No abstractions<br>✅ React pattern | ⚠️ Repetitive code | ✅ **SELECTED** |
-| B. Suspense Boundaries | Wrap each card in `<Suspense>` | ✅ Progressive loading | ❌ Overkill for sync data<br>❌ Extra component tree | ❌ Rejected |
-| C. Error Boundaries | `<ErrorBoundary>` per card | ✅ Catches runtime errors | ❌ Wrong abstraction<br>❌ Missing data ≠ error | ❌ Rejected |
-| D. Optional Chaining Everywhere | `supplier?.name ?? 'Unknown'` | ✅ Concise | ❌ Shows "Unknown" (violates spec)<br>❌ Fails gracefully = bad UX | ❌ Rejected |
+| Option                             | Description                    | Pros                                                             | Cons                                                             | Decision       |
+| ---------------------------------- | ------------------------------ | ---------------------------------------------------------------- | ---------------------------------------------------------------- | -------------- |
+| **A. Component-Level Null Checks** | Early return if data missing   | ✅ Simple<br>✅ Performant<br>✅ No abstractions<br>✅ React pattern | ⚠️ Repetitive code                                                | ✅ **SELECTED** |
+| B. Suspense Boundaries             | Wrap each card in `<Suspense>` | ✅ Progressive loading                                            | ❌ Overkill for sync data<br>❌ Extra component tree               | ❌ Rejected     |
+| C. Error Boundaries                | `<ErrorBoundary>` per card     | ✅ Catches runtime errors                                         | ❌ Wrong abstraction<br>❌ Missing data ≠ error                    | ❌ Rejected     |
+| D. Optional Chaining Everywhere    | `supplier?.name ?? 'Unknown'`  | ✅ Concise                                                        | ❌ Shows "Unknown" (violates spec)<br>❌ Fails gracefully = bad UX | ❌ Rejected     |
 
 **Final Decision**: **Component-Level Null Checks with Graceful Degradation**
 
@@ -273,16 +273,16 @@ export function ModelSpecifications({ model }: Props) {
 
 ## Technology Decisions Summary
 
-| Decision | Technology/Pattern | Rationale |
-|----------|-------------------|-----------|
-| Material Benefits | Static TypeScript object | Type-safe, performant, i18n-ready |
-| Performance Ratings | Material-based defaults (Phase 1) | No schema changes, works immediately |
-| Rating Display | Stars (1-5) + Spanish descriptive text | UX clarity, accessibility |
-| Mobile Layout | Vertical stack (CSS Grid reflow) | No JS, maintains hierarchy |
-| Null Handling | Component-level guards | Simple, performant, type-safe |
-| Data Fetching | Extend existing Prisma select | Zero additional queries |
-| Component Pattern | Atomic Design (Card organisms) | Matches existing architecture |
-| Styling | TailwindCSS + shadcn/ui | Existing stack, consistent UI |
+| Decision            | Technology/Pattern                     | Rationale                            |
+| ------------------- | -------------------------------------- | ------------------------------------ |
+| Material Benefits   | Static TypeScript object               | Type-safe, performant, i18n-ready    |
+| Performance Ratings | Material-based defaults (Phase 1)      | No schema changes, works immediately |
+| Rating Display      | Stars (1-5) + Spanish descriptive text | UX clarity, accessibility            |
+| Mobile Layout       | Vertical stack (CSS Grid reflow)       | No JS, maintains hierarchy           |
+| Null Handling       | Component-level guards                 | Simple, performant, type-safe        |
+| Data Fetching       | Extend existing Prisma select          | Zero additional queries              |
+| Component Pattern   | Atomic Design (Card organisms)         | Matches existing architecture        |
+| Styling             | TailwindCSS + shadcn/ui                | Existing stack, consistent UI        |
 
 ## Implementation Dependencies
 
