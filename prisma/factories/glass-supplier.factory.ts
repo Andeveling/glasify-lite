@@ -92,7 +92,7 @@ export function createGlassSupplier(
   const validated = schemaResult.data;
   if (!validated) {
     return {
-      errors: [{ code: 'VALIDATION_ERROR', message: 'Validation failed', path: [] }],
+      errors: [ { code: 'VALIDATION_ERROR', message: 'Validation failed', path: [] } ],
       success: false,
     };
   }

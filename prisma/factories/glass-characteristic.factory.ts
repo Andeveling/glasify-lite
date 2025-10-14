@@ -31,7 +31,7 @@ const MAX_CATEGORY_LENGTH = 50;
 /**
  * Valid characteristic categories
  */
-const CHARACTERISTIC_CATEGORIES = ['safety', 'thermal', 'acoustic', 'coating', 'solar', 'privacy'] as const;
+const CHARACTERISTIC_CATEGORIES = [ 'safety', 'thermal', 'acoustic', 'coating', 'solar', 'privacy' ] as const;
 
 /**
  * Zod schema for GlassCharacteristic input validation
@@ -103,7 +103,7 @@ export function createGlassCharacteristic(
   const validated = schemaResult.data;
   if (!validated) {
     return {
-      errors: [{ code: 'VALIDATION_ERROR', message: 'Validation failed', path: [] }],
+      errors: [ { code: 'VALIDATION_ERROR', message: 'Validation failed', path: [] } ],
       success: false,
     };
   }
