@@ -23,7 +23,7 @@ export const getModelByIdInput = z.object({
 });
 
 export const listServicesInput = z.object({
-  manufacturerId: z.cuid('ID del fabricante debe ser válido'),
+  // Services are now global, no longer tied to a specific manufacturer
 });
 
 export const listGlassTypesInput = z.object({
@@ -101,7 +101,6 @@ export const modelDetailOutput = z.object({
 export const serviceOutput = z.object({
   createdAt: z.date(),
   id: z.string(),
-  manufacturerId: z.string().nullable(), // REFACTOR: Deprecated field, now optional
   name: z.string(),
   rate: z.number(),
   type: z.enum(['area', 'perimeter', 'fixed']),
@@ -146,15 +145,16 @@ export const listGlassSolutionsOutput = z.array(glassSolutionOutput);
 
 export const glassTypeOutput = z.object({
   createdAt: z.date(),
+  description: z.string().nullable().optional(), // REFACTOR: New field
+  glassSupplierId: z.string().nullable().optional(), // REFACTOR: New supplier reference
   id: z.string(),
+  isActive: z.boolean().optional(), // REFACTOR: New field
   isLaminated: z.boolean(),
   isLowE: z.boolean(),
   isTempered: z.boolean(),
   isTripleGlazed: z.boolean(),
-  manufacturerId: z.string().nullable(), // REFACTOR: Deprecated field, now optional
   name: z.string(),
   pricePerSqm: z.number(),
-  profileSupplierId: z.string().nullable().optional(), // REFACTOR: New optional supplier reference
   purpose: z.enum(['general', 'insulation', 'security', 'decorative']),
   solutions: z.array(glassTypeSolutionOutput).optional(),
   thicknessMm: z.number(),

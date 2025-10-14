@@ -99,7 +99,6 @@ export async function generateQuoteFromCart(
         data: {
           contactPhone: input.contactPhone,
           currency,
-          manufacturerId: input.manufacturerId || null, // REFACTOR: Deprecated field, kept for backward compatibility
           projectCity: input.projectAddress.projectCity,
           projectName: input.projectAddress.projectName,
           projectPostalCode: input.projectAddress.projectPostalCode,

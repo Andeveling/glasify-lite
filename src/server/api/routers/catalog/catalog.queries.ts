@@ -179,15 +179,17 @@ export const catalogQueries = createTRPCRouter({
           orderBy: { name: 'asc' },
           select: {
             createdAt: true,
+            description: true,
+            glassSupplierId: true,
             id: true,
+            isActive: true,
             isLaminated: true,
             isLowE: true,
             isTempered: true,
             isTripleGlazed: true,
-            manufacturerId: true,
             name: true,
             pricePerSqm: true,
-            purpose: true, // Kept for potential future fallback needs
+            purpose: true,
             solutions: {
               include: {
                 solution: true,
@@ -389,24 +391,18 @@ export const catalogQueries = createTRPCRouter({
     .output(listServicesOutput)
     .query(async ({ ctx, input }) => {
       try {
-        logger.info('Listing services for manufacturer', {
-          manufacturerId: input.manufacturerId,
-        });
+        logger.info('Listing services');
 
         const services = await ctx.db.service.findMany({
           orderBy: { name: 'asc' },
           select: {
             createdAt: true,
             id: true,
-            manufacturerId: true,
             name: true,
             rate: true,
             type: true,
             unit: true,
             updatedAt: true,
-          },
-          where: {
-            manufacturerId: input.manufacturerId,
           },
         });
 
@@ -418,14 +414,12 @@ export const catalogQueries = createTRPCRouter({
 
         logger.info('Successfully retrieved services', {
           count: serializedServices.length,
-          manufacturerId: input.manufacturerId,
         });
 
         return serializedServices;
       } catch (error) {
         logger.error('Error listing services', {
           error: error instanceof Error ? error.message : 'Unknown error',
-          manufacturerId: input.manufacturerId,
         });
 
         throw new Error('No se pudieron cargar los servicios. Intente nuevamente.');

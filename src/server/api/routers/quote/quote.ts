@@ -24,8 +24,8 @@ export const calculateItemServiceInput = z.object({
 
 export const calculateItemAdjustmentInput = z.object({
   concept: z.string().min(1, 'El concepto del ajuste es requerido'),
-  sign: z.enum([ 'positive', 'negative' ]),
-  unit: z.enum([ 'unit', 'sqm', 'ml' ]),
+  sign: z.enum(['positive', 'negative']),
+  unit: z.enum(['unit', 'sqm', 'ml']),
   value: z.number().min(0, 'El valor debe ser mayor o igual a 0'),
 });
 
@@ -43,7 +43,7 @@ export const calculateItemServiceOutput = z.object({
   amount: z.number(),
   quantity: z.number(),
   serviceId: z.string(),
-  unit: z.enum([ 'unit', 'sqm', 'ml' ]),
+  unit: z.enum(['unit', 'sqm', 'ml']),
 });
 
 export const calculateItemAdjustmentOutput = z.object({
@@ -96,9 +96,9 @@ export const quoteRouter = createTRPCRouter({
 
         // First, calculate the item to get the subtotal
         const calculation = await ctx.db.$transaction(async (tx) => {
-          // Get model data
+          // Get model data (profileSupplier is the new relation)
           const model = await tx.model.findUnique({
-            include: { manufacturer: true },
+            include: { profileSupplier: true },
             where: { id: input.modelId },
           });
 
@@ -142,7 +142,6 @@ export const quoteRouter = createTRPCRouter({
             quote = await tx.quote.create({
               data: {
                 currency,
-                manufacturerId: model.manufacturerId, // REFACTOR: Deprecated field, will be removed
                 status: 'draft',
                 validUntil,
               },
@@ -154,7 +153,6 @@ export const quoteRouter = createTRPCRouter({
             const services = await tx.service.findMany({
               where: {
                 id: { in: serviceIds },
-                manufacturerId: model.manufacturerId,
               },
             });
 
@@ -301,7 +299,7 @@ export const quoteRouter = createTRPCRouter({
 
         // Get model data (needed for ranges, pricing and discounts)
         const model = await ctx.db.model.findUnique({
-          include: { manufacturer: true },
+          include: { profileSupplier: true },
           where: { id: input.modelId },
         });
 
@@ -329,7 +327,6 @@ export const quoteRouter = createTRPCRouter({
           const services = await ctx.db.service.findMany({
             where: {
               id: { in: serviceIds },
-              manufacturerId: model.manufacturerId,
             },
           });
 
@@ -567,7 +564,7 @@ export const quoteRouter = createTRPCRouter({
         // Filter expired quotes if not including them
         if (!input.includeExpired) {
           andConditions.push({
-            OR: [ { validUntil: null }, { validUntil: { gte: new Date() } } ],
+            OR: [{ validUntil: null }, { validUntil: { gte: new Date() } }],
           });
         }
 
@@ -607,7 +604,7 @@ export const quoteRouter = createTRPCRouter({
         };
 
         // Execute query with pagination
-        const [ quotes, total ] = await Promise.all([
+        const [quotes, total] = await Promise.all([
           ctx.db.quote.findMany({
             include: {
               // biome-ignore lint/style/useNamingConvention: Prisma's _count is a special field
@@ -616,7 +613,7 @@ export const quoteRouter = createTRPCRouter({
               },
             },
             orderBy: {
-              [ input.sortBy ]: input.sortOrder,
+              [input.sortBy]: input.sortOrder,
             },
             skip,
             take: input.limit,
