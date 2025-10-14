@@ -14,10 +14,8 @@ async function ModelFormData({ serverModel }: ModelFormWrapperProps) {
     glassTypeIds: serverModel.compatibleGlassTypeIds,
   });
 
-  // Fetch services for this profile supplier
-  const services = await api.catalog['list-services']({
-    manufacturerId: serverModel.profileSupplier?.id ?? '',
-  });
+  // Fetch services (now global, no longer tied to manufacturer)
+  const services = await api.catalog['list-services']({});
 
   // Fetch glass solutions filtered by model compatibility (UX: "Don't Make Me Think")
   // Only show solutions that have at least one compatible glass type for this model
