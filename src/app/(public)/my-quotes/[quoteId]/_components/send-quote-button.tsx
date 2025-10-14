@@ -19,7 +19,7 @@ interface SendQuoteButtonProps {
  */
 export function SendQuoteButton({ quote }: SendQuoteButtonProps) {
   const router = useRouter();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [ isModalOpen, setIsModalOpen ] = useState(false);
   const { mutate: sendQuote, isPending } = useSendQuote({
     redirectOnSuccess: false, // Stay on current page after sending
   });
