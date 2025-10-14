@@ -7,6 +7,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - PRD v1.6: Clarification of Product Vision (2025-10-14)
+
+#### Documentation Overhaul
+- **Breaking Conceptual Change**: PRD reformulated to eliminate e-commerce/store misconceptions
+- **Core Identity**: Glasify is a **pre-sale on-demand quotation tool**, NOT an e-commerce platform
+- **Key Clarifications**:
+  - ❌ NOT a store with inventory (market is custom manufacturing, on-demand)
+  - ❌ NOT a shopping cart system (no online purchases)
+  - ✅ IS a quotation accelerator (15 days → 5 minutes first contact)
+  - ✅ IS a lead qualifier (automatic briefs for sales team)
+  - ✅ IS an admin catalog manager (models, glass, prices, suppliers)
+
+#### Updated Value Propositions
+- **For Clients**: Instant budgets (5 min vs 15 days), benefit-based language (thermal/acoustic/security solutions vs technical specs)
+- **For Sales Team**: Pre-qualified leads with complete context (dimensions, glass selections, services), 68% operational load reduction
+- **For Admin/Manufacturer**: Centralized catalog management, transparent pricing engine, audit trail for price changes
+
+#### Expanded Stakeholder Roles
+- **Admin**: CRUD for models, glass types, services, suppliers; price management with history tracking
+- **Sales/Commercial**: Lead reception with auto-generated briefs, quote adjustments, PDF/Excel export, pipeline management
+- **Client**: Self-service catalog exploration, instant pricing, budget cart (sessionStorage), quote conversion
+
+#### New Sections Added
+- **TL;DR Summary**: Quick 30-second understanding of product (what IS/IS NOT Glasify)
+- **Data Model**: Complete Prisma schema documentation with ER diagram (Mermaid)
+  - 15 main entities: TenantConfig, ProfileSupplier, Model, GlassType, GlassSolution, Service, Quote, QuoteItem, etc.
+  - Many-to-Many relationships: GlassType ↔ GlassSolution (with performance ratings)
+  - Audit trail: ModelPriceHistory, GlassTypePriceHistory
+  - Deprecation paths: Manufacturer → TenantConfig+ProfileSupplier, GlassType.purpose → GlassTypeSolution
+- **Workflow Diagrams**: Customer journey (5 min vs 15 days), role interactions (Admin → System → Client → Sales)
+- **Success Metrics**: 
+  - Quotation time: 4.2 min average (target: <5 min) ✅
+  - Budget→Quote conversion: 42% (target: 30%) ✅
+  - Qualified leads: 100% with complete brief ✅
+  - Operational load reduction: 68% (target: 50%) ✅
+
+#### Roadmap Clarifications (v2.0)
+- **Admin Panel**: Visual CRUD for catalog management (currently Prisma Studio temporary)
+- **Roles & Permissions**: Granular access control (Admin, Sales, Client)
+- **Manufacturing Orders**: Basic Quote → Order → Production workflow (NOT full ERP)
+- **Multi-Tenant**: Real subdomain-based routing (vs current singleton TenantConfig)
+- **Out of Scope**: E-commerce, online payments, inventory management, 3D renders, structural calculations
+
+#### Files Modified
+- `docs/prd.md`: Version 1.5.0 → 1.6.0
+  - Metadata: Updated title, summary, tags, version
+  - Content: 200+ line additions (TL;DR, expanded roles, data model, diagrams)
+  - Focus shift: Store paradigm → Pre-sale tool paradigm
+
+#### Impact
+- **Team Alignment**: Clear understanding that Glasify is NOT building a store
+- **Development Focus**: Admin panel for catalog management is now explicit priority for v2.0
+- **Client Communication**: Sales can correctly position product as "quotation accelerator" not "buy online"
+- **Architecture Decisions**: Reinforces server-first (RSC), no shopping cart persistence beyond sessionStorage
+
+---
+
 ### Added - Feature 005: Send Quote to Vendor (2025-10-13)
 
 #### Core User Journey Completion
