@@ -5,6 +5,7 @@
 **Status**: Draft  
 **Input**: User description: "$ARGUMENTS"
 
+
 ## User Scenarios & Testing *(mandatory)*
 
 <!--
@@ -18,6 +19,8 @@
   - Tested independently
   - Deployed independently
   - Demonstrated to users independently
+
+  TESTING POLICY: Tests MUST exist for all happy paths and critical edge cases before merge. Tests MAY be written before, during, or after implementation, but MUST be present before merging the feature (see "Pragmatic Testing Discipline" in constitution). No workflow restriction: test-first/test-last is NOT required.
 -->
 
 ### User Story 1 - [Brief Title] (Priority: P1)

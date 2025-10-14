@@ -9,7 +9,7 @@ type ModelSidebarProps = {
 
 export function ModelSidebar({ model }: ModelSidebarProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <ModelInfo model={model} />
       <ModelDimensionsCard dimensions={model.dimensions} />
       <ModelFeatures features={model.features} />
