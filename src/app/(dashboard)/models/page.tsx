@@ -1,15 +1,14 @@
-import { Edit, Eye, Filter, Package, Plus, Search, Trash2 } from 'lucide-react';
+import { Edit, Eye, Filter, Package, Plus, Search } from 'lucide-react';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { generateStableKeyedArray } from '@/app/_utils/generate-keys.util';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { auth } from '@/server/auth';
+import { ModelsTable } from './_components/models-table';
 
 export const metadata: Metadata = {
   description: 'Administra los modelos de vidrio disponibles en el catálogo',
@@ -87,105 +86,6 @@ const MOCK_MODELS = [
 ];
 
 const PROFILE_SUPPLIERS = ['Todos', 'VEKA', 'Guardian Glass', 'Pilkington'];
-
-const STATUS_CONFIG = {
-  draft: { label: 'Borrador', variant: 'secondary' as const },
-  published: { label: 'Publicado', variant: 'default' as const },
-};
-
-function ModelsTable({
-  models = MOCK_MODELS,
-  onEdit,
-  onView,
-  onDelete,
-}: {
-  models?: typeof MOCK_MODELS;
-  onEdit?: (modelId: string) => void;
-  onView?: (modelId: string) => void;
-  onDelete?: (modelId: string) => void;
-}) {
-  const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat('es-AR', {
-      currency: 'ARS',
-      maximumFractionDigits: 0,
-      style: 'currency',
-    }).format(amount);
-
-  const formatDate = (dateString: string) =>
-    new Intl.DateTimeFormat('es-AR', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    }).format(new Date(dateString));
-
-  const formatDimensions = (minW: number, maxW: number, minH: number, maxH: number) =>
-    `${minW}-${maxW} × ${minH}-${maxH} mm`;
-
-  return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Modelo</TableHead>
-            <TableHead>Estado</TableHead>
-            <TableHead>Dimensiones</TableHead>
-            <TableHead className="text-right">Precio Base</TableHead>
-            <TableHead>Vidrios Compatibles</TableHead>
-            <TableHead>Actualizado</TableHead>
-            <TableHead className="w-32">Acciones</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {models.map((model) => (
-            <TableRow key={model.id}>
-              <TableCell>
-                <div>
-                  <div className="font-medium">{model.name}</div>
-                  <div className="text-muted-foreground text-sm">{model.profileSupplier ?? 'Sin proveedor'}</div>
-                </div>
-              </TableCell>
-              <TableCell>
-                <Badge variant={STATUS_CONFIG[model.status].variant}>{STATUS_CONFIG[model.status].label}</Badge>
-              </TableCell>
-              <TableCell className="font-mono text-sm">
-                {formatDimensions(model.minWidthMm, model.maxWidthMm, model.minHeightMm, model.maxHeightMm)}
-              </TableCell>
-              <TableCell className="text-right font-medium">{formatCurrency(model.basePrice)}</TableCell>
-              <TableCell>
-                <div className="flex flex-wrap gap-1">
-                  {model.compatibleGlassTypes.slice(0, 2).map((glassType) => (
-                    <Badge className="text-xs" key={glassType} variant="outline">
-                      {glassType}
-                    </Badge>
-                  ))}
-                  {model.compatibleGlassTypes.length > 2 && (
-                    <Badge className="text-xs" variant="outline">
-                      +{model.compatibleGlassTypes.length - 2}
-                    </Badge>
-                  )}
-                </div>
-              </TableCell>
-              <TableCell className="text-muted-foreground text-sm">{formatDate(model.updatedAt)}</TableCell>
-              <TableCell>
-                <div className="flex gap-1">
-                  <Button onClick={() => onView?.(model.id)} size="sm" title="Ver detalles" variant="outline">
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                  <Button onClick={() => onEdit?.(model.id)} size="sm" title="Editar modelo" variant="outline">
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button onClick={() => onDelete?.(model.id)} size="sm" title="Eliminar modelo" variant="outline">
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-  );
-}
 
 function ModelsPageContent() {
   const models = MOCK_MODELS;

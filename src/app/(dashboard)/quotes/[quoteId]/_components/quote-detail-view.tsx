@@ -10,6 +10,7 @@
 import { ArrowLeft, Clock, Phone } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
+import { useTenantConfig } from '@/providers/tenant-config-provider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,6 +25,8 @@ type QuoteDetailViewProps = {
 };
 
 export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
+  const { locale, timezone } = useTenantConfig();
+
   return (
     <div className="space-y-6">
       {/* Header con botón de regreso y acción de envío */}
@@ -46,7 +49,7 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
             {/* Title with sent date */}
             <div>
               <p className="font-semibold text-blue-900 dark:text-blue-100">
-                Cotización enviada el {formatDate(quote.sentAt)}
+                Cotización enviada el {formatDate(quote.sentAt, locale, timezone)}
               </p>
               <p className="text-blue-700 text-sm dark:text-blue-300">
                 El fabricante ha recibido tu solicitud y se pondrá en contacto contigo pronto.
@@ -85,7 +88,7 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
           <div className="flex items-start justify-between">
             <div>
               <CardTitle>{quote.projectAddress.projectName}</CardTitle>
-              <CardDescription>Creada el {formatDate(quote.createdAt)}</CardDescription>
+              <CardDescription>Creada el {formatDate(quote.createdAt, locale, timezone)}</CardDescription>
             </div>
             <div className="flex gap-2">
               <QuoteStatusBadge status={quote.status} />
@@ -126,7 +129,7 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
           <div className="flex gap-8">
             <div>
               <p className="text-muted-foreground text-sm">Válida hasta</p>
-              <p className="font-medium">{quote.validUntil ? formatDate(quote.validUntil) : 'Sin límite'}</p>
+              <p className="font-medium">{quote.validUntil ? formatDate(quote.validUntil, locale, timezone) : 'Sin límite'}</p>
             </div>
             <div>
               <p className="text-muted-foreground text-sm">Total de unidades</p>
