@@ -2,9 +2,11 @@
 
 import { Edit, Eye, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useTenantConfig } from '@/providers/tenant-config-provider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { formatDate } from '@/lib/utils';
 
 type Model = {
   basePrice: number;
@@ -31,6 +33,7 @@ type ModelsTableProps = {
 };
 
 function ModelsTable({ models, onView, onEdit, onDelete }: ModelsTableProps) {
+  const { locale, timezone } = useTenantConfig();
   const router = useRouter();
 
   const handleView = (modelId: string) => {
@@ -99,7 +102,7 @@ function ModelsTable({ models, onView, onEdit, onDelete }: ModelsTableProps) {
                   )}
                 </div>
               </TableCell>
-              <TableCell className="text-muted-foreground text-sm">{formatDate(model.updatedAt)}</TableCell>
+              <TableCell className="text-muted-foreground text-sm">{formatDate(model.updatedAt, locale, timezone)}</TableCell>
               <TableCell>
                 <div className="flex gap-1">
                   <Button onClick={() => handleView(model.id)} size="sm" title="Ver detalles" variant="outline">
@@ -127,10 +130,6 @@ function formatCurrency(amount: number): string {
     currency: 'ARS',
     style: 'currency',
   }).format(amount);
-}
-
-function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('es-AR');
 }
 
 function formatDimensions(minW: number, maxW: number, minH: number, maxH: number): string {

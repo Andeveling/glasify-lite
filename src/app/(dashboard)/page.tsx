@@ -4,10 +4,12 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { generateStableKeyedArray } from '@/app/_utils/generate-keys.util';
+import { getTenantConfig } from '@/server/utils/tenant';
 import StatsCard from '@/app/(dashboard)/_components/stats-card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatDate } from '@/lib/utils';
 import { auth } from '@/server/auth';
 
 export const metadata: Metadata = {
@@ -160,14 +162,6 @@ function RecentQuotes() {
     }).format(amount);
   };
 
-  const formatDate = (dateString: string) =>
-    new Intl.DateTimeFormat('es-AR', {
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      month: 'short',
-    }).format(new Date(dateString));
-
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -182,7 +176,7 @@ function RecentQuotes() {
       <CardContent>
         <div className="space-y-4">
           {RECENT_QUOTES.map((quote) => {
-            const StatusIcon = STATUS_CONFIG[quote.status].icon;
+            const StatusIcon = STATUS_CONFIG[ quote.status ].icon;
             return (
               <div
                 className="flex items-center justify-between border-border border-b pb-4 last:border-0 last:pb-0"
@@ -195,15 +189,15 @@ function RecentQuotes() {
                   <div>
                     <p className="font-medium text-sm">{quote.customer}</p>
                     <p className="text-muted-foreground text-xs">
-                      {quote.items} ítem{quote.items !== 1 ? 's' : ''} • {formatDate(quote.createdAt)}
+                      {quote.items} ítem{quote.items !== 1 ? 's' : ''} • {formatDate(quote.createdAt, 'es-CO', 'America/Bogota')}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="text-right">
                     <p className="font-medium text-sm">{formatCurrency(quote.amount)}</p>
-                    <Badge className="text-xs" variant={STATUS_CONFIG[quote.status].variant}>
-                      {STATUS_CONFIG[quote.status].label}
+                    <Badge className="text-xs" variant={STATUS_CONFIG[ quote.status ].variant}>
+                      {STATUS_CONFIG[ quote.status ].label}
                     </Badge>
                   </div>
                 </div>
@@ -266,6 +260,9 @@ export default async function DashboardPage() {
   if (!session?.user) {
     redirect('/signin');
   }
+
+  // Get tenant configuration for date formatting
+  const tenantConfig = await getTenantConfig();
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
