@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
+import { formatCurrency } from '@/lib/export/pdf/pdf-utils';
 
 // ============================================================================
 // Types
@@ -59,12 +60,9 @@ type PriceBreakdownPopoverProps = {
 export function PriceBreakdownPopover({
   breakdown,
   className,
-  currency = '$',
   totalAmount,
 }: PriceBreakdownPopoverProps) {
-  const formatAmount = (amount: number): string => {
-    return `${currency}${amount.toLocaleString('es-AR')}`;
-  };
+
 
   return (
     <Popover>
@@ -79,7 +77,7 @@ export function PriceBreakdownPopover({
           <Info className="h-4 w-4 text-muted-foreground" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-80">
+      <PopoverContent align="end" className="min-w-90">
         <div className="space-y-4">
           <h3 className="font-semibold text-sm">Desglose del precio</h3>
 
@@ -94,12 +92,12 @@ export function PriceBreakdownPopover({
               {breakdown.map((item, index) => (
                 <TableRow key={`${item.label}-${index}`}>
                   <TableCell className="text-sm">{item.label}</TableCell>
-                  <TableCell className="text-right text-sm">{formatAmount(item.amount)}</TableCell>
+                  <TableCell className="text-right text-sm">{formatCurrency (item.amount)}</TableCell>
                 </TableRow>
               ))}
               <TableRow className="border-t-2">
                 <TableCell className="font-bold">Total</TableCell>
-                <TableCell className="text-right font-bold">{formatAmount(totalAmount)}</TableCell>
+                <TableCell className="text-right font-bold">{formatCurrency(totalAmount)}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
