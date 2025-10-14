@@ -84,7 +84,7 @@ export async function exportQuotePDF(input: ExportQuoteInput): Promise<ExportRes
             },
             model: {
               include: {
-                manufacturer: {
+                profileSupplier: {
                   select: {
                     id: true,
                     name: true,
@@ -168,7 +168,7 @@ export async function exportQuotePDF(input: ExportQuoteInput): Promise<ExportRes
           id: item.id,
           name: item.name,
           product: {
-            manufacturer: item.model?.manufacturer?.name,
+            manufacturer: item.model?.profileSupplier?.name,
             name: item.model?.name ?? 'Producto',
           },
           quantity: item.quantity,
@@ -270,7 +270,7 @@ export async function exportQuoteExcel(input: ExportQuoteInput): Promise<ExportR
             },
             model: {
               include: {
-                manufacturer: {
+                profileSupplier: {
                   select: {
                     id: true,
                     name: true,
@@ -409,7 +409,7 @@ export async function exportQuoteExcel(input: ExportQuoteInput): Promise<ExportR
           height: heightM,
           id: item.id,
           itemNumber: index + 1,
-          manufacturer: item.model?.manufacturer?.name,
+          manufacturer: item.model?.profileSupplier?.name,
           name: item.name,
           productName: item.model?.name ?? 'Producto',
           quantity: item.quantity,
