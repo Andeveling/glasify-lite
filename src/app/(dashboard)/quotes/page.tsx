@@ -23,7 +23,7 @@ export default async function QuotesPage({ searchParams }: QuotesPageProps) {
   });
 
   return (
-    <div className="container mx-auto max-w-5xl py-8">
+    <div className="container mx-auto max-w-7xl py-8">
       <div className="mb-8">
         <h1 className="font-bold text-3xl">Mis Cotizaciones</h1>
         <p className="mt-2 text-muted-foreground">Gestiona y revisa todas tus cotizaciones</p>

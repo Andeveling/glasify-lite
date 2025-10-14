@@ -69,14 +69,6 @@ export default async function MyQuotesPage({ searchParams }: MyQuotesPageProps) 
 
   const { sortBy: backendSortBy, sortOrder } = getSortParams(sortBy);
 
-  logger.info('[MyQuotesPage] User accessing their quotes', {
-    page,
-    searchQuery: searchQuery ?? 'none',
-    sortBy: backendSortBy,
-    sortOrder,
-    status: status ?? 'all',
-    userId: session.user.id,
-  });
 
   // Fetch user's quotes with filters
   const result = await api.quote['list-user-quotes']({
@@ -93,7 +85,7 @@ export default async function MyQuotesPage({ searchParams }: MyQuotesPageProps) 
   const hasActiveFilters = Boolean(status || searchQuery || (sortBy && sortBy !== 'newest'));
 
   return (
-    <div className="container mx-auto max-w-5xl py-8">
+    <div className="container mx-auto max-w-7xl py-8">
       {/* Header with back button */}
       <div className="mb-8">
         <Link href="/catalog">

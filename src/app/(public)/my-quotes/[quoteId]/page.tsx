@@ -43,7 +43,7 @@ export default async function MyQuoteDetailPage({ params }: MyQuoteDetailPagePro
     const quote = await api.quote['get-by-id']({ id: quoteId });
 
     return (
-      <div className="container mx-auto max-w-5xl py-8">
+      <div className="container mx-auto max-w-7xl py-8">
         <QuoteDetailView isPublicView quote={quote} />
       </div>
     );
