@@ -1,11 +1,13 @@
 'use client';
 
 import { Gem } from 'lucide-react';
+import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { FormSection } from '@/components/form-section';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { RadioGroup } from '@/components/ui/radio-group';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { formatCurrency } from '@/lib/utils';
 import type { GlassTypeOutput } from '@/server/api/routers/catalog';
 import { GlassTypeCardSimple } from './_components/glass-type-card-simple';
 import { useGlassTypesByTab } from './_hooks/use-glass-types-by-tab';
@@ -34,10 +36,24 @@ type GlassTypeSelectorSectionProps = {
 };
 
 export function GlassTypeSelectorSection({ basePrice, glassTypes, selectedSolutionId }: GlassTypeSelectorSectionProps) {
-  const { control } = useFormContext();
+  const { control, watch } = useFormContext();
 
   // Hook handles grouping by solution
   const tabs = useGlassTypesByTab(glassTypes, basePrice);
+
+  // Watch selected glass type
+  const selectedGlassTypeId = watch('glassType');
+
+  // Find selected glass type details
+  const selectedGlassType = useMemo(() => {
+    if (!selectedGlassTypeId) return null;
+    
+    for (const tab of tabs) {
+      const found = tab.options.find((opt) => opt.id === selectedGlassTypeId);
+      if (found) return found;
+    }
+    return null;
+  }, [selectedGlassTypeId, tabs]);
 
   // Find default tab (selected solution or first tab)
   const defaultTab = selectedSolutionId
@@ -57,6 +73,27 @@ export function GlassTypeSelectorSection({ basePrice, glassTypes, selectedSoluti
       legend="Tipo de Cristal"
     >
       <Tabs defaultValue={defaultTab}>
+        {/* Selection Indicator - Always visible at top */}
+        {selectedGlassType && (
+          <div className="mb-6 rounded-lg border-2 border-primary bg-primary/10 p-4 dark:bg-purple-950/30">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900">
+                <Gem className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-muted-foreground">Vidrio seleccionado</p>
+                <p className="text-lg font-semibold text-foreground">{selectedGlassType.name}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                  {formatCurrency(selectedGlassType.pricePerSqm)}
+                </p>
+                <p className="text-xs text-muted-foreground">por m²</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Tabs navigation */}
         <TabsList className="w-full justify-start overflow-x-auto">
           {tabs.map((tab) => {
@@ -78,7 +115,7 @@ export function GlassTypeSelectorSection({ basePrice, glassTypes, selectedSoluti
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <>
+                <div>
                   {tabs.map((tab) => (
                     <TabsContent className="space-y-3" key={tab.key} value={tab.key}>
                       {/* Info text */}
@@ -103,7 +140,7 @@ export function GlassTypeSelectorSection({ basePrice, glassTypes, selectedSoluti
                       </RadioGroup>
                     </TabsContent>
                   ))}
-                </>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>

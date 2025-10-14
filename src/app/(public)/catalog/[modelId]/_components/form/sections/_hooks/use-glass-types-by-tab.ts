@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { GlassTypeOutput } from '@/server/api/routers/catalog';
-import { Home } from 'lucide-react';
+import { Home, Shield, Snowflake, Sparkles, Volume2, Zap } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { GlassTypeOption } from './use-glass-type-options';
 import { buildGlassFeatures, calculatePerformanceRatings } from '../_utils/glass-type.utils';
@@ -32,7 +32,16 @@ export type GlassTab = {
 // ============================================================================
 
 function getSolutionIcon(iconName: string | null | undefined): LucideIcon {
-  return Home; // Default - can be extended with dynamic imports if needed
+  const iconMap: Record<string, LucideIcon> = {
+    Home,
+    Shield,
+    Snowflake,
+    Sparkles,
+    Volume2,
+    Zap,
+  };
+
+  return iconName && iconMap[ iconName ] ? iconMap[ iconName ] : Home;
 }
 
 // ============================================================================
