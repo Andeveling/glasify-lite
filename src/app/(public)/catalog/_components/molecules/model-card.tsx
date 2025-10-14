@@ -53,7 +53,11 @@ type ModelCardProps = {
  */
 export function ModelCard({ id, name, profileSupplier, range, basePrice, highlightedSolutions }: ModelCardProps) {
   return (
-    <Card aria-label={`Tarjeta del modelo ${name}`} className="group p-0 pb-2 transition-opacity hover:opacity-80">
+    <Card
+      aria-label={`Tarjeta del modelo ${name}`}
+      className="group p-0 pb-2 transition-opacity hover:opacity-80"
+      data-testid="model-card"
+    >
       <Link className="block space-y-3" href={`/catalog/${id}`}>
         {/* Product Image */}
         <ProductImagePlaceholder productName={name} />
