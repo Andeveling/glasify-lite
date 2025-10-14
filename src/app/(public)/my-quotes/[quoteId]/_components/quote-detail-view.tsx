@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * QuoteDetailView Component (Public User Version)
  *
