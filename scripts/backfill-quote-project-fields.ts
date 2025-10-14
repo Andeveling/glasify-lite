@@ -36,7 +36,6 @@ async function backfillQuoteProjectFields() {
       select: {
         contactAddress: true,
         id: true,
-        manufacturerId: true,
         userId: true,
       },
       where: {
