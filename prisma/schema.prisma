@@ -107,15 +107,16 @@ model Session {
 }
 
 model User {
-  id            String              @id @default(cuid())
-  name          String?
-  email         String?             @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  quotes        Quote[]
-  priceChanges  ModelPriceHistory[]
+  id                String                  @id @default(cuid())
+  name              String?
+  email             String?                 @unique
+  emailVerified     DateTime?
+  image             String?
+  accounts          Account[]
+  sessions          Session[]
+  quotes            Quote[]
+  priceChanges      ModelPriceHistory[]
+  glassPriceChanges GlassTypePriceHistory[]
 }
 
 model VerificationToken {
@@ -229,26 +230,51 @@ model Model {
 }
 
 model GlassType {
-  id             String              @id @default(cuid())
-  name           String
+  id                String                    @id @default(cuid())
+  name              String
   /// @deprecated Use solutions relationship instead. This field will be removed in v2.0.
   /// Legacy single-purpose classification. Replaced by Many-to-Many GlassTypeSolution.
   /// Maintained for backward compatibility only.
-  purpose        GlassPurpose
-  thicknessMm    Int
-  /// Precio por metro cuadrado del vidrio (moneda de TenantConfig)
-  pricePerSqm    Decimal             @db.Decimal(12, 2)
+  purpose           GlassPurpose
+  thicknessMm       Int
+  /// Precio por metro cuadrado del vidrio (referencia currency de TenantConfig)
+  pricePerSqm       Decimal                   @db.Decimal(12, 2)
   /// Transmitancia térmica (W/m²·K) — opcional si aplica
-  uValue         Decimal?            @db.Decimal(5, 2)
-  /// Atributos de seguridad/eficiencia
-  isTempered     Boolean             @default(false)
-  isLaminated    Boolean             @default(false)
-  isLowE         Boolean             @default(false)
-  isTripleGlazed Boolean             @default(false)
-  createdAt      DateTime            @default(now())
-  updatedAt      DateTime            @updatedAt
-  quoteItems     QuoteItem[]
-  solutions      GlassTypeSolution[]
+  uValue            Decimal?                  @db.Decimal(5, 2)
+  /// @deprecated Use characteristics relationship instead. Will be removed in v2.0.
+  isTempered        Boolean                   @default(false)
+  /// @deprecated Use characteristics relationship instead. Will be removed in v2.0.
+  isLaminated       Boolean                   @default(false)
+  /// @deprecated Use characteristics relationship instead. Will be removed in v2.0.
+  isLowE            Boolean                   @default(false)
+  /// @deprecated Use characteristics relationship instead. Will be removed in v2.0.
+  isTripleGlazed    Boolean                   @default(false)
+  // New fields for enhanced structure
+  glassSupplierId   String?
+  glassSupplier     GlassSupplier?            @relation(fields: [glassSupplierId], references: [id], onDelete: SetNull)
+  /// SKU or product code from supplier
+  sku               String?                   @unique
+  /// Detailed description of the glass type
+  description       String?
+  /// Solar factor (g-value) — 0.00 to 1.00
+  solarFactor       Decimal?                  @db.Decimal(4, 2)
+  /// Light transmission percentage — 0.00 to 1.00
+  lightTransmission Decimal?                  @db.Decimal(4, 2)
+  /// Whether this glass type is active for selection
+  isActive          Boolean                   @default(true)
+  /// Date of last technical review
+  lastReviewDate    DateTime?
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+  quoteItems        QuoteItem[]
+  solutions         GlassTypeSolution[]
+  characteristics   GlassTypeCharacteristic[]
+  priceHistory      GlassTypePriceHistory[]
+
+  @@index([glassSupplierId])
+  @@index([isActive])
+  @@index([thicknessMm])
+  @@index([sku])
 }
 
 model Service {
@@ -446,4 +472,102 @@ model GlassTypeSolution {
   @@index([glassTypeId])
   @@index([solutionId])
   @@index([isPrimary])
+}
+
+/// Glass Supplier
+/// Represents glass manufacturers (Guardian, Saint-Gobain, Pilkington, AGC, Vitro, etc.)
+model GlassSupplier {
+  id           String      @id @default(cuid())
+  /// Supplier name (Guardian, Saint-Gobain, Pilkington, etc.)
+  name         String      @unique
+  /// Short code for the supplier (e.g., 'GRD' for Guardian)
+  code         String?     @unique
+  /// Country where the supplier is based
+  country      String?
+  /// Official website URL
+  website      String?
+  /// Contact email for orders/inquiries
+  contactEmail String?
+  /// Contact phone number
+  contactPhone String?
+  /// Whether this supplier is active for selection
+  isActive     Boolean     @default(true)
+  /// Additional notes about the supplier
+  notes        String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  glassTypes   GlassType[]
+
+  @@index([isActive])
+  @@index([code])
+}
+
+/// Glass Characteristic
+/// Flexible characteristic definitions for glass properties (tempered, laminated, low-e, etc.)
+/// Replaces rigid boolean fields with extensible Many-to-Many relationship
+model GlassCharacteristic {
+  id          String                    @id @default(cuid())
+  /// Unique key for the characteristic (e.g., 'tempered', 'laminated', 'low_e')
+  key         String                    @unique
+  /// Technical name in English
+  name        String
+  /// Commercial name in Spanish
+  nameEs      String
+  /// Description of the characteristic
+  description String?
+  /// Category grouping (e.g., 'safety', 'thermal', 'acoustic', 'coating')
+  category    String
+  /// Whether this characteristic is active for assignment
+  isActive    Boolean                   @default(true)
+  /// Display order (lower = higher priority)
+  sortOrder   Int                       @default(0)
+  createdAt   DateTime                  @default(now())
+  updatedAt   DateTime                  @updatedAt
+  glassTypes  GlassTypeCharacteristic[]
+
+  @@index([category])
+  @@index([isActive])
+}
+
+/// Glass Type Characteristic (Pivot Table)
+/// Many-to-Many relationship between GlassType and GlassCharacteristic
+/// Allows a glass type to have multiple characteristics with optional values
+model GlassTypeCharacteristic {
+  id               String              @id @default(cuid())
+  glassTypeId      String
+  glassType        GlassType           @relation(fields: [glassTypeId], references: [id], onDelete: Cascade)
+  characteristicId String
+  characteristic   GlassCharacteristic @relation(fields: [characteristicId], references: [id], onDelete: Cascade)
+  /// Optional value for the characteristic (e.g., '6.38mm' for laminated thickness)
+  value            String?
+  /// Optional certification reference (e.g., 'EN 12150' for tempered glass)
+  certification    String?
+  /// Additional notes about this characteristic application
+  notes            String?
+  createdAt        DateTime            @default(now())
+
+  @@unique([glassTypeId, characteristicId])
+  @@index([glassTypeId])
+  @@index([characteristicId])
+}
+
+/// Glass Type Price History
+/// Tracks price changes over time with audit trail
+model GlassTypePriceHistory {
+  id            String    @id @default(cuid())
+  glassTypeId   String
+  glassType     GlassType @relation(fields: [glassTypeId], references: [id], onDelete: Cascade)
+  /// Price per square meter at the time of this record
+  pricePerSqm   Decimal   @db.Decimal(12, 2)
+  /// Reason for the price change (e.g., 'material cost increase', 'market adjustment')
+  reason        String?
+  /// Date from which this price is effective
+  effectiveFrom DateTime
+  /// User who created this price record
+  createdBy     String?
+  createdByUser User?     @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+  createdAt     DateTime  @default(now())
+
+  @@index([glassTypeId, effectiveFrom])
+  @@index([createdBy])
 }

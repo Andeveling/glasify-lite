@@ -1,6 +1,8 @@
 /** biome-ignore-all lint/suspicious/noConsole: seed script requires console logging */
 import type { MaterialType, PrismaClient } from '@prisma/client';
 import { envSeed } from '../src/env-seed';
+import { createGlassCharacteristics, GLASS_CHARACTERISTIC_PRESETS } from './factories/glass-characteristic.factory';
+import { createGlassSuppliers, GLASS_SUPPLIER_PRESETS } from './factories/glass-supplier.factory';
 
 /**
  * TenantConfig Singleton - Business Configuration
@@ -127,7 +129,84 @@ export async function seedTenant(prisma: PrismaClient) {
   console.log(`   PVC Suppliers: ${createdSuppliers.filter((s) => s.materialType === 'PVC').length}`);
   console.log(`   ALUMINUM Suppliers: ${createdSuppliers.filter((s) => s.materialType === 'ALUMINUM').length}`);
 
+  // ==========================================
+  // STEP 4: Create/Update GlassSupplier Records
+  // ==========================================
+  console.log('\n🏭 Creating glass suppliers...');
+
+  const glassSupplierData = Object.values(GLASS_SUPPLIER_PRESETS);
+  const glassSupplierResults = createGlassSuppliers(glassSupplierData);
+  const validGlassSuppliers = glassSupplierResults.filter((r) => r.success).map((r) => r.data!);
+
+  const createdGlassSuppliers = await Promise.all(
+    validGlassSuppliers.map((supplier) =>
+      prisma.glassSupplier.upsert({
+        create: supplier,
+        update: supplier,
+        where: { name: supplier.name },
+      })
+    )
+  );
+
+  console.log(`✅ Created/updated ${createdGlassSuppliers.length} glass suppliers:`);
+  for (const supplier of createdGlassSuppliers) {
+    const status = supplier.isActive ? '✓' : '✗';
+    console.log(`   ${status} ${supplier.name} (${supplier.code || 'N/A'})`);
+  }
+
+  // ==========================================
+  // STEP 5: Create/Update GlassCharacteristic Records
+  // ==========================================
+  console.log('\n🔍 Creating glass characteristics...');
+
+  const characteristicResults = createGlassCharacteristics(GLASS_CHARACTERISTIC_PRESETS);
+  const validCharacteristics = characteristicResults.filter((r) => r.success).map((r) => r.data!);
+
+  const createdCharacteristics = await Promise.all(
+    validCharacteristics.map((characteristic) =>
+      prisma.glassCharacteristic.upsert({
+        create: characteristic,
+        update: characteristic,
+        where: { key: characteristic.key },
+      })
+    )
+  );
+
+  console.log(`✅ Created/updated ${createdCharacteristics.length} glass characteristics:`);
+  const characteristicsByCategory = createdCharacteristics.reduce(
+    (acc, char) => {
+      if (!acc[char.category]) {
+        acc[char.category] = [];
+      }
+      acc[char.category]!.push(char);
+      return acc;
+    },
+    {} as Record<string, typeof createdCharacteristics>
+  );
+
+  for (const [category, chars] of Object.entries(characteristicsByCategory)) {
+    console.log(`   📁 ${category}: ${chars.length} characteristics`);
+    for (const char of chars) {
+      const status = char.isActive ? '✓' : '✗';
+      console.log(`      ${status} ${char.nameEs} (${char.key})`);
+    }
+  }
+
+  // ==========================================
+  // STEP 6: Updated Summary Statistics
+  // ==========================================
+  console.log('\n📊 Tenant Seed Summary:');
+  console.log('   TenantConfig: 1 record (singleton)');
+  console.log(`   ProfileSuppliers: ${createdSuppliers.length} records`);
+  console.log(`   Active Suppliers: ${createdSuppliers.filter((s) => s.isActive).length}`);
+  console.log(`   PVC Suppliers: ${createdSuppliers.filter((s) => s.materialType === 'PVC').length}`);
+  console.log(`   ALUMINUM Suppliers: ${createdSuppliers.filter((s) => s.materialType === 'ALUMINUM').length}`);
+  console.log(`   GlassSuppliers: ${createdGlassSuppliers.length} records`);
+  console.log(`   GlassCharacteristics: ${createdCharacteristics.length} records`);
+
   return {
+    characteristics: createdCharacteristics,
+    glassSuppliers: createdGlassSuppliers,
     profileSuppliers: createdSuppliers,
     tenantConfig,
   };
