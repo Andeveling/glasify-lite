@@ -109,8 +109,8 @@ type QuoteListProps = {
 
 export function QuoteList({ quotes = MOCK_QUOTES, onViewQuote, onContactCustomer, isLoading = false }: QuoteListProps) {
   const { locale, timezone } = useTenantConfig();
-  const [ statusFilter, setStatusFilter ] = useState<QuoteStatus | 'all'>('all');
-  const [ searchQuery, setSearchQuery ] = useState('');
+  const [statusFilter, setStatusFilter] = useState<QuoteStatus | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Filter quotes based on search and status
   const filteredQuotes = quotes.filter((quote) => {
@@ -222,10 +222,10 @@ export function QuoteList({ quotes = MOCK_QUOTES, onViewQuote, onContactCustomer
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={STATUS_CONFIG[ quote.status ].variant}>{STATUS_CONFIG[ quote.status ].label}</Badge>
+                      <Badge variant={STATUS_CONFIG[quote.status].variant}>{STATUS_CONFIG[quote.status].label}</Badge>
                       {quote.estimatedDelivery && (
                         <div className="mt-1 text-muted-foreground text-xs">
-                          Entrega: {formatDate(quote.estimatedDelivery, locale, timezone).split(',')[ 0 ]}
+                          Entrega: {formatDate(quote.estimatedDelivery, locale, timezone).split(',')[0]}
                         </div>
                       )}
                     </TableCell>
@@ -241,8 +241,12 @@ export function QuoteList({ quotes = MOCK_QUOTES, onViewQuote, onContactCustomer
                         <span className="text-muted-foreground">—</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-muted-foreground text-sm">{formatDate(quote.createdAt, locale, timezone)}</TableCell>
-                    <TableCell className="text-muted-foreground text-sm">{formatDate(quote.updatedAt, locale, timezone)}</TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {formatDate(quote.createdAt, locale, timezone)}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {formatDate(quote.updatedAt, locale, timezone)}
+                    </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
                         <Button

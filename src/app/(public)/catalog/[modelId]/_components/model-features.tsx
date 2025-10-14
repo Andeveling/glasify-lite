@@ -6,7 +6,7 @@ type ModelFeaturesProps = {
 };
 
 // ✅ Move to module scope - created once, not on every render
-const HIGHLIGHT_KEYWORDS = [ 'excelente', 'máxima', 'excepcional', 'alta reducción', 'óptimo', 'superior' ];
+const HIGHLIGHT_KEYWORDS = ['excelente', 'máxima', 'excepcional', 'alta reducción', 'óptimo', 'superior'];
 
 /**
  * Determines if a feature highlights exceptional performance
@@ -30,7 +30,7 @@ function isHighlightFeature(feature: string): boolean {
  */
 export function ModelFeatures({ features }: ModelFeaturesProps) {
   // Sort features so highlights come first
-  const sortedFeatures = [ ...features ].sort((a, b) => {
+  const sortedFeatures = [...features].sort((a, b) => {
     const aIsHighlight = isHighlightFeature(a);
     const bIsHighlight = isHighlightFeature(b);
 

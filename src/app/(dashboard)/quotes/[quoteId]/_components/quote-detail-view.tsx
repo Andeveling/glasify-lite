@@ -129,7 +129,9 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
           <div className="flex gap-8">
             <div>
               <p className="text-muted-foreground text-sm">Válida hasta</p>
-              <p className="font-medium">{quote.validUntil ? formatDate(quote.validUntil, locale, timezone) : 'Sin límite'}</p>
+              <p className="font-medium">
+                {quote.validUntil ? formatDate(quote.validUntil, locale, timezone) : 'Sin límite'}
+              </p>
             </div>
             <div>
               <p className="text-muted-foreground text-sm">Total de unidades</p>

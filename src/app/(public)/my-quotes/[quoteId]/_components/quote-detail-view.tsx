@@ -112,7 +112,9 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
           <div className="flex gap-8">
             <div>
               <p className="text-muted-foreground text-sm">Válida hasta</p>
-              <p className="font-medium">{quote.validUntil ? formatDate(quote.validUntil, locale, timezone) : 'Sin límite'}</p>
+              <p className="font-medium">
+                {quote.validUntil ? formatDate(quote.validUntil, locale, timezone) : 'Sin límite'}
+              </p>
             </div>
             <div>
               <p className="text-muted-foreground text-sm">Total de unidades</p>
@@ -209,8 +211,8 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
           <CardContent className="pt-6">
             <p className="text-muted-foreground text-sm">
               <strong>Nota:</strong> Esta cotización tiene una validez de{' '}
-              {quote.validUntil ? `hasta el ${formatDate(quote.validUntil, locale, timezone)}` : 'sin límite'}. Los precios están
-              bloqueados al momento de la generación de la cotización.
+              {quote.validUntil ? `hasta el ${formatDate(quote.validUntil, locale, timezone)}` : 'sin límite'}. Los
+              precios están bloqueados al momento de la generación de la cotización.
             </p>
           </CardContent>
         </Card>

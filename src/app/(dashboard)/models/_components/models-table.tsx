@@ -102,7 +102,9 @@ function ModelsTable({ models, onView, onEdit, onDelete }: ModelsTableProps) {
                   )}
                 </div>
               </TableCell>
-              <TableCell className="text-muted-foreground text-sm">{formatDate(model.updatedAt, locale, timezone)}</TableCell>
+              <TableCell className="text-muted-foreground text-sm">
+                {formatDate(model.updatedAt, locale, timezone)}
+              </TableCell>
               <TableCell>
                 <div className="flex gap-1">
                   <Button onClick={() => handleView(model.id)} size="sm" title="Ver detalles" variant="outline">
