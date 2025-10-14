@@ -25,25 +25,10 @@ type GlassTypePerformanceProps = {
 
 export function GlassTypePerformance({ acoustic, security, thermal }: GlassTypePerformanceProps) {
   return (
-    <div className="space-y-2 w-full">
-      <PerformanceBar
-        icon={Shield}
-        max={5}
-        tooltip="Protección contra impactos y roturas"
-        value={security}
-      />
-      <PerformanceBar
-        icon={Snowflake}
-        max={5}
-        tooltip="Aislamiento y eficiencia energética"
-        value={thermal}
-      />
-      <PerformanceBar
-        icon={Volume2}
-        max={5}
-        tooltip="Reducción de ruido exterior"
-        value={acoustic}
-      />
+    <div className="w-full space-y-2">
+      <PerformanceBar icon={Shield} max={5} tooltip="Protección contra impactos y roturas" value={security} />
+      <PerformanceBar icon={Snowflake} max={5} tooltip="Aislamiento y eficiencia energética" value={thermal} />
+      <PerformanceBar icon={Volume2} max={5} tooltip="Reducción de ruido exterior" value={acoustic} />
     </div>
   );
 }

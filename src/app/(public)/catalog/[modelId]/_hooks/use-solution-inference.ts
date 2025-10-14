@@ -131,7 +131,7 @@ function inferPrimarySolution(
     security: 'security',
   };
 
-  const solutionKey = purposeToSolutionKey[ glassType.purpose ];
+  const solutionKey = purposeToSolutionKey[glassType.purpose];
   const fallbackSolution = availableSolutions.find((s) => s.key === solutionKey);
 
   return fallbackSolution ?? null;
@@ -199,7 +199,7 @@ export function useSolutionInference(
       securityRating,
       thermalRating,
     };
-  }, [ glassType, availableSolutions ]);
+  }, [glassType, availableSolutions]);
 
   return {
     acousticRating: inferredSolution?.acousticRating ?? 3,

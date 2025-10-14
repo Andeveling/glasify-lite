@@ -30,13 +30,13 @@ const DEBOUNCE_DELAY_MS = 300; // ✅ Optimized for real-time responsiveness
  * - Retorna desglose completo con dimPrice, accPrice, services, adjustments
  */
 export function usePriceCalculation(params: UsePriceCalculationParams): UsePriceCalculationReturn {
-  const [ isCalculating, setIsCalculating ] = useState(false);
-  const [ calculatedPrice, setCalculatedPrice ] = useState<number | undefined>(undefined);
-  const [ breakdown, setBreakdown ] = useState<PriceItemCalculationResult | undefined>(undefined);
-  const [ error, setError ] = useState<string | undefined>(undefined);
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [calculatedPrice, setCalculatedPrice] = useState<number | undefined>(undefined);
+  const [breakdown, setBreakdown] = useState<PriceItemCalculationResult | undefined>(undefined);
+  const [error, setError] = useState<string | undefined>(undefined);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const calculateMutation = api.quote[ 'calculate-item' ].useMutation({
+  const calculateMutation = api.quote['calculate-item'].useMutation({
     onError: (err) => {
       setIsCalculating(false);
       setCalculatedPrice(undefined);
@@ -68,7 +68,7 @@ export function usePriceCalculation(params: UsePriceCalculationParams): UsePrice
   mutateRef.current = calculateMutation.mutate;
 
   // ✅ Create stable serialized dependency for services array
-  const servicesKey = useMemo(() => JSON.stringify(params.additionalServices), [ params.additionalServices ]);
+  const servicesKey = useMemo(() => JSON.stringify(params.additionalServices), [params.additionalServices]);
 
   // ✅ Store services in ref for stable access
   const servicesRef = useRef(params.additionalServices);
@@ -114,7 +114,7 @@ export function usePriceCalculation(params: UsePriceCalculationParams): UsePrice
         clearTimeout(debounceTimerRef.current);
       }
     };
-  }, [ params.modelId, params.glassTypeId, params.heightMm, params.widthMm, servicesKey ]);
+  }, [params.modelId, params.glassTypeId, params.heightMm, params.widthMm, servicesKey]);
 
   return {
     breakdown,

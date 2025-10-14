@@ -24,7 +24,6 @@ import { QuoteSummary } from './quote-summary';
 import { DimensionsSection } from './sections/dimensions-section';
 import { GlassTypeSelectorSection } from './sections/glass-type-selector-section';
 import { ServicesSelectorSection } from './sections/services-selector-section';
-import { Window2DPreview } from './sections/window-2d-preview';
 
 // ============================================================================
 // Types
@@ -260,8 +259,6 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
               ref={successCardRef}
             />
           )}
-
-  
 
           <Card className="p-6">
             <DimensionsSection
