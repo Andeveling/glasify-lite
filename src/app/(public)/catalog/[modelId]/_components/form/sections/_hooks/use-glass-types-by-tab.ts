@@ -62,8 +62,8 @@ export function useGlassTypesByTab(
       if (assignedGlassTypes.has(glassType.id)) return;
 
       // Find primary solution (or first solution if no primary)
-      const primarySolution = glassType.solutions?.find((s) => s.isPrimary) ?? glassType.solutions?.[0];
-      
+      const primarySolution = glassType.solutions?.find((s) => s.isPrimary) ?? glassType.solutions?.[ 0 ];
+
       if (!primarySolution) return;
 
       const solution = primarySolution.solution;
@@ -91,7 +91,7 @@ export function useGlassTypesByTab(
         // Step 3: Transform glass types to options
         const options = tab.glassTypes.map((glassType): GlassTypeOption => {
           // Get primary solution for this tab
-          const primarySolution = glassType.solutions?.find((s) => s.isPrimary) ?? glassType.solutions?.[0];
+          const primarySolution = glassType.solutions?.find((s) => s.isPrimary) ?? glassType.solutions?.[ 0 ];
           const solution = primarySolution?.solution;
 
           const icon = getSolutionIcon(solution?.icon);
