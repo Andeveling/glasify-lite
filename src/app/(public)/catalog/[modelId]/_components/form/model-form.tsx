@@ -16,13 +16,15 @@ import type {
 } from '@/server/api/routers/catalog';
 import type { CreateCartItemInput } from '@/types/cart.types';
 import { usePriceCalculation } from '../../_hooks/use-price-calculation';
+import { useSolutionInference } from '../../_hooks/use-solution-inference';
 import { createQuoteFormSchema, type QuoteFormValues } from '../../_utils/validation';
+import { StickyPriceHeader } from '../sticky-price-header';
 import { AddedToCartActions } from './added-to-cart-actions';
 import { QuoteSummary } from './quote-summary';
 import { DimensionsSection } from './sections/dimensions-section';
 import { GlassTypeSelectorSection } from './sections/glass-type-selector-section';
 import { ServicesSelectorSection } from './sections/services-selector-section';
-import { SolutionSelectorSection } from './sections/solution-selector-section';
+import { Window2DPreview } from './sections/window-2d-preview';
 
 // ============================================================================
 // Types
@@ -76,7 +78,15 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
   const height = useWatch({ control: form.control, name: 'height' });
   const glassType = useWatch({ control: form.control, name: 'glassType' });
   const additionalServices = useWatch({ control: form.control, name: 'additionalServices' });
-  const selectedSolution = useWatch({ control: form.control, name: 'solution' });
+
+  // ✅ Get selected glass type object
+  const selectedGlassType = glassTypes.find((gt) => gt.id === glassType);
+
+  // ✅ Infer solution from glass type (replaces manual selection)
+  const { inferredSolution, securityRating, thermalRating, acousticRating } = useSolutionInference(
+    selectedGlassType ?? null,
+    solutions
+  );
 
   // Calculate price in real-time
   const { calculatedPrice, error, isCalculating } = usePriceCalculation({
@@ -87,10 +97,7 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
     widthMm: Number(width) || 0,
   });
 
-  // ✅ Prepare cart item data from form values
-  const selectedGlassType = glassTypes.find((gt) => gt.id === glassType);
-  const selectedSolutionData = solutions.find((s) => s.id === selectedSolution);
-
+  // ✅ Prepare cart item data from form values (using inferred solution)
   const cartItemInput: CreateCartItemInput & { unitPrice: number } = {
     additionalServiceIds: additionalServices,
     glassTypeId: glassType,
@@ -99,8 +106,8 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
     modelId: model.id,
     modelName: model.name,
     quantity: 1, // Single item per add (user can increase in cart)
-    solutionId: selectedSolution || undefined,
-    solutionName: selectedSolutionData?.name || undefined,
+    solutionId: inferredSolution?.id || undefined,
+    solutionName: inferredSolution?.nameEs || undefined,
     unitPrice: calculatedPrice ?? model.basePrice,
     widthMm: Number(width) || 0,
   };
@@ -144,7 +151,20 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)}>
-        <div className="space-y-6">
+        {/* ✅ Sticky Price Header - Always visible */}
+        <StickyPriceHeader
+          basePrice={model.basePrice}
+          breakdown={[
+            { amount: model.basePrice, label: 'Precio base del modelo' },
+            ...(selectedGlassType
+              ? [{ amount: selectedGlassType.pricePerSqm, label: `Vidrio ${selectedGlassType.name}` }]
+              : []),
+          ]}
+          currency={currency}
+          currentPrice={calculatedPrice ?? model.basePrice}
+        />
+
+        <div className="space-y-6 pt-4">
           {/* ✅ Show success actions after adding to cart */}
           {justAddedToCart && (
             <AddedToCartActions
@@ -154,17 +174,7 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
             />
           )}
 
-          {/* Solution Selector (Step 1) - Optional */}
-          {solutions.length > 0 && (
-            <Card className="p-6">
-              <SolutionSelectorSection solutions={solutions} />
-            </Card>
-          )}
-
-          {/* Glass Type Selector (Step 2) - Filtered by solution if selected */}
-          <Card className="p-6">
-            <GlassTypeSelectorSection glassTypes={glassTypes} selectedSolutionId={selectedSolution} />
-          </Card>
+  
 
           <Card className="p-6">
             <DimensionsSection
@@ -174,6 +184,15 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
                 minHeight: model.minHeightMm,
                 minWidth: model.minWidthMm,
               }}
+            />
+          </Card>
+
+          {/* Glass Type Selector with performance bars */}
+          <Card className="p-6">
+            <GlassTypeSelectorSection
+              basePrice={model.basePrice}
+              glassTypes={glassTypes}
+              selectedSolutionId={inferredSolution?.id}
             />
           </Card>
 

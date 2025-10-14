@@ -1,21 +1,34 @@
 /** biome-ignore-all lint/style/noMagicNumbers: Este archivo es un preview visual 2D, los valores "mágicos" están justificados por UX y proporciones visuales, no por lógica de negocio ni cálculos reutilizables. No se requiere refactorizar a constantes globales ni reutilizables aquí. */
-import { Maximize2, Minimize2, Ruler } from 'lucide-react';
+import { Maximize2, Minimize2, Ruler, Shield, ThermometerSun, Volume2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { StatBadge } from '@/components/ui/stat-badge';
 
 type Window2DPreviewProps = {
-  width: number;
-  height: number;
+  acousticRating?: number;
   className?: string;
+  glassTypeName?: string;
+  height: number;
+  securityRating?: number;
   showControls?: boolean;
   showMeasurements?: boolean;
+  showStats?: boolean;
+  solutionName?: string;
+  thermalRating?: number;
+  width: number;
 };
 
 export function Window2DPreview({
-  width,
-  height,
+  acousticRating = 3,
   className = '',
+  glassTypeName,
+  height,
+  securityRating = 3,
   showControls = true,
   showMeasurements = true,
+  showStats = true,
+  solutionName,
+  thermalRating = 3,
+  width,
 }: Window2DPreviewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -289,7 +302,7 @@ export function Window2DPreview({
 
       {showControls && (
         <>
-          {/* Info overlay */}
+          {/* Info overlay with dimensions */}
           <div className="absolute top-4 left-4 rounded-lg border border-border bg-card/95 px-3 py-2 text-sm shadow-sm backdrop-blur-sm">
             <div className="mb-2 flex items-center gap-2 font-medium text-card-foreground">
               <Ruler className="h-4 w-4 text-primary" />
@@ -311,33 +324,72 @@ export function Window2DPreview({
             </div>
           </div>
 
-          {/* Control buttons */}
-          <div className="absolute top-4 right-4">
-            <button
-              className="group rounded-lg border border-border bg-card/95 p-2 shadow-sm backdrop-blur-sm transition-all hover:bg-accent hover:text-accent-foreground"
-              onClick={() => setIsExpanded(!isExpanded)}
-              title={isExpanded ? 'Contraer' : 'Expandir'}
-              type="button"
-            >
-              {isExpanded ? (
-                <Minimize2 className="h-4 w-4 transition-colors" />
-              ) : (
-                <Maximize2 className="h-4 w-4 transition-colors" />
-              )}
-            </button>
-          </div>
+          {/* Performance Stats Overlay (top-right) */}
+          {showStats && (
+            <div className="absolute top-4 right-4 flex flex-col gap-2">
+              <StatBadge
+                icon={Shield}
+                label="Seguridad"
+                tooltip="Protección contra impactos y roturas"
+                value={securityRating}
+              />
+              <StatBadge
+                icon={ThermometerSun}
+                label="Térmico"
+                tooltip="Aislamiento térmico y eficiencia energética"
+                value={thermalRating}
+              />
+              <StatBadge icon={Volume2} label="Acústico" tooltip="Reducción de ruido exterior" value={acousticRating} />
+            </div>
+          )}
 
-          {/* Material legend */}
+          {/* Control buttons (moved down to avoid overlap with stats) */}
+          {!showStats && (
+            <div className="absolute top-4 right-4">
+              <button
+                className="group rounded-lg border border-border bg-card/95 p-2 shadow-sm backdrop-blur-sm transition-all hover:bg-accent hover:text-accent-foreground"
+                onClick={() => setIsExpanded(!isExpanded)}
+                title={isExpanded ? 'Contraer' : 'Expandir'}
+                type="button"
+              >
+                {isExpanded ? (
+                  <Minimize2 className="h-4 w-4 transition-colors" />
+                ) : (
+                  <Maximize2 className="h-4 w-4 transition-colors" />
+                )}
+              </button>
+            </div>
+          )}
+
+          {/* Glass Type and Solution Info (bottom-left) */}
           <div className="absolute bottom-4 left-4 rounded-lg border border-border bg-card/95 px-3 py-2 shadow-sm backdrop-blur-sm">
-            <div className="flex items-center gap-4 text-xs">
-              <div className="flex items-center gap-2">
-                <div className="h-3 w-3 rounded-sm border border-primary/50 bg-gradient-to-br from-primary/40 to-primary/20 shadow-xs" />
-                <span className="text-muted-foreground">Vidrio</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="h-3 w-3 rounded-sm border border-muted bg-muted shadow-xs" />
-                <span className="text-muted-foreground">Marco</span>
-              </div>
+            <div className="space-y-1 text-xs">
+              {glassTypeName && (
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded-sm border border-primary/50 bg-gradient-to-br from-primary/40 to-primary/20 shadow-xs" />
+                  <span className="text-muted-foreground">Vidrio:</span>
+                  <span className="font-medium text-foreground">{glassTypeName}</span>
+                </div>
+              )}
+              {solutionName && (
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded-sm border border-muted bg-muted shadow-xs" />
+                  <span className="text-muted-foreground">Solución:</span>
+                  <span className="font-medium text-foreground">{solutionName}</span>
+                </div>
+              )}
+              {!(glassTypeName || solutionName) && (
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <div className="h-3 w-3 rounded-sm border border-primary/50 bg-gradient-to-br from-primary/40 to-primary/20 shadow-xs" />
+                    <span className="text-muted-foreground">Vidrio</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-3 w-3 rounded-sm border border-muted bg-muted shadow-xs" />
+                    <span className="text-muted-foreground">Marco</span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

@@ -34,7 +34,7 @@ async function migrateGlassCharacteristics(dryRun = false) {
     });
 
     console.log(`   ✓ Found ${characteristics.length} characteristics`);
-    const characteristicMap = new Map(characteristics.map((c) => [ c.key, c ]));
+    const characteristicMap = new Map(characteristics.map((c) => [c.key, c]));
 
     console.log('\n🔍 Analyzing glass types...');
     const glassTypes = await prisma.glassType.findMany({
@@ -58,8 +58,8 @@ async function migrateGlassCharacteristics(dryRun = false) {
       const booleanFields = Object.keys(CHARACTERISTIC_MAPPING) as BooleanField[];
 
       for (const field of booleanFields) {
-        if (glassType[ field ]) {
-          const characteristicKey = CHARACTERISTIC_MAPPING[ field ];
+        if (glassType[field]) {
+          const characteristicKey = CHARACTERISTIC_MAPPING[field];
           const characteristic = characteristicMap.get(characteristicKey);
 
           if (!characteristic) {

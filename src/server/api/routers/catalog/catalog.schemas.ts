@@ -15,7 +15,7 @@ export const listModelsInput = z.object({
   manufacturerId: z.cuid('ID del fabricante debe ser válido').optional(),
   page: z.number().min(1).default(1),
   search: z.string().optional(),
-  sort: z.enum(['name-asc', 'name-desc', 'price-asc', 'price-desc']).default('name-asc'),
+  sort: z.enum([ 'name-asc', 'name-desc', 'price-asc', 'price-desc' ]).default('name-asc'),
 });
 
 export const getModelByIdInput = z.object({
@@ -66,7 +66,7 @@ export const modelSummaryOutput = z.object({
       name: z.string(),
     })
     .nullable(),
-  status: z.enum(['draft', 'published']),
+  status: z.enum([ 'draft', 'published' ]),
   updatedAt: z.date(),
 });
 
@@ -94,7 +94,7 @@ export const modelDetailOutput = z.object({
       name: z.string(),
     })
     .nullable(),
-  status: z.enum(['draft', 'published']),
+  status: z.enum([ 'draft', 'published' ]),
   updatedAt: z.date(),
 });
 
@@ -103,8 +103,8 @@ export const serviceOutput = z.object({
   id: z.string(),
   name: z.string(),
   rate: z.number(),
-  type: z.enum(['area', 'perimeter', 'fixed']),
-  unit: z.enum(['unit', 'sqm', 'ml']),
+  type: z.enum([ 'area', 'perimeter', 'fixed' ]),
+  unit: z.enum([ 'unit', 'sqm', 'ml' ]),
   updatedAt: z.date(),
 });
 
@@ -114,7 +114,11 @@ export const listServicesOutput = z.array(serviceOutput);
 // GLASS SOLUTIONS SCHEMAS
 // ========================================
 
-export const performanceRating = z.enum(['basic', 'standard', 'good', 'very_good', 'excellent']);
+export const performanceRating = z.enum([ 'basic', 'standard', 'good', 'very_good', 'excellent' ]);
+
+// ========================================
+// GLASS SOLUTIONS
+// ========================================
 
 export const glassSolutionOutput = z.object({
   createdAt: z.date(),
@@ -143,20 +147,49 @@ export const glassTypeSolutionOutput = z.object({
 
 export const listGlassSolutionsOutput = z.array(glassSolutionOutput);
 
+// ========================================
+// GLASS CHARACTERISTICS
+// ========================================
+
+export const glassCharacteristicOutput = z.object({
+  category: z.string(),
+  createdAt: z.date(),
+  description: z.string().nullable(),
+  id: z.string(),
+  isActive: z.boolean(),
+  key: z.string(),
+  name: z.string(),
+  nameEs: z.string(),
+  sortOrder: z.number(),
+  updatedAt: z.date(),
+});
+
+export const glassTypeCharacteristicOutput = z.object({
+  certification: z.string().nullable().optional(),
+  characteristic: glassCharacteristicOutput,
+  characteristicId: z.string(),
+  createdAt: z.date(),
+  glassTypeId: z.string(),
+  id: z.string(),
+  notes: z.string().nullable().optional(),
+  value: z.string().nullable(),
+});
+
 export const glassTypeOutput = z.object({
+  characteristics: z.array(glassTypeCharacteristicOutput).optional(), // NEW: Many-to-Many characteristics
   createdAt: z.date(),
   description: z.string().nullable().optional(), // REFACTOR: New field
   glassSupplierId: z.string().nullable().optional(), // REFACTOR: New supplier reference
   id: z.string(),
   isActive: z.boolean().optional(), // REFACTOR: New field
-  isLaminated: z.boolean(),
-  isLowE: z.boolean(),
-  isTempered: z.boolean(),
-  isTripleGlazed: z.boolean(),
+  isLaminated: z.boolean(), // @deprecated Use characteristics relationship
+  isLowE: z.boolean(), // @deprecated Use characteristics relationship
+  isTempered: z.boolean(), // @deprecated Use characteristics relationship
+  isTripleGlazed: z.boolean(), // @deprecated Use characteristics relationship
   name: z.string(),
   pricePerSqm: z.number(),
-  purpose: z.enum(['general', 'insulation', 'security', 'decorative']),
-  solutions: z.array(glassTypeSolutionOutput).optional(),
+  purpose: z.enum([ 'general', 'insulation', 'security', 'decorative' ]), // @deprecated Use solutions relationship
+  solutions: z.array(glassTypeSolutionOutput).optional(), // NEW: Many-to-Many solutions
   thicknessMm: z.number(),
   updatedAt: z.date(),
   uValue: z.number().nullable(),

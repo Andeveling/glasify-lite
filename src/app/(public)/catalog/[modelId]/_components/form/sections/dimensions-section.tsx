@@ -35,8 +35,6 @@ function generateSuggestedValues(min: number, max: number, count = 5): number[] 
   }).filter((value, index, arr) => arr.indexOf(value) === index); // Eliminar duplicados
 }
 
-// biome-ignore lint/style/noMagicNumbers: valores predefinidos de cantidad para UX
-const QUANTITY_PRESETS = [1, 2, 3, 5, 8, 13, 21, 100] as const;
 
 export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   const { control, setValue } = useFormContext();
@@ -137,7 +135,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
 
       <DimensionValidationAlert showAlert={showValidationAlert} />
 
-      <QuantityField control={control} name="quantity" presets={QUANTITY_PRESETS} />
+      <QuantityField control={control} name="quantity"  />
     </FormSection>
   );
 }

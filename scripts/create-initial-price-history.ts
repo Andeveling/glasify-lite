@@ -75,7 +75,7 @@ async function createInitialPriceHistory(dryRun = false) {
 
         if (dryRun) {
           console.log(
-            `   ✓ Would create price history: "${glassType.name}" - $${glassType.pricePerSqm}/m² (effective: ${glassType.createdAt.toISOString().split('T')[ 0 ]})`
+            `   ✓ Would create price history: "${glassType.name}" - $${glassType.pricePerSqm}/m² (effective: ${glassType.createdAt.toISOString().split('T')[0]})`
           );
           totalCreated++;
         } else {
@@ -91,7 +91,7 @@ async function createInitialPriceHistory(dryRun = false) {
           });
 
           console.log(
-            `   ✓ Created price history: "${glassType.name}" - $${glassType.pricePerSqm}/m² (effective: ${glassType.createdAt.toISOString().split('T')[ 0 ]})`
+            `   ✓ Created price history: "${glassType.name}" - $${glassType.pricePerSqm}/m² (effective: ${glassType.createdAt.toISOString().split('T')[0]})`
           );
           totalCreated++;
         }

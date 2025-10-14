@@ -8,7 +8,6 @@ import { cn } from '@/lib/utils';
 type QuantityFieldProps<T extends FieldValues> = {
   control: Control<T>;
   name: Path<T>;
-  presets: readonly number[];
   min?: number;
   max?: number;
 };
@@ -35,7 +34,6 @@ export function QuantityField<T extends FieldValues>({
   max = 999,
   min = 1,
   name,
-  presets,
 }: QuantityFieldProps<T>) {
   return (
     <FormField
@@ -144,38 +142,6 @@ export function QuantityField<T extends FieldValues>({
                 </Button>
               </div>
             </FormControl>
-
-            {/* Preset Quick-Select Buttons */}
-            {presets.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-muted-foreground text-xs">Cantidades comunes:</p>
-                <div className="flex flex-wrap gap-2">
-                  {presets.map((preset) => {
-                    const isSelected = currentValue === preset;
-                    const isValid = preset >= min && preset <= max;
-
-                    return (
-                      <Button
-                        className={cn(
-                          'h-9 min-w-[3rem] transition-all duration-200',
-                          isSelected && 'border-primary bg-primary/10 text-primary ring-2 ring-primary/20',
-                          !isSelected && isValid && 'hover:border-primary/50 hover:bg-primary/5',
-                          !isValid && 'cursor-not-allowed opacity-40'
-                        )}
-                        disabled={!isValid}
-                        key={preset}
-                        onClick={() => handlePresetClick(preset)}
-                        size="sm"
-                        type="button"
-                        variant={isSelected ? 'default' : 'outline'}
-                      >
-                        {preset}
-                      </Button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
 
             <FormDescription>
               Selecciona la cantidad de unidades que deseas cotizar (mínimo {min}, máximo {max})

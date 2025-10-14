@@ -32,32 +32,32 @@ const profileSuppliers: Array<{
   materialType: MaterialType;
   name: string;
 }> = [
-    {
-      isActive: true,
-      materialType: 'PVC',
-      name: 'Rehau',
-    },
-    {
-      isActive: true,
-      materialType: 'PVC',
-      name: 'Deceuninck',
-    },
-    {
-      isActive: true,
-      materialType: 'ALUMINUM',
-      name: 'Azembla',
-    },
-    {
-      isActive: true,
-      materialType: 'ALUMINUM',
-      name: 'Aluflex',
-    },
-    {
-      isActive: false,
-      materialType: 'PVC',
-      name: 'VEKA', // Inactive supplier example
-    },
-  ];
+  {
+    isActive: true,
+    materialType: 'PVC',
+    name: 'Rehau',
+  },
+  {
+    isActive: true,
+    materialType: 'PVC',
+    name: 'Deceuninck',
+  },
+  {
+    isActive: true,
+    materialType: 'ALUMINUM',
+    name: 'Azembla',
+  },
+  {
+    isActive: true,
+    materialType: 'ALUMINUM',
+    name: 'Aluflex',
+  },
+  {
+    isActive: false,
+    materialType: 'PVC',
+    name: 'VEKA', // Inactive supplier example
+  },
+];
 
 /**
  * Seed TenantConfig singleton and ProfileSupplier records
@@ -179,16 +179,16 @@ export async function seedTenant(prisma: PrismaClient) {
   console.log(`✅ Created/updated ${createdCharacteristics.length} glass characteristics:`);
   const characteristicsByCategory = createdCharacteristics.reduce(
     (acc, char) => {
-      if (!acc[ char.category ]) {
-        acc[ char.category ] = [];
+      if (!acc[char.category]) {
+        acc[char.category] = [];
       }
-      acc[ char.category ]?.push(char);
+      acc[char.category]?.push(char);
       return acc;
     },
     {} as Record<string, typeof createdCharacteristics>
   );
 
-  for (const [ category, chars ] of Object.entries(characteristicsByCategory)) {
+  for (const [category, chars] of Object.entries(characteristicsByCategory)) {
     console.log(`   📁 ${category}: ${chars.length} characteristics`);
     for (const char of chars) {
       const status = char.isActive ? '✓' : '✗';

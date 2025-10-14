@@ -178,6 +178,12 @@ export const catalogQueries = createTRPCRouter({
         const glassTypes = await ctx.db.glassType.findMany({
           orderBy: { name: 'asc' },
           select: {
+            characteristics: {
+              include: {
+                characteristic: true,
+              },
+              orderBy: { characteristic: { name: 'asc' } },
+            },
             createdAt: true,
             description: true,
             glassSupplierId: true,
@@ -194,7 +200,7 @@ export const catalogQueries = createTRPCRouter({
               include: {
                 solution: true,
               },
-              orderBy: [{ isPrimary: 'desc' }, { solution: { sortOrder: 'asc' } }],
+              orderBy: [ { isPrimary: 'desc' }, { solution: { sortOrder: 'asc' } } ],
             },
             thicknessMm: true,
             updatedAt: true,
