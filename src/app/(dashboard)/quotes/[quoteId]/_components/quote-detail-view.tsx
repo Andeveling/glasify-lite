@@ -10,12 +10,12 @@
 import { ArrowLeft, Clock, Phone } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
-import { useTenantConfig } from '@/providers/tenant-config-provider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatDate } from '@/lib/utils';
+import { useTenantConfig } from '@/providers/tenant-config-provider';
 import type { QuoteDetailSchema } from '@/server/api/routers/quote/quote.schemas';
 import { QuoteStatusBadge } from '../../_components/quote-status-badge';
 import { SendQuoteButton } from './send-quote-button';

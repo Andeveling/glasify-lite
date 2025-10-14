@@ -3,7 +3,6 @@
 import { Eye, Filter, MessageCircle, Search } from 'lucide-react';
 import { useState } from 'react';
 import { generateStableKeyedArray } from '@/app/_utils/generate-keys.util';
-import { useTenantConfig } from '@/providers/tenant-config-provider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatDate } from '@/lib/utils';
+import { useTenantConfig } from '@/providers/tenant-config-provider';
 
 // Types for quote data
 type QuoteStatus = 'draft' | 'calculating' | 'pending' | 'submitted' | 'completed' | 'cancelled';

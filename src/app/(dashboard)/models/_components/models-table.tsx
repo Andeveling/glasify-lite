@@ -2,11 +2,11 @@
 
 import { Edit, Eye, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useTenantConfig } from '@/providers/tenant-config-provider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatDate } from '@/lib/utils';
+import { useTenantConfig } from '@/providers/tenant-config-provider';
 
 type Model = {
   basePrice: number;

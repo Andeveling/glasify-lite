@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { generateStableKeyedArray } from '@/app/_utils/generate-keys.util';
-import { getTenantConfig } from '@/server/utils/tenant';
 import StatsCard from '@/app/(dashboard)/_components/stats-card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatDate } from '@/lib/utils';
 import { auth } from '@/server/auth';
+import { getTenantConfig } from '@/server/utils/tenant';
 
 export const metadata: Metadata = {
   description: 'Panel de control para la gestión de vidrios y cotizaciones',

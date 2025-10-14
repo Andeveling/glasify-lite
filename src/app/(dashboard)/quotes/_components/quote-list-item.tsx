@@ -11,11 +11,11 @@
 import { Eye } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
-import { useTenantConfig } from '@/providers/tenant-config-provider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn, formatDate } from '@/lib/utils';
+import { useTenantConfig } from '@/providers/tenant-config-provider';
 import type { QuoteListItemSchema } from '@/server/api/routers/quote/quote.schemas';
 import { QuoteStatusBadge } from './quote-status-badge';
 

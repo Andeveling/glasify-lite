@@ -1,6 +1,6 @@
+import { format as tempoFormat } from '@formkit/tempo';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { format as tempoFormat } from '@formkit/tempo';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
