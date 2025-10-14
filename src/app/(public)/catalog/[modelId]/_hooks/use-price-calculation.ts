@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { PriceItemCalculationResult } from '@/server/price/price-item';
 import { api } from '@/trpc/react';
 
 type UsePriceCalculationParams = {
@@ -7,6 +8,13 @@ type UsePriceCalculationParams = {
   heightMm: number;
   modelId: string;
   widthMm: number;
+};
+
+type UsePriceCalculationReturn = {
+  calculatedPrice: number | undefined;
+  breakdown: PriceItemCalculationResult | undefined;
+  error: string | undefined;
+  isCalculating: boolean;
 };
 
 const DEBOUNCE_DELAY_MS = 300; // ✅ Optimized for real-time responsiveness
@@ -19,17 +27,20 @@ const DEBOUNCE_DELAY_MS = 300; // ✅ Optimized for real-time responsiveness
  * - Manejo robusto de errores con mensajes user-friendly
  * - Prevención de loops infinitos usando refs y memoización estable
  * - Serialización estable de arrays para evitar re-renders innecesarios
+ * - Retorna desglose completo con dimPrice, accPrice, services, adjustments
  */
-export function usePriceCalculation(params: UsePriceCalculationParams) {
-  const [isCalculating, setIsCalculating] = useState(false);
-  const [calculatedPrice, setCalculatedPrice] = useState<number | undefined>(undefined);
-  const [error, setError] = useState<string | undefined>(undefined);
+export function usePriceCalculation(params: UsePriceCalculationParams): UsePriceCalculationReturn {
+  const [ isCalculating, setIsCalculating ] = useState(false);
+  const [ calculatedPrice, setCalculatedPrice ] = useState<number | undefined>(undefined);
+  const [ breakdown, setBreakdown ] = useState<PriceItemCalculationResult | undefined>(undefined);
+  const [ error, setError ] = useState<string | undefined>(undefined);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const calculateMutation = api.quote['calculate-item'].useMutation({
+  const calculateMutation = api.quote[ 'calculate-item' ].useMutation({
     onError: (err) => {
       setIsCalculating(false);
       setCalculatedPrice(undefined);
+      setBreakdown(undefined);
 
       // ✅ User-friendly error messages in Spanish
       let errorMessage = 'Error al calcular el precio. Intenta nuevamente.';
@@ -46,6 +57,7 @@ export function usePriceCalculation(params: UsePriceCalculationParams) {
     },
     onSuccess: (data) => {
       setCalculatedPrice(data.subtotal);
+      setBreakdown(data);
       setIsCalculating(false);
       setError(undefined);
     },
@@ -56,7 +68,7 @@ export function usePriceCalculation(params: UsePriceCalculationParams) {
   mutateRef.current = calculateMutation.mutate;
 
   // ✅ Create stable serialized dependency for services array
-  const servicesKey = useMemo(() => JSON.stringify(params.additionalServices), [params.additionalServices]);
+  const servicesKey = useMemo(() => JSON.stringify(params.additionalServices), [ params.additionalServices ]);
 
   // ✅ Store services in ref for stable access
   const servicesRef = useRef(params.additionalServices);
@@ -70,6 +82,7 @@ export function usePriceCalculation(params: UsePriceCalculationParams) {
 
     if (!isValid) {
       setCalculatedPrice(undefined);
+      setBreakdown(undefined);
       setError(undefined);
       return;
     }
@@ -101,9 +114,10 @@ export function usePriceCalculation(params: UsePriceCalculationParams) {
         clearTimeout(debounceTimerRef.current);
       }
     };
-  }, [params.modelId, params.glassTypeId, params.heightMm, params.widthMm, servicesKey]);
+  }, [ params.modelId, params.glassTypeId, params.heightMm, params.widthMm, servicesKey ]);
 
   return {
+    breakdown,
     calculatedPrice,
     error,
     isCalculating,

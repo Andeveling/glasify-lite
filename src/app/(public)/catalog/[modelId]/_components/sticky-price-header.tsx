@@ -1,8 +1,10 @@
 'use client';
 
+import { Gem, Package, Ruler } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { PriceBreakdownPopover } from '@/components/ui/price-breakdown-popover';
+import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { formatCurrency } from '@/lib/export/pdf/pdf-utils';
 
@@ -10,15 +12,27 @@ import { formatCurrency } from '@/lib/export/pdf/pdf-utils';
 // Types
 // ============================================================================
 
+type PriceBreakdownCategory = 'model' | 'glass' | 'service' | 'adjustment';
+
 type PriceBreakdownItem = {
   amount: number;
+  category: PriceBreakdownCategory;
   label: string;
+};
+
+type ConfigSummary = {
+  glassTypeName?: string;
+  heightMm?: number;
+  modelName: string;
+  solutionName?: string;
+  widthMm?: number;
 };
 
 type StickyPriceHeaderProps = {
   basePrice: number;
   breakdown: PriceBreakdownItem[];
   className?: string;
+  configSummary: ConfigSummary;
   currency?: string;
   currentPrice: number;
 };
@@ -30,72 +44,61 @@ type StickyPriceHeaderProps = {
 /**
  * Sticky Price Header Component (Molecule)
  *
- * Displays real-time calculated price with sticky positioning, ensuring price
- * is always visible during scroll. Includes price breakdown popover and
- * discount badge when applicable.
+ * Displays real-time calculated price with configuration summary, using sticky
+ * positioning to ensure critical information is always visible during scroll.
  *
  * ## Features
  * - **Sticky positioning**: Stays at top (z-10) during scroll
+ * - **Configuration summary**: Model name, dimensions, glass type always visible
  * - **Backdrop blur**: Glass morphism effect for better readability
  * - **Price animation**: Smooth scale/fade effect when price updates
  * - **Breakdown popover**: Itemized price details on demand
  * - **Discount badge**: Shows savings when current price < base price
- * - **Responsive**: Compact layout on mobile (<768px)
- * - **Accessibility**: ARIA labels, keyboard navigation
+ * - **Responsive**: 
+ *   - Mobile (<768px): Price only, summary hidden
+ *   - Tablet (768px-1024px): Price + compact summary
+ *   - Desktop (>1024px): Full layout with all details
+ * - **Accessibility**: ARIA labels, keyboard navigation, screen reader announcements
  *
- * ## Usage
- * ```tsx
- * <StickyPriceHeader
- *   currentPrice={1444983}
- *   basePrice={1500000}
- *   currency="$"
- *   breakdown={[
- *     { label: 'Base del modelo', amount: 650000 },
- *     { label: 'Vidrio Laminado', amount: 120000 }
- *   ]}
- * />
- * ```
+ * ## Don't Make Me Think Compliance
+ * - ✅ No hidden information: User always knows WHAT they're configuring
+ * - ✅ Reduces cognitive load: No need to scroll up to remember configuration
+ * - ✅ Visual hierarchy: Price (primary) + Config summary (secondary)
+ * - ✅ Progressive disclosure: Details in popover, essentials always visible
  *
- * ## Accessibility
- * - Screen reader announcement on price change
- * - Keyboard accessible popover trigger
- * - Semantic HTML structure
- *
- * @example
- * // In model-form.tsx
- * const { calculatedPrice } = usePriceCalculation({ ... });
- * return (
- *   <>
- *     <StickyPriceHeader currentPrice={calculatedPrice} ... />
- *     <Form>...</Form>
- *   </>
- * );
  */
 export function StickyPriceHeader({
   basePrice,
   breakdown,
   className,
-  currency = '$',
+  configSummary,
+  currency,
   currentPrice,
 }: StickyPriceHeaderProps) {
   const discount = basePrice - currentPrice;
   const hasDiscount = discount > 0;
 
+  // Format dimensions
+  const hasDimensions = configSummary.widthMm && configSummary.heightMm;
+  const dimensionsText = hasDimensions
+    ? `${configSummary.widthMm} × ${configSummary.heightMm} mm`
+    : 'Sin dimensiones';
+
   return (
     <div
       className={cn(
-        'sticky top-12 z-10 border-b bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6 md:py-4',
+        'sticky top-12 z-10 border-b bg-background px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6 md:py-4',
         className
       )}
     >
-      <div className="flex items-center justify-between gap-2">
-        {/* Price display with animation */}
-        <div className="flex items-baseline gap-2">
+      <div className="flex flex-col gap-3 lg:flex-row-reverse lg:items-center lg:justify-between">
+        {/* Right: Price display with animation (now on the right) */}
+        <div className="flex items-baseline gap-2 lg:justify-end lg:min-w-[220px]">
           <div className="space-y-0.5">
-            <p className="text-muted-foreground text-xs md:text-sm">Precio configurado</p>
+            <p className="text-xs text-muted-foreground md:text-sm">Precio configurado</p>
             <motion.p
               animate={{ opacity: 1, scale: 1 }}
-              className="font-bold text-2xl md:text-3xl"
+              className="text-2xl font-bold md:text-3xl"
               initial={{ opacity: 0.8, scale: 0.98 }}
               key={currentPrice} // Re-animate when price changes
               transition={{ duration: 0.2, ease: 'easeOut' }}
@@ -108,17 +111,62 @@ export function StickyPriceHeader({
           <PriceBreakdownPopover breakdown={breakdown} currency={currency} totalAmount={currentPrice} />
         </div>
 
-        {/* Discount badge */}
-        {hasDiscount && (
-          <Badge className="bg-green-500/10 text-green-700 hover:bg-green-500/20 dark:text-green-400" variant="outline">
-            -{formatCurrency(discount)}
-          </Badge>
-        )}
+        {/* Left: Configuration Summary - Don't Make Me Think (now on the left) */}
+        <div className="flex flex-wrap items-center gap-2 md:gap-3">
+          {/* Model name */}
+          <div className="flex items-center gap-1.5 rounded-md bg-muted px-2 py-1">
+            <Package className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="text-xs font-medium md:text-sm">{configSummary.modelName}</span>
+          </div>
+
+          {/* Dimensions */}
+          {hasDimensions && (
+            <>
+              <Separator className="hidden h-4 md:block" orientation="vertical" />
+              <div className="flex items-center gap-1.5 rounded-md bg-muted px-2 py-1">
+                <Ruler className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-xs font-medium md:text-sm">{dimensionsText}</span>
+              </div>
+            </>
+          )}
+
+          {/* Glass type */}
+          {configSummary.glassTypeName && (
+            <>
+              <Separator className="hidden h-4 md:block" orientation="vertical" />
+              <div className="flex items-center gap-1.5 rounded-md bg-purple-50 px-2 py-1 dark:bg-purple-950/30">
+                <Gem className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
+                <span className="text-xs font-medium text-purple-700 dark:text-purple-300 md:text-sm">
+                  {configSummary.glassTypeName}
+                </span>
+              </div>
+            </>
+          )}
+
+          {/* Solution badge (if available) */}
+          {configSummary.solutionName && (
+            <Badge className="hidden md:inline-flex" variant="secondary">
+              {configSummary.solutionName}
+            </Badge>
+          )}
+
+          {/* Discount badge */}
+          {hasDiscount && (
+            <Badge
+              className="bg-green-500/10 text-green-700 hover:bg-green-500/20 dark:text-green-400"
+              variant="outline"
+            >
+              -{formatCurrency(discount)}
+            </Badge>
+          )}
+        </div>
       </div>
 
       {/* Screen reader announcement for price changes */}
       <div aria-atomic="true" aria-live="polite" className="sr-only">
-        Precio actualizado: {formatCurrency(currentPrice)}
+        Precio actualizado: {formatCurrency(currentPrice)} para {configSummary.modelName}
+        {hasDimensions && `, dimensiones ${dimensionsText}`}
+        {configSummary.glassTypeName && `, vidrio ${configSummary.glassTypeName}`}
       </div>
     </div>
   );

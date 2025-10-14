@@ -89,13 +89,98 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
   );
 
   // Calculate price in real-time
-  const { calculatedPrice, error, isCalculating } = usePriceCalculation({
+  const { calculatedPrice, breakdown, error, isCalculating } = usePriceCalculation({
     additionalServices,
     glassTypeId: glassType,
     heightMm: Number(height) || 0,
     modelId: model.id,
     widthMm: Number(width) || 0,
   });
+
+  // ✅ Build detailed price breakdown for popover
+  const priceBreakdown = useMemo(() => {
+    const items: Array<{ amount: number; category: 'model' | 'glass' | 'service' | 'adjustment'; label: string }> = [];
+
+    if (!breakdown) {
+      // Fallback: show base price only
+      items.push({
+        amount: Number(model.basePrice),
+        category: 'model',
+        label: 'Precio base del modelo',
+      });
+      return items;
+    }
+
+    // Calculate glass cost separately (area * pricePerSqm)
+    const widthM = Number(width) / 1000;
+    const heightM = Number(height) / 1000;
+    const glassArea = widthM * heightM;
+    const glassCost = selectedGlassType ? glassArea * selectedGlassType.pricePerSqm : 0;
+
+    // Model price (dimPrice includes base + area factor, but NOT glass cost)
+    const modelOnlyPrice = breakdown.dimPrice - glassCost;
+
+    if (modelOnlyPrice > 0) {
+      items.push({
+        amount: modelOnlyPrice,
+        category: 'model',
+        label: 'Precio base del modelo',
+      });
+    }
+
+    // Glass cost (separate line item for clarity)
+    if (glassCost > 0 && selectedGlassType) {
+      items.push({
+        amount: glassCost,
+        category: 'glass',
+        label: `Vidrio ${selectedGlassType.name}`,
+      });
+    }
+
+    // Accessories
+    if (breakdown.accPrice > 0) {
+      items.push({
+        amount: breakdown.accPrice,
+        category: 'model',
+        label: 'Accesorios',
+      });
+    }
+
+    // Services
+    if (breakdown.services.length > 0) {
+      const servicesById = services.reduce(
+        (acc, svc) => {
+          acc[svc.id] = svc;
+          return acc;
+        },
+        {} as Record<string, ServiceOutput>
+      );
+
+      for (const svc of breakdown.services) {
+        const serviceData = servicesById[svc.serviceId];
+        if (serviceData) {
+          items.push({
+            amount: svc.amount,
+            category: 'service',
+            label: serviceData.name,
+          });
+        }
+      }
+    }
+
+    // Adjustments
+    if (breakdown.adjustments.length > 0) {
+      for (const adj of breakdown.adjustments) {
+        items.push({
+          amount: adj.amount,
+          category: 'adjustment',
+          label: adj.concept,
+        });
+      }
+    }
+
+    return items;
+  }, [breakdown, model.basePrice, services, width, height, selectedGlassType]);
 
   // ✅ Prepare cart item data from form values (using inferred solution)
   const cartItemInput: CreateCartItemInput & { unitPrice: number } = {
@@ -151,15 +236,17 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)}>
-        {/* ✅ Sticky Price Header - Always visible */}
+        {/* ✅ Sticky Price Header - Always visible with config summary */}
         <StickyPriceHeader
           basePrice={model.basePrice}
-          breakdown={[
-            { amount: model.basePrice, label: 'Precio base del modelo' },
-            ...(selectedGlassType
-              ? [{ amount: selectedGlassType.pricePerSqm, label: `Vidrio ${selectedGlassType.name}` }]
-              : []),
-          ]}
+          breakdown={priceBreakdown}
+          configSummary={{
+            glassTypeName: selectedGlassType?.name,
+            heightMm: Number(height) || undefined,
+            modelName: model.name,
+            solutionName: inferredSolution?.nameEs,
+            widthMm: Number(width) || undefined,
+          }}
           currency={currency}
           currentPrice={calculatedPrice ?? model.basePrice}
         />
