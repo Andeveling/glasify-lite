@@ -63,7 +63,7 @@ export function QuantityField<T extends FieldValues>({ control, max = 999, min =
           }
         };
 
-        const handlePresetClick = (preset: number) => {
+        const _handlePresetClick = (preset: number) => {
           if (preset >= min && preset <= max) {
             field.onChange(preset);
           }

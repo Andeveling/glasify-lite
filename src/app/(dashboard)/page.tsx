@@ -263,7 +263,7 @@ export default async function DashboardPage() {
   }
 
   // Get tenant configuration for date formatting
-  const tenantConfig = await getTenantConfig();
+  const _tenantConfig = await getTenantConfig();
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">

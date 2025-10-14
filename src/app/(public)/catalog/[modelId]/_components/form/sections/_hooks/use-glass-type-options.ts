@@ -43,9 +43,9 @@ export type GlassTypeOption = {
 /**
  * Map solution icon name (from database) to Lucide component
  */
-function getSolutionIcon(iconName: string | null | undefined): LucideIcon {
+function getSolutionIcon(_iconName: string | null | undefined): LucideIcon {
   // Lazy load icons only when needed
-  const iconMap: Record<string, () => Promise<{ [key: string]: LucideIcon }>> = {
+  const _iconMap: Record<string, () => Promise<{ [key: string]: LucideIcon }>> = {
     Home: () => import('lucide-react').then((m) => ({ Home: m.Home })),
     Shield: () => import('lucide-react').then((m) => ({ Shield: m.Shield })),
     Snowflake: () => import('lucide-react').then((m) => ({ Snowflake: m.Snowflake })),

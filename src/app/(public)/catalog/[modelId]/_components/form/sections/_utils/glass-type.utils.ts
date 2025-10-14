@@ -33,7 +33,7 @@ function hasCharacteristic(glassType: GlassTypeOutput, characteristicName: strin
 /**
  * Get numeric value from characteristic (e.g., thickness, U-value)
  */
-function getCharacteristicValue(glassType: GlassTypeOutput, characteristicName: string): number | null {
+function _getCharacteristicValue(glassType: GlassTypeOutput, characteristicName: string): number | null {
   const characteristic = glassType.characteristics?.find((gc) => gc.characteristic.name === characteristicName);
   return characteristic?.value ? Number(characteristic.value) : null;
 }
