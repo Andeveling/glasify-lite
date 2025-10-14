@@ -35,7 +35,11 @@
     "logger:test": "tsx scripts/test-logger.ts",
     "logs:clean": "rm -f logs/*.log",
     "logs:view": "tail -f logs/combined.log",
-    "logs:errors": "tail -f logs/error.log"
+    "logs:errors": "tail -f logs/error.log",
+    "migrate:glass-chars": "tsx scripts/migrate-glass-characteristics.ts",
+    "migrate:glass-chars:dry": "tsx scripts/migrate-glass-characteristics.ts --dry-run",
+    "migrate:price-history": "tsx scripts/create-initial-price-history.ts",
+    "migrate:price-history:dry": "tsx scripts/create-initial-price-history.ts --dry-run"
   },
   "dependencies": {
     "@auth/prisma-adapter": "2.10.0",
