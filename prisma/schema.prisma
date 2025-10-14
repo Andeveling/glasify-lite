@@ -183,16 +183,12 @@ model ProfileSupplier {
 /// @deprecated This model will be removed in v2.0. Migrated to TenantConfig + ProfileSupplier.
 /// DO NOT use this model in new code. Use TenantConfig for business config and ProfileSupplier for profile manufacturers.
 model Manufacturer {
-  id                String      @id @default(cuid())
+  id                String   @id @default(cuid())
   name              String
-  currency          String      @db.Char(3)
-  quoteValidityDays Int         @default(15)
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
-  models            Model[]
-  glassTypes        GlassType[]
-  services          Service[]
-  quotes            Quote[]
+  currency          String   @db.Char(3)
+  quoteValidityDays Int      @default(15)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   @@index([currency])
 }
@@ -201,10 +197,6 @@ model Model {
   id                     String               @id @default(cuid())
   profileSupplierId      String?
   profileSupplier        ProfileSupplier?     @relation(fields: [profileSupplierId], references: [id], onDelete: SetNull)
-  /// @deprecated Use profileSupplierId instead. Will be removed after migration.
-  manufacturerId         String?
-  /// @deprecated Use profileSupplier instead. Will be removed after migration.
-  manufacturer           Manufacturer?        @relation(fields: [manufacturerId], references: [id], onDelete: Cascade)
   name                   String
   status                 ModelStatus          @default(draft)
   minWidthMm             Int
@@ -234,22 +226,17 @@ model Model {
   priceHistory           ModelPriceHistory[]
 
   @@index([profileSupplierId, status])
-  @@index([manufacturerId, status])
 }
 
 model GlassType {
   id             String              @id @default(cuid())
-  /// @deprecated Use TenantConfig for currency. Will be removed after migration.
-  manufacturerId String?
-  /// @deprecated Use TenantConfig for currency. Will be removed after migration.
-  manufacturer   Manufacturer?       @relation(fields: [manufacturerId], references: [id], onDelete: Cascade)
   name           String
   /// @deprecated Use solutions relationship instead. This field will be removed in v2.0.
   /// Legacy single-purpose classification. Replaced by Many-to-Many GlassTypeSolution.
   /// Maintained for backward compatibility only.
   purpose        GlassPurpose
   thicknessMm    Int
-  /// Precio por metro cuadrado del vidrio (moneda de Manufacturer)
+  /// Precio por metro cuadrado del vidrio (moneda de TenantConfig)
   pricePerSqm    Decimal             @db.Decimal(12, 2)
   /// Transmitancia térmica (W/m²·K) — opcional si aplica
   uValue         Decimal?            @db.Decimal(5, 2)
@@ -262,40 +249,26 @@ model GlassType {
   updatedAt      DateTime            @updatedAt
   quoteItems     QuoteItem[]
   solutions      GlassTypeSolution[]
-
-  @@index([manufacturerId])
-  /// @deprecated Index on deprecated purpose field. Will be removed in v2.0.
-  @@index([manufacturerId, purpose])
 }
 
 model Service {
-  id             String             @id @default(cuid())
-  /// @deprecated Use TenantConfig for global services. Will be removed after migration.
-  manufacturerId String?
-  /// @deprecated Use TenantConfig for global services. Will be removed after migration.
-  manufacturer   Manufacturer?      @relation(fields: [manufacturerId], references: [id], onDelete: Cascade)
-  name           String
-  type           ServiceType
-  unit           ServiceUnit
-  rate           Decimal            @db.Decimal(12, 4)
-  createdAt      DateTime           @default(now())
-  updatedAt      DateTime           @updatedAt
-  quoteServices  QuoteItemService[]
-
-  @@index([manufacturerId, type])
+  id            String             @id @default(cuid())
+  name          String
+  type          ServiceType
+  unit          ServiceUnit
+  rate          Decimal            @db.Decimal(12, 4)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  quoteServices QuoteItemService[]
 }
 
 model Quote {
-  id             String        @id @default(cuid())
-  /// @deprecated Use TenantConfig for currency and validity. Will be removed after migration.
-  manufacturerId String?
-  /// @deprecated Use TenantConfig for currency and validity. Will be removed after migration.
-  manufacturer   Manufacturer? @relation(fields: [manufacturerId], references: [id], onDelete: Cascade)
+  id             String      @id @default(cuid())
   userId         String?
-  user           User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
-  status         QuoteStatus   @default(draft)
-  currency       String        @db.Char(3)
-  total          Decimal       @default(0) @db.Decimal(12, 2)
+  user           User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  status         QuoteStatus @default(draft)
+  currency       String      @db.Char(3)
+  total          Decimal     @default(0) @db.Decimal(12, 2)
   validUntil     DateTime?
   contactPhone   String?
   /// @deprecated Use structured project fields instead. Will be removed in v2.0.
@@ -310,12 +283,11 @@ model Quote {
 
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
-  sentAt      DateTime?    // Timestamp when quote was sent to vendor (Feature 005)
+  sentAt      DateTime? // Timestamp when quote was sent to vendor (Feature 005)
   items       QuoteItem[]
   adjustments Adjustment[]
 
   // Performance indexes for quote queries (T079)
-  @@index([manufacturerId, status])
   @@index([userId]) // Original index
   @@index([userId, status]) // Composite index for filtering by user + status
   @@index([userId, createdAt(sort: Desc)]) // Optimized for sorting by createdAt DESC
