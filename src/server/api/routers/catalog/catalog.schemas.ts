@@ -15,7 +15,7 @@ export const listModelsInput = z.object({
   manufacturerId: z.cuid('ID del fabricante debe ser válido').optional(),
   page: z.number().min(1).default(1),
   search: z.string().optional(),
-  sort: z.enum([ 'name-asc', 'name-desc', 'price-asc', 'price-desc' ]).default('name-asc'),
+  sort: z.enum(['name-asc', 'name-desc', 'price-asc', 'price-desc']).default('name-asc'),
 });
 
 export const getModelByIdInput = z.object({
@@ -66,7 +66,7 @@ export const modelSummaryOutput = z.object({
       name: z.string(),
     })
     .nullable(),
-  status: z.enum([ 'draft', 'published' ]),
+  status: z.enum(['draft', 'published']),
   updatedAt: z.date(),
 });
 
@@ -91,10 +91,11 @@ export const modelDetailOutput = z.object({
   profileSupplier: z
     .object({
       id: z.string(),
+      materialType: z.enum(['PVC', 'ALUMINUM', 'WOOD', 'MIXED']),
       name: z.string(),
     })
     .nullable(),
-  status: z.enum([ 'draft', 'published' ]),
+  status: z.enum(['draft', 'published']),
   updatedAt: z.date(),
 });
 
@@ -103,8 +104,8 @@ export const serviceOutput = z.object({
   id: z.string(),
   name: z.string(),
   rate: z.number(),
-  type: z.enum([ 'area', 'perimeter', 'fixed' ]),
-  unit: z.enum([ 'unit', 'sqm', 'ml' ]),
+  type: z.enum(['area', 'perimeter', 'fixed']),
+  unit: z.enum(['unit', 'sqm', 'ml']),
   updatedAt: z.date(),
 });
 
@@ -114,7 +115,7 @@ export const listServicesOutput = z.array(serviceOutput);
 // GLASS SOLUTIONS SCHEMAS
 // ========================================
 
-export const performanceRating = z.enum([ 'basic', 'standard', 'good', 'very_good', 'excellent' ]);
+export const performanceRating = z.enum(['basic', 'standard', 'good', 'very_good', 'excellent']);
 
 // ========================================
 // GLASS SOLUTIONS
@@ -188,7 +189,7 @@ export const glassTypeOutput = z.object({
   isTripleGlazed: z.boolean(), // @deprecated Use characteristics relationship
   name: z.string(),
   pricePerSqm: z.number(),
-  purpose: z.enum([ 'general', 'insulation', 'security', 'decorative' ]), // @deprecated Use solutions relationship
+  purpose: z.enum(['general', 'insulation', 'security', 'decorative']), // @deprecated Use solutions relationship
   solutions: z.array(glassTypeSolutionOutput).optional(), // NEW: Many-to-Many solutions
   thicknessMm: z.number(),
   updatedAt: z.date(),

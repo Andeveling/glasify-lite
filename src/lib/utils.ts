@@ -1,50 +1,30 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { formatCurrency as formatCurrencyUtil } from '@/app/_utils/format-currency.util';
+import { format as tempoFormat } from '@formkit/tempo';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 /**
- * Formats a currency value for Spanish (Latin America) locale
- *
- * @deprecated Use formatCurrency from '@/app/_utils/format-currency.util' instead
- * This function is kept for backward compatibility
- *
- * @param value - The value to format (string or number)
- * @param currency - Optional currency code (defaults to 'COP')
- * @returns Formatted currency string
- */
-export function formatCurrency(value: string | number, currency = 'COP'): string {
-  const numericValue = typeof value === 'string' ? Number.parseFloat(value) : value;
-
-  if (Number.isNaN(numericValue)) {
-    return formatCurrencyUtil(0, { currency });
-  }
-
-  return formatCurrencyUtil(numericValue, {
-    currency,
-    decimals: currency === 'USD' ? 2 : 0,
-    locale: currency === 'USD' ? 'es-PA' : 'es-CO',
-  });
-}
-
-/**
- * Formats a date for Spanish (Latin America) locale
+ * Formats a date for Spanish (Latin America) locale using Tempo
  * @param date - The date to format (Date object or string)
+ * @param locale - IETF BCP 47 locale (e.g., 'es-CO', 'en-US')
+ * @param timezone - IANA timezone identifier (e.g., 'America/Bogota')
  * @returns Formatted date string
  */
-export function formatDate(date: Date | string): string {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
+export function formatDate(date: Date | string, locale = 'es-CO', timezone = 'America/Bogota'): string {
+  try {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
 
-  if (Number.isNaN(dateObj.getTime())) {
+    if (Number.isNaN(dateObj.getTime())) {
+      return 'Fecha inválida';
+    }
+
+    // Use Tempo for consistent date formatting with tenant config
+    return tempoFormat(dateObj, 'DD/MM/YYYY', locale);
+  } catch (error) {
+    console.error('Error formatting date:', error);
     return 'Fecha inválida';
   }
-
-  return new Intl.DateTimeFormat('es-CO', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  }).format(dateObj);
 }

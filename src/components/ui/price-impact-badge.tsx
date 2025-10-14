@@ -2,8 +2,8 @@
 
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 import { formatCurrency } from '@/lib/export/pdf/pdf-utils';
+import { cn } from '@/lib/utils';
 
 // ============================================================================
 // Types

@@ -12,6 +12,7 @@
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
+import { useTenantConfig } from '@/providers/tenant-config-provider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,6 +31,7 @@ type QuoteDetailViewProps = {
 };
 
 export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailViewProps) {
+  const { locale, timezone } = useTenantConfig();
   const backLink = isPublicView ? '/my-quotes' : '/quotes';
   const backLabel = isPublicView ? 'Volver a mis cotizaciones' : 'Volver a cotizaciones';
 

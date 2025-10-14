@@ -3,8 +3,8 @@ import { Fragment } from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { cn } from '@/lib/utils';
 import { formatCurrency } from '@/lib/export/pdf/pdf-utils';
+import { cn } from '@/lib/utils';
 
 // ============================================================================
 // Types
@@ -70,11 +70,7 @@ type PriceBreakdownPopoverProps = {
  *   <PriceBreakdownPopover breakdown={breakdown} totalAmount={totalPrice} />
  * </div>
  */
-export function PriceBreakdownPopover({
-  breakdown,
-  className,
-  totalAmount,
-}: PriceBreakdownPopoverProps) {
+export function PriceBreakdownPopover({ breakdown, className, totalAmount }: PriceBreakdownPopoverProps) {
   // Group items by category
   const groupedItems = breakdown.reduce(
     (acc, item) => {
