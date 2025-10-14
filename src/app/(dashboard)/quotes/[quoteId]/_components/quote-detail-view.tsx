@@ -46,22 +46,22 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
 
       {/* Enhanced confirmation message for sent quotes (US3) */}
       {quote.status === 'sent' && quote.sentAt && (
-        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950">
+        <div className="rounded-lg border border-[--color-info-border] bg-[--color-info-background] p-4">
           <div className="space-y-3">
             {/* Title with sent date */}
             <div>
-              <p className="font-semibold text-blue-900 dark:text-blue-100">
+              <p className="font-semibold text-foreground">
                 Cotización enviada el {formatDate(quote.sentAt, locale, timezone)}
               </p>
-              <p className="text-blue-700 text-sm dark:text-blue-300">
+              <p className="text-muted-foreground text-sm">
                 El fabricante ha recibido tu solicitud y se pondrá en contacto contigo pronto.
               </p>
             </div>
 
             {/* Timeline expectation */}
             <div className="flex items-start gap-2 text-sm">
-              <Clock className="mt-0.5 h-4 w-4 text-blue-600 dark:text-blue-400" />
-              <p className="text-blue-700 dark:text-blue-300">
+              <Clock className="mt-0.5 h-4 w-4 text-[--color-info]" />
+              <p className="text-muted-foreground">
                 <span className="font-medium">Tiempo de respuesta:</span> Recibirás una respuesta en 24-48 horas hábiles
               </p>
             </div>
@@ -69,15 +69,15 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
             {/* Vendor contact (if available) */}
             {quote.vendorContactPhone && (
               <div className="flex items-start gap-2 text-sm">
-                <Phone className="mt-0.5 h-4 w-4 text-blue-600 dark:text-blue-400" />
-                <p className="text-blue-700 dark:text-blue-300">
+                <Phone className="mt-0.5 h-4 w-4 text-[--color-info]" />
+                <p className="text-muted-foreground">
                   <span className="font-medium">Contacto del fabricante:</span> {quote.vendorContactPhone}
                 </p>
               </div>
             )}
 
             {/* Next steps */}
-            <p className="text-blue-600 text-xs dark:text-blue-400">
+            <p className="text-muted-foreground text-xs">
               Mientras tanto, puedes revisar otras cotizaciones o crear una nueva.
             </p>
           </div>
