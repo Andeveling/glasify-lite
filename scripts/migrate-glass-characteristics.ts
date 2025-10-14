@@ -22,8 +22,8 @@ const CHARACTERISTIC_MAPPING = {
 
 type BooleanField = keyof typeof CHARACTERISTIC_MAPPING;
 
-async function migrateGlassCharacteristics(isDryRun = false) {
-  const mode = isDryRun ? 'DRY RUN' : 'LIVE';
+async function migrateGlassCharacteristics(dryRun = false) {
+  const mode = dryRun ? 'DRY RUN' : 'LIVE';
   console.log(`\n�� Starting Glass Characteristics Migration (${mode} MODE)\n`);
 
   try {
@@ -34,7 +34,7 @@ async function migrateGlassCharacteristics(isDryRun = false) {
     });
 
     console.log(`   ✓ Found ${characteristics.length} characteristics`);
-    const characteristicMap = new Map(characteristics.map((c) => [c.key, c]));
+    const characteristicMap = new Map(characteristics.map((c) => [ c.key, c ]));
 
     console.log('\n🔍 Analyzing glass types...');
     const glassTypes = await prisma.glassType.findMany({
@@ -58,8 +58,8 @@ async function migrateGlassCharacteristics(isDryRun = false) {
       const booleanFields = Object.keys(CHARACTERISTIC_MAPPING) as BooleanField[];
 
       for (const field of booleanFields) {
-        if (glassType[field]) {
-          const characteristicKey = CHARACTERISTIC_MAPPING[field];
+        if (glassType[ field ]) {
+          const characteristicKey = CHARACTERISTIC_MAPPING[ field ];
           const characteristic = characteristicMap.get(characteristicKey);
 
           if (!characteristic) {
@@ -84,7 +84,7 @@ async function migrateGlassCharacteristics(isDryRun = false) {
             continue;
           }
 
-          if (isDryRun) {
+          if (dryRun) {
             console.log(`   ✓ Would create: ${glassType.name} → ${characteristic.nameEs}`);
             totalCreated++;
           } else {
@@ -117,7 +117,7 @@ async function migrateGlassCharacteristics(isDryRun = false) {
       }
     }
 
-    if (isDryRun) {
+    if (dryRun) {
       console.log('\n🔒 DRY RUN: No changes were made to the database');
       console.log('   Run without --dry-run to apply changes');
     } else {

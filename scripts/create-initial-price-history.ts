@@ -31,8 +31,8 @@ const MIGRATION_REASON = 'Initial price record from migration';
 /**
  * Main price history creation function
  */
-async function createInitialPriceHistory(isDryRun = false) {
-  const mode = isDryRun ? 'DRY RUN' : 'LIVE';
+async function createInitialPriceHistory(dryRun = false) {
+  const mode = dryRun ? 'DRY RUN' : 'LIVE';
   console.log(`\n💰 Starting Initial Price History Creation (${mode} MODE)\n`);
 
   try {
@@ -73,9 +73,9 @@ async function createInitialPriceHistory(isDryRun = false) {
           continue;
         }
 
-        if (isDryRun) {
+        if (dryRun) {
           console.log(
-            `   ✓ Would create price history: "${glassType.name}" - $${glassType.pricePerSqm}/m² (effective: ${glassType.createdAt.toISOString().split('T')[0]})`
+            `   ✓ Would create price history: "${glassType.name}" - $${glassType.pricePerSqm}/m² (effective: ${glassType.createdAt.toISOString().split('T')[ 0 ]})`
           );
           totalCreated++;
         } else {
@@ -91,7 +91,7 @@ async function createInitialPriceHistory(isDryRun = false) {
           });
 
           console.log(
-            `   ✓ Created price history: "${glassType.name}" - $${glassType.pricePerSqm}/m² (effective: ${glassType.createdAt.toISOString().split('T')[0]})`
+            `   ✓ Created price history: "${glassType.name}" - $${glassType.pricePerSqm}/m² (effective: ${glassType.createdAt.toISOString().split('T')[ 0 ]})`
           );
           totalCreated++;
         }
@@ -118,7 +118,7 @@ async function createInitialPriceHistory(isDryRun = false) {
       }
     }
 
-    if (isDryRun) {
+    if (dryRun) {
       console.log('\n🔒 DRY RUN: No changes were made to the database');
       console.log('   Run without --dry-run to apply changes');
     } else {

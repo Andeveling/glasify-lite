@@ -32,32 +32,32 @@ const profileSuppliers: Array<{
   materialType: MaterialType;
   name: string;
 }> = [
-  {
-    isActive: true,
-    materialType: 'PVC',
-    name: 'Rehau',
-  },
-  {
-    isActive: true,
-    materialType: 'PVC',
-    name: 'Deceuninck',
-  },
-  {
-    isActive: true,
-    materialType: 'ALUMINUM',
-    name: 'Azembla',
-  },
-  {
-    isActive: true,
-    materialType: 'ALUMINUM',
-    name: 'Aluflex',
-  },
-  {
-    isActive: false,
-    materialType: 'PVC',
-    name: 'VEKA', // Inactive supplier example
-  },
-];
+    {
+      isActive: true,
+      materialType: 'PVC',
+      name: 'Rehau',
+    },
+    {
+      isActive: true,
+      materialType: 'PVC',
+      name: 'Deceuninck',
+    },
+    {
+      isActive: true,
+      materialType: 'ALUMINUM',
+      name: 'Azembla',
+    },
+    {
+      isActive: true,
+      materialType: 'ALUMINUM',
+      name: 'Aluflex',
+    },
+    {
+      isActive: false,
+      materialType: 'PVC',
+      name: 'VEKA', // Inactive supplier example
+    },
+  ];
 
 /**
  * Seed TenantConfig singleton and ProfileSupplier records
@@ -136,7 +136,9 @@ export async function seedTenant(prisma: PrismaClient) {
 
   const glassSupplierData = Object.values(GLASS_SUPPLIER_PRESETS);
   const glassSupplierResults = createGlassSuppliers(glassSupplierData);
-  const validGlassSuppliers = glassSupplierResults.filter((r) => r.success).map((r) => r.data!);
+  const validGlassSuppliers = glassSupplierResults
+    .filter((r) => r.success)
+    .map((r) => r.data as NonNullable<typeof r.data>);
 
   const createdGlassSuppliers = await Promise.all(
     validGlassSuppliers.map((supplier) =>
@@ -160,7 +162,9 @@ export async function seedTenant(prisma: PrismaClient) {
   console.log('\n🔍 Creating glass characteristics...');
 
   const characteristicResults = createGlassCharacteristics(GLASS_CHARACTERISTIC_PRESETS);
-  const validCharacteristics = characteristicResults.filter((r) => r.success).map((r) => r.data!);
+  const validCharacteristics = characteristicResults
+    .filter((r) => r.success)
+    .map((r) => r.data as NonNullable<typeof r.data>);
 
   const createdCharacteristics = await Promise.all(
     validCharacteristics.map((characteristic) =>
@@ -175,16 +179,16 @@ export async function seedTenant(prisma: PrismaClient) {
   console.log(`✅ Created/updated ${createdCharacteristics.length} glass characteristics:`);
   const characteristicsByCategory = createdCharacteristics.reduce(
     (acc, char) => {
-      if (!acc[char.category]) {
-        acc[char.category] = [];
+      if (!acc[ char.category ]) {
+        acc[ char.category ] = [];
       }
-      acc[char.category]!.push(char);
+      acc[ char.category ]?.push(char);
       return acc;
     },
     {} as Record<string, typeof createdCharacteristics>
   );
 
-  for (const [category, chars] of Object.entries(characteristicsByCategory)) {
+  for (const [ category, chars ] of Object.entries(characteristicsByCategory)) {
     console.log(`   📁 ${category}: ${chars.length} characteristics`);
     for (const char of chars) {
       const status = char.isActive ? '✓' : '✗';

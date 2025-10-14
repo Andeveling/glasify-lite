@@ -20,7 +20,7 @@ import type { ExportFormat, ExportResult, QuotePDFData } from '@/types/export.ty
  * Input schema for export actions
  */
 const exportQuoteInputSchema = z.object({
-  format: z.enum([ 'pdf', 'excel' ] satisfies ExportFormat[]),
+  format: z.enum(['pdf', 'excel'] satisfies ExportFormat[]),
   quoteId: z.string().cuid('Invalid quote ID format'),
 });
 
@@ -203,7 +203,7 @@ export async function exportQuotePDF(input: ExportQuoteInput): Promise<ExportRes
 
     return {
       data: base64Data,
-      filename: `Cotizacion_${quote.projectName || 'Sin_nombre'}_${new Date().toISOString().split('T')[ 0 ]}.pdf`,
+      filename: `Cotizacion_${quote.projectName || 'Sin_nombre'}_${new Date().toISOString().split('T')[0]}.pdf`,
       mimeType: 'application/pdf',
       success: true,
     };
@@ -445,7 +445,7 @@ export async function exportQuoteExcel(input: ExportQuoteInput): Promise<ExportR
 
     return {
       data: base64Data,
-      filename: `Cotizacion_${quote.projectName || 'Sin_nombre'}_${new Date().toISOString().split('T')[ 0 ]}.xlsx`,
+      filename: `Cotizacion_${quote.projectName || 'Sin_nombre'}_${new Date().toISOString().split('T')[0]}.xlsx`,
       mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       success: true,
     };

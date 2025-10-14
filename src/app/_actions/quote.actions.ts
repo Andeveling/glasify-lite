@@ -117,7 +117,7 @@ export async function generateQuoteFromCartAction(
     }
 
     // 3. Validate first cart item exists (for error handling)
-    const firstCartItem = cartItems[ 0 ];
+    const firstCartItem = cartItems[0];
     if (!firstCartItem) {
       logger.error('[QuoteAction] Cart is empty after validation', {
         correlationId,
