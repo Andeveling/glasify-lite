@@ -2,6 +2,7 @@
 
 import type { Quote } from '@prisma/client';
 import { Send } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useSendQuote } from '@/hooks/use-send-quote';
@@ -17,9 +18,12 @@ interface SendQuoteButtonProps {
  * Opens modal to capture/confirm contact information before sending
  */
 export function SendQuoteButton({ quote }: SendQuoteButtonProps) {
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { mutate: sendQuote, isPending } = useSendQuote();
-  console.log('Quote status:', quote.status);
+  const { mutate: sendQuote, isPending } = useSendQuote({
+    redirectOnSuccess: false, // Stay on current page after sending
+  });
+
   // Only show button for draft quotes
   if (quote.status !== 'draft') {
     return null;
@@ -39,6 +43,8 @@ export function SendQuoteButton({ quote }: SendQuoteButtonProps) {
       {
         onSuccess: () => {
           setIsModalOpen(false);
+          // Force page revalidation to show updated quote data
+          router.refresh();
         },
       }
     );
@@ -46,7 +52,7 @@ export function SendQuoteButton({ quote }: SendQuoteButtonProps) {
 
   return (
     <>
-      <Button className="gap-2" disabled={isPending} onClick={handleSendClick} size="lg">
+      <Button className="gap-2" disabled={isPending} onClick={handleSendClick} size="sm">
         <Send className="h-4 w-4" />
         {isPending ? 'Enviando...' : 'Enviar Cotización'}
       </Button>

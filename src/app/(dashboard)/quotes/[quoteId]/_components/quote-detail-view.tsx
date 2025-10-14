@@ -172,7 +172,7 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
                   <TableCell>{item.modelName}</TableCell>
                   <TableCell>{item.glassTypeName}</TableCell>
                   <TableCell>{item.solutionName ?? '—'}</TableCell>
-                  <TableCell className='text-right'>
+                  <TableCell className="text-right">
                     {item.widthMm} × {item.heightMm}
                   </TableCell>
                   <TableCell className="text-right">{item.quantity}</TableCell>

@@ -87,7 +87,7 @@ export const STATUS_CONFIG: Record<QuoteStatus, StatusConfig> = {
     },
     icon: FileText,
     iconName: 'file-text',
-    label: 'Pendiente',
+    label: 'Borrador',
     tooltip:
       'Esta cotización fue generada desde el carrito y está lista para enviar. Revisa los detalles antes de enviarla.',
     variant: 'secondary',

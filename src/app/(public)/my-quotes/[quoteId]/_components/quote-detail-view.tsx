@@ -11,7 +11,7 @@
  * Updated with QuoteStatusBadge component (US1) for better status clarity.
  */
 
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Clock, Phone } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +25,7 @@ import { WindowType } from '@/types/window.types';
 import { QuoteStatusBadge } from '../../_components/quote-status-badge';
 import { QuoteExportButtons } from './quote-export-buttons';
 import { type QuoteItemData, QuoteItemsGrid } from './quote-items-grid';
+import { SendQuoteButton } from './send-quote-button';
 
 type QuoteDetailViewProps = {
   quote: QuoteDetailSchema;
@@ -61,9 +62,54 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
           </Link>
         </Button>
 
-        {/* Export buttons - US3 */}
-        {isPublicView && <QuoteExportButtons quoteId={quote.id} size="sm" variant="full" />}
+        <div className="flex items-center gap-2">
+          {/* Send quote button - only for draft quotes */}
+          <SendQuoteButton quote={quote} />
+
+          {/* Export buttons - US3 */}
+          {isPublicView && <QuoteExportButtons quoteId={quote.id} size="sm" variant="full" />}
+        </div>
       </div>
+
+      {/* Enhanced confirmation message for sent quotes (US3) */}
+      {quote.status === 'sent' && quote.sentAt && (
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950">
+          <div className="space-y-3">
+            {/* Title with sent date */}
+            <div>
+              <p className="font-semibold text-blue-900 dark:text-blue-100">
+                Cotización enviada el {formatDate(quote.sentAt, locale, timezone)}
+              </p>
+              <p className="text-blue-700 text-sm dark:text-blue-300">
+                El fabricante ha recibido tu solicitud y se pondrá en contacto contigo pronto.
+              </p>
+            </div>
+
+            {/* Timeline expectation */}
+            <div className="flex items-start gap-2 text-sm">
+              <Clock className="mt-0.5 h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <p className="text-blue-700 dark:text-blue-300">
+                <span className="font-medium">Tiempo de respuesta:</span> Recibirás una respuesta en 24-48 horas hábiles
+              </p>
+            </div>
+
+            {/* Vendor contact (if available) */}
+            {quote.vendorContactPhone && (
+              <div className="flex items-start gap-2 text-sm">
+                <Phone className="mt-0.5 h-4 w-4 text-blue-600 dark:text-blue-400" />
+                <p className="text-blue-700 dark:text-blue-300">
+                  <span className="font-medium">Contacto del fabricante:</span> {quote.vendorContactPhone}
+                </p>
+              </div>
+            )}
+
+            {/* Next steps */}
+            <p className="text-blue-600 text-xs dark:text-blue-400">
+              Mientras tanto, puedes revisar otras cotizaciones o crear una nueva.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Información principal de la cotización */}
       <Card>

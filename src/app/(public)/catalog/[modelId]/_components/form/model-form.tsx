@@ -42,11 +42,11 @@ type ModelFormProps = {
 // ============================================================================
 
 export function ModelForm({ model, glassTypes, services, solutions, currency }: ModelFormProps) {
-  const schema = useMemo(() => createQuoteFormSchema(model), [ model ]);
+  const schema = useMemo(() => createQuoteFormSchema(model), [model]);
   const { addItem } = useCart();
 
   // ✅ Track if item was just added to cart
-  const [ justAddedToCart, setJustAddedToCart ] = useState(false);
+  const [justAddedToCart, setJustAddedToCart] = useState(false);
 
   // ✅ Auto-scroll to success card when item is added
   const successCardRef = useScrollIntoView(justAddedToCart);
@@ -55,13 +55,13 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
   const defaultValues = useMemo(
     () => ({
       additionalServices: [],
-      glassType: glassTypes[ 0 ]?.id ?? '', // Pre-select first glass type (usually most common/budget)
+      glassType: glassTypes[0]?.id ?? '', // Pre-select first glass type (usually most common/budget)
       height: model.minHeightMm, // Use minimum height as starting point
       quantity: 1,
       solution: '', // No solution selected by default (optional field)
       width: model.minWidthMm, // Use minimum width as starting point
     }),
-    [ model.minWidthMm, model.minHeightMm, glassTypes ]
+    [model.minWidthMm, model.minHeightMm, glassTypes]
   );
 
   const form = useForm<QuoteFormValues>({
@@ -150,14 +150,14 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
     if (breakdown.services.length > 0) {
       const servicesById = services.reduce(
         (acc, svc) => {
-          acc[ svc.id ] = svc;
+          acc[svc.id] = svc;
           return acc;
         },
         {} as Record<string, ServiceOutput>
       );
 
       for (const svc of breakdown.services) {
-        const serviceData = servicesById[ svc.serviceId ];
+        const serviceData = servicesById[svc.serviceId];
         if (serviceData) {
           items.push({
             amount: svc.amount,
@@ -180,7 +180,7 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
     }
 
     return items;
-  }, [ breakdown, model.basePrice, services, width, height, selectedGlassType ]);
+  }, [breakdown, model.basePrice, services, width, height, selectedGlassType]);
 
   // ✅ Prepare cart item data from form values (using inferred solution)
   const cartItemInput: CreateCartItemInput & { unitPrice: number } = {
