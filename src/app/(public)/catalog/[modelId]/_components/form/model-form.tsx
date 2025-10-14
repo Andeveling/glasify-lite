@@ -229,7 +229,8 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
   const handleConfigureAnother = () => {
     setJustAddedToCart(false);
     form.reset(defaultValues);
-    // Scroll handled automatically by useScrollIntoView when justAddedToCart becomes true again
+    // Smooth scroll to top for better UX
+    window.scrollTo({ behavior: 'smooth', top: 0 });
   };
 
   return (
@@ -251,15 +252,6 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
         />
 
         <div className="space-y-6 pt-4">
-          {/* ✅ Show success actions after adding to cart */}
-          {justAddedToCart && (
-            <AddedToCartActions
-              modelName={model.name}
-              onConfigureAnother={handleConfigureAnother}
-              ref={successCardRef}
-            />
-          )}
-
           <Card className="p-6">
             <DimensionsSection
               dimensions={{
@@ -293,7 +285,16 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
             currency={currency}
             error={error}
             isCalculating={isCalculating}
+            justAddedToCart={justAddedToCart}
           />
+          {/* ✅ Show success actions after adding to cart */}
+          {justAddedToCart && (
+            <AddedToCartActions
+              modelName={model.name}
+              onConfigureAnother={handleConfigureAnother}
+              ref={successCardRef}
+            />
+          )}
         </div>
       </form>
     </Form>

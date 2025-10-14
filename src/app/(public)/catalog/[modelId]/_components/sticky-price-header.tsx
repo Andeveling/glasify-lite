@@ -85,7 +85,7 @@ export function StickyPriceHeader({
   return (
     <div
       className={cn(
-        'sticky top-12 z-10 border-b bg-background px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6 md:py-4',
+        'sticky top-16 z-10 border-b bg-background px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6 md:py-4',
         className
       )}
     >
