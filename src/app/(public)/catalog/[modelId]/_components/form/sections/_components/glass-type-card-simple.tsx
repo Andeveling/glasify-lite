@@ -47,9 +47,7 @@ export function GlassTypeCardSimple({ isSelected, option }: GlassTypeCardSimpleP
       <div
         className={cn(
           'flex size-12 shrink-0 items-center justify-center rounded-lg transition-colors',
-          isSelected
-            ? 'bg-primary text-primary-foreground'
-            : 'bg-muted text-muted-foreground group-hover:bg-primary/10'
+          isSelected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground group-hover:bg-primary/10'
         )}
       >
         <Icon className="size-6" />
@@ -72,14 +70,14 @@ export function GlassTypeCardSimple({ isSelected, option }: GlassTypeCardSimpleP
 
         {/* Price */}
         <div className="shrink-0 text-right">
-          <div className="font-bold text-primary text-base">{formatCurrency(option.pricePerSqm)}</div>
+          <div className="font-bold text-base text-primary">{formatCurrency(option.pricePerSqm)}</div>
           <div className="text-muted-foreground text-xs">por m²</div>
         </div>
       </div>
 
       {/* Selected indicator */}
       {isSelected && (
-        <div className="absolute -top-2 -right-2 flex size-6 items-center justify-center rounded-full bg-primary shadow-lg">
+        <div className="-top-2 -right-2 absolute flex size-6 items-center justify-center rounded-full bg-primary shadow-lg">
           <Check className="size-4 text-primary-foreground" />
         </div>
       )}

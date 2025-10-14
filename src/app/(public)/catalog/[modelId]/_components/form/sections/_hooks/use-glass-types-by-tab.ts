@@ -1,9 +1,9 @@
+import type { LucideIcon } from 'lucide-react';
+import { Home, Shield, Snowflake, Sparkles, Volume2, Zap } from 'lucide-react';
 import { useMemo } from 'react';
 import type { GlassTypeOutput } from '@/server/api/routers/catalog';
-import { Home, Shield, Snowflake, Sparkles, Volume2, Zap } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
-import type { GlassTypeOption } from './use-glass-type-options';
 import { buildGlassFeatures, calculatePerformanceRatings } from '../_utils/glass-type.utils';
+import type { GlassTypeOption } from './use-glass-type-options';
 
 /**
  * Custom Hook: useGlassTypesByTab
@@ -41,39 +41,39 @@ function getSolutionIcon(iconName: string | null | undefined): LucideIcon {
     Zap,
   };
 
-  return iconName && iconMap[ iconName ] ? iconMap[ iconName ] : Home;
+  return iconName && iconMap[iconName] ? iconMap[iconName] : Home;
 }
 
 // ============================================================================
 // Hook Implementation
 // ============================================================================
 
-export function useGlassTypesByTab(
-  glassTypes: GlassTypeOutput[],
-  basePrice?: number
-): GlassTab[] {
+export function useGlassTypesByTab(glassTypes: GlassTypeOutput[], basePrice?: number): GlassTab[] {
   const tabs = useMemo(() => {
     // Step 1: Map glass types to their PRIMARY solution only (deduplicate)
-    const primarySolutionsMap = new Map<string, {
-      id: string;
-      key: string;
-      label: string;
-      icon: LucideIcon;
-      sortOrder: number;
-      glassTypes: GlassTypeOutput[];
-    }>();
+    const primarySolutionsMap = new Map<
+      string,
+      {
+        id: string;
+        key: string;
+        label: string;
+        icon: LucideIcon;
+        sortOrder: number;
+        glassTypes: GlassTypeOutput[];
+      }
+    >();
 
     // Track assigned glass types to avoid duplicates
     const assignedGlassTypes = new Set<string>();
 
-    glassTypes.forEach((glassType) => {
+    for (const glassType of glassTypes) {
       // Skip if already assigned to a tab
-      if (assignedGlassTypes.has(glassType.id)) return;
+      if (assignedGlassTypes.has(glassType.id)) continue;
 
       // Find primary solution (or first solution if no primary)
-      const primarySolution = glassType.solutions?.find((s) => s.isPrimary) ?? glassType.solutions?.[ 0 ];
+      const primarySolution = glassType.solutions?.find((s) => s.isPrimary) ?? glassType.solutions?.[0];
 
-      if (!primarySolution) return;
+      if (!primarySolution) continue;
 
       const solution = primarySolution.solution;
 
@@ -88,9 +88,12 @@ export function useGlassTypesByTab(
         });
       }
 
-      primarySolutionsMap.get(solution.id)!.glassTypes.push(glassType);
+      const solutionTab = primarySolutionsMap.get(solution.id);
+      if (solutionTab) {
+        solutionTab.glassTypes.push(glassType);
+      }
       assignedGlassTypes.add(glassType.id);
-    });
+    }
 
     // Step 2: Convert to tabs array and sort by sortOrder
     const tabsArray = Array.from(primarySolutionsMap.values())
@@ -100,7 +103,7 @@ export function useGlassTypesByTab(
         // Step 3: Transform glass types to options
         const options = tab.glassTypes.map((glassType): GlassTypeOption => {
           // Get primary solution for this tab
-          const primarySolution = glassType.solutions?.find((s) => s.isPrimary) ?? glassType.solutions?.[ 0 ];
+          const primarySolution = glassType.solutions?.find((s) => s.isPrimary) ?? glassType.solutions?.[0];
           const solution = primarySolution?.solution;
 
           const icon = getSolutionIcon(solution?.icon);
@@ -129,7 +132,7 @@ export function useGlassTypesByTab(
 
         // Step 4: Sort options by performance rating and price
         const sortedOptions = options.sort((a, b) => {
-          const RATING_WEIGHTS: Record<string, number> = {
+          const RatingWeights: Record<string, number> = {
             basic: 1,
             excellent: 5,
             good: 3,
@@ -137,8 +140,8 @@ export function useGlassTypesByTab(
             veryGood: 4,
           };
 
-          const weightA = a.performanceRating ? (RATING_WEIGHTS[ a.performanceRating ] ?? 0) : 0;
-          const weightB = b.performanceRating ? (RATING_WEIGHTS[ b.performanceRating ] ?? 0) : 0;
+          const weightA = a.performanceRating ? (RatingWeights[a.performanceRating] ?? 0) : 0;
+          const weightB = b.performanceRating ? (RatingWeights[b.performanceRating] ?? 0) : 0;
 
           if (weightB !== weightA) return weightB - weightA;
           return a.pricePerSqm - b.pricePerSqm;
@@ -153,7 +156,7 @@ export function useGlassTypesByTab(
       });
 
     return tabsArray;
-  }, [ glassTypes, basePrice ]);
+  }, [glassTypes, basePrice]);
 
   return tabs;
 }

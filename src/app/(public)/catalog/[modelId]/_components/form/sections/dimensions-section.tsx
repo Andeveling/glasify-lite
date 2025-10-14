@@ -35,7 +35,6 @@ function generateSuggestedValues(min: number, max: number, count = 5): number[] 
   }).filter((value, index, arr) => arr.indexOf(value) === index); // Eliminar duplicados
 }
 
-
 export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   const { control, setValue } = useFormContext();
 
@@ -135,7 +134,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
 
       <DimensionValidationAlert showAlert={showValidationAlert} />
 
-      <QuantityField control={control} name="quantity"  />
+      <QuantityField control={control} name="quantity" />
     </FormSection>
   );
 }

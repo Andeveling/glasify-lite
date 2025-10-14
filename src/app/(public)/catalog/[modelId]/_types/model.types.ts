@@ -6,6 +6,14 @@ export type PriceIndicator = 'budget' | 'standard' | 'premium';
 
 export type ServiceType = 'area' | 'perimeter' | 'fixed';
 
+export type MaterialType = 'PVC' | 'ALUMINUM' | 'WOOD' | 'MIXED';
+
+export type ProfileSupplier = {
+  id: string;
+  name: string;
+  materialType: MaterialType;
+};
+
 export type GlassOption = {
   id: string;
   purpose: GlassPurpose;
@@ -38,9 +46,9 @@ export type ModelDimensions = {
 export type Model = {
   id: string;
   name: string;
-  /** @deprecated Use profileSupplier instead */
+  /** @deprecated Use profileSupplier object instead */
   manufacturer?: string;
-  profileSupplier?: string;
+  profileSupplier: ProfileSupplier | null;
   description: string;
   basePrice: number;
   currency: string;

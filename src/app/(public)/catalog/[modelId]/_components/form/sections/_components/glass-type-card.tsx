@@ -2,7 +2,6 @@
 
 import { Check, Sparkles } from 'lucide-react';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
-import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { PerformanceRatingBadge } from '@/components/ui/performance-rating-badge';
 import { PriceImpactBadge } from '@/components/ui/price-impact-badge';
@@ -10,7 +9,6 @@ import { RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
 import type { PerformanceRating } from '@/server/api/routers/catalog';
 import type { GlassTypeOption } from '../_hooks/use-glass-type-options';
-import { GlassTypePerformance } from './glass-type-performance';
 
 /**
  * Glass Type Card Component (Organism)
@@ -69,40 +67,40 @@ export function GlassTypeCard({ basePrice, isSelected, option }: GlassTypeCardPr
 
       {/* Hidden radio input */}
       <RadioGroupItem className="sr-only" id={option.id} value={option.id} />
-        {/* Selected indicator (top-right inside card) */}
-        {isSelected && (
-          <div className="absolute top-3 right-3 flex size-6 items-center justify-center rounded-full bg-primary">
-            <Check className="size-4 text-primary-foreground" />
-          </div>
-        )}
-
-        {/* Header: Icon + Title */}
-        <div className="flex items-start gap-3">
-          <div
-            className={cn(
-              'flex size-10 shrink-0 items-center justify-center rounded-lg transition-colors',
-              isSelected
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted text-muted-foreground group-hover:bg-primary/10'
-            )}
-          >
-            <Icon className="size-5" />
-          </div>
-          <div className="flex-1 space-y-1">
-            <h4 className={cn('font-semibold text-sm leading-tight', isSelected && 'text-primary')}>{option.title}</h4>
-            <p className="line-clamp-1 text-muted-foreground text-xs">{option.name}</p>
-          </div>
+      {/* Selected indicator (top-right inside card) */}
+      {isSelected && (
+        <div className="absolute top-3 right-3 flex size-6 items-center justify-center rounded-full bg-primary">
+          <Check className="size-4 text-primary-foreground" />
         </div>
+      )}
 
-        {/* Performance indicators */}
-        {/* <GlassTypePerformance
+      {/* Header: Icon + Title */}
+      <div className="flex items-start gap-3">
+        <div
+          className={cn(
+            'flex size-10 shrink-0 items-center justify-center rounded-lg transition-colors',
+            isSelected
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-muted text-muted-foreground group-hover:bg-primary/10'
+          )}
+        >
+          <Icon className="size-5" />
+        </div>
+        <div className="flex-1 space-y-1">
+          <h4 className={cn('font-semibold text-sm leading-tight', isSelected && 'text-primary')}>{option.title}</h4>
+          <p className="line-clamp-1 text-muted-foreground text-xs">{option.name}</p>
+        </div>
+      </div>
+
+      {/* Performance indicators */}
+      {/* <GlassTypePerformance
           acoustic={option.acousticRating}
           security={option.securityRating}
           thermal={option.thermalRating}
         /> */}
 
-        {/* Features (limit to 3 for scannability) */}
-        {/* {option.features.length > 0 && (
+      {/* Features (limit to 3 for scannability) */}
+      {/* {option.features.length > 0 && (
           <div className="space-y-1.5">
             <p className="font-medium text-muted-foreground text-xs">Características</p>
             <div className="flex flex-wrap gap-1">
@@ -115,21 +113,21 @@ export function GlassTypeCard({ basePrice, isSelected, option }: GlassTypeCardPr
           </div>
         )} */}
 
-        {/* Footer: Performance rating + Price */}
-        <div className="flex items-end justify-between gap-2 border-t pt-3">
-          <div className="flex flex-col gap-1">
-            {option.performanceRating && (
-              <PerformanceRatingBadge rating={option.performanceRating as PerformanceRating} />
-            )}
-            {basePrice && option.priceModifier !== 0 && (
-              <PriceImpactBadge basePrice={basePrice} currency="$" priceModifier={option.priceModifier} />
-            )}
-          </div>
-          <div className="text-right">
-            <div className="font-bold text-primary text-lg">{formatCurrency(option.pricePerSqm)}</div>
-            <div className="text-muted-foreground text-xs">por m²</div>
-          </div>
+      {/* Footer: Performance rating + Price */}
+      <div className="flex items-end justify-between gap-2 border-t pt-3">
+        <div className="flex flex-col gap-1">
+          {option.performanceRating && (
+            <PerformanceRatingBadge rating={option.performanceRating as PerformanceRating} />
+          )}
+          {basePrice && option.priceModifier !== 0 && (
+            <PriceImpactBadge basePrice={basePrice} currency="$" priceModifier={option.priceModifier} />
+          )}
         </div>
-      </Label>
+        <div className="text-right">
+          <div className="font-bold text-lg text-primary">{formatCurrency(option.pricePerSqm)}</div>
+          <div className="text-muted-foreground text-xs">por m²</div>
+        </div>
+      </div>
+    </Label>
   );
 }

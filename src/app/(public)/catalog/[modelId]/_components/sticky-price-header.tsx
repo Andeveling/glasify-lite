@@ -1,12 +1,12 @@
 'use client';
 
-import { Gem, Package, Ruler } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Gem, Package, Ruler } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { PriceBreakdownPopover } from '@/components/ui/price-breakdown-popover';
 import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
 import { formatCurrency } from '@/lib/export/pdf/pdf-utils';
+import { cn } from '@/lib/utils';
 
 // ============================================================================
 // Types
@@ -54,7 +54,7 @@ type StickyPriceHeaderProps = {
  * - **Price animation**: Smooth scale/fade effect when price updates
  * - **Breakdown popover**: Itemized price details on demand
  * - **Discount badge**: Shows savings when current price < base price
- * - **Responsive**: 
+ * - **Responsive**:
  *   - Mobile (<768px): Price only, summary hidden
  *   - Tablet (768px-1024px): Price + compact summary
  *   - Desktop (>1024px): Full layout with all details
@@ -80,25 +80,23 @@ export function StickyPriceHeader({
 
   // Format dimensions
   const hasDimensions = configSummary.widthMm && configSummary.heightMm;
-  const dimensionsText = hasDimensions
-    ? `${configSummary.widthMm} × ${configSummary.heightMm} mm`
-    : 'Sin dimensiones';
+  const dimensionsText = hasDimensions ? `${configSummary.widthMm} × ${configSummary.heightMm} mm` : 'Sin dimensiones';
 
   return (
     <div
       className={cn(
-        'sticky top-12 z-10 border-b bg-background px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6 md:py-4',
+        'sticky top-16 z-10 border-b bg-background px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6 md:py-4',
         className
       )}
     >
       <div className="flex flex-col gap-3 lg:flex-row-reverse lg:items-center lg:justify-between">
         {/* Right: Price display with animation (now on the right) */}
-        <div className="flex items-baseline gap-2 lg:justify-end lg:min-w-[220px]">
+        <div className="flex items-baseline gap-2 lg:min-w-[220px] lg:justify-end">
           <div className="space-y-0.5">
-            <p className="text-xs text-muted-foreground md:text-sm">Precio configurado</p>
+            <p className="text-muted-foreground text-xs md:text-sm">Precio configurado</p>
             <motion.p
               animate={{ opacity: 1, scale: 1 }}
-              className="text-2xl font-bold md:text-3xl"
+              className="font-bold text-2xl md:text-3xl"
               initial={{ opacity: 0.8, scale: 0.98 }}
               key={currentPrice} // Re-animate when price changes
               transition={{ duration: 0.2, ease: 'easeOut' }}
@@ -116,7 +114,7 @@ export function StickyPriceHeader({
           {/* Model name */}
           <div className="flex items-center gap-1.5 rounded-md bg-muted px-2 py-1">
             <Package className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="text-xs font-medium md:text-sm">{configSummary.modelName}</span>
+            <span className="font-medium text-xs md:text-sm">{configSummary.modelName}</span>
           </div>
 
           {/* Dimensions */}
@@ -125,7 +123,7 @@ export function StickyPriceHeader({
               <Separator className="hidden h-4 md:block" orientation="vertical" />
               <div className="flex items-center gap-1.5 rounded-md bg-muted px-2 py-1">
                 <Ruler className="h-3.5 w-3.5 text-muted-foreground" />
-                <span className="text-xs font-medium md:text-sm">{dimensionsText}</span>
+                <span className="font-medium text-xs md:text-sm">{dimensionsText}</span>
               </div>
             </>
           )}
@@ -136,7 +134,7 @@ export function StickyPriceHeader({
               <Separator className="hidden h-4 md:block" orientation="vertical" />
               <div className="flex items-center gap-1.5 rounded-md bg-purple-50 px-2 py-1 dark:bg-purple-950/30">
                 <Gem className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
-                <span className="text-xs font-medium text-purple-700 dark:text-purple-300 md:text-sm">
+                <span className="font-medium text-purple-700 text-xs md:text-sm dark:text-purple-300">
                   {configSummary.glassTypeName}
                 </span>
               </div>

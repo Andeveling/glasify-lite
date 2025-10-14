@@ -24,7 +24,6 @@ import { QuoteSummary } from './quote-summary';
 import { DimensionsSection } from './sections/dimensions-section';
 import { GlassTypeSelectorSection } from './sections/glass-type-selector-section';
 import { ServicesSelectorSection } from './sections/services-selector-section';
-import { Window2DPreview } from './sections/window-2d-preview';
 
 // ============================================================================
 // Types
@@ -43,11 +42,11 @@ type ModelFormProps = {
 // ============================================================================
 
 export function ModelForm({ model, glassTypes, services, solutions, currency }: ModelFormProps) {
-  const schema = useMemo(() => createQuoteFormSchema(model), [model]);
+  const schema = useMemo(() => createQuoteFormSchema(model), [ model ]);
   const { addItem } = useCart();
 
   // ✅ Track if item was just added to cart
-  const [justAddedToCart, setJustAddedToCart] = useState(false);
+  const [ justAddedToCart, setJustAddedToCart ] = useState(false);
 
   // ✅ Auto-scroll to success card when item is added
   const successCardRef = useScrollIntoView(justAddedToCart);
@@ -56,13 +55,13 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
   const defaultValues = useMemo(
     () => ({
       additionalServices: [],
-      glassType: glassTypes[0]?.id ?? '', // Pre-select first glass type (usually most common/budget)
+      glassType: glassTypes[ 0 ]?.id ?? '', // Pre-select first glass type (usually most common/budget)
       height: model.minHeightMm, // Use minimum height as starting point
       quantity: 1,
       solution: '', // No solution selected by default (optional field)
       width: model.minWidthMm, // Use minimum width as starting point
     }),
-    [model.minWidthMm, model.minHeightMm, glassTypes]
+    [ model.minWidthMm, model.minHeightMm, glassTypes ]
   );
 
   const form = useForm<QuoteFormValues>({
@@ -77,6 +76,7 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
   const width = useWatch({ control: form.control, name: 'width' });
   const height = useWatch({ control: form.control, name: 'height' });
   const glassType = useWatch({ control: form.control, name: 'glassType' });
+  const quantity = useWatch({ control: form.control, name: 'quantity' });
   const additionalServices = useWatch({ control: form.control, name: 'additionalServices' });
 
   // ✅ Get selected glass type object
@@ -150,14 +150,14 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
     if (breakdown.services.length > 0) {
       const servicesById = services.reduce(
         (acc, svc) => {
-          acc[svc.id] = svc;
+          acc[ svc.id ] = svc;
           return acc;
         },
         {} as Record<string, ServiceOutput>
       );
 
       for (const svc of breakdown.services) {
-        const serviceData = servicesById[svc.serviceId];
+        const serviceData = servicesById[ svc.serviceId ];
         if (serviceData) {
           items.push({
             amount: svc.amount,
@@ -180,7 +180,7 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
     }
 
     return items;
-  }, [breakdown, model.basePrice, services, width, height, selectedGlassType]);
+  }, [ breakdown, model.basePrice, services, width, height, selectedGlassType ]);
 
   // ✅ Prepare cart item data from form values (using inferred solution)
   const cartItemInput: CreateCartItemInput & { unitPrice: number } = {
@@ -190,7 +190,7 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
     heightMm: Number(height) || 0,
     modelId: model.id,
     modelName: model.name,
-    quantity: 1, // Single item per add (user can increase in cart)
+    quantity: Number(quantity) || 1, // Use form quantity value
     solutionId: inferredSolution?.id || undefined,
     solutionName: inferredSolution?.nameEs || undefined,
     unitPrice: calculatedPrice ?? model.basePrice,
@@ -230,7 +230,8 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
   const handleConfigureAnother = () => {
     setJustAddedToCart(false);
     form.reset(defaultValues);
-    // Scroll handled automatically by useScrollIntoView when justAddedToCart becomes true again
+    // Smooth scroll to top for better UX
+    window.scrollTo({ behavior: 'smooth', top: 0 });
   };
 
   return (
@@ -252,17 +253,6 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
         />
 
         <div className="space-y-6 pt-4">
-          {/* ✅ Show success actions after adding to cart */}
-          {justAddedToCart && (
-            <AddedToCartActions
-              modelName={model.name}
-              onConfigureAnother={handleConfigureAnother}
-              ref={successCardRef}
-            />
-          )}
-
-  
-
           <Card className="p-6">
             <DimensionsSection
               dimensions={{
@@ -296,7 +286,16 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
             currency={currency}
             error={error}
             isCalculating={isCalculating}
+            justAddedToCart={justAddedToCart}
           />
+          {/* ✅ Show success actions after adding to cart */}
+          {justAddedToCart && (
+            <AddedToCartActions
+              modelName={model.name}
+              onConfigureAnother={handleConfigureAnother}
+              ref={successCardRef}
+            />
+          )}
         </div>
       </form>
     </Form>

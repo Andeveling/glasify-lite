@@ -35,12 +35,14 @@ Rules:
 - New features SHOULD prefer extension patterns (hooks, procedures, adapters) over direct modifications of stable modules.
 - Backwards-incompatible API changes MUST follow versioning rules in Governance and include migration guidance.
 
-### Test-First (NON-NEGOTIABLE)
-Testing is mandatory. For new features the test-first workflow MUST be followed: write failing tests → implement minimal code to pass → refactor. Tests define acceptable behavior and are treated as first-class artifacts.
+
+### Pragmatic Testing Discipline
+Testing is mandatory, but the workflow is flexible. Contributors MAY write tests before, during, or after implementation, as long as critical paths and edge cases are covered before merging. The goal is to ensure reliability and maintainability without imposing a rigid test-first or test-last process.
 
 Rules:
 - All feature PRs MUST include tests covering happy paths and critical edge cases.
 - Unit tests MUST run in CI; integration and contract tests MUST be added for cross-service changes.
+- Tests MAY be written before, during, or after implementation, but MUST exist before merge.
 
 ### Server-First Architecture (Next.js 15)
 
@@ -153,6 +155,23 @@ Compliance:
 - All PRs MUST reference the constitution when changes touch governance principles.
 - Failure to comply with MUST-level rules constitutes a blocking issue for merge until resolved.
 
-**Version**: 1.1.0  
+<!--
+Sync Impact Report
+
+- Version change: 1.1.0 → 2.0.0
+- Modified principles:
+  - "Test-Last (NON-NEGOTIABLE)" → "Pragmatic Testing Discipline" (reemplazo de política)
+- Added sections: none
+- Removed sections: none
+- Templates requiring review:
+  - .specify/templates/plan-template.md ⚠ pending (verificar alineación con nueva política de testing)
+  - .specify/templates/spec-template.md ⚠ pending (asegurar que la sección de testing no exija test-first/test-last)
+  - .specify/templates/tasks-template.md ✅ actualizado (categorías de tasks revisadas)
+- Follow-up TODOs:
+  - RATIFICATION_DATE confirmado como 2025-10-09 (adopción original)
+  - Revisar documentación y onboarding para reflejar la nueva política de testing
+-->
+
+**Version**: 2.0.0  
 **Ratified**: 2025-10-09  
-**Last Amended**: 2025-10-11
+**Last Amended**: 2025-10-14

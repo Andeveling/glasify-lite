@@ -33,7 +33,7 @@ function hasCharacteristic(glassType: GlassTypeOutput, characteristicName: strin
 /**
  * Get numeric value from characteristic (e.g., thickness, U-value)
  */
-function getCharacteristicValue(glassType: GlassTypeOutput, characteristicName: string): number | null {
+function _getCharacteristicValue(glassType: GlassTypeOutput, characteristicName: string): number | null {
   const characteristic = glassType.characteristics?.find((gc) => gc.characteristic.name === characteristicName);
   return characteristic?.value ? Number(characteristic.value) : null;
 }
@@ -141,7 +141,7 @@ export function sortByPerformance(
   glassTypes: GlassTypeOutput[],
   selectedSolutionId?: string
 ): Array<GlassTypeOutput & { isRecommended: boolean }> {
-  const RATING_WEIGHTS: Record<string, number> = {
+  const RatingWeights: Record<string, number> = {
     basic: 1,
     excellent: 5,
     good: 3,
@@ -149,7 +149,7 @@ export function sortByPerformance(
     veryGood: 4,
   };
 
-  const sorted = [ ...glassTypes ].sort((a, b) => {
+  const sorted = [...glassTypes].sort((a, b) => {
     // Get performance rating for selected or primary solution
     const ratingA = selectedSolutionId
       ? a.solutions?.find((s) => s.solution.id === selectedSolutionId)?.performanceRating
@@ -159,8 +159,8 @@ export function sortByPerformance(
       ? b.solutions?.find((s) => s.solution.id === selectedSolutionId)?.performanceRating
       : b.solutions?.find((s) => s.isPrimary)?.performanceRating;
 
-    const weightA = ratingA ? (RATING_WEIGHTS[ ratingA ] ?? 0) : 0;
-    const weightB = ratingB ? (RATING_WEIGHTS[ ratingB ] ?? 0) : 0;
+    const weightA = ratingA ? (RatingWeights[ratingA] ?? 0) : 0;
+    const weightB = ratingB ? (RatingWeights[ratingB] ?? 0) : 0;
 
     // Sort by performance (highest first)
     if (weightB !== weightA) return weightB - weightA;

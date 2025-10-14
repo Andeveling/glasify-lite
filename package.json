@@ -9,6 +9,7 @@
     "lint:fix": "npx ultracite fix",
     "lint:unsafe": "npx ultracite fix --unsafe",
     "lint:errors": "npx biome check --diagnostic-level=error",
+    "format": "npx biome format --write",
     "ultra:doc": "npx ultracite doctor",
     "db:generate": "prisma migrate dev",
     "db:migrate": "prisma migrate deploy",

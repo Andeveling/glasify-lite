@@ -13,6 +13,7 @@ type QuoteSummaryProps = {
   currency: string;
   error?: string;
   isCalculating?: boolean;
+  justAddedToCart?: boolean;
 };
 
 /**
@@ -27,7 +28,14 @@ const FIELD_LABELS: Record<string, string> = {
   width: 'Ancho',
 };
 
-export function QuoteSummary({ basePrice, calculatedPrice, currency, error, isCalculating }: QuoteSummaryProps) {
+export function QuoteSummary({
+  basePrice,
+  calculatedPrice,
+  currency,
+  error,
+  isCalculating,
+  justAddedToCart = false,
+}: QuoteSummaryProps) {
   const {
     formState: { errors, isValid },
   } = useFormContext();
@@ -125,11 +133,17 @@ export function QuoteSummary({ basePrice, calculatedPrice, currency, error, isCa
     );
   };
 
+  const getButtonText = () => {
+    if (justAddedToCart) return 'Agregado al carrito';
+    if (isCalculating) return 'Calculando...';
+    return 'Agregar al carrito';
+  };
+
   const statusContent = getStatusContent();
   const priceDisplay = getPriceDisplay();
   const cardState = getCardState();
   const formErrors = getFormErrors();
-  const canSubmit = isValid && hasValidCalculation && !isCalculating && !error;
+  const canSubmit = isValid && hasValidCalculation && !isCalculating && !error && !justAddedToCart;
 
   return (
     <Card
@@ -158,7 +172,7 @@ export function QuoteSummary({ basePrice, calculatedPrice, currency, error, isCa
             type="submit"
           >
             <ShoppingCart className="mr-2 size-5" />
-            {isCalculating ? 'Calculando...' : 'Agregar al carrito'}
+            {getButtonText()}
           </Button>
         </div>
 

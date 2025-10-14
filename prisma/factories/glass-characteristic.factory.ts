@@ -26,7 +26,7 @@ const MAX_KEY_LENGTH = 50;
 const MIN_NAME_LENGTH = 2;
 const MAX_NAME_LENGTH = 100;
 const MAX_DESCRIPTION_LENGTH = 500;
-const MAX_CATEGORY_LENGTH = 50;
+const _MAX_CATEGORY_LENGTH = 50;
 
 /**
  * Valid characteristic categories

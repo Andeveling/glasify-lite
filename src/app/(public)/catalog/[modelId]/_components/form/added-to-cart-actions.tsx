@@ -1,3 +1,5 @@
+'use client';
+
 import { CheckCircle2, LayoutGrid, RotateCcw, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';

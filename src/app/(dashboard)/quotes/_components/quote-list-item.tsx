@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * QuoteListItem Component
  *
@@ -15,6 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn, formatDate } from '@/lib/utils';
+import { useTenantConfig } from '@/providers/tenant-config-provider';
 import type { QuoteListItemSchema } from '@/server/api/routers/quote/quote.schemas';
 import { QuoteStatusBadge } from './quote-status-badge';
 
@@ -23,6 +26,8 @@ type QuoteListItemProps = {
 };
 
 export function QuoteListItem({ quote }: QuoteListItemProps) {
+  const { locale, timezone } = useTenantConfig();
+
   return (
     <Card className={cn('transition-opacity', quote.isExpired && 'opacity-60')} data-testid="quote-list-item">
       <CardContent className="flex items-center justify-between gap-4 p-6">
@@ -40,16 +45,16 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
           <div className="flex items-center gap-6 text-muted-foreground text-sm">
             {quote.status === 'sent' && quote.sentAt ? (
               <div>
-                <span className="font-medium">Enviada:</span> {formatDate(quote.sentAt)}
+                <span className="font-medium">Enviada:</span> {formatDate(quote.sentAt, locale, timezone)}
               </div>
             ) : (
               <div>
-                <span className="font-medium">Creada:</span> {formatDate(quote.createdAt)}
+                <span className="font-medium">Creada:</span> {formatDate(quote.createdAt, locale, timezone)}
               </div>
             )}
             {quote.validUntil && (
               <div>
-                <span className="font-medium">Válida hasta:</span> {formatDate(quote.validUntil)}
+                <span className="font-medium">Válida hasta:</span> {formatDate(quote.validUntil, locale, timezone)}
               </div>
             )}
             <div>

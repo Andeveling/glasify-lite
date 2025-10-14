@@ -29,12 +29,7 @@ type QuantityFieldProps<T extends FieldValues> = {
  * - Disabled states prevent invalid inputs
  * - Harmonious button design with consistent spacing and sizing
  */
-export function QuantityField<T extends FieldValues>({
-  control,
-  max = 999,
-  min = 1,
-  name,
-}: QuantityFieldProps<T>) {
+export function QuantityField<T extends FieldValues>({ control, max = 999, min = 1, name }: QuantityFieldProps<T>) {
   return (
     <FormField
       control={control}
@@ -68,7 +63,7 @@ export function QuantityField<T extends FieldValues>({
           }
         };
 
-        const handlePresetClick = (preset: number) => {
+        const _handlePresetClick = (preset: number) => {
           if (preset >= min && preset <= max) {
             field.onChange(preset);
           }
