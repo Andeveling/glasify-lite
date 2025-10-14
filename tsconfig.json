@@ -22,18 +22,18 @@
       }
     ],
     "incremental": true,
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@views/auth/*": ["./src/app/(auth)/*"],
-      "@views/dashboard/*": ["./src/app/(dashboard)/*"],
-      "@views/components/*": ["./src/app/_components/*"],
-      "@views/catalog/*": ["./src/app/(public)/catalog/*"],
-      "@views/quote/*": ["./src/app/(public)/quote/*"],
-      "@ui/*": ["./src/components/ui/*"],
       "@server/*": ["./src/server/*"],
       "@styles/*": ["./src/styles/*"],
-      "@trpc/server/*": ["./src/trpc/server/*"],
-      "@trpc/server-client/*": ["./src/trpc/server-client/*"]
+      "@trpc/*": ["./src/trpc/*"],
+      "@ui/*": ["./src/components/ui/*"],
+      "@views/auth/*": ["./src/app/(auth)/*"],
+      "@views/catalog/*": ["./src/app/(public)/catalog/*"],
+      "@views/components/*": ["./src/app/_components/*"],
+      "@views/dashboard/*": ["./src/app/(dashboard)/*"],
+      "@views/quote/*": ["./src/app/(public)/quote/*"]
     },
     "strictNullChecks": true
   },

@@ -69,7 +69,7 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
           <div className="flex items-start justify-between">
             <div>
               <CardTitle>{quote.projectAddress.projectName}</CardTitle>
-              <CardDescription>Creada el {formatDate(quote.createdAt)}</CardDescription>
+              <CardDescription>Creada el {formatDate(quote.createdAt, locale, timezone)}</CardDescription>
             </div>
 
             {/* US1: New QuoteStatusBadge with icon and tooltip */}
