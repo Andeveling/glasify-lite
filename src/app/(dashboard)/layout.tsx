@@ -1,4 +1,4 @@
-import { FileText, Home, LogOut, Package, Settings } from 'lucide-react';
+import { FileText, Home, LogOut, Package, Settings, Users } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -37,6 +37,11 @@ const sidebarNavItems = [
     title: 'Cotizaciones',
   },
   {
+    href: '/dashboard/users',
+    icon: Users,
+    title: 'Usuarios',
+  },
+  {
     href: '/dashboard/settings',
     icon: Settings,
     title: 'Configuración',
@@ -57,7 +62,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     user: 'Usuario',
   } as const;
 
-  const userRoleLabel = roleLabels[session.user.role] || 'Usuario';
+  const userRoleLabel = roleLabels[ session.user.role ] || 'Usuario';
 
   return (
     <SidebarProvider>

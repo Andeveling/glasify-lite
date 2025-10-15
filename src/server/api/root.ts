@@ -3,6 +3,7 @@ import { profileSupplierRouter } from '@/server/api/routers/admin/profile-suppli
 import { tenantConfigRouter } from '@/server/api/routers/admin/tenant-config';
 import { catalogRouter } from '@/server/api/routers/catalog';
 import { quoteRouter } from '@/server/api/routers/quote/quote';
+import { userRouter } from '@/server/api/routers/user';
 import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc';
 
 /**
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   profileSupplier: profileSupplierRouter,
   quote: quoteRouter,
   tenantConfig: tenantConfigRouter,
+  user: userRouter, // Task: T035 [US5] - User management router
 });
 
 // export type definition of API

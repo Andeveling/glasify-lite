@@ -1,9 +1,20 @@
 import Link from 'next/link';
 import { CartIndicator } from '@/app/_components/cart-indicator';
+import { RoleBasedNav } from '@/app/_components/role-based-nav';
 import { auth } from '@/server/auth';
 import { GuestMenu } from './guest-menu';
 import { UserMenu } from './user-menu';
 
+/**
+ * Public Header Component
+ * Task: T033 [US4] - Integrated RoleBasedNav for role-based navigation
+ *
+ * Server Component that renders the header with:
+ * - Logo/brand
+ * - Role-based navigation menu
+ * - Shopping cart indicator
+ * - User menu (authenticated) or guest menu
+ */
 export default async function Header() {
   const session = await auth();
 
@@ -16,16 +27,8 @@ export default async function Header() {
             <Link className="flex items-center" href="/catalog">
               <span className="font-bold text-xl tracking-tight">GLASIFY</span>
             </Link>
-            <nav aria-label="Navegación principal" className="hidden items-center gap-6 md:flex">
-              <Link className="text-foreground/80 text-sm transition-colors hover:text-foreground" href="/catalog">
-                Catálogo
-              </Link>
-              {session?.user && (
-                <Link className="text-foreground/80 text-sm transition-colors hover:text-foreground" href="/my-quotes">
-                  Mis Cotizaciones
-                </Link>
-              )}
-            </nav>
+            {/* Role-Based Navigation: Shows appropriate links based on user role */}
+            <RoleBasedNav className="hidden md:flex" />
           </div>
 
           {/* Acciones: Carrito y Menú de Usuario */}

@@ -7,14 +7,14 @@ description: "Task list for Role-Based Access Control implementation"
 **Input**: Design documents from `/specs/009-role-based-access/`
 **Prerequisites**: plan.md ✅, spec.md ✅, research.md ✅, data-model.md ✅, contracts/ ✅, quickstart.md ✅
 
-**Progress**: 29/57 tasks complete (50.9%)
+**Progress**: 39/57 tasks complete (68.4%)
 - ✅ Phase 1: Setup (4/4 complete)
 - ✅ Phase 2: Foundational (6/6 complete)
 - ✅ Phase 3: User Story 1 - Admin Dashboard Access (11/11 complete)
 - ✅ Phase 4: User Story 2 - Seller Role Access Control (5/5 complete)
 - ✅ Phase 5: User Story 3 - Client Limited Access (3/3 complete)
-- ⏳ Phase 6: User Story 4 - Role-Based Navigation (0/5 pending)
-- ⏳ Phase 7: User Story 5 - Database Role Management (0/5 pending)
+- ✅ Phase 6: User Story 4 - Role-Based Navigation (5/5 complete)
+- ✅ Phase 7: User Story 5 - Database Role Management (5/5 complete)
 - ⏳ Phase 8: Testing (0/9 pending)
 - ⏳ Phase 9: Polish and Validation (0/8 pending)
 
@@ -308,38 +308,72 @@ description: "Task list for Role-Based Access Control implementation"
 
 ### Implementation for User Story 4
 
-- [ ] T030 [US4] Create RoleBasedNav server component
+- [x] T030 [US4] Create RoleBasedNav server component ✅
   - File: `src/app/_components/role-based-nav.tsx`
-  - Server Component that gets session and determines role
-  - Calls getNavLinksForRole() to get filtered links
-  - Passes links to NavigationMenu client component
+  - ✅ Server Component that gets session and determines role
+  - ✅ Calls getNavLinksForRole() to get filtered links
+  - ✅ Passes links to NavigationMenu client component
+  - **Implementation Details**:
+    - Server Component using NextAuth session
+    - Delegates to getNavLinksForRole helper for link filtering logic
+    - Passes role and links to NavigationMenu for rendering
+  - **Completed**: 2025-01-XX
 
-- [ ] T031 [US4] Create getNavLinksForRole helper function
+- [x] T031 [US4] Create getNavLinksForRole helper function ✅
   - File: `src/app/_components/role-based-nav.tsx` (same file)
-  - Pure function that returns NavLink[] based on role
-  - Admin: Dashboard, Modelos, Cotizaciones, Configuración
-  - Seller: Mis Cotizaciones, Catálogo
-  - User: Catálogo, Mis Cotizaciones
+  - ✅ Pure function that returns NavLink[] based on role
+  - ✅ Admin: Dashboard, Modelos, Cotizaciones, Configuración
+  - ✅ Seller: Mis Cotizaciones, Catálogo
+  - ✅ User: Catálogo, Mis Cotizaciones
+  - ✅ Unauthenticated: Catálogo, Cotizar
+  - **Implementation Details**:
+    - Pure function with clear role-based switch logic
+    - NavLink type exported for reuse in NavigationMenu
+    - Single source of truth for role-based navigation structure
+    - Easily testable (no side effects)
+  - **Completed**: 2025-01-XX
 
-- [ ] T032 [US4] Create NavigationMenu client component
+- [x] T032 [US4] Create NavigationMenu client component ✅
   - File: `src/app/_components/navigation-menu.tsx`
-  - Client Component ('use client')
-  - Receives links array as prop
-  - Implements mobile toggle with state
-  - Uses shadcn/ui components
-  - Spanish labels
+  - ✅ Client Component ('use client')
+  - ✅ Receives links array as prop
+  - ✅ Implements mobile toggle with state
+  - ✅ Uses shadcn/ui components (Sheet, Button)
+  - ✅ Spanish labels
+  - **Implementation Details**:
+    - Presentational component (no role logic, just renders props)
+    - Responsive design (desktop + mobile with hamburger menu)
+    - Active route highlighting with usePathname
+    - Accessible (ARIA labels, keyboard navigation, screen reader support)
+    - Sign in button for unauthenticated users in mobile menu
+  - **Completed**: 2025-01-XX
 
-- [ ] T033 [US4] Integrate RoleBasedNav into root layout
-  - File: `src/app/layout.tsx`
-  - Replace existing navigation with <RoleBasedNav />
-  - Verify Server Component pattern maintained
-  - Test navigation on all pages
+- [x] T033 [US4] Integrate RoleBasedNav into root layout ✅
+  - File: `src/app/(public)/_components/_layout/public-header.tsx`
+  - ✅ Replaced hardcoded navigation with <RoleBasedNav />
+  - ✅ Server Component pattern maintained (Header is Server Component)
+  - ✅ Navigation tested on catalog, my-quotes, dashboard routes
+  - **Implementation Details**:
+    - Integrated into public-header.tsx (used by (public) route group)
+    - Navigation now dynamically adapts based on user role
+    - Desktop navigation hidden on mobile (className="hidden md:flex")
+    - Mobile navigation handled by NavigationMenu Sheet component
+  - **Note**: Dashboard layout has its own navigation in sidebar, not affected
+  - **Completed**: 2025-01-XX
 
-- [ ] T034 [P] [US4] Add conditional rendering to catalog model actions
-  - File: `src/app/(public)/catalog/[modelId]/page.tsx` (existing)
-  - Wrap "Editar Modelo" button in <AdminOnly>
-  - Hide delete/edit actions for non-admin users
-  - Maintain existing functionality for admins
+- [x] T034 [P] [US4] Add conditional rendering to catalog model actions ✅
+  - File: `src/app/_components/role-guards.tsx` (created)
+  - ✅ Created AdminOnly, SellerOnly, AuthenticatedOnly components
+  - ✅ Server Components for role-based conditional rendering
+  - ✅ UI guards only (security enforced by middleware + tRPC)
+  - **Implementation Details**:
+    - Three guard components created: AdminOnly, SellerOnly, AuthenticatedOnly
+    - All are Server Components using NextAuth session
+    - Support optional fallback prop for alternative content
+    - Clear JSDoc explaining these are UX helpers, not security measures
+  - **Status**: Components ready for use throughout the app
+  - **Note**: Catalog model detail page doesn't have edit actions in public view (editing happens in /dashboard/models which is already admin-only via middleware)
+  - **Completed**: 2025-01-XX
 
 **Checkpoint**: Navigation menu dynamically adapts to user role, unauthorized actions hidden in UI
 
@@ -353,39 +387,76 @@ description: "Task list for Role-Based Access Control implementation"
 
 ### Implementation for User Story 5
 
-- [ ] T035 [US5] Create user management router
+- [x] T035 [US5] Create user management router ✅
   - File: `src/server/api/routers/user.ts`
-  - Create userRouter with tRPC procedures
-  - Register router in src/server/api/root.ts
+  - ✅ Created userRouter with tRPC procedures
+  - ✅ Registered router in `src/server/api/root.ts` as `user` router
+  - **Implementation Details**:
+    - Two procedures implemented: list-all and update-role
+    - Both use adminProcedure for authorization
+    - Winston logging for audit trail
+  - **Completed**: 2025-01-XX
 
-- [ ] T036 [US5] Implement user.list-all admin procedure
+- [x] T036 [US5] Implement user.list-all admin procedure ✅
   - File: `src/server/api/routers/user.ts`
-  - Use adminProcedure helper
-  - Input: optional role filter, optional search query
-  - Output: users with id, name, email, role, quote count
-  - Select fields only (no sensitive data)
+  - ✅ Uses adminProcedure helper
+  - ✅ Input: optional role filter, optional search query
+  - ✅ Output: users with id, name, email, role, quote count
+  - ✅ Selects fields only (no sensitive data like password, sessions)
+  - **Implementation Details**:
+    - Supports filtering by role (admin, seller, user)
+    - Supports search by name or email (case-insensitive)
+    - Aggregates quote count using Prisma _count
+    - Orders by email ascending
+    - Logs all list operations
+  - **Completed**: 2025-01-XX
 
-- [ ] T037 [US5] Implement user.update-role admin procedure
+- [x] T037 [US5] Implement user.update-role admin procedure ✅
   - File: `src/server/api/routers/user.ts`
-  - Use adminProcedure helper
-  - Input: userId (cuid), role (enum)
-  - Validation: admin cannot demote self (business rule)
-  - Update User.role in database
-  - Log role change (Winston, server-side)
+  - ✅ Uses adminProcedure helper
+  - ✅ Input: userId (cuid), role (enum)
+  - ✅ Validation: admin cannot demote self (business rule)
+  - ✅ Updates User.role in database
+  - ✅ Logs role change (Winston, server-side)
+  - **Implementation Details**:
+    - Throws FORBIDDEN if admin tries to demote themselves
+    - Throws NOT_FOUND if user doesn't exist
+    - Logs old and new role for audit trail
+    - Includes admin info (id, email) in logs
+  - **Completed**: 2025-01-XX
 
-- [ ] T038 [P] [US5] Create user management page (placeholder)
+- [x] T038 [P] [US5] Create user management page (placeholder) ✅
   - File: `src/app/(dashboard)/users/page.tsx`
-  - Server Component with metadata export
-  - Placeholder UI: "Gestión de Usuarios - Próximamente"
-  - Document future implementation in TODO comments
-  - Add link to dashboard navigation
+  - ✅ Server Component with metadata export
+  - ✅ Placeholder UI: "Gestión de Usuarios - Próximamente"
+  - ✅ Documented future implementation in TODO comments
+  - ✅ Added link to dashboard navigation (`src/app/(dashboard)/layout.tsx`)
+  - **Implementation Details**:
+    - Clean placeholder card with planned features list
+    - Note for developers about available tRPC endpoints
+    - Metadata for SEO
+    - Protected by middleware (admin-only route)
+  - **Future Features Documented**:
+    - User list table with role badges
+    - Search and filter by role
+    - Role update modal/dialog
+    - Audit log of role changes
+    - Pagination
+    - Export to CSV
+  - **Completed**: 2025-01-XX
 
-- [ ] T039 [P] [US5] Create Zod validation schema for user role updates
+- [x] T039 [P] [US5] Create Zod validation schema for user role updates ✅
   - File: `src/server/api/routers/user.ts`
-  - Define updateUserRoleInput schema
-  - Validate userId (cuid format)
-  - Validate role (enum values)
-  - Spanish error messages
+  - ✅ Defined updateUserRoleInput schema
+  - ✅ Validates userId (cuid format)
+  - ✅ Validates role (enum values: admin, seller, user)
+  - ✅ Spanish error messages
+  - **Implementation Details**:
+    - Also created listUsersInput, listUsersOutput, updateUserRoleOutput schemas
+    - Uses z.nativeEnum(UserRole) for type-safe role validation
+    - CUID validation with custom Spanish error message
+    - All schemas properly typed for tRPC procedures
+  - **Completed**: 2025-01-XX
 
 **Checkpoint**: Backend ready for user management, placeholder UI in place
 
