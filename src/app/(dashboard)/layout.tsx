@@ -57,7 +57,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     user: 'Usuario',
   } as const;
 
-  const userRoleLabel = roleLabels[ session.user.role ] || 'Usuario';
+  const userRoleLabel = roleLabels[session.user.role] || 'Usuario';
 
   return (
     <SidebarProvider>

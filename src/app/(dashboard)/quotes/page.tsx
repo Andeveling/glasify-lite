@@ -30,21 +30,21 @@ export default async function QuotesPage({ searchParams }: QuotesPageProps) {
   // Use list-all for admins, list-user-quotes for others
   const result =
     session?.user?.role === 'admin'
-      ? await api.quote[ 'list-all' ]({
-        includeExpired: false,
-        limit: 10,
-        page,
-        search,
-        status,
-        userId,
-      })
-      : await api.quote[ 'list-user-quotes' ]({
-        includeExpired: false,
-        limit: 10,
-        page,
-        search,
-        status,
-      });
+      ? await api.quote['list-all']({
+          includeExpired: false,
+          limit: 10,
+          page,
+          search,
+          status,
+          userId,
+        })
+      : await api.quote['list-user-quotes']({
+          includeExpired: false,
+          limit: 10,
+          page,
+          search,
+          status,
+        });
 
   const isAdmin = session?.user?.role === 'admin';
 
@@ -53,7 +53,9 @@ export default async function QuotesPage({ searchParams }: QuotesPageProps) {
       <div className="mb-8">
         <h1 className="font-bold text-3xl">{isAdmin ? 'Todas las Cotizaciones' : 'Mis Cotizaciones'}</h1>
         <p className="mt-2 text-muted-foreground">
-          {isAdmin ? 'Vista completa de cotizaciones de todos los usuarios' : 'Gestiona y revisa todas tus cotizaciones'}
+          {isAdmin
+            ? 'Vista completa de cotizaciones de todos los usuarios'
+            : 'Gestiona y revisa todas tus cotizaciones'}
         </p>
       </div>
 

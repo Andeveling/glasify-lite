@@ -63,7 +63,7 @@ export function QuoteListItem({ quote, showUser = false }: QuoteListItemProps) {
                 <User className="h-3.5 w-3.5" />
                 <span className="font-medium">{quote.user.name || quote.user.email}</span>
                 <Badge className="text-xs" variant="secondary">
-                  {roleLabels[ quote.user.role ]}
+                  {roleLabels[quote.user.role]}
                 </Badge>
               </div>
             )}

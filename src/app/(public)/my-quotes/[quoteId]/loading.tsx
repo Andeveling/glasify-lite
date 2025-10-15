@@ -59,7 +59,7 @@ export default function QuoteDetailLoading() {
 
         {/* Quote details grid with progressive animation */}
         <div className="mt-6 grid gap-4 md:grid-cols-2">
-          {[...Array(4)].map((_, i) => (
+          {[ ...new Array(4) ].map((_, i) => (
             <div className="space-y-2" key={i}>
               <div className="relative h-4 w-24 overflow-hidden rounded bg-muted">
                 <div
@@ -92,11 +92,11 @@ export default function QuoteDetailLoading() {
 
         {/* Items grid with staggered card animations */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {[...Array(6)].map((_, i) => (
+          {[ ...new Array(6) ].map((_, itemIndex) => (
             <div
               className="fade-in animate-in space-y-4 overflow-hidden rounded-lg border bg-card p-4 opacity-0"
-              key={i}
-              style={{ animationDelay: `${i * 100}ms`, animationFillMode: 'forwards' }}
+              key={itemIndex}
+              style={{ animationDelay: `${itemIndex * 100}ms`, animationFillMode: 'forwards' }}
             >
               {/* Item image with centered spinner */}
               <div className="relative">
@@ -121,15 +121,15 @@ export default function QuoteDetailLoading() {
 
                 {/* Specs */}
                 <div className="space-y-2">
-                  {[...Array(3)].map((_, j) => (
+                  {[ ...new Array(3) ].map((unused, specItemIndex) => (
                     <div
                       className="relative h-4 overflow-hidden rounded bg-muted"
-                      key={j}
-                      style={{ width: `${100 - j * 15}%` }}
+                      key={specItemIndex}
+                      style={{ width: `${100 - specItemIndex * 15}%` }}
                     >
                       <div
                         className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                        style={{ animationDelay: `${200 + j * 50}ms` }}
+                        style={{ animationDelay: `${200 + specItemIndex * 50}ms` }}
                       />
                     </div>
                   ))}
@@ -157,7 +157,7 @@ export default function QuoteDetailLoading() {
             <div className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           </div>
           <div className="space-y-3">
-            {[...Array(4)].map((_, i) => (
+            {[ ...new Array(4) ].map((_, i) => (
               <div className="flex items-center justify-between" key={i}>
                 <div className="relative h-5 w-32 overflow-hidden rounded bg-muted">
                   <div

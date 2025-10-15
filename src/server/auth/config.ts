@@ -54,7 +54,7 @@ export const authConfig = {
     },
     session: ({ session, user }) => {
       const userRole = user.role || (isAdmin(user.email) ? 'admin' : 'user');
-      
+
       return {
         ...session,
         user: {
