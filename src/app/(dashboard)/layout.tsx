@@ -50,6 +50,15 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect('/signin');
   }
 
+  // Map role to Spanish label
+  const roleLabels = {
+    admin: 'Administrador',
+    seller: 'Vendedor',
+    user: 'Usuario',
+  } as const;
+
+  const userRoleLabel = roleLabels[ session.user.role ] || 'Usuario';
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -86,7 +95,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 <div className="mb-2 flex items-center space-x-4">
                   <div className="flex-1">
                     <p className="font-medium text-sm leading-none">{session.user.name ?? session.user.email}</p>
-                    <p className="text-muted-foreground text-xs leading-none">Administrador</p>
+                    <p className="text-muted-foreground text-xs leading-none">{userRoleLabel}</p>
                   </div>
                 </div>
                 <Separator className="my-2" />

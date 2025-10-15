@@ -1,7 +1,7 @@
 import type { GlassType, Model, Prisma, ProfileSupplier } from '@prisma/client';
 import { z } from 'zod';
 import logger from '@/lib/logger';
-import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
+import { adminProcedure, createTRPCRouter } from '@/server/api/trpc';
 
 // Helper functions to reduce complexity
 async function validateProfileSupplierExists(
@@ -63,7 +63,7 @@ export const modelUpsertOutput = z.object({
 });
 
 export const adminRouter = createTRPCRouter({
-  'model-upsert': publicProcedure
+  'model-upsert': adminProcedure
     .input(modelUpsertInput)
     .output(modelUpsertOutput)
     .mutation(async ({ ctx, input }) => {

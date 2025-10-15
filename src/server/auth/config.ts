@@ -52,15 +52,19 @@ export const authConfig = {
 
       return baseUrl;
     },
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-        // Use database role if present, otherwise fall back to ADMIN_EMAIL check for backward compatibility
-        role: user.role || (isAdmin(user.email) ? 'admin' : 'user'),
-      },
-    }),
+    session: ({ session, user }) => {
+      const userRole = user.role || (isAdmin(user.email) ? 'admin' : 'user');
+      
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: user.id,
+          // Use database role if present, otherwise fall back to ADMIN_EMAIL check for backward compatibility
+          role: userRole,
+        },
+      };
+    },
     // biome-ignore lint/suspicious/useAwait: NextAuth.js requires async callbacks
     async signIn({ user }) {
       // This callback is called after successful sign in

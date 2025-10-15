@@ -14,13 +14,14 @@ import {
   listProfileSuppliersSchema,
   updateProfileSupplierSchema,
 } from '../../../schemas/supplier.schema';
-import { createTRPCRouter, protectedProcedure } from '../../trpc';
+import { adminProcedure, createTRPCRouter, protectedProcedure } from '../../trpc';
 
 export const profileSupplierRouter = createTRPCRouter({
   /**
    * Create a new profile supplier
+   * Admin only - creates new profile manufacturer
    */
-  create: protectedProcedure.input(createProfileSupplierSchema).mutation(async ({ input }) => {
+  create: adminProcedure.input(createProfileSupplierSchema).mutation(async ({ input }) => {
     // Check if supplier with same name already exists
     const existing = await db.profileSupplier.findUnique({
       where: { name: input.name },
@@ -40,8 +41,9 @@ export const profileSupplierRouter = createTRPCRouter({
 
   /**
    * Delete a profile supplier
+   * Admin only - permanently removes supplier
    */
-  delete: protectedProcedure.input(z.object({ id: z.string().cuid() })).mutation(async ({ input }) => {
+  delete: adminProcedure.input(z.object({ id: z.string().cuid() })).mutation(async ({ input }) => {
     // Check if supplier exists
     const existing = await db.profileSupplier.findUnique({
       include: {
@@ -113,8 +115,9 @@ export const profileSupplierRouter = createTRPCRouter({
 
   /**
    * Toggle active status
+   * Admin only - activates/deactivates supplier
    */
-  toggleActive: protectedProcedure.input(z.object({ id: z.string().cuid() })).mutation(async ({ input }) => {
+  toggleActive: adminProcedure.input(z.object({ id: z.string().cuid() })).mutation(async ({ input }) => {
     const supplier = await db.profileSupplier.findUnique({
       where: { id: input.id },
     });
@@ -134,8 +137,9 @@ export const profileSupplierRouter = createTRPCRouter({
 
   /**
    * Update a profile supplier
+   * Admin only - modifies supplier data
    */
-  update: protectedProcedure
+  update: adminProcedure
     .input(
       z.object({
         data: updateProfileSupplierSchema,

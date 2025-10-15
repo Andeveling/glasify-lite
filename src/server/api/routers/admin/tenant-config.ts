@@ -8,7 +8,7 @@
 
 import { updateTenantConfigSchema } from '../../../schemas/tenant.schema';
 import { getTenantConfig, updateTenantConfig } from '../../../utils/tenant';
-import { createTRPCRouter, protectedProcedure } from '../../trpc';
+import { adminProcedure, createTRPCRouter, protectedProcedure } from '../../trpc';
 
 export const tenantConfigRouter = createTRPCRouter({
   /**
@@ -34,6 +34,7 @@ export const tenantConfigRouter = createTRPCRouter({
 
   /**
    * Update the singleton TenantConfig
+   * Admin only - modifies global tenant configuration
    */
-  update: protectedProcedure.input(updateTenantConfigSchema).mutation(({ input }) => updateTenantConfig(input)),
+  update: adminProcedure.input(updateTenantConfigSchema).mutation(({ input }) => updateTenantConfig(input)),
 });
