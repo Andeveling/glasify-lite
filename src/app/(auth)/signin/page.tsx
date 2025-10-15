@@ -14,7 +14,9 @@ export default async function SignInPage() {
   const session = await auth();
 
   if (session?.user) {
-    redirect('/auth/callback');
+    // Redirect based on role (middleware will handle this, but we do it here for faster response)
+    const redirectUrl = session.user.role === 'admin' ? '/dashboard' : '/my-quotes';
+    redirect(redirectUrl);
   }
 
   // Render client component with modal
