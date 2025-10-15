@@ -35,7 +35,6 @@ type ProfileSupplierSeed = {
 
 type GlassTypeSeed = {
   readonly id: string;
-  readonly manufacturerId: string | null; // DEPRECATED: kept for backward compatibility, nullable
   readonly name: string;
   readonly purpose: 'general' | 'insulation' | 'security' | 'decorative';
   readonly thicknessMm: number;
@@ -49,7 +48,6 @@ type GlassTypeSeed = {
 
 type ServiceSeed = {
   readonly id: string;
-  readonly manufacturerId: string | null; // DEPRECATED: kept for backward compatibility, nullable
   readonly name: string;
   readonly type: 'area' | 'perimeter' | 'fixed';
   readonly unit: 'unit' | 'sqm' | 'ml';
@@ -106,7 +104,6 @@ const BASE_GLASS_TYPES: readonly GlassTypeSeed[] = [
     id: 'cm1glass123def456ghi789jkl',
     isLaminated: true,
     isTempered: true,
-    manufacturerId: null, // DEPRECATED: Use TenantConfig for global glass types
     name: 'Vidrio Laminado 6mm',
     pricePerSqm: '185000.00',
     purpose: 'security',
@@ -115,7 +112,6 @@ const BASE_GLASS_TYPES: readonly GlassTypeSeed[] = [
   {
     id: 'cm1glasstype123456789abc1',
     isTempered: true,
-    manufacturerId: null, // DEPRECATED: Use TenantConfig for global glass types
     name: 'Vidrio Templado 8mm',
     pricePerSqm: '210000.00',
     purpose: 'security',
@@ -124,7 +120,6 @@ const BASE_GLASS_TYPES: readonly GlassTypeSeed[] = [
   {
     id: 'cm1glasstype123456789abc2',
     isLowE: true,
-    manufacturerId: null, // DEPRECATED: Use TenantConfig for global glass types
     name: 'Vidrio Bajo Emisivo 6mm',
     pricePerSqm: '240000.00',
     purpose: 'insulation',
@@ -132,7 +127,6 @@ const BASE_GLASS_TYPES: readonly GlassTypeSeed[] = [
   },
   {
     id: 'cm1catalogglasstype123456789',
-    manufacturerId: null, // DEPRECATED: Use TenantConfig for global glass types
     name: 'Vidrio Aislante 6mm',
     pricePerSqm: '190000.00',
     purpose: 'insulation',
@@ -143,7 +137,6 @@ const BASE_GLASS_TYPES: readonly GlassTypeSeed[] = [
 const BASE_SERVICES: readonly ServiceSeed[] = [
   {
     id: 'cm1service123def456ghi789',
-    manufacturerId: null, // DEPRECATED: Use TenantConfig for global services
     name: 'Instalación profesional',
     rate: '75000.0000',
     type: 'fixed',
@@ -151,7 +144,6 @@ const BASE_SERVICES: readonly ServiceSeed[] = [
   },
   {
     id: 'cm1service1def456ghi789',
-    manufacturerId: null, // DEPRECATED: Use TenantConfig for global services
     name: 'Sellado perimetral premium',
     rate: '15000.0000',
     type: 'perimeter',
@@ -159,7 +151,6 @@ const BASE_SERVICES: readonly ServiceSeed[] = [
   },
   {
     id: 'cm1service2def456ghi789',
-    manufacturerId: null, // DEPRECATED: Use TenantConfig for global services
     name: 'Transporte especializado',
     rate: '25000.0000',
     type: 'area',
@@ -253,7 +244,6 @@ const buildGlassTypeData = (glassType: GlassTypeSeed) => ({
   isLowE: glassType.isLowE ?? false,
   isTempered: glassType.isTempered ?? false,
   isTripleGlazed: glassType.isTripleGlazed ?? false,
-  manufacturerId: glassType.manufacturerId,
   name: glassType.name,
   pricePerSqm: glassType.pricePerSqm,
   purpose: glassType.purpose,
@@ -278,7 +268,6 @@ const seedServices = async () => {
     await db.service.upsert({
       create: service,
       update: {
-        manufacturerId: service.manufacturerId,
         name: service.name,
         rate: service.rate,
         type: service.type,

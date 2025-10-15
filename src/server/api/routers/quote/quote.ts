@@ -3,11 +3,11 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import logger from '@/lib/logger';
 import {
-  adminProcedure,
   createTRPCRouter,
   getQuoteFilter,
   protectedProcedure,
   publicProcedure,
+  sellerOrAdminProcedure,
 } from '@/server/api/trpc';
 import { calculatePriceItem, type PriceAdjustmentInput, type PriceServiceInput } from '@/server/price/price-item';
 import { sendQuoteNotification } from '@/server/services/email';
@@ -25,23 +25,25 @@ import { sendQuoteToVendor } from './quote.service';
 // Input schemas
 export const calculateItemServiceInput = z.object({
   quantity: z.number().optional(),
-  serviceId: z.string().cuid('ID del servicio debe ser válido'),
+  serviceId: z.string().cuid({ error: 'ID del servicio debe ser válido' }),
 });
 
 export const calculateItemAdjustmentInput = z.object({
-  concept: z.string().min(1, 'El concepto del ajuste es requerido'),
+  concept: z.string().min(1, { error: 'El concepto del ajuste es requerido' }),
   sign: z.enum(['positive', 'negative']),
   unit: z.enum(['unit', 'sqm', 'ml']),
-  value: z.number().min(0, 'El valor debe ser mayor o igual a 0'),
+  value: z.number().min(0, { error: 'El valor debe ser mayor o igual a 0' }),
 });
 
 export const calculateItemInput = z.object({
-  adjustments: z.array(calculateItemAdjustmentInput).default([]),
-  glassTypeId: z.string().cuid('ID del tipo de vidrio debe ser válido'),
-  heightMm: z.number().int().min(1, 'Alto debe ser mayor a 0 mm'),
-  modelId: z.string().cuid('ID del modelo debe ser válido'),
-  services: z.array(calculateItemServiceInput).default([]),
-  widthMm: z.number().int().min(1, 'Ancho debe ser mayor a 0 mm'),
+  adjustments: z.array(calculateItemAdjustmentInput),
+  glassTypeId: z.string().cuid({ error: 'ID del tipo de vidrio debe ser válido' }),
+  heightMm: z.number().int().min(1, { error: 'Alto debe ser mayor a 0 mm' }),
+  modelId: z.string().cuid({ error: 'ID del modelo debe ser válido' }),
+  quantity: z.number(),
+  services: z.array(calculateItemServiceInput),
+  unit: z.enum(['unit', 'sqm', 'ml']),
+  widthMm: z.number().int().min(1, { error: 'Ancho debe ser mayor a 0 mm' }),
 });
 
 // Output schemas
@@ -66,7 +68,7 @@ export const calculateItemOutput = z.object({
 });
 
 export const addItemInput = calculateItemInput.extend({
-  quoteId: z.string().cuid('ID de la cotización debe ser válido').optional(),
+  quoteId: z.string().cuid({ error: 'ID de la cotización debe ser válido' }).optional(),
 });
 
 export const addItemOutput = z.object({
@@ -77,10 +79,10 @@ export const addItemOutput = z.object({
 
 export const submitInput = z.object({
   contact: z.object({
-    address: z.string().min(1, 'Dirección es requerida'),
-    phone: z.string().min(1, 'Teléfono es requerido'),
+    address: z.string().min(1, { error: 'Dirección es requerida' }),
+    phone: z.string().min(1, { error: 'Teléfono es requerido' }),
   }),
-  quoteId: z.string().cuid('ID de la cotización debe ser válido'),
+  quoteId: z.string().cuid({ error: 'ID de la cotización debe ser válido' }),
 });
 
 export const submitOutput = z.object({
@@ -553,11 +555,11 @@ export const quoteRouter = createTRPCRouter({
     }),
 
   /**
-   * List ALL quotes with user information (Admin only)
-   * Task: T020 [US1]
-   * Allows admins to view all quotes across all users
+   * List ALL quotes with user information (Admin and Seller)
+   * Task: T020 [US1] - Updated for seller access
+   * Allows admins and sellers to view all quotes across all users
    */
-  'list-all': adminProcedure
+  'list-all': sellerOrAdminProcedure
     .input(
       z.object({
         includeExpired: z.boolean().default(false),
@@ -572,16 +574,17 @@ export const quoteRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       try {
-        logger.info('[US1] Admin fetching all quotes', {
-          adminId: ctx.session.user.id,
+        logger.info('[US1/US2] Admin/Seller fetching all quotes', {
           includeExpired: input.includeExpired,
           limit: input.limit,
           page: input.page,
+          role: ctx.session.user.role,
           search: input.search,
           sortBy: input.sortBy,
           sortOrder: input.sortOrder,
           status: input.status,
           userId: input.userId,
+          viewerId: ctx.session.user.id,
         });
 
         const skip = (input.page - 1) * input.limit;

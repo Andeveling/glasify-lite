@@ -2,7 +2,7 @@ import { UserRole } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import logger from '@/lib/logger';
-import { adminProcedure, createTRPCRouter } from '../trpc';
+import { adminProcedure, createTRPCRouter, sellerOrAdminProcedure } from '../trpc';
 
 /**
  * Zod Validation Schemas
@@ -15,7 +15,7 @@ import { adminProcedure, createTRPCRouter } from '../trpc';
  */
 const listUsersInput = z
   .object({
-    role: z.nativeEnum(UserRole).optional(),
+    role: z.enum(UserRole).optional(),
     search: z.string().min(1).max(100).optional(),
   })
   .optional();
@@ -28,9 +28,9 @@ const listUsersInput = z
  * Spanish error messages for user-facing validation
  */
 const updateUserRoleInput = z.object({
-  role: z.nativeEnum(UserRole),
+  role: z.enum(UserRole),
   userId: z.string().cuid({
-    message: 'ID de usuario inválido',
+    error: 'ID de usuario inválido',
   }),
 });
 
@@ -73,9 +73,9 @@ const updateUserRoleOutput = z.object({
 export const userRouter = createTRPCRouter({
   /**
    * List All Users
-   * Task: T036 [US5]
+   * Task: T036 [US5] - Updated for seller access
    *
-   * Admin procedure to list all users in the system.
+   * Admin and Seller procedure to list all users in the system.
    * Supports optional filtering by role and search query.
    *
    * Returns users with:
@@ -89,15 +89,16 @@ export const userRouter = createTRPCRouter({
    * @input search - Optional search query (matches name or email)
    * @output Array of users with quote counts
    */
-  'list-all': adminProcedure
+  'list-all': sellerOrAdminProcedure
     .input(listUsersInput)
     .output(listUsersOutput)
     .query(async ({ ctx, input }) => {
       try {
         logger.info('[US5] Listing all users', {
-          adminId: ctx.session.user.id,
           role: input?.role,
           search: input?.search,
+          viewerId: ctx.session.user.id,
+          viewerRole: ctx.session.user.role,
         });
 
         // Build where clause with optional filters

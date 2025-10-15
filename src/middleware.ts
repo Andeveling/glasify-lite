@@ -17,8 +17,12 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/quote') ||
     pathname.startsWith('/my-quotes');
 
-  const isAdminRoute = pathname.startsWith('/dashboard');
-  const isSellerRoute = pathname.startsWith('/quotes') && pathname !== '/my-quotes';
+  const isAdminOnlyRoute =
+    pathname.startsWith('/dashboard/models') ||
+    pathname.startsWith('/dashboard/settings') ||
+    pathname.startsWith('/dashboard/tenant');
+  const isSellerOrAdminRoute = pathname.startsWith('/dashboard/quotes') || pathname.startsWith('/dashboard/users');
+  const isDashboardHome = pathname === '/dashboard' || pathname === '/dashboard/';
   const isAuthRoute = pathname.startsWith('/signin');
   const isAuthCallback = pathname === '/auth/callback';
 
@@ -29,9 +33,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(signinUrl);
   }
 
-  // 2. Block non-admin from admin routes
-  if (isAdminRoute && userRole !== 'admin') {
-    logger.warn('Unauthorized dashboard access attempt', {
+  // 2. Block non-admin from admin-only routes (models, settings, tenant config)
+  if (isAdminOnlyRoute && userRole !== 'admin') {
+    logger.warn('Unauthorized admin-only route access attempt', {
       path: pathname,
       role: userRole,
       timestamp: new Date().toISOString(),
@@ -40,9 +44,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/my-quotes', request.url));
   }
 
-  // 3. Block non-seller from seller routes
-  if (isSellerRoute && !['admin', 'seller'].includes(userRole || '')) {
-    logger.warn('Unauthorized seller route access attempt', {
+  // 3. Block non-seller/non-admin from seller routes (quotes, users)
+  if (isSellerOrAdminRoute && !['admin', 'seller'].includes(userRole || '')) {
+    logger.warn('Unauthorized seller/admin route access attempt', {
       path: pathname,
       role: userRole,
       timestamp: new Date().toISOString(),
@@ -51,7 +55,17 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/my-quotes', request.url));
   }
 
-  // 4. Redirect logged-in users away from signin page
+  // 4. Redirect sellers from dashboard home to /dashboard/quotes
+  if (isDashboardHome && userRole === 'seller') {
+    return NextResponse.redirect(new URL('/dashboard/quotes', request.url));
+  }
+
+  // 4. Redirect sellers from dashboard home to /dashboard/quotes
+  if (isDashboardHome && userRole === 'seller') {
+    return NextResponse.redirect(new URL('/dashboard/quotes', request.url));
+  }
+
+  // 5. Redirect logged-in users away from signin page
   if (isAuthRoute && isLoggedIn && !isAuthCallback) {
     return NextResponse.redirect(new URL('/auth/callback', request.url));
   }

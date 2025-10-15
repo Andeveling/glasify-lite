@@ -217,21 +217,31 @@ export const sellerProcedure = protectedProcedure.use(({ ctx, next }) => {
 });
 
 /**
+ * Seller or Admin procedure (alternative name for clarity)
+ *
+ * Restricts procedure execution to users with 'seller' OR 'admin' role.
+ * Useful for procedures that both sellers and admins should access.
+ *
+ * @see https://trpc.io/docs/server/authorization
+ */
+export const sellerOrAdminProcedure = sellerProcedure;
+
+/**
  * Role-based quote filter helper
  *
  * Returns Prisma where clause based on user role for quote queries.
- * - Admin: Returns empty object (sees all quotes)
- * - Seller/User: Returns filter to see only their own quotes
+ * - Admin/Seller: Returns empty object (sees all quotes)
+ * - User: Returns filter to see only their own quotes
  *
  * @param session - NextAuth session with user role
  * @returns Prisma where clause for quote filtering
  */
 export function getQuoteFilter(session: Session): Prisma.QuoteWhereInput {
-  // Admins see all quotes
-  if (session.user.role === 'admin') {
+  // Admins and sellers see all quotes
+  if (session.user.role === 'admin' || session.user.role === 'seller') {
     return {};
   }
 
-  // Sellers and users see only their own quotes
+  // Regular users see only their own quotes
   return { userId: session.user.id };
 }
