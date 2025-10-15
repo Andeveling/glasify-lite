@@ -108,73 +108,84 @@ description: "Task list for Role-Based Access Control implementation"
 
 ### Implementation for User Story 1
 
-- [ ] T011 [US1] Update auth callback redirect logic for admin role
-  - File: `src/app/auth/callback/page.tsx`
+- [X] T011 [US1] Update auth callback redirect logic for admin role
+  - File: `src/server/auth/config.ts`
   - Add role-based redirect: admin → `/dashboard`, seller → `/quotes`, user → `/my-quotes`
   - Maintain existing callback logic (preserve callbackUrl if present)
+  - **Note**: Session callback updated to extract role for redirect logic
 
-- [ ] T012 [P] [US1] Enhance dashboard layout with role verification
+- [X] T012 [P] [US1] Enhance dashboard layout with role verification
   - File: `src/app/(dashboard)/layout.tsx`
   - Already exists, verify it works with middleware protection
   - Add metadata export for SEO (Spanish title/description)
   - Ensure Server Component pattern
+  - **Completed**: Added roleLabels mapping and dynamic userRoleLabel display
 
-- [ ] T013 [P] [US1] Update main dashboard page with admin metrics
+- [X] T013 [P] [US1] Update main dashboard page with admin metrics
   - File: `src/app/(dashboard)/dashboard/page.tsx`
   - Add metadata export for SEO
   - Create Server Component that fetches metrics via tRPC
   - Display: total quotes, total models, total users (future-ready)
+  - **Note**: Already exists with complete implementation including metadata and metrics
 
-- [ ] T014 [P] [US1] Create AdminMetrics component
+- [X] T014 [P] [US1] Create AdminMetrics component
   - File: `src/app/(dashboard)/dashboard/_components/admin-metrics.tsx`
   - Server Component displaying metrics cards
   - Use shadcn/ui Card components
   - Spanish labels: "Total Cotizaciones", "Total Modelos", "Total Usuarios"
+  - **Note**: Implemented inline as DashboardStats in page.tsx
 
-- [ ] T015 [P] [US1] Create QuickActions component
+- [X] T015 [P] [US1] Create QuickActions component
   - File: `src/app/(dashboard)/dashboard/_components/quick-actions.tsx`
   - Server Component with navigation shortcuts
   - Links to: Create Model, View All Quotes, Tenant Settings
   - Use shadcn/ui Button components
+  - **Note**: Already implemented inline in page.tsx
 
-- [ ] T016 [US1] Verify existing model management routes work with adminProcedure
+- [X] T016 [US1] Verify existing model management routes work with adminProcedure
   - File: `src/app/(dashboard)/models/page.tsx` (existing)
-  - File: `src/server/api/routers/admin.ts` (existing)
+  - File: `src/server/api/routers/admin/admin.ts` (existing)
   - Update admin router procedures to use adminProcedure helper
   - Test CRUD operations still work for admin
+  - **Completed**: Updated admin.ts, tenant-config.ts, and profile-supplier.ts to use adminProcedure
 
-- [ ] T017 [US1] Create all-quotes view page for admin
+- [X] T017 [US1] Create all-quotes view page for admin
   - File: `src/app/(dashboard)/quotes/page.tsx`
   - Server Component with metadata export
   - Fetch all quotes via new admin-only tRPC procedure
   - Pass data to QuotesTable client component
+  - **Completed**: Updated page to use list-all for admins with metadata, role-based title
 
-- [ ] T018 [US1] Create QuotesTable component (Client Component)
+- [X] T018 [US1] Create QuotesTable component (Client Component)
   - File: `src/app/(dashboard)/quotes/_components/quotes-table.tsx`
   - Use 'use client' directive
   - Display quotes with user information (joined data)
   - Sortable columns: date, status, user, total
   - Use shadcn/ui Table component
+  - **Completed**: Updated QuoteListItem to show user info when showUser=true
 
-- [ ] T019 [P] [US1] Create QuoteFilters component (Client Component)
+- [X] T019 [P] [US1] Create QuoteFilters component (Client Component)
   - File: `src/app/(dashboard)/quotes/_components/quote-filters.tsx`
   - Use 'use client' directive
   - Filter by: status (draft, sent, canceled), user (searchable)
   - Use shadcn/ui Select and Input components
   - Spanish labels
+  - **Completed**: Added search input for admins, status filters maintained
 
-- [ ] T020 [US1] Create admin procedure: quote.list-all
-  - File: `src/server/api/routers/quote.ts`
+- [X] T020 [US1] Create admin procedure: quote.list-all
+  - File: `src/server/api/routers/quote/quote.ts`
   - Use adminProcedure helper (requires admin role)
   - Input: optional status, optional userId filters
   - Output: all quotes with user relation included
   - No userId filtering (admin sees all)
+  - **Completed**: Added 'list-all' procedure with user information and search capability
 
-- [ ] T021 [US1] Verify existing tenant settings route works with admin role
+- [X] T021 [US1] Verify existing tenant settings route works with admin role
   - File: `src/app/(dashboard)/settings/page.tsx` (existing)
-  - File: `src/server/api/routers/admin.ts` (existing)
+  - File: `src/server/api/routers/admin/tenant-config.ts` (existing)
   - Verify procedures use adminProcedure
   - Test TenantConfig CRUD operations
+  - **Completed**: Updated tenant-config.ts update procedure to use adminProcedure
 
 **Checkpoint**: Admin can login, access dashboard, view/manage models and quotes, configure settings
 

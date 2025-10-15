@@ -2,7 +2,7 @@ import type { Prisma, Quote } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import logger from '@/lib/logger';
-import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc';
+import { adminProcedure, createTRPCRouter, getQuoteFilter, protectedProcedure, publicProcedure } from '@/server/api/trpc';
 import { calculatePriceItem, type PriceAdjustmentInput, type PriceServiceInput } from '@/server/price/price-item';
 import { sendQuoteNotification } from '@/server/services/email';
 import { getQuoteValidityDays, getTenantConfigSelect, getTenantCurrency } from '@/server/utils/tenant';
@@ -533,6 +533,7 @@ export const quoteRouter = createTRPCRouter({
   /**
    * List user quotes with pagination and filtering
    * Task: T068 [P] [US5]
+   * Updated: T024 [US2] - Role-based filtering (admin sees all, others see own)
    */
   'list-user-quotes': protectedProcedure
     .input(listUserQuotesInput)
@@ -548,14 +549,17 @@ export const quoteRouter = createTRPCRouter({
           sortOrder: input.sortOrder,
           status: input.status,
           userId: ctx.session.user.id,
+          userRole: ctx.session.user.role,
         });
 
         const skip = (input.page - 1) * input.limit;
 
-        // Build where clause with proper AND/OR logic
+        // Build where clause with role-based filtering
+        const roleFilter = getQuoteFilter(ctx.session);
+        
         const baseWhere = {
+          ...roleFilter, // Apply role-based filtering (admin sees all, others see own)
           status: input.status,
-          userId: ctx.session.user.id,
         };
 
         // Combine filters using AND
@@ -658,6 +662,179 @@ export const quoteRouter = createTRPCRouter({
           error: error instanceof Error ? error.message : 'Unknown error',
           input,
           userId: ctx.session.user.id,
+        });
+
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'No se pudieron cargar las cotizaciones. Intente nuevamente.',
+        });
+      }
+    }),
+
+  /**
+   * List ALL quotes with user information (Admin only)
+   * Task: T020 [US1]
+   * Allows admins to view all quotes across all users
+   */
+  'list-all': adminProcedure
+    .input(
+      z.object({
+        includeExpired: z.boolean().default(false),
+        limit: z.number().int().min(1).max(100).default(20),
+        page: z.number().int().min(1).default(1),
+        search: z.string().optional(),
+        sortBy: z.enum(['createdAt', 'total', 'validUntil']).default('createdAt'),
+        sortOrder: z.enum(['asc', 'desc']).default('desc'),
+        status: z.enum(['draft', 'sent', 'canceled']).optional(),
+        userId: z.string().cuid().optional(), // Filter by specific user
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        logger.info('[US1] Admin fetching all quotes', {
+          includeExpired: input.includeExpired,
+          limit: input.limit,
+          page: input.page,
+          search: input.search,
+          sortBy: input.sortBy,
+          sortOrder: input.sortOrder,
+          status: input.status,
+          userId: input.userId,
+          adminId: ctx.session.user.id,
+        });
+
+        const skip = (input.page - 1) * input.limit;
+
+        // Build where clause for admin filtering
+        const baseWhere: Prisma.QuoteWhereInput = {
+          ...(input.status && { status: input.status }),
+          ...(input.userId && { userId: input.userId }), // Optional filter by specific user
+        };
+
+        // Combine filters using AND
+        const andConditions: Prisma.QuoteWhereInput[] = [];
+
+        // Filter expired quotes if not including them
+        if (!input.includeExpired) {
+          andConditions.push({
+            OR: [{ validUntil: null }, { validUntil: { gte: new Date() } }],
+          });
+        }
+
+        // Search filter
+        if (input.search) {
+          andConditions.push({
+            OR: [
+              {
+                projectName: {
+                  contains: input.search,
+                  mode: 'insensitive' as const,
+                },
+              },
+              {
+                projectStreet: {
+                  contains: input.search,
+                  mode: 'insensitive' as const,
+                },
+              },
+              {
+                user: {
+                  OR: [
+                    { name: { contains: input.search, mode: 'insensitive' as const } },
+                    { email: { contains: input.search, mode: 'insensitive' as const } },
+                  ],
+                },
+              },
+              {
+                items: {
+                  some: {
+                    name: {
+                      contains: input.search,
+                      mode: 'insensitive' as const,
+                    },
+                  },
+                },
+              },
+            ],
+          });
+        }
+
+        const where = {
+          ...baseWhere,
+          ...(andConditions.length > 0 ? { AND: andConditions } : {}),
+        };
+
+        // Execute query with pagination and user information
+        const [quotes, total] = await Promise.all([
+          ctx.db.quote.findMany({
+            include: {
+              // biome-ignore lint/style/useNamingConvention: Prisma's _count is a special field
+              _count: {
+                select: { items: true },
+              },
+              user: {
+                select: {
+                  email: true,
+                  id: true,
+                  name: true,
+                  role: true,
+                },
+              },
+            },
+            orderBy: {
+              [input.sortBy]: input.sortOrder,
+            },
+            skip,
+            take: input.limit,
+            where,
+          }),
+          ctx.db.quote.count({ where }),
+        ]);
+
+        const totalPages = Math.ceil(total / input.limit);
+
+        const result = {
+          hasNextPage: input.page < totalPages,
+          hasPreviousPage: input.page > 1,
+          limit: input.limit,
+          page: input.page,
+          quotes: quotes.map((quote) => ({
+            createdAt: quote.createdAt,
+            currency: quote.currency,
+            id: quote.id,
+            isExpired: quote.validUntil ? quote.validUntil < new Date() : false,
+            itemCount: quote._count.items,
+            projectName: quote.projectName ?? 'Sin nombre',
+            sentAt: quote.sentAt,
+            status: quote.status,
+            total: Number(quote.total),
+            user: quote.user
+              ? {
+                  email: quote.user.email,
+                  id: quote.user.id,
+                  name: quote.user.name,
+                  role: quote.user.role,
+                }
+              : null,
+            validUntil: quote.validUntil,
+          })),
+          total,
+          totalPages,
+        };
+
+        logger.info('[US1] Admin quotes fetched successfully', {
+          count: quotes.length,
+          page: input.page,
+          total,
+          adminId: ctx.session.user.id,
+        });
+
+        return result;
+      } catch (error) {
+        logger.error('[US1] Error fetching all quotes', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          input,
+          adminId: ctx.session.user.id,
         });
 
         throw new TRPCError({
