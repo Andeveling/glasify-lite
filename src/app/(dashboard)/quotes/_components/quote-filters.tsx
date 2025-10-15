@@ -72,8 +72,8 @@ export function QuoteFilters({ currentStatus, showUserFilter = false }: QuoteFil
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
-  const [searchValue, setSearchValue] = useState(searchParams.get('search') ?? '');
+  const [ isPending, startTransition ] = useTransition();
+  const [ searchValue, setSearchValue ] = useState(searchParams.get('search') ?? '');
 
   /**
    * Update URL search params with new filter selection
@@ -97,7 +97,7 @@ export function QuoteFilters({ currentStatus, showUserFilter = false }: QuoteFil
         router.replace(newUrl);
       });
     },
-    [searchParams, pathname, router]
+    [ searchParams, pathname, router ]
   );
 
   /**
@@ -123,7 +123,7 @@ export function QuoteFilters({ currentStatus, showUserFilter = false }: QuoteFil
         router.replace(newUrl);
       });
     },
-    [searchValue, searchParams, pathname, router]
+    [ searchValue, searchParams, pathname, router ]
   );
 
   const activeFilter = currentStatus ?? 'all';

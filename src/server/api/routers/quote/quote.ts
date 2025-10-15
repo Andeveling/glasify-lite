@@ -402,6 +402,7 @@ export const quoteRouter = createTRPCRouter({
   /**
    * Get quote by ID with full details
    * Task: T068 [P] [US5]
+   * Updated: T025 [US2] - Add ownership check (admin can view any quote)
    */
   'get-by-id': protectedProcedure
     .input(getQuoteByIdInput)
@@ -411,8 +412,10 @@ export const quoteRouter = createTRPCRouter({
         logger.info('[US5] Fetching quote by ID', {
           quoteId: input.id,
           userId: ctx.session.user.id,
+          userRole: ctx.session.user.role,
         });
 
+        // First, fetch the quote without userId filter
         const quote = await ctx.db.quote.findUnique({
           include: {
             items: {
@@ -445,12 +448,11 @@ export const quoteRouter = createTRPCRouter({
           },
           where: {
             id: input.id,
-            userId: ctx.session.user.id, // Ensure user owns the quote
           },
         });
 
         if (!quote) {
-          logger.warn('[US5] Quote not found or unauthorized', {
+          logger.warn('[US5] Quote not found', {
             quoteId: input.id,
             userId: ctx.session.user.id,
           });
@@ -458,6 +460,24 @@ export const quoteRouter = createTRPCRouter({
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Cotización no encontrada',
+          });
+        }
+
+        // Ownership check: user can only access quote if they own it OR they are admin
+        const isOwner = quote.userId === ctx.session.user.id;
+        const isAdmin = ctx.session.user.role === 'admin';
+
+        if (!isOwner && !isAdmin) {
+          logger.warn('[US2] Unauthorized quote access attempt', {
+            quoteId: input.id,
+            quoteOwnerId: quote.userId,
+            requestUserId: ctx.session.user.id,
+            userRole: ctx.session.user.role,
+          });
+
+          throw new TRPCError({
+            code: 'FORBIDDEN',
+            message: 'No tienes permiso para acceder a esta cotización',
           });
         }
 
