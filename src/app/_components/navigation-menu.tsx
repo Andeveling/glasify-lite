@@ -1,10 +1,10 @@
 'use client';
 
+import type { UserRole } from '@prisma/client';
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import type { UserRole } from '@prisma/client';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
@@ -84,7 +84,7 @@ export function NavigationMenu({
   className?: string;
 }) {
   const pathname = usePathname();
-  const [ mobileMenuOpen, setMobileMenuOpen ] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
@@ -108,9 +108,7 @@ export function NavigationMenu({
 
   return (
     <nav
-      aria-label={
-        userRole === 'admin' ? 'Navegación del panel administrativo' : 'Navegación principal'
-      }
+      aria-label={userRole === 'admin' ? 'Navegación del panel administrativo' : 'Navegación principal'}
       className={cn('flex items-center space-x-4', className)}
     >
       {/* Desktop Navigation */}

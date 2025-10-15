@@ -32,8 +32,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
  * - RoleBadge (Component) - Visual indicator of user role
  */
 export const metadata: Metadata = {
-  title: 'Gestión de Usuarios - Glasify',
   description: 'Administra roles y permisos de usuarios del sistema',
+  title: 'Gestión de Usuarios - Glasify',
 };
 
 export default function UsersPage() {
@@ -53,12 +53,10 @@ export default function UsersPage() {
           <CardDescription>Esta funcionalidad estará disponible próximamente</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="rounded-lg border border-dashed border-muted-foreground/25 bg-muted/50 p-8 text-center">
+          <div className="rounded-lg border border-muted-foreground/25 border-dashed bg-muted/50 p-8 text-center">
             <Users className="mx-auto h-12 w-12 text-muted-foreground/50" />
             <h3 className="mt-4 font-semibold text-lg">Próximamente</h3>
-            <p className="mt-2 text-muted-foreground text-sm">
-              La interfaz de gestión de usuarios está en desarrollo.
-            </p>
+            <p className="mt-2 text-muted-foreground text-sm">La interfaz de gestión de usuarios está en desarrollo.</p>
           </div>
 
           <div className="space-y-4">
@@ -94,7 +92,8 @@ export default function UsersPage() {
           <div className="rounded-lg bg-muted p-4">
             <p className="font-medium text-sm">Nota para Desarrolladores</p>
             <p className="mt-1 text-muted-foreground text-xs">
-              Los endpoints de tRPC ya están implementados: <code className="rounded bg-background px-1 py-0.5">user.list-all</code> y{' '}
+              Los endpoints de tRPC ya están implementados:{' '}
+              <code className="rounded bg-background px-1 py-0.5">user.list-all</code> y{' '}
               <code className="rounded bg-background px-1 py-0.5">user.update-role</code>
             </p>
             <p className="mt-2 text-muted-foreground text-xs">

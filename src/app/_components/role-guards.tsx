@@ -57,7 +57,7 @@ export async function SellerOnly({ children, fallback }: { children: ReactNode; 
   const isSeller = session?.user?.role === 'seller';
   const isAdmin = session?.user?.role === 'admin';
 
-  if (!isSeller && !isAdmin) {
+  if (!(isSeller || isAdmin)) {
     return fallback ?? null;
   }
 

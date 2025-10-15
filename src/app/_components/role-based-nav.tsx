@@ -1,5 +1,5 @@
-import { Calculator, FileText, Package, Settings, LayoutDashboard } from 'lucide-react';
 import type { UserRole } from '@prisma/client';
+import { Calculator, FileText, LayoutDashboard, Package, Settings } from 'lucide-react';
 import { auth } from '@/server/auth';
 import { NavigationMenu } from './navigation-menu';
 
@@ -70,14 +70,14 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
         href: '/my-quotes',
         icon: FileText,
         label: 'Mis Cotizaciones',
-        routes: [ '/my-quotes' ],
+        routes: ['/my-quotes'],
       },
       {
         description: 'Explorar catálogo de productos',
         href: '/catalog',
         icon: Package,
         label: 'Catálogo',
-        routes: [ '/catalog' ],
+        routes: ['/catalog'],
       },
     ];
   }
@@ -90,14 +90,14 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
         href: '/catalog',
         icon: Package,
         label: 'Catálogo',
-        routes: [ '/catalog' ],
+        routes: ['/catalog'],
       },
       {
         description: 'Ver mis cotizaciones',
         href: '/my-quotes',
         icon: FileText,
         label: 'Mis Cotizaciones',
-        routes: [ '/my-quotes' ],
+        routes: ['/my-quotes'],
       },
     ];
   }
@@ -109,14 +109,14 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
       href: '/catalog',
       icon: Package,
       label: 'Catálogo',
-      routes: [ '/catalog' ],
+      routes: ['/catalog'],
     },
     {
       description: 'Crear una nueva cotización',
       href: '/quote',
       icon: Calculator,
       label: 'Cotizar',
-      routes: [ '/quote' ],
+      routes: ['/quote'],
     },
   ];
 }

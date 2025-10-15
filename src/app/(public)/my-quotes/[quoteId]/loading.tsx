@@ -59,7 +59,7 @@ export default function QuoteDetailLoading() {
 
         {/* Quote details grid with progressive animation */}
         <div className="mt-6 grid gap-4 md:grid-cols-2">
-          {[ ...new Array(4) ].map((_, i) => (
+          {[...new Array(4)].map((_, i) => (
             <div className="space-y-2" key={i}>
               <div className="relative h-4 w-24 overflow-hidden rounded bg-muted">
                 <div
@@ -92,7 +92,7 @@ export default function QuoteDetailLoading() {
 
         {/* Items grid with staggered card animations */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {[ ...new Array(6) ].map((_, itemIndex) => (
+          {[...new Array(6)].map((_, itemIndex) => (
             <div
               className="fade-in animate-in space-y-4 overflow-hidden rounded-lg border bg-card p-4 opacity-0"
               key={itemIndex}
@@ -121,7 +121,7 @@ export default function QuoteDetailLoading() {
 
                 {/* Specs */}
                 <div className="space-y-2">
-                  {[ ...new Array(3) ].map((unused, specItemIndex) => (
+                  {[...new Array(3)].map((unused, specItemIndex) => (
                     <div
                       className="relative h-4 overflow-hidden rounded bg-muted"
                       key={specItemIndex}
@@ -157,7 +157,7 @@ export default function QuoteDetailLoading() {
             <div className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           </div>
           <div className="space-y-3">
-            {[ ...new Array(4) ].map((_, i) => (
+            {[...new Array(4)].map((_, i) => (
               <div className="flex items-center justify-between" key={i}>
                 <div className="relative h-5 w-32 overflow-hidden rounded bg-muted">
                   <div
