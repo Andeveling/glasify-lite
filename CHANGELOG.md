@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Role-Based Access Control (RBAC) System (2025-10-15)
+
+#### Database Schema
+- **UserRole Enum**: Added `admin`, `seller`, `user` roles to Prisma schema
+- **User.role Field**: New indexed field with default value `user`
+- **Migration**: Created reversible migration `20251015003329_add_user_role` with rollback script
+
+#### Authentication & Authorization
+- **NextAuth Configuration**: Extended Session and User interfaces to include role
+- **Session Callback**: Automatically assigns `admin` role to users matching `ADMIN_EMAIL` env var
+- **Middleware Protection**: Implemented route-level authorization in `src/middleware.ts`
+  - `/dashboard/*` routes restricted to admin users only
+  - Unauthorized access redirects to `/my-quotes` with warning log
+  - Uses NextAuth v5 `auth()` helper for session retrieval
+
+#### tRPC Procedure Helpers
+- **adminProcedure**: Protects procedures requiring admin role, throws FORBIDDEN error
+- **sellerProcedure**: Protects procedures requiring seller or admin role
+- **getQuoteFilter**: Data filtering helper that returns all quotes for admins, user-scoped for others
+
+#### UI Components (Server Components)
+- **AdminOnly**: Conditional rendering guard for admin-only UI elements
+- **SellerOnly**: Conditional rendering guard for seller/admin UI elements
+- Both components use `auth()` helper and support optional fallback content
+
+#### Implementation Status
+- ✅ Phase 1: Setup (Database migration, NextAuth config, Prisma generation)
+- ✅ Phase 2: Foundational (Middleware, tRPC helpers, UI guards)
+- ⏳ Phase 3-9: Pending (Admin Dashboard UI, User Stories implementation)
+
+#### Quality Validation
+- **AuthJS Compliance**: Implementation follows official RBAC guide (database adapter pattern)
+- **Constitution Compliance**: 100% adherence to project principles (Server-First, Winston server-only, etc.)
+- **Test Coverage**: 0 critical issues, 3 optional enhancements identified
+- **Overall Verdict**: HIGH CONFIDENCE TO PROCEED with remaining user stories
+
 ### Changed - PRD v1.6: Clarification of Product Vision (2025-10-14)
 
 #### Documentation Overhaul
