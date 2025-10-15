@@ -1,4 +1,4 @@
-import { FileText, Home, LogOut, Package, Settings } from 'lucide-react';
+import { FileText, Home, LogOut, Package, Settings, Users } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -37,6 +37,11 @@ const sidebarNavItems = [
     title: 'Cotizaciones',
   },
   {
+    href: '/dashboard/users',
+    icon: Users,
+    title: 'Usuarios',
+  },
+  {
     href: '/dashboard/settings',
     icon: Settings,
     title: 'Configuración',
@@ -49,6 +54,15 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (!session?.user) {
     redirect('/signin');
   }
+
+  // Map role to Spanish label
+  const roleLabels = {
+    admin: 'Administrador',
+    seller: 'Vendedor',
+    user: 'Usuario',
+  } as const;
+
+  const userRoleLabel = roleLabels[session.user.role] || 'Usuario';
 
   return (
     <SidebarProvider>
@@ -86,7 +100,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 <div className="mb-2 flex items-center space-x-4">
                   <div className="flex-1">
                     <p className="font-medium text-sm leading-none">{session.user.name ?? session.user.email}</p>
-                    <p className="text-muted-foreground text-xs leading-none">Administrador</p>
+                    <p className="text-muted-foreground text-xs leading-none">{userRoleLabel}</p>
                   </div>
                 </div>
                 <Separator className="my-2" />

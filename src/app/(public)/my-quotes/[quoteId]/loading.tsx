@@ -59,8 +59,8 @@ export default function QuoteDetailLoading() {
 
         {/* Quote details grid with progressive animation */}
         <div className="mt-6 grid gap-4 md:grid-cols-2">
-          {[ ...Array(4) ].map((_, i) => (
-            <div key={i} className="space-y-2">
+          {[...new Array(4)].map((_, i) => (
+            <div className="space-y-2" key={i}>
               <div className="relative h-4 w-24 overflow-hidden rounded bg-muted">
                 <div
                   className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent"
@@ -92,11 +92,11 @@ export default function QuoteDetailLoading() {
 
         {/* Items grid with staggered card animations */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {[ ...Array(6) ].map((_, i) => (
+          {[...new Array(6)].map((_, itemIndex) => (
             <div
-              key={i}
-              className="space-y-4 overflow-hidden rounded-lg border bg-card p-4 opacity-0 animate-in fade-in"
-              style={{ animationDelay: `${i * 100}ms`, animationFillMode: 'forwards' }}
+              className="fade-in animate-in space-y-4 overflow-hidden rounded-lg border bg-card p-4 opacity-0"
+              key={itemIndex}
+              style={{ animationDelay: `${itemIndex * 100}ms`, animationFillMode: 'forwards' }}
             >
               {/* Item image with centered spinner */}
               <div className="relative">
@@ -121,11 +121,15 @@ export default function QuoteDetailLoading() {
 
                 {/* Specs */}
                 <div className="space-y-2">
-                  {[ ...Array(3) ].map((_, j) => (
-                    <div key={j} className="relative h-4 overflow-hidden rounded bg-muted" style={{ width: `${100 - j * 15}%` }}>
+                  {[...new Array(3)].map((_unused, specItemIndex) => (
+                    <div
+                      className="relative h-4 overflow-hidden rounded bg-muted"
+                      key={specItemIndex}
+                      style={{ width: `${100 - specItemIndex * 15}%` }}
+                    >
                       <div
                         className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                        style={{ animationDelay: `${200 + j * 50}ms` }}
+                        style={{ animationDelay: `${200 + specItemIndex * 50}ms` }}
                       />
                     </div>
                   ))}
@@ -153,8 +157,8 @@ export default function QuoteDetailLoading() {
             <div className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           </div>
           <div className="space-y-3">
-            {[ ...Array(4) ].map((_, i) => (
-              <div key={i} className="flex items-center justify-between">
+            {[...new Array(4)].map((_, i) => (
+              <div className="flex items-center justify-between" key={i}>
                 <div className="relative h-5 w-32 overflow-hidden rounded bg-muted">
                   <div
                     className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent"
@@ -183,11 +187,10 @@ export default function QuoteDetailLoading() {
 
       {/* Floating spinner with bounce animation and pulse effect */}
       <div className="pointer-events-none fixed right-8 bottom-8 animate-bounce">
-        <div className="flex size-16 items-center justify-center rounded-full bg-primary/10 shadow-lg ring-4 ring-primary/20 backdrop-blur-sm animate-in fade-in zoom-in">
+        <div className="fade-in zoom-in flex size-16 animate-in items-center justify-center rounded-full bg-primary/10 shadow-lg ring-4 ring-primary/20 backdrop-blur-sm">
           <Spinner className="size-8 text-primary" />
         </div>
       </div>
     </div>
   );
 }
-

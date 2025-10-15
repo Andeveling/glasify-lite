@@ -101,9 +101,11 @@ export function usePriceCalculation(params: UsePriceCalculationParams): UsePrice
         glassTypeId: params.glassTypeId,
         heightMm: params.heightMm,
         modelId: params.modelId,
+        quantity: 1, // Default quantity for price calculation
         services: servicesRef.current.map((serviceId: string) => ({
           serviceId,
         })),
+        unit: 'unit', // Default unit for price calculation
         widthMm: params.widthMm,
       });
     }, DEBOUNCE_DELAY_MS);

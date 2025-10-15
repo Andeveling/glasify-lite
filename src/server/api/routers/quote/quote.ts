@@ -2,7 +2,13 @@ import type { Prisma, Quote } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import logger from '@/lib/logger';
-import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc';
+import {
+  createTRPCRouter,
+  getQuoteFilter,
+  protectedProcedure,
+  publicProcedure,
+  sellerOrAdminProcedure,
+} from '@/server/api/trpc';
 import { calculatePriceItem, type PriceAdjustmentInput, type PriceServiceInput } from '@/server/price/price-item';
 import { sendQuoteNotification } from '@/server/services/email';
 import { getQuoteValidityDays, getTenantConfigSelect, getTenantCurrency } from '@/server/utils/tenant';
@@ -19,23 +25,25 @@ import { sendQuoteToVendor } from './quote.service';
 // Input schemas
 export const calculateItemServiceInput = z.object({
   quantity: z.number().optional(),
-  serviceId: z.string().cuid('ID del servicio debe ser válido'),
+  serviceId: z.string().cuid({ error: 'ID del servicio debe ser válido' }),
 });
 
 export const calculateItemAdjustmentInput = z.object({
-  concept: z.string().min(1, 'El concepto del ajuste es requerido'),
+  concept: z.string().min(1, { error: 'El concepto del ajuste es requerido' }),
   sign: z.enum(['positive', 'negative']),
   unit: z.enum(['unit', 'sqm', 'ml']),
-  value: z.number().min(0, 'El valor debe ser mayor o igual a 0'),
+  value: z.number().min(0, { error: 'El valor debe ser mayor o igual a 0' }),
 });
 
 export const calculateItemInput = z.object({
-  adjustments: z.array(calculateItemAdjustmentInput).default([]),
-  glassTypeId: z.string().cuid('ID del tipo de vidrio debe ser válido'),
-  heightMm: z.number().int().min(1, 'Alto debe ser mayor a 0 mm'),
-  modelId: z.string().cuid('ID del modelo debe ser válido'),
-  services: z.array(calculateItemServiceInput).default([]),
-  widthMm: z.number().int().min(1, 'Ancho debe ser mayor a 0 mm'),
+  adjustments: z.array(calculateItemAdjustmentInput),
+  glassTypeId: z.string().cuid({ error: 'ID del tipo de vidrio debe ser válido' }),
+  heightMm: z.number().int().min(1, { error: 'Alto debe ser mayor a 0 mm' }),
+  modelId: z.string().cuid({ error: 'ID del modelo debe ser válido' }),
+  quantity: z.number(),
+  services: z.array(calculateItemServiceInput),
+  unit: z.enum(['unit', 'sqm', 'ml']),
+  widthMm: z.number().int().min(1, { error: 'Ancho debe ser mayor a 0 mm' }),
 });
 
 // Output schemas
@@ -60,7 +68,7 @@ export const calculateItemOutput = z.object({
 });
 
 export const addItemInput = calculateItemInput.extend({
-  quoteId: z.string().cuid('ID de la cotización debe ser válido').optional(),
+  quoteId: z.string().cuid({ error: 'ID de la cotización debe ser válido' }).optional(),
 });
 
 export const addItemOutput = z.object({
@@ -71,10 +79,10 @@ export const addItemOutput = z.object({
 
 export const submitInput = z.object({
   contact: z.object({
-    address: z.string().min(1, 'Dirección es requerida'),
-    phone: z.string().min(1, 'Teléfono es requerido'),
+    address: z.string().min(1, { error: 'Dirección es requerida' }),
+    phone: z.string().min(1, { error: 'Teléfono es requerido' }),
   }),
-  quoteId: z.string().cuid('ID de la cotización debe ser válido'),
+  quoteId: z.string().cuid({ error: 'ID de la cotización debe ser válido' }),
 });
 
 export const submitOutput = z.object({
@@ -402,6 +410,7 @@ export const quoteRouter = createTRPCRouter({
   /**
    * Get quote by ID with full details
    * Task: T068 [P] [US5]
+   * Updated: T025 [US2] - Add ownership check (admin can view any quote)
    */
   'get-by-id': protectedProcedure
     .input(getQuoteByIdInput)
@@ -411,8 +420,10 @@ export const quoteRouter = createTRPCRouter({
         logger.info('[US5] Fetching quote by ID', {
           quoteId: input.id,
           userId: ctx.session.user.id,
+          userRole: ctx.session.user.role,
         });
 
+        // First, fetch the quote without userId filter
         const quote = await ctx.db.quote.findUnique({
           include: {
             items: {
@@ -445,12 +456,11 @@ export const quoteRouter = createTRPCRouter({
           },
           where: {
             id: input.id,
-            userId: ctx.session.user.id, // Ensure user owns the quote
           },
         });
 
         if (!quote) {
-          logger.warn('[US5] Quote not found or unauthorized', {
+          logger.warn('[US5] Quote not found', {
             quoteId: input.id,
             userId: ctx.session.user.id,
           });
@@ -458,6 +468,24 @@ export const quoteRouter = createTRPCRouter({
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Cotización no encontrada',
+          });
+        }
+
+        // Ownership check: user can only access quote if they own it OR they are admin
+        const isOwner = quote.userId === ctx.session.user.id;
+        const isAdmin = ctx.session.user.role === 'admin';
+
+        if (!(isOwner || isAdmin)) {
+          logger.warn('[US2] Unauthorized quote access attempt', {
+            quoteId: input.id,
+            quoteOwnerId: quote.userId,
+            requestUserId: ctx.session.user.id,
+            userRole: ctx.session.user.role,
+          });
+
+          throw new TRPCError({
+            code: 'FORBIDDEN',
+            message: 'No tienes permiso para acceder a esta cotización',
           });
         }
 
@@ -526,6 +554,180 @@ export const quoteRouter = createTRPCRouter({
       }
     }),
 
+  /**
+   * List ALL quotes with user information (Admin and Seller)
+   * Task: T020 [US1] - Updated for seller access
+   * Allows admins and sellers to view all quotes across all users
+   */
+  'list-all': sellerOrAdminProcedure
+    .input(
+      z.object({
+        includeExpired: z.boolean().default(false),
+        limit: z.number().int().min(1).max(100).default(20),
+        page: z.number().int().min(1).default(1),
+        search: z.string().optional(),
+        sortBy: z.enum(['createdAt', 'total', 'validUntil']).default('createdAt'),
+        sortOrder: z.enum(['asc', 'desc']).default('desc'),
+        status: z.enum(['draft', 'sent', 'canceled']).optional(),
+        userId: z.string().cuid().optional(), // Filter by specific user
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        logger.info('[US1/US2] Admin/Seller fetching all quotes', {
+          includeExpired: input.includeExpired,
+          limit: input.limit,
+          page: input.page,
+          role: ctx.session.user.role,
+          search: input.search,
+          sortBy: input.sortBy,
+          sortOrder: input.sortOrder,
+          status: input.status,
+          userId: input.userId,
+          viewerId: ctx.session.user.id,
+        });
+
+        const skip = (input.page - 1) * input.limit;
+
+        // Build where clause for admin filtering
+        const baseWhere: Prisma.QuoteWhereInput = {
+          ...(input.status && { status: input.status }),
+          ...(input.userId && { userId: input.userId }), // Optional filter by specific user
+        };
+
+        // Combine filters using AND
+        const andConditions: Prisma.QuoteWhereInput[] = [];
+
+        // Filter expired quotes if not including them
+        if (!input.includeExpired) {
+          andConditions.push({
+            OR: [{ validUntil: null }, { validUntil: { gte: new Date() } }],
+          });
+        }
+
+        // Search filter
+        if (input.search) {
+          andConditions.push({
+            OR: [
+              {
+                projectName: {
+                  contains: input.search,
+                  mode: 'insensitive' as const,
+                },
+              },
+              {
+                projectStreet: {
+                  contains: input.search,
+                  mode: 'insensitive' as const,
+                },
+              },
+              {
+                user: {
+                  OR: [
+                    { name: { contains: input.search, mode: 'insensitive' as const } },
+                    { email: { contains: input.search, mode: 'insensitive' as const } },
+                  ],
+                },
+              },
+              {
+                items: {
+                  some: {
+                    name: {
+                      contains: input.search,
+                      mode: 'insensitive' as const,
+                    },
+                  },
+                },
+              },
+            ],
+          });
+        }
+
+        const where = {
+          ...baseWhere,
+          ...(andConditions.length > 0 ? { AND: andConditions } : {}),
+        };
+
+        // Execute query with pagination and user information
+        const [quotes, total] = await Promise.all([
+          ctx.db.quote.findMany({
+            include: {
+              // biome-ignore lint/style/useNamingConvention: Prisma's _count is a special field
+              _count: {
+                select: { items: true },
+              },
+              user: {
+                select: {
+                  email: true,
+                  id: true,
+                  name: true,
+                  role: true,
+                },
+              },
+            },
+            orderBy: {
+              [input.sortBy]: input.sortOrder,
+            },
+            skip,
+            take: input.limit,
+            where,
+          }),
+          ctx.db.quote.count({ where }),
+        ]);
+
+        const totalPages = Math.ceil(total / input.limit);
+
+        const result = {
+          hasNextPage: input.page < totalPages,
+          hasPreviousPage: input.page > 1,
+          limit: input.limit,
+          page: input.page,
+          quotes: quotes.map((quote) => ({
+            createdAt: quote.createdAt,
+            currency: quote.currency,
+            id: quote.id,
+            isExpired: quote.validUntil ? quote.validUntil < new Date() : false,
+            itemCount: quote._count.items,
+            projectName: quote.projectName ?? 'Sin nombre',
+            sentAt: quote.sentAt,
+            status: quote.status,
+            total: Number(quote.total),
+            user: quote.user
+              ? {
+                  email: quote.user.email,
+                  id: quote.user.id,
+                  name: quote.user.name,
+                  role: quote.user.role,
+                }
+              : null,
+            validUntil: quote.validUntil,
+          })),
+          total,
+          totalPages,
+        };
+
+        logger.info('[US1] Admin quotes fetched successfully', {
+          adminId: ctx.session.user.id,
+          count: quotes.length,
+          page: input.page,
+          total,
+        });
+
+        return result;
+      } catch (error) {
+        logger.error('[US1] Error fetching all quotes', {
+          adminId: ctx.session.user.id,
+          error: error instanceof Error ? error.message : 'Unknown error',
+          input,
+        });
+
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'No se pudieron cargar las cotizaciones. Intente nuevamente.',
+        });
+      }
+    }),
+
   // =============================================================================
   // Query Procedures (User Story 5 - Quote History)
   // =============================================================================
@@ -533,6 +735,7 @@ export const quoteRouter = createTRPCRouter({
   /**
    * List user quotes with pagination and filtering
    * Task: T068 [P] [US5]
+   * Updated: T024 [US2] - Role-based filtering (admin sees all, others see own)
    */
   'list-user-quotes': protectedProcedure
     .input(listUserQuotesInput)
@@ -548,14 +751,17 @@ export const quoteRouter = createTRPCRouter({
           sortOrder: input.sortOrder,
           status: input.status,
           userId: ctx.session.user.id,
+          userRole: ctx.session.user.role,
         });
 
         const skip = (input.page - 1) * input.limit;
 
-        // Build where clause with proper AND/OR logic
+        // Build where clause with role-based filtering
+        const roleFilter = getQuoteFilter(ctx.session);
+
         const baseWhere = {
+          ...roleFilter, // Apply role-based filtering (admin sees all, others see own)
           status: input.status,
-          userId: ctx.session.user.id,
         };
 
         // Combine filters using AND

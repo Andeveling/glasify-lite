@@ -19,7 +19,6 @@ interface SendQuoteButtonProps {
 export function SendQuoteButton({ quote }: SendQuoteButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { mutate: sendQuote, isPending } = useSendQuote();
-  console.log('Quote status:', quote.status);
   // Only show button for draft quotes
   if (quote.status !== 'draft') {
     return null;

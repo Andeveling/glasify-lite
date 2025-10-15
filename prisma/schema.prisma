@@ -78,6 +78,16 @@ enum MaterialType {
   MIXED
 }
 
+/// User role in the system
+/// - admin: Full access (models, all quotes, tenant config)
+/// - seller: Limited access (own quotes, catalog)
+/// - user: Client access (own quotes, catalog browsing)
+enum UserRole {
+  admin
+  seller
+  user
+}
+
 // Necessary for Next auth
 model Account {
   id                       String  @id @default(cuid())
@@ -112,11 +122,14 @@ model User {
   email             String?                 @unique
   emailVerified     DateTime?
   image             String?
+  role              UserRole                @default(user)
   accounts          Account[]
   sessions          Session[]
   quotes            Quote[]
   priceChanges      ModelPriceHistory[]
   glassPriceChanges GlassTypePriceHistory[]
+
+  @@index([role])
 }
 
 model VerificationToken {

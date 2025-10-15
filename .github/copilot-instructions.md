@@ -1,161 +1,79 @@
-# GitHub Copilot Instructions — Glasify Lite
+# Glasify Lite Development Guidelines
 
-## Prioridades de Generación de Código
+**Project Type**: Full-stack glass quotation management application  
+**Last Updated**: 2025-10-14  
+**Constitution**: See `.specify/memory/constitution.md`
 
-Cuando generes código para este repositorio:
+## Code Generation Priorities
 
-1. **Compatibilidad de Versiones**: Siempre detecta y respeta las versiones exactas de lenguajes, frameworks y librerías usadas en este proyecto
-2. **Archivos de Contexto**: Prioriza patrones y estándares definidos en el directorio `.github/instructions`
-3. **Patrones del Codebase**: Cuando los archivos de contexto no provean guía específica, escanea el codebase para patrones establecidos
-4. **Consistencia Arquitectónica**: Mantén el estilo arquitectónico Next.js 15 App Router con tRPC y los límites establecidos
-5. **Calidad de Código**: Prioriza mantenibilidad, rendimiento, seguridad, accesibilidad y testabilidad en todo el código generado
+When generating code for this repository:
 
----
-
-## Detección de Versiones de Tecnología
-
-Antes de generar código, identifica las versiones exactas:
-
-### Versiones de Lenguaje
-
-- **TypeScript**: `5.8.2` (strict mode habilitado)
-- **Node.js**: Compatible con `es2022` target
-- **ECMAScript**: `ES2022`
-
-### Versiones de Frameworks
-
-- **Next.js**: `15.2.3` (App Router, React Server Components)
-- **React**: `19.0.0` (con React Server Components)
-- **React DOM**: `19.0.0`
-
-### Librerías Principales
-
-- **tRPC**: `11.0.0` (@trpc/client, @trpc/server, @trpc/react-query)
-- **Prisma**: `6.16.2` (ORM con PostgreSQL)
-- **NextAuth.js**: `5.0.0-beta.25` (autenticación)
-- **TanStack Query**: `5.69.0` (React Query)
-- **Zod**: `4.1.1` (validación de schemas)
-- **TailwindCSS**: `4.0.15` (con PostCSS)
-- **Shadcn/ui**: Componentes basados en Radix UI
-- **Winston**: `3.17.0` (logging estructurado)
-- **React Hook Form**: `7.63.0` (con ZodResolver)
-
-### Herramientas de Desarrollo
-
-- **Ultracite**: `5.4.4` (linting y formateo con Biome)
-- **Biome**: `2.2.4` (formatter y linter)
-- **Vitest**: `3.2.4` (unit tests con jsdom)
-- **Playwright**: `1.55.1` (E2E tests)
-- **Lefthook**: `1.13.4` (git hooks)
+1. **Version Compatibility**: Always detect and respect exact versions of languages, frameworks and libraries
+2. **Context Files**: Prioritize patterns defined in `.github/instructions/` directory
+3. **Codebase Patterns**: When context files don't provide guidance, scan codebase for established patterns
+4. **Architectural Consistency**: Maintain Next.js 15 App Router + tRPC style and boundaries
+5. **Code Quality**: Prioritize maintainability, performance, security, accessibility and testability
 
 ---
 
-## Winston Logger - Uso Correcto
+## Active Technologies
 
-### ⚠️ IMPORTANTE: Winston es SOLO para Server-Side
+**Language/Runtime**:
+- TypeScript 5.8.2 (strict mode), Node.js (ES2022 target)
 
-Winston usa módulos de Node.js (`fs`, `path`, etc.) que **NO están disponibles en el navegador**.
+**Framework**:
+- Next.js 15.2.3 (App Router, React Server Components 19.0.0)
 
-**✅ PERMITIDO - Server-Side**:
-- ✅ Server Components
-- ✅ Server Actions (`'use server'`)
-- ✅ API Route Handlers (`/api/*`)
-- ✅ tRPC Procedures (routers en `/server/api/routers`)
-- ✅ Middleware (`middleware.ts`)
-- ✅ Server-side utilities (`/server/*`)
+**Core Dependencies**:
+- tRPC 11.0.0 (type-safe API)
+- Prisma 6.16.2 (PostgreSQL ORM)
+- NextAuth.js 5.0.0-beta.25 (authentication)
+- TanStack Query 5.69.0 (React Query)
+- Zod 4.1.1 (schema validation)
+- React Hook Form 7.63.0 (forms)
 
-**❌ PROHIBIDO - Client-Side**:
-- ❌ Client Components (`'use client'`)
-- ❌ Custom Hooks (`use*.ts`)
-- ❌ Client-side utilities usados por componentes
-- ❌ Cualquier código que se ejecute en el navegador
+**UI Stack**:
+- Shadcn/ui + Radix UI (components)
+- TailwindCSS 4.0.15 (styling)
 
-### Patrón Correcto
-
-```typescript
-// ✅ BIEN: Server Component
-import logger from '@/lib/logger';
-
-export default async function ProductPage({ params }: Props) {
-  logger.info('Product page accessed', { productId: params.id });
-  const product = await db.product.findUnique({ where: { id: params.id } });
-  return <ProductDetail product={product} />;
-}
-
-// ✅ BIEN: Server Action
-'use server';
-import logger from '@/lib/logger';
-
-export async function createQuote(data: QuoteInput) {
-  logger.info('Creating quote', { data });
-  const quote = await db.quote.create({ data });
-  return { success: true, quoteId: quote.id };
-}
-
-// ✅ BIEN: tRPC Procedure
-import logger from '@/lib/logger';
-
-export const catalogRouter = createTRPCRouter({
-  'list-models': publicProcedure
-    .input(catalogInputSchema)
-    .query(async ({ input }) => {
-      logger.info('Listing models', { filters: input });
-      return await db.model.findMany({ where: input });
-    }),
-});
-
-// ❌ MAL: Client Component
-'use client';
-import logger from '@/lib/logger'; // ❌ ERROR: Winston no funciona en cliente
-
-export function ProductForm() {
-  const handleSubmit = () => {
-    logger.info('Form submitted'); // ❌ Causará error en build
-  };
-  return <form onSubmit={handleSubmit}>...</form>;
-}
-
-// ✅ BIEN: Client Component sin logger
-'use client';
-// En cliente, usa console (solo en desarrollo) o toast/error boundaries
-
-export function ProductForm() {
-  const handleSubmit = () => {
-    // Usuario ya recibe feedback con toast
-    toast.success('Producto agregado');
-    // Errores se capturan en DevTools automáticamente
-  };
-  return <form onSubmit={handleSubmit}>...</form>;
-}
-```
-
-### Por Qué No Usar Logger en Cliente
-
-1. **Build Error**: Winston usa módulos de Node.js que no existen en navegador
-2. **No es Necesario**: 
-   - Toasts informan al usuario (UX)
-   - DevTools capturan errores automáticamente
-   - No necesitas logs estructurados en cliente
-3. **Mejor Rendimiento**: Menos JavaScript en bundle del cliente
+**Development Tools**:
+- Ultracite 5.4.4 + Biome 2.2.4 (linting/formatting)
+- Vitest 3.2.4 (unit/integration tests with jsdom)
+- Playwright 1.55.1 (E2E tests)
+- Winston 3.17.0 (server-side logging)
+- Lefthook 1.13.4 (git hooks)
 
 ---
 
-## Convenciones del Proyecto
+## Critical Rules
 
-### Commits Messages
+### Winston Logger - Server-Side ONLY
 
-- Use conventional commit messages in **English**
-- UI text must be in **Spanish (es-LA)**
-- Examples:
-  - `feat: add quote calculation endpoint`
-  - `fix: correct pricing formula for tempered glass`
-  - `docs: update API documentation`
-  - `refactor: extract search logic to custom hook`
-  - `test: add unit tests for catalog utils`
+⚠️ **IMPORTANT**: Winston uses Node.js modules (`fs`, `path`) that are **NOT available in browser**.
 
-### Important
+**✅ ALLOWED** (Server-Side):
+- Server Components
+- Server Actions (`'use server'`)
+- API Route Handlers (`/api/*`)
+- tRPC Procedures (`/server/api/routers`)
+- Middleware (`middleware.ts`)
+- Server-side utilities (`/server/*`)
 
-- **Never use Spanish in code, comments, or commit messages** — only in UI text and user-facing content.
+**❌ PROHIBITED** (Client-Side):
+- Client Components (`'use client'`)
+- Custom Hooks (`use*.ts`)
+- Client-side utilities used by components
+- Any browser-executed code
+
+**Client-Side Alternatives**:
+- Use `console` (development only)
+- Use toast notifications (user feedback)
+- Use error boundaries (error handling)
+
+**Client-Side Alternatives**:
+- Use `console` (development only)
+- Use toast notifications (user feedback)
+- Use error boundaries (error handling)
 
 ### Naming Conventions
 
@@ -165,260 +83,149 @@ export function ProductForm() {
 - **Constants**: UPPER_SNAKE_CASE (`MAX_GLASS_THICKNESS`, `DEFAULT_PAGE_LIMIT`)
 - **Database entities**: PascalCase (`Manufacturer`, `QuoteItem`)
 - **tRPC procedures**: kebab-case (`'quote.calculate-item'`, `'catalog.list-models'`)
+- **Route Groups**: (lowercase) `(auth)`, `(dashboard)`, `(public)`
+- **Private Folders**: _underscore-prefix `_components/`, `_hooks/`, `_utils/`, `_types/`
 
-### Domain Language (Spanish)
+- **Route Groups**: (lowercase) `(auth)`, `(dashboard)`, `(public)`
+- **Private Folders**: _underscore-prefix `_components/`, `_hooks/`, `_utils/`, `_types/`
 
-UI text, error messages, and user-facing content must be in Spanish (es-LA):
+### Language Rules
 
+**Code/Comments/Commits**: English ONLY
+- Conventional commits format
+- Examples: `feat: add role-based access`, `fix: correct pricing formula`
+
+**UI Text**: Spanish (es-LA) ONLY
 - "Cotización" not "Quote"
 - "Vidrio" not "Glass"
 - "Modelo" not "Model"
 - "Fabricante" not "Manufacturer"
-- "Presupuesto" not "Budget"
 
-### Project Structure
+---
 
-Sigue estrictamente la estructura oficial de Next.js App Router:
+## Project Structure
+
+Next.js 15 App Router with strict organizational rules:
 
 ```
 glasify-lite/
 ├── src/
 │   ├── app/                          # Next.js 15 App Router
-│   │   ├── (auth)/                   # Route group: páginas de autenticación
-│   │   │   └── signin/
-│   │   │       └── page.tsx          # Server Component
-│   │   ├── (dashboard)/              # Route group: área privada
-│   │   │   ├── layout.tsx            # Layout con protección
-│   │   │   └── dashboard/
-│   │   ├── (public)/                 # Route group: área pública
+│   │   ├── (auth)/                   # Route group: authentication pages
+│   │   ├── (dashboard)/              # Route group: protected admin area
+│   │   ├── (public)/                 # Route group: public area
 │   │   │   └── catalog/
-│   │   │       ├── _components/      # Componentes privados (organisms/molecules)
-│   │   │       ├── _hooks/           # Custom hooks específicos
-│   │   │       ├── _types/           # TypeScript types locales
-│   │   │       ├── _utils/           # Utilities específicas (pure functions)
-│   │   │       ├── [modelId]/        # Dynamic route
-│   │   │       │   └── page.tsx
-│   │   │       └── page.tsx          # Server Component (template/page)
-│   │   ├── _components/              # Componentes compartidos de app
-│   │   ├── _utils/                   # Utilities globales de app
-│   │   ├── api/                      # Route handlers API
-│   │   │   └── trpc/[trpc]/
+│   │   │       ├── _components/      # Private components (organisms/molecules)
+│   │   │       ├── _hooks/           # Feature-specific custom hooks
+│   │   │       ├── _types/           # Feature-specific TypeScript types
+│   │   │       ├── _utils/           # Feature-specific utilities (pure functions)
+│   │   │       └── page.tsx          # Server Component
+│   │   ├── _components/              # Shared app components
+│   │   ├── _utils/                   # Global app utilities
+│   │   ├── api/trpc/[trpc]/         # tRPC API routes
 │   │   ├── layout.tsx                # Root layout
-│   │   ├── page.tsx                  # Home page
-│   │   ├── not-found.tsx             # 404 page
-│   │   └── global-error.tsx          # Error boundary global
+│   │   └── page.tsx                  # Home page
 │   │
-│   ├── components/                   # Componentes UI compartidos (atoms/molecules)
-│   │   ├── ui/                       # Shadcn/ui components (atoms)
-│   │   │   ├── button.tsx
-│   │   │   ├── input.tsx
-│   │   │   ├── card.tsx
-│   │   │   └── form.tsx
-│   │   └── back-button.tsx           # Shared molecules
-│   │
-│   ├── hooks/                        # Custom hooks globales
-│   │   └── use-toast.tsx
-│   │
-│   ├── lib/                          # Utilities y configuraciones
-│   │   ├── logger.ts                 # Winston singleton logger
-│   │   └── utils.ts                  # Helper functions (cn, etc.)
-│   │
+│   ├── components/ui/                # Shadcn/ui atoms (NO business logic)
+│   ├── hooks/                        # Global custom hooks
+│   ├── lib/                          # Utilities and configurations
+│   │   ├── logger.ts                 # Winston singleton (SERVER-SIDE ONLY)
+│   │   └── utils.ts                  # Helper functions
 │   ├── providers/                    # React Context providers
-│   │   └── theme-provider.tsx
-│   │
-│   ├── server/                       # Backend lógica (tRPC, Prisma)
-│   │   ├── api/
-│   │   │   ├── routers/              # tRPC routers
-│   │   │   │   ├── catalog.ts
-│   │   │   │   ├── quote.ts
-│   │   │   │   └── admin.ts
-│   │   │   ├── root.ts               # tRPC root router
-│   │   │   └── trpc.ts               # tRPC config
+│   ├── server/                       # Backend logic (tRPC, Prisma)
+│   │   ├── api/routers/              # tRPC routers (kebab-case procedures)
 │   │   ├── auth/                     # NextAuth config
-│   │   │   ├── config.ts
-│   │   │   └── index.ts
 │   │   ├── services/                 # Business logic services
-│   │   │   └── catalog.service.ts
 │   │   └── db.ts                     # Prisma singleton client
-│   │
 │   ├── trpc/                         # tRPC client configuration
-│   │   ├── react.tsx                 # React client
-│   │   ├── server.ts                 # Server client
-│   │   └── query-client.ts
-│   │
-│   ├── styles/                       # CSS global
-│   │   └── globals.css
-│   │
 │   ├── middleware.ts                 # Next.js middleware
-│   └── env.js                        # Environment validation (@t3-oss/env-nextjs)
+│   └── env.js                        # Environment validation
 │
-├── prisma/                           # Database schema y migrations
-│   ├── schema.prisma
-│   ├── seed.ts
-│   └── migrations/
-│
+├── prisma/                           # Database schema and migrations
 ├── tests/                            # Unit, integration, contract tests
-│   ├── unit/
-│   ├── integration/
-│   ├── contract/
-│   └── setup.ts
-│
 ├── e2e/                              # Playwright E2E tests
-│   └── auth/
-│
-├── public/                           # Static assets
-│   └── favicon.ico
-│
-├── docs/                             # Documentación del proyecto
-├── .github/                          # GitHub configs y copilot instructions
-├── next.config.js                    # Next.js configuration
-├── tsconfig.json                     # TypeScript configuration
-├── tailwind.config.ts                # TailwindCSS configuration
-├── vitest.config.ts                  # Vitest configuration
-├── playwright.config.ts              # Playwright configuration
-└── package.json
+└── docs/                             # Project documentation
 ```
 
-### Reglas de Organización
+**Organization Rules**:
+- Route Groups: `(name)` for organizing routes without affecting URLs
+- Private Files: `_name` for folders/files that are not routes (colocation)
+- Nested Layouts: Share UI between related routes
+- Loading/Error: Use `loading.tsx` and `error.tsx` for states
 
-**App Router (`src/app/`)**
-
-- **Route Groups**: Usa `(nombre)` para organizar rutas sin afectar URLs
-- **Archivos Privados**: Usa `_nombre` para carpetas/archivos que no son rutas
-- **Colocation**: Coloca componentes, hooks, types y utils cerca de donde se usan
-- **Layouts**: Crea layouts anidados para compartir UI entre rutas relacionadas
-- **Loading/Error**: Usa `loading.tsx` y `error.tsx` para estados de carga y errores
-
-**Componentes (`src/components/`)**
-
-- **ui/**: Solo componentes Shadcn/ui (atoms) - sin lógica de negocio
-- **Shared Molecules**: Componentes reutilizables que combinan atoms
-- **NO organisms aquí**: Los organisms van en `_components/` de cada feature
-
-**Server (`src/server/`)**
-
-- **api/routers/**: tRPC routers con kebab-case naming (`'list-models'`)
-- **services/**: Business logic separada de routers (SOLID - SRP)
-- **db.ts**: Prisma client singleton con prevención de hot reload issues
-
-### Database Design
-
-- **Manufacturers**: Glass manufacturers (VEKA, Guardian, etc.)
-- **Models**: Specific glass models with pricing data
-- **GlassTypes**: Categories (tempered, laminated, etc.)
-- **Services**: Additional services (cutting, polishing, etc.)
-- **Quotes**: Customer quotation requests
-- **QuoteItems**: Individual items within a quote
-- **Adjustments**: Price modifications (discounts, surcharges)
+**Organization Rules**:
+- Route Groups: `(name)` for organizing routes without affecting URLs
+- Private Files: `_name` for folders/files that are not routes (colocation)
+- Nested Layouts: Share UI between related routes
+- Loading/Error: Use `loading.tsx` and `error.tsx` for states
 
 ---
 
 ## Arquitectura Next.js 15 + SOLID + Atomic Design
 
-### Principios de Arquitectura
+### Server-First Architecture
 
-**Next.js 15 App Router**
+- **Server Components by default**, Client Components only when necessary
+- Use `'use client'` directive ONLY for: interactivity, React hooks, browser APIs
+- Leverage Server Actions for data mutations
+- ISR (Incremental Static Regeneration) with `revalidate` for semi-static content
+- Streaming with `<Suspense>` for better Core Web Vitals
 
-- Server Components por defecto, Client Components solo cuando sea necesario
-- Usa directiva `'use client'` únicamente para interactividad, hooks de React o context
-- Aprovecha Server Actions para mutaciones de datos
-- ISR (Incremental Static Regeneration) con `revalidate` para contenido semi-estático
-- Streaming con `<Suspense>` para mejores Core Web Vitals
+### SOLID Principles
 
-**SOLID Principles**
+- **Single Responsibility**: Each module/component has ONE clear responsibility
+- **Open/Closed**: Components open for extension, closed for modification
+- **Liskov Substitution**: Components can be replaced by their variants
+- **Interface Segregation**: Specific props, not generic interfaces
+- **Dependency Inversion**: Depend on abstractions (hooks, contexts) not implementations
 
-- **Single Responsibility**: Cada módulo/componente tiene una responsabilidad clara
-- **Open/Closed**: Componentes abiertos a extensión, cerrados a modificación
-- **Liskov Substitution**: Los componentes pueden ser reemplazados por sus variantes
-- **Interface Segregation**: Props específicas, no interfaces genéricas
-- **Dependency Inversion**: Depende de abstracciones (hooks, contexts) no de implementaciones
+### Atomic Design
 
-**Atomic Design**
+- **Atoms**: Basic UI components (`Button`, `Input`) in `src/components/ui/`
+- **Molecules**: Simple combinations of atoms
+- **Organisms**: Complex components with logic in `_components/`
+- **Templates**: Page layouts without data as `layout.tsx`
+- **Pages**: Server Components that orchestrate everything in `page.tsx`
 
-- **Atoms**: Componentes UI básicos (`Button`, `Input`, `Label`) en `src/components/ui/`
-- **Molecules**: Combinaciones simples de atoms (`InputGroup`, `FormField`)
-- **Organisms**: Componentes complejos con lógica (`CatalogFilters`, `ModelCard`) en `_components/`
-- **Templates**: Layouts de página sin datos (`DashboardLayout`) como `layout.tsx`
-- **Pages**: Server Components que orquestan todo en `page.tsx`
+- **Templates**: Page layouts without data as `layout.tsx`
+- **Pages**: Server Components that orchestrate everything in `page.tsx`
 
 ---
 
-## Patrones SOLID en el Codebase
+## SOLID Patterns in Practice
 
 ### Single Responsibility Principle (SRP)
 
-**✅ Patrón Correcto** (del codebase):
-
 ```typescript
-// ❌ MAL: Componente con múltiples responsabilidades
-function CatalogPage() {
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
-  const { data } = api.catalog['list-models'].useQuery({...});
-
-  return (
-    <div>
-      <input onChange={e => setSearch(e.target.value)} />
-      {/* renderizado de cards, paginación, etc. */}
-    </div>
-  );
-}
-
-// ✅ BIEN: Responsabilidades separadas (patrón del proyecto)
-// 1. Page: Orquestación (Server Component)
+// ✅ GOOD: Separated responsibilities
+// 1. Page: Orchestration (Server Component)
 export default async function CatalogPage({ searchParams }: Props) {
-  const { searchQuery, page, manufacturerId, sort } = validateCatalogParams(params);
-  const manufacturers = await api.catalog['list-manufacturers']();
-
-  return (
-    <div>
-      <CatalogHeader />
-      <CatalogFilterBar {...props} />
-      <Suspense fallback={<CatalogSkeleton />}>
-        <CatalogContent {...props} />
-      </Suspense>
-    </div>
-  );
+  const data = await api.catalog['list-models'](searchParams);
+  return <CatalogContent initialData={data} />;
 }
 
-// 2. Hook: Gestión de estado de búsqueda
+// 2. Hook: State management
 export function useDebouncedSearch(initialValue = '', debounceMs = 300) {
-  const [query, setQuery] = useState(initialValue);
-  const { updateQueryParams } = useQueryParams();
-
-  const debouncedUpdate = useDebouncedCallback((value: string) => {
-    startTransition(() => {
-      updateQueryParams({ q: value || null, page: null });
-    });
-  }, debounceMs);
-
-  return { query, handleSearchChange, handleClear, isPending };
+  // Logic here
+  return { query, handleSearchChange, handleClear };
 }
 
-// 3. Componente: UI y presentación
+// 3. Component: UI presentation
 export function CatalogSearch({ initialValue }: Props) {
   const { query, handleSearchChange } = useDebouncedSearch(initialValue);
-
-  return (
-    <Input
-      value={query}
-      onChange={e => handleSearchChange(e.target.value)}
-    />
-  );
+  return <Input value={query} onChange={handleSearchChange} />;
 }
 
-// 4. Utility: Lógica pura, sin side effects
-export function calculateTotalPages(total: number, itemsPerPage: number): number {
+// 4. Utility: Pure function
+export function calculateTotalPages(total: number, itemsPerPage: number) {
   return Math.ceil(total / itemsPerPage);
 }
 ```
 
 ### Open/Closed Principle (OCP)
 
-**✅ Patrón Correcto** (del codebase):
-
 ```typescript
-// Componente abierto a extensión, cerrado a modificación
+// ✅ Open for extension, closed for modification
 export function CatalogFilters({
   showControls = true,
   showBadges = true,
@@ -428,7 +235,6 @@ export function CatalogFilters({
   return (
     <>
       {showControls && <ManufacturerFilter {...props} />}
-      {showControls && <SortSelect {...props} />}
       {showBadges && <ActiveFilterBadges {...props} />}
       {showResultCount && <ResultCount total={totalResults} />}
     </>
@@ -436,90 +242,15 @@ export function CatalogFilters({
 }
 ```
 
-### Liskov Substitution Principle (LSP)
-
-**✅ Patrón Correcto** (del codebase):
-
-```typescript
-// Los componentes UI pueden ser reemplazados por sus variantes
-function Button({ variant = 'default', size = 'default', ...props }: ButtonProps) {
-  return (
-    <button className={cn(buttonVariants({ variant, size }))} {...props} />
-  );
-}
-
-// Uso: Todas las variantes son intercambiables
-<Button>Default</Button>
-<Button variant="outline">Outline</Button>
-<Button variant="ghost">Ghost</Button>
-```
-
-### Interface Segregation Principle (ISP)
-
-**✅ Patrón Correcto** (del codebase):
-
-```typescript
-// ❌ MAL: Interface genérica con props innecesarias
-type CatalogComponentProps = {
-  searchQuery?: string;
-  page?: number;
-  manufacturers?: Manufacturer[];
-  models?: Model[];
-  // ... muchos props más
-};
-
-// ✅ BIEN: Props específicas para cada componente
-type CatalogSearchProps = {
-  initialValue?: string;
-};
-
-type CatalogFiltersProps = {
-  manufacturers?: Array<{ id: string; name: string }>;
-  currentManufacturer?: string;
-  currentSort?: string;
-  showControls?: boolean;
-  showBadges?: boolean;
-};
-```
-
 ### Dependency Inversion Principle (DIP)
 
-**✅ Patrón Correcto** (del codebase):
-
 ```typescript
-// ❌ MAL: Componente depende directamente de Prisma
-function CatalogContent() {
-  const models = await prisma.model.findMany({...}); // ❌ Dependencia concreta
-  return <CatalogGrid models={models} />;
-}
-
-// ✅ BIEN: Componente depende de abstracción (tRPC procedure)
+// ✅ Depend on abstractions (tRPC procedure), not Prisma directly
 async function CatalogContent({ searchQuery, page }: Props) {
-  // Abstracción: tRPC procedure (no sabe si usa Prisma, fetch, cache, etc.)
-  const { items: models } = await api.catalog['list-models']({
-    search: searchQuery,
-    page,
-    limit: 20,
-  });
-
-  return <CatalogGrid models={models} />;
+  const { items } = await api.catalog['list-models']({ search: searchQuery, page });
+  return <CatalogGrid models={items} />;
 }
-
-// Hook personalizado: Abstracción sobre useSearchParams
-export function useQueryParams() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const updateQueryParams = useCallback((updates: Record<string, string | null>) => {
-    // ... lógica de actualización
-    router.replace(`${pathname}?${params.toString()}`);
-  }, [searchParams, router]);
-
-  return { updateQueryParams, getParam };
-}
-```
-
----
+```---
 
 ## Patrones de Atomic Design
 
@@ -559,229 +290,80 @@ export function useQueryParams() {
 
 ---
 
-## Mejores Prácticas para Crear Pages
+## Best Practices for Pages
 
-### Regla de Oro: Pages SIEMPRE como Server Components
-
-Las páginas (`page.tsx`) deben ser **Server Components** por defecto. Solo crea Client Components cuando absolutamente necesites interactividad en el nivel de página.
-
-### ✅ Patrón Recomendado: Server Page + Client Content
+### Pages MUST be Server Components by Default
 
 ```typescript
-// ✅ EXCELENTE: page.tsx como Server Component
-// src/app/(public)/catalog/page.tsx
-
-import type { Metadata } from 'next';
-import { CatalogPageContent } from './_components/catalog-page-content';
-
-// SEO: Metadata estática o dinámica
-export const metadata: Metadata = {
-  title: 'Catálogo de Productos',
-  description: 'Explora nuestro catálogo completo',
-};
-
-// Opcional: Configuración del segmento de ruta
-export const revalidate = 3600; // ISR: revalidar cada hora
+// ✅ Server Page + Client Content pattern
+export const metadata: Metadata = { title: 'Catálogo' };
+export const revalidate = 3600; // ISR
 
 export default async function CatalogPage({ searchParams }: Props) {
-  // Fetch de datos en el servidor (sin waterfalls)
-  const data = await api.catalog['list-models']({ ...searchParams });
-  
+  const data = await api.catalog['list-models'](searchParams);
   return <CatalogPageContent initialData={data} />;
 }
 ```
 
-```typescript
-// ✅ BIEN: Client Component solo para interactividad
-// src/app/(public)/catalog/_components/catalog-page-content.tsx
+**Configuration Options**:
+- Static (default): `export default async function Page() { }`
+- ISR: `export const revalidate = 3600;`
+- Dynamic: `export const dynamic = 'force-dynamic';`
 
-'use client';
-
-export function CatalogPageContent({ initialData }: Props) {
-  const [filters, setFilters] = useState({});
-  // Toda la lógica interactiva aquí
-  
-  return (
-    <div>
-      <CatalogFilters onChange={setFilters} />
-      <CatalogGrid items={initialData} />
-    </div>
-  );
-}
-```
-
-### ❌ Anti-patrón: Page como Client Component
-
-```typescript
-// ❌ MAL: Página completa como Client Component
-'use client';
-
-export default function CatalogPage() {
-  // ❌ Problemas:
-  // - Sin SEO (metadata no funciona en Client Components)
-  // - Bundle JavaScript más grande
-  // - Sin SSR/ISR benefits
-  // - Peor Core Web Vitals
-  
-  const [data, setData] = useState([]);
-  
-  return <div>...</div>;
-}
-```
-
-### Casos de Uso por Tipo de Página
-
-#### Páginas Públicas (SEO crítico)
-
-```typescript
-// ✅ SIEMPRE Server Component con metadata
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'Tu Título',
-  description: 'Tu descripción para SEO',
-  openGraph: {
-    title: 'Título OG',
-    description: 'Descripción OG',
-  },
-};
-
-// Opcional: Dynamic metadata
-export async function generateMetadata({ params }): Promise<Metadata> {
-  const product = await fetchProduct(params.id);
-  return {
-    title: product.name,
-    description: product.description,
-  };
-}
-
-export default async function PublicPage() {
-  return <PageContent />;
-}
-```
-
-#### Páginas con sessionStorage/localStorage
-
-```typescript
-// ✅ Server Component + force-dynamic
-export const dynamic = 'force-dynamic'; // No static generation
-
-export default function CartPage() {
-  // Page sigue siendo Server Component
-  // Client logic delegado a componente hijo
-  return <CartPageContent />;
-}
-```
-
-#### Páginas Privadas (Dashboard)
-
-```typescript
-// ✅ Server Component + data fetching
-export default async function DashboardPage() {
-  const session = await auth();
-  if (!session) redirect('/signin');
-  
-  const data = await fetchUserData(session.user.id);
-  
-  return <DashboardContent data={data} />;
-}
-```
-
-### Configuración de Route Segments
-
-```typescript
-// Static generation (default)
-export default async function Page() { ... }
-
-// ISR - Revalidar cada X segundos
-export const revalidate = 3600; // 1 hora
-
-// Dynamic - Siempre server-side render
-export const dynamic = 'force-dynamic';
-
-// Static con params dinámicos
-export async function generateStaticParams() {
-  return [{ id: '1' }, { id: '2' }];
-}
-```
-
-### Checklist para Crear una Page
-
-- [ ] ¿Es Server Component? (debe serlo por defecto)
-- [ ] ¿Tiene metadata para SEO? (si es pública)
-- [ ] ¿Usa `dynamic` o `revalidate` correctamente?
-- [ ] ¿Delega interactividad a Client Components?
-- [ ] ¿Hace fetch de datos en el servidor?
-- [ ] ¿Usa Suspense para streaming?
-
-### Beneficios de Server Components en Pages
-
-1. **SEO**: Metadata y contenido pre-renderizado
-2. **Performance**: Menor JavaScript, mejor FCP/LCP
-3. **Security**: Código sensible no llega al cliente
-4. **DX**: TypeScript end-to-end sin serialización
-5. **Cost**: Menos procesamiento en cliente
+**Checklist**:
+- [ ] Server Component by default
+- [ ] Metadata export (if public)
+- [ ] Delegates interactivity to Client Components
+- [ ] Server-side data fetching
+- [ ] Suspense for streaming
 
 ---
 
-## Estándares de Calidad de Código
+## Code Quality Standards
 
-### Mantenibilidad
+### Maintainability
+- Self-documenting code with clear names
+- Single Responsibility per function/component
+- Functions < 50 lines
 
-- **Código Autodocumentado**: Nombres claros y descriptivos
-- **Responsabilidad Única**: Funciones y componentes con un propósito claro
-- **Complejidad Limitada**: Funciones simples, máximo 50 líneas
+### Performance
+- Server Components by default
+- ISR for semi-static content: `export const revalidate = 3600`
+- Streaming with Suspense
+- Debounce for searches
 
-### Rendimiento
+### Security
+- Zod validation in tRPC procedures
+- Prisma ORM (prevents SQL injection)
+- NextAuth.js for protected routes
+- Security headers in `next.config.js`
 
-- **Server Components por defecto**: Client Components solo para interactividad
-- **ISR para contenido semi-estático**: `export const revalidate = 3600`
-- **Streaming con Suspense**: Carga progresiva de contenido
-- **Debounce en búsquedas**: Reduce requests innecesarios
+### Accessibility
+- Semantic HTML (`<button>`, `<nav>`)
+- ARIA attributes when needed
+- Keyboard navigation
+- WCAG AA color contrast
 
-### Seguridad
-
-- **Validación de inputs**: Zod schemas en tRPC procedures
-- **Queries parametrizadas**: Prisma ORM previene SQL injection
-- **Autenticación**: NextAuth.js para rutas protegidas
-- **Headers de seguridad**: Configurados en `next.config.js`
-
-### Accesibilidad
-
-- **Semantic HTML**: Elementos apropiados (`<button>`, `<nav>`)
-- **ARIA attributes**: Cuando sea necesario
-- **Keyboard navigation**: Todos los controles accesibles
-- **Color contrast**: Cumple WCAG AA
-
-### Testabilidad
-
-- **Código testeable**: Funciones puras, lógica separada de UI
-- **Tests aislados**: Unit tests independientes
-- **Coverage apropiado**: Prioriza lógica crítica
+### Testability
+- Pure functions, logic separated from UI
+- Isolated unit tests
+- Coverage for critical paths
 
 ---
 
-## Testing Strategy
+## Next.js Specific Rules
 
-### Unit Tests (Vitest)
+**Prohibited**:
+- ❌ `<img>` (use `<Image>` from `next/image`)
+- ❌ `<head>` (use `metadata` export)
+- ❌ `<a>` for internal navigation (use `<Link>`)
+- ❌ `useRouter` for simple navigation (use `<Link>`)
 
-## **Ubicación**: `tests/unit/`
-
-## Reglas Específicas de Next.js
-
-**Prohibido**:
-
-- ❌ `<img>` (usa `<Image>` de `next/image`)
-- ❌ `<head>` (usa `metadata` export)
-- ❌ `<a>` para navegación interna (usa `<Link>`)
-- ❌ `useRouter` para navegación simple (usa `<Link>`)
-
-**Preferido**:
-
-- ✅ Server Components por defecto
-- ✅ `<Link>` para navegación
-- ✅ `<Image>` para imágenes
-- ✅ ISR con `revalidate`
+**Preferred**:
+- ✅ Server Components by default
+- ✅ `<Link>` for navigation
+- ✅ `<Image>` for images
+- ✅ ISR with `revalidate`
 
 ---
 
@@ -796,45 +378,290 @@ export async function generateStaticParams() {
 - `pnpm test:e2e` - Run E2E tests with Playwright
 - `pnpm typecheck` - Check TypeScript types
 
-## Testing & Tooling
+---
 
-- Use Vitest for unit/contract/integration tests with jsdom and @testing-library/react.
-- Use Playwright for E2E tests. Start the Next.js dev server automatically in Playwright config.
-- Provide package.json scripts: `test`, `test:watch`, `test:ui`, `test:e2e`, `test:e2e:ui`.
-- Organize tests under `tests/{unit,contract,integration,perf}` and E2E under `e2e/`.
-- Ensure CI runs lint (Ultracite), typecheck (tsc), unit tests (Vitest) and E2E (Playwright) on PRs.
+## Role-Based Access Control (RBAC) Patterns
+
+### Authorization Layers
+
+Glasify implements **defense-in-depth authorization** with three layers:
+
+1. **Middleware Layer** (`src/middleware.ts`): Route-level protection
+2. **tRPC Layer** (`src/server/api/trpc.ts`): API procedure authorization
+3. **UI Layer** (`src/app/_components/`): Conditional rendering guards
+
+### User Roles
+
+- **admin**: Full system access (dashboard, models, all quotes, settings, users)
+- **seller**: Quote management + catalog (own quotes only, blocked from admin routes)
+- **user**: Catalog + own quotes (blocked from admin routes)
+
+### Common RBAC Patterns
+
+#### Pattern 1: Protect Admin Routes (Middleware)
+
+```typescript
+// src/middleware.ts
+export async function middleware(req: NextRequest) {
+  const session = await auth();
+  const { pathname } = req.nextUrl;
+
+  // Admin-only routes
+  const adminRoutes = ['/dashboard'];
+  if (adminRoutes.some(route => pathname.startsWith(route))) {
+    if (session?.user?.role !== 'admin') {
+      logger.warn('Unauthorized access attempt', { 
+        userId: session?.user?.id,
+        role: session?.user?.role,
+        path: pathname 
+      });
+      return NextResponse.redirect(new URL('/my-quotes', req.url));
+    }
+  }
+  
+  return NextResponse.next();
+}
+```
+
+#### Pattern 2: Admin-Only tRPC Procedure
+
+```typescript
+// src/server/api/routers/admin/admin.ts
+import { adminProcedure } from '../../trpc';
+
+export const adminRouter = router({
+  'create-model': adminProcedure
+    .input(createModelSchema)
+    .mutation(async ({ ctx, input }) => {
+      // Only admins can reach here
+      return await ctx.db.model.create({ data: input });
+    }),
+});
+```
+
+#### Pattern 3: Role-Based Data Filtering
+
+```typescript
+// src/server/api/routers/quote.ts
+import { getQuoteFilter } from '../../trpc';
+
+export const quoteRouter = router({
+  'list-user-quotes': protectedProcedure
+    .input(listQuotesSchema)
+    .query(async ({ ctx, input }) => {
+      const roleFilter = getQuoteFilter(ctx.session);
+      // Admin sees all, others see only own
+      return await ctx.db.quote.findMany({
+        where: { ...roleFilter, ...input.filters },
+      });
+    }),
+});
+```
+
+#### Pattern 4: Ownership Validation (Admin or Owner)
+
+```typescript
+// src/server/api/routers/quote.ts
+export const quoteRouter = router({
+  'get-by-id': protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const quote = await ctx.db.quote.findUnique({ where: { id: input.id } });
+      
+      const isOwner = quote?.userId === ctx.session.user.id;
+      const isAdmin = ctx.session.user.role === 'admin';
+      
+      if (!isOwner && !isAdmin) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'No tienes permiso para ver esta cotización',
+        });
+      }
+      
+      return quote;
+    }),
+});
+```
+
+#### Pattern 5: Conditional UI Rendering (Server Component)
+
+```typescript
+// src/app/(dashboard)/models/page.tsx
+import { AdminOnly } from '@/app/_components/admin-only';
+
+export default async function ModelsPage() {
+  return (
+    <div>
+      <h1>Modelos</h1>
+      
+      {/* Only admins see this button */}
+      <AdminOnly>
+        <Button>Crear Modelo</Button>
+      </AdminOnly>
+      
+      <ModelsList />
+    </div>
+  );
+}
+```
+
+#### Pattern 6: Role-Based Navigation
+
+```typescript
+// src/app/_components/role-based-nav.tsx
+export function getNavLinksForRole(role?: UserRole): NavLink[] {
+  switch (role) {
+    case 'admin':
+      return [
+        { href: '/dashboard', label: 'Dashboard' },
+        { href: '/dashboard/models', label: 'Modelos' },
+        { href: '/dashboard/quotes', label: 'Cotizaciones' },
+        { href: '/dashboard/users', label: 'Usuarios' },
+      ];
+    case 'seller':
+    case 'user':
+      return [
+        { href: '/my-quotes', label: 'Mis Cotizaciones' },
+        { href: '/catalog', label: 'Catálogo' },
+      ];
+    default:
+      return [
+        { href: '/catalog', label: 'Catálogo' },
+      ];
+  }
+}
+```
+
+### RBAC Helper Functions
+
+#### getQuoteFilter (Data Filtering)
+
+```typescript
+// src/server/api/trpc.ts
+export function getQuoteFilter(session: Session | null): Prisma.QuoteWhereInput {
+  if (!session?.user?.id) return { userId: 'impossible' };
+  if (session.user.role === 'admin') return {}; // Admin sees all
+  return { userId: session.user.id }; // Others see only own
+}
+```
+
+#### adminProcedure (tRPC Helper)
+
+```typescript
+// src/server/api/trpc.ts
+export const adminProcedure = protectedProcedure.use(async (opts) => {
+  const { ctx } = opts;
+  if (ctx.session.user.role !== 'admin') {
+    logger.warn('Non-admin attempted admin procedure', {
+      userId: ctx.session.user.id,
+      role: ctx.session.user.role,
+    });
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'No tienes permisos de administrador',
+    });
+  }
+  return opts.next({ ctx });
+});
+```
+
+#### sellerProcedure (tRPC Helper - Future)
+
+```typescript
+// src/server/api/trpc.ts
+export const sellerProcedure = protectedProcedure.use(async (opts) => {
+  const { ctx } = opts;
+  const allowedRoles: UserRole[] = ['admin', 'seller'];
+  if (!allowedRoles.includes(ctx.session.user.role)) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'No tienes permisos de vendedor',
+    });
+  }
+  return opts.next({ ctx });
+});
+```
+
+### RBAC Best Practices
+
+✅ **DO**:
+- Check authorization server-side (middleware, tRPC, Server Components)
+- Use `adminProcedure` for admin-only tRPC procedures
+- Use `getQuoteFilter` for role-based data filtering
+- Log authorization failures with Winston (server-side only)
+- Throw Spanish error messages for user feedback
+- Use Server Component guards for UI (not security)
+
+❌ **DON'T**:
+- Trust client-side authorization (UI guards are UX, not security)
+- Use Winston in Client Components (server-side only)
+- Forget to validate ownership in adminOrOwner procedures
+- Hard-code role checks (use helper functions)
+- Mix authorization with business logic (separate concerns)
+
+### RBAC Testing Patterns
+
+```typescript
+// Unit test: auth helpers
+describe('getQuoteFilter', () => {
+  it('returns empty filter for admin role', () => {
+    const session: MockSession = { user: { id: '1', role: 'admin' } };
+    expect(getQuoteFilter(session)).toEqual({});
+  });
+
+  it('returns userId filter for user role', () => {
+    const session: MockSession = { user: { id: '1', role: 'user' } };
+    expect(getQuoteFilter(session)).toEqual({ userId: '1' });
+  });
+});
+
+// E2E test: admin access
+test('should redirect admin to /dashboard after login', async ({ page }) => {
+  await page.goto('/signin');
+  await page.getByLabel(/email/i).fill(ADMIN_USER.email);
+  await page.getByLabel(/contraseña/i).fill(ADMIN_USER.password);
+  await page.getByRole('button', { name: /iniciar sesión/i }).click();
+  await page.waitForURL(/\/dashboard/);
+  expect(page.url()).toContain('/dashboard');
+});
+```
 
 ---
 
-## Resumen de Patrones Clave
+## Key Patterns Summary
 
-1. **Next.js 15**: Server Components por defecto, ISR, Streaming
-2. **Pages**: SIEMPRE Server Components, delegar interactividad a componentes hijos
-3. **Winston Logger**: Solo server-side (Server Components, Server Actions, API Routes, tRPC)
-4. **SEO**: Metadata en Server Components, `generateMetadata` para contenido dinámico
-5. **SOLID**: Responsabilidad única, composición, dependencias invertidas
+1. **Next.js 15**: Server Components by default, ISR, Streaming
+2. **Pages**: ALWAYS Server Components, delegate interactivity to children
+3. **Winston Logger**: Server-side ONLY (Server Components, Server Actions, API Routes, tRPC)
+4. **SEO**: Metadata in Server Components, `generateMetadata` for dynamic content
+5. **SOLID**: Single Responsibility, composition, inverted dependencies
 6. **Atomic Design**: atoms (ui/), molecules (components/), organisms (\_components/), templates (layout.tsx), pages (page.tsx)
-7. **tRPC**: Type-safe APIs con kebab-case naming
-8. **Prisma**: ORM con PostgreSQL, singleton client
-9. **Zod**: Validación de schemas end-to-end
-10. **Custom Hooks**: Lógica reutilizable separada de UI
+7. **tRPC**: Type-safe APIs with kebab-case naming
+8. **Prisma**: ORM with PostgreSQL, singleton client
+9. **Zod**: End-to-end schema validation
+10. **Custom Hooks**: Reusable logic separated from UI
 11. **Testing**: Vitest (unit/integration), Playwright (E2E)
-12. **Ultracite**: Linting y formateo con Biome
+12. **Ultracite**: Linting and formatting with Biome
+13. **RBAC**: Three-layer authorization (middleware, tRPC, UI guards)
 
 ---
 
-**Cuando generes código, SIEMPRE**:
+**When generating code, ALWAYS**:
 
-1. Detecta las versiones exactas del proyecto
-2. Sigue los patrones establecidos en el codebase
-3. **Crea pages como Server Components** (delega interactividad a Client Components)
-4. **No uses Winston logger en Client Components** (solo server-side)
-5. Aplica principios SOLID y Atomic Design
-6. Usa la estructura de carpetas de Next.js App Router
-7. Prioriza Server Components sobre Client Components
-8. Agrega metadata para SEO en páginas públicas
-9. Usa `dynamic` o `revalidate` según el caso de uso
-10. Escribe código testeable y bien documentado
-11. Usa español solo en UI text, todo lo demás en inglés
-12. No crees Barrels (index.ts) o archivos barriles en ningún lugar, de NINGÚN tipo
-13. Sigue las convenciones de naming y organización del proyecto
+1. Detect exact project versions
+2. Follow established codebase patterns
+3. **Create pages as Server Components** (delegate interactivity to Client Components)
+4. **Never use Winston logger in Client Components** (server-side only)
+5. **Apply RBAC patterns** (middleware, tRPC procedures, UI guards)
+6. **Use adminProcedure for admin-only APIs** (not manual role checks)
+7. **Use getQuoteFilter for data filtering** (role-based WHERE clauses)
+8. Apply SOLID principles and Atomic Design
+9. Use Next.js App Router folder structure
+10. Prioritize Server Components over Client Components
+11. Add metadata for SEO on public pages
+12. Use `dynamic` or `revalidate` according to use case
+13. Write testable and well-documented code
+14. Use Spanish only in UI text, everything else in English
+15. Never create Barrels (index.ts) or barrel files anywhere
+16. Follow project naming and organization conventions
+
