@@ -104,13 +104,13 @@ This feature is critical for:
 
 ## Risks & Mitigation
 
-| Risk | Impact | Likelihood | Mitigation |
-|------|--------|------------|------------|
-| Accidental deletion of catalog items with dependencies | High | Medium | Implement referential integrity checks; show dependency count before deletion; soft delete option |
-| Poor UX for complex forms (Glass Type with characteristics) | Medium | High | Use progressive disclosure; auto-save drafts; clear validation feedback |
-| Performance degradation with large catalogs | Medium | Low | Implement pagination; debounce search; index database queries |
-| Data migration complexity for existing catalogs | High | Low | Provide migration scripts; validate data integrity before deployment |
-| Concurrent edits causing conflicts | Low | Low | Last-write-wins; show last updated timestamp |
+| Risk                                                        | Impact | Likelihood | Mitigation                                                                                        |
+| ----------------------------------------------------------- | ------ | ---------- | ------------------------------------------------------------------------------------------------- |
+| Accidental deletion of catalog items with dependencies      | High   | Medium     | Implement referential integrity checks; show dependency count before deletion; soft delete option |
+| Poor UX for complex forms (Glass Type with characteristics) | Medium | High       | Use progressive disclosure; auto-save drafts; clear validation feedback                           |
+| Performance degradation with large catalogs                 | Medium | Low        | Implement pagination; debounce search; index database queries                                     |
+| Data migration complexity for existing catalogs             | High   | Low        | Provide migration scripts; validate data integrity before deployment                              |
+| Concurrent edits causing conflicts                          | Low    | Low        | Last-write-wins; show last updated timestamp                                                      |
 
 ## Open Questions
 
