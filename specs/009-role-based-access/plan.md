@@ -226,3 +226,182 @@ glasify-lite/
 ```
 
 **Structure Decision**: Web application structure with Next.js 15 App Router. Using route groups `(dashboard)` for admin and `(seller)` for seller to organize without affecting URLs. Server Components by default for all pages, with Client Components only for interactivity (forms, menus). All role authorization happens server-side (middleware + tRPC).
+
+---
+
+## Phase 0: Research Outcomes ✅
+
+**Status**: COMPLETE
+
+All technical unknowns have been resolved. See [research.md](./research.md) for detailed findings:
+
+1. ✅ **Next.js 15 Middleware Authorization**: Pattern defined with session-based role checks
+2. ✅ **tRPC Procedure Helpers**: `adminProcedure` and `sellerProcedure` patterns established
+3. ✅ **Prisma Enum Migration**: Safe migration strategy with rollback script
+4. ✅ **Server Component Guards**: `<AdminOnly>` and `<SellerOnly>` pattern defined
+5. ✅ **Role-Based Navigation**: Server-filtered links + Client Component pattern
+6. ✅ **Seller Role Strategy**: "Limited admin" with separate route group
+
+**Key Decisions**:
+- Authorization happens at 3 layers: Middleware (routes), tRPC (data), UI (UX)
+- Database enum with safe default (`user`)
+- Backward compatible with `ADMIN_EMAIL` environment variable
+- Server Components for zero client JavaScript in authorization logic
+
+---
+
+## Phase 1: Design & Contracts ✅
+
+**Status**: COMPLETE
+
+### Artifacts Created
+
+1. ✅ **[data-model.md](./data-model.md)**: User role entity model, relationships, and query patterns
+2. ✅ **[contracts/user-role-enum.contract.md](./contracts/user-role-enum.contract.md)**: Role enum definition and validation
+3. ✅ **[contracts/middleware-role-checks.contract.md](./contracts/middleware-role-checks.contract.md)**: Middleware authorization contract
+4. ✅ **[contracts/trpc-admin-procedures.contract.md](./contracts/trpc-admin-procedures.contract.md)**: tRPC procedure authorization contract
+5. ✅ **[quickstart.md](./quickstart.md)**: Developer guide with code examples
+
+### Constitution Check (Post-Design) ✅
+
+**Re-evaluation after Phase 1 design**:
+
+#### ✅ Single Responsibility Principle (SRP)
+- **Middleware**: ONLY route authorization
+- **tRPC Helpers**: ONLY API authorization
+- **Guard Components**: ONLY conditional rendering (no security logic)
+- **Database Migration**: ONLY schema changes
+
+**Verdict**: PASS - Each component has single, well-defined responsibility
+
+#### ✅ Open/Closed Principle (OCP)
+- Role system extensible: New roles added to enum without modifying existing code
+- Procedure helpers use middleware pattern (composable)
+- Guard components use composition (reusable)
+
+**Verdict**: PASS - System designed for extension, not modification
+
+#### ✅ Pragmatic Testing Discipline
+- Test plan includes:
+  - Unit: `auth-helpers.test.ts`, `middleware-role.test.ts`
+  - Integration: `trpc-admin-auth.test.ts`, `trpc-seller-filter.test.ts`
+  - Contract: `user-role-schema.test.ts`
+  - E2E: `admin-dashboard.spec.ts`, `seller-quotes.spec.ts`, `client-access.spec.ts`
+- Tests cover happy paths AND edge cases (self-demotion, session expiry, unauthorized access)
+
+**Verdict**: PASS - Comprehensive test coverage planned
+
+#### ✅ Server-First Architecture (Next.js 15)
+- All new pages are Server Components (`/dashboard/*`, `/quotes`)
+- Client Components ONLY for interactivity (forms, mobile menu toggle)
+- Metadata exports planned for admin pages
+- Pattern: Server Page + Client Content followed throughout
+
+**Verdict**: PASS - Server-First architecture maintained
+
+#### ✅ Observability & Versioning
+- Winston logger used ONLY in:
+  - Middleware (unauthorized access attempts)
+  - tRPC procedures (admin actions)
+  - Server Actions (role changes)
+- NO Winston in Client Components
+- Audit trail for security events
+
+**Verdict**: PASS - Logging properly scoped to server-side
+
+#### ✅ Technology & Compliance Requirements
+- No new dependencies added (uses existing stack)
+- Zod schemas for input validation
+- Authorization checks server-side
+- UI text in Spanish, code in English
+
+**Verdict**: PASS - Technology constraints respected
+
+#### ✅ Development Workflow & Quality Gates
+- Migration includes rollback script
+- TypeScript strict mode compliance
+- Conventional commits planned
+- CI gates addressed (lint, test, typecheck, E2E)
+
+**Verdict**: PASS - Workflow requirements met
+
+### Final Constitution Verdict: ✅ ALL CHECKS PASS
+
+No violations. No complexity tracking needed. Design adheres to all constitutional principles.
+
+---
+
+## Agent Context Update
+
+**Status**: PENDING (manual execution required)
+
+To update Copilot agent context with RBAC patterns:
+
+```bash
+cd /home/andres/Proyectos/glasify-lite
+bash .specify/scripts/bash/update-agent-context.sh copilot
+```
+
+This will add role-based patterns to `.github/copilot-instructions.md` for future code generation.
+
+---
+
+## Phase 2: Task Breakdown
+
+**Status**: NOT STARTED (requires `/speckit.tasks` command)
+
+The next command to run is:
+
+```bash
+/speckit.tasks
+```
+
+This will generate `tasks.md` with granular implementation tasks based on this plan.
+
+---
+
+## Summary
+
+### Completed Phases
+
+- ✅ **Phase 0 (Research)**: All technical decisions made, patterns defined
+- ✅ **Phase 1 (Design & Contracts)**: Data model, API contracts, and quickstart guide created
+- ✅ **Constitution Check**: All principles validated, no violations
+
+### Pending Phases
+
+- ⏳ **Agent Context Update**: Run update script manually
+- ⏳ **Phase 2 (Tasks)**: Run `/speckit.tasks` to generate implementation tasks
+
+### Artifacts Summary
+
+| Artifact                        | Status | Location                                                 |
+| ------------------------------- | ------ | -------------------------------------------------------- |
+| Feature Specification           | ✅ DONE | `specs/009-role-based-access/spec.md`                    |
+| Specification Checklist         | ✅ DONE | `specs/009-role-based-access/checklists/requirements.md` |
+| Implementation Plan (this file) | ✅ DONE | `specs/009-role-based-access/plan.md`                    |
+| Research Document               | ✅ DONE | `specs/009-role-based-access/research.md`                |
+| Data Model                      | ✅ DONE | `specs/009-role-based-access/data-model.md`              |
+| API Contracts (3 files)         | ✅ DONE | `specs/009-role-based-access/contracts/*.contract.md`    |
+| Quickstart Guide                | ✅ DONE | `specs/009-role-based-access/quickstart.md`              |
+| Task Breakdown                  | ⏳ TODO | `specs/009-role-based-access/tasks.md`                   |
+
+---
+
+## Next Steps for Developer
+
+1. **Review all artifacts** in `specs/009-role-based-access/`
+2. **Run agent context update** (if using Copilot)
+3. **Run `/speckit.tasks`** to generate implementation tasks
+4. **Begin implementation** following tasks.md priority order
+5. **Run tests** as features are completed
+6. **Update CHANGELOG.md** before merge
+
+---
+
+## Feature Readiness
+
+**Planning Phase**: ✅ COMPLETE  
+**Implementation Phase**: Ready to start with `/speckit.tasks`
+
+All design decisions made, contracts defined, and patterns established. Feature is ready for task breakdown and implementation.
