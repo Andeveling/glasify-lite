@@ -44,10 +44,12 @@ Glasify Lite now has a production-ready **Role-Based Access Control (RBAC)** sys
 - **Tenant Settings**: Configuration management (admin-only)
 
 #### ✅ Seller Access Control (Phase 4)
-- **Own Quotes Only**: Data filtering prevents seeing other users' quotes
+- **All Quotes Access**: Sellers can view all customer quotes (same as admin)
+- **User Database Access**: Sellers can view all users in the system
+- **Dashboard Routes**: Access to `/dashboard/quotes` and `/dashboard/users`
 - **Catalog Access**: Full catalog browsing enabled
-- **Quote Management**: Create, edit, delete own quotes
-- **Admin Routes Blocked**: Middleware redirects to `/my-quotes`
+- **Quote Management**: Create, edit, delete any quote
+- **Admin Routes Blocked**: `/dashboard/models` and `/dashboard/settings` restricted (admin-only)
 
 #### ✅ Client Access (Phase 5)
 - **Public Catalog**: No authentication required for browsing
@@ -141,7 +143,7 @@ Glasify Lite now has a production-ready **Role-Based Access Control (RBAC)** sys
 ### Security Guarantees
 
 ✅ **Server-Side Only**: All authorization checks happen server-side  
-✅ **Data Isolation**: Non-admins cannot access other users' data  
+✅ **Data Isolation**: Regular users cannot access other users' data (sellers/admins see all)  
 ✅ **Audit Logging**: Winston logs all unauthorized access attempts  
 ✅ **Spanish Errors**: User-friendly error messages in Spanish  
 ✅ **Session-Based**: Role stored securely in NextAuth session  
@@ -150,6 +152,7 @@ Glasify Lite now has a production-ready **Role-Based Access Control (RBAC)** sys
 - Role changes require logout/login (session cache)
 - UI guards are UX only (not security)
 - Single admin per deployment (MVP)
+- Sellers cannot modify roles (admin-only action)
 
 ---
 
@@ -164,17 +167,19 @@ Glasify Lite now has a production-ready **Role-Based Access Control (RBAC)** sys
 
 ### Role Coverage Matrix
 
-| Feature              | Admin | Seller | User | Guest |
-| -------------------- | ----- | ------ | ---- | ----- |
-| `/catalog` (view)    | ✅     | ✅      | ✅    | ✅     |
-| `/my-quotes` (own)   | ✅     | ✅      | ✅    | ❌     |
-| `/dashboard` (admin) | ✅     | ❌      | ❌    | ❌     |
-| `/dashboard/models`  | ✅     | ❌      | ❌    | ❌     |
-| `/dashboard/quotes`  | ✅     | ❌      | ❌    | ❌     |
-| `/dashboard/users`   | ✅     | ❌      | ❌    | ❌     |
-| View all quotes      | ✅     | ❌      | ❌    | ❌     |
-| Create model         | ✅     | ❌      | ❌    | ❌     |
-| Update user roles    | ✅     | ❌      | ❌    | ❌     |
+| Feature               | Admin | Seller | User | Guest |
+| --------------------- | ----- | ------ | ---- | ----- |
+| `/catalog` (view)     | ✅     | ✅      | ✅    | ✅     |
+| `/my-quotes` (own)    | ✅     | ✅      | ✅    | ❌     |
+| `/dashboard/quotes`   | ✅     | ✅      | ❌    | ❌     |
+| `/dashboard/users`    | ✅     | ✅      | ❌    | ❌     |
+| `/dashboard/models`   | ✅     | ❌      | ❌    | ❌     |
+| `/dashboard/settings` | ✅     | ❌      | ❌    | ❌     |
+| View all quotes       | ✅     | ✅      | ❌    | ❌     |
+| View all users        | ✅     | ✅      | ❌    | ❌     |
+| Create model          | ✅     | ❌      | ❌    | ❌     |
+| Update user roles     | ✅     | ❌      | ❌    | ❌     |
+| Modify settings       | ✅     | ❌      | ❌    | ❌     |
 
 ---
 

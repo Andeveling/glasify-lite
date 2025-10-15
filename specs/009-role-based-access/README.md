@@ -42,9 +42,9 @@
 ## Arquitectura de 3 Capas
 
 ```
-1. Middleware → Protección de rutas /dashboard/*
-2. tRPC → adminProcedure, getQuoteFilter (data isolation)
-3. UI Guards → <AdminOnly>, <RoleBasedNav> (UX only)
+1. Middleware → Protección de rutas /dashboard/* (admin-only: models, settings | seller/admin: quotes, users)
+2. tRPC → adminProcedure, sellerOrAdminProcedure, getQuoteFilter (data isolation)
+3. UI Guards → <AdminOnly>, <SellerOrAdminOnly> (UX only)
 ```
 
 ## Tests
@@ -57,12 +57,12 @@
 
 ## Roles
 
-| Rol        | Dashboard | Modelos | Todas las Cotizaciones | Mis Cotizaciones | Catálogo |
-| ---------- | --------- | ------- | ---------------------- | ---------------- | -------- |
-| **admin**  | ✅         | ✅       | ✅                      | ✅                | ✅        |
-| **seller** | ❌         | ❌       | ❌                      | ✅                | ✅        |
-| **user**   | ❌         | ❌       | ❌                      | ✅                | ✅        |
-| **guest**  | ❌         | ❌       | ❌                      | ❌                | ✅        |
+| Rol        | Dashboard | Modelos | Todas las Cotizaciones | Mis Cotizaciones | Usuarios | Catálogo |
+| ---------- | --------- | ------- | ---------------------- | ---------------- | -------- | -------- |
+| **admin**  | ✅         | ✅       | ✅                      | ✅                | ✅        | ✅        |
+| **seller** | ❌         | ❌       | ✅                      | ✅                | ✅        | ✅        |
+| **user**   | ❌         | ❌       | ❌                      | ✅                | ❌        | ✅        |
+| **guest**  | ❌         | ❌       | ❌                      | ❌                | ❌        | ✅        |
 
 ---
 
