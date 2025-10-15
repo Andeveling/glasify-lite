@@ -72,9 +72,7 @@ describe('tRPC Admin Procedures Authorization', () => {
 
       // ACT: Simulate error message generation
       const isAuthorized = checkAdminAccess(userRole);
-      const errorMessage = isAuthorized
-        ? null
-        : 'Acceso denegado. Se requiere rol de administrador.';
+      const errorMessage = isAuthorized ? null : 'Acceso denegado. Se requiere rol de administrador.';
 
       // ASSERT: Should return Spanish error
       expect(errorMessage).toBe('Acceso denegado. Se requiere rol de administrador.');
@@ -90,9 +88,8 @@ describe('tRPC Admin Procedures Authorization', () => {
       const targetRole: UserRole = 'user';
 
       // ACT: Simulate business rule check
-      const isSelfDemotion = checkUserMatch(currentUserId, targetUserId) && 
-                             checkAdminAccess(currentRole) && 
-                             !checkAdminAccess(targetRole);
+      const isSelfDemotion =
+        checkUserMatch(currentUserId, targetUserId) && checkAdminAccess(currentRole) && !checkAdminAccess(targetRole);
       const shouldThrowForbidden = isSelfDemotion;
 
       // ASSERT: Should prevent self-demotion
@@ -108,9 +105,8 @@ describe('tRPC Admin Procedures Authorization', () => {
       const targetRole: UserRole = 'user';
 
       // ACT: Simulate business rule check
-      const isSelfDemotion = checkUserMatch(currentUserId, targetUserId) && 
-                             checkAdminAccess(currentRole) && 
-                             !checkAdminAccess(targetRole);
+      const isSelfDemotion =
+        checkUserMatch(currentUserId, targetUserId) && checkAdminAccess(currentRole) && !checkAdminAccess(targetRole);
       const shouldAllow = !isSelfDemotion;
 
       // ASSERT: Should allow demotion of others
@@ -126,9 +122,8 @@ describe('tRPC Admin Procedures Authorization', () => {
       const targetRole: UserRole = 'admin';
 
       // ACT: Simulate business rule check
-      const isSelfDemotion = checkUserMatch(currentUserId, targetUserId) && 
-                             checkAdminAccess(currentRole) && 
-                             !checkAdminAccess(targetRole);
+      const isSelfDemotion =
+        checkUserMatch(currentUserId, targetUserId) && checkAdminAccess(currentRole) && !checkAdminAccess(targetRole);
       const shouldAllow = !isSelfDemotion;
 
       // ASSERT: Should allow (no-op update)
@@ -141,9 +136,7 @@ describe('tRPC Admin Procedures Authorization', () => {
       const isSelfDemotion = true;
 
       // ACT: Generate error message
-      const errorMessage = isSelfDemotion
-        ? 'No puedes cambiar tu propio rol de administrador.'
-        : null;
+      const errorMessage = isSelfDemotion ? 'No puedes cambiar tu propio rol de administrador.' : null;
 
       // ASSERT: Should return Spanish error
       expect(errorMessage).toBe('No puedes cambiar tu propio rol de administrador.');
@@ -189,10 +182,10 @@ describe('tRPC Admin Procedures Authorization', () => {
         ? {
             level: 'warn',
             message: 'Unauthorized admin procedure access attempt',
-            role: userRole,
-            userId: userId,
             procedure: attemptedProcedure,
+            role: userRole,
             timestamp: expect.any(String),
+            userId,
           }
         : null;
 
@@ -205,7 +198,7 @@ describe('tRPC Admin Procedures Authorization', () => {
 
     it('should not log successful admin procedure access', () => {
       // ARRANGE: Admin user calling admin procedure
-      const userId = 'admin-123';
+      const _userId = 'admin-123';
       const userRole: UserRole = 'admin';
 
       // ACT: Simulate log check

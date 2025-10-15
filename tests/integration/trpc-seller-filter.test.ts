@@ -26,9 +26,9 @@ describe('tRPC Seller Data Filtering', () => {
       // ARRANGE: Admin user session
       const session: MockSession = {
         user: {
+          email: 'admin@example.com',
           id: 'admin-123',
           role: 'admin',
-          email: 'admin@example.com',
         },
       };
 
@@ -43,9 +43,9 @@ describe('tRPC Seller Data Filtering', () => {
       // ARRANGE: Seller user session
       const session: MockSession = {
         user: {
+          email: 'seller@example.com',
           id: 'seller-123',
           role: 'seller',
-          email: 'seller@example.com',
         },
       };
 
@@ -60,9 +60,9 @@ describe('tRPC Seller Data Filtering', () => {
       // ARRANGE: Regular user session
       const session: MockSession = {
         user: {
+          email: 'user@example.com',
           id: 'user-123',
           role: 'user',
-          email: 'user@example.com',
         },
       };
 
@@ -76,10 +76,10 @@ describe('tRPC Seller Data Filtering', () => {
     it('should apply different filters for different sellers', () => {
       // ARRANGE: Two different sellers
       const seller1: MockSession = {
-        user: { id: 'seller-1', role: 'seller', email: 'seller1@example.com' },
+        user: { email: 'seller1@example.com', id: 'seller-1', role: 'seller' },
       };
       const seller2: MockSession = {
-        user: { id: 'seller-2', role: 'seller', email: 'seller2@example.com' },
+        user: { email: 'seller2@example.com', id: 'seller-2', role: 'seller' },
       };
 
       // ACT: Generate filters for both
@@ -97,9 +97,9 @@ describe('tRPC Seller Data Filtering', () => {
     it('should allow access when user owns the quote', () => {
       // ARRANGE: Quote owned by user
       const session: MockSession = {
-        user: { id: 'user-123', role: 'user', email: 'user@example.com' },
+        user: { email: 'user@example.com', id: 'user-123', role: 'user' },
       };
-      const quote = { id: 'quote-1', userId: 'user-123', total: 1000 };
+      const quote = { id: 'quote-1', total: 1000, userId: 'user-123' };
 
       // ACT: Simulate ownership check
       const isOwner = quote.userId === session.user.id;
@@ -114,9 +114,9 @@ describe('tRPC Seller Data Filtering', () => {
     it('should allow access when user is admin (regardless of ownership)', () => {
       // ARRANGE: Quote owned by someone else, but user is admin
       const session: MockSession = {
-        user: { id: 'admin-123', role: 'admin', email: 'admin@example.com' },
+        user: { email: 'admin@example.com', id: 'admin-123', role: 'admin' },
       };
-      const quote = { id: 'quote-1', userId: 'user-456', total: 1000 };
+      const quote = { id: 'quote-1', total: 1000, userId: 'user-456' };
 
       // ACT: Simulate ownership check
       const isOwner = quote.userId === session.user.id;
@@ -132,9 +132,9 @@ describe('tRPC Seller Data Filtering', () => {
     it('should deny access when user does not own the quote and is not admin', () => {
       // ARRANGE: Quote owned by someone else, user is regular user
       const session: MockSession = {
-        user: { id: 'user-123', role: 'user', email: 'user@example.com' },
+        user: { email: 'user@example.com', id: 'user-123', role: 'user' },
       };
-      const quote = { id: 'quote-1', userId: 'user-456', total: 1000 };
+      const quote = { id: 'quote-1', total: 1000, userId: 'user-456' };
 
       // ACT: Simulate ownership check
       const isOwner = quote.userId === session.user.id;
@@ -150,9 +150,9 @@ describe('tRPC Seller Data Filtering', () => {
     it('should deny access when seller tries to access another sellers quote', () => {
       // ARRANGE: Quote owned by seller-2, requested by seller-1
       const session: MockSession = {
-        user: { id: 'seller-1', role: 'seller', email: 'seller1@example.com' },
+        user: { email: 'seller1@example.com', id: 'seller-1', role: 'seller' },
       };
-      const quote = { id: 'quote-1', userId: 'seller-2', total: 1000 };
+      const quote = { id: 'quote-1', total: 1000, userId: 'seller-2' };
 
       // ACT: Simulate ownership check
       const isOwner = quote.userId === session.user.id;
@@ -171,9 +171,7 @@ describe('tRPC Seller Data Filtering', () => {
 
       // ACT: Generate error message
       const errorCode = canAccess ? null : 'FORBIDDEN';
-      const errorMessage = canAccess
-        ? null
-        : 'No tienes permiso para ver esta cotización.';
+      const errorMessage = canAccess ? null : 'No tienes permiso para ver esta cotización.';
 
       // ASSERT: Should return Spanish error
       expect(errorCode).toBe('FORBIDDEN');
@@ -185,9 +183,9 @@ describe('tRPC Seller Data Filtering', () => {
     it('should handle null/undefined quote userId gracefully', () => {
       // ARRANGE: Quote with missing userId (corrupt data)
       const session: MockSession = {
-        user: { id: 'user-123', role: 'user', email: 'user@example.com' },
+        user: { email: 'user@example.com', id: 'user-123', role: 'user' },
       };
-      const quote = { id: 'quote-1', userId: null as unknown as string, total: 1000 };
+      const quote = { id: 'quote-1', total: 1000, userId: null as unknown as string };
 
       // ACT: Simulate ownership check
       const isOwner = quote.userId === session.user.id;
@@ -202,7 +200,7 @@ describe('tRPC Seller Data Filtering', () => {
     it('should apply filter consistently across multiple calls', () => {
       // ARRANGE: Seller making multiple requests
       const session: MockSession = {
-        user: { id: 'seller-123', role: 'seller', email: 'seller@example.com' },
+        user: { email: 'seller@example.com', id: 'seller-123', role: 'seller' },
       };
 
       // ACT: Generate filter multiple times

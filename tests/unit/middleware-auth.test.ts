@@ -4,9 +4,7 @@
  * Reference: T041 [P] Create unit test: middleware authorization logic
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
+import { describe, expect, it } from 'vitest';
 
 /**
  * Route access matrix for testing
@@ -21,13 +19,13 @@ const routeAccessMatrix = {
     allowed: ['/quotes', '/my-quotes', '/catalog'],
     blocked: ['/dashboard', '/dashboard/models', '/dashboard/quotes'],
   },
-  user: {
-    allowed: ['/my-quotes', '/catalog'],
-    blocked: ['/dashboard', '/quotes'],
-  },
   unauthenticated: {
     allowed: ['/catalog', '/signin'],
     blocked: ['/dashboard', '/quotes', '/my-quotes'],
+  },
+  user: {
+    allowed: ['/my-quotes', '/catalog'],
+    blocked: ['/dashboard', '/quotes'],
   },
 };
 
@@ -43,15 +41,15 @@ const expectedRedirects = {
     '/dashboard/models': '/my-quotes',
     '/signin': '/auth/callback',
   },
+  unauthenticated: {
+    '/dashboard': '/signin?callbackUrl=%2Fdashboard',
+    '/my-quotes': '/signin?callbackUrl=%2Fmy-quotes',
+    '/quotes': '/signin?callbackUrl=%2Fquotes',
+  },
   user: {
     '/dashboard': '/my-quotes',
     '/quotes': '/my-quotes',
     '/signin': '/auth/callback',
-  },
-  unauthenticated: {
-    '/dashboard': '/signin?callbackUrl=%2Fdashboard',
-    '/quotes': '/signin?callbackUrl=%2Fquotes',
-    '/my-quotes': '/signin?callbackUrl=%2Fmy-quotes',
   },
 };
 
@@ -59,7 +57,7 @@ describe('Middleware Authorization Logic', () => {
   describe('Route Access Matrix', () => {
     it('admin can access all protected routes', () => {
       const adminRoutes = routeAccessMatrix.admin;
-      
+
       expect(adminRoutes.allowed).toContain('/dashboard');
       expect(adminRoutes.allowed).toContain('/dashboard/models');
       expect(adminRoutes.allowed).toContain('/dashboard/quotes');
@@ -70,7 +68,7 @@ describe('Middleware Authorization Logic', () => {
 
     it('seller can access seller routes but not admin routes', () => {
       const sellerRoutes = routeAccessMatrix.seller;
-      
+
       expect(sellerRoutes.allowed).toContain('/quotes');
       expect(sellerRoutes.allowed).toContain('/my-quotes');
       expect(sellerRoutes.blocked).toContain('/dashboard');
@@ -79,7 +77,7 @@ describe('Middleware Authorization Logic', () => {
 
     it('user can access own quotes but not admin or seller routes', () => {
       const userRoutes = routeAccessMatrix.user;
-      
+
       expect(userRoutes.allowed).toContain('/my-quotes');
       expect(userRoutes.blocked).toContain('/dashboard');
       expect(userRoutes.blocked).toContain('/quotes');
@@ -87,7 +85,7 @@ describe('Middleware Authorization Logic', () => {
 
     it('unauthenticated users can only access public routes', () => {
       const publicRoutes = routeAccessMatrix.unauthenticated;
-      
+
       expect(publicRoutes.allowed).toContain('/catalog');
       expect(publicRoutes.allowed).toContain('/signin');
       expect(publicRoutes.blocked).toContain('/dashboard');
@@ -147,12 +145,7 @@ describe('Middleware Authorization Logic', () => {
     });
 
     it('identifies protected routes correctly', () => {
-      const protectedPaths = [
-        '/dashboard',
-        '/quotes',
-        '/quote/123',
-        '/my-quotes',
-      ];
+      const protectedPaths = ['/dashboard', '/quotes', '/quote/123', '/my-quotes'];
       const publicPaths = ['/catalog', '/signin', '/'];
 
       for (const path of protectedPaths) {

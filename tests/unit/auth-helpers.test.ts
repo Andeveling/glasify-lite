@@ -37,13 +37,13 @@ function getQuoteFilter(session: MockSession) {
 describe('getQuoteFilter', () => {
   it('returns empty object for admin role (sees all quotes)', () => {
     const session: MockSession = {
+      expires: new Date(Date.now() + 86_400_000).toISOString(),
       user: {
+        email: 'admin@example.com',
         id: 'admin-id',
         name: 'Admin User',
-        email: 'admin@example.com',
         role: 'admin',
       },
-      expires: new Date(Date.now() + 86400000).toISOString(),
     };
 
     const filter = getQuoteFilter(session);
@@ -53,13 +53,13 @@ describe('getQuoteFilter', () => {
 
   it('returns userId filter for seller role (sees only own quotes)', () => {
     const session: MockSession = {
+      expires: new Date(Date.now() + 86_400_000).toISOString(),
       user: {
+        email: 'seller@example.com',
         id: 'seller-id',
         name: 'Seller User',
-        email: 'seller@example.com',
         role: 'seller',
       },
-      expires: new Date(Date.now() + 86400000).toISOString(),
     };
 
     const filter = getQuoteFilter(session);
@@ -69,13 +69,13 @@ describe('getQuoteFilter', () => {
 
   it('returns userId filter for user role (sees only own quotes)', () => {
     const session: MockSession = {
+      expires: new Date(Date.now() + 86_400_000).toISOString(),
       user: {
+        email: 'user@example.com',
         id: 'user-id',
         name: 'Regular User',
-        email: 'user@example.com',
         role: 'user',
       },
-      expires: new Date(Date.now() + 86400000).toISOString(),
     };
 
     const filter = getQuoteFilter(session);
@@ -85,23 +85,23 @@ describe('getQuoteFilter', () => {
 
   it('handles different admin user IDs correctly', () => {
     const session1: MockSession = {
+      expires: new Date(Date.now() + 86_400_000).toISOString(),
       user: {
+        email: 'admin1@example.com',
         id: 'admin-1',
         name: 'Admin One',
-        email: 'admin1@example.com',
         role: 'admin',
       },
-      expires: new Date(Date.now() + 86400000).toISOString(),
     };
 
     const session2: MockSession = {
+      expires: new Date(Date.now() + 86_400_000).toISOString(),
       user: {
+        email: 'admin2@example.com',
         id: 'admin-2',
         name: 'Admin Two',
-        email: 'admin2@example.com',
         role: 'admin',
       },
-      expires: new Date(Date.now() + 86400000).toISOString(),
     };
 
     expect(getQuoteFilter(session1)).toEqual({});
@@ -110,23 +110,23 @@ describe('getQuoteFilter', () => {
 
   it('handles different seller user IDs correctly', () => {
     const session1: MockSession = {
+      expires: new Date(Date.now() + 86_400_000).toISOString(),
       user: {
+        email: 'seller1@example.com',
         id: 'seller-1',
         name: 'Seller One',
-        email: 'seller1@example.com',
         role: 'seller',
       },
-      expires: new Date(Date.now() + 86400000).toISOString(),
     };
 
     const session2: MockSession = {
+      expires: new Date(Date.now() + 86_400_000).toISOString(),
       user: {
+        email: 'seller2@example.com',
         id: 'seller-2',
         name: 'Seller Two',
-        email: 'seller2@example.com',
         role: 'seller',
       },
-      expires: new Date(Date.now() + 86400000).toISOString(),
     };
 
     expect(getQuoteFilter(session1)).toEqual({ userId: 'seller-1' });

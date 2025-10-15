@@ -15,8 +15,8 @@ import { z } from 'zod';
 const UserRoleEnum = z.enum(['admin', 'seller', 'user']);
 
 const updateUserRoleInput = z.object({
-  userId: z.string().cuid({ message: 'ID de usuario inválido.' }),
   role: UserRoleEnum,
+  userId: z.string().cuid({ message: 'ID de usuario inválido.' }),
 });
 
 const listUsersInput = z.object({
@@ -25,11 +25,11 @@ const listUsersInput = z.object({
 });
 
 const userOutput = z.object({
+  email: z.string(),
   id: z.string(),
   name: z.string().nullable(),
-  email: z.string(),
-  role: UserRoleEnum,
   quoteCount: z.number().int().nonnegative(),
+  role: UserRoleEnum,
 });
 
 const listUsersOutput = z.array(userOutput);
@@ -99,8 +99,8 @@ describe('Contract Test - UserRole Schemas', () => {
   describe('updateUserRoleInput Schema', () => {
     it('should accept valid input', () => {
       const validInput = {
-        userId: 'clx1234567890abcdefghi',
         role: 'admin' as const,
+        userId: 'clx1234567890abcdefghi',
       };
 
       const result = updateUserRoleInput.safeParse(validInput);
@@ -116,7 +116,7 @@ describe('Contract Test - UserRole Schemas', () => {
       const roles = ['admin', 'seller', 'user'] as const;
 
       for (const role of roles) {
-        const input = { userId: 'clx1234567890abcdefghi', role };
+        const input = { role, userId: 'clx1234567890abcdefghi' };
         const result = updateUserRoleInput.safeParse(input);
 
         expect(result.success).toBe(true);
@@ -128,8 +128,8 @@ describe('Contract Test - UserRole Schemas', () => {
 
     it('should reject invalid userId format', () => {
       const invalidInput = {
-        userId: 'not-a-cuid',
         role: 'admin' as const,
+        userId: 'not-a-cuid',
       };
 
       const result = updateUserRoleInput.safeParse(invalidInput);
@@ -143,8 +143,8 @@ describe('Contract Test - UserRole Schemas', () => {
 
     it('should reject invalid role', () => {
       const invalidInput = {
-        userId: 'clx1234567890abcdefghi',
         role: 'superadmin',
+        userId: 'clx1234567890abcdefghi',
       };
 
       const result = updateUserRoleInput.safeParse(invalidInput);
@@ -231,11 +231,11 @@ describe('Contract Test - UserRole Schemas', () => {
   describe('userOutput Schema', () => {
     it('should validate complete user output', () => {
       const validOutput = {
+        email: 'john@example.com',
         id: 'clx1234567890abcdefghi',
         name: 'John Doe',
-        email: 'john@example.com',
-        role: 'seller' as const,
         quoteCount: 5,
+        role: 'seller' as const,
       };
 
       const result = userOutput.safeParse(validOutput);
@@ -250,11 +250,11 @@ describe('Contract Test - UserRole Schemas', () => {
 
     it('should accept null name', () => {
       const validOutput = {
+        email: 'john@example.com',
         id: 'clx1234567890abcdefghi',
         name: null,
-        email: 'john@example.com',
-        role: 'user' as const,
         quoteCount: 0,
+        role: 'user' as const,
       };
 
       const result = userOutput.safeParse(validOutput);
@@ -267,11 +267,11 @@ describe('Contract Test - UserRole Schemas', () => {
 
     it('should accept zero quote count', () => {
       const validOutput = {
+        email: 'jane@example.com',
         id: 'clx1234567890abcdefghi',
         name: 'Jane Doe',
-        email: 'jane@example.com',
-        role: 'user' as const,
         quoteCount: 0,
+        role: 'user' as const,
       };
 
       const result = userOutput.safeParse(validOutput);
@@ -284,11 +284,11 @@ describe('Contract Test - UserRole Schemas', () => {
 
     it('should reject negative quote count', () => {
       const invalidOutput = {
+        email: 'john@example.com',
         id: 'clx1234567890abcdefghi',
         name: 'John Doe',
-        email: 'john@example.com',
-        role: 'seller' as const,
         quoteCount: -1,
+        role: 'seller' as const,
       };
 
       const result = userOutput.safeParse(invalidOutput);
@@ -298,11 +298,11 @@ describe('Contract Test - UserRole Schemas', () => {
 
     it('should reject decimal quote count', () => {
       const invalidOutput = {
+        email: 'john@example.com',
         id: 'clx1234567890abcdefghi',
         name: 'John Doe',
-        email: 'john@example.com',
-        role: 'seller' as const,
         quoteCount: 2.5,
+        role: 'seller' as const,
       };
 
       const result = userOutput.safeParse(invalidOutput);
@@ -312,8 +312,8 @@ describe('Contract Test - UserRole Schemas', () => {
 
     it('should reject missing required fields', () => {
       const invalidOutput = {
-        id: 'clx1234567890abcdefghi',
         email: 'john@example.com',
+        id: 'clx1234567890abcdefghi',
         // Missing: name, role, quoteCount
       };
 
@@ -327,18 +327,18 @@ describe('Contract Test - UserRole Schemas', () => {
     it('should validate array of users', () => {
       const validOutput = [
         {
+          email: 'admin@example.com',
           id: 'user-1',
           name: 'Admin User',
-          email: 'admin@example.com',
-          role: 'admin' as const,
           quoteCount: 10,
+          role: 'admin' as const,
         },
         {
+          email: 'seller@example.com',
           id: 'user-2',
           name: 'Seller User',
-          email: 'seller@example.com',
-          role: 'seller' as const,
           quoteCount: 5,
+          role: 'seller' as const,
         },
       ];
 
@@ -366,11 +366,11 @@ describe('Contract Test - UserRole Schemas', () => {
     it('should reject array with invalid user object', () => {
       const invalidOutput = [
         {
+          email: 'admin@example.com',
           id: 'user-1',
           name: 'Admin User',
-          email: 'admin@example.com',
-          role: 'admin' as const,
           quoteCount: 10,
+          role: 'admin' as const,
         },
         {
           id: 'user-2',

@@ -121,7 +121,7 @@ export default function QuoteDetailLoading() {
 
                 {/* Specs */}
                 <div className="space-y-2">
-                  {[...new Array(3)].map((unused, specItemIndex) => (
+                  {[...new Array(3)].map((_unused, specItemIndex) => (
                     <div
                       className="relative h-4 overflow-hidden rounded bg-muted"
                       key={specItemIndex}
