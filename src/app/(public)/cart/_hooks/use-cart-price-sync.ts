@@ -95,10 +95,12 @@ export function useCartPriceSync({ items, onPriceUpdate, debounceMs = 500, enabl
           glassTypeId: item.glassTypeId,
           heightMm: item.heightMm,
           modelId: item.modelId,
+          quantity: item.quantity,
           services: item.additionalServiceIds.map((serviceId) => ({
             quantity: item.quantity, // Apply service to entire quantity
             serviceId,
           })),
+          unit: 'unit', // Cart items are always per unit
           widthMm: item.widthMm,
         });
 

@@ -62,15 +62,15 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
     ];
   }
 
-  // Seller navigation: Access to own quotes and catalog
+  // Seller navigation: Access to all quotes, users, and catalog (no models/settings)
   if (role === 'seller') {
     return [
       {
-        description: 'Ver mis cotizaciones',
-        href: '/my-quotes',
+        description: 'Ver todas las cotizaciones de clientes',
+        href: '/dashboard/quotes',
         icon: FileText,
-        label: 'Mis Cotizaciones',
-        routes: ['/my-quotes'],
+        label: 'Cotizaciones',
+        routes: ['/dashboard/quotes'],
       },
       {
         description: 'Explorar catálogo de productos',

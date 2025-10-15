@@ -7,7 +7,7 @@ import { QuoteListItem } from './_components/quote-list-item';
 
 export const metadata: Metadata = {
   description: 'Gestiona y revisa todas las cotizaciones del sistema',
-  title: 'Cotizaciones - Glasify Admin',
+  title: 'Cotizaciones - Glasify',
 };
 
 type QuotesPageProps = {
@@ -27,24 +27,24 @@ export default async function QuotesPage({ searchParams }: QuotesPageProps) {
   const search = params?.search;
   const userId = params?.userId;
 
-  // Use list-all for admins, list-user-quotes for others
-  const result =
-    session?.user?.role === 'admin'
-      ? await api.quote['list-all']({
-          includeExpired: false,
-          limit: 10,
-          page,
-          search,
-          status,
-          userId,
-        })
-      : await api.quote['list-user-quotes']({
-          includeExpired: false,
-          limit: 10,
-          page,
-          search,
-          status,
-        });
+  // Use list-all for admins and sellers, list-user-quotes for regular users
+  const isSellerOrAdmin = session?.user?.role === 'admin' || session?.user?.role === 'seller';
+  const result = isSellerOrAdmin
+    ? await api.quote['list-all']({
+        includeExpired: false,
+        limit: 10,
+        page,
+        search,
+        status,
+        userId,
+      })
+    : await api.quote['list-user-quotes']({
+        includeExpired: false,
+        limit: 10,
+        page,
+        search,
+        status,
+      });
 
   const isAdmin = session?.user?.role === 'admin';
 

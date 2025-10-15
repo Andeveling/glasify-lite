@@ -4,30 +4,31 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 /**
  * User Management Page
- * Task: T038 [P] [US5]
+ * Task: T038 [P] [US5] - Updated for seller access
  *
  * Server Component with metadata export.
  * Placeholder UI for future user management implementation.
  *
- * This page is admin-only (protected by middleware at /dashboard route).
+ * This page is accessible by admin and seller roles (protected by middleware).
+ * Sellers can view users but cannot modify roles (adminProcedure restriction).
  *
  * Future Implementation TODO:
  * - User list table with role badges
  * - Search and filter by role
- * - Role update modal/dialog
+ * - Role update modal/dialog (admin-only action)
  * - User creation form (if needed)
- * - User deletion/deactivation
+ * - User deletion/deactivation (admin-only)
  * - Audit log of role changes
  * - Pagination for large user lists
  * - Export users to CSV
  *
  * tRPC Procedures Available:
- * - user.list-all (T036) - List all users with optional filters
- * - user.update-role (T037) - Update user role with validation
+ * - user.list-all (T036) - List all users (seller/admin access)
+ * - user.update-role (T037) - Update user role (admin-only)
  *
  * Components to Create:
  * - UsersTable (Client Component) - Display users in table format
- * - RoleUpdateDialog (Client Component) - Modal for changing user roles
+ * - RoleUpdateDialog (Client Component) - Modal for changing user roles (admin-only)
  * - UserFilters (Client Component) - Search and filter controls
  * - RoleBadge (Component) - Visual indicator of user role
  */
