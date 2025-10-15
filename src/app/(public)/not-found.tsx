@@ -1,8 +1,9 @@
-import { AlertCircle, ArrowLeft, BookOpen, Home, Search, ShoppingCart } from 'lucide-react';
+import { AlertCircle, BookOpen, Home, Search, ShoppingCart } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { BackButton } from './_components/back-button';
 
 export const metadata: Metadata = {
   description: 'La página que buscas no existe o ha sido movida',
@@ -70,10 +71,7 @@ export default function PublicNotFound() {
                   </Button>
                 </Link>
 
-                <Button className="gap-2" onClick={() => window.history.back()} variant="ghost">
-                  <ArrowLeft className="h-4 w-4" />
-                  Página Anterior
-                </Button>
+                <BackButton />
               </div>
             </div>
 
