@@ -15,18 +15,19 @@ declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      role: 'admin' | 'user';
+      role: 'admin' | 'seller' | 'user';
     } & DefaultSession['user'];
   }
 
   interface User {
-    role?: 'admin' | 'user';
+    role?: 'admin' | 'seller' | 'user';
   }
 }
 
 /**
  * Determines if a user is an admin based on their email
  * Compares against the ADMIN_EMAIL environment variable
+ * Used as fallback when database role is not set (backward compatibility)
  */
 const isAdmin = (email: string | null | undefined): boolean => {
   if (!(email && env.ADMIN_EMAIL)) return false;
@@ -56,7 +57,8 @@ export const authConfig = {
       user: {
         ...session.user,
         id: user.id,
-        role: isAdmin(user.email) ? 'admin' : 'user',
+        // Use database role if present, otherwise fall back to ADMIN_EMAIL check for backward compatibility
+        role: user.role || (isAdmin(user.email) ? 'admin' : 'user'),
       },
     }),
     // biome-ignore lint/suspicious/useAwait: NextAuth.js requires async callbacks

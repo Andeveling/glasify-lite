@@ -1,32 +1,57 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import logger from '@/lib/logger';
+import { auth } from '@/server/auth';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Check if user has auth session token
-  const sessionToken =
-    request.cookies.get('authjs.session-token') || request.cookies.get('__Secure-authjs.session-token');
+  // Get session (includes user.role from NextAuth callback)
+  const session = await auth();
+  const isLoggedIn = !!session;
+  const userRole = session?.user?.role;
 
-  const isLoggedIn = !!sessionToken;
-
-  // Protected routes that require authentication
+  // Define route patterns
   const isProtectedRoute =
-    pathname.startsWith('/dashboard') || pathname.startsWith('/quotes') || pathname.startsWith('/quote');
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/quotes') ||
+    pathname.startsWith('/quote') ||
+    pathname.startsWith('/my-quotes');
 
-  // Auth routes
+  const isAdminRoute = pathname.startsWith('/dashboard');
+  const isSellerRoute = pathname.startsWith('/quotes') && pathname !== '/my-quotes';
   const isAuthRoute = pathname.startsWith('/signin');
-
-  // Auth callback route
   const isAuthCallback = pathname === '/auth/callback';
 
-  // If trying to access protected route without being logged in
+  // 1. Redirect unauthenticated users from protected routes
   if (isProtectedRoute && !isLoggedIn) {
     const signinUrl = new URL('/signin', request.url);
     signinUrl.searchParams.set('callbackUrl', pathname);
     return NextResponse.redirect(signinUrl);
   }
 
-  // If logged in and trying to access signin page, redirect to callback for role-based redirect
+  // 2. Block non-admin from admin routes
+  if (isAdminRoute && userRole !== 'admin') {
+    logger.warn('Unauthorized dashboard access attempt', {
+      path: pathname,
+      role: userRole,
+      timestamp: new Date().toISOString(),
+      userId: session?.user?.id,
+    });
+    return NextResponse.redirect(new URL('/my-quotes', request.url));
+  }
+
+  // 3. Block non-seller from seller routes
+  if (isSellerRoute && !['admin', 'seller'].includes(userRole || '')) {
+    logger.warn('Unauthorized seller route access attempt', {
+      path: pathname,
+      role: userRole,
+      timestamp: new Date().toISOString(),
+      userId: session?.user?.id,
+    });
+    return NextResponse.redirect(new URL('/my-quotes', request.url));
+  }
+
+  // 4. Redirect logged-in users away from signin page
   if (isAuthRoute && isLoggedIn && !isAuthCallback) {
     return NextResponse.redirect(new URL('/auth/callback', request.url));
   }

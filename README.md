@@ -226,11 +226,11 @@ glasify-lite/
 
 ### User Roles
 
-| Role     | Description                          | Access Level                              |
-|----------|--------------------------------------|-------------------------------------------|
-| `admin`  | System administrator                 | Full access (dashboard, all quotes, config) |
-| `seller` | Sales representative                 | Own quotes, catalog browsing              |
-| `user`   | End client                           | Own quotes, catalog browsing              |
+| Role     | Description          | Access Level                                |
+| -------- | -------------------- | ------------------------------------------- |
+| `admin`  | System administrator | Full access (dashboard, all quotes, config) |
+| `seller` | Sales representative | Own quotes, catalog browsing                |
+| `user`   | End client           | Own quotes, catalog browsing                |
 
 ### Authorization Layers
 
