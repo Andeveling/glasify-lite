@@ -33,8 +33,8 @@ type QuoteListItemProps = {
 
 export function QuoteListItem({ quote }: QuoteListItemProps) {
   const router = useRouter();
-  const [ isPending, startTransition ] = useTransition();
-  const [ loadingAction, setLoadingAction ] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const cta = getStatusCTA(quote.status);
 
   // TODO: QuoteListItemSchema doesn't include items array yet
@@ -79,13 +79,17 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
     view: Eye,
   };
 
-  const CTAIcon = cta ? ctaIcon[ cta.action ] : Eye;
+  const CTAIcon = cta ? ctaIcon[cta.action] : Eye;
 
   const isLoading = isPending && loadingAction !== null;
 
   return (
     <Card
-      className={cn('transition-all duration-200', quote.isExpired && 'opacity-60', isLoading && 'opacity-50 ring-2 ring-primary/20')}
+      className={cn(
+        'transition-all duration-200',
+        quote.isExpired && 'opacity-60',
+        isLoading && 'opacity-50 ring-2 ring-primary/20'
+      )}
       data-testid="quote-list-item"
     >
       <CardContent className="flex items-center justify-between gap-4 p-6">
