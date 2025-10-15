@@ -26,9 +26,197 @@ Components live close to where they're used:
 Three-layer authorization strategy following AuthJS best practices:
 - **Database Layer**: UserRole enum (`admin`, `seller`, `user`) with indexed User.role field
 - **Middleware Layer**: Route protection in `src/middleware.ts` using NextAuth `auth()` helper
-- **tRPC Layer**: Procedure helpers (`adminProcedure`, `sellerProcedure`) for API authorization
+- **tRPC Layer**: Procedure helpers (`adminProcedure`, `sellerProcedure`, `adminOrOwnerProcedure`) for API authorization
 - **UI Layer**: Server Component guards (`<AdminOnly>`, `<SellerOnly>`) for conditional rendering
 - **Data Filtering**: `getQuoteFilter()` ensures users only see their own data (except admins)
+
+#### RBAC Architecture Layers
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    User Request                              │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│         Layer 1: Next.js Middleware (Route Protection)       │
+├─────────────────────────────────────────────────────────────┤
+│ • Uses NextAuth auth() helper to get session                │
+│ • Pattern matching: /dashboard/* → admin only               │
+│ • Redirects: Unauthorized → /my-quotes                      │
+│ • Winston logging: Unauthorized access attempts             │
+│ File: src/middleware.ts                                     │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│         Layer 2: Server Components (UI Guards)               │
+├─────────────────────────────────────────────────────────────┤
+│ • <AdminOnly>: Conditional rendering for admin UI           │
+│ • <SellerOnly>: Conditional rendering for seller/admin UI   │
+│ • <RoleBasedNav>: Dynamic navigation by role                │
+│ • Server-side auth() check before rendering                 │
+│ Files: src/app/_components/admin-only.tsx                   │
+│        src/app/_components/seller-only.tsx                  │
+│        src/app/_components/role-based-nav.tsx               │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│         Layer 3: tRPC Procedures (API Authorization)         │
+├─────────────────────────────────────────────────────────────┤
+│ • adminProcedure: Throws FORBIDDEN if role !== 'admin'      │
+│ • sellerProcedure: Requires role in ['admin', 'seller']     │
+│ • adminOrOwnerProcedure: Admin or resource owner check      │
+│ • Winston logging: API authorization failures               │
+│ File: src/server/api/trpc.ts                                │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│         Layer 4: Data Filtering (Database Query)             │
+├─────────────────────────────────────────────────────────────┤
+│ • getQuoteFilter(session): Role-based WHERE clause          │
+│   - Admin: {} (no filter, sees all)                         │
+│   - Seller/User: { userId: session.user.id }                │
+│ • Applied in tRPC procedures before Prisma queries          │
+│ • Ensures data isolation at database level                  │
+│ File: src/server/api/trpc.ts                                │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│              Prisma Query Execution                          │
+│        (Data returned respects role permissions)             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### Role Permission Matrix
+
+| Feature                             | Admin | Seller | User | Guest |
+| ----------------------------------- | ----- | ------ | ---- | ----- |
+| `/catalog` (view)                   | ✅     | ✅      | ✅    | ✅     |
+| `/my-quotes` (own quotes)           | ✅     | ✅      | ✅    | ❌     |
+| `/dashboard` (admin home)           | ✅     | ❌      | ❌    | ❌     |
+| `/dashboard/models` (manage models) | ✅     | ❌      | ❌    | ❌     |
+| `/dashboard/quotes` (all quotes)    | ✅     | ❌      | ❌    | ❌     |
+| `/dashboard/users` (manage users)   | ✅     | ❌      | ❌    | ❌     |
+| Create quote                        | ✅     | ✅      | ✅    | ❌     |
+| Edit own quote                      | ✅     | ✅      | ✅    | ❌     |
+| Edit any quote                      | ✅     | ❌      | ❌    | ❌     |
+| View all quotes                     | ✅     | ❌      | ❌    | ❌     |
+| Create model                        | ✅     | ❌      | ❌    | ❌     |
+| Update user roles                   | ✅     | ❌      | ❌    | ❌     |
+
+#### Authorization Code Examples
+
+**Middleware Route Protection**:
+```typescript
+// src/middleware.ts
+export async function middleware(req: NextRequest) {
+  const session = await auth();
+  const { pathname } = req.nextUrl;
+
+  // Admin-only routes
+  const adminRoutes = ['/dashboard'];
+  if (adminRoutes.some(route => pathname.startsWith(route))) {
+    if (session?.user?.role !== 'admin') {
+      logger.warn('Unauthorized access attempt', { 
+        userId: session?.user?.id,
+        role: session?.user?.role,
+        path: pathname 
+      });
+      return NextResponse.redirect(new URL('/my-quotes', req.url));
+    }
+  }
+  
+  return NextResponse.next();
+}
+```
+
+**tRPC Admin Procedure**:
+```typescript
+// src/server/api/trpc.ts
+export const adminProcedure = protectedProcedure.use(async (opts) => {
+  const { ctx } = opts;
+  if (ctx.session.user.role !== 'admin') {
+    logger.warn('Non-admin attempted admin procedure', {
+      userId: ctx.session.user.id,
+      role: ctx.session.user.role,
+    });
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'No tienes permisos de administrador',
+    });
+  }
+  return opts.next({ ctx });
+});
+```
+
+**Data Filtering Helper**:
+```typescript
+// src/server/api/trpc.ts
+export function getQuoteFilter(session: Session | null): Prisma.QuoteWhereInput {
+  if (!session?.user?.id) return { userId: 'impossible' };
+  if (session.user.role === 'admin') return {}; // Admin sees all
+  return { userId: session.user.id }; // Others see only own
+}
+
+// Usage in tRPC procedure
+const quotes = await ctx.db.quote.findMany({
+  where: getQuoteFilter(ctx.session),
+  include: { user: session.user.role === 'admin' },
+});
+```
+
+**Server Component Guard**:
+```typescript
+// src/app/_components/admin-only.tsx
+import { auth } from '@/server/auth/config';
+
+export async function AdminOnly({ 
+  children, 
+  fallback 
+}: { 
+  children: React.ReactNode; 
+  fallback?: React.ReactNode;
+}) {
+  const session = await auth();
+  if (session?.user?.role !== 'admin') {
+    return fallback ?? null;
+  }
+  return <>{children}</>;
+}
+
+// Usage in page
+<AdminOnly>
+  <Button>Crear Modelo</Button>
+</AdminOnly>
+```
+
+#### Role Assignment Strategy
+
+1. **Admin Role**: Assigned via environment variable `ADMIN_EMAIL`
+   - Checked in NextAuth session callback
+   - Automatic assignment on login if email matches
+   - Single admin per deployment (MVP)
+
+2. **Seller Role**: Manual assignment via admin panel (future)
+   - Database update: `UPDATE User SET role = 'seller' WHERE id = ?`
+   - Requires logout/login for session update
+
+3. **User Role**: Default for all new users
+   - Set in Prisma schema: `role UserRole @default(user)`
+   - No special configuration needed
+
+#### Security Considerations
+
+✅ **Server-Side Authorization**: All checks happen server-side (middleware, tRPC, Server Components)
+✅ **Defense in Depth**: Multiple layers prevent unauthorized access
+✅ **Data Isolation**: Database queries filtered by role
+✅ **Session-Based**: Role stored in NextAuth session (not client-side)
+✅ **Audit Logging**: Winston logs all authorization failures (server-side only)
+
+❌ **Client-Side Trust**: UI guards are for UX, NOT security
+❌ **Session Cache**: Role changes require logout/login
+❌ **No Real-Time Updates**: Role changes don't propagate to active sessions
+
+
 
 ## Directory Structure
 

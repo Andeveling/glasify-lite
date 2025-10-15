@@ -380,6 +380,254 @@ export default async function CatalogPage({ searchParams }: Props) {
 
 ---
 
+## Role-Based Access Control (RBAC) Patterns
+
+### Authorization Layers
+
+Glasify implements **defense-in-depth authorization** with three layers:
+
+1. **Middleware Layer** (`src/middleware.ts`): Route-level protection
+2. **tRPC Layer** (`src/server/api/trpc.ts`): API procedure authorization
+3. **UI Layer** (`src/app/_components/`): Conditional rendering guards
+
+### User Roles
+
+- **admin**: Full system access (dashboard, models, all quotes, settings, users)
+- **seller**: Quote management + catalog (own quotes only, blocked from admin routes)
+- **user**: Catalog + own quotes (blocked from admin routes)
+
+### Common RBAC Patterns
+
+#### Pattern 1: Protect Admin Routes (Middleware)
+
+```typescript
+// src/middleware.ts
+export async function middleware(req: NextRequest) {
+  const session = await auth();
+  const { pathname } = req.nextUrl;
+
+  // Admin-only routes
+  const adminRoutes = ['/dashboard'];
+  if (adminRoutes.some(route => pathname.startsWith(route))) {
+    if (session?.user?.role !== 'admin') {
+      logger.warn('Unauthorized access attempt', { 
+        userId: session?.user?.id,
+        role: session?.user?.role,
+        path: pathname 
+      });
+      return NextResponse.redirect(new URL('/my-quotes', req.url));
+    }
+  }
+  
+  return NextResponse.next();
+}
+```
+
+#### Pattern 2: Admin-Only tRPC Procedure
+
+```typescript
+// src/server/api/routers/admin/admin.ts
+import { adminProcedure } from '../../trpc';
+
+export const adminRouter = router({
+  'create-model': adminProcedure
+    .input(createModelSchema)
+    .mutation(async ({ ctx, input }) => {
+      // Only admins can reach here
+      return await ctx.db.model.create({ data: input });
+    }),
+});
+```
+
+#### Pattern 3: Role-Based Data Filtering
+
+```typescript
+// src/server/api/routers/quote.ts
+import { getQuoteFilter } from '../../trpc';
+
+export const quoteRouter = router({
+  'list-user-quotes': protectedProcedure
+    .input(listQuotesSchema)
+    .query(async ({ ctx, input }) => {
+      const roleFilter = getQuoteFilter(ctx.session);
+      // Admin sees all, others see only own
+      return await ctx.db.quote.findMany({
+        where: { ...roleFilter, ...input.filters },
+      });
+    }),
+});
+```
+
+#### Pattern 4: Ownership Validation (Admin or Owner)
+
+```typescript
+// src/server/api/routers/quote.ts
+export const quoteRouter = router({
+  'get-by-id': protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const quote = await ctx.db.quote.findUnique({ where: { id: input.id } });
+      
+      const isOwner = quote?.userId === ctx.session.user.id;
+      const isAdmin = ctx.session.user.role === 'admin';
+      
+      if (!isOwner && !isAdmin) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'No tienes permiso para ver esta cotización',
+        });
+      }
+      
+      return quote;
+    }),
+});
+```
+
+#### Pattern 5: Conditional UI Rendering (Server Component)
+
+```typescript
+// src/app/(dashboard)/models/page.tsx
+import { AdminOnly } from '@/app/_components/admin-only';
+
+export default async function ModelsPage() {
+  return (
+    <div>
+      <h1>Modelos</h1>
+      
+      {/* Only admins see this button */}
+      <AdminOnly>
+        <Button>Crear Modelo</Button>
+      </AdminOnly>
+      
+      <ModelsList />
+    </div>
+  );
+}
+```
+
+#### Pattern 6: Role-Based Navigation
+
+```typescript
+// src/app/_components/role-based-nav.tsx
+export function getNavLinksForRole(role?: UserRole): NavLink[] {
+  switch (role) {
+    case 'admin':
+      return [
+        { href: '/dashboard', label: 'Dashboard' },
+        { href: '/dashboard/models', label: 'Modelos' },
+        { href: '/dashboard/quotes', label: 'Cotizaciones' },
+        { href: '/dashboard/users', label: 'Usuarios' },
+      ];
+    case 'seller':
+    case 'user':
+      return [
+        { href: '/my-quotes', label: 'Mis Cotizaciones' },
+        { href: '/catalog', label: 'Catálogo' },
+      ];
+    default:
+      return [
+        { href: '/catalog', label: 'Catálogo' },
+      ];
+  }
+}
+```
+
+### RBAC Helper Functions
+
+#### getQuoteFilter (Data Filtering)
+
+```typescript
+// src/server/api/trpc.ts
+export function getQuoteFilter(session: Session | null): Prisma.QuoteWhereInput {
+  if (!session?.user?.id) return { userId: 'impossible' };
+  if (session.user.role === 'admin') return {}; // Admin sees all
+  return { userId: session.user.id }; // Others see only own
+}
+```
+
+#### adminProcedure (tRPC Helper)
+
+```typescript
+// src/server/api/trpc.ts
+export const adminProcedure = protectedProcedure.use(async (opts) => {
+  const { ctx } = opts;
+  if (ctx.session.user.role !== 'admin') {
+    logger.warn('Non-admin attempted admin procedure', {
+      userId: ctx.session.user.id,
+      role: ctx.session.user.role,
+    });
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'No tienes permisos de administrador',
+    });
+  }
+  return opts.next({ ctx });
+});
+```
+
+#### sellerProcedure (tRPC Helper - Future)
+
+```typescript
+// src/server/api/trpc.ts
+export const sellerProcedure = protectedProcedure.use(async (opts) => {
+  const { ctx } = opts;
+  const allowedRoles: UserRole[] = ['admin', 'seller'];
+  if (!allowedRoles.includes(ctx.session.user.role)) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'No tienes permisos de vendedor',
+    });
+  }
+  return opts.next({ ctx });
+});
+```
+
+### RBAC Best Practices
+
+✅ **DO**:
+- Check authorization server-side (middleware, tRPC, Server Components)
+- Use `adminProcedure` for admin-only tRPC procedures
+- Use `getQuoteFilter` for role-based data filtering
+- Log authorization failures with Winston (server-side only)
+- Throw Spanish error messages for user feedback
+- Use Server Component guards for UI (not security)
+
+❌ **DON'T**:
+- Trust client-side authorization (UI guards are UX, not security)
+- Use Winston in Client Components (server-side only)
+- Forget to validate ownership in adminOrOwner procedures
+- Hard-code role checks (use helper functions)
+- Mix authorization with business logic (separate concerns)
+
+### RBAC Testing Patterns
+
+```typescript
+// Unit test: auth helpers
+describe('getQuoteFilter', () => {
+  it('returns empty filter for admin role', () => {
+    const session: MockSession = { user: { id: '1', role: 'admin' } };
+    expect(getQuoteFilter(session)).toEqual({});
+  });
+
+  it('returns userId filter for user role', () => {
+    const session: MockSession = { user: { id: '1', role: 'user' } };
+    expect(getQuoteFilter(session)).toEqual({ userId: '1' });
+  });
+});
+
+// E2E test: admin access
+test('should redirect admin to /dashboard after login', async ({ page }) => {
+  await page.goto('/signin');
+  await page.getByLabel(/email/i).fill(ADMIN_USER.email);
+  await page.getByLabel(/contraseña/i).fill(ADMIN_USER.password);
+  await page.getByRole('button', { name: /iniciar sesión/i }).click();
+  await page.waitForURL(/\/dashboard/);
+  expect(page.url()).toContain('/dashboard');
+});
+```
+
+---
+
 ## Key Patterns Summary
 
 1. **Next.js 15**: Server Components by default, ISR, Streaming
@@ -394,6 +642,7 @@ export default async function CatalogPage({ searchParams }: Props) {
 10. **Custom Hooks**: Reusable logic separated from UI
 11. **Testing**: Vitest (unit/integration), Playwright (E2E)
 12. **Ultracite**: Linting and formatting with Biome
+13. **RBAC**: Three-layer authorization (middleware, tRPC, UI guards)
 
 ---
 
@@ -403,12 +652,16 @@ export default async function CatalogPage({ searchParams }: Props) {
 2. Follow established codebase patterns
 3. **Create pages as Server Components** (delegate interactivity to Client Components)
 4. **Never use Winston logger in Client Components** (server-side only)
-5. Apply SOLID principles and Atomic Design
-6. Use Next.js App Router folder structure
-7. Prioritize Server Components over Client Components
-8. Add metadata for SEO on public pages
-9. Use `dynamic` or `revalidate` according to use case
-10. Write testable and well-documented code
-11. Use Spanish only in UI text, everything else in English
-12. Never create Barrels (index.ts) or barrel files anywhere
-13. Follow project naming and organization conventions
+5. **Apply RBAC patterns** (middleware, tRPC procedures, UI guards)
+6. **Use adminProcedure for admin-only APIs** (not manual role checks)
+7. **Use getQuoteFilter for data filtering** (role-based WHERE clauses)
+8. Apply SOLID principles and Atomic Design
+9. Use Next.js App Router folder structure
+10. Prioritize Server Components over Client Components
+11. Add metadata for SEO on public pages
+12. Use `dynamic` or `revalidate` according to use case
+13. Write testable and well-documented code
+14. Use Spanish only in UI text, everything else in English
+15. Never create Barrels (index.ts) or barrel files anywhere
+16. Follow project naming and organization conventions
+
