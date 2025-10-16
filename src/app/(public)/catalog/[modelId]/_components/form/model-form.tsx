@@ -26,6 +26,13 @@ import { GlassTypeSelectorSection } from './sections/glass-type-selector-section
 import { ServicesSelectorSection } from './sections/services-selector-section';
 
 // ============================================================================
+// Constants
+// ============================================================================
+
+/** Conversion factor from millimeters to meters */
+const MM_TO_METERS = 1000;
+
+// ============================================================================
 // Types
 // ============================================================================
 
@@ -42,11 +49,11 @@ type ModelFormProps = {
 // ============================================================================
 
 export function ModelForm({ model, glassTypes, services, solutions, currency }: ModelFormProps) {
-  const schema = useMemo(() => createQuoteFormSchema(model), [model]);
+  const schema = useMemo(() => createQuoteFormSchema(model), [ model ]);
   const { addItem } = useCart();
 
   // ✅ Track if item was just added to cart
-  const [justAddedToCart, setJustAddedToCart] = useState(false);
+  const [ justAddedToCart, setJustAddedToCart ] = useState(false);
 
   // ✅ Auto-scroll to success card when item is added
   const successCardRef = useScrollIntoView(justAddedToCart);
@@ -55,13 +62,13 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
   const defaultValues = useMemo(
     () => ({
       additionalServices: [],
-      glassType: glassTypes[0]?.id ?? '', // Pre-select first glass type (usually most common/budget)
+      glassType: glassTypes[ 0 ]?.id ?? '', // Pre-select first glass type (usually most common/budget)
       height: model.minHeightMm, // Use minimum height as starting point
       quantity: 1,
       solution: '', // No solution selected by default (optional field)
       width: model.minWidthMm, // Use minimum width as starting point
     }),
-    [model.minWidthMm, model.minHeightMm, glassTypes]
+    [ model.minWidthMm, model.minHeightMm, glassTypes ]
   );
 
   const form = useForm<QuoteFormValues>({
@@ -82,11 +89,24 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
   // ✅ Get selected glass type object
   const selectedGlassType = glassTypes.find((gt) => gt.id === glassType);
 
+  // ✅ Calculate billable glass area in m² (applying discounts)
+  // This matches the server-side calculation in price-item.ts
+  const glassArea = useMemo(() => {
+    // Apply glass discounts (profiles take space)
+    const effectiveWidthMm = Math.max(Number(width) - model.glassDiscountWidthMm, 0);
+    const effectiveHeightMm = Math.max(Number(height) - model.glassDiscountHeightMm, 0);
+
+    const widthM = effectiveWidthMm / MM_TO_METERS;
+    const heightM = effectiveHeightMm / MM_TO_METERS;
+
+    if (widthM > 0 && heightM > 0) {
+      return widthM * heightM;
+    }
+    return 0;
+  }, [ width, height, model.glassDiscountWidthMm, model.glassDiscountHeightMm ]);
+
   // ✅ Infer solution from glass type (replaces manual selection)
-  const { inferredSolution, securityRating, thermalRating, acousticRating } = useSolutionInference(
-    selectedGlassType ?? null,
-    solutions
-  );
+  const { inferredSolution } = useSolutionInference(selectedGlassType ?? null, solutions);
 
   // Calculate price in real-time
   const { calculatedPrice, breakdown, error, isCalculating } = usePriceCalculation({
@@ -112,10 +132,10 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
     }
 
     // Calculate glass cost separately (area * pricePerSqm)
-    const widthM = Number(width) / 1000;
-    const heightM = Number(height) / 1000;
-    const glassArea = widthM * heightM;
-    const glassCost = selectedGlassType ? glassArea * selectedGlassType.pricePerSqm : 0;
+    const widthM = Number(width) / MM_TO_METERS;
+    const heightM = Number(height) / MM_TO_METERS;
+    const localGlassArea = widthM * heightM;
+    const glassCost = selectedGlassType ? localGlassArea * selectedGlassType.pricePerSqm : 0;
 
     // Model price (dimPrice includes base + area factor, but NOT glass cost)
     const modelOnlyPrice = breakdown.dimPrice - glassCost;
@@ -128,12 +148,12 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
       });
     }
 
-    // Glass cost (separate line item for clarity)
+    // Glass type (show area calculation)
     if (glassCost > 0 && selectedGlassType) {
       items.push({
         amount: glassCost,
         category: 'glass',
-        label: `Vidrio ${selectedGlassType.name}`,
+        label: `Vidrio ${selectedGlassType.name} (${localGlassArea.toFixed(2)} m²)`,
       });
     }
 
@@ -150,14 +170,14 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
     if (breakdown.services.length > 0) {
       const servicesById = services.reduce(
         (acc, svc) => {
-          acc[svc.id] = svc;
+          acc[ svc.id ] = svc;
           return acc;
         },
         {} as Record<string, ServiceOutput>
       );
 
       for (const svc of breakdown.services) {
-        const serviceData = servicesById[svc.serviceId];
+        const serviceData = servicesById[ svc.serviceId ];
         if (serviceData) {
           items.push({
             amount: svc.amount,
@@ -180,7 +200,7 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
     }
 
     return items;
-  }, [breakdown, model.basePrice, services, width, height, selectedGlassType]);
+  }, [ breakdown, model.basePrice, services, width, height, selectedGlassType ]);
 
   // ✅ Prepare cart item data from form values (using inferred solution)
   const cartItemInput: CreateCartItemInput & { unitPrice: number } = {
@@ -268,6 +288,7 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
           <Card className="p-6">
             <GlassTypeSelectorSection
               basePrice={model.basePrice}
+              glassArea={glassArea}
               glassTypes={glassTypes}
               selectedSolutionId={inferredSolution?.id}
             />

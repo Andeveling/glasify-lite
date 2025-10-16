@@ -35,6 +35,8 @@ export const catalogQueries = createTRPCRouter({
             costPerMmHeight: true,
             costPerMmWidth: true,
             createdAt: true,
+            glassDiscountHeightMm: true,
+            glassDiscountWidthMm: true,
             id: true,
             maxHeightMm: true,
             maxWidthMm: true,

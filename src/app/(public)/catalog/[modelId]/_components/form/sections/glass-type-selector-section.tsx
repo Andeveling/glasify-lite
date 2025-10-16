@@ -32,11 +32,17 @@ import { useGlassTypesByTab } from './_hooks/use-glass-types-by-tab';
 
 type GlassTypeSelectorSectionProps = {
   basePrice?: number; // Model base price for comparison
+  glassArea?: number; // Calculated glass area in m² (from parent form)
   glassTypes: GlassTypeOutput[];
   selectedSolutionId?: string; // Used to set default tab
 };
 
-export function GlassTypeSelectorSection({ basePrice, glassTypes, selectedSolutionId }: GlassTypeSelectorSectionProps) {
+export function GlassTypeSelectorSection({
+  basePrice,
+  glassArea,
+  glassTypes,
+  selectedSolutionId,
+}: GlassTypeSelectorSectionProps) {
   const { control, watch } = useFormContext();
 
   // Hook handles grouping by solution
@@ -46,7 +52,7 @@ export function GlassTypeSelectorSection({ basePrice, glassTypes, selectedSoluti
   const selectedGlassTypeId = watch('glassType');
 
   // Track active tab for visual feedback
-  const [activeTab, setActiveTab] = useState<string>();
+  const [ activeTab, setActiveTab ] = useState<string>();
 
   // Find selected glass type details
   const selectedGlassType = useMemo(() => {
@@ -57,16 +63,16 @@ export function GlassTypeSelectorSection({ basePrice, glassTypes, selectedSoluti
       if (found) return found;
     }
     return null;
-  }, [selectedGlassTypeId, tabs]);
+  }, [ selectedGlassTypeId, tabs ]);
 
   // Find default tab (selected solution or first tab)
   const defaultTab = selectedSolutionId
     ? (tabs.find((tab) =>
-        tab.options.some((opt) =>
-          glassTypes.find((gt) => gt.id === opt.id)?.solutions?.some((s) => s.solution.id === selectedSolutionId)
-        )
-      )?.key ?? tabs[0]?.key)
-    : tabs[0]?.key;
+      tab.options.some((opt) =>
+        glassTypes.find((gt) => gt.id === opt.id)?.solutions?.some((s) => s.solution.id === selectedSolutionId)
+      )
+    )?.key ?? tabs[ 0 ]?.key)
+    : tabs[ 0 ]?.key;
 
   if (tabs.length === 0) {
     return null;
@@ -89,12 +95,28 @@ export function GlassTypeSelectorSection({ basePrice, glassTypes, selectedSoluti
               <div className="flex-1">
                 <p className="font-medium text-muted-foreground text-sm">Vidrio seleccionado</p>
                 <p className="font-semibold text-foreground text-lg">{selectedGlassType.name}</p>
+                {glassArea && glassArea > 0 && (
+                  <p className="text-muted-foreground text-xs">
+                    {glassArea.toFixed(2)} m² × {formatCurrency(selectedGlassType.pricePerSqm)}/m²
+                  </p>
+                )}
               </div>
               <div className="text-right">
-                <p className="font-bold text-2xl text-purple-600 dark:text-purple-400">
-                  {formatCurrency(selectedGlassType.pricePerSqm)}
-                </p>
-                <p className="text-muted-foreground text-xs">por m²</p>
+                {glassArea && glassArea > 0 ? (
+                  <>
+                    <p className="font-bold text-2xl text-purple-600 dark:text-purple-400">
+                      {formatCurrency(selectedGlassType.pricePerSqm * glassArea)}
+                    </p>
+                    <p className="text-muted-foreground text-xs">total vidrio</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-bold text-2xl text-purple-600 dark:text-purple-400">
+                      {formatCurrency(selectedGlassType.pricePerSqm)}
+                    </p>
+                    <p className="text-muted-foreground text-xs">por m²</p>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -114,7 +136,7 @@ export function GlassTypeSelectorSection({ basePrice, glassTypes, selectedSoluti
               >
                 <Icon className={cn('size-4', isActive && 'text-primary')} />
                 <span className="hidden sm:inline">{tab.label}</span>
-                <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
+                <span className="sm:hidden">{tab.label.split(' ')[ 0 ]}</span>
 
                 {/* Badge con conteo de opciones */}
                 <span
