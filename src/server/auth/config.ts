@@ -72,9 +72,6 @@ export const authConfig = {
       return true;
     },
   },
-  pages: {
-    signIn: '/signin',
-  },
   providers: [
     GoogleProvider,
     /**

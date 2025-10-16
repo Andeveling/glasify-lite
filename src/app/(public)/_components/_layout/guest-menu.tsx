@@ -1,8 +1,9 @@
 'use client';
 
 import { LogIn, Moon, Sun, User } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTheme } from 'next-themes';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SignInModal } from '@/components/signin-modal';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,6 +18,23 @@ import {
 export function GuestMenu() {
   const { theme, setTheme } = useTheme();
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Auto-open modal when ?signin=true is in URL
+  useEffect(() => {
+    const shouldShowSignIn = searchParams.get('signin') === 'true';
+    if (shouldShowSignIn) {
+      setShowSignInModal(true);
+      // Clean up URL by removing signin param
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.delete('signin');
+      const newUrl = newSearchParams.toString()
+        ? `${window.location.pathname}?${newSearchParams.toString()}`
+        : window.location.pathname;
+      router.replace(newUrl);
+    }
+  }, [searchParams, router]);
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
