@@ -42,12 +42,23 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   const width = useWatch({ control, name: 'width' });
   const height = useWatch({ control, name: 'height' });
 
+  // ✅ Stable setValue callbacks to prevent infinite loops
+  const setWidthValue = useCallback(
+    (value: number) => setValue('width', value, { shouldValidate: true }),
+    [ setValue ]
+  );
+
+  const setHeightValue = useCallback(
+    (value: number) => setValue('height', value, { shouldValidate: true }),
+    [ setValue ]
+  );
+
   // ✅ Use custom debounced dimension hook for width
   const { localValue: localWidth, setLocalValue: setLocalWidth } = useDebouncedDimension({
     initialValue: width || dimensions.minWidth,
     max: dimensions.maxWidth,
     min: dimensions.minWidth,
-    setValue: (value) => setValue('width', value, { shouldValidate: true }),
+    setValue: setWidthValue,
     value: width,
   });
 
@@ -56,7 +67,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
     initialValue: height || dimensions.minHeight,
     max: dimensions.maxHeight,
     min: dimensions.minHeight,
-    setValue: (value) => setValue('height', value, { shouldValidate: true }),
+    setValue: setHeightValue,
     value: height,
   });
 
@@ -66,38 +77,46 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   // ✅ Optimized handlers for sliders - no debounce needed (handled by hook)
   const handleWidthSliderChange = useCallback(
     (value: number[]) => {
-      const newValue = value[0];
+      const newValue = value[ 0 ];
       if (newValue !== undefined) {
         setLocalWidth(newValue); // ✅ Update local state immediately (visual feedback)
         // ✅ Form update is debounced automatically in the hook
       }
     },
-    [setLocalWidth]
+    [ setLocalWidth ]
   );
 
   const handleHeightSliderChange = useCallback(
     (value: number[]) => {
-      const newValue = value[0];
+      const newValue = value[ 0 ];
       if (newValue !== undefined) {
         setLocalHeight(newValue);
       }
     },
-    [setLocalHeight]
+    [ setLocalHeight ]
   );
 
   // ✅ Memoize validation check functions
   const isWidthValid = useCallback(
     (value: number) => isValidDimension(value, dimensions.minWidth, dimensions.maxWidth),
-    [dimensions.minWidth, dimensions.maxWidth, isValidDimension]
+    [ dimensions.minWidth, dimensions.maxWidth, isValidDimension ]
   );
 
   const isHeightValid = useCallback(
     (value: number) => isValidDimension(value, dimensions.minHeight, dimensions.maxHeight),
-    [dimensions.minHeight, dimensions.maxHeight, isValidDimension]
+    [ dimensions.minHeight, dimensions.maxHeight, isValidDimension ]
   );
 
-  // ✅ Memoize generateSuggestedValues to prevent recreation on every render
-  const generateSuggestedValuesMemo = useMemo(() => generateSuggestedValues, []);
+  // ✅ Memoize suggested values arrays to prevent recreation on every render
+  const widthSuggestedValues = useMemo(
+    () => generateSuggestedValues(dimensions.minWidth, dimensions.maxWidth),
+    [ dimensions.minWidth, dimensions.maxWidth ]
+  );
+
+  const heightSuggestedValues = useMemo(
+    () => generateSuggestedValues(dimensions.minHeight, dimensions.maxHeight),
+    [ dimensions.minHeight, dimensions.maxHeight ]
+  );
 
   // Check if validation alert should show
   const showValidationAlert =
@@ -109,7 +128,6 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
       <div className="grid gap-6 sm:grid-cols-2">
         <DimensionField
           control={control}
-          generateSuggestedValues={generateSuggestedValuesMemo}
           isValid={isWidthValid}
           label="Ancho"
           localValue={localWidth}
@@ -117,11 +135,11 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
           min={dimensions.minWidth}
           name="width"
           onSliderChange={handleWidthSliderChange}
+          suggestedValues={widthSuggestedValues}
         />
 
         <DimensionField
           control={control}
-          generateSuggestedValues={generateSuggestedValuesMemo}
           isValid={isHeightValid}
           label="Alto"
           localValue={localHeight}
@@ -129,6 +147,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
           min={dimensions.minHeight}
           name="height"
           onSliderChange={handleHeightSliderChange}
+          suggestedValues={heightSuggestedValues}
         />
       </div>
 

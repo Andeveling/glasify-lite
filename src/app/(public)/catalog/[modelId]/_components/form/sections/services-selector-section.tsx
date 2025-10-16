@@ -8,7 +8,7 @@ import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { FormSection } from '@/components/form-section';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { cn } from '@/lib/utils';
 import type { ServiceOutput } from '@/server/api/routers/catalog';
 
@@ -32,12 +32,12 @@ const SERVICE_UNIT_LABELS = {
 const MM_TO_METERS = 1000;
 const PERIMETER_MULTIPLIER = 2;
 
-function getServiceTypeLabel(type: ServiceOutput['type']): string {
-  return SERVICE_TYPE_LABELS[type];
+function getServiceTypeLabel(type: ServiceOutput[ 'type' ]): string {
+  return SERVICE_TYPE_LABELS[ type ];
 }
 
-function getServiceUnitLabel(unit: ServiceOutput['unit']): string {
-  return SERVICE_UNIT_LABELS[unit];
+function getServiceUnitLabel(unit: ServiceOutput[ 'unit' ]): string {
+  return SERVICE_UNIT_LABELS[ unit ];
 }
 
 type ServiceCardProps = {
@@ -80,18 +80,19 @@ function ServiceCard({ control, service }: ServiceCardProps) {
               <Checkbox
                 checked={isChecked}
                 className="mt-0.5 size-5 transition-all duration-200"
+                id={`service-checkbox-${service.id}`}
                 onCheckedChange={(checked) => {
                   const currentValue = field.value || [];
                   const newValue = checked
-                    ? [...currentValue, service.id]
+                    ? [ ...currentValue, service.id ]
                     : currentValue.filter((id: string) => id !== service.id);
                   field.onChange(newValue);
                 }}
               />
             </FormControl>
-            <div className="flex-1 space-y-2">
+            <label className="flex-1 cursor-pointer space-y-2" htmlFor={`service-checkbox-${service.id}`}>
               <div className="flex items-start justify-between gap-2">
-                <FormLabel className={labelClasses}>{service.name}</FormLabel>
+                <span className={labelClasses}>{service.name}</span>
                 {isChecked && (
                   <Badge className="fade-in zoom-in shrink-0 animate-in" variant="default">
                     Seleccionado
@@ -107,7 +108,7 @@ function ServiceCard({ control, service }: ServiceCardProps) {
                 <span className={priceClasses}>{formatCurrency(service.rate)}</span>
                 <span className="text-muted-foreground text-xs">por {getServiceUnitLabel(service.unit)}</span>
               </div>
-            </div>
+            </label>
 
             {/* Visual indicator line */}
             <div className={indicatorClasses} />
@@ -144,13 +145,13 @@ export function ServicesSelectorSection({ services }: ServicesSelectorSectionPro
     const hasValidDimensions = width > 0 && height > 0;
     if (!hasValidDimensions) return 0;
     return (width / MM_TO_METERS) * (height / MM_TO_METERS); // Convert mm to m²
-  }, [width, height]);
+  }, [ width, height ]);
 
   const perimeter = useMemo(() => {
     const hasValidDimensions = width > 0 && height > 0;
     if (!hasValidDimensions) return 0;
     return PERIMETER_MULTIPLIER * (width / MM_TO_METERS + height / MM_TO_METERS); // Convert mm to meters
-  }, [width, height]);
+  }, [ width, height ]);
 
   // Calculate total estimated cost and total
   const { selectedCount, estimatedTotal } = useMemo(() => {
@@ -173,7 +174,7 @@ export function ServicesSelectorSection({ services }: ServicesSelectorSectionPro
       estimatedTotal: costPerUnit * quantity,
       selectedCount: selectedServicesList.length,
     };
-  }, [services, selectedServices, area, perimeter, quantity]);
+  }, [ services, selectedServices, area, perimeter, quantity ]);
 
   return (
     <FormSection
