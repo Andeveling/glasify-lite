@@ -12,14 +12,14 @@ import { Label } from '@/components/ui/label';
 
 type SignInModalProps = {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChangeAction: (open: boolean) => void;
   defaultEmail?: string;
 };
 
-export function SignInModal({ open, onOpenChange, defaultEmail = '' }: SignInModalProps) {
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [isEmailLoading, setIsEmailLoading] = useState(false);
-  const [email, setEmail] = useState(defaultEmail);
+export function SignInModal({ open, onOpenChangeAction, defaultEmail = '' }: SignInModalProps) {
+  const [ isGoogleLoading, setIsGoogleLoading ] = useState(false);
+  const [ isEmailLoading, setIsEmailLoading ] = useState(false);
+  const [ email, setEmail ] = useState(defaultEmail);
   const searchParams = useSearchParams();
 
   // Get callbackUrl from query params, default to /catalog
@@ -51,7 +51,7 @@ export function SignInModal({ open, onOpenChange, defaultEmail = '' }: SignInMod
   const isLoading = isGoogleLoading || isEmailLoading;
 
   return (
-    <Dialog onOpenChange={onOpenChange} open={open}>
+    <Dialog onOpenChange={onOpenChangeAction} open={open}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="space-y-4">
           {/* Logo/Icon */}
