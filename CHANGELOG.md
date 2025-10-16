@@ -7,6 +7,81 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - GlassType Empty Solutions Array Bug (2025-10-16)
+
+#### Runtime Error Resolution
+- **Issue**: `Reduce of empty array with no initial value` error in catalog model detail page
+- **Root Cause**: GlassTypes in database had no GlassTypeSolution relationships assigned
+- **Impact**: Complete catalog browsing failure for all models
+
+#### Code Fixes
+- **Defensive Programming** (`use-solution-inference.ts`):
+  - Added `solutions.length > 0` validation before calling `.reduce()`
+  - Prevents runtime error even with empty solutions array
+  - Safe fallback to purpose-based mapping when no solutions exist
+
+#### Data Migration
+- **New Script** (`scripts/migrate-glass-type-solutions.ts`):
+  - Automated migration from deprecated `GlassPurpose` enum to `GlassTypeSolution` table
+  - Uses factory pattern with `calculateGlassSolutions()` for intelligent assignment
+  - Migrated 4 existing GlassTypes → 10 GlassTypeSolution relationships
+  - Performance ratings based on glass characteristics (tempered, laminated, low-e, etc.)
+  - Primary solution detection for each glass type
+
+#### Seeder Enhancement
+- **Orchestrator Integration** (`seeders/seed-orchestrator.ts`):
+  - Already had GlassTypeSolution creation logic (lines 500-560)
+  - Automatically assigns solutions to glass types during seeding
+  - Uses `calculateGlassSolutions()` factory function for consistency
+  - Validates assignments with Zod schemas before creation
+  - Skips duplicates, logs warnings for missing solutions
+
+- **Preset Configuration** (`data/presets/minimal.preset.ts`):
+  - Now includes `glassSolutions` array (security, thermal_insulation, general)
+  - All glass types get appropriate solutions with performance ratings
+  - Example assignments:
+    * Vidrio Templado 6mm → Security (good, PRIMARY)
+    * DVH 24mm → Thermal Insulation (good, PRIMARY) + Security (standard)
+    * Vidrio Simple 4mm → General (standard, PRIMARY)
+
+#### Testing & Validation
+- **Database Verification**:
+  ```
+  ✅ Vidrio Laminado 6mm → 2 solutions (security PRIMARY, sound_insulation)
+  ✅ Vidrio Templado 8mm → 2 solutions (security PRIMARY, sound_insulation)  
+  ✅ Vidrio Bajo Emisivo 6mm → 4 solutions (thermal PRIMARY, energy, security, sound)
+  ✅ Vidrio Aislante 6mm → 2 solutions (security PRIMARY, sound_insulation)
+  ```
+- **Seeder Execution**: ✅ 4 GlassTypeSolution created automatically
+- **Runtime Tests**: ✅ Catalog pages load without errors
+- **Biome Linting**: ✅ 0 critical errors, clean build
+
+#### Files Modified
+- `src/app/(public)/catalog/[modelId]/_hooks/use-solution-inference.ts` - Added array length validation
+- `scripts/migrate-glass-type-solutions.ts` - **NEW**: Migration script
+- `prisma/seeders/seed-orchestrator.ts` - Verified GlassTypeSolution creation (existing)
+- `prisma/data/presets/minimal.preset.ts` - Verified glassSolutions inclusion (existing)
+
+#### Breaking Changes
+None. This is a bug fix with backward-compatible database migration.
+
+#### Migration Guide
+**For Existing Installations**:
+1. Run migration script: `npx tsx scripts/migrate-glass-type-solutions.ts`
+2. Verify results in database or Prisma Studio
+3. Future seeds will automatically create GlassTypeSolution relationships
+
+**For New Installations**:
+- No action required, seeder handles everything automatically
+
+#### Architecture Notes
+- Maintains deprecation path: `GlassPurpose` enum → `GlassTypeSolution` table
+- Factory pattern ensures consistent solution assignment logic
+- Orchestrator centralizes all seeding operations
+- Winston logging tracks migration/seeding progress (server-side only)
+
+---
+
 ### Added - Role-Based Access Control (RBAC) System (2025-10-15)
 
 #### Database Schema
