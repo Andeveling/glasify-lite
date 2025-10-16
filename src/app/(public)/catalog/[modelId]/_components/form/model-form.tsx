@@ -108,11 +108,15 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
   // ✅ Infer solution from glass type (replaces manual selection)
   const { inferredSolution } = useSolutionInference(selectedGlassType ?? null, solutions);
 
-  // Calculate price in real-time
+  // Calculate price in real-time with dimension validation
   const { calculatedPrice, breakdown, error, isCalculating } = usePriceCalculation({
     additionalServices,
     glassTypeId: glassType,
     heightMm: Number(height) || 0,
+    maxHeightMm: model.maxHeightMm,
+    maxWidthMm: model.maxWidthMm,
+    minHeightMm: model.minHeightMm,
+    minWidthMm: model.minWidthMm,
     modelId: model.id,
     widthMm: Number(width) || 0,
   });
@@ -131,11 +135,9 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
       return items;
     }
 
-    // Calculate glass cost separately (area * pricePerSqm)
-    const widthM = Number(width) / MM_TO_METERS;
-    const heightM = Number(height) / MM_TO_METERS;
-    const localGlassArea = widthM * heightM;
-    const glassCost = selectedGlassType ? localGlassArea * selectedGlassType.pricePerSqm : 0;
+    // ✅ Use glassArea (with discounts applied) instead of calculating again
+    // This matches server-side calculation in price-item.ts lines 131-142
+    const glassCost = selectedGlassType ? glassArea * selectedGlassType.pricePerSqm : 0;
 
     // Model price (dimPrice includes base + area factor, but NOT glass cost)
     const modelOnlyPrice = breakdown.dimPrice - glassCost;
@@ -148,12 +150,12 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
       });
     }
 
-    // Glass type (show area calculation)
+    // Glass type (show area calculation with discounts applied)
     if (glassCost > 0 && selectedGlassType) {
       items.push({
         amount: glassCost,
         category: 'glass',
-        label: `Vidrio ${selectedGlassType.name} (${localGlassArea.toFixed(2)} m²)`,
+        label: `Vidrio ${selectedGlassType.name} (${glassArea.toFixed(2)} m²)`,
       });
     }
 
@@ -200,7 +202,7 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
     }
 
     return items;
-  }, [ breakdown, model.basePrice, services, width, height, selectedGlassType ]);
+  }, [ breakdown, model.basePrice, services, glassArea, selectedGlassType ]);
 
   // ✅ Prepare cart item data from form values (using inferred solution)
   const cartItemInput: CreateCartItemInput & { unitPrice: number } = {

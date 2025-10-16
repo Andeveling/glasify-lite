@@ -8,6 +8,11 @@ type UsePriceCalculationParams = {
   heightMm: number;
   modelId: string;
   widthMm: number;
+  // ✅ ADD: Model dimension constraints for validation
+  minWidthMm?: number;
+  maxWidthMm?: number;
+  minHeightMm?: number;
+  maxHeightMm?: number;
 };
 
 type UsePriceCalculationReturn = {
@@ -23,11 +28,19 @@ const DEBOUNCE_DELAY_MS = 300; // ✅ Optimized for real-time responsiveness
  * Custom hook para calcular el precio del item con debounce optimizado
  * ✅ Real-time UX Improvements:
  * - Debounce a 300ms para balance óptimo entre responsiveness y performance
+ * - Validación client-side: NO llama al API si dimensiones están fuera de rango
  * - Estado de cálculo claro con isCalculating
  * - Manejo robusto de errores con mensajes user-friendly
  * - Prevención de loops infinitos usando refs y memoización estable
  * - Serialización estable de arrays para evitar re-renders innecesarios
  * - Retorna desglose completo con dimPrice, accPrice, services, adjustments
+ *
+ * @param params - Parámetros de cálculo incluyendo dimensiones y límites del modelo
+ * @param params.minWidthMm - Ancho mínimo permitido (opcional, validación client-side)
+ * @param params.maxWidthMm - Ancho máximo permitido (opcional, validación client-side)
+ * @param params.minHeightMm - Alto mínimo permitido (opcional, validación client-side)
+ * @param params.maxHeightMm - Alto máximo permitido (opcional, validación client-side)
+ * @returns Estado del cálculo con precio, desglose, error y bandera isCalculating
  */
 export function usePriceCalculation(params: UsePriceCalculationParams): UsePriceCalculationReturn {
   const [isCalculating, setIsCalculating] = useState(false);
@@ -77,13 +90,29 @@ export function usePriceCalculation(params: UsePriceCalculationParams): UsePrice
   // ✅ Debounced calculation effect with stable dependencies
   // biome-ignore lint/correctness/useExhaustiveDependencies: servicesKey is intentionally used to detect array changes
   useEffect(() => {
-    // Only calculate if we have all required data
-    const isValid = params.modelId && params.glassTypeId && params.heightMm > 0 && params.widthMm > 0;
+    // ✅ VALIDATION 1: Check if we have all required data
+    const hasRequiredData = params.modelId && params.glassTypeId && params.heightMm > 0 && params.widthMm > 0;
 
-    if (!isValid) {
+    if (!hasRequiredData) {
       setCalculatedPrice(undefined);
       setBreakdown(undefined);
       setError(undefined);
+      return;
+    }
+
+    // ✅ VALIDATION 2: Check if dimensions are within model constraints
+    const isDimensionsValid =
+      (!params.minWidthMm || params.widthMm >= params.minWidthMm) &&
+      (!params.maxWidthMm || params.widthMm <= params.maxWidthMm) &&
+      (!params.minHeightMm || params.heightMm >= params.minHeightMm) &&
+      (!params.maxHeightMm || params.heightMm <= params.maxHeightMm);
+
+    if (!isDimensionsValid) {
+      // ✅ Don't call API if dimensions are out of range
+      setCalculatedPrice(undefined);
+      setBreakdown(undefined);
+      setError('Dimensiones fuera del rango permitido');
+      setIsCalculating(false);
       return;
     }
 
@@ -116,7 +145,17 @@ export function usePriceCalculation(params: UsePriceCalculationParams): UsePrice
         clearTimeout(debounceTimerRef.current);
       }
     };
-  }, [params.modelId, params.glassTypeId, params.heightMm, params.widthMm, servicesKey]);
+  }, [
+    params.modelId,
+    params.glassTypeId,
+    params.heightMm,
+    params.widthMm,
+    params.minWidthMm,
+    params.maxWidthMm,
+    params.minHeightMm,
+    params.maxHeightMm,
+    servicesKey,
+  ]);
 
   return {
     breakdown,
