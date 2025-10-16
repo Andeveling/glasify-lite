@@ -66,6 +66,9 @@ export function useGlassTypesByTab(glassTypes: GlassTypeOutput[], basePrice?: nu
     // Track assigned glass types to avoid duplicates
     const assignedGlassTypes = new Set<string>();
 
+    // Track glass types WITHOUT solutions for fallback tab
+    const glassTypesWithoutSolution: GlassTypeOutput[] = [];
+
     for (const glassType of glassTypes) {
       // Skip if already assigned to a tab
       if (assignedGlassTypes.has(glassType.id)) continue;
@@ -73,7 +76,11 @@ export function useGlassTypesByTab(glassTypes: GlassTypeOutput[], basePrice?: nu
       // Find primary solution (or first solution if no primary)
       const primarySolution = glassType.solutions?.find((s) => s.isPrimary) ?? glassType.solutions?.[0];
 
-      if (!primarySolution) continue;
+      // ✅ FIX: If no solution, add to fallback list instead of skipping
+      if (!primarySolution) {
+        glassTypesWithoutSolution.push(glassType);
+        continue;
+      }
 
       const solution = primarySolution.solution;
 
@@ -93,6 +100,18 @@ export function useGlassTypesByTab(glassTypes: GlassTypeOutput[], basePrice?: nu
         solutionTab.glassTypes.push(glassType);
       }
       assignedGlassTypes.add(glassType.id);
+    }
+
+    // ✅ FIX: Add fallback "General" tab for glass types without solutions
+    if (glassTypesWithoutSolution.length > 0) {
+      primarySolutionsMap.set('general', {
+        glassTypes: glassTypesWithoutSolution,
+        icon: Home,
+        id: 'general',
+        key: 'general',
+        label: 'General',
+        sortOrder: 999, // Show last
+      });
     }
 
     // Step 2: Convert to tabs array and sort by sortOrder

@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Gem, Package, Ruler } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
 import { PriceBreakdownPopover } from '@/components/ui/price-breakdown-popover';
 import { Separator } from '@/components/ui/separator';
 import { formatCurrency } from '@/lib/export/pdf/pdf-utils';
@@ -83,9 +84,9 @@ export function StickyPriceHeader({
   const dimensionsText = hasDimensions ? `${configSummary.widthMm} × ${configSummary.heightMm} mm` : 'Sin dimensiones';
 
   return (
-    <div
+    <Card
       className={cn(
-        'sticky top-20 z-10 border-b bg-background px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6 md:py-4',
+        'sticky top-16 z-10 border-b bg-background px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6 md:py-4',
         className
       )}
     >
@@ -166,6 +167,6 @@ export function StickyPriceHeader({
         {hasDimensions && `, dimensiones ${dimensionsText}`}
         {configSummary.glassTypeName && `, vidrio ${configSummary.glassTypeName}`}
       </div>
-    </div>
+    </Card>
   );
 }
