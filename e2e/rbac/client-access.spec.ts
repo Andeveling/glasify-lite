@@ -20,7 +20,7 @@ const CLIENT_USER = {
   password: process.env.TEST_CLIENT_PASSWORD || 'Client123!',
 };
 
-const ANOTHER_CLIENT = {
+const _ANOTHER_CLIENT = {
   email: process.env.TEST_CLIENT2_EMAIL || 'client2@glasify.test',
   password: process.env.TEST_CLIENT2_PASSWORD || 'Client123!',
 };

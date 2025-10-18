@@ -1,7 +1,5 @@
-import { ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+import { BackLink } from '@/components/ui/back-link';
 import logger from '@/lib/logger';
 import { auth } from '@/server/auth';
 import { api } from '@/trpc/server-client';
@@ -70,7 +68,7 @@ export default async function MyQuotesPage({ searchParams }: MyQuotesPageProps) 
   const { sortBy: backendSortBy, sortOrder } = getSortParams(sortBy);
 
   // Fetch user's quotes with filters
-  const result = await api.quote['list-user-quotes']({
+  const result = await api.quote[ 'list-user-quotes' ]({
     includeExpired: false,
     limit: 10,
     page,
@@ -87,12 +85,9 @@ export default async function MyQuotesPage({ searchParams }: MyQuotesPageProps) 
     <div className="container mx-auto max-w-7xl py-8">
       {/* Header with back button */}
       <div className="mb-8">
-        <Link href="/catalog">
-          <Button className="mb-4" size="sm" variant="ghost">
-            <ChevronLeft className="mr-2 size-4" />
-            Volver al Catálogo
-          </Button>
-        </Link>
+        <BackLink className="mb-4" href="/catalog" icon="chevron">
+          Volver al Catálogo
+        </BackLink>
 
         <h1 className="font-bold text-3xl tracking-tight">Mis Cotizaciones</h1>
         <p className="mt-2 text-muted-foreground">Gestiona y revisa todas tus cotizaciones generadas</p>
