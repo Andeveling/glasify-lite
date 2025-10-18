@@ -38,22 +38,39 @@ type ModelCostBreakdownProps = {
 /**
  * Cost type labels (Spanish)
  */
-const costTypeLabels: Record<CostType, string> = {
-  fixed: 'Fijo',
-  per_mm_height: 'Por mm de alto',
-  per_mm_width: 'Por mm de ancho',
-  per_sqm: 'Por m²',
-};
+// Map CostType enum to localized labels
+function getCostTypeLabel(type: CostType) {
+  switch (type) {
+    case 'fixed':
+      return 'Fijo';
+    case 'per_mm_height':
+      return 'Por mm de alto';
+    case 'per_mm_width':
+      return 'Por mm de ancho';
+    case 'per_sqm':
+      return 'Por m²';
+    default:
+      return type;
+  }
+}
 
 /**
  * Cost type descriptions
  */
-const costTypeDescriptions: Record<CostType, string> = {
-  fixed: 'Costo fijo independiente de las dimensiones',
-  per_mm_height: 'Costo calculado por milímetro de altura',
-  per_mm_width: 'Costo calculado por milímetro de ancho',
-  per_sqm: 'Costo calculado por metro cuadrado',
-};
+function getCostTypeDescription(type: CostType) {
+  switch (type) {
+    case 'fixed':
+      return 'Costo fijo independiente de las dimensiones';
+    case 'per_mm_height':
+      return 'Costo calculado por milímetro de altura';
+    case 'per_mm_width':
+      return 'Costo calculado por milímetro de ancho';
+    case 'per_sqm':
+      return 'Costo calculado por metro cuadrado';
+    default:
+      return '';
+  }
+}
 
 export function ModelCostBreakdown({ readOnly = false }: ModelCostBreakdownProps) {
   const form = useFormContext();
@@ -93,8 +110,8 @@ export function ModelCostBreakdown({ readOnly = false }: ModelCostBreakdownProps
           </div>
         ) : (
           <div className="space-y-6">
-            {fields.map((field, index) => (
-              <Card className="border-muted" key={field.id}>
+            {fields.map((entry, index) => (
+              <Card className="border-muted" key={entry.id}>
                 <CardContent className="pt-6">
                   <div className="grid gap-4">
                     {/* Component Name */}
@@ -132,16 +149,16 @@ export function ModelCostBreakdown({ readOnly = false }: ModelCostBreakdownProps
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {(['fixed', 'per_mm_width', 'per_mm_height', 'per_sqm'] as CostType[]).map((type) => (
-                                  <SelectItem key={type} value={type}>
-                                    {costTypeLabels[type]}
-                                  </SelectItem>
-                                ))}
+                                {([ 'fixed', 'per_mm_width', 'per_mm_height', 'per_sqm' ] as CostType[]).map(
+                                  (type) => (
+                                    <SelectItem key={type} value={type}>
+                                      {getCostTypeLabel(type)}
+                                    </SelectItem>
+                                  )
+                                )}
                               </SelectContent>
                             </Select>
-                            <FormDescription>
-                              {field.value && costTypeDescriptions[field.value as CostType]}
-                            </FormDescription>
+                            <FormDescription>{field.value && getCostTypeDescription(field.value as CostType)}</FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}

@@ -13,6 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { MaterialType, ModelStatus } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import type { Resolver } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -65,7 +66,7 @@ export function ModelForm({ mode, defaultValues }: ModelFormProps) {
   const router = useRouter();
 
   // Fetch profile suppliers for dropdown
-  const { data: suppliersData } = api.admin['profile-supplier'].list.useQuery({
+  const { data: suppliersData } = api.admin[ 'profile-supplier' ].list.useQuery({
     isActive: 'active',
     limit: 100,
     page: 1,
@@ -74,7 +75,7 @@ export function ModelForm({ mode, defaultValues }: ModelFormProps) {
   });
 
   // Fetch glass types for multi-select
-  const { data: glassTypesData } = api.admin['glass-type'].list.useQuery({
+  const { data: glassTypesData } = api.admin[ 'glass-type' ].list.useQuery({
     isActive: 'active',
     limit: 100,
     page: 1,
@@ -102,7 +103,8 @@ export function ModelForm({ mode, defaultValues }: ModelFormProps) {
       profitMarginPercentage: defaultValues?.profitMarginPercentage ?? undefined,
       status: defaultValues?.status ?? 'draft',
     },
-    resolver: zodResolver(createModelSchema),
+    // Align resolver types with the form values to avoid Control<> generic mismatches
+    resolver: zodResolver(createModelSchema) as unknown as Resolver<ModelFormValues>,
   });
 
   const createMutation = api.admin.model.create.useMutation({
@@ -149,6 +151,7 @@ export function ModelForm({ mode, defaultValues }: ModelFormProps) {
   // Material type labels
   const materialLabels: Record<MaterialType, string> = {
     ALUMINUM: 'Aluminio',
+    MIXED: 'Mixto',
     PVC: 'PVC',
     WOOD: 'Madera',
   };
@@ -156,7 +159,7 @@ export function ModelForm({ mode, defaultValues }: ModelFormProps) {
   return (
     <Form {...form}>
       <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
-        <Accordion className="space-y-4" defaultValue={['basic']} type="multiple">
+        <Accordion className="space-y-4" defaultValue={[ 'basic' ]} type="multiple">
           {/* Basic Information Section */}
           <AccordionItem value="basic">
             <AccordionTrigger className="rounded-lg bg-muted px-4 py-2 hover:bg-muted/80">
@@ -222,7 +225,7 @@ export function ModelForm({ mode, defaultValues }: ModelFormProps) {
                             <SelectItem value="none">Sin proveedor</SelectItem>
                             {suppliers.map((supplier) => (
                               <SelectItem key={supplier.id} value={supplier.id}>
-                                {supplier.name} ({materialLabels[supplier.materialType]})
+                                {supplier.name} ({materialLabels[ supplier.materialType ]})
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -526,7 +529,7 @@ export function ModelForm({ mode, defaultValues }: ModelFormProps) {
                                         onCheckedChange={(checked) => {
                                           const currentValue = field.value ?? [];
                                           const newValue = checked
-                                            ? [...currentValue, glassType.id]
+                                            ? [ ...currentValue, glassType.id ]
                                             : currentValue.filter((value) => value !== glassType.id);
                                           field.onChange(newValue);
                                         }}
@@ -592,9 +595,9 @@ export function ModelForm({ mode, defaultValues }: ModelFormProps) {
                     render={({ field }) => {
                       let dateValue = '';
                       if (field.value instanceof Date) {
-                        dateValue = field.value.toISOString().split('T')[0] ?? '';
+                        dateValue = field.value.toISOString().split('T')[ 0 ] ?? '';
                       } else if (field.value) {
-                        dateValue = new Date(field.value).toISOString().split('T')[0] ?? '';
+                        dateValue = new Date(field.value).toISOString().split('T')[ 0 ] ?? '';
                       }
 
                       return (

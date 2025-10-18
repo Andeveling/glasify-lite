@@ -57,11 +57,18 @@ type SerializedGlassType = {
     name: string;
   } | null;
   solutions: Array<{
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    glassTypeId: string;
+    solutionId: string;
     isPrimary: boolean;
+    performanceRating: string;
+    notes: string | null;
     solution: {
       id: string;
-      name: string;
-      slug: string;
+      key: string;
+      nameEs: string;
     };
   }>;
 };
@@ -289,7 +296,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
                         ) : (
                           glassType.solutions.map((sol) => (
                             <Badge key={sol.solution.id} variant={sol.isPrimary ? 'default' : 'secondary'}>
-                              {sol.solution.nameEs}
+                              {sol.solution.id}
                             </Badge>
                           ))
                         )}
