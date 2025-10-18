@@ -86,15 +86,15 @@ type GlassTypeListProps = {
 export function GlassTypeList({ initialData }: GlassTypeListProps) {
   const router = useRouter();
   const utils = api.useUtils();
-  const [ search, setSearch ] = useState('');
-  const [ isActive, setIsActive ] = useState<'all' | 'active' | 'inactive'>('all');
-  const [ purpose, setPurpose ] = useState<'all' | 'general' | 'insulation' | 'security' | 'decorative'>('all');
-  const [ page, setPage ] = useState(1);
-  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
-  const [ glassTypeToDelete, setGlassTypeToDelete ] = useState<{ id: string; name: string } | null>(null);
+  const [search, setSearch] = useState('');
+  const [isActive, setIsActive] = useState<'all' | 'active' | 'inactive'>('all');
+  const [purpose, setPurpose] = useState<'all' | 'general' | 'insulation' | 'security' | 'decorative'>('all');
+  const [page, setPage] = useState(1);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [glassTypeToDelete, setGlassTypeToDelete] = useState<{ id: string; name: string } | null>(null);
 
   // Query with filters
-  const { data, isLoading } = api.admin[ 'glass-type' ].list.useQuery(
+  const { data, isLoading } = api.admin['glass-type'].list.useQuery(
     {
       isActive,
       limit: 20,
@@ -110,7 +110,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
   );
 
   // Delete mutation
-  const deleteMutation = api.admin[ 'glass-type' ].delete.useMutation({
+  const deleteMutation = api.admin['glass-type'].delete.useMutation({
     onError: (error) => {
       toast.error('Error al eliminar tipo de vidrio', {
         description: error.message,
@@ -120,7 +120,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
       toast.success('Tipo de vidrio eliminado correctamente');
       setDeleteDialogOpen(false);
       setGlassTypeToDelete(null);
-      void utils.admin[ 'glass-type' ].list.invalidate();
+      void utils.admin['glass-type'].list.invalidate();
     },
   });
 
@@ -303,7 +303,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline">{purposeLabels[ glassType.purpose ]}</Badge>
+                      <Badge variant="outline">{purposeLabels[glassType.purpose]}</Badge>
                     </TableCell>
                     <TableCell>
                       <Badge variant={glassType.isActive ? 'default' : 'secondary'}>

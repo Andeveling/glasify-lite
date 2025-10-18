@@ -31,9 +31,7 @@ export function NavMain({
             // Example: '/admin/models' -> ['admin','models'] (prefix allowed)
             // '/admin' -> ['admin'] (no prefix match; must be exact)
             const segmentsCount = item.url.split('/').filter(Boolean).length;
-            const isActive =
-              pathname === item.url ||
-              (segmentsCount > 1 && pathname.startsWith(`${item.url}/`));
+            const isActive = pathname === item.url || (segmentsCount > 1 && pathname.startsWith(`${item.url}/`));
 
             return (
               <SidebarMenuItem key={item.title}>

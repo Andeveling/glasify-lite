@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
 export default async function GlassTypesPage() {
   // Fetch initial data server-side
-  const initialData = await api.admin[ 'glass-type' ].list({
+  const initialData = await api.admin['glass-type'].list({
     limit: 20,
     page: 1,
     sortBy: 'name',

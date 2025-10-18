@@ -123,8 +123,7 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
               // Prevent top-level '/admin' from matching all child routes.
               // Only allow prefix matching for items with at least two segments (e.g. '/admin/profile-suppliers').
               const segmentsCount = item.url.split('/').filter(Boolean).length;
-              const isActive =
-                pathname === item.url || (segmentsCount > 1 && pathname.startsWith(`${item.url}/`));
+              const isActive = pathname === item.url || (segmentsCount > 1 && pathname.startsWith(`${item.url}/`));
 
               return (
                 <SidebarMenuItem key={item.url}>

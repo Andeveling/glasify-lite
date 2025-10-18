@@ -78,11 +78,11 @@ const SERVICE_TYPE_VARIANTS: Record<ServiceType, 'default' | 'secondary' | 'outl
 export function ServiceList({ initialData }: ServiceListProps) {
   const router = useRouter();
   const utils = api.useUtils();
-  const [ search, setSearch ] = useState('');
-  const [ typeFilter, setTypeFilter ] = useState<'all' | ServiceType>('all');
-  const [ page, setPage ] = useState(1);
-  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
-  const [ serviceToDelete, setServiceToDelete ] = useState<{ id: string; name: string } | null>(null);
+  const [search, setSearch] = useState('');
+  const [typeFilter, setTypeFilter] = useState<'all' | ServiceType>('all');
+  const [page, setPage] = useState(1);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [serviceToDelete, setServiceToDelete] = useState<{ id: string; name: string } | null>(null);
 
   // Query with filters
   const { data, isLoading } = api.admin.service.list.useQuery(
@@ -210,10 +210,10 @@ export function ServiceList({ initialData }: ServiceListProps) {
                     <TableRow key={service.id}>
                       <TableCell className="font-medium">{service.name}</TableCell>
                       <TableCell>
-                        <Badge variant={SERVICE_TYPE_VARIANTS[ service.type ]}>{SERVICE_TYPE_LABELS[ service.type ]}</Badge>
+                        <Badge variant={SERVICE_TYPE_VARIANTS[service.type]}>{SERVICE_TYPE_LABELS[service.type]}</Badge>
                       </TableCell>
                       <TableCell>
-                        <span className="text-muted-foreground text-sm">{SERVICE_UNIT_LABELS[ service.unit ]}</span>
+                        <span className="text-muted-foreground text-sm">{SERVICE_UNIT_LABELS[service.unit]}</span>
                       </TableCell>
                       <TableCell className="text-right font-mono">
                         $

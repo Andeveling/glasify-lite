@@ -14,7 +14,7 @@ const LOADER_DISPLAY_DURATION_MS = 300;
 
 export function NavigationLoader() {
   const pathname = usePathname();
-  const [ isNavigating, setIsNavigating ] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const prevPathname = useRef(pathname);
 
   useEffect(() => {
