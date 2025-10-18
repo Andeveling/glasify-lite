@@ -96,7 +96,7 @@ export default async function AdminDashboardPage() {
   ];
 
   return (
-    <AdminContentContainer>
+    <AdminContentContainer maxWidth="full">
       <div className="flex flex-col gap-4">
         <div>
           <h1 className="font-bold text-3xl tracking-tight">Dashboard de Administración</h1>

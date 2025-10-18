@@ -1,4 +1,3 @@
-import { Factory, GlassWater, Grid3x3, Package, Settings, Sparkles, Wrench } from 'lucide-react';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
@@ -27,6 +26,9 @@ export const metadata: Metadata = {
  * - Glass Solutions (categorization taxonomy)
  * - Glass Characteristics (flexible property tagging)
  *
+ * Navigation configuration is now in AdminSidebar (Client Component) to avoid
+ * Next.js 15 serialization errors with Lucide icon components.
+ *
  * @see https://ui.shadcn.com/blocks - dashboard-01 block
  */
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -37,69 +39,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect('/signin?callbackUrl=/admin');
   }
 
-  // Admin navigation structure
-  const navMain = [
-    {
-      icon: Settings,
-      title: 'Dashboard',
-      url: '/admin',
-    },
-    {
-      description: 'Ventanas y puertas',
-      icon: Grid3x3,
-      title: 'Modelos',
-      url: '/admin/models',
-    },
-    {
-      description: 'Configuraciones de vidrio',
-      icon: GlassWater,
-      title: 'Tipos de Vidrio',
-      url: '/admin/glass-types',
-    },
-    {
-      description: 'Servicios adicionales',
-      icon: Wrench,
-      title: 'Servicios',
-      url: '/admin/services',
-    },
-  ];
-
-  const navSuppliers = [
-    {
-      description: 'Fabricantes de perfiles',
-      icon: Factory,
-      title: 'Proveedores de Perfiles',
-      url: '/admin/profile-suppliers',
-    },
-    {
-      description: 'Fabricantes de vidrio',
-      icon: Package,
-      title: 'Proveedores de Vidrio',
-      url: '/admin/glass-suppliers',
-    },
-  ];
-
-  const navTaxonomy = [
-    {
-      description: 'Categorización por uso',
-      icon: Sparkles,
-      title: 'Soluciones de Vidrio',
-      url: '/admin/glass-solutions',
-    },
-    {
-      description: 'Propiedades del vidrio',
-      icon: Settings,
-      title: 'Características de Vidrio',
-      url: '/admin/glass-characteristics',
-    },
-  ];
-
   return (
     <SidebarProvider defaultOpen>
       <AdminSidebar
-        navMain={navMain}
-        navSuppliers={navSuppliers}
-        navTaxonomy={navTaxonomy}
         user={{
           avatar: session.user.image ?? undefined,
           email: session.user.email ?? '',
@@ -107,10 +49,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         }}
       />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+        <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b bg-background px-6">
           <AdminBreadcrumbs />
         </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</main>
+        <main className="flex flex-1 flex-col gap-6 p-6">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

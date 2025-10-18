@@ -64,25 +64,33 @@ export const AdminBreadcrumbs: FC = () => {
 
   return (
     <Breadcrumb>
-      <BreadcrumbList>
+      <BreadcrumbList className="flex items-center gap-1">
         {/* Home link */}
         <BreadcrumbItem>
-          <BreadcrumbLink href="/admin">
+          <BreadcrumbLink
+            className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground"
+            href="/admin"
+          >
             <Home className="h-4 w-4" />
             <span className="sr-only">Inicio</span>
           </BreadcrumbLink>
         </BreadcrumbItem>
 
         {breadcrumbItems.map((item) => (
-          <div className="flex items-center gap-2" key={item.href}>
+          <div className="flex items-center gap-1" key={item.href}>
             <BreadcrumbSeparator>
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
             </BreadcrumbSeparator>
             <BreadcrumbItem>
               {item.isLast ? (
-                <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                <BreadcrumbPage className="font-medium text-foreground">{item.label}</BreadcrumbPage>
               ) : (
-                <BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
+                <BreadcrumbLink
+                  className="text-muted-foreground transition-colors hover:text-foreground"
+                  href={item.href}
+                >
+                  {item.label}
+                </BreadcrumbLink>
               )}
             </BreadcrumbItem>
           </div>
