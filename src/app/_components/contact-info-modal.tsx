@@ -72,7 +72,7 @@ export function ContactInfoModal({ open, onClose, onSubmit, defaultValues, isLoa
     if (open && userEmail) {
       form.setValue('contactEmail', userEmail);
     }
-  }, [ open, userEmail, form ]);
+  }, [open, userEmail, form]);
 
   const handleSubmit = form.handleSubmit((data) => {
     onSubmit(data);

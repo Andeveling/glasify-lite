@@ -17,7 +17,7 @@ interface SendQuoteButtonProps {
  * Opens modal to capture/confirm contact information before sending
  */
 export function SendQuoteButton({ quote }: SendQuoteButtonProps) {
-  const [ isModalOpen, setIsModalOpen ] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { mutate: sendQuote, isPending } = useSendQuote();
   // Only show button for draft quotes
   if (quote.status !== 'draft') {

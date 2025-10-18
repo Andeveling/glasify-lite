@@ -1,21 +1,4 @@
-<!--
-Sync Impact Report
 
-- Version change: 1.0.0 → 1.1.0
-- Modified principles:
-  - "Observability & Versioning" → expanded with Winston logger usage restrictions
-  - "Technology & Compliance Requirements" → added RSC architecture patterns
-- Added sections:
-  - New principle: "Server-First Architecture (Next.js 15)"
-- Removed sections: none
-- Templates requiring review:
-  - .specify/templates/plan-template.md ⚠ pending (verify Server-First principle alignment)
-  - .specify/templates/spec-template.md ⚠ pending (ensure RSC patterns documented)
-  - .specify/templates/tasks-template.md ✅ updated (task categories aligned)
-- Follow-up TODOs:
-  - RATIFICATION_DATE confirmed as 2025-10-09 (initial constitution adoption)
-  - Review existing codebase for Client Components incorrectly using Winston logger
--->
 
 # Glasify Lite Constitution
 
@@ -158,20 +141,22 @@ Compliance:
 <!--
 Sync Impact Report
 
-- Version change: 1.1.0 → 2.0.0
-- Modified principles:
-  - "Test-Last (NON-NEGOTIABLE)" → "Pragmatic Testing Discipline" (reemplazo de política)
+- Version change: 2.0.0 → 2.0.1 (PATCH)
+- Modified principles: none
 - Added sections: none
 - Removed sections: none
-- Templates requiring review:
-  - .specify/templates/plan-template.md ⚠ pending (verificar alineación con nueva política de testing)
-  - .specify/templates/spec-template.md ⚠ pending (asegurar que la sección de testing no exija test-first/test-last)
-  - .specify/templates/tasks-template.md ✅ actualizado (categorías de tasks revisadas)
-- Follow-up TODOs:
-  - RATIFICATION_DATE confirmado como 2025-10-09 (adopción original)
-  - Revisar documentación y onboarding para reflejar la nueva política de testing
+- Templates updated:
+  - .specify/templates/plan-template.md ✅ updated (added comprehensive Constitution Check aligned with v2.0.0)
+  - .specify/templates/spec-template.md ✅ verified (no test-first/test-last requirements found)
+  - .specify/templates/tasks-template.md ✅ updated (removed test-first mandate, aligned with Pragmatic Testing Discipline)
+- Follow-up TODOs: none
+- Changes summary:
+  * plan-template.md: Replaced placeholder Constitution Check with detailed checklist covering all principles
+  * tasks-template.md: Updated testing notes to reflect flexible testing workflow (before/during/after)
+  * All templates now aligned with constitution v2.0.0 principles
 -->
 
-**Version**: 2.0.0  
+# Glasify Lite Constitution
+**Version**: 2.0.1  
 **Ratified**: 2025-10-09  
-**Last Amended**: 2025-10-14
+**Last Amended**: 2025-10-18
