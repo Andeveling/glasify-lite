@@ -1,6 +1,6 @@
 /**
  * ModelTableRow Component
- * 
+ *
  * Single row in model table with actions
  * Follows Single Responsibility Principle - renders one model row
  */
@@ -75,7 +75,7 @@ export function ModelTableRow({ model, onDeleteClick }: ModelTableRowProps) {
         <Badge variant="secondary">{model.compatibleGlassTypeIds.length} tipos</Badge>
       </TableCell>
       <TableCell>
-        <Badge variant={getStatusVariant(model.status)}>{statusLabels[ model.status ]}</Badge>
+        <Badge variant={getStatusVariant(model.status)}>{statusLabels[model.status]}</Badge>
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-2">

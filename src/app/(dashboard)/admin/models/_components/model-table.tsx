@@ -1,6 +1,6 @@
 /**
  * ModelTable Component
- * 
+ *
  * Table display for models with loading states
  * Follows Open/Closed Principle - extensible via props
  */

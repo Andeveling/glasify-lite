@@ -1,6 +1,6 @@
 /**
  * ModelTableSkeleton Component
- * 
+ *
  * Loading skeleton for model table
  * Provides better UX than generic "Loading..." text
  */

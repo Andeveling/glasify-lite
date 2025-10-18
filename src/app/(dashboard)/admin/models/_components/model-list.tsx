@@ -74,14 +74,14 @@ type ModelListProps = {
 
 export function ModelList({ initialData }: ModelListProps) {
   const utils = api.useUtils();
-  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
-  const [ modelToDelete, setModelToDelete ] = useState<{ id: string; name: string } | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [modelToDelete, setModelToDelete] = useState<{ id: string; name: string } | null>(null);
 
   // Custom hook for filter state management (Single Responsibility)
   const { filters, handlers } = useModelFilters();
 
   // Fetch profile suppliers for filter
-  const { data: suppliersData } = api.admin[ 'profile-supplier' ].list.useQuery({
+  const { data: suppliersData } = api.admin['profile-supplier'].list.useQuery({
     isActive: 'active',
     limit: 100,
     page: 1,

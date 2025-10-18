@@ -1,6 +1,6 @@
 /**
  * ModelFilters Component
- * 
+ *
  * Search and filter controls for model list
  * Follows Single Responsibility Principle - only renders filter UI
  */

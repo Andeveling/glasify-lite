@@ -149,16 +149,16 @@ export function ModelCostBreakdown({ readOnly = false }: ModelCostBreakdownProps
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {([ 'fixed', 'per_mm_width', 'per_mm_height', 'per_sqm' ] as CostType[]).map(
-                                  (type) => (
-                                    <SelectItem key={type} value={type}>
-                                      {getCostTypeLabel(type)}
-                                    </SelectItem>
-                                  )
-                                )}
+                                {(['fixed', 'per_mm_width', 'per_mm_height', 'per_sqm'] as CostType[]).map((type) => (
+                                  <SelectItem key={type} value={type}>
+                                    {getCostTypeLabel(type)}
+                                  </SelectItem>
+                                ))}
                               </SelectContent>
                             </Select>
-                            <FormDescription>{field.value && getCostTypeDescription(field.value as CostType)}</FormDescription>
+                            <FormDescription>
+                              {field.value && getCostTypeDescription(field.value as CostType)}
+                            </FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}

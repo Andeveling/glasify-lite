@@ -1,6 +1,6 @@
 /**
  * Pagination Component
- * 
+ *
  * Reusable pagination controls
  * Follows Single Responsibility Principle - only handles pagination UI
  */
@@ -24,12 +24,7 @@ export function Pagination({ currentPage, onPageChange, totalPages }: Pagination
         Página {currentPage} de {totalPages}
       </p>
       <div className="flex gap-2">
-        <Button
-          disabled={currentPage === 1}
-          onClick={() => onPageChange(currentPage - 1)}
-          size="sm"
-          variant="outline"
-        >
+        <Button disabled={currentPage === 1} onClick={() => onPageChange(currentPage - 1)} size="sm" variant="outline">
           Anterior
         </Button>
         <Button
