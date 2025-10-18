@@ -1,25 +1,19 @@
 'use client';
 
 import {
-  IconCamera,
-  IconChartBar,
-  IconDashboard,
-  IconDatabase,
-  IconFileAi,
-  IconFileDescription,
-  IconFileWord,
-  IconFolder,
-  IconHelp,
-  IconInnerShadowTop,
-  IconListDetails,
-  IconReport,
-  IconSearch,
-  IconSettings,
-  IconUsers,
-} from '@tabler/icons-react';
+  Factory,
+  GlassWater,
+  Grid3x3,
+  HelpCircle,
+  LayoutDashboard,
+  Package,
+  Search,
+  Settings,
+  Sparkles,
+  Wrench,
+} from 'lucide-react';
+import Link from 'next/link';
 import type * as React from 'react';
-
-import { NavDocuments } from '@/components/nav-documents';
 import { NavMain } from '@/components/nav-main';
 import { NavSecondary } from '@/components/nav-secondary';
 import { NavUser } from '@/components/nav-user';
@@ -27,6 +21,8 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -34,119 +30,73 @@ import {
 } from '@/components/ui/sidebar';
 
 const data = {
-  documents: [
-    {
-      icon: IconDatabase,
-      name: 'Data Library',
-      url: '#',
-    },
-    {
-      icon: IconReport,
-      name: 'Reports',
-      url: '#',
-    },
-    {
-      icon: IconFileWord,
-      name: 'Word Assistant',
-      url: '#',
-    },
-  ],
-  navClouds: [
-    {
-      icon: IconCamera,
-      isActive: true,
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-      title: 'Capture',
-      url: '#',
-    },
-    {
-      icon: IconFileDescription,
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-      title: 'Proposal',
-      url: '#',
-    },
-    {
-      icon: IconFileAi,
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-      title: 'Prompts',
-      url: '#',
-    },
-  ],
   navMain: [
     {
-      icon: IconDashboard,
+      icon: LayoutDashboard,
       title: 'Dashboard',
-      url: '#',
+      url: '/admin',
     },
     {
-      icon: IconListDetails,
-      title: 'Lifecycle',
-      url: '#',
+      icon: Grid3x3,
+      title: 'Modelos',
+      url: '/admin/models',
     },
     {
-      icon: IconChartBar,
-      title: 'Analytics',
-      url: '#',
+      icon: GlassWater,
+      title: 'Tipos de Vidrio',
+      url: '/admin/glass-types',
     },
     {
-      icon: IconFolder,
-      title: 'Projects',
-      url: '#',
-    },
-    {
-      icon: IconUsers,
-      title: 'Team',
-      url: '#',
+      icon: Wrench,
+      title: 'Servicios',
+      url: '/admin/services',
     },
   ],
   navSecondary: [
     {
-      icon: IconSettings,
-      title: 'Settings',
+      icon: Settings,
+      title: 'Configuración',
       url: '#',
     },
     {
-      icon: IconHelp,
-      title: 'Get Help',
+      icon: HelpCircle,
+      title: 'Ayuda',
       url: '#',
     },
     {
-      icon: IconSearch,
-      title: 'Search',
+      icon: Search,
+      title: 'Buscar',
       url: '#',
+    },
+  ],
+  navSuppliers: [
+    {
+      icon: Factory,
+      title: 'Proveedores de Perfiles',
+      url: '/admin/profile-suppliers',
+    },
+    {
+      icon: Package,
+      title: 'Proveedores de Vidrio',
+      url: '/admin/glass-suppliers',
+    },
+  ],
+  navTaxonomy: [
+    {
+      icon: Sparkles,
+      title: 'Soluciones de Vidrio',
+      url: '/admin/glass-solutions',
+    },
+    {
+      icon: Settings,
+      title: 'Características de Vidrio',
+      url: '/admin/glass-characteristics',
     },
   ],
   user: {
     avatar: '/avatars/shadcn.jpg',
-    email: 'm@example.com',
-    name: 'shadcn',
+    email: 'admin@glasify.com',
+    name: 'Admin',
   },
 };
 
@@ -157,17 +107,53 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
-              <a href="#">
-                <IconInnerShadowTop className="!size-5" />
-                <span className="font-semibold text-base">Acme Inc.</span>
-              </a>
+              <Link href="/admin">
+                <Sparkles className="!size-5" />
+                <span className="font-semibold text-base">Glasify Admin</span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
+        {/* Main catalog entities */}
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
+
+        {/* Supplier management */}
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+          <SidebarGroupLabel>Proveedores</SidebarGroupLabel>
+          <SidebarMenu>
+            {data.navSuppliers.map((item) => (
+              <SidebarMenuItem key={item.url}>
+                <SidebarMenuButton asChild>
+                  <Link href={item.url}>
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+
+        {/* Taxonomy management */}
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+          <SidebarGroupLabel>Taxonomía</SidebarGroupLabel>
+          <SidebarMenu>
+            {data.navTaxonomy.map((item) => (
+              <SidebarMenuItem key={item.url}>
+                <SidebarMenuButton asChild>
+                  <Link href={item.url}>
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+
+        {/* Secondary navigation */}
         <NavSecondary className="mt-auto" items={data.navSecondary} />
       </SidebarContent>
       <SidebarFooter>

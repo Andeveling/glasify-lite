@@ -15,20 +15,6 @@ import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
-  IconChevronDown,
-  IconChevronLeft,
-  IconChevronRight,
-  IconChevronsLeft,
-  IconChevronsRight,
-  IconCircleCheckFilled,
-  IconDotsVertical,
-  IconGripVertical,
-  IconLayoutColumns,
-  IconLoader,
-  IconPlus,
-  IconTrendingUp,
-} from '@tabler/icons-react';
-import {
   type ColumnDef,
   type ColumnFiltersState,
   flexRender,
@@ -43,7 +29,21 @@ import {
   useReactTable,
   type VisibilityState,
 } from '@tanstack/react-table';
-import * as React from 'react';
+import {
+  CheckCircle,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  GripVertical,
+  LayoutGrid,
+  Loader,
+  MoreVertical,
+  Plus,
+  TrendingUp,
+} from 'lucide-react';
+import React from 'react';
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -101,7 +101,7 @@ function DragHandle({ id }: { id: number }) {
       size="icon"
       variant="ghost"
     >
-      <IconGripVertical className="size-3 text-muted-foreground" />
+      <GripVertical className="size-3 text-muted-foreground" />
       <span className="sr-only">Drag to reorder</span>
     </Button>
   );
@@ -157,11 +157,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: 'status',
     cell: ({ row }) => (
       <Badge className="px-1.5 text-muted-foreground" variant="outline">
-        {row.original.status === 'Done' ? (
-          <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
-        ) : (
-          <IconLoader />
-        )}
+        {row.original.status === 'Done' ? <CheckCircle className="fill-green-500 dark:fill-green-400" /> : <Loader />}
         {row.original.status}
       </Badge>
     ),
@@ -254,7 +250,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button className="flex size-8 text-muted-foreground data-[state=open]:bg-muted" size="icon" variant="ghost">
-            <IconDotsVertical />
+            <MoreVertical />
             <span className="sr-only">Open menu</span>
           </Button>
         </DropdownMenuTrigger>
@@ -337,10 +333,10 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active && over && active.id !== over.id) {
-      setData((data) => {
+      setData((currentData) => {
         const oldIndex = dataIds.indexOf(active.id);
         const newIndex = dataIds.indexOf(over.id);
-        return arrayMove(data, oldIndex, newIndex);
+        return arrayMove(currentData, oldIndex, newIndex);
       });
     }
   }
@@ -376,10 +372,10 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button size="sm" variant="outline">
-                <IconLayoutColumns />
+                <LayoutGrid />
                 <span className="hidden lg:inline">Customize Columns</span>
                 <span className="lg:hidden">Columns</span>
-                <IconChevronDown />
+                <ChevronDown />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
@@ -399,7 +395,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
             </DropdownMenuContent>
           </DropdownMenu>
           <Button size="sm" variant="outline">
-            <IconPlus />
+            <Plus />
             <span className="hidden lg:inline">Add Section</span>
           </Button>
         </div>
@@ -482,7 +478,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                 variant="outline"
               >
                 <span className="sr-only">Go to first page</span>
-                <IconChevronsLeft />
+                <ChevronsLeft />
               </Button>
               <Button
                 className="size-8"
@@ -492,7 +488,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                 variant="outline"
               >
                 <span className="sr-only">Go to previous page</span>
-                <IconChevronLeft />
+                <ChevronLeft />
               </Button>
               <Button
                 className="size-8"
@@ -502,7 +498,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                 variant="outline"
               >
                 <span className="sr-only">Go to next page</span>
-                <IconChevronRight />
+                <ChevronRight />
               </Button>
               <Button
                 className="hidden size-8 lg:flex"
@@ -512,7 +508,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                 variant="outline"
               >
                 <span className="sr-only">Go to last page</span>
-                <IconChevronsRight />
+                <ChevronsRight />
               </Button>
             </div>
           </div>
@@ -609,7 +605,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
               <Separator />
               <div className="grid gap-2">
                 <div className="flex gap-2 font-medium leading-none">
-                  Trending up by 5.2% this month <IconTrendingUp className="size-4" />
+                  Trending up by 5.2% this month <TrendingUp className="size-4" />
                 </div>
                 <div className="text-muted-foreground">
                   Showing total visitors for the last 6 months. This is just some random text to test the layout. It
