@@ -1,6 +1,6 @@
 'use client';
 
-import { IconChevronRight, IconHome } from '@tabler/icons-react';
+import { ChevronRight, Home } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import type { FC } from 'react';
 
@@ -52,7 +52,7 @@ export const AdminBreadcrumbs: FC = () => {
 
   const breadcrumbItems = pathSegments.map((segment, index) => {
     const href = `/${pathSegments.slice(0, index + 1).join('/')}`;
-    const label = pathLabels[ segment ] ?? segment;
+    const label = pathLabels[segment] ?? segment;
     const isLast = index === pathSegments.length - 1;
 
     return {
@@ -68,7 +68,7 @@ export const AdminBreadcrumbs: FC = () => {
         {/* Home link */}
         <BreadcrumbItem>
           <BreadcrumbLink href="/admin">
-            <IconHome className="h-4 w-4" />
+            <Home className="h-4 w-4" />
             <span className="sr-only">Inicio</span>
           </BreadcrumbLink>
         </BreadcrumbItem>
@@ -76,7 +76,7 @@ export const AdminBreadcrumbs: FC = () => {
         {breadcrumbItems.map((item) => (
           <div className="flex items-center gap-2" key={item.href}>
             <BreadcrumbSeparator>
-              <IconChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4" />
             </BreadcrumbSeparator>
             <BreadcrumbItem>
               {item.isLast ? (

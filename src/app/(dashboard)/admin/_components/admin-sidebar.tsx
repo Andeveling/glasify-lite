@@ -1,7 +1,7 @@
 'use client';
 
-import type { Icon } from '@tabler/icons-react';
-import { IconInnerShadowTop } from '@tabler/icons-react';
+import type { LucideIcon } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import type { FC } from 'react';
 
 import { NavMain } from '@/components/nav-main';
@@ -21,7 +21,7 @@ import {
 interface NavItem {
   title: string;
   url: string;
-  icon: Icon;
+  icon: LucideIcon;
   description?: string;
 }
 
@@ -54,7 +54,7 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, navMain, navSupplier
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
               <a href="/admin">
-                <IconInnerShadowTop className="!size-5" />
+                <Sparkles className="!size-5" />
                 <span className="font-semibold text-base">Glasify Admin</span>
               </a>
             </SidebarMenuButton>

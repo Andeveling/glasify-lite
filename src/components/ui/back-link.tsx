@@ -53,7 +53,7 @@ export type BackLinkProps = {
   /** Button variant style */
   variant?: 'ghost' | 'outline' | 'link';
   /** Button size */
-  size?: VariantProps<typeof buttonVariants>[ 'size' ];
+  size?: VariantProps<typeof buttonVariants>['size'];
   /** Additional CSS classes */
   className?: string;
 };

@@ -35,6 +35,6 @@ export const AdminContentContainer: FC<AdminContentContainerProps> = ({ children
   };
 
   return (
-    <div className={cn('mx-auto w-full space-y-6 px-4 py-6', maxWidthClasses[ maxWidth ], className)}>{children}</div>
+    <div className={cn('mx-auto w-full space-y-6 px-4 py-6', maxWidthClasses[maxWidth], className)}>{children}</div>
   );
 };

@@ -1,12 +1,4 @@
-import {
-  IconBuildingFactory2,
-  IconGlass,
-  IconPackage,
-  IconSettings,
-  IconSparkles,
-  IconTool,
-  IconWindow,
-} from '@tabler/icons-react';
+import { Factory, GlassWater, Grid3x3, Package, Settings, Sparkles, Wrench } from 'lucide-react';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
@@ -48,25 +40,25 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   // Admin navigation structure
   const navMain = [
     {
-      icon: IconSettings,
+      icon: Settings,
       title: 'Dashboard',
       url: '/admin',
     },
     {
       description: 'Ventanas y puertas',
-      icon: IconWindow,
+      icon: Grid3x3,
       title: 'Modelos',
       url: '/admin/models',
     },
     {
       description: 'Configuraciones de vidrio',
-      icon: IconGlass,
+      icon: GlassWater,
       title: 'Tipos de Vidrio',
       url: '/admin/glass-types',
     },
     {
       description: 'Servicios adicionales',
-      icon: IconTool,
+      icon: Wrench,
       title: 'Servicios',
       url: '/admin/services',
     },
@@ -75,13 +67,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const navSuppliers = [
     {
       description: 'Fabricantes de perfiles',
-      icon: IconBuildingFactory2,
+      icon: Factory,
       title: 'Proveedores de Perfiles',
       url: '/admin/profile-suppliers',
     },
     {
       description: 'Fabricantes de vidrio',
-      icon: IconPackage,
+      icon: Package,
       title: 'Proveedores de Vidrio',
       url: '/admin/glass-suppliers',
     },
@@ -90,13 +82,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const navTaxonomy = [
     {
       description: 'Categorización por uso',
-      icon: IconSparkles,
+      icon: Sparkles,
       title: 'Soluciones de Vidrio',
       url: '/admin/glass-solutions',
     },
     {
       description: 'Propiedades del vidrio',
-      icon: IconSettings,
+      icon: Settings,
       title: 'Características de Vidrio',
       url: '/admin/glass-characteristics',
     },
