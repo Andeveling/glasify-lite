@@ -6,6 +6,7 @@
  */
 
 import { ArrowLeftRight, ArrowUpDown, type LucideIcon, Shield, Snowflake, Sparkles, Volume2 } from 'lucide-react';
+import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 
 /**
@@ -59,12 +60,79 @@ type ProductImagePlaceholderProps = {
  * TODO: Integrate real images later.
  */
 export function ProductImagePlaceholder({ productName: _productName }: ProductImagePlaceholderProps) {
+  return <ProductImage productName={_productName} src={undefined} />;
+}
+
+// Small, performant SVG shimmer used as blurDataURL for image placeholder
+function shimmerSvg(width = 700, height = 525) {
+  return `
+    <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g">
+          <stop stop-color="#f3f4f6" offset="20%" />
+          <stop stop-color="#e5e7eb" offset="50%" />
+          <stop stop-color="#f3f4f6" offset="70%" />
+        </linearGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="#f3f4f6" />
+      <rect width="100%" height="100%" fill="url(#g)" />
+    </svg>`;
+}
+
+function shimmerDataUrl(width = 700, height = 525) {
+  // Use encoded utf8 data URI to avoid depending on Buffer/btoa across runtimes
+  return `data:image/svg+xml;utf8,${encodeURIComponent(shimmerSvg(width, height))}`;
+}
+
+type ProductImageProps = {
+  src?: string | null;
+  productName?: string;
+  alt?: string;
+  priority?: boolean;
+  sizes?: string;
+  className?: string;
+  aspectRatioClass?: string; // Tailwind aspect-ratio utility class
+};
+
+/**
+ * ProductImage - Atomic Component
+ *
+ * Improved product image with support for:
+ * - optional real image `src` with fallback to placeholder
+ * - responsive sizes and Next/Image `fill` mode
+ * - accessible figcaption (screen reader only)
+ * - blur placeholder using an inline SVG shimmer (no extra assets)
+ *
+ * This component is intentionally presentational and keeps server-side rendering
+ * behaviour (no client-side event handlers). If you need interactive loading
+ * states, convert it to a client component later.
+ */
+export function ProductImage({
+  src,
+  productName,
+  alt,
+  priority = false,
+  sizes,
+  className = '',
+  aspectRatioClass = 'aspect-[4/3]',
+}: ProductImageProps) {
+  const imageSrc = src ?? '/placeholder.webp';
+  const altText = alt ?? (productName ? `Imagen del producto: ${productName}` : 'Imagen del producto');
+
   return (
-    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-muted">
-      <div className="flex h-full items-center justify-center">
-        <span className="text-muted-foreground/50 text-sm">Imagen del producto</span>
-      </div>
-    </div>
+    <figure className={`relative ${aspectRatioClass} w-full overflow-hidden rounded-lg bg-muted ${className}`}>
+      <Image
+        alt={altText}
+        blurDataURL={imageSrc === '/placeholder.webp' ? shimmerDataUrl(700, 525) : undefined}
+        className="h-full w-full object-contain"
+        fill
+        placeholder={imageSrc === '/placeholder.webp' ? 'blur' : 'empty'}
+        priority={priority}
+        sizes={sizes ?? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'}
+        src={imageSrc}
+      />
+      <figcaption className="sr-only text-muted-foreground/50 text-sm">{altText}</figcaption>
+    </figure>
   );
 }
 
