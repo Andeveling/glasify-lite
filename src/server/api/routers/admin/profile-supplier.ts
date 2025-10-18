@@ -1,181 +1,273 @@
 /**
- * ProfileSupplier tRPC Router
+ * Profile Supplier tRPC Router
  *
- * Profile manufacturer management (Rehau, Deceuninck, etc.)
+ * Admin CRUD operations for ProfileSupplier entity
  *
- * @see /plan/refactor-manufacturer-to-tenant-config-1.md
+ * All procedures use adminProcedure (admin-only access)
+ * Includes Winston logging for audit trail
+ * Includes referential integrity check for deletions
  */
 
+import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { z } from 'zod';
-import { db } from '../../../db';
+import logger from '@/lib/logger';
 import {
   createProfileSupplierSchema,
+  deleteProfileSupplierSchema,
+  getProfileSupplierByIdSchema,
   listProfileSuppliersSchema,
   updateProfileSupplierSchema,
-} from '../../../schemas/supplier.schema';
-import { adminProcedure, createTRPCRouter, protectedProcedure } from '../../trpc';
+} from '@/lib/validations/admin/profile-supplier.schema';
+import { adminProcedure, createTRPCRouter } from '@/server/api/trpc';
+import { canDeleteProfileSupplier } from '@/server/services/referential-integrity.service';
 
+/**
+ * Helper: Build where clause for list query
+ */
+function buildWhereClause(input: {
+  search?: string;
+  materialType?: string;
+  isActive?: 'all' | 'active' | 'inactive';
+}): Prisma.ProfileSupplierWhereInput {
+  const where: Prisma.ProfileSupplierWhereInput = {};
+
+  // Search by name
+  if (input.search) {
+    where.name = {
+      contains: input.search,
+      mode: 'insensitive',
+    };
+  }
+
+  // Filter by material type
+  if (input.materialType) {
+    where.materialType = input.materialType as Prisma.EnumMaterialTypeFilter;
+  }
+
+  // Filter by active status
+  if (input.isActive && input.isActive !== 'all') {
+    where.isActive = input.isActive === 'active';
+  }
+
+  return where;
+}
+
+/**
+ * Helper: Build orderBy clause for list query
+ */
+function buildOrderByClause(sortBy: string, sortOrder: 'asc' | 'desc'): Prisma.ProfileSupplierOrderByWithRelationInput {
+  const orderBy: Prisma.ProfileSupplierOrderByWithRelationInput = {};
+
+  switch (sortBy) {
+    case 'name':
+      orderBy.name = sortOrder;
+      break;
+    case 'materialType':
+      orderBy.materialType = sortOrder;
+      break;
+    case 'createdAt':
+      orderBy.createdAt = sortOrder;
+      break;
+    default:
+      orderBy.name = 'asc'; // Default sort
+  }
+
+  return orderBy;
+}
+
+/**
+ * Profile Supplier Router
+ */
 export const profileSupplierRouter = createTRPCRouter({
   /**
-   * Create a new profile supplier
-   * Admin only - creates new profile manufacturer
+   * Create Profile Supplier
+   * POST /api/trpc/admin/profile-supplier.create
+   *
+   * Creates a new profile supplier
    */
-  create: adminProcedure.input(createProfileSupplierSchema).mutation(async ({ input }) => {
-    // Check if supplier with same name already exists
-    const existing = await db.profileSupplier.findUnique({
+  create: adminProcedure.input(createProfileSupplierSchema).mutation(async ({ ctx, input }) => {
+    // Check for duplicate name
+    const existing = await ctx.db.profileSupplier.findUnique({
       where: { name: input.name },
     });
 
     if (existing) {
       throw new TRPCError({
         code: 'CONFLICT',
-        message: `ProfileSupplier with name "${input.name}" already exists`,
+        message: 'Ya existe un proveedor con este nombre',
       });
     }
 
-    return db.profileSupplier.create({
+    const profileSupplier = await ctx.db.profileSupplier.create({
       data: input,
     });
+
+    logger.info('Profile supplier created', {
+      materialType: profileSupplier.materialType,
+      supplierId: profileSupplier.id,
+      supplierName: profileSupplier.name,
+      userId: ctx.session.user.id,
+    });
+
+    return profileSupplier;
   }),
 
   /**
-   * Delete a profile supplier
-   * Admin only - permanently removes supplier
+   * Delete Profile Supplier
+   * DELETE /api/trpc/admin/profile-supplier.delete
+   *
+   * Deletes a profile supplier if no models are associated
+   * Uses referential integrity service to check dependencies
    */
-  delete: adminProcedure.input(z.object({ id: z.string().cuid() })).mutation(async ({ input }) => {
-    // Check if supplier exists
-    const existing = await db.profileSupplier.findUnique({
-      include: {
-        // biome-ignore lint/style/useNamingConvention: Prisma generated field
-        _count: {
-          select: { models: true },
-        },
-      },
+  delete: adminProcedure.input(deleteProfileSupplierSchema).mutation(async ({ ctx, input }) => {
+    // Check if exists
+    const existing = await ctx.db.profileSupplier.findUnique({
       where: { id: input.id },
     });
 
     if (!existing) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: `ProfileSupplier with ID ${input.id} not found`,
+        message: 'Proveedor de perfiles no encontrado',
       });
     }
 
-    // Prevent deletion if supplier has models
-    if (existing._count.models > 0) {
+    // Check referential integrity
+    const integrityCheck = await canDeleteProfileSupplier(input.id);
+
+    if (!integrityCheck.canDelete) {
       throw new TRPCError({
-        code: 'PRECONDITION_FAILED',
-        message: `Cannot delete ProfileSupplier "${existing.name}" because it has ${existing._count.models} associated models`,
+        code: 'CONFLICT',
+        message: integrityCheck.message,
       });
     }
 
-    return db.profileSupplier.delete({
+    await ctx.db.profileSupplier.delete({
       where: { id: input.id },
     });
+
+    logger.warn('Profile supplier deleted', {
+      supplierId: input.id,
+      supplierName: existing.name,
+      userId: ctx.session.user.id,
+    });
+
+    return { success: true };
   }),
 
   /**
-   * Get a single profile supplier by ID
+   * Get Profile Supplier by ID
+   * GET /api/trpc/admin/profile-supplier.getById
+   *
+   * Returns full profile supplier details with model count
    */
-  getById: protectedProcedure.input(z.object({ id: z.string().cuid() })).query(async ({ input }) => {
-    const supplier = await db.profileSupplier.findUnique({
+  getById: adminProcedure.input(getProfileSupplierByIdSchema).query(async ({ ctx, input }) => {
+    const profileSupplier = await ctx.db.profileSupplier.findUnique({
       where: { id: input.id },
     });
 
-    if (!supplier) {
+    if (!profileSupplier) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: `ProfileSupplier with ID ${input.id} not found`,
+        message: 'Proveedor de perfiles no encontrado',
       });
     }
 
-    return supplier;
+    logger.info('Profile supplier retrieved', {
+      supplierId: input.id,
+      supplierName: profileSupplier.name,
+      userId: ctx.session.user.id,
+    });
+
+    return profileSupplier;
   }),
   /**
-   * List all profile suppliers
+   * List Profile Suppliers
+   * GET /api/trpc/admin/profile-supplier.list
+   *
+   * Supports pagination, search, filtering, and sorting
    */
-  list: protectedProcedure.input(listProfileSuppliersSchema.optional()).query(({ input }) => {
-    const where = {
-      ...(input?.isActive !== undefined && { isActive: input.isActive }),
-      ...(input?.materialType && { materialType: input.materialType }),
-      ...(input?.search && {
-        name: {
-          contains: input.search,
-          mode: 'insensitive' as const,
-        },
-      }),
-    };
+  list: adminProcedure.input(listProfileSuppliersSchema).query(async ({ ctx, input }) => {
+    const { page, limit, sortBy, sortOrder, ...filters } = input;
 
-    return db.profileSupplier.findMany({
-      orderBy: { name: 'asc' },
+    const where = buildWhereClause(filters);
+    const orderBy = buildOrderByClause(sortBy, sortOrder);
+
+    // Get total count
+    const total = await ctx.db.profileSupplier.count({ where });
+
+    // Get paginated items
+    const items = await ctx.db.profileSupplier.findMany({
+      orderBy,
+      skip: (page - 1) * limit,
+      take: limit,
       where,
     });
+
+    logger.info('Profile suppliers listed', {
+      filters,
+      limit,
+      page,
+      total,
+      userId: ctx.session.user.id,
+    });
+
+    return {
+      items,
+      limit,
+      page,
+      total,
+      totalPages: Math.ceil(total / limit),
+    };
   }),
 
   /**
-   * Toggle active status
-   * Admin only - activates/deactivates supplier
+   * Update Profile Supplier
+   * PUT /api/trpc/admin/profile-supplier.update
+   *
+   * Updates an existing profile supplier
    */
-  toggleActive: adminProcedure.input(z.object({ id: z.string().cuid() })).mutation(async ({ input }) => {
-    const supplier = await db.profileSupplier.findUnique({
-      where: { id: input.id },
+  update: adminProcedure.input(updateProfileSupplierSchema).mutation(async ({ ctx, input }) => {
+    const { id, data } = input;
+
+    // Check if exists
+    const existing = await ctx.db.profileSupplier.findUnique({
+      where: { id },
     });
 
-    if (!supplier) {
+    if (!existing) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: `ProfileSupplier with ID ${input.id} not found`,
+        message: 'Proveedor de perfiles no encontrado',
       });
     }
 
-    return db.profileSupplier.update({
-      data: { isActive: !supplier.isActive },
-      where: { id: input.id },
-    });
-  }),
-
-  /**
-   * Update a profile supplier
-   * Admin only - modifies supplier data
-   */
-  update: adminProcedure
-    .input(
-      z.object({
-        data: updateProfileSupplierSchema,
-        id: z.string().cuid(),
-      })
-    )
-    .mutation(async ({ input }) => {
-      // Check if supplier exists
-      const existing = await db.profileSupplier.findUnique({
-        where: { id: input.id },
+    // Check for duplicate name (if name is being updated)
+    if (data.name && data.name !== existing.name) {
+      const duplicate = await ctx.db.profileSupplier.findUnique({
+        where: { name: data.name },
       });
 
-      if (!existing) {
+      if (duplicate) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: `ProfileSupplier with ID ${input.id} not found`,
+          code: 'CONFLICT',
+          message: 'Ya existe un proveedor con este nombre',
         });
       }
+    }
 
-      // If updating name, check for duplicates
-      if (input.data.name && input.data.name !== existing.name) {
-        const duplicate = await db.profileSupplier.findUnique({
-          where: { name: input.data.name },
-        });
+    const profileSupplier = await ctx.db.profileSupplier.update({
+      data,
+      where: { id },
+    });
 
-        if (duplicate) {
-          throw new TRPCError({
-            code: 'CONFLICT',
-            message: `ProfileSupplier with name "${input.data.name}" already exists`,
-          });
-        }
-      }
+    logger.info('Profile supplier updated', {
+      changes: data,
+      supplierId: profileSupplier.id,
+      supplierName: profileSupplier.name,
+      userId: ctx.session.user.id,
+    });
 
-      return db.profileSupplier.update({
-        data: input.data,
-        where: { id: input.id },
-      });
-    }),
+    return profileSupplier;
+  }),
 });
