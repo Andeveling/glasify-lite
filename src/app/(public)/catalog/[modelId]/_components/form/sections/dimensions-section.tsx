@@ -43,14 +43,11 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   const height = useWatch({ control, name: 'height' });
 
   // ✅ Stable setValue callbacks to prevent infinite loops
-  const setWidthValue = useCallback(
-    (value: number) => setValue('width', value, { shouldValidate: true }),
-    [ setValue ]
-  );
+  const setWidthValue = useCallback((value: number) => setValue('width', value, { shouldValidate: true }), [setValue]);
 
   const setHeightValue = useCallback(
     (value: number) => setValue('height', value, { shouldValidate: true }),
-    [ setValue ]
+    [setValue]
   );
 
   // ✅ Use custom debounced dimension hook for width
@@ -77,45 +74,45 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   // ✅ Optimized handlers for sliders - no debounce needed (handled by hook)
   const handleWidthSliderChange = useCallback(
     (value: number[]) => {
-      const newValue = value[ 0 ];
+      const newValue = value[0];
       if (newValue !== undefined) {
         setLocalWidth(newValue); // ✅ Update local state immediately (visual feedback)
         // ✅ Form update is debounced automatically in the hook
       }
     },
-    [ setLocalWidth ]
+    [setLocalWidth]
   );
 
   const handleHeightSliderChange = useCallback(
     (value: number[]) => {
-      const newValue = value[ 0 ];
+      const newValue = value[0];
       if (newValue !== undefined) {
         setLocalHeight(newValue);
       }
     },
-    [ setLocalHeight ]
+    [setLocalHeight]
   );
 
   // ✅ Memoize validation check functions
   const isWidthValid = useCallback(
     (value: number) => isValidDimension(value, dimensions.minWidth, dimensions.maxWidth),
-    [ dimensions.minWidth, dimensions.maxWidth, isValidDimension ]
+    [dimensions.minWidth, dimensions.maxWidth, isValidDimension]
   );
 
   const isHeightValid = useCallback(
     (value: number) => isValidDimension(value, dimensions.minHeight, dimensions.maxHeight),
-    [ dimensions.minHeight, dimensions.maxHeight, isValidDimension ]
+    [dimensions.minHeight, dimensions.maxHeight, isValidDimension]
   );
 
   // ✅ Memoize suggested values arrays to prevent recreation on every render
   const widthSuggestedValues = useMemo(
     () => generateSuggestedValues(dimensions.minWidth, dimensions.maxWidth),
-    [ dimensions.minWidth, dimensions.maxWidth ]
+    [dimensions.minWidth, dimensions.maxWidth]
   );
 
   const heightSuggestedValues = useMemo(
     () => generateSuggestedValues(dimensions.minHeight, dimensions.maxHeight),
-    [ dimensions.minHeight, dimensions.maxHeight ]
+    [dimensions.minHeight, dimensions.maxHeight]
   );
 
   // Check if validation alert should show

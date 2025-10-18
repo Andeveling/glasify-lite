@@ -52,7 +52,7 @@ export function GlassTypeSelectorSection({
   const selectedGlassTypeId = watch('glassType');
 
   // Track active tab for visual feedback
-  const [ activeTab, setActiveTab ] = useState<string>();
+  const [activeTab, setActiveTab] = useState<string>();
 
   // Find selected glass type details
   const selectedGlassType = useMemo(() => {
@@ -63,16 +63,16 @@ export function GlassTypeSelectorSection({
       if (found) return found;
     }
     return null;
-  }, [ selectedGlassTypeId, tabs ]);
+  }, [selectedGlassTypeId, tabs]);
 
   // Find default tab (selected solution or first tab)
   const defaultTab = selectedSolutionId
     ? (tabs.find((tab) =>
-      tab.options.some((opt) =>
-        glassTypes.find((gt) => gt.id === opt.id)?.solutions?.some((s) => s.solution.id === selectedSolutionId)
-      )
-    )?.key ?? tabs[ 0 ]?.key)
-    : tabs[ 0 ]?.key;
+        tab.options.some((opt) =>
+          glassTypes.find((gt) => gt.id === opt.id)?.solutions?.some((s) => s.solution.id === selectedSolutionId)
+        )
+      )?.key ?? tabs[0]?.key)
+    : tabs[0]?.key;
 
   if (tabs.length === 0) {
     return null;
@@ -136,7 +136,7 @@ export function GlassTypeSelectorSection({
               >
                 <Icon className={cn('size-4', isActive && 'text-primary')} />
                 <span className="hidden sm:inline">{tab.label}</span>
-                <span className="sm:hidden">{tab.label.split(' ')[ 0 ]}</span>
+                <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
 
                 {/* Badge con conteo de opciones */}
                 <span

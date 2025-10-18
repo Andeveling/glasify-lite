@@ -32,12 +32,12 @@ const SERVICE_UNIT_LABELS = {
 const MM_TO_METERS = 1000;
 const PERIMETER_MULTIPLIER = 2;
 
-function getServiceTypeLabel(type: ServiceOutput[ 'type' ]): string {
-  return SERVICE_TYPE_LABELS[ type ];
+function getServiceTypeLabel(type: ServiceOutput['type']): string {
+  return SERVICE_TYPE_LABELS[type];
 }
 
-function getServiceUnitLabel(unit: ServiceOutput[ 'unit' ]): string {
-  return SERVICE_UNIT_LABELS[ unit ];
+function getServiceUnitLabel(unit: ServiceOutput['unit']): string {
+  return SERVICE_UNIT_LABELS[unit];
 }
 
 type ServiceCardProps = {
@@ -84,7 +84,7 @@ function ServiceCard({ control, service }: ServiceCardProps) {
                 onCheckedChange={(checked) => {
                   const currentValue = field.value || [];
                   const newValue = checked
-                    ? [ ...currentValue, service.id ]
+                    ? [...currentValue, service.id]
                     : currentValue.filter((id: string) => id !== service.id);
                   field.onChange(newValue);
                 }}
@@ -145,13 +145,13 @@ export function ServicesSelectorSection({ services }: ServicesSelectorSectionPro
     const hasValidDimensions = width > 0 && height > 0;
     if (!hasValidDimensions) return 0;
     return (width / MM_TO_METERS) * (height / MM_TO_METERS); // Convert mm to m²
-  }, [ width, height ]);
+  }, [width, height]);
 
   const perimeter = useMemo(() => {
     const hasValidDimensions = width > 0 && height > 0;
     if (!hasValidDimensions) return 0;
     return PERIMETER_MULTIPLIER * (width / MM_TO_METERS + height / MM_TO_METERS); // Convert mm to meters
-  }, [ width, height ]);
+  }, [width, height]);
 
   // Calculate total estimated cost and total
   const { selectedCount, estimatedTotal } = useMemo(() => {
@@ -174,7 +174,7 @@ export function ServicesSelectorSection({ services }: ServicesSelectorSectionPro
       estimatedTotal: costPerUnit * quantity,
       selectedCount: selectedServicesList.length,
     };
-  }, [ services, selectedServices, area, perimeter, quantity ]);
+  }, [services, selectedServices, area, perimeter, quantity]);
 
   return (
     <FormSection

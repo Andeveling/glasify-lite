@@ -3,9 +3,9 @@
 import type { Quote } from '@prisma/client';
 import { Send } from 'lucide-react';
 import { useState } from 'react';
+import { ContactInfoModal } from '@/app/_components/contact-info-modal';
 import { Button } from '@/components/ui/button';
 import { useSendQuote } from '@/hooks/use-send-quote';
-import { ContactInfoModal } from './contact-info-modal';
 
 interface SendQuoteButtonProps {
   quote: Pick<Quote, 'id' | 'status' | 'contactPhone'>;
@@ -17,7 +17,7 @@ interface SendQuoteButtonProps {
  * Opens modal to capture/confirm contact information before sending
  */
 export function SendQuoteButton({ quote }: SendQuoteButtonProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [ isModalOpen, setIsModalOpen ] = useState(false);
   const { mutate: sendQuote, isPending } = useSendQuote();
   // Only show button for draft quotes
   if (quote.status !== 'draft') {
@@ -52,7 +52,6 @@ export function SendQuoteButton({ quote }: SendQuoteButtonProps) {
 
       <ContactInfoModal
         defaultValues={{
-          contactEmail: '', // Email not persisted, always empty by default
           contactPhone: quote.contactPhone ?? '',
         }}
         isLoading={isPending}

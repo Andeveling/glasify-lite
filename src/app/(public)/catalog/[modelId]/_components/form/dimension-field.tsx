@@ -33,7 +33,6 @@ export function DimensionField<T extends FieldValues>({
   isValid,
   suggestedValues,
 }: DimensionFieldProps<T>) {
-
   // Determine dimension type based on label
   const dimensionType = label.toLowerCase().includes('ancho') ? 'width' : 'height';
 

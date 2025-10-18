@@ -1,6 +1,8 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
@@ -14,18 +16,16 @@ import {
 } from '@/components/ui/dialog';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { PhoneInput } from '@/components/ui/phone-input';
 
 /**
  * Contact information schema matching backend validation
- * Phone: Colombian format (+57) or US format (+1), 10-15 digits
- * Email: Optional but must be valid if provided
+ * Phone: E164 format (international format with country code)
+ * Email: Automatically filled from session, not editable
  */
 const contactSchema = z.object({
-  contactEmail: z.string().email('Correo electrónico inválido').optional().or(z.literal('')),
-  contactPhone: z
-    .string()
-    .min(1, 'El teléfono es requerido')
-    .regex(/^\+?[1-9]\d{9,14}$/, 'Formato de teléfono inválido. Ejemplo: +573001234567 o +12125551234'),
+  contactEmail: z.email('Correo electrónico inválido'),
+  contactPhone: z.string().min(1, 'El teléfono es requerido'),
 });
 
 type ContactFormValues = z.infer<typeof contactSchema>;
@@ -39,18 +39,40 @@ interface ContactInfoModalProps {
 }
 
 /**
- * Modal to capture or confirm contact information before sending quote
- * Pre-fills existing contact data if available
- * Validates phone format (Colombian/US) and optional email
+ * Unified modal to capture or confirm contact information before sending quote
+ * - Email: Auto-filled from authenticated user session (read-only)
+ * - Phone: International format input with country selector (PhoneInput component)
+ * - Pre-fills existing phone data if available
+ *
+ * @example
+ * ```tsx
+ * <ContactInfoModal
+ *   open={isOpen}
+ *   onClose={() => setIsOpen(false)}
+ *   onSubmit={(data) => sendQuote(data)}
+ *   defaultValues={{ contactPhone: quote.contactPhone }}
+ *   isLoading={isPending}
+ * />
+ * ```
  */
 export function ContactInfoModal({ open, onClose, onSubmit, defaultValues, isLoading = false }: ContactInfoModalProps) {
+  const { data: session } = useSession();
+  const userEmail = session?.user?.email ?? '';
+
   const form = useForm<ContactFormValues>({
     defaultValues: {
-      contactEmail: defaultValues?.contactEmail ?? '',
+      contactEmail: userEmail,
       contactPhone: defaultValues?.contactPhone ?? '',
     },
     resolver: zodResolver(contactSchema),
   });
+
+  // Update email when session changes or modal opens
+  useEffect(() => {
+    if (open && userEmail) {
+      form.setValue('contactEmail', userEmail);
+    }
+  }, [ open, userEmail, form ]);
 
   const handleSubmit = form.handleSubmit((data) => {
     onSubmit(data);
@@ -75,6 +97,32 @@ export function ContactInfoModal({ open, onClose, onSubmit, defaultValues, isLoa
 
         <Form {...form}>
           <form className="space-y-4" onSubmit={handleSubmit}>
+            {/* Email - Read-only, from session */}
+            <FormField
+              control={form.control}
+              name="contactEmail"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Correo Electrónico</FormLabel>
+                  <FormControl>
+                    <Input
+                      autoComplete="email"
+                      disabled={isLoading}
+                      placeholder="tu@email.com"
+                      type="email"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Este es tu correo registrado, pero puedes modificarlo si deseas que la respuesta llegue a otro
+                    contacto.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Phone - International format input */}
             <FormField
               control={form.control}
               name="contactPhone"
@@ -82,32 +130,16 @@ export function ContactInfoModal({ open, onClose, onSubmit, defaultValues, isLoa
                 <FormItem>
                   <FormLabel>Teléfono *</FormLabel>
                   <FormControl>
-                    <Input placeholder="+573001234567" {...field} autoComplete="tel" disabled={isLoading} />
-                  </FormControl>
-                  <FormDescription>
-                    Incluye el código de país. Ejemplo: +57 para Colombia, +1 para EE.UU.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="contactEmail"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Correo Electrónico (Opcional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="tu@email.com"
-                      type="email"
+                    <PhoneInput
                       {...field}
-                      autoComplete="email"
+                      defaultCountry="CO"
                       disabled={isLoading}
+                      placeholder="Ingresa tu número de teléfono"
                     />
                   </FormControl>
-                  <FormDescription>Email alternativo para recibir respuestas del fabricante.</FormDescription>
+                  <FormDescription>
+                    Selecciona tu país y escribe tu número. Ejemplo: 300 123 4567 (Colombia)
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
