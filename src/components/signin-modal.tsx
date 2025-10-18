@@ -17,9 +17,9 @@ type SignInModalProps = {
 };
 
 export function SignInModal({ open, onOpenChangeAction, defaultEmail = '' }: SignInModalProps) {
-  const [ isGoogleLoading, setIsGoogleLoading ] = useState(false);
-  const [ isEmailLoading, setIsEmailLoading ] = useState(false);
-  const [ email, setEmail ] = useState(defaultEmail);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isEmailLoading, setIsEmailLoading] = useState(false);
+  const [email, setEmail] = useState(defaultEmail);
   const searchParams = useSearchParams();
 
   // Get callbackUrl from query params, default to /catalog
