@@ -165,9 +165,9 @@ export function ModelForm({ mode, defaultValues }: ModelFormProps) {
             <AccordionTrigger className="rounded-lg bg-muted px-4 py-2 hover:bg-muted/80">
               <span className="font-semibold text-lg">Información Básica</span>
             </AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent className='mt-1'>
               <Card>
-                <CardContent className="grid gap-4 pt-6 md:grid-cols-2">
+                <CardContent className='grid gap-4 md:grid-cols-2'>
                   {/* Name */}
                   <FormField
                     control={form.control}

@@ -1,32 +1,38 @@
 /**
- * Model List Component (US9 - T084)
+ * Model List Component (US9 - T084) - REFACTORED
  *
- * Client Component with search, filters, pagination and CRUD actions
+ * Optimized Client Component following SOLID principles and Next.js 15 best practices
  *
  * Features:
  * - Search by name, SKU, or description
  * - Filter by status and profile supplier
  * - Pagination with page navigation
  * - Display status badges, price range, glass type count
- * - Create, edit, delete actions
+ * - Create, edit, delete actions (using Link for navigation)
  * - Delete confirmation dialog with referential integrity
+ * - Skeleton loading states for better UX
+ * - Suspense boundaries for granular loading
+ * - Custom hooks for separation of concerns
+ *
+ * SOLID Principles Applied:
+ * - Single Responsibility: Logic separated into custom hooks and smaller components
+ * - Open/Closed: Components extensible via props
+ * - Liskov Substitution: Components are interchangeable
+ * - Interface Segregation: Specific props interfaces
+ * - Dependency Inversion: Depends on abstractions (hooks, props)
  */
 
 'use client';
 
 import type { MaterialType, ModelStatus } from '@prisma/client';
-import { Pencil, Plus, Search, Trash2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { toast } from 'sonner';
 import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { api } from '@/trpc/react';
+import { useModelFilters } from '../_hooks/use-model-filters';
+import { ModelFilters } from './model-filters';
+import { ModelTable } from './model-table';
+import { Pagination } from './pagination';
 
 type SerializedModel = {
   id: string;
@@ -67,14 +73,12 @@ type ModelListProps = {
 };
 
 export function ModelList({ initialData }: ModelListProps) {
-  const router = useRouter();
   const utils = api.useUtils();
-  const [ search, setSearch ] = useState('');
-  const [ status, setStatus ] = useState<'all' | 'draft' | 'published'>('all');
-  const [ profileSupplierId, setProfileSupplierId ] = useState<string>('all');
-  const [ page, setPage ] = useState(1);
   const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
   const [ modelToDelete, setModelToDelete ] = useState<{ id: string; name: string } | null>(null);
+
+  // Custom hook for filter state management (Single Responsibility)
+  const { filters, handlers } = useModelFilters();
 
   // Fetch profile suppliers for filter
   const { data: suppliersData } = api.admin[ 'profile-supplier' ].list.useQuery({
@@ -85,18 +89,19 @@ export function ModelList({ initialData }: ModelListProps) {
     sortOrder: 'asc',
   });
 
-  // Query with filters
+  // Query with filters - keepPreviousData for better UX during filter changes
   const { data, isLoading } = api.admin.model.list.useQuery(
     {
       limit: 20,
-      page,
-      profileSupplierId: profileSupplierId === 'all' ? undefined : profileSupplierId,
-      search: search || undefined,
+      page: filters.page,
+      profileSupplierId: filters.profileSupplierId === 'all' ? undefined : filters.profileSupplierId,
+      search: filters.search || undefined,
       sortBy: 'name',
       sortOrder: 'asc',
-      status: status === 'all' ? undefined : status,
+      status: filters.status === 'all' ? undefined : filters.status,
     },
     {
+      // Keep previous data while fetching new data (better UX)
       placeholderData: (previousData) => previousData,
     }
   );
@@ -116,14 +121,7 @@ export function ModelList({ initialData }: ModelListProps) {
     },
   });
 
-  const handleCreateClick = () => {
-    router.push('/admin/models/new');
-  };
-
-  const handleEditClick = (id: string) => {
-    router.push(`/admin/models/${id}`);
-  };
-
+  // Handler for delete action
   const handleDeleteClick = (id: string, name: string) => {
     setModelToDelete({ id, name });
     setDeleteDialogOpen(true);
@@ -134,216 +132,33 @@ export function ModelList({ initialData }: ModelListProps) {
     await deleteMutation.mutateAsync({ id: modelToDelete.id });
   };
 
-  // Use initial data on first render, then switch to query data
-  const models = data?.items ?? initialData.items;
+  // Use query data or fallback to initial data
+  // Type assertion needed because tRPC returns Decimal but we need number
+  const models = (data?.items ?? initialData.items) as SerializedModel[];
   const totalPages = data?.totalPages ?? initialData.totalPages;
+  const total = data?.total ?? initialData.total;
   const suppliers = suppliersData?.items ?? [];
-
-  // Status labels
-  const statusLabels: Record<string, string> = {
-    draft: 'Borrador',
-    published: 'Publicado',
-  };
-
-  // Status variants
-  const getStatusVariant = (modelStatus: string): 'default' | 'secondary' | 'outline' => {
-    if (modelStatus === 'published') return 'default';
-    if (modelStatus === 'draft') return 'secondary';
-    return 'outline';
-  };
 
   return (
     <div className="space-y-6">
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Filtros</CardTitle>
-          <CardDescription>Busca y filtra modelos</CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4 md:grid-cols-4">
-          {/* Search */}
-          <div className="space-y-2">
-            <label className="font-medium text-sm" htmlFor="search">
-              Buscar
-            </label>
-            <div className="relative">
-              <Search className="absolute top-2.5 left-2.5 size-4 text-muted-foreground" />
-              <Input
-                className="pl-8"
-                id="search"
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
-                }}
-                placeholder="Buscar por nombre, SKU..."
-                value={search}
-              />
-            </div>
-          </div>
+      {/* Filters Component - Single Responsibility */}
+      <Suspense fallback={<div className="h-48 animate-pulse rounded-lg bg-muted" />}>
+        <ModelFilters
+          onSearchChange={handlers.handleSearchChange}
+          onStatusChange={handlers.handleStatusChange}
+          onSupplierChange={handlers.handleSupplierChange}
+          profileSupplierId={filters.profileSupplierId}
+          search={filters.search}
+          status={filters.status}
+          suppliers={suppliers}
+        />
+      </Suspense>
 
-          {/* Status Filter */}
-          <div className="space-y-2">
-            <label className="font-medium text-sm" htmlFor="status">
-              Estado
-            </label>
-            <Select
-              onValueChange={(value) => {
-                setStatus(value as typeof status);
-                setPage(1);
-              }}
-              value={status}
-            >
-              <SelectTrigger id="status">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="draft">Borrador</SelectItem>
-                <SelectItem value="published">Publicado</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Profile Supplier Filter */}
-          <div className="space-y-2">
-            <label className="font-medium text-sm" htmlFor="profileSupplierId">
-              Proveedor de Perfiles
-            </label>
-            <Select
-              onValueChange={(value) => {
-                setProfileSupplierId(value);
-                setPage(1);
-              }}
-              value={profileSupplierId}
-            >
-              <SelectTrigger id="profileSupplierId">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                {suppliers.map((supplier) => (
-                  <SelectItem key={supplier.id} value={supplier.id}>
-                    {supplier.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Create Button */}
-          <div className="flex items-end">
-            <Button className="w-full" onClick={handleCreateClick}>
-              <Plus className="mr-2 size-4" />
-              Nuevo Modelo
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Modelos ({data?.total ?? 0})</CardTitle>
-          <CardDescription>
-            Mostrando {models.length} de {data?.total ?? 0} modelos
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nombre</TableHead>
-                <TableHead>SKU</TableHead>
-                <TableHead>Dimensiones</TableHead>
-                <TableHead>Precio Base</TableHead>
-                <TableHead>Proveedor</TableHead>
-                <TableHead>Tipos Compatibles</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead className="text-right">Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading && (
-                <TableRow>
-                  <TableCell className="text-center" colSpan={8}>
-                    Cargando...
-                  </TableCell>
-                </TableRow>
-              )}
-              {!isLoading && models.length === 0 && (
-                <TableRow>
-                  <TableCell className="text-center text-muted-foreground" colSpan={8}>
-                    No se encontraron modelos
-                  </TableCell>
-                </TableRow>
-              )}
-              {!isLoading &&
-                models.map((model) => (
-                  <TableRow key={model.id}>
-                    <TableCell className="font-medium">{model.name}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">Sin SKU</Badge>
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      <div className="flex flex-col gap-0.5">
-                        <span>
-                          Ancho: {model.minWidthMm}-{model.maxWidthMm}mm
-                        </span>
-                        <span className="text-muted-foreground text-xs">
-                          Alto: {model.minHeightMm}-{model.maxHeightMm}mm
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-sm">${Number(model.basePrice).toLocaleString('es-CO')}</TableCell>
-                    <TableCell className="text-sm">
-                      {model.profileSupplier?.name || <span className="text-muted-foreground">Sin proveedor</span>}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">{model.compatibleGlassTypeIds.length} tipos</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={getStatusVariant(model.status)}>{statusLabels[ model.status ]}</Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button onClick={() => handleEditClick(model.id)} size="icon" variant="ghost">
-                          <Pencil className="size-4" />
-                          <span className="sr-only">Editar</span>
-                        </Button>
-                        <Button onClick={() => handleDeleteClick(model.id, model.name)} size="icon" variant="ghost">
-                          <Trash2 className="size-4 text-destructive" />
-                          <span className="sr-only">Eliminar</span>
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="mt-4 flex items-center justify-between">
-              <p className="text-muted-foreground text-sm">
-                Página {page} de {totalPages}
-              </p>
-              <div className="flex gap-2">
-                <Button disabled={page === 1} onClick={() => setPage((p) => p - 1)} size="sm" variant="outline">
-                  Anterior
-                </Button>
-                <Button
-                  disabled={page === totalPages}
-                  onClick={() => setPage((p) => p + 1)}
-                  size="sm"
-                  variant="outline"
-                >
-                  Siguiente
-                </Button>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* Table Component with Skeleton Loading - Better UX */}
+      <Suspense fallback={<div className="h-96 animate-pulse rounded-lg bg-muted" />}>
+        <ModelTable isLoading={isLoading} models={models} onDeleteClick={handleDeleteClick} total={total} />
+        <Pagination currentPage={filters.page} onPageChange={handlers.handlePageChange} totalPages={totalPages} />
+      </Suspense>
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog

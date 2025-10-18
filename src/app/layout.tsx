@@ -2,6 +2,7 @@ import '@/styles/globals.css';
 
 import type { Metadata } from 'next';
 import { Fira_Code, Geist, Inter, Lora } from 'next/font/google';
+import { NavigationLoader } from '@/app/_components/navigation-loader';
 import { Toaster } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
 import { SessionProvider } from '@/providers/session-provider';
@@ -13,31 +14,31 @@ import { ReactScan } from './_components/react-scan';
 
 export const metadata: Metadata = {
   description: 'Cotización inteligente de productos de vidrio para fabricantes y distribuidores',
-  icons: [{ rel: 'icon', url: '/favicon.ico' }],
+  icons: [ { rel: 'icon', url: '/favicon.ico' } ],
   title: 'Glasify Lite - Cotizador Inteligente de Vidrios',
 };
 
 const geist = Geist({
   display: 'swap',
-  subsets: ['latin'],
+  subsets: [ 'latin' ],
   variable: '--font-geist-sans',
 });
 
 const inter = Inter({
   display: 'swap',
-  subsets: ['latin'],
+  subsets: [ 'latin' ],
   variable: '--font-inter-sans',
 });
 
 const lora = Lora({
   display: 'swap',
-  subsets: ['latin'],
+  subsets: [ 'latin' ],
   variable: '--font-lora-serif',
 });
 
 const firaCode = Fira_Code({
   display: 'swap',
-  subsets: ['latin'],
+  subsets: [ 'latin' ],
   variable: '--font-fira-code-mono',
 });
 
@@ -53,6 +54,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       suppressHydrationWarning
     >
       <body suppressHydrationWarning>
+        <NavigationLoader />
         <ReactScan />
         <TenantConfigProvider
           config={{
