@@ -35,6 +35,9 @@ importers:
       '@prisma/client':
         specifier: 6.17.0
         version: 6.17.0(prisma@6.17.0(typescript@5.9.3))(typescript@5.9.3)
+      '@radix-ui/react-accordion':
+        specifier: ^1.2.12
+        version: 1.2.12(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@radix-ui/react-alert-dialog':
         specifier: ^1.1.15
         version: 1.1.15(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -101,9 +104,6 @@ importers:
       '@t3-oss/env-nextjs':
         specifier: 0.13.8
         version: 0.13.8(typescript@5.9.3)(zod@4.1.12)
-      '@tabler/icons-react':
-        specifier: ^3.35.0
-        version: 3.35.0(react@19.2.0)
       '@tanstack/react-query':
         specifier: 5.90.2
         version: 5.90.2(react@19.2.0)
@@ -2179,14 +2179,6 @@ packages:
         optional: true
       zod:
         optional: true
-
-  '@tabler/icons-react@3.35.0':
-    resolution: {integrity: sha512-XG7t2DYf3DyHT5jxFNp5xyLVbL4hMJYJhiSdHADzAjLRYfL7AnjlRfiHDHeXxkb2N103rEIvTsBRazxXtAUz2g==}
-    peerDependencies:
-      react: '>= 16'
-
-  '@tabler/icons@3.35.0':
-    resolution: {integrity: sha512-yYXe+gJ56xlZFiXwV9zVoe3FWCGuZ/D7/G4ZIlDtGxSx5CGQK110wrnT29gUj52kEZoxqF7oURTk97GQxELOFQ==}
 
   '@tailwindcss/node@4.1.14':
     resolution: {integrity: sha512-hpz+8vFk3Ic2xssIA3e01R6jkmsAhvkQdXlEbRTk6S10xDAtiQiM3FyvZVGsucefq764euO/b8WUW9ysLdThHw==}
@@ -7277,13 +7269,6 @@ snapshots:
     optionalDependencies:
       typescript: 5.9.3
       zod: 4.1.12
-
-  '@tabler/icons-react@3.35.0(react@19.2.0)':
-    dependencies:
-      '@tabler/icons': 3.35.0
-      react: 19.2.0
-
-  '@tabler/icons@3.35.0': {}
 
   '@tailwindcss/node@4.1.14':
     dependencies:

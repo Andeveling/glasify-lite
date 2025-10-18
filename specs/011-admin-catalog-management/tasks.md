@@ -71,31 +71,13 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T006 Create shared Zod validation utilities in `src/lib/validations/shared.schema.ts` (positive integers, decimal validation, dimension min/max refinements)
-- [ ] T007 Create referential integrity service in `src/server/services/referential-integrity.service.ts` (check dependencies before delete)
-- [ ] T008 [P] Create price history service for models in `src/server/services/model-price-history.service.ts`
-- [ ] T009 [P] Create price history service for glass types in `src/server/services/glass-price-history.service.ts`
-- [ ] T010 [P] Create reusable delete confirmation dialog component in `src/app/_components/delete-confirmation-dialog.tsx`
-- [ ] T011 [P] Update admin navigation component in `src/app/_components/admin-nav.tsx` with links for all 7 entity types
-- [ ] T012 Register admin router namespace in `src/server/api/root.ts` (create `admin: createTRPCRouter({})` placeholder)
-
-**Checkpoint**: Foundation ready - user story implementation can now begin in parallel
-
----
-
-## Phase 3: Foundational (Blocking Prerequisites)
-
-**Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
-
-**⚠️ CRITICAL**: No user story work can begin until this phase is complete
-
-- [ ] T015 Create shared Zod validation utilities in `src/lib/validations/shared.schema.ts` (positive integers, decimal validation, dimension min/max refinements)
-- [ ] T016 Create referential integrity service in `src/server/services/referential-integrity.service.ts` (check dependencies before delete)
-- [ ] T017 [P] Create price history service for models in `src/server/services/model-price-history.service.ts`
-- [ ] T018 [P] Create price history service for glass types in `src/server/services/glass-price-history.service.ts`
-- [ ] T019 [P] Create reusable delete confirmation dialog component in `src/app/_components/delete-confirmation-dialog.tsx`
-- [ ] T020 [P] Update admin navigation component in `src/app/_components/admin-nav.tsx` with links for all 7 entity types
-- [ ] T021 Register admin router namespace in `src/server/api/root.ts` (create `admin: createTRPCRouter({})` placeholder)
+- [x] T015 Create shared Zod validation utilities in `src/lib/validations/shared.schema.ts` (positive integers, decimal validation, dimension min/max refinements)
+- [x] T016 Create referential integrity service in `src/server/services/referential-integrity.service.ts` (check dependencies before delete)
+- [x] T017 [P] Create price history service for models in `src/server/services/model-price-history.service.ts`
+- [x] T018 [P] Create price history service for glass types in `src/server/services/glass-price-history.service.ts`
+- [x] T019 [P] Create reusable delete confirmation dialog component in `src/app/_components/delete-confirmation-dialog.tsx`
+- [x] T020 [P] Update admin navigation component in `src/app/_components/admin-nav.tsx` with links for all 7 entity types (NOTE: Already implemented in AdminSidebar during Phase 1)
+- [x] T021 Register admin router namespace in `src/server/api/root.ts` (create `admin: createTRPCRouter({})` placeholder) (NOTE: Already exists and registered)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -111,16 +93,16 @@
 
 ### Implementation for User Story 4
 
-- [ ] T022 [P] [US4] Create Zod schemas in `src/lib/validations/admin/profile-supplier.schema.ts` (create, update, list, delete schemas)
-- [ ] T023 [US4] Create tRPC router in `src/server/api/routers/admin/profile-supplier.ts` (list, getById, create, update, delete procedures with adminProcedure)
-- [ ] T024 [US4] Register profileSupplier router in `src/server/api/root.ts` admin namespace
-- [ ] T025 [P] [US4] Create list page in `src/app/(dashboard)/admin/profile-suppliers/page.tsx` (Server Component with initial data fetch)
-- [ ] T026 [P] [US4] Create list component in `src/app/(dashboard)/admin/profile-suppliers/_components/profile-supplier-list.tsx` (Client Component with search/filter/pagination)
-- [ ] T027 [P] [US4] Create form component in `src/app/(dashboard)/admin/profile-suppliers/_components/profile-supplier-form.tsx` (Client Component with React Hook Form + Zod)
-- [ ] T028 [P] [US4] Create new page in `src/app/(dashboard)/admin/profile-suppliers/new/page.tsx` (Server Component wrapper)
-- [ ] T029 [P] [US4] Create edit page in `src/app/(dashboard)/admin/profile-suppliers/[id]/page.tsx` (Server Component with data fetch)
-- [ ] T030 [US4] Add Winston logging for all CRUD operations in profileSupplier router
-- [ ] T031 [US4] Add referential integrity check in delete procedure (check for associated models)
+- [x] T022 [P] [US4] Create Zod schemas in `src/lib/validations/admin/profile-supplier.schema.ts` (create, update, list, delete schemas)
+- [x] T023 [US4] Create tRPC router in `src/server/api/routers/admin/profile-supplier.ts` (list, getById, create, update, delete procedures with adminProcedure)
+- [x] T024 [US4] Register profileSupplier router in `src/server/api/root.ts` admin namespace
+- [x] T025 [P] [US4] Create list page in `src/app/(dashboard)/admin/profile-suppliers/page.tsx` (Server Component with initial data fetch)
+- [x] T026 [P] [US4] Create list component in `src/app/(dashboard)/admin/profile-suppliers/_components/profile-supplier-list.tsx` (Client Component with search/filter/pagination)
+- [x] T027 [P] [US4] Create form component in `src/app/(dashboard)/admin/profile-suppliers/_components/profile-supplier-form.tsx` (Client Component with React Hook Form + Zod)
+- [x] T028 [P] [US4] Create new page in `src/app/(dashboard)/admin/profile-suppliers/new/page.tsx` (Server Component wrapper)
+- [x] T029 [P] [US4] Create edit page in `src/app/(dashboard)/admin/profile-suppliers/[id]/page.tsx` (Server Component with data fetch)
+- [x] T030 [US4] Add Winston logging for all CRUD operations in profileSupplier router
+- [x] T031 [US4] Add referential integrity check in delete procedure (check for associated models)
 
 **Checkpoint**: ProfileSupplier CRUD complete and independently testable
 
@@ -136,16 +118,16 @@
 
 ### Implementation for User Story 5
 
-- [ ] T023 [P] [US5] Create Zod schemas in `src/lib/validations/admin/glass-supplier.schema.ts` (create, update, list, delete schemas with email/URL validation)
-- [ ] T024 [US5] Create tRPC router in `src/server/api/routers/admin/glass-supplier.ts` (list, getById, create, update, delete procedures)
-- [ ] T025 [US5] Register glassSupplier router in `src/server/api/root.ts` admin namespace
-- [ ] T026 [P] [US5] Create list page in `src/app/(dashboard)/admin/glass-suppliers/page.tsx`
-- [ ] T027 [P] [US5] Create list component in `src/app/(dashboard)/admin/glass-suppliers/_components/glass-supplier-list.tsx`
-- [ ] T028 [P] [US5] Create form component in `src/app/(dashboard)/admin/glass-suppliers/_components/glass-supplier-form.tsx`
-- [ ] T029 [P] [US5] Create new page in `src/app/(dashboard)/admin/glass-suppliers/new/page.tsx`
-- [ ] T030 [P] [US5] Create edit page in `src/app/(dashboard)/admin/glass-suppliers/[id]/page.tsx`
-- [ ] T031 [US5] Add Winston logging for all CRUD operations
-- [ ] T023 [US5] Add referential integrity check in delete procedure (check for associated glass types)
+- [x] T033 [P] [US5] Create Zod schemas in `src/lib/validations/admin/glass-supplier.schema.ts` (create, update, list, delete schemas with email/URL validation)
+- [x] T034 [US5] Create tRPC router in `src/server/api/routers/admin/glass-supplier.ts` (list, getById, create, update, delete procedures)
+- [x] T035 [US5] Register glassSupplier router in `src/server/api/root.ts` admin namespace
+- [x] T036 [P] [US5] Create list page in `src/app/(dashboard)/admin/glass-suppliers/page.tsx`
+- [x] T037 [P] [US5] Create list component in `src/app/(dashboard)/admin/glass-suppliers/_components/glass-supplier-list.tsx`
+- [x] T038 [P] [US5] Create form component in `src/app/(dashboard)/admin/glass-suppliers/_components/glass-supplier-form.tsx`
+- [x] T039 [P] [US5] Create new page in `src/app/(dashboard)/admin/glass-suppliers/new/page.tsx`
+- [x] T040 [P] [US5] Create edit page in `src/app/(dashboard)/admin/glass-suppliers/[id]/page.tsx`
+- [x] T041 [US5] Add Winston logging for all CRUD operations
+- [x] T042 [US5] Add referential integrity check in delete procedure (check for associated glass types)
 
 **Checkpoint**: GlassSupplier CRUD complete and independently testable
 
@@ -161,16 +143,16 @@
 
 ### Implementation for User Story 6
 
-- [ ] T024 [P] [US6] Create Zod schemas in `src/lib/validations/admin/glass-solution.schema.ts` (create, update, list, delete schemas with key snake_case validation)
-- [ ] T025 [US6] Create tRPC router in `src/server/api/routers/admin/glass-solution.ts` (list, getById, create, update, delete procedures)
-- [ ] T026 [US6] Register glassSolution router in `src/server/api/root.ts` admin namespace
-- [ ] T027 [P] [US6] Create list page in `src/app/(dashboard)/admin/glass-solutions/page.tsx`
-- [ ] T028 [P] [US6] Create list component in `src/app/(dashboard)/admin/glass-solutions/_components/glass-solution-list.tsx`
-- [ ] T029 [P] [US6] Create form component in `src/app/(dashboard)/admin/glass-solutions/_components/glass-solution-form.tsx` (with Lucide icon selector)
-- [ ] T030 [P] [US6] Create new page in `src/app/(dashboard)/admin/glass-solutions/new/page.tsx`
-- [ ] T031 [P] [US6] Create edit page in `src/app/(dashboard)/admin/glass-solutions/[id]/page.tsx`
-- [ ] T023 [US6] Add Winston logging for all CRUD operations
-- [ ] T032 [US6] Add referential integrity check in delete procedure (check for associated GlassTypeSolution records)
+- [x] T043 [P] [US6] Create Zod schemas in `src/lib/validations/admin/glass-solution.schema.ts` (create, update, list, delete schemas with key snake_case validation)
+- [x] T044 [US6] Create tRPC router in `src/server/api/routers/admin/glass-solution.ts` (list, getById, create, update, delete procedures)
+- [x] T045 [US6] Register glassSolution router in `src/server/api/root.ts` admin namespace
+- [x] T046 [P] [US6] Create list page in `src/app/(dashboard)/admin/glass-solutions/page.tsx`
+- [x] T047 [P] [US6] Create list component in `src/app/(dashboard)/admin/glass-solutions/_components/glass-solution-list.tsx`
+- [x] T048 [P] [US6] Create form component in `src/app/(dashboard)/admin/glass-solutions/_components/glass-solution-form.tsx` (with Lucide icon selector)
+- [x] T049 [P] [US6] Create new page in `src/app/(dashboard)/admin/glass-solutions/new/page.tsx`
+- [x] T050 [P] [US6] Create edit page in `src/app/(dashboard)/admin/glass-solutions/[id]/page.tsx`
+- [x] T051 [P] [US6] Add Winston logging for all CRUD operations
+- [x] T052 [P] [US6] Add referential integrity check in delete procedure (check for associated GlassTypeSolution records)
 
 **Checkpoint**: GlassSolution CRUD complete and independently testable
 
@@ -186,16 +168,16 @@
 
 ### Implementation for User Story 7
 
-- [ ] T024 [P] [US7] Create Zod schemas in `src/lib/validations/admin/glass-characteristic.schema.ts` (create, update, list, delete schemas with key snake_case validation)
-- [ ] T025 [US7] Create tRPC router in `src/server/api/routers/admin/glass-characteristic.ts` (list, getById, create, update, delete procedures)
-- [ ] T026 [US7] Register glassCharacteristic router in `src/server/api/root.ts` admin namespace
-- [ ] T027 [P] [US7] Create list page in `src/app/(dashboard)/admin/glass-characteristics/page.tsx`
-- [ ] T028 [P] [US7] Create list component in `src/app/(dashboard)/admin/glass-characteristics/_components/glass-characteristic-list.tsx` (with category grouping)
-- [ ] T029 [P] [US7] Create form component in `src/app/(dashboard)/admin/glass-characteristics/_components/glass-characteristic-form.tsx`
-- [ ] T030 [P] [US7] Create new page in `src/app/(dashboard)/admin/glass-characteristics/new/page.tsx`
-- [ ] T031 [P] [US7] Create edit page in `src/app/(dashboard)/admin/glass-characteristics/[id]/page.tsx`
-- [ ] T023 [US7] Add Winston logging for all CRUD operations
-- [ ] T032 [US7] Add referential integrity check in delete procedure (check for associated GlassTypeCharacteristic records)
+- [ ] T053 [P] [US7] Create Zod schemas in `src/lib/validations/admin/glass-characteristic.schema.ts` (create, update, list, delete schemas with key snake_case validation)
+- [ ] T054 [US7] Create tRPC router in `src/server/api/routers/admin/glass-characteristic.ts` (list, getById, create, update, delete procedures)
+- [ ] T055 [US7] Register glassCharacteristic router in `src/server/api/root.ts` admin namespace
+- [ ] T056 [P] [US7] Create list page in `src/app/(dashboard)/admin/glass-characteristics/page.tsx`
+- [ ] T057 [P] [US7] Create list component in `src/app/(dashboard)/admin/glass-characteristics/_components/glass-characteristic-list.tsx` (with category grouping)
+- [ ] T058 [P] [US7] Create form component in `src/app/(dashboard)/admin/glass-characteristics/_components/glass-characteristic-form.tsx`
+- [ ] T059 [P] [US7] Create new page in `src/app/(dashboard)/admin/glass-characteristics/new/page.tsx`
+- [ ] T060 [P] [US7] Create edit page in `src/app/(dashboard)/admin/glass-characteristics/[id]/page.tsx`
+- [ ] T061 [P] [US7] Add Winston logging for all CRUD operations
+- [ ] T062 [P] [US7] Add referential integrity check in delete procedure (check for associated GlassTypeCharacteristic records)
 
 **Checkpoint**: GlassCharacteristic CRUD complete and independently testable
 
@@ -203,7 +185,7 @@
 
 ---
 
-## Phase 7: User Story 2 - Manage Glass Types (Priority: P2) 🎯 Core Product
+## Phase 7: User Story 8 - Manage Glass Types (Priority: P2) 🎯 Core Product
 
 **Goal**: Enable admins to create, edit, view, and delete glass types with solutions, characteristics, and pricing
 
@@ -211,28 +193,28 @@
 
 **Dependencies**: Requires US5 (GlassSupplier), US6 (GlassSolution), US7 (GlassCharacteristic) complete
 
-### Implementation for User Story 2
+### Implementation for User Story 8
 
-- [ ] T024 [P] [US2] Create Zod schemas in `src/lib/validations/admin/glass-type.schema.ts` (create, update, list, delete schemas with nested solutions/characteristics arrays)
-- [ ] T025 [US2] Create tRPC router in `src/server/api/routers/admin/glass-type.ts` (list with solution/characteristic joins, getById with full relations, create with nested creates, update with solution/characteristic replacement, delete with integrity check)
-- [ ] T026 [US2] Register glassType router in `src/server/api/root.ts` admin namespace
-- [ ] T027 [US2] Add price history auto-creation in update procedure (call glass-price-history.service.ts when pricePerSqm changes)
-- [ ] T028 [P] [US2] Create list page in `src/app/(dashboard)/admin/glass-types/page.tsx`
-- [ ] T029 [P] [US2] Create list component in `src/app/(dashboard)/admin/glass-types/_components/glass-type-list.tsx` (show solutions as badges)
-- [ ] T030 [P] [US2] Create form component in `src/app/(dashboard)/admin/glass-types/_components/glass-type-form.tsx` (with Accordion sections: Basic Info, Thermal Properties, Solutions, Characteristics)
-- [ ] T031 [P] [US2] Create solution selector component in `src/app/(dashboard)/admin/glass-types/_components/solution-selector.tsx` (React Hook Form useFieldArray for dynamic solutions with performance rating, isPrimary, notes)
-- [ ] T023 [P] [US2] Create characteristic selector component in `src/app/(dashboard)/admin/glass-types/_components/characteristic-selector.tsx` (React Hook Form useFieldArray for dynamic characteristics with value, certification, notes)
-- [ ] T032 [P] [US2] Create new page in `src/app/(dashboard)/admin/glass-types/new/page.tsx`
-- [ ] T024 [P] [US2] Create edit page in `src/app/(dashboard)/admin/glass-types/[id]/page.tsx` (fetch with all relations)
-- [ ] T025 [US2] Add Winston logging for all CRUD operations (including solution/characteristic assignments)
-- [ ] T026 [US2] Add referential integrity check in delete procedure (check for associated quote items)
-- [ ] T027 [US2] Add validation in update procedure: only one solution can have isPrimary=true per glass type
+- [x] T063 [P] [US8] Create Zod schemas in `src/lib/validations/admin/glass-type.schema.ts` (create, update, list, delete schemas with nested solutions/characteristics arrays)
+- [x] T064 [US8] Create tRPC router in `src/server/api/routers/admin/glass-type.ts` (list with solution/characteristic joins, getById with full relations, create with nested creates, update with solution/characteristic replacement, delete with integrity check)
+- [x] T065 [US8] Register glassType router in `src/server/api/root.ts` admin namespace
+- [x] T066 [US8] Add price history auto-creation in update procedure (call glass-price-history.service.ts when pricePerSqm changes)
+- [x] T067 [P] [US8] Create list page in `src/app/(dashboard)/admin/glass-types/page.tsx`
+- [x] T068 [P] [US8] Create list component in `src/app/(dashboard)/admin/glass-types/_components/glass-type-list.tsx` (show solutions as badges)
+- [x] T069 [P] [US8] Create form component in `src/app/(dashboard)/admin/glass-types/_components/glass-type-form.tsx` (with Accordion sections: Basic Info, Thermal Properties, Solutions, Characteristics)
+- [x] T070 [P] [US8] Create solution selector component in `src/app/(dashboard)/admin/glass-types/_components/solution-selector.tsx` (React Hook Form useFieldArray for dynamic solutions with performance rating, isPrimary, notes)
+- [x] T071 [P] [US8] Create characteristic selector component in `src/app/(dashboard)/admin/glass-types/_components/characteristic-selector.tsx` (React Hook Form useFieldArray for dynamic characteristics with value, certification, notes)
+- [x] T072 [P] [US8] Create new page in `src/app/(dashboard)/admin/glass-types/new/page.tsx`
+- [x] T073 [P] [US8] Create edit page in `src/app/(dashboard)/admin/glass-types/[id]/page.tsx` (fetch with all relations)
+- [x] T074 [US8] Add Winston logging for all CRUD operations (including solution/characteristic assignments)
+- [x] T075 [US8] Add referential integrity check in delete procedure (check for associated quote items)
+- [x] T076 [US8] Add validation in update procedure: only one solution can have isPrimary=true per glass type
 
 **Checkpoint**: GlassType CRUD complete with full solution/characteristic management and price history tracking
 
 ---
 
-## Phase 8: User Story 1 - Manage Window/Door Models (Priority: P1) 🎯 MVP Core
+## Phase 8: User Story 9 - Manage Window/Door Models (Priority: P1) 🎯 MVP Core
 
 **Goal**: Enable admins to create, edit, view, and delete window/door models with pricing, dimensions, and compatible glass types
 
@@ -240,21 +222,21 @@
 
 **Dependencies**: Requires US4 (ProfileSupplier), US2 (GlassType complete for compatible glass types selection)
 
-### Implementation for User Story 1
+### Implementation for User Story 9
 
-- [ ] T028 [P] [US1] Create Zod schemas in `src/lib/validations/admin/model.schema.ts` (create, update, list, delete schemas with dimension min/max refinements, compatibleGlassTypeIds array validation, cost breakdown nested schemas)
-- [ ] T029 [US1] Create tRPC router in `src/server/api/routers/admin/model.ts` (list, getById with cost breakdown/price history, create, update with price history trigger, delete with integrity check, addCostBreakdown, updateCostBreakdown, deleteCostBreakdown procedures)
-- [ ] T030 [US1] Register model router in `src/server/api/root.ts` admin namespace
-- [ ] T031 [US1] Add price history auto-creation in update procedure (call model-price-history.service.ts when basePrice/costPerMmWidth/costPerMmHeight changes)
-- [ ] T023 [US1] Add validation in create/update: validate all compatibleGlassTypeIds exist and are active
-- [ ] T032 [P] [US1] Create list page in `src/app/(dashboard)/admin/models/page.tsx`
-- [ ] T024 [P] [US1] Create list component in `src/app/(dashboard)/admin/models/_components/model-list.tsx` (show status badges, price range, glass type count)
-- [ ] T025 [P] [US1] Create form component in `src/app/(dashboard)/admin/models/_components/model-form.tsx` (with Accordion sections: Basic Info, Dimensions, Pricing, Compatible Glass Types, Cost Notes)
-- [ ] T026 [P] [US1] Create cost breakdown component in `src/app/(dashboard)/admin/models/_components/model-cost-breakdown.tsx` (React Hook Form useFieldArray for dynamic cost components, shown in separate tab/section on edit page)
-- [ ] T027 [P] [US1] Create new page in `src/app/(dashboard)/admin/models/new/page.tsx`
-- [ ] T028 [P] [US1] Create edit page in `src/app/(dashboard)/admin/models/[id]/page.tsx` (fetch with cost breakdown and price history)
-- [ ] T029 [US1] Add Winston logging for all CRUD operations (including cost breakdown changes)
-- [ ] T030 [US1] Add referential integrity check in delete procedure (check for associated quote items)
+- [x] T077 [P] [US9] Create Zod schemas in `src/lib/validations/admin/model.schema.ts` (create, update, list, delete schemas with dimension min/max refinements, compatibleGlassTypeIds array validation, cost breakdown nested schemas)
+- [x] T079 [P] [US9] Create tRPC router in `src/server/api/routers/admin/model.ts` (list, getById with cost breakdown/price history, create, update with price history trigger, delete with integrity check, addCostBreakdown, updateCostBreakdown, deleteCostBreakdown procedures)
+- [x] T080 [P] [US9] Register model router in `src/server/api/root.ts` admin namespace
+- [x] T081 [P] [US9] Add price history auto-creation in update procedure (call model-price-history.service.ts when basePrice/costPerMmWidth/costPerMmHeight changes)
+- [x] T082 [P] [US9] Add validation in create/update: validate all compatibleGlassTypeIds exist and are active
+- [x] T083 [P] [US9] Create list page in `src/app/(dashboard)/admin/models/page.tsx`
+- [x] T084 [P] [US9] Create list component in `src/app/(dashboard)/admin/models/_components/model-list.tsx` (show status badges, price range, glass type count)
+- [x] T085 [P] [US9] Create form component in `src/app/(dashboard)/admin/models/_components/model-form.tsx` (with Accordion sections: Basic Info, Dimensions, Pricing, Compatible Glass Types, Cost Notes)
+- [x] T086 [P] [US9] Create cost breakdown component in `src/app/(dashboard)/admin/models/_components/model-cost-breakdown.tsx` (React Hook Form useFieldArray for dynamic cost components, shown in separate tab/section on edit page)
+- [x] T087 [P] [US9] Create new page in `src/app/(dashboard)/admin/models/new/page.tsx`
+- [x] T088 [P] [US9] Create edit page in `src/app/(dashboard)/admin/models/[id]/page.tsx` (fetch with cost breakdown and price history)
+- [x] T089 [P] [US9] Add Winston logging for all CRUD operations (including cost breakdown changes)
+- [x] T090 [P] [US9] Add referential integrity check in delete procedure (check for associated quote items)
 
 **Checkpoint**: Model CRUD complete with cost breakdown management, price history tracking, and glass type compatibility
 
@@ -262,7 +244,7 @@
 
 ---
 
-## Phase 9: User Story 3 - Manage Services (Priority: P3) 🎯 Supplementary
+## Phase 9: User Story 10 - Manage Services (Priority: P3) 🎯 Supplementary
 
 **Goal**: Enable admins to create, edit, view, and delete additional services for quotes
 
@@ -272,16 +254,16 @@
 
 ### Implementation for User Story 3
 
-- [ ] T031 [P] [US3] Create Zod schemas in `src/lib/validations/admin/service.schema.ts` (create, update, list, delete schemas)
-- [ ] T023 [US3] Create tRPC router in `src/server/api/routers/admin/service.ts` (list, getById, create, update, delete procedures)
-- [ ] T032 [US3] Register service router in `src/server/api/root.ts` admin namespace
-- [ ] T024 [P] [US3] Create list page in `src/app/(dashboard)/admin/services/page.tsx`
-- [ ] T025 [P] [US3] Create list component in `src/app/(dashboard)/admin/services/_components/service-list.tsx` (show type and unit badges)
-- [ ] T026 [P] [US3] Create form component in `src/app/(dashboard)/admin/services/_components/service-form.tsx`
-- [ ] T027 [P] [US3] Create new page in `src/app/(dashboard)/admin/services/new/page.tsx`
-- [ ] T028 [P] [US3] Create edit page in `src/app/(dashboard)/admin/services/[id]/page.tsx`
-- [ ] T029 [US3] Add Winston logging for all CRUD operations
-- [ ] T030 [US3] Add referential integrity check in delete procedure (check for associated quote item services)
+- [x] T091 [P] [US10] Create Zod schemas in `src/lib/validations/admin/service.schema.ts` (create, update, list, delete schemas)
+- [x] T092 [US10] Create tRPC router in `src/server/api/routers/admin/service.ts` (list, getById, create, update, delete procedures)
+- [x] T093 [US10] Register service router in `src/server/api/root.ts` admin namespace
+- [x] T094 [P] [US10] Create list page in `src/app/(dashboard)/admin/services/page.tsx`
+- [x] T095 [P] [US10] Create list component in `src/app/(dashboard)/admin/services/_components/service-list.tsx` (show type and unit badges)
+- [x] T096 [P] [US10] Create form component in `src/app/(dashboard)/admin/services/_components/service-form.tsx`
+- [x] T097 [P] [US10] Create new page in `src/app/(dashboard)/admin/services/new/page.tsx`
+- [x] T098 [P] [US10] Create edit page in `src/app/(dashboard)/admin/services/[id]/page.tsx`
+- [x] T099 [P] [US10] Add Winston logging for all CRUD operations
+- [x] T100 [P] [US10] Add referential integrity check in delete procedure (check for associated quote item services)
 
 **Checkpoint**: Service CRUD complete and independently testable
 
@@ -291,28 +273,28 @@
 
 **Purpose**: Improvements that affect multiple user stories and final validation
 
-- [ ] T031 [P] Write unit tests for all tRPC routers in `tests/unit/admin/*.test.ts` (profile-supplier, glass-supplier, glass-solution, glass-characteristic, glass-type, model, service)
-- [ ] T023 [P] Write unit tests for price history services in `tests/unit/services/*.test.ts` (model-price-history, glass-price-history)
-- [ ] T032 [P] Write unit tests for referential integrity service in `tests/unit/services/referential-integrity.test.ts`
-- [ ] T024 [P] Write integration tests for model CRUD with cost breakdown in `tests/integration/admin/model-crud.test.ts`
-- [ ] T025 [P] Write integration tests for glass type CRUD with solutions/characteristics in `tests/integration/admin/glass-type-crud.test.ts`
-- [ ] T026 [P] Write E2E test for profile supplier management in `e2e/admin/profile-supplier-management.spec.ts`
-- [ ] T027 [P] Write E2E test for glass supplier management in `e2e/admin/glass-supplier-management.spec.ts`
-- [ ] T028 [P] Write E2E test for glass solution management in `e2e/admin/glass-solution-management.spec.ts`
-- [ ] T029 [P] Write E2E test for glass characteristic management in `e2e/admin/glass-characteristic-management.spec.ts`
-- [ ] T030 [P] Write E2E test for glass type management in `e2e/admin/glass-type-management.spec.ts` (full workflow: create with solutions/characteristics, edit, price change with history, delete prevention)
-- [ ] T031 [P] Write E2E test for model management in `e2e/admin/model-management.spec.ts` (full workflow: create with glass types, publish, add cost breakdown, price change with history, delete prevention)
-- [ ] T023 [P] Write E2E test for service management in `e2e/admin/service-management.spec.ts`
-- [ ] T032 [P] Update README.md with admin catalog management features in `README.md`
-- [ ] T024 [P] Update CHANGELOG.md with feature details following conventional changelog format in `CHANGELOG.md`
-- [ ] T025 Code review: Verify all Winston logger calls are server-side only (no usage in Client Components)
-- [ ] T026 Code review: Verify all admin procedures use `adminProcedure` (not `protectedProcedure`)
-- [ ] T027 Code review: Verify all forms use Spanish (es-LA) UI text, all code/comments in English
-- [ ] T028 Run `pnpm typecheck` to verify TypeScript compilation
-- [ ] T029 Run `pnpm lint:fix` to ensure Ultracite/Biome formatting compliance
-- [ ] T030 Run `pnpm test` to execute all unit and integration tests
-- [ ] T031 Run `pnpm test:e2e` to execute all E2E tests with Playwright
-- [ ] T023 Run quickstart.md validation: Follow setup steps and verify all entity CRUD operations work end-to-end
+- [ ] T102 [P] Write unit tests for all tRPC routers in `tests/unit/admin/*.test.ts` (profile-supplier, glass-supplier, glass-solution, glass-characteristic, glass-type, model, service)
+- [ ] T103 [P] Write unit tests for price history services in `tests/unit/services/*.test.ts` (model-price-history, glass-price-history)
+- [ ] T104 [P] Write unit tests for referential integrity service in `tests/unit/services/referential-integrity.test.ts`
+- [ ] T105 [P] Write integration tests for model CRUD with cost breakdown in `tests/integration/admin/model-crud.test.ts`
+- [ ] T106 [P] Write integration tests for glass type CRUD with solutions/characteristics in `tests/integration/admin/glass-type-crud.test.ts`
+- [ ] T107 [P] Write E2E test for profile supplier management in `e2e/admin/profile-supplier-management.spec.ts`
+- [ ] T108 [P] Write E2E test for glass supplier management in `e2e/admin/glass-supplier-management.spec.ts`
+- [ ] T109 [P] Write E2E test for glass solution management in `e2e/admin/glass-solution-management.spec.ts`
+- [ ] T110 [P] Write E2E test for glass characteristic management in `e2e/admin/glass-characteristic-management.spec.ts`
+- [ ] T111 [P] Write E2E test for glass type management in `e2e/admin/glass-type-management.spec.ts` (full workflow: create with solutions/characteristics, edit, price change with history, delete prevention)
+- [ ] T112 [P] Write E2E test for model management in `e2e/admin/model-management.spec.ts` (full workflow: create with glass types, publish, add cost breakdown, price change with history, delete prevention)
+- [ ] T113 [P] Write E2E test for service management in `e2e/admin/service-management.spec.ts`
+- [ ] T114 [P] Update README.md with admin catalog management features in `README.md`
+- [ ] T115 [P] Update CHANGELOG.md with feature details following conventional changelog format in `CHANGELOG.md`
+- [ ] T116 Code review: Verify all Winston logger calls are server-side only (no usage in Client Components)
+- [ ] T117 Code review: Verify all admin procedures use `adminProcedure` (not `protectedProcedure`)
+- [ ] T118 Code review: Verify all forms use Spanish (es-LA) UI text, all code/comments in English
+- [ ] T119 Run `pnpm typecheck` to verify TypeScript compilation
+- [ ] T120 Run `pnpm lint:fix` to ensure Ultracite/Biome formatting compliance
+- [ ] T121 Run `pnpm test` to execute all unit and integration tests
+- [ ] T122 Run `pnpm test:e2e` to execute all E2E tests with Playwright
+- [ ] T123 Run quickstart.md validation: Follow setup steps and verify all entity CRUD operations work end-to-end
 
 ---
 
