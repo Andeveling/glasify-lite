@@ -108,7 +108,7 @@ export function ContactInfoModal({ open, onClose, onSubmit, defaultValues, isLoa
                     <Input
                       autoComplete="email"
                       disabled={isLoading}
-                      placeholder="tu@email.com"
+                      placeholder="unmail@email.com"
                       type="email"
                       {...field}
                     />
