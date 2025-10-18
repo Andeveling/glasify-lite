@@ -17,6 +17,7 @@ When generating code for this repository:
 ---
 
 ## Active Technologies
+- PostgreSQL via Prisma ORM (existing schema in `prisma/schema.prisma`) (011-admin-catalog-management)
 
 **Language/Runtime**:
 - TypeScript 5.8.2 (strict mode), Node.js (ES2022 target)
