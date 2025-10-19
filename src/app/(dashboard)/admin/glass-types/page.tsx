@@ -2,7 +2,7 @@
  * Glass Types List Page (US8 - T067)
  *
  * Server Component with Suspense boundaries for streaming
- * Pattern based on /catalog/page.tsx for consistent behavior
+ * Pattern: SSR (Server-Side Rendering) for dashboard routes
  *
  * Architecture:
  * - Reads filters from URL search params (Promise in Next.js 15)
@@ -11,7 +11,7 @@
  * - Template literal key for proper re-suspension
  *
  * Performance:
- * - force-dynamic ensures searchParams changes trigger re-renders
+ * - SSR with force-dynamic ensures fresh data on every request
  * - Suspense with specific key values for reliable updates
  * - Parallel data fetching where applicable
  *
@@ -32,12 +32,12 @@ export const metadata: Metadata = {
 };
 
 /**
- * ISR Configuration: Revalidate every 30 seconds
- * - Server renders are cached for 30 seconds
+ * SSR Configuration: Force dynamic rendering
+ * - No caching for admin routes (always fresh data)
  * - Suspense key triggers re-fetch when filters change
- * - Background revalidation on cache miss
+ * - Private dashboard routes don't benefit from ISR
  */
-export const revalidate = 30;
+export const dynamic = 'force-dynamic';
 
 type SearchParams = Promise<{
   purpose?: string;
@@ -56,19 +56,11 @@ type PageProps = {
 // Loading skeleton for the table
 function GlassTypesTableSkeleton() {
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-4">
-        <Skeleton className="h-10 w-full max-w-sm" />
-        <Skeleton className="h-10 w-[180px]" />
-        <Skeleton className="h-10 w-[180px]" />
-        <Skeleton className="h-10 w-[180px]" />
-      </div>
-      <div className="rounded-md border">
-        <div className="space-y-3 p-4">
-          {Array.from({ length: 10 }).map((_, i) => (
-            <Skeleton className="h-16 w-full" key={i} />
-          ))}
-        </div>
+    <div className="rounded-md border">
+      <div className="space-y-3 p-4">
+        {Array.from({ length: 10 }).map((_, i) => (
+          <Skeleton className="h-16 w-full" key={i} />
+        ))}
       </div>
     </div>
   );
@@ -83,7 +75,6 @@ async function GlassTypesTableContent({
   search,
   sortBy,
   sortOrder,
-  suppliers,
 }: {
   page: number;
   purpose?: string;
@@ -92,7 +83,6 @@ async function GlassTypesTableContent({
   search?: string;
   sortBy: string;
   sortOrder: 'asc' | 'desc';
-  suppliers: Array<{ id: string; name: string }>;
 }) {
   // Fetch glass types data (heavy query inside Suspense)
   const initialData = await api.admin['glass-type'].list({
@@ -128,7 +118,6 @@ async function GlassTypesTableContent({
         purpose,
         search,
       }}
-      suppliers={suppliers}
     />
   );
 }
@@ -191,7 +180,6 @@ export default async function GlassTypesPage({ searchParams }: PageProps) {
           search={search}
           sortBy={sortBy}
           sortOrder={sortOrder}
-          suppliers={suppliersData.items}
         />
       </Suspense>
     </div>

@@ -345,6 +345,22 @@ function formatArea(value: number, context?: Partial<FormatContext> | null): str
   return `${formatNumber(value, { context, decimals: 2 })} m²`;
 }
 
+/**
+ * Format thickness (millimeters)
+ *
+ * @example
+ * ```ts
+ * formatThickness(6, tenantConfig)
+ * // "6mm"
+ * formatThickness(10.5, tenantConfig)
+ * // "10,5mm"
+ * ```
+ */
+function formatThickness(value: number, context?: Partial<FormatContext> | null): string {
+  const hasDecimals = value % 1 !== 0;
+  return `${formatNumber(value, { context, decimals: hasDecimals ? 1 : 0 })}mm`;
+}
+
 // =============================================================================
 // EXPORTS
 // =============================================================================
@@ -364,6 +380,7 @@ export {
   formatPercent,
   formatDimensions,
   formatArea,
+  formatThickness,
 };
 
 export type { FormatContext };

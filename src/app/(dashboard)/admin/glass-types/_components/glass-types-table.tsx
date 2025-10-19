@@ -2,35 +2,35 @@
  * GlassTypesTable Component
  *
  * Server-optimized table for Glass Types admin page using ServerTable components.
- * Implements server-side filtering, sorting, search, and pagination.
+ * Pure presentation component - filters managed by GlassTypesFilters component.
  *
  * Features:
  * - Server-side data fetching via tRPC
  * - URL-based state management
  * - Debounced search (300ms)
  * - Sortable columns
- * - Filter by purpose, supplier, active status, thickness
  * - Delete confirmation with referential integrity check
+ * - Optimistic UI updates for delete operations
  *
  * Architecture:
  * - Uses ServerTable organism with molecular components
  * - Follows SOLID principles (Single Responsibility)
  * - Type-safe with Zod validation
  */
+/** biome-ignore-all assist/source/useSortedKeys: El problema era que Biome estaba reordenando alfabéticamente las propiedades del objeto de configuración de la mutación, poniendo onError antes de onMutate. TypeScript necesita que onMutate se defina primero para inferir el tipo del contexto que luego se usa en onError.
+ */
 
 'use client';
 
 import type { GlassPurpose } from '@prisma/client';
-import { MoreHorizontal, Pencil, Plus, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog';
 import type { ServerTableColumn } from '@/app/_components/server-table';
 import { ServerTable } from '@/app/_components/server-table';
-import { type FilterDefinition, TableFilters } from '@/app/_components/server-table/table-filters';
 import { TablePagination } from '@/app/_components/server-table/table-pagination';
-import { TableSearch } from '@/app/_components/server-table/table-search';
 import { useTenantConfig } from '@/app/_hooks/use-tenant-config';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -43,7 +43,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { formatCurrency } from '@/lib/format';
+import { formatCurrency, formatThickness } from '@/lib/format';
 import { api } from '@/trpc/react';
 
 /**
@@ -75,14 +75,6 @@ type GlassType = {
   };
 };
 
-/**
- * Supplier data type
- */
-type Supplier = {
-  id: string;
-  name: string;
-};
-
 type GlassTypesTableProps = {
   initialData: {
     items: GlassType[];
@@ -91,7 +83,6 @@ type GlassTypesTableProps = {
     totalPages: number;
     limit: number;
   };
-  suppliers: Supplier[];
   searchParams: {
     search?: string;
     purpose?: string;
@@ -174,24 +165,91 @@ function ActionsMenu({ glassType, onDelete }: { glassType: GlassType; onDelete: 
   );
 }
 
-export function GlassTypesTable({ initialData, suppliers, searchParams }: GlassTypesTableProps) {
+export function GlassTypesTable({ initialData, searchParams }: GlassTypesTableProps) {
   const { formatContext } = useTenantConfig();
   const utils = api.useUtils();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [glassTypeToDelete, setGlassTypeToDelete] = useState<{ id: string; name: string } | null>(null);
 
-  // Delete mutation
-  const deleteMutation = api.admin['glass-type'].delete.useMutation({
-    onError: (error) => {
+  // Delete mutation with optimistic updates
+  // biome-ignore format: Order matters for TypeScript inference (onMutate must come before onError)
+  const deleteMutation = api.admin[ 'glass-type' ].delete.useMutation({
+    // onMutate MUST be first to establish context type for onError
+    async onMutate(variables) {
+      // Cancel outgoing refetches to prevent optimistic update from being overwritten
+      await utils.admin[ 'glass-type' ].list.cancel();
+
+      // Snapshot the previous value
+      const previousData = utils.admin[ 'glass-type' ].list.getData();
+
+      // Optimistically remove the item from cache
+      if (previousData) {
+        utils.admin[ 'glass-type' ].list.setData(
+          // Match the input parameters of the current query
+          {
+            glassSupplierId: searchParams.glassSupplierId !== 'all' ? searchParams.glassSupplierId : undefined,
+            isActive: searchParams.isActive as 'all' | 'active' | 'inactive' | undefined,
+            limit: initialData.limit,
+            page: Number(searchParams.page) || 1,
+            purpose: (searchParams.purpose !== 'all' ? searchParams.purpose : undefined) as
+              | 'general'
+              | 'insulation'
+              | 'security'
+              | 'decorative'
+              | undefined,
+            search: searchParams.search,
+          },
+          (old) => {
+            if (!old) return old;
+            return {
+              ...old,
+              items: old.items.filter((item) => item.id !== variables.id),
+              total: old.total - 1,
+            };
+          }
+        );
+      }
+
+      // Show immediate feedback
+      toast.loading('Eliminando tipo de vidrio...', { id: 'delete-glass-type' });
+
+      // Return context with snapshot for rollback
+      return { previousData };
+    },
+    onError(error, _variables, context) {
+      // Rollback to previous data on error
+      if (context?.previousData) {
+        utils.admin[ 'glass-type' ].list.setData(
+          {
+            glassSupplierId: searchParams.glassSupplierId !== 'all' ? searchParams.glassSupplierId : undefined,
+            isActive: searchParams.isActive as 'all' | 'active' | 'inactive' | undefined,
+            limit: initialData.limit,
+            page: Number(searchParams.page) || 1,
+            purpose: (searchParams.purpose !== 'all' ? searchParams.purpose : undefined) as
+              | 'general'
+              | 'insulation'
+              | 'security'
+              | 'decorative'
+              | undefined,
+            search: searchParams.search,
+          },
+          context.previousData
+        );
+      }
+
       toast.error('Error al eliminar tipo de vidrio', {
         description: error.message,
+        id: 'delete-glass-type',
       });
     },
-    onSuccess: () => {
-      toast.success('Tipo de vidrio eliminado correctamente');
+    onSuccess() {
+      toast.success('Tipo de vidrio eliminado correctamente', { id: 'delete-glass-type' });
       setDeleteDialogOpen(false);
       setGlassTypeToDelete(null);
-      void utils.admin['glass-type'].list.invalidate();
+    },
+    onSettled() {
+      // Always refetch to ensure data consistency
+      void utils.admin[ 'glass-type' ].list.invalidate();
     },
   });
 
@@ -234,7 +292,7 @@ export function GlassTypesTable({ initialData, suppliers, searchParams }: GlassT
     },
     {
       align: 'center',
-      cell: (item) => `${item.thicknessMm}mm`,
+      cell: (item) => formatThickness(item.thicknessMm, formatContext),
       header: 'Espesor',
       id: 'thicknessMm',
       sortable: true,
@@ -274,57 +332,8 @@ export function GlassTypesTable({ initialData, suppliers, searchParams }: GlassT
     },
   ];
 
-  /**
-   * Filter definitions
-   */
-  const filters: FilterDefinition[] = [
-    {
-      defaultValue: 'all',
-      id: 'purpose',
-      label: 'Propósito',
-      options: [
-        { label: 'Todos', value: 'all' },
-        { label: 'General', value: 'general' },
-        { label: 'Aislamiento', value: 'insulation' },
-        { label: 'Seguridad', value: 'security' },
-        { label: 'Decorativo', value: 'decorative' },
-      ],
-      type: 'select',
-    },
-    {
-      defaultValue: 'all',
-      id: 'isActive',
-      label: 'Estado',
-      options: [
-        { label: 'Todos', value: 'all' },
-        { label: 'Activos', value: 'active' },
-        { label: 'Inactivos', value: 'inactive' },
-      ],
-      type: 'select',
-    },
-    {
-      defaultValue: 'all',
-      id: 'glassSupplierId',
-      label: 'Proveedor de Vidrio',
-      options: [{ label: 'Todos', value: 'all' }, ...suppliers.map((s) => ({ label: s.name, value: s.id }))],
-      type: 'select',
-    },
-  ];
-
   return (
-    <div className="space-y-6">
-      {/* Filters */}
-      <div className="flex items-end justify-between gap-4">
-        <TableFilters filters={filters} />
-        <Button asChild>
-          <Link href="/admin/glass-types/new">
-            <Plus className="mr-2 size-4" />
-            Nuevo Tipo de Vidrio
-          </Link>
-        </Button>
-      </div>
-
-      {/* Table Card */}
+    <>
       <Card>
         <CardHeader>
           <div className="flex items-start justify-between">
@@ -335,9 +344,6 @@ export function GlassTypesTable({ initialData, suppliers, searchParams }: GlassT
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Search */}
-          <TableSearch defaultValue={searchParams.search} placeholder="Buscar por nombre, SKU o descripción..." />
-
           {/* Table */}
           <ServerTable columns={columns} data={initialData.items} emptyMessage="No se encontraron tipos de vidrio" />
 
@@ -360,6 +366,6 @@ export function GlassTypesTable({ initialData, suppliers, searchParams }: GlassT
         onOpenChange={setDeleteDialogOpen}
         open={deleteDialogOpen}
       />
-    </div>
+    </>
   );
 }

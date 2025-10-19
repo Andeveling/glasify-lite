@@ -3,6 +3,7 @@
  *
  * Filter controls for Glass Types admin table.
  * Extracted outside Suspense to prevent disappearing during loading states.
+ * Consolidated filter block - single source of truth.
  *
  * Features:
  * - Search input with debounce (300ms)
@@ -20,6 +21,7 @@
 
 'use client';
 
+import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import { type FilterDefinition, TableFilters } from '@/app/_components/server-table/table-filters';
 import { TableSearch } from '@/app/_components/server-table/table-search';
@@ -83,10 +85,10 @@ export function GlassTypesFilters({ searchParams, suppliers }: GlassTypesFilters
   ];
 
   return (
-    <div className="flex items-end justify-between gap-4">
+    <div className="flex flex-wrap items-end justify-between gap-4">
       {/* Search */}
       <div className="max-w-sm flex-1">
-        <TableSearch defaultValue={searchParams.search} placeholder="Buscar por nombre..." />
+        <TableSearch defaultValue={searchParams.search} placeholder="Buscar por nombre, SKU o descripción..." />
       </div>
 
       {/* Filters */}
@@ -94,7 +96,10 @@ export function GlassTypesFilters({ searchParams, suppliers }: GlassTypesFilters
 
       {/* Create button */}
       <Button asChild>
-        <Link href="/admin/glass-types/new">Nuevo Tipo de Vidrio</Link>
+        <Link href="/admin/glass-types/new">
+          <Plus className="mr-2 size-4" />
+          Nuevo Tipo de Vidrio
+        </Link>
       </Button>
     </div>
   );

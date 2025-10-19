@@ -1033,20 +1033,91 @@ When migrating existing tables to server-optimized pattern:
 
 ## Key Patterns Summary
 
-1. **Next.js 15**: Server Components by default, ISR, Streaming
-2. **Pages**: ALWAYS Server Components, delegate interactivity to children
-3. **Winston Logger**: Server-side ONLY (Server Components, Server Actions, API Routes, tRPC)
-4. **SEO**: Metadata in Server Components, `generateMetadata` for dynamic content
-5. **SOLID**: Single Responsibility, composition, inverted dependencies
-6. **Atomic Design**: atoms (ui/), molecules (components/), organisms (\_components/), templates (layout.tsx), pages (page.tsx)
-7. **tRPC**: Type-safe APIs with kebab-case naming
-8. **Prisma**: ORM with PostgreSQL, singleton client, performance indexes
-9. **Zod**: End-to-end schema validation
-10. **Custom Hooks**: Reusable logic separated from UI
-11. **Testing**: Vitest (unit/integration), Playwright (E2E)
-12. **Ultracite**: Linting and formatting with Biome
-13. **RBAC**: Three-layer authorization (middleware, tRPC, UI guards)
-14. **Server Tables**: URL-based state, debounced search, database indexes
+1. **Next.js 15**: Server Components by default, SSR/ISR based on route type, Streaming
+2. **Dashboard Routes**: SSR with `dynamic = 'force-dynamic'` (no ISR for private routes)
+3. **Pages**: ALWAYS Server Components, delegate interactivity to children
+4. **Winston Logger**: Server-side ONLY (Server Components, Server Actions, API Routes, tRPC)
+5. **SEO**: Metadata in Server Components, `generateMetadata` for dynamic content
+6. **SOLID**: Single Responsibility, composition, inverted dependencies
+7. **Atomic Design**: atoms (ui/), molecules (components/), organisms (\_components/), templates (layout.tsx), pages (page.tsx)
+8. **tRPC**: Type-safe APIs with kebab-case naming
+9. **Prisma**: ORM with PostgreSQL, singleton client, performance indexes
+10. **Zod**: End-to-end schema validation
+11. **Custom Hooks**: Reusable logic separated from UI
+12. **Testing**: Vitest (unit/integration), Playwright (E2E)
+13. **Ultracite**: Linting and formatting with Biome
+14. **RBAC**: Three-layer authorization (middleware, tRPC, UI guards)
+15. **Server Tables**: URL-based state, debounced search, database indexes
+16. **Formatters**: Centralized in `@lib/format` with tenant context
+17. **Optimistic UI**: Implement for mutations with rollback on error
+
+---
+
+## Dashboard Route Standards
+
+**Critical for all admin routes (`/admin/*`)**: Follow the [Dashboard Route Standard](../docs/dashboard-route-standard.md)
+
+### Quick Reference
+
+**SSR Configuration**:
+```typescript
+// ALWAYS for dashboard routes
+export const dynamic = 'force-dynamic';
+```
+
+**Filter Placement**:
+- Filters OUTSIDE Suspense (always visible during loading)
+- Single source of truth for filter definitions
+- Debounced search (300ms)
+
+**Component Structure**:
+```
+admin/[feature]/
+├── _components/
+│   ├── [feature]-table.tsx     # Pure presentation (Client)
+│   └── [feature]-filters.tsx   # Filter controls (Client)
+└── page.tsx                    # SSR page (Server)
+```
+
+**Formatters**:
+```typescript
+import { formatCurrency, formatThickness } from '@/lib/format';
+import { useTenantConfig } from '@/app/_hooks/use-tenant-config';
+
+const { formatContext } = useTenantConfig();
+formatCurrency(amount, { context: formatContext });
+```
+
+**Optimistic UI**:
+```typescript
+const mutation = api.feature.delete.useMutation({
+  onMutate: async (variables) => {
+    // Cancel, snapshot, update cache
+    const previousData = utils.feature.list.getData();
+    // ... optimistic update
+    return { previousData };
+  },
+  onError: (error, _vars, context) => {
+    // Rollback to snapshot
+    if (context?.previousData) {
+      utils.feature.list.setData(params, context.previousData);
+    }
+  },
+  onSettled: () => void utils.feature.list.invalidate(),
+});
+```
+
+**Dashboard Checklist**:
+- [ ] Use `dynamic = 'force-dynamic'` (no ISR)
+- [ ] Filters outside Suspense
+- [ ] Single filter block (no duplicates)
+- [ ] Centralized formatters with tenant context
+- [ ] Optimistic UI for mutations
+- [ ] Proper Suspense key with all query params
+- [ ] Type-safe tRPC procedures
+- [ ] Database indexes for performance
+
+See full documentation: [docs/dashboard-route-standard.md](../docs/dashboard-route-standard.md)
 
 ---
 
@@ -1054,19 +1125,21 @@ When migrating existing tables to server-optimized pattern:
 
 1. Detect exact project versions
 2. Follow established codebase patterns
-3. **Create pages as Server Components** (delegate interactivity to Client Components)
-4. **Never use Winston logger in Client Components** (server-side only)
-5. **Apply RBAC patterns** (middleware, tRPC procedures, UI guards)
-6. **Use adminProcedure for admin-only APIs** (not manual role checks)
-7. **Use getQuoteFilter for data filtering** (role-based WHERE clauses)
-8. **Use server-optimized table pattern** (URL state, debounced search, database indexes)
-9. Apply SOLID principles and Atomic Design
-10. Use Next.js App Router folder structure
-11. Prioritize Server Components over Client Components
-12. Add metadata for SEO on public pages
-13. Use `dynamic` or `revalidate` according to use case
-14. Write testable and well-documented code
-15. Use Spanish only in UI text, everything else in English
-16. Never create Barrels (index.ts) or barrel files anywhere
-17. Follow project naming and organization conventions
+3. **For dashboard routes: Use SSR with `dynamic = 'force-dynamic'`** (no ISR)
+4. **Create pages as Server Components** (delegate interactivity to Client Components)
+5. **Never use Winston logger in Client Components** (server-side only)
+6. **Apply RBAC patterns** (middleware, tRPC procedures, UI guards)
+7. **Use adminProcedure for admin-only APIs** (not manual role checks)
+8. **Use getQuoteFilter for data filtering** (role-based WHERE clauses)
+9. **Use server-optimized table pattern** (URL state, debounced search, database indexes)
+10. **Use centralized formatters from `@lib/format`** (with tenant context)
+11. **Implement optimistic UI for mutations** (with rollback on error)
+12. Apply SOLID principles and Atomic Design
+13. Use Next.js App Router folder structure
+14. Prioritize Server Components over Client Components
+15. Add metadata for SEO on public pages
+16. Write testable and well-documented code
+17. Use Spanish only in UI text, everything else in English
+18. Never create Barrels (index.ts) or barrel files anywhere
+19. Follow project naming and organization conventions
 
