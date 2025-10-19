@@ -63,7 +63,7 @@ export default async function EditModelPage({ params }: EditModelPageProps) {
         </p>
       </div>
 
-      <ModelForm defaultValues={defaultValues} mode="edit" />
+      <ModelForm initialData={defaultValues} mode="edit" modelId={model.id} />
 
       {/* Price History Section */}
       {model.priceHistory && model.priceHistory.length > 0 && (
