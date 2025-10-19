@@ -1,9 +1,12 @@
+'use client';
+
 import { Info } from 'lucide-react';
 import { Fragment } from 'react';
+import { useTenantConfig } from '@/app/_hooks/use-tenant-config';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { formatCurrency } from '@/lib/export/pdf/pdf-utils';
+import { formatCurrency } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
 // ============================================================================
@@ -71,6 +74,8 @@ type PriceBreakdownPopoverProps = {
  * </div>
  */
 export function PriceBreakdownPopover({ breakdown, className, totalAmount }: PriceBreakdownPopoverProps) {
+  const { formatContext } = useTenantConfig();
+
   // Group items by category
   const groupedItems = breakdown.reduce(
     (acc, item) => {
@@ -140,7 +145,7 @@ export function PriceBreakdownPopover({ breakdown, className, totalAmount }: Pri
                         <TableCell
                           className={cn('text-right text-sm', item.amount < 0 && 'text-green-600 dark:text-green-400')}
                         >
-                          {formatCurrency(item.amount)}
+                          {formatCurrency(item.amount, { context: formatContext })}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -151,7 +156,7 @@ export function PriceBreakdownPopover({ breakdown, className, totalAmount }: Pri
                           Subtotal {categoryLabels[category].toLowerCase()}
                         </TableCell>
                         <TableCell className="text-right text-xs font-medium text-muted-foreground">
-                          {formatCurrency(categoryTotal)}
+                          {formatCurrency(categoryTotal, { context: formatContext })}
                         </TableCell>
                       </TableRow>
                     )}
@@ -161,7 +166,9 @@ export function PriceBreakdownPopover({ breakdown, className, totalAmount }: Pri
               {/* Total row */}
               <TableRow className="border-t-2">
                 <TableCell className="font-bold">Total</TableCell>
-                <TableCell className="text-right font-bold">{formatCurrency(totalAmount)}</TableCell>
+                <TableCell className="text-right font-bold">
+                  {formatCurrency(totalAmount, { context: formatContext })}
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>

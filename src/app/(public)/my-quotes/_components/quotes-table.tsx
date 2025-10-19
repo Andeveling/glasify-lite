@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { TableFilters } from '@/app/_components/server-table/table-filters';
 import { TablePagination } from '@/app/_components/server-table/table-pagination';
 import { TableSearch } from '@/app/_components/server-table/table-search';
+import { useTenantConfig } from '@/app/_hooks/use-tenant-config';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,7 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { formatCurrency } from '@/lib/export/pdf/pdf-utils';
+import { formatCurrency } from '@/lib/format';
 
 type QuoteStatus = 'draft' | 'sent' | 'canceled';
 
@@ -59,6 +60,7 @@ type QuotesTableProps = {
  * Uses the established ServerTable pattern with reusable molecules.
  */
 export function QuotesTable({ data }: QuotesTableProps) {
+  const { formatContext } = useTenantConfig();
   return (
     <div className="space-y-4">
       {/* Search and Filters */}
@@ -143,7 +145,7 @@ export function QuotesTable({ data }: QuotesTableProps) {
                       <QuoteStatusBadge status={quote.status} />
                     </td>
                     <td className="px-4 py-3 text-right font-medium text-sm">
-                      {formatCurrency(quote.total, quote.currency)}
+                      {formatCurrency(quote.total, { context: formatContext })}
                     </td>
                     <td className="px-4 py-3 text-center text-muted-foreground text-sm">{quote.itemCount}</td>
                     <td className="px-4 py-3 text-sm">

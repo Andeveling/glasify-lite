@@ -1,8 +1,9 @@
 'use client';
 
 import { ArrowDown, ArrowUp } from 'lucide-react';
+import { useTenantConfig } from '@/app/_hooks/use-tenant-config';
 import { Badge } from '@/components/ui/badge';
-import { formatCurrency } from '@/lib/export/pdf/pdf-utils';
+import { formatCurrency } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
 // ============================================================================
@@ -49,6 +50,8 @@ type PriceImpactBadgeProps = {
  * ```
  */
 export function PriceImpactBadge({ basePrice, className, currency = '$', priceModifier }: PriceImpactBadgeProps) {
+  const { formatContext } = useTenantConfig();
+
   const isDiscount = priceModifier < 0;
   const isSurcharge = priceModifier > 0;
   const isNeutral = priceModifier === 0;
@@ -77,8 +80,8 @@ export function PriceImpactBadge({ basePrice, className, currency = '$', priceMo
     <Badge
       aria-label={
         isDiscount
-          ? `Descuento de ${currency}${formatCurrency(absoluteAmount)}`
-          : `Recargo de ${currency}${formatCurrency(absoluteAmount)}`
+          ? `Descuento de ${currency}${formatCurrency(absoluteAmount, { context: formatContext })}`
+          : `Recargo de ${currency}${formatCurrency(absoluteAmount, { context: formatContext })}`
       }
       className={cn('gap-1 text-xs font-medium tabular-nums', colorClass, className)}
       variant="outline"
@@ -86,7 +89,7 @@ export function PriceImpactBadge({ basePrice, className, currency = '$', priceMo
       {Icon && <Icon aria-hidden="true" className="h-3 w-3" />}
       <span>
         {sign}
-        {formatCurrency(absoluteAmount)}
+        {formatCurrency(absoluteAmount, { context: formatContext })}
       </span>
     </Badge>
   );

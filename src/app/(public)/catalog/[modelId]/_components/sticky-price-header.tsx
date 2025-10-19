@@ -2,11 +2,12 @@
 
 import { motion } from 'framer-motion';
 import { Gem, Package, Ruler } from 'lucide-react';
+import { useTenantConfig } from '@/app/_hooks/use-tenant-config';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { PriceBreakdownPopover } from '@/components/ui/price-breakdown-popover';
 import { Separator } from '@/components/ui/separator';
-import { formatCurrency } from '@/lib/export/pdf/pdf-utils';
+import { formatCurrency } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
 // ============================================================================
@@ -76,6 +77,7 @@ export function StickyPriceHeader({
   currency,
   currentPrice,
 }: StickyPriceHeaderProps) {
+  const { formatContext } = useTenantConfig();
   const discount = basePrice - currentPrice;
   const hasDiscount = discount > 0;
 
@@ -102,7 +104,7 @@ export function StickyPriceHeader({
               key={currentPrice} // Re-animate when price changes
               transition={{ duration: 0.2, ease: 'easeOut' }}
             >
-              {formatCurrency(currentPrice, currency)}
+              {formatCurrency(currentPrice, { context: formatContext })}
             </motion.p>
           </div>
 
@@ -155,7 +157,7 @@ export function StickyPriceHeader({
               className="bg-green-500/10 text-green-700 hover:bg-green-500/20 dark:text-green-400"
               variant="outline"
             >
-              -{formatCurrency(discount)}
+              -{formatCurrency(discount, { context: formatContext })}
             </Badge>
           )}
         </div>
@@ -163,7 +165,7 @@ export function StickyPriceHeader({
 
       {/* Screen reader announcement for price changes */}
       <div aria-atomic="true" aria-live="polite" className="sr-only">
-        Precio actualizado: {formatCurrency(currentPrice)} para {configSummary.modelName}
+        Precio actualizado: {formatCurrency(currentPrice, { context: formatContext })} para {configSummary.modelName}
         {hasDimensions && `, dimensiones ${dimensionsText}`}
         {configSummary.glassTypeName && `, vidrio ${configSummary.glassTypeName}`}
       </div>

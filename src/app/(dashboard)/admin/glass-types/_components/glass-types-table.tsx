@@ -31,6 +31,7 @@ import { ServerTable } from '@/app/_components/server-table';
 import { type FilterDefinition, TableFilters } from '@/app/_components/server-table/table-filters';
 import { TablePagination } from '@/app/_components/server-table/table-pagination';
 import { TableSearch } from '@/app/_components/server-table/table-search';
+import { useTenantConfig } from '@/app/_hooks/use-tenant-config';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -42,7 +43,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { formatCurrency } from '@/lib/export/pdf/pdf-utils';
+import { formatCurrency } from '@/lib/format';
 import { api } from '@/trpc/react';
 
 /**
@@ -174,6 +175,7 @@ function ActionsMenu({ glassType, onDelete }: { glassType: GlassType; onDelete: 
 }
 
 export function GlassTypesTable({ initialData, suppliers, searchParams }: GlassTypesTableProps) {
+  const { formatContext } = useTenantConfig();
   const utils = api.useUtils();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [glassTypeToDelete, setGlassTypeToDelete] = useState<{ id: string; name: string } | null>(null);
@@ -238,7 +240,7 @@ export function GlassTypesTable({ initialData, suppliers, searchParams }: GlassT
       sortable: true,
     },
     {
-      cell: (item) => formatCurrency(item.pricePerSqm),
+      cell: (item) => formatCurrency(item.pricePerSqm, { context: formatContext }),
       header: 'Precio/m²',
       id: 'pricePerSqm',
       sortable: true,
