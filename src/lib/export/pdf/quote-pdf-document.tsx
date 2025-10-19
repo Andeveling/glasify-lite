@@ -8,9 +8,9 @@
  */
 
 import { Document, Image, Page, Text, View } from '@react-pdf/renderer';
+import { formatCurrency, formatDateFull } from '@/lib/format';
 import type { QuotePDFData } from '@/types/export.types';
 import { pdfColors, pdfStyles } from './pdf-styles';
-import { formatCurrency, formatDateSpanish } from './pdf-utils';
 
 interface QuotePDFDocumentProps {
   data: QuotePDFData;
@@ -63,8 +63,8 @@ function PDFHeader({ data }: QuotePDFDocumentProps) {
       <View style={pdfStyles.headerRight}>
         <Text style={pdfStyles.quoteNumber}>Cotización</Text>
         <Text style={pdfStyles.quoteNumber}>#{data.quote.id.slice(0, 8)}</Text>
-        <Text style={pdfStyles.quoteDate}>Fecha: {formatDateSpanish(data.quote.createdAt)}</Text>
-        <Text style={pdfStyles.quoteDate}>Válida hasta: {formatDateSpanish(data.quote.validUntil)}</Text>
+        <Text style={pdfStyles.quoteDate}>Fecha: {formatDateFull(data.quote.createdAt, data.formatting)}</Text>
+        <Text style={pdfStyles.quoteDate}>Válida hasta: {formatDateFull(data.quote.validUntil, data.formatting)}</Text>
       </View>
     </View>
   );
@@ -166,11 +166,11 @@ function PDFItemsTable({ data }: QuotePDFDocumentProps) {
             <Text style={[pdfStyles.tableCell, pdfStyles.colQuantity, pdfStyles.tableCellCenter]}>{item.quantity}</Text>
 
             <Text style={[pdfStyles.tableCell, pdfStyles.colUnitPrice, pdfStyles.tableCellRight]}>
-              {formatCurrency(item.unitPrice, data.formatting.currency)}
+              {formatCurrency(item.unitPrice, { context: data.formatting })}
             </Text>
 
             <Text style={[pdfStyles.tableCell, pdfStyles.colSubtotal, pdfStyles.tableCellRight]}>
-              {formatCurrency(item.subtotal, data.formatting.currency)}
+              {formatCurrency(item.subtotal, { context: data.formatting })}
             </Text>
           </View>
         ))}
@@ -188,14 +188,14 @@ function PDFTotals({ data }: QuotePDFDocumentProps) {
       {/* Subtotal */}
       <View style={pdfStyles.totalsRow}>
         <Text style={pdfStyles.totalsLabel}>Subtotal:</Text>
-        <Text style={pdfStyles.totalsValue}>{formatCurrency(data.totals.subtotal, data.formatting.currency)}</Text>
+        <Text style={pdfStyles.totalsValue}>{formatCurrency(data.totals.subtotal, { context: data.formatting })}</Text>
       </View>
 
       {/* Tax */}
       {data.totals.tax !== undefined && data.totals.tax > 0 && (
         <View style={pdfStyles.totalsRow}>
           <Text style={pdfStyles.totalsLabel}>IVA (19%):</Text>
-          <Text style={pdfStyles.totalsValue}>{formatCurrency(data.totals.tax, data.formatting.currency)}</Text>
+          <Text style={pdfStyles.totalsValue}>{formatCurrency(data.totals.tax, { context: data.formatting })}</Text>
         </View>
       )}
 
@@ -203,14 +203,16 @@ function PDFTotals({ data }: QuotePDFDocumentProps) {
       {data.totals.discount !== undefined && data.totals.discount > 0 && (
         <View style={pdfStyles.totalsRow}>
           <Text style={pdfStyles.totalsLabel}>Descuento:</Text>
-          <Text style={pdfStyles.totalsValue}>-{formatCurrency(data.totals.discount, data.formatting.currency)}</Text>
+          <Text style={pdfStyles.totalsValue}>
+            -{formatCurrency(data.totals.discount, { context: data.formatting })}
+          </Text>
         </View>
       )}
 
       {/* Total */}
       <View style={[pdfStyles.totalsRow, pdfStyles.totalRow]}>
         <Text style={pdfStyles.totalLabel}>Total:</Text>
-        <Text style={pdfStyles.totalValue}>{formatCurrency(data.totals.total, data.formatting.currency)}</Text>
+        <Text style={pdfStyles.totalValue}>{formatCurrency(data.totals.total, { context: data.formatting })}</Text>
       </View>
     </View>
   );
@@ -229,7 +231,9 @@ function PDFFooter({ data }: QuotePDFDocumentProps) {
         </Text>
       )}
 
-      <Text style={pdfStyles.footerText}>Cotización válida hasta {formatDateSpanish(data.quote.validUntil)}</Text>
+      <Text style={pdfStyles.footerText}>
+        Cotización válida hasta {formatDateFull(data.quote.validUntil, data.formatting)}
+      </Text>
 
       {data.company.address && <Text style={pdfStyles.footerText}>{data.company.address}</Text>}
 
