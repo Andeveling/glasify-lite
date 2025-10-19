@@ -18,6 +18,7 @@ import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import type { z } from 'zod';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -26,11 +27,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  type CreateGlassTypeInput,
-  createGlassTypeSchema,
-  type GetGlassTypeByIdOutput,
-} from '@/lib/validations/admin/glass-type.schema';
+import { createGlassTypeSchema, type GetGlassTypeByIdOutput } from '@/lib/validations/admin/glass-type.schema';
 import { api } from '@/trpc/react';
 import { CharacteristicSelector } from './characteristic-selector';
 import { SolutionSelector } from './solution-selector';
@@ -42,8 +39,8 @@ type GlassTypeFormProps = {
 
 const DEFAULT_THICKNESS_MM = 6;
 
-// Form values type - explicitly includes arrays to match schema
-type GlassTypeFormValues = CreateGlassTypeInput;
+// Form values type - directly inferred from Zod schema for exact compatibility
+type GlassTypeFormValues = z.infer<typeof createGlassTypeSchema>;
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Form component with multiple sections requires extensive setup
 export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
@@ -81,7 +78,7 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
     resolver: zodResolver(createGlassTypeSchema),
   });
 
-  const createMutation = api.admin['glass-type'].create.useMutation({
+  const createMutation = api.admin[ 'glass-type' ].create.useMutation({
     onError: (err) => {
       toast.error('Error al crear tipo de vidrio', {
         description: err.message,
@@ -94,7 +91,7 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
     },
   });
 
-  const updateMutation = api.admin['glass-type'].update.useMutation({
+  const updateMutation = api.admin[ 'glass-type' ].update.useMutation({
     onError: (err) => {
       toast.error('Error al actualizar tipo de vidrio', {
         description: err.message,
@@ -107,7 +104,7 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
     },
   });
 
-  const handleSubmit = (data: GlassTypeFormValues) => {
+  const onSubmit = (data: GlassTypeFormValues) => {
     if (mode === 'create') {
       createMutation.mutate(data);
     } else if (defaultValues) {
@@ -122,8 +119,8 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
 
   return (
     <Form {...form}>
-      <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
-        <Accordion className="space-y-4" defaultValue={['basic']} type="multiple">
+      <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+        <Accordion className="space-y-4" defaultValue={[ 'basic' ]} type="multiple">
           {/* Basic Information Section */}
           <AccordionItem value="basic">
             <AccordionTrigger className="rounded-lg bg-muted px-4 py-2 hover:bg-muted/80">

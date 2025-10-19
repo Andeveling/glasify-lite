@@ -16,6 +16,7 @@ import logger from '@/lib/logger';
 import {
   createGlassTypeSchema,
   deleteGlassTypeSchema,
+  getGlassTypeByIdOutputSchema,
   listGlassTypesSchema,
   updateGlassTypeSchema,
 } from '@/lib/validations/admin/glass-type.schema';
@@ -344,83 +345,95 @@ export const glassTypeRouter = createTRPCRouter({
    *
    * Returns full glass type details with solutions, characteristics, and supplier
    */
-  getById: adminProcedure.input(deleteGlassTypeSchema).query(async ({ ctx, input }) => {
-    const glassType = await ctx.db.glassType.findUnique({
-      include: {
-        // biome-ignore lint/style/useNamingConvention: Prisma special _count field
-        _count: {
-          select: {
-            characteristics: true,
-            quoteItems: true,
-            solutions: true,
+  getById: adminProcedure
+    .input(deleteGlassTypeSchema)
+    .output(getGlassTypeByIdOutputSchema)
+    .query(async ({ ctx, input }) => {
+      const glassType = await ctx.db.glassType.findUnique({
+        include: {
+          // biome-ignore lint/style/useNamingConvention: Prisma special _count field
+          _count: {
+            select: {
+              characteristics: true,
+              quoteItems: true,
+              solutions: true,
+            },
           },
-        },
-        characteristics: {
-          include: {
-            characteristic: {
-              select: {
-                category: true,
-                id: true,
-                key: true,
-                name: true,
-                nameEs: true,
+          characteristics: {
+            include: {
+              characteristic: {
+                select: {
+                  category: true,
+                  id: true,
+                  key: true,
+                  name: true,
+                  nameEs: true,
+                },
               },
             },
-          },
-          orderBy: {
-            characteristic: {
-              sortOrder: 'asc',
-            },
-          },
-        },
-        glassSupplier: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        solutions: {
-          include: {
-            solution: {
-              select: {
-                icon: true,
-                id: true,
-                key: true,
-                name: true,
-                nameEs: true,
-              },
-            },
-          },
-          orderBy: [
-            {
-              isPrimary: 'desc',
-            },
-            {
-              solution: {
+            orderBy: {
+              characteristic: {
                 sortOrder: 'asc',
               },
             },
-          ],
+          },
+          glassSupplier: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          solutions: {
+            include: {
+              solution: {
+                select: {
+                  icon: true,
+                  id: true,
+                  key: true,
+                  name: true,
+                  nameEs: true,
+                },
+              },
+            },
+            orderBy: [
+              {
+                isPrimary: 'desc',
+              },
+              {
+                solution: {
+                  sortOrder: 'asc',
+                },
+              },
+            ],
+          },
         },
-      },
-      where: { id: input.id },
-    });
-
-    if (!glassType) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Tipo de vidrio no encontrado',
+        where: { id: input.id },
       });
-    }
 
-    logger.info('Glass type retrieved', {
-      glassTypeId: input.id,
-      glassTypeName: glassType.name,
-      userId: ctx.session.user.id,
-    });
+      if (!glassType) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Tipo de vidrio no encontrado',
+        });
+      }
 
-    return glassType;
-  }),
+      // Serialize Prisma Decimal fields to numbers to match the output schema
+      const serializedGlassType = {
+        ...glassType,
+        lightTransmission: glassType.lightTransmission?.toNumber() ?? null,
+        pricePerSqm: glassType.pricePerSqm.toNumber(),
+        solarFactor: glassType.solarFactor?.toNumber() ?? null,
+        uValue: glassType.uValue?.toNumber() ?? null,
+      };
+
+      logger.info('Glass type retrieved', {
+        glassTypeId: input.id,
+        glassTypeName: glassType.name,
+        userId: ctx.session.user.id,
+      });
+
+      return serializedGlassType;
+    }),
 
   /**
    * List Glass Types
