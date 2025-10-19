@@ -56,71 +56,71 @@ Refactorizar el componente `GlassTypeForm` para aplicar principios SOLID, mejora
 
 - GOAL-001: Separar toda la lógica del formulario en custom hooks reutilizables ✅
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-001 | Crear `_hooks/use-form-defaults.ts` - Hook para transformar defaultValues a form defaults | ✅ | 2025-10-19 |
-| TASK-002 | Crear `_hooks/use-glass-type-mutations.ts` - Hook para mutations (create/update) con callbacks | ✅ | 2025-10-19 |
-| TASK-003 | Crear `_hooks/use-glass-type-form.ts` - Hook principal que orquesta form state y validación | ✅ | 2025-10-19 |
-| TASK-004 | Agregar unit tests para cada hook en `__tests__/hooks/` | ⏭️ | Skipped |
+| Task     | Description                                                                                    | Completed | Date       |
+| -------- | ---------------------------------------------------------------------------------------------- | --------- | ---------- |
+| TASK-001 | Crear `_hooks/use-form-defaults.ts` - Hook para transformar defaultValues a form defaults      | ✅         | 2025-10-19 |
+| TASK-002 | Crear `_hooks/use-glass-type-mutations.ts` - Hook para mutations (create/update) con callbacks | ✅         | 2025-10-19 |
+| TASK-003 | Crear `_hooks/use-glass-type-form.ts` - Hook principal que orquesta form state y validación    | ✅         | 2025-10-19 |
+| TASK-004 | Agregar unit tests para cada hook en `__tests__/hooks/`                                        | ⏭️         | Skipped    |
 
 ### Implementation Phase 2: Create Reusable Field Components (Molecules)
 
 - GOAL-002: Crear componentes de campo reutilizables para eliminar duplicación ✅
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-005 | Crear `_components/form-fields/form-number-field.tsx` - Input numérico con validación y formato | ✅ | 2025-10-19 |
-| TASK-006 | Crear `_components/form-fields/form-select-field.tsx` - Select con estilos consistentes | ✅ | 2025-10-19 |
-| TASK-007 | Crear `_components/form-fields/form-textarea-field.tsx` - Textarea con contador de caracteres | ✅ | 2025-10-19 |
-| TASK-008 | Crear `_components/form-fields/form-checkbox-field.tsx` - Checkbox para campos boolean | ✅ | 2025-10-19 |
-| TASK-009 | Crear barrel file `_components/form-fields/index.ts` para exports limpios | ⏭️ | Skipped |
+| Task     | Description                                                                                     | Completed | Date       |
+| -------- | ----------------------------------------------------------------------------------------------- | --------- | ---------- |
+| TASK-005 | Crear `_components/form-fields/form-number-field.tsx` - Input numérico con validación y formato | ✅         | 2025-10-19 |
+| TASK-006 | Crear `_components/form-fields/form-select-field.tsx` - Select con estilos consistentes         | ✅         | 2025-10-19 |
+| TASK-007 | Crear `_components/form-fields/form-textarea-field.tsx` - Textarea con contador de caracteres   | ✅         | 2025-10-19 |
+| TASK-008 | Crear `_components/form-fields/form-checkbox-field.tsx` - Checkbox para campos boolean          | ✅         | 2025-10-19 |
+| TASK-009 | Crear barrel file `_components/form-fields/index.ts` para exports limpios                       | ⏭️         | Skipped    |
 
 ### Implementation Phase 3: Extract Form Sections (Organisms)
 
 - GOAL-003: Dividir el formulario en secciones independientes y autocontenidas ✅
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-010 | Crear `_components/sections/basic-info-section.tsx` - Sección de información básica | ✅ | 2025-10-19 |
-| TASK-011 | Crear `_components/sections/thermal-properties-section.tsx` - Propiedades térmicas y ópticas | ✅ | 2025-10-19 |
-| TASK-012 | Crear `_components/sections/solutions-section.tsx` - Wrapper para SolutionSelector | ✅ | 2025-10-19 |
-| TASK-013 | Crear `_components/sections/characteristics-section.tsx` - Wrapper para CharacteristicSelector | ✅ | 2025-10-19 |
-| TASK-014 | Crear barrel file `_components/sections/index.ts` para exports | ⏭️ | Skipped |
+| Task     | Description                                                                                    | Completed | Date       |
+| -------- | ---------------------------------------------------------------------------------------------- | --------- | ---------- |
+| TASK-010 | Crear `_components/sections/basic-info-section.tsx` - Sección de información básica            | ✅         | 2025-10-19 |
+| TASK-011 | Crear `_components/sections/thermal-properties-section.tsx` - Propiedades térmicas y ópticas   | ✅         | 2025-10-19 |
+| TASK-012 | Crear `_components/sections/solutions-section.tsx` - Wrapper para SolutionSelector             | ✅         | 2025-10-19 |
+| TASK-013 | Crear `_components/sections/characteristics-section.tsx` - Wrapper para CharacteristicSelector | ✅         | 2025-10-19 |
+| TASK-014 | Crear barrel file `_components/sections/index.ts` para exports                                 | ⏭️         | Skipped    |
 
 ### Implementation Phase 4: Refactor Main Form Component
 
 - GOAL-004: Simplificar componente principal a solo orquestación y composición ✅
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-015 | Refactorizar `glass-type-form.tsx` usando hooks y section components | ✅ | 2025-10-19 |
-| TASK-016 | Mover form actions a `_components/form-actions.tsx` | ✅ | 2025-10-19 |
-| TASK-017 | Reducir componente principal a < 150 líneas | ✅ | 2025-10-19 |
-| TASK-018 | Agregar JSDoc comments a todos los componentes nuevos | ✅ | 2025-10-19 |
+| Task     | Description                                                          | Completed | Date       |
+| -------- | -------------------------------------------------------------------- | --------- | ---------- |
+| TASK-015 | Refactorizar `glass-type-form.tsx` usando hooks y section components | ✅         | 2025-10-19 |
+| TASK-016 | Mover form actions a `_components/form-actions.tsx`                  | ✅         | 2025-10-19 |
+| TASK-017 | Reducir componente principal a < 150 líneas                          | ✅         | 2025-10-19 |
+| TASK-018 | Agregar JSDoc comments a todos los componentes nuevos                | ✅         | 2025-10-19 |
 
 ### Implementation Phase 5: UI Improvements
 
-- GOAL-005: Mejorar jerarquía visual y experiencia de usuario
+- GOAL-005: Mejorar jerarquía visual y experiencia de usuario ✅
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-019 | Mejorar estilos de AccordionTrigger con iconos y mejor contraste | | |
-| TASK-020 | Agregar tooltips a campos con información técnica (U-Value, Solar Factor) | | |
-| TASK-021 | Mejorar responsive design en grid layouts (md:grid-cols-2) | | |
-| TASK-022 | Agregar loading skeletons para mejor UX durante fetch de solutions/characteristics | | |
-| TASK-023 | Implementar field grouping visual con mejor spacing | | |
+| TASK-019 | Mejorar estilos de AccordionTrigger con iconos y mejor contraste | ✅ | 2025-10-19 |
+| TASK-020 | Agregar tooltips a campos con información técnica (U-Value, Solar Factor) | ⏭️ | Skipped |
+| TASK-021 | Mejorar responsive design en grid layouts (md:grid-cols-2) | ✅ | 2025-10-19 |
+| TASK-022 | Agregar loading skeletons para mejor UX durante fetch de solutions/characteristics | ⏭️ | Skipped |
+| TASK-023 | Implementar field grouping visual con mejor spacing | ✅ | 2025-10-19 |
 
 ### Implementation Phase 6: Testing & Documentation
 
 - GOAL-006: Asegurar calidad y documentar cambios
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-024 | Actualizar E2E tests en `e2e/admin/glass-types/` para cubrir nuevo flujo | | |
-| TASK-025 | Agregar integration tests para form submission | | |
-| TASK-026 | Actualizar documentación en `docs/components/glass-type-form.md` | | |
-| TASK-027 | Agregar ejemplos de uso de componentes reutilizables | | |
-| TASK-028 | Ejecutar `pnpm lint:fix` y `pnpm typecheck` | | |
+| Task     | Description                                                              | Completed | Date |
+| -------- | ------------------------------------------------------------------------ | --------- | ---- |
+| TASK-024 | Actualizar E2E tests en `e2e/admin/glass-types/` para cubrir nuevo flujo |           |      |
+| TASK-025 | Agregar integration tests para form submission                           |           |      |
+| TASK-026 | Actualizar documentación en `docs/components/glass-type-form.md`         |           |      |
+| TASK-027 | Agregar ejemplos de uso de componentes reutilizables                     |           |      |
+| TASK-028 | Ejecutar `pnpm lint:fix` y `pnpm typecheck`                              |           |      |
 
 ## 3. Alternatives
 

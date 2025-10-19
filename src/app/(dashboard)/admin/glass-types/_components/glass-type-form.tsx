@@ -47,41 +47,49 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
       <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
         <Accordion className="space-y-4" defaultValue={['basic']} type="multiple">
           {/* Basic Information Section */}
-          <AccordionItem value="basic">
-            <AccordionTrigger className="rounded-lg bg-muted px-4 py-2 hover:bg-muted/80">
-              <span className="font-semibold text-lg">Información Básica</span>
+          <AccordionItem className="rounded-lg border" value="basic">
+            <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">
+              <span className="flex items-center gap-2 text-lg font-semibold">
+                📝 Información Básica
+              </span>
             </AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent className="px-1 pt-4">
               <BasicInfoSection control={form.control} />
             </AccordionContent>
           </AccordionItem>
 
           {/* Thermal Properties Section */}
-          <AccordionItem value="thermal">
-            <AccordionTrigger className="rounded-lg bg-muted px-4 py-2 hover:bg-muted/80">
-              <span className="font-semibold text-lg">Propiedades Térmicas y Ópticas</span>
+          <AccordionItem className="rounded-lg border" value="thermal">
+            <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">
+              <span className="flex items-center gap-2 text-lg font-semibold">
+                🌡️ Propiedades Térmicas y Ópticas
+              </span>
             </AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent className="px-1 pt-4">
               <ThermalPropertiesSection control={form.control} />
             </AccordionContent>
           </AccordionItem>
 
           {/* Solutions Section */}
-          <AccordionItem value="solutions">
-            <AccordionTrigger className="rounded-lg bg-muted px-4 py-2 hover:bg-muted/80">
-              <span className="font-semibold text-lg">Soluciones</span>
+          <AccordionItem className="rounded-lg border" value="solutions">
+            <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">
+              <span className="flex items-center gap-2 text-lg font-semibold">
+                💡 Soluciones
+              </span>
             </AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent className="px-1 pt-4">
               <SolutionsSection />
             </AccordionContent>
           </AccordionItem>
 
           {/* Characteristics Section */}
-          <AccordionItem value="characteristics">
-            <AccordionTrigger className="rounded-lg bg-muted px-4 py-2 hover:bg-muted/80">
-              <span className="font-semibold text-lg">Características</span>
+          <AccordionItem className="rounded-lg border" value="characteristics">
+            <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">
+              <span className="flex items-center gap-2 text-lg font-semibold">
+                ⭐ Características
+              </span>
             </AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent className="px-1 pt-4">
               <CharacteristicsSection />
             </AccordionContent>
           </AccordionItem>
