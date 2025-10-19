@@ -46,7 +46,7 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
     <Form {...form}>
       {/* @ts-expect-error - Type mismatch between Zod schema and RHF Control types */}
       <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
-        <Accordion className="space-y-4" defaultValue={[ 'basic' ]} type="multiple">
+        <Accordion className="space-y-4" defaultValue={['basic']} type="multiple">
           {/* Basic Information Section */}
           <AccordionItem className="rounded-lg border" value="basic">
             <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">

@@ -102,25 +102,25 @@ Refactorizar el componente `GlassTypeForm` para aplicar principios SOLID, mejora
 
 - GOAL-005: Mejorar jerarquía visual y experiencia de usuario ✅
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-019 | Mejorar estilos de AccordionTrigger con iconos y mejor contraste | ✅ | 2025-10-19 |
-| TASK-020 | Agregar tooltips a campos con información técnica (U-Value, Solar Factor) | ⏭️ | Skipped |
-| TASK-021 | Mejorar responsive design en grid layouts (md:grid-cols-2) | ✅ | 2025-10-19 |
-| TASK-022 | Agregar loading skeletons para mejor UX durante fetch de solutions/characteristics | ⏭️ | Skipped |
-| TASK-023 | Implementar field grouping visual con mejor spacing | ✅ | 2025-10-19 |
+| Task     | Description                                                                        | Completed | Date       |
+| -------- | ---------------------------------------------------------------------------------- | --------- | ---------- |
+| TASK-019 | Mejorar estilos de AccordionTrigger con iconos y mejor contraste                   | ✅         | 2025-10-19 |
+| TASK-020 | Agregar tooltips a campos con información técnica (U-Value, Solar Factor)          | ⏭️         | Skipped    |
+| TASK-021 | Mejorar responsive design en grid layouts (md:grid-cols-2)                         | ✅         | 2025-10-19 |
+| TASK-022 | Agregar loading skeletons para mejor UX durante fetch de solutions/characteristics | ⏭️         | Skipped    |
+| TASK-023 | Implementar field grouping visual con mejor spacing                                | ✅         | 2025-10-19 |
 
 ### Implementation Phase 6: Testing & Documentation
 
 - GOAL-006: Asegurar calidad y documentar cambios ⏭️
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-024 | Actualizar E2E tests en `e2e/admin/glass-types/` para cubrir nuevo flujo | ⏭️ | Skipped |
-| TASK-025 | Agregar integration tests para form submission | ⏭️ | Skipped |
-| TASK-026 | Actualizar documentación en `docs/components/glass-type-form.md` | ⏭️ | Skipped |
-| TASK-027 | Agregar ejemplos de uso de componentes reutilizables | ⏭️ | Skipped |
-| TASK-028 | Ejecutar `pnpm lint:fix` y `pnpm typecheck` | ⏭️ | Skipped |
+| Task     | Description                                                              | Completed | Date    |
+| -------- | ------------------------------------------------------------------------ | --------- | ------- |
+| TASK-024 | Actualizar E2E tests en `e2e/admin/glass-types/` para cubrir nuevo flujo | ⏭️         | Skipped |
+| TASK-025 | Agregar integration tests para form submission                           | ⏭️         | Skipped |
+| TASK-026 | Actualizar documentación en `docs/components/glass-type-form.md`         | ⏭️         | Skipped |
+| TASK-027 | Agregar ejemplos de uso de componentes reutilizables                     | ⏭️         | Skipped |
+| TASK-028 | Ejecutar `pnpm lint:fix` y `pnpm typecheck`                              | ⏭️         | Skipped |
 
 ## 3. Alternatives
 
