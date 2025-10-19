@@ -115,8 +115,8 @@ function ActionsMenu({ model, onDelete }: { model: Model; onDelete: (id: string,
 
 export function ModelsTable({ initialData }: ModelsTableProps) {
   const utils = api.useUtils();
-  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
-  const [ modelToDelete, setModelToDelete ] = useState<{ id: string; name: string } | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [modelToDelete, setModelToDelete] = useState<{ id: string; name: string } | null>(null);
 
   // Delete mutation
   const deleteMutation = api.admin.model.delete.useMutation({

@@ -95,7 +95,7 @@ async function GlassTypesTableContent({
   suppliers: Array<{ id: string; name: string }>;
 }) {
   // Fetch glass types data (heavy query inside Suspense)
-  const initialData = await api.admin[ 'glass-type' ].list({
+  const initialData = await api.admin['glass-type'].list({
     glassSupplierId,
     isActive,
     limit: 20,
@@ -150,7 +150,7 @@ export default async function GlassTypesPage({ searchParams }: PageProps) {
   const sortOrder = (params.sortOrder || 'asc') as 'asc' | 'desc';
 
   // Fetch suppliers for filter dropdown (lightweight query outside Suspense)
-  const suppliersData = await api.admin[ 'glass-supplier' ].list({
+  const suppliersData = await api.admin['glass-supplier'].list({
     isActive: 'active',
     limit: 100,
     page: 1,

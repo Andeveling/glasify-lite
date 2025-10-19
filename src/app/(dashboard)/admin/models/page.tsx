@@ -133,7 +133,7 @@ export default async function ModelsPage({ searchParams }: PageProps) {
   const sortOrder = (params.sortOrder || 'desc') as 'asc' | 'desc';
 
   // Fetch suppliers for filter dropdown (lightweight query outside Suspense)
-  const suppliersData = await api.admin[ 'profile-supplier' ].list({
+  const suppliersData = await api.admin['profile-supplier'].list({
     isActive: 'active',
     limit: 100,
     page: 1,

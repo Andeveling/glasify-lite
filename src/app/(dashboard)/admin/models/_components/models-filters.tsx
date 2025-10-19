@@ -64,7 +64,7 @@ export function ModelsFilters({ searchParams, suppliers }: ModelsFiltersProps) {
       defaultValue: 'all',
       id: 'profileSupplierId',
       label: 'Proveedor de Perfiles',
-      options: [ { label: 'Todos', value: 'all' }, ...suppliers.map((s) => ({ label: s.name, value: s.id })) ],
+      options: [{ label: 'Todos', value: 'all' }, ...suppliers.map((s) => ({ label: s.name, value: s.id }))],
       type: 'select',
     },
   ];

@@ -43,7 +43,7 @@ const modelFormSchema = z.object({
   name: z.string().min(1, 'El nombre es requerido'),
   profileSupplierId: z.string().optional().nullable(),
   profitMarginPercentage: z.number().min(0).max(MAX_PROFIT_MARGIN).optional().nullable(),
-  status: z.enum([ 'draft', 'published' ]),
+  status: z.enum(['draft', 'published']),
 });
 
 type ModelFormValues = z.infer<typeof modelFormSchema>;
@@ -59,7 +59,7 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
   const utils = api.useUtils();
 
   // Suppliers query with 5-minute stale time (rarely changes)
-  const { data: suppliersData } = api.admin[ 'profile-supplier' ].list.useQuery(
+  const { data: suppliersData } = api.admin['profile-supplier'].list.useQuery(
     {
       limit: 100,
       page: 1,
@@ -72,7 +72,7 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
   );
 
   // Glass types query with 5-minute stale time (rarely changes)
-  const { data: glassTypesData } = api.admin[ 'glass-type' ].list.useQuery(
+  const { data: glassTypesData } = api.admin['glass-type'].list.useQuery(
     {
       limit: 100,
       page: 1,
@@ -104,7 +104,7 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
       toast.success('Modelo actualizado exitosamente');
       // Invalidate specific queries instead of everything
       void utils.admin.model.list.invalidate();
-      void utils.admin.model[ 'get-by-id' ].invalidate({ id: data.id });
+      void utils.admin.model['get-by-id'].invalidate({ id: data.id });
       router.push('/admin/models');
     },
   });

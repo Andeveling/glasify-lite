@@ -66,7 +66,7 @@ export function GlassTypesFilters({ searchParams, suppliers }: GlassTypesFilters
       defaultValue: 'all',
       id: 'glassSupplierId',
       label: 'Proveedor de Vidrio',
-      options: [ { label: 'Todos', value: 'all' }, ...suppliers.map((s) => ({ label: s.name, value: s.id })) ],
+      options: [{ label: 'Todos', value: 'all' }, ...suppliers.map((s) => ({ label: s.name, value: s.id }))],
       type: 'select',
     },
     {
