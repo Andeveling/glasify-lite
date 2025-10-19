@@ -4,7 +4,7 @@ Glasify es una herramienta digital enfocada en acelerar y estandarizar la cotiza
 
 Sobre mí (Andres Parra): tengo 7 años de experiencia en el mercado de ventanas en PVC y aluminio. He trabajado en todas las áreas del negocio: instalación en obra y remodelaciones, trabajos en altura y de renombre (3 años), fabricación y asesoría técnica en obra (2 años), y 2 años en presupuestos + asistencia técnico-comercial. En ese periodo utilicé software de fabricantes europeos de perfiles, que no se adapta bien a las necesidades y particularidades de LATAM.
 
-Actualmente llevo 3 años dedicados al desarrollo de software, con foco en crear una solución que ayude al mercado a tener respuestas rápidas, claras y ajustadas al contexto regional.
+Actualmente llevo 3 años dedicados al desarrollo de software, con foco en crear una solución que ayude al mercado a tener respuestas rápidas, claras y ajustadas al contexto regional. Hoy el proyecto opera con un único desarrollador (founder técnico) y se prioriza un piloto de 12 meses orientado a investigación y adopción, con cofinanciación mediante Aliados Fundadores.
 
 ## Participantes del ecosistema
 
@@ -69,7 +69,7 @@ Tecnología y arquitectura:
 - Tablas optimizadas en servidor y manejo de estado vía URL (búsqueda, filtros, orden, paginación) para SEO/UX y rendimiento.
 - Exportadores PDF/Excel y flujo Budget → Quote → (post‑venta fuera de alcance v1.6).
 
-Extensiones con IA (roadmap, sin bloquear el core):
+Extensiones con IA (roadmap condicional a meta founders):
 - RAG por tenant: recuperación sobre catálogo, documentación y conversaciones (vector index por tenant) para respuestas fundamentadas y en español, evitando alucinaciones.
 - MCP server con Tools: catálogo de herramientas invocables por agentes (p. ej., CatalogSearch, BudgetBuilder, QuoteDraft, GeoNoiseEstimator, SupplierAvailability, CRMCreateLead, AdminModelWizard, PriceChangeAdvisor).
 - Roles de agentes: 
@@ -81,7 +81,7 @@ Extensiones con IA (roadmap, sin bloquear el core):
 	2) GeoNoiseEstimator: estima dB ambiente (rango) según zona/tipo de vía; comunica que es una aproximación.
 	3) CatalogSearch + BudgetBuilder: compone 3 alternativas con vidrios orientados a aislamiento acústico y estima dB de atenuación por rango.
 	4) QuoteDraft: crea draft compartible para el comercial; CRMCreateLead crea/actualiza lead.
-- KPIs IA iniciales: tiempo a propuesta asistida < 3 min; aceptación de recomendaciones > 30%; error de estimación dB dentro de ±3–5 dB (cuando haya validación en campo).
+- KPIs IA iniciales (si se activa): tiempo a propuesta asistida < 3 min; aceptación de recomendaciones > 30%; error de estimación dB dentro de ±3–5 dB (cuando haya validación en campo).
 - Consideraciones: privacidad de datos (PII‑safe), guardrails, toggles por tenant, explainability y auditoría de decisiones; medir impacto antes de generalizar.
 
 ### Propuesta de valor por segmento
@@ -110,13 +110,14 @@ Extensiones con IA (roadmap, sin bloquear el core):
 
 
 ## Roadmap propuesto
+0. Fase 0 – Piloto 12 meses + Founders: core de cotización (catálogo, límites técnicos, Budget, PDF/Excel, My Quotes); medición de adopción y performance; sin IA activa. Programa Aliados Fundadores con meta colectiva de USD 2,000 para desbloquear IA.
 1. Fase 1 – MVP de cotización rápida (residencial): catálogo base de modelos de ventanas + soluciones de vidrio, precios por m², espesor y propósito; flujo simple guiado; exportación de propuesta PDF.
 2. Fase 2 – Integración con proveedores/fabricantes: listas de precios por fabricante, contexto por zona/ciudad, reglas de disponibilidad y alternativas.
-3. Fase 3 – Asistente técnico comercial: recomendaciones según necesidad y presupuesto, explicación de diferencias de valor, registro de interacción y seguimiento.
+3. Fase 3 – Asistente técnico comercial (condicional a meta founders): recomendaciones según necesidad y presupuesto, explicación de diferencias de valor, registro de interacción y seguimiento.
 4. Fase 4 – Integración con CRMs comerciales: envío automático de cotizaciones y oportunidades a sistemas como HubSpot, Salesforce, Zoho, PipeDrive, etc.; sincronización de estados y seguimiento de clientes.
-5. Fase 5 – Plataforma de Agentes IA (RAG + MCP Tools): chat asistido para cliente/comercial/admin; RAG por tenant; MCP Tools (CatalogSearch, BudgetBuilder, QuoteDraft, GeoNoiseEstimator, CRMCreateLead, AdminModelWizard); KPIs: <3 min a propuesta asistida, >30% aceptación de recomendaciones, error dB ±3–5.
+5. Fase 5 – Plataforma de Agentes IA (RAG + MCP Tools, condicional): chat asistido para cliente/comercial/admin; RAG por tenant; MCP Tools (CatalogSearch, BudgetBuilder, QuoteDraft, GeoNoiseEstimator, CRMCreateLead, AdminModelWizard); KPIs: <3 min a propuesta asistida, >30% aceptación de recomendaciones, error dB ±3–5.
 
-## Arquitectura IA (visión)
+## Arquitectura IA (visión; activación condicionada)
 
 - RAG por tenant: indexación de catálogo, documentación técnica y chats en un vector store aislado por tenant; respuestas en español fundamentadas con citas.
 - MCP server con tools: orquestación de agentes que invocan herramientas de negocio (consulta de catálogo, creación de Budget/Quote, sincronización CRM, estimación de ruido, sugerencias de precios/modelos).
@@ -125,7 +126,7 @@ Extensiones con IA (roadmap, sin bloquear el core):
 	- Agente Comercial (coach y resumidor)
 	- Agente Admin (configuración y data‑quality)
 - Guardrails y cumplimiento: PII redaction, consentimiento de geolocalización, rate limits y trazabilidad de acciones.
-- Evaluación continua: harness de prompts + tests de regresión; métricas de utilidad (aceptación), seguridad (zero‑shot toxicity), y precisión (validación dB, coherencia de compatibilidades).
+- Evaluación continua: harness de prompts + tests de regresión; métricas de utilidad (aceptación), seguridad (zero‑shot toxicity), y precisión (validación dB, coherencia de compatibilidades). La activación de IA depende de alcanzar la meta colectiva de USD 2,000 del Programa Aliados Fundadores.
 
 ## Riesgos y mitigaciones
 - Disponibilidad/actualización de precios: acuerdos con fabricantes y sincronización periódica; alertas de desactualización.
