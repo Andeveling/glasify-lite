@@ -49,9 +49,7 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
           {/* Basic Information Section */}
           <AccordionItem className="rounded-lg border" value="basic">
             <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">
-              <span className="flex items-center gap-2 text-lg font-semibold">
-                📝 Información Básica
-              </span>
+              <span className="flex items-center gap-2 font-semibold text-lg">📝 Información Básica</span>
             </AccordionTrigger>
             <AccordionContent className="px-1 pt-4">
               <BasicInfoSection control={form.control} />
@@ -61,9 +59,7 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
           {/* Thermal Properties Section */}
           <AccordionItem className="rounded-lg border" value="thermal">
             <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">
-              <span className="flex items-center gap-2 text-lg font-semibold">
-                🌡️ Propiedades Térmicas y Ópticas
-              </span>
+              <span className="flex items-center gap-2 font-semibold text-lg">🌡️ Propiedades Térmicas y Ópticas</span>
             </AccordionTrigger>
             <AccordionContent className="px-1 pt-4">
               <ThermalPropertiesSection control={form.control} />
@@ -73,9 +69,7 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
           {/* Solutions Section */}
           <AccordionItem className="rounded-lg border" value="solutions">
             <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">
-              <span className="flex items-center gap-2 text-lg font-semibold">
-                💡 Soluciones
-              </span>
+              <span className="flex items-center gap-2 font-semibold text-lg">💡 Soluciones</span>
             </AccordionTrigger>
             <AccordionContent className="px-1 pt-4">
               <SolutionsSection />
@@ -85,9 +79,7 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
           {/* Characteristics Section */}
           <AccordionItem className="rounded-lg border" value="characteristics">
             <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">
-              <span className="flex items-center gap-2 text-lg font-semibold">
-                ⭐ Características
-              </span>
+              <span className="flex items-center gap-2 font-semibold text-lg">⭐ Características</span>
             </AccordionTrigger>
             <AccordionContent className="px-1 pt-4">
               <CharacteristicsSection />
