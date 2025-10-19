@@ -26,7 +26,7 @@ export default async function EditModelPage({ params }: EditModelPageProps) {
   const { id } = await params;
 
   // Fetch model with all relations (cost breakdown, price history)
-  const model = await api.admin.model['get-by-id']({ id });
+  const model = await api.admin.model[ 'get-by-id' ]({ id });
 
   if (!model) {
     notFound();
