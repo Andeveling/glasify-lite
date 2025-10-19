@@ -512,6 +512,29 @@ Pricing Engine recalcula automáticamente en cotizaciones nuevas
 - ⏳ **Inventario de Materias Primas**: Stock de perfiles, vidrios, accesorios (no productos terminados)
 - ⏳ **Facturación Básica**: Generación de facturas desde Quotes (no contabilidad completa)
 
+- ⏳ **Plataforma de Agentes IA (RAG + MCP Tools)**:
+  - RAG por tenant (vector store aislado) sobre catálogo, documentación y chats para respuestas fundamentadas en español.
+  - MCP server con Tools invocables: CatalogSearch, BudgetBuilder, QuoteDraft, GeoNoiseEstimator, SupplierAvailability, CRMCreateLead, AdminModelWizard, PriceChangeAdvisor.
+  - Roles de agentes: Asistente de Cliente (chat de compra), Coach Comercial (estrategias y resúmenes), Asistente de Admin (configuración y data‑quality).
+  - Flujo ejemplo: “Quiero una ventana para el ruido” → ciudad/zona (consentimiento) → estimación de dB ambiente → 3 opciones por presupuesto con atenuación aproximada → draft de Quote → lead en CRM.
+  - KPIs IA iniciales: tiempo a propuesta asistida < 3 min; aceptación de recomendaciones > 30%; error de estimación dB ±3–5 (cuando haya validación en campo).
+
+### Arquitectura IA (visión v2.x)
+
+- RAG por tenant: index de catálogo y documentos técnicos con citas en respuestas; grounding estricto para minimizar alucinaciones.
+- MCP server con tools: orquestación de acciones de negocio (consulta catálogo, creación Budget/Quote, sincronización CRM, estimación de ruido, sugerencias de precios/modelos).
+- Orquestación multi‑agente: Cliente (asistente de compra), Comercial (coach y resumidor), Admin (configuración y limpieza de datos).
+- Guardrails: PII redaction, consentimiento explícito para geolocalización, rate limits, auditoría de herramientas invocadas.
+- Evaluación continua: harness de prompts + tests de regresión (utilidad, seguridad, precisión); telemetría para medición de impacto y toggles por tenant.
+
+### Riesgos y mitigaciones (IA)
+
+- Alucinaciones/precisión: RAG con citas, thresholds de confianza y disclaimers en estimaciones (especialmente dB); fallback a flujo manual.
+- Privacidad/PII: consentimiento para geolocalización; anonimización/retención limitada; controles y aislamiento por tenant.
+- Sesgos/explicabilidad: revisiones periódicas, datasets balanceados y explicaciones de recomendaciones.
+- Cumplimiento legal: términos claros de uso de datos, opt‑out por tenant, auditoría exportable.
+- Coste/latencia: cachés, herramientas locales cuando aplique, colas y SLAs por operación crítica; presupuesto de tokens y observabilidad.
+
 **Filosofía**: Glasify hace **una cosa muy bien** (cotización rápida con contexto), e integra con sistemas especializados para el resto.
 
 ## Stakeholders y Roles

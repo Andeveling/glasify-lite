@@ -70,10 +70,19 @@ Tecnología y arquitectura:
 - Exportadores PDF/Excel y flujo Budget → Quote → (post‑venta fuera de alcance v1.6).
 
 Extensiones con IA (roadmap, sin bloquear el core):
-- IA para el cliente: asistente de compra en lenguaje de beneficios (térmico/acústico/seguridad), recomendaciones contextuales por zona/clima/ruido y explicación de diferencias de valor.
-- IA para el admin: sugerencias para gestionar catálogo (detectar inconsistencias, compatibilidades faltantes), ayuda en actualización de precios y limpieza de datos.
-- IA para el comercial: estrategias de follow‑up y priorización de leads basadas en historial de chat + datos de cliente/proyecto; resúmenes de conversación y borradores de respuesta con contexto.
-- Consideraciones: privacidad de datos (PII‑safe), guardrails, toggles por tenant y métricas de impacto antes de generalizar.
+- RAG por tenant: recuperación sobre catálogo, documentación y conversaciones (vector index por tenant) para respuestas fundamentadas y en español, evitando alucinaciones.
+- MCP server con Tools: catálogo de herramientas invocables por agentes (p. ej., CatalogSearch, BudgetBuilder, QuoteDraft, GeoNoiseEstimator, SupplierAvailability, CRMCreateLead, AdminModelWizard, PriceChangeAdvisor).
+- Roles de agentes: 
+	- Asistente de Cliente (chat): entiende comandos como "quiero una ventana para el ruido", obtiene ubicación (con consentimiento), estima ruido ambiente aproximado, propone 3 opciones por presupuesto (básico/medio/alto) y añade al Budget.
+	- Coach Comercial: sugiere estrategias de asesoría y follow‑up basadas en historial de chat y datos del proyecto; genera resúmenes y borradores de respuesta.
+	- Asistente de Admin: facilita creación/edición de modelos, detección de inconsistencias y compatibilidades, y propone ajustes de precios.
+- Flujo ejemplo (chat):
+	1) Usuario: "Quiero una ventana para el ruido" → agente pide o detecta ciudad/zona.
+	2) GeoNoiseEstimator: estima dB ambiente (rango) según zona/tipo de vía; comunica que es una aproximación.
+	3) CatalogSearch + BudgetBuilder: compone 3 alternativas con vidrios orientados a aislamiento acústico y estima dB de atenuación por rango.
+	4) QuoteDraft: crea draft compartible para el comercial; CRMCreateLead crea/actualiza lead.
+- KPIs IA iniciales: tiempo a propuesta asistida < 3 min; aceptación de recomendaciones > 30%; error de estimación dB dentro de ±3–5 dB (cuando haya validación en campo).
+- Consideraciones: privacidad de datos (PII‑safe), guardrails, toggles por tenant, explainability y auditoría de decisiones; medir impacto antes de generalizar.
 
 ### Propuesta de valor por segmento
 - Fabricantes: reducción del tiempo de respuesta, estandarización técnica, menor sobreespecificación y menos retrabajos.
@@ -105,12 +114,29 @@ Extensiones con IA (roadmap, sin bloquear el core):
 2. Fase 2 – Integración con proveedores/fabricantes: listas de precios por fabricante, contexto por zona/ciudad, reglas de disponibilidad y alternativas.
 3. Fase 3 – Asistente técnico comercial: recomendaciones según necesidad y presupuesto, explicación de diferencias de valor, registro de interacción y seguimiento.
 4. Fase 4 – Integración con CRMs comerciales: envío automático de cotizaciones y oportunidades a sistemas como HubSpot, Salesforce, Zoho, PipeDrive, etc.; sincronización de estados y seguimiento de clientes.
+5. Fase 5 – Plataforma de Agentes IA (RAG + MCP Tools): chat asistido para cliente/comercial/admin; RAG por tenant; MCP Tools (CatalogSearch, BudgetBuilder, QuoteDraft, GeoNoiseEstimator, CRMCreateLead, AdminModelWizard); KPIs: <3 min a propuesta asistida, >30% aceptación de recomendaciones, error dB ±3–5.
+
+## Arquitectura IA (visión)
+
+- RAG por tenant: indexación de catálogo, documentación técnica y chats en un vector store aislado por tenant; respuestas en español fundamentadas con citas.
+- MCP server con tools: orquestación de agentes que invocan herramientas de negocio (consulta de catálogo, creación de Budget/Quote, sincronización CRM, estimación de ruido, sugerencias de precios/modelos).
+- Orquestación multi‑agente: 
+	- Agente Cliente (asistente de compra)
+	- Agente Comercial (coach y resumidor)
+	- Agente Admin (configuración y data‑quality)
+- Guardrails y cumplimiento: PII redaction, consentimiento de geolocalización, rate limits y trazabilidad de acciones.
+- Evaluación continua: harness de prompts + tests de regresión; métricas de utilidad (aceptación), seguridad (zero‑shot toxicity), y precisión (validación dB, coherencia de compatibilidades).
 
 ## Riesgos y mitigaciones
 - Disponibilidad/actualización de precios: acuerdos con fabricantes y sincronización periódica; alertas de desactualización.
 - Precisión de estimaciones: separar pre‑cotización (rápida) de cotización fina (validada), dejando claros los supuestos.
 - Adopción del equipo comercial: entrenamiento + plantillas; UX simple y centrada en tareas.
 - Variabilidad de medidas “on demand”: plantillas por tipología + rangos y advertencias técnicas.
+- IA – Alucinaciones/precisión: RAG estricto con citas, tests de regresión y disclaimers en estimaciones (especialmente dB). Fallback a flujos manuales si no hay confianza suficiente.
+- IA – Privacidad/PII: consentimiento explícito para geolocalización; anonimización y retención limitada; controles por tenant.
+- IA – Sesgos y explicabilidad: revisiones periódicas, dataset balanceado y explicaciones de recomendaciones.
+- IA – Cumplimiento legal: términos claros de uso de datos, posibilidad de opt‑out e informes de auditoría.
+- IA – Coste/latencia: cachés, herramientas locales donde tenga sentido, colas de trabajo; SLA por operación crítica.
 
 ---
 
