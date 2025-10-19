@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - Constitution Update v2.1.0 (2025-01-19)
+
+#### Constitution Restructure
+- **Separation of Concerns**: Split non-technical governance from technical implementation
+  - Constitution now focuses on principles and "why" (accessible to all team members)
+  - Technical details moved to `.github/copilot-instructions.md` (implementation "how")
+  - Plain language rewrite for non-technical stakeholders
+
+#### Enhanced Principles
+- **Server-First Performance**:
+  - Added caching strategy guidelines (30-60s for semi-static, 5min for catalog data)
+  - Clarified ISR (Incremental Static Regeneration) over force-dynamic preference
+  - Performance budgets and optimization patterns
+
+- **Observability & Logging**:
+  - Explicit Winston logger server-side only restriction
+  - Client-side alternatives documented (console, toast messages, error boundaries)
+  - Correlation IDs for tracking related events
+
+#### New Sections
+- **Principle Priority**: Resolution order when principles conflict
+- **Success Metrics**: Measurable goals for adherence to principles
+- **Performance & Caching Strategy**: Concrete guidance for data caching patterns
+
+#### Documentation
+- **Version**: 2.0.1 → 2.1.0 (MINOR)
+- **Rationale**: Added new guidance (caching strategy, performance metrics)
+- **Migration**: None required (non-breaking, clarification-focused)
+- **Sync Impact Report**: All templates verified compatible
+
 ### Fixed - GlassType Empty Solutions Array Bug (2025-10-16)
 
 #### Runtime Error Resolution
