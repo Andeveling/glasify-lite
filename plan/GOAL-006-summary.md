@@ -145,18 +145,18 @@ tail -f logs/combined.log | grep "Slow query"
 **Key Highlights**:
 
 - **Database Query Benchmarks**:
-  | Operation | Avg Time | p95 Time | Index Used |
-  |-----------|----------|----------|------------|
-  | List models (page 1) | 12ms | 18ms | createdAt_DESC |
-  | Search by name | 8ms | 15ms | name |
-  | Filter by status | 6ms | 12ms | status |
+  | Operation            | Avg Time | p95 Time | Index Used     |
+  | -------------------- | -------- | -------- | -------------- |
+  | List models (page 1) | 12ms     | 18ms     | createdAt_DESC |
+  | Search by name       | 8ms      | 15ms     | name           |
+  | Filter by status     | 6ms      | 12ms     | status         |
 
 - **Server Component Render Time**:
-  | Page | TTFB | Notes |
-  |------|------|-------|
-  | `/catalog` | ~250ms | Static with ISR |
-  | `/dashboard/admin/models` | ~300ms | Dynamic |
-  | `/my-quotes` | ~280ms | User-specific |
+  | Page                      | TTFB   | Notes           |
+  | ------------------------- | ------ | --------------- |
+  | `/catalog`                | ~250ms | Static with ISR |
+  | `/dashboard/admin/models` | ~300ms | Dynamic         |
+  | `/my-quotes`              | ~280ms | User-specific   |
 
 - **Optimization Strategies**:
   - Parallel queries with `Promise.all`

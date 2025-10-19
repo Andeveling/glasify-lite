@@ -413,12 +413,12 @@ The following tasks require production deployment to Vercel and cannot be execut
 
 **Baseline Metrics** (Development, PostgreSQL local):
 
-| Operation | Model | Avg Time | p95 Time | Index Used |
-|-----------|-------|----------|----------|------------|
-| List all models (page 1) | Model | 12ms | 18ms | createdAt_DESC |
-| Search models by name | Model | 8ms | 15ms | name |
-| Filter by status | Model | 6ms | 12ms | status |
-| User quotes list | Quote | 10ms | 20ms | userId, createdAt_DESC |
+| Operation                | Model | Avg Time | p95 Time | Index Used             |
+| ------------------------ | ----- | -------- | -------- | ---------------------- |
+| List all models (page 1) | Model | 12ms     | 18ms     | createdAt_DESC         |
+| Search models by name    | Model | 8ms      | 15ms     | name                   |
+| Filter by status         | Model | 6ms      | 12ms     | status                 |
+| User quotes list         | Quote | 10ms     | 20ms     | userId, createdAt_DESC |
 
 **Expected Production Performance**:
 - Similar or better (managed PostgreSQL with optimizations)
@@ -429,11 +429,11 @@ The following tasks require production deployment to Vercel and cannot be execut
 
 **Current Performance** (Local Development):
 
-| Page | Time to First Byte | Notes |
-|------|-------------------|-------|
-| `/catalog` | ~250ms | Static with ISR (revalidate: 3600) |
-| `/dashboard/admin/models` | ~300ms | Dynamic with Suspense |
-| `/my-quotes` | ~280ms | User-specific, RBAC filter |
+| Page                      | Time to First Byte | Notes                              |
+| ------------------------- | ------------------ | ---------------------------------- |
+| `/catalog`                | ~250ms             | Static with ISR (revalidate: 3600) |
+| `/dashboard/admin/models` | ~300ms             | Dynamic with Suspense              |
+| `/my-quotes`              | ~280ms             | User-specific, RBAC filter         |
 
 **Optimization Applied**:
 - Server Components for data fetching
