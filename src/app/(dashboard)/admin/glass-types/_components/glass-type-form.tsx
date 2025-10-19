@@ -62,12 +62,21 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
     glassSupplierId: defaultValues?.glassSupplierId ?? undefined,
     isActive: defaultValues?.isActive ?? true, // Always boolean
     lastReviewDate: defaultValues?.lastReviewDate ?? undefined,
-    lightTransmission: defaultValues?.lightTransmission !== null && defaultValues?.lightTransmission !== undefined ? Number(defaultValues.lightTransmission) : undefined,
+    lightTransmission:
+      defaultValues?.lightTransmission !== null && defaultValues?.lightTransmission !== undefined
+        ? Number(defaultValues.lightTransmission)
+        : undefined,
     name: defaultValues?.name ?? '',
-    pricePerSqm: defaultValues?.pricePerSqm !== null && defaultValues?.pricePerSqm !== undefined ? Number(defaultValues.pricePerSqm) : 0,
+    pricePerSqm:
+      defaultValues?.pricePerSqm !== null && defaultValues?.pricePerSqm !== undefined
+        ? Number(defaultValues.pricePerSqm)
+        : 0,
     purpose: (defaultValues?.purpose as GlassPurpose) ?? 'general',
     sku: defaultValues?.sku ?? undefined,
-    solarFactor: defaultValues?.solarFactor !== null && defaultValues?.solarFactor !== undefined ? Number(defaultValues.solarFactor) : undefined,
+    solarFactor:
+      defaultValues?.solarFactor !== null && defaultValues?.solarFactor !== undefined
+        ? Number(defaultValues.solarFactor)
+        : undefined,
     solutions:
       defaultValues?.solutions.map((s) => ({
         isPrimary: s.isPrimary,
@@ -76,7 +85,8 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
         solutionId: s.solutionId,
       })) ?? [],
     thicknessMm: defaultValues?.thicknessMm ?? DEFAULT_THICKNESS_MM,
-    uValue: defaultValues?.uValue !== null && defaultValues?.uValue !== undefined ? Number(defaultValues.uValue) : undefined,
+    uValue:
+      defaultValues?.uValue !== null && defaultValues?.uValue !== undefined ? Number(defaultValues.uValue) : undefined,
   };
 
   const form = useForm<GlassTypeFormValues>({
@@ -84,7 +94,7 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
     resolver: zodResolver(createGlassTypeSchema),
   });
 
-  const createMutation = api.admin[ 'glass-type' ].create.useMutation({
+  const createMutation = api.admin['glass-type'].create.useMutation({
     onError: (err) => {
       toast.error('Error al crear tipo de vidrio', {
         description: err.message,
@@ -97,7 +107,7 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
     },
   });
 
-  const updateMutation = api.admin[ 'glass-type' ].update.useMutation({
+  const updateMutation = api.admin['glass-type'].update.useMutation({
     onError: (err) => {
       toast.error('Error al actualizar tipo de vidrio', {
         description: err.message,
@@ -126,7 +136,7 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
   return (
     <Form {...form}>
       <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
-        <Accordion className="space-y-4" defaultValue={[ 'basic' ]} type="multiple">
+        <Accordion className="space-y-4" defaultValue={['basic']} type="multiple">
           {/* Basic Information Section */}
           <AccordionItem value="basic">
             <AccordionTrigger className="rounded-lg bg-muted px-4 py-2 hover:bg-muted/80">

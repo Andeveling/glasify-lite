@@ -1,7 +1,7 @@
 # Glasify Lite Development Guidelines
 
 **Project Type**: Full-stack glass quotation management application  
-**Last Updated**: 2025-10-14  
+**Last Updated**: 2025-01-21  
 **Constitution**: See `.specify/memory/constitution.md`
 
 ## Code Generation Priorities
@@ -629,6 +629,408 @@ test('should redirect admin to /dashboard after login', async ({ page }) => {
 
 ---
 
+## Server-Optimized Data Tables
+
+### Architecture Pattern
+
+Glasify uses a **server-first data table architecture** that leverages URL state management and Next.js Server Components for optimal performance and SEO.
+
+**Core Principles**:
+- URL as single source of truth for table state (page, sort, filters, search)
+- Server Components for data fetching and rendering
+- Client Components only for interactive controls
+- Debounced search (300ms) for reduced server load
+- Database indexes for query performance
+- Type-safe tRPC procedures with Zod validation
+
+### Component Structure
+
+```
+src/app/_components/server-table/
+├── server-table.tsx          # Main table container (Client Component)
+├── table-header.tsx          # Sortable column headers (Client Component)
+├── table-search.tsx          # Debounced search input (Client Component)
+├── table-pagination.tsx      # Pagination controls (Client Component)
+└── table-filters.tsx         # Generic filter component (Client Component)
+
+src/app/(dashboard)/admin/models/
+├── _components/
+│   └── models-table.tsx      # Feature-specific table (Client Component)
+└── page.tsx                  # Server Component with data fetching
+```
+
+### Pattern 1: Page with Server-Side Data Fetching
+
+```typescript
+// src/app/(dashboard)/admin/models/page.tsx
+import { api } from '@/trpc/server';
+import { ModelsTable } from './_components/models-table';
+
+type SearchParams = Promise<{
+  page?: string;
+  sort?: string;
+  order?: 'asc' | 'desc';
+  search?: string;
+  status?: string;
+}>;
+
+export default async function ModelsPage({ 
+  searchParams 
+}: { 
+  searchParams: SearchParams 
+}) {
+  const params = await searchParams;
+  
+  // Server-side data fetching with type-safe tRPC
+  const data = await api.model['list-models']({
+    page: Number(params.page) || 1,
+    sort: params.sort as SortField || 'createdAt',
+    order: params.order || 'desc',
+    search: params.search,
+    status: params.status as ModelStatus,
+  });
+
+  return (
+    <div className="container py-10">
+      <h1>Modelos de Vidrio</h1>
+      <ModelsTable initialData={data} />
+    </div>
+  );
+}
+```
+
+### Pattern 2: Feature-Specific Table Component
+
+```typescript
+// src/app/(dashboard)/admin/models/_components/models-table.tsx
+'use client';
+
+import { ServerTable } from '@/app/_components/server-table/server-table';
+import { TableSearch } from '@/app/_components/server-table/table-search';
+import { TableFilters } from '@/app/_components/server-table/table-filters';
+import { TablePagination } from '@/app/_components/server-table/table-pagination';
+
+export function ModelsTable({ initialData }: Props) {
+  // Column definitions
+  const columns: ColumnDef<Model>[] = [
+    { 
+      key: 'name', 
+      label: 'Nombre', 
+      sortable: true,
+      render: (model) => model.name 
+    },
+    { 
+      key: 'status', 
+      label: 'Estado', 
+      sortable: true,
+      render: (model) => <StatusBadge status={model.status} />
+    },
+    // ... more columns
+  ];
+
+  // Filter definitions
+  const filterDefs: FilterDef[] = [
+    {
+      key: 'status',
+      label: 'Estado',
+      type: 'select',
+      options: [
+        { value: 'active', label: 'Activo' },
+        { value: 'inactive', label: 'Inactivo' },
+      ],
+    },
+  ];
+
+  return (
+    <div>
+      <TableSearch placeholder="Buscar modelos..." />
+      <TableFilters filters={filterDefs} />
+      
+      <ServerTable
+        columns={columns}
+        data={initialData.items}
+        total={initialData.total}
+      />
+      
+      <TablePagination 
+        currentPage={initialData.page}
+        totalPages={initialData.totalPages}
+        itemsPerPage={initialData.itemsPerPage}
+      />
+    </div>
+  );
+}
+```
+
+### Pattern 3: URL-Based State Management
+
+```typescript
+// src/hooks/use-server-params.ts
+'use client';
+
+export function useServerParams() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const updateParams = useCallback((updates: Record<string, string | null>) => {
+    const params = new URLSearchParams(searchParams);
+    
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === null) {
+        params.delete(key);
+      } else {
+        params.set(key, value);
+      }
+    });
+
+    // Reset to page 1 when filters/search changes
+    if ('search' in updates || Object.keys(updates).some(k => k !== 'page')) {
+      params.set('page', '1');
+    }
+
+    router.push(`${pathname}?${params.toString()}`);
+  }, [router, pathname, searchParams]);
+
+  return { searchParams, updateParams };
+}
+```
+
+### Pattern 4: Debounced Search
+
+```typescript
+// src/app/_components/server-table/table-search.tsx
+'use client';
+
+export function TableSearch({ placeholder }: Props) {
+  const { searchParams, updateParams } = useServerParams();
+  const [localValue, setLocalValue] = useState(searchParams.get('search') || '');
+
+  const debouncedUpdate = useDebouncedCallback((value: string) => {
+    updateParams({ search: value || null });
+  }, 300); // 300ms debounce
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setLocalValue(value); // Immediate UI update
+    debouncedUpdate(value); // Debounced URL update
+  };
+
+  return (
+    <div className="relative">
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2" />
+      <Input
+        type="search"
+        placeholder={placeholder}
+        value={localValue}
+        onChange={handleChange}
+      />
+    </div>
+  );
+}
+```
+
+### Pattern 5: Sortable Headers
+
+```typescript
+// src/app/_components/server-table/table-header.tsx
+'use client';
+
+export function TableHeader({ column }: Props) {
+  const { searchParams, updateParams } = useServerParams();
+  
+  const currentSort = searchParams.get('sort');
+  const currentOrder = searchParams.get('order') as 'asc' | 'desc';
+  
+  const isSorted = currentSort === column.key;
+  const nextOrder = !isSorted ? 'asc' : currentOrder === 'asc' ? 'desc' : null;
+
+  const handleSort = () => {
+    if (!column.sortable) return;
+    
+    updateParams({
+      sort: nextOrder ? column.key : null,
+      order: nextOrder,
+    });
+  };
+
+  return (
+    <th onClick={handleSort} className={cn(column.sortable && 'cursor-pointer')}>
+      {column.label}
+      {column.sortable && (
+        <span className="ml-2">
+          {!isSorted && '↕'}
+          {isSorted && currentOrder === 'asc' && '↑'}
+          {isSorted && currentOrder === 'desc' && '↓'}
+        </span>
+      )}
+    </th>
+  );
+}
+```
+
+### Pattern 6: Type-Safe tRPC Procedure
+
+```typescript
+// src/server/api/routers/model.ts
+export const modelRouter = router({
+  'list-models': adminProcedure
+    .input(listModelsSchema)
+    .query(async ({ ctx, input }) => {
+      const { page = 1, sort = 'createdAt', order = 'desc', search, status } = input;
+      const itemsPerPage = 10;
+      const skip = (page - 1) * itemsPerPage;
+
+      // Build WHERE clause
+      const where: Prisma.ModelWhereInput = {
+        ...(search && {
+          name: { contains: search, mode: 'insensitive' },
+        }),
+        ...(status && { status }),
+      };
+
+      // Parallel queries for better performance
+      const [items, total] = await Promise.all([
+        ctx.db.model.findMany({
+          where,
+          orderBy: { [sort]: order },
+          take: itemsPerPage,
+          skip,
+          select: {
+            id: true,
+            name: true,
+            status: true,
+            createdAt: true,
+            _count: { select: { glassTypes: true } },
+          },
+        }),
+        ctx.db.model.count({ where }),
+      ]);
+
+      return {
+        items,
+        total,
+        page,
+        totalPages: Math.ceil(total / itemsPerPage),
+        itemsPerPage,
+      };
+    }),
+});
+```
+
+### Pattern 7: Database Indexes for Performance
+
+```prisma
+// prisma/schema.prisma
+model Model {
+  id        String   @id @default(cuid())
+  name      String
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+
+  // Performance indexes
+  @@index([name])           // For search queries
+  @@index([status])         // For filter queries
+  @@index([createdAt(sort: Desc)])  // For default sorting
+}
+```
+
+### Server Table Best Practices
+
+✅ **DO**:
+- Use Server Components for page-level data fetching
+- Store table state in URL searchParams (SEO, shareable, back/forward)
+- Debounce search inputs (300ms) to reduce server load
+- Add database indexes for sortable/filterable columns
+- Use parallel queries (`Promise.all`) for counts + data
+- Reset to page 1 when filters/search changes
+- Use tRPC for type-safe API procedures
+- Add E2E tests for critical user flows
+
+❌ **DON'T**:
+- Use TanStack Table (replaced by server-first pattern)
+- Store table state in React state or Context
+- Make immediate API calls on every keystroke
+- Forget to add database indexes for performance
+- Mix data fetching logic in Client Components
+- Hard-code pagination/filter values
+- Use client-side sorting/filtering for large datasets
+
+### Performance Optimizations
+
+1. **Database Level**:
+   - Indexed columns for WHERE/ORDER BY clauses
+   - `select` only needed fields (no full models)
+   - Parallel queries with `Promise.all`
+
+2. **Network Level**:
+   - Debounced search (300ms)
+   - URL-based state (no redundant fetches)
+   - Server Components (zero JS for static content)
+
+3. **UX Level**:
+   - Optimistic UI updates (local state + debounced sync)
+   - Loading states during data fetches
+   - Proper error boundaries
+
+### Testing Pattern
+
+```typescript
+// e2e/admin/models-table.spec.ts
+import { test, expect } from '@playwright/test';
+
+const DEBOUNCE_WAIT_MS = 300;
+
+test('should filter models by search query', async ({ page }) => {
+  await page.goto('/dashboard/admin/models');
+  
+  const searchInput = page.getByPlaceholder(/buscar modelos/i);
+  await searchInput.fill('Templado');
+  
+  // Wait for debounce
+  await page.waitForTimeout(DEBOUNCE_WAIT_MS + 100);
+  
+  // Verify URL updated
+  await expect(page).toHaveURL(/search=Templado/);
+  
+  // Verify results filtered
+  await expect(page.getByRole('row')).toContainText('Templado');
+});
+
+test('should persist state in URL for deep linking', async ({ page }) => {
+  // Navigate directly to filtered URL
+  await page.goto('/dashboard/admin/models?status=active&sort=name&order=asc&page=2');
+  
+  // Verify filters applied
+  await expect(page.getByRole('combobox', { name: /estado/i })).toHaveValue('active');
+  
+  // Verify sort applied
+  const nameHeader = page.getByRole('columnheader', { name: /nombre/i });
+  await expect(nameHeader).toContainText('↑');
+  
+  // Verify pagination
+  await expect(page.getByText(/página 2/i)).toBeVisible();
+});
+```
+
+### Migration Checklist
+
+When migrating existing tables to server-optimized pattern:
+
+- [ ] Create feature-specific table component in `_components/`
+- [ ] Update page to async Server Component with searchParams
+- [ ] Create tRPC procedure with Zod input schema
+- [ ] Add database indexes for sortable/filterable columns
+- [ ] Implement debounced search with `useDebouncedCallback`
+- [ ] Use `useServerParams` for URL state management
+- [ ] Add column definitions with sortable flags
+- [ ] Add filter definitions for `<TableFilters>`
+- [ ] Write E2E tests for critical flows
+- [ ] Remove old TanStack Table dependencies (if any)
+- [ ] Update documentation and copilot instructions
+
+---
+
 ## Key Patterns Summary
 
 1. **Next.js 15**: Server Components by default, ISR, Streaming
@@ -638,12 +1040,13 @@ test('should redirect admin to /dashboard after login', async ({ page }) => {
 5. **SOLID**: Single Responsibility, composition, inverted dependencies
 6. **Atomic Design**: atoms (ui/), molecules (components/), organisms (\_components/), templates (layout.tsx), pages (page.tsx)
 7. **tRPC**: Type-safe APIs with kebab-case naming
-8. **Prisma**: ORM with PostgreSQL, singleton client
+8. **Prisma**: ORM with PostgreSQL, singleton client, performance indexes
 9. **Zod**: End-to-end schema validation
 10. **Custom Hooks**: Reusable logic separated from UI
 11. **Testing**: Vitest (unit/integration), Playwright (E2E)
 12. **Ultracite**: Linting and formatting with Biome
 13. **RBAC**: Three-layer authorization (middleware, tRPC, UI guards)
+14. **Server Tables**: URL-based state, debounced search, database indexes
 
 ---
 
@@ -656,13 +1059,14 @@ test('should redirect admin to /dashboard after login', async ({ page }) => {
 5. **Apply RBAC patterns** (middleware, tRPC procedures, UI guards)
 6. **Use adminProcedure for admin-only APIs** (not manual role checks)
 7. **Use getQuoteFilter for data filtering** (role-based WHERE clauses)
-8. Apply SOLID principles and Atomic Design
-9. Use Next.js App Router folder structure
-10. Prioritize Server Components over Client Components
-11. Add metadata for SEO on public pages
-12. Use `dynamic` or `revalidate` according to use case
-13. Write testable and well-documented code
-14. Use Spanish only in UI text, everything else in English
-15. Never create Barrels (index.ts) or barrel files anywhere
-16. Follow project naming and organization conventions
+8. **Use server-optimized table pattern** (URL state, debounced search, database indexes)
+9. Apply SOLID principles and Atomic Design
+10. Use Next.js App Router folder structure
+11. Prioritize Server Components over Client Components
+12. Add metadata for SEO on public pages
+13. Use `dynamic` or `revalidate` according to use case
+14. Write testable and well-documented code
+15. Use Spanish only in UI text, everything else in English
+16. Never create Barrels (index.ts) or barrel files anywhere
+17. Follow project naming and organization conventions
 

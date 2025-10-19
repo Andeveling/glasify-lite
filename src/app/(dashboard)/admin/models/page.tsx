@@ -6,7 +6,7 @@
  * Architecture:
  * - Reads filters from URL search params
  * - Fetches filtered data from server
- * - Passes data to ModelList client component
+ * - Passes data to ModelsTable component
  * - On filter change (URL update), page automatically refetches
  *
  * Scalability:
@@ -20,7 +20,7 @@
 
 import type { Metadata } from 'next';
 import { api } from '@/trpc/server-client';
-import { ModelList } from './_components/model-list';
+import { ModelsTable } from './_components/models-table';
 
 export const metadata: Metadata = {
   description: 'Administra los modelos de ventanas y puertas con sus dimensiones y precios',
@@ -31,6 +31,9 @@ type SearchParams = Promise<{
   status?: string;
   profileSupplierId?: string;
   page?: string;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }>;
 
 type PageProps = {
@@ -45,19 +48,23 @@ export default async function ModelsPage({ searchParams }: PageProps) {
   const status = params.status === 'all' || !params.status ? undefined : (params.status as 'draft' | 'published');
   const profileSupplierId =
     params.profileSupplierId === 'all' || !params.profileSupplierId ? undefined : params.profileSupplierId;
+  const search = params.search || undefined;
+  const sortBy = params.sortBy || 'createdAt';
+  const sortOrder = params.sortOrder || 'desc';
 
   // Fetch filtered data from server
   const initialData = await api.admin.model.list({
     limit: 20, // Items per page
     page,
     profileSupplierId,
-    sortBy: 'name',
-    sortOrder: 'asc',
+    search,
+    sortBy: sortBy as 'name' | 'createdAt' | 'updatedAt' | 'basePrice',
+    sortOrder,
     status,
   });
 
   // Fetch suppliers for filter dropdown
-  const suppliersData = await api.admin[ 'profile-supplier' ].list({
+  const suppliersData = await api.admin['profile-supplier'].list({
     isActive: 'active',
     limit: 100,
     page: 1,
@@ -87,7 +94,7 @@ export default async function ModelsPage({ searchParams }: PageProps) {
         </p>
       </div>
 
-      <ModelList initialData={serializedData} suppliers={suppliersData.items} />
+      <ModelsTable initialData={serializedData} searchParams={params} suppliers={suppliersData.items} />
     </div>
   );
 }

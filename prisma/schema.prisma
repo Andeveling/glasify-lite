@@ -239,7 +239,12 @@ model Model {
   costBreakdown          ModelCostBreakdown[]
   priceHistory           ModelPriceHistory[]
 
+  // Performance indexes for admin table queries (TASK-011)
   @@index([profileSupplierId, status])
+  @@index([name]) // Search by model name
+  @@index([status]) // Filter by status (draft/published)
+  @@index([createdAt(sort: Desc)]) // Sort by creation date
+  @@index([updatedAt(sort: Desc)]) // Sort by last update
 }
 
 model GlassType {
@@ -284,10 +289,15 @@ model GlassType {
   characteristics   GlassTypeCharacteristic[]
   priceHistory      GlassTypePriceHistory[]
 
-  @@index([glassSupplierId])
-  @@index([isActive])
-  @@index([thicknessMm])
-  @@index([sku])
+  // Performance indexes for admin table queries (TASK-012)
+  @@index([name]) // Search by glass type name
+  @@index([purpose]) // Filter by purpose (deprecated but still indexed)
+  @@index([glassSupplierId]) // Filter by supplier
+  @@index([isActive]) // Filter by active status
+  @@index([thicknessMm]) // Sort/filter by thickness
+  @@index([createdAt(sort: Desc)]) // Sort by creation date
+  @@index([updatedAt(sort: Desc)]) // Sort by last update
+  @@index([sku]) // Unique SKU lookup
 }
 
 model Service {
@@ -326,11 +336,14 @@ model Quote {
   items       QuoteItem[]
   adjustments Adjustment[]
 
-  // Performance indexes for quote queries (T079)
+  // Performance indexes for quote queries (TASK-013)
   @@index([userId]) // Original index
   @@index([userId, status]) // Composite index for filtering by user + status
   @@index([userId, createdAt(sort: Desc)]) // Optimized for sorting by createdAt DESC
   @@index([userId, validUntil]) // Optimized for expired quotes filtering
+  @@index([projectName]) // Search by project name
+  @@index([status]) // Filter by status (draft/sent/canceled)
+  @@index([createdAt(sort: Desc)]) // Sort by creation date (all quotes)
 }
 
 model QuoteItem {

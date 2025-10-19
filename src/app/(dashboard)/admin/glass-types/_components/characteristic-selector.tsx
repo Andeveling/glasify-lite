@@ -38,7 +38,7 @@ export function CharacteristicSelector() {
   // Fetch active characteristics via tRPC
   // Note: glassCharacteristic router will be created in future tasks (US7)
   // For now, use empty array or fetch via Server Component prop
-  const { data: characteristicsData, isLoading } = api.admin[ 'glass-solution' ].list.useQuery(
+  const { data: characteristicsData, isLoading } = api.admin['glass-solution'].list.useQuery(
     {
       isActive: 'active',
       limit: 100,
