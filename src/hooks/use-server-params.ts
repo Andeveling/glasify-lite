@@ -113,10 +113,10 @@ export function useServerParams(): UseServerParamsReturn {
       const queryString = createQueryString({ [key]: value });
       const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
 
-      // Use replaceState to avoid polluting history
-      window.history.replaceState(null, '', newUrl);
+      // Use router.replace to ensure Next.js triggers a re-render
+      router.replace(newUrl, { scroll: false });
     },
-    [pathname, createQueryString]
+    [pathname, createQueryString, router]
   );
 
   /**
@@ -127,10 +127,10 @@ export function useServerParams(): UseServerParamsReturn {
       const queryString = createQueryString(params);
       const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
 
-      // Use replaceState to avoid polluting history
-      window.history.replaceState(null, '', newUrl);
+      // Use router.replace to ensure Next.js triggers a re-render
+      router.replace(newUrl, { scroll: false });
     },
-    [pathname, createQueryString]
+    [pathname, createQueryString, router]
   );
 
   /**
@@ -152,8 +152,8 @@ export function useServerParams(): UseServerParamsReturn {
    * Reset all parameters
    */
   const resetParams = useCallback(() => {
-    window.history.replaceState(null, '', pathname);
-  }, [pathname]);
+    router.replace(pathname, { scroll: false });
+  }, [pathname, router]);
 
   /**
    * Navigate to new page (pagination)

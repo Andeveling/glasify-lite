@@ -2,12 +2,13 @@
  * Models List Page (US9 - T083)
  *
  * Server Component with Suspense boundaries for streaming
+ * Pattern based on /catalog/page.tsx for consistent behavior
  *
  * Architecture:
  * - Reads filters from URL search params (Promise in Next.js 15)
- * - Initiates parallel data fetching (no await in main component)
- * - Uses Suspense boundaries for streaming and loading states
- * - On filter change (URL update), page automatically refetches
+ * - Lightweight queries (suppliers) outside Suspense
+ * - Heavy query (models list) inside Suspense
+ * - Template literal key for proper re-suspension
  *
  * Scalability:
  * - No limit on dataset size (server filters before returning)
@@ -15,9 +16,9 @@
  * - Deep linking support (filters in URL)
  *
  * Performance:
- * - Streaming with Suspense for immediate navigation
- * - Parallel data fetching for better performance
- * - No force-dynamic needed (Suspense handles dynamic rendering)
+ * - force-dynamic ensures searchParams changes trigger re-renders
+ * - Suspense with specific key values for reliable updates
+ * - Optimized query separation
  *
  * Route: /admin/models
  * Access: Admin only (protected by middleware)
@@ -27,6 +28,7 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/trpc/server-client';
+import { ModelsFilters } from './_components/models-filters';
 import { ModelsTable } from './_components/models-table';
 
 export const metadata: Metadata = {
@@ -71,35 +73,31 @@ function ModelsTableSkeleton() {
 }
 
 // Server Component that fetches and renders the table
-async function ModelsTableContent({ params }: { params: Awaited<SearchParams> }) {
-  // Parse search params with server-side filtering
-  const page = Number(params.page) || 1;
-  const status = (params.status && params.status !== 'all' ? params.status : 'all') as 'all' | 'draft' | 'published';
-  const profileSupplierId =
-    params.profileSupplierId && params.profileSupplierId !== 'all' ? params.profileSupplierId : undefined;
-  const search = params.search || undefined;
-  const sortBy = params.sortBy || 'createdAt';
-  const sortOrder = params.sortOrder || 'desc';
-
-  // Parallel data fetching
-  const [ initialData, suppliersData ] = await Promise.all([
-    api.admin.model.list({
-      limit: 20,
-      page,
-      profileSupplierId,
-      search,
-      sortBy: sortBy as 'name' | 'createdAt' | 'updatedAt' | 'basePrice',
-      sortOrder,
-      status,
-    }),
-    api.admin[ 'profile-supplier' ].list({
-      isActive: 'active',
-      limit: 100,
-      page: 1,
-      sortBy: 'name',
-      sortOrder: 'asc',
-    }),
-  ]);
+async function ModelsTableContent({
+  page,
+  status,
+  profileSupplierId,
+  search,
+  sortBy,
+  sortOrder,
+}: {
+  page: number;
+  status: 'all' | 'draft' | 'published';
+  profileSupplierId?: string;
+  search?: string;
+  sortBy: string;
+  sortOrder: 'asc' | 'desc';
+}) {
+  // Fetch models data (heavy query inside Suspense)
+  const initialData = await api.admin.model.list({
+    limit: 20,
+    page,
+    profileSupplierId,
+    search,
+    sortBy: sortBy as 'name' | 'createdAt' | 'updatedAt' | 'basePrice',
+    sortOrder,
+    status,
+  });
 
   // Transform Decimal fields to number for Client Component serialization
   const serializedData = {
@@ -114,14 +112,33 @@ async function ModelsTableContent({ params }: { params: Awaited<SearchParams> })
     })),
   };
 
-  return <ModelsTable initialData={serializedData} searchParams={params} suppliers={suppliersData.items} />;
+  return <ModelsTable initialData={serializedData} />;
 }
 
 export default async function ModelsPage({ searchParams }: PageProps) {
   const params = await searchParams;
 
+  // Parse search params (outside Suspense)
+  const page = Number(params.page) || 1;
+  const status = (params.status && params.status !== 'all' ? params.status : 'all') as 'all' | 'draft' | 'published';
+  const profileSupplierId =
+    params.profileSupplierId && params.profileSupplierId !== 'all' ? params.profileSupplierId : undefined;
+  const search = params.search || undefined;
+  const sortBy = params.sortBy || 'createdAt';
+  const sortOrder = (params.sortOrder || 'desc') as 'asc' | 'desc';
+
+  // Fetch suppliers for filter dropdown (lightweight query outside Suspense)
+  const suppliersData = await api.admin[ 'profile-supplier' ].list({
+    isActive: 'active',
+    limit: 100,
+    page: 1,
+    sortBy: 'name',
+    sortOrder: 'asc',
+  });
+
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div>
         <h1 className="font-bold text-3xl tracking-tight">Modelos</h1>
         <p className="text-muted-foreground">
@@ -129,8 +146,30 @@ export default async function ModelsPage({ searchParams }: PageProps) {
         </p>
       </div>
 
-      <Suspense fallback={<ModelsTableSkeleton />} key={JSON.stringify(params)}>
-        <ModelsTableContent params={params} />
+      {/* Filters outside Suspense - always visible */}
+      <ModelsFilters
+        searchParams={{
+          page: String(page),
+          profileSupplierId: params.profileSupplierId,
+          search,
+          status: params.status,
+        }}
+        suppliers={suppliersData.items}
+      />
+
+      {/* Table content inside Suspense - streaming */}
+      <Suspense
+        fallback={<ModelsTableSkeleton />}
+        key={`${search}-${page}-${status}-${profileSupplierId}-${sortBy}-${sortOrder}`}
+      >
+        <ModelsTableContent
+          page={page}
+          profileSupplierId={profileSupplierId}
+          search={search}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          status={status}
+        />
       </Suspense>
     </div>
   );

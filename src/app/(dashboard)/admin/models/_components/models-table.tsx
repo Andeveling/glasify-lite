@@ -28,9 +28,7 @@ import { toast } from 'sonner';
 import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog';
 import type { ServerTableColumn } from '@/app/_components/server-table';
 import { ServerTable } from '@/app/_components/server-table';
-import { type FilterDefinition, TableFilters } from '@/app/_components/server-table/table-filters';
 import { TablePagination } from '@/app/_components/server-table/table-pagination';
-import { TableSearch } from '@/app/_components/server-table/table-search';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -66,15 +64,6 @@ type Model = {
   } | null;
 };
 
-/**
- * Supplier data type
- */
-type Supplier = {
-  id: string;
-  name: string;
-  materialType: MaterialType;
-};
-
 type ModelsTableProps = {
   initialData: {
     items: Model[];
@@ -82,13 +71,6 @@ type ModelsTableProps = {
     page: number;
     totalPages: number;
     limit: number;
-  };
-  suppliers: Supplier[];
-  searchParams: {
-    search?: string;
-    status?: string;
-    profileSupplierId?: string;
-    page?: string;
   };
 };
 
@@ -131,10 +113,10 @@ function ActionsMenu({ model, onDelete }: { model: Model; onDelete: (id: string,
   );
 }
 
-export function ModelsTable({ initialData, suppliers, searchParams }: ModelsTableProps) {
+export function ModelsTable({ initialData }: ModelsTableProps) {
   const utils = api.useUtils();
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [modelToDelete, setModelToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
+  const [ modelToDelete, setModelToDelete ] = useState<{ id: string; name: string } | null>(null);
 
   // Delete mutation
   const deleteMutation = api.admin.model.delete.useMutation({
@@ -219,40 +201,8 @@ export function ModelsTable({ initialData, suppliers, searchParams }: ModelsTabl
     },
   ];
 
-  /**
-   * Filter definitions
-   */
-  const filters: FilterDefinition[] = [
-    {
-      defaultValue: 'all',
-      id: 'status',
-      label: 'Estado',
-      options: [
-        { label: 'Todos', value: 'all' },
-        { label: 'Borrador', value: 'draft' },
-        { label: 'Publicado', value: 'published' },
-      ],
-      type: 'select',
-    },
-    {
-      defaultValue: 'all',
-      id: 'profileSupplierId',
-      label: 'Proveedor de Perfiles',
-      options: [{ label: 'Todos', value: 'all' }, ...suppliers.map((s) => ({ label: s.name, value: s.id }))],
-      type: 'select',
-    },
-  ];
-
   return (
-    <div className="space-y-6">
-      {/* Filters */}
-      <div className="flex items-end justify-between gap-4">
-        <TableFilters filters={filters} />
-        <Button asChild>
-          <Link href="/admin/models/new">Nuevo Modelo</Link>
-        </Button>
-      </div>
-
+    <>
       {/* Table Card */}
       <Card>
         <CardHeader>
@@ -264,9 +214,6 @@ export function ModelsTable({ initialData, suppliers, searchParams }: ModelsTabl
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Search */}
-          <TableSearch defaultValue={searchParams.search} placeholder="Buscar por nombre..." />
-
           {/* Table */}
           <ServerTable columns={columns} data={initialData.items} emptyMessage="No se encontraron modelos" />
 
@@ -289,6 +236,6 @@ export function ModelsTable({ initialData, suppliers, searchParams }: ModelsTabl
         onOpenChange={setDeleteDialogOpen}
         open={deleteDialogOpen}
       />
-    </div>
+    </>
   );
 }
