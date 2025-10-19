@@ -30,13 +30,13 @@ Successfully migrated Glasify's admin data tables from TanStack Table to a **ser
 
 **Created Reusable Molecular Components**:
 
-| Component | Purpose | Location | Lines |
-|-----------|---------|----------|-------|
-| `ServerTable` | Main table container with column rendering | `src/app/_components/server-table/server-table.tsx` | 120 |
-| `TableHeader` | Sortable column headers with indicators | `src/app/_components/server-table/table-header.tsx` | 85 |
-| `TableSearch` | Debounced search input (300ms) | `src/app/_components/server-table/table-search.tsx` | 95 |
-| `TablePagination` | Pagination controls with first/last/next/prev | `src/app/_components/server-table/table-pagination.tsx` | 110 |
-| `TableFilters` | Generic filter component (select/radio/checkbox) | `src/app/_components/server-table/table-filters.tsx` | 130 |
+| Component         | Purpose                                          | Location                                                | Lines |
+| ----------------- | ------------------------------------------------ | ------------------------------------------------------- | ----- |
+| `ServerTable`     | Main table container with column rendering       | `src/app/_components/server-table/server-table.tsx`     | 120   |
+| `TableHeader`     | Sortable column headers with indicators          | `src/app/_components/server-table/table-header.tsx`     | 85    |
+| `TableSearch`     | Debounced search input (300ms)                   | `src/app/_components/server-table/table-search.tsx`     | 95    |
+| `TablePagination` | Pagination controls with first/last/next/prev    | `src/app/_components/server-table/table-pagination.tsx` | 110   |
+| `TableFilters`    | Generic filter component (select/radio/checkbox) | `src/app/_components/server-table/table-filters.tsx`    | 130   |
 
 **Created Reusable Hooks**:
 
@@ -286,12 +286,12 @@ export const modelRouter = router({
 
 ### Database Query Performance (with indexes)
 
-| Operation | Before | After | Improvement |
-|-----------|--------|-------|-------------|
-| Search by name | ~120ms | ~35ms | 71% faster |
-| Filter by status | ~80ms | ~30ms | 62% faster |
-| Default sort (createdAt DESC) | ~150ms | ~28ms | 81% faster |
-| Combined (search + filter + sort) | ~200ms | ~55ms | 72% faster |
+| Operation                         | Before | After | Improvement |
+| --------------------------------- | ------ | ----- | ----------- |
+| Search by name                    | ~120ms | ~35ms | 71% faster  |
+| Filter by status                  | ~80ms  | ~30ms | 62% faster  |
+| Default sort (createdAt DESC)     | ~150ms | ~28ms | 81% faster  |
+| Combined (search + filter + sort) | ~200ms | ~55ms | 72% faster  |
 
 *Based on database with 1000+ models, 500+ glass types, 2000+ quotes*
 

@@ -2,15 +2,15 @@
 goal: Refactor Data Tables to Server-Optimized Pattern with Next.js 15 + tRPC + Prisma
 version: 1.0
 date_created: 2025-10-18
-last_updated: 2025-10-18
+last_updated: 2025-01-21
 owner: Development Team
-status: 'Planned'
+status: 'In Progress'
 tags: [refactor, architecture, performance, data-tables, server-components, next-js-15]
 ---
 
 # Introduction
 
-![Status: Planned](https://img.shields.io/badge/status-Planned-blue)
+![Status: In Progress](https://img.shields.io/badge/status-In%20Progress-yellow)
 
 Refactor existing DataTable components to use a fully server-optimized pattern that leverages Next.js 15 App Router's Server Components, tRPC procedures, and Prisma query optimization. Replace client-heavy TanStack Table with reusable server-first components that handle filtering, sorting, pagination, and search using URL search params for deep linking and optimal performance.
 
@@ -74,74 +74,74 @@ Refactor existing DataTable components to use a fully server-optimized pattern t
 
 - **GOAL-001**: Create foundational server-optimized table components and utilities
 
-| Task     | Description                                                                                                                  | Completed | Date |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------- | --------- | ---- |
-| TASK-001 | Create `useServerParams` hook for URL state management in Client Components (`src/hooks/use-server-params.ts`)               |           |      |
-| TASK-002 | Create `useDebouncedCallback` hook for search input debouncing (300ms) (`src/hooks/use-debounced-callback.ts`)               |           |      |
-| TASK-003 | Create `ServerTable` organism component (`src/app/_components/server-table/index.tsx`) - renders table rows from server data |           |      |
-| TASK-004 | Create `TableHeader` molecule with sortable columns (`src/app/_components/server-table/table-header.tsx`)                    |           |      |
-| TASK-005 | Create `TableFilters` molecule for URL-based filtering (`src/app/_components/server-table/table-filters.tsx`)                |           |      |
-| TASK-006 | Create `TableSearch` molecule with debounced input (`src/app/_components/server-table/table-search.tsx`)                     |           |      |
-| TASK-007 | Create `TablePagination` molecule with Next/Prev controls (`src/app/_components/server-table/table-pagination.tsx`)          |           |      |
-| TASK-008 | Create `buildTableWhereClause` utility for dynamic Prisma filters (`src/lib/utils/table-query-builder.ts`)                   |           |      |
-| TASK-009 | Create `buildTableOrderByClause` utility for dynamic Prisma sorting (`src/lib/utils/table-query-builder.ts`)                 |           |      |
-| TASK-010 | Create `parseTableSearchParams` utility to extract & validate URL params (`src/lib/utils/table-params-parser.ts`)            |           |      |
+| Task     | Description                                                                                                                  | Completed | Date       |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------- | --------- | ---------- |
+| TASK-001 | Create `useServerParams` hook for URL state management in Client Components (`src/hooks/use-server-params.ts`)               | ✅        | 2025-01-21 |
+| TASK-002 | Create `useDebouncedCallback` hook for search input debouncing (300ms) (`src/hooks/use-debounced-callback.ts`)               | ✅        | 2025-01-21 |
+| TASK-003 | Create `ServerTable` organism component (`src/app/_components/server-table/index.tsx`) - renders table rows from server data | ✅        | 2025-01-21 |
+| TASK-004 | Create `TableHeader` molecule with sortable columns (`src/app/_components/server-table/table-header.tsx`)                    | ✅        | 2025-01-21 |
+| TASK-005 | Create `TableFilters` molecule for URL-based filtering (`src/app/_components/server-table/table-filters.tsx`)                | ✅        | 2025-01-21 |
+| TASK-006 | Create `TableSearch` molecule with debounced input (`src/app/_components/server-table/table-search.tsx`)                     | ✅        | 2025-01-21 |
+| TASK-007 | Create `TablePagination` molecule with Next/Prev controls (`src/app/_components/server-table/table-pagination.tsx`)          | ✅        | 2025-01-21 |
+| TASK-008 | Create `buildTableWhereClause` utility for dynamic Prisma filters (`src/lib/utils/table-query-builder.ts`)                   | ✅        | 2025-01-21 |
+| TASK-009 | Create `buildTableOrderByClause` utility for dynamic Prisma sorting (`src/lib/utils/table-query-builder.ts`)                 | ✅        | 2025-01-21 |
+| TASK-010 | Create `parseTableSearchParams` utility to extract & validate URL params (`src/lib/utils/table-params-parser.ts`)            | ✅        | 2025-01-21 |
 
 ### Implementation Phase 2: Prisma Query Optimization
 
 - **GOAL-002**: Optimize database schema and queries for table operations
 
-| Task     | Description                                                                                                                                | Completed | Date |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------ | --------- | ---- |
-| TASK-011 | Add database indexes for Model table: `name`, `status`, `profileSupplierId`, `createdAt` (`prisma/schema.prisma`)                          |           |      |
-| TASK-012 | Add database indexes for GlassType table: `name`, `purpose`, `glassSupplierId`, `isActive` (`prisma/schema.prisma`)                        |           |      |
-| TASK-013 | Add database indexes for Quote table: `projectName`, `status`, `userId`, `createdAt` (`prisma/schema.prisma`)                              |           |      |
-| TASK-014 | Run `pnpm db:migrate` to apply index changes                                                                                               |           |      |
-| TASK-015 | Update `admin.model.list` tRPC procedure with optimized Prisma query (select only needed fields) (`src/server/api/routers/admin/model.ts`) |           |      |
-| TASK-016 | Add `@prisma/client` query logging to verify index usage (`src/server/db.ts`)                                                              |           |      |
-| TASK-017 | Implement cursor-based pagination helper for large datasets (`src/lib/utils/cursor-pagination.ts`)                                         |           |      |
+| Task     | Description                                                                                                                                | Completed | Date       |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------ | --------- | ---------- |
+| TASK-011 | Add database indexes for Model table: `name`, `status`, `profileSupplierId`, `createdAt` (`prisma/schema.prisma`)                          | ✅        | 2025-01-21 |
+| TASK-012 | Add database indexes for GlassType table: `name`, `purpose`, `glassSupplierId`, `isActive` (`prisma/schema.prisma`)                        | ✅        | 2025-01-21 |
+| TASK-013 | Add database indexes for Quote table: `projectName`, `status`, `userId`, `createdAt` (`prisma/schema.prisma`)                              | ✅        | 2025-01-21 |
+| TASK-014 | Run `pnpm db:migrate` to apply index changes                                                                                               | ✅        | 2025-01-21 |
+| TASK-015 | Update `admin.model.list` tRPC procedure with optimized Prisma query (select only needed fields) (`src/server/api/routers/admin/model.ts`) | ✅        | 2025-01-21 |
+| TASK-016 | Add `@prisma/client` query logging to verify index usage (`src/server/db.ts`)                                                              | ✅        | 2025-01-21 |
+| TASK-017 | Implement cursor-based pagination helper for large datasets (`src/lib/utils/cursor-pagination.ts`)                                         | ✅        | 2025-01-21 |
 
 ### Implementation Phase 3: Models Table Migration
 
 - **GOAL-003**: Migrate Models admin table to new server-optimized pattern
 
-| Task     | Description                                                                                                                                         | Completed | Date |
-| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ---- |
-| TASK-018 | Create new `models/page.tsx` with async searchParams prop (`src/app/(dashboard)/admin/models/page.tsx`)                                             |           |      |
-| TASK-019 | Create `ModelsServerFilters` component with status & supplier selects (`src/app/(dashboard)/admin/models/_components/server-filters.tsx`)           |           |      |
-| TASK-020 | Create `ModelsTableHeader` with sortable columns (name, status, price, createdAt) (`src/app/(dashboard)/admin/models/_components/table-header.tsx`) |           |      |
-| TASK-021 | Create `ModelsTableRow` component for rendering model data (`src/app/(dashboard)/admin/models/_components/table-row.tsx`)                           |           |      |
-| TASK-022 | Update `admin.model.list` input schema with filter/sort/search params (`src/lib/validations/admin/model.schema.ts`)                                 |           |      |
-| TASK-023 | Replace `model-list.tsx` with new ServerTable composition                                                                                           |           |      |
-| TASK-024 | Remove `data-table.tsx` and `columns.tsx` (TanStack Table dependencies)                                                                             |           |      |
-| TASK-025 | Add E2E tests for Models table filtering/sorting/search (`e2e/admin/models-table.spec.ts`)                                                          |           |      |
+| Task     | Description                                                                                                                                         | Completed | Date       |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ---------- |
+| TASK-018 | Create new `models/page.tsx` with async searchParams prop (`src/app/(dashboard)/admin/models/page.tsx`)                                             | ✅        | 2025-01-21 |
+| TASK-019 | Create `ModelsServerFilters` component with status & supplier selects (`src/app/(dashboard)/admin/models/_components/server-filters.tsx`)           | ✅        | 2025-01-21 |
+| TASK-020 | Create `ModelsTableHeader` with sortable columns (name, status, price, createdAt) (`src/app/(dashboard)/admin/models/_components/table-header.tsx`) | ✅        | 2025-01-21 |
+| TASK-021 | Create `ModelsTableRow` component for rendering model data (`src/app/(dashboard)/admin/models/_components/table-row.tsx`)                           | ✅        | 2025-01-21 |
+| TASK-022 | Update `admin.model.list` input schema with filter/sort/search params (`src/lib/validations/admin/model.schema.ts`)                                 | ✅        | 2025-01-21 |
+| TASK-023 | Replace `model-list.tsx` with new ServerTable composition                                                                                           | ✅        | 2025-01-21 |
+| TASK-024 | Remove `data-table.tsx` and `columns.tsx` (TanStack Table dependencies)                                                                             | ⏸️        | Deferred   |
+| TASK-025 | Add E2E tests for Models table filtering/sorting/search (`e2e/admin/models-table.spec.ts`)                                                          | ✅        | 2025-01-21 |
 
 ### Implementation Phase 4: Glass Types Table Migration
 
 - **GOAL-004**: Apply server-optimized pattern to Glass Types admin table
 
-| Task     | Description                                                                                                                             | Completed | Date |
-| -------- | --------------------------------------------------------------------------------------------------------------------------------------- | --------- | ---- |
-| TASK-026 | Update `glass-types/page.tsx` with searchParams (`src/app/(dashboard)/admin/glass-types/page.tsx`)                                      |           |      |
-| TASK-027 | Create `GlassTypesServerFilters` (purpose, supplier, isActive) (`src/app/(dashboard)/admin/glass-types/_components/server-filters.tsx`) |           |      |
-| TASK-028 | Create `GlassTypesTableHeader` with sortable columns                                                                                    |           |      |
-| TASK-029 | Create `GlassTypesTableRow` component                                                                                                   |           |      |
-| TASK-030 | Update `admin.glass-type.list` with optimized query                                                                                     |           |      |
-| TASK-031 | Remove old DataTable implementation                                                                                                     |           |      |
-| TASK-032 | Add E2E tests for Glass Types table (`e2e/admin/glass-types-table.spec.ts`)                                                             |           |      |
+| Task     | Description                                                                                                                             | Completed | Date       |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------- | --------- | ---------- |
+| TASK-026 | Update `glass-types/page.tsx` with searchParams (`src/app/(dashboard)/admin/glass-types/page.tsx`)                                      | ✅        | 2025-01-21 |
+| TASK-027 | Create `GlassTypesServerFilters` (purpose, supplier, isActive) (`src/app/(dashboard)/admin/glass-types/_components/server-filters.tsx`) | ✅        | 2025-01-21 |
+| TASK-028 | Create `GlassTypesTableHeader` with sortable columns                                                                                    | ✅        | 2025-01-21 |
+| TASK-029 | Create `GlassTypesTableRow` component                                                                                                   | ✅        | 2025-01-21 |
+| TASK-030 | Update `admin.glass-type.list` with optimized query                                                                                     | ✅        | 2025-01-21 |
+| TASK-031 | Remove old DataTable implementation                                                                                                     | ⏸️        | Deferred   |
+| TASK-032 | Add E2E tests for Glass Types table (`e2e/admin/glass-types-table.spec.ts`)                                                             | ✅        | 2025-01-21 |
 
 ### Implementation Phase 5: Quotes Table Migration
 
 - **GOAL-005**: Migrate user quotes table with role-based filtering
 
-| Task     | Description                                                  | Completed | Date |
-| -------- | ------------------------------------------------------------ | --------- | ---- |
-| TASK-033 | Update `/my-quotes/page.tsx` with searchParams               |           |      |
-| TASK-034 | Create `QuotesServerFilters` (status, date range)            |           |      |
-| TASK-035 | Create `QuotesTableHeader` with sortable columns             |           |      |
-| TASK-036 | Create `QuotesTableRow` component                            |           |      |
-| TASK-037 | Update `quote.list-user-quotes` with role-based WHERE clause |           |      |
-| TASK-038 | Add E2E tests for Quotes table with RBAC scenarios           |           |      |
+| Task     | Description                                                  | Completed | Date       |
+| -------- | ------------------------------------------------------------ | --------- | ---------- |
+| TASK-033 | Update `/my-quotes/page.tsx` with searchParams               | ✅        | 2025-01-21 |
+| TASK-034 | Create `QuotesServerFilters` (status, date range)            | ✅        | 2025-01-21 |
+| TASK-035 | Create `QuotesTableHeader` with sortable columns             | ✅        | 2025-01-21 |
+| TASK-036 | Create `QuotesTableRow` component                            | ✅        | 2025-01-21 |
+| TASK-037 | Update `quote.list-user-quotes` with role-based WHERE clause | ✅        | 2025-01-21 |
+| TASK-038 | Add E2E tests for Quotes table with RBAC scenarios           | ✅        | 2025-01-21 |
 
 ### Implementation Phase 6: Performance Testing & Optimization
 
@@ -160,14 +160,14 @@ Refactor existing DataTable components to use a fully server-optimized pattern t
 
 - **GOAL-007**: Document new patterns and remove deprecated code
 
-| Task     | Description                                                                           | Completed | Date |
-| -------- | ------------------------------------------------------------------------------------- | --------- | ---- |
-| TASK-045 | Create architecture documentation (`docs/architecture-server-tables.md`)              |           |      |
-| TASK-046 | Create developer guide for creating new tables (`docs/guides/create-server-table.md`) |           |      |
-| TASK-047 | Update `.github/copilot-instructions.md` with new table patterns                      |           |      |
-| TASK-048 | Remove unused TanStack Table dependencies from `package.json`                         |           |      |
-| TASK-049 | Run `pnpm lint:fix` and `pnpm typecheck` on all changes                               |           |      |
-| TASK-050 | Create PR with migration summary and performance comparison                           |           |      |
+| Task     | Description                                                                           | Completed | Date       |
+| -------- | ------------------------------------------------------------------------------------- | --------- | ---------- |
+| TASK-045 | Create architecture documentation (`docs/architecture-server-tables.md`)              | ✅        | 2025-01-21 |
+| TASK-046 | Create developer guide for creating new tables (`docs/guides/create-server-table.md`) | ⏸️        | Deferred   |
+| TASK-047 | Update `.github/copilot-instructions.md` with new table patterns                      | ✅        | 2025-01-21 |
+| TASK-048 | Remove unused TanStack Table dependencies from `package.json`                         | ⏸️        | Deferred   |
+| TASK-049 | Run `pnpm lint:fix` and `pnpm typecheck` on all changes                               | ✅        | 2025-01-21 |
+| TASK-050 | Create PR with migration summary and performance comparison                           | ✅        | 2025-01-21 |
 
 ## 3. Alternatives
 

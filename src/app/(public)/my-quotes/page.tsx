@@ -4,8 +4,7 @@ import logger from '@/lib/logger';
 import { auth } from '@/server/auth';
 import { api } from '@/trpc/server-client';
 import { EmptyQuotesState } from './_components/empty-quotes-state';
-import { QuoteFilters } from './_components/quote-filters';
-import { QuoteListItem } from './_components/quote-list-item';
+import { QuotesTable } from './_components/quotes-table';
 
 type MyQuotesPageProps = {
   searchParams?: Promise<{
@@ -93,29 +92,11 @@ export default async function MyQuotesPage({ searchParams }: MyQuotesPageProps) 
         <p className="mt-2 text-muted-foreground">Gestiona y revisa todas tus cotizaciones generadas</p>
       </div>
 
-      {/* Filters */}
-      <div className="mb-6">
-        <QuoteFilters currentSearchQuery={searchQuery} currentSort={sortBy} currentStatus={status} />
-      </div>
-
-      {/* Quotes list or empty state */}
+      {/* Show empty state or table */}
       {result.quotes.length === 0 ? (
         <EmptyQuotesState variant={hasActiveFilters ? 'no-results' : 'no-quotes'} />
       ) : (
-        <div className="space-y-4">
-          {result.quotes.map((quote) => (
-            <QuoteListItem key={quote.id} quote={quote} />
-          ))}
-        </div>
-      )}
-
-      {/* Pagination */}
-      {result.totalPages > 1 && (
-        <div className="mt-8 flex justify-center gap-2">
-          <p className="text-muted-foreground text-sm">
-            Página {result.page} de {result.totalPages}
-          </p>
-        </div>
+        <QuotesTable data={result} />
       )}
     </div>
   );
