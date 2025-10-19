@@ -17,18 +17,17 @@
 
 'use client';
 
-import type { Control } from 'react-hook-form';
+import type { Control, FieldValues } from 'react-hook-form';
 import { Card, CardContent } from '@/components/ui/card';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import type { CreateGlassTypeInput } from '@/lib/validations/admin/glass-type.schema';
 import { FormCheckboxField } from '../form-fields/form-checkbox-field';
 import { FormNumberField } from '../form-fields/form-number-field';
 import { FormSelectField } from '../form-fields/form-select-field';
 import { FormTextareaField } from '../form-fields/form-textarea-field';
 
 interface BasicInfoSectionProps {
-  control: Control<CreateGlassTypeInput>;
+  control: Control<FieldValues>;
 }
 
 const PURPOSE_OPTIONS = [

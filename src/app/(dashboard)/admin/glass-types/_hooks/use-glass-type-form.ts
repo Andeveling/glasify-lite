@@ -34,8 +34,12 @@ export function useGlassTypeForm({ mode, defaultValues, onSuccessCallback }: Use
     onSuccessCallback,
   });
 
+  // Combine form state with mutations
+  // Note: Type assertion needed due to Zod schema defaults vs strict RHF types
   const form = useForm<CreateGlassTypeInput>({
-    defaultValues: formDefaults,
+    defaultValues: formDefaults as CreateGlassTypeInput,
+    mode: 'onChange',
+    // @ts-expect-error - Zod default() creates optional fields that conflict with RHF's strict typing
     resolver: zodResolver(createGlassTypeSchema),
   });
 

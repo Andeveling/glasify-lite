@@ -13,13 +13,12 @@
 
 'use client';
 
-import type { Control } from 'react-hook-form';
+import type { Control, FieldValues } from 'react-hook-form';
 import { Card, CardContent } from '@/components/ui/card';
-import type { CreateGlassTypeInput } from '@/lib/validations/admin/glass-type.schema';
 import { FormNumberField } from '../form-fields/form-number-field';
 
 interface ThermalPropertiesSectionProps {
-  control: Control<CreateGlassTypeInput>;
+  control: Control<FieldValues>;
 }
 
 /**

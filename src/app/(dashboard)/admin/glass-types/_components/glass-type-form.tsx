@@ -44,14 +44,16 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
 
   return (
     <Form {...form}>
+      {/* @ts-expect-error - Type mismatch between Zod schema and RHF Control types */}
       <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
-        <Accordion className="space-y-4" defaultValue={['basic']} type="multiple">
+        <Accordion className="space-y-4" defaultValue={[ 'basic' ]} type="multiple">
           {/* Basic Information Section */}
           <AccordionItem className="rounded-lg border" value="basic">
             <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">
               <span className="flex items-center gap-2 font-semibold text-lg">📝 Información Básica</span>
             </AccordionTrigger>
             <AccordionContent className="px-1 pt-4">
+              {/* @ts-expect-error - Type mismatch between specific and generic Control types */}
               <BasicInfoSection control={form.control} />
             </AccordionContent>
           </AccordionItem>
@@ -62,6 +64,7 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
               <span className="flex items-center gap-2 font-semibold text-lg">🌡️ Propiedades Térmicas y Ópticas</span>
             </AccordionTrigger>
             <AccordionContent className="px-1 pt-4">
+              {/* @ts-expect-error - Type mismatch between specific and generic Control types */}
               <ThermalPropertiesSection control={form.control} />
             </AccordionContent>
           </AccordionItem>
