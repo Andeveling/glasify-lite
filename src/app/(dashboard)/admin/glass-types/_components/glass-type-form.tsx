@@ -39,42 +39,48 @@ type GlassTypeFormProps = {
 
 const DEFAULT_THICKNESS_MM = 6;
 
-// Form values type - directly inferred from Zod schema for exact compatibility
-type GlassTypeFormValues = z.infer<typeof createGlassTypeSchema>;
+// Form values type - use z.input to get the input type (with defaults applied)
+type GlassTypeFormValues = z.input<typeof createGlassTypeSchema>;
+
+// Helper type to ensure isActive is always boolean in form defaults
+type FormDefaults = Omit<Partial<GlassTypeFormValues>, 'isActive'> & { isActive: boolean };
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Form component with multiple sections requires extensive setup
 export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
   const router = useRouter();
 
+  // Prepare form defaults ensuring isActive is always boolean
+  const formDefaults: FormDefaults = {
+    characteristics:
+      defaultValues?.characteristics.map((c) => ({
+        certification: c.certification ?? undefined,
+        characteristicId: c.characteristicId,
+        notes: c.notes ?? undefined,
+        value: c.value ?? undefined,
+      })) ?? [],
+    description: defaultValues?.description ?? undefined,
+    glassSupplierId: defaultValues?.glassSupplierId ?? undefined,
+    isActive: defaultValues?.isActive ?? true, // Always boolean
+    lastReviewDate: defaultValues?.lastReviewDate ?? undefined,
+    lightTransmission: defaultValues?.lightTransmission !== null && defaultValues?.lightTransmission !== undefined ? Number(defaultValues.lightTransmission) : undefined,
+    name: defaultValues?.name ?? '',
+    pricePerSqm: defaultValues?.pricePerSqm !== null && defaultValues?.pricePerSqm !== undefined ? Number(defaultValues.pricePerSqm) : 0,
+    purpose: (defaultValues?.purpose as GlassPurpose) ?? 'general',
+    sku: defaultValues?.sku ?? undefined,
+    solarFactor: defaultValues?.solarFactor !== null && defaultValues?.solarFactor !== undefined ? Number(defaultValues.solarFactor) : undefined,
+    solutions:
+      defaultValues?.solutions.map((s) => ({
+        isPrimary: s.isPrimary,
+        notes: s.notes ?? undefined,
+        performanceRating: s.performanceRating,
+        solutionId: s.solutionId,
+      })) ?? [],
+    thicknessMm: defaultValues?.thicknessMm ?? DEFAULT_THICKNESS_MM,
+    uValue: defaultValues?.uValue !== null && defaultValues?.uValue !== undefined ? Number(defaultValues.uValue) : undefined,
+  };
+
   const form = useForm<GlassTypeFormValues>({
-    defaultValues: {
-      characteristics:
-        defaultValues?.characteristics.map((c) => ({
-          certification: c.certification ?? undefined,
-          characteristicId: c.characteristicId,
-          notes: c.notes ?? undefined,
-          value: c.value ?? undefined,
-        })) ?? [],
-      description: defaultValues?.description ?? undefined,
-      glassSupplierId: defaultValues?.glassSupplierId ?? undefined,
-      isActive: defaultValues?.isActive ?? true,
-      lastReviewDate: defaultValues?.lastReviewDate ?? undefined,
-      lightTransmission: defaultValues?.lightTransmission ? Number(defaultValues.lightTransmission) : undefined,
-      name: defaultValues?.name ?? '',
-      pricePerSqm: defaultValues?.pricePerSqm ? Number(defaultValues.pricePerSqm) : 0,
-      purpose: (defaultValues?.purpose as GlassPurpose) ?? 'general',
-      sku: defaultValues?.sku ?? undefined,
-      solarFactor: defaultValues?.solarFactor ? Number(defaultValues.solarFactor) : undefined,
-      solutions:
-        defaultValues?.solutions.map((s) => ({
-          isPrimary: s.isPrimary,
-          notes: s.notes ?? undefined,
-          performanceRating: s.performanceRating,
-          solutionId: s.solutionId,
-        })) ?? [],
-      thicknessMm: defaultValues?.thicknessMm ?? DEFAULT_THICKNESS_MM,
-      uValue: defaultValues?.uValue ? Number(defaultValues.uValue) : undefined,
-    },
+    defaultValues: formDefaults,
     resolver: zodResolver(createGlassTypeSchema),
   });
 
