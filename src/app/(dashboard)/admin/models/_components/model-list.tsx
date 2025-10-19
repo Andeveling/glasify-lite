@@ -1,38 +1,35 @@
 /**
- * Model List Component (US9 - T084) - REFACTORED
+ * Model List Component (US9 - T084) - SERVER-SIDE FILTERING
  *
- * Optimized Client Component following SOLID principles and Next.js 15 best practices
+ * Client Component that renders data table with server-side filtering via URL
  *
  * Features:
- * - Search by name, SKU, or description
- * - Filter by status and profile supplier
- * - Pagination with page navigation
- * - Display status badges, price range, glass type count
- * - Create, edit, delete actions (using Link for navigation)
- * - Delete confirmation dialog with referential integrity
- * - Skeleton loading states for better UX
- * - Suspense boundaries for granular loading
- * - Custom hooks for separation of concerns
+ * - Server-side filtering (status, supplier) via URL search params
+ * - Client-side search (instant, on current page data)
+ * - Deep linking support
+ * - Delete confirmation dialog
+ *
+ * Architecture:
+ * - ServerFilters: Controls that update URL (triggers page refetch)
+ * - DataTable: Renders data + client-side search
+ * - Page: Server Component that refetches on URL change
  *
  * SOLID Principles Applied:
- * - Single Responsibility: Logic separated into custom hooks and smaller components
- * - Open/Closed: Components extensible via props
- * - Liskov Substitution: Components are interchangeable
- * - Interface Segregation: Specific props interfaces
- * - Dependency Inversion: Depends on abstractions (hooks, props)
+ * - Single Responsibility: Rendering and delete action handling only
+ * - Dependency Inversion: Data comes from server via props
  */
 
 'use client';
 
 import type { MaterialType, ModelStatus } from '@prisma/client';
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { api } from '@/trpc/react';
-import { useModelFilters } from '../_hooks/use-model-filters';
-import { ModelFilters } from './model-filters';
-import { ModelTable } from './model-table';
-import { Pagination } from './pagination';
+import { createColumns, type Model } from './columns';
+import { DataTable } from './data-table';
+import { ServerFilters } from './server-filters';
 
 type SerializedModel = {
   id: string;
@@ -43,10 +40,10 @@ type SerializedModel = {
   maxWidthMm: number;
   minHeightMm: number;
   maxHeightMm: number;
-  basePrice: number; // Already converted from Decimal
-  costPerMmWidth: number; // Already converted from Decimal
-  costPerMmHeight: number; // Already converted from Decimal
-  accessoryPrice: number; // Already converted from Decimal
+  basePrice: number;
+  costPerMmWidth: number;
+  costPerMmHeight: number;
+  accessoryPrice: number;
   glassDiscountWidthMm: number;
   glassDiscountHeightMm: number;
   compatibleGlassTypeIds: string[];
@@ -62,6 +59,12 @@ type SerializedModel = {
   } | null;
 };
 
+type Supplier = {
+  id: string;
+  name: string;
+  materialType: MaterialType;
+};
+
 type ModelListProps = {
   initialData: {
     items: SerializedModel[];
@@ -70,41 +73,13 @@ type ModelListProps = {
     total: number;
     totalPages: number;
   };
+  suppliers: Supplier[];
 };
 
-export function ModelList({ initialData }: ModelListProps) {
+export function ModelList({ initialData, suppliers }: ModelListProps) {
   const utils = api.useUtils();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [modelToDelete, setModelToDelete] = useState<{ id: string; name: string } | null>(null);
-
-  // Custom hook for filter state management (Single Responsibility)
-  const { filters, handlers } = useModelFilters();
-
-  // Fetch profile suppliers for filter
-  const { data: suppliersData } = api.admin['profile-supplier'].list.useQuery({
-    isActive: 'active',
-    limit: 100,
-    page: 1,
-    sortBy: 'name',
-    sortOrder: 'asc',
-  });
-
-  // Query with filters - keepPreviousData for better UX during filter changes
-  const { data, isLoading } = api.admin.model.list.useQuery(
-    {
-      limit: 20,
-      page: filters.page,
-      profileSupplierId: filters.profileSupplierId === 'all' ? undefined : filters.profileSupplierId,
-      search: filters.search || undefined,
-      sortBy: 'name',
-      sortOrder: 'asc',
-      status: filters.status === 'all' ? undefined : filters.status,
-    },
-    {
-      // Keep previous data while fetching new data (better UX)
-      placeholderData: (previousData) => previousData,
-    }
-  );
 
   // Delete mutation
   const deleteMutation = api.admin.model.delete.useMutation({
@@ -132,33 +107,28 @@ export function ModelList({ initialData }: ModelListProps) {
     await deleteMutation.mutateAsync({ id: modelToDelete.id });
   };
 
-  // Use query data or fallback to initial data
-  // Type assertion needed because tRPC returns Decimal but we need number
-  const models = (data?.items ?? initialData.items) as SerializedModel[];
-  const totalPages = data?.totalPages ?? initialData.totalPages;
-  const total = data?.total ?? initialData.total;
-  const suppliers = suppliersData?.items ?? [];
+  // Use server-fetched data
+  const models = initialData.items as Model[];
+  const total = initialData.total;
+
+  // Create columns with delete handler
+  const columns = createColumns(handleDeleteClick);
 
   return (
     <div className="space-y-6">
-      {/* Filters Component - Single Responsibility */}
-      <Suspense fallback={<div className="h-48 animate-pulse rounded-lg bg-muted" />}>
-        <ModelFilters
-          onSearchChange={handlers.handleSearchChange}
-          onStatusChange={handlers.handleStatusChange}
-          onSupplierChange={handlers.handleSupplierChange}
-          profileSupplierId={filters.profileSupplierId}
-          search={filters.search}
-          status={filters.status}
-          suppliers={suppliers}
-        />
-      </Suspense>
+      {/* Server-side filters (updates URL → page refetches) */}
+      <ServerFilters suppliers={suppliers} />
 
-      {/* Table Component with Skeleton Loading - Better UX */}
-      <Suspense fallback={<div className="h-96 animate-pulse rounded-lg bg-muted" />}>
-        <ModelTable isLoading={isLoading} models={models} onDeleteClick={handleDeleteClick} total={total} />
-        <Pagination currentPage={filters.page} onPageChange={handlers.handlePageChange} totalPages={totalPages} />
-      </Suspense>
+      {/* Data Table with client-side search only */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Modelos ({total})</CardTitle>
+          <CardDescription>Gestiona los modelos de perfiles disponibles en el catálogo</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DataTable columns={columns} data={models} searchKey="name" searchPlaceholder="Buscar por nombre..." />
+        </CardContent>
+      </Card>
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog

@@ -1,8 +1,18 @@
 /**
  * Models List Page (US9 - T083)
  *
- * Server Component that fetches initial data and delegates
- * interactivity to ModelList Client Component
+ * Server Component with server-side filtering via URL search params
+ *
+ * Architecture:
+ * - Reads filters from URL search params
+ * - Fetches filtered data from server
+ * - Passes data to ModelList client component
+ * - On filter change (URL update), page automatically refetches
+ *
+ * Scalability:
+ * - No limit on dataset size (server filters before returning)
+ * - Pagination server-side (20 items per page by default)
+ * - Deep linking support (filters in URL)
  *
  * Route: /admin/models
  * Access: Admin only (protected by middleware)
@@ -17,10 +27,39 @@ export const metadata: Metadata = {
   title: 'Modelos | Admin',
 };
 
-export default async function ModelsPage() {
-  // Fetch initial data server-side
+type SearchParams = Promise<{
+  status?: string;
+  profileSupplierId?: string;
+  page?: string;
+}>;
+
+type PageProps = {
+  searchParams: SearchParams;
+};
+
+export default async function ModelsPage({ searchParams }: PageProps) {
+  const params = await searchParams;
+
+  // Parse search params with server-side filtering
+  const page = Number(params.page) || 1;
+  const status = params.status === 'all' || !params.status ? undefined : (params.status as 'draft' | 'published');
+  const profileSupplierId =
+    params.profileSupplierId === 'all' || !params.profileSupplierId ? undefined : params.profileSupplierId;
+
+  // Fetch filtered data from server
   const initialData = await api.admin.model.list({
-    limit: 20,
+    limit: 20, // Items per page
+    page,
+    profileSupplierId,
+    sortBy: 'name',
+    sortOrder: 'asc',
+    status,
+  });
+
+  // Fetch suppliers for filter dropdown
+  const suppliersData = await api.admin[ 'profile-supplier' ].list({
+    isActive: 'active',
+    limit: 100,
     page: 1,
     sortBy: 'name',
     sortOrder: 'asc',
@@ -48,7 +87,7 @@ export default async function ModelsPage() {
         </p>
       </div>
 
-      <ModelList initialData={serializedData} />
+      <ModelList initialData={serializedData} suppliers={suppliersData.items} />
     </div>
   );
 }
