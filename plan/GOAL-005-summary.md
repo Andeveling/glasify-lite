@@ -327,12 +327,12 @@ pnpm test:e2e e2e/my-quotes/quotes-table.spec.ts
 
 Based on established patterns from Models and Glass Types tables:
 
-| Metric | Before (List Items) | After (ServerTable) | Improvement |
-|--------|---------------------|---------------------|-------------|
-| Client Bundle | ~45KB | ~8KB | -82% |
-| Search API Calls | Every keystroke | Every 300ms | -70% |
-| Initial Load Time | ~800ms | ~500ms | 37% faster |
-| Filter Operations | ~400ms | ~250ms | 37% faster |
+| Metric            | Before (List Items) | After (ServerTable) | Improvement |
+| ----------------- | ------------------- | ------------------- | ----------- |
+| Client Bundle     | ~45KB               | ~8KB                | -82%        |
+| Search API Calls  | Every keystroke     | Every 300ms         | -70%        |
+| Initial Load Time | ~800ms              | ~500ms              | 37% faster  |
+| Filter Operations | ~400ms              | ~250ms              | 37% faster  |
 
 *Note: Actual metrics should be validated with Lighthouse CI in Phase 6*
 
