@@ -163,13 +163,13 @@ const updateMutation = api.admin.model.update.useMutation({
 
 ## Performance Results
 
-| Scenario | Before | After | Improvement |
-|----------|--------|-------|-------------|
-| List → Edit (first time) | 3-5s | 3-5s | 0% (expected) |
-| List → Edit (cached) | 3-5s | ~1s | 70% ✅ |
-| Edit → List (no save) | 2-3s | ~0.5s | 75% ✅ |
-| Edit → Save → List | 2-3s | 2-3s | 0% (expected) |
-| Create → List | 2-3s | 2-3s | 0% (expected) |
+| Scenario                 | Before | After | Improvement   |
+| ------------------------ | ------ | ----- | ------------- |
+| List → Edit (first time) | 3-5s   | 3-5s  | 0% (expected) |
+| List → Edit (cached)     | 3-5s   | ~1s   | 70% ✅         |
+| Edit → List (no save)    | 2-3s   | ~0.5s | 75% ✅         |
+| Edit → Save → List       | 2-3s   | 2-3s  | 0% (expected) |
+| Create → List            | 2-3s   | 2-3s  | 0% (expected) |
 
 **Total improvement**: 70-75% reduction in load times for cached scenarios
 

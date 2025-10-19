@@ -36,8 +36,13 @@ export const metadata: Metadata = {
   title: 'Modelos | Admin',
 };
 
-// Force dynamic rendering to ensure searchParams changes trigger re-renders
-export const dynamic = 'force-dynamic';
+/**
+ * ISR Configuration: Revalidate every 30 seconds
+ * - Server renders are cached for 30 seconds
+ * - Suspense key triggers re-fetch when filters change
+ * - Background revalidation on cache miss
+ */
+export const revalidate = 30;
 
 type SearchParams = Promise<{
   status?: string;

@@ -28,12 +28,12 @@ void utils.admin.model.list.invalidate(); // ❌ Borra todo
 
 ## ✅ Soluciones Aplicadas
 
-| Archivo | Cambio | Beneficio |
-|---------|--------|-----------|
-| `admin/models/page.tsx` | `force-dynamic` → `revalidate = 30` | 70% más rápido en back navigation |
-| `admin/glass-types/page.tsx` | `force-dynamic` → `revalidate = 30` | 70% más rápido en back navigation |
-| `model-form.tsx` | Agregado `staleTime: 300_000` | ~2-3s más rápido en visitas subsecuentes |
-| `model-form.tsx` | Invalidación selectiva | Mejor cache preservation |
+| Archivo                      | Cambio                              | Beneficio                                |
+| ---------------------------- | ----------------------------------- | ---------------------------------------- |
+| `admin/models/page.tsx`      | `force-dynamic` → `revalidate = 30` | 70% más rápido en back navigation        |
+| `admin/glass-types/page.tsx` | `force-dynamic` → `revalidate = 30` | 70% más rápido en back navigation        |
+| `model-form.tsx`             | Agregado `staleTime: 300_000`       | ~2-3s más rápido en visitas subsecuentes |
+| `model-form.tsx`             | Invalidación selectiva              | Mejor cache preservation                 |
 
 ## 📊 Performance Results
 
@@ -88,12 +88,12 @@ useQuery(
 
 ### Regla General
 
-| Tipo de Dato | staleTime Recomendado |
-|--------------|----------------------|
-| User input (search, filters) | 0 (siempre fresh) |
-| Catalog data (suppliers, glass types) | 5 minutes |
-| Static content (translations) | Infinity |
-| Real-time data (messages) | 0 o usar WebSockets |
+| Tipo de Dato                          | staleTime Recomendado |
+| ------------------------------------- | --------------------- |
+| User input (search, filters)          | 0 (siempre fresh)     |
+| Catalog data (suppliers, glass types) | 5 minutes             |
+| Static content (translations)         | Infinity              |
+| Real-time data (messages)             | 0 o usar WebSockets   |
 
 ## 📝 Files Changed
 

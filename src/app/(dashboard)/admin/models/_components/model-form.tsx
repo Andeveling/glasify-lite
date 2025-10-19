@@ -24,6 +24,7 @@ const DEFAULT_MIN_WIDTH_MM = 600;
 const DEFAULT_MAX_WIDTH_MM = 2000;
 const DEFAULT_MIN_HEIGHT_MM = 800;
 const DEFAULT_MAX_HEIGHT_MM = 2200;
+const FIVE_MINUTES_MS = 300_000; // 5 minutes stale time for catalog data
 
 const modelFormSchema = z.object({
   accessoryPrice: z.number().min(0).optional().nullable(),
@@ -42,7 +43,7 @@ const modelFormSchema = z.object({
   name: z.string().min(1, 'El nombre es requerido'),
   profileSupplierId: z.string().optional().nullable(),
   profitMarginPercentage: z.number().min(0).max(MAX_PROFIT_MARGIN).optional().nullable(),
-  status: z.enum(['draft', 'published']),
+  status: z.enum([ 'draft', 'published' ]),
 });
 
 type ModelFormValues = z.infer<typeof modelFormSchema>;
@@ -57,18 +58,31 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
   const router = useRouter();
   const utils = api.useUtils();
 
-  const { data: suppliersData } = api.admin['profile-supplier'].list.useQuery({
-    limit: 100,
-    page: 1,
-    sortBy: 'name',
-    sortOrder: 'asc',
-  });
-  const { data: glassTypesData } = api.admin['glass-type'].list.useQuery({
-    limit: 100,
-    page: 1,
-    sortBy: 'name',
-    sortOrder: 'asc',
-  });
+  // Suppliers query with 5-minute stale time (rarely changes)
+  const { data: suppliersData } = api.admin[ 'profile-supplier' ].list.useQuery(
+    {
+      limit: 100,
+      page: 1,
+      sortBy: 'name',
+      sortOrder: 'asc',
+    },
+    {
+      staleTime: FIVE_MINUTES_MS,
+    }
+  );
+
+  // Glass types query with 5-minute stale time (rarely changes)
+  const { data: glassTypesData } = api.admin[ 'glass-type' ].list.useQuery(
+    {
+      limit: 100,
+      page: 1,
+      sortBy: 'name',
+      sortOrder: 'asc',
+    },
+    {
+      staleTime: FIVE_MINUTES_MS,
+    }
+  );
 
   const createMutation = api.admin.model.create.useMutation({
     onError: (error) => {
@@ -76,6 +90,7 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
     },
     onSuccess: () => {
       toast.success('Modelo creado exitosamente');
+      // Invalidate only the list query (not all admin queries)
       void utils.admin.model.list.invalidate();
       router.push('/admin/models');
     },
@@ -85,9 +100,11 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
     onError: (error) => {
       toast.error(`Error al actualizar modelo: ${error.message}`);
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success('Modelo actualizado exitosamente');
+      // Invalidate specific queries instead of everything
       void utils.admin.model.list.invalidate();
+      void utils.admin.model[ 'get-by-id' ].invalidate({ id: data.id });
       router.push('/admin/models');
     },
   });

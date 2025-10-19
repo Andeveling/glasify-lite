@@ -1,5 +1,6 @@
 import { Factory, GlassWater, Grid3x3, Package, Settings, Sparkles, Wrench } from 'lucide-react';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { db } from '@/server/db';
@@ -117,7 +118,7 @@ export default async function AdminDashboardPage() {
                   <div className="font-bold text-2xl">{entity.count}</div>
                   <p className="text-muted-foreground text-xs">{entity.description}</p>
                   <Button asChild className="mt-4 h-auto p-0" variant="link">
-                    <a href={entity.href}>Ver todos →</a>
+                    <Link href={entity.href}>Ver todos →</Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -136,7 +137,7 @@ export default async function AdminDashboardPage() {
               </CardHeader>
               <CardContent>
                 <Button asChild className="w-full">
-                  <a href="/admin/models/new">Crear Modelo</a>
+                  <Link href="/admin/models/new">Crear Modelo</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -160,7 +161,19 @@ export default async function AdminDashboardPage() {
               </CardHeader>
               <CardContent>
                 <Button asChild className="w-full">
-                  <a href="/admin/services/new">Crear Servicio</a>
+                  <Link href="/admin/glass-types/new">Crear Tipo de Vidrio</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Crear Servicio</CardTitle>
+                <CardDescription>Agrega un nuevo servicio adicional</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild className="w-full">
+                  <Link href="/admin/services/new">Crear Servicio</Link>
                 </Button>
               </CardContent>
             </Card>
