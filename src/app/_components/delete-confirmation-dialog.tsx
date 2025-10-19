@@ -97,7 +97,7 @@ export function DeleteConfirmationDialog({
             {canDelete ? `¿Eliminar ${entityName}?` : `No se puede eliminar ${entityName}`}
           </AlertDialogTitle>
           <AlertDialogDescription className="space-y-3 text-left">
-            <p>
+            <div>
               {canDelete ? (
                 <>
                   Estás a punto de eliminar <strong>{entityLabel}</strong>.
@@ -107,11 +107,11 @@ export function DeleteConfirmationDialog({
                   No puedes eliminar <strong>{entityLabel}</strong> porque tiene dependencias activas.
                 </>
               )}
-            </p>
+            </div>
 
             {hasDependencies && (
               <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3">
-                <p className="mb-2 font-semibold text-destructive text-sm">Dependencias encontradas:</p>
+                <div className="mb-2 font-semibold text-destructive text-sm">Dependencias encontradas:</div>
                 <ul className="list-disc space-y-1 pl-5 text-sm">
                   {dependencies.map((dep, index) => (
                     <li key={`${dep.entity}-${index}`}>
@@ -119,22 +119,22 @@ export function DeleteConfirmationDialog({
                     </li>
                   ))}
                 </ul>
-                <p className="mt-3 text-muted-foreground text-xs">
+                <div className="mt-3 text-muted-foreground text-xs">
                   Elimina o actualiza estas dependencias antes de eliminar {entityLabel}.
-                </p>
+                </div>
               </div>
             )}
 
             {canDelete && warningMessage && (
-              <p className="rounded-lg bg-amber-50 p-3 text-amber-900 text-sm dark:bg-amber-950 dark:text-amber-100">
+              <div className="rounded-lg bg-amber-50 p-3 text-amber-900 text-sm dark:bg-amber-950 dark:text-amber-100">
                 {warningMessage}
-              </p>
+              </div>
             )}
 
             {canDelete && !warningMessage && (
-              <p className="text-muted-foreground text-sm">
+              <div className="text-muted-foreground text-sm">
                 Esta acción no se puede deshacer. El registro será eliminado permanentemente.
-              </p>
+              </div>
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>

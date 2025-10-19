@@ -117,7 +117,19 @@ async function ModelsTableContent({
     })),
   };
 
-  return <ModelsTable initialData={serializedData} />;
+  return (
+    <ModelsTable
+      initialData={serializedData}
+      searchParams={{
+        page,
+        profileSupplierId,
+        search,
+        sortBy: sortBy as 'name' | 'createdAt' | 'updatedAt' | 'basePrice',
+        sortOrder,
+        status,
+      }}
+    />
+  );
 }
 
 export default async function ModelsPage({ searchParams }: PageProps) {

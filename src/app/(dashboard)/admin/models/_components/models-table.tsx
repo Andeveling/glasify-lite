@@ -29,6 +29,7 @@ import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-
 import type { ServerTableColumn } from '@/app/_components/server-table';
 import { ServerTable } from '@/app/_components/server-table';
 import { TablePagination } from '@/app/_components/server-table/table-pagination';
+import { useTenantConfig } from '@/app/_hooks/use-tenant-config';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -40,7 +41,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { formatCurrency } from '@/lib/export/pdf/pdf-utils';
+import { formatCurrency } from '@/lib/format';
+import type { RouterOutputs } from '@/trpc/react';
 import { api } from '@/trpc/react';
 
 /**
@@ -71,6 +73,14 @@ type ModelsTableProps = {
     page: number;
     totalPages: number;
     limit: number;
+  };
+  searchParams: {
+    page: number;
+    status: 'all' | 'draft' | 'published';
+    profileSupplierId?: string;
+    search?: string;
+    sortBy: 'name' | 'createdAt' | 'updatedAt' | 'basePrice';
+    sortOrder: 'asc' | 'desc';
   };
 };
 
@@ -113,22 +123,92 @@ function ActionsMenu({ model, onDelete }: { model: Model; onDelete: (id: string,
   );
 }
 
-export function ModelsTable({ initialData }: ModelsTableProps) {
+export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
   const utils = api.useUtils();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [modelToDelete, setModelToDelete] = useState<{ id: string; name: string } | null>(null);
 
-  // Delete mutation
-  const deleteMutation = api.admin.model.delete.useMutation({
-    onError: (error) => {
-      toast.error('Error al eliminar modelo', {
-        description: error.message,
-      });
+  // Active query with placeholderData (enables cache invalidation)
+  const { data } = api.admin.model.list.useQuery(
+    {
+      limit: 20,
+      page: searchParams.page,
+      profileSupplierId: searchParams.profileSupplierId,
+      search: searchParams.search,
+      sortBy: searchParams.sortBy,
+      sortOrder: searchParams.sortOrder,
+      status: searchParams.status,
     },
-    onSuccess: () => {
-      toast.success('Modelo eliminado correctamente');
-      setDeleteDialogOpen(false);
-      setModelToDelete(null);
+    {
+      placeholderData: initialData as never, // Use server data as placeholder
+      refetchOnMount: false, // Don't refetch on mount (use server data)
+      staleTime: 30_000, // Consider data fresh for 30 seconds
+    }
+  );
+
+  // Use fetched data or fallback to initialData
+  const tableData = data ?? initialData;
+
+  // Tenant config for tenant-aware formatting (aggressively cached, never refetches)
+  const { formatContext } = useTenantConfig();
+
+  // Context type for optimistic update snapshot
+  type DeleteModelContext = {
+    previousData?: RouterOutputs['admin']['model']['list'];
+  };
+
+  // Delete mutation with optimistic updates
+  const deleteMutation = api.admin.model.delete.useMutation<DeleteModelContext>({
+    onError: (_error, _variables, context) => {
+      // Rollback to previous data on error
+      if (context?.previousData) {
+        utils.admin.model.list.setData(
+          {
+            limit: 20,
+            page: searchParams.page,
+            profileSupplierId: searchParams.profileSupplierId,
+            search: searchParams.search,
+            sortBy: searchParams.sortBy,
+            sortOrder: searchParams.sortOrder,
+            status: searchParams.status,
+          },
+          context.previousData
+        );
+      }
+    },
+    onMutate: async (variables) => {
+      // Cancel any outgoing refetches to avoid overwriting optimistic update
+      await utils.admin.model.list.cancel();
+
+      // Snapshot the previous value
+      const previousData = utils.admin.model.list.getData();
+
+      // Optimistically update to remove the deleted model
+      utils.admin.model.list.setData(
+        {
+          limit: 20,
+          page: searchParams.page,
+          profileSupplierId: searchParams.profileSupplierId,
+          search: searchParams.search,
+          sortBy: searchParams.sortBy,
+          sortOrder: searchParams.sortOrder,
+          status: searchParams.status,
+        },
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            items: old.items.filter((model) => model.id !== variables.id),
+            total: old.total - 1,
+          };
+        }
+      );
+
+      // Return context with snapshot
+      return { previousData };
+    },
+    onSettled: () => {
+      // Always refetch after error or success to ensure sync with server
       void utils.admin.model.list.invalidate();
     },
   });
@@ -142,11 +222,29 @@ export function ModelsTable({ initialData }: ModelsTableProps) {
   };
 
   /**
-   * Confirm delete
+   * Confirm delete with optimistic UI and toast.promise
    */
   const handleConfirmDelete = async () => {
     if (!modelToDelete) return;
-    await deleteMutation.mutateAsync({ id: modelToDelete.id });
+
+    const deletePromise = deleteMutation.mutateAsync({ id: modelToDelete.id });
+
+    toast.promise(deletePromise, {
+      error: (error: Error) => error.message || 'No se pudo eliminar el modelo',
+      loading: `Eliminando ${modelToDelete.name}...`,
+      success: `${modelToDelete.name} eliminado correctamente`,
+    });
+
+    // Close dialog and reset state after promise resolves (success or error)
+    await deletePromise
+      .then(() => {
+        setDeleteDialogOpen(false);
+        setModelToDelete(null);
+      })
+      .catch(() => {
+        // Error already handled by toast.promise and onError
+        // Keep dialog open so user can try again or cancel
+      });
   };
 
   /**
@@ -172,7 +270,7 @@ export function ModelsTable({ initialData }: ModelsTableProps) {
       sortable: false,
     },
     {
-      cell: (model) => formatCurrency(model.basePrice),
+      cell: (model) => formatCurrency(model.basePrice, { context: formatContext }),
       header: 'Precio Base',
       id: 'basePrice',
       sortable: true,
@@ -208,20 +306,20 @@ export function ModelsTable({ initialData }: ModelsTableProps) {
         <CardHeader>
           <div className="flex items-start justify-between">
             <div>
-              <CardTitle>Modelos ({initialData.total})</CardTitle>
+              <CardTitle>Modelos ({tableData.total})</CardTitle>
               <CardDescription>Gestiona los modelos de perfiles disponibles en el catálogo</CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Table */}
-          <ServerTable columns={columns} data={initialData.items} emptyMessage="No se encontraron modelos" />
+          <ServerTable columns={columns} data={tableData.items as Model[]} emptyMessage="No se encontraron modelos" />
 
           {/* Pagination */}
           <TablePagination
-            currentPage={initialData.page}
-            totalItems={initialData.total}
-            totalPages={initialData.totalPages}
+            currentPage={tableData.page}
+            totalItems={tableData.total}
+            totalPages={tableData.totalPages}
           />
         </CardContent>
       </Card>

@@ -207,6 +207,24 @@ export const modelRouter = createTRPCRouter({
    * Deletes model after checking referential integrity
    */
   delete: adminProcedure.input(deleteModelSchema).mutation(async ({ ctx, input }) => {
+    // Check if model exists
+    const existingModel = await ctx.db.model.findUnique({
+      select: { id: true, name: true },
+      where: { id: input.id },
+    });
+
+    if (!existingModel) {
+      logger.warn('Model not found for deletion', {
+        modelId: input.id,
+        userId: ctx.session.user.id,
+      });
+
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'El modelo no existe o ya fue eliminado',
+      });
+    }
+
     // Check referential integrity
     const integrityCheck = await canDeleteModel(input.id);
 

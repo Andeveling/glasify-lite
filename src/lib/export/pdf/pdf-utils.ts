@@ -3,52 +3,35 @@
  *
  * Helper functions for PDF generation including formatting,
  * image encoding, and data transformation.
+ *
+ * @deprecated formatCurrency, formatDate, formatDateSpanish
+ * Use @/lib/format instead for tenant-aware formatting
  */
 
+import { formatCurrency as formatCurrencyCore, formatDateCustom, formatDateFull } from '@/lib/format';
+
 /**
- * Format number as Colombian Peso currency
+ * Format number as currency (legacy wrapper)
+ * @deprecated Use formatCurrency from @/lib/format with TenantConfig context
  */
 export function formatCurrency(amount: number, currency = 'COP'): string {
-  if (currency === 'COP') {
-    // Colombian Peso format: $1.234.567
-    return `$${amount.toLocaleString('es-CO', {
-      maximumFractionDigits: 0,
-      minimumFractionDigits: 0,
-    })}`;
-  }
-
-  // Fallback to standard format
-  return new Intl.NumberFormat('es-CO', {
-    currency,
-    minimumFractionDigits: 0,
-    style: 'currency',
-  }).format(amount);
+  return formatCurrencyCore(amount, { context: { currency, locale: 'es-CO', timezone: 'America/Bogota' } });
 }
 
 /**
- * Format date as YYYY-MM-DD
+ * Format date as YYYY-MM-DD (legacy wrapper)
+ * @deprecated Use formatDateCustom from @/lib/format with TenantConfig context
  */
 export function formatDate(date: string | Date): string {
-  const d = typeof date === 'string' ? new Date(date) : date;
-
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-
-  return `${year}-${month}-${day}`;
+  return formatDateCustom(date, 'YYYY-MM-DD');
 }
 
 /**
- * Format date as human-readable Spanish date
+ * Format date as human-readable Spanish date (legacy wrapper)
+ * @deprecated Use formatDateFull from @/lib/format with TenantConfig context
  */
 export function formatDateSpanish(date: string | Date): string {
-  const d = typeof date === 'string' ? new Date(date) : date;
-
-  return d.toLocaleDateString('es-CO', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
+  return formatDateFull(date, { currency: 'COP', locale: 'es-CO', timezone: 'America/Bogota' });
 }
 
 /**
@@ -70,10 +53,12 @@ export function encodeImage(_url: string): Promise<string | null> {
  * Truncate text to max length with ellipsis
  */
 export function truncateText(text: string, maxLength: number): string {
+  const ellipsisLength = 3;
+
   if (text.length <= maxLength) {
     return text;
   }
-  return `${text.slice(0, maxLength - 3)}...`;
+  return `${text.slice(0, maxLength - ellipsisLength)}...`;
 }
 
 /**
