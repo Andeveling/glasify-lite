@@ -1,46 +1,69 @@
 /**
  * Profile Supplier List Component
  *
- * Client Component with search, filters, pagination and CRUD actions
+ * Client Component - Server-optimized pattern
+ *
+ * Receives:
+ * - initialData: Datos precargados del servidor (SSR)
+ * - searchParams: Estado actual de filtros (para sincronización)
+ *
+ * Responsibilities:
+ * - Display tabla con datos
+ * - Handle CRUD actions (edit, delete)
+ * - Manage optimistic UI
  *
  * Features:
- * - Search by name
- * - Filter by material type and active status
- * - Pagination with page navigation
- * - Create, edit, delete actions via dialog modals
- * - Delete confirmation dialog with referential integrity
- * - Optimistic UI updates
+ * - Optimistic delete with rollback on error
+ * - Toast notifications with loading states
+ * - Cache invalidation after mutations
+ *
+ * Key differences from old ServiceList:
+ * ✅ Eliminado: React state para filtros (page, search, typeFilter)
+ * ✅ Agregado: Recibe datos iniciales del servidor
+ * ✅ Agregado: Sincroniza con URL via searchParams
+ * ✅ Simplificado: Enfocado en presentación, no state management
  */
+/** biome-ignore-all assist/source/useSortedKeys: TypeScript necesita que onMutate se defina primero para inferir el tipo del contexto que luego se usa en onError. */
 
 'use client';
 
 import type { MaterialType, ProfileSupplier } from '@prisma/client';
-import { Factory, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog';
+import { TablePagination } from '@/app/_components/server-table/table-pagination';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import type { ListProfileSuppliersOutput } from '@/lib/validations/admin/profile-supplier.schema';
 import { api } from '@/trpc/react';
-import { useProfileSupplierMutations } from '../_hooks/use-profile-supplier-mutations';
-import { ProfileSupplierDialog } from './profile-supplier-dialog';
+import { ProfileSupplierEmpty } from './profile-supplier-empty';
 
 type ProfileSupplierListProps = {
-  initialData: ListProfileSuppliersOutput;
+  initialData: {
+    items: ProfileSupplier[];
+    limit: number;
+    page: number;
+    total: number;
+    totalPages: number;
+  };
+  onEditClick: (supplier: ProfileSupplier) => void;
+  searchParams: {
+    isActive?: string;
+    materialType?: string;
+    page?: string;
+    search?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  };
 };
 
-const MATERIAL_TYPE_OPTIONS: { label: string; value: MaterialType }[] = [
-  { label: 'PVC', value: 'PVC' },
-  { label: 'Aluminio', value: 'ALUMINUM' },
-  { label: 'Madera', value: 'WOOD' },
-  { label: 'Mixto', value: 'MIXED' },
-];
-
+/**
+ * Material type labels (Spanish)
+ * Used for badges and UI display
+ */
 const MATERIAL_TYPE_LABELS: Record<MaterialType, string> = {
   ALUMINUM: 'Aluminio',
   MIXED: 'Mixto',
@@ -48,289 +71,198 @@ const MATERIAL_TYPE_LABELS: Record<MaterialType, string> = {
   WOOD: 'Madera',
 };
 
-export function ProfileSupplierList({ initialData }: ProfileSupplierListProps) {
-  const [search, setSearch] = useState('');
-  const [materialType, setMaterialType] = useState<MaterialType | 'ALL'>('ALL');
-  const [isActive, setIsActive] = useState<'all' | 'active' | 'inactive'>('all');
-  const [page, setPage] = useState(1);
+/**
+ * Material type badge variants
+ * Visual distinction for different material types
+ */
+const MATERIAL_TYPE_VARIANTS: Record<MaterialType, 'default' | 'secondary' | 'outline' | 'destructive'> = {
+  ALUMINUM: 'default',
+  MIXED: 'outline',
+  PVC: 'secondary',
+  WOOD: 'destructive',
+};
 
-  // Dialog states
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create');
-  const [selectedSupplier, setSelectedSupplier] = useState<ProfileSupplier | undefined>(undefined);
-
-  // Delete dialog states
+export function ProfileSupplierList({ initialData, searchParams, onEditClick }: ProfileSupplierListProps) {
+  const utils = api.useUtils();
+  const router = useRouter();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [supplierToDelete, setSupplierToDelete] = useState<{ id: string; name: string } | null>(null);
 
-  // Query with filters
-  const { data, isLoading } = api.admin['profile-supplier'].list.useQuery(
-    {
-      isActive,
-      limit: 20,
-      materialType: materialType === 'ALL' ? undefined : materialType,
-      page,
-      search: search || undefined,
-      sortBy: 'name',
-      sortOrder: 'asc',
-    },
-    {
-      initialData,
-      placeholderData: (previousData) => previousData, // TanStack Query v5 replacement for keepPreviousData
-    }
-  );
+  // Delete mutation with optimistic UI
+  const deleteMutation = api.admin['profile-supplier'].delete.useMutation({
+    onMutate: async (variables) => {
+      // Cancel any outgoing refetches
+      await utils.admin['profile-supplier'].list.cancel();
 
-  // Delete mutation from hook
-  const { handleDelete, deleteMutation } = useProfileSupplierMutations({
+      // Snapshot the previous value
+      const previousData = utils.admin['profile-supplier'].list.getData();
+
+      // Optimistically remove the item from cache
+      if (previousData) {
+        utils.admin['profile-supplier'].list.setData(
+          // Match the input parameters of the current query
+          {
+            isActive: searchParams.isActive as 'all' | 'active' | 'inactive' | undefined,
+            limit: initialData.limit,
+            materialType: searchParams.materialType as MaterialType | undefined,
+            page: Number(searchParams.page) || 1,
+            search: searchParams.search,
+            sortBy: (searchParams.sortBy || 'name') as 'name' | 'createdAt' | 'materialType',
+            sortOrder: (searchParams.sortOrder || 'asc') as 'asc' | 'desc',
+          },
+          (old) => {
+            if (!old) return old;
+            return {
+              ...old,
+              items: old.items.filter((item) => item.id !== variables.id),
+              total: old.total - 1,
+            };
+          }
+        );
+      }
+
+      // Show immediate feedback
+      toast.loading('Eliminando proveedor...', { id: 'delete-supplier' });
+
+      // Return context with snapshot for rollback
+      return { previousData };
+    },
+    onError: (error, _variables, context) => {
+      // Rollback to previous data on error
+      if (context?.previousData) {
+        utils.admin['profile-supplier'].list.setData(
+          {
+            isActive: searchParams.isActive as 'all' | 'active' | 'inactive' | undefined,
+            limit: initialData.limit,
+            materialType: searchParams.materialType as MaterialType | undefined,
+            page: Number(searchParams.page) || 1,
+            search: searchParams.search,
+            sortBy: (searchParams.sortBy || 'name') as 'name' | 'createdAt' | 'materialType',
+            sortOrder: (searchParams.sortOrder || 'asc') as 'asc' | 'desc',
+          },
+          context.previousData
+        );
+      }
+
+      toast.error('Error al eliminar proveedor', {
+        description: error.message,
+        id: 'delete-supplier',
+      });
+    },
     onSuccess: () => {
+      toast.success('Proveedor eliminado correctamente', { id: 'delete-supplier' });
       setDeleteDialogOpen(false);
       setSupplierToDelete(null);
     },
+    onSettled: () => {
+      // Invalidate cache and refresh server data
+      void utils.admin['profile-supplier'].list.invalidate();
+      router.refresh();
+    },
   });
 
-  const handleCreateClick = () => {
-    setDialogMode('create');
-    setSelectedSupplier(undefined);
-    setDialogOpen(true);
-  };
-
-  const handleEditClick = (supplier: ProfileSupplier) => {
-    setDialogMode('edit');
-    setSelectedSupplier(supplier);
-    setDialogOpen(true);
-  };
-
-  const handleDeleteClick = (id: string, name: string) => {
-    setSupplierToDelete({ id, name });
+  const handleDeleteClick = (supplier: { id: string; name: string }) => {
+    setSupplierToDelete(supplier);
     setDeleteDialogOpen(true);
   };
 
-  const handleConfirmDelete = () => {
-    if (!supplierToDelete) return;
-    handleDelete(supplierToDelete.id);
+  const handleDeleteConfirm = () => {
+    if (supplierToDelete) {
+      deleteMutation.mutate({ id: supplierToDelete.id });
+    }
   };
 
-  const suppliers = data?.items ?? [];
-  const totalPages = data?.totalPages ?? 1;
+  const { items: suppliers, page: currentPage, total, totalPages } = initialData;
+
+  // Check if there are filters active
+  const hasFilters = Boolean(
+    searchParams?.search ||
+      (searchParams?.materialType && searchParams.materialType !== 'all') ||
+      (searchParams?.isActive && searchParams.isActive !== 'all')
+  );
 
   return (
-    <div className="space-y-6">
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Filtros</CardTitle>
-          <CardDescription>Busca y filtra proveedores</CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4 md:grid-cols-4">
-          {/* Search */}
-          <div className="space-y-2">
-            <label className="font-medium text-sm" htmlFor="search">
-              Buscar
-            </label>
-            <div className="relative">
-              <Search className="absolute top-2.5 left-2.5 size-4 text-muted-foreground" />
-              <Input
-                className="pl-8"
-                id="search"
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1); // Reset to first page on search
-                }}
-                placeholder="Buscar por nombre..."
-                value={search}
-              />
-            </div>
-          </div>
-
-          {/* Material Type Filter */}
-          <div className="space-y-2">
-            <label className="font-medium text-sm" htmlFor="materialType">
-              Tipo de Material
-            </label>
-            <Select
-              onValueChange={(value) => {
-                setMaterialType(value as MaterialType | 'ALL');
-                setPage(1);
-              }}
-              value={materialType}
-            >
-              <SelectTrigger id="materialType">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">Todos</SelectItem>
-                {MATERIAL_TYPE_OPTIONS.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Active Status Filter */}
-          <div className="space-y-2">
-            <label className="font-medium text-sm" htmlFor="isActive">
-              Estado
-            </label>
-            <Select
-              onValueChange={(value) => {
-                setIsActive(value as 'all' | 'active' | 'inactive');
-                setPage(1);
-              }}
-              value={isActive}
-            >
-              <SelectTrigger id="isActive">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="active">Activos</SelectItem>
-                <SelectItem value="inactive">Inactivos</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Create Button */}
-          <div className="flex items-end">
-            <Button className="w-full" onClick={handleCreateClick}>
-              <Plus className="mr-2 size-4" />
-              Nuevo Proveedor
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Proveedores ({data?.total ?? 0})</CardTitle>
-          <CardDescription>
-            Mostrando {suppliers.length} de {data?.total ?? 0} proveedores
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nombre</TableHead>
-                <TableHead>Material</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead>Notas</TableHead>
-                <TableHead className="text-right">Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading && (
-                <TableRow>
-                  <TableCell className="text-center" colSpan={5}>
-                    Cargando...
-                  </TableCell>
-                </TableRow>
-              )}
-              {!isLoading && suppliers.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={5}>
-                    <Empty>
-                      <EmptyHeader>
-                        <EmptyMedia variant="icon">
-                          <Factory />
-                        </EmptyMedia>
-                        <EmptyTitle>No hay proveedores de perfiles</EmptyTitle>
-                        <EmptyDescription>
-                          {search || materialType !== 'ALL' || isActive !== 'all'
-                            ? 'No se encontraron proveedores que coincidan con los filtros aplicados'
-                            : 'Comienza agregando tu primer proveedor de perfiles'}
-                        </EmptyDescription>
-                      </EmptyHeader>
-                      <EmptyContent>
-                        <Button onClick={handleCreateClick}>
-                          <Plus className="mr-2 size-4" />
-                          Crear Primer Proveedor
-                        </Button>
-                      </EmptyContent>
-                    </Empty>
-                  </TableCell>
-                </TableRow>
-              )}
-              {!isLoading &&
-                suppliers.map((supplier) => (
-                  <TableRow key={supplier.id}>
-                    <TableCell className="font-medium">{supplier.name}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{MATERIAL_TYPE_LABELS[supplier.materialType]}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={supplier.isActive ? 'default' : 'secondary'}>
-                        {supplier.isActive ? 'Activo' : 'Inactivo'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="max-w-[200px] truncate text-muted-foreground text-sm">
-                      {supplier.notes || '-'}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button onClick={() => handleEditClick(supplier)} size="icon" variant="ghost">
-                          <Pencil className="size-4" />
-                          <span className="sr-only">Editar</span>
-                        </Button>
-                        <Button
-                          onClick={() => handleDeleteClick(supplier.id, supplier.name)}
-                          size="icon"
-                          variant="ghost"
-                        >
-                          <Trash2 className="size-4 text-destructive" />
-                          <span className="sr-only">Eliminar</span>
-                        </Button>
-                      </div>
-                    </TableCell>
+    <>
+      {/* Empty state */}
+      {suppliers.length === 0 ? (
+        <ProfileSupplierEmpty hasFilters={hasFilters} />
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle>Proveedores de Perfiles</CardTitle>
+            <CardDescription>
+              {total} proveedor{total !== 1 ? 's' : ''} registrado{total !== 1 ? 's' : ''}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Table */}
+            <div className="overflow-x-auto rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nombre</TableHead>
+                    <TableHead>Material</TableHead>
+                    <TableHead>Estado</TableHead>
+                    <TableHead>Notas</TableHead>
+                    <TableHead className="w-[100px] text-right">Acciones</TableHead>
                   </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="mt-4 flex items-center justify-between">
-              <p className="text-muted-foreground text-sm">
-                Página {page} de {totalPages}
-              </p>
-              <div className="flex gap-2">
-                <Button disabled={page === 1} onClick={() => setPage((p) => p - 1)} size="sm" variant="outline">
-                  Anterior
-                </Button>
-                <Button
-                  disabled={page === totalPages}
-                  onClick={() => setPage((p) => p + 1)}
-                  size="sm"
-                  variant="outline"
-                >
-                  Siguiente
-                </Button>
-              </div>
+                </TableHeader>
+                <TableBody>
+                  {suppliers.map((supplier) => (
+                    <TableRow key={supplier.id}>
+                      <TableCell className="font-medium">{supplier.name}</TableCell>
+                      <TableCell>
+                        <Badge variant={MATERIAL_TYPE_VARIANTS[supplier.materialType]}>
+                          {MATERIAL_TYPE_LABELS[supplier.materialType]}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={supplier.isActive ? 'default' : 'secondary'}>
+                          {supplier.isActive ? 'Activo' : 'Inactivo'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="max-w-[200px] truncate text-muted-foreground text-sm">
+                        {supplier.notes || '-'}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button onClick={() => onEditClick(supplier)} size="sm" variant="ghost">
+                            <Pencil className="h-4 w-4" />
+                            <span className="sr-only">Editar</span>
+                          </Button>
+                          <Button
+                            onClick={() => handleDeleteClick({ id: supplier.id, name: supplier.name })}
+                            size="sm"
+                            variant="ghost"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            <span className="sr-only">Eliminar</span>
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
-          )}
-        </CardContent>
-      </Card>
 
-      {/* Profile Supplier Dialog */}
-      <ProfileSupplierDialog
-        defaultValues={selectedSupplier}
-        mode={dialogMode}
-        onOpenChange={setDialogOpen}
-        open={dialogOpen}
-      />
+            {/* Pagination - reutilizable component */}
+            <TablePagination currentPage={currentPage} totalItems={total} totalPages={totalPages} />
+          </CardContent>
+        </Card>
+      )}
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
         dependencies={[]}
         entityLabel={supplierToDelete?.name ?? ''}
-        entityName="proveedor de perfiles"
+        entityName="proveedor"
         loading={deleteMutation.isPending}
-        onConfirm={handleConfirmDelete} // TODO: Add dependencies from integrityCheck when available
+        onConfirm={handleDeleteConfirm}
         onOpenChange={setDeleteDialogOpen}
         open={deleteDialogOpen}
+        warningMessage="Esta acción no se puede deshacer."
       />
-    </div>
+    </>
   );
 }

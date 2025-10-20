@@ -68,6 +68,20 @@
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - all CRUD operations work via dialog modals
 
+**✅ REFACTORING COMPLETADO**: Se implementó exitosamente el patrón server-optimized siguiendo el estándar de Services:
+- ✅ page.tsx: SSR con `force-dynamic` y lectura de searchParams (Next.js 15 Promise pattern)
+- ✅ profile-supplier-content.tsx: Wrapper client para manejo de estado de dialogs
+- ✅ profile-supplier-filters.tsx: Componente de filtros con URL sync via TableSearch/TableFilters
+- ✅ profile-supplier-list.tsx: Tabla con optimistic delete, URL-based pagination
+- ✅ profile-supplier-empty.tsx: Empty state con mensajes condicionales
+- ✅ TypeScript: 0 errores en modo strict
+- ✅ Patrón URL: Todos los filtros se reflejan en searchParams (page, search, materialType, isActive)
+- ✅ SSR Cache: Invalidación two-step (invalidate + router.refresh)
+- ✅ Mutations: Delete con optimistic UI y rollback en error
+- ✅ Dialog: Create/Edit manejado en Content, no navegación a páginas separadas
+
+
+
 ---
 
 ## Phase 4: User Story 2 - Improved Code Maintainability (Priority: P1)

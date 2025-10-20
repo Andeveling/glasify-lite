@@ -69,7 +69,7 @@ export function ProfileSupplierDialog({ mode, open, onOpenChange, defaultValues 
   });
 
   // Handle form submission - routes to create or update
-  const handleSubmit = (formData: Parameters<typeof handleCreate>[ 0 ]) => {
+  const handleSubmit = (formData: Parameters<typeof handleCreate>[0]) => {
     if (mode === 'create') {
       handleCreate(formData);
     } else if (defaultValues?.id) {
