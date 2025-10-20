@@ -19,12 +19,12 @@
 
 **Purpose**: Validate existing infrastructure and prepare for refactoring
 
-- [ ] T001 Verify branch `012-simplify-profile-suppliers` is checked out
-- [ ] T002 Run `pnpm install` to ensure all dependencies are installed
-- [ ] T003 [P] Verify PostgreSQL is running and database is accessible
-- [ ] T004 [P] Run `pnpm db:generate` to generate Prisma Client
-- [ ] T005 [P] Run `pnpm typecheck` to verify TypeScript setup
-- [ ] T006 Create `_hooks/` directory in `src/app/(dashboard)/admin/profile-suppliers/`
+- [x] T001 Verify branch `012-simplify-profile-suppliers` is checked out
+- [x] T002 Run `pnpm install` to ensure all dependencies are installed
+- [x] T003 [P] Verify PostgreSQL is running and database is accessible
+- [x] T004 [P] Run `pnpm db:generate` to generate Prisma Client
+- [x] T005 [P] Run `pnpm typecheck` to verify TypeScript setup
+- [x] T006 Create `_hooks/` directory in `src/app/(dashboard)/admin/profile-suppliers/`
 
 ---
 
@@ -34,13 +34,13 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T007 Review Services module pattern in `src/app/(dashboard)/admin/services/_components/`
-- [ ] T008 Review Services hooks in `src/app/(dashboard)/admin/services/_hooks/`
-- [ ] T009 Review existing tRPC procedures in `src/server/api/routers/admin/profile-supplier.ts`
-- [ ] T010 Review existing validation schema in `src/lib/validations/admin/profile-supplier.schema.ts`
-- [ ] T011 Review current profile-supplier-form.tsx implementation (247 lines)
-- [ ] T012 Review DeleteConfirmationDialog component in `src/app/_components/delete-confirmation-dialog.tsx`
-- [ ] T013 Review Empty state components in `src/components/ui/empty.tsx`
+- [x] T007 Review Services module pattern in `src/app/(dashboard)/admin/services/_components/`
+- [x] T008 Review Services hooks in `src/app/(dashboard)/admin/services/_hooks/`
+- [x] T009 Review existing tRPC procedures in `src/server/api/routers/admin/profile-supplier.ts`
+- [x] T010 Review existing validation schema in `src/lib/validations/admin/profile-supplier.schema.ts`
+- [x] T011 Review current profile-supplier-form.tsx implementation (247 lines)
+- [x] T012 Review DeleteConfirmationDialog component in `src/app/_components/delete-confirmation-dialog.tsx`
+- [x] T013 Review Empty state components in `src/components/ui/empty.tsx`
 
 **Checkpoint**: Foundation reviewed - user story implementation can now begin in parallel
 
