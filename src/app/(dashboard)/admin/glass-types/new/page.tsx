@@ -23,7 +23,7 @@ export default function NewGlassTypePage() {
         <h1 className="font-bold text-3xl tracking-tight">Nuevo Tipo de Vidrio</h1>
         <p className="text-muted-foreground">Crea un nuevo tipo de vidrio con sus soluciones y características</p>
       </div>
-      <div className='flex flex-1 gap-4 overflow-hidden rounded-lg'>
+      <div className="flex flex-1 gap-4 overflow-hidden rounded-lg">
         {/* Formulario - Ocupa espacio flexible */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-0">

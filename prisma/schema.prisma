@@ -306,9 +306,12 @@ model Service {
   type          ServiceType
   unit          ServiceUnit
   rate          Decimal            @db.Decimal(12, 4)
+  isActive      Boolean            @default(true)
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
   quoteServices QuoteItemService[]
+
+  @@index([isActive])
 }
 
 model Quote {

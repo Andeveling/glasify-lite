@@ -27,8 +27,10 @@ import { canDeleteService } from '@/server/services/referential-integrity.servic
 function buildWhereClause(input: {
   search?: string;
   type?: 'all' | 'area' | 'perimeter' | 'fixed';
+  isActive?: 'all' | 'active' | 'inactive';
 }): Prisma.ServiceWhereInput {
-  const where: Prisma.ServiceWhereInput = {};
+  type ServiceWhereInputWithIsActive = Prisma.ServiceWhereInput & { isActive?: boolean };
+  const where: ServiceWhereInputWithIsActive = {};
 
   // Search by name
   if (input.search) {
@@ -41,6 +43,11 @@ function buildWhereClause(input: {
   // Filter by type
   if (input.type && input.type !== 'all') {
     where.type = input.type;
+  }
+
+  // Filter by active status
+  if (input.isActive && input.isActive !== 'all') {
+    where.isActive = input.isActive === 'active';
   }
 
   return where;
@@ -168,9 +175,9 @@ export const serviceRouter = createTRPCRouter({
    * Returns paginated list of services with filtering and sorting
    */
   list: adminProcedure.input(listServicesSchema).query(async ({ ctx, input }) => {
-    const { limit, page, search, sortBy, sortOrder, type } = input;
+    const { limit, page, search, sortBy, sortOrder, type, isActive } = input;
 
-    const where = buildWhereClause({ search, type });
+    const where = buildWhereClause({ isActive, search, type });
     const orderBy = buildOrderByClause(sortBy, sortOrder);
 
     // Execute count and find queries in parallel
@@ -188,7 +195,7 @@ export const serviceRouter = createTRPCRouter({
 
     logger.info('Services listed', {
       count: items.length,
-      filters: { search, type },
+      filters: { isActive, search, type },
       page,
       total,
       userId: ctx.session.user.id,

@@ -71,9 +71,10 @@ export type UpdateServiceInput = z.infer<typeof updateServiceSchema>;
 
 /**
  * List Services Schema
- * Pagination + search + sorting
+ * Pagination + search + sorting + filtering
  */
 export const listServicesSchema = paginationSchema.extend({
+  isActive: z.enum(['all', 'active', 'inactive']).default('all').describe('Filter by active status'),
   search: searchQuerySchema.describe('Search by name'),
 
   sortBy: z.enum(['name', 'createdAt', 'updatedAt', 'rate']).default('createdAt').describe('Sort field'),

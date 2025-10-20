@@ -1031,6 +1031,100 @@ When migrating existing tables to server-optimized pattern:
 
 ---
 
+## Services Admin Dashboard Pattern
+
+The `/admin/services` view implements the **server-optimized dashboard pattern** with full standardization:
+
+### URL Schema
+
+Services uses these query parameters for state management:
+- `page` - Current page (default: 1)
+- `search` - Search query (debounced 300ms)
+- `type` - Service type filter (all/area/perimeter/fixed, default: all)
+- `isActive` - Status filter (all/active/inactive, default: all)
+- `sortBy` - Sort field (name/createdAt/updatedAt/rate, default: name)
+- `sortOrder` - Sort direction (asc/desc, default: asc)
+
+### Example URLs
+
+```
+/admin/services                                    # Default state
+/admin/services?type=area&page=1&search=inst      # Filtered search
+/admin/services?isActive=active&type=fixed        # Status + type filter
+/admin/services?page=2&search=entrega&type=area   # Complex filter
+```
+
+### File Structure
+
+```
+src/app/(dashboard)/admin/services/
+├── page.tsx                              # Server Component (SSR)
+├── _components/
+│   ├── services-filters.tsx              # Filter controls (Client)
+│   └── services-list.tsx                 # Table display (Client)
+└── _components/service-form.tsx          # Form component
+```
+
+### Implementation Details
+
+**Page Component** (`page.tsx`):
+- `export const dynamic = 'force-dynamic'` - SSR, no ISR
+- Accepts `searchParams` as `Promise` (Next.js 15)
+- Parses all query params outside Suspense
+- Passes filters to `<ServicesFilters />`
+- Content inside Suspense with skeleton fallback
+
+**Filters Component** (`services-filters.tsx`):
+- Always visible (outside Suspense)
+- Uses `<TableSearch />` with debounce (300ms)
+- Uses `<TableFilters />` for dropdowns
+- Syncs with URL via server-filters pattern
+- "Don't Make Me Think" UX: clear labels, logical grouping
+
+**List Component** (`services-list.tsx`):
+- Receives `initialData` from server
+- Handles CRUD operations (edit, delete)
+- Uses `<TablePagination />` for page navigation
+- Uses `formatCurrency()` for display
+- Optimistic UI for mutations
+
+### Key Features
+
+✅ **Deep Linking**: Share filtered URLs with team  
+✅ **Browser History**: Back/forward buttons work correctly  
+✅ **Streaming**: Skeleton shows while loading  
+✅ **SEO**: Server-rendered initial state  
+✅ **Performance**: Debounced search reduces server load  
+✅ **Scalability**: Handles 100+ items with pagination  
+
+### Common Patterns
+
+**Reset to page 1 on filter change**:
+```typescript
+// Automatically handled by useServerParams in TableSearch/TableFilters
+// When user changes filter, page param is reset to 1
+```
+
+**Format service rate**:
+```typescript
+import { formatCurrency } from '@/lib/format';
+{formatCurrency(service.rate)}  // Uses default tenant context (COP)
+```
+
+**Delete with confirmation**:
+```typescript
+<DeleteConfirmationDialog
+  open={deleteDialogOpen}
+  onOpenChange={setDeleteDialogOpen}
+  entityName="servicio"
+  entityLabel={serviceToDelete?.name}
+  onConfirm={handleDeleteConfirm}
+  loading={deleteMutation.isPending}
+/>
+```
+
+---
+
 ## Key Patterns Summary
 
 1. **Next.js 15**: Server Components by default, SSR/ISR based on route type, Streaming
@@ -1048,6 +1142,7 @@ When migrating existing tables to server-optimized pattern:
 13. **Ultracite**: Linting and formatting with Biome
 14. **RBAC**: Three-layer authorization (middleware, tRPC, UI guards)
 15. **Server Tables**: URL-based state, debounced search, database indexes
+16. **Services Dashboard**: Full server-optimized pattern with filters, pagination, CRUD
 16. **Formatters**: Centralized in `@lib/format` with tenant context
 17. **Optimistic UI**: Implement for mutations with rollback on error
 

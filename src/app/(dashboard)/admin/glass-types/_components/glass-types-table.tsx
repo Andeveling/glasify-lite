@@ -34,7 +34,6 @@ import { TablePagination } from '@/app/_components/server-table/table-pagination
 import { useTenantConfig } from '@/app/_hooks/use-tenant-config';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -334,27 +333,13 @@ export function GlassTypesTable({ initialData, searchParams }: GlassTypesTablePr
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div>
-              <CardTitle>Tipos de Vidrio ({initialData.total})</CardTitle>
-              <CardDescription>Gestiona los tipos de vidrio con sus soluciones y características</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Table */}
-          <ServerTable columns={columns} data={initialData.items} emptyMessage="No se encontraron tipos de vidrio" />
-
-          {/* Pagination */}
-          <TablePagination
-            currentPage={initialData.page}
-            totalItems={initialData.total}
-            totalPages={initialData.totalPages}
-          />
-        </CardContent>
-      </Card>
+      <ServerTable columns={columns} data={initialData.items} emptyMessage="No se encontraron tipos de vidrio" />
+      {/* Pagination */}
+      <TablePagination
+        currentPage={initialData.page}
+        totalItems={initialData.total}
+        totalPages={initialData.totalPages}
+      />
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
