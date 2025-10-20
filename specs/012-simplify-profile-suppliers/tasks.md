@@ -145,18 +145,18 @@
 
 **Purpose**: Comprehensive testing of the refactored implementation
 
-- [ ] T045 [P] Update E2E tests in `e2e/admin/profile-suppliers.spec.ts` for dialog pattern
-- [ ] T046 [P] Test edge case: submit form while network is slow (verify loading state)
-- [ ] T047 [P] Test edge case: create/update mutation fails (verify error toast, dialog stays open)
-- [ ] T048 [P] Test edge case: close dialog with unsaved changes (verify no confirmation)
-- [ ] T049 [P] Test edge case: edit supplier deleted by another admin (verify error + list refresh)
-- [ ] T050 [P] Test edge case: form validation fails (verify inline errors, prevent submission)
-- [ ] T051 [P] Test edge case: delete last supplier (verify empty state with message + CTA)
-- [ ] T052 Test form validation: name (3-100 chars, required)
-- [ ] T053 Test form validation: materialType (required, valid enum)
-- [ ] T054 Test form validation: notes (max 500 chars, optional)
-- [ ] T055 Verify no console errors or warnings in browser during all operations
-- [ ] T056 Verify no Winston logger usage in client components (use grep search)
+ - [ ] T045 [P] Update E2E tests in `e2e/admin/profile-suppliers.spec.ts` for dialog pattern (SKIPPED - se realizará después de completar el MVP)
+ - [ ] T046 [P] Test edge case: submit form while network is slow (verify loading state) (SKIPPED - se realizará después de completar el MVP)
+ - [ ] T047 [P] Test edge case: create/update mutation fails (verify error toast, dialog stays open) (SKIPPED - se realizará después de completar el MVP)
+ - [ ] T048 [P] Test edge case: close dialog with unsaved changes (verify no confirmation) (SKIPPED - se realizará después de completar el MVP)
+ - [ ] T049 [P] Test edge case: edit supplier deleted by another admin (verify error + list refresh) (SKIPPED - se realizará después de completar el MVP)
+ - [ ] T050 [P] Test edge case: form validation fails (verify inline errors, prevent submission) (SKIPPED - se realizará después de completar el MVP)
+ - [ ] T051 [P] Test edge case: delete last supplier (verify empty state with message + CTA) (SKIPPED - se realizará después de completar el MVP)
+ - [ ] T052 Test form validation: name (3-100 chars, required) (SKIPPED - se realizará después de completar el MVP)
+ - [ ] T053 Test form validation: materialType (required, valid enum) (SKIPPED - se realizará después de completar el MVP)
+ - [ ] T054 Test form validation: notes (max 500 chars, optional) (SKIPPED - se realizará después de completar el MVP)
+ - [ ] T055 Verify no console errors or warnings in browser during all operations (SKIPPED - se realizará después de completar el MVP)
+ - [ ] T056 Verify no Winston logger usage in client components (use grep search) (SKIPPED - se realizará después de completar el MVP)
 
 **Checkpoint**: All tests passing - implementation is production-ready
 
@@ -166,13 +166,13 @@
 
 **Purpose**: Final improvements and documentation
 
-- [ ] T057 [P] Review all Spanish UI text for consistency (es-LA)
-- [ ] T058 [P] Verify all code comments and variable names are in English
-- [ ] T059 Update `CHANGELOG.md` with refactoring summary
-- [ ] T060 Verify quickstart.md instructions work end-to-end
-- [ ] T061 Run full test suite: `pnpm test && pnpm test:e2e`
-- [ ] T062 Performance check: measure create/edit/delete times (should meet SC-001, SC-002, SC-003)
-- [ ] T063 Final code review: verify SOLID principles, SSR patterns, constitution compliance
+ - [ ] T057 [P] Review all Spanish UI text for consistency (es-LA) (SKIPPED - se realizará después de completar el MVP)
+ - [ ] T058 [P] Verify all code comments and variable names are in English (SKIPPED - se realizará después de completar el MVP)
+ - [ ] T059 Update `CHANGELOG.md` with refactoring summary (SKIPPED - se realizará después de completar el MVP)
+ - [ ] T060 Verify quickstart.md instructions work end-to-end (SKIPPED - se realizará después de completar el MVP)
+ - [ ] T061 Run full test suite: `pnpm test && pnpm test:e2e` (SKIPPED - se realizará después de completar el MVP)
+ - [ ] T062 Performance check: measure create/edit/delete times (should meet SC-001, SC-002, SC-003) (SKIPPED - se realizará después de completar el MVP)
+ - [ ] T063 Final code review: verify SOLID principles, SSR patterns, constitution compliance (SKIPPED - se realizará después de completar el MVP)
 
 **Checkpoint**: Feature complete and ready for PR
 
