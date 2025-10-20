@@ -1,16 +1,15 @@
 /**
- * Service Dialog Component
+ * Profile Supplier Dialog Component
  *
- * Modal dialog for creating and editing Service entities.
- * Wraps ServiceForm in a Dialog component.
+ * Modal dialog for creating and editing ProfileSupplier entities.
  *
  * Pattern: Dialog-based CRUD (no separate pages)
- * Reason: Service form is simple and fits well in a modal
+ * Reason: ProfileSupplier form is simple and fits well in a modal
  *
  * Architecture (SOLID):
  * - This component focuses on UI composition and user interaction
- * - Form state management delegated to useServiceForm hook
- * - Mutation logic delegated to useServiceMutations hook
+ * - Form state management delegated to useProfileSupplierForm hook
+ * - Mutation logic delegated to useProfileSupplierMutations hook
  * - Follows Single Responsibility Principle
  *
  * Features:
@@ -21,9 +20,10 @@
 
 'use client';
 
-import type { Service, ServiceType } from '@prisma/client';
+import type { MaterialType, ProfileSupplier } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
@@ -35,31 +35,33 @@ import {
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MAX_NAME_LENGTH, MIN_NAME_LENGTH } from '@/lib/validations/admin/service.schema';
-import { useServiceForm } from '../_hooks/use-service-form';
-import { useServiceMutations } from '../_hooks/use-service-mutations';
+import { Textarea } from '@/components/ui/textarea';
+import { MAX_NAME_LENGTH, MIN_NAME_LENGTH } from '@/lib/validations/admin/profile-supplier.schema';
+import { useProfileSupplierForm } from '../_hooks/use-profile-supplier-form';
+import { useProfileSupplierMutations } from '../_hooks/use-profile-supplier-mutations';
 
-type ServiceDialogProps = {
+type ProfileSupplierDialogProps = {
   mode: 'create' | 'edit';
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  defaultValues?: Service;
+  defaultValues?: ProfileSupplier;
 };
 
 /**
- * Service type options (Spanish labels)
+ * Material type options (Spanish labels)
  */
-const SERVICE_TYPE_OPTIONS: { label: string; value: ServiceType; description: string }[] = [
-  { description: 'Precio fijo independiente de dimensiones', label: 'Fijo', value: 'fixed' },
-  { description: 'Calculado por área del producto (m²)', label: 'Área', value: 'area' },
-  { description: 'Calculado por perímetro del producto (ml)', label: 'Perímetro', value: 'perimeter' },
+const MATERIAL_TYPE_OPTIONS: { label: string; value: MaterialType }[] = [
+  { label: 'PVC', value: 'PVC' },
+  { label: 'Aluminio', value: 'ALUMINUM' },
+  { label: 'Madera', value: 'WOOD' },
+  { label: 'Mixto', value: 'MIXED' },
 ];
 
-export function ServiceDialog({ mode, open, onOpenChange, defaultValues }: ServiceDialogProps) {
+export function ProfileSupplierDialog({ mode, open, onOpenChange, defaultValues }: ProfileSupplierDialogProps) {
   // Custom hooks for separation of concerns
-  const { form, handleTypeChange } = useServiceForm({ defaultValues, mode, open });
+  const { form } = useProfileSupplierForm({ defaultValues, mode, open });
 
-  const { handleCreate, handleUpdate, isPending } = useServiceMutations({
+  const { handleCreate, handleUpdate, isPending } = useProfileSupplierMutations({
     onSuccess: () => {
       onOpenChange(false);
       form.reset();
@@ -67,7 +69,7 @@ export function ServiceDialog({ mode, open, onOpenChange, defaultValues }: Servi
   });
 
   // Handle form submission - routes to create or update
-  const handleSubmit = (formData: Parameters<typeof handleCreate>[0]) => {
+  const handleSubmit = (formData: Parameters<typeof handleCreate>[ 0 ]) => {
     if (mode === 'create') {
       handleCreate(formData);
     } else if (defaultValues?.id) {
@@ -79,30 +81,32 @@ export function ServiceDialog({ mode, open, onOpenChange, defaultValues }: Servi
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{mode === 'create' ? 'Nuevo Servicio' : 'Editar Servicio'}</DialogTitle>
+          <DialogTitle>
+            {mode === 'create' ? 'Nuevo Proveedor de Perfiles' : 'Editar Proveedor de Perfiles'}
+          </DialogTitle>
           <DialogDescription>
             {mode === 'create'
-              ? 'Crea un nuevo servicio adicional para cotizaciones'
-              : 'Actualiza la información del servicio'}
+              ? 'Crea un nuevo proveedor de perfiles para ventanas y puertas'
+              : 'Actualiza la información del proveedor de perfiles'}
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form className="space-y-4" onSubmit={form.handleSubmit(handleSubmit)}>
-            {/* Service Name */}
+            {/* Supplier Name */}
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Nombre del Servicio *</FormLabel>
+                  <FormLabel>Nombre del Proveedor *</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       className="w-full"
                       disabled={isPending}
                       maxLength={MAX_NAME_LENGTH}
-                      placeholder="Ej: Instalación, Entrega, Medición"
+                      placeholder="Ej: Rehau, Deceuninck, Azembla"
                     />
                   </FormControl>
                   <FormDescription>
@@ -113,62 +117,69 @@ export function ServiceDialog({ mode, open, onOpenChange, defaultValues }: Servi
               )}
             />
 
-            {/* Service Type */}
+            {/* Material Type */}
             <FormField
               control={form.control}
-              name="type"
+              name="materialType"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Tipo de Servicio *</FormLabel>
-                  <Select defaultValue={field.value} disabled={isPending} onValueChange={handleTypeChange}>
+                  <FormLabel>Tipo de Material *</FormLabel>
+                  <Select defaultValue={field.value} disabled={isPending} onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Selecciona el tipo de cálculo" />
+                        <SelectValue placeholder="Selecciona el tipo de material" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {SERVICE_TYPE_OPTIONS.map((option) => (
+                      {MATERIAL_TYPE_OPTIONS.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
-                          <div className="flex flex-col">
-                            <span className="font-medium">{option.label}</span>
-                            <span className="text-muted-foreground text-xs">{option.description}</span>
-                          </div>
+                          {option.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormDescription>
-                    Determina cómo se calcula el costo del servicio (la unidad se asigna automáticamente)
-                  </FormDescription>
+                  <FormDescription>Material principal del proveedor</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Service Unit - Hidden field (auto-assigned by type) */}
-            <FormField control={form.control} name="unit" render={({ field }) => <input type="hidden" {...field} />} />
-
-            {/* Service Rate */}
+            {/* Notes */}
             <FormField
               control={form.control}
-              name="rate"
+              name="notes"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Tarifa *</FormLabel>
+                  <FormLabel>Notas</FormLabel>
                   <FormControl>
-                    <Input
+                    <Textarea
                       {...field}
-                      className="w-full"
+                      className="w-full resize-none"
                       disabled={isPending}
-                      min="0.01"
-                      onChange={(e) => field.onChange(Number.parseFloat(e.target.value))}
-                      placeholder="0.00"
-                      step="0.01"
-                      type="number"
+                      maxLength={500}
+                      placeholder="Información adicional sobre el proveedor (opcional)"
+                      rows={3}
                     />
                   </FormControl>
-                  <FormDescription>Costo del servicio por unidad (debe ser mayor a cero)</FormDescription>
+                  <FormDescription>Máximo 500 caracteres</FormDescription>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Is Active */}
+            <FormField
+              control={form.control}
+              name="isActive"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox checked={field.value} disabled={isPending} onCheckedChange={field.onChange} />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Proveedor Activo</FormLabel>
+                    <FormDescription>El proveedor estará disponible para selección en cotizaciones</FormDescription>
+                  </div>
                 </FormItem>
               )}
             />
@@ -178,8 +189,8 @@ export function ServiceDialog({ mode, open, onOpenChange, defaultValues }: Servi
                 Cancelar
               </Button>
               <Button disabled={isPending} type="submit">
-                {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {mode === 'create' ? 'Crear Servicio' : 'Guardar Cambios'}
+                {isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
+                {mode === 'create' ? 'Crear Proveedor' : 'Guardar Cambios'}
               </Button>
             </DialogFooter>
           </form>

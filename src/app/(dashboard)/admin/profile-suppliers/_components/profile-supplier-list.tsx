@@ -1,5 +1,5 @@
 /**
- * Profile Supplier List Component (US4 - T026)
+ * Profile Supplier List Component
  *
  * Client Component with search, filters, pagination and CRUD actions
  *
@@ -7,26 +7,28 @@
  * - Search by name
  * - Filter by material type and active status
  * - Pagination with page navigation
- * - Create, edit, delete actions
+ * - Create, edit, delete actions via dialog modals
  * - Delete confirmation dialog with referential integrity
+ * - Optimistic UI updates
  */
 
 'use client';
 
-import type { MaterialType } from '@prisma/client';
-import { Pencil, Plus, Search, Trash2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import type { MaterialType, ProfileSupplier } from '@prisma/client';
+import { Factory, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { toast } from 'sonner';
 import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import type { ListProfileSuppliersOutput } from '@/lib/validations/admin/profile-supplier.schema';
 import { api } from '@/trpc/react';
+import { useProfileSupplierMutations } from '../_hooks/use-profile-supplier-mutations';
+import { ProfileSupplierDialog } from './profile-supplier-dialog';
 
 type ProfileSupplierListProps = {
   initialData: ListProfileSuppliersOutput;
@@ -47,12 +49,17 @@ const MATERIAL_TYPE_LABELS: Record<MaterialType, string> = {
 };
 
 export function ProfileSupplierList({ initialData }: ProfileSupplierListProps) {
-  const router = useRouter();
-  const utils = api.useUtils();
   const [search, setSearch] = useState('');
   const [materialType, setMaterialType] = useState<MaterialType | 'ALL'>('ALL');
   const [isActive, setIsActive] = useState<'all' | 'active' | 'inactive'>('all');
   const [page, setPage] = useState(1);
+
+  // Dialog states
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create');
+  const [selectedSupplier, setSelectedSupplier] = useState<ProfileSupplier | undefined>(undefined);
+
+  // Delete dialog states
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [supplierToDelete, setSupplierToDelete] = useState<{ id: string; name: string } | null>(null);
 
@@ -73,35 +80,24 @@ export function ProfileSupplierList({ initialData }: ProfileSupplierListProps) {
     }
   );
 
-  // Delete mutation
-  const deleteMutation = api.admin['profile-supplier'].delete.useMutation({
-    onError: (error) => {
-      toast.error('Error al eliminar proveedor', {
-        description: error.message,
-      });
-    },
+  // Delete mutation from hook
+  const { handleDelete, deleteMutation } = useProfileSupplierMutations({
     onSuccess: () => {
-      toast.success('Proveedor eliminado correctamente');
       setDeleteDialogOpen(false);
       setSupplierToDelete(null);
-      // Invalidate list to refresh
-      void utils.admin['profile-supplier'].list.invalidate();
     },
   });
 
-  // Get dependencies for delete dialog
-  // TODO: Implement referential integrity check to show dependencies
-  // const { data: integrityCheck } = api.admin['profile-supplier'].getById.useQuery(
-  //   { id: supplierToDelete?.id ?? '' },
-  //   { enabled: !!supplierToDelete && deleteDialogOpen }
-  // );
-
   const handleCreateClick = () => {
-    router.push('/admin/profile-suppliers/new');
+    setDialogMode('create');
+    setSelectedSupplier(undefined);
+    setDialogOpen(true);
   };
 
-  const handleEditClick = (id: string) => {
-    router.push(`/admin/profile-suppliers/${id}`);
+  const handleEditClick = (supplier: ProfileSupplier) => {
+    setDialogMode('edit');
+    setSelectedSupplier(supplier);
+    setDialogOpen(true);
   };
 
   const handleDeleteClick = (id: string, name: string) => {
@@ -109,9 +105,9 @@ export function ProfileSupplierList({ initialData }: ProfileSupplierListProps) {
     setDeleteDialogOpen(true);
   };
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDelete = () => {
     if (!supplierToDelete) return;
-    await deleteMutation.mutateAsync({ id: supplierToDelete.id });
+    handleDelete(supplierToDelete.id);
   };
 
   const suppliers = data?.items ?? [];
@@ -234,8 +230,26 @@ export function ProfileSupplierList({ initialData }: ProfileSupplierListProps) {
               )}
               {!isLoading && suppliers.length === 0 && (
                 <TableRow>
-                  <TableCell className="text-center text-muted-foreground" colSpan={5}>
-                    No se encontraron proveedores
+                  <TableCell colSpan={5}>
+                    <Empty>
+                      <EmptyHeader>
+                        <EmptyMedia variant="icon">
+                          <Factory />
+                        </EmptyMedia>
+                        <EmptyTitle>No hay proveedores de perfiles</EmptyTitle>
+                        <EmptyDescription>
+                          {search || materialType !== 'ALL' || isActive !== 'all'
+                            ? 'No se encontraron proveedores que coincidan con los filtros aplicados'
+                            : 'Comienza agregando tu primer proveedor de perfiles'}
+                        </EmptyDescription>
+                      </EmptyHeader>
+                      <EmptyContent>
+                        <Button onClick={handleCreateClick}>
+                          <Plus className="mr-2 size-4" />
+                          Crear Primer Proveedor
+                        </Button>
+                      </EmptyContent>
+                    </Empty>
                   </TableCell>
                 </TableRow>
               )}
@@ -256,7 +270,7 @@ export function ProfileSupplierList({ initialData }: ProfileSupplierListProps) {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button onClick={() => handleEditClick(supplier.id)} size="icon" variant="ghost">
+                        <Button onClick={() => handleEditClick(supplier)} size="icon" variant="ghost">
                           <Pencil className="size-4" />
                           <span className="sr-only">Editar</span>
                         </Button>
@@ -298,6 +312,14 @@ export function ProfileSupplierList({ initialData }: ProfileSupplierListProps) {
           )}
         </CardContent>
       </Card>
+
+      {/* Profile Supplier Dialog */}
+      <ProfileSupplierDialog
+        defaultValues={selectedSupplier}
+        mode={dialogMode}
+        onOpenChange={setDialogOpen}
+        open={dialogOpen}
+      />
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog

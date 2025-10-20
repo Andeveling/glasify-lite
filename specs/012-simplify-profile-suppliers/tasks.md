@@ -54,12 +54,12 @@
 
 ### Implementation for User Story 1
 
-- [ ] T014 [P] [US1] Create `useProfileSupplierForm` hook in `src/app/(dashboard)/admin/profile-suppliers/_hooks/use-profile-supplier-form.ts` (form state management with React Hook Form + Zod)
-- [ ] T015 [P] [US1] Create `useProfileSupplierMutations` hook in `src/app/(dashboard)/admin/profile-suppliers/_hooks/use-profile-supplier-mutations.ts` (create, update, delete mutations with SSR cache invalidation)
-- [ ] T016 [US1] Create `ProfileSupplierDialog` component in `src/app/(dashboard)/admin/profile-suppliers/_components/profile-supplier-dialog.tsx` (dialog modal with form, <200 lines)
-- [ ] T017 [US1] Update `profile-supplier-list.tsx` to use dialog modal instead of navigation (add dialog state, remove navigation functions)
-- [ ] T018 [US1] Implement optimistic delete with rollback in `useProfileSupplierMutations` hook
-- [ ] T019 [US1] Add Empty state UI using `@/components/ui/empty` when list is empty
+- [x] T014 [P] [US1] Create `useProfileSupplierForm` hook in `src/app/(dashboard)/admin/profile-suppliers/_hooks/use-profile-supplier-form.ts` (form state management with React Hook Form + Zod)
+- [x] T015 [P] [US1] Create `useProfileSupplierMutations` hook in `src/app/(dashboard)/admin/profile-suppliers/_hooks/use-profile-supplier-mutations.ts` (create, update, delete mutations with SSR cache invalidation)
+- [x] T016 [US1] Create `ProfileSupplierDialog` component in `src/app/(dashboard)/admin/profile-suppliers/_components/profile-supplier-dialog.tsx` (dialog modal with form, <200 lines)
+- [x] T017 [US1] Update `profile-supplier-list.tsx` to use dialog modal instead of navigation (add dialog state, remove navigation functions)
+- [x] T018 [US1] Implement optimistic delete with rollback in `useProfileSupplierMutations` hook
+- [x] T019 [US1] Add Empty state UI using `@/components/ui/empty` when list is empty
 - [ ] T020 [US1] Test create operation - dialog opens, form submits, supplier appears in list without navigation
 - [ ] T021 [US1] Test edit operation - dialog opens with pre-filled data, updates reflect immediately
 - [ ] T022 [US1] Test delete operation with confirmation dialog - supplier removed with optimistic update
