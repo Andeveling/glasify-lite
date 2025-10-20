@@ -32,11 +32,17 @@ import { useGlassTypesByTab } from './_hooks/use-glass-types-by-tab';
 
 type GlassTypeSelectorSectionProps = {
   basePrice?: number; // Model base price for comparison
+  glassArea?: number; // Calculated glass area in m² (from parent form)
   glassTypes: GlassTypeOutput[];
   selectedSolutionId?: string; // Used to set default tab
 };
 
-export function GlassTypeSelectorSection({ basePrice, glassTypes, selectedSolutionId }: GlassTypeSelectorSectionProps) {
+export function GlassTypeSelectorSection({
+  basePrice,
+  glassArea,
+  glassTypes,
+  selectedSolutionId,
+}: GlassTypeSelectorSectionProps) {
   const { control, watch } = useFormContext();
 
   // Hook handles grouping by solution
@@ -89,12 +95,28 @@ export function GlassTypeSelectorSection({ basePrice, glassTypes, selectedSoluti
               <div className="flex-1">
                 <p className="font-medium text-muted-foreground text-sm">Vidrio seleccionado</p>
                 <p className="font-semibold text-foreground text-lg">{selectedGlassType.name}</p>
+                {glassArea && glassArea > 0 && (
+                  <p className="text-muted-foreground text-xs">
+                    {glassArea.toFixed(2)} m² × {formatCurrency(selectedGlassType.pricePerSqm)}/m²
+                  </p>
+                )}
               </div>
               <div className="text-right">
-                <p className="font-bold text-2xl text-purple-600 dark:text-purple-400">
-                  {formatCurrency(selectedGlassType.pricePerSqm)}
-                </p>
-                <p className="text-muted-foreground text-xs">por m²</p>
+                {glassArea && glassArea > 0 ? (
+                  <>
+                    <p className="font-bold text-2xl text-purple-600 dark:text-purple-400">
+                      {formatCurrency(selectedGlassType.pricePerSqm * glassArea)}
+                    </p>
+                    <p className="text-muted-foreground text-xs">total vidrio</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-bold text-2xl text-purple-600 dark:text-purple-400">
+                      {formatCurrency(selectedGlassType.pricePerSqm)}
+                    </p>
+                    <p className="text-muted-foreground text-xs">por m²</p>
+                  </>
+                )}
               </div>
             </div>
           </div>

@@ -1,41 +1,63 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import logger from '@/lib/logger';
+import {
+  isAdminOnlyRoute,
+  isDashboardHome,
+  isProtectedRoute,
+  isPublicRoute,
+  isSellerOrAdminRoute,
+  shouldSkipMiddleware,
+  type UserRole,
+} from '@/lib/middleware-utils';
 import { auth } from '@/server/auth';
 
+/**
+ * Middleware Runtime Configuration
+ * CRITICAL: Must use 'nodejs' runtime for NextAuth + Prisma compatibility
+ * Edge Runtime does NOT support: Prisma Client, Winston, fs, path, process.cwd()
+ */
+export const runtime = 'nodejs';
+
+/**
+ * Next.js Middleware for Authentication and Role-Based Access Control (RBAC)
+ *
+ * Flow:
+ * 1. Skip middleware for static assets and NextAuth API routes (early return)
+ * 2. Skip auth check for public routes (early return)
+ * 3. Get session for protected routes
+ * 4. Redirect unauthenticated users to /catalog?signin=true
+ * 5. Check role-based access (admin, seller, user)
+ * 6. Allow authorized requests
+ */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Get session (includes user.role from NextAuth callback)
+  // Early return: Skip middleware for static assets and NextAuth API routes
+  if (shouldSkipMiddleware(pathname)) {
+    return NextResponse.next();
+  }
+
+  // Early return: Allow public routes without auth check
+  if (isPublicRoute(pathname)) {
+    return NextResponse.next();
+  }
+
+  // Get session for protected routes (includes user.role from NextAuth callback)
   const session = await auth();
   const isLoggedIn = !!session;
-  const userRole = session?.user?.role;
+  const userRole = session?.user?.role as UserRole | undefined;
 
-  // Define route patterns
-  const isProtectedRoute =
-    pathname.startsWith('/dashboard') ||
-    pathname.startsWith('/quotes') ||
-    pathname.startsWith('/quote') ||
-    pathname.startsWith('/my-quotes');
-
-  const isAdminOnlyRoute =
-    pathname.startsWith('/dashboard/models') ||
-    pathname.startsWith('/dashboard/settings') ||
-    pathname.startsWith('/dashboard/tenant');
-  const isSellerOrAdminRoute = pathname.startsWith('/dashboard/quotes') || pathname.startsWith('/dashboard/users');
-  const isDashboardHome = pathname === '/dashboard' || pathname === '/dashboard/';
-  const isAuthRoute = pathname.startsWith('/signin');
-  const isAuthCallback = pathname === '/auth/callback';
-
-  // 1. Redirect unauthenticated users from protected routes
-  if (isProtectedRoute && !isLoggedIn) {
-    const signinUrl = new URL('/signin', request.url);
-    signinUrl.searchParams.set('callbackUrl', pathname);
-    return NextResponse.redirect(signinUrl);
+  // Redirect unauthenticated users from protected routes to catalog with signin modal
+  if (isProtectedRoute(pathname) && !isLoggedIn) {
+    const catalogUrl = new URL('/catalog', request.url);
+    catalogUrl.searchParams.set('signin', 'true');
+    catalogUrl.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(catalogUrl);
   }
 
-  // 2. Block non-admin from admin-only routes (models, settings, tenant config)
-  if (isAdminOnlyRoute && userRole !== 'admin') {
-    logger.warn('Unauthorized admin-only route access attempt', {
+  // Block non-admin from admin-only routes (models, settings, tenant config)
+  if (isAdminOnlyRoute(pathname) && userRole !== 'admin') {
+    // biome-ignore lint/suspicious/noConsole: Console logging is acceptable in middleware for security events
+    console.warn('[Middleware] Unauthorized admin-only route access attempt', {
       path: pathname,
       role: userRole,
       timestamp: new Date().toISOString(),
@@ -44,9 +66,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/my-quotes', request.url));
   }
 
-  // 3. Block non-seller/non-admin from seller routes (quotes, users)
-  if (isSellerOrAdminRoute && !['admin', 'seller'].includes(userRole || '')) {
-    logger.warn('Unauthorized seller/admin route access attempt', {
+  // Block non-seller/non-admin from seller routes (quotes, users)
+  if (isSellerOrAdminRoute(pathname) && !['admin', 'seller'].includes(userRole || '')) {
+    // biome-ignore lint/suspicious/noConsole: Console logging is acceptable in middleware for security events
+    console.warn('[Middleware] Unauthorized seller/admin route access attempt', {
       path: pathname,
       role: userRole,
       timestamp: new Date().toISOString(),
@@ -55,22 +78,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/my-quotes', request.url));
   }
 
-  // 4. Redirect sellers from dashboard home to /dashboard/quotes
-  if (isDashboardHome && userRole === 'seller') {
+  // Redirect sellers from dashboard home to /dashboard/quotes
+  if (isDashboardHome(pathname) && userRole === 'seller') {
     return NextResponse.redirect(new URL('/dashboard/quotes', request.url));
   }
 
-  // 4. Redirect sellers from dashboard home to /dashboard/quotes
-  if (isDashboardHome && userRole === 'seller') {
-    return NextResponse.redirect(new URL('/dashboard/quotes', request.url));
-  }
-
-  // 5. Redirect logged-in users away from signin page
-  if (isAuthRoute && isLoggedIn && !isAuthCallback) {
-    return NextResponse.redirect(new URL('/auth/callback', request.url));
-  }
-
-  // Allow all other requests to continue
+  // Allow all other authorized requests
   return NextResponse.next();
 }
 

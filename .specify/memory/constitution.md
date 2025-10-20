@@ -1,177 +1,347 @@
-<!--
-Sync Impact Report
-
-- Version change: 1.0.0 → 1.1.0
-- Modified principles:
-  - "Observability & Versioning" → expanded with Winston logger usage restrictions
-  - "Technology & Compliance Requirements" → added RSC architecture patterns
-- Added sections:
-  - New principle: "Server-First Architecture (Next.js 15)"
-- Removed sections: none
-- Templates requiring review:
-  - .specify/templates/plan-template.md ⚠ pending (verify Server-First principle alignment)
-  - .specify/templates/spec-template.md ⚠ pending (ensure RSC patterns documented)
-  - .specify/templates/tasks-template.md ✅ updated (task categories aligned)
-- Follow-up TODOs:
-  - RATIFICATION_DATE confirmed as 2025-10-09 (initial constitution adoption)
-  - Review existing codebase for Client Components incorrectly using Winston logger
--->
-
 # Glasify Lite Constitution
+**Version**: 2.1.1  
+**Ratified**: 2025-10-09  
+**Last Amended**: 2025-01-20
 
-## Core Principles
+---
 
-### Single Responsibility (SRP)
-All modules, components and services MUST have a single, well-defined responsibility. Code that mixes concerns (UI + business logic + data access) MUST be refactored into smaller units. Rationale: SRP improves testability, maintainability and enables safe incremental refactors.
+## About This Document
 
-Rules:
-- Modules and components MUST not exceed one primary responsibility.
-- Tests and docs MUST exist for each public abstraction.
+This constitution defines the **non-negotiable principles and values** that guide all engineering decisions in Glasify Lite. It is written in plain language to be accessible to all team members, regardless of technical background.
 
-### Open/Closed (OCP)
-Public interfaces and modules MUST be open for extension and closed for modification. Design for extension (plugins, strategies, adapters) rather than editing existing behavior when adding features.
+For **technical implementation details**, code patterns, and specific framework usage, see `.github/copilot-instructions.md`.
 
-Rules:
-- New features SHOULD prefer extension patterns (hooks, procedures, adapters) over direct modifications of stable modules.
-- Backwards-incompatible API changes MUST follow versioning rules in Governance and include migration guidance.
+---
 
+## Core Values
 
-### Pragmatic Testing Discipline
-Testing is mandatory, but the workflow is flexible. Contributors MAY write tests before, during, or after implementation, as long as critical paths and edge cases are covered before merging. The goal is to ensure reliability and maintainability without imposing a rigid test-first or test-last process.
+### 1. Clarity Over Complexity
 
-Rules:
-- All feature PRs MUST include tests covering happy paths and critical edge cases.
-- Unit tests MUST run in CI; integration and contract tests MUST be added for cross-service changes.
-- Tests MAY be written before, during, or after implementation, but MUST exist before merge.
+**What it means**: Code should be easy to understand, not clever or complex.
 
-### Server-First Architecture (Next.js 15)
+**Why it matters**: Simple code is easier to maintain, debug, and improve. Every team member should be able to understand what the code does without extensive documentation.
 
-> "Leverage the server by default. Move to the client only when necessary."  
-> Server Components provide better performance, security, and SEO. Client Components are for interactivity, not default.
+**In practice**:
+- Use clear, descriptive names for variables and functions
+- Break complex logic into smaller, understandable pieces
+- Write code that reads like a story, not a puzzle
 
-Rules:
-- **Pages MUST be Server Components by default.**
-  - Use `page.tsx` for orchestration, data fetching, and metadata
-  - Delegate interactivity to dedicated Client Components (`_components/*-content.tsx`)
-  - Public pages MUST export `metadata` for SEO
-  - Pages requiring dynamic rendering (sessionStorage, etc.) MUST use `export const dynamic = 'force-dynamic'`
+**Examples**:
+- ✅ `calculateTotalPrice(items)` instead of `calc(x)`
+- ✅ `isUserAuthenticated()` instead of `chk()`
+- ✅ Small functions with one clear purpose
 
-- **Client Components ('use client') ONLY when required for:**
-  - React hooks (useState, useEffect, useContext)
-  - Browser APIs (localStorage, sessionStorage, navigator)
-  - Event handlers requiring immediate interactivity
-  - Third-party libraries requiring browser environment
+---
 
-- **Pattern: Server Page + Client Content**
-  ```typescript
-  // ✅ page.tsx - Server Component
-  export const metadata: Metadata = { title: '...' };
-  export default async function Page() {
-    const data = await fetchData();
-    return <PageContent initialData={data} />;
-  }
+### 2. Server-First Performance
 
-  // ✅ page-content.tsx - Client Component
-  'use client';
-  export function PageContent({ initialData }: Props) {
-    // All interactivity here
-  }
-  ```
+**What it means**: Do heavy work on the server, not in the user's browser.
 
-### Integration & Contract Testing
-End-to-end integrations and contract tests are required where components cross service or boundary lines (e.g., server → DB, server → external API, client → server contracts). Contracts MUST be explicit and versioned.
+**Why it matters**: Servers are faster and more secure than browsers. Users get faster load times and better experiences when we process data on the server.
 
-Rules:
-- Any change to shared schemas or API contracts MUST include contract tests and migration notes.
-- Integration tests MUST run in CI for changes touching integration points.
+**In practice**:
+- Fetch and prepare data on the server before sending to browser
+- Only use browser code when you need user interaction (clicks, typing)
+- Cache frequently-accessed data to avoid repeated work
 
-### Observability & Versioning
-All services and libraries MUST emit structured logs and follow the project's semantic versioning policy. Error handling, monitoring hooks and clear audit logs are required to diagnose issues in production.
+**Caching Strategy**:
+- **Semi-static content**: Use 30-60 second cache (admin pages, catalog data)
+- **Rarely-changing data**: Use 5-minute cache (suppliers, product types)
+- **User-specific data**: Use short cache or no cache (personal quotes)
 
-Rules:
-- Use structured logging and a consistent correlation id pattern for traces.
-- **Winston Logger is STRICTLY server-side only.**
-  - ✅ ALLOWED: Server Components, Server Actions (`'use server'`), API Route Handlers, tRPC procedures, middleware, server-side utilities
-  - ❌ PROHIBITED: Client Components (`'use client'`), custom hooks used in client, browser-executed code
-  - Rationale: Winston uses Node.js modules (`fs`, `path`) unavailable in browser webpack bundles
-  - Client-side: Use console (development only), toast notifications (user feedback), or error boundaries
-- Versioning MUST follow MAJOR.MINOR.PATCH semantic rules; breaking changes require MAJOR bumps and a migration plan.
+**Cache Refresh After Changes**:
+- When you create, update, or delete data on the server, the browser needs to know
+- Use `router.refresh()` to tell Next.js to get fresh data from the server
+- This updates the page without losing the user's place or what they were doing
+- Always combine with cache invalidation: clear old data + fetch new data
 
-## Technology & Compliance Requirements
+**Examples**:
+- ✅ Load product list on server, send ready data to browser
+- ✅ Cache product catalog for 5 minutes (it rarely changes)
+- ✅ After creating a service, refresh the page to show the new service
+- ✅ After deleting an item, refresh so it disappears from the list
+- ❌ Load all products in browser and filter there
+- ❌ Reload same data every time user clicks back
+- ❌ Expect the page to update automatically without refresh (it won't with SSR)
 
-This project enforces a constrained stack to preserve compatibility and developer expectations. Mandatory technologies and conventions:
+---
 
-- **Next.js 15 (App Router) with React Server Components**
-  - Server Components by default for pages (`page.tsx`)
-  - Client Components (`'use client'`) only for interactivity
-  - Metadata exports for SEO on public pages
-  - Dynamic rendering configuration (`export const dynamic = 'force-dynamic'`) when using browser APIs
-- TypeScript (strict), Zod 4 for validation, tRPC for typed APIs, Prisma for DB access
-- React Hook Form + @hookform/resolvers for form validation
-- shadcn/ui + Radix for UI primitives; TailwindCSS for styling
-- Formatting and linting: Biome/Ultracite conventions (pnpm scripts provided)
-- UI text MUST be Spanish (es‑LA); code, comments and commits MUST be English
+### 3. One Job, One Place
 
-Security & compliance:
+**What it means**: Each piece of code should do one thing and do it well.
 
-- All inputs MUST be validated server-side (Zod schemas in tRPC .input())
-- Secrets MUST never be committed; use environment variables and @t3-oss/env-nextjs
-- Sensitive operations MUST include authorization checks and audit logging
+**Why it matters**: When code has multiple responsibilities, changes become risky. You might break one feature while fixing another.
 
-## Development Workflow & Quality Gates
+**In practice**:
+- Separate user interface from business logic
+- Keep data fetching separate from data display
+- One file, one purpose
 
-Process requirements for all contributions:
+**Examples**:
+- ✅ `user-form.tsx` handles the form UI
+- ✅ `user-service.ts` handles saving user data
+- ✅ `user-validator.ts` checks if data is valid
+- ❌ One giant file that does everything
 
-- Pull requests MUST pass the following CI gates before merge:
-	- Type check (tsc --noEmit)
-	- Formatting / lint fix (pnpm ultra) or ultracite checks
-	- Unit tests (vitest) and relevant integration/contract tests
-	- E2E tests for changes affecting user flows (Playwright)
-- Code review: at least one approver with maintainer or reviewer role; large or risky changes SHOULD request two reviewers.
-- Commit messages MUST follow conventional commits; PR descriptions MUST reference affected principles and migration notes when applicable.
+---
 
-Quality expectations:
+### 4. Flexible Testing
 
-- Performance budgets and accessibility checks SHOULD be included for UI changes.
-- Changes that affect public or internal APIs MUST include examples, changelog entry and migration instructions.
+**What it means**: Tests are required, but you choose when to write them.
 
-## Conventions
-- Brach naming: always in English.
-- Commit messages: Use conventional commits format `/commitlint.config.js`.
-- Comments and JSDoc: English only.
-- UI text and feedback messages: Spanish (es-LA) only.
+**Why it matters**: Different features need different approaches. What matters is that critical paths are tested before code goes live.
+
+**In practice**:
+- You can write tests before, during, or after coding
+- All features must have tests before merging to main branch
+- Focus on testing what users actually do (user journeys)
+- Test error cases and edge conditions
+
+**Examples**:
+- ✅ Write tests first if you know exactly what to build
+- ✅ Write tests after if you're exploring solutions
+- ✅ Write tests during if that fits your workflow
+- ❌ No tests at all (blocking issue for merge)
+
+---
+
+### 5. Extend, Don't Modify
+
+**What it means**: Add new features without changing existing code.
+
+**Why it matters**: Changing working code is risky. Adding new code alongside old code is safer.
+
+**In practice**:
+- Add new features through configuration or plugins
+- Keep existing interfaces stable
+- When you must change something, provide migration path
+
+**Examples**:
+- ✅ Add new report type by creating new component
+- ✅ Add new payment method through plugin system
+- ❌ Change existing calculator to add new feature (might break other features)
+
+---
+
+### 6. Security From the Start
+
+**What it means**: Check permissions and validate data at every entry point.
+
+**Why it matters**: Users can be malicious or make mistakes. The system must protect itself and legitimate users.
+
+**In practice**:
+- Validate all user input on the server
+- Check user permissions before allowing actions
+- Never trust data from browsers
+- Log security-related events
+
+**Examples**:
+- ✅ Check if user has admin role before showing admin panel
+- ✅ Validate email format before saving to database
+- ✅ Log all login attempts (success and failure)
+- ❌ Assume browser-side validation is enough
+
+---
+
+### 7. Track Everything Important
+
+**What it means**: Log significant events and errors so we can diagnose problems.
+
+**Why it matters**: When something goes wrong in production, logs are our only way to understand what happened.
+
+**In practice**:
+- Log errors with enough context to debug
+- Track important user actions (login, purchases, quote creation)
+- Use structured logs (consistent format)
+- Never log passwords or sensitive data
+
+**Logging Rules**:
+- **Server-side only**: Use Winston logger in server code only
+- **Client-side**: Use browser console for development, toast messages for users
+- **Correlation IDs**: Track related events together
+- **Spanish messages**: Error messages shown to users must be in Spanish
+
+**Examples**:
+- ✅ Log when user creates a quote (with quote ID and user ID)
+- ✅ Log errors with full context (what failed, when, why)
+- ❌ Log every button click (too much noise)
+- ❌ Log passwords or credit card numbers
+
+---
+
+## Language & Communication
+
+### Code and Comments: English Only
+
+**Why**: English is the universal language of software development. All code, comments, and technical documentation must be in English for consistency and accessibility to the global developer community.
+
+**Examples**:
+- ✅ `calculatePrice(items)` with comment "// Calculate total including tax"
+- ❌ `calcularPrecio(items)` with comment "// Calcular total incluyendo impuesto"
+
+### User Interface: Spanish Only (es-LA)
+
+**Why**: Our users are Spanish speakers in Latin America. All user-facing text must be in Spanish.
+
+**Examples**:
+- ✅ Button text: "Crear Cotización"
+- ✅ Error message: "El correo electrónico no es válido"
+- ❌ Button text: "Create Quote"
+- ❌ Error message: "Email is not valid"
+
+### Commit Messages: English Only
+
+**Why**: Git history is part of technical documentation. Follow conventional commits format.
+
+**Examples**:
+- ✅ `feat: add user authentication`
+- ✅ `fix: correct price calculation for discounts`
+- ❌ `feat: agregar autenticación de usuario`
+
+---
+
+## Technology Constraints
+
+### Required Stack
+
+The following technologies are mandatory for consistency and team expertise:
+
+**Core Framework**:
+- Next.js 15 (App Router with React Server Components)
+- TypeScript (strict mode enabled)
+
+**Backend**:
+- tRPC (type-safe API communication)
+- Prisma (database access)
+- PostgreSQL (database)
+- NextAuth.js (authentication)
+
+**Frontend**:
+- React 19 (Server Components first)
+- Shadcn/ui + Radix UI (component library)
+- TailwindCSS (styling)
+- React Hook Form (forms)
+
+**Testing**:
+- Vitest (unit/integration tests)
+- Playwright (end-to-end tests)
+
+**Code Quality**:
+- Biome + Ultracite (formatting and linting)
+
+### What You Cannot Use
+
+- ❌ Other JavaScript frameworks (Vue, Angular, Svelte)
+- ❌ Alternative form libraries without approval
+- ❌ CSS frameworks other than TailwindCSS
+- ❌ Winston logger in browser code (server-side only)
+
+---
+
+## Quality Gates
+
+All code changes must pass these checks before merging:
+
+### Automated Checks (Must Pass)
+- [ ] TypeScript type checking (no errors)
+- [ ] Code formatting (Biome/Ultracite)
+- [ ] Unit tests (all passing)
+- [ ] Integration tests (if applicable)
+- [ ] End-to-end tests (if user flows affected)
+
+### Human Review (Must Pass)
+- [ ] At least one code reviewer approval
+- [ ] Large or risky changes require two approvals
+- [ ] Security-sensitive changes require security review
+
+### Documentation (Must Include)
+- [ ] Changelog entry for user-facing changes
+- [ ] Migration notes if breaking changes
+- [ ] Examples for new public APIs
+
+---
 
 ## Governance
 
-The constitution is the authoritative guide for engineering decisions. Amendments follow this procedure:
+### How This Document Works
 
-1. Propose a change via a documented PR against `.specify/memory/constitution.md` with a clear rationale and impact analysis.
-2. Provide a migration plan for any breaking changes and a test plan that demonstrates compliance.
-3. Require approval by at least two maintainers (or one maintainer + one architect) for MAJOR changes; MINOR/PATCH changes require one maintainer review.
-4. Once merged, update the Sync Impact Report and notify the team in the project communication channel.
+The constitution is the **ultimate authority** for engineering decisions. When in doubt, refer to these principles.
 
-Compliance:
+### How to Propose Changes
 
-- All PRs MUST reference the constitution when changes touch governance principles.
-- Failure to comply with MUST-level rules constitutes a blocking issue for merge until resolved.
+1. Create a pull request against `.specify/memory/constitution.md`
+2. Explain **why** the change is needed (rationale)
+3. Explain **how** it affects existing code (impact analysis)
+4. Provide migration plan if it breaks existing patterns
+5. Get approval:
+   - **MAJOR changes**: 2 maintainer approvals
+   - **MINOR/PATCH changes**: 1 maintainer approval
+
+### Change Types
+
+- **MAJOR (3.0.0)**: Remove or significantly change a core principle
+- **MINOR (2.1.0)**: Add new principle or materially expand guidance
+- **PATCH (2.0.1)**: Clarify wording, fix typos, non-semantic refinements
+
+### Compliance
+
+- All pull requests **must** reference constitution when touching principles
+- Violations of **must** rules block merge until resolved
+- Team is notified of constitution changes through communication channel
+
+---
+
+## Principle Priority
+
+When principles conflict (rare), use this order:
+
+1. **Security From the Start** (no compromises on security)
+2. **Clarity Over Complexity** (readable code over clever code)
+3. **Server-First Performance** (fast for users)
+4. **One Job, One Place** (maintainability)
+5. **Flexible Testing** (quality assurance)
+6. **Extend, Don't Modify** (stability)
+7. **Track Everything Important** (observability)
+
+---
+
+## Success Metrics
+
+We measure success by:
+
+- **User Experience**: Page load times <2 seconds
+- **Code Quality**: Test coverage >80% for critical paths
+- **Development Speed**: Features deployed within sprint goals
+- **Stability**: <5% error rate in production
+- **Maintainability**: New developers productive within 1 week
+
+---
+
+## Questions?
+
+If something is unclear:
+1. Check `.github/copilot-instructions.md` for technical implementation details
+2. Ask in team communication channel
+3. Propose a constitution amendment to clarify
+
+---
 
 <!--
 Sync Impact Report
 
-- Version change: 1.1.0 → 2.0.0
+- Version change: 2.1.0 → 2.1.1 (PATCH)
 - Modified principles:
-  - "Test-Last (NON-NEGOTIABLE)" → "Pragmatic Testing Discipline" (reemplazo de política)
-- Added sections: none
+  * Server-First Performance: Added explicit guidance on cache refresh pattern with router.refresh()
+- Added sections:
+  * Cache Refresh After Changes (clarification under Server-First Performance)
 - Removed sections: none
-- Templates requiring review:
-  - .specify/templates/plan-template.md ⚠ pending (verificar alineación con nueva política de testing)
-  - .specify/templates/spec-template.md ⚠ pending (asegurar que la sección de testing no exija test-first/test-last)
-  - .specify/templates/tasks-template.md ✅ actualizado (categorías de tasks revisadas)
-- Follow-up TODOs:
-  - RATIFICATION_DATE confirmado como 2025-10-09 (adopción original)
-  - Revisar documentación y onboarding para reflejar la nueva política de testing
+- Templates updated:
+  * .github/copilot-instructions.md ✅ updated (added SSR Cache Invalidation pattern)
+  * AGENTS.md ✅ updated (documented router.refresh() pattern)
+- Follow-up TODOs: none
+- Changes summary:
+  * Clarified that SSR pages with force-dynamic need router.refresh() after mutations
+  * Added plain language explanation of why browser doesn't auto-update with SSR
+  * Documented the two-step pattern: invalidate cache + refresh server data
+  * Provided concrete examples of when to use router.refresh()
 -->
-
-**Version**: 2.0.0  
-**Ratified**: 2025-10-09  
-**Last Amended**: 2025-10-14

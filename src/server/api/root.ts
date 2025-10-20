@@ -1,5 +1,10 @@
 import { adminRouter } from '@/server/api/routers/admin/admin';
+import { glassSolutionRouter } from '@/server/api/routers/admin/glass-solution';
+import { glassSupplierRouter } from '@/server/api/routers/admin/glass-supplier';
+import { glassTypeRouter } from '@/server/api/routers/admin/glass-type';
+import { modelRouter } from '@/server/api/routers/admin/model';
 import { profileSupplierRouter } from '@/server/api/routers/admin/profile-supplier';
+import { serviceRouter } from '@/server/api/routers/admin/service';
 import { tenantConfigRouter } from '@/server/api/routers/admin/tenant-config';
 import { catalogRouter } from '@/server/api/routers/catalog';
 import { quoteRouter } from '@/server/api/routers/quote/quote';
@@ -12,12 +17,19 @@ import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc';
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  admin: adminRouter,
+  admin: createTRPCRouter({
+    ...adminRouter._def.record,
+    'glass-solution': glassSolutionRouter,
+    'glass-supplier': glassSupplierRouter,
+    'glass-type': glassTypeRouter,
+    model: modelRouter,
+    'profile-supplier': profileSupplierRouter,
+    service: serviceRouter,
+  }),
   catalog: catalogRouter,
-  profileSupplier: profileSupplierRouter,
   quote: quoteRouter,
   tenantConfig: tenantConfigRouter,
-  user: userRouter, // Task: T035 [US5] - User management router
+  user: userRouter,
 });
 
 // export type definition of API

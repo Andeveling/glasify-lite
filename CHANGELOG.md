@@ -7,6 +7,111 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - Constitution Update v2.1.0 (2025-01-19)
+
+#### Constitution Restructure
+- **Separation of Concerns**: Split non-technical governance from technical implementation
+  - Constitution now focuses on principles and "why" (accessible to all team members)
+  - Technical details moved to `.github/copilot-instructions.md` (implementation "how")
+  - Plain language rewrite for non-technical stakeholders
+
+#### Enhanced Principles
+- **Server-First Performance**:
+  - Added caching strategy guidelines (30-60s for semi-static, 5min for catalog data)
+  - Clarified ISR (Incremental Static Regeneration) over force-dynamic preference
+  - Performance budgets and optimization patterns
+
+- **Observability & Logging**:
+  - Explicit Winston logger server-side only restriction
+  - Client-side alternatives documented (console, toast messages, error boundaries)
+  - Correlation IDs for tracking related events
+
+#### New Sections
+- **Principle Priority**: Resolution order when principles conflict
+- **Success Metrics**: Measurable goals for adherence to principles
+- **Performance & Caching Strategy**: Concrete guidance for data caching patterns
+
+#### Documentation
+- **Version**: 2.0.1 → 2.1.0 (MINOR)
+- **Rationale**: Added new guidance (caching strategy, performance metrics)
+- **Migration**: None required (non-breaking, clarification-focused)
+- **Sync Impact Report**: All templates verified compatible
+
+### Fixed - GlassType Empty Solutions Array Bug (2025-10-16)
+
+#### Runtime Error Resolution
+- **Issue**: `Reduce of empty array with no initial value` error in catalog model detail page
+- **Root Cause**: GlassTypes in database had no GlassTypeSolution relationships assigned
+- **Impact**: Complete catalog browsing failure for all models
+
+#### Code Fixes
+- **Defensive Programming** (`use-solution-inference.ts`):
+  - Added `solutions.length > 0` validation before calling `.reduce()`
+  - Prevents runtime error even with empty solutions array
+  - Safe fallback to purpose-based mapping when no solutions exist
+
+#### Data Migration
+- **New Script** (`scripts/migrate-glass-type-solutions.ts`):
+  - Automated migration from deprecated `GlassPurpose` enum to `GlassTypeSolution` table
+  - Uses factory pattern with `calculateGlassSolutions()` for intelligent assignment
+  - Migrated 4 existing GlassTypes → 10 GlassTypeSolution relationships
+  - Performance ratings based on glass characteristics (tempered, laminated, low-e, etc.)
+  - Primary solution detection for each glass type
+
+#### Seeder Enhancement
+- **Orchestrator Integration** (`seeders/seed-orchestrator.ts`):
+  - Already had GlassTypeSolution creation logic (lines 500-560)
+  - Automatically assigns solutions to glass types during seeding
+  - Uses `calculateGlassSolutions()` factory function for consistency
+  - Validates assignments with Zod schemas before creation
+  - Skips duplicates, logs warnings for missing solutions
+
+- **Preset Configuration** (`data/presets/minimal.preset.ts`):
+  - Now includes `glassSolutions` array (security, thermal_insulation, general)
+  - All glass types get appropriate solutions with performance ratings
+  - Example assignments:
+    * Vidrio Templado 6mm → Security (good, PRIMARY)
+    * DVH 24mm → Thermal Insulation (good, PRIMARY) + Security (standard)
+    * Vidrio Simple 4mm → General (standard, PRIMARY)
+
+#### Testing & Validation
+- **Database Verification**:
+  ```
+  ✅ Vidrio Laminado 6mm → 2 solutions (security PRIMARY, sound_insulation)
+  ✅ Vidrio Templado 8mm → 2 solutions (security PRIMARY, sound_insulation)  
+  ✅ Vidrio Bajo Emisivo 6mm → 4 solutions (thermal PRIMARY, energy, security, sound)
+  ✅ Vidrio Aislante 6mm → 2 solutions (security PRIMARY, sound_insulation)
+  ```
+- **Seeder Execution**: ✅ 4 GlassTypeSolution created automatically
+- **Runtime Tests**: ✅ Catalog pages load without errors
+- **Biome Linting**: ✅ 0 critical errors, clean build
+
+#### Files Modified
+- `src/app/(public)/catalog/[modelId]/_hooks/use-solution-inference.ts` - Added array length validation
+- `scripts/migrate-glass-type-solutions.ts` - **NEW**: Migration script
+- `prisma/seeders/seed-orchestrator.ts` - Verified GlassTypeSolution creation (existing)
+- `prisma/data/presets/minimal.preset.ts` - Verified glassSolutions inclusion (existing)
+
+#### Breaking Changes
+None. This is a bug fix with backward-compatible database migration.
+
+#### Migration Guide
+**For Existing Installations**:
+1. Run migration script: `npx tsx scripts/migrate-glass-type-solutions.ts`
+2. Verify results in database or Prisma Studio
+3. Future seeds will automatically create GlassTypeSolution relationships
+
+**For New Installations**:
+- No action required, seeder handles everything automatically
+
+#### Architecture Notes
+- Maintains deprecation path: `GlassPurpose` enum → `GlassTypeSolution` table
+- Factory pattern ensures consistent solution assignment logic
+- Orchestrator centralizes all seeding operations
+- Winston logging tracks migration/seeding progress (server-side only)
+
+---
+
 ### Added - Role-Based Access Control (RBAC) System (2025-10-15)
 
 #### Database Schema

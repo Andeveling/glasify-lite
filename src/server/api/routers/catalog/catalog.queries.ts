@@ -35,6 +35,8 @@ export const catalogQueries = createTRPCRouter({
             costPerMmHeight: true,
             costPerMmWidth: true,
             createdAt: true,
+            glassDiscountHeightMm: true,
+            glassDiscountWidthMm: true,
             id: true,
             maxHeightMm: true,
             maxWidthMm: true,
@@ -212,16 +214,10 @@ export const catalogQueries = createTRPCRouter({
           },
         });
 
-        // Serialize Decimal fields (pricePerSqm, uValue) and nested solution relations
+        // Serialize Decimal fields (pricePerSqm, uValue)
         const serializedGlassTypes = glassTypes.map((glassType) => ({
           ...glassType,
           pricePerSqm: glassType.pricePerSqm.toNumber(),
-          solutions: glassType.solutions?.map((sol) => ({
-            ...sol,
-            solution: {
-              ...sol.solution,
-            },
-          })),
           uValue: glassType.uValue?.toNumber() ?? null,
         }));
 
@@ -396,7 +392,7 @@ export const catalogQueries = createTRPCRouter({
   'list-services': publicProcedure
     .input(listServicesInput)
     .output(listServicesOutput)
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx }) => {
       try {
         logger.info('Listing services');
 

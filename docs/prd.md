@@ -10,7 +10,7 @@ ai_note: "yes"
 summary: "Especificación actualizada de Glasify Lite v1.6 - Herramienta de pre-venta on-demand que reduce la fricción del primer contacto cliente-fabricante de semanas a minutos. NO es una tienda e-commerce, es un acelerador de cotización con gestión de catálogo para admins."
 post_date: "2025-10-14"
 version: "1.6.0"
-last_updated: "2025-10-14"
+last_updated: "2025-10-19"
 ---
 
 # PRD: Glasify Lite v1.6
@@ -56,6 +56,12 @@ Admin → Configura catálogo → Actualiza precios → Habilita cotizaciones pr
 | **Última actualización** | 2025-10-14                            |
 | **Estado**               | ✅ En producción (funcionalidades MVP) |
 | **Próxima versión**      | v2.0 (Q2 2026)                        |
+
+### Aclaración de piloto y financiación
+
+- Equipo actual: 1 desarrollador (founder técnico).
+- Piloto de 12 meses orientado a investigación y adopción con cohortes continuas. No se promete “producto en semanas”.
+- Programa Aliados Fundadores (cofinanciación colectiva): meta de USD 4,000 para activar la primera fase de IA (asistente + RAG por tenant). Hasta alcanzar la meta, el foco es el core (catálogo, cotización, Budget, PDF/Excel, reportes de asesor). La IA no se ofrece en los primeros días.
 
 ## Historial de Versiones
 
@@ -373,6 +379,8 @@ Pricing Engine recalcula automáticamente en cotizaciones nuevas
 - WCAG 2.1 AA compliant (accesibilidad)
 - Export success rate: 95% (PDF/Excel)
 
+ℹ️ IA: En planificación. Activación condicionada a meta founders (USD 4,000).
+
 � **v2.0 en Roadmap** (Q2 2026)
 - **Panel Admin**: CRUD visual para modelos, vidrios, servicios, proveedores
 - **Roles y Permisos**: Admin, Comercial, Cliente con permisos granulares
@@ -511,6 +519,31 @@ Pricing Engine recalcula automáticamente en cotizaciones nuevas
 - ⏳ **Multi-Tenant Real**: Múltiples negocios por instancia (vs singleton TenantConfig actual)
 - ⏳ **Inventario de Materias Primas**: Stock de perfiles, vidrios, accesorios (no productos terminados)
 - ⏳ **Facturación Básica**: Generación de facturas desde Quotes (no contabilidad completa)
+
+- ⏳ **Plataforma de Agentes IA (RAG + MCP Tools)**:
+  - RAG por tenant (vector store aislado) sobre catálogo, documentación y chats para respuestas fundamentadas en español.
+  - MCP server con Tools invocables: CatalogSearch, BudgetBuilder, QuoteDraft, GeoNoiseEstimator, SupplierAvailability, CRMCreateLead, AdminModelWizard, PriceChangeAdvisor.
+  - Roles de agentes: Asistente de Cliente (chat de compra), Coach Comercial (estrategias y resúmenes), Asistente de Admin (configuración y data‑quality).
+  - Flujo ejemplo: “Quiero una ventana para el ruido” → ciudad/zona (consentimiento) → estimación de dB ambiente → 3 opciones por presupuesto con atenuación aproximada → draft de Quote → lead en CRM.
+  - KPIs IA iniciales: tiempo a propuesta asistida < 3 min; aceptación de recomendaciones > 30%; error de estimación dB ±3–5 (cuando haya validación en campo).
+
+### Arquitectura IA (visión v2.x)
+
+Nota de activación condicionada: IA se activará únicamente cuando se cumpla la meta colectiva del Programa Aliados Fundadores (USD 4,000). Antes de esa meta, IA permanece en planificación sin despliegue.
+
+- RAG por tenant: index de catálogo y documentos técnicos con citas en respuestas; grounding estricto para minimizar alucinaciones.
+- MCP server con tools: orquestación de acciones de negocio (consulta catálogo, creación Budget/Quote, sincronización CRM, estimación de ruido, sugerencias de precios/modelos).
+- Orquestación multi‑agente: Cliente (asistente de compra), Comercial (coach y resumidor), Admin (configuración y limpieza de datos).
+- Guardrails: PII redaction, consentimiento explícito para geolocalización, rate limits, auditoría de herramientas invocadas.
+- Evaluación continua: harness de prompts + tests de regresión (utilidad, seguridad, precisión); telemetría para medición de impacto y toggles por tenant.
+
+### Riesgos y mitigaciones (IA)
+
+- Alucinaciones/precisión: RAG con citas, thresholds de confianza y disclaimers en estimaciones (especialmente dB); fallback a flujo manual.
+- Privacidad/PII: consentimiento para geolocalización; anonimización/retención limitada; controles y aislamiento por tenant.
+- Sesgos/explicabilidad: revisiones periódicas, datasets balanceados y explicaciones de recomendaciones.
+- Cumplimiento legal: términos claros de uso de datos, opt‑out por tenant, auditoría exportable.
+- Coste/latencia: cachés, herramientas locales cuando aplique, colas y SLAs por operación crítica; presupuesto de tokens y observabilidad.
 
 **Filosofía**: Glasify hace **una cosa muy bien** (cotización rápida con contexto), e integra con sistemas especializados para el resto.
 

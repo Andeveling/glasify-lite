@@ -16,7 +16,7 @@ export function ModelInfo({ model }: ModelInfoProps) {
           className="object-cover"
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
-          src={model.imageUrl || '/placeholder.svg'}
+          src={'/placeholder.webp'}
         />
       </div>
       <div className="space-y-4 p-6">

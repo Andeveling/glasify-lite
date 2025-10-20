@@ -1,14 +1,28 @@
 'use client';
 
 import type { UserRole } from '@prisma/client';
-import { Menu } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { Calculator, FileText, LayoutDashboard, Menu, Package, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import type { NavLink } from './role-based-nav';
+import type { IconName, NavLink } from './role-based-nav';
+
+/**
+ * Icon Map
+ * Maps serializable icon names to actual Lucide React components
+ * This allows Server Components to pass icon names as strings
+ */
+const iconMap: Record<IconName, LucideIcon> = {
+  Calculator,
+  FileText,
+  LayoutDashboard,
+  Package,
+  Settings,
+};
 
 /**
  * Navigation Items Component
@@ -27,6 +41,7 @@ function NavigationItems({
     <>
       {items.map((item) => {
         const isActive = currentPath === item.href || item.routes?.some((route) => currentPath.startsWith(route));
+        const IconComponent = iconMap[item.icon];
 
         return (
           <Link
@@ -41,7 +56,7 @@ function NavigationItems({
             key={item.href}
             onClick={onItemClick}
           >
-            <item.icon aria-hidden="true" className="h-4 w-4" />
+            <IconComponent aria-hidden="true" className="h-4 w-4" />
             {item.label}
             <span className="sr-only" id={`nav-desc-${item.href.replace(/\//g, '-')}`}>
               {item.description}

@@ -1,8 +1,7 @@
 'use client';
 
 import { AlertTriangle, Home, RefreshCcw } from 'lucide-react';
-import Link from 'next/link';
-import { useEffect } from 'react';
+import { BackLink } from '@/components/ui/back-link';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
@@ -12,8 +11,6 @@ type ErrorProps = {
 };
 
 export default function ErrorPage({ error, reset }: ErrorProps) {
-  useEffect(() => {}, []);
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
       <Card className="w-full max-w-md p-8">
@@ -40,12 +37,10 @@ export default function ErrorPage({ error, reset }: ErrorProps) {
               Intentar de nuevo
             </Button>
 
-            <Button asChild className="flex-1" size="lg" variant="outline">
-              <Link href="/catalog">
-                <Home className="mr-2 h-4 w-4" />
-                Volver al catálogo
-              </Link>
-            </Button>
+            <BackLink className="flex-1" href="/catalog" icon="none" size="lg" variant="outline">
+              <Home className="mr-2 h-4 w-4" />
+              Volver al catálogo
+            </BackLink>
           </div>
         </div>
       </Card>

@@ -9,11 +9,10 @@
  * @module app/(dashboard)/quotes/[quoteId]/_components/quote-detail-view
  */
 
-import { ArrowLeft, Clock, Phone } from 'lucide-react';
-import Link from 'next/link';
+import { Clock, Phone } from 'lucide-react';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
+import { BackLink } from '@/components/ui/back-link';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatDate } from '@/lib/utils';
@@ -33,12 +32,9 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
     <div className="space-y-6">
       {/* Header con botón de regreso y acción de envío */}
       <div className="flex items-center justify-between gap-4">
-        <Button asChild size="sm" variant="outline">
-          <Link href="/quotes">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Volver a cotizaciones
-          </Link>
-        </Button>
+        <BackLink href="/quotes" variant="outline">
+          Volver a cotizaciones
+        </BackLink>
 
         {/* Show send button only for draft quotes */}
         <SendQuoteButton quote={quote} />

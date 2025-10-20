@@ -11,12 +11,11 @@
  * Updated with QuoteStatusBadge component (US1) for better status clarity.
  */
 
-import { ArrowLeft, Building2, Calendar, Clock, MapPin, Package, Phone } from 'lucide-react';
-import Link from 'next/link';
+import { Building2, Calendar, Clock, MapPin, Package, Phone } from 'lucide-react';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { BackLink } from '@/components/ui/back-link';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -57,12 +56,9 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
     <div className="space-y-6">
       {/* Header con botón de regreso y exportación */}
       <div className="flex items-center justify-between gap-4">
-        <Button asChild size="sm" variant="outline">
-          <Link href={backLink}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {backLabel}
-          </Link>
-        </Button>
+        <BackLink href={backLink} icon="chevron" variant="link">
+          {backLabel}
+        </BackLink>
 
         <div className="flex items-center gap-2">
           {/* Send quote button - only for draft quotes */}

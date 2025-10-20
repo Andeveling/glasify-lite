@@ -1,6 +1,7 @@
 'use client';
 
 import { ChevronRight } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -11,20 +12,25 @@ import { Label } from '@/components/ui/label';
 
 type SignInModalProps = {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChangeAction: (open: boolean) => void;
   defaultEmail?: string;
 };
 
-export function SignInModal({ open, onOpenChange, defaultEmail = '' }: SignInModalProps) {
+export function SignInModal({ open, onOpenChangeAction, defaultEmail = '' }: SignInModalProps) {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isEmailLoading, setIsEmailLoading] = useState(false);
   const [email, setEmail] = useState(defaultEmail);
+  const searchParams = useSearchParams();
+
+  // Get callbackUrl from query params, default to /catalog
+  const callbackUrl = searchParams.get('callbackUrl') || '/catalog';
 
   const handleGoogleSignIn = async () => {
     try {
       setIsGoogleLoading(true);
-      await signIn('google', { callbackUrl: '/auth/callback' });
+      await signIn('google', { callbackUrl });
     } catch (_error) {
+      // Error handling delegated to NextAuth
     } finally {
       setIsGoogleLoading(false);
     }
@@ -36,6 +42,7 @@ export function SignInModal({ open, onOpenChange, defaultEmail = '' }: SignInMod
     try {
       setIsEmailLoading(true);
     } catch (_error) {
+      // Error handling delegated to email provider
     } finally {
       setIsEmailLoading(false);
     }
@@ -44,7 +51,7 @@ export function SignInModal({ open, onOpenChange, defaultEmail = '' }: SignInMod
   const isLoading = isGoogleLoading || isEmailLoading;
 
   return (
-    <Dialog onOpenChange={onOpenChange} open={open}>
+    <Dialog onOpenChange={onOpenChangeAction} open={open}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="space-y-4">
           {/* Logo/Icon */}
@@ -109,7 +116,13 @@ export function SignInModal({ open, onOpenChange, defaultEmail = '' }: SignInMod
 
           <p className="text-center text-muted-foreground text-xs">
             ¿No tienes una cuenta?{' '}
-            <button className="font-medium text-primary hover:underline" onClick={() => {}} type="button">
+            <button
+              className="font-medium text-primary hover:underline"
+              onClick={() => {
+                // TODO: Implement signup flow
+              }}
+              type="button"
+            >
               Regístrate
             </button>
           </p>

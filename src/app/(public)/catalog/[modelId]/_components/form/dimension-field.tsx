@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import type { Control, FieldValues, Path } from 'react-hook-form';
 import { DimensionInput } from '@/components/dimension-input';
 import { DimensionSlider } from '@/components/dimension-slider';
@@ -15,7 +14,7 @@ type DimensionFieldProps<T extends FieldValues> = {
   localValue: number;
   onSliderChange: (value: number[]) => void;
   isValid: (value: number) => boolean;
-  generateSuggestedValues: (min: number, max: number) => number[];
+  suggestedValues: number[];
 };
 
 /**
@@ -32,10 +31,8 @@ export function DimensionField<T extends FieldValues>({
   localValue,
   onSliderChange,
   isValid,
-  generateSuggestedValues,
+  suggestedValues,
 }: DimensionFieldProps<T>) {
-  const suggestedValues = useMemo(() => generateSuggestedValues(min, max), [min, max, generateSuggestedValues]);
-
   // Determine dimension type based on label
   const dimensionType = label.toLowerCase().includes('ancho') ? 'width' : 'height';
 

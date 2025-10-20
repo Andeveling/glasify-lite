@@ -116,12 +116,16 @@ function inferPrimarySolution(
   if (primarySolution) return primarySolution;
 
   // Priority 2: Find solution with highest performance rating
-  const bestSolution = glassType.solutions?.reduce((best, current) => {
-    const bestRating = performanceToNumeric(best.performanceRating);
-    const currentRating = performanceToNumeric(current.performanceRating);
-    return currentRating > bestRating ? current : best;
-  })?.solution;
-  if (bestSolution) return bestSolution;
+  // Safety check: only reduce if array has elements
+  const solutions = glassType.solutions ?? [];
+  if (solutions.length > 0) {
+    const bestSolution = solutions.reduce((best, current) => {
+      const bestRating = performanceToNumeric(best.performanceRating);
+      const currentRating = performanceToNumeric(current.performanceRating);
+      return currentRating > bestRating ? current : best;
+    })?.solution;
+    if (bestSolution) return bestSolution;
+  }
 
   // Priority 3: Fallback to purpose-based mapping
   const purposeToSolutionKey: Record<string, string> = {

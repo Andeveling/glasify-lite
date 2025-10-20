@@ -19,7 +19,7 @@ const SELLER_USER = {
   password: process.env.TEST_SELLER_PASSWORD || 'Seller123!',
 };
 
-const ANOTHER_SELLER = {
+const _ANOTHER_SELLER = {
   email: process.env.TEST_SELLER2_EMAIL || 'seller2@glasify.test',
   password: process.env.TEST_SELLER2_PASSWORD || 'Seller123!',
 };

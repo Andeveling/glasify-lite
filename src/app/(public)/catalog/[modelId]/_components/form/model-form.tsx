@@ -26,6 +26,13 @@ import { GlassTypeSelectorSection } from './sections/glass-type-selector-section
 import { ServicesSelectorSection } from './sections/services-selector-section';
 
 // ============================================================================
+// Constants
+// ============================================================================
+
+/** Conversion factor from millimeters to meters */
+const MM_TO_METERS = 1000;
+
+// ============================================================================
 // Types
 // ============================================================================
 
@@ -82,17 +89,34 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
   // ✅ Get selected glass type object
   const selectedGlassType = glassTypes.find((gt) => gt.id === glassType);
 
-  // ✅ Infer solution from glass type (replaces manual selection)
-  const { inferredSolution, securityRating, thermalRating, acousticRating } = useSolutionInference(
-    selectedGlassType ?? null,
-    solutions
-  );
+  // ✅ Calculate billable glass area in m² (applying discounts)
+  // This matches the server-side calculation in price-item.ts
+  const glassArea = useMemo(() => {
+    // Apply glass discounts (profiles take space)
+    const effectiveWidthMm = Math.max(Number(width) - model.glassDiscountWidthMm, 0);
+    const effectiveHeightMm = Math.max(Number(height) - model.glassDiscountHeightMm, 0);
 
-  // Calculate price in real-time
+    const widthM = effectiveWidthMm / MM_TO_METERS;
+    const heightM = effectiveHeightMm / MM_TO_METERS;
+
+    if (widthM > 0 && heightM > 0) {
+      return widthM * heightM;
+    }
+    return 0;
+  }, [width, height, model.glassDiscountWidthMm, model.glassDiscountHeightMm]);
+
+  // ✅ Infer solution from glass type (replaces manual selection)
+  const { inferredSolution } = useSolutionInference(selectedGlassType ?? null, solutions);
+
+  // Calculate price in real-time with dimension validation
   const { calculatedPrice, breakdown, error, isCalculating } = usePriceCalculation({
     additionalServices,
     glassTypeId: glassType,
     heightMm: Number(height) || 0,
+    maxHeightMm: model.maxHeightMm,
+    maxWidthMm: model.maxWidthMm,
+    minHeightMm: model.minHeightMm,
+    minWidthMm: model.minWidthMm,
     modelId: model.id,
     widthMm: Number(width) || 0,
   });
@@ -111,10 +135,8 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
       return items;
     }
 
-    // Calculate glass cost separately (area * pricePerSqm)
-    const widthM = Number(width) / 1000;
-    const heightM = Number(height) / 1000;
-    const glassArea = widthM * heightM;
+    // ✅ Use glassArea (with discounts applied) instead of calculating again
+    // This matches server-side calculation in price-item.ts lines 131-142
     const glassCost = selectedGlassType ? glassArea * selectedGlassType.pricePerSqm : 0;
 
     // Model price (dimPrice includes base + area factor, but NOT glass cost)
@@ -128,12 +150,12 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
       });
     }
 
-    // Glass cost (separate line item for clarity)
+    // Glass type (show area calculation with discounts applied)
     if (glassCost > 0 && selectedGlassType) {
       items.push({
         amount: glassCost,
         category: 'glass',
-        label: `Vidrio ${selectedGlassType.name}`,
+        label: `Vidrio ${selectedGlassType.name} (${glassArea.toFixed(2)} m²)`,
       });
     }
 
@@ -180,7 +202,7 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
     }
 
     return items;
-  }, [breakdown, model.basePrice, services, width, height, selectedGlassType]);
+  }, [breakdown, model.basePrice, services, glassArea, selectedGlassType]);
 
   // ✅ Prepare cart item data from form values (using inferred solution)
   const cartItemInput: CreateCartItemInput & { unitPrice: number } = {
@@ -268,6 +290,7 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
           <Card className="p-6">
             <GlassTypeSelectorSection
               basePrice={model.basePrice}
+              glassArea={glassArea}
               glassTypes={glassTypes}
               selectedSolutionId={inferredSolution?.id}
             />

@@ -1,16 +1,22 @@
 import type { UserRole } from '@prisma/client';
-import { Calculator, FileText, LayoutDashboard, Package, Settings } from 'lucide-react';
 import { auth } from '@/server/auth';
 import { NavigationMenu } from './navigation-menu';
 
 /**
+ * Icon names for navigation
+ * Serializable string literals that can pass from Server to Client Components
+ */
+export type IconName = 'LayoutDashboard' | 'Package' | 'FileText' | 'Settings' | 'Calculator';
+
+/**
  * Navigation Item Type
  * Defines the structure of a navigation link
+ * Uses icon name (string) instead of component to be serializable
  */
 export type NavLink = {
   href: string;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: IconName; // Changed from React.ComponentType to string
   description: string;
   routes?: string[]; // Additional routes that should highlight this item
 };
@@ -38,25 +44,25 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
       {
         description: 'Resumen y estadísticas del negocio',
         href: '/dashboard',
-        icon: LayoutDashboard,
+        icon: 'LayoutDashboard',
         label: 'Dashboard',
       },
       {
         description: 'Gestionar modelos y precios de vidrio',
         href: '/dashboard/models',
-        icon: Package,
+        icon: 'Package',
         label: 'Modelos',
       },
       {
         description: 'Ver y gestionar todas las cotizaciones',
         href: '/dashboard/quotes',
-        icon: FileText,
+        icon: 'FileText',
         label: 'Cotizaciones',
       },
       {
         description: 'Configuración del sistema',
         href: '/dashboard/settings',
-        icon: Settings,
+        icon: 'Settings',
         label: 'Configuración',
       },
     ];
@@ -68,16 +74,16 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
       {
         description: 'Ver todas las cotizaciones de clientes',
         href: '/dashboard/quotes',
-        icon: FileText,
+        icon: 'FileText',
         label: 'Cotizaciones',
-        routes: [ '/dashboard/quotes' ],
+        routes: ['/dashboard/quotes'],
       },
       {
         description: 'Explorar catálogo de productos',
         href: '/catalog',
-        icon: Package,
+        icon: 'Package',
         label: 'Catálogo',
-        routes: [ '/catalog' ],
+        routes: ['/catalog'],
       },
     ];
   }
@@ -88,16 +94,16 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
       {
         description: 'Explorar catálogo de productos',
         href: '/catalog',
-        icon: Package,
+        icon: 'Package',
         label: 'Catálogo',
-        routes: [ '/catalog' ],
+        routes: ['/catalog'],
       },
       {
         description: 'Ver mis cotizaciones',
         href: '/my-quotes',
-        icon: FileText,
+        icon: 'FileText',
         label: 'Mis Cotizaciones',
-        routes: [ '/my-quotes' ],
+        routes: ['/my-quotes'],
       },
     ];
   }
@@ -107,16 +113,16 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
     {
       description: 'Explorar catálogo de productos',
       href: '/catalog',
-      icon: Package,
+      icon: 'Package',
       label: 'Catálogo',
-      routes: [ '/catalog' ],
+      routes: ['/catalog'],
     },
     {
       description: 'Crear una nueva cotización',
       href: '/quote',
-      icon: Calculator,
+      icon: 'Calculator',
       label: 'Cotizar',
-      routes: [ '/quote' ],
+      routes: ['/quote'],
     },
   ];
 }

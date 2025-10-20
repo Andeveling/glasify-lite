@@ -1,8 +1,9 @@
-import { AlertTriangle, ArrowLeft, BarChart3, FileText, Home, Package, Settings, Shield } from 'lucide-react';
+import { AlertTriangle, BarChart3, FileText, Home, Package, Settings, Shield } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { BackButton } from './_components/back-button';
 
 export const metadata: Metadata = {
   description: 'La página de administración que buscas no existe o no tienes permisos para acceder a ella',
@@ -100,10 +101,7 @@ export default function DashboardNotFound() {
                   </Button>
                 </Link>
 
-                <Button className="gap-2" onClick={() => window.history.back()} variant="ghost">
-                  <ArrowLeft className="h-4 w-4" />
-                  Página Anterior
-                </Button>
+                <BackButton />
               </div>
             </div>
 

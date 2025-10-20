@@ -82,6 +82,8 @@ export const modelDetailOutput = z.object({
   costPerMmHeight: z.number(),
   costPerMmWidth: z.number(),
   createdAt: z.date(),
+  glassDiscountHeightMm: z.number(),
+  glassDiscountWidthMm: z.number(),
   id: z.string(),
   maxHeightMm: z.number(),
   maxWidthMm: z.number(),
