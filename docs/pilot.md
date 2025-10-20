@@ -7,7 +7,7 @@ featured_image: "/images/glasify-pilot.png"
 categories: ["product", "requirements"]
 tags: ["piloto", "IA", "cotizaciones", "ventanas", "PVC", "aluminio"]
 ai_note: "yes"
-summary: "Plan de piloto (12 meses) para transformar el primer minuto de atención comercial con cotización asistida; IA condicional (meta founders USD 2,000); KPIs claros y cofinanciación con aliados."
+summary: "Plan de piloto (12 meses) para transformar el primer minuto de atención comercial con cotización asistida; IA condicional (meta founders USD 4,000); KPIs claros y cofinanciación con aliados."
 post_date: "2025-10-19"
 ---
 
@@ -34,7 +34,7 @@ Un sistema que automatiza el primer minuto de atención comercial combinando cá
 | Etapa                        | Qué hace el sistema                                                                           | Valor agregado                                   |
 | ---------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------ |
 | 🧮 Cotización inmediata       | Genera precio base según medidas, tipo de apertura y material (PVC o aluminio).               | Reduce tiempos y errores.                        |
-| 💬 Asistente IA (condicional) | Atiende y asesora con lenguaje natural; sugiere mejoras (p. ej., mayor aislamiento acústico). | Se activa al alcanzar meta founders (USD 2,000). |
+| 💬 Asistente IA (condicional) | Atiende y asesora con lenguaje natural; sugiere mejoras (p. ej., mayor aislamiento acústico). | Se activa al alcanzar meta founders (USD 4,000). |
 | 📑 Reporte para el asesor     | Resume perfil del cliente y estrategia de contacto (p. ej., orientado a precio vs confort).   | Permite personalizar y cerrar con argumentos.    |
 | ⚙️ Gestión centralizada       | Guarda cada cotización con datos estructurados (perfil, preferencias, zona, proyecto).        | Analítica de mercado y mejora continua.          |
 
@@ -83,10 +83,9 @@ Hitos por trimestre (referenciales):
 | Q2        | Iteración por feedback y métricas                     | Telemetría básica, ajustes de UX, mejoras de performance y exportaciones         |
 | Q3        | Integraciones opcionales (1 CRM) y reportes de asesor | Reporte de asesor, integración con 1 CRM (si aplica), procesos y disclaimers     |
 | Q4        | Consolidación, evaluación de impacto y decisión       | Informe anual de uso, KPIs, decisión go/no‑go y plan de escalamiento             |
-
 Notas:
-- IA no se activa en etapas tempranas. Se habilitará únicamente si se cumple la meta del Programa Founders (USD 2,000) y según prioridades acordadas.
-- El alcance es incremental para asegurar sostenibilidad con un equipo de 1 dev.
+IA no se activa en etapas tempranas. Se habilitará únicamente si se cumple la meta del Programa Founders (USD 4,000) y según prioridades acordadas.
+El alcance es incremental para asegurar sostenibilidad con un equipo de 1 dev.
 
 ## Entregables por rol
 
@@ -121,10 +120,10 @@ Aliado (empresa participante):
 
 ### Programa Founders (cofinanciación colectiva)
 
-Objetivo: alcanzar una meta colectiva de USD 2,000 para desbloquear la primera fase de IA (asistente para cliente con recomendaciones básicas y RAG por tenant). Este programa funciona como un crowdfunding orientado a empresas fundadoras que co‑crean el producto.
+Objetivo: alcanzar una meta colectiva de USD 4,000 para desbloquear la primera fase de IA (asistente para cliente con recomendaciones básicas y RAG por tenant). Este programa funciona como un crowdfunding orientado a empresas fundadoras que co‑crean el producto.
 
 Cómo funciona:
-- Las empresas eligen un paquete de participación (ver abajo). Su aporte se suma a la meta colectiva (USD 2,000).
+- Las empresas eligen un paquete de participación (ver abajo). Su aporte se suma a la meta colectiva (USD 4,000).
 - Mientras la meta no se cumpla, el foco es el core (catálogo, cotización, Budget, PDF/Excel, reportes de asesor) durante el piloto de 12 meses.
 - Al alcanzar la meta, se planifica y ejecuta la activación de IA de forma incremental y segura.
 
@@ -134,7 +133,7 @@ Transparencia y uso de fondos:
 
 ### Paquetes de participación (USD — precios de referencia)
 
-Pensados para LATAM y claros para aliados fundadores. Facturación en USD (si el aliado prefiere COP, se usa la TRM del día de factura). Los aportes se acumulan hacia la meta colectiva de USD 2,000.
+Pensados para LATAM y claros para aliados fundadores. Facturación en USD (si el aliado prefiere COP, se usa la TRM del día de factura). Los aportes se acumulan hacia la meta colectiva de USD 4,000.
 
 | Nivel                | Precio USD | Para quién                                 | Qué incluye (clave)                                                       | Resultados esperados (12 meses)                                         | Beneficios/Condiciones                                                               |
 | -------------------- | ---------- | ------------------------------------------ | ------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
@@ -147,7 +146,7 @@ Notas de facturación y moneda:
 - Descuentos “early adopter” aplican según fecha de confirmación y cupos disponibles.
 - Costos cloud del piloto se estiman y cobran en USD; variarán según uso (almacenamiento, base de datos, vector store, observabilidad y exportaciones).
 
-Calendario de pagos sugerido: 50% a la firma (asegura cupo), 50% al mes 2. Facturación en USD. Los aportes se contabilizan hacia la meta colectiva (USD 2,000) para activar IA.
+Calendario de pagos sugerido: 50% a la firma (asegura cupo), 50% al mes 2. Facturación en USD. Los aportes se contabilizan hacia la meta colectiva (USD 4,000) para activar IA.
 
 ### Alternativas de cofinanciación
 
@@ -162,7 +161,7 @@ Beneficios:
 - Descuento adicional del 15% sobre el paquete elegido.
 - Espacio asegurado en el Glasify Innovation Board (créditos de voto según paquete).
 - Acceso prioritario a demos internas y roadmap previo al cierre de cada ciclo.
-- Visibilidad del avance hacia la meta colectiva y prioridad en activación de IA una vez alcanzada.
+- Visibilidad del avance hacia la meta colectiva (USD 4,000) y prioridad en activación de IA una vez alcanzada.
 
 Compromisos:
 - Disponibilidad de owners (comercial/técnico) 2–4 h/semana.
@@ -247,7 +246,7 @@ Reglas y guardrails:
 >
 > Estimado [Nombre/Empresa],
 >
-> Estamos impulsando un piloto de 12 meses que transforma el primer minuto de atención comercial con cotización automática y reportes para el asesor. Las capacidades de IA se activarán cuando la cohorte de Aliados Fundadores alcance la meta colectiva (USD 2,000), priorizando siempre seguridad y evidencia de uso.
+> Estamos impulsando un piloto de 12 meses que transforma el primer minuto de atención comercial con cotización automática y reportes para el asesor. Las capacidades de IA se activarán cuando la cohorte de Aliados Fundadores alcance la meta colectiva (USD 4,000), priorizando siempre seguridad y evidencia de uso.
 >
 > Nos gustaría contar con su empresa como aliado pionero, probando la herramienta con su catálogo y procesos de venta. ¿Podemos agendar una breve demostración?
 >

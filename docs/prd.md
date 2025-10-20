@@ -61,7 +61,7 @@ Admin → Configura catálogo → Actualiza precios → Habilita cotizaciones pr
 
 - Equipo actual: 1 desarrollador (founder técnico).
 - Piloto de 12 meses orientado a investigación y adopción con cohortes continuas. No se promete “producto en semanas”.
-- Programa Aliados Fundadores (cofinanciación colectiva): meta de USD 2,000 para activar la primera fase de IA (asistente + RAG por tenant). Hasta alcanzar la meta, el foco es el core (catálogo, cotización, Budget, PDF/Excel, reportes de asesor). La IA no se ofrece en los primeros días.
+- Programa Aliados Fundadores (cofinanciación colectiva): meta de USD 4,000 para activar la primera fase de IA (asistente + RAG por tenant). Hasta alcanzar la meta, el foco es el core (catálogo, cotización, Budget, PDF/Excel, reportes de asesor). La IA no se ofrece en los primeros días.
 
 ## Historial de Versiones
 
@@ -379,7 +379,7 @@ Pricing Engine recalcula automáticamente en cotizaciones nuevas
 - WCAG 2.1 AA compliant (accesibilidad)
 - Export success rate: 95% (PDF/Excel)
 
-ℹ️ IA: En planificación. Activación condicionada a meta founders (USD 2,000).
+ℹ️ IA: En planificación. Activación condicionada a meta founders (USD 4,000).
 
 � **v2.0 en Roadmap** (Q2 2026)
 - **Panel Admin**: CRUD visual para modelos, vidrios, servicios, proveedores
@@ -529,7 +529,7 @@ Pricing Engine recalcula automáticamente en cotizaciones nuevas
 
 ### Arquitectura IA (visión v2.x)
 
-Nota de activación condicionada: IA se activará únicamente cuando se cumpla la meta colectiva del Programa Aliados Fundadores (USD 2,000). Antes de esa meta, IA permanece en planificación sin despliegue.
+Nota de activación condicionada: IA se activará únicamente cuando se cumpla la meta colectiva del Programa Aliados Fundadores (USD 4,000). Antes de esa meta, IA permanece en planificación sin despliegue.
 
 - RAG por tenant: index de catálogo y documentos técnicos con citas en respuestas; grounding estricto para minimizar alucinaciones.
 - MCP server con tools: orquestación de acciones de negocio (consulta catálogo, creación Budget/Quote, sincronización CRM, estimación de ruido, sugerencias de precios/modelos).
