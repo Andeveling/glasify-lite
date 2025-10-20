@@ -1031,6 +1031,198 @@ When migrating existing tables to server-optimized pattern:
 
 ---
 
+## SSR Cache Invalidation Pattern
+
+### Problem Statement
+
+When using **SSR with `force-dynamic`**, data is fetched on the server and passed as props to Client Components. TanStack Query's `invalidate()` only clears the **client-side cache**, but doesn't trigger a **server-side re-fetch**.
+
+**Result**: After mutations (create/update/delete), the UI doesn't update because:
+1. Server data remains stale (not re-fetched)
+2. Client components display old `initialData` from props
+3. Cache invalidation alone doesn't reload server data
+
+### Solution: Two-Step Invalidation
+
+Use **both** cache invalidation AND `router.refresh()` in mutation callbacks:
+
+```typescript
+import { useRouter } from 'next/navigation';
+
+const router = useRouter();
+const utils = api.useUtils();
+
+const createMutation = api.admin.service.create.useMutation({
+  onSuccess: () => {
+    toast.success('Servicio creado correctamente');
+  },
+  onSettled: () => {
+    // Step 1: Invalidate client-side cache
+    void utils.admin.service.list.invalidate();
+    
+    // Step 2: Refresh server data (re-runs page.tsx data fetching)
+    router.refresh();
+  },
+});
+```
+
+### How It Works
+
+**`router.refresh()`**:
+- Triggers Next.js to re-execute the Server Component
+- Re-runs all data fetching in `page.tsx`
+- Updates `initialData` passed to Client Components
+- **Preserves client state** (no full page reload)
+- Maintains scroll position, open dialogs, form state
+
+**Why Both Steps?**:
+1. `invalidate()`: Clears stale cache entries (prevents serving old data)
+2. `router.refresh()`: Forces server to fetch fresh data
+
+### When to Use This Pattern
+
+✅ **REQUIRED** when:
+- Page uses `export const dynamic = 'force-dynamic'`
+- Data is fetched in Server Component (`page.tsx`)
+- Data is passed as `initialData` prop to Client Components
+- Mutations change data that needs to reflect in UI
+
+❌ **NOT NEEDED** when:
+- Using client-side data fetching only (no SSR)
+- Using ISR with automatic revalidation
+- Data doesn't change (read-only views)
+
+### Complete Example
+
+**Page (Server Component)**:
+```typescript
+// src/app/(dashboard)/admin/services/page.tsx
+export const dynamic = 'force-dynamic';
+
+export default async function ServicesPage({ searchParams }: Props) {
+  const params = await searchParams;
+  
+  // Server-side data fetch
+  const data = await api.admin.service.list({
+    page: Number(params.page) || 1,
+    search: params.search,
+    // ... other filters
+  });
+
+  return <ServicesContent initialData={data} />;
+}
+```
+
+**Client Component with Mutations**:
+```typescript
+// src/app/(dashboard)/admin/services/_components/service-dialog.tsx
+'use client';
+
+import { useRouter } from 'next/navigation';
+
+export function ServiceDialog({ mode, open, onOpenChange, defaultValues }: Props) {
+  const utils = api.useUtils();
+  const router = useRouter();
+
+  const createMutation = api.admin.service.create.useMutation({
+    onMutate: () => {
+      toast.loading('Creando servicio...', { id: 'create-service' });
+    },
+    onError: (err) => {
+      toast.error('Error al crear servicio', {
+        description: err.message,
+        id: 'create-service',
+      });
+    },
+    onSuccess: () => {
+      toast.success('Servicio creado correctamente', { id: 'create-service' });
+      onOpenChange(false);
+    },
+    onSettled: () => {
+      // Two-step invalidation for SSR
+      void utils.admin.service.list.invalidate();
+      router.refresh();
+    },
+  });
+
+  const updateMutation = api.admin.service.update.useMutation({
+    // ... same pattern
+    onSettled: () => {
+      void utils.admin.service.list.invalidate();
+      router.refresh();
+    },
+  });
+
+  const deleteMutation = api.admin.service.delete.useMutation({
+    // ... same pattern with optimistic updates
+    onSettled: () => {
+      void utils.admin.service.list.invalidate();
+      router.refresh();
+    },
+  });
+
+  // ... rest of component
+}
+```
+
+### Best Practices
+
+✅ **DO**:
+- Always call `router.refresh()` in `onSettled` (runs on both success and error)
+- Combine with optimistic updates for instant feedback
+- Use in all CRUD mutations (create, update, delete)
+- Keep `router.refresh()` after `invalidate()` (order matters)
+
+❌ **DON'T**:
+- Call `router.refresh()` in `onSuccess` only (won't run on error)
+- Use without cache invalidation (stale cache may persist)
+- Call multiple times in parallel (one refresh is enough)
+- Forget to import from `next/navigation` (not `next/router`)
+
+### Testing Considerations
+
+E2E tests should verify the complete flow:
+
+```typescript
+// e2e/admin/services.spec.ts
+test('should show new service after creation', async ({ page }) => {
+  await page.goto('/admin/services');
+  
+  // Open create dialog
+  await page.getByRole('button', { name: /nuevo servicio/i }).click();
+  
+  // Fill form
+  await page.getByLabel(/nombre/i).fill('Test Service');
+  await page.getByLabel(/tipo/i).selectOption('fixed');
+  await page.getByLabel(/tarifa/i).fill('50000');
+  
+  // Submit
+  await page.getByRole('button', { name: /crear servicio/i }).click();
+  
+  // Verify success toast
+  await expect(page.getByText(/servicio creado correctamente/i)).toBeVisible();
+  
+  // Verify service appears in table (after router.refresh())
+  await expect(page.getByRole('row', { name: /test service/i })).toBeVisible();
+});
+```
+
+### Troubleshooting
+
+**Problem**: UI doesn't update after mutation  
+**Solution**: Check that both `invalidate()` and `router.refresh()` are called
+
+**Problem**: Page reloads completely (loses state)  
+**Solution**: Use `router.refresh()` not `router.push()` or `window.location.reload()`
+
+**Problem**: Old data shows briefly before update  
+**Solution**: Implement optimistic updates in `onMutate` for instant feedback
+
+**Problem**: Error "router is not defined"  
+**Solution**: Import from `next/navigation` and ensure component is Client Component
+
+---
+
 ## Services Admin Dashboard Pattern
 
 The `/admin/services` view implements the **server-optimized dashboard pattern** with full standardization:
@@ -1129,22 +1321,23 @@ import { formatCurrency } from '@/lib/format';
 
 1. **Next.js 15**: Server Components by default, SSR/ISR based on route type, Streaming
 2. **Dashboard Routes**: SSR with `dynamic = 'force-dynamic'` (no ISR for private routes)
-3. **Pages**: ALWAYS Server Components, delegate interactivity to children
-4. **Winston Logger**: Server-side ONLY (Server Components, Server Actions, API Routes, tRPC)
-5. **SEO**: Metadata in Server Components, `generateMetadata` for dynamic content
-6. **SOLID**: Single Responsibility, composition, inverted dependencies
-7. **Atomic Design**: atoms (ui/), molecules (components/), organisms (\_components/), templates (layout.tsx), pages (page.tsx)
-8. **tRPC**: Type-safe APIs with kebab-case naming
-9. **Prisma**: ORM with PostgreSQL, singleton client, performance indexes
-10. **Zod**: End-to-end schema validation
-11. **Custom Hooks**: Reusable logic separated from UI
-12. **Testing**: Vitest (unit/integration), Playwright (E2E)
-13. **Ultracite**: Linting and formatting with Biome
-14. **RBAC**: Three-layer authorization (middleware, tRPC, UI guards)
-15. **Server Tables**: URL-based state, debounced search, database indexes
-16. **Services Dashboard**: Full server-optimized pattern with filters, pagination, CRUD
-16. **Formatters**: Centralized in `@lib/format` with tenant context
-17. **Optimistic UI**: Implement for mutations with rollback on error
+3. **SSR Cache Invalidation**: Use `invalidate()` + `router.refresh()` for mutations in SSR pages
+4. **Pages**: ALWAYS Server Components, delegate interactivity to children
+5. **Winston Logger**: Server-side ONLY (Server Components, Server Actions, API Routes, tRPC)
+6. **SEO**: Metadata in Server Components, `generateMetadata` for dynamic content
+7. **SOLID**: Single Responsibility, composition, inverted dependencies
+8. **Atomic Design**: atoms (ui/), molecules (components/), organisms (\_components/), templates (layout.tsx), pages (page.tsx)
+9. **tRPC**: Type-safe APIs with kebab-case naming
+10. **Prisma**: ORM with PostgreSQL, singleton client, performance indexes
+11. **Zod**: End-to-end schema validation
+12. **Custom Hooks**: Reusable logic separated from UI
+13. **Testing**: Vitest (unit/integration), Playwright (E2E)
+14. **Ultracite**: Linting and formatting with Biome
+15. **RBAC**: Three-layer authorization (middleware, tRPC, UI guards)
+16. **Server Tables**: URL-based state, debounced search, database indexes
+17. **Services Dashboard**: Full server-optimized pattern with filters, pagination, CRUD
+18. **Formatters**: Centralized in `@lib/format` with tenant context
+19. **Optimistic UI**: Implement for mutations with rollback on error
 
 ---
 
@@ -1198,7 +1391,10 @@ const mutation = api.feature.delete.useMutation({
       utils.feature.list.setData(params, context.previousData);
     }
   },
-  onSettled: () => void utils.feature.list.invalidate(),
+  onSettled: () => {
+    void utils.feature.list.invalidate();
+    router.refresh(); // Required for SSR pages with force-dynamic
+  },
 });
 ```
 
@@ -1208,6 +1404,7 @@ const mutation = api.feature.delete.useMutation({
 - [ ] Single filter block (no duplicates)
 - [ ] Centralized formatters with tenant context
 - [ ] Optimistic UI for mutations
+- [ ] **Two-step cache invalidation: `invalidate()` + `router.refresh()`**
 - [ ] Proper Suspense key with all query params
 - [ ] Type-safe tRPC procedures
 - [ ] Database indexes for performance
@@ -1222,19 +1419,20 @@ See full documentation: [docs/dashboard-route-standard.md](../docs/dashboard-rou
 2. Follow established codebase patterns
 3. **For dashboard routes: Use SSR with `dynamic = 'force-dynamic'`** (no ISR)
 4. **Create pages as Server Components** (delegate interactivity to Client Components)
-5. **Never use Winston logger in Client Components** (server-side only)
-6. **Apply RBAC patterns** (middleware, tRPC procedures, UI guards)
-7. **Use adminProcedure for admin-only APIs** (not manual role checks)
-8. **Use getQuoteFilter for data filtering** (role-based WHERE clauses)
-9. **Use server-optimized table pattern** (URL state, debounced search, database indexes)
-10. **Use centralized formatters from `@lib/format`** (with tenant context)
-11. **Implement optimistic UI for mutations** (with rollback on error)
-12. Apply SOLID principles and Atomic Design
-13. Use Next.js App Router folder structure
-14. Prioritize Server Components over Client Components
-15. Add metadata for SEO on public pages
-16. Write testable and well-documented code
-17. Use Spanish only in UI text, everything else in English
-18. Never create Barrels (index.ts) or barrel files anywhere
-19. Follow project naming and organization conventions
+5. **For SSR mutations: Use `router.refresh()` after `invalidate()`** (two-step pattern)
+6. **Never use Winston logger in Client Components** (server-side only)
+7. **Apply RBAC patterns** (middleware, tRPC procedures, UI guards)
+8. **Use adminProcedure for admin-only APIs** (not manual role checks)
+9. **Use getQuoteFilter for data filtering** (role-based WHERE clauses)
+10. **Use server-optimized table pattern** (URL state, debounced search, database indexes)
+11. **Use centralized formatters from `@lib/format`** (with tenant context)
+12. **Implement optimistic UI for mutations** (with rollback on error)
+13. Apply SOLID principles and Atomic Design
+14. Use Next.js App Router folder structure
+15. Prioritize Server Components over Client Components
+16. Add metadata for SEO on public pages
+17. Write testable and well-documented code
+18. Use Spanish only in UI text, everything else in English
+19. Never create Barrels (index.ts) or barrel files anywhere
+20. Follow project naming and organization conventions
 

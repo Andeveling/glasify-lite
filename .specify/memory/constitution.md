@@ -1,7 +1,7 @@
 # Glasify Lite Constitution
-**Version**: 2.1.0  
+**Version**: 2.1.1  
 **Ratified**: 2025-10-09  
-**Last Amended**: 2025-01-19
+**Last Amended**: 2025-01-20
 
 ---
 
@@ -49,11 +49,20 @@ For **technical implementation details**, code patterns, and specific framework 
 - **Rarely-changing data**: Use 5-minute cache (suppliers, product types)
 - **User-specific data**: Use short cache or no cache (personal quotes)
 
+**Cache Refresh After Changes**:
+- When you create, update, or delete data on the server, the browser needs to know
+- Use `router.refresh()` to tell Next.js to get fresh data from the server
+- This updates the page without losing the user's place or what they were doing
+- Always combine with cache invalidation: clear old data + fetch new data
+
 **Examples**:
 - ✅ Load product list on server, send ready data to browser
 - ✅ Cache product catalog for 5 minutes (it rarely changes)
+- ✅ After creating a service, refresh the page to show the new service
+- ✅ After deleting an item, refresh so it disappears from the list
 - ❌ Load all products in browser and filter there
 - ❌ Reload same data every time user clicks back
+- ❌ Expect the page to update automatically without refresh (it won't with SSR)
 
 ---
 
@@ -320,29 +329,19 @@ If something is unclear:
 <!--
 Sync Impact Report
 
-- Version change: 2.0.1 → 2.1.0 (MINOR)
+- Version change: 2.1.0 → 2.1.1 (PATCH)
 - Modified principles:
-  * Server-First Architecture: Enhanced clarity on ISR vs force-dynamic usage
-  * Observability & Versioning: Clarified Winston logger restrictions
-  * Development Workflow: Added performance optimization guidelines
+  * Server-First Performance: Added explicit guidance on cache refresh pattern with router.refresh()
 - Added sections:
-  * Performance & Caching Strategy (new principle under Server-First Architecture)
-  * Performance budgets and success metrics
+  * Cache Refresh After Changes (clarification under Server-First Performance)
 - Removed sections: none
 - Templates updated:
-  * .specify/templates/plan-template.md ✅ verified (Constitution Check aligned)
-  * .specify/templates/spec-template.md ✅ verified (requirements structure compatible)
-  * .specify/templates/tasks-template.md ✅ verified (testing flexibility maintained)
-  * .github/copilot-instructions.md ✅ updated (technical patterns documented separately)
+  * .github/copilot-instructions.md ✅ updated (added SSR Cache Invalidation pattern)
+  * AGENTS.md ✅ updated (documented router.refresh() pattern)
 - Follow-up TODOs: none
 - Changes summary:
-  * Separated technical implementation details from constitution principles
-  * Rewrote in plain language for accessibility to non-technical stakeholders
-  * Added performance optimization guidance (ISR with revalidate, staleTime configuration)
-  * Clarified Server-First Architecture with concrete examples in simple terms
-  * Enhanced observability section with explicit Winston usage rules
-  * Maintained flexibility in testing workflow
-  * Technical patterns moved to copilot-instructions.md for implementation reference
-  * Added principle priority order for conflict resolution
-  * Added success metrics for measuring adherence to principles
+  * Clarified that SSR pages with force-dynamic need router.refresh() after mutations
+  * Added plain language explanation of why browser doesn't auto-update with SSR
+  * Documented the two-step pattern: invalidate cache + refresh server data
+  * Provided concrete examples of when to use router.refresh()
 -->

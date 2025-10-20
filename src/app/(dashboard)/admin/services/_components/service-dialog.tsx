@@ -19,6 +19,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Service, ServiceType, ServiceUnit } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -62,6 +63,7 @@ const SERVICE_TYPE_OPTIONS: { label: string; value: ServiceType; description: st
 
 export function ServiceDialog({ mode, open, onOpenChange, defaultValues }: ServiceDialogProps) {
   const utils = api.useUtils();
+  const router = useRouter();
 
   // React Hook Form
   const form = useForm<FormValues>({
@@ -85,7 +87,7 @@ export function ServiceDialog({ mode, open, onOpenChange, defaultValues }: Servi
       perimeter: 'ml',
     };
 
-    form.setValue('unit', typeToUnitMap[type]);
+    form.setValue('unit', typeToUnitMap[ type ]);
   };
 
   // Reset form when dialog opens with new data
@@ -105,7 +107,7 @@ export function ServiceDialog({ mode, open, onOpenChange, defaultValues }: Servi
         unit: 'unit',
       });
     }
-  }, [open, defaultValues, mode, form]);
+  }, [ open, defaultValues, mode, form ]);
 
   // Create mutation with optimistic update
   const createMutation = api.admin.service.create.useMutation({
@@ -124,8 +126,9 @@ export function ServiceDialog({ mode, open, onOpenChange, defaultValues }: Servi
       form.reset();
     },
     onSettled: () => {
-      // Always refetch to ensure data consistency
+      // Invalidate cache and refresh server data
       void utils.admin.service.list.invalidate();
+      router.refresh();
     },
   });
 
@@ -146,8 +149,9 @@ export function ServiceDialog({ mode, open, onOpenChange, defaultValues }: Servi
       form.reset();
     },
     onSettled: () => {
-      // Always refetch to ensure data consistency
+      // Invalidate cache and refresh server data
       void utils.admin.service.list.invalidate();
+      router.refresh();
     },
   });
 
