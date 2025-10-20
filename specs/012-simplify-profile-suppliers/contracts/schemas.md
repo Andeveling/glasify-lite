@@ -73,12 +73,12 @@ export type CreateProfileSupplierInput = z.infer<typeof createProfileSupplierSch
 
 **Field Validation**:
 
-| Field | Required | Min | Max | Transform | Default |
-|-------|----------|-----|-----|-----------|---------|
-| name | ✅ Yes | 3 | 100 | trim() | - |
-| materialType | ✅ Yes | - | - | - | - |
-| notes | ❌ No | - | 500 | - | undefined |
-| isActive | ❌ No | - | - | - | true |
+| Field        | Required | Min | Max | Transform | Default   |
+| ------------ | -------- | --- | --- | --------- | --------- |
+| name         | ✅ Yes    | 3   | 100 | trim()    | -         |
+| materialType | ✅ Yes    | -   | -   | -         | -         |
+| notes        | ❌ No     | -   | 500 | -         | undefined |
+| isActive     | ❌ No     | -   | -   | -         | true      |
 
 **Error Messages** (Spanish):
 - `name` required: "El nombre es requerido"
@@ -164,13 +164,13 @@ export type UpdateProfileSupplierInput = z.infer<typeof updateProfileSupplierSch
 
 **Field Validation**:
 
-| Field | Required | Min | Max | Transform | Default |
-|-------|----------|-----|-----|-----------|---------|
-| id | ✅ Yes | - | - | - | - |
-| name | ✅ Yes | 3 | 100 | trim() | - |
-| materialType | ✅ Yes | - | - | - | - |
-| notes | ❌ No | - | 500 | - | undefined |
-| isActive | ✅ Yes | - | - | - | - |
+| Field        | Required | Min | Max | Transform | Default   |
+| ------------ | -------- | --- | --- | --------- | --------- |
+| id           | ✅ Yes    | -   | -   | -         | -         |
+| name         | ✅ Yes    | 3   | 100 | trim()    | -         |
+| materialType | ✅ Yes    | -   | -   | -         | -         |
+| notes        | ❌ No     | -   | 500 | -         | undefined |
+| isActive     | ✅ Yes    | -   | -   | -         | -         |
 
 **Usage in tRPC**:
 ```typescript
@@ -219,12 +219,12 @@ export type ListProfileSuppliersInput = z.infer<typeof listProfileSuppliersSchem
 
 **Field Validation**:
 
-| Field | Required | Type | Validation | Default |
-|-------|----------|------|------------|---------|
-| page | ❌ No | number | Positive integer | 1 |
-| search | ❌ No | string | Any | undefined |
-| materialType | ❌ No | enum | One of 4 values | undefined |
-| isActive | ❌ No | boolean | - | undefined |
+| Field        | Required | Type    | Validation       | Default   |
+| ------------ | -------- | ------- | ---------------- | --------- |
+| page         | ❌ No     | number  | Positive integer | 1         |
+| search       | ❌ No     | string  | Any              | undefined |
+| materialType | ❌ No     | enum    | One of 4 values  | undefined |
+| isActive     | ❌ No     | boolean | -                | undefined |
 
 **Usage in tRPC**:
 ```typescript
@@ -255,9 +255,9 @@ export type DeleteProfileSupplierInput = z.infer<typeof deleteProfileSupplierSch
 
 **Field Validation**:
 
-| Field | Required | Type | Validation |
-|-------|----------|------|------------|
-| id | ✅ Yes | string | CUID format |
+| Field | Required | Type   | Validation  |
+| ----- | -------- | ------ | ----------- |
+| id    | ✅ Yes    | string | CUID format |
 
 **Usage in tRPC**:
 ```typescript
@@ -288,9 +288,9 @@ export type GetByIdInput = z.infer<typeof getByIdSchema>;
 
 **Field Validation**:
 
-| Field | Required | Type | Validation |
-|-------|----------|------|------------|
-| id | ✅ Yes | string | CUID format |
+| Field | Required | Type   | Validation  |
+| ----- | -------- | ------ | ----------- |
+| id    | ✅ Yes    | string | CUID format |
 
 **Usage in tRPC**:
 ```typescript

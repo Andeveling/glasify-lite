@@ -460,14 +460,14 @@ Based on Services module as reference (already completed):
 
 ## 8. Decisions Summary
 
-| Decision | Rationale | Alternative Considered | Why Rejected |
-|----------|-----------|------------------------|--------------|
-| Use Services module pattern exactly | Proven pattern, already documented | Create custom pattern | Reinventing wheel, less maintainable |
-| Dialog modal instead of separate pages | Better UX, consistent with Services | Keep separate pages | Slow UX, inconsistent |
-| Two custom hooks (form + mutations) | SOLID SRP, testable | Single hook | Less testable, violates SRP |
-| SSR with force-dynamic (keep existing) | Admin route needs fresh data | ISR with revalidation | Admin data changes frequently |
-| Spanish UI, English code | Constitution requirement | All English | Would violate constitution |
-| No auto-assignment logic | Material type is explicit choice | Auto-assign based on name | No clear mapping rule |
+| Decision                               | Rationale                           | Alternative Considered    | Why Rejected                         |
+| -------------------------------------- | ----------------------------------- | ------------------------- | ------------------------------------ |
+| Use Services module pattern exactly    | Proven pattern, already documented  | Create custom pattern     | Reinventing wheel, less maintainable |
+| Dialog modal instead of separate pages | Better UX, consistent with Services | Keep separate pages       | Slow UX, inconsistent                |
+| Two custom hooks (form + mutations)    | SOLID SRP, testable                 | Single hook               | Less testable, violates SRP          |
+| SSR with force-dynamic (keep existing) | Admin route needs fresh data        | ISR with revalidation     | Admin data changes frequently        |
+| Spanish UI, English code               | Constitution requirement            | All English               | Would violate constitution           |
+| No auto-assignment logic               | Material type is explicit choice    | Auto-assign based on name | No clear mapping rule                |
 
 ---
 

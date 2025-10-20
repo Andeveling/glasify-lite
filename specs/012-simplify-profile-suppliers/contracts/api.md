@@ -352,13 +352,13 @@ const supplier = await api.admin['profile-supplier'].getById({
 
 ### tRPC Error Codes
 
-| Code | HTTP Status | Usage |
-|------|-------------|-------|
-| FORBIDDEN | 403 | User is not admin |
-| BAD_REQUEST | 400 | Invalid input or business rule violation |
-| NOT_FOUND | 404 | Supplier not found by ID |
-| CONFLICT | 409 | Unique constraint violation (duplicate name) |
-| INTERNAL_SERVER_ERROR | 500 | Unexpected server error |
+| Code                  | HTTP Status | Usage                                        |
+| --------------------- | ----------- | -------------------------------------------- |
+| FORBIDDEN             | 403         | User is not admin                            |
+| BAD_REQUEST           | 400         | Invalid input or business rule violation     |
+| NOT_FOUND             | 404         | Supplier not found by ID                     |
+| CONFLICT              | 409         | Unique constraint violation (duplicate name) |
+| INTERNAL_SERVER_ERROR | 500         | Unexpected server error                      |
 
 ### Error Response Format
 
