@@ -29,8 +29,7 @@ function buildWhereClause(input: {
   type?: 'all' | 'area' | 'perimeter' | 'fixed';
   isActive?: 'all' | 'active' | 'inactive';
 }): Prisma.ServiceWhereInput {
-  type ServiceWhereInputWithIsActive = Prisma.ServiceWhereInput & { isActive?: boolean };
-  const where: ServiceWhereInputWithIsActive = {};
+  const where: Prisma.ServiceWhereInput = {};
 
   // Search by name
   if (input.search) {

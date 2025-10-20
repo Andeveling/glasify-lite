@@ -34,6 +34,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatCurrency } from '@/lib/format';
 import { api } from '@/trpc/react';
+import { ServicesEmpty } from './services-empty';
 
 type SerializedService = {
   id: string;
@@ -94,7 +95,7 @@ const SERVICE_TYPE_VARIANTS: Record<ServiceType, 'default' | 'secondary' | 'outl
   perimeter: 'outline',
 };
 
-export function ServicesList({ initialData }: ServicesListProps) {
+export function ServicesList({ initialData, searchParams }: ServicesListProps) {
   const router = useRouter();
   const utils = api.useUtils();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -132,76 +133,77 @@ export function ServicesList({ initialData }: ServicesListProps) {
 
   const { items: services, page: currentPage, total, totalPages } = initialData;
 
+  // Check if there are filters active
+  const hasFilters = Boolean(
+    searchParams?.search ||
+      (searchParams?.type && searchParams.type !== 'all') ||
+      (searchParams?.isActive && searchParams.isActive !== 'all')
+  );
+
   return (
     <>
-      <Card>
-        <CardHeader>
-          <CardTitle>Servicios Disponibles</CardTitle>
-          <CardDescription>
-            {total} servicio{total !== 1 ? 's' : ''} registrado{total !== 1 ? 's' : ''}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Empty state */}
-          {services.length === 0 ? (
-            <div className="flex h-32 items-center justify-center text-center text-muted-foreground text-sm">
-              No hay servicios disponibles
-            </div>
-          ) : (
-            <>
-              {/* Table */}
-              <div className="overflow-x-auto rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nombre</TableHead>
-                      <TableHead>Tipo</TableHead>
-                      <TableHead>Unidad</TableHead>
-                      <TableHead className="text-right">Tarifa</TableHead>
-                      <TableHead className="w-[100px] text-right">Acciones</TableHead>
+      {/* Empty state */}
+      {services.length === 0 ? (
+        <ServicesEmpty hasFilters={hasFilters} />
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle>Servicios Disponibles</CardTitle>
+            <CardDescription>
+              {total} servicio{total !== 1 ? 's' : ''} registrado{total !== 1 ? 's' : ''}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Table */}
+            <div className="overflow-x-auto rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nombre</TableHead>
+                    <TableHead>Tipo</TableHead>
+                    <TableHead>Unidad</TableHead>
+                    <TableHead className="text-right">Tarifa</TableHead>
+                    <TableHead className="w-[100px] text-right">Acciones</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {services.map((service) => (
+                    <TableRow key={service.id}>
+                      <TableCell className="font-medium">{service.name}</TableCell>
+                      <TableCell>
+                        <Badge variant={SERVICE_TYPE_VARIANTS[service.type]}>{SERVICE_TYPE_LABELS[service.type]}</Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground text-sm">
+                        {SERVICE_UNIT_LABELS[service.unit]}
+                      </TableCell>
+                      <TableCell className="text-right">{formatCurrency(service.rate)}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button onClick={() => handleEditClick(service.id)} size="sm" variant="ghost">
+                            <Pencil className="h-4 w-4" />
+                            <span className="sr-only">Editar</span>
+                          </Button>
+                          <Button
+                            onClick={() => handleDeleteClick({ id: service.id, name: service.name })}
+                            size="sm"
+                            variant="ghost"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            <span className="sr-only">Eliminar</span>
+                          </Button>
+                        </div>
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {services.map((service) => (
-                      <TableRow key={service.id}>
-                        <TableCell className="font-medium">{service.name}</TableCell>
-                        <TableCell>
-                          <Badge variant={SERVICE_TYPE_VARIANTS[service.type]}>
-                            {SERVICE_TYPE_LABELS[service.type]}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground text-sm">
-                          {SERVICE_UNIT_LABELS[service.unit]}
-                        </TableCell>
-                        <TableCell className="text-right">{formatCurrency(service.rate)}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <Button onClick={() => handleEditClick(service.id)} size="sm" variant="ghost">
-                              <Pencil className="h-4 w-4" />
-                              <span className="sr-only">Editar</span>
-                            </Button>
-                            <Button
-                              onClick={() => handleDeleteClick({ id: service.id, name: service.name })}
-                              size="sm"
-                              variant="ghost"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                              <span className="sr-only">Eliminar</span>
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
 
-              {/* Pagination - reutilizable component */}
-              <TablePagination currentPage={currentPage} totalItems={total} totalPages={totalPages} />
-            </>
-          )}
-        </CardContent>
-      </Card>
+            {/* Pagination - reutilizable component */}
+            <TablePagination currentPage={currentPage} totalItems={total} totalPages={totalPages} />
+          </CardContent>
+        </Card>
+      )}
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
