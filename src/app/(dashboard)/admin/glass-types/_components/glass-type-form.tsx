@@ -15,8 +15,8 @@
 
 'use client';
 
+import { FileText, Lightbulb, Star, ThermometerSun } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { FileText, ThermometerSun, Lightbulb, Star } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Form } from '@/components/ui/form';
 import type { GetGlassTypeByIdOutput } from '@/lib/validations/admin/glass-type.schema';
@@ -52,7 +52,7 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
           <AccordionItem className="rounded-lg border" value="basic">
             <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">
               <span className="flex items-center gap-2 font-semibold text-lg">
-                <FileText className="h-5 w-5" aria-hidden="true" />
+                <FileText aria-hidden="true" className="h-5 w-5" />
                 <span>Información Básica</span>
               </span>
             </AccordionTrigger>
@@ -66,7 +66,7 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
           <AccordionItem className="rounded-lg border" value="thermal">
             <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">
               <span className="flex items-center gap-2 font-semibold text-lg">
-                <ThermometerSun className="h-5 w-5" aria-hidden="true" />
+                <ThermometerSun aria-hidden="true" className="h-5 w-5" />
                 <span>Propiedades Térmicas y Ópticas</span>
               </span>
             </AccordionTrigger>
@@ -80,7 +80,7 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
           <AccordionItem className="rounded-lg border" value="solutions">
             <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">
               <span className="flex items-center gap-2 font-semibold text-lg">
-                <Lightbulb className="h-5 w-5" aria-hidden="true" />
+                <Lightbulb aria-hidden="true" className="h-5 w-5" />
                 <span>Soluciones</span>
               </span>
             </AccordionTrigger>
@@ -93,7 +93,7 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
           <AccordionItem className="rounded-lg border" value="characteristics">
             <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">
               <span className="flex items-center gap-2 font-semibold text-lg">
-                <Star className="h-5 w-5" aria-hidden="true" />
+                <Star aria-hidden="true" className="h-5 w-5" />
                 <span>Características</span>
               </span>
             </AccordionTrigger>
