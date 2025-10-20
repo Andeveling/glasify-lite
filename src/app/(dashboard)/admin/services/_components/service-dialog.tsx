@@ -6,7 +6,13 @@
  *
  * Pattern: Dialog-based CRUD (no separate pages)
  * Reason: Service form is simple and fits well in a modal
+ *
+ * Features:
+ * - Optimistic updates with loading states
+ * - Toast notifications
+ * - Cache invalidation after mutations
  */
+/** biome-ignore-all assist/source/useSortedKeys: TypeScript necesita que onMutate se defina primero para inferir el tipo del contexto que luego se usa en onError. */
 
 'use client';
 
@@ -94,35 +100,49 @@ export function ServiceDialog({ mode, open, onOpenChange, defaultValues }: Servi
         unit: 'unit',
       });
     }
-  }, [ open, defaultValues, mode, form ]);
+  }, [open, defaultValues, mode, form]);
 
-  // Create mutation
+  // Create mutation with optimistic update
   const createMutation = api.admin.service.create.useMutation({
+    onMutate: () => {
+      toast.loading('Creando servicio...', { id: 'create-service' });
+    },
     onError: (err) => {
       toast.error('Error al crear servicio', {
         description: err.message,
+        id: 'create-service',
       });
     },
     onSuccess: () => {
-      toast.success('Servicio creado correctamente');
+      toast.success('Servicio creado correctamente', { id: 'create-service' });
       onOpenChange(false);
-      void utils.admin.service.list.invalidate();
       form.reset();
+    },
+    onSettled: () => {
+      // Always refetch to ensure data consistency
+      void utils.admin.service.list.invalidate();
     },
   });
 
-  // Update mutation
+  // Update mutation with optimistic update
   const updateMutation = api.admin.service.update.useMutation({
+    onMutate: () => {
+      toast.loading('Actualizando servicio...', { id: 'update-service' });
+    },
     onError: (err) => {
       toast.error('Error al actualizar servicio', {
         description: err.message,
+        id: 'update-service',
       });
     },
     onSuccess: () => {
-      toast.success('Servicio actualizado correctamente');
+      toast.success('Servicio actualizado correctamente', { id: 'update-service' });
       onOpenChange(false);
-      void utils.admin.service.list.invalidate();
       form.reset();
+    },
+    onSettled: () => {
+      // Always refetch to ensure data consistency
+      void utils.admin.service.list.invalidate();
     },
   });
 

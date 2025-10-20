@@ -1,27 +1,24 @@
 /**
  * Services List Page (US10 - T094)
  *
- * Server Component with Suspense boundaries for streaming
- * Pattern: SSR (Server-Side Rendering) for dashboard routes
+ * Server Component - SSR pattern for dashboard routes
  *
  * Architecture:
  * - Reads filters from URL search params (Promise in Next.js 15)
- * - Lightweight queries (none) outside Suspense
- * - Heavy query (services list) inside Suspense
- * - Template literal key for proper re-suspension
+ * - Fetches data at page level (prevents EventEmitter memory leaks)
+ * - Passes serialized data to client components
+ * - No Suspense boundaries (data fetched before render)
  *
  * Performance:
  * - SSR with force-dynamic ensures fresh data on every request
- * - Suspense with specific key values for reliable updates
- * - Parallel data fetching where applicable
+ * - Single API call per page load
+ * - Data serialization for Decimal types
  *
  * Route: /admin/services
  * Access: Admin only (protected by middleware)
  */
 
 import type { Metadata } from 'next';
-import { Suspense } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/trpc/server-client';
 import { ServicesContent } from './_components/services-content';
 
@@ -51,63 +48,27 @@ type PageProps = {
   searchParams: SearchParams;
 };
 
-// Loading skeleton for the table
-function ServicesListSkeleton() {
-  return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <Skeleton className="h-10 w-full max-w-sm" />
-        <Skeleton className="h-10 w-[180px]" />
-        <Skeleton className="h-10 w-[180px]" />
-      </div>
-      <div className="rounded-md border">
-        <div className="space-y-1 border-b p-4">
-          <div className="flex justify-between">
-            <Skeleton className="h-4 w-[100px]" />
-            <Skeleton className="h-4 w-[80px]" />
-            <Skeleton className="h-4 w-[80px]" />
-            <Skeleton className="h-4 w-[60px]" />
-          </div>
-        </div>
-        <div className="space-y-0 divide-y">
-          {Array.from({ length: 10 }).map((_, i) => (
-            <div className="flex justify-between p-4" key={i}>
-              <Skeleton className="h-4 w-[150px]" />
-              <Skeleton className="h-4 w-[80px]" />
-              <Skeleton className="h-4 w-[60px]" />
-              <Skeleton className="h-4 w-[60px]" />
-              <Skeleton className="h-4 w-[40px]" />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
+export default async function ServicesPage({ searchParams }: PageProps) {
+  const params = await searchParams;
 
-// Server Component that fetches and renders the table
-async function ServicesListContent({
-  isActive,
-  page,
-  search,
-  sortBy,
-  sortOrder,
-  type,
-}: {
-  isActive: 'all' | 'active' | 'inactive';
-  page: number;
-  search?: string;
-  sortBy: 'name' | 'createdAt' | 'updatedAt' | 'rate';
-  sortOrder: 'asc' | 'desc';
-  type?: string;
-}) {
-  // Fetch services data (heavy query inside Suspense)
+  // Parse search params (outside Suspense)
+  const page = Number(params.page) || 1;
+  const search = params.search && params.search !== '' ? params.search : undefined;
+  const type = params.type && params.type !== 'all' ? params.type : undefined;
+  const isActive = (params.isActive && params.isActive !== 'all' ? params.isActive : 'all') as
+    | 'all'
+    | 'active'
+    | 'inactive';
+  const sortBy = (params.sortBy || 'name') as 'name' | 'createdAt' | 'updatedAt' | 'rate';
+  const sortOrder = (params.sortOrder || 'asc') as 'asc' | 'desc';
+
+  // Fetch data OUTSIDE Suspense to avoid EventEmitter memory leak
   const initialData = await api.admin.service.list({
     isActive,
     limit: 20,
     page,
     search,
-    sortBy: sortBy as 'name' | 'createdAt' | 'updatedAt' | 'rate',
+    sortBy,
     sortOrder,
     type: (type === 'all' ? 'all' : type) as 'all' | 'area' | 'perimeter' | 'fixed',
   });
@@ -121,34 +82,14 @@ async function ServicesListContent({
     })),
   };
 
-  return (
-    <ServicesContent
-      initialData={serializedData}
-      searchParams={{
-        isActive,
-        page: String(page),
-        search,
-        sortBy,
-        sortOrder,
-        type,
-      }}
-    />
-  );
-}
-
-export default async function ServicesPage({ searchParams }: PageProps) {
-  const params = await searchParams;
-
-  // Parse search params (outside Suspense)
-  const page = Number(params.page) || 1;
-  const search = params.search && params.search !== '' ? params.search : undefined;
-  const type = params.type && params.type !== 'all' ? params.type : undefined;
-  const isActive = (params.isActive && params.isActive !== 'all' ? params.isActive : 'all') as
-    | 'all'
-    | 'active'
-    | 'inactive';
-  const sortBy = params.sortBy || 'name';
-  const sortOrder = (params.sortOrder || 'asc') as 'asc' | 'desc';
+  const searchParamsForClient = {
+    isActive,
+    page: String(page),
+    search,
+    sortBy,
+    sortOrder,
+    type,
+  };
 
   return (
     <div className="space-y-6">
@@ -160,20 +101,8 @@ export default async function ServicesPage({ searchParams }: PageProps) {
         </p>
       </div>
 
-      {/* Content with filters and table inside Suspense - streaming */}
-      <Suspense
-        fallback={<ServicesListSkeleton />}
-        key={`${search}-${page}-${type}-${isActive}-${sortBy}-${sortOrder}`}
-      >
-        <ServicesListContent
-          isActive={isActive}
-          page={page}
-          search={search}
-          sortBy={sortBy as 'name' | 'createdAt' | 'updatedAt' | 'rate'}
-          sortOrder={sortOrder}
-          type={type}
-        />
-      </Suspense>
+      {/* Content with filters and table */}
+      <ServicesContent initialData={serializedData} searchParams={searchParamsForClient} />
     </div>
   );
 }

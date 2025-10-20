@@ -12,12 +12,18 @@
  * - Handle CRUD actions (edit, delete)
  * - Manage optimistic UI
  *
+ * Features:
+ * - Optimistic delete with rollback on error
+ * - Toast notifications with loading states
+ * - Cache invalidation after mutations
+ *
  * Key differences from old ServiceList:
  * ✅ Eliminado: React state para filtros (page, search, typeFilter)
  * ✅ Agregado: Recibe datos iniciales del servidor
  * ✅ Agregado: Sincroniza con URL via searchParams
  * ✅ Simplificado: Enfocado en presentación, no state management
  */
+/** biome-ignore-all assist/source/useSortedKeys: TypeScript necesita que onMutate se defina primero para inferir el tipo del contexto que luego se usa en onError. */
 
 'use client';
 
@@ -97,24 +103,91 @@ const SERVICE_TYPE_VARIANTS: Record<ServiceType, 'default' | 'secondary' | 'outl
 
 export function ServicesList({ initialData, searchParams }: ServicesListProps) {
   const utils = api.useUtils();
-  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
-  const [ serviceToDelete, setServiceToDelete ] = useState<{ id: string; name: string } | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [serviceToDelete, setServiceToDelete] = useState<{ id: string; name: string } | null>(null);
 
   // Dialog state for edit only (create is handled in ServicesContent)
-  const [ editDialogOpen, setEditDialogOpen ] = useState(false);
-  const [ serviceToEdit, setServiceToEdit ] = useState<Service | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [serviceToEdit, setServiceToEdit] = useState<Service | null>(null);
 
   // Delete mutation with optimistic UI
   const deleteMutation = api.admin.service.delete.useMutation({
-    onError: (error) => {
+    onMutate: async (variables) => {
+      // Cancel any outgoing refetches
+      await utils.admin.service.list.cancel();
+
+      // Snapshot the previous value
+      const previousData = utils.admin.service.list.getData();
+
+      // Optimistically remove the item from cache
+      if (previousData) {
+        utils.admin.service.list.setData(
+          // Match the input parameters of the current query
+          {
+            isActive: searchParams.isActive as 'all' | 'active' | 'inactive' | undefined,
+            limit: initialData.limit,
+            page: Number(searchParams.page) || 1,
+            search: searchParams.search,
+            sortBy: (searchParams.sortBy || 'name') as 'name' | 'createdAt' | 'updatedAt' | 'rate',
+            sortOrder: (searchParams.sortOrder || 'asc') as 'asc' | 'desc',
+            type: (searchParams.type !== 'all' ? searchParams.type : undefined) as
+              | 'all'
+              | 'area'
+              | 'perimeter'
+              | 'fixed'
+              | undefined,
+          },
+          (old) => {
+            if (!old) return old;
+            return {
+              ...old,
+              items: old.items.filter((item) => item.id !== variables.id),
+              total: old.total - 1,
+            };
+          }
+        );
+      }
+
+      // Show immediate feedback
+      toast.loading('Eliminando servicio...', { id: 'delete-service' });
+
+      // Return context with snapshot for rollback
+      return { previousData };
+    },
+    onError: (error, _variables, context) => {
+      // Rollback to previous data on error
+      if (context?.previousData) {
+        utils.admin.service.list.setData(
+          {
+            isActive: searchParams.isActive as 'all' | 'active' | 'inactive' | undefined,
+            limit: initialData.limit,
+            page: Number(searchParams.page) || 1,
+            search: searchParams.search,
+            sortBy: (searchParams.sortBy || 'name') as 'name' | 'createdAt' | 'updatedAt' | 'rate',
+            sortOrder: (searchParams.sortOrder || 'asc') as 'asc' | 'desc',
+            type: (searchParams.type !== 'all' ? searchParams.type : undefined) as
+              | 'all'
+              | 'area'
+              | 'perimeter'
+              | 'fixed'
+              | undefined,
+          },
+          context.previousData
+        );
+      }
+
       toast.error('Error al eliminar servicio', {
         description: error.message,
+        id: 'delete-service',
       });
     },
     onSuccess: () => {
-      toast.success('Servicio eliminado correctamente');
+      toast.success('Servicio eliminado correctamente', { id: 'delete-service' });
       setDeleteDialogOpen(false);
       setServiceToDelete(null);
+    },
+    onSettled: () => {
+      // Always refetch to ensure data consistency
       void utils.admin.service.list.invalidate();
     },
   });
@@ -130,7 +203,7 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
       ...service,
       createdAt: service.createdAt ?? new Date(),
       isActive: service.isActive ?? true,
-      rate: mockDecimal as Service[ 'rate' ],
+      rate: mockDecimal as Service['rate'],
       updatedAt: service.updatedAt ?? new Date(),
     });
     setEditDialogOpen(true);
@@ -152,8 +225,8 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
   // Check if there are filters active
   const hasFilters = Boolean(
     searchParams?.search ||
-    (searchParams?.type && searchParams.type !== 'all') ||
-    (searchParams?.isActive && searchParams.isActive !== 'all')
+      (searchParams?.type && searchParams.type !== 'all') ||
+      (searchParams?.isActive && searchParams.isActive !== 'all')
   );
 
   return (
@@ -197,10 +270,10 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
                     <TableRow key={service.id}>
                       <TableCell className="font-medium">{service.name}</TableCell>
                       <TableCell>
-                        <Badge variant={SERVICE_TYPE_VARIANTS[ service.type ]}>{SERVICE_TYPE_LABELS[ service.type ]}</Badge>
+                        <Badge variant={SERVICE_TYPE_VARIANTS[service.type]}>{SERVICE_TYPE_LABELS[service.type]}</Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm">
-                        {SERVICE_UNIT_LABELS[ service.unit ]}
+                        {SERVICE_UNIT_LABELS[service.unit]}
                       </TableCell>
                       <TableCell className="text-right">{formatCurrency(service.rate)}</TableCell>
                       <TableCell className="text-right">
