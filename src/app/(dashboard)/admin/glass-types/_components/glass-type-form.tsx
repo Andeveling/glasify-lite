@@ -16,6 +16,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { FileText, ThermometerSun, Lightbulb, Star } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Form } from '@/components/ui/form';
 import type { GetGlassTypeByIdOutput } from '@/lib/validations/admin/glass-type.schema';
@@ -46,11 +47,14 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
     <Form {...form}>
       {/* @ts-expect-error - Type mismatch between Zod schema and RHF Control types */}
       <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
-        <Accordion className="space-y-4" defaultValue={['basic']} type="multiple">
+        <Accordion className="space-y-4" defaultValue={[ 'basic' ]} type="multiple">
           {/* Basic Information Section */}
           <AccordionItem className="rounded-lg border" value="basic">
             <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">
-              <span className="flex items-center gap-2 font-semibold text-lg">📝 Información Básica</span>
+              <span className="flex items-center gap-2 font-semibold text-lg">
+                <FileText className="h-5 w-5" aria-hidden="true" />
+                <span>Información Básica</span>
+              </span>
             </AccordionTrigger>
             <AccordionContent className="px-1 pt-4">
               {/* @ts-expect-error - Type mismatch between specific and generic Control types */}
@@ -61,7 +65,10 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
           {/* Thermal Properties Section */}
           <AccordionItem className="rounded-lg border" value="thermal">
             <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">
-              <span className="flex items-center gap-2 font-semibold text-lg">🌡️ Propiedades Térmicas y Ópticas</span>
+              <span className="flex items-center gap-2 font-semibold text-lg">
+                <ThermometerSun className="h-5 w-5" aria-hidden="true" />
+                <span>Propiedades Térmicas y Ópticas</span>
+              </span>
             </AccordionTrigger>
             <AccordionContent className="px-1 pt-4">
               {/* @ts-expect-error - Type mismatch between specific and generic Control types */}
@@ -72,7 +79,10 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
           {/* Solutions Section */}
           <AccordionItem className="rounded-lg border" value="solutions">
             <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">
-              <span className="flex items-center gap-2 font-semibold text-lg">💡 Soluciones</span>
+              <span className="flex items-center gap-2 font-semibold text-lg">
+                <Lightbulb className="h-5 w-5" aria-hidden="true" />
+                <span>Soluciones</span>
+              </span>
             </AccordionTrigger>
             <AccordionContent className="px-1 pt-4">
               <SolutionsSection />
@@ -82,7 +92,10 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
           {/* Characteristics Section */}
           <AccordionItem className="rounded-lg border" value="characteristics">
             <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">
-              <span className="flex items-center gap-2 font-semibold text-lg">⭐ Características</span>
+              <span className="flex items-center gap-2 font-semibold text-lg">
+                <Star className="h-5 w-5" aria-hidden="true" />
+                <span>Características</span>
+              </span>
             </AccordionTrigger>
             <AccordionContent className="px-1 pt-4">
               <CharacteristicsSection />

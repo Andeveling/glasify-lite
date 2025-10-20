@@ -18,17 +18,21 @@ export const metadata: Metadata = {
 
 export default function NewGlassTypePage() {
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
-      <div>
-        <h1 className="font-bold text-3xl tracking-tight">Nuevo Tipo de Vidriosss</h1>
+    <div className="flex h-full flex-col gap-6 overflow-hidden">
+      <div className="space-y-2">
+        <h1 className="font-bold text-3xl tracking-tight">Nuevo Tipo de Vidrio</h1>
         <p className="text-muted-foreground">Crea un nuevo tipo de vidrio con sus soluciones y características</p>
       </div>
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <div>
-          <GlassTypeForm mode="create" />
+      <div className='flex flex-1 gap-4 overflow-hidden rounded-lg'>
+        {/* Formulario - Ocupa espacio flexible */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-0">
+            <GlassTypeForm mode="create" />
+          </div>
         </div>
-        <div>
-          <Skeleton className="h-[800px] w-full rounded-lg" />
+        {/* Preview - Ancho fijo mínimo o flexible en pantallas grandes */}
+        <div className="hidden w-full flex-1 lg:block">
+          <Skeleton className="h-full w-full" />
         </div>
       </div>
     </div>
