@@ -6,7 +6,7 @@
  * Features:
  * - Multi-line text input
  * - Character counter (optional)
- * - Minimum height control
+ * - Row count control (uses textarea rows)
  * - Optional description text
  *
  * @module _components/form-fields/form-textarea-field
@@ -24,11 +24,12 @@ interface FormTextareaFieldProps<TFieldValues extends FieldValues> {
   label: string;
   placeholder?: string;
   description?: string;
-  minHeight?: string;
+  rows?: number; // prefer rows over height for reliable sizing
   maxLength?: number;
   showCharCount?: boolean;
   required?: boolean;
   disabled?: boolean;
+  className?: string; // allow grid span / layout classes
 }
 
 /**
@@ -40,18 +41,19 @@ export function FormTextareaField<TFieldValues extends FieldValues>({
   label,
   placeholder,
   description,
-  minHeight = '100px',
+  rows = 6,
   maxLength,
   showCharCount = false,
   required = false,
   disabled = false,
+  className,
 }: FormTextareaFieldProps<TFieldValues>) {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem>
+        <FormItem className={className}>
           <FormLabel>
             {label}
             {required && ' *'}
@@ -59,10 +61,10 @@ export function FormTextareaField<TFieldValues extends FieldValues>({
           <FormControl>
             <Textarea
               {...field}
-              className={`min-h-[${minHeight}]`}
               disabled={disabled}
               maxLength={maxLength}
               placeholder={placeholder}
+              rows={rows}
               value={field.value ?? ''}
             />
           </FormControl>

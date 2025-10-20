@@ -18,7 +18,7 @@ type EditGlassTypePageProps = {
 
 export async function generateMetadata({ params }: EditGlassTypePageProps): Promise<Metadata> {
   const { id } = await params;
-  const glassType = await api.admin['glass-type'].getById({ id });
+  const glassType = await api.admin[ 'glass-type' ].getById({ id });
 
   return {
     description: `Editar tipo de vidrio: ${glassType?.name ?? 'No encontrado'}`,
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: EditGlassTypePageProps): Prom
 
 export default async function EditGlassTypePage({ params }: EditGlassTypePageProps) {
   const { id } = await params;
-  const glassType = await api.admin['glass-type'].getById({ id });
+  const glassType = await api.admin[ 'glass-type' ].getById({ id });
 
   if (!glassType) {
     notFound();
@@ -37,7 +37,7 @@ export default async function EditGlassTypePage({ params }: EditGlassTypePagePro
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <div>
-        <h1 className="font-bold text-3xl tracking-tight">Editar Tipo de Vidrio</h1>
+        <h1 className="font-bold text-7xl tracking-tight">Editar Tipo de Vidrio</h1>
         <p className="text-muted-foreground">Actualiza la información del tipo de vidrio: {glassType.name}</p>
       </div>
 

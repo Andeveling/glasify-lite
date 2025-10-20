@@ -8,6 +8,7 @@
  */
 
 import type { Metadata } from 'next';
+import { Skeleton } from '@/components/ui/skeleton';
 import { GlassTypeForm } from '../_components/glass-type-form';
 
 export const metadata: Metadata = {
@@ -17,13 +18,19 @@ export const metadata: Metadata = {
 
 export default function NewGlassTypePage() {
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
+    <div className="mx-auto max-w-7xl space-y-6">
       <div>
-        <h1 className="font-bold text-3xl tracking-tight">Nuevo Tipo de Vidrio</h1>
+        <h1 className="font-bold text-3xl tracking-tight">Nuevo Tipo de Vidriosss</h1>
         <p className="text-muted-foreground">Crea un nuevo tipo de vidrio con sus soluciones y características</p>
       </div>
-
-      <GlassTypeForm mode="create" />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div>
+          <GlassTypeForm mode="create" />
+        </div>
+        <div>
+          <Skeleton className="h-[800px] w-full rounded-lg" />
+        </div>
+      </div>
     </div>
   );
 }

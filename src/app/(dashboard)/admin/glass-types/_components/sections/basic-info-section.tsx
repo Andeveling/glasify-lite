@@ -10,7 +10,7 @@
  * - Purpose (required)
  * - SKU (optional)
  * - Description (optional)
- * - Is Active (checkbox)
+ * - Is Active (switch)
  *
  * @module _components/sections/basic-info-section
  */
@@ -44,12 +44,21 @@ export function BasicInfoSection({ control }: BasicInfoSectionProps) {
   return (
     <Card>
       <CardContent className="grid gap-4 pt-6 md:grid-cols-2">
+        {/* Switch placed in the top-right cell */}
+        <div style={{ alignSelf: 'start', gridColumnStart: 2, gridRowStart: 1, justifySelf: 'end' }}>
+          <FormCheckboxField
+            control={control}
+            description="El tipo de vidrio está disponible para selección"
+            label="Activo"
+            name="isActive"
+          />
+        </div>
         {/* Name */}
         <FormField
           control={control}
           name="name"
           render={({ field }) => (
-            <FormItem className="md:col-span-2">
+            <FormItem className="md:col-span-2 md:row-start-2">
               <FormLabel>Nombre *</FormLabel>
               <FormControl>
                 <Input placeholder="Ej: Vidrio Templado 6mm" {...field} />
@@ -111,20 +120,13 @@ export function BasicInfoSection({ control }: BasicInfoSectionProps) {
 
         {/* Description */}
         <FormTextareaField
+          className="md:col-span-2"
           control={control}
           description="Información adicional (opcional)"
           label="Descripción"
-          minHeight="100px"
           name="description"
           placeholder="Descripción detallada del tipo de vidrio..."
-        />
-
-        {/* Is Active */}
-        <FormCheckboxField
-          control={control}
-          description="El tipo de vidrio está disponible para selección"
-          label="Activo"
-          name="isActive"
+          rows={6}
         />
       </CardContent>
     </Card>
