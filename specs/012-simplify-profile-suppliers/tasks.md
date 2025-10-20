@@ -60,11 +60,11 @@
 - [x] T017 [US1] Update `profile-supplier-list.tsx` to use dialog modal instead of navigation (add dialog state, remove navigation functions)
 - [x] T018 [US1] Implement optimistic delete with rollback in `useProfileSupplierMutations` hook
 - [x] T019 [US1] Add Empty state UI using `@/components/ui/empty` when list is empty
-- [ ] T020 [US1] Test create operation - dialog opens, form submits, supplier appears in list without navigation
-- [ ] T021 [US1] Test edit operation - dialog opens with pre-filled data, updates reflect immediately
-- [ ] T022 [US1] Test delete operation with confirmation dialog - supplier removed with optimistic update
-- [ ] T023 [US1] Verify SSR cache invalidation (invalidate + router.refresh) after mutations
-- [ ] T024 [US1] Verify loading states and toast notifications work correctly
+- [x] T020 [US1] Test create operation - dialog opens, form submits, supplier appears in list without navigation
+- [x] T021 [US1] Test edit operation - dialog opens with pre-filled data, updates reflect immediately
+- [x] T022 [US1] Test delete operation with confirmation dialog - supplier removed with optimistic update
+- [x] T023 [US1] Verify SSR cache invalidation (invalidate + router.refresh) after mutations
+- [x] T024 [US1] Verify loading states and toast notifications work correctly
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - all CRUD operations work via dialog modals
 
