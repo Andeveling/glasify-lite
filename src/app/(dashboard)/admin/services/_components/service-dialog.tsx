@@ -7,22 +7,22 @@
  * Pattern: Dialog-based CRUD (no separate pages)
  * Reason: Service form is simple and fits well in a modal
  *
+ * Architecture (SOLID):
+ * - This component focuses on UI composition and user interaction
+ * - Form state management delegated to useServiceForm hook
+ * - Mutation logic delegated to useServiceMutations hook
+ * - Follows Single Responsibility Principle
+ *
  * Features:
  * - Optimistic updates with loading states
  * - Toast notifications
  * - Cache invalidation after mutations
  */
-/** biome-ignore-all assist/source/useSortedKeys: TypeScript necesita que onMutate se defina primero para inferir el tipo del contexto que luego se usa en onError. */
 
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import type { Service, ServiceType, ServiceUnit } from '@prisma/client';
+import type { Service, ServiceType } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -35,21 +35,15 @@ import {
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { createServiceSchema, MAX_NAME_LENGTH, MIN_NAME_LENGTH } from '@/lib/validations/admin/service.schema';
-import { api } from '@/trpc/react';
+import { MAX_NAME_LENGTH, MIN_NAME_LENGTH } from '@/lib/validations/admin/service.schema';
+import { useServiceForm } from '../_hooks/use-service-form';
+import { useServiceMutations } from '../_hooks/use-service-mutations';
 
 type ServiceDialogProps = {
   mode: 'create' | 'edit';
   open: boolean;
   onOpenChange: (open: boolean) => void;
   defaultValues?: Service;
-};
-
-type FormValues = {
-  name: string;
-  type: ServiceType;
-  unit: ServiceUnit;
-  rate: number;
 };
 
 /**
@@ -62,112 +56,24 @@ const SERVICE_TYPE_OPTIONS: { label: string; value: ServiceType; description: st
 ];
 
 export function ServiceDialog({ mode, open, onOpenChange, defaultValues }: ServiceDialogProps) {
-  const utils = api.useUtils();
-  const router = useRouter();
+  // Custom hooks for separation of concerns
+  const { form, handleTypeChange } = useServiceForm({ defaultValues, mode, open });
 
-  // React Hook Form
-  const form = useForm<FormValues>({
-    defaultValues: {
-      name: defaultValues?.name ?? '',
-      rate: defaultValues?.rate?.toNumber() ?? 0,
-      type: defaultValues?.type ?? 'fixed',
-      unit: defaultValues?.unit ?? 'unit',
-    },
-    resolver: zodResolver(createServiceSchema),
-  });
-
-  // Auto-assign unit based on service type
-  const handleTypeChange = (type: ServiceType) => {
-    form.setValue('type', type);
-
-    // Map type to unit automatically
-    const typeToUnitMap: Record<ServiceType, ServiceUnit> = {
-      fixed: 'unit',
-      area: 'sqm',
-      perimeter: 'ml',
-    };
-
-    form.setValue('unit', typeToUnitMap[ type ]);
-  };
-
-  // Reset form when dialog opens with new data
-  useEffect(() => {
-    if (open && defaultValues) {
-      form.reset({
-        name: defaultValues.name,
-        rate: defaultValues.rate.toNumber(),
-        type: defaultValues.type,
-        unit: defaultValues.unit,
-      });
-    } else if (open && mode === 'create') {
-      form.reset({
-        name: '',
-        rate: 0,
-        type: 'fixed',
-        unit: 'unit',
-      });
-    }
-  }, [ open, defaultValues, mode, form ]);
-
-  // Create mutation with optimistic update
-  const createMutation = api.admin.service.create.useMutation({
-    onMutate: () => {
-      toast.loading('Creando servicio...', { id: 'create-service' });
-    },
-    onError: (err) => {
-      toast.error('Error al crear servicio', {
-        description: err.message,
-        id: 'create-service',
-      });
-    },
+  const { handleCreate, handleUpdate, isPending } = useServiceMutations({
     onSuccess: () => {
-      toast.success('Servicio creado correctamente', { id: 'create-service' });
       onOpenChange(false);
       form.reset();
     },
-    onSettled: () => {
-      // Invalidate cache and refresh server data
-      void utils.admin.service.list.invalidate();
-      router.refresh();
-    },
   });
 
-  // Update mutation with optimistic update
-  const updateMutation = api.admin.service.update.useMutation({
-    onMutate: () => {
-      toast.loading('Actualizando servicio...', { id: 'update-service' });
-    },
-    onError: (err) => {
-      toast.error('Error al actualizar servicio', {
-        description: err.message,
-        id: 'update-service',
-      });
-    },
-    onSuccess: () => {
-      toast.success('Servicio actualizado correctamente', { id: 'update-service' });
-      onOpenChange(false);
-      form.reset();
-    },
-    onSettled: () => {
-      // Invalidate cache and refresh server data
-      void utils.admin.service.list.invalidate();
-      router.refresh();
-    },
-  });
-
-  // Handle form submission
-  const handleSubmit = (formData: FormValues) => {
+  // Handle form submission - routes to create or update
+  const handleSubmit = (formData: Parameters<typeof handleCreate>[ 0 ]) => {
     if (mode === 'create') {
-      createMutation.mutate(formData);
+      handleCreate(formData);
     } else if (defaultValues?.id) {
-      updateMutation.mutate({
-        data: formData,
-        id: defaultValues.id,
-      });
+      handleUpdate(defaultValues.id, formData);
     }
   };
-
-  const isPending = createMutation.isPending || updateMutation.isPending;
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
