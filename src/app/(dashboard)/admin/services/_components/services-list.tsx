@@ -21,9 +21,8 @@
 
 'use client';
 
-import type { ServiceType, ServiceUnit } from '@prisma/client';
+import type { Service, ServiceType, ServiceUnit } from '@prisma/client';
 import { Pencil, Trash2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog';
@@ -34,6 +33,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatCurrency } from '@/lib/format';
 import { api } from '@/trpc/react';
+import { ServiceDialog } from './service-dialog';
 import { ServicesEmpty } from './services-empty';
 
 type SerializedService = {
@@ -96,10 +96,13 @@ const SERVICE_TYPE_VARIANTS: Record<ServiceType, 'default' | 'secondary' | 'outl
 };
 
 export function ServicesList({ initialData, searchParams }: ServicesListProps) {
-  const router = useRouter();
   const utils = api.useUtils();
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [serviceToDelete, setServiceToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
+  const [ serviceToDelete, setServiceToDelete ] = useState<{ id: string; name: string } | null>(null);
+
+  // Dialog state for edit only (create is handled in ServicesContent)
+  const [ editDialogOpen, setEditDialogOpen ] = useState(false);
+  const [ serviceToEdit, setServiceToEdit ] = useState<Service | null>(null);
 
   // Delete mutation with optimistic UI
   const deleteMutation = api.admin.service.delete.useMutation({
@@ -116,8 +119,21 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
     },
   });
 
-  const handleEditClick = (id: string) => {
-    router.push(`/admin/services/${id}`);
+  const handleEditClick = (service: SerializedService) => {
+    // Convert to full Service type for the dialog
+    // Note: rate is already a number in SerializedService, will be converted in the form
+    const mockDecimal = {
+      toNumber: () => service.rate,
+    };
+
+    setServiceToEdit({
+      ...service,
+      createdAt: service.createdAt ?? new Date(),
+      isActive: service.isActive ?? true,
+      rate: mockDecimal as Service[ 'rate' ],
+      updatedAt: service.updatedAt ?? new Date(),
+    });
+    setEditDialogOpen(true);
   };
 
   const handleDeleteClick = (service: { id: string; name: string }) => {
@@ -136,12 +152,22 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
   // Check if there are filters active
   const hasFilters = Boolean(
     searchParams?.search ||
-      (searchParams?.type && searchParams.type !== 'all') ||
-      (searchParams?.isActive && searchParams.isActive !== 'all')
+    (searchParams?.type && searchParams.type !== 'all') ||
+    (searchParams?.isActive && searchParams.isActive !== 'all')
   );
 
   return (
     <>
+      {/* Edit Dialog only - Create is handled by ServicesContent */}
+      {serviceToEdit && (
+        <ServiceDialog
+          defaultValues={serviceToEdit}
+          mode="edit"
+          onOpenChange={setEditDialogOpen}
+          open={editDialogOpen}
+        />
+      )}
+
       {/* Empty state */}
       {services.length === 0 ? (
         <ServicesEmpty hasFilters={hasFilters} />
@@ -171,15 +197,15 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
                     <TableRow key={service.id}>
                       <TableCell className="font-medium">{service.name}</TableCell>
                       <TableCell>
-                        <Badge variant={SERVICE_TYPE_VARIANTS[service.type]}>{SERVICE_TYPE_LABELS[service.type]}</Badge>
+                        <Badge variant={SERVICE_TYPE_VARIANTS[ service.type ]}>{SERVICE_TYPE_LABELS[ service.type ]}</Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm">
-                        {SERVICE_UNIT_LABELS[service.unit]}
+                        {SERVICE_UNIT_LABELS[ service.unit ]}
                       </TableCell>
                       <TableCell className="text-right">{formatCurrency(service.rate)}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <Button onClick={() => handleEditClick(service.id)} size="sm" variant="ghost">
+                          <Button onClick={() => handleEditClick(service)} size="sm" variant="ghost">
                             <Pencil className="h-4 w-4" />
                             <span className="sr-only">Editar</span>
                           </Button>

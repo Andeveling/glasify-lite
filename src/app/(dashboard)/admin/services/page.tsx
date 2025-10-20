@@ -23,8 +23,7 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/trpc/server-client';
-import { ServicesFilters } from './_components/services-filters';
-import { ServicesList } from './_components/services-list';
+import { ServicesContent } from './_components/services-content';
 
 export const metadata: Metadata = {
   description: 'Administra los servicios adicionales para cotizaciones',
@@ -123,7 +122,7 @@ async function ServicesListContent({
   };
 
   return (
-    <ServicesList
+    <ServicesContent
       initialData={serializedData}
       searchParams={{
         isActive,
@@ -161,17 +160,7 @@ export default async function ServicesPage({ searchParams }: PageProps) {
         </p>
       </div>
 
-      {/* Filters outside Suspense - always visible */}
-      <ServicesFilters
-        searchParams={{
-          isActive: params.isActive,
-          page: String(page),
-          search: params.search,
-          type: params.type,
-        }}
-      />
-
-      {/* Table content inside Suspense - streaming */}
+      {/* Content with filters and table inside Suspense - streaming */}
       <Suspense
         fallback={<ServicesListSkeleton />}
         key={`${search}-${page}-${type}-${isActive}-${sortBy}-${sortOrder}`}

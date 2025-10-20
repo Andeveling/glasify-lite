@@ -9,19 +9,19 @@
  * - Search input with debounce (300ms)
  * - Type filter (area, perimeter, fixed)
  * - Active status filter (all, active, inactive)
- * - Create button
+ * - Create button (opens modal)
  * - Always visible during table loading
  *
  * Architecture:
  * - Client Component for interactivity
  * - URL-based state management via useServerFilters hook
  * - Receives filters from server (passed as props)
+ * - onCreateClick callback to parent for modal control
  */
 
 'use client';
 
 import { Plus } from 'lucide-react';
-import Link from 'next/link';
 import { type FilterDefinition, TableFilters } from '@/app/_components/server-table/table-filters';
 import { TableSearch } from '@/app/_components/server-table/table-search';
 import { Button } from '@/components/ui/button';
@@ -33,9 +33,10 @@ type ServicesFiltersProps = {
     search?: string;
     type?: string;
   };
+  onCreateClick?: () => void;
 };
 
-export function ServicesFilters({ searchParams }: ServicesFiltersProps) {
+export function ServicesFilters({ searchParams, onCreateClick }: ServicesFiltersProps) {
   /**
    * Filter definitions
    * Consistent with "Don't Make Me Think" principle:
@@ -80,11 +81,9 @@ export function ServicesFilters({ searchParams }: ServicesFiltersProps) {
       <TableFilters filters={filters} />
 
       {/* Create button - always visible, clear action */}
-      <Button asChild>
-        <Link href="/admin/services/new">
-          <Plus className="mr-2 size-4" />
-          Nuevo Servicio
-        </Link>
+      <Button onClick={onCreateClick}>
+        <Plus className="mr-2 size-4" />
+        Nuevo Servicio
       </Button>
     </div>
   );
