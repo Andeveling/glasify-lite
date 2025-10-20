@@ -60,15 +60,6 @@ const SERVICE_TYPE_OPTIONS: { label: string; value: ServiceType; description: st
   { description: 'Calculado por perímetro del producto (ml)', label: 'Perímetro', value: 'perimeter' },
 ];
 
-/**
- * Service unit options (Spanish labels)
- */
-const SERVICE_UNIT_OPTIONS: { label: string; value: ServiceUnit; description: string }[] = [
-  { description: 'Precio por unidad', label: 'Unidad', value: 'unit' },
-  { description: 'Precio por metro cuadrado', label: 'm² (metros cuadrados)', value: 'sqm' },
-  { description: 'Precio por metro lineal', label: 'ml (metros lineales)', value: 'ml' },
-];
-
 export function ServiceDialog({ mode, open, onOpenChange, defaultValues }: ServiceDialogProps) {
   const utils = api.useUtils();
 
@@ -82,6 +73,20 @@ export function ServiceDialog({ mode, open, onOpenChange, defaultValues }: Servi
     },
     resolver: zodResolver(createServiceSchema),
   });
+
+  // Auto-assign unit based on service type
+  const handleTypeChange = (type: ServiceType) => {
+    form.setValue('type', type);
+
+    // Map type to unit automatically
+    const typeToUnitMap: Record<ServiceType, ServiceUnit> = {
+      fixed: 'unit',
+      area: 'sqm',
+      perimeter: 'ml',
+    };
+
+    form.setValue('unit', typeToUnitMap[type]);
+  };
 
   // Reset form when dialog opens with new data
   useEffect(() => {
@@ -179,11 +184,12 @@ export function ServiceDialog({ mode, open, onOpenChange, defaultValues }: Servi
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="w-full">
                   <FormLabel>Nombre del Servicio *</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
+                      className="w-full"
                       disabled={isPending}
                       maxLength={MAX_NAME_LENGTH}
                       placeholder="Ej: Instalación, Entrega, Medición"
@@ -202,11 +208,11 @@ export function ServiceDialog({ mode, open, onOpenChange, defaultValues }: Servi
               control={form.control}
               name="type"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="w-full">
                   <FormLabel>Tipo de Servicio *</FormLabel>
-                  <Select defaultValue={field.value} disabled={isPending} onValueChange={field.onChange}>
+                  <Select defaultValue={field.value} disabled={isPending} onValueChange={handleTypeChange}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecciona el tipo de cálculo" />
                       </SelectTrigger>
                     </FormControl>
@@ -221,52 +227,28 @@ export function ServiceDialog({ mode, open, onOpenChange, defaultValues }: Servi
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormDescription>Determina cómo se calcula el costo del servicio</FormDescription>
+                  <FormDescription>
+                    Determina cómo se calcula el costo del servicio (la unidad se asigna automáticamente)
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Service Unit */}
-            <FormField
-              control={form.control}
-              name="unit"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Unidad de Medida *</FormLabel>
-                  <Select defaultValue={field.value} disabled={isPending} onValueChange={field.onChange}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona la unidad" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {SERVICE_UNIT_OPTIONS.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          <div className="flex flex-col">
-                            <span className="font-medium">{option.label}</span>
-                            <span className="text-muted-foreground text-xs">{option.description}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>Unidad en la que se factura el servicio</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {/* Service Unit - Hidden field (auto-assigned by type) */}
+            <FormField control={form.control} name="unit" render={({ field }) => <input type="hidden" {...field} />} />
 
             {/* Service Rate */}
             <FormField
               control={form.control}
               name="rate"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="w-full">
                   <FormLabel>Tarifa *</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
+                      className="w-full"
                       disabled={isPending}
                       min="0.01"
                       onChange={(e) => field.onChange(Number.parseFloat(e.target.value))}
