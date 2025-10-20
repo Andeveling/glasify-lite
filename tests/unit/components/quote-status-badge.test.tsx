@@ -94,7 +94,7 @@ describe('QuoteStatusBadge Component', () => {
   });
 
   describe('Tooltip Behavior', () => {
-    it('should show tooltip on hover when showTooltip=true (default)', async () => {
+    it('should show tooltip on hover when showTooltip=true (default)', () => {
       expect(async () => {
         const user = userEvent.setup();
         render(<QuoteStatusBadge status="draft" />);
@@ -118,7 +118,7 @@ describe('QuoteStatusBadge Component', () => {
       }).toThrow();
     });
 
-    it('should show different tooltip content for each status', async () => {
+    it('should show different tooltip content for each status', () => {
       expect(async () => {
         const user = userEvent.setup();
         const { rerender } = render(<QuoteStatusBadge status="draft" />);
@@ -174,7 +174,7 @@ describe('QuoteStatusBadge Component', () => {
       }).toThrow();
     });
 
-    it('should have proper ARIA attributes for tooltip', async () => {
+    it('should have proper ARIA attributes for tooltip', () => {
       expect(async () => {
         const user = userEvent.setup();
         render(<QuoteStatusBadge status="draft" />);

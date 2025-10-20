@@ -118,13 +118,20 @@ export function calculateColumnWidth(content: string, minWidth = 10, maxWidth = 
  * Removes formula injection attempts and special characters
  */
 export function sanitizeExcelText(text: string): string {
+  let sanitized = text;
+
   // Prevent formula injection
-  if (text.startsWith('=') || text.startsWith('+') || text.startsWith('-') || text.startsWith('@')) {
-    text = `'${text}`;
+  if (
+    sanitized.startsWith('=') ||
+    sanitized.startsWith('+') ||
+    sanitized.startsWith('-') ||
+    sanitized.startsWith('@')
+  ) {
+    sanitized = `'${sanitized}`;
   }
 
-  // Remove control characters
-  return text.replace(/[\u0000-\u001F\u007F-\u009F]/g, '').trim();
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: Control characters removal is intentional for Excel security
+  return sanitized.replace(/[\u0000-\u001F\u007F-\u009F]/g, '').trim();
 }
 
 /**

@@ -9,6 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { formatDate } from '@/lib/utils';
+import { useTenantConfig } from '@/providers/tenant-config-provider';
 
 // Types for quote data
 type QuoteStatus = 'draft' | 'calculating' | 'pending' | 'submitted' | 'completed' | 'cancelled';
@@ -106,6 +108,7 @@ type QuoteListProps = {
 };
 
 export function QuoteList({ quotes = MOCK_QUOTES, onViewQuote, onContactCustomer, isLoading = false }: QuoteListProps) {
+  const { locale, timezone } = useTenantConfig();
   const [statusFilter, setStatusFilter] = useState<QuoteStatus | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -127,16 +130,6 @@ export function QuoteList({ quotes = MOCK_QUOTES, onViewQuote, onContactCustomer
       currency: 'ARS',
       style: 'currency',
     }).format(amount);
-
-  // Format date
-  const formatDate = (dateString: string) =>
-    new Intl.DateTimeFormat('es-AR', {
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    }).format(new Date(dateString));
 
   if (isLoading) {
     return (
@@ -232,7 +225,7 @@ export function QuoteList({ quotes = MOCK_QUOTES, onViewQuote, onContactCustomer
                       <Badge variant={STATUS_CONFIG[quote.status].variant}>{STATUS_CONFIG[quote.status].label}</Badge>
                       {quote.estimatedDelivery && (
                         <div className="mt-1 text-muted-foreground text-xs">
-                          Entrega: {formatDate(quote.estimatedDelivery).split(',')[0]}
+                          Entrega: {formatDate(quote.estimatedDelivery, locale, timezone).split(',')[0]}
                         </div>
                       )}
                     </TableCell>
@@ -248,8 +241,12 @@ export function QuoteList({ quotes = MOCK_QUOTES, onViewQuote, onContactCustomer
                         <span className="text-muted-foreground">—</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-muted-foreground text-sm">{formatDate(quote.createdAt)}</TableCell>
-                    <TableCell className="text-muted-foreground text-sm">{formatDate(quote.updatedAt)}</TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {formatDate(quote.createdAt, locale, timezone)}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {formatDate(quote.updatedAt, locale, timezone)}
+                    </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
                         <Button

@@ -1,13 +1,10 @@
-import { ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+import { BackLink } from '@/components/ui/back-link';
 import logger from '@/lib/logger';
 import { auth } from '@/server/auth';
 import { api } from '@/trpc/server-client';
 import { EmptyQuotesState } from './_components/empty-quotes-state';
-import { QuoteFilters } from './_components/quote-filters';
-import { QuoteListItem } from './_components/quote-list-item';
+import { QuotesTable } from './_components/quotes-table';
 
 type MyQuotesPageProps = {
   searchParams?: Promise<{
@@ -53,65 +50,53 @@ export default async function MyQuotesPage({ searchParams }: MyQuotesPageProps) 
   const searchQuery = params?.q ?? undefined;
   const sortBy = params?.sort as 'newest' | 'oldest' | 'price-high' | 'price-low' | undefined;
 
-  logger.info('[MyQuotesPage] User accessing their quotes', {
-    page,
-    searchQuery: searchQuery ?? 'none',
-    sortBy: sortBy ?? 'newest',
-    status: status ?? 'all',
-    userId: session.user.id,
-  });
+  // Map frontend sort values to backend format
+  const getSortParams = (sortOption?: string) => {
+    switch (sortOption) {
+      case 'oldest':
+        return { sortBy: 'createdAt' as const, sortOrder: 'asc' as const };
+      case 'price-high':
+        return { sortBy: 'total' as const, sortOrder: 'desc' as const };
+      case 'price-low':
+        return { sortBy: 'total' as const, sortOrder: 'asc' as const };
+      default:
+        return { sortBy: 'createdAt' as const, sortOrder: 'desc' as const };
+    }
+  };
+
+  const { sortBy: backendSortBy, sortOrder } = getSortParams(sortBy);
 
   // Fetch user's quotes with filters
   const result = await api.quote['list-user-quotes']({
     includeExpired: false,
     limit: 10,
     page,
+    search: searchQuery,
+    sortBy: backendSortBy,
+    sortOrder,
     status,
-    // Note: Add searchQuery and sortBy to tRPC procedure if not already supported
-    // For now, filtering will happen client-side via the QuoteFilters component
   });
 
   // Check if filters are active
   const hasActiveFilters = Boolean(status || searchQuery || (sortBy && sortBy !== 'newest'));
 
   return (
-    <div className="container mx-auto max-w-5xl py-8">
+    <div className="container mx-auto max-w-7xl py-8">
       {/* Header with back button */}
       <div className="mb-8">
-        <Link href="/catalog">
-          <Button className="mb-4" size="sm" variant="ghost">
-            <ChevronLeft className="mr-2 size-4" />
-            Volver al Catálogo
-          </Button>
-        </Link>
+        <BackLink className="mb-4" href="/catalog" icon="chevron">
+          Volver al Catálogo
+        </BackLink>
 
         <h1 className="font-bold text-3xl tracking-tight">Mis Cotizaciones</h1>
         <p className="mt-2 text-muted-foreground">Gestiona y revisa todas tus cotizaciones generadas</p>
       </div>
 
-      {/* Filters */}
-      <div className="mb-6">
-        <QuoteFilters />
-      </div>
-
-      {/* Quotes list or empty state */}
+      {/* Show empty state or table */}
       {result.quotes.length === 0 ? (
         <EmptyQuotesState variant={hasActiveFilters ? 'no-results' : 'no-quotes'} />
       ) : (
-        <div className="space-y-4">
-          {result.quotes.map((quote) => (
-            <QuoteListItem key={quote.id} quote={quote} />
-          ))}
-        </div>
-      )}
-
-      {/* Pagination */}
-      {result.totalPages > 1 && (
-        <div className="mt-8 flex justify-center gap-2">
-          <p className="text-muted-foreground text-sm">
-            Página {result.page} de {result.totalPages}
-          </p>
-        </div>
+        <QuotesTable data={result} />
       )}
     </div>
   );

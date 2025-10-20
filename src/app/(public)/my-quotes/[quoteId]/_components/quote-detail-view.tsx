@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * QuoteDetailView Component (Public User Version)
  *
@@ -9,19 +11,22 @@
  * Updated with QuoteStatusBadge component (US1) for better status clarity.
  */
 
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { Building2, Calendar, Clock, MapPin, Package, Phone } from 'lucide-react';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { BackLink } from '@/components/ui/back-link';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatDate } from '@/lib/utils';
+import { useTenantConfig } from '@/providers/tenant-config-provider';
 import type { QuoteDetailSchema } from '@/server/api/routers/quote/quote.schemas';
 import { WindowType } from '@/types/window.types';
 import { QuoteStatusBadge } from '../../_components/quote-status-badge';
 import { QuoteExportButtons } from './quote-export-buttons';
 import { type QuoteItemData, QuoteItemsGrid } from './quote-items-grid';
+import { SendQuoteButton } from './send-quote-button';
 
 type QuoteDetailViewProps = {
   quote: QuoteDetailSchema;
@@ -30,6 +35,7 @@ type QuoteDetailViewProps = {
 };
 
 export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailViewProps) {
+  const { locale, timezone } = useTenantConfig();
   const backLink = isPublicView ? '/my-quotes' : '/quotes';
   const backLabel = isPublicView ? 'Volver a mis cotizaciones' : 'Volver a cotizaciones';
 
@@ -50,27 +56,64 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
     <div className="space-y-6">
       {/* Header con botón de regreso y exportación */}
       <div className="flex items-center justify-between gap-4">
-        <Button asChild size="sm" variant="outline">
-          <Link href={backLink}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {backLabel}
-          </Link>
-        </Button>
+        <BackLink href={backLink} icon="chevron" variant="link">
+          {backLabel}
+        </BackLink>
 
-        {/* Export buttons - US3 */}
-        {isPublicView && <QuoteExportButtons quoteId={quote.id} size="sm" variant="full" />}
+        <div className="flex items-center gap-2">
+          {/* Send quote button - only for draft quotes */}
+          <SendQuoteButton quote={quote} />
+
+          {/* Export buttons - US3 */}
+          {isPublicView && <QuoteExportButtons quoteId={quote.id} size="sm" variant="full" />}
+        </div>
       </div>
+
+      {/* Enhanced confirmation message for sent quotes (US3) */}
+      {quote.status === 'sent' && quote.sentAt && (
+        <Alert className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950">
+          <Clock className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+          <AlertTitle className="text-blue-900 dark:text-blue-100">
+            Cotización enviada el {formatDate(quote.sentAt, locale, timezone)}
+          </AlertTitle>
+          <AlertDescription className="space-y-2 text-blue-700 dark:text-blue-300">
+            <p>El fabricante ha recibido tu solicitud y se pondrá en contacto contigo pronto.</p>
+
+            <div className="flex items-start gap-2 text-sm">
+              <Clock className="mt-0.5 h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+              <p>
+                <span className="font-medium">Tiempo de respuesta:</span> Recibirás una respuesta en 24-48 horas hábiles
+              </p>
+            </div>
+
+            {quote.vendorContactPhone && (
+              <div className="flex items-start gap-2 text-sm">
+                <Phone className="mt-0.5 h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                <p>
+                  <span className="font-medium">Contacto del fabricante:</span> {quote.vendorContactPhone}
+                </p>
+              </div>
+            )}
+
+            <p className="text-blue-600 text-xs dark:text-blue-400">
+              Mientras tanto, puedes revisar otras cotizaciones o crear una nueva.
+            </p>
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Información principal de la cotización */}
       <Card>
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div>
-              <CardTitle>{quote.projectAddress.projectName}</CardTitle>
-              <CardDescription>Creada el {formatDate(quote.createdAt)}</CardDescription>
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between gap-4">
+            <div className="space-y-1.5">
+              <CardTitle className="text-2xl">{quote.projectAddress.projectName}</CardTitle>
+              <CardDescription className="flex items-center gap-1.5 text-sm">
+                <Calendar className="h-3.5 w-3.5" />
+                Creada el {formatDate(quote.createdAt, locale, timezone)}
+              </CardDescription>
             </div>
 
-            {/* US1: New QuoteStatusBadge with icon and tooltip */}
             <div className="flex gap-2">
               <QuoteStatusBadge showIcon={true} showTooltip={true} size="default" status={quote.status} />
               {quote.isExpired && (
@@ -81,40 +124,70 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+
+        <Separator />
+
+        <CardContent className="grid gap-4 pt-6 sm:grid-cols-2">
           {/* Fabricante */}
-          <div>
-            <p className="text-muted-foreground text-sm">Fabricante</p>
-            <p className="font-medium">{quote.manufacturerName}</p>
+          <div className="flex items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+              <Building2 className="h-4 w-4 text-primary" />
+            </div>
+            <div className="space-y-0.5">
+              <p className="font-medium text-muted-foreground text-xs">Fabricante</p>
+              <p className="font-semibold leading-tight">{quote.manufacturerName}</p>
+            </div>
           </div>
 
           {/* Dirección del proyecto */}
-          <div>
-            <p className="text-muted-foreground text-sm">Dirección del proyecto</p>
-            <p className="font-medium">{quote.projectAddress.projectStreet}</p>
-            <p className="text-sm">
-              {quote.projectAddress.projectCity}, {quote.projectAddress.projectState}{' '}
-              {quote.projectAddress.projectPostalCode}
-            </p>
+          <div className="flex items-start gap-3 sm:col-span-2">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+              <MapPin className="h-4 w-4 text-primary" />
+            </div>
+            <div className="space-y-0.5">
+              <p className="font-medium text-muted-foreground text-xs">Dirección del proyecto</p>
+              <p className="font-semibold leading-tight">{quote.projectAddress.projectStreet}</p>
+              <p className="text-muted-foreground text-sm">
+                {quote.projectAddress.projectCity}, {quote.projectAddress.projectState}{' '}
+                {quote.projectAddress.projectPostalCode}
+              </p>
+            </div>
           </div>
 
-          {/* Contacto (opcional) */}
+          {/* Contacto (si existe) */}
           {quote.contactPhone && (
-            <div>
-              <p className="text-muted-foreground text-sm">Teléfono de contacto</p>
-              <p className="font-medium">{quote.contactPhone}</p>
+            <div className="flex items-start gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/30">
+                <Phone className="h-4 w-4 text-accent-foreground" />
+              </div>
+              <div className="space-y-0.5">
+                <p className="font-medium text-muted-foreground text-xs">Teléfono de contacto</p>
+                <p className="font-semibold leading-tight">{quote.contactPhone}</p>
+              </div>
             </div>
           )}
 
           {/* Validez */}
-          <div className="flex gap-8">
-            <div>
-              <p className="text-muted-foreground text-sm">Válida hasta</p>
-              <p className="font-medium">{quote.validUntil ? formatDate(quote.validUntil) : 'Sin límite'}</p>
+          <div className="flex items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary/50">
+              <Clock className="h-4 w-4 text-secondary-foreground" />
             </div>
-            <div>
-              <p className="text-muted-foreground text-sm">Total de unidades</p>
-              <p className="font-medium">{quote.totalUnits}</p>
+            <div className="space-y-0.5">
+              <p className="font-medium text-muted-foreground text-xs">Válida hasta</p>
+              <p className="font-semibold leading-tight">
+                {quote.validUntil ? formatDate(quote.validUntil, locale, timezone) : 'Sin límite'}
+              </p>
+            </div>
+          </div>
+
+          {/* Total de unidades */}
+          <div className="flex items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-chart-1/20">
+              <Package className="h-4 w-4 text-chart-1" />
+            </div>
+            <div className="space-y-0.5">
+              <p className="font-medium text-muted-foreground text-xs">Total de unidades</p>
+              <p className="font-semibold leading-tight">{quote.totalUnits}</p>
             </div>
           </div>
         </CardContent>
@@ -207,8 +280,8 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
           <CardContent className="pt-6">
             <p className="text-muted-foreground text-sm">
               <strong>Nota:</strong> Esta cotización tiene una validez de{' '}
-              {quote.validUntil ? `hasta el ${formatDate(quote.validUntil)}` : 'sin límite'}. Los precios están
-              bloqueados al momento de la generación de la cotización.
+              {quote.validUntil ? `hasta el ${formatDate(quote.validUntil, locale, timezone)}` : 'sin límite'}. Los
+              precios están bloqueados al momento de la generación de la cotización.
             </p>
           </CardContent>
         </Card>

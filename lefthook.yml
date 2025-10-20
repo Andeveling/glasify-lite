@@ -1,8 +1,14 @@
 pre-commit:
-  jobs:
-    - run: pnpm dlx ultracite fix
+  commands:
+    lint:
       glob: "**/*.{js,jsx,ts,tsx,json,jsonc,css,md,mdx}"
       exclude: "src/styles/globals.css"
+      run: pnpm dlx biome check --diagnostic-level=error {staged_files} && pnpm dlx biome format --check {staged_files}
+      stage_fixed: false
+    fix:
+      glob: "**/*.{js,jsx,ts,tsx,json,jsonc,css,md,mdx}"
+      exclude: "src/styles/globals.css"
+      run: pnpm dlx biome fix {staged_files}
       stage_fixed: true
 
 commit-msg:

@@ -28,7 +28,7 @@ import {
 /**
  * Create complete Excel workbook for quote
  */
-export async function createQuoteExcelWorkbook(data: QuoteExcelData): Promise<ExcelJS.Workbook> {
+export function createQuoteExcelWorkbook(data: QuoteExcelData): ExcelJS.Workbook {
   const workbook = new ExcelJS.Workbook();
 
   // Set workbook properties
@@ -186,7 +186,7 @@ function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
   totalRow.getCell(2).border = excelBorders.thick;
 
   // Apply borders to summary sections
-  applyBordersToRange(sheet, 4, 1, currentRow - 1, 2);
+  applyBordersToRange(sheet, { endCol: 2, endRow: currentRow - 1, startCol: 1, startRow: 4 });
 }
 
 /**
@@ -225,7 +225,8 @@ function createItemsSheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
   }
 
   // Data Rows
-  data.items.forEach((item, index) => {
+  let index = 0;
+  for (const item of data.items) {
     const rowNumber = index + 2; // Start at row 2 (row 1 is header)
     const row = sheet.getRow(rowNumber);
     row.height = excelRowHeights.tableRow;
@@ -265,7 +266,9 @@ function createItemsSheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
       row.getCell(col).fill = fill;
       row.getCell(col).border = excelBorders.thin;
     }
-  });
+
+    index++;
+  }
 
   // Totals Row
   const totalsRowNumber = data.items.length + 2;
@@ -305,11 +308,9 @@ function createItemsSheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
  */
 function applyBordersToRange(
   sheet: ExcelJS.Worksheet,
-  startRow: number,
-  startCol: number,
-  endRow: number,
-  endCol: number
+  range: { startRow: number; startCol: number; endRow: number; endCol: number }
 ) {
+  const { startRow, startCol, endRow, endCol } = range;
   for (let row = startRow; row <= endRow; row++) {
     for (let col = startCol; col <= endCol; col++) {
       const cell = sheet.getRow(row).getCell(col);
@@ -322,7 +323,7 @@ function applyBordersToRange(
  * Write workbook to buffer for Server Action
  */
 export async function writeQuoteExcel(data: QuoteExcelData): Promise<Buffer> {
-  const workbook = await createQuoteExcelWorkbook(data);
+  const workbook = createQuoteExcelWorkbook(data);
   const buffer = await workbook.xlsx.writeBuffer();
   return Buffer.from(buffer);
 }

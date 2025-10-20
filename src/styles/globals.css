@@ -6,6 +6,7 @@
 body {
   letter-spacing: var(--tracking-normal);
 }
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -13,6 +14,20 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Custom animations for loading states */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@theme {
+  --animate-shimmer: shimmer 2s infinite;
 }
 
 /* Theme creator templates */
@@ -177,12 +192,28 @@ body {
   --color-warning-foreground: oklch(0.25 0.08 60);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+
+  /* Info state colors (used for informational messages, confirmations, etc.) */
+  --color-info: oklch(0.6 0.15 230);
+  --color-info-foreground: oklch(0.98 0 0);
+  --color-info-border: oklch(0.75 0.1 230);
+  --color-info-background: oklch(0.95 0.02 230);
 }
 
-/* Dark theme warning colors */
+/* Dark theme warning and info colors */
 .dark {
   --color-warning: oklch(0.7 0.13 70);
   --color-warning-foreground: oklch(0.95 0 0);
+  --color-warning-border: oklch(0.75 0.1 70);
+  --color-warning-background: oklch(0.25 0.03 70);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+  --color-success-border: var(--success-border);
+  --color-success-background: var(--success-background);
+
+  /* Info state colors for dark mode */
+  --color-info: oklch(0.65 0.12 235);
+  --color-info-foreground: oklch(0.98 0 0);
+  --color-info-border: oklch(0.45 0.08 235);
+  --color-info-background: oklch(0.25 0.03 235);
 }

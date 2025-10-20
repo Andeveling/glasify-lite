@@ -15,11 +15,10 @@
  * <EmptyQuotesState variant="no-results" onClearFilters={() => clearFilters()} />
  * ```
  */
-
 import { FileText, Search } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 
 export interface EmptyQuotesStateProps {
   /**
@@ -38,41 +37,45 @@ export interface EmptyQuotesStateProps {
 export function EmptyQuotesState({ variant = 'no-quotes', onClearFilters }: EmptyQuotesStateProps) {
   if (variant === 'no-results') {
     return (
-      <Card data-testid="empty-filtered-state">
-        <CardContent className="flex flex-col items-center justify-center gap-4 py-16">
-          <Search className="h-16 w-16 text-muted-foreground" />
-          <div className="text-center">
-            <h3 className="mb-2 font-semibold text-lg">No se encontraron cotizaciones</h3>
-            <p className="text-muted-foreground">
-              No hay cotizaciones que coincidan con los filtros aplicados.
-              <br />
-              Intenta ajustar los filtros o eliminarlos para ver más resultados.
-            </p>
-          </div>
-          {onClearFilters && (
+      <Empty data-testid="empty-filtered-state">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <Search />
+          </EmptyMedia>
+          <EmptyTitle>No se encontraron cotizaciones</EmptyTitle>
+          <EmptyDescription>
+            No hay cotizaciones que coincidan con los filtros aplicados.
+            <br />
+            Intenta ajustar los filtros o eliminarlos para ver más resultados.
+          </EmptyDescription>
+        </EmptyHeader>
+        {onClearFilters && (
+          <EmptyContent>
             <Button onClick={onClearFilters} variant="outline">
               Limpiar filtros
             </Button>
-          )}
-        </CardContent>
-      </Card>
+          </EmptyContent>
+        )}
+      </Empty>
     );
   }
 
   return (
-    <Card data-testid="empty-quotes-state">
-      <CardContent className="flex flex-col items-center justify-center gap-4 py-16">
-        <FileText className="h-16 w-16 text-muted-foreground" />
-        <div className="text-center">
-          <h3 className="mb-2 font-semibold text-lg">No tienes cotizaciones aún</h3>
-          <p className="text-muted-foreground">
-            Explora nuestro catálogo y configura ventanas para generar tu primera cotización
-          </p>
-        </div>
+    <Empty data-testid="empty-quotes-state">
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <FileText className="size-12" />
+        </EmptyMedia>
+        <EmptyTitle>No tienes cotizaciones aún</EmptyTitle>
+        <EmptyDescription>
+          Explora nuestro catálogo y configura ventanas para generar tu primera cotización
+        </EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
         <Button asChild>
           <Link href="/catalog">Ir al catálogo</Link>
         </Button>
-      </CardContent>
-    </Card>
+      </EmptyContent>
+    </Empty>
   );
 }

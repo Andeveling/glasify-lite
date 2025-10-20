@@ -42,6 +42,24 @@ const SIZE_CLASSES = {
 } as const;
 
 /**
+ * Get pixel dimensions for a size variant
+ */
+function getSizeDimensions(size: 'sm' | 'md' | 'lg' | 'xl'): { width: number; height: number } {
+  switch (size) {
+    case 'sm':
+      return { height: 48, width: 48 };
+    case 'md':
+      return { height: 80, width: 80 };
+    case 'lg':
+      return { height: 128, width: 128 };
+    case 'xl':
+      return { height: 192, width: 192 };
+    default:
+      return { height: 80, width: 80 };
+  }
+}
+
+/**
  * Background color classes
  */
 const BACKGROUND_CLASSES = {
@@ -98,6 +116,7 @@ export function WindowDiagram({
         decoding="async"
         loading="lazy"
         src={diagram.svgPath}
+        {...getSizeDimensions(size)}
       />
     </div>
   );
@@ -111,9 +130,8 @@ export function WindowDiagram({
  */
 export function WindowDiagramSkeleton({ size = 'md', className }: Pick<WindowDiagramProps, 'size' | 'className'>) {
   return (
-    <div
-      aria-label="Cargando diagrama..."
-      className={cn('animate-pulse rounded-md bg-gray-200', SIZE_CLASSES[size], className)}
-    />
+    <output aria-busy="true" className={cn('animate-pulse rounded-md bg-gray-200', SIZE_CLASSES[size], className)}>
+      <span className="sr-only">Cargando diagrama...</span>
+    </output>
   );
 }

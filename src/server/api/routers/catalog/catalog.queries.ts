@@ -35,6 +35,8 @@ export const catalogQueries = createTRPCRouter({
             costPerMmHeight: true,
             costPerMmWidth: true,
             createdAt: true,
+            glassDiscountHeightMm: true,
+            glassDiscountWidthMm: true,
             id: true,
             maxHeightMm: true,
             maxWidthMm: true,
@@ -44,6 +46,7 @@ export const catalogQueries = createTRPCRouter({
             profileSupplier: {
               select: {
                 id: true,
+                materialType: true,
                 name: true,
               },
             },
@@ -178,16 +181,24 @@ export const catalogQueries = createTRPCRouter({
         const glassTypes = await ctx.db.glassType.findMany({
           orderBy: { name: 'asc' },
           select: {
+            characteristics: {
+              include: {
+                characteristic: true,
+              },
+              orderBy: { characteristic: { name: 'asc' } },
+            },
             createdAt: true,
+            description: true,
+            glassSupplierId: true,
             id: true,
+            isActive: true,
             isLaminated: true,
             isLowE: true,
             isTempered: true,
             isTripleGlazed: true,
-            manufacturerId: true,
             name: true,
             pricePerSqm: true,
-            purpose: true, // Kept for potential future fallback needs
+            purpose: true,
             solutions: {
               include: {
                 solution: true,
@@ -203,16 +214,10 @@ export const catalogQueries = createTRPCRouter({
           },
         });
 
-        // Serialize Decimal fields (pricePerSqm, uValue) and nested solution relations
+        // Serialize Decimal fields (pricePerSqm, uValue)
         const serializedGlassTypes = glassTypes.map((glassType) => ({
           ...glassType,
           pricePerSqm: glassType.pricePerSqm.toNumber(),
-          solutions: glassType.solutions?.map((sol) => ({
-            ...sol,
-            solution: {
-              ...sol.solution,
-            },
-          })),
           uValue: glassType.uValue?.toNumber() ?? null,
         }));
 
@@ -232,11 +237,13 @@ export const catalogQueries = createTRPCRouter({
 
   /**
    * List manufacturers for filter dropdown
+   * Only returns suppliers that have at least one published model
+   * Following "Don't Make Me Think" principle - avoid showing empty options
    * @public
    */
   'list-manufacturers': publicProcedure.query(async ({ ctx }) => {
     try {
-      logger.info('Listing profile suppliers for filter');
+      logger.info('Listing profile suppliers with published models for filter');
 
       const profileSuppliers = await ctx.db.profileSupplier.findMany({
         orderBy: { name: 'asc' },
@@ -245,11 +252,20 @@ export const catalogQueries = createTRPCRouter({
           name: true,
         },
         where: {
-          isActive: true,
+          AND: [
+            { isActive: true },
+            {
+              models: {
+                some: {
+                  status: 'published',
+                },
+              },
+            },
+          ],
         },
       });
 
-      logger.info('Successfully retrieved profile suppliers', {
+      logger.info('Successfully retrieved profile suppliers with published models', {
         count: profileSuppliers.length,
       });
 
@@ -376,26 +392,20 @@ export const catalogQueries = createTRPCRouter({
   'list-services': publicProcedure
     .input(listServicesInput)
     .output(listServicesOutput)
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx }) => {
       try {
-        logger.info('Listing services for manufacturer', {
-          manufacturerId: input.manufacturerId,
-        });
+        logger.info('Listing services');
 
         const services = await ctx.db.service.findMany({
           orderBy: { name: 'asc' },
           select: {
             createdAt: true,
             id: true,
-            manufacturerId: true,
             name: true,
             rate: true,
             type: true,
             unit: true,
             updatedAt: true,
-          },
-          where: {
-            manufacturerId: input.manufacturerId,
           },
         });
 
@@ -407,14 +417,12 @@ export const catalogQueries = createTRPCRouter({
 
         logger.info('Successfully retrieved services', {
           count: serializedServices.length,
-          manufacturerId: input.manufacturerId,
         });
 
         return serializedServices;
       } catch (error) {
         logger.error('Error listing services', {
           error: error instanceof Error ? error.message : 'Unknown error',
-          manufacturerId: input.manufacturerId,
         });
 
         throw new Error('No se pudieron cargar los servicios. Intente nuevamente.');

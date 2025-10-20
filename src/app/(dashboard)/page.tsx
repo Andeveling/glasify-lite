@@ -8,7 +8,9 @@ import StatsCard from '@/app/(dashboard)/_components/stats-card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatDate } from '@/lib/utils';
 import { auth } from '@/server/auth';
+import { getTenantConfig } from '@/server/utils/tenant';
 
 export const metadata: Metadata = {
   description: 'Panel de control para la gestión de vidrios y cotizaciones',
@@ -160,14 +162,6 @@ function RecentQuotes() {
     }).format(amount);
   };
 
-  const formatDate = (dateString: string) =>
-    new Intl.DateTimeFormat('es-AR', {
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      month: 'short',
-    }).format(new Date(dateString));
-
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -195,7 +189,8 @@ function RecentQuotes() {
                   <div>
                     <p className="font-medium text-sm">{quote.customer}</p>
                     <p className="text-muted-foreground text-xs">
-                      {quote.items} ítem{quote.items !== 1 ? 's' : ''} • {formatDate(quote.createdAt)}
+                      {quote.items} ítem{quote.items !== 1 ? 's' : ''} •{' '}
+                      {formatDate(quote.createdAt, 'es-CO', 'America/Bogota')}
                     </p>
                   </div>
                 </div>
@@ -266,6 +261,9 @@ export default async function DashboardPage() {
   if (!session?.user) {
     redirect('/signin');
   }
+
+  // Get tenant configuration for date formatting
+  const _tenantConfig = await getTenantConfig();
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">

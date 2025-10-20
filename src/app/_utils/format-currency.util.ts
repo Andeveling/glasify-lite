@@ -1,7 +1,12 @@
 /**
  * Currency formatting utility using Intl.NumberFormat
  * Provides consistent currency formatting across the application
+ *
+ * @deprecated Consider migrating to @/lib/format for tenant-aware formatting
+ * This file is kept for backward compatibility with existing code
  */
+
+import { formatCurrencyCompact as formatCurrencyCompactCore, formatCurrency as formatCurrencyCore } from '@/lib/format';
 
 type FormatCurrencyOptions = {
   /**
@@ -20,7 +25,7 @@ type FormatCurrencyOptions = {
    */
   decimals?: number;
   /**
-   * Display mode for currency
+   * Display mode for currency (not fully supported in new system)
    * - 'symbol': Show currency symbol (e.g., $)
    * - 'code': Show currency code (e.g., COP)
    * - 'name': Show currency name (e.g., Colombian Peso)
@@ -28,7 +33,7 @@ type FormatCurrencyOptions = {
    */
   display?: 'symbol' | 'code' | 'name';
   /**
-   * Whether to use grouping separators
+   * Whether to use grouping separators (always enabled in new system)
    * @default true
    */
   useGrouping?: boolean;
@@ -43,7 +48,7 @@ const DEFAULT_OPTIONS: Required<FormatCurrencyOptions> = {
 };
 
 /**
- * Formats a number as currency using Intl.NumberFormat
+ * Formats a number as currency using centralized formatting system
  *
  * @param value - The numeric value to format
  * @param options - Formatting options
@@ -60,21 +65,14 @@ const DEFAULT_OPTIONS: Required<FormatCurrencyOptions> = {
 export const formatCurrency = (value: number, options: FormatCurrencyOptions = {}): string => {
   const config = { ...DEFAULT_OPTIONS, ...options };
 
-  try {
-    const formatter = new Intl.NumberFormat(config.locale, {
+  return formatCurrencyCore(value, {
+    context: {
       currency: config.currency,
-      currencyDisplay: config.display,
-      maximumFractionDigits: config.decimals,
-      minimumFractionDigits: config.decimals,
-      style: 'currency',
-      useGrouping: config.useGrouping,
-    });
-
-    return formatter.format(value);
-  } catch {
-    // Fallback to basic formatting if Intl.NumberFormat fails
-    return `${config.currency} ${value.toFixed(config.decimals)}`;
-  }
+      locale: config.locale,
+      timezone: 'America/Bogota', // Default timezone, not used for currency
+    },
+    decimals: config.decimals,
+  });
 };
 
 /**
@@ -137,21 +135,11 @@ export const formatUSD = (value: number, showDecimals = true): string =>
 export const formatCurrencyCompact = (value: number, options: Omit<FormatCurrencyOptions, 'decimals'> = {}): string => {
   const config = { ...DEFAULT_OPTIONS, ...options };
 
-  try {
-    const formatter = new Intl.NumberFormat(config.locale, {
-      compactDisplay: 'short',
-      currency: config.currency,
-      currencyDisplay: config.display,
-      maximumFractionDigits: 1,
-      notation: 'compact',
-      style: 'currency',
-    });
-
-    return formatter.format(value);
-  } catch {
-    // Fallback to standard formatting
-    return formatCurrency(value, { ...config, decimals: 0 });
-  }
+  return formatCurrencyCompactCore(value, {
+    currency: config.currency,
+    locale: config.locale,
+    timezone: 'America/Bogota', // Default timezone, not used for currency
+  });
 };
 
 /**

@@ -96,7 +96,7 @@
         "useHeadingContent": "warn"
       },
       "performance": {
-        "useTopLevelRegex": "warn"
+        "useTopLevelRegex": "info"
       }
     }
   },
@@ -136,6 +136,19 @@
       "includes": ["src/components/ui/**"],
       "linter": {
         "enabled": false
+      }
+    },
+    {
+      "includes": ["src/components/quote/window-diagram.tsx"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "useImageSize": "off"
+          },
+          "performance": {
+            "noImgElement": "off"
+          }
+        }
       }
     }
   ],

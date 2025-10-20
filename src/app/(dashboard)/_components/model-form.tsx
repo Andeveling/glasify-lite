@@ -102,8 +102,12 @@ function useModelFormController({ modelData, onSuccess }: ModelFormControllerArg
   const [isLoading, setIsLoading] = useState(false);
 
   // Fetch profile suppliers from tRPC
-  const { data: profileSuppliers, isLoading: isLoadingSuppliers } = api.profileSupplier.list.useQuery({
-    isActive: true,
+  const { data: profileSuppliers, isLoading: isLoadingSuppliers } = api.admin['profile-supplier'].list.useQuery({
+    isActive: 'active',
+    limit: 100,
+    page: 1,
+    sortBy: 'name',
+    sortOrder: 'asc',
   });
 
   // Use the actual admin.model-upsert mutation
@@ -149,7 +153,14 @@ function useModelFormController({ modelData, onSuccess }: ModelFormControllerArg
 
   const isEditing = Boolean(modelData?.id);
 
-  return { form, handleSubmit, isEditing, isLoading, isLoadingSuppliers, profileSuppliers };
+  return {
+    form,
+    handleSubmit,
+    isEditing,
+    isLoading,
+    isLoadingSuppliers,
+    profileSuppliers: profileSuppliers?.items ?? [],
+  };
 }
 
 export function ModelForm({ modelData, onSuccess, onCancel }: ModelFormProps) {

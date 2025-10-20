@@ -1,6 +1,7 @@
 'use client';
 
 import { ChevronRight } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -11,36 +12,37 @@ import { Label } from '@/components/ui/label';
 
 type SignInModalProps = {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChangeAction: (open: boolean) => void;
   defaultEmail?: string;
 };
 
-export function SignInModal({ open, onOpenChange, defaultEmail = '' }: SignInModalProps) {
+export function SignInModal({ open, onOpenChangeAction, defaultEmail = '' }: SignInModalProps) {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isEmailLoading, setIsEmailLoading] = useState(false);
   const [email, setEmail] = useState(defaultEmail);
+  const searchParams = useSearchParams();
+
+  // Get callbackUrl from query params, default to /catalog
+  const callbackUrl = searchParams.get('callbackUrl') || '/catalog';
 
   const handleGoogleSignIn = async () => {
     try {
       setIsGoogleLoading(true);
-      await signIn('google', { callbackUrl: '/auth/callback' });
-    } catch (error) {
-      console.error('Error signing in with Google:', error);
+      await signIn('google', { callbackUrl });
+    } catch (_error) {
+      // Error handling delegated to NextAuth
     } finally {
       setIsGoogleLoading(false);
     }
   };
 
-  const handleEmailContinue = async () => {
+  const handleEmailContinue = () => {
     if (!email) return;
 
     try {
       setIsEmailLoading(true);
-      // For now, we only support OAuth. This could be extended to magic links.
-      // Redirect to email-based auth flow or show error
-      console.log('Email auth not yet implemented:', email);
-    } catch (error) {
-      console.error('Error with email auth:', error);
+    } catch (_error) {
+      // Error handling delegated to email provider
     } finally {
       setIsEmailLoading(false);
     }
@@ -49,7 +51,7 @@ export function SignInModal({ open, onOpenChange, defaultEmail = '' }: SignInMod
   const isLoading = isGoogleLoading || isEmailLoading;
 
   return (
-    <Dialog onOpenChange={onOpenChange} open={open}>
+    <Dialog onOpenChange={onOpenChangeAction} open={open}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="space-y-4">
           {/* Logo/Icon */}
@@ -117,8 +119,7 @@ export function SignInModal({ open, onOpenChange, defaultEmail = '' }: SignInMod
             <button
               className="font-medium text-primary hover:underline"
               onClick={() => {
-                // Could open a sign-up modal or redirect
-                console.log('Sign up clicked');
+                // TODO: Implement signup flow
               }}
               type="button"
             >

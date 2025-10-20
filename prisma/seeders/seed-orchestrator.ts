@@ -338,8 +338,8 @@ export class SeedOrchestrator {
         // Replace PLACEHOLDER glass type IDs with actual IDs
         const compatibleGlassTypeIds = Array.from(glassTypeIdMap.values());
 
-        // Remove profileSupplierName and manufacturer (factory artifact) and add profileSupplierId
-        const { profileSupplierName: _unused, manufacturer: _unusedManufacturer, ...modelData } = result.data;
+        // Remove profileSupplierName (factory artifact) and add profileSupplierId
+        const { profileSupplierName: _unused, ...modelData } = result.data;
 
         // Check if model already exists by name
         const existingModel = await this.prisma.model.findFirst({

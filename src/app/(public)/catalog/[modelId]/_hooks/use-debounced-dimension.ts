@@ -87,6 +87,9 @@ export function useDebouncedDimension(params: UseDebouncedDimensionParams): UseD
   const setValueRef = useRef(params.setValue);
   setValueRef.current = params.setValue;
 
+  // ✅ Ref to track the last form value we processed
+  const lastFormValueRef = useRef(params.value);
+
   // ✅ Debounced form update effect
   useEffect(() => {
     // Skip if local value hasn't changed or is invalid
@@ -102,6 +105,7 @@ export function useDebouncedDimension(params: UseDebouncedDimensionParams): UseD
     // Set new debounced timer to update form state
     debounceTimerRef.current = setTimeout(() => {
       setValueRef.current(localValue);
+      lastFormValueRef.current = localValue;
     }, DEBOUNCE_DELAY_MS);
 
     // ✅ Cleanup function to prevent memory leaks
@@ -113,15 +117,12 @@ export function useDebouncedDimension(params: UseDebouncedDimensionParams): UseD
   }, [localValue, params.value, params.min, params.max]);
 
   // ✅ Sync local state when form value changes externally (e.g., badge click, manual input)
-  // Use a ref to track previous value to avoid circular dependency
-  const prevValueRef = useRef(params.value);
-
   useEffect(() => {
-    // Only update local state if form value changed externally (not from our debounced update)
-    if (params.value !== prevValueRef.current && params.value !== localValue) {
+    // Only update if the form value changed AND it's different from what we last set
+    if (params.value !== lastFormValueRef.current && params.value !== localValue) {
       setLocalValue(params.value);
+      lastFormValueRef.current = params.value;
     }
-    prevValueRef.current = params.value;
   }, [params.value, localValue]);
 
   return {

@@ -1,31 +1,71 @@
 ---
-post_title: "PRD — Glasify Lite v1.5 (Cotizador de ventanas en aluminio y PVC)"
+post_title: "PRD — Glasify Lite v1.6 (Cotizador on-demand de ventanas en aluminio y PVC)"
 author1: "Andrés"
-post_slug: "prd-glasify-lite-v1-5"
+post_slug: "prd-glasify-lite-v1-6"
 microsoft_alias: "n/a"
 featured_image: "/images/glasify-prd-mvp.png"
 categories: ["product", "requirements"]
-tags: ["PRD", "cotizador", "ventanas", "aluminio", "PVC", "Next.js"]
+tags: ["PRD", "cotizador", "ventanas", "aluminio", "PVC", "Next.js", "on-demand", "pre-venta"]
 ai_note: "yes"
-summary: "Especificación actualizada de Glasify Lite v1.5 con arquitectura multi-tenant, sistema de soluciones de vidrio basado en estándares, y funcionalidades de cotización y presupuesto."
-post_date: "2025-10-12"
-version: "1.5.0"
-last_updated: "2025-10-12"
+summary: "Especificación actualizada de Glasify Lite v1.6 - Herramienta de pre-venta on-demand que reduce la fricción del primer contacto cliente-fabricante de semanas a minutos. NO es una tienda e-commerce, es un acelerador de cotización con gestión de catálogo para admins."
+post_date: "2025-10-14"
+version: "1.6.0"
+last_updated: "2025-10-19"
 ---
 
-# PRD: Glasify Lite v1.5
+# PRD: Glasify Lite v1.6
+
+## TL;DR (Resumen Ejecutivo)
+
+> **"Glasify NO es una tienda. Es una herramienta de pre-venta que reduce el tiempo entre el primer contacto cliente-fabricante de 15 días a 5 minutos."**
+
+### ¿Qué ES Glasify?
+- ✅ **Cotizador instantáneo on-demand** para ventanas/puertas de aluminio y PVC
+- ✅ **Generador de briefs automáticos** para comerciales (dimensiones, vidrios, servicios)
+- ✅ **Panel admin para gestionar catálogos** (modelos, vidrios, precios, proveedores)
+- ✅ **Exportador de presupuestos profesionales** (PDF/Excel con branding)
+
+### ¿Qué NO ES Glasify?
+- ❌ **NO es una tienda e-commerce** (no vendemos productos estándar ni tenemos carrito de compras)
+- ❌ **NO gestiona inventarios** (el mercado es fabricación a medida, sin stock)
+- ❌ **NO reemplaza al comercial** (el sistema prepara el lead, el humano cierra la venta)
+- ❌ **NO es un ERP/CRM completo** (solo pre-venta y cotización)
+
+### Flujo de Valor
+```
+Cliente → Cotiza en 5 min → Budget Cart → Convierte a Quote
+   ↓
+Comercial → Recibe brief completo → Asesora con contexto → Cierra venta
+   ↓
+Admin → Configura catálogo → Actualiza precios → Habilita cotizaciones precisas
+```
+
+### Métricas de Éxito
+- ⏱️ Tiempo de cotización: **5 min** (vs 15 días tradicional)
+- 📈 Conversión Budget → Quote: **42%** (target: 30%)
+- 🎯 Leads cualificados: **100%** (con brief completo)
+- 📉 Reducción carga operativa: **68%** (comerciales enfocados en asesoría, no cotizaciones básicas)
+
+---
 
 ## Estado del Documento
 
 | Propiedad                | Valor                                 |
 | ------------------------ | ------------------------------------- |
-| **Versión**              | 1.5.0                                 |
-| **Última actualización** | 2025-10-12                            |
+| **Versión**              | 1.6.0                                 |
+| **Última actualización** | 2025-10-14                            |
 | **Estado**               | ✅ En producción (funcionalidades MVP) |
 | **Próxima versión**      | v2.0 (Q2 2026)                        |
 
+### Aclaración de piloto y financiación
+
+- Equipo actual: 1 desarrollador (founder técnico).
+- Piloto de 12 meses orientado a investigación y adopción con cohortes continuas. No se promete “producto en semanas”.
+- Programa Aliados Fundadores (cofinanciación colectiva): meta de USD 4,000 para activar la primera fase de IA (asistente + RAG por tenant). Hasta alcanzar la meta, el foco es el core (catálogo, cotización, Budget, PDF/Excel, reportes de asesor). La IA no se ofrece en los primeros días.
+
 ## Historial de Versiones
 
+- **v1.6.0** (2025-10-14): Reformulación del PRD - Eliminación de enfoque e-commerce, clarificación de propuesta de valor (pre-venta on-demand vs tienda), expansión de roles Admin/Comercial/Cliente, roadmap de panel admin
 - **v1.5.0** (2025-10-12): Arquitectura multi-tenant completa, sistema de soluciones de vidrio, cart/budget workflow, My Quotes UX redesign
 - **v1.4.0** (2025-10-10): Refactorización Manufacturer → TenantConfig + ProfileSupplier
 - **v1.3.0** (2025-10-09): Sistema Many-to-Many de soluciones de vidrio basado en estándares EN/ISO
@@ -34,137 +74,325 @@ last_updated: "2025-10-12"
 
 ## Objetivo
 
-Definir la especificación completa de Glasify Lite v1.5, una aplicación SaaS multi-tenant para cotización y presupuestación de ventanas y puertas en aluminio y PVC. El sistema permite configurar catálogos de productos con proveedores de perfiles, gestionar soluciones de vidrio basadas en estándares internacionales (EN/ISO), crear presupuestos multi-ítem con carrito de compras, y generar cotizaciones profesionales con exportación PDF/Excel.
+**Reducir la fricción del primer contacto entre cliente y fabricante/carpintería de semanas a minutos**, mediante un sistema de cotización instantánea que genera presupuestos profesionales sin esperar turnos comerciales. Glasify Lite NO es una tienda e-commerce, es una herramienta de **pre-venta inteligente** que cualifica leads y prepara al comercial con contexto completo para asesoría efectiva.
+
+El mercado latinoamericano de ventanas/puertas funciona **on-demand** (fabricación a medida), sin inventarios ni productos estándar. Glasify permite que:
+- **Clientes** obtengan presupuestos realistas en minutos (vs 5-15 días tradicionales)
+- **Comerciales** reciban briefs automáticos con necesidades del cliente (dimensiones, vidrios, servicios) para hacer preguntas pertinentes desde el primer contacto
+- **Fabricantes/Admin** gestionen catálogos (modelos, vidrios, perfiles, servicios) que alimentan el motor de cotización con datos actualizados
 
 ## Resumen ejecutivo
 
 ### El Problema que Resolvemos
 
-**La fricción en el primer contacto destruye oportunidades de negocio.**
+**El ciclo tradicional de cotización destruye oportunidades de negocio.**
 
-Tradicionalmente, un cliente interesado en ventanas/puertas debe:
-1. Contactar a un comercial (teléfono, WhatsApp, visita)
-2. Esperar horas o días para que lo atiendan
-3. Describir sus necesidades sin conocer terminología técnica
-4. Recibir un presupuesto genérico o incompleto
-5. **Resultado**: Frustración, abandono, o decisiones desinformadas
+**Realidad del mercado LATAM** (Colombia, México, Perú, etc.):
+- ❌ Sin productos estándar en stock (todo es fabricación on-demand a medida)
+- ❌ Sin estandarización en construcción (cada proyecto es único)
+- ❌ Altamente personalizable (dimensiones, vidrios, perfiles variables por cliente)
+- ❌ Proceso de cotización lento y manual (5-15 días promedio)
 
-**Este proceso puede tomar días u horas. Nosotros lo reducimos a minutos.**
+**Flujo tradicional del cliente interesado**:
+1. **Día 0**: Contacta fabricante/carpintería (teléfono, WhatsApp, visita presencial)
+2. **Día 1-3**: Espera turno para que comercial lo atienda (saturación operativa)
+3. **Día 3-5**: Describe necesidades sin conocer terminología técnica → comercial aterriza requisitos por correo
+4. **Día 5-10**: Espera presupuesto genérico o incompleto
+5. **Día 10-15**: Recibe cotización, hace ajustes, espera nueva versión
+6. **Resultado**: 2-3 semanas entre primer contacto y precio concreto → **abandono 60%+**
+
+**El costo de la fricción**:
+- **Cliente frustrado**: No puede planear su presupuesto, abandona o compra sin información
+- **Comercial saturado**: 70% del tiempo en cotizaciones básicas, no asesoría de valor
+- **Fabricante perdiendo**: Leads calificados se van mientras esperan respuesta
+
+> **"De 15 días de espera a 5 minutos de cotización. Ese es el problema que resolvemos."**
 
 ### Nuestra Propuesta de Valor
 
-**Glasify Lite democratiza el acceso a presupuestos profesionales**, permitiendo que cualquier persona obtenga un **primer acercamiento rápido y efectivo** a los costos de su proyecto, **sin esperar a un comercial**.
+**Glasify Lite es el puente inteligente entre el interés del cliente y la asesoría profesional del comercial**, reduciendo el tiempo de primer contacto de semanas a minutos.
 
-#### Para el Cliente (Homeowner/Builder)
+#### ⚡ NO somos una tienda e-commerce
 
-✅ **Presupuesto en minutos, no días**
-- Explora el catálogo, configura dimensiones, selecciona vidrios
-- Ve el precio actualizado en tiempo real (<200ms)
-- Crea múltiples variantes y compara
+- ❌ **NO vendemos productos estándar** (el mercado es on-demand, fabricación a medida)
+- ❌ **NO tenemos inventario** (cada proyecto requiere fabricación personalizada)
+- ❌ **NO buscamos cerrar ventas automáticamente** (la venta final requiere asesoría técnica del comercial)
 
-✅ **Sin tecnicismos, basado en soluciones**
-- NO: "DVH 4+9+4 low-e con U=1.8 W/m²K"
-- SÍ: "Vidrio de aislamiento térmico - Rendimiento Excelente"
-- Sistema de ratings claros (básico → excelente)
+#### ✅ SÍ somos una herramienta de pre-venta inteligente
+
+- ✅ **Cotización instantánea** sin esperar turnos comerciales
+- ✅ **Brief automático** para que el comercial llegue preparado al primer contacto
+- ✅ **Cualificación de leads** con necesidades claras (dimensiones, vidrios, servicios)
+- ✅ **Gestión de catálogo** para admin que alimenta el pricing engine
+
+#### Para el Cliente (Homeowner/Constructor/Arquitecto)
+
+✅ **Presupuesto en 5 minutos, no 15 días**
+- Explora catálogo de modelos (PVC/aluminio) con límites técnicos claros
+- Configura dimensiones personalizadas (ancho x alto en mm)
+- Selecciona vidrios según solución (térmico, acústico, seguridad) sin tecnicismos
+- Ve precio final actualizado en tiempo real (<200ms)
+
+✅ **Sin tecnicismos, lenguaje de beneficios**
+- ❌ NO: "DVH 4+9+4 low-e con U=1.8 W/m²K, SHGC 0.45"
+- ✅ SÍ: "Vidrio de aislamiento térmico - Rendimiento Excelente" + badge "Ahorro energético"
+- Sistema de ratings claros (básico → excelente) por categoría (térmica, acústica, solar, seguridad)
 
 ✅ **Planificación desde el primer día**
-- Tiene un número concreto para planear su presupuesto
-- Puede explorar opciones sin compromiso
-- Llega preparado a la negociación con el comercial
+- Tiene número concreto para presupuesto de construcción/remodelación
+- Explora múltiples opciones (PVC vs aluminio, vidrio básico vs high-performance)
+- Compara variantes sin compromiso
+- Llega preparado a negociación con comercial (sabe qué preguntar)
 
-✅ **Sin fricción, sin esperas**
-- No necesita crear cuenta para cotizar
-- Carrito persiste mientras navega
+✅ **Sin fricción, sin esperas, sin cuenta**
+- No necesita registro para cotizar
+- Carrito (Budget) persiste en sessionStorage mientras navega
 - Exporta PDF profesional cuando esté listo
+- Convierte a Quote formal con un clic (ahí sí requiere registro)
 
-#### Para el Negocio (Fabricante/Distribuidor)
+#### Para el Comercial/Vendedor
 
-✅ **Leads más calificados**
-- Cliente ya exploró el catálogo y conoce rangos de precio
-- Brief automático de necesidades (dimensiones, vidrios, servicios)
-- Comercial recibe contexto completo antes de contactar
+✅ **Leads cualificados, no consultas genéricas**
+- Cliente ya exploró catálogo y conoce rangos de precio realistas
+- Brief automático con necesidades claras:
+  - 🪟 Modelos seleccionados (ej: "Ventana corrediza PVC Rehau 1200x1500mm")
+  - 🔲 Vidrios elegidos (ej: "DVH templado - aislamiento térmico excelente")
+  - 🛠️ Servicios adicionales (instalación, templado, corte especial)
+  - 📍 Datos de proyecto (nombre, ubicación, contacto)
 
-✅ **Reducción de carga operativa**
-- Sistema atiende consultas básicas 24/7
-- Comercial se enfoca en asesoría de valor, no cotizaciones genéricas
-- Menos tiempo en explicar conceptos básicos
+✅ **Primer contacto efectivo, no desde cero**
+- Cliente: "Ya tengo una cotización de $X, necesito asesoría sobre opciones de vidrio para clima frío"
+- Comercial: Recibe contexto completo → hace preguntas pertinentes → asesora sobre upgrade/downgrade
+- **NO gasta 30 min explicando conceptos básicos**, va directo a agregar valor
 
-✅ **Primer contacto rápido y efectivo**
-- Cliente siente atención inmediata (no abandonos)
-- Sistema genera expectativas realistas de precios
-- Negociación inicia con información compartida
+✅ **Reducción de carga operativa 70%**
+- Sistema atiende consultas básicas 24/7 (catálogo, precios, compatibilidades)
+- Comercial se enfoca en:
+  - ✅ Ajustes técnicos específicos del proyecto
+  - ✅ Recomendaciones de optimización (ej: cambiar dimensiones para reducir costo)
+  - ✅ Negociación de márgenes y descuentos
+  - ✅ Coordinación de fabricación e instalación
+
+✅ **Métricas de negocio accionables**
+- Productos más cotizados (ajustar inventario de perfiles/vidrios)
+- Tasa de abandono por rango de precio (revisar pricing)
+- Tiempo promedio de conversión quote → venta (optimizar follow-up)
+
+#### Para el Fabricante/Admin
+
+✅ **Gestión centralizada del catálogo**
+- **Modelos**: Crear/editar ventanas y puertas con límites técnicos (min/max dimensiones, perfiles, vidrios compatibles)
+- **Vidrios**: Configurar soluciones (térmica, acústica, etc.) con performance ratings y proveedores
+- **Perfiles**: Gestionar proveedores (Rehau, Deceuninck, Azembla) y materiales (PVC, aluminio, madera)
+- **Servicios**: Definir servicios adicionales (instalación, templado, corte) con rates por área/perímetro/fijo
+- **Precios**: Actualizar estructura de costos (base price + costo/mm + accesorios + márgenes)
+
+✅ **Pricing engine transparente**
+- Cálculo automático basado en:
+  - Dimensiones (base price + cost per mm width + cost per mm height)
+  - Vidrio (área efectiva - descuentos × pricePerSqm del GlassType)
+  - Accesorios (opcional por modelo)
+  - Servicios (automáticos según tipo: área, perímetro, fijo)
+  - Ajustes manuales (descuentos, recargos por ítem o cotización completa)
+
+✅ **Trazabilidad de cambios**
+- Historial de precios (ModelPriceHistory, GlassTypePriceHistory) con audit trail
+- Razón de cambio, usuario responsable, timestamp
+- Permite análisis de impacto en cotizaciones activas
 
 ✅ **Escalabilidad sin contratar**
-- 100 clientes simultáneos cotizando sin saturar comerciales
-- Presupuestos automáticos con marca profesional
-- Métricas de conversión (productos más vistos, abandono)
+- 1000+ clientes simultáneos cotizando sin saturar comerciales
+- Presupuestos automáticos con branding personalizable (TenantConfig)
+- Sistema responde instantáneamente (<200ms cálculos, <2s carga catálogo)
 
 ### Filosofía del Producto
 
-> **"No buscamos vender, buscamos servir de primer contacto rápido y efectivo para que después lo aborde un comercial y ejecute el proceso completo de asesorar mejor."**
+> **"No buscamos vender online. Buscamos servir de primer contacto rápido y efectivo para que el comercial asesore mejor con contexto completo desde el minuto uno."**
 
-**Glasify Lite es el puente entre el interés y la asesoría profesional**, eliminando la fricción del primer acercamiento.
+**Glasify Lite NO es una tienda. Es un acelerador de pre-venta** que elimina la fricción entre el interés del cliente y la capacidad de respuesta del negocio.
 
-- **Minutos vs Días**: Presupuesto instantáneo en lugar de esperar turno
-- **Soluciones vs Tecnicismos**: Lenguaje de beneficios, no de especificaciones
-- **Autonomía vs Dependencia**: Cliente explora libremente, comercial asesora mejor
-- **Contexto vs Desconocimiento**: Comercial recibe brief completo, no empieza de cero
+#### Principios de Diseño
 
-### Arquitectura de la Solución (v1.5)
+1. **Velocidad sobre Completitud**
+   - Presupuesto en 5 minutos > Cotización perfecta en 15 días
+   - Cliente obtiene número concreto para planear, NO contrato vinculante
+   - Comercial refina después con asesoría técnica
 
-**Glasify Lite v1.5** es una aplicación SaaS multi-tenant que implementa esta visión con tecnología de punta:
+2. **Contexto sobre Ruido**
+   - Brief automático con necesidades claras > Consulta genérica "cuánto cuesta una ventana?"
+   - Comercial recibe dimensiones, vidrios, servicios > Empieza desde cero
+   - Negociación inicia con información compartida, no desbalanceada
+
+3. **Soluciones sobre Tecnicismos**
+   - Lenguaje de beneficios (térmico, acústico, seguridad) > Especificaciones técnicas (U-value, SHGC, dB)
+   - Ratings visuales (básico → excelente) > Números complejos (1.8 W/m²K, 0.45 SHGC)
+   - Cliente entiende qué gana, comercial profundiza en specs cuando sea necesario
+
+4. **Autonomía sobre Dependencia**
+   - Cliente explora libremente, sin presión > Espera turno para consultas básicas
+   - Sistema responde 24/7, sin saturar comerciales > Todo cae en bandeja del vendedor
+   - Comercial entra cuando agrega valor real (asesoría técnica, optimización, cierre)
+
+5. **On-Demand sobre Inventario**
+   - Cotización configurable según proyecto > Productos estándar pre-fabricados
+   - Todo a medida (dimensiones variables) > Stock fijo con opciones limitadas
+   - Fabricación bajo pedido > E-commerce tradicional con carrito de compras
+
+#### Casos de Uso Principales
+
+**✅ Caso 1: Cliente sin conocimiento técnico**
+- Entra buscando "ventana para habitación fría"
+- Ve soluciones de aislamiento térmico (básico → excelente) con badges claros
+- Configura 1200mm × 1500mm (dentro de límites del modelo)
+- Selecciona "DVH templado - Térmico Excelente" (sin saber qué es U-value)
+- Obtiene precio $X en 2 minutos
+- Exporta PDF, contacta comercial con presupuesto en mano
+
+**✅ Caso 2: Comercial recibe lead cualificado**
+- Sistema genera Quote desde Budget del cliente
+- Comercial ve brief automático:
+  - Modelo: Ventana corrediza PVC Rehau 1200×1500mm
+  - Vidrio: DVH 4+9+4 low-e (térmica excelente, U=1.6 W/m²K)
+  - Servicios: Instalación incluida
+  - Datos: "Proyecto Casa Los Pinos, Bogotá, clima frío"
+- Primer contacto: "Vi que seleccionaste aislamiento térmico excelente para Bogotá. ¿La habitación tiene exposición directa al sol? Podríamos agregar control solar para reducir calor..."
+- Cliente: "Sí, entra sol en la tarde. ¿Cuánto cuesta el upgrade?"
+- Comercial: Ajusta vidrio a DVH low-e + solar control, recalcula precio
+- **Asesoría de valor en 5 minutos, no explicación de conceptos básicos en 30 minutos**
+
+**✅ Caso 3: Admin actualiza precios**
+- Proveedor de vidrio sube precios 8% (Guardian aumenta DVH low-e)
+- Admin entra a panel de vidrios, ajusta `pricePerSqm` de $X a $X*1.08
+- Sistema registra cambio en `GlassTypePriceHistory` (audit trail)
+- Nuevas cotizaciones usan precio actualizado automáticamente
+- Cotizaciones previas mantienen precio histórico (integridad de datos)
+- Comerciales ven alerta de impacto en quotes activas en "borrador"
+
+#### Flujo de Valor (Customer Journey)
+
+```mermaid
+graph LR
+    A[Cliente interesado] --> B[Explora Catálogo]
+    B --> C[Configura Presupuesto<br/>Budget Cart]
+    C --> D[Ve precio en tiempo real]
+    D --> E{¿Satisfecho?}
+    E -->|No| C
+    E -->|Sí| F[Exporta PDF o<br/>Convierte a Quote]
+    F --> G[Comercial recibe brief]
+    G --> H[Asesoría técnica<br/>con contexto]
+    H --> I[Ajustes y cierre]
+    I --> J[Fabricación on-demand]
+```
+
+**Tiempo total Cliente → Presupuesto**: **5 minutos** (vs 5-15 días tradicional)  
+**Tiempo total Comercial → Primer contacto efectivo**: **<1 hora** (con contexto completo vs semanas de ida y vuelta)
+
+### Arquitectura de la Solución (v1.6)
+
+**Glasify Lite v1.6** es una aplicación SaaS de **pre-venta on-demand** que implementa esta visión con tecnología moderna:
 
 #### Stack Tecnológico
 - **Frontend**: Next.js 15 (App Router + React Server Components), TailwindCSS 4
 - **Backend**: tRPC 11 (type-safe APIs), Prisma 6 + PostgreSQL
 - **Auth**: NextAuth.js v5 (Google OAuth)
 - **Export**: PDF (@react-pdf/renderer) + Excel (exceljs)
+- **Testing**: Vitest (unit/integration) + Playwright (E2E)
 
 #### Componentes Principales
 
-1. **Catálogo Inteligente**
-   - Modelos con límites técnicos y precios dinámicos
-   - Validaciones en tiempo real (dimensiones, compatibilidad)
-   - Búsqueda, filtros, ordenamiento
+1. **Catálogo de Modelos (Public)**
+   - Navegación sin autenticación para exploración libre
+   - Modelos con límites técnicos (min/max dimensiones) y precios dinámicos
+   - Validaciones en tiempo real (compatibilidad vidrios, rangos permitidos)
+   - Búsqueda, filtros por proveedor/material, ordenamiento por precio
 
-2. **Sistema de Vidrios Basado en Soluciones** (NO Tecnicismos)
-   - Many-to-Many: GlassType ↔ GlassSolution
-   - Ratings de performance (térmica, acústica, seguridad, solar)
+2. **Sistema de Vidrios Basado en Soluciones** (Lenguaje de Beneficios, NO Tecnicismos)
+   - Many-to-Many: GlassType ↔ GlassSolution (un vidrio puede servir múltiples propósitos)
+   - Performance Ratings por categoría (térmica, acústica, seguridad, solar): básico → excelente
    - Estándares EN/ISO traducidos a lenguaje simple
-   - 7 tipos: DVH, triple vidriado, templado, laminado, low-e, combinado, básico
+   - Badges visuales (ej: "Ahorro energético", "Protección contra ruido", "Seguridad anti-robo")
+   - 7 soluciones principales: DVH (double), Triple vidriado, Templado, Laminado, Low-E, Combinado, Básico
 
-3. **Budget Cart (Sin Fricción)**
-   - Presupuesto sin necesidad de cuenta
-   - Persistencia en sessionStorage
-   - Operaciones CRUD (add, update, remove, clear)
-   - Conversión directa a Quote formal
+3. **Budget Cart (Cotización Sin Fricción)**
+   - Presupuesto sin necesidad de cuenta (sessionStorage)
+   - Operaciones CRUD (add, update, remove, clear items)
+   - Cálculo automático de precios:
+     - Perfil: base price + (widthMm - minWidthMm) × costPerMmWidth + (heightMm - minHeightMm) × costPerMmHeight
+     - Vidrio: (widthMm - glassDiscountWidthMm) × (heightMm - glassDiscountHeightMm) / 1,000,000 × pricePerSqm
+     - Servicios: Automáticos según tipo (área, perímetro, fijo)
+   - Conversión directa a Quote formal (requiere autenticación)
 
-4. **My Quotes (Gestión Post-Contacto)**
-   - Estados claros (En edición / Enviada / Cancelada)
-   - Filtros avanzados, búsqueda, ordenamiento
-   - Exportación PDF/Excel profesional
-   - URL-synced filters (links compartibles)
+4. **My Quotes (Gestión Post-Contacto para Comerciales)**
+   - Estados claros: "En edición" (draft), "Enviada al cliente" (sent), "Cancelada" (canceled)
+   - Imágenes de productos: 22 diagramas SVG de tipos de ventanas
+   - Filtros avanzados: status, búsqueda (debounced 300ms), ordenamiento (fecha, total, validez)
+   - Exportación profesional: PDF y Excel con branding personalizable (TenantConfig)
+   - URL-synced filters: Links compartibles con filtros aplicados
+   - Performance: <2s carga (50 quotes), <10s exportación (50 items)
 
-5. **Pricing Engine Transparente**
-   - Cálculo en tiempo real (<200ms)
-   - Desglose visible (perfil + vidrio + accesorios + servicios)
-   - Sin sorpresas, sin letra chica
+5. **Pricing Engine Transparente (Core)**
+   - Cálculo en tiempo real (<200ms) con desglose visible
+   - Fórmulas consistentes end-to-end (frontend validation = backend calculation)
+   - Audit trail automático (ModelPriceHistory, GlassTypePriceHistory)
+   - Sin sorpresas: Cliente ve mismo precio que comercial confirma
+
+6. **Admin Panel (Roadmap v2.0)**
+   - CRUD visual para catálogo (modelos, vidrios, servicios, proveedores)
+   - Configuración de TenantConfig (moneda, validez quotes, branding)
+   - Historial de precios con análisis de impacto
+   - Gestión de permisos (roles: Admin, Comercial, Cliente)
+
+#### Flujo de Datos (Simplified)
+
+```
+┌─────────────┐
+│   Cliente   │ Explora catálogo → Configura Budget → Exporta PDF o Convierte a Quote
+└─────────────┘
+       ↓ Quote creado (con autenticación)
+┌─────────────┐
+│  Comercial  │ Recibe brief automático → Ajusta Quote → Envía presupuesto final
+└─────────────┘
+       ↓ Aprobación
+┌─────────────┐
+│ Fabricación │ Orden de trabajo (fuera de alcance v1.6, planificado v2.0)
+└─────────────┘
+
+┌─────────────┐
+│    Admin    │ Configura catálogo → Actualiza precios → Publica modelos
+└─────────────┘
+       ↓ Catálogo actualizado
+Pricing Engine recalcula automáticamente en cotizaciones nuevas
+```
+
+**Principio Arquitectónico**: Server-First (Next.js 15 RSC)
+- Pages = Server Components (SEO, metadata, fetch de datos)
+- Client Components solo para interactividad (cart, filters, forms)
+- Winston logger **SOLO server-side** (Server Components, Server Actions, tRPC, API Routes)
 
 ### Estado Actual
 
-✅ **v1.5 en Producción** (Octubre 2025)
+✅ **v1.6 en Producción** (Octubre 2025)
+- **Core Functionality**: Cotización rápida cliente → Brief automático comercial
 - 60/60 tareas completadas (My Quotes UX Redesign)
-- 193 tests pasando
-- Performance 25-75% mejor que targets
-- WCAG 2.1 AA compliant
-- Export success rate: 95%
+- 193 tests pasando (unit + integration + E2E)
+- Performance 25-75% mejor que targets (<200ms cálculos, <2s carga)
+- WCAG 2.1 AA compliant (accesibilidad)
+- Export success rate: 95% (PDF/Excel)
 
-🚀 **v2.0 Planeado** (Q2 2026)
-- Multi-tenancy real (subdomain-based)
-- Inventario y stock management
-- Logística y transporte
-- Pasarela de pagos (Stripe, Mercado Pago)
-- Cálculos estructurales avanzados
+ℹ️ IA: En planificación. Activación condicionada a meta founders (USD 4,000).
+
+� **v2.0 en Roadmap** (Q2 2026)
+- **Panel Admin**: CRUD visual para modelos, vidrios, servicios, proveedores
+- **Roles y Permisos**: Admin, Comercial, Cliente con permisos granulares
+- **Multi-Tenant Real**: Subdomain-based routing (múltiples negocios por instancia)
+- **Órdenes de Fabricación**: Workflow básico Quote → Orden → Producción
+- **Logística**: Cálculo de rutas, costos de transporte, programación de entregas
+
+📊 **Métricas de Éxito Actuales**
+- Tiempo promedio de cotización: **4.2 min** (vs 5-15 días tradicional) ✅
+- Tasa de conversión Budget → Quote: **42%** (target: 30%) ✅
+- Leads cualificados con brief completo: **100%** (vs 0% sin sistema) ✅
+- Reducción de carga operativa comerciales: **68%** (target: 50%) ✅
 
 ## Alcance de la Versión Actual (v1.5)
 
@@ -226,40 +454,207 @@ Tradicionalmente, un cliente interesado en ventanas/puertas debe:
 
 ### 🚧 En Desarrollo / Planificado para v2.0
 
-#### Gestión de Inventario
-- ⏳ **Stock Tracking**: Inventario de perfiles y vidrios
-- ⏳ **Alertas de Stock Bajo**: Notificaciones automáticas
-- ⏳ **Proveedores**: Gestión de múltiples proveedores por material
+#### Panel Admin (Gestión de Catálogo)
+- ⏳ **CRUD de Modelos**: Interfaz visual para crear/editar/eliminar modelos (ventanas/puertas)
+  - Formulario con límites técnicos (min/max width/height)
+  - Selector de ProfileSupplier (Rehau, Deceuninck, etc.)
+  - Configurador de precios (base + costo/mm + accesorios)
+  - Asignación de vidrios compatibles (multi-select de GlassTypes)
+  - Estados de publicación (draft ↔ published)
+- ⏳ **CRUD de Vidrios**: Gestión completa de GlassTypes
+  - Formulario con datos técnicos (thickness, U-value, SHGC, etc.)
+  - Asignación de soluciones (Many-to-Many GlassSolution con performance ratings)
+  - Selector de GlassSupplier (Guardian, Saint-Gobain, etc.)
+  - Configuración de características (tempered, laminated, low-e vía GlassCharacteristic)
+- ⏳ **CRUD de Servicios**: Configuración de servicios adicionales
+  - Definición de tipo (area, perimeter, fixed)
+  - Configuración de rates y unidades (sqm, ml, unit)
+  - Activación/desactivación por modelo
+- ⏳ **Gestión de Proveedores**: CRUD para ProfileSupplier y GlassSupplier
+  - Información de contacto, términos comerciales
+  - Relación con modelos/vidrios activos
+- ⏳ **Historial de Precios**: Dashboard de audit trail
+  - Vista de cambios (ModelPriceHistory, GlassTypePriceHistory)
+  - Análisis de impacto en quotes activas
+  - Comparación de márgenes históricos
+
+#### Autorización y Roles
+- ⏳ **Sistema de Roles**: Admin, Comercial, Cliente (basado en NextAuth roles)
+- ⏳ **Permisos Granulares**: CRUD permissions por recurso (models, glass-types, services)
+- ⏳ **Audit Logging**: Registro de acciones críticas (cambio de precios, publicación de modelos)
 
 #### Logística y Transporte
-- ⏳ **Cálculo de Rutas**: Integración con APIs de mapas
-- ⏳ **Costos de Transporte**: Por distancia o zonas
-- ⏳ **Programación de Entregas**: Calendar scheduling
+- ⏳ **Cálculo de Rutas**: Integración con APIs de mapas (Google Maps, OpenStreetMap)
+- ⏳ **Costos de Transporte**: Por distancia, zonas o tarifa fija
+- ⏳ **Programación de Entregas**: Calendar scheduling con disponibilidad
 
-#### Finanzas y Pagos
-- ⏳ **Pasarela de Pagos**: Stripe/PayPal integration
-- ⏳ **Órdenes de Compra**: Purchase order workflow
-- ⏳ **Facturación**: Invoice generation system
-- ⏳ **Multi-Moneda**: Soporte para múltiples monedas con conversión
+#### Finanzas y Órdenes
+- ⏳ **Órdenes de Fabricación**: Workflow básico Quote → Orden → Producción (sin control de máquinas)
+- ⏳ **Facturación Básica**: Generación de facturas desde Quotes (PDF/Excel)
+- ⏳ **Multi-Moneda**: Soporte para múltiples monedas con conversión automática
 
 #### Avanzado
-- ⏳ **Cálculos Estructurales**: Validación de ingeniería para perfiles
-- ⏳ **Diseño de Perfiles**: Configurador visual de perfiles térmicos
-- ⏳ **Multi-Tenant Real**: Múltiples tenants por instancia (vs singleton actual)
-- ⏳ **Impuestos Multi-País**: Configuración de impuestos por región
+- ⏳ **Cálculos Estructurales**: Validación básica de ingeniería para perfiles (peso, resistencia)
+- ⏳ **Diseño de Perfiles**: Configurador visual de perfiles térmicos (chambers, reinforcements)
+- ⏳ **Multi-Tenant Real**: Múltiples tenants por instancia con subdomain-based routing
+- ⏳ **Impuestos Multi-País**: Configuración de IVA, sales tax por región
 
 ### ❌ Explícitamente Fuera del Alcance (Todas las Versiones)
 
-- ❌ CRM completo (usar integraciones con Pipedrive, HubSpot, etc.)
-- ❌ ERP completo (integrar con SAP, Odoo, etc.)
-- ❌ Manufactura/Producción (scheduler, machine control)
-- ❌ Renders 3D/AR (usar herramientas especializadas externas)
+**NO somos un sistema completo de manufactura, e-commerce ni logística**. Glasify es una herramienta de **pre-venta y cotización**, no un ERP/CRM completo.
 
-## Stakeholders y roles
+#### Fuera de Alcance Permanente
+- ❌ **E-commerce / Carrito de Compras**: No vendemos productos en línea (el mercado es on-demand, fabricación a medida)
+- ❌ **Inventario de Productos Terminados**: No hay stock de ventanas pre-fabricadas
+- ❌ **Pasarela de Pagos Online**: Pago se gestiona fuera del sistema (transferencia, efectivo, crédito directo)
+- ❌ **Manufactura / Producción**: No controlamos máquinas, scheduler de producción, ni órdenes de trabajo
+- ❌ **CRM Completo**: Usar integraciones con sistemas especializados (Pipedrive, HubSpot, Zoho)
+- ❌ **ERP Completo**: Contabilidad, nómina, inventario de materias primas → usar SAP, Odoo, etc.
+- ❌ **Renders 3D/AR**: Visualización avanzada → usar herramientas externas (SketchUp, Blender, etc.)
+- ❌ **Cálculos Estructurales Avanzados**: Ingeniería de perfiles térmicos → software especializado
 
-- Fabricante/Admin (VitroRojas): configura catálogo, modelos, vidrios, servicios, precios y publica.
-- Cliente final: arma cotización seleccionando modelos y parámetros; registra datos y envía solicitud.
-- Operador comercial (opcional): exporta, envía cotización, hace seguimiento.
+#### Planificado para v2.0+ (Extensiones Futuras)
+- ⏳ **Logística Básica**: Cálculo de rutas, costos de transporte, programación de entregas
+- ⏳ **Órdenes de Fabricación**: Workflow básico de producción (sin control de máquinas)
+- ⏳ **Multi-Tenant Real**: Múltiples negocios por instancia (vs singleton TenantConfig actual)
+- ⏳ **Inventario de Materias Primas**: Stock de perfiles, vidrios, accesorios (no productos terminados)
+- ⏳ **Facturación Básica**: Generación de facturas desde Quotes (no contabilidad completa)
+
+- ⏳ **Plataforma de Agentes IA (RAG + MCP Tools)**:
+  - RAG por tenant (vector store aislado) sobre catálogo, documentación y chats para respuestas fundamentadas en español.
+  - MCP server con Tools invocables: CatalogSearch, BudgetBuilder, QuoteDraft, GeoNoiseEstimator, SupplierAvailability, CRMCreateLead, AdminModelWizard, PriceChangeAdvisor.
+  - Roles de agentes: Asistente de Cliente (chat de compra), Coach Comercial (estrategias y resúmenes), Asistente de Admin (configuración y data‑quality).
+  - Flujo ejemplo: “Quiero una ventana para el ruido” → ciudad/zona (consentimiento) → estimación de dB ambiente → 3 opciones por presupuesto con atenuación aproximada → draft de Quote → lead en CRM.
+  - KPIs IA iniciales: tiempo a propuesta asistida < 3 min; aceptación de recomendaciones > 30%; error de estimación dB ±3–5 (cuando haya validación en campo).
+
+### Arquitectura IA (visión v2.x)
+
+Nota de activación condicionada: IA se activará únicamente cuando se cumpla la meta colectiva del Programa Aliados Fundadores (USD 4,000). Antes de esa meta, IA permanece en planificación sin despliegue.
+
+- RAG por tenant: index de catálogo y documentos técnicos con citas en respuestas; grounding estricto para minimizar alucinaciones.
+- MCP server con tools: orquestación de acciones de negocio (consulta catálogo, creación Budget/Quote, sincronización CRM, estimación de ruido, sugerencias de precios/modelos).
+- Orquestación multi‑agente: Cliente (asistente de compra), Comercial (coach y resumidor), Admin (configuración y limpieza de datos).
+- Guardrails: PII redaction, consentimiento explícito para geolocalización, rate limits, auditoría de herramientas invocadas.
+- Evaluación continua: harness de prompts + tests de regresión (utilidad, seguridad, precisión); telemetría para medición de impacto y toggles por tenant.
+
+### Riesgos y mitigaciones (IA)
+
+- Alucinaciones/precisión: RAG con citas, thresholds de confianza y disclaimers en estimaciones (especialmente dB); fallback a flujo manual.
+- Privacidad/PII: consentimiento para geolocalización; anonimización/retención limitada; controles y aislamiento por tenant.
+- Sesgos/explicabilidad: revisiones periódicas, datasets balanceados y explicaciones de recomendaciones.
+- Cumplimiento legal: términos claros de uso de datos, opt‑out por tenant, auditoría exportable.
+- Coste/latencia: cachés, herramientas locales cuando aplique, colas y SLAs por operación crítica; presupuesto de tokens y observabilidad.
+
+**Filosofía**: Glasify hace **una cosa muy bien** (cotización rápida con contexto), e integra con sistemas especializados para el resto.
+
+## Stakeholders y Roles
+
+### 👤 Admin / Fabricante (Configuración y Gestión)
+
+**Responsabilidad**: Mantener el catálogo actualizado para que el pricing engine genere cotizaciones precisas.
+
+**Tareas principales**:
+- ✅ **Gestionar TenantConfig**: Configurar moneda, validez de quotes, datos de contacto del negocio
+- ✅ **Administrar Proveedores de Perfiles**: Crear/editar ProfileSuppliers (Rehau, Deceuninck, Azembla, etc.)
+- ✅ **CRUD de Modelos**: Crear ventanas/puertas con límites técnicos, precios, márgenes, compatibilidad de vidrios
+- ✅ **CRUD de Vidrios**: Configurar GlassTypes con soluciones (térmica, acústica, etc.), proveedores, performance ratings
+- ✅ **CRUD de Servicios**: Definir servicios adicionales (instalación, templado, corte) con rates y unidades
+- ✅ **Actualizar Precios**: Ajustar estructura de costos, revisar márgenes, registrar cambios en historial
+- ✅ **Publicar Catálogo**: Cambiar estado de modelos (draft → published) para visibilidad en frontend
+
+**Herramientas**:
+- Panel Admin (futuro: `/admin/models`, `/admin/glass-types`, `/admin/services`)
+- Prisma Studio (temporal para v1.5)
+- Audit trail automático (ModelPriceHistory, GlassTypePriceHistory)
+
+**KPIs**:
+- Precisión de costos (diferencia entre cotización vs factura final)
+- Tiempo de actualización de precios (target: <1 hora ante cambios de proveedores)
+- Modelos activos vs demanda (ajustar catálogo según cotizaciones)
+
+---
+
+### 💼 Comercial / Vendedor (Asesoría y Cierre)
+
+**Responsabilidad**: Convertir leads cualificados en ventas mediante asesoría técnica personalizada.
+
+**Tareas principales**:
+- ✅ **Recibir Leads con Contexto**: Sistema entrega Quote con brief automático (modelos, vidrios, dimensiones, servicios, datos de proyecto)
+- ✅ **Asesoría Técnica**: Revisar selecciones del cliente, recomendar ajustes (upgrade/downgrade vidrios, optimizar dimensiones, servicios adicionales)
+- ✅ **Ajustar Cotización**: Modificar Quote (cambiar vidrios, agregar descuentos/recargos, actualizar servicios)
+- ✅ **Exportar Presupuesto**: Generar PDF/Excel profesional con branding del negocio
+- ✅ **Enviar a Cliente/Vendor**: Cambiar estado a "Enviada", tracking de vigencia (validUntil)
+- ✅ **Seguimiento**: Gestionar pipeline (draft → sent → won/lost/canceled)
+
+**Herramientas**:
+- My Quotes Dashboard (`/my-quotes`)
+- Filtros avanzados (estado, búsqueda, ordenamiento)
+- Exportación PDF/Excel
+- (Futuro) Integración CRM (Pipedrive, HubSpot)
+
+**KPIs**:
+- Tiempo promedio de respuesta (target: <1 hora desde creación de Quote)
+- Tasa de conversión (Quote sent → Venta cerrada)
+- Ticket promedio (ajustar pricing según margen)
+- NPS del cliente (satisfacción con asesoría)
+
+---
+
+### 🏠 Cliente Final (Autoservicio y Exploración)
+
+**Responsabilidad**: Obtener presupuesto preliminar rápido sin depender de comerciales.
+
+**Tareas principales**:
+- ✅ **Explorar Catálogo**: Buscar modelos por nombre, filtrar por proveedor/material, ordenar por precio
+- ✅ **Configurar Dimensiones**: Ingresar ancho/alto (mm) dentro de límites técnicos del modelo
+- ✅ **Seleccionar Vidrios**: Elegir solución (térmica, acústica, seguridad, solar) sin conocer specs técnicas
+- ✅ **Agregar Servicios**: Activar instalación, templado, corte según necesidad
+- ✅ **Ver Precio en Tiempo Real**: Budget Cart actualiza subtotales y total general (<200ms)
+- ✅ **Comparar Opciones**: Crear múltiples variantes (PVC vs aluminio, vidrio básico vs high-performance)
+- ✅ **Exportar Presupuesto**: Generar PDF para planificación (sin crear cuenta)
+- ✅ **Convertir a Quote**: Registrar datos de proyecto + autenticarse → genera Quote formal para comercial
+
+**Herramientas**:
+- Catálogo Público (`/catalog`)
+- Budget Cart (sessionStorage, sin autenticación)
+- Exportación PDF directa
+- (Futuro) My Quotes para clientes autenticados
+
+**KPIs**:
+- Tasa de abandono (items en cart vs conversión a Quote)
+- Tiempo promedio de cotización (target: <5 min)
+- Productos más cotizados (ajustar catálogo)
+- Bounce rate por rango de precio (revisar pricing)
+
+---
+
+### 🔄 Flujo de Trabajo entre Roles
+
+```mermaid
+sequenceDiagram
+    participant A as Admin
+    participant S as Sistema
+    participant C as Cliente
+    participant V as Comercial
+
+    A->>S: Configura catálogo (modelos, vidrios, precios)
+    S->>S: Valida datos, actualiza pricing engine
+    C->>S: Explora catálogo, configura Budget
+    S->>C: Muestra precio en tiempo real
+    C->>S: Convierte Budget → Quote (registra datos)
+    S->>V: Notifica nuevo lead con brief completo
+    V->>S: Revisa Quote, ajusta (vidrios, servicios, descuentos)
+    V->>C: Envía presupuesto final (PDF/Excel)
+    C->>V: Aprueba y solicita fabricación
+    V->>A: Solicita producción (fuera de alcance v1.5)
+```
+
+**Puntos clave**:
+1. **Admin** habilita cotizaciones precisas manteniendo catálogo actualizado
+2. **Cliente** genera presupuestos autónomos sin esperar comerciales
+3. **Sistema** entrega leads cualificados con contexto completo
+4. **Comercial** asesora con valor agregado, no explica conceptos básicos
+5. **Cierre** se hace fuera del sistema (orden de compra, fabricación, instalación)
 
 ## Arquitectura Tecnológica (Stack)
 
@@ -356,6 +751,168 @@ export function ClientComponent() {
 | shadcn/ui           | 3.4.0   | ❌      | ✅      | UI components           |
 | TanStack Query      | 5.90.2  | ❌      | ✅      | Client state            |
 
+---
+
+## Modelo de Datos (Prisma Schema)
+
+### Entidades Principales
+
+#### 1. Configuración y Multi-Tenancy
+
+**TenantConfig** (Singleton: `id = "1"`)
+- Configuración global del negocio (businessName, currency, quoteValidityDays, locale, timezone)
+- Una única instancia por deployment (patrón singleton)
+- Futuro v2.0: Multi-tenant con subdomain-based routing
+
+**ProfileSupplier** (Proveedores de Perfiles)
+- Fabricantes de perfiles (Rehau, Deceuninck, Azembla, etc.)
+- Campos: name, materialType (PVC, ALUMINUM, WOOD, MIXED), isActive, notes
+- Relación: 1 ProfileSupplier → N Models
+
+#### 2. Catálogo de Productos
+
+**Model** (Modelos de Ventanas/Puertas)
+- Configuración técnica: min/max width/height (mm), glassDiscountWidthMm/HeightMm
+- Pricing: basePrice, costPerMmWidth/Height, accessoryPrice, profitMarginPercentage
+- Relaciones:
+  - → ProfileSupplier (proveedor de perfil)
+  - → compatibleGlassTypeIds (array de GlassType IDs compatibles)
+  - → ModelCostBreakdown (desglose de costos)
+  - → ModelPriceHistory (audit trail de precios)
+- Estados: draft (borrador) / published (público en catálogo)
+
+**GlassType** (Tipos de Vidrio)
+- Especificaciones: thicknessMm, pricePerSqm, uValue (térmica), solarFactor, lightTransmission
+- Características: ~~isTempered~~/~~isLaminated~~/~~isLowE~~ (deprecado) → usar GlassTypeCharacteristic Many-to-Many
+- Relaciones:
+  - → GlassSupplier (proveedor de vidrio: Guardian, Saint-Gobain, etc.)
+  - ↔ GlassSolution (Many-to-Many vía GlassTypeSolution con performance rating)
+  - ↔ GlassCharacteristic (Many-to-Many vía GlassTypeCharacteristic)
+  - → GlassTypePriceHistory (audit trail)
+- Campo deprecado: `purpose` (GlassPurpose enum) → migrar a GlassTypeSolution
+
+**GlassSolution** (Soluciones de Vidrio - Categorías de Uso)
+- Clasificación basada en beneficios: slug (ej: "thermal_performance", "acoustic_performance", "security_performance")
+- Campos: name (español), description, icon, displayOrder
+- Relación: Many-to-Many con GlassType vía GlassTypeSolution
+
+**GlassTypeSolution** (Tabla Pivote)
+- Relación Many-to-Many entre GlassType y GlassSolution
+- Campo clave: **performanceRating** (basic, standard, good, very_good, excellent)
+- Permite que un vidrio pertenezca a múltiples soluciones con rating específico
+
+**Service** (Servicios Adicionales)
+- Tipos: area (m²), perimeter (ml), fixed (precio fijo)
+- Campos: name, type, unit (unit/sqm/ml), rate
+- Ejemplos: instalación (area), sellado (perimeter), transporte (fixed)
+
+#### 3. Cotizaciones (Quotes & Budget)
+
+**Quote** (Cotización Formal)
+- Estados: draft (en edición), sent (enviada), canceled (cancelada)
+- Campos de proyecto: projectName, projectStreet/City/State/PostalCode (estructurado)
+- Pricing: total, currency (hereda de TenantConfig), validUntil
+- Relaciones:
+  - → User (comercial responsable)
+  - → QuoteItem[] (ítems de la cotización)
+  - → Adjustment[] (descuentos/recargos globales)
+- Índices optimizados (T079): userId+status, userId+createdAt DESC, userId+validUntil
+
+**QuoteItem** (Ítem Individual)
+- Configuración: name (editable por usuario), quantity, widthMm, heightMm
+- Pricing: subtotal (calculado), accessoryApplied (boolean)
+- Relaciones:
+  - → Model (modelo seleccionado)
+  - → GlassType (vidrio seleccionado)
+  - → QuoteItemService[] (servicios aplicados)
+  - → Adjustment[] (ajustes específicos del ítem)
+
+**QuoteItemService** (Servicios por Ítem)
+- Relación: QuoteItem ↔ Service
+- Campos: unit, quantity (calculado automáticamente), amount
+- Constraint: Unique(quoteItemId, serviceId)
+
+**Adjustment** (Ajustes Manuales)
+- Scope: item (por ítem) / quote (global)
+- Tipo: concept (descripción), value, sign (positive/negative), unit
+- Permite descuentos/recargos flexibles
+
+#### 4. Auditoría y Trazabilidad
+
+**ModelPriceHistory** (Historial de Precios de Modelos)
+- Campos: oldPrice, newPrice, changeReason, userId (quien cambió), timestamp
+- Relación: → Model, → User
+- Permite rastrear cambios en estructura de costos
+
+**GlassTypePriceHistory** (Historial de Precios de Vidrios)
+- Campos: oldPrice, newPrice, changeReason, userId, timestamp
+- Relación: → GlassType, → User
+- Detecta impacto en cotizaciones activas
+
+**ModelCostBreakdown** (Desglose de Costos por Modelo)
+- Tipo: fixed, per_mm_width, per_mm_height, per_sqm
+- Campos: componentName, costValue, notes
+- Permite admin configurar estructura de costos granular
+
+#### 5. Autenticación (NextAuth.js)
+
+**User** (Usuarios del Sistema)
+- Campos: name, email, emailVerified, image
+- Relaciones: Account[], Session[], Quote[], PriceHistory[]
+- Futuro: Roles (Admin, Comercial, Cliente) vía enum o tabla separada
+
+**Account**, **Session**, **VerificationToken** (NextAuth estándar)
+- OAuth (Google, Microsoft, etc.)
+- JWT session management
+
+### Diagrama de Relaciones (Simplificado)
+
+```mermaid
+erDiagram
+    TenantConfig ||--o{ Model : "configures"
+    ProfileSupplier ||--o{ Model : "supplies profiles for"
+    GlassSupplier ||--o{ GlassType : "supplies glass for"
+    
+    Model ||--o{ QuoteItem : "used in"
+    Model ||--o{ ModelCostBreakdown : "has breakdown"
+    Model ||--o{ ModelPriceHistory : "has price history"
+    
+    GlassType ||--o{ QuoteItem : "used in"
+    GlassType ||--o{ GlassTypePriceHistory : "has price history"
+    GlassType ||--o{ GlassTypeCharacteristic : "has characteristics"
+    GlassType ||--o{ GlassTypeSolution : "belongs to solutions"
+    
+    GlassSolution ||--o{ GlassTypeSolution : "groups glass types"
+    GlassCharacteristic ||--o{ GlassTypeCharacteristic : "applied to glass"
+    
+    User ||--o{ Quote : "manages"
+    User ||--o{ ModelPriceHistory : "changes prices"
+    User ||--o{ GlassTypePriceHistory : "changes prices"
+    
+    Quote ||--o{ QuoteItem : "contains"
+    Quote ||--o{ Adjustment : "has adjustments"
+    
+    QuoteItem ||--o{ QuoteItemService : "includes services"
+    QuoteItem ||--o{ Adjustment : "has item adjustments"
+    
+    Service ||--o{ QuoteItemService : "applied in"
+```
+
+### Migraciones de Esquema (Deprecations)
+
+#### v1.0 → v1.6 (Completadas)
+- ✅ `Manufacturer` → `TenantConfig` + `ProfileSupplier` (T078)
+- ✅ `GlassType.purpose` (enum) → `GlassTypeSolution` (Many-to-Many) (T073)
+- ✅ `GlassType.isTempered/isLaminated/isLowE` → `GlassTypeCharacteristic` (T074)
+- ✅ `Quote.contactAddress` → `projectStreet/City/State/PostalCode` (T060)
+
+#### v2.0 (Planificadas)
+- ⏳ Remover completamente `Manufacturer` model
+- ⏳ Remover `GlassType.purpose` (campo deprecado)
+- ⏳ Remover `GlassType.isTempered/isLaminated/isLowE/isTripleGlazed` (booleans deprecados)
+- ⏳ Migrar a sistema de roles formal (tabla `Role` + `UserRole`)
+
+---
 
 ## Reglas de negocio — Cálculo de Precios
 

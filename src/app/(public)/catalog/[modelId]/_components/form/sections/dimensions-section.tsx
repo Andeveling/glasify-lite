@@ -35,9 +35,6 @@ function generateSuggestedValues(min: number, max: number, count = 5): number[] 
   }).filter((value, index, arr) => arr.indexOf(value) === index); // Eliminar duplicados
 }
 
-// biome-ignore lint/style/noMagicNumbers: valores predefinidos de cantidad para UX
-const QUANTITY_PRESETS = [1, 2, 3, 5, 8, 13, 21, 100] as const;
-
 export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   const { control, setValue } = useFormContext();
 
@@ -45,12 +42,20 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   const width = useWatch({ control, name: 'width' });
   const height = useWatch({ control, name: 'height' });
 
+  // ✅ Stable setValue callbacks to prevent infinite loops
+  const setWidthValue = useCallback((value: number) => setValue('width', value, { shouldValidate: true }), [setValue]);
+
+  const setHeightValue = useCallback(
+    (value: number) => setValue('height', value, { shouldValidate: true }),
+    [setValue]
+  );
+
   // ✅ Use custom debounced dimension hook for width
   const { localValue: localWidth, setLocalValue: setLocalWidth } = useDebouncedDimension({
     initialValue: width || dimensions.minWidth,
     max: dimensions.maxWidth,
     min: dimensions.minWidth,
-    setValue: (value) => setValue('width', value, { shouldValidate: true }),
+    setValue: setWidthValue,
     value: width,
   });
 
@@ -59,7 +64,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
     initialValue: height || dimensions.minHeight,
     max: dimensions.maxHeight,
     min: dimensions.minHeight,
-    setValue: (value) => setValue('height', value, { shouldValidate: true }),
+    setValue: setHeightValue,
     value: height,
   });
 
@@ -99,8 +104,16 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
     [dimensions.minHeight, dimensions.maxHeight, isValidDimension]
   );
 
-  // ✅ Memoize generateSuggestedValues to prevent recreation on every render
-  const generateSuggestedValuesMemo = useMemo(() => generateSuggestedValues, []);
+  // ✅ Memoize suggested values arrays to prevent recreation on every render
+  const widthSuggestedValues = useMemo(
+    () => generateSuggestedValues(dimensions.minWidth, dimensions.maxWidth),
+    [dimensions.minWidth, dimensions.maxWidth]
+  );
+
+  const heightSuggestedValues = useMemo(
+    () => generateSuggestedValues(dimensions.minHeight, dimensions.maxHeight),
+    [dimensions.minHeight, dimensions.maxHeight]
+  );
 
   // Check if validation alert should show
   const showValidationAlert =
@@ -112,7 +125,6 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
       <div className="grid gap-6 sm:grid-cols-2">
         <DimensionField
           control={control}
-          generateSuggestedValues={generateSuggestedValuesMemo}
           isValid={isWidthValid}
           label="Ancho"
           localValue={localWidth}
@@ -120,11 +132,11 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
           min={dimensions.minWidth}
           name="width"
           onSliderChange={handleWidthSliderChange}
+          suggestedValues={widthSuggestedValues}
         />
 
         <DimensionField
           control={control}
-          generateSuggestedValues={generateSuggestedValuesMemo}
           isValid={isHeightValid}
           label="Alto"
           localValue={localHeight}
@@ -132,12 +144,13 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
           min={dimensions.minHeight}
           name="height"
           onSliderChange={handleHeightSliderChange}
+          suggestedValues={heightSuggestedValues}
         />
       </div>
 
       <DimensionValidationAlert showAlert={showValidationAlert} />
 
-      <QuantityField control={control} name="quantity" presets={QUANTITY_PRESETS} />
+      <QuantityField control={control} name="quantity" />
     </FormSection>
   );
 }

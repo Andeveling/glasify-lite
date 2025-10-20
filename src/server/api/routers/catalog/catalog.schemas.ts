@@ -23,7 +23,7 @@ export const getModelByIdInput = z.object({
 });
 
 export const listServicesInput = z.object({
-  manufacturerId: z.cuid('ID del fabricante debe ser válido'),
+  // Services are now global, no longer tied to a specific manufacturer
 });
 
 export const listGlassTypesInput = z.object({
@@ -82,6 +82,8 @@ export const modelDetailOutput = z.object({
   costPerMmHeight: z.number(),
   costPerMmWidth: z.number(),
   createdAt: z.date(),
+  glassDiscountHeightMm: z.number(),
+  glassDiscountWidthMm: z.number(),
   id: z.string(),
   maxHeightMm: z.number(),
   maxWidthMm: z.number(),
@@ -91,6 +93,7 @@ export const modelDetailOutput = z.object({
   profileSupplier: z
     .object({
       id: z.string(),
+      materialType: z.enum(['PVC', 'ALUMINUM', 'WOOD', 'MIXED']),
       name: z.string(),
     })
     .nullable(),
@@ -101,7 +104,6 @@ export const modelDetailOutput = z.object({
 export const serviceOutput = z.object({
   createdAt: z.date(),
   id: z.string(),
-  manufacturerId: z.string().nullable(), // REFACTOR: Deprecated field, now optional
   name: z.string(),
   rate: z.number(),
   type: z.enum(['area', 'perimeter', 'fixed']),
@@ -116,6 +118,10 @@ export const listServicesOutput = z.array(serviceOutput);
 // ========================================
 
 export const performanceRating = z.enum(['basic', 'standard', 'good', 'very_good', 'excellent']);
+
+// ========================================
+// GLASS SOLUTIONS
+// ========================================
 
 export const glassSolutionOutput = z.object({
   createdAt: z.date(),
@@ -144,19 +150,49 @@ export const glassTypeSolutionOutput = z.object({
 
 export const listGlassSolutionsOutput = z.array(glassSolutionOutput);
 
-export const glassTypeOutput = z.object({
+// ========================================
+// GLASS CHARACTERISTICS
+// ========================================
+
+export const glassCharacteristicOutput = z.object({
+  category: z.string(),
   createdAt: z.date(),
+  description: z.string().nullable(),
   id: z.string(),
-  isLaminated: z.boolean(),
-  isLowE: z.boolean(),
-  isTempered: z.boolean(),
-  isTripleGlazed: z.boolean(),
-  manufacturerId: z.string().nullable(), // REFACTOR: Deprecated field, now optional
+  isActive: z.boolean(),
+  key: z.string(),
+  name: z.string(),
+  nameEs: z.string(),
+  sortOrder: z.number(),
+  updatedAt: z.date(),
+});
+
+export const glassTypeCharacteristicOutput = z.object({
+  certification: z.string().nullable().optional(),
+  characteristic: glassCharacteristicOutput,
+  characteristicId: z.string(),
+  createdAt: z.date(),
+  glassTypeId: z.string(),
+  id: z.string(),
+  notes: z.string().nullable().optional(),
+  value: z.string().nullable(),
+});
+
+export const glassTypeOutput = z.object({
+  characteristics: z.array(glassTypeCharacteristicOutput).optional(), // NEW: Many-to-Many characteristics
+  createdAt: z.date(),
+  description: z.string().nullable().optional(), // REFACTOR: New field
+  glassSupplierId: z.string().nullable().optional(), // REFACTOR: New supplier reference
+  id: z.string(),
+  isActive: z.boolean().optional(), // REFACTOR: New field
+  isLaminated: z.boolean(), // @deprecated Use characteristics relationship
+  isLowE: z.boolean(), // @deprecated Use characteristics relationship
+  isTempered: z.boolean(), // @deprecated Use characteristics relationship
+  isTripleGlazed: z.boolean(), // @deprecated Use characteristics relationship
   name: z.string(),
   pricePerSqm: z.number(),
-  profileSupplierId: z.string().nullable().optional(), // REFACTOR: New optional supplier reference
-  purpose: z.enum(['general', 'insulation', 'security', 'decorative']),
-  solutions: z.array(glassTypeSolutionOutput).optional(),
+  purpose: z.enum(['general', 'insulation', 'security', 'decorative']), // @deprecated Use solutions relationship
+  solutions: z.array(glassTypeSolutionOutput).optional(), // NEW: Many-to-Many solutions
   thicknessMm: z.number(),
   updatedAt: z.date(),
   uValue: z.number().nullable(),

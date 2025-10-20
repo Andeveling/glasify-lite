@@ -26,7 +26,7 @@ export default async function QuoteDetailPage({ params }: QuoteDetailPageProps) 
     const quote = await api.quote['get-by-id']({ id: quoteId });
 
     return (
-      <div className="container mx-auto max-w-5xl py-8">
+      <div className="container mx-auto max-w-7xl py-8">
         <QuoteDetailView quote={quote} />
       </div>
     );

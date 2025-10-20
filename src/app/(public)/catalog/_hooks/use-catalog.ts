@@ -206,7 +206,7 @@ export function useCatalogFilters(
         urlParams.set('q', currentSearchQuery);
       }
       if (currentProfileSupplier && currentProfileSupplier !== 'all') {
-        urlParams.set('profileSupplier', currentProfileSupplier);
+        urlParams.set('manufacturer', currentProfileSupplier);
       }
       if (currentSort && currentSort !== 'name-asc') {
         urlParams.set('sort', currentSort);
@@ -229,8 +229,8 @@ export function useCatalogFilters(
   const handleProfileSupplierChange = useCallback(
     (value: string) => {
       const queryString = createQueryString({
+        manufacturer: value === 'all' ? null : value,
         page: null, // Reset to page 1 when filtering
-        profileSupplier: value === 'all' ? null : value,
       });
 
       router.push(`${pathname}?${queryString}`);

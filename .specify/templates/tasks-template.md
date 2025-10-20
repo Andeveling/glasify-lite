@@ -78,7 +78,7 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 1 (OPTIONAL - only if tests requested) ⚠️
 
-**NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+**NOTE**: Tests MAY be written before, during, or after implementation (Pragmatic Testing Discipline). However, tests MUST exist and pass before merging the feature.
 
 - [ ] T010 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py
 - [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py
@@ -175,7 +175,7 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Within Each User Story
 
-- Tests (if included) MUST be written and FAIL before implementation
+- Tests (if included) MAY be written before, during, or after implementation, but MUST exist before merge
 - Models before services
 - Services before endpoints
 - Core implementation before integration
@@ -242,9 +242,10 @@ With multiple developers:
 - [P] tasks = different files, no dependencies
 - [Story] label maps task to specific user story for traceability
 - Each user story should be independently completable and testable
-- Verify tests fail before implementing
+- Tests MAY be written before, during, or after implementation (but MUST exist before merge)
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
+
 
 

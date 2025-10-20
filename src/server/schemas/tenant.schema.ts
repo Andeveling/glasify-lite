@@ -39,28 +39,36 @@ export const localeSchema = z
  */
 export const timezoneSchema = z
   .string()
-  .min(1, 'Timezone cannot be empty')
-  .max(MAX_TIMEZONE_LENGTH, 'Timezone cannot exceed 50 characters')
+  .min(1, { error: 'Timezone cannot be empty' })
+  .max(MAX_TIMEZONE_LENGTH, { error: 'Timezone cannot exceed 50 characters' })
   .describe('IANA timezone identifier (e.g., America/Bogota)');
 
 /**
  * Create TenantConfig Schema
  */
 export const createTenantConfigSchema = z.object({
-  businessAddress: z.string().max(MAX_ADDRESS_LENGTH, 'Address cannot exceed 500 characters').optional().nullable(),
+  businessAddress: z
+    .string()
+    .max(MAX_ADDRESS_LENGTH, { error: 'Address cannot exceed 500 characters' })
+    .optional()
+    .nullable(),
   businessName: z
     .string()
-    .min(1, 'Business name is required')
-    .max(MAX_BUSINESS_NAME_LENGTH, 'Business name cannot exceed 100 characters'),
-  contactEmail: z.string().email('Invalid email format').optional().nullable(),
-  contactPhone: z.string().max(MAX_PHONE_LENGTH, 'Phone number cannot exceed 20 characters').optional().nullable(),
+    .min(1, { error: 'Business name is required' })
+    .max(MAX_BUSINESS_NAME_LENGTH, { error: 'Business name cannot exceed 100 characters' }),
+  contactEmail: z.string().email({ error: 'Invalid email format' }).optional().nullable(),
+  contactPhone: z
+    .string()
+    .max(MAX_PHONE_LENGTH, { error: 'Phone number cannot exceed 20 characters' })
+    .optional()
+    .nullable(),
   currency: currencyCodeSchema,
   locale: localeSchema.default('es-CO'),
   quoteValidityDays: z
     .number()
-    .int('Quote validity must be a whole number')
-    .min(1, 'Quote validity must be at least 1 day')
-    .max(MAX_QUOTE_VALIDITY_DAYS, 'Quote validity cannot exceed 365 days')
+    .int({ error: 'Quote validity must be a whole number' })
+    .min(1, { error: 'Quote validity must be at least 1 day' })
+    .max(MAX_QUOTE_VALIDITY_DAYS, { error: 'Quote validity cannot exceed 365 days' })
     .default(DEFAULT_QUOTE_VALIDITY_DAYS),
   timezone: timezoneSchema.default('America/Bogota'),
 });

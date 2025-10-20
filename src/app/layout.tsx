@@ -2,6 +2,7 @@ import '@/styles/globals.css';
 
 import type { Metadata } from 'next';
 import { Fira_Code, Geist, Inter, Lora } from 'next/font/google';
+import { NavigationLoader } from '@/app/_components/navigation-loader';
 import { Toaster } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
 import { SessionProvider } from '@/providers/session-provider';
@@ -53,6 +54,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       suppressHydrationWarning
     >
       <body suppressHydrationWarning>
+        <NavigationLoader />
         <ReactScan />
         <TenantConfigProvider
           config={{

@@ -15,18 +15,19 @@ declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      role: 'admin' | 'user';
+      role: 'admin' | 'seller' | 'user';
     } & DefaultSession['user'];
   }
 
   interface User {
-    role?: 'admin' | 'user';
+    role?: 'admin' | 'seller' | 'user';
   }
 }
 
 /**
  * Determines if a user is an admin based on their email
  * Compares against the ADMIN_EMAIL environment variable
+ * Used as fallback when database role is not set (backward compatibility)
  */
 const isAdmin = (email: string | null | undefined): boolean => {
   if (!(email && env.ADMIN_EMAIL)) return false;
@@ -41,6 +42,7 @@ const isAdmin = (email: string | null | undefined): boolean => {
 export const authConfig = {
   adapter: PrismaAdapter(db),
   callbacks: {
+    // biome-ignore lint/suspicious/useAwait: NextAuth.js requires async callbacks
     async redirect({ url, baseUrl }) {
       // Allow relative callback URLs
       if (url.startsWith('/')) return `${baseUrl}${url}`;
@@ -50,22 +52,25 @@ export const authConfig = {
 
       return baseUrl;
     },
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-        role: isAdmin(user.email) ? 'admin' : 'user',
-      },
-    }),
+    session: ({ session, user }) => {
+      const userRole = user.role || (isAdmin(user.email) ? 'admin' : 'user');
+
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: user.id,
+          // Use database role if present, otherwise fall back to ADMIN_EMAIL check for backward compatibility
+          role: userRole,
+        },
+      };
+    },
+    // biome-ignore lint/suspicious/useAwait: NextAuth.js requires async callbacks
     async signIn({ user }) {
       // This callback is called after successful sign in
       // We can't redirect here, but we can use the session callback
       return true;
     },
-  },
-  pages: {
-    signIn: '/signin',
   },
   providers: [
     GoogleProvider,

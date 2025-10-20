@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { BackLink } from '@/components/ui/back-link';
 import { Card, CardContent } from '@/components/ui/card';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -41,9 +41,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
           {/* Back to catalog link */}
           <p className="px-8 text-center text-muted-foreground text-sm">
-            <Button asChild size="sm" variant="link">
-              <Link href="/catalog">Volver al catálogo</Link>
-            </Button>
+            <BackLink href="/catalog" icon="none" variant="link">
+              Volver al catálogo
+            </BackLink>
           </p>
         </div>
       </div>

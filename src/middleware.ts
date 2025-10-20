@@ -1,37 +1,89 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import {
+  isAdminOnlyRoute,
+  isDashboardHome,
+  isProtectedRoute,
+  isPublicRoute,
+  isSellerOrAdminRoute,
+  shouldSkipMiddleware,
+  type UserRole,
+} from '@/lib/middleware-utils';
+import { auth } from '@/server/auth';
 
-export function middleware(request: NextRequest) {
+/**
+ * Middleware Runtime Configuration
+ * CRITICAL: Must use 'nodejs' runtime for NextAuth + Prisma compatibility
+ * Edge Runtime does NOT support: Prisma Client, Winston, fs, path, process.cwd()
+ */
+export const runtime = 'nodejs';
+
+/**
+ * Next.js Middleware for Authentication and Role-Based Access Control (RBAC)
+ *
+ * Flow:
+ * 1. Skip middleware for static assets and NextAuth API routes (early return)
+ * 2. Skip auth check for public routes (early return)
+ * 3. Get session for protected routes
+ * 4. Redirect unauthenticated users to /catalog?signin=true
+ * 5. Check role-based access (admin, seller, user)
+ * 6. Allow authorized requests
+ */
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Check if user has auth session token
-  const sessionToken =
-    request.cookies.get('authjs.session-token') || request.cookies.get('__Secure-authjs.session-token');
-
-  const isLoggedIn = !!sessionToken;
-
-  // Protected routes that require authentication
-  const isProtectedRoute =
-    pathname.startsWith('/dashboard') || pathname.startsWith('/quotes') || pathname.startsWith('/quote');
-
-  // Auth routes
-  const isAuthRoute = pathname.startsWith('/signin');
-
-  // Auth callback route
-  const isAuthCallback = pathname === '/auth/callback';
-
-  // If trying to access protected route without being logged in
-  if (isProtectedRoute && !isLoggedIn) {
-    const signinUrl = new URL('/signin', request.url);
-    signinUrl.searchParams.set('callbackUrl', pathname);
-    return NextResponse.redirect(signinUrl);
+  // Early return: Skip middleware for static assets and NextAuth API routes
+  if (shouldSkipMiddleware(pathname)) {
+    return NextResponse.next();
   }
 
-  // If logged in and trying to access signin page, redirect to callback for role-based redirect
-  if (isAuthRoute && isLoggedIn && !isAuthCallback) {
-    return NextResponse.redirect(new URL('/auth/callback', request.url));
+  // Early return: Allow public routes without auth check
+  if (isPublicRoute(pathname)) {
+    return NextResponse.next();
   }
 
-  // Allow all other requests to continue
+  // Get session for protected routes (includes user.role from NextAuth callback)
+  const session = await auth();
+  const isLoggedIn = !!session;
+  const userRole = session?.user?.role as UserRole | undefined;
+
+  // Redirect unauthenticated users from protected routes to catalog with signin modal
+  if (isProtectedRoute(pathname) && !isLoggedIn) {
+    const catalogUrl = new URL('/catalog', request.url);
+    catalogUrl.searchParams.set('signin', 'true');
+    catalogUrl.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(catalogUrl);
+  }
+
+  // Block non-admin from admin-only routes (models, settings, tenant config)
+  if (isAdminOnlyRoute(pathname) && userRole !== 'admin') {
+    // biome-ignore lint/suspicious/noConsole: Console logging is acceptable in middleware for security events
+    console.warn('[Middleware] Unauthorized admin-only route access attempt', {
+      path: pathname,
+      role: userRole,
+      timestamp: new Date().toISOString(),
+      userId: session?.user?.id,
+    });
+    return NextResponse.redirect(new URL('/my-quotes', request.url));
+  }
+
+  // Block non-seller/non-admin from seller routes (quotes, users)
+  if (isSellerOrAdminRoute(pathname) && !['admin', 'seller'].includes(userRole || '')) {
+    // biome-ignore lint/suspicious/noConsole: Console logging is acceptable in middleware for security events
+    console.warn('[Middleware] Unauthorized seller/admin route access attempt', {
+      path: pathname,
+      role: userRole,
+      timestamp: new Date().toISOString(),
+      userId: session?.user?.id,
+    });
+    return NextResponse.redirect(new URL('/my-quotes', request.url));
+  }
+
+  // Redirect sellers from dashboard home to /dashboard/quotes
+  if (isDashboardHome(pathname) && userRole === 'seller') {
+    return NextResponse.redirect(new URL('/dashboard/quotes', request.url));
+  }
+
+  // Allow all other authorized requests
   return NextResponse.next();
 }
 

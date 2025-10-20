@@ -237,7 +237,13 @@ export function getWindowDiagram(type: WindowType | string): WindowDiagram {
   // Type guard: check if valid WindowType
   const windowType = Object.values(WT).includes(type as WindowType) ? (type as WindowType) : DEFAULT_WINDOW_TYPE;
 
-  return WINDOW_DIAGRAM_MAP[windowType] ?? WINDOW_DIAGRAM_MAP[DEFAULT_WINDOW_TYPE]!;
+  const diagram = WINDOW_DIAGRAM_MAP[windowType] ?? WINDOW_DIAGRAM_MAP[DEFAULT_WINDOW_TYPE];
+
+  if (!diagram) {
+    throw new Error(`Window diagram not found for type: ${windowType}`);
+  }
+
+  return diagram;
 }
 
 /**
@@ -307,5 +313,11 @@ export function getWindowDiagramsByCategory(
     specialty: [WT.TILT_TURN, WT.BAY_WINDOW, WT.BOW_WINDOW, WT.CORNER],
   };
 
-  return categories[category].map((type) => WINDOW_DIAGRAM_MAP[type]!);
+  return categories[category].map((type) => {
+    const diagram = WINDOW_DIAGRAM_MAP[type];
+    if (!diagram) {
+      throw new Error(`Window diagram not found for type: ${type}`);
+    }
+    return diagram;
+  });
 }

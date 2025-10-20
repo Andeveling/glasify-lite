@@ -74,9 +74,9 @@ test.describe('Quote Status Clarity (US1)', () => {
 
   test('should show different labels for each status type', async ({ page }) => {
     // Check all possible status labels
-    const enEdicion = page.getByText('En edición');
-    const enviada = page.getByText('Enviada');
-    const cancelada = page.getByText('Cancelada');
+    const _enEdicion = page.getByText('En edición');
+    const _enviada = page.getByText('Enviada');
+    const _cancelada = page.getByText('Cancelada');
 
     // At least one status should be visible on the page
     const statusCount = await page.getByTestId('quote-status-badge').count();

@@ -31,7 +31,68 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+This feature must align with Glasify Lite Constitution v2.0.0 principles:
+
+### Single Responsibility (SRP)
+- [ ] Each component/module has ONE clear responsibility
+- [ ] Business logic is separated from UI and data access
+- [ ] Tests and docs exist for each public abstraction
+
+### Open/Closed (OCP)
+- [ ] New features use extension patterns (hooks, procedures, adapters)
+- [ ] No modification of stable modules unless documented with migration plan
+- [ ] Breaking API changes include MAJOR version bump + migration guide
+
+### Pragmatic Testing Discipline
+- [ ] Tests MAY be written before/during/after implementation
+- [ ] Tests MUST cover happy paths and critical edge cases before merge
+- [ ] Unit tests run in CI
+- [ ] Integration/contract tests for cross-service changes
+
+### Server-First Architecture (Next.js 15)
+- [ ] Pages are Server Components by default (`page.tsx`)
+- [ ] Client Components (`'use client'`) ONLY for: React hooks, browser APIs, event handlers, client-required libraries
+- [ ] Public pages export `metadata` for SEO
+- [ ] Dynamic rendering uses `export const dynamic = 'force-dynamic'`
+- [ ] Pattern: Server Page + Client Content (interactivity in `_components/*-content.tsx`)
+
+### Integration & Contract Testing
+- [ ] Contract tests for shared schemas/API contracts
+- [ ] Integration tests for service boundaries (DB, external APIs, client-server)
+- [ ] Contracts are explicit and versioned
+
+### Observability & Versioning
+- [ ] Structured logging with correlation IDs
+- [ ] **Winston logger ONLY in server-side code** (Server Components, Server Actions, API routes, tRPC, middleware)
+- [ ] **NO Winston in Client Components** (use console, toast, error boundaries)
+- [ ] Semantic versioning: MAJOR.MINOR.PATCH
+- [ ] Authorization checks + audit logging for sensitive operations
+
+### Technology Stack Compliance
+- [ ] Next.js 15 App Router with React Server Components
+- [ ] TypeScript (strict), Zod 4, tRPC, Prisma
+- [ ] React Hook Form + @hookform/resolvers
+- [ ] shadcn/ui + Radix + TailwindCSS
+- [ ] Biome/Ultracite for formatting/linting
+- [ ] UI text in Spanish (es-LA); code/comments/commits in English
+
+### Security & Compliance
+- [ ] All inputs validated server-side (Zod schemas in tRPC `.input()`)
+- [ ] No secrets committed (use env variables + @t3-oss/env-nextjs)
+- [ ] Sensitive operations include authorization + audit logging
+
+### Development Workflow
+- [ ] Conventional commits format
+- [ ] PR descriptions reference affected principles
+- [ ] CI gates: typecheck, lint, unit tests, E2E tests (if user flows affected)
+- [ ] Code review: 1 approver (2 for large/risky changes)
+
+---
+
+**Notes**:
+- Mark N/A for checks not applicable to this feature
+- Document any exceptions in Complexity Tracking section
+- Re-validate after Phase 1 design decisions
 
 ## Project Structure
 
@@ -98,7 +159,8 @@ directories captured above]
 
 *Fill ONLY if Constitution Check has violations that must be justified*
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+| Violation                  | Why Needed         | Simpler Alternative Rejected Because |
+| -------------------------- | ------------------ | ------------------------------------ |
+| [e.g., 4th project]        | [current need]     | [why 3 projects insufficient]        |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient]  |
+

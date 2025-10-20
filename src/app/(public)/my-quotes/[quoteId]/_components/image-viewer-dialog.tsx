@@ -20,13 +20,13 @@ import { X } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect } from 'react';
 import { WindowDiagram } from '@/components/quote/window-diagram';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Dialog, DialogClose, DialogContent, DialogOverlay, DialogTitle } from '@/components/ui/dialog';
 import { VisuallyHidden } from '@/components/ui/visually-hidden';
 import { getProductImageWithFallback } from '@/lib/utils/image-utils';
 import type { WindowType } from '@/types/window.types';
 import { DEFAULT_WINDOW_TYPE, WINDOW_TYPE_LABELS } from '@/types/window.types';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 
 export interface ImageViewerDialogProps {
   /**
@@ -107,7 +107,7 @@ export function ImageViewerDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogOverlay className="fixed inset-0 z-50 backdrop-blur-sm bg-background/80" data-testid="dialog-overlay" />
+      <DialogOverlay className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm" data-testid="dialog-overlay" />
       <DialogContent
         aria-label={`Visor de imagen: ${modelName}`}
         className="fixed top-[50%] left-[50%] z-50 max-h-[90vh] w-[90vw] max-w-6xl translate-x-[-50%] translate-y-[-50%] overflow-hidden border-border bg-card p-0 shadow-2xl focus:outline-none"
@@ -122,17 +122,17 @@ export function ImageViewerDialog({
         {/* Close button */}
         <DialogClose
           aria-label="Cerrar visor de imagen"
-          className="absolute top-2 right-2 z-10 rounded-full bg-card/80 p-2 text-foreground backdrop-blur-sm transition-all hover:bg-card/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
           asChild
+          className="absolute top-2 right-2 z-10 rounded-full bg-card/80 p-2 text-foreground backdrop-blur-sm transition-all hover:bg-card/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
         >
-          <Button variant="ghost" size="icon">
+          <Button size="icon" variant="ghost">
             <X className="size-6" />
           </Button>
         </DialogClose>
 
         {/* Image container */}
         <Card className="relative flex h-[70vh] w-full items-center justify-center bg-background">
-          {hasImage ? (
+          {hasImage && optimizedImageUrl ? (
             <div className="relative h-full w-full">
               <Image
                 alt={modelName}
@@ -141,7 +141,7 @@ export function ImageViewerDialog({
                 fill
                 priority
                 sizes="90vw"
-                src={optimizedImageUrl!}
+                src={optimizedImageUrl}
               />
             </div>
           ) : (

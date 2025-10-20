@@ -55,9 +55,8 @@ type QuoteGenerationResult = {
  * This action:
  * 1. Validates user authentication
  * 2. Retrieves cart items from client (passed as parameter)
- * 3. Gets manufacturerId from first cart item's model
- * 4. Calls quote.service.ts to generate quote with transaction
- * 5. Returns result with quote ID or error
+ * 3. Calls quote.service.ts to generate quote with transaction
+ * 4. Returns result with quote ID or error
  *
  * Progressive Enhancement: Works via form submission or programmatic call
  *
@@ -117,7 +116,7 @@ export async function generateQuoteFromCartAction(
       };
     }
 
-    // 3. Get manufacturerId from first cart item's model
+    // 3. Validate first cart item exists (for error handling)
     const firstCartItem = cartItems[0];
     if (!firstCartItem) {
       logger.error('[QuoteAction] Cart is empty after validation', {
@@ -130,33 +129,10 @@ export async function generateQuoteFromCartAction(
       };
     }
 
-    const firstModel = await db.model.findUnique({
-      select: { manufacturerId: true },
-      where: { id: firstCartItem.modelId },
-    });
-
-    if (!firstModel) {
-      logger.error('[QuoteAction] Model not found for cart item', {
-        correlationId,
-        modelId: firstCartItem.modelId,
-      });
-
-      return {
-        error: 'Modelo no encontrado. Por favor intenta nuevamente.',
-        success: false,
-      };
-    }
-
-    // REFACTOR: manufacturerId is now optional (deprecated field)
-    // For backward compatibility, we pass it if available
-    // In the future, this will be removed entirely
-    const manufacturerId = firstModel.manufacturerId ?? '';
-
     // 4. Call quote service to generate quote
     const result = await generateQuoteFromCart(db, userId, {
       cartItems,
       contactPhone: formInput.contactPhone,
-      manufacturerId, // May be empty string if model has no manufacturerId
       projectAddress: {
         projectCity: formInput.projectCity,
         projectName: formInput.projectName ?? 'Sin nombre',
@@ -169,7 +145,6 @@ export async function generateQuoteFromCartAction(
     logger.info('[QuoteAction] Quote generation completed successfully', {
       correlationId,
       duration: `${Date.now() - startTime}ms`,
-      manufacturerId: manufacturerId || 'none',
       quoteId: result.quoteId,
       userId,
     });

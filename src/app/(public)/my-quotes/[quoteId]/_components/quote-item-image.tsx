@@ -141,7 +141,7 @@ export function QuoteItemImage({
       onKeyDown={handleKeyDown}
       type="button"
     >
-      {shouldShowImage ? (
+      {shouldShowImage && optimizedImageUrl ? (
         <Image
           alt={modelName}
           className="object-cover"
@@ -150,7 +150,7 @@ export function QuoteItemImage({
           onError={handleImageError}
           onLoad={handleImageLoad}
           sizes={sizeConfig.sizes}
-          src={optimizedImageUrl!}
+          src={optimizedImageUrl}
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center p-2">

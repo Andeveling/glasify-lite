@@ -26,7 +26,7 @@ const MAX_CART_ITEMS = 20;
 // ============================================================================
 
 /**
- * List user quotes (paginated, filterable)
+ * List user quotes input
  *
  * tRPC Query: quote['list-user-quotes']
  */
@@ -34,7 +34,8 @@ export const listUserQuotesInput = z.object({
   includeExpired: z.boolean().default(false),
   limit: z.number().int().positive().max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE),
   page: z.number().int().positive().default(1),
-  sortBy: z.enum(['createdAt', 'validUntil', 'total']).default('createdAt'),
+  search: z.string().optional(),
+  sortBy: z.enum(['createdAt', 'sentAt', 'validUntil', 'total']).default('createdAt'),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
   status: z.enum(['draft', 'sent', 'canceled']).optional(),
 });
@@ -120,6 +121,7 @@ export const quoteListItemSchema = z.object({
   isExpired: z.boolean(),
   itemCount: z.number().int().nonnegative(),
   projectName: z.string(),
+  sentAt: z.date().nullable(),
   status: z.enum(['draft', 'sent', 'canceled']),
   total: z.number().nonnegative(),
   validUntil: z.date().nullable(),
@@ -165,7 +167,7 @@ export type QuoteItemDetailSchema = z.infer<typeof quoteItemDetailSchema>;
  * Full quote detail
  */
 export const quoteDetailSchema = z.object({
-  contactPhone: z.string().optional(),
+  contactPhone: z.string().nullable(),
   createdAt: z.date(),
   currency: z.string(),
   id: z.string().cuid(),
@@ -174,11 +176,13 @@ export const quoteDetailSchema = z.object({
   items: z.array(quoteItemDetailSchema),
   manufacturerName: z.string(),
   projectAddress: projectAddressSchema,
+  sentAt: z.date().nullable(),
   status: z.enum(['draft', 'sent', 'canceled']),
   total: z.number().nonnegative(),
   totalUnits: z.number().int().nonnegative(),
   userEmail: z.string().optional(),
   validUntil: z.date().nullable(),
+  vendorContactPhone: z.string().nullable(), // Tenant contact for US3
 });
 
 export type QuoteDetailSchema = z.infer<typeof quoteDetailSchema>;
@@ -217,3 +221,64 @@ export const generateQuoteFromCartOutput = z.discriminatedUnion('success', [
 ]);
 
 export type GenerateQuoteFromCartOutput = z.infer<typeof generateQuoteFromCartOutput>;
+
+// ============================================================================
+// Feature 005: Send Quote to Vendor
+// ============================================================================
+
+/**
+ * Send quote to vendor input
+ *
+ * tRPC Mutation: quote['send-to-vendor']
+ *
+ * Validates contact information before sending quote.
+ * Phone must be in international format (E.164 compliant).
+ *
+ * @example
+ * ```typescript
+ * // Valid Colombian phone
+ * { quoteId: 'cuid123', contactPhone: '+573001234567' }
+ *
+ * // Valid US phone
+ * { quoteId: 'cuid123', contactPhone: '+12025551234', contactEmail: 'user@example.com' }
+ * ```
+ */
+export const sendToVendorInput = z.object({
+  contactEmail: z.string().email('Correo electrónico inválido').optional(),
+  contactPhone: z
+    .string()
+    .regex(/^\+?[1-9]\d{9,14}$/, 'Formato de teléfono inválido. Debe incluir código de país (ej: +57 300 123 4567)'),
+  quoteId: z.string().cuid('ID de cotización inválido'),
+});
+
+export type SendToVendorInput = z.infer<typeof sendToVendorInput>;
+
+/**
+ * Send quote to vendor output
+ *
+ * Returns updated quote with 'sent' status and submission timestamp.
+ *
+ * @example
+ * ```typescript
+ * {
+ *   id: 'cuid123',
+ *   status: 'sent',
+ *   sentAt: new Date('2025-10-13T12:00:00Z'),
+ *   contactPhone: '+573001234567',
+ *   contactEmail: 'user@example.com',
+ *   total: 1500000,
+ *   currency: 'COP'
+ * }
+ * ```
+ */
+export const sendToVendorOutput = z.object({
+  contactEmail: z.string().optional(),
+  contactPhone: z.string(),
+  currency: z.string().length(3),
+  id: z.string().cuid(),
+  sentAt: z.date(),
+  status: z.literal('sent'),
+  total: z.number().nonnegative(),
+});
+
+export type SendToVendorOutput = z.infer<typeof sendToVendorOutput>;
