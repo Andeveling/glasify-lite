@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { db } from '@/server/db';
 import { AdminContentContainer } from './_components/admin-content-container';
+import { DownloadCatalogTemplateButton } from './_components/download-catalog-template-button';
 
 export const metadata: Metadata = {
   description: 'Panel de administración del catálogo',
@@ -99,9 +100,12 @@ export default async function AdminDashboardPage() {
   return (
     <AdminContentContainer maxWidth="full">
       <div className="flex flex-col gap-4">
-        <div>
-          <h1 className="font-bold text-3xl tracking-tight">Dashboard de Administración</h1>
-          <p className="text-muted-foreground">Gestiona el catálogo de productos, proveedores y taxonomías</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="font-bold text-3xl tracking-tight">Dashboard de Administración</h1>
+            <p className="text-muted-foreground">Gestiona el catálogo de productos, proveedores y taxonomías</p>
+          </div>
+          <DownloadCatalogTemplateButton />
         </div>
 
         {/* Entity Stats Grid */}
@@ -150,18 +154,6 @@ export default async function AdminDashboardPage() {
               <CardContent>
                 <Button asChild className="w-full">
                   <a href="/admin/glass-types/new">Crear Tipo de Vidrio</a>
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Crear Servicio</CardTitle>
-                <CardDescription>Agrega un nuevo servicio adicional</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button asChild className="w-full">
-                  <Link href="/admin/glass-types/new">Crear Tipo de Vidrio</Link>
                 </Button>
               </CardContent>
             </Card>

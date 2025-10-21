@@ -36,8 +36,7 @@ import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-
 import { TablePagination } from '@/app/_components/server-table/table-pagination';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatCurrency } from '@/lib/format';
 import { api } from '@/trpc/react';
 import { ServiceDialog } from './service-dialog';
@@ -105,12 +104,12 @@ const SERVICE_TYPE_VARIANTS: Record<ServiceType, 'default' | 'secondary' | 'outl
 export function ServicesList({ initialData, searchParams }: ServicesListProps) {
   const utils = api.useUtils();
   const router = useRouter();
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [serviceToDelete, setServiceToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
+  const [ serviceToDelete, setServiceToDelete ] = useState<{ id: string; name: string } | null>(null);
 
   // Dialog state for edit only (create is handled in ServicesContent)
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [serviceToEdit, setServiceToEdit] = useState<Service | null>(null);
+  const [ editDialogOpen, setEditDialogOpen ] = useState(false);
+  const [ serviceToEdit, setServiceToEdit ] = useState<Service | null>(null);
 
   // Delete mutation with optimistic UI
   const deleteMutation = api.admin.service.delete.useMutation({
@@ -206,7 +205,7 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
       ...service,
       createdAt: service.createdAt ?? new Date(),
       isActive: service.isActive ?? true,
-      rate: mockDecimal as Service['rate'],
+      rate: mockDecimal as Service[ 'rate' ],
       updatedAt: service.updatedAt ?? new Date(),
     });
     setEditDialogOpen(true);
@@ -228,8 +227,8 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
   // Check if there are filters active
   const hasFilters = Boolean(
     searchParams?.search ||
-      (searchParams?.type && searchParams.type !== 'all') ||
-      (searchParams?.isActive && searchParams.isActive !== 'all')
+    (searchParams?.type && searchParams.type !== 'all') ||
+    (searchParams?.isActive && searchParams.isActive !== 'all')
   );
 
   return (
@@ -248,63 +247,53 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
       {services.length === 0 ? (
         <ServicesEmpty hasFilters={hasFilters} />
       ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Servicios Disponibles</CardTitle>
-            <CardDescription>
-              {total} servicio{total !== 1 ? 's' : ''} registrado{total !== 1 ? 's' : ''}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Table */}
-            <div className="overflow-x-auto rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nombre</TableHead>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Unidad</TableHead>
-                    <TableHead className="text-right">Tarifa</TableHead>
-                    <TableHead className="w-[100px] text-right">Acciones</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {services.map((service) => (
-                    <TableRow key={service.id}>
-                      <TableCell className="font-medium">{service.name}</TableCell>
-                      <TableCell>
-                        <Badge variant={SERVICE_TYPE_VARIANTS[service.type]}>{SERVICE_TYPE_LABELS[service.type]}</Badge>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground text-sm">
-                        {SERVICE_UNIT_LABELS[service.unit]}
-                      </TableCell>
-                      <TableCell className="text-right">{formatCurrency(service.rate)}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button onClick={() => handleEditClick(service)} size="sm" variant="ghost">
-                            <Pencil className="h-4 w-4" />
-                            <span className="sr-only">Editar</span>
-                          </Button>
-                          <Button
-                            onClick={() => handleDeleteClick({ id: service.id, name: service.name })}
-                            size="sm"
-                            variant="ghost"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                            <span className="sr-only">Eliminar</span>
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+        <>
+          <div className="overflow-x-auto rounded-md border">
 
-            {/* Pagination - reutilizable component */}
-            <TablePagination currentPage={currentPage} totalItems={total} totalPages={totalPages} />
-          </CardContent>
-        </Card>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nombre</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Unidad</TableHead>
+                  <TableHead className="text-right">Tarifa</TableHead>
+                  <TableHead className="w-[100px] text-right">Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {services.map((service) => (
+                  <TableRow key={service.id}>
+                    <TableCell className="font-medium">{service.name}</TableCell>
+                    <TableCell>
+                      <Badge variant={SERVICE_TYPE_VARIANTS[ service.type ]}>{SERVICE_TYPE_LABELS[ service.type ]}</Badge>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm">{SERVICE_UNIT_LABELS[ service.unit ]}</TableCell>
+                    <TableCell className="text-right">{formatCurrency(service.rate)}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button onClick={() => handleEditClick(service)} size="sm" variant="ghost">
+                          <Pencil className="h-4 w-4" />
+                          <span className="sr-only">Editar</span>
+                        </Button>
+                        <Button
+                          onClick={() => handleDeleteClick({ id: service.id, name: service.name })}
+                          size="sm"
+                          variant="ghost"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          <span className="sr-only">Eliminar</span>
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+              <TableFooter className='p-2'>
+              </TableFooter>
+            </Table>
+          </div>
+          <TablePagination currentPage={currentPage} totalItems={total} totalPages={totalPages} />
+        </>
       )}
 
       {/* Delete Confirmation Dialog */}
