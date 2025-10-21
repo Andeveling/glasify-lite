@@ -32,7 +32,6 @@ import { TablePagination } from '@/app/_components/server-table/table-pagination
 import { useTenantConfig } from '@/app/_hooks/use-tenant-config';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -125,8 +124,8 @@ function ActionsMenu({ model, onDelete }: { model: Model; onDelete: (id: string,
 
 export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
   const utils = api.useUtils();
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [modelToDelete, setModelToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
+  const [ modelToDelete, setModelToDelete ] = useState<{ id: string; name: string } | null>(null);
 
   // Active query with placeholderData (enables cache invalidation)
   const { data } = api.admin.model.list.useQuery(
@@ -154,7 +153,7 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
 
   // Context type for optimistic update snapshot
   type DeleteModelContext = {
-    previousData?: RouterOutputs['admin']['model']['list'];
+    previousData?: RouterOutputs[ 'admin' ][ 'model' ][ 'list' ];
   };
 
   // Delete mutation with optimistic updates
@@ -301,30 +300,10 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
 
   return (
     <>
-      {/* Table Card */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div>
-              <CardTitle>Modelos ({tableData.total})</CardTitle>
-              <CardDescription>Gestiona los modelos de perfiles disponibles en el catálogo</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Table */}
-          <ServerTable columns={columns} data={tableData.items as Model[]} emptyMessage="No se encontraron modelos" />
+      <ServerTable columns={columns} data={tableData.items as Model[]} emptyMessage="No se encontraron modelos" />
 
-          {/* Pagination */}
-          <TablePagination
-            currentPage={tableData.page}
-            totalItems={tableData.total}
-            totalPages={tableData.totalPages}
-          />
-        </CardContent>
-      </Card>
+      <TablePagination currentPage={tableData.page} totalItems={tableData.total} totalPages={tableData.totalPages} />
 
-      {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
         dependencies={[]}
         entityLabel={modelToDelete?.name ?? ''}

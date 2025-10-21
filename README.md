@@ -208,7 +208,9 @@ glasify-lite/
 ### Database
 - `pnpm db:generate` - Run Prisma migrations
 - `pnpm db:studio` - Open Prisma Studio GUI
-- `pnpm db:seed` - Seed database with sample data
+- `pnpm seed --preset=minimal` - Seed database with minimal data (testing)
+- `pnpm seed --preset=demo-client` - Seed with realistic demo data
+- `pnpm seed --preset=vitro-rojas-panama` - Seed for Vitro Rojas S.A. (Panama)
 
 ### Code Quality
 - `pnpm lint` - Check for linting issues
