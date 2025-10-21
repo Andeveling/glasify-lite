@@ -34,14 +34,14 @@ type GlassSupplierListProps = {
 export function GlassSupplierList({ initialData }: GlassSupplierListProps) {
   const router = useRouter();
   const utils = api.useUtils();
-  const [search, setSearch] = useState('');
-  const [isActive, setIsActive] = useState<'all' | 'active' | 'inactive'>('all');
-  const [page, setPage] = useState(1);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [supplierToDelete, setSupplierToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [ search, setSearch ] = useState('');
+  const [ isActive, setIsActive ] = useState<'all' | 'active' | 'inactive'>('all');
+  const [ page, setPage ] = useState(1);
+  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
+  const [ supplierToDelete, setSupplierToDelete ] = useState<{ id: string; name: string } | null>(null);
 
   // Query with filters
-  const { data, isLoading } = api.admin['glass-supplier'].list.useQuery(
+  const { data, isLoading } = api.admin[ 'glass-supplier' ].list.useQuery(
     {
       isActive,
       limit: 20,
@@ -57,7 +57,7 @@ export function GlassSupplierList({ initialData }: GlassSupplierListProps) {
   );
 
   // Delete mutation
-  const deleteMutation = api.admin['glass-supplier'].delete.useMutation({
+  const deleteMutation = api.admin[ 'glass-supplier' ].delete.useMutation({
     onError: (error) => {
       toast.error('Error al eliminar proveedor', {
         description: error.message,
@@ -68,7 +68,7 @@ export function GlassSupplierList({ initialData }: GlassSupplierListProps) {
       setDeleteDialogOpen(false);
       setSupplierToDelete(null);
       // Invalidate list to refresh
-      void utils.admin['glass-supplier'].list.invalidate();
+      void utils.admin[ 'glass-supplier' ].list.invalidate();
     },
   });
 
@@ -156,104 +156,96 @@ export function GlassSupplierList({ initialData }: GlassSupplierListProps) {
       </Card>
 
       {/* Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Proveedores de Vidrio ({data?.total ?? 0})</CardTitle>
-          <CardDescription>
-            Mostrando {suppliers.length} de {data?.total ?? 0} proveedores
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nombre</TableHead>
-                <TableHead>Código</TableHead>
-                <TableHead>País</TableHead>
-                <TableHead>Tipos de Vidrio</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead className="text-right">Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading && (
-                <TableRow>
-                  <TableCell className="text-center" colSpan={6}>
-                    Cargando...
-                  </TableCell>
-                </TableRow>
-              )}
-              {!isLoading && suppliers.length === 0 && (
-                <TableRow>
-                  <TableCell className="text-center text-muted-foreground" colSpan={6}>
-                    No se encontraron proveedores
-                  </TableCell>
-                </TableRow>
-              )}
-              {!isLoading &&
-                suppliers.map((supplier) => (
-                  <TableRow key={supplier.id}>
-                    <TableCell className="font-medium">{supplier.name}</TableCell>
-                    <TableCell>
-                      {supplier.code ? (
-                        <Badge variant="outline">{supplier.code}</Badge>
-                      ) : (
-                        <span className="text-muted-foreground text-sm">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-sm">{supplier.country || '-'}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">{supplier._count.glassTypes}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={supplier.isActive ? 'default' : 'secondary'}>
-                        {supplier.isActive ? 'Activo' : 'Inactivo'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button onClick={() => handleEditClick(supplier.id)} size="icon" variant="ghost">
-                          <Pencil className="size-4" />
-                          <span className="sr-only">Editar</span>
-                        </Button>
-                        <Button
-                          onClick={() => handleDeleteClick(supplier.id, supplier.name)}
-                          size="icon"
-                          variant="ghost"
-                        >
-                          <Trash2 className="size-4 text-destructive" />
-                          <span className="sr-only">Eliminar</span>
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="mt-4 flex items-center justify-between">
-              <p className="text-muted-foreground text-sm">
-                Página {page} de {totalPages}
-              </p>
-              <div className="flex gap-2">
-                <Button disabled={page === 1} onClick={() => setPage((p) => p - 1)} size="sm" variant="outline">
-                  Anterior
-                </Button>
-                <Button
-                  disabled={page === totalPages}
-                  onClick={() => setPage((p) => p + 1)}
-                  size="sm"
-                  variant="outline"
-                >
-                  Siguiente
-                </Button>
-              </div>
-            </div>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Nombre</TableHead>
+            <TableHead>Código</TableHead>
+            <TableHead>País</TableHead>
+            <TableHead>Tipos de Vidrio</TableHead>
+            <TableHead>Estado</TableHead>
+            <TableHead className="text-right">Acciones</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {isLoading && (
+            <TableRow>
+              <TableCell className="text-center" colSpan={6}>
+                Cargando...
+              </TableCell>
+            </TableRow>
           )}
-        </CardContent>
-      </Card>
+          {!isLoading && suppliers.length === 0 && (
+            <TableRow>
+              <TableCell className="text-center text-muted-foreground" colSpan={6}>
+                No se encontraron proveedores
+              </TableCell>
+            </TableRow>
+          )}
+          {!isLoading &&
+            suppliers.map((supplier) => (
+              <TableRow key={supplier.id}>
+                <TableCell className="font-medium">{supplier.name}</TableCell>
+                <TableCell>
+                  {supplier.code ? (
+                    <Badge variant="outline">{supplier.code}</Badge>
+                  ) : (
+                    <span className="text-muted-foreground text-sm">-</span>
+                  )}
+                </TableCell>
+                <TableCell className="text-sm">{supplier.country || '-'}</TableCell>
+                <TableCell>
+                  <Badge variant="secondary">{supplier._count.glassTypes}</Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge variant={supplier.isActive ? 'default' : 'secondary'}>
+                    {supplier.isActive ? 'Activo' : 'Inactivo'}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    <Button onClick={() => handleEditClick(supplier.id)} size="icon" variant="ghost">
+                      <Pencil className="size-4" />
+                      <span className="sr-only">Editar</span>
+                    </Button>
+                    <Button
+                      onClick={() => handleDeleteClick(supplier.id, supplier.name)}
+                      size="icon"
+                      variant="ghost"
+                    >
+                      <Trash2 className="size-4 text-destructive" />
+                      <span className="sr-only">Eliminar</span>
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+        </TableBody>
+      </Table>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-4 flex items-center justify-between">
+          <p className="text-muted-foreground text-sm">
+            Página {page} de {totalPages}
+          </p>
+          <div className="flex gap-2">
+            <Button disabled={page === 1} onClick={() => setPage((p) => p - 1)} size="sm" variant="outline">
+              Anterior
+            </Button>
+            <Button
+              disabled={page === totalPages}
+              onClick={() => setPage((p) => p + 1)}
+              size="sm"
+              variant="outline"
+            >
+              Siguiente
+            </Button>
+          </div>
+        </div>
+      )}
+
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog

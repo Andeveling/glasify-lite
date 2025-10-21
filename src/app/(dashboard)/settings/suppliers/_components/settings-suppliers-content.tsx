@@ -69,17 +69,17 @@ type SupplierFormData = {
 };
 
 type SettingsSuppliersContentProps = {
-  initialData: RouterOutputs['admin']['profile-supplier']['list'];
+  initialData: RouterOutputs[ 'admin' ][ 'profile-supplier' ][ 'list' ];
 };
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Component with multiple UI states and handlers
 export function SettingsSuppliersContent({ initialData }: SettingsSuppliersContentProps) {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [formMode, setFormMode] = useState<SupplierFormMode>('create');
-  const [selectedSupplier, setSelectedSupplier] = useState<SupplierFormData | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [materialTypeFilter, setMaterialTypeFilter] = useState<MaterialType | 'ALL'>('ALL');
-  const [isActiveFilter, setIsActiveFilter] = useState<'ALL' | 'ACTIVE' | 'INACTIVE'>('ALL');
+  const [ isDialogOpen, setIsDialogOpen ] = useState(false);
+  const [ formMode, setFormMode ] = useState<SupplierFormMode>('create');
+  const [ selectedSupplier, setSelectedSupplier ] = useState<SupplierFormData | null>(null);
+  const [ searchQuery, setSearchQuery ] = useState('');
+  const [ materialTypeFilter, setMaterialTypeFilter ] = useState<MaterialType | 'ALL'>('ALL');
+  const [ isActiveFilter, setIsActiveFilter ] = useState<'ALL' | 'ACTIVE' | 'INACTIVE'>('ALL');
 
   const utils = api.useUtils();
 
@@ -91,7 +91,7 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
     filterActiveStatus = 'inactive';
   }
 
-  const { data, isLoading } = api.admin['profile-supplier'].list.useQuery(
+  const { data, isLoading } = api.admin[ 'profile-supplier' ].list.useQuery(
     {
       isActive: filterActiveStatus,
       limit: 100,
@@ -110,7 +110,7 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
   const suppliers = data?.items ?? [];
 
   // Create mutation
-  const createMutation = api.admin['profile-supplier'].create.useMutation({
+  const createMutation = api.admin[ 'profile-supplier' ].create.useMutation({
     onError: (err: { message?: string }) => {
       toast.error('Error al crear proveedor', {
         description: err.message || 'Ocurrió un error inesperado',
@@ -120,14 +120,14 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
       toast.success('Proveedor creado', {
         description: 'El proveedor se creó correctamente',
       });
-      void utils.admin['profile-supplier'].list.invalidate();
+      void utils.admin[ 'profile-supplier' ].list.invalidate();
       setIsDialogOpen(false);
       form.reset();
     },
   });
 
   // Update mutation
-  const updateMutation = api.admin['profile-supplier'].update.useMutation({
+  const updateMutation = api.admin[ 'profile-supplier' ].update.useMutation({
     onError: (err: { message?: string }) => {
       toast.error('Error al actualizar proveedor', {
         description: err.message || 'Ocurrió un error inesperado',
@@ -137,7 +137,7 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
       toast.success('Proveedor actualizado', {
         description: 'Los cambios se guardaron correctamente',
       });
-      void utils.admin['profile-supplier'].list.invalidate();
+      void utils.admin[ 'profile-supplier' ].list.invalidate();
       setIsDialogOpen(false);
       setSelectedSupplier(null);
       form.reset();
@@ -145,7 +145,7 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
   });
 
   // Delete mutation
-  const deleteMutation = api.admin['profile-supplier'].delete.useMutation({
+  const deleteMutation = api.admin[ 'profile-supplier' ].delete.useMutation({
     onError: (err: { message?: string }) => {
       toast.error('Error al eliminar proveedor', {
         description: err.message || 'No se puede eliminar un proveedor con modelos asociados',
@@ -155,12 +155,12 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
       toast.success('Proveedor eliminado', {
         description: 'El proveedor se eliminó correctamente',
       });
-      void utils.admin['profile-supplier'].list.invalidate();
+      void utils.admin[ 'profile-supplier' ].list.invalidate();
     },
   });
 
   // Toggle active status
-  const toggleActiveMutation = api.admin['profile-supplier'].update.useMutation({
+  const toggleActiveMutation = api.admin[ 'profile-supplier' ].update.useMutation({
     onError: (err: { message?: string }) => {
       toast.error('Error al cambiar estado', {
         description: err.message || 'Ocurrió un error inesperado',
@@ -168,7 +168,7 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
     },
     onSuccess: () => {
       toast.success('Estado actualizado');
-      void utils.admin['profile-supplier'].list.invalidate();
+      void utils.admin[ 'profile-supplier' ].list.invalidate();
     },
   });
 
@@ -197,7 +197,7 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
   };
 
   // Handle edit dialog open
-  const handleEditClick = (supplier: (typeof suppliers)[0]) => {
+  const handleEditClick = (supplier: (typeof suppliers)[ 0 ]) => {
     setFormMode('edit');
     setSelectedSupplier({
       data: {
@@ -273,73 +273,67 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
       </div>
 
       {/* Filters */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Filtros</CardTitle>
-          <CardDescription>Filtra proveedores por tipo de material, estado o nombre</CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4 md:grid-cols-3">
-          {/* Search */}
-          <div className="space-y-2">
-            <label className="font-medium text-sm" htmlFor="search">
-              Buscar
-            </label>
-            <div className="relative">
-              <Search className="absolute top-2.5 left-2.5 size-4 text-muted-foreground" />
-              <Input
-                className="pl-8"
-                id="search"
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar por nombre..."
-                value={searchQuery}
-              />
-            </div>
-          </div>
 
-          {/* Material Type Filter */}
-          <div className="space-y-2">
-            <label className="font-medium text-sm" htmlFor="materialType">
-              Tipo de Material
-            </label>
-            <Select
-              onValueChange={(value) => setMaterialTypeFilter(value as MaterialType | 'ALL')}
-              value={materialTypeFilter}
-            >
-              <SelectTrigger id="materialType">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">Todos</SelectItem>
-                {MATERIAL_TYPE_OPTIONS.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+      {/* Search */}
+      <div className="space-y-2">
+        <label className="font-medium text-sm" htmlFor="search">
+          Buscar
+        </label>
+        <div className="relative">
+          <Search className="absolute top-2.5 left-2.5 size-4 text-muted-foreground" />
+          <Input
+            className="pl-8"
+            id="search"
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Buscar por nombre..."
+            value={searchQuery}
+          />
+        </div>
+      </div>
 
-          {/* Active Status Filter */}
-          <div className="space-y-2">
-            <label className="font-medium text-sm" htmlFor="isActive">
-              Estado
-            </label>
-            <Select
-              onValueChange={(value) => setIsActiveFilter(value as 'ALL' | 'ACTIVE' | 'INACTIVE')}
-              value={isActiveFilter}
-            >
-              <SelectTrigger id="isActive">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">Todos</SelectItem>
-                <SelectItem value="ACTIVE">Activos</SelectItem>
-                <SelectItem value="INACTIVE">Inactivos</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Material Type Filter */}
+      <div className="space-y-2">
+        <label className="font-medium text-sm" htmlFor="materialType">
+          Tipo de Material
+        </label>
+        <Select
+          onValueChange={(value) => setMaterialTypeFilter(value as MaterialType | 'ALL')}
+          value={materialTypeFilter}
+        >
+          <SelectTrigger id="materialType">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">Todos</SelectItem>
+            {MATERIAL_TYPE_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Active Status Filter */}
+      <div className="space-y-2">
+        <label className="font-medium text-sm" htmlFor="isActive">
+          Estado
+        </label>
+        <Select
+          onValueChange={(value) => setIsActiveFilter(value as 'ALL' | 'ACTIVE' | 'INACTIVE')}
+          value={isActiveFilter}
+        >
+          <SelectTrigger id="isActive">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">Todos</SelectItem>
+            <SelectItem value="ACTIVE">Activos</SelectItem>
+            <SelectItem value="INACTIVE">Inactivos</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
 
       {/* Suppliers Table */}
       <Card>
@@ -384,7 +378,7 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
                   <TableRow key={supplier.id}>
                     <TableCell className="font-medium">{supplier.name}</TableCell>
                     <TableCell>
-                      <Badge variant="outline">{MATERIAL_TYPE_LABELS[supplier.materialType]}</Badge>
+                      <Badge variant="outline">{MATERIAL_TYPE_LABELS[ supplier.materialType ]}</Badge>
                     </TableCell>
                     <TableCell>
                       <Badge variant={supplier.isActive ? 'default' : 'secondary'}>

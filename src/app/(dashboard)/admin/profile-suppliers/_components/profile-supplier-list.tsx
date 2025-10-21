@@ -36,7 +36,6 @@ import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-
 import { TablePagination } from '@/app/_components/server-table/table-pagination';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { api } from '@/trpc/react';
 import { ProfileSupplierEmpty } from './profile-supplier-empty';
@@ -85,21 +84,21 @@ const MATERIAL_TYPE_VARIANTS: Record<MaterialType, 'default' | 'secondary' | 'ou
 export function ProfileSupplierList({ initialData, searchParams, onEditClick }: ProfileSupplierListProps) {
   const utils = api.useUtils();
   const router = useRouter();
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [supplierToDelete, setSupplierToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
+  const [ supplierToDelete, setSupplierToDelete ] = useState<{ id: string; name: string } | null>(null);
 
   // Delete mutation with optimistic UI
-  const deleteMutation = api.admin['profile-supplier'].delete.useMutation({
+  const deleteMutation = api.admin[ 'profile-supplier' ].delete.useMutation({
     onMutate: async (variables) => {
       // Cancel any outgoing refetches
-      await utils.admin['profile-supplier'].list.cancel();
+      await utils.admin[ 'profile-supplier' ].list.cancel();
 
       // Snapshot the previous value
-      const previousData = utils.admin['profile-supplier'].list.getData();
+      const previousData = utils.admin[ 'profile-supplier' ].list.getData();
 
       // Optimistically remove the item from cache
       if (previousData) {
-        utils.admin['profile-supplier'].list.setData(
+        utils.admin[ 'profile-supplier' ].list.setData(
           // Match the input parameters of the current query
           {
             isActive: searchParams.isActive as 'all' | 'active' | 'inactive' | undefined,
@@ -130,7 +129,7 @@ export function ProfileSupplierList({ initialData, searchParams, onEditClick }: 
     onError: (error, _variables, context) => {
       // Rollback to previous data on error
       if (context?.previousData) {
-        utils.admin['profile-supplier'].list.setData(
+        utils.admin[ 'profile-supplier' ].list.setData(
           {
             isActive: searchParams.isActive as 'all' | 'active' | 'inactive' | undefined,
             limit: initialData.limit,
@@ -156,7 +155,7 @@ export function ProfileSupplierList({ initialData, searchParams, onEditClick }: 
     },
     onSettled: () => {
       // Invalidate cache and refresh server data
-      void utils.admin['profile-supplier'].list.invalidate();
+      void utils.admin[ 'profile-supplier' ].list.invalidate();
       router.refresh();
     },
   });
@@ -177,8 +176,8 @@ export function ProfileSupplierList({ initialData, searchParams, onEditClick }: 
   // Check if there are filters active
   const hasFilters = Boolean(
     searchParams?.search ||
-      (searchParams?.materialType && searchParams.materialType !== 'all') ||
-      (searchParams?.isActive && searchParams.isActive !== 'all')
+    (searchParams?.materialType && searchParams.materialType !== 'all') ||
+    (searchParams?.isActive && searchParams.isActive !== 'all')
   );
 
   return (
@@ -187,69 +186,61 @@ export function ProfileSupplierList({ initialData, searchParams, onEditClick }: 
       {suppliers.length === 0 ? (
         <ProfileSupplierEmpty hasFilters={hasFilters} />
       ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Proveedores de Perfiles</CardTitle>
-            <CardDescription>
-              {total} proveedor{total !== 1 ? 's' : ''} registrado{total !== 1 ? 's' : ''}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Table */}
-            <div className="overflow-x-auto rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nombre</TableHead>
-                    <TableHead>Material</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead>Notas</TableHead>
-                    <TableHead className="w-[100px] text-right">Acciones</TableHead>
+        <>
+          {/* Table */}
+          <div className="overflow-x-auto rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nombre</TableHead>
+                  <TableHead>Material</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead>Notas</TableHead>
+                  <TableHead className="w-[100px] text-right">Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {suppliers.map((supplier) => (
+                  <TableRow key={supplier.id}>
+                    <TableCell className="font-medium">{supplier.name}</TableCell>
+                    <TableCell>
+                      <Badge variant={MATERIAL_TYPE_VARIANTS[ supplier.materialType ]}>
+                        {MATERIAL_TYPE_LABELS[ supplier.materialType ]}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={supplier.isActive ? 'default' : 'secondary'}>
+                        {supplier.isActive ? 'Activo' : 'Inactivo'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="max-w-[200px] truncate text-muted-foreground text-sm">
+                      {supplier.notes || '-'}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button onClick={() => onEditClick(supplier)} size="sm" variant="ghost">
+                          <Pencil className="h-4 w-4" />
+                          <span className="sr-only">Editar</span>
+                        </Button>
+                        <Button
+                          onClick={() => handleDeleteClick({ id: supplier.id, name: supplier.name })}
+                          size="sm"
+                          variant="ghost"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          <span className="sr-only">Eliminar</span>
+                        </Button>
+                      </div>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {suppliers.map((supplier) => (
-                    <TableRow key={supplier.id}>
-                      <TableCell className="font-medium">{supplier.name}</TableCell>
-                      <TableCell>
-                        <Badge variant={MATERIAL_TYPE_VARIANTS[supplier.materialType]}>
-                          {MATERIAL_TYPE_LABELS[supplier.materialType]}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={supplier.isActive ? 'default' : 'secondary'}>
-                          {supplier.isActive ? 'Activo' : 'Inactivo'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="max-w-[200px] truncate text-muted-foreground text-sm">
-                        {supplier.notes || '-'}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button onClick={() => onEditClick(supplier)} size="sm" variant="ghost">
-                            <Pencil className="h-4 w-4" />
-                            <span className="sr-only">Editar</span>
-                          </Button>
-                          <Button
-                            onClick={() => handleDeleteClick({ id: supplier.id, name: supplier.name })}
-                            size="sm"
-                            variant="ghost"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                            <span className="sr-only">Eliminar</span>
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
 
-            {/* Pagination - reutilizable component */}
-            <TablePagination currentPage={currentPage} totalItems={total} totalPages={totalPages} />
-          </CardContent>
-        </Card>
+          {/* Pagination - reutilizable component */}
+          <TablePagination currentPage={currentPage} totalItems={total} totalPages={totalPages} />
+        </>
       )}
 
       {/* Delete Confirmation Dialog */}

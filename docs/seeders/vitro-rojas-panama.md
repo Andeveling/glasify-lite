@@ -188,21 +188,21 @@ pnpm seed --preset=vitro-rojas-panama
 
 ### Precios Base (USD/m²)
 
-| Sistema | 2 Paños | 3 Paños | 4 Paños |
-|---------|---------|---------|---------|
-| Corredizo VC | $130 | $150 | $165 |
-| Corredizo Europa | $140 | $160 | $175 |
-| Abatible Europa | $130 | $150 | $170 |
+| Sistema          | 2 Paños | 3 Paños | 4 Paños |
+| ---------------- | ------- | ------- | ------- |
+| Corredizo VC     | $130    | $150    | $165    |
+| Corredizo Europa | $140    | $160    | $175    |
+| Abatible Europa  | $130    | $150    | $170    |
 
 ### Adicionales por Tipo de Vidrio
 
-| Tipo | Adicional (USD/m²) |
-|------|-------------------|
-| Claro | Incluido |
-| Laminado | +$15 |
-| Gris/Bronce | +$10 |
-| Reflectivo | +$15 |
-| Laminado Gris/Bronce | +$18 |
+| Tipo                 | Adicional (USD/m²) |
+| -------------------- | ------------------ |
+| Claro                | Incluido           |
+| Laminado             | +$15               |
+| Gris/Bronce          | +$10               |
+| Reflectivo           | +$15               |
+| Laminado Gris/Bronce | +$18               |
 
 ### Fórmulas de Corte (Vitro Rojas)
 

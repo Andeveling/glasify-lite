@@ -273,7 +273,7 @@ pnpm db:studio
 | TASK-042 | Validar en Prisma Studio que TenantConfig tiene datos correctos de Panamá (USD, es-PA, America/Panama)                      |           |      |
 | TASK-043 | Validar que se crearon exactamente 6 modelos corredizos + 3 modelos abatibles = 9 modelos totales                           |           |      |
 | TASK-044 | Validar que cada modelo tiene mínimo 2 GlassTypes compatibles                                                               |           |      |
-| TASK-045 | Validar que se crearon 5 servicios (Instalación, Sellado Perimetral, Desmonte, Reposición, Protección)                     |           |      |
+| TASK-045 | Validar que se crearon 5 servicios (Instalación, Sellado Perimetral, Desmonte, Reposición, Protección)                      |           |      |
 | TASK-046 | Validar que se crearon 4 GlassSolutions con sus respectivos GlassTypes vinculados                                           |           |      |
 | TASK-047 | Verificar que precios coinciden con sistema de Vitro Rojas ($130-$170 base + adicionales por tipo de vidrio)                |           |      |
 | TASK-048 | Crear archivo `docs/seeders/vitro-rojas-panama.md` documentando estructura del preset y cómo extenderlo para otros clientes |           |      |

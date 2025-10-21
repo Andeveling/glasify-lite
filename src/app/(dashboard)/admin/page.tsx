@@ -165,7 +165,7 @@ export default async function AdminDashboardPage() {
               </CardHeader>
               <CardContent>
                 <Button asChild className="w-full">
-                  <Link href="/admin/services/new">Crear Servicio</Link>
+                  <Link href="/admin/services">Crear Servicio</Link>
                 </Button>
               </CardContent>
             </Card>
