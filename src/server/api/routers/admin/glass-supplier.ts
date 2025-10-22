@@ -196,20 +196,10 @@ export const glassSupplierRouter = createTRPCRouter({
    * Get Glass Supplier by ID
    * GET /api/trpc/admin/glassSupplier.getById
    *
-   * Returns full glass supplier details with associated glass types
+   * Returns full glass supplier details
    */
   getById: adminProcedure.input(getGlassSupplierByIdSchema).query(async ({ ctx, input }) => {
     const glassSupplier = await ctx.db.glassSupplier.findUnique({
-      include: {
-        glassTypes: {
-          select: {
-            id: true,
-            isActive: true,
-            name: true,
-            thicknessMm: true,
-          },
-        },
-      },
       where: { id: input.id },
     });
 
@@ -247,16 +237,8 @@ export const glassSupplierRouter = createTRPCRouter({
     // Get total count
     const total = await ctx.db.glassSupplier.count({ where });
 
-    // Get paginated items with glass type count
+    // Get paginated items
     const items = await ctx.db.glassSupplier.findMany({
-      include: {
-        // biome-ignore lint/style/useNamingConvention: Prisma generated field
-        _count: {
-          select: {
-            glassTypes: true,
-          },
-        },
-      },
       orderBy,
       skip: (page - 1) * limit,
       take: limit,

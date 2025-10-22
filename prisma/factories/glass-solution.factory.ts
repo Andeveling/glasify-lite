@@ -8,8 +8,10 @@
  * - Bilingual naming (English name + Spanish nameEs)
  */
 
+import fs from 'node:fs';
+import path from 'node:path';
 import { z } from 'zod';
-import type { FactoryOptions, FactoryResult } from './types';
+import type { FactoryOptions, FactoryResult, ValidationError } from './types';
 import { validateWithSchema } from './utils';
 
 /**
@@ -150,4 +152,144 @@ export function createGlassSolution(
     data: input,
     success: true,
   };
+}
+
+/**
+ * Seed file schema validation
+ */
+const seedSolutionSchema = z.object({
+  description: z.string(),
+  icon: z.string(),
+  key: z.string(),
+  name: z.string(),
+  nameEs: z.string(),
+  sortOrder: z.number(),
+});
+
+const seedFileSchema = z.object({
+  solutions: z.array(seedSolutionSchema),
+  version: z.string(),
+});
+
+/**
+ * Loads and seeds glass solutions from JSON file
+ *
+ * @param fileName - Name of the seed JSON file in prisma/data
+ * @returns Result with counts and any errors
+ *
+ * @example
+ * ```ts
+ * const result = await seedGlassSolutionsFromFile('glass-solutions.json');
+ * console.log(`Seeded ${result.seeded} solutions, skipped ${result.skipped}`);
+ * ```
+ */
+export async function seedGlassSolutionsFromFile(fileName: string): Promise<{
+  errors: ValidationError[];
+  seeded: number;
+  skipped: number;
+}> {
+  const dataPath = path.join(process.cwd(), 'prisma', 'data', fileName);
+
+  // Load JSON file
+  let rawData: unknown;
+  try {
+    const fileContent = fs.readFileSync(dataPath, 'utf-8');
+    rawData = JSON.parse(fileContent);
+  } catch (error) {
+    return {
+      errors: [
+        {
+          code: 'FILE_READ_ERROR',
+          context: { error, fileName },
+          message: `Failed to read or parse ${fileName}`,
+          path: [],
+        },
+      ],
+      seeded: 0,
+      skipped: 0,
+    };
+  }
+
+  // Validate JSON structure
+  const validationResult = seedFileSchema.safeParse(rawData);
+  if (!validationResult.success) {
+    return {
+      errors: validationResult.error.issues.map((err) => ({
+        code: 'SCHEMA_VALIDATION_ERROR',
+        context: { zodError: err },
+        message: err.message,
+        path: err.path.map(String),
+      })),
+      seeded: 0,
+      skipped: 0,
+    };
+  }
+
+  const { solutions, version } = validationResult.data;
+  const errors: ValidationError[] = [];
+  let seeded = 0;
+  let skipped = 0;
+
+  // Dynamically import Prisma client
+  const { PrismaClient } = await import('@prisma/client');
+  const prisma = new PrismaClient();
+
+  try {
+    for (const solution of solutions) {
+      try {
+        // Check if solution with this key already exists
+        const existing = await prisma.glassSolution.findUnique({
+          where: { key: solution.key },
+        });
+
+        if (existing) {
+          // Skip if already seeded with same or newer version
+          if (existing.isSeeded && existing.seedVersion === version) {
+            skipped++;
+            continue;
+          }
+          // Update if existing but different version
+          await prisma.glassSolution.update({
+            data: {
+              description: solution.description,
+              icon: solution.icon,
+              isSeeded: true,
+              name: solution.name,
+              nameEs: solution.nameEs,
+              seedVersion: version,
+              sortOrder: solution.sortOrder,
+            },
+            where: { key: solution.key },
+          });
+          seeded++;
+        } else {
+          // Create new solution
+          await prisma.glassSolution.create({
+            data: {
+              description: solution.description,
+              icon: solution.icon,
+              isSeeded: true,
+              key: solution.key,
+              name: solution.name,
+              nameEs: solution.nameEs,
+              seedVersion: version,
+              sortOrder: solution.sortOrder,
+            },
+          });
+          seeded++;
+        }
+      } catch (error) {
+        errors.push({
+          code: 'DATABASE_ERROR',
+          context: { error, key: solution.key },
+          message: `Failed to seed glass solution ${solution.key}`,
+          path: ['solutions', solution.key],
+        });
+      }
+    }
+  } finally {
+    await prisma.$disconnect();
+  }
+
+  return { errors, seeded, skipped };
 }

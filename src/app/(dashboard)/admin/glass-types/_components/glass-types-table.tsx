@@ -22,7 +22,6 @@
 
 'use client';
 
-import type { GlassPurpose } from '@prisma/client';
 import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -51,17 +50,12 @@ import { api } from '@/trpc/react';
 type GlassType = {
   id: string;
   name: string;
-  purpose: GlassPurpose;
   thicknessMm: number;
   pricePerSqm: number;
   sku: string | null;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
-  glassSupplier: {
-    id: string;
-    name: string;
-  } | null;
   solutions: Array<{
     isPrimary: boolean;
     solution: {
@@ -84,26 +78,10 @@ type GlassTypesTableProps = {
   };
   searchParams: {
     search?: string;
-    purpose?: string;
-    glassSupplierId?: string;
     isActive?: string;
     page?: string;
   };
 };
-
-/**
- * Purpose badge component
- */
-function PurposeBadge({ purpose }: { purpose: GlassPurpose }) {
-  const labels: Record<GlassPurpose, string> = {
-    decorative: 'Decorativo',
-    general: 'General',
-    insulation: 'Aislamiento',
-    security: 'Seguridad',
-  };
-
-  return <Badge variant="outline">{labels[purpose]}</Badge>;
-}
 
 /**
  * Active status badge
@@ -186,16 +164,9 @@ export function GlassTypesTable({ initialData, searchParams }: GlassTypesTablePr
         utils.admin[ 'glass-type' ].list.setData(
           // Match the input parameters of the current query
           {
-            glassSupplierId: searchParams.glassSupplierId !== 'all' ? searchParams.glassSupplierId : undefined,
             isActive: searchParams.isActive as 'all' | 'active' | 'inactive' | undefined,
             limit: initialData.limit,
             page: Number(searchParams.page) || 1,
-            purpose: (searchParams.purpose !== 'all' ? searchParams.purpose : undefined) as
-              | 'general'
-              | 'insulation'
-              | 'security'
-              | 'decorative'
-              | undefined,
             search: searchParams.search,
           },
           (old) => {
@@ -220,16 +191,9 @@ export function GlassTypesTable({ initialData, searchParams }: GlassTypesTablePr
       if (context?.previousData) {
         utils.admin[ 'glass-type' ].list.setData(
           {
-            glassSupplierId: searchParams.glassSupplierId !== 'all' ? searchParams.glassSupplierId : undefined,
             isActive: searchParams.isActive as 'all' | 'active' | 'inactive' | undefined,
             limit: initialData.limit,
             page: Number(searchParams.page) || 1,
-            purpose: (searchParams.purpose !== 'all' ? searchParams.purpose : undefined) as
-              | 'general'
-              | 'insulation'
-              | 'security'
-              | 'decorative'
-              | undefined,
             search: searchParams.search,
           },
           context.previousData
@@ -284,12 +248,6 @@ export function GlassTypesTable({ initialData, searchParams }: GlassTypesTablePr
       sortable: true,
     },
     {
-      cell: (item) => <PurposeBadge purpose={item.purpose} />,
-      header: 'Propósito',
-      id: 'purpose',
-      sortable: true,
-    },
-    {
       align: 'center',
       cell: (item) => formatThickness(item.thicknessMm, formatContext),
       header: 'Espesor',
@@ -306,12 +264,6 @@ export function GlassTypesTable({ initialData, searchParams }: GlassTypesTablePr
       cell: (item) => <SolutionsBadges solutions={item.solutions} />,
       header: 'Soluciones',
       id: 'solutions',
-      sortable: false,
-    },
-    {
-      cell: (item) => (item.glassSupplier ? item.glassSupplier.name : '—'),
-      header: 'Proveedor',
-      id: 'supplier',
       sortable: false,
     },
     {

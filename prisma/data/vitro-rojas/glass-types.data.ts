@@ -29,23 +29,13 @@ import type { GlassTypeInput } from '../../factories/glass-type.factory';
  */
 const generalPurposeGlassTypes: GlassTypeInput[] = [
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
+    code: 'VR_CLEAR6',
     name: 'Vidrio Claro 6mm',
-    pricePerSqm: 28, // USD
-    purpose: 'general',
     thicknessMm: 6,
   },
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
+    code: 'VR_CLEAR8',
     name: 'Vidrio Claro 8mm',
-    pricePerSqm: 35, // USD
-    purpose: 'general',
     thicknessMm: 8,
   },
 ];
@@ -58,33 +48,18 @@ const generalPurposeGlassTypes: GlassTypeInput[] = [
  */
 const securityGlassTypes: GlassTypeInput[] = [
   {
-    isLaminated: true,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
+    code: 'VR_LAM6',
     name: 'Vidrio Laminado 6.38mm (6+6)',
-    pricePerSqm: 43, // Base $28 + $15 laminado
-    purpose: 'security',
     thicknessMm: 6.38,
   },
   {
-    isLaminated: true,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
+    code: 'VR_LAM8',
     name: 'Vidrio Laminado 8.38mm (8+8)',
-    pricePerSqm: 50, // Base $35 + $15 laminado
-    purpose: 'security',
     thicknessMm: 8.38,
   },
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: true,
-    isTripleGlazed: false,
+    code: 'VR_TEMP6',
     name: 'Vidrio Templado 6mm',
-    pricePerSqm: 45, // Templado para puertas
-    purpose: 'security',
     thicknessMm: 6,
   },
 ];
@@ -98,24 +73,14 @@ const securityGlassTypes: GlassTypeInput[] = [
  */
 const insulationGlassTypes: GlassTypeInput[] = [
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
+    code: 'VR_DVH16',
     name: 'DVH 16mm (6-4-6)',
-    pricePerSqm: 85, // USD - Doble Vidrio Hermético
-    purpose: 'insulation',
     thicknessMm: 16,
     uValue: 2.8, // W/m²K
   },
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
+    code: 'VR_DVH18',
     name: 'DVH 18.5mm (6-6.5-6)',
-    pricePerSqm: 92, // USD
-    purpose: 'insulation',
     thicknessMm: 18.5,
     uValue: 2.7, // W/m²K - Mejor aislamiento
   },
@@ -132,43 +97,23 @@ const insulationGlassTypes: GlassTypeInput[] = [
  */
 const decorativeGlassTypes: GlassTypeInput[] = [
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
+    code: 'VR_GRAY6',
     name: 'Vidrio Gris 6mm',
-    pricePerSqm: 38, // Base $28 + $10 tintado
-    purpose: 'decorative',
     thicknessMm: 6,
   },
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
+    code: 'VR_BRONZE6',
     name: 'Vidrio Bronce 6mm',
-    pricePerSqm: 38, // Base $28 + $10 tintado
-    purpose: 'decorative',
     thicknessMm: 6,
   },
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
+    code: 'VR_REFL6',
     name: 'Vidrio Reflectivo 6mm',
-    pricePerSqm: 43, // Base $28 + $15 reflectivo
-    purpose: 'decorative',
     thicknessMm: 6,
   },
   {
-    isLaminated: true,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
+    code: 'VR_LAMGRAY6',
     name: 'Vidrio Laminado Gris 6.38mm',
-    pricePerSqm: 46, // Base $28 + $18 laminado tintado
-    purpose: 'decorative',
     thicknessMm: 6.38,
   },
 ];

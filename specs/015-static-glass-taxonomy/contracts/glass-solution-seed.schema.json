@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://glasify.io/schemas/glass-solution-seed.v1.json",
+  "title": "Glass Solution Seed Data Schema",
+  "description": "JSON schema for universal glass solution taxonomy seed data",
+  "type": "object",
+  "required": ["version", "glassSolutions"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Semantic version of the seed data format",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+      "examples": ["1.0", "1.1"]
+    },
+    "glassSolutions": {
+      "type": "array",
+      "description": "Array of glass solution definitions",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/GlassSolution"
+      }
+    }
+  },
+  "definitions": {
+    "GlassSolution": {
+      "type": "object",
+      "required": ["key", "name", "nameEs"],
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Unique identifier for the solution (snake_case)",
+          "pattern": "^[a-z_]+$",
+          "minLength": 3,
+          "maxLength": 50,
+          "examples": ["solar_control", "energy_efficiency", "security"]
+        },
+        "name": {
+          "type": "string",
+          "description": "Technical name in English",
+          "minLength": 3,
+          "maxLength": 100,
+          "examples": [
+            "Solar Control",
+            "Energy Efficiency",
+            "Security & Safety"
+          ]
+        },
+        "nameEs": {
+          "type": "string",
+          "description": "Commercial name in Spanish (es-LA)",
+          "minLength": 3,
+          "maxLength": 100,
+          "examples": ["Control Solar", "Eficiencia Energética", "Seguridad"]
+        },
+        "description": {
+          "type": "string",
+          "description": "Technical description with compliance information",
+          "maxLength": 1000,
+          "examples": [
+            "Reduces solar heat gain and glare, improving comfort and reducing cooling costs. Compliance: ISO 9050, ASHRAE 90.1"
+          ]
+        },
+        "icon": {
+          "type": "string",
+          "description": "Lucide React icon name (must be valid icon)",
+          "minLength": 2,
+          "maxLength": 50,
+          "examples": ["Sun", "Leaf", "Shield", "Volume2", "Eye", "Wind"]
+        },
+        "sortOrder": {
+          "type": "integer",
+          "description": "Display order (lower = higher priority)",
+          "minimum": 0,
+          "maximum": 1000,
+          "default": 0
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "version": "1.0",
+      "glassSolutions": [
+        {
+          "key": "solar_control",
+          "name": "Solar Control",
+          "nameEs": "Control Solar",
+          "description": "Reduces solar heat gain and glare, improving comfort and reducing cooling costs. Compliance: ISO 9050, ASHRAE 90.1",
+          "icon": "Sun",
+          "sortOrder": 1
+        },
+        {
+          "key": "energy_efficiency",
+          "name": "Energy Efficiency",
+          "nameEs": "Eficiencia Energética",
+          "description": "Low-emissivity coatings reduce heat transfer, improving HVAC efficiency. Compliance: LEED v4, EDGE certification",
+          "icon": "Leaf",
+          "sortOrder": 2
+        },
+        {
+          "key": "security",
+          "name": "Security & Safety",
+          "nameEs": "Seguridad",
+          "description": "Laminated or tempered glass for impact resistance and security. Compliance: EN 356 (burglar resistance), EN 12600 (safety)",
+          "icon": "Shield",
+          "sortOrder": 3
+        }
+      ]
+    }
+  ]
+}

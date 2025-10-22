@@ -62,24 +62,15 @@ export async function canDeleteProfileSupplier(supplierId: string): Promise<Refe
 
 /**
  * Check if a GlassSupplier can be deleted
- * Dependency: GlassTypes
+ * @deprecated - GlassSupplier.glassTypes relation removed in v2.0
+ * GlassSuppliers are now independent entities (can always be deleted if no ProfileSupplier references)
  */
-export async function canDeleteGlassSupplier(supplierId: string): Promise<ReferentialIntegrityResult> {
+export function canDeleteGlassSupplier(supplierId: string): Promise<ReferentialIntegrityResult> {
   logger.info('Checking referential integrity for GlassSupplier', { supplierId });
 
-  const glassTypeCount = await db.glassType.count({
-    where: { glassSupplier: { id: supplierId } },
-  });
-
+  // Note: glassTypes relation removed in v2.0 static glass taxonomy migration
+  // GlassSuppliers are now independent entities
   const dependencies: DependencyCheck[] = [];
-
-  if (glassTypeCount > 0) {
-    dependencies.push({
-      count: glassTypeCount,
-      entity: 'GlassType',
-      message: `${glassTypeCount} tipo(s) de vidrio asociado(s)`,
-    });
-  }
 
   const canDelete = dependencies.length === 0;
 
@@ -89,13 +80,13 @@ export async function canDeleteGlassSupplier(supplierId: string): Promise<Refere
     supplierId,
   });
 
-  return {
+  return Promise.resolve({
     canDelete,
     dependencies,
     message: canDelete
       ? 'El proveedor puede ser eliminado'
       : `No se puede eliminar: ${dependencies.map((d) => d.message).join(', ')}`,
-  };
+  });
 }
 
 /**

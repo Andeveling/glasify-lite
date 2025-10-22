@@ -38,7 +38,6 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
     },
     {
       initialData,
-      placeholderData: (previousData) => previousData,
     }
   );
 

@@ -137,9 +137,11 @@ export const listGlassSolutionsOutputSchema = z.object({
       icon: z.string().nullable(),
       id: z.string(),
       isActive: z.boolean(),
+      isSeeded: z.boolean(),
       key: z.string(),
       name: z.string(),
       nameEs: z.string(),
+      seedVersion: z.string().nullable(),
       sortOrder: z.number(),
       updatedAt: z.date(),
     })

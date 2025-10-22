@@ -187,7 +187,7 @@ export const quoteRouter = createTRPCRouter({
             value: adj.value,
           }));
 
-          // Fetch glass type for price per m²
+          // Fetch glass type for validation
           const glassType = await tx.glassType.findUnique({
             where: { id: input.glassTypeId },
           });
@@ -195,7 +195,7 @@ export const quoteRouter = createTRPCRouter({
             throw new Error('Tipo de vidrio no encontrado');
           }
 
-          // Calculate price including glass area pricing
+          // Calculate price including glass area pricing (using direct pricePerSqm from GlassType)
           const itemCalculation = calculatePriceItem({
             adjustments: adjustmentInputs,
             glass: {
@@ -361,7 +361,7 @@ export const quoteRouter = createTRPCRouter({
           value: adj.value,
         }));
 
-        // Fetch glass type for price per m²
+        // Fetch glass type for validation
         const glassType = await ctx.db.glassType.findUnique({
           where: { id: input.glassTypeId },
         });
@@ -369,7 +369,7 @@ export const quoteRouter = createTRPCRouter({
           throw new Error('Tipo de vidrio no encontrado');
         }
 
-        // Calculate price including glass area pricing
+        // Calculate price including glass area pricing (using direct pricePerSqm from GlassType)
         const itemCalculation = calculatePriceItem({
           adjustments: adjustmentInputs,
           glass: {

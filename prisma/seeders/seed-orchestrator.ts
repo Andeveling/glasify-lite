@@ -15,7 +15,7 @@ import type { GlassSolutionInput } from '../factories/glass-solution.factory';
 import { createGlassSolution } from '../factories/glass-solution.factory';
 import type { GlassTypeInput } from '../factories/glass-type.factory';
 import { createGlassType } from '../factories/glass-type.factory';
-import { calculateGlassSolutions, createGlassTypeSolution } from '../factories/glass-type-solution.factory';
+
 import type { ModelInput } from '../factories/model.factory';
 import { createModel } from '../factories/model.factory';
 import type { ProfileSupplierInput } from '../factories/profile-supplier.factory';
@@ -273,14 +273,20 @@ export class SeedOrchestrator {
           where: { name: result.data.name },
         });
 
+        // Ensure pricePerSqm has a default value for MVP
+        const dataWithPrice = {
+          ...result.data,
+          pricePerSqm: result.data.pricePerSqm ?? 50_000.0,
+        };
+
         // Create or update
         const glassType = existing
           ? await this.prisma.glassType.update({
-              data: result.data,
+              data: dataWithPrice,
               where: { id: existing.id },
             })
           : await this.prisma.glassType.create({
-              data: result.data,
+              data: dataWithPrice,
             });
 
         glassTypeIdMap.set(glassType.name, glassType.id);
@@ -486,91 +492,21 @@ export class SeedOrchestrator {
   ): Promise<void> {
     this.logger.info(`Assigning solutions to ${glassTypes.size} glass types...`);
 
-    // Get all glass types from database with characteristics
+    // DEPRECATED: Solution assignment logic removed in v2.0
+    // Solutions are now assigned via seed data, not auto-calculated from boolean flags
+    // The calculateGlassSolutions function used deprecated fields (isTempered, isLaminated, etc.)
+    // TODO: Re-implement solution inference from characteristics if needed
+
+    // Get all glass types from database
     const glassTypesData = await this.prisma.glassType.findMany({
       select: {
         id: true,
-        isLaminated: true,
-        isLowE: true,
-        isTempered: true,
-        isTripleGlazed: true,
+        code: true,
         name: true,
-        purpose: true,
-        thicknessMm: true,
       },
     });
 
-    for (const glassType of glassTypesData) {
-      try {
-        // Calculate which solutions apply to this glass type
-        const assignments = calculateGlassSolutions({
-          isLaminated: glassType.isLaminated,
-          isLowE: glassType.isLowE,
-          isTempered: glassType.isTempered,
-          isTripleGlazed: glassType.isTripleGlazed,
-          purpose: glassType.purpose,
-          thicknessMm: glassType.thicknessMm,
-        });
-
-        // Create each assignment
-        for (const assignment of assignments) {
-          const solutionId = solutions.get(assignment.solutionKey);
-          if (!solutionId) {
-            this.logger.warn(`Solution not found: ${assignment.solutionKey}`);
-            continue;
-          }
-
-          // Check if assignment already exists
-          const existing = await this.prisma.glassTypeSolution.findUnique({
-            where: {
-              // biome-ignore lint/style/useNamingConvention: Prisma generated unique constraint name
-              glassTypeId_solutionId: {
-                glassTypeId: glassType.id,
-                solutionId,
-              },
-            },
-          });
-
-          const assignmentData = {
-            glassTypeId: glassType.id,
-            isPrimary: assignment.isPrimary,
-            performanceRating: assignment.performanceRating,
-            solutionId,
-          };
-
-          const factoryResult = createGlassTypeSolution(assignmentData, {
-            skipValidation: this.options.skipValidation,
-          });
-
-          if (!(factoryResult.success && factoryResult.data)) {
-            this.handleValidationErrors(`${glassType.name} -> ${assignment.solutionKey}`, factoryResult.errors);
-            this.stats.glassTypeSolutions.failed++;
-            continue;
-          }
-
-          // Create or update
-          if (existing) {
-            await this.prisma.glassTypeSolution.update({
-              data: factoryResult.data,
-              where: { id: existing.id },
-            });
-          } else {
-            await this.prisma.glassTypeSolution.create({
-              data: factoryResult.data,
-            });
-          }
-
-          this.stats.glassTypeSolutions.created++;
-          this.logger.debug(
-            `Assigned: ${glassType.name} -> ${assignment.solutionKey} (${assignment.performanceRating})`
-          );
-        }
-      } catch (error) {
-        this.logger.error(`Failed to assign solutions to: ${glassType.name}`, error);
-        this.stats.glassTypeSolutions.failed++;
-        if (!this.options.continueOnError) throw error;
-      }
-    }
+    this.logger.debug(`Processed ${glassTypesData.length} glass types for solution assignment`);
 
     this.logger.success(
       `Glass type solutions: ${this.stats.glassTypeSolutions.created} created, ${this.stats.glassTypeSolutions.failed} failed`
