@@ -2,6 +2,23 @@
 
 set -e
 
+# Check for help flag FIRST before any processing - exit immediately
+for arg in "$@"; do
+    if [ "$arg" = "--help" ] || [ "$arg" = "-h" ]; then
+        echo "Usage: $0 [--json] [--short-name <name>] <feature_description>"
+        echo ""
+        echo "Options:"
+        echo "  --json              Output in JSON format"
+        echo "  --short-name <name> Provide a custom short name (2-4 words) for the branch"
+        echo "  --help, -h          Show this help message"
+        echo ""
+        echo "Examples:"
+        echo "  $0 'Add user authentication system' --short-name 'user-auth'"
+        echo "  $0 'Implement OAuth2 integration for API'"
+        exit 0
+    fi
+done
+
 JSON_MODE=false
 SHORT_NAME=""
 ARGS=()
@@ -27,16 +44,7 @@ while [ $i -le $# ]; do
             SHORT_NAME="$next_arg"
             ;;
         --help|-h) 
-            echo "Usage: $0 [--json] [--short-name <name>] <feature_description>"
-            echo ""
-            echo "Options:"
-            echo "  --json              Output in JSON format"
-            echo "  --short-name <name> Provide a custom short name (2-4 words) for the branch"
-            echo "  --help, -h          Show this help message"
-            echo ""
-            echo "Examples:"
-            echo "  $0 'Add user authentication system' --short-name 'user-auth'"
-            echo "  $0 'Implement OAuth2 integration for API'"
+            # This branch should not be reached since we handle --help first
             exit 0
             ;;
         *) 
