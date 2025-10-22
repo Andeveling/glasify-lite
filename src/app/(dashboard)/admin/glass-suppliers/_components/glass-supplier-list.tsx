@@ -14,9 +14,7 @@
 'use client';
 
 import { Pencil, Plus, Search, Trash2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { toast } from 'sonner';
 import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -25,59 +23,33 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import type { GlassSupplierListOutput } from '@/lib/validations/admin/glass-supplier.schema';
-import { api } from '@/trpc/react';
+import type { FormValues } from '../_hooks/use-glass-supplier-form';
+import { useGlassSupplierMutations } from '../_hooks/use-glass-supplier-mutations';
+import { GlassSupplierDialog } from './glass-supplier-dialog';
 
 type GlassSupplierListProps = {
   initialData: GlassSupplierListOutput;
 };
 
 export function GlassSupplierList({ initialData }: GlassSupplierListProps) {
-  const router = useRouter();
-  const utils = api.useUtils();
-  const [ search, setSearch ] = useState('');
-  const [ isActive, setIsActive ] = useState<'all' | 'active' | 'inactive'>('all');
-  const [ page, setPage ] = useState(1);
+  const [ dialogOpen, setDialogOpen ] = useState(false);
+  const [ dialogMode, setDialogMode ] = useState<'create' | 'edit'>('create');
+  const [ selectedSupplier, setSelectedSupplier ] = useState<(FormValues & { id: string }) | undefined>(undefined);
+
+  const { deleteMutation } = useGlassSupplierMutations();
   const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
   const [ supplierToDelete, setSupplierToDelete ] = useState<{ id: string; name: string } | null>(null);
 
-  // Query with filters
-  const { data, isLoading } = api.admin[ 'glass-supplier' ].list.useQuery(
-    {
-      isActive,
-      limit: 20,
-      page,
-      search: search || undefined,
-      sortBy: 'name',
-      sortOrder: 'asc',
-    },
-    {
-      initialData,
-      placeholderData: (previousData) => previousData, // TanStack Query v5 replacement for keepPreviousData
-    }
-  );
-
-  // Delete mutation
-  const deleteMutation = api.admin[ 'glass-supplier' ].delete.useMutation({
-    onError: (error) => {
-      toast.error('Error al eliminar proveedor', {
-        description: error.message,
-      });
-    },
-    onSuccess: () => {
-      toast.success('Proveedor eliminado correctamente');
-      setDeleteDialogOpen(false);
-      setSupplierToDelete(null);
-      // Invalidate list to refresh
-      void utils.admin[ 'glass-supplier' ].list.invalidate();
-    },
-  });
-
   const handleCreateClick = () => {
-    router.push('/admin/glass-suppliers/new');
+    setDialogMode('create');
+    setSelectedSupplier(undefined);
+    setDialogOpen(true);
   };
 
-  const handleEditClick = (id: string) => {
-    router.push(`/admin/glass-suppliers/${id}`);
+  const handleEditClick = (supplier: (FormValues & { id: string }) | GlassSupplierListOutput[ 'items' ][ number ]) => {
+    setDialogMode('edit');
+    setSelectedSupplier(supplier as FormValues & { id: string });
+    setDialogOpen(true);
   };
 
   const handleDeleteClick = (id: string, name: string) => {
@@ -85,13 +57,22 @@ export function GlassSupplierList({ initialData }: GlassSupplierListProps) {
     setDeleteDialogOpen(true);
   };
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDelete = () => {
     if (!supplierToDelete) return;
-    await deleteMutation.mutateAsync({ id: supplierToDelete.id });
+    deleteMutation.mutate(
+      { id: supplierToDelete.id },
+      {
+        onSuccess: () => {
+          setDeleteDialogOpen(false);
+          setSupplierToDelete(null);
+        },
+      }
+    );
   };
 
-  const suppliers = data?.items ?? [];
-  const totalPages = data?.totalPages ?? 1;
+  const suppliers = initialData.items ?? [];
+  const totalPages = initialData.totalPages ?? 1;
+  const page = initialData.page ?? 1;
 
   return (
     <div className="space-y-6">
@@ -109,16 +90,7 @@ export function GlassSupplierList({ initialData }: GlassSupplierListProps) {
             </label>
             <div className="relative">
               <Search className="absolute top-2.5 left-2.5 size-4 text-muted-foreground" />
-              <Input
-                className="pl-8"
-                id="search"
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1); // Reset to first page on search
-                }}
-                placeholder="Buscar por nombre, código o país..."
-                value={search}
-              />
+              <Input className="pl-8" id="search" placeholder="Buscar por nombre, código o país..." />
             </div>
           </div>
 
@@ -127,13 +99,7 @@ export function GlassSupplierList({ initialData }: GlassSupplierListProps) {
             <label className="font-medium text-sm" htmlFor="isActive">
               Estado
             </label>
-            <Select
-              onValueChange={(value) => {
-                setIsActive(value as 'all' | 'active' | 'inactive');
-                setPage(1);
-              }}
-              value={isActive}
-            >
+            <Select>
               <SelectTrigger id="isActive">
                 <SelectValue />
               </SelectTrigger>
@@ -156,7 +122,6 @@ export function GlassSupplierList({ initialData }: GlassSupplierListProps) {
       </Card>
 
       {/* Table */}
-
       <Table>
         <TableHeader>
           <TableRow>
@@ -169,58 +134,46 @@ export function GlassSupplierList({ initialData }: GlassSupplierListProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isLoading && (
-            <TableRow>
-              <TableCell className="text-center" colSpan={6}>
-                Cargando...
-              </TableCell>
-            </TableRow>
-          )}
-          {!isLoading && suppliers.length === 0 && (
+          {suppliers.length === 0 && (
             <TableRow>
               <TableCell className="text-center text-muted-foreground" colSpan={6}>
                 No se encontraron proveedores
               </TableCell>
             </TableRow>
           )}
-          {!isLoading &&
-            suppliers.map((supplier) => (
-              <TableRow key={supplier.id}>
-                <TableCell className="font-medium">{supplier.name}</TableCell>
-                <TableCell>
-                  {supplier.code ? (
-                    <Badge variant="outline">{supplier.code}</Badge>
-                  ) : (
-                    <span className="text-muted-foreground text-sm">-</span>
-                  )}
-                </TableCell>
-                <TableCell className="text-sm">{supplier.country || '-'}</TableCell>
-                <TableCell>
-                  <Badge variant="secondary">{supplier._count.glassTypes}</Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge variant={supplier.isActive ? 'default' : 'secondary'}>
-                    {supplier.isActive ? 'Activo' : 'Inactivo'}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button onClick={() => handleEditClick(supplier.id)} size="icon" variant="ghost">
-                      <Pencil className="size-4" />
-                      <span className="sr-only">Editar</span>
-                    </Button>
-                    <Button
-                      onClick={() => handleDeleteClick(supplier.id, supplier.name)}
-                      size="icon"
-                      variant="ghost"
-                    >
-                      <Trash2 className="size-4 text-destructive" />
-                      <span className="sr-only">Eliminar</span>
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
+          {suppliers.map((supplier) => (
+            <TableRow key={supplier.id}>
+              <TableCell className="font-medium">{supplier.name}</TableCell>
+              <TableCell>
+                {supplier.code ? (
+                  <Badge variant="outline">{supplier.code}</Badge>
+                ) : (
+                  <span className="text-muted-foreground text-sm">-</span>
+                )}
+              </TableCell>
+              <TableCell className="text-sm">{supplier.country || '-'}</TableCell>
+              <TableCell>
+                <Badge variant="secondary">{supplier._count.glassTypes}</Badge>
+              </TableCell>
+              <TableCell>
+                <Badge variant={supplier.isActive ? 'default' : 'secondary'}>
+                  {supplier.isActive ? 'Activo' : 'Inactivo'}
+                </Badge>
+              </TableCell>
+              <TableCell className="text-right">
+                <div className="flex justify-end gap-2">
+                  <Button onClick={() => handleEditClick(supplier)} size="icon" variant="ghost">
+                    <Pencil className="size-4" />
+                    <span className="sr-only">Editar</span>
+                  </Button>
+                  <Button onClick={() => handleDeleteClick(supplier.id, supplier.name)} size="icon" variant="ghost">
+                    <Trash2 className="size-4 text-destructive" />
+                    <span className="sr-only">Eliminar</span>
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
 
@@ -231,21 +184,22 @@ export function GlassSupplierList({ initialData }: GlassSupplierListProps) {
             Página {page} de {totalPages}
           </p>
           <div className="flex gap-2">
-            <Button disabled={page === 1} onClick={() => setPage((p) => p - 1)} size="sm" variant="outline">
+            <Button disabled={page === 1} size="sm" variant="outline">
               Anterior
             </Button>
-            <Button
-              disabled={page === totalPages}
-              onClick={() => setPage((p) => p + 1)}
-              size="sm"
-              variant="outline"
-            >
+            <Button disabled={page === totalPages} size="sm" variant="outline">
               Siguiente
             </Button>
           </div>
         </div>
       )}
 
+      <GlassSupplierDialog
+        defaultValues={selectedSupplier}
+        mode={dialogMode}
+        onOpenChangeAction={setDialogOpen}
+        open={dialogOpen}
+      />
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
