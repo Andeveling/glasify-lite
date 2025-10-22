@@ -5,6 +5,16 @@
 **Status**: Draft  
 **Input**: User description: "Convert GlassType and GlassSolution to static taxonomy based on industry standards. Tenants manage their own suppliers via CRUD."
 
+## Clarifications
+
+### Session 2025-10-22
+
+- Q: GlassType management model (fully static seed-only vs admin CRUD) → A: **Hybrid Model** - Seed initial 30 types from Tecnoglass + Admin has full CRUD (create/update/delete) for custom types. Field `isSeeded` distinguishes base types from custom types.
+- Q: How to populate GlassCharacteristic and GlassTypeSolution data → A: **Seed both** - Seed ~10-15 standard characteristics (tempered, laminated, low-e, triple-glazed, acoustic, hurricane-resistant) + seed GlassTypeSolution relationships for 30 Tecnoglass types with performanceRating. Admin can assign via CRUD to custom types.
+- Q: Handle deprecated fields in GlassType (isTempered, isLaminated, isLowE, isTripleGlazed, purpose, glassSupplierId, pricePerSqm, sku) → A: **Delete immediately** - App not in production yet, remove all deprecated fields, migration script only, clean schema for v1.0 launch.
+- Q: Role-based access for glass taxonomy CRUD (admin/seller/user permissions) → A: **Admin-only CRUD** - Only role='admin' can manage GlassType, GlassCharacteristic, and GlassTypeSolution. Sellers/users have read-only access for quote creation.
+- Q: Migration strategy for legacy data (preserve existing 4 glass types vs clean slate) → A: **Clean slate** - Delete all existing glass types, remove deprecated fields from schema, start fresh with 30 seeded Tecnoglass types. App not in production, no legacy data to preserve.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Standardized Glass Types Catalog (Priority: P1)
@@ -17,9 +27,9 @@ When creating quotes, users select from a standardized catalog of glass types ba
 
 **Acceptance Scenarios**:
 
-1. **Given** admin views glass types catalog, **When** filtering by series (Serie-R, Serie-N, Solarban), **Then** all types from that series appear with technical specifications
-2. **Given** user creates quote, **When** selecting glass type, **Then** dropdown shows only standardized types with nomenclature (e.g., "N70/38 - Neutral Low-E")
-3. **Given** standardized glass type exists, **When** tenant tries to create custom glass type, **Then** system prevents creation (no CRUD for glass types)
+1. **Given** admin views glass types catalog, **When** filtering by series (Serie-R, Serie-N, Solarban), **Then** all seeded types from that series appear with technical specifications and badge indicating "Seeded"
+2. **Given** user creates quote, **When** selecting glass type, **Then** dropdown shows both seeded standard types and admin-created custom types with nomenclature (e.g., "N70/38 - Neutral Low-E")
+3. **Given** admin needs custom glass type, **When** accessing glass type management, **Then** can create new type with full technical specs (marked `isSeeded: false`)
 
 ---
 
@@ -55,19 +65,19 @@ Each tenant maintains their own supplier catalog via existing CRUD operations. T
 
 ---
 
-### User Story 4 - Data Migration from Dynamic to Static (Priority: P1)
+### User Story 4 - Schema Migration & Clean Slate (Priority: P1)
 
-Existing glass types and solutions in the database are migrated to static seed data. Historical quotes maintain references to glass types via IDs that now point to seeded data instead of tenant-created records. No data loss occurs.
+Database schema is cleaned of all deprecated fields and legacy data. Fresh start with 30 seeded Tecnoglass types and proper relational structure (GlassCharacteristic, GlassTypeSolution). App not in production allows complete schema refactoring without legacy constraints.
 
-**Why this priority**: Zero downtime requirement. Cannot break existing quotes or client data during migration. This ensures business continuity.
+**Why this priority**: Clean architecture from start. No technical debt, no deprecated fields, no migration complexity. Foundation for production launch.
 
-**Independent Test**: Before migration, count of glass types and solutions matches after migration. Historical quotes still render correctly with all glass type technical specs intact. Tenant-specific suppliers remain unchanged.
+**Independent Test**: After migration, GlassType table has 30 seeded Tecnoglass records with clean schema (no deprecated fields). GlassCharacteristic has ~10-15 records. GlassTypeSolution has relationships defined. All models match final production schema.
 
 **Acceptance Scenarios**:
 
-1. **Given** production database has 50 tenant-created glass types, **When** migration runs, **Then** 50 seed records created with matching IDs (or ID mapping table created)
-2. **Given** historical quote references glass type ID, **When** quote loads after migration, **Then** glass type displays with technical specs from seed data
-3. **Given** migration completes, **When** attempting to create new glass type via old CRUD, **Then** UI/API returns "Glass types are now system-managed" error
+1. **Given** schema migration runs, **When** inspecting GlassType table, **Then** deprecated fields do not exist (isTempered, isLaminated, isLowE, isTripleGlazed, purpose, glassSupplierId, pricePerSqm, sku removed)
+2. **Given** seed script runs, **When** querying GlassType, **Then** exactly 30 Tecnoglass types exist with isSeeded=true and all technical specs populated
+3. **Given** admin accesses glass type management, **When** viewing catalog, **Then** can create new custom types and see seeded types clearly marked
 
 ---
 
@@ -95,15 +105,25 @@ Existing glass types and solutions in the database are migrated to static seed d
 
 - **FR-003**: System MUST provide a fixed taxonomy of glass solutions: Control Solar, Eficiencia Energética, Seguridad, Acústico, Privacidad, and Resistencia a Huracanes
 
-- **FR-004**: Glass types and solutions MUST be seeded during application initialization and NOT be modifiable via tenant CRUD operations
+- **FR-004**: System MUST seed 30 standard glass types from Tecnoglass during initial deployment (Serie-R, Serie-N, Solarban) marked with `isSeeded: true`
 
-- **FR-005**: System MUST maintain existing GlassSupplier CRUD functionality for tenant-specific supplier management (create, read, update, delete suppliers)
+- **FR-005**: Admin users MUST have full CRUD capabilities for GlassType (create, read, update, delete) to manage custom types marked with `isSeeded: false`
 
-- **FR-006**: Tenants MUST be able to associate their suppliers with standardized glass types (many-to-many relationship)
+- **FR-006**: GlassSolution MUST remain fully static (seed-only, no CRUD) as solutions are universal industry standards
 
-- **FR-007**: System MUST migrate existing tenant-created glass types and solutions to seeded data without breaking historical quote references
+- **FR-007**: System MUST seed ~10-15 GlassCharacteristic records (tempered, laminated, low-e, triple-glazed, acoustic, hurricane-resistant, etc.) and GlassTypeSolution relationships linking 30 Tecnoglass types to applicable solutions with performanceRating (basic/standard/good/very_good/excellent)
 
-- **FR-008**: System MUST prevent creation of new glass types or solutions via previous CRUD endpoints (return clear error message directing admins to request new types via support)
+- **FR-008**: System MUST maintain existing GlassSupplier CRUD functionality for tenant-specific supplier management (create, read, update, delete suppliers)
+
+- **FR-009**: Tenants MUST be able to associate their suppliers with glass types (both seeded and custom) via many-to-many relationship
+
+- **FR-010**: System MUST delete all existing glass types from database (clean slate approach - app not in production) and start fresh with 30 seeded Tecnoglass types
+
+- **FR-011**: System MUST remove all deprecated fields from GlassType model in schema migration (`isTempered`, `isLaminated`, `isLowE`, `isTripleGlazed`, `purpose` enum, `glassSupplierId`, `pricePerSqm`, `sku`, `glassSupplier` relation)
+
+- **FR-012**: System MUST remove deprecated Manufacturer model entirely, migrating businessName/currency/quoteValidityDays to TenantConfig singleton
+
+- **FR-013**: System MUST restrict GlassType, GlassCharacteristic, and GlassTypeSolution CRUD operations to users with role='admin' only. Sellers and users have read-only access for catalog browsing and quote creation
 
 - **FR-009**: Quote forms MUST display glass types with nomenclature format: `[Code] - [Description]` (e.g., "N70/38 - Neutral Low-E, 72.7% visible transmission")
 

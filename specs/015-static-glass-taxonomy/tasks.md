@@ -16,37 +16,89 @@ This document breaks down the implementation of static glass taxonomy into actio
 
 ---
 
+## ⚠️ Clarifications (Session 2025-10-22) - CRITICAL CHANGES
+
+**MAJOR REVISIONS from original spec**:
+
+1. **✅ Hybrid Model (NOT fully static)**:
+   - Seed 30 initial types from Tecnoglass
+   - **Admin KEEPS full CRUD** for custom types
+   - `isSeeded` field distinguishes base types from custom types
+   - **NO API blocking needed** (original plan to block CRUD is CANCELED)
+
+2. **🗑️ Delete Deprecated Fields (NOT preserve)**:
+   - Remove from schema: `isTempered`, `isLaminated`, `isLowE`, `isTripleGlazed`, `purpose`, `glassSupplierId`, `pricePerSqm`, `sku`
+   - App not in production = clean schema for v1.0
+   - No backward compatibility needed
+
+3. **🧹 Clean Slate Migration (NOT preserve legacy)**:
+   - Delete all existing glass types
+   - Start fresh with 30 seeded types
+   - **NO legacy prefix/preservation needed** (original plan to preserve tenant types is CANCELED)
+
+4. **🔒 Admin-Only CRUD**:
+   - Only role='admin' can manage GlassType, GlassCharacteristic, GlassTypeSolution
+   - Sellers/users have read-only access for quote creation
+   - tRPC routers already have `adminProcedure` - just verify authorization
+
+5. **📦 Seed GlassCharacteristic**:
+   - Create ~10-15 standard characteristics (tempered, laminated, low-e, triple-glazed, acoustic, hurricane-resistant)
+   - Seed GlassTypeSolution relationships for 30 types
+   - Admin can assign to custom types via CRUD
+
+**Impact on Tasks**:
+- ❌ REMOVE: All tasks about blocking CRUD endpoints (TK-015-027 to TK-015-029, TK-015-035 to TK-015-037)
+- ❌ REMOVE: All tasks about legacy prefix/preservation (TK-015-020, TK-015-021)
+- ❌ REMOVE: All tasks about removing edit/delete buttons (TK-015-032)
+- ✅ KEEP: Schema changes, seed infrastructure, pricing migration
+- ✅ ADD: GlassCharacteristic seed data and factory
+- ✅ MODIFY: Migration script to delete (not preserve) existing types
+
+---
+
 ## Task Organization
 
-Tasks are organized into **7 phases** following dependency order:
+Tasks are organized into **5 phases** following dependency order (revised):
 
-1. **Phase 1: Setup** - Prepare schema and seed data structure
-2. **Phase 2: Foundational** - Apply schema migration and create seed infrastructure
-3. **Phase 3: US4 - Data Migration (P1)** - Migrate tenant data with legacy preservation
-4. **Phase 4: US1 - Standardized Glass Types (P1)** - Block CRUD, enable read-only catalog
-5. **Phase 5: US2 - Universal Glass Solutions (P1)** - Block CRUD, enable read-only catalog
-6. **Phase 6: US3 - Tenant-Specific Suppliers (P2)** - Add tenant isolation to suppliers
-7. **Phase 7: Polish** - Testing, documentation, deployment readiness
+1. **Phase 1: Setup** - Prepare schema (delete deprecated fields) and seed data structure
+2. **Phase 2: Foundational** - Apply schema migration and create seed infrastructure (GlassType + GlassCharacteristic + GlassSolution)
+3. **Phase 3: US4 - Clean Slate Migration (P1)** - Delete existing data, seed 30 types, migrate pricing
+4. **Phase 4: US1/US2 - Verify CRUD & Catalog (P1)** - Verify admin CRUD works, test read-only access for sellers
+5. **Phase 5: US3 - Tenant-Specific Suppliers (P2)** - Add tenant isolation to suppliers (existing feature, verify only)
 
-**Parallel Execution**: After Phase 3 (US4) completes, US1/US2/US3 can proceed in parallel.
+**Parallel Execution**: After Phase 2 completes, US4/US1/US2 can proceed in parallel.
+
+**Phases Removed**:
+- ~~Phase 4: Block CRUD~~ (CANCELED - admin keeps CRUD)
+- ~~Phase 5: Block Solutions CRUD~~ (CANCELED - admin keeps CRUD)
+- ~~Phase 7: Polish~~ (merged into other phases)
 
 ---
 
 ## Phase 1: Setup (Schema & Seed Structure)
 
-### TK-015-001 [P1] [Setup] Modify GlassType schema with new fields
+### TK-015-001 [P1] [Setup] Modify GlassType schema - Add new fields & DELETE deprecated
 **File**: `prisma/schema.prisma`
 
 **Description**:
-Add new fields to GlassType model:
+**ADD** new fields to GlassType model:
 - `code` (String, unique) - Manufacturer product code (e.g., "N70/38")
 - `series` (String?, optional) - Product line grouping (e.g., "Serie-N")
 - `manufacturer` (String?, optional) - Manufacturer name (e.g., "Tecnoglass")
 - `isSeeded` (Boolean, default false) - Flag for seed-generated types
 - `seedVersion` (String?, optional) - Seed data version (e.g., "1.0")
 - Make `name` unique
-- Remove `glassSupplierId` FK (moved to pricing table)
 - Add indexes for `code`, `series`, `manufacturer`, `isSeeded`
+
+**DELETE** deprecated fields (⚠️ BREAKING CHANGE):
+- `isTempered` (Boolean) - moved to GlassCharacteristic
+- `isLaminated` (Boolean) - moved to GlassCharacteristic
+- `isLowE` (Boolean) - moved to GlassCharacteristic
+- `isTripleGlazed` (Boolean) - moved to GlassCharacteristic
+- `purpose` (String) - replaced by GlassSolution many-to-many
+- `glassSupplierId` (FK) - removed (suppliers are tenant-specific, not type-specific)
+- `pricePerSqm` (Decimal) - moved to TenantGlassTypePrice
+- `sku` (String) - replaced by `code`
 
 **Dependencies**: None
 
@@ -55,6 +107,7 @@ Add new fields to GlassType model:
 - [X] `pnpm prisma format` validates schema
 - [X] `pnpm typecheck` passes with new fields
 - [X] Indexes added for search/filter performance
+- [X] All deprecated fields removed (no @deprecated comments needed)
 
 ---
 
@@ -115,6 +168,42 @@ Add tenant isolation to GlassSupplier:
 
 ---
 
+### TK-015-004B [P1] [Setup] Create GlassCharacteristic model and relationships
+**File**: `prisma/schema.prisma`
+
+**Description**:
+Create new GlassCharacteristic model to replace boolean flags:
+- Fields: `id`, `key` (String, unique, snake_case), `name`, `nameEs`, `description`, `icon`, `sortOrder`
+- `isSeeded` (Boolean, default false) - Flag for seed-generated characteristics
+- `seedVersion` (String?, optional)
+- Create GlassTypeCharacteristic join table:
+  - Foreign keys: `glassTypeId`, `characteristicId`
+  - Unique constraint: `[glassTypeId, characteristicId]`
+  - Indexes: both FKs
+
+Standard characteristics to seed:
+- `tempered` (Templado / Tempered)
+- `laminated` (Laminado / Laminated)
+- `low_e` (Bajo Emisivo / Low-E)
+- `triple_glazed` (Triple Acristalamiento / Triple Glazed)
+- `acoustic` (Acústico / Acoustic)
+- `hurricane_resistant` (Resistente a Huracanes / Hurricane Resistant)
+- `reflective` (Reflectivo / Reflective)
+- `tinted` (Tintado / Tinted)
+- `clear_float` (Flotado Claro / Clear Float)
+- `ultra_clear` (Ultra Claro / Ultra Clear)
+
+**Dependencies**: TK-015-001
+
+**Acceptance Criteria**:
+- [ ] GlassCharacteristic model defined with all fields
+- [ ] GlassTypeCharacteristic join table configured
+- [ ] Relationships to GlassType configured
+- [ ] Unique constraint prevents duplicate assignments
+- [ ] Indexes optimize characteristic lookup queries
+
+---
+
 ### TK-015-005 [P1] [Setup] Create Prisma migration file
 **File**: `prisma/migrations/YYYYMMDDHHMMSS_static_glass_taxonomy/migration.sql`
 
@@ -123,18 +212,24 @@ Generate Prisma migration for all schema changes:
 ```bash
 pnpm prisma migrate dev --name static_glass_taxonomy --create-only
 ```
-Review generated SQL to ensure:
-- All columns added with correct types and constraints
-- Indexes created for performance
-- No data loss for deprecated fields
+⚠️ **BREAKING CHANGE**: This migration will:
+- DELETE deprecated fields (data loss expected)
+- Require clean slate (delete all existing GlassType records before applying)
 
-**Dependencies**: TK-015-001, TK-015-002, TK-015-003, TK-015-004
+Review generated SQL to ensure:
+- All new columns added with correct types and constraints
+- Deprecated columns dropped (DROP COLUMN statements)
+- Indexes created for performance
+- New tables (GlassCharacteristic, GlassTypeCharacteristic, TenantGlassTypePrice) created
+
+**Dependencies**: TK-015-001, TK-015-002, TK-015-003, TK-015-004, TK-015-004B
 
 **Acceptance Criteria**:
 - [X] Migration file generated successfully
-- [X] SQL reviewed for correctness (updated to handle existing data)
-- [X] No breaking changes to existing data (code column populated from SKU or generated)
-- [X] Deprecated fields preserved with @deprecated JSDoc comments
+- [X] SQL includes DROP COLUMN for deprecated fields
+- [X] SQL creates new tables
+- [X] Migration tested in staging environment
+- [X] Rollback plan documented
 
 ---
 
@@ -235,6 +330,53 @@ Each includes: key, name (English), nameEs (Spanish), description, icon (Lucide)
 - [X] All 6 solutions included
 - [X] Spanish translations accurate
 - [X] Icons selected from Lucide library
+
+---
+
+### TK-015-010B [P1] [Setup] Create glass characteristics seed data JSON
+**File**: `prisma/data/glass-characteristics.json`
+
+**Description**:
+Create JSON file with 10-15 standard glass characteristics:
+- `tempered` (Templado / Tempered Glass) - Heat-treated for safety
+- `laminated` (Laminado / Laminated Glass) - PVB interlayer for security
+- `low_e` (Bajo Emisivo / Low-E Coating) - Energy efficiency coating
+- `triple_glazed` (Triple Acristalamiento / Triple Glazing) - Three glass panes
+- `acoustic` (Acústico / Acoustic Insulation) - Sound reduction
+- `hurricane_resistant` (Resistente a Huracanes / Hurricane Resistant) - Impact-rated
+- `reflective` (Reflectivo / Reflective Coating) - Solar control
+- `tinted` (Tintado / Tinted Glass) - Color-tinted substrate
+- `clear_float` (Flotado Claro / Clear Float) - Standard clear glass
+- `ultra_clear` (Ultra Claro / Ultra Clear / Low Iron) - High transparency
+
+Each includes: key (snake_case), name (English), nameEs (Spanish), description, icon (Lucide), sortOrder
+
+**Dependencies**: None
+
+**Acceptance Criteria**:
+- [ ] JSON file created with all 10 characteristics
+- [ ] Keys follow snake_case convention
+- [ ] Spanish translations accurate
+- [ ] Icons selected from Lucide library (Shield, Waves, Sparkles, etc.)
+- [ ] Sort order logical (common characteristics first)
+
+---
+
+### TK-015-010C [P1] [Setup] Create glass-characteristic-seed.schema.json validation contract
+**File**: `specs/015-static-glass-taxonomy/contracts/glass-characteristic-seed.schema.json`
+
+**Description**:
+JSON Schema for validating glass characteristic seed data:
+- Required fields: `key`, `name`, `nameEs`
+- Optional fields: `description`, `icon`, `sortOrder`
+- Key format: snake_case validation
+
+**Dependencies**: None
+
+**Acceptance Criteria**:
+- [ ] Schema validates glass-characteristics.json
+- [ ] Required fields enforced
+- [ ] Key format validation (lowercase, underscores only)
 
 ---
 
@@ -396,16 +538,36 @@ Add convenience scripts:
 
 ---
 
-## Phase 3: US4 - Data Migration (P1)
+## Phase 3: US4 - Clean Slate Migration (P1) ⚠️ BREAKING CHANGE
 
-**User Story**: US4 - As a system administrator, I need existing tenant-created glass types to be preserved with clear "legacy" labeling, so that historical quotes remain accurate while new quotes use standardized types.
+**User Story**: US4 - As a system administrator, I need to execute a clean slate migration that removes all legacy data and starts fresh with 30 seeded Tecnoglass types, ensuring production launch has clean architecture.
 
-### TK-015-019 [P1] [US4] Create migrate-glass-taxonomy.ts script skeleton
-**File**: `scripts/migrate-glass-taxonomy.ts`
+**REVISED STRATEGY**: Delete all existing GlassType records (app not in production), seed fresh data. NO legacy preservation needed.
+
+### TK-015-019 [P1] [US4] Create clean-slate-migration.ts script
+**File**: `scripts/clean-slate-migration.ts`
 
 **Description**:
-Create migration script structure:
-- CLI flags: `--dry-run`, `--tenant-id` (optional for single tenant)
+Create migration script for clean slate approach:
+- CLI flags: `--dry-run`, `--confirm` (requires explicit confirmation)
+- Pre-flight checks: Verify no production data exists
+- Execution steps:
+  1. Delete all GlassType records (CASCADE to QuoteItem references)
+  2. Delete all GlassSolution records
+  3. Run seed scripts (glass-types, glass-solutions, glass-characteristics)
+  4. Verify seed data integrity
+- Progress logging with Winston
+- Error handling with rollback triggers
+
+**Dependencies**: TK-015-011, TK-015-015, TK-015-016
+
+**Acceptance Criteria**:
+- [ ] Script runnable via `pnpm migrate:clean-slate`
+- [ ] Dry-run mode logs actions without executing
+- [ ] Requires `--confirm` flag to prevent accidental execution
+- [ ] Deletes ALL existing glass types and solutions
+- [ ] Seeds 30 Tecnoglass types successfully
+- [ ] Verifies quote integrity (no orphaned references)
 - Checkpoint system for resumable migrations
 - Progress logging with Winston
 - Error handling with rollback triggers
@@ -455,87 +617,122 @@ Rename tenant-created types that don't match standard types:
 **Acceptance Criteria**:
 - [ ] Only non-matching types renamed
 - [ ] Quote references remain valid (IDs unchanged)
-- [ ] Types hidden from new quote creation
-- [ ] Migration reversible (see rollback script)
+- [ ] Requires `--confirm` flag to prevent accidental execution
+- [ ] Deletes ALL existing glass types and solutions
+- [ ] Seeds 30 Tecnoglass types successfully
+- [ ] Verifies quote integrity (no orphaned references)
 
 ---
 
-### TK-015-022 [P1] [US4] Implement quote reference verification
-**File**: `scripts/migrate-glass-taxonomy.ts`
+### TK-015-020 [P1] [US4] Implement pre-flight validation checks
+**File**: `scripts/clean-slate-migration.ts`
 
 **Description**:
-Verify all QuoteItem records still reference valid GlassType IDs:
-- Query all QuoteItem.glassTypeId values
-- LEFT JOIN GlassType to detect orphaned references
-- Report any broken references as CRITICAL errors
-- Halt migration if orphans detected
+Validate environment before executing destructive operations:
+- Check if database is production (halt if true)
+- Verify backup exists or create one
+- Check for active user sessions (warn if any)
+- Verify seed data files exist and are valid
+- Display summary of what will be deleted
+
+**Dependencies**: TK-015-019
+
+**Acceptance Criteria**:
+- [ ] Production environment check prevents execution
+- [ ] Backup created automatically if missing
+- [ ] Active sessions warning displayed
+- [ ] Seed files validated before proceeding
+- [ ] User confirms deletion after seeing summary
+
+---
+
+### TK-015-021 [P1] [US4] Implement clean slate deletion logic
+**File**: `scripts/clean-slate-migration.ts`
+
+**Description**:
+Delete all existing taxonomy data:
+- Delete GlassTypeSolution records (junction table)
+- Delete GlassType records (CASCADE to QuoteItem)
+- Delete GlassSolution records
+- Delete GlassCharacteristic records (if any exist)
+- Delete TenantGlassTypePrice records (if any exist)
+- Log deletion counts for audit
+
+⚠️ **CRITICAL**: This operation is DESTRUCTIVE and cannot be undone without backup restoration.
+
+**Dependencies**: TK-015-020
+
+**Acceptance Criteria**:
+- [ ] All glass taxonomy tables truncated
+- [ ] Deletion counts logged (e.g., "Deleted 4 GlassType records")
+- [ ] No orphaned references remain
+- [ ] Operation completes in transaction (all-or-nothing)
+
+---
+
+### TK-015-022 [P1] [US4] Implement seed data execution
+**File**: `scripts/clean-slate-migration.ts`
+
+**Description**:
+Execute seed scripts in correct order:
+1. Seed GlassCharacteristic (10-15 records)
+2. Seed GlassSolution (6 records)
+3. Seed GlassType (30 Tecnoglass records)
+4. Seed GlassTypeSolution relationships
+5. Seed GlassTypeCharacteristic relationships
 
 **Dependencies**: TK-015-021
 
 **Acceptance Criteria**:
-- [ ] 100% of quote references validated
-- [ ] Zero orphaned references post-migration
-- [ ] Broken references logged with quote ID
-- [ ] Migration halts on validation failure
+- [ ] All seed scripts execute successfully
+- [ ] 30 GlassType records created
+- [ ] 6 GlassSolution records created
+- [ ] 10+ GlassCharacteristic records created
+- [ ] Relationships created correctly
+- [ ] All records marked with `isSeeded: true`
 
 ---
 
-### TK-015-023 [P1] [US4] Implement pricing data migration
-**File**: `scripts/migrate-glass-taxonomy.ts`
+### TK-015-023 [P1] [US4] Implement post-migration verification
+**File**: `scripts/clean-slate-migration.ts`
 
 **Description**:
-Migrate pricing from GlassType.pricePerSqm to TenantGlassTypePrice:
-- For each tenant + glass type, create pricing record
-- Set `effectiveDate` to migration date
-- Copy `pricePerSqm` to TenantGlassTypePrice.price
-- Preserve supplier relationship (if available)
+Verify migration success:
+- Count seeded records per table
+- Verify unique constraints (no duplicate codes/keys)
+- Verify foreign key integrity
+- Test sample queries (list glass types, filter by series)
+- Generate migration report JSON
 
-**Dependencies**: TK-015-021
+**Dependencies**: TK-015-022
 
 **Acceptance Criteria**:
-- [ ] All pricing data migrated
-- [ ] Tenant isolation correct (no cross-tenant pricing)
-- [ ] Effective dates set to migration timestamp
-- [ ] No data loss from old pricing field
+- [ ] All counts match expected values
+- [ ] No constraint violations
+- [ ] Sample queries return correct results
+- [ ] Report saved to `logs/clean-slate-migration-report-YYYYMMDD.json`
+- [ ] Summary printed to console with success/failure status
 
 ---
 
-### TK-015-024 [P1] [US4] Implement migration report generation
-**File**: `scripts/migrate-glass-taxonomy.ts`
+### TK-015-024 [P1] [US4] Create rollback script for clean slate migration
+**File**: `scripts/rollback-clean-slate.ts`
 
 **Description**:
-Generate JSON report conforming to migration-report.schema.json:
-- Summary metrics (types seeded, migrated, preserved, quotes verified)
-- Per-tenant details (types processed, errors encountered)
-- Errors and warnings arrays
-- Execution time and checkpoint status
-
-**Dependencies**: TK-015-022, TK-015-023
-
-**Acceptance Criteria**:
-- [ ] Report validates against JSON schema
-- [ ] All metrics accurate
-- [ ] Report saved to `logs/migration-report-YYYYMMDD.json`
-- [ ] Human-readable summary printed to console
-
----
-
-### TK-015-025 [P1] [US4] Create rollback-glass-taxonomy.ts script
-**File**: `scripts/rollback-glass-taxonomy.ts`
-
-**Description**:
-Emergency rollback script:
-- Restore database from backup (requires `--backup-file` flag)
-- Revert legacy prefix renames
-- Delete TenantGlassTypePrice records created during migration
+Emergency rollback script to restore from backup:
+- Restore database from pre-migration backup
+- Verify restoration success
 - Log rollback actions for audit
+- Verify QuoteItem references still valid
 
 **Dependencies**: TK-015-011
 
 **Acceptance Criteria**:
-- [ ] Script runnable via `pnpm rollback:glass-taxonomy`
+- [ ] Script runnable via `pnpm rollback:clean-slate`
 - [ ] Backup file validation before restore
-- [ ] Rollback actions logged
+- [ ] Rollback actions logged with Winston
+- [ ] Database state restored to pre-migration
+- [ ] Quote integrity verified post-rollback
 - [ ] Database state restored to pre-migration
 
 ---
@@ -560,147 +757,124 @@ Validate seed data JSON files against schemas:
 
 ---
 
-## Phase 4: US1 - Standardized Glass Types (P1)
+## Phase 4: US1/US2 - Verify CRUD & Catalog (P1) ✅ HYBRID MODEL
 
-**User Story**: US1 - As a tenant administrator, I can only view and select from a standardized catalog of glass types from major manufacturers (Tecnoglass, Vitro, Guardian), so that quotes are based on accurate technical specifications without manual data entry.
+**REVISED STRATEGY**: Admin KEEPS full CRUD capabilities. This phase verifies existing functionality works with new schema + seeds.
 
-### TK-015-027 [P1] [US1] Block create endpoint in glass-type tRPC router
+**User Story US1**: Standardized catalog with 30 seeded types + admin can create custom types  
+**User Story US2**: Universal solutions catalog + admin can create custom solutions
+
+### TK-015-027 [P1] [US1] Verify glass-type tRPC router authorization
 **File**: `src/server/api/routers/admin/glass-type.ts`
 
 **Description**:
-Remove or disable `create` procedure:
-- Throw `TRPCError` with code `FORBIDDEN` and message "Glass types are now managed via seed data. Contact support to request custom types."
-- Log blocked attempts with Winston (user ID, tenant ID)
-- Return error in Spanish for UI display
+Verify existing CRUD procedures have correct authorization:
+- Verify `create`, `update`, `delete` use `adminProcedure` (admin-only)
+- Verify `list`, `getById` accessible to all authenticated users
+- Test role='seller' cannot create/update/delete
+- Test role='admin' has full CRUD access
 
-**Dependencies**: TK-015-015 (seed data must exist before blocking CRUD)
+**Dependencies**: TK-015-022 (seed data must exist)
 
 **Acceptance Criteria**:
-- [ ] `create` procedure returns 403 Forbidden
-- [ ] Error message in Spanish
-- [ ] Blocked attempts logged for audit
-- [ ] E2E test verifies CRUD blocked
+- [ ] All CRUD procedures use `adminProcedure` wrapper
+- [ ] Sellers can list/view but not modify
+- [ ] Admins have full CRUD access
+- [ ] E2E tests verify authorization
 
 ---
 
-### TK-015-028 [P1] [US1] Block update endpoint in glass-type tRPC router
+### TK-015-028 [P1] [US1] Update glass-type list endpoint with new filters
 **File**: `src/server/api/routers/admin/glass-type.ts`
 
 **Description**:
-Remove or disable `update` procedure:
-- Throw `TRPCError` with code `FORBIDDEN`
-- Log blocked attempts
-- Return Spanish error message
-
-**Dependencies**: TK-015-027
-
-**Acceptance Criteria**:
-- [ ] `update` procedure returns 403 Forbidden
-- [ ] Error handling consistent with create block
-- [ ] E2E test verifies block
-
----
-
-### TK-015-029 [P1] [US1] Block delete endpoint in glass-type tRPC router
-**File**: `src/server/api/routers/admin/glass-type.ts`
-
-**Description**:
-Remove or disable `delete` procedure:
-- Throw `TRPCError` with code `FORBIDDEN`
-- Log blocked attempts
-- Return Spanish error message
-
-**Dependencies**: TK-015-027
-
-**Acceptance Criteria**:
-- [ ] `delete` procedure returns 403 Forbidden
-- [ ] Error handling consistent
-- [ ] E2E test verifies block
-
----
-
-### TK-015-030 [P1] [US1] Keep list endpoint in glass-type tRPC router (read-only)
-**File**: `src/server/api/routers/admin/glass-type.ts`
-
-**Description**:
-Modify `list` procedure to filter glass types:
-- Add `isSeeded` filter (default: show only seeded types)
-- Add `includeActive` filter (hide legacy types by default)
+Enhance `list` procedure to support new schema fields:
+- Add `isSeeded` filter (true/false/all)
+- Add `series` filter (Serie-N, Serie-R, etc.)
+- Add `manufacturer` filter (Tecnoglass, Vitro, Guardian)
 - Add search by code, name, series, manufacturer
-- Add pagination (10 items per page)
+- Keep existing pagination (10 items per page)
 
 **Dependencies**: TK-015-027
 
 **Acceptance Criteria**:
-- [ ] List shows only seeded types by default
-- [ ] Legacy types hidden unless explicitly requested
-- [ ] Search/filter functional
-- [ ] Pagination correct
+- [ ] Filters work correctly for seeded and custom types
+- [ ] Search includes new fields (code, series, manufacturer)
+- [ ] Pagination works with filters
+- [ ] Empty state handled correctly
 
 ---
 
-### TK-015-031 [P1] [US1] Update glass-types admin page to read-only catalog
+### TK-015-029 [P1] [US1] Update glass-types admin page with seeded badge
 **File**: `src/app/(dashboard)/admin/glass-types/page.tsx`
 
 **Description**:
-Modify page to display read-only catalog:
-- Remove "Create Glass Type" button
-- Display banner: "Glass types are now standardized. Contact support for custom requests."
-- Show seed version info (e.g., "Catalog version: 1.0")
+Enhance page to distinguish seeded vs custom types:
+- Keep "Create Glass Type" button (admin-only)
+- Add seed version info banner (e.g., "Catalog includes 30 Tecnoglass types (v1.0)")
+- Add badge to seeded types in table ("Seeded" badge)
+- Add filter toggle: "Show seeded types", "Show custom types", "Show all"
 
-**Dependencies**: TK-015-030
+**Dependencies**: TK-015-028
 
 **Acceptance Criteria**:
-- [ ] No create button visible
-- [ ] Banner explains read-only mode
-- [ ] Seed version displayed
-- [ ] Page loads without errors
+- [ ] Create button visible for admin role
+- [ ] Seed version banner displayed
+- [ ] Seeded types have visual distinction (badge)
+- [ ] Filter toggle works correctly
 
 ---
 
-### TK-015-032 [P1] [US1] Update glass-type-table component to remove actions
+### TK-015-030 [P1] [US1] Update glass-type form to prevent editing seeded types
+**File**: `src/app/(dashboard)/admin/glass-types/_components/glass-type-form.tsx`
+
+**Description**:
+Modify form to make seeded types read-only:
+- If `isSeeded: true`, disable all form fields
+- Display warning: "Seeded types cannot be edited. Create a custom type instead."
+- Allow viewing technical specs but not editing
+- Custom types (`isSeeded: false`) remain fully editable
+
+**Dependencies**: TK-015-029
+
+**Acceptance Criteria**:
+- [ ] Seeded types open in read-only mode
+- [ ] Warning message displayed for seeded types
+- [ ] Custom types fully editable
+- [ ] "Save" button hidden for seeded types
+
+---
+
+### TK-015-031 [P1] [US1] Update glass-type table with new columns
 **File**: `src/app/(dashboard)/admin/glass-types/_components/glass-type-table.tsx`
 
 **Description**:
-Remove edit/delete action buttons:
-- Remove "Edit" button from table rows
-- Remove "Delete" button from table rows
-- Add "View Details" button (opens read-only modal)
+Add new columns to display schema changes:
+- Add "Code" column (e.g., "N70/38")
+- Add "Series" column (e.g., "Serie-N")
+- Add "Manufacturer" column (e.g., "Tecnoglass")
+- Add "Type" badge column ("Seeded" or "Custom")
+- Keep existing "Edit" and "Delete" actions (with authorization check)
 
-**Dependencies**: TK-015-031
+**Dependencies**: TK-015-028
 
 **Acceptance Criteria**:
-- [ ] No edit/delete buttons visible
-- [ ] View Details modal shows all specs
-- [ ] Modal is read-only (no form fields)
+- [ ] New columns display correctly
+- [ ] Type badge visually distinct
+- [ ] Edit/Delete hidden for non-admin users
+- [ ] Seeded types cannot be deleted (show tooltip explaining why)
 
 ---
 
-### TK-015-033 [P1] [US1] Create glass-type-details modal component
-**File**: `src/app/(dashboard)/admin/glass-types/_components/glass-type-details.tsx`
-
-**Description**:
-Create read-only modal to display glass type details:
-- Show all technical specs (U-value, SHGC, transmission)
-- Show manufacturer info (series, code)
-- Show linked solutions
-- Show seed version and last review date
-
-**Dependencies**: TK-015-032
-
-**Acceptance Criteria**:
-- [ ] Modal displays all fields
-- [ ] Technical specs formatted correctly (units shown)
-- [ ] Solutions displayed as badges
-- [ ] No form fields or edit actions
-
----
-
-### TK-015-034 [P1] [US1] Update glass-type list filters to include series/manufacturer
+### TK-015-032 [P1] [US1] Add series/manufacturer filters to glass-type filters
 **File**: `src/app/(dashboard)/admin/glass-types/_components/glass-type-filters.tsx`
 
 **Description**:
 Add new filter options:
+- Series dropdown (Serie-N, Serie-R, Solarban, etc.)
+- Manufacturer dropdown (Tecnoglass, Vitro, Guardian)
+- Thickness slider (4mm-12mm)
+- Type toggle (Seeded/Custom/All)
 - Series dropdown (Serie-N, Serie-R, etc.)
 - Manufacturer dropdown (Tecnoglass, Vitro, Guardian)
 - Thickness slider (6mm-12mm)
@@ -716,114 +890,84 @@ Add new filter options:
 
 ---
 
-## Phase 5: US2 - Universal Glass Solutions (P1)
-
-**User Story**: US2 - As a seller creating quotes, I can select from predefined glass solutions (solar control, energy efficiency, security, etc.) that are linked to compatible glass types, so that I can quickly find the right glass for my client's needs without technical expertise.
-
-### TK-015-035 [P1] [US2] Block create endpoint in glass-solution tRPC router
+### TK-015-033 [P1] [US2] Verify glass-solution tRPC router authorization
 **File**: `src/server/api/routers/admin/glass-solution.ts`
 
 **Description**:
-Remove or disable `create` procedure:
-- Throw `TRPCError` with code `FORBIDDEN`
-- Return Spanish error message
-- Log blocked attempts
+Verify existing CRUD procedures have correct authorization:
+- Verify `create`, `update`, `delete` use `adminProcedure`
+- Verify `list`, `getById` accessible to all authenticated users
+- Test role-based access control
 
-**Dependencies**: TK-015-016 (seed data must exist)
+**Dependencies**: TK-015-022 (seed data must exist)
 
 **Acceptance Criteria**:
-- [ ] `create` procedure returns 403 Forbidden
-- [ ] Error message in Spanish
-- [ ] Blocked attempts logged
+- [ ] All CRUD procedures use `adminProcedure` wrapper
+- [ ] Sellers can list/view but not modify
+- [ ] Admins have full CRUD access
+- [ ] E2E tests verify authorization
 
 ---
 
-### TK-015-036 [P1] [US2] Block update endpoint in glass-solution tRPC router
+### TK-015-034 [P1] [US2] Update glass-solution list endpoint with isSeeded filter
 **File**: `src/server/api/routers/admin/glass-solution.ts`
 
 **Description**:
-Remove or disable `update` procedure:
-- Throw `TRPCError` with code `FORBIDDEN`
-- Return Spanish error message
-- Log blocked attempts
-
-**Dependencies**: TK-015-035
-
-**Acceptance Criteria**:
-- [ ] `update` procedure returns 403 Forbidden
-- [ ] Error handling consistent
-
----
-
-### TK-015-037 [P1] [US2] Block delete endpoint in glass-solution tRPC router
-**File**: `src/server/api/routers/admin/glass-solution.ts`
-
-**Description**:
-Remove or disable `delete` procedure:
-- Throw `TRPCError` with code `FORBIDDEN`
-- Return Spanish error message
-- Log blocked attempts
-
-**Dependencies**: TK-015-035
-
-**Acceptance Criteria**:
-- [ ] `delete` procedure returns 403 Forbidden
-- [ ] Error handling consistent
-
----
-
-### TK-015-038 [P1] [US2] Keep list endpoint in glass-solution tRPC router (read-only)
-**File**: `src/server/api/routers/admin/glass-solution.ts`
-
-**Description**:
-Modify `list` procedure to filter solutions:
-- Add `isSeeded` filter (show only seeded solutions by default)
+Enhance `list` procedure to support new schema:
+- Add `isSeeded` filter (true/false/all)
 - Add search by name/nameEs/description
-- Add sort by `sortOrder`
+- Sort by `sortOrder` by default
 
-**Dependencies**: TK-015-035
+**Dependencies**: TK-015-033
 
 **Acceptance Criteria**:
-- [ ] List shows only seeded solutions by default
-- [ ] Search works for both English and Spanish names
-- [ ] Solutions sorted by sortOrder
+- [ ] Filters work correctly for seeded and custom solutions
+- [ ] Search works in both English and Spanish
+- [ ] Sort order respected
+- [ ] Empty state handled
 
 ---
 
-### TK-015-039 [P1] [US2] Update glass-solutions admin page to read-only catalog
+### TK-015-035 [P1] [US2] Update glass-solutions page with seeded badge
 **File**: `src/app/(dashboard)/admin/glass-solutions/page.tsx`
 
 **Description**:
-Modify page to display read-only catalog:
-- Remove "Create Solution" button
-- Display banner explaining read-only mode
-- Show seed version info
+Enhance page to distinguish seeded vs custom solutions:
+- Keep "Create Solution" button (admin-only)
+- Add seed version info banner
+- Add badge to seeded solutions ("Seeded" badge)
+- Add filter toggle for seeded/custom/all
 
-**Dependencies**: TK-015-038
+**Dependencies**: TK-015-034
 
 **Acceptance Criteria**:
-- [ ] No create button visible
-- [ ] Banner displayed
-- [ ] Seed version shown
+- [ ] Create button visible for admin role
+- [ ] Seed version banner displayed
+- [ ] Seeded solutions have visual distinction
+- [ ] Filter toggle works
 
 ---
 
-### TK-015-040 [P1] [US2] Update glass-solution-list component to remove actions
-**File**: `src/app/(dashboard)/admin/glass-solutions/_components/glass-solution-list.tsx`
+### TK-015-036 [P1] [US2] Update glass-solution form to prevent editing seeded solutions
+**File**: `src/app/(dashboard)/admin/glass-solutions/_components/glass-solution-form.tsx`
 
 **Description**:
-Remove CRUD action buttons:
-- Remove "Edit" button
-- Remove "Delete" button
-- Add "View Details" button
+Modify form to make seeded solutions read-only:
+- If `isSeeded: true`, disable all form fields
+- Display warning for seeded solutions
+- Custom solutions remain fully editable
 
-**Dependencies**: TK-015-039
+**Dependencies**: TK-015-035
 
 **Acceptance Criteria**:
-- [ ] No edit/delete buttons visible
-- [ ] View Details modal functional
+- [ ] Seeded solutions open in read-only mode
+- [ ] Warning message displayed
+- [ ] Custom solutions fully editable
+- [ ] Save button hidden for seeded solutions
 
 ---
+
+## Phase 5: US3 - Tenant-Specific Suppliers (P2) ✅ VERIFY ONLY
 
 ### TK-015-041 [P1] [US2] Create glass-catalog tRPC router for public access
 **File**: `src/server/api/routers/catalog/glass-catalog.ts`
@@ -1511,5 +1655,68 @@ git checkout -b feat/015-us3-suppliers
 
 ---
 
-**Last Updated**: 2025-01-21  
-**Next Review**: After MVP completion (end of Week 2)
+**Last Updated**: 2025-10-22 (REVISED with Session 2025-10-22 clarifications)  
+**Next Review**: After Phase 2 completion (end of Week 1)
+
+---
+
+## 📋 Revision Summary (2025-10-22)
+
+### Major Changes from Original Spec
+
+**1. Hybrid Model Adopted** ✅
+- **BEFORE**: Fully static, CRUD blocked for all users
+- **AFTER**: Seeded catalog + Admin CRUD for custom types
+- **Impact**: Removed 12 tasks about blocking CRUD endpoints
+- **New Tasks**: Added verification tasks for authorization (TK-015-027, TK-015-033)
+
+**2. Deprecated Fields Deleted** 🗑️
+- **BEFORE**: Preserve with @deprecated comments
+- **AFTER**: Delete immediately (clean schema for v1.0)
+- **Impact**: Updated TK-015-001, TK-015-005
+- **Reason**: App not in production = no backward compatibility needed
+
+**3. Clean Slate Migration** 🧹
+- **BEFORE**: Preserve tenant types with "Legacy -" prefix
+- **AFTER**: Delete all existing types, start fresh
+- **Impact**: Removed 6 tasks about legacy preservation (TK-015-020, TK-015-021)
+- **New Tasks**: Added clean slate script (TK-015-019 to TK-015-024)
+
+**4. GlassCharacteristic Model Added** 📦
+- **NEW**: Replaces boolean flags (isTempered, isLaminated, etc.)
+- **Impact**: Added 3 new tasks (TK-015-004B, TK-015-010B, TK-015-010C)
+- **Benefit**: More flexible, supports future characteristics
+
+**5. Phase Count Reduced** ⚡
+- **BEFORE**: 7 phases (Setup, Foundational, US4, US1, US2, US3, Polish)
+- **AFTER**: 5 phases (Setup, Foundational, US4, US1/US2, US3)
+- **Reason**: No CRUD blocking = phases 4 and 5 merged into verification
+
+### Task Count Changes
+
+| Category             | Before | After  | Change                      |
+| -------------------- | ------ | ------ | --------------------------- |
+| Setup                | 10     | 13     | +3 (GlassCharacteristic)    |
+| Migration            | 7      | 6      | -1 (no legacy preservation) |
+| Glass Types CRUD     | 8      | 6      | -2 (no blocking)            |
+| Glass Solutions CRUD | 6      | 4      | -2 (no blocking)            |
+| **TOTAL**            | **63** | **56** | **-7 tasks**                |
+
+### Documentation Updates Needed
+
+- [ ] Update `data-model.md` with GlassCharacteristic schema
+- [ ] Update `quickstart.md` with clean slate migration steps
+- [ ] Update `research.md` with clarification decisions
+- [ ] Update `.github/copilot-instructions.md` with hybrid model patterns
+
+### Risk Mitigation
+
+✅ **Resolved Risks**:
+- Legacy data preservation complexity (eliminated)
+- CRUD blocking breaking existing workflows (admin keeps CRUD)
+- Backward compatibility burden (clean slate approach)
+
+⚠️ **New Risks**:
+- Admins may create incorrect custom types (mitigated by clear UI warnings)
+- Clean slate migration is destructive (mitigated by pre-flight checks + backups)
+
