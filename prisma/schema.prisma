@@ -171,6 +171,11 @@ model TenantConfig {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  /// Glass type pricing (for static taxonomy feature)
+  glassPricing   TenantGlassTypePrice[]
+  /// Glass suppliers (for future multi-tenancy support)
+  glassSuppliers GlassSupplier[]
+
   @@index([currency])
 }
 
@@ -249,13 +254,20 @@ model Model {
 
 model GlassType {
   id                String                    @id @default(cuid())
-  name              String
+  name              String                    @unique
+  /// Manufacturer product code (e.g., "N70/38", "ClimaGuard 80/70")
+  code              String                    @unique
+  /// Product line grouping (e.g., "Serie-N", "Serie-R", "ClimaGuard")
+  series            String?
+  /// Manufacturer name (e.g., "Tecnoglass", "Guardian", "Vitro")
+  manufacturer      String?
   /// @deprecated Use solutions relationship instead. This field will be removed in v2.0.
   /// Legacy single-purpose classification. Replaced by Many-to-Many GlassTypeSolution.
   /// Maintained for backward compatibility only.
   purpose           GlassPurpose
   thicknessMm       Int
-  /// Precio por metro cuadrado del vidrio (referencia currency de TenantConfig)
+  /// @deprecated Replaced by TenantGlassTypePrice. Maintained for data migration only.
+  /// Will be removed after migration completes.
   pricePerSqm       Decimal                   @db.Decimal(12, 2)
   /// Transmitancia térmica (W/m²·K) — opcional si aplica
   uValue            Decimal?                  @db.Decimal(5, 2)
@@ -267,10 +279,12 @@ model GlassType {
   isLowE            Boolean                   @default(false)
   /// @deprecated Use characteristics relationship instead. Will be removed in v2.0.
   isTripleGlazed    Boolean                   @default(false)
-  // New fields for enhanced structure
+  // Deprecated: Use TenantGlassTypePrice for supplier relationships
+  /// @deprecated Replaced by TenantGlassTypePrice.supplierId. Will be removed in v2.0.
   glassSupplierId   String?
+  /// @deprecated Replaced by TenantGlassTypePrice.supplierId. Will be removed in v2.0.
   glassSupplier     GlassSupplier?            @relation(fields: [glassSupplierId], references: [id], onDelete: SetNull)
-  /// SKU or product code from supplier
+  /// @deprecated Use code field instead. SKU is now the manufacturer code.
   sku               String?                   @unique
   /// Detailed description of the glass type
   description       String?
@@ -282,22 +296,33 @@ model GlassType {
   isActive          Boolean                   @default(true)
   /// Date of last technical review
   lastReviewDate    DateTime?
+  /// Flag for seed-generated types (true) vs tenant-created custom types (false)
+  isSeeded          Boolean                   @default(false)
+  /// Seed data version (e.g., "1.0", "1.1") for idempotent updates
+  seedVersion       String?
   createdAt         DateTime                  @default(now())
   updatedAt         DateTime                  @updatedAt
   quoteItems        QuoteItem[]
   solutions         GlassTypeSolution[]
   characteristics   GlassTypeCharacteristic[]
+  /// @deprecated Replaced by TenantGlassTypePrice. Will be removed in v2.0.
   priceHistory      GlassTypePriceHistory[]
+  /// Per-tenant pricing for this glass type
+  tenantPricing     TenantGlassTypePrice[]
 
-  // Performance indexes for admin table queries (TASK-012)
+  // Performance indexes for admin table queries (TASK-012, TK-015-001)
   @@index([name]) // Search by glass type name
+  @@index([code]) // Search by manufacturer code
+  @@index([series]) // Filter by product series
+  @@index([manufacturer]) // Filter by manufacturer
   @@index([purpose]) // Filter by purpose (deprecated but still indexed)
-  @@index([glassSupplierId]) // Filter by supplier
+  @@index([glassSupplierId]) // Filter by supplier (deprecated)
   @@index([isActive]) // Filter by active status
+  @@index([isSeeded]) // Filter seeded vs custom types
   @@index([thicknessMm]) // Sort/filter by thickness
   @@index([createdAt(sort: Desc)]) // Sort by creation date
   @@index([updatedAt(sort: Desc)]) // Sort by last update
-  @@index([sku]) // Unique SKU lookup
+  @@index([sku]) // Unique SKU lookup (deprecated)
 }
 
 model Service {
@@ -472,12 +497,17 @@ model GlassSolution {
   sortOrder   Int                 @default(0)
   /// Si la solución está activa para mostrarse a usuarios
   isActive    Boolean             @default(true)
+  /// Flag for seed-generated solutions (true) vs custom solutions (false)
+  isSeeded    Boolean             @default(false)
+  /// Seed data version (e.g., "1.0", "1.1") for idempotent updates
+  seedVersion String?
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
   glassTypes  GlassTypeSolution[]
 
   @@index([sortOrder])
   @@index([isActive])
+  @@index([isSeeded])
 }
 
 /// Tabla pivote: Relación Many-to-Many entre GlassType y GlassSolution
@@ -505,30 +535,37 @@ model GlassTypeSolution {
 
 /// Glass Supplier
 /// Represents glass manufacturers (Guardian, Saint-Gobain, Pilkington, AGC, Vitro, etc.)
+/// Note: Currently single-tenant, tenantConfigId optional for backward compatibility
 model GlassSupplier {
-  id           String      @id @default(cuid())
+  id             String                 @id @default(cuid())
+  /// Optional tenant config ID for multi-tenancy support (currently unused in single-tenant mode)
+  tenantConfigId String?                @default("1")
+  tenantConfig   TenantConfig?          @relation(fields: [tenantConfigId], references: [id], onDelete: SetNull)
   /// Supplier name (Guardian, Saint-Gobain, Pilkington, etc.)
-  name         String      @unique
+  name           String                 @unique
   /// Short code for the supplier (e.g., 'GRD' for Guardian)
-  code         String?     @unique
+  code           String?                @unique
   /// Country where the supplier is based
-  country      String?
+  country        String?
   /// Official website URL
-  website      String?
+  website        String?
   /// Contact email for orders/inquiries
-  contactEmail String?
+  contactEmail   String?
   /// Contact phone number
-  contactPhone String?
+  contactPhone   String?
   /// Whether this supplier is active for selection
-  isActive     Boolean     @default(true)
+  isActive       Boolean                @default(true)
   /// Additional notes about the supplier
-  notes        String?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  glassTypes   GlassType[]
+  notes          String?
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  glassTypes     GlassType[]
+  /// Tenant-specific pricing for glass types from this supplier
+  pricing        TenantGlassTypePrice[]
 
   @@index([isActive])
   @@index([code])
+  @@index([tenantConfigId])
 }
 
 /// Glass Characteristic
@@ -578,6 +615,39 @@ model GlassTypeCharacteristic {
   @@unique([glassTypeId, characteristicId])
   @@index([glassTypeId])
   @@index([characteristicId])
+}
+
+/// Tenant-Specific Glass Type Pricing
+/// Stores pricing for glass types (currently single-tenant via TenantConfig singleton)
+/// Note: Uses tenantConfigId for future multi-tenancy compatibility
+/// Replaces global pricePerSqm in GlassType model
+model TenantGlassTypePrice {
+  id             String         @id @default(cuid())
+  /// Tenant config reference (currently always "1" for singleton)
+  tenantConfigId String         @default("1")
+  tenantConfig   TenantConfig   @relation(fields: [tenantConfigId], references: [id], onDelete: Cascade)
+  /// Glass type being priced
+  glassTypeId    String
+  glassType      GlassType      @relation(fields: [glassTypeId], references: [id], onDelete: Cascade)
+  /// Optional supplier for this pricing (if supplier-specific)
+  supplierId     String?
+  supplier       GlassSupplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  /// Price per square meter for this glass type-supplier combination
+  price          Decimal        @db.Decimal(12, 2)
+  /// Date from which this price is effective
+  effectiveDate  DateTime       @default(now())
+  /// Optional expiry date for this pricing
+  expiryDate     DateTime?
+  /// Additional notes about this pricing (e.g., volume discount, promotion)
+  notes          String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  /// Unique constraint: one price per tenant-glass type-supplier-effective date
+  @@unique([tenantConfigId, glassTypeId, supplierId, effectiveDate])
+  @@index([tenantConfigId, glassTypeId]) // Lookup pricing for glass type
+  @@index([effectiveDate]) // Filter by date range
+  @@index([supplierId]) // Filter by supplier
 }
 
 /// Glass Type Price History
