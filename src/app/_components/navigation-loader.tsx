@@ -12,16 +12,40 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 const LOADER_DISPLAY_DURATION_MS = 800;
-const LOADER_DURATION_SECONDS = LOADER_DISPLAY_DURATION_MS / 1000;
+const MILLISECONDS_PER_SECOND = 1000;
+const LOADER_DURATION_SECONDS = LOADER_DISPLAY_DURATION_MS / MILLISECONDS_PER_SECOND;
 const SHIMMER_DURATION_SECONDS = 0.8;
 
+// Animation timing constants
+const OPACITY_TRANSITION_DURATION = 0.2;
+
+// Progress bar animation keyframes
+const PROGRESS_WIDTH_KEYFRAMES = ['0%', '70%', '90%', '100%'];
+const PROGRESS_POSITION_KEYFRAMES = ['0%', '0%', '0%', '0%'];
+
+// Shimmer animation constants
+const SHIMMER_START_POSITION = '-100%';
+const SHIMMER_END_POSITION = '200%';
+
+// Framer Motion easing curve values
+const EASING_START = 0.4;
+const EASING_FIRST_CONTROL = 0;
+const EASING_SECOND_CONTROL = 0.2;
+const EASING_END = 1;
+
+// Framer Motion animation timing points
+const PROGRESS_START = 0;
+const PROGRESS_QUARTER = 0.5;
+const PROGRESS_THREE_QUARTERS = 0.8;
+const PROGRESS_END = 1;
+
 // Framer Motion animation constants
-const EASING_CURVE = [ 0.4, 0, 0.2, 1 ] as const; // Custom cubic-bezier for smooth acceleration
-const PROGRESS_KEYFRAMES = [ 0, 0.5, 0.8, 1 ]; // Animation timing points
+const EASING_CURVE = [EASING_START, EASING_FIRST_CONTROL, EASING_SECOND_CONTROL, EASING_END] as const;
+const PROGRESS_KEYFRAMES = [PROGRESS_START, PROGRESS_QUARTER, PROGRESS_THREE_QUARTERS, PROGRESS_END];
 
 export function NavigationLoader() {
   const pathname = usePathname();
-  const [ isNavigating, setIsNavigating ] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const prevPathname = useRef(pathname);
 
   useEffect(() => {
@@ -40,7 +64,7 @@ export function NavigationLoader() {
 
       return () => clearTimeout(timer);
     }
-  }, [ pathname ]);
+  }, [pathname]);
 
   return (
     <AnimatePresence>
@@ -50,13 +74,13 @@ export function NavigationLoader() {
           className="fixed top-0 right-0 left-0 z-50 h-1 overflow-hidden bg-primary/10"
           exit={{ opacity: 0 }}
           initial={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: OPACITY_TRANSITION_DURATION }}
         >
           {/* Progress bar with shimmer effect */}
           <motion.div
             animate={{
-              width: [ '0%', '70%', '90%', '100%' ],
-              x: [ '0%', '0%', '0%', '0%' ],
+              width: PROGRESS_WIDTH_KEYFRAMES,
+              x: PROGRESS_POSITION_KEYFRAMES,
             }}
             className="h-full bg-gradient-to-r from-primary via-primary/80 to-primary"
             exit={{ opacity: 0, width: '100%' }}
@@ -70,9 +94,9 @@ export function NavigationLoader() {
 
           {/* Shimmer overlay effect */}
           <motion.div
-            animate={{ x: '200%' }}
+            animate={{ x: SHIMMER_END_POSITION }}
             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-            initial={{ x: '-100%' }}
+            initial={{ x: SHIMMER_START_POSITION }}
             transition={{
               duration: SHIMMER_DURATION_SECONDS,
               ease: 'linear',
