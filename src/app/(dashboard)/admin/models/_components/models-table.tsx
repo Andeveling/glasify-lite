@@ -124,8 +124,8 @@ function ActionsMenu({ model, onDelete }: { model: Model; onDelete: (id: string,
 
 export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
   const utils = api.useUtils();
-  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
-  const [ modelToDelete, setModelToDelete ] = useState<{ id: string; name: string } | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [modelToDelete, setModelToDelete] = useState<{ id: string; name: string } | null>(null);
 
   // Active query with placeholderData (enables cache invalidation)
   const { data } = api.admin.model.list.useQuery(
@@ -153,7 +153,7 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
 
   // Context type for optimistic update snapshot
   type DeleteModelContext = {
-    previousData?: RouterOutputs[ 'admin' ][ 'model' ][ 'list' ];
+    previousData?: RouterOutputs['admin']['model']['list'];
   };
 
   // Delete mutation with optimistic updates

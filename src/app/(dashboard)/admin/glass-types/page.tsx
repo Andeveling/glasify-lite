@@ -79,7 +79,7 @@ async function GlassTypesTableContent({
   sortOrder: 'asc' | 'desc';
 }) {
   // Fetch glass types data (heavy query inside Suspense)
-  const initialData = await api.admin[ 'glass-type' ].list({
+  const initialData = await api.admin['glass-type'].list({
     isActive,
     limit: 20,
     page,
@@ -127,7 +127,7 @@ export default async function GlassTypesPage({ searchParams }: PageProps) {
   const sortOrder = (params.sortOrder || 'asc') as 'asc' | 'desc';
 
   // Fetch suppliers for filter dropdown (lightweight query outside Suspense)
-  const suppliersData = await api.admin[ 'glass-supplier' ].list({
+  const suppliersData = await api.admin['glass-supplier'].list({
     isActive: 'active',
     limit: 100,
     page: 1,
@@ -154,17 +154,8 @@ export default async function GlassTypesPage({ searchParams }: PageProps) {
       />
 
       {/* Table content inside Suspense - streaming */}
-      <Suspense
-        fallback={<GlassTypesTableSkeleton />}
-        key={`${search}-${page}-${isActive}-${sortBy}-${sortOrder}`}
-      >
-        <GlassTypesTableContent
-          isActive={isActive}
-          page={page}
-          search={search}
-          sortBy={sortBy}
-          sortOrder={sortOrder}
-        />
+      <Suspense fallback={<GlassTypesTableSkeleton />} key={`${search}-${page}-${isActive}-${sortBy}-${sortOrder}`}>
+        <GlassTypesTableContent isActive={isActive} page={page} search={search} sortBy={sortBy} sortOrder={sortOrder} />
       </Suspense>
     </div>
   );

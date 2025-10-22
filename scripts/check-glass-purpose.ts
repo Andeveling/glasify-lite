@@ -6,4 +6,3 @@
  */
 
 console.log('ℹ️  check-glass-purpose.ts - DEPRECATED in v2.0 (purpose field removed)');
-

@@ -178,7 +178,7 @@ export const europaClasica4Panos: ModelInput = {
   compatibleGlassTypeIds: [],
   costNotes: 'Precio base $175/m². Sistema premium de 4 paños con DVH.',
   costPerMmHeight: 0.016,
-  costPerMmWidth: 0.020,
+  costPerMmWidth: 0.02,
   glassDiscountHeightMm: 66,
   glassDiscountWidthMm: 12,
   maxHeightMm: 2800,

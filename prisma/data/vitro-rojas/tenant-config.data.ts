@@ -24,8 +24,8 @@
  */
 
 export const vitroRojasTenantConfig = {
-  businessName: 'Vitro Rojas S.A.',
   businessAddress: 'Ciudad de Panamá, Panamá',
+  businessName: 'Vitro Rojas S.A.',
   contactEmail: 'ventas@vitrorojas.com',
   contactPhone: '+507-123-4567',
   currency: 'USD', // Dólar estadounidense (moneda oficial de Panamá)

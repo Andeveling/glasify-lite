@@ -84,21 +84,21 @@ const MATERIAL_TYPE_VARIANTS: Record<MaterialType, 'default' | 'secondary' | 'ou
 export function ProfileSupplierList({ initialData, searchParams, onEditClick }: ProfileSupplierListProps) {
   const utils = api.useUtils();
   const router = useRouter();
-  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
-  const [ supplierToDelete, setSupplierToDelete ] = useState<{ id: string; name: string } | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [supplierToDelete, setSupplierToDelete] = useState<{ id: string; name: string } | null>(null);
 
   // Delete mutation with optimistic UI
-  const deleteMutation = api.admin[ 'profile-supplier' ].delete.useMutation({
+  const deleteMutation = api.admin['profile-supplier'].delete.useMutation({
     onMutate: async (variables) => {
       // Cancel any outgoing refetches
-      await utils.admin[ 'profile-supplier' ].list.cancel();
+      await utils.admin['profile-supplier'].list.cancel();
 
       // Snapshot the previous value
-      const previousData = utils.admin[ 'profile-supplier' ].list.getData();
+      const previousData = utils.admin['profile-supplier'].list.getData();
 
       // Optimistically remove the item from cache
       if (previousData) {
-        utils.admin[ 'profile-supplier' ].list.setData(
+        utils.admin['profile-supplier'].list.setData(
           // Match the input parameters of the current query
           {
             isActive: searchParams.isActive as 'all' | 'active' | 'inactive' | undefined,
@@ -129,7 +129,7 @@ export function ProfileSupplierList({ initialData, searchParams, onEditClick }: 
     onError: (error, _variables, context) => {
       // Rollback to previous data on error
       if (context?.previousData) {
-        utils.admin[ 'profile-supplier' ].list.setData(
+        utils.admin['profile-supplier'].list.setData(
           {
             isActive: searchParams.isActive as 'all' | 'active' | 'inactive' | undefined,
             limit: initialData.limit,
@@ -155,7 +155,7 @@ export function ProfileSupplierList({ initialData, searchParams, onEditClick }: 
     },
     onSettled: () => {
       // Invalidate cache and refresh server data
-      void utils.admin[ 'profile-supplier' ].list.invalidate();
+      void utils.admin['profile-supplier'].list.invalidate();
       router.refresh();
     },
   });
@@ -176,8 +176,8 @@ export function ProfileSupplierList({ initialData, searchParams, onEditClick }: 
   // Check if there are filters active
   const hasFilters = Boolean(
     searchParams?.search ||
-    (searchParams?.materialType && searchParams.materialType !== 'all') ||
-    (searchParams?.isActive && searchParams.isActive !== 'all')
+      (searchParams?.materialType && searchParams.materialType !== 'all') ||
+      (searchParams?.isActive && searchParams.isActive !== 'all')
   );
 
   return (
@@ -204,8 +204,8 @@ export function ProfileSupplierList({ initialData, searchParams, onEditClick }: 
                   <TableRow key={supplier.id}>
                     <TableCell className="font-medium">{supplier.name}</TableCell>
                     <TableCell>
-                      <Badge variant={MATERIAL_TYPE_VARIANTS[ supplier.materialType ]}>
-                        {MATERIAL_TYPE_LABELS[ supplier.materialType ]}
+                      <Badge variant={MATERIAL_TYPE_VARIANTS[supplier.materialType]}>
+                        {MATERIAL_TYPE_LABELS[supplier.materialType]}
                       </Badge>
                     </TableCell>
                     <TableCell>

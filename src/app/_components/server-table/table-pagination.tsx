@@ -68,7 +68,7 @@ export function TablePagination({
   };
 
   return (
-    <div className='flex w-full items-center justify-between'>
+    <div className="flex w-full items-center justify-between">
       {/* Item count */}
       {showItemCount && (
         <div className="text-muted-foreground text-sm">

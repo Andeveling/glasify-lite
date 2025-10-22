@@ -104,12 +104,12 @@ const SERVICE_TYPE_VARIANTS: Record<ServiceType, 'default' | 'secondary' | 'outl
 export function ServicesList({ initialData, searchParams }: ServicesListProps) {
   const utils = api.useUtils();
   const router = useRouter();
-  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
-  const [ serviceToDelete, setServiceToDelete ] = useState<{ id: string; name: string } | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [serviceToDelete, setServiceToDelete] = useState<{ id: string; name: string } | null>(null);
 
   // Dialog state for edit only (create is handled in ServicesContent)
-  const [ editDialogOpen, setEditDialogOpen ] = useState(false);
-  const [ serviceToEdit, setServiceToEdit ] = useState<Service | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [serviceToEdit, setServiceToEdit] = useState<Service | null>(null);
 
   // Delete mutation with optimistic UI
   const deleteMutation = api.admin.service.delete.useMutation({
@@ -205,7 +205,7 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
       ...service,
       createdAt: service.createdAt ?? new Date(),
       isActive: service.isActive ?? true,
-      rate: mockDecimal as Service[ 'rate' ],
+      rate: mockDecimal as Service['rate'],
       updatedAt: service.updatedAt ?? new Date(),
     });
     setEditDialogOpen(true);
@@ -227,8 +227,8 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
   // Check if there are filters active
   const hasFilters = Boolean(
     searchParams?.search ||
-    (searchParams?.type && searchParams.type !== 'all') ||
-    (searchParams?.isActive && searchParams.isActive !== 'all')
+      (searchParams?.type && searchParams.type !== 'all') ||
+      (searchParams?.isActive && searchParams.isActive !== 'all')
   );
 
   return (
@@ -249,7 +249,6 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
       ) : (
         <>
           <div className="overflow-x-auto rounded-md border">
-
             <Table>
               <TableHeader>
                 <TableRow>
@@ -265,9 +264,9 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
                   <TableRow key={service.id}>
                     <TableCell className="font-medium">{service.name}</TableCell>
                     <TableCell>
-                      <Badge variant={SERVICE_TYPE_VARIANTS[ service.type ]}>{SERVICE_TYPE_LABELS[ service.type ]}</Badge>
+                      <Badge variant={SERVICE_TYPE_VARIANTS[service.type]}>{SERVICE_TYPE_LABELS[service.type]}</Badge>
                     </TableCell>
-                    <TableCell className="text-muted-foreground text-sm">{SERVICE_UNIT_LABELS[ service.unit ]}</TableCell>
+                    <TableCell className="text-muted-foreground text-sm">{SERVICE_UNIT_LABELS[service.unit]}</TableCell>
                     <TableCell className="text-right">{formatCurrency(service.rate)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
@@ -288,8 +287,7 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
                   </TableRow>
                 ))}
               </TableBody>
-              <TableFooter className='p-2'>
-              </TableFooter>
+              <TableFooter className="p-2" />
             </Table>
           </div>
           <TablePagination currentPage={currentPage} totalItems={total} totalPages={totalPages} />

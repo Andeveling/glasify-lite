@@ -54,9 +54,7 @@ export function GlassTypesSection({ glassTypes }: GlassTypesSectionProps) {
                         </FormControl>
                         <div className="flex-1 space-y-1 leading-none">
                           <FormLabel className="cursor-pointer font-normal">{glassType.name}</FormLabel>
-                          <p className="text-muted-foreground text-xs">
-                            {glassType.thicknessMm}mm
-                          </p>
+                          <p className="text-muted-foreground text-xs">{glassType.thicknessMm}mm</p>
                         </div>
                       </FormItem>
                     )}

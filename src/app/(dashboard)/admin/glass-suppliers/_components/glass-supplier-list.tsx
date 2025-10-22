@@ -45,13 +45,13 @@ type GlassSupplierListProps = {
 };
 
 export function GlassSupplierList({ initialData, searchParams }: GlassSupplierListProps) {
-  const [ dialogOpen, setDialogOpen ] = useState(false);
-  const [ dialogMode, setDialogMode ] = useState<'create' | 'edit'>('create');
-  const [ selectedSupplier, setSelectedSupplier ] = useState<(FormValues & { id: string }) | undefined>(undefined);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create');
+  const [selectedSupplier, setSelectedSupplier] = useState<(FormValues & { id: string }) | undefined>(undefined);
 
   const { deleteMutation } = useGlassSupplierMutations();
-  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
-  const [ supplierToDelete, setSupplierToDelete ] = useState<{ id: string; name: string } | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [supplierToDelete, setSupplierToDelete] = useState<{ id: string; name: string } | null>(null);
 
   const handleCreateClick = () => {
     setDialogMode('create');
@@ -59,7 +59,7 @@ export function GlassSupplierList({ initialData, searchParams }: GlassSupplierLi
     setDialogOpen(true);
   };
 
-  const handleEditClick = (supplier: (FormValues & { id: string }) | GlassSupplierListOutput[ 'items' ][ number ]) => {
+  const handleEditClick = (supplier: (FormValues & { id: string }) | GlassSupplierListOutput['items'][number]) => {
     setDialogMode('edit');
     setSelectedSupplier(supplier as FormValues & { id: string });
     setDialogOpen(true);
@@ -114,23 +114,23 @@ export function GlassSupplierList({ initialData, searchParams }: GlassSupplierLi
               <TableBody>
                 {suppliers.map((supplier) => (
                   <TableRow key={supplier.id}>
-                  <TableCell className="font-medium">{supplier.name}</TableCell>
-                  <TableCell>
-                    {supplier.code ? (
-                      <Badge variant="outline">{supplier.code}</Badge>
-                    ) : (
+                    <TableCell className="font-medium">{supplier.name}</TableCell>
+                    <TableCell>
+                      {supplier.code ? (
+                        <Badge variant="outline">{supplier.code}</Badge>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell>{supplier.country || <span className="text-muted-foreground">—</span>}</TableCell>
+                    <TableCell className="text-center">
                       <span className="text-muted-foreground text-sm">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell>{supplier.country || <span className="text-muted-foreground">—</span>}</TableCell>
-                  <TableCell className="text-center">
-                    <span className="text-muted-foreground text-sm">—</span>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={supplier.isActive ? 'default' : 'secondary'}>
-                      {supplier.isActive ? 'Activo' : 'Inactivo'}
-                    </Badge>
-                  </TableCell>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={supplier.isActive ? 'default' : 'secondary'}>
+                        {supplier.isActive ? 'Activo' : 'Inactivo'}
+                      </Badge>
+                    </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button onClick={() => handleEditClick(supplier)} size="icon" variant="ghost">

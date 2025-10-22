@@ -500,8 +500,8 @@ export class SeedOrchestrator {
     // Get all glass types from database
     const glassTypesData = await this.prisma.glassType.findMany({
       select: {
-        id: true,
         code: true,
+        id: true,
         name: true,
       },
     });

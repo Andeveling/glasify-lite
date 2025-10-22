@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { downloadCatalogTemplate } from '@/server/actions/download-catalog-template';
 
 export function DownloadCatalogTemplateButton() {
-  const [ isDownloading, setIsDownloading ] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const handleDownload = async () => {
     try {
@@ -20,10 +20,10 @@ export function DownloadCatalogTemplateButton() {
       const byteCharacters = atob(buffer);
       const byteNumbers = new Array(byteCharacters.length);
       for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[ i ] = byteCharacters.charCodeAt(i);
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
       const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([ byteArray ], {
+      const blob = new Blob([byteArray], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       });
 

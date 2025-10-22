@@ -1,8 +1,8 @@
 import { renderHook } from '@testing-library/react';
-import { useGlassSupplierMutations } from '@/app/(dashboard)/admin/glass-suppliers/_hooks/use-glass-supplier-mutations';
-import { api } from '@/trpc/react';
 import { toast } from 'sonner';
 import { vi } from 'vitest';
+import { useGlassSupplierMutations } from '@/app/(dashboard)/admin/glass-suppliers/_hooks/use-glass-supplier-mutations';
+import { api } from '@/trpc/react';
 
 vi.mock('@/trpc/react', () => ({
   api: {
@@ -11,10 +11,10 @@ vi.mock('@/trpc/react', () => ({
         create: {
           useMutation: vi.fn(),
         },
-        update: {
+        delete: {
           useMutation: vi.fn(),
         },
-        delete: {
+        update: {
           useMutation: vi.fn(),
         },
       },
@@ -33,8 +33,8 @@ vi.mock('@/trpc/react', () => ({
 
 vi.mock('sonner', () => ({
   toast: {
-    success: vi.fn(),
     error: vi.fn(),
+    success: vi.fn(),
   },
 }));
 
@@ -62,7 +62,7 @@ describe('useGlassSupplierMutations', () => {
       mutate,
     });
     const { result } = renderHook(() => useGlassSupplierMutations());
-    const data = { id: '1', data: { name: 'Test' } };
+    const data = { data: { name: 'Test' }, id: '1' };
     result.current.updateMutation.mutate(data);
     expect(mutate).toHaveBeenCalledWith(data);
   });
@@ -78,24 +78,20 @@ describe('useGlassSupplierMutations', () => {
         },
       },
     });
-    (api.admin['glass-supplier'].create.useMutation as any).mockImplementation(
-      ({ onSuccess }: any) => {
-        onSuccess();
-        return { mutate: vi.fn() };
-      }
-    );
+    (api.admin['glass-supplier'].create.useMutation as any).mockImplementation(({ onSuccess }: any) => {
+      onSuccess();
+      return { mutate: vi.fn() };
+    });
     renderHook(() => useGlassSupplierMutations());
     expect(invalidate).toHaveBeenCalled();
   });
 
   it('shows toasts for success/error', () => {
-    (api.admin['glass-supplier'].create.useMutation as any).mockImplementation(
-      ({ onSuccess, onError }: any) => {
-        onSuccess();
-        onError(new Error('Test Error'));
-        return { mutate: vi.fn() };
-      }
-    );
+    (api.admin['glass-supplier'].create.useMutation as any).mockImplementation(({ onSuccess, onError }: any) => {
+      onSuccess();
+      onError(new Error('Test Error'));
+      return { mutate: vi.fn() };
+    });
     renderHook(() => useGlassSupplierMutations());
     expect(toast.success).toHaveBeenCalled();
     expect(toast.error).toHaveBeenCalled();

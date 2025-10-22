@@ -60,7 +60,7 @@ export default async function GlassSuppliersPage({ searchParams }: PageProps) {
   const sortOrder = (params.sortOrder || 'asc') as 'asc' | 'desc';
 
   // Fetch data server-side with filters
-  const initialData = await api.admin[ 'glass-supplier' ].list({
+  const initialData = await api.admin['glass-supplier'].list({
     country,
     isActive,
     limit: 20,
