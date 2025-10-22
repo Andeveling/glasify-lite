@@ -131,10 +131,6 @@ export type ListGlassSuppliersInput = z.infer<typeof listGlassSuppliersSchema>;
 export const listGlassSuppliersOutputSchema = z.object({
   items: z.array(
     z.object({
-      // biome-ignore lint/style/useNamingConvention: Prisma generated field
-      _count: z.object({
-        glassTypes: z.number(),
-      }),
       code: z.string().nullable(),
       contactEmail: z.string().nullable(),
       contactPhone: z.string().nullable(),

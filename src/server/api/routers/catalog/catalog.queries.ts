@@ -187,18 +187,17 @@ export const catalogQueries = createTRPCRouter({
               },
               orderBy: { characteristic: { name: 'asc' } },
             },
+            code: true,
             createdAt: true,
             description: true,
-            glassSupplierId: true,
             id: true,
             isActive: true,
-            isLaminated: true,
-            isLowE: true,
-            isTempered: true,
-            isTripleGlazed: true,
+            isSeeded: true,
+            manufacturer: true,
             name: true,
             pricePerSqm: true,
-            purpose: true,
+            seedVersion: true,
+            series: true,
             solutions: {
               include: {
                 solution: true,
@@ -214,7 +213,7 @@ export const catalogQueries = createTRPCRouter({
           },
         });
 
-        // Serialize Decimal fields (pricePerSqm, uValue)
+        // Serialize Decimal fields (uValue, pricePerSqm)
         const serializedGlassTypes = glassTypes.map((glassType) => ({
           ...glassType,
           pricePerSqm: glassType.pricePerSqm.toNumber(),

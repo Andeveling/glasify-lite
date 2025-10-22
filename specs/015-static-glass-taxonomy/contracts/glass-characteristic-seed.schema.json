@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://glasify.app/schemas/glass-characteristic-seed.schema.json",
+  "title": "Glass Characteristic Seed Data Schema",
+  "description": "JSON Schema for validating glass characteristic seed data structure",
+  "type": "object",
+  "required": ["version", "characteristics"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Seed data version for idempotent updates",
+      "pattern": "^[0-9]+\\.[0-9]+$",
+      "examples": ["1.0", "1.1", "2.0"]
+    },
+    "characteristics": {
+      "type": "array",
+      "description": "Array of glass characteristic definitions",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/glassCharacteristic"
+      }
+    }
+  },
+  "definitions": {
+    "glassCharacteristic": {
+      "type": "object",
+      "required": ["key", "name", "nameEs", "category"],
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Unique characteristic key in snake_case format",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "minLength": 2,
+          "maxLength": 50,
+          "examples": [
+            "tempered",
+            "laminated",
+            "low_e",
+            "triple_glazed",
+            "acoustic"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "Technical name in English",
+          "minLength": 2,
+          "maxLength": 100,
+          "examples": ["Tempered Glass", "Laminated Glass", "Low-E Coating"]
+        },
+        "nameEs": {
+          "type": "string",
+          "description": "Commercial name in Spanish",
+          "minLength": 2,
+          "maxLength": 100,
+          "examples": ["Vidrio Templado", "Vidrio Laminado", "Bajo Emisivo"]
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the characteristic",
+          "maxLength": 500
+        },
+        "category": {
+          "type": "string",
+          "description": "Category grouping for the characteristic",
+          "enum": ["safety", "thermal", "acoustic", "coating", "substrate"],
+          "examples": ["safety", "thermal", "acoustic"]
+        },
+        "sortOrder": {
+          "type": "integer",
+          "description": "Display order (lower = higher priority)",
+          "minimum": 0,
+          "maximum": 999,
+          "default": 0
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

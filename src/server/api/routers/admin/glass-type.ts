@@ -21,7 +21,6 @@ import {
   updateGlassTypeSchema,
 } from '@/lib/validations/admin/glass-type.schema';
 import { adminProcedure, createTRPCRouter } from '@/server/api/trpc';
-import { createGlassTypePriceHistory } from '@/server/services/glass-price-history.service';
 import { canDeleteGlassType } from '@/server/services/referential-integrity.service';
 
 /**
@@ -29,8 +28,6 @@ import { canDeleteGlassType } from '@/server/services/referential-integrity.serv
  */
 function buildWhereClause(input: {
   search?: string;
-  purpose?: 'general' | 'insulation' | 'security' | 'decorative';
-  glassSupplierId?: string;
   solutionId?: string;
   isActive?: boolean;
   thicknessMin?: number;
@@ -38,7 +35,7 @@ function buildWhereClause(input: {
 }): Prisma.GlassTypeWhereInput {
   const where: Prisma.GlassTypeWhereInput = {};
 
-  // Search by name, SKU, or description
+  // Search by name, code, or description
   if (input.search) {
     where.OR = [
       {
@@ -48,7 +45,7 @@ function buildWhereClause(input: {
         },
       },
       {
-        sku: {
+        code: {
           contains: input.search,
           mode: 'insensitive',
         },
@@ -60,16 +57,6 @@ function buildWhereClause(input: {
         },
       },
     ];
-  }
-
-  // Filter by purpose
-  if (input.purpose) {
-    where.purpose = input.purpose;
-  }
-
-  // Filter by glass supplier
-  if (input.glassSupplierId) {
-    where.glassSupplierId = input.glassSupplierId;
   }
 
   // Filter by assigned solution
@@ -112,14 +99,14 @@ function buildOrderByClause(sortBy: string, sortOrder: 'asc' | 'desc'): Prisma.G
     case 'name':
       orderBy.name = sortOrder;
       break;
+    case 'code':
+      orderBy.code = sortOrder;
+      break;
     case 'thicknessMm':
       orderBy.thicknessMm = sortOrder;
       break;
-    case 'pricePerSqm':
-      orderBy.pricePerSqm = sortOrder;
-      break;
-    case 'purpose':
-      orderBy.purpose = sortOrder;
+    case 'manufacturer':
+      orderBy.manufacturer = sortOrder;
       break;
     case 'createdAt':
       orderBy.createdAt = sortOrder;
@@ -153,41 +140,6 @@ export const glassTypeRouter = createTRPCRouter({
         code: 'CONFLICT',
         message: 'Ya existe un tipo de vidrio con este nombre',
       });
-    }
-
-    // Check for duplicate SKU (if provided)
-    if (input.sku) {
-      const existingBySku = await ctx.db.glassType.findUnique({
-        where: { sku: input.sku },
-      });
-
-      if (existingBySku) {
-        throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Ya existe un tipo de vidrio con este SKU',
-        });
-      }
-    }
-
-    // Validate glass supplier exists (if provided)
-    if (input.glassSupplierId) {
-      const supplier = await ctx.db.glassSupplier.findUnique({
-        where: { id: input.glassSupplierId },
-      });
-
-      if (!supplier) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Proveedor de vidrio no encontrado',
-        });
-      }
-
-      if (!supplier.isActive) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'El proveedor de vidrio está inactivo',
-        });
-      }
     }
 
     // Validate all solution IDs exist and are active
@@ -265,7 +217,6 @@ export const glassTypeRouter = createTRPCRouter({
             characteristic: true,
           },
         },
-        glassSupplier: true,
         solutions: {
           include: {
             solution: true,
@@ -274,19 +225,10 @@ export const glassTypeRouter = createTRPCRouter({
       },
     });
 
-    // Create initial price history record
-    await createGlassTypePriceHistory({
-      createdBy: ctx.session.user.id,
-      glassTypeId: glassType.id,
-      pricePerSqm: glassType.pricePerSqm.toNumber(),
-      reason: 'Precio inicial',
-    });
-
     logger.info('Glass type created', {
       characteristicsCount: characteristics.length,
       glassTypeId: glassType.id,
       glassTypeName: glassType.name,
-      pricePerSqm: glassType.pricePerSqm.toNumber(),
       solutionsCount: solutions.length,
       userId: ctx.session.user.id,
     });
@@ -377,12 +319,6 @@ export const glassTypeRouter = createTRPCRouter({
               },
             },
           },
-          glassSupplier: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
           solutions: {
             include: {
               solution: {
@@ -421,7 +357,6 @@ export const glassTypeRouter = createTRPCRouter({
       const serializedGlassType = {
         ...glassType,
         lightTransmission: glassType.lightTransmission?.toNumber() ?? null,
-        pricePerSqm: glassType.pricePerSqm.toNumber(),
         solarFactor: glassType.solarFactor?.toNumber() ?? null,
         uValue: glassType.uValue?.toNumber() ?? null,
       };
@@ -463,12 +398,6 @@ export const glassTypeRouter = createTRPCRouter({
             characteristics: true,
             quoteItems: true,
             solutions: true,
-          },
-        },
-        glassSupplier: {
-          select: {
-            id: true,
-            name: true,
           },
         },
         solutions: {
@@ -552,43 +481,6 @@ export const glassTypeRouter = createTRPCRouter({
         throw new TRPCError({
           code: 'CONFLICT',
           message: 'Ya existe un tipo de vidrio con este nombre',
-        });
-      }
-    }
-
-    // Check for duplicate SKU (excluding current)
-    if (data.sku) {
-      const existingBySku = await ctx.db.glassType.findFirst({
-        where: {
-          AND: [{ sku: data.sku }, { NOT: { id } }],
-        },
-      });
-
-      if (existingBySku) {
-        throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Ya existe un tipo de vidrio con este SKU',
-        });
-      }
-    }
-
-    // Validate glass supplier exists and is active (if provided)
-    if (data.glassSupplierId !== undefined && data.glassSupplierId) {
-      const supplier = await ctx.db.glassSupplier.findUnique({
-        where: { id: data.glassSupplierId },
-      });
-
-      if (!supplier) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Proveedor de vidrio no encontrado',
-        });
-      }
-
-      if (!supplier.isActive) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'El proveedor de vidrio está inactivo',
         });
       }
     }
@@ -680,7 +572,6 @@ export const glassTypeRouter = createTRPCRouter({
             characteristic: true,
           },
         },
-        glassSupplier: true,
         solutions: {
           include: {
             solution: true,
@@ -690,27 +581,10 @@ export const glassTypeRouter = createTRPCRouter({
       where: { id },
     });
 
-    // Create price history if price changed
-    if (data.pricePerSqm !== undefined) {
-      const oldPrice = existing.pricePerSqm.toNumber();
-      const newPrice = glassType.pricePerSqm.toNumber();
-
-      if (oldPrice !== newPrice) {
-        await createGlassTypePriceHistory({
-          createdBy: ctx.session.user.id,
-          glassTypeId: glassType.id,
-          pricePerSqm: newPrice,
-          reason: `Cambio de precio: ${oldPrice} → ${newPrice}`,
-        });
-      }
-    }
-
     logger.info('Glass type updated', {
       characteristicsReplaced: characteristics !== undefined,
       glassTypeId: glassType.id,
       glassTypeName: glassType.name,
-      priceChanged:
-        data.pricePerSqm !== undefined && existing.pricePerSqm.toNumber() !== glassType.pricePerSqm.toNumber(),
       solutionsReplaced: solutions !== undefined,
       userId: ctx.session.user.id,
     });

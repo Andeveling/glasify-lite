@@ -31,7 +31,15 @@ const _MAX_CATEGORY_LENGTH = 50;
 /**
  * Valid characteristic categories
  */
-const CHARACTERISTIC_CATEGORIES = ['safety', 'thermal', 'acoustic', 'coating', 'solar', 'privacy'] as const;
+const CHARACTERISTIC_CATEGORIES = [
+  'safety',
+  'thermal',
+  'acoustic',
+  'coating',
+  'solar',
+  'privacy',
+  'substrate',
+] as const;
 
 /**
  * Zod schema for GlassCharacteristic input validation
@@ -319,3 +327,168 @@ export const GLASS_CHARACTERISTIC_PRESETS: GlassCharacteristicInput[] = [
     sortOrder: 52,
   },
 ];
+
+/**
+ * Seed file schema validation
+ */
+const seedCharacteristicSchema = z.object({
+  category: z.enum(CHARACTERISTIC_CATEGORIES),
+  description: z.string().optional(),
+  icon: z.string().optional(),
+  isActive: z.boolean().optional(),
+  key: z.string(),
+  name: z.string(),
+  nameEs: z.string(),
+  sortOrder: z.number().optional(),
+});
+
+const seedFileSchema = z.object({
+  characteristics: z.array(seedCharacteristicSchema),
+  version: z.string(),
+});
+
+/**
+ * Seeds or updates a single glass characteristic
+ */
+async function seedCharacteristic(
+  prisma: InstanceType<typeof import('@prisma/client').PrismaClient>,
+  characteristic: {
+    category: string;
+    description?: string;
+    isActive?: boolean;
+    key: string;
+    name: string;
+    nameEs: string;
+    sortOrder?: number;
+  },
+  version: string
+): Promise<{ seeded: boolean; skipped: boolean }> {
+  const existing = await prisma.glassCharacteristic.findUnique({
+    where: { key: characteristic.key },
+  });
+
+  if (existing) {
+    // Skip if already seeded with same version
+    if (existing.isSeeded && existing.seedVersion === version) {
+      return { seeded: false, skipped: true };
+    }
+    // Update if existing but different version
+    await prisma.glassCharacteristic.update({
+      data: {
+        category: characteristic.category,
+        description: characteristic.description,
+        isActive: characteristic.isActive ?? true,
+        isSeeded: true,
+        name: characteristic.name,
+        nameEs: characteristic.nameEs,
+        seedVersion: version,
+        sortOrder: characteristic.sortOrder ?? 0,
+      },
+      where: { key: characteristic.key },
+    });
+    return { seeded: true, skipped: false };
+  }
+
+  // Create new characteristic
+  await prisma.glassCharacteristic.create({
+    data: {
+      category: characteristic.category,
+      description: characteristic.description,
+      isActive: characteristic.isActive ?? true,
+      isSeeded: true,
+      key: characteristic.key,
+      name: characteristic.name,
+      nameEs: characteristic.nameEs,
+      seedVersion: version,
+      sortOrder: characteristic.sortOrder ?? 0,
+    },
+  });
+  return { seeded: true, skipped: false };
+}
+
+/**
+ * Loads and seeds glass characteristics from JSON file
+ *
+ * @param fileName - Name of the seed JSON file in prisma/data
+ * @returns Result with counts and any errors
+ *
+ * @example
+ * ```ts
+ * const result = await seedGlassCharacteristicsFromFile('glass-characteristics.json');
+ * console.log(`Seeded ${result.seeded} characteristics, skipped ${result.skipped}`);
+ * ```
+ */
+export async function seedGlassCharacteristicsFromFile(fileName: string): Promise<{
+  errors: Array<{ code: string; message: string; path: string[]; context?: unknown }>;
+  seeded: number;
+  skipped: number;
+}> {
+  const fs = await import('node:fs');
+  const path = await import('node:path');
+  const dataPath = path.join(process.cwd(), 'prisma', 'data', fileName);
+
+  // Load JSON file
+  let rawData: unknown;
+  try {
+    const fileContent = fs.readFileSync(dataPath, 'utf-8');
+    rawData = JSON.parse(fileContent);
+  } catch (error) {
+    return {
+      errors: [
+        {
+          code: 'FILE_READ_ERROR',
+          context: { error, fileName },
+          message: `Failed to read or parse ${fileName}`,
+          path: [],
+        },
+      ],
+      seeded: 0,
+      skipped: 0,
+    };
+  }
+
+  // Validate JSON structure
+  const validationResult = seedFileSchema.safeParse(rawData);
+  if (!validationResult.success) {
+    return {
+      errors: validationResult.error.issues.map((err) => ({
+        code: 'SCHEMA_VALIDATION_ERROR',
+        context: { zodError: err },
+        message: err.message,
+        path: err.path.map(String),
+      })),
+      seeded: 0,
+      skipped: 0,
+    };
+  }
+
+  const { characteristics, version } = validationResult.data;
+  const errors: Array<{ code: string; message: string; path: string[]; context?: unknown }> = [];
+  let seeded = 0;
+  let skipped = 0;
+
+  // Dynamically import Prisma client
+  const { PrismaClient } = await import('@prisma/client');
+  const prisma = new PrismaClient();
+
+  try {
+    for (const characteristic of characteristics) {
+      try {
+        const result = await seedCharacteristic(prisma, characteristic, version);
+        if (result.seeded) seeded++;
+        if (result.skipped) skipped++;
+      } catch (error) {
+        errors.push({
+          code: 'DATABASE_ERROR',
+          context: { error, key: characteristic.key },
+          message: `Failed to seed glass characteristic ${characteristic.key}`,
+          path: ['characteristics', characteristic.key],
+        });
+      }
+    }
+  } finally {
+    await prisma.$disconnect();
+  }
+
+  return { errors, seeded, skipped };
+}

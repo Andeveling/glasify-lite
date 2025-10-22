@@ -1,81 +1,104 @@
 /**
  * GlassType Factory
  *
- * Creates validated GlassType seed data based on Colombian market specifications.
+ * Creates validated GlassType seed data from JSON files.
+ * Supports idempotent seeding with isSeeded flag and seedVersion tracking.
  *
  * Data sources:
- * - docs/context/glassess.catalog.md (Colombian glass market data)
- * - Prisma schema GlassType model
+ * - prisma/data/glass-types-tecnoglass.json
+ * - Prisma schema GlassType model (v2.0 - clean schema)
  *
- * @version 1.0.0
+ * @version 2.0.0 (Static Glass Taxonomy - TK-015-012)
  */
 
-import type { Prisma } from '@prisma/client';
+import fs from 'node:fs';
+import path from 'node:path';
 import { z } from 'zod';
 import type { FactoryMetadata, FactoryOptions, FactoryResult, ValidationError } from './types';
-import { mergeOverrides, validatePrice, validateWithSchema } from './utils';
+import { mergeOverrides, validateWithSchema } from './utils';
 
 // Validation constants
 const MIN_GLASS_NAME_LENGTH = 3;
 const MAX_GLASS_NAME_LENGTH = 100;
+const MIN_CODE_LENGTH = 2;
+const MAX_CODE_LENGTH = 50;
+const MAX_SERIES_LENGTH = 50;
+const MAX_MANUFACTURER_LENGTH = 100;
+const MAX_DESCRIPTION_LENGTH = 500;
 const MIN_THICKNESS_MM = 3;
 const MAX_THICKNESS_MM = 50;
-const MAX_PRICE_PER_SQM_COP = 500_000; // 500k COP/sqm
-const MIN_TRIPLE_GLAZED_THICKNESS = 20;
+const MIN_U_VALUE = 0.5; // W/m²K (triple-glazed with argon + Low-E)
+const MAX_U_VALUE = 6.0; // W/m²K (single-glazed)
+const HIGH_U_VALUE_THRESHOLD = 3.0; // Poor thermal insulation warning threshold
+const MIN_SOLAR_FACTOR = 0.0; // g-value (fully reflective)
+const MAX_SOLAR_FACTOR = 1.0; // g-value (clear glass)
+const SOLAR_FACTOR_TRANSMISSION_TOLERANCE = 0.2; // Maximum difference between solar factor and light transmission
+const MIN_LIGHT_TRANSMISSION = 0.0; // 0% (opaque)
+const MAX_LIGHT_TRANSMISSION = 1.0; // 100% (ultra-clear)
 
 /**
- * Zod schema for GlassType input validation
+ * Zod schema for GlassType seed data input validation
+ * Matches glass-type-seed.schema.json contract
  */
 const glassTypeInputSchema = z.object({
-  isLaminated: z.boolean().default(false),
-  isLowE: z.boolean().default(false),
-  isTempered: z.boolean().default(false),
-  isTripleGlazed: z.boolean().default(false),
+  code: z.string().min(MIN_CODE_LENGTH).max(MAX_CODE_LENGTH),
+  description: z.string().max(MAX_DESCRIPTION_LENGTH).optional(),
+  lightTransmission: z.number().min(MIN_LIGHT_TRANSMISSION).max(MAX_LIGHT_TRANSMISSION).optional(),
+  manufacturer: z.string().max(MAX_MANUFACTURER_LENGTH).optional(),
   name: z.string().min(MIN_GLASS_NAME_LENGTH).max(MAX_GLASS_NAME_LENGTH),
-  pricePerSqm: z.number().positive(),
-  purpose: z.enum(['general', 'insulation', 'security', 'decorative']),
+  pricePerSqm: z.number().min(0).optional(), // Optional for seed data, will use default
+  series: z.string().max(MAX_SERIES_LENGTH).optional(),
+  solarFactor: z.number().min(MIN_SOLAR_FACTOR).max(MAX_SOLAR_FACTOR).optional(),
   thicknessMm: z.number().int().min(MIN_THICKNESS_MM).max(MAX_THICKNESS_MM),
-  uValue: z.number().positive().optional(),
+  uValue: z.number().min(MIN_U_VALUE).max(MAX_U_VALUE).optional(),
 });
 
 /**
- * Input type for creating a GlassType
+ * Input type for creating a GlassType from seed data
  */
 export type GlassTypeInput = z.infer<typeof glassTypeInputSchema>;
 
 /**
  * Creates a validated GlassType object for seeding
  *
- * @param input - GlassType data
- * @param options - Factory options
+ * @param input - GlassType data from JSON seed file
+ * @param options - Factory options (overrides, skipValidation)
  * @returns FactoryResult with validated GlassType or errors
  *
  * @example
  * ```ts
  * const result = createGlassType({
- *   name: 'Vidrio Templado 6mm',
- *   purpose: 'security',
+ *   code: 'N70/38',
+ *   name: 'Neutral Low-E N70/38',
+ *   series: 'Serie-N',
+ *   manufacturer: 'Tecnoglass',
  *   thicknessMm: 6,
- *   pricePerSqm: 65000,
- *   isTempered: true,
+ *   uValue: 1.8,
+ *   solarFactor: 0.43,
+ *   lightTransmission: 0.70,
  * });
  *
  * if (result.success) {
- *   await prisma.glassType.create({ data: result.data });
+ *   await prisma.glassType.upsert({
+ *     where: { code: result.data.code },
+ *     update: {},
+ *     create: {
+ *       ...result.data,
+ *       isSeeded: true,
+ *       seedVersion: '1.0',
+ *     },
+ *   });
  * }
  * ```
  */
-export function createGlassType(
-  input: GlassTypeInput,
-  options?: FactoryOptions
-): FactoryResult<Prisma.GlassTypeCreateInput> {
+export function createGlassType(input: GlassTypeInput, options?: FactoryOptions): FactoryResult<GlassTypeInput> {
   // Merge overrides if provided
   const data = mergeOverrides(input, options?.overrides);
 
   // Skip validation if requested (for performance)
   if (options?.skipValidation) {
     return {
-      data: data as Prisma.GlassTypeCreateInput,
+      data: data as GlassTypeInput,
       success: true,
     };
   }
@@ -97,29 +120,27 @@ export function createGlassType(
   // Additional business logic validations
   const additionalErrors: ValidationError[] = [];
 
-  // Validate price is reasonable for Colombian market
-  const priceError = validatePrice(validated.pricePerSqm, 'pricePerSqm', MAX_PRICE_PER_SQM_COP);
-  if (priceError) {
-    additionalErrors.push(priceError);
-  }
-
-  // Validate thickness is appropriate for glass type
-  if (validated.isTripleGlazed && validated.thicknessMm < MIN_TRIPLE_GLAZED_THICKNESS) {
+  // Validate U-value range warnings
+  if (validated.uValue && validated.uValue > HIGH_U_VALUE_THRESHOLD) {
     additionalErrors.push({
-      code: 'INVALID_THICKNESS_FOR_TYPE',
-      context: { isTripleGlazed: true, thicknessMm: validated.thicknessMm },
-      message: 'Triple glazed glass should be at least 20mm thick',
-      path: ['thicknessMm'],
+      code: 'HIGH_U_VALUE_WARNING',
+      context: { uValue: validated.uValue },
+      message: 'U-value above 3.0 indicates poor thermal insulation',
+      path: ['uValue'],
     });
   }
 
-  // Validate Low-E glass typically has U-value specified
-  if (validated.isLowE && !validated.uValue) {
+  // Validate solar factor consistency with light transmission
+  if (
+    validated.solarFactor &&
+    validated.lightTransmission &&
+    validated.solarFactor > validated.lightTransmission + SOLAR_FACTOR_TRANSMISSION_TOLERANCE
+  ) {
     additionalErrors.push({
-      code: 'MISSING_U_VALUE',
-      context: { isLowE: true },
-      message: 'Low-E glass should have a U-value specified',
-      path: ['uValue'],
+      code: 'INCONSISTENT_SOLAR_PROPERTIES',
+      context: { lightTransmission: validated.lightTransmission, solarFactor: validated.solarFactor },
+      message: 'Solar factor should not exceed light transmission by more than 0.2',
+      path: ['solarFactor', 'lightTransmission'],
     });
   }
 
@@ -132,7 +153,7 @@ export function createGlassType(
 
   // Return validated data ready for Prisma
   return {
-    data: validated as Prisma.GlassTypeCreateInput,
+    data: validated,
     success: true,
   };
 }
@@ -144,10 +165,7 @@ export function createGlassType(
  * @param options - Factory options
  * @returns Array of FactoryResults
  */
-export function createGlassTypes(
-  inputs: GlassTypeInput[],
-  options?: FactoryOptions
-): FactoryResult<Prisma.GlassTypeCreateInput>[] {
+export function createGlassTypes(inputs: GlassTypeInput[], options?: FactoryOptions): FactoryResult<GlassTypeInput>[] {
   return inputs.map((input) => createGlassType(input, options));
 }
 
@@ -157,14 +175,10 @@ export function createGlassTypes(
  * @param results - Array of FactoryResults
  * @returns Array of successful data objects
  */
-export function getSuccessfulGlassTypes(
-  results: FactoryResult<Prisma.GlassTypeCreateInput>[]
-): Prisma.GlassTypeCreateInput[] {
+export function getSuccessfulGlassTypes(results: FactoryResult<GlassTypeInput>[]): GlassTypeInput[] {
   return results
     .filter(
-      (
-        result
-      ): result is FactoryResult<Prisma.GlassTypeCreateInput> & { success: true; data: Prisma.GlassTypeCreateInput } =>
+      (result): result is FactoryResult<GlassTypeInput> & { success: true; data: GlassTypeInput } =>
         result.success && result.data !== undefined
     )
     .map((result) => result.data);
@@ -183,3 +197,155 @@ export const glassTypeFactoryMetadata: FactoryMetadata = {
   ],
   version: '1.0.0',
 };
+
+/**
+ * Zod schema for seed data JSON validation
+ */
+const seedGlassTypeSchema = z.object({
+  code: z.string().min(1),
+  description: z.string().optional(),
+  lightTransmission: z.number().min(0).max(1).optional(),
+  manufacturer: z.string().optional(),
+  name: z.string().min(MIN_GLASS_NAME_LENGTH),
+  series: z.string().optional(),
+  solarFactor: z.number().min(0).max(1).optional(),
+  thicknessMm: z.number().int().min(MIN_THICKNESS_MM).max(MAX_THICKNESS_MM),
+  uValue: z.number().positive().optional(),
+});
+
+const seedFileSchema = z.object({
+  glassTypes: z.array(seedGlassTypeSchema),
+  manufacturer: z.string(),
+  version: z.string(),
+});
+
+/**
+ * Loads and seeds glass types from JSON file
+ *
+ * @param filePath - Path to the seed JSON file relative to prisma/data
+ * @returns Object with seeded count and any errors
+ *
+ * @example
+ * ```ts
+ * const result = await seedGlassTypesFromFile('glass-types-tecnoglass.json');
+ * console.log(`Seeded ${result.seeded} types, skipped ${result.skipped}, ${result.errors.length} errors`);
+ * ```
+ */
+export async function seedGlassTypesFromFile(fileName: string): Promise<{
+  errors: ValidationError[];
+  seeded: number;
+  skipped: number;
+}> {
+  const dataPath = path.join(process.cwd(), 'prisma', 'data', fileName);
+
+  // Load JSON file
+  let rawData: unknown;
+  try {
+    const fileContent = fs.readFileSync(dataPath, 'utf-8');
+    rawData = JSON.parse(fileContent);
+  } catch (error) {
+    return {
+      errors: [
+        {
+          code: 'FILE_READ_ERROR',
+          context: { error, fileName },
+          message: `Failed to read or parse ${fileName}`,
+          path: [],
+        },
+      ],
+      seeded: 0,
+      skipped: 0,
+    };
+  }
+
+  // Validate JSON structure
+  const validationResult = seedFileSchema.safeParse(rawData);
+  if (!validationResult.success) {
+    return {
+      errors: validationResult.error.issues.map((err) => ({
+        code: 'SCHEMA_VALIDATION_ERROR',
+        context: { zodError: err },
+        message: err.message,
+        path: err.path.map(String),
+      })),
+      seeded: 0,
+      skipped: 0,
+    };
+  }
+
+  const { glassTypes, manufacturer, version } = validationResult.data;
+  const errors: ValidationError[] = [];
+  let seeded = 0;
+  let skipped = 0;
+
+  // Dynamically import Prisma client to avoid circular dependencies
+  const { PrismaClient } = await import('@prisma/client');
+  const prisma = new PrismaClient();
+
+  try {
+    for (const glassType of glassTypes) {
+      try {
+        // Check if glass type with this code already exists
+        const existing = await prisma.glassType.findUnique({
+          where: { code: glassType.code },
+        });
+
+        if (existing) {
+          // Skip if already seeded with same or newer version
+          if (existing.isSeeded && existing.seedVersion === version) {
+            skipped++;
+            continue;
+          }
+          // Update if existing but different version
+          await prisma.glassType.update({
+            data: {
+              description: glassType.description,
+              isSeeded: true,
+              lightTransmission: glassType.lightTransmission,
+              manufacturer: glassType.manufacturer || manufacturer,
+              name: glassType.name,
+              pricePerSqm: (glassType as GlassTypeInput & { pricePerSqm?: number }).pricePerSqm ?? existing.pricePerSqm,
+              seedVersion: version,
+              series: glassType.series,
+              solarFactor: glassType.solarFactor,
+              thicknessMm: glassType.thicknessMm,
+              uValue: glassType.uValue,
+            },
+            where: { code: glassType.code },
+          });
+          seeded++;
+        } else {
+          // Create new glass type (v2.0 clean schema - no deprecated fields)
+          await prisma.glassType.create({
+            data: {
+              code: glassType.code,
+              description: glassType.description,
+              isSeeded: true,
+              lightTransmission: glassType.lightTransmission,
+              manufacturer: glassType.manufacturer || manufacturer,
+              name: glassType.name,
+              pricePerSqm: (glassType as GlassTypeInput & { pricePerSqm?: number }).pricePerSqm ?? 50_000.0,
+              seedVersion: version,
+              series: glassType.series,
+              solarFactor: glassType.solarFactor,
+              thicknessMm: glassType.thicknessMm,
+              uValue: glassType.uValue,
+            },
+          });
+          seeded++;
+        }
+      } catch (error) {
+        errors.push({
+          code: 'DATABASE_ERROR',
+          context: { code: glassType.code, error },
+          message: `Failed to seed glass type ${glassType.code}`,
+          path: ['glassTypes', glassType.code],
+        });
+      }
+    }
+  } finally {
+    await prisma.$disconnect();
+  }
+
+  return { errors, seeded, skipped };
+}
