@@ -7,13 +7,11 @@
  * @module _hooks/use-form-defaults
  */
 
-import type { GlassPurpose } from '@prisma/client';
 import { useMemo } from 'react';
 import type {
   CreateGlassTypeInput,
   GetGlassTypeByIdOutput,
   GlassTypeCharacteristicInput,
-  GlassTypeSolutionInput,
 } from '@/lib/validations/admin/glass-type.schema';
 
 const DEFAULT_THICKNESS_MM = 6;
@@ -38,18 +36,6 @@ function transformCharacteristics(
 }
 
 /**
- * Transform solutions array from backend to form format
- */
-function transformSolutions(solutions: GetGlassTypeByIdOutput['solutions']): GlassTypeSolutionInput[] {
-  return solutions.map((s) => ({
-    isPrimary: s.isPrimary,
-    notes: s.notes ?? undefined,
-    performanceRating: s.performanceRating,
-    solutionId: s.solutionId,
-  }));
-}
-
-/**
  * Convert nullable number to optional number
  */
 function toOptionalNumber(value: number | null | undefined): number | undefined {
@@ -62,11 +48,9 @@ function toOptionalNumber(value: number | null | undefined): number | undefined 
 function getEmptyDefaults(): FormDefaults {
   return {
     characteristics: [],
+    code: '',
     isActive: true,
     name: '',
-    pricePerSqm: 0,
-    purpose: 'general' as GlassPurpose,
-    solutions: [],
     thicknessMm: DEFAULT_THICKNESS_MM,
   };
 }
@@ -85,17 +69,14 @@ export function useFormDefaults(defaultValues?: GetGlassTypeByIdOutput): FormDef
 
     return {
       characteristics: transformCharacteristics(defaultValues.characteristics),
+      code: defaultValues.code ?? '',
       description: defaultValues.description ?? undefined,
-      glassSupplierId: defaultValues.glassSupplierId ?? undefined,
       isActive: defaultValues.isActive ?? true,
-      lastReviewDate: defaultValues.lastReviewDate ?? undefined,
       lightTransmission: toOptionalNumber(defaultValues.lightTransmission),
+      manufacturer: defaultValues.manufacturer ?? undefined,
       name: defaultValues.name ?? '',
-      pricePerSqm: toOptionalNumber(defaultValues.pricePerSqm) ?? 0,
-      purpose: (defaultValues.purpose as GlassPurpose) ?? 'general',
-      sku: defaultValues.sku ?? undefined,
+      series: defaultValues.series ?? undefined,
       solarFactor: toOptionalNumber(defaultValues.solarFactor),
-      solutions: transformSolutions(defaultValues.solutions),
       thicknessMm: defaultValues.thicknessMm ?? DEFAULT_THICKNESS_MM,
       uValue: toOptionalNumber(defaultValues.uValue),
     };

@@ -14,7 +14,6 @@
 
 'use client';
 
-import type { GlassPurpose } from '@prisma/client';
 import { Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -31,7 +30,6 @@ import { api } from '@/trpc/react';
 type SerializedGlassType = {
   id: string;
   name: string;
-  purpose: GlassPurpose;
   thicknessMm: number;
   pricePerSqm: number; // Already converted from Decimal
   uValue: number | null; // Already converted from Decimal
@@ -39,7 +37,6 @@ type SerializedGlassType = {
   isLaminated: boolean;
   isLowE: boolean;
   isTripleGlazed: boolean;
-  glassSupplierId: string | null;
   sku: string | null;
   description: string | null;
   solarFactor: number | null; // Already converted from Decimal
@@ -52,10 +49,6 @@ type SerializedGlassType = {
     solutions: number;
     characteristics: number;
   };
-  glassSupplier: {
-    id: string;
-    name: string;
-  } | null;
   solutions: Array<{
     id: string;
     createdAt: Date;
@@ -88,7 +81,6 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
   const utils = api.useUtils();
   const [search, setSearch] = useState('');
   const [isActive, setIsActive] = useState<'all' | 'active' | 'inactive'>('all');
-  const [purpose, setPurpose] = useState<'all' | 'general' | 'insulation' | 'security' | 'decorative'>('all');
   const [page, setPage] = useState(1);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [glassTypeToDelete, setGlassTypeToDelete] = useState<{ id: string; name: string } | null>(null);
@@ -99,7 +91,6 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
       isActive,
       limit: 20,
       page,
-      purpose: purpose === 'all' ? undefined : purpose,
       search: search || undefined,
       sortBy: 'name',
       sortOrder: 'asc',
@@ -146,14 +137,6 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
   const glassTypes = data?.items ?? initialData.items;
   const totalPages = data?.totalPages ?? initialData.totalPages;
 
-  // Purpose labels
-  const purposeLabels: Record<string, string> = {
-    decorative: 'Decorativo',
-    general: 'General',
-    insulation: 'Aislamiento',
-    security: 'Seguridad',
-  };
-
   return (
     <div className="space-y-6">
       {/* Filters */}
@@ -162,7 +145,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
           <CardTitle>Filtros</CardTitle>
           <CardDescription>Busca y filtra tipos de vidrio</CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4 md:grid-cols-4">
+        <CardContent className="grid gap-4 md:grid-cols-3">
           {/* Search */}
           <div className="space-y-2">
             <label className="font-medium text-sm" htmlFor="search">
@@ -181,31 +164,6 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
                 value={search}
               />
             </div>
-          </div>
-
-          {/* Purpose Filter */}
-          <div className="space-y-2">
-            <label className="font-medium text-sm" htmlFor="purpose">
-              Propósito
-            </label>
-            <Select
-              onValueChange={(value) => {
-                setPurpose(value as typeof purpose);
-                setPage(1);
-              }}
-              value={purpose}
-            >
-              <SelectTrigger id="purpose">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="general">General</SelectItem>
-                <SelectItem value="insulation">Aislamiento</SelectItem>
-                <SelectItem value="security">Seguridad</SelectItem>
-                <SelectItem value="decorative">Decorativo</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
 
           {/* Active Status Filter */}
@@ -256,9 +214,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
                 <TableHead>Nombre</TableHead>
                 <TableHead>Espesor</TableHead>
                 <TableHead>Precio/m²</TableHead>
-                <TableHead>Proveedor</TableHead>
                 <TableHead>Soluciones</TableHead>
-                <TableHead>Propósito</TableHead>
                 <TableHead>Estado</TableHead>
                 <TableHead className="text-right">Acciones</TableHead>
               </TableRow>
@@ -266,14 +222,14 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
             <TableBody>
               {isLoading && (
                 <TableRow>
-                  <TableCell className="text-center" colSpan={8}>
+                  <TableCell className="text-center" colSpan={6}>
                     Cargando...
                   </TableCell>
                 </TableRow>
               )}
               {!isLoading && glassTypes.length === 0 && (
                 <TableRow>
-                  <TableCell className="text-center text-muted-foreground" colSpan={8}>
+                  <TableCell className="text-center text-muted-foreground" colSpan={6}>
                     No se encontraron tipos de vidrio
                   </TableCell>
                 </TableRow>
@@ -286,9 +242,6 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
                       <Badge variant="outline">{glassType.thicknessMm}mm</Badge>
                     </TableCell>
                     <TableCell className="text-sm">${Number(glassType.pricePerSqm).toLocaleString('es-CO')}</TableCell>
-                    <TableCell className="text-sm">
-                      {glassType.glassSupplier?.name || <span className="text-muted-foreground">Sin proveedor</span>}
-                    </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
                         {glassType.solutions.length === 0 ? (
@@ -301,9 +254,6 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
                           ))
                         )}
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{purposeLabels[glassType.purpose]}</Badge>
                     </TableCell>
                     <TableCell>
                       <Badge variant={glassType.isActive ? 'default' : 'secondary'}>
