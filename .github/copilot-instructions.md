@@ -22,6 +22,8 @@ When generating code for this repository:
 - PostgreSQL via Prisma 6.16.2 (existing ProfileSupplier schema) (012-simplify-profile-suppliers)
 - TypeScript 5.8.2 (strict mode), Node.js ES2022 target + Next.js 15.2.3 (App Router), React 19.0.0 (Server Components), tRPC 11.0.0, TanStack Query 5.69.0, React Hook Form 7.63.0, Zod 4.1.1 (013-standardize-glass-suppliers)
 - PostgreSQL via Prisma 6.16.2 (existing GlassSupplier schema with GlassTypes relationship) (013-standardize-glass-suppliers)
+- TypeScript 5.9.3, Node.js (ES2022 target via Next.js 15.5.4) + Next.js 15.5.4 (App Router), Prisma 6.17.0 (ORM), tRPC 11.6.0 (API), Zod 4.1.12 (validation), React Hook Form 7.64.0 (015-static-glass-taxonomy)
+- PostgreSQL via Prisma ORM (existing multi-tenant schema with GlassType, GlassSolution, GlassSupplier models) (015-static-glass-taxonomy)
 
 **Language/Runtime**:
 - TypeScript 5.8.2 (strict mode), Node.js (ES2022 target)
@@ -1440,3 +1442,6 @@ See full documentation: [docs/dashboard-route-standard.md](../docs/dashboard-rou
 19. Never create Barrels (index.ts) or barrel files anywhere
 20. Follow project naming and organization conventions
 
+
+## Recent Changes
+- 015-static-glass-taxonomy: Added TypeScript 5.9.3, Node.js (ES2022 target via Next.js 15.5.4) + Next.js 15.5.4 (App Router), Prisma 6.17.0 (ORM), tRPC 11.6.0 (API), Zod 4.1.12 (validation), React Hook Form 7.64.0
