@@ -5,79 +5,64 @@
  *
  * Features:
  * - Search by name, code, or country
- * - Filter by country and active status
+ * - Filter by active status
  * - Pagination with page navigation
  * - Create, edit, delete actions
  * - Delete confirmation dialog with referential integrity
+ *
+ * Architecture:
+ * - Filters extracted to separate component (always visible)
+ * - Empty state component for no results
+ * - URL-based state management via server params
  */
 
 'use client';
 
-import { Pencil, Plus, Search, Trash2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { toast } from 'sonner';
 import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog';
+import { TablePagination } from '@/app/_components/server-table/table-pagination';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import type { GlassSupplierListOutput } from '@/lib/validations/admin/glass-supplier.schema';
-import { api } from '@/trpc/react';
+import type { FormValues } from '../_hooks/use-glass-supplier-form';
+import { useGlassSupplierMutations } from '../_hooks/use-glass-supplier-mutations';
+import { GlassSupplierDialog } from './glass-supplier-dialog';
+import { GlassSupplierEmpty } from './glass-supplier-empty';
+import { GlassSupplierFilters } from './glass-supplier-filters';
 
 type GlassSupplierListProps = {
   initialData: GlassSupplierListOutput;
+  searchParams: {
+    country?: string;
+    isActive?: string;
+    page?: string;
+    search?: string;
+    sortBy?: string;
+    sortOrder?: string;
+  };
 };
 
-export function GlassSupplierList({ initialData }: GlassSupplierListProps) {
-  const router = useRouter();
-  const utils = api.useUtils();
-  const [ search, setSearch ] = useState('');
-  const [ isActive, setIsActive ] = useState<'all' | 'active' | 'inactive'>('all');
-  const [ page, setPage ] = useState(1);
+export function GlassSupplierList({ initialData, searchParams }: GlassSupplierListProps) {
+  const [ dialogOpen, setDialogOpen ] = useState(false);
+  const [ dialogMode, setDialogMode ] = useState<'create' | 'edit'>('create');
+  const [ selectedSupplier, setSelectedSupplier ] = useState<(FormValues & { id: string }) | undefined>(undefined);
+
+  const { deleteMutation } = useGlassSupplierMutations();
   const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
   const [ supplierToDelete, setSupplierToDelete ] = useState<{ id: string; name: string } | null>(null);
 
-  // Query with filters
-  const { data, isLoading } = api.admin[ 'glass-supplier' ].list.useQuery(
-    {
-      isActive,
-      limit: 20,
-      page,
-      search: search || undefined,
-      sortBy: 'name',
-      sortOrder: 'asc',
-    },
-    {
-      initialData,
-      placeholderData: (previousData) => previousData, // TanStack Query v5 replacement for keepPreviousData
-    }
-  );
-
-  // Delete mutation
-  const deleteMutation = api.admin[ 'glass-supplier' ].delete.useMutation({
-    onError: (error) => {
-      toast.error('Error al eliminar proveedor', {
-        description: error.message,
-      });
-    },
-    onSuccess: () => {
-      toast.success('Proveedor eliminado correctamente');
-      setDeleteDialogOpen(false);
-      setSupplierToDelete(null);
-      // Invalidate list to refresh
-      void utils.admin[ 'glass-supplier' ].list.invalidate();
-    },
-  });
-
   const handleCreateClick = () => {
-    router.push('/admin/glass-suppliers/new');
+    setDialogMode('create');
+    setSelectedSupplier(undefined);
+    setDialogOpen(true);
   };
 
-  const handleEditClick = (id: string) => {
-    router.push(`/admin/glass-suppliers/${id}`);
+  const handleEditClick = (supplier: (FormValues & { id: string }) | GlassSupplierListOutput[ 'items' ][ number ]) => {
+    setDialogMode('edit');
+    setSelectedSupplier(supplier as FormValues & { id: string });
+    setDialogOpen(true);
   };
 
   const handleDeleteClick = (id: string, name: string) => {
@@ -85,167 +70,100 @@ export function GlassSupplierList({ initialData }: GlassSupplierListProps) {
     setDeleteDialogOpen(true);
   };
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDelete = () => {
     if (!supplierToDelete) return;
-    await deleteMutation.mutateAsync({ id: supplierToDelete.id });
+    deleteMutation.mutate(
+      { id: supplierToDelete.id },
+      {
+        onSuccess: () => {
+          setDeleteDialogOpen(false);
+          setSupplierToDelete(null);
+        },
+      }
+    );
   };
 
-  const suppliers = data?.items ?? [];
-  const totalPages = data?.totalPages ?? 1;
+  const suppliers = initialData.items ?? [];
+  const totalPages = initialData.totalPages ?? 1;
+  const page = initialData.page ?? 1;
+  const hasFilters = Boolean(searchParams.search || (searchParams.isActive && searchParams.isActive !== 'all'));
 
   return (
     <div className="space-y-6">
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Filtros</CardTitle>
-          <CardDescription>Busca y filtra proveedores de vidrio</CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4 md:grid-cols-3">
-          {/* Search */}
-          <div className="space-y-2">
-            <label className="font-medium text-sm" htmlFor="search">
-              Buscar
-            </label>
-            <div className="relative">
-              <Search className="absolute top-2.5 left-2.5 size-4 text-muted-foreground" />
-              <Input
-                className="pl-8"
-                id="search"
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1); // Reset to first page on search
-                }}
-                placeholder="Buscar por nombre, código o país..."
-                value={search}
-              />
-            </div>
+      {/* Filters - always visible */}
+      <GlassSupplierFilters onCreateClickAction={handleCreateClick} searchParams={searchParams} />
+
+      {/* Table or Empty State */}
+      {suppliers.length === 0 ? (
+        <GlassSupplierEmpty hasFilters={hasFilters} />
+      ) : (
+        <>
+          {/* Table */}
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[30%]">Nombre</TableHead>
+                  <TableHead className="w-[10%]">Código</TableHead>
+                  <TableHead className="w-[20%]">País</TableHead>
+                  <TableHead className="w-[15%] text-center">Tipos de Vidrio</TableHead>
+                  <TableHead className="w-[15%]">Estado</TableHead>
+                  <TableHead className="w-[10%] text-right">Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {suppliers.map((supplier) => (
+                  <TableRow key={supplier.id}>
+                    <TableCell className="font-medium">{supplier.name}</TableCell>
+                    <TableCell>
+                      {supplier.code ? (
+                        <Badge variant="outline">{supplier.code}</Badge>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell>{supplier.country || <span className="text-muted-foreground">—</span>}</TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="secondary">{supplier._count.glassTypes}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={supplier.isActive ? 'default' : 'secondary'}>
+                        {supplier.isActive ? 'Activo' : 'Inactivo'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button onClick={() => handleEditClick(supplier)} size="icon" variant="ghost">
+                          <Pencil className="size-4" />
+                          <span className="sr-only">Editar {supplier.name}</span>
+                        </Button>
+                        <Button
+                          onClick={() => handleDeleteClick(supplier.id, supplier.name)}
+                          size="icon"
+                          variant="ghost"
+                        >
+                          <Trash2 className="size-4 text-destructive" />
+                          <span className="sr-only">Eliminar {supplier.name}</span>
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
 
-          {/* Active Status Filter */}
-          <div className="space-y-2">
-            <label className="font-medium text-sm" htmlFor="isActive">
-              Estado
-            </label>
-            <Select
-              onValueChange={(value) => {
-                setIsActive(value as 'all' | 'active' | 'inactive');
-                setPage(1);
-              }}
-              value={isActive}
-            >
-              <SelectTrigger id="isActive">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="active">Activos</SelectItem>
-                <SelectItem value="inactive">Inactivos</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Create Button */}
-          <div className="flex items-end">
-            <Button className="w-full" onClick={handleCreateClick}>
-              <Plus className="mr-2 size-4" />
-              Nuevo Proveedor
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Table */}
-
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Nombre</TableHead>
-            <TableHead>Código</TableHead>
-            <TableHead>País</TableHead>
-            <TableHead>Tipos de Vidrio</TableHead>
-            <TableHead>Estado</TableHead>
-            <TableHead className="text-right">Acciones</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {isLoading && (
-            <TableRow>
-              <TableCell className="text-center" colSpan={6}>
-                Cargando...
-              </TableCell>
-            </TableRow>
-          )}
-          {!isLoading && suppliers.length === 0 && (
-            <TableRow>
-              <TableCell className="text-center text-muted-foreground" colSpan={6}>
-                No se encontraron proveedores
-              </TableCell>
-            </TableRow>
-          )}
-          {!isLoading &&
-            suppliers.map((supplier) => (
-              <TableRow key={supplier.id}>
-                <TableCell className="font-medium">{supplier.name}</TableCell>
-                <TableCell>
-                  {supplier.code ? (
-                    <Badge variant="outline">{supplier.code}</Badge>
-                  ) : (
-                    <span className="text-muted-foreground text-sm">-</span>
-                  )}
-                </TableCell>
-                <TableCell className="text-sm">{supplier.country || '-'}</TableCell>
-                <TableCell>
-                  <Badge variant="secondary">{supplier._count.glassTypes}</Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge variant={supplier.isActive ? 'default' : 'secondary'}>
-                    {supplier.isActive ? 'Activo' : 'Inactivo'}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button onClick={() => handleEditClick(supplier.id)} size="icon" variant="ghost">
-                      <Pencil className="size-4" />
-                      <span className="sr-only">Editar</span>
-                    </Button>
-                    <Button
-                      onClick={() => handleDeleteClick(supplier.id, supplier.name)}
-                      size="icon"
-                      variant="ghost"
-                    >
-                      <Trash2 className="size-4 text-destructive" />
-                      <span className="sr-only">Eliminar</span>
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-        </TableBody>
-      </Table>
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="mt-4 flex items-center justify-between">
-          <p className="text-muted-foreground text-sm">
-            Página {page} de {totalPages}
-          </p>
-          <div className="flex gap-2">
-            <Button disabled={page === 1} onClick={() => setPage((p) => p - 1)} size="sm" variant="outline">
-              Anterior
-            </Button>
-            <Button
-              disabled={page === totalPages}
-              onClick={() => setPage((p) => p + 1)}
-              size="sm"
-              variant="outline"
-            >
-              Siguiente
-            </Button>
-          </div>
-        </div>
+          {/* Pagination */}
+          <TablePagination currentPage={page} totalItems={initialData.total} totalPages={totalPages} />
+        </>
       )}
 
+      <GlassSupplierDialog
+        defaultValues={selectedSupplier}
+        mode={dialogMode}
+        onOpenChangeAction={setDialogOpen}
+        open={dialogOpen}
+      />
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog

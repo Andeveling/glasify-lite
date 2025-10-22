@@ -20,6 +20,8 @@ When generating code for this repository:
 - PostgreSQL via Prisma ORM (existing schema in `prisma/schema.prisma`) (011-admin-catalog-management)
 - TypeScript 5.8.2 (strict mode), Node.js (ES2022 target) + Next.js 15.2.3 (App Router), React 19.0.0 (Server Components), tRPC 11.0.0, TanStack Query 5.69.0, React Hook Form 7.63.0, Zod 4.1.1 (012-simplify-profile-suppliers)
 - PostgreSQL via Prisma 6.16.2 (existing ProfileSupplier schema) (012-simplify-profile-suppliers)
+- TypeScript 5.8.2 (strict mode), Node.js ES2022 target + Next.js 15.2.3 (App Router), React 19.0.0 (Server Components), tRPC 11.0.0, TanStack Query 5.69.0, React Hook Form 7.63.0, Zod 4.1.1 (013-standardize-glass-suppliers)
+- PostgreSQL via Prisma 6.16.2 (existing GlassSupplier schema with GlassTypes relationship) (013-standardize-glass-suppliers)
 
 **Language/Runtime**:
 - TypeScript 5.8.2 (strict mode), Node.js (ES2022 target)
