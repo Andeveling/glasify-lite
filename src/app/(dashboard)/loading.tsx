@@ -1,5 +1,4 @@
 import { generateStableKeyedArray } from '@/app/_utils/generate-keys.util';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const NAV_SKELETON_COUNT = 6;
@@ -112,14 +111,6 @@ export default function DashboardLoading() {
             </div>
           </div>
         </main>
-      </div>
-
-      {/* Loading overlay */}
-      <div className="fixed inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-        <div className="space-y-4 text-center">
-          <LoadingSpinner size="lg" />
-          <p className="text-muted-foreground text-sm">Cargando panel de administración...</p>
-        </div>
       </div>
     </div>
   );

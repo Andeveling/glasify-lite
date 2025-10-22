@@ -49,6 +49,7 @@ export function useGlassSupplierMutations({ onSuccess }: UseGlassSupplierMutatio
     onError: (err: { message: string }) => {
       toast.error('Error al crear proveedor', {
         description: err.message,
+        duration: 5000, // 5 seconds
         id: 'create-supplier',
       });
     },
@@ -75,10 +76,7 @@ export function useGlassSupplierMutations({ onSuccess }: UseGlassSupplierMutatio
    */
   const updateMutation = api.admin['glass-supplier'].update.useMutation({
     onError: (err: { message: string }) => {
-      toast.error('Error al actualizar proveedor', {
-        description: err.message,
-        id: 'update-supplier',
-      });
+      toast.error('Error al actualizar proveedor');
     },
     onMutate: () => {
       toast.loading('Actualizando proveedor...', { id: 'update-supplier' });
@@ -103,6 +101,7 @@ export function useGlassSupplierMutations({ onSuccess }: UseGlassSupplierMutatio
     onError: (err: { message: string }) => {
       toast.error('Error al eliminar proveedor', {
         description: err.message,
+        duration: 5000, // 5 seconds
         id: 'delete-supplier',
       });
     },
@@ -123,13 +122,38 @@ export function useGlassSupplierMutations({ onSuccess }: UseGlassSupplierMutatio
   /**
    * Submit handlers for form
    * Routes to create or update based on mode
+   * Cleans empty strings to undefined for optional fields
    */
   const handleCreate = (data: FormValues) => {
-    createMutation.mutate(data);
+    // Clean up optional fields (convert empty strings to undefined)
+    const cleanedData = {
+      code: data.code?.trim() || undefined,
+      contactEmail: data.contactEmail?.trim() || undefined,
+      contactPhone: data.contactPhone?.trim() || undefined,
+      country: data.country?.trim() || undefined,
+      isActive: data.isActive,
+      name: data.name.trim(),
+      notes: data.notes?.trim() || undefined,
+      website: data.website?.trim() || undefined,
+    };
+
+    createMutation.mutate(cleanedData);
   };
 
   const handleUpdate = (id: string, data: FormValues) => {
-    updateMutation.mutate({ data, id });
+    // Clean up optional fields (convert empty strings to undefined)
+    const cleanedData = {
+      code: data.code?.trim() || undefined,
+      contactEmail: data.contactEmail?.trim() || undefined,
+      contactPhone: data.contactPhone?.trim() || undefined,
+      country: data.country?.trim() || undefined,
+      isActive: data.isActive,
+      name: data.name.trim(),
+      notes: data.notes?.trim() || undefined,
+      website: data.website?.trim() || undefined,
+    };
+
+    updateMutation.mutate({ data: cleanedData, id });
   };
 
   const handleDelete = (id: string) => {

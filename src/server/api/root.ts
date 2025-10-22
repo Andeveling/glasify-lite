@@ -19,12 +19,12 @@ import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc';
 export const appRouter = createTRPCRouter({
   admin: createTRPCRouter({
     ...adminRouter._def.record,
-    'glass-solution': createTRPCRouter(glassSolutionRouter._def.record),
-    'glass-supplier': createTRPCRouter(glassSupplierRouter._def.record),
-    'glass-type': createTRPCRouter(glassTypeRouter._def.record),
-    model: createTRPCRouter(modelRouter._def.record),
-    'profile-supplier': createTRPCRouter(profileSupplierRouter._def.record),
-    service: createTRPCRouter(serviceRouter._def.record),
+    'glass-solution': glassSolutionRouter,
+    'glass-supplier': glassSupplierRouter,
+    'glass-type': glassTypeRouter,
+    model: modelRouter,
+    'profile-supplier': profileSupplierRouter,
+    service: serviceRouter,
   }),
   catalog: catalogRouter,
   quote: quoteRouter,
