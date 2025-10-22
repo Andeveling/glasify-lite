@@ -114,23 +114,23 @@ export function GlassSupplierList({ initialData, searchParams }: GlassSupplierLi
               <TableBody>
                 {suppliers.map((supplier) => (
                   <TableRow key={supplier.id}>
-                    <TableCell className="font-medium">{supplier.name}</TableCell>
-                    <TableCell>
-                      {supplier.code ? (
-                        <Badge variant="outline">{supplier.code}</Badge>
-                      ) : (
-                        <span className="text-muted-foreground text-sm">—</span>
-                      )}
-                    </TableCell>
-                    <TableCell>{supplier.country || <span className="text-muted-foreground">—</span>}</TableCell>
-                    <TableCell className="text-center">
-                      <Badge variant="secondary">{supplier._count.glassTypes}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={supplier.isActive ? 'default' : 'secondary'}>
-                        {supplier.isActive ? 'Activo' : 'Inactivo'}
-                      </Badge>
-                    </TableCell>
+                  <TableCell className="font-medium">{supplier.name}</TableCell>
+                  <TableCell>
+                    {supplier.code ? (
+                      <Badge variant="outline">{supplier.code}</Badge>
+                    ) : (
+                      <span className="text-muted-foreground text-sm">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell>{supplier.country || <span className="text-muted-foreground">—</span>}</TableCell>
+                  <TableCell className="text-center">
+                    <span className="text-muted-foreground text-sm">—</span>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={supplier.isActive ? 'default' : 'secondary'}>
+                      {supplier.isActive ? 'Activo' : 'Inactivo'}
+                    </Badge>
+                  </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button onClick={() => handleEditClick(supplier)} size="icon" variant="ghost">
