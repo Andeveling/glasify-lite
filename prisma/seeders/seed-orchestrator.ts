@@ -25,6 +25,14 @@ import { createService } from '../factories/service.factory';
 import { seedTenant } from '../seed-tenant';
 
 /**
+ * Helper: Generate URL-friendly slug from key
+ * Converts snake_case keys to kebab-case slugs
+ */
+function generateSlugFromKey(key: string): string {
+  return key.replace(/_/g, '-');
+}
+
+/**
  * Preset configuration interface
  */
 export interface SeedPreset {
@@ -457,11 +465,17 @@ export class SeedOrchestrator {
         // Create or update
         const solution = existing
           ? await this.prisma.glassSolution.update({
-              data: result.data,
+              data: {
+                ...result.data,
+                slug: generateSlugFromKey(result.data.key),
+              },
               where: { id: existing.id },
             })
           : await this.prisma.glassSolution.create({
-              data: result.data,
+              data: {
+                ...result.data,
+                slug: generateSlugFromKey(result.data.key),
+              },
             });
 
         // Store ID mapping for relationship resolution

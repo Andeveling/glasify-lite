@@ -140,6 +140,7 @@ function PDFItemsTable({ data }: QuotePDFDocumentProps) {
             style={[pdfStyles.tableRow, ...(index % 2 === 1 ? [pdfStyles.tableRowEven] : [])]}
             wrap={false}
           >
+            {/* Producto */}
             <View style={[pdfStyles.tableCell, pdfStyles.colItem]}>
               <Text style={pdfStyles.tableCellLeft}>{item.name}</Text>
               {item.product?.manufacturer && (
@@ -149,6 +150,7 @@ function PDFItemsTable({ data }: QuotePDFDocumentProps) {
               )}
             </View>
 
+            {/* Descripción */}
             <View style={[pdfStyles.tableCell, pdfStyles.colDescription]}>
               {item.product?.name && <Text style={pdfStyles.tableCellLeft}>{item.product.name}</Text>}
               {item.glass?.type && (
@@ -159,16 +161,22 @@ function PDFItemsTable({ data }: QuotePDFDocumentProps) {
               )}
             </View>
 
+            {/* Dimensiones */}
             <Text style={[pdfStyles.tableCell, pdfStyles.colDimensions, pdfStyles.tableCellCenter]}>
-              {item.dimensions ? `${item.dimensions.width}x${item.dimensions.height}m` : '-'}
+              {item.dimensions ? `${item.dimensions.width}x${item.dimensions.height}` : '-'}
             </Text>
 
-            <Text style={[pdfStyles.tableCell, pdfStyles.colQuantity, pdfStyles.tableCellCenter]}>{item.quantity}</Text>
+            {/* Cantidad */}
+            <Text style={[pdfStyles.tableCell, pdfStyles.colQuantity, pdfStyles.tableCellCenter]}>
+              {item.quantity}
+            </Text>
 
+            {/* Precio Unitario */}
             <Text style={[pdfStyles.tableCell, pdfStyles.colUnitPrice, pdfStyles.tableCellRight]}>
               {formatCurrency(item.unitPrice, { context: data.formatting })}
             </Text>
 
+            {/* Subtotal */}
             <Text style={[pdfStyles.tableCell, pdfStyles.colSubtotal, pdfStyles.tableCellRight]}>
               {formatCurrency(item.subtotal, { context: data.formatting })}
             </Text>

@@ -99,14 +99,14 @@ export const pdfLayout = {
  * PDF Styles
  */
 export const pdfStyles = StyleSheet.create({
-  colDescription: { width: '25%' },
+  // Column Widths - Optimized for better text wrapping and readability
+  // Total: 100% (20% + 20% + 15% + 12% + 16% + 17%)
+  colDescription: { width: '20%' },
   colDimensions: { width: '15%' },
-
-  // Column Widths
-  colItem: { width: '30%' },
-  colQuantity: { width: '10%' },
-  colSubtotal: { width: '10%' },
-  colUnitPrice: { width: '10%' },
+  colItem: { width: '20%' },
+  colQuantity: { width: '12%' },
+  colSubtotal: { width: '17%' },
+  colUnitPrice: { width: '16%' },
   companyLogo: {
     height: 40,
     objectFit: 'contain',
@@ -232,6 +232,7 @@ export const pdfStyles = StyleSheet.create({
   },
   tableCell: {
     color: pdfColors.gray900,
+    flex: 1,
     fontSize: pdfFonts.sizes.sm,
     padding: pdfSpacing.xs,
   },
@@ -248,20 +249,27 @@ export const pdfStyles = StyleSheet.create({
     backgroundColor: pdfColors.primary,
     borderTopLeftRadius: pdfLayout.borders.radius,
     borderTopRightRadius: pdfLayout.borders.radius,
+    display: 'flex',
     flexDirection: 'row',
+    gap: 0,
     padding: pdfSpacing.sm,
   },
   tableHeaderCell: {
+    alignItems: 'center',
     color: pdfColors.white,
+    display: 'flex',
+    flex: 1,
     fontSize: pdfFonts.sizes.sm,
     fontWeight: 'bold',
+    justifyContent: 'center',
     textAlign: 'center',
   },
   tableRow: {
+    alignItems: 'flex-start',
     borderBottomColor: pdfColors.gray200,
     borderBottomWidth: 1,
     flexDirection: 'row',
-    minHeight: 40,
+    minHeight: 50,
     padding: pdfSpacing.sm,
   },
   tableRowEven: {
