@@ -143,14 +143,7 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
       icon: 'Glasses',
       label: 'Soluciones',
       routes: [ '/glasses/solutions' ],
-    },
-    {
-      description: 'Crear una nueva cotización',
-      href: '/quote',
-      icon: 'Calculator',
-      label: 'Cotizar',
-      routes: [ '/quote' ],
-    },
+    }
   ];
 }
 
