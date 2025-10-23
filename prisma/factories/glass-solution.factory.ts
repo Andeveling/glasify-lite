@@ -59,6 +59,17 @@ const glassSolutionSchema = z.object({
 });
 
 /**
+ * Helper: Generate URL-friendly slug from key
+ *
+ * Converts snake_case keys to kebab-case slugs
+ * @example 'solar_control' → 'solar-control'
+ * @example 'thermal_insulation' → 'thermal-insulation'
+ */
+function generateSlugFromKey(key: string): string {
+  return key.replace(/_/g, '-');
+}
+
+/**
  * GlassSolution input type (inferred from schema)
  */
 export type GlassSolutionInput = z.infer<typeof glassSolutionSchema>;
@@ -257,6 +268,7 @@ export async function seedGlassSolutionsFromFile(fileName: string): Promise<{
               name: solution.name,
               nameEs: solution.nameEs,
               seedVersion: version,
+              slug: generateSlugFromKey(solution.key),
               sortOrder: solution.sortOrder,
             },
             where: { key: solution.key },
@@ -273,6 +285,7 @@ export async function seedGlassSolutionsFromFile(fileName: string): Promise<{
               name: solution.name,
               nameEs: solution.nameEs,
               seedVersion: version,
+              slug: generateSlugFromKey(solution.key),
               sortOrder: solution.sortOrder,
             },
           });

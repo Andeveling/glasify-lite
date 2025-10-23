@@ -22,6 +22,14 @@ import { adminProcedure, createTRPCRouter } from '@/server/api/trpc';
 import { canDeleteGlassSolution } from '@/server/services/referential-integrity.service';
 
 /**
+ * Helper: Generate URL-friendly slug from key
+ * Converts snake_case keys to kebab-case slugs
+ */
+function generateSlugFromKey(key: string): string {
+  return key.replace(/_/g, '-');
+}
+
+/**
  * Helper: Build where clause for list query
  */
 function buildWhereClause(input: { search?: string; isActive?: boolean }): Prisma.GlassSolutionWhereInput {
@@ -109,7 +117,10 @@ export const glassSolutionRouter = createTRPCRouter({
     }
 
     const glassSolution = await ctx.db.glassSolution.create({
-      data: input,
+      data: {
+        ...input,
+        slug: generateSlugFromKey(input.key),
+      },
     });
 
     logger.info('Glass solution created', {
@@ -288,7 +299,11 @@ export const glassSolutionRouter = createTRPCRouter({
     }
 
     const glassSolution = await ctx.db.glassSolution.update({
-      data,
+      data: {
+        ...data,
+        // If key is updated, also update slug
+        ...(data.key && { slug: generateSlugFromKey(data.key) }),
+      },
       where: { id },
     });
 

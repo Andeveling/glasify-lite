@@ -142,6 +142,7 @@ export const listGlassSolutionsOutputSchema = z.object({
       name: z.string(),
       nameEs: z.string(),
       seedVersion: z.string().nullable(),
+      slug: z.string().describe('URL-friendly slug for dynamic routes'),
       sortOrder: z.number(),
       updatedAt: z.date(),
     })

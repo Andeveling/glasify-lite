@@ -456,6 +456,9 @@ model GlassSolution {
   id          String              @id @default(cuid())
   /// Clave única para identificar la solución (ej: 'security', 'thermal_insulation')
   key         String              @unique
+  /// URL-friendly slug para rutas dinámicas (ej: 'solar-control', 'energy-efficiency')
+  /// Derivado de `key` reemplazando guiones bajos con guiones (kebab-case)
+  slug        String              @unique @db.VarChar(100)
   /// Nombre técnico en inglés
   name        String
   /// Nombre comercial en español
@@ -479,6 +482,7 @@ model GlassSolution {
   @@index([sortOrder])
   @@index([isActive])
   @@index([isSeeded])
+  @@index([slug])
 }
 
 /// Tabla pivote: Relación Many-to-Many entre GlassType y GlassSolution

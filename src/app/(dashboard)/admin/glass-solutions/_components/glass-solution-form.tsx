@@ -24,6 +24,8 @@ import {
 } from '@/lib/validations/admin/glass-solution.schema';
 import { api } from '@/trpc/react';
 
+import { IconSelector } from './icon-selector';
+
 type GlassSolutionFormProps = {
   mode: 'create' | 'edit';
   defaultValues?: GlassSolution;
@@ -55,7 +57,7 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
     resolver: zodResolver(createGlassSolutionSchema),
   });
 
-  const createMutation = api.admin['glass-solution'].create.useMutation({
+  const createMutation = api.admin[ 'glass-solution' ].create.useMutation({
     onError: (err: { message?: string }) => {
       toast.error('Error al crear solución', {
         description: err.message || 'Ocurrió un error inesperado',
@@ -70,7 +72,7 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
     },
   });
 
-  const updateMutation = api.admin['glass-solution'].update.useMutation({
+  const updateMutation = api.admin[ 'glass-solution' ].update.useMutation({
     onError: (err: { message?: string }) => {
       toast.error('Error al actualizar solución', {
         description: err.message || 'Ocurrió un error inesperado',
@@ -226,15 +228,14 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
                   <FormItem>
                     <FormLabel>Icono Lucide (Opcional)</FormLabel>
                     <FormControl>
-                      <Input
+                      <IconSelector
                         disabled={isPending}
-                        placeholder="Ej: ShieldCheck, Layers, Snowflake"
-                        {...field}
-                        value={field.value ?? ''}
+                        onChangeAction={field.onChange}
+                        value={field.value ?? undefined}
                       />
                     </FormControl>
                     <FormDescription>
-                      Nombre de un icono de Lucide React (ej: ShieldCheck, Layers, Snowflake)
+                      Selecciona un icono visual para representar esta solución de vidrio
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

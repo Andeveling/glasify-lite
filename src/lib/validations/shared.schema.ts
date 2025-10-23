@@ -8,7 +8,7 @@ import { z } from 'zod';
 // Validation constants
 const DECIMAL_PRECISION = 0.01;
 const MAX_KEY_LENGTH = 50;
-const MAX_TEXT_LENGTH = 255;
+const MAX_TEXT_LENGTH = 500;
 const MAX_LONG_TEXT_LENGTH = 2000;
 const MAX_SEARCH_LENGTH = 100;
 const MAX_PAGE_LIMIT = 100;
@@ -74,7 +74,7 @@ export const dimensionRefinement = <T extends { min: number; max: number }>(
 ) => {
   if (data.min >= data.max) {
     ctx.addIssue({
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       message: `El valor mínimo de ${field} debe ser menor que el máximo`,
       path: ['min'],
     });
@@ -84,12 +84,12 @@ export const dimensionRefinement = <T extends { min: number; max: number }>(
 /**
  * URL validator (optional, but must be valid if provided)
  */
-export const optionalUrl = z.string().url({ message: 'Debe ser una URL válida' }).optional().or(z.literal(''));
+export const optionalUrl = z.url({ message: 'Debe ser una URL válida' }).optional().or(z.literal(''));
 
 /**
  * Email validator
  */
-export const emailValidator = z.string().email({ message: 'Debe ser un correo electrónico válido' });
+export const emailValidator = z.email({ message: 'Debe ser un correo electrónico válido' });
 
 /**
  * Snake case key validator (for solution keys, characteristic keys)
@@ -109,7 +109,7 @@ export const snakeCaseKey = z
 export const spanishText = z
   .string()
   .min(1, { message: 'Este campo es obligatorio' })
-  .max(MAX_TEXT_LENGTH, { message: 'Debe tener máximo 255 caracteres' });
+  .max(MAX_TEXT_LENGTH, { message: 'Debe tener máximo 500 caracteres' });
 
 /**
  * Spanish text validator (optional)

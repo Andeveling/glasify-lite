@@ -87,11 +87,6 @@ const data = {
       title: 'Soluciones de Vidrio',
       url: '/admin/glass-solutions',
     },
-    {
-      icon: Settings,
-      title: 'Características de Vidrio',
-      url: '/admin/glass-characteristics',
-    },
   ],
   user: {
     avatar: '/avatars/shadcn.jpg',

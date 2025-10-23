@@ -89,12 +89,12 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
       title: 'Soluciones de Vidrio',
       url: '/admin/glass-solutions',
     },
-    {
-      description: 'Propiedades del vidrio',
-      icon: Settings,
-      title: 'Características de Vidrio',
-      url: '/admin/glass-characteristics',
-    },
+    // {
+    //   description: 'Propiedades del vidrio',
+    //   icon: Settings,
+    //   title: 'Características de Vidrio',
+    //   url: '/admin/glass-characteristics',
+    // },
   ];
 
   return (

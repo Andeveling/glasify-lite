@@ -2,7 +2,7 @@
 
 import type { UserRole } from '@prisma/client';
 import type { LucideIcon } from 'lucide-react';
-import { Calculator, FileText, LayoutDashboard, Menu, Package, Settings } from 'lucide-react';
+import { Calculator, FileText, Glasses, LayoutDashboard, Menu, Package, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -19,6 +19,7 @@ import type { IconName, NavLink } from './role-based-nav';
 const iconMap: Record<IconName, LucideIcon> = {
   Calculator,
   FileText,
+  Glasses,
   LayoutDashboard,
   Package,
   Settings,
@@ -41,7 +42,7 @@ function NavigationItems({
     <>
       {items.map((item) => {
         const isActive = currentPath === item.href || item.routes?.some((route) => currentPath.startsWith(route));
-        const IconComponent = iconMap[item.icon];
+        const IconComponent = iconMap[ item.icon ];
 
         return (
           <Link
@@ -99,7 +100,7 @@ export function NavigationMenu({
   className?: string;
 }) {
   const pathname = usePathname();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [ mobileMenuOpen, setMobileMenuOpen ] = useState(false);
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
