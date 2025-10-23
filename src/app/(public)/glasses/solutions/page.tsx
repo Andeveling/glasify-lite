@@ -14,8 +14,8 @@
 import { GlassesIcon } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import logger from '@/lib/logger';
 import { getIconComponent } from '@/lib/icon-map';
+import logger from '@/lib/logger';
 import { api } from '@/trpc/server-client';
 
 // Static generation with 1-hour revalidation

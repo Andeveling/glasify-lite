@@ -15,8 +15,8 @@ import { ArrowLeft, Star } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import logger from '@/lib/logger';
 import { getIconComponent } from '@/lib/icon-map';
+import logger from '@/lib/logger';
 import { api } from '@/trpc/server-client';
 
 // Static generation with 1-hour revalidation
@@ -103,7 +103,7 @@ function PerformanceRating({ rating }: { rating: string }): React.ReactElement {
   };
 
   const ratingKey = (rating as RatingKey) || 'standard';
-  const ratingData = ratings[ratingKey];
+  const ratingData = ratings[ ratingKey ];
 
   return (
     <div className="flex items-center gap-2">
@@ -132,10 +132,10 @@ export default async function GlassSolutionDetailPage({ params }: { params: Prom
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-secondary/5">
         {/* Breadcrumb Navigation */}
-        <div className='border-border border-b bg-card/50'>
+        <div className="border-border border-b bg-card/50">
           <div className="mx-auto max-w-4xl px-4 py-4 sm:px-6 lg:px-8">
             <Link
-              className='inline-flex items-center gap-2 text-muted-foreground text-sm hover:text-primary'
+              className="inline-flex items-center gap-2 text-muted-foreground text-sm hover:text-primary"
               href="/glasses/solutions"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -157,7 +157,7 @@ export default async function GlassSolutionDetailPage({ params }: { params: Prom
               </div>
             )}
 
-            <h1 className='mb-4 font-bold text-4xl tracking-tight'>{solution.nameEs}</h1>
+            <h1 className="mb-4 font-bold text-4xl tracking-tight">{solution.nameEs}</h1>
 
             {solution.description && <p className="text-lg text-muted-foreground">{solution.description}</p>}
           </div>
@@ -165,24 +165,24 @@ export default async function GlassSolutionDetailPage({ params }: { params: Prom
           {/* Glass Types Section */}
           {solution.glassTypes.length > 0 ? (
             <div>
-              <h2 className='mb-6 font-bold text-2xl'>Tipos de Vidrio Disponibles</h2>
+              <h2 className="mb-6 font-bold text-2xl">Tipos de Vidrio Disponibles</h2>
 
               <div className="grid gap-4 md:grid-cols-2">
                 {solution.glassTypes.map((glassType) => (
                   <div className="rounded-lg border border-border bg-card p-6" key={glassType.id}>
                     {/* Glass Type Header */}
                     <div className="mb-4">
-                      <h3 className='mb-2 font-semibold text-lg'>{glassType.name}</h3>
+                      <h3 className="mb-2 font-semibold text-lg">{glassType.name}</h3>
 
                       {glassType.code && (
-                        <p className='text-muted-foreground text-sm'>
+                        <p className="text-muted-foreground text-sm">
                           Código: <span className="font-mono font-semibold">{glassType.code}</span>
                         </p>
                       )}
                     </div>
 
                     {/* Specifications */}
-                    <div className='mb-4 space-y-2 border-border border-y py-4'>
+                    <div className="mb-4 space-y-2 border-border border-y py-4">
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Espesor</span>
                         <span className="font-semibold">{glassType.thicknessMm}mm</span>
@@ -202,20 +202,20 @@ export default async function GlassSolutionDetailPage({ params }: { params: Prom
 
                     {/* Performance Rating */}
                     <div className="mb-4">
-                      <p className='mb-2 text-muted-foreground text-sm'>Rendimiento</p>
+                      <p className="mb-2 text-muted-foreground text-sm">Rendimiento</p>
                       <PerformanceRating rating={glassType.performanceRating} />
                     </div>
 
                     {/* Badges */}
                     <div className="flex flex-wrap gap-2">
                       {glassType.isPrimary && (
-                        <span className='inline-block rounded-full bg-primary/10 px-3 py-1 font-medium text-primary text-xs'>
+                        <span className="inline-block rounded-full bg-primary/10 px-3 py-1 font-medium text-primary text-xs">
                           Solución Primaria
                         </span>
                       )}
 
                       {glassType.notes && (
-                        <span className='inline-block rounded-full bg-secondary px-3 py-1 font-medium text-secondary-foreground text-xs'>
+                        <span className="inline-block rounded-full bg-secondary px-3 py-1 font-medium text-secondary-foreground text-xs">
                           Notas disponibles
                         </span>
                       )}
@@ -223,14 +223,14 @@ export default async function GlassSolutionDetailPage({ params }: { params: Prom
 
                     {/* Notes */}
                     {glassType.notes && (
-                      <div className='mt-4 rounded bg-muted p-3 text-muted-foreground text-sm'>{glassType.notes}</div>
+                      <div className="mt-4 rounded bg-muted p-3 text-muted-foreground text-sm">{glassType.notes}</div>
                     )}
                   </div>
                 ))}
               </div>
             </div>
           ) : (
-            <div className='rounded-lg border border-border border-dashed bg-card/50 p-12 text-center'>
+            <div className="rounded-lg border border-border border-dashed bg-card/50 p-12 text-center">
               <p className="text-muted-foreground">No hay tipos de vidrio asignados a esta solución aún.</p>
             </div>
           )}
