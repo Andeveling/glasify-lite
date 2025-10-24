@@ -12,6 +12,7 @@
 
 'use server';
 
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import logger from '@/lib/logger';
 import { generateQuoteFromCart } from '@/server/api/routers/quote/quote.service';
@@ -82,7 +83,9 @@ export async function generateQuoteFromCartAction(
 
   try {
     // 1. Authentication check
-    const session = await auth();
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
 
     if (!session?.user?.id) {
       logger.warn('[QuoteAction] Unauthorized quote generation attempt', {
@@ -182,7 +185,9 @@ export async function generateQuoteFromCartAction(
  * ```
  */
 export async function redirectToQuoteGenerationAction(): Promise<void> {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session?.user?.id) {
     // Redirect to sign-in with callback to quote generation page

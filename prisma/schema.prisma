@@ -31,6 +31,7 @@ enum ServiceUnit {
 /// - draft: Generated from cart, pending review/send (read-only, not editable)
 /// - sent: Sent to vendor/client, awaiting response
 /// - canceled: Canceled and no longer active
+
 enum QuoteStatus {
   draft
   sent
@@ -49,6 +50,7 @@ enum AdjustmentSign {
 
 /// @deprecated Use GlassSolution + GlassTypeSolution Many-to-Many instead.
 /// This enum will be removed in v2.0. Maintained for backward compatibility only.
+
 enum GlassPurpose {
   general
   insulation
@@ -82,6 +84,7 @@ enum MaterialType {
 /// - admin: Full access (models, all quotes, tenant config)
 /// - seller: Limited access (own quotes, catalog)
 /// - user: Client access (own quotes, catalog browsing)
+
 enum UserRole {
   admin
   seller
@@ -89,19 +92,24 @@ enum UserRole {
 }
 
 // Necessary for Next auth
-model Account {
-  id                 String   @id @default(cuid())
-  accountId          String   @map("providerAccountId")
-  providerId         String   @map("provider")
-  accessToken        String?  @map("access_token")
-  refreshToken       String?  @map("refresh_token")
-  accessTokenExpiresAt DateTime? @map("expires_at")
-  idToken            String?  @map("id_token")
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
 
-  userId             String
-  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Account {
+  id                   String    @id @default(cuid())
+  accountId            String    @map("providerAccountId")
+  providerId           String    @map("provider")
+  accessToken          String?   @map("access_token")
+  refreshToken         String?   @map("refresh_token")
+  accessTokenExpiresAt DateTime? @map("expires_at")
+  idToken              String?   @map("id_token")
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
 
   @@unique([providerId, accountId])
 }
@@ -114,23 +122,25 @@ model Session {
   updatedAt DateTime @updatedAt
 
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ipAddress String?
+  userAgent String?
 }
 
 model User {
-  id            String              @id @default(cuid())
+  id            String   @id @default(cuid())
   name          String?
-  email         String?             @unique
-  emailVerified Boolean             @default(false)
+  email         String?  @unique
+  emailVerified Boolean  @default(false)
   image         String?
-  role          UserRole            @default(user)
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
+  role          UserRole @default(user)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  accounts      Account[]
-  sessions      Session[]
-  quotes        Quote[]
-  priceChanges  ModelPriceHistory[]
+  accounts     Account[]
+  sessions     Session[]
+  quotes       Quote[]
+  priceChanges ModelPriceHistory[]
 
   @@index([role])
 }
@@ -143,10 +153,22 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier, value])
+}
+
 /// Multi-Tenant Configuration (Single Tenant per deployment)
 /// This is a singleton table that stores the tenant-level configuration.
 /// In the current implementation, there should only be ONE record in this table with id = "1".
 /// The fixed ID enforces the singleton pattern at the database level.
+
 model TenantConfig {
   id String @id @default("1")
 
@@ -182,6 +204,7 @@ model TenantConfig {
 
 /// Profile Supplier
 /// Represents manufacturers of window/door profiles (Rehau, Deceuninck, Azembla, etc.)
+
 model ProfileSupplier {
   id           String       @id @default(cuid())
   /// Supplier name (Rehau, Deceuninck, Azembla, etc.)
@@ -202,6 +225,7 @@ model ProfileSupplier {
 
 /// @deprecated This model will be removed in v2.0. Migrated to TenantConfig + ProfileSupplier.
 /// DO NOT use this model in new code. Use TenantConfig for business config and ProfileSupplier for profile manufacturers.
+
 model Manufacturer {
   id                String   @id @default(cuid())
   name              String
@@ -246,11 +270,15 @@ model Model {
   priceHistory           ModelPriceHistory[]
 
   // Performance indexes for admin table queries (TASK-011)
+  // Search by model name
+  // Filter by status (draft/published)
+  // Sort by creation date
+  // Sort by last update
   @@index([profileSupplierId, status])
-  @@index([name]) // Search by model name
-  @@index([status]) // Filter by status (draft/published)
-  @@index([createdAt(sort: Desc)]) // Sort by creation date
-  @@index([updatedAt(sort: Desc)]) // Sort by last update
+  @@index([name])
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
+  @@index([updatedAt(sort: Desc)])
 }
 
 model GlassType {
@@ -288,16 +316,26 @@ model GlassType {
   characteristics   GlassTypeCharacteristic[]
 
   // Performance indexes for admin table queries (TASK-012, TK-015-001)
-  @@index([name]) // Search by glass type name
-  @@index([code]) // Search by manufacturer code
-  @@index([series]) // Filter by product series
-  @@index([manufacturer]) // Filter by manufacturer
-  @@index([isActive]) // Filter by active status
-  @@index([isSeeded]) // Filter seeded vs custom types
-  @@index([thicknessMm]) // Sort/filter by thickness
-  @@index([pricePerSqm]) // Sort/filter by price
-  @@index([createdAt(sort: Desc)]) // Sort by creation date
-  @@index([updatedAt(sort: Desc)]) // Sort by last update
+  // Search by glass type name
+  // Search by manufacturer code
+  // Filter by product series
+  // Filter by manufacturer
+  // Filter by active status
+  // Filter seeded vs custom types
+  // Sort/filter by thickness
+  // Sort/filter by price
+  // Sort by creation date
+  // Sort by last update
+  @@index([name])
+  @@index([code])
+  @@index([series])
+  @@index([manufacturer])
+  @@index([isActive])
+  @@index([isSeeded])
+  @@index([thicknessMm])
+  @@index([pricePerSqm])
+  @@index([createdAt(sort: Desc)])
+  @@index([updatedAt(sort: Desc)])
 }
 
 model Service {
@@ -340,13 +378,20 @@ model Quote {
   adjustments Adjustment[]
 
   // Performance indexes for quote queries (TASK-013)
-  @@index([userId]) // Original index
-  @@index([userId, status]) // Composite index for filtering by user + status
-  @@index([userId, createdAt(sort: Desc)]) // Optimized for sorting by createdAt DESC
-  @@index([userId, validUntil]) // Optimized for expired quotes filtering
-  @@index([projectName]) // Search by project name
-  @@index([status]) // Filter by status (draft/sent/canceled)
-  @@index([createdAt(sort: Desc)]) // Sort by creation date (all quotes)
+  // Original index
+  // Composite index for filtering by user + status
+  // Optimized for sorting by createdAt DESC
+  // Optimized for expired quotes filtering
+  // Search by project name
+  // Filter by status (draft/sent/canceled)
+  // Sort by creation date (all quotes)
+  @@index([userId])
+  @@index([userId, status])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([userId, validUntil])
+  @@index([projectName])
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
 }
 
 model QuoteItem {
@@ -410,6 +455,7 @@ model Adjustment {
 
 /// Desglose de componentes de costo para cada modelo
 /// Permite al admin definir y ajustar cada componente que conforma el precio final
+
 model ModelCostBreakdown {
   id        String   @id @default(cuid())
   modelId   String
@@ -431,6 +477,7 @@ model ModelCostBreakdown {
 
 /// Historial de cambios de precio de los modelos
 /// Permite rastrear cuándo y por qué cambiaron los precios
+
 model ModelPriceHistory {
   id              String   @id @default(cuid())
   modelId         String
@@ -456,6 +503,7 @@ model ModelPriceHistory {
 
 /// Soluciones de vidrio (categorías de uso)
 /// Permite clasificar vidrios según su propósito principal (seguridad, térmico, acústico, etc.)
+
 model GlassSolution {
   id          String              @id @default(cuid())
   /// Clave única para identificar la solución (ej: 'security', 'thermal_insulation')
@@ -491,6 +539,7 @@ model GlassSolution {
 
 /// Tabla pivote: Relación Many-to-Many entre GlassType y GlassSolution
 /// Permite que un vidrio pertenezca a múltiples soluciones con calificación de rendimiento
+
 model GlassTypeSolution {
   id                String            @id @default(cuid())
   glassTypeId       String
@@ -515,15 +564,16 @@ model GlassTypeSolution {
 /// Glass Supplier
 /// Represents glass manufacturers (Guardian, Saint-Gobain, Pilkington, AGC, Vitro, etc.)
 /// Note: Currently single-tenant, tenantConfigId optional for backward compatibility
+
 model GlassSupplier {
-  id             String                 @id @default(cuid())
+  id             String        @id @default(cuid())
   /// Optional tenant config ID for multi-tenancy support (currently unused in single-tenant mode)
-  tenantConfigId String?                @default("1")
-  tenantConfig   TenantConfig?          @relation(fields: [tenantConfigId], references: [id], onDelete: SetNull)
+  tenantConfigId String?       @default("1")
+  tenantConfig   TenantConfig? @relation(fields: [tenantConfigId], references: [id], onDelete: SetNull)
   /// Supplier name (Guardian, Saint-Gobain, Pilkington, etc.)
-  name           String                 @unique
+  name           String        @unique
   /// Short code for the supplier (e.g., 'GRD' for Guardian)
-  code           String?                @unique
+  code           String?       @unique
   /// Country where the supplier is based
   country        String?
   /// Official website URL
@@ -533,11 +583,11 @@ model GlassSupplier {
   /// Contact phone number
   contactPhone   String?
   /// Whether this supplier is active for selection
-  isActive       Boolean                @default(true)
+  isActive       Boolean       @default(true)
   /// Additional notes about the supplier
   notes          String?
-  createdAt      DateTime               @default(now())
-  updatedAt      DateTime               @updatedAt
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   @@index([isActive])
   @@index([code])
@@ -547,6 +597,7 @@ model GlassSupplier {
 /// Glass Characteristic
 /// Flexible characteristic definitions for glass properties (tempered, laminated, low-e, etc.)
 /// Replaces rigid boolean fields with extensible Many-to-Many relationship
+
 model GlassCharacteristic {
   id          String                    @id @default(cuid())
   /// Unique key for the characteristic (e.g., 'tempered', 'laminated', 'low_e')
@@ -579,6 +630,7 @@ model GlassCharacteristic {
 /// Glass Type Characteristic (Pivot Table)
 /// Many-to-Many relationship between GlassType and GlassCharacteristic
 /// Allows a glass type to have multiple characteristics with optional values
+
 model GlassTypeCharacteristic {
   id               String              @id @default(cuid())
   glassTypeId      String

@@ -1,3 +1,4 @@
+import { headers } from 'next/headers';
 import { auth } from '@/server/auth';
 
 type AdminOnlyProps = {
@@ -24,7 +25,9 @@ type AdminOnlyProps = {
  * @returns JSX element or null
  */
 export async function AdminOnly({ children, fallback = null }: AdminOnlyProps) {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (session?.user?.role !== 'admin') {
     return <>{fallback}</>;

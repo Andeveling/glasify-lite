@@ -8,6 +8,7 @@
  */
 
 import { TRPCError } from '@trpc/server';
+import { headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
 import logger from '@/lib/logger';
 import { auth } from '@/server/auth';
@@ -22,7 +23,9 @@ type MyQuoteDetailPageProps = {
 
 export default async function MyQuoteDetailPage({ params }: MyQuoteDetailPageProps) {
   // Check authentication
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session?.user) {
     logger.warn('[MyQuoteDetailPage] Unauthenticated user attempted to access quote', {
@@ -40,7 +43,7 @@ export default async function MyQuoteDetailPage({ params }: MyQuoteDetailPagePro
       userId: session.user.id,
     });
 
-    const quote = await api.quote['get-by-id']({ id: quoteId });
+    const quote = await api.quote[ 'get-by-id' ]({ id: quoteId });
 
     return (
       <div className="container mx-auto max-w-7xl py-8">

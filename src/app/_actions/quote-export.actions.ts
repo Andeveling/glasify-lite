@@ -7,7 +7,9 @@
 
 'use server';
 
+import type { Decimal } from '@prisma/client/runtime/library';
 import type { QuoteStatus } from '@prisma/client';
+import { headers } from 'next/headers';
 import { z } from 'zod';
 import { writeQuoteExcel } from '@/lib/export/excel/quote-excel-workbook';
 import { renderQuotePDF } from '@/lib/export/pdf/quote-pdf-document';
@@ -15,6 +17,25 @@ import logger from '@/lib/logger';
 import { auth } from '@/server/auth';
 import { db } from '@/server/db';
 import type { ExportFormat, ExportResult, QuotePDFData } from '@/types/export.types';
+
+/**
+ * Constants for quote export calculations
+ */
+const MM_TO_METERS = 1000;
+const DEFAULT_QUOTE_VALIDITY_DAYS = 30;
+const HOURS_IN_DAY = 24;
+const MINUTES_IN_HOUR = 60;
+const SECONDS_IN_MINUTE = 60;
+const MS_IN_SECOND = 1000;
+
+/**
+ * Calculate default quote validity date (30 days from now)
+ */
+const getDefaultValidityDate = () =>
+  new Date(
+    Date.now() +
+      DEFAULT_QUOTE_VALIDITY_DAYS * HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE * MS_IN_SECOND,
+  );
 
 /**
  * Input schema for export actions
@@ -28,10 +49,14 @@ type ExportQuoteInput = z.infer<typeof exportQuoteInputSchema>;
 
 /**
  * Calculate totals from quote items
+ * Uses unknown type for complex Prisma includes
  */
-function calculateQuoteTotals(quote: any) {
+function calculateQuoteTotals(quote: { items: unknown[]; total: Decimal }) {
   // Calculate subtotal from items
-  const subtotal = quote.items.reduce((sum: number, item: any) => sum + Number(item.subtotal), 0);
+  const subtotal = quote.items.reduce((sum: number, item: unknown) => {
+    const typedItem = item as { subtotal: Decimal };
+    return sum + Number(typedItem.subtotal);
+  }, 0);
 
   //Tax and discount are not yet implemented in the schema
   // They will be calculated from adjustments in future iterations
@@ -61,7 +86,9 @@ export async function exportQuotePDF(input: ExportQuoteInput): Promise<ExportRes
     logger.info('Starting PDF export', { quoteId });
 
     // Authenticate user
-    const session = await auth();
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
     if (!session?.user) {
       logger.warn('Unauthorized PDF export attempt', { quoteId });
       return {
@@ -247,7 +274,9 @@ export async function exportQuoteExcel(input: ExportQuoteInput): Promise<ExportR
     logger.info('Starting Excel export', { quoteId });
 
     // Authenticate user
-    const session = await auth();
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
     if (!session?.user) {
       logger.warn('Unauthorized Excel export attempt', { quoteId });
       return {

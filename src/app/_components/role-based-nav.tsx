@@ -1,4 +1,5 @@
 import type { UserRole } from '@prisma/client';
+import { headers } from 'next/headers';
 import { auth } from '@/server/auth';
 import { NavigationMenu } from './navigation-menu';
 
@@ -167,8 +168,10 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
  * @returns Navigation menu with role-appropriate links
  */
 export async function RoleBasedNav({ className }: { className?: string }) {
-  const session = await auth();
-  const userRole = session?.user?.role;
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  const userRole = session?.user?.role as UserRole | undefined;
 
   // Get navigation links based on user role
   const navLinks = getNavLinksForRole(userRole);

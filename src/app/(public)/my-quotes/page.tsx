@@ -1,3 +1,4 @@
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { BackLink } from '@/components/ui/back-link';
 import logger from '@/lib/logger';
@@ -34,7 +35,9 @@ type MyQuotesPageProps = {
  */
 export default async function MyQuotesPage({ searchParams }: MyQuotesPageProps) {
   // Check authentication
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session?.user) {
     logger.warn('[MyQuotesPage] Unauthenticated user attempted to access quotes', {
@@ -67,7 +70,7 @@ export default async function MyQuotesPage({ searchParams }: MyQuotesPageProps) 
   const { sortBy: backendSortBy, sortOrder } = getSortParams(sortBy);
 
   // Fetch user's quotes with filters
-  const result = await api.quote['list-user-quotes']({
+  const result = await api.quote[ 'list-user-quotes' ]({
     includeExpired: false,
     limit: 10,
     page,
