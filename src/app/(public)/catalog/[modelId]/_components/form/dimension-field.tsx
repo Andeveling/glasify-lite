@@ -44,9 +44,9 @@ export function DimensionField<T extends FieldValues>({
         const fieldIsValid = isValid(field.value);
 
         return (
-          <FormItem>
-            <div className="flex items-center justify-between">
-              <FormLabel>{label}</FormLabel>
+          <FormItem className="space-y-2">
+            <div className="flex items-center justify-between gap-2">
+              <FormLabel className="text-sm">{label}</FormLabel>
               <ValidationIndicator isValid={fieldIsValid} showIndicator={!!field.value} />
             </div>
 
@@ -62,18 +62,23 @@ export function DimensionField<T extends FieldValues>({
               />
             </FormControl>
 
-            <DimensionSlider
-              max={max}
-              min={min}
-              onChange={onSliderChange}
-              step={10}
-              trackColor={fieldIsValid ? 'muted' : 'destructive'}
-              value={localValue}
-            />
+            <div className="hidden sm:block">
+              <DimensionSlider
+                max={max}
+                min={min}
+                onChange={onSliderChange}
+                step={10}
+                trackColor={fieldIsValid ? 'muted' : 'destructive'}
+                value={localValue}
+              />
+            </div>
 
-            <SuggestedValueBadges currentValue={field.value} onSelect={field.onChange} values={suggestedValues} />
+            {/* Show suggested values only on desktop (lg breakpoint) */}
+            <div className="hidden lg:block">
+              <SuggestedValueBadges currentValue={field.value} onSelect={field.onChange} values={suggestedValues} />
+            </div>
 
-            <FormDescription>
+            <FormDescription className="text-xs">
               Rango: {min}-{max}mm
             </FormDescription>
             <FormMessage />

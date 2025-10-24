@@ -274,8 +274,8 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
           currentPrice={calculatedPrice ?? model.basePrice}
         />
 
-        <div className="space-y-6 pt-4">
-          <Card className="p-6">
+        <div className="space-y-4 pt-4 sm:space-y-6">
+          <Card className="p-4 sm:p-6">
             <DimensionsSection
               dimensions={{
                 maxHeight: model.maxHeightMm,
@@ -287,7 +287,7 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
           </Card>
 
           {/* Glass Type Selector with performance bars */}
-          <Card className="p-6">
+          <Card className="p-4 sm:p-6">
             <GlassTypeSelectorSection
               basePrice={model.basePrice}
               glassArea={glassArea}
@@ -298,7 +298,7 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
 
           {/* Services Section - Only show if services are available (Don't Make Me Think principle) */}
           {services.length > 0 && (
-            <Card className="p-6">
+            <Card className="p-4 sm:p-6">
               <ServicesSelectorSection services={services} />
             </Card>
           )}

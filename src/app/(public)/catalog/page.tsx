@@ -33,8 +33,8 @@ type CatalogPageProps = {
  * - Better UX (instant navigation, progressive enhancement)
  */
 
-// Disable ISR temporarily due to Next.js 15 prerendering limitations with client components
-// TODO: Re-enable ISR once Next.js 15 properly handles client components in Server Components
+// Disable ISR temporarily due to Next.js 16 prerendering limitations with client components
+// TODO: Re-enable ISR once Next.js 16 properly handles client components in Server Components
 // export const revalidate = 3600;
 export const dynamic = 'force-dynamic';
 
