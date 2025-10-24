@@ -31,7 +31,56 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+Reference: `.specify/memory/constitution.md` - verify feature complies with all principles.
+
+### Core Values Compliance
+
+- [ ] **Clarity Over Complexity**: Design uses clear, descriptive names and simple logic
+- [ ] **Server-First Performance**: Heavy work done on server, appropriate caching strategy defined
+  - [ ] Caching strategy documented (semi-static 30-60s, rarely-changing 5min, user-specific short/none)
+  - [ ] SSR mutations use two-step invalidation: `invalidate()` + `router.refresh()`
+- [ ] **One Job, One Place**: Each module has single responsibility, clear separation of concerns
+- [ ] **Flexible Testing**: Testing strategy defined (before/during/after - all features require tests before merge)
+- [ ] **Extend, Don't Modify**: New features add code, don't change existing working code
+- [ ] **Security From the Start**: Input validation and authorization checks at every entry point
+  - [ ] User permissions checked server-side (middleware, tRPC, Server Components)
+  - [ ] All user input validated with Zod schemas
+- [ ] **Track Everything Important**: Logging strategy defined for errors and significant events
+  - [ ] Winston logger used ONLY in server-side code (never in Client Components)
+  - [ ] Error messages to users in Spanish, technical logs in English
+
+### Language & Communication
+
+- [ ] Code/comments/commits in English only
+- [ ] UI text in Spanish (es-LA) only
+- [ ] Commit messages follow Conventional Commits format
+
+### Technology Constraints
+
+- [ ] Uses required stack: Next.js 15 (App Router), TypeScript (strict), React 19, tRPC, Prisma, PostgreSQL
+- [ ] No prohibited technologies (Vue/Angular/Svelte, non-TailwindCSS frameworks, Winston in browser)
+- [ ] UI components use Shadcn/ui + Radix UI + TailwindCSS
+
+### Quality Gates
+
+- [ ] TypeScript strict mode enabled, no type errors expected
+- [ ] Biome/Ultracite formatting rules followed
+- [ ] Tests planned for all user journeys (unit/integration/E2E as appropriate)
+- [ ] Changelog entry planned for user-facing changes
+- [ ] Migration notes prepared if breaking changes
+
+### Principle Priority Resolution
+
+If principles conflict, documented resolution following priority order:
+1. Security From the Start (non-negotiable)
+2. Clarity Over Complexity
+3. Server-First Performance
+4. One Job, One Place
+5. Flexible Testing
+6. Extend, Don't Modify
+7. Track Everything Important
+
+**Result**: ✅ PASS / ⚠️ VIOLATIONS REQUIRE JUSTIFICATION (see Complexity Tracking section)
 
 ## Project Structure
 
@@ -98,7 +147,7 @@ directories captured above]
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+| Violation                  | Why Needed         | Simpler Alternative Rejected Because |
+| -------------------------- | ------------------ | ------------------------------------ |
+| [e.g., 4th project]        | [current need]     | [why 3 projects insufficient]        |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient]  |

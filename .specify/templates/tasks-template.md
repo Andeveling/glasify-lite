@@ -8,6 +8,12 @@ description: "Task list template for feature implementation"
 **Input**: Design documents from `/specs/[###-feature-name]/`
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
 
+**Constitution Compliance**: Tasks must follow principles from `.specify/memory/constitution.md`. Key reminders:
+- **Flexible Testing**: Tests can be written before/during/after coding, but ALL features need tests before merge
+- **One Job, One Place**: Each task should have single responsibility
+- **Clarity Over Complexity**: Use descriptive task names and clear file paths
+- **Security From the Start**: Include validation and authorization tasks
+
 **Tests**: The examples below include test tasks. Tests are OPTIONAL - only include them if explicitly requested in the feature specification.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
@@ -63,11 +69,14 @@ description: "Task list template for feature implementation"
 Examples of foundational tasks (adjust based on your project):
 
 - [ ] T004 Setup database schema and migrations framework
-- [ ] T005 [P] Implement authentication/authorization framework
+- [ ] T005 [P] Implement authentication/authorization framework (Constitution: Security From the Start)
 - [ ] T006 [P] Setup API routing and middleware structure
 - [ ] T007 Create base models/entities that all stories depend on
-- [ ] T008 Configure error handling and logging infrastructure
+- [ ] T008 Configure error handling and logging infrastructure (Constitution: Track Everything Important)
+  - Winston logger for server-side only (NEVER in Client Components)
+  - Spanish error messages for users, English for technical logs
 - [ ] T009 Setup environment configuration management
+- [ ] T010 [P] Configure Zod schemas for input validation (Constitution: Security From the Start)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 

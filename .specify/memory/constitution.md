@@ -1,7 +1,7 @@
 # Glasify Lite Constitution
-**Version**: 2.1.1  
+**Version**: 2.1.2  
 **Ratified**: 2025-10-09  
-**Last Amended**: 2025-01-20
+**Last Amended**: 2025-10-23
 
 ---
 
@@ -329,19 +329,22 @@ If something is unclear:
 <!--
 Sync Impact Report
 
-- Version change: 2.1.0 → 2.1.1 (PATCH)
-- Modified principles:
-  * Server-First Performance: Added explicit guidance on cache refresh pattern with router.refresh()
-- Added sections:
-  * Cache Refresh After Changes (clarification under Server-First Performance)
+- Version change: 2.1.1 → 2.1.2 (PATCH)
+- Modified principles: none (template alignment only)
+- Added sections: none
 - Removed sections: none
 - Templates updated:
-  * .github/copilot-instructions.md ✅ updated (added SSR Cache Invalidation pattern)
-  * AGENTS.md ✅ updated (documented router.refresh() pattern)
+  * .specify/templates/plan-template.md ✅ updated (enhanced Constitution Check section with specific principle references)
+  * .specify/templates/spec-template.md ✅ verified (already aligned)
+  * .specify/templates/tasks-template.md ✅ verified (already aligned)
+  * .specify/templates/checklist-template.md ✅ verified (already aligned)
+  * .specify/templates/agent-file-template.md ✅ verified (already aligned)
 - Follow-up TODOs: none
 - Changes summary:
-  * Clarified that SSR pages with force-dynamic need router.refresh() after mutations
-  * Added plain language explanation of why browser doesn't auto-update with SSR
-  * Documented the two-step pattern: invalidate cache + refresh server data
-  * Provided concrete examples of when to use router.refresh()
+  * Enhanced plan-template.md Constitution Check section with concrete checklist items
+  * Added specific references to all 7 constitution principles
+  * Included technology constraints validation
+  * Added quality gates reference
+  * All templates now properly reference constitution principles where applicable
+- Rationale: PATCH version bump for template clarifications and improved consistency between constitution and templates
 -->
