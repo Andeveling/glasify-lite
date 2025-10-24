@@ -1,12 +1,12 @@
 {
   "chat.promptFilesRecommendations": {
-    // "speckit.constitution": true,
-    // "speckit.specify": true,
-    // "speckit.plan": true,
-    // "speckit.tasks": true,
-    // "speckit.implement": true
-    "create-implementation-plan": true,
-    "update-implementation-plan": true
+    "speckit.constitution": true,
+    "speckit.specify": true,
+    "speckit.plan": true,
+    "speckit.tasks": true,
+    "speckit.implement": true
+    // "create-implementation-plan": true,
+    // "update-implementation-plan": true
   },
   "chat.tools.terminal.autoApprove": {
     ".specify/scripts/bash/": true,
