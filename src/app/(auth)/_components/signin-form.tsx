@@ -30,8 +30,8 @@ type SignInFormProps = {
 };
 
 export default function SignInForm({ isLoading = false, error }: SignInFormProps) {
-  const [ isCredentialsLoading, setIsCredentialsLoading ] = useState(false);
-  const [ isGoogleLoading, setIsGoogleLoading ] = useState(false);
+  const [isCredentialsLoading, setIsCredentialsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   // React Hook Form with Zod resolver as single source of truth
   const form = useForm<SignInFormValues>({

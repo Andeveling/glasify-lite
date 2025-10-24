@@ -43,7 +43,7 @@ export default async function MyQuoteDetailPage({ params }: MyQuoteDetailPagePro
       userId: session.user.id,
     });
 
-    const quote = await api.quote[ 'get-by-id' ]({ id: quoteId });
+    const quote = await api.quote['get-by-id']({ id: quoteId });
 
     return (
       <div className="container mx-auto max-w-7xl py-8">

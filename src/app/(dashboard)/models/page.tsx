@@ -22,7 +22,7 @@ const SKELETON_CARDS_COUNT = 3;
 const MOCK_MODELS = [
   {
     basePrice: 150_000,
-    compatibleGlassTypes: [ 'Templado 6mm', 'Laminado 8mm' ],
+    compatibleGlassTypes: ['Templado 6mm', 'Laminado 8mm'],
     costPerMmHeight: 45,
     costPerMmWidth: 60,
     createdAt: '2024-01-10T10:00:00Z',
@@ -38,7 +38,7 @@ const MOCK_MODELS = [
   },
   {
     basePrice: 280_000,
-    compatibleGlassTypes: [ 'Templado 10mm' ],
+    compatibleGlassTypes: ['Templado 10mm'],
     costPerMmHeight: 80,
     costPerMmWidth: 120,
     createdAt: '2024-01-12T16:20:00Z',
@@ -54,7 +54,7 @@ const MOCK_MODELS = [
   },
   {
     basePrice: 95_000,
-    compatibleGlassTypes: [ 'Templado 6mm', 'DVH' ],
+    compatibleGlassTypes: ['Templado 6mm', 'DVH'],
     costPerMmHeight: 25,
     costPerMmWidth: 35,
     createdAt: '2024-01-08T09:45:00Z',
@@ -70,7 +70,7 @@ const MOCK_MODELS = [
   },
   {
     basePrice: 320_000,
-    compatibleGlassTypes: [ 'Templado 8mm', 'Laminado 6+6mm' ],
+    compatibleGlassTypes: ['Templado 8mm', 'Laminado 6+6mm'],
     costPerMmHeight: 100,
     costPerMmWidth: 180,
     createdAt: '2024-01-05T14:10:00Z',
@@ -86,7 +86,7 @@ const MOCK_MODELS = [
   },
 ];
 
-const PROFILE_SUPPLIERS = [ 'Todos', 'VEKA', 'Guardian Glass', 'Pilkington' ];
+const PROFILE_SUPPLIERS = ['Todos', 'VEKA', 'Guardian Glass', 'Pilkington'];
 
 function ModelsPageContent() {
   const models = MOCK_MODELS;

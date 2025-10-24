@@ -29,7 +29,7 @@ export async function SellerOnly({ children, fallback = null }: SellerOnlyProps)
     headers: await headers(),
   });
 
-  if (![ 'admin', 'seller' ].includes(session?.user?.role || '')) {
+  if (!['admin', 'seller'].includes(session?.user?.role || '')) {
     return <>{fallback}</>;
   }
 

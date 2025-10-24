@@ -45,7 +45,7 @@ export const metadata: Metadata = {
 export default async function GlassSolutionsPage() {
   try {
     // Fetch solutions from tRPC server procedure
-    const { items: solutions } = await api.catalog[ 'list-solutions' ]({
+    const { items: solutions } = await api.catalog['list-solutions']({
       limit: 100,
       page: 1,
     });

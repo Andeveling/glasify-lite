@@ -177,7 +177,7 @@ function RecentQuotes() {
       <CardContent>
         <div className="space-y-4">
           {RECENT_QUOTES.map((quote) => {
-            const StatusIcon = STATUS_CONFIG[ quote.status ].icon;
+            const StatusIcon = STATUS_CONFIG[quote.status].icon;
             return (
               <div
                 className="flex items-center justify-between border-border border-b pb-4 last:border-0 last:pb-0"
@@ -198,8 +198,8 @@ function RecentQuotes() {
                 <div className="flex items-center gap-3">
                   <div className="text-right">
                     <p className="font-medium text-sm">{formatCurrency(quote.amount)}</p>
-                    <Badge className="text-xs" variant={STATUS_CONFIG[ quote.status ].variant}>
-                      {STATUS_CONFIG[ quote.status ].label}
+                    <Badge className="text-xs" variant={STATUS_CONFIG[quote.status].variant}>
+                      {STATUS_CONFIG[quote.status].label}
                     </Badge>
                   </div>
                 </div>

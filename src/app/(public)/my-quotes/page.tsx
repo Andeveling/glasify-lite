@@ -70,7 +70,7 @@ export default async function MyQuotesPage({ searchParams }: MyQuotesPageProps) 
   const { sortBy: backendSortBy, sortOrder } = getSortParams(sortBy);
 
   // Fetch user's quotes with filters
-  const result = await api.quote[ 'list-user-quotes' ]({
+  const result = await api.quote['list-user-quotes']({
     includeExpired: false,
     limit: 10,
     page,

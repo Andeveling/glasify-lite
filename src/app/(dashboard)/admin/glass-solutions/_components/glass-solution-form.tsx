@@ -57,7 +57,7 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
     resolver: zodResolver(createGlassSolutionSchema),
   });
 
-  const createMutation = api.admin[ 'glass-solution' ].create.useMutation({
+  const createMutation = api.admin['glass-solution'].create.useMutation({
     onError: (err: { message?: string }) => {
       toast.error('Error al crear solución', {
         description: err.message || 'Ocurrió un error inesperado',
@@ -72,7 +72,7 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
     },
   });
 
-  const updateMutation = api.admin[ 'glass-solution' ].update.useMutation({
+  const updateMutation = api.admin['glass-solution'].update.useMutation({
     onError: (err: { message?: string }) => {
       toast.error('Error al actualizar solución', {
         description: err.message || 'Ocurrió un error inesperado',

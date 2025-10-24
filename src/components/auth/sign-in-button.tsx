@@ -61,7 +61,7 @@ export function SignInButton({
   size = 'default',
   className,
 }: SignInButtonProps) {
-  const [ isLoading, setIsLoading ] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   /**
    * Handle Google OAuth sign-in

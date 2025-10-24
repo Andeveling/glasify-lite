@@ -33,21 +33,21 @@ export default async function QuotesPage({ searchParams }: QuotesPageProps) {
   // Use list-all for admins and sellers, list-user-quotes for regular users
   const isSellerOrAdmin = session?.user?.role === 'admin' || session?.user?.role === 'seller';
   const result = isSellerOrAdmin
-    ? await api.quote[ 'list-all' ]({
-      includeExpired: false,
-      limit: 10,
-      page,
-      search,
-      status,
-      userId,
-    })
-    : await api.quote[ 'list-user-quotes' ]({
-      includeExpired: false,
-      limit: 10,
-      page,
-      search,
-      status,
-    });
+    ? await api.quote['list-all']({
+        includeExpired: false,
+        limit: 10,
+        page,
+        search,
+        status,
+        userId,
+      })
+    : await api.quote['list-user-quotes']({
+        includeExpired: false,
+        limit: 10,
+        page,
+        search,
+        status,
+      });
 
   const isAdmin = session?.user?.role === 'admin';
 

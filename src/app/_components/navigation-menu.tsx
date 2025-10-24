@@ -42,7 +42,7 @@ function NavigationItems({
     <>
       {items.map((item) => {
         const isActive = currentPath === item.href || item.routes?.some((route) => currentPath.startsWith(route));
-        const IconComponent = iconMap[ item.icon ];
+        const IconComponent = iconMap[item.icon];
 
         return (
           <Link
@@ -100,7 +100,7 @@ export function NavigationMenu({
   className?: string;
 }) {
   const pathname = usePathname();
-  const [ mobileMenuOpen, setMobileMenuOpen ] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
 

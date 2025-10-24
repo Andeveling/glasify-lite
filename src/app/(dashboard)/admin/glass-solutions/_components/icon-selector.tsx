@@ -145,7 +145,7 @@ type IconSelectorProps = {
 };
 
 export function IconSelector({ value, onChangeAction, disabled }: IconSelectorProps) {
-  const [ searchQuery, setSearchQuery ] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const filteredIcons = GLASS_SOLUTION_ICONS.filter(({ name }) =>
     name.toLowerCase().includes(searchQuery.toLowerCase())
