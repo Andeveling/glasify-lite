@@ -1,7 +1,5 @@
 import { FileText, Home, LogOut, Package, Settings } from 'lucide-react';
 import Link from 'next/link';
-import type { Session } from 'next-auth';
-
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -16,7 +14,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { signOut } from '@/server/auth';
+import type { auth } from '@/server/auth';
+
+type Session = Awaited<ReturnType<typeof auth.api.getSession>>;
 
 const sidebarNavItems = [
   {
@@ -80,7 +80,7 @@ export default function DashboardSidebar({ session }: DashboardSidebarProps) {
             <div className="px-2 py-2">
               <div className="mb-2 flex items-center space-x-4">
                 <div className="flex-1">
-                  <p className="font-medium text-sm leading-none">{session.user.name ?? session.user.email}</p>
+                  <p className="font-medium text-sm leading-none">{session?.user?.name ?? session?.user?.email}</p>
                   <p className="text-muted-foreground text-xs leading-none">Administrador</p>
                 </div>
               </div>
@@ -88,7 +88,9 @@ export default function DashboardSidebar({ session }: DashboardSidebarProps) {
               <form
                 action={async () => {
                   'use server';
-                  await signOut({ redirectTo: '/catalog' });
+                  const { auth: betterAuth } = await import('@/server/auth');
+                  const { headers } = await import('next/headers');
+                  await betterAuth.api.signOut({ headers: await headers() });
                 }}
               >
                 <Button className="w-full justify-start" size="sm" type="submit" variant="ghost">

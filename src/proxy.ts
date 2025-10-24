@@ -1,3 +1,4 @@
+import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import {
   isAdminOnlyRoute,
@@ -11,20 +12,23 @@ import {
 import { auth } from '@/server/auth';
 
 /**
- * Next.js Middleware for Authentication and Role-Based Access Control (RBAC)
+ * Next.js Proxy for Authentication and Role-Based Access Control (RBAC)
  *
  * Flow:
- * 1. Skip middleware for static assets and NextAuth API routes (early return)
+ * 1. Skip proxy for static assets and auth API routes (early return)
  * 2. Skip auth check for public routes (early return)
  * 3. Get session for protected routes
  * 4. Redirect unauthenticated users to /catalog?signin=true
  * 5. Check role-based access (admin, seller, user)
  * 6. Allow authorized requests
+ *
+ * Note: For Next.js 15.2.0+, proxy runs with Node.js runtime enabled,
+ * allowing direct use of auth.api.getSession()
  */
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Early return: Skip middleware for static assets and NextAuth API routes
+  // Early return: Skip middleware for static assets and auth API routes
   if (shouldSkipMiddleware(pathname)) {
     return NextResponse.next();
   }
@@ -34,8 +38,11 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Get session for protected routes (includes user.role from NextAuth callback)
-  const session = await auth();
+  // Get session for protected routes (includes user.role from Better Auth)
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
   const isLoggedIn = !!session;
   const userRole = session?.user?.role as UserRole | undefined;
 
@@ -92,4 +99,5 @@ export const config = {
      */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
+  runtime: 'nodejs', // Required for Node.js runtime to use auth.api in middleware
 };

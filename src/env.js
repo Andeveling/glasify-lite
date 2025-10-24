@@ -2,7 +2,8 @@ import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 
 // Only one call process env
-const { ADMIN_EMAIL, AUTH_GOOGLE_ID, AUTH_GOOGLE_SECRET, AUTH_SECRET, DATABASE_URL, NODE_ENV } = process.env;
+const { ADMIN_EMAIL, AUTH_GOOGLE_ID, AUTH_GOOGLE_SECRET, BETTER_AUTH_SECRET, BASE_URL, DATABASE_URL, NODE_ENV } =
+  process.env;
 
 export const env = createEnv({
   /**
@@ -27,7 +28,8 @@ export const env = createEnv({
     ADMIN_EMAIL,
     AUTH_GOOGLE_ID,
     AUTH_GOOGLE_SECRET,
-    AUTH_SECRET,
+    BASE_URL,
+    BETTER_AUTH_SECRET,
     DATABASE_URL,
     NODE_ENV,
   },
@@ -39,7 +41,8 @@ export const env = createEnv({
     ADMIN_EMAIL: z.string().email().optional(),
     AUTH_GOOGLE_ID: z.string(),
     AUTH_GOOGLE_SECRET: z.string(),
-    AUTH_SECRET: process.env.NODE_ENV === 'production' ? z.string() : z.string().optional(),
+    BASE_URL: z.string().url().optional(),
+    BETTER_AUTH_SECRET: process.env.NODE_ENV === 'production' ? z.string() : z.string().optional(),
     DATABASE_URL: z.url(),
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   },

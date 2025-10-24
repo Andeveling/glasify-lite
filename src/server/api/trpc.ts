@@ -9,7 +9,7 @@
 
 import type { Prisma } from '@prisma/client';
 import { initTRPC, TRPCError } from '@trpc/server';
-import type { Session } from 'next-auth';
+import { headers } from 'next/headers';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
 
@@ -30,7 +30,9 @@ import { db } from '@/server/db';
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   return {
     db,
@@ -227,21 +229,25 @@ export const sellerProcedure = protectedProcedure.use(({ ctx, next }) => {
 export const sellerOrAdminProcedure = sellerProcedure;
 
 /**
- * Role-based quote filter helper
+ * Get role-based filter for quote queries
  *
- * Returns Prisma where clause based on user role for quote queries.
  * - Admin/Seller: Returns empty object (sees all quotes)
  * - User: Returns filter to see only their own quotes
  *
- * @param session - NextAuth session with user role
+ * @param session - Better Auth session with user role
  * @returns Prisma where clause for quote filtering
  */
-export function getQuoteFilter(session: Session): Prisma.QuoteWhereInput {
+export function getQuoteFilter(session: Awaited<ReturnType<typeof auth.api.getSession>>): Prisma.QuoteWhereInput {
   // Admins and sellers see all quotes
-  if (session.user.role === 'admin' || session.user.role === 'seller') {
+  if (session?.user?.role === 'admin' || session?.user?.role === 'seller') {
     return {};
   }
 
   // Regular users see only their own quotes
-  return { userId: session.user.id };
+  if (session?.user?.id) {
+    return { userId: session.user.id };
+  }
+
+  // No session - no access
+  return { userId: '' };
 }

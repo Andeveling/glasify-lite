@@ -90,39 +90,43 @@ enum UserRole {
 
 // Necessary for Next auth
 model Account {
-  id                       String  @id @default(cuid())
-  userId                   String
-  type                     String
-  provider                 String
-  providerAccountId        String
-  refresh_token            String? // @db.Text
-  access_token             String? // @db.Text
-  expires_at               Int?
-  token_type               String?
-  scope                    String?
-  id_token                 String? // @db.Text
-  session_state            String?
-  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  refresh_token_expires_in Int?
+  id                 String   @id @default(cuid())
+  accountId          String   @map("providerAccountId")
+  providerId         String   @map("provider")
+  accessToken        String?  @map("access_token")
+  refreshToken       String?  @map("refresh_token")
+  accessTokenExpiresAt DateTime? @map("expires_at")
+  idToken            String?  @map("id_token")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
-  @@unique([provider, providerAccountId])
+  userId             String
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  expiresAt DateTime @map("expires")
+  token     String   @unique @map("sessionToken")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
   id            String              @id @default(cuid())
   name          String?
   email         String?             @unique
-  emailVerified DateTime?
+  emailVerified Boolean             @default(false)
   image         String?
   role          UserRole            @default(user)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
   accounts      Account[]
   sessions      Session[]
   quotes        Quote[]

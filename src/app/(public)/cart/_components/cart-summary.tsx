@@ -19,10 +19,10 @@
 
 import { ShoppingCart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useSession } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
 import type { CartSummary as CartSummaryType } from '@/types/cart.types';
 import { QuoteGenerationDrawer } from './quote-generation-drawer';
@@ -34,9 +34,6 @@ import { QuoteGenerationDrawer } from './quote-generation-drawer';
 export type CartSummaryProps = {
   /** Cart summary data */
   summary: CartSummaryType;
-
-  /** Callback when "Generate Quote" is clicked (only called if authenticated) */
-  onGenerateQuote?: () => void;
 
   /** Whether quote generation is in progress */
   isGenerating?: boolean;
@@ -59,11 +56,10 @@ export type CartSummaryProps = {
  * />
  * ```
  */
-export function CartSummary({ summary, onGenerateQuote, isGenerating = false, className }: CartSummaryProps) {
+export function CartSummary({ summary, isGenerating = false, className }: CartSummaryProps) {
   const router = useRouter();
-  const { status } = useSession();
-  const isAuthenticated = status === 'authenticated';
-  const isLoading = status === 'loading';
+  const { data: session, isPending: isLoading } = useSession();
+  const isAuthenticated = !!session?.user;
 
   /**
    * Handle "Generate Quote" button click
@@ -76,12 +72,6 @@ export function CartSummary({ summary, onGenerateQuote, isGenerating = false, cl
       // Redirect to sign-in with callback to cart page
       router.push('/api/auth/signin?callbackUrl=/cart');
       return;
-    }
-
-    // User is authenticated, trigger will open drawer
-    // Callback is optional and only used for custom behavior
-    if (onGenerateQuote) {
-      onGenerateQuote();
     }
   };
 

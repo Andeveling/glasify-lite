@@ -15,9 +15,9 @@
 
 'use client';
 
-import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { signIn } from '@/lib/auth-client';
 
 // ============================================================================
 // Types
@@ -38,12 +38,6 @@ export type SignInButtonProps = {
 
   /** Custom CSS class */
   className?: string;
-
-  /** Callback on sign-in success */
-  onSuccess?: () => void;
-
-  /** Callback on sign-in error */
-  onError?: (error: Error) => void;
 };
 
 // ============================================================================
@@ -66,10 +60,8 @@ export function SignInButton({
   variant = 'default',
   size = 'default',
   className,
-  onSuccess,
-  onError,
 }: SignInButtonProps) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [ isLoading, setIsLoading ] = useState(false);
 
   /**
    * Handle Google OAuth sign-in
@@ -79,18 +71,11 @@ export function SignInButton({
       setIsLoading(true);
 
       // Trigger Google OAuth flow
-      await signIn('google', {
-        callbackUrl,
-        redirect: true,
+      await signIn.social({
+        callbackURL: callbackUrl,
+        provider: 'google',
       });
-
-      // Success callback (may not execute if redirect happens immediately)
-      onSuccess?.();
-    } catch (error) {
-      // Error callback
-      const errorObj = error instanceof Error ? error : new Error('Sign-in failed');
-      onError?.(errorObj);
-
+    } catch {
       setIsLoading(false);
     }
   };
