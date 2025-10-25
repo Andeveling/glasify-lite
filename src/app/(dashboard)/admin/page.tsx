@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import { AdminContentContainer } from '@/app/(dashboard)/admin/_components/admin-content-container';
 import { db } from '@/server/db';
-import { DashboardContent } from './metrics/_components/dashboard-content';
-
+import { DashboardContent } from './_components/dashboard-content';
 export const metadata: Metadata = {
   description: 'Panel de métricas y estadísticas del negocio',
   title: 'Dashboard | Admin - Glasify Lite',

@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ModelType } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -15,6 +16,7 @@ import { BasicInfoSection } from './basic-info-section';
 import { CostNotesSection } from './cost-notes-section';
 import { DimensionsSection } from './dimensions-section';
 import { GlassTypesSection } from './glass-types-section';
+import { ModelTypeDesignSection } from './model-type-design-section';
 import { PricingSection } from './pricing-section';
 
 // Constants
@@ -33,6 +35,7 @@ const modelFormSchema = z.object({
   costNotes: z.string().optional().nullable(),
   costPerMmHeight: z.number().min(0),
   costPerMmWidth: z.number().min(0),
+  designId: z.string().optional().nullable(),
   glassDiscountHeightMm: z.number().int().min(0).default(0),
   glassDiscountWidthMm: z.number().int().min(0).default(0),
   lastCostReviewDate: z.date().optional().nullable(),
@@ -44,6 +47,7 @@ const modelFormSchema = z.object({
   profileSupplierId: z.string().optional().nullable(),
   profitMarginPercentage: z.number().min(0).max(MAX_PROFIT_MARGIN).optional().nullable(),
   status: z.enum(['draft', 'published']),
+  type: z.nativeEnum(ModelType).optional().nullable(),
 });
 
 type ModelFormValues = z.infer<typeof modelFormSchema>;
@@ -88,10 +92,13 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
     onError: (error) => {
       toast.error(`Error al crear modelo: ${error.message}`);
     },
+    onSettled: () => {
+      // Invalidate list query and refresh server data
+      void utils.admin.model.list.invalidate();
+      router.refresh(); // Re-fetch server data for SSR
+    },
     onSuccess: () => {
       toast.success('Modelo creado exitosamente');
-      // Invalidate only the list query (not all admin queries)
-      void utils.admin.model.list.invalidate();
       router.push('/admin/models');
     },
   });
@@ -100,11 +107,16 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
     onError: (error) => {
       toast.error(`Error al actualizar modelo: ${error.message}`);
     },
-    onSuccess: (data) => {
-      toast.success('Modelo actualizado exitosamente');
-      // Invalidate specific queries instead of everything
+    onSettled: () => {
+      // Invalidate specific queries and refresh server data
       void utils.admin.model.list.invalidate();
-      void utils.admin.model['get-by-id'].invalidate({ id: data.id });
+      if (modelId) {
+        void utils.admin.model['get-by-id'].invalidate({ id: modelId });
+      }
+      router.refresh(); // Re-fetch server data for SSR
+    },
+    onSuccess: () => {
+      toast.success('Modelo actualizado exitosamente');
       router.push('/admin/models');
     },
   });
@@ -117,6 +129,7 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
       costNotes: initialData?.costNotes ?? null,
       costPerMmHeight: initialData?.costPerMmHeight ?? 0,
       costPerMmWidth: initialData?.costPerMmWidth ?? 0,
+      designId: initialData?.designId ?? null,
       glassDiscountHeightMm: initialData?.glassDiscountHeightMm ?? 0,
       glassDiscountWidthMm: initialData?.glassDiscountWidthMm ?? 0,
       lastCostReviewDate: initialData?.lastCostReviewDate ?? null,
@@ -128,6 +141,7 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
       profileSupplierId: initialData?.profileSupplierId ?? null,
       profitMarginPercentage: initialData?.profitMarginPercentage ?? null,
       status: initialData?.status ?? 'draft',
+      type: initialData?.type ?? null,
     },
     // @ts-expect-error - Zod .default() causes type inference issues with react-hook-form
     resolver: zodResolver(modelFormSchema),
@@ -139,9 +153,11 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
       ...values,
       accessoryPrice: values.accessoryPrice ?? undefined,
       costNotes: values.costNotes ?? undefined,
+      designId: values.designId ?? undefined,
       lastCostReviewDate: values.lastCostReviewDate ?? undefined,
       profileSupplierId: values.profileSupplierId ?? undefined,
       profitMarginPercentage: values.profitMarginPercentage ?? undefined,
+      type: values.type ?? undefined,
     };
 
     if (mode === 'create') {
@@ -158,6 +174,11 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
   const suppliers = suppliersData?.items ?? [];
   const glassTypes = glassTypesData?.items ?? [];
 
+  // Obtener el material type del supplier seleccionado
+  const selectedSupplierId = form.watch('profileSupplierId');
+  const selectedSupplier = suppliers.find((s) => s.id === selectedSupplierId);
+  const materialType = selectedSupplier?.materialType ?? null;
+
   return (
     <Form {...form}>
       {/* @ts-expect-error - Type mismatch between Zod schema with .default() and react-hook-form inference */}
@@ -167,6 +188,7 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
           {/* Left Column - Basic Info (spans 2 columns on large screens) */}
           <div className="space-y-6 lg:col-span-2">
             <BasicInfoSection suppliers={suppliers} />
+            <ModelTypeDesignSection materialType={materialType} />
             <DimensionsSection />
             <PricingSection />
           </div>

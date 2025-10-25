@@ -93,13 +93,13 @@ function ActiveBadge({ isActive }: { isActive: boolean }) {
 /**
  * Solutions display
  */
-function SolutionsBadges({ solutions }: { solutions: GlassType['solutions'] }) {
+function SolutionsBadges({ solutions }: { solutions: GlassType[ 'solutions' ] }) {
   if (solutions.length === 0) {
     return <span className="text-muted-foreground text-sm">—</span>;
   }
 
   const primary = solutions.find((s) => s.isPrimary);
-  const displaySolution = primary ?? solutions[0];
+  const displaySolution = primary ?? solutions[ 0 ];
 
   if (!displaySolution) {
     return <span className="text-muted-foreground text-sm">—</span>;
@@ -145,8 +145,8 @@ function ActionsMenu({ glassType, onDelete }: { glassType: GlassType; onDelete: 
 export function GlassTypesTable({ initialData, searchParams }: GlassTypesTableProps) {
   const { formatContext } = useTenantConfig();
   const utils = api.useUtils();
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [glassTypeToDelete, setGlassTypeToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
+  const [ glassTypeToDelete, setGlassTypeToDelete ] = useState<{ id: string; name: string } | null>(null);
 
   // Delete mutation with optimistic updates
   // biome-ignore format: Order matters for TypeScript inference (onMutate must come before onError)
@@ -285,7 +285,7 @@ export function GlassTypesTable({ initialData, searchParams }: GlassTypesTablePr
 
   return (
     <>
-      <ServerTable columns={columns} data={initialData.items} emptyMessage="No se encontraron tipos de vidrio" />
+      <ServerTable columns={columns} data={initialData.items} emptyMessage="No se encontraron tipos de vidriossss" />
       {/* Pagination */}
       <TablePagination
         currentPage={initialData.page}

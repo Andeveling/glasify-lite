@@ -75,7 +75,7 @@ export function useGlassSupplierMutations({ onSuccess }: UseGlassSupplierMutatio
    * Flow: Same as create mutation but for updates
    */
   const updateMutation = api.admin['glass-supplier'].update.useMutation({
-    onError: (err: { message: string }) => {
+    onError: (_err: { message: string }) => {
       toast.error('Error al actualizar proveedor');
     },
     onMutate: () => {
