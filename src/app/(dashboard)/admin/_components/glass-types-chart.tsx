@@ -17,7 +17,7 @@ import { EmptyDashboardState } from './empty-dashboard-state';
 const PERCENTAGE_MULTIPLIER = 100;
 
 // Color palette for pie chart slices
-const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)'];
+const COLORS = [ 'var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)' ];
 
 const chartConfig = {
   count: {
@@ -25,23 +25,23 @@ const chartConfig = {
   },
   glassTypeId1: {
     color: 'var(--chart-1)',
-    label: 'Vidrio 1',
+    label: 'Cristal 1',
   },
   glassTypeId2: {
     color: 'var(--chart-2)',
-    label: 'Vidrio 2',
+    label: 'Cristal 2',
   },
   glassTypeId3: {
     color: 'var(--chart-3)',
-    label: 'Vidrio 3',
+    label: 'Cristal 3',
   },
   glassTypeId4: {
     color: 'var(--chart-4)',
-    label: 'Vidrio 4',
+    label: 'Cristal 4',
   },
   glassTypeId5: {
     color: 'var(--chart-5)',
-    label: 'Vidrio 5',
+    label: 'Cristal 5',
   },
 } satisfies ChartConfig;
 
@@ -74,7 +74,7 @@ export function GlassTypesChart({ data, tenantConfig }: GlassTypesChartProps) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Tipos de Vidrio Más Usados</CardTitle>
+        <CardTitle>Tipos de Cristal Más Usados</CardTitle>
         <CardDescription>Top 5 cristales por cantidad de uso</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
@@ -87,7 +87,7 @@ export function GlassTypesChart({ data, tenantConfig }: GlassTypesChartProps) {
               content={({ active, payload }) => {
                 if (!(active && payload) || payload.length === 0) return null;
 
-                const tooltipData = payload[0]?.payload;
+                const tooltipData = payload[ 0 ]?.payload;
                 if (!tooltipData) return null;
 
                 return (
@@ -104,7 +104,7 @@ export function GlassTypesChart({ data, tenantConfig }: GlassTypesChartProps) {
             />
             <Pie data={chartData} dataKey="count" label labelLine={false} nameKey="name" outerRadius={120}>
               {chartData.map((_, index) => (
-                <Cell fill={COLORS[index % COLORS.length]} key={`cell-${index}`} />
+                <Cell fill={COLORS[ index % COLORS.length ]} key={`cell-${index}`} />
               ))}
             </Pie>
             <Legend

@@ -1,7 +1,7 @@
 /**
  * Vidrios La Equidad - PVC Deceuninck Window Models
  *
- * Data source: https://vidrioslaequidad.com/
+ * Data source: https://cristaleslaequidad.com/
  * Sistemas PVC Deceuninck de alta gama
  *
  * Características Deceuninck:
@@ -97,4 +97,4 @@ export const pvcCasement2Panels: ModelInput = {
 /**
  * All PVC Deceuninck models
  */
-export const vidriosLaEquidadPVCModels: ModelInput[] = [pvcSliding2Panes, pvcCasement1Panel, pvcCasement2Panels];
+export const cristalesLaEquidadPVCModels: ModelInput[] = [pvcSliding2Panes, pvcCasement1Panel, pvcCasement2Panels];

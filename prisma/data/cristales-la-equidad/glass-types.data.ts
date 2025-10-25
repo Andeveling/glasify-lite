@@ -1,7 +1,7 @@
 /**
  * Vidrios La Equidad - Glass Types Catalog
  *
- * Data source: https://vidrioslaequidad.com/
+ * Data source: https://cristaleslaequidad.com/
  * Tipos de cristal para mercado colombiano
  *
  * Aplicaciones: Residencial, comercial e institucional
@@ -162,7 +162,7 @@ export const bulletResistantGlass: GlassTypeInput = {
 /**
  * All glass types for Vidrios La Equidad
  */
-export const vidriosLaEquidadGlassTypes: GlassTypeInput[] = [
+export const cristalesLaEquidadGlassTypes: GlassTypeInput[] = [
   clearFloat,
   bronzeReflective,
   grayReflective,

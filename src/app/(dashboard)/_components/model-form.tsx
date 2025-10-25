@@ -68,15 +68,15 @@ const modelFormSchema = z
       .min(1, 'El nombre del modelo es requerido')
       .max(MAX_NAME_LENGTH, `El nombre no debe exceder ${MAX_NAME_LENGTH} caracteres`),
     profileSupplierId: z.string().cuid('ID del proveedor de perfiles debe ser válido').optional().nullable(),
-    status: z.enum(['draft', 'published']),
+    status: z.enum([ 'draft', 'published' ]),
   })
   .refine((data) => data.minWidthMm < data.maxWidthMm, {
     message: 'El ancho mínimo debe ser menor al ancho máximo',
-    path: ['maxWidthMm'],
+    path: [ 'maxWidthMm' ],
   })
   .refine((data) => data.minHeightMm < data.maxHeightMm, {
     message: 'La altura mínima debe ser menor a la altura máxima',
-    path: ['maxHeightMm'],
+    path: [ 'maxHeightMm' ],
   });
 
 type ModelFormData = z.infer<typeof modelFormSchema>;
@@ -93,16 +93,16 @@ type ModelFormControllerArgs = Pick<ModelFormProps, 'modelData' | 'onSuccess'>;
 
 // Mock data for development - in a real app this would come from the API
 const MOCK_GLASS_TYPES = [
-  { id: 'cm1glass123456789abcdef01', name: 'Vidrio Templado 6mm' },
-  { id: 'cm1glass234567890bcdef012', name: 'Vidrio Laminado 8mm' },
+  { id: 'cm1glass123456789abcdef01', name: 'Cristal Templado 6mm' },
+  { id: 'cm1glass234567890bcdef012', name: 'Cristal Laminado 8mm' },
   { id: 'cm1glass345678901cdef0123', name: 'Doble Vidriado Hermético' },
 ];
 
 function useModelFormController({ modelData, onSuccess }: ModelFormControllerArgs) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [ isLoading, setIsLoading ] = useState(false);
 
   // Fetch profile suppliers from tRPC
-  const { data: profileSuppliers, isLoading: isLoadingSuppliers } = api.admin['profile-supplier'].list.useQuery({
+  const { data: profileSuppliers, isLoading: isLoadingSuppliers } = api.admin[ 'profile-supplier' ].list.useQuery({
     isActive: 'active',
     limit: 100,
     page: 1,
@@ -111,7 +111,7 @@ function useModelFormController({ modelData, onSuccess }: ModelFormControllerArg
   });
 
   // Use the actual admin.model-upsert mutation
-  const modelUpsertMutation = api.admin['model-upsert'].useMutation({
+  const modelUpsertMutation = api.admin[ 'model-upsert' ].useMutation({
     onError: () => {
       setIsLoading(false);
     },
@@ -233,7 +233,7 @@ function BasicInfoSection({
           <FormItem>
             <FormLabel>Nombre del Modelo</FormLabel>
             <FormControl>
-              <Input placeholder="ej. Vidrio Templado 6mm" {...field} />
+              <Input placeholder="ej. Cristal Templado 6mm" {...field} />
             </FormControl>
             <FormDescription>Nombre descriptivo del modelo de cristal</FormDescription>
             <FormMessage />
@@ -307,14 +307,14 @@ function BasicInfoSection({
 function GlassTypesSection({ form }: { form: ModelFormApi }) {
   return (
     <div className="space-y-4">
-      <h3 className="font-medium text-lg">Tipos de Vidrio Compatibles</h3>
+      <h3 className="font-medium text-lg">Tipos de Cristal Compatibles</h3>
 
       <FormField
         control={form.control}
         name="compatibleGlassTypeIds"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Tipos de Vidrio</FormLabel>
+            <FormLabel>Tipos de Cristal</FormLabel>
             <FormDescription>Selecciona los tipos de cristal compatibles con este modelo (mínimo 1)</FormDescription>
             <div className="grid grid-cols-1 gap-2">
               {MOCK_GLASS_TYPES.map((glassType) => (
@@ -327,7 +327,7 @@ function GlassTypesSection({ form }: { form: ModelFormApi }) {
                     className="h-4 w-4"
                     onChange={(e) => {
                       const updatedValue = e.target.checked
-                        ? [...field.value, glassType.id]
+                        ? [ ...field.value, glassType.id ]
                         : field.value.filter((id: string) => id !== glassType.id);
                       field.onChange(updatedValue);
                     }}

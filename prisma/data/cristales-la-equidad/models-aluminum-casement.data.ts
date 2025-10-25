@@ -1,7 +1,7 @@
 /**
  * Vidrios La Equidad - Aluminum Casement Window Models
  *
- * Data source: https://vidrioslaequidad.com/
+ * Data source: https://cristaleslaequidad.com/
  * Puertas ventanas en aluminio (ventanas abatibles)
  *
  * Sistemas de apertura interna/externa
@@ -94,7 +94,7 @@ export const aluminumDoor1Panel: ModelInput = {
 /**
  * All aluminum casement models
  */
-export const vidriosLaEquidadAluminumCasementModels: ModelInput[] = [
+export const cristalesLaEquidadAluminumCasementModels: ModelInput[] = [
   aluminumCasement1Panel,
   aluminumCasement2Panels,
   aluminumDoor1Panel,

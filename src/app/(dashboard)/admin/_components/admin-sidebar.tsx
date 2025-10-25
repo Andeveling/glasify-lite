@@ -56,7 +56,7 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
     {
       description: 'Configuraciones de cristal',
       icon: GlassWater,
-      title: 'Tipos de Vidrio',
+      title: 'Tipos de Cristal',
       url: '/admin/glass-types',
     },
     {
@@ -77,7 +77,7 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
     {
       description: 'Fabricantes de cristal',
       icon: Package,
-      title: 'Proveedores de Vidrio',
+      title: 'Proveedores de Cristal',
       url: '/admin/glass-suppliers',
     },
   ];
@@ -86,13 +86,13 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
     {
       description: 'Categorización por uso',
       icon: Sparkles,
-      title: 'Soluciones de Vidrio',
+      title: 'Soluciones de Cristal',
       url: '/admin/glass-solutions',
     },
     // {
     //   description: 'Propiedades del cristal',
     //   icon: Settings,
-    //   title: 'Características de Vidrio',
+    //   title: 'Características de Cristal',
     //   url: '/admin/glass-characteristics',
     // },
   ];

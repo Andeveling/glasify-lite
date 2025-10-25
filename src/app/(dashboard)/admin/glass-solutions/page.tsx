@@ -5,11 +5,11 @@ import { GlassSolutionList } from './_components/glass-solution-list';
 
 export const metadata: Metadata = {
   description: 'Gestiona las soluciones base para tipos de cristal',
-  title: 'Soluciones de Vidrio | Admin',
+  title: 'Soluciones de Cristal | Admin',
 };
 
 export default async function GlassSolutionsPage() {
-  const initialData = await api.admin['glass-solution'].list({
+  const initialData = await api.admin[ 'glass-solution' ].list({
     limit: 20,
     page: 1,
     sortBy: 'sortOrder',
@@ -19,7 +19,7 @@ export default async function GlassSolutionsPage() {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <h1 className="font-bold text-3xl tracking-tight">Soluciones de Vidrio</h1>
+        <h1 className="font-bold text-3xl tracking-tight">Soluciones de Cristal</h1>
         <p className="text-muted-foreground">Gestiona las soluciones base para tipos de cristal</p>
       </div>
 

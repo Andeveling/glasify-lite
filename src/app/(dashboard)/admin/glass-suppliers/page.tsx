@@ -22,7 +22,7 @@ import { GlassSupplierList } from './_components/glass-supplier-list';
 
 export const metadata: Metadata = {
   description: 'Administra los fabricantes de cristal',
-  title: 'Proveedores de Vidrio | Admin',
+  title: 'Proveedores de Cristal | Admin',
 };
 
 /**
@@ -60,7 +60,7 @@ export default async function GlassSuppliersPage({ searchParams }: PageProps) {
   const sortOrder = (params.sortOrder || 'asc') as 'asc' | 'desc';
 
   // Fetch data server-side with filters
-  const initialData = await api.admin['glass-supplier'].list({
+  const initialData = await api.admin[ 'glass-supplier' ].list({
     country,
     isActive,
     limit: 20,
@@ -82,7 +82,7 @@ export default async function GlassSuppliersPage({ searchParams }: PageProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-bold text-3xl tracking-tight">Proveedores de Vidrio</h1>
+        <h1 className="font-bold text-3xl tracking-tight">Proveedores de Cristal</h1>
         <p className="text-muted-foreground">Administra los fabricantes de cristal y sus productos</p>
       </div>
 

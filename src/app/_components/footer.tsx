@@ -81,7 +81,7 @@ export function Footer({ variant = 'full', className }: FooterProps) {
                 className="block text-muted-foreground text-sm hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"
                 href="/catalog"
               >
-                Catálogo de Vidrios
+                Catálogo de Cristales
               </Link>
               <Link
                 className="block text-muted-foreground text-sm hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"

@@ -17,7 +17,7 @@ import type { GlassSolutionInput } from '../../factories/glass-solution.factory'
  *
  * Adaptadas al mercado colombiano (Valle del Cauca)
  */
-export const vidriosLaEquidadGlassSolutions: GlassSolutionInput[] = [
+export const cristalesLaEquidadGlassSolutions: GlassSolutionInput[] = [
   {
     description:
       'Vidrio claro estándar para aplicaciones residenciales y comerciales básicas. Ideal para ventanas donde no se requieren características especiales.',

@@ -2,7 +2,7 @@
 
 **Estado**: Activo ✅  
 **Fecha de creación**: 2025-01-25  
-**URL**: https://vidrioslaequidad.com/  
+**URL**: https://cristaleslaequidad.com/  
 **Ubicación**: Valle del Cauca, Colombia  
 **Regiones de cobertura**: Valle del Cauca, Quindío, Risaralda
 
@@ -224,7 +224,7 @@ prisma/data/presets/
 
 ## 🔗 Referencias
 
-- **Website**: https://vidrioslaequidad.com/
-- **Sobre Nosotros**: https://vidrioslaequidad.com/nosotros/
+- **Website**: https://cristaleslaequidad.com/
+- **Sobre Nosotros**: https://cristaleslaequidad.com/nosotros/
 - **Fecha de scraping**: 2025-01-25
 - **Versión del preset**: 1.0.0

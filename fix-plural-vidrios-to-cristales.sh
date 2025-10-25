@@ -1,10 +1,9 @@
 #!/bin/bash
 
 ##############################################################################
-# Script: replace-cristal-to-cristal.sh
-# Description: Replace all instances of "cristal" with "cristal" and "cristales"
-#              with "cristales" throughout the project
-# Usage: ./replace-cristal-to-cristal.sh
+# Script: fix-plural-cristales-to-cristales.sh
+# Description: Replace remaining "cristales" with "cristales" throughout the project
+# Usage: ./fix-plural-cristales-to-cristales.sh
 # Note: This script preserves case sensitivity and creates backups
 ##############################################################################
 
@@ -17,11 +16,11 @@ NC='\033[0m' # No Color
 
 # Configuration
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" || exit 1
-BACKUP_DIR="${PROJECT_ROOT}/.backups/cristal-to-cristal-$(date +%s)"
-LOG_FILE="${PROJECT_ROOT}/.backups/replacement-log-$(date +%Y%m%d-%H%M%S).txt"
+BACKUP_DIR="${PROJECT_ROOT}/.backups/cristales-to-cristales-$(date +%s)"
+LOG_FILE="${PROJECT_ROOT}/.backups/fix-plural-log-$(date +%Y%m%d-%H%M%S).txt"
 
 echo -e "${BLUE}════════════════════════════════════════════════════════════${NC}"
-echo -e "${BLUE}  Script: Replace 'cristal' with 'cristal'${NC}"
+echo -e "${BLUE}  Script: Fix 'cristales' → 'cristales' (Plural)${NC}"
 echo -e "${BLUE}════════════════════════════════════════════════════════════${NC}"
 echo ""
 
@@ -33,10 +32,10 @@ echo -e "${YELLOW}Backup directory: ${BACKUP_DIR}${NC}"
 echo ""
 
 # Find all relevant files
-echo -e "${BLUE}Searching for files containing 'cristal'...${NC}"
+echo -e "${BLUE}Searching for files containing 'cristales'...${NC}"
 
 # Use find with simpler syntax
-FILES_WITH_VIDRIO=$(find "${PROJECT_ROOT}" \
+FILES_WITH_VIDRIOS=$(find "${PROJECT_ROOT}" \
   -type f \
   -not -path "*/node_modules/*" \
   -not -path "*/.git/*" \
@@ -52,24 +51,24 @@ FILES_WITH_VIDRIO=$(find "${PROJECT_ROOT}" \
   -not -name "*~" \
   2>/dev/null)
 
-# Filter files that contain cristal/cristales
+# Filter files that contain cristales
 FILTERED_FILES=""
 while IFS= read -r file; do
-  if [ -n "$file" ] && grep -q -E "cristal|cristales" "$file" 2>/dev/null; then
+  if [ -n "$file" ] && grep -q "cristales" "$file" 2>/dev/null; then
     FILTERED_FILES="${FILTERED_FILES}${file}"$'\n'
   fi
-done <<< "$FILES_WITH_VIDRIO"
+done <<< "$FILES_WITH_VIDRIOS"
 
 # Remove trailing newline
-FILES_WITH_VIDRIO=$(echo "$FILTERED_FILES" | sed '/^$/d')
+FILES_WITH_VIDRIOS=$(echo "$FILTERED_FILES" | sed '/^$/d')
 
-if [ -z "$FILES_WITH_VIDRIO" ]; then
-  echo -e "${YELLOW}No files containing 'cristal' or 'cristales' found.${NC}"
+if [ -z "$FILES_WITH_VIDRIOS" ]; then
+  echo -e "${YELLOW}No files containing 'cristales' found.${NC}"
   exit 0
 fi
 
-FILE_COUNT=$(echo "$FILES_WITH_VIDRIO" | wc -l)
-echo -e "${GREEN}Found ${FILE_COUNT} files containing 'cristal' or 'cristales'${NC}"
+FILE_COUNT=$(echo "$FILES_WITH_VIDRIOS" | wc -l)
+echo -e "${GREEN}Found ${FILE_COUNT} files containing 'cristales'${NC}"
 echo ""
 
 # Initialize counters
@@ -86,7 +85,7 @@ while IFS= read -r file; do
   fi
   
   # Count occurrences before
-  BEFORE=$(grep -o -E "cristal|cristales" "$file" 2>/dev/null | wc -l)
+  BEFORE=$(grep -o "cristales" "$file" 2>/dev/null | wc -l)
   
   if [ "$BEFORE" -eq 0 ]; then
     continue
@@ -98,29 +97,22 @@ while IFS= read -r file; do
   mkdir -p "$(dirname "$BACKUP_FILE")" || continue
   cp "$file" "$BACKUP_FILE" || continue
   
-  # Replace in the file
-  # First replace "cristales" (plural) - must be done before "cristal"
-  if ! sed -i 's/\bvidrios\b/cristales/g' "$file"; then
-    echo -e "${RED}✗${NC} ${RELATIVE_PATH} (error in sed)"
-    continue
-  fi
-  
-  # Then replace "cristal" (singular)
-  if ! sed -i 's/\bvidrio\b/cristal/g' "$file"; then
+  # Replace in the file - only "cristales" → "cristales"
+  if ! sed -i 's/cristales/cristales/g' "$file"; then
     echo -e "${RED}✗${NC} ${RELATIVE_PATH} (error in sed)"
     continue
   fi
   
   # Count occurrences after
-  AFTER=$(grep -o -E "cristal|cristales" "$file" 2>/dev/null | wc -l)
+  AFTER=$(grep -o "cristales" "$file" 2>/dev/null | wc -l)
   
   TOTAL_FILES=$((TOTAL_FILES + 1))
-  TOTAL_REPLACEMENTS=$((TOTAL_REPLACEMENTS + AFTER))
+  TOTAL_REPLACEMENTS=$((TOTAL_REPLACEMENTS + BEFORE))
   
   echo -e "${GREEN}✓${NC} ${RELATIVE_PATH}"
-  echo "  Replacements: ${BEFORE} → ${AFTER}" | tee -a "${LOG_FILE}"
+  echo "  Replacements: ${BEFORE} instances of 'cristales' → 'cristales'" | tee -a "${LOG_FILE}"
   
-done <<< "$FILES_WITH_VIDRIO"
+done <<< "$FILES_WITH_VIDRIOS"
 
 echo ""
 echo -e "${BLUE}════════════════════════════════════════════════════════════${NC}"

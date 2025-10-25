@@ -57,7 +57,7 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
     resolver: zodResolver(createGlassSolutionSchema),
   });
 
-  const createMutation = api.admin['glass-solution'].create.useMutation({
+  const createMutation = api.admin[ 'glass-solution' ].create.useMutation({
     onError: (err: { message?: string }) => {
       toast.error('Error al crear solución', {
         description: err.message || 'Ocurrió un error inesperado',
@@ -72,7 +72,7 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
     },
   });
 
-  const updateMutation = api.admin['glass-solution'].update.useMutation({
+  const updateMutation = api.admin[ 'glass-solution' ].update.useMutation({
     onError: (err: { message?: string }) => {
       toast.error('Error al actualizar solución', {
         description: err.message || 'Ocurrió un error inesperado',
@@ -113,7 +113,7 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{mode === 'create' ? 'Nueva Solución de Vidrio' : 'Editar Solución de Vidrio'}</CardTitle>
+        <CardTitle>{mode === 'create' ? 'Nueva Solución de Cristal' : 'Editar Solución de Cristal'}</CardTitle>
         <CardDescription>
           {mode === 'create'
             ? 'Crea una nueva solución base para tipos de cristal'
@@ -181,7 +181,7 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
                       <Input
                         disabled={isPending}
                         maxLength={MAX_NAME_LENGTH}
-                        placeholder="Ej: Vidrio Templado, Vidrio Laminado"
+                        placeholder="Ej: Cristal Templado, Cristal Laminado"
                         {...field}
                       />
                     </FormControl>

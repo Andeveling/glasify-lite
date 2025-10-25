@@ -13,14 +13,14 @@ import { GlassSolutionForm } from '../_components/glass-solution-form';
 
 export const metadata: Metadata = {
   description: 'Crear nueva solución de cristal',
-  title: 'Nueva Solución de Vidrio | Admin',
+  title: 'Nueva Solución de Cristal | Admin',
 };
 
 export default function NewGlassSolutionPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-bold text-3xl tracking-tight">Nueva Solución de Vidrio</h1>
+        <h1 className="font-bold text-3xl tracking-tight">Nueva Solución de Cristal</h1>
         <p className="text-muted-foreground">Crea una nueva solución base para tipos de cristal</p>
       </div>
 

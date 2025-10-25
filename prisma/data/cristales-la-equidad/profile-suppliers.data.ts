@@ -1,7 +1,7 @@
 /**
  * Vidrios La Equidad - Profile Suppliers
  *
- * Data source: https://vidrioslaequidad.com/
+ * Data source: https://cristaleslaequidad.com/
  * Empresa del Valle del Cauca, Colombia
  * Productos: Aluminio, cristal, acero y PVC
  *
@@ -22,7 +22,7 @@ import type { ProfileSupplierInput } from '../../factories/profile-supplier.fact
  * 1. Nacional (Aluminio) - Proveedor local de perfiles de aluminio
  * 2. Deceuninck - Sistemas PVC de alta gama
  */
-export const vidriosLaEquidadProfileSuppliers: ProfileSupplierInput[] = [
+export const cristalesLaEquidadProfileSuppliers: ProfileSupplierInput[] = [
   {
     isActive: true,
     materialType: 'ALUMINUM',

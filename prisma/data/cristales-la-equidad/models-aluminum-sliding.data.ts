@@ -1,7 +1,7 @@
 /**
  * Vidrios La Equidad - Aluminum Sliding Window Models
  *
- * Data source: https://vidrioslaequidad.com/
+ * Data source: https://cristaleslaequidad.com/
  * Productos en aluminio para mercado residencial y comercial
  *
  * Sistemas corredizos en aluminio:
@@ -100,7 +100,7 @@ export const aluminumSliding4Panes: ModelInput = {
 /**
  * All aluminum sliding models
  */
-export const vidriosLaEquidadAluminumSlidingModels: ModelInput[] = [
+export const cristalesLaEquidadAluminumSlidingModels: ModelInput[] = [
   aluminumSliding2Panes,
   aluminumSliding3Panes,
   aluminumSliding4Panes,

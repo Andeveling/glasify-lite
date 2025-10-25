@@ -1,7 +1,7 @@
 /**
  * Vidrios La Equidad - Services
  *
- * Servicios ofrecidos según https://vidrioslaequidad.com/nosotros/
+ * Servicios ofrecidos según https://cristaleslaequidad.com/nosotros/
  * - Asesoría y diseño
  * - Fabricación e instalación
  * - Control de calidad
@@ -24,7 +24,7 @@ import type { ServiceInput } from '../../factories/service.factory';
  * - Sellado: Servicios medidos por perímetro (ml)
  * - Servicios fijos: Tarifa única por unidad
  */
-export const vidriosLaEquidadServices: ServiceInput[] = [
+export const cristalesLaEquidadServices: ServiceInput[] = [
   {
     name: 'Instalación de Ventanas',
     rate: 80_000, // COP/m² - Instalación profesional con garantía

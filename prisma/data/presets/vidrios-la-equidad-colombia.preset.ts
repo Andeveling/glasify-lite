@@ -8,7 +8,7 @@
  * Mercado: Residencial, comercial e institucional
  *
  * Datos basados en:
- * - Web scraping https://vidrioslaequidad.com/
+ * - Web scraping https://cristaleslaequidad.com/
  * - Mercado colombiano (precios en COP)
  * - 5+ años de experiencia
  * - 500+ clientes satisfechos
@@ -32,13 +32,13 @@
  */
 
 import type { SeedPreset } from '../../seeders/seed-orchestrator';
-import { vidriosLaEquidadGlassSolutions } from '../cristales-la-equidad/glass-solutions.data';
-import { vidriosLaEquidadGlassTypes } from '../cristales-la-equidad/glass-types.data';
-import { vidriosLaEquidadAluminumCasementModels } from '../cristales-la-equidad/models-aluminum-casement.data';
-import { vidriosLaEquidadAluminumSlidingModels } from '../cristales-la-equidad/models-aluminum-sliding.data';
-import { vidriosLaEquidadPVCModels } from '../cristales-la-equidad/models-pvc-deceuninck.data';
-import { vidriosLaEquidadProfileSuppliers } from '../cristales-la-equidad/profile-suppliers.data';
-import { vidriosLaEquidadServices } from '../cristales-la-equidad/services.data';
+import { cristalesLaEquidadGlassSolutions } from '../cristales-la-equidad/glass-solutions.data';
+import { cristalesLaEquidadGlassTypes } from '../cristales-la-equidad/glass-types.data';
+import { cristalesLaEquidadAluminumCasementModels } from '../cristales-la-equidad/models-aluminum-casement.data';
+import { cristalesLaEquidadAluminumSlidingModels } from '../cristales-la-equidad/models-aluminum-sliding.data';
+import { cristalesLaEquidadPVCModels } from '../cristales-la-equidad/models-pvc-deceuninck.data';
+import { cristalesLaEquidadProfileSuppliers } from '../cristales-la-equidad/profile-suppliers.data';
+import { cristalesLaEquidadServices } from '../cristales-la-equidad/services.data';
 
 /**
  * Preset completo para Vidrios La Equidad
@@ -51,27 +51,27 @@ import { vidriosLaEquidadServices } from '../cristales-la-equidad/services.data'
  * Nota: Este preset REEMPLAZA completamente los datos del tenant.
  * Ejecutar solo en instancia dedicada de Vidrios La Equidad.
  */
-export const vidriosLaEquidadColombiaPreset: SeedPreset = {
+export const cristalesLaEquidadColombiaPreset: SeedPreset = {
   description: 'Vidrios La Equidad - Fabricante e instalador de ventanas, puertas y divisiones en Valle del Cauca',
 
   // Soluciones de cristal (5)
-  glassSolutions: vidriosLaEquidadGlassSolutions,
+  glassSolutions: cristalesLaEquidadGlassSolutions,
 
   // Tipos de cristal (10)
-  glassTypes: vidriosLaEquidadGlassTypes,
+  glassTypes: cristalesLaEquidadGlassTypes,
 
   // Modelos de ventanas/puertas (9)
   models: [
-    ...vidriosLaEquidadAluminumSlidingModels,
-    ...vidriosLaEquidadAluminumCasementModels,
-    ...vidriosLaEquidadPVCModels,
+    ...cristalesLaEquidadAluminumSlidingModels,
+    ...cristalesLaEquidadAluminumCasementModels,
+    ...cristalesLaEquidadPVCModels,
   ],
 
   name: 'cristales-la-equidad-colombia',
 
   // Proveedores de perfiles (2)
-  profileSuppliers: vidriosLaEquidadProfileSuppliers,
+  profileSuppliers: cristalesLaEquidadProfileSuppliers,
 
   // Servicios (6)
-  services: vidriosLaEquidadServices,
+  services: cristalesLaEquidadServices,
 };
