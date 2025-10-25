@@ -426,4 +426,51 @@ export const dashboardRouter = createTRPCRouter({
       throw error;
     }
   }),
+
+  /**
+   * Check if dashboard has data (quotes exist)
+   * Lightweight query to determine if analytics queries should be executed
+   * Used to prevent unnecessary queries when no data exists
+   *
+   * Returns:
+   * - true if quotes exist for the user (considering RBAC and period)
+   * - false if no quotes exist
+   */
+  hasData: protectedProcedure.input(dashboardPeriodInput).query(async ({ ctx, input }) => {
+    try {
+      const { period } = input;
+      const { session, db } = ctx;
+
+      // Get date range for period
+      const dateRange = getPeriodDateRange(period);
+
+      // RBAC: Admin sees all, seller sees only own
+      const whereFilter =
+        session.user.role === 'admin'
+          ? { createdAt: { gte: dateRange.start, lte: dateRange.end } }
+          : {
+              createdAt: { gte: dateRange.start, lte: dateRange.end },
+              userId: session.user.id,
+            };
+
+      // Count quotes (lightweight - only count, no data fetching)
+      const count = await db.quote.count({ where: whereFilter });
+
+      logger.info('Dashboard data check performed', {
+        hasData: count > 0,
+        period,
+        quoteCount: count,
+        role: session.user.role,
+        userId: session.user.id,
+      });
+
+      return count > 0;
+    } catch (error) {
+      logger.error('Error checking dashboard data', {
+        error,
+        userId: ctx.session.user.id,
+      });
+      throw error;
+    }
+  }),
 });

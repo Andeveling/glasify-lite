@@ -1,5 +1,6 @@
 // src/server/api/routers/catalog/catalog.schemas.ts
 import { z } from 'zod';
+import { storedDesignConfigSchema } from '@/lib/design/validation';
 
 // Constants
 export const DEFAULT_PAGE_LIMIT = 20;
@@ -54,6 +55,15 @@ export const modelSummaryOutput = z.object({
   costPerMmHeight: z.number(),
   costPerMmWidth: z.number(),
   createdAt: z.date(),
+  design: z
+    .object({
+      config: storedDesignConfigSchema,
+      id: z.string(),
+      name: z.string(),
+      nameEs: z.string(),
+    })
+    .nullable()
+    .optional(),
   id: z.string(),
   maxHeightMm: z.number(),
   maxWidthMm: z.number(),
@@ -63,6 +73,7 @@ export const modelSummaryOutput = z.object({
   profileSupplier: z
     .object({
       id: z.string(),
+      materialType: z.enum(['PVC', 'ALUMINUM', 'WOOD', 'MIXED']),
       name: z.string(),
     })
     .nullable(),
@@ -82,6 +93,15 @@ export const modelDetailOutput = z.object({
   costPerMmHeight: z.number(),
   costPerMmWidth: z.number(),
   createdAt: z.date(),
+  design: z
+    .object({
+      config: storedDesignConfigSchema,
+      id: z.string(),
+      name: z.string(),
+      nameEs: z.string(),
+    })
+    .nullable()
+    .optional(),
   glassDiscountHeightMm: z.number(),
   glassDiscountWidthMm: z.number(),
   id: z.string(),

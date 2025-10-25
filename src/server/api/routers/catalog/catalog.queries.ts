@@ -1,4 +1,6 @@
 // src/server/api/routers/catalog/catalog.queries.ts
+
+import { validateDesignConfig } from '@/lib/design/validation';
 import logger from '@/lib/logger';
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
 import {
@@ -35,6 +37,14 @@ export const catalogQueries = createTRPCRouter({
             costPerMmHeight: true,
             costPerMmWidth: true,
             createdAt: true,
+            design: {
+              select: {
+                config: true,
+                id: true,
+                name: true,
+                nameEs: true,
+              },
+            },
             glassDiscountHeightMm: true,
             glassDiscountWidthMm: true,
             id: true,
@@ -64,14 +74,44 @@ export const catalogQueries = createTRPCRouter({
           throw new Error('El modelo solicitado no existe o no está disponible.');
         }
 
+        // Serialize Decimal fields
         const serializedModel = serializeDecimalFields(model);
 
+        // Validate design config if present
+        let validatedDesign: {
+          config: ReturnType<typeof validateDesignConfig>;
+          id: string;
+          name: string;
+          nameEs: string;
+        } | null = null;
+        if (model.design) {
+          try {
+            const validatedConfig = validateDesignConfig(model.design.config);
+            validatedDesign = {
+              config: validatedConfig,
+              id: model.design.id,
+              name: model.design.name,
+              nameEs: model.design.nameEs,
+            };
+          } catch (error) {
+            logger.warn('Invalid design config, excluding from response', {
+              designId: model.design.id,
+              error: error instanceof Error ? error.message : 'Unknown error',
+              modelId: input.modelId,
+            });
+          }
+        }
+
         logger.info('Successfully retrieved model', {
+          hasDesign: !!validatedDesign,
           modelId: input.modelId,
           modelName: model.name,
         });
 
-        return serializedModel;
+        return {
+          ...serializedModel,
+          design: validatedDesign,
+        };
       } catch (error) {
         logger.error('Error getting model by ID', {
           error: error instanceof Error ? error.message : 'Unknown error',
@@ -339,6 +379,14 @@ export const catalogQueries = createTRPCRouter({
             costPerMmHeight: true,
             costPerMmWidth: true,
             createdAt: true,
+            design: {
+              select: {
+                config: true,
+                id: true,
+                name: true,
+                nameEs: true,
+              },
+            },
             id: true,
             maxHeightMm: true,
             maxWidthMm: true,
@@ -348,6 +396,7 @@ export const catalogQueries = createTRPCRouter({
             profileSupplier: {
               select: {
                 id: true,
+                materialType: true,
                 name: true,
               },
             },
@@ -359,8 +408,41 @@ export const catalogQueries = createTRPCRouter({
           where: whereClause,
         });
 
-        // Serialize Decimal fields
-        const serializedModels = models.map(serializeDecimalFields);
+        // Serialize Decimal fields and validate designs
+        const serializedModels = models.map((model) => {
+          const serialized = serializeDecimalFields(model);
+
+          // Validate design config if present
+          let validatedDesign: {
+            config: ReturnType<typeof validateDesignConfig>;
+            id: string;
+            name: string;
+            nameEs: string;
+          } | null = null;
+
+          if (model.design) {
+            try {
+              const validatedConfig = validateDesignConfig(model.design.config);
+              validatedDesign = {
+                config: validatedConfig,
+                id: model.design.id,
+                name: model.design.name,
+                nameEs: model.design.nameEs,
+              };
+            } catch (error) {
+              logger.warn('Invalid design config in model list, excluding from response', {
+                designId: model.design.id,
+                error: error instanceof Error ? error.message : 'Unknown error',
+                modelId: model.id,
+              });
+            }
+          }
+
+          return {
+            ...serialized,
+            design: validatedDesign,
+          };
+        });
 
         logger.info('Successfully retrieved models', {
           count: serializedModels.length,

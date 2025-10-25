@@ -5,6 +5,7 @@ import { glassSolutionRouter } from '@/server/api/routers/admin/glass-solution';
 import { glassSupplierRouter } from '@/server/api/routers/admin/glass-supplier';
 import { glassTypeRouter } from '@/server/api/routers/admin/glass-type';
 import { modelRouter } from '@/server/api/routers/admin/model';
+import { modelDesignRouter } from '@/server/api/routers/admin/model-design';
 import { profileSupplierRouter } from '@/server/api/routers/admin/profile-supplier';
 import { serviceRouter } from '@/server/api/routers/admin/service';
 import { adminProcedure, createTRPCRouter } from '@/server/api/trpc';
@@ -73,6 +74,7 @@ export const adminRouter = createTRPCRouter({
   'glass-supplier': glassSupplierRouter,
   'glass-type': glassTypeRouter,
   model: modelRouter,
+  'model-design': modelDesignRouter,
   'model-upsert': adminProcedure
     .input(modelUpsertInput)
     .output(modelUpsertOutput)

@@ -182,18 +182,78 @@ export const modelRouter = createTRPCRouter({
       });
     }
 
+    // Validate design type compatibility if designId is provided
+    if (input.designId && input.type) {
+      const design = await ctx.db.modelDesign.findUnique({
+        select: {
+          id: true,
+          isActive: true,
+          type: true,
+        },
+        where: { id: input.designId },
+      });
+
+      if (!design) {
+        logger.warn('Invalid design ID in model creation', {
+          designId: input.designId,
+          userId: ctx.session.user.id,
+        });
+
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'El diseño seleccionado no existe',
+        });
+      }
+
+      if (!design.isActive) {
+        logger.warn('Inactive design in model creation', {
+          designId: input.designId,
+          userId: ctx.session.user.id,
+        });
+
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'El diseño seleccionado está inactivo',
+        });
+      }
+
+      if (design.type !== input.type) {
+        logger.warn('Design type mismatch in model creation', {
+          designId: input.designId,
+          designType: design.type,
+          modelType: input.type,
+          userId: ctx.session.user.id,
+        });
+
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `El diseño seleccionado es de tipo ${design.type} pero el modelo es de tipo ${input.type}`,
+        });
+      }
+    }
+
     // Create model
     const model = await ctx.db.model.create({
       data: input,
       include: {
+        design: {
+          select: {
+            id: true,
+            name: true,
+            nameEs: true,
+            type: true,
+          },
+        },
         profileSupplier: true,
       },
     });
 
     logger.info('Model created', {
       compatibleGlassTypeIds: input.compatibleGlassTypeIds,
+      designId: input.designId,
       modelId: model.id,
       modelName: model.name,
+      type: input.type,
       userId: ctx.session.user.id,
     });
 
@@ -314,6 +374,14 @@ export const modelRouter = createTRPCRouter({
             createdAt: 'asc',
           },
         },
+        design: {
+          select: {
+            id: true,
+            name: true,
+            nameEs: true,
+            type: true,
+          },
+        },
         priceHistory: {
           orderBy: {
             createdAt: 'desc',
@@ -366,6 +434,14 @@ export const modelRouter = createTRPCRouter({
       ctx.db.model.count({ where }),
       ctx.db.model.findMany({
         include: {
+          design: {
+            select: {
+              id: true,
+              name: true,
+              nameEs: true,
+              type: true,
+            },
+          },
           profileSupplier: {
             select: {
               id: true,
@@ -416,6 +492,7 @@ export const modelRouter = createTRPCRouter({
         costPerMmHeight: true,
         costPerMmWidth: true,
         id: true,
+        type: true,
       },
       where: { id },
     });
@@ -467,6 +544,64 @@ export const modelRouter = createTRPCRouter({
       }
     }
 
+    // Validate design type compatibility if designId is provided or changed
+    if (data.designId !== undefined) {
+      // Determine the effective type (use new type if provided, otherwise use current)
+      const effectiveType = data.type !== undefined ? data.type : currentModel.type;
+
+      if (data.designId && effectiveType) {
+        const design = await ctx.db.modelDesign.findUnique({
+          select: {
+            id: true,
+            isActive: true,
+            type: true,
+          },
+          where: { id: data.designId },
+        });
+
+        if (!design) {
+          logger.warn('Invalid design ID in model update', {
+            designId: data.designId,
+            modelId: id,
+            userId: ctx.session.user.id,
+          });
+
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'El diseño seleccionado no existe',
+          });
+        }
+
+        if (!design.isActive) {
+          logger.warn('Inactive design in model update', {
+            designId: data.designId,
+            modelId: id,
+            userId: ctx.session.user.id,
+          });
+
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'El diseño seleccionado está inactivo',
+          });
+        }
+
+        if (design.type !== effectiveType) {
+          logger.warn('Design type mismatch in model update', {
+            designId: data.designId,
+            designType: design.type,
+            effectiveType,
+            modelId: id,
+            userId: ctx.session.user.id,
+          });
+
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: `El diseño seleccionado es de tipo ${design.type} pero el modelo es de tipo ${effectiveType}`,
+          });
+        }
+      }
+    }
+
     // Check if pricing fields changed (compare Decimal values)
     const priceChanged =
       (data.basePrice !== undefined && data.basePrice.toString() !== currentModel.basePrice.toString()) ||
@@ -479,6 +614,14 @@ export const modelRouter = createTRPCRouter({
     const updatedModel = await ctx.db.model.update({
       data,
       include: {
+        design: {
+          select: {
+            id: true,
+            name: true,
+            nameEs: true,
+            type: true,
+          },
+        },
         profileSupplier: true,
       },
       where: { id },
