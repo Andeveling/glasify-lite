@@ -147,32 +147,36 @@ export class SeedOrchestrator {
     this.logger.info(preset.description);
 
     try {
+      // Clean existing data first (IMPORTANT: Reset database before seeding)
+      this.logger.section('Step 0/8: Cleaning Existing Data');
+      await this.cleanDatabase();
+
       // Step 0: Seed TenantConfig singleton (ALWAYS FIRST - business configuration)
-      this.logger.section('Step 0/7: TenantConfig Singleton');
+      this.logger.section('Step 1/8: TenantConfig Singleton');
       await seedTenant(this.prisma);
 
       // Step 1: Seed profile suppliers (no dependencies)
-      this.logger.section('Step 1/7: Profile Suppliers');
+      this.logger.section('Step 2/8: Profile Suppliers');
       const suppliers = await this.seedProfileSuppliers(preset.profileSuppliers);
 
       // Step 2: Seed glass types (no dependencies)
-      this.logger.section('Step 2/7: Glass Types');
+      this.logger.section('Step 3/8: Glass Types');
       const glassTypes = await this.seedGlassTypes(preset.glassTypes);
 
       // Step 3: Seed models (depends on suppliers and glass types)
-      this.logger.section('Step 3/7: Window/Door Models');
+      this.logger.section('Step 4/8: Window/Door Models');
       await this.seedModels(preset.models, suppliers, glassTypes);
 
       // Step 4: Seed services (no dependencies)
-      this.logger.section('Step 4/7: Services');
+      this.logger.section('Step 5/8: Services');
       await this.seedServices(preset.services);
 
       // Step 5: Seed glass solutions (no dependencies)
-      this.logger.section('Step 5/7: Glass Solutions');
+      this.logger.section('Step 6/8: Glass Solutions');
       const solutions = await this.seedGlassSolutions(preset.glassSolutions);
 
       // Step 6: Assign solutions to glass types (depends on glass types and solutions)
-      this.logger.section('Step 6/7: Assign Solutions to Glass Types');
+      this.logger.section('Step 7/8: Assign Solutions to Glass Types');
       await this.assignSolutionsToGlassTypes(glassTypes, solutions);
 
       // Calculate final stats
@@ -199,6 +203,47 @@ export class SeedOrchestrator {
     } catch (error) {
       this.logger.error('Seed orchestration failed', error);
       throw error;
+    }
+  }
+
+  /**
+   * Clean database - Delete all seeded data before starting fresh
+   * Order matters: delete child records before parent records (foreign key constraints)
+   */
+  private async cleanDatabase(): Promise<void> {
+    try {
+      this.logger.info('Cleaning existing data...');
+
+      // Delete in order of dependencies (reverse of creation)
+      // GlassTypeCharacteristic (depends on GlassType and GlassCharacteristic)
+      await this.prisma.glassTypeCharacteristic.deleteMany({});
+
+      // Quote, QuoteItem (business data - might want to preserve in production)
+      await this.prisma.quoteItem.deleteMany({});
+      await this.prisma.quote.deleteMany({});
+
+      // Model (depends on ProfileSupplier)
+      await this.prisma.model.deleteMany({});
+
+      // Service (independent)
+      await this.prisma.service.deleteMany({});
+
+      // GlassType (independent)
+      await this.prisma.glassType.deleteMany({});
+
+      // GlassSolution (independent)
+      await this.prisma.glassSolution.deleteMany({});
+
+      // GlassSupplier (independent)
+      await this.prisma.glassSupplier.deleteMany({});
+
+      // ProfileSupplier (independent)
+      await this.prisma.profileSupplier.deleteMany({});
+
+      this.logger.success('✅ Database cleaned successfully');
+    } catch (error) {
+      this.logger.error('Failed to clean database', error);
+      if (!this.options.continueOnError) throw error;
     }
   }
 
