@@ -10,7 +10,7 @@ src/app/(public)/catalog/[modelId]/
 │   │   ├── quote-summary.tsx       # ✅ Client Component - Price & submit
 │   │   └── sections/              # Form sections con FieldSet
 │   │       ├── dimensions-section.tsx        # ✅ Client - Dimensiones con validación
-│   │       ├── glass-type-selector-section.tsx  # ✅ Client - Selector de tipo de vidrio
+│   │       ├── glass-type-selector-section.tsx  # ✅ Client - Selector de tipo de cristal
 │   │       └── services-selector-section.tsx    # ✅ Client - Servicios adicionales
 │   ├── model-dimensions.tsx     # ✅ Server Component - Card dimensiones
 │   ├── model-features.tsx       # ✅ Server Component - Card características
@@ -33,7 +33,7 @@ src/app/(public)/catalog/[modelId]/
 - **ModelDimensions**: Solo muestra restricciones de dimensiones
 - **ModelFeatures**: Solo lista características
 - **DimensionsSection**: Solo maneja inputs de dimensiones
-- **GlassTypeSelectorSection**: Solo selector de tipo de vidrio
+- **GlassTypeSelectorSection**: Solo selector de tipo de cristal
 - **ServicesSelectorSection**: Solo selector de servicios
 
 #### Open/Closed Principle (OCP)

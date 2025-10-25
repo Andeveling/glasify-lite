@@ -224,7 +224,7 @@ Nota: Otros acabados disponibles bajo pedido y plazos de entrega a convenir.
 
 TIPOS DE VIDRIO
 
-Entre los vidrios que se pueden utilizar están:
+Entre los cristales que se pueden utilizar están:
 
 Los monolíticos: 6, 8, 10 y 12 mm.
 
@@ -364,7 +364,7 @@ donde las condiciones de viento sean inferiores a 30km/h, no es recomendable en 
 
 encima  de  los  17  metros  de  altura  (edificios  de  7  pisos),  cualquier  producción  fuera  de
 
-especificación debe utilizar vidrio de seguridad.
+especificación debe utilizar cristal de seguridad.
 
 Se recomienda consultar previamente a Extralum en toda aplicación en la que los requisitos
 

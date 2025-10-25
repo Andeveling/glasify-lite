@@ -110,7 +110,7 @@ describe('ImageViewerDialog', () => {
     it('should display glass type when provided', () => {
       render(<ImageViewerDialog {...defaultProps} />);
 
-      expect(screen.getByText(/vidrio:/i)).toBeInTheDocument();
+      expect(screen.getByText(/cristal:/i)).toBeInTheDocument();
       expect(screen.getByText('Templado')).toBeInTheDocument();
     });
 
@@ -150,7 +150,7 @@ describe('ImageViewerDialog', () => {
       );
 
       expect(screen.queryByText(/dimensiones:/i)).not.toBeInTheDocument();
-      expect(screen.queryByText(/vidrio:/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/cristal:/i)).not.toBeInTheDocument();
       expect(screen.queryByText(/fabricante:/i)).not.toBeInTheDocument();
       expect(screen.queryByText(/espesor:/i)).not.toBeInTheDocument();
       expect(screen.queryByText(/tratamiento:/i)).not.toBeInTheDocument();

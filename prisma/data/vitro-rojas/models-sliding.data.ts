@@ -11,7 +11,7 @@
  * - 3 paños: $150 USD/m²
  * - 4 paños: $165 USD/m²
  *
- * Fórmulas de corte para vidrio:
+ * Fórmulas de corte para cristal:
  * - 2 paños: Alto = H-66mm, Ancho = (W-7mm)÷2
  * - 3 paños: Alto = H-66mm, Ancho = (W+63mm)÷3
  * - 4 paños: Alto = H-66mm, Ancho = (W+48mm)÷4
@@ -45,8 +45,8 @@ import type { ModelInput } from '../../factories/model.factory';
 export const vcPanama2Panos: ModelInput = {
   accessoryPrice: 45, // USD - Rodines, cerraduras, felpas
   basePrice: 130, // USD/m²
-  compatibleGlassTypeIds: ['placeholder'], // Se populará automáticamente con todos los tipos de vidrio
-  costNotes: 'Precio base $130/m². Compatible con vidrio simple 6-8mm o laminado 33.1mm.',
+  compatibleGlassTypeIds: ['placeholder'], // Se populará automáticamente con todos los tipos de cristal
+  costNotes: 'Precio base $130/m². Compatible con cristal simple 6-8mm o laminado 33.1mm.',
   costPerMmHeight: 0.012, // $0.012 USD/mm (factor de ajuste por altura)
   costPerMmWidth: 0.015, // $0.015 USD/mm (factor de ajuste por ancho)
   glassDiscountHeightMm: 66, // Fórmula Vitro Rojas: Alto = H - 66mm
@@ -132,7 +132,7 @@ export const europaClasica2Panos: ModelInput = {
   accessoryPrice: 55, // USD - Accesorios premium
   basePrice: 140, // USD/m² (premium sobre VC)
   compatibleGlassTypeIds: ['placeholder'],
-  costNotes: 'Precio base $140/m². Compatible con vidrio simple 6-12mm o DVH 16-18.5mm. Sistema premium.',
+  costNotes: 'Precio base $140/m². Compatible con cristal simple 6-12mm o DVH 16-18.5mm. Sistema premium.',
   costPerMmHeight: 0.014,
   costPerMmWidth: 0.017,
   glassDiscountHeightMm: 66,

@@ -2,7 +2,7 @@
 
   
 
-Glasify es una herramienta digital enfocada en acelerar y estandarizar la cotización de soluciones de ventanas y vidrios en LATAM, reduciendo tiempos de respuesta de días a minutos y mejorando la calidad del asesoramiento técnico.
+Glasify es una herramienta digital enfocada en acelerar y estandarizar la cotización de soluciones de ventanas y cristales en LATAM, reduciendo tiempos de respuesta de días a minutos y mejorando la calidad del asesoramiento técnico.
 
   
 
@@ -58,7 +58,7 @@ Empresas que fabrican el producto terminado. Algunas ofrecen la ventana + servic
 
 | Fabricante regional (Antioquia) | VentPro S.A.S. — Miguel Vélez | Medellín, Colombia 🇨🇴 | Validar operación en el eje industrial y ventanas mixtas (PVC/aluminio). | Especializada en productos termoacústicos europeos; ideal para pruebas de rendimiento. |
 
-| Aliado internacional (vidrio y carpintería) | Vitro Rojas S.A. — Juan Pablo Rojas | Ciudad de Panamá 🇵🇦 | Validar compatibilidad internacional, importación y expansión LATAM. | Primer cliente confirmado; permite probar integración internacional y escalabilidad transfronteriza. |
+| Aliado internacional (cristal y carpintería) | Vitro Rojas S.A. — Juan Pablo Rojas | Ciudad de Panamá 🇵🇦 | Validar compatibilidad internacional, importación y expansión LATAM. | Primer cliente confirmado; permite probar integración internacional y escalabilidad transfronteriza. |
 
   
 
@@ -100,7 +100,7 @@ Mezcla de factores del mercado LATAM:
 
 6. Vidrios: las fábricas compran a distribuidores pequeños o a gigantes especializados (Vidrio Andino | Saint-Gobain, Tecnoglass).
 
-7. Riesgos operativos: cortes errados, vidrios rotos, mermas.
+7. Riesgos operativos: cortes errados, cristales rotos, mermas.
 
   
 
@@ -116,11 +116,11 @@ Lo que ya estamos construyendo (v1.6 en producción):
 
 - Cotizador on‑demand que entrega una primera cotización en minutos con supuestos claros y parámetros ajustables.
 
-- Catálogo público con límites técnicos por modelo (min/max dimensiones, compatibilidades de vidrio y perfil) y filtros útiles.
+- Catálogo público con límites técnicos por modelo (min/max dimensiones, compatibilidades de cristal y perfil) y filtros útiles.
 
 - Budget Cart sin fricción (sessionStorage), exportación de presupuesto profesional (PDF/Excel) y conversión a Quote formal con autenticación.
 
-- Brief automático para comerciales con contexto del proyecto (dimensiones, soluciones de vidrio, servicios) para un primer contacto efectivo.
+- Brief automático para comerciales con contexto del proyecto (dimensiones, soluciones de cristal, servicios) para un primer contacto efectivo.
 
 - My Quotes para comerciales con estados claros (draft/sent/canceled) y tiempos de carga optimizados.
 
@@ -152,7 +152,7 @@ Extensiones con IA (enfoque incremental bajo demanda):
 
 2. **Asistente de cálculo de precios**: calcula valor base y genera desglose de precios por mm² en anchos y altos; permite ajustes ágiles de tarifa y estima impacto en cotizaciones de catálogo.
 
-3. **Sugerencias de soluciones de vidrio**: dado un propósito (térmico, acústico, seguridad) y contexto (ubicación, tipo de edificio), recomienda 2-3 opciones de modelos + vidrio del catálogo con justificación técnica.
+3. **Sugerencias de soluciones de cristal**: dado un propósito (térmico, acústico, seguridad) y contexto (ubicación, tipo de edificio), recomienda 2-3 opciones de modelos + cristal del catálogo con justificación técnica.
 
 4. **Asistente de FAQ**: responde preguntas frecuentes sobre el proceso, productos y servicios usando contexto estático del tenant (sin búsqueda semántica).
 
@@ -240,14 +240,14 @@ Extensiones con IA (enfoque incremental bajo demanda):
 
 0. **Fase 0 – Piloto 12 meses + Foundations**: core de cotización (catálogo, límites técnicos, Budget, PDF/Excel, My Quotes); medición de adopción y performance; sin IA activa inicialmente.
 
-1. **Fase 1 – MVP de cotización rápida (residencial)**: catálogo base de modelos de ventanas + soluciones de vidrio, precios por m², espesor y propósito; flujo simple guiado; exportación de propuesta PDF.
+1. **Fase 1 – MVP de cotización rápida (residencial)**: catálogo base de modelos de ventanas + soluciones de cristal, precios por m², espesor y propósito; flujo simple guiado; exportación de propuesta PDF.
 
 2. **Fase 2 – Integración con proveedores/fabricantes**: listas de precios por fabricante, contexto por zona/ciudad, reglas de disponibilidad y alternativas.
 
 3. **Fase 3 – Features IA bajo demanda (incremental)**:
 	- 3.1: Generador de resúmenes de cotización (comercial)
 	- 3.2: Asistente de cálculo de precios (admin/comercial)
-	- 3.3: Sugerencias de soluciones de vidrio (cliente/comercial)
+	- 3.3: Sugerencias de soluciones de cristal (cliente/comercial)
 	- 3.4: Asistente de FAQ básico (cliente)
 
 - **Criterio de activación**: mínimo 3 usuarios piloto solicitando la feature + prompt validado manualmente.

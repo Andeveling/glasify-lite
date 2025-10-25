@@ -35,7 +35,7 @@ test.describe('Glass Types Table - Server Optimized', () => {
 
   test('should display glass types table with data', async ({ page }) => {
     // Verify page title
-    await expect(page.getByRole('heading', { name: /tipos de vidrio/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /tipos de cristal/i })).toBeVisible();
 
     // Verify table has rows
     const tableRows = page.locator('table tbody tr');

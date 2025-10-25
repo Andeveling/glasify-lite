@@ -232,7 +232,7 @@ export const hardwareAdjustment: ServiceInput = {
 
 /**
  * Glass replacement
- * Reemplazo de vidrio: retiro, limpieza, instalación, sellado
+ * Reemplazo de cristal: retiro, limpieza, instalación, sellado
  */
 export const glassReplacement: ServiceInput = {
   name: 'Reemplazo de Vidrio (Labor)',

@@ -285,9 +285,9 @@ model Model {
   costPerMmWidth         Decimal              @db.Decimal(12, 4)
   costPerMmHeight        Decimal              @db.Decimal(12, 4)
   accessoryPrice         Decimal?             @db.Decimal(12, 2)
-  /// Descuento fijo por lado para el cálculo del vidrio facturable (mm)
+  /// Descuento fijo por lado para el cálculo del cristal facturable (mm)
   /// Fórmula: anchoEfectivo = widthMm - glassDiscountWidthMm; altoEfectivo = heightMm - glassDiscountHeightMm
-  /// El área de vidrio facturable se calcula con los valores efectivos (en m²) y se multiplica por el pricePerSqm del GlassType.
+  /// El área de cristal facturable se calcula con los valores efectivos (en m²) y se multiplica por el pricePerSqm del GlassType.
   glassDiscountWidthMm   Int                  @default(0)
   glassDiscountHeightMm  Int                  @default(0)
   compatibleGlassTypeIds String[]
@@ -578,8 +578,8 @@ model ModelPriceHistory {
   @@index([createdBy])
 }
 
-/// Soluciones de vidrio (categorías de uso)
-/// Permite clasificar vidrios según su propósito principal (seguridad, térmico, acústico, etc.)
+/// Soluciones de cristal (categorías de uso)
+/// Permite clasificar cristales según su propósito principal (seguridad, térmico, acústico, etc.)
 
 model GlassSolution {
   id          String              @id @default(cuid())
@@ -615,7 +615,7 @@ model GlassSolution {
 }
 
 /// Tabla pivote: Relación Many-to-Many entre GlassType y GlassSolution
-/// Permite que un vidrio pertenezca a múltiples soluciones con calificación de rendimiento
+/// Permite que un cristal pertenezca a múltiples soluciones con calificación de rendimiento
 
 model GlassTypeSolution {
   id                String            @id @default(cuid())
@@ -625,7 +625,7 @@ model GlassTypeSolution {
   solution          GlassSolution     @relation(fields: [solutionId], references: [id], onDelete: Cascade)
   /// Calificación de rendimiento para esta solución (1-5)
   performanceRating PerformanceRating
-  /// Indica si esta es la solución principal del vidrio
+  /// Indica si esta es la solución principal del cristal
   isPrimary         Boolean           @default(false)
   /// Notas adicionales sobre esta clasificación
   notes             String?

@@ -3,7 +3,7 @@
  *
  * Data source: https://vidrioslaequidad.com/
  * Empresa del Valle del Cauca, Colombia
- * Productos: Aluminio, vidrio, acero y PVC
+ * Productos: Aluminio, cristal, acero y PVC
  *
  * Enfoque inicial:
  * - Ventanas en aluminio

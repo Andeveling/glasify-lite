@@ -195,7 +195,7 @@ export const catalogQueries = createTRPCRouter({
           modelId: input?.modelId,
         });
 
-        throw new Error('No se pudieron cargar las soluciones de vidrio. Intente nuevamente.');
+        throw new Error('No se pudieron cargar las soluciones de cristal. Intente nuevamente.');
       }
     }),
 
@@ -270,7 +270,7 @@ export const catalogQueries = createTRPCRouter({
           error: error instanceof Error ? error.message : 'Unknown error',
         });
 
-        throw new Error('No se pudieron cargar los tipos de vidrio. Intente nuevamente.');
+        throw new Error('No se pudieron cargar los tipos de cristal. Intente nuevamente.');
       }
     }),
 

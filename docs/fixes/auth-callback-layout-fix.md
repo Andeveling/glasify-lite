@@ -11,7 +11,7 @@ Cuando un usuario completaba el login con Google, la página `/auth/callback` mo
 │  GLASIFY (fondo púrpura)                          │
 │                                                    │
 │  "Cotización inteligente de productos             │
-│   de vidrio para fabricantes..."                  │
+│   de cristal para fabricantes..."                  │
 │                                                    │
 │  [Volver al catálogo]                             │
 │                                                    │

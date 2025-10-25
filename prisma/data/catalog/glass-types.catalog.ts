@@ -5,11 +5,11 @@
  *
  * Data sources:
  * - docs/context/glassess.catalog.md
- * - https://www.aluviarte.com/tipos-de-vidrio-aluviarte.html
- * - https://vitrolit.com/productos/vidrio-templado-incoloro/
- * - https://vitrolit.com/productos/vidrio-laminado/
+ * - https://www.aluviarte.com/tipos-de-cristal-aluviarte.html
+ * - https://vitrolit.com/productos/cristal-templado-incoloro/
+ * - https://vitrolit.com/productos/cristal-laminado/
  * - https://vitelsa.com.co/insulado-dvh/
- * - https://www.vitroglazings.com/es/productos/vidrio-de-baja-emisividad-low-e/
+ * - https://www.vitroglazings.com/es/productos/cristal-de-baja-emisividad-low-e/
  *
  * @version 1.0.0
  * @lastUpdated 2025-01-10

@@ -58,7 +58,7 @@ test.describe('Quote Detail View', () => {
     await expect(page.getByRole('table')).toBeVisible();
     await expect(page.getByRole('columnheader', { name: /nombre/i })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: /modelo/i })).toBeVisible();
-    await expect(page.getByRole('columnheader', { name: /tipo de vidrio/i })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: /tipo de cristal/i })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: /dimensiones/i })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: /cantidad/i })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: /precio unitario/i })).toBeVisible();

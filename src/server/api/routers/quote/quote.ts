@@ -37,7 +37,7 @@ export const calculateItemAdjustmentInput = z.object({
 
 export const calculateItemInput = z.object({
   adjustments: z.array(calculateItemAdjustmentInput),
-  glassTypeId: z.string().cuid({ error: 'ID del tipo de vidrio debe ser válido' }),
+  glassTypeId: z.string().cuid({ error: 'ID del tipo de cristal debe ser válido' }),
   heightMm: z.number().int().min(1, { error: 'Alto debe ser mayor a 0 mm' }),
   modelId: z.string().cuid({ error: 'ID del modelo debe ser válido' }),
   quantity: z.number(),
@@ -116,7 +116,7 @@ export const quoteRouter = createTRPCRouter({
 
           // Validate glass type compatibility
           if (!model.compatibleGlassTypeIds.includes(input.glassTypeId)) {
-            throw new Error('Tipo de vidrio no compatible con este modelo');
+            throw new Error('Tipo de cristal no compatible con este modelo');
           }
 
           // Validate dimensions
@@ -192,7 +192,7 @@ export const quoteRouter = createTRPCRouter({
             where: { id: input.glassTypeId },
           });
           if (!glassType) {
-            throw new Error('Tipo de vidrio no encontrado');
+            throw new Error('Tipo de cristal no encontrado');
           }
 
           // Calculate price including glass area pricing (using direct pricePerSqm from GlassType)
@@ -317,7 +317,7 @@ export const quoteRouter = createTRPCRouter({
 
         // Validate glass type compatibility
         if (!model.compatibleGlassTypeIds.includes(input.glassTypeId)) {
-          throw new Error('Tipo de vidrio no compatible con este modelo');
+          throw new Error('Tipo de cristal no compatible con este modelo');
         }
 
         // Validate dimensions
@@ -366,7 +366,7 @@ export const quoteRouter = createTRPCRouter({
           where: { id: input.glassTypeId },
         });
         if (!glassType) {
-          throw new Error('Tipo de vidrio no encontrado');
+          throw new Error('Tipo de cristal no encontrado');
         }
 
         // Calculate price including glass area pricing (using direct pricePerSqm from GlassType)

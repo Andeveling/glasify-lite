@@ -25,12 +25,12 @@ export function useGlassTypeMutations({ onSuccessCallback }: UseMutationsOptions
 
   const createMutation = api.admin['glass-type'].create.useMutation({
     onError: (err) => {
-      toast.error('Error al crear tipo de vidrio', {
+      toast.error('Error al crear tipo de cristal', {
         description: err.message,
       });
     },
     onSuccess: () => {
-      toast.success('Tipo de vidrio creado correctamente');
+      toast.success('Tipo de cristal creado correctamente');
       router.push('/admin/glass-types');
       router.refresh();
       onSuccessCallback?.();
@@ -39,12 +39,12 @@ export function useGlassTypeMutations({ onSuccessCallback }: UseMutationsOptions
 
   const updateMutation = api.admin['glass-type'].update.useMutation({
     onError: (err) => {
-      toast.error('Error al actualizar tipo de vidrio', {
+      toast.error('Error al actualizar tipo de cristal', {
         description: err.message,
       });
     },
     onSuccess: () => {
-      toast.success('Tipo de vidrio actualizado correctamente');
+      toast.success('Tipo de cristal actualizado correctamente');
       router.push('/admin/glass-types');
       router.refresh();
       onSuccessCallback?.();

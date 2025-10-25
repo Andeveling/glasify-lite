@@ -47,7 +47,7 @@ export interface DeleteConfirmationDialogProps {
   open: boolean;
   /** Callback when dialog state changes */
   onOpenChange: (open: boolean) => void;
-  /** Entity type name (e.g., "modelo", "tipo de vidrio") */
+  /** Entity type name (e.g., "modelo", "tipo de cristal") */
   entityName: string;
   /** Specific entity label/name (e.g., "Ventana Corrediza PVC") */
   entityLabel: string;

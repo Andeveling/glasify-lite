@@ -151,7 +151,7 @@
 // Zod Schema (lib/validations/admin/model.schema.ts):
 export const createModelSchema = z.object({
   // ... other fields
-  compatibleGlassTypeIds: z.array(z.string().cuid()).min(1, 'Selecciona al menos un tipo de vidrio'),
+  compatibleGlassTypeIds: z.array(z.string().cuid()).min(1, 'Selecciona al menos un tipo de cristal'),
 });
 
 // tRPC Procedure (server/api/routers/admin/model.ts):
@@ -168,7 +168,7 @@ export const modelRouter = router({
       if (glassTypes.length !== input.compatibleGlassTypeIds.length) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: 'Uno o más tipos de vidrio no existen o no están activos',
+          message: 'Uno o más tipos de cristal no existen o no están activos',
         });
       }
       

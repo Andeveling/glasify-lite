@@ -11,7 +11,7 @@
 
 ### User Story 1 - Admin Dashboard Access and Management (Priority: P1)
 
-Un administrador inicia sesión con su cuenta de Google y es automáticamente redirigido al panel de administración donde puede gestionar modelos de vidrio, configuración del sistema y ver todas las cotizaciones de todos los usuarios.
+Un administrador inicia sesión con su cuenta de Google y es automáticamente redirigido al panel de administración donde puede gestionar modelos de cristal, configuración del sistema y ver todas las cotizaciones de todos los usuarios.
 
 **Why this priority**: Este es el flujo principal que permite a los administradores acceder a las funcionalidades críticas de gestión del sistema. Sin este flujo, no hay forma de administrar el catálogo ni la configuración del negocio.
 
@@ -68,7 +68,7 @@ Un cliente final inicia sesión y es redirigido a "Mis Cotizaciones" donde puede
 1. **Given** el usuario tiene rol "user" (cliente final), **When** inicia sesión con Google OAuth, **Then** es redirigido a `/my-quotes`
 2. **Given** el cliente está autenticado, **When** intenta acceder a `/dashboard` o cualquier ruta administrativa, **Then** es redirigido a `/my-quotes` con un mensaje informativo
 3. **Given** el cliente está en `/my-quotes`, **When** visualiza la lista de cotizaciones, **Then** solo ve sus propias cotizaciones
-4. **Given** el cliente está autenticado, **When** accede a `/catalog` y navega por modelos de vidrio, **Then** puede ver toda la información pública del catálogo
+4. **Given** el cliente está autenticado, **When** accede a `/catalog` y navega por modelos de cristal, **Then** puede ver toda la información pública del catálogo
 
 ---
 

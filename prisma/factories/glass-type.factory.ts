@@ -192,8 +192,8 @@ export const glassTypeFactoryMetadata: FactoryMetadata = {
   name: 'GlassTypeFactory',
   sources: [
     'docs/context/glassess.catalog.md',
-    'https://www.aluviarte.com/tipos-de-vidrio-aluviarte.html',
-    'https://vitrolit.com/productos/vidrio-templado-incoloro/',
+    'https://www.aluviarte.com/tipos-de-cristal-aluviarte.html',
+    'https://vitrolit.com/productos/cristal-templado-incoloro/',
   ],
   version: '1.0.0',
 };

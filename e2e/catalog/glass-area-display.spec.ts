@@ -34,8 +34,8 @@ test.describe('Catalog Model Form - Glass Area Display', () => {
     const glassAreaText = page.locator('text=/1\\.50 m²/').first();
     await expect(glassAreaText).toBeVisible();
 
-    // Verify "total vidrio" label is shown
-    const totalGlassLabel = page.locator('text=/total vidrio/i').first();
+    // Verify "total cristal" label is shown
+    const totalGlassLabel = page.locator('text=/total cristal/i').first();
     await expect(totalGlassLabel).toBeVisible();
 
     // Verify calculated total price is shown (not price per m²)

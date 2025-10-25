@@ -44,7 +44,7 @@ Joint venture con DVP. Extrusión nacional e importación desde Alemania y EE.UU
 - **Hermeticidad:** Protección total contra agua, viento y polvo.
 - **Alta resistencia:** Inalterable en el tiempo, sin oxidación ni deformación.
 - **Bajo mantenimiento:** Fácil limpieza, no requiere pintura.
-- **Seguridad:** Material autoextinguible, no gotea, compatible con vidrios de seguridad.
+- **Seguridad:** Material autoextinguible, no gotea, compatible con cristales de seguridad.
 - **Versatilidad de diseño:** Amplia gama de formas, estilos y colores (más de 30 a pedido).
 
 ## 6. LÍNEA ALEMANA

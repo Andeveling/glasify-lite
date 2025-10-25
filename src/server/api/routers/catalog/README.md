@@ -1,6 +1,6 @@
 # Catalog Router
 
-Router de tRPC para operaciones relacionadas con el catálogo de modelos de vidrio.
+Router de tRPC para operaciones relacionadas con el catálogo de modelos de cristal.
 
 ## 📁 Estructura de Archivos
 

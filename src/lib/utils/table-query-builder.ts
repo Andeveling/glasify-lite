@@ -13,13 +13,13 @@
  * Usage:
  * ```typescript
  * const whereClause = buildTableWhereClause(
- *   { search: 'vidrio', status: 'published' },
+ *   { search: 'cristal', status: 'published' },
  *   {
  *     search: ['nameEs', 'descriptionEs'],
  *     exact: { status: 'status' }
  *   }
  * );
- * // Result: { OR: [{ nameEs: { contains: 'vidrio' }}, ...], status: 'published' }
+ * // Result: { OR: [{ nameEs: { contains: 'cristal' }}, ...], status: 'published' }
  *
  * const orderByClause = buildTableOrderByClause(
  *   { sortBy: 'createdAt', sortOrder: 'desc' }

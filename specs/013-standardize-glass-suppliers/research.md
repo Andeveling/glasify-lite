@@ -126,7 +126,7 @@ GlassSupplier has one-to-many relationship with GlassTypes. Delete must respect 
 if (await ctx.db.glassType.count({ where: { supplierId: input.id } }) > 0) {
   throw new TRPCError({
     code: 'BAD_REQUEST',
-    message: 'No se puede eliminar este proveedor porque tiene tipos de vidrio asociados.'
+    message: 'No se puede eliminar este proveedor porque tiene tipos de cristal asociados.'
   });
 }
 ```
@@ -243,7 +243,7 @@ import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia } from '@/
       <EmptyMedia icon={<PackageX />} />
       <EmptyTitle>No hay proveedores registrados</EmptyTitle>
       <EmptyDescription>
-        Comienza creando tu primer proveedor de vidrio
+        Comienza creando tu primer proveedor de cristal
       </EmptyDescription>
     </EmptyHeader>
     <Button onClick={() => setDialogOpen(true)}>

@@ -47,7 +47,7 @@
 ```
 
 ### ❌ Problemas:
-1. **Sin proveedor**: No sabes de dónde viene cada vidrio
+1. **Sin proveedor**: No sabes de dónde viene cada cristal
 2. **Características rígidas**: Agregar nueva = ALTER TABLE
 3. **Sin historial de precios**: No auditoría de cambios
 4. **Sin control de activos**: No puedes descatalogar temporalmente
@@ -150,7 +150,7 @@
 
 ### Antes (Actual)
 ```typescript
-// ❌ Buscar vidrios templados (rígido)
+// ❌ Buscar cristales templados (rígido)
 const tempered = await db.glassType.findMany({
   where: { isTempered: true }
 });
@@ -162,7 +162,7 @@ const tempered = await db.glassType.findMany({
 
 ### Después (Propuesto)
 ```typescript
-// ✅ Buscar vidrios templados (flexible)
+// ✅ Buscar cristales templados (flexible)
 const tempered = await db.glassType.findMany({
   where: {
     characteristics: {

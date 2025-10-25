@@ -4,7 +4,7 @@ import { testServer } from '../integration-setup';
 // Regex constants for performance optimization
 const MODEL_ID_ERROR_REGEX = /ID del modelo debe ser válido/;
 const WIDTH_ERROR_REGEX = /Ancho debe ser mayor a 0/;
-const GLASS_TYPE_ID_ERROR_REGEX = /ID del tipo de vidrio debe ser válido/;
+const GLASS_TYPE_ID_ERROR_REGEX = /ID del tipo de cristal debe ser válido/;
 const SERVICE_ID_ERROR_REGEX = /ID del servicio debe ser válido/;
 const UNIT_REGEX = /^(unit|sqm|ml)$/;
 const CALCULATION_TIME_LIMIT_MS = 200; // Performance requirement: calculation under 200ms

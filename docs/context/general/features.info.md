@@ -39,9 +39,9 @@ Se refiere a la vida útil del producto, su resistencia estructural y la protecc
 
 ### 4. Capacidad de Acristalamiento y Dimensión
 
-La ventana debe poder alojar el tipo de vidrio necesario para el aislamiento deseado.
+La ventana debe poder alojar el tipo de cristal necesario para el aislamiento deseado.
 
-*   **Espesor de Vidrio (DVH/TVH):** La capacidad de acristalamiento es clave. Los sistemas de PVC de alto desempeño permiten utilizar **vidrio doble (DVH) o triple (TVH)** para optimizar el aislamiento térmico y acústico.
+*   **Espesor de Vidrio (DVH/TVH):** La capacidad de acristalamiento es clave. Los sistemas de PVC de alto desempeño permiten utilizar **cristal doble (DVH) o triple (TVH)** para optimizar el aislamiento térmico y acústico.
     *   Líneas estándar (SL-322, DL-322) aceptan hasta **16 mm**.
     *   Líneas superiores (Everest Max) aceptan hasta **36 mm**.
     *   Las líneas tope (Legend, Legend Slide) aceptan hasta **52 mm** de espesor.

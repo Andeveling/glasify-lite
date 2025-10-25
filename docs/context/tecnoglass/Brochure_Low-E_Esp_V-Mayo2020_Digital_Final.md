@@ -9,8 +9,8 @@ Vidrio de baja emisividad de alto rendimiento
 
 En Tecnoglass ofrecemos una gran variedad de recubrimientos de baja emisividad, Low-E, que brindan beneficios de ahorro
 energético a cualquier tipo de proyecto arquitectónico. Esta tecnología permite minimizar la cantidad de luz ultravioleta e
-infrarroja que atraviesa el vidrio sin disminuir la cantidad de luz visible. Nuestros recubrimientos Low-E pueden ser aplicados
-sobre vidrio incoloro o de color.
+infrarroja que atraviesa el cristal sin disminuir la cantidad de luz visible. Nuestros recubrimientos Low-E pueden ser aplicados
+sobre cristal incoloro o de color.
 
 Nuestros recubrimientos y configuraciones comprenden una amplia gama de tamaños, colores, patrones, acabados en bordes e
 impresión digital que le permite a los arquitectos y constructores llevar a acabo sus diseños, sin comprometer la estética de sus
@@ -22,14 +22,14 @@ Serie-R
 
 Serie-N
 
-La Serie-R ofrece una amplia gama de vidrios
+La Serie-R ofrece una amplia gama de cristales
 termoacústicos de alto rendimiento con aspecto "cool
 crisp" que brindan desde baja hasta alta reflectividad y
 visibilidad. Estos recubrimientos tienen un brillo neutral
-que mejora la apariencia del vidrio bajo en hierro, así
-como la de diferentes vidrios a color.
+que mejora la apariencia del cristal bajo en hierro, así
+como la de diferentes cristales a color.
 
-La Serie-N reúne una amplia gama de vidrios neutros de
+La Serie-N reúne una amplia gama de cristales neutros de
 alto rendimiento, termoacústicos, desarrollados para
 mejorar el control solar y la eficiencia energética, al tiempo
 que proporcionan una estética neutra. Estos recubrimientos
@@ -78,7 +78,7 @@ Control de calor y eficiencia energética
 
 Diversos rangos de reflexividad
 
-Disponible para vidrio insulado, con tratamiento
+Disponible para cristal insulado, con tratamiento
 térmico y curvo
 
 Amplia gama de colores, patrones y diseños para
@@ -485,7 +485,7 @@ Los resultados representan los datos de rendimiento del Centro de Vidrio basados
 de la producción de la fábrica. Los valores reales pueden variar ligeramente debido a las variaciones en el proceso de producción. Estos datos se deben utilizar para ﬁnes de comparación y no deben considerarse un contrato. Es responsabilidad del
 destinatario completar la capacidad de fabricación de las conﬁguraciones de acristalamiento anteriores, así como evaluar las consideraciones de diseño apropiadas, como el análisis de carga de viento y nieve, análisis de estrés térmico y cumplimiento
 del código de construcción local. Tecnoglass recomienda que una maqueta de tamaño completo se revise en las condiciones especíﬁcas del lugar de trabajo y conserve la maqueta como base de un producto aceptable. Un recubrimiento que mira hacia
-un airspacer en una unidad IG puede tener un color diferente al del mismo recubrimiento en un laminado. El tinte oscuro interior cuando se usa con un vidrio transparente de baja emisividad puede aumentar el efecto de cambio de color regular.
+un airspacer en una unidad IG puede tener un color diferente al del mismo recubrimiento en un laminado. El tinte oscuro interior cuando se usa con un cristal transparente de baja emisividad puede aumentar el efecto de cambio de color regular.
 
 Low-E
 
@@ -901,7 +901,7 @@ Azuria + Incoloro
 
 Vea más opciones y pruebe nuestra
 calculadora para medir el desempeño
-del vidrio en www.tecnoglass.com
+del cristal en www.tecnoglass.com
 
 Coeficiente
 de Sombra

@@ -134,7 +134,7 @@ export function CharacteristicSelector() {
                   <FormDescription>
                     {characteristics.length === 0
                       ? 'Primero debes crear características en el módulo de administración'
-                      : 'Selecciona una característica técnica del vidrio'}
+                      : 'Selecciona una característica técnica del cristal'}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

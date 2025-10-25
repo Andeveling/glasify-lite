@@ -28,7 +28,7 @@ export const listServicesInput = z.object({
 });
 
 export const listGlassTypesInput = z.object({
-  glassTypeIds: z.array(z.cuid('ID del tipo de vidrio debe ser válido')),
+  glassTypeIds: z.array(z.cuid('ID del tipo de cristal debe ser válido')),
 });
 
 export const listGlassSolutionsInput = z

@@ -48,7 +48,7 @@ export function BasicInfoSection({ control }: BasicInfoSectionProps) {
         <div style={{ alignSelf: 'start', gridColumnStart: 2, gridRowStart: 1, justifySelf: 'end' }}>
           <FormCheckboxField
             control={control}
-            description="El tipo de vidrio está disponible para selección"
+            description="El tipo de cristal está disponible para selección"
             label="Activo"
             name="isActive"
           />
@@ -63,7 +63,7 @@ export function BasicInfoSection({ control }: BasicInfoSectionProps) {
               <FormControl>
                 <Input placeholder="Ej: Vidrio Templado 6mm" {...field} />
               </FormControl>
-              <FormDescription>Nombre descriptivo del tipo de vidrio</FormDescription>
+              <FormDescription>Nombre descriptivo del tipo de cristal</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -125,7 +125,7 @@ export function BasicInfoSection({ control }: BasicInfoSectionProps) {
           description="Información adicional (opcional)"
           label="Descripción"
           name="description"
-          placeholder="Descripción detallada del tipo de vidrio..."
+          placeholder="Descripción detallada del tipo de cristal..."
           rows={6}
         />
       </CardContent>

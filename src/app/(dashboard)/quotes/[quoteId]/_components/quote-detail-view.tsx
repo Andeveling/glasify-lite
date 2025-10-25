@@ -153,7 +153,7 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
               <TableRow>
                 <TableHead>Nombre</TableHead>
                 <TableHead>Modelo</TableHead>
-                <TableHead>Tipo de vidrio</TableHead>
+                <TableHead>Tipo de cristal</TableHead>
                 <TableHead>Solución</TableHead>
                 <TableHead>Dimensiones (mm)</TableHead>
                 <TableHead className="text-right">Cantidad</TableHead>

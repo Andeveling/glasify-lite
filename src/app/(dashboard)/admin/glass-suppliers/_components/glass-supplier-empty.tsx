@@ -25,11 +25,11 @@ export function GlassSupplierEmpty({ hasFilters }: GlassSupplierEmptyProps) {
         <EmptyMedia variant="icon">
           <Factory />
         </EmptyMedia>
-        <EmptyTitle>{hasFilters ? 'No se encontraron proveedores' : 'No hay proveedores de vidrio'}</EmptyTitle>
+        <EmptyTitle>{hasFilters ? 'No se encontraron proveedores' : 'No hay proveedores de cristal'}</EmptyTitle>
         <EmptyDescription>
           {hasFilters
             ? 'No se encontraron proveedores que coincidan con los filtros aplicados. Intenta ajustar los criterios de búsqueda.'
-            : 'Comienza agregando tu primer proveedor de vidrio para gestionar los fabricantes.'}
+            : 'Comienza agregando tu primer proveedor de cristal para gestionar los fabricantes.'}
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>{/* Create button is in filters component */}</EmptyContent>

@@ -27,7 +27,7 @@ import { GlassTypesFilters } from './_components/glass-types-filters';
 import { GlassTypesTable } from './_components/glass-types-table';
 
 export const metadata: Metadata = {
-  description: 'Administra los tipos de vidrio con sus soluciones y características',
+  description: 'Administra los tipos de cristal con sus soluciones y características',
   title: 'Tipos de Vidrio | Admin',
 };
 
@@ -140,7 +140,7 @@ export default async function GlassTypesPage({ searchParams }: PageProps) {
       {/* Header */}
       <div>
         <h1 className="font-bold text-3xl tracking-tight">Tipos de Vidrio</h1>
-        <p className="text-muted-foreground">Administra los tipos de vidrio con sus soluciones y características</p>
+        <p className="text-muted-foreground">Administra los tipos de cristal con sus soluciones y características</p>
       </div>
 
       {/* Filters outside Suspense - always visible */}

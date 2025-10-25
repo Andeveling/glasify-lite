@@ -27,9 +27,9 @@ Entrada: 1200 × 1500 mm, Vidrio Claro
 Cálculo:
 ├─ Ancho final: (1200 - 7) ÷ 2 = 596.5 mm
 ├─ Alto final: 1500 - 66 = 1434 mm
-├─ Área vidrio: 596.5 × 1434 = 0.8547 m²
+├─ Área cristal: 596.5 × 1434 = 0.8547 m²
 ├─ Precio base: 0.8547 × $130/m² = $111.11
-├─ Adicional vidrio: 0.8547 × $0/m² = $0
+├─ Adicional cristal: 0.8547 × $0/m² = $0
 └─ TOTAL: $111.11
 ```
 
@@ -48,10 +48,10 @@ Configuración del Modelo:
 Entrada: 1200 × 1500 mm, Vidrio Claro
 Cálculo:
 ├─ Precio perfiles: $80 + (1200-1200) × $0 + (1500-1500) × $0 = $80
-├─ Ancho vidrio: (1200 - 7) ÷ 2 = 596.5 mm
-├─ Alto vidrio: 1500 - 66 = 1434 mm
-├─ Área vidrio: 596.5 × 1434 = 0.8547 m²
-├─ Precio vidrio: 0.8547 × $0/m² = $0 (incluido en basePrice)
+├─ Ancho cristal: (1200 - 7) ÷ 2 = 596.5 mm
+├─ Alto cristal: 1500 - 66 = 1434 mm
+├─ Área cristal: 596.5 × 1434 = 0.8547 m²
+├─ Precio cristal: 0.8547 × $0/m² = $0 (incluido en basePrice)
 ├─ Servicios: $0
 └─ TOTAL: $80
 
@@ -62,7 +62,7 @@ Cálculo:
    
    SOLUCIÓN: Cambiar configuración Glasify:
    ├─ basePrice: $50 (parte de perfiles pura)
-   ├─ pricePerSqm del vidrio: $75/m² (incluye resto de perfiles + vidrio)
+   ├─ pricePerSqm del cristal: $75/m² (incluye resto de perfiles + cristal)
    
    Con esta config:
    Precio = $50 + (0.8547 × $75) = $50 + $64.10 = $114.10 ≈ $111.11 ✓
@@ -81,7 +81,7 @@ Entrada: 1800 × 1200 mm, Vidrio Laminado
 Cálculo:
 ├─ Ancho final: (1800 + 63) ÷ 3 = 621 mm  ⚠️ SUMA, NO RESTA
 ├─ Alto final: 1200 - 66 = 1134 mm
-├─ Área vidrio: 621 × 1134 = 0.7041 m²
+├─ Área cristal: 621 × 1134 = 0.7041 m²
 ├─ Precio base: 0.7041 × $150/m² = $105.62
 ├─ Adicional laminado: 0.7041 × $15/m² = $10.56
 └─ TOTAL: $116.18
@@ -100,11 +100,11 @@ Configuración del Modelo:
 Entrada: 1800 × 1200 mm, Vidrio Laminado
 Cálculo:
 ├─ Precio perfiles: $60 + (1800-1800) × $0 + (1200-1200) × $0 = $60
-├─ Ancho vidrio: (1800 + 63) ÷ 3 = 621 mm  [descuento es negativo → suma]
-├─ Alto vidrio: 1200 - 66 = 1134 mm
-├─ Área vidrio: 621 × 1134 = 0.7041 m²
-├─ Precio vidrio claro: 0.7041 × $50/m² = $35.21
-├─ Precio vidrio laminado: 0.7041 × $15/m² = $10.56
+├─ Ancho cristal: (1800 + 63) ÷ 3 = 621 mm  [descuento es negativo → suma]
+├─ Alto cristal: 1200 - 66 = 1134 mm
+├─ Área cristal: 621 × 1134 = 0.7041 m²
+├─ Precio cristal claro: 0.7041 × $50/m² = $35.21
+├─ Precio cristal laminado: 0.7041 × $15/m² = $10.56
 ├─ Servicios: $0
 └─ TOTAL: $60 + $35.21 + $10.56 = $105.77 ≈ $116.18 ~10% diferencia
 
@@ -130,9 +130,9 @@ Entrada: 1000 × 1400 mm, Vidrio Claro
 Cálculo:
 ├─ Ancho final: 1000 - 63 = 937 mm (marco perimetral)
 ├─ Alto final: 1400 - 63 = 1337 mm
-├─ Área vidrio: 937 × 1337 = 1.2523 m²
+├─ Área cristal: 937 × 1337 = 1.2523 m²
 ├─ Precio base: 1.2523 × $170/m² = $212.90
-├─ Adicional vidrio: 0 (claro, incluido)
+├─ Adicional cristal: 0 (claro, incluido)
 └─ TOTAL: $212.90
 ```
 
@@ -149,10 +149,10 @@ Configuración del Modelo:
 Entrada: 1000 × 1400 mm, Vidrio Claro
 Cálculo:
 ├─ Precio perfiles: $150
-├─ Ancho vidrio: 1000 - 63 = 937 mm
-├─ Alto vidrio: 1400 - 63 = 1337 mm
-├─ Área vidrio: 937 × 1337 = 1.2523 m²
-├─ Precio vidrio: 1.2523 × $50/m² = $62.62 (incluido en base + vidrio)
+├─ Ancho cristal: 1000 - 63 = 937 mm
+├─ Alto cristal: 1400 - 63 = 1337 mm
+├─ Área cristal: 937 × 1337 = 1.2523 m²
+├─ Precio cristal: 1.2523 × $50/m² = $62.62 (incluido en base + cristal)
 ├─ Servicios: $0
 └─ TOTAL: $150 + $62.62 = $212.62 ≈ $212.90 ✓
 ```
@@ -179,12 +179,12 @@ Cálculo:
 
 ## 🎯 Clave: Distribución de Costos
 
-La pregunta crítica es: **¿Cómo distribuyes el $130/m² (2P) entre perfiles y vidrio?**
+La pregunta crítica es: **¿Cómo distribuyes el $130/m² (2P) entre perfiles y cristal?**
 
 ### Opción A: Perfiles Fijo, Vidrio Variable
 
 ```
-$130/m² = $80 (perfiles fijo) + $50 (vidrio claro) + margen
+$130/m² = $80 (perfiles fijo) + $50 (cristal claro) + margen
 
 Glasify Config:
 ├─ basePrice: $80
@@ -203,7 +203,7 @@ Precio 2P Laminado: $80 + (0.8547 × $65) = $80 + $55.56 = $135.56
 ### Opción B: Perfiles Mínimo, Vidrio Absorbe Costo
 
 ```
-$130/m² = $30 (perfiles mínimo) + $100 (vidrio claro) + margen
+$130/m² = $30 (perfiles mínimo) + $100 (cristal claro) + margen
 
 Glasify Config:
 ├─ basePrice: $30
@@ -222,11 +222,11 @@ Precio 2P Laminado: $30 + (0.8547 × $115) = $30 + $98.29 = $128.29
 ### Opción C: Incluir Todo en Vidrio (Más Simple)
 
 ```
-$130/m² = $0 (sin basePrice) + $130 (vidrio claro incluye perfiles) + margen
+$130/m² = $0 (sin basePrice) + $130 (cristal claro incluye perfiles) + margen
 
 Glasify Config:
 ├─ basePrice: $0 (o muy bajo)
-├─ GlassType Claro: pricePerSqm = $130/m² (incluye perfiles + vidrio + margen)
+├─ GlassType Claro: pricePerSqm = $130/m² (incluye perfiles + cristal + margen)
 ├─ GlassType Laminado: pricePerSqm = $130 + $15 = $145/m²
 
 Precio 2P Claro: $0 + (0.8547 × $130) = $111.11 ✓ EXACTO
@@ -237,7 +237,7 @@ Precio 2P Laminado: $0 + (0.8547 × $145) = $123.94
 - Glasify: $111.11
 - Gap: 0% ✓ PERFECTO
 
-PERO: Esto no refleja realidad de costos (perfiles vs vidrio).
+PERO: Esto no refleja realidad de costos (perfiles vs cristal).
 Ventaja: Simplifica para MVP, es "black box" aceptable.
 ```
 
@@ -245,7 +245,7 @@ Ventaja: Simplifica para MVP, es "black box" aceptable.
 
 ## ✅ Recomendación
 
-Para el **MVP/Piloto**, usa **Opción C** (incluir todo en vidrio):
+Para el **MVP/Piloto**, usa **Opción C** (incluir todo en cristal):
 
 ```typescript
 // Configuración Simple (MVP)
@@ -299,7 +299,7 @@ Diferencia: -12% ⚠️ (necesita ajuste)
 
 La clave para que Glasify replique exactamente a Vitro Rojas es:
 
-1. **Confirmar la distribución de costos** (perfiles vs vidrio)
+1. **Confirmar la distribución de costos** (perfiles vs cristal)
 2. **Validar fórmulas de 3 y 4 paños** (¿+63 es correcto?)
 3. **Cruzar 10+ casos** hasta que diferencia sea < 3%
 4. **Documentar decisiones** en `ModelCostBreakdown` (para auditoría)

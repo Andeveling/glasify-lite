@@ -20,7 +20,7 @@ Como cliente navegando el catálogo, quiero ver el diseño visual del modelo en 
 **Acceptance Scenarios**:
 
 1. **Given** un cliente visita la página de catálogo, **When** el catálogo se carga, **Then** cada tarjeta de modelo muestra su diseño 2D asociado renderizado visualmente
-2. **Given** un modelo tiene diseño asociado, **When** se renderiza en `ModelCard`, **Then** el diseño muestra la estructura básica de marcos y vidrios acorde al tipo de modelo
+2. **Given** un modelo tiene diseño asociado, **When** se renderiza en `ModelCard`, **Then** el diseño muestra la estructura básica de marcos y cristales acorde al tipo de modelo
 3. **Given** un modelo NO tiene diseño asociado, **When** se renderiza en `ModelCard`, **Then** se muestra el placeholder genérico actual (fallback)
 4. **Given** un diseño está cargando, **When** se renderiza la tarjeta, **Then** se muestra un skeleton loader apropiado
 
@@ -63,7 +63,7 @@ Como administrador, quiero explorar la galería completa de diseños predefinido
 
 ### Edge Cases
 
-- ¿Qué pasa cuando un modelo tiene dimensiones extremas (muy ancho/angosto o muy alto/bajo)? El diseño debe adaptarse dinámicamente manteniendo proporciones lógicas de los elementos internos (marcos, vidrios, bisagras)
+- ¿Qué pasa cuando un modelo tiene dimensiones extremas (muy ancho/angosto o muy alto/bajo)? El diseño debe adaptarse dinámicamente manteniendo proporciones lógicas de los elementos internos (marcos, cristales, bisagras)
 - ¿Cómo maneja el sistema diseños corruptos o inválidos (JSON malformado)? Debe mostrar fallback y registrar error sin romper la UI
 - ¿Qué sucede si se elimina un diseño que está siendo usado por modelos existentes? Sistema debe prevenir eliminación o marcar como inactivo y mantener rendering
 - ¿Cómo se comporta el rendering en dispositivos móviles con pantallas pequeñas? Debe escalar proporcionalmente al contenedor manteniendo legibilidad
@@ -88,7 +88,7 @@ Como administrador, quiero explorar la galería completa de diseños predefinido
 - **FR-011**: Sistema DEBE optimizar performance del rendering para catálogos con múltiples modelos (lazy loading, virtualización)
 - **FR-012**: Sistema DEBE preservar aspect ratio y proporciones lógicas del diseño al escalar
 - **FR-013**: Sistema DEBE adaptar diseños dinámicamente a las dimensiones específicas del modelo (rendering parametrizado)
-- **FR-014**: Sistema DEBE ajustar elementos internos del diseño (marcos, vidrios, bisagras) proporcionalmente según dimensiones del modelo
+- **FR-014**: Sistema DEBE ajustar elementos internos del diseño (marcos, cristales, bisagras) proporcionalmente según dimensiones del modelo
 - **FR-015**: Sistema DEBE aplicar color base al diseño según el material del perfil: gris para aluminio, blanco para PVC, marrón para madera, color neutro para mixto
 - **FR-016**: Sistema DEBE re-renderizar diseño automáticamente cuando cambian dimensiones o material del modelo
 - **FR-017**: Sistema DEBE requerir que el modelo tenga tipo definido antes de permitir asignación de diseño
@@ -100,9 +100,9 @@ Como administrador, quiero explorar la galería completa de diseños predefinido
   - Nombre único del diseño
   - Descripción breve
   - Tipo de modelo compatible (ventana fija, ventana corredera horizontal, ventana corredera vertical, puerta estándar, puerta doble, etc.)
-  - Definición JSON de formas geométricas (marcos, vidrios, bisagras, manijas) con parámetros adaptativos
+  - Definición JSON de formas geométricas (marcos, cristales, bisagras, manijas) con parámetros adaptativos
   - Dimensiones base de referencia (ancho y alto en mm)
-  - Reglas de adaptación para diferentes proporciones (cómo escalan marcos, vidrios, etc.)
+  - Reglas de adaptación para diferentes proporciones (cómo escalan marcos, cristales, etc.)
   - Estado activo/inactivo para disponibilidad en galería
   - Metadata de creación/actualización
 
@@ -135,7 +135,7 @@ Como administrador, quiero explorar la galería completa de diseños predefinido
 ## Assumptions
 
 - Los diseños 2D son estructuras parametrizadas que se adaptan a dimensiones del modelo manteniendo proporciones lógicas
-- Los diseños utilizan sistema de parámetros para definir cómo escalan marcos, vidrios y accesorios según input de dimensiones
+- Los diseños utilizan sistema de parámetros para definir cómo escalan marcos, cristales y accesorios según input de dimensiones
 - La paleta de colores por material es fija: PVC=blanco, ALUMINUM=gris, WOOD=marrón, MIXED=neutro
 - Los colores son aproximaciones visuales básicas, no texturas fotorrealistas (suficiente para diferenciación rápida)
 - La galería inicial de diseños será poblada mediante seeders con tipos comunes: ventana fija, corredera horizontal, corredera vertical, puerta estándar, puerta doble

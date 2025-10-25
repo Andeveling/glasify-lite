@@ -27,13 +27,13 @@ La información proporcionada sobre Alumina resalta una clara segmentación en s
 Esta línea se enfoca en la diferenciación estética, la alta funcionalidad y un **desempeño superior** en reducción acústica y estanqueidad.
 
 *   **Aberturas de Presión (Serie 40):** Los sistemas **Oscilobatientes y Proyectantes (Serie 40)** muestran los mejores niveles de desempeño (clasificación **6 en Aire, Agua y Acústico**), equiparándose a los sistemas de PVC de doble junta en términos de hermeticidad (ya que el aluminio es un material conductor, el alto rendimiento proviene del diseño del perfil y los sellos de tres empaques perimetrales de EPDM).
-*   **Capacidad de Acristalamiento:** La Serie 40 maneja vidrios gruesos (hasta **28 mm**), permitiendo el uso de DVH o vidrios multilaminados para un excelente aislamiento.
+*   **Capacidad de Acristalamiento:** La Serie 40 maneja cristales gruesos (hasta **28 mm**), permitiendo el uso de DVH o cristales multilaminados para un excelente aislamiento.
 
 ### 2. Línea Superior (Diseño y Funcionalidad Media-Alta)
 Se caracteriza por líneas más suaves y redondeadas, ofreciendo un buen equilibrio entre funcionalidad y diseño.
 
 *   **Rendimiento Destacado (Serie 35):** La **Ventana Proyectante Serie 35** también reporta un alto desempeño en estanqueidad (Clase 6 en Agua y Aire, 6 en Acústica), a pesar de su perfil de menor profundidad (35 mm).
-*   **Corredizas:** Las corredizas de esta línea (Series 80 y 50) usan doble felpa y son adecuadas para uso residencial. La Serie 50 permite espesores de vidrio de 4 a 10 mm.
+*   **Corredizas:** Las corredizas de esta línea (Series 80 y 50) usan doble felpa y son adecuadas para uso residencial. La Serie 50 permite espesores de cristal de 4 a 10 mm.
 
 ### 3. Vidrio / Vidrio Fijo
-Alumina ofrece opciones de **Vidrio Fijo** en casi todas las series, con capacidades que van desde 4 mm hasta 28 mm, dependiendo de la línea, lo que permite la instalación de vidrio monolítico, laminado o insulado (DVH). El aislamiento eficaz del sonido y el calor depende en gran medida de las elecciones de vidrio.
+Alumina ofrece opciones de **Vidrio Fijo** en casi todas las series, con capacidades que van desde 4 mm hasta 28 mm, dependiendo de la línea, lo que permite la instalación de cristal monolítico, laminado o insulado (DVH). El aislamiento eficaz del sonido y el calor depende en gran medida de las elecciones de cristal.

@@ -35,7 +35,7 @@ export const aluminumSliding2Panes: ModelInput = {
   costNotes: 'Precio base $380.000/m². Sistema corredizo en aluminio con herrajes de calidad.',
   costPerMmHeight: 35, // COP/mm - Factor de ajuste por altura
   costPerMmWidth: 40, // COP/mm - Factor de ajuste por ancho
-  glassDiscountHeightMm: 66, // Descuento para cálculo de vidrio
+  glassDiscountHeightMm: 66, // Descuento para cálculo de cristal
   glassDiscountWidthMm: 7, // Descuento total entre paños
   maxHeightMm: 2400,
   maxWidthMm: 3000,

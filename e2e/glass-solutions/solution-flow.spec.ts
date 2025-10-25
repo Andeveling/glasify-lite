@@ -66,7 +66,7 @@ test.describe('Glass Solutions - User Journey', () => {
     await page.waitForLoadState('networkidle');
 
     // Verify solution selector section is visible
-    const solutionSection = page.locator('text=/Selecciona.*soluci\u00f3n|Tipo de vidrio/i').first();
+    const solutionSection = page.locator('text=/Selecciona.*soluci\u00f3n|Tipo de cristal/i').first();
     await expect(solutionSection).toBeVisible();
 
     // Verify solution options are displayed
@@ -98,7 +98,7 @@ test.describe('Glass Solutions - User Journey', () => {
     await page.waitForTimeout(INTERACTION_WAIT_MS);
 
     // Verify glass type selector appears
-    const glassTypeSection = page.locator('text=/Selecciona.*tipo|vidrio disponible/i').first();
+    const glassTypeSection = page.locator('text=/Selecciona.*tipo|cristal disponible/i').first();
     const glassTypeVisible = await glassTypeSection.isVisible().catch(() => false);
 
     if (glassTypeVisible) {

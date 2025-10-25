@@ -34,7 +34,7 @@ async function validateGlassTypesExist(tx: Prisma.TransactionClient, glassTypeId
   });
 
   if (glassTypes.length !== glassTypeIds.length) {
-    throw new Error('Uno o más tipos de vidrio no encontrados');
+    throw new Error('Uno o más tipos de cristal no encontrados');
   }
 
   return glassTypes;
@@ -45,8 +45,8 @@ export const modelUpsertInput = z.object({
   accessoryPrice: z.number().min(0).optional().nullable(),
   basePrice: z.number().min(0, 'Precio base debe ser mayor o igual a 0'),
   compatibleGlassTypeIds: z
-    .array(z.cuid('ID del tipo de vidrio debe ser válido'))
-    .min(1, 'Debe seleccionar al menos un tipo de vidrio compatible'),
+    .array(z.cuid('ID del tipo de cristal debe ser válido'))
+    .min(1, 'Debe seleccionar al menos un tipo de cristal compatible'),
   costPerMmHeight: z.number().min(0, 'Costo por mm de alto debe ser mayor o igual a 0'),
   costPerMmWidth: z.number().min(0, 'Costo por mm de ancho debe ser mayor o igual a 0'),
   id: z.cuid().optional(), // If provided, update; otherwise, create

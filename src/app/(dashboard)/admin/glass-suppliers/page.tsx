@@ -21,7 +21,7 @@ import { api } from '@/trpc/server-client';
 import { GlassSupplierList } from './_components/glass-supplier-list';
 
 export const metadata: Metadata = {
-  description: 'Administra los fabricantes de vidrio',
+  description: 'Administra los fabricantes de cristal',
   title: 'Proveedores de Vidrio | Admin',
 };
 
@@ -83,7 +83,7 @@ export default async function GlassSuppliersPage({ searchParams }: PageProps) {
     <div className="space-y-6">
       <div>
         <h1 className="font-bold text-3xl tracking-tight">Proveedores de Vidrio</h1>
-        <p className="text-muted-foreground">Administra los fabricantes de vidrio y sus productos</p>
+        <p className="text-muted-foreground">Administra los fabricantes de cristal y sus productos</p>
       </div>
 
       <GlassSupplierList initialData={initialData} searchParams={searchParamsForClient} />

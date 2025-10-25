@@ -351,7 +351,7 @@ ListQueryState: Re-fetch to confirm deletion
 
 **Error Messages** (Spanish):
 - Duplicate name: "Ya existe un proveedor con este nombre"
-- Referential integrity: "No se puede eliminar este proveedor porque tiene tipos de vidrio asociados. Primero elimina o reasigna los tipos de vidrio."
+- Referential integrity: "No se puede eliminar este proveedor porque tiene tipos de cristal asociados. Primero elimina o reasigna los tipos de cristal."
 - Not found: "Proveedor no encontrado"
 - Generic: "Ocurrió un error inesperado. Por favor, intenta nuevamente."
 

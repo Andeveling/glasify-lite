@@ -79,7 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Analítica de Catálogo (US2)**:
   - Top 5 modelos más cotizados (gráfico de barras horizontal)
-  - Top 5 tipos de vidrio más usados (gráfico de pie)
+  - Top 5 tipos de cristal más usados (gráfico de pie)
   - Distribución por fabricante/proveedor (gráfico de pie)
 
 - **Métricas Monetarias (US3)**:

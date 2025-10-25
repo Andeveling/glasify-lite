@@ -21,8 +21,8 @@ last_updated: "2025-10-20"
 
 ### ¿Qué ES Glasify?
 - ✅ **Cotizador instantáneo on-demand** para ventanas/puertas de aluminio y PVC
-- ✅ **Generador de briefs automáticos** para comerciales (dimensiones, vidrios, servicios)
-- ✅ **Panel admin para gestionar catálogos** (modelos, vidrios, precios, proveedores)
+- ✅ **Generador de briefs automáticos** para comerciales (dimensiones, cristales, servicios)
+- ✅ **Panel admin para gestionar catálogos** (modelos, cristales, precios, proveedores)
 - ✅ **Exportador de presupuestos profesionales** (PDF/Excel con branding)
 
 ### ¿Qué NO ES Glasify?
@@ -66,9 +66,9 @@ Admin → Configura catálogo → Actualiza precios → Habilita cotizaciones pr
 ## Historial de Versiones
 
 - **v1.6.0** (2025-10-14): Reformulación del PRD - Eliminación de enfoque e-commerce, clarificación de propuesta de valor (pre-venta on-demand vs tienda), expansión de roles Admin/Comercial/Cliente, roadmap de panel admin
-- **v1.5.0** (2025-10-12): Arquitectura multi-tenant completa, sistema de soluciones de vidrio, cart/budget workflow, My Quotes UX redesign
+- **v1.5.0** (2025-10-12): Arquitectura multi-tenant completa, sistema de soluciones de cristal, cart/budget workflow, My Quotes UX redesign
 - **v1.4.0** (2025-10-10): Refactorización Manufacturer → TenantConfig + ProfileSupplier
-- **v1.3.0** (2025-10-09): Sistema Many-to-Many de soluciones de vidrio basado en estándares EN/ISO
+- **v1.3.0** (2025-10-09): Sistema Many-to-Many de soluciones de cristal basado en estándares EN/ISO
 - **v1.2.0** (2025-10-08): Budget Cart workflow con sessionStorage
 - **v1.0.0** (2025-09-26): Documentación inicial del MVP
 
@@ -78,8 +78,8 @@ Admin → Configura catálogo → Actualiza precios → Habilita cotizaciones pr
 
 El mercado latinoamericano de ventanas/puertas funciona **on-demand** (fabricación a medida), sin inventarios ni productos estándar. Glasify permite que:
 - **Clientes** obtengan presupuestos realistas en minutos (vs 5-15 días tradicionales)
-- **Comerciales** reciban briefs automáticos con necesidades del cliente (dimensiones, vidrios, servicios) para hacer preguntas pertinentes desde el primer contacto
-- **Fabricantes/Admin** gestionen catálogos (modelos, vidrios, perfiles, servicios) que alimentan el motor de cotización con datos actualizados
+- **Comerciales** reciban briefs automáticos con necesidades del cliente (dimensiones, cristales, servicios) para hacer preguntas pertinentes desde el primer contacto
+- **Fabricantes/Admin** gestionen catálogos (modelos, cristales, perfiles, servicios) que alimentan el motor de cotización con datos actualizados
 
 ## Resumen ejecutivo
 
@@ -90,7 +90,7 @@ El mercado latinoamericano de ventanas/puertas funciona **on-demand** (fabricaci
 **Realidad del mercado LATAM** (Colombia, México, Perú, etc.):
 - ❌ Sin productos estándar en stock (todo es fabricación on-demand a medida)
 - ❌ Sin estandarización en construcción (cada proyecto es único)
-- ❌ Altamente personalizable (dimensiones, vidrios, perfiles variables por cliente)
+- ❌ Altamente personalizable (dimensiones, cristales, perfiles variables por cliente)
 - ❌ Proceso de cotización lento y manual (5-15 días promedio)
 
 **Flujo tradicional del cliente interesado**:
@@ -122,7 +122,7 @@ El mercado latinoamericano de ventanas/puertas funciona **on-demand** (fabricaci
 
 - ✅ **Cotización instantánea** sin esperar turnos comerciales
 - ✅ **Brief automático** para que el comercial llegue preparado al primer contacto
-- ✅ **Cualificación de leads** con necesidades claras (dimensiones, vidrios, servicios)
+- ✅ **Cualificación de leads** con necesidades claras (dimensiones, cristales, servicios)
 - ✅ **Gestión de catálogo** para admin que alimenta el pricing engine
 
 #### Para el Cliente (Homeowner/Constructor/Arquitecto)
@@ -130,7 +130,7 @@ El mercado latinoamericano de ventanas/puertas funciona **on-demand** (fabricaci
 ✅ **Presupuesto en 5 minutos, no 15 días**
 - Explora catálogo de modelos (PVC/aluminio) con límites técnicos claros
 - Configura dimensiones personalizadas (ancho x alto en mm)
-- Selecciona vidrios según solución (térmico, acústico, seguridad) sin tecnicismos
+- Selecciona cristales según solución (térmico, acústico, seguridad) sin tecnicismos
 - Ve precio final actualizado en tiempo real (<200ms)
 
 ✅ **Sin tecnicismos, lenguaje de beneficios**
@@ -140,7 +140,7 @@ El mercado latinoamericano de ventanas/puertas funciona **on-demand** (fabricaci
 
 ✅ **Planificación desde el primer día**
 - Tiene número concreto para presupuesto de construcción/remodelación
-- Explora múltiples opciones (PVC vs aluminio, vidrio básico vs high-performance)
+- Explora múltiples opciones (PVC vs aluminio, cristal básico vs high-performance)
 - Compara variantes sin compromiso
 - Llega preparado a negociación con comercial (sabe qué preguntar)
 
@@ -161,7 +161,7 @@ El mercado latinoamericano de ventanas/puertas funciona **on-demand** (fabricaci
   - 📍 Datos de proyecto (nombre, ubicación, contacto)
 
 ✅ **Primer contacto efectivo, no desde cero**
-- Cliente: "Ya tengo una cotización de $X, necesito asesoría sobre opciones de vidrio para clima frío"
+- Cliente: "Ya tengo una cotización de $X, necesito asesoría sobre opciones de cristal para clima frío"
 - Comercial: Recibe contexto completo → hace preguntas pertinentes → asesora sobre upgrade/downgrade
 - **NO gasta 30 min explicando conceptos básicos**, va directo a agregar valor
 
@@ -174,14 +174,14 @@ El mercado latinoamericano de ventanas/puertas funciona **on-demand** (fabricaci
   - ✅ Coordinación de fabricación e instalación
 
 ✅ **Métricas de negocio accionables**
-- Productos más cotizados (ajustar inventario de perfiles/vidrios)
+- Productos más cotizados (ajustar inventario de perfiles/cristales)
 - Tasa de abandono por rango de precio (revisar pricing)
 - Tiempo promedio de conversión quote → venta (optimizar follow-up)
 
 #### Para el Fabricante/Admin
 
 ✅ **Gestión centralizada del catálogo**
-- **Modelos**: Crear/editar ventanas y puertas con límites técnicos (min/max dimensiones, perfiles, vidrios compatibles)
+- **Modelos**: Crear/editar ventanas y puertas con límites técnicos (min/max dimensiones, perfiles, cristales compatibles)
 - **Vidrios**: Configurar soluciones (térmica, acústica, etc.) con performance ratings y proveedores
 - **Perfiles**: Gestionar proveedores (Rehau, Deceuninck, Azembla) y materiales (PVC, aluminio, madera)
 - **Servicios**: Definir servicios adicionales (instalación, templado, corte) con rates por área/perímetro/fijo
@@ -220,7 +220,7 @@ El mercado latinoamericano de ventanas/puertas funciona **on-demand** (fabricaci
 
 2. **Contexto sobre Ruido**
    - Brief automático con necesidades claras > Consulta genérica "cuánto cuesta una ventana?"
-   - Comercial recibe dimensiones, vidrios, servicios > Empieza desde cero
+   - Comercial recibe dimensiones, cristales, servicios > Empieza desde cero
    - Negociación inicia con información compartida, no desbalanceada
 
 3. **Soluciones sobre Tecnicismos**
@@ -257,12 +257,12 @@ El mercado latinoamericano de ventanas/puertas funciona **on-demand** (fabricaci
   - Datos: "Proyecto Casa Los Pinos, Bogotá, clima frío"
 - Primer contacto: "Vi que seleccionaste aislamiento térmico excelente para Bogotá. ¿La habitación tiene exposición directa al sol? Podríamos agregar control solar para reducir calor..."
 - Cliente: "Sí, entra sol en la tarde. ¿Cuánto cuesta el upgrade?"
-- Comercial: Ajusta vidrio a DVH low-e + solar control, recalcula precio
+- Comercial: Ajusta cristal a DVH low-e + solar control, recalcula precio
 - **Asesoría de valor en 5 minutos, no explicación de conceptos básicos en 30 minutos**
 
 **✅ Caso 3: Admin actualiza precios**
-- Proveedor de vidrio sube precios 8% (Guardian aumenta DVH low-e)
-- Admin entra a panel de vidrios, ajusta `pricePerSqm` de $X a $X*1.08
+- Proveedor de cristal sube precios 8% (Guardian aumenta DVH low-e)
+- Admin entra a panel de cristales, ajusta `pricePerSqm` de $X a $X*1.08
 - Sistema registra cambio en `GlassTypePriceHistory` (audit trail)
 - Nuevas cotizaciones usan precio actualizado automáticamente
 - Cotizaciones previas mantienen precio histórico (integridad de datos)
@@ -303,11 +303,11 @@ graph LR
 1. **Catálogo de Modelos (Public)**
    - Navegación sin autenticación para exploración libre
    - Modelos con límites técnicos (min/max dimensiones) y precios dinámicos
-   - Validaciones en tiempo real (compatibilidad vidrios, rangos permitidos)
+   - Validaciones en tiempo real (compatibilidad cristales, rangos permitidos)
    - Búsqueda, filtros por proveedor/material, ordenamiento por precio
 
 2. **Sistema de Vidrios Basado en Soluciones** (Lenguaje de Beneficios, NO Tecnicismos)
-   - Many-to-Many: GlassType ↔ GlassSolution (un vidrio puede servir múltiples propósitos)
+   - Many-to-Many: GlassType ↔ GlassSolution (un cristal puede servir múltiples propósitos)
    - Performance Ratings por categoría (térmica, acústica, seguridad, solar): básico → excelente
    - Estándares EN/ISO traducidos a lenguaje simple
    - Badges visuales (ej: "Ahorro energético", "Protección contra ruido", "Seguridad anti-robo")
@@ -337,7 +337,7 @@ graph LR
    - Sin sorpresas: Cliente ve mismo precio que comercial confirma
 
 6. **Admin Panel (Roadmap v2.0)**
-   - CRUD visual para catálogo (modelos, vidrios, servicios, proveedores)
+   - CRUD visual para catálogo (modelos, cristales, servicios, proveedores)
    - Configuración de TenantConfig (moneda, validez quotes, branding)
    - Historial de precios con análisis de impacto
    - Gestión de permisos (roles: Admin, Comercial, Cliente)
@@ -382,7 +382,7 @@ Pricing Engine recalcula automáticamente en cotizaciones nuevas
 ℹ️ IA: En planificación. Activación condicionada a meta founders (USD 4,000).
 
 � **v2.0 en Roadmap** (Q2 2026)
-- **Panel Admin**: CRUD visual para modelos, vidrios, servicios, proveedores
+- **Panel Admin**: CRUD visual para modelos, cristales, servicios, proveedores
 - **Roles y Permisos**: Admin, Comercial, Cliente con permisos granulares
 - **Multi-Tenant Real**: Subdomain-based routing (múltiples negocios por instancia)
 - **Órdenes de Fabricación**: Workflow básico Quote → Orden → Producción
@@ -424,7 +424,7 @@ Pricing Engine recalcula automáticamente en cotizaciones nuevas
 #### Presupuesto y Carrito (Budget Cart)
 - ✅ **SessionStorage Persistence**: Carrito persiste sin necesidad de cuenta
 - ✅ **Operaciones CRUD**: Add, update, remove, clear items
-- ✅ **Validaciones**: Límites técnicos, vidrios compatibles, cálculos automáticos
+- ✅ **Validaciones**: Límites técnicos, cristales compatibles, cálculos automáticos
 - ✅ **Preview en Tiempo Real**: Subtotales, servicios, total general
 - ✅ **Conversión a Cotización**: Transformación directa a Quote con un clic
 
@@ -459,7 +459,7 @@ Pricing Engine recalcula automáticamente en cotizaciones nuevas
   - Formulario con límites técnicos (min/max width/height)
   - Selector de ProfileSupplier (Rehau, Deceuninck, etc.)
   - Configurador de precios (base + costo/mm + accesorios)
-  - Asignación de vidrios compatibles (multi-select de GlassTypes)
+  - Asignación de cristales compatibles (multi-select de GlassTypes)
   - Estados de publicación (draft ↔ published)
 - ⏳ **CRUD de Vidrios**: Gestión completa de GlassTypes
   - Formulario con datos técnicos (thickness, U-value, SHGC, etc.)
@@ -472,7 +472,7 @@ Pricing Engine recalcula automáticamente en cotizaciones nuevas
   - Activación/desactivación por modelo
 - ⏳ **Gestión de Proveedores**: CRUD para ProfileSupplier y GlassSupplier
   - Información de contacto, términos comerciales
-  - Relación con modelos/vidrios activos
+  - Relación con modelos/cristales activos
 - ⏳ **Historial de Precios**: Dashboard de audit trail
   - Vista de cambios (ModelPriceHistory, GlassTypePriceHistory)
   - Análisis de impacto en quotes activas
@@ -517,7 +517,7 @@ Pricing Engine recalcula automáticamente en cotizaciones nuevas
 - ⏳ **Logística Básica**: Cálculo de rutas, costos de transporte, programación de entregas
 - ⏳ **Órdenes de Fabricación**: Workflow básico de producción (sin control de máquinas)
 - ⏳ **Multi-Tenant Real**: Múltiples negocios por instancia (vs singleton TenantConfig actual)
-- ⏳ **Inventario de Materias Primas**: Stock de perfiles, vidrios, accesorios (no productos terminados)
+- ⏳ **Inventario de Materias Primas**: Stock de perfiles, cristales, accesorios (no productos terminados)
 - ⏳ **Facturación Básica**: Generación de facturas desde Quotes (no contabilidad completa)
 
 - ⏳ **Extensiones con IA (Enfoque Incremental y Pragmático)**:
@@ -530,7 +530,7 @@ Pricing Engine recalcula automáticamente en cotizaciones nuevas
   
   2. **Asistente de cálculo de precios**: Calcula valor base y genera desglose de precios por mm² en anchos y altos; permite ajustes ágiles de tarifa y estima impacto en cotizaciones de catálogo.
   
-  3. **Sugerencias de soluciones de vidrio**: Dado un propósito (térmico, acústico, seguridad) y contexto (ubicación, tipo de edificio), recomienda 2-3 opciones de modelos + vidrio del catálogo con justificación técnica.
+  3. **Sugerencias de soluciones de cristal**: Dado un propósito (térmico, acústico, seguridad) y contexto (ubicación, tipo de edificio), recomienda 2-3 opciones de modelos + cristal del catálogo con justificación técnica.
   
   4. **Asistente de FAQ**: Responde preguntas frecuentes sobre el proceso, productos y servicios usando contexto estático del tenant (sin búsqueda semántica).
   
@@ -598,7 +598,7 @@ Pricing Engine recalcula automáticamente en cotizaciones nuevas
 **Tareas principales**:
 - ✅ **Gestionar TenantConfig**: Configurar moneda, validez de quotes, datos de contacto del negocio
 - ✅ **Administrar Proveedores de Perfiles**: Crear/editar ProfileSuppliers (Rehau, Deceuninck, Azembla, etc.)
-- ✅ **CRUD de Modelos**: Crear ventanas/puertas con límites técnicos, precios, márgenes, compatibilidad de vidrios
+- ✅ **CRUD de Modelos**: Crear ventanas/puertas con límites técnicos, precios, márgenes, compatibilidad de cristales
 - ✅ **CRUD de Vidrios**: Configurar GlassTypes con soluciones (térmica, acústica, etc.), proveedores, performance ratings
 - ✅ **CRUD de Servicios**: Definir servicios adicionales (instalación, templado, corte) con rates y unidades
 - ✅ **Actualizar Precios**: Ajustar estructura de costos, revisar márgenes, registrar cambios en historial
@@ -621,9 +621,9 @@ Pricing Engine recalcula automáticamente en cotizaciones nuevas
 **Responsabilidad**: Convertir leads cualificados en ventas mediante asesoría técnica personalizada.
 
 **Tareas principales**:
-- ✅ **Recibir Leads con Contexto**: Sistema entrega Quote con brief automático (modelos, vidrios, dimensiones, servicios, datos de proyecto)
-- ✅ **Asesoría Técnica**: Revisar selecciones del cliente, recomendar ajustes (upgrade/downgrade vidrios, optimizar dimensiones, servicios adicionales)
-- ✅ **Ajustar Cotización**: Modificar Quote (cambiar vidrios, agregar descuentos/recargos, actualizar servicios)
+- ✅ **Recibir Leads con Contexto**: Sistema entrega Quote con brief automático (modelos, cristales, dimensiones, servicios, datos de proyecto)
+- ✅ **Asesoría Técnica**: Revisar selecciones del cliente, recomendar ajustes (upgrade/downgrade cristales, optimizar dimensiones, servicios adicionales)
+- ✅ **Ajustar Cotización**: Modificar Quote (cambiar cristales, agregar descuentos/recargos, actualizar servicios)
 - ✅ **Exportar Presupuesto**: Generar PDF/Excel profesional con branding del negocio
 - ✅ **Enviar a Cliente/Vendor**: Cambiar estado a "Enviada", tracking de vigencia (validUntil)
 - ✅ **Seguimiento**: Gestionar pipeline (draft → sent → won/lost/canceled)
@@ -652,7 +652,7 @@ Pricing Engine recalcula automáticamente en cotizaciones nuevas
 - ✅ **Seleccionar Vidrios**: Elegir solución (térmica, acústica, seguridad, solar) sin conocer specs técnicas
 - ✅ **Agregar Servicios**: Activar instalación, templado, corte según necesidad
 - ✅ **Ver Precio en Tiempo Real**: Budget Cart actualiza subtotales y total general (<200ms)
-- ✅ **Comparar Opciones**: Crear múltiples variantes (PVC vs aluminio, vidrio básico vs high-performance)
+- ✅ **Comparar Opciones**: Crear múltiples variantes (PVC vs aluminio, cristal básico vs high-performance)
 - ✅ **Exportar Presupuesto**: Generar PDF para planificación (sin crear cuenta)
 - ✅ **Convertir a Quote**: Registrar datos de proyecto + autenticarse → genera Quote formal para comercial
 
@@ -679,13 +679,13 @@ sequenceDiagram
     participant C as Cliente
     participant V as Comercial
 
-    A->>S: Configura catálogo (modelos, vidrios, precios)
+    A->>S: Configura catálogo (modelos, cristales, precios)
     S->>S: Valida datos, actualiza pricing engine
     C->>S: Explora catálogo, configura Budget
     S->>C: Muestra precio en tiempo real
     C->>S: Convierte Budget → Quote (registra datos)
     S->>V: Notifica nuevo lead con brief completo
-    V->>S: Revisa Quote, ajusta (vidrios, servicios, descuentos)
+    V->>S: Revisa Quote, ajusta (cristales, servicios, descuentos)
     V->>C: Envía presupuesto final (PDF/Excel)
     C->>V: Aprueba y solicita fabricación
     V->>A: Solicita producción (fuera de alcance v1.5)
@@ -827,7 +827,7 @@ export function ClientComponent() {
 - Especificaciones: thicknessMm, pricePerSqm, uValue (térmica), solarFactor, lightTransmission
 - Características: ~~isTempered~~/~~isLaminated~~/~~isLowE~~ (deprecado) → usar GlassTypeCharacteristic Many-to-Many
 - Relaciones:
-  - → GlassSupplier (proveedor de vidrio: Guardian, Saint-Gobain, etc.)
+  - → GlassSupplier (proveedor de cristal: Guardian, Saint-Gobain, etc.)
   - ↔ GlassSolution (Many-to-Many vía GlassTypeSolution con performance rating)
   - ↔ GlassCharacteristic (Many-to-Many vía GlassTypeCharacteristic)
   - → GlassTypePriceHistory (audit trail)
@@ -841,7 +841,7 @@ export function ClientComponent() {
 **GlassTypeSolution** (Tabla Pivote)
 - Relación Many-to-Many entre GlassType y GlassSolution
 - Campo clave: **performanceRating** (basic, standard, good, very_good, excellent)
-- Permite que un vidrio pertenezca a múltiples soluciones con rating específico
+- Permite que un cristal pertenezca a múltiples soluciones con rating específico
 
 **Service** (Servicios Adicionales)
 - Tipos: area (m²), perimeter (ml), fixed (precio fijo)
@@ -865,7 +865,7 @@ export function ClientComponent() {
 - Pricing: subtotal (calculado), accessoryApplied (boolean)
 - Relaciones:
   - → Model (modelo seleccionado)
-  - → GlassType (vidrio seleccionado)
+  - → GlassType (cristal seleccionado)
   - → QuoteItemService[] (servicios aplicados)
   - → Adjustment[] (ajustes específicos del ítem)
 
@@ -964,7 +964,7 @@ Dado un modelo con:
 - Dimensiones mínimas: `minWidthMm`, `minHeightMm`
 - Precio base: `basePrice` (válido en dimensiones mínimas)
 - Costos por mm: `costPerMmWidth`, `costPerMmHeight`
-- Descuentos de vidrio: `glassDiscountWidthMm`, `glassDiscountHeightMm`
+- Descuentos de cristal: `glassDiscountWidthMm`, `glassDiscountHeightMm`
 
 Para una solicitud con dimensiones `widthMm`, `heightMm`:
 
@@ -1039,14 +1039,14 @@ if (heightMm < minHeightMm || heightMm > maxHeightMm) {
 
 #### Compatibilidad de Vidrio
 ```typescript
-// El vidrio debe estar en la lista de compatibles del modelo
+// El cristal debe estar en la lista de compatibles del modelo
 if (!model.compatibleGlassTypeIds.includes(glassTypeId)) {
-  throw new Error('Tipo de vidrio no compatible con este modelo');
+  throw new Error('Tipo de cristal no compatible con este modelo');
 }
 
 // El espesor debe existir en el GlassType
 if (glassThicknessMm !== glassType.thicknessMm) {
-  throw new Error('Espesor de vidrio inválido');
+  throw new Error('Espesor de cristal inválido');
 }
 ```
 
@@ -1056,7 +1056,7 @@ const effectiveWidth = widthMm - glassDiscountWidthMm;
 const effectiveHeight = heightMm - glassDiscountHeightMm;
 
 if (effectiveWidth <= 0 || effectiveHeight <= 0) {
-  throw new Error('Área de vidrio resultante inválida después de descuentos');
+  throw new Error('Área de cristal resultante inválida después de descuentos');
 }
 ```
 
@@ -1123,11 +1123,11 @@ const formatCurrency = (value: number, currency: string, locale: string): string
 5. **Subtotal**:
    - `subtotal = 147 + 20.40 + 20 + 15.85 = 203.25 USD`
 
-**Nota**: Este ejemplo muestra cómo el descuento de vidrio reduce el área facturable del vidrio, mientras que los servicios se calculan sobre las dimensiones totales del ítem.
+**Nota**: Este ejemplo muestra cómo el descuento de cristal reduce el área facturable del cristal, mientras que los servicios se calculan sobre las dimensiones totales del ítem.
 
 ## UI de referencia
 
-La página de ejemplo muestra patrón de formulario con: selección de estilo, opciones de vidrio, campos de ancho/alto en mm, y total dinámico con “Add to basket”. Glasify tomará ese flujo como guía, adaptado a LATAM y a nuestro modelo de servicios y accesorios.
+La página de ejemplo muestra patrón de formulario con: selección de estilo, opciones de cristal, campos de ancho/alto en mm, y total dinámico con “Add to basket”. Glasify tomará ese flujo como guía, adaptado a LATAM y a nuestro modelo de servicios y accesorios.
 
 ## Flujos principales
 
@@ -1144,8 +1144,8 @@ La página de ejemplo muestra patrón de formulario con: selección de estilo, o
 2. **Configuración de ítem**
    - Selecciona un modelo → `/catalog/[modelId]`
    - Ingresa dimensiones (widthMm, heightMm) con validación en tiempo real
-   - Selecciona tipo de vidrio (solo compatibles con el modelo)
-   - Selecciona espesor de vidrio (según thicknessMm disponibles)
+   - Selecciona tipo de cristal (solo compatibles con el modelo)
+   - Selecciona espesor de cristal (según thicknessMm disponibles)
    - Opcional: Agrega servicios (instalación, sellado, etc.)
    - Ve cálculo de precio dinámico (<200ms actualización)
 
@@ -1215,7 +1215,7 @@ La página de ejemplo muestra patrón de formulario con: selección de estilo, o
        - contactPhone
      - **Items Grid**: Cards visuales con:
        - Imagen del modelo (SVG diagram)
-       - Especificaciones (dimensiones, vidrio, servicios)
+       - Especificaciones (dimensiones, cristal, servicios)
        - Subtotal desglosado
        - Acciones: Editar, Eliminar
 
@@ -1274,16 +1274,16 @@ La página de ejemplo muestra patrón de formulario con: selección de estilo, o
      - Configura pricing:
        - basePrice (precio base)
        - costPerMmWidth, costPerMmHeight (precio incremental)
-       - glassDiscountWidthMm/HeightMm (reduce área facturable de vidrio)
+       - glassDiscountWidthMm/HeightMm (reduce área facturable de cristal)
        - accessoryPrice (kit de accesorios fijo)
        - profitMarginPercentage
-     - Asigna vidrios compatibles (multiselect)
+     - Asigna cristales compatibles (multiselect)
      - Adjunta imagen (SVG diagram)
    - Publica modelo → Visible en catálogo
 
-4. **Gestión de vidrios y soluciones**
+4. **Gestión de cristales y soluciones**
    - Accede a `/admin/glass-types`
-   - Create tipo de vidrio:
+   - Create tipo de cristal:
      - Nombre, espesor (mm), precio por m²
      - Propiedades: isTempered, isLaminated, isLowE, etc.
      - uValue (transmitancia térmica)
@@ -1309,7 +1309,7 @@ La página de ejemplo muestra patrón de formulario con: selección de estilo, o
   - Dado un formulario completo y válido, cuando guardo, entonces el modelo queda en estado “Borrador/Publicado”.
   - No se permite publicar si faltan basePrice, costPerMmWidth o costPerMmHeight o límites.
 
-- Como Cliente quiero ver solo vidrios compatibles con el modelo y propósito seleccionado.
+- Como Cliente quiero ver solo cristales compatibles con el modelo y propósito seleccionado.
   - Dado un modelo, cuando elijo “DVH”, entonces solo veo combinaciones válidas (espesores soportados).
 
 ### Cotización
@@ -1488,7 +1488,7 @@ model Model {
 ```
 
 #### GlassType
-Tipos de vidrio con pricing por m².
+Tipos de cristal con pricing por m².
 
 ```prisma
 model GlassType {
@@ -1512,7 +1512,7 @@ model GlassType {
 ```
 
 #### GlassSolution (Standards-Based)
-Soluciones de vidrio con ratings de performance basados en EN/ISO.
+Soluciones de cristal con ratings de performance basados en EN/ISO.
 
 ```prisma
 model GlassSolution {
@@ -1648,7 +1648,7 @@ model Manufacturer {
 Nota: ver la especificación detallada más abajo (rutas en /api/v1). Ejemplos rápidos:
 
 - GET /api/v1/manufacturers/{id}/models?status=published → lista de modelos y límites.
-- GET /api/v1/models/{id}/glasses → vidrios/espesores soportados.
+- GET /api/v1/models/{id}/glasses → cristales/espesores soportados.
 - POST /api/v1/quotes (crea/borrador) → {quoteId}
 - POST /api/v1/quotes/{id}/items (agrega ítem) → desglose calculado y subtotal.
 - POST /api/v1/quotes/{id}/submit (requiere auth Google + contacto) → confirma envío.
@@ -1685,7 +1685,7 @@ function priceItem({ widthMm, heightMm, minWidthMm, minHeightMm, basePrice, cost
 ## Riesgos y mitigación
 
 - Confusión de unidades (mm vs cm): UI y placeholders claros; validaciones en tiempo real.
-- Variabilidad de vidrio DVH/templado: catálogo bien acotado por modelo; warnings si no disponible.
+- Variabilidad de cristal DVH/templado: catálogo bien acotado por modelo; warnings si no disponible.
 - Precios no actualizados: controles de publicación y estados de vigencia por modelo.
 
 ## Anexo A — Ejemplo numérico
@@ -1704,7 +1704,7 @@ Cálculo:
 
 ## Anexo B — UI de referencia
 
-- Campos clave: ancho/alto (mm), opciones de vidrio, accesorios/servicios, total dinámico y botón para agregar.
+- Campos clave: ancho/alto (mm), opciones de cristal, accesorios/servicios, total dinámico y botón para agregar.
 
 ## Anexo C — API/Contrato (especificación detallada)
 
@@ -2191,7 +2191,7 @@ CREATE TABLE addresses (
 
 ### Snapshot de Precios (Auditoría)
 
-**Problema**: Precios de modelos/vidrios pueden cambiar después de crear cotización
+**Problema**: Precios de modelos/cristales pueden cambiar después de crear cotización
 
 **Solución v1.5**:
 
@@ -2465,7 +2465,7 @@ Implementar tests parametrizados que cubran estas combinaciones y que verifiquen
 
 ### Tests de integración (flujo)
 
-- Crear fabricante y publicar un modelo con límites y vidrios.
+- Crear fabricante y publicar un modelo con límites y cristales.
 - Crear cotización (POST /quotes) → obtener quoteId.
 - Agregar ítem válido (POST /quotes/{id}/items) → comprobar subtotal y breakdown coinciden con la función priceItem.
 - Obtener quote (GET /quotes/{id}) → verificar totals y que item aparece en la lista.

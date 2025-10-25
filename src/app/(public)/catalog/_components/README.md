@@ -771,14 +771,14 @@ Cuando un componente hace demasiado, extrae lógica a:
 Funciones puras son **10x más fáciles de testear** que componentes React:
 ```typescript
 // ✅ FÁCIL: Test de función pura
-expect(buildSearchParameter('vidrio')).toEqual({ 
+expect(buildSearchParameter('cristal')).toEqual({ 
   key: 'search', 
-  label: 'vidrio' 
+  label: 'cristal' 
 });
 
 // ❌ DIFÍCIL: Test de componente con lógica
 render(<Component />);
-expect(screen.getByRole('badge')).toHaveTextContent('vidrio');
+expect(screen.getByRole('badge')).toHaveTextContent('cristal');
 ```
 
 ### 3. **Configuration over Code**

@@ -7,9 +7,9 @@
  * Mercado: Residencial y comercial
  *
  * Datos basados en:
- * - Sistema de cotización Vitro Rojas (precios por m² + adicionales por vidrio)
+ * - Sistema de cotización Vitro Rojas (precios por m² + adicionales por cristal)
  * - Especificaciones técnicas Extralum Panamá (VC Panamá, Europa Clásica, Europa Abatible)
- * - Mercado panameño (tipos de vidrio, proveedores locales)
+ * - Mercado panameño (tipos de cristal, proveedores locales)
  *
  * Arquitectura: Single-Tenant
  * - Cada cliente (Vitro Rojas) tiene su propia instancia de Glasify + DB
@@ -18,11 +18,11 @@
  *
  * Contenido:
  * - 1 proveedor de perfiles: Extralum (aluminio)
- * - 2 proveedores de vidrio: locales de Panamá
- * - 11 tipos de vidrio: general (2), security (3), insulation (2), decorative (4)
+ * - 2 proveedores de cristal: locales de Panamá
+ * - 11 tipos de cristal: general (2), security (3), insulation (2), decorative (4)
  * - 9 modelos de ventanas: corredizos (6), abatibles (3)
  * - 5 servicios: instalación, sellado, desmonte, reposición, protección
- * - 4 soluciones de vidrio: uso general, seguridad, térmico, decorativo
+ * - 4 soluciones de cristal: uso general, seguridad, térmico, decorativo
  *
  * @version 1.0.0
  * @date 2025-01-21
@@ -51,10 +51,10 @@ import { vitroRojasServices } from '../vitro-rojas/services.data';
 export const vitroRojasPanamaPreset: SeedPreset = {
   description: 'Vitro Rojas S.A. - Fabricante de ventanas y puertas de aluminio en Panamá',
 
-  // Soluciones de vidrio (4)
+  // Soluciones de cristal (4)
   glassSolutions: vitroRojasGlassSolutions,
 
-  // Tipos de vidrio (11)
+  // Tipos de cristal (11)
   glassTypes: vitroRojasGlassTypes,
 
   // Modelos de ventanas/puertas (9)

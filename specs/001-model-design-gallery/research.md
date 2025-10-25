@@ -479,7 +479,7 @@ type StoredDesignConfig = {
   "metadata": {
     "id": "fixed-window-simple",
     "name": "Ventana Fija Simple",
-    "description": "Ventana fija rectangular con marco y vidrio",
+    "description": "Ventana fija rectangular con marco y cristal",
     "type": "fixed_window"
   },
   "dimensions": {

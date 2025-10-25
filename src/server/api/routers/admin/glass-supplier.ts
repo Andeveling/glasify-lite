@@ -116,7 +116,7 @@ export const glassSupplierRouter = createTRPCRouter({
     if (existingByName) {
       throw new TRPCError({
         code: 'CONFLICT',
-        message: 'Ya existe un proveedor de vidrio con este nombre',
+        message: 'Ya existe un proveedor de cristal con este nombre',
       });
     }
 
@@ -129,7 +129,7 @@ export const glassSupplierRouter = createTRPCRouter({
       if (existingByCode) {
         throw new TRPCError({
           code: 'CONFLICT',
-          message: 'Ya existe un proveedor de vidrio con este código',
+          message: 'Ya existe un proveedor de cristal con este código',
         });
       }
     }
@@ -165,7 +165,7 @@ export const glassSupplierRouter = createTRPCRouter({
     if (!existing) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: 'Proveedor de vidrio no encontrado',
+        message: 'Proveedor de cristal no encontrado',
       });
     }
 
@@ -206,7 +206,7 @@ export const glassSupplierRouter = createTRPCRouter({
     if (!glassSupplier) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: 'Proveedor de vidrio no encontrado',
+        message: 'Proveedor de cristal no encontrado',
       });
     }
 
@@ -279,7 +279,7 @@ export const glassSupplierRouter = createTRPCRouter({
     if (!existing) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: 'Proveedor de vidrio no encontrado',
+        message: 'Proveedor de cristal no encontrado',
       });
     }
 

@@ -140,7 +140,7 @@ export async function downloadCatalogTemplate() {
 
   servicesSheet.addRow({
     name: 'Templado',
-    notes: 'Proceso de templado de vidrio para mayor seguridad',
+    notes: 'Proceso de templado de cristal para mayor seguridad',
     rate: 35_000,
     type: 'area',
     unit: 'sqm',
@@ -195,10 +195,10 @@ export async function downloadCatalogTemplate() {
     content: '- Costo por mm: Precio adicional por cada milímetro de ancho/alto (puede ser 0)',
   });
   instructionsSheet.addRow({
-    content: '- Descuento Vidrio: Milímetros a descontar del tamaño total para calcular área de vidrio',
+    content: '- Descuento Vidrio: Milímetros a descontar del tamaño total para calcular área de cristal',
   });
   instructionsSheet.addRow({
-    content: '  Ejemplo: Si ventana es 1000mm y descuento es -7mm, el vidrio será 993mm',
+    content: '  Ejemplo: Si ventana es 1000mm y descuento es -7mm, el cristal será 993mm',
   });
   instructionsSheet.addRow({ content: '' });
 
@@ -207,10 +207,10 @@ export async function downloadCatalogTemplate() {
   });
   instructionsSheet.getRow(GLASS_TYPES_SECTION_ROW).font = { bold: true };
   instructionsSheet.addRow({
-    content: '- Nombre: Tipo y grosor del vidrio (ej: "Vidrio Claro 6mm", "Laminado 8mm", "Reflectivo Bronce 6mm")',
+    content: '- Nombre: Tipo y grosor del cristal (ej: "Vidrio Claro 6mm", "Laminado 8mm", "Reflectivo Bronce 6mm")',
   });
   instructionsSheet.addRow({
-    content: '- Proveedor: Fabricante del vidrio (ej: "Guardian", "Saint-Gobain", "Vitro")',
+    content: '- Proveedor: Fabricante del cristal (ej: "Guardian", "Saint-Gobain", "Vitro")',
   });
   instructionsSheet.addRow({
     content: '- SKU: Código de producto del proveedor (opcional)',
@@ -219,10 +219,10 @@ export async function downloadCatalogTemplate() {
     content: '- Grosor: En milímetros (6, 8, 10, etc.)',
   });
   instructionsSheet.addRow({
-    content: '- Precio por m²: Costo del vidrio por metro cuadrado',
+    content: '- Precio por m²: Costo del cristal por metro cuadrado',
   });
   instructionsSheet.addRow({
-    content: '- Valor U: Transmitancia térmica (opcional, para vidrios con aislamiento)',
+    content: '- Valor U: Transmitancia térmica (opcional, para cristales con aislamiento)',
   });
   instructionsSheet.addRow({ content: '' });
 
@@ -267,7 +267,7 @@ export async function downloadCatalogTemplate() {
     content: '3. Los precios deben estar en tu moneda local (sin símbolos, solo números).',
   });
   instructionsSheet.addRow({
-    content: '4. Para descuentos de vidrio, usa números negativos (ej: -7, -66).',
+    content: '4. Para descuentos de cristal, usa números negativos (ej: -7, -66).',
   });
   instructionsSheet.addRow({
     content: '5. Una vez completado, envía este archivo de vuelta a tu contacto de Glasify.',

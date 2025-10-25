@@ -55,8 +55,8 @@ export function GlassTypesChart({ data, tenantConfig }: GlassTypesChartProps) {
   if (!data || data.length === 0) {
     return (
       <EmptyDashboardState
-        description="No hay cotizaciones en este período para mostrar tipos de vidrio populares"
-        title="Sin datos de tipos de vidrio"
+        description="No hay cotizaciones en este período para mostrar tipos de cristal populares"
+        title="Sin datos de tipos de cristal"
       />
     );
   }
@@ -75,7 +75,7 @@ export function GlassTypesChart({ data, tenantConfig }: GlassTypesChartProps) {
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
         <CardTitle>Tipos de Vidrio Más Usados</CardTitle>
-        <CardDescription>Top 5 vidrios por cantidad de uso</CardDescription>
+        <CardDescription>Top 5 cristales por cantidad de uso</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -130,7 +130,7 @@ export function GlassTypesChart({ data, tenantConfig }: GlassTypesChartProps) {
         <div className="flex items-center gap-2 font-medium leading-none">
           Total de {formatNumber(totalUses)} usos <TrendingUp className="h-4 w-4" />
         </div>
-        <div className="text-muted-foreground leading-none">Distribución de tipos de vidrio en cotizaciones</div>
+        <div className="text-muted-foreground leading-none">Distribución de tipos de cristal en cotizaciones</div>
       </CardFooter>
     </Card>
   );

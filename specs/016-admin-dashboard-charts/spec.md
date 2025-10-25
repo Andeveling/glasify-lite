@@ -26,16 +26,16 @@ Como admin o seller, necesito ver métricas clave sobre el rendimiento de cotiza
 
 ### User Story 2 - Análisis de Catálogo y Productos Populares (Priority: P2)
 
-Como admin, necesito ver qué modelos y tipos de vidrio son los más cotizados, para optimizar el inventario, identificar productos más rentables y ajustar precios estratégicamente.
+Como admin, necesito ver qué modelos y tipos de cristal son los más cotizados, para optimizar el inventario, identificar productos más rentables y ajustar precios estratégicamente.
 
 **Why this priority**: Proporciona insights valiosos sobre preferencias de clientes y productos rentables, pero es secundario a entender el rendimiento general de cotizaciones. Ayuda en decisiones de inventario y pricing.
 
-**Independent Test**: Puede ser probado verificando que el dashboard muestra: top 5 modelos más cotizados, top 5 tipos de vidrio más usados, y distribución de cotizaciones por fabricante de perfiles. Funciona independientemente de otras métricas.
+**Independent Test**: Puede ser probado verificando que el dashboard muestra: top 5 modelos más cotizados, top 5 tipos de cristal más usados, y distribución de cotizaciones por fabricante de perfiles. Funciona independientemente de otras métricas.
 
 **Acceptance Scenarios**:
 
 1. **Given** soy un admin, **When** accedo a la sección de análisis de catálogo, **Then** veo un gráfico de barras con los 5 modelos más cotizados y su cantidad de apariciones
-2. **Given** soy un admin, **When** veo el análisis de catálogo, **Then** veo un gráfico circular mostrando la distribución de tipos de vidrio utilizados en cotizaciones
+2. **Given** soy un admin, **When** veo el análisis de catálogo, **Then** veo un gráfico circular mostrando la distribución de tipos de cristal utilizados en cotizaciones
 3. **Given** soy un admin, **When** veo el análisis de catálogo, **Then** veo métricas sobre qué fabricantes de perfiles (ProfileSupplier) son más populares
 4. **Given** soy un seller, **When** intento acceder al análisis de catálogo detallado, **Then** veo solo información de mis propias cotizaciones
 
@@ -79,7 +79,7 @@ Como admin o seller, necesito poder filtrar todas las métricas del dashboard po
 
 - ¿Qué pasa cuando un usuario nuevo (admin o seller) accede al dashboard sin cotizaciones generadas? → Mostrar estado vacío con mensaje motivacional y CTA para crear primera cotización
 - ¿Cómo se manejan los gráficos cuando hay muy pocos datos (ej: solo 2-3 cotizaciones)? → Mostrar los datos disponibles con nota indicando que más datos mejorarán la precisión
-- ¿Qué sucede si un modelo o tipo de vidrio es eliminado pero tiene datos históricos? → Mantener las estadísticas históricas pero marcar como "Producto descontinuado"
+- ¿Qué sucede si un modelo o tipo de cristal es eliminado pero tiene datos históricos? → Mantener las estadísticas históricas pero marcar como "Producto descontinuado"
 - ¿Cómo se comportan las métricas de sellers que no tienen cotizaciones propias? → Mostrar dashboard vacío con guía sobre cómo empezar a crear cotizaciones
 - ¿Qué pasa con cotizaciones en diferentes monedas (por TenantConfig.currency)? → Todas las métricas monetarias deben respetar la moneda configurada y mostrarla claramente
 - ¿Cómo se manejan los filtros temporales cuando cruzan años? → Permitir selección correcta y mostrar datos agrupados apropiadamente
@@ -108,10 +108,10 @@ Como admin o seller, necesito poder filtrar todas las métricas del dashboard po
 
 - **FR-011**: System MUST calcular los 5 modelos más cotizados basándose en QuoteItem.modelId y sus frecuencias
 - **FR-012**: System MUST mostrar nombre del modelo (Model.name) y fabricante de perfil (ProfileSupplier.name) para cada modelo top
-- **FR-013**: System MUST calcular los 5 tipos de vidrio más usados basándose en QuoteItem.glassTypeId
-- **FR-014**: System MUST mostrar nombre del tipo de vidrio (GlassType.name) y código (GlassType.code) para cada tipo top
+- **FR-013**: System MUST calcular los 5 tipos de cristal más usados basándose en QuoteItem.glassTypeId
+- **FR-014**: System MUST mostrar nombre del tipo de cristal (GlassType.name) y código (GlassType.code) para cada tipo top
 - **FR-015**: System MUST generar gráfico circular mostrando distribución porcentual de fabricantes de perfiles en cotizaciones
-- **FR-016**: System MUST incluir solo modelos y vidrios de cotizaciones en el período seleccionado
+- **FR-016**: System MUST incluir solo modelos y cristales de cotizaciones en el período seleccionado
 
 #### Métricas Monetarias (P3)
 
@@ -146,7 +146,7 @@ Como admin o seller, necesito poder filtrar todas las métricas del dashboard po
 - **Quote**: Entidad principal para métricas. Atributos clave: id, userId, status (draft/sent/canceled), total (valor monetario), createdAt, sentAt. Relaciones: items (QuoteItem[]), user (User)
 - **QuoteItem**: Items individuales de cotizaciones. Atributos clave: id, quoteId, modelId, glassTypeId, quantity, subtotal. Relaciones: model (Model), glassType (GlassType), quote (Quote)
 - **Model**: Modelos de ventanas/puertas cotizados. Atributos clave: id, name, profileSupplierId, status. Relaciones: profileSupplier (ProfileSupplier), quoteItems (QuoteItem[])
-- **GlassType**: Tipos de vidrio utilizados. Atributos clave: id, name, code, manufacturer, pricePerSqm. Relaciones: quoteItems (QuoteItem[])
+- **GlassType**: Tipos de cristal utilizados. Atributos clave: id, name, code, manufacturer, pricePerSqm. Relaciones: quoteItems (QuoteItem[])
 - **ProfileSupplier**: Fabricantes de perfiles. Atributos clave: id, name, materialType. Relaciones: models (Model[])
 - **User**: Usuarios del sistema. Atributos clave: id, name, email, role (admin/seller/user). Relaciones: quotes (Quote[])
 - **TenantConfig**: Configuración del tenant (singleton). Atributos clave: currency, locale, timezone. Usado para formateo de números y fechas
@@ -156,7 +156,7 @@ Como admin o seller, necesito poder filtrar todas las métricas del dashboard po
 ### Measurable Outcomes
 
 - **SC-001**: Admins y sellers pueden ver el estado actual de cotizaciones (totales por estado) en menos de 3 segundos desde que cargan el dashboard
-- **SC-002**: Usuarios pueden identificar los 3 productos más populares (modelos y vidrios) en menos de 5 segundos de navegación en el dashboard
+- **SC-002**: Usuarios pueden identificar los 3 productos más populares (modelos y cristales) en menos de 5 segundos de navegación en el dashboard
 - **SC-003**: Sistema muestra métricas de valor monetario con la moneda y formato correcto del tenant configurado en 100% de los casos
 - **SC-004**: Dashboard carga y muestra todas las métricas principales (P1) en menos de 2 segundos con hasta 1000 cotizaciones
 - **SC-005**: Sellers ven únicamente sus propias cotizaciones en 100% de los casos (aislamiento de datos verificable)

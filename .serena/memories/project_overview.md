@@ -1,7 +1,7 @@
 # Glasify Lite - Project Overview
 
 ## Purpose
-Glasify Lite es una aplicación web para cotización inteligente de productos de vidrio. Permite a los usuarios crear presupuestos y cotizaciones para diferentes tipos de vidrios y servicios relacionados.
+Glasify Lite es una aplicación web para cotización inteligente de productos de cristal. Permite a los usuarios crear presupuestos y cotizaciones para diferentes tipos de cristales y servicios relacionados.
 
 ## Tech Stack
 - **Framework**: Next.js 15 with App Router

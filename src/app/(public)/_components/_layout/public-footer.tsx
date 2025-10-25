@@ -44,7 +44,7 @@ export default function PublicFooter() {
             <p className="text-foreground/60 text-sm">
               © 2025 Glasify Lite
               <br />
-              Cotizador inteligente de productos de vidrio para arquitectos e ingenieros.
+              Cotizador inteligente de productos de cristal para arquitectos e ingenieros.
             </p>
           </div>
         </div>

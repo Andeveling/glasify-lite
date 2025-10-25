@@ -25,7 +25,7 @@ model GlassType {
 }
 ```
 **Impacto**: 
-- Confusión en el código (dos formas de clasificar vidrios)
+- Confusión en el código (dos formas de clasificar cristales)
 - Queries que podrían usar una u otra
 - Mantenimiento duplicado
 
@@ -46,12 +46,12 @@ model GlassType {
 ### ❌ Problema 3: Sin Proveedor de Vidrio
 ```prisma
 model GlassType {
-  // ❌ No hay referencia a quién fabrica/provee el vidrio
+  // ❌ No hay referencia a quién fabrica/provee el cristal
   name String  // "Guardian Sun" - ¿de dónde?
 }
 ```
 **Impacto**:
-- No puedes filtrar por proveedor de vidrio
+- No puedes filtrar por proveedor de cristal
 - No rastreable para compras/inventario
 - Precios no asociados a proveedor específico
 
@@ -73,7 +73,7 @@ model GlassType {
 }
 ```
 **Impacto**:
-- No puedes ocultar vidrios temporalmente descontinuados
+- No puedes ocultar cristales temporalmente descontinuados
 - DELETE no es opción (rompe integridad referencial con QuoteItem)
 
 ---
@@ -86,7 +86,7 @@ model GlassType {
 // ============================================
 // 1. PROVEEDOR DE VIDRIO
 // ============================================
-/// Proveedores de vidrio (Guardian, Saint-Gobain, Pilkington, etc.)
+/// Proveedores de cristal (Guardian, Saint-Gobain, Pilkington, etc.)
 model GlassSupplier {
   id              String      @id @default(cuid())
   /// Nombre comercial del proveedor
@@ -133,7 +133,7 @@ model GlassType {
   description       String?
   
   // Precio
-  /// Precio por metro cuadrado del vidrio (moneda de TenantConfig)
+  /// Precio por metro cuadrado del cristal (moneda de TenantConfig)
   pricePerSqm       Decimal                 @db.Decimal(12, 2)
   
   // Propiedades térmicas
@@ -147,7 +147,7 @@ model GlassType {
   lightTransmission Decimal?                @db.Decimal(4, 2)
   
   // Control
-  /// Si el vidrio está disponible para cotización
+  /// Si el cristal está disponible para cotización
   isActive          Boolean                 @default(true)
   /// Fecha de última revisión de datos técnicos
   lastReviewDate    DateTime?
@@ -325,7 +325,7 @@ ALTER TABLE "GlassType" DROP COLUMN "purpose";
 
 ### ✅ Mantenibilidad
 - Proveedores centralizados y reutilizables
-- Características reutilizables entre tipos de vidrio
+- Características reutilizables entre tipos de cristal
 
 ### ✅ Performance
 - Índices estratégicos en campos de búsqueda común
@@ -340,7 +340,7 @@ ALTER TABLE "GlassType" DROP COLUMN "purpose";
 
 ## 📝 Queries Ejemplo Post-Migración
 
-### Buscar vidrios por característica
+### Buscar cristales por característica
 ```typescript
 const temperedGlasses = await db.glassType.findMany({
   where: {
@@ -382,7 +382,7 @@ const guardianGlasses = await db.glassType.findMany({
 ## ⚠️ Consideraciones
 
 1. **Backward Compatibility**: Durante la migración, mantén ambos sistemas (booleanos + características) hasta validar
-2. **Data Integrity**: Verifica que cada vidrio tenga al menos un proveedor después de migración
+2. **Data Integrity**: Verifica que cada cristal tenga al menos un proveedor después de migración
 3. **Performance**: Agrega índices compuestos si queries específicas lo requieren
 4. **UI Updates**: Actualizar formularios para usar el nuevo sistema de características
 

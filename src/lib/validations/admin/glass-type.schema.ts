@@ -263,7 +263,7 @@ export const updateGlassTypeSchema = z.object({
       )
       .describe('Replace all solutions'),
   }),
-  id: z.string().cuid('ID de tipo de vidrio inválido'),
+  id: z.string().cuid('ID de tipo de cristal inválido'),
 });
 
 export type UpdateGlassTypeInput = z.infer<typeof updateGlassTypeSchema>;
@@ -408,7 +408,7 @@ export type GetGlassTypeByIdOutput = z.infer<typeof getGlassTypeByIdOutputSchema
  * Requires ID only
  */
 export const deleteGlassTypeSchema = z.object({
-  id: z.string().cuid('ID de tipo de vidrio inválido'),
+  id: z.string().cuid('ID de tipo de cristal inválido'),
 });
 
 export type DeleteGlassTypeInput = z.infer<typeof deleteGlassTypeSchema>;

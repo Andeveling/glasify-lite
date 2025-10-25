@@ -13,7 +13,7 @@ import { TRPCReactProvider } from '@/trpc/react';
 import { ReactScan } from './_components/react-scan';
 
 export const metadata: Metadata = {
-  description: 'Cotización inteligente de productos de vidrio para fabricantes y distribuidores',
+  description: 'Cotización inteligente de productos de cristal para fabricantes y distribuidores',
   icons: [{ rel: 'icon', url: '/favicon.ico' }],
   title: 'Glasify Lite - Cotizador Inteligente de Vidrios',
 };

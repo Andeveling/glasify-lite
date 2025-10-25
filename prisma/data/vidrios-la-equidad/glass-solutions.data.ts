@@ -1,7 +1,7 @@
 /**
  * Vidrios La Equidad - Glass Solutions
  *
- * Soluciones de vidrio para el mercado colombiano
+ * Soluciones de cristal para el mercado colombiano
  * Valle del Cauca, Quindío y Risaralda
  *
  * Vinculación con GlassTypes mediante categorización por propósito
@@ -13,7 +13,7 @@
 import type { GlassSolutionInput } from '../../factories/glass-solution.factory';
 
 /**
- * Soluciones de vidrio para Vidrios La Equidad
+ * Soluciones de cristal para Vidrios La Equidad
  *
  * Adaptadas al mercado colombiano (Valle del Cauca)
  */

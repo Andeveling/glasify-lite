@@ -8,7 +8,7 @@ import { FormSection } from '@/components/form-section';
 // ✅ Ejemplo básico con icono
 export function BasicExample() {
   return (
-    <FormSection description="Especifica las dimensiones del vidrio requeridas." icon={Ruler} legend="Dimensiones">
+    <FormSection description="Especifica las dimensiones del cristal requeridas." icon={Ruler} legend="Dimensiones">
       <div className="space-y-4">
         <input className="w-full" placeholder="Ancho (cm)" type="number" />
         <input className="w-full" placeholder="Alto (cm)" type="number" />

@@ -80,13 +80,13 @@ describe('search-parameters.utils', () => {
 
   describe('buildSearchParameter', () => {
     it('should build search parameter with correct properties', () => {
-      const param = buildSearchParameter('vidrio templado');
+      const param = buildSearchParameter('cristal templado');
 
       expect(param).toEqual({
-        ariaLabel: 'Quitar búsqueda: vidrio templado',
+        ariaLabel: 'Quitar búsqueda: cristal templado',
         icon: Search,
         key: 'search',
-        label: 'vidrio templado',
+        label: 'cristal templado',
       });
     });
 
@@ -103,10 +103,10 @@ describe('search-parameters.utils', () => {
     });
 
     it('should handle special characters in search query', () => {
-      const param = buildSearchParameter('vidrio & cristal (6mm)');
+      const param = buildSearchParameter('cristal & cristal (6mm)');
 
-      expect(param?.label).toBe('vidrio & cristal (6mm)');
-      expect(param?.ariaLabel).toBe('Quitar búsqueda: vidrio & cristal (6mm)');
+      expect(param?.label).toBe('cristal & cristal (6mm)');
+      expect(param?.ariaLabel).toBe('Quitar búsqueda: cristal & cristal (6mm)');
     });
   });
 
@@ -190,7 +190,7 @@ describe('search-parameters.utils', () => {
     it('should build parameters for all active filters', () => {
       const params = buildActiveParameters({
         profileSupplierName: 'Guardian',
-        searchQuery: 'vidrio',
+        searchQuery: 'cristal',
         sortType: 'price-desc',
       });
 
@@ -203,15 +203,15 @@ describe('search-parameters.utils', () => {
 
     it('should build parameters for search query only', () => {
       const params = buildActiveParameters({
-        searchQuery: 'vidrio templado',
+        searchQuery: 'cristal templado',
       });
 
       expect(params).toHaveLength(1);
       expect(params[0]).toEqual({
-        ariaLabel: 'Quitar búsqueda: vidrio templado',
+        ariaLabel: 'Quitar búsqueda: cristal templado',
         icon: Search,
         key: 'search',
-        label: 'vidrio templado',
+        label: 'cristal templado',
       });
     });
 
@@ -245,7 +245,7 @@ describe('search-parameters.utils', () => {
 
     it('should not include default sort in parameters', () => {
       const params = buildActiveParameters({
-        searchQuery: 'vidrio',
+        searchQuery: 'cristal',
         sortType: 'name-asc', // default sort
       });
 
@@ -287,7 +287,7 @@ describe('search-parameters.utils', () => {
     it('should preserve order: search, profileSupplier, sort', () => {
       const params = buildActiveParameters({
         profileSupplierName: 'Guardian',
-        searchQuery: 'vidrio',
+        searchQuery: 'cristal',
         sortType: 'price-asc',
       });
 

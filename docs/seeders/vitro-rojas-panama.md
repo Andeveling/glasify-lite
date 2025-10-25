@@ -38,7 +38,7 @@ author: Andres
 
 ### Catálogo de Productos
 
-- **GlassTypes**: 11 tipos de vidrio
+- **GlassTypes**: 11 tipos de cristal
   - General (2): Claro 6mm, Claro 8mm
   - Security (3): Laminado 6.38mm, Laminado 8.38mm, Templado 6mm
   - Insulation (2): DVH 16mm, DVH 18.5mm
@@ -96,7 +96,7 @@ author: Andres
 
 - **Vitro Rojas S.A. - Instrucciones de Corte y Presupuesto**
   - Precios base por m² según cantidad de paños
-  - Adicionales por tipo de vidrio
+  - Adicionales por tipo de cristal
   - Fórmulas de corte por configuración
 
 ## Estructura de Archivos
@@ -105,8 +105,8 @@ author: Andres
 prisma/data/vitro-rojas/
 ├── tenant-config.data.ts       # Configuración de negocio (referencia)
 ├── profile-suppliers.data.ts   # Extralum (aluminio)
-├── glass-suppliers.data.ts     # Proveedores de vidrio (referencia)
-├── glass-types.data.ts         # 11 tipos de vidrio
+├── glass-suppliers.data.ts     # Proveedores de cristal (referencia)
+├── glass-types.data.ts         # 11 tipos de cristal
 ├── glass-solutions.data.ts     # 4 soluciones
 ├── models-sliding.data.ts      # 6 modelos corredizos
 ├── models-casement.data.ts     # 3 modelos abatibles
@@ -207,20 +207,20 @@ pnpm seed --preset=vitro-rojas-panama
 ### Fórmulas de Corte (Vitro Rojas)
 
 **Ventanas de 2 paños:**
-- Alto vidrio = Alto total - 66mm
-- Ancho vidrio = (Ancho total - 7mm) ÷ 2
+- Alto cristal = Alto total - 66mm
+- Ancho cristal = (Ancho total - 7mm) ÷ 2
 
 **Ventanas de 3 paños:**
-- Alto vidrio = Alto total - 66mm
-- Ancho vidrio = (Ancho total + 63mm) ÷ 3
+- Alto cristal = Alto total - 66mm
+- Ancho cristal = (Ancho total + 63mm) ÷ 3
 
 **Ventanas de 4 paños:**
-- Alto vidrio = Alto total - 66mm
-- Ancho vidrio = (Ancho total + 48mm) ÷ 4
+- Alto cristal = Alto total - 66mm
+- Ancho cristal = (Ancho total + 48mm) ÷ 4
 
 **Marco perimetral (abatibles):**
-- Alto vidrio = Alto total - 63mm
-- Ancho vidrio = Ancho total - 63mm
+- Alto cristal = Alto total - 63mm
+- Ancho cristal = Ancho total - 63mm
 
 ## Restricciones de Dimensiones
 

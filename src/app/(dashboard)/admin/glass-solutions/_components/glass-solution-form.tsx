@@ -116,8 +116,8 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
         <CardTitle>{mode === 'create' ? 'Nueva Solución de Vidrio' : 'Editar Solución de Vidrio'}</CardTitle>
         <CardDescription>
           {mode === 'create'
-            ? 'Crea una nueva solución base para tipos de vidrio'
-            : 'Actualiza la información de la solución de vidrio'}
+            ? 'Crea una nueva solución base para tipos de cristal'
+            : 'Actualiza la información de la solución de cristal'}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -235,7 +235,7 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
                       />
                     </FormControl>
                     <FormDescription>
-                      Selecciona un icono visual para representar esta solución de vidrio
+                      Selecciona un icono visual para representar esta solución de cristal
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -278,7 +278,7 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
                     <div className="space-y-1 leading-none">
                       <FormLabel>Solución Activa</FormLabel>
                       <FormDescription>
-                        Las soluciones activas están disponibles para asignar a tipos de vidrio
+                        Las soluciones activas están disponibles para asignar a tipos de cristal
                       </FormDescription>
                     </div>
                   </FormItem>

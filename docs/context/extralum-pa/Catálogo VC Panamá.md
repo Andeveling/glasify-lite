@@ -62,7 +62,7 @@ polvo. Evacuación eficiente del agua.
 -Utiliza accesorios de alta calidad como complemento a las
 funciones y estética del producto.
 
--El sistema permite utilizar vidrios de seguridad.
+-El sistema permite utilizar cristales de seguridad.
 
 -Utiliza empaque de caucho EPDM, el cual tiene un excelente
 comportamiento frente a la intemperie.
@@ -194,7 +194,7 @@ VILAX
 
 33.1 mm.
 
-Incorpore vidrio de seguridad Fuertex o Vilax a su proyecto para proteger
+Incorpore cristal de seguridad Fuertex o Vilax a su proyecto para proteger
 la integridad de sus ocupantes y la seguridad de sus bienes.
 
 Nota: Para una mejor selección del espesor se deben suministrar los datos

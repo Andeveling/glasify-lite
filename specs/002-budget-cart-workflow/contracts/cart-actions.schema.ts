@@ -27,8 +27,8 @@ const MAX_ITEM_NAME_LENGTH = 50;
  */
 export const addToCartInput = z.object({
   additionalServiceIds: z.array(z.string().cuid()).default([]),
-  glassTypeId: z.string().cuid('ID del tipo de vidrio debe ser válido'),
-  glassTypeName: z.string().min(1, 'Nombre del tipo de vidrio es requerido'),
+  glassTypeId: z.string().cuid('ID del tipo de cristal debe ser válido'),
+  glassTypeName: z.string().min(1, 'Nombre del tipo de cristal es requerido'),
   heightMm: z.number().int().positive('Alto debe ser positivo'),
   modelId: z.string().cuid('ID del modelo debe ser válido'),
   modelName: z.string().min(1, 'Nombre del modelo es requerido'),

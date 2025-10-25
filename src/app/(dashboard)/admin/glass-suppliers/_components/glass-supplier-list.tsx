@@ -169,7 +169,7 @@ export function GlassSupplierList({ initialData, searchParams }: GlassSupplierLi
       <DeleteConfirmationDialog
         dependencies={[]}
         entityLabel={supplierToDelete?.name ?? ''}
-        entityName="proveedor de vidrio"
+        entityName="proveedor de cristal"
         loading={deleteMutation.isPending}
         onConfirm={handleConfirmDelete}
         onOpenChange={setDeleteDialogOpen}

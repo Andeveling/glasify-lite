@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: EditGlassSolutionPageProps): 
   const solution = await api.admin['glass-solution'].getById({ id });
 
   return {
-    description: `Editar solución de vidrio: ${solution?.name ?? 'No encontrada'}`,
+    description: `Editar solución de cristal: ${solution?.name ?? 'No encontrada'}`,
     title: `Editar ${solution?.name ?? 'Solución'} | Admin`,
   };
 }

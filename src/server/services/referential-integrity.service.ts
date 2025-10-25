@@ -106,7 +106,7 @@ export async function canDeleteGlassSolution(solutionId: string): Promise<Refere
     dependencies.push({
       count: assignmentCount,
       entity: 'GlassTypeSolution',
-      message: `${assignmentCount} tipo(s) de vidrio con esta solución`,
+      message: `${assignmentCount} tipo(s) de cristal con esta solución`,
     });
   }
 
@@ -144,7 +144,7 @@ export async function canDeleteGlassCharacteristic(characteristicId: string): Pr
     dependencies.push({
       count: assignmentCount,
       entity: 'GlassTypeCharacteristic',
-      message: `${assignmentCount} tipo(s) de vidrio con esta característica`,
+      message: `${assignmentCount} tipo(s) de cristal con esta característica`,
     });
   }
 
@@ -201,7 +201,7 @@ export async function canDeleteGlassType(glassTypeId: string): Promise<Referenti
     dependencies.push({
       count: modelsWithThisGlassType.length,
       entity: 'Model',
-      message: `${modelsWithThisGlassType.length} modelo(s) con este tipo de vidrio como compatible`,
+      message: `${modelsWithThisGlassType.length} modelo(s) con este tipo de cristal como compatible`,
     });
   }
 
@@ -217,7 +217,7 @@ export async function canDeleteGlassType(glassTypeId: string): Promise<Referenti
     canDelete,
     dependencies,
     message: canDelete
-      ? 'El tipo de vidrio puede ser eliminado'
+      ? 'El tipo de cristal puede ser eliminado'
       : `No se puede eliminar: ${dependencies.map((d) => d.message).join(', ')}`,
   };
 }

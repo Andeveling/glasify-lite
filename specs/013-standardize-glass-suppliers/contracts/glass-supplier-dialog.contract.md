@@ -166,7 +166,7 @@ interface GlassSupplier {
     website: "https://www.vitro.com",
     contactEmail: "ventas@vitro.com",
     contactPhone: "+52 81 8888 8888",
-    notes: "Principal proveedor de vidrio templado",
+    notes: "Principal proveedor de cristal templado",
     isActive: true,
     tenantId: "tenant123",
     createdAt: new Date("2024-01-15"),

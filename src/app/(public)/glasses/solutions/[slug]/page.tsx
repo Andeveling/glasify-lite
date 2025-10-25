@@ -59,16 +59,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
     if (!solution) {
       return {
-        description: 'La solución de vidrio solicitada no existe.',
+        description: 'La solución de cristal solicitada no existe.',
         title: 'Solución no encontrada | Glasify Lite',
       };
     }
 
     return {
       description:
-        solution.description || `Descubre la solución de vidrio ${solution.nameEs} y sus características especiales.`,
+        solution.description || `Descubre la solución de cristal ${solution.nameEs} y sus características especiales.`,
       openGraph: {
-        description: solution.description || `Solución de vidrio especializada: ${solution.nameEs}`,
+        description: solution.description || `Solución de cristal especializada: ${solution.nameEs}`,
         title: `${solution.nameEs} | Glasify Lite`,
         type: 'website',
       },
@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     });
 
     return {
-      description: 'Error al cargar la página de solución de vidrio.',
+      description: 'Error al cargar la página de solución de cristal.',
       title: 'Error | Glasify Lite',
     };
   }
@@ -231,7 +231,7 @@ export default async function GlassSolutionDetailPage({ params }: { params: Prom
             </div>
           ) : (
             <div className="rounded-lg border border-border border-dashed bg-card/50 p-12 text-center">
-              <p className="text-muted-foreground">No hay tipos de vidrio asignados a esta solución aún.</p>
+              <p className="text-muted-foreground">No hay tipos de cristal asignados a esta solución aún.</p>
             </div>
           )}
         </div>

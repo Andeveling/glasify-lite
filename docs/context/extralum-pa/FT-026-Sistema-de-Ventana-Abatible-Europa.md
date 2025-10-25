@@ -307,7 +307,7 @@ Nota: Otros acabados disponibles bajo pedido y plazos de entrega a convenir.
 
 TIPOS DE VIDRIO
 
-Entre los vidrios que se pueden utilizar están:
+Entre los cristales que se pueden utilizar están:
 
 Los monolíticos: 6, 8, 10 y 12 mm.
 
@@ -469,11 +469,11 @@ EX1387
 
 2,800 mm
 
-Nota: Para los fijos con vidrios de 6 mm hasta 2000 mm de ancho.
+Nota: Para los fijos con cristales de 6 mm hasta 2000 mm de ancho.
 
 Se recomienda la aplicación del apartado completo #7 de la norma INTE C312:2019, donde
 
-especifica el uso de vidrio de seguridad en áreas vidriadas consideradas de riesgo, a saber:
+especifica el uso de cristal de seguridad en áreas vidriadas consideradas de riesgo, a saber:
 
 •  Apartado 7.2: Puertas
 •  Apartado 7.3: Paneles laterales a una puerta
@@ -520,7 +520,7 @@ La  reducción  acústica  dentro  de  una  habitación  se  logra  únicamente 
 
 materiales se han diseñado para tal fin, y se establezca el nivel de reducción requerido.
 
-•  En  una  ventana,  la  especificación  del  tipo  de  vidrio  es  muy  importante,  pero  es  igual  de
+•  En  una  ventana,  la  especificación  del  tipo  de  cristal  es  muy  importante,  pero  es  igual  de
 
 importante el tipo de ventana.
 

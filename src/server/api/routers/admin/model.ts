@@ -162,7 +162,7 @@ export const modelRouter = createTRPCRouter({
 
       throw new TRPCError({
         code: 'BAD_REQUEST',
-        message: `Tipos de vidrio no encontrados: ${missingIds.join(', ')}`,
+        message: `Tipos de cristal no encontrados: ${missingIds.join(', ')}`,
       });
     }
 
@@ -178,7 +178,7 @@ export const modelRouter = createTRPCRouter({
 
       throw new TRPCError({
         code: 'BAD_REQUEST',
-        message: `Los siguientes tipos de vidrio están inactivos: ${inactiveIds.join(', ')}`,
+        message: `Los siguientes tipos de cristal están inactivos: ${inactiveIds.join(', ')}`,
       });
     }
 
@@ -530,7 +530,7 @@ export const modelRouter = createTRPCRouter({
 
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: `Tipos de vidrio no encontrados: ${missingGlassTypeIds.join(', ')}`,
+          message: `Tipos de cristal no encontrados: ${missingGlassTypeIds.join(', ')}`,
         });
       }
 
@@ -539,7 +539,7 @@ export const modelRouter = createTRPCRouter({
         const inactiveIds = inactiveGlassTypes.map((gt) => gt.id);
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: `Los siguientes tipos de vidrio están inactivos: ${inactiveIds.join(', ')}`,
+          message: `Los siguientes tipos de cristal están inactivos: ${inactiveIds.join(', ')}`,
         });
       }
     }

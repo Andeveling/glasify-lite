@@ -182,7 +182,7 @@ export function GlassTypesTable({ initialData, searchParams }: GlassTypesTablePr
       }
 
       // Show immediate feedback
-      toast.loading('Eliminando tipo de vidrio...', { id: 'delete-glass-type' });
+      toast.loading('Eliminando tipo de cristal...', { id: 'delete-glass-type' });
 
       // Return context with snapshot for rollback
       return { previousData };
@@ -201,13 +201,13 @@ export function GlassTypesTable({ initialData, searchParams }: GlassTypesTablePr
         );
       }
 
-      toast.error('Error al eliminar tipo de vidrio', {
+      toast.error('Error al eliminar tipo de cristal', {
         description: error.message,
         id: 'delete-glass-type',
       });
     },
     onSuccess() {
-      toast.success('Tipo de vidrio eliminado correctamente', { id: 'delete-glass-type' });
+      toast.success('Tipo de cristal eliminado correctamente', { id: 'delete-glass-type' });
       setDeleteDialogOpen(false);
       setGlassTypeToDelete(null);
     },
@@ -290,12 +290,12 @@ export function GlassTypesTable({ initialData, searchParams }: GlassTypesTablePr
         <EmptyMedia variant="icon">
           <Wine className="size-6" />
         </EmptyMedia>
-        <EmptyTitle>Sin tipos de vidrio</EmptyTitle>
-        <EmptyDescription>No se encontraron tipos de vidrio. Crea uno nuevo para comenzar.</EmptyDescription>
+        <EmptyTitle>Sin tipos de cristal</EmptyTitle>
+        <EmptyDescription>No se encontraron tipos de cristal. Crea uno nuevo para comenzar.</EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         <Button asChild>
-          <Link href="/admin/glass-types/new">Crear tipo de vidrio</Link>
+          <Link href="/admin/glass-types/new">Crear tipo de cristal</Link>
         </Button>
       </EmptyContent>
     </Empty>
@@ -315,7 +315,7 @@ export function GlassTypesTable({ initialData, searchParams }: GlassTypesTablePr
       <DeleteConfirmationDialog
         dependencies={[]}
         entityLabel={glassTypeToDelete?.name ?? ''}
-        entityName="tipo de vidrio"
+        entityName="tipo de cristal"
         loading={deleteMutation.isPending}
         onConfirm={handleConfirmDelete}
         onOpenChange={setDeleteDialogOpen}

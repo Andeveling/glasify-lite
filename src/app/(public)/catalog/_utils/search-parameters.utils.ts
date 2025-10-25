@@ -193,12 +193,12 @@ export function buildSortParameter(sortType: string | null | undefined): SearchP
  * @example
  * ```ts
  * const params = buildActiveParameters({
- *   searchQuery: 'vidrio',
+ *   searchQuery: 'cristal',
  *   profileSupplierName: 'Guardian',
  *   sortType: 'price-desc',
  * });
  * // => [
- * //   { key: 'search', label: 'vidrio', ... },
+ * //   { key: 'search', label: 'cristal', ... },
  * //   { key: 'profileSupplier', label: 'Guardian', ... },
  * //   { key: 'sort', label: 'Precio ↓', ... }
  * // ]

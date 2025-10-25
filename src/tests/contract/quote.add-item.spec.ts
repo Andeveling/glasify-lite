@@ -7,7 +7,7 @@ const DIMENSION_ERROR_REGEX = /(Ancho|Alto) debe estar entre \d+mm y \d+mm|dimen
 const MODEL_ID_ERROR_REGEX = /ID del modelo debe ser válido/;
 const HEIGHT_ERROR_REGEX = /Alto debe ser mayor a 0/;
 const QUOTE_ID_ERROR_REGEX = /ID de la cotización debe ser válido/;
-const GLASS_COMPATIBILITY_ERROR_REGEX = /compatible|vidrio|tipo/i;
+const GLASS_COMPATIBILITY_ERROR_REGEX = /compatible|cristal|tipo/i;
 
 describe('Contract: quote.add-item', () => {
   it('should add item to new quote when no quoteId provided', async () => {

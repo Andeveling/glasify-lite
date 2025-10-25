@@ -194,7 +194,7 @@ See [research.md](./research.md) for detailed findings.
 - **Canvas Library**: Konva + react-konva (estándar React, API declarativa)
 - **SSR Pattern**: Client Components con `'use client'`, Server Components pre-fetch data
 - **Performance**: `React.memo()` + Intersection Observer para lazy rendering
-- **Adaptation**: Constraint-based (mantiene espesores lógicos, vidrios llenan espacio)
+- **Adaptation**: Constraint-based (mantiene espesores lógicos, cristales llenan espacio)
 - **Storage**: JSON hierarchical con versioning (`version: '1.0'`)
 
 ---

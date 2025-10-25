@@ -11,8 +11,8 @@ const WIDTH_ERROR_REGEX = /Ancho mínimo debe ser menor al ancho máximo/;
 const HEIGHT_ERROR_REGEX = /Alto mínimo debe ser menor al alto máximo/;
 const MODEL_NAME_ERROR_REGEX = /Nombre del modelo es requerido/;
 const BASE_PRICE_ERROR_REGEX = /Precio base debe ser mayor o igual a 0/;
-const GLASS_TYPES_ERROR_REGEX = /Debe seleccionar al menos un tipo de vidrio compatible/;
-const GLASS_TYPE_ID_ERROR_REGEX = /ID del tipo de vidrio debe ser válido/;
+const GLASS_TYPES_ERROR_REGEX = /Debe seleccionar al menos un tipo de cristal compatible/;
+const GLASS_TYPE_ID_ERROR_REGEX = /ID del tipo de cristal debe ser válido/;
 const MODEL_NOT_FOUND_ERROR_REGEX = /modelo.*encontrado|model.*found/i;
 
 describe('Contract: admin.model.upsert', () => {

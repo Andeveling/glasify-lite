@@ -167,7 +167,7 @@ export function StickyPriceHeader({
       <div aria-atomic="true" aria-live="polite" className="sr-only">
         Precio actualizado: {formatCurrency(currentPrice, { context: formatContext })} para {configSummary.modelName}
         {hasDimensions && `, dimensiones ${dimensionsText}`}
-        {configSummary.glassTypeName && `, vidrio ${configSummary.glassTypeName}`}
+        {configSummary.glassTypeName && `, cristal ${configSummary.glassTypeName}`}
       </div>
     </Card>
   );

@@ -2,7 +2,7 @@
  * Vidrios La Equidad - Glass Types Catalog
  *
  * Data source: https://vidrioslaequidad.com/
- * Tipos de vidrio para mercado colombiano
+ * Tipos de cristal para mercado colombiano
  *
  * Aplicaciones: Residencial, comercial e institucional
  * Mercado: Valle del Cauca, Quindío y Risaralda

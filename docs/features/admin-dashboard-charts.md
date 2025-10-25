@@ -90,7 +90,7 @@ server/
 
 **Metrics Displayed**:
 - Top 5 modelos más cotizados (nombre + manufacturer)
-- Top 5 tipos de vidrio (código + manufacturer)
+- Top 5 tipos de cristal (código + manufacturer)
 - Distribución por fabricante/proveedor
 
 **Visualizations**:

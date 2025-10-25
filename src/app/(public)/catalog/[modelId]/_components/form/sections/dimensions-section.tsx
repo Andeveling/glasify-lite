@@ -121,7 +121,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
     (height && !isValidDimension(height, dimensions.minHeight, dimensions.maxHeight));
 
   return (
-    <FormSection description="Especifica las dimensiones del vidrio requeridas." icon={Ruler} legend="Dimensiones">
+    <FormSection description="Especifica las dimensiones del cristal requeridas." icon={Ruler} legend="Dimensiones">
       <div className="grid gap-6 sm:grid-cols-2">
         <DimensionField
           control={control}

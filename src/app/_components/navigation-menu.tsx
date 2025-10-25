@@ -115,7 +115,7 @@ export function NavigationMenu({
   const getMenuDescription = () => {
     if (userRole === 'admin') return 'Navegación del panel de control';
     if (userRole === 'seller') return 'Gestiona tus cotizaciones';
-    return 'Cotizador inteligente de vidrios';
+    return 'Cotizador inteligente de cristales';
   };
 
   const menuTitle = getMenuTitle();

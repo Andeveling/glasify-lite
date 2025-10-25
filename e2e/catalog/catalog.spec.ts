@@ -26,7 +26,7 @@ test.describe('Catalog Page', () => {
   test.describe('Initial Page Load', () => {
     test('should display catalog header and description', async ({ page }) => {
       await expect(page.getByRole('heading', { name: 'Catálogo de Productos' })).toBeVisible();
-      await expect(page.getByText('Explore nuestra selección de productos de vidrio')).toBeVisible();
+      await expect(page.getByText('Explore nuestra selección de productos de cristal')).toBeVisible();
     });
 
     test('should display all filter controls', async ({ page }) => {

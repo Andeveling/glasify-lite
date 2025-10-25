@@ -40,7 +40,7 @@ Currently, GlassSolutions are managed as a full CRUD entity with:
 - **REQ-004**: Solution pages must display all GlassTypes assigned to that solution with performance ratings
 - **REQ-005**: Content must support ISR (Incremental Static Regeneration) for performance
 - **REQ-006**: Admin can still assign/unassign GlassTypes to Solutions through GlassType form
-- **REQ-007**: Solution slug must be derived from `key` field (e.g., `solar_control` → `/vidrios/soluciones/solar-control`)
+- **REQ-007**: Solution slug must be derived from `key` field (e.g., `solar_control` → `/cristales/soluciones/solar-control`)
 - **REQ-008**: All UI text must be in Spanish (es-LA)
 - **REQ-009**: Preserve existing seed infrastructure for GlassSolutions
 - **REQ-010**: Solutions listing page must be static/ISR, not SSR

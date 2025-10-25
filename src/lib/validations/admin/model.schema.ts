@@ -83,8 +83,8 @@ const baseModelSchema = z
     basePrice: priceValidator.describe('Base price in tenant currency'),
 
     compatibleGlassTypeIds: z
-      .array(z.string().cuid('ID de tipo de vidrio inválido'))
-      .min(1, 'Debe seleccionar al menos un tipo de vidrio compatible')
+      .array(z.string().cuid('ID de tipo de cristal inválido'))
+      .min(1, 'Debe seleccionar al menos un tipo de cristal compatible')
       .describe('Array of compatible GlassType IDs'),
 
     costNotes: optionalSpanishText

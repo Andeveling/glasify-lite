@@ -8,7 +8,7 @@ import type { MaterialType } from '../_types/model.types';
 export const MATERIAL_BENEFITS: Record<MaterialType, string[]> = {
   ALUMINUM: [
     'Máxima resistencia estructural - Soporta grandes dimensiones sin deformarse',
-    'Perfiles delgados y estética moderna - Maximiza el área de vidrio',
+    'Perfiles delgados y estética moderna - Maximiza el área de cristal',
     'Durabilidad excepcional - Vida útil superior a 30 años',
     'Ideal para grandes dimensiones - Puertas corredizas hasta 6700mm',
   ],

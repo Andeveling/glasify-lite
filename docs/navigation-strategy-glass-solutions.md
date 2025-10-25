@@ -85,7 +85,7 @@ NavigationMenu.tsx (Client)
 
 #### Desde Página de Detalle de Modelo (/catalog/[modelId])
 - Agregar sección: **"Soluciones Aplicables"**
-- Mostrar soluciones que aplican a este vidrio
+- Mostrar soluciones que aplican a este cristal
 - Cards clickeables a detalles de solución
 
 #### Desde Página de Cotización (/quote)
@@ -213,7 +213,7 @@ Página Listado (/glasses/solutions)
 3. Clicks en "Soluciones"
 4. Ve listado de 8 soluciones (grid)
 5. Clicks en "Control Solar"
-6. Ve detalle con tipos de vidrio y ratings
+6. Ve detalle con tipos de cristal y ratings
 7. Clicks en "Volver a soluciones"
 8. Vuelve al listado
 ```

@@ -525,7 +525,7 @@ CREATE INDEX "Model_type_idx" ON "Model"("type");
     "id": "fixed-window-simple",
     "name": "fixed-window-simple",
     "nameEs": "Ventana Fija Simple",
-    "description": "Ventana fija rectangular con marco y vidrio",
+    "description": "Ventana fija rectangular con marco y cristal",
     "type": "fixed_window"
   },
   "dimensions": {

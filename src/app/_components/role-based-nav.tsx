@@ -49,7 +49,7 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
         label: 'Dashboard',
       },
       {
-        description: 'Gestionar modelos y precios de vidrio',
+        description: 'Gestionar modelos y precios de cristal',
         href: '/admin/models',
         icon: 'Package',
         label: 'Modelos',
@@ -87,7 +87,7 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
         routes: ['/catalog'],
       },
       {
-        description: 'Descubrir soluciones de vidrio especializadas',
+        description: 'Descubrir soluciones de cristal especializadas',
         href: '/glasses/solutions',
         icon: 'Glasses',
         label: 'Soluciones',
@@ -107,7 +107,7 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
         routes: ['/catalog'],
       },
       {
-        description: 'Descubrir soluciones de vidrio especializadas',
+        description: 'Descubrir soluciones de cristal especializadas',
         href: '/glasses/solutions',
         icon: 'Glasses',
         label: 'Soluciones',
@@ -133,7 +133,7 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
       routes: ['/catalog'],
     },
     {
-      description: 'Descubrir soluciones de vidrio especializadas',
+      description: 'Descubrir soluciones de cristal especializadas',
       href: '/glasses/solutions',
       icon: 'Glasses',
       label: 'Soluciones',

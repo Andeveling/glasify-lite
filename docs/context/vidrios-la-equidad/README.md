@@ -49,7 +49,7 @@
 6. **Entrega**: Garantía y soporte postventa
 
 ### Valores Empresariales
-- **Misión**: Ofrecer soluciones en aluminio, vidrio y acero con innovación, calidad y excelencia
+- **Misión**: Ofrecer soluciones en aluminio, cristal y acero con innovación, calidad y excelencia
 - **Visión**: Ser empresa líder regional en fabricación e instalación de sistemas
 - **Compromiso**: Satisfacción del cliente, calidad garantizada, cumplimiento de plazos
 
@@ -57,8 +57,8 @@
 
 ## 🗂️ Preset de Datos
 
-**Nombre del preset**: `vidrios-la-equidad-colombia`  
-**Ubicación**: `/prisma/data/presets/vidrios-la-equidad-colombia.preset.ts`
+**Nombre del preset**: `cristales-la-equidad-colombia`  
+**Ubicación**: `/prisma/data/presets/cristales-la-equidad-colombia.preset.ts`
 
 ### Contenido del Preset
 
@@ -126,7 +126,7 @@
 
 ```bash
 # Cargar datos de Vidrios La Equidad
-pnpm seed --preset=vidrios-la-equidad-colombia
+pnpm seed --preset=cristales-la-equidad-colombia
 ```
 
 ### Configuración Requerida
@@ -143,10 +143,10 @@ TENANT_TIMEZONE="America/Bogota"
 ### Verificación Post-Seed
 
 1. Verificar proveedores creados (2)
-2. Verificar tipos de vidrio (10)
+2. Verificar tipos de cristal (10)
 3. Verificar modelos de ventanas (9)
 4. Verificar servicios (6)
-5. Verificar soluciones de vidrio (5)
+5. Verificar soluciones de cristal (5)
 
 ---
 
@@ -185,17 +185,17 @@ TENANT_TIMEZONE="America/Bogota"
 ## 📁 Archivos del Preset
 
 ```
-prisma/data/vidrios-la-equidad/
+prisma/data/cristales-la-equidad/
 ├── profile-suppliers.data.ts       # Proveedores de perfiles (2)
 ├── services.data.ts                # Servicios de instalación (6)
 ├── models-aluminum-sliding.data.ts # Ventanas corredizas aluminio (3)
 ├── models-aluminum-casement.data.ts # Ventanas abatibles aluminio (3)
 ├── models-pvc-deceuninck.data.ts   # Ventanas PVC Deceuninck (3)
-├── glass-types.data.ts             # Tipos de vidrio (10)
-└── glass-solutions.data.ts         # Soluciones de vidrio (5)
+├── glass-types.data.ts             # Tipos de cristal (10)
+└── glass-solutions.data.ts         # Soluciones de cristal (5)
 
 prisma/data/presets/
-└── vidrios-la-equidad-colombia.preset.ts # Preset principal
+└── cristales-la-equidad-colombia.preset.ts # Preset principal
 ```
 
 ---
@@ -213,10 +213,10 @@ prisma/data/presets/
 
 ## 📝 Notas Técnicas
 
-- **Códigos de vidrio**: Formato `VLE-XXX-YY` (Vidrios La Equidad + Tipo + Espesor)
+- **Códigos de cristal**: Formato `VLE-XXX-YY` (Vidrios La Equidad + Tipo + Espesor)
 - **Precios**: Con separadores de miles (e.g., 35_000)
 - **Moneda**: COP (Pesos Colombianos)
-- **Dimensiones**: Milímetros (mm) para vidrio
+- **Dimensiones**: Milímetros (mm) para cristal
 - **Área**: Metros cuadrados (m²) para precios
 - **Arquitectura**: Single-tenant (instancia dedicada)
 

@@ -17,7 +17,7 @@ Refactorizar el componente `GlassTypeForm` para aplicar principios SOLID, mejora
 ## 1. Requirements & Constraints
 
 **Requisitos del Sistema:**
-- **REQ-001**: Mantener toda la funcionalidad existente del formulario (crear/editar tipos de vidrio)
+- **REQ-001**: Mantener toda la funcionalidad existente del formulario (crear/editar tipos de cristal)
 - **REQ-002**: Preservar validación con React Hook Form + Zod
 - **REQ-003**: Mantener integración con tRPC para mutaciones
 - **REQ-004**: Soportar accordions con secciones: Basic Info, Thermal Properties, Solutions, Characteristics

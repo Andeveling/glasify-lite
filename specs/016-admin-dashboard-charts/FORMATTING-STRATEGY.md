@@ -275,9 +275,9 @@ export {
   formatNumber,            // Números con separadores
   formatPercent,           // Porcentajes
   
-  formatDimensions,        // Para vidrios: "2.500mm × 1.800mm"
-  formatArea,              // Para vidrios: "4,50 m²"
-  formatThickness,         // Para vidrios: "6mm"
+  formatDimensions,        // Para cristales: "2.500mm × 1.800mm"
+  formatArea,              // Para cristales: "4,50 m²"
+  formatThickness,         // Para cristales: "6mm"
 };
 ```
 

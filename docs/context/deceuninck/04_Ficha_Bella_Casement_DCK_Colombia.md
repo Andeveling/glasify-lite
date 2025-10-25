@@ -1295,10 +1295,10 @@ radiación UV.
 3, 4 y más cámaras para una mayor aislación.
 
 4. Vidrio (acristalamiento)
-Al ser una gran parte de la envoltura de su edificio, el vidrio es un elemento
+Al ser una gran parte de la envoltura de su edificio, el cristal es un elemento
 importante en su hogar.
 El  aislamiento  eficaz  del  sonido  y  el  calor  depende  en  gran  medida  de
-buenas elecciones que se hagan con respecto al vidrio.
+buenas elecciones que se hagan con respecto al cristal.
 
 5. Junquillo
 Con burletes coextruidos de fábrica.

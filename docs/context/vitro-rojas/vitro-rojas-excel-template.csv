@@ -61,7 +61,7 @@ Vidrio 5: Espesor (mm),6,6,6,6
 Vidrio 5: pricePerSqm (adicional USD/m²),18,18,18,18
 Vidrio 5: ¿Incluido en basePrice o adicional?,Adicional,Adicional,Adicional,Adicional
 ,,,,,
-¿Hay otros vidrios no mencionados?,Sí / No,Sí / No,Sí / No,Sí / No
+¿Hay otros cristales no mencionados?,Sí / No,Sí / No,Sí / No,Sí / No
 Si SÍ ¿Cuáles y precios?,Listar,Listar,Listar,Listar
 ,,,,,
 SERVICIOS ADICIONALES (Service),,,,,
@@ -71,7 +71,7 @@ Servicio 1: Unidad,sqm / ml / unit,sqm / ml / unit,sqm / ml / unit,sqm / ml / un
 Servicio 1: Tarifa,$ por unidad,$ por unidad,$ por unidad,$ por unidad
 Servicio 1: ¿Obligatorio u Opcional?,Obligatorio / Opcional,Obligatorio / Opcional,Obligatorio / Opcional,Obligatorio / Opcional
 ,,,,,
-Servicio 2: Nombre,Templado de vidrio,Templado de vidrio,Templado de vidrio,Templado de vidrio
+Servicio 2: Nombre,Templado de cristal,Templado de cristal,Templado de cristal,Templado de cristal
 Servicio 2: Tipo,area / perimeter / fixed,area / perimeter / fixed,area / perimeter / fixed,area / perimeter / fixed
 Servicio 2: Unidad,sqm / ml / unit,sqm / ml / unit,sqm / ml / unit,sqm / ml / unit
 Servicio 2: Tarifa,$ por unidad,$ por unidad,$ por unidad,$ por unidad

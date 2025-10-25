@@ -335,7 +335,7 @@ test.describe('Glass Suppliers CRUD', () => {
     await page.getByRole('button', { name: /eliminar/i }).click();
     
     // Verify error
-    await expect(page.getByText(/tiene tipos de vidrio asociados/i)).toBeVisible();
+    await expect(page.getByText(/tiene tipos de cristal asociados/i)).toBeVisible();
     await expect(page.getByRole('row', { name: /vitro/i })).toBeVisible();
   });
 });
@@ -486,7 +486,7 @@ const { createMutation, updateMutation } = useGlassSupplierMutations({
 if (await ctx.db.glassType.count({ where: { supplierId: input.id } }) > 0) {
   throw new TRPCError({
     code: 'BAD_REQUEST',
-    message: 'No se puede eliminar este proveedor porque tiene tipos de vidrio asociados.',
+    message: 'No se puede eliminar este proveedor porque tiene tipos de cristal asociados.',
   });
 }
 ```

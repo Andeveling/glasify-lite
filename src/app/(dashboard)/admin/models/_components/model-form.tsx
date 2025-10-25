@@ -31,7 +31,7 @@ const FIVE_MINUTES_MS = 300_000; // 5 minutes stale time for catalog data
 const modelFormSchema = z.object({
   accessoryPrice: z.number().min(0).optional().nullable(),
   basePrice: z.number().min(0),
-  compatibleGlassTypeIds: z.array(z.string()).min(1, 'Debe seleccionar al menos un tipo de vidrio'),
+  compatibleGlassTypeIds: z.array(z.string()).min(1, 'Debe seleccionar al menos un tipo de cristal'),
   costNotes: z.string().optional().nullable(),
   costPerMmHeight: z.number().min(0),
   costPerMmWidth: z.number().min(0),

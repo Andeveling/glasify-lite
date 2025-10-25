@@ -81,7 +81,7 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
       <Card>
         <CardHeader>
           <CardTitle>Filtros</CardTitle>
-          <CardDescription>Busca y filtra soluciones de vidrio</CardDescription>
+          <CardDescription>Busca y filtra soluciones de cristal</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-3">
           <div className="space-y-2">
@@ -237,7 +237,7 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
       <DeleteConfirmationDialog
         dependencies={[]}
         entityLabel={solutionToDelete?.name ?? ''}
-        entityName="solución de vidrio"
+        entityName="solución de cristal"
         loading={deleteMutation.isPending}
         onConfirm={handleConfirmDelete}
         onOpenChange={setDeleteDialogOpen}

@@ -138,7 +138,7 @@ export const glassTypeRouter = createTRPCRouter({
     if (existingByName) {
       throw new TRPCError({
         code: 'CONFLICT',
-        message: 'Ya existe un tipo de vidrio con este nombre',
+        message: 'Ya existe un tipo de cristal con este nombre',
       });
     }
 
@@ -253,7 +253,7 @@ export const glassTypeRouter = createTRPCRouter({
     if (!existing) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: 'Tipo de vidrio no encontrado',
+        message: 'Tipo de cristal no encontrado',
       });
     }
 
@@ -349,7 +349,7 @@ export const glassTypeRouter = createTRPCRouter({
       if (!glassType) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'Tipo de vidrio no encontrado',
+          message: 'Tipo de cristal no encontrado',
         });
       }
 
@@ -465,7 +465,7 @@ export const glassTypeRouter = createTRPCRouter({
     if (!existing) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: 'Tipo de vidrio no encontrado',
+        message: 'Tipo de cristal no encontrado',
       });
     }
 
@@ -480,7 +480,7 @@ export const glassTypeRouter = createTRPCRouter({
       if (existingByName) {
         throw new TRPCError({
           code: 'CONFLICT',
-          message: 'Ya existe un tipo de vidrio con este nombre',
+          message: 'Ya existe un tipo de cristal con este nombre',
         });
       }
     }

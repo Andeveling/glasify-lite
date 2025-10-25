@@ -1,10 +1,10 @@
 /**
  * Vitro Rojas - Glass Types
  *
- * Tipos de vidrio comunes en el mercado panameño.
+ * Tipos de cristal comunes en el mercado panameño.
  * Precios en USD según sistema de cotización Vitro Rojas.
  *
- * Adicionales por tipo de vidrio (sobre precio base de ventana):
+ * Adicionales por tipo de cristal (sobre precio base de ventana):
  * - Claro: Incluido en precio base
  * - Laminado: +$15 USD/m²
  * - Gris/Bronce: +$10 USD/m²
@@ -23,7 +23,7 @@
 import type { GlassTypeInput } from '../../factories/glass-type.factory';
 
 /**
- * Tipos de vidrio para uso general (económico)
+ * Tipos de cristal para uso general (económico)
  *
  * Aplicación: Ventanas residenciales estándar sin requerimientos especiales
  * Precios en USD/m² - Mercado Panamá
@@ -44,10 +44,10 @@ const generalPurposeGlassTypes: GlassTypeInput[] = [
 ];
 
 /**
- * Tipos de vidrio para seguridad (laminados y templados)
+ * Tipos de cristal para seguridad (laminados y templados)
  *
  * Aplicación: Áreas con riesgo de impacto, seguridad anti-robo
- * Precios en USD/m² - Mercado Panamá (premium sobre vidrio claro)
+ * Precios en USD/m² - Mercado Panamá (premium sobre cristal claro)
  *
  * Nota: Los espesores se redondean al entero más cercano
  * - Laminado 6.38mm (6+6) → 6mm
@@ -75,7 +75,7 @@ const securityGlassTypes: GlassTypeInput[] = [
 ];
 
 /**
- * Tipos de vidrio para aislamiento térmico y eficiencia energética (DVH)
+ * Tipos de cristal para aislamiento térmico y eficiencia energética (DVH)
  *
  * Aplicación: Áreas con aire acondicionado, reducción de consumo energético
  * Precios en USD/m² - Mercado Panamá (premium)
@@ -103,7 +103,7 @@ const insulationGlassTypes: GlassTypeInput[] = [
 ];
 
 /**
- * Tipos de vidrio decorativos (tintados y reflectivos)
+ * Tipos de cristal decorativos (tintados y reflectivos)
  *
  * Aplicación: Control solar, privacidad, estética
  * Precios en USD/m² - Mercado Panamá
@@ -140,7 +140,7 @@ const decorativeGlassTypes: GlassTypeInput[] = [
 ];
 
 /**
- * Todos los tipos de vidrio para Vitro Rojas
+ * Todos los tipos de cristal para Vitro Rojas
  * Total: 11 tipos (2 general + 3 security + 2 insulation + 4 decorative)
  */
 export const vitroRojasGlassTypes: GlassTypeInput[] = [

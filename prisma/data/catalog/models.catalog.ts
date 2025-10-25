@@ -38,11 +38,11 @@ export const deceuninckInouticS5500: ModelInput = {
   basePrice: 450_000, // COP base price
   compatibleGlassTypeIds: ['PLACEHOLDER'], // Will be populated during seeding
   costNotes:
-    'Sistema corredera premium con perfiles multicámara. Excelente hermeticidad y aislamiento. Compatible con vidrios de 4-30mm.',
+    'Sistema corredera premium con perfiles multicámara. Excelente hermeticidad y aislamiento. Compatible con cristales de 4-30mm.',
   costPerMmHeight: 95,
   costPerMmWidth: 120,
   glassDiscountHeightMm: 50,
-  glassDiscountWidthMm: 50, // Descuento para cálculo de vidrio
+  glassDiscountWidthMm: 50, // Descuento para cálculo de cristal
   maxHeightMm: 2400,
   maxWidthMm: 3000,
   minHeightMm: 600,
@@ -62,7 +62,7 @@ export const deceuninckZendowS4100: ModelInput = {
   basePrice: 350_000, // COP
   compatibleGlassTypeIds: ['PLACEHOLDER'],
   costNotes:
-    'Sistema corredera estándar con buen aislamiento. Compatible con vidrios de 4-24mm. Ideal para proyectos residenciales.',
+    'Sistema corredera estándar con buen aislamiento. Compatible con cristales de 4-24mm. Ideal para proyectos residenciales.',
   costPerMmHeight: 75,
   costPerMmWidth: 95,
   glassDiscountHeightMm: 45,
@@ -90,7 +90,7 @@ export const deceuninckElegantS8000: ModelInput = {
   basePrice: 520_000, // COP
   compatibleGlassTypeIds: ['PLACEHOLDER'],
   costNotes:
-    'Sistema oscilobatiente premium con cierre multipunto. Máxima hermeticidad y seguridad. Compatible con vidrios de 4-32mm. Herrajes alemanes de alta calidad.',
+    'Sistema oscilobatiente premium con cierre multipunto. Máxima hermeticidad y seguridad. Compatible con cristales de 4-32mm. Herrajes alemanes de alta calidad.',
   costPerMmHeight: 115,
   costPerMmWidth: 140,
   glassDiscountHeightMm: 40,
@@ -112,7 +112,7 @@ export const deceuninckElegantBatiente: ModelInput = {
   accessoryPrice: 75_000,
   basePrice: 380_000, // COP
   compatibleGlassTypeIds: ['PLACEHOLDER'],
-  costNotes: 'Ventana batiente con apertura hacia el exterior. Buena hermeticidad. Compatible con vidrios de 4-24mm.',
+  costNotes: 'Ventana batiente con apertura hacia el exterior. Buena hermeticidad. Compatible con cristales de 4-24mm.',
   costPerMmHeight: 85,
   costPerMmWidth: 105,
   glassDiscountHeightMm: 35,
@@ -140,7 +140,7 @@ export const aluminaKoncept100: ModelInput = {
   basePrice: 650_000, // COP
   compatibleGlassTypeIds: ['PLACEHOLDER'],
   costNotes:
-    'Sistema corredera/batiente/elevable. Espesor vidrio 8-25mm. Perfil 101.5mm, marco 125mm. Capacidad 200-220kg. Diseño moderno, alta hermeticidad, norma NSR-10.',
+    'Sistema corredera/batiente/elevable. Espesor cristal 8-25mm. Perfil 101.5mm, marco 125mm. Capacidad 200-220kg. Diseño moderno, alta hermeticidad, norma NSR-10.',
   costPerMmHeight: 125,
   costPerMmWidth: 155,
   glassDiscountHeightMm: 55,
@@ -163,7 +163,7 @@ export const aluminaKoncept70: ModelInput = {
   basePrice: 480_000, // COP
   compatibleGlassTypeIds: ['PLACEHOLDER'],
   costNotes:
-    'Puerta y ventana corredera. Espesor vidrio 6-15mm. Perfil 67mm, marco 95mm. Capacidad 160kg. Líneas suaves, buena atenuación acústica.',
+    'Puerta y ventana corredera. Espesor cristal 6-15mm. Perfil 67mm, marco 95mm. Capacidad 160kg. Líneas suaves, buena atenuación acústica.',
   costPerMmHeight: 90,
   costPerMmWidth: 115,
   glassDiscountHeightMm: 45,
@@ -186,7 +186,7 @@ export const aluminaKoncept50: ModelInput = {
   basePrice: 320_000, // COP
   compatibleGlassTypeIds: ['PLACEHOLDER'],
   costNotes:
-    'Ventana corredera/vidrio fijo. Espesor vidrio 4-10mm. Perfil 53mm, marco 77mm. Capacidad 30kg. Alta hermeticidad, cortes a 45°.',
+    'Ventana corredera/cristal fijo. Espesor cristal 4-10mm. Perfil 53mm, marco 77mm. Capacidad 30kg. Alta hermeticidad, cortes a 45°.',
   costPerMmHeight: 65,
   costPerMmWidth: 85,
   glassDiscountHeightMm: 35,
@@ -209,7 +209,7 @@ export const aluminaKoncept40: ModelInput = {
   basePrice: 580_000, // COP
   compatibleGlassTypeIds: ['PLACEHOLDER'],
   costNotes:
-    'Oscilobatiente/batiente/proyectante. Espesor vidrio 4-10mm. Perfil 47-88mm, marco 88-100mm. Cierre multipunto, sellos EPDM, sistema europeo.',
+    'Oscilobatiente/batiente/proyectante. Espesor cristal 4-10mm. Perfil 47-88mm, marco 88-100mm. Cierre multipunto, sellos EPDM, sistema europeo.',
   costPerMmHeight: 120,
   costPerMmWidth: 145,
   glassDiscountHeightMm: 40,
@@ -236,7 +236,7 @@ export const aluminaSuperior80: ModelInput = {
   basePrice: 420_000, // COP
   compatibleGlassTypeIds: ['PLACEHOLDER'],
   costNotes:
-    'Puerta/ventana corredera. Espesor vidrio 6-12mm. Perfil 83mm, marco 70-85mm. Capacidad 125kg. Perfiles redondeados, cierre automático.',
+    'Puerta/ventana corredera. Espesor cristal 6-12mm. Perfil 83mm, marco 70-85mm. Capacidad 125kg. Perfiles redondeados, cierre automático.',
   costPerMmHeight: 85,
   costPerMmWidth: 105,
   glassDiscountHeightMm: 42,
@@ -259,7 +259,7 @@ export const aluminaSuperior50: ModelInput = {
   basePrice: 280_000, // COP
   compatibleGlassTypeIds: ['PLACEHOLDER'],
   costNotes:
-    'Ventana corredera. Espesor vidrio 6-10mm. Perfil 53mm, marco 55mm. Corte a 90°, sistema simple, uso residencial.',
+    'Ventana corredera. Espesor cristal 6-10mm. Perfil 53mm, marco 55mm. Corte a 90°, sistema simple, uso residencial.',
   costPerMmHeight: 60,
   costPerMmWidth: 75,
   glassDiscountHeightMm: 30,

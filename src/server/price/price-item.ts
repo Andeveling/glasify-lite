@@ -79,9 +79,9 @@ export type PriceItemCalculationInput = {
     accessoryPrice?: Decimal | number | string | null;
   };
   /**
-   * Configuración opcional de vidrio. Cuando se provee, el cálculo incluye:
-   *  - Descuentos fijos por lado para el área facturable del vidrio (en mm)
-   *  - Precio adicional por m² de vidrio facturable
+   * Configuración opcional de cristal. Cuando se provee, el cálculo incluye:
+   *  - Descuentos fijos por lado para el área facturable del cristal (en mm)
+   *  - Precio adicional por m² de cristal facturable
    */
   glass?: {
     pricePerSqm: Decimal | number | string;
@@ -123,7 +123,7 @@ export const calculatePriceItem = (input: PriceItemCalculationInput): PriceItemC
   const basePrice = toDecimal(input.model.basePrice);
   const widthCost = toDecimal(input.model.costPerMmWidth).mul(widthMm);
   const heightCost = toDecimal(input.model.costPerMmHeight).mul(heightMm);
-  // Cálculo opcional de vidrio
+  // Cálculo opcional de cristal
   let glassPriceDecimal = new Decimal(0);
   if (input.glass && toDecimal(input.glass.pricePerSqm).greaterThan(0)) {
     const dW = Math.max(input.glass.discountWidthMm ?? 0, 0);

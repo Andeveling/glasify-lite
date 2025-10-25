@@ -35,7 +35,7 @@ test.describe('Quote Navigation from Cart', () => {
     await page.getByLabel(/alto/i).fill('1500');
 
     // Select glass type (if dropdown exists)
-    const glassTypeSelect = page.getByLabel(/tipo de vidrio/i);
+    const glassTypeSelect = page.getByLabel(/tipo de cristal/i);
     if (await glassTypeSelect.isVisible()) {
       await glassTypeSelect.click();
       await page.getByRole('option').first().click();

@@ -110,7 +110,7 @@
       "uValue": 5.8,
       "solarFactor": 0.86,
       "lightTransmission": 0.89,
-      "description": "Vidrio flotado transparente estándar con alta transparencia. Substrato base para unidades de vidrio laminado y aislante."
+      "description": "Vidrio flotado transparente estándar con alta transparencia. Substrato base para unidades de cristal laminado y aislante."
     },
     {
       "code": "CLEAR-8MM",
@@ -198,7 +198,7 @@
       "uValue": 5.75,
       "solarFactor": 0.84,
       "lightTransmission": 0.87,
-      "description": "Dos láminas de vidrio de 3mm unidas con intercapa de PVB. Proporciona seguridad, protección UV y aislamiento acústico."
+      "description": "Dos láminas de cristal de 3mm unidas con intercapa de PVB. Proporciona seguridad, protección UV y aislamiento acústico."
     },
     {
       "code": "LAMINATED-8.38",
@@ -209,7 +209,7 @@
       "uValue": 5.65,
       "solarFactor": 0.82,
       "lightTransmission": 0.86,
-      "description": "Dos láminas de vidrio de 4mm con intercapa de PVB para mayor seguridad y rendimiento acústico."
+      "description": "Dos láminas de cristal de 4mm con intercapa de PVB para mayor seguridad y rendimiento acústico."
     },
     {
       "code": "LAMINATED-10.38",
@@ -286,7 +286,7 @@
       "uValue": 1.68,
       "solarFactor": 0.26,
       "lightTransmission": 0.42,
-      "description": "Unidad de vidrio aislante de doble acristalamiento con recubrimiento bajo-E. Excelente aislamiento térmico y acústico para edificios certificados LEED."
+      "description": "Unidad de cristal aislante de doble acristalamiento con recubrimiento bajo-E. Excelente aislamiento térmico y acústico para edificios certificados LEED."
     },
     {
       "code": "N70/38-IGU",

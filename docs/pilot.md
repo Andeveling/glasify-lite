@@ -137,7 +137,7 @@ El alcance es incremental para asegurar sostenibilidad con un equipo de 1 dev.
 
 ## Requerimientos previos e integraciones
 
-- Datos mínimos: productos/modelos, límites de dimensiones, vidrios compatibles, reglas de precio, servicios.
+- Datos mínimos: productos/modelos, límites de dimensiones, cristales compatibles, reglas de precio, servicios.
 - Accesos (si CRM): sandbox/API key de HubSpot, Salesforce, Zoho o PipeDrive.
 - Legales: NDA, DPA, consentimiento de geolocalización cuando aplique.
 

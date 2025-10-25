@@ -14,7 +14,7 @@ import { auth } from '@/server/auth';
 import { getTenantConfig } from '@/server/utils/tenant';
 
 export const metadata: Metadata = {
-  description: 'Panel de control para la gestión de vidrios y cotizaciones',
+  description: 'Panel de control para la gestión de cristales y cotizaciones',
   title: 'Dashboard - Glasify',
 };
 
@@ -227,7 +227,7 @@ function QuickActions() {
                 <Plus className="h-4 w-4" />
                 <span className="font-medium">Crear Nuevo Modelo</span>
               </div>
-              <span className="text-muted-foreground text-sm">Agregar un modelo de vidrio al catálogo</span>
+              <span className="text-muted-foreground text-sm">Agregar un modelo de cristal al catálogo</span>
             </Link>
           </Button>
 

@@ -125,7 +125,7 @@ export const glassolutionsPublicQueries = createTRPCRouter({
 
         if (!solution) {
           logger.warn('Glass solution not found by slug', { slug: input.slug });
-          throw new Error('La solución de vidrio solicitada no existe.');
+          throw new Error('La solución de cristal solicitada no existe.');
         }
 
         // Transform the related glass types

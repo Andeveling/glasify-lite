@@ -16,7 +16,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              &ldquo;Cotización inteligente de productos de vidrio para fabricantes y distribuidores.&rdquo;
+              &ldquo;Cotización inteligente de productos de cristal para fabricantes y distribuidores.&rdquo;
             </p>
             <footer className="text-sm">Glasify Lite</footer>
           </blockquote>
@@ -31,7 +31,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <Link className="mx-auto" href="/catalog">
               <span className="font-bold text-2xl">Glasify</span>
             </Link>
-            <p className="text-muted-foreground text-sm">Cotizador inteligente de vidrios</p>
+            <p className="text-muted-foreground text-sm">Cotizador inteligente de cristales</p>
           </div>
 
           {/* Auth form content in card */}

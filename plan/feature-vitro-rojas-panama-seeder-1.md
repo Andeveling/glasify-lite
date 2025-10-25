@@ -22,7 +22,7 @@ Crear preset completo de datos para **Vitro Rojas S.A.**, fabricante de ventanas
    - ✅ `tenant-config.data.ts` - Configuración de negocio (referencia)
    - ✅ `profile-suppliers.data.ts` - Extralum (único proveedor)
    - ✅ `glass-suppliers.data.ts` - 2 proveedores locales (referencia)
-   - ✅ `glass-types.data.ts` - 11 tipos de vidrio (USD)
+   - ✅ `glass-types.data.ts` - 11 tipos de cristal (USD)
    - ✅ `glass-solutions.data.ts` - 4 soluciones
    - ✅ `models-sliding.data.ts` - 6 modelos corredizos
    - ✅ `models-casement.data.ts` - 3 modelos abatibles
@@ -42,10 +42,10 @@ Crear preset completo de datos para **Vitro Rojas S.A.**, fabricante de ventanas
 ### Contenido del Preset
 
 - **1** proveedor de perfiles (Extralum)
-- **11** tipos de vidrio (2 general + 3 security + 2 insulation + 4 decorative)
+- **11** tipos de cristal (2 general + 3 security + 2 insulation + 4 decorative)
 - **9** modelos (6 corredizos + 3 abatibles)
 - **5** servicios (instalación, sellado, desmonte, reposición, protección)
-- **4** soluciones de vidrio
+- **4** soluciones de cristal
 
 ### Cómo Usar
 
@@ -75,10 +75,10 @@ pnpm db:studio
 ### Requisitos de Negocio
 
 - **REQ-001**: Configurar tenant para mercado panameño (USD, es-PA, America/Panama)
-- **REQ-002**: Implementar sistema de cotización de Vitro Rojas basado en m² con adicionales por tipo de vidrio
+- **REQ-002**: Implementar sistema de cotización de Vitro Rojas basado en m² con adicionales por tipo de cristal
 - **REQ-003**: Soportar sistemas Corredizo y Abatible con configuraciones de 2, 3 y 4 paños
 - **REQ-004**: Usar perfiles de aluminio Extralum como único proveedor
-- **REQ-005**: Incluir vidrios comunes del mercado panameño (mínimo 2 por solución)
+- **REQ-005**: Incluir cristales comunes del mercado panameño (mínimo 2 por solución)
 - **REQ-006**: Implementar servicios basados en fórmulas de corte de Vitro Rojas
 
 ### Requisitos Técnicos
@@ -101,7 +101,7 @@ pnpm db:studio
   - 3 paños: $150 USD/m²
   - 4 paños: $170 USD/m²
 
-- **REQ-014**: Adicionales por tipo de vidrio:
+- **REQ-014**: Adicionales por tipo de cristal:
   - Claro: Incluido en precio base
   - Laminado: +$15 USD/m²
   - Gris o Bronce: +$10 USD/m²
@@ -188,15 +188,15 @@ pnpm db:studio
 
 ### Phase 2: Tipos de Vidrio (GlassTypes)
 
-**GOAL-002**: Definir tipos de vidrio compatibles con sistemas de Vitro Rojas
+**GOAL-002**: Definir tipos de cristal compatibles con sistemas de Vitro Rojas
 
 | Task     | Description                                                                                                                                   | Completed | Date |
 | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ---- |
-| TASK-004 | Crear archivo `prisma/data/vitro-rojas/glass-types.data.ts` con tipos de vidrio para Solución General: Claro 6mm ($28/m²), Claro 8mm ($35/m²) |           |      |
-| TASK-005 | Agregar tipos de vidrio para Solución Seguridad: Laminado 6.38mm ($43/m²), Laminado 8.38mm ($52/m²)                                           |           |      |
-| TASK-006 | Agregar tipos de vidrio para Solución Térmica: DVH 16mm ($85/m²), DVH 18.5mm ($92/m²)                                                         |           |      |
-| TASK-007 | Agregar tipos de vidrio decorativos: Gris 6mm ($38/m²), Bronce 6mm ($38/m²), Reflectivo 6mm ($43/m²), Laminado Gris 6.38mm ($61/m²)           |           |      |
-| TASK-008 | Validar que cada solución (general, security, insulation, decorative) tenga mínimo 2 tipos de vidrio                                          |           |      |
+| TASK-004 | Crear archivo `prisma/data/vitro-rojas/glass-types.data.ts` con tipos de cristal para Solución General: Claro 6mm ($28/m²), Claro 8mm ($35/m²) |           |      |
+| TASK-005 | Agregar tipos de cristal para Solución Seguridad: Laminado 6.38mm ($43/m²), Laminado 8.38mm ($52/m²)                                           |           |      |
+| TASK-006 | Agregar tipos de cristal para Solución Térmica: DVH 16mm ($85/m²), DVH 18.5mm ($92/m²)                                                         |           |      |
+| TASK-007 | Agregar tipos de cristal decorativos: Gris 6mm ($38/m²), Bronce 6mm ($38/m²), Reflectivo 6mm ($43/m²), Laminado Gris 6.38mm ($61/m²)           |           |      |
+| TASK-008 | Validar que cada solución (general, security, insulation, decorative) tenga mínimo 2 tipos de cristal                                          |           |      |
 
 ### Phase 3: Modelos de Ventanas Corredizas
 
@@ -211,7 +211,7 @@ pnpm db:studio
 | TASK-013 | Agregar modelo "Corredizo Europa Clásica 2 Paños (OX)" con basePrice: $140/m², minWidth: 804mm, maxWidth: 3200mm, minHeight: 640mm, maxHeight: 2800mm                                  |           |      |
 | TASK-014 | Agregar modelo "Corredizo Europa Clásica 3 Paños (XOX)" con basePrice: $160/m², dimensiones Europa                                                                                     |           |      |
 | TASK-015 | Agregar modelo "Corredizo Europa Clásica 4 Paños (OXXO)" con basePrice: $175/m², dimensiones Europa                                                                                    |           |      |
-| TASK-016 | Vincular compatibleGlassTypeIds con vidrios de 6-8mm (simple) y DVH 16-18.5mm para todos los modelos corredizos                                                                        |           |      |
+| TASK-016 | Vincular compatibleGlassTypeIds con cristales de 6-8mm (simple) y DVH 16-18.5mm para todos los modelos corredizos                                                                        |           |      |
 
 ### Phase 4: Modelos de Ventanas Abatibles
 
@@ -224,7 +224,7 @@ pnpm db:studio
 | TASK-019 | Agregar modelo "Abatible Europa 3 Hojas (XOX)" con basePrice: $150/m², dimensiones ajustadas para 3 hojas                                              |           |      |
 | TASK-020 | Agregar modelo "Abatible Europa 4 Hojas (XXOO)" con basePrice: $170/m², dimensiones para 4 hojas                                                       |           |      |
 | TASK-021 | Configurar glassDiscounts según fórmula marco perimetral (63mm alto/ancho) para contramarco EX-1385                                                    |           |      |
-| TASK-022 | Vincular compatibleGlassTypeIds con vidrios 6-12mm (simple/templado) y DVH 12.5-18.5mm                                                                 |           |      |
+| TASK-022 | Vincular compatibleGlassTypeIds con cristales 6-12mm (simple/templado) y DVH 12.5-18.5mm                                                                 |           |      |
 
 ### Phase 5: Servicios Adicionales
 
@@ -236,7 +236,7 @@ pnpm db:studio
 | TASK-024 | Agregar servicio "Instalación de Ventanas" (type: area, rate: $15 USD/m², unit: sqm, notes: "Incluye colocación y nivelación de ventanas")             |           |      |
 | TASK-025 | Agregar servicio "Sellado Perimetral" (type: perimeter, rate: $3.50 USD/ml, unit: ml, notes: "Sellado con silicona estructural")                       |           |      |
 | TASK-026 | Agregar servicio "Desmonte de Ventana Existente" (type: fixed, rate: $25 USD/unidad, unit: unit, notes: "Retiro de ventana antigua, incluye limpieza") |           |      |
-| TASK-027 | Agregar servicio "Servicio de Reposición" (type: fixed, rate: $35 USD/unidad, unit: unit, notes: "Reposición de vidrio o componentes dañados")         |           |      |
+| TASK-027 | Agregar servicio "Servicio de Reposición" (type: fixed, rate: $35 USD/unidad, unit: unit, notes: "Reposición de cristal o componentes dañados")         |           |      |
 | TASK-028 | Agregar servicio "Protección para Obra" (type: area, rate: $2.50 USD/m², unit: sqm, notes: "Protección con film durante construcción")                 |           |      |
 
 ### Phase 6: Soluciones de Vidrio
@@ -275,7 +275,7 @@ pnpm db:studio
 | TASK-044 | Validar que cada modelo tiene mínimo 2 GlassTypes compatibles                                                               |           |      |
 | TASK-045 | Validar que se crearon 5 servicios (Instalación, Sellado Perimetral, Desmonte, Reposición, Protección)                      |           |      |
 | TASK-046 | Validar que se crearon 4 GlassSolutions con sus respectivos GlassTypes vinculados                                           |           |      |
-| TASK-047 | Verificar que precios coinciden con sistema de Vitro Rojas ($130-$170 base + adicionales por tipo de vidrio)                |           |      |
+| TASK-047 | Verificar que precios coinciden con sistema de Vitro Rojas ($130-$170 base + adicionales por tipo de cristal)                |           |      |
 | TASK-048 | Crear archivo `docs/seeders/vitro-rojas-panama.md` documentando estructura del preset y cómo extenderlo para otros clientes |           |      |
 | TASK-049 | Actualizar `README.md` con ejemplo de uso: `pnpm seed --preset=vitro-rojas-panama`                                          |           |      |
 
@@ -292,7 +292,7 @@ pnpm db:studio
   - **Razón descartada**: Vitro Rojas opera 100% en USD, conversión añade complejidad innecesaria
 
 - **ALT-003**: Crear modelos genéricos sin especificaciones técnicas Extralum
-  - **Razón descartada**: Perderíamos restricciones reales de dimensiones, espesores de vidrio compatibles
+  - **Razón descartada**: Perderíamos restricciones reales de dimensiones, espesores de cristal compatibles
 
 - **ALT-004**: Hardcodear IDs de GlassTypes en modelos
   - **Razón descartada**: No es idempotente, requiere conocer IDs generados previamente
@@ -335,12 +335,12 @@ pnpm db:studio
 
 - **FILE-001**: `prisma/data/vitro-rojas/tenant-config.data.ts` - Configuración de tenant para Panamá
 - **FILE-002**: `prisma/data/vitro-rojas/profile-suppliers.data.ts` - Datos de Extralum
-- **FILE-003**: `prisma/data/vitro-rojas/glass-suppliers.data.ts` - Proveedores de vidrio en Panamá
-- **FILE-004**: `prisma/data/vitro-rojas/glass-types.data.ts` - Tipos de vidrio del mercado panameño
+- **FILE-003**: `prisma/data/vitro-rojas/glass-suppliers.data.ts` - Proveedores de cristal en Panamá
+- **FILE-004**: `prisma/data/vitro-rojas/glass-types.data.ts` - Tipos de cristal del mercado panameño
 - **FILE-005**: `prisma/data/vitro-rojas/models-sliding.data.ts` - Modelos de sistemas corredizos
 - **FILE-006**: `prisma/data/vitro-rojas/models-casement.data.ts` - Modelos de sistemas abatibles
 - **FILE-007**: `prisma/data/vitro-rojas/services.data.ts` - Servicios de corte e instalación
-- **FILE-008**: `prisma/data/vitro-rojas/glass-solutions.data.ts` - Soluciones de vidrio típicas
+- **FILE-008**: `prisma/data/vitro-rojas/glass-solutions.data.ts` - Soluciones de cristal típicas
 - **FILE-009**: `prisma/data/presets/vitro-rojas-panama.preset.ts` - Preset completo ejecutable
 - **FILE-010**: `docs/seeders/vitro-rojas-panama.md` - Documentación del preset
 
@@ -390,7 +390,7 @@ Los seeders son scripts de datos, no lógica de negocio. La validación se hace 
 
 - **TEST-004**: Validar GlassTypes creados
   - **Query**: `await prisma.glassType.count()`
-  - **Expect**: Mínimo 9 tipos de vidrio (2 por solución × 4 soluciones + extras)
+  - **Expect**: Mínimo 9 tipos de cristal (2 por solución × 4 soluciones + extras)
   - **Expect**: Todos los precios en USD (no COP)
 
 - **TEST-005**: Validar Models creados
@@ -449,7 +449,7 @@ Los seeders son scripts de datos, no lógica de negocio. La validación se hace 
   - **Mitigación**: Documentar en notas de servicios que son valores de referencia
   - **Impacto**: Bajo - son guías, no valores exactos
 
-- **RISK-004**: Precios de vidrio en Panamá pueden diferir de fuentes consultadas
+- **RISK-004**: Precios de cristal en Panamá pueden diferir de fuentes consultadas
   - **Mitigación**: Usar precios de referencia, Vitro Rojas puede actualizarlos post-seed
   - **Impacto**: Bajo - datos son base, no valores contractuales
 
@@ -475,7 +475,7 @@ Los seeders son scripts de datos, no lógica de negocio. La validación se hace 
   - **Validación**: Interpretación de fórmulas de Vitro Rojas
 
 - **ASSUMPTION-006**: DVH (Doble Vidrio Hermético) es equivalente a "Insulated Glass Unit"
-  - **Validación**: Terminología estándar en industria del vidrio
+  - **Validación**: Terminología estándar en industria del cristal
 
 - **ASSUMPTION-007**: Locale `es-PA` es válido para formateo de fechas/números en Panamá
   - **Validación**: Estándar BCP 47 para español de Panamá
@@ -501,21 +501,21 @@ Los seeders son scripts de datos, no lógica de negocio. La validación se hace 
 - **SCHEMA-001**: `prisma/schema.prisma` - Modelo de datos completo
   - TenantConfig (singleton)
   - ProfileSupplier (fabricantes de perfiles)
-  - GlassSupplier (proveedores de vidrio)
+  - GlassSupplier (proveedores de cristal)
   - GlassCharacteristic (características técnicas)
-  - GlassSolution (soluciones de vidrio)
-  - GlassType (tipos específicos de vidrio)
+  - GlassSolution (soluciones de cristal)
+  - GlassType (tipos específicos de cristal)
   - Model (modelos de ventanas/puertas)
   - Service (servicios adicionales)
 
 ### Factories Existentes
 
 - **FACTORY-001**: `prisma/factories/model.factory.ts` - Validación de modelos
-- **FACTORY-002**: `prisma/factories/glass-type.factory.ts` - Validación de tipos de vidrio
+- **FACTORY-002**: `prisma/factories/glass-type.factory.ts` - Validación de tipos de cristal
 - **FACTORY-003**: `prisma/factories/service.factory.ts` - Validación de servicios
 - **FACTORY-004**: `prisma/factories/glass-solution.factory.ts` - Validación de soluciones
 - **FACTORY-005**: `prisma/factories/profile-supplier.factory.ts` - Validación de proveedores de perfiles
-- **FACTORY-006**: `prisma/factories/glass-supplier.factory.ts` - Validación de proveedores de vidrio
+- **FACTORY-006**: `prisma/factories/glass-supplier.factory.ts` - Validación de proveedores de cristal
 
 ### Presets de Referencia
 

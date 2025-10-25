@@ -32,8 +32,8 @@ const modelFormSchema = z
       .min(0, 'El precio base debe ser mayor o igual a 0')
       .max(MAX_PRICE, `El precio base no debe exceder ${MAX_PRICE.toLocaleString()}`),
     compatibleGlassTypeIds: z
-      .array(z.string().cuid('ID del tipo de vidrio debe ser válido'))
-      .min(1, 'Debe seleccionar al menos un tipo de vidrio compatible'),
+      .array(z.string().cuid('ID del tipo de cristal debe ser válido'))
+      .min(1, 'Debe seleccionar al menos un tipo de cristal compatible'),
     costPerMmHeight: z
       .number()
       .min(0, 'El costo por mm de altura debe ser mayor o igual a 0')
@@ -175,8 +175,8 @@ export function ModelForm({ modelData, onSuccess, onCancel }: ModelFormProps) {
         <CardTitle>{isEditing ? 'Editar Modelo' : 'Crear Nuevo Modelo'}</CardTitle>
         <CardDescription>
           {isEditing
-            ? 'Modifica los datos del modelo de vidrio existente'
-            : 'Ingresa los datos del nuevo modelo de vidrio'}
+            ? 'Modifica los datos del modelo de cristal existente'
+            : 'Ingresa los datos del nuevo modelo de cristal'}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -235,7 +235,7 @@ function BasicInfoSection({
             <FormControl>
               <Input placeholder="ej. Vidrio Templado 6mm" {...field} />
             </FormControl>
-            <FormDescription>Nombre descriptivo del modelo de vidrio</FormDescription>
+            <FormDescription>Nombre descriptivo del modelo de cristal</FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -315,7 +315,7 @@ function GlassTypesSection({ form }: { form: ModelFormApi }) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Tipos de Vidrio</FormLabel>
-            <FormDescription>Selecciona los tipos de vidrio compatibles con este modelo (mínimo 1)</FormDescription>
+            <FormDescription>Selecciona los tipos de cristal compatibles con este modelo (mínimo 1)</FormDescription>
             <div className="grid grid-cols-1 gap-2">
               {MOCK_GLASS_TYPES.map((glassType) => (
                 <label

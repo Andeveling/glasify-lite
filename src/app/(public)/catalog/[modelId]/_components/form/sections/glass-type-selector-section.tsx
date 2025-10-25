@@ -107,7 +107,7 @@ export function GlassTypeSelectorSection({
                     <p className="font-bold text-2xl text-purple-600 dark:text-purple-400">
                       {formatCurrency(selectedGlassType.pricePerSqm * glassArea)}
                     </p>
-                    <p className="text-muted-foreground text-xs">total vidrio</p>
+                    <p className="text-muted-foreground text-xs">total cristal</p>
                   </>
                 ) : (
                   <>

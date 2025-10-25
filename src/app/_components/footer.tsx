@@ -20,7 +20,7 @@ export function Footer({ variant = 'full', className }: FooterProps) {
             <Package aria-hidden="true" className="h-4 w-4 text-primary" />
             <span>© {CURRENT_YEAR} Glasify Lite</span>
             <span>•</span>
-            <span>Cotizador inteligente de vidrios</span>
+            <span>Cotizador inteligente de cristales</span>
           </div>
         </div>
       </footer>
@@ -39,7 +39,7 @@ export function Footer({ variant = 'full', className }: FooterProps) {
             </div>
 
             <p className="mt-2 max-w-md text-muted-foreground text-sm">
-              Cotizador inteligente de vidrios para profesionales y clientes. Calcula precios en tiempo real con los
+              Cotizador inteligente de cristales para profesionales y clientes. Calcula precios en tiempo real con los
               mejores modelos disponibles en el mercado.
             </p>
 

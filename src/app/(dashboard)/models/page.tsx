@@ -12,7 +12,7 @@ import { auth } from '@/server/auth';
 import { ModelsTable } from './_components/models-table';
 
 export const metadata: Metadata = {
-  description: 'Administra los modelos de vidrio disponibles en el catálogo',
+  description: 'Administra los modelos de cristal disponibles en el catálogo',
   title: 'Gestión de Modelos - Glasify',
 };
 
@@ -116,7 +116,7 @@ function ModelsPageContent() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-bold text-2xl">Gestión de Modelos</h1>
-          <p className="text-muted-foreground">Administra los modelos de vidrio disponibles en tu catálogo</p>
+          <p className="text-muted-foreground">Administra los modelos de cristal disponibles en tu catálogo</p>
         </div>
         <Button onClick={handleCreateModel}>
           <Plus className="mr-2 h-4 w-4" />

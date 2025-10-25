@@ -49,7 +49,7 @@ Acristalamiento
 •  Unión mediante escuadras.
 •  Hueco de Vidrio 10 y 22 mm.
 
-•  Espesor  máximo  de  vidrio  o  paneles
+•  Espesor  máximo  de  cristal  o  paneles
 22  mm  y  mínimo  1  mm  (según  tabla  de
 acristalamiento).
 
@@ -57,7 +57,7 @@ Monolítico
 
 Doble
 
-Triple vidrio
+Triple cristal
 
 Sección perimetral de 70 mm con premarco y solape
 
@@ -112,12 +112,12 @@ Espesor 1.4 – 1.6 mm.
 
 Hueco de acristalamiento
 
-De 10 y 22 mm (galce de vidrio de alto 15 mm).
+De 10 y 22 mm (galce de cristal de alto 15 mm).
 
 Perfiles especiales
 
 Marcos de 2 y 3 carriles. Hoja con refuerzo.
-Perfil de cruce de 4 hojas. Perfil reductor de vidrio.
+Perfil de cruce de 4 hojas. Perfil reductor de cristal.
 
 Uso
 
@@ -154,13 +154,13 @@ BY CARBONEPerimetral de 70 mmTipos de apertura
 3 hojas
 en 3 carriles
 
-2 hojas + vidrio fijo
+2 hojas + cristal fijo
 inferior
 
-2 hojas + vidrio
+2 hojas + cristal
 fijo superior
 
-2 hojas + vidrios
+2 hojas + cristales
 laterales
 
 4 hojas
@@ -224,7 +224,7 @@ Vidrio (Características, RW)
 (RW)
 
 U H,V
-Transmitancia térmica del vidrio
+Transmitancia térmica del cristal
 
 U H
 Transmitancia térmica de la ventana
@@ -973,7 +973,7 @@ Cruce central 4 hojas, ancho 28 mm
 
 31.4
 
-Reductor de hueco de vidrio de 22 - 10 mm
+Reductor de hueco de cristal de 22 - 10 mm
 
 23
 
@@ -1089,7 +1089,7 @@ LONGITUD 5.85 MTS
 
 *Consultar disponibilidad de diferentes acabados.
 
-Reductor de hueco de vidrio de 22 - 10 mm
+Reductor de hueco de cristal de 22 - 10 mm
 
 Código: U012
 Perimetro Total (mm): 133
@@ -4930,7 +4930,7 @@ Medida
 
 •  Hechas de material resistente a selladores. La forma especial de la superficie y el
 fondo sólido lo hacen idealmente adecuado para diferentes propósitos. El diseño
-de los bloques garantizan el posicionamiento de los vidrios en la instalación.
+de los bloques garantizan el posicionamiento de los cristales en la instalación.
 
 •  Cada bloque tiene una capacidad de carga de 300 Kg.
 
@@ -5913,7 +5913,7 @@ resistente a los rayos UV.
 •  Anti-envejecimiento, usado hasta 7 años.
 •  Más resistente que la pantalla de insectos de fibra de
 
-vidrio, resistente al desgarro.
+cristal, resistente al desgarro.
 
 MATERIAL PP + PE
 
@@ -6543,7 +6543,7 @@ Acristalamiento
 •  Unión mediante escuadras.
 •  Hueco de Vidrio 10 mm.
 
-•  Espesor  máximo  de  vidrio  o  paneles
+•  Espesor  máximo  de  cristal  o  paneles
 10  mm  y  mínimo  2  mm  (según  tabla  de
 acristalamiento).
 
@@ -6598,7 +6598,7 @@ Espesor 1,2 - 1,4 mm.
 
 Hueco de acristalamiento
 
-De 10 mm (galce de vidrio de alto 15 mm).
+De 10 mm (galce de cristal de alto 15 mm).
 
 Uso
 
@@ -6633,13 +6633,13 @@ BY CARBONEPerimetral de 60 mmTipos de apertura
 3 hojas
 en 2 carriles
 
-2 hojas + vidrio fijo
+2 hojas + cristal fijo
 inferior
 
-2 hojas + vidrio
+2 hojas + cristal
 fijo superior
 
-2 hojas + vidrios
+2 hojas + cristales
 laterales
 
 4 hojas
@@ -6725,7 +6725,7 @@ Vidrio (Características, RW)
 (RW)
 
 U H,V
-Transmitancia térmica del vidrio
+Transmitancia térmica del cristal
 
 U H
 Transmitancia térmica de la ventana
@@ -9239,7 +9239,7 @@ Medida
 
 •  Hechas de material resistente a selladores. La forma especial de la superficie y el
 fondo sólido lo hacen idealmente adecuado para diferentes propósitos. El diseño
-de los bloques garantizan el posicionamiento de los vidrios en la instalación.
+de los bloques garantizan el posicionamiento de los cristales en la instalación.
 
 •  Cada bloque tiene una capacidad de carga de 300 Kg.
 
@@ -9470,7 +9470,7 @@ resistente a los rayos UV.
 •  Anti-envejecimiento, usado hasta 7 años.
 •  Más resistente que la pantalla de insectos de fibra de
 
-vidrio, resistente al desgarro.
+cristal, resistente al desgarro.
 
 MATERIAL PP + PE
 
@@ -9840,7 +9840,7 @@ Acristalamiento
 53x33.65  mm  (central)  60x25.9  mm
 (horizontal).
 
-•  Espesor  máximo  de  vidrio  o  paneles
+•  Espesor  máximo  de  cristal  o  paneles
 16  mm  y  mínimo  4  mm  (según  tabla  de
 acristalamiento).
 
@@ -9903,7 +9903,7 @@ Espesor 1,2 - 1,4 mm.
 
 Hueco de acristalamiento
 
-De 16 mm (galce de vidrio de alto 15 mm).
+De 16 mm (galce de cristal de alto 15 mm).
 
 Perfiles especiales
 
@@ -9943,13 +9943,13 @@ BY CARBONECorte Recto 70 mmTipos de apertura
 3 hojas
 en 3 carriles
 
-2 hojas + vidrio fijo
+2 hojas + cristal fijo
 inferior
 
-2 hojas + vidrio
+2 hojas + cristal
 fijo superior
 
-2 hojas + vidrios
+2 hojas + cristales
 laterales
 
 4 hojas
@@ -10011,7 +10011,7 @@ Vidrio (Características, RW)
 (RW)
 
 U H,V
-Transmitancia térmica del vidrio
+Transmitancia térmica del cristal
 
 U H
 Transmitancia térmica de la ventana
@@ -13220,7 +13220,7 @@ Medida
 
 •  Hechas de material resistente a selladores. La forma especial de la superficie y el
 fondo sólido lo hacen idealmente adecuado para diferentes propósitos. El diseño
-de los bloques garantizan el posicionamiento de los vidrios en la instalación.
+de los bloques garantizan el posicionamiento de los cristales en la instalación.
 
 •  Cada bloque tiene una capacidad de carga de 300 Kg.
 
@@ -13857,7 +13857,7 @@ resistente a los rayos UV.
 •  Anti-envejecimiento, usado hasta 7 años.
 •  Más resistente que la pantalla de insectos de fibra de
 
-vidrio, resistente al desgarro.
+cristal, resistente al desgarro.
 
 MATERIAL PP + PE
 
@@ -14388,7 +14388,7 @@ mm de ancho y 46 mm de alto.
 •  Unión mediante escuadras.
 •  Hueco total 41 mm.
 
-•  Espesor  máximo  de  vidrio  o  paneles
+•  Espesor  máximo  de  cristal  o  paneles
 26  mm  y  mínimo  1  mm  (según  tabla  de
 acristalamiento).
 
@@ -14396,7 +14396,7 @@ Monolítico
 
 Doble
 
-Triple vidrio
+Triple cristal
 
 Sección abatible de 45 mm con premarco y solape
 
@@ -14563,7 +14563,7 @@ Vidrio (Características, RW)
 (RW)
 
 U H,V
-Transmitancia térmica del vidrio
+Transmitancia térmica del cristal
 
 U H
 Transmitancia térmica de la ventana
@@ -18787,7 +18787,7 @@ ya que funciona por expansión.
 
 •  Funciona  en  perfiles  de  marco,  hoja  de
 
-puerta abatible y vidrio fijo. perfiles
+puerta abatible y cristal fijo. perfiles
 U020, U021, U022.
 
 A= 37 mm
@@ -18839,7 +18839,7 @@ corrosión.
 
 •  Mayor  rígidez,  alineamiento  y  rapidez  de  instalación
 
-para travesaños de vidrio fijo.
+para travesaños de cristal fijo.
 
 •  Funciona en perfiles de travesaño U019.
 
@@ -18852,7 +18852,7 @@ corrosión.
 
 •  Mayor  rígidez,  alineamiento  y  rapidez  de  instalación
 
-para travesaños de vidrio fijo.
+para travesaños de cristal fijo.
 
 •  Funciona en perfiles de travesaño U023.
 
@@ -19075,7 +19075,7 @@ Medida
 
 •  Hechas de material resistente a selladores. La forma especial de la superficie y el
 fondo sólido lo hacen idealmente adecuado para diferentes propósitos. El diseño
-de los bloques garantizan el posicionamiento de los vidrios en la instalación.
+de los bloques garantizan el posicionamiento de los cristales en la instalación.
 
 •  Cada bloque tiene una capacidad de carga de 300 Kg.
 
@@ -21228,12 +21228,12 @@ BY CARBONEAbatible  de 45 mmPLÁSTICO PROTECTOR PARA VENTANAS
 
 Plástico protector para ventanas Carbone Protective
 
-•  Nuestra película protectora de vidrio se puede aplicar directamente al vidrio que no se ha limpiado y ayudará a quitar cualquier
+•  Nuestra película protectora de cristal se puede aplicar directamente al cristal que no se ha limpiado y ayudará a quitar cualquier
 
 polvo existente en él.
 
 •  Tiene una capacidad de adherencia estable y no necesita volver a aplicarse en el sitio.
-•  La película protectora de vidrio es fácil de remover y no deja ningún residuo que requiere limpieza.
+•  La película protectora de cristal es fácil de remover y no deja ningún residuo que requiere limpieza.
 
 Aplicación:
 
@@ -21666,7 +21666,7 @@ de ancho, 46 y 150 mm de alto.
 •  Unión mediante escuadras.
 •  Hueco 41 mm.
 
-•  Espesor  máximo  de  vidrio  o  paneles
+•  Espesor  máximo  de  cristal  o  paneles
 26  mm  y  mínimo  1  mm  (según  tabla  de
 acristalamiento).
 
@@ -22034,7 +22034,7 @@ Vidrio (Características, RW)
 (RW)
 
 U H,V
-Transmitancia térmica del vidrio
+Transmitancia térmica del cristal
 
 U H
 Transmitancia térmica de la ventana
@@ -23072,7 +23072,7 @@ ya que funciona por expansión.
 
 •  Funciona  en  perfiles  de  marco,  hoja  de
 
-puerta abatible y vidrio fijo. perfiles
+puerta abatible y cristal fijo. perfiles
 U020, U021, U022.
 
 Bisagra de ventana para canal europeo
@@ -23227,7 +23227,7 @@ UA014
 especial  de  la  superficie  y  el  fondo  sólido  lo  hacen
 idealmente  adecuado  para  diferentes  propósitos.  El
 diseño  de  los  bloques  garantizan  el  posicionamiento  de
-los vidrios en la instalación.
+los cristales en la instalación.
 
 •  Cada bloque tiene una capacidad de carga de 300 Kg.
 

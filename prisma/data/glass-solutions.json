@@ -5,7 +5,7 @@
       "key": "solar_control",
       "name": "Solar Control",
       "nameEs": "Control Solar",
-      "description": "Productos de vidrio diseñados para reducir la ganancia de calor solar y minimizar los costos de refrigeración. Presentan recubrimientos reflectivos o bajo-emisivos que bloquean la radiación infrarroja mientras mantienen la transmisión de luz visible. Ideal para climas cálidos y edificios con altas cargas de refrigeración.",
+      "description": "Productos de cristal diseñados para reducir la ganancia de calor solar y minimizar los costos de refrigeración. Presentan recubrimientos reflectivos o bajo-emisivos que bloquean la radiación infrarroja mientras mantienen la transmisión de luz visible. Ideal para climas cálidos y edificios con altas cargas de refrigeración.",
       "icon": "Sun",
       "sortOrder": 1
     },
@@ -21,7 +21,7 @@
       "key": "security",
       "name": "Security & Safety",
       "nameEs": "Seguridad",
-      "description": "Productos de vidrio laminado y templado que brindan protección contra entrada forzada, rotura accidental e impacto humano. Incluye laminados con PVB que mantienen los fragmentos de vidrio unidos cuando se rompen, y vidrio templado termo-reforzado que se fragmenta en pedazos pequeños menos dañinos.",
+      "description": "Productos de cristal laminado y templado que brindan protección contra entrada forzada, rotura accidental e impacto humano. Incluye laminados con PVB que mantienen los fragmentos de cristal unidos cuando se rompen, y cristal templado termo-reforzado que se fragmenta en pedazos pequeños menos dañinos.",
       "icon": "Shield",
       "sortOrder": 3
     },
@@ -29,7 +29,7 @@
       "key": "acoustic",
       "name": "Acoustic Insulation",
       "nameEs": "Aislamiento Acústico",
-      "description": "Vidrio laminado con intercapas de PVB acústico especializado que amortiguan las vibraciones sonoras. Reduce la transmisión de ruido exterior en 30-50dB según la composición del vidrio. Esencial para edificios cerca de aeropuertos, autopistas y fuentes de ruido urbano.",
+      "description": "Vidrio laminado con intercapas de PVB acústico especializado que amortiguan las vibraciones sonoras. Reduce la transmisión de ruido exterior en 30-50dB según la composición del cristal. Esencial para edificios cerca de aeropuertos, autopistas y fuentes de ruido urbano.",
       "icon": "Volume2",
       "sortOrder": 4
     },
@@ -37,7 +37,7 @@
       "key": "privacy",
       "name": "Privacy & Aesthetics",
       "nameEs": "Privacidad",
-      "description": "Vidrio tintado, reflectivo y decorativo que limita la visibilidad desde el exterior mientras mantiene las vistas interiores. Incluye tintes bronce, gris, verde y azul, así como opciones de vidrio esmerilado y con patrones. Equilibra la privacidad con la luz natural.",
+      "description": "Vidrio tintado, reflectivo y decorativo que limita la visibilidad desde el exterior mientras mantiene las vistas interiores. Incluye tintes bronce, gris, verde y azul, así como opciones de cristal esmerilado y con patrones. Equilibra la privacidad con la luz natural.",
       "icon": "Eye",
       "sortOrder": 5
     },

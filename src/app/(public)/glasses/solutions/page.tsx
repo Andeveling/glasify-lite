@@ -27,9 +27,9 @@ export const revalidate = 3600; // ISR: 1 hour
  */
 export const metadata: Metadata = {
   description:
-    'Explora nuestras soluciones de vidrio especializadas para control solar, eficiencia energética, aislamiento, seguridad y más.',
+    'Explora nuestras soluciones de cristal especializadas para control solar, eficiencia energética, aislamiento, seguridad y más.',
   openGraph: {
-    description: 'Soluciones de vidrio personalizadas para todas tus necesidades arquitectónicas y de construcción.',
+    description: 'Soluciones de cristal personalizadas para todas tus necesidades arquitectónicas y de construcción.',
     title: 'Soluciones de Vidrio | Glasify Lite',
     type: 'website',
   },
@@ -55,7 +55,7 @@ export default async function GlassSolutionsPage() {
         <div className="flex min-h-96 flex-col items-center justify-center text-center">
           <GlassesIcon className="mb-4 h-12 w-12 text-muted-foreground" />
           <h1 className="mb-2 font-bold text-2xl">Sin soluciones disponibles</h1>
-          <p className="text-muted-foreground">Por el momento no hay soluciones de vidrio disponibles.</p>
+          <p className="text-muted-foreground">Por el momento no hay soluciones de cristal disponibles.</p>
         </div>
       );
     }
@@ -67,7 +67,7 @@ export default async function GlassSolutionsPage() {
           <div className="mb-12 text-center">
             <h1 className="mb-4 font-bold text-4xl tracking-tight">Soluciones de Vidrio</h1>
             <p className="text-lg text-muted-foreground">
-              Descubre nuestras soluciones especializadas de vidrio para cada necesidad de tu proyecto.
+              Descubre nuestras soluciones especializadas de cristal para cada necesidad de tu proyecto.
             </p>
           </div>
 
@@ -126,7 +126,7 @@ export default async function GlassSolutionsPage() {
         <GlassesIcon className="mb-4 h-12 w-12 text-destructive" />
         <h1 className="mb-2 font-bold text-2xl">Error al cargar soluciones</h1>
         <p className="text-muted-foreground">
-          Hubo un problema al cargar las soluciones de vidrio. Por favor, intenta más tarde.
+          Hubo un problema al cargar las soluciones de cristal. Por favor, intenta más tarde.
         </p>
       </div>
     );

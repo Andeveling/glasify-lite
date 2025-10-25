@@ -38,14 +38,14 @@ import type { ModelInput } from '../../factories/model.factory';
  * - Ancho hoja fija (O): 395-2400mm
  * - Alto hoja fija (O): 395-2800mm
  *
- * Descuento de vidrio: 63mm en perímetro (marco perimetral)
+ * Descuento de cristal: 63mm en perímetro (marco perimetral)
  */
 export const abatibleEuropa2Hojas: ModelInput = {
   accessoryPrice: 85, // USD - Bisagras, cerraduras, manillas
   basePrice: 130, // USD/m²
-  compatibleGlassTypeIds: ['placeholder'], // Se populará automáticamente con todos los tipos de vidrio
+  compatibleGlassTypeIds: ['placeholder'], // Se populará automáticamente con todos los tipos de cristal
   costNotes:
-    'Precio base $130/m². Sistema abatible con bisagras V8000 (75kg por par). Compatible con vidrio 6-12mm o DVH 12.5-18.5mm.',
+    'Precio base $130/m². Sistema abatible con bisagras V8000 (75kg por par). Compatible con cristal 6-12mm o DVH 12.5-18.5mm.',
   costPerMmHeight: 0.016, // Mayor costo que corredizo por complejidad
   costPerMmWidth: 0.019,
   glassDiscountHeightMm: 63, // Fórmula marco perimetral: H - 63mm

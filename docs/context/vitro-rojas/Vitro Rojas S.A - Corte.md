@@ -48,7 +48,7 @@ $170
 
 n Adicionales por Tipo de Vidrio
 
-Tipo de vidrio
+Tipo de cristal
 
 Claro
 
@@ -72,5 +72,5 @@ Incluido
 
 +$18
 
-n El cálculo del área de vidrio sigue la misma fórmula aplicada según la cantidad de paños.
+n El cálculo del área de cristal sigue la misma fórmula aplicada según la cantidad de paños.
 

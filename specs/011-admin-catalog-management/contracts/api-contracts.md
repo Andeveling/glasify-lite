@@ -559,7 +559,7 @@ Output: z.object({
 })
 
 // Possible Errors:
-// - TRPCError(CONFLICT): "No se puede eliminar el tipo de vidrio porque tiene X items de cotización asociados"
+// - TRPCError(CONFLICT): "No se puede eliminar el tipo de cristal porque tiene X items de cotización asociados"
 ```
 
 ---

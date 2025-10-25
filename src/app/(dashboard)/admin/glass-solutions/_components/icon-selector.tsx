@@ -72,7 +72,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
 
-// Iconos curados para soluciones de vidrio (40 opciones relevantes)
+// Iconos curados para soluciones de cristal (40 opciones relevantes)
 const GLASS_SOLUTION_ICONS: { name: string; icon: LucideIcon; category: string }[] = [
   { category: 'Seguridad', icon: ShieldCheck, name: 'ShieldCheck' },
   { category: 'Seguridad', icon: Shield, name: 'Shield' },

@@ -1,7 +1,7 @@
 /**
  * Vitro Rojas - Glass Solutions
  *
- * Soluciones de vidrio para diferentes necesidades del mercado panameño
+ * Soluciones de cristal para diferentes necesidades del mercado panameño
  *
  * Nota: Las soluciones se vinculan con GlassTypes mediante el campo 'purpose'
  * (general, security, insulation, decorative)
@@ -13,7 +13,7 @@
 import type { GlassSolutionInput } from '../../factories/glass-solution.factory';
 
 /**
- * Soluciones de vidrio para Vitro Rojas
+ * Soluciones de cristal para Vitro Rojas
  *
  * Adaptadas al mercado panameño con terminología local
  */

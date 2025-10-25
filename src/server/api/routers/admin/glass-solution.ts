@@ -149,7 +149,7 @@ export const glassSolutionRouter = createTRPCRouter({
     if (!existing) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: 'Solución de vidrio no encontrada',
+        message: 'Solución de cristal no encontrada',
       });
     }
 
@@ -199,7 +199,7 @@ export const glassSolutionRouter = createTRPCRouter({
     if (!glassSolution) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: 'Solución de vidrio no encontrada',
+        message: 'Solución de cristal no encontrada',
       });
     }
 
@@ -280,7 +280,7 @@ export const glassSolutionRouter = createTRPCRouter({
     if (!existing) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: 'Solución de vidrio no encontrada',
+        message: 'Solución de cristal no encontrada',
       });
     }
 

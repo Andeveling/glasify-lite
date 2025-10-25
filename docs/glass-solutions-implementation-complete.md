@@ -166,14 +166,14 @@ GLASIFY
 - Solution header con icon y descripción
 - Breadcrumb navigation (volver)
 - Glass types section con grid
-- Para cada vidrio:
+- Para cada cristal:
   - Nombre + código
   - Espesor (mm)
   - Precio por m²
   - Performance rating (1-5 stars)
   - Badges (Primary, Notes available)
   - Notas (si existen)
-- Empty state message si no hay vidrios
+- Empty state message si no hay cristales
 
 ### Icons Rendering
 - Icon names guardados en BD (strings)

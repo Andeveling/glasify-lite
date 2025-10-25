@@ -61,7 +61,7 @@ export function usePriceCalculation(params: UsePriceCalculationParams): UsePrice
       if (err.message.includes('no encontrado') || err.message.includes('no disponible')) {
         errorMessage = 'Modelo no disponible';
       } else if (err.message.includes('no compatible')) {
-        errorMessage = 'Tipo de vidrio no compatible';
+        errorMessage = 'Tipo de cristal no compatible';
       } else if (err.message.includes('debe estar entre')) {
         errorMessage = 'Dimensiones fuera del rango permitido';
       }
