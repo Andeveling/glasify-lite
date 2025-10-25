@@ -5,15 +5,15 @@ import { X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
-type ActiveSearchParametersProps = {
-  searchQuery?: string | null;
-  selectedProfileSupplierName?: string | null;
-  sortType?: CatalogSortOption | null;
-  onRemoveSearch?: () => void;
-  onRemoveProfileSupplier?: () => void;
-  onRemoveSort?: () => void;
+interface ActiveSearchParametersProps {
+  searchQuery: string;
+  selectedProfileSupplierName: string | null;
+  sortType: CatalogSortOption;
+  onRemoveSearchAction?: () => void;
+  onRemoveProfileSupplierAction?: () => void;
+  onRemoveSortAction?: () => void;
   onClearAllAction?: () => void;
-};
+}
 
 /**
  * ActiveSearchParameters Component
@@ -33,13 +33,13 @@ type ActiveSearchParametersProps = {
  * - Fully accessible with ARIA labels
  * - Testable utilities in search-parameters.utils.ts
  */
-export default function ActiveSearchParameters({
+export function ActiveSearchParameters({
   searchQuery,
   selectedProfileSupplierName,
   sortType,
-  onRemoveSearch,
-  onRemoveProfileSupplier,
-  onRemoveSort,
+  onRemoveSearchAction,
+  onRemoveProfileSupplierAction,
+  onRemoveSortAction,
   onClearAllAction,
 }: ActiveSearchParametersProps) {
   // Build active parameters using pure function
@@ -51,9 +51,9 @@ export default function ActiveSearchParameters({
 
   // Map handlers to parameter keys
   const handlers: Record<string, (() => void) | undefined> = {
-    profileSupplier: onRemoveProfileSupplier,
-    search: onRemoveSearch,
-    sort: onRemoveSort,
+    profileSupplier: onRemoveProfileSupplierAction,
+    search: onRemoveSearchAction,
+    sort: onRemoveSortAction,
   };
 
   // Don't render if no active parameters

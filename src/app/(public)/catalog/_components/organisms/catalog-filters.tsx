@@ -1,6 +1,6 @@
 'use client';
 
-import ActiveSearchParameters from '@views/catalog/_components/molecules/active-filter-badges';
+import { ActiveSearchParameters } from '@views/catalog/_components/molecules/active-filter-badges';
 import { ResultCount } from '@views/catalog/_components/molecules/result-count';
 import { useCatalogFilters } from '@views/catalog/_hooks/use-catalog';
 import type { CatalogSortOption } from '@views/catalog/_utils/search-parameters.utils';
@@ -157,11 +157,11 @@ export function CatalogFilters({
       {showBadges && hasActiveParameters && (
         <ActiveSearchParameters
           onClearAllAction={handleClearFilters}
-          onRemoveProfileSupplier={handleRemoveProfileSupplier}
-          onRemoveSearch={handleRemoveSearch}
-          onRemoveSort={handleRemoveSort}
-          searchQuery={currentSearchQuery}
-          selectedProfileSupplierName={selectedProfileSupplierName}
+          onRemoveProfileSupplierAction={handleRemoveProfileSupplier}
+          onRemoveSearchAction={handleRemoveSearch}
+          onRemoveSortAction={handleRemoveSort}
+          searchQuery={currentSearchQuery ?? ""}
+          selectedProfileSupplierName={selectedProfileSupplierName ?? null}
           sortType={currentSort as CatalogSortOption}
         />
       )}
