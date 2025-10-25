@@ -20,6 +20,7 @@ import { demoClientPreset } from './data/presets/demo-client.preset';
 import { fullCatalogPreset } from './data/presets/full-catalog.preset';
 // Import presets (NO BARRELS - direct imports)
 import { minimalPreset } from './data/presets/minimal.preset';
+import { vidriosLaEquidadColombiaPreset } from './data/presets/vidrios-la-equidad-colombia.preset';
 import { vitroRojasPanamaPreset } from './data/presets/vitro-rojas-panama.preset';
 import type { SeedPreset } from './seeders/seed-orchestrator';
 import { SeedOrchestrator } from './seeders/seed-orchestrator';
@@ -31,6 +32,7 @@ const PRESETS: Record<string, SeedPreset> = {
   'demo-client': demoClientPreset,
   'full-catalog': fullCatalogPreset,
   minimal: minimalPreset,
+  'vidrios-la-equidad-colombia': vidriosLaEquidadColombiaPreset,
   'vitro-rojas-panama': vitroRojasPanamaPreset,
 };
 
