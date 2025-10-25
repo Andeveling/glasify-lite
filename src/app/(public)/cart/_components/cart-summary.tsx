@@ -159,7 +159,7 @@ export function CartSummary({ summary, isGenerating = false, className }: CartSu
       </Card>
 
       {/* Sign-in modal for unauthenticated users */}
-      <SignInModal onOpenChangeAction={setShowSignInModal} open={showSignInModal} />
+      <SignInModal callbackUrl="/cart" onOpenChangeAction={setShowSignInModal} open={showSignInModal} />
     </>
   );
 }

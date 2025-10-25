@@ -1,53 +1,61 @@
 'use client';
 
-import { ChevronRight } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Icons } from '@/components/ui/icons';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { signIn } from '@/lib/auth-client';
 
+// ============================================================================
+// Types
+// ============================================================================
+
 type SignInModalProps = {
+  /** Whether the modal is open */
   open: boolean;
+
+  /** Callback when modal open state changes */
   onOpenChangeAction: (open: boolean) => void;
-  defaultEmail?: string;
+
+  /** Callback URL after successful sign-in (defaults to /catalog) */
+  callbackUrl?: string;
 };
 
-export function SignInModal({ open, onOpenChangeAction, defaultEmail = '' }: SignInModalProps) {
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [isEmailLoading, setIsEmailLoading] = useState(false);
-  const [email, setEmail] = useState(defaultEmail);
+// ============================================================================
+// Component
+// ============================================================================
+
+export function SignInModal({
+  open,
+  onOpenChangeAction,
+  callbackUrl: defaultCallbackUrl,
+}: SignInModalProps) {
   const searchParams = useSearchParams();
+  const [ isGoogleLoading, setIsGoogleLoading ] = useState(false);
+  const [ error, setError ] = useState<string | null>(null);
 
-  // Get callbackUrl from query params, default to /catalog
-  const callbackUrl = searchParams.get('callbackUrl') || '/catalog';
+  // Get callbackUrl from prop, query params, or default to /catalog
+  const callbackUrl = defaultCallbackUrl || searchParams.get('callbackUrl') || '/catalog';
 
+  /**
+   * Handle Google OAuth sign-in
+   */
   const handleGoogleSignIn = async () => {
     try {
       setIsGoogleLoading(true);
+      setError(null);
+
       await signIn.social({
         callbackURL: callbackUrl,
         provider: 'google',
       });
+      // Note: User will be redirected by signIn, modal closes via redirect
     } catch {
+      setError('Error al conectar con Google. Intenta nuevamente.');
       setIsGoogleLoading(false);
     }
   };
-
-  const handleEmailContinue = () => {
-    if (!email) return;
-
-    try {
-      setIsEmailLoading(true);
-    } catch {
-      setIsEmailLoading(false);
-    }
-  };
-
-  const isLoading = isGoogleLoading || isEmailLoading;
 
   return (
     <Dialog onOpenChange={onOpenChangeAction} open={open}>
@@ -59,22 +67,28 @@ export function SignInModal({ open, onOpenChangeAction, defaultEmail = '' }: Sig
           </div>
 
           <div className="space-y-2 text-center">
-            <DialogTitle className="text-2xl">Iniciar Sesión en Glasify</DialogTitle>
+            <DialogTitle className="text-2xl">Iniciar Sesión</DialogTitle>
             <DialogDescription className="text-base">
-              Bienvenido de nuevo! Por favor inicia sesión para continuar
+              Usa Google para acceder rápidamente
             </DialogDescription>
           </div>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* OAuth Providers - Solo Google por ahora */}
+          {/* Error message */}
+          {error && (
+            <div className="rounded-md bg-destructive/10 p-3 text-destructive text-sm">
+              {error}
+            </div>
+          )}
+
+          {/* OAuth Providers - Solo Google */}
           <Button
             className="w-full"
-            disabled={isLoading}
+            disabled={isGoogleLoading}
             onClick={handleGoogleSignIn}
             size="lg"
             type="button"
-            variant="outline"
           >
             {isGoogleLoading ? (
               <Icons.spinner className="mr-2 h-5 w-5 animate-spin" />
@@ -83,48 +97,6 @@ export function SignInModal({ open, onOpenChangeAction, defaultEmail = '' }: Sig
             )}
             Continuar con Google
           </Button>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">o</span>
-            </div>
-          </div>
-
-          {/* Email Input */}
-          <div className="space-y-2">
-            <Label htmlFor="email">Dirección de email</Label>
-            <Input
-              autoComplete="email"
-              disabled={isLoading}
-              id="email"
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Ingresa tu dirección de email"
-              type="email"
-              value={email}
-            />
-          </div>
-
-          <Button className="w-full" disabled={isLoading || !email} onClick={handleEmailContinue} size="lg">
-            {isEmailLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
-            Continuar
-            <ChevronRight className="ml-2 h-4 w-4" />
-          </Button>
-
-          <p className="text-center text-muted-foreground text-xs">
-            ¿No tienes una cuenta?{' '}
-            <button
-              className="font-medium text-primary hover:underline"
-              onClick={() => {
-                // TODO: Implement signup flow
-              }}
-              type="button"
-            >
-              Regístrate
-            </button>
-          </p>
         </div>
       </DialogContent>
     </Dialog>
