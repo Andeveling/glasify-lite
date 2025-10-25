@@ -26,6 +26,7 @@ When generating code for this repository:
 - PostgreSQL via Prisma ORM (existing multi-tenant schema with GlassType, GlassSolution, GlassSupplier models) (015-static-glass-taxonomy)
 - PostgreSQL via Prisma ORM (existing schema: Quote, QuoteItem, Model, GlassType, ProfileSupplier, User, TenantConfig) (016-admin-dashboard-charts)
 - TypeScript 5.8.2 (strict mode), Node.js (ES2022 target) + Next.js 15.2.3 (App Router), React 19.0.0 (Server Components), tRPC 11.0.0, Prisma 6.16.2, shadcn/ui charts (Recharts 2.12.7), date-fns-tz (timezone handling) (016-admin-dashboard-charts)
+- PostgreSQL (existing multi-tenant schema with Model, ProfileSupplier, User, Quote) (001-model-design-gallery)
 
 **Language/Runtime**:
 - TypeScript 5.8.2 (strict mode), Node.js (ES2022 target)
@@ -40,6 +41,13 @@ When generating code for this repository:
 - TanStack Query 5.69.0 (React Query)
 - Zod 4.1.1 (schema validation)
 - React Hook Form 7.63.0 (forms)
+
+**Canvas & Design Rendering** (001-model-design-gallery):
+- Konva 9.x (2D canvas rendering library)
+- react-konva 18.x (React bindings for Konva)
+- Parametric design system with constraint-based adaptation
+- Material-based color mapping (PVC=white, ALUMINUM=gray, WOOD=brown, MIXED=light gray)
+- Design storage: JSON configuration with versioning (StoredDesignConfig v1.0)
 
 **UI Stack**:
 - Shadcn/ui + Radix UI (components)
@@ -271,6 +279,148 @@ src/app/(dashboard)/admin/models/
 20. Follow project naming and organization conventions
 
 
+## Design Rendering Patterns (001-model-design-gallery)
+
+### Client Component Boundary
+
+⚠️ **CRITICAL**: Konva rendering runs ONLY in Client Components (`'use client'`)
+
+**✅ ALLOWED**:
+- `DesignRenderer.tsx` - renders StoredDesignConfig via Konva Stage/Layer
+- `DesignFallback.tsx` - placeholder when no design assigned
+- `ModelDesignPreview.tsx` - preview in modal/gallery
+- Canvas event handlers (click, drag, etc.)
+- Lazy loading with `React.memo` + `Intersection Observer`
+
+**❌ PROHIBITED**:
+- Design rendering logic in Server Components
+- Konva in Server Actions
+- Design adaptation calculations in tRPC procedures (move to service layer)
+
+### Design Data Flow
+
+```
+ModelDesign (DB) 
+  → StoredDesignConfig (JSON, versioned v1.0)
+  → validateDesignConfig() (Zod validation)
+  → designAdapterService.adaptDesign(config, dimensions)
+  → AdaptedDesign (resolved px values, material colors)
+  → DesignRenderer (Konva Stage + shapes)
+```
+
+### Key Abstractions
+
+**1. StoredDesignConfig** (`src/lib/design/types.ts`):
+- Version-locked JSON structure (version: '1.0')
+- Hierarchical: metadata → dimensions → constraints → shapes array
+- Shape types: rect, circle, line, path
+- Shape styles: fill (hex or 'material'), stroke, strokeWidth, opacity, cornerRadius
+- Position/Size: supports absolute (px) or relative (%)
+
+**2. Material Color Mapping** (`src/lib/design/material-colors.ts`):
+- Singleton: Map of MaterialType to hex color (PVC=white, ALUMINUM=gray, WOOD=brown, MIXED=light-gray)
+- Resolution: During adaptation, 'material' placeholders → actual hex colors
+- Rule: All shapes must resolve 'material' fill before rendering
+
+**3. Design Validation** (`src/lib/design/validation.ts`):
+- `storedDesignConfigSchema`: Zod schema enforcing v1.0 structure, 1-100 shapes, constraint ranges
+- `validateDesignConfig(config)`: Throws on invalid config (use for trusted data)
+- `isValidDesignConfig(config)`: Safe check returning boolean (use for untrusted input)
+- Constants: `MAX_SHAPES_PER_DESIGN=100`, `MIN_SHAPES_PER_DESIGN=1`, `MAX_OPACITY_VALUE=1`, `MIN_PERCENT_VALUE=0`, `MAX_PERCENT_VALUE=1`
+
+**4. Design Adapter Service** (`src/server/services/design-adapter-service.ts` - to be created):
+- `adaptDesign(config: StoredDesignConfig, baseWidth: number, baseHeight: number): AdaptedDesign`
+- Converts relative positioning (%) → absolute (px) based on model dimensions
+- Resolves material colors via `getMaterialColor()`
+- Validates all shapes are complete before returning
+- Throws if config invalid or color resolution fails
+
+**5. DesignRenderer Component** (`src/app/_components/design/design-renderer.tsx` - to be created):
+- Client Component with `'use client'` directive
+- Props: `design: AdaptedDesign`, `width: number`, `height: number`, optional `onShapeClick?`
+- Uses Konva Stage/Layer/Shape (rect, circle, line, path)
+- `React.memo` wrapper for optimization
+- Lazy load with `Intersection Observer` for off-screen designs
+- Error boundary integration for render failures
+
+### Parametric Design System
+
+**Constraint-Based Adaptation**:
+- Frame thickness: Logical constraints (frameThicknessMin/Max, e.g., 40-80mm)
+- Glass fill: Automatically fills remaining space with `glassMargin` offset
+- Dimension adaptation: All percentages calculated relative to model dimensions
+- Proportional scaling: Designs adapt to different model sizes
+
+**Example**:
+```typescript
+// Fixed window design for 1000x1200mm
+// Logical constraints in mm:
+- frameThickness: 40-80mm (adapts to model)
+- glassMargin: 5mm (offset from frame edge)
+
+// Rendered at 800x960px:
+- Frame rect: x:0, y:0, w:800, h:960 (fills container)
+- Glass rect: x:40px (scaled from 40mm), y:40px, fills remaining with 5px margin
+```
+
+### Design Database & Seeding
+
+**ModelDesign Table**:
+- `id`: cuid, primary key
+- `name` (unique): slug for identification, e.g., 'fixed-window-simple'
+- `nameEs`: Spanish label for UI, e.g., 'Ventana Fija Simple'
+- `type`: ModelType enum (fixed_window, sliding_window_horizontal, etc.)
+- `config`: StoredDesignConfig JSON (versioned)
+- `thumbnailUrl`: Optional preview image
+- `isActive`: Boolean flag for soft deletion
+- `displayOrder`: Integer for gallery ordering
+- Indexes: `(type, isActive)`, `displayOrder` for query performance
+
+**Model Relationship**:
+- `Model.designId?` (optional): Foreign key to ModelDesign
+- `Model.type?` (optional): ModelType enum for categorization
+- Cascade: onDelete SetNull (preserve model if design deleted)
+
+**Seeding** (`prisma/seeders/seed-designs.ts`):
+- Idempotent creation: Check if design exists by name before creating
+- Error tracking: SeedResult interface captures skipped/errors per seed
+- Integration: Step 8/8 in seed orchestrator after Step 7 (Assign Solutions)
+
+### File Organization
+
+```
+src/lib/design/
+├── types.ts                 # StoredDesignConfig, ShapeDefinition, AdaptedDesign
+├── material-colors.ts       # MATERIAL_COLORS constant, helper functions
+└── validation.ts            # Zod schemas, validation functions
+
+src/server/services/
+└── design-adapter-service.ts  # adaptDesign(config, dimensions): AdaptedDesign (SERVER-SIDE)
+
+src/app/_components/design/
+├── design-renderer.tsx      # Client Component, Konva rendering (MUST be 'use client')
+├── design-fallback.tsx      # Placeholder when no design
+└── model-card.tsx           # Integration with catalog card
+
+prisma/seeders/
+└── seed-designs.ts          # Design factories + seedModelDesigns()
+
+prisma/migrations/
+└── 20251025184911_add_model_designs/  # ModelDesign table + ModelType enum
+```
+
+### When Implementing Design Components
+
+1. **Validate Early**: Always call `validateDesignConfig()` in service layer (server-side)
+2. **Adapt Before Render**: Use `designAdapterService.adaptDesign()` to resolve all values to px
+3. **Render Safely**: DesignRenderer receives AdaptedDesign (all values guaranteed)
+4. **Handle Errors**: Catch adaptation errors, show fallback in DesignFallback component
+5. **Optimize**: Wrap DesignRenderer with `React.memo`, use `Intersection Observer` for lazy loading
+6. **Test Both Layers**: Unit tests for validation/adaptation (server), snapshot tests for renderer (client)
+
+---
+
 ## Recent Changes
+- 001-model-design-gallery: Added TypeScript 5.8.2 (strict mode), Node.js ES2022 target, Konva 9.x + react-konva 18.x, design rendering patterns (Phase 2: Foundation complete)
 - 016-admin-dashboard-charts: Added TypeScript 5.8.2 (strict mode), Node.js (ES2022 target)
 - 015-static-glass-taxonomy: Added TypeScript 5.9.3, Node.js (ES2022 target via Next.js 15.5.4) + Next.js 15.5.4 (App Router), Prisma 6.17.0 (ORM), tRPC 11.6.0 (API), Zod 4.1.12 (validation), React Hook Form 7.64.0
