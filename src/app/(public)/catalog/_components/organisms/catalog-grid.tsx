@@ -1,5 +1,7 @@
+import type { MaterialType } from '@prisma/client';
 import { ModelCard } from '@views/catalog/_components/molecules/model-card';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
+import type { StoredDesignConfig } from '@/lib/design/types';
 
 type Model = {
   accessoryPrice: number | null;
@@ -8,16 +10,23 @@ type Model = {
   costPerMmHeight: number;
   costPerMmWidth: number;
   createdAt: Date;
-  id: string;
-  profileSupplier: {
+  design?: {
+    config: StoredDesignConfig;
     id: string;
     name: string;
+    nameEs: string;
   } | null;
+  id: string;
   maxHeightMm: number;
   maxWidthMm: number;
   minHeightMm: number;
   minWidthMm: number;
   name: string;
+  profileSupplier: {
+    id: string;
+    materialType: MaterialType;
+    name: string;
+  } | null;
   status: string;
   updatedAt: Date;
 };
@@ -80,8 +89,10 @@ export function CatalogGrid({ models }: CatalogGridProps) {
             <ModelCard
               basePrice={formatCurrency(model.basePrice)}
               compatibleGlassTypes={[]}
+              design={model.design}
               highlightedSolutions={getMockHighlightedSolutions(model.id)}
               id={model.id}
+              material={model.profileSupplier?.materialType}
               name={model.name}
               profileSupplier={model.profileSupplier?.name}
               range={{

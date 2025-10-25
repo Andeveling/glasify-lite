@@ -17,7 +17,7 @@ import {
 
 export function GuestMenu() {
   const { theme, setTheme } = useTheme();
-  const [ showSignInModal, setShowSignInModal ] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -34,7 +34,7 @@ export function GuestMenu() {
         : window.location.pathname;
       router.replace(newUrl);
     }
-  }, [ searchParams, router ]);
+  }, [searchParams, router]);
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');

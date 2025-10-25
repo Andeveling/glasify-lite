@@ -191,7 +191,7 @@ function QuoteStatusBadge({ status }: { status: QuoteStatus }) {
     sent: { label: 'Enviada', variant: 'default' },
   };
 
-  const { label, variant } = config[ status ];
+  const { label, variant } = config[status];
 
   return <Badge variant={variant}>{label}</Badge>;
 }

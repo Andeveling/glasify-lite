@@ -45,10 +45,10 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   const { searchQuery, page, manufacturerId, sort } = validateCatalogParams(params);
 
   // Fetch profile suppliers for filter dropdown
-  const profileSuppliers = await api.catalog[ 'list-manufacturers' ]();
+  const profileSuppliers = await api.catalog['list-manufacturers']();
 
   // Fetch total count for results display (lightweight query)
-  const totalData = await api.catalog[ 'list-models' ]({
+  const totalData = await api.catalog['list-models']({
     limit: 1,
     manufacturerId,
     page: 1,
