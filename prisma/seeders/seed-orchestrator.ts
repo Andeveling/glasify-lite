@@ -23,6 +23,7 @@ import { createProfileSupplier } from '../factories/profile-supplier.factory';
 import type { ServiceInput } from '../factories/service.factory';
 import { createService } from '../factories/service.factory';
 import { seedTenant } from '../seed-tenant';
+import { seedModelDesigns } from './seed-designs';
 
 /**
  * Helper: Generate URL-friendly slug from key
@@ -75,6 +76,8 @@ export interface SeedOptions {
 class SeedLogger {
   private readonly verbose: boolean;
 
+  private static readonly SECTION_WIDTH = 50;
+
   constructor(verbose = false) {
     this.verbose = verbose;
   }
@@ -105,9 +108,9 @@ class SeedLogger {
   }
 
   section(title: string): void {
-    console.log(`\n${'='.repeat(50)}`);
+    console.log(`\n${'='.repeat(SeedLogger.SECTION_WIDTH)}`);
     console.log(`  ${title}`);
-    console.log(`${'='.repeat(50)}`);
+    console.log(`${'='.repeat(SeedLogger.SECTION_WIDTH)}`);
   }
 }
 
@@ -120,6 +123,8 @@ export class SeedOrchestrator {
   private readonly startTime: number;
   private readonly prisma: PrismaClient;
   private readonly options: SeedOptions;
+
+  private static readonly DEFAULT_GLASS_PRICE_PER_SQM = 50_000.0;
 
   constructor(prisma: PrismaClient, options: SeedOptions = {}) {
     this.prisma = prisma;
@@ -178,6 +183,19 @@ export class SeedOrchestrator {
       // Step 6: Assign solutions to glass types (depends on glass types and solutions)
       this.logger.section('Step 7/8: Assign Solutions to Glass Types');
       await this.assignSolutionsToGlassTypes(glassTypes, solutions);
+
+      // Step 7: Seed model designs (no dependencies)
+      this.logger.section('Step 8/8: Model Designs');
+      const designsResult = await seedModelDesigns();
+      this.logger.info(`✅ Seeded: ${designsResult.seeded} model designs`);
+      if (designsResult.skipped > 0) {
+        this.logger.info(`⏭️  Skipped: ${designsResult.skipped} (already up-to-date)`);
+      }
+      if (designsResult.errors.length > 0) {
+        for (const error of designsResult.errors) {
+          this.logger.error(`❌ ${error.message}`);
+        }
+      }
 
       // Calculate final stats
       this.stats.durationMs = Date.now() - this.startTime;
@@ -329,7 +347,7 @@ export class SeedOrchestrator {
         // Ensure pricePerSqm has a default value for MVP
         const dataWithPrice = {
           ...result.data,
-          pricePerSqm: result.data.pricePerSqm ?? 50_000.0,
+          pricePerSqm: result.data.pricePerSqm ?? SeedOrchestrator.DEFAULT_GLASS_PRICE_PER_SQM,
         };
 
         // Create or update
@@ -371,60 +389,7 @@ export class SeedOrchestrator {
 
     for (const modelInput of models) {
       try {
-        // Resolve supplier ID
-        const supplierId = supplierIdMap.get(modelInput.profileSupplierName);
-        if (!supplierId) {
-          this.logger.error(`Supplier not found: ${modelInput.profileSupplierName} for model ${modelInput.name}`);
-          this.stats.models.failed++;
-          if (!this.options.continueOnError) {
-            throw new Error(`Supplier not found: ${modelInput.profileSupplierName}`);
-          }
-          continue;
-        }
-
-        // Validate with factory
-        const result = createModel(modelInput, {
-          skipValidation: this.options.skipValidation,
-        });
-
-        if (!(result.success && result.data)) {
-          this.handleValidationErrors(modelInput.name, result.errors);
-          this.stats.models.failed++;
-          if (!this.options.continueOnError) throw new Error('Validation failed');
-          continue;
-        }
-
-        // Replace PLACEHOLDER glass type IDs with actual IDs
-        const compatibleGlassTypeIds = Array.from(glassTypeIdMap.values());
-
-        // Remove profileSupplierName (factory artifact) and add profileSupplierId
-        const { profileSupplierName: _unused, ...modelData } = result.data;
-
-        // Check if model already exists by name
-        const existingModel = await this.prisma.model.findFirst({
-          where: { name: modelData.name },
-        });
-
-        // Create or update
-        const model = existingModel
-          ? await this.prisma.model.update({
-              data: {
-                ...modelData,
-                compatibleGlassTypeIds,
-                profileSupplierId: supplierId,
-              },
-              where: { id: existingModel.id },
-            })
-          : await this.prisma.model.create({
-              data: {
-                ...modelData,
-                compatibleGlassTypeIds,
-                profileSupplierId: supplierId,
-              },
-            });
-
-        this.stats.models.created++;
-        this.logger.debug(`Created: ${model.name} (${model.id})`);
+        await this.processSingleModel(modelInput, supplierIdMap, glassTypeIdMap);
       } catch (error) {
         this.logger.error(`Failed to create model: ${modelInput.name}`, error);
         this.stats.models.failed++;
@@ -433,6 +398,70 @@ export class SeedOrchestrator {
     }
 
     this.logger.success(`Models: ${this.stats.models.created} created, ${this.stats.models.failed} failed`);
+  }
+
+  /**
+   * Process a single model (extracted for complexity reduction)
+   */
+  private async processSingleModel(
+    modelInput: ModelInput,
+    supplierIdMap: Map<string, string>,
+    glassTypeIdMap: Map<string, string>
+  ): Promise<void> {
+    // Resolve supplier ID
+    const supplierId = supplierIdMap.get(modelInput.profileSupplierName);
+    if (!supplierId) {
+      this.logger.error(`Supplier not found: ${modelInput.profileSupplierName} for model ${modelInput.name}`);
+      this.stats.models.failed++;
+      if (!this.options.continueOnError) {
+        throw new Error(`Supplier not found: ${modelInput.profileSupplierName}`);
+      }
+      return;
+    }
+
+    // Validate with factory
+    const result = createModel(modelInput, {
+      skipValidation: this.options.skipValidation,
+    });
+
+    if (!(result.success && result.data)) {
+      this.handleValidationErrors(modelInput.name, result.errors);
+      this.stats.models.failed++;
+      if (!this.options.continueOnError) throw new Error('Validation failed');
+      return;
+    }
+
+    // Replace PLACEHOLDER glass type IDs with actual IDs
+    const compatibleGlassTypeIds = Array.from(glassTypeIdMap.values());
+
+    // Remove profileSupplierName (factory artifact) - keep designId as scalar field
+    const { profileSupplierName: _unused, ...modelData } = result.data;
+
+    // Check if model already exists by name
+    const existingModel = await this.prisma.model.findFirst({
+      where: { name: modelData.name },
+    });
+
+    // Create or update (designId is a scalar field, not a relation)
+    const model = existingModel
+      ? await this.prisma.model.update({
+          data: {
+            ...modelData,
+            compatibleGlassTypeIds,
+            profileSupplierId: supplierId,
+          },
+          where: { id: existingModel.id },
+        })
+      : await this.prisma.model.create({
+          data: {
+            ...modelData,
+            compatibleGlassTypeIds,
+            profileSupplierId: supplierId,
+          },
+        });
+
+    this.stats.models.created++;
+    this.logger.debug(`Created: ${model.name} (${model.id})`);
   }
 
   /**
@@ -547,7 +576,7 @@ export class SeedOrchestrator {
    */
   private async assignSolutionsToGlassTypes(
     glassTypes: Map<string, string>,
-    solutions: Map<string, string>
+    _solutions: Map<string, string>
   ): Promise<void> {
     this.logger.info(`Assigning solutions to ${glassTypes.size} glass types...`);
 

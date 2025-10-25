@@ -80,6 +80,31 @@ enum MaterialType {
   MIXED
 }
 
+/// Model type for design categorization and compatibility
+/// Represents the functional type of a model (window, door, etc.)
+/// Used for validating design assignments - only compatible designs can be assigned
+
+enum ModelType {
+  /// Ventana fija (no abre)
+  fixed_window
+  /// Ventana corredera horizontal (1 o más hojas deslizantes)
+  sliding_window_horizontal
+  /// Ventana corredera vertical (guillotina)
+  sliding_window_vertical
+  /// Ventana batiente (abre hacia afuera/adentro)
+  casement_window
+  /// Ventana proyectante (abre inclinado)
+  awning_window
+  /// Puerta estándar (1 hoja)
+  single_door
+  /// Puerta doble (2 hojas)
+  double_door
+  /// Puerta corredera (deslizante)
+  sliding_door
+  /// Otro (para casos no cubiertos)
+  other
+}
+
 /// User role in the system
 /// - admin: Full access (models, all quotes, tenant config)
 /// - seller: Limited access (own quotes, catalog)
@@ -243,6 +268,15 @@ model Model {
   profileSupplier        ProfileSupplier?     @relation(fields: [profileSupplierId], references: [id], onDelete: SetNull)
   name                   String
   status                 ModelStatus          @default(draft)
+  
+  /// Tipo de modelo (ventana, puerta, etc.)
+  /// Requerido para asignar diseño compatible
+  type                   ModelType?
+  
+  /// Diseño visual 2D asociado (opcional)
+  designId               String?
+  design                 ModelDesign?         @relation(fields: [designId], references: [id], onDelete: SetNull)
+  
   minWidthMm             Int
   maxWidthMm             Int
   minHeightMm            Int
@@ -279,6 +313,49 @@ model Model {
   @@index([status])
   @@index([createdAt(sort: Desc)])
   @@index([updatedAt(sort: Desc)])
+  @@index([designId])
+  @@index([type])
+}
+
+/// Model Design
+/// Representa diseños 2D predefinidos para visualización de modelos
+/// Almacena configuración JSON con formas Konva para rendering adaptativo
+
+model ModelDesign {
+  id           String     @id @default(cuid())
+  
+  /// Nombre único del diseño (ej: "fixed-window-simple", "sliding-door-double")
+  name         String     @unique
+  
+  /// Descripción breve en español para UI
+  nameEs       String
+  description  String?
+  
+  /// Tipo de modelo compatible (ventana fija, corredera, puerta, etc.)
+  type         ModelType
+  
+  /// Configuración JSON del diseño (ver StoredDesignConfig type)
+  /// Estructura versionada con metadata, constraints y shapes
+  config       Json
+  
+  /// Thumbnail preview del diseño (opcional, para galería)
+  /// URL relativa a /public/designs/thumbnails/
+  thumbnailUrl String?
+  
+  /// Estado: activo (disponible en galería) o inactivo
+  isActive     Boolean    @default(true)
+  
+  /// Orden de aparición en galería (menor número = más arriba)
+  displayOrder Int        @default(0)
+  
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  
+  /// Modelos que usan este diseño
+  models       Model[]
+  
+  @@index([type, isActive])
+  @@index([displayOrder])
 }
 
 model GlassType {

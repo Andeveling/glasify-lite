@@ -12,7 +12,7 @@
  * @version 1.0.0
  */
 
-import type { Prisma } from '@prisma/client';
+import type { ModelType, Prisma } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
 import { z } from 'zod';
 import type { FactoryMetadata, FactoryOptions, FactoryResult, ValidationError } from './types';
@@ -40,6 +40,7 @@ const modelInputSchema = z.object({
   costNotes: z.string().optional(),
   costPerMmHeight: z.number().nonnegative(),
   costPerMmWidth: z.number().nonnegative(),
+  designId: z.cuid().optional(),
   glassDiscountHeightMm: z.number().int().nonnegative().max(MAX_DISCOUNT_MM).default(0),
   glassDiscountWidthMm: z.number().int().nonnegative().max(MAX_DISCOUNT_MM).default(0),
   lastCostReviewDate: z.date().optional(),
@@ -51,6 +52,19 @@ const modelInputSchema = z.object({
   profileSupplierName: z.string(), // Used to find ProfileSupplier
   profitMarginPercentage: z.number().nonnegative().max(MAX_PROFIT_MARGIN).optional(),
   status: z.enum(['draft', 'published']).default('published'),
+  type: z
+    .enum([
+      'fixed_window',
+      'sliding_window_horizontal',
+      'sliding_window_vertical',
+      'casement_window',
+      'awning_window',
+      'single_door',
+      'double_door',
+      'sliding_door',
+      'other',
+    ])
+    .optional(),
 });
 
 /**
@@ -60,8 +74,10 @@ export type ModelInput = z.infer<typeof modelInputSchema>;
 
 /**
  * Output type for Model with ProfileSupplier connection
+ * Omits profileSupplier (handled separately) and design (handled by designId)
  */
-export type ModelCreateData = Omit<Prisma.ModelCreateInput, 'profileSupplier'> & {
+export type ModelCreateData = Omit<Prisma.ModelCreateInput, 'profileSupplier' | 'design'> & {
+  designId?: string;
   profileSupplierName: string;
 };
 
@@ -144,6 +160,7 @@ function toModelCreateData(validated: z.infer<typeof modelInputSchema>): ModelCr
     costNotes: validated.costNotes,
     costPerMmHeight: new Decimal(validated.costPerMmHeight),
     costPerMmWidth: new Decimal(validated.costPerMmWidth),
+    designId: validated.designId,
     glassDiscountHeightMm: validated.glassDiscountHeightMm,
     glassDiscountWidthMm: validated.glassDiscountWidthMm,
     lastCostReviewDate: validated.lastCostReviewDate,
@@ -156,6 +173,7 @@ function toModelCreateData(validated: z.infer<typeof modelInputSchema>): ModelCr
     profitMarginPercentage:
       validated.profitMarginPercentage !== undefined ? new Decimal(validated.profitMarginPercentage) : undefined,
     status: validated.status,
+    type: validated.type as ModelType | undefined,
   };
 }
 
