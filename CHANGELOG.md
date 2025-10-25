@@ -7,6 +7,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Admin Dashboard Charts (2025-10-24)
+
+#### New Admin Dashboard Feature
+- **Dashboard as Admin Home**: El dashboard de métricas ahora es la página principal de `/admin`
+  - Reemplaza la vista anterior de tarjetas de catálogo
+  - Primera vista al entrar al panel de administración
+  - Acceso directo a métricas clave del negocio
+
+- **Métricas de Rendimiento de Cotizaciones (US1)**:
+  - Total de cotizaciones con tendencia vs período anterior
+  - Tasa de conversión (cotizaciones enviadas vs borradores)
+  - Cotizaciones promedio por día
+  - Gráfico de tendencia temporal con líneas (daily/weekly granularity)
+
+- **Analítica de Catálogo (US2)**:
+  - Top 5 modelos más cotizados (gráfico de barras horizontal)
+  - Top 5 tipos de vidrio más usados (gráfico de pie)
+  - Distribución por fabricante/proveedor (gráfico de pie)
+
+- **Métricas Monetarias (US3)**:
+  - Valor total de cotizaciones con tendencia
+  - Ticket promedio con tendencia
+  - Distribución por rangos de precio (0-1M, 1M-5M, 5M-10M, 10M+)
+
+- **Filtros Temporales (US4)**:
+  - Selector de período: 7 días, 30 días, 90 días, año completo
+  - Comparación automática vs período anterior
+  - Indicadores de tendencia (↑ verde, ↓ rojo) en todas las métricas
+
+#### Technical Implementation
+- **shadcn/ui Charts**: Integración completa con Recharts (LineChart, BarChart, PieChart)
+- **Server Components**: SSR con `dynamic = 'force-dynamic'` para data real-time
+- **tRPC Procedures**: 6 nuevos endpoints con RBAC (admin ve todo, seller ve solo sus cotizaciones)
+- **Service Layer**: Lógica de negocio pura en `dashboard-metrics.ts`
+- **Centralized Formatters**: 100% uso de `@lib/format` (formatCurrency, formatPercent, formatNumber, formatDate)
+- **Timezone-Aware**: Cálculos de períodos respetan timezone del tenant vía `@formkit/tempo`
+- **Type Safety**: Prisma Decimal handling, TypeScript strict mode compliance
+
+#### RBAC & Performance
+- **Role-Based Access**: Middleware + tRPC procedures filtran data según rol
+- **Database Indexes**: Queries optimizadas en Quote.createdAt, Quote.userId
+- **Empty States**: Mensajes informativos cuando no hay data
+- **Responsive Design**: Mobile-first con breakpoints sm/md/lg
+
+#### User Experience
+- **Spanish UI**: Todos los textos en español (es-LA)
+- **Period Comparison**: Labels "vs período anterior" en todas las tendencias
+- **Color Coding**: Verde (mejora), rojo (decline), neutro (sin cambio)
+- **Tooltips**: Detalles formatados en hover (currency, percentages, dates)
+- **Default Landing**: Dashboard de métricas como home del admin (en lugar de catalog overview)
+
 ### Changed - Constitution Update v2.1.0 (2025-01-19)
 
 #### Constitution Restructure
