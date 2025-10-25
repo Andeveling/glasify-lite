@@ -42,9 +42,9 @@ export function SuggestedValueBadges({
           return (
             <Button
               className={cn(
-                'm-0 h-6 min-w-[4rem] p-1 font-mono text-xs transition-all duration-200',
+                'm-0 h-6 min-w-[4rem] p-1 font-mono text-xs transition-all duration-200 hover:bg-primary/5',
                 isSelected && 'border-primary bg-primary/10 text-primary ring-2 ring-primary/20',
-                !isSelected && 'hover:border-primary/50 hover:bg-primary/5'
+                !isSelected && 'hover:border-primary/50 hover:bg-primary/5 hover:text-primary'
               )}
               key={value}
               onClick={() => onSelect(value)}
