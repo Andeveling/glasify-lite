@@ -89,22 +89,22 @@ export function TableFilters({ filters, showClearAll = true }: TableFiltersProps
 
     // Treat 'all' as empty filter (remove the parameter)
     if (value && value !== 'all') {
-      updates[ filterId ] = value;
+      updates[filterId] = value;
     } else {
-      delete updates[ filterId ];
+      delete updates[filterId];
     }
 
     // Reset to page 1 on filter change
     updates.page = '1';
     updateParams(updates);
-  };  /**
+  }; /**
    * Clear all filters
    */
   const handleClearAll = () => {
     const updates: Record<string, string | undefined> = {};
 
     for (const filter of filters) {
-      updates[ filter.id ] = undefined;
+      updates[filter.id] = undefined;
     }
 
     updates.page = '1';
