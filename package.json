@@ -107,6 +107,8 @@
     "react-day-picker": "9.11.1",
     "react-dom": "19.2.0",
     "react-hook-form": "7.64.0",
+    "react-intersection-observer": "^9.16.0",
+    "react-konva": "^19.2.0",
     "react-phone-number-input": "^3.4.13",
     "react-scan": "^0.4.3",
     "recharts": "2.15.4",

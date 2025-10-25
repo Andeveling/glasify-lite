@@ -7,6 +7,62 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Model Design Gallery (2025-01-25)
+
+#### New Feature: Visualización de Diseños 2D en Catálogo
+- **Design Rendering System**: Sistema completo de rendering de modelos 2D usando Konva.js
+  - Client Component `DesignRenderer` con soporte para shapes: rect, circle, line, path
+  - React.memo optimization para performance
+  - Ordenamiento por layers (z-index) para composición correcta
+  
+- **Parametric Design Adaptation**: Diseños se adaptan automáticamente a dimensiones del modelo
+  - Server-side service `design-adapter-service` convierte diseños relativos → absolutos
+  - Constraint-based adaptation (frameThickness, glassMargin)
+  - Material color resolution (PVC=blanco, ALUMINUM=gris, WOOD=marrón, MIXED=light-gray)
+  
+- **Database Schema**: Nuevas entidades para gestión de diseños
+  - `ModelDesign` table: id, name, nameEs, type, config (JSON), thumbnailUrl, isActive, displayOrder
+  - `ModelType` enum: fixed_window, sliding_window_horizontal, sliding_window_vertical, casement_window, awning_window, single_door, double_door, sliding_door, other
+  - Model.designId relation (optional, onDelete: SetNull)
+  - Model.type field para categorización
+  
+- **Catalog Integration (US1)**: Diseños visibles en tarjetas de catálogo
+  - ModelCard actualizado para renderizar diseños 2D o fallback
+  - tRPC `catalog.list-models` extendido con design config
+  - Material type propagation desde ProfileSupplier
+  - DesignFallback component para modelos sin diseño
+  
+- **Design Foundation**: Tipos, validación y utilidades core
+  - TypeScript types: StoredDesignConfig (v1.0), ShapeDefinition, AdaptedDesign
+  - Zod validation schemas con constraints (max 100 shapes, opacity 0-1)
+  - Material color mapping con MATERIAL_COLORS constant
+  - Winston logging en design-adapter-service (server-side only)
+
+#### Technical Implementation
+- **Konva 9.x + react-konva 18.x**: Canvas rendering library para performance 2D
+- **Server-First Architecture**: Adaptación parametrizada en server, rendering en client
+  - `design-adapter-service.ts`: Pure business logic, framework-agnostic
+  - `DesignRenderer.tsx`: Client Component boundary bien definida
+- **Validation Layer**: Zod schemas garantizan integridad de diseños JSON
+  - Version locking (v1.0) para migraciones futuras
+  - Shape count limits (1-100 shapes per design)
+  - Opacity validation (0-1 range)
+- **Seeding Infrastructure**: Factory pattern para diseños predefinidos
+  - `seed-designs.ts`: Idempotent creation, error tracking
+  - Integrado en orchestrator (Step 8/8)
+- **Type Safety**: Strict TypeScript compliance, Prisma Decimal handling
+- **Design Error Handling**: Graceful degradation con fallback placeholders
+
+#### Dependencies Added
+- `konva@^9.x`: 2D canvas rendering engine
+- `react-konva@^18.x`: React bindings para Konva
+
+#### Constitution Compliance
+- **Flexible Testing**: Tests escritos antes/durante implementación (T017-T018 complete)
+- **Server-First Performance**: Heavy work (adaptation) en server, rendering solo en client
+- **Winston Logger**: Server-side ONLY (NEVER en Client Components)
+- **SOLID Principles**: Single Responsibility en cada capa (validation, adaptation, rendering)
+
 ### Added - Admin Dashboard Charts (2025-10-24)
 
 #### New Admin Dashboard Feature

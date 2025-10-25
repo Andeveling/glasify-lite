@@ -7,6 +7,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
+      '@lib': resolve(__dirname, './src/lib'),
       '@server': resolve(__dirname, './src/server'),
       '@styles': resolve(__dirname, './src/styles'),
       '@trpc': resolve(__dirname, './src/trpc'),
