@@ -45,12 +45,12 @@ import type { ModelInput } from '../../factories/model.factory';
 export const vcPanama2Panos: ModelInput = {
   accessoryPrice: 45, // USD - Rodines, cerraduras, felpas
   basePrice: 130, // USD/m²
-  compatibleGlassTypeIds: [], // Se populará con vidrios 6mm y 8mm
+  compatibleGlassTypeIds: ['placeholder'], // Se populará automáticamente con todos los tipos de vidrio
   costNotes: 'Precio base $130/m². Compatible con vidrio simple 6-8mm o laminado 33.1mm.',
   costPerMmHeight: 0.012, // $0.012 USD/mm (factor de ajuste por altura)
   costPerMmWidth: 0.015, // $0.015 USD/mm (factor de ajuste por ancho)
   glassDiscountHeightMm: 66, // Fórmula Vitro Rojas: Alto = H - 66mm
-  glassDiscountWidthMm: 3.5, // Por paño: (W-7mm)÷2 = W/2 - 3.5mm
+  glassDiscountWidthMm: 4, // Por paño: (W-7mm)÷2 ≈ W/2 - 3.5mm (redondeado a 4)
   maxHeightMm: 1850,
   maxWidthMm: 2950, // 1350mm móvil + 1600mm fijo
   minHeightMm: 272,
@@ -69,7 +69,7 @@ export const vcPanama2Panos: ModelInput = {
 export const vcPanama3Panos: ModelInput = {
   accessoryPrice: 65, // USD - Más rodines y cerraduras
   basePrice: 150, // USD/m²
-  compatibleGlassTypeIds: [],
+  compatibleGlassTypeIds: ['placeholder'],
   costNotes: 'Precio base $150/m². Sistema de 3 vías con paño central fijo.',
   costPerMmHeight: 0.013,
   costPerMmWidth: 0.017,
@@ -93,7 +93,7 @@ export const vcPanama3Panos: ModelInput = {
 export const vcPanama4Panos: ModelInput = {
   accessoryPrice: 85, // USD - Mayor cantidad de accesorios
   basePrice: 165, // USD/m²
-  compatibleGlassTypeIds: [],
+  compatibleGlassTypeIds: ['placeholder'],
   costNotes: 'Precio base $165/m². Sistema de 4 paños con laterales fijos.',
   costPerMmHeight: 0.014,
   costPerMmWidth: 0.018,
@@ -131,12 +131,12 @@ export const vcPanama4Panos: ModelInput = {
 export const europaClasica2Panos: ModelInput = {
   accessoryPrice: 55, // USD - Accesorios premium
   basePrice: 140, // USD/m² (premium sobre VC)
-  compatibleGlassTypeIds: [], // Se populará con 6-8mm simple + DVH 16-18.5mm
+  compatibleGlassTypeIds: ['placeholder'],
   costNotes: 'Precio base $140/m². Compatible con vidrio simple 6-12mm o DVH 16-18.5mm. Sistema premium.',
   costPerMmHeight: 0.014,
   costPerMmWidth: 0.017,
   glassDiscountHeightMm: 66,
-  glassDiscountWidthMm: 3.5,
+  glassDiscountWidthMm: 4,
   maxHeightMm: 2800,
   maxWidthMm: 3200, // 1600mm + 1600mm
   minHeightMm: 320,
@@ -153,7 +153,7 @@ export const europaClasica2Panos: ModelInput = {
 export const europaClasica3Panos: ModelInput = {
   accessoryPrice: 75, // USD
   basePrice: 160, // USD/m²
-  compatibleGlassTypeIds: [],
+  compatibleGlassTypeIds: ['placeholder'],
   costNotes: 'Precio base $160/m². Sistema premium de 3 vías con DVH.',
   costPerMmHeight: 0.015,
   costPerMmWidth: 0.019,
@@ -175,7 +175,7 @@ export const europaClasica3Panos: ModelInput = {
 export const europaClasica4Panos: ModelInput = {
   accessoryPrice: 95, // USD
   basePrice: 175, // USD/m²
-  compatibleGlassTypeIds: [],
+  compatibleGlassTypeIds: ['placeholder'],
   costNotes: 'Precio base $175/m². Sistema premium de 4 paños con DVH.',
   costPerMmHeight: 0.016,
   costPerMmWidth: 0.02,

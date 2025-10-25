@@ -43,7 +43,7 @@ import type { ModelInput } from '../../factories/model.factory';
 export const abatibleEuropa2Hojas: ModelInput = {
   accessoryPrice: 85, // USD - Bisagras, cerraduras, manillas
   basePrice: 130, // USD/m²
-  compatibleGlassTypeIds: [], // Se populará con 6-12mm simple + DVH 12.5-18.5mm
+  compatibleGlassTypeIds: ['placeholder'], // Se populará automáticamente con todos los tipos de vidrio
   costNotes:
     'Precio base $130/m². Sistema abatible con bisagras V8000 (75kg por par). Compatible con vidrio 6-12mm o DVH 12.5-18.5mm.',
   costPerMmHeight: 0.016, // Mayor costo que corredizo por complejidad
@@ -68,7 +68,7 @@ export const abatibleEuropa2Hojas: ModelInput = {
 export const abatibleEuropa3Hojas: ModelInput = {
   accessoryPrice: 125, // USD - Más bisagras y cerraduras
   basePrice: 150, // USD/m²
-  compatibleGlassTypeIds: [],
+  compatibleGlassTypeIds: ['placeholder'],
   costNotes: 'Precio base $150/m². Sistema de 3 hojas con panel central fijo. Cerradura multipunto opcional.',
   costPerMmHeight: 0.017,
   costPerMmWidth: 0.021,
@@ -93,7 +93,7 @@ export const abatibleEuropa3Hojas: ModelInput = {
 export const abatibleEuropa4Hojas: ModelInput = {
   accessoryPrice: 165, // USD - Mayor cantidad de herrajes
   basePrice: 170, // USD/m²
-  compatibleGlassTypeIds: [],
+  compatibleGlassTypeIds: ['placeholder'],
   costNotes:
     'Precio base $170/m². Sistema de 4 hojas premium. Cerradura multipunto con cilindro recomendada para alturas >1800mm.',
   costPerMmHeight: 0.018,

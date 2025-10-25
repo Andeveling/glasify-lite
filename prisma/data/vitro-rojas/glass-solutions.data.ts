@@ -22,7 +22,7 @@ export const vitroRojasGlassSolutions: GlassSolutionInput[] = [
     description:
       'Vidrio claro simple para uso residencial estándar. Ideal para ventanas donde no se requieren características especiales.',
     icon: 'Home',
-    key: 'general_purpose',
+    key: 'general',
     name: 'General Purpose',
     nameEs: 'Uso General',
     sortOrder: 1,
@@ -40,7 +40,7 @@ export const vitroRojasGlassSolutions: GlassSolutionInput[] = [
     description:
       'DVH (Doble Vidrio Hermético) para aislamiento térmico y ahorro energético. Ideal para espacios con aire acondicionado en clima tropical.',
     icon: 'Snowflake',
-    key: 'thermal_insulation',
+    key: 'energy_efficiency',
     name: 'Thermal Insulation',
     nameEs: 'Aislamiento Térmico',
     sortOrder: 3,

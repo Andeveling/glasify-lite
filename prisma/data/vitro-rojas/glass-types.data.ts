@@ -45,17 +45,21 @@ const generalPurposeGlassTypes: GlassTypeInput[] = [
  *
  * Aplicación: Áreas con riesgo de impacto, seguridad anti-robo
  * Adicional: +$15 USD/m² sobre precio base
+ * 
+ * Nota: Los espesores se redondean al entero más cercano
+ * - Laminado 6.38mm (6+6) → 6mm
+ * - Laminado 8.38mm (8+8) → 8mm
  */
 const securityGlassTypes: GlassTypeInput[] = [
   {
     code: 'VR_LAM6',
     name: 'Vidrio Laminado 6.38mm (6+6)',
-    thicknessMm: 6.38,
+    thicknessMm: 6,
   },
   {
     code: 'VR_LAM8',
     name: 'Vidrio Laminado 8.38mm (8+8)',
-    thicknessMm: 8.38,
+    thicknessMm: 8,
   },
   {
     code: 'VR_TEMP6',
@@ -70,6 +74,9 @@ const securityGlassTypes: GlassTypeInput[] = [
  * Aplicación: Áreas con aire acondicionado, reducción de consumo energético
  * Compatible con: Sistema Corredizo Europa Clásica (DVH 16-18.5mm)
  * Compatible con: Sistema Abatible Europa (DVH 12.5-18.5mm)
+ * 
+ * Nota: Espesores redondeados al entero más cercano
+ * - DVH 18.5mm (6-6.5-6) → 19mm
  */
 const insulationGlassTypes: GlassTypeInput[] = [
   {
@@ -81,7 +88,7 @@ const insulationGlassTypes: GlassTypeInput[] = [
   {
     code: 'VR_DVH18',
     name: 'DVH 18.5mm (6-6.5-6)',
-    thicknessMm: 18.5,
+    thicknessMm: 19,
     uValue: 2.7, // W/m²K - Mejor aislamiento
   },
 ];
@@ -94,6 +101,9 @@ const insulationGlassTypes: GlassTypeInput[] = [
  * - Gris/Bronce: +$10 USD/m²
  * - Reflectivo: +$15 USD/m²
  * - Laminado Gris/Bronce: +$18 USD/m²
+ * 
+ * Nota: Espesores redondeados al entero más cercano
+ * - Laminado Gris 6.38mm → 6mm
  */
 const decorativeGlassTypes: GlassTypeInput[] = [
   {
@@ -114,7 +124,7 @@ const decorativeGlassTypes: GlassTypeInput[] = [
   {
     code: 'VR_LAMGRAY6',
     name: 'Vidrio Laminado Gris 6.38mm',
-    thicknessMm: 6.38,
+    thicknessMm: 6,
   },
 ];
 
