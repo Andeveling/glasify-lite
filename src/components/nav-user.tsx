@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
-import { signOut } from '@/lib/auth-client';
+import { handleSignOut } from '@/app/(public)/_components/_layout/actions';
 
 export function NavUser({
   user,
@@ -23,10 +23,6 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
-
-  const handleSignOut = async () => {
-    await signOut();
-  };
 
   return (
     <SidebarMenu>
