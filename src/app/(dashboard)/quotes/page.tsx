@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import { auth } from '@/server/auth';
 import { api } from '@/trpc/server-client';
 import { EmptyQuotesState } from './_components/empty-quotes-state';
@@ -20,7 +21,9 @@ type QuotesPageProps = {
 };
 
 export default async function QuotesPage({ searchParams }: QuotesPageProps) {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
   const params = await searchParams;
   const page = Number(params?.page) || 1;
   const status = params?.status as 'draft' | 'sent' | 'canceled' | undefined;

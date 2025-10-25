@@ -31,74 +31,62 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-This feature must align with Glasify Lite Constitution v2.0.0 principles:
+Reference: `.specify/memory/constitution.md` - verify feature complies with all principles.
 
-### Single Responsibility (SRP)
-- [ ] Each component/module has ONE clear responsibility
-- [ ] Business logic is separated from UI and data access
-- [ ] Tests and docs exist for each public abstraction
+### Core Values Compliance
 
-### Open/Closed (OCP)
-- [ ] New features use extension patterns (hooks, procedures, adapters)
-- [ ] No modification of stable modules unless documented with migration plan
-- [ ] Breaking API changes include MAJOR version bump + migration guide
+- [ ] **Clarity Over Complexity**: Design uses clear, descriptive names and simple logic
+- [ ] **Server-First Performance**: Heavy work done on server, appropriate caching strategy defined
+  - [ ] Caching strategy documented (semi-static 30-60s, rarely-changing 5min, user-specific short/none)
+  - [ ] SSR mutations use two-step invalidation: `invalidate()` + `router.refresh()`
+- [ ] **One Job, One Place**: Each module has single responsibility, clear separation of concerns
+- [ ] **Flexible Testing**: Testing strategy defined (before/during/after - all features require tests before merge)
+- [ ] **Extend, Don't Modify**: New features add code, don't change existing working code
+- [ ] **Security From the Start**: Input validation and authorization checks at every entry point
+  - [ ] User permissions checked server-side (middleware, tRPC, Server Components)
+  - [ ] All user input validated with Zod schemas
+- [ ] **Track Everything Important**: Logging strategy defined for errors and significant events
+  - [ ] Winston logger used ONLY in server-side code (never in Client Components)
+  - [ ] Error messages to users in Spanish, technical logs in English
 
-### Pragmatic Testing Discipline
-- [ ] Tests MAY be written before/during/after implementation
-- [ ] Tests MUST cover happy paths and critical edge cases before merge
-- [ ] Unit tests run in CI
-- [ ] Integration/contract tests for cross-service changes
+### Language & Communication
 
-### Server-First Architecture (Next.js 15)
-- [ ] Pages are Server Components by default (`page.tsx`)
-- [ ] Client Components (`'use client'`) ONLY for: React hooks, browser APIs, event handlers, client-required libraries
-- [ ] Public pages export `metadata` for SEO
-- [ ] Dynamic rendering uses `export const dynamic = 'force-dynamic'`
-- [ ] Pattern: Server Page + Client Content (interactivity in `_components/*-content.tsx`)
+- [ ] Code/comments/commits in English only
+- [ ] UI text in Spanish (es-LA) only
+- [ ] Commit messages follow Conventional Commits format
 
-### Integration & Contract Testing
-- [ ] Contract tests for shared schemas/API contracts
-- [ ] Integration tests for service boundaries (DB, external APIs, client-server)
-- [ ] Contracts are explicit and versioned
+### Technology Constraints
 
-### Observability & Versioning
-- [ ] Structured logging with correlation IDs
-- [ ] **Winston logger ONLY in server-side code** (Server Components, Server Actions, API routes, tRPC, middleware)
-- [ ] **NO Winston in Client Components** (use console, toast, error boundaries)
-- [ ] Semantic versioning: MAJOR.MINOR.PATCH
-- [ ] Authorization checks + audit logging for sensitive operations
+- [ ] Uses required stack: Next.js 15 (App Router), TypeScript (strict), React 19, tRPC, Prisma, PostgreSQL
+- [ ] No prohibited technologies (Vue/Angular/Svelte, non-TailwindCSS frameworks, Winston in browser)
+- [ ] UI components use Shadcn/ui + Radix UI + TailwindCSS
 
-### Technology Stack Compliance
-- [ ] Next.js 15 App Router with React Server Components
-- [ ] TypeScript (strict), Zod 4, tRPC, Prisma
-- [ ] React Hook Form + @hookform/resolvers
-- [ ] shadcn/ui + Radix + TailwindCSS
-- [ ] Biome/Ultracite for formatting/linting
-- [ ] UI text in Spanish (es-LA); code/comments/commits in English
+### Quality Gates
 
-### Security & Compliance
-- [ ] All inputs validated server-side (Zod schemas in tRPC `.input()`)
-- [ ] No secrets committed (use env variables + @t3-oss/env-nextjs)
-- [ ] Sensitive operations include authorization + audit logging
+- [ ] TypeScript strict mode enabled, no type errors expected
+- [ ] Biome/Ultracite formatting rules followed
+- [ ] Tests planned for all user journeys (unit/integration/E2E as appropriate)
+- [ ] Changelog entry planned for user-facing changes
+- [ ] Migration notes prepared if breaking changes
 
-### Development Workflow
-- [ ] Conventional commits format
-- [ ] PR descriptions reference affected principles
-- [ ] CI gates: typecheck, lint, unit tests, E2E tests (if user flows affected)
-- [ ] Code review: 1 approver (2 for large/risky changes)
+### Principle Priority Resolution
 
----
+If principles conflict, documented resolution following priority order:
+1. Security From the Start (non-negotiable)
+2. Clarity Over Complexity
+3. Server-First Performance
+4. One Job, One Place
+5. Flexible Testing
+6. Extend, Don't Modify
+7. Track Everything Important
 
-**Notes**:
-- Mark N/A for checks not applicable to this feature
-- Document any exceptions in Complexity Tracking section
-- Re-validate after Phase 1 design decisions
+**Result**: ✅ PASS / ⚠️ VIOLATIONS REQUIRE JUSTIFICATION (see Complexity Tracking section)
 
 ## Project Structure
 
 ### Documentation (this feature)
 
-```
+```text
 specs/[###-feature]/
 ├── plan.md              # This file (/speckit.plan command output)
 ├── research.md          # Phase 0 output (/speckit.plan command)
@@ -116,7 +104,7 @@ specs/[###-feature]/
   not include Option labels.
 -->
 
-```
+```text
 # [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
 ├── models/
@@ -157,10 +145,9 @@ directories captured above]
 
 ## Complexity Tracking
 
-*Fill ONLY if Constitution Check has violations that must be justified*
+> **Fill ONLY if Constitution Check has violations that must be justified**
 
 | Violation                  | Why Needed         | Simpler Alternative Rejected Because |
 | -------------------------- | ------------------ | ------------------------------------ |
 | [e.g., 4th project]        | [current need]     | [why 3 projects insufficient]        |
 | [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient]  |
-

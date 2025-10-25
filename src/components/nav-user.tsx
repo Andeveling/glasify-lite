@@ -1,8 +1,7 @@
 'use client';
 
 import { LogOut } from 'lucide-react';
-import { signOut } from 'next-auth/react';
-
+import { handleSignOut } from '@/app/(public)/_components/_layout/actions';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -24,10 +23,6 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
-
-  const handleSignOut = () => {
-    void signOut();
-  };
 
   return (
     <SidebarMenu>

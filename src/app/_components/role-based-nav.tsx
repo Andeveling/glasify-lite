@@ -1,4 +1,5 @@
 import type { UserRole } from '@prisma/client';
+import { headers } from 'next/headers';
 import { auth } from '@/server/auth';
 import { NavigationMenu } from './navigation-menu';
 
@@ -6,13 +7,7 @@ import { NavigationMenu } from './navigation-menu';
  * Icon names for navigation
  * Serializable string literals that can pass from Server to Client Components
  */
-export type IconName =
-  | 'LayoutDashboard'
-  | 'Package'
-  | 'FileText'
-  | 'Settings'
-  | 'Calculator'
-  | 'Glasses';
+export type IconName = 'LayoutDashboard' | 'Package' | 'FileText' | 'Settings' | 'Calculator' | 'Glasses';
 
 /**
  * Navigation Item Type
@@ -82,21 +77,21 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
         href: '/dashboard/quotes',
         icon: 'FileText',
         label: 'Cotizaciones',
-        routes: [ '/dashboard/quotes' ],
+        routes: ['/dashboard/quotes'],
       },
       {
         description: 'Explorar catálogo de productos',
         href: '/catalog',
         icon: 'Package',
         label: 'Catálogo',
-        routes: [ '/catalog' ],
+        routes: ['/catalog'],
       },
       {
         description: 'Descubrir soluciones de vidrio especializadas',
         href: '/glasses/solutions',
         icon: 'Glasses',
         label: 'Soluciones',
-        routes: [ '/glasses/solutions' ],
+        routes: ['/glasses/solutions'],
       },
     ];
   }
@@ -109,21 +104,21 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
         href: '/catalog',
         icon: 'Package',
         label: 'Catálogo',
-        routes: [ '/catalog' ],
+        routes: ['/catalog'],
       },
       {
         description: 'Descubrir soluciones de vidrio especializadas',
         href: '/glasses/solutions',
         icon: 'Glasses',
         label: 'Soluciones',
-        routes: [ '/glasses/solutions' ],
+        routes: ['/glasses/solutions'],
       },
       {
         description: 'Ver mis cotizaciones',
         href: '/my-quotes',
         icon: 'FileText',
         label: 'Mis Cotizaciones',
-        routes: [ '/my-quotes' ],
+        routes: ['/my-quotes'],
       },
     ];
   }
@@ -135,15 +130,15 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
       href: '/catalog',
       icon: 'Package',
       label: 'Catálogo',
-      routes: [ '/catalog' ],
+      routes: ['/catalog'],
     },
     {
       description: 'Descubrir soluciones de vidrio especializadas',
       href: '/glasses/solutions',
       icon: 'Glasses',
       label: 'Soluciones',
-      routes: [ '/glasses/solutions' ],
-    }
+      routes: ['/glasses/solutions'],
+    },
   ];
 }
 
@@ -167,8 +162,10 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
  * @returns Navigation menu with role-appropriate links
  */
 export async function RoleBasedNav({ className }: { className?: string }) {
-  const session = await auth();
-  const userRole = session?.user?.role;
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  const userRole = session?.user?.role as UserRole | undefined;
 
   // Get navigation links based on user role
   const navLinks = getNavLinksForRole(userRole);

@@ -1,15 +1,14 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Icons } from '@/components/ui/icons';
 import { Input } from '@/components/ui/input';
+import { signIn } from '@/lib/auth-client';
 
 // Constants
 const MIN_PASSWORD_LENGTH = 6;
@@ -26,13 +25,11 @@ const signInFormSchema = z.object({
 type SignInFormValues = z.infer<typeof signInFormSchema>;
 
 type SignInFormProps = {
-  onSubmit?: (values: SignInFormValues) => Promise<void>;
-  onGoogleSignIn?: () => Promise<void>;
   isLoading?: boolean;
   error?: string | null;
 };
 
-export default function SignInForm({ onSubmit, onGoogleSignIn, isLoading = false, error }: SignInFormProps) {
+export default function SignInForm({ isLoading = false, error }: SignInFormProps) {
   const [isCredentialsLoading, setIsCredentialsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
@@ -50,21 +47,16 @@ export default function SignInForm({ onSubmit, onGoogleSignIn, isLoading = false
     try {
       setIsCredentialsLoading(true);
 
-      if (onSubmit) {
-        await onSubmit(values);
-      } else {
-        // Default NextAuth credentials sign in
-        const result = await signIn('credentials', {
-          email: values.email,
-          password: values.password,
-          redirect: false,
-        });
+      // Better Auth credentials sign in
+      const result = await signIn.email({
+        email: values.email,
+        password: values.password,
+      });
 
-        if (result?.error) {
-          form.setError('root', {
-            message: 'Email o contraseña incorrectos',
-          });
-        }
+      if (result?.error) {
+        form.setError('root', {
+          message: 'Email o contraseña incorrectos',
+        });
       }
     } catch {
       form.setError('root', {
@@ -79,13 +71,11 @@ export default function SignInForm({ onSubmit, onGoogleSignIn, isLoading = false
     try {
       setIsGoogleLoading(true);
 
-      if (onGoogleSignIn) {
-        await onGoogleSignIn();
-      } else {
-        // Default NextAuth Google sign in
-        // Redirect will be handled by middleware based on user role
-        await signIn('google', { callbackUrl: '/auth/callback' });
-      }
+      // Better Auth Google sign in
+      await signIn.social({
+        callbackURL: '/dashboard',
+        provider: 'google',
+      });
     } catch {
       form.setError('root', {
         message: 'Error al conectar con Google. Intenta nuevamente.',

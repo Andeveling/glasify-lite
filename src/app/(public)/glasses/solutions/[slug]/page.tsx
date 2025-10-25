@@ -29,7 +29,7 @@ export const revalidate = 3600; // ISR: 1 hour
  */
 export async function generateStaticParams() {
   try {
-    const { items: solutions } = await api.catalog[ 'list-solutions' ]({
+    const { items: solutions } = await api.catalog['list-solutions']({
       limit: 1000,
       page: 1,
     });
@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
 
   try {
-    const solution = await api.catalog[ 'get-by-slug' ]({ slug }).catch(() => null);
+    const solution = await api.catalog['get-by-slug']({ slug }).catch(() => null);
 
     if (!solution) {
       return {
@@ -103,7 +103,7 @@ function PerformanceRating({ rating }: { rating: string }): React.ReactElement {
   };
 
   const ratingKey = (rating as RatingKey) || 'standard';
-  const ratingData = ratings[ ratingKey ];
+  const ratingData = ratings[ratingKey];
 
   return (
     <div className="flex items-center gap-2">
@@ -127,7 +127,7 @@ export default async function GlassSolutionDetailPage({ params }: { params: Prom
   const { slug } = await params;
 
   try {
-    const solution = await api.catalog[ 'get-by-slug' ]({ slug });
+    const solution = await api.catalog['get-by-slug']({ slug });
 
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-secondary/5">

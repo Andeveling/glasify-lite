@@ -33,12 +33,13 @@ export function CatalogFilterBar({
   currentSort?: string;
 }) {
   return (
-    <div className="grid w-full grid-cols-1 gap-y-2 md:grid-cols-12 md:gap-x-6">
-      {/* Row 1: Search (left), Filters (right) */}
-      <div className="md:col-span-5 lg:col-span-6">
+    <div className="space-y-4">
+      {/* Row 1: Search (full width in mobile) */}
+      <div>
         <CatalogSearch initialValue={searchQuery} />
       </div>
-      <div className="flex items-center justify-end md:col-span-7 lg:col-span-6">
+      {/* Row 2: Filters (full width in mobile, side by side in desktop) */}
+      <div className="flex flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-end">
         <CatalogFilters
           currentProfileSupplier={currentProfileSupplier}
           currentSearchQuery={searchQuery}
@@ -49,8 +50,8 @@ export function CatalogFilterBar({
           totalResults={undefined}
         />
       </div>
-      {/* Row 2: Search parameters badges + result count (full width) */}
-      <div className="md:col-span-12 lg:col-span-12">
+      {/* Row 3: Search parameters badges + result count (full width) */}
+      <div>
         <CatalogFilters
           currentProfileSupplier={currentProfileSupplier}
           currentSearchQuery={searchQuery}

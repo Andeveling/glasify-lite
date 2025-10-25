@@ -1,5 +1,6 @@
 import { AlertCircle, Calculator, CheckCircle, Clock, FileText, Package, Plus, TrendingUp, Users } from 'lucide-react';
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
@@ -256,7 +257,9 @@ function QuickActions() {
 }
 
 export default async function DashboardPage() {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session?.user) {
     redirect('/signin');

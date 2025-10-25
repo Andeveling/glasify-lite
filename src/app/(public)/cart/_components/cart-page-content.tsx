@@ -9,7 +9,6 @@
 
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { Suspense } from 'react';
 import { useCart } from '../_hooks/use-cart';
 import { useCartItemActions } from '../_hooks/use-cart-item-actions';
@@ -33,7 +32,6 @@ const SKELETON_ITEMS_COUNT = 3;
  * Handles all cart operations and state management
  */
 export function CartPageContent() {
-  const router = useRouter();
   const { items, summary, updateItem, removeItem, hydrated } = useCart();
 
   // Initialize cart item actions hook (SOLID - SRP)
@@ -104,13 +102,6 @@ export function CartPageContent() {
     }
   };
 
-  /**
-   * Handle quote generation (navigate to quote creation)
-   */
-  const handleGenerateQuote = () => {
-    router.push('/quote/new');
-  };
-
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8">
       {/* Page header */}
@@ -142,7 +133,7 @@ export function CartPageContent() {
 
         {/* Cart summary (1/3 width on desktop, sticky) */}
         <div>
-          <CartSummary onGenerateQuote={handleGenerateQuote} summary={summary} />
+          <CartSummary summary={summary} />
         </div>
       </div>
     </div>

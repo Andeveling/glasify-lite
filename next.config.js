@@ -11,11 +11,6 @@ const config = {
   // Performance optimizations
   compress: true,
 
-  // ESLint configuration
-  eslint: {
-    ignoreDuringBuilds: false,
-  },
-
   // Security headers
   headers() {
     return Promise.resolve([

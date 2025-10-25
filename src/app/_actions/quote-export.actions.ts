@@ -8,6 +8,8 @@
 'use server';
 
 import type { QuoteStatus } from '@prisma/client';
+import type { Decimal } from '@prisma/client/runtime/library';
+import { headers } from 'next/headers';
 import { z } from 'zod';
 import { writeQuoteExcel } from '@/lib/export/excel/quote-excel-workbook';
 import { renderQuotePDF } from '@/lib/export/pdf/quote-pdf-document';
@@ -15,6 +17,24 @@ import logger from '@/lib/logger';
 import { auth } from '@/server/auth';
 import { db } from '@/server/db';
 import type { ExportFormat, ExportResult, QuotePDFData } from '@/types/export.types';
+
+/**
+ * Constants for quote export calculations
+ */
+const MM_TO_METERS = 1000;
+const DEFAULT_QUOTE_VALIDITY_DAYS = 30;
+const HOURS_IN_DAY = 24;
+const MINUTES_IN_HOUR = 60;
+const SECONDS_IN_MINUTE = 60;
+const MS_IN_SECOND = 1000;
+
+/**
+ * Calculate default quote validity date (30 days from now)
+ */
+const getDefaultValidityDate = () =>
+  new Date(
+    Date.now() + DEFAULT_QUOTE_VALIDITY_DAYS * HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE * MS_IN_SECOND
+  );
 
 /**
  * Input schema for export actions
@@ -28,10 +48,14 @@ type ExportQuoteInput = z.infer<typeof exportQuoteInputSchema>;
 
 /**
  * Calculate totals from quote items
+ * Uses unknown type for complex Prisma includes
  */
-function calculateQuoteTotals(quote: any) {
+function calculateQuoteTotals(quote: { items: unknown[]; total: Decimal }) {
   // Calculate subtotal from items
-  const subtotal = quote.items.reduce((sum: number, item: any) => sum + Number(item.subtotal), 0);
+  const subtotal = quote.items.reduce((sum: number, item: unknown) => {
+    const typedItem = item as { subtotal: Decimal };
+    return sum + Number(typedItem.subtotal);
+  }, 0);
 
   //Tax and discount are not yet implemented in the schema
   // They will be calculated from adjustments in future iterations
@@ -61,7 +85,9 @@ export async function exportQuotePDF(input: ExportQuoteInput): Promise<ExportRes
     logger.info('Starting PDF export', { quoteId });
 
     // Authenticate user
-    const session = await auth();
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
     if (!session?.user) {
       logger.warn('Unauthorized PDF export attempt', { quoteId });
       return {
@@ -151,8 +177,8 @@ export async function exportQuotePDF(input: ExportQuoteInput): Promise<ExportRes
         timezone: 'America/Santiago',
       },
       items: quote.items.map((item) => {
-        const widthM = item.widthMm / 1000;
-        const heightM = item.heightMm / 1000;
+        const widthM = item.widthMm / MM_TO_METERS;
+        const heightM = item.heightMm / MM_TO_METERS;
         const area = widthM * heightM;
 
         return {
@@ -183,7 +209,7 @@ export async function exportQuotePDF(input: ExportQuoteInput): Promise<ExportRes
         projectName: quote.projectName || 'Sin nombre',
         status: quote.status,
         totalAmount: Number(quote.total),
-        validUntil: quote.validUntil || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days default
+        validUntil: quote.validUntil || getDefaultValidityDate(),
       },
       totals,
     };
@@ -247,7 +273,9 @@ export async function exportQuoteExcel(input: ExportQuoteInput): Promise<ExportR
     logger.info('Starting Excel export', { quoteId });
 
     // Authenticate user
-    const session = await auth();
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
     if (!session?.user) {
       logger.warn('Unauthorized Excel export attempt', { quoteId });
       return {
@@ -293,7 +321,20 @@ export async function exportQuoteExcel(input: ExportQuoteInput): Promise<ExportR
     });
 
     // Verify quote exists
-    const quote = quoteData as any; // Type assertion for complex Prisma include
+    // Type assertion for complex Prisma include with all relations
+    const quote = quoteData as Record<string, unknown> & {
+      id: string;
+      userId: string;
+      projectName: string | null;
+      status: QuoteStatus;
+      total: Decimal;
+      currency: string;
+      contactPhone: string | null;
+      createdAt: Date;
+      validUntil: Date | null;
+      items: Record<string, unknown>[];
+      user: { name: string | null; email: string | null } | null;
+    };
     if (!quote) {
       logger.warn('Quote not found for Excel export', { quoteId });
       return {
@@ -397,9 +438,25 @@ export async function exportQuoteExcel(input: ExportQuoteInput): Promise<ExportR
         locale: 'es-CL',
         timezone: 'America/Santiago',
       },
-      items: quote.items.map((item: any, index: number): ExcelItemInfo => {
-        const widthM = item.widthMm / 1000;
-        const heightM = item.heightMm / 1000;
+      items: quote.items.map((rawItem: Record<string, unknown>, index: number): ExcelItemInfo => {
+        // Type assertion for Prisma item with all relations
+        const item = rawItem as {
+          id: string;
+          name: string;
+          quantity: number;
+          widthMm: number;
+          heightMm: number;
+          subtotal: Decimal;
+          glassType: { name: string };
+          model: {
+            name: string;
+            profileSupplier?: { name: string };
+            category?: { name: string };
+          } | null;
+        };
+
+        const widthM = item.widthMm / MM_TO_METERS;
+        const heightM = item.heightMm / MM_TO_METERS;
         const area = widthM * heightM;
 
         return {
@@ -425,7 +482,7 @@ export async function exportQuoteExcel(input: ExportQuoteInput): Promise<ExportR
         projectName: quote.projectName || 'Sin nombre',
         status: quote.status,
         totalAmount: Number(quote.total),
-        validUntil: quote.validUntil || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        validUntil: quote.validUntil || getDefaultValidityDate(),
       },
       totals,
     };

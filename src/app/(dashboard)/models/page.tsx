@@ -1,5 +1,6 @@
 import { Edit, Eye, Filter, Package, Plus, Search } from 'lucide-react';
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { generateStableKeyedArray } from '@/app/_utils/generate-keys.util';
@@ -217,7 +218,9 @@ function ModelsPageContent() {
 }
 
 export default async function ModelsPage() {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session?.user) {
     redirect('/signin');

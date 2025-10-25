@@ -1,3 +1,4 @@
+import { headers } from 'next/headers';
 import Link from 'next/link';
 import { CartIndicator } from '@/app/_components/cart-indicator';
 import { RoleBasedNav } from '@/app/_components/role-based-nav';
@@ -16,7 +17,9 @@ import { UserMenu } from './user-menu';
  * - User menu (authenticated) or guest menu
  */
 export default async function Header() {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   return (
     <header className="sticky top-0 z-50 border-border border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

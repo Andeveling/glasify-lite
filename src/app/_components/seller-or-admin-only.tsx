@@ -1,3 +1,4 @@
+import { headers } from 'next/headers';
 import { auth } from '@/server/auth';
 
 type SellerOrAdminOnlyProps = {
@@ -27,7 +28,9 @@ type SellerOrAdminOnlyProps = {
  * @returns JSX element or null
  */
 export async function SellerOrAdminOnly({ children, fallback = null }: SellerOrAdminOnlyProps) {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
   const role = session?.user?.role;
 
   if (role !== 'admin' && role !== 'seller') {

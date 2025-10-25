@@ -2,13 +2,13 @@
 
 import { ChevronRight } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
-import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Icons } from '@/components/ui/icons';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { signIn } from '@/lib/auth-client';
 
 type SignInModalProps = {
   open: boolean;
@@ -28,10 +28,11 @@ export function SignInModal({ open, onOpenChangeAction, defaultEmail = '' }: Sig
   const handleGoogleSignIn = async () => {
     try {
       setIsGoogleLoading(true);
-      await signIn('google', { callbackUrl });
-    } catch (_error) {
-      // Error handling delegated to NextAuth
-    } finally {
+      await signIn.social({
+        callbackURL: callbackUrl,
+        provider: 'google',
+      });
+    } catch {
       setIsGoogleLoading(false);
     }
   };
@@ -41,9 +42,7 @@ export function SignInModal({ open, onOpenChangeAction, defaultEmail = '' }: Sig
 
     try {
       setIsEmailLoading(true);
-    } catch (_error) {
-      // Error handling delegated to email provider
-    } finally {
+    } catch {
       setIsEmailLoading(false);
     }
   };

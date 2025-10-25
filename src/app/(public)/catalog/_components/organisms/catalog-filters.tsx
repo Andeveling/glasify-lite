@@ -85,10 +85,10 @@ export function CatalogFilters({
   );
 
   return (
-    <div className="mb-4 space-y-4">
+    <div className="w-full space-y-3">
       {/* Filter Controls */}
       {showControls && (
-        <div className="flex flex-wrap items-center justify-end gap-3">
+        <div className="flex w-full flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-end">
           {/* Clear all parameters button */}
           {hasActiveParameters && (
             <Button
@@ -102,15 +102,15 @@ export function CatalogFilters({
               <span className="sr-only hidden lg:not-sr-only">Limpiar</span>
             </Button>
           )}
-          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+          <div className="hidden items-center gap-2 text-muted-foreground text-sm md:flex">
             <Filter className="size-4" />
-            <span className="sr-only hidden md:not-sr-only">Filtros</span>
+            <span>Filtros</span>
           </div>
 
           {/* Profile Supplier filter */}
           {profileSuppliers.length > 0 && (
             <Select onValueChange={handleProfileSupplierChange} value={currentProfileSupplier}>
-              <SelectTrigger className="w-[160px] gap-2 md:w-[180px]">
+              <SelectTrigger className="w-full gap-2 md:w-auto md:min-w-[180px]">
                 <Building2 className="size-4 opacity-70" />
                 <SelectValue placeholder="Proveedor" />
               </SelectTrigger>
@@ -130,7 +130,7 @@ export function CatalogFilters({
 
           {/* Sort filter */}
           <Select onValueChange={handleSortChange} value={currentSort}>
-            <SelectTrigger className="w-[160px] gap-2 md:w-[180px]">
+            <SelectTrigger className="w-full gap-2 md:w-auto md:min-w-[180px]">
               <ArrowUpDown className="size-4 opacity-70" />
               <SelectValue placeholder="Ordenar" />
             </SelectTrigger>
