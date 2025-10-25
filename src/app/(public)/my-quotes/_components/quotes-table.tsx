@@ -63,38 +63,42 @@ export function QuotesTable({ data }: QuotesTableProps) {
   const { formatContext } = useTenantConfig();
   return (
     <div className="space-y-4">
-      {/* Search and Filters */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      {/* Search and Filters - Mobile stacked, Desktop in row */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:gap-6">
+        {/* Search - takes flex-1 on desktop */}
         <div className="flex-1">
           <TableSearch placeholder="Buscar por nombre de proyecto..." />
         </div>
 
-        <TableFilters
-          filters={[
-            {
-              id: 'status',
-              label: 'Estado',
-              options: [
-                { label: 'Todos', value: '' },
-                { label: 'Borrador', value: 'draft' },
-                { label: 'Enviada', value: 'sent' },
-                { label: 'Cancelada', value: 'canceled' },
-              ],
-              type: 'select',
-            },
-            {
-              id: 'sort',
-              label: 'Ordenar por',
-              options: [
-                { label: 'Más recientes', value: 'newest' },
-                { label: 'Más antiguas', value: 'oldest' },
-                { label: 'Precio: Mayor a menor', value: 'price-high' },
-                { label: 'Precio: Menor a mayor', value: 'price-low' },
-              ],
-              type: 'select',
-            },
-          ]}
-        />
+        {/* Filters wrapper - keeps them together on desktop */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:gap-4">
+          <TableFilters
+            filters={[
+              {
+                id: 'status',
+                label: 'Estado',
+                options: [
+                  { label: 'Todos', value: 'all' },
+                  { label: 'Borrador', value: 'draft' },
+                  { label: 'Enviada', value: 'sent' },
+                  { label: 'Cancelada', value: 'canceled' },
+                ],
+                type: 'select',
+              },
+              {
+                id: 'sort',
+                label: 'Ordenar por',
+                options: [
+                  { label: 'Más recientes', value: 'newest' },
+                  { label: 'Más antiguas', value: 'oldest' },
+                  { label: 'Precio: Mayor a menor', value: 'price-high' },
+                  { label: 'Precio: Menor a mayor', value: 'price-low' },
+                ],
+                type: 'select',
+              },
+            ]}
+          />
+        </div>
       </div>
 
       {/* Results Count */}
@@ -187,7 +191,7 @@ function QuoteStatusBadge({ status }: { status: QuoteStatus }) {
     sent: { label: 'Enviada', variant: 'default' },
   };
 
-  const { label, variant } = config[status];
+  const { label, variant } = config[ status ];
 
   return <Badge variant={variant}>{label}</Badge>;
 }

@@ -69,7 +69,7 @@ export interface TableFiltersProps {
 }
 
 export function TableFilters({ filters, showClearAll = true }: TableFiltersProps) {
-  const { getParam, updateParams, deleteParam } = useServerParams();
+  const { getParam, updateParams, getAllParams } = useServerParams();
 
   /**
    * Check if any filter is active (not default value)
@@ -84,27 +84,27 @@ export function TableFilters({ filters, showClearAll = true }: TableFiltersProps
    * Handle filter change
    */
   const handleFilterChange = (filterId: string, value: string) => {
-    const filter = filters.find((f) => f.id === filterId);
-    const defaultValue = filter?.defaultValue ?? 'all';
+    const currentParams = getAllParams();
+    const updates: Record<string, string | undefined> = { ...currentParams };
 
-    if (value === defaultValue) {
-      deleteParam(filterId);
+    // Treat 'all' as empty filter (remove the parameter)
+    if (value && value !== 'all') {
+      updates[ filterId ] = value;
     } else {
-      updateParams({
-        [filterId]: value,
-        page: '1', // Reset to first page on filter change
-      });
+      delete updates[ filterId ];
     }
-  };
 
-  /**
+    // Reset to page 1 on filter change
+    updates.page = '1';
+    updateParams(updates);
+  };  /**
    * Clear all filters
    */
   const handleClearAll = () => {
     const updates: Record<string, string | undefined> = {};
 
     for (const filter of filters) {
-      updates[filter.id] = undefined;
+      updates[ filter.id ] = undefined;
     }
 
     updates.page = '1';
@@ -118,7 +118,7 @@ export function TableFilters({ filters, showClearAll = true }: TableFiltersProps
         const value = getParam(filter.id) ?? filter.defaultValue ?? 'all';
 
         return (
-          <div className="min-w-[200px] flex-1 space-y-2" key={filter.id}>
+          <div className="min-w-[180px] space-y-2" key={filter.id}>
             <Label htmlFor={filter.id}>{filter.label}</Label>
 
             {filter.type === 'select' && (

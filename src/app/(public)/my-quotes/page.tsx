@@ -41,10 +41,11 @@ export default async function MyQuotesPage({ searchParams }: MyQuotesPageProps) 
 
   if (!session?.user) {
     logger.warn('[MyQuotesPage] Unauthenticated user attempted to access quotes', {
-      redirectTo: '/api/auth/signin',
+      redirectTo: '/catalog',
     });
 
-    redirect('/api/auth/signin?callbackUrl=/my-quotes');
+    // Redirect to catalog instead of /api/auth/signin (no broken page)
+    redirect('/catalog');
   }
 
   const params = await searchParams;
@@ -70,7 +71,7 @@ export default async function MyQuotesPage({ searchParams }: MyQuotesPageProps) 
   const { sortBy: backendSortBy, sortOrder } = getSortParams(sortBy);
 
   // Fetch user's quotes with filters
-  const result = await api.quote['list-user-quotes']({
+  const result = await api.quote[ 'list-user-quotes' ]({
     includeExpired: false,
     limit: 10,
     page,
