@@ -25,13 +25,13 @@ type AddedToCartActionsProps = {
 export function AddedToCartActions({ modelName, onConfigureAnotherAction, ref }: AddedToCartActionsProps) {
   return (
     <motion.div
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      initial={{ opacity: 0, scale: 0.95, y: 20 }}
       ref={ref}
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{
         duration: 0.4,
         ease: 'easeOut',
-        y: { type: 'spring', stiffness: 100, damping: 15 },
+        y: { damping: 15, stiffness: 100, type: 'spring' },
       }}
     >
       <Card className="border-2 border-success/50 bg-success/5 p-6">
@@ -50,7 +50,12 @@ export function AddedToCartActions({ modelName, onConfigureAnotherAction, ref }:
           {/* Action Buttons */}
           <div className="flex flex-col gap-3 sm:flex-row">
             {/* Primary Action: Configure Another */}
-            <Button className="flex-1 justify-start gap-2" onClick={onConfigureAnotherAction} size="lg" variant="default">
+            <Button
+              className="flex-1 justify-start gap-2"
+              onClick={onConfigureAnotherAction}
+              size="lg"
+              variant="default"
+            >
               <RotateCcw className="size-5" />
               <span>Configurar otro {modelName}</span>
             </Button>
