@@ -8,7 +8,7 @@
  * Relations: profileSupplier (Many-to-One), costBreakdown (One-to-Many), priceHistory (One-to-Many)
  */
 
-import { ModelStatus } from '@prisma/client';
+import { ModelStatus, ModelType } from '@prisma/client';
 import { z } from 'zod';
 import {
   optionalSpanishText,
@@ -37,6 +37,14 @@ export const MAX_COST_NOTES_LENGTH = 500;
  */
 const modelStatusSchema = z.nativeEnum(ModelStatus, {
   message: 'El estado del modelo debe ser: draft o published',
+});
+
+/**
+ * ModelType enum schema (Prisma enum)
+ * Used for categorizing models and validating design compatibility
+ */
+const modelTypeSchema = z.nativeEnum(ModelType, {
+  message: 'El tipo de modelo debe ser uno de los valores permitidos',
 });
 
 /**
@@ -92,6 +100,13 @@ const baseModelSchema = z
       .number()
       .nonnegative('El costo por mm de ancho no puede ser negativo')
       .describe('Additional cost per millimeter of width'),
+
+    designId: z
+      .string()
+      .cuid('ID de diseño inválido')
+      .optional()
+      .nullable()
+      .describe('Optional ModelDesign ID for visual representation'),
 
     glassDiscountHeightMm: z
       .number()
@@ -170,6 +185,8 @@ const baseModelSchema = z
       .describe('Profit margin percentage (0-100)'),
 
     status: modelStatusSchema.describe('Model status (draft or published)'),
+
+    type: modelTypeSchema.optional().nullable().describe('Model type category (window, door, etc.)'),
   })
   .superRefine(createDimensionRefinement);
 
