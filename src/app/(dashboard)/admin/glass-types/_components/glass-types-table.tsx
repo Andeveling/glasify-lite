@@ -22,7 +22,7 @@
 
 'use client';
 
-import { MoreHorizontal, Pencil, Trash2, Wine } from 'lucide-react';
+import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -41,9 +41,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { formatCurrency, formatThickness } from '@/lib/format';
 import { api } from '@/trpc/react';
+import { GlassTypesEmpty } from './glass-types-empty';
 
 /**
  * Glass Type data type (from tRPC)
@@ -284,22 +284,7 @@ export function GlassTypesTable({ initialData, searchParams }: GlassTypesTablePr
     },
   ];
 
-  const emptyState = (
-    <Empty>
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <Wine className="size-6" />
-        </EmptyMedia>
-        <EmptyTitle>Sin tipos de cristal</EmptyTitle>
-        <EmptyDescription>No se encontraron tipos de cristal. Crea uno nuevo para comenzar.</EmptyDescription>
-      </EmptyHeader>
-      <EmptyContent>
-        <Button asChild>
-          <Link href="/admin/glass-types/new">Crear tipo de cristal</Link>
-        </Button>
-      </EmptyContent>
-    </Empty>
-  );
+  const emptyState = <GlassTypesEmpty />;
 
   return (
     <>

@@ -43,6 +43,7 @@ import {
 import { formatCurrency } from '@/lib/format';
 import type { RouterOutputs } from '@/trpc/react';
 import { api } from '@/trpc/react';
+import { ModelsEmpty } from './models-empty';
 
 /**
  * Model data type (from tRPC)
@@ -124,8 +125,8 @@ function ActionsMenu({ model, onDelete }: { model: Model; onDelete: (id: string,
 
 export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
   const utils = api.useUtils();
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [modelToDelete, setModelToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
+  const [ modelToDelete, setModelToDelete ] = useState<{ id: string; name: string } | null>(null);
 
   // Active query with placeholderData (enables cache invalidation)
   const { data } = api.admin.model.list.useQuery(
@@ -153,7 +154,7 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
 
   // Context type for optimistic update snapshot
   type DeleteModelContext = {
-    previousData?: RouterOutputs['admin']['model']['list'];
+    previousData?: RouterOutputs[ 'admin' ][ 'model' ][ 'list' ];
   };
 
   // Delete mutation with optimistic updates
@@ -300,7 +301,7 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
 
   return (
     <>
-      <ServerTable columns={columns} data={tableData.items as Model[]} emptyMessage="No se encontraron modelos" />
+      <ServerTable columns={columns} data={tableData.items as Model[]} emptyState={<ModelsEmpty />} />
 
       <TablePagination currentPage={tableData.page} totalItems={tableData.total} totalPages={tableData.totalPages} />
 
