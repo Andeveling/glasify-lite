@@ -315,7 +315,7 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
           {justAddedToCart && (
             <AddedToCartActions
               modelName={model.name}
-              onConfigureAnother={handleConfigureAnother}
+              onConfigureAnotherAction={handleConfigureAnother}
               ref={successCardRef}
             />
           )}
