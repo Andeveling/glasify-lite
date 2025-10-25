@@ -43,62 +43,89 @@ export function DashboardContent({ tenantConfig }: DashboardContentProps) {
   const searchParams = useSearchParams();
   const period = (searchParams.get('period') ?? DashboardPeriod.LAST_30_DAYS) as '7d' | '30d' | '90d' | 'year';
 
-  // Fetch quote metrics
+  // Check if dashboard has data (lightweight query)
+  // Only if hasData is true, fetch all analytics queries
+  const {
+    data: dataExists,
+    isLoading: checkingData,
+    error: checkError,
+  } = api.dashboard.hasData.useQuery({
+    period,
+  });
+
+  // Fetch quote metrics (only if data exists)
   const {
     data: metricsData,
     isLoading: metricsLoading,
     error: metricsError,
-  } = api.dashboard.getQuotesMetrics.useQuery({
-    period,
-  });
+  } = api.dashboard.getQuotesMetrics.useQuery(
+    { period },
+    { enabled: dataExists === true },
+  );
 
-  // Fetch quote trend
+  // Fetch quote trend (only if data exists)
   const {
     data: trendData,
     isLoading: trendLoading,
     error: trendError,
-  } = api.dashboard.getQuotesTrend.useQuery({
-    period,
-  });
+  } = api.dashboard.getQuotesTrend.useQuery(
+    { period },
+    { enabled: dataExists === true },
+  );
 
-  // Fetch catalog analytics
+  // Fetch catalog analytics (only if data exists)
   const {
     data: catalogData,
     isLoading: catalogLoading,
     error: catalogError,
-  } = api.dashboard.getCatalogAnalytics.useQuery({
-    period,
-  });
+  } = api.dashboard.getCatalogAnalytics.useQuery(
+    { period },
+    { enabled: dataExists === true },
+  );
 
-  // Fetch monetary metrics
+  // Fetch monetary metrics (only if data exists)
   const {
     data: monetaryData,
     isLoading: monetaryLoading,
     error: monetaryError,
-  } = api.dashboard.getMonetaryMetrics.useQuery({
-    period,
-  });
+  } = api.dashboard.getMonetaryMetrics.useQuery(
+    { period },
+    { enabled: dataExists === true },
+  );
 
-  // Fetch price ranges
+  // Fetch price ranges (only if data exists)
   const {
     data: priceRangesData,
     isLoading: priceRangesLoading,
     error: priceRangesError,
-  } = api.dashboard.getPriceRanges.useQuery({
-    period,
-  });
+  } = api.dashboard.getPriceRanges.useQuery(
+    { period },
+    { enabled: dataExists === true },
+  );
 
   // Global loading state
-  const isLoading = metricsLoading || trendLoading || catalogLoading || monetaryLoading || priceRangesLoading;
+  const isLoading = checkingData || metricsLoading || trendLoading || catalogLoading || monetaryLoading || priceRangesLoading;
 
   // Global error state
-  const hasError = metricsError || trendError || catalogError || monetaryError || priceRangesError;
+  const hasError = checkError || metricsError || trendError || catalogError || monetaryError || priceRangesError;
+
+  // Check if no data exists
+  const isEmpty = dataExists === false;
 
   if (hasError) {
     return (
       <EmptyDashboardState
         description="No se pudieron cargar los datos del dashboard. Por favor, intenta recargar la página."
         title="Error al cargar métricas"
+      />
+    );
+  }
+
+  if (isEmpty) {
+    return (
+      <EmptyDashboardState
+        description="No hay cotizaciones registradas aún. Crea tu primera cotización para ver las métricas del dashboard."
+        title="Sin datos disponibles"
       />
     );
   }
