@@ -17,7 +17,7 @@ import { EmptyDashboardState } from './empty-dashboard-state';
 const PERCENTAGE_MULTIPLIER = 100;
 
 // Color palette for pie chart slices
-const COLORS = [ 'var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)' ];
+const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)'];
 
 const chartConfig = {
   count: {
@@ -87,7 +87,7 @@ export function GlassTypesChart({ data, tenantConfig }: GlassTypesChartProps) {
               content={({ active, payload }) => {
                 if (!(active && payload) || payload.length === 0) return null;
 
-                const tooltipData = payload[ 0 ]?.payload;
+                const tooltipData = payload[0]?.payload;
                 if (!tooltipData) return null;
 
                 return (
@@ -104,7 +104,7 @@ export function GlassTypesChart({ data, tenantConfig }: GlassTypesChartProps) {
             />
             <Pie data={chartData} dataKey="count" label labelLine={false} nameKey="name" outerRadius={120}>
               {chartData.map((_, index) => (
-                <Cell fill={COLORS[ index % COLORS.length ]} key={`cell-${index}`} />
+                <Cell fill={COLORS[index % COLORS.length]} key={`cell-${index}`} />
               ))}
             </Pie>
             <Legend
