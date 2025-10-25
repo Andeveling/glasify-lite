@@ -73,7 +73,7 @@ export function GlassSupplierDialog({ mode, open, onOpenChangeAction, defaultVal
     <Dialog onOpenChange={onOpenChangeAction} open={open}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{mode === 'create' ? 'Crear Proveedor de Vidrio' : 'Editar Proveedor de Vidrio'}</DialogTitle>
+          <DialogTitle>{mode === 'create' ? 'Crear Proveedor de Cristal' : 'Editar Proveedor de Cristal'}</DialogTitle>
           <DialogDescription>
             {mode === 'create'
               ? 'Complete los detalles para crear un nuevo proveedor.'

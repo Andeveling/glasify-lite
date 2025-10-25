@@ -67,8 +67,8 @@ export function GlassTypesFilters({ searchParams, suppliers }: GlassTypesFilters
     {
       defaultValue: 'all',
       id: 'glassSupplierId',
-      label: 'Proveedor de Vidrio',
-      options: [{ label: 'Todos', value: 'all' }, ...suppliers.map((s) => ({ label: s.name, value: s.id }))],
+      label: 'Proveedor de Cristal',
+      options: [ { label: 'Todos', value: 'all' }, ...suppliers.map((s) => ({ label: s.name, value: s.id })) ],
       type: 'select',
     },
     {
@@ -98,7 +98,7 @@ export function GlassTypesFilters({ searchParams, suppliers }: GlassTypesFilters
       <Button asChild>
         <Link href="/admin/glass-types/new">
           <Plus className="mr-2 size-4" />
-          Nuevo Tipo de Vidrio
+          Nuevo Tipo de Cristal
         </Link>
       </Button>
     </div>

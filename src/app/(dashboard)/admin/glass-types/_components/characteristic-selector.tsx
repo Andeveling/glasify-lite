@@ -38,7 +38,7 @@ export function CharacteristicSelector() {
   // Fetch active characteristics via tRPC
   // Note: glassCharacteristic router will be created in future tasks (US7)
   // For now, use empty array or fetch via Server Component prop
-  const { data: characteristicsData, isLoading } = api.admin['glass-solution'].list.useQuery(
+  const { data: characteristicsData, isLoading } = api.admin[ 'glass-solution' ].list.useQuery(
     {
       isActive: 'active',
       limit: 100,
@@ -71,7 +71,7 @@ export function CharacteristicSelector() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-medium text-lg">Características del Vidrio</h3>
+          <h3 className="font-medium text-lg">Características del Cristal</h3>
           <p className="text-muted-foreground text-sm">
             Asigna características técnicas (templado, laminado, low-e, etc.) con valores y certificaciones
           </p>

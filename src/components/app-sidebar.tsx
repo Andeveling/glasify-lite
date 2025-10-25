@@ -43,7 +43,7 @@ const data = {
     },
     {
       icon: GlassWater,
-      title: 'Tipos de Vidrio',
+      title: 'Tipos de Cristal',
       url: '/admin/glass-types',
     },
     {
@@ -77,14 +77,14 @@ const data = {
     },
     {
       icon: Package,
-      title: 'Proveedores de Vidrio',
+      title: 'Proveedores de Cristal',
       url: '/admin/glass-suppliers',
     },
   ],
   navTaxonomy: [
     {
       icon: Sparkles,
-      title: 'Soluciones de Vidrio',
+      title: 'Soluciones de Cristal',
       url: '/admin/glass-solutions',
     },
   ],

@@ -45,13 +45,13 @@ type GlassSupplierListProps = {
 };
 
 export function GlassSupplierList({ initialData, searchParams }: GlassSupplierListProps) {
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create');
-  const [selectedSupplier, setSelectedSupplier] = useState<(FormValues & { id: string }) | undefined>(undefined);
+  const [ dialogOpen, setDialogOpen ] = useState(false);
+  const [ dialogMode, setDialogMode ] = useState<'create' | 'edit'>('create');
+  const [ selectedSupplier, setSelectedSupplier ] = useState<(FormValues & { id: string }) | undefined>(undefined);
 
   const { deleteMutation } = useGlassSupplierMutations();
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [supplierToDelete, setSupplierToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
+  const [ supplierToDelete, setSupplierToDelete ] = useState<{ id: string; name: string } | null>(null);
 
   const handleCreateClick = () => {
     setDialogMode('create');
@@ -59,7 +59,7 @@ export function GlassSupplierList({ initialData, searchParams }: GlassSupplierLi
     setDialogOpen(true);
   };
 
-  const handleEditClick = (supplier: (FormValues & { id: string }) | GlassSupplierListOutput['items'][number]) => {
+  const handleEditClick = (supplier: (FormValues & { id: string }) | GlassSupplierListOutput[ 'items' ][ number ]) => {
     setDialogMode('edit');
     setSelectedSupplier(supplier as FormValues & { id: string });
     setDialogOpen(true);
@@ -106,7 +106,7 @@ export function GlassSupplierList({ initialData, searchParams }: GlassSupplierLi
                   <TableHead className="w-[30%]">Nombre</TableHead>
                   <TableHead className="w-[10%]">Código</TableHead>
                   <TableHead className="w-[20%]">País</TableHead>
-                  <TableHead className="w-[15%] text-center">Tipos de Vidrio</TableHead>
+                  <TableHead className="w-[15%] text-center">Tipos de Cristal</TableHead>
                   <TableHead className="w-[15%]">Estado</TableHead>
                   <TableHead className="w-[10%] text-right">Acciones</TableHead>
                 </TableRow>

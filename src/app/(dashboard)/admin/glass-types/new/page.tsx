@@ -13,14 +13,14 @@ import { GlassTypeForm } from '../_components/glass-type-form';
 
 export const metadata: Metadata = {
   description: 'Crear un nuevo tipo de cristal con sus soluciones y características',
-  title: 'Nuevo Tipo de Vidrio | Admin',
+  title: 'Nuevo Tipo de Cristal | Admin',
 };
 
 export default function NewGlassTypePage() {
   return (
     <div className="flex h-full flex-col gap-6 overflow-hidden">
       <div className="space-y-2">
-        <h1 className="font-bold text-3xl tracking-tight">Nuevo Tipo de Vidrio</h1>
+        <h1 className="font-bold text-3xl tracking-tight">Nuevo Tipo de Cristal</h1>
         <p className="text-muted-foreground">Crea un nuevo tipo de cristal con sus soluciones y características</p>
       </div>
       <div className="flex flex-1 gap-4 overflow-hidden rounded-lg">

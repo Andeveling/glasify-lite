@@ -21,13 +21,13 @@ type GlassSolutionListProps = {
 export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
   const router = useRouter();
   const utils = api.useUtils();
-  const [search, setSearch] = useState('');
-  const [isActive, setIsActive] = useState<'all' | 'active' | 'inactive'>('all');
-  const [page, setPage] = useState(1);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [solutionToDelete, setSolutionToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [ search, setSearch ] = useState('');
+  const [ isActive, setIsActive ] = useState<'all' | 'active' | 'inactive'>('all');
+  const [ page, setPage ] = useState(1);
+  const [ deleteDialogOpen, setDeleteDialogOpen ] = useState(false);
+  const [ solutionToDelete, setSolutionToDelete ] = useState<{ id: string; name: string } | null>(null);
 
-  const { data, isLoading } = api.admin['glass-solution'].list.useQuery(
+  const { data, isLoading } = api.admin[ 'glass-solution' ].list.useQuery(
     {
       isActive,
       limit: 20,
@@ -41,7 +41,7 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
     }
   );
 
-  const deleteMutation = api.admin['glass-solution'].delete.useMutation({
+  const deleteMutation = api.admin[ 'glass-solution' ].delete.useMutation({
     onError: (error) => {
       toast.error('Error al eliminar solución', {
         description: error.message,
@@ -51,7 +51,7 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
       toast.success('Solución eliminada correctamente');
       setDeleteDialogOpen(false);
       setSolutionToDelete(null);
-      void utils.admin['glass-solution'].list.invalidate();
+      void utils.admin[ 'glass-solution' ].list.invalidate();
     },
   });
 
@@ -136,7 +136,7 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Soluciones de Vidrio ({data?.total ?? 0})</CardTitle>
+          <CardTitle>Soluciones de Cristal ({data?.total ?? 0})</CardTitle>
           <CardDescription>
             Mostrando {solutions.length} de {data?.total ?? 0} soluciones
           </CardDescription>
@@ -149,7 +149,7 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
                 <TableHead>Nombre</TableHead>
                 <TableHead>Nombre (ES)</TableHead>
                 <TableHead>Orden</TableHead>
-                <TableHead>Tipos de Vidrio</TableHead>
+                <TableHead>Tipos de Cristal</TableHead>
                 <TableHead>Estado</TableHead>
                 <TableHead className="text-right">Acciones</TableHead>
               </TableRow>

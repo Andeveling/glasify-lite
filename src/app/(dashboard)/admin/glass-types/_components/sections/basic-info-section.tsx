@@ -61,7 +61,7 @@ export function BasicInfoSection({ control }: BasicInfoSectionProps) {
             <FormItem className="md:col-span-2 md:row-start-2">
               <FormLabel>Nombre *</FormLabel>
               <FormControl>
-                <Input placeholder="Ej: Vidrio Templado 6mm" {...field} />
+                <Input placeholder="Ej: Cristal Templado 6mm" {...field} />
               </FormControl>
               <FormDescription>Nombre descriptivo del tipo de cristal</FormDescription>
               <FormMessage />

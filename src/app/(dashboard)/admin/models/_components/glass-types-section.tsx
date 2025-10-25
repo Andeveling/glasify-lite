@@ -12,7 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import type { RouterOutputs } from '@/trpc/react';
 
-type GlassType = RouterOutputs['admin']['glass-type']['list']['items'][number];
+type GlassType = RouterOutputs[ 'admin' ][ 'glass-type' ][ 'list' ][ 'items' ][ number ];
 
 type GlassTypesSectionProps = {
   glassTypes: GlassType[];
@@ -24,7 +24,7 @@ export function GlassTypesSection({ glassTypes }: GlassTypesSectionProps) {
   return (
     <Card className="h-fit">
       <CardHeader>
-        <CardTitle>Tipos de Vidrio</CardTitle>
+        <CardTitle>Tipos de Cristal</CardTitle>
         <CardDescription>Selecciona los compatibles</CardDescription>
       </CardHeader>
       <CardContent>
@@ -47,7 +47,7 @@ export function GlassTypesSection({ glassTypes }: GlassTypesSectionProps) {
                             onCheckedChange={(checked) => {
                               const currentValue = field.value ?? [];
                               return checked
-                                ? field.onChange([...currentValue, glassType.id])
+                                ? field.onChange([ ...currentValue, glassType.id ])
                                 : field.onChange(currentValue.filter((v: string) => v !== glassType.id));
                             }}
                           />

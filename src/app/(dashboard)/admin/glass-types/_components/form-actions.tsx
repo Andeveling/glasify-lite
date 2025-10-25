@@ -28,7 +28,7 @@ export function FormActions({ mode, isLoading, onCancel }: FormActionsProps) {
       </Button>
       <Button disabled={isLoading} type="submit">
         {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
-        {mode === 'create' ? 'Crear Tipo de Vidrio' : 'Guardar Cambios'}
+        {mode === 'create' ? 'Crear Tipo de Cristal' : 'Guardar Cambios'}
       </Button>
     </div>
   );

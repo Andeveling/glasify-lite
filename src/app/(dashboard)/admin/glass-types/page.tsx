@@ -28,7 +28,7 @@ import { GlassTypesTable } from './_components/glass-types-table';
 
 export const metadata: Metadata = {
   description: 'Administra los tipos de cristal con sus soluciones y características',
-  title: 'Tipos de Vidrio | Admin',
+  title: 'Tipos de Cristal | Admin',
 };
 
 /**
@@ -79,7 +79,7 @@ async function GlassTypesTableContent({
   sortOrder: 'asc' | 'desc';
 }) {
   // Fetch glass types data (heavy query inside Suspense)
-  const initialData = await api.admin['glass-type'].list({
+  const initialData = await api.admin[ 'glass-type' ].list({
     isActive,
     limit: 20,
     page,
@@ -127,7 +127,7 @@ export default async function GlassTypesPage({ searchParams }: PageProps) {
   const sortOrder = (params.sortOrder || 'asc') as 'asc' | 'desc';
 
   // Fetch suppliers for filter dropdown (lightweight query outside Suspense)
-  const suppliersData = await api.admin['glass-supplier'].list({
+  const suppliersData = await api.admin[ 'glass-supplier' ].list({
     isActive: 'active',
     limit: 100,
     page: 1,
@@ -139,7 +139,7 @@ export default async function GlassTypesPage({ searchParams }: PageProps) {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="font-bold text-3xl tracking-tight">Tipos de Vidrio</h1>
+        <h1 className="font-bold text-3xl tracking-tight">Tipos de Cristal</h1>
         <p className="text-muted-foreground">Administra los tipos de cristal con sus soluciones y características</p>
       </div>
 

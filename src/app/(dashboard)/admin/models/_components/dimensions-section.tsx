@@ -71,7 +71,7 @@ export function DimensionsSection() {
 
         {/* Glass Discounts */}
         <div className="space-y-4 md:col-span-2">
-          <h4 className="font-medium text-sm">Descuentos de Vidrio</h4>
+          <h4 className="font-medium text-sm">Descuentos de Cristal</h4>
           <div className="grid gap-4 md:grid-cols-2">
             <FormNumberInput
               description="Descuento por lado para cálculo de cristal"
