@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  ProductDimensions,
-  ProductImagePlaceholder,
-  ProductInfo,
-  ProductPrice,
-  ProductSolutions,
-} from '@views/catalog/_components/molecules/model-card-atoms';
+import { ProductImagePlaceholder, ProductPrice } from '@views/catalog/_components/molecules/model-card-atoms';
 import Link from 'next/link';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 
@@ -15,8 +9,8 @@ type ModelCardProps = {
   name: string;
   profileSupplier?: string;
   range: {
-    width: [number, number];
-    height: [number, number];
+    width: [ number, number ];
+    height: [ number, number ];
   };
   basePrice: string;
   compatibleGlassTypes: Array<{
@@ -34,47 +28,34 @@ type ModelCardProps = {
 
 /**
  * ModelCard - Pure Presentational Component
- * Issue: #002-ui-ux-requirements
+ * Optimized for "Don't Make Me Think" principle
  *
- * Displays model information in a clean, minimalist card.
- * Inspired by Saleor Storefront design principles.
+ * Shows only essential information:
+ * - Product image (visual anchor)
+ * - Product name (what is it)
+ * - Price (key decision factor)
  *
- * Responsibilities (Single Responsibility Principle):
- * - Compose atomic components into card layout
- * - Provide navigation link
- * - Display highlighted glass solutions
- * - No business logic, pure presentation
- *
- * Benefits:
- * - Easy to test (just snapshot tests)
- * - Easy to maintain (no complex logic)
- * - Composed from reusable atoms
- * - Follows Atomic Design methodology
+ * Everything else is available on detail page.
+ * Simple, fast, clear.
  */
-export function ModelCard({ id, name, profileSupplier, range, basePrice, highlightedSolutions }: ModelCardProps) {
+export function ModelCard({ id, name, basePrice }: ModelCardProps) {
   return (
     <Card
       aria-label={`Tarjeta del modelo ${name}`}
-      className="group p-0 pb-2 transition-opacity hover:opacity-80"
+      className="group overflow-hidden transition-all hover:shadow-lg"
       data-testid="model-card"
     >
-      <Link className="block space-y-3" href={`/catalog/${id}`}>
-        {/* Product Image */}
+      <Link className="block" href={`/catalog/${id}`}>
+        {/* Product Image - Large and prominent */}
         <ProductImagePlaceholder productName={name} />
 
-        {/* Product Info */}
-        <CardContent className="space-y-2 px-3 py-0">
-          {/* Glass Solutions - Highlighted features */}
-          {highlightedSolutions && highlightedSolutions.length > 0 && (
-            <ProductSolutions solutions={highlightedSolutions} />
-          )}
-
-          <ProductInfo name={name} profileSupplier={profileSupplier} />
-          <ProductDimensions heightRange={range.height} widthRange={range.width} />
+        {/* Product Info - Minimal and clear */}
+        <CardContent className="space-y-2 p-4">
+          <h3 className="font-medium text-foreground text-sm tracking-tight">{name}</h3>
         </CardContent>
 
-        {/* Product Price */}
-        <CardFooter className="flex justify-end px-3">
+        {/* Product Price - Prominent */}
+        <CardFooter className='flex justify-end'>
           <ProductPrice price={basePrice} />
         </CardFooter>
       </Link>
