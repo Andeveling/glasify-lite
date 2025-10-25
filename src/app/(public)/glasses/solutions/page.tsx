@@ -30,10 +30,10 @@ export const metadata: Metadata = {
     'Explora nuestras soluciones de cristal especializadas para control solar, eficiencia energética, aislamiento, seguridad y más.',
   openGraph: {
     description: 'Soluciones de cristal personalizadas para todas tus necesidades arquitectónicas y de construcción.',
-    title: 'Soluciones de Vidrio | Glasify Lite',
+    title: 'Soluciones de Cristal | Glasify Lite',
     type: 'website',
   },
-  title: 'Soluciones de Vidrio | Glasify Lite',
+  title: 'Soluciones de Cristal | Glasify Lite',
 };
 
 /**
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
 export default async function GlassSolutionsPage() {
   try {
     // Fetch solutions from tRPC server procedure
-    const { items: solutions } = await api.catalog['list-solutions']({
+    const { items: solutions } = await api.catalog[ 'list-solutions' ]({
       limit: 100,
       page: 1,
     });
@@ -65,7 +65,7 @@ export default async function GlassSolutionsPage() {
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-12 text-center">
-            <h1 className="mb-4 font-bold text-4xl tracking-tight">Soluciones de Vidrio</h1>
+            <h1 className="mb-4 font-bold text-4xl tracking-tight">Soluciones de Cristal</h1>
             <p className="text-lg text-muted-foreground">
               Descubre nuestras soluciones especializadas de cristal para cada necesidad de tu proyecto.
             </p>

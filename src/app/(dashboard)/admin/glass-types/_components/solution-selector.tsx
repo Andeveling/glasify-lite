@@ -48,7 +48,7 @@ export function SolutionSelector() {
   });
 
   // Fetch active solutions via tRPC
-  const { data: solutionsData, isLoading } = api.admin['glass-solution'].list.useQuery({
+  const { data: solutionsData, isLoading } = api.admin[ 'glass-solution' ].list.useQuery({
     isActive: 'active',
     limit: 100,
     page: 1,
@@ -86,7 +86,7 @@ export function SolutionSelector() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-medium text-lg">Soluciones de Vidrio</h3>
+          <h3 className="font-medium text-lg">Soluciones de Cristal</h3>
           <p className="text-muted-foreground text-sm">
             Asigna soluciones (aislamiento, seguridad, etc.) con calificación de rendimiento
           </p>
@@ -155,7 +155,7 @@ export function SolutionSelector() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {Object.entries(PERFORMANCE_LABELS).map(([value, label]) => (
+                      {Object.entries(PERFORMANCE_LABELS).map(([ value, label ]) => (
                         <SelectItem key={value} value={value}>
                           {label}
                         </SelectItem>

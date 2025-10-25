@@ -18,7 +18,7 @@ type EditGlassSolutionPageProps = {
 
 export async function generateMetadata({ params }: EditGlassSolutionPageProps): Promise<Metadata> {
   const { id } = await params;
-  const solution = await api.admin['glass-solution'].getById({ id });
+  const solution = await api.admin[ 'glass-solution' ].getById({ id });
 
   return {
     description: `Editar solución de cristal: ${solution?.name ?? 'No encontrada'}`,
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: EditGlassSolutionPageProps): 
 
 export default async function EditGlassSolutionPage({ params }: EditGlassSolutionPageProps) {
   const { id } = await params;
-  const solution = await api.admin['glass-solution'].getById({ id });
+  const solution = await api.admin[ 'glass-solution' ].getById({ id });
 
   if (!solution) {
     notFound();
@@ -37,7 +37,7 @@ export default async function EditGlassSolutionPage({ params }: EditGlassSolutio
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-bold text-3xl tracking-tight">Editar Solución de Vidrio</h1>
+        <h1 className="font-bold text-3xl tracking-tight">Editar Solución de Cristal</h1>
         <p className="text-muted-foreground">Actualiza la información de la solución: {solution.name}</p>
       </div>
 

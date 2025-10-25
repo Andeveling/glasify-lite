@@ -19,10 +19,10 @@ import {
 const pathLabels: Record<string, string> = {
   admin: 'Admin',
   edit: 'Editar',
-  'glass-characteristics': 'Características de Vidrio',
-  'glass-solutions': 'Soluciones de Vidrio',
-  'glass-suppliers': 'Proveedores de Vidrio',
-  'glass-types': 'Tipos de Vidrio',
+  'glass-characteristics': 'Características de Cristal',
+  'glass-solutions': 'Soluciones de Cristal',
+  'glass-suppliers': 'Proveedores de Cristal',
+  'glass-types': 'Tipos de Cristal',
   models: 'Modelos',
   new: 'Nuevo',
   'profile-suppliers': 'Proveedores de Perfiles',
@@ -52,7 +52,7 @@ export const AdminBreadcrumbs: FC = () => {
 
   const breadcrumbItems = pathSegments.map((segment, index) => {
     const href = `/${pathSegments.slice(0, index + 1).join('/')}`;
-    const label = pathLabels[segment] ?? segment;
+    const label = pathLabels[ segment ] ?? segment;
     const isLast = index === pathSegments.length - 1;
 
     return {
