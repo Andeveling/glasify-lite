@@ -3,6 +3,7 @@
 import { buildActiveParameters, type CatalogSortOption } from '@views/catalog/_utils/search-parameters.utils';
 import { X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 type ActiveSearchParametersProps = {
   searchQuery?: string | null;
@@ -11,6 +12,7 @@ type ActiveSearchParametersProps = {
   onRemoveSearch?: () => void;
   onRemoveProfileSupplier?: () => void;
   onRemoveSort?: () => void;
+  onClearAllAction?: () => void;
 };
 
 /**
@@ -38,6 +40,7 @@ export default function ActiveSearchParameters({
   onRemoveSearch,
   onRemoveProfileSupplier,
   onRemoveSort,
+  onClearAllAction,
 }: ActiveSearchParametersProps) {
   // Build active parameters using pure function
   const activeParameters = buildActiveParameters({
@@ -64,7 +67,7 @@ export default function ActiveSearchParameters({
 
       {activeParameters.map((param) => {
         const Icon = param.icon;
-        const handleRemove = handlers[param.key];
+        const handleRemove = handlers[ param.key ];
 
         return (
           <Badge className="gap-1.5 pr-1 pl-2" key={param.key} variant="secondary">
@@ -83,6 +86,19 @@ export default function ActiveSearchParameters({
           </Badge>
         );
       })}
+
+      {/* Clear all button */}
+      {onClearAllAction && (
+        <Button
+          aria-label="Limpiar todos los parámetros de búsqueda"
+          className="h-6 gap-1 px-2 py-0 text-xs"
+          onClick={onClearAllAction}
+          variant="ghost"
+        >
+          <X className="size-3" />
+          <span>Limpiar</span>
+        </Button>
+      )}
     </div>
   );
 }

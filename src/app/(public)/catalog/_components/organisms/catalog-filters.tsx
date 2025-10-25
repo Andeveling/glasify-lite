@@ -4,8 +4,7 @@ import ActiveSearchParameters from '@views/catalog/_components/molecules/active-
 import { ResultCount } from '@views/catalog/_components/molecules/result-count';
 import { useCatalogFilters } from '@views/catalog/_hooks/use-catalog';
 import type { CatalogSortOption } from '@views/catalog/_utils/search-parameters.utils';
-import { ArrowDownAZ, ArrowDownZA, ArrowUpDown, Building2, Filter, SortAsc, SortDesc, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ArrowDownAZ, ArrowDownZA, ArrowUpDown, Building2, Filter, SortAsc, SortDesc } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -89,19 +88,6 @@ export function CatalogFilters({
       {/* Filter Controls */}
       {showControls && (
         <div className="flex w-full flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-end">
-          {/* Clear all parameters button */}
-          {hasActiveParameters && (
-            <Button
-              aria-label="Limpiar todos los parámetros de búsqueda"
-              className="gap-2"
-              onClick={handleClearFilters}
-              size="icon"
-              variant="ghost"
-            >
-              <X className="size-4" />
-              <span className="sr-only hidden lg:not-sr-only">Limpiar</span>
-            </Button>
-          )}
           <div className="hidden items-center gap-2 text-muted-foreground text-sm md:flex">
             <Filter className="size-4" />
             <span>Filtros</span>
@@ -168,8 +154,9 @@ export function CatalogFilters({
       )}
 
       {/* Active Search Parameters - Badges Section */}
-      {showBadges && (
+      {showBadges && hasActiveParameters && (
         <ActiveSearchParameters
+          onClearAllAction={handleClearFilters}
           onRemoveProfileSupplier={handleRemoveProfileSupplier}
           onRemoveSearch={handleRemoveSearch}
           onRemoveSort={handleRemoveSort}

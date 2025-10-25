@@ -4,20 +4,12 @@ import { CatalogSearch } from '@views/catalog/_components/molecules/catalog-sear
 import { CatalogFilters } from '@views/catalog/_components/organisms/catalog-filters';
 
 /**
- * CatalogFilterBar - Grid layout for search + filters + badges
- * Issue: #002-ui-ux-requirements
+ * CatalogFilterBar - Single row layout for search + filters
  *
- * Composes filter components following Open/Closed Principle:
- * - First row: search (left), filter controls (right)
- * - Second row: active search parameters and result count (full width)
+ * Desktop: All controls in one row
+ * Mobile: Stacked vertically
  *
- * Each responsibility is delegated to specialized components:
- * - CatalogSearch: Handles search input
- * - CatalogFilters: Orchestrates filter controls, badges, and result count
- *
- * Memory Leak Fix:
- * - Passes searchParams as props instead of each component calling useSearchParams()
- * - Prevents EventEmitter memory leak warning
+ * Composes filter components following Open/Closed Principle
  */
 export function CatalogFilterBar({
   searchQuery,
@@ -34,23 +26,28 @@ export function CatalogFilterBar({
 }) {
   return (
     <div className="space-y-4">
-      {/* Row 1: Search (full width in mobile) */}
-      <div>
-        <CatalogSearch initialValue={searchQuery} />
+      {/* Row 1: Search (left) + Filters (right) - Side by side on desktop */}
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        {/* Search - Takes most of the space on desktop */}
+        <div className="flex-1">
+          <CatalogSearch initialValue={searchQuery} />
+        </div>
+
+        {/* Filters (sort, supplier) - Right aligned on desktop */}
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-3">
+          <CatalogFilters
+            currentProfileSupplier={currentProfileSupplier}
+            currentSearchQuery={searchQuery}
+            currentSort={currentSort}
+            profileSuppliers={profileSuppliers}
+            showBadges={false}
+            showResultCount={false}
+            totalResults={undefined}
+          />
+        </div>
       </div>
-      {/* Row 2: Filters (full width in mobile, side by side in desktop) */}
-      <div className="flex flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-end">
-        <CatalogFilters
-          currentProfileSupplier={currentProfileSupplier}
-          currentSearchQuery={searchQuery}
-          currentSort={currentSort}
-          profileSuppliers={profileSuppliers}
-          showBadges={false}
-          showResultCount={false}
-          totalResults={undefined}
-        />
-      </div>
-      {/* Row 3: Search parameters badges + result count (full width) */}
+
+      {/* Row 2: Active filters badges + result count (full width) */}
       <div>
         <CatalogFilters
           currentProfileSupplier={currentProfileSupplier}
