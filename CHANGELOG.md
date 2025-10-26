@@ -7,6 +7,72 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Model Image Gallery Integration (2025-10-26)
+
+#### Gallery Discovery System
+- **Automatic Image Detection**: Sistema que escanea automáticamente `/public/models/designs/` y descubre imágenes disponibles (SVG, PNG, JPG, WEBP)
+- **Visual Selector UI**: Componente `ImageGallerySectionComponent` con:
+  - Preview grande de imagen seleccionada
+  - Grid de thumbnails (4 columnas) con selección visual
+  - Estados de carga (Skeleton) y error handling graceful
+  - Accesibilidad completa (ARIA labels, keyboard navigation)
+- **tRPC Admin API**: Nuevo router `admin.gallery['list-images']` que retorna metadata de imágenes
+  - Protegido con `adminProcedure` (solo admins)
+  - Graceful error handling (retorna array vacío en caso de error)
+  - Type-safe con `GalleryImage[]` response
+
+#### Model Form Integration
+- **imageUrl Field**: Campo opcional en `ModelForm` con validación Zod (URL format)
+- **React Hook Form**: Integración con `useController` para manejo de estado
+- **Schema Extension**: `modelFormSchema` ahora incluye `imageUrl: z.string().url().optional().nullable()`
+- **Default Values**: Soporte para edición (pre-selección de imagen existente)
+
+#### Catalog Display
+- **ModelCard Enhancement**: Muestra imagen real si `imageUrl` existe, placeholder si no
+- **Next.js Image Optimization**: Uso de `<Image>` component con:
+  - Lazy loading automático
+  - Responsive sizes: `(max-width: 768px) 100vw, 50vw`
+  - Alt text descriptivo para accesibilidad
+  - Object-fit contain para mantener aspect ratio
+- **Graceful Fallback**: `ProductImagePlaceholder` se mantiene como fallback
+
+#### Data Utilities
+- **Gallery Scanner**: `get-gallery-images.ts` escanea filesystem con Node.js fs/promises
+  - Filtra por extensiones permitidas (.svg, .png, .jpg, .jpeg, .webp)
+  - Genera URLs públicas automáticamente
+  - Formatea nombres (kebab-case → Title Case)
+  - Type-safe con `GalleryImage` interface
+- **URL Validation**: Helper `isValidGalleryImageUrl()` para seguridad
+
+#### Data Migration Script
+- **assign-model-images.ts**: Script inteligente para asignar imágenes a modelos existentes
+  - 12 patrones de mapeo basados en nombres (Practicable, OX, OXX, OXXO, etc.)
+  - Dry-run mode para preview sin cambios
+  - Verbose logging con estadísticas completas
+  - Actualización masiva vía Prisma con error handling
+
+#### Technical Implementation
+- **TypeScript Types**: `GalleryImage`, `GalleryConfig`, `GalleryError` interfaces
+- **Constants**: `ALLOWED_EXTENSIONS`, `PUBLIC_URL_BASE`, `DESIGNS_DIR_RELATIVE`
+- **Server-Only Utils**: Gallery scanner usa Node.js modules (no disponible en browser)
+- **Catalog Schema Updates**: `modelSummaryOutput` y `modelDetailOutput` incluyen `imageUrl`
+- **Query Updates**: Todos los queries de catalog seleccionan `imageUrl: true`
+
+#### Files Created
+- `src/lib/gallery/get-gallery-images.ts` - Core utility
+- `src/lib/gallery/types.ts` - TypeScript interfaces
+- `src/lib/gallery/constants.ts` - Configuration constants
+- `src/server/api/routers/admin/gallery.ts` - tRPC router
+- `src/app/(dashboard)/admin/models/_components/image-gallery-section.tsx` - Selector UI
+- `src/app/(dashboard)/admin/models/_components/image-gallery-item.tsx` - Thumbnail component
+- `prisma/migrations-scripts/assign-model-images.ts` - Data migration script
+
+#### Files Modified
+- `src/app/(dashboard)/admin/models/_components/model-form.tsx` - Added imageUrl field
+- `src/app/(public)/catalog/_components/molecules/model-card.tsx` - Display image or placeholder
+- `src/server/api/routers/catalog/catalog.schemas.ts` - Added imageUrl to schemas
+- `src/server/api/routers/catalog/catalog.queries.ts` - Select imageUrl in queries
+
 ### Added - Admin Dashboard Charts (2025-10-24)
 
 #### New Admin Dashboard Feature

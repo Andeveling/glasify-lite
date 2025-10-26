@@ -1,6 +1,7 @@
 import type { GlassType, Model, Prisma, ProfileSupplier } from '@prisma/client';
 import { z } from 'zod';
 import logger from '@/lib/logger';
+import { galleryRouter } from '@/server/api/routers/admin/gallery';
 import { glassSolutionRouter } from '@/server/api/routers/admin/glass-solution';
 import { glassSupplierRouter } from '@/server/api/routers/admin/glass-supplier';
 import { glassTypeRouter } from '@/server/api/routers/admin/glass-type';
@@ -69,6 +70,7 @@ export const modelUpsertOutput = z.object({
 });
 
 export const adminRouter = createTRPCRouter({
+  gallery: galleryRouter,
   'glass-solution': glassSolutionRouter,
   'glass-supplier': glassSupplierRouter,
   'glass-type': glassTypeRouter,

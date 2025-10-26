@@ -15,6 +15,7 @@ import { BasicInfoSection } from './basic-info-section';
 import { CostNotesSection } from './cost-notes-section';
 import { DimensionsSection } from './dimensions-section';
 import { GlassTypesSection } from './glass-types-section';
+import { ImageGallerySectionComponent } from './image-gallery-section';
 import { PricingSection } from './pricing-section';
 
 // Constants
@@ -35,6 +36,7 @@ const modelFormSchema = z.object({
   costPerMmWidth: z.number().min(0),
   glassDiscountHeightMm: z.number().int().min(0).default(0),
   glassDiscountWidthMm: z.number().int().min(0).default(0),
+  imageUrl: z.string().url('URL de imagen debe ser válida').optional().nullable(),
   lastCostReviewDate: z.date().optional().nullable(),
   maxHeightMm: z.number().int().min(MIN_DIMENSION_MM),
   maxWidthMm: z.number().int().min(MIN_DIMENSION_MM),
@@ -119,6 +121,7 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
       costPerMmWidth: initialData?.costPerMmWidth ?? 0,
       glassDiscountHeightMm: initialData?.glassDiscountHeightMm ?? 0,
       glassDiscountWidthMm: initialData?.glassDiscountWidthMm ?? 0,
+      imageUrl: initialData?.imageUrl ?? null,
       lastCostReviewDate: initialData?.lastCostReviewDate ?? null,
       maxHeightMm: initialData?.maxHeightMm ?? DEFAULT_MAX_HEIGHT_MM,
       maxWidthMm: initialData?.maxWidthMm ?? DEFAULT_MAX_WIDTH_MM,
@@ -139,6 +142,7 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
       ...values,
       accessoryPrice: values.accessoryPrice ?? undefined,
       costNotes: values.costNotes ?? undefined,
+      imageUrl: values.imageUrl ?? undefined,
       lastCostReviewDate: values.lastCostReviewDate ?? undefined,
       profileSupplierId: values.profileSupplierId ?? undefined,
       profitMarginPercentage: values.profitMarginPercentage ?? undefined,
@@ -167,6 +171,7 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
           {/* Left Column - Basic Info (spans 2 columns on large screens) */}
           <div className="space-y-6 lg:col-span-2">
             <BasicInfoSection suppliers={suppliers} />
+            <ImageGallerySectionComponent />
             <DimensionsSection />
             <PricingSection />
           </div>

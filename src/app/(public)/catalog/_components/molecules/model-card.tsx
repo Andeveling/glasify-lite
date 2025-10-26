@@ -1,8 +1,9 @@
 'use client';
 
-import { ProductImagePlaceholder, ProductPrice } from '@views/catalog/_components/molecules/model-card-atoms';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { ProductImagePlaceholder, ProductPrice } from '@views/catalog/_components/molecules/model-card-atoms';
 
 type ModelCardProps = {
   id: string;
@@ -13,6 +14,11 @@ type ModelCardProps = {
     height: [number, number];
   };
   basePrice: string;
+  /**
+   * Optional URL to model design image
+   * If provided, shows real image; otherwise shows placeholder
+   */
+  imageUrl?: string | null;
   compatibleGlassTypes: Array<{
     id: string;
     name: string;
@@ -38,7 +44,7 @@ type ModelCardProps = {
  * Everything else is available on detail page.
  * Simple, fast, clear.
  */
-export function ModelCard({ id, name, basePrice }: ModelCardProps) {
+export function ModelCard({ id, name, basePrice, imageUrl }: ModelCardProps) {
   return (
     <Card
       aria-label={`Tarjeta del modelo ${name}`}
@@ -47,7 +53,20 @@ export function ModelCard({ id, name, basePrice }: ModelCardProps) {
     >
       <Link className="block" href={`/catalog/${id}`}>
         {/* Product Image - Large and prominent */}
-        <ProductImagePlaceholder productName={name} />
+        {imageUrl ? (
+          <div className="relative h-60 w-full bg-gray-100">
+            <Image
+              alt={`Imagen del modelo ${name}`}
+              className="h-full w-full object-contain p-2"
+              fill
+              priority={false}
+              sizes="(max-width: 768px) 100vw, 50vw"
+              src={imageUrl}
+            />
+          </div>
+        ) : (
+          <ProductImagePlaceholder productName={name} />
+        )}
 
         {/* Product Info - Minimal and clear */}
         <CardContent className="space-y-2 p-4">

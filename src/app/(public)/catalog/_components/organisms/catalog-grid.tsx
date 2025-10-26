@@ -9,6 +9,7 @@ type Model = {
   costPerMmWidth: number;
   createdAt: Date;
   id: string;
+  imageUrl: string | null;
   profileSupplier: {
     id: string;
     name: string;
@@ -82,6 +83,7 @@ export function CatalogGrid({ models }: CatalogGridProps) {
               compatibleGlassTypes={[]}
               highlightedSolutions={getMockHighlightedSolutions(model.id)}
               id={model.id}
+              imageUrl={model.imageUrl}
               name={model.name}
               profileSupplier={model.profileSupplier?.name}
               range={{
