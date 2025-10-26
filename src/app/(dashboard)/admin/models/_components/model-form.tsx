@@ -6,11 +6,9 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { api } from '@/trpc/react';
-
 import { BasicInfoSection } from './basic-info-section';
 import { CostNotesSection } from './cost-notes-section';
 import { DimensionsSection } from './dimensions-section';
@@ -36,7 +34,17 @@ const modelFormSchema = z.object({
   costPerMmWidth: z.number().min(0),
   glassDiscountHeightMm: z.number().int().min(0).default(0),
   glassDiscountWidthMm: z.number().int().min(0).default(0),
-  imageUrl: z.string().url('URL de imagen debe ser válida').optional().nullable(),
+  imageUrl: z
+    .union([
+      z.url('URL de imagen debe ser válida'), // Absolute URLs
+      z.string().regex(/^\/[^\s]*$/, 'La ruta de la imagen debe comenzar con /'), // Relative paths starting with /
+      z.literal(''), // Empty string
+      z.null(),
+      z.undefined(),
+    ])
+    .optional()
+    .nullable()
+    .transform((val) => val || undefined),
   lastCostReviewDate: z.date().optional().nullable(),
   maxHeightMm: z.number().int().min(MIN_DIMENSION_MM),
   maxWidthMm: z.number().int().min(MIN_DIMENSION_MM),
@@ -92,8 +100,9 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
     },
     onSuccess: () => {
       toast.success('Modelo creado exitosamente');
-      // Invalidate only the list query (not all admin queries)
+      // SSR two-step pattern: invalidate cache + refresh server data
       void utils.admin.model.list.invalidate();
+      router.refresh(); // Force re-fetch server data
       router.push('/admin/models');
     },
   });
@@ -104,9 +113,10 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
     },
     onSuccess: (data) => {
       toast.success('Modelo actualizado exitosamente');
-      // Invalidate specific queries instead of everything
+      // SSR two-step pattern: invalidate cache + refresh server data
       void utils.admin.model.list.invalidate();
       void utils.admin.model[ 'get-by-id' ].invalidate({ id: data.id });
+      router.refresh(); // Force re-fetch server data
       router.push('/admin/models');
     },
   });
@@ -121,7 +131,7 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
       costPerMmWidth: initialData?.costPerMmWidth ?? 0,
       glassDiscountHeightMm: initialData?.glassDiscountHeightMm ?? 0,
       glassDiscountWidthMm: initialData?.glassDiscountWidthMm ?? 0,
-      imageUrl: initialData?.imageUrl ?? null,
+      imageUrl: initialData?.imageUrl ?? undefined,
       lastCostReviewDate: initialData?.lastCostReviewDate ?? null,
       maxHeightMm: initialData?.maxHeightMm ?? DEFAULT_MAX_HEIGHT_MM,
       maxWidthMm: initialData?.maxWidthMm ?? DEFAULT_MAX_WIDTH_MM,

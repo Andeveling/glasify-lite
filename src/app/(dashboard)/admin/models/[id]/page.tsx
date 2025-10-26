@@ -22,11 +22,17 @@ export const metadata: Metadata = {
   title: 'Editar Modelo | Admin',
 };
 
+/**
+ * Force dynamic rendering to ensure fresh data after mutations
+ * Without this, the form won't show updated values after edit
+ */
+export const dynamic = 'force-dynamic';
+
 export default async function EditModelPage({ params }: EditModelPageProps) {
   const { id } = await params;
 
   // Fetch model with all relations (cost breakdown, price history)
-  const model = await api.admin.model['get-by-id']({ id });
+  const model = await api.admin.model[ 'get-by-id' ]({ id });
 
   if (!model) {
     notFound();
@@ -34,15 +40,16 @@ export default async function EditModelPage({ params }: EditModelPageProps) {
 
   // Transform Decimal fields to numbers for form
   const defaultValues = {
-    accessoryPrice: model.accessoryPrice?.toNumber() ?? null,
+    accessoryPrice: model.accessoryPrice?.toNumber(),
     basePrice: model.basePrice.toNumber(),
     compatibleGlassTypeIds: model.compatibleGlassTypeIds,
-    costNotes: model.costNotes,
+    costNotes: model.costNotes ?? undefined,
     costPerMmHeight: model.costPerMmHeight.toNumber(),
     costPerMmWidth: model.costPerMmWidth.toNumber(),
     glassDiscountHeightMm: model.glassDiscountHeightMm,
     glassDiscountWidthMm: model.glassDiscountWidthMm,
     id: model.id,
+    imageUrl: model.imageUrl ?? undefined,
     lastCostReviewDate: model.lastCostReviewDate,
     maxHeightMm: model.maxHeightMm,
     maxWidthMm: model.maxWidthMm,
@@ -50,7 +57,7 @@ export default async function EditModelPage({ params }: EditModelPageProps) {
     minWidthMm: model.minWidthMm,
     name: model.name,
     profileSupplierId: model.profileSupplierId,
-    profitMarginPercentage: model.profitMarginPercentage?.toNumber() ?? null,
+    profitMarginPercentage: model.profitMarginPercentage?.toNumber(),
     status: model.status,
   };
 

@@ -9,12 +9,12 @@
  * - Click to select, visual feedback
  * - Lazy loading and accessibility
  *
- * Integrates with react-hook-form using useController
+ * Integrates with react-hook-form using useFormContext
  * Manages both display and form state
  */
 
 import Image from 'next/image';
-import { useController } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/trpc/react';
 import { ImageGalleryItem } from './image-gallery-item';
@@ -71,11 +71,9 @@ export function ImageGallerySectionComponent({
   label = 'Imagen del Modelo',
   description = 'Selecciona una imagen de la galería disponible',
 }: ImageGallerySectionProps) {
-  // Connect to react-hook-form field
-  const { field } = useController({
-    defaultValue: '',
-    name,
-  });
+  // Connect to react-hook-form using context
+  const { watch, setValue } = useFormContext();
+  const currentValue = watch(name);
 
   // Fetch gallery images from tRPC
   // Note: tRPC returns GalleryImage[] | GalleryError, but query guarantees empty array on error
@@ -111,7 +109,7 @@ export function ImageGallerySectionComponent({
   }
 
   // Find selected image for preview
-  const selectedImage = images.find((img) => img.url === field.value);
+  const selectedImage = images.find((img) => img.url === currentValue);
 
   return (
     <div className="space-y-4">
@@ -140,7 +138,7 @@ export function ImageGallerySectionComponent({
           <button
             aria-label="Deseleccionar imagen"
             className="font-medium text-primary text-xs transition-colors hover:text-primary/80"
-            onClick={() => field.onChange('')}
+            onClick={() => setValue(name, null)}
             type="button"
           >
             Limpiar
@@ -158,10 +156,10 @@ export function ImageGallerySectionComponent({
         <div className="grid grid-cols-4 gap-2 sm:gap-3">
           {images.map((image) => (
             <ImageGalleryItem
-              isSelected={field.value === image.url}
+              isSelected={currentValue === image.url}
               key={image.url}
               name={image.name}
-              onSelect={() => field.onChange(image.url)}
+              onSelect={() => setValue(name, image.url)}
               url={image.url}
             />
           ))}

@@ -75,7 +75,7 @@ export function CatalogGrid({ models }: CatalogGridProps) {
   return (
     <div className="space-y-8">
       {/* Models grid - responsive and clean */}
-      <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {models.map((model) => (
           <li key={model.id}>
             <ModelCard
