@@ -1,17 +1,17 @@
 'use client';
 
+import { ProductImagePlaceholder, ProductPrice } from '@views/catalog/_components/molecules/model-card-atoms';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { ProductImagePlaceholder, ProductPrice } from '@views/catalog/_components/molecules/model-card-atoms';
 
 type ModelCardProps = {
   id: string;
   name: string;
   profileSupplier?: string;
   range: {
-    width: [number, number];
-    height: [number, number];
+    width: [ number, number ];
+    height: [ number, number ];
   };
   basePrice: string;
   /**

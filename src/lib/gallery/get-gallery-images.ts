@@ -91,15 +91,15 @@ export async function getGalleryImages(): Promise<GalleryImage[] | GalleryError>
       if (errorCode === 'ENOENT') {
         return {
           code: 'DIR_NOT_FOUND',
-          message: `Designs directory not found at ${designsDir}`,
           details: { path: designsDir },
+          message: `Designs directory not found at ${designsDir}`,
         };
       }
       if (errorCode === 'EACCES') {
         return {
           code: 'READ_ERROR',
+          details: { errno: errorCode, path: designsDir },
           message: `Permission denied reading directory: ${designsDir}`,
-          details: { path: designsDir, errno: errorCode },
         };
       }
       throw error;
@@ -128,8 +128,8 @@ export async function getGalleryImages(): Promise<GalleryImage[] | GalleryError>
   } catch (error) {
     return {
       code: 'READ_ERROR',
-      message: `Failed to read gallery images: ${error instanceof Error ? error.message : 'Unknown error'}`,
       details: { error },
+      message: `Failed to read gallery images: ${error instanceof Error ? error.message : 'Unknown error'}`,
     };
   }
 }

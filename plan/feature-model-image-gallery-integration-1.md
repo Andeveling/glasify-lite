@@ -55,13 +55,13 @@ El campo `imageUrl` ya existe en el schema Prisma. Este plan proporciona la infr
 
 **GOAL-001**: Implementar tRPC procedure para obtener lista de imágenes de galería
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-001 | Crear utility function `get-gallery-images.ts` en `src/lib/gallery/` que escanea `/public/models/designs/` | | |
-| TASK-002 | Implementar validación de extensiones permitidas (SVG, PNG, JPG, WebP) | | |
-| TASK-003 | Crear tRPC procedure `admin.gallery.list-images` que retorna array de `{name, url, filename}` | | |
-| TASK-004 | Agregar tests para verificar detección correcta de imágenes | | |
-| TASK-005 | Documentar estructura de respuesta de API con ejemplos | | |
+| Task     | Description                                                                                                | Completed | Date |
+| -------- | ---------------------------------------------------------------------------------------------------------- | --------- | ---- |
+| TASK-001 | Crear utility function `get-gallery-images.ts` en `src/lib/gallery/` que escanea `/public/models/designs/` |           |      |
+| TASK-002 | Implementar validación de extensiones permitidas (SVG, PNG, JPG, WebP)                                     |           |      |
+| TASK-003 | Crear tRPC procedure `admin.gallery.list-images` que retorna array de `{name, url, filename}`              |           |      |
+| TASK-004 | Agregar tests para verificar detección correcta de imágenes                                                |           |      |
+| TASK-005 | Documentar estructura de respuesta de API con ejemplos                                                     |           |      |
 
 **Entrada**: Ninguna  
 **Salida**: Endpoint tRPC funcional que retorna lista de imágenes disponibles
@@ -72,14 +72,14 @@ El campo `imageUrl` ya existe en el schema Prisma. Este plan proporciona la infr
 
 **GOAL-002**: Crear componente de selector de imágenes integrado en ModelForm
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-006 | Crear componente `ImageGallerySectionComponent` en `_components/image-gallery-section.tsx` | | |
-| TASK-007 | Implementar preview de imagen seleccionada (50x50px mínimo) | | |
-| TASK-008 | Crear grid visual (4 columnas) con thumbnails de galería (40x40px cada uno) | | |
-| TASK-009 | Agregar estado visual para imagen seleccionada (border, highlight) | | |
-| TASK-010 | Implementar lazy loading para imágenes de galería | | |
-| TASK-011 | Agregar accesibilidad: ARIA labels, keyboard navigation | | |
+| Task     | Description                                                                                | Completed | Date |
+| -------- | ------------------------------------------------------------------------------------------ | --------- | ---- |
+| TASK-006 | Crear componente `ImageGallerySectionComponent` en `_components/image-gallery-section.tsx` |           |      |
+| TASK-007 | Implementar preview de imagen seleccionada (50x50px mínimo)                                |           |      |
+| TASK-008 | Crear grid visual (4 columnas) con thumbnails de galería (40x40px cada uno)                |           |      |
+| TASK-009 | Agregar estado visual para imagen seleccionada (border, highlight)                         |           |      |
+| TASK-010 | Implementar lazy loading para imágenes de galería                                          |           |      |
+| TASK-011 | Agregar accesibilidad: ARIA labels, keyboard navigation                                    |           |      |
 
 **Entrada**: API tRPC `admin.gallery.list-images`  
 **Salida**: Componente reutilizable que devuelve URL seleccionada
@@ -90,13 +90,13 @@ El campo `imageUrl` ya existe en el schema Prisma. Este plan proporciona la infr
 
 **GOAL-003**: Integrar selector de imágenes en el formulario de modelos
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-012 | Agregar campo `imageUrl` al schema Zod de `modelFormSchema` en `model-form.tsx` | | |
-| TASK-013 | Agregar inicialización de `imageUrl` en `defaultValues` del formulario | | |
-| TASK-014 | Insertar `ImageGallerySectionComponent` en ModelForm (lado derecho, después de GlassTypes) | | |
-| TASK-015 | Transformar `imageUrl` null → undefined en handleSubmit | | |
-| TASK-016 | Actualizar validación backend para aceptar `imageUrl` opcional | | |
+| Task     | Description                                                                                | Completed | Date |
+| -------- | ------------------------------------------------------------------------------------------ | --------- | ---- |
+| TASK-012 | Agregar campo `imageUrl` al schema Zod de `modelFormSchema` en `model-form.tsx`            |           |      |
+| TASK-013 | Agregar inicialización de `imageUrl` en `defaultValues` del formulario                     |           |      |
+| TASK-014 | Insertar `ImageGallerySectionComponent` en ModelForm (lado derecho, después de GlassTypes) |           |      |
+| TASK-015 | Transformar `imageUrl` null → undefined en handleSubmit                                    |           |      |
+| TASK-016 | Actualizar validación backend para aceptar `imageUrl` opcional                             |           |      |
 
 **Entrada**: Componente `ImageGallerySectionComponent`  
 **Salida**: Modelo ahora captura y persiste `imageUrl`
@@ -107,14 +107,14 @@ El campo `imageUrl` ya existe en el schema Prisma. Este plan proporciona la infr
 
 **GOAL-004**: Actualizar ModelCard para mostrar imagen asociada
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-017 | Actualizar props de `ModelCard` para incluir `imageUrl` opcional | ✅ | 2025-10-26 |
-| TASK-018 | Reemplazar `ProductImagePlaceholder` con `Image` dinámico si `imageUrl` existe | ✅ | 2025-10-26 |
-| TASK-019 | Mantener placeholder si `imageUrl` es null/undefined | ✅ | 2025-10-26 |
-| TASK-020 | Implementar optimización de imagen con Next.js `<Image>` component | ✅ | 2025-10-26 |
-| TASK-021 | Agregar alt text descriptivo usando nombre del modelo | ✅ | 2025-10-26 |
-| TASK-022 | Testing: verificar fallback a placeholder en casos edge | ✅ | 2025-10-26 |
+| Task     | Description                                                                    | Completed | Date       |
+| -------- | ------------------------------------------------------------------------------ | --------- | ---------- |
+| TASK-017 | Actualizar props de `ModelCard` para incluir `imageUrl` opcional               | ✅         | 2025-10-26 |
+| TASK-018 | Reemplazar `ProductImagePlaceholder` con `Image` dinámico si `imageUrl` existe | ✅         | 2025-10-26 |
+| TASK-019 | Mantener placeholder si `imageUrl` es null/undefined                           | ✅         | 2025-10-26 |
+| TASK-020 | Implementar optimización de imagen con Next.js `<Image>` component             | ✅         | 2025-10-26 |
+| TASK-021 | Agregar alt text descriptivo usando nombre del modelo                          | ✅         | 2025-10-26 |
+| TASK-022 | Testing: verificar fallback a placeholder en casos edge                        | ✅         | 2025-10-26 |
 
 **Entrada**: `imageUrl` en datos del modelo  
 **Salida**: ModelCard muestra imagen o placeholder según disponibilidad
@@ -125,11 +125,11 @@ El campo `imageUrl` ya existe en el schema Prisma. Este plan proporciona la infr
 
 **GOAL-005**: Actualizar datos existentes para mantener compatibilidad
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-023 | Crear script de seed/update que asigne imágenes por patrón de nombre | ✅ | 2025-10-26 |
-| TASK-024 | Documentar mapeo nombre-modelo → imagen (ej: "Practicable" → practicable.svg) | ✅ | 2025-10-26 |
-| TASK-025 | Testing: verificar que modelos sin imagen siguen siendo accesibles | ✅ | 2025-10-26 |
+| Task     | Description                                                                   | Completed | Date       |
+| -------- | ----------------------------------------------------------------------------- | --------- | ---------- |
+| TASK-023 | Crear script de seed/update que asigne imágenes por patrón de nombre          | ✅         | 2025-10-26 |
+| TASK-024 | Documentar mapeo nombre-modelo → imagen (ej: "Practicable" → practicable.svg) | ✅         | 2025-10-26 |
+| TASK-025 | Testing: verificar que modelos sin imagen siguen siendo accesibles            | ✅         | 2025-10-26 |
 
 **Entrada**: Modelos existentes en BD  
 **Salida**: Modelos con `imageUrl` asignada automáticamente cuando sea posible
@@ -142,13 +142,13 @@ El campo `imageUrl` ya existe en el schema Prisma. Este plan proporciona la infr
 
 **GOAL-006**: Implementar pruebas completas (unitarias, integración, E2E)
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-026 | Test unitario: `get-gallery-images.ts` escanea directorio correctamente | | |
-| TASK-027 | Test unitario: validación de extensiones de archivo | | |
-| TASK-028 | Test integración: tRPC procedure retorna datos válidos | | |
-| TASK-029 | Test E2E: flujo completo admin (seleccionar imagen → guardar → ver en catálogo) | | |
-| TASK-030 | Test E2E: agregar nueva imagen a `/public/models/designs/` y verificar que aparece | | |
+| Task     | Description                                                                        | Completed | Date |
+| -------- | ---------------------------------------------------------------------------------- | --------- | ---- |
+| TASK-026 | Test unitario: `get-gallery-images.ts` escanea directorio correctamente            |           |      |
+| TASK-027 | Test unitario: validación de extensiones de archivo                                |           |      |
+| TASK-028 | Test integración: tRPC procedure retorna datos válidos                             |           |      |
+| TASK-029 | Test E2E: flujo completo admin (seleccionar imagen → guardar → ver en catálogo)    |           |      |
+| TASK-030 | Test E2E: agregar nueva imagen a `/public/models/designs/` y verificar que aparece |           |      |
 
 **Entrada**: Toda la implementación anterior  
 **Salida**: Suite de tests que valida escalabilidad y correctitud
@@ -366,14 +366,14 @@ export function ModelCard({ id, name, imageUrl, basePrice }: ModelCardProps) {
 
 ## 9. Timeline Estimado
 
-| Phase | Tasks | Duración Est. | Dependencias |
-|-------|-------|--------------|--------------|
-| 1. Backend API | TASK-001 a TASK-005 | 2-3 horas | Ninguna |
-| 2. Frontend Selector | TASK-006 a TASK-011 | 3-4 horas | Phase 1 |
-| 3. Integración ModelForm | TASK-012 a TASK-016 | 2 horas | Phase 2 |
-| 4. ModelCard | TASK-017 a TASK-022 | 2-3 horas | Phase 3 |
-| 5. Datos | TASK-023 a TASK-025 | 1 hora | Phase 4 |
-| 6. Testing | TASK-026 a TASK-030 | 4-5 horas | Phase 5 |
+| Phase                    | Tasks               | Duración Est. | Dependencias |
+| ------------------------ | ------------------- | ------------- | ------------ |
+| 1. Backend API           | TASK-001 a TASK-005 | 2-3 horas     | Ninguna      |
+| 2. Frontend Selector     | TASK-006 a TASK-011 | 3-4 horas     | Phase 1      |
+| 3. Integración ModelForm | TASK-012 a TASK-016 | 2 horas       | Phase 2      |
+| 4. ModelCard             | TASK-017 a TASK-022 | 2-3 horas     | Phase 3      |
+| 5. Datos                 | TASK-023 a TASK-025 | 1 hora        | Phase 4      |
+| 6. Testing               | TASK-026 a TASK-030 | 4-5 horas     | Phase 5      |
 
 **Total Estimado**: 14-18 horas
 

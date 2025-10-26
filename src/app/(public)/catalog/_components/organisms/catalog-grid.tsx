@@ -51,7 +51,7 @@ function getMockHighlightedSolutions(modelId: string) {
 
   // Use model ID to pseudo-randomly assign solutions
   const index = modelId.charCodeAt(0) % mockSolutions.length;
-  return mockSolutions[index];
+  return mockSolutions[ index ];
 }
 
 /**
@@ -87,8 +87,8 @@ export function CatalogGrid({ models }: CatalogGridProps) {
               name={model.name}
               profileSupplier={model.profileSupplier?.name}
               range={{
-                height: [model.minHeightMm, model.maxHeightMm],
-                width: [model.minWidthMm, model.maxWidthMm],
+                height: [ model.minHeightMm, model.maxHeightMm ],
+                width: [ model.minWidthMm, model.maxWidthMm ],
               }}
             />
           </li>

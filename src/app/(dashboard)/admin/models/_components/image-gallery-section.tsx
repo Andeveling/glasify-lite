@@ -80,7 +80,7 @@ export function ImageGallerySectionComponent({
   // Fetch gallery images from tRPC
   // Note: tRPC returns GalleryImage[] | GalleryError, but query guarantees empty array on error
   // so we can safely treat data as an array after the error check
-  const { data: rawData = [], isLoading, error } = api.admin.gallery['list-images'].useQuery();
+  const { data: rawData = [], isLoading, error } = api.admin.gallery[ 'list-images' ].useQuery();
 
   // Type assertion: we know it's always an array due to router implementation
   const images: typeof rawData = Array.isArray(rawData) ? rawData : [];
