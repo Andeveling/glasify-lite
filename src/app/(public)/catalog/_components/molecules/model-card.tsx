@@ -53,7 +53,7 @@ export function ModelCard({ id, name, basePrice, imageUrl, range }: ModelCardPro
   return (
     <Card
       aria-label={`Tarjeta del modelo ${name}`}
-      className='group flex flex-col overflow-hidden py-0 transition-all duration-300 hover:border-primary/50 hover:shadow-xl'
+      className="group flex flex-col overflow-hidden py-0 transition-all duration-300 hover:border-primary/50 hover:shadow-xl"
       data-testid="model-card"
     >
       <Link className="w-full" href={`/catalog/${id}`}>
@@ -76,7 +76,7 @@ export function ModelCard({ id, name, basePrice, imageUrl, range }: ModelCardPro
         {/* Content Section */}
         <CardContent className="flex flex-1 flex-col gap-2 p-3">
           {/* Model Name */}
-          <h3 className="line-clamp-2 font-semibold text-base text-foreground transition-colors group-hover:text-primary">
+          <h3 className='truncate font-semibold text-base text-foreground transition-colors group-hover:text-primary'>
             {name}
           </h3>
 
