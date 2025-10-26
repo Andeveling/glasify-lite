@@ -9,8 +9,8 @@ type ModelCardProps = {
   name: string;
   profileSupplier?: string;
   range: {
-    width: [ number, number ];
-    height: [ number, number ];
+    width: [number, number];
+    height: [number, number];
   };
   basePrice: string;
   compatibleGlassTypes: Array<{
@@ -55,7 +55,7 @@ export function ModelCard({ id, name, basePrice }: ModelCardProps) {
         </CardContent>
 
         {/* Product Price - Prominent */}
-        <CardFooter className='flex justify-end'>
+        <CardFooter className="flex justify-end">
           <ProductPrice price={basePrice} />
         </CardFooter>
       </Link>

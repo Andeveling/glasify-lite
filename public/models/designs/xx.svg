@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="280mm"
+   height="210mm"
+   viewBox="0 0 280 210"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="XX.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:lockguides="false"
+     inkscape:zoom="0.73049944"
+     inkscape:cx="500.34262"
+     inkscape:cy="464.06606"
+     inkscape:window-width="1920"
+     inkscape:window-height="990"
+     inkscape:window-x="0"
+     inkscape:window-y="54"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     showguides="true">
+    <sodipodi:guide
+       position="0,-68.648363"
+       orientation="1,0"
+       id="guide4498"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="140.00498,464.91179"
+       orientation="1,0"
+       id="guide4500"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="9.4868527,105.08073"
+       orientation="0,-1"
+       id="guide6680"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="280.0054,115.09749"
+       orientation="1,0"
+       id="guide7412"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2">
+    <marker
+       style="overflow:visible"
+       id="Arrow1"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Arrow1"
+       markerWidth="4.0606604"
+       markerHeight="6.7071066"
+       viewBox="0 0 4.0606602 6.7071068"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         id="path5057"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="5.3244081"
+       markerHeight="6.15538509"
+       viewBox="0 0 5.3244081 6.15538509"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135" />
+    </marker>
+    <linearGradient
+       id="linearGradient1158"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#bfbfbf;stop-opacity:1;"
+         offset="0"
+         id="stop1156" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient388">
+      <stop
+         style="stop-color:#77adff;stop-opacity:1;"
+         offset="0.05898267"
+         id="stop384" />
+      <stop
+         style="stop-color:#bde8f6;stop-opacity:0;"
+         offset="1"
+         id="stop386" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient388"
+       id="linearGradient390"
+       x1="956.1532"
+       y1="254.30661"
+       x2="-1412.8088"
+       y2="1395.6047"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.27332327,0,0,0.39140225,3.0207781,-73.279497)" />
+    <marker
+       style="overflow:visible"
+       id="Arrow1-6"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Arrow1"
+       markerWidth="4.0606604"
+       markerHeight="6.7071066"
+       viewBox="0 0 4.0606602 6.7071068"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         id="path5057-7"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:url(#linearGradient390);fill-opacity:1;stroke:#e6e6e6;stroke-width:6.542;stroke-dasharray:none;stroke-linecap:round;paint-order:markers fill stroke"
+       id="rect134"
+       width="263.45844"
+       height="193.45845"
+       x="8.2707739"
+       y="8.2707748" />
+    <rect
+       style="fill:#e6e6e6;stroke-width:20.8908;stroke-dasharray:none"
+       id="rect14674"
+       width="7.3451395"
+       height="199.96559"
+       x="139.88034"
+       y="5.0159683" />
+    <path
+       style="fill:#7bb1ff;fill-opacity:0.945098;stroke:none;stroke-width:6.54201;stroke-linecap:round;stroke-dasharray:none;paint-order:markers fill stroke;marker-start:url(#TriangleStart)"
+       d="m 27.35223,102.79309 c 91.79155,0.011 92.2998,0.12353 92.2998,0.12353"
+       id="path21832" />
+    <path
+       style="fill:#7bb1ff;fill-opacity:0.945098;stroke:none;stroke-width:6.542;stroke-linecap:round;stroke-dasharray:none;paint-order:markers fill stroke"
+       d="m 166.72657,44.742306 h 84.17437 z"
+       id="path22103" />
+    <path
+       style="fill:#e6e6e6;fill-opacity:0.945098;stroke:#e6e6e6;stroke-width:5.59391;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Arrow1);paint-order:markers fill stroke"
+       d="M 95.836493,104.46986 H 56.297003"
+       id="path33543" />
+    <path
+       style="fill:#e6e6e6;fill-opacity:0.945098;stroke:#e6e6e6;stroke-width:5.59391;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Arrow1-6);paint-order:markers fill stroke"
+       d="m 190.8366,105.05341 h 39.53949"
+       id="path33543-5" />
+  </g>
+</svg>

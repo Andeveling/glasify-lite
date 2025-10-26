@@ -67,7 +67,7 @@ export function ActiveSearchParameters({
 
       {activeParameters.map((param) => {
         const Icon = param.icon;
-        const handleRemove = handlers[ param.key ];
+        const handleRemove = handlers[param.key];
 
         return (
           <Badge className="gap-1.5 pr-1 pl-2" key={param.key} variant="secondary">

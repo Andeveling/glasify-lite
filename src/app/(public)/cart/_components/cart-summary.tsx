@@ -58,7 +58,7 @@ export type CartSummaryProps = {
  * ```
  */
 export function CartSummary({ summary, isGenerating = false, className }: CartSummaryProps) {
-  const [ showSignInModal, setShowSignInModal ] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
   const { data: session, isPending: isLoading } = useSession();
   const isAuthenticated = !!session?.user;
 

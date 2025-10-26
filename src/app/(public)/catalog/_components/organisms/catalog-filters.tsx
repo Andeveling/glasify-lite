@@ -160,7 +160,7 @@ export function CatalogFilters({
           onRemoveProfileSupplierAction={handleRemoveProfileSupplier}
           onRemoveSearchAction={handleRemoveSearch}
           onRemoveSortAction={handleRemoveSort}
-          searchQuery={currentSearchQuery ?? ""}
+          searchQuery={currentSearchQuery ?? ''}
           selectedProfileSupplierName={selectedProfileSupplierName ?? null}
           sortType={currentSort as CatalogSortOption}
         />

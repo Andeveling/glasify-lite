@@ -156,8 +156,8 @@ export function ProductInfo({ name, profileSupplier }: ProductInfoProps) {
 }
 
 type ProductDimensionsProps = {
-  widthRange: [ number, number ];
-  heightRange: [ number, number ];
+  widthRange: [number, number];
+  heightRange: [number, number];
 };
 
 /**
@@ -172,14 +172,14 @@ export function ProductDimensions({ widthRange, heightRange }: ProductDimensions
       <DimensionDisplay
         icon={<ArrowLeftRight className="h-3.5 w-3.5" />}
         label="Ancho"
-        max={widthRange[ 1 ]}
-        min={widthRange[ 0 ]}
+        max={widthRange[1]}
+        min={widthRange[0]}
       />
       <DimensionDisplay
         icon={<ArrowUpDown className="h-3.5 w-3.5" />}
         label="Alto"
-        max={heightRange[ 1 ]}
-        min={heightRange[ 0 ]}
+        max={heightRange[1]}
+        min={heightRange[0]}
       />
     </div>
   );
@@ -221,7 +221,7 @@ type SolutionBadgeProps = {
  */
 export function SolutionBadge({ icon, label, rating = 'good' }: SolutionBadgeProps) {
   // Get icon component from map
-  const IconComponent = icon ? ICON_MAP[ icon ] : null;
+  const IconComponent = icon ? ICON_MAP[icon] : null;
 
   // Visual variants based on performance rating
   const ratingVariants = {
@@ -234,7 +234,7 @@ export function SolutionBadge({ icon, label, rating = 'good' }: SolutionBadgePro
 
   // Map database snake_case to camelCase for variant lookup
   const variantKey = rating === 'very_good' ? 'veryGood' : rating;
-  const variantClass = ratingVariants[ variantKey as keyof typeof ratingVariants ];
+  const variantClass = ratingVariants[variantKey as keyof typeof ratingVariants];
 
   return (
     <Badge className={`gap-1 px-2 py-0.5 text-xs ${variantClass}`} variant="outline">

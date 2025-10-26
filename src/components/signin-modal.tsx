@@ -26,14 +26,10 @@ type SignInModalProps = {
 // Component
 // ============================================================================
 
-export function SignInModal({
-  open,
-  onOpenChangeAction,
-  callbackUrl: defaultCallbackUrl,
-}: SignInModalProps) {
+export function SignInModal({ open, onOpenChangeAction, callbackUrl: defaultCallbackUrl }: SignInModalProps) {
   const searchParams = useSearchParams();
-  const [ isGoogleLoading, setIsGoogleLoading ] = useState(false);
-  const [ error, setError ] = useState<string | null>(null);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Get callbackUrl from prop, query params, or default to /catalog
   const callbackUrl = defaultCallbackUrl || searchParams.get('callbackUrl') || '/catalog';
@@ -68,28 +64,16 @@ export function SignInModal({
 
           <div className="space-y-2 text-center">
             <DialogTitle className="text-2xl">Iniciar Sesión</DialogTitle>
-            <DialogDescription className="text-base">
-              Usa Google para acceder rápidamente
-            </DialogDescription>
+            <DialogDescription className="text-base">Usa Google para acceder rápidamente</DialogDescription>
           </div>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           {/* Error message */}
-          {error && (
-            <div className="rounded-md bg-destructive/10 p-3 text-destructive text-sm">
-              {error}
-            </div>
-          )}
+          {error && <div className="rounded-md bg-destructive/10 p-3 text-destructive text-sm">{error}</div>}
 
           {/* OAuth Providers - Solo Google */}
-          <Button
-            className="w-full"
-            disabled={isGoogleLoading}
-            onClick={handleGoogleSignIn}
-            size="lg"
-            type="button"
-          >
+          <Button className="w-full" disabled={isGoogleLoading} onClick={handleGoogleSignIn} size="lg" type="button">
             {isGoogleLoading ? (
               <Icons.spinner className="mr-2 h-5 w-5 animate-spin" />
             ) : (
