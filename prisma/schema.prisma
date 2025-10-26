@@ -242,7 +242,7 @@ model Model {
   profileSupplierId      String?
   profileSupplier        ProfileSupplier?     @relation(fields: [profileSupplierId], references: [id], onDelete: SetNull)
   name                   String
-  imageUrl               String?  @default("")
+  imageUrl               String?              @default("")
   status                 ModelStatus          @default(draft)
   minWidthMm             Int
   maxWidthMm             Int
