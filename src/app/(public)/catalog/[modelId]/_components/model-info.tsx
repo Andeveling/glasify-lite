@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { formatCurrency } from '@/app/_utils/format-currency.util';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import type { Model } from '../_types/model.types';
 
 type ModelInfoProps = {
@@ -9,29 +9,28 @@ type ModelInfoProps = {
 
 export function ModelInfo({ model }: ModelInfoProps) {
   return (
-    <Card className="overflow-hidden">
-      <div className="relative aspect-square bg-muted">
+    <Card className="overflow-hidden p-0">
+      {/* Image Section */}
+      <div className="relative aspect-square w-full overflow-hidden bg-muted">
         <Image
           alt={model.name}
-          className="object-cover"
+          className="h-full w-full object-cover"
           fill
+          priority
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
-          src={'/placeholder.webp'}
+          src={model.imageUrl || '/placeholder.webp'}
         />
       </div>
-      <div className="space-y-4 p-6">
-        <div>
-          <h2 className="text-balance font-semibold text-xl">{model.name}</h2>
-          <p className="text-muted-foreground text-sm">{model.manufacturer}</p>
-        </div>
 
-        <div className="flex items-baseline gap-2">
-          <span className="font-bold text-3xl">{formatCurrency(model.basePrice)}</span>
-          <span className="text-muted-foreground text-sm">precio base</span>
+      <CardContent className="py-0">
+        {/* Price */}
+        <div className='pt-0 pb-2'>
+          <p className="mb-1 font-medium text-muted-foreground text-sm">Precio Base</p>
+          <p className="font-bold text-3xl text-foreground">
+            {formatCurrency(model.basePrice, { currency: model.currency })}
+          </p>
         </div>
-
-        <p className="text-muted-foreground text-sm leading-relaxed">{model.description}</p>
-      </div>
+      </CardContent>
     </Card>
   );
 }

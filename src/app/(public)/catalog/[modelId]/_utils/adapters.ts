@@ -31,7 +31,7 @@ export function adaptModelFromServer(serverModel: ModelDetailOutput): Model {
     },
     features: ['Fabricación de alta calidad', 'Garantía del fabricante', ...materialFeatures],
     id: serverModel.id,
-    imageUrl: '/modern-aluminum-sliding-window.jpg', // TODO: Add imageUrl to Model table
+    imageUrl: serverModel.imageUrl || '/placeholder.webp',
     name: serverModel.name,
     profileSupplier,
   };
