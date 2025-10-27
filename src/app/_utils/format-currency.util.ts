@@ -102,19 +102,20 @@ export const formatCOP = (value: number, showDecimals = false): string =>
  * Optimized for the Panamanian market with default settings
  *
  * @param value - The numeric value to format
- * @param showDecimals - Whether to show decimal places
+ * @param decimals - Number of decimal places (default: 2, use 4 for precise pricing)
  * @returns Formatted USD currency string
  *
  * @example
  * ```ts
  * formatUSD(1250) // "$1,250.00"
- * formatUSD(1250, false) // "$1,250"
+ * formatUSD(1250, 4) // "$1,250.0000"
+ * formatUSD(0.015, 4) // "$0.0150"
  * ```
  */
-export const formatUSD = (value: number, showDecimals = true): string =>
+export const formatUSD = (value: number, decimals = 2): string =>
   formatCurrency(value, {
     currency: 'USD',
-    decimals: showDecimals ? 2 : 0,
+    decimals,
     display: 'symbol',
     locale: 'es-PA',
   });

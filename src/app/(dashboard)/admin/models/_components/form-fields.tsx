@@ -104,7 +104,14 @@ export function FormNumberInput({
 
 /**
  * Currency Input Field (formatted as money)
+ * Supports up to 4 decimal places for precise pricing
+ *
+ * @param decimals - Number of decimal places (default: 2, use 4 for precise cost factors)
  */
+type CurrencyFieldProps = NumberFieldProps & {
+  decimals?: 0 | 1 | 2 | 3 | 4;
+};
+
 export function FormCurrencyInput({
   name,
   label,
@@ -112,7 +119,8 @@ export function FormCurrencyInput({
   placeholder,
   required = false,
   min = 0,
-}: NumberFieldProps) {
+  decimals = 2,
+}: CurrencyFieldProps) {
   const form = useFormContext();
 
   return (
@@ -133,7 +141,7 @@ export function FormCurrencyInput({
                 className="pl-7"
                 min={min}
                 placeholder={placeholder}
-                step="0.01"
+                step={10 ** -decimals}
                 type="number"
                 {...field}
                 onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}

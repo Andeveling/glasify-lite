@@ -30,8 +30,8 @@ const modelFormSchema = z.object({
   basePrice: z.number().min(0),
   compatibleGlassTypeIds: z.array(z.string()).min(1, 'Debe seleccionar al menos un tipo de vidrio'),
   costNotes: z.string().optional().nullable(),
-  costPerMmHeight: z.number().min(0),
-  costPerMmWidth: z.number().min(0),
+  costPerMmHeight: z.number().min(0), // Allow up to 4 decimal places
+  costPerMmWidth: z.number().min(0), // Allow up to 4 decimal places
   glassDiscountHeightMm: z.number().int().min(0).default(0),
   glassDiscountWidthMm: z.number().int().min(0).default(0),
   imageUrl: z

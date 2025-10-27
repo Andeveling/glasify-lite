@@ -76,9 +76,9 @@ export function ModelCard({ id, name, basePrice, imageUrl, range }: ModelCardPro
         {/* Content Section */}
         <CardContent className="flex flex-1 flex-col gap-2 p-3">
           {/* Model Name */}
-          <h3 className='truncate font-semibold text-base text-foreground transition-colors group-hover:text-primary'>
+          <h4 className='truncate font-semibold text-base text-foreground transition-colors group-hover:text-primary'>
             {name}
-          </h3>
+          </h4>
 
           {/* Dimensions Section */}
           <div className="space-y-1">

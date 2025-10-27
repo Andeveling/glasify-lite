@@ -198,6 +198,8 @@ function formatCurrency(
   }
 ): string {
   const { currency, locale } = getContext(options?.context);
+  // Default: COP (0 decimals), USD/EUR (2 decimals)
+  // Can be overridden with options.decimals for precision cases (e.g., pricing with 3-4 decimals)
   const decimals = options?.decimals ?? (currency === 'COP' ? 0 : 2);
 
   try {
