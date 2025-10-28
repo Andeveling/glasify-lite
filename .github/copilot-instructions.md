@@ -26,6 +26,8 @@ When generating code for this repository:
 - PostgreSQL via Prisma ORM (existing multi-tenant schema with GlassType, GlassSolution, GlassSupplier models) (015-static-glass-taxonomy)
 - PostgreSQL via Prisma ORM (existing schema: Quote, QuoteItem, Model, GlassType, ProfileSupplier, User, TenantConfig) (016-admin-dashboard-charts)
 - TypeScript 5.8.2 (strict mode), Node.js (ES2022 target) + Next.js 15.2.3 (App Router), React 19.0.0 (Server Components), tRPC 11.0.0, Prisma 6.16.2, shadcn/ui charts (Recharts 2.12.7), date-fns-tz (timezone handling) (016-admin-dashboard-charts)
+- TypeScript 5.8.2 (strict mode), Node.js ES2022 target + Next.js 15.2.3 (App Router), React 19.0.0 (Server Components), tRPC 11.0.0, Prisma 6.16.2, Zod 4.1.1, React Hook Form 7.63.0 (001-model-color-catalog)
+- PostgreSQL via Prisma ORM (existing multi-tenant schema) (001-model-color-catalog)
 
 **Language/Runtime**:
 - TypeScript 5.8.2 (strict mode), Node.js (ES2022 target)
@@ -272,5 +274,6 @@ src/app/(dashboard)/admin/models/
 
 
 ## Recent Changes
+- 001-model-color-catalog: Added TypeScript 5.8.2 (strict mode), Node.js ES2022 target + Next.js 15.2.3 (App Router), React 19.0.0 (Server Components), tRPC 11.0.0, Prisma 6.16.2, Zod 4.1.1, React Hook Form 7.63.0
+- 001-model-color-catalog: Added TypeScript 5.8.2 (strict mode), Node.js ES2022 target + Next.js 15.2.3 (App Router), React 19.0.0 (Server Components), tRPC 11.0.0, Prisma 6.16.2, Zod 4.1.1, React Hook Form 7.63.0
 - 016-admin-dashboard-charts: Added TypeScript 5.8.2 (strict mode), Node.js (ES2022 target)
-- 015-static-glass-taxonomy: Added TypeScript 5.9.3, Node.js (ES2022 target via Next.js 15.5.4) + Next.js 15.5.4 (App Router), Prisma 6.17.0 (ORM), tRPC 11.6.0 (API), Zod 4.1.12 (validation), React Hook Form 7.64.0
