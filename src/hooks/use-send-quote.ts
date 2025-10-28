@@ -118,7 +118,9 @@ export function useSendQuote(options: UseSendQuoteOptions = {}) {
 
         // Optimistically update to 'sent' status
         utils.quote["get-by-id"].setData({ id: input.quoteId }, (old) => {
-          if (!old) return old;
+          if (!old) {
+            return old;
+          }
 
           return {
             ...old,

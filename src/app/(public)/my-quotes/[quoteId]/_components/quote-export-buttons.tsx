@@ -11,7 +11,7 @@ import { FileDown, FileSpreadsheet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuoteExport } from "../../_hooks/use-quote-export";
 
-interface QuoteExportButtonsProps {
+type QuoteExportButtonsProps = {
   /** Quote ID to export */
   quoteId: string;
 
@@ -23,7 +23,7 @@ interface QuoteExportButtonsProps {
 
   /** Additional CSS classes */
   className?: string;
-}
+};
 
 /**
  * Export buttons for quote PDF and Excel downloads

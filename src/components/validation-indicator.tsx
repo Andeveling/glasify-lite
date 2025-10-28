@@ -17,7 +17,9 @@ export function ValidationIndicator({
   showIndicator,
   className,
 }: ValidationIndicatorProps) {
-  if (!showIndicator) return null;
+  if (!showIndicator) {
+    return null;
+  }
 
   return isValid ? (
     <Check

@@ -11,7 +11,7 @@ import {
 import { formatCurrency, formatPercent } from "@/lib/format";
 import type { MonetaryMetrics } from "@/types/dashboard";
 
-interface MonetaryMetricsCardsProps {
+type MonetaryMetricsCardsProps = {
   /**
    * Monetary metrics from tRPC query
    */
@@ -21,7 +21,7 @@ interface MonetaryMetricsCardsProps {
    * Tenant configuration for currency/locale formatting
    */
   tenantConfig?: { currency?: string; locale?: string } | null;
-}
+};
 
 /**
  * MonetaryMetricsCards Component

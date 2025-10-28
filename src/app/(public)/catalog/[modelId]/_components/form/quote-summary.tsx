@@ -59,8 +59,12 @@ export function QuoteSummary({
 
   // ✅ Enhanced UX: Dynamic state calculation
   const getCardState = () => {
-    if (error || hasFormErrors) return "error";
-    if (hasValidCalculation && isValid) return "success";
+    if (error || hasFormErrors) {
+      return "error";
+    }
+    if (hasValidCalculation && isValid) {
+      return "success";
+    }
     return "idle";
   };
 
@@ -146,8 +150,12 @@ export function QuoteSummary({
   };
 
   const getButtonText = () => {
-    if (justAddedToCart) return "Agregado al carrito";
-    if (isCalculating) return "Calculando...";
+    if (justAddedToCart) {
+      return "Agregado al carrito";
+    }
+    if (isCalculating) {
+      return "Calculando...";
+    }
     return "Agregar al carrito";
   };
 

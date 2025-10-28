@@ -14,13 +14,13 @@ import { describe, expect, it } from "vitest";
 /**
  * Expected confirmation message structure
  */
-interface ConfirmationMessage {
+type ConfirmationMessage = {
   title: string;
   description: string;
   timeline?: string;
   vendorContact?: string;
   nextSteps?: string;
-}
+};
 
 /**
  * Helper function to build confirmation message

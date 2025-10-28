@@ -19,7 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/trpc/react";
 import { ImageGalleryItem } from "./image-gallery-item";
 
-interface ImageGallerySectionProps {
+type ImageGallerySectionProps = {
   /**
    * Name of the form field (for react-hook-form)
    * @example "imageUrl"
@@ -35,7 +35,7 @@ interface ImageGallerySectionProps {
    * Optional custom description
    */
   description?: string;
-}
+};
 
 /**
  * Loading skeleton for gallery grid

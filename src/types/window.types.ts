@@ -114,7 +114,7 @@ export const WindowType = {
  *
  * Provides human-readable labels and descriptions for each window type
  */
-export interface WindowTypeMetadata {
+export type WindowTypeMetadata = {
   /** Window type enum value */
   type: WindowType;
 
@@ -135,14 +135,14 @@ export interface WindowTypeMetadata {
 
   /** Operation mechanism */
   operation: "sliding" | "swinging" | "fixed" | "tilt" | "pivot" | "vertical";
-}
+};
 
 /**
  * Window diagram configuration
  *
  * Maps WindowType to SVG file path and rendering options
  */
-export interface WindowDiagram {
+export type WindowDiagram = {
   /** Window type */
   type: WindowType;
 
@@ -160,14 +160,14 @@ export interface WindowDiagram {
 
   /** Alternative text for accessibility */
   altText: string;
-}
+};
 
 /**
  * Window dimension specifications
  *
  * Used for quote items with dimensional data
  */
-export interface WindowDimensions {
+export type WindowDimensions = {
   /** Width in centimeters */
   width: number;
 
@@ -185,14 +185,14 @@ export interface WindowDimensions {
 
   /** Optional: Glass thickness in millimeters */
   glassThickness?: number;
-}
+};
 
 /**
  * Window product specification
  *
  * Complete specification for a window product in a quote
  */
-export interface WindowProduct {
+export type WindowProduct = {
   /** Window type */
   type: WindowType;
 
@@ -216,7 +216,7 @@ export interface WindowProduct {
 
   /** Optional: Additional features */
   features?: string[];
-}
+};
 
 /**
  * Type guard to check if a string is a valid WindowType

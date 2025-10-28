@@ -37,7 +37,7 @@ import {
 import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
 import { useServerParams } from "@/hooks/use-server-params";
 
-export interface TableSearchProps {
+export type TableSearchProps = {
   /** Placeholder text for search input */
   placeholder?: string;
 
@@ -46,7 +46,7 @@ export interface TableSearchProps {
 
   /** Debounce delay in milliseconds (default: 300ms) */
   debounceMs?: number;
-}
+};
 
 export function TableSearch({
   placeholder = "Buscar...",
@@ -76,7 +76,9 @@ export function TableSearch({
    * Handle input change (debounced submission)
    */
   const handleInput = () => {
-    if (!formRef.current) return;
+    if (!formRef.current) {
+      return;
+    }
     const formData = new FormData(formRef.current);
     debouncedSubmit(formData);
   };

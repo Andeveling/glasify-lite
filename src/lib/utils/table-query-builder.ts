@@ -35,7 +35,7 @@ import type { Prisma } from "@prisma/client";
 /**
  * Search configuration for building WHERE clauses
  */
-export interface SearchConfig {
+export type SearchConfig = {
   /**
    * Fields to search with ILIKE (case-insensitive partial match)
    * Used for full-text search across multiple columns
@@ -59,23 +59,23 @@ export interface SearchConfig {
    * Example: { createdAt: 'createdAt' }
    */
   dateRange?: Record<string, string>;
-}
+};
 
 /**
  * Parsed filter parameters from URL
  */
-export interface FilterParams {
+export type FilterParams = {
   search?: string;
   [key: string]: string | number | boolean | undefined;
-}
+};
 
 /**
  * Parsed sort parameters from URL
  */
-export interface SortParams {
+export type SortParams = {
   sortBy?: string;
   sortOrder?: "asc" | "desc";
-}
+};
 
 /**
  * Build search OR clause
@@ -240,7 +240,9 @@ export function isValidSortField(
   sortBy: string | undefined,
   allowedFields: string[]
 ): boolean {
-  if (!sortBy) return true; // Allow no sort field (use default)
+  if (!sortBy) {
+    return true; // Allow no sort field (use default)
+  }
   return allowedFields.includes(sortBy);
 }
 

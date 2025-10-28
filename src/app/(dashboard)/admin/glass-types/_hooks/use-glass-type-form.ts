@@ -16,11 +16,11 @@ import {
 import { useFormDefaults } from "./use-form-defaults";
 import { useGlassTypeMutations } from "./use-glass-type-mutations";
 
-interface UseGlassTypeFormOptions {
+type UseGlassTypeFormOptions = {
   mode: "create" | "edit";
   defaultValues?: GetGlassTypeByIdOutput;
   onSuccessCallback?: () => void;
-}
+};
 
 /**
  * Main form hook - orchestrates form state, validation and mutations

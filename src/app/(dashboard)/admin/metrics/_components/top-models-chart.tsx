@@ -40,10 +40,10 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-interface TopModelsChartProps {
+type TopModelsChartProps = {
   data: TopModel[];
   tenantConfig?: { locale?: string } | null;
-}
+};
 
 export function TopModelsChart({ data, tenantConfig }: TopModelsChartProps) {
   // Empty state check
@@ -102,10 +102,14 @@ export function TopModelsChart({ data, tenantConfig }: TopModelsChartProps) {
             />
             <ChartTooltip
               content={({ active, payload }) => {
-                if (!(active && payload) || payload.length === 0) return null;
+                if (!(active && payload) || payload.length === 0) {
+                  return null;
+                }
 
                 const tooltipData = payload[0]?.payload;
-                if (!tooltipData) return null;
+                if (!tooltipData) {
+                  return null;
+                }
 
                 return (
                   <div className="rounded-lg border bg-background p-3 shadow-md">

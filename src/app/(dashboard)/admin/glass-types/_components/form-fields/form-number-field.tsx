@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-interface FormNumberFieldProps<TFieldValues extends FieldValues> {
+type FormNumberFieldProps<TFieldValues extends FieldValues> = {
   control: Control<TFieldValues>;
   name: FieldPath<TFieldValues>;
   label: string;
@@ -36,7 +36,7 @@ interface FormNumberFieldProps<TFieldValues extends FieldValues> {
   step?: number;
   required?: boolean;
   disabled?: boolean;
-}
+};
 
 /**
  * Reusable number input field component

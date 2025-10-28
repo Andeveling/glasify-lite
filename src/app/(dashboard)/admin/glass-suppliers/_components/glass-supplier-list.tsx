@@ -90,7 +90,9 @@ export function GlassSupplierList({
   };
 
   const handleConfirmDelete = () => {
-    if (!supplierToDelete) return;
+    if (!supplierToDelete) {
+      return;
+    }
     deleteMutation.mutate(
       { id: supplierToDelete.id },
       {

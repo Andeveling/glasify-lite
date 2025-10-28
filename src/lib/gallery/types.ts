@@ -11,7 +11,7 @@
  * - name: Human-readable name (e.g., "Practicable")
  * - url: Public URL path accessible from browser (e.g., "/models/designs/practicable.svg")
  */
-export interface GalleryImage {
+export type GalleryImage = {
   /**
    * Original filename including extension
    * @example "practicable.svg"
@@ -32,12 +32,12 @@ export interface GalleryImage {
    * @example "/models/designs/practicable.svg"
    */
   url: string;
-}
+};
 
 /**
  * Response from gallery.list-images tRPC procedure
  */
-export interface GalleryImagesResponse {
+export type GalleryImagesResponse = {
   /**
    * Array of available gallery images sorted alphabetically by name
    */
@@ -54,12 +54,12 @@ export interface GalleryImagesResponse {
    * Used for caching validation
    */
   scannedAt: Date;
-}
+};
 
 /**
  * Configuration for gallery system
  */
-export interface GalleryConfig {
+export type GalleryConfig = {
   /**
    * Absolute path to designs directory on filesystem
    * @example "/home/user/project/public/models/designs"
@@ -77,13 +77,13 @@ export interface GalleryConfig {
    * @example [".svg", ".png", ".jpg", ".jpeg", ".webp"]
    */
   allowedExtensions: string[];
-}
+};
 
 /**
  * Error details for gallery operations
  */
-export interface GalleryError {
+export type GalleryError = {
   code: "DIR_NOT_FOUND" | "READ_ERROR" | "NO_IMAGES" | "INVALID_CONFIG";
   message: string;
   details?: Record<string, unknown>;
-}
+};

@@ -41,6 +41,8 @@ export const iconMap: Record<string, LucideIcon> = {
  * Returns the icon component or a fallback if not found
  */
 export function getIconComponent(iconName: string | null): LucideIcon {
-  if (!iconName) return Home;
+  if (!iconName) {
+    return Home;
+  }
   return iconMap[iconName] || Home;
 }

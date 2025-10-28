@@ -44,10 +44,14 @@ export function Window2DPreview({
   // biome-ignore lint/correctness/useExhaustiveDependencies: Las dependencias están bien definidas, no es necesario agregar canvasRef ni animationRef
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!(canvas && width && height)) return;
+    if (!(canvas && width && height)) {
+      return;
+    }
 
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!ctx) {
+      return;
+    }
 
     // Get CSS variables
     const style = getComputedStyle(document.documentElement);

@@ -93,11 +93,11 @@ const IMAGE_MAPPING_RULES: Array<{
 /**
  * CLI options interface
  */
-interface CliOptions {
+type CliOptions = {
   dryRun: boolean;
   verbose: boolean;
   help: boolean;
-}
+};
 
 /**
  * Parse command-line arguments
@@ -165,7 +165,7 @@ function findMatchingImage(modelName: string): string | null {
 /**
  * Migration statistics
  */
-interface MigrationStats {
+type MigrationStats = {
   totalModels: number;
   modelsWithImages: number;
   modelsWithoutImages: number;
@@ -173,7 +173,7 @@ interface MigrationStats {
   updated: number;
   failed: number;
   skipped: number;
-}
+};
 
 /**
  * Execute migration

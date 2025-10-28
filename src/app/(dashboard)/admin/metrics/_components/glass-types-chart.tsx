@@ -62,10 +62,10 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-interface GlassTypesChartProps {
+type GlassTypesChartProps = {
   data: TopGlassType[];
   tenantConfig?: { locale?: string } | null;
-}
+};
 
 export function GlassTypesChart({ data, tenantConfig }: GlassTypesChartProps) {
   // Empty state check
@@ -102,10 +102,14 @@ export function GlassTypesChart({ data, tenantConfig }: GlassTypesChartProps) {
           <PieChart>
             <ChartTooltip
               content={({ active, payload }) => {
-                if (!(active && payload) || payload.length === 0) return null;
+                if (!(active && payload) || payload.length === 0) {
+                  return null;
+                }
 
                 const tooltipData = payload[0]?.payload;
-                if (!tooltipData) return null;
+                if (!tooltipData) {
+                  return null;
+                }
 
                 return (
                   <div className="rounded-lg border bg-background p-3 shadow-md">

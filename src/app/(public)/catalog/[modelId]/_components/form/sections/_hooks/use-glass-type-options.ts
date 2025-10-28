@@ -80,7 +80,9 @@ export function useGlassTypeOptions(
 ): GlassTypeOption[] {
   // Step 1: Filter glass types by selected solution
   const filteredGlassTypes = useMemo(() => {
-    if (!selectedSolutionId) return glassTypes;
+    if (!selectedSolutionId) {
+      return glassTypes;
+    }
 
     return glassTypes.filter((glassType) =>
       glassType.solutions?.some((sol) => sol.solution.id === selectedSolutionId)

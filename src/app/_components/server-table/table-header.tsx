@@ -37,10 +37,10 @@ import {
 import { useServerParams } from "@/hooks/use-server-params";
 import type { ServerTableColumn } from "./index";
 
-export interface TableHeaderProps<T extends Record<string, unknown>> {
+export type TableHeaderProps<T extends Record<string, unknown>> = {
   /** Column definitions */
   columns: ServerTableColumn<T>[];
-}
+};
 
 /**
  * Get sort icon based on current state

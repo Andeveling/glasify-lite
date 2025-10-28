@@ -24,13 +24,13 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 
-interface FormCheckboxFieldProps<TFieldValues extends FieldValues> {
+type FormCheckboxFieldProps<TFieldValues extends FieldValues> = {
   control: Control<TFieldValues>;
   name: FieldPath<TFieldValues>;
   label: string;
   description?: string;
   disabled?: boolean;
-}
+};
 
 /**
  * Reusable switch field component (keeps the same form API as the previous checkbox)

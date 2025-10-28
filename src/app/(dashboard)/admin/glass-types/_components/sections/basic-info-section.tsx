@@ -33,9 +33,9 @@ import { FormNumberField } from "../form-fields/form-number-field";
 import { FormSelectField } from "../form-fields/form-select-field";
 import { FormTextareaField } from "../form-fields/form-textarea-field";
 
-interface BasicInfoSectionProps {
+type BasicInfoSectionProps = {
   control: Control<FieldValues>;
-}
+};
 
 const PURPOSE_OPTIONS = [
   { label: "General", value: "general" },

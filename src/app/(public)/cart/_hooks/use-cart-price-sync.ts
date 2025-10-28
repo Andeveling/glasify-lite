@@ -136,7 +136,9 @@ export function useCartPriceSync({
    * Sync prices for all items (debounced)
    */
   const syncPrices = useCallback(() => {
-    if (!enabled) return;
+    if (!enabled) {
+      return;
+    }
 
     // Clear existing timeout
     if (timeoutRef.current) {

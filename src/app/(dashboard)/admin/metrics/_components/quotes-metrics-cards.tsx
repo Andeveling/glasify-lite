@@ -8,7 +8,7 @@ import { MetricCard } from "./metric-card";
 // Conversion constant for decimal to percentage display
 const PERCENTAGE_MULTIPLIER = 100;
 
-interface QuotesMetricsCardsProps {
+type QuotesMetricsCardsProps = {
   /**
    * Quote metrics data from tRPC query
    */
@@ -22,7 +22,7 @@ interface QuotesMetricsCardsProps {
     currency?: string;
     timezone?: string;
   } | null;
-}
+};
 
 /**
  * QuotesMetricsCards Component

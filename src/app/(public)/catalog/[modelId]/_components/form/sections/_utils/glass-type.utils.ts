@@ -64,12 +64,18 @@ export function buildGlassFeatures(glassType: GlassTypeOutput): GlassFeatures {
   const features: string[] = [];
 
   // Check characteristics using the new Many-to-Many relationship
-  if (hasCharacteristic(glassType, "tempered")) features.push("Templado");
-  if (hasCharacteristic(glassType, "laminated")) features.push("Laminado");
-  if (hasCharacteristic(glassType, "low-e"))
+  if (hasCharacteristic(glassType, "tempered")) {
+    features.push("Templado");
+  }
+  if (hasCharacteristic(glassType, "laminated")) {
+    features.push("Laminado");
+  }
+  if (hasCharacteristic(glassType, "low-e")) {
     features.push("Bajo emisivo (Low-E)");
-  if (hasCharacteristic(glassType, "triple-glazed"))
+  }
+  if (hasCharacteristic(glassType, "triple-glazed")) {
     features.push("Triple acristalamiento");
+  }
 
   // Note: v2.0 - deprecated boolean fields removed
   // Use characteristics relationships for feature detection
@@ -108,20 +114,37 @@ export function calculatePerformanceRatings(
   let acoustic = 2;
 
   // Security calculation
-  if (isTempered) security += 1;
-  if (isLaminated) security += 2;
-  if (thickness >= THICK_GLASS_SECURITY) security += 1;
+  if (isTempered) {
+    security += 1;
+  }
+  if (isLaminated) {
+    security += 2;
+  }
+  if (thickness >= THICK_GLASS_SECURITY) {
+    security += 1;
+  }
 
   // Thermal calculation
-  if (isLowE) thermal += 2;
-  if (isTripleGlazed) thermal += 1;
-  if (glassType.uValue && glassType.uValue < MIN_U_VALUE_THRESHOLD)
+  if (isLowE) {
+    thermal += 2;
+  }
+  if (isTripleGlazed) {
     thermal += 1;
+  }
+  if (glassType.uValue && glassType.uValue < MIN_U_VALUE_THRESHOLD) {
+    thermal += 1;
+  }
 
   // Acoustic calculation
-  if (isLaminated) acoustic += 2;
-  if (isTripleGlazed) acoustic += 1;
-  if (thickness >= THICK_GLASS_ACOUSTIC) acoustic += 1;
+  if (isLaminated) {
+    acoustic += 2;
+  }
+  if (isTripleGlazed) {
+    acoustic += 1;
+  }
+  if (thickness >= THICK_GLASS_ACOUSTIC) {
+    acoustic += 1;
+  }
 
   return {
     acoustic: Math.min(MAX_RATING, acoustic),
@@ -165,7 +188,9 @@ export function sortByPerformance(
     const weightB = ratingB ? (RatingWeights[ratingB] ?? 0) : 0;
 
     // Sort by performance (highest first)
-    if (weightB !== weightA) return weightB - weightA;
+    if (weightB !== weightA) {
+      return weightB - weightA;
+    }
 
     // Tie-break by thickness (thicker first - more durable)
     return b.thicknessMm - a.thicknessMm;

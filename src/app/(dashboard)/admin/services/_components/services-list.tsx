@@ -163,7 +163,9 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
               | undefined,
           },
           (old) => {
-            if (!old) return old;
+            if (!old) {
+              return old;
+            }
             return {
               ...old,
               items: old.items.filter((item) => item.id !== variables.id),

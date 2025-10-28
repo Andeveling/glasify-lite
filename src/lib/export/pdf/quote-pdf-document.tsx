@@ -12,9 +12,9 @@ import { formatCurrency, formatDateFull } from "@/lib/format";
 import type { QuotePDFData } from "@/types/export.types";
 import { pdfColors, pdfStyles } from "./pdf-styles";
 
-interface QuotePDFDocumentProps {
+type QuotePDFDocumentProps = {
   data: QuotePDFData;
-}
+};
 
 /**
  * Main PDF Document Component

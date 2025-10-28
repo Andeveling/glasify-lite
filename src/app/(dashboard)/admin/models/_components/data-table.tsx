@@ -55,13 +55,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-interface DataTableProps<TData, TValue> {
+type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchKey?: string;
   searchPlaceholder?: string;
   toolbarSlot?: React.ReactNode;
-}
+};
 
 const PAGE_SIZE_10 = 10;
 const PAGE_SIZE_20 = 20;

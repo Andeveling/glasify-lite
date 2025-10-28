@@ -107,7 +107,9 @@ function validateModelBusinessLogic(
     validated.maxWidthMm,
     "width"
   );
-  if (widthError) errors.push(widthError);
+  if (widthError) {
+    errors.push(widthError);
+  }
 
   // Validate height constraints (min < max)
   const heightError = validateMinMax(
@@ -115,7 +117,9 @@ function validateModelBusinessLogic(
     validated.maxHeightMm,
     "height"
   );
-  if (heightError) errors.push(heightError);
+  if (heightError) {
+    errors.push(heightError);
+  }
 
   // Validate base price
   const basePriceError = validatePrice(
@@ -123,7 +127,9 @@ function validateModelBusinessLogic(
     "basePrice",
     MAX_BASE_PRICE_COP
   );
-  if (basePriceError) errors.push(basePriceError);
+  if (basePriceError) {
+    errors.push(basePriceError);
+  }
 
   // Validate cost per mm values
   if (validated.costPerMmWidth > MAX_COST_PER_MM) {
@@ -160,7 +166,9 @@ function validateModelBusinessLogic(
       "accessoryPrice",
       MAX_ACCESSORY_PRICE_COP
     );
-    if (accessoryError) errors.push(accessoryError);
+    if (accessoryError) {
+      errors.push(accessoryError);
+    }
   }
 
   // Validate compatible glass types
@@ -168,7 +176,9 @@ function validateModelBusinessLogic(
     validated.compatibleGlassTypeIds,
     "compatibleGlassTypeIds"
   );
-  if (glassTypesError) errors.push(glassTypesError);
+  if (glassTypesError) {
+    errors.push(glassTypesError);
+  }
 
   // Validate profit margin
   if (

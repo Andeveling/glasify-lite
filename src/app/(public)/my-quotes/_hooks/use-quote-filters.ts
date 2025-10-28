@@ -16,11 +16,11 @@ export type QuoteStatus = "draft" | "sent" | "canceled";
 
 export type QuoteSortOption = "newest" | "oldest" | "price-high" | "price-low";
 
-export interface QuoteFilters {
+export type QuoteFilters = {
   status?: QuoteStatus;
   searchQuery: string;
   sortBy: QuoteSortOption;
-}
+};
 
 /**
  * Custom hook for managing quote filters with URL synchronization
@@ -211,9 +211,15 @@ export function useQuoteFilters(currentParams: {
   const activeFiltersCount = useMemo(() => {
     let count = 0;
 
-    if (filters.status) count++;
-    if (filters.searchQuery) count++;
-    if (filters.sortBy && filters.sortBy !== "newest") count++;
+    if (filters.status) {
+      count++;
+    }
+    if (filters.searchQuery) {
+      count++;
+    }
+    if (filters.sortBy && filters.sortBy !== "newest") {
+      count++;
+    }
 
     return count;
   }, [filters]);

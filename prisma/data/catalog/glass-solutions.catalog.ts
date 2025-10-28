@@ -25,14 +25,14 @@
  * - icon: Lucide icon name for UI
  * - sortOrder: Display order in UI (lower = higher priority)
  */
-export interface GlassSolutionRecord {
+export type GlassSolutionRecord = {
   description: string;
   icon: string;
   key: string;
   name: string;
   nameEs: string;
   sortOrder: number;
-}
+};
 
 /**
  * Security Solution

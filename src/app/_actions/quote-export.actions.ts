@@ -373,7 +373,7 @@ export async function exportQuoteExcel(
     const totals = calculateQuoteTotals(quote);
 
     // Transform to Excel data format
-    interface ExcelQuoteInfo {
+    type ExcelQuoteInfo = {
       id: string;
       projectName: string;
       status: QuoteStatus;
@@ -381,15 +381,15 @@ export async function exportQuoteExcel(
       validUntil: Date;
       totalAmount: number;
       itemCount: number;
-    }
+    };
 
-    interface ExcelCustomerInfo {
+    type ExcelCustomerInfo = {
       name: string;
       email: string;
       phone: string | null;
-    }
+    };
 
-    interface ExcelItemInfo {
+    type ExcelItemInfo = {
       itemNumber: number;
       id: string;
       name: string;
@@ -403,36 +403,36 @@ export async function exportQuoteExcel(
       height: number;
       area: number;
       glassType: string;
-    }
+    };
 
-    interface ExcelCompanyInfo {
+    type ExcelCompanyInfo = {
       name: string;
       address: string;
       phone: string;
       email: string;
-    }
+    };
 
-    interface ExcelFormattingInfo {
+    type ExcelFormattingInfo = {
       locale: string;
       currency: string;
       timezone: string;
-    }
+    };
 
-    interface ExcelTotals {
+    type ExcelTotals = {
       subtotal: number;
       tax?: number;
       discount?: number;
       total: number;
-    }
+    };
 
-    interface QuoteExcelDataTyped {
+    type QuoteExcelDataTyped = {
       quote: ExcelQuoteInfo;
       customer: ExcelCustomerInfo;
       items: ExcelItemInfo[];
       totals: ExcelTotals;
       company: ExcelCompanyInfo;
       formatting: ExcelFormattingInfo;
-    }
+    };
 
     const excelData: QuoteExcelDataTyped = {
       company: {

@@ -45,8 +45,12 @@ const statusLabels: Record<ModelStatus, string> = {
 const getStatusVariant = (
   status: ModelStatus
 ): "default" | "secondary" | "outline" => {
-  if (status === "published") return "default";
-  if (status === "draft") return "secondary";
+  if (status === "published") {
+    return "default";
+  }
+  if (status === "draft") {
+    return "secondary";
+  }
   return "outline";
 };
 

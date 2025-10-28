@@ -515,8 +515,12 @@ export async function seedGlassCharacteristicsFromFile(
           characteristic,
           version
         );
-        if (result.seeded) seeded++;
-        if (result.skipped) skipped++;
+        if (result.seeded) {
+          seeded++;
+        }
+        if (result.skipped) {
+          skipped++;
+        }
       } catch (error) {
         errors.push({
           code: "DATABASE_ERROR",

@@ -13,7 +13,7 @@ import { describe, expect, it } from "vitest";
 // Import types for the functions we'll implement
 type QuoteStatus = Quote["status"];
 
-interface StatusConfig {
+type StatusConfig = {
   label: string;
   icon: string;
   tooltip: string;
@@ -23,7 +23,7 @@ interface StatusConfig {
     label: string;
     action: "edit" | "view" | "duplicate" | "resend";
   };
-}
+};
 
 // Mock implementation signatures (to be implemented in T014)
 declare function getStatusConfig(status: QuoteStatus): StatusConfig;

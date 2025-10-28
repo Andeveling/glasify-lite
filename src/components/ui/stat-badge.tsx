@@ -31,8 +31,12 @@ type StatBadgeProps = {
  * - 4-5: Good (green)
  */
 function getPerformanceColor(value: number): string {
-  if (value >= 4) return "text-green-600 dark:text-green-400";
-  if (value === 3) return "text-yellow-600 dark:text-yellow-400";
+  if (value >= 4) {
+    return "text-green-600 dark:text-green-400";
+  }
+  if (value === 3) {
+    return "text-yellow-600 dark:text-yellow-400";
+  }
   return "text-red-600 dark:text-red-400";
 }
 
@@ -40,8 +44,12 @@ function getPerformanceColor(value: number): string {
  * Get background color based on performance value
  */
 function getPerformanceBg(value: number): string {
-  if (value >= 4) return "bg-green-50 dark:bg-green-950/20";
-  if (value === 3) return "bg-yellow-50 dark:bg-yellow-950/20";
+  if (value >= 4) {
+    return "bg-green-50 dark:bg-green-950/20";
+  }
+  if (value === 3) {
+    return "bg-yellow-50 dark:bg-yellow-950/20";
+  }
   return "bg-red-50 dark:bg-red-950/20";
 }
 

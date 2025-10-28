@@ -61,11 +61,15 @@ export function GlassTypeSelectorSection({
 
   // Find selected glass type details
   const selectedGlassType = useMemo(() => {
-    if (!selectedGlassTypeId) return null;
+    if (!selectedGlassTypeId) {
+      return null;
+    }
 
     for (const tab of tabs) {
       const found = tab.options.find((opt) => opt.id === selectedGlassTypeId);
-      if (found) return found;
+      if (found) {
+        return found;
+      }
     }
     return null;
   }, [selectedGlassTypeId, tabs]);

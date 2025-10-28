@@ -25,7 +25,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-interface QuotesTrendChartProps {
+type QuotesTrendChartProps = {
   /**
    * Trend data points from tRPC query
    * Each point has: date (ISO string), count (number), label (formatted string)
@@ -36,7 +36,7 @@ interface QuotesTrendChartProps {
    * Period label for chart title (e.g., "Últimos 30 días")
    */
   periodLabel: string;
-}
+};
 
 /**
  * QuotesTrendChart Component

@@ -35,7 +35,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useServerParams } from "@/hooks/use-server-params";
 
-export interface TablePaginationProps {
+export type TablePaginationProps = {
   /** Current page number (1-indexed) */
   currentPage: number;
 
@@ -50,7 +50,7 @@ export interface TablePaginationProps {
 
   /** Show item count */
   showItemCount?: boolean;
-}
+};
 
 export function TablePagination({
   currentPage,
@@ -68,7 +68,9 @@ export function TablePagination({
    * Navigate to specific page
    */
   const goToPage = (page: number) => {
-    if (page < 1 || page > totalPages || page === currentPage) return;
+    if (page < 1 || page > totalPages || page === currentPage) {
+      return;
+    }
     updateParam("page", page);
   };
 

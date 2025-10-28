@@ -8,7 +8,7 @@ import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-interface ActiveSearchParametersProps {
+type ActiveSearchParametersProps = {
   searchQuery: string;
   selectedProfileSupplierName: string | null;
   sortType: CatalogSortOption;
@@ -16,7 +16,7 @@ interface ActiveSearchParametersProps {
   onRemoveProfileSupplierAction?: () => void;
   onRemoveSortAction?: () => void;
   onClearAllAction?: () => void;
-}
+};
 
 /**
  * ActiveSearchParameters Component

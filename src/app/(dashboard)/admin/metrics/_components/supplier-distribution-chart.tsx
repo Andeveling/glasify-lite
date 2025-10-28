@@ -62,10 +62,10 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-interface SupplierDistributionChartProps {
+type SupplierDistributionChartProps = {
   data: SupplierDistribution[];
   tenantConfig?: { locale?: string } | null;
-}
+};
 
 export function SupplierDistributionChart({
   data,
@@ -104,10 +104,14 @@ export function SupplierDistributionChart({
           <PieChart>
             <ChartTooltip
               content={({ active, payload }) => {
-                if (!(active && payload) || payload.length === 0) return null;
+                if (!(active && payload) || payload.length === 0) {
+                  return null;
+                }
 
                 const tooltipData = payload[0]?.payload;
-                if (!tooltipData) return null;
+                if (!tooltipData) {
+                  return null;
+                }
 
                 return (
                   <div className="rounded-lg border bg-background p-3 shadow-md">

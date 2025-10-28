@@ -42,7 +42,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-interface PriceRangesChartProps {
+type PriceRangesChartProps = {
   /**
    * Price range distribution from tRPC query
    */
@@ -52,7 +52,7 @@ interface PriceRangesChartProps {
    * Tenant configuration for currency/locale formatting
    */
   tenantConfig?: { currency?: string; locale?: string } | null;
-}
+};
 
 /**
  * PriceRangesChart Component
@@ -143,10 +143,14 @@ export function PriceRangesChart({
             <YAxis dataKey="label" fontSize={11} type="category" width={100} />
             <ChartTooltip
               content={({ active, payload }) => {
-                if (!(active && payload) || payload.length === 0) return null;
+                if (!(active && payload) || payload.length === 0) {
+                  return null;
+                }
 
                 const tooltipData = payload[0]?.payload;
-                if (!tooltipData) return null;
+                if (!tooltipData) {
+                  return null;
+                }
 
                 // Format detailed range for tooltip
                 const minFormatted = formatCurrency(tooltipData.min, {

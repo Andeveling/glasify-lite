@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-interface AdminContentContainerProps {
+type AdminContentContainerProps = {
   children: ReactNode;
   className?: string;
   /**
@@ -9,7 +9,7 @@ interface AdminContentContainerProps {
    * @default '7xl' (80rem / 1280px)
    */
   maxWidth?: "full" | "7xl" | "6xl" | "5xl" | "4xl";
-}
+};
 
 /**
  * Standardized Content Container for Admin Pages

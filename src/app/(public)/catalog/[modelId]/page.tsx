@@ -15,7 +15,9 @@ export default async function Page({ params }: PageProps) {
     () => null
   );
 
-  if (!serverModel) notFound();
+  if (!serverModel) {
+    notFound();
+  }
 
   // Render with Suspense boundaries for secondary data
   return (

@@ -29,15 +29,15 @@ export type CTAAction = "edit" | "view" | "duplicate" | "resend";
 /**
  * Call-to-action configuration
  */
-export interface StatusCTA {
+export type StatusCTA = {
   label: string;
   action: CTAAction;
-}
+};
 
 /**
  * Complete status configuration
  */
-export interface StatusConfig {
+export type StatusConfig = {
   /** Display label in Spanish */
   label: string;
 
@@ -58,7 +58,7 @@ export interface StatusConfig {
 
   /** Optional call-to-action button */
   cta?: StatusCTA;
-}
+};
 
 /**
  * Status configuration registry

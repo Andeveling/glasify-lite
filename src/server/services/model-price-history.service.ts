@@ -11,16 +11,16 @@ import { db } from "@/server/db";
  * @server-side-only This service uses Winston logger (Node.js only)
  */
 
-export interface ModelPriceChange {
+export type ModelPriceChange = {
   modelId: string;
   basePrice: number;
   costPerMmWidth: number;
   costPerMmHeight: number;
   reason?: string;
   createdBy: string;
-}
+};
 
-export interface PriceHistoryRecord {
+export type PriceHistoryRecord = {
   id: string;
   modelId: string;
   basePrice: number;
@@ -30,7 +30,7 @@ export interface PriceHistoryRecord {
   effectiveFrom: Date;
   createdBy: string | null;
   createdAt: Date;
-}
+};
 
 /**
  * Convert Prisma Decimal to number

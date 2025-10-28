@@ -10,9 +10,9 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { api } from "@/trpc/react";
 
-interface UseMutationsOptions {
+type UseMutationsOptions = {
   onSuccessCallback?: () => void;
-}
+};
 
 /**
  * Manages create and update mutations for glass types

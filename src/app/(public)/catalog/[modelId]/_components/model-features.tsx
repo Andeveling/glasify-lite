@@ -44,7 +44,9 @@ export function ModelFeatures({ features }: ModelFeaturesProps) {
     const bIsHighlight = isHighlightFeature(b);
 
     // If both are highlights or both are not, maintain original order
-    if (aIsHighlight === bIsHighlight) return 0;
+    if (aIsHighlight === bIsHighlight) {
+      return 0;
+    }
 
     // Highlights come first
     return aIsHighlight ? -1 : 1;

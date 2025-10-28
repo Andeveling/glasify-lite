@@ -187,10 +187,14 @@ export function buildSortParameter(
   sortType: string | null | undefined
 ): SearchParameter | undefined {
   // Don't show badge for default sort
-  if (isDefaultSort(sortType)) return;
+  if (isDefaultSort(sortType)) {
+    return;
+  }
 
   const config = getSortConfiguration(sortType);
-  if (!config) return;
+  if (!config) {
+    return;
+  }
 
   return {
     ariaLabel: `Quitar ordenamiento: ${config.label}`,

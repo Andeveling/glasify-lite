@@ -38,13 +38,13 @@ const contactSchema = z.object({
 
 type ContactFormValues = z.infer<typeof contactSchema>;
 
-interface ContactInfoModalProps {
+type ContactInfoModalProps = {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: ContactFormValues) => void;
   defaultValues?: Partial<ContactFormValues>;
   isLoading?: boolean;
-}
+};
 
 /**
  * Unified modal to capture or confirm contact information before sending quote

@@ -195,7 +195,7 @@ export function GlassTypesTable({
             search: searchParams.search,
           },
           (old) => {
-            if (!old) return old;
+            if (!old) { return old; }
             return {
               ...old,
               items: old.items.filter((item) => item.id !== variables.id),
@@ -253,7 +253,9 @@ export function GlassTypesTable({
    * Confirm delete
    */
   const handleConfirmDelete = async () => {
-    if (!glassTypeToDelete) return;
+    if (!glassTypeToDelete) {
+      return;
+    }
     await deleteMutation.mutateAsync({ id: glassTypeToDelete.id });
   };
 

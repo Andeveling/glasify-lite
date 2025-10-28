@@ -211,7 +211,9 @@ export function mergeOverrides<T extends Record<string, unknown>>(
   defaults: T,
   overrides?: Record<string, unknown>
 ): T {
-  if (!overrides) return defaults;
+  if (!overrides) {
+    return defaults;
+  }
 
   return {
     ...defaults,

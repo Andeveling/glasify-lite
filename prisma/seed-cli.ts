@@ -39,13 +39,13 @@ const PRESETS: Record<string, SeedPreset> = {
 /**
  * CLI configuration
  */
-interface CliOptions {
+type CliOptions = {
   preset: string;
   verbose: boolean;
   skipValidation: boolean;
   continueOnError: boolean;
   help: boolean;
-}
+};
 
 /**
  * Parse command-line arguments

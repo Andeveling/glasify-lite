@@ -22,7 +22,7 @@ import { QuoteItemImage } from "./quote-item-image";
 /**
  * Quote item data structure for grid
  */
-export interface QuoteItemData {
+export type QuoteItemData = {
   id: string;
   modelName: string;
   modelImageUrl: string | null;
@@ -33,9 +33,9 @@ export interface QuoteItemData {
   manufacturer?: string;
   thickness?: string;
   treatment?: string;
-}
+};
 
-export interface QuoteItemsGridProps {
+export type QuoteItemsGridProps = {
   /**
    * Quote items to display
    */
@@ -50,7 +50,7 @@ export interface QuoteItemsGridProps {
    * Custom empty state message
    */
   emptyMessage?: string;
-}
+};
 
 /**
  * QuoteItemsGrid Component
@@ -92,7 +92,9 @@ export function QuoteItemsGrid({
     width: number | null,
     height: number | null
   ): string | undefined => {
-    if (!(width && height)) return;
+    if (!(width && height)) {
+      return;
+    }
     return `${width} × ${height} cm`;
   };
 

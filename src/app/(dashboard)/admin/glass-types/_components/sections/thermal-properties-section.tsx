@@ -17,9 +17,9 @@ import type { Control, FieldValues } from "react-hook-form";
 import { Card, CardContent } from "@/components/ui/card";
 import { FormNumberField } from "../form-fields/form-number-field";
 
-interface ThermalPropertiesSectionProps {
+type ThermalPropertiesSectionProps = {
   control: Control<FieldValues>;
-}
+};
 
 /**
  * Thermal and optical properties section component

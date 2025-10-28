@@ -77,7 +77,9 @@ export function useGlassTypesByTab(
 
     for (const glassType of glassTypes) {
       // Skip if already assigned to a tab
-      if (assignedGlassTypes.has(glassType.id)) continue;
+      if (assignedGlassTypes.has(glassType.id)) {
+        continue;
+      }
 
       // Find primary solution (or first solution if no primary)
       const primarySolution =
@@ -178,7 +180,9 @@ export function useGlassTypesByTab(
             ? (RatingWeights[b.performanceRating] ?? 0)
             : 0;
 
-          if (weightB !== weightA) return weightB - weightA;
+          if (weightB !== weightA) {
+            return weightB - weightA;
+          }
           return a.pricePerSqm - b.pricePerSqm;
         });
 

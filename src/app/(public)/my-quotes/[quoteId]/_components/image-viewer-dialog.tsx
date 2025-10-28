@@ -34,7 +34,7 @@ import { getProductImageWithFallback } from "@/lib/utils/image-utils";
 import type { WindowType } from "@/types/window.types";
 import { DEFAULT_WINDOW_TYPE, WINDOW_TYPE_LABELS } from "@/types/window.types";
 
-export interface ImageViewerDialogProps {
+export type ImageViewerDialogProps = {
   /**
    * Dialog open state
    */
@@ -74,7 +74,7 @@ export interface ImageViewerDialogProps {
     thickness?: string;
     treatment?: string;
   };
-}
+};
 
 /**
  * ImageViewerDialog Component
@@ -102,7 +102,9 @@ export function ImageViewerDialog({
    * Handle keyboard shortcuts
    */
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      return;
+    }
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-interface ChartContainerProps {
+type ChartContainerProps = {
   /**
    * Chart title displayed in the header
    */
@@ -35,7 +35,7 @@ interface ChartContainerProps {
    * Height class for the chart content area (default: h-64)
    */
   height?: string;
-}
+};
 
 /**
  * ChartContainer Component

@@ -58,7 +58,7 @@ export type BaseTableParams = z.infer<typeof baseTableParamsSchema>;
 /**
  * Parser configuration options
  */
-export interface TableParserConfig {
+export type TableParserConfig = {
   /**
    * Default number of items per page
    */
@@ -78,7 +78,7 @@ export interface TableParserConfig {
    * Additional filter schemas to merge with base schema
    */
   filterSchema?: z.ZodObject<z.ZodRawShape>;
-}
+};
 
 /**
  * Parse and validate table search parameters from URL

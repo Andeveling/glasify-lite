@@ -31,12 +31,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface SelectOption {
+type SelectOption = {
   value: string;
   label: string;
-}
+};
 
-interface FormSelectFieldProps<TFieldValues extends FieldValues> {
+type FormSelectFieldProps<TFieldValues extends FieldValues> = {
   control: Control<TFieldValues>;
   name: FieldPath<TFieldValues>;
   label: string;
@@ -45,7 +45,7 @@ interface FormSelectFieldProps<TFieldValues extends FieldValues> {
   options: SelectOption[];
   required?: boolean;
   disabled?: boolean;
-}
+};
 
 /**
  * Reusable select field component

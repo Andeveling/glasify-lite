@@ -12,7 +12,7 @@
 
 import Image from "next/image";
 
-interface ImageGalleryItemProps {
+type ImageGalleryItemProps = {
   /**
    * Public URL of the image
    */
@@ -32,7 +32,7 @@ interface ImageGalleryItemProps {
    * Callback when image is clicked
    */
   onSelect: () => void;
-}
+};
 
 /**
  * Gallery item component - small thumbnail with selection state

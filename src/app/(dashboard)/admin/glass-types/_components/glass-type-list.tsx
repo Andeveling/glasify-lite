@@ -153,7 +153,9 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
   };
 
   const handleConfirmDelete = async () => {
-    if (!glassTypeToDelete) return;
+    if (!glassTypeToDelete) {
+      return;
+    }
     await deleteMutation.mutateAsync({ id: glassTypeToDelete.id });
   };
 

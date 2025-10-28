@@ -27,7 +27,7 @@ import {
 /**
  * QuoteStatusBadge props
  */
-export interface QuoteStatusBadgeProps {
+export type QuoteStatusBadgeProps = {
   /** Quote status (draft, sent, canceled) */
   status: QuoteStatus | Quote["status"];
 
@@ -42,7 +42,7 @@ export interface QuoteStatusBadgeProps {
 
   /** Badge size variant */
   size?: "sm" | "default" | "lg";
-}
+};
 
 /**
  * Size variant classes for badge

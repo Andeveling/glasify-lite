@@ -134,7 +134,9 @@ export function ProfileSupplierList({
             sortOrder: (searchParams.sortOrder || "asc") as "asc" | "desc",
           },
           (old) => {
-            if (!old) return old;
+            if (!old) {
+              return old;
+            }
             return {
               ...old,
               items: old.items.filter((item) => item.id !== variables.id),

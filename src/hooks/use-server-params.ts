@@ -37,7 +37,7 @@ import { useCallback } from "react";
 
 export type ParamValue = string | number | boolean | null | undefined;
 
-export interface UseServerParamsReturn {
+export type UseServerParamsReturn = {
   /**
    * Update a single URL parameter
    * Uses replaceState to avoid polluting browser history
@@ -74,7 +74,7 @@ export interface UseServerParamsReturn {
    * Get all current search params as object
    */
   getAllParams: () => Record<string, string>;
-}
+};
 
 /**
  * Custom hook for managing server-side URL parameters

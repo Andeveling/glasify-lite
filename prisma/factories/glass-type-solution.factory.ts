@@ -28,23 +28,23 @@ const THICKNESS_DVH_THICK = 20;
 /**
  * Glass characteristics for rating calculation
  */
-export interface GlassCharacteristics {
+export type GlassCharacteristics = {
   isLaminated: boolean;
   isLowE: boolean;
   isTempered: boolean;
   isTripleGlazed: boolean;
   purpose: string;
   thicknessMm: number;
-}
+};
 
 /**
  * Solution assignment result
  */
-export interface SolutionAssignment {
+export type SolutionAssignment = {
   isPrimary: boolean;
   performanceRating: PerformanceRating;
   solutionKey: string;
-}
+};
 
 /**
  * Zod schema for GlassTypeSolution input validation
@@ -88,15 +88,31 @@ export function calculateSecurityRating(
 ): PerformanceRating {
   let score = 1;
 
-  if (glass.isTempered) score += 1;
-  if (glass.isLaminated) score += 2;
-  if (glass.thicknessMm >= THICKNESS_STANDARD) score += 1;
-  if (glass.isLaminated && glass.isTempered) score += 1; // Bonus for combination
+  if (glass.isTempered) {
+    score += 1;
+  }
+  if (glass.isLaminated) {
+    score += 2;
+  }
+  if (glass.thicknessMm >= THICKNESS_STANDARD) {
+    score += 1;
+  }
+  if (glass.isLaminated && glass.isTempered) {
+    score += 1; // Bonus for combination
+  }
 
-  if (score >= RATING_EXCELLENT) return "excellent";
-  if (score >= RATING_VERY_GOOD) return "very_good";
-  if (score >= RATING_GOOD) return "good";
-  if (score >= RATING_STANDARD) return "standard";
+  if (score >= RATING_EXCELLENT) {
+    return "excellent";
+  }
+  if (score >= RATING_VERY_GOOD) {
+    return "very_good";
+  }
+  if (score >= RATING_GOOD) {
+    return "good";
+  }
+  if (score >= RATING_STANDARD) {
+    return "standard";
+  }
   return "basic";
 }
 
@@ -123,19 +139,35 @@ export function calculateSoundInsulationRating(
   let score = 1;
 
   // Base score from thickness
-  if (glass.thicknessMm >= THICKNESS_STANDARD) score += 1;
-  if (glass.thicknessMm >= THICKNESS_DVH_MIN) score += 1;
+  if (glass.thicknessMm >= THICKNESS_STANDARD) {
+    score += 1;
+  }
+  if (glass.thicknessMm >= THICKNESS_DVH_MIN) {
+    score += 1;
+  }
 
   // Laminated glass significantly improves acoustic performance
-  if (glass.isLaminated) score += 2;
+  if (glass.isLaminated) {
+    score += 2;
+  }
 
   // Triple glazing with air/gas chambers
-  if (glass.isTripleGlazed) score += 1;
+  if (glass.isTripleGlazed) {
+    score += 1;
+  }
 
-  if (score >= RATING_EXCELLENT) return "excellent";
-  if (score >= RATING_VERY_GOOD) return "very_good";
-  if (score >= RATING_GOOD) return "good";
-  if (score >= RATING_STANDARD) return "standard";
+  if (score >= RATING_EXCELLENT) {
+    return "excellent";
+  }
+  if (score >= RATING_VERY_GOOD) {
+    return "very_good";
+  }
+  if (score >= RATING_GOOD) {
+    return "good";
+  }
+  if (score >= RATING_STANDARD) {
+    return "standard";
+  }
   return "basic";
 }
 
@@ -162,19 +194,35 @@ export function calculateThermalInsulationRating(
   let score = 1;
 
   // Thicker glass or DVH configuration
-  if (glass.thicknessMm >= THICKNESS_DVH_MIN) score += 1; // Likely DVH
-  if (glass.thicknessMm >= THICKNESS_DVH_THICK) score += 1; // Definitely DVH
+  if (glass.thicknessMm >= THICKNESS_DVH_MIN) {
+    score += 1; // Likely DVH
+  }
+  if (glass.thicknessMm >= THICKNESS_DVH_THICK) {
+    score += 1; // Definitely DVH
+  }
 
   // Low-E coating significantly reduces U-value
-  if (glass.isLowE) score += 2;
+  if (glass.isLowE) {
+    score += 2;
+  }
 
   // Triple glazing
-  if (glass.isTripleGlazed) score += 1;
+  if (glass.isTripleGlazed) {
+    score += 1;
+  }
 
-  if (score >= RATING_EXCELLENT) return "excellent";
-  if (score >= RATING_VERY_GOOD) return "very_good";
-  if (score >= RATING_GOOD) return "good";
-  if (score >= RATING_STANDARD) return "standard";
+  if (score >= RATING_EXCELLENT) {
+    return "excellent";
+  }
+  if (score >= RATING_VERY_GOOD) {
+    return "very_good";
+  }
+  if (score >= RATING_GOOD) {
+    return "good";
+  }
+  if (score >= RATING_STANDARD) {
+    return "standard";
+  }
   return "basic";
 }
 
@@ -191,15 +239,31 @@ export function calculateEnergyEfficiencyRating(
 ): PerformanceRating {
   let score = 1;
 
-  if (glass.thicknessMm >= THICKNESS_DVH_MIN) score += 1; // DVH
-  if (glass.isLowE) score += 2; // Low-E is key for energy efficiency
-  if (glass.isTripleGlazed) score += 1;
-  if (glass.isLowE && glass.isTripleGlazed) score += 1; // Bonus
+  if (glass.thicknessMm >= THICKNESS_DVH_MIN) {
+    score += 1; // DVH
+  }
+  if (glass.isLowE) {
+    score += 2; // Low-E is key for energy efficiency
+  }
+  if (glass.isTripleGlazed) {
+    score += 1;
+  }
+  if (glass.isLowE && glass.isTripleGlazed) {
+    score += 1; // Bonus
+  }
 
-  if (score >= RATING_EXCELLENT) return "excellent";
-  if (score >= RATING_VERY_GOOD) return "very_good";
-  if (score >= RATING_GOOD) return "good";
-  if (score >= RATING_STANDARD) return "standard";
+  if (score >= RATING_EXCELLENT) {
+    return "excellent";
+  }
+  if (score >= RATING_VERY_GOOD) {
+    return "very_good";
+  }
+  if (score >= RATING_GOOD) {
+    return "good";
+  }
+  if (score >= RATING_STANDARD) {
+    return "standard";
+  }
   return "basic";
 }
 

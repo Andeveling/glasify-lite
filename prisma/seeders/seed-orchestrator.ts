@@ -35,7 +35,7 @@ function generateSlugFromKey(key: string): string {
 /**
  * Preset configuration interface
  */
-export interface SeedPreset {
+export type SeedPreset = {
   name: string;
   description: string;
   glassTypes: GlassTypeInput[];
@@ -43,12 +43,12 @@ export interface SeedPreset {
   models: ModelInput[];
   services: ServiceInput[];
   glassSolutions: GlassSolutionInput[];
-}
+};
 
 /**
  * Seed statistics
  */
-export interface SeedStats {
+export type SeedStats = {
   glassTypes: { created: number; failed: number };
   profileSuppliers: { created: number; failed: number };
   models: { created: number; failed: number };
@@ -58,16 +58,16 @@ export interface SeedStats {
   totalCreated: number;
   totalFailed: number;
   durationMs: number;
-}
+};
 
 /**
  * Seed options
  */
-export interface SeedOptions {
+export type SeedOptions = {
   verbose?: boolean;
   skipValidation?: boolean;
   continueOnError?: boolean;
-}
+};
 
 /**
  * Logger helper
@@ -245,7 +245,9 @@ export class SeedOrchestrator {
       this.logger.success("✅ Database cleaned successfully");
     } catch (error) {
       this.logger.error("Failed to clean database", error);
-      if (!this.options.continueOnError) throw error;
+      if (!this.options.continueOnError) {
+        throw error;
+      }
     }
   }
 
@@ -268,8 +270,9 @@ export class SeedOrchestrator {
         if (!(result.success && result.data)) {
           this.handleValidationErrors(supplierInput.name, result.errors);
           this.stats.profileSuppliers.failed++;
-          if (!this.options.continueOnError)
+          if (!this.options.continueOnError) {
             throw new Error("Validation failed");
+          }
           continue;
         }
 
@@ -297,7 +300,9 @@ export class SeedOrchestrator {
           error
         );
         this.stats.profileSuppliers.failed++;
-        if (!this.options.continueOnError) throw error;
+        if (!this.options.continueOnError) {
+          throw error;
+        }
       }
     }
 
@@ -327,8 +332,9 @@ export class SeedOrchestrator {
         if (!(result.success && result.data)) {
           this.handleValidationErrors(glassTypeInput.name, result.errors);
           this.stats.glassTypes.failed++;
-          if (!this.options.continueOnError)
+          if (!this.options.continueOnError) {
             throw new Error("Validation failed");
+          }
           continue;
         }
 
@@ -362,7 +368,9 @@ export class SeedOrchestrator {
           error
         );
         this.stats.glassTypes.failed++;
-        if (!this.options.continueOnError) throw error;
+        if (!this.options.continueOnError) {
+          throw error;
+        }
       }
     }
 
@@ -408,8 +416,9 @@ export class SeedOrchestrator {
         if (!(result.success && result.data)) {
           this.handleValidationErrors(modelInput.name, result.errors);
           this.stats.models.failed++;
-          if (!this.options.continueOnError)
+          if (!this.options.continueOnError) {
             throw new Error("Validation failed");
+          }
           continue;
         }
 
@@ -447,7 +456,9 @@ export class SeedOrchestrator {
       } catch (error) {
         this.logger.error(`Failed to create model: ${modelInput.name}`, error);
         this.stats.models.failed++;
-        if (!this.options.continueOnError) throw error;
+        if (!this.options.continueOnError) {
+          throw error;
+        }
       }
     }
 
@@ -471,8 +482,9 @@ export class SeedOrchestrator {
         if (!(result.success && result.data)) {
           this.handleValidationErrors(serviceInput.name, result.errors);
           this.stats.services.failed++;
-          if (!this.options.continueOnError)
+          if (!this.options.continueOnError) {
             throw new Error("Validation failed");
+          }
           continue;
         }
 
@@ -499,7 +511,9 @@ export class SeedOrchestrator {
           error
         );
         this.stats.services.failed++;
-        if (!this.options.continueOnError) throw error;
+        if (!this.options.continueOnError) {
+          throw error;
+        }
       }
     }
 
@@ -527,8 +541,9 @@ export class SeedOrchestrator {
         if (!(result.success && result.data)) {
           this.handleValidationErrors(solutionInput.key, result.errors);
           this.stats.glassSolutions.failed++;
-          if (!this.options.continueOnError)
+          if (!this.options.continueOnError) {
             throw new Error("Validation failed");
+          }
           continue;
         }
 
@@ -564,7 +579,9 @@ export class SeedOrchestrator {
           error
         );
         this.stats.glassSolutions.failed++;
-        if (!this.options.continueOnError) throw error;
+        if (!this.options.continueOnError) {
+          throw error;
+        }
       }
     }
 
@@ -580,7 +597,7 @@ export class SeedOrchestrator {
    */
   private async assignSolutionsToGlassTypes(
     glassTypes: Map<string, string>,
-    solutions: Map<string, string>
+    _solutions: Map<string, string>
   ): Promise<void> {
     this.logger.info(
       `Assigning solutions to ${glassTypes.size} glass types...`
@@ -616,7 +633,9 @@ export class SeedOrchestrator {
     entityName: string,
     errors: Array<{ code: string; message: string }> | undefined
   ): void {
-    if (!errors || errors.length === 0) return;
+    if (!errors || errors.length === 0) {
+      return;
+    }
 
     this.logger.error(`Validation failed for: ${entityName}`);
     for (const error of errors) {

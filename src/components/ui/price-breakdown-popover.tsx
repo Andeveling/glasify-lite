@@ -146,7 +146,9 @@ export function PriceBreakdownPopover({
             <TableBody>
               {categoryOrder.map((category) => {
                 const items = groupedItems[category];
-                if (!items || items.length === 0) return null;
+                if (!items || items.length === 0) {
+                  return null;
+                }
 
                 const categoryTotal = items.reduce(
                   (sum, item) => sum + item.amount,

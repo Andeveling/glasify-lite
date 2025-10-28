@@ -15,15 +15,15 @@ import {
 } from "@/app/_actions/quote-export.actions";
 import type { ExportFormat } from "@/types/export.types";
 
-interface UseQuoteExportOptions {
+type UseQuoteExportOptions = {
   /** Callback invoked after successful export */
   onSuccess?: (format: ExportFormat) => void;
 
   /** Callback invoked when export fails */
   onError?: (error: string, format: ExportFormat) => void;
-}
+};
 
-interface UseQuoteExportReturn {
+type UseQuoteExportReturn = {
   /** Export quote to PDF format */
   exportPDF: (quoteId: string) => Promise<void>;
 
@@ -38,7 +38,7 @@ interface UseQuoteExportReturn {
 
   /** Whether any export is in progress */
   isExporting: boolean;
-}
+};
 
 /**
  * Hook for quote export functionality

@@ -44,7 +44,7 @@ const SIZE_CONFIG = {
 
 export type QuoteItemImageSize = keyof typeof SIZE_CONFIG;
 
-export interface QuoteItemImageProps {
+export type QuoteItemImageProps = {
   /**
    * Product model name for alt text
    */
@@ -74,7 +74,7 @@ export interface QuoteItemImageProps {
    * Disable lazy loading (use for above-the-fold images)
    */
   eager?: boolean;
-}
+};
 
 /**
  * QuoteItemImage Component

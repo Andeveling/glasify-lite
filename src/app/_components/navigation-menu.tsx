@@ -121,15 +121,23 @@ export function NavigationMenu({
 
   // Determine menu title based on role
   const getMenuTitle = () => {
-    if (userRole === "admin") return "Panel Administrativo";
-    if (userRole === "seller") return "Portal de Vendedor";
+    if (userRole === "admin") {
+      return "Panel Administrativo";
+    }
+    if (userRole === "seller") {
+      return "Portal de Vendedor";
+    }
     return "Glasify Lite";
   };
 
   // Determine menu description based on role
   const getMenuDescription = () => {
-    if (userRole === "admin") return "Navegación del panel de control";
-    if (userRole === "seller") return "Gestiona tus cotizaciones";
+    if (userRole === "admin") {
+      return "Navegación del panel de control";
+    }
+    if (userRole === "seller") {
+      return "Gestiona tus cotizaciones";
+    }
     return "Cotizador inteligente de vidrios";
   };
 

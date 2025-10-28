@@ -10,7 +10,9 @@ import { db } from "@/server/db";
  * Compares against the ADMIN_EMAIL environment variable
  */
 const isAdmin = (email: string | null | undefined): boolean => {
-  if (!(email && env.ADMIN_EMAIL)) return false;
+  if (!(email && env.ADMIN_EMAIL)) {
+    return false;
+  }
   return email.toLowerCase() === env.ADMIN_EMAIL.toLowerCase();
 };
 

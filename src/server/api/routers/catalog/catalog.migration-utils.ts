@@ -118,6 +118,8 @@ export function ensureGlassHasSolutions<
 export function isUsingFallbackSolutions(
   solutions: Array<{ id: string }> | undefined
 ): boolean {
-  if (!solutions || solutions.length === 0) return false;
+  if (!solutions || solutions.length === 0) {
+    return false;
+  }
   return solutions.some((s) => s.id.startsWith("fallback-"));
 }

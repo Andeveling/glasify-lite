@@ -43,7 +43,9 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
 
   // Handle CTA actions
   const handleCTAClick = () => {
-    if (!cta) return;
+    if (!cta) {
+      return;
+    }
 
     setLoadingAction(cta.action);
 

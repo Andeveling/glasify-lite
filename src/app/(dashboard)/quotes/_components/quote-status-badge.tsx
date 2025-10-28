@@ -12,9 +12,9 @@ import type { QuoteStatus } from "@prisma/client";
 import { FileText, Send, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
-interface QuoteStatusBadgeProps {
+type QuoteStatusBadgeProps = {
   status: QuoteStatus;
-}
+};
 
 /**
  * Configuration for each quote status

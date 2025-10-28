@@ -207,7 +207,9 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
             status: searchParams.status,
           },
           (old) => {
-            if (!old) return old;
+            if (!old) {
+              return old;
+            }
             return {
               ...old,
               items: old.items.filter((model) => model.id !== variables.id),
@@ -238,7 +240,9 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
    * Confirm delete with optimistic UI and toast.promise
    */
   const handleConfirmDelete = async () => {
-    if (!modelToDelete) return;
+    if (!modelToDelete) {
+      return;
+    }
 
     const deletePromise = deleteMutation.mutateAsync({ id: modelToDelete.id });
 

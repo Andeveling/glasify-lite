@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { DashboardPeriod } from "@/types/dashboard";
 
-interface PeriodSelectorProps {
+type PeriodSelectorProps = {
   /**
    * Default period if no URL param is set
    */
@@ -20,7 +20,7 @@ interface PeriodSelectorProps {
    * Additional CSS classes for the select component
    */
   className?: string;
-}
+};
 
 /**
  * PeriodSelector Component

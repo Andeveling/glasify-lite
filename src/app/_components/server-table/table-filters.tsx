@@ -50,29 +50,29 @@ import { useServerParams } from "@/hooks/use-server-params";
 /**
  * Filter option definition
  */
-export interface FilterOption {
+export type FilterOption = {
   value: string;
   label: string;
-}
+};
 
 /**
  * Filter definition
  */
-export interface FilterDefinition {
+export type FilterDefinition = {
   id: string;
   label: string;
   type: "select";
   options: FilterOption[];
   defaultValue?: string;
-}
+};
 
-export interface TableFiltersProps {
+export type TableFiltersProps = {
   /** Filter definitions */
   filters: FilterDefinition[];
 
   /** Show clear all button */
   showClearAll?: boolean;
-}
+};
 
 export function TableFilters({
   filters,

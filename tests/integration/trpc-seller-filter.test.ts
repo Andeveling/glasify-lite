@@ -12,13 +12,13 @@ import { describe, expect, it } from "vitest";
 
 type UserRole = "admin" | "seller" | "user";
 
-interface MockSession {
+type MockSession = {
   user: {
     id: string;
     role: UserRole;
     email: string;
   };
-}
+};
 
 describe("tRPC Seller Data Filtering", () => {
   describe("quote.list Role-Based Filtering", () => {

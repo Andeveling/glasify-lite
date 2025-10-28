@@ -67,11 +67,11 @@ const modelFormSchema = z.object({
 
 type ModelFormValues = z.infer<typeof modelFormSchema>;
 
-interface ModelFormProps {
+type ModelFormProps = {
   mode: "create" | "edit";
   initialData?: Partial<ModelFormValues>;
   modelId?: string;
-}
+};
 
 export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
   const router = useRouter();

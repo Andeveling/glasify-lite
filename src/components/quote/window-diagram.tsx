@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { getWindowDiagram } from "@/lib/utils/window-diagram-map";
 import type { WindowType } from "@/types/window.types";
 
-export interface WindowDiagramProps {
+export type WindowDiagramProps = {
   /** Window type to render */
   type: WindowType | string;
 
@@ -29,7 +29,7 @@ export interface WindowDiagramProps {
 
   /** Background color */
   background?: "transparent" | "white" | "gray";
-}
+};
 
 /**
  * Size dimensions mapping

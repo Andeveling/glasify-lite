@@ -163,13 +163,17 @@ export function ServicesSelectorSection({
   // Calculate measurements
   const area = useMemo(() => {
     const hasValidDimensions = width > 0 && height > 0;
-    if (!hasValidDimensions) return 0;
+    if (!hasValidDimensions) {
+      return 0;
+    }
     return (width / MM_TO_METERS) * (height / MM_TO_METERS); // Convert mm to m²
   }, [width, height]);
 
   const perimeter = useMemo(() => {
     const hasValidDimensions = width > 0 && height > 0;
-    if (!hasValidDimensions) return 0;
+    if (!hasValidDimensions) {
+      return 0;
+    }
     return (
       PERIMETER_MULTIPLIER * (width / MM_TO_METERS + height / MM_TO_METERS)
     ); // Convert mm to meters

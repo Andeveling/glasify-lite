@@ -93,7 +93,9 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
   };
 
   const handleConfirmDelete = async () => {
-    if (!solutionToDelete) return;
+    if (!solutionToDelete) {
+      return;
+    }
     await deleteMutation.mutateAsync({ id: solutionToDelete.id });
   };
 

@@ -13,7 +13,9 @@ type DimensionValidationAlertProps = {
 export function DimensionValidationAlert({
   showAlert,
 }: DimensionValidationAlertProps) {
-  if (!showAlert) return null;
+  if (!showAlert) {
+    return null;
+  }
 
   return (
     <Alert className="mt-4" variant="destructive">

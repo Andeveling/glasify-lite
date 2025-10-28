@@ -8,9 +8,9 @@ import { ContactInfoModal } from "@/app/_components/contact-info-modal";
 import { Button } from "@/components/ui/button";
 import { useSendQuote } from "@/hooks/use-send-quote";
 
-interface SendQuoteButtonProps {
+type SendQuoteButtonProps = {
   quote: Pick<Quote, "id" | "status" | "contactPhone">;
-}
+};
 
 /**
  * Button to send a draft quote to vendor

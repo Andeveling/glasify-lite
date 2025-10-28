@@ -14,7 +14,7 @@ import { QuotesTrendChart } from "./quotes-trend-chart";
 import { SupplierDistributionChart } from "./supplier-distribution-chart";
 import { TopModelsChart } from "./top-models-chart";
 
-interface DashboardContentProps {
+type DashboardContentProps = {
   /**
    * Tenant configuration for formatting (from server)
    */
@@ -23,7 +23,7 @@ interface DashboardContentProps {
     currency?: string;
     timezone?: string;
   } | null;
-}
+};
 
 /**
  * DashboardContent Component

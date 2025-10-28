@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-interface EmptyDashboardStateProps {
+type EmptyDashboardStateProps = {
   /**
    * Title for the empty state message
    */
@@ -30,7 +30,7 @@ interface EmptyDashboardStateProps {
    * Additional CSS classes for the card
    */
   className?: string;
-}
+};
 
 /**
  * EmptyDashboardState Component

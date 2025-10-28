@@ -300,7 +300,9 @@ test.describe("Services Admin Dashboard", () => {
     let select = page.locator('select, [role="combobox"]').first();
     await select.click();
     let option = page.getByRole("option", { name: /área/i });
-    if (await option.isVisible()) await option.click();
+    if (await option.isVisible()) {
+      await option.click();
+    }
 
     // Wait for URL update
     await page.waitForURL(/type=area/);
@@ -309,7 +311,9 @@ test.describe("Services Admin Dashboard", () => {
     select = page.locator('select, [role="combobox"]').last();
     await select.click();
     option = page.getByRole("option", { name: /activo/i });
-    if (await option.isVisible()) await option.click();
+    if (await option.isVisible()) {
+      await option.click();
+    }
 
     // Verify both filters in URL
     await page.waitForURL(

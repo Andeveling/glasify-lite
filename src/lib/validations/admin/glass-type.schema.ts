@@ -322,7 +322,9 @@ export const updateGlassTypeSchema = z.object({
       .optional()
       .refine(
         (solutions) => {
-          if (!solutions) return true;
+          if (!solutions) {
+            return true;
+          }
           const primaryCount = solutions.filter((s) => s.isPrimary).length;
           return primaryCount <= 1;
         },

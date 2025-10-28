@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-interface MetricCardProps {
+type MetricCardProps = {
   /**
    * Title of the metric (e.g., "Total de Cotizaciones")
    */
@@ -36,7 +36,7 @@ interface MetricCardProps {
    * Additional CSS classes for the card
    */
   className?: string;
-}
+};
 
 /**
  * MetricCard Component

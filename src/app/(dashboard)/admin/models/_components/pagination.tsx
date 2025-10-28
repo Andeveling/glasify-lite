@@ -20,7 +20,9 @@ export function Pagination({
   onPageChange,
   totalPages,
 }: PaginationProps) {
-  if (totalPages <= 1) return null;
+  if (totalPages <= 1) {
+    return null;
+  }
 
   return (
     <div className="mt-4 flex items-center justify-between">

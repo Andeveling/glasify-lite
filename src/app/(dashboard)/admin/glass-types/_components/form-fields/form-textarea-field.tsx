@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 
-interface FormTextareaFieldProps<TFieldValues extends FieldValues> {
+type FormTextareaFieldProps<TFieldValues extends FieldValues> = {
   control: Control<TFieldValues>;
   name: FieldPath<TFieldValues>;
   label: string;
@@ -37,7 +37,7 @@ interface FormTextareaFieldProps<TFieldValues extends FieldValues> {
   required?: boolean;
   disabled?: boolean;
   className?: string; // allow grid span / layout classes
-}
+};
 
 /**
  * Reusable textarea field component

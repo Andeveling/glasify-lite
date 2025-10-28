@@ -245,13 +245,19 @@ export function getImagePreloadProps(imageUrl: string, size: ImageSize = "md") {
  * @returns True if URL is valid (http/https or relative path)
  */
 export function isValidImageUrl(url: string | null | undefined): boolean {
-  if (!url) return false;
+  if (!url) {
+    return false;
+  }
 
   // Allow relative paths
-  if (url.startsWith("/")) return true;
+  if (url.startsWith("/")) {
+    return true;
+  }
 
   // Allow data URIs
-  if (url.startsWith("data:image/")) return true;
+  if (url.startsWith("data:image/")) {
+    return true;
+  }
 
   // Allow external URLs (http/https)
   try {

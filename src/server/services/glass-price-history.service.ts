@@ -17,17 +17,17 @@ import logger from "@/lib/logger";
 /**
  * @deprecated - Use TenantGlassTypePrice instead
  */
-export interface GlassTypePriceChange {
+export type GlassTypePriceChange = {
   glassTypeId: string;
   pricePerSqm: number;
   reason?: string;
   createdBy: string;
-}
+};
 
 /**
  * @deprecated - Use TenantGlassTypePrice instead
  */
-export interface GlassTypePriceHistoryRecord {
+export type GlassTypePriceHistoryRecord = {
   id: string;
   glassTypeId: string;
   pricePerSqm: number;
@@ -35,7 +35,7 @@ export interface GlassTypePriceHistoryRecord {
   effectiveFrom: Date;
   createdBy: string | null;
   createdAt: Date;
-}
+};
 
 /**
  * @deprecated - Model removed from schema

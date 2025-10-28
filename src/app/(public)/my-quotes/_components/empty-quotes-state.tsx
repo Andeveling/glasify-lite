@@ -27,7 +27,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 
-export interface EmptyQuotesStateProps {
+export type EmptyQuotesStateProps = {
   /**
    * Variant to display:
    * - 'no-quotes': User has no quotes yet
@@ -39,7 +39,7 @@ export interface EmptyQuotesStateProps {
    * Callback to clear filters (required for 'no-results' variant)
    */
   onClearFilters?: () => void;
-}
+};
 
 export function EmptyQuotesState({
   variant = "no-quotes",

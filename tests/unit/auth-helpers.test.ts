@@ -8,7 +8,7 @@ import { describe, expect, it } from "vitest";
 
 type UserRole = "admin" | "seller" | "user";
 
-interface MockSession {
+type MockSession = {
   user: {
     id: string;
     role: UserRole;
@@ -16,7 +16,7 @@ interface MockSession {
     name?: string | null;
   };
   expires: string;
-}
+};
 
 /**
  * getQuoteFilter helper logic (tested in isolation)

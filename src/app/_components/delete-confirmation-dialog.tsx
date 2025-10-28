@@ -36,13 +36,13 @@ import { Button } from "@/components/ui/button";
  * ```
  */
 
-export interface DependencyInfo {
+export type DependencyInfo = {
   entity: string;
   count: number;
   message: string;
-}
+};
 
-export interface DeleteConfirmationDialogProps {
+export type DeleteConfirmationDialogProps = {
   /** Dialog open state */
   open: boolean;
   /** Callback when dialog state changes */
@@ -59,7 +59,7 @@ export interface DeleteConfirmationDialogProps {
   loading?: boolean;
   /** Custom warning message (optional) */
   warningMessage?: string;
-}
+};
 
 export function DeleteConfirmationDialog({
   open,
@@ -77,7 +77,9 @@ export function DeleteConfirmationDialog({
   const canDelete = !hasDependencies;
 
   const handleConfirm = async () => {
-    if (!canDelete) return;
+    if (!canDelete) {
+      return;
+    }
 
     setIsConfirming(true);
     try {
@@ -180,7 +182,7 @@ export function DeleteConfirmationDialog({
  * Trigger button for the delete confirmation dialog.
  * Use with DeleteConfirmationDialog component.
  */
-export interface DeleteButtonProps {
+export type DeleteButtonProps = {
   onClick: () => void;
   disabled?: boolean;
   variant?:
@@ -191,7 +193,7 @@ export interface DeleteButtonProps {
     | "ghost"
     | "link";
   size?: "default" | "sm" | "lg" | "icon";
-}
+};
 
 export function DeleteButton({
   onClick,

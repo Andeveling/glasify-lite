@@ -10,17 +10,17 @@ import { db } from "@/server/db";
  * @server-side-only This service uses Winston logger (Node.js only)
  */
 
-export interface DependencyCheck {
+export type DependencyCheck = {
   entity: string;
   count: number;
   message: string;
-}
+};
 
-export interface ReferentialIntegrityResult {
+export type ReferentialIntegrityResult = {
   canDelete: boolean;
   dependencies: DependencyCheck[];
   message: string;
-}
+};
 
 /**
  * Check if a ProfileSupplier can be deleted

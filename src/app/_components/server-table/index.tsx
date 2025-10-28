@@ -41,7 +41,7 @@ import {
 /**
  * Column definition for table
  */
-export interface ServerTableColumn<T> {
+export type ServerTableColumn<T> = {
   /** Column identifier (must match data key) */
   id: string;
 
@@ -59,12 +59,12 @@ export interface ServerTableColumn<T> {
 
   /** Column width (CSS value) */
   width?: string;
-}
+};
 
 /**
  * ServerTable props
  */
-export interface ServerTableProps<T extends Record<string, unknown>> {
+export type ServerTableProps<T extends Record<string, unknown>> = {
   /** Array of data items to display */
   data: T[];
 
@@ -103,7 +103,7 @@ export interface ServerTableProps<T extends Record<string, unknown>> {
 
   /** Additional table class names */
   className?: string;
-}
+};
 
 /**
  * Default row key extractor
@@ -146,8 +146,12 @@ function defaultCellRenderer<T extends Record<string, unknown>>(
 function getAlignmentClass(
   align?: "left" | "center" | "right"
 ): string | undefined {
-  if (align === "center") return "text-center";
-  if (align === "right") return "text-right";
+  if (align === "center") {
+    return "text-center";
+  }
+  if (align === "right") {
+    return "text-right";
+  }
   return;
 }
 

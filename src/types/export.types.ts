@@ -15,7 +15,7 @@ export type ExportFormat = "pdf" | "excel";
 /**
  * Export configuration options
  */
-export interface ExportOptions {
+export type ExportOptions = {
   /** Export format (PDF or Excel) */
   format: ExportFormat;
 
@@ -39,13 +39,13 @@ export interface ExportOptions {
 
   /** Timezone for date formatting (falls back to TENANT_TIMEZONE) */
   timezone?: string;
-}
+};
 
 /**
  * Quote data structure for PDF generation
  * Enriched with computed fields and formatting helpers
  */
-export interface QuotePDFData {
+export type QuotePDFData = {
   /** Quote metadata */
   quote: {
     id: string;
@@ -121,13 +121,13 @@ export interface QuotePDFData {
     discount?: number;
     total: number;
   };
-}
+};
 
 /**
  * Quote data structure for Excel generation
  * Similar to PDF but optimized for spreadsheet format
  */
-export interface QuoteExcelData {
+export type QuoteExcelData = {
   /** Quote metadata */
   quote: {
     id: string;
@@ -195,12 +195,12 @@ export interface QuoteExcelData {
     discount?: number;
     total: number;
   };
-}
+};
 
 /**
  * Export result returned from Server Actions
  */
-export interface ExportResult {
+export type ExportResult = {
   success: boolean;
 
   /** Base64-encoded file data (for download) */
@@ -220,12 +220,12 @@ export interface ExportResult {
 
   /** Generation duration in milliseconds (for logging) */
   duration?: number;
-}
+};
 
 /**
  * Export metadata for logging and analytics
  */
-export interface ExportMetadata {
+export type ExportMetadata = {
   quoteId: string;
   format: ExportFormat;
   itemCount: number;
@@ -234,4 +234,4 @@ export interface ExportMetadata {
   userId: string;
   timestamp: Date;
   options: ExportOptions;
-}
+};

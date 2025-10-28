@@ -19,7 +19,7 @@ import type { CartItem } from "./cart.types";
  *
  * All fields required for structured address storage
  */
-export interface QuoteProjectAddress {
+export type QuoteProjectAddress = {
   /** Project name or identifier */
   projectName: string;
 
@@ -34,14 +34,14 @@ export interface QuoteProjectAddress {
 
   /** Postal code */
   projectPostalCode: string;
-}
+};
 
 /**
  * Input for generating quote from cart
  *
  * Used in generateQuoteFromCartAction Server Action
  */
-export interface GenerateQuoteInput {
+export type GenerateQuoteInput = {
   /** Cart items to convert to quote items */
   cartItems: CartItem[];
 
@@ -57,7 +57,7 @@ export interface GenerateQuoteInput {
    * are now obtained from TenantConfig singleton.
    */
   manufacturerId?: string;
-}
+};
 
 // ============================================================================
 // Quote Output Types (DTOs)
@@ -68,7 +68,7 @@ export interface GenerateQuoteInput {
  *
  * Enriched version of QuoteItem for UI rendering
  */
-export interface QuoteItemDetail {
+export type QuoteItemDetail = {
   /** Quote item ID */
   id: string;
 
@@ -101,14 +101,14 @@ export interface QuoteItemDetail {
 
   /** Additional service names */
   serviceNames: string[];
-}
+};
 
 /**
  * Full quote detail for display
  *
  * Complete quote information with computed fields
  */
-export interface QuoteDetail {
+export type QuoteDetail = {
   /** Quote ID */
   id: string;
 
@@ -150,14 +150,14 @@ export interface QuoteDetail {
 
   /** Total units (sum of quantities) */
   totalUnits: number;
-}
+};
 
 /**
  * Quote list item for quote history
  *
  * Lightweight version for list rendering
  */
-export interface QuoteListItem {
+export type QuoteListItem = {
   /** Quote ID */
   id: string;
 
@@ -184,7 +184,7 @@ export interface QuoteListItem {
 
   /** Number of items */
   itemCount: number;
-}
+};
 
 // ============================================================================
 // Quote Query Options
@@ -193,7 +193,7 @@ export interface QuoteListItem {
 /**
  * Options for listing user quotes
  */
-export interface ListUserQuotesOptions {
+export type ListUserQuotesOptions = {
   /** User ID (from session) */
   userId: string;
 
@@ -214,12 +214,12 @@ export interface ListUserQuotesOptions {
 
   /** Sort direction */
   sortOrder?: "asc" | "desc";
-}
+};
 
 /**
  * Paginated quote list response
  */
-export interface QuoteListResponse {
+export type QuoteListResponse = {
   /** Quotes for current page */
   quotes: QuoteListItem[];
 
@@ -240,7 +240,7 @@ export interface QuoteListResponse {
 
   /** Whether there's a previous page */
   hasPreviousPage: boolean;
-}
+};
 
 // ============================================================================
 // Quote Validation
@@ -308,11 +308,11 @@ export const QUOTE_CONSTANTS = {
 /**
  * Quote status display metadata
  */
-export interface QuoteStatusMeta {
+export type QuoteStatusMeta = {
   label: string;
   color: "default" | "secondary" | "success" | "warning" | "destructive";
   description: string;
-}
+};
 
 /**
  * Quote status metadata map
