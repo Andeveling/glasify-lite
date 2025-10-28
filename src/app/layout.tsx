@@ -5,11 +5,13 @@ import { Fira_Code, Geist, Inter, Lora } from 'next/font/google';
 import { NavigationLoader } from '@/app/_components/navigation-loader';
 import { Toaster } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
+import { BrandingProvider } from '@/providers/branding-provider';
 import { SessionProvider } from '@/providers/session-provider';
 import { TenantConfigProvider } from '@/providers/tenant-config-provider';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { getTenantConfig } from '@/server/utils/tenant';
 import { TRPCReactProvider } from '@/trpc/react';
+import { api } from '@/trpc/server-client';
 import { ReactScan } from './_components/react-scan';
 
 export const metadata: Metadata = {
@@ -47,6 +49,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   // This makes currency, locale, timezone available to all Client Components
   const tenantConfig = await getTenantConfig();
 
+  // Fetch branding config for theming
+  const branding = await api.tenantConfig.getBranding();
+
   return (
     <html
       className={cn(geist.variable, inter.variable, lora.variable, firaCode.variable)}
@@ -56,21 +61,30 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <body suppressHydrationWarning>
         <NavigationLoader />
         <ReactScan />
-        <TenantConfigProvider
+        <BrandingProvider
           config={{
-            currency: tenantConfig.currency,
-            locale: tenantConfig.locale,
-            quoteValidityDays: tenantConfig.quoteValidityDays,
-            timezone: tenantConfig.timezone,
+            businessName: branding.businessName,
+            logoUrl: branding.logoUrl,
+            primaryColor: branding.primaryColor,
+            secondaryColor: branding.secondaryColor,
           }}
         >
-          <SessionProvider>
-            <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
-              <TRPCReactProvider>{children}</TRPCReactProvider>
-              <Toaster expand position="bottom-right" richColors />
-            </ThemeProvider>
-          </SessionProvider>
-        </TenantConfigProvider>
+          <TenantConfigProvider
+            config={{
+              currency: tenantConfig.currency,
+              locale: tenantConfig.locale,
+              quoteValidityDays: tenantConfig.quoteValidityDays,
+              timezone: tenantConfig.timezone,
+            }}
+          >
+            <SessionProvider>
+              <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
+                <TRPCReactProvider>{children}</TRPCReactProvider>
+                <Toaster expand position="bottom-right" richColors />
+              </ThemeProvider>
+            </SessionProvider>
+          </TenantConfigProvider>
+        </BrandingProvider>
       </body>
     </html>
   );

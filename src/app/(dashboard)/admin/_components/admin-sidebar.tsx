@@ -1,6 +1,6 @@
 'use client';
 
-import { Factory, GlassWater, Grid3x3, Package, Settings, Sparkles, Wrench } from 'lucide-react';
+import { Factory, GlassWater, Grid3x3, Package, Paintbrush, Settings, Sparkles, Wrench } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { FC } from 'react';
@@ -64,6 +64,12 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
       icon: Wrench,
       title: 'Servicios',
       url: '/admin/services',
+    },
+    {
+      description: 'Logo y colores corporativos',
+      icon: Paintbrush,
+      title: 'Branding',
+      url: '/admin/branding',
     },
   ];
 
