@@ -5,6 +5,7 @@ import {
   GlassWater,
   Grid3x3,
   Package,
+  Paintbrush,
   Settings,
   Sparkles,
   Wrench,
@@ -72,6 +73,12 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
       icon: Wrench,
       title: "Servicios",
       url: "/admin/services",
+    },
+    {
+      description: 'Logo y colores corporativos',
+      icon: Paintbrush,
+      title: 'Branding',
+      url: '/admin/branding',
     },
   ];
 
