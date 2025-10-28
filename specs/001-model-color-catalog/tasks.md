@@ -28,9 +28,9 @@ description: "Implementation tasks for color catalog system"
 
 **Purpose**: Project initialization and database foundation
 
-- [ ] T001 Create feature branch `001-model-color-catalog` from develop
-- [ ] T002 [P] Create directory structure for color feature (admin/colors/, admin/models/[id]/colors/, seeders/)
-- [ ] T003 [P] Install any missing dependencies (verify Zod, Prisma, React Hook Form versions)
+- [x] T001 Create feature branch `001-model-color-catalog` from develop
+- [x] T002 [P] Create directory structure for color feature (admin/colors/, admin/models/[id]/colors/, seeders/)
+- [x] T003 [P] Install any missing dependencies (verify Zod, Prisma, React Hook Form versions)
 
 **Checkpoint**: Directory structure ready for implementation
 
@@ -44,46 +44,46 @@ description: "Implementation tasks for color catalog system"
 
 ### Database Schema & Migrations
 
-- [ ] T004 Create Prisma schema for Color model in `prisma/schema.prisma`
+- [x] T004 Create Prisma schema for Color model in `prisma/schema.prisma`
   - Fields: id (String @id @default(cuid())), name (String), ralCode (String?), hexCode (String), isActive (Boolean @default(true)), createdAt, updatedAt
   - Constraints: @@unique([name, hexCode]), @@index([isActive]), @@index([name])
   - Relations: modelColors ModelColor[], quoteItems QuoteItem[]
 
-- [ ] T005 Create Prisma schema for ModelColor model in `prisma/schema.prisma`
+- [x] T005 Create Prisma schema for ModelColor model in `prisma/schema.prisma`
   - Fields: id, modelId (String), colorId (String), surchargePercentage (Decimal), isDefault (Boolean @default(false)), createdAt, updatedAt
   - Constraints: @@unique([modelId, colorId]), @@index([modelId, isDefault]), @@index([colorId])
   - Relations: model Model @relation, color Color @relation
   - Foreign keys: onDelete CASCADE for model, onDelete RESTRICT for color
 
-- [ ] T006 Extend QuoteItem model in `prisma/schema.prisma`
+- [x] T006 Extend QuoteItem model in `prisma/schema.prisma`
   - Add optional fields: colorId (String?), colorSurchargePercentage (Decimal?), colorHexCode (String?), colorName (String?)
   - Add relation: color Color? @relation
 
-- [ ] T007 Generate Prisma migration with `npx prisma migrate dev --name add_color_catalog_system`
+- [x] T007 Generate Prisma migration with `npx prisma migrate dev --name add_color_catalog_system`
 
-- [ ] T008 Verify migration success and rollback capability (manual test)
+- [x] T008 Verify migration success and rollback capability (manual test)
 
 ### Validation Schemas
 
-- [ ] T009 [P] Create Zod validation schemas in `src/lib/validations/color.ts`
+- [x] T009 [P] Create Zod validation schemas in `src/lib/validations/color.ts`
   - colorCreateSchema: name (1-50 chars), ralCode (optional regex /^RAL \d{4}$/), hexCode (required regex /^#[0-9A-Fa-f]{6}$/), isActive (boolean default true)
   - colorUpdateSchema: same as create but all fields optional
   - Spanish error messages: "Formato hexadecimal inválido (#RRGGBB)", "Código RAL inválido (RAL XXXX)"
 
-- [ ] T010 [P] Create Zod validation schemas in `src/lib/validations/model-color.ts`
+- [x] T010 [P] Create Zod validation schemas in `src/lib/validations/model-color.ts`
   - modelColorAssignSchema: modelId (string), colorId (string), surchargePercentage (number 0-100), isDefault (boolean)
   - modelColorUpdateSurchargeSchema: surchargePercentage only
   - Spanish error messages: "El recargo debe estar entre 0% y 100%"
 
 ### Seeder Infrastructure
 
-- [ ] T011 Create color seeder in `prisma/seeders/colors.seeder.ts`
+- [x] T011 Create color seeder in `prisma/seeders/colors.seeder.ts`
   - Implement idempotent upsert using @@unique([name, hexCode]) constraint
   - Seed 10 standard colors from spec.md FR-001 with exact RAL codes and hex values
   - Add Winston logging (server-side only): "Color seed started", "Upserted X colors", error logs
   - Use try-catch with transaction rollback on failure
 
-- [ ] T012 Integrate color seeder into main seed script `prisma/seed-tenant.ts`
+- [x] T012 Integrate color seeder into main seed script `prisma/seed-tenant.ts`
   - Import and execute colorSeeder before model seeding
   - Add error handling and logging
 
@@ -99,36 +99,36 @@ description: "Implementation tasks for color catalog system"
 
 ### Backend Implementation (US1)
 
-- [ ] T013 [P] [US1] Create tRPC colors router in `src/server/api/routers/colors.ts`
+- [x] T013 [P] [US1] Create tRPC colors router in `src/server/api/routers/admin/colors.ts`
   - Export router with namespace 'colors'
   - Initialize with empty procedures object
 
-- [ ] T014 [P] [US1] Implement `colors.list` query in `src/server/api/routers/colors.ts`
+- [x] T014 [P] [US1] Implement `colors.list` query in `src/server/api/routers/admin/colors.ts`
   - Auth: adminProcedure
   - Input: z.object({ isActive: z.boolean().optional(), search: z.string().optional() })
   - Query: Prisma findMany with where filters, include _count for modelColors and quoteItems
   - Return: Color[] with usage counts
 
-- [ ] T015 [P] [US1] Implement `colors.getById` query in `src/server/api/routers/colors.ts`
+- [x] T015 [P] [US1] Implement `colors.getById` query in `src/server/api/routers/admin/colors.ts`
   - Auth: adminProcedure
   - Input: z.object({ id: z.string() })
   - Query: Prisma findUniqueOrThrow with full relations
   - Error: TRPCError NOT_FOUND if color doesn't exist (Spanish message: "Color no encontrado")
 
-- [ ] T016 [P] [US1] Implement `colors.create` mutation in `src/server/api/routers/colors.ts`
+- [x] T016 [P] [US1] Implement `colors.create` mutation in `src/server/api/routers/admin/colors.ts`
   - Auth: adminProcedure
   - Input: colorCreateSchema from validations/color.ts
   - Business logic: Check duplicate name+hexCode before insert
   - Error: TRPCError CONFLICT if duplicate (Spanish: "El color ya existe con este nombre o código hexadecimal")
   - Winston logging: Log color creation with admin user ID
 
-- [ ] T017 [P] [US1] Implement `colors.update` mutation in `src/server/api/routers/colors.ts`
+- [x] T017 [P] [US1] Implement `colors.update` mutation in `src/server/api/routers/admin/colors.ts`
   - Auth: adminProcedure
   - Input: z.object({ id: z.string() }).merge(colorUpdateSchema)
   - Business logic: Check duplicate on name+hexCode change
   - Winston logging: Log update with changed fields
 
-- [ ] T018 [P] [US1] Implement `colors.delete` mutation in `src/server/api/routers/colors.ts`
+- [x] T018 [P] [US1] Implement `colors.delete` mutation in `src/server/api/routers/admin/colors.ts`
   - Auth: adminProcedure
   - Input: z.object({ id: z.string() })
   - Business logic: Three-tier deletion strategy
@@ -137,23 +137,23 @@ description: "Implementation tasks for color catalog system"
     - If no references: Hard delete, return success
   - Winston logging: Log deletion attempt and result
 
-- [ ] T019 [P] [US1] Implement `colors.checkUsage` query in `src/server/api/routers/colors.ts`
+- [x] T019 [P] [US1] Implement `colors.checkUsage` query in `src/server/api/routers/admin/colors.ts`
   - Auth: adminProcedure
   - Input: z.object({ id: z.string() })
   - Return: { modelCount: number, quoteCount: number, canDelete: boolean, canHardDelete: boolean }
 
-- [ ] T020 [US1] Register colors router in `src/server/api/root.ts`
+- [x] T020 [US1] Register colors router in `src/server/api/routers/admin/admin.ts`
   - Import colorsRouter
-  - Add to appRouter: colors: colorsRouter
+  - Add to adminRouter: colors: colorsRouter
 
 ### Frontend Components (US1)
 
-- [ ] T021 [P] [US1] Create ColorChip component in `src/app/(dashboard)/admin/colors/_components/color-chip.tsx`
+- [x] T021 [P] [US1] Create ColorChip component in `src/app/(dashboard)/admin/colors/_components/color-chip.tsx`
   - Props: hexCode (string), size ('sm' | 'md' | 'lg')
   - Render: div with background color, border, optional checkmark for selected state
   - Reusable across admin and client UI
 
-- [ ] T022 [P] [US1] Create ColorForm component in `src/app/(dashboard)/admin/colors/_components/color-form.tsx`
+- [x] T022 [P] [US1] Create ColorForm component in `src/app/(dashboard)/admin/colors/_components/color-form.tsx`
   - Use React Hook Form 7.63.0 with Zod resolver
   - Fields: name (Input), ralCode (Input with pattern hint "RAL XXXX"), hexCode (Input with color picker preview), isActive (Switch)
   - Client Component with 'use client' directive
@@ -162,7 +162,7 @@ description: "Implementation tasks for color catalog system"
   - Optimistic UI: Show loading state, toast on success/error (Spanish messages)
   - Error handling: Display Zod validation errors inline
 
-- [ ] T023 [P] [US1] Create ColorListTable component in `src/app/(dashboard)/admin/colors/_components/color-list-table.tsx`
+- [x] T023 [P] [US1] Create ColorListTable component in `src/app/(dashboard)/admin/colors/_components/color-list-table.tsx`
   - Use existing ServerTable pattern from project
   - Columns: ColorChip, Name, RAL Code, Hex Code, Status badge (Activo/Inactivo), Usage counts (X modelos, Y cotizaciones), Actions (Edit, Delete)
   - Client Component with search input (debounced 300ms)
@@ -170,19 +170,19 @@ description: "Implementation tasks for color catalog system"
   - Sort: By name, createdAt
   - Actions: Edit button → navigate to /admin/colors/[id], Delete button → confirm dialog → colors.delete mutation
 
-- [ ] T024 [US1] Create color list page in `src/app/(dashboard)/admin/colors/page.tsx`
+- [x] T024 [US1] Create color list page in `src/app/(dashboard)/admin/colors/page.tsx`
   - Server Component with export const dynamic = 'force-dynamic'
   - Metadata: title "Gestión de Colores", description
   - Fetch initial colors: const colors = await api.colors.list()
   - Render: ColorListTable with initialData={colors}
   - Add "Nuevo Color" button → navigate to /admin/colors/new
 
-- [ ] T025 [US1] Create new color page in `src/app/(dashboard)/admin/colors/new/page.tsx`
+- [x] T025 [US1] Create new color page in `src/app/(dashboard)/admin/colors/new/page.tsx`
   - Server Component with metadata
   - Render: ColorForm in create mode
   - On success: router.push('/admin/colors') + toast notification
 
-- [ ] T026 [US1] Create edit color page in `src/app/(dashboard)/admin/colors/[id]/page.tsx`
+- [x] T026 [US1] Create edit color page in `src/app/(dashboard)/admin/colors/[id]/edit/page.tsx`
   - Server Component with dynamic route param
   - Fetch color: const color = await api.colors.getById({ id: params.id })
   - Error boundary: 404 if color not found
@@ -191,7 +191,7 @@ description: "Implementation tasks for color catalog system"
 
 ### Cache Invalidation Patterns (US1)
 
-- [ ] T027 [US1] Implement two-step cache invalidation in ColorForm mutations
+- [x] T027 [US1] Implement two-step cache invalidation in ColorForm mutations
   - Import useRouter from 'next/navigation'
   - In onSettled callback: void utils.colors.list.invalidate(); router.refresh();
   - Apply to both create and update mutations
