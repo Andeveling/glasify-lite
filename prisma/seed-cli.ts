@@ -12,7 +12,6 @@
  * @version 1.0.0
  */
 // @ts-nocheck
-/* biome-ignore lint/suspicious/noConsole: CLI script requires console output */
 
 import { parseArgs } from "node:util";
 import { db } from "../src/server/db";
@@ -92,7 +91,9 @@ function parseCliArgs(): CliOptions {
 /**
  * Print CLI help
  */
-function printHelp(): void {}
+function printHelp(): void {
+  // TODO: Implement help message (currently unused)
+}
 
 /**
  * Validate preset name

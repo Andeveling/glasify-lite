@@ -13,6 +13,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import type { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 import type {
   FactoryMetadata,
@@ -40,6 +41,7 @@ const MAX_SOLAR_FACTOR = 1.0; // g-value (clear glass)
 const SOLAR_FACTOR_TRANSMISSION_TOLERANCE = 0.2; // Maximum difference between solar factor and light transmission
 const MIN_LIGHT_TRANSMISSION = 0.0; // 0% (opaque)
 const MAX_LIGHT_TRANSMISSION = 1.0; // 100% (ultra-clear)
+const DEFAULT_PRICE_PER_SQM = 50_000.0; // Default price in CLP currency
 
 /**
  * Zod schema for GlassType seed data input validation
@@ -253,6 +255,134 @@ const seedFileSchema = z.object({
 });
 
 /**
+ * Loads and validates seed data from JSON file
+ */
+function loadSeedData(fileName: string): {
+  success: boolean;
+  data?: {
+    glassTypes: GlassTypeInput[];
+    manufacturer: string;
+    version: string;
+  };
+  errors: ValidationError[];
+} {
+  const dataPath = path.join(process.cwd(), "prisma", "data", fileName);
+
+  // Load JSON file
+  let rawData: unknown;
+  try {
+    const fileContent = fs.readFileSync(dataPath, "utf-8");
+    rawData = JSON.parse(fileContent);
+  } catch (error) {
+    return {
+      success: false,
+      errors: [
+        {
+          code: "FILE_READ_ERROR",
+          context: { error, fileName },
+          message: `Failed to read or parse ${fileName}`,
+          path: [],
+        },
+      ],
+    };
+  }
+
+  // Validate JSON structure
+  const validationResult = seedFileSchema.safeParse(rawData);
+  if (!validationResult.success) {
+    return {
+      success: false,
+      errors: validationResult.error.issues.map((err) => ({
+        code: "SCHEMA_VALIDATION_ERROR",
+        context: { zodError: err },
+        message: err.message,
+        path: err.path.map(String),
+      })),
+    };
+  }
+
+  return {
+    success: true,
+    data: validationResult.data,
+    errors: [],
+  };
+}
+
+/**
+ * Processes a single glass type (create or update)
+ */
+async function processGlassType(
+  prisma: PrismaClient,
+  glassType: GlassTypeInput,
+  manufacturer: string,
+  version: string
+): Promise<{ seeded: boolean; error?: ValidationError }> {
+  try {
+    // Check if glass type with this code already exists
+    const existing = await prisma.glassType.findUnique({
+      where: { code: glassType.code },
+    });
+
+    if (existing) {
+      // Skip if already seeded with same or newer version
+      if (existing.isSeeded && existing.seedVersion === version) {
+        return { seeded: false };
+      }
+      // Update if existing but different version
+      await prisma.glassType.update({
+        data: {
+          description: glassType.description,
+          isSeeded: true,
+          lightTransmission: glassType.lightTransmission,
+          manufacturer: glassType.manufacturer || manufacturer,
+          name: glassType.name,
+          pricePerSqm:
+            (glassType as GlassTypeInput & { pricePerSqm?: number })
+              .pricePerSqm ?? existing.pricePerSqm,
+          seedVersion: version,
+          series: glassType.series,
+          solarFactor: glassType.solarFactor,
+          thicknessMm: glassType.thicknessMm,
+          uValue: glassType.uValue,
+        },
+        where: { code: glassType.code },
+      });
+      return { seeded: true };
+    }
+    // Create new glass type
+    await prisma.glassType.create({
+      data: {
+        code: glassType.code,
+        description: glassType.description,
+        isSeeded: true,
+        lightTransmission: glassType.lightTransmission,
+        manufacturer: glassType.manufacturer || manufacturer,
+        name: glassType.name,
+        pricePerSqm:
+          (glassType as GlassTypeInput & { pricePerSqm?: number })
+            .pricePerSqm ?? DEFAULT_PRICE_PER_SQM,
+        seedVersion: version,
+        series: glassType.series,
+        solarFactor: glassType.solarFactor,
+        thicknessMm: glassType.thicknessMm,
+        uValue: glassType.uValue,
+      },
+    });
+    return { seeded: true };
+  } catch (error) {
+    return {
+      seeded: false,
+      error: {
+        code: "DATABASE_ERROR",
+        context: { code: glassType.code, error },
+        message: `Failed to seed glass type ${glassType.code}`,
+        path: ["glassTypes", glassType.code],
+      },
+    };
+  }
+}
+
+/**
  * Loads and seeds glass types from JSON file
  *
  * @param filePath - Path to the seed JSON file relative to prisma/data
@@ -269,115 +399,41 @@ export async function seedGlassTypesFromFile(fileName: string): Promise<{
   seeded: number;
   skipped: number;
 }> {
-  const dataPath = path.join(process.cwd(), "prisma", "data", fileName);
-
-  // Load JSON file
-  let rawData: unknown;
-  try {
-    const fileContent = fs.readFileSync(dataPath, "utf-8");
-    rawData = JSON.parse(fileContent);
-  } catch (error) {
+  // Load and validate seed data
+  const loadResult = await loadSeedData(fileName);
+  if (!(loadResult.success && loadResult.data)) {
     return {
-      errors: [
-        {
-          code: "FILE_READ_ERROR",
-          context: { error, fileName },
-          message: `Failed to read or parse ${fileName}`,
-          path: [],
-        },
-      ],
+      errors: loadResult.errors,
       seeded: 0,
       skipped: 0,
     };
   }
 
-  // Validate JSON structure
-  const validationResult = seedFileSchema.safeParse(rawData);
-  if (!validationResult.success) {
-    return {
-      errors: validationResult.error.issues.map((err) => ({
-        code: "SCHEMA_VALIDATION_ERROR",
-        context: { zodError: err },
-        message: err.message,
-        path: err.path.map(String),
-      })),
-      seeded: 0,
-      skipped: 0,
-    };
-  }
-
-  const { glassTypes, manufacturer, version } = validationResult.data;
+  const { glassTypes, manufacturer, version } = loadResult.data;
   const errors: ValidationError[] = [];
   let seeded = 0;
   let skipped = 0;
 
   // Dynamically import Prisma client to avoid circular dependencies
-  const { PrismaClient } = await import("@prisma/client");
-  const prisma = new PrismaClient();
+  const { PrismaClient: PrismaClientConstructor } = await import(
+    "@prisma/client"
+  );
+  const prisma = new PrismaClientConstructor();
 
   try {
     for (const glassType of glassTypes) {
-      try {
-        // Check if glass type with this code already exists
-        const existing = await prisma.glassType.findUnique({
-          where: { code: glassType.code },
-        });
-
-        if (existing) {
-          // Skip if already seeded with same or newer version
-          if (existing.isSeeded && existing.seedVersion === version) {
-            skipped++;
-            continue;
-          }
-          // Update if existing but different version
-          await prisma.glassType.update({
-            data: {
-              description: glassType.description,
-              isSeeded: true,
-              lightTransmission: glassType.lightTransmission,
-              manufacturer: glassType.manufacturer || manufacturer,
-              name: glassType.name,
-              pricePerSqm:
-                (glassType as GlassTypeInput & { pricePerSqm?: number })
-                  .pricePerSqm ?? existing.pricePerSqm,
-              seedVersion: version,
-              series: glassType.series,
-              solarFactor: glassType.solarFactor,
-              thicknessMm: glassType.thicknessMm,
-              uValue: glassType.uValue,
-            },
-            where: { code: glassType.code },
-          });
-          seeded++;
-        } else {
-          // Create new glass type (v2.0 clean schema - no deprecated fields)
-          await prisma.glassType.create({
-            data: {
-              code: glassType.code,
-              description: glassType.description,
-              isSeeded: true,
-              lightTransmission: glassType.lightTransmission,
-              manufacturer: glassType.manufacturer || manufacturer,
-              name: glassType.name,
-              pricePerSqm:
-                (glassType as GlassTypeInput & { pricePerSqm?: number })
-                  .pricePerSqm ?? 50_000.0,
-              seedVersion: version,
-              series: glassType.series,
-              solarFactor: glassType.solarFactor,
-              thicknessMm: glassType.thicknessMm,
-              uValue: glassType.uValue,
-            },
-          });
-          seeded++;
-        }
-      } catch (error) {
-        errors.push({
-          code: "DATABASE_ERROR",
-          context: { code: glassType.code, error },
-          message: `Failed to seed glass type ${glassType.code}`,
-          path: ["glassTypes", glassType.code],
-        });
+      const result = await processGlassType(
+        prisma,
+        glassType,
+        manufacturer,
+        version
+      );
+      if (result.seeded) {
+        seeded++;
+      } else if (result.error) {
+        errors.push(result.error);
+      } else {
+        skipped++;
       }
     }
   } finally {

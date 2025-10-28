@@ -46,12 +46,5 @@
   },
   "[typescriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
-  },
-  "editor.formatOnSave": true,
-  "editor.formatOnPaste": true,
-  "emmet.showExpandedAbbreviation": "never",
-  "editor.codeActionsOnSave": {
-    "source.fixAll.biome": "explicit",
-    "source.organizeImports.biome": "explicit"
   }
 }

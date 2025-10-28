@@ -32,6 +32,10 @@ function generateSlugFromKey(key: string): string {
   return key.replace(/_/g, "-");
 }
 
+// Section formatting constants
+const SECTION_SEPARATOR_LENGTH = 50;
+const DEFAULT_GLASS_PRICE_PER_SQM = 50_000.0; // Default price in CLP currency
+
 /**
  * Preset configuration interface
  */
@@ -105,9 +109,9 @@ class SeedLogger {
   }
 
   section(title: string): void {
-    console.log(`\n${"=".repeat(50)}`);
+    console.log(`\n${"=".repeat(SECTION_SEPARATOR_LENGTH)}`);
     console.log(`  ${title}`);
-    console.log(`${"=".repeat(50)}`);
+    console.log(`${"=".repeat(SECTION_SEPARATOR_LENGTH)}`);
   }
 }
 
@@ -346,7 +350,7 @@ export class SeedOrchestrator {
         // Ensure pricePerSqm has a default value for MVP
         const dataWithPrice = {
           ...result.data,
-          pricePerSqm: result.data.pricePerSqm ?? 50_000.0,
+          pricePerSqm: result.data.pricePerSqm ?? DEFAULT_GLASS_PRICE_PER_SQM,
         };
 
         // Create or update
@@ -382,6 +386,61 @@ export class SeedOrchestrator {
   }
 
   /**
+   * Process and validate a single model
+   */
+  private async processModel(
+    modelInput: ModelInput,
+    supplierId: string,
+    glassTypeIdMap: Map<string, string>
+  ): Promise<void> {
+    // Validate with factory
+    const result = createModel(modelInput, {
+      skipValidation: this.options.skipValidation,
+    });
+
+    if (!(result.success && result.data)) {
+      this.handleValidationErrors(modelInput.name, result.errors);
+      this.stats.models.failed++;
+      if (!this.options.continueOnError) {
+        throw new Error("Validation failed");
+      }
+      return;
+    }
+
+    // Replace PLACEHOLDER glass type IDs with actual IDs
+    const compatibleGlassTypeIds = Array.from(glassTypeIdMap.values());
+
+    // Remove profileSupplierName (factory artifact) and add profileSupplierId
+    const { profileSupplierName: _unused, ...modelData } = result.data;
+
+    // Check if model already exists by name
+    const existingModel = await this.prisma.model.findFirst({
+      where: { name: modelData.name },
+    });
+
+    // Create or update
+    const model = existingModel
+      ? await this.prisma.model.update({
+          data: {
+            ...modelData,
+            compatibleGlassTypeIds,
+            profileSupplierId: supplierId,
+          },
+          where: { id: existingModel.id },
+        })
+      : await this.prisma.model.create({
+          data: {
+            ...modelData,
+            compatibleGlassTypeIds,
+            profileSupplierId: supplierId,
+          },
+        });
+
+    this.stats.models.created++;
+    this.logger.debug(`Created: ${model.name} (${model.id})`);
+  }
+
+  /**
    * Seed models with supplier and glass type relationships
    */
   private async seedModels(
@@ -408,51 +467,7 @@ export class SeedOrchestrator {
           continue;
         }
 
-        // Validate with factory
-        const result = createModel(modelInput, {
-          skipValidation: this.options.skipValidation,
-        });
-
-        if (!(result.success && result.data)) {
-          this.handleValidationErrors(modelInput.name, result.errors);
-          this.stats.models.failed++;
-          if (!this.options.continueOnError) {
-            throw new Error("Validation failed");
-          }
-          continue;
-        }
-
-        // Replace PLACEHOLDER glass type IDs with actual IDs
-        const compatibleGlassTypeIds = Array.from(glassTypeIdMap.values());
-
-        // Remove profileSupplierName (factory artifact) and add profileSupplierId
-        const { profileSupplierName: _unused, ...modelData } = result.data;
-
-        // Check if model already exists by name
-        const existingModel = await this.prisma.model.findFirst({
-          where: { name: modelData.name },
-        });
-
-        // Create or update
-        const model = existingModel
-          ? await this.prisma.model.update({
-              data: {
-                ...modelData,
-                compatibleGlassTypeIds,
-                profileSupplierId: supplierId,
-              },
-              where: { id: existingModel.id },
-            })
-          : await this.prisma.model.create({
-              data: {
-                ...modelData,
-                compatibleGlassTypeIds,
-                profileSupplierId: supplierId,
-              },
-            });
-
-        this.stats.models.created++;
-        this.logger.debug(`Created: ${model.name} (${model.id})`);
+        await this.processModel(modelInput, supplierId, glassTypeIdMap);
       } catch (error) {
         this.logger.error(`Failed to create model: ${modelInput.name}`, error);
         this.stats.models.failed++;

@@ -144,7 +144,7 @@ export function ColorsList({ initialData, searchParams }: ColorsListProps) {
       });
     },
     onSettled: () => {
-      void utils.admin.colors.list.invalidate();
+      utils.admin.colors.list.invalidate().catch(undefined);
       router.refresh();
     },
     onSuccess: () => {
