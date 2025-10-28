@@ -6,13 +6,13 @@
  * @see /plan/refactor-manufacturer-to-tenant-config-1.md
  */
 
-import type { Prisma, PrismaClient, TenantConfig } from '@prisma/client';
-import type { DefaultArgs } from '@prisma/client/runtime/library';
-import { db } from '../db';
+import type { Prisma, PrismaClient, TenantConfig } from "@prisma/client";
+import type { DefaultArgs } from "@prisma/client/runtime/library";
+import { db } from "../db";
 
 type TransactionClient = Omit<
   PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
-  '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
+  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
 >;
 
 /**
@@ -22,12 +22,16 @@ type TransactionClient = Omit<
  * @throws {Error} If no TenantConfig exists in the database
  * @returns Promise<TenantConfig> The tenant configuration
  */
-export async function getTenantConfig(client?: TransactionClient): Promise<TenantConfig> {
+export async function getTenantConfig(
+  client?: TransactionClient
+): Promise<TenantConfig> {
   const prisma = client ?? db;
   const config = await prisma.tenantConfig.findFirst();
 
   if (!config) {
-    throw new Error('No TenantConfig found in database. Run migration script to create one.');
+    throw new Error(
+      "No TenantConfig found in database. Run migration script to create one."
+    );
   }
 
   return config;
@@ -40,7 +44,9 @@ export async function getTenantConfig(client?: TransactionClient): Promise<Tenan
  * @param client Optional Prisma client (for transactions)
  * @returns Promise<Partial<TenantConfig>> Selected fields
  */
-export async function getTenantConfigSelect<T extends Prisma.TenantConfigSelect>(
+export async function getTenantConfigSelect<
+  T extends Prisma.TenantConfigSelect,
+>(
   select: T,
   client?: TransactionClient
 ): Promise<Prisma.TenantConfigGetPayload<{ select: T }>> {
@@ -50,7 +56,9 @@ export async function getTenantConfigSelect<T extends Prisma.TenantConfigSelect>
   });
 
   if (!config) {
-    throw new Error('No TenantConfig found in database. Run migration script to create one.');
+    throw new Error(
+      "No TenantConfig found in database. Run migration script to create one."
+    );
   }
 
   return config;
@@ -82,7 +90,9 @@ export async function updateTenantConfig(
  * @param client Optional Prisma client (for transactions)
  * @returns Promise<string> ISO 4217 currency code
  */
-export async function getTenantCurrency(client?: TransactionClient): Promise<string> {
+export async function getTenantCurrency(
+  client?: TransactionClient
+): Promise<string> {
   const config = await getTenantConfigSelect({ currency: true }, client);
 
   return config.currency;
@@ -94,8 +104,13 @@ export async function getTenantCurrency(client?: TransactionClient): Promise<str
  * @param client Optional Prisma client (for transactions)
  * @returns Promise<number> Quote validity in days
  */
-export async function getQuoteValidityDays(client?: TransactionClient): Promise<number> {
-  const config = await getTenantConfigSelect({ quoteValidityDays: true }, client);
+export async function getQuoteValidityDays(
+  client?: TransactionClient
+): Promise<number> {
+  const config = await getTenantConfigSelect(
+    { quoteValidityDays: true },
+    client
+  );
 
   return config.quoteValidityDays;
 }

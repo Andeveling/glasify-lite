@@ -1,0 +1,394 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Quote Colors - Client Color Selection Operations",
+  "description": "tRPC procedures for client-facing color selection in quotation flow (public/authenticated)",
+  "version": "1.0.0",
+  "router": "quotes (extension)",
+  "basePath": "src/server/api/routers/quotes.ts",
+  "note": "These procedures are additions to the existing quotes router, not a new router",
+
+  "procedures": {
+    "getModelColorsForQuote": {
+      "type": "query",
+      "auth": "publicProcedure",
+      "description": "Get available colors for a model in catalog (client selection UI)",
+      "input": {
+        "type": "object",
+        "properties": {
+          "modelId": {
+            "type": "string",
+            "format": "cuid",
+            "description": "Model ID from catalog"
+          }
+        },
+        "required": ["modelId"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "modelId": { "type": "string" },
+          "hasColors": {
+            "type": "boolean",
+            "description": "If false, no color selector shown in UI"
+          },
+          "defaultColorId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Auto-selected color ID (null if no colors)"
+          },
+          "colors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "colorId (not modelColorId)"
+                },
+                "name": { "type": "string" },
+                "hexCode": { "type": "string" },
+                "surchargePercentage": { "type": "number" },
+                "isDefault": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      },
+      "businessLogic": {
+        "filtering": "Only isActive colors shown",
+        "ordering": "Default color first, then alphabetically by name",
+        "caching": "Cache for 5 minutes (rarely changes, many repeated calls)"
+      },
+      "example": {
+        "input": { "modelId": "clxModel123" },
+        "outputWithColors": {
+          "modelId": "clxModel123",
+          "hasColors": true,
+          "defaultColorId": "clxColor001",
+          "colors": [
+            {
+              "id": "clxColor001",
+              "name": "Blanco",
+              "hexCode": "#F3F3E9",
+              "surchargePercentage": 0,
+              "isDefault": true
+            },
+            {
+              "id": "clxColor002",
+              "name": "Gris Antracita",
+              "hexCode": "#384043",
+              "surchargePercentage": 10,
+              "isDefault": false
+            }
+          ]
+        },
+        "outputNoColors": {
+          "modelId": "clxModel456",
+          "hasColors": false,
+          "defaultColorId": null,
+          "colors": []
+        }
+      }
+    },
+
+    "calculatePriceWithColor": {
+      "type": "query",
+      "auth": "publicProcedure",
+      "description": "Calculate quote item price with color surcharge (for client-side validation)",
+      "input": {
+        "type": "object",
+        "properties": {
+          "modelId": { "type": "string", "format": "cuid" },
+          "colorId": {
+            "type": "string",
+            "format": "cuid",
+            "optional": true,
+            "description": "If omitted, uses default color or no color"
+          },
+          "widthMm": { "type": "number", "minimum": 1 },
+          "heightMm": { "type": "number", "minimum": 1 },
+          "glassTypeId": { "type": "string", "format": "cuid" },
+          "quantity": { "type": "number", "minimum": 1, "default": 1 }
+        },
+        "required": ["modelId", "widthMm", "heightMm", "glassTypeId"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "basePrice": {
+            "type": "number",
+            "description": "Model base price (without color)"
+          },
+          "colorSurcharge": {
+            "type": "number",
+            "description": "Amount added for color (0 if no color)"
+          },
+          "colorSurchargePercentage": {
+            "type": "number",
+            "description": "Percentage applied"
+          },
+          "glassPrice": { "type": "number" },
+          "subtotal": {
+            "type": "number",
+            "description": "(basePrice + colorSurcharge + glassPrice) * quantity"
+          },
+          "selectedColor": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "hexCode": { "type": "string" }
+            }
+          }
+        }
+      },
+      "businessLogic": {
+        "pricingFormula": "(basePrice * (1 + colorSurcharge%/100) + glassPrice) * quantity",
+        "defaultHandling": "If colorId omitted, use model's default color (or no color if model has none)",
+        "validation": "Verify colorId is actually assigned to modelId (prevent client tampering)"
+      },
+      "errors": [
+        {
+          "code": "BAD_REQUEST",
+          "message": "El color seleccionado no está disponible para este modelo"
+        }
+      ],
+      "example": {
+        "input": {
+          "modelId": "clxModel123",
+          "colorId": "clxColor002",
+          "widthMm": 1000,
+          "heightMm": 1200,
+          "glassTypeId": "clxGlass001",
+          "quantity": 2
+        },
+        "output": {
+          "basePrice": 450,
+          "colorSurcharge": 45,
+          "colorSurchargePercentage": 10,
+          "glassPrice": 120,
+          "subtotal": 1230,
+          "selectedColor": {
+            "id": "clxColor002",
+            "name": "Gris Antracita",
+            "hexCode": "#384043"
+          }
+        }
+      }
+    },
+
+    "createQuoteItemWithColor": {
+      "type": "mutation",
+      "auth": "publicProcedure (or protectedProcedure depending on quote flow)",
+      "description": "Create quote item with color selection and snapshot data",
+      "input": {
+        "type": "object",
+        "properties": {
+          "quoteId": { "type": "string", "format": "cuid" },
+          "modelId": { "type": "string", "format": "cuid" },
+          "colorId": {
+            "type": "string",
+            "format": "cuid",
+            "optional": true,
+            "description": "If omitted, uses default or null"
+          },
+          "name": { "type": "string", "maxLength": 50 },
+          "quantity": { "type": "number", "minimum": 1 },
+          "widthMm": { "type": "number" },
+          "heightMm": { "type": "number" },
+          "glassTypeId": { "type": "string", "format": "cuid" },
+          "accessoryApplied": { "type": "boolean", "default": false }
+        },
+        "required": [
+          "quoteId",
+          "modelId",
+          "name",
+          "quantity",
+          "widthMm",
+          "heightMm",
+          "glassTypeId"
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "quoteId": { "type": "string" },
+          "modelId": { "type": "string" },
+          "colorId": { "type": "string", "nullable": true },
+          "colorName": { "type": "string", "nullable": true },
+          "colorHexCode": { "type": "string", "nullable": true },
+          "colorSurchargePercentage": { "type": "number", "nullable": true },
+          "subtotal": { "type": "number" }
+        }
+      },
+      "businessLogic": {
+        "snapshotCapture": "Atomically capture color name, hex, surcharge% from ModelColor at creation time",
+        "priceRecalculation": "Server recalculates price to prevent client tampering (ignore client-provided subtotal)",
+        "validation": "Verify colorId matches modelId assignment before snapshot",
+        "defaultHandling": "If colorId null, check if model has default color and use it automatically"
+      },
+      "transactionalSteps": [
+        "1. Lookup ModelColor to get surcharge% (or skip if colorId null)",
+        "2. Lookup Color to get name + hexCode for snapshot",
+        "3. Recalculate price with formula: (basePrice * (1 + surcharge%/100) + glassPrice) * qty",
+        "4. Create QuoteItem with all fields including snapshot",
+        "5. Update Quote.total (if applicable)"
+      ],
+      "errors": [
+        {
+          "code": "NOT_FOUND",
+          "message": "Color o modelo no encontrado"
+        },
+        {
+          "code": "BAD_REQUEST",
+          "message": "El color no está asignado a este modelo"
+        },
+        {
+          "code": "BAD_REQUEST",
+          "message": "Discrepancia en el precio calculado (posible manipulación)",
+          "trigger": "Client-provided price differs from server calculation by >0.01"
+        }
+      ],
+      "example": {
+        "input": {
+          "quoteId": "clxQuote001",
+          "modelId": "clxModel123",
+          "colorId": "clxColor005",
+          "name": "Ventana Sala",
+          "quantity": 1,
+          "widthMm": 1200,
+          "heightMm": 1500,
+          "glassTypeId": "clxGlass002",
+          "accessoryApplied": false
+        },
+        "output": {
+          "id": "clxQI001",
+          "quoteId": "clxQuote001",
+          "modelId": "clxModel123",
+          "colorId": "clxColor005",
+          "colorName": "Madera Roble Oscuro",
+          "colorHexCode": "#794D35",
+          "colorSurchargePercentage": 22,
+          "subtotal": 670.5
+        }
+      }
+    },
+
+    "updateQuoteItemColor": {
+      "type": "mutation",
+      "auth": "protectedProcedure",
+      "description": "Update color selection on existing quote item (before quote sent)",
+      "input": {
+        "type": "object",
+        "properties": {
+          "quoteItemId": { "type": "string", "format": "cuid" },
+          "colorId": {
+            "type": "string",
+            "format": "cuid",
+            "optional": true,
+            "nullable": true,
+            "description": "New color ID or null to remove color"
+          }
+        },
+        "required": ["quoteItemId"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "colorId": { "type": "string", "nullable": true },
+          "colorName": { "type": "string", "nullable": true },
+          "colorHexCode": { "type": "string", "nullable": true },
+          "colorSurchargePercentage": { "type": "number", "nullable": true },
+          "subtotal": { "type": "number", "description": "Recalculated price" }
+        }
+      },
+      "businessLogic": {
+        "quoteStatusCheck": "Only allow if quote.status = 'draft' (immutable after sent)",
+        "snapshotUpdate": "Re-capture snapshot from new color (or nullify if colorId=null)",
+        "priceRecalculation": "Recalculate subtotal with new surcharge percentage"
+      },
+      "errors": [
+        {
+          "code": "FORBIDDEN",
+          "message": "No se puede modificar una cotización enviada"
+        },
+        {
+          "code": "BAD_REQUEST",
+          "message": "El color no está disponible para este modelo"
+        }
+      ]
+    }
+  },
+
+  "sharedTypes": {
+    "QuoteItemWithColorInput": {
+      "description": "Extended quote item input schema with color selection",
+      "location": "src/lib/validations/quote.ts",
+      "extends": "QuoteItemInput",
+      "additionalFields": {
+        "colorId": "z.string().cuid().optional()",
+        "colorSurchargePercentage": "z.number().min(0).max(100).optional() // Validated server-side, not from client"
+      }
+    }
+  },
+
+  "clientIntegration": {
+    "colorSelector": {
+      "component": "src/app/(public)/catalog/[modelId]/_components/color-selector.tsx",
+      "pattern": "Client Component with 'use client' directive",
+      "dataFlow": [
+        "1. Server Component loads model + colors via getModelColorsForQuote()",
+        "2. Pass colors array to ColorSelector as props",
+        "3. ColorSelector maintains selectedColorId in local state",
+        "4. On color change, calculate new price client-side (instant feedback)",
+        "5. On form submit, pass colorId to createQuoteItemWithColor()",
+        "6. Server validates color assignment and recalculates price (security)"
+      ],
+      "priceCalculation": {
+        "clientSide": "For instant UI feedback (<200ms requirement)",
+        "formula": "basePrice * (1 + selectedColor.surchargePercentage / 100)",
+        "serverValidation": "Server recalculates to prevent tampering"
+      }
+    },
+    "pdfGeneration": {
+      "location": "PDF template (existing quote PDF generator)",
+      "colorDisplay": [
+        "Show color chip (div with backgroundColor = colorHexCode)",
+        "Display color name next to model name",
+        "If surcharge > 0, show breakdown line: 'Recargo por color {name} (+{%}): ${amount}'"
+      ],
+      "snapshotUsage": "Use colorHexCode/colorName snapshots, NOT live Color lookup (preserves historical accuracy)"
+    }
+  },
+
+  "securityNotes": [
+    "Color selection is public (no auth for browsing), but quote creation requires auth",
+    "Server ALWAYS recalculates price - never trust client-provided subtotal",
+    "Validate colorId belongs to modelId before accepting (prevent client sending invalid combinations)",
+    "Quote item updates only allowed on draft quotes (status check)",
+    "Snapshot immutability enforced - never update color fields after quote creation"
+  ],
+
+  "performanceConsiderations": [
+    "getModelColorsForQuote() cached 5 min (ISR) - colors rarely change",
+    "calculatePriceWithColor() is fast (<50ms) - simple math, no complex queries",
+    "Client-side price calculation for UX - server validation for security",
+    "PDF generation uses snapshots - no database lookups needed",
+    "Expected response times: getModelColors <30ms, createQuoteItem <100ms"
+  ],
+
+  "cacheStrategy": {
+    "modelColors": {
+      "duration": "5 minutes (ISR)",
+      "invalidation": "Revalidate on model color assignment/update via admin",
+      "rationale": "Color configuration changes infrequently, heavy read traffic"
+    },
+    "quoteCreation": {
+      "pattern": "Two-step invalidation (TanStack Query + router.refresh())",
+      "context": "If quote items shown in SSR component with force-dynamic"
+    }
+  }
+}

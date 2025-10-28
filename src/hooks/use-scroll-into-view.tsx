@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 // Small delay to ensure DOM is fully updated before scrolling
 const SCROLL_DELAY_MS = 100;
@@ -16,7 +16,11 @@ const SCROLL_DELAY_MS = 100;
  */
 export function useScrollIntoView<T extends HTMLElement = HTMLDivElement>(
   shouldScroll: boolean,
-  options: ScrollIntoViewOptions = { behavior: 'smooth', block: 'start', inline: 'nearest' }
+  options: ScrollIntoViewOptions = {
+    behavior: "smooth",
+    block: "start",
+    inline: "nearest",
+  }
 ) {
   const ref = useRef<T>(null);
 

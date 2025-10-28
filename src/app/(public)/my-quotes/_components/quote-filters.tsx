@@ -1,31 +1,37 @@
-'use client';
+"use client";
 
-import { Filter, Search, SortAsc, X } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { QuoteSortOption, QuoteStatus } from '../_hooks/use-quote-filters';
-import { useQuoteFilters } from '../_hooks/use-quote-filters';
+import { Filter, Search, SortAsc, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { QuoteSortOption, QuoteStatus } from "../_hooks/use-quote-filters";
+import { useQuoteFilters } from "../_hooks/use-quote-filters";
 
 /**
  * Status filter options with Spanish labels
  */
-const STATUS_OPTIONS: Array<{ value: QuoteStatus | 'all'; label: string }> = [
-  { label: 'Todas', value: 'all' },
-  { label: 'En edición', value: 'draft' },
-  { label: 'Enviada al cliente', value: 'sent' },
-  { label: 'Cancelada', value: 'canceled' },
+const STATUS_OPTIONS: Array<{ value: QuoteStatus | "all"; label: string }> = [
+  { label: "Todas", value: "all" },
+  { label: "En edición", value: "draft" },
+  { label: "Enviada al cliente", value: "sent" },
+  { label: "Cancelada", value: "canceled" },
 ];
 
 /**
  * Sort options with Spanish labels
  */
 const SORT_OPTIONS: Array<{ value: QuoteSortOption; label: string }> = [
-  { label: 'Más recientes', value: 'newest' },
-  { label: 'Más antiguas', value: 'oldest' },
-  { label: 'Mayor valor', value: 'price-high' },
-  { label: 'Menor valor', value: 'price-low' },
+  { label: "Más recientes", value: "newest" },
+  { label: "Más antiguas", value: "oldest" },
+  { label: "Mayor valor", value: "price-high" },
+  { label: "Menor valor", value: "price-low" },
 ];
 
 /**
@@ -86,7 +92,7 @@ export function QuoteFilters({
    * Handle status filter change
    */
   const handleStatusChange = (value: string) => {
-    if (value === 'all') {
+    if (value === "all") {
       setStatus(undefined);
     } else {
       setStatus(value as QuoteStatus);
@@ -111,7 +117,7 @@ export function QuoteFilters({
    * Clear search input
    */
   const handleClearSearch = () => {
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
   return (
@@ -122,7 +128,11 @@ export function QuoteFilters({
         <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center">
           {/* Status Filter */}
           <div className="w-full sm:w-48">
-            <Select disabled={isPending} onValueChange={handleStatusChange} value={filters.status ?? 'all'}>
+            <Select
+              disabled={isPending}
+              onValueChange={handleStatusChange}
+              value={filters.status ?? "all"}
+            >
               <SelectTrigger
                 aria-label="Filtrar cotizaciones por estado"
                 className="w-full"
@@ -170,8 +180,16 @@ export function QuoteFilters({
 
         {/* Right Side: Sort Select */}
         <div className="w-full sm:w-48">
-          <Select disabled={isPending} onValueChange={handleSortChange} value={filters.sortBy}>
-            <SelectTrigger aria-label="Ordenar cotizaciones" className="w-full" data-testid="sort-select">
+          <Select
+            disabled={isPending}
+            onValueChange={handleSortChange}
+            value={filters.sortBy}
+          >
+            <SelectTrigger
+              aria-label="Ordenar cotizaciones"
+              className="w-full"
+              data-testid="sort-select"
+            >
               <SortAsc className="mr-2 size-4" />
               <SelectValue placeholder="Ordenar por" />
             </SelectTrigger>
@@ -190,12 +208,20 @@ export function QuoteFilters({
       {hasActiveFilters && (
         <div className="flex items-center justify-between rounded-md border bg-muted/50 p-3">
           <div className="flex items-center gap-2">
-            <span className="text-muted-foreground text-sm">Filtros activos:</span>
+            <span className="text-muted-foreground text-sm">
+              Filtros activos:
+            </span>
             <Badge data-testid="active-filters-count" variant="secondary">
               {activeFiltersCount}
             </Badge>
           </div>
-          <Button data-testid="clear-filters" disabled={isPending} onClick={clearFilters} size="sm" variant="ghost">
+          <Button
+            data-testid="clear-filters"
+            disabled={isPending}
+            onClick={clearFilters}
+            size="sm"
+            variant="ghost"
+          >
             <X className="mr-2 size-4" />
             Limpiar filtros
           </Button>
@@ -205,7 +231,9 @@ export function QuoteFilters({
       {/* Loading State Indicator */}
       {isPending && (
         <div className="flex items-center justify-center py-2">
-          <div className="text-muted-foreground text-sm">Aplicando filtros...</div>
+          <div className="text-muted-foreground text-sm">
+            Aplicando filtros...
+          </div>
         </div>
       )}
     </div>

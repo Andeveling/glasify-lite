@@ -5,7 +5,7 @@
  * Used across tRPC procedures and UI components.
  */
 
-import type { PerformanceRating } from '@prisma/client';
+import type { PerformanceRating } from "@prisma/client";
 
 /** Scoring constants for solution prioritization */
 const PRIMARY_SOLUTION_BONUS = 20;
@@ -52,15 +52,15 @@ export type SolutionAggregation = {
  */
 export function getRatingScore(rating: PerformanceRating): number {
   switch (rating) {
-    case 'excellent':
+    case "excellent":
       return RATING_EXCELLENT;
-    case 'very_good':
+    case "very_good":
       return RATING_VERY_GOOD;
-    case 'good':
+    case "good":
       return RATING_GOOD;
-    case 'standard':
+    case "standard":
       return RATING_STANDARD;
-    case 'basic':
+    case "basic":
       return RATING_BASIC;
     default:
       return RATING_BASIC;

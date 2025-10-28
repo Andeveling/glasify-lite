@@ -2,7 +2,7 @@
  * Dashboard Metrics Service - Pure business logic
  */
 
-import { formatDateShort } from '@/lib/format';
+import { formatDateShort } from "@/lib/format";
 import type {
   DashboardPeriodType,
   DateRange,
@@ -11,7 +11,7 @@ import type {
   TopGlassType,
   TopModel,
   TrendDataPoint,
-} from '@/types/dashboard';
+} from "@/types/dashboard";
 
 const DAYS_IN_WEEK = 7;
 const DAYS_IN_MONTH = 30;
@@ -22,7 +22,8 @@ const SECONDS_PER_MINUTE = 60;
 const MINUTES_PER_HOUR = 60;
 const HOURS_PER_DAY = 24;
 const MS_PER_SECOND = 1000;
-const MS_PER_DAY = MS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY;
+const MS_PER_DAY =
+  MS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY;
 
 // Catalog analytics constants
 const TOP_ITEMS_LIMIT = 5;
@@ -32,15 +33,15 @@ export function getPeriodDateRange(period: DashboardPeriodType): DateRange {
   const start = new Date();
   let label: string;
 
-  if (period === '7d') {
+  if (period === "7d") {
     start.setDate(start.getDate() - DAYS_IN_WEEK);
-    label = 'Últimos 7 días';
-  } else if (period === '30d') {
+    label = "Últimos 7 días";
+  } else if (period === "30d") {
     start.setDate(start.getDate() - DAYS_IN_MONTH);
-    label = 'Últimos 30 días';
-  } else if (period === '90d') {
+    label = "Últimos 30 días";
+  } else if (period === "90d") {
     start.setDate(start.getDate() - DAYS_IN_QUARTER);
-    label = 'Últimos 90 días';
+    label = "Últimos 90 días";
   } else {
     start.setFullYear(end.getFullYear(), 0, 1);
     label = `Año ${end.getFullYear()}`;
@@ -53,7 +54,10 @@ export function calculateConversionRate(sent: number, total: number): number {
   return total === 0 ? 0 : sent / total;
 }
 
-export function calculatePercentageChange(current: number, previous: number): number {
+export function calculatePercentageChange(
+  current: number,
+  previous: number
+): number {
   return previous === 0 ? 0 : (current - previous) / previous;
 }
 
@@ -114,21 +118,23 @@ export function aggregateQuotesByDate(
 
   // Aggregate existing quotes
   for (const quote of quotes) {
-    const dateKey = quote.createdAt.toISOString().split('T')[0]; // YYYY-MM-DD
+    const dateKey = quote.createdAt.toISOString().split("T")[0]; // YYYY-MM-DD
     if (dateKey) {
       countsByDate.set(dateKey, (countsByDate.get(dateKey) ?? 0) + 1);
     }
   }
 
   // Calculate number of days in range
-  const daysDiff = Math.ceil((dateRange.end.getTime() - dateRange.start.getTime()) / MS_PER_DAY);
+  const daysDiff = Math.ceil(
+    (dateRange.end.getTime() - dateRange.start.getTime()) / MS_PER_DAY
+  );
 
   // Fill gaps with zero counts
   const result: TrendDataPoint[] = [];
   const currentDate = new Date(dateRange.start);
 
   for (let i = 0; i <= daysDiff; i++) {
-    const dateKey = currentDate.toISOString().split('T')[0];
+    const dateKey = currentDate.toISOString().split("T")[0];
 
     if (dateKey) {
       result.push({
@@ -182,7 +188,10 @@ export function getTopModels(
   }>
 ): TopModel[] {
   // Count items by modelId
-  const countsByModel = new Map<string, { count: number; modelName: string; supplierName: string | null }>();
+  const countsByModel = new Map<
+    string,
+    { count: number; modelName: string; supplierName: string | null }
+  >();
 
   for (const item of quoteItems) {
     const existing = countsByModel.get(item.modelId);
@@ -319,11 +328,14 @@ export function getSupplierDistribution(
   }>
 ): SupplierDistribution[] {
   // Count items by supplierId (null for models without supplier)
-  const countsBySupplier = new Map<string | null, { count: number; supplierName: string }>();
+  const countsBySupplier = new Map<
+    string | null,
+    { count: number; supplierName: string }
+  >();
 
   for (const item of quoteItems) {
     const supplierId = item.model.profileSupplier?.id ?? null;
-    const supplierName = item.model.profileSupplier?.name ?? 'Sin fabricante';
+    const supplierName = item.model.profileSupplier?.name ?? "Sin fabricante";
 
     const existing = countsBySupplier.get(supplierId);
     if (existing) {
@@ -372,7 +384,9 @@ export function getSupplierDistribution(
  * // Returns: { totalValue: 7000000, averageValue: 2333333.33 }
  * ```
  */
-export function calculateMonetaryMetrics(quotes: Array<{ total: { toNumber: () => number } }>): {
+export function calculateMonetaryMetrics(
+  quotes: Array<{ total: { toNumber: () => number } }>
+): {
   averageValue: number;
   totalValue: number;
 } {
@@ -380,7 +394,10 @@ export function calculateMonetaryMetrics(quotes: Array<{ total: { toNumber: () =
     return { averageValue: 0, totalValue: 0 };
   }
 
-  const totalValue = quotes.reduce((sum, quote) => sum + quote.total.toNumber(), 0);
+  const totalValue = quotes.reduce(
+    (sum, quote) => sum + quote.total.toNumber(),
+    0
+  );
   const averageValue = totalValue / quotes.length;
 
   return { averageValue, totalValue };
@@ -417,10 +434,10 @@ export function calculateMonetaryMetrics(quotes: Array<{ total: { toNumber: () =
 export function groupQuotesByPriceRange(
   quotes: Array<{ total: { toNumber: () => number } }>,
   ranges: Array<{ label: string; max: number | null; min: number }> = [
-    { label: '0 - 1M', max: 1_000_000, min: 0 },
-    { label: '1M - 5M', max: 5_000_000, min: 1_000_000 },
-    { label: '5M - 10M', max: 10_000_000, min: 5_000_000 },
-    { label: '10M+', max: null, min: 10_000_000 },
+    { label: "0 - 1M", max: 1_000_000, min: 0 },
+    { label: "1M - 5M", max: 5_000_000, min: 1_000_000 },
+    { label: "5M - 10M", max: 10_000_000, min: 5_000_000 },
+    { label: "10M+", max: null, min: 10_000_000 },
   ]
 ): Array<{ count: number; label: string; max: number | null; min: number }> {
   // Initialize counts

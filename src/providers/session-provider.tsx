@@ -8,7 +8,7 @@
  * @module providers/session-provider
  */
 
-'use client';
+"use client";
 
 type SessionProviderProps = {
   children: React.ReactNode;

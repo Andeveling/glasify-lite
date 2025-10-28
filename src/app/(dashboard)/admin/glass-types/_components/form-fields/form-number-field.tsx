@@ -12,13 +12,20 @@
  * @module _components/form-fields/form-number-field
  */
 
-'use client';
+"use client";
 
-import type { Control, FieldPath, FieldValues } from 'react-hook-form';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import type { Control, FieldPath, FieldValues } from "react-hook-form";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
-interface FormNumberFieldProps<TFieldValues extends FieldValues> {
+type FormNumberFieldProps<TFieldValues extends FieldValues> = {
   control: Control<TFieldValues>;
   name: FieldPath<TFieldValues>;
   label: string;
@@ -29,7 +36,7 @@ interface FormNumberFieldProps<TFieldValues extends FieldValues> {
   step?: number;
   required?: boolean;
   disabled?: boolean;
-}
+};
 
 /**
  * Reusable number input field component
@@ -54,7 +61,7 @@ export function FormNumberField<TFieldValues extends FieldValues>({
         <FormItem>
           <FormLabel>
             {label}
-            {required && ' *'}
+            {required && " *"}
           </FormLabel>
           <FormControl>
             <Input
@@ -64,12 +71,12 @@ export function FormNumberField<TFieldValues extends FieldValues>({
               min={min}
               onChange={(e) => {
                 const value = e.target.value;
-                field.onChange(value === '' ? undefined : Number(value));
+                field.onChange(value === "" ? undefined : Number(value));
               }}
               placeholder={placeholder}
               step={step}
               type="number"
-              value={field.value ?? ''}
+              value={field.value ?? ""}
             />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}

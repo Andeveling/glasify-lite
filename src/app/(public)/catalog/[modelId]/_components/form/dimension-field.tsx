@@ -1,9 +1,16 @@
-import type { Control, FieldValues, Path } from 'react-hook-form';
-import { DimensionInput } from '@/components/dimension-input';
-import { DimensionSlider } from '@/components/dimension-slider';
-import { SuggestedValueBadges } from '@/components/suggested-value-badges';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { ValidationIndicator } from '@/components/validation-indicator';
+import type { Control, FieldValues, Path } from "react-hook-form";
+import { DimensionInput } from "@/components/dimension-input";
+import { DimensionSlider } from "@/components/dimension-slider";
+import { SuggestedValueBadges } from "@/components/suggested-value-badges";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { ValidationIndicator } from "@/components/validation-indicator";
 
 type DimensionFieldProps<T extends FieldValues> = {
   control: Control<T>;
@@ -34,7 +41,9 @@ export function DimensionField<T extends FieldValues>({
   suggestedValues,
 }: DimensionFieldProps<T>) {
   // Determine dimension type based on label
-  const dimensionType = label.toLowerCase().includes('ancho') ? 'width' : 'height';
+  const dimensionType = label.toLowerCase().includes("ancho")
+    ? "width"
+    : "height";
 
   return (
     <FormField
@@ -47,7 +56,10 @@ export function DimensionField<T extends FieldValues>({
           <FormItem className="space-y-2">
             <div className="flex items-center justify-between gap-2">
               <FormLabel className="text-sm">{label}</FormLabel>
-              <ValidationIndicator isValid={fieldIsValid} showIndicator={!!field.value} />
+              <ValidationIndicator
+                isValid={fieldIsValid}
+                showIndicator={!!field.value}
+              />
             </div>
 
             <FormControl>
@@ -68,14 +80,18 @@ export function DimensionField<T extends FieldValues>({
                 min={min}
                 onChange={onSliderChange}
                 step={10}
-                trackColor={fieldIsValid ? 'muted' : 'destructive'}
+                trackColor={fieldIsValid ? "muted" : "destructive"}
                 value={localValue}
               />
             </div>
 
             {/* Show suggested values only on desktop (lg breakpoint) */}
             <div className="hidden lg:block">
-              <SuggestedValueBadges currentValue={field.value} onSelect={field.onChange} values={suggestedValues} />
+              <SuggestedValueBadges
+                currentValue={field.value}
+                onSelect={field.onChange}
+                values={suggestedValues}
+              />
             </div>
 
             <FormDescription className="text-xs">

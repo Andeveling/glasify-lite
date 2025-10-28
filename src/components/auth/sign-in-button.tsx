@@ -13,11 +13,11 @@
  * @module components/auth/sign-in-button
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { signIn } from '@/lib/auth-client';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { signIn } from "@/lib/auth-client";
 
 // ============================================================================
 // Types
@@ -31,10 +31,16 @@ export type SignInButtonProps = {
   children?: React.ReactNode;
 
   /** Button variant */
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  variant?:
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link";
 
   /** Button size */
-  size?: 'default' | 'sm' | 'lg' | 'icon';
+  size?: "default" | "sm" | "lg" | "icon";
 
   /** Custom CSS class */
   className?: string;
@@ -55,10 +61,10 @@ export type SignInButtonProps = {
  * ```
  */
 export function SignInButton({
-  callbackUrl = '/dashboard',
-  children = 'Iniciar sesión con Google',
-  variant = 'default',
-  size = 'default',
+  callbackUrl = "/dashboard",
+  children = "Iniciar sesión con Google",
+  variant = "default",
+  size = "default",
   className,
 }: SignInButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
@@ -73,7 +79,7 @@ export function SignInButton({
       // Trigger Google OAuth flow
       await signIn.social({
         callbackURL: callbackUrl,
-        provider: 'google',
+        provider: "google",
       });
     } catch {
       setIsLoading(false);
@@ -89,7 +95,7 @@ export function SignInButton({
       type="button"
       variant={variant}
     >
-      {isLoading ? 'Iniciando sesión...' : children}
+      {isLoading ? "Iniciando sesión..." : children}
     </Button>
   );
 }

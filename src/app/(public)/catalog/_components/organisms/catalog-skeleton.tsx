@@ -1,6 +1,6 @@
-import { generateStableKeyedArray } from '@/app/_utils/generate-keys.util';
-import { ModelCardSkeleton } from '@/app/(public)/catalog/_components/molecules/model-card-skeleton';
-import { Skeleton } from '@/components/ui/skeleton';
+import { generateStableKeyedArray } from "@/app/_utils/generate-keys.util";
+import { ModelCardSkeleton } from "@/app/(public)/catalog/_components/molecules/model-card-skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 /**
  * CatalogSkeleton - Loading State
@@ -19,12 +19,17 @@ export function CatalogSkeleton() {
       </div>
 
       {/* Skeleton grid - igual que CatalogGrid */}
-      <ul aria-label="Cargando productos..." className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {generateStableKeyedArray(skeletonItemsCount, 'catalog-skeleton').map((item) => (
-          <li key={item.key}>
-            <ModelCardSkeleton />
-          </li>
-        ))}
+      <ul
+        aria-label="Cargando productos..."
+        className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
+      >
+        {generateStableKeyedArray(skeletonItemsCount, "catalog-skeleton").map(
+          (item) => (
+            <li key={item.key}>
+              <ModelCardSkeleton />
+            </li>
+          )
+        )}
       </ul>
     </div>
   );

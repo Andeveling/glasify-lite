@@ -1,10 +1,15 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { CheckCircle2, LayoutGrid, RotateCcw, ShoppingCart } from 'lucide-react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { motion } from "framer-motion";
+import {
+  CheckCircle2,
+  LayoutGrid,
+  RotateCcw,
+  ShoppingCart,
+} from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 type AddedToCartActionsProps = {
   modelName: string;
@@ -22,7 +27,11 @@ type AddedToCartActionsProps = {
  *
  * @component
  */
-export function AddedToCartActions({ modelName, onConfigureAnotherAction, ref }: AddedToCartActionsProps) {
+export function AddedToCartActions({
+  modelName,
+  onConfigureAnotherAction,
+  ref,
+}: AddedToCartActionsProps) {
   return (
     <motion.div
       animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -30,8 +39,8 @@ export function AddedToCartActions({ modelName, onConfigureAnotherAction, ref }:
       ref={ref}
       transition={{
         duration: 0.4,
-        ease: 'easeOut',
-        y: { damping: 15, stiffness: 100, type: 'spring' },
+        ease: "easeOut",
+        y: { damping: 15, stiffness: 100, type: "spring" },
       }}
     >
       <Card className="border-2 border-success/50 bg-success/5 p-6">
@@ -40,7 +49,9 @@ export function AddedToCartActions({ modelName, onConfigureAnotherAction, ref }:
           <div className="flex items-start gap-3">
             <CheckCircle2 className="mt-0.5 size-6 shrink-0 text-success" />
             <div className="flex-1">
-              <h3 className="font-semibold text-lg text-success">¡Agregado exitosamente!</h3>
+              <h3 className="font-semibold text-lg text-success">
+                ¡Agregado exitosamente!
+              </h3>
               <p className="mt-1 text-muted-foreground text-sm">
                 <strong>{modelName}</strong> ha sido agregado a tu carrito
               </p>
@@ -62,7 +73,12 @@ export function AddedToCartActions({ modelName, onConfigureAnotherAction, ref }:
 
             {/* Secondary Actions */}
             <div className="flex gap-3 sm:flex-row">
-              <Button asChild className="flex-1 justify-start gap-2 sm:flex-initial" size="lg" variant="outline">
+              <Button
+                asChild
+                className="flex-1 justify-start gap-2 sm:flex-initial"
+                size="lg"
+                variant="outline"
+              >
                 <Link href="/catalog" prefetch>
                   <LayoutGrid className="size-5" />
                   <span className="sm:hidden">Explorar catálogo</span>
@@ -70,7 +86,12 @@ export function AddedToCartActions({ modelName, onConfigureAnotherAction, ref }:
                 </Link>
               </Button>
 
-              <Button asChild className="flex-1 justify-start gap-2 sm:flex-initial" size="lg" variant="outline">
+              <Button
+                asChild
+                className="flex-1 justify-start gap-2 sm:flex-initial"
+                size="lg"
+                variant="outline"
+              >
                 <Link href="/cart" prefetch>
                   <ShoppingCart className="size-5" />
                   <span className="sm:hidden">Ver carrito</span>

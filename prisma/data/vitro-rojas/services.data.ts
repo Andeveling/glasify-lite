@@ -8,7 +8,7 @@
  * @date 2025-01-21
  */
 
-import type { ServiceInput } from '../../factories/service.factory';
+import type { ServiceInput } from "../../factories/service.factory";
 
 /**
  * Servicios de Vitro Rojas
@@ -20,33 +20,33 @@ import type { ServiceInput } from '../../factories/service.factory';
  */
 export const vitroRojasServices: ServiceInput[] = [
   {
-    name: 'Instalación de Ventanas',
+    name: "Instalación de Ventanas",
     rate: 15, // USD/m²
-    type: 'area',
-    unit: 'sqm',
+    type: "area",
+    unit: "sqm",
   },
   {
-    name: 'Sellado Perimetral',
+    name: "Sellado Perimetral",
     rate: 3.5, // USD/ml
-    type: 'perimeter',
-    unit: 'ml',
+    type: "perimeter",
+    unit: "ml",
   },
   {
-    name: 'Desmonte de Ventana Existente',
+    name: "Desmonte de Ventana Existente",
     rate: 25, // USD/unidad
-    type: 'fixed',
-    unit: 'unit',
+    type: "fixed",
+    unit: "unit",
   },
   {
-    name: 'Servicio de Reposición',
+    name: "Servicio de Reposición",
     rate: 35, // USD/unidad
-    type: 'fixed',
-    unit: 'unit',
+    type: "fixed",
+    unit: "unit",
   },
   {
-    name: 'Protección para Obra',
+    name: "Protección para Obra",
     rate: 2.5, // USD/m²
-    type: 'area',
-    unit: 'sqm',
+    type: "area",
+    unit: "sqm",
   },
 ];

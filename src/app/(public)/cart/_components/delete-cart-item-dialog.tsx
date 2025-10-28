@@ -13,7 +13,7 @@
  * @module app/(public)/cart/_components/delete-cart-item-dialog
  */
 
-'use client';
+"use client";
 
 import {
   AlertDialog,
@@ -24,7 +24,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 
 // ============================================================================
 // Types
@@ -70,7 +70,12 @@ export type DeleteCartItemDialogProps = {
  * }
  * ```
  */
-export function DeleteCartItemDialog({ open, onOpenChange, itemName, onConfirm }: DeleteCartItemDialogProps) {
+export function DeleteCartItemDialog({
+  open,
+  onOpenChange,
+  itemName,
+  onConfirm,
+}: DeleteCartItemDialogProps) {
   /**
    * Handle confirmation click
    */
@@ -85,8 +90,9 @@ export function DeleteCartItemDialog({ open, onOpenChange, itemName, onConfirm }
         <AlertDialogHeader>
           <AlertDialogTitle>¿Eliminar artículo?</AlertDialogTitle>
           <AlertDialogDescription>
-            Estás a punto de eliminar <span className="font-semibold">"{itemName}"</span> del carrito. Esta acción no se
-            puede deshacer.
+            Estás a punto de eliminar{" "}
+            <span className="font-semibold">"{itemName}"</span> del carrito.
+            Esta acción no se puede deshacer.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

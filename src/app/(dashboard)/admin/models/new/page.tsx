@@ -6,11 +6,11 @@
  * Route: /admin/models/new
  */
 
-import type { Metadata } from 'next';
-import { ModelForm } from '../_components/model-form';
+import type { Metadata } from "next";
+import { ModelForm } from "../_components/model-form";
 
 export const metadata: Metadata = {
-  title: 'Crear Modelo | Admin',
+  title: "Crear Modelo | Admin",
 };
 
 export default function NewModelPage() {
@@ -18,7 +18,9 @@ export default function NewModelPage() {
     <div className="space-y-6">
       <div>
         <h1 className="font-bold text-3xl tracking-tight">Crear Modelo</h1>
-        <p className="text-muted-foreground">Crea un nuevo modelo de ventana o puerta</p>
+        <p className="text-muted-foreground">
+          Crea un nuevo modelo de ventana o puerta
+        </p>
       </div>
 
       <ModelForm mode="create" />

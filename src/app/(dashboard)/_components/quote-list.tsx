@@ -1,19 +1,44 @@
-'use client';
+"use client";
 
-import { Eye, Filter, MessageCircle, Search } from 'lucide-react';
-import { useState } from 'react';
-import { generateStableKeyedArray } from '@/app/_utils/generate-keys.util';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { formatDate } from '@/lib/utils';
-import { useTenantConfig } from '@/providers/tenant-config-provider';
+import { Eye, Filter, MessageCircle, Search } from "lucide-react";
+import { useState } from "react";
+import { generateStableKeyedArray } from "@/app/_utils/generate-keys.util";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { formatDate } from "@/lib/utils";
+import { useTenantConfig } from "@/providers/tenant-config-provider";
 
 // Types for quote data
-type QuoteStatus = 'draft' | 'calculating' | 'pending' | 'submitted' | 'completed' | 'cancelled';
+type QuoteStatus =
+  | "draft"
+  | "calculating"
+  | "pending"
+  | "submitted"
+  | "completed"
+  | "cancelled";
 
 type Quote = {
   id: string;
@@ -31,58 +56,58 @@ type Quote = {
 // Mock data for development
 const MOCK_QUOTES: Quote[] = [
   {
-    createdAt: '2024-01-15T10:30:00Z',
-    customerEmail: 'juan.perez@email.com',
-    customerName: 'Juan Pérez',
-    customerPhone: '+54 9 11 1234-5678',
-    estimatedDelivery: '2024-01-22T00:00:00Z',
-    id: 'cm1quote123456789abcdef01',
+    createdAt: "2024-01-15T10:30:00Z",
+    customerEmail: "juan.perez@email.com",
+    customerName: "Juan Pérez",
+    customerPhone: "+54 9 11 1234-5678",
+    estimatedDelivery: "2024-01-22T00:00:00Z",
+    id: "cm1quote123456789abcdef01",
     itemCount: 3,
-    status: 'submitted',
+    status: "submitted",
     totalAmount: 450_000,
-    updatedAt: '2024-01-15T14:20:00Z',
+    updatedAt: "2024-01-15T14:20:00Z",
   },
   {
-    createdAt: '2024-01-14T16:45:00Z',
-    customerEmail: 'maria.gonzalez@email.com',
-    customerName: 'María González',
-    id: 'cm1quote234567890bcdef012',
+    createdAt: "2024-01-14T16:45:00Z",
+    customerEmail: "maria.gonzalez@email.com",
+    customerName: "María González",
+    id: "cm1quote234567890bcdef012",
     itemCount: 2,
-    status: 'pending',
+    status: "pending",
     totalAmount: 320_000,
-    updatedAt: '2024-01-14T16:45:00Z',
+    updatedAt: "2024-01-14T16:45:00Z",
   },
   {
-    createdAt: '2024-01-13T09:15:00Z',
-    customerEmail: 'carlos.rodriguez@email.com',
-    customerName: 'Carlos Rodríguez',
-    customerPhone: '+54 9 11 9876-5432',
-    id: 'cm1quote345678901cdef0123',
+    createdAt: "2024-01-13T09:15:00Z",
+    customerEmail: "carlos.rodriguez@email.com",
+    customerName: "Carlos Rodríguez",
+    customerPhone: "+54 9 11 9876-5432",
+    id: "cm1quote345678901cdef0123",
     itemCount: 5,
-    status: 'calculating',
+    status: "calculating",
     totalAmount: 890_000,
-    updatedAt: '2024-01-13T11:30:00Z',
+    updatedAt: "2024-01-13T11:30:00Z",
   },
   {
-    createdAt: '2024-01-10T14:20:00Z',
-    customerEmail: 'ana.martinez@email.com',
-    customerName: 'Ana Martínez',
-    estimatedDelivery: '2024-01-20T00:00:00Z',
-    id: 'cm1quote456789012def01234',
+    createdAt: "2024-01-10T14:20:00Z",
+    customerEmail: "ana.martinez@email.com",
+    customerName: "Ana Martínez",
+    estimatedDelivery: "2024-01-20T00:00:00Z",
+    id: "cm1quote456789012def01234",
     itemCount: 1,
-    status: 'completed',
+    status: "completed",
     totalAmount: 150_000,
-    updatedAt: '2024-01-12T10:15:00Z',
+    updatedAt: "2024-01-12T10:15:00Z",
   },
   {
-    createdAt: '2024-01-09T11:00:00Z',
-    customerEmail: 'roberto.silva@email.com',
-    customerName: 'Roberto Silva',
-    id: 'cm1quote567890123ef012345',
+    createdAt: "2024-01-09T11:00:00Z",
+    customerEmail: "roberto.silva@email.com",
+    customerName: "Roberto Silva",
+    id: "cm1quote567890123ef012345",
     itemCount: 4,
-    status: 'draft',
+    status: "draft",
     totalAmount: 0,
-    updatedAt: '2024-01-09T11:00:00Z',
+    updatedAt: "2024-01-09T11:00:00Z",
   },
 ];
 
@@ -90,14 +115,17 @@ const QUOTE_SKELETON_COUNT = 5;
 
 const STATUS_CONFIG: Record<
   QuoteStatus,
-  { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }
+  {
+    label: string;
+    variant: "default" | "secondary" | "destructive" | "outline";
+  }
 > = {
-  calculating: { label: 'Calculando', variant: 'outline' },
-  cancelled: { label: 'Cancelada', variant: 'destructive' },
-  completed: { label: 'Completada', variant: 'default' },
-  draft: { label: 'Borrador', variant: 'secondary' },
-  pending: { label: 'Pendiente', variant: 'outline' },
-  submitted: { label: 'Enviada', variant: 'default' },
+  calculating: { label: "Calculando", variant: "outline" },
+  cancelled: { label: "Cancelada", variant: "destructive" },
+  completed: { label: "Completada", variant: "default" },
+  draft: { label: "Borrador", variant: "secondary" },
+  pending: { label: "Pendiente", variant: "outline" },
+  submitted: { label: "Enviada", variant: "default" },
 };
 
 type QuoteListProps = {
@@ -107,10 +135,15 @@ type QuoteListProps = {
   isLoading?: boolean;
 };
 
-export function QuoteList({ quotes = MOCK_QUOTES, onViewQuote, onContactCustomer, isLoading = false }: QuoteListProps) {
+export function QuoteList({
+  quotes = MOCK_QUOTES,
+  onViewQuote,
+  onContactCustomer,
+  isLoading = false,
+}: QuoteListProps) {
   const { locale, timezone } = useTenantConfig();
-  const [statusFilter, setStatusFilter] = useState<QuoteStatus | 'all'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<QuoteStatus | "all">("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Filter quotes based on search and status
   const filteredQuotes = quotes.filter((quote) => {
@@ -119,16 +152,17 @@ export function QuoteList({ quotes = MOCK_QUOTES, onViewQuote, onContactCustomer
       quote.customerEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
       quote.id.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesStatus = statusFilter === 'all' || quote.status === statusFilter;
+    const matchesStatus =
+      statusFilter === "all" || quote.status === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
 
   // Format currency
   const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat('es-AR', {
-      currency: 'ARS',
-      style: 'currency',
+    new Intl.NumberFormat("es-AR", {
+      currency: "ARS",
+      style: "currency",
     }).format(amount);
 
   if (isLoading) {
@@ -139,8 +173,14 @@ export function QuoteList({ quotes = MOCK_QUOTES, onViewQuote, onContactCustomer
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {generateStableKeyedArray(QUOTE_SKELETON_COUNT, 'quote-skeleton').map((item) => (
-              <div className="h-16 animate-pulse rounded bg-muted" key={item.key} />
+            {generateStableKeyedArray(
+              QUOTE_SKELETON_COUNT,
+              "quote-skeleton"
+            ).map((item) => (
+              <div
+                className="h-16 animate-pulse rounded bg-muted"
+                key={item.key}
+              />
             ))}
           </div>
         </CardContent>
@@ -152,7 +192,9 @@ export function QuoteList({ quotes = MOCK_QUOTES, onViewQuote, onContactCustomer
     <Card>
       <CardHeader>
         <CardTitle>Gestión de Cotizaciones</CardTitle>
-        <CardDescription>Administra y supervisa todas las cotizaciones de clientes</CardDescription>
+        <CardDescription>
+          Administra y supervisa todas las cotizaciones de clientes
+        </CardDescription>
       </CardHeader>
       <CardContent>
         {/* Filters and Search */}
@@ -171,7 +213,12 @@ export function QuoteList({ quotes = MOCK_QUOTES, onViewQuote, onContactCustomer
 
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4 text-muted-foreground" />
-            <Select onValueChange={(value) => setStatusFilter(value as QuoteStatus | 'all')} value={statusFilter}>
+            <Select
+              onValueChange={(value) =>
+                setStatusFilter(value as QuoteStatus | "all")
+              }
+              value={statusFilter}
+            >
               <SelectTrigger className="w-40">
                 <SelectValue placeholder="Estado" />
               </SelectTrigger>
@@ -191,9 +238,9 @@ export function QuoteList({ quotes = MOCK_QUOTES, onViewQuote, onContactCustomer
         {/* Quotes Table */}
         {filteredQuotes.length === 0 ? (
           <div className="py-8 text-center text-muted-foreground">
-            {searchQuery || statusFilter !== 'all'
-              ? 'No se encontraron cotizaciones con los filtros aplicados.'
-              : 'No hay cotizaciones disponibles.'}
+            {searchQuery || statusFilter !== "all"
+              ? "No se encontraron cotizaciones con los filtros aplicados."
+              : "No hay cotizaciones disponibles."}
           </div>
         ) : (
           <div className="rounded-md border">
@@ -215,17 +262,30 @@ export function QuoteList({ quotes = MOCK_QUOTES, onViewQuote, onContactCustomer
                     <TableCell>
                       <div>
                         <div className="font-medium">{quote.customerName}</div>
-                        <div className="text-muted-foreground text-sm">{quote.customerEmail}</div>
+                        <div className="text-muted-foreground text-sm">
+                          {quote.customerEmail}
+                        </div>
                         {quote.customerPhone && (
-                          <div className="text-muted-foreground text-sm">{quote.customerPhone}</div>
+                          <div className="text-muted-foreground text-sm">
+                            {quote.customerPhone}
+                          </div>
                         )}
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={STATUS_CONFIG[quote.status].variant}>{STATUS_CONFIG[quote.status].label}</Badge>
+                      <Badge variant={STATUS_CONFIG[quote.status].variant}>
+                        {STATUS_CONFIG[quote.status].label}
+                      </Badge>
                       {quote.estimatedDelivery && (
                         <div className="mt-1 text-muted-foreground text-xs">
-                          Entrega: {formatDate(quote.estimatedDelivery, locale, timezone).split(',')[0]}
+                          Entrega:{" "}
+                          {
+                            formatDate(
+                              quote.estimatedDelivery,
+                              locale,
+                              timezone
+                            ).split(",")[0]
+                          }
                         </div>
                       )}
                     </TableCell>
@@ -280,7 +340,9 @@ export function QuoteList({ quotes = MOCK_QUOTES, onViewQuote, onContactCustomer
         <div className="mt-6 border-t pt-4">
           <div className="text-muted-foreground text-sm">
             Mostrando {filteredQuotes.length} de {quotes.length} cotizaciones
-            {(searchQuery || statusFilter !== 'all') && <span> • Filtros aplicados</span>}
+            {(searchQuery || statusFilter !== "all") && (
+              <span> • Filtros aplicados</span>
+            )}
           </div>
         </div>
       </CardContent>

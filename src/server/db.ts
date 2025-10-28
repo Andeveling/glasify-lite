@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
-import logger from '@/lib/logger';
+import logger from "@/lib/logger";
 
 /**
  * Performance threshold for slow query logging (milliseconds)
@@ -20,13 +20,16 @@ const SLOW_QUERY_THRESHOLD_MS = 500;
  */
 const createPrismaClient = () => {
   const client = new PrismaClient({
-    log: (process.env.NODE_ENV ?? 'development') === 'development' ? ['query', 'error', 'warn'] : ['error'],
+    log:
+      (process.env.NODE_ENV ?? "development") === "development"
+        ? ["query", "error", "warn"]
+        : ["error"],
   });
 
   // Performance monitoring: Log slow queries for optimization (development only)
-  if ((process.env.NODE_ENV ?? 'development') !== 'production') {
+  if ((process.env.NODE_ENV ?? "development") !== "production") {
     return client.$extends({
-      name: 'slowQueryLogger',
+      name: "slowQueryLogger",
       query: {
         async $allOperations({ operation, model, args, query }) {
           const startTime = Date.now();
@@ -35,7 +38,7 @@ const createPrismaClient = () => {
 
           // Log slow queries for performance analysis
           if (duration > SLOW_QUERY_THRESHOLD_MS) {
-            logger.warn('Slow query detected', {
+            logger.warn("Slow query detected", {
               args: JSON.stringify(args),
               duration: `${duration}ms`,
               model,
@@ -60,8 +63,9 @@ const globalForPrisma = globalThis as unknown as {
 // Export the db client
 // In development, this is extended with performance monitoring
 // In production, this is a standard PrismaClient
-export const db = (globalForPrisma.prisma ?? createPrismaClient()) as unknown as PrismaClient;
+export const db = (globalForPrisma.prisma ??
+  createPrismaClient()) as unknown as PrismaClient;
 
-if ((process.env.NODE_ENV ?? 'development') !== 'production') {
+if ((process.env.NODE_ENV ?? "development") !== "production") {
   globalForPrisma.prisma = db as ReturnType<typeof createPrismaClient>;
 }

@@ -7,38 +7,39 @@
  * @module ImageUtils
  */
 
-import type { WindowType } from '@/types/window.types';
-import { getWindowDiagramPath } from './window-diagram-map';
+import type { WindowType } from "@/types/window.types";
+import { getWindowDiagramPath } from "./window-diagram-map";
 
 /**
  * Image size presets for product thumbnails
  */
-export type ImageSize = 'sm' | 'md' | 'lg' | 'xl';
+export type ImageSize = "sm" | "md" | "lg" | "xl";
 
 /**
  * Image size dimensions (width x height in pixels)
  */
-export const IMAGE_SIZES: Record<ImageSize, { width: number; height: number }> = {
-  lg: { height: 320, width: 320 }, // Detail view
-  md: { height: 160, width: 160 }, // Grid thumbnail
-  sm: { height: 80, width: 80 }, // List item preview
-  xl: { height: 640, width: 640 }, // Lightbox/full view
-};
+export const IMAGE_SIZES: Record<ImageSize, { width: number; height: number }> =
+  {
+    lg: { height: 320, width: 320 }, // Detail view
+    md: { height: 160, width: 160 }, // Grid thumbnail
+    sm: { height: 80, width: 80 }, // List item preview
+    xl: { height: 640, width: 640 }, // Lightbox/full view
+  };
 
 /**
  * CDN configuration (placeholder - update with actual CDN)
  */
-const CDN_BASE_URL = process.env.NEXT_PUBLIC_CDN_URL ?? '';
+const CDN_BASE_URL = process.env.NEXT_PUBLIC_CDN_URL ?? "";
 
 /**
  * Default placeholder image when no product image exists
  */
-const DEFAULT_PLACEHOLDER = '/images/placeholder-product.svg';
+const DEFAULT_PLACEHOLDER = "/images/placeholder-product.svg";
 
 /**
  * Image format preferences (modern formats first)
  */
-const SUPPORTED_FORMATS = ['webp', 'avif', 'png', 'jpg', 'jpeg'] as const;
+const SUPPORTED_FORMATS = ["webp", "avif", "png", "jpg", "jpeg"] as const;
 export type ImageFormat = (typeof SUPPORTED_FORMATS)[number];
 
 /**
@@ -61,8 +62,8 @@ export type ImageFormat = (typeof SUPPORTED_FORMATS)[number];
  */
 export function getOptimizedImageUrl(
   imageUrl: string | null | undefined,
-  size: ImageSize = 'md',
-  format: ImageFormat = 'webp'
+  size: ImageSize = "md",
+  format: ImageFormat = "webp"
 ): string {
   if (!imageUrl) {
     return DEFAULT_PLACEHOLDER;
@@ -72,14 +73,16 @@ export function getOptimizedImageUrl(
   if (CDN_BASE_URL) {
     const dimensions = IMAGE_SIZES[size];
     const params = new URLSearchParams({
-      fit: 'cover',
+      fit: "cover",
       fmt: format,
       h: dimensions.height.toString(),
-      q: '85', // Quality 85%
+      q: "85", // Quality 85%
       w: dimensions.width.toString(),
     });
 
-    const baseUrl = imageUrl.startsWith('http') ? imageUrl : `${CDN_BASE_URL}${imageUrl}`;
+    const baseUrl = imageUrl.startsWith("http")
+      ? imageUrl
+      : `${CDN_BASE_URL}${imageUrl}`;
     return `${baseUrl}?${params.toString()}`;
   }
 
@@ -111,7 +114,7 @@ export function getOptimizedImageUrl(
 export function getProductImageWithFallback(
   productImageUrl: string | null | undefined,
   windowType?: WindowType | string | null,
-  size: ImageSize = 'md'
+  size: ImageSize = "md"
 ): string {
   // Priority 1: Product image
   if (productImageUrl) {
@@ -134,7 +137,7 @@ export function getProductImageWithFallback(
  * @returns True if URL is external (starts with http/https)
  */
 export function isExternalImage(url: string): boolean {
-  return url.startsWith('http://') || url.startsWith('https://');
+  return url.startsWith("http://") || url.startsWith("https://");
 }
 
 /**
@@ -144,7 +147,7 @@ export function isExternalImage(url: string): boolean {
  * @returns True if URL ends with .svg
  */
 export function isSvgImage(url: string): boolean {
-  return url.toLowerCase().endsWith('.svg');
+  return url.toLowerCase().endsWith(".svg");
 }
 
 /**
@@ -162,7 +165,10 @@ export function isSvgImage(url: string): boolean {
  * // '/uploads/window.jpg?w=160 1x, /uploads/window.jpg?w=320 2x, /uploads/window.jpg?w=480 3x'
  * ```
  */
-export function generateSrcSet(imageUrl: string | null | undefined, size: ImageSize = 'md'): string | undefined {
+export function generateSrcSet(
+  imageUrl: string | null | undefined,
+  size: ImageSize = "md"
+): string | undefined {
   if (!imageUrl || isSvgImage(imageUrl)) {
     return; // SVGs don't need srcset
   }
@@ -174,25 +180,27 @@ export function generateSrcSet(imageUrl: string | null | undefined, size: ImageS
   }
 
   const variants = [
-    { descriptor: '1x', scale: 1 },
-    { descriptor: '2x', scale: 2 },
-    { descriptor: '3x', scale: 3 },
+    { descriptor: "1x", scale: 1 },
+    { descriptor: "2x", scale: 2 },
+    { descriptor: "3x", scale: 3 },
   ];
 
   return variants
     .map(({ scale, descriptor }) => {
       const params = new URLSearchParams({
-        fit: 'cover',
-        fmt: 'webp',
+        fit: "cover",
+        fmt: "webp",
         h: (dimensions.height * scale).toString(),
-        q: '85',
+        q: "85",
         w: (dimensions.width * scale).toString(),
       });
 
-      const baseUrl = imageUrl.startsWith('http') ? imageUrl : `${CDN_BASE_URL}${imageUrl}`;
+      const baseUrl = imageUrl.startsWith("http")
+        ? imageUrl
+        : `${CDN_BASE_URL}${imageUrl}`;
       return `${baseUrl}?${params.toString()} ${descriptor}`;
     })
-    .join(', ');
+    .join(", ");
 }
 
 /**
@@ -201,7 +209,10 @@ export function generateSrcSet(imageUrl: string | null | undefined, size: ImageS
  * @param size - Image size preset
  * @returns Width and height in pixels
  */
-export function getImageDimensions(size: ImageSize): { width: number; height: number } {
+export function getImageDimensions(size: ImageSize): {
+  width: number;
+  height: number;
+} {
   return IMAGE_SIZES[size];
 }
 
@@ -215,15 +226,15 @@ export function getImageDimensions(size: ImageSize): { width: number; height: nu
  * @param size - Image size preset
  * @returns Preload link props
  */
-export function getImagePreloadProps(imageUrl: string, size: ImageSize = 'md') {
+export function getImagePreloadProps(imageUrl: string, size: ImageSize = "md") {
   const dimensions = IMAGE_SIZES[size];
 
   return {
-    as: 'image',
+    as: "image",
     href: getOptimizedImageUrl(imageUrl, size),
     imageSizes: `${dimensions.width}px`,
     imageSrcSet: generateSrcSet(imageUrl, size),
-    rel: 'preload',
+    rel: "preload",
   };
 }
 
@@ -234,18 +245,24 @@ export function getImagePreloadProps(imageUrl: string, size: ImageSize = 'md') {
  * @returns True if URL is valid (http/https or relative path)
  */
 export function isValidImageUrl(url: string | null | undefined): boolean {
-  if (!url) return false;
+  if (!url) {
+    return false;
+  }
 
   // Allow relative paths
-  if (url.startsWith('/')) return true;
+  if (url.startsWith("/")) {
+    return true;
+  }
 
   // Allow data URIs
-  if (url.startsWith('data:image/')) return true;
+  if (url.startsWith("data:image/")) {
+    return true;
+  }
 
   // Allow external URLs (http/https)
   try {
     const parsed = new URL(url);
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
   } catch {
     return false;
   }
@@ -260,8 +277,11 @@ export function isValidImageUrl(url: string | null | undefined): boolean {
  * @param priority - Explicit priority override
  * @returns Loading strategy ('lazy' | 'eager')
  */
-export function getImageLoadingStrategy(isAboveFold = false, priority = false): 'lazy' | 'eager' {
-  return priority || isAboveFold ? 'eager' : 'lazy';
+export function getImageLoadingStrategy(
+  isAboveFold = false,
+  priority = false
+): "lazy" | "eager" {
+  return priority || isAboveFold ? "eager" : "lazy";
 }
 
 /**
@@ -277,9 +297,12 @@ export function getImageLoadingStrategy(isAboveFold = false, priority = false): 
  * // 'Ventana VEKA Premium - Ventana Corrediza 2 Hojas'
  * ```
  */
-export function formatImageAltText(productName?: string | null, windowType?: WindowType | string | null): string {
+export function formatImageAltText(
+  productName?: string | null,
+  windowType?: WindowType | string | null
+): string {
   if (!(productName || windowType)) {
-    return 'Imagen de producto';
+    return "Imagen de producto";
   }
 
   const parts: string[] = [];
@@ -293,5 +316,5 @@ export function formatImageAltText(productName?: string | null, windowType?: Win
     parts.push(`Tipo: ${windowType}`);
   }
 
-  return parts.join(' - ');
+  return parts.join(" - ");
 }

@@ -15,7 +15,7 @@
  * @lastUpdated 2025-01-10
  */
 
-import type { GlassTypeInput } from '../../factories/glass-type.factory';
+import type { GlassTypeInput } from "../../factories/glass-type.factory";
 
 /**
  * Common glass types available in Colombian market
@@ -33,18 +33,18 @@ export const glassTypesCatalog: GlassTypeInput[] = [
   // MONOLÍTICO (Float/Crudo) - Basic Glass
   // ==========================================
   {
-    code: 'MONO4',
-    name: 'Vidrio Monolítico 4mm',
+    code: "MONO4",
+    name: "Vidrio Monolítico 4mm",
     thicknessMm: 4,
   },
   {
-    code: 'MONO6',
-    name: 'Vidrio Monolítico 6mm',
+    code: "MONO6",
+    name: "Vidrio Monolítico 6mm",
     thicknessMm: 6,
   },
   {
-    code: 'MONO8',
-    name: 'Vidrio Monolítico 8mm',
+    code: "MONO8",
+    name: "Vidrio Monolítico 8mm",
     thicknessMm: 8,
   },
 
@@ -52,23 +52,23 @@ export const glassTypesCatalog: GlassTypeInput[] = [
   // TEMPLADO - Safety Glass (5x stronger)
   // ==========================================
   {
-    code: 'TEMP6',
-    name: 'Vidrio Templado 6mm',
+    code: "TEMP6",
+    name: "Vidrio Templado 6mm",
     thicknessMm: 6,
   },
   {
-    code: 'TEMP8',
-    name: 'Vidrio Templado 8mm',
+    code: "TEMP8",
+    name: "Vidrio Templado 8mm",
     thicknessMm: 8,
   },
   {
-    code: 'TEMP10',
-    name: 'Vidrio Templado 10mm',
+    code: "TEMP10",
+    name: "Vidrio Templado 10mm",
     thicknessMm: 10,
   },
   {
-    code: 'TEMP12',
-    name: 'Vidrio Templado 12mm',
+    code: "TEMP12",
+    name: "Vidrio Templado 12mm",
     thicknessMm: 12,
   },
 
@@ -76,23 +76,23 @@ export const glassTypesCatalog: GlassTypeInput[] = [
   // LAMINADO - Security Glass (retains fragments)
   // ==========================================
   {
-    code: 'LAM6',
-    name: 'Vidrio Laminado 6mm (3+3)',
+    code: "LAM6",
+    name: "Vidrio Laminado 6mm (3+3)",
     thicknessMm: 6,
   },
   {
-    code: 'LAM8',
-    name: 'Vidrio Laminado 8mm (4+4)',
+    code: "LAM8",
+    name: "Vidrio Laminado 8mm (4+4)",
     thicknessMm: 8,
   },
   {
-    code: 'LAM10',
-    name: 'Vidrio Laminado 10mm (5+5)',
+    code: "LAM10",
+    name: "Vidrio Laminado 10mm (5+5)",
     thicknessMm: 10,
   },
   {
-    code: 'LAM10',
-    name: 'Vidrio Laminado Acústico 10mm',
+    code: "LAM10",
+    name: "Vidrio Laminado Acústico 10mm",
     thicknessMm: 10,
   },
 
@@ -100,20 +100,20 @@ export const glassTypesCatalog: GlassTypeInput[] = [
   // DVH (Doble Vidrio Hermético) - Insulated Glass
   // ==========================================
   {
-    code: 'DVH20',
-    name: 'DVH 20mm (4-12-4)',
+    code: "DVH20",
+    name: "DVH 20mm (4-12-4)",
     thicknessMm: 20,
     uValue: 2.8, // W/m²·K
   },
   {
-    code: 'DVH24',
-    name: 'DVH 24mm (6-12-6)',
+    code: "DVH24",
+    name: "DVH 24mm (6-12-6)",
     thicknessMm: 24,
     uValue: 2.6, // W/m²·K
   },
   {
-    code: 'DVH28',
-    name: 'DVH 28mm (6-16-6)',
+    code: "DVH28",
+    name: "DVH 28mm (6-16-6)",
     thicknessMm: 28,
     uValue: 2.4, // W/m²·K
   },
@@ -122,14 +122,14 @@ export const glassTypesCatalog: GlassTypeInput[] = [
   // LOW-E (Baja Emisividad) - Energy Efficient
   // ==========================================
   {
-    code: 'DVH24',
-    name: 'DVH Low-E 24mm (6-12-6)',
+    code: "DVH24",
+    name: "DVH Low-E 24mm (6-12-6)",
     thicknessMm: 24,
     uValue: 1.8, // W/m²·K (mejor aislamiento)
   },
   {
-    code: 'DVH28',
-    name: 'DVH Low-E 28mm (6-16-6)',
+    code: "DVH28",
+    name: "DVH Low-E 28mm (6-16-6)",
     thicknessMm: 28,
     uValue: 1.6, // W/m²·K
   },
@@ -138,13 +138,13 @@ export const glassTypesCatalog: GlassTypeInput[] = [
   // CONTROL SOLAR / REFLECTIVO
   // ==========================================
   {
-    code: 'REFL6',
-    name: 'Vidrio Reflectivo 6mm',
+    code: "REFL6",
+    name: "Vidrio Reflectivo 6mm",
     thicknessMm: 6,
   },
   {
-    code: 'DVH24',
-    name: 'DVH Control Solar 24mm (6-12-6)',
+    code: "DVH24",
+    name: "DVH Control Solar 24mm (6-12-6)",
     thicknessMm: 24,
     uValue: 2.2, // W/m²·K
   },
@@ -153,13 +153,13 @@ export const glassTypesCatalog: GlassTypeInput[] = [
   // ESPECIALIDADES
   // ==========================================
   {
-    code: 'GLASS6',
-    name: 'Vidrio Esmerilado 6mm',
+    code: "GLASS6",
+    name: "Vidrio Esmerilado 6mm",
     thicknessMm: 6,
   },
   {
-    code: 'TEMP12',
-    name: 'Vidrio Templado + Laminado 12mm (6+6)',
+    code: "TEMP12",
+    name: "Vidrio Templado + Laminado 12mm (6+6)",
     thicknessMm: 12,
   },
 ];
@@ -180,27 +180,51 @@ export const glassTypesCatalog: GlassTypeInput[] = [
  * Recommended glass types for different applications
  */
 export const recommendedGlassTypes = {
-  budget: ['Vidrio Monolítico 4mm', 'Vidrio Monolítico 6mm', 'Vidrio Templado 6mm'],
-  commercial: ['Vidrio Templado 10mm', 'DVH Low-E 28mm (6-16-6)', 'Vidrio Templado + Laminado 12mm (6+6)'],
-  premium: ['DVH Low-E 28mm (6-16-6)', 'Vidrio Templado + Laminado 12mm (6+6)', 'DVH Control Solar 24mm (6-12-6)'],
-  residential: ['Vidrio Templado 6mm', 'DVH 24mm (6-12-6)', 'Vidrio Laminado 6mm (3+3)'],
+  budget: [
+    "Vidrio Monolítico 4mm",
+    "Vidrio Monolítico 6mm",
+    "Vidrio Templado 6mm",
+  ],
+  commercial: [
+    "Vidrio Templado 10mm",
+    "DVH Low-E 28mm (6-16-6)",
+    "Vidrio Templado + Laminado 12mm (6+6)",
+  ],
+  premium: [
+    "DVH Low-E 28mm (6-16-6)",
+    "Vidrio Templado + Laminado 12mm (6+6)",
+    "DVH Control Solar 24mm (6-12-6)",
+  ],
+  residential: [
+    "Vidrio Templado 6mm",
+    "DVH 24mm (6-12-6)",
+    "Vidrio Laminado 6mm (3+3)",
+  ],
 };
 
 /**
  * Glass types grouped by category
  */
 export const glassTypesByCategory = {
-  doubleGlazing: glassTypesCatalog.filter((g) => g.name.toLowerCase().includes('dvh')),
-  laminated: glassTypesCatalog.filter((g) => g.name.toLowerCase().includes('laminado')),
-  monolithic: glassTypesCatalog.filter((g) => g.name.toLowerCase().includes('monolítico')),
+  doubleGlazing: glassTypesCatalog.filter((g) =>
+    g.name.toLowerCase().includes("dvh")
+  ),
+  laminated: glassTypesCatalog.filter((g) =>
+    g.name.toLowerCase().includes("laminado")
+  ),
+  monolithic: glassTypesCatalog.filter((g) =>
+    g.name.toLowerCase().includes("monolítico")
+  ),
   specialty: glassTypesCatalog.filter(
     (g) =>
-      g.name.toLowerCase().includes('low-e') ||
-      g.name.toLowerCase().includes('control solar') ||
-      g.name.toLowerCase().includes('reflectivo') ||
-      g.name.toLowerCase().includes('acústico')
+      g.name.toLowerCase().includes("low-e") ||
+      g.name.toLowerCase().includes("control solar") ||
+      g.name.toLowerCase().includes("reflectivo") ||
+      g.name.toLowerCase().includes("acústico")
   ),
   tempered: glassTypesCatalog.filter(
-    (g) => g.name.toLowerCase().includes('templado') && !g.name.toLowerCase().includes('laminado')
+    (g) =>
+      g.name.toLowerCase().includes("templado") &&
+      !g.name.toLowerCase().includes("laminado")
   ),
 };

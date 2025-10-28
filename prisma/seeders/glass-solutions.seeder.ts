@@ -9,18 +9,18 @@
  *   pnpm seed:glass-solutions
  */
 
-import { seedGlassSolutionsFromFile } from '../factories/glass-solution.factory';
+import { seedGlassSolutionsFromFile } from "../factories/glass-solution.factory";
 
 /**
  * Main seeder function
  */
 export async function seedGlassSolutions(): Promise<void> {
-  console.log('🌱 Seeding glass solutions...\n');
+  console.log("🌱 Seeding glass solutions...\n");
 
   try {
     // Seed core glass solutions
-    console.log('📦 Loading core glass solutions...');
-    const result = await seedGlassSolutionsFromFile('glass-solutions.json');
+    console.log("📦 Loading core glass solutions...");
+    const result = await seedGlassSolutionsFromFile("glass-solutions.json");
 
     // Report results
     console.log(`✅ Seeded: ${result.seeded} glass solutions`);
@@ -31,15 +31,15 @@ export async function seedGlassSolutions(): Promise<void> {
       for (const error of result.errors) {
         console.error(`  - ${error.message}`);
         if (error.context) {
-          console.error('    Context:', error.context);
+          console.error("    Context:", error.context);
         }
       }
       process.exit(1);
     }
 
-    console.log('\n✨ Glass solutions seeding completed successfully!');
+    console.log("\n✨ Glass solutions seeding completed successfully!");
   } catch (error) {
-    console.error('\n❌ Fatal error during glass solutions seeding:', error);
+    console.error("\n❌ Fatal error during glass solutions seeding:", error);
     process.exit(1);
   }
 }
@@ -50,6 +50,6 @@ seedGlassSolutions()
     process.exit(0);
   })
   .catch((error) => {
-    console.error('Seeder failed:', error);
+    console.error("Seeder failed:", error);
     process.exit(1);
   });

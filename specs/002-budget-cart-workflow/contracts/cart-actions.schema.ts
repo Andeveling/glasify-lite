@@ -7,7 +7,7 @@
  * Location: app/_actions/cart.actions.ts
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // ============================================================================
 // Constants
@@ -27,15 +27,15 @@ const MAX_ITEM_NAME_LENGTH = 50;
  */
 export const addToCartInput = z.object({
   additionalServiceIds: z.array(z.string().cuid()).default([]),
-  glassTypeId: z.string().cuid('ID del tipo de vidrio debe ser válido'),
-  glassTypeName: z.string().min(1, 'Nombre del tipo de vidrio es requerido'),
-  heightMm: z.number().int().positive('Alto debe ser positivo'),
-  modelId: z.string().cuid('ID del modelo debe ser válido'),
-  modelName: z.string().min(1, 'Nombre del modelo es requerido'),
-  quantity: z.number().int().positive('Cantidad debe ser positiva').default(1),
+  glassTypeId: z.string().cuid("ID del tipo de vidrio debe ser válido"),
+  glassTypeName: z.string().min(1, "Nombre del tipo de vidrio es requerido"),
+  heightMm: z.number().int().positive("Alto debe ser positivo"),
+  modelId: z.string().cuid("ID del modelo debe ser válido"),
+  modelName: z.string().min(1, "Nombre del modelo es requerido"),
+  quantity: z.number().int().positive("Cantidad debe ser positiva").default(1),
   solutionId: z.string().cuid().optional(),
   solutionName: z.string().optional(),
-  widthMm: z.number().int().positive('Ancho debe ser positivo'),
+  widthMm: z.number().int().positive("Ancho debe ser positivo"),
 });
 
 export type AddToCartInput = z.infer<typeof addToCartInput>;
@@ -47,12 +47,20 @@ export type AddToCartInput = z.infer<typeof addToCartInput>;
  */
 export const updateCartItemInput = z
   .object({
-    itemId: z.string().cuid('ID del item debe ser válido'),
-    name: z.string().min(1, 'Nombre es requerido').max(MAX_ITEM_NAME_LENGTH, 'Nombre muy largo').optional(),
-    quantity: z.number().int().positive('Cantidad debe ser positiva').optional(),
+    itemId: z.string().cuid("ID del item debe ser válido"),
+    name: z
+      .string()
+      .min(1, "Nombre es requerido")
+      .max(MAX_ITEM_NAME_LENGTH, "Nombre muy largo")
+      .optional(),
+    quantity: z
+      .number()
+      .int()
+      .positive("Cantidad debe ser positiva")
+      .optional(),
   })
   .refine((data) => data.name !== undefined || data.quantity !== undefined, {
-    message: 'Debe proporcionar nombre o cantidad para actualizar',
+    message: "Debe proporcionar nombre o cantidad para actualizar",
   });
 
 export type UpdateCartItemInput = z.infer<typeof updateCartItemInput>;
@@ -63,7 +71,7 @@ export type UpdateCartItemInput = z.infer<typeof updateCartItemInput>;
  * Server Action: removeFromCartAction
  */
 export const removeFromCartInput = z.object({
-  itemId: z.string().cuid('ID del item debe ser válido'),
+  itemId: z.string().cuid("ID del item debe ser válido"),
 });
 
 export type RemoveFromCartInput = z.infer<typeof removeFromCartInput>;
@@ -75,7 +83,7 @@ export type RemoveFromCartInput = z.infer<typeof removeFromCartInput>;
  */
 export const clearCartInput = z.object({
   confirm: z.literal(true).refine((val) => val === true, {
-    message: 'Debe confirmar antes de vaciar el carrito',
+    message: "Debe confirmar antes de vaciar el carrito",
   }),
 });
 
@@ -112,7 +120,7 @@ export type CartItemSchema = z.infer<typeof cartItemSchema>;
  * Standard Server Action response
  * Uses discriminated union for success/error states
  */
-export const cartActionResponse = z.discriminatedUnion('success', [
+export const cartActionResponse = z.discriminatedUnion("success", [
   z.object({
     data: z.object({
       item: cartItemSchema.optional(),
@@ -124,7 +132,12 @@ export const cartActionResponse = z.discriminatedUnion('success', [
   }),
   z.object({
     error: z.object({
-      code: z.enum(['VALIDATION_ERROR', 'NOT_FOUND', 'LIMIT_EXCEEDED', 'UNKNOWN']),
+      code: z.enum([
+        "VALIDATION_ERROR",
+        "NOT_FOUND",
+        "LIMIT_EXCEEDED",
+        "UNKNOWN",
+      ]),
       message: z.string(),
     }),
     success: z.literal(false),
@@ -138,10 +151,10 @@ export type CartActionResponse = z.infer<typeof cartActionResponse>;
 // ============================================================================
 
 export const cartActionMeta = {
-  addToCart: { span: 'cart.add-to-cart' },
-  clearCart: { span: 'cart.clear' },
-  removeFromCart: { span: 'cart.remove-item' },
-  updateCartItem: { span: 'cart.update-item' },
+  addToCart: { span: "cart.add-to-cart" },
+  clearCart: { span: "cart.clear" },
+  removeFromCart: { span: "cart.remove-item" },
+  updateCartItem: { span: "cart.update-item" },
 } as const;
 
 // ============================================================================

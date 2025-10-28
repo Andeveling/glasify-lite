@@ -10,7 +10,7 @@
  * @date 2025-01-21
  */
 
-import type { ProfileSupplierInput } from '../../factories/profile-supplier.factory';
+import type { ProfileSupplierInput } from "../../factories/profile-supplier.factory";
 
 /**
  * Extralum - Único proveedor de perfiles de aluminio para Vitro Rojas
@@ -23,9 +23,9 @@ import type { ProfileSupplierInput } from '../../factories/profile-supplier.fact
 export const vitroRojasProfileSuppliers: ProfileSupplierInput[] = [
   {
     isActive: true,
-    materialType: 'ALUMINUM',
-    name: 'Extralum',
+    materialType: "ALUMINUM",
+    name: "Extralum",
     notes:
-      'Distribuidor de perfiles de aluminio en Panamá. Series: VC Panamá (corredizo económico), Europa Clásica (corredizo premium 3 vías), Europa Abatible (apertura interna/externa con corte 45°).',
+      "Distribuidor de perfiles de aluminio en Panamá. Series: VC Panamá (corredizo económico), Europa Clásica (corredizo premium 3 vías), Europa Abatible (apertura interna/externa con corte 45°).",
   },
 ];

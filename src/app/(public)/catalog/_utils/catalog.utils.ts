@@ -23,7 +23,10 @@ export function formatRange(min: number, max: number): string {
  * @param itemsPerPage - Number of items per page
  * @returns Total number of pages
  */
-export function calculateTotalPages(total: number, itemsPerPage: number): number {
+export function calculateTotalPages(
+  total: number,
+  itemsPerPage: number
+): number {
   return Math.ceil(total / itemsPerPage);
 }
 
@@ -34,7 +37,10 @@ export function calculateTotalPages(total: number, itemsPerPage: number): number
  * @param previousPage - Previous page in the sequence
  * @returns Whether to show ellipsis
  */
-export function shouldShowEllipsis(currentPage: number, previousPage: number | undefined): boolean {
+export function shouldShowEllipsis(
+  currentPage: number,
+  previousPage: number | undefined
+): boolean {
   return previousPage !== undefined && currentPage - previousPage > 1;
 }
 
@@ -79,7 +85,7 @@ export type DisplayModel = {
 export function transformModelForDisplay(
   model: RawModel,
   formatCurrency: (amount: number) => string
-): Omit<DisplayModel, 'compatibleGlassTypes'> {
+): Omit<DisplayModel, "compatibleGlassTypes"> {
   return {
     basePrice: formatCurrency(model.basePrice),
     id: model.id,

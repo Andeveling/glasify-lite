@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 const DEBOUNCE_DELAY_MS = 300; // ✅ Optimized for real-time responsiveness (proven in use-price-calculation)
 
@@ -76,7 +76,9 @@ function isValidDimension(value: number, min: number, max: number): boolean {
  * }, [setLocalValue]);
  * ```
  */
-export function useDebouncedDimension(params: UseDebouncedDimensionParams): UseDebouncedDimensionReturn {
+export function useDebouncedDimension(
+  params: UseDebouncedDimensionParams
+): UseDebouncedDimensionReturn {
   // ✅ Local state for immediate UI feedback (no debounce)
   const [localValue, setLocalValue] = useState<number>(params.initialValue);
 
@@ -93,7 +95,10 @@ export function useDebouncedDimension(params: UseDebouncedDimensionParams): UseD
   // ✅ Debounced form update effect
   useEffect(() => {
     // Skip if local value hasn't changed or is invalid
-    if (localValue === params.value || !isValidDimension(localValue, params.min, params.max)) {
+    if (
+      localValue === params.value ||
+      !isValidDimension(localValue, params.min, params.max)
+    ) {
       return;
     }
 
@@ -119,7 +124,10 @@ export function useDebouncedDimension(params: UseDebouncedDimensionParams): UseD
   // ✅ Sync local state when form value changes externally (e.g., badge click, manual input)
   useEffect(() => {
     // Only update if the form value changed AND it's different from what we last set
-    if (params.value !== lastFormValueRef.current && params.value !== localValue) {
+    if (
+      params.value !== lastFormValueRef.current &&
+      params.value !== localValue
+    ) {
       setLocalValue(params.value);
       lastFormValueRef.current = params.value;
     }

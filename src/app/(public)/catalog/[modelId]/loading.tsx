@@ -1,5 +1,5 @@
-import { ModelFormSkeleton } from './_components/model-form-skeleton';
-import { ModelSidebarSkeleton } from './_components/model-sidebar-skeleton';
+import { ModelFormSkeleton } from "./_components/model-form-skeleton";
+import { ModelSidebarSkeleton } from "./_components/model-sidebar-skeleton";
 
 export default function Loading() {
   return (

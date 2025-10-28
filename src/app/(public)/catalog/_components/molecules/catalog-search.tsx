@@ -1,9 +1,14 @@
-'use client';
+"use client";
 
-import { useDebouncedSearch } from '@views/catalog/_hooks/use-catalog';
-import { Search, X } from 'lucide-react';
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group';
-import { Spinner } from '@/components/ui/spinner';
+import { useDebouncedSearch } from "@views/catalog/_hooks/use-catalog";
+import { Search, X } from "lucide-react";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import { Spinner } from "@/components/ui/spinner";
 
 type CatalogSearchProps = {
   initialValue?: string;
@@ -24,8 +29,9 @@ type CatalogSearchProps = {
  * - Easy to maintain (no complex logic)
  * - Reusable (logic extracted to hook)
  */
-export function CatalogSearch({ initialValue = '' }: CatalogSearchProps) {
-  const { query, isPending, handleSearchChange, handleClear } = useDebouncedSearch(initialValue);
+export function CatalogSearch({ initialValue = "" }: CatalogSearchProps) {
+  const { query, isPending, handleSearchChange, handleClear } =
+    useDebouncedSearch(initialValue);
 
   return (
     <div>
@@ -43,7 +49,12 @@ export function CatalogSearch({ initialValue = '' }: CatalogSearchProps) {
           </InputGroupAddon>
           {query && !isPending && (
             <InputGroupAddon align="inline-end">
-              <InputGroupButton className="size-8" onClick={handleClear} size="icon-sm" variant="ghost">
+              <InputGroupButton
+                className="size-8"
+                onClick={handleClear}
+                size="icon-sm"
+                variant="ghost"
+              >
                 <X className="size-4" />
                 <span className="sr-only">Limpiar búsqueda</span>
               </InputGroupButton>

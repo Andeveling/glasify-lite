@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { FileText, LogOut, Moon, Sun, User } from 'lucide-react';
-import Link from 'next/link';
-import { useTheme } from 'next-themes';
-import { Button } from '@/components/ui/button';
+import { FileText, LogOut, Moon, Sun, User } from "lucide-react";
+import Link from "next/link";
+import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,8 +11,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { handleSignOut } from './actions';
+} from "@/components/ui/dropdown-menu";
+import { handleSignOut } from "./actions";
 
 type UserMenuProps = {
   userName?: string | null;
@@ -27,7 +27,7 @@ export function UserMenu({ userName, userEmail }: UserMenuProps) {
   };
 
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   return (
@@ -41,8 +41,14 @@ export function UserMenu({ userName, userEmail }: UserMenuProps) {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="font-medium text-sm leading-none">{userName ?? 'Usuario'}</p>
-            {userEmail && <p className="text-muted-foreground text-xs leading-none">{userEmail}</p>}
+            <p className="font-medium text-sm leading-none">
+              {userName ?? "Usuario"}
+            </p>
+            {userEmail && (
+              <p className="text-muted-foreground text-xs leading-none">
+                {userEmail}
+              </p>
+            )}
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -54,8 +60,12 @@ export function UserMenu({ userName, userEmail }: UserMenuProps) {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={toggleTheme}>
-          {theme === 'dark' ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
-          <span>Cambiar a {theme === 'dark' ? 'Claro' : 'Oscuro'}</span>
+          {theme === "dark" ? (
+            <Sun className="mr-2 h-4 w-4" />
+          ) : (
+            <Moon className="mr-2 h-4 w-4" />
+          )}
+          <span>Cambiar a {theme === "dark" ? "Claro" : "Oscuro"}</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={onSignOut}>

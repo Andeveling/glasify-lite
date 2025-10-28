@@ -21,10 +21,10 @@
  * - Scrollable content (max-h-[70vh])
  */
 
-'use client';
+"use client";
 
-import { Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -32,24 +32,37 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { PhoneInput } from '@/components/ui/phone-input';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
-import type { FormValues } from '../_hooks/use-glass-supplier-form';
-import { useGlassSupplierForm } from '../_hooks/use-glass-supplier-form';
-import { useGlassSupplierMutations } from '../_hooks/use-glass-supplier-mutations';
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import type { FormValues } from "../_hooks/use-glass-supplier-form";
+import { useGlassSupplierForm } from "../_hooks/use-glass-supplier-form";
+import { useGlassSupplierMutations } from "../_hooks/use-glass-supplier-mutations";
 
 type GlassSupplierDialogProps = {
-  mode: 'create' | 'edit';
+  mode: "create" | "edit";
   open: boolean;
   onOpenChangeAction: (open: boolean) => void;
   defaultValues?: FormValues & { id?: string };
 };
 
-export function GlassSupplierDialog({ mode, open, onOpenChangeAction, defaultValues }: GlassSupplierDialogProps) {
+export function GlassSupplierDialog({
+  mode,
+  open,
+  onOpenChangeAction,
+  defaultValues,
+}: GlassSupplierDialogProps) {
   // Custom hooks for separation of concerns
   const { form } = useGlassSupplierForm({ defaultValues, mode, open });
 
@@ -62,7 +75,7 @@ export function GlassSupplierDialog({ mode, open, onOpenChangeAction, defaultVal
 
   // Handle form submission - routes to create or update
   const handleSubmit = (formData: FormValues) => {
-    if (mode === 'create') {
+    if (mode === "create") {
       handleCreate(formData);
     } else if (defaultValues?.id) {
       handleUpdate(defaultValues.id, formData);
@@ -73,17 +86,24 @@ export function GlassSupplierDialog({ mode, open, onOpenChangeAction, defaultVal
     <Dialog onOpenChange={onOpenChangeAction} open={open}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{mode === 'create' ? 'Crear Proveedor de Vidrio' : 'Editar Proveedor de Vidrio'}</DialogTitle>
+          <DialogTitle>
+            {mode === "create"
+              ? "Crear Proveedor de Vidrio"
+              : "Editar Proveedor de Vidrio"}
+          </DialogTitle>
           <DialogDescription>
-            {mode === 'create'
-              ? 'Complete los detalles para crear un nuevo proveedor.'
-              : 'Actualice los detalles del proveedor.'}
+            {mode === "create"
+              ? "Complete los detalles para crear un nuevo proveedor."
+              : "Actualice los detalles del proveedor."}
           </DialogDescription>
         </DialogHeader>
 
         <div className="max-h-[70vh] overflow-y-auto">
           <Form {...form}>
-            <form className="space-y-6 p-4" onSubmit={form.handleSubmit(handleSubmit)}>
+            <form
+              className="space-y-6 p-4"
+              onSubmit={form.handleSubmit(handleSubmit)}
+            >
               {/* Section 1: Basic Information */}
               <div className="space-y-4">
                 <h3 className="font-medium text-lg">Información Básica</h3>
@@ -99,7 +119,7 @@ export function GlassSupplierDialog({ mode, open, onOpenChangeAction, defaultVal
                             {...field}
                             disabled={isPending}
                             placeholder="Ej: Guardian, Saint-Gobain"
-                            value={field.value ?? ''}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -113,7 +133,12 @@ export function GlassSupplierDialog({ mode, open, onOpenChangeAction, defaultVal
                       <FormItem>
                         <FormLabel>Código</FormLabel>
                         <FormControl>
-                          <Input {...field} disabled={isPending} placeholder="Ej: GRD, SGB" value={field.value ?? ''} />
+                          <Input
+                            {...field}
+                            disabled={isPending}
+                            placeholder="Ej: GRD, SGB"
+                            value={field.value ?? ""}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -131,7 +156,7 @@ export function GlassSupplierDialog({ mode, open, onOpenChangeAction, defaultVal
                           {...field}
                           disabled={isPending}
                           placeholder="Ej: México, Estados Unidos"
-                          value={field.value ?? ''}
+                          value={field.value ?? ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -156,7 +181,7 @@ export function GlassSupplierDialog({ mode, open, onOpenChangeAction, defaultVal
                             disabled={isPending}
                             placeholder="https://www.ejemplo.com"
                             type="url"
-                            value={field.value ?? ''}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -175,7 +200,7 @@ export function GlassSupplierDialog({ mode, open, onOpenChangeAction, defaultVal
                             disabled={isPending}
                             placeholder="ventas@ejemplo.com"
                             type="email"
-                            value={field.value ?? ''}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -195,7 +220,7 @@ export function GlassSupplierDialog({ mode, open, onOpenChangeAction, defaultVal
                           defaultCountry="MX"
                           disabled={isPending}
                           placeholder="Ingresa el número telefónico"
-                          value={field.value ?? ''}
+                          value={field.value ?? ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -220,7 +245,7 @@ export function GlassSupplierDialog({ mode, open, onOpenChangeAction, defaultVal
                           disabled={isPending}
                           placeholder="Notas adicionales sobre el proveedor"
                           rows={3}
-                          value={field.value ?? ''}
+                          value={field.value ?? ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -234,10 +259,17 @@ export function GlassSupplierDialog({ mode, open, onOpenChangeAction, defaultVal
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">Activo</FormLabel>
-                        <FormDescription>Indica si el proveedor está disponible para seleccionar</FormDescription>
+                        <FormDescription>
+                          Indica si el proveedor está disponible para
+                          seleccionar
+                        </FormDescription>
                       </div>
                       <FormControl>
-                        <Switch checked={field.value} disabled={isPending} onCheckedChange={field.onChange} />
+                        <Switch
+                          checked={field.value}
+                          disabled={isPending}
+                          onCheckedChange={field.onChange}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
@@ -245,12 +277,19 @@ export function GlassSupplierDialog({ mode, open, onOpenChangeAction, defaultVal
               </div>
 
               <DialogFooter>
-                <Button disabled={isPending} onClick={() => onOpenChangeAction(false)} type="button" variant="outline">
+                <Button
+                  disabled={isPending}
+                  onClick={() => onOpenChangeAction(false)}
+                  type="button"
+                  variant="outline"
+                >
                   Cancelar
                 </Button>
                 <Button disabled={isPending} type="submit">
-                  {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {mode === 'create' ? 'Crear Proveedor' : 'Guardar Cambios'}
+                  {isPending && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  {mode === "create" ? "Crear Proveedor" : "Guardar Cambios"}
                 </Button>
               </DialogFooter>
             </form>

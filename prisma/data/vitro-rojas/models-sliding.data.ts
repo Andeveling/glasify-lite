@@ -20,7 +20,7 @@
  * @date 2025-01-21
  */
 
-import type { ModelInput } from '../../factories/model.factory';
+import type { ModelInput } from "../../factories/model.factory";
 
 /**
  * Sistema Corredizo VC Panamá
@@ -45,8 +45,9 @@ import type { ModelInput } from '../../factories/model.factory';
 export const vcPanama2Panos: ModelInput = {
   accessoryPrice: 45, // USD - Rodines, cerraduras, felpas
   basePrice: 130, // USD/m²
-  compatibleGlassTypeIds: ['placeholder'], // Se populará automáticamente con todos los tipos de vidrio
-  costNotes: 'Precio base $130/m². Compatible con vidrio simple 6-8mm o laminado 33.1mm.',
+  compatibleGlassTypeIds: ["placeholder"], // Se populará automáticamente con todos los tipos de vidrio
+  costNotes:
+    "Precio base $130/m². Compatible con vidrio simple 6-8mm o laminado 33.1mm.",
   costPerMmHeight: 0.012, // $0.012 USD/mm (factor de ajuste por altura)
   costPerMmWidth: 0.015, // $0.015 USD/mm (factor de ajuste por ancho)
   glassDiscountHeightMm: 66, // Fórmula Vitro Rojas: Alto = H - 66mm
@@ -55,10 +56,10 @@ export const vcPanama2Panos: ModelInput = {
   maxWidthMm: 2950, // 1350mm móvil + 1600mm fijo
   minHeightMm: 272,
   minWidthMm: 500, // 250mm móvil + 250mm fijo
-  name: 'Corredizo VC Panamá 2 Paños (OX)',
-  profileSupplierName: 'Extralum',
+  name: "Corredizo VC Panamá 2 Paños (OX)",
+  profileSupplierName: "Extralum",
   profitMarginPercentage: 35, // 35% margen sobre costos
-  status: 'published',
+  status: "published",
 };
 
 /**
@@ -69,8 +70,8 @@ export const vcPanama2Panos: ModelInput = {
 export const vcPanama3Panos: ModelInput = {
   accessoryPrice: 65, // USD - Más rodines y cerraduras
   basePrice: 150, // USD/m²
-  compatibleGlassTypeIds: ['placeholder'],
-  costNotes: 'Precio base $150/m². Sistema de 3 vías con paño central fijo.',
+  compatibleGlassTypeIds: ["placeholder"],
+  costNotes: "Precio base $150/m². Sistema de 3 vías con paño central fijo.",
   costPerMmHeight: 0.013,
   costPerMmWidth: 0.017,
   glassDiscountHeightMm: 66, // Alto = H - 66mm
@@ -79,10 +80,10 @@ export const vcPanama3Panos: ModelInput = {
   maxWidthMm: 4550, // 3 paños (1350+1600+1600)
   minHeightMm: 272,
   minWidthMm: 750, // 3x250mm
-  name: 'Corredizo VC Panamá 3 Paños (XOX)',
-  profileSupplierName: 'Extralum',
+  name: "Corredizo VC Panamá 3 Paños (XOX)",
+  profileSupplierName: "Extralum",
   profitMarginPercentage: 35,
-  status: 'published',
+  status: "published",
 };
 
 /**
@@ -93,8 +94,8 @@ export const vcPanama3Panos: ModelInput = {
 export const vcPanama4Panos: ModelInput = {
   accessoryPrice: 85, // USD - Mayor cantidad de accesorios
   basePrice: 165, // USD/m²
-  compatibleGlassTypeIds: ['placeholder'],
-  costNotes: 'Precio base $165/m². Sistema de 4 paños con laterales fijos.',
+  compatibleGlassTypeIds: ["placeholder"],
+  costNotes: "Precio base $165/m². Sistema de 4 paños con laterales fijos.",
   costPerMmHeight: 0.014,
   costPerMmWidth: 0.018,
   glassDiscountHeightMm: 66, // Alto = H - 66mm
@@ -103,10 +104,10 @@ export const vcPanama4Panos: ModelInput = {
   maxWidthMm: 5900, // 4 paños (1350+1350+1600+1600)
   minHeightMm: 272,
   minWidthMm: 1000, // 4x250mm
-  name: 'Corredizo VC Panamá 4 Paños (OXXO)',
-  profileSupplierName: 'Extralum',
+  name: "Corredizo VC Panamá 4 Paños (OXXO)",
+  profileSupplierName: "Extralum",
   profitMarginPercentage: 35,
-  status: 'published',
+  status: "published",
 };
 
 /**
@@ -131,8 +132,9 @@ export const vcPanama4Panos: ModelInput = {
 export const europaClasica2Panos: ModelInput = {
   accessoryPrice: 55, // USD - Accesorios premium
   basePrice: 140, // USD/m² (premium sobre VC)
-  compatibleGlassTypeIds: ['placeholder'],
-  costNotes: 'Precio base $140/m². Compatible con vidrio simple 6-12mm o DVH 16-18.5mm. Sistema premium.',
+  compatibleGlassTypeIds: ["placeholder"],
+  costNotes:
+    "Precio base $140/m². Compatible con vidrio simple 6-12mm o DVH 16-18.5mm. Sistema premium.",
   costPerMmHeight: 0.014,
   costPerMmWidth: 0.017,
   glassDiscountHeightMm: 66,
@@ -141,10 +143,10 @@ export const europaClasica2Panos: ModelInput = {
   maxWidthMm: 3200, // 1600mm + 1600mm
   minHeightMm: 320,
   minWidthMm: 804, // 402mm + 402mm
-  name: 'Corredizo Europa Clásica 2 Paños (OX)',
-  profileSupplierName: 'Extralum',
+  name: "Corredizo Europa Clásica 2 Paños (OX)",
+  profileSupplierName: "Extralum",
   profitMarginPercentage: 38, // Mayor margen por ser premium
-  status: 'published',
+  status: "published",
 };
 
 /**
@@ -153,8 +155,8 @@ export const europaClasica2Panos: ModelInput = {
 export const europaClasica3Panos: ModelInput = {
   accessoryPrice: 75, // USD
   basePrice: 160, // USD/m²
-  compatibleGlassTypeIds: ['placeholder'],
-  costNotes: 'Precio base $160/m². Sistema premium de 3 vías con DVH.',
+  compatibleGlassTypeIds: ["placeholder"],
+  costNotes: "Precio base $160/m². Sistema premium de 3 vías con DVH.",
   costPerMmHeight: 0.015,
   costPerMmWidth: 0.019,
   glassDiscountHeightMm: 66,
@@ -163,10 +165,10 @@ export const europaClasica3Panos: ModelInput = {
   maxWidthMm: 4800, // 3x1600mm
   minHeightMm: 320,
   minWidthMm: 1206, // 3x402mm
-  name: 'Corredizo Europa Clásica 3 Paños (XOX)',
-  profileSupplierName: 'Extralum',
+  name: "Corredizo Europa Clásica 3 Paños (XOX)",
+  profileSupplierName: "Extralum",
   profitMarginPercentage: 38,
-  status: 'published',
+  status: "published",
 };
 
 /**
@@ -175,8 +177,8 @@ export const europaClasica3Panos: ModelInput = {
 export const europaClasica4Panos: ModelInput = {
   accessoryPrice: 95, // USD
   basePrice: 175, // USD/m²
-  compatibleGlassTypeIds: ['placeholder'],
-  costNotes: 'Precio base $175/m². Sistema premium de 4 paños con DVH.',
+  compatibleGlassTypeIds: ["placeholder"],
+  costNotes: "Precio base $175/m². Sistema premium de 4 paños con DVH.",
   costPerMmHeight: 0.016,
   costPerMmWidth: 0.02,
   glassDiscountHeightMm: 66,
@@ -185,10 +187,10 @@ export const europaClasica4Panos: ModelInput = {
   maxWidthMm: 6400, // 4x1600mm
   minHeightMm: 320,
   minWidthMm: 1608, // 4x402mm
-  name: 'Corredizo Europa Clásica 4 Paños (OXXO)',
-  profileSupplierName: 'Extralum',
+  name: "Corredizo Europa Clásica 4 Paños (OXXO)",
+  profileSupplierName: "Extralum",
   profitMarginPercentage: 38,
-  status: 'published',
+  status: "published",
 };
 
 /**

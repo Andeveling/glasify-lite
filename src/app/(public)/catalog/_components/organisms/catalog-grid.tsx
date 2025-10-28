@@ -1,5 +1,5 @@
-import { ModelCard } from '@views/catalog/_components/molecules/model-card';
-import { formatCurrency } from '@/app/_utils/format-currency.util';
+import { ModelCard } from "@views/catalog/_components/molecules/model-card";
+import { formatCurrency } from "@/app/_utils/format-currency.util";
 
 type Model = {
   accessoryPrice: number | null;
@@ -35,23 +35,39 @@ function getMockHighlightedSolutions(modelId: string) {
   // Mock data - different solutions for different models
   const mockSolutions = [
     [
-      { icon: 'Shield', nameEs: 'Seguridad', rating: 'excellent' as const },
-      { icon: 'Snowflake', nameEs: 'Aislamiento Térmico', rating: 'very_good' as const },
+      { icon: "Shield", nameEs: "Seguridad", rating: "excellent" as const },
+      {
+        icon: "Snowflake",
+        nameEs: "Aislamiento Térmico",
+        rating: "very_good" as const,
+      },
     ],
     [
-      { icon: 'Volume2', nameEs: 'Aislamiento Acústico', rating: 'excellent' as const },
-      { icon: 'Shield', nameEs: 'Seguridad', rating: 'good' as const },
+      {
+        icon: "Volume2",
+        nameEs: "Aislamiento Acústico",
+        rating: "excellent" as const,
+      },
+      { icon: "Shield", nameEs: "Seguridad", rating: "good" as const },
     ],
     [
-      { icon: 'Snowflake', nameEs: 'Aislamiento Térmico', rating: 'excellent' as const },
-      { icon: 'Sparkles', nameEs: 'Decorativo', rating: 'very_good' as const },
-      { icon: 'Volume2', nameEs: 'Aislamiento Acústico', rating: 'good' as const },
+      {
+        icon: "Snowflake",
+        nameEs: "Aislamiento Térmico",
+        rating: "excellent" as const,
+      },
+      { icon: "Sparkles", nameEs: "Decorativo", rating: "very_good" as const },
+      {
+        icon: "Volume2",
+        nameEs: "Aislamiento Acústico",
+        rating: "good" as const,
+      },
     ],
   ];
 
   // Use model ID to pseudo-randomly assign solutions
   const index = modelId.charCodeAt(0) % mockSolutions.length;
-  return mockSolutions[ index ];
+  return mockSolutions[index];
 }
 
 /**
@@ -87,8 +103,8 @@ export function CatalogGrid({ models }: CatalogGridProps) {
               name={model.name}
               profileSupplier={model.profileSupplier?.name}
               range={{
-                height: [ model.minHeightMm, model.maxHeightMm ],
-                width: [ model.minWidthMm, model.maxWidthMm ],
+                height: [model.minHeightMm, model.maxHeightMm],
+                width: [model.minWidthMm, model.maxWidthMm],
               }}
             />
           </li>

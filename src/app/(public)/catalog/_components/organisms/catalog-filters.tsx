@@ -1,10 +1,18 @@
-'use client';
+"use client";
 
-import { ActiveSearchParameters } from '@views/catalog/_components/molecules/active-filter-badges';
-import { ResultCount } from '@views/catalog/_components/molecules/result-count';
-import { useCatalogFilters } from '@views/catalog/_hooks/use-catalog';
-import type { CatalogSortOption } from '@views/catalog/_utils/search-parameters.utils';
-import { ArrowDownAZ, ArrowDownZA, ArrowUpDown, Building2, Filter, SortAsc, SortDesc } from 'lucide-react';
+import { ActiveSearchParameters } from "@views/catalog/_components/molecules/active-filter-badges";
+import { ResultCount } from "@views/catalog/_components/molecules/result-count";
+import { useCatalogFilters } from "@views/catalog/_hooks/use-catalog";
+import type { CatalogSortOption } from "@views/catalog/_utils/search-parameters.utils";
+import {
+  ArrowDownAZ,
+  ArrowDownZA,
+  ArrowUpDown,
+  Building2,
+  Filter,
+  SortAsc,
+  SortDesc,
+} from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -13,7 +21,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
 type CatalogFiltersProps = {
   profileSuppliers?: Array<{
@@ -60,8 +68,8 @@ export function CatalogFilters({
   showControls = true,
   showBadges = true,
   showResultCount = true,
-  currentProfileSupplier = 'all',
-  currentSort = 'name-asc',
+  currentProfileSupplier = "all",
+  currentSort = "name-asc",
   currentSearchQuery,
 }: CatalogFiltersProps) {
   // Delegate all logic to custom hook (SRP - Single Responsibility)
@@ -95,7 +103,10 @@ export function CatalogFilters({
 
           {/* Profile Supplier filter */}
           {profileSuppliers.length > 0 && (
-            <Select onValueChange={handleProfileSupplierChange} value={currentProfileSupplier}>
+            <Select
+              onValueChange={handleProfileSupplierChange}
+              value={currentProfileSupplier}
+            >
               <SelectTrigger className="w-full gap-2 md:w-auto md:min-w-[180px]">
                 <Building2 className="size-4 opacity-70" />
                 <SelectValue placeholder="Proveedor" />
@@ -160,7 +171,7 @@ export function CatalogFilters({
           onRemoveProfileSupplierAction={handleRemoveProfileSupplier}
           onRemoveSearchAction={handleRemoveSearch}
           onRemoveSortAction={handleRemoveSort}
-          searchQuery={currentSearchQuery ?? ''}
+          searchQuery={currentSearchQuery ?? ""}
           selectedProfileSupplierName={selectedProfileSupplierName ?? null}
           sortType={currentSort as CatalogSortOption}
         />

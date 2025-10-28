@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 /**
  * Price Ranges Chart Component
@@ -6,24 +6,43 @@
  * with count and percentage tooltips
  */
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { type ChartConfig, ChartContainer, ChartTooltip } from '@/components/ui/chart';
-import { formatCurrency, formatCurrencyCompact, formatPercent } from '@/lib/format';
-import type { PriceRange } from '@/types/dashboard';
-import { EmptyDashboardState } from './empty-dashboard-state';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+} from "@/components/ui/chart";
+import {
+  formatCurrency,
+  formatCurrencyCompact,
+  formatPercent,
+} from "@/lib/format";
+import type { PriceRange } from "@/types/dashboard";
+import { EmptyDashboardState } from "./empty-dashboard-state";
 
 const BORDER_RADIUS_VALUE = 4;
-const BAR_RADIUS_RIGHT: [number, number, number, number] = [0, BORDER_RADIUS_VALUE, BORDER_RADIUS_VALUE, 0];
+const BAR_RADIUS_RIGHT: [number, number, number, number] = [
+  0,
+  BORDER_RADIUS_VALUE,
+  BORDER_RADIUS_VALUE,
+  0,
+];
 
 const chartConfig = {
   count: {
-    color: 'var(--chart-2)',
-    label: 'Cotizaciones',
+    color: "var(--chart-2)",
+    label: "Cotizaciones",
   },
 } satisfies ChartConfig;
 
-interface PriceRangesChartProps {
+type PriceRangesChartProps = {
   /**
    * Price range distribution from tRPC query
    */
@@ -33,7 +52,7 @@ interface PriceRangesChartProps {
    * Tenant configuration for currency/locale formatting
    */
   tenantConfig?: { currency?: string; locale?: string } | null;
-}
+};
 
 /**
  * PriceRangesChart Component
@@ -61,7 +80,10 @@ interface PriceRangesChartProps {
  * />
  * ```
  */
-export function PriceRangesChart({ data, tenantConfig }: PriceRangesChartProps) {
+export function PriceRangesChart({
+  data,
+  tenantConfig,
+}: PriceRangesChartProps) {
   // Empty state check
   if (!data || data.length === 0) {
     return (
@@ -76,8 +98,12 @@ export function PriceRangesChart({ data, tenantConfig }: PriceRangesChartProps) 
   const chartData = data.map((item) => {
     // Format range label using formatCurrencyCompact
     const minFormatted = formatCurrencyCompact(item.min, tenantConfig);
-    const maxFormatted = item.max ? formatCurrencyCompact(item.max, tenantConfig) : '+';
-    const rangeLabel = item.max ? `${minFormatted} - ${maxFormatted}` : `${minFormatted}${maxFormatted}`;
+    const maxFormatted = item.max
+      ? formatCurrencyCompact(item.max, tenantConfig)
+      : "+";
+    const rangeLabel = item.max
+      ? `${minFormatted} - ${maxFormatted}`
+      : `${minFormatted}${maxFormatted}`;
 
     return {
       count: item.count,
@@ -92,10 +118,15 @@ export function PriceRangesChart({ data, tenantConfig }: PriceRangesChartProps) 
     <Card>
       <CardHeader className="pb-3">
         <CardTitle>Distribución por Rango de Precio</CardTitle>
-        <CardDescription>Cantidad de cotizaciones por rango de valor</CardDescription>
+        <CardDescription>
+          Cantidad de cotizaciones por rango de valor
+        </CardDescription>
       </CardHeader>
       <CardContent className="pl-0">
-        <ChartContainer className="aspect-auto h-80 w-full" config={chartConfig}>
+        <ChartContainer
+          className="aspect-auto h-80 w-full"
+          config={chartConfig}
+        >
           <BarChart
             accessibilityLayer
             data={chartData}
@@ -112,14 +143,22 @@ export function PriceRangesChart({ data, tenantConfig }: PriceRangesChartProps) 
             <YAxis dataKey="label" fontSize={11} type="category" width={100} />
             <ChartTooltip
               content={({ active, payload }) => {
-                if (!(active && payload) || payload.length === 0) return null;
+                if (!(active && payload) || payload.length === 0) {
+                  return null;
+                }
 
                 const tooltipData = payload[0]?.payload;
-                if (!tooltipData) return null;
+                if (!tooltipData) {
+                  return null;
+                }
 
                 // Format detailed range for tooltip
-                const minFormatted = formatCurrency(tooltipData.min, { context: tenantConfig });
-                const maxFormatted = tooltipData.max ? formatCurrency(tooltipData.max, { context: tenantConfig }) : '+';
+                const minFormatted = formatCurrency(tooltipData.min, {
+                  context: tenantConfig,
+                });
+                const maxFormatted = tooltipData.max
+                  ? formatCurrency(tooltipData.max, { context: tenantConfig })
+                  : "+";
                 const detailedRange = tooltipData.max
                   ? `${minFormatted} - ${maxFormatted}`
                   : `${minFormatted}${maxFormatted}`;
@@ -129,13 +168,20 @@ export function PriceRangesChart({ data, tenantConfig }: PriceRangesChartProps) 
                     <p className="font-semibold text-sm">{detailedRange}</p>
                     <p className="mt-1 font-medium text-primary text-sm">
                       {tooltipData.count} cotizaciones (
-                      {formatPercent(tooltipData.percentage, { context: tenantConfig })})
+                      {formatPercent(tooltipData.percentage, {
+                        context: tenantConfig,
+                      })}
+                      )
                     </p>
                   </div>
                 );
               }}
             />
-            <Bar dataKey="count" fill="var(--color-count)" radius={BAR_RADIUS_RIGHT} />
+            <Bar
+              dataKey="count"
+              fill="var(--color-count)"
+              radius={BAR_RADIUS_RIGHT}
+            />
           </BarChart>
         </ChartContainer>
       </CardContent>

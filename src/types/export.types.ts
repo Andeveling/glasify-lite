@@ -5,17 +5,17 @@
  * Supports both @react-pdf/renderer and exceljs libraries.
  */
 
-import type { Quote } from '@prisma/client';
+import type { Quote } from "@prisma/client";
 
 /**
  * Supported export formats
  */
-export type ExportFormat = 'pdf' | 'excel';
+export type ExportFormat = "pdf" | "excel";
 
 /**
  * Export configuration options
  */
-export interface ExportOptions {
+export type ExportOptions = {
   /** Export format (PDF or Excel) */
   format: ExportFormat;
 
@@ -29,7 +29,7 @@ export interface ExportOptions {
   includeImages?: boolean;
 
   /** Page size for PDF exports (default: 'A4') */
-  pageSize?: 'A4' | 'LETTER' | 'LEGAL';
+  pageSize?: "A4" | "LETTER" | "LEGAL";
 
   /** Locale for formatting (falls back to TENANT_LOCALE) */
   locale?: string;
@@ -39,18 +39,18 @@ export interface ExportOptions {
 
   /** Timezone for date formatting (falls back to TENANT_TIMEZONE) */
   timezone?: string;
-}
+};
 
 /**
  * Quote data structure for PDF generation
  * Enriched with computed fields and formatting helpers
  */
-export interface QuotePDFData {
+export type QuotePDFData = {
   /** Quote metadata */
   quote: {
     id: string;
     projectName: string;
-    status: Quote['status'];
+    status: Quote["status"];
     createdAt: Date;
     validUntil: Date;
     totalAmount: number;
@@ -79,7 +79,7 @@ export interface QuotePDFData {
       width: number;
       height: number;
       area: number;
-      unit: 'm²' | 'cm²';
+      unit: "m²" | "cm²";
     };
 
     /** Glass specifications (if applicable) */
@@ -87,6 +87,8 @@ export interface QuotePDFData {
       type: string;
       thickness?: number;
       color?: string;
+      colorHexCode?: string;
+      colorSurchargePercentage?: number;
       treatment?: string;
     };
   }>;
@@ -121,18 +123,18 @@ export interface QuotePDFData {
     discount?: number;
     total: number;
   };
-}
+};
 
 /**
  * Quote data structure for Excel generation
  * Similar to PDF but optimized for spreadsheet format
  */
-export interface QuoteExcelData {
+export type QuoteExcelData = {
   /** Quote metadata */
   quote: {
     id: string;
     projectName: string;
-    status: Quote['status'];
+    status: Quote["status"];
     createdAt: Date;
     validUntil: Date;
     totalAmount: number;
@@ -195,12 +197,12 @@ export interface QuoteExcelData {
     discount?: number;
     total: number;
   };
-}
+};
 
 /**
  * Export result returned from Server Actions
  */
-export interface ExportResult {
+export type ExportResult = {
   success: boolean;
 
   /** Base64-encoded file data (for download) */
@@ -220,12 +222,12 @@ export interface ExportResult {
 
   /** Generation duration in milliseconds (for logging) */
   duration?: number;
-}
+};
 
 /**
  * Export metadata for logging and analytics
  */
-export interface ExportMetadata {
+export type ExportMetadata = {
   quoteId: string;
   format: ExportFormat;
   itemCount: number;
@@ -234,4 +236,4 @@ export interface ExportMetadata {
   userId: string;
   timestamp: Date;
   options: ExportOptions;
-}
+};

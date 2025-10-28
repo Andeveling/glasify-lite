@@ -17,7 +17,7 @@
  * @date 2025-01-25
  */
 
-import type { ModelInput } from '../../factories/model.factory';
+import type { ModelInput } from "../../factories/model.factory";
 
 /**
  * Ventana PVC Deceuninck Corrediza 2 Paños
@@ -28,8 +28,9 @@ import type { ModelInput } from '../../factories/model.factory';
 export const pvcSliding2Panes: ModelInput = {
   accessoryPrice: 150_000, // COP - Herrajes europeos de alta calidad
   basePrice: 520_000, // COP/m² - PVC premium
-  compatibleGlassTypeIds: ['placeholder'],
-  costNotes: 'Precio base $520.000/m². Sistema PVC Deceuninck con aislamiento térmico y acústico superior.',
+  compatibleGlassTypeIds: ["placeholder"],
+  costNotes:
+    "Precio base $520.000/m². Sistema PVC Deceuninck con aislamiento térmico y acústico superior.",
   costPerMmHeight: 45,
   costPerMmWidth: 50,
   glassDiscountHeightMm: 70,
@@ -38,10 +39,10 @@ export const pvcSliding2Panes: ModelInput = {
   maxWidthMm: 3000,
   minHeightMm: 600,
   minWidthMm: 800,
-  name: 'Ventana PVC Deceuninck Corrediza 2 Paños',
-  profileSupplierName: 'Deceuninck',
+  name: "Ventana PVC Deceuninck Corrediza 2 Paños",
+  profileSupplierName: "Deceuninck",
   profitMarginPercentage: 38,
-  status: 'published',
+  status: "published",
 };
 
 /**
@@ -53,8 +54,9 @@ export const pvcSliding2Panes: ModelInput = {
 export const pvcCasement1Panel: ModelInput = {
   accessoryPrice: 180_000, // COP - Herrajes de apertura premium
   basePrice: 560_000, // COP/m²
-  compatibleGlassTypeIds: ['placeholder'],
-  costNotes: 'Precio base $560.000/m². Sistema abatible PVC con hermeticidad superior.',
+  compatibleGlassTypeIds: ["placeholder"],
+  costNotes:
+    "Precio base $560.000/m². Sistema abatible PVC con hermeticidad superior.",
   costPerMmHeight: 48,
   costPerMmWidth: 52,
   glassDiscountHeightMm: 75,
@@ -63,10 +65,10 @@ export const pvcCasement1Panel: ModelInput = {
   maxWidthMm: 1200,
   minHeightMm: 600,
   minWidthMm: 600,
-  name: 'Ventana PVC Deceuninck Abatible 1 Hoja',
-  profileSupplierName: 'Deceuninck',
+  name: "Ventana PVC Deceuninck Abatible 1 Hoja",
+  profileSupplierName: "Deceuninck",
   profitMarginPercentage: 38,
-  status: 'published',
+  status: "published",
 };
 
 /**
@@ -78,8 +80,9 @@ export const pvcCasement1Panel: ModelInput = {
 export const pvcCasement2Panels: ModelInput = {
   accessoryPrice: 220_000, // COP
   basePrice: 590_000, // COP/m²
-  compatibleGlassTypeIds: ['placeholder'],
-  costNotes: 'Precio base $590.000/m². Sistema abatible doble hoja con máxima eficiencia energética.',
+  compatibleGlassTypeIds: ["placeholder"],
+  costNotes:
+    "Precio base $590.000/m². Sistema abatible doble hoja con máxima eficiencia energética.",
   costPerMmHeight: 50,
   costPerMmWidth: 55,
   glassDiscountHeightMm: 75,
@@ -88,13 +91,17 @@ export const pvcCasement2Panels: ModelInput = {
   maxWidthMm: 2400,
   minHeightMm: 600,
   minWidthMm: 1200,
-  name: 'Ventana PVC Deceuninck Abatible 2 Hojas',
-  profileSupplierName: 'Deceuninck',
+  name: "Ventana PVC Deceuninck Abatible 2 Hojas",
+  profileSupplierName: "Deceuninck",
   profitMarginPercentage: 38,
-  status: 'published',
+  status: "published",
 };
 
 /**
  * All PVC Deceuninck models
  */
-export const vidriosLaEquidadPVCModels: ModelInput[] = [pvcSliding2Panes, pvcCasement1Panel, pvcCasement2Panels];
+export const vidriosLaEquidadPVCModels: ModelInput[] = [
+  pvcSliding2Panes,
+  pvcCasement1Panel,
+  pvcCasement2Panels,
+];

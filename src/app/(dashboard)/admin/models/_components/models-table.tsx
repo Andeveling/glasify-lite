@@ -10,6 +10,7 @@
  * - Debounced search (300ms)
  * - Sortable columns
  * - Filter by status and supplier
+ * - Color assignment status (T041)
  * - Delete confirmation
  *
  * Architecture:
@@ -18,20 +19,20 @@
  * - Type-safe with Zod validation
  */
 
-'use client';
+"use client";
 
-import type { MaterialType, ModelStatus } from '@prisma/client';
-import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog';
-import type { ServerTableColumn } from '@/app/_components/server-table';
-import { ServerTable } from '@/app/_components/server-table';
-import { TablePagination } from '@/app/_components/server-table/table-pagination';
-import { useTenantConfig } from '@/app/_hooks/use-tenant-config';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import type { MaterialType, ModelStatus } from "@prisma/client";
+import { MoreHorizontal, Palette, Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
+import { DeleteConfirmationDialog } from "@/app/_components/delete-confirmation-dialog";
+import type { ServerTableColumn } from "@/app/_components/server-table";
+import { ServerTable } from "@/app/_components/server-table";
+import { TablePagination } from "@/app/_components/server-table/table-pagination";
+import { useTenantConfig } from "@/app/_hooks/use-tenant-config";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,10 +40,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { formatCurrency } from '@/lib/format';
-import type { RouterOutputs } from '@/trpc/react';
-import { api } from '@/trpc/react';
+} from "@/components/ui/dropdown-menu";
+import { formatCurrency } from "@/lib/format";
+import type { RouterOutputs } from "@/trpc/react";
+import { api } from "@/trpc/react";
 
 /**
  * Model data type (from tRPC)
@@ -63,6 +64,9 @@ type Model = {
     name: string;
     materialType: MaterialType;
   } | null;
+  _count: {
+    modelColors: number; // T041: Color count
+  };
 };
 
 type ModelsTableProps = {
@@ -75,11 +79,11 @@ type ModelsTableProps = {
   };
   searchParams: {
     page: number;
-    status: 'all' | 'draft' | 'published';
+    status: "all" | "draft" | "published";
     profileSupplierId?: string;
     search?: string;
-    sortBy: 'name' | 'createdAt' | 'updatedAt' | 'basePrice';
-    sortOrder: 'asc' | 'desc';
+    sortBy: "name" | "createdAt" | "updatedAt" | "basePrice";
+    sortOrder: "asc" | "desc";
   };
 };
 
@@ -87,8 +91,8 @@ type ModelsTableProps = {
  * Status badge component
  */
 function StatusBadge({ status }: { status: ModelStatus }) {
-  const variant = status === 'published' ? 'default' : 'secondary';
-  const label = status === 'published' ? 'Publicado' : 'Borrador';
+  const variant = status === "published" ? "default" : "secondary";
+  const label = status === "published" ? "Publicado" : "Borrador";
 
   return <Badge variant={variant}>{label}</Badge>;
 }
@@ -96,7 +100,13 @@ function StatusBadge({ status }: { status: ModelStatus }) {
 /**
  * Actions dropdown menu
  */
-function ActionsMenu({ model, onDelete }: { model: Model; onDelete: (id: string, name: string) => void }) {
+function ActionsMenu({
+  model,
+  onDelete,
+}: {
+  model: Model;
+  onDelete: (id: string, name: string) => void;
+}) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -113,7 +123,10 @@ function ActionsMenu({ model, onDelete }: { model: Model; onDelete: (id: string,
             Editar
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem className="text-destructive" onClick={() => onDelete(model.id, model.name)}>
+        <DropdownMenuItem
+          className="text-destructive"
+          onClick={() => onDelete(model.id, model.name)}
+        >
           <Trash2 className="mr-2 size-4" />
           Eliminar
         </DropdownMenuItem>
@@ -125,7 +138,10 @@ function ActionsMenu({ model, onDelete }: { model: Model; onDelete: (id: string,
 export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
   const utils = api.useUtils();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [modelToDelete, setModelToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [modelToDelete, setModelToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   // Active query with placeholderData (enables cache invalidation)
   const { data } = api.admin.model.list.useQuery(
@@ -153,14 +169,37 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
 
   // Context type for optimistic update snapshot
   type DeleteModelContext = {
-    previousData?: RouterOutputs['admin']['model']['list'];
+    previousData?: RouterOutputs["admin"]["model"]["list"];
   };
 
   // Delete mutation with optimistic updates
-  const deleteMutation = api.admin.model.delete.useMutation<DeleteModelContext>({
-    onError: (_error, _variables, context) => {
-      // Rollback to previous data on error
-      if (context?.previousData) {
+  const deleteMutation = api.admin.model.delete.useMutation<DeleteModelContext>(
+    {
+      onError: (_error, _variables, context) => {
+        // Rollback to previous data on error
+        if (context?.previousData) {
+          utils.admin.model.list.setData(
+            {
+              limit: 20,
+              page: searchParams.page,
+              profileSupplierId: searchParams.profileSupplierId,
+              search: searchParams.search,
+              sortBy: searchParams.sortBy,
+              sortOrder: searchParams.sortOrder,
+              status: searchParams.status,
+            },
+            context.previousData
+          );
+        }
+      },
+      onMutate: async (variables) => {
+        // Cancel any outgoing refetches to avoid overwriting optimistic update
+        await utils.admin.model.list.cancel();
+
+        // Snapshot the previous value
+        const previousData = utils.admin.model.list.getData();
+
+        // Optimistically update to remove the deleted model
         utils.admin.model.list.setData(
           {
             limit: 20,
@@ -171,46 +210,27 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
             sortOrder: searchParams.sortOrder,
             status: searchParams.status,
           },
-          context.previousData
+          (old) => {
+            if (!old) {
+              return old;
+            }
+            return {
+              ...old,
+              items: old.items.filter((model) => model.id !== variables.id),
+              total: old.total - 1,
+            };
+          }
         );
-      }
-    },
-    onMutate: async (variables) => {
-      // Cancel any outgoing refetches to avoid overwriting optimistic update
-      await utils.admin.model.list.cancel();
 
-      // Snapshot the previous value
-      const previousData = utils.admin.model.list.getData();
-
-      // Optimistically update to remove the deleted model
-      utils.admin.model.list.setData(
-        {
-          limit: 20,
-          page: searchParams.page,
-          profileSupplierId: searchParams.profileSupplierId,
-          search: searchParams.search,
-          sortBy: searchParams.sortBy,
-          sortOrder: searchParams.sortOrder,
-          status: searchParams.status,
-        },
-        (old) => {
-          if (!old) return old;
-          return {
-            ...old,
-            items: old.items.filter((model) => model.id !== variables.id),
-            total: old.total - 1,
-          };
-        }
-      );
-
-      // Return context with snapshot
-      return { previousData };
-    },
-    onSettled: () => {
-      // Always refetch after error or success to ensure sync with server
-      void utils.admin.model.list.invalidate();
-    },
-  });
+        // Return context with snapshot
+        return { previousData };
+      },
+      onSettled: () => {
+        // Always refetch after error or success to ensure sync with server
+        void utils.admin.model.list.invalidate();
+      },
+    }
+  );
 
   /**
    * Handle delete click
@@ -224,12 +244,14 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
    * Confirm delete with optimistic UI and toast.promise
    */
   const handleConfirmDelete = async () => {
-    if (!modelToDelete) return;
+    if (!modelToDelete) {
+      return;
+    }
 
     const deletePromise = deleteMutation.mutateAsync({ id: modelToDelete.id });
 
     toast.promise(deletePromise, {
-      error: (error: Error) => error.message || 'No se pudo eliminar el modelo',
+      error: (error: Error) => error.message || "No se pudo eliminar el modelo",
       loading: `Eliminando ${modelToDelete.name}...`,
       success: `${modelToDelete.name} eliminado correctamente`,
     });
@@ -252,61 +274,96 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
   const columns: ServerTableColumn<Model>[] = [
     {
       cell: (model) => model.name,
-      header: 'Nombre',
-      id: 'name',
+      header: "Nombre",
+      id: "name",
       sortable: true,
     },
     {
       cell: (model) => <StatusBadge status={model.status} />,
-      header: 'Estado',
-      id: 'status',
+      header: "Estado",
+      id: "status",
       sortable: true,
     },
     {
-      cell: (model) => (model.profileSupplier ? model.profileSupplier.name : '—'),
-      header: 'Proveedor',
-      id: 'profileSupplier',
+      cell: (model) =>
+        model.profileSupplier ? model.profileSupplier.name : "—",
+      header: "Proveedor",
+      id: "profileSupplier",
       sortable: false,
     },
     {
-      cell: (model) => formatCurrency(model.basePrice, { context: formatContext }),
-      header: 'Precio Base',
-      id: 'basePrice',
+      cell: (model) =>
+        formatCurrency(model.basePrice, { context: formatContext }),
+      header: "Precio Base",
+      id: "basePrice",
       sortable: true,
     },
     {
-      align: 'center',
+      align: "center",
       cell: (model) => `${model.minWidthMm}-${model.maxWidthMm}mm`,
-      header: 'Ancho',
-      id: 'width',
+      header: "Ancho",
+      id: "width",
       sortable: false,
     },
     {
-      align: 'center',
+      align: "center",
       cell: (model) => `${model.minHeightMm}-${model.maxHeightMm}mm`,
-      header: 'Alto',
-      id: 'height',
+      header: "Alto",
+      id: "height",
       sortable: false,
     },
     {
-      align: 'right',
-      cell: (model) => <ActionsMenu model={model} onDelete={handleDeleteClick} />,
-      header: 'Acciones',
-      id: 'actions',
+      align: "center",
+      cell: (model) => {
+        const colorCount = model._count.modelColors;
+        if (colorCount === 0) {
+          return (
+            <Badge variant="secondary">
+              <Palette className="mr-1 h-3 w-3" />
+              Sin colores
+            </Badge>
+          );
+        }
+        return (
+          <Badge variant="default">
+            <Palette className="mr-1 h-3 w-3" />
+            {colorCount} {colorCount === 1 ? "color" : "colores"}
+          </Badge>
+        );
+      },
+      header: "Colores",
+      id: "colors",
       sortable: false,
-      width: '80px',
+    },
+    {
+      align: "right",
+      cell: (model) => (
+        <ActionsMenu model={model} onDelete={handleDeleteClick} />
+      ),
+      header: "Acciones",
+      id: "actions",
+      sortable: false,
+      width: "80px",
     },
   ];
 
   return (
     <>
-      <ServerTable columns={columns} data={tableData.items as Model[]} emptyMessage="No se encontraron modelos" />
+      <ServerTable
+        columns={columns}
+        data={tableData.items as Model[]}
+        emptyMessage="No se encontraron modelos"
+      />
 
-      <TablePagination currentPage={tableData.page} totalItems={tableData.total} totalPages={tableData.totalPages} />
+      <TablePagination
+        currentPage={tableData.page}
+        totalItems={tableData.total}
+        totalPages={tableData.totalPages}
+      />
 
       <DeleteConfirmationDialog
         dependencies={[]}
-        entityLabel={modelToDelete?.name ?? ''}
+        entityLabel={modelToDelete?.name ?? ""}
         entityName="modelo"
         loading={deleteMutation.isPending}
         onConfirm={handleConfirmDelete}

@@ -1,18 +1,21 @@
-'use client';
+"use client";
 
-import { ProductImagePlaceholder, ProductPrice } from '@views/catalog/_components/molecules/model-card-atoms';
-import { Maximize2 } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Card, CardContent } from '@/components/ui/card';
+import {
+  ProductImagePlaceholder,
+  ProductPrice,
+} from "@views/catalog/_components/molecules/model-card-atoms";
+import { Maximize2 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
 
 type ModelCardProps = {
   id: string;
   name: string;
   profileSupplier?: string;
   range: {
-    width: [ number, number ];
-    height: [ number, number ];
+    width: [number, number];
+    height: [number, number];
   };
   basePrice: string;
   /**
@@ -29,7 +32,7 @@ type ModelCardProps = {
   highlightedSolutions?: Array<{
     icon?: string;
     nameEs: string;
-    rating: 'excellent' | 'very_good' | 'good' | 'standard' | 'basic';
+    rating: "excellent" | "very_good" | "good" | "standard" | "basic";
   }>;
 };
 
@@ -44,11 +47,17 @@ type ModelCardProps = {
  * - Price (decision factor)
  * - Link to details
  */
-export function ModelCard({ id, name, basePrice, imageUrl, range }: ModelCardProps) {
-  const minWidth = Math.round(range.width[ 0 ]);
-  const maxWidth = Math.round(range.width[ 1 ]);
-  const minHeight = Math.round(range.height[ 0 ]);
-  const maxHeight = Math.round(range.height[ 1 ]);
+export function ModelCard({
+  id,
+  name,
+  basePrice,
+  imageUrl,
+  range,
+}: ModelCardProps) {
+  const minWidth = Math.round(range.width[0]);
+  const maxWidth = Math.round(range.width[1]);
+  const minHeight = Math.round(range.height[0]);
+  const maxHeight = Math.round(range.height[1]);
 
   return (
     <Card
@@ -66,7 +75,7 @@ export function ModelCard({ id, name, basePrice, imageUrl, range }: ModelCardPro
               fill
               priority={false}
               sizes="(max-width: 768px) 100vw, 50vw"
-              src={imageUrl || '/placeholder.svg'}
+              src={imageUrl || "/placeholder.svg"}
             />
           ) : (
             <ProductImagePlaceholder productName={name} />
@@ -76,7 +85,7 @@ export function ModelCard({ id, name, basePrice, imageUrl, range }: ModelCardPro
         {/* Content Section */}
         <CardContent className="flex flex-1 flex-col gap-2 p-3">
           {/* Model Name */}
-          <h4 className='truncate font-semibold text-base text-foreground transition-colors group-hover:text-primary'>
+          <h4 className="truncate font-semibold text-base text-foreground transition-colors group-hover:text-primary">
             {name}
           </h4>
 
@@ -109,7 +118,9 @@ export function ModelCard({ id, name, basePrice, imageUrl, range }: ModelCardPro
           </div>
 
           <div className="flex w-full items-center justify-between pt-1">
-            <span className="font-medium text-muted-foreground text-xs">Precio base</span>
+            <span className="font-medium text-muted-foreground text-xs">
+              Precio base
+            </span>
             <ProductPrice price={basePrice} />
           </div>
         </CardContent>

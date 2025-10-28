@@ -47,7 +47,7 @@ const MIN_CURSOR_PAGE_SIZE = 1;
  * @returns Base64 encoded cursor
  */
 export function encodeCursor(value: string): string {
-  return Buffer.from(value).toString('base64');
+  return Buffer.from(value).toString("base64");
 }
 
 /**
@@ -59,9 +59,9 @@ export function encodeCursor(value: string): string {
  */
 export function decodeCursor(cursor: string): string {
   try {
-    return Buffer.from(cursor, 'base64').toString('utf-8');
+    return Buffer.from(cursor, "base64").toString("utf-8");
   } catch {
-    throw new Error('Invalid cursor format');
+    throw new Error("Invalid cursor format");
   }
 }
 
@@ -100,7 +100,10 @@ export function buildCursorPaginationParams(
     skip?: number;
     cursor?: { id: string };
   } = {
-    take: Math.max(MIN_CURSOR_PAGE_SIZE, Math.min(MAX_CURSOR_PAGE_SIZE, pageSize)),
+    take: Math.max(
+      MIN_CURSOR_PAGE_SIZE,
+      Math.min(MAX_CURSOR_PAGE_SIZE, pageSize)
+    ),
   };
 
   if (cursor) {

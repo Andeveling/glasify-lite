@@ -14,7 +14,7 @@
  * @date 2025-01-25
  */
 
-import type { ProfileSupplierInput } from '../../factories/profile-supplier.factory';
+import type { ProfileSupplierInput } from "../../factories/profile-supplier.factory";
 
 /**
  * Proveedores de perfiles para Vidrios La Equidad
@@ -25,16 +25,16 @@ import type { ProfileSupplierInput } from '../../factories/profile-supplier.fact
 export const vidriosLaEquidadProfileSuppliers: ProfileSupplierInput[] = [
   {
     isActive: true,
-    materialType: 'ALUMINUM',
-    name: 'Sistemas Aluminio Nacional',
+    materialType: "ALUMINUM",
+    name: "Sistemas Aluminio Nacional",
     notes:
-      'Proveedor de perfiles de aluminio en Colombia. Sistemas corredizos y abatibles para ventanas y puertas. Uso residencial, comercial e institucional.',
+      "Proveedor de perfiles de aluminio en Colombia. Sistemas corredizos y abatibles para ventanas y puertas. Uso residencial, comercial e institucional.",
   },
   {
     isActive: true,
-    materialType: 'PVC',
-    name: 'Deceuninck',
+    materialType: "PVC",
+    name: "Deceuninck",
     notes:
-      'Sistemas PVC de alta gama. Excelente aislamiento térmico y acústico. Ideal para proyectos que requieren eficiencia energética y durabilidad.',
+      "Sistemas PVC de alta gama. Excelente aislamiento térmico y acústico. Ideal para proyectos que requieren eficiencia energética y durabilidad.",
   },
 ];

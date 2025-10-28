@@ -1,10 +1,16 @@
-'use client';
+"use client";
 
-import { BarChart3, FileX } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import { BarChart3, FileX } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
-interface EmptyDashboardStateProps {
+type EmptyDashboardStateProps = {
   /**
    * Title for the empty state message
    */
@@ -24,7 +30,7 @@ interface EmptyDashboardStateProps {
    * Additional CSS classes for the card
    */
   className?: string;
-}
+};
 
 /**
  * EmptyDashboardState Component
@@ -47,13 +53,13 @@ interface EmptyDashboardStateProps {
  * ```
  */
 export function EmptyDashboardState({
-  title = 'Sin datos disponibles',
-  description = 'No hay información para mostrar en el período seleccionado. Intenta cambiar el filtro de período.',
+  title = "Sin datos disponibles",
+  description = "No hay información para mostrar en el período seleccionado. Intenta cambiar el filtro de período.",
   icon: Icon = FileX,
   className,
 }: EmptyDashboardStateProps) {
   return (
-    <Card className={cn('border-dashed', className)}>
+    <Card className={cn("border-dashed", className)}>
       <CardHeader className="pb-4">
         <div className="flex items-center gap-3">
           <div className="rounded-lg bg-muted p-2">

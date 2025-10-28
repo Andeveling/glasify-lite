@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { FileCheck, FileText, FileX, Send } from 'lucide-react';
-import { formatPercent } from '@/lib/format';
-import type { QuoteMetrics } from '@/types/dashboard';
-import { MetricCard } from './metric-card';
+import { FileCheck, FileText, FileX, Send } from "lucide-react";
+import { formatPercent } from "@/lib/format";
+import type { QuoteMetrics } from "@/types/dashboard";
+import { MetricCard } from "./metric-card";
 
 // Conversion constant for decimal to percentage display
 const PERCENTAGE_MULTIPLIER = 100;
 
-interface QuotesMetricsCardsProps {
+type QuotesMetricsCardsProps = {
   /**
    * Quote metrics data from tRPC query
    */
@@ -17,8 +17,12 @@ interface QuotesMetricsCardsProps {
   /**
    * Tenant configuration for formatting (locale, currency, timezone)
    */
-  tenantConfig?: { locale?: string; currency?: string; timezone?: string } | null;
-}
+  tenantConfig?: {
+    locale?: string;
+    currency?: string;
+    timezone?: string;
+  } | null;
+};
 
 /**
  * QuotesMetricsCards Component
@@ -52,9 +56,14 @@ interface QuotesMetricsCardsProps {
  * />
  * ```
  */
-export function QuotesMetricsCards({ metrics, tenantConfig }: QuotesMetricsCardsProps) {
+export function QuotesMetricsCards({
+  metrics,
+  tenantConfig,
+}: QuotesMetricsCardsProps) {
   // Format conversion rate using centralized formatter
-  const conversionRateFormatted = formatPercent(metrics.conversionRate, { context: tenantConfig });
+  const conversionRateFormatted = formatPercent(metrics.conversionRate, {
+    context: tenantConfig,
+  });
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -66,9 +75,19 @@ export function QuotesMetricsCards({ metrics, tenantConfig }: QuotesMetricsCards
         value={metrics.totalQuotes}
       />
 
-      <MetricCard description="Sin enviar" icon={FileCheck} title="Borradores" value={metrics.draftQuotes} />
+      <MetricCard
+        description="Sin enviar"
+        icon={FileCheck}
+        title="Borradores"
+        value={metrics.draftQuotes}
+      />
 
-      <MetricCard description="Esperando respuesta" icon={Send} title="Enviadas" value={metrics.sentQuotes} />
+      <MetricCard
+        description="Esperando respuesta"
+        icon={Send}
+        title="Enviadas"
+        value={metrics.sentQuotes}
+      />
 
       <MetricCard
         description="Enviadas / Total"

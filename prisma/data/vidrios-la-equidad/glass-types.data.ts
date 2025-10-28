@@ -12,18 +12,19 @@
  * @date 2025-01-25
  */
 
-import type { GlassTypeInput } from '../../factories/glass-type.factory';
+import type { GlassTypeInput } from "../../factories/glass-type.factory";
 
 /**
  * Vidrio Claro Transparente
  * Vidrio flotado estándar sin tratamiento
  */
 export const clearFloat: GlassTypeInput = {
-  code: 'VLE-CLR-6',
-  description: 'Vidrio flotado transparente de alta claridad, ideal para aplicaciones generales.',
+  code: "VLE-CLR-6",
+  description:
+    "Vidrio flotado transparente de alta claridad, ideal para aplicaciones generales.",
   lightTransmission: 0.88,
-  manufacturer: 'Nacional',
-  name: 'Vidrio Claro Transparente',
+  manufacturer: "Nacional",
+  name: "Vidrio Claro Transparente",
   pricePerSqm: 35_000,
   thicknessMm: 6,
 };
@@ -33,11 +34,12 @@ export const clearFloat: GlassTypeInput = {
  * Vidrio con tinte bronce para control solar
  */
 export const bronzeReflective: GlassTypeInput = {
-  code: 'VLE-BRZ-6',
-  description: 'Vidrio reflectivo con tinte bronce, reduce entrada de calor y ofrece privacidad.',
+  code: "VLE-BRZ-6",
+  description:
+    "Vidrio reflectivo con tinte bronce, reduce entrada de calor y ofrece privacidad.",
   lightTransmission: 0.35,
-  manufacturer: 'Nacional',
-  name: 'Vidrio Bronce Reflectivo',
+  manufacturer: "Nacional",
+  name: "Vidrio Bronce Reflectivo",
   pricePerSqm: 48_000,
   solarFactor: 0.42,
   thicknessMm: 6,
@@ -48,11 +50,12 @@ export const bronzeReflective: GlassTypeInput = {
  * Control solar y estética moderna
  */
 export const grayReflective: GlassTypeInput = {
-  code: 'VLE-GRY-6',
-  description: 'Vidrio reflectivo gris para control solar y estética contemporánea.',
+  code: "VLE-GRY-6",
+  description:
+    "Vidrio reflectivo gris para control solar y estética contemporánea.",
   lightTransmission: 0.38,
-  manufacturer: 'Nacional',
-  name: 'Vidrio Gris Reflectivo',
+  manufacturer: "Nacional",
+  name: "Vidrio Gris Reflectivo",
   pricePerSqm: 48_000,
   solarFactor: 0.45,
   thicknessMm: 6,
@@ -63,11 +66,12 @@ export const grayReflective: GlassTypeInput = {
  * Seguridad y resistencia mejorada
  */
 export const temperedClear: GlassTypeInput = {
-  code: 'VLE-TMP-6',
-  description: 'Vidrio flotado templado de alta resistencia, seguro al romperse en fragmentos pequeños.',
+  code: "VLE-TMP-6",
+  description:
+    "Vidrio flotado templado de alta resistencia, seguro al romperse en fragmentos pequeños.",
   lightTransmission: 0.87,
-  manufacturer: 'Nacional',
-  name: 'Vidrio Templado Transparente',
+  manufacturer: "Nacional",
+  name: "Vidrio Templado Transparente",
   pricePerSqm: 65_000,
   thicknessMm: 6,
 };
@@ -77,11 +81,12 @@ export const temperedClear: GlassTypeInput = {
  * Seguridad superior contra impactos
  */
 export const laminatedClear: GlassTypeInput = {
-  code: 'VLE-LAM-6',
-  description: 'Vidrio laminado con película PVB, alta seguridad y protección UV.',
+  code: "VLE-LAM-6",
+  description:
+    "Vidrio laminado con película PVB, alta seguridad y protección UV.",
   lightTransmission: 0.85,
-  manufacturer: 'Nacional',
-  name: 'Vidrio Laminado 6mm',
+  manufacturer: "Nacional",
+  name: "Vidrio Laminado 6mm",
   pricePerSqm: 95_000,
   thicknessMm: 6,
 };
@@ -91,11 +96,12 @@ export const laminatedClear: GlassTypeInput = {
  * Aislamiento térmico y acústico
  */
 export const insulatedGlass: GlassTypeInput = {
-  code: 'VLE-DVH-18',
-  description: 'DVH con cámara de aire, excelente aislamiento térmico y acústico.',
+  code: "VLE-DVH-18",
+  description:
+    "DVH con cámara de aire, excelente aislamiento térmico y acústico.",
   lightTransmission: 0.78,
-  manufacturer: 'Nacional',
-  name: 'Doble Vidriado Hermético 18mm',
+  manufacturer: "Nacional",
+  name: "Doble Vidriado Hermético 18mm",
   pricePerSqm: 145_000,
   thicknessMm: 18,
   uValue: 2.7,
@@ -106,11 +112,12 @@ export const insulatedGlass: GlassTypeInput = {
  * Máxima eficiencia energética
  */
 export const lowEGlass: GlassTypeInput = {
-  code: 'VLE-LOWE-6',
-  description: 'Vidrio con capa de baja emisividad, máxima eficiencia energética.',
+  code: "VLE-LOWE-6",
+  description:
+    "Vidrio con capa de baja emisividad, máxima eficiencia energética.",
   lightTransmission: 0.82,
-  manufacturer: 'Importado',
-  name: 'Vidrio Low-E 6mm',
+  manufacturer: "Importado",
+  name: "Vidrio Low-E 6mm",
   pricePerSqm: 125_000,
   solarFactor: 0.62,
   thicknessMm: 6,
@@ -122,11 +129,12 @@ export const lowEGlass: GlassTypeInput = {
  * Privacidad con transmisión de luz
  */
 export const frostedGlass: GlassTypeInput = {
-  code: 'VLE-FST-6',
-  description: 'Vidrio satinado translúcido, ideal para privacidad manteniendo iluminación natural.',
+  code: "VLE-FST-6",
+  description:
+    "Vidrio satinado translúcido, ideal para privacidad manteniendo iluminación natural.",
   lightTransmission: 0.72,
-  manufacturer: 'Nacional',
-  name: 'Vidrio Esmerilado 6mm',
+  manufacturer: "Nacional",
+  name: "Vidrio Esmerilado 6mm",
   pricePerSqm: 55_000,
   thicknessMm: 6,
 };
@@ -136,11 +144,12 @@ export const frostedGlass: GlassTypeInput = {
  * Control de ruido superior
  */
 export const acousticLaminated: GlassTypeInput = {
-  code: 'VLE-ACU-8',
-  description: 'Vidrio laminado con película acústica especial, reduce ruido hasta 38dB.',
+  code: "VLE-ACU-8",
+  description:
+    "Vidrio laminado con película acústica especial, reduce ruido hasta 38dB.",
   lightTransmission: 0.83,
-  manufacturer: 'Importado',
-  name: 'Vidrio Acústico Laminado 8mm',
+  manufacturer: "Importado",
+  name: "Vidrio Acústico Laminado 8mm",
   pricePerSqm: 165_000,
   thicknessMm: 8,
 };
@@ -150,11 +159,12 @@ export const acousticLaminated: GlassTypeInput = {
  * Máxima protección
  */
 export const bulletResistantGlass: GlassTypeInput = {
-  code: 'VLE-BLT-22',
-  description: 'Vidrio laminado de seguridad nivel 1, protección contra impactos de arma corta.',
+  code: "VLE-BLT-22",
+  description:
+    "Vidrio laminado de seguridad nivel 1, protección contra impactos de arma corta.",
   lightTransmission: 0.75,
-  manufacturer: 'Importado',
-  name: 'Vidrio Antibalas Nivel 1',
+  manufacturer: "Importado",
+  name: "Vidrio Antibalas Nivel 1",
   pricePerSqm: 380_000,
   thicknessMm: 22,
 };

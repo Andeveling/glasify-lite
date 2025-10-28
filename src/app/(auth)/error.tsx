@@ -1,72 +1,78 @@
-'use client';
+"use client";
 
-import { AlertTriangle, Home, RotateCcw, ShieldAlert } from 'lucide-react';
-import { useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { AlertTriangle, Home, RotateCcw, ShieldAlert } from "lucide-react";
+import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 function getErrorType(error: Error) {
   const message = error.message.toLowerCase();
 
-  if (message.includes('auth') || message.includes('credential')) {
-    return 'auth';
+  if (message.includes("auth") || message.includes("credential")) {
+    return "auth";
   }
-  if (message.includes('session') || message.includes('token')) {
-    return 'session';
+  if (message.includes("session") || message.includes("token")) {
+    return "session";
   }
-  if (message.includes('fetch') || message.includes('network')) {
-    return 'network';
+  if (message.includes("fetch") || message.includes("network")) {
+    return "network";
   }
-  return 'generic';
+  return "generic";
 }
 
 function getErrorTitle(errorType: string) {
   switch (errorType) {
-    case 'auth':
-      return 'Error de autenticación';
-    case 'session':
-      return 'Sesión expirada';
-    case 'network':
-      return 'Error de conexión';
+    case "auth":
+      return "Error de autenticación";
+    case "session":
+      return "Sesión expirada";
+    case "network":
+      return "Error de conexión";
     default:
-      return 'Error de acceso';
+      return "Error de acceso";
   }
 }
 
 function getErrorMessage(errorType: string) {
   switch (errorType) {
-    case 'auth':
-      return 'Las credenciales proporcionadas no son válidas. Verifica tu información e intenta nuevamente.';
-    case 'session':
-      return 'Tu sesión ha expirado por seguridad. Por favor, inicia sesión nuevamente.';
-    case 'network':
-      return 'No se pudo conectar con el servidor de autenticación. Verifica tu conexión.';
+    case "auth":
+      return "Las credenciales proporcionadas no son válidas. Verifica tu información e intenta nuevamente.";
+    case "session":
+      return "Tu sesión ha expirado por seguridad. Por favor, inicia sesión nuevamente.";
+    case "network":
+      return "No se pudo conectar con el servidor de autenticación. Verifica tu conexión.";
     default:
-      return 'Ocurrió un error al procesar tu solicitud de acceso. Por favor, intenta nuevamente.';
+      return "Ocurrió un error al procesar tu solicitud de acceso. Por favor, intenta nuevamente.";
   }
 }
 
-export default function AuthError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+export default function AuthError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
   const errorType = getErrorType(error);
 
   useEffect(() => {
     // Log the error to error reporting service
     // In production, replace with proper error reporting
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       // console.error('Auth route error:', error);
     }
   }, []);
 
   const handleGoHome = () => {
-    window.location.href = '/';
+    window.location.href = "/";
   };
 
   const handleTrySignIn = () => {
-    window.location.href = '/signin';
+    window.location.href = "/signin";
   };
 
-  const shouldShowRetry = errorType !== 'session' && errorType !== 'auth';
-  const isAuthOrSession = errorType === 'session' || errorType === 'auth';
+  const shouldShowRetry = errorType !== "session" && errorType !== "auth";
+  const isAuthOrSession = errorType === "session" || errorType === "auth";
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background to-muted/20 p-4">
@@ -80,14 +86,18 @@ export default function AuthError({ error, reset }: { error: Error & { digest?: 
             )}
           </div>
 
-          <h2 className="font-semibold text-foreground text-xl">{getErrorTitle(errorType)}</h2>
+          <h2 className="font-semibold text-foreground text-xl">
+            {getErrorTitle(errorType)}
+          </h2>
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <p className="text-center text-muted-foreground text-sm">{getErrorMessage(errorType)}</p>
+          <p className="text-center text-muted-foreground text-sm">
+            {getErrorMessage(errorType)}
+          </p>
 
           {/* Development error details */}
-          {process.env.NODE_ENV === 'development' && (
+          {process.env.NODE_ENV === "development" && (
             <details className="rounded border p-3 text-left">
               <summary className="cursor-pointer font-medium text-muted-foreground text-xs">
                 Detalles del error (solo en desarrollo)
@@ -108,9 +118,15 @@ export default function AuthError({ error, reset }: { error: Error & { digest?: 
               </Button>
             )}
 
-            <Button className="w-full" onClick={handleTrySignIn} variant={isAuthOrSession ? 'default' : 'outline'}>
+            <Button
+              className="w-full"
+              onClick={handleTrySignIn}
+              variant={isAuthOrSession ? "default" : "outline"}
+            >
               <ShieldAlert className="mr-2 h-4 w-4" />
-              {errorType === 'session' ? 'Iniciar sesión nuevamente' : 'Ir a inicio de sesión'}
+              {errorType === "session"
+                ? "Iniciar sesión nuevamente"
+                : "Ir a inicio de sesión"}
             </Button>
 
             <Button className="w-full" onClick={handleGoHome} variant="ghost">

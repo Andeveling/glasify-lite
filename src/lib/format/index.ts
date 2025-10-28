@@ -8,21 +8,21 @@
  * @server-side-only
  */
 
-import { format as tempoFormat } from '@formkit/tempo';
-import type { TenantConfig } from '@prisma/client';
+import { format as tempoFormat } from "@formkit/tempo";
+import type { TenantConfig } from "@prisma/client";
 
 /**
  * Formatting context from TenantConfig
  */
-type FormatContext = Pick<TenantConfig, 'locale' | 'timezone' | 'currency'>;
+type FormatContext = Pick<TenantConfig, "locale" | "timezone" | "currency">;
 
 /**
  * Default format context (fallback when tenant config not available)
  */
 const DEFAULT_CONTEXT: FormatContext = {
-  currency: 'COP',
-  locale: 'es-CO',
-  timezone: 'America/Bogota',
+  currency: "COP",
+  locale: "es-CO",
+  timezone: "America/Bogota",
 };
 
 /**
@@ -53,7 +53,7 @@ function getContext(context?: Partial<FormatContext> | null): FormatContext {
  */
 function formatDate(
   date: Date | string,
-  formatStyle: string | { date?: string; time?: string } = { date: 'medium' },
+  formatStyle: string | { date?: string; time?: string } = { date: "medium" },
   context?: Partial<FormatContext> | null
 ): string {
   const { locale, timezone } = getContext(context);
@@ -76,8 +76,11 @@ function formatDate(
  * // en-US: "Sunday, January 19, 2025"
  * ```
  */
-function formatDateFull(date: Date | string, context?: Partial<FormatContext> | null): string {
-  return formatDate(date, { date: 'full' }, context);
+function formatDateFull(
+  date: Date | string,
+  context?: Partial<FormatContext> | null
+): string {
+  return formatDate(date, { date: "full" }, context);
 }
 
 /**
@@ -90,8 +93,11 @@ function formatDateFull(date: Date | string, context?: Partial<FormatContext> | 
  * // en-US: "January 19, 2025"
  * ```
  */
-function formatDateLong(date: Date | string, context?: Partial<FormatContext> | null): string {
-  return formatDate(date, { date: 'long' }, context);
+function formatDateLong(
+  date: Date | string,
+  context?: Partial<FormatContext> | null
+): string {
+  return formatDate(date, { date: "long" }, context);
 }
 
 /**
@@ -104,8 +110,11 @@ function formatDateLong(date: Date | string, context?: Partial<FormatContext> | 
  * // en-US: "Jan 19, 2025"
  * ```
  */
-function formatDateMedium(date: Date | string, context?: Partial<FormatContext> | null): string {
-  return formatDate(date, { date: 'medium' }, context);
+function formatDateMedium(
+  date: Date | string,
+  context?: Partial<FormatContext> | null
+): string {
+  return formatDate(date, { date: "medium" }, context);
 }
 
 /**
@@ -118,8 +127,11 @@ function formatDateMedium(date: Date | string, context?: Partial<FormatContext> 
  * // en-US: "1/19/2025"
  * ```
  */
-function formatDateShort(date: Date | string, context?: Partial<FormatContext> | null): string {
-  return formatDate(date, { date: 'short' }, context);
+function formatDateShort(
+  date: Date | string,
+  context?: Partial<FormatContext> | null
+): string {
+  return formatDate(date, { date: "short" }, context);
 }
 
 /**
@@ -134,8 +146,8 @@ function formatDateShort(date: Date | string, context?: Partial<FormatContext> |
  */
 function formatDateTime(
   date: Date | string,
-  dateStyle: 'full' | 'long' | 'medium' | 'short' = 'medium',
-  timeStyle: 'full' | 'long' | 'medium' | 'short' = 'short',
+  dateStyle: "full" | "long" | "medium" | "short" = "medium",
+  timeStyle: "full" | "long" | "medium" | "short" = "short",
   context?: Partial<FormatContext> | null
 ): string {
   return formatDate(date, { date: dateStyle, time: timeStyle }, context);
@@ -153,7 +165,7 @@ function formatDateTime(
  */
 function formatTime(
   date: Date | string,
-  style: 'full' | 'long' | 'medium' | 'short' = 'short',
+  style: "full" | "long" | "medium" | "short" = "short",
   context?: Partial<FormatContext> | null
 ): string {
   return formatDate(date, { time: style }, context);
@@ -171,7 +183,11 @@ function formatTime(
  * // "19/01/2025 14:30"
  * ```
  */
-function formatDateCustom(date: Date | string, formatTokens: string, context?: Partial<FormatContext> | null): string {
+function formatDateCustom(
+  date: Date | string,
+  formatTokens: string,
+  context?: Partial<FormatContext> | null
+): string {
   return formatDate(date, formatTokens, context);
 }
 
@@ -200,14 +216,14 @@ function formatCurrency(
   const { currency, locale } = getContext(options?.context);
   // Default: COP (0 decimals), USD/EUR (2 decimals)
   // Can be overridden with options.decimals for precision cases (e.g., pricing with 3-4 decimals)
-  const decimals = options?.decimals ?? (currency === 'COP' ? 0 : 2);
+  const decimals = options?.decimals ?? (currency === "COP" ? 0 : 2);
 
   try {
     return new Intl.NumberFormat(locale, {
       currency,
       maximumFractionDigits: decimals,
       minimumFractionDigits: decimals,
-      style: 'currency',
+      style: "currency",
     }).format(amount);
   } catch {
     // Fallback if Intl fails
@@ -225,16 +241,19 @@ function formatCurrency(
  * // en-US: "$1.5M"
  * ```
  */
-function formatCurrencyCompact(amount: number, context?: Partial<FormatContext> | null): string {
+function formatCurrencyCompact(
+  amount: number,
+  context?: Partial<FormatContext> | null
+): string {
   const { currency, locale } = getContext(context);
 
   try {
     return new Intl.NumberFormat(locale, {
-      compactDisplay: 'short',
+      compactDisplay: "short",
       currency,
       maximumFractionDigits: 1,
-      notation: 'compact',
-      style: 'currency',
+      notation: "compact",
+      style: "currency",
     }).format(amount);
   } catch {
     return formatCurrency(amount, { context });
@@ -299,7 +318,7 @@ function formatPercent(
     return new Intl.NumberFormat(locale, {
       maximumFractionDigits: decimals,
       minimumFractionDigits: decimals,
-      style: 'percent',
+      style: "percent",
     }).format(value);
   } catch {
     return `${(value * percentMultiplier).toFixed(decimals)}%`;
@@ -319,7 +338,11 @@ function formatPercent(
  * // "2.500mm × 1.800mm"
  * ```
  */
-function formatDimensions(width: number, height: number, context?: Partial<FormatContext> | null): string {
+function formatDimensions(
+  width: number,
+  height: number,
+  context?: Partial<FormatContext> | null
+): string {
   const { locale } = getContext(context);
 
   try {
@@ -343,7 +366,10 @@ function formatDimensions(width: number, height: number, context?: Partial<Forma
  * // "4,50 m²"
  * ```
  */
-function formatArea(value: number, context?: Partial<FormatContext> | null): string {
+function formatArea(
+  value: number,
+  context?: Partial<FormatContext> | null
+): string {
   return `${formatNumber(value, { context, decimals: 2 })} m²`;
 }
 
@@ -358,7 +384,10 @@ function formatArea(value: number, context?: Partial<FormatContext> | null): str
  * // "10,5mm"
  * ```
  */
-function formatThickness(value: number, context?: Partial<FormatContext> | null): string {
+function formatThickness(
+  value: number,
+  context?: Partial<FormatContext> | null
+): string {
   const hasDecimals = value % 1 !== 0;
   return `${formatNumber(value, { context, decimals: hasDecimals ? 1 : 0 })}mm`;
 }

@@ -1,18 +1,18 @@
-import type { Metadata } from 'next';
-import { AdminContentContainer } from '@/app/(dashboard)/admin/_components/admin-content-container';
-import { db } from '@/server/db';
-import { DashboardContent } from './metrics/_components/dashboard-content';
+import type { Metadata } from "next";
+import { AdminContentContainer } from "@/app/(dashboard)/admin/_components/admin-content-container";
+import { db } from "@/server/db";
+import { DashboardContent } from "./metrics/_components/dashboard-content";
 
 export const metadata: Metadata = {
-  description: 'Panel de métricas y estadísticas del negocio',
-  title: 'Dashboard | Admin - Glasify Lite',
+  description: "Panel de métricas y estadísticas del negocio",
+  title: "Dashboard | Admin - Glasify Lite",
 };
 
 /**
  * Force dynamic rendering (SSR) for real-time metrics
  * Dashboard data should always be fresh (no static generation)
  */
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 /**
  * Admin Dashboard Home Page

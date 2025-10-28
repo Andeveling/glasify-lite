@@ -24,14 +24,14 @@
  */
 
 export const vitroRojasTenantConfig = {
-  businessAddress: 'Ciudad de Panamá, Panamá',
-  businessName: 'Vitro Rojas S.A.',
-  contactEmail: 'ventas@vitrorojas.com',
-  contactPhone: '+507-123-4567',
-  currency: 'USD', // Dólar estadounidense (moneda oficial de Panamá)
-  locale: 'es-PA', // Español de Panamá
+  businessAddress: "Ciudad de Panamá, Panamá",
+  businessName: "Vitro Rojas S.A.",
+  contactEmail: "ventas@vitrorojas.com",
+  contactPhone: "+507-123-4567",
+  currency: "USD", // Dólar estadounidense (moneda oficial de Panamá)
+  locale: "es-PA", // Español de Panamá
   quoteValidityDays: 15, // 15 días de validez para cotizaciones
-  timezone: 'America/Panama', // Zona horaria EST (UTC-5)
+  timezone: "America/Panama", // Zona horaria EST (UTC-5)
 } as const;
 
 /**

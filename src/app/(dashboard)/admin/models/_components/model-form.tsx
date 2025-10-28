@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Form } from '@/components/ui/form';
-import { api } from '@/trpc/react';
-import { BasicInfoSection } from './basic-info-section';
-import { CostNotesSection } from './cost-notes-section';
-import { DimensionsSection } from './dimensions-section';
-import { GlassTypesSection } from './glass-types-section';
-import { ImageGallerySectionComponent } from './image-gallery-section';
-import { PricingSection } from './pricing-section';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { api } from "@/trpc/react";
+import { BasicInfoSection } from "./basic-info-section";
+import { CostNotesSection } from "./cost-notes-section";
+import { DimensionsSection } from "./dimensions-section";
+import { GlassTypesSection } from "./glass-types-section";
+import { ImageGallerySectionComponent } from "./image-gallery-section";
+import { PricingSection } from "./pricing-section";
 
 // Constants
 const MIN_DIMENSION_MM = 100;
@@ -28,7 +28,9 @@ const FIVE_MINUTES_MS = 300_000; // 5 minutes stale time for catalog data
 const modelFormSchema = z.object({
   accessoryPrice: z.number().min(0).optional().nullable(),
   basePrice: z.number().min(0),
-  compatibleGlassTypeIds: z.array(z.string()).min(1, 'Debe seleccionar al menos un tipo de vidrio'),
+  compatibleGlassTypeIds: z
+    .array(z.string())
+    .min(1, "Debe seleccionar al menos un tipo de vidrio"),
   costNotes: z.string().optional().nullable(),
   costPerMmHeight: z.number().min(0), // Allow up to 4 decimal places
   costPerMmWidth: z.number().min(0), // Allow up to 4 decimal places
@@ -36,9 +38,11 @@ const modelFormSchema = z.object({
   glassDiscountWidthMm: z.number().int().min(0).default(0),
   imageUrl: z
     .union([
-      z.url('URL de imagen debe ser válida'), // Absolute URLs
-      z.string().regex(/^\/[^\s]*$/, 'La ruta de la imagen debe comenzar con /'), // Relative paths starting with /
-      z.literal(''), // Empty string
+      z.url("URL de imagen debe ser válida"), // Absolute URLs
+      z
+        .string()
+        .regex(/^\/[^\s]*$/, "La ruta de la imagen debe comenzar con /"), // Relative paths starting with /
+      z.literal(""), // Empty string
       z.null(),
       z.undefined(),
     ])
@@ -50,31 +54,36 @@ const modelFormSchema = z.object({
   maxWidthMm: z.number().int().min(MIN_DIMENSION_MM),
   minHeightMm: z.number().int().min(MIN_DIMENSION_MM),
   minWidthMm: z.number().int().min(MIN_DIMENSION_MM),
-  name: z.string().min(1, 'El nombre es requerido'),
+  name: z.string().min(1, "El nombre es requerido"),
   profileSupplierId: z.string().optional().nullable(),
-  profitMarginPercentage: z.number().min(0).max(MAX_PROFIT_MARGIN).optional().nullable(),
-  status: z.enum([ 'draft', 'published' ]),
+  profitMarginPercentage: z
+    .number()
+    .min(0)
+    .max(MAX_PROFIT_MARGIN)
+    .optional()
+    .nullable(),
+  status: z.enum(["draft", "published"]),
 });
 
 type ModelFormValues = z.infer<typeof modelFormSchema>;
 
-interface ModelFormProps {
-  mode: 'create' | 'edit';
+type ModelFormProps = {
+  mode: "create" | "edit";
   initialData?: Partial<ModelFormValues>;
   modelId?: string;
-}
+};
 
 export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
   const router = useRouter();
   const utils = api.useUtils();
 
   // Suppliers query with 5-minute stale time (rarely changes)
-  const { data: suppliersData } = api.admin[ 'profile-supplier' ].list.useQuery(
+  const { data: suppliersData } = api.admin["profile-supplier"].list.useQuery(
     {
       limit: 100,
       page: 1,
-      sortBy: 'name',
-      sortOrder: 'asc',
+      sortBy: "name",
+      sortOrder: "asc",
     },
     {
       staleTime: FIVE_MINUTES_MS,
@@ -82,12 +91,12 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
   );
 
   // Glass types query with 5-minute stale time (rarely changes)
-  const { data: glassTypesData } = api.admin[ 'glass-type' ].list.useQuery(
+  const { data: glassTypesData } = api.admin["glass-type"].list.useQuery(
     {
       limit: 100,
       page: 1,
-      sortBy: 'name',
-      sortOrder: 'asc',
+      sortBy: "name",
+      sortOrder: "asc",
     },
     {
       staleTime: FIVE_MINUTES_MS,
@@ -99,11 +108,11 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
       toast.error(`Error al crear modelo: ${error.message}`);
     },
     onSuccess: () => {
-      toast.success('Modelo creado exitosamente');
+      toast.success("Modelo creado exitosamente");
       // SSR two-step pattern: invalidate cache + refresh server data
       void utils.admin.model.list.invalidate();
       router.refresh(); // Force re-fetch server data
-      router.push('/admin/models');
+      router.push("/admin/models");
     },
   });
 
@@ -112,12 +121,12 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
       toast.error(`Error al actualizar modelo: ${error.message}`);
     },
     onSuccess: (data) => {
-      toast.success('Modelo actualizado exitosamente');
+      toast.success("Modelo actualizado exitosamente");
       // SSR two-step pattern: invalidate cache + refresh server data
       void utils.admin.model.list.invalidate();
-      void utils.admin.model[ 'get-by-id' ].invalidate({ id: data.id });
+      void utils.admin.model["get-by-id"].invalidate({ id: data.id });
       router.refresh(); // Force re-fetch server data
-      router.push('/admin/models');
+      router.push("/admin/models");
     },
   });
 
@@ -137,10 +146,10 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
       maxWidthMm: initialData?.maxWidthMm ?? DEFAULT_MAX_WIDTH_MM,
       minHeightMm: initialData?.minHeightMm ?? DEFAULT_MIN_HEIGHT_MM,
       minWidthMm: initialData?.minWidthMm ?? DEFAULT_MIN_WIDTH_MM,
-      name: initialData?.name ?? '',
+      name: initialData?.name ?? "",
       profileSupplierId: initialData?.profileSupplierId ?? null,
       profitMarginPercentage: initialData?.profitMarginPercentage ?? null,
-      status: initialData?.status ?? 'draft',
+      status: initialData?.status ?? "draft",
     },
     // @ts-expect-error - Zod .default() causes type inference issues with react-hook-form
     resolver: zodResolver(modelFormSchema),
@@ -158,7 +167,7 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
       profitMarginPercentage: values.profitMarginPercentage ?? undefined,
     };
 
-    if (mode === 'create') {
+    if (mode === "create") {
       createMutation.mutate(transformedValues);
     } else if (modelId) {
       updateMutation.mutate({
@@ -195,12 +204,16 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
 
         {/* Sticky Action Bar */}
         <div className="sticky bottom-0 z-10 flex items-center justify-end gap-4 rounded-lg border bg-card p-4 shadow-lg">
-          <Button onClick={() => router.push('/admin/models')} type="button" variant="outline">
+          <Button
+            onClick={() => router.push("/admin/models")}
+            type="button"
+            variant="outline"
+          >
             Cancelar
           </Button>
           <Button disabled={isLoading} type="submit">
             {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
-            {mode === 'create' ? 'Crear Modelo' : 'Actualizar Modelo'}
+            {mode === "create" ? "Crear Modelo" : "Actualizar Modelo"}
           </Button>
         </div>
       </form>

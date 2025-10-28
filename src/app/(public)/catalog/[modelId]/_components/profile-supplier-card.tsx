@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { Building2, CheckCircle2, Info } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
-import type { Model } from '../_types/model.types';
-import { MATERIAL_BENEFITS } from '../_utils/material-benefits';
+import { Building2, CheckCircle2, Info } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import type { Model } from "../_types/model.types";
+import { MATERIAL_BENEFITS } from "../_utils/material-benefits";
 
 type ProfileSupplierCardProps = {
   model: Model;
@@ -31,7 +31,9 @@ export function ProfileSupplierCard({ model }: ProfileSupplierCardProps) {
           <Building2 className="h-5 w-5" />
           <h3 className="font-semibold">Proveedor de Perfiles</h3>
         </div>
-        <p className="mt-3 text-muted-foreground text-sm">Proveedor no especificado</p>
+        <p className="mt-3 text-muted-foreground text-sm">
+          Proveedor no especificado
+        </p>
       </Card>
     );
   }
@@ -41,18 +43,18 @@ export function ProfileSupplierCard({ model }: ProfileSupplierCardProps) {
 
   // Map materialType enum to Spanish display text
   const materialTypeLabels: Record<string, string> = {
-    ALUMINUM: 'Aluminio',
-    MIXED: 'Mixto',
-    PVC: 'PVC',
-    WOOD: 'Madera',
+    ALUMINUM: "Aluminio",
+    MIXED: "Mixto",
+    PVC: "PVC",
+    WOOD: "Madera",
   };
 
   // Material-specific emphasis for comparison
   const materialEmphasis: Record<string, string> = {
-    ALUMINUM: 'Máxima resistencia y capacidad estructural',
-    MIXED: 'Versatilidad y balance de propiedades',
-    PVC: 'Aislamiento térmico y acústico excepcional',
-    WOOD: 'Calidez natural y sustentabilidad',
+    ALUMINUM: "Máxima resistencia y capacidad estructural",
+    MIXED: "Versatilidad y balance de propiedades",
+    PVC: "Aislamiento térmico y acústico excepcional",
+    WOOD: "Calidez natural y sustentabilidad",
   };
 
   return (
@@ -71,14 +73,18 @@ export function ProfileSupplierCard({ model }: ProfileSupplierCardProps) {
         {/* Material Type Badge */}
         <div className="flex items-center gap-2">
           <span className="text-muted-foreground text-sm">Material:</span>
-          <Badge variant="secondary">{materialTypeLabels[materialType] || materialType}</Badge>
+          <Badge variant="secondary">
+            {materialTypeLabels[materialType] || materialType}
+          </Badge>
         </div>
 
         {/* Material Emphasis (User Story 5: Comparison) */}
         <div className="rounded-md bg-primary/5 p-3">
           <div className="flex items-start gap-2">
             <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-            <p className="font-medium text-primary text-sm">{materialEmphasis[materialType]}</p>
+            <p className="font-medium text-primary text-sm">
+              {materialEmphasis[materialType]}
+            </p>
           </div>
         </div>
 
@@ -87,8 +93,14 @@ export function ProfileSupplierCard({ model }: ProfileSupplierCardProps) {
           <h5 className="mb-2 font-medium text-sm">Ventajas del Material</h5>
           <ul className="space-y-1.5">
             {benefits.map((benefit, index) => (
-              <li className="flex items-start gap-2 text-muted-foreground text-sm" key={index}>
-                <CheckCircle2 aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <li
+                className="flex items-start gap-2 text-muted-foreground text-sm"
+                key={index}
+              >
+                <CheckCircle2
+                  aria-hidden="true"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-primary"
+                />
                 <span>{benefit}</span>
               </li>
             ))}

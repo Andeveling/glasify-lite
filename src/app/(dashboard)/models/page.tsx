@@ -1,19 +1,31 @@
-import { Edit, Eye, Filter, Package, Plus, Search } from 'lucide-react';
-import type { Metadata } from 'next';
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
-import { generateStableKeyedArray } from '@/app/_utils/generate-keys.util';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { auth } from '@/server/auth';
-import { ModelsTable } from './_components/models-table';
+import { Edit, Eye, Filter, Package, Plus, Search } from "lucide-react";
+import type { Metadata } from "next";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
+import { generateStableKeyedArray } from "@/app/_utils/generate-keys.util";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { auth } from "@/server/auth";
+import { ModelsTable } from "./_components/models-table";
 
 export const metadata: Metadata = {
-  description: 'Administra los modelos de vidrio disponibles en el catálogo',
-  title: 'Gestión de Modelos - Glasify',
+  description: "Administra los modelos de vidrio disponibles en el catálogo",
+  title: "Gestión de Modelos - Glasify",
 };
 
 const SKELETON_CARDS_COUNT = 3;
@@ -22,71 +34,71 @@ const SKELETON_CARDS_COUNT = 3;
 const MOCK_MODELS = [
   {
     basePrice: 150_000,
-    compatibleGlassTypes: ['Templado 6mm', 'Laminado 8mm'],
+    compatibleGlassTypes: ["Templado 6mm", "Laminado 8mm"],
     costPerMmHeight: 45,
     costPerMmWidth: 60,
-    createdAt: '2024-01-10T10:00:00Z',
-    id: 'cm1model123456789abcdef01',
+    createdAt: "2024-01-10T10:00:00Z",
+    id: "cm1model123456789abcdef01",
     maxHeightMm: 1800,
     maxWidthMm: 2000,
     minHeightMm: 400,
     minWidthMm: 300,
-    name: 'Ventana Premium 2024',
-    profileSupplier: 'VEKA',
-    status: 'published' as const,
-    updatedAt: '2024-01-15T14:30:00Z',
+    name: "Ventana Premium 2024",
+    profileSupplier: "VEKA",
+    status: "published" as const,
+    updatedAt: "2024-01-15T14:30:00Z",
   },
   {
     basePrice: 280_000,
-    compatibleGlassTypes: ['Templado 10mm'],
+    compatibleGlassTypes: ["Templado 10mm"],
     costPerMmHeight: 80,
     costPerMmWidth: 120,
-    createdAt: '2024-01-12T16:20:00Z',
-    id: 'cm1model234567890bcdef012',
+    createdAt: "2024-01-12T16:20:00Z",
+    id: "cm1model234567890bcdef012",
     maxHeightMm: 2400,
     maxWidthMm: 1200,
     minHeightMm: 2000,
     minWidthMm: 800,
-    name: 'Puerta Estándar',
-    profileSupplier: 'Guardian Glass',
-    status: 'draft' as const,
-    updatedAt: '2024-01-12T16:20:00Z',
+    name: "Puerta Estándar",
+    profileSupplier: "Guardian Glass",
+    status: "draft" as const,
+    updatedAt: "2024-01-12T16:20:00Z",
   },
   {
     basePrice: 95_000,
-    compatibleGlassTypes: ['Templado 6mm', 'DVH'],
+    compatibleGlassTypes: ["Templado 6mm", "DVH"],
     costPerMmHeight: 25,
     costPerMmWidth: 35,
-    createdAt: '2024-01-08T09:45:00Z',
-    id: 'cm1model345678901cdef0123',
+    createdAt: "2024-01-08T09:45:00Z",
+    id: "cm1model345678901cdef0123",
     maxHeightMm: 2500,
     maxWidthMm: 3000,
     minHeightMm: 500,
     minWidthMm: 500,
-    name: 'Vitrina Comercial',
-    profileSupplier: 'Pilkington',
-    status: 'published' as const,
-    updatedAt: '2024-01-14T11:15:00Z',
+    name: "Vitrina Comercial",
+    profileSupplier: "Pilkington",
+    status: "published" as const,
+    updatedAt: "2024-01-14T11:15:00Z",
   },
   {
     basePrice: 320_000,
-    compatibleGlassTypes: ['Templado 8mm', 'Laminado 6+6mm'],
+    compatibleGlassTypes: ["Templado 8mm", "Laminado 6+6mm"],
     costPerMmHeight: 100,
     costPerMmWidth: 180,
-    createdAt: '2024-01-05T14:10:00Z',
-    id: 'cm1model456789012def01234',
+    createdAt: "2024-01-05T14:10:00Z",
+    id: "cm1model456789012def01234",
     maxHeightMm: 2200,
     maxWidthMm: 1500,
     minHeightMm: 1800,
     minWidthMm: 600,
-    name: 'Mampara de Baño',
-    profileSupplier: 'VEKA',
-    status: 'published' as const,
-    updatedAt: '2024-01-13T09:25:00Z',
+    name: "Mampara de Baño",
+    profileSupplier: "VEKA",
+    status: "published" as const,
+    updatedAt: "2024-01-13T09:25:00Z",
   },
 ];
 
-const PROFILE_SUPPLIERS = ['Todos', 'VEKA', 'Guardian Glass', 'Pilkington'];
+const PROFILE_SUPPLIERS = ["Todos", "VEKA", "Guardian Glass", "Pilkington"];
 
 function ModelsPageContent() {
   const models = MOCK_MODELS;
@@ -116,7 +128,9 @@ function ModelsPageContent() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-bold text-2xl">Gestión de Modelos</h1>
-          <p className="text-muted-foreground">Administra los modelos de vidrio disponibles en tu catálogo</p>
+          <p className="text-muted-foreground">
+            Administra los modelos de vidrio disponibles en tu catálogo
+          </p>
         </div>
         <Button onClick={handleCreateModel}>
           <Plus className="mr-2 h-4 w-4" />
@@ -128,12 +142,16 @@ function ModelsPageContent() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="font-medium text-sm">Total de Modelos</CardTitle>
+            <CardTitle className="font-medium text-sm">
+              Total de Modelos
+            </CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="font-bold text-2xl">{models.length}</div>
-            <p className="text-muted-foreground text-xs">+2 desde el mes pasado</p>
+            <p className="text-muted-foreground text-xs">
+              +2 desde el mes pasado
+            </p>
           </CardContent>
         </Card>
 
@@ -143,8 +161,12 @@ function ModelsPageContent() {
             <Eye className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="font-bold text-2xl">{models.filter((m) => m.status === 'published').length}</div>
-            <p className="text-muted-foreground text-xs">Visibles en catálogo público</p>
+            <div className="font-bold text-2xl">
+              {models.filter((m) => m.status === "published").length}
+            </div>
+            <p className="text-muted-foreground text-xs">
+              Visibles en catálogo público
+            </p>
           </CardContent>
         </Card>
 
@@ -154,8 +176,12 @@ function ModelsPageContent() {
             <Edit className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="font-bold text-2xl">{models.filter((m) => m.status === 'draft').length}</div>
-            <p className="text-muted-foreground text-xs">Pendientes de publicación</p>
+            <div className="font-bold text-2xl">
+              {models.filter((m) => m.status === "draft").length}
+            </div>
+            <p className="text-muted-foreground text-xs">
+              Pendientes de publicación
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -207,10 +233,17 @@ function ModelsPageContent() {
       <Card>
         <CardHeader>
           <CardTitle>Modelos</CardTitle>
-          <CardDescription>Lista completa de modelos disponibles</CardDescription>
+          <CardDescription>
+            Lista completa de modelos disponibles
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <ModelsTable models={models} onDelete={handleDeleteModel} onEdit={handleEditModel} onView={handleViewModel} />
+          <ModelsTable
+            models={models}
+            onDelete={handleDeleteModel}
+            onEdit={handleEditModel}
+            onView={handleViewModel}
+          />
         </CardContent>
       </Card>
     </div>
@@ -223,7 +256,7 @@ export default async function ModelsPage() {
   });
 
   if (!session?.user) {
-    redirect('/signin');
+    redirect("/signin");
   }
 
   return (
@@ -233,8 +266,14 @@ export default async function ModelsPage() {
           <div className="space-y-6">
             <div className="h-8 animate-pulse rounded bg-muted" />
             <div className="grid gap-4 md:grid-cols-3">
-              {generateStableKeyedArray(SKELETON_CARDS_COUNT, 'model-skeleton').map((item) => (
-                <div className="h-32 animate-pulse rounded-lg bg-muted" key={item.key} />
+              {generateStableKeyedArray(
+                SKELETON_CARDS_COUNT,
+                "model-skeleton"
+              ).map((item) => (
+                <div
+                  className="h-32 animate-pulse rounded-lg bg-muted"
+                  key={item.key}
+                />
               ))}
             </div>
             <div className="h-96 animate-pulse rounded-lg bg-muted" />

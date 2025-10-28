@@ -25,7 +25,7 @@
  * @date 2025-01-21
  */
 
-import type { ModelInput } from '../../factories/model.factory';
+import type { ModelInput } from "../../factories/model.factory";
 
 /**
  * Abatible Europa 2 Hojas (OX)
@@ -43,9 +43,9 @@ import type { ModelInput } from '../../factories/model.factory';
 export const abatibleEuropa2Hojas: ModelInput = {
   accessoryPrice: 85, // USD - Bisagras, cerraduras, manillas
   basePrice: 130, // USD/m²
-  compatibleGlassTypeIds: ['placeholder'], // Se populará automáticamente con todos los tipos de vidrio
+  compatibleGlassTypeIds: ["placeholder"], // Se populará automáticamente con todos los tipos de vidrio
   costNotes:
-    'Precio base $130/m². Sistema abatible con bisagras V8000 (75kg por par). Compatible con vidrio 6-12mm o DVH 12.5-18.5mm.',
+    "Precio base $130/m². Sistema abatible con bisagras V8000 (75kg por par). Compatible con vidrio 6-12mm o DVH 12.5-18.5mm.",
   costPerMmHeight: 0.016, // Mayor costo que corredizo por complejidad
   costPerMmWidth: 0.019,
   glassDiscountHeightMm: 63, // Fórmula marco perimetral: H - 63mm
@@ -54,10 +54,10 @@ export const abatibleEuropa2Hojas: ModelInput = {
   maxWidthMm: 3450, // 1050mm móvil + 2400mm fijo
   minHeightMm: 478,
   minWidthMm: 873, // 478mm móvil + 395mm fijo
-  name: 'Abatible Europa 2 Hojas (OX)',
-  profileSupplierName: 'Extralum',
+  name: "Abatible Europa 2 Hojas (OX)",
+  profileSupplierName: "Extralum",
   profitMarginPercentage: 40, // Mayor margen por complejidad de instalación
-  status: 'published',
+  status: "published",
 };
 
 /**
@@ -68,8 +68,9 @@ export const abatibleEuropa2Hojas: ModelInput = {
 export const abatibleEuropa3Hojas: ModelInput = {
   accessoryPrice: 125, // USD - Más bisagras y cerraduras
   basePrice: 150, // USD/m²
-  compatibleGlassTypeIds: ['placeholder'],
-  costNotes: 'Precio base $150/m². Sistema de 3 hojas con panel central fijo. Cerradura multipunto opcional.',
+  compatibleGlassTypeIds: ["placeholder"],
+  costNotes:
+    "Precio base $150/m². Sistema de 3 hojas con panel central fijo. Cerradura multipunto opcional.",
   costPerMmHeight: 0.017,
   costPerMmWidth: 0.021,
   glassDiscountHeightMm: 63,
@@ -78,10 +79,10 @@ export const abatibleEuropa3Hojas: ModelInput = {
   maxWidthMm: 4500, // 1050mm + 2400mm + 1050mm
   minHeightMm: 478,
   minWidthMm: 1351, // 478mm + 395mm + 478mm
-  name: 'Abatible Europa 3 Hojas (XOX)',
-  profileSupplierName: 'Extralum',
+  name: "Abatible Europa 3 Hojas (XOX)",
+  profileSupplierName: "Extralum",
   profitMarginPercentage: 40,
-  status: 'published',
+  status: "published",
 };
 
 /**
@@ -93,9 +94,9 @@ export const abatibleEuropa3Hojas: ModelInput = {
 export const abatibleEuropa4Hojas: ModelInput = {
   accessoryPrice: 165, // USD - Mayor cantidad de herrajes
   basePrice: 170, // USD/m²
-  compatibleGlassTypeIds: ['placeholder'],
+  compatibleGlassTypeIds: ["placeholder"],
   costNotes:
-    'Precio base $170/m². Sistema de 4 hojas premium. Cerradura multipunto con cilindro recomendada para alturas >1800mm.',
+    "Precio base $170/m². Sistema de 4 hojas premium. Cerradura multipunto con cilindro recomendada para alturas >1800mm.",
   costPerMmHeight: 0.018,
   costPerMmWidth: 0.023,
   glassDiscountHeightMm: 63,
@@ -104,10 +105,10 @@ export const abatibleEuropa4Hojas: ModelInput = {
   maxWidthMm: 6900, // 2x1050mm móvil + 2x2400mm fijo
   minHeightMm: 478,
   minWidthMm: 1746, // 2x478mm + 2x395mm
-  name: 'Abatible Europa 4 Hojas (XXOO)',
-  profileSupplierName: 'Extralum',
+  name: "Abatible Europa 4 Hojas (XXOO)",
+  profileSupplierName: "Extralum",
   profitMarginPercentage: 42, // Mayor margen por complejidad premium
-  status: 'published',
+  status: "published",
 };
 
 /**

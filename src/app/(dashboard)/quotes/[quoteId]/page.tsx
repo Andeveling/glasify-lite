@@ -7,11 +7,11 @@
  * @module app/(dashboard)/quotes/[quoteId]/page
  */
 
-import { TRPCError } from '@trpc/server';
-import { notFound } from 'next/navigation';
+import { TRPCError } from "@trpc/server";
+import { notFound } from "next/navigation";
 
-import { api } from '@/trpc/server-client';
-import { QuoteDetailView } from './_components/quote-detail-view';
+import { api } from "@/trpc/server-client";
+import { QuoteDetailView } from "./_components/quote-detail-view";
 
 type QuoteDetailPageProps = {
   params: Promise<{
@@ -19,11 +19,13 @@ type QuoteDetailPageProps = {
   }>;
 };
 
-export default async function QuoteDetailPage({ params }: QuoteDetailPageProps) {
+export default async function QuoteDetailPage({
+  params,
+}: QuoteDetailPageProps) {
   const { quoteId } = await params;
 
   try {
-    const quote = await api.quote['get-by-id']({ id: quoteId });
+    const quote = await api.quote["get-by-id"]({ id: quoteId });
 
     return (
       <div className="container mx-auto max-w-7xl py-8">
@@ -32,7 +34,7 @@ export default async function QuoteDetailPage({ params }: QuoteDetailPageProps) 
     );
   } catch (error) {
     // If quote not found or access denied, show 404
-    if (error instanceof TRPCError && error.code === 'NOT_FOUND') {
+    if (error instanceof TRPCError && error.code === "NOT_FOUND") {
       notFound();
     }
 

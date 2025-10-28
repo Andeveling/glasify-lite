@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 /**
  * QuoteDetailView Component
@@ -9,17 +9,30 @@
  * @module app/(dashboard)/quotes/[quoteId]/_components/quote-detail-view
  */
 
-import { Clock, Phone } from 'lucide-react';
-import { formatCurrency } from '@/app/_utils/format-currency.util';
-import { BackLink } from '@/components/ui/back-link';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { formatDate } from '@/lib/utils';
-import { useTenantConfig } from '@/providers/tenant-config-provider';
-import type { QuoteDetailSchema } from '@/server/api/routers/quote/quote.schemas';
-import { QuoteStatusBadge } from '../../_components/quote-status-badge';
-import { SendQuoteButton } from './send-quote-button';
+import { Clock, Phone } from "lucide-react";
+import { formatCurrency } from "@/app/_utils/format-currency.util";
+import { BackLink } from "@/components/ui/back-link";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { formatDate } from "@/lib/utils";
+import { useTenantConfig } from "@/providers/tenant-config-provider";
+import type { QuoteDetailSchema } from "@/server/api/routers/quote/quote.schemas";
+import { QuoteStatusBadge } from "../../_components/quote-status-badge";
+import { SendQuoteButton } from "./send-quote-button";
 
 type QuoteDetailViewProps = {
   quote: QuoteDetailSchema;
@@ -41,16 +54,18 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
       </div>
 
       {/* Enhanced confirmation message for sent quotes (US3) */}
-      {quote.status === 'sent' && quote.sentAt && (
+      {quote.status === "sent" && quote.sentAt && (
         <div className="rounded-lg border border-[--color-info-border] bg-[--color-info-background] p-4">
           <div className="space-y-3">
             {/* Title with sent date */}
             <div>
               <p className="font-semibold text-foreground">
-                Cotización enviada el {formatDate(quote.sentAt, locale, timezone)}
+                Cotización enviada el{" "}
+                {formatDate(quote.sentAt, locale, timezone)}
               </p>
               <p className="text-muted-foreground text-sm">
-                El fabricante ha recibido tu solicitud y se pondrá en contacto contigo pronto.
+                El fabricante ha recibido tu solicitud y se pondrá en contacto
+                contigo pronto.
               </p>
             </div>
 
@@ -58,7 +73,8 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
             <div className="flex items-start gap-2 text-sm">
               <Clock className="mt-0.5 h-4 w-4 text-[--color-info]" />
               <p className="text-muted-foreground">
-                <span className="font-medium">Tiempo de respuesta:</span> Recibirás una respuesta en 24-48 horas hábiles
+                <span className="font-medium">Tiempo de respuesta:</span>{" "}
+                Recibirás una respuesta en 24-48 horas hábiles
               </p>
             </div>
 
@@ -67,14 +83,16 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
               <div className="flex items-start gap-2 text-sm">
                 <Phone className="mt-0.5 h-4 w-4 text-[--color-info]" />
                 <p className="text-muted-foreground">
-                  <span className="font-medium">Contacto del fabricante:</span> {quote.vendorContactPhone}
+                  <span className="font-medium">Contacto del fabricante:</span>{" "}
+                  {quote.vendorContactPhone}
                 </p>
               </div>
             )}
 
             {/* Next steps */}
             <p className="text-muted-foreground text-xs">
-              Mientras tanto, puedes revisar otras cotizaciones o crear una nueva.
+              Mientras tanto, puedes revisar otras cotizaciones o crear una
+              nueva.
             </p>
           </div>
         </div>
@@ -86,12 +104,17 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
           <div className="flex items-start justify-between">
             <div>
               <CardTitle>{quote.projectAddress.projectName}</CardTitle>
-              <CardDescription>Creada el {formatDate(quote.createdAt, locale, timezone)}</CardDescription>
+              <CardDescription>
+                Creada el {formatDate(quote.createdAt, locale, timezone)}
+              </CardDescription>
             </div>
             <div className="flex gap-2">
               <QuoteStatusBadge status={quote.status} />
               {quote.isExpired && (
-                <Badge className="border-destructive text-destructive" variant="outline">
+                <Badge
+                  className="border-destructive text-destructive"
+                  variant="outline"
+                >
                   Vencida
                 </Badge>
               )}
@@ -107,10 +130,13 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
 
           {/* Dirección del proyecto */}
           <div>
-            <p className="text-muted-foreground text-sm">Dirección del proyecto</p>
+            <p className="text-muted-foreground text-sm">
+              Dirección del proyecto
+            </p>
             <p className="font-medium">{quote.projectAddress.projectStreet}</p>
             <p className="text-sm">
-              {quote.projectAddress.projectCity}, {quote.projectAddress.projectState}{' '}
+              {quote.projectAddress.projectCity},{" "}
+              {quote.projectAddress.projectState}{" "}
               {quote.projectAddress.projectPostalCode}
             </p>
           </div>
@@ -118,7 +144,9 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
           {/* Contacto (opcional) */}
           {quote.contactPhone && (
             <div>
-              <p className="text-muted-foreground text-sm">Teléfono de contacto</p>
+              <p className="text-muted-foreground text-sm">
+                Teléfono de contacto
+              </p>
               <p className="font-medium">{quote.contactPhone}</p>
             </div>
           )}
@@ -128,7 +156,9 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
             <div>
               <p className="text-muted-foreground text-sm">Válida hasta</p>
               <p className="font-medium">
-                {quote.validUntil ? formatDate(quote.validUntil, locale, timezone) : 'Sin límite'}
+                {quote.validUntil
+                  ? formatDate(quote.validUntil, locale, timezone)
+                  : "Sin límite"}
               </p>
             </div>
             <div>
@@ -144,7 +174,7 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
         <CardHeader>
           <CardTitle>Items de la cotización</CardTitle>
           <CardDescription>
-            {quote.itemCount} {quote.itemCount === 1 ? 'item' : 'items'}
+            {quote.itemCount} {quote.itemCount === 1 ? "item" : "items"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -167,7 +197,7 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
                   <TableCell className="font-medium">{item.name}</TableCell>
                   <TableCell>{item.modelName}</TableCell>
                   <TableCell>{item.glassTypeName}</TableCell>
-                  <TableCell>{item.solutionName ?? '—'}</TableCell>
+                  <TableCell>{item.solutionName ?? "—"}</TableCell>
                   <TableCell className="text-right">
                     {item.widthMm} × {item.heightMm}
                   </TableCell>
@@ -175,15 +205,15 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
                   <TableCell className="text-right">
                     {formatCurrency(item.unitPrice, {
                       currency: quote.currency,
-                      decimals: quote.currency === 'USD' ? 2 : 0,
-                      locale: quote.currency === 'USD' ? 'es-PA' : 'es-CO',
+                      decimals: quote.currency === "USD" ? 2 : 0,
+                      locale: quote.currency === "USD" ? "es-PA" : "es-CO",
                     })}
                   </TableCell>
                   <TableCell className="text-right">
                     {formatCurrency(item.subtotal, {
                       currency: quote.currency,
-                      decimals: quote.currency === 'USD' ? 2 : 0,
-                      locale: quote.currency === 'USD' ? 'es-PA' : 'es-CO',
+                      decimals: quote.currency === "USD" ? 2 : 0,
+                      locale: quote.currency === "USD" ? "es-PA" : "es-CO",
                     })}
                   </TableCell>
                 </TableRow>
@@ -198,8 +228,8 @@ export function QuoteDetailView({ quote }: QuoteDetailViewProps) {
               <p className="font-bold text-2xl">
                 {formatCurrency(quote.total, {
                   currency: quote.currency,
-                  decimals: quote.currency === 'USD' ? 2 : 0,
-                  locale: quote.currency === 'USD' ? 'es-PA' : 'es-CO',
+                  decimals: quote.currency === "USD" ? 2 : 0,
+                  locale: quote.currency === "USD" ? "es-PA" : "es-CO",
                 })}
               </p>
             </div>

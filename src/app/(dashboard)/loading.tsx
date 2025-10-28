@@ -1,5 +1,5 @@
-import { generateStableKeyedArray } from '@/app/_utils/generate-keys.util';
-import { Skeleton } from '@/components/ui/skeleton';
+import { generateStableKeyedArray } from "@/app/_utils/generate-keys.util";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const NAV_SKELETON_COUNT = 6;
 const STATS_CARD_COUNT = 4;
@@ -8,10 +8,13 @@ const TABLE_ROW_COUNT = 8;
 const TABLE_CELL_COUNT = 5;
 
 export default function DashboardLoading() {
-  const navItems = generateStableKeyedArray(NAV_SKELETON_COUNT, 'nav-skeleton');
-  const statsCards = generateStableKeyedArray(STATS_CARD_COUNT, 'stats-card');
-  const tableHeaders = generateStableKeyedArray(TABLE_HEADER_COUNT, 'table-header');
-  const tableRows = generateStableKeyedArray(TABLE_ROW_COUNT, 'table-row');
+  const navItems = generateStableKeyedArray(NAV_SKELETON_COUNT, "nav-skeleton");
+  const statsCards = generateStableKeyedArray(STATS_CARD_COUNT, "stats-card");
+  const tableHeaders = generateStableKeyedArray(
+    TABLE_HEADER_COUNT,
+    "table-header"
+  );
+  const tableRows = generateStableKeyedArray(TABLE_ROW_COUNT, "table-row");
 
   return (
     <div className="flex h-screen bg-background">
@@ -67,7 +70,10 @@ export default function DashboardLoading() {
           {/* Stats cards skeleton */}
           <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {statsCards.map((item) => (
-              <div className="space-y-3 rounded-lg border border-border p-4" key={item.key}>
+              <div
+                className="space-y-3 rounded-lg border border-border p-4"
+                key={item.key}
+              >
                 <div className="flex items-center justify-between">
                   <Skeleton className="h-4 w-20" />
                   <Skeleton className="h-4 w-4" />
@@ -99,9 +105,15 @@ export default function DashboardLoading() {
 
               {/* Table rows */}
               {tableRows.map((rowItem) => {
-                const tableCells = generateStableKeyedArray(TABLE_CELL_COUNT, `table-cell-${rowItem.index}`);
+                const tableCells = generateStableKeyedArray(
+                  TABLE_CELL_COUNT,
+                  `table-cell-${rowItem.index}`
+                );
                 return (
-                  <div className="flex space-x-4 border-border border-b p-4 last:border-b-0" key={rowItem.key}>
+                  <div
+                    className="flex space-x-4 border-border border-b p-4 last:border-b-0"
+                    key={rowItem.key}
+                  >
                     {tableCells.map((cellItem) => (
                       <Skeleton className="h-4 flex-1" key={cellItem.key} />
                     ))}

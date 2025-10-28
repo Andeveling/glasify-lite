@@ -1,4 +1,4 @@
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 export default function AuthLoading() {
   return (
@@ -39,7 +39,9 @@ export default function AuthLoading() {
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="space-y-4 text-center">
             <LoadingSpinner size="lg" />
-            <p className="text-muted-foreground text-sm">Validando credenciales...</p>
+            <p className="text-muted-foreground text-sm">
+              Validando credenciales...
+            </p>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
-import { AdminContentContainer } from '@/app/(dashboard)/admin/_components/admin-content-container';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import { AdminContentContainer } from "@/app/(dashboard)/admin/_components/admin-content-container";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Constants for skeleton counts matching dashboard layout
 const QUOTE_METRICS_COUNT = 4;
@@ -30,8 +30,11 @@ export default function AdminMetricsDashboardLoading() {
         <section className="space-y-4">
           <Skeleton className="h-7 w-56" />
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {[...new Array(QUOTE_METRICS_COUNT)].map((_, i) => (
-              <Card key={`metric-${i}`}>
+            {Array.from(
+              { length: QUOTE_METRICS_COUNT },
+              (_, i) => `quote-metric-skeleton-${i}`
+            ).map((key) => (
+              <Card key={key}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <Skeleton className="h-4 w-24" />
                   <Skeleton className="h-4 w-4 rounded-full" />
@@ -59,8 +62,11 @@ export default function AdminMetricsDashboardLoading() {
         <section className="space-y-4">
           <Skeleton className="h-7 w-48" />
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {[...new Array(CATALOG_CHARTS_COUNT)].map((_, i) => (
-              <Card key={`catalog-${i}`}>
+            {Array.from(
+              { length: CATALOG_CHARTS_COUNT },
+              (_, i) => `catalog-chart-skeleton-${i}`
+            ).map((key) => (
+              <Card key={key}>
                 <CardHeader>
                   <Skeleton className="h-5 w-32" />
                 </CardHeader>
@@ -76,8 +82,11 @@ export default function AdminMetricsDashboardLoading() {
         <section className="space-y-4">
           <Skeleton className="h-7 w-44" />
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {[...new Array(MONETARY_CHARTS_COUNT)].map((_, i) => (
-              <Card key={`monetary-${i}`}>
+            {Array.from(
+              { length: MONETARY_CHARTS_COUNT },
+              (_, i) => `monetary-chart-skeleton-${i}`
+            ).map((key) => (
+              <Card key={key}>
                 <CardHeader>
                   <Skeleton className="h-5 w-36" />
                 </CardHeader>

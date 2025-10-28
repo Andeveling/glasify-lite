@@ -269,6 +269,7 @@ model Model {
   quoteItems             QuoteItem[]
   costBreakdown          ModelCostBreakdown[]
   priceHistory           ModelPriceHistory[]
+  modelColors            ModelColor[] // Colors assigned to this model with surcharges
 
   // Performance indexes for admin table queries (TASK-011)
   // Search by model name
@@ -410,14 +411,23 @@ model QuoteItem {
 
   widthMm          Int
   heightMm         Int
-  accessoryApplied Boolean            @default(false)
-  subtotal         Decimal            @db.Decimal(12, 4)
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  services         QuoteItemService[]
-  adjustments      Adjustment[]
+  accessoryApplied Boolean @default(false)
+  subtotal         Decimal @db.Decimal(12, 4)
+
+  // Color selection (optional) - Snapshot for quote immutability
+  colorId                  String? // Reference to selected color (nullable - color optional)
+  color                    Color?   @relation(fields: [colorId], references: [id], onDelete: Restrict)
+  colorSurchargePercentage Decimal? @db.Decimal(5, 2) // Snapshot of surcharge at quote creation
+  colorHexCode             String?  @db.VarChar(7) // Snapshot of hex code for PDF rendering
+  colorName                String?  @db.VarChar(50) // Snapshot of color name for display
+
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  services    QuoteItemService[]
+  adjustments Adjustment[]
 
   @@index([quoteId])
+  @@index([colorId])
 }
 
 model QuoteItemService {
@@ -649,6 +659,54 @@ model GlassTypeCharacteristic {
   @@unique([glassTypeId, characteristicId])
   @@index([glassTypeId])
   @@index([characteristicId])
+}
+
+// COLOR CATALOG SYSTEM
+// Master color catalog with model-specific color assignments and surcharges
+// Implements snapshot pattern for quote immutability (colorId + denormalized fields in QuoteItem)
+
+/// Color - Master catalog of available colors
+/// Global catalog shared across all tenants, seeded with 10 industry-standard colors
+
+model Color {
+  id          String       @id @default(cuid())
+  /// Commercial color name (e.g., "Blanco", "Nogal Europeo")
+  name        String       @db.VarChar(50)
+  /// Industry standard RAL code (optional, e.g., "RAL 9010")
+  ralCode     String?      @db.VarChar(10)
+  /// Hexadecimal color code for UI rendering (#RRGGBB format)
+  hexCode     String       @db.VarChar(7)
+  /// Soft delete flag (false = hidden in new assignments, but preserved in existing)
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  modelColors ModelColor[] // Models using this color
+  quoteItems  QuoteItem[] // Quotes with this color selected
+
+  @@unique([name, hexCode]) // Prevent duplicate colors
+  @@index([isActive]) // Filter active colors
+  @@index([name]) // Search by name
+}
+
+/// ModelColor - Junction table linking Model to Color with model-specific surcharge
+/// Implements Many-to-Many relationship with additional business data
+
+model ModelColor {
+  id                  String   @id @default(cuid())
+  modelId             String
+  model               Model    @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  colorId             String
+  color               Color    @relation(fields: [colorId], references: [id], onDelete: Restrict)
+  /// Percentage surcharge added to model base price (0.00-100.00)
+  surchargePercentage Decimal  @db.Decimal(5, 2)
+  /// One color per model must be default (auto-selected if client doesn't choose)
+  isDefault           Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@unique([modelId, colorId]) // Prevent duplicate color assignments per model
+  @@index([modelId, isDefault]) // Optimize default color lookup
+  @@index([colorId]) // Reverse lookup (which models use this color)
 }
 
 // DEPRECATED MODELS SECTION

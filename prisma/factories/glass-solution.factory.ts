@@ -8,11 +8,11 @@
  * - Bilingual naming (English name + Spanish nameEs)
  */
 
-import fs from 'node:fs';
-import path from 'node:path';
-import { z } from 'zod';
-import type { FactoryOptions, FactoryResult, ValidationError } from './types';
-import { validateWithSchema } from './utils';
+import fs from "node:fs";
+import path from "node:path";
+import { z } from "zod";
+import type { FactoryOptions, FactoryResult, ValidationError } from "./types";
+import { validateWithSchema } from "./utils";
 
 /**
  * Valid Lucide icon names for glass solutions
@@ -20,16 +20,16 @@ import { validateWithSchema } from './utils';
  * Limited to icons that make semantic sense for glass solutions
  */
 const VALID_ICONS = [
-  'Shield', // Security
-  'Snowflake', // Thermal insulation
-  'Volume2', // Sound insulation
-  'Zap', // Energy efficiency
-  'Sparkles', // Decorative
-  'Home', // General purpose
-  'Lock', // Alternative for security
-  'Flame', // Alternative for thermal
-  'Speaker', // Alternative for sound
-  'Lightbulb', // Alternative for energy
+  "Shield", // Security
+  "Snowflake", // Thermal insulation
+  "Volume2", // Sound insulation
+  "Zap", // Energy efficiency
+  "Sparkles", // Decorative
+  "Home", // General purpose
+  "Lock", // Alternative for security
+  "Flame", // Alternative for thermal
+  "Speaker", // Alternative for sound
+  "Lightbulb", // Alternative for energy
 ] as const;
 
 // Validation constants
@@ -46,13 +46,19 @@ const MAX_SORT_ORDER = 100;
  * Zod schema for GlassSolution input validation
  */
 const glassSolutionSchema = z.object({
-  description: z.string().min(MIN_DESCRIPTION_LENGTH).max(MAX_DESCRIPTION_LENGTH),
+  description: z
+    .string()
+    .min(MIN_DESCRIPTION_LENGTH)
+    .max(MAX_DESCRIPTION_LENGTH),
   icon: z.enum(VALID_ICONS),
   key: z
     .string()
     .min(MIN_KEY_LENGTH)
     .max(MAX_KEY_LENGTH)
-    .regex(/^[a-z][a-z0-9_]*$/, 'Key must be lowercase snake_case (e.g., thermal_insulation)'),
+    .regex(
+      /^[a-z][a-z0-9_]*$/,
+      "Key must be lowercase snake_case (e.g., thermal_insulation)"
+    ),
   name: z.string().min(MIN_NAME_LENGTH).max(MAX_NAME_LENGTH),
   nameEs: z.string().min(MIN_NAME_LENGTH).max(MAX_NAME_LENGTH),
   sortOrder: z.number().int().min(MIN_SORT_ORDER).max(MAX_SORT_ORDER),
@@ -66,7 +72,7 @@ const glassSolutionSchema = z.object({
  * @example 'thermal_insulation' → 'thermal-insulation'
  */
 function generateSlugFromKey(key: string): string {
-  return key.replace(/_/g, '-');
+  return key.replace(/_/g, "-");
 }
 
 /**
@@ -114,40 +120,50 @@ export function createGlassSolution(
 
   // Validate key uniqueness (should be checked at database level, but good practice)
   const validKeys = [
-    'security',
-    'thermal_insulation',
-    'sound_insulation',
-    'energy_efficiency',
-    'decorative',
-    'general',
+    "security",
+    "thermal_insulation",
+    "sound_insulation",
+    "energy_efficiency",
+    "decorative",
+    "general",
   ];
   if (!validKeys.includes(input.key)) {
     errors.push({
-      code: 'INVALID_KEY',
-      message: `Invalid key "${input.key}". Expected one of: ${validKeys.join(', ')}`,
-      path: ['key'],
+      code: "INVALID_KEY",
+      message: `Invalid key "${input.key}". Expected one of: ${validKeys.join(", ")}`,
+      path: ["key"],
     });
   }
 
   // Validate nameEs is actually in Spanish (basic check)
   if (input.nameEs === input.name) {
     errors.push({
-      code: 'INVALID_TRANSLATION',
-      message: 'nameEs should be Spanish translation, not identical to English name',
-      path: ['nameEs'],
+      code: "INVALID_TRANSLATION",
+      message:
+        "nameEs should be Spanish translation, not identical to English name",
+      path: ["nameEs"],
     });
   }
 
   // Validate description is in Spanish
-  const spanishIndicators = ['ción', 'dad', 'ento', 'ante', 'para', 'con', 'de', 'y'];
+  const spanishIndicators = [
+    "ción",
+    "dad",
+    "ento",
+    "ante",
+    "para",
+    "con",
+    "de",
+    "y",
+  ];
   const hasSpanishIndicator = spanishIndicators.some((indicator) =>
     input.description.toLowerCase().includes(indicator)
   );
   if (!hasSpanishIndicator) {
     errors.push({
-      code: 'INVALID_LANGUAGE',
-      message: 'description should be in Spanish (es-LA)',
-      path: ['description'],
+      code: "INVALID_LANGUAGE",
+      message: "description should be in Spanish (es-LA)",
+      path: ["description"],
     });
   }
 
@@ -199,18 +215,18 @@ export async function seedGlassSolutionsFromFile(fileName: string): Promise<{
   seeded: number;
   skipped: number;
 }> {
-  const dataPath = path.join(process.cwd(), 'prisma', 'data', fileName);
+  const dataPath = path.join(process.cwd(), "prisma", "data", fileName);
 
   // Load JSON file
   let rawData: unknown;
   try {
-    const fileContent = fs.readFileSync(dataPath, 'utf-8');
+    const fileContent = fs.readFileSync(dataPath, "utf-8");
     rawData = JSON.parse(fileContent);
   } catch (error) {
     return {
       errors: [
         {
-          code: 'FILE_READ_ERROR',
+          code: "FILE_READ_ERROR",
           context: { error, fileName },
           message: `Failed to read or parse ${fileName}`,
           path: [],
@@ -226,7 +242,7 @@ export async function seedGlassSolutionsFromFile(fileName: string): Promise<{
   if (!validationResult.success) {
     return {
       errors: validationResult.error.issues.map((err) => ({
-        code: 'SCHEMA_VALIDATION_ERROR',
+        code: "SCHEMA_VALIDATION_ERROR",
         context: { zodError: err },
         message: err.message,
         path: err.path.map(String),
@@ -242,7 +258,7 @@ export async function seedGlassSolutionsFromFile(fileName: string): Promise<{
   let skipped = 0;
 
   // Dynamically import Prisma client
-  const { PrismaClient } = await import('@prisma/client');
+  const { PrismaClient } = await import("@prisma/client");
   const prisma = new PrismaClient();
 
   try {
@@ -293,10 +309,10 @@ export async function seedGlassSolutionsFromFile(fileName: string): Promise<{
         }
       } catch (error) {
         errors.push({
-          code: 'DATABASE_ERROR',
+          code: "DATABASE_ERROR",
           context: { error, key: solution.key },
           message: `Failed to seed glass solution ${solution.key}`,
-          path: ['solutions', solution.key],
+          path: ["solutions", solution.key],
         });
       }
     }

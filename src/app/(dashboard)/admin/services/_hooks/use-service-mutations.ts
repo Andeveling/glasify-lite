@@ -14,16 +14,18 @@
  */
 /** biome-ignore-all assist/source/useSortedKeys: <explanation> */
 
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
-import { api } from '@/trpc/react';
-import type { FormValues } from './use-service-form';
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { api } from "@/trpc/react";
+import type { FormValues } from "./use-service-form";
 
 type UseServiceMutationsProps = {
   onSuccess?: () => void;
 };
 
-export function useServiceMutations({ onSuccess }: UseServiceMutationsProps = {}) {
+export function useServiceMutations({
+  onSuccess,
+}: UseServiceMutationsProps = {}) {
   const utils = api.useUtils();
   const router = useRouter();
 
@@ -38,16 +40,16 @@ export function useServiceMutations({ onSuccess }: UseServiceMutationsProps = {}
    */
   const createMutation = api.admin.service.create.useMutation({
     onMutate: () => {
-      toast.loading('Creando servicio...', { id: 'create-service' });
+      toast.loading("Creando servicio...", { id: "create-service" });
     },
     onError: (err) => {
-      toast.error('Error al crear servicio', {
+      toast.error("Error al crear servicio", {
         description: err.message,
-        id: 'create-service',
+        id: "create-service",
       });
     },
     onSuccess: () => {
-      toast.success('Servicio creado correctamente', { id: 'create-service' });
+      toast.success("Servicio creado correctamente", { id: "create-service" });
       onSuccess?.();
     },
     onSettled: () => {
@@ -66,16 +68,18 @@ export function useServiceMutations({ onSuccess }: UseServiceMutationsProps = {}
    */
   const updateMutation = api.admin.service.update.useMutation({
     onMutate: () => {
-      toast.loading('Actualizando servicio...', { id: 'update-service' });
+      toast.loading("Actualizando servicio...", { id: "update-service" });
     },
     onError: (err) => {
-      toast.error('Error al actualizar servicio', {
+      toast.error("Error al actualizar servicio", {
         description: err.message,
-        id: 'update-service',
+        id: "update-service",
       });
     },
     onSuccess: () => {
-      toast.success('Servicio actualizado correctamente', { id: 'update-service' });
+      toast.success("Servicio actualizado correctamente", {
+        id: "update-service",
+      });
       onSuccess?.();
     },
     onSettled: () => {

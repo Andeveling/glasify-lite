@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 /**
  * Custom hook for responsive media queries
@@ -20,11 +20,11 @@ export function useMediaQuery(query: string): boolean {
     };
 
     // Add listener
-    media.addEventListener('change', listener);
+    media.addEventListener("change", listener);
 
     // Cleanup
     return () => {
-      media.removeEventListener('change', listener);
+      media.removeEventListener("change", listener);
     };
   }, [query]);
 

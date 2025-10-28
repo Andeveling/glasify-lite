@@ -1,5 +1,5 @@
-import { headers } from 'next/headers';
-import { auth } from '@/server/auth';
+import { headers } from "next/headers";
+import { auth } from "@/server/auth";
 
 type AdminOnlyProps = {
   children: React.ReactNode;
@@ -29,7 +29,7 @@ export async function AdminOnly({ children, fallback = null }: AdminOnlyProps) {
     headers: await headers(),
   });
 
-  if (session?.user?.role !== 'admin') {
+  if (session?.user?.role !== "admin") {
     return <>{fallback}</>;
   }
 

@@ -1,4 +1,4 @@
-import { createId } from '@paralleldrive/cuid2';
+import { createId } from "@paralleldrive/cuid2";
 
 /**
  * Generates a unique random key for React components
@@ -14,7 +14,7 @@ export function generateKey() {
  * @param prefix - Optional prefix for the generated keys (default: 'item')
  * @returns Array of objects with unique keys
  */
-export function generateKeyedArray(length: number, prefix = 'item') {
+export function generateKeyedArray(length: number, prefix = "item") {
   return Array.from({ length }, (_, index) => ({
     index,
     key: `${prefix}-${generateKey()}-${index}`,

@@ -5,7 +5,7 @@
  * for PDF and Excel exports.
  */
 
-import type { ExportFormat } from '@/types/export.types';
+import type { ExportFormat } from "@/types/export.types";
 
 /**
  * Generate export filename with consistent format
@@ -19,7 +19,11 @@ import type { ExportFormat } from '@/types/export.types';
  * generateExportFilename('Casa Rodriguez', new Date('2025-10-12'), 'pdf')
  * // Returns: "Cotizacion_Casa_Rodriguez_2025-10-12.pdf"
  */
-export function generateExportFilename(projectName: string, date: Date, format: ExportFormat): string {
+export function generateExportFilename(
+  projectName: string,
+  date: Date,
+  format: ExportFormat
+): string {
   // Sanitize project name
   const sanitizedName = sanitizeProjectName(projectName);
 
@@ -41,27 +45,27 @@ export function generateExportFilename(projectName: string, date: Date, format: 
  * - Handles empty names
  */
 function sanitizeProjectName(name: string): string {
-  if (!name || name.trim() === '') {
-    return 'Sin_Nombre';
+  if (!name || name.trim() === "") {
+    return "Sin_Nombre";
   }
 
   return (
     name
       .trim()
       // Remove quotes, ampersands, and other special chars
-      .replace(/["&\\.]/g, '')
+      .replace(/["&\\.]/g, "")
       // Replace multiple spaces with single space
-      .replace(/\s+/g, ' ')
+      .replace(/\s+/g, " ")
       // Replace spaces with underscores
-      .replace(/\s/g, '_')
+      .replace(/\s/g, "_")
       // Remove any remaining non-alphanumeric chars (except underscores and accented chars)
-      .replace(/[^\w\u00C0-\u017F_]/g, '')
+      .replace(/[^\w\u00C0-\u017F_]/g, "")
       // Truncate to max 50 chars
       .slice(0, 50)
       // Capitalize first letter of each word
-      .split('_')
+      .split("_")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join('_')
+      .join("_")
   );
 }
 
@@ -70,8 +74,8 @@ function sanitizeProjectName(name: string): string {
  */
 function formatDateForFilename(date: Date): string {
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
 }
@@ -81,12 +85,12 @@ function formatDateForFilename(date: Date): string {
  */
 function getFileExtension(format: ExportFormat): string {
   switch (format) {
-    case 'pdf':
-      return 'pdf';
-    case 'excel':
-      return 'xlsx';
+    case "pdf":
+      return "pdf";
+    case "excel":
+      return "xlsx";
     default:
-      return 'pdf';
+      return "pdf";
   }
 }
 
@@ -101,7 +105,10 @@ export function validateFilename(filename: string): boolean {
 /**
  * Generate filename with timestamp for uniqueness (optional variant)
  */
-export function generateExportFilenameWithTimestamp(projectName: string, format: ExportFormat): string {
+export function generateExportFilenameWithTimestamp(
+  projectName: string,
+  format: ExportFormat
+): string {
   const sanitizedName = sanitizeProjectName(projectName);
   const timestamp = Date.now();
   const extension = getFileExtension(format);

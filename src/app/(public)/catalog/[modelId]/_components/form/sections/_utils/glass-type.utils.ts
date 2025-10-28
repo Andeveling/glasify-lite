@@ -1,4 +1,4 @@
-import type { GlassTypeOutput } from '@/server/api/routers/catalog';
+import type { GlassTypeOutput } from "@/server/api/routers/catalog";
 
 /**
  * Glass Type Utilities
@@ -26,15 +26,27 @@ export type GlassFeatures = string[];
 /**
  * Check if glass type has a specific characteristic
  */
-function hasCharacteristic(glassType: GlassTypeOutput, characteristicName: string): boolean {
-  return glassType.characteristics?.some((gc) => gc.characteristic.name === characteristicName) ?? false;
+function hasCharacteristic(
+  glassType: GlassTypeOutput,
+  characteristicName: string
+): boolean {
+  return (
+    glassType.characteristics?.some(
+      (gc) => gc.characteristic.name === characteristicName
+    ) ?? false
+  );
 }
 
 /**
  * Get numeric value from characteristic (e.g., thickness, U-value)
  */
-function _getCharacteristicValue(glassType: GlassTypeOutput, characteristicName: string): number | null {
-  const characteristic = glassType.characteristics?.find((gc) => gc.characteristic.name === characteristicName);
+function _getCharacteristicValue(
+  glassType: GlassTypeOutput,
+  characteristicName: string
+): number | null {
+  const characteristic = glassType.characteristics?.find(
+    (gc) => gc.characteristic.name === characteristicName
+  );
   return characteristic?.value ? Number(characteristic.value) : null;
 }
 
@@ -52,10 +64,18 @@ export function buildGlassFeatures(glassType: GlassTypeOutput): GlassFeatures {
   const features: string[] = [];
 
   // Check characteristics using the new Many-to-Many relationship
-  if (hasCharacteristic(glassType, 'tempered')) features.push('Templado');
-  if (hasCharacteristic(glassType, 'laminated')) features.push('Laminado');
-  if (hasCharacteristic(glassType, 'low-e')) features.push('Bajo emisivo (Low-E)');
-  if (hasCharacteristic(glassType, 'triple-glazed')) features.push('Triple acristalamiento');
+  if (hasCharacteristic(glassType, "tempered")) {
+    features.push("Templado");
+  }
+  if (hasCharacteristic(glassType, "laminated")) {
+    features.push("Laminado");
+  }
+  if (hasCharacteristic(glassType, "low-e")) {
+    features.push("Bajo emisivo (Low-E)");
+  }
+  if (hasCharacteristic(glassType, "triple-glazed")) {
+    features.push("Triple acristalamiento");
+  }
 
   // Note: v2.0 - deprecated boolean fields removed
   // Use characteristics relationships for feature detection
@@ -78,13 +98,15 @@ const MIN_U_VALUE_THRESHOLD = 1.5;
 const THICK_GLASS_SECURITY = 8;
 const THICK_GLASS_ACOUSTIC = 10;
 
-export function calculatePerformanceRatings(glassType: GlassTypeOutput): PerformanceRatings {
+export function calculatePerformanceRatings(
+  glassType: GlassTypeOutput
+): PerformanceRatings {
   // v2.0: Always use characteristics system
   // All glass types now have characteristics relationships
-  const isTempered = hasCharacteristic(glassType, 'tempered');
-  const isLaminated = hasCharacteristic(glassType, 'laminated');
-  const isLowE = hasCharacteristic(glassType, 'low-e');
-  const isTripleGlazed = hasCharacteristic(glassType, 'triple-glazed');
+  const isTempered = hasCharacteristic(glassType, "tempered");
+  const isLaminated = hasCharacteristic(glassType, "laminated");
+  const isLowE = hasCharacteristic(glassType, "low-e");
+  const isTripleGlazed = hasCharacteristic(glassType, "triple-glazed");
   const thickness = glassType.thicknessMm;
 
   let security = 2;
@@ -92,19 +114,37 @@ export function calculatePerformanceRatings(glassType: GlassTypeOutput): Perform
   let acoustic = 2;
 
   // Security calculation
-  if (isTempered) security += 1;
-  if (isLaminated) security += 2;
-  if (thickness >= THICK_GLASS_SECURITY) security += 1;
+  if (isTempered) {
+    security += 1;
+  }
+  if (isLaminated) {
+    security += 2;
+  }
+  if (thickness >= THICK_GLASS_SECURITY) {
+    security += 1;
+  }
 
   // Thermal calculation
-  if (isLowE) thermal += 2;
-  if (isTripleGlazed) thermal += 1;
-  if (glassType.uValue && glassType.uValue < MIN_U_VALUE_THRESHOLD) thermal += 1;
+  if (isLowE) {
+    thermal += 2;
+  }
+  if (isTripleGlazed) {
+    thermal += 1;
+  }
+  if (glassType.uValue && glassType.uValue < MIN_U_VALUE_THRESHOLD) {
+    thermal += 1;
+  }
 
   // Acoustic calculation
-  if (isLaminated) acoustic += 2;
-  if (isTripleGlazed) acoustic += 1;
-  if (thickness >= THICK_GLASS_ACOUSTIC) acoustic += 1;
+  if (isLaminated) {
+    acoustic += 2;
+  }
+  if (isTripleGlazed) {
+    acoustic += 1;
+  }
+  if (thickness >= THICK_GLASS_ACOUSTIC) {
+    acoustic += 1;
+  }
 
   return {
     acoustic: Math.min(MAX_RATING, acoustic),
@@ -135,18 +175,22 @@ export function sortByPerformance(
   const sorted = [...glassTypes].sort((a, b) => {
     // Get performance rating for selected or primary solution
     const ratingA = selectedSolutionId
-      ? a.solutions?.find((s) => s.solution.id === selectedSolutionId)?.performanceRating
+      ? a.solutions?.find((s) => s.solution.id === selectedSolutionId)
+          ?.performanceRating
       : a.solutions?.find((s) => s.isPrimary)?.performanceRating;
 
     const ratingB = selectedSolutionId
-      ? b.solutions?.find((s) => s.solution.id === selectedSolutionId)?.performanceRating
+      ? b.solutions?.find((s) => s.solution.id === selectedSolutionId)
+          ?.performanceRating
       : b.solutions?.find((s) => s.isPrimary)?.performanceRating;
 
     const weightA = ratingA ? (RatingWeights[ratingA] ?? 0) : 0;
     const weightB = ratingB ? (RatingWeights[ratingB] ?? 0) : 0;
 
     // Sort by performance (highest first)
-    if (weightB !== weightA) return weightB - weightA;
+    if (weightB !== weightA) {
+      return weightB - weightA;
+    }
 
     // Tie-break by thickness (thicker first - more durable)
     return b.thicknessMm - a.thicknessMm;

@@ -1,12 +1,19 @@
-'use client';
+"use client";
 
-import { Edit, Eye, Trash2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { formatDate } from '@/lib/utils';
-import { useTenantConfig } from '@/providers/tenant-config-provider';
+import { Edit, Eye, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { formatDate } from "@/lib/utils";
+import { useTenantConfig } from "@/providers/tenant-config-provider";
 
 type Model = {
   basePrice: number;
@@ -21,7 +28,7 @@ type Model = {
   minWidthMm: number;
   name: string;
   profileSupplier: string;
-  status: 'published' | 'draft';
+  status: "published" | "draft";
   updatedAt: string;
 };
 
@@ -85,13 +92,24 @@ function ModelsTable({ models, onView, onEdit, onDelete }: ModelsTableProps) {
                 <Badge variant="outline">{model.profileSupplier}</Badge>
               </TableCell>
               <TableCell className="font-mono text-sm">
-                {formatDimensions(model.minWidthMm, model.maxWidthMm, model.minHeightMm, model.maxHeightMm)}
+                {formatDimensions(
+                  model.minWidthMm,
+                  model.maxWidthMm,
+                  model.minHeightMm,
+                  model.maxHeightMm
+                )}
               </TableCell>
-              <TableCell className="text-right font-medium">{formatCurrency(model.basePrice)}</TableCell>
+              <TableCell className="text-right font-medium">
+                {formatCurrency(model.basePrice)}
+              </TableCell>
               <TableCell>
                 <div className="flex flex-wrap gap-1">
                   {model.compatibleGlassTypes.slice(0, 2).map((glassType) => (
-                    <Badge className="text-xs" key={glassType} variant="outline">
+                    <Badge
+                      className="text-xs"
+                      key={glassType}
+                      variant="outline"
+                    >
                       {glassType}
                     </Badge>
                   ))}
@@ -107,13 +125,28 @@ function ModelsTable({ models, onView, onEdit, onDelete }: ModelsTableProps) {
               </TableCell>
               <TableCell>
                 <div className="flex gap-1">
-                  <Button onClick={() => handleView(model.id)} size="sm" title="Ver detalles" variant="outline">
+                  <Button
+                    onClick={() => handleView(model.id)}
+                    size="sm"
+                    title="Ver detalles"
+                    variant="outline"
+                  >
                     <Eye className="h-4 w-4" />
                   </Button>
-                  <Button onClick={() => handleEdit(model.id)} size="sm" title="Editar modelo" variant="outline">
+                  <Button
+                    onClick={() => handleEdit(model.id)}
+                    size="sm"
+                    title="Editar modelo"
+                    variant="outline"
+                  >
                     <Edit className="h-4 w-4" />
                   </Button>
-                  <Button onClick={() => handleDelete(model.id)} size="sm" title="Eliminar modelo" variant="outline">
+                  <Button
+                    onClick={() => handleDelete(model.id)}
+                    size="sm"
+                    title="Eliminar modelo"
+                    variant="outline"
+                  >
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
                 </div>
@@ -128,13 +161,18 @@ function ModelsTable({ models, onView, onEdit, onDelete }: ModelsTableProps) {
 
 // Utility functions
 function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('es-AR', {
-    currency: 'ARS',
-    style: 'currency',
+  return new Intl.NumberFormat("es-AR", {
+    currency: "ARS",
+    style: "currency",
   }).format(amount);
 }
 
-function formatDimensions(minW: number, maxW: number, minH: number, maxH: number): string {
+function formatDimensions(
+  minW: number,
+  maxW: number,
+  minH: number,
+  maxH: number
+): string {
   return `${minW}-${maxW}×${minH}-${maxH}mm`;
 }
 

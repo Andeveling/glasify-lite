@@ -12,17 +12,17 @@
  * @module QuoteItemPreview
  */
 
-import type { WindowType } from '@/types/window.types';
-import { QuoteItemImage } from '../[quoteId]/_components/quote-item-image';
+import type { WindowType } from "@/types/window.types";
+import { QuoteItemImage } from "../[quoteId]/_components/quote-item-image";
 
-export interface QuoteItemPreviewData {
+export type QuoteItemPreviewData = {
   id: string;
   modelName: string;
   modelImageUrl: string | null;
   windowType: WindowType;
-}
+};
 
-export interface QuoteItemPreviewProps {
+export type QuoteItemPreviewProps = {
   /**
    * All quote items (only first 3 will be shown)
    */
@@ -32,7 +32,7 @@ export interface QuoteItemPreviewProps {
    * Total item count for "+N more" indicator
    */
   totalCount?: number;
-}
+};
 
 /**
  * QuoteItemPreview Component

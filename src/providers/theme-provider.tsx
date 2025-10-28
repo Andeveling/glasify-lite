@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { ThemeProvider as NextThemesProvider } from 'next-themes';
-import type * as React from 'react';
-import { useEffect, useState } from 'react';
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+import type * as React from "react";
+import { useEffect, useState } from "react";
 
-export function ThemeProvider({ children, ...props }: React.ComponentProps<typeof NextThemesProvider>) {
+export function ThemeProvider({
+  children,
+  ...props
+}: React.ComponentProps<typeof NextThemesProvider>) {
   const [mounted, setMounted] = useState(false);
 
   // Prevent hydration mismatch by only rendering after mount

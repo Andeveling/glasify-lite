@@ -1,10 +1,10 @@
-import { adminRouter } from '@/server/api/routers/admin/admin';
-import { tenantConfigRouter } from '@/server/api/routers/admin/tenant-config';
-import { catalogRouter } from '@/server/api/routers/catalog';
-import { dashboardRouter } from '@/server/api/routers/dashboard';
-import { quoteRouter } from '@/server/api/routers/quote/quote';
-import { userRouter } from '@/server/api/routers/user';
-import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc';
+import { adminRouter } from "@/server/api/routers/admin/admin";
+import { tenantConfigRouter } from "@/server/api/routers/admin/tenant-config";
+import { catalogRouter } from "@/server/api/routers/catalog";
+import { dashboardRouter } from "@/server/api/routers/dashboard";
+import { quoteRouter } from "@/server/api/routers/quote/quote";
+import { userRouter } from "@/server/api/routers/user";
+import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 
 /**
  * This is the primary router for the server.

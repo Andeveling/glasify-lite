@@ -10,15 +10,15 @@
  * @module app/_actions/quote.actions
  */
 
-'use server';
+"use server";
 
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
-import logger from '@/lib/logger';
-import { generateQuoteFromCart } from '@/server/api/routers/quote/quote.service';
-import { auth } from '@/server/auth';
-import { db } from '@/server/db';
-import type { CartItem } from '@/types/cart.types';
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import logger from "@/lib/logger";
+import { generateQuoteFromCart } from "@/server/api/routers/quote/quote.service";
+import { auth } from "@/server/auth";
+import { db } from "@/server/db";
+import type { CartItem } from "@/types/cart.types";
 
 // ============================================================================
 // Types
@@ -88,19 +88,19 @@ export async function generateQuoteFromCartAction(
     });
 
     if (!session?.user?.id) {
-      logger.warn('[QuoteAction] Unauthorized quote generation attempt', {
+      logger.warn("[QuoteAction] Unauthorized quote generation attempt", {
         correlationId,
       });
 
       return {
-        error: 'Debes iniciar sesión para generar una cotización',
+        error: "Debes iniciar sesión para generar una cotización",
         success: false,
       };
     }
 
     const userId = session.user.id;
 
-    logger.info('[QuoteAction] Starting quote generation', {
+    logger.info("[QuoteAction] Starting quote generation", {
       correlationId,
       itemCount: cartItems.length,
       userId,
@@ -108,13 +108,14 @@ export async function generateQuoteFromCartAction(
 
     // 2. Validation: Cart must not be empty
     if (!cartItems || cartItems.length === 0) {
-      logger.warn('[QuoteAction] Empty cart detected', {
+      logger.warn("[QuoteAction] Empty cart detected", {
         correlationId,
         userId,
       });
 
       return {
-        error: 'El carrito está vacío. Agrega items antes de generar una cotización.',
+        error:
+          "El carrito está vacío. Agrega items antes de generar una cotización.",
         success: false,
       };
     }
@@ -122,12 +123,12 @@ export async function generateQuoteFromCartAction(
     // 3. Validate first cart item exists (for error handling)
     const firstCartItem = cartItems[0];
     if (!firstCartItem) {
-      logger.error('[QuoteAction] Cart is empty after validation', {
+      logger.error("[QuoteAction] Cart is empty after validation", {
         correlationId,
       });
 
       return {
-        error: 'El carrito está vacío. Por favor intenta nuevamente.',
+        error: "El carrito está vacío. Por favor intenta nuevamente.",
         success: false,
       };
     }
@@ -138,14 +139,14 @@ export async function generateQuoteFromCartAction(
       contactPhone: formInput.contactPhone,
       projectAddress: {
         projectCity: formInput.projectCity,
-        projectName: formInput.projectName ?? 'Sin nombre',
+        projectName: formInput.projectName ?? "Sin nombre",
         projectPostalCode: formInput.projectPostalCode,
         projectState: formInput.projectState,
         projectStreet: formInput.projectStreet,
       },
     });
 
-    logger.info('[QuoteAction] Quote generation completed successfully', {
+    logger.info("[QuoteAction] Quote generation completed successfully", {
       correlationId,
       duration: `${Date.now() - startTime}ms`,
       quoteId: result.quoteId,
@@ -157,14 +158,17 @@ export async function generateQuoteFromCartAction(
       success: true,
     };
   } catch (error) {
-    logger.error('[QuoteAction] Quote generation failed', {
+    logger.error("[QuoteAction] Quote generation failed", {
       correlationId,
       duration: `${Date.now() - startTime}ms`,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : "Unknown error",
     });
 
     return {
-      error: error instanceof Error ? error.message : 'Error al generar la cotización. Por favor intenta nuevamente.',
+      error:
+        error instanceof Error
+          ? error.message
+          : "Error al generar la cotización. Por favor intenta nuevamente.",
       success: false,
     };
   }
@@ -191,9 +195,9 @@ export async function redirectToQuoteGenerationAction(): Promise<void> {
 
   if (!session?.user?.id) {
     // Redirect to sign-in with callback to quote generation page
-    redirect('/api/auth/signin?callbackUrl=/quote/new');
+    redirect("/api/auth/signin?callbackUrl=/quote/new");
   }
 
   // User is authenticated, redirect to quote generation page
-  redirect('/quote/new');
+  redirect("/quote/new");
 }

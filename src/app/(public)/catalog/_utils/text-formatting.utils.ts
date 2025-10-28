@@ -32,7 +32,7 @@ export type PluralOptions = {
  * formatNumber(1234567); // => "1.234.567"
  * ```
  */
-export function formatNumber(num: number, locale = 'es-AR'): string {
+export function formatNumber(num: number, locale = "es-AR"): string {
   return new Intl.NumberFormat(locale).format(num);
 }
 
@@ -91,7 +91,7 @@ export function formatResultCount(count: number): string {
   return pluralize(count, {
     one: `${formatNumber(count)} modelo encontrado`,
     other: `${formatNumber(count)} modelos encontrados`,
-    zero: 'No se encontraron resultados',
+    zero: "No se encontraron resultados",
   });
 }
 

@@ -15,18 +15,24 @@
  * @module app/(public)/cart/_components/cart-summary
  */
 
-'use client';
+"use client";
 
-import { ShoppingCart } from 'lucide-react';
-import { useState } from 'react';
-import { formatCurrency } from '@/app/_utils/format-currency.util';
-import { SignInModal } from '@/components/signin-modal';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useSession } from '@/lib/auth-client';
-import { cn } from '@/lib/utils';
-import type { CartSummary as CartSummaryType } from '@/types/cart.types';
-import { QuoteGenerationDrawer } from './quote-generation-drawer';
+import { ShoppingCart } from "lucide-react";
+import { useState } from "react";
+import { formatCurrency } from "@/app/_utils/format-currency.util";
+import { SignInModal } from "@/components/signin-modal";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useSession } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
+import type { CartSummary as CartSummaryType } from "@/types/cart.types";
+import { QuoteGenerationDrawer } from "./quote-generation-drawer";
 
 // ============================================================================
 // Types
@@ -57,7 +63,11 @@ export type CartSummaryProps = {
  * />
  * ```
  */
-export function CartSummary({ summary, isGenerating = false, className }: CartSummaryProps) {
+export function CartSummary({
+  summary,
+  isGenerating = false,
+  className,
+}: CartSummaryProps) {
   const [showSignInModal, setShowSignInModal] = useState(false);
   const { data: session, isPending: isLoading } = useSession();
   const isAuthenticated = !!session?.user;
@@ -78,7 +88,7 @@ export function CartSummary({ summary, isGenerating = false, className }: CartSu
 
   return (
     <>
-      <Card className={cn('sticky top-4', className)}>
+      <Card className={cn("sticky top-4", className)}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <ShoppingCart className="size-5" />
@@ -103,8 +113,8 @@ export function CartSummary({ summary, isGenerating = false, className }: CartSu
               <p className="font-bold text-2xl">
                 {formatCurrency(summary.total, {
                   currency: summary.currency,
-                  decimals: summary.currency === 'USD' ? 2 : 0,
-                  locale: summary.currency === 'USD' ? 'es-PA' : 'es-CO',
+                  decimals: summary.currency === "USD" ? 2 : 0,
+                  locale: summary.currency === "USD" ? "es-PA" : "es-CO",
                 })}
               </p>
               <p className="text-muted-foreground text-xs">IVA incluido</p>
@@ -123,7 +133,7 @@ export function CartSummary({ summary, isGenerating = false, className }: CartSu
                   size="lg"
                   type="button"
                 >
-                  {isGenerating ? 'Generando...' : 'Generar cotización'}
+                  {isGenerating ? "Generando..." : "Generar cotización"}
                 </Button>
               }
             />
@@ -136,7 +146,7 @@ export function CartSummary({ summary, isGenerating = false, className }: CartSu
               size="lg"
               type="button"
             >
-              {isGenerating ? 'Generando...' : 'Generar cotización'}
+              {isGenerating ? "Generando..." : "Generar cotización"}
             </Button>
           )}
 
@@ -159,7 +169,11 @@ export function CartSummary({ summary, isGenerating = false, className }: CartSu
       </Card>
 
       {/* Sign-in modal for unauthenticated users */}
-      <SignInModal callbackUrl="/cart" onOpenChangeAction={setShowSignInModal} open={showSignInModal} />
+      <SignInModal
+        callbackUrl="/cart"
+        onOpenChangeAction={setShowSignInModal}
+        open={showSignInModal}
+      />
     </>
   );
 }

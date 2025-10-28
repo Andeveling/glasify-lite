@@ -10,32 +10,36 @@
  * @version 1.0.0
  */
 
-import type { PrismaClient } from '@prisma/client';
-import type { GlassSolutionInput } from '../factories/glass-solution.factory';
-import { createGlassSolution } from '../factories/glass-solution.factory';
-import type { GlassTypeInput } from '../factories/glass-type.factory';
-import { createGlassType } from '../factories/glass-type.factory';
+import type { PrismaClient } from "@prisma/client";
+import type { GlassSolutionInput } from "../factories/glass-solution.factory";
+import { createGlassSolution } from "../factories/glass-solution.factory";
+import type { GlassTypeInput } from "../factories/glass-type.factory";
+import { createGlassType } from "../factories/glass-type.factory";
 
-import type { ModelInput } from '../factories/model.factory';
-import { createModel } from '../factories/model.factory';
-import type { ProfileSupplierInput } from '../factories/profile-supplier.factory';
-import { createProfileSupplier } from '../factories/profile-supplier.factory';
-import type { ServiceInput } from '../factories/service.factory';
-import { createService } from '../factories/service.factory';
-import { seedTenant } from '../seed-tenant';
+import type { ModelInput } from "../factories/model.factory";
+import { createModel } from "../factories/model.factory";
+import type { ProfileSupplierInput } from "../factories/profile-supplier.factory";
+import { createProfileSupplier } from "../factories/profile-supplier.factory";
+import type { ServiceInput } from "../factories/service.factory";
+import { createService } from "../factories/service.factory";
+import { seedTenant } from "../seed-tenant";
 
 /**
  * Helper: Generate URL-friendly slug from key
  * Converts snake_case keys to kebab-case slugs
  */
 function generateSlugFromKey(key: string): string {
-  return key.replace(/_/g, '-');
+  return key.replace(/_/g, "-");
 }
+
+// Section formatting constants
+const SECTION_SEPARATOR_LENGTH = 50;
+const DEFAULT_GLASS_PRICE_PER_SQM = 50_000.0; // Default price in CLP currency
 
 /**
  * Preset configuration interface
  */
-export interface SeedPreset {
+export type SeedPreset = {
   name: string;
   description: string;
   glassTypes: GlassTypeInput[];
@@ -43,12 +47,12 @@ export interface SeedPreset {
   models: ModelInput[];
   services: ServiceInput[];
   glassSolutions: GlassSolutionInput[];
-}
+};
 
 /**
  * Seed statistics
  */
-export interface SeedStats {
+export type SeedStats = {
   glassTypes: { created: number; failed: number };
   profileSuppliers: { created: number; failed: number };
   models: { created: number; failed: number };
@@ -58,16 +62,16 @@ export interface SeedStats {
   totalCreated: number;
   totalFailed: number;
   durationMs: number;
-}
+};
 
 /**
  * Seed options
  */
-export interface SeedOptions {
+export type SeedOptions = {
   verbose?: boolean;
   skipValidation?: boolean;
   continueOnError?: boolean;
-}
+};
 
 /**
  * Logger helper
@@ -105,9 +109,9 @@ class SeedLogger {
   }
 
   section(title: string): void {
-    console.log(`\n${'='.repeat(50)}`);
+    console.log(`\n${"=".repeat(SECTION_SEPARATOR_LENGTH)}`);
     console.log(`  ${title}`);
-    console.log(`${'='.repeat(50)}`);
+    console.log(`${"=".repeat(SECTION_SEPARATOR_LENGTH)}`);
   }
 }
 
@@ -148,35 +152,37 @@ export class SeedOrchestrator {
 
     try {
       // Clean existing data first (IMPORTANT: Reset database before seeding)
-      this.logger.section('Step 0/8: Cleaning Existing Data');
+      this.logger.section("Step 0/8: Cleaning Existing Data");
       await this.cleanDatabase();
 
       // Step 0: Seed TenantConfig singleton (ALWAYS FIRST - business configuration)
-      this.logger.section('Step 1/8: TenantConfig Singleton');
+      this.logger.section("Step 1/8: TenantConfig Singleton");
       await seedTenant(this.prisma);
 
       // Step 1: Seed profile suppliers (no dependencies)
-      this.logger.section('Step 2/8: Profile Suppliers');
-      const suppliers = await this.seedProfileSuppliers(preset.profileSuppliers);
+      this.logger.section("Step 2/8: Profile Suppliers");
+      const suppliers = await this.seedProfileSuppliers(
+        preset.profileSuppliers
+      );
 
       // Step 2: Seed glass types (no dependencies)
-      this.logger.section('Step 3/8: Glass Types');
+      this.logger.section("Step 3/8: Glass Types");
       const glassTypes = await this.seedGlassTypes(preset.glassTypes);
 
       // Step 3: Seed models (depends on suppliers and glass types)
-      this.logger.section('Step 4/8: Window/Door Models');
+      this.logger.section("Step 4/8: Window/Door Models");
       await this.seedModels(preset.models, suppliers, glassTypes);
 
       // Step 4: Seed services (no dependencies)
-      this.logger.section('Step 5/8: Services');
+      this.logger.section("Step 5/8: Services");
       await this.seedServices(preset.services);
 
       // Step 5: Seed glass solutions (no dependencies)
-      this.logger.section('Step 6/8: Glass Solutions');
+      this.logger.section("Step 6/8: Glass Solutions");
       const solutions = await this.seedGlassSolutions(preset.glassSolutions);
 
       // Step 6: Assign solutions to glass types (depends on glass types and solutions)
-      this.logger.section('Step 7/8: Assign Solutions to Glass Types');
+      this.logger.section("Step 7/8: Assign Solutions to Glass Types");
       await this.assignSolutionsToGlassTypes(glassTypes, solutions);
 
       // Calculate final stats
@@ -201,7 +207,7 @@ export class SeedOrchestrator {
 
       return this.stats;
     } catch (error) {
-      this.logger.error('Seed orchestration failed', error);
+      this.logger.error("Seed orchestration failed", error);
       throw error;
     }
   }
@@ -212,7 +218,7 @@ export class SeedOrchestrator {
    */
   private async cleanDatabase(): Promise<void> {
     try {
-      this.logger.info('Cleaning existing data...');
+      this.logger.info("Cleaning existing data...");
 
       // Delete in order of dependencies (reverse of creation)
       // GlassTypeCharacteristic (depends on GlassType and GlassCharacteristic)
@@ -240,17 +246,21 @@ export class SeedOrchestrator {
       // ProfileSupplier (independent)
       await this.prisma.profileSupplier.deleteMany({});
 
-      this.logger.success('✅ Database cleaned successfully');
+      this.logger.success("✅ Database cleaned successfully");
     } catch (error) {
-      this.logger.error('Failed to clean database', error);
-      if (!this.options.continueOnError) throw error;
+      this.logger.error("Failed to clean database", error);
+      if (!this.options.continueOnError) {
+        throw error;
+      }
     }
   }
 
   /**
    * Seed profile suppliers
    */
-  private async seedProfileSuppliers(suppliers: ProfileSupplierInput[]): Promise<Map<string, string>> {
+  private async seedProfileSuppliers(
+    suppliers: ProfileSupplierInput[]
+  ): Promise<Map<string, string>> {
     const supplierIdMap = new Map<string, string>();
 
     this.logger.info(`Seeding ${suppliers.length} profile suppliers...`);
@@ -264,7 +274,9 @@ export class SeedOrchestrator {
         if (!(result.success && result.data)) {
           this.handleValidationErrors(supplierInput.name, result.errors);
           this.stats.profileSuppliers.failed++;
-          if (!this.options.continueOnError) throw new Error('Validation failed');
+          if (!this.options.continueOnError) {
+            throw new Error("Validation failed");
+          }
           continue;
         }
 
@@ -287,9 +299,14 @@ export class SeedOrchestrator {
         this.stats.profileSuppliers.created++;
         this.logger.debug(`Created: ${supplier.name} (${supplier.id})`);
       } catch (error) {
-        this.logger.error(`Failed to create supplier: ${supplierInput.name}`, error);
+        this.logger.error(
+          `Failed to create supplier: ${supplierInput.name}`,
+          error
+        );
         this.stats.profileSuppliers.failed++;
-        if (!this.options.continueOnError) throw error;
+        if (!this.options.continueOnError) {
+          throw error;
+        }
       }
     }
 
@@ -303,7 +320,9 @@ export class SeedOrchestrator {
   /**
    * Seed glass types
    */
-  private async seedGlassTypes(glassTypes: GlassTypeInput[]): Promise<Map<string, string>> {
+  private async seedGlassTypes(
+    glassTypes: GlassTypeInput[]
+  ): Promise<Map<string, string>> {
     const glassTypeIdMap = new Map<string, string>();
 
     this.logger.info(`Seeding ${glassTypes.length} glass types...`);
@@ -317,7 +336,9 @@ export class SeedOrchestrator {
         if (!(result.success && result.data)) {
           this.handleValidationErrors(glassTypeInput.name, result.errors);
           this.stats.glassTypes.failed++;
-          if (!this.options.continueOnError) throw new Error('Validation failed');
+          if (!this.options.continueOnError) {
+            throw new Error("Validation failed");
+          }
           continue;
         }
 
@@ -329,7 +350,7 @@ export class SeedOrchestrator {
         // Ensure pricePerSqm has a default value for MVP
         const dataWithPrice = {
           ...result.data,
-          pricePerSqm: result.data.pricePerSqm ?? 50_000.0,
+          pricePerSqm: result.data.pricePerSqm ?? DEFAULT_GLASS_PRICE_PER_SQM,
         };
 
         // Create or update
@@ -346,9 +367,14 @@ export class SeedOrchestrator {
         this.stats.glassTypes.created++;
         this.logger.debug(`Created: ${glassType.name} (${glassType.id})`);
       } catch (error) {
-        this.logger.error(`Failed to create glass type: ${glassTypeInput.name}`, error);
+        this.logger.error(
+          `Failed to create glass type: ${glassTypeInput.name}`,
+          error
+        );
         this.stats.glassTypes.failed++;
-        if (!this.options.continueOnError) throw error;
+        if (!this.options.continueOnError) {
+          throw error;
+        }
       }
     }
 
@@ -357,6 +383,61 @@ export class SeedOrchestrator {
     );
 
     return glassTypeIdMap;
+  }
+
+  /**
+   * Process and validate a single model
+   */
+  private async processModel(
+    modelInput: ModelInput,
+    supplierId: string,
+    glassTypeIdMap: Map<string, string>
+  ): Promise<void> {
+    // Validate with factory
+    const result = createModel(modelInput, {
+      skipValidation: this.options.skipValidation,
+    });
+
+    if (!(result.success && result.data)) {
+      this.handleValidationErrors(modelInput.name, result.errors);
+      this.stats.models.failed++;
+      if (!this.options.continueOnError) {
+        throw new Error("Validation failed");
+      }
+      return;
+    }
+
+    // Replace PLACEHOLDER glass type IDs with actual IDs
+    const compatibleGlassTypeIds = Array.from(glassTypeIdMap.values());
+
+    // Remove profileSupplierName (factory artifact) and add profileSupplierId
+    const { profileSupplierName: _unused, ...modelData } = result.data;
+
+    // Check if model already exists by name
+    const existingModel = await this.prisma.model.findFirst({
+      where: { name: modelData.name },
+    });
+
+    // Create or update
+    const model = existingModel
+      ? await this.prisma.model.update({
+          data: {
+            ...modelData,
+            compatibleGlassTypeIds,
+            profileSupplierId: supplierId,
+          },
+          where: { id: existingModel.id },
+        })
+      : await this.prisma.model.create({
+          data: {
+            ...modelData,
+            compatibleGlassTypeIds,
+            profileSupplierId: supplierId,
+          },
+        });
+
+    this.stats.models.created++;
+    this.logger.debug(`Created: ${model.name} (${model.id})`);
   }
 
   /**
@@ -374,65 +455,31 @@ export class SeedOrchestrator {
         // Resolve supplier ID
         const supplierId = supplierIdMap.get(modelInput.profileSupplierName);
         if (!supplierId) {
-          this.logger.error(`Supplier not found: ${modelInput.profileSupplierName} for model ${modelInput.name}`);
+          this.logger.error(
+            `Supplier not found: ${modelInput.profileSupplierName} for model ${modelInput.name}`
+          );
           this.stats.models.failed++;
           if (!this.options.continueOnError) {
-            throw new Error(`Supplier not found: ${modelInput.profileSupplierName}`);
+            throw new Error(
+              `Supplier not found: ${modelInput.profileSupplierName}`
+            );
           }
           continue;
         }
 
-        // Validate with factory
-        const result = createModel(modelInput, {
-          skipValidation: this.options.skipValidation,
-        });
-
-        if (!(result.success && result.data)) {
-          this.handleValidationErrors(modelInput.name, result.errors);
-          this.stats.models.failed++;
-          if (!this.options.continueOnError) throw new Error('Validation failed');
-          continue;
-        }
-
-        // Replace PLACEHOLDER glass type IDs with actual IDs
-        const compatibleGlassTypeIds = Array.from(glassTypeIdMap.values());
-
-        // Remove profileSupplierName (factory artifact) and add profileSupplierId
-        const { profileSupplierName: _unused, ...modelData } = result.data;
-
-        // Check if model already exists by name
-        const existingModel = await this.prisma.model.findFirst({
-          where: { name: modelData.name },
-        });
-
-        // Create or update
-        const model = existingModel
-          ? await this.prisma.model.update({
-              data: {
-                ...modelData,
-                compatibleGlassTypeIds,
-                profileSupplierId: supplierId,
-              },
-              where: { id: existingModel.id },
-            })
-          : await this.prisma.model.create({
-              data: {
-                ...modelData,
-                compatibleGlassTypeIds,
-                profileSupplierId: supplierId,
-              },
-            });
-
-        this.stats.models.created++;
-        this.logger.debug(`Created: ${model.name} (${model.id})`);
+        await this.processModel(modelInput, supplierId, glassTypeIdMap);
       } catch (error) {
         this.logger.error(`Failed to create model: ${modelInput.name}`, error);
         this.stats.models.failed++;
-        if (!this.options.continueOnError) throw error;
+        if (!this.options.continueOnError) {
+          throw error;
+        }
       }
     }
 
-    this.logger.success(`Models: ${this.stats.models.created} created, ${this.stats.models.failed} failed`);
+    this.logger.success(
+      `Models: ${this.stats.models.created} created, ${this.stats.models.failed} failed`
+    );
   }
 
   /**
@@ -450,7 +497,9 @@ export class SeedOrchestrator {
         if (!(result.success && result.data)) {
           this.handleValidationErrors(serviceInput.name, result.errors);
           this.stats.services.failed++;
-          if (!this.options.continueOnError) throw new Error('Validation failed');
+          if (!this.options.continueOnError) {
+            throw new Error("Validation failed");
+          }
           continue;
         }
 
@@ -472,19 +521,28 @@ export class SeedOrchestrator {
         this.stats.services.created++;
         this.logger.debug(`Created: ${service.name} (${service.id})`);
       } catch (error) {
-        this.logger.error(`Failed to create service: ${serviceInput.name}`, error);
+        this.logger.error(
+          `Failed to create service: ${serviceInput.name}`,
+          error
+        );
         this.stats.services.failed++;
-        if (!this.options.continueOnError) throw error;
+        if (!this.options.continueOnError) {
+          throw error;
+        }
       }
     }
 
-    this.logger.success(`Services: ${this.stats.services.created} created, ${this.stats.services.failed} failed`);
+    this.logger.success(
+      `Services: ${this.stats.services.created} created, ${this.stats.services.failed} failed`
+    );
   }
 
   /**
    * Seed glass solutions
    */
-  private async seedGlassSolutions(solutions: GlassSolutionInput[]): Promise<Map<string, string>> {
+  private async seedGlassSolutions(
+    solutions: GlassSolutionInput[]
+  ): Promise<Map<string, string>> {
     const solutionIdMap = new Map<string, string>();
 
     this.logger.info(`Seeding ${solutions.length} glass solutions...`);
@@ -498,7 +556,9 @@ export class SeedOrchestrator {
         if (!(result.success && result.data)) {
           this.handleValidationErrors(solutionInput.key, result.errors);
           this.stats.glassSolutions.failed++;
-          if (!this.options.continueOnError) throw new Error('Validation failed');
+          if (!this.options.continueOnError) {
+            throw new Error("Validation failed");
+          }
           continue;
         }
 
@@ -529,9 +589,14 @@ export class SeedOrchestrator {
         this.stats.glassSolutions.created++;
         this.logger.debug(`Created: ${solution.nameEs} (${solution.id})`);
       } catch (error) {
-        this.logger.error(`Failed to create glass solution: ${solutionInput.key}`, error);
+        this.logger.error(
+          `Failed to create glass solution: ${solutionInput.key}`,
+          error
+        );
         this.stats.glassSolutions.failed++;
-        if (!this.options.continueOnError) throw error;
+        if (!this.options.continueOnError) {
+          throw error;
+        }
       }
     }
 
@@ -547,9 +612,11 @@ export class SeedOrchestrator {
    */
   private async assignSolutionsToGlassTypes(
     glassTypes: Map<string, string>,
-    solutions: Map<string, string>
+    _solutions: Map<string, string>
   ): Promise<void> {
-    this.logger.info(`Assigning solutions to ${glassTypes.size} glass types...`);
+    this.logger.info(
+      `Assigning solutions to ${glassTypes.size} glass types...`
+    );
 
     // DEPRECATED: Solution assignment logic removed in v2.0
     // Solutions are now assigned via seed data, not auto-calculated from boolean flags
@@ -565,7 +632,9 @@ export class SeedOrchestrator {
       },
     });
 
-    this.logger.debug(`Processed ${glassTypesData.length} glass types for solution assignment`);
+    this.logger.debug(
+      `Processed ${glassTypesData.length} glass types for solution assignment`
+    );
 
     this.logger.success(
       `Glass type solutions: ${this.stats.glassTypeSolutions.created} created, ${this.stats.glassTypeSolutions.failed} failed`
@@ -579,7 +648,9 @@ export class SeedOrchestrator {
     entityName: string,
     errors: Array<{ code: string; message: string }> | undefined
   ): void {
-    if (!errors || errors.length === 0) return;
+    if (!errors || errors.length === 0) {
+      return;
+    }
 
     this.logger.error(`Validation failed for: ${entityName}`);
     for (const error of errors) {
@@ -591,16 +662,22 @@ export class SeedOrchestrator {
    * Print seeding summary
    */
   private printSummary(): void {
-    this.logger.section('Seeding Summary');
+    this.logger.section("Seeding Summary");
 
-    console.log('\n📊 Statistics:');
-    console.log('   TenantConfig: 1 singleton (always created)');
+    console.log("\n📊 Statistics:");
+    console.log("   TenantConfig: 1 singleton (always created)");
     console.log(
       `   Profile Suppliers: ${this.stats.profileSuppliers.created} created, ${this.stats.profileSuppliers.failed} failed`
     );
-    console.log(`   Glass Types: ${this.stats.glassTypes.created} created, ${this.stats.glassTypes.failed} failed`);
-    console.log(`   Models: ${this.stats.models.created} created, ${this.stats.models.failed} failed`);
-    console.log(`   Services: ${this.stats.services.created} created, ${this.stats.services.failed} failed`);
+    console.log(
+      `   Glass Types: ${this.stats.glassTypes.created} created, ${this.stats.glassTypes.failed} failed`
+    );
+    console.log(
+      `   Models: ${this.stats.models.created} created, ${this.stats.models.failed} failed`
+    );
+    console.log(
+      `   Services: ${this.stats.services.created} created, ${this.stats.services.failed} failed`
+    );
     console.log(
       `   Glass Solutions: ${this.stats.glassSolutions.created} created, ${this.stats.glassSolutions.failed} failed`
     );
@@ -608,13 +685,17 @@ export class SeedOrchestrator {
       `   Glass-Solution Assignments: ${this.stats.glassTypeSolutions.created} created, ${this.stats.glassTypeSolutions.failed} failed`
     );
 
-    console.log(`\n✨ Total: ${this.stats.totalCreated + 1} created, ${this.stats.totalFailed} failed`);
+    console.log(
+      `\n✨ Total: ${this.stats.totalCreated + 1} created, ${this.stats.totalFailed} failed`
+    );
     console.log(`⏱️  Duration: ${this.stats.durationMs}ms`);
 
     if (this.stats.totalFailed > 0) {
-      this.logger.warn('Some entities failed to seed. Check logs above for details.');
+      this.logger.warn(
+        "Some entities failed to seed. Check logs above for details."
+      );
     } else {
-      this.logger.success('All entities seeded successfully! 🎉');
+      this.logger.success("All entities seeded successfully! 🎉");
     }
   }
 }

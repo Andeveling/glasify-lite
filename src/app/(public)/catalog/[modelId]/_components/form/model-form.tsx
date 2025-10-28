@@ -1,29 +1,33 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMemo, useState } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
-import { toast } from 'sonner';
-import { useCart } from '@/app/(public)/cart/_hooks/use-cart';
-import { Card } from '@/components/ui/card';
-import { Form } from '@/components/ui/form';
-import { useScrollIntoView } from '@/hooks/use-scroll-into-view';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMemo, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { toast } from "sonner";
+import { useCart } from "@/app/(public)/cart/_hooks/use-cart";
+import { Card } from "@/components/ui/card";
+import { Form } from "@/components/ui/form";
+import { useScrollIntoView } from "@/hooks/use-scroll-into-view";
 import type {
   GlassSolutionOutput,
   GlassTypeOutput,
   ModelDetailOutput,
   ServiceOutput,
-} from '@/server/api/routers/catalog';
-import type { CreateCartItemInput } from '@/types/cart.types';
-import { usePriceCalculation } from '../../_hooks/use-price-calculation';
-import { useSolutionInference } from '../../_hooks/use-solution-inference';
-import { createQuoteFormSchema, type QuoteFormValues } from '../../_utils/validation';
-import { StickyPriceHeader } from '../sticky-price-header';
-import { AddedToCartActions } from './added-to-cart-actions';
-import { QuoteSummary } from './quote-summary';
-import { DimensionsSection } from './sections/dimensions-section';
-import { GlassTypeSelectorSection } from './sections/glass-type-selector-section';
-import { ServicesSelectorSection } from './sections/services-selector-section';
+} from "@/server/api/routers/catalog";
+import type { CreateCartItemInput } from "@/types/cart.types";
+import { usePriceCalculation } from "../../_hooks/use-price-calculation";
+import { useSolutionInference } from "../../_hooks/use-solution-inference";
+import {
+  createQuoteFormSchema,
+  type QuoteFormValues,
+} from "../../_utils/validation";
+import { ColorSelector } from "../color-selector";
+import { StickyPriceHeader } from "../sticky-price-header";
+import { AddedToCartActions } from "./added-to-cart-actions";
+import { QuoteSummary } from "./quote-summary";
+import { DimensionsSection } from "./sections/dimensions-section";
+import { GlassTypeSelectorSection } from "./sections/glass-type-selector-section";
+import { ServicesSelectorSection } from "./sections/services-selector-section";
 
 // ============================================================================
 // Constants
@@ -48,12 +52,22 @@ type ModelFormProps = {
 // Component
 // ============================================================================
 
-export function ModelForm({ model, glassTypes, services, solutions, currency }: ModelFormProps) {
+export function ModelForm({
+  model,
+  glassTypes,
+  services,
+  solutions,
+  currency,
+}: ModelFormProps) {
   const schema = useMemo(() => createQuoteFormSchema(model), [model]);
   const { addItem } = useCart();
 
   // ✅ Track if item was just added to cart
   const [justAddedToCart, setJustAddedToCart] = useState(false);
+
+  // ✅ Track selected color and its surcharge percentage
+  const [selectedColorId, setSelectedColorId] = useState<string | undefined>();
+  const [colorSurchargePercentage, setColorSurchargePercentage] = useState(0);
 
   // ✅ Auto-scroll to success card when item is added
   const successCardRef = useScrollIntoView(justAddedToCart);
@@ -62,10 +76,11 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
   const defaultValues = useMemo(
     () => ({
       additionalServices: [],
-      glassType: glassTypes[0]?.id ?? '', // Pre-select first glass type (usually most common/budget)
+      colorId: undefined,
+      glassType: glassTypes[0]?.id ?? "", // Pre-select first glass type (usually most common/budget)
       height: model.minHeightMm, // Use minimum height as starting point
       quantity: 1,
-      solution: '', // No solution selected by default (optional field)
+      solution: "", // No solution selected by default (optional field)
       width: model.minWidthMm, // Use minimum width as starting point
     }),
     [model.minWidthMm, model.minHeightMm, glassTypes]
@@ -73,18 +88,21 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
 
   const form = useForm<QuoteFormValues>({
     defaultValues,
-    mode: 'onChange',
+    mode: "onChange",
     // @ts-expect-error - zodResolver with z.coerce has type inference issues
     resolver: zodResolver(schema),
   });
 
   // Watch form values for price calculation
   // ✅ Optimization: Use useWatch with specific fields instead of form.watch() to prevent unnecessary re-renders
-  const width = useWatch({ control: form.control, name: 'width' });
-  const height = useWatch({ control: form.control, name: 'height' });
-  const glassType = useWatch({ control: form.control, name: 'glassType' });
-  const quantity = useWatch({ control: form.control, name: 'quantity' });
-  const additionalServices = useWatch({ control: form.control, name: 'additionalServices' });
+  const width = useWatch({ control: form.control, name: "width" });
+  const height = useWatch({ control: form.control, name: "height" });
+  const glassType = useWatch({ control: form.control, name: "glassType" });
+  const quantity = useWatch({ control: form.control, name: "quantity" });
+  const additionalServices = useWatch({
+    control: form.control,
+    name: "additionalServices",
+  });
 
   // ✅ Get selected glass type object
   const selectedGlassType = glassTypes.find((gt) => gt.id === glassType);
@@ -93,8 +111,14 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
   // This matches the server-side calculation in price-item.ts
   const glassArea = useMemo(() => {
     // Apply glass discounts (profiles take space)
-    const effectiveWidthMm = Math.max(Number(width) - model.glassDiscountWidthMm, 0);
-    const effectiveHeightMm = Math.max(Number(height) - model.glassDiscountHeightMm, 0);
+    const effectiveWidthMm = Math.max(
+      Number(width) - model.glassDiscountWidthMm,
+      0
+    );
+    const effectiveHeightMm = Math.max(
+      Number(height) - model.glassDiscountHeightMm,
+      0
+    );
 
     const widthM = effectiveWidthMm / MM_TO_METERS;
     const heightM = effectiveHeightMm / MM_TO_METERS;
@@ -106,38 +130,48 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
   }, [width, height, model.glassDiscountWidthMm, model.glassDiscountHeightMm]);
 
   // ✅ Infer solution from glass type (replaces manual selection)
-  const { inferredSolution } = useSolutionInference(selectedGlassType ?? null, solutions);
+  const { inferredSolution } = useSolutionInference(
+    selectedGlassType ?? null,
+    solutions
+  );
 
   // Calculate price in real-time with dimension validation
-  const { calculatedPrice, breakdown, error, isCalculating } = usePriceCalculation({
-    additionalServices,
-    glassTypeId: glassType,
-    heightMm: Number(height) || 0,
-    maxHeightMm: model.maxHeightMm,
-    maxWidthMm: model.maxWidthMm,
-    minHeightMm: model.minHeightMm,
-    minWidthMm: model.minWidthMm,
-    modelId: model.id,
-    widthMm: Number(width) || 0,
-  });
+  const { calculatedPrice, breakdown, error, isCalculating } =
+    usePriceCalculation({
+      additionalServices,
+      glassTypeId: glassType,
+      heightMm: Number(height) || 0,
+      maxHeightMm: model.maxHeightMm,
+      maxWidthMm: model.maxWidthMm,
+      minHeightMm: model.minHeightMm,
+      minWidthMm: model.minWidthMm,
+      modelId: model.id,
+      widthMm: Number(width) || 0,
+    });
 
   // ✅ Build detailed price breakdown for popover
   const priceBreakdown = useMemo(() => {
-    const items: Array<{ amount: number; category: 'model' | 'glass' | 'service' | 'adjustment'; label: string }> = [];
+    const items: Array<{
+      amount: number;
+      category: "model" | "glass" | "service" | "adjustment";
+      label: string;
+    }> = [];
 
     if (!breakdown) {
       // Fallback: show base price only
       items.push({
         amount: Number(model.basePrice),
-        category: 'model',
-        label: 'Precio base del modelo',
+        category: "model",
+        label: "Precio base del modelo",
       });
       return items;
     }
 
     // ✅ Use glassArea (with discounts applied) instead of calculating again
     // This matches server-side calculation in price-item.ts lines 131-142
-    const glassCost = selectedGlassType ? glassArea * selectedGlassType.pricePerSqm : 0;
+    const glassCost = selectedGlassType
+      ? glassArea * selectedGlassType.pricePerSqm
+      : 0;
 
     // Model price (dimPrice includes base + area factor, but NOT glass cost)
     const modelOnlyPrice = breakdown.dimPrice - glassCost;
@@ -145,8 +179,8 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
     if (modelOnlyPrice > 0) {
       items.push({
         amount: modelOnlyPrice,
-        category: 'model',
-        label: 'Precio base del modelo',
+        category: "model",
+        label: "Precio base del modelo",
       });
     }
 
@@ -154,7 +188,7 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
     if (glassCost > 0 && selectedGlassType) {
       items.push({
         amount: glassCost,
-        category: 'glass',
+        category: "glass",
         label: `Vidrio ${selectedGlassType.name} (${glassArea.toFixed(2)} m²)`,
       });
     }
@@ -163,8 +197,8 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
     if (breakdown.accPrice > 0) {
       items.push({
         amount: breakdown.accPrice,
-        category: 'model',
-        label: 'Accesorios',
+        category: "model",
+        label: "Accesorios",
       });
     }
 
@@ -183,7 +217,7 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
         if (serviceData) {
           items.push({
             amount: svc.amount,
-            category: 'service',
+            category: "service",
             label: serviceData.name,
           });
         }
@@ -195,7 +229,7 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
       for (const adj of breakdown.adjustments) {
         items.push({
           amount: adj.amount,
-          category: 'adjustment',
+          category: "adjustment",
           label: adj.concept,
         });
       }
@@ -204,11 +238,22 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
     return items;
   }, [breakdown, model.basePrice, services, glassArea, selectedGlassType]);
 
+  // ✅ Handler for color selection changes
+  const handleColorChange = (
+    colorId: string | undefined,
+    surchargePercentage: number
+  ) => {
+    setSelectedColorId(colorId);
+    setColorSurchargePercentage(surchargePercentage);
+    form.setValue("colorId", colorId);
+  };
+
   // ✅ Prepare cart item data from form values (using inferred solution)
   const cartItemInput: CreateCartItemInput & { unitPrice: number } = {
     additionalServiceIds: additionalServices,
+    colorId: selectedColorId,
     glassTypeId: glassType,
-    glassTypeName: selectedGlassType?.name ?? '',
+    glassTypeName: selectedGlassType?.name ?? "",
     heightMm: Number(height) || 0,
     modelId: model.id,
     modelName: model.name,
@@ -232,17 +277,17 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
       setJustAddedToCart(true);
 
       // Show success toast
-      toast.success('Item agregado al carrito', {
+      toast.success("Item agregado al carrito", {
         description: `${model.name} ha sido agregado exitosamente`,
       });
     } catch (err) {
       const errorMessage =
-        err instanceof Error && err.message.includes('no puedes agregar más')
-          ? 'Has alcanzado el límite de 20 items en el carrito'
-          : 'No se pudo agregar el item al carrito';
+        err instanceof Error && err.message.includes("no puedes agregar más")
+          ? "Has alcanzado el límite de 20 items en el carrito"
+          : "No se pudo agregar el item al carrito";
 
       // Show error toast
-      toast.error('Error al agregar', {
+      toast.error("Error al agregar", {
         description: errorMessage,
       });
     }
@@ -251,9 +296,11 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
   // ✅ Handler to configure another item
   const handleConfigureAnother = () => {
     setJustAddedToCart(false);
+    setSelectedColorId(undefined);
+    setColorSurchargePercentage(0);
     form.reset(defaultValues);
     // Smooth scroll to top for better UX
-    window.scrollTo({ behavior: 'smooth', top: 0 });
+    window.scrollTo({ behavior: "smooth", top: 0 });
   };
 
   return (
@@ -295,6 +342,9 @@ export function ModelForm({ model, glassTypes, services, solutions, currency }: 
               selectedSolutionId={inferredSolution?.id}
             />
           </Card>
+
+          {/* Color Selector - Only show if model has colors */}
+          <ColorSelector modelId={model.id} onColorChange={handleColorChange} />
 
           {/* Services Section - Only show if services are available (Don't Make Me Think principle) */}
           {services.length > 0 && (

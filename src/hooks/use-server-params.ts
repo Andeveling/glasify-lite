@@ -30,14 +30,14 @@
  * @see https://nextjs.org/docs/app/api-reference/functions/use-search-params
  */
 
-'use client';
+"use client";
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback } from 'react';
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback } from "react";
 
 export type ParamValue = string | number | boolean | null | undefined;
 
-export interface UseServerParamsReturn {
+export type UseServerParamsReturn = {
   /**
    * Update a single URL parameter
    * Uses replaceState to avoid polluting browser history
@@ -74,7 +74,7 @@ export interface UseServerParamsReturn {
    * Get all current search params as object
    */
   getAllParams: () => Record<string, string>;
-}
+};
 
 /**
  * Custom hook for managing server-side URL parameters
@@ -93,7 +93,7 @@ export function useServerParams(): UseServerParamsReturn {
 
       // Apply all updates
       for (const [key, value] of Object.entries(updates)) {
-        if (value === null || value === undefined || value === '') {
+        if (value === null || value === undefined || value === "") {
           params.delete(key);
         } else {
           params.set(key, String(value));
@@ -136,7 +136,10 @@ export function useServerParams(): UseServerParamsReturn {
   /**
    * Get current parameter value
    */
-  const getParam = useCallback((key: string): string | null => searchParams.get(key), [searchParams]);
+  const getParam = useCallback(
+    (key: string): string | null => searchParams.get(key),
+    [searchParams]
+  );
 
   /**
    * Delete a parameter

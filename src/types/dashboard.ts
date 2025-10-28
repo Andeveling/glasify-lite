@@ -7,7 +7,7 @@
  * @module types/dashboard
  */
 
-import type { TenantConfig } from '@prisma/client';
+import type { TenantConfig } from "@prisma/client";
 
 // =============================================================================
 // ENUMS
@@ -17,22 +17,23 @@ import type { TenantConfig } from '@prisma/client';
  * Period selection for temporal filtering
  */
 export const DashboardPeriod = {
-  CURRENT_YEAR: 'year',
-  LAST_7_DAYS: '7d',
-  LAST_30_DAYS: '30d',
-  LAST_90_DAYS: '90d',
+  CURRENT_YEAR: "year",
+  LAST_7_DAYS: "7d",
+  LAST_30_DAYS: "30d",
+  LAST_90_DAYS: "90d",
 } as const;
 
-export type DashboardPeriodType = (typeof DashboardPeriod)[keyof typeof DashboardPeriod];
+export type DashboardPeriodType =
+  (typeof DashboardPeriod)[keyof typeof DashboardPeriod];
 
 /**
  * Chart rendering types
  */
 export const ChartType = {
-  AREA: 'area',
-  BAR: 'bar',
-  LINE: 'line',
-  PIE: 'pie',
+  AREA: "area",
+  BAR: "bar",
+  LINE: "line",
+  PIE: "pie",
 } as const;
 
 export type ChartTypeValue = (typeof ChartType)[keyof typeof ChartType];
@@ -57,7 +58,7 @@ export type ChartTypeValue = (typeof ChartType)[keyof typeof ChartType];
  * }
  * ```
  */
-export interface QuoteMetrics {
+export type QuoteMetrics = {
   canceledQuotes: number;
   conversionRate: number; // (sent / total) * 100, 0-1 decimal
   draftQuotes: number;
@@ -65,24 +66,24 @@ export interface QuoteMetrics {
   previousPeriodTotal: number;
   sentQuotes: number;
   totalQuotes: number;
-}
+};
 
 /**
  * Single data point for trend chart
  */
-export interface TrendDataPoint {
+export type TrendDataPoint = {
   count: number;
   date: string; // ISO 8601 format
   label: string; // Pre-formatted date (e.g., "15 Ene") from formatDateShort
-}
+};
 
 /**
  * Quote trend data for time-series visualization
  */
-export interface QuotesTrendData {
+export type QuotesTrendData = {
   dataPoints: TrendDataPoint[];
   period: DashboardPeriodType;
-}
+};
 
 // =============================================================================
 // CATALOG ANALYTICS (US2)
@@ -91,44 +92,44 @@ export interface QuotesTrendData {
 /**
  * Top quoted model
  */
-export interface TopModel {
+export type TopModel = {
   count: number;
   modelId: string;
   modelName: string;
   percentage: number; // (count / totalItems) * 100, 0-1 decimal
   supplierName: string | null;
-}
+};
 
 /**
  * Top glass type
  */
-export interface TopGlassType {
+export type TopGlassType = {
   count: number;
   glassTypeCode: string;
   glassTypeId: string;
   glassTypeName: string;
   manufacturer: string | null;
   percentage: number; // (count / totalItems) * 100, 0-1 decimal
-}
+};
 
 /**
  * Supplier distribution aggregation
  */
-export interface SupplierDistribution {
+export type SupplierDistribution = {
   count: number;
   percentage: number;
   supplierId: string | null; // null for models without supplier
   supplierName: string;
-}
+};
 
 /**
  * Catalog analytics aggregation (top models, glass types, suppliers)
  */
-export interface CatalogAnalytics {
+export type CatalogAnalytics = {
   supplierDistribution: SupplierDistribution[];
   topGlassTypes: TopGlassType[]; // Max 5
   topModels: TopModel[]; // Max 5
-}
+};
 
 // =============================================================================
 // MONETARY METRICS (US3)
@@ -149,33 +150,33 @@ export interface CatalogAnalytics {
  * }
  * ```
  */
-export interface MonetaryMetrics {
+export type MonetaryMetrics = {
   averageValue: number;
   currency: string; // From TenantConfig
   locale: string; // From TenantConfig
   percentageChange: number;
   previousPeriodTotal: number;
   totalValue: number; // Sum of Quote.total (as number, not Decimal)
-}
+};
 
 /**
  * Price range bucket
  */
-export interface PriceRange {
+export type PriceRange = {
   count: number;
   label: string; // Pre-formatted range (e.g., "$1M - $5M") from formatCurrency
   max: number | null; // null for open-ended range (e.g., "10M+")
   min: number;
   percentage: number;
-}
+};
 
 /**
  * Price range distribution
  */
-export interface PriceRangeDistribution {
+export type PriceRangeDistribution = {
   currency: string;
   ranges: PriceRange[];
-}
+};
 
 // =============================================================================
 // PERIOD COMPARISON (US4)
@@ -184,23 +185,23 @@ export interface PriceRangeDistribution {
 /**
  * Date range with human-readable label
  */
-export interface DateRange {
+export type DateRange = {
   end: Date;
   label: string; // Human-readable (e.g., "Últimos 30 días")
   start: Date;
-}
+};
 
 /**
  * Period comparison with percentage change
  */
-export interface PeriodComparison {
+export type PeriodComparison = {
   currentPeriod: DateRange;
   currentValue: number;
   isPositive: boolean; // true if increase, false if decrease
   percentageChange: number; // 0-1 decimal
   previousPeriod: DateRange;
   previousValue: number;
-}
+};
 
 // =============================================================================
 // CHART CONFIGURATION
@@ -209,14 +210,14 @@ export interface PeriodComparison {
 /**
  * Chart rendering configuration
  */
-export interface ChartConfig {
+export type ChartConfig = {
   dataKey: string;
   description?: string;
   title: string;
   type: ChartTypeValue;
   xAxisKey?: string;
   yAxisKey?: string;
-}
+};
 
 // =============================================================================
 // CONTEXT & CONFIGURATION
@@ -230,9 +231,9 @@ export interface ChartConfig {
  * - Date/time formatting with locale
  * - Timezone handling
  */
-export interface DashboardContext {
-  tenantConfig: Pick<TenantConfig, 'currency' | 'locale' | 'timezone'>;
-}
+export type DashboardContext = {
+  tenantConfig: Pick<TenantConfig, "currency" | "locale" | "timezone">;
+};
 
 // =============================================================================
 // UTILITY TYPES
@@ -241,18 +242,18 @@ export interface DashboardContext {
 /**
  * Generic metric card data
  */
-export interface MetricCardData {
+export type MetricCardData = {
   comparison?: {
     isPositive: boolean;
     percentage: number; // Formatted via formatPercent
   };
   label: string;
   value: string; // Pre-formatted value using @lib/format
-}
+};
 
 /**
  * Generic chart data point
  */
-export interface ChartDataPoint {
+export type ChartDataPoint = {
   [key: string]: string | number;
-}
+};

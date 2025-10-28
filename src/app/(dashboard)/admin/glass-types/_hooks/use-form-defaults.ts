@@ -7,12 +7,12 @@
  * @module _hooks/use-form-defaults
  */
 
-import { useMemo } from 'react';
+import { useMemo } from "react";
 import type {
   CreateGlassTypeInput,
   GetGlassTypeByIdOutput,
   GlassTypeCharacteristicInput,
-} from '@/lib/validations/admin/glass-type.schema';
+} from "@/lib/validations/admin/glass-type.schema";
 
 const DEFAULT_THICKNESS_MM = 6;
 
@@ -25,7 +25,7 @@ type FormDefaults = Partial<CreateGlassTypeInput>;
  * Transform characteristics array from backend to form format
  */
 function transformCharacteristics(
-  characteristics: GetGlassTypeByIdOutput['characteristics']
+  characteristics: GetGlassTypeByIdOutput["characteristics"]
 ): GlassTypeCharacteristicInput[] {
   return characteristics.map((c) => ({
     certification: c.certification ?? undefined,
@@ -38,7 +38,9 @@ function transformCharacteristics(
 /**
  * Convert nullable number to optional number
  */
-function toOptionalNumber(value: number | null | undefined): number | undefined {
+function toOptionalNumber(
+  value: number | null | undefined
+): number | undefined {
   return value !== null && value !== undefined ? Number(value) : undefined;
 }
 
@@ -48,9 +50,9 @@ function toOptionalNumber(value: number | null | undefined): number | undefined 
 function getEmptyDefaults(): FormDefaults {
   return {
     characteristics: [],
-    code: '',
+    code: "",
     isActive: true,
-    name: '',
+    name: "",
     thicknessMm: DEFAULT_THICKNESS_MM,
   };
 }
@@ -61,7 +63,9 @@ function getEmptyDefaults(): FormDefaults {
  * @param defaultValues - Optional glass type data from backend
  * @returns Form defaults with proper type conversions
  */
-export function useFormDefaults(defaultValues?: GetGlassTypeByIdOutput): FormDefaults {
+export function useFormDefaults(
+  defaultValues?: GetGlassTypeByIdOutput
+): FormDefaults {
   return useMemo(() => {
     if (!defaultValues) {
       return getEmptyDefaults();
@@ -69,12 +73,12 @@ export function useFormDefaults(defaultValues?: GetGlassTypeByIdOutput): FormDef
 
     return {
       characteristics: transformCharacteristics(defaultValues.characteristics),
-      code: defaultValues.code ?? '',
+      code: defaultValues.code ?? "",
       description: defaultValues.description ?? undefined,
       isActive: defaultValues.isActive ?? true,
       lightTransmission: toOptionalNumber(defaultValues.lightTransmission),
       manufacturer: defaultValues.manufacturer ?? undefined,
-      name: defaultValues.name ?? '',
+      name: defaultValues.name ?? "",
       series: defaultValues.series ?? undefined,
       solarFactor: toOptionalNumber(defaultValues.solarFactor),
       thicknessMm: defaultValues.thicknessMm ?? DEFAULT_THICKNESS_MM,
