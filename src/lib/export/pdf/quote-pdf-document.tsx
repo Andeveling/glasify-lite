@@ -191,6 +191,35 @@ function PDFItemsTable({ data }: QuotePDFDocumentProps) {
                   {item.glass.thickness && ` ${item.glass.thickness}mm`}
                 </Text>
               )}
+              {item.glass?.color && (
+                <View
+                  style={{
+                    alignItems: "center",
+                    flexDirection: "row",
+                    marginTop: 2,
+                  }}
+                >
+                  {item.glass.colorHexCode && (
+                    <View
+                      style={{
+                        backgroundColor: item.glass.colorHexCode,
+                        border: "1px solid #e5e7eb",
+                        borderRadius: 2,
+                        height: 10,
+                        marginRight: 4,
+                        width: 10,
+                      }}
+                    />
+                  )}
+                  <Text style={[pdfStyles.tableCellLeft, { fontSize: 8 }]}>
+                    Color: {item.glass.color}
+                    {item.glass.colorSurchargePercentage &&
+                    item.glass.colorSurchargePercentage > 0
+                      ? ` (+${item.glass.colorSurchargePercentage}%)`
+                      : ""}
+                  </Text>
+                </View>
+              )}
             </View>
 
             {/* Dimensiones */}

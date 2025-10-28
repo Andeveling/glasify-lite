@@ -19,12 +19,12 @@
 import type { Color, ModelColor } from "@prisma/client";
 import { Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { ColorChip } from "@/app/(dashboard)/admin/colors/_components/color-chip";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { ColorChip } from "@/app/(dashboard)/admin/colors/_components/color-chip";
 
 type ModelColorWithColor = ModelColor & {
   color: Color;
@@ -33,9 +33,21 @@ type ModelColorWithColor = ModelColor & {
 /**
  * Props for ModelColorRow
  *
- * Note: Next.js shows warnings about callback props not being Server Actions.
- * These are false positives - callbacks are valid when passed from Client Components.
- * This component is used in model-colors-list.tsx (also a Client Component).
+ * ⚠️ NEXT.JS WARNING (FALSE POSITIVE):
+ * Next.js 15 shows warnings about callback props not being Server Actions.
+ * This is a KNOWN ISSUE - callbacks are perfectly valid in Client-to-Client components.
+ *
+ * Context:
+ * - This component (model-color-row.tsx) is a Client Component ("use client")
+ * - Parent component (model-colors-list.tsx) is also a Client Component
+ * - Callbacks are NOT crossing Server/Client boundary
+ * - No serialization is needed for Client-to-Client prop passing
+ *
+ * References:
+ * - https://github.com/vercel/next.js/issues/54282
+ * - These warnings can be safely ignored for Client-to-Client callbacks
+ *
+ * DO NOT rename to "Action" suffix - these are NOT Server Actions.
  */
 type ModelColorRowProps = {
   modelColor: ModelColorWithColor;
@@ -57,7 +69,7 @@ export function ModelColorRow({
   isUpdating = false,
 }: ModelColorRowProps) {
   const [surcharge, setSurcharge] = useState(
-    Number(modelColor.surchargePercentage),
+    Number(modelColor.surchargePercentage)
   );
 
   // Debounce surcharge changes (500ms delay)
@@ -74,7 +86,12 @@ export function ModelColorRow({
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [surcharge, modelColor.id, modelColor.surchargePercentage, onSurchargeChange]);
+  }, [
+    surcharge,
+    modelColor.id,
+    modelColor.surchargePercentage,
+    onSurchargeChange,
+  ]);
 
   const handleSurchargeChange = (value: string) => {
     const numValue = Number.parseFloat(value);

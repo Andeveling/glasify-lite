@@ -78,10 +78,8 @@ export const calculateItemOutput = z.object({
 });
 
 export const addItemInput = calculateItemInput.extend({
-  quoteId: z
-    .string()
-    .cuid({ error: "ID de la cotización debe ser válido" })
-    .optional(),
+  colorId: z.cuid({ error: "ID del color debe ser válido" }).optional(), // T045: Color selection optional
+  quoteId: z.cuid({ error: "ID de la cotización debe ser válido" }).optional(),
 });
 
 export const addItemOutput = z.object({
@@ -245,16 +243,67 @@ export const quoteRouter = createTRPCRouter({
             widthMm: input.widthMm,
           });
 
+          // T045: Fetch color snapshot if colorId provided
+          let colorSnapshot: {
+            colorId: string;
+            colorName: string;
+            colorHexCode: string;
+            colorSurchargePercentage: number;
+          } | null = null;
+
+          let colorSurcharge = 0;
+
+          if (input.colorId) {
+            const modelColor = await tx.modelColor.findFirst({
+              include: {
+                color: true,
+              },
+              where: {
+                colorId: input.colorId,
+                modelId: model.id,
+              },
+            });
+
+            if (!modelColor) {
+              throw new Error("Color no asignado a este modelo");
+            }
+
+            if (!modelColor.color.isActive) {
+              throw new Error("Color no disponible");
+            }
+
+            colorSnapshot = {
+              colorHexCode: modelColor.color.hexCode,
+              colorId: modelColor.colorId,
+              colorName: modelColor.color.name,
+              colorSurchargePercentage:
+                modelColor.surchargePercentage.toNumber(),
+            };
+
+            // Calculate color surcharge (applied to dimPrice only)
+            colorSurcharge =
+              itemCalculation.dimPrice *
+              (colorSnapshot.colorSurchargePercentage / 100);
+          }
+
+          // Calculate final subtotal including color surcharge
+          const finalSubtotal = itemCalculation.subtotal + colorSurcharge;
+
           // Create quote item
           const quoteItem = await tx.quoteItem.create({
             data: {
               accessoryApplied: Boolean(model.accessoryPrice),
+              // T045: Color snapshot fields
+              colorHexCode: colorSnapshot?.colorHexCode,
+              colorId: colorSnapshot?.colorId,
+              colorName: colorSnapshot?.colorName,
+              colorSurchargePercentage: colorSnapshot?.colorSurchargePercentage,
               glassTypeId: input.glassTypeId,
               heightMm: input.heightMm,
               modelId: model.id,
               name: model.name, // Add the required name property
               quoteId: quote.id,
-              subtotal: itemCalculation.subtotal,
+              subtotal: finalSubtotal,
               widthMm: input.widthMm,
             },
           });
@@ -1107,6 +1156,252 @@ export const quoteRouter = createTRPCRouter({
             ? error.message
             : "No se pudo enviar la cotización. Intente nuevamente.";
         throw new Error(errorMessage);
+      }
+    }),
+
+  /**
+   * T043: Get Model Colors for Quote
+   * Returns available colors for a model with default color marked
+   * Public procedure - accessible in catalog without authentication
+   * Cached for 5 minutes (colors rarely change)
+   */
+  "get-model-colors-for-quote": publicProcedure
+    .input(
+      z.object({
+        modelId: z.string().cuid({ error: "ID del modelo debe ser válido" }),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const modelColors = await ctx.db.modelColor.findMany({
+          include: {
+            color: true,
+          },
+          orderBy: [
+            { isDefault: "desc" }, // Default first
+            { color: { name: "asc" } }, // Then alphabetically
+          ],
+          where: {
+            color: {
+              isActive: true,
+            },
+            modelId: input.modelId,
+          },
+        });
+
+        const defaultColor = modelColors.find((mc) => mc.isDefault);
+
+        logger.info("Model colors fetched for quote", {
+          colorCount: modelColors.length,
+          defaultColorId: defaultColor?.colorId,
+          modelId: input.modelId,
+        });
+
+        return {
+          colors: modelColors.map((mc) => ({
+            color: {
+              hexCode: mc.color.hexCode,
+              id: mc.color.id,
+              name: mc.color.name,
+              ralCode: mc.color.ralCode,
+            },
+            id: mc.id,
+            isDefault: mc.isDefault,
+            surchargePercentage: mc.surchargePercentage.toNumber(),
+          })),
+          defaultColorId: defaultColor?.colorId ?? null,
+          hasColors: modelColors.length > 0,
+          modelId: input.modelId,
+        };
+      } catch (error) {
+        logger.error("Error fetching model colors for quote", {
+          error: error instanceof Error ? error.message : "Unknown error",
+          modelId: input.modelId,
+        });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error al obtener los colores del modelo",
+        });
+      }
+    }),
+
+  /**
+   * T044: Calculate Price with Color
+   * Server-side price calculation with color surcharge
+   * Prevents client-side tampering
+   */
+  "calculate-price-with-color": publicProcedure
+    .input(
+      calculateItemInput.extend({
+        colorId: z
+          .string()
+          .cuid({ error: "ID del color debe ser válido" })
+          .optional(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        // Calculate base price without color
+        const model = await ctx.db.model.findUnique({
+          include: { profileSupplier: true },
+          where: { id: input.modelId },
+        });
+
+        if (!model) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Modelo no encontrado",
+          });
+        }
+
+        // Get services data
+        const serviceInputs: PriceServiceInput[] = [];
+        if (input.services.length > 0) {
+          const serviceIds = input.services.map((s) => s.serviceId);
+          const services = await ctx.db.service.findMany({
+            where: {
+              id: { in: serviceIds },
+            },
+          });
+
+          for (const serviceInput of input.services) {
+            const service = services.find(
+              (s) => s.id === serviceInput.serviceId
+            );
+            if (!service) {
+              throw new TRPCError({
+                code: "NOT_FOUND",
+                message: `Servicio ${serviceInput.serviceId} no encontrado`,
+              });
+            }
+            serviceInputs.push({
+              quantityOverride: serviceInput.quantity,
+              rate: service.rate,
+              serviceId: service.id,
+              type: service.type,
+              unit: service.unit,
+            });
+          }
+        }
+
+        // Convert adjustments
+        const adjustmentInputs: PriceAdjustmentInput[] = input.adjustments.map(
+          (adj) => ({
+            concept: adj.concept,
+            sign: adj.sign,
+            unit: adj.unit,
+            value: adj.value,
+          })
+        );
+
+        // Fetch glass type for validation
+        const glassType = await ctx.db.glassType.findUnique({
+          where: { id: input.glassTypeId },
+        });
+        if (!glassType) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Tipo de vidrio no encontrado",
+          });
+        }
+
+        // Calculate base price
+        const calculation = calculatePriceItem({
+          adjustments: adjustmentInputs,
+          glass: {
+            discountHeightMm: model.glassDiscountHeightMm,
+            discountWidthMm: model.glassDiscountWidthMm,
+            pricePerSqm: glassType.pricePerSqm,
+          },
+          heightMm: input.heightMm,
+          includeAccessory: Boolean(model.accessoryPrice),
+          model: {
+            accessoryPrice: model.accessoryPrice,
+            basePrice: model.basePrice,
+            costPerMmHeight: model.costPerMmHeight,
+            costPerMmWidth: model.costPerMmWidth,
+          },
+          services: serviceInputs,
+          widthMm: input.widthMm,
+        });
+
+        // Calculate color surcharge if colorId provided
+        let colorSurcharge = 0;
+        let colorSurchargePercentage = 0;
+
+        if (input.colorId) {
+          const modelColor = await ctx.db.modelColor.findFirst({
+            include: {
+              color: true,
+            },
+            where: {
+              colorId: input.colorId,
+              modelId: input.modelId,
+            },
+          });
+
+          if (!modelColor) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Color no asignado a este modelo",
+            });
+          }
+
+          if (!modelColor.color.isActive) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Color no disponible",
+            });
+          }
+
+          colorSurchargePercentage = modelColor.surchargePercentage.toNumber();
+          // Apply surcharge ONLY to model base price (dimPrice in calculation)
+          colorSurcharge =
+            calculation.dimPrice * (colorSurchargePercentage / 100);
+        }
+
+        const totalWithColor = calculation.subtotal + colorSurcharge;
+
+        logger.info("Price calculated with color", {
+          colorId: input.colorId,
+          colorSurcharge,
+          colorSurchargePercentage,
+          modelId: input.modelId,
+          totalWithColor,
+        });
+
+        return {
+          basePrice: calculation.subtotal,
+          breakdown: {
+            accPrice: calculation.accPrice,
+            adjustments: calculation.adjustments.map((adj) => ({
+              amount: adj.amount,
+              concept: adj.concept,
+            })),
+            color: colorSurcharge,
+            dimPrice: calculation.dimPrice,
+            services: calculation.services.map((svc) => ({
+              amount: svc.amount,
+              quantity: svc.quantity,
+              serviceId: svc.serviceId,
+              unit: svc.unit,
+            })),
+          },
+          colorSurcharge,
+          totalWithColor,
+        };
+      } catch (error) {
+        if (error instanceof TRPCError) {
+          throw error;
+        }
+        logger.error("Error calculating price with color", {
+          error: error instanceof Error ? error.message : "Unknown error",
+          modelId: input.modelId,
+        });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error al calcular el precio con color",
+        });
       }
     }),
 });

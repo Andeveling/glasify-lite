@@ -49,6 +49,9 @@ export type CartItem = {
   /** Array of Service.id references */
   additionalServiceIds: string[];
 
+  /** Optional reference to ModelColor.id */
+  colorId?: string;
+
   /** User-editable name (auto-generated: "VEKA-001") */
   name: string;
 
@@ -118,6 +121,7 @@ export type CreateCartItemInput = {
   heightMm: number;
   quantity?: number;
   additionalServiceIds?: string[];
+  colorId?: string;
 };
 
 /**

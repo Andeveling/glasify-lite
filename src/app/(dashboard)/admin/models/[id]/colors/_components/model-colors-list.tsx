@@ -27,8 +27,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ModelColorRow } from "./model-color-row";
 import { api } from "@/trpc/react";
+import { ModelColorRow } from "./model-color-row";
 
 type ModelColorWithColor = ModelColor & {
   color: Color;
@@ -51,51 +51,48 @@ export function ModelColorsList({
   const utils = api.useUtils();
 
   // Query for real-time data (with initialData from SSR)
-  const { data: modelColors = initialColors } =
-    api.admin["model-colors"].listByModel.useQuery(
-      { modelId },
-      { initialData: initialColors },
-    );
+  const { data: modelColors = initialColors } = api.admin[
+    "model-colors"
+  ].listByModel.useQuery({ modelId }, { initialData: initialColors });
 
   // Update surcharge mutation
-  const updateSurchargeMutation =
-    api.admin["model-colors"].updateSurcharge.useMutation({
-      onSuccess: () => {
-        toast.success("Recargo actualizado");
-        void utils.admin["model-colors"].listByModel.invalidate();
-        router.refresh();
-      },
-      onError: (error) => {
-        toast.error(error.message || "Error al actualizar recargo");
-      },
-    });
+  const updateSurchargeMutation = api.admin[
+    "model-colors"
+  ].updateSurcharge.useMutation({
+    onSuccess: () => {
+      toast.success("Recargo actualizado");
+      void utils.admin["model-colors"].listByModel.invalidate();
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Error al actualizar recargo");
+    },
+  });
 
   // Set default mutation
-  const setDefaultMutation =
-    api.admin["model-colors"].setDefault.useMutation({
-      onSuccess: () => {
-        toast.success("Color establecido como predeterminado");
-        void utils.admin["model-colors"].listByModel.invalidate();
-        router.refresh();
-      },
-      onError: (error) => {
-        toast.error(error.message || "Error al establecer color por defecto");
-      },
-    });
+  const setDefaultMutation = api.admin["model-colors"].setDefault.useMutation({
+    onSuccess: () => {
+      toast.success("Color establecido como predeterminado");
+      void utils.admin["model-colors"].listByModel.invalidate();
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Error al establecer color por defecto");
+    },
+  });
 
   // Unassign mutation
-  const unassignMutation =
-    api.admin["model-colors"].unassign.useMutation({
-      onSuccess: () => {
-        toast.success("Color eliminado del modelo");
-        void utils.admin["model-colors"].listByModel.invalidate();
-        void utils.admin["model-colors"].getAvailableColors.invalidate();
-        router.refresh();
-      },
-      onError: (error) => {
-        toast.error(error.message || "Error al eliminar color");
-      },
-    });
+  const unassignMutation = api.admin["model-colors"].unassign.useMutation({
+    onSuccess: () => {
+      toast.success("Color eliminado del modelo");
+      void utils.admin["model-colors"].listByModel.invalidate();
+      void utils.admin["model-colors"].getAvailableColors.invalidate();
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Error al eliminar color");
+    },
+  });
 
   const handleSurchargeChange = (id: string, surcharge: number) => {
     updateSurchargeMutation.mutate({
@@ -110,9 +107,7 @@ export function ModelColorsList({
 
   const handleRemove = (id: string) => {
     // TODO: Add confirmation dialog
-    if (
-      confirm("¿Estás seguro de eliminar este color del modelo?")
-    ) {
+    if (confirm("¿Estás seguro de eliminar este color del modelo?")) {
       unassignMutation.mutate({ id });
     }
   };

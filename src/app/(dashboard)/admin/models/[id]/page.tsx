@@ -7,10 +7,10 @@
  * Route: /admin/models/[id]
  */
 
+import { Palette } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Palette } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/server-client";
@@ -86,7 +86,10 @@ export default async function EditModelPage({ params }: EditModelPageProps) {
           <Link href={`/admin/models/${id}/colors`}>
             <Palette className="mr-2 h-4 w-4" />
             Configurar Colores
-            <Badge className="ml-2" variant={colorCount === 0 ? "secondary" : "default"}>
+            <Badge
+              className="ml-2"
+              variant={colorCount === 0 ? "secondary" : "default"}
+            >
               {colorCount} {colorCount === 1 ? "color" : "colores"}
             </Badge>
           </Link>

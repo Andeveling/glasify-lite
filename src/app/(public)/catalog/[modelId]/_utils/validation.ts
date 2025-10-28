@@ -10,6 +10,7 @@ const MIN_QUANTITY = 1;
 export function createQuoteFormSchema(model: ModelDetailOutput) {
   return z.object({
     additionalServices: z.array(z.string()),
+    colorId: z.string().optional(),
     glassType: z
       .string({ message: "Debes seleccionar un tipo de cristal" })
       .min(1),

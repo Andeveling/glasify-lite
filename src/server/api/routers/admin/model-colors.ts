@@ -439,9 +439,9 @@ export const modelColorsRouter = createTRPCRouter({
           z.object({
             colorId: z.string().cuid(),
             surchargePercentage: z.number().min(0).max(100),
-          }),
+          })
         ),
-      }),
+      })
     )
     .mutation(async ({ ctx, input }) => {
       try {

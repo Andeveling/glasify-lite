@@ -13,10 +13,10 @@
  * Access: Admin only (adminProcedure)
  */
 
+import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -25,9 +25,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { api } from "@/trpc/server-client";
 import { AddColorDialog } from "./_components/add-color-dialog";
 import { ModelColorsList } from "./_components/model-colors-list";
-import { api } from "@/trpc/server-client";
 
 // Force SSR - no caching for admin dashboard
 export const dynamic = "force-dynamic";
@@ -68,10 +68,9 @@ export default async function ModelColorsPage({ params }: PageProps) {
     });
 
     // Fetch available colors for assignment
-    const availableColors =
-      await api.admin["model-colors"].getAvailableColors({
-        modelId,
-      });
+    const availableColors = await api.admin["model-colors"].getAvailableColors({
+      modelId,
+    });
 
     return (
       <div className="container mx-auto space-y-6 py-8">
@@ -117,8 +116,10 @@ export default async function ModelColorsPage({ params }: PageProps) {
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Color por defecto:</span>
               <span className="font-semibold">
-                {modelColors.find((mc: { isDefault: boolean; color: { name: string } }) => mc.isDefault)?.color.name ||
-                  "Ninguno"}
+                {modelColors.find(
+                  (mc: { isDefault: boolean; color: { name: string } }) =>
+                    mc.isDefault
+                )?.color.name || "Ninguno"}
               </span>
             </div>
           </CardContent>
@@ -152,7 +153,7 @@ export default async function ModelColorsPage({ params }: PageProps) {
               💡 Información sobre Colores
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2 text-sm text-muted-foreground">
+          <CardContent className="space-y-2 text-muted-foreground text-sm">
             <ul className="list-inside list-disc space-y-1">
               <li>
                 El <strong>recargo porcentual</strong> se aplica únicamente al
@@ -167,11 +168,10 @@ export default async function ModelColorsPage({ params }: PageProps) {
                 modelo
               </li>
               <li>
-                Los cambios de recargo se guardan automáticamente después de 500ms
+                Los cambios de recargo se guardan automáticamente después de
+                500ms
               </li>
-              <li>
-                Los colores inactivos no aparecen en el catálogo público
-              </li>
+              <li>Los colores inactivos no aparecen en el catálogo público</li>
             </ul>
           </CardContent>
         </Card>

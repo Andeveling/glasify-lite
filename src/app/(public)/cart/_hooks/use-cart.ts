@@ -141,6 +141,7 @@ export function useCart(): UseCartReturn {
       // Create new cart item
       const newItem: CartItem = {
         additionalServiceIds: input.additionalServiceIds ?? [],
+        colorId: input.colorId,
         createdAt: new Date().toISOString(),
         dimensions: {
           heightMm: input.heightMm,

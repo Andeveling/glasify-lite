@@ -200,6 +200,11 @@ export async function exportQuotePDF(
             width: widthM,
           },
           glass: {
+            color: item.colorName ?? undefined,
+            colorHexCode: item.colorHexCode ?? undefined,
+            colorSurchargePercentage: item.colorSurchargePercentage
+              ? Number(item.colorSurchargePercentage)
+              : undefined,
             type: item.glassType.name,
           },
           id: item.id,

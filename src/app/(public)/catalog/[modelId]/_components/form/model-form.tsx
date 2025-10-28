@@ -21,6 +21,7 @@ import {
   createQuoteFormSchema,
   type QuoteFormValues,
 } from "../../_utils/validation";
+import { ColorSelector } from "../color-selector";
 import { StickyPriceHeader } from "../sticky-price-header";
 import { AddedToCartActions } from "./added-to-cart-actions";
 import { QuoteSummary } from "./quote-summary";
@@ -64,6 +65,10 @@ export function ModelForm({
   // ✅ Track if item was just added to cart
   const [justAddedToCart, setJustAddedToCart] = useState(false);
 
+  // ✅ Track selected color and its surcharge percentage
+  const [selectedColorId, setSelectedColorId] = useState<string | undefined>();
+  const [colorSurchargePercentage, setColorSurchargePercentage] = useState(0);
+
   // ✅ Auto-scroll to success card when item is added
   const successCardRef = useScrollIntoView(justAddedToCart);
 
@@ -71,6 +76,7 @@ export function ModelForm({
   const defaultValues = useMemo(
     () => ({
       additionalServices: [],
+      colorId: undefined,
       glassType: glassTypes[0]?.id ?? "", // Pre-select first glass type (usually most common/budget)
       height: model.minHeightMm, // Use minimum height as starting point
       quantity: 1,
@@ -232,9 +238,20 @@ export function ModelForm({
     return items;
   }, [breakdown, model.basePrice, services, glassArea, selectedGlassType]);
 
+  // ✅ Handler for color selection changes
+  const handleColorChange = (
+    colorId: string | undefined,
+    surchargePercentage: number
+  ) => {
+    setSelectedColorId(colorId);
+    setColorSurchargePercentage(surchargePercentage);
+    form.setValue("colorId", colorId);
+  };
+
   // ✅ Prepare cart item data from form values (using inferred solution)
   const cartItemInput: CreateCartItemInput & { unitPrice: number } = {
     additionalServiceIds: additionalServices,
+    colorId: selectedColorId,
     glassTypeId: glassType,
     glassTypeName: selectedGlassType?.name ?? "",
     heightMm: Number(height) || 0,
@@ -279,6 +296,8 @@ export function ModelForm({
   // ✅ Handler to configure another item
   const handleConfigureAnother = () => {
     setJustAddedToCart(false);
+    setSelectedColorId(undefined);
+    setColorSurchargePercentage(0);
     form.reset(defaultValues);
     // Smooth scroll to top for better UX
     window.scrollTo({ behavior: "smooth", top: 0 });
@@ -323,6 +342,9 @@ export function ModelForm({
               selectedSolutionId={inferredSolution?.id}
             />
           </Card>
+
+          {/* Color Selector - Only show if model has colors */}
+          <ColorSelector modelId={model.id} onColorChange={handleColorChange} />
 
           {/* Services Section - Only show if services are available (Don't Make Me Think principle) */}
           {services.length > 0 && (

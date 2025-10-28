@@ -87,6 +87,8 @@ export type QuotePDFData = {
       type: string;
       thickness?: number;
       color?: string;
+      colorHexCode?: string;
+      colorSurchargePercentage?: number;
       treatment?: string;
     };
   }>;

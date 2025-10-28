@@ -318,10 +318,10 @@ description: "Implementation tasks for color catalog system"
 
 ### Backend Implementation (US3)
 
-- [ ] T042 [P] [US3] Extend quotes router with color procedures in `src/server/api/routers/quotes.ts`
+- [x] T042 [P] [US3] Extend quotes router with color procedures in `src/server/api/routers/quote/quote.ts`
   - Add new procedures: getModelColorsForQuote, calculatePriceWithColor, createQuoteItemWithColor, updateQuoteItemColor
 
-- [ ] T043 [P] [US3] Implement `quotes.getModelColorsForQuote` query in `src/server/api/routers/quotes.ts`
+- [x] T043 [P] [US3] Implement `quotes.getModelColorsForQuote` query in `src/server/api/routers/quote/quote.ts`
   - Auth: publicProcedure (accessible to anonymous users in catalog)
   - Input: z.object({ modelId: z.string() })
   - Query: modelColors.listByModel with color relation where color.isActive = true
@@ -329,7 +329,7 @@ description: "Implementation tasks for color catalog system"
   - Caching: Add revalidate: 300 (5 minutes - colors rarely change)
   - Ordering: Default first, then alphabetically
 
-- [ ] T044 [P] [US3] Implement `quotes.calculatePriceWithColor` query in `src/server/api/routers/quotes.ts`
+- [x] T044 [P] [US3] Implement `quotes.calculatePriceWithColor` query in `src/server/api/routers/quote/quote.ts`
   - Auth: publicProcedure
   - Input: z.object({ modelId: z.string(), colorId: z.string().optional(), quantity: z.number(), dimensions: z.object(...) })
   - Business logic:
@@ -340,7 +340,7 @@ description: "Implementation tasks for color catalog system"
   - Return: { basePrice, colorSurcharge, totalWithColor, breakdown: { model, glass, services, color } }
   - Use case: Server-side validation before adding to cart (prevent tampering)
 
-- [ ] T045 [P] [US3] Implement `quotes.createQuoteItemWithColor` mutation in `src/server/api/routers/quotes.ts`
+- [x] T045 [P] [US3] Implement `quotes.createQuoteItemWithColor` mutation in `src/server/api/routers/quote/quote.ts`
   - Auth: publicProcedure or authenticatedProcedure (depends on cart flow)
   - Input: Extends existing QuoteItem input with colorId (optional)
   - Business logic:
@@ -351,7 +351,7 @@ description: "Implementation tasks for color catalog system"
   - Prisma: Create QuoteItem with all color snapshot fields populated
   - Winston logging: Log quote item creation with color selection
 
-- [ ] T046 [P] [US3] Implement `quotes.updateQuoteItemColor` mutation in `src/server/api/routers/quotes.ts`
+- [ ] T046 [P] [US3] Implement `quotes.updateQuoteItemColor` mutation in `src/server/api/routers/quote/quote.ts`
   - Auth: authenticatedProcedure with ownership validation
   - Input: z.object({ quoteItemId: z.string(), colorId: z.string().optional() })
   - Business logic:
@@ -362,7 +362,7 @@ description: "Implementation tasks for color catalog system"
 
 ### Frontend Components (US3)
 
-- [ ] T047 [P] [US3] Create ColorSelector component in `src/app/(public)/catalog/[modelId]/_components/color-selector.tsx`
+- [x] T047 [P] [US3] Create ColorSelector component in `src/app/(public)/catalog/[modelId]/_components/color-selector.tsx`
   - Props: modelId, onColorChange (callback with colorId, surchargePercentage)
   - Client Component ('use client')
   - Fetch colors: const { data } = api.quotes.getModelColorsForQuote.useQuery({ modelId })
@@ -373,7 +373,7 @@ description: "Implementation tasks for color catalog system"
   - Interaction: Click chip → update selection → call onColorChange with new surcharge
   - Accessibility: Keyboard navigation, aria-labels in Spanish
 
-- [ ] T048 [US3] Integrate ColorSelector into catalog model page
+- [x] T048 [US3] Integrate ColorSelector into catalog model page
   - File: `src/app/(public)/catalog/[modelId]/page.tsx` or quote form component
   - Add ColorSelector before price summary section
   - Wire onColorChange to update price calculation state
@@ -381,7 +381,7 @@ description: "Implementation tasks for color catalog system"
   - Display breakdown: "Precio base: $XXX | Recargo por color: $YYY | Total: $ZZZ"
   - Performance: Calculation must be <200ms (pure JavaScript math, no API call)
 
-- [ ] T049 [US3] Update quote form to capture color selection
+- [x] T049 [US3] Update quote form to capture color selection
   - File: Quote creation form component (existing)
   - Add hidden field: colorId (controlled by ColorSelector)
   - On submit: Include colorId in createQuoteItemWithColor mutation
@@ -389,7 +389,7 @@ description: "Implementation tasks for color catalog system"
 
 ### PDF Generation (US3)
 
-- [ ] T050 [US3] Extend PDF template to include color information
+- [x] T050 [US3] Extend PDF template to include color information
   - File: PDF generation service/template (existing - locate via grep_search)
   - For each QuoteItem with colorId:
     - Render color chip (rectangle filled with colorHexCode)
@@ -400,12 +400,13 @@ description: "Implementation tasks for color catalog system"
 
 ### Pricing Service Integration (US3)
 
-- [ ] T051 [US3] Extend pricing calculation service to support color surcharge
+- [x] T051 [US3] Extend pricing calculation service to support color surcharge
   - File: `src/server/services/pricing/calculate-price.ts`
   - Add parameter: colorSurchargePercentage (optional, default 0)
   - Apply surcharge to model base price component only
   - Return breakdown with separate colorSurcharge field
   - Maintain backwards compatibility: Existing calls without color should work unchanged
+  - **IMPLEMENTATION NOTE**: Color surcharge applied INLINE in quote router procedures (calculate-price-with-color, add-item) rather than in base pricing service. This maintains separation of concerns and backwards compatibility. Formula: `colorSurcharge = dimPrice * (surchargePercentage / 100)`. No changes needed to base pricing service.
 
 **Checkpoint**: User Story 3 complete - Full client flow with color selection and PDF generation working
 

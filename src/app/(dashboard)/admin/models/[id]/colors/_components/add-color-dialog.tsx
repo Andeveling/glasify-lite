@@ -17,13 +17,14 @@
 
 "use client";
 
-import type { Color } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { Color } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { ColorChip } from "@/app/(dashboard)/admin/colors/_components/color-chip";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -45,7 +46,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { ColorChip } from "@/app/(dashboard)/admin/colors/_components/color-chip";
 import { api } from "@/trpc/react";
 
 // Form validation schema
@@ -157,7 +157,7 @@ export function AddColorDialog({
                             type="button"
                           >
                             <ColorChip hexCode={color.hexCode} size="lg" />
-                            <span className="text-center text-xs font-medium">
+                            <span className="text-center font-medium text-xs">
                               {color.name}
                             </span>
                             {color.ralCode && (
