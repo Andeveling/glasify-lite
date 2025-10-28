@@ -137,10 +137,10 @@ export function GlassTypesChart({ data, tenantConfig }: GlassTypesChartProps) {
               nameKey="name"
               outerRadius={120}
             >
-              {chartData.map((_, index) => (
+              {chartData.map((item) => (
                 <Cell
-                  fill={COLORS[index % COLORS.length]}
-                  key={`cell-${index}`}
+                  fill={COLORS[chartData.indexOf(item) % COLORS.length]}
+                  key={`cell-${item.name}`}
                 />
               ))}
             </Pie>

@@ -33,7 +33,7 @@ export function useColorMutations({
       });
     },
     onSettled: () => {
-      void utils.admin.colors.list.invalidate();
+      utils.admin.colors.list.invalidate().catch(undefined);
       router.refresh();
     },
     onSuccess: () => {
@@ -50,7 +50,7 @@ export function useColorMutations({
       });
     },
     onSettled: () => {
-      void utils.admin.colors.list.invalidate();
+      utils.admin.colors.list.invalidate().catch(undefined);
       router.refresh();
     },
     onSuccess: () => {

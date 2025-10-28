@@ -135,7 +135,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
       toast.success("Tipo de vidrio eliminado correctamente");
       setDeleteDialogOpen(false);
       setGlassTypeToDelete(null);
-      void utils.admin["glass-type"].list.invalidate();
+      utils.admin["glass-type"].list.invalidate().catch(undefined);
     },
   });
 

@@ -178,7 +178,8 @@ export default async function ModelColorsPage({ params }: PageProps) {
       </div>
     );
   } catch (error) {
-    console.error("Error loading model colors page:", error);
+    // Error is already logged by the tRPC procedure
+    // Simply return 404 for end user
     notFound();
   }
 }

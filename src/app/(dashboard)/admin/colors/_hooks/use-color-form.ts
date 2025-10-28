@@ -44,7 +44,7 @@ export function useColorForm({
       ralCode: null,
     },
     mode: "onChange",
-    resolver: zodResolver(colorCreateSchema) as any,
+    resolver: zodResolver(colorCreateSchema),
   });
 
   const onSubmit = (data: ColorCreateInput) => {

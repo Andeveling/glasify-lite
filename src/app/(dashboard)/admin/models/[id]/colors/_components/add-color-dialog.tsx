@@ -48,13 +48,17 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { api } from "@/trpc/react";
 
+// Surcharge percentage constraints
+const MAX_SURCHARGE_PERCENTAGE = 100;
+const MIN_SURCHARGE_PERCENTAGE = 0;
+
 // Form validation schema
 const assignColorSchema = z.object({
   colorId: z.string().min(1, "Debes seleccionar un color"),
   surchargePercentage: z
     .number()
-    .min(0, "El recargo debe ser mayor o igual a 0%")
-    .max(100, "El recargo debe ser entre 0% y 100%"),
+    .min(MIN_SURCHARGE_PERCENTAGE, "El recargo debe ser mayor o igual a 0%")
+    .max(MAX_SURCHARGE_PERCENTAGE, "El recargo debe ser entre 0% y 100%"),
   isDefault: z.boolean(),
 });
 
@@ -92,8 +96,8 @@ export function AddColorDialog({
   const assignMutation = api.admin["model-colors"].assign.useMutation({
     onSuccess: () => {
       toast.success("Color asignado correctamente");
-      void utils.admin["model-colors"].listByModel.invalidate();
-      void utils.admin["model-colors"].getAvailableColors.invalidate();
+      utils.admin["model-colors"].listByModel.invalidate().catch(undefined);
+      utils.admin["model-colors"].getAvailableColors.invalidate().catch(undefined);
       router.refresh();
       setOpen(false);
       form.reset();
@@ -133,7 +137,7 @@ export function AddColorDialog({
           <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
             {/* Color Selection Grid */}
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="colorId"
               render={() => (
                 <FormItem>
@@ -177,7 +181,7 @@ export function AddColorDialog({
 
             {/* Surcharge Percentage Input */}
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="surchargePercentage"
               render={({ field }) => (
                 <FormItem>
@@ -208,7 +212,7 @@ export function AddColorDialog({
 
             {/* Set as Default Switch */}
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="isDefault"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">

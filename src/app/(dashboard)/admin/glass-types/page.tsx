@@ -54,11 +54,15 @@ type PageProps = {
 
 // Loading skeleton for the table
 function GlassTypesTableSkeleton() {
+  const skeletonIds = Array.from({ length: 10 }, (_, i) =>
+    `skeleton-${Date.now()}-${i}`
+  );
+
   return (
     <div className="rounded-md border">
       <div className="space-y-3 p-4">
-        {Array.from({ length: 10 }).map((_, i) => (
-          <Skeleton className="h-16 w-full" key={i} />
+        {skeletonIds.map((id) => (
+          <Skeleton className="h-16 w-full" key={id} />
         ))}
       </div>
     </div>

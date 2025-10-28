@@ -48,8 +48,8 @@ function GalleryGridSkeleton() {
 
       {/* Gallery grid skeleton */}
       <div className="grid grid-cols-4 gap-3">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <Skeleton className="aspect-square rounded-md" key={i} />
+        {Array.from({ length: 8 }, (_, i) => `gallery-skeleton-${i}`).map((key) => (
+          <Skeleton className="aspect-square rounded-md" key={key} />
         ))}
       </div>
     </div>

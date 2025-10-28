@@ -84,7 +84,7 @@ export function ColorForm({ mode, defaultValues }: ColorFormProps) {
 
             {/* Name Field */}
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
@@ -105,7 +105,7 @@ export function ColorForm({ mode, defaultValues }: ColorFormProps) {
 
             {/* RAL Code Field */}
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="ralCode"
               render={({ field }) => (
                 <FormItem>
@@ -127,11 +127,11 @@ export function ColorForm({ mode, defaultValues }: ColorFormProps) {
 
             {/* Hex Code Field */}
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="hexCode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Código Hexadecimal *</FormLabel>
+                  <FormLabel>Código Hex *</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="#FFFFFF"
@@ -151,7 +151,7 @@ export function ColorForm({ mode, defaultValues }: ColorFormProps) {
 
             {/* Active Status Switch */}
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="isActive"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -185,14 +185,20 @@ export function ColorForm({ mode, defaultValues }: ColorFormProps) {
             Cancelar
           </Button>
           <Button disabled={isLoading} type="submit">
-            {isLoading
-              ? "Guardando..."
-              : mode === "create"
-                ? "Crear Color"
-                : "Guardar Cambios"}
+            {getButtonLabel(isLoading, mode)}
           </Button>
         </div>
       </form>
     </Form>
   );
+}
+
+/**
+ * Get button label based on loading state and form mode
+ */
+function getButtonLabel(isLoading: boolean, mode: "create" | "edit"): string {
+  if (isLoading) {
+    return "Guardando...";
+  }
+  return mode === "create" ? "Crear Color" : "Guardar Cambios";
 }

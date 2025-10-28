@@ -26,6 +26,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TableCell, TableRow } from "@/components/ui/table";
 
+// Surcharge management constants
+const SURCHARGE_DEBOUNCE_MS = 500;
+const MIN_SURCHARGE = 0;
+const MAX_SURCHARGE = 100;
+
 type ModelColorWithColor = ModelColor & {
   color: Color;
 };
@@ -78,12 +83,12 @@ export function ModelColorRow({
       const originalSurcharge = Number(modelColor.surchargePercentage);
       if (
         surcharge !== originalSurcharge &&
-        surcharge >= 0 &&
-        surcharge <= 100
+        surcharge >= MIN_SURCHARGE &&
+        surcharge <= MAX_SURCHARGE
       ) {
         onSurchargeChange(modelColor.id, surcharge);
       }
-    }, 500);
+    }, SURCHARGE_DEBOUNCE_MS);
 
     return () => clearTimeout(timer);
   }, [
@@ -96,7 +101,7 @@ export function ModelColorRow({
   const handleSurchargeChange = (value: string) => {
     const numValue = Number.parseFloat(value);
     if (!Number.isNaN(numValue)) {
-      setSurcharge(Math.max(0, Math.min(100, numValue)));
+      setSurcharge(Math.max(MIN_SURCHARGE, Math.min(MAX_SURCHARGE, numValue)));
     }
   };
 

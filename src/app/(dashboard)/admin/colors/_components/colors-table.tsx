@@ -39,26 +39,34 @@ type ColorsTableProps = {
   onDeleteAction: (color: { id: string; name: string }) => void;
 };
 
+// Time constants in milliseconds
+const MS_PER_MINUTE = 60_000;
+const MS_PER_HOUR = 3_600_000;
+const MS_PER_DAY = 86_400_000;
+const MINUTES_PER_HOUR = 60;
+const HOURS_PER_DAY = 24;
+const MAX_DAYS_FOR_RELATIVE_TIME = 30;
+
 /**
  * Simple relative time formatter (without external dependencies)
  */
 function formatRelativeTime(date: Date): string {
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60_000);
-  const diffHours = Math.floor(diffMs / 3_600_000);
-  const diffDays = Math.floor(diffMs / 86_400_000);
+  const diffMins = Math.floor(diffMs / MS_PER_MINUTE);
+  const diffHours = Math.floor(diffMs / MS_PER_HOUR);
+  const diffDays = Math.floor(diffMs / MS_PER_DAY);
 
   if (diffMins < 1) {
     return "hace un momento";
   }
-  if (diffMins < 60) {
+  if (diffMins < MINUTES_PER_HOUR) {
     return `hace ${diffMins} min`;
   }
-  if (diffHours < 24) {
+  if (diffHours < HOURS_PER_DAY) {
     return `hace ${diffHours}h`;
   }
-  if (diffDays < 30) {
+  if (diffDays < MAX_DAYS_FOR_RELATIVE_TIME) {
     return `hace ${diffDays}d`;
   }
   return date.toLocaleDateString("es-ES", {

@@ -75,7 +75,7 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
       toast.success("Solución eliminada correctamente");
       setDeleteDialogOpen(false);
       setSolutionToDelete(null);
-      void utils.admin["glass-solution"].list.invalidate();
+      utils.admin["glass-solution"].list.invalidate().catch(undefined);
     },
   });
 

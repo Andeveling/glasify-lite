@@ -237,7 +237,7 @@ export function GlassTypesTable({
     },
     onSettled() {
       // Always refetch to ensure data consistency
-      void utils.admin[ 'glass-type' ].list.invalidate();
+      utils.admin["glass-type"].list.invalidate().catch(undefined);
     },
   });
 

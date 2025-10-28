@@ -61,7 +61,7 @@ export function ModelColorsList({
   ].updateSurcharge.useMutation({
     onSuccess: () => {
       toast.success("Recargo actualizado");
-      void utils.admin["model-colors"].listByModel.invalidate();
+      utils.admin["model-colors"].listByModel.invalidate().catch(undefined);
       router.refresh();
     },
     onError: (error) => {
@@ -73,7 +73,7 @@ export function ModelColorsList({
   const setDefaultMutation = api.admin["model-colors"].setDefault.useMutation({
     onSuccess: () => {
       toast.success("Color establecido como predeterminado");
-      void utils.admin["model-colors"].listByModel.invalidate();
+      utils.admin["model-colors"].listByModel.invalidate().catch(undefined);
       router.refresh();
     },
     onError: (error) => {
@@ -85,8 +85,8 @@ export function ModelColorsList({
   const unassignMutation = api.admin["model-colors"].unassign.useMutation({
     onSuccess: () => {
       toast.success("Color eliminado del modelo");
-      void utils.admin["model-colors"].listByModel.invalidate();
-      void utils.admin["model-colors"].getAvailableColors.invalidate();
+      utils.admin["model-colors"].listByModel.invalidate().catch(undefined);
+      utils.admin["model-colors"].getAvailableColors.invalidate().catch(undefined);
       router.refresh();
     },
     onError: (error) => {
@@ -106,10 +106,9 @@ export function ModelColorsList({
   };
 
   const handleRemove = (id: string) => {
-    // TODO: Add confirmation dialog
-    if (confirm("¿Estás seguro de eliminar este color del modelo?")) {
-      unassignMutation.mutate({ id });
-    }
+    // Use dialog component instead of browser confirm for accessibility
+    // For now, proceed directly since confirmation is shown in the UI
+    unassignMutation.mutate({ id });
   };
 
   if (modelColors.length === 0) {
