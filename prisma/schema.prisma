@@ -192,6 +192,30 @@ model TenantConfig {
   contactPhone    String?
   businessAddress String?
 
+  /// Branding: Logo URL (path to uploaded file)
+  logoUrl String?
+
+  /// Branding: Primary brand color (hex format: #RRGGBB)
+  primaryColor String @default("#3B82F6")
+
+  /// Branding: Secondary brand color (hex format: #RRGGBB)
+  secondaryColor String @default("#1E40AF")
+
+  /// Social Media: Facebook page URL
+  facebookUrl String?
+
+  /// Social Media: Instagram profile URL
+  instagramUrl String?
+
+  /// Social Media: LinkedIn company URL
+  linkedinUrl String?
+
+  /// WhatsApp: Contact number in E.164 format (+[country][number])
+  whatsappNumber String?
+
+  /// WhatsApp: Enable floating button in catalog and quotes
+  whatsappEnabled Boolean @default(false)
+
   /// Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
