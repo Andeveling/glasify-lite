@@ -6,6 +6,7 @@ import { galleryRouter } from "@/server/api/routers/admin/gallery";
 import { glassSolutionRouter } from "@/server/api/routers/admin/glass-solution";
 import { glassSupplierRouter } from "@/server/api/routers/admin/glass-supplier";
 import { glassTypeRouter } from "@/server/api/routers/admin/glass-type";
+import { modelColorsRouter } from "@/server/api/routers/admin/model-colors";
 import { modelRouter } from "@/server/api/routers/admin/model";
 import { profileSupplierRouter } from "@/server/api/routers/admin/profile-supplier";
 import { serviceRouter } from "@/server/api/routers/admin/service";
@@ -88,6 +89,7 @@ export const adminRouter = createTRPCRouter({
   "glass-supplier": glassSupplierRouter,
   "glass-type": glassTypeRouter,
   model: modelRouter,
+  "model-colors": modelColorsRouter,
   "model-upsert": adminProcedure
     .input(modelUpsertInput)
     .output(modelUpsertOutput)

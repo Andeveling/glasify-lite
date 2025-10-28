@@ -8,7 +8,11 @@
  */
 
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Palette } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/server-client";
 import { ModelForm } from "../_components/model-form";
 
@@ -38,6 +42,12 @@ export default async function EditModelPage({ params }: EditModelPageProps) {
     notFound();
   }
 
+  // Fetch assigned colors count for badge (T040)
+  const modelColors = await api.admin["model-colors"].listByModel({
+    modelId: id,
+  });
+  const colorCount = modelColors.length;
+
   // Transform Decimal fields to numbers for form
   const defaultValues = {
     accessoryPrice: model.accessoryPrice?.toNumber(),
@@ -63,11 +73,24 @@ export default async function EditModelPage({ params }: EditModelPageProps) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-bold text-3xl tracking-tight">Editar Modelo</h1>
-        <p className="text-muted-foreground">
-          Edita el modelo <span className="font-medium">{model.name}</span>
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="font-bold text-3xl tracking-tight">Editar Modelo</h1>
+          <p className="text-muted-foreground">
+            Edita el modelo <span className="font-medium">{model.name}</span>
+          </p>
+        </div>
+
+        {/* T040: Configurar Colores button with color count badge */}
+        <Button asChild variant="outline">
+          <Link href={`/admin/models/${id}/colors`}>
+            <Palette className="mr-2 h-4 w-4" />
+            Configurar Colores
+            <Badge className="ml-2" variant={colorCount === 0 ? "secondary" : "default"}>
+              {colorCount} {colorCount === 1 ? "color" : "colores"}
+            </Badge>
+          </Link>
+        </Button>
       </div>
 
       <ModelForm initialData={defaultValues} mode="edit" modelId={model.id} />

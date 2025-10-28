@@ -10,6 +10,7 @@
  * - Debounced search (300ms)
  * - Sortable columns
  * - Filter by status and supplier
+ * - Color assignment status (T041)
  * - Delete confirmation
  *
  * Architecture:
@@ -21,7 +22,7 @@
 "use client";
 
 import type { MaterialType, ModelStatus } from "@prisma/client";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal, Palette, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -63,6 +64,9 @@ type Model = {
     name: string;
     materialType: MaterialType;
   } | null;
+  _count: {
+    modelColors: number; // T041: Color count
+  };
 };
 
 type ModelsTableProps = {
@@ -306,6 +310,29 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
       cell: (model) => `${model.minHeightMm}-${model.maxHeightMm}mm`,
       header: "Alto",
       id: "height",
+      sortable: false,
+    },
+    {
+      align: "center",
+      cell: (model) => {
+        const colorCount = model._count.modelColors;
+        if (colorCount === 0) {
+          return (
+            <Badge variant="secondary">
+              <Palette className="mr-1 h-3 w-3" />
+              Sin colores
+            </Badge>
+          );
+        }
+        return (
+          <Badge variant="default">
+            <Palette className="mr-1 h-3 w-3" />
+            {colorCount} {colorCount === 1 ? "color" : "colores"}
+          </Badge>
+        );
+      },
+      header: "Colores",
+      id: "colors",
       sortable: false,
     },
     {

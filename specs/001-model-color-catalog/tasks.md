@@ -209,23 +209,23 @@ description: "Implementation tasks for color catalog system"
 
 ### Backend Implementation (US2)
 
-- [ ] T028 [P] [US2] Create tRPC modelColors router in `src/server/api/routers/model-colors.ts`
+- [x] T028 [P] [US2] Create tRPC modelColors router in `src/server/api/routers/admin/model-colors.ts`
   - Export router with namespace 'modelColors'
   - All procedures use adminProcedure (admin-only operations)
 
-- [ ] T029 [P] [US2] Implement `modelColors.listByModel` query in `src/server/api/routers/model-colors.ts`
+- [x] T029 [P] [US2] Implement `modelColors.listByModel` query in `src/server/api/routers/admin/model-colors.ts`
   - Input: z.object({ modelId: z.string() })
   - Query: Prisma findMany where modelId, include color relation
   - Ordering: isDefault DESC, color.name ASC (default first)
   - Filter: Only include where color.isActive = true
 
-- [ ] T030 [P] [US2] Implement `modelColors.getAvailableColors` query in `src/server/api/routers/model-colors.ts`
+- [x] T030 [P] [US2] Implement `modelColors.getAvailableColors` query in `src/server/api/routers/admin/model-colors.ts`
   - Input: z.object({ modelId: z.string() })
   - Query: Find all active colors NOT yet assigned to this model
   - Return: Color[] excluding already assigned colors
   - Use case: Populate "Add Color" dropdown
 
-- [ ] T031 [P] [US2] Implement `modelColors.assign` mutation in `src/server/api/routers/model-colors.ts`
+- [x] T031 [P] [US2] Implement `modelColors.assign` mutation in `src/server/api/routers/admin/model-colors.ts`
   - Input: modelColorAssignSchema (modelId, colorId, surchargePercentage, isDefault optional)
   - Business logic: 
     - Check model exists and user has access (tenant validation)
@@ -236,12 +236,12 @@ description: "Implementation tasks for color catalog system"
   - Error: TRPCError CONFLICT if already assigned (Spanish: "Este color ya está asignado al modelo")
   - Winston logging: Log assignment with modelId, colorId, surchargePercentage
 
-- [ ] T032 [P] [US2] Implement `modelColors.updateSurcharge` mutation in `src/server/api/routers/model-colors.ts`
+- [x] T032 [P] [US2] Implement `modelColors.updateSurcharge` mutation in `src/server/api/routers/admin/model-colors.ts`
   - Input: z.object({ id: z.string(), surchargePercentage: z.number().min(0).max(100) })
   - Update: Prisma update where id
   - Validation: Reject if surcharge outside 0-100 range (Spanish: "El recargo debe estar entre 0% y 100%")
 
-- [ ] T033 [P] [US2] Implement `modelColors.setDefault` mutation in `src/server/api/routers/model-colors.ts`
+- [x] T033 [P] [US2] Implement `modelColors.setDefault` mutation in `src/server/api/routers/admin/model-colors.ts`
   - Input: z.object({ id: z.string() })
   - Transaction:
     - Get modelId from the ModelColor being set as default
@@ -249,7 +249,7 @@ description: "Implementation tasks for color catalog system"
     - Update target ModelColor: set isDefault = true
   - Error handling: TRPCError NOT_FOUND if id doesn't exist
 
-- [ ] T034 [P] [US2] Implement `modelColors.unassign` mutation in `src/server/api/routers/model-colors.ts`
+- [x] T034 [P] [US2] Implement `modelColors.unassign` mutation in `src/server/api/routers/admin/model-colors.ts`
   - Input: z.object({ id: z.string() })
   - Business logic:
     - Check if color is used in any QuoteItem for this model (optional safeguard)
@@ -257,32 +257,32 @@ description: "Implementation tasks for color catalog system"
   - Delete: Prisma delete where id
   - Winston logging: Log unassignment
 
-- [ ] T035 [P] [US2] Implement `modelColors.bulkAssign` mutation in `src/server/api/routers/model-colors.ts`
+- [x] T035 [P] [US2] Implement `modelColors.bulkAssign` mutation in `src/server/api/routers/admin/model-colors.ts`
   - Input: z.object({ modelId: z.string(), assignments: z.array(z.object({ colorId, surchargePercentage })) })
   - Transaction: Prisma createMany with skipDuplicates
   - Use case: Quick setup when creating new model with standard color set
   - Business logic: First color in array becomes default if no default exists
 
-- [ ] T036 [US2] Register modelColors router in `src/server/api/root.ts`
+- [x] T036 [US2] Register modelColors router in `src/server/api/root.ts`
   - Import modelColorsRouter
   - Add to appRouter: modelColors: modelColorsRouter
 
 ### Frontend Components (US2)
 
-- [ ] T037 [P] [US2] Create ModelColorRow component in `src/app/(dashboard)/admin/models/[id]/colors/_components/model-color-row.tsx`
+- [x] T037 [P] [US2] Create ModelColorRow component in `src/app/(dashboard)/admin/models/[id]/colors/_components/model-color-row.tsx`
   - Props: modelColor (with color relation), onUpdateSurcharge, onSetDefault, onRemove
   - Render: ColorChip | Name | RAL | Surcharge input (editable) | Default radio/checkbox | Remove button
   - Client Component with inline surcharge editing (debounced 500ms)
   - Optimistic UI for surcharge updates
 
-- [ ] T038 [P] [US2] Create AddColorDialog component in `src/app/(dashboard)/admin/models/[id]/colors/_components/add-color-dialog.tsx`
+- [x] T038 [P] [US2] Create AddColorDialog component in `src/app/(dashboard)/admin/models/[id]/colors/_components/add-color-dialog.tsx`
   - Props: modelId, availableColors (from modelColors.getAvailableColors)
   - Shadcn Dialog with color selection (visual chips grid)
   - Form: Selected color + surcharge percentage input + "Set as default" checkbox
   - Submit: Call modelColors.assign mutation
   - Close on success with toast notification
 
-- [ ] T039 [US2] Create model colors page in `src/app/(dashboard)/admin/models/[id]/colors/page.tsx`
+- [x] T039 [US2] Create model colors page in `src/app/(dashboard)/admin/models/[id]/colors/page.tsx`
   - Server Component with dynamic route params
   - Metadata: title "Colores del Modelo - [Model Name]"
   - Fetch model and assigned colors: const modelColors = await api.modelColors.listByModel({ modelId: params.id })
@@ -296,12 +296,12 @@ description: "Implementation tasks for color catalog system"
 
 ### Integration with Models Module (US2)
 
-- [ ] T040 [US2] Add "Configurar Colores" link in model edit page
+- [x] T040 [US2] Add "Configurar Colores" link in model edit page
   - File: `src/app/(dashboard)/admin/models/[id]/page.tsx` or equivalent
   - Add navigation button/link to `/admin/models/[id]/colors`
   - Display color count badge: "X colores configurados"
 
-- [ ] T041 [US2] Extend Model list table to show color assignment status
+- [x] T041 [US2] Extend Model list table to show color assignment status
   - File: Model list component (existing)
   - Add column: Color count with badge (0 = warning "Sin colores", >0 = success badge)
   - Optional: Show default color chip preview

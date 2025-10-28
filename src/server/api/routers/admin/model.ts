@@ -389,6 +389,11 @@ export const modelRouter = createTRPCRouter({
       ctx.db.model.count({ where }),
       ctx.db.model.findMany({
         include: {
+          _count: {
+            select: {
+              modelColors: true, // T041: Count assigned colors
+            },
+          },
           profileSupplier: {
             select: {
               id: true,
