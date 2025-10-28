@@ -1,8 +1,14 @@
-'use client';
+"use client";
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DashboardPeriod } from '@/types/dashboard';
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { DashboardPeriod } from "@/types/dashboard";
 
 interface PeriodSelectorProps {
   /**
@@ -40,18 +46,21 @@ interface PeriodSelectorProps {
  * // URL updates to: /admin/metrics?period=30d
  * ```
  */
-export function PeriodSelector({ defaultPeriod = DashboardPeriod.LAST_30_DAYS, className }: PeriodSelectorProps) {
+export function PeriodSelector({
+  defaultPeriod = DashboardPeriod.LAST_30_DAYS,
+  className,
+}: PeriodSelectorProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   // Get current period from URL or use default
-  const currentPeriod = searchParams.get('period') ?? defaultPeriod;
+  const currentPeriod = searchParams.get("period") ?? defaultPeriod;
 
   const handlePeriodChange = (newPeriod: string) => {
     // Create new URLSearchParams to preserve other params
     const params = new URLSearchParams(searchParams);
-    params.set('period', newPeriod);
+    params.set("period", newPeriod);
 
     // Update URL with new period and refresh server data
     router.push(`${pathname}?${params.toString()}`);
@@ -60,10 +69,10 @@ export function PeriodSelector({ defaultPeriod = DashboardPeriod.LAST_30_DAYS, c
 
   // Period options with Spanish labels
   const periodOptions = [
-    { label: 'Últimos 7 días', value: DashboardPeriod.LAST_7_DAYS },
-    { label: 'Últimos 30 días', value: DashboardPeriod.LAST_30_DAYS },
-    { label: 'Últimos 90 días', value: DashboardPeriod.LAST_90_DAYS },
-    { label: 'Año actual', value: DashboardPeriod.CURRENT_YEAR },
+    { label: "Últimos 7 días", value: DashboardPeriod.LAST_7_DAYS },
+    { label: "Últimos 30 días", value: DashboardPeriod.LAST_30_DAYS },
+    { label: "Últimos 90 días", value: DashboardPeriod.LAST_90_DAYS },
+    { label: "Año actual", value: DashboardPeriod.CURRENT_YEAR },
   ];
 
   return (

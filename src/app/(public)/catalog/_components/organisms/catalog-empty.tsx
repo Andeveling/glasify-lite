@@ -1,7 +1,14 @@
-import { SearchX } from 'lucide-react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
+import { SearchX } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 
 type CatalogEmptyProps = {
   hasActiveFilters: boolean;
@@ -24,8 +31,8 @@ export function CatalogEmpty({ hasActiveFilters }: CatalogEmptyProps) {
         <EmptyTitle>No se encontraron modelos</EmptyTitle>
         <EmptyDescription>
           {hasActiveFilters
-            ? 'Intente ajustar los filtros de búsqueda para encontrar modelos que coincidan con sus criterios.'
-            : 'No hay modelos disponibles en el catálogo en este momento.'}
+            ? "Intente ajustar los filtros de búsqueda para encontrar modelos que coincidan con sus criterios."
+            : "No hay modelos disponibles en el catálogo en este momento."}
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>

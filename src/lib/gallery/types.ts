@@ -83,7 +83,7 @@ export interface GalleryConfig {
  * Error details for gallery operations
  */
 export interface GalleryError {
-  code: 'DIR_NOT_FOUND' | 'READ_ERROR' | 'NO_IMAGES' | 'INVALID_CONFIG';
+  code: "DIR_NOT_FOUND" | "READ_ERROR" | "NO_IMAGES" | "INVALID_CONFIG";
   message: string;
   details?: Record<string, unknown>;
 }

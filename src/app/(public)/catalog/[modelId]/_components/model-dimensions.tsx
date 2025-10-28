@@ -1,7 +1,7 @@
-import { Maximize2 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
-import type { ModelDimensions } from '../_types/model.types';
+import { Maximize2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import type { ModelDimensions } from "../_types/model.types";
 
 type ModelDimensionsProps = {
   dimensions: ModelDimensions;
@@ -86,7 +86,10 @@ export function ModelDimensionsCard({ dimensions }: ModelDimensionsProps) {
         {/* Contextual Help */}
         {(hasExceptionalWidth || hasExceptionalHeight) && (
           <div className="rounded-md bg-muted/50 p-2 text-muted-foreground text-xs">
-            <p>💡 Este modelo soporta grandes dimensiones, ideal para puertas corredizas y ventanales amplios.</p>
+            <p>
+              💡 Este modelo soporta grandes dimensiones, ideal para puertas
+              corredizas y ventanales amplios.
+            </p>
           </div>
         )}
       </div>

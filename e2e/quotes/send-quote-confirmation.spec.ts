@@ -12,12 +12,12 @@
  * @module e2e/quotes/send-quote-confirmation.spec
  */
 
-import { expect, test } from '@playwright/test';
-import { PrismaClient } from '@prisma/client';
+import { expect, test } from "@playwright/test";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-test.describe('Send Quote - Post-Submission Messaging (US3)', () => {
+test.describe("Send Quote - Post-Submission Messaging (US3)", () => {
   let testUserId: string;
   let testQuoteId: string;
 
@@ -31,7 +31,7 @@ test.describe('Send Quote - Post-Submission Messaging (US3)', () => {
       data: {
         email: `test-us3-${Date.now()}@example.com`,
         emailVerified: new Date(),
-        name: 'Test User US3',
+        name: "Test User US3",
       },
     });
     testUserId = user.id;
@@ -41,29 +41,29 @@ test.describe('Send Quote - Post-Submission Messaging (US3)', () => {
     const glassType = await prisma.glassType.findFirst();
 
     if (!(model && glassType)) {
-      throw new Error('Database not seeded. Run: pnpm db:seed');
+      throw new Error("Database not seeded. Run: pnpm db:seed");
     }
 
     // Create draft quote
     const quote = await prisma.quote.create({
       data: {
-        contactPhone: '+573009999999',
-        currency: 'COP',
+        contactPhone: "+573009999999",
+        currency: "COP",
         items: {
           create: [
             {
               glassTypeId: glassType.id,
               heightMm: 1500,
               modelId: model.id,
-              name: 'Test Item',
+              name: "Test Item",
               quantity: 1,
               subtotal: 150_000,
               widthMm: 1000,
             },
           ],
         },
-        projectName: 'Proyecto US3',
-        status: 'draft',
+        projectName: "Proyecto US3",
+        status: "draft",
         total: 150_000,
         userId: testUserId,
         validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -89,139 +89,145 @@ test.describe('Send Quote - Post-Submission Messaging (US3)', () => {
     }
   });
 
-  test('should show confirmation message after sending quote', async ({ page }) => {
+  test("should show confirmation message after sending quote", async ({
+    page,
+  }) => {
     await page.goto(`/quotes/${testQuoteId}`);
 
     // Send quote
-    await page.getByRole('button', { name: /enviar cotización/i }).click();
-    await page.getByRole('dialog').waitFor({ state: 'visible' });
+    await page.getByRole("button", { name: /enviar cotización/i }).click();
+    await page.getByRole("dialog").waitFor({ state: "visible" });
     await page
-      .getByRole('button', { name: /enviar cotización/i })
+      .getByRole("button", { name: /enviar cotización/i })
       .last()
       .click();
 
     // Wait for status change
-    await expect(page.getByText('Enviada')).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText("Enviada")).toBeVisible({ timeout: 10_000 });
 
     // Verify confirmation message is visible
-    const confirmationBox = page.locator('.bg-blue-50, .dark\\:bg-blue-950');
+    const confirmationBox = page.locator(".bg-blue-50, .dark\\:bg-blue-950");
     await expect(confirmationBox).toBeVisible();
   });
 
-  test('should display sentAt date in confirmation message', async ({ page }) => {
+  test("should display sentAt date in confirmation message", async ({
+    page,
+  }) => {
     await page.goto(`/quotes/${testQuoteId}`);
 
     // Send quote
-    await page.getByRole('button', { name: /enviar cotización/i }).click();
-    await page.getByRole('dialog').waitFor({ state: 'visible' });
+    await page.getByRole("button", { name: /enviar cotización/i }).click();
+    await page.getByRole("dialog").waitFor({ state: "visible" });
     await page
-      .getByRole('button', { name: /enviar cotización/i })
+      .getByRole("button", { name: /enviar cotización/i })
       .last()
       .click();
 
     // Wait for confirmation
-    await expect(page.getByText('Enviada')).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText("Enviada")).toBeVisible({ timeout: 10_000 });
 
     // Verify date message
     await expect(page.getByText(/cotización enviada el/i)).toBeVisible();
   });
 
-  test('should show timeline expectation (24-48 hours)', async ({ page }) => {
+  test("should show timeline expectation (24-48 hours)", async ({ page }) => {
     await page.goto(`/quotes/${testQuoteId}`);
 
     // Send quote
-    await page.getByRole('button', { name: /enviar cotización/i }).click();
-    await page.getByRole('dialog').waitFor({ state: 'visible' });
+    await page.getByRole("button", { name: /enviar cotización/i }).click();
+    await page.getByRole("dialog").waitFor({ state: "visible" });
     await page
-      .getByRole('button', { name: /enviar cotización/i })
+      .getByRole("button", { name: /enviar cotización/i })
       .last()
       .click();
 
     // Wait for confirmation
-    await expect(page.getByText('Enviada')).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText("Enviada")).toBeVisible({ timeout: 10_000 });
 
     // Verify timeline message
     await expect(page.getByText(/24-48 horas/i)).toBeVisible();
     await expect(page.getByText(/tiempo de respuesta/i)).toBeVisible();
   });
 
-  test('should display vendor contact phone', async ({ page }) => {
+  test("should display vendor contact phone", async ({ page }) => {
     await page.goto(`/quotes/${testQuoteId}`);
 
     // Send quote
-    await page.getByRole('button', { name: /enviar cotización/i }).click();
-    await page.getByRole('dialog').waitFor({ state: 'visible' });
+    await page.getByRole("button", { name: /enviar cotización/i }).click();
+    await page.getByRole("dialog").waitFor({ state: "visible" });
     await page
-      .getByRole('button', { name: /enviar cotización/i })
+      .getByRole("button", { name: /enviar cotización/i })
       .last()
       .click();
 
     // Wait for confirmation
-    await expect(page.getByText('Enviada')).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText("Enviada")).toBeVisible({ timeout: 10_000 });
 
     // Verify vendor contact
     await expect(page.getByText(/contacto del fabricante/i)).toBeVisible();
-    await expect(page.getByText('+573001112222')).toBeVisible();
+    await expect(page.getByText("+573001112222")).toBeVisible();
   });
 
-  test('should show next steps guidance', async ({ page }) => {
+  test("should show next steps guidance", async ({ page }) => {
     await page.goto(`/quotes/${testQuoteId}`);
 
     // Send quote
-    await page.getByRole('button', { name: /enviar cotización/i }).click();
-    await page.getByRole('dialog').waitFor({ state: 'visible' });
+    await page.getByRole("button", { name: /enviar cotización/i }).click();
+    await page.getByRole("dialog").waitFor({ state: "visible" });
     await page
-      .getByRole('button', { name: /enviar cotización/i })
+      .getByRole("button", { name: /enviar cotización/i })
       .last()
       .click();
 
     // Wait for confirmation
-    await expect(page.getByText('Enviada')).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText("Enviada")).toBeVisible({ timeout: 10_000 });
 
     // Verify next steps
     await expect(page.getByText(/mientras tanto/i)).toBeVisible();
     await expect(page.getByText(/revisar otras cotizaciones/i)).toBeVisible();
   });
 
-  test('should update status badge to "Enviada" in quote list', async ({ page }) => {
+  test('should update status badge to "Enviada" in quote list', async ({
+    page,
+  }) => {
     await page.goto(`/quotes/${testQuoteId}`);
 
     // Send quote
-    await page.getByRole('button', { name: /enviar cotización/i }).click();
-    await page.getByRole('dialog').waitFor({ state: 'visible' });
+    await page.getByRole("button", { name: /enviar cotización/i }).click();
+    await page.getByRole("dialog").waitFor({ state: "visible" });
     await page
-      .getByRole('button', { name: /enviar cotización/i })
+      .getByRole("button", { name: /enviar cotización/i })
       .last()
       .click();
 
     // Wait for confirmation
-    await expect(page.getByText('Enviada')).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText("Enviada")).toBeVisible({ timeout: 10_000 });
 
     // Navigate back to list
-    await page.getByRole('link', { name: /volver a cotizaciones/i }).click();
+    await page.getByRole("link", { name: /volver a cotizaciones/i }).click();
 
     // Verify badge in list shows "Enviada"
-    await expect(page.getByText('Proyecto US3')).toBeVisible();
+    await expect(page.getByText("Proyecto US3")).toBeVisible();
     const listItem = page.locator('[data-testid="quote-list-item"]').first();
-    await expect(listItem.getByText('Enviada')).toBeVisible();
+    await expect(listItem.getByText("Enviada")).toBeVisible();
   });
 
-  test('should show all confirmation elements together', async ({ page }) => {
+  test("should show all confirmation elements together", async ({ page }) => {
     await page.goto(`/quotes/${testQuoteId}`);
 
     // Send quote
-    await page.getByRole('button', { name: /enviar cotización/i }).click();
-    await page.getByRole('dialog').waitFor({ state: 'visible' });
+    await page.getByRole("button", { name: /enviar cotización/i }).click();
+    await page.getByRole("dialog").waitFor({ state: "visible" });
     await page
-      .getByRole('button', { name: /enviar cotización/i })
+      .getByRole("button", { name: /enviar cotización/i })
       .last()
       .click();
 
     // Wait for confirmation
-    await expect(page.getByText('Enviada')).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText("Enviada")).toBeVisible({ timeout: 10_000 });
 
     // Verify all elements are present
-    const confirmationBox = page.locator('.bg-blue-50, .dark\\:bg-blue-950');
+    const confirmationBox = page.locator(".bg-blue-50, .dark\\:bg-blue-950");
     await expect(confirmationBox).toBeVisible();
 
     // Check icons are present
@@ -231,16 +237,18 @@ test.describe('Send Quote - Post-Submission Messaging (US3)', () => {
     await expect(phoneIcon).toBeVisible();
   });
 
-  test('should persist confirmation message after page reload', async ({ page }) => {
+  test("should persist confirmation message after page reload", async ({
+    page,
+  }) => {
     // First, send the quote
     await page.goto(`/quotes/${testQuoteId}`);
-    await page.getByRole('button', { name: /enviar cotización/i }).click();
-    await page.getByRole('dialog').waitFor({ state: 'visible' });
+    await page.getByRole("button", { name: /enviar cotización/i }).click();
+    await page.getByRole("dialog").waitFor({ state: "visible" });
     await page
-      .getByRole('button', { name: /enviar cotización/i })
+      .getByRole("button", { name: /enviar cotización/i })
       .last()
       .click();
-    await expect(page.getByText('Enviada')).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText("Enviada")).toBeVisible({ timeout: 10_000 });
 
     // Reload page
     await page.reload();
@@ -250,31 +258,33 @@ test.describe('Send Quote - Post-Submission Messaging (US3)', () => {
     await expect(page.getByText(/24-48 horas/i)).toBeVisible();
   });
 
-  test('should not show confirmation message for draft quotes', async ({ page }) => {
+  test("should not show confirmation message for draft quotes", async ({
+    page,
+  }) => {
     await page.goto(`/quotes/${testQuoteId}`);
 
     // Verify no confirmation message for draft
-    const confirmationBox = page.locator('.bg-blue-50, .dark\\:bg-blue-950');
+    const confirmationBox = page.locator(".bg-blue-50, .dark\\:bg-blue-950");
     await expect(confirmationBox).not.toBeVisible();
 
     // Only draft badge should be visible
-    await expect(page.getByText('Borrador')).toBeVisible();
+    await expect(page.getByText("Borrador")).toBeVisible();
   });
 
-  test('should handle missing vendor contact gracefully', async ({ page }) => {
+  test("should handle missing vendor contact gracefully", async ({ page }) => {
     // Note: This test assumes tenant config may not have contactPhone
     // If your seed always provides it, this test may not be relevant
 
     await page.goto(`/quotes/${testQuoteId}`);
 
     // Send quote
-    await page.getByRole('button', { name: /enviar cotización/i }).click();
-    await page.getByRole('dialog').waitFor({ state: 'visible' });
+    await page.getByRole("button", { name: /enviar cotización/i }).click();
+    await page.getByRole("dialog").waitFor({ state: "visible" });
     await page
-      .getByRole('button', { name: /enviar cotización/i })
+      .getByRole("button", { name: /enviar cotización/i })
       .last()
       .click();
-    await expect(page.getByText('Enviada')).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText("Enviada")).toBeVisible({ timeout: 10_000 });
 
     // Confirmation should show, vendor contact section depends on data
     await expect(page.getByText(/cotización enviada el/i)).toBeVisible();

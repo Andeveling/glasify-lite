@@ -12,20 +12,20 @@
  * Features loading state with spinner when navigating to detail page.
  */
 
-'use client';
+"use client";
 
-import { Copy, Edit3, Eye } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
-import { formatCurrency } from '@/app/_utils/format-currency.util';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Spinner } from '@/components/ui/spinner';
-import { cn, formatDate } from '@/lib/utils';
-import type { QuoteListItemSchema } from '@/server/api/routers/quote/quote.schemas';
-import { getStatusCTA } from '../_utils/status-config';
-import { QuoteStatusBadge } from './quote-status-badge';
+import { Copy, Edit3, Eye } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { formatCurrency } from "@/app/_utils/format-currency.util";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
+import { cn, formatDate } from "@/lib/utils";
+import type { QuoteListItemSchema } from "@/server/api/routers/quote/quote.schemas";
+import { getStatusCTA } from "../_utils/status-config";
+import { QuoteStatusBadge } from "./quote-status-badge";
 
 type QuoteListItemProps = {
   quote: QuoteListItemSchema;
@@ -49,17 +49,17 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
 
     startTransition(() => {
       switch (cta.action) {
-        case 'edit':
+        case "edit":
           router.push(`/my-quotes/${quote.id}`);
           break;
-        case 'view':
+        case "view":
           router.push(`/my-quotes/${quote.id}`);
           break;
-        case 'duplicate':
+        case "duplicate":
           // TODO: Implement duplicate functionality in future US
           router.push(`/my-quotes/${quote.id}`);
           break;
-        case 'resend':
+        case "resend":
           // TODO: Implement resend functionality in future US
           router.push(`/my-quotes/${quote.id}`);
           break;
@@ -86,9 +86,9 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
   return (
     <Card
       className={cn(
-        'transition-all duration-200',
-        quote.isExpired && 'opacity-60',
-        isLoading && 'opacity-50 ring-2 ring-primary/20'
+        "transition-all duration-200",
+        quote.isExpired && "opacity-60",
+        isLoading && "opacity-50 ring-2 ring-primary/20"
       )}
       data-testid="quote-list-item"
     >
@@ -98,10 +98,19 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
             <h3 className="font-semibold text-lg">{quote.projectName}</h3>
 
             {/* US1: New QuoteStatusBadge with icon and tooltip */}
-            <QuoteStatusBadge showIcon={true} showTooltip={true} size="default" status={quote.status} />
+            <QuoteStatusBadge
+              showIcon={true}
+              showTooltip={true}
+              size="default"
+              status={quote.status}
+            />
 
             {quote.isExpired && (
-              <Badge className="text-muted-foreground" data-testid="expired-badge" variant="outline">
+              <Badge
+                className="text-muted-foreground"
+                data-testid="expired-badge"
+                variant="outline"
+              >
                 Expirada
               </Badge>
             )}
@@ -109,11 +118,13 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
 
           <div className="flex items-center gap-6 text-muted-foreground text-sm">
             <div>
-              <span className="font-medium">Creada:</span> {formatDate(quote.createdAt)}
+              <span className="font-medium">Creada:</span>{" "}
+              {formatDate(quote.createdAt)}
             </div>
             {quote.validUntil && (
               <div>
-                <span className="font-medium">Válida hasta:</span> {formatDate(quote.validUntil)}
+                <span className="font-medium">Válida hasta:</span>{" "}
+                {formatDate(quote.validUntil)}
               </div>
             )}
             <div>
@@ -123,7 +134,9 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
 
           {/* US2: Product image preview (TODO: Enable when schema includes items) */}
           {hasItemsPreview && (
-            <div className="mt-3">{/* <QuoteItemPreview items={previewItems} totalCount={quote.itemCount} /> */}</div>
+            <div className="mt-3">
+              {/* <QuoteItemPreview items={previewItems} totalCount={quote.itemCount} /> */}
+            </div>
           )}
         </div>
 
@@ -133,8 +146,8 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
             <div className="font-bold text-lg">
               {formatCurrency(quote.total, {
                 currency: quote.currency,
-                decimals: quote.currency === 'USD' ? 2 : 0,
-                locale: quote.currency === 'USD' ? 'es-PA' : 'es-CO',
+                decimals: quote.currency === "USD" ? 2 : 0,
+                locale: quote.currency === "USD" ? "es-PA" : "es-CO",
               })}
             </div>
           </div>
@@ -149,7 +162,7 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
             ) : (
               <>
                 <CTAIcon className="mr-2 h-4 w-4" />
-                {cta?.label ?? 'Ver detalles'}
+                {cta?.label ?? "Ver detalles"}
               </>
             )}
           </Button>

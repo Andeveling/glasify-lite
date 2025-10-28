@@ -7,7 +7,7 @@
  * @vitest-environment node
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 import {
   getAllWindowDiagrams,
   getWindowDiagram,
@@ -16,23 +16,27 @@ import {
   getWindowDiagramsByCategory,
   hasWindowDiagram,
   WINDOW_DIAGRAM_MAP,
-} from '../../../src/lib/utils/window-diagram-map';
-import { DEFAULT_WINDOW_TYPE, type WindowDiagram, WindowType } from '../../../src/types/window.types';
+} from "../../../src/lib/utils/window-diagram-map";
+import {
+  DEFAULT_WINDOW_TYPE,
+  type WindowDiagram,
+  WindowType,
+} from "../../../src/types/window.types";
 
-describe('Window Diagram Map Utility', () => {
-  describe('getWindowDiagram', () => {
-    it('should return correct diagram for valid WindowType', () => {
+describe("Window Diagram Map Utility", () => {
+  describe("getWindowDiagram", () => {
+    it("should return correct diagram for valid WindowType", () => {
       const diagram = getWindowDiagram(WindowType.SLIDING_2_PANEL);
 
       expect(diagram).toBeDefined();
       expect(diagram.type).toBe(WindowType.SLIDING_2_PANEL);
-      expect(diagram.svgPath).toBe('/diagrams/windows/sliding-2-panel.svg');
+      expect(diagram.svgPath).toBe("/diagrams/windows/sliding-2-panel.svg");
       expect(diagram.viewBox).toBeDefined();
       expect(diagram.aspectRatio).toBeGreaterThan(0);
-      expect(diagram.altText).toContain('corrediza');
+      expect(diagram.altText).toContain("corrediza");
     });
 
-    it('should return correct diagram for each basic window type', () => {
+    it("should return correct diagram for each basic window type", () => {
       const basicTypes = [
         WindowType.FRENCH_2_PANEL,
         WindowType.FRENCH_4_PANEL,
@@ -50,193 +54,221 @@ describe('Window Diagram Map Utility', () => {
         const diagram = getWindowDiagram(type);
         expect(diagram).toBeDefined();
         expect(diagram.type).toBe(type);
-        expect(diagram.svgPath).toContain('/diagrams/windows/');
-        expect(diagram.svgPath).toContain('.svg');
+        expect(diagram.svgPath).toContain("/diagrams/windows/");
+        expect(diagram.svgPath).toContain(".svg");
       }
     });
 
-    it('should fall back to default diagram for unknown type', () => {
-      const unknownType = 'totally-unknown-type' as WindowType;
+    it("should fall back to default diagram for unknown type", () => {
+      const unknownType = "totally-unknown-type" as WindowType;
       const diagram = getWindowDiagram(unknownType);
 
       expect(diagram).toBeDefined();
       expect(diagram.type).toBe(DEFAULT_WINDOW_TYPE);
-      expect(diagram.svgPath).toContain('fixed-single.svg');
+      expect(diagram.svgPath).toContain("fixed-single.svg");
     });
 
-    it('should fall back to default for null/undefined', () => {
+    it("should fall back to default for null/undefined", () => {
       const nullDiagram = getWindowDiagram(null as unknown as WindowType);
-      const undefinedDiagram = getWindowDiagram(undefined as unknown as WindowType);
+      const undefinedDiagram = getWindowDiagram(
+        undefined as unknown as WindowType
+      );
 
       expect(nullDiagram.type).toBe(DEFAULT_WINDOW_TYPE);
       expect(undefinedDiagram.type).toBe(DEFAULT_WINDOW_TYPE);
     });
 
-    it('should fall back to default for empty string', () => {
-      const diagram = getWindowDiagram('');
+    it("should fall back to default for empty string", () => {
+      const diagram = getWindowDiagram("");
       expect(diagram.type).toBe(DEFAULT_WINDOW_TYPE);
     });
 
-    it('should handle WindowType.UNKNOWN correctly', () => {
+    it("should handle WindowType.UNKNOWN correctly", () => {
       const diagram = getWindowDiagram(WindowType.UNKNOWN);
       expect(diagram.type).toBe(WindowType.UNKNOWN);
-      expect(diagram.svgPath).toContain('fixed-single.svg');
+      expect(diagram.svgPath).toContain("fixed-single.svg");
     });
   });
 
-  describe('getWindowDiagramPath', () => {
-    it('should return SVG path for valid type', () => {
+  describe("getWindowDiagramPath", () => {
+    it("should return SVG path for valid type", () => {
       const path = getWindowDiagramPath(WindowType.CASEMENT_LEFT);
-      expect(path).toBe('/diagrams/windows/casement-left.svg');
+      expect(path).toBe("/diagrams/windows/casement-left.svg");
     });
 
-    it('should return default path for unknown type', () => {
-      const path = getWindowDiagramPath('unknown' as WindowType);
-      expect(path).toContain('/diagrams/windows/fixed-single.svg');
+    it("should return default path for unknown type", () => {
+      const path = getWindowDiagramPath("unknown" as WindowType);
+      expect(path).toContain("/diagrams/windows/fixed-single.svg");
     });
 
-    it('should return string (not object)', () => {
+    it("should return string (not object)", () => {
       const path = getWindowDiagramPath(WindowType.AWNING);
-      expect(typeof path).toBe('string');
+      expect(typeof path).toBe("string");
     });
   });
 
-  describe('getWindowDiagramAltText', () => {
-    it('should return accessible Spanish alt text', () => {
+  describe("getWindowDiagramAltText", () => {
+    it("should return accessible Spanish alt text", () => {
       const altText = getWindowDiagramAltText(WindowType.FRENCH_2_PANEL);
-      expect(altText).toContain('puerta');
-      expect(altText).toContain('francesa');
+      expect(altText).toContain("puerta");
+      expect(altText).toContain("francesa");
     });
 
-    it('should return different alt text for different types', () => {
+    it("should return different alt text for different types", () => {
       const french = getWindowDiagramAltText(WindowType.FRENCH_2_PANEL);
       const sliding = getWindowDiagramAltText(WindowType.SLIDING_2_PANEL);
 
       expect(french).not.toBe(sliding);
-      expect(french).toContain('francesa');
-      expect(sliding).toContain('corrediza');
+      expect(french).toContain("francesa");
+      expect(sliding).toContain("corrediza");
     });
 
-    it('should return default alt text for unknown type', () => {
-      const altText = getWindowDiagramAltText('unknown' as WindowType);
+    it("should return default alt text for unknown type", () => {
+      const altText = getWindowDiagramAltText("unknown" as WindowType);
       expect(altText).toBeDefined();
-      expect(typeof altText).toBe('string');
+      expect(typeof altText).toBe("string");
     });
   });
 
-  describe('hasWindowDiagram', () => {
-    it('should return true for valid WindowType', () => {
+  describe("hasWindowDiagram", () => {
+    it("should return true for valid WindowType", () => {
       expect(hasWindowDiagram(WindowType.SLIDING_2_PANEL)).toBe(true);
       expect(hasWindowDiagram(WindowType.FRENCH_4_PANEL)).toBe(true);
       expect(hasWindowDiagram(WindowType.AWNING)).toBe(true);
     });
 
-    it('should return false for unknown type', () => {
-      expect(hasWindowDiagram('totally-unknown' as WindowType)).toBe(false);
+    it("should return false for unknown type", () => {
+      expect(hasWindowDiagram("totally-unknown" as WindowType)).toBe(false);
     });
 
-    it('should return false for null/undefined', () => {
+    it("should return false for null/undefined", () => {
       expect(hasWindowDiagram(null as unknown as WindowType)).toBe(false);
       expect(hasWindowDiagram(undefined as unknown as WindowType)).toBe(false);
     });
 
-    it('should return false for empty string', () => {
-      expect(hasWindowDiagram('')).toBe(false);
+    it("should return false for empty string", () => {
+      expect(hasWindowDiagram("")).toBe(false);
     });
 
-    it('should return true for WindowType.UNKNOWN (it exists in enum)', () => {
+    it("should return true for WindowType.UNKNOWN (it exists in enum)", () => {
       expect(hasWindowDiagram(WindowType.UNKNOWN)).toBe(true);
     });
   });
 
-  describe('getAllWindowDiagrams', () => {
-    it('should return array of all diagrams', () => {
+  describe("getAllWindowDiagrams", () => {
+    it("should return array of all diagrams", () => {
       const allDiagrams = getAllWindowDiagrams();
 
       expect(Array.isArray(allDiagrams)).toBe(true);
       expect(allDiagrams.length).toBeGreaterThan(0);
     });
 
-    it('should include all WindowType enum values', () => {
+    it("should include all WindowType enum values", () => {
       const allDiagrams = getAllWindowDiagrams();
       const allTypes = Object.values(WindowType);
 
       expect(allDiagrams.length).toBe(allTypes.length);
     });
 
-    it('each diagram should have required properties', () => {
+    it("each diagram should have required properties", () => {
       const allDiagrams = getAllWindowDiagrams();
 
       for (const diagram of allDiagrams) {
-        expect(diagram).toHaveProperty('type');
-        expect(diagram).toHaveProperty('svgPath');
-        expect(diagram).toHaveProperty('viewBox');
-        expect(diagram).toHaveProperty('aspectRatio');
-        expect(diagram).toHaveProperty('altText');
+        expect(diagram).toHaveProperty("type");
+        expect(diagram).toHaveProperty("svgPath");
+        expect(diagram).toHaveProperty("viewBox");
+        expect(diagram).toHaveProperty("aspectRatio");
+        expect(diagram).toHaveProperty("altText");
       }
     });
   });
 
-  describe('getWindowDiagramsByCategory', () => {
-    it('should return french category diagrams', () => {
-      const french = getWindowDiagramsByCategory('french');
+  describe("getWindowDiagramsByCategory", () => {
+    it("should return french category diagrams", () => {
+      const french = getWindowDiagramsByCategory("french");
 
       expect(Array.isArray(french)).toBe(true);
       expect(french.length).toBe(2); // FRENCH_2_PANEL, FRENCH_4_PANEL
-      expect(french.some((d: WindowDiagram) => d.type === WindowType.FRENCH_2_PANEL)).toBe(true);
-      expect(french.some((d: WindowDiagram) => d.type === WindowType.FRENCH_4_PANEL)).toBe(true);
+      expect(
+        french.some((d: WindowDiagram) => d.type === WindowType.FRENCH_2_PANEL)
+      ).toBe(true);
+      expect(
+        french.some((d: WindowDiagram) => d.type === WindowType.FRENCH_4_PANEL)
+      ).toBe(true);
     });
 
-    it('should return sliding category diagrams', () => {
-      const sliding = getWindowDiagramsByCategory('sliding');
+    it("should return sliding category diagrams", () => {
+      const sliding = getWindowDiagramsByCategory("sliding");
 
       expect(sliding.length).toBeGreaterThanOrEqual(3); // At least 2, 3, 4 panel
-      expect(sliding.some((d: WindowDiagram) => d.type === WindowType.SLIDING_2_PANEL)).toBe(true);
-      expect(sliding.some((d: WindowDiagram) => d.type === WindowType.SLIDING_3_PANEL)).toBe(true);
+      expect(
+        sliding.some(
+          (d: WindowDiagram) => d.type === WindowType.SLIDING_2_PANEL
+        )
+      ).toBe(true);
+      expect(
+        sliding.some(
+          (d: WindowDiagram) => d.type === WindowType.SLIDING_3_PANEL
+        )
+      ).toBe(true);
     });
 
-    it('should return casement category diagrams', () => {
-      const casement = getWindowDiagramsByCategory('casement');
+    it("should return casement category diagrams", () => {
+      const casement = getWindowDiagramsByCategory("casement");
 
       expect(casement.length).toBeGreaterThanOrEqual(2); // At least LEFT, RIGHT
-      expect(casement.some((d: WindowDiagram) => d.type === WindowType.CASEMENT_LEFT)).toBe(true);
-      expect(casement.some((d: WindowDiagram) => d.type === WindowType.CASEMENT_RIGHT)).toBe(true);
+      expect(
+        casement.some((d: WindowDiagram) => d.type === WindowType.CASEMENT_LEFT)
+      ).toBe(true);
+      expect(
+        casement.some(
+          (d: WindowDiagram) => d.type === WindowType.CASEMENT_RIGHT
+        )
+      ).toBe(true);
     });
 
-    it('should return fixed category diagrams', () => {
-      const fixed = getWindowDiagramsByCategory('fixed');
+    it("should return fixed category diagrams", () => {
+      const fixed = getWindowDiagramsByCategory("fixed");
 
       expect(fixed.length).toBeGreaterThanOrEqual(1);
-      expect(fixed.some((d: WindowDiagram) => d.type === WindowType.FIXED_SINGLE)).toBe(true);
+      expect(
+        fixed.some((d: WindowDiagram) => d.type === WindowType.FIXED_SINGLE)
+      ).toBe(true);
     });
 
-    it('should return projecting category diagrams', () => {
-      const projecting = getWindowDiagramsByCategory('projecting');
+    it("should return projecting category diagrams", () => {
+      const projecting = getWindowDiagramsByCategory("projecting");
 
       expect(projecting.length).toBe(2); // AWNING, HOPPER
-      expect(projecting.some((d: WindowDiagram) => d.type === WindowType.AWNING)).toBe(true);
-      expect(projecting.some((d: WindowDiagram) => d.type === WindowType.HOPPER)).toBe(true);
+      expect(
+        projecting.some((d: WindowDiagram) => d.type === WindowType.AWNING)
+      ).toBe(true);
+      expect(
+        projecting.some((d: WindowDiagram) => d.type === WindowType.HOPPER)
+      ).toBe(true);
     });
 
-    it('should not have overlapping categories', () => {
-      const french = getWindowDiagramsByCategory('french');
-      const sliding = getWindowDiagramsByCategory('sliding');
+    it("should not have overlapping categories", () => {
+      const french = getWindowDiagramsByCategory("french");
+      const sliding = getWindowDiagramsByCategory("sliding");
 
       const frenchTypes = french.map((d: WindowDiagram) => d.type);
       const slidingTypes = sliding.map((d: WindowDiagram) => d.type);
 
-      const overlap = frenchTypes.filter((t: WindowType) => slidingTypes.includes(t));
+      const overlap = frenchTypes.filter((t: WindowType) =>
+        slidingTypes.includes(t)
+      );
       expect(overlap.length).toBe(0);
     });
   });
 
-  describe('WINDOW_DIAGRAM_MAP constant', () => {
-    it('should be a valid object', () => {
+  describe("WINDOW_DIAGRAM_MAP constant", () => {
+    it("should be a valid object", () => {
       expect(WINDOW_DIAGRAM_MAP).toBeDefined();
-      expect(typeof WINDOW_DIAGRAM_MAP).toBe('object');
+      expect(typeof WINDOW_DIAGRAM_MAP).toBe("object");
     });
 
-    it('should have entry for each WindowType', () => {
+    it("should have entry for each WindowType", () => {
       const allTypes = Object.values(WindowType);
 
       for (const type of allTypes) {
@@ -244,15 +276,17 @@ describe('Window Diagram Map Utility', () => {
       }
     });
 
-    it('should have consistent viewBox dimensions', () => {
+    it("should have consistent viewBox dimensions", () => {
       for (const diagram of Object.values(WINDOW_DIAGRAM_MAP)) {
         expect(diagram.viewBox.width).toBeGreaterThan(0);
         expect(diagram.viewBox.height).toBeGreaterThan(0);
-        expect(diagram.aspectRatio).toBe(diagram.viewBox.width / diagram.viewBox.height);
+        expect(diagram.aspectRatio).toBe(
+          diagram.viewBox.width / diagram.viewBox.height
+        );
       }
     });
 
-    it('should have SVG paths matching type names', () => {
+    it("should have SVG paths matching type names", () => {
       for (const [type, diagram] of Object.entries(WINDOW_DIAGRAM_MAP)) {
         if (type !== WindowType.UNKNOWN) {
           expect((diagram as WindowDiagram).svgPath).toContain(type);
@@ -261,8 +295,8 @@ describe('Window Diagram Map Utility', () => {
     });
   });
 
-  describe('SVG Path Consistency', () => {
-    it('all SVG paths should start with /diagrams/windows/', () => {
+  describe("SVG Path Consistency", () => {
+    it("all SVG paths should start with /diagrams/windows/", () => {
       const allDiagrams = getAllWindowDiagrams();
 
       for (const diagram of allDiagrams) {
@@ -270,7 +304,7 @@ describe('Window Diagram Map Utility', () => {
       }
     });
 
-    it('all SVG paths should end with .svg', () => {
+    it("all SVG paths should end with .svg", () => {
       const allDiagrams = getAllWindowDiagrams();
 
       for (const diagram of allDiagrams) {
@@ -278,18 +312,18 @@ describe('Window Diagram Map Utility', () => {
       }
     });
 
-    it('SVG paths should use kebab-case', () => {
+    it("SVG paths should use kebab-case", () => {
       const allDiagrams = getAllWindowDiagrams();
 
       for (const diagram of allDiagrams) {
-        const filename = diagram.svgPath.split('/').pop()?.replace('.svg', '');
+        const filename = diagram.svgPath.split("/").pop()?.replace(".svg", "");
         expect(filename).toMatch(/^[a-z0-9-]+$/);
       }
     });
   });
 
-  describe('Alt Text Accessibility', () => {
-    it('all alt texts should be in Spanish', () => {
+  describe("Alt Text Accessibility", () => {
+    it("all alt texts should be in Spanish", () => {
       const allDiagrams = getAllWindowDiagrams();
 
       for (const diagram of allDiagrams) {
@@ -297,7 +331,7 @@ describe('Window Diagram Map Utility', () => {
       }
     });
 
-    it('alt texts should be descriptive (>10 characters)', () => {
+    it("alt texts should be descriptive (>10 characters)", () => {
       const allDiagrams = getAllWindowDiagrams();
 
       for (const diagram of allDiagrams) {

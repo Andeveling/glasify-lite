@@ -14,26 +14,26 @@
 // @ts-nocheck
 /* biome-ignore lint/suspicious/noConsole: CLI script requires console output */
 
-import { parseArgs } from 'node:util';
-import { db } from '../src/server/db';
-import { demoClientPreset } from './data/presets/demo-client.preset';
-import { fullCatalogPreset } from './data/presets/full-catalog.preset';
+import { parseArgs } from "node:util";
+import { db } from "../src/server/db";
+import { demoClientPreset } from "./data/presets/demo-client.preset";
+import { fullCatalogPreset } from "./data/presets/full-catalog.preset";
 // Import presets (NO BARRELS - direct imports)
-import { minimalPreset } from './data/presets/minimal.preset';
-import { vidriosLaEquidadColombiaPreset } from './data/presets/vidrios-la-equidad-colombia.preset';
-import { vitroRojasPanamaPreset } from './data/presets/vitro-rojas-panama.preset';
-import type { SeedPreset } from './seeders/seed-orchestrator';
-import { SeedOrchestrator } from './seeders/seed-orchestrator';
+import { minimalPreset } from "./data/presets/minimal.preset";
+import { vidriosLaEquidadColombiaPreset } from "./data/presets/vidrios-la-equidad-colombia.preset";
+import { vitroRojasPanamaPreset } from "./data/presets/vitro-rojas-panama.preset";
+import type { SeedPreset } from "./seeders/seed-orchestrator";
+import { SeedOrchestrator } from "./seeders/seed-orchestrator";
 
 /**
  * Available presets registry
  */
 const PRESETS: Record<string, SeedPreset> = {
-  'demo-client': demoClientPreset,
-  'full-catalog': fullCatalogPreset,
+  "demo-client": demoClientPreset,
+  "full-catalog": fullCatalogPreset,
   minimal: minimalPreset,
-  'vidrios-la-equidad-colombia': vidriosLaEquidadColombiaPreset,
-  'vitro-rojas-panama': vitroRojasPanamaPreset,
+  "vidrios-la-equidad-colombia": vidriosLaEquidadColombiaPreset,
+  "vitro-rojas-panama": vitroRojasPanamaPreset,
 };
 
 /**
@@ -53,38 +53,38 @@ interface CliOptions {
 function parseCliArgs(): CliOptions {
   const { values } = parseArgs({
     options: {
-      'continue-on-error': {
+      "continue-on-error": {
         default: false,
-        type: 'boolean',
+        type: "boolean",
       },
       help: {
         default: false,
-        short: 'h',
-        type: 'boolean',
+        short: "h",
+        type: "boolean",
       },
       preset: {
-        default: 'minimal',
-        short: 'p',
-        type: 'string',
+        default: "minimal",
+        short: "p",
+        type: "string",
       },
-      'skip-validation': {
+      "skip-validation": {
         default: false,
-        type: 'boolean',
+        type: "boolean",
       },
       verbose: {
         default: false,
-        short: 'v',
-        type: 'boolean',
+        short: "v",
+        type: "boolean",
       },
     },
     strict: true,
   });
 
   return {
-    continueOnError: values['continue-on-error'] ?? false,
+    continueOnError: values["continue-on-error"] ?? false,
     help: values.help ?? false,
-    preset: values.preset ?? 'minimal',
-    skipValidation: values['skip-validation'] ?? false,
+    preset: values.preset ?? "minimal",
+    skipValidation: values["skip-validation"] ?? false,
     verbose: values.verbose ?? false,
   };
 }

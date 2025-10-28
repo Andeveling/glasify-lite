@@ -14,7 +14,7 @@
  * @date 2025-01-25
  */
 
-import type { ModelInput } from '../../factories/model.factory';
+import type { ModelInput } from "../../factories/model.factory";
 
 /**
  * Ventana Abatible Aluminio 1 Hoja
@@ -25,8 +25,9 @@ import type { ModelInput } from '../../factories/model.factory';
 export const aluminumCasement1Panel: ModelInput = {
   accessoryPrice: 140_000, // COP - Herrajes y bisagras
   basePrice: 420_000, // COP/m²
-  compatibleGlassTypeIds: ['placeholder'],
-  costNotes: 'Precio base $420.000/m². Ventana abatible 1 hoja con herrajes de alta durabilidad.',
+  compatibleGlassTypeIds: ["placeholder"],
+  costNotes:
+    "Precio base $420.000/m². Ventana abatible 1 hoja con herrajes de alta durabilidad.",
   costPerMmHeight: 42,
   costPerMmWidth: 45,
   glassDiscountHeightMm: 68,
@@ -35,10 +36,10 @@ export const aluminumCasement1Panel: ModelInput = {
   maxWidthMm: 1200,
   minHeightMm: 600,
   minWidthMm: 600,
-  name: 'Ventana Abatible Aluminio 1 Hoja',
-  profileSupplierName: 'Sistemas Aluminio Nacional',
+  name: "Ventana Abatible Aluminio 1 Hoja",
+  profileSupplierName: "Sistemas Aluminio Nacional",
   profitMarginPercentage: 35,
-  status: 'published',
+  status: "published",
 };
 
 /**
@@ -50,8 +51,9 @@ export const aluminumCasement1Panel: ModelInput = {
 export const aluminumCasement2Panels: ModelInput = {
   accessoryPrice: 180_000, // COP
   basePrice: 460_000, // COP/m²
-  compatibleGlassTypeIds: ['placeholder'],
-  costNotes: 'Precio base $460.000/m². Ventana abatible 2 hojas con apertura independiente.',
+  compatibleGlassTypeIds: ["placeholder"],
+  costNotes:
+    "Precio base $460.000/m². Ventana abatible 2 hojas con apertura independiente.",
   costPerMmHeight: 45,
   costPerMmWidth: 48,
   glassDiscountHeightMm: 68,
@@ -60,10 +62,10 @@ export const aluminumCasement2Panels: ModelInput = {
   maxWidthMm: 2400,
   minHeightMm: 600,
   minWidthMm: 1200,
-  name: 'Ventana Abatible Aluminio 2 Hojas',
-  profileSupplierName: 'Sistemas Aluminio Nacional',
+  name: "Ventana Abatible Aluminio 2 Hojas",
+  profileSupplierName: "Sistemas Aluminio Nacional",
   profitMarginPercentage: 35,
-  status: 'published',
+  status: "published",
 };
 
 /**
@@ -75,8 +77,9 @@ export const aluminumCasement2Panels: ModelInput = {
 export const aluminumDoor1Panel: ModelInput = {
   accessoryPrice: 200_000, // COP - Herrajes reforzados y cerradura
   basePrice: 480_000, // COP/m²
-  compatibleGlassTypeIds: ['placeholder'],
-  costNotes: 'Precio base $480.000/m². Puerta ventana con herrajes reforzados y cerradura de seguridad.',
+  compatibleGlassTypeIds: ["placeholder"],
+  costNotes:
+    "Precio base $480.000/m². Puerta ventana con herrajes reforzados y cerradura de seguridad.",
   costPerMmHeight: 47,
   costPerMmWidth: 50,
   glassDiscountHeightMm: 70,
@@ -85,10 +88,10 @@ export const aluminumDoor1Panel: ModelInput = {
   maxWidthMm: 1200,
   minHeightMm: 1800,
   minWidthMm: 700,
-  name: 'Puerta Ventana Aluminio 1 Hoja',
-  profileSupplierName: 'Sistemas Aluminio Nacional',
+  name: "Puerta Ventana Aluminio 1 Hoja",
+  profileSupplierName: "Sistemas Aluminio Nacional",
   profitMarginPercentage: 35,
-  status: 'published',
+  status: "published",
 };
 
 /**

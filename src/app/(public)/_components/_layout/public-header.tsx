@@ -1,10 +1,10 @@
-import { headers } from 'next/headers';
-import Link from 'next/link';
-import { CartIndicator } from '@/app/_components/cart-indicator';
-import { RoleBasedNav } from '@/app/_components/role-based-nav';
-import { auth } from '@/server/auth';
-import { GuestMenu } from './guest-menu';
-import { UserMenu } from './user-menu';
+import { headers } from "next/headers";
+import Link from "next/link";
+import { CartIndicator } from "@/app/_components/cart-indicator";
+import { RoleBasedNav } from "@/app/_components/role-based-nav";
+import { auth } from "@/server/auth";
+import { GuestMenu } from "./guest-menu";
+import { UserMenu } from "./user-menu";
 
 /**
  * Public Header Component
@@ -37,7 +37,14 @@ export default async function Header() {
           {/* Acciones: Carrito y Menú de Usuario */}
           <div className="flex items-center gap-3">
             <CartIndicator variant="compact" />
-            {session?.user ? <UserMenu userEmail={session.user.email} userName={session.user.name} /> : <GuestMenu />}
+            {session?.user ? (
+              <UserMenu
+                userEmail={session.user.email}
+                userName={session.user.name}
+              />
+            ) : (
+              <GuestMenu />
+            )}
           </div>
         </div>
       </div>

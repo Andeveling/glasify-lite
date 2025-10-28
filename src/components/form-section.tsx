@@ -1,6 +1,6 @@
-import type { LucideIcon } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { cn } from '@/lib/utils';
+import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 import {
   FieldContent,
   FieldDescription,
@@ -9,7 +9,7 @@ import {
   FieldLegend,
   FieldSeparator,
   FieldSet,
-} from './ui/field';
+} from "./ui/field";
 
 type FormSectionProps = {
   icon?: LucideIcon;
@@ -21,7 +21,7 @@ type FormSectionProps = {
   legendClassName?: string;
   descriptionClassName?: string;
   groupClassName?: string;
-  orientation?: 'vertical' | 'horizontal' | 'responsive';
+  orientation?: "vertical" | "horizontal" | "responsive";
   showSeparator?: boolean;
   separatorText?: string;
 };
@@ -41,7 +41,7 @@ export function FormSection({
   legendClassName,
   descriptionClassName,
   groupClassName,
-  orientation = 'vertical',
+  orientation = "vertical",
   showSeparator = false,
   separatorText,
 }: FormSectionProps) {
@@ -49,11 +49,17 @@ export function FormSection({
     <FieldSet className={className}>
       <FieldGroup className={groupClassName} data-orientation={orientation}>
         <div className="space-y-2">
-          <FieldLegend className={cn('font-bold text-2xl tracking-tight', legendClassName)}>
+          <FieldLegend
+            className={cn("font-bold text-2xl tracking-tight", legendClassName)}
+          >
             {Icon && <Icon className="mr-3 mb-1 inline size-6 text-primary" />}
             {legend}
           </FieldLegend>
-          {description && <FieldDescription className={descriptionClassName}>{description}</FieldDescription>}
+          {description && (
+            <FieldDescription className={descriptionClassName}>
+              {description}
+            </FieldDescription>
+          )}
         </div>
 
         <FieldContent>{children}</FieldContent>
@@ -62,7 +68,11 @@ export function FormSection({
       </FieldGroup>
 
       {showSeparator && (
-        <FieldSeparator>{separatorText && <span className="font-medium text-xs">{separatorText}</span>}</FieldSeparator>
+        <FieldSeparator>
+          {separatorText && (
+            <span className="font-medium text-xs">{separatorText}</span>
+          )}
+        </FieldSeparator>
       )}
     </FieldSet>
   );

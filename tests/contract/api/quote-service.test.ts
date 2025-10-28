@@ -9,49 +9,49 @@
  */
 /** biome-ignore-all lint/style/noNonNullAssertion: <explanation> */
 
-import type { Manufacturer, PrismaClient } from '@prisma/client';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { CartItem } from '../../../src/types/cart.types';
-import type { GenerateQuoteInput } from '../../../src/types/quote.types';
+import type { Manufacturer, PrismaClient } from "@prisma/client";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { CartItem } from "../../../src/types/cart.types";
+import type { GenerateQuoteInput } from "../../../src/types/quote.types";
 
 const CLX_ID_REGEX = /^clx_/;
 
 const mockCartItems: CartItem[] = [
   {
-    additionalServiceIds: ['clx_service_123'],
-    createdAt: '2025-01-15T10:30:00.000Z',
+    additionalServiceIds: ["clx_service_123"],
+    createdAt: "2025-01-15T10:30:00.000Z",
     dimensions: {
       heightMm: 1500,
       widthMm: 1200,
     },
-    glassTypeId: 'clx_glass_123',
-    glassTypeName: 'Tempered 6mm',
+    glassTypeId: "clx_glass_123",
+    glassTypeName: "Tempered 6mm",
     heightMm: 1500,
-    id: 'clx_cart_item_1',
-    modelId: 'clx_model_123',
-    modelName: 'VEKA Sliding Window',
-    name: 'VEKA-001',
+    id: "clx_cart_item_1",
+    modelId: "clx_model_123",
+    modelName: "VEKA Sliding Window",
+    name: "VEKA-001",
     quantity: 2,
-    solutionId: 'clx_solution_123',
-    solutionName: 'Energy Saving',
+    solutionId: "clx_solution_123",
+    solutionName: "Energy Saving",
     subtotal: 30_001.0,
     unitPrice: 15_000.5,
     widthMm: 1200,
   },
   {
     additionalServiceIds: [],
-    createdAt: '2025-01-15T10:35:00.000Z',
+    createdAt: "2025-01-15T10:35:00.000Z",
     dimensions: {
       heightMm: 1200,
       widthMm: 800,
     },
-    glassTypeId: 'clx_glass_456',
-    glassTypeName: 'Laminated 8mm',
+    glassTypeId: "clx_glass_456",
+    glassTypeName: "Laminated 8mm",
     heightMm: 1200,
-    id: 'clx_cart_item_2',
-    modelId: 'clx_model_456',
-    modelName: 'Guardian Fixed Panel',
-    name: 'GUARDIAN-001',
+    id: "clx_cart_item_2",
+    modelId: "clx_model_456",
+    modelName: "Guardian Fixed Panel",
+    name: "GUARDIAN-001",
     quantity: 1,
     subtotal: 12_000.0,
     unitPrice: 12_000.0,
@@ -59,7 +59,7 @@ const mockCartItems: CartItem[] = [
   },
 ];
 
-describe('Contract: Quote Service Business Logic', () => {
+describe("Contract: Quote Service Business Logic", () => {
   // Mock Prisma client
   const _mockPrisma = {
     $transaction: vi.fn(),
@@ -78,30 +78,30 @@ describe('Contract: Quote Service Business Logic', () => {
   } as unknown as PrismaClient;
 
   const _mockManufacturer: Manufacturer = {
-    createdAt: new Date('2025-01-01'),
-    currency: 'COP',
-    id: 'clx_manufacturer_123',
-    name: 'VEKA Colombia',
+    createdAt: new Date("2025-01-01"),
+    currency: "COP",
+    id: "clx_manufacturer_123",
+    name: "VEKA Colombia",
     quoteValidityDays: 15,
-    updatedAt: new Date('2025-01-01'),
+    updatedAt: new Date("2025-01-01"),
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe('generateQuoteFromCart', () => {
-    it('should accept valid input and return quote with correct structure', () => {
+  describe("generateQuoteFromCart", () => {
+    it("should accept valid input and return quote with correct structure", () => {
       const input: GenerateQuoteInput = {
         cartItems: mockCartItems,
-        contactPhone: '+57 300 123 4567',
-        manufacturerId: 'clx_manufacturer_123',
+        contactPhone: "+57 300 123 4567",
+        manufacturerId: "clx_manufacturer_123",
         projectAddress: {
-          projectCity: 'Bogotá',
-          projectName: 'Residential Complex Phase 1',
-          projectPostalCode: '110111',
-          projectState: 'Cundinamarca',
-          projectStreet: 'Av. Principal 123',
+          projectCity: "Bogotá",
+          projectName: "Residential Complex Phase 1",
+          projectPostalCode: "110111",
+          projectState: "Cundinamarca",
+          projectStreet: "Av. Principal 123",
         },
       };
 
@@ -115,7 +115,7 @@ describe('Contract: Quote Service Business Logic', () => {
 
       // Validate input contract
       expect(input.cartItems).toHaveLength(2);
-      expect(input.projectAddress.projectStreet).toBe('Av. Principal 123');
+      expect(input.projectAddress.projectStreet).toBe("Av. Principal 123");
       expect(input.manufacturerId).toMatch(/^clx_/);
 
       // Validate output structure
@@ -124,16 +124,16 @@ describe('Contract: Quote Service Business Logic', () => {
       expect(expectedOutput.itemCount).toBe(2);
     });
 
-    it('should validate that cart items have valid references', () => {
+    it("should validate that cart items have valid references", () => {
       const input: GenerateQuoteInput = {
         cartItems: mockCartItems,
-        manufacturerId: 'clx_manufacturer_123',
+        manufacturerId: "clx_manufacturer_123",
         projectAddress: {
-          projectCity: 'Test City',
-          projectName: 'Test Project',
-          projectPostalCode: '12345',
-          projectState: 'Test State',
-          projectStreet: 'Test Street',
+          projectCity: "Test City",
+          projectName: "Test Project",
+          projectPostalCode: "12345",
+          projectState: "Test State",
+          projectStreet: "Test Street",
         },
       };
       // All cart items must have valid model and glass type IDs
@@ -147,50 +147,57 @@ describe('Contract: Quote Service Business Logic', () => {
     });
   });
 
-  it('should validate that validUntil is calculated correctly', () => {
-    const now = new Date('2025-01-15T10:00:00.000Z');
+  it("should validate that validUntil is calculated correctly", () => {
+    const now = new Date("2025-01-15T10:00:00.000Z");
     const quoteValidityDays = 15;
 
     // Calculate expected validUntil
     const expectedValidUntil = new Date(now);
-    expectedValidUntil.setDate(expectedValidUntil.getDate() + quoteValidityDays);
+    expectedValidUntil.setDate(
+      expectedValidUntil.getDate() + quoteValidityDays
+    );
 
     // Contract: validUntil should be exactly N days from creation
-    const daysDiff = Math.floor((expectedValidUntil.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    const daysDiff = Math.floor(
+      (expectedValidUntil.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+    );
 
     expect(daysDiff).toBe(quoteValidityDays);
   });
 
-  it('should validate that total equals sum of all item subtotals', () => {
+  it("should validate that total equals sum of all item subtotals", () => {
     const input: GenerateQuoteInput = {
       cartItems: mockCartItems,
-      manufacturerId: 'clx_manufacturer_123',
+      manufacturerId: "clx_manufacturer_123",
       projectAddress: {
-        projectCity: 'Test City',
-        projectName: 'Test Project',
-        projectPostalCode: '12345',
-        projectState: 'Test State',
-        projectStreet: 'Test Street',
+        projectCity: "Test City",
+        projectName: "Test Project",
+        projectPostalCode: "12345",
+        projectState: "Test State",
+        projectStreet: "Test Street",
       },
     };
 
     // Calculate expected total
-    const expectedTotal = input.cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+    const expectedTotal = input.cartItems.reduce(
+      (sum, item) => sum + item.subtotal,
+      0
+    );
 
     // Contract: quote total must match cart total
     expect(expectedTotal).toBe(42_001.0);
   });
 
-  it('should validate project address structure', () => {
+  it("should validate project address structure", () => {
     const input: GenerateQuoteInput = {
       cartItems: mockCartItems,
-      manufacturerId: 'clx_manufacturer_123',
+      manufacturerId: "clx_manufacturer_123",
       projectAddress: {
-        projectCity: 'Bogotá',
-        projectName: 'Residential Complex',
-        projectPostalCode: '110111',
-        projectState: 'Cundinamarca',
-        projectStreet: 'Av. Principal 123',
+        projectCity: "Bogotá",
+        projectName: "Residential Complex",
+        projectPostalCode: "110111",
+        projectState: "Cundinamarca",
+        projectStreet: "Av. Principal 123",
       },
     };
 
@@ -201,29 +208,29 @@ describe('Contract: Quote Service Business Logic', () => {
     expect(input.projectAddress.projectPostalCode).toBeTruthy();
   });
 
-  it('should handle optional fields correctly', () => {
+  it("should handle optional fields correctly", () => {
     const inputWithOptionals: GenerateQuoteInput = {
       cartItems: mockCartItems,
-      contactPhone: '+57 300 123 4567',
-      manufacturerId: 'clx_manufacturer_123',
+      contactPhone: "+57 300 123 4567",
+      manufacturerId: "clx_manufacturer_123",
       projectAddress: {
-        projectCity: 'Test City',
-        projectName: 'Test Project',
-        projectPostalCode: '12345',
-        projectState: 'Test State',
-        projectStreet: 'Test Street',
+        projectCity: "Test City",
+        projectName: "Test Project",
+        projectPostalCode: "12345",
+        projectState: "Test State",
+        projectStreet: "Test Street",
       },
     };
 
     const inputWithoutOptionals: GenerateQuoteInput = {
       cartItems: mockCartItems,
-      manufacturerId: 'clx_manufacturer_123',
+      manufacturerId: "clx_manufacturer_123",
       projectAddress: {
-        projectCity: 'Test City',
-        projectName: 'Test Project',
-        projectPostalCode: '12345',
-        projectState: 'Test State',
-        projectStreet: 'Test Street',
+        projectCity: "Test City",
+        projectName: "Test Project",
+        projectPostalCode: "12345",
+        projectState: "Test State",
+        projectStreet: "Test Street",
       },
     };
 
@@ -232,19 +239,19 @@ describe('Contract: Quote Service Business Logic', () => {
     expect(inputWithoutOptionals.contactPhone).toBeUndefined();
   });
 
-  it('should validate cart item name uniqueness within quote', () => {
+  it("should validate cart item name uniqueness within quote", () => {
     const duplicateNamesInput: GenerateQuoteInput = {
       cartItems: [
-        { ...(mockCartItems[0] ?? {}), name: 'VEKA-001' },
-        { ...(mockCartItems[1] ?? {}), name: 'VEKA-001' }, // Duplicate name
+        { ...(mockCartItems[0] ?? {}), name: "VEKA-001" },
+        { ...(mockCartItems[1] ?? {}), name: "VEKA-001" }, // Duplicate name
       ],
-      manufacturerId: 'clx_manufacturer_123',
+      manufacturerId: "clx_manufacturer_123",
       projectAddress: {
-        projectCity: 'Test City',
-        projectName: 'Test Project',
-        projectPostalCode: '12345',
-        projectState: 'Test State',
-        projectStreet: 'Test Street',
+        projectCity: "Test City",
+        projectName: "Test Project",
+        projectPostalCode: "12345",
+        projectState: "Test State",
+        projectStreet: "Test Street",
       },
     };
 
@@ -255,16 +262,16 @@ describe('Contract: Quote Service Business Logic', () => {
     expect(names.length).not.toBe(uniqueNames.size);
   });
 
-  it('should validate quantity and subtotal relationship', () => {
+  it("should validate quantity and subtotal relationship", () => {
     const input: GenerateQuoteInput = {
       cartItems: mockCartItems,
-      manufacturerId: 'clx_manufacturer_123',
+      manufacturerId: "clx_manufacturer_123",
       projectAddress: {
-        projectCity: 'Test City',
-        projectName: 'Test Project',
-        projectPostalCode: '12345',
-        projectState: 'Test State',
-        projectStreet: 'Test Street',
+        projectCity: "Test City",
+        projectName: "Test Project",
+        projectPostalCode: "12345",
+        projectState: "Test State",
+        projectStreet: "Test Street",
       },
     };
 
@@ -275,17 +282,17 @@ describe('Contract: Quote Service Business Logic', () => {
   });
 });
 
-describe('Error Scenarios', () => {
-  it('should validate empty cart rejection', () => {
+describe("Error Scenarios", () => {
+  it("should validate empty cart rejection", () => {
     const emptyCartInput: GenerateQuoteInput = {
       cartItems: [],
-      manufacturerId: 'clx_manufacturer_123',
+      manufacturerId: "clx_manufacturer_123",
       projectAddress: {
-        projectCity: 'Test City',
-        projectName: 'Test Project',
-        projectPostalCode: '12345',
-        projectState: 'Test State',
-        projectStreet: 'Test Street',
+        projectCity: "Test City",
+        projectName: "Test Project",
+        projectPostalCode: "12345",
+        projectState: "Test State",
+        projectStreet: "Test Street",
       },
     };
 
@@ -293,16 +300,16 @@ describe('Error Scenarios', () => {
     expect(emptyCartInput.cartItems).toHaveLength(0);
   });
 
-  it('should validate invalid manufacturer ID', () => {
+  it("should validate invalid manufacturer ID", () => {
     const invalidManufacturerInput: GenerateQuoteInput = {
       cartItems: mockCartItems,
-      manufacturerId: 'invalid-id',
+      manufacturerId: "invalid-id",
       projectAddress: {
-        projectCity: 'Test City',
-        projectName: 'Test Project',
-        projectPostalCode: '12345',
-        projectState: 'Test State',
-        projectStreet: 'Test Street',
+        projectCity: "Test City",
+        projectName: "Test Project",
+        projectPostalCode: "12345",
+        projectState: "Test State",
+        projectStreet: "Test Street",
       },
     };
 
@@ -310,7 +317,7 @@ describe('Error Scenarios', () => {
     expect(invalidManufacturerInput.manufacturerId).not.toMatch(/^clx_/);
   });
 
-  it('should validate negative prices rejection', () => {
+  it("should validate negative prices rejection", () => {
     const negativePriceItem: CartItem = {
       ...mockCartItems[0]!,
       subtotal: -200,
@@ -322,7 +329,7 @@ describe('Error Scenarios', () => {
     expect(negativePriceItem.subtotal).toBeLessThan(0);
   });
 
-  it('should validate zero quantity rejection', () => {
+  it("should validate zero quantity rejection", () => {
     const zeroQuantityItem: CartItem = {
       ...mockCartItems[0]!,
       quantity: 0,
@@ -334,8 +341,8 @@ describe('Error Scenarios', () => {
   });
 });
 
-describe('Data Transformation', () => {
-  it('should validate cart item to quote item transformation', () => {
+describe("Data Transformation", () => {
+  it("should validate cart item to quote item transformation", () => {
     const cartItem = mockCartItems[0]!;
 
     // Contract: CartItem fields should map to QuoteItem fields
@@ -349,21 +356,21 @@ describe('Data Transformation', () => {
       widthMm: cartItem.widthMm, // Dimensions preserved
     };
 
-    expect(quoteItemStructure.name).toBe('VEKA-001');
+    expect(quoteItemStructure.name).toBe("VEKA-001");
     expect(quoteItemStructure.quantity).toBe(2);
     expect(quoteItemStructure.subtotal).toBe(30_001.0);
   });
 
-  it('should validate project address transformation', () => {
+  it("should validate project address transformation", () => {
     const input: GenerateQuoteInput = {
       cartItems: mockCartItems,
-      manufacturerId: 'clx_manufacturer_123',
+      manufacturerId: "clx_manufacturer_123",
       projectAddress: {
-        projectCity: 'Bogotá',
-        projectName: 'Residential Complex Phase 1',
-        projectPostalCode: '110111',
-        projectState: 'Cundinamarca',
-        projectStreet: 'Av. Principal 123',
+        projectCity: "Bogotá",
+        projectName: "Residential Complex Phase 1",
+        projectPostalCode: "110111",
+        projectState: "Cundinamarca",
+        projectStreet: "Av. Principal 123",
       },
     };
 
@@ -376,8 +383,8 @@ describe('Data Transformation', () => {
       projectStreet: input.projectAddress.projectStreet,
     };
 
-    expect(quoteProjectFields.projectName).toBe('Residential Complex Phase 1');
-    expect(quoteProjectFields.projectStreet).toBe('Av. Principal 123');
-    expect(quoteProjectFields.projectCity).toBe('Bogotá');
+    expect(quoteProjectFields.projectName).toBe("Residential Complex Phase 1");
+    expect(quoteProjectFields.projectStreet).toBe("Av. Principal 123");
+    expect(quoteProjectFields.projectCity).toBe("Bogotá");
   });
 });

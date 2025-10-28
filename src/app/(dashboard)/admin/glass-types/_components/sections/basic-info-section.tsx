@@ -15,26 +15,33 @@
  * @module _components/sections/basic-info-section
  */
 
-'use client';
+"use client";
 
-import type { Control, FieldValues } from 'react-hook-form';
-import { Card, CardContent } from '@/components/ui/card';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { FormCheckboxField } from '../form-fields/form-checkbox-field';
-import { FormNumberField } from '../form-fields/form-number-field';
-import { FormSelectField } from '../form-fields/form-select-field';
-import { FormTextareaField } from '../form-fields/form-textarea-field';
+import type { Control, FieldValues } from "react-hook-form";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { FormCheckboxField } from "../form-fields/form-checkbox-field";
+import { FormNumberField } from "../form-fields/form-number-field";
+import { FormSelectField } from "../form-fields/form-select-field";
+import { FormTextareaField } from "../form-fields/form-textarea-field";
 
 interface BasicInfoSectionProps {
   control: Control<FieldValues>;
 }
 
 const PURPOSE_OPTIONS = [
-  { label: 'General', value: 'general' },
-  { label: 'Aislamiento', value: 'insulation' },
-  { label: 'Seguridad', value: 'security' },
-  { label: 'Decorativo', value: 'decorative' },
+  { label: "General", value: "general" },
+  { label: "Aislamiento", value: "insulation" },
+  { label: "Seguridad", value: "security" },
+  { label: "Decorativo", value: "decorative" },
 ];
 
 /**
@@ -45,7 +52,14 @@ export function BasicInfoSection({ control }: BasicInfoSectionProps) {
     <Card>
       <CardContent className="grid gap-4 pt-6 md:grid-cols-2">
         {/* Switch placed in the top-right cell */}
-        <div style={{ alignSelf: 'start', gridColumnStart: 2, gridRowStart: 1, justifySelf: 'end' }}>
+        <div
+          style={{
+            alignSelf: "start",
+            gridColumnStart: 2,
+            gridRowStart: 1,
+            justifySelf: "end",
+          }}
+        >
           <FormCheckboxField
             control={control}
             description="El tipo de vidrio está disponible para selección"
@@ -63,7 +77,9 @@ export function BasicInfoSection({ control }: BasicInfoSectionProps) {
               <FormControl>
                 <Input placeholder="Ej: Vidrio Templado 6mm" {...field} />
               </FormControl>
-              <FormDescription>Nombre descriptivo del tipo de vidrio</FormDescription>
+              <FormDescription>
+                Nombre descriptivo del tipo de vidrio
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -110,7 +126,11 @@ export function BasicInfoSection({ control }: BasicInfoSectionProps) {
             <FormItem>
               <FormLabel>SKU</FormLabel>
               <FormControl>
-                <Input placeholder="Ej: VT-6MM-001" {...field} value={field.value ?? ''} />
+                <Input
+                  placeholder="Ej: VT-6MM-001"
+                  {...field}
+                  value={field.value ?? ""}
+                />
               </FormControl>
               <FormDescription>Código del proveedor (opcional)</FormDescription>
               <FormMessage />

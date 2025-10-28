@@ -8,9 +8,9 @@
  * @module app/(dashboard)/quotes/_components/quote-status-badge
  */
 
-import type { QuoteStatus } from '@prisma/client';
-import { FileText, Send, XCircle } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import type { QuoteStatus } from "@prisma/client";
+import { FileText, Send, XCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface QuoteStatusBadgeProps {
   status: QuoteStatus;
@@ -23,23 +23,23 @@ interface QuoteStatusBadgeProps {
 const statusConfig = {
   canceled: {
     icon: XCircle,
-    label: 'Cancelada',
-    variant: 'destructive' as const,
+    label: "Cancelada",
+    variant: "destructive" as const,
   },
   draft: {
     icon: FileText,
-    label: 'Borrador',
-    variant: 'secondary' as const,
+    label: "Borrador",
+    variant: "secondary" as const,
   },
   sent: {
     icon: Send,
-    label: 'Enviada',
-    variant: 'default' as const,
+    label: "Enviada",
+    variant: "default" as const,
   },
 } satisfies Record<
   QuoteStatus,
   {
-    variant: 'default' | 'secondary' | 'destructive' | 'outline';
+    variant: "default" | "secondary" | "destructive" | "outline";
     label: string;
     icon: React.ComponentType<{ className?: string }>;
   }

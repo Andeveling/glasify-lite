@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import type { Quote } from '@prisma/client';
-import { Send } from 'lucide-react';
-import { useState } from 'react';
-import { ContactInfoModal } from '@/app/_components/contact-info-modal';
-import { Button } from '@/components/ui/button';
-import { useSendQuote } from '@/hooks/use-send-quote';
+import type { Quote } from "@prisma/client";
+import { Send } from "lucide-react";
+import { useState } from "react";
+import { ContactInfoModal } from "@/app/_components/contact-info-modal";
+import { Button } from "@/components/ui/button";
+import { useSendQuote } from "@/hooks/use-send-quote";
 
 interface SendQuoteButtonProps {
-  quote: Pick<Quote, 'id' | 'status' | 'contactPhone'>;
+  quote: Pick<Quote, "id" | "status" | "contactPhone">;
 }
 
 /**
@@ -20,7 +20,7 @@ export function SendQuoteButton({ quote }: SendQuoteButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { mutate: sendQuote, isPending } = useSendQuote();
   // Only show button for draft quotes
-  if (quote.status !== 'draft') {
+  if (quote.status !== "draft") {
     return null;
   }
 
@@ -28,7 +28,10 @@ export function SendQuoteButton({ quote }: SendQuoteButtonProps) {
     setIsModalOpen(true);
   };
 
-  const handleConfirmSend = (data: { contactPhone: string; contactEmail?: string }) => {
+  const handleConfirmSend = (data: {
+    contactPhone: string;
+    contactEmail?: string;
+  }) => {
     sendQuote(
       {
         contactEmail: data.contactEmail,
@@ -45,14 +48,19 @@ export function SendQuoteButton({ quote }: SendQuoteButtonProps) {
 
   return (
     <>
-      <Button className="gap-2" disabled={isPending} onClick={handleSendClick} size="lg">
+      <Button
+        className="gap-2"
+        disabled={isPending}
+        onClick={handleSendClick}
+        size="lg"
+      >
         <Send className="h-4 w-4" />
-        {isPending ? 'Enviando...' : 'Enviar Cotización'}
+        {isPending ? "Enviando..." : "Enviar Cotización"}
       </Button>
 
       <ContactInfoModal
         defaultValues={{
-          contactPhone: quote.contactPhone ?? '',
+          contactPhone: quote.contactPhone ?? "",
         }}
         isLoading={isPending}
         onClose={() => setIsModalOpen(false)}

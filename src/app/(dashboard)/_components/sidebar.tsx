@@ -1,7 +1,7 @@
-import { FileText, Home, LogOut, Package, Settings } from 'lucide-react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import { FileText, Home, LogOut, Package, Settings } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
   SidebarContent,
@@ -13,31 +13,31 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar';
-import type { auth } from '@/server/auth';
+} from "@/components/ui/sidebar";
+import type { auth } from "@/server/auth";
 
 type Session = Awaited<ReturnType<typeof auth.api.getSession>>;
 
 const sidebarNavItems = [
   {
-    href: '/dashboard',
+    href: "/dashboard",
     icon: Home,
-    title: 'Panel Principal',
+    title: "Panel Principal",
   },
   {
-    href: '/dashboard/models',
+    href: "/dashboard/models",
     icon: Package,
-    title: 'Modelos',
+    title: "Modelos",
   },
   {
-    href: '/dashboard/quotes',
+    href: "/dashboard/quotes",
     icon: FileText,
-    title: 'Cotizaciones',
+    title: "Cotizaciones",
   },
   {
-    href: '/dashboard/settings',
+    href: "/dashboard/settings",
     icon: Settings,
-    title: 'Configuración',
+    title: "Configuración",
   },
 ];
 
@@ -80,20 +80,29 @@ export default function DashboardSidebar({ session }: DashboardSidebarProps) {
             <div className="px-2 py-2">
               <div className="mb-2 flex items-center space-x-4">
                 <div className="flex-1">
-                  <p className="font-medium text-sm leading-none">{session?.user?.name ?? session?.user?.email}</p>
-                  <p className="text-muted-foreground text-xs leading-none">Administrador</p>
+                  <p className="font-medium text-sm leading-none">
+                    {session?.user?.name ?? session?.user?.email}
+                  </p>
+                  <p className="text-muted-foreground text-xs leading-none">
+                    Administrador
+                  </p>
                 </div>
               </div>
               <Separator className="my-2" />
               <form
                 action={async () => {
-                  'use server';
-                  const { auth: betterAuth } = await import('@/server/auth');
-                  const { headers } = await import('next/headers');
+                  "use server";
+                  const { auth: betterAuth } = await import("@/server/auth");
+                  const { headers } = await import("next/headers");
                   await betterAuth.api.signOut({ headers: await headers() });
                 }}
               >
-                <Button className="w-full justify-start" size="sm" type="submit" variant="ghost">
+                <Button
+                  className="w-full justify-start"
+                  size="sm"
+                  type="submit"
+                  variant="ghost"
+                >
                   <LogOut className="h-4 w-4" />
                   <span>Cerrar Sesión</span>
                 </Button>

@@ -5,15 +5,15 @@
  * Follows Single Responsibility Principle - renders one model row
  */
 
-'use client';
+"use client";
 
-import type { MaterialType, ModelStatus } from '@prisma/client';
-import { Pencil, Trash2 } from 'lucide-react';
-import Link from 'next/link';
-import { useCurrencyFormatter } from '@/app/_hooks/use-currency-formatter';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { TableCell, TableRow } from '@/components/ui/table';
+import type { MaterialType, ModelStatus } from "@prisma/client";
+import { Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useCurrencyFormatter } from "@/app/_hooks/use-currency-formatter";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { TableCell, TableRow } from "@/components/ui/table";
 
 type ModelData = {
   id: string;
@@ -38,14 +38,16 @@ type ModelTableRowProps = {
 };
 
 const statusLabels: Record<ModelStatus, string> = {
-  draft: 'Borrador',
-  published: 'Publicado',
+  draft: "Borrador",
+  published: "Publicado",
 };
 
-const getStatusVariant = (status: ModelStatus): 'default' | 'secondary' | 'outline' => {
-  if (status === 'published') return 'default';
-  if (status === 'draft') return 'secondary';
-  return 'outline';
+const getStatusVariant = (
+  status: ModelStatus
+): "default" | "secondary" | "outline" => {
+  if (status === "published") return "default";
+  if (status === "draft") return "secondary";
+  return "outline";
 };
 
 export function ModelTableRow({ model, onDeleteClick }: ModelTableRowProps) {
@@ -69,13 +71,19 @@ export function ModelTableRow({ model, onDeleteClick }: ModelTableRowProps) {
       </TableCell>
       <TableCell className="text-sm">{formatPrice(model.basePrice)}</TableCell>
       <TableCell className="text-sm">
-        {model.profileSupplier?.name || <span className="text-muted-foreground">Sin proveedor</span>}
+        {model.profileSupplier?.name || (
+          <span className="text-muted-foreground">Sin proveedor</span>
+        )}
       </TableCell>
       <TableCell>
-        <Badge variant="secondary">{model.compatibleGlassTypeIds.length} tipos</Badge>
+        <Badge variant="secondary">
+          {model.compatibleGlassTypeIds.length} tipos
+        </Badge>
       </TableCell>
       <TableCell>
-        <Badge variant={getStatusVariant(model.status)}>{statusLabels[model.status]}</Badge>
+        <Badge variant={getStatusVariant(model.status)}>
+          {statusLabels[model.status]}
+        </Badge>
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-2">
@@ -85,7 +93,11 @@ export function ModelTableRow({ model, onDeleteClick }: ModelTableRowProps) {
               <span className="sr-only">Editar</span>
             </Link>
           </Button>
-          <Button onClick={() => onDeleteClick(model.id, model.name)} size="icon" variant="ghost">
+          <Button
+            onClick={() => onDeleteClick(model.id, model.name)}
+            size="icon"
+            variant="ghost"
+          >
             <Trash2 className="size-4 text-destructive" />
             <span className="sr-only">Eliminar</span>
           </Button>

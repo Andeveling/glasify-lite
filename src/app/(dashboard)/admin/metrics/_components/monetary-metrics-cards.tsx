@@ -1,9 +1,15 @@
-'use client';
+"use client";
 
-import { TrendingDown, TrendingUp } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatCurrency, formatPercent } from '@/lib/format';
-import type { MonetaryMetrics } from '@/types/dashboard';
+import { TrendingDown, TrendingUp } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { formatCurrency, formatPercent } from "@/lib/format";
+import type { MonetaryMetrics } from "@/types/dashboard";
 
 interface MonetaryMetricsCardsProps {
   /**
@@ -44,12 +50,15 @@ interface MonetaryMetricsCardsProps {
  * />
  * ```
  */
-export function MonetaryMetricsCards({ data, tenantConfig }: MonetaryMetricsCardsProps) {
+export function MonetaryMetricsCards({
+  data,
+  tenantConfig,
+}: MonetaryMetricsCardsProps) {
   const { totalValue, averageValue, percentageChange } = data;
 
   const isPositiveTrend = percentageChange >= 0;
   const TrendIcon = isPositiveTrend ? TrendingUp : TrendingDown;
-  const trendColor = isPositiveTrend ? 'text-green-600' : 'text-red-600';
+  const trendColor = isPositiveTrend ? "text-green-600" : "text-red-600";
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -76,10 +85,16 @@ export function MonetaryMetricsCards({ data, tenantConfig }: MonetaryMetricsCard
           </svg>
         </CardHeader>
         <CardContent>
-          <div className="font-bold text-2xl">{formatCurrency(totalValue, { context: tenantConfig })}</div>
+          <div className="font-bold text-2xl">
+            {formatCurrency(totalValue, { context: tenantConfig })}
+          </div>
           <div className="mt-1 flex items-center gap-1 text-muted-foreground text-xs">
             <TrendIcon className={`h-4 w-4 ${trendColor}`} />
-            <span className={trendColor}>{formatPercent(Math.abs(percentageChange), { context: tenantConfig })}</span>
+            <span className={trendColor}>
+              {formatPercent(Math.abs(percentageChange), {
+                context: tenantConfig,
+              })}
+            </span>
             <span>vs período anterior</span>
           </div>
         </CardContent>
@@ -110,8 +125,12 @@ export function MonetaryMetricsCards({ data, tenantConfig }: MonetaryMetricsCard
           </svg>
         </CardHeader>
         <CardContent>
-          <div className="font-bold text-2xl">{formatCurrency(averageValue, { context: tenantConfig })}</div>
-          <CardDescription className="mt-1">Valor promedio por cotización</CardDescription>
+          <div className="font-bold text-2xl">
+            {formatCurrency(averageValue, { context: tenantConfig })}
+          </div>
+          <CardDescription className="mt-1">
+            Valor promedio por cotización
+          </CardDescription>
         </CardContent>
       </Card>
     </div>

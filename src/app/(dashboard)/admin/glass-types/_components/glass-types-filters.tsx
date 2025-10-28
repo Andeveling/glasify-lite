@@ -19,13 +19,16 @@
  * - Receives suppliers from server (fetched outside Suspense)
  */
 
-'use client';
+"use client";
 
-import { Plus } from 'lucide-react';
-import Link from 'next/link';
-import { type FilterDefinition, TableFilters } from '@/app/_components/server-table/table-filters';
-import { TableSearch } from '@/app/_components/server-table/table-search';
-import { Button } from '@/components/ui/button';
+import { Plus } from "lucide-react";
+import Link from "next/link";
+import {
+  type FilterDefinition,
+  TableFilters,
+} from "@/app/_components/server-table/table-filters";
+import { TableSearch } from "@/app/_components/server-table/table-search";
+import { Button } from "@/components/ui/button";
 
 /**
  * Supplier data type
@@ -46,41 +49,47 @@ type GlassTypesFiltersProps = {
   suppliers: Supplier[];
 };
 
-export function GlassTypesFilters({ searchParams, suppliers }: GlassTypesFiltersProps) {
+export function GlassTypesFilters({
+  searchParams,
+  suppliers,
+}: GlassTypesFiltersProps) {
   /**
    * Filter definitions
    */
   const filters: FilterDefinition[] = [
     {
-      defaultValue: 'all',
-      id: 'purpose',
-      label: 'Propósito',
+      defaultValue: "all",
+      id: "purpose",
+      label: "Propósito",
       options: [
-        { label: 'Todos', value: 'all' },
-        { label: 'General', value: 'general' },
-        { label: 'Aislamiento', value: 'insulation' },
-        { label: 'Seguridad', value: 'security' },
-        { label: 'Decorativo', value: 'decorative' },
+        { label: "Todos", value: "all" },
+        { label: "General", value: "general" },
+        { label: "Aislamiento", value: "insulation" },
+        { label: "Seguridad", value: "security" },
+        { label: "Decorativo", value: "decorative" },
       ],
-      type: 'select',
+      type: "select",
     },
     {
-      defaultValue: 'all',
-      id: 'glassSupplierId',
-      label: 'Proveedor de Vidrio',
-      options: [{ label: 'Todos', value: 'all' }, ...suppliers.map((s) => ({ label: s.name, value: s.id }))],
-      type: 'select',
+      defaultValue: "all",
+      id: "glassSupplierId",
+      label: "Proveedor de Vidrio",
+      options: [
+        { label: "Todos", value: "all" },
+        ...suppliers.map((s) => ({ label: s.name, value: s.id })),
+      ],
+      type: "select",
     },
     {
-      defaultValue: 'all',
-      id: 'isActive',
-      label: 'Estado',
+      defaultValue: "all",
+      id: "isActive",
+      label: "Estado",
       options: [
-        { label: 'Todos', value: 'all' },
-        { label: 'Activo', value: 'active' },
-        { label: 'Inactivo', value: 'inactive' },
+        { label: "Todos", value: "all" },
+        { label: "Activo", value: "active" },
+        { label: "Inactivo", value: "inactive" },
       ],
-      type: 'select',
+      type: "select",
     },
   ];
 
@@ -88,7 +97,10 @@ export function GlassTypesFilters({ searchParams, suppliers }: GlassTypesFilters
     <div className="flex flex-wrap items-end justify-between gap-4">
       {/* Search */}
       <div className="max-w-sm flex-1">
-        <TableSearch defaultValue={searchParams.search} placeholder="Buscar por nombre, SKU o descripción..." />
+        <TableSearch
+          defaultValue={searchParams.search}
+          placeholder="Buscar por nombre, SKU o descripción..."
+        />
       </div>
 
       {/* Filters */}

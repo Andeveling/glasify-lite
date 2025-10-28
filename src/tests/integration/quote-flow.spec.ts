@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { testServer } from '../integration-setup';
+import { describe, expect, it } from "vitest";
+import { testServer } from "../integration-setup";
 
 // Constants for testing
 const QUOTE_CALCULATION_PERFORMANCE_SLA_MS = 200;
@@ -10,12 +10,12 @@ const BASE_HEIGHT_MM = 800;
 const WIDTH_INCREMENT_MM = 200;
 const HEIGHT_INCREMENT_MM = 100;
 
-describe('Integration: Quote Creation Flow', () => {
-  it('should complete full quote creation flow', async () => {
+describe("Integration: Quote Creation Flow", () => {
+  it("should complete full quote creation flow", async () => {
     // Setup test data
-    const modelId = 'cm1model123def456ghi789jkl';
-    const glassTypeId = 'cm1glass123def456ghi789jkl';
-    const serviceId = 'cm1service123def456ghi789jkl';
+    const modelId = "cm1model123def456ghi789jkl";
+    const glassTypeId = "cm1glass123def456ghi789jkl";
+    const serviceId = "cm1service123def456ghi789jkl";
 
     const quoteItemData = {
       glassTypeId,
@@ -27,25 +27,25 @@ describe('Integration: Quote Creation Flow', () => {
     };
 
     // Act 1: Calculate item price (first step in quote flow)
-    const calculation = await testServer.quote['calculate-item'](quoteItemData);
+    const calculation = await testServer.quote["calculate-item"](quoteItemData);
 
     // Assert 1: Calculation should return valid price structure
     expect(calculation).toBeDefined();
-    expect(calculation).toHaveProperty('subtotal');
-    expect(typeof calculation.subtotal).toBe('number');
+    expect(calculation).toHaveProperty("subtotal");
+    expect(typeof calculation.subtotal).toBe("number");
     expect(calculation.subtotal).toBeGreaterThan(0);
 
     // Act 2: Add item to quote (second step in quote flow)
-    const addItemResult = await testServer.quote['add-item'](quoteItemData);
+    const addItemResult = await testServer.quote["add-item"](quoteItemData);
 
     // Assert 2: Item should be added successfully
     expect(addItemResult).toBeDefined();
-    expect(addItemResult).toHaveProperty('quoteId');
-    expect(addItemResult).toHaveProperty('itemId');
-    expect(addItemResult).toHaveProperty('subtotal');
+    expect(addItemResult).toHaveProperty("quoteId");
+    expect(addItemResult).toHaveProperty("itemId");
+    expect(addItemResult).toHaveProperty("subtotal");
     expect(addItemResult.quoteId).toMatch(VALID_CUID_REGEX);
     expect(addItemResult.itemId).toMatch(VALID_CUID_REGEX);
-    expect(typeof addItemResult.subtotal).toBe('number');
+    expect(typeof addItemResult.subtotal).toBe("number");
 
     // Act 3: Add second item to existing quote
     const secondItemPayload = {
@@ -55,7 +55,8 @@ describe('Integration: Quote Creation Flow', () => {
       widthMm: 1200,
     };
 
-    const secondItemResult = await testServer.quote['add-item'](secondItemPayload);
+    const secondItemResult =
+      await testServer.quote["add-item"](secondItemPayload);
 
     // Assert 3: Should use same quote but different item
     expect(secondItemResult.quoteId).toBe(addItemResult.quoteId);
@@ -65,8 +66,8 @@ describe('Integration: Quote Creation Flow', () => {
     // Act 4: Submit complete quote (final step)
     const submitData = {
       contact: {
-        address: 'Calle 123 #45-67, Bogotá, Colombia',
-        phone: '+57 300 123 4567',
+        address: "Calle 123 #45-67, Bogotá, Colombia",
+        phone: "+57 300 123 4567",
       },
       quoteId: addItemResult.quoteId,
     };
@@ -75,23 +76,23 @@ describe('Integration: Quote Creation Flow', () => {
 
     // Assert 4: Quote should be submitted successfully
     expect(submitResult).toBeDefined();
-    expect(submitResult).toHaveProperty('quoteId', addItemResult.quoteId);
-    expect(submitResult).toHaveProperty('status', 'sent');
+    expect(submitResult).toHaveProperty("quoteId", addItemResult.quoteId);
+    expect(submitResult).toHaveProperty("status", "sent");
   });
 
-  it('should handle quote calculation performance requirements', async () => {
+  it("should handle quote calculation performance requirements", async () => {
     const quoteItemData = {
-      glassTypeId: 'cm1glass123def456ghi789jkl',
+      glassTypeId: "cm1glass123def456ghi789jkl",
       heightMm: 1200,
-      modelId: 'cm1model123def456ghi789jkl',
+      modelId: "cm1model123def456ghi789jkl",
       quantity: 1,
-      services: [{ quantity: 2, serviceId: 'cm1service123def456ghi789jkl' }],
+      services: [{ quantity: 2, serviceId: "cm1service123def456ghi789jkl" }],
       widthMm: 1500,
     };
 
     // Act: Measure calculation response time
     const startTime = performance.now();
-    const calculation = await testServer.quote['calculate-item'](quoteItemData);
+    const calculation = await testServer.quote["calculate-item"](quoteItemData);
     const endTime = performance.now();
     const responseTime = endTime - startTime;
 
@@ -100,39 +101,40 @@ describe('Integration: Quote Creation Flow', () => {
     expect(calculation.subtotal).toBeGreaterThan(0);
   });
 
-  it('should validate quote creation with services and adjustments', async () => {
+  it("should validate quote creation with services and adjustments", async () => {
     // This test validates the complex pricing scenarios
     // that the quote UI needs to handle
 
     const complexQuoteData = {
       adjustments: [
         {
-          concept: 'Descuento cliente frecuente',
-          sign: 'negative' as const,
-          unit: 'sqm' as const,
+          concept: "Descuento cliente frecuente",
+          sign: "negative" as const,
+          unit: "sqm" as const,
           value: 5,
         },
       ],
-      glassTypeId: 'cm1glass123def456ghi789jkl',
+      glassTypeId: "cm1glass123def456ghi789jkl",
       heightMm: 1500,
-      modelId: 'cm1model123def456ghi789jkl',
+      modelId: "cm1model123def456ghi789jkl",
       quantity: 1,
       services: [
-        { quantity: 1, serviceId: 'cm1service123def456ghi789jkl' },
-        { quantity: 2, serviceId: 'cm1service456ghi789jkldef' },
+        { quantity: 1, serviceId: "cm1service123def456ghi789jkl" },
+        { quantity: 2, serviceId: "cm1service456ghi789jkldef" },
       ],
       widthMm: 1800,
     };
 
     // Act: Calculate complex quote
-    const calculation = await testServer.quote['calculate-item'](complexQuoteData);
+    const calculation =
+      await testServer.quote["calculate-item"](complexQuoteData);
 
     // Assert: Should handle complex pricing correctly
     expect(calculation).toBeDefined();
     expect(calculation.subtotal).toBeGreaterThan(0);
 
     // Act: Add complex item to quote
-    const result = await testServer.quote['add-item'](complexQuoteData);
+    const result = await testServer.quote["add-item"](complexQuoteData);
 
     // Assert: Should create quote with complex pricing
     expect(result.quoteId).toMatch(VALID_CUID_REGEX);
@@ -140,25 +142,26 @@ describe('Integration: Quote Creation Flow', () => {
     expect(result.subtotal).toBeGreaterThan(0);
   });
 
-  it('should handle quote state management across multiple operations', async () => {
+  it("should handle quote state management across multiple operations", async () => {
     // This test validates that quote state is maintained
     // during the multi-step UI flow
 
     const baseItemData = {
-      glassTypeId: 'cm1glass123def456ghi789jkl',
+      glassTypeId: "cm1glass123def456ghi789jkl",
       heightMm: 800,
-      modelId: 'cm1model123def456ghi789jkl',
+      modelId: "cm1model123def456ghi789jkl",
       quantity: 1,
-      services: [{ quantity: 1, serviceId: 'cm1service123def456ghi789jkl' }],
+      services: [{ quantity: 1, serviceId: "cm1service123def456ghi789jkl" }],
       widthMm: 1000,
     };
 
     // Step 1: Create initial quote
-    const firstItem = await testServer.quote['add-item'](baseItemData);
+    const firstItem = await testServer.quote["add-item"](baseItemData);
     const quoteId = firstItem.quoteId;
 
     // Step 2: Add multiple items to same quote
-    const items: Array<{ quoteId: string; itemId: string; subtotal: number }> = [];
+    const items: Array<{ quoteId: string; itemId: string; subtotal: number }> =
+      [];
     for (let i = 0; i < MULTIPLE_ITEMS_COUNT; i++) {
       const itemData = {
         ...baseItemData,
@@ -167,7 +170,7 @@ describe('Integration: Quote Creation Flow', () => {
         widthMm: BASE_WIDTH_MM + i * WIDTH_INCREMENT_MM,
       };
 
-      const result = await testServer.quote['add-item'](itemData);
+      const result = await testServer.quote["add-item"](itemData);
       items.push(result);
 
       // Assert: All items belong to same quote
@@ -183,14 +186,14 @@ describe('Integration: Quote Creation Flow', () => {
     // Step 3: Submit consolidated quote
     const submitResult = await testServer.quote.submit({
       contact: {
-        address: 'Calle 123 #45-67, Bogotá, Colombia',
-        phone: '+57 300 123 4567',
+        address: "Calle 123 #45-67, Bogotá, Colombia",
+        phone: "+57 300 123 4567",
       },
       quoteId,
     });
 
     // Assert: Quote submitted successfully with all items
-    expect(submitResult.status).toBe('sent');
+    expect(submitResult.status).toBe("sent");
     expect(submitResult.quoteId).toBe(quoteId);
   });
 });

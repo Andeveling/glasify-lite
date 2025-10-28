@@ -1,16 +1,27 @@
-'use client';
+"use client";
 
-import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { formatNumber } from '@/lib/format';
-import type { TrendDataPoint } from '@/types/dashboard';
-import { EmptyDashboardState } from './empty-dashboard-state';
+import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { formatNumber } from "@/lib/format";
+import type { TrendDataPoint } from "@/types/dashboard";
+import { EmptyDashboardState } from "./empty-dashboard-state";
 
 const chartConfig = {
   count: {
-    color: 'var(--chart-1)',
-    label: 'Cotizaciones',
+    color: "var(--chart-1)",
+    label: "Cotizaciones",
   },
 } satisfies ChartConfig;
 
@@ -74,12 +85,17 @@ export function QuotesTrendChart({ data, periodLabel }: QuotesTrendChartProps) {
         <div className="flex">
           <div className="flex flex-1 flex-col justify-center gap-1 border-t border-l px-6 py-4 text-left sm:border-t-0 sm:px-8 sm:py-6">
             <span className="text-muted-foreground text-xs">Total</span>
-            <span className="font-bold text-lg leading-none sm:text-3xl">{formatNumber(total)}</span>
+            <span className="font-bold text-lg leading-none sm:text-3xl">
+              {formatNumber(total)}
+            </span>
           </div>
         </div>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
-        <ChartContainer className="aspect-auto h-[250px] w-full" config={chartConfig}>
+        <ChartContainer
+          className="aspect-auto h-[250px] w-full"
+          config={chartConfig}
+        >
           <LineChart
             accessibilityLayer
             data={data}
@@ -89,9 +105,25 @@ export function QuotesTrendChart({ data, periodLabel }: QuotesTrendChartProps) {
             }}
           >
             <CartesianGrid vertical={false} />
-            <XAxis axisLine={false} dataKey="label" minTickGap={32} tickLine={false} tickMargin={8} />
-            <ChartTooltip content={<ChartTooltipContent className="w-[150px]" nameKey="count" />} />
-            <Line dataKey="count" dot={false} stroke="var(--color-count)" strokeWidth={2} type="monotone" />
+            <XAxis
+              axisLine={false}
+              dataKey="label"
+              minTickGap={32}
+              tickLine={false}
+              tickMargin={8}
+            />
+            <ChartTooltip
+              content={
+                <ChartTooltipContent className="w-[150px]" nameKey="count" />
+              }
+            />
+            <Line
+              dataKey="count"
+              dot={false}
+              stroke="var(--color-count)"
+              strokeWidth={2}
+              type="monotone"
+            />
           </LineChart>
         </ChartContainer>
       </CardContent>

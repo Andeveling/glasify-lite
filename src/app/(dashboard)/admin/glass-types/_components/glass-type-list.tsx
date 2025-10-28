@@ -12,20 +12,39 @@
  * - Delete confirmation dialog with referential integrity
  */
 
-'use client';
+"use client";
 
-import { Pencil, Plus, Search, Trash2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { api } from '@/trpc/react';
+import { Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import { DeleteConfirmationDialog } from "@/app/_components/delete-confirmation-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { api } from "@/trpc/react";
 
 type SerializedGlassType = {
   id: string;
@@ -79,21 +98,26 @@ type GlassTypeListProps = {
 export function GlassTypeList({ initialData }: GlassTypeListProps) {
   const router = useRouter();
   const utils = api.useUtils();
-  const [search, setSearch] = useState('');
-  const [isActive, setIsActive] = useState<'all' | 'active' | 'inactive'>('all');
+  const [search, setSearch] = useState("");
+  const [isActive, setIsActive] = useState<"all" | "active" | "inactive">(
+    "all"
+  );
   const [page, setPage] = useState(1);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [glassTypeToDelete, setGlassTypeToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [glassTypeToDelete, setGlassTypeToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   // Query with filters
-  const { data, isLoading } = api.admin['glass-type'].list.useQuery(
+  const { data, isLoading } = api.admin["glass-type"].list.useQuery(
     {
       isActive,
       limit: 20,
       page,
       search: search || undefined,
-      sortBy: 'name',
-      sortOrder: 'asc',
+      sortBy: "name",
+      sortOrder: "asc",
     },
     {
       placeholderData: (previousData) => previousData,
@@ -101,22 +125,22 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
   );
 
   // Delete mutation
-  const deleteMutation = api.admin['glass-type'].delete.useMutation({
+  const deleteMutation = api.admin["glass-type"].delete.useMutation({
     onError: (error) => {
-      toast.error('Error al eliminar tipo de vidrio', {
+      toast.error("Error al eliminar tipo de vidrio", {
         description: error.message,
       });
     },
     onSuccess: () => {
-      toast.success('Tipo de vidrio eliminado correctamente');
+      toast.success("Tipo de vidrio eliminado correctamente");
       setDeleteDialogOpen(false);
       setGlassTypeToDelete(null);
-      void utils.admin['glass-type'].list.invalidate();
+      void utils.admin["glass-type"].list.invalidate();
     },
   });
 
   const handleCreateClick = () => {
-    router.push('/admin/glass-types/new');
+    router.push("/admin/glass-types/new");
   };
 
   const handleEditClick = (id: string) => {
@@ -173,7 +197,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
             </label>
             <Select
               onValueChange={(value) => {
-                setIsActive(value as 'all' | 'active' | 'inactive');
+                setIsActive(value as "all" | "active" | "inactive");
                 setPage(1);
               }}
               value={isActive}
@@ -229,7 +253,10 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
               )}
               {!isLoading && glassTypes.length === 0 && (
                 <TableRow>
-                  <TableCell className="text-center text-muted-foreground" colSpan={6}>
+                  <TableCell
+                    className="text-center text-muted-foreground"
+                    colSpan={6}
+                  >
                     No se encontraron tipos de vidrio
                   </TableCell>
                 </TableRow>
@@ -237,18 +264,27 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
               {!isLoading &&
                 glassTypes.map((glassType) => (
                   <TableRow key={glassType.id}>
-                    <TableCell className="font-medium">{glassType.name}</TableCell>
+                    <TableCell className="font-medium">
+                      {glassType.name}
+                    </TableCell>
                     <TableCell>
                       <Badge variant="outline">{glassType.thicknessMm}mm</Badge>
                     </TableCell>
-                    <TableCell className="text-sm">${Number(glassType.pricePerSqm).toLocaleString('es-CO')}</TableCell>
+                    <TableCell className="text-sm">
+                      ${Number(glassType.pricePerSqm).toLocaleString("es-CO")}
+                    </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
                         {glassType.solutions.length === 0 ? (
-                          <span className="text-muted-foreground text-sm">Sin soluciones</span>
+                          <span className="text-muted-foreground text-sm">
+                            Sin soluciones
+                          </span>
                         ) : (
                           glassType.solutions.map((sol) => (
-                            <Badge key={sol.solution.id} variant={sol.isPrimary ? 'default' : 'secondary'}>
+                            <Badge
+                              key={sol.solution.id}
+                              variant={sol.isPrimary ? "default" : "secondary"}
+                            >
                               {sol.solution.id}
                             </Badge>
                           ))
@@ -256,18 +292,26 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={glassType.isActive ? 'default' : 'secondary'}>
-                        {glassType.isActive ? 'Activo' : 'Inactivo'}
+                      <Badge
+                        variant={glassType.isActive ? "default" : "secondary"}
+                      >
+                        {glassType.isActive ? "Activo" : "Inactivo"}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button onClick={() => handleEditClick(glassType.id)} size="icon" variant="ghost">
+                        <Button
+                          onClick={() => handleEditClick(glassType.id)}
+                          size="icon"
+                          variant="ghost"
+                        >
                           <Pencil className="size-4" />
                           <span className="sr-only">Editar</span>
                         </Button>
                         <Button
-                          onClick={() => handleDeleteClick(glassType.id, glassType.name)}
+                          onClick={() =>
+                            handleDeleteClick(glassType.id, glassType.name)
+                          }
                           size="icon"
                           variant="ghost"
                         >
@@ -288,7 +332,12 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
                 Página {page} de {totalPages}
               </p>
               <div className="flex gap-2">
-                <Button disabled={page === 1} onClick={() => setPage((p) => p - 1)} size="sm" variant="outline">
+                <Button
+                  disabled={page === 1}
+                  onClick={() => setPage((p) => p - 1)}
+                  size="sm"
+                  variant="outline"
+                >
                   Anterior
                 </Button>
                 <Button
@@ -308,7 +357,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
         dependencies={[]}
-        entityLabel={glassTypeToDelete?.name ?? ''}
+        entityLabel={glassTypeToDelete?.name ?? ""}
         entityName="tipo de vidrio"
         loading={deleteMutation.isPending}
         onConfirm={handleConfirmDelete}

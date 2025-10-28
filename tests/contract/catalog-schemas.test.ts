@@ -5,7 +5,7 @@
  * These tests validate Zod schemas and ensure data structures match expectations.
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 import {
   glassSolutionOutput,
   glassTypeOutput,
@@ -13,11 +13,11 @@ import {
   listGlassSolutionsOutput,
   listGlassTypesInput,
   listGlassTypesOutput,
-} from '@/server/api/routers/catalog/catalog.schemas';
+} from "@/server/api/routers/catalog/catalog.schemas";
 
-describe('Contract Tests - Catalog Schemas', () => {
-  describe('listGlassSolutionsInput schema', () => {
-    it('should accept valid input with includeGlassCount true', () => {
+describe("Contract Tests - Catalog Schemas", () => {
+  describe("listGlassSolutionsInput schema", () => {
+    it("should accept valid input with includeGlassCount true", () => {
       const validInput = { includeGlassCount: true };
 
       const result = listGlassSolutionsInput.safeParse(validInput);
@@ -28,7 +28,7 @@ describe('Contract Tests - Catalog Schemas', () => {
       }
     });
 
-    it('should accept valid input with includeGlassCount false', () => {
+    it("should accept valid input with includeGlassCount false", () => {
       const validInput = { includeGlassCount: false };
 
       const result = listGlassSolutionsInput.safeParse(validInput);
@@ -36,7 +36,7 @@ describe('Contract Tests - Catalog Schemas', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should use default value when includeGlassCount is omitted', () => {
+    it("should use default value when includeGlassCount is omitted", () => {
       const validInput = {};
 
       const result = listGlassSolutionsInput.safeParse(validInput);
@@ -47,8 +47,8 @@ describe('Contract Tests - Catalog Schemas', () => {
       }
     });
 
-    it('should reject invalid input types', () => {
-      const invalidInput = { includeGlassCount: 'yes' };
+    it("should reject invalid input types", () => {
+      const invalidInput = { includeGlassCount: "yes" };
 
       const result = listGlassSolutionsInput.safeParse(invalidInput);
 
@@ -56,40 +56,40 @@ describe('Contract Tests - Catalog Schemas', () => {
     });
   });
 
-  describe('glassSolutionOutput schema', () => {
-    it('should validate complete solution output', () => {
+  describe("glassSolutionOutput schema", () => {
+    it("should validate complete solution output", () => {
       const expectedGlassCount = 5;
 
       const validOutput = {
         descriptionEn: null,
-        descriptionEs: 'Vidrio de seguridad laminado',
+        descriptionEs: "Vidrio de seguridad laminado",
         glassCount: expectedGlassCount,
-        icon: 'Shield',
-        id: 'sol_123',
-        key: 'security',
-        nameEn: 'Security',
-        nameEs: 'Seguridad',
+        icon: "Shield",
+        id: "sol_123",
+        key: "security",
+        nameEn: "Security",
+        nameEs: "Seguridad",
       };
 
       const result = glassSolutionOutput.safeParse(validOutput);
 
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.id).toBe('sol_123');
-        expect(result.data.key).toBe('security');
+        expect(result.data.id).toBe("sol_123");
+        expect(result.data.key).toBe("security");
         expect(result.data.glassCount).toBe(expectedGlassCount);
       }
     });
-    it('should accept null values for optional fields', () => {
+    it("should accept null values for optional fields", () => {
       const validOutput = {
         descriptionEn: null,
-        descriptionEs: 'Aislamiento térmico',
+        descriptionEs: "Aislamiento térmico",
         glassCount: undefined,
         icon: null,
-        id: 'sol_456',
-        key: 'thermal_insulation',
-        nameEn: 'Thermal',
-        nameEs: 'Térmico',
+        id: "sol_456",
+        key: "thermal_insulation",
+        nameEn: "Thermal",
+        nameEs: "Térmico",
       };
 
       const result = glassSolutionOutput.safeParse(validOutput);
@@ -97,11 +97,11 @@ describe('Contract Tests - Catalog Schemas', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should reject missing required fields', () => {
+    it("should reject missing required fields", () => {
       const invalidOutput = {
         // Missing key, nameEs, nameEn
-        icon: 'Home',
-        id: 'sol_789',
+        icon: "Home",
+        id: "sol_789",
       };
 
       const result = glassSolutionOutput.safeParse(invalidOutput);
@@ -110,25 +110,25 @@ describe('Contract Tests - Catalog Schemas', () => {
     });
   });
 
-  describe('listGlassTypesInput schema', () => {
-    it('should accept valid input with all optional fields', () => {
+  describe("listGlassTypesInput schema", () => {
+    it("should accept valid input with all optional fields", () => {
       const validInput = {
         includeManufacturer: true,
         includeSolutions: true,
-        manufacturerId: 'mfr_123',
-        solutionKey: 'security',
+        manufacturerId: "mfr_123",
+        solutionKey: "security",
       };
 
       const result = listGlassTypesInput.safeParse(validInput);
 
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.manufacturerId).toBe('mfr_123');
-        expect(result.data.solutionKey).toBe('security');
+        expect(result.data.manufacturerId).toBe("mfr_123");
+        expect(result.data.solutionKey).toBe("security");
       }
     });
 
-    it('should accept empty object as all fields are optional', () => {
+    it("should accept empty object as all fields are optional", () => {
       const validInput = {};
 
       const result = listGlassTypesInput.safeParse(validInput);
@@ -136,7 +136,7 @@ describe('Contract Tests - Catalog Schemas', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should use default values for includeManufacturer and includeSolutions', () => {
+    it("should use default values for includeManufacturer and includeSolutions", () => {
       const validInput = {};
 
       const result = listGlassTypesInput.safeParse(validInput);
@@ -148,7 +148,7 @@ describe('Contract Tests - Catalog Schemas', () => {
       }
     });
 
-    it('should reject invalid manufacturer ID format', () => {
+    it("should reject invalid manufacturer ID format", () => {
       const invalidInput = {
         manufacturerId: 123, // Should be string
       };
@@ -159,83 +159,89 @@ describe('Contract Tests - Catalog Schemas', () => {
     });
   });
 
-  describe('glassTypeOutput schema', () => {
-    it('should validate complete glass type output with solutions', () => {
+  describe("glassTypeOutput schema", () => {
+    it("should validate complete glass type output with solutions", () => {
       const validOutput = {
-        id: 'gt_123',
+        id: "gt_123",
         isLaminated: true,
         isLowE: false,
         isTempered: false,
         isTripleGlazed: false,
         manufacturer: {
-          id: 'mfr_123',
-          name: 'Guardian',
+          id: "mfr_123",
+          name: "Guardian",
         },
-        manufacturerId: 'mfr_123',
-        name: 'Guardian Sun 6mm',
+        manufacturerId: "mfr_123",
+        name: "Guardian Sun 6mm",
         pricePerSqm: 85.5,
         solutions: [
           {
-            acousticRating: 'standard',
-            energyRating: 'very_good',
-            id: 'gts_1',
+            acousticRating: "standard",
+            energyRating: "very_good",
+            id: "gts_1",
             isPrimary: true,
-            securityRating: 'good',
+            securityRating: "good",
             solution: {
-              icon: 'Shield',
-              id: 'sol_1',
-              key: 'security',
-              nameEn: 'Security',
-              nameEs: 'Seguridad',
+              icon: "Shield",
+              id: "sol_1",
+              key: "security",
+              nameEn: "Security",
+              nameEs: "Seguridad",
             },
-            thermalRating: 'standard',
+            thermalRating: "standard",
           },
         ],
-        thickness: '6.00',
+        thickness: "6.00",
       };
 
       const result = glassTypeOutput.safeParse(validOutput);
 
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.id).toBe('gt_123');
+        expect(result.data.id).toBe("gt_123");
         expect(result.data.solutions).toHaveLength(1);
         expect(result.data.solutions?.[0]?.isPrimary).toBe(true);
-        expect(result.data.solutions?.[0]?.securityRating).toBe('good');
+        expect(result.data.solutions?.[0]?.securityRating).toBe("good");
       }
     });
 
-    it('should validate all performance rating values', () => {
-      const performanceRatings = ['basic', 'standard', 'good', 'very_good', 'excellent'];
+    it("should validate all performance rating values", () => {
+      const performanceRatings = [
+        "basic",
+        "standard",
+        "good",
+        "very_good",
+        "excellent",
+      ];
 
       for (const rating of performanceRatings) {
         const validOutput = {
-          id: 'gt_test',
+          id: "gt_test",
           isLaminated: false,
           isLowE: false,
           isTempered: false,
           isTripleGlazed: false,
-          manufacturerId: 'mfr_1',
-          name: 'Test Glass',
+          manufacturerId: "mfr_1",
+          name: "Test Glass",
           pricePerSqm: 50,
           solutions: [
             {
               acousticRating: rating,
               energyRating: rating,
-              id: 'gts_test',
+              id: "gts_test",
               isPrimary: true,
               securityRating: rating,
               solution: {
-                icon: 'Home',
-                id: 'sol_1',
-                key: 'general',
-                nameEn: 'General',
-                nameEs: 'General',
+                icon: "Home",
+                id: "sol_1",
+                key: "general",
+                nameEn: "General",
+                nameEs: "General",
               },
               thermalRating: rating,
             },
           ],
-          thickness: '4.00',
+          thickness: "4.00",
         };
 
         const result = glassTypeOutput.safeParse(validOutput);
@@ -244,34 +250,34 @@ describe('Contract Tests - Catalog Schemas', () => {
       }
     });
 
-    it('should reject invalid performance rating', () => {
+    it("should reject invalid performance rating", () => {
       const invalidOutput = {
-        id: 'gt_invalid',
+        id: "gt_invalid",
         isLaminated: false,
         isLowE: false,
         isTempered: false,
         isTripleGlazed: false,
-        manufacturerId: 'mfr_1',
-        name: 'Invalid Glass',
+        manufacturerId: "mfr_1",
+        name: "Invalid Glass",
         pricePerSqm: 50,
         solutions: [
           {
-            acousticRating: 'basic',
-            energyRating: 'basic',
-            id: 'gts_invalid',
+            acousticRating: "basic",
+            energyRating: "basic",
+            id: "gts_invalid",
             isPrimary: true,
-            securityRating: 'super_excellent', // Invalid rating
+            securityRating: "super_excellent", // Invalid rating
             solution: {
-              icon: 'Home',
-              id: 'sol_1',
-              key: 'general',
-              nameEn: 'General',
-              nameEs: 'General',
+              icon: "Home",
+              id: "sol_1",
+              key: "general",
+              nameEn: "General",
+              nameEs: "General",
             },
-            thermalRating: 'basic',
+            thermalRating: "basic",
           },
         ],
-        thickness: '4.00',
+        thickness: "4.00",
       };
 
       const result = glassTypeOutput.safeParse(invalidOutput);
@@ -279,18 +285,18 @@ describe('Contract Tests - Catalog Schemas', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should accept glass type without solutions', () => {
+    it("should accept glass type without solutions", () => {
       const validOutput = {
-        id: 'gt_no_solutions',
+        id: "gt_no_solutions",
         isLaminated: false,
         isLowE: false,
         isTempered: true,
         isTripleGlazed: false,
-        manufacturerId: 'mfr_1',
-        name: 'Glass Without Solutions',
+        manufacturerId: "mfr_1",
+        name: "Glass Without Solutions",
         pricePerSqm: 75,
         solutions: [],
-        thickness: '6.00',
+        thickness: "6.00",
       };
 
       const result = glassTypeOutput.safeParse(validOutput);
@@ -299,28 +305,28 @@ describe('Contract Tests - Catalog Schemas', () => {
     });
   });
 
-  describe('listGlassSolutionsOutput schema', () => {
-    it('should validate array of solutions', () => {
+  describe("listGlassSolutionsOutput schema", () => {
+    it("should validate array of solutions", () => {
       const validOutput = [
         {
           descriptionEn: null,
-          descriptionEs: 'Vidrio de seguridad',
+          descriptionEs: "Vidrio de seguridad",
           glassCount: 3,
-          icon: 'Shield',
-          id: 'sol_1',
-          key: 'security',
-          nameEn: 'Security',
-          nameEs: 'Seguridad',
+          icon: "Shield",
+          id: "sol_1",
+          key: "security",
+          nameEn: "Security",
+          nameEs: "Seguridad",
         },
         {
           descriptionEn: null,
-          descriptionEs: 'Aislamiento térmico',
+          descriptionEs: "Aislamiento térmico",
           glassCount: 2,
-          icon: 'Snowflake',
-          id: 'sol_2',
-          key: 'thermal_insulation',
-          nameEn: 'Thermal',
-          nameEs: 'Térmico',
+          icon: "Snowflake",
+          id: "sol_2",
+          key: "thermal_insulation",
+          nameEn: "Thermal",
+          nameEs: "Térmico",
         },
       ];
 
@@ -329,11 +335,11 @@ describe('Contract Tests - Catalog Schemas', () => {
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data).toHaveLength(2);
-        expect(result.data[0]?.key).toBe('security');
+        expect(result.data[0]?.key).toBe("security");
       }
     });
 
-    it('should accept empty array', () => {
+    it("should accept empty array", () => {
       const validOutput: unknown[] = [];
 
       const result = listGlassSolutionsOutput.safeParse(validOutput);
@@ -345,32 +351,32 @@ describe('Contract Tests - Catalog Schemas', () => {
     });
   });
 
-  describe('listGlassTypesOutput schema', () => {
-    it('should validate array of glass types', () => {
+  describe("listGlassTypesOutput schema", () => {
+    it("should validate array of glass types", () => {
       const validOutput = [
         {
-          id: 'gt_1',
+          id: "gt_1",
           isLaminated: false,
           isLowE: false,
           isTempered: false,
           isTripleGlazed: false,
-          manufacturerId: 'mfr_1',
-          name: 'Glass Type 1',
+          manufacturerId: "mfr_1",
+          name: "Glass Type 1",
           pricePerSqm: 45,
           solutions: [],
-          thickness: '4.00',
+          thickness: "4.00",
         },
         {
-          id: 'gt_2',
+          id: "gt_2",
           isLaminated: false,
           isLowE: true,
           isTempered: true,
           isTripleGlazed: false,
-          manufacturerId: 'mfr_1',
-          name: 'Glass Type 2',
+          manufacturerId: "mfr_1",
+          name: "Glass Type 2",
           pricePerSqm: 65,
           solutions: [],
-          thickness: '6.00',
+          thickness: "6.00",
         },
       ];
 

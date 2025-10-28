@@ -7,10 +7,10 @@
  * @module app/(public)/cart/_hooks/use-cart
  */
 
-'use client';
+"use client";
 
-import { createId } from '@paralleldrive/cuid2';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createId } from "@paralleldrive/cuid2";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   calculateItemSubtotal,
   findCartItem,
@@ -18,11 +18,16 @@ import {
   removeCartItem,
   updateCartItem,
   validateCartLimit,
-} from '@/lib/utils/cart.utils';
-import { generateItemName } from '@/lib/utils/generate-item-name';
-import { useTenantConfig } from '@/providers/tenant-config-provider';
-import type { CartItem, CartSummary, CreateCartItemInput, UpdateCartItemInput } from '@/types/cart.types';
-import { useCartStorage } from './use-cart-storage';
+} from "@/lib/utils/cart.utils";
+import { generateItemName } from "@/lib/utils/generate-item-name";
+import { useTenantConfig } from "@/providers/tenant-config-provider";
+import type {
+  CartItem,
+  CartSummary,
+  CreateCartItemInput,
+  UpdateCartItemInput,
+} from "@/types/cart.types";
+import { useCartStorage } from "./use-cart-storage";
 
 // ============================================================================
 // Types
@@ -42,7 +47,7 @@ type UseCartReturn = {
   addItem: (input: CreateCartItemInput & { unitPrice: number }) => void;
 
   /** Update existing item */
-  updateItem: (id: string, updates: Omit<UpdateCartItemInput, 'id'>) => void;
+  updateItem: (id: string, updates: Omit<UpdateCartItemInput, "id">) => void;
 
   /** Remove item from cart */
   removeItem: (id: string) => void;
@@ -95,7 +100,12 @@ type UseCartReturn = {
  * ```
  */
 export function useCart(): UseCartReturn {
-  const { items: storedItems, saveItems, clearItems, isHydrated } = useCartStorage();
+  const {
+    items: storedItems,
+    saveItems,
+    clearItems,
+    isHydrated,
+  } = useCartStorage();
   const { currency } = useTenantConfig();
   const [items, setItems] = useState<CartItem[]>([]);
 
@@ -163,7 +173,7 @@ export function useCart(): UseCartReturn {
    * Update existing cart item
    */
   const updateItem = useCallback(
-    (id: string, updates: Omit<UpdateCartItemInput, 'id'>) => {
+    (id: string, updates: Omit<UpdateCartItemInput, "id">) => {
       const item = findCartItem(items, id);
 
       if (!item) {
@@ -212,7 +222,9 @@ export function useCart(): UseCartReturn {
       if (existingItem) {
         // Item already in cart, just update it
         const updatedItem = updateCartItem(existingItem, item);
-        const updatedItems = items.map((i) => (i.id === item.id ? updatedItem : i));
+        const updatedItems = items.map((i) =>
+          i.id === item.id ? updatedItem : i
+        );
         setItems(updatedItems);
         saveItems(updatedItems);
         return;
@@ -244,13 +256,19 @@ export function useCart(): UseCartReturn {
   /**
    * Get item by ID
    */
-  const getItemById = useCallback((id: string): CartItem | undefined => findCartItem(items, id), [items]);
+  const getItemById = useCallback(
+    (id: string): CartItem | undefined => findCartItem(items, id),
+    [items]
+  );
 
   /**
    * Cart summary (memoized)
    * Uses tenant currency from config (single source of truth)
    */
-  const summary = useMemo((): CartSummary => generateCartSummary(items, currency), [items, currency]);
+  const summary = useMemo(
+    (): CartSummary => generateCartSummary(items, currency),
+    [items, currency]
+  );
 
   return {
     addItem,

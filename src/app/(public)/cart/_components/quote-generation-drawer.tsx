@@ -15,19 +15,19 @@
  * @module app/(public)/cart/_components/quote-generation-drawer
  */
 
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, X } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
-import { generateQuoteFromCartAction } from '@/app/_actions/quote.actions';
-import { formatCurrency } from '@/app/_utils/format-currency.util';
-import { useCart } from '@/app/(public)/cart/_hooks/use-cart';
-import { Button } from '@/components/ui/button';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { generateQuoteFromCartAction } from "@/app/_actions/quote.actions";
+import { formatCurrency } from "@/app/_utils/format-currency.util";
+import { useCart } from "@/app/(public)/cart/_hooks/use-cart";
+import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerClose,
@@ -37,13 +37,20 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from '@/components/ui/drawer';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { PhoneInput } from '@/components/ui/phone-input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Spinner } from '@/components/ui/spinner';
-import { useMediaQuery } from '@/hooks/use-media-query';
+} from "@/components/ui/drawer";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Spinner } from "@/components/ui/spinner";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 // ============================================================================
 // Validation Schema
@@ -55,15 +62,30 @@ const MAX_POSTAL_CODE_LENGTH = 20;
 const MAX_PHONE_LENGTH = 20;
 
 const quoteGenerationFormSchema = z.object({
-  contactPhone: z.string().max(MAX_PHONE_LENGTH, 'Teléfono muy largo').optional(),
-  projectCity: z.string().min(1, 'Ciudad es requerida').max(MAX_PROJECT_ADDRESS_LENGTH, 'Ciudad muy larga'),
-  projectName: z.string().max(MAX_PROJECT_NAME_LENGTH, 'Nombre muy largo').optional(),
+  contactPhone: z
+    .string()
+    .max(MAX_PHONE_LENGTH, "Teléfono muy largo")
+    .optional(),
+  projectCity: z
+    .string()
+    .min(1, "Ciudad es requerida")
+    .max(MAX_PROJECT_ADDRESS_LENGTH, "Ciudad muy larga"),
+  projectName: z
+    .string()
+    .max(MAX_PROJECT_NAME_LENGTH, "Nombre muy largo")
+    .optional(),
   projectPostalCode: z
     .string()
-    .min(1, 'Código postal es requerido')
-    .max(MAX_POSTAL_CODE_LENGTH, 'Código postal muy largo'),
-  projectState: z.string().min(1, 'Estado/Provincia es requerido').max(MAX_PROJECT_ADDRESS_LENGTH, 'Estado muy largo'),
-  projectStreet: z.string().min(1, 'Calle es requerida').max(MAX_PROJECT_ADDRESS_LENGTH, 'Calle muy larga'),
+    .min(1, "Código postal es requerido")
+    .max(MAX_POSTAL_CODE_LENGTH, "Código postal muy largo"),
+  projectState: z
+    .string()
+    .min(1, "Estado/Provincia es requerido")
+    .max(MAX_PROJECT_ADDRESS_LENGTH, "Estado muy largo"),
+  projectStreet: z
+    .string()
+    .min(1, "Calle es requerida")
+    .max(MAX_PROJECT_ADDRESS_LENGTH, "Calle muy larga"),
 });
 
 type QuoteGenerationFormValues = z.infer<typeof quoteGenerationFormSchema>;
@@ -103,18 +125,18 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const form = useForm<QuoteGenerationFormValues>({
     defaultValues: {
-      contactPhone: '',
-      projectCity: '',
-      projectName: '',
-      projectPostalCode: '',
-      projectState: '',
-      projectStreet: '',
+      contactPhone: "",
+      projectCity: "",
+      projectName: "",
+      projectPostalCode: "",
+      projectState: "",
+      projectStreet: "",
     },
-    mode: 'onBlur',
+    mode: "onBlur",
     resolver: zodResolver(quoteGenerationFormSchema),
   });
 
@@ -149,19 +171,22 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
 
             return result.quoteId;
           }
-          form.setError('root', {
-            message: result.error ?? 'Error al generar la cotización',
+          form.setError("root", {
+            message: result.error ?? "Error al generar la cotización",
           });
 
-          throw new Error(result.error ?? 'Error al generar la cotización');
+          throw new Error(result.error ?? "Error al generar la cotización");
         } finally {
           setIsSubmitting(false);
         }
       },
       {
-        error: (error) => (error instanceof Error ? error.message : 'Error al generar la cotización'),
-        loading: 'Generando cotización...',
-        success: 'Cotización creada exitosamente. Redirigiendo...',
+        error: (error) =>
+          error instanceof Error
+            ? error.message
+            : "Error al generar la cotización",
+        loading: "Generando cotización...",
+        success: "Cotización creada exitosamente. Redirigiendo...",
       }
     );
   };
@@ -175,22 +200,31 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
             <div className="text-center">
               <p className="font-semibold text-lg">Cotización Creada</p>
-              <p className="text-muted-foreground text-sm">Redirigiendo a tu cotización...</p>
+              <p className="text-muted-foreground text-sm">
+                Redirigiendo a tu cotización...
+              </p>
             </div>
           </div>
         </div>
       )}
 
-      <Drawer direction={isDesktop ? 'right' : 'bottom'} onOpenChange={handleOpenChange} open={isOpen}>
+      <Drawer
+        direction={isDesktop ? "right" : "bottom"}
+        onOpenChange={handleOpenChange}
+        open={isOpen}
+      >
         <DrawerTrigger asChild>{trigger}</DrawerTrigger>
 
-        <DrawerContent className={isDesktop ? 'h-full max-w-2xl' : 'max-h-[90vh]'}>
+        <DrawerContent
+          className={isDesktop ? "h-full max-w-2xl" : "max-h-[90vh]"}
+        >
           <DrawerHeader className="border-b">
             <div className="flex items-start justify-between">
               <div>
                 <DrawerTitle>Generar Cotización</DrawerTitle>
                 <DrawerDescription>
-                  Proporciona los detalles del proyecto para generar tu cotización formal
+                  Proporciona los detalles del proyecto para generar tu
+                  cotización formal
                 </DrawerDescription>
               </div>
               <DrawerClose asChild>
@@ -203,14 +237,18 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
 
           <ScrollArea className="flex-1">
             <Form {...form}>
-              <form className="space-y-4 p-4" onSubmit={form.handleSubmit(handleSubmit)}>
+              <form
+                className="space-y-4 p-4"
+                onSubmit={form.handleSubmit(handleSubmit)}
+              >
                 {/* Cart Summary */}
                 <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium text-sm">Items en el carrito</p>
                       <p className="text-muted-foreground text-xs">
-                        {cartItems.length} {cartItems.length === 1 ? 'producto' : 'productos'}
+                        {cartItems.length}{" "}
+                        {cartItems.length === 1 ? "producto" : "productos"}
                       </p>
                     </div>
                     <div className="text-right">
@@ -219,7 +257,7 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
                         {formatCurrency(summary.total, {
                           currency: summary.currency,
                           decimals: 0,
-                          locale: 'es-CO',
+                          locale: "es-CO",
                         })}
                       </p>
                     </div>
@@ -332,7 +370,11 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
                     <FormItem>
                       <FormLabel>Teléfono (opcional)</FormLabel>
                       <FormControl>
-                        <PhoneInput placeholder="+57 300 123 4567" {...field} disabled={isSubmitting} />
+                        <PhoneInput
+                          placeholder="+57 300 123 4567"
+                          {...field}
+                          disabled={isSubmitting}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -352,7 +394,11 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
           <DrawerFooter className="border-t">
             <div className="flex gap-2">
               <DrawerClose asChild>
-                <Button className="flex-1" disabled={isSubmitting} variant="outline">
+                <Button
+                  className="flex-1"
+                  disabled={isSubmitting}
+                  variant="outline"
+                >
                   Cancelar
                 </Button>
               </DrawerClose>
@@ -368,7 +414,7 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
                     Generando...
                   </>
                 ) : (
-                  'Generar Cotización'
+                  "Generar Cotización"
                 )}
               </Button>
             </div>

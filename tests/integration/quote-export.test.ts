@@ -7,19 +7,23 @@
  * Test-First: These tests should FAIL until T043 is implemented
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 
-describe('Quote Export Integration', () => {
-  it('should have exportQuotePDF Server Action', () => {
+describe("Quote Export Integration", () => {
+  it("should have exportQuotePDF Server Action", () => {
     expect(() => {
-      const { exportQuotePDF } = require('../../../src/app/_actions/quote-export.actions');
+      const {
+        exportQuotePDF,
+      } = require("../../../src/app/_actions/quote-export.actions");
       return exportQuotePDF;
     }).not.toThrow();
   });
 
-  it('should have exportQuoteExcel Server Action', () => {
+  it("should have exportQuoteExcel Server Action", () => {
     expect(() => {
-      const { exportQuoteExcel } = require('../../../src/app/_actions/quote-export.actions');
+      const {
+        exportQuoteExcel,
+      } = require("../../../src/app/_actions/quote-export.actions");
       return exportQuoteExcel;
     }).not.toThrow();
   });

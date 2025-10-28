@@ -9,14 +9,14 @@
  * @module app/(dashboard)/quotes/_components/quote-filters
  */
 
-'use client';
+"use client";
 
-import type { QuoteStatus } from '@prisma/client';
-import { FileText, Search, Send, XCircle } from 'lucide-react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useState, useTransition } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import type { QuoteStatus } from "@prisma/client";
+import { FileText, Search, Send, XCircle } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useState, useTransition } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 type QuoteFiltersProps = {
   /** Current active status filter (from URL) */
@@ -26,7 +26,7 @@ type QuoteFiltersProps = {
 };
 
 type FilterOption = {
-  value: QuoteStatus | 'all';
+  value: QuoteStatus | "all";
   label: string;
   icon: typeof FileText;
 };
@@ -37,23 +37,23 @@ type FilterOption = {
 const filterOptions: FilterOption[] = [
   {
     icon: FileText,
-    label: 'Todas',
-    value: 'all',
+    label: "Todas",
+    value: "all",
   },
   {
     icon: FileText,
-    label: 'Borradores',
-    value: 'draft',
+    label: "Borradores",
+    value: "draft",
   },
   {
     icon: Send,
-    label: 'Enviadas',
-    value: 'sent',
+    label: "Enviadas",
+    value: "sent",
   },
   {
     icon: XCircle,
-    label: 'Canceladas',
-    value: 'canceled',
+    label: "Canceladas",
+    value: "canceled",
   },
 ];
 
@@ -68,30 +68,37 @@ const filterOptions: FilterOption[] = [
  * <QuoteFilters currentStatus={status} showUserFilter={isAdmin} />
  * ```
  */
-export function QuoteFilters({ currentStatus, showUserFilter = false }: QuoteFiltersProps) {
+export function QuoteFilters({
+  currentStatus,
+  showUserFilter = false,
+}: QuoteFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-  const [searchValue, setSearchValue] = useState(searchParams.get('search') ?? '');
+  const [searchValue, setSearchValue] = useState(
+    searchParams.get("search") ?? ""
+  );
 
   /**
    * Update URL search params with new filter selection
    */
   const updateFilter = useCallback(
-    (newStatus: QuoteStatus | 'all') => {
+    (newStatus: QuoteStatus | "all") => {
       const params = new URLSearchParams(searchParams.toString());
 
-      if (newStatus === 'all') {
-        params.delete('status');
+      if (newStatus === "all") {
+        params.delete("status");
       } else {
-        params.set('status', newStatus);
+        params.set("status", newStatus);
       }
 
       // Reset to page 1 when changing filters
-      params.delete('page');
+      params.delete("page");
 
-      const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+      const newUrl = params.toString()
+        ? `${pathname}?${params.toString()}`
+        : pathname;
 
       startTransition(() => {
         router.replace(newUrl);
@@ -109,15 +116,17 @@ export function QuoteFilters({ currentStatus, showUserFilter = false }: QuoteFil
       const params = new URLSearchParams(searchParams.toString());
 
       if (searchValue.trim()) {
-        params.set('search', searchValue.trim());
+        params.set("search", searchValue.trim());
       } else {
-        params.delete('search');
+        params.delete("search");
       }
 
       // Reset to page 1 when searching
-      params.delete('page');
+      params.delete("page");
 
-      const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+      const newUrl = params.toString()
+        ? `${pathname}?${params.toString()}`
+        : pathname;
 
       startTransition(() => {
         router.replace(newUrl);
@@ -126,7 +135,7 @@ export function QuoteFilters({ currentStatus, showUserFilter = false }: QuoteFil
     [searchValue, searchParams, pathname, router]
   );
 
-  const activeFilter = currentStatus ?? 'all';
+  const activeFilter = currentStatus ?? "all";
 
   return (
     <div className="mb-6 space-y-4">
@@ -160,7 +169,7 @@ export function QuoteFilters({ currentStatus, showUserFilter = false }: QuoteFil
               key={option.value}
               onClick={() => updateFilter(option.value)}
               size="sm"
-              variant={isActive ? 'default' : 'outline'}
+              variant={isActive ? "default" : "outline"}
             >
               <Icon className="h-4 w-4" />
               {option.label}

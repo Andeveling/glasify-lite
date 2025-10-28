@@ -13,15 +13,15 @@
  * @module e2e/quote/quote-generation
  */
 
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
 // ============================================================================
 // Constants
 // ============================================================================
 
-const CATALOG_URL = '/catalog';
-const CART_URL = '/cart';
-const QUOTE_NEW_URL = '/quote/new';
+const CATALOG_URL = "/catalog";
+const CART_URL = "/cart";
+const QUOTE_NEW_URL = "/quote/new";
 
 // Test data constants
 const DEFAULT_WIDTH_MM = 1000;
@@ -41,7 +41,8 @@ const MODEL_DETAIL_URL_PATTERN = /\/catalog\/[^/]+/;
 const QUOTE_DETAIL_URL_PATTERN = /\/quotes\/[^/]+/;
 const SIGNIN_URL_PATTERN = /\/signin|\/api\/auth\/signin/;
 const SIGNIN_OR_QUOTE_URL_PATTERN = /\/signin|\/quote\/new/;
-const SIGNIN_OR_QUOTE_OR_API_URL_PATTERN = /\/signin|\/quote\/new|\/api\/auth\/signin/;
+const SIGNIN_OR_QUOTE_OR_API_URL_PATTERN =
+  /\/signin|\/quote\/new|\/api\/auth\/signin/;
 const ADDED_TO_CART_PATTERN = /agregado al carrito/i;
 const ADD_TO_CART_BUTTON_PATTERN = /agregar al carrito/i;
 const QUOTE_CREATED_PATTERN = /cotización creada/i;
@@ -72,7 +73,9 @@ async function addItemToCart(page: any, widthMm = 1000, heightMm = 1500) {
 
   // Fill dimensions (if inputs are available and empty)
   const widthInput = page.locator('input[name="widthMm"], input[name="width"]');
-  const heightInput = page.locator('input[name="heightMm"], input[name="height"]');
+  const heightInput = page.locator(
+    'input[name="heightMm"], input[name="height"]'
+  );
 
   if (await widthInput.isVisible()) {
     const currentWidth = await widthInput.inputValue();
@@ -101,13 +104,17 @@ async function addItemToCart(page: any, widthMm = 1000, heightMm = 1500) {
   await page.waitForTimeout(PRICE_CALCULATION_DELAY_MS);
 
   // Click "Add to Cart" button
-  const addToCartButton = page.getByRole('button', { name: ADD_TO_CART_BUTTON_PATTERN });
+  const addToCartButton = page.getByRole("button", {
+    name: ADD_TO_CART_BUTTON_PATTERN,
+  });
   await expect(addToCartButton).toBeVisible();
   await expect(addToCartButton).toBeEnabled();
   await addToCartButton.click();
 
   // Wait for success toast
-  await expect(page.locator(`text=${ADDED_TO_CART_PATTERN.source}`)).toBeVisible({ timeout: TOAST_TIMEOUT_MS });
+  await expect(
+    page.locator(`text=${ADDED_TO_CART_PATTERN.source}`)
+  ).toBeVisible({ timeout: TOAST_TIMEOUT_MS });
 }
 
 /**
@@ -116,12 +123,12 @@ async function addItemToCart(page: any, widthMm = 1000, heightMm = 1500) {
 async function fillQuoteForm(
   page: any,
   data = {
-    city: 'Bogotá',
-    phone: '+57 300 123 4567',
-    postalCode: '110111',
-    projectName: 'Proyecto Test E2E',
-    state: 'Cundinamarca',
-    street: 'Calle 123 #45-67',
+    city: "Bogotá",
+    phone: "+57 300 123 4567",
+    postalCode: "110111",
+    projectName: "Proyecto Test E2E",
+    state: "Cundinamarca",
+    street: "Calle 123 #45-67",
   }
 ) {
   // Fill project name (optional)
@@ -151,7 +158,7 @@ async function fillQuoteForm(
 // Tests
 // ============================================================================
 
-test.describe('Quote Generation Flow (US4)', () => {
+test.describe("Quote Generation Flow (US4)", () => {
   test.beforeEach(async ({ page }) => {
     // Clear sessionStorage before each test
     await page.goto(CATALOG_URL);
@@ -159,7 +166,7 @@ test.describe('Quote Generation Flow (US4)', () => {
   });
 
   // biome-ignore lint/suspicious/noSkippedTests: requires real Google OAuth setup, pending auth mock implementation
-  test.skip('should complete full flow: add items → authenticate → fill form → generate quote → verify redirect', async ({
+  test.skip("should complete full flow: add items → authenticate → fill form → generate quote → verify redirect", async ({
     page,
   }) => {
     // NOTE: This test is skipped because it requires actual Google OAuth authentication
@@ -175,14 +182,16 @@ test.describe('Quote Generation Flow (US4)', () => {
 
     // STEP 2: Navigate to cart and click "Generate Quote"
     await page.goto(CART_URL);
-    const generateQuoteButton = page.getByRole('button', { name: GENERATE_QUOTE_BUTTON_PATTERN });
+    const generateQuoteButton = page.getByRole("button", {
+      name: GENERATE_QUOTE_BUTTON_PATTERN,
+    });
     await generateQuoteButton.click();
 
     // STEP 3: Should redirect to sign-in (if not authenticated)
     await page.waitForURL(SIGNIN_OR_QUOTE_URL_PATTERN);
 
     // If redirected to sign-in, complete OAuth flow
-    if (page.url().includes('/signin')) {
+    if (page.url().includes("/signin")) {
       // TODO: Implement OAuth flow with test credentials
       // For now, we skip this part
       return;
@@ -192,21 +201,31 @@ test.describe('Quote Generation Flow (US4)', () => {
     await fillQuoteForm(page);
 
     // STEP 5: Submit form
-    const submitButton = page.getByRole('button', { name: GENERATE_QUOTE_BUTTON_PATTERN });
+    const submitButton = page.getByRole("button", {
+      name: GENERATE_QUOTE_BUTTON_PATTERN,
+    });
     await submitButton.click();
 
     // STEP 6: Wait for success toast
-    await expect(page.locator(`text=${QUOTE_CREATED_PATTERN.source}`)).toBeVisible({ timeout: SUCCESS_TIMEOUT_MS });
+    await expect(
+      page.locator(`text=${QUOTE_CREATED_PATTERN.source}`)
+    ).toBeVisible({ timeout: SUCCESS_TIMEOUT_MS });
 
     // STEP 7: Verify redirect to quote detail page
-    await page.waitForURL(QUOTE_DETAIL_URL_PATTERN, { timeout: SUCCESS_TIMEOUT_MS });
+    await page.waitForURL(QUOTE_DETAIL_URL_PATTERN, {
+      timeout: SUCCESS_TIMEOUT_MS,
+    });
 
     // STEP 8: Verify cart is cleared
     await page.goto(CART_URL);
-    await expect(page.locator('[data-testid="empty-cart-state"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="empty-cart-state"]')
+    ).toBeVisible();
   });
 
-  test('should redirect unauthenticated user to sign-in when accessing /quote/new', async ({ page }) => {
+  test("should redirect unauthenticated user to sign-in when accessing /quote/new", async ({
+    page,
+  }) => {
     // ACT: Try to access quote generation page without authentication
     await page.goto(QUOTE_NEW_URL);
 
@@ -215,11 +234,13 @@ test.describe('Quote Generation Flow (US4)', () => {
     const url = new URL(page.url());
 
     // Verify callbackUrl is set
-    const callbackUrl = url.searchParams.get('callbackUrl');
+    const callbackUrl = url.searchParams.get("callbackUrl");
     expect(callbackUrl).toBe(QUOTE_NEW_URL);
   });
 
-  test('should redirect to catalog if cart is empty when accessing /quote/new', async ({ page }) => {
+  test("should redirect to catalog if cart is empty when accessing /quote/new", async ({
+    page,
+  }) => {
     // NOTE: This test assumes we can access /quote/new directly (authenticated)
     // If authentication is required, this will fail
 
@@ -242,7 +263,9 @@ test.describe('Quote Generation Flow (US4)', () => {
     expect(isOnCatalog).toBe(true);
   });
 
-  test('should preserve cart items during quote generation navigation', async ({ page }) => {
+  test("should preserve cart items during quote generation navigation", async ({
+    page,
+  }) => {
     // ARRANGE: Add items to cart
     await addItemToCart(page, DEFAULT_WIDTH_MM, DEFAULT_HEIGHT_MM);
     await addItemToCart(page, SECONDARY_WIDTH_MM, SECONDARY_HEIGHT_MM);
@@ -251,23 +274,32 @@ test.describe('Quote Generation Flow (US4)', () => {
     await page.goto(CART_URL);
 
     // Verify 2 items in cart
-    const cartItemsCount = await page.locator('[data-testid="cart-item"]').count();
+    const cartItemsCount = await page
+      .locator('[data-testid="cart-item"]')
+      .count();
     expect(cartItemsCount).toBe(2);
 
     // ACT: Click "Generate Quote" button
-    const generateQuoteButton = page.getByRole('button', { name: GENERATE_QUOTE_BUTTON_PATTERN });
+    const generateQuoteButton = page.getByRole("button", {
+      name: GENERATE_QUOTE_BUTTON_PATTERN,
+    });
     await generateQuoteButton.click();
 
     // Wait for navigation (either sign-in or quote form)
     await page.waitForURL(SIGNIN_OR_QUOTE_OR_API_URL_PATTERN);
 
     // If on sign-in, navigate back to cart to verify persistence
-    if (page.url().includes('/signin') || page.url().includes('/api/auth/signin')) {
+    if (
+      page.url().includes("/signin") ||
+      page.url().includes("/api/auth/signin")
+    ) {
       await page.goto(CART_URL);
     }
 
     // ASSERT: Cart items should still be there (sessionStorage preserved)
-    const cartItemsAfterNav = await page.locator('[data-testid="cart-item"]').count();
+    const cartItemsAfterNav = await page
+      .locator('[data-testid="cart-item"]')
+      .count();
     expect(cartItemsAfterNav).toBe(2);
   });
 });
@@ -276,7 +308,7 @@ test.describe('Quote Generation Flow (US4)', () => {
 // Form Validation Tests
 // ============================================================================
 
-test.describe('Quote Form Validation (US4)', () => {
+test.describe("Quote Form Validation (US4)", () => {
   test.beforeEach(async ({ page }) => {
     // Add item to cart first
     await page.goto(CATALOG_URL);
@@ -284,7 +316,9 @@ test.describe('Quote Form Validation (US4)', () => {
   });
 
   // biome-ignore lint/suspicious/noSkippedTests: requires authentication to test validation, pending auth mock setup
-  test.skip('should show validation errors for empty required fields', async ({ page }) => {
+  test.skip("should show validation errors for empty required fields", async ({
+    page,
+  }) => {
     // NOTE: Skipped because requires authentication
     // To test this, authenticate first, then:
 
@@ -295,18 +329,26 @@ test.describe('Quote Form Validation (US4)', () => {
     await page.goto(QUOTE_NEW_URL);
 
     // Wait for form to load
-    await expect(page.locator('input[name="projectStreet"]')).toBeVisible({ timeout: FORM_TIMEOUT_MS });
+    await expect(page.locator('input[name="projectStreet"]')).toBeVisible({
+      timeout: FORM_TIMEOUT_MS,
+    });
 
     // ACT: Submit form without filling required fields
-    const submitButton = page.getByRole('button', { name: GENERATE_QUOTE_BUTTON_PATTERN });
+    const submitButton = page.getByRole("button", {
+      name: GENERATE_QUOTE_BUTTON_PATTERN,
+    });
     await submitButton.click();
 
     // ASSERT: Should show validation errors
-    await expect(page.locator(`text=${REQUIRED_FIELD_PATTERN.source}`)).toBeVisible();
+    await expect(
+      page.locator(`text=${REQUIRED_FIELD_PATTERN.source}`)
+    ).toBeVisible();
   });
 
   // biome-ignore lint/suspicious/noSkippedTests: requires authentication to test validation, pending auth mock setup
-  test.skip('should show validation errors for fields exceeding max length', async ({ page }) => {
+  test.skip("should show validation errors for fields exceeding max length", async ({
+    page,
+  }) => {
     // NOTE: Skipped because requires authentication
 
     // ARRANGE: Add item to cart
@@ -316,16 +358,20 @@ test.describe('Quote Form Validation (US4)', () => {
     await page.goto(QUOTE_NEW_URL);
 
     // Wait for form to load
-    await expect(page.locator('input[name="projectStreet"]')).toBeVisible({ timeout: FORM_TIMEOUT_MS });
+    await expect(page.locator('input[name="projectStreet"]')).toBeVisible({
+      timeout: FORM_TIMEOUT_MS,
+    });
 
     // ACT: Fill street with very long string
-    const longString = 'A'.repeat(MAX_STRING_LENGTH_TEST); // Exceeds MAX_PROJECT_ADDRESS_LENGTH (200)
+    const longString = "A".repeat(MAX_STRING_LENGTH_TEST); // Exceeds MAX_PROJECT_ADDRESS_LENGTH (200)
     await page.locator('input[name="projectStreet"]').fill(longString);
 
     // Blur to trigger validation
     await page.locator('input[name="projectCity"]').focus();
 
     // ASSERT: Should show "muy largo" error
-    await expect(page.locator(`text=${FIELD_TOO_LONG_PATTERN.source}`)).toBeVisible({ timeout: VALIDATION_TIMEOUT_MS });
+    await expect(
+      page.locator(`text=${FIELD_TOO_LONG_PATTERN.source}`)
+    ).toBeVisible({ timeout: VALIDATION_TIMEOUT_MS });
   });
 });

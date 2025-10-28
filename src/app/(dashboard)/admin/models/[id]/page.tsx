@@ -7,10 +7,10 @@
  * Route: /admin/models/[id]
  */
 
-import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { api } from '@/trpc/server-client';
-import { ModelForm } from '../_components/model-form';
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { api } from "@/trpc/server-client";
+import { ModelForm } from "../_components/model-form";
 
 type EditModelPageProps = {
   params: Promise<{
@@ -19,20 +19,20 @@ type EditModelPageProps = {
 };
 
 export const metadata: Metadata = {
-  title: 'Editar Modelo | Admin',
+  title: "Editar Modelo | Admin",
 };
 
 /**
  * Force dynamic rendering to ensure fresh data after mutations
  * Without this, the form won't show updated values after edit
  */
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function EditModelPage({ params }: EditModelPageProps) {
   const { id } = await params;
 
   // Fetch model with all relations (cost breakdown, price history)
-  const model = await api.admin.model[ 'get-by-id' ]({ id });
+  const model = await api.admin.model["get-by-id"]({ id });
 
   if (!model) {
     notFound();
@@ -80,27 +80,45 @@ export default async function EditModelPage({ params }: EditModelPageProps) {
             <table className="w-full">
               <thead className="border-b bg-muted/50">
                 <tr>
-                  <th className="px-4 py-3 text-left font-medium text-sm">Fecha</th>
-                  <th className="px-4 py-3 text-left font-medium text-sm">Precio Base</th>
-                  <th className="px-4 py-3 text-left font-medium text-sm">Costo/mm Ancho</th>
-                  <th className="px-4 py-3 text-left font-medium text-sm">Costo/mm Alto</th>
-                  <th className="px-4 py-3 text-left font-medium text-sm">Razón</th>
+                  <th className="px-4 py-3 text-left font-medium text-sm">
+                    Fecha
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-sm">
+                    Precio Base
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-sm">
+                    Costo/mm Ancho
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-sm">
+                    Costo/mm Alto
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-sm">
+                    Razón
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {model.priceHistory.map((history) => (
                   <tr className="border-b last:border-0" key={history.id}>
                     <td className="px-4 py-3 text-sm">
-                      {new Date(history.createdAt).toLocaleDateString('es-ES', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
+                      {new Date(history.createdAt).toLocaleDateString("es-ES", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
                       })}
                     </td>
-                    <td className="px-4 py-3 font-mono text-sm">${history.basePrice.toLocaleString()}</td>
-                    <td className="px-4 py-3 font-mono text-sm">${history.costPerMmWidth.toLocaleString()}</td>
-                    <td className="px-4 py-3 font-mono text-sm">${history.costPerMmHeight.toLocaleString()}</td>
-                    <td className="px-4 py-3 text-muted-foreground text-sm">{history.reason}</td>
+                    <td className="px-4 py-3 font-mono text-sm">
+                      ${history.basePrice.toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3 font-mono text-sm">
+                      ${history.costPerMmWidth.toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3 font-mono text-sm">
+                      ${history.costPerMmHeight.toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground text-sm">
+                      {history.reason}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -117,24 +135,38 @@ export default async function EditModelPage({ params }: EditModelPageProps) {
             <table className="w-full">
               <thead className="border-b bg-muted/50">
                 <tr>
-                  <th className="px-4 py-3 text-left font-medium text-sm">Componente</th>
-                  <th className="px-4 py-3 text-left font-medium text-sm">Tipo de Costo</th>
-                  <th className="px-4 py-3 text-left font-medium text-sm">Costo Unitario</th>
-                  <th className="px-4 py-3 text-left font-medium text-sm">Notas</th>
+                  <th className="px-4 py-3 text-left font-medium text-sm">
+                    Componente
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-sm">
+                    Tipo de Costo
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-sm">
+                    Costo Unitario
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-sm">
+                    Notas
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {model.costBreakdown.map((item) => (
                   <tr className="border-b last:border-0" key={item.id}>
-                    <td className="px-4 py-3 font-medium text-sm">{item.component}</td>
-                    <td className="px-4 py-3 text-sm">
-                      {item.costType === 'fixed' && 'Fijo'}
-                      {item.costType === 'per_mm_width' && 'Por mm ancho'}
-                      {item.costType === 'per_mm_height' && 'Por mm alto'}
-                      {item.costType === 'per_sqm' && 'Por m²'}
+                    <td className="px-4 py-3 font-medium text-sm">
+                      {item.component}
                     </td>
-                    <td className="px-4 py-3 font-mono text-sm">${item.unitCost.toLocaleString()}</td>
-                    <td className="px-4 py-3 text-muted-foreground text-sm">{item.notes || '—'}</td>
+                    <td className="px-4 py-3 text-sm">
+                      {item.costType === "fixed" && "Fijo"}
+                      {item.costType === "per_mm_width" && "Por mm ancho"}
+                      {item.costType === "per_mm_height" && "Por mm alto"}
+                      {item.costType === "per_sqm" && "Por m²"}
+                    </td>
+                    <td className="px-4 py-3 font-mono text-sm">
+                      ${item.unitCost.toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground text-sm">
+                      {item.notes || "—"}
+                    </td>
                   </tr>
                 ))}
               </tbody>

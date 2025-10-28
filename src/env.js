@@ -1,9 +1,16 @@
-import { createEnv } from '@t3-oss/env-nextjs';
-import { z } from 'zod';
+import { createEnv } from "@t3-oss/env-nextjs";
+import { z } from "zod";
 
 // Only one call process env
-const { ADMIN_EMAIL, AUTH_GOOGLE_ID, AUTH_GOOGLE_SECRET, BETTER_AUTH_SECRET, BASE_URL, DATABASE_URL, NODE_ENV } =
-  process.env;
+const {
+  ADMIN_EMAIL,
+  AUTH_GOOGLE_ID,
+  AUTH_GOOGLE_SECRET,
+  BETTER_AUTH_SECRET,
+  BASE_URL,
+  DATABASE_URL,
+  NODE_ENV,
+} = process.env;
 
 export const env = createEnv({
   /**
@@ -42,9 +49,14 @@ export const env = createEnv({
     AUTH_GOOGLE_ID: z.string(),
     AUTH_GOOGLE_SECRET: z.string(),
     BASE_URL: z.string().url().optional(),
-    BETTER_AUTH_SECRET: process.env.NODE_ENV === 'production' ? z.string() : z.string().optional(),
+    BETTER_AUTH_SECRET:
+      process.env.NODE_ENV === "production"
+        ? z.string()
+        : z.string().optional(),
     DATABASE_URL: z.url(),
-    NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+    NODE_ENV: z
+      .enum(["development", "test", "production"])
+      .default("development"),
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

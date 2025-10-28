@@ -13,11 +13,11 @@
  * @version 1.0.0
  */
 
-import type { GlassSolutionInput } from '../../factories/glass-solution.factory';
-import type { GlassTypeInput } from '../../factories/glass-type.factory';
-import type { ModelInput } from '../../factories/model.factory';
-import type { ProfileSupplierInput } from '../../factories/profile-supplier.factory';
-import type { ServiceInput } from '../../factories/service.factory';
+import type { GlassSolutionInput } from "../../factories/glass-solution.factory";
+import type { GlassTypeInput } from "../../factories/glass-type.factory";
+import type { ModelInput } from "../../factories/model.factory";
+import type { ProfileSupplierInput } from "../../factories/profile-supplier.factory";
+import type { ServiceInput } from "../../factories/service.factory";
 
 // ==========================================
 // GLASS TYPES (3 essential)
@@ -28,18 +28,18 @@ import type { ServiceInput } from '../../factories/service.factory';
  */
 export const minimalGlassTypes: GlassTypeInput[] = [
   {
-    code: 'MIN_SIMPLE4',
-    name: 'Vidrio Simple 4mm',
+    code: "MIN_SIMPLE4",
+    name: "Vidrio Simple 4mm",
     thicknessMm: 4,
   },
   {
-    code: 'MIN_TEMP6',
-    name: 'Vidrio Templado 6mm',
+    code: "MIN_TEMP6",
+    name: "Vidrio Templado 6mm",
     thicknessMm: 6,
   },
   {
-    code: 'MIN_DVH24',
-    name: 'DVH 24mm (6-12-6)',
+    code: "MIN_DVH24",
+    name: "DVH 24mm (6-12-6)",
     thicknessMm: 24,
     uValue: 2.8,
   },
@@ -55,15 +55,15 @@ export const minimalGlassTypes: GlassTypeInput[] = [
 export const minimalProfileSuppliers: ProfileSupplierInput[] = [
   {
     isActive: true,
-    materialType: 'PVC',
-    name: 'Deceuninck',
-    notes: 'Premium PVC profiles - European quality',
+    materialType: "PVC",
+    name: "Deceuninck",
+    notes: "Premium PVC profiles - European quality",
   },
   {
     isActive: true,
-    materialType: 'ALUMINUM',
-    name: 'Alumina',
-    notes: 'Colombian aluminum manufacturer - local production',
+    materialType: "ALUMINUM",
+    name: "Alumina",
+    notes: "Colombian aluminum manufacturer - local production",
   },
 ];
 
@@ -78,7 +78,7 @@ export const minimalModels: ModelInput[] = [
   {
     accessoryPrice: 65_000,
     basePrice: 350_000,
-    compatibleGlassTypeIds: ['PLACEHOLDER'], // Will be populated during seeding
+    compatibleGlassTypeIds: ["PLACEHOLDER"], // Will be populated during seeding
     costPerMmHeight: 75,
     costPerMmWidth: 95,
     glassDiscountHeightMm: 45,
@@ -87,15 +87,15 @@ export const minimalModels: ModelInput[] = [
     maxWidthMm: 2500,
     minHeightMm: 500,
     minWidthMm: 700,
-    name: 'Ventana Corredera Estándar',
-    profileSupplierName: 'Deceuninck',
+    name: "Ventana Corredera Estándar",
+    profileSupplierName: "Deceuninck",
     profitMarginPercentage: 30,
-    status: 'published',
+    status: "published",
   },
   {
     accessoryPrice: 55_000,
     basePrice: 280_000,
-    compatibleGlassTypeIds: ['PLACEHOLDER'],
+    compatibleGlassTypeIds: ["PLACEHOLDER"],
     costPerMmHeight: 65,
     costPerMmWidth: 85,
     glassDiscountHeightMm: 35,
@@ -104,10 +104,10 @@ export const minimalModels: ModelInput[] = [
     maxWidthMm: 2400,
     minHeightMm: 400,
     minWidthMm: 600,
-    name: 'Ventana Corredera Aluminio',
-    profileSupplierName: 'Alumina',
+    name: "Ventana Corredera Aluminio",
+    profileSupplierName: "Alumina",
     profitMarginPercentage: 28,
-    status: 'published',
+    status: "published",
   },
 ];
 
@@ -120,22 +120,22 @@ export const minimalModels: ModelInput[] = [
  */
 export const minimalServices: ServiceInput[] = [
   {
-    name: 'Instalación Estándar',
+    name: "Instalación Estándar",
     rate: 45_000,
-    type: 'area',
-    unit: 'sqm',
+    type: "area",
+    unit: "sqm",
   },
   {
-    name: 'Sellado Perimetral',
+    name: "Sellado Perimetral",
     rate: 8500,
-    type: 'perimeter',
-    unit: 'ml',
+    type: "perimeter",
+    unit: "ml",
   },
   {
-    name: 'Retiro de Ventana Antigua',
+    name: "Retiro de Ventana Antigua",
     rate: 55_000,
-    type: 'fixed',
-    unit: 'unit',
+    type: "fixed",
+    unit: "unit",
   },
 ];
 
@@ -148,27 +148,27 @@ export const minimalServices: ServiceInput[] = [
  */
 export const minimalGlassSolutions: GlassSolutionInput[] = [
   {
-    description: 'Protección contra impactos, rotura y acceso no autorizado',
-    icon: 'Shield',
-    key: 'security',
-    name: 'Security',
-    nameEs: 'Seguridad',
+    description: "Protección contra impactos, rotura y acceso no autorizado",
+    icon: "Shield",
+    key: "security",
+    name: "Security",
+    nameEs: "Seguridad",
     sortOrder: 1,
   },
   {
-    description: 'Reducción de pérdida de calor y mejora de eficiencia térmica',
-    icon: 'Snowflake',
-    key: 'thermal_insulation',
-    name: 'Thermal Insulation',
-    nameEs: 'Aislamiento Térmico',
+    description: "Reducción de pérdida de calor y mejora de eficiencia térmica",
+    icon: "Snowflake",
+    key: "thermal_insulation",
+    name: "Thermal Insulation",
+    nameEs: "Aislamiento Térmico",
     sortOrder: 2,
   },
   {
-    description: 'Solución estándar para uso general',
-    icon: 'Home',
-    key: 'general',
-    name: 'General Purpose',
-    nameEs: 'Uso General',
+    description: "Solución estándar para uso general",
+    icon: "Home",
+    key: "general",
+    name: "General Purpose",
+    nameEs: "Uso General",
     sortOrder: 6,
   },
 ];
@@ -181,11 +181,11 @@ export const minimalGlassSolutions: GlassSolutionInput[] = [
  * Minimal preset configuration
  */
 export const minimalPreset = {
-  description: 'Configuración mínima para pruebas rápidas y CI/CD',
+  description: "Configuración mínima para pruebas rápidas y CI/CD",
   glassSolutions: minimalGlassSolutions,
   glassTypes: minimalGlassTypes,
   models: minimalModels,
-  name: 'minimal',
+  name: "minimal",
   profileSuppliers: minimalProfileSuppliers,
   services: minimalServices,
   stats: {

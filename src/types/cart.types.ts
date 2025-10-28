@@ -139,7 +139,11 @@ export type UpdateCartItemInput = {
  */
 export type CartValidationError = {
   /** Error code */
-  code: 'DUPLICATE_NAME' | 'CART_LIMIT_EXCEEDED' | 'INVALID_QUANTITY' | 'ITEM_NOT_FOUND';
+  code:
+    | "DUPLICATE_NAME"
+    | "CART_LIMIT_EXCEEDED"
+    | "INVALID_QUANTITY"
+    | "ITEM_NOT_FOUND";
 
   /** Human-readable error message */
   message: string;
@@ -168,7 +172,7 @@ export const CART_CONSTANTS = {
   MIN_QUANTITY: 1,
 
   /** SessionStorage key for cart data */
-  STORAGE_KEY: 'glasify_cart',
+  STORAGE_KEY: "glasify_cart",
 } as const;
 
 /**

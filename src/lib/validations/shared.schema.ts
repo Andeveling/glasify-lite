@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 /**
  * Shared Zod validation utilities for admin catalog management
@@ -19,7 +19,7 @@ const DEFAULT_PAGE_LIMIT = 20;
  * Used for IDs, counts, sort orders, etc.
  */
 export const positiveInt = z.number().int().positive({
-  message: 'Debe ser un número entero positivo',
+  message: "Debe ser un número entero positivo",
 });
 
 /**
@@ -27,7 +27,7 @@ export const positiveInt = z.number().int().positive({
  * Used for optional counts, zero-allowed values
  */
 export const nonNegativeInt = z.number().int().min(0, {
-  message: 'Debe ser un número entero mayor o igual a cero',
+  message: "Debe ser un número entero mayor o igual a cero",
 });
 
 /**
@@ -35,7 +35,7 @@ export const nonNegativeInt = z.number().int().min(0, {
  * Used for prices, rates, dimensions
  */
 export const positiveDecimal = z.number().positive({
-  message: 'Debe ser un número positivo',
+  message: "Debe ser un número positivo",
 });
 
 /**
@@ -43,7 +43,7 @@ export const positiveDecimal = z.number().positive({
  * Used for optional measurements, zero-allowed prices
  */
 export const nonNegativeDecimal = z.number().min(0, {
-  message: 'Debe ser un número mayor o igual a cero',
+  message: "Debe ser un número mayor o igual a cero",
 });
 
 /**
@@ -52,8 +52,10 @@ export const nonNegativeDecimal = z.number().min(0, {
  */
 export const priceValidator = z
   .number()
-  .positive({ message: 'El precio debe ser mayor a cero' })
-  .multipleOf(DECIMAL_PRECISION, { message: 'El precio debe tener máximo 2 decimales' });
+  .positive({ message: "El precio debe ser mayor a cero" })
+  .multipleOf(DECIMAL_PRECISION, {
+    message: "El precio debe tener máximo 2 decimales",
+  });
 
 /**
  * Dimension validator with min/max refinement
@@ -74,9 +76,9 @@ export const dimensionRefinement = <T extends { min: number; max: number }>(
 ) => {
   if (data.min >= data.max) {
     ctx.addIssue({
-      code: 'custom',
+      code: "custom",
       message: `El valor mínimo de ${field} debe ser menor que el máximo`,
-      path: ['min'],
+      path: ["min"],
     });
   }
 };
@@ -84,12 +86,17 @@ export const dimensionRefinement = <T extends { min: number; max: number }>(
 /**
  * URL validator (optional, but must be valid if provided)
  */
-export const optionalUrl = z.url({ message: 'Debe ser una URL válida' }).optional().or(z.literal(''));
+export const optionalUrl = z
+  .url({ message: "Debe ser una URL válida" })
+  .optional()
+  .or(z.literal(""));
 
 /**
  * Email validator
  */
-export const emailValidator = z.email({ message: 'Debe ser un correo electrónico válido' });
+export const emailValidator = z.email({
+  message: "Debe ser un correo electrónico válido",
+});
 
 /**
  * Snake case key validator (for solution keys, characteristic keys)
@@ -98,25 +105,25 @@ export const emailValidator = z.email({ message: 'Debe ser un correo electrónic
 export const snakeCaseKey = z
   .string()
   .regex(/^[a-z0-9_]+$/, {
-    message: 'Solo se permiten letras minúsculas, números y guiones bajos',
+    message: "Solo se permiten letras minúsculas, números y guiones bajos",
   })
-  .min(2, { message: 'Debe tener al menos 2 caracteres' })
-  .max(MAX_KEY_LENGTH, { message: 'Debe tener máximo 50 caracteres' });
+  .min(2, { message: "Debe tener al menos 2 caracteres" })
+  .max(MAX_KEY_LENGTH, { message: "Debe tener máximo 50 caracteres" });
 
 /**
  * Spanish text validator (required)
  */
 export const spanishText = z
   .string()
-  .min(1, { message: 'Este campo es obligatorio' })
-  .max(MAX_TEXT_LENGTH, { message: 'Debe tener máximo 500 caracteres' });
+  .min(1, { message: "Este campo es obligatorio" })
+  .max(MAX_TEXT_LENGTH, { message: "Debe tener máximo 500 caracteres" });
 
 /**
  * Spanish text validator (optional)
  */
 export const optionalSpanishText = z
   .string()
-  .max(MAX_TEXT_LENGTH, { message: 'Debe tener máximo 255 caracteres' })
+  .max(MAX_TEXT_LENGTH, { message: "Debe tener máximo 255 caracteres" })
   .optional();
 
 /**
@@ -124,7 +131,7 @@ export const optionalSpanishText = z
  */
 export const longText = z
   .string()
-  .max(MAX_LONG_TEXT_LENGTH, { message: 'Debe tener máximo 2000 caracteres' })
+  .max(MAX_LONG_TEXT_LENGTH, { message: "Debe tener máximo 2000 caracteres" })
   .optional();
 
 /**
@@ -138,17 +145,21 @@ export const paginationSchema = z.object({
 /**
  * Sort order schema
  */
-export const sortOrderSchema = z.enum(['asc', 'desc']).default('asc');
+export const sortOrderSchema = z.enum(["asc", "desc"]).default("asc");
 
 /**
  * Active status filter
  */
-export const activeFilterSchema = z.enum(['all', 'active', 'inactive']).default('all');
+export const activeFilterSchema = z
+  .enum(["all", "active", "inactive"])
+  .default("all");
 
 /**
  * Search query validator
  */
 export const searchQuerySchema = z
   .string()
-  .max(MAX_SEARCH_LENGTH, { message: 'La búsqueda debe tener máximo 100 caracteres' })
+  .max(MAX_SEARCH_LENGTH, {
+    message: "La búsqueda debe tener máximo 100 caracteres",
+  })
   .optional();

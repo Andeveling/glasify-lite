@@ -20,19 +20,19 @@
 /** biome-ignore-all assist/source/useSortedKeys: El problema era que Biome estaba reordenando alfabéticamente las propiedades del objeto de configuración de la mutación, poniendo onError antes de onMutate. TypeScript necesita que onMutate se defina primero para inferir el tipo del contexto que luego se usa en onError.
  */
 
-'use client';
+"use client";
 
-import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog';
-import type { ServerTableColumn } from '@/app/_components/server-table';
-import { ServerTable } from '@/app/_components/server-table';
-import { TablePagination } from '@/app/_components/server-table/table-pagination';
-import { useTenantConfig } from '@/app/_hooks/use-tenant-config';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
+import { DeleteConfirmationDialog } from "@/app/_components/delete-confirmation-dialog";
+import type { ServerTableColumn } from "@/app/_components/server-table";
+import { ServerTable } from "@/app/_components/server-table";
+import { TablePagination } from "@/app/_components/server-table/table-pagination";
+import { useTenantConfig } from "@/app/_hooks/use-tenant-config";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,9 +40,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { formatCurrency, formatThickness } from '@/lib/format';
-import { api } from '@/trpc/react';
+} from "@/components/ui/dropdown-menu";
+import { formatCurrency, formatThickness } from "@/lib/format";
+import { api } from "@/trpc/react";
 
 /**
  * Glass Type data type (from tRPC)
@@ -87,13 +87,17 @@ type GlassTypesTableProps = {
  * Active status badge
  */
 function ActiveBadge({ isActive }: { isActive: boolean }) {
-  return <Badge variant={isActive ? 'default' : 'secondary'}>{isActive ? 'Activo' : 'Inactivo'}</Badge>;
+  return (
+    <Badge variant={isActive ? "default" : "secondary"}>
+      {isActive ? "Activo" : "Inactivo"}
+    </Badge>
+  );
 }
 
 /**
  * Solutions display
  */
-function SolutionsBadges({ solutions }: { solutions: GlassType['solutions'] }) {
+function SolutionsBadges({ solutions }: { solutions: GlassType["solutions"] }) {
   if (solutions.length === 0) {
     return <span className="text-muted-foreground text-sm">—</span>;
   }
@@ -107,8 +111,14 @@ function SolutionsBadges({ solutions }: { solutions: GlassType['solutions'] }) {
 
   return (
     <div className="flex flex-wrap items-center gap-1">
-      <Badge variant={displaySolution.isPrimary ? 'default' : 'secondary'}>{displaySolution.solution.nameEs}</Badge>
-      {solutions.length > 1 && <span className="text-muted-foreground text-xs">+{solutions.length - 1}</span>}
+      <Badge variant={displaySolution.isPrimary ? "default" : "secondary"}>
+        {displaySolution.solution.nameEs}
+      </Badge>
+      {solutions.length > 1 && (
+        <span className="text-muted-foreground text-xs">
+          +{solutions.length - 1}
+        </span>
+      )}
     </div>
   );
 }
@@ -116,7 +126,13 @@ function SolutionsBadges({ solutions }: { solutions: GlassType['solutions'] }) {
 /**
  * Actions dropdown menu
  */
-function ActionsMenu({ glassType, onDelete }: { glassType: GlassType; onDelete: (id: string, name: string) => void }) {
+function ActionsMenu({
+  glassType,
+  onDelete,
+}: {
+  glassType: GlassType;
+  onDelete: (id: string, name: string) => void;
+}) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -133,7 +149,10 @@ function ActionsMenu({ glassType, onDelete }: { glassType: GlassType; onDelete: 
             Editar
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem className="text-destructive" onClick={() => onDelete(glassType.id, glassType.name)}>
+        <DropdownMenuItem
+          className="text-destructive"
+          onClick={() => onDelete(glassType.id, glassType.name)}
+        >
           <Trash2 className="mr-2 size-4" />
           Eliminar
         </DropdownMenuItem>
@@ -142,11 +161,17 @@ function ActionsMenu({ glassType, onDelete }: { glassType: GlassType; onDelete: 
   );
 }
 
-export function GlassTypesTable({ initialData, searchParams }: GlassTypesTableProps) {
+export function GlassTypesTable({
+  initialData,
+  searchParams,
+}: GlassTypesTableProps) {
   const { formatContext } = useTenantConfig();
   const utils = api.useUtils();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [glassTypeToDelete, setGlassTypeToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [glassTypeToDelete, setGlassTypeToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   // Delete mutation with optimistic updates
   // biome-ignore format: Order matters for TypeScript inference (onMutate must come before onError)
@@ -240,52 +265,61 @@ export function GlassTypesTable({ initialData, searchParams }: GlassTypesTablePr
       cell: (item) => (
         <div>
           <div className="font-medium">{item.name}</div>
-          {item.sku && <div className="text-muted-foreground text-xs">SKU: {item.sku}</div>}
+          {item.sku && (
+            <div className="text-muted-foreground text-xs">SKU: {item.sku}</div>
+          )}
         </div>
       ),
-      header: 'Nombre',
-      id: 'name',
+      header: "Nombre",
+      id: "name",
       sortable: true,
     },
     {
-      align: 'center',
+      align: "center",
       cell: (item) => formatThickness(item.thicknessMm, formatContext),
-      header: 'Espesor',
-      id: 'thicknessMm',
+      header: "Espesor",
+      id: "thicknessMm",
       sortable: true,
     },
     {
-      cell: (item) => formatCurrency(item.pricePerSqm, { context: formatContext }),
-      header: 'Precio/m²',
-      id: 'pricePerSqm',
+      cell: (item) =>
+        formatCurrency(item.pricePerSqm, { context: formatContext }),
+      header: "Precio/m²",
+      id: "pricePerSqm",
       sortable: true,
     },
     {
       cell: (item) => <SolutionsBadges solutions={item.solutions} />,
-      header: 'Soluciones',
-      id: 'solutions',
+      header: "Soluciones",
+      id: "solutions",
       sortable: false,
     },
     {
-      align: 'center',
+      align: "center",
       cell: (item) => <ActiveBadge isActive={item.isActive} />,
-      header: 'Estado',
-      id: 'isActive',
+      header: "Estado",
+      id: "isActive",
       sortable: false,
     },
     {
-      align: 'right',
-      cell: (item) => <ActionsMenu glassType={item} onDelete={handleDeleteClick} />,
-      header: 'Acciones',
-      id: 'actions',
+      align: "right",
+      cell: (item) => (
+        <ActionsMenu glassType={item} onDelete={handleDeleteClick} />
+      ),
+      header: "Acciones",
+      id: "actions",
       sortable: false,
-      width: '80px',
+      width: "80px",
     },
   ];
 
   return (
     <>
-      <ServerTable columns={columns} data={initialData.items} emptyMessage="No se encontraron tipos de vidrio" />
+      <ServerTable
+        columns={columns}
+        data={initialData.items}
+        emptyMessage="No se encontraron tipos de vidrio"
+      />
       {/* Pagination */}
       <TablePagination
         currentPage={initialData.page}
@@ -296,7 +330,7 @@ export function GlassTypesTable({ initialData, searchParams }: GlassTypesTablePr
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
         dependencies={[]}
-        entityLabel={glassTypeToDelete?.name ?? ''}
+        entityLabel={glassTypeToDelete?.name ?? ""}
         entityName="tipo de vidrio"
         loading={deleteMutation.isPending}
         onConfirm={handleConfirmDelete}

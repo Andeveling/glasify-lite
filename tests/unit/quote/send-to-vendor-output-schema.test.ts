@@ -9,19 +9,19 @@
  * @module tests/unit/quote/send-to-vendor-output-schema
  */
 
-import { describe, expect, it } from 'vitest';
-import { sendToVendorOutput } from '../../../src/server/api/routers/quote/quote.schemas';
+import { describe, expect, it } from "vitest";
+import { sendToVendorOutput } from "../../../src/server/api/routers/quote/quote.schemas";
 
-describe('sendToVendorOutput Schema Validation (T008)', () => {
-  describe('Valid outputs', () => {
-    it('should accept complete valid output with all fields', () => {
+describe("sendToVendorOutput Schema Validation (T008)", () => {
+  describe("Valid outputs", () => {
+    it("should accept complete valid output with all fields", () => {
       const validOutput = {
-        contactEmail: 'user@example.com',
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
-        sentAt: new Date('2025-10-13T14:30:00.000Z'),
-        status: 'sent' as const,
+        contactEmail: "user@example.com",
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
+        sentAt: new Date("2025-10-13T14:30:00.000Z"),
+        status: "sent" as const,
         total: 1_500_000,
       };
 
@@ -29,23 +29,23 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
 
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.id).toBe('clx1a2b3c4d5e6f7g8h9i0j');
-        expect(result.data.status).toBe('sent');
+        expect(result.data.id).toBe("clx1a2b3c4d5e6f7g8h9i0j");
+        expect(result.data.status).toBe("sent");
         expect(result.data.sentAt).toBeInstanceOf(Date);
-        expect(result.data.contactPhone).toBe('+573001234567');
-        expect(result.data.contactEmail).toBe('user@example.com');
+        expect(result.data.contactPhone).toBe("+573001234567");
+        expect(result.data.contactEmail).toBe("user@example.com");
         expect(result.data.total).toBe(1_500_000);
-        expect(result.data.currency).toBe('COP');
+        expect(result.data.currency).toBe("COP");
       }
     });
 
-    it('should accept valid output without optional contactEmail', () => {
+    it("should accept valid output without optional contactEmail", () => {
       const validOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
-        sentAt: new Date('2025-10-13T14:30:00.000Z'),
-        status: 'sent' as const,
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
+        sentAt: new Date("2025-10-13T14:30:00.000Z"),
+        status: "sent" as const,
         total: 1_500_000,
       };
 
@@ -57,13 +57,13 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
       }
     });
 
-    it('should accept zero total amount', () => {
+    it("should accept zero total amount", () => {
       const validOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent' as const,
+        status: "sent" as const,
         total: 0,
       };
 
@@ -75,13 +75,13 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
       }
     });
 
-    it('should accept different currency codes (3 characters)', () => {
+    it("should accept different currency codes (3 characters)", () => {
       const validOutput = {
-        contactPhone: '+573001234567',
-        currency: 'USD',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "USD",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent' as const,
+        status: "sent" as const,
         total: 1000,
       };
 
@@ -89,18 +89,18 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
 
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.currency).toBe('USD');
+        expect(result.data.currency).toBe("USD");
       }
     });
 
-    it('should accept Date object for sentAt', () => {
+    it("should accept Date object for sentAt", () => {
       const now = new Date();
       const validOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: now,
-        status: 'sent' as const,
+        status: "sent" as const,
         total: 1000,
       };
 
@@ -114,13 +114,13 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
     });
   });
 
-  describe('Required field validation', () => {
-    it('should reject output missing id', () => {
+  describe("Required field validation", () => {
+    it("should reject output missing id", () => {
       const invalidOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
+        contactPhone: "+573001234567",
+        currency: "COP",
         sentAt: new Date(),
-        status: 'sent' as const,
+        status: "sent" as const,
         total: 1000,
       };
 
@@ -128,15 +128,17 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues.some((issue) => issue.path.includes('id'))).toBe(true);
+        expect(
+          result.error.issues.some((issue) => issue.path.includes("id"))
+        ).toBe(true);
       }
     });
 
-    it('should reject output missing status', () => {
+    it("should reject output missing status", () => {
       const invalidOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
         total: 1000,
       };
@@ -145,16 +147,18 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues.some((issue) => issue.path.includes('status'))).toBe(true);
+        expect(
+          result.error.issues.some((issue) => issue.path.includes("status"))
+        ).toBe(true);
       }
     });
 
-    it('should reject output missing sentAt', () => {
+    it("should reject output missing sentAt", () => {
       const invalidOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
-        status: 'sent' as const,
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
+        status: "sent" as const,
         total: 1000,
       };
 
@@ -162,16 +166,18 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues.some((issue) => issue.path.includes('sentAt'))).toBe(true);
+        expect(
+          result.error.issues.some((issue) => issue.path.includes("sentAt"))
+        ).toBe(true);
       }
     });
 
-    it('should reject output missing contactPhone', () => {
+    it("should reject output missing contactPhone", () => {
       const invalidOutput = {
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent' as const,
+        status: "sent" as const,
         total: 1000,
       };
 
@@ -179,33 +185,39 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues.some((issue) => issue.path.includes('contactPhone'))).toBe(true);
+        expect(
+          result.error.issues.some((issue) =>
+            issue.path.includes("contactPhone")
+          )
+        ).toBe(true);
       }
     });
 
-    it('should reject output missing total', () => {
+    it("should reject output missing total", () => {
       const invalidOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent' as const,
+        status: "sent" as const,
       };
 
       const result = sendToVendorOutput.safeParse(invalidOutput);
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues.some((issue) => issue.path.includes('total'))).toBe(true);
+        expect(
+          result.error.issues.some((issue) => issue.path.includes("total"))
+        ).toBe(true);
       }
     });
 
-    it('should reject output missing currency', () => {
+    it("should reject output missing currency", () => {
       const invalidOutput = {
-        contactPhone: '+573001234567',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent' as const,
+        status: "sent" as const,
         total: 1000,
       };
 
@@ -213,19 +225,21 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues.some((issue) => issue.path.includes('currency'))).toBe(true);
+        expect(
+          result.error.issues.some((issue) => issue.path.includes("currency"))
+        ).toBe(true);
       }
     });
   });
 
-  describe('Status field validation', () => {
+  describe("Status field validation", () => {
     it('should enforce literal status value "sent"', () => {
       const validOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent' as const,
+        status: "sent" as const,
         total: 1000,
       };
 
@@ -233,17 +247,17 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
 
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.status).toBe('sent');
+        expect(result.data.status).toBe("sent");
       }
     });
 
     it('should reject status "draft"', () => {
       const invalidOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'draft',
+        status: "draft",
         total: 1000,
       };
 
@@ -254,11 +268,11 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
 
     it('should reject status "canceled"', () => {
       const invalidOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'canceled',
+        status: "canceled",
         total: 1000,
       };
 
@@ -267,13 +281,13 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should reject arbitrary status string', () => {
+    it("should reject arbitrary status string", () => {
       const invalidOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'pending',
+        status: "pending",
         total: 1000,
       };
 
@@ -283,14 +297,14 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
     });
   });
 
-  describe('Type validation', () => {
-    it('should reject invalid CUID for id', () => {
+  describe("Type validation", () => {
+    it("should reject invalid CUID for id", () => {
       const invalidOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'not-a-valid-cuid',
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "not-a-valid-cuid",
         sentAt: new Date(),
-        status: 'sent' as const,
+        status: "sent" as const,
         total: 1000,
       };
 
@@ -299,13 +313,13 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should reject string for sentAt instead of Date', () => {
+    it("should reject string for sentAt instead of Date", () => {
       const invalidOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
-        sentAt: '2025-10-13T14:30:00.000Z',
-        status: 'sent' as const,
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
+        sentAt: "2025-10-13T14:30:00.000Z",
+        status: "sent" as const,
         total: 1000,
       };
 
@@ -314,13 +328,13 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should reject negative total', () => {
+    it("should reject negative total", () => {
       const invalidOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent' as const,
+        status: "sent" as const,
         total: -1000,
       };
 
@@ -329,14 +343,14 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should reject string for total instead of number', () => {
+    it("should reject string for total instead of number", () => {
       const invalidOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent' as const,
-        total: '1000',
+        status: "sent" as const,
+        total: "1000",
       };
 
       const result = sendToVendorOutput.safeParse(invalidOutput);
@@ -344,13 +358,13 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should reject currency with wrong length (not 3 chars)', () => {
+    it("should reject currency with wrong length (not 3 chars)", () => {
       const invalidOutput = {
-        contactPhone: '+573001234567',
-        currency: 'US',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "US",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent' as const,
+        status: "sent" as const,
         total: 1000,
       };
 
@@ -359,13 +373,13 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should reject currency longer than 3 characters', () => {
+    it("should reject currency longer than 3 characters", () => {
       const invalidOutput = {
-        contactPhone: '+573001234567',
-        currency: 'USDD',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "USDD",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent' as const,
+        status: "sent" as const,
         total: 1000,
       };
 
@@ -375,15 +389,15 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
     });
   });
 
-  describe('Edge cases', () => {
-    it('should handle undefined contactEmail gracefully', () => {
+  describe("Edge cases", () => {
+    it("should handle undefined contactEmail gracefully", () => {
       const validOutput = {
         contactEmail: undefined,
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent' as const,
+        status: "sent" as const,
         total: 1000,
       };
 
@@ -395,7 +409,7 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
       }
     });
 
-    it('should reject null values for required fields', () => {
+    it("should reject null values for required fields", () => {
       const invalidOutput = {
         contactPhone: null,
         currency: null,
@@ -410,7 +424,7 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should reject empty object', () => {
+    it("should reject empty object", () => {
       const invalidOutput = {};
 
       const result = sendToVendorOutput.safeParse(invalidOutput);
@@ -421,14 +435,14 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
       }
     });
 
-    it('should reject extra fields not in schema', () => {
+    it("should reject extra fields not in schema", () => {
       const outputWithExtraField = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        extraField: 'should-be-ignored',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "COP",
+        extraField: "should-be-ignored",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent' as const,
+        status: "sent" as const,
         total: 1000,
       };
 
@@ -437,7 +451,7 @@ describe('sendToVendorOutput Schema Validation (T008)', () => {
       // Zod by default strips extra fields with safeParse
       expect(result.success).toBe(true);
       if (result.success) {
-        expect('extraField' in result.data).toBe(false);
+        expect("extraField" in result.data).toBe(false);
       }
     });
   });

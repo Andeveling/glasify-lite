@@ -1,18 +1,32 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import type { GlassSolution } from '@prisma/client';
-import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { GlassSolution } from "@prisma/client";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   createGlassSolutionSchema,
   MAX_KEY_LENGTH,
@@ -21,13 +35,13 @@ import {
   MIN_KEY_LENGTH,
   MIN_NAME_LENGTH,
   MIN_SORT_ORDER,
-} from '@/lib/validations/admin/glass-solution.schema';
-import { api } from '@/trpc/react';
+} from "@/lib/validations/admin/glass-solution.schema";
+import { api } from "@/trpc/react";
 
-import { IconSelector } from './icon-selector';
+import { IconSelector } from "./icon-selector";
 
 type GlassSolutionFormProps = {
-  mode: 'create' | 'edit';
+  mode: "create" | "edit";
   defaultValues?: GlassSolution;
 };
 
@@ -41,7 +55,10 @@ type FormValues = {
   isActive?: boolean;
 };
 
-export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProps) {
+export function GlassSolutionForm({
+  mode,
+  defaultValues,
+}: GlassSolutionFormProps) {
   const router = useRouter();
 
   const form = useForm<FormValues>({
@@ -49,40 +66,40 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
       description: defaultValues?.description ?? undefined,
       icon: defaultValues?.icon ?? undefined,
       isActive: defaultValues?.isActive ?? true,
-      key: defaultValues?.key ?? '',
-      name: defaultValues?.name ?? '',
-      nameEs: defaultValues?.nameEs ?? '',
+      key: defaultValues?.key ?? "",
+      name: defaultValues?.name ?? "",
+      nameEs: defaultValues?.nameEs ?? "",
       sortOrder: defaultValues?.sortOrder ?? 0,
     },
     resolver: zodResolver(createGlassSolutionSchema),
   });
 
-  const createMutation = api.admin['glass-solution'].create.useMutation({
+  const createMutation = api.admin["glass-solution"].create.useMutation({
     onError: (err: { message?: string }) => {
-      toast.error('Error al crear solución', {
-        description: err.message || 'Ocurrió un error inesperado',
+      toast.error("Error al crear solución", {
+        description: err.message || "Ocurrió un error inesperado",
       });
     },
     onSuccess: () => {
-      toast.success('Solución creada', {
-        description: 'La solución se creó correctamente',
+      toast.success("Solución creada", {
+        description: "La solución se creó correctamente",
       });
-      router.push('/admin/glass-solutions');
+      router.push("/admin/glass-solutions");
       router.refresh();
     },
   });
 
-  const updateMutation = api.admin['glass-solution'].update.useMutation({
+  const updateMutation = api.admin["glass-solution"].update.useMutation({
     onError: (err: { message?: string }) => {
-      toast.error('Error al actualizar solución', {
-        description: err.message || 'Ocurrió un error inesperado',
+      toast.error("Error al actualizar solución", {
+        description: err.message || "Ocurrió un error inesperado",
       });
     },
     onSuccess: () => {
-      toast.success('Solución actualizada', {
-        description: 'Los cambios se guardaron correctamente',
+      toast.success("Solución actualizada", {
+        description: "Los cambios se guardaron correctamente",
       });
-      router.push('/admin/glass-solutions');
+      router.push("/admin/glass-solutions");
       router.refresh();
     },
   });
@@ -98,7 +115,7 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
       sortOrder: formData.sortOrder ?? 0,
     };
 
-    if (mode === 'create') {
+    if (mode === "create") {
       createMutation.mutate(cleanedData);
     } else if (defaultValues?.id) {
       updateMutation.mutate({
@@ -113,16 +130,23 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{mode === 'create' ? 'Nueva Solución de Vidrio' : 'Editar Solución de Vidrio'}</CardTitle>
+        <CardTitle>
+          {mode === "create"
+            ? "Nueva Solución de Vidrio"
+            : "Editar Solución de Vidrio"}
+        </CardTitle>
         <CardDescription>
-          {mode === 'create'
-            ? 'Crea una nueva solución base para tipos de vidrio'
-            : 'Actualiza la información de la solución de vidrio'}
+          {mode === "create"
+            ? "Crea una nueva solución base para tipos de vidrio"
+            : "Actualiza la información de la solución de vidrio"}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
+          <form
+            className="space-y-6"
+            onSubmit={form.handleSubmit(handleSubmit)}
+          >
             <div className="space-y-4">
               <h3 className="font-semibold text-lg">Información Básica</h3>
 
@@ -134,15 +158,16 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
                     <FormLabel>Clave Técnica *</FormLabel>
                     <FormControl>
                       <Input
-                        disabled={isPending || mode === 'edit'}
+                        disabled={isPending || mode === "edit"}
                         maxLength={MAX_KEY_LENGTH}
                         placeholder="Ej: tempered, laminated, insulated"
                         {...field}
                       />
                     </FormControl>
                     <FormDescription>
-                      Identificador único en snake_case ({MIN_KEY_LENGTH}-{MAX_KEY_LENGTH} caracteres). No editable
-                      después de crear.
+                      Identificador único en snake_case ({MIN_KEY_LENGTH}-
+                      {MAX_KEY_LENGTH} caracteres). No editable después de
+                      crear.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -164,7 +189,8 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
                       />
                     </FormControl>
                     <FormDescription>
-                      Nombre en inglés ({MIN_NAME_LENGTH}-{MAX_NAME_LENGTH} caracteres)
+                      Nombre en inglés ({MIN_NAME_LENGTH}-{MAX_NAME_LENGTH}{" "}
+                      caracteres)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -185,7 +211,9 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>Nombre en español para la interfaz de usuario</FormDescription>
+                    <FormDescription>
+                      Nombre en español para la interfaz de usuario
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -205,12 +233,15 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
                         placeholder="0-100"
                         type="number"
                         {...field}
-                        onChange={(e) => field.onChange(Number.parseInt(e.target.value, 10))}
+                        onChange={(e) =>
+                          field.onChange(Number.parseInt(e.target.value, 10))
+                        }
                         value={field.value ?? 0}
                       />
                     </FormControl>
                     <FormDescription>
-                      Define el orden de aparición (0-100, menor número aparece primero)
+                      Define el orden de aparición (0-100, menor número aparece
+                      primero)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -235,7 +266,8 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
                       />
                     </FormControl>
                     <FormDescription>
-                      Selecciona un icono visual para representar esta solución de vidrio
+                      Selecciona un icono visual para representar esta solución
+                      de vidrio
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -254,10 +286,12 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
                         placeholder="Descripción técnica de la solución..."
                         rows={4}
                         {...field}
-                        value={field.value ?? ''}
+                        value={field.value ?? ""}
                       />
                     </FormControl>
-                    <FormDescription>Descripción técnica o notas internas</FormDescription>
+                    <FormDescription>
+                      Descripción técnica o notas internas
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -273,12 +307,17 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-start gap-3 space-y-0 rounded-md border p-4">
                     <FormControl>
-                      <Checkbox checked={field.value} disabled={isPending} onCheckedChange={field.onChange} />
+                      <Checkbox
+                        checked={field.value}
+                        disabled={isPending}
+                        onCheckedChange={field.onChange}
+                      />
                     </FormControl>
                     <div className="space-y-1 leading-none">
                       <FormLabel>Solución Activa</FormLabel>
                       <FormDescription>
-                        Las soluciones activas están disponibles para asignar a tipos de vidrio
+                        Las soluciones activas están disponibles para asignar a
+                        tipos de vidrio
                       </FormDescription>
                     </div>
                   </FormItem>
@@ -289,9 +328,14 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
             <div className="flex gap-4">
               <Button disabled={isPending} type="submit">
                 {isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
-                {mode === 'create' ? 'Crear Solución' : 'Guardar Cambios'}
+                {mode === "create" ? "Crear Solución" : "Guardar Cambios"}
               </Button>
-              <Button disabled={isPending} onClick={() => router.back()} type="button" variant="outline">
+              <Button
+                disabled={isPending}
+                onClick={() => router.back()}
+                type="button"
+                variant="outline"
+              >
                 Cancelar
               </Button>
             </div>

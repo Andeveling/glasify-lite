@@ -7,59 +7,62 @@
  * @vitest-environment jsdom
  */
 
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
-import { ImageViewerDialog } from '@/app/(public)/my-quotes/[quoteId]/_components/image-viewer-dialog';
-import { WindowType } from '@/types/window.types';
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
+import { ImageViewerDialog } from "@/app/(public)/my-quotes/[quoteId]/_components/image-viewer-dialog";
+import { WindowType } from "@/types/window.types";
 
-describe('ImageViewerDialog', () => {
+describe("ImageViewerDialog", () => {
   const defaultProps = {
-    dimensions: '100 x 120 cm',
-    modelImageUrl: 'https://cdn.example.com/models/veka-guardian.jpg',
-    modelName: 'VEKA Guardian 10mm',
+    dimensions: "100 x 120 cm",
+    modelImageUrl: "https://cdn.example.com/models/veka-guardian.jpg",
+    modelName: "VEKA Guardian 10mm",
     onOpenChange: vi.fn(),
     open: true,
     specifications: {
-      glassType: 'Templado',
-      manufacturer: 'Guardian',
-      thickness: '10mm',
-      treatment: 'Low-E',
+      glassType: "Templado",
+      manufacturer: "Guardian",
+      thickness: "10mm",
+      treatment: "Low-E",
     },
     windowType: WindowType.SLIDING_2_PANEL,
   };
 
-  describe('Accessibility', () => {
-    it('should render visually hidden DialogTitle for screen readers', () => {
+  describe("Accessibility", () => {
+    it("should render visually hidden DialogTitle for screen readers", () => {
       render(<ImageViewerDialog {...defaultProps} />);
 
       // DialogTitle should exist in DOM but be visually hidden
-      const title = screen.getByText('Visor de imagen: VEKA Guardian 10mm');
+      const title = screen.getByText("Visor de imagen: VEKA Guardian 10mm");
       expect(title).toBeInTheDocument();
 
       // Verify it has Radix VisuallyHidden styles (sr-only or absolute positioning)
-      const titleElement = title.closest('[data-radix-visually-hidden]');
+      const titleElement = title.closest("[data-radix-visually-hidden]");
       expect(titleElement).toBeInTheDocument();
     });
 
-    it('should have aria-label on DialogContent', () => {
+    it("should have aria-label on DialogContent", () => {
       render(<ImageViewerDialog {...defaultProps} />);
 
-      const dialog = screen.getByTestId('image-viewer-dialog');
-      expect(dialog).toHaveAttribute('aria-label', 'Visor de imagen: VEKA Guardian 10mm');
+      const dialog = screen.getByTestId("image-viewer-dialog");
+      expect(dialog).toHaveAttribute(
+        "aria-label",
+        "Visor de imagen: VEKA Guardian 10mm"
+      );
     });
 
-    it('should have aria-label on close button', () => {
+    it("should have aria-label on close button", () => {
       render(<ImageViewerDialog {...defaultProps} />);
 
-      const closeButton = screen.getByLabelText('Cerrar visor de imagen');
+      const closeButton = screen.getByLabelText("Cerrar visor de imagen");
       expect(closeButton).toBeInTheDocument();
     });
 
-    it('should trap focus within dialog when open', () => {
+    it("should trap focus within dialog when open", () => {
       render(<ImageViewerDialog {...defaultProps} />);
 
-      const closeButton = screen.getByLabelText('Cerrar visor de imagen');
+      const closeButton = screen.getByLabelText("Cerrar visor de imagen");
       expect(closeButton).toBeInTheDocument();
 
       // Focus should be trapped - pressing Tab shouldn't escape dialog
@@ -67,75 +70,81 @@ describe('ImageViewerDialog', () => {
     });
   });
 
-  describe('Image Display', () => {
-    it('should render product image when modelImageUrl is provided', () => {
+  describe("Image Display", () => {
+    it("should render product image when modelImageUrl is provided", () => {
       render(<ImageViewerDialog {...defaultProps} />);
 
-      const image = screen.getByRole('img', { name: 'VEKA Guardian 10mm' });
+      const image = screen.getByRole("img", { name: "VEKA Guardian 10mm" });
       expect(image).toBeInTheDocument();
-      expect(image).toHaveAttribute('src', expect.stringContaining('veka-guardian'));
+      expect(image).toHaveAttribute(
+        "src",
+        expect.stringContaining("veka-guardian")
+      );
     });
 
-    it('should render WindowDiagram fallback when no image URL', () => {
+    it("should render WindowDiagram fallback when no image URL", () => {
       render(<ImageViewerDialog {...defaultProps} modelImageUrl={null} />);
 
       // WindowDiagram should render SVG with window type label
-      const diagram = screen.getByRole('img', { name: /ventana corrediza/i });
+      const diagram = screen.getByRole("img", { name: /ventana corrediza/i });
       expect(diagram).toBeInTheDocument();
     });
 
-    it('should display product name in overlay', () => {
+    it("should display product name in overlay", () => {
       render(<ImageViewerDialog {...defaultProps} />);
 
-      const heading = screen.getByRole('heading', { level: 3, name: 'VEKA Guardian 10mm' });
+      const heading = screen.getByRole("heading", {
+        level: 3,
+        name: "VEKA Guardian 10mm",
+      });
       expect(heading).toBeInTheDocument();
     });
   });
 
-  describe('Product Specifications Overlay', () => {
-    it('should display window type', () => {
+  describe("Product Specifications Overlay", () => {
+    it("should display window type", () => {
       render(<ImageViewerDialog {...defaultProps} />);
 
       expect(screen.getByText(/tipo:/i)).toBeInTheDocument();
       expect(screen.getByText(/ventana corrediza/i)).toBeInTheDocument();
     });
 
-    it('should display dimensions when provided', () => {
+    it("should display dimensions when provided", () => {
       render(<ImageViewerDialog {...defaultProps} />);
 
       expect(screen.getByText(/dimensiones:/i)).toBeInTheDocument();
-      expect(screen.getByText('100 x 120 cm')).toBeInTheDocument();
+      expect(screen.getByText("100 x 120 cm")).toBeInTheDocument();
     });
 
-    it('should display glass type when provided', () => {
+    it("should display glass type when provided", () => {
       render(<ImageViewerDialog {...defaultProps} />);
 
       expect(screen.getByText(/vidrio:/i)).toBeInTheDocument();
-      expect(screen.getByText('Templado')).toBeInTheDocument();
+      expect(screen.getByText("Templado")).toBeInTheDocument();
     });
 
-    it('should display manufacturer when provided', () => {
+    it("should display manufacturer when provided", () => {
       render(<ImageViewerDialog {...defaultProps} />);
 
       expect(screen.getByText(/fabricante:/i)).toBeInTheDocument();
-      expect(screen.getByText('Guardian')).toBeInTheDocument();
+      expect(screen.getByText("Guardian")).toBeInTheDocument();
     });
 
-    it('should display thickness when provided', () => {
+    it("should display thickness when provided", () => {
       render(<ImageViewerDialog {...defaultProps} />);
 
       expect(screen.getByText(/espesor:/i)).toBeInTheDocument();
-      expect(screen.getByText('10mm')).toBeInTheDocument();
+      expect(screen.getByText("10mm")).toBeInTheDocument();
     });
 
-    it('should display treatment when provided', () => {
+    it("should display treatment when provided", () => {
       render(<ImageViewerDialog {...defaultProps} />);
 
       expect(screen.getByText(/tratamiento:/i)).toBeInTheDocument();
-      expect(screen.getByText('Low-E')).toBeInTheDocument();
+      expect(screen.getByText("Low-E")).toBeInTheDocument();
     });
 
-    it('should hide specifications sections when not provided', () => {
+    it("should hide specifications sections when not provided", () => {
       render(
         <ImageViewerDialog
           {...defaultProps}
@@ -157,59 +166,65 @@ describe('ImageViewerDialog', () => {
     });
   });
 
-  describe('User Interactions', () => {
-    it('should call onOpenChange with false when close button clicked', async () => {
+  describe("User Interactions", () => {
+    it("should call onOpenChange with false when close button clicked", async () => {
       const user = userEvent.setup();
       const onOpenChange = vi.fn();
 
-      render(<ImageViewerDialog {...defaultProps} onOpenChange={onOpenChange} />);
+      render(
+        <ImageViewerDialog {...defaultProps} onOpenChange={onOpenChange} />
+      );
 
-      const closeButton = screen.getByLabelText('Cerrar visor de imagen');
+      const closeButton = screen.getByLabelText("Cerrar visor de imagen");
       await user.click(closeButton);
 
       expect(onOpenChange).toHaveBeenCalledWith(false);
     });
 
-    it('should call onOpenChange with false when Escape key pressed', async () => {
+    it("should call onOpenChange with false when Escape key pressed", async () => {
       const user = userEvent.setup();
       const onOpenChange = vi.fn();
 
-      render(<ImageViewerDialog {...defaultProps} onOpenChange={onOpenChange} />);
+      render(
+        <ImageViewerDialog {...defaultProps} onOpenChange={onOpenChange} />
+      );
 
-      await user.keyboard('{Escape}');
+      await user.keyboard("{Escape}");
 
       await waitFor(() => {
         expect(onOpenChange).toHaveBeenCalledWith(false);
       });
     });
 
-    it('should not render dialog content when open is false', () => {
+    it("should not render dialog content when open is false", () => {
       render(<ImageViewerDialog {...defaultProps} open={false} />);
 
-      expect(screen.queryByTestId('image-viewer-dialog')).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId("image-viewer-dialog")
+      ).not.toBeInTheDocument();
     });
   });
 
-  describe('Visual States', () => {
-    it('should apply backdrop blur to overlay', () => {
+  describe("Visual States", () => {
+    it("should apply backdrop blur to overlay", () => {
       render(<ImageViewerDialog {...defaultProps} />);
 
-      const overlay = screen.getByTestId('dialog-overlay');
-      expect(overlay).toHaveClass('backdrop-blur-sm');
+      const overlay = screen.getByTestId("dialog-overlay");
+      expect(overlay).toHaveClass("backdrop-blur-sm");
     });
 
-    it('should apply transparent background to dialog content', () => {
+    it("should apply transparent background to dialog content", () => {
       render(<ImageViewerDialog {...defaultProps} />);
 
-      const dialog = screen.getByTestId('image-viewer-dialog');
-      expect(dialog).toHaveClass('bg-transparent');
+      const dialog = screen.getByTestId("image-viewer-dialog");
+      expect(dialog).toHaveClass("bg-transparent");
     });
 
-    it('should position close button absolutely in top-right corner', () => {
+    it("should position close button absolutely in top-right corner", () => {
       render(<ImageViewerDialog {...defaultProps} />);
 
-      const closeButton = screen.getByLabelText('Cerrar visor de imagen');
-      expect(closeButton).toHaveClass('absolute', 'top-4', 'right-4');
+      const closeButton = screen.getByLabelText("Cerrar visor de imagen");
+      expect(closeButton).toHaveClass("absolute", "top-4", "right-4");
     });
   });
 });

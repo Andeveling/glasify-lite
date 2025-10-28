@@ -12,12 +12,12 @@
  * @module QuoteItemsGrid
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import type { WindowType } from '@/types/window.types';
-import { ImageViewerDialog } from './image-viewer-dialog';
-import { QuoteItemImage } from './quote-item-image';
+import { useState } from "react";
+import type { WindowType } from "@/types/window.types";
+import { ImageViewerDialog } from "./image-viewer-dialog";
+import { QuoteItemImage } from "./quote-item-image";
 
 /**
  * Quote item data structure for grid
@@ -60,7 +60,7 @@ export interface QuoteItemsGridProps {
 export function QuoteItemsGrid({
   items,
   eager = false,
-  emptyMessage = 'No hay elementos en esta cotización',
+  emptyMessage = "No hay elementos en esta cotización",
 }: QuoteItemsGridProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
@@ -88,7 +88,10 @@ export function QuoteItemsGrid({
   /**
    * Format dimensions for display
    */
-  const formatDimensions = (width: number | null, height: number | null): string | undefined => {
+  const formatDimensions = (
+    width: number | null,
+    height: number | null
+  ): string | undefined => {
     if (!(width && height)) return;
     return `${width} × ${height} cm`;
   };
@@ -105,7 +108,10 @@ export function QuoteItemsGrid({
   return (
     <>
       {/* Grid */}
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4" data-testid="quote-items-grid">
+      <div
+        className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4"
+        data-testid="quote-items-grid"
+      >
         {items.map((item, index) => (
           <div className="flex flex-col gap-2" key={item.id}>
             {/* Product thumbnail */}
@@ -120,12 +126,16 @@ export function QuoteItemsGrid({
 
             {/* Product name */}
             <div className="min-h-10">
-              <p className="line-clamp-2 font-medium text-sm leading-tight">{item.modelName}</p>
+              <p className="line-clamp-2 font-medium text-sm leading-tight">
+                {item.modelName}
+              </p>
             </div>
 
             {/* Dimensions */}
             {(item.width || item.height) && (
-              <p className="text-muted-foreground text-xs">{formatDimensions(item.width, item.height)}</p>
+              <p className="text-muted-foreground text-xs">
+                {formatDimensions(item.width, item.height)}
+              </p>
             )}
           </div>
         ))}

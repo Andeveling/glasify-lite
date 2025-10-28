@@ -6,10 +6,10 @@
  * @module _components/sections/solutions-section
  */
 
-'use client';
+"use client";
 
-import { Card, CardContent } from '@/components/ui/card';
-import { SolutionSelector } from '../solution-selector';
+import { Card, CardContent } from "@/components/ui/card";
+import { SolutionSelector } from "../solution-selector";
 
 /**
  * Solutions section component (wrapper)

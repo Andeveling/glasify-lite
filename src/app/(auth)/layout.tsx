@@ -1,8 +1,12 @@
-import Link from 'next/link';
-import { BackLink } from '@/components/ui/back-link';
-import { Card, CardContent } from '@/components/ui/card';
+import Link from "next/link";
+import { BackLink } from "@/components/ui/back-link";
+import { Card, CardContent } from "@/components/ui/card";
 
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+export default function AuthLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div className="container relative grid h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
       {/* Left side - Branding/Info */}
@@ -16,7 +20,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              &ldquo;Cotización inteligente de productos de vidrio para fabricantes y distribuidores.&rdquo;
+              &ldquo;Cotización inteligente de productos de vidrio para
+              fabricantes y distribuidores.&rdquo;
             </p>
             <footer className="text-sm">Glasify Lite</footer>
           </blockquote>
@@ -31,7 +36,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <Link className="mx-auto" href="/catalog">
               <span className="font-bold text-2xl">Glasify</span>
             </Link>
-            <p className="text-muted-foreground text-sm">Cotizador inteligente de vidrios</p>
+            <p className="text-muted-foreground text-sm">
+              Cotizador inteligente de vidrios
+            </p>
           </div>
 
           {/* Auth form content in card */}

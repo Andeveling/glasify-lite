@@ -1,12 +1,19 @@
-import { Award, Info, Sparkles } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import { Award, Info, Sparkles } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 type ModelFeaturesProps = {
   features: string[];
 };
 
 // ✅ Move to module scope - created once, not on every render
-const HIGHLIGHT_KEYWORDS = ['excelente', 'máxima', 'excepcional', 'alta reducción', 'óptimo', 'superior'];
+const HIGHLIGHT_KEYWORDS = [
+  "excelente",
+  "máxima",
+  "excepcional",
+  "alta reducción",
+  "óptimo",
+  "superior",
+];
 
 /**
  * Determines if a feature highlights exceptional performance
@@ -14,7 +21,9 @@ const HIGHLIGHT_KEYWORDS = ['excelente', 'máxima', 'excepcional', 'alta reducci
  * @returns true if feature contains highlight keywords
  */
 function isHighlightFeature(feature: string): boolean {
-  return HIGHLIGHT_KEYWORDS.some((keyword) => feature.toLowerCase().includes(keyword));
+  return HIGHLIGHT_KEYWORDS.some((keyword) =>
+    feature.toLowerCase().includes(keyword)
+  );
 }
 
 /**
@@ -53,11 +62,23 @@ export function ModelFeatures({ features }: ModelFeaturesProps) {
           return (
             <li className="flex items-start gap-2 text-sm" key={index}>
               {isHighlight ? (
-                <Sparkles aria-label="Característica destacada" className="mt-0.5 h-4 w-4 shrink-0 text-yellow-500" />
+                <Sparkles
+                  aria-label="Característica destacada"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-yellow-500"
+                />
               ) : (
-                <Award aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-primary/70" />
+                <Award
+                  aria-hidden="true"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-primary/70"
+                />
               )}
-              <span className={isHighlight ? 'font-medium' : 'text-muted-foreground'}>{feature}</span>
+              <span
+                className={
+                  isHighlight ? "font-medium" : "text-muted-foreground"
+                }
+              >
+                {feature}
+              </span>
             </li>
           );
         })}

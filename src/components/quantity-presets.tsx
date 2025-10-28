@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
 type QuantityPresetsProps = {
   presets: readonly number[];
@@ -11,12 +11,21 @@ type QuantityPresetsProps = {
  * Grid of preset quantity buttons for quick selection
  * Provides common quantity shortcuts for better UX
  */
-export function QuantityPresets({ presets, onSelect, className }: QuantityPresetsProps) {
+export function QuantityPresets({
+  presets,
+  onSelect,
+  className,
+}: QuantityPresetsProps) {
   return (
     <div className={className}>
       <div className="flex flex-wrap gap-2">
         {presets.map((preset) => (
-          <Button key={preset} onClick={() => onSelect(preset)} size="icon" type="button">
+          <Button
+            key={preset}
+            onClick={() => onSelect(preset)}
+            size="icon"
+            type="button"
+          >
             {preset}
           </Button>
         ))}

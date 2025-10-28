@@ -9,18 +9,21 @@
  * @module tests/contract/quote/send-to-vendor.contract
  */
 
-import { describe, expect, it } from 'vitest';
-import { sendToVendorInput, sendToVendorOutput } from '../../../src/server/api/routers/quote/quote.schemas';
+import { describe, expect, it } from "vitest";
+import {
+  sendToVendorInput,
+  sendToVendorOutput,
+} from "../../../src/server/api/routers/quote/quote.schemas";
 
-describe('Contract Test: send-to-vendor (T010)', () => {
-  describe('Input Contract Enforcement', () => {
-    it('should enforce quoteId as required CUID', () => {
+describe("Contract Test: send-to-vendor (T010)", () => {
+  describe("Input Contract Enforcement", () => {
+    it("should enforce quoteId as required CUID", () => {
       const invalidInputs = [
         {}, // missing quoteId
-        { contactPhone: '+573001234567' }, // missing quoteId
-        { contactPhone: '+573001234567', quoteId: 'not-a-cuid' }, // invalid CUID
-        { contactPhone: '+573001234567', quoteId: 123 }, // wrong type
-        { contactPhone: '+573001234567', quoteId: null }, // null
+        { contactPhone: "+573001234567" }, // missing quoteId
+        { contactPhone: "+573001234567", quoteId: "not-a-cuid" }, // invalid CUID
+        { contactPhone: "+573001234567", quoteId: 123 }, // wrong type
+        { contactPhone: "+573001234567", quoteId: null }, // null
       ];
 
       for (const input of invalidInputs) {
@@ -29,13 +32,13 @@ describe('Contract Test: send-to-vendor (T010)', () => {
       }
     });
 
-    it('should enforce contactPhone as required with specific format', () => {
+    it("should enforce contactPhone as required with specific format", () => {
       const invalidInputs = [
-        { quoteId: 'clx1a2b3c4d5e6f7g8h9i0j' }, // missing contactPhone
-        { contactPhone: '', quoteId: 'clx1a2b3c4d5e6f7g8h9i0j' }, // empty string
-        { contactPhone: '123', quoteId: 'clx1a2b3c4d5e6f7g8h9i0j' }, // too short
-        { contactPhone: '300-123-4567', quoteId: 'clx1a2b3c4d5e6f7g8h9i0j' }, // dashes
-        { contactPhone: 123_456_789, quoteId: 'clx1a2b3c4d5e6f7g8h9i0j' }, // number type
+        { quoteId: "clx1a2b3c4d5e6f7g8h9i0j" }, // missing contactPhone
+        { contactPhone: "", quoteId: "clx1a2b3c4d5e6f7g8h9i0j" }, // empty string
+        { contactPhone: "123", quoteId: "clx1a2b3c4d5e6f7g8h9i0j" }, // too short
+        { contactPhone: "300-123-4567", quoteId: "clx1a2b3c4d5e6f7g8h9i0j" }, // dashes
+        { contactPhone: 123_456_789, quoteId: "clx1a2b3c4d5e6f7g8h9i0j" }, // number type
       ];
 
       for (const input of invalidInputs) {
@@ -44,12 +47,12 @@ describe('Contract Test: send-to-vendor (T010)', () => {
       }
     });
 
-    it('should allow valid phone formats (international)', () => {
+    it("should allow valid phone formats (international)", () => {
       const validInputs = [
-        { contactPhone: '+573001234567', quoteId: 'clx1a2b3c4d5e6f7g8h9i0j' },
-        { contactPhone: '573001234567', quoteId: 'clx1a2b3c4d5e6f7g8h9i0j' },
-        { contactPhone: '+14155552671', quoteId: 'clx1a2b3c4d5e6f7g8h9i0j' },
-        { contactPhone: '5712345678', quoteId: 'clx1a2b3c4d5e6f7g8h9i0j' },
+        { contactPhone: "+573001234567", quoteId: "clx1a2b3c4d5e6f7g8h9i0j" },
+        { contactPhone: "573001234567", quoteId: "clx1a2b3c4d5e6f7g8h9i0j" },
+        { contactPhone: "+14155552671", quoteId: "clx1a2b3c4d5e6f7g8h9i0j" },
+        { contactPhone: "5712345678", quoteId: "clx1a2b3c4d5e6f7g8h9i0j" },
       ];
 
       for (const input of validInputs) {
@@ -58,39 +61,39 @@ describe('Contract Test: send-to-vendor (T010)', () => {
       }
     });
 
-    it('should make contactEmail optional but validate format when provided', () => {
+    it("should make contactEmail optional but validate format when provided", () => {
       // Valid: Email omitted
       const validWithoutEmail = {
-        contactPhone: '+573001234567',
-        quoteId: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        quoteId: "clx1a2b3c4d5e6f7g8h9i0j",
       };
 
       expect(sendToVendorInput.safeParse(validWithoutEmail).success).toBe(true);
 
       // Valid: Email provided with correct format
       const validWithEmail = {
-        contactEmail: 'user@example.com',
-        contactPhone: '+573001234567',
-        quoteId: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactEmail: "user@example.com",
+        contactPhone: "+573001234567",
+        quoteId: "clx1a2b3c4d5e6f7g8h9i0j",
       };
 
       expect(sendToVendorInput.safeParse(validWithEmail).success).toBe(true);
 
       // Invalid: Bad email format
       const invalidEmail = {
-        contactEmail: 'not-an-email',
-        contactPhone: '+573001234567',
-        quoteId: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactEmail: "not-an-email",
+        contactPhone: "+573001234567",
+        quoteId: "clx1a2b3c4d5e6f7g8h9i0j",
       };
 
       expect(sendToVendorInput.safeParse(invalidEmail).success).toBe(false);
     });
 
-    it('should not allow extra undeclared fields', () => {
+    it("should not allow extra undeclared fields", () => {
       const inputWithExtraField = {
-        contactPhone: '+573001234567',
-        extraField: 'should-be-stripped',
-        quoteId: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        extraField: "should-be-stripped",
+        quoteId: "clx1a2b3c4d5e6f7g8h9i0j",
       };
 
       const result = sendToVendorInput.safeParse(inputWithExtraField);
@@ -98,23 +101,23 @@ describe('Contract Test: send-to-vendor (T010)', () => {
       expect(result.success).toBe(true);
       if (result.success) {
         // Zod strips extra fields by default
-        expect('extraField' in result.data).toBe(false);
+        expect("extraField" in result.data).toBe(false);
       }
     });
   });
 
-  describe('Output Contract Validation', () => {
-    it('should require all mandatory fields', () => {
+  describe("Output Contract Validation", () => {
+    it("should require all mandatory fields", () => {
       const incompleteOutputs = [
         {}, // empty object
-        { id: 'clx1a2b3c4d5e6f7g8h9i0j' }, // only id
-        { id: 'clx1a2b3c4d5e6f7g8h9i0j', status: 'sent' }, // missing others
+        { id: "clx1a2b3c4d5e6f7g8h9i0j" }, // only id
+        { id: "clx1a2b3c4d5e6f7g8h9i0j", status: "sent" }, // missing others
         {
           // missing sentAt
-          contactPhone: '+573001234567',
-          currency: 'COP',
-          id: 'clx1a2b3c4d5e6f7g8h9i0j',
-          status: 'sent',
+          contactPhone: "+573001234567",
+          currency: "COP",
+          id: "clx1a2b3c4d5e6f7g8h9i0j",
+          status: "sent",
           total: 1000,
         },
       ];
@@ -127,18 +130,18 @@ describe('Contract Test: send-to-vendor (T010)', () => {
 
     it('should enforce status literal as "sent" only', () => {
       const validOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent' as const,
+        status: "sent" as const,
         total: 1000,
       };
 
       expect(sendToVendorOutput.safeParse(validOutput).success).toBe(true);
 
       // Invalid status values
-      const invalidStatuses = ['draft', 'canceled', 'pending', 'completed'];
+      const invalidStatuses = ["draft", "canceled", "pending", "completed"];
 
       for (const invalidStatus of invalidStatuses) {
         const invalidOutput = {
@@ -150,12 +153,12 @@ describe('Contract Test: send-to-vendor (T010)', () => {
       }
     });
 
-    it('should require sentAt to be a Date object', () => {
+    it("should require sentAt to be a Date object", () => {
       const baseOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
-        status: 'sent' as const,
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
+        status: "sent" as const,
         total: 1000,
       };
 
@@ -164,29 +167,36 @@ describe('Contract Test: send-to-vendor (T010)', () => {
       expect(sendToVendorOutput.safeParse(validOutput).success).toBe(true);
 
       // Invalid: Date string
-      const invalidStringDate = { ...baseOutput, sentAt: '2025-10-13T14:30:00Z' };
-      expect(sendToVendorOutput.safeParse(invalidStringDate).success).toBe(false);
+      const invalidStringDate = {
+        ...baseOutput,
+        sentAt: "2025-10-13T14:30:00Z",
+      };
+      expect(sendToVendorOutput.safeParse(invalidStringDate).success).toBe(
+        false
+      );
 
       // Invalid: Number (timestamp)
       const invalidTimestamp = { ...baseOutput, sentAt: Date.now() };
-      expect(sendToVendorOutput.safeParse(invalidTimestamp).success).toBe(false);
+      expect(sendToVendorOutput.safeParse(invalidTimestamp).success).toBe(
+        false
+      );
 
       // Invalid: null
       const invalidNull = { ...baseOutput, sentAt: null };
       expect(sendToVendorOutput.safeParse(invalidNull).success).toBe(false);
     });
 
-    it('should validate currency as exactly 3 characters', () => {
+    it("should validate currency as exactly 3 characters", () => {
       const baseOutput = {
-        contactPhone: '+573001234567',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent' as const,
+        status: "sent" as const,
         total: 1000,
       };
 
       // Valid currencies
-      const validCurrencies = ['COP', 'USD', 'EUR', 'MXN'];
+      const validCurrencies = ["COP", "USD", "EUR", "MXN"];
 
       for (const currency of validCurrencies) {
         const output = { ...baseOutput, currency };
@@ -194,7 +204,7 @@ describe('Contract Test: send-to-vendor (T010)', () => {
       }
 
       // Invalid: Wrong length
-      const invalidCurrencies = ['CO', 'US', 'USDD', 'COPESO'];
+      const invalidCurrencies = ["CO", "US", "USDD", "COPESO"];
 
       for (const currency of invalidCurrencies) {
         const output = { ...baseOutput, currency };
@@ -202,13 +212,13 @@ describe('Contract Test: send-to-vendor (T010)', () => {
       }
     });
 
-    it('should require total to be non-negative number', () => {
+    it("should require total to be non-negative number", () => {
       const baseOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent' as const,
+        status: "sent" as const,
       };
 
       // Valid: Zero and positive numbers
@@ -224,25 +234,25 @@ describe('Contract Test: send-to-vendor (T010)', () => {
       expect(sendToVendorOutput.safeParse(invalidOutput).success).toBe(false);
 
       // Invalid: String
-      const invalidString = { ...baseOutput, total: '1000' };
+      const invalidString = { ...baseOutput, total: "1000" };
       expect(sendToVendorOutput.safeParse(invalidString).success).toBe(false);
     });
 
-    it('should validate id as CUID format', () => {
+    it("should validate id as CUID format", () => {
       const baseOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
+        contactPhone: "+573001234567",
+        currency: "COP",
         sentAt: new Date(),
-        status: 'sent' as const,
+        status: "sent" as const,
         total: 1000,
       };
 
       // Valid CUID
-      const validOutput = { ...baseOutput, id: 'clx1a2b3c4d5e6f7g8h9i0j' };
+      const validOutput = { ...baseOutput, id: "clx1a2b3c4d5e6f7g8h9i0j" };
       expect(sendToVendorOutput.safeParse(validOutput).success).toBe(true);
 
       // Invalid IDs
-      const invalidIds = ['not-a-cuid', '12345', 'abc-def-ghi', ''];
+      const invalidIds = ["not-a-cuid", "12345", "abc-def-ghi", ""];
 
       for (const id of invalidIds) {
         const output = { ...baseOutput, id };
@@ -250,13 +260,13 @@ describe('Contract Test: send-to-vendor (T010)', () => {
       }
     });
 
-    it('should make contactEmail optional in output', () => {
+    it("should make contactEmail optional in output", () => {
       const baseOutput = {
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent' as const,
+        status: "sent" as const,
         total: 1000,
       };
 
@@ -264,7 +274,7 @@ describe('Contract Test: send-to-vendor (T010)', () => {
       expect(sendToVendorOutput.safeParse(baseOutput).success).toBe(true);
 
       // Valid with contactEmail
-      const withEmail = { ...baseOutput, contactEmail: 'user@example.com' };
+      const withEmail = { ...baseOutput, contactEmail: "user@example.com" };
       expect(sendToVendorOutput.safeParse(withEmail).success).toBe(true);
 
       // Valid with undefined contactEmail
@@ -273,21 +283,21 @@ describe('Contract Test: send-to-vendor (T010)', () => {
     });
   });
 
-  describe('Input/Output Type Consistency', () => {
-    it('should ensure quoteId format consistency between input and output', () => {
-      const quoteId = 'clx1a2b3c4d5e6f7g8h9i0j';
+  describe("Input/Output Type Consistency", () => {
+    it("should ensure quoteId format consistency between input and output", () => {
+      const quoteId = "clx1a2b3c4d5e6f7g8h9i0j";
 
       const inputResult = sendToVendorInput.safeParse({
-        contactPhone: '+573001234567',
+        contactPhone: "+573001234567",
         quoteId,
       });
 
       const outputResult = sendToVendorOutput.safeParse({
-        contactPhone: '+573001234567',
-        currency: 'COP',
+        contactPhone: "+573001234567",
+        currency: "COP",
         id: quoteId,
         sentAt: new Date(),
-        status: 'sent',
+        status: "sent",
         total: 1000,
       });
 
@@ -299,20 +309,20 @@ describe('Contract Test: send-to-vendor (T010)', () => {
       }
     });
 
-    it('should ensure contactPhone consistency between input and output', () => {
-      const contactPhone = '+573001234567';
+    it("should ensure contactPhone consistency between input and output", () => {
+      const contactPhone = "+573001234567";
 
       const inputResult = sendToVendorInput.safeParse({
         contactPhone,
-        quoteId: 'clx1a2b3c4d5e6f7g8h9i0j',
+        quoteId: "clx1a2b3c4d5e6f7g8h9i0j",
       });
 
       const outputResult = sendToVendorOutput.safeParse({
         contactPhone,
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent',
+        status: "sent",
         total: 1000,
       });
 
@@ -320,28 +330,30 @@ describe('Contract Test: send-to-vendor (T010)', () => {
       expect(outputResult.success).toBe(true);
 
       if (inputResult.success && outputResult.success) {
-        expect(inputResult.data.contactPhone).toBe(outputResult.data.contactPhone);
+        expect(inputResult.data.contactPhone).toBe(
+          outputResult.data.contactPhone
+        );
       }
     });
 
-    it('should ensure contactEmail optionality is consistent', () => {
-      const contactEmail = 'user@example.com';
+    it("should ensure contactEmail optionality is consistent", () => {
+      const contactEmail = "user@example.com";
 
       // Input with email
       const inputWithEmail = sendToVendorInput.safeParse({
         contactEmail,
-        contactPhone: '+573001234567',
-        quoteId: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        quoteId: "clx1a2b3c4d5e6f7g8h9i0j",
       });
 
       // Output with email
       const outputWithEmail = sendToVendorOutput.safeParse({
         contactEmail,
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent',
+        status: "sent",
         total: 1000,
       });
 
@@ -350,17 +362,17 @@ describe('Contract Test: send-to-vendor (T010)', () => {
 
       // Input without email
       const inputWithoutEmail = sendToVendorInput.safeParse({
-        contactPhone: '+573001234567',
-        quoteId: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        quoteId: "clx1a2b3c4d5e6f7g8h9i0j",
       });
 
       // Output without email
       const outputWithoutEmail = sendToVendorOutput.safeParse({
-        contactPhone: '+573001234567',
-        currency: 'COP',
-        id: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "+573001234567",
+        currency: "COP",
+        id: "clx1a2b3c4d5e6f7g8h9i0j",
         sentAt: new Date(),
-        status: 'sent',
+        status: "sent",
         total: 1000,
       });
 
@@ -369,9 +381,9 @@ describe('Contract Test: send-to-vendor (T010)', () => {
     });
   });
 
-  describe('Contract Completeness', () => {
-    it('should have all required input fields defined in schema', () => {
-      const requiredInputFields = ['quoteId', 'contactPhone'];
+  describe("Contract Completeness", () => {
+    it("should have all required input fields defined in schema", () => {
+      const requiredInputFields = ["quoteId", "contactPhone"];
 
       const emptyInput = {};
       const result = sendToVendorInput.safeParse(emptyInput);
@@ -386,8 +398,15 @@ describe('Contract Test: send-to-vendor (T010)', () => {
       }
     });
 
-    it('should have all required output fields defined in schema', () => {
-      const requiredOutputFields = ['id', 'status', 'sentAt', 'contactPhone', 'total', 'currency'];
+    it("should have all required output fields defined in schema", () => {
+      const requiredOutputFields = [
+        "id",
+        "status",
+        "sentAt",
+        "contactPhone",
+        "total",
+        "currency",
+      ];
 
       const emptyOutput = {};
       const result = sendToVendorOutput.safeParse(emptyOutput);
@@ -402,11 +421,11 @@ describe('Contract Test: send-to-vendor (T010)', () => {
       }
     });
 
-    it('should provide meaningful error messages in Spanish', () => {
+    it("should provide meaningful error messages in Spanish", () => {
       // Invalid phone format
       const invalidPhone = {
-        contactPhone: 'invalid',
-        quoteId: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactPhone: "invalid",
+        quoteId: "clx1a2b3c4d5e6f7g8h9i0j",
       };
 
       const phoneResult = sendToVendorInput.safeParse(invalidPhone);
@@ -420,8 +439,8 @@ describe('Contract Test: send-to-vendor (T010)', () => {
 
       // Invalid quote ID
       const invalidQuoteId = {
-        contactPhone: '+573001234567',
-        quoteId: 'not-a-cuid',
+        contactPhone: "+573001234567",
+        quoteId: "not-a-cuid",
       };
 
       const quoteIdResult = sendToVendorInput.safeParse(invalidQuoteId);
@@ -435,9 +454,9 @@ describe('Contract Test: send-to-vendor (T010)', () => {
 
       // Invalid email
       const invalidEmail = {
-        contactEmail: 'not-an-email',
-        contactPhone: '+573001234567',
-        quoteId: 'clx1a2b3c4d5e6f7g8h9i0j',
+        contactEmail: "not-an-email",
+        contactPhone: "+573001234567",
+        quoteId: "clx1a2b3c4d5e6f7g8h9i0j",
       };
 
       const emailResult = sendToVendorInput.safeParse(invalidEmail);

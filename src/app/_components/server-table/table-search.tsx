@@ -24,13 +24,18 @@
  * @see https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations
  */
 
-'use client';
+"use client";
 
-import { Search, X } from 'lucide-react';
-import { useRef, useTransition } from 'react';
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group';
-import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
-import { useServerParams } from '@/hooks/use-server-params';
+import { Search, X } from "lucide-react";
+import { useRef, useTransition } from "react";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
+import { useServerParams } from "@/hooks/use-server-params";
 
 export interface TableSearchProps {
   /** Placeholder text for search input */
@@ -43,7 +48,11 @@ export interface TableSearchProps {
   debounceMs?: number;
 }
 
-export function TableSearch({ placeholder = 'Buscar...', defaultValue = '', debounceMs = 300 }: TableSearchProps) {
+export function TableSearch({
+  placeholder = "Buscar...",
+  defaultValue = "",
+  debounceMs = 300,
+}: TableSearchProps) {
   const { updateParams } = useServerParams();
   const [isPending, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
@@ -53,11 +62,11 @@ export function TableSearch({ placeholder = 'Buscar...', defaultValue = '', debo
    * Debounced form submission handler
    */
   const debouncedSubmit = useDebouncedCallback((formData: FormData) => {
-    const searchValue = formData.get('search') as string;
+    const searchValue = formData.get("search") as string;
 
     startTransition(() => {
       updateParams({
-        page: '1', // Reset to first page on search
+        page: "1", // Reset to first page on search
         search: searchValue.trim() || undefined, // Remove param if empty
       });
     });
@@ -77,7 +86,7 @@ export function TableSearch({ placeholder = 'Buscar...', defaultValue = '', debo
    */
   const handleClear = () => {
     if (inputRef.current) {
-      inputRef.current.value = '';
+      inputRef.current.value = "";
       inputRef.current.focus();
     }
 
@@ -88,7 +97,7 @@ export function TableSearch({ placeholder = 'Buscar...', defaultValue = '', debo
 
     startTransition(() => {
       updateParams({
-        page: '1',
+        page: "1",
         search: undefined,
       });
     });

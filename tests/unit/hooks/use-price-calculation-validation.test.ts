@@ -1,12 +1,12 @@
-import { renderHook, waitFor } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
-import { usePriceCalculation } from '../../../src/app/(public)/catalog/[modelId]/_hooks/use-price-calculation';
+import { renderHook, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { usePriceCalculation } from "../../../src/app/(public)/catalog/[modelId]/_hooks/use-price-calculation";
 
 // Mock tRPC
-vi.mock('@/trpc/react', () => ({
+vi.mock("@/trpc/react", () => ({
   api: {
     quote: {
-      'calculate-item': {
+      "calculate-item": {
         useMutation: vi.fn(() => ({
           mutate: vi.fn(),
         })),
@@ -19,11 +19,11 @@ vi.mock('@/trpc/react', () => ({
  * Client-Side Dimension Validation Tests
  * Verifies that usePriceCalculation does NOT call the API when dimensions are out of range
  */
-describe('usePriceCalculation - Client-Side Validation', () => {
+describe("usePriceCalculation - Client-Side Validation", () => {
   const baseParams = {
     additionalServices: [],
-    glassTypeId: 'glass-123',
-    modelId: 'model-123',
+    glassTypeId: "glass-123",
+    modelId: "model-123",
   };
 
   const modelConstraints = {
@@ -33,7 +33,7 @@ describe('usePriceCalculation - Client-Side Validation', () => {
     minWidthMm: 600,
   };
 
-  it('should NOT calculate when width is below minimum', () => {
+  it("should NOT calculate when width is below minimum", () => {
     const { result } = renderHook(() =>
       usePriceCalculation({
         ...baseParams,
@@ -44,11 +44,11 @@ describe('usePriceCalculation - Client-Side Validation', () => {
     );
 
     expect(result.current.calculatedPrice).toBeUndefined();
-    expect(result.current.error).toBe('Dimensiones fuera del rango permitido');
+    expect(result.current.error).toBe("Dimensiones fuera del rango permitido");
     expect(result.current.isCalculating).toBe(false);
   });
 
-  it('should NOT calculate when width is above maximum', () => {
+  it("should NOT calculate when width is above maximum", () => {
     const { result } = renderHook(() =>
       usePriceCalculation({
         ...baseParams,
@@ -59,11 +59,11 @@ describe('usePriceCalculation - Client-Side Validation', () => {
     );
 
     expect(result.current.calculatedPrice).toBeUndefined();
-    expect(result.current.error).toBe('Dimensiones fuera del rango permitido');
+    expect(result.current.error).toBe("Dimensiones fuera del rango permitido");
     expect(result.current.isCalculating).toBe(false);
   });
 
-  it('should NOT calculate when height is below minimum', () => {
+  it("should NOT calculate when height is below minimum", () => {
     const { result } = renderHook(() =>
       usePriceCalculation({
         ...baseParams,
@@ -74,11 +74,11 @@ describe('usePriceCalculation - Client-Side Validation', () => {
     );
 
     expect(result.current.calculatedPrice).toBeUndefined();
-    expect(result.current.error).toBe('Dimensiones fuera del rango permitido');
+    expect(result.current.error).toBe("Dimensiones fuera del rango permitido");
     expect(result.current.isCalculating).toBe(false);
   });
 
-  it('should NOT calculate when height is above maximum', () => {
+  it("should NOT calculate when height is above maximum", () => {
     const { result } = renderHook(() =>
       usePriceCalculation({
         ...baseParams,
@@ -89,11 +89,11 @@ describe('usePriceCalculation - Client-Side Validation', () => {
     );
 
     expect(result.current.calculatedPrice).toBeUndefined();
-    expect(result.current.error).toBe('Dimensiones fuera del rango permitido');
+    expect(result.current.error).toBe("Dimensiones fuera del rango permitido");
     expect(result.current.isCalculating).toBe(false);
   });
 
-  it('should NOT calculate when both dimensions are out of range', () => {
+  it("should NOT calculate when both dimensions are out of range", () => {
     const { result } = renderHook(() =>
       usePriceCalculation({
         ...baseParams,
@@ -104,11 +104,11 @@ describe('usePriceCalculation - Client-Side Validation', () => {
     );
 
     expect(result.current.calculatedPrice).toBeUndefined();
-    expect(result.current.error).toBe('Dimensiones fuera del rango permitido');
+    expect(result.current.error).toBe("Dimensiones fuera del rango permitido");
     expect(result.current.isCalculating).toBe(false);
   });
 
-  it('should allow calculation when dimensions are at minimum boundary', async () => {
+  it("should allow calculation when dimensions are at minimum boundary", async () => {
     const { result } = renderHook(() =>
       usePriceCalculation({
         ...baseParams,
@@ -120,11 +120,13 @@ describe('usePriceCalculation - Client-Side Validation', () => {
 
     // Should not show error for valid dimensions
     await waitFor(() => {
-      expect(result.current.error).not.toBe('Dimensiones fuera del rango permitido');
+      expect(result.current.error).not.toBe(
+        "Dimensiones fuera del rango permitido"
+      );
     });
   });
 
-  it('should allow calculation when dimensions are at maximum boundary', async () => {
+  it("should allow calculation when dimensions are at maximum boundary", async () => {
     const { result } = renderHook(() =>
       usePriceCalculation({
         ...baseParams,
@@ -136,11 +138,13 @@ describe('usePriceCalculation - Client-Side Validation', () => {
 
     // Should not show error for valid dimensions
     await waitFor(() => {
-      expect(result.current.error).not.toBe('Dimensiones fuera del rango permitido');
+      expect(result.current.error).not.toBe(
+        "Dimensiones fuera del rango permitido"
+      );
     });
   });
 
-  it('should allow calculation when dimensions are within range', async () => {
+  it("should allow calculation when dimensions are within range", async () => {
     const { result } = renderHook(() =>
       usePriceCalculation({
         ...baseParams,
@@ -152,11 +156,13 @@ describe('usePriceCalculation - Client-Side Validation', () => {
 
     // Should not show error for valid dimensions
     await waitFor(() => {
-      expect(result.current.error).not.toBe('Dimensiones fuera del rango permitido');
+      expect(result.current.error).not.toBe(
+        "Dimensiones fuera del rango permitido"
+      );
     });
   });
 
-  it('should work without dimension constraints (backward compatibility)', async () => {
+  it("should work without dimension constraints (backward compatibility)", async () => {
     const { result } = renderHook(() =>
       usePriceCalculation({
         ...baseParams,
@@ -168,7 +174,9 @@ describe('usePriceCalculation - Client-Side Validation', () => {
 
     // Should not show error when no constraints are provided
     await waitFor(() => {
-      expect(result.current.error).not.toBe('Dimensiones fuera del rango permitido');
+      expect(result.current.error).not.toBe(
+        "Dimensiones fuera del rango permitido"
+      );
     });
   });
 });

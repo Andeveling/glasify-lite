@@ -1,7 +1,7 @@
 // src/server/api/routers/catalog/index.ts
-import { createTRPCRouter } from '@/server/api/trpc';
-import { catalogQueries } from './catalog.queries';
-import { glassolutionsPublicQueries } from './glass-solutions.queries';
+import { createTRPCRouter } from "@/server/api/trpc";
+import { catalogQueries } from "./catalog.queries";
+import { glassolutionsPublicQueries } from "./glass-solutions.queries";
 
 /**
  * Catalog Router
@@ -21,4 +21,4 @@ export const catalogRouter = createTRPCRouter({
 });
 
 // Export schemas for form validation (quote parametrization)
-export * from './catalog.schemas';
+export * from "./catalog.schemas";

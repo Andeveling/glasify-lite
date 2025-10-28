@@ -10,15 +10,15 @@
  * @module e2e/quote/cart-cleared-after-quote
  */
 
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
 // ============================================================================
 // Constants
 // ============================================================================
 
-const CATALOG_URL = '/catalog';
-const CART_URL = '/cart';
-const QUOTE_NEW_URL = '/quote/new';
+const CATALOG_URL = "/catalog";
+const CART_URL = "/cart";
+const QUOTE_NEW_URL = "/quote/new";
 
 // Test data constants
 const DEFAULT_WIDTH_MM = 1000;
@@ -47,7 +47,11 @@ const EMPTY_CART_MESSAGE_PATTERN = /carrito vacío|no hay productos/i;
 /**
  * Add a configured model to cart
  */
-async function addItemToCart(page: any, widthMm = DEFAULT_WIDTH_MM, heightMm = DEFAULT_HEIGHT_MM) {
+async function addItemToCart(
+  page: any,
+  widthMm = DEFAULT_WIDTH_MM,
+  heightMm = DEFAULT_HEIGHT_MM
+) {
   // Navigate to catalog
   await page.goto(CATALOG_URL);
 
@@ -61,7 +65,9 @@ async function addItemToCart(page: any, widthMm = DEFAULT_WIDTH_MM, heightMm = D
 
   // Fill dimensions (if inputs are available and empty)
   const widthInput = page.locator('input[name="widthMm"], input[name="width"]');
-  const heightInput = page.locator('input[name="heightMm"], input[name="height"]');
+  const heightInput = page.locator(
+    'input[name="heightMm"], input[name="height"]'
+  );
 
   if (await widthInput.isVisible()) {
     const currentWidth = await widthInput.inputValue();
@@ -90,13 +96,17 @@ async function addItemToCart(page: any, widthMm = DEFAULT_WIDTH_MM, heightMm = D
   await page.waitForTimeout(PRICE_CALCULATION_DELAY_MS);
 
   // Click "Add to Cart" button
-  const addToCartButton = page.getByRole('button', { name: ADD_TO_CART_BUTTON_PATTERN });
+  const addToCartButton = page.getByRole("button", {
+    name: ADD_TO_CART_BUTTON_PATTERN,
+  });
   await expect(addToCartButton).toBeVisible();
   await expect(addToCartButton).toBeEnabled();
   await addToCartButton.click();
 
   // Wait for success toast
-  await expect(page.locator(`text=${ADDED_TO_CART_PATTERN.source}`)).toBeVisible({ timeout: TOAST_TIMEOUT_MS });
+  await expect(
+    page.locator(`text=${ADDED_TO_CART_PATTERN.source}`)
+  ).toBeVisible({ timeout: TOAST_TIMEOUT_MS });
 }
 
 /**
@@ -105,12 +115,12 @@ async function addItemToCart(page: any, widthMm = DEFAULT_WIDTH_MM, heightMm = D
 async function fillQuoteForm(
   page: any,
   data = {
-    city: 'Bogotá',
-    phone: '+57 300 123 4567',
-    postalCode: '110111',
-    projectName: 'Proyecto Test Cart Clearing',
-    state: 'Cundinamarca',
-    street: 'Calle 123 #45-67',
+    city: "Bogotá",
+    phone: "+57 300 123 4567",
+    postalCode: "110111",
+    projectName: "Proyecto Test Cart Clearing",
+    state: "Cundinamarca",
+    street: "Calle 123 #45-67",
   }
 ) {
   // Fill project name (optional)
@@ -146,14 +156,16 @@ async function fillQuoteForm(
 // Cart Clearing Tests
 // ============================================================================
 
-test.describe('Cart Cleared After Quote (US4-T064)', () => {
+test.describe("Cart Cleared After Quote (US4-T064)", () => {
   test.beforeEach(async ({ page }) => {
     // Clear sessionStorage before each test
     await page.goto(CATALOG_URL);
     await page.evaluate(() => sessionStorage.clear());
   });
 
-  test('should verify cart items persist before quote generation', async ({ page }) => {
+  test("should verify cart items persist before quote generation", async ({
+    page,
+  }) => {
     // ARRANGE: Add items to cart
     await addItemToCart(page, DEFAULT_WIDTH_MM, DEFAULT_HEIGHT_MM);
     await addItemToCart(page, SECONDARY_WIDTH_MM, SECONDARY_HEIGHT_MM);
@@ -166,17 +178,21 @@ test.describe('Cart Cleared After Quote (US4-T064)', () => {
     expect(cartItems).toBe(EXPECTED_CART_ITEMS_COUNT);
 
     // ASSERT: Verify sessionStorage contains cart data
-    const sessionCartData = await page.evaluate(() => sessionStorage.getItem('glasify-cart'));
+    const sessionCartData = await page.evaluate(() =>
+      sessionStorage.getItem("glasify-cart")
+    );
     expect(sessionCartData).toBeTruthy();
 
-    const cartData = JSON.parse(sessionCartData || '{}');
+    const cartData = JSON.parse(sessionCartData || "{}");
     expect(cartData.items).toBeDefined();
     expect(Array.isArray(cartData.items)).toBe(true);
     expect(cartData.items.length).toBe(EXPECTED_CART_ITEMS_COUNT);
   });
 
   // biome-ignore lint/suspicious/noSkippedTests: requires authentication to complete quote flow, pending auth mock setup
-  test.skip('should clear cart after successful quote generation', async ({ page }) => {
+  test.skip("should clear cart after successful quote generation", async ({
+    page,
+  }) => {
     // NOTE: This test requires authentication to complete the full quote flow
     // Skip until auth mock is implemented
 
@@ -186,41 +202,57 @@ test.describe('Cart Cleared After Quote (US4-T064)', () => {
 
     // Verify cart has items
     await page.goto(CART_URL);
-    const initialCartItems = await page.locator('[data-testid="cart-item"]').count();
+    const initialCartItems = await page
+      .locator('[data-testid="cart-item"]')
+      .count();
     expect(initialCartItems).toBe(EXPECTED_CART_ITEMS_COUNT);
 
     // Navigate to quote generation
     await page.goto(QUOTE_NEW_URL);
 
     // Wait for form to load
-    await expect(page.locator('input[name="projectStreet"]')).toBeVisible({ timeout: FORM_TIMEOUT_MS });
+    await expect(page.locator('input[name="projectStreet"]')).toBeVisible({
+      timeout: FORM_TIMEOUT_MS,
+    });
 
     // ACT: Fill and submit quote form
     await fillQuoteForm(page);
 
-    const submitButton = page.getByRole('button', { name: GENERATE_QUOTE_BUTTON_PATTERN });
+    const submitButton = page.getByRole("button", {
+      name: GENERATE_QUOTE_BUTTON_PATTERN,
+    });
     await submitButton.click();
 
     // Wait for success toast
-    await expect(page.locator(`text=${QUOTE_CREATED_PATTERN.source}`)).toBeVisible({ timeout: SUCCESS_TIMEOUT_MS });
+    await expect(
+      page.locator(`text=${QUOTE_CREATED_PATTERN.source}`)
+    ).toBeVisible({ timeout: SUCCESS_TIMEOUT_MS });
 
     // Wait for redirect to quote detail page
-    await page.waitForURL(QUOTE_DETAIL_URL_PATTERN, { timeout: SUCCESS_TIMEOUT_MS });
+    await page.waitForURL(QUOTE_DETAIL_URL_PATTERN, {
+      timeout: SUCCESS_TIMEOUT_MS,
+    });
 
     // ASSERT: Navigate to cart and verify it's empty
     await page.goto(CART_URL);
 
     // Check empty cart UI state
     const emptyCartState = page.locator('[data-testid="empty-cart-state"]');
-    const emptyCartMessage = page.locator(`text=${EMPTY_CART_MESSAGE_PATTERN.source}`);
+    const emptyCartMessage = page.locator(
+      `text=${EMPTY_CART_MESSAGE_PATTERN.source}`
+    );
 
     const hasEmptyState = await emptyCartState.isVisible().catch(() => false);
-    const hasEmptyMessage = await emptyCartMessage.isVisible().catch(() => false);
+    const hasEmptyMessage = await emptyCartMessage
+      .isVisible()
+      .catch(() => false);
 
     expect(hasEmptyState || hasEmptyMessage).toBe(true);
 
     // ASSERT: Verify sessionStorage is cleared
-    const sessionCartData = await page.evaluate(() => sessionStorage.getItem('glasify-cart'));
+    const sessionCartData = await page.evaluate(() =>
+      sessionStorage.getItem("glasify-cart")
+    );
 
     if (sessionCartData) {
       const cartData = JSON.parse(sessionCartData);
@@ -232,13 +264,15 @@ test.describe('Cart Cleared After Quote (US4-T064)', () => {
     }
   });
 
-  test('should show empty cart state when navigating to /cart after clearing', async ({ page }) => {
+  test("should show empty cart state when navigating to /cart after clearing", async ({
+    page,
+  }) => {
     // ARRANGE: Start with empty cart
     await page.goto(CATALOG_URL);
 
     // Manually clear any cart data
     await page.evaluate(() => {
-      sessionStorage.removeItem('glasify-cart');
+      sessionStorage.removeItem("glasify-cart");
     });
 
     // ACT: Navigate to cart
@@ -246,41 +280,52 @@ test.describe('Cart Cleared After Quote (US4-T064)', () => {
 
     // ASSERT: Empty cart state should be visible
     const emptyCartState = page.locator('[data-testid="empty-cart-state"]');
-    const emptyCartMessage = page.locator(`text=${EMPTY_CART_MESSAGE_PATTERN.source}`);
+    const emptyCartMessage = page.locator(
+      `text=${EMPTY_CART_MESSAGE_PATTERN.source}`
+    );
 
     const hasEmptyState = await emptyCartState.isVisible().catch(() => false);
-    const hasEmptyMessage = await emptyCartMessage.isVisible().catch(() => false);
+    const hasEmptyMessage = await emptyCartMessage
+      .isVisible()
+      .catch(() => false);
 
     expect(hasEmptyState || hasEmptyMessage).toBe(true);
 
     // ASSERT: "Generate Quote" button should not be visible (no items)
-    const generateQuoteButton = page.getByRole('button', { name: GENERATE_QUOTE_BUTTON_PATTERN });
-    const isGenerateButtonVisible = await generateQuoteButton.isVisible().catch(() => false);
+    const generateQuoteButton = page.getByRole("button", {
+      name: GENERATE_QUOTE_BUTTON_PATTERN,
+    });
+    const isGenerateButtonVisible = await generateQuoteButton
+      .isVisible()
+      .catch(() => false);
 
     expect(isGenerateButtonVisible).toBe(false);
   });
 
   // biome-ignore lint/suspicious/noSkippedTests: requires authentication to complete quote flow, pending auth mock setup
-  test.skip('should prevent accessing /quote/new after cart is cleared', async ({ page }) => {
+  test.skip("should prevent accessing /quote/new after cart is cleared", async ({
+    page,
+  }) => {
     // NOTE: This test requires authentication
     // Skip until auth mock is implemented
 
     // ARRANGE: Manually clear cart
     await page.goto(CATALOG_URL);
     await page.evaluate(() => {
-      sessionStorage.removeItem('glasify-cart');
+      sessionStorage.removeItem("glasify-cart");
     });
 
     // ACT: Try to access quote generation page with cleared cart
     await page.goto(QUOTE_NEW_URL);
 
     // Wait for redirects
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState("networkidle");
 
     // ASSERT: Should redirect to catalog (empty cart not allowed)
     const currentUrl = page.url();
     const isOnCatalog = currentUrl.includes(CATALOG_URL);
-    const isOnSignIn = currentUrl.includes('/signin') || currentUrl.includes('/api/auth/signin');
+    const isOnSignIn =
+      currentUrl.includes("/signin") || currentUrl.includes("/api/auth/signin");
 
     // Either on catalog (direct redirect) or sign-in (will redirect after auth)
     expect(isOnCatalog || isOnSignIn).toBe(true);

@@ -8,7 +8,7 @@
  * Task: T065 [P] [US5]
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 import {
   type GetQuoteByIdInput,
   getQuoteByIdInput,
@@ -16,24 +16,24 @@ import {
   type ListUserQuotesOutput,
   listUserQuotesInput,
   listUserQuotesOutput,
-} from '../../../src/server/api/routers/quote/quote.schemas';
+} from "../../../src/server/api/routers/quote/quote.schemas";
 
-describe('Contract: quote.list-user-quotes', () => {
-  describe('Input validation', () => {
-    it('should accept valid pagination parameters', () => {
+describe("Contract: quote.list-user-quotes", () => {
+  describe("Input validation", () => {
+    it("should accept valid pagination parameters", () => {
       const input: ListUserQuotesInput = {
         includeExpired: false,
         limit: 10,
         page: 1,
-        sortBy: 'createdAt',
-        sortOrder: 'desc',
+        sortBy: "createdAt",
+        sortOrder: "desc",
       };
 
       const result = listUserQuotesInput.safeParse(input);
       expect(result.success).toBe(true);
     });
 
-    it('should apply defaults when parameters are omitted', () => {
+    it("should apply defaults when parameters are omitted", () => {
       const input = {};
 
       const result = listUserQuotesInput.parse(input);
@@ -41,22 +41,22 @@ describe('Contract: quote.list-user-quotes', () => {
         includeExpired: false,
         limit: 20,
         page: 1,
-        sortBy: 'createdAt',
-        sortOrder: 'desc',
+        sortBy: "createdAt",
+        sortOrder: "desc",
       });
     });
 
-    it('should accept optional status filter', () => {
+    it("should accept optional status filter", () => {
       const input = {
-        status: 'draft' as const,
+        status: "draft" as const,
       };
 
       const result = listUserQuotesInput.safeParse(input);
       expect(result.success).toBe(true);
-      expect(result.data?.status).toBe('draft');
+      expect(result.data?.status).toBe("draft");
     });
 
-    it('should accept includeExpired flag', () => {
+    it("should accept includeExpired flag", () => {
       const input = {
         includeExpired: true,
       };
@@ -66,7 +66,7 @@ describe('Contract: quote.list-user-quotes', () => {
       expect(result.data?.includeExpired).toBe(true);
     });
 
-    it('should reject limit exceeding maximum', () => {
+    it("should reject limit exceeding maximum", () => {
       const input = {
         limit: 150, // MAX_PAGE_SIZE = 100
       };
@@ -75,7 +75,7 @@ describe('Contract: quote.list-user-quotes', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should reject negative page number', () => {
+    it("should reject negative page number", () => {
       const input = {
         page: -1,
       };
@@ -84,18 +84,18 @@ describe('Contract: quote.list-user-quotes', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should reject invalid sortBy field', () => {
+    it("should reject invalid sortBy field", () => {
       const input = {
-        sortBy: 'invalidField',
+        sortBy: "invalidField",
       };
 
       const result = listUserQuotesInput.safeParse(input);
       expect(result.success).toBe(false);
     });
 
-    it('should reject invalid status value', () => {
+    it("should reject invalid status value", () => {
       const input = {
-        status: 'INVALID_STATUS',
+        status: "INVALID_STATUS",
       };
 
       const result = listUserQuotesInput.safeParse(input);
@@ -103,8 +103,8 @@ describe('Contract: quote.list-user-quotes', () => {
     });
   });
 
-  describe('Output validation', () => {
-    it('should validate complete response structure', () => {
+  describe("Output validation", () => {
+    it("should validate complete response structure", () => {
       const output: ListUserQuotesOutput = {
         hasNextPage: true,
         hasPreviousPage: false,
@@ -112,15 +112,15 @@ describe('Contract: quote.list-user-quotes', () => {
         page: 1,
         quotes: [
           {
-            createdAt: new Date('2025-10-09T10:00:00Z'),
-            currency: 'MXN',
-            id: 'clx1234567890',
+            createdAt: new Date("2025-10-09T10:00:00Z"),
+            currency: "MXN",
+            id: "clx1234567890",
             isExpired: false,
             itemCount: 5,
-            projectName: 'Casa Familiar',
-            status: 'draft',
+            projectName: "Casa Familiar",
+            status: "draft",
             total: 15_000.5,
-            validUntil: new Date('2025-10-24T10:00:00Z'),
+            validUntil: new Date("2025-10-24T10:00:00Z"),
           },
         ],
         total: 25,
@@ -129,11 +129,14 @@ describe('Contract: quote.list-user-quotes', () => {
 
       const result = listUserQuotesOutput.safeParse(output);
       if (!result.success) {
-        console.error('Validation errors:', JSON.stringify(result.error.issues, null, 2));
+        console.error(
+          "Validation errors:",
+          JSON.stringify(result.error.issues, null, 2)
+        );
       }
       expect(result.success).toBe(true);
     });
-    it('should validate empty quotes list', () => {
+    it("should validate empty quotes list", () => {
       const output: ListUserQuotesOutput = {
         hasNextPage: false,
         hasPreviousPage: false,
@@ -148,7 +151,7 @@ describe('Contract: quote.list-user-quotes', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should validate quote with null validUntil date', () => {
+    it("should validate quote with null validUntil date", () => {
       const output: ListUserQuotesOutput = {
         hasNextPage: false,
         hasPreviousPage: false,
@@ -156,13 +159,13 @@ describe('Contract: quote.list-user-quotes', () => {
         page: 1,
         quotes: [
           {
-            createdAt: new Date('2025-10-09'),
-            currency: 'MXN',
-            id: 'clx1234567890',
+            createdAt: new Date("2025-10-09"),
+            currency: "MXN",
+            id: "clx1234567890",
             isExpired: false,
             itemCount: 2,
-            projectName: 'Proyecto Sin Fecha',
-            status: 'draft',
+            projectName: "Proyecto Sin Fecha",
+            status: "draft",
             total: 5000,
             validUntil: null,
           },
@@ -175,7 +178,7 @@ describe('Contract: quote.list-user-quotes', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should reject response with invalid quote ID format', () => {
+    it("should reject response with invalid quote ID format", () => {
       const output = {
         hasNextPage: false,
         hasPreviousPage: false,
@@ -184,11 +187,11 @@ describe('Contract: quote.list-user-quotes', () => {
         quotes: [
           {
             createdAt: new Date(),
-            id: 'invalid-id',
+            id: "invalid-id",
             isExpired: false,
             itemCount: 1,
-            projectName: 'Proyecto',
-            status: 'draft',
+            projectName: "Proyecto",
+            status: "draft",
             total: 1000,
             validUntil: new Date(),
           },
@@ -201,7 +204,7 @@ describe('Contract: quote.list-user-quotes', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should reject response with negative total', () => {
+    it("should reject response with negative total", () => {
       const output = {
         hasNextPage: false,
         hasPreviousPage: false,
@@ -210,11 +213,11 @@ describe('Contract: quote.list-user-quotes', () => {
         quotes: [
           {
             createdAt: new Date(),
-            id: 'clx1234567890',
+            id: "clx1234567890",
             isExpired: false,
             itemCount: 1,
-            projectName: 'Proyecto',
-            status: 'draft',
+            projectName: "Proyecto",
+            status: "draft",
             total: -100, // Invalid: negative
             validUntil: new Date(),
           },
@@ -229,36 +232,36 @@ describe('Contract: quote.list-user-quotes', () => {
   });
 });
 
-describe('Contract: quote.get-by-id', () => {
-  describe('Input validation', () => {
-    it('should accept valid CUID', () => {
+describe("Contract: quote.get-by-id", () => {
+  describe("Input validation", () => {
+    it("should accept valid CUID", () => {
       const input: GetQuoteByIdInput = {
-        id: 'clx1234567890',
+        id: "clx1234567890",
       };
 
       const result = getQuoteByIdInput.safeParse(input);
       expect(result.success).toBe(true);
     });
 
-    it('should reject invalid ID format', () => {
+    it("should reject invalid ID format", () => {
       const input = {
-        id: 'not-a-cuid',
+        id: "not-a-cuid",
       };
 
       const result = getQuoteByIdInput.safeParse(input);
       expect(result.success).toBe(false);
     });
 
-    it('should reject missing ID', () => {
+    it("should reject missing ID", () => {
       const input = {};
 
       const result = getQuoteByIdInput.safeParse(input);
       expect(result.success).toBe(false);
     });
 
-    it('should reject empty string ID', () => {
+    it("should reject empty string ID", () => {
       const input = {
-        id: '',
+        id: "",
       };
 
       const result = getQuoteByIdInput.safeParse(input);
@@ -266,8 +269,8 @@ describe('Contract: quote.get-by-id', () => {
     });
   });
 
-  describe('Output validation', () => {
-    it('should validate output schema exists', () => {
+  describe("Output validation", () => {
+    it("should validate output schema exists", () => {
       // Note: The getQuoteByIdOutput schema will be validated
       // when the implementation is complete in T068
       expect(getQuoteByIdInput).toBeDefined();

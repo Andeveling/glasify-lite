@@ -7,7 +7,7 @@
  * @see specs/011-admin-catalog-management/data-model.md - Section 6
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 import {
   activeFilterSchema,
   longText,
@@ -16,7 +16,7 @@ import {
   searchQuerySchema,
   sortOrderSchema as sharedSortOrderSchema,
   spanishText,
-} from '../shared.schema';
+} from "../shared.schema";
 
 /**
  * Constants
@@ -35,9 +35,15 @@ export const MAX_SORT_ORDER = 100;
  */
 const keySchema = z
   .string()
-  .min(MIN_KEY_LENGTH, `La clave debe tener al menos ${MIN_KEY_LENGTH} caracteres`)
+  .min(
+    MIN_KEY_LENGTH,
+    `La clave debe tener al menos ${MIN_KEY_LENGTH} caracteres`
+  )
   .max(MAX_KEY_LENGTH, `La clave no puede exceder ${MAX_KEY_LENGTH} caracteres`)
-  .regex(/^[a-z0-9_]+$/, 'La clave debe estar en formato snake_case (solo letras minúsculas, números y guiones bajos)')
+  .regex(
+    /^[a-z0-9_]+$/,
+    "La clave debe estar en formato snake_case (solo letras minúsculas, números y guiones bajos)"
+  )
   .transform((val) => val.toLowerCase());
 
 /**
@@ -47,7 +53,10 @@ const keySchema = z
  */
 const iconSchema = z
   .string()
-  .regex(/^[A-Z][a-zA-Z0-9]*$/, 'El icono debe ser un nombre válido de Lucide React (PascalCase)')
+  .regex(
+    /^[A-Z][a-zA-Z0-9]*$/,
+    "El icono debe ser un nombre válido de Lucide React (PascalCase)"
+  )
   .optional()
   .nullable();
 
@@ -58,7 +67,7 @@ const iconSchema = z
  */
 const sortOrderSchema = z
   .number()
-  .int('El orden debe ser un número entero')
+  .int("El orden debe ser un número entero")
   .min(MIN_SORT_ORDER, `El orden debe ser al menos ${MIN_SORT_ORDER}`)
   .max(MAX_SORT_ORDER, `El orden no puede exceder ${MAX_SORT_ORDER}`)
   .default(0);
@@ -68,25 +77,48 @@ const sortOrderSchema = z
  * Shared fields for create/update operations
  */
 const baseGlassSolutionSchema = z.object({
-  description: optionalSpanishText.pipe(longText).describe('Description of the solution'),
+  description: optionalSpanishText
+    .pipe(longText)
+    .describe("Description of the solution"),
 
-  icon: iconSchema.describe('Lucide React icon name (e.g., Shield, Snowflake, Volume2)'),
+  icon: iconSchema.describe(
+    "Lucide React icon name (e.g., Shield, Snowflake, Volume2)"
+  ),
 
-  isActive: z.boolean().default(true).describe('Whether solution is active for assignment'),
-  key: keySchema.describe('Unique snake_case key (e.g., thermal_insulation, security)'),
+  isActive: z
+    .boolean()
+    .default(true)
+    .describe("Whether solution is active for assignment"),
+  key: keySchema.describe(
+    "Unique snake_case key (e.g., thermal_insulation, security)"
+  ),
 
   name: z
     .string()
-    .min(MIN_NAME_LENGTH, `El nombre en inglés debe tener al menos ${MIN_NAME_LENGTH} caracteres`)
-    .max(MAX_NAME_LENGTH, `El nombre en inglés no puede exceder ${MAX_NAME_LENGTH} caracteres`)
-    .describe('Technical name in English (e.g., Thermal Insulation)'),
+    .min(
+      MIN_NAME_LENGTH,
+      `El nombre en inglés debe tener al menos ${MIN_NAME_LENGTH} caracteres`
+    )
+    .max(
+      MAX_NAME_LENGTH,
+      `El nombre en inglés no puede exceder ${MAX_NAME_LENGTH} caracteres`
+    )
+    .describe("Technical name in English (e.g., Thermal Insulation)"),
 
   nameEs: spanishText
-    .min(MIN_NAME_LENGTH, `El nombre en español debe tener al menos ${MIN_NAME_LENGTH} caracteres`)
-    .max(MAX_NAME_LENGTH, `El nombre en español no puede exceder ${MAX_NAME_LENGTH} caracteres`)
-    .describe('Commercial name in Spanish (e.g., Aislamiento Térmico)'),
+    .min(
+      MIN_NAME_LENGTH,
+      `El nombre en español debe tener al menos ${MIN_NAME_LENGTH} caracteres`
+    )
+    .max(
+      MAX_NAME_LENGTH,
+      `El nombre en español no puede exceder ${MAX_NAME_LENGTH} caracteres`
+    )
+    .describe("Commercial name in Spanish (e.g., Aislamiento Térmico)"),
 
-  sortOrder: sortOrderSchema.describe('Display order (lower = higher priority)'),
+  sortOrder: sortOrderSchema.describe(
+    "Display order (lower = higher priority)"
+  ),
 });
 
 /**
@@ -95,7 +127,9 @@ const baseGlassSolutionSchema = z.object({
  */
 export const createGlassSolutionSchema = baseGlassSolutionSchema;
 
-export type CreateGlassSolutionInput = z.infer<typeof createGlassSolutionSchema>;
+export type CreateGlassSolutionInput = z.infer<
+  typeof createGlassSolutionSchema
+>;
 
 /**
  * Update Glass Solution Schema
@@ -103,20 +137,25 @@ export type CreateGlassSolutionInput = z.infer<typeof createGlassSolutionSchema>
  */
 export const updateGlassSolutionSchema = z.object({
   data: baseGlassSolutionSchema.partial(),
-  id: z.string().cuid('ID de solución inválido'),
+  id: z.string().cuid("ID de solución inválido"),
 });
 
-export type UpdateGlassSolutionInput = z.infer<typeof updateGlassSolutionSchema>;
+export type UpdateGlassSolutionInput = z.infer<
+  typeof updateGlassSolutionSchema
+>;
 
 /**
  * List Glass Solutions Schema
  * Pagination + search + filters + sorting
  */
 export const listGlassSolutionsSchema = paginationSchema.extend({
-  isActive: activeFilterSchema.optional().describe('Filter by active status'),
-  search: searchQuerySchema.describe('Search by key, name, or nameEs'),
-  sortBy: z.enum(['key', 'name', 'sortOrder', 'createdAt']).default('sortOrder').describe('Sort field'),
-  sortOrder: sharedSortOrderSchema.describe('Sort order'),
+  isActive: activeFilterSchema.optional().describe("Filter by active status"),
+  search: searchQuerySchema.describe("Search by key, name, or nameEs"),
+  sortBy: z
+    .enum(["key", "name", "sortOrder", "createdAt"])
+    .default("sortOrder")
+    .describe("Sort field"),
+  sortOrder: sharedSortOrderSchema.describe("Sort order"),
 });
 
 export type ListGlassSolutionsInput = z.infer<typeof listGlassSolutionsSchema>;
@@ -142,7 +181,7 @@ export const listGlassSolutionsOutputSchema = z.object({
       name: z.string(),
       nameEs: z.string(),
       seedVersion: z.string().nullable(),
-      slug: z.string().describe('URL-friendly slug for dynamic routes'),
+      slug: z.string().describe("URL-friendly slug for dynamic routes"),
       sortOrder: z.number(),
       updatedAt: z.date(),
     })
@@ -153,22 +192,28 @@ export const listGlassSolutionsOutputSchema = z.object({
   totalPages: z.number().int().nonnegative(),
 });
 
-export type GlassSolutionListOutput = z.infer<typeof listGlassSolutionsOutputSchema>;
+export type GlassSolutionListOutput = z.infer<
+  typeof listGlassSolutionsOutputSchema
+>;
 
 /**
  * Delete Glass Solution Schema
  */
 export const deleteGlassSolutionSchema = z.object({
-  id: z.string().cuid('ID de solución inválido'),
+  id: z.string().cuid("ID de solución inválido"),
 });
 
-export type DeleteGlassSolutionInput = z.infer<typeof deleteGlassSolutionSchema>;
+export type DeleteGlassSolutionInput = z.infer<
+  typeof deleteGlassSolutionSchema
+>;
 
 /**
  * Get Glass Solution by ID Schema
  */
 export const getGlassSolutionByIdSchema = z.object({
-  id: z.string().cuid('ID de solución inválido'),
+  id: z.string().cuid("ID de solución inválido"),
 });
 
-export type GetGlassSolutionByIdInput = z.infer<typeof getGlassSolutionByIdSchema>;
+export type GetGlassSolutionByIdInput = z.infer<
+  typeof getGlassSolutionByIdSchema
+>;

@@ -11,15 +11,15 @@
  * @generated Static page generated at build time, revalidated every hour
  */
 
-import { GlassesIcon } from 'lucide-react';
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { getIconComponent } from '@/lib/icon-map';
-import logger from '@/lib/logger';
-import { api } from '@/trpc/server-client';
+import { GlassesIcon } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { getIconComponent } from "@/lib/icon-map";
+import logger from "@/lib/logger";
+import { api } from "@/trpc/server-client";
 
 // Static generation with 1-hour revalidation
-export const dynamic = 'force-static';
+export const dynamic = "force-static";
 export const revalidate = 3600; // ISR: 1 hour
 
 /**
@@ -27,13 +27,14 @@ export const revalidate = 3600; // ISR: 1 hour
  */
 export const metadata: Metadata = {
   description:
-    'Explora nuestras soluciones de vidrio especializadas para control solar, eficiencia energética, aislamiento, seguridad y más.',
+    "Explora nuestras soluciones de vidrio especializadas para control solar, eficiencia energética, aislamiento, seguridad y más.",
   openGraph: {
-    description: 'Soluciones de vidrio personalizadas para todas tus necesidades arquitectónicas y de construcción.',
-    title: 'Soluciones de Vidrio | Glasify Lite',
-    type: 'website',
+    description:
+      "Soluciones de vidrio personalizadas para todas tus necesidades arquitectónicas y de construcción.",
+    title: "Soluciones de Vidrio | Glasify Lite",
+    type: "website",
   },
-  title: 'Soluciones de Vidrio | Glasify Lite',
+  title: "Soluciones de Vidrio | Glasify Lite",
 };
 
 /**
@@ -45,7 +46,7 @@ export const metadata: Metadata = {
 export default async function GlassSolutionsPage() {
   try {
     // Fetch solutions from tRPC server procedure
-    const { items: solutions } = await api.catalog['list-solutions']({
+    const { items: solutions } = await api.catalog["list-solutions"]({
       limit: 100,
       page: 1,
     });
@@ -54,8 +55,12 @@ export default async function GlassSolutionsPage() {
       return (
         <div className="flex min-h-96 flex-col items-center justify-center text-center">
           <GlassesIcon className="mb-4 h-12 w-12 text-muted-foreground" />
-          <h1 className="mb-2 font-bold text-2xl">Sin soluciones disponibles</h1>
-          <p className="text-muted-foreground">Por el momento no hay soluciones de vidrio disponibles.</p>
+          <h1 className="mb-2 font-bold text-2xl">
+            Sin soluciones disponibles
+          </h1>
+          <p className="text-muted-foreground">
+            Por el momento no hay soluciones de vidrio disponibles.
+          </p>
         </div>
       );
     }
@@ -65,9 +70,12 @@ export default async function GlassSolutionsPage() {
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-12 text-center">
-            <h1 className="mb-4 font-bold text-4xl tracking-tight">Soluciones de Vidrio</h1>
+            <h1 className="mb-4 font-bold text-4xl tracking-tight">
+              Soluciones de Vidrio
+            </h1>
             <p className="text-lg text-muted-foreground">
-              Descubre nuestras soluciones especializadas de vidrio para cada necesidad de tu proyecto.
+              Descubre nuestras soluciones especializadas de vidrio para cada
+              necesidad de tu proyecto.
             </p>
           </div>
 
@@ -89,9 +97,13 @@ export default async function GlassSolutionsPage() {
 
                   {/* Content */}
                   <div>
-                    <h2 className="mb-2 font-semibold text-xl group-hover:text-primary">{solution.nameEs}</h2>
+                    <h2 className="mb-2 font-semibold text-xl group-hover:text-primary">
+                      {solution.nameEs}
+                    </h2>
                     {solution.description && (
-                      <p className="line-clamp-3 text-muted-foreground text-sm">{solution.description}</p>
+                      <p className="line-clamp-3 text-muted-foreground text-sm">
+                        {solution.description}
+                      </p>
                     )}
                   </div>
 
@@ -106,7 +118,12 @@ export default async function GlassSolutionsPage() {
                       viewBox="0 0 24 24"
                     >
                       <title id={`title-${solution.id}`}>Ver detalles</title>
-                      <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
+                      <path
+                        d="M9 5l7 7-7 7"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                      />
                     </svg>
                   </div>
                 </Link>
@@ -117,8 +134,8 @@ export default async function GlassSolutionsPage() {
       </div>
     );
   } catch (error) {
-    logger.error('Error loading glass solutions page', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    logger.error("Error loading glass solutions page", {
+      error: error instanceof Error ? error.message : "Unknown error",
     });
 
     return (
@@ -126,7 +143,8 @@ export default async function GlassSolutionsPage() {
         <GlassesIcon className="mb-4 h-12 w-12 text-destructive" />
         <h1 className="mb-2 font-bold text-2xl">Error al cargar soluciones</h1>
         <p className="text-muted-foreground">
-          Hubo un problema al cargar las soluciones de vidrio. Por favor, intenta más tarde.
+          Hubo un problema al cargar las soluciones de vidrio. Por favor,
+          intenta más tarde.
         </p>
       </div>
     );

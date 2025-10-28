@@ -12,8 +12,8 @@
  * @module QuoteItemPreview
  */
 
-import type { WindowType } from '@/types/window.types';
-import { QuoteItemImage } from '../[quoteId]/_components/quote-item-image';
+import type { WindowType } from "@/types/window.types";
+import { QuoteItemImage } from "../[quoteId]/_components/quote-item-image";
 
 export interface QuoteItemPreviewData {
   id: string;

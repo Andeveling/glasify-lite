@@ -7,33 +7,33 @@
  * @module tests/integration/auth/quote-auth-guard
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 
-describe('Quote Auth Guard Integration', () => {
-  describe('Middleware Protection', () => {
-    it('should redirect to /signin when accessing /quotes without authentication', () => {
+describe("Quote Auth Guard Integration", () => {
+  describe("Middleware Protection", () => {
+    it("should redirect to /signin when accessing /quotes without authentication", () => {
       // ARRANGE: No session cookie
-      const requestUrl = 'http://localhost:3000/quotes';
+      const requestUrl = "http://localhost:3000/quotes";
 
       // ACT: Simulate middleware check
-      const isProtectedRoute = requestUrl.includes('/quotes');
+      const isProtectedRoute = requestUrl.includes("/quotes");
       const isLoggedIn = false; // No session token
 
       // ASSERT: Should trigger redirect
       expect(isProtectedRoute).toBe(true);
       expect(isLoggedIn).toBe(false);
 
-      const expectedRedirect = '/signin?callbackUrl=%2Fquotes';
-      expect(expectedRedirect).toContain('/signin');
-      expect(expectedRedirect).toContain('callbackUrl');
+      const expectedRedirect = "/signin?callbackUrl=%2Fquotes";
+      expect(expectedRedirect).toContain("/signin");
+      expect(expectedRedirect).toContain("callbackUrl");
     });
 
-    it('should redirect to /signin when accessing /quote/new without authentication', () => {
+    it("should redirect to /signin when accessing /quote/new without authentication", () => {
       // ARRANGE: No session cookie
-      const requestUrl = 'http://localhost:3000/quote/new';
+      const requestUrl = "http://localhost:3000/quote/new";
 
       // ACT: Simulate middleware check
-      const isProtectedRoute = requestUrl.includes('/quote');
+      const isProtectedRoute = requestUrl.includes("/quote");
       const isLoggedIn = false;
 
       // ASSERT: Should trigger redirect
@@ -41,12 +41,12 @@ describe('Quote Auth Guard Integration', () => {
       expect(isLoggedIn).toBe(false);
     });
 
-    it('should allow authenticated users to access /quotes', () => {
+    it("should allow authenticated users to access /quotes", () => {
       // ARRANGE: Valid session cookie
-      const requestUrl = 'http://localhost:3000/quotes';
+      const requestUrl = "http://localhost:3000/quotes";
 
       // ACT: Simulate middleware check with session
-      const isProtectedRoute = requestUrl.includes('/quotes');
+      const isProtectedRoute = requestUrl.includes("/quotes");
       const isLoggedIn = true; // Has session token
 
       // ASSERT: Should allow access
@@ -54,21 +54,21 @@ describe('Quote Auth Guard Integration', () => {
       expect(isLoggedIn).toBe(true);
     });
 
-    it('should preserve callbackUrl in signin redirect', () => {
+    it("should preserve callbackUrl in signin redirect", () => {
       // ARRANGE: Accessing /quote/new without auth
-      const requestPath = '/quote/new';
+      const requestPath = "/quote/new";
 
       // ACT: Build redirect URL
-      const signinUrl = new URL('/signin', 'http://localhost:3000');
-      signinUrl.searchParams.set('callbackUrl', requestPath);
+      const signinUrl = new URL("/signin", "http://localhost:3000");
+      signinUrl.searchParams.set("callbackUrl", requestPath);
 
       // ASSERT: CallbackUrl should be preserved
-      expect(signinUrl.pathname).toBe('/signin');
-      expect(signinUrl.searchParams.get('callbackUrl')).toBe('/quote/new');
+      expect(signinUrl.pathname).toBe("/signin");
+      expect(signinUrl.searchParams.get("callbackUrl")).toBe("/quote/new");
     });
   });
 
-  describe('CartSummary Auth Check', () => {
+  describe("CartSummary Auth Check", () => {
     it('should redirect to signin when clicking "Generate Quote" unauthenticated', () => {
       // ARRANGE: User has items in cart but no session
       const hasCartItems = true;

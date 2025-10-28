@@ -9,10 +9,10 @@
  * - EN 356: Glass in building - Security glazing
  */
 
-import type { PerformanceRating } from '@prisma/client';
-import { z } from 'zod';
-import type { FactoryOptions, FactoryResult } from './types';
-import { validateWithSchema } from './utils';
+import type { PerformanceRating } from "@prisma/client";
+import { z } from "zod";
+import type { FactoryOptions, FactoryResult } from "./types";
+import { validateWithSchema } from "./utils";
 
 // Rating thresholds
 const RATING_EXCELLENT = 5;
@@ -52,7 +52,13 @@ export interface SolutionAssignment {
 const glassTypeSolutionSchema = z.object({
   glassTypeId: z.string().cuid(),
   isPrimary: z.boolean(),
-  performanceRating: z.enum(['basic', 'standard', 'good', 'very_good', 'excellent']),
+  performanceRating: z.enum([
+    "basic",
+    "standard",
+    "good",
+    "very_good",
+    "excellent",
+  ]),
   solutionId: z.string().cuid(),
 });
 
@@ -77,7 +83,9 @@ export type GlassTypeSolutionInput = z.infer<typeof glassTypeSolutionSchema>;
  * - 4: Very Good (laminated tempered)
  * - 5: Excellent (multi-layer laminated tempered)
  */
-export function calculateSecurityRating(glass: GlassCharacteristics): PerformanceRating {
+export function calculateSecurityRating(
+  glass: GlassCharacteristics
+): PerformanceRating {
   let score = 1;
 
   if (glass.isTempered) score += 1;
@@ -85,11 +93,11 @@ export function calculateSecurityRating(glass: GlassCharacteristics): Performanc
   if (glass.thicknessMm >= THICKNESS_STANDARD) score += 1;
   if (glass.isLaminated && glass.isTempered) score += 1; // Bonus for combination
 
-  if (score >= RATING_EXCELLENT) return 'excellent';
-  if (score >= RATING_VERY_GOOD) return 'very_good';
-  if (score >= RATING_GOOD) return 'good';
-  if (score >= RATING_STANDARD) return 'standard';
-  return 'basic';
+  if (score >= RATING_EXCELLENT) return "excellent";
+  if (score >= RATING_VERY_GOOD) return "very_good";
+  if (score >= RATING_GOOD) return "good";
+  if (score >= RATING_STANDARD) return "standard";
+  return "basic";
 }
 
 /**
@@ -109,7 +117,9 @@ export function calculateSecurityRating(glass: GlassCharacteristics): Performanc
  * - 4 (Very Good): 40-44 dB
  * - 5 (Excellent): 45+ dB
  */
-export function calculateSoundInsulationRating(glass: GlassCharacteristics): PerformanceRating {
+export function calculateSoundInsulationRating(
+  glass: GlassCharacteristics
+): PerformanceRating {
   let score = 1;
 
   // Base score from thickness
@@ -122,11 +132,11 @@ export function calculateSoundInsulationRating(glass: GlassCharacteristics): Per
   // Triple glazing with air/gas chambers
   if (glass.isTripleGlazed) score += 1;
 
-  if (score >= RATING_EXCELLENT) return 'excellent';
-  if (score >= RATING_VERY_GOOD) return 'very_good';
-  if (score >= RATING_GOOD) return 'good';
-  if (score >= RATING_STANDARD) return 'standard';
-  return 'basic';
+  if (score >= RATING_EXCELLENT) return "excellent";
+  if (score >= RATING_VERY_GOOD) return "very_good";
+  if (score >= RATING_GOOD) return "good";
+  if (score >= RATING_STANDARD) return "standard";
+  return "basic";
 }
 
 /**
@@ -146,7 +156,9 @@ export function calculateSoundInsulationRating(glass: GlassCharacteristics): Per
  * - 4 (Very Good): U 1.2-1.9
  * - 5 (Excellent): U < 1.2
  */
-export function calculateThermalInsulationRating(glass: GlassCharacteristics): PerformanceRating {
+export function calculateThermalInsulationRating(
+  glass: GlassCharacteristics
+): PerformanceRating {
   let score = 1;
 
   // Thicker glass or DVH configuration
@@ -159,11 +171,11 @@ export function calculateThermalInsulationRating(glass: GlassCharacteristics): P
   // Triple glazing
   if (glass.isTripleGlazed) score += 1;
 
-  if (score >= RATING_EXCELLENT) return 'excellent';
-  if (score >= RATING_VERY_GOOD) return 'very_good';
-  if (score >= RATING_GOOD) return 'good';
-  if (score >= RATING_STANDARD) return 'standard';
-  return 'basic';
+  if (score >= RATING_EXCELLENT) return "excellent";
+  if (score >= RATING_VERY_GOOD) return "very_good";
+  if (score >= RATING_GOOD) return "good";
+  if (score >= RATING_STANDARD) return "standard";
+  return "basic";
 }
 
 /**
@@ -174,7 +186,9 @@ export function calculateThermalInsulationRating(glass: GlassCharacteristics): P
  * - Triple glazing: Enhanced performance
  * - DVH (double glazing): Standard improvement
  */
-export function calculateEnergyEfficiencyRating(glass: GlassCharacteristics): PerformanceRating {
+export function calculateEnergyEfficiencyRating(
+  glass: GlassCharacteristics
+): PerformanceRating {
   let score = 1;
 
   if (glass.thicknessMm >= THICKNESS_DVH_MIN) score += 1; // DVH
@@ -182,11 +196,11 @@ export function calculateEnergyEfficiencyRating(glass: GlassCharacteristics): Pe
   if (glass.isTripleGlazed) score += 1;
   if (glass.isLowE && glass.isTripleGlazed) score += 1; // Bonus
 
-  if (score >= RATING_EXCELLENT) return 'excellent';
-  if (score >= RATING_VERY_GOOD) return 'very_good';
-  if (score >= RATING_GOOD) return 'good';
-  if (score >= RATING_STANDARD) return 'standard';
-  return 'basic';
+  if (score >= RATING_EXCELLENT) return "excellent";
+  if (score >= RATING_VERY_GOOD) return "very_good";
+  if (score >= RATING_GOOD) return "good";
+  if (score >= RATING_STANDARD) return "standard";
+  return "basic";
 }
 
 /**
@@ -213,16 +227,18 @@ export function calculateEnergyEfficiencyRating(glass: GlassCharacteristics): Pe
  * // ]
  * ```
  */
-export function calculateGlassSolutions(glass: GlassCharacteristics): SolutionAssignment[] {
+export function calculateGlassSolutions(
+  glass: GlassCharacteristics
+): SolutionAssignment[] {
   const solutions: SolutionAssignment[] = [];
 
   // Security rating (all glasses have some level of security)
   const securityRating = calculateSecurityRating(glass);
-  if (securityRating !== 'basic' || glass.purpose === 'security') {
+  if (securityRating !== "basic" || glass.purpose === "security") {
     solutions.push({
-      isPrimary: glass.purpose === 'security',
+      isPrimary: glass.purpose === "security",
       performanceRating: securityRating,
-      solutionKey: 'security',
+      solutionKey: "security",
     });
   }
 
@@ -232,17 +248,21 @@ export function calculateGlassSolutions(glass: GlassCharacteristics): SolutionAs
     solutions.push({
       isPrimary: false, // Rarely the primary purpose
       performanceRating: soundRating,
-      solutionKey: 'sound_insulation',
+      solutionKey: "sound_insulation",
     });
   }
 
   // Thermal insulation (DVH, Low-E, triple glazing)
-  if (glass.thicknessMm >= THICKNESS_DVH_MIN || glass.isLowE || glass.isTripleGlazed) {
+  if (
+    glass.thicknessMm >= THICKNESS_DVH_MIN ||
+    glass.isLowE ||
+    glass.isTripleGlazed
+  ) {
     const thermalRating = calculateThermalInsulationRating(glass);
     solutions.push({
-      isPrimary: glass.purpose === 'insulation',
+      isPrimary: glass.purpose === "insulation",
       performanceRating: thermalRating,
-      solutionKey: 'thermal_insulation',
+      solutionKey: "thermal_insulation",
     });
   }
 
@@ -252,25 +272,25 @@ export function calculateGlassSolutions(glass: GlassCharacteristics): SolutionAs
     solutions.push({
       isPrimary: false, // Related to thermal but distinct
       performanceRating: energyRating,
-      solutionKey: 'energy_efficiency',
+      solutionKey: "energy_efficiency",
     });
   }
 
   // Decorative
-  if (glass.purpose === 'decorative') {
+  if (glass.purpose === "decorative") {
     solutions.push({
       isPrimary: true,
-      performanceRating: 'standard', // Decorative doesn't have performance grades
-      solutionKey: 'decorative',
+      performanceRating: "standard", // Decorative doesn't have performance grades
+      solutionKey: "decorative",
     });
   }
 
   // General purpose (fallback for simple glasses)
-  if (glass.purpose === 'general' || solutions.length === 0) {
+  if (glass.purpose === "general" || solutions.length === 0) {
     solutions.push({
-      isPrimary: glass.purpose === 'general',
-      performanceRating: 'standard',
-      solutionKey: 'general',
+      isPrimary: glass.purpose === "general",
+      performanceRating: "standard",
+      solutionKey: "general",
     });
   }
 

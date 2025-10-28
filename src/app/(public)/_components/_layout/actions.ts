@@ -1,8 +1,8 @@
-'use server';
+"use server";
 
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
-import { auth } from '@/server/auth';
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth } from "@/server/auth";
 
 /**
  * Server Action to handle user sign out
@@ -12,5 +12,5 @@ export async function handleSignOut() {
   await auth.api.signOut({
     headers: await headers(),
   });
-  redirect('/catalog');
+  redirect("/catalog");
 }

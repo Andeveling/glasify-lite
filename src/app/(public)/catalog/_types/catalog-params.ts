@@ -5,7 +5,11 @@
  * Type-safe query parameter definitions for catalog filtering and sorting
  */
 
-export type CatalogSortOption = 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc';
+export type CatalogSortOption =
+  | "name-asc"
+  | "name-desc"
+  | "price-asc"
+  | "price-desc";
 
 export type CatalogSearchParams = {
   /** Search query for filtering models by name */
@@ -27,6 +31,6 @@ export function validateCatalogParams(params: CatalogSearchParams) {
     manufacturerId: params.manufacturer,
     page: params.page ? Math.max(1, Number.parseInt(params.page, 10)) : 1,
     searchQuery: params.q?.trim(),
-    sort: (params.sort ?? 'name-asc') as CatalogSortOption,
+    sort: (params.sort ?? "name-asc") as CatalogSortOption,
   };
 }

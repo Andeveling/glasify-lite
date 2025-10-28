@@ -7,14 +7,14 @@
  * @module e2e/cart/multiple-configurations
  */
 
-import { expect, type Page, test } from '@playwright/test';
+import { expect, type Page, test } from "@playwright/test";
 
 // ============================================================================
 // Constants
 // ============================================================================
 
-const CATALOG_URL = '/catalog';
-const CART_URL = '/cart';
+const CATALOG_URL = "/catalog";
+const CART_URL = "/cart";
 const DEFAULT_TIMEOUT = 10_000;
 const MESSAGE_TIMEOUT = 5000;
 const EXPECTED_ITEM_COUNT_THREE = 3;
@@ -47,7 +47,9 @@ async function addConfiguredItem(
   } = {}
 ) {
   // Wait for form to be ready
-  await page.waitForSelector('input[name="glassType"]', { timeout: DEFAULT_TIMEOUT });
+  await page.waitForSelector('input[name="glassType"]', {
+    timeout: DEFAULT_TIMEOUT,
+  });
 
   // Select glass type if specified
   if (config.glassTypeIndex !== undefined) {
@@ -78,29 +80,37 @@ async function addConfiguredItem(
   }
 
   // Wait for price calculation
-  await page.waitForSelector(`text=${PRICE_CALCULATED_PATTERN}`, { timeout: DEFAULT_TIMEOUT });
+  await page.waitForSelector(`text=${PRICE_CALCULATED_PATTERN}`, {
+    timeout: DEFAULT_TIMEOUT,
+  });
 
   // Click add to cart
-  const addButton = page.getByRole('button', { name: ADD_TO_CART_BUTTON_PATTERN });
+  const addButton = page.getByRole("button", {
+    name: ADD_TO_CART_BUTTON_PATTERN,
+  });
   await expect(addButton).toBeEnabled();
   await addButton.click();
 
   // Wait for success message
-  await expect(page.locator(`text=${ADDED_TO_CART_MESSAGE_PATTERN}`)).toBeVisible({ timeout: MESSAGE_TIMEOUT });
+  await expect(
+    page.locator(`text=${ADDED_TO_CART_MESSAGE_PATTERN}`)
+  ).toBeVisible({ timeout: MESSAGE_TIMEOUT });
 }
 
 // ============================================================================
 // Tests
 // ============================================================================
 
-test.describe('Multiple Configurations (US1)', () => {
+test.describe("Multiple Configurations (US1)", () => {
   test.beforeEach(async ({ page }) => {
     // Clear sessionStorage before each test
     await page.goto(CATALOG_URL);
     await page.evaluate(() => sessionStorage.clear());
   });
 
-  test('should add same model twice with different dimensions - sequential names', async ({ page }) => {
+  test("should add same model twice with different dimensions - sequential names", async ({
+    page,
+  }) => {
     await page.goto(CATALOG_URL);
 
     // Select first model
@@ -113,7 +123,7 @@ test.describe('Multiple Configurations (US1)', () => {
 
     // Verify badge shows 1
     let cartBadge = page.locator('a[href="/cart"] output');
-    await expect(cartBadge).toHaveText('1');
+    await expect(cartBadge).toHaveText("1");
 
     // Go back to same model
     await page.goto(CATALOG_URL);
@@ -125,7 +135,7 @@ test.describe('Multiple Configurations (US1)', () => {
 
     // Verify badge shows 2
     cartBadge = page.locator('a[href="/cart"] output');
-    await expect(cartBadge).toHaveText('2');
+    await expect(cartBadge).toHaveText("2");
 
     // Navigate to cart
     await page.goto(CART_URL);
@@ -142,12 +152,14 @@ test.describe('Multiple Configurations (US1)', () => {
     expect(secondName).toMatch(SECOND_ITEM_NAME_PATTERN);
 
     // Verify both names have same prefix (same model)
-    const firstPrefix = firstName.split('-')[0];
-    const secondPrefix = secondName.split('-')[0];
+    const firstPrefix = firstName.split("-")[0];
+    const secondPrefix = secondName.split("-")[0];
     expect(firstPrefix).toBe(secondPrefix);
   });
 
-  test('should add same model three times with different glass types - sequential names', async ({ page }) => {
+  test("should add same model three times with different glass types - sequential names", async ({
+    page,
+  }) => {
     await page.goto(CATALOG_URL);
 
     // Select first model
@@ -186,13 +198,15 @@ test.describe('Multiple Configurations (US1)', () => {
 
     // Verify badge shows 3
     const cartBadge = page.locator('a[href="/cart"] output');
-    await expect(cartBadge).toHaveText('3');
+    await expect(cartBadge).toHaveText("3");
 
     // Navigate to cart
     await page.goto(CART_URL);
 
     // Verify all three items exist
-    await expect(page.locator('[data-testid^="cart-item-"]')).toHaveCount(EXPECTED_ITEM_COUNT_THREE);
+    await expect(page.locator('[data-testid^="cart-item-"]')).toHaveCount(
+      EXPECTED_ITEM_COUNT_THREE
+    );
 
     // Verify sequential names
     const itemNames = page.locator('[data-testid="cart-item-name"]');
@@ -205,12 +219,16 @@ test.describe('Multiple Configurations (US1)', () => {
     expect(thirdName).toMatch(THIRD_ITEM_NAME_PATTERN);
 
     // Verify all names have same prefix
-    const prefixes = [firstName, secondName, thirdName].map((name) => name.split('-')[0]);
+    const prefixes = [firstName, secondName, thirdName].map(
+      (name) => name.split("-")[0]
+    );
     expect(prefixes[0]).toBe(prefixes[1]);
     expect(prefixes[1]).toBe(prefixes[2]);
   });
 
-  test('should handle mixed models - different name prefixes and sequences', async ({ page }) => {
+  test("should handle mixed models - different name prefixes and sequences", async ({
+    page,
+  }) => {
     await page.goto(CATALOG_URL);
 
     // Get all available models
@@ -248,13 +266,15 @@ test.describe('Multiple Configurations (US1)', () => {
 
     // Verify badge shows 4
     const cartBadge = page.locator('a[href="/cart"] output');
-    await expect(cartBadge).toHaveText('4');
+    await expect(cartBadge).toHaveText("4");
 
     // Navigate to cart
     await page.goto(CART_URL);
 
     // Verify all four items exist
-    await expect(page.locator('[data-testid^="cart-item-"]')).toHaveCount(EXPECTED_ITEM_COUNT_FOUR);
+    await expect(page.locator('[data-testid^="cart-item-"]')).toHaveCount(
+      EXPECTED_ITEM_COUNT_FOUR
+    );
 
     // Get all item names
     const itemNames = page.locator('[data-testid="cart-item-name"]');
@@ -266,26 +286,30 @@ test.describe('Multiple Configurations (US1)', () => {
 
     // Extract prefixes and sequences
     const items = names.map((name) => {
-      const [prefix, sequence] = name.split('-');
+      const [prefix, sequence] = name.split("-");
       return { prefix, sequence };
     });
 
     // Verify first model items have sequential numbers
     const firstModelPrefix = items[0].prefix;
-    const firstModelItems = items.filter((item) => item.prefix === firstModelPrefix);
+    const firstModelItems = items.filter(
+      (item) => item.prefix === firstModelPrefix
+    );
     const firstModelSequences = firstModelItems.map((item) => item.sequence);
 
-    expect(firstModelSequences).toContain('001');
-    expect(firstModelSequences).toContain('002');
-    expect(firstModelSequences).toContain('003');
+    expect(firstModelSequences).toContain("001");
+    expect(firstModelSequences).toContain("002");
+    expect(firstModelSequences).toContain("003");
 
     // Verify second model item has sequence 001
     const secondModelPrefix = items[2].prefix;
-    expect(items[2].sequence).toBe('001');
+    expect(items[2].sequence).toBe("001");
     expect(secondModelPrefix).not.toBe(firstModelPrefix);
   });
 
-  test('should persist sequential names after page reload', async ({ page }) => {
+  test("should persist sequential names after page reload", async ({
+    page,
+  }) => {
     await page.goto(CATALOG_URL);
 
     // Add two items from same model
@@ -304,7 +328,7 @@ test.describe('Multiple Configurations (US1)', () => {
 
     // Verify badge still shows 2
     const cartBadge = page.locator('a[href="/cart"] output');
-    await expect(cartBadge).toHaveText('2');
+    await expect(cartBadge).toHaveText("2");
 
     // Navigate to cart
     await page.goto(CART_URL);
@@ -317,8 +341,8 @@ test.describe('Multiple Configurations (US1)', () => {
     expect(firstName).toMatch(FIRST_ITEM_NAME_PATTERN);
     expect(secondName).toMatch(SECOND_ITEM_NAME_PATTERN);
 
-    const firstPrefix = firstName.split('-')[0];
-    const secondPrefix = secondName.split('-')[0];
+    const firstPrefix = firstName.split("-")[0];
+    const secondPrefix = secondName.split("-")[0];
     expect(firstPrefix).toBe(secondPrefix);
   });
 });

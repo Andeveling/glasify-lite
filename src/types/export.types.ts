@@ -5,12 +5,12 @@
  * Supports both @react-pdf/renderer and exceljs libraries.
  */
 
-import type { Quote } from '@prisma/client';
+import type { Quote } from "@prisma/client";
 
 /**
  * Supported export formats
  */
-export type ExportFormat = 'pdf' | 'excel';
+export type ExportFormat = "pdf" | "excel";
 
 /**
  * Export configuration options
@@ -29,7 +29,7 @@ export interface ExportOptions {
   includeImages?: boolean;
 
   /** Page size for PDF exports (default: 'A4') */
-  pageSize?: 'A4' | 'LETTER' | 'LEGAL';
+  pageSize?: "A4" | "LETTER" | "LEGAL";
 
   /** Locale for formatting (falls back to TENANT_LOCALE) */
   locale?: string;
@@ -50,7 +50,7 @@ export interface QuotePDFData {
   quote: {
     id: string;
     projectName: string;
-    status: Quote['status'];
+    status: Quote["status"];
     createdAt: Date;
     validUntil: Date;
     totalAmount: number;
@@ -79,7 +79,7 @@ export interface QuotePDFData {
       width: number;
       height: number;
       area: number;
-      unit: 'm²' | 'cm²';
+      unit: "m²" | "cm²";
     };
 
     /** Glass specifications (if applicable) */
@@ -132,7 +132,7 @@ export interface QuoteExcelData {
   quote: {
     id: string;
     projectName: string;
-    status: Quote['status'];
+    status: Quote["status"];
     createdAt: Date;
     validUntil: Date;
     totalAmount: number;

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Factory,
@@ -11,12 +11,12 @@ import {
   Settings,
   Sparkles,
   Wrench,
-} from 'lucide-react';
-import Link from 'next/link';
-import type * as React from 'react';
-import { NavMain } from '@/components/nav-main';
-import { NavSecondary } from '@/components/nav-secondary';
-import { NavUser } from '@/components/nav-user';
+} from "lucide-react";
+import Link from "next/link";
+import type * as React from "react";
+import { NavMain } from "@/components/nav-main";
+import { NavSecondary } from "@/components/nav-secondary";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -27,71 +27,71 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar';
+} from "@/components/ui/sidebar";
 
 const data = {
   navMain: [
     {
       icon: LayoutDashboard,
-      title: 'Dashboard',
-      url: '/admin',
+      title: "Dashboard",
+      url: "/admin",
     },
     {
       icon: Grid3x3,
-      title: 'Modelos',
-      url: '/admin/models',
+      title: "Modelos",
+      url: "/admin/models",
     },
     {
       icon: GlassWater,
-      title: 'Tipos de Vidrio',
-      url: '/admin/glass-types',
+      title: "Tipos de Vidrio",
+      url: "/admin/glass-types",
     },
     {
       icon: Wrench,
-      title: 'Servicios',
-      url: '/admin/services',
+      title: "Servicios",
+      url: "/admin/services",
     },
   ],
   navSecondary: [
     {
       icon: Settings,
-      title: 'Configuración',
-      url: '#',
+      title: "Configuración",
+      url: "#",
     },
     {
       icon: HelpCircle,
-      title: 'Ayuda',
-      url: '#',
+      title: "Ayuda",
+      url: "#",
     },
     {
       icon: Search,
-      title: 'Buscar',
-      url: '#',
+      title: "Buscar",
+      url: "#",
     },
   ],
   navSuppliers: [
     {
       icon: Factory,
-      title: 'Proveedores de Perfiles',
-      url: '/admin/profile-suppliers',
+      title: "Proveedores de Perfiles",
+      url: "/admin/profile-suppliers",
     },
     {
       icon: Package,
-      title: 'Proveedores de Vidrio',
-      url: '/admin/glass-suppliers',
+      title: "Proveedores de Vidrio",
+      url: "/admin/glass-suppliers",
     },
   ],
   navTaxonomy: [
     {
       icon: Sparkles,
-      title: 'Soluciones de Vidrio',
-      url: '/admin/glass-solutions',
+      title: "Soluciones de Vidrio",
+      url: "/admin/glass-solutions",
     },
   ],
   user: {
-    avatar: '/avatars/shadcn.jpg',
-    email: 'admin@glasify.com',
-    name: 'Admin',
+    avatar: "/avatars/shadcn.jpg",
+    email: "admin@glasify.com",
+    name: "Admin",
   },
 };
 
@@ -101,7 +101,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
+            <SidebarMenuButton
+              asChild
+              className="data-[slot=sidebar-menu-button]:!p-1.5"
+            >
               <Link href="/admin">
                 <Sparkles className="!size-5" />
                 <span className="font-semibold text-base">Glasify Admin</span>

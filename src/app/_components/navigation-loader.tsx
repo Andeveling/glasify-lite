@@ -5,27 +5,28 @@
  * Uses Framer Motion for smooth animations
  */
 
-'use client';
+"use client";
 
-import { AnimatePresence, motion } from 'framer-motion';
-import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from "framer-motion";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 const LOADER_DISPLAY_DURATION_MS = 800;
 const MILLISECONDS_PER_SECOND = 1000;
-const LOADER_DURATION_SECONDS = LOADER_DISPLAY_DURATION_MS / MILLISECONDS_PER_SECOND;
+const LOADER_DURATION_SECONDS =
+  LOADER_DISPLAY_DURATION_MS / MILLISECONDS_PER_SECOND;
 const SHIMMER_DURATION_SECONDS = 0.8;
 
 // Animation timing constants
 const OPACITY_TRANSITION_DURATION = 0.2;
 
 // Progress bar animation keyframes
-const PROGRESS_WIDTH_KEYFRAMES = ['0%', '70%', '90%', '100%'];
-const PROGRESS_POSITION_KEYFRAMES = ['0%', '0%', '0%', '0%'];
+const PROGRESS_WIDTH_KEYFRAMES = ["0%", "70%", "90%", "100%"];
+const PROGRESS_POSITION_KEYFRAMES = ["0%", "0%", "0%", "0%"];
 
 // Shimmer animation constants
-const SHIMMER_START_POSITION = '-100%';
-const SHIMMER_END_POSITION = '200%';
+const SHIMMER_START_POSITION = "-100%";
+const SHIMMER_END_POSITION = "200%";
 
 // Framer Motion easing curve values
 const EASING_START = 0.4;
@@ -40,8 +41,18 @@ const PROGRESS_THREE_QUARTERS = 0.8;
 const PROGRESS_END = 1;
 
 // Framer Motion animation constants
-const EASING_CURVE = [EASING_START, EASING_FIRST_CONTROL, EASING_SECOND_CONTROL, EASING_END] as const;
-const PROGRESS_KEYFRAMES = [PROGRESS_START, PROGRESS_QUARTER, PROGRESS_THREE_QUARTERS, PROGRESS_END];
+const EASING_CURVE = [
+  EASING_START,
+  EASING_FIRST_CONTROL,
+  EASING_SECOND_CONTROL,
+  EASING_END,
+] as const;
+const PROGRESS_KEYFRAMES = [
+  PROGRESS_START,
+  PROGRESS_QUARTER,
+  PROGRESS_THREE_QUARTERS,
+  PROGRESS_END,
+];
 
 export function NavigationLoader() {
   const pathname = usePathname();
@@ -83,8 +94,8 @@ export function NavigationLoader() {
               x: PROGRESS_POSITION_KEYFRAMES,
             }}
             className="h-full bg-gradient-to-r from-primary via-primary/80 to-primary"
-            exit={{ opacity: 0, width: '100%' }}
-            initial={{ width: '0%', x: '0%' }}
+            exit={{ opacity: 0, width: "100%" }}
+            initial={{ width: "0%", x: "0%" }}
             transition={{
               duration: LOADER_DURATION_SECONDS,
               ease: EASING_CURVE,
@@ -99,7 +110,7 @@ export function NavigationLoader() {
             initial={{ x: SHIMMER_START_POSITION }}
             transition={{
               duration: SHIMMER_DURATION_SECONDS,
-              ease: 'linear',
+              ease: "linear",
               repeat: Number.POSITIVE_INFINITY,
             }}
           />

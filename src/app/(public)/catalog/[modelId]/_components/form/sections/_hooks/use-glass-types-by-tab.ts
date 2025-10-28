@@ -1,9 +1,12 @@
-import type { LucideIcon } from 'lucide-react';
-import { Home, Shield, Snowflake, Sparkles, Volume2, Zap } from 'lucide-react';
-import { useMemo } from 'react';
-import type { GlassTypeOutput } from '@/server/api/routers/catalog';
-import { buildGlassFeatures, calculatePerformanceRatings } from '../_utils/glass-type.utils';
-import type { GlassTypeOption } from './use-glass-type-options';
+import type { LucideIcon } from "lucide-react";
+import { Home, Shield, Snowflake, Sparkles, Volume2, Zap } from "lucide-react";
+import { useMemo } from "react";
+import type { GlassTypeOutput } from "@/server/api/routers/catalog";
+import {
+  buildGlassFeatures,
+  calculatePerformanceRatings,
+} from "../_utils/glass-type.utils";
+import type { GlassTypeOption } from "./use-glass-type-options";
 
 /**
  * Custom Hook: useGlassTypesByTab
@@ -48,7 +51,10 @@ function getSolutionIcon(iconName: string | null | undefined): LucideIcon {
 // Hook Implementation
 // ============================================================================
 
-export function useGlassTypesByTab(glassTypes: GlassTypeOutput[], basePrice?: number): GlassTab[] {
+export function useGlassTypesByTab(
+  glassTypes: GlassTypeOutput[],
+  basePrice?: number
+): GlassTab[] {
   const tabs = useMemo(() => {
     // Step 1: Map glass types to their PRIMARY solution only (deduplicate)
     const primarySolutionsMap = new Map<
@@ -74,7 +80,9 @@ export function useGlassTypesByTab(glassTypes: GlassTypeOutput[], basePrice?: nu
       if (assignedGlassTypes.has(glassType.id)) continue;
 
       // Find primary solution (or first solution if no primary)
-      const primarySolution = glassType.solutions?.find((s) => s.isPrimary) ?? glassType.solutions?.[0];
+      const primarySolution =
+        glassType.solutions?.find((s) => s.isPrimary) ??
+        glassType.solutions?.[0];
 
       // ✅ FIX: If no solution, add to fallback list instead of skipping
       if (!primarySolution) {
@@ -104,12 +112,12 @@ export function useGlassTypesByTab(glassTypes: GlassTypeOutput[], basePrice?: nu
 
     // ✅ FIX: Add fallback "General" tab for glass types without solutions
     if (glassTypesWithoutSolution.length > 0) {
-      primarySolutionsMap.set('general', {
+      primarySolutionsMap.set("general", {
         glassTypes: glassTypesWithoutSolution,
         icon: Home,
-        id: 'general',
-        key: 'general',
-        label: 'General',
+        id: "general",
+        key: "general",
+        label: "General",
         sortOrder: 999, // Show last
       });
     }
@@ -122,7 +130,9 @@ export function useGlassTypesByTab(glassTypes: GlassTypeOutput[], basePrice?: nu
         // Step 3: Transform glass types to options
         const options = tab.glassTypes.map((glassType): GlassTypeOption => {
           // Get primary solution for this tab
-          const primarySolution = glassType.solutions?.find((s) => s.isPrimary) ?? glassType.solutions?.[0];
+          const primarySolution =
+            glassType.solutions?.find((s) => s.isPrimary) ??
+            glassType.solutions?.[0];
           const solution = primarySolution?.solution;
 
           const icon = getSolutionIcon(solution?.icon);
@@ -130,7 +140,9 @@ export function useGlassTypesByTab(glassTypes: GlassTypeOutput[], basePrice?: nu
           const features = buildGlassFeatures(glassType);
           const performanceRatings = calculatePerformanceRatings(glassType);
           const performanceRating = primarySolution?.performanceRating;
-          const priceModifier = basePrice ? glassType.pricePerSqm - basePrice : 0;
+          const priceModifier = basePrice
+            ? glassType.pricePerSqm - basePrice
+            : 0;
 
           return {
             acousticRating: performanceRatings.acoustic,
@@ -159,8 +171,12 @@ export function useGlassTypesByTab(glassTypes: GlassTypeOutput[], basePrice?: nu
             veryGood: 4,
           };
 
-          const weightA = a.performanceRating ? (RatingWeights[a.performanceRating] ?? 0) : 0;
-          const weightB = b.performanceRating ? (RatingWeights[b.performanceRating] ?? 0) : 0;
+          const weightA = a.performanceRating
+            ? (RatingWeights[a.performanceRating] ?? 0)
+            : 0;
+          const weightB = b.performanceRating
+            ? (RatingWeights[b.performanceRating] ?? 0)
+            : 0;
 
           if (weightB !== weightA) return weightB - weightA;
           return a.pricePerSqm - b.pricePerSqm;

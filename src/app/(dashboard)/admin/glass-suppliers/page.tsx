@@ -16,13 +16,13 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from 'next';
-import { api } from '@/trpc/server-client';
-import { GlassSupplierList } from './_components/glass-supplier-list';
+import type { Metadata } from "next";
+import { api } from "@/trpc/server-client";
+import { GlassSupplierList } from "./_components/glass-supplier-list";
 
 export const metadata: Metadata = {
-  description: 'Administra los fabricantes de vidrio',
-  title: 'Proveedores de Vidrio | Admin',
+  description: "Administra los fabricantes de vidrio",
+  title: "Proveedores de Vidrio | Admin",
 };
 
 /**
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
  * - No caching for admin routes (always fresh data)
  * - Private dashboard routes don't benefit from ISR
  */
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 type SearchParams = Promise<{
   country?: string;
@@ -38,7 +38,7 @@ type SearchParams = Promise<{
   page?: string;
   search?: string;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }>;
 
 type PageProps = {
@@ -50,17 +50,22 @@ export default async function GlassSuppliersPage({ searchParams }: PageProps) {
 
   // Parse search params
   const page = Number(params.page) || 1;
-  const search = params.search && params.search !== '' ? params.search : undefined;
-  const country = params.country && params.country !== 'all' ? params.country : undefined;
-  const isActive = (params.isActive && params.isActive !== 'all' ? params.isActive : 'all') as
-    | 'all'
-    | 'active'
-    | 'inactive';
-  const sortBy = (params.sortBy || 'name') as 'name' | 'code' | 'country' | 'createdAt';
-  const sortOrder = (params.sortOrder || 'asc') as 'asc' | 'desc';
+  const search =
+    params.search && params.search !== "" ? params.search : undefined;
+  const country =
+    params.country && params.country !== "all" ? params.country : undefined;
+  const isActive = (
+    params.isActive && params.isActive !== "all" ? params.isActive : "all"
+  ) as "all" | "active" | "inactive";
+  const sortBy = (params.sortBy || "name") as
+    | "name"
+    | "code"
+    | "country"
+    | "createdAt";
+  const sortOrder = (params.sortOrder || "asc") as "asc" | "desc";
 
   // Fetch data server-side with filters
-  const initialData = await api.admin['glass-supplier'].list({
+  const initialData = await api.admin["glass-supplier"].list({
     country,
     isActive,
     limit: 20,
@@ -82,11 +87,18 @@ export default async function GlassSuppliersPage({ searchParams }: PageProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-bold text-3xl tracking-tight">Proveedores de Vidrio</h1>
-        <p className="text-muted-foreground">Administra los fabricantes de vidrio y sus productos</p>
+        <h1 className="font-bold text-3xl tracking-tight">
+          Proveedores de Vidrio
+        </h1>
+        <p className="text-muted-foreground">
+          Administra los fabricantes de vidrio y sus productos
+        </p>
       </div>
 
-      <GlassSupplierList initialData={initialData} searchParams={searchParamsForClient} />
+      <GlassSupplierList
+        initialData={initialData}
+        searchParams={searchParamsForClient}
+      />
     </div>
   );
 }

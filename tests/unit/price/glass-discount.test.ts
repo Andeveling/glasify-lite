@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { calculatePriceItem } from '../../../src/server/price/price-item';
+import { describe, expect, it } from "vitest";
+import { calculatePriceItem } from "../../../src/server/price/price-item";
 
 /**
  * Glass Discount Validation Tests
@@ -27,7 +27,7 @@ const EXPECTED_ZERO_GLASS_AREA = 11_000;
 const MIN_SAVINGS_PER_WINDOW = 13_000;
 const MIN_SAVINGS_TEN_WINDOWS = 130_000;
 
-describe('calculatePriceItem - Glass Discount Application', () => {
+describe("calculatePriceItem - Glass Discount Application", () => {
   const baseModel = {
     accessoryPrice: 0,
     basePrice: BASE_PRICE,
@@ -35,7 +35,7 @@ describe('calculatePriceItem - Glass Discount Application', () => {
     costPerMmWidth: COST_PER_MM,
   };
 
-  it('should apply glass discounts when calculating glass area', () => {
+  it("should apply glass discounts when calculating glass area", () => {
     // 1000mm x 1000mm window with 50mm discount per side
     // Expected: (1000-50) x (1000-50) = 950mm x 950mm = 0.9025 m²
     const result = calculatePriceItem({
@@ -58,7 +58,7 @@ describe('calculatePriceItem - Glass Discount Application', () => {
     expect(result.dimPrice).toBe(EXPECTED_WITH_50MM_DISCOUNT);
   });
 
-  it('should calculate full area when no discounts are provided', () => {
+  it("should calculate full area when no discounts are provided", () => {
     // 1000mm x 1000mm window with NO discounts
     // Expected: 1000mm x 1000mm = 1m²
     const result = calculatePriceItem({
@@ -76,7 +76,7 @@ describe('calculatePriceItem - Glass Discount Application', () => {
     expect(result.dimPrice).toBe(EXPECTED_NO_DISCOUNT);
   });
 
-  it('should calculate full area when discounts are zero', () => {
+  it("should calculate full area when discounts are zero", () => {
     // 1000mm x 1000mm window with 0mm discounts
     // Expected: Same as no discounts (1m²)
     const result = calculatePriceItem({
@@ -93,7 +93,7 @@ describe('calculatePriceItem - Glass Discount Application', () => {
     expect(result.dimPrice).toBe(EXPECTED_NO_DISCOUNT);
   });
 
-  it('should calculate full area when discounts are zero', () => {
+  it("should calculate full area when discounts are zero", () => {
     // 1000mm x 1000mm window with 0mm discounts
     // Expected: Same as no discounts (1m²)
     const result = calculatePriceItem({
@@ -110,7 +110,7 @@ describe('calculatePriceItem - Glass Discount Application', () => {
     expect(result.dimPrice).toBe(120_000);
   });
 
-  it('should handle realistic discount values (30mm per side)', () => {
+  it("should handle realistic discount values (30mm per side)", () => {
     // 1500mm x 2000mm window with 30mm discount per side
     // Expected: (1500-30) x (2000-30) = 1470mm x 1970mm = 2.8959 m²
     const result = calculatePriceItem({
@@ -132,7 +132,7 @@ describe('calculatePriceItem - Glass Discount Application', () => {
     expect(result.dimPrice).toBe(EXPECTED_WITH_30MM_DISCOUNT);
   });
 
-  it('should not result in negative area when discounts exceed dimensions', () => {
+  it("should not result in negative area when discounts exceed dimensions", () => {
     // Edge case: 100mm x 100mm window with 50mm discount per side
     // Without protection: (100-50) x (100-50) = 50mm x 50mm = 0.0025 m²
     // Expected: Glass cost should be very small or zero
@@ -156,7 +156,7 @@ describe('calculatePriceItem - Glass Discount Application', () => {
     expect(result.dimPrice).toBeGreaterThan(0); // Should never be negative
   });
 
-  it('should result in zero glass cost when discounts equal dimensions', () => {
+  it("should result in zero glass cost when discounts equal dimensions", () => {
     // Extreme case: 100mm x 100mm window with 100mm discount per side
     // Expected: (100-100) x (100-100) = 0 m² → glass cost = 0
     const result = calculatePriceItem({
@@ -178,7 +178,7 @@ describe('calculatePriceItem - Glass Discount Application', () => {
     expect(result.dimPrice).toBe(EXPECTED_ZERO_GLASS_AREA);
   });
 
-  it('should demonstrate cost impact of discounts on expensive glass', () => {
+  it("should demonstrate cost impact of discounts on expensive glass", () => {
     // Real-world scenario: 2 windows with expensive glass ($200k/m²)
     // Window 1: 1200mm x 1800mm WITHOUT discounts = 2.16 m² = $432k glass cost
     // Window 2: 1200mm x 1800mm WITH 40mm discounts = 2.09 m² = $418k glass cost

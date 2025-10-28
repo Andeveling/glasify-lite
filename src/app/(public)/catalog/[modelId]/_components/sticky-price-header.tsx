@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { Gem, Package, Ruler } from 'lucide-react';
-import { useTenantConfig } from '@/app/_hooks/use-tenant-config';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
-import { PriceBreakdownPopover } from '@/components/ui/price-breakdown-popover';
-import { Separator } from '@/components/ui/separator';
-import { formatCurrency } from '@/lib/format';
-import { cn } from '@/lib/utils';
+import { motion } from "framer-motion";
+import { Gem, Package, Ruler } from "lucide-react";
+import { useTenantConfig } from "@/app/_hooks/use-tenant-config";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { PriceBreakdownPopover } from "@/components/ui/price-breakdown-popover";
+import { Separator } from "@/components/ui/separator";
+import { formatCurrency } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 // ============================================================================
 // Types
 // ============================================================================
 
-type PriceBreakdownCategory = 'model' | 'glass' | 'service' | 'adjustment';
+type PriceBreakdownCategory = "model" | "glass" | "service" | "adjustment";
 
 type PriceBreakdownItem = {
   amount: number;
@@ -83,12 +83,14 @@ export function StickyPriceHeader({
 
   // Format dimensions
   const hasDimensions = configSummary.widthMm && configSummary.heightMm;
-  const dimensionsText = hasDimensions ? `${configSummary.widthMm} × ${configSummary.heightMm} mm` : 'Sin dimensiones';
+  const dimensionsText = hasDimensions
+    ? `${configSummary.widthMm} × ${configSummary.heightMm} mm`
+    : "Sin dimensiones";
 
   return (
     <Card
       className={cn(
-        'sticky top-16 z-10 border-b bg-background px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6 md:py-4',
+        "sticky top-16 z-10 border-b bg-background px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6 md:py-4",
         className
       )}
     >
@@ -96,20 +98,26 @@ export function StickyPriceHeader({
         {/* Right: Price display with animation (now on the right) */}
         <div className="flex items-baseline gap-2 lg:min-w-[220px] lg:justify-end">
           <div className="space-y-0.5">
-            <p className="text-muted-foreground text-xs md:text-sm">Precio configurado</p>
+            <p className="text-muted-foreground text-xs md:text-sm">
+              Precio configurado
+            </p>
             <motion.p
               animate={{ opacity: 1, scale: 1 }}
               className="font-bold text-2xl md:text-3xl"
               initial={{ opacity: 0.8, scale: 0.98 }}
               key={currentPrice} // Re-animate when price changes
-              transition={{ duration: 0.2, ease: 'easeOut' }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
             >
               {formatCurrency(currentPrice, { context: formatContext })}
             </motion.p>
           </div>
 
           {/* Breakdown popover */}
-          <PriceBreakdownPopover breakdown={breakdown} currency={currency} totalAmount={currentPrice} />
+          <PriceBreakdownPopover
+            breakdown={breakdown}
+            currency={currency}
+            totalAmount={currentPrice}
+          />
         </div>
 
         {/* Left: Configuration Summary - Don't Make Me Think (now on the left) */}
@@ -117,16 +125,23 @@ export function StickyPriceHeader({
           {/* Model name */}
           <div className="flex items-center gap-1.5 rounded-md bg-muted px-2 py-1">
             <Package className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="font-medium text-xs md:text-sm">{configSummary.modelName}</span>
+            <span className="font-medium text-xs md:text-sm">
+              {configSummary.modelName}
+            </span>
           </div>
 
           {/* Dimensions */}
           {hasDimensions && (
             <>
-              <Separator className="hidden h-4 md:block" orientation="vertical" />
+              <Separator
+                className="hidden h-4 md:block"
+                orientation="vertical"
+              />
               <div className="flex items-center gap-1.5 rounded-md bg-muted px-2 py-1">
                 <Ruler className="h-3.5 w-3.5 text-muted-foreground" />
-                <span className="font-medium text-xs md:text-sm">{dimensionsText}</span>
+                <span className="font-medium text-xs md:text-sm">
+                  {dimensionsText}
+                </span>
               </div>
             </>
           )}
@@ -134,7 +149,10 @@ export function StickyPriceHeader({
           {/* Glass type */}
           {configSummary.glassTypeName && (
             <>
-              <Separator className="hidden h-4 md:block" orientation="vertical" />
+              <Separator
+                className="hidden h-4 md:block"
+                orientation="vertical"
+              />
               <div className="flex items-center gap-1.5 rounded-md bg-purple-50 px-2 py-1 dark:bg-purple-950/30">
                 <Gem className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
                 <span className="font-medium text-purple-700 text-xs md:text-sm dark:text-purple-300">
@@ -165,9 +183,12 @@ export function StickyPriceHeader({
 
       {/* Screen reader announcement for price changes */}
       <div aria-atomic="true" aria-live="polite" className="sr-only">
-        Precio actualizado: {formatCurrency(currentPrice, { context: formatContext })} para {configSummary.modelName}
+        Precio actualizado:{" "}
+        {formatCurrency(currentPrice, { context: formatContext })} para{" "}
+        {configSummary.modelName}
         {hasDimensions && `, dimensiones ${dimensionsText}`}
-        {configSummary.glassTypeName && `, vidrio ${configSummary.glassTypeName}`}
+        {configSummary.glassTypeName &&
+          `, vidrio ${configSummary.glassTypeName}`}
       </div>
     </Card>
   );

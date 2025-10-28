@@ -31,14 +31,14 @@
  * @author Andres
  */
 
-import type { SeedPreset } from '../../seeders/seed-orchestrator';
-import { vidriosLaEquidadGlassSolutions } from '../vidrios-la-equidad/glass-solutions.data';
-import { vidriosLaEquidadGlassTypes } from '../vidrios-la-equidad/glass-types.data';
-import { vidriosLaEquidadAluminumCasementModels } from '../vidrios-la-equidad/models-aluminum-casement.data';
-import { vidriosLaEquidadAluminumSlidingModels } from '../vidrios-la-equidad/models-aluminum-sliding.data';
-import { vidriosLaEquidadPVCModels } from '../vidrios-la-equidad/models-pvc-deceuninck.data';
-import { vidriosLaEquidadProfileSuppliers } from '../vidrios-la-equidad/profile-suppliers.data';
-import { vidriosLaEquidadServices } from '../vidrios-la-equidad/services.data';
+import type { SeedPreset } from "../../seeders/seed-orchestrator";
+import { vidriosLaEquidadGlassSolutions } from "../vidrios-la-equidad/glass-solutions.data";
+import { vidriosLaEquidadGlassTypes } from "../vidrios-la-equidad/glass-types.data";
+import { vidriosLaEquidadAluminumCasementModels } from "../vidrios-la-equidad/models-aluminum-casement.data";
+import { vidriosLaEquidadAluminumSlidingModels } from "../vidrios-la-equidad/models-aluminum-sliding.data";
+import { vidriosLaEquidadPVCModels } from "../vidrios-la-equidad/models-pvc-deceuninck.data";
+import { vidriosLaEquidadProfileSuppliers } from "../vidrios-la-equidad/profile-suppliers.data";
+import { vidriosLaEquidadServices } from "../vidrios-la-equidad/services.data";
 
 /**
  * Preset completo para Vidrios La Equidad
@@ -52,7 +52,8 @@ import { vidriosLaEquidadServices } from '../vidrios-la-equidad/services.data';
  * Ejecutar solo en instancia dedicada de Vidrios La Equidad.
  */
 export const vidriosLaEquidadColombiaPreset: SeedPreset = {
-  description: 'Vidrios La Equidad - Fabricante e instalador de ventanas, puertas y divisiones en Valle del Cauca',
+  description:
+    "Vidrios La Equidad - Fabricante e instalador de ventanas, puertas y divisiones en Valle del Cauca",
 
   // Soluciones de vidrio (5)
   glassSolutions: vidriosLaEquidadGlassSolutions,
@@ -67,7 +68,7 @@ export const vidriosLaEquidadColombiaPreset: SeedPreset = {
     ...vidriosLaEquidadPVCModels,
   ],
 
-  name: 'vidrios-la-equidad-colombia',
+  name: "vidrios-la-equidad-colombia",
 
   // Proveedores de perfiles (2)
   profileSuppliers: vidriosLaEquidadProfileSuppliers,

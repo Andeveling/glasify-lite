@@ -31,9 +31,9 @@
  * @see PERF-003: Debounce search inputs by 300ms
  */
 
-'use client';
+"use client";
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from "react";
 
 /**
  * Generic callback type that can accept any arguments and return any value
@@ -54,7 +54,10 @@ const DEFAULT_DELAY = 300;
  * @param delay - Delay in milliseconds (default: 300ms)
  * @returns Debounced version of the callback
  */
-export function useDebouncedCallback<T extends AnyFunction>(callback: T, delay: number = DEFAULT_DELAY): T {
+export function useDebouncedCallback<T extends AnyFunction>(
+  callback: T,
+  delay: number = DEFAULT_DELAY
+): T {
   // Store timeout ID for cleanup
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -107,7 +110,10 @@ export function useDebouncedCallback<T extends AnyFunction>(callback: T, delay: 
  * <input value={value} onChange={(e) => setValue(e.target.value)} />
  * ```
  */
-export function useDebouncedState<T>(initialValue: T, delay: number = DEFAULT_DELAY): [T, (newValue: T) => void] {
+export function useDebouncedState<T>(
+  initialValue: T,
+  delay: number = DEFAULT_DELAY
+): [T, (newValue: T) => void] {
   const valueRef = useRef<T>(initialValue);
   const debouncedSetValue = useDebouncedCallback((newValue: T) => {
     valueRef.current = newValue;

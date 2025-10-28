@@ -13,8 +13,8 @@
  * All procedures use adminProcedure (admin-only access)
  */
 
-import { getGalleryImages } from '@/lib/gallery/get-gallery-images';
-import { adminProcedure, createTRPCRouter } from '@/server/api/trpc';
+import { getGalleryImages } from "@/lib/gallery/get-gallery-images";
+import { adminProcedure, createTRPCRouter } from "@/server/api/trpc";
 
 /**
  * tRPC router for gallery operations
@@ -43,12 +43,12 @@ export const galleryRouter = createTRPCRouter({
    *
    * @returns Array of GalleryImage objects
    */
-  'list-images': adminProcedure.query(async () => {
+  "list-images": adminProcedure.query(async () => {
     // Discover images from filesystem
     const result = await getGalleryImages();
 
     // Handle errors from gallery scanner - return empty array for graceful degradation
-    if ('code' in result && result.code !== undefined) {
+    if ("code" in result && result.code !== undefined) {
       // On error, return empty array
       // Admin can still use form without image selector
       return [];

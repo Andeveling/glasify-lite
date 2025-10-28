@@ -11,16 +11,16 @@
  * @staticGeneration generateStaticParams generates paths for all solutions
  */
 
-import { ArrowLeft, Star } from 'lucide-react';
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { getIconComponent } from '@/lib/icon-map';
-import logger from '@/lib/logger';
-import { api } from '@/trpc/server-client';
+import { ArrowLeft, Star } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getIconComponent } from "@/lib/icon-map";
+import logger from "@/lib/logger";
+import { api } from "@/trpc/server-client";
 
 // Static generation with 1-hour revalidation
-export const dynamic = 'force-static';
+export const dynamic = "force-static";
 export const revalidate = 3600; // ISR: 1 hour
 
 /**
@@ -29,7 +29,7 @@ export const revalidate = 3600; // ISR: 1 hour
  */
 export async function generateStaticParams() {
   try {
-    const { items: solutions } = await api.catalog['list-solutions']({
+    const { items: solutions } = await api.catalog["list-solutions"]({
       limit: 1000,
       page: 1,
     });
@@ -38,8 +38,8 @@ export async function generateStaticParams() {
       slug: solution.slug,
     }));
   } catch (error) {
-    logger.error('Error generating static params for glass solutions', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    logger.error("Error generating static params for glass solutions", {
+      error: error instanceof Error ? error.message : "Unknown error",
     });
 
     // Return empty array to prevent build failure
@@ -51,38 +51,47 @@ export async function generateStaticParams() {
 /**
  * Generate dynamic metadata for each solution page
  */
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
   const { slug } = await params;
 
   try {
-    const solution = await api.catalog['get-by-slug']({ slug }).catch(() => null);
+    const solution = await api.catalog["get-by-slug"]({ slug }).catch(
+      () => null
+    );
 
     if (!solution) {
       return {
-        description: 'La solución de vidrio solicitada no existe.',
-        title: 'Solución no encontrada | Glasify Lite',
+        description: "La solución de vidrio solicitada no existe.",
+        title: "Solución no encontrada | Glasify Lite",
       };
     }
 
     return {
       description:
-        solution.description || `Descubre la solución de vidrio ${solution.nameEs} y sus características especiales.`,
+        solution.description ||
+        `Descubre la solución de vidrio ${solution.nameEs} y sus características especiales.`,
       openGraph: {
-        description: solution.description || `Solución de vidrio especializada: ${solution.nameEs}`,
+        description:
+          solution.description ||
+          `Solución de vidrio especializada: ${solution.nameEs}`,
         title: `${solution.nameEs} | Glasify Lite`,
-        type: 'website',
+        type: "website",
       },
       title: `${solution.nameEs} | Glasify Lite`,
     };
   } catch (error) {
-    logger.error('Error generating metadata for glass solution', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    logger.error("Error generating metadata for glass solution", {
+      error: error instanceof Error ? error.message : "Unknown error",
       slug,
     });
 
     return {
-      description: 'Error al cargar la página de solución de vidrio.',
-      title: 'Error | Glasify Lite',
+      description: "Error al cargar la página de solución de vidrio.",
+      title: "Error | Glasify Lite",
     };
   }
 }
@@ -91,18 +100,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
  * Performance rating component
  */
 function PerformanceRating({ rating }: { rating: string }): React.ReactElement {
-  type RatingKey = 'basic' | 'excellent' | 'good' | 'standard' | 'very_good';
+  type RatingKey = "basic" | "excellent" | "good" | "standard" | "very_good";
 
   const ratings: Record<RatingKey, { label: string; stars: number }> = {
-    basic: { label: 'Básico', stars: 1 },
-    excellent: { label: 'Excelente', stars: 5 },
-    good: { label: 'Bueno', stars: 3 },
-    standard: { label: 'Estándar', stars: 2 },
+    basic: { label: "Básico", stars: 1 },
+    excellent: { label: "Excelente", stars: 5 },
+    good: { label: "Bueno", stars: 3 },
+    standard: { label: "Estándar", stars: 2 },
     // biome-ignore lint/style/useNamingConvention: Matches database enum value
-    very_good: { label: 'Muy Bueno', stars: 4 },
+    very_good: { label: "Muy Bueno", stars: 4 },
   };
 
-  const ratingKey = (rating as RatingKey) || 'standard';
+  const ratingKey = (rating as RatingKey) || "standard";
   const ratingData = ratings[ratingKey];
 
   return (
@@ -110,7 +119,7 @@ function PerformanceRating({ rating }: { rating: string }): React.ReactElement {
       <div className="flex gap-1">
         {Array.from({ length: 5 }).map((_, i) => (
           <Star
-            className={`h-4 w-4 ${i < ratingData.stars ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`}
+            className={`h-4 w-4 ${i < ratingData.stars ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"}`}
             key={i}
           />
         ))}
@@ -123,11 +132,15 @@ function PerformanceRating({ rating }: { rating: string }): React.ReactElement {
 /**
  * Glass Solution Detail Page Component
  */
-export default async function GlassSolutionDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function GlassSolutionDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
 
   try {
-    const solution = await api.catalog['get-by-slug']({ slug });
+    const solution = await api.catalog["get-by-slug"]({ slug });
 
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-secondary/5">
@@ -157,26 +170,42 @@ export default async function GlassSolutionDetailPage({ params }: { params: Prom
               </div>
             )}
 
-            <h1 className="mb-4 font-bold text-4xl tracking-tight">{solution.nameEs}</h1>
+            <h1 className="mb-4 font-bold text-4xl tracking-tight">
+              {solution.nameEs}
+            </h1>
 
-            {solution.description && <p className="text-lg text-muted-foreground">{solution.description}</p>}
+            {solution.description && (
+              <p className="text-lg text-muted-foreground">
+                {solution.description}
+              </p>
+            )}
           </div>
 
           {/* Glass Types Section */}
           {solution.glassTypes.length > 0 ? (
             <div>
-              <h2 className="mb-6 font-bold text-2xl">Tipos de Vidrio Disponibles</h2>
+              <h2 className="mb-6 font-bold text-2xl">
+                Tipos de Vidrio Disponibles
+              </h2>
 
               <div className="grid gap-4 md:grid-cols-2">
                 {solution.glassTypes.map((glassType) => (
-                  <div className="rounded-lg border border-border bg-card p-6" key={glassType.id}>
+                  <div
+                    className="rounded-lg border border-border bg-card p-6"
+                    key={glassType.id}
+                  >
                     {/* Glass Type Header */}
                     <div className="mb-4">
-                      <h3 className="mb-2 font-semibold text-lg">{glassType.name}</h3>
+                      <h3 className="mb-2 font-semibold text-lg">
+                        {glassType.name}
+                      </h3>
 
                       {glassType.code && (
                         <p className="text-muted-foreground text-sm">
-                          Código: <span className="font-mono font-semibold">{glassType.code}</span>
+                          Código:{" "}
+                          <span className="font-mono font-semibold">
+                            {glassType.code}
+                          </span>
                         </p>
                       )}
                     </div>
@@ -185,24 +214,33 @@ export default async function GlassSolutionDetailPage({ params }: { params: Prom
                     <div className="mb-4 space-y-2 border-border border-y py-4">
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Espesor</span>
-                        <span className="font-semibold">{glassType.thicknessMm}mm</span>
+                        <span className="font-semibold">
+                          {glassType.thicknessMm}mm
+                        </span>
                       </div>
 
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Precio por m²</span>
+                        <span className="text-muted-foreground">
+                          Precio por m²
+                        </span>
                         <span className="font-semibold">
                           $
-                          {Number(glassType.pricePerSqm).toLocaleString('es-LA', {
-                            maximumFractionDigits: 2,
-                            minimumFractionDigits: 2,
-                          })}
+                          {Number(glassType.pricePerSqm).toLocaleString(
+                            "es-LA",
+                            {
+                              maximumFractionDigits: 2,
+                              minimumFractionDigits: 2,
+                            }
+                          )}
                         </span>
                       </div>
                     </div>
 
                     {/* Performance Rating */}
                     <div className="mb-4">
-                      <p className="mb-2 text-muted-foreground text-sm">Rendimiento</p>
+                      <p className="mb-2 text-muted-foreground text-sm">
+                        Rendimiento
+                      </p>
                       <PerformanceRating rating={glassType.performanceRating} />
                     </div>
 
@@ -223,7 +261,9 @@ export default async function GlassSolutionDetailPage({ params }: { params: Prom
 
                     {/* Notes */}
                     {glassType.notes && (
-                      <div className="mt-4 rounded bg-muted p-3 text-muted-foreground text-sm">{glassType.notes}</div>
+                      <div className="mt-4 rounded bg-muted p-3 text-muted-foreground text-sm">
+                        {glassType.notes}
+                      </div>
                     )}
                   </div>
                 ))}
@@ -231,15 +271,17 @@ export default async function GlassSolutionDetailPage({ params }: { params: Prom
             </div>
           ) : (
             <div className="rounded-lg border border-border border-dashed bg-card/50 p-12 text-center">
-              <p className="text-muted-foreground">No hay tipos de vidrio asignados a esta solución aún.</p>
+              <p className="text-muted-foreground">
+                No hay tipos de vidrio asignados a esta solución aún.
+              </p>
             </div>
           )}
         </div>
       </div>
     );
   } catch (error) {
-    logger.error('Error loading glass solution detail page', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    logger.error("Error loading glass solution detail page", {
+      error: error instanceof Error ? error.message : "Unknown error",
       slug,
     });
 

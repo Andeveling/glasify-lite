@@ -33,13 +33,19 @@
  * @see REQ-001: Server-side filtering via URL params
  */
 
-'use client';
+"use client";
 
-import { X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useServerParams } from '@/hooks/use-server-params';
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useServerParams } from "@/hooks/use-server-params";
 
 /**
  * Filter option definition
@@ -55,7 +61,7 @@ export interface FilterOption {
 export interface FilterDefinition {
   id: string;
   label: string;
-  type: 'select';
+  type: "select";
   options: FilterOption[];
   defaultValue?: string;
 }
@@ -68,7 +74,10 @@ export interface TableFiltersProps {
   showClearAll?: boolean;
 }
 
-export function TableFilters({ filters, showClearAll = true }: TableFiltersProps) {
+export function TableFilters({
+  filters,
+  showClearAll = true,
+}: TableFiltersProps) {
   const { getParam, updateParams, getAllParams } = useServerParams();
 
   /**
@@ -76,7 +85,7 @@ export function TableFilters({ filters, showClearAll = true }: TableFiltersProps
    */
   const hasActiveFilters = filters.some((filter) => {
     const value = getParam(filter.id);
-    const defaultValue = filter.defaultValue ?? 'all';
+    const defaultValue = filter.defaultValue ?? "all";
     return value && value !== defaultValue;
   });
 
@@ -88,14 +97,14 @@ export function TableFilters({ filters, showClearAll = true }: TableFiltersProps
     const updates: Record<string, string | undefined> = { ...currentParams };
 
     // Treat 'all' as empty filter (remove the parameter)
-    if (value && value !== 'all') {
+    if (value && value !== "all") {
       updates[filterId] = value;
     } else {
       delete updates[filterId];
     }
 
     // Reset to page 1 on filter change
-    updates.page = '1';
+    updates.page = "1";
     updateParams(updates);
   }; /**
    * Clear all filters
@@ -107,7 +116,7 @@ export function TableFilters({ filters, showClearAll = true }: TableFiltersProps
       updates[filter.id] = undefined;
     }
 
-    updates.page = '1';
+    updates.page = "1";
     updateParams(updates);
   };
 
@@ -115,14 +124,17 @@ export function TableFilters({ filters, showClearAll = true }: TableFiltersProps
     <div className="flex flex-wrap items-end gap-4">
       {/* Render each filter */}
       {filters.map((filter) => {
-        const value = getParam(filter.id) ?? filter.defaultValue ?? 'all';
+        const value = getParam(filter.id) ?? filter.defaultValue ?? "all";
 
         return (
           <div className="min-w-[180px] space-y-2" key={filter.id}>
             <Label htmlFor={filter.id}>{filter.label}</Label>
 
-            {filter.type === 'select' && (
-              <Select onValueChange={(val) => handleFilterChange(filter.id, val)} value={value}>
+            {filter.type === "select" && (
+              <Select
+                onValueChange={(val) => handleFilterChange(filter.id, val)}
+                value={value}
+              >
                 <SelectTrigger id={filter.id}>
                   <SelectValue />
                 </SelectTrigger>

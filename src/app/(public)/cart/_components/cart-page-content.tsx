@@ -7,14 +7,14 @@
  * @module app/(public)/cart/_components/cart-page-content
  */
 
-'use client';
+"use client";
 
-import { Suspense } from 'react';
-import { useCart } from '../_hooks/use-cart';
-import { useCartItemActions } from '../_hooks/use-cart-item-actions';
-import { CartItem } from './cart-item';
-import { CartSummary } from './cart-summary';
-import { EmptyCartState } from './empty-cart-state';
+import { Suspense } from "react";
+import { useCart } from "../_hooks/use-cart";
+import { useCartItemActions } from "../_hooks/use-cart-item-actions";
+import { CartItem } from "./cart-item";
+import { CartSummary } from "./cart-summary";
+import { EmptyCartState } from "./empty-cart-state";
 
 // ============================================================================
 // Constants
@@ -51,7 +51,10 @@ export function CartPageContent() {
           <div className="lg:col-span-2">
             <div className="space-y-4">
               {Array.from({ length: SKELETON_ITEMS_COUNT }).map((_, i) => (
-                <div className="h-32 animate-pulse rounded-lg border bg-muted" key={i} />
+                <div
+                  className="h-32 animate-pulse rounded-lg border bg-muted"
+                  key={i}
+                />
               ))}
             </div>
           </div>
@@ -108,7 +111,8 @@ export function CartPageContent() {
       <div className="mb-6">
         <h1 className="font-bold text-3xl">Carrito de presupuesto</h1>
         <p className="mt-2 text-muted-foreground">
-          Revisa y ajusta tus configuraciones antes de generar una cotización formal
+          Revisa y ajusta tus configuraciones antes de generar una cotización
+          formal
         </p>
       </div>
 
@@ -118,7 +122,12 @@ export function CartPageContent() {
         <div className="lg:col-span-2">
           <div className="space-y-4">
             {items.map((item) => (
-              <Suspense fallback={<div className="h-32 animate-pulse rounded-lg border bg-muted" />} key={item.id}>
+              <Suspense
+                fallback={
+                  <div className="h-32 animate-pulse rounded-lg border bg-muted" />
+                }
+                key={item.id}
+              >
                 <CartItem
                   currency={summary.currency}
                   item={item}

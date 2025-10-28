@@ -10,14 +10,14 @@
  * @module tests/unit/hooks/use-cart
  */
 
-import { describe, it } from 'vitest';
+import { describe, it } from "vitest";
 
 // ============================================================================
 // Tests Temporarily Disabled
 // ============================================================================
 
-describe('useCart (SKIPPED)', () => {
-  it.todo('Fix infinite loop in useEffect and re-enable all tests');
+describe("useCart (SKIPPED)", () => {
+  it.todo("Fix infinite loop in useEffect and re-enable all tests");
 });
 
 /*

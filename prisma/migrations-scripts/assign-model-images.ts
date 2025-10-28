@@ -15,8 +15,8 @@
  * @version 1.0.0
  */
 
-import { parseArgs } from 'node:util';
-import { db } from '../../src/server/db';
+import { parseArgs } from "node:util";
+import { db } from "../../src/server/db";
 
 /**
  * Mapping rules: model name patterns to image filenames
@@ -29,63 +29,63 @@ const IMAGE_MAPPING_RULES: Array<{
 }> = [
   // Specific combinations first
   {
-    description: 'Doble practicable con fijo',
-    imageUrl: '/models/designs/doble-practicable-fijo.svg',
+    description: "Doble practicable con fijo",
+    imageUrl: "/models/designs/doble-practicable-fijo.svg",
     pattern: /doble.*practicable.*fijo|practicable.*doble.*fijo/i,
   },
   {
-    description: 'Oscilobatiente',
-    imageUrl: '/models/designs/oscilobatiente.svg',
+    description: "Oscilobatiente",
+    imageUrl: "/models/designs/oscilobatiente.svg",
     pattern: /oscilobatiente/i,
   },
   {
-    description: 'OXXO - Fijo-Practicable-Practicable-Fijo',
-    imageUrl: '/models/designs/oxxo.svg',
+    description: "OXXO - Fijo-Practicable-Practicable-Fijo",
+    imageUrl: "/models/designs/oxxo.svg",
     pattern: /^oxxo$|fijo.*practicable.*practicable.*fijo/i,
   },
   {
-    description: 'OXXX - Fijo-Practicable-Practicable-Practicable',
-    imageUrl: '/models/designs/oxxx.svg',
+    description: "OXXX - Fijo-Practicable-Practicable-Practicable",
+    imageUrl: "/models/designs/oxxx.svg",
     pattern: /^oxxx$/i,
   },
   {
-    description: 'OXX - Fijo-Practicable-Practicable',
-    imageUrl: '/models/designs/oxx.svg',
+    description: "OXX - Fijo-Practicable-Practicable",
+    imageUrl: "/models/designs/oxx.svg",
     pattern: /^oxx$|fijo.*practicable.*practicable(?!.*fijo)/i,
   },
   {
-    description: 'OX - Fijo-Practicable',
-    imageUrl: '/models/designs/ox.svg',
+    description: "OX - Fijo-Practicable",
+    imageUrl: "/models/designs/ox.svg",
     pattern: /^ox$|fijo.*practicable(?!.*practicable)/i,
   },
   {
-    description: 'XOX - Practicable-Fijo-Practicable',
-    imageUrl: '/models/designs/xox.svg',
+    description: "XOX - Practicable-Fijo-Practicable",
+    imageUrl: "/models/designs/xox.svg",
     pattern: /^xox$|practicable.*fijo.*practicable/i,
   },
   {
-    description: 'XO - Practicable-Fijo',
-    imageUrl: '/models/designs/xo.svg',
+    description: "XO - Practicable-Fijo",
+    imageUrl: "/models/designs/xo.svg",
     pattern: /^xo$|practicable.*fijo(?!.*practicable)/i,
   },
   {
-    description: 'XX - Doble practicable',
-    imageUrl: '/models/designs/xx.svg',
+    description: "XX - Doble practicable",
+    imageUrl: "/models/designs/xx.svg",
     pattern: /^xx$|doble.*practicable(?!.*fijo)/i,
   },
   {
-    description: 'Proyectante tipo 2',
-    imageUrl: '/models/designs/proyectante-2.svg',
+    description: "Proyectante tipo 2",
+    imageUrl: "/models/designs/proyectante-2.svg",
     pattern: /proyectante.*2|proyectante.*tipo.*2/i,
   },
   {
-    description: 'Proyectante simple',
-    imageUrl: '/models/designs/proyectante.svg',
+    description: "Proyectante simple",
+    imageUrl: "/models/designs/proyectante.svg",
     pattern: /proyectante(?!.*2)/i,
   },
   {
-    description: 'Practicable simple',
-    imageUrl: '/models/designs/practicable.svg',
+    description: "Practicable simple",
+    imageUrl: "/models/designs/practicable.svg",
     pattern: /^practicable$|practicable(?!.*(doble|fijo|oscilobatiente))/i,
   },
 ];
@@ -106,14 +106,14 @@ function parseCliArgs(): CliOptions {
   const { values } = parseArgs({
     allowPositionals: false,
     options: {
-      'dry-run': { default: false, type: 'boolean' },
-      help: { default: false, short: 'h', type: 'boolean' },
-      verbose: { default: false, short: 'v', type: 'boolean' },
+      "dry-run": { default: false, type: "boolean" },
+      help: { default: false, short: "h", type: "boolean" },
+      verbose: { default: false, short: "v", type: "boolean" },
     },
   });
 
   return {
-    dryRun: values['dry-run'] as boolean,
+    dryRun: values["dry-run"] as boolean,
     help: values.help as boolean,
     verbose: values.verbose as boolean,
   };
@@ -189,7 +189,7 @@ async function runMigration(options: CliOptions): Promise<MigrationStats> {
     updated: 0,
   };
 
-  console.log('\n🔍 Fetching models from database...\n');
+  console.log("\n🔍 Fetching models from database...\n");
 
   // Fetch all models
   const models = await db.model.findMany({
@@ -209,17 +209,19 @@ async function runMigration(options: CliOptions): Promise<MigrationStats> {
   console.log(`   ○ ${stats.modelsWithoutImages} without images\n`);
 
   if (options.dryRun) {
-    console.log('🔸 DRY RUN MODE - No changes will be made\n');
+    console.log("🔸 DRY RUN MODE - No changes will be made\n");
   }
 
-  console.log('🔄 Processing models...\n');
+  console.log("🔄 Processing models...\n");
 
   // Process each model
   for (const model of models) {
     // Skip models that already have images
     if (model.imageUrl) {
       if (options.verbose) {
-        console.log(`⏭️  Skipping "${model.name}" - already has image: ${model.imageUrl}`);
+        console.log(
+          `⏭️  Skipping "${model.name}" - already has image: ${model.imageUrl}`
+        );
       }
       stats.skipped++;
       continue;
@@ -263,9 +265,9 @@ async function runMigration(options: CliOptions): Promise<MigrationStats> {
  * Display final statistics
  */
 function displayStats(stats: MigrationStats, dryRun: boolean) {
-  console.log(`\n${'='.repeat(60)}`);
-  console.log('📊 Migration Summary');
-  console.log('='.repeat(60));
+  console.log(`\n${"=".repeat(60)}`);
+  console.log("📊 Migration Summary");
+  console.log("=".repeat(60));
   console.log(`Total models:          ${stats.totalModels}`);
   console.log(`Already with images:   ${stats.modelsWithImages}`);
   console.log(`Without images:        ${stats.modelsWithoutImages}`);
@@ -279,12 +281,12 @@ function displayStats(stats: MigrationStats, dryRun: boolean) {
   }
 
   console.log(`Skipped:               ${stats.skipped}`);
-  console.log('='.repeat(60));
+  console.log("=".repeat(60));
 
   if (dryRun) {
-    console.log('\n💡 Run without --dry-run to apply changes');
+    console.log("\n💡 Run without --dry-run to apply changes");
   } else if (stats.updated > 0) {
-    console.log('\n✅ Migration completed successfully');
+    console.log("\n✅ Migration completed successfully");
   }
 }
 
@@ -299,7 +301,7 @@ async function main() {
     process.exit(0);
   }
 
-  console.log('🖼️  Model Images Assignment Migration');
+  console.log("🖼️  Model Images Assignment Migration");
 
   try {
     const startTime = Date.now();
@@ -312,7 +314,7 @@ async function main() {
     await db.$disconnect();
     process.exit(0);
   } catch (error) {
-    console.error('\n❌ Migration failed:', error);
+    console.error("\n❌ Migration failed:", error);
     await db.$disconnect();
     process.exit(1);
   }

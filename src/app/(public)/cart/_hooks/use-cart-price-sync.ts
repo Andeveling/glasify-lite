@@ -13,11 +13,11 @@
  * @module app/(public)/cart/_hooks/use-cart-price-sync
  */
 
-'use client';
+"use client";
 
-import { useCallback, useEffect, useRef } from 'react';
-import { api } from '@/trpc/react';
-import type { CartItem } from '@/types/cart.types';
+import { useCallback, useEffect, useRef } from "react";
+import { api } from "@/trpc/react";
+import type { CartItem } from "@/types/cart.types";
 
 // ============================================================================
 // Types
@@ -72,12 +72,17 @@ type UseCartPriceSyncOptions = {
  * }
  * ```
  */
-export function useCartPriceSync({ items, onPriceUpdate, debounceMs = 500, enabled = true }: UseCartPriceSyncOptions) {
+export function useCartPriceSync({
+  items,
+  onPriceUpdate,
+  debounceMs = 500,
+  enabled = true,
+}: UseCartPriceSyncOptions) {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const previousQuantitiesRef = useRef<Map<string, number>>(new Map());
 
   // tRPC mutation for price calculation using quote.calculate-item
-  const calculatePriceMutation = api.quote['calculate-item'].useMutation();
+  const calculatePriceMutation = api.quote["calculate-item"].useMutation();
 
   // Track items in a ref to avoid dependency issues
   const itemsRef = useRef(items);
@@ -100,7 +105,7 @@ export function useCartPriceSync({ items, onPriceUpdate, debounceMs = 500, enabl
             quantity: item.quantity, // Apply service to entire quantity
             serviceId,
           })),
-          unit: 'unit', // Cart items are always per unit
+          unit: "unit", // Cart items are always per unit
           widthMm: item.widthMm,
         });
 
@@ -144,7 +149,10 @@ export function useCartPriceSync({ items, onPriceUpdate, debounceMs = 500, enabl
         const previousQuantity = previousQuantitiesRef.current.get(item.id);
 
         // Only recalculate if quantity changed
-        if (previousQuantity !== undefined && previousQuantity !== item.quantity) {
+        if (
+          previousQuantity !== undefined &&
+          previousQuantity !== item.quantity
+        ) {
           recalculateItemPrice(item).then((result) => {
             if (onPriceUpdate) {
               onPriceUpdate(result);

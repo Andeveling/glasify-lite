@@ -2,7 +2,7 @@
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
  */
-import './src/env.js';
+import "./src/env.js";
 
 const PRISMA_REGEX = /[\\/]node_modules[\\/]@prisma[\\/]/;
 
@@ -17,35 +17,35 @@ const config = {
       {
         headers: [
           {
-            key: 'X-Frame-Options',
-            value: 'DENY',
+            key: "X-Frame-Options",
+            value: "DENY",
           },
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
+            key: "X-Content-Type-Options",
+            value: "nosniff",
           },
           {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
           },
           {
-            key: 'X-DNS-Prefetch-Control',
-            value: 'on',
+            key: "X-DNS-Prefetch-Control",
+            value: "on",
           },
         ],
-        source: '/(.*)',
+        source: "/(.*)",
       },
     ]);
   },
 
   // Image optimization for Vercel
   images: {
-    formats: ['image/webp', 'image/avif'],
+    formats: ["image/webp", "image/avif"],
     remotePatterns: [
       {
-        hostname: 'images.unsplash.com',
-        pathname: '/photo-*/**',
-        protocol: 'https',
+        hostname: "images.unsplash.com",
+        pathname: "/photo-*/**",
+        protocol: "https",
       },
     ],
   },
@@ -54,12 +54,12 @@ const config = {
   reactStrictMode: true,
 
   // Configure external packages for serverless
-  serverExternalPackages: ['@prisma/client'],
+  serverExternalPackages: ["@prisma/client"],
 
   // Turbopack configuration
   turbopack: {
     rules: {
-      '*.svg': ['@svgr/webpack'],
+      "*.svg": ["@svgr/webpack"],
     },
   },
 
@@ -75,8 +75,8 @@ const config = {
       webpackConfig.optimization.splitChunks.cacheGroups = {
         ...webpackConfig.optimization.splitChunks.cacheGroups,
         prisma: {
-          chunks: 'all',
-          name: 'prisma',
+          chunks: "all",
+          name: "prisma",
           priority: 20,
           test: PRISMA_REGEX,
         },

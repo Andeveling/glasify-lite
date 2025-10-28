@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useCallback, useMemo } from 'react';
-import { useFormContext } from 'react-hook-form';
-import type { GlassSolutionOutput } from '@/server/api/routers/catalog';
+import { useCallback, useMemo } from "react";
+import { useFormContext } from "react-hook-form";
+import type { GlassSolutionOutput } from "@/server/api/routers/catalog";
 
 type UseSolutionSelectorProps = {
   solutions: GlassSolutionOutput[];
@@ -19,8 +19,8 @@ export function useSolutionSelector({ solutions }: UseSolutionSelectorProps) {
   const { setValue, watch } = useFormContext();
 
   // Watch both solution and glassType fields
-  const selectedSolutionId = watch('solution') as string | undefined;
-  const currentGlassType = watch('glassType') as string | undefined;
+  const selectedSolutionId = watch("solution") as string | undefined;
+  const currentGlassType = watch("glassType") as string | undefined;
 
   // Find the selected solution object
   const selectedSolution = useMemo(
@@ -34,11 +34,11 @@ export function useSolutionSelector({ solutions }: UseSolutionSelectorProps) {
    */
   const handleSolutionChange = useCallback(
     (solutionId: string) => {
-      setValue('solution', solutionId, { shouldValidate: true });
+      setValue("solution", solutionId, { shouldValidate: true });
 
       // Reset glass type when solution changes
       if (currentGlassType) {
-        setValue('glassType', '', { shouldValidate: false });
+        setValue("glassType", "", { shouldValidate: false });
       }
     },
     [setValue, currentGlassType]

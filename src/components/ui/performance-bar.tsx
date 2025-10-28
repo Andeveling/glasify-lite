@@ -1,8 +1,13 @@
-'use client';
+"use client";
 
-import type { LucideIcon } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
+import type { LucideIcon } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 // ============================================================================
 // Types
@@ -72,7 +77,7 @@ export function PerformanceBar({
   const percentage = (clampedValue / max) * 100;
 
   return (
-    <div className={cn('flex items-center gap-2', className)}>
+    <div className={cn("flex items-center gap-2", className)}>
       {/* Icon with tooltip */}
       {Icon && (
         <TooltipProvider>
@@ -91,26 +96,26 @@ export function PerformanceBar({
         </TooltipProvider>
       )}
       {/* Progress bar with semantic color */}
-      <div className="relative flex-1 min-w-0">
+      <div className="relative min-w-0 flex-1">
         <div className="relative h-2 w-full overflow-hidden rounded-full bg-muted">
           <div
-            className="h-full transition-all duration-500 ease-out rounded-full"
+            className="h-full rounded-full transition-all duration-500 ease-out"
             style={{
               backgroundColor:
                 percentage >= 80
-                  ? 'oklch(var(--success))'
+                  ? "oklch(var(--success))"
                   : percentage >= 60
-                    ? 'oklch(var(--chart-4))'
+                    ? "oklch(var(--chart-4))"
                     : percentage >= 40
-                      ? 'oklch(var(--chart-5))'
-                      : 'oklch(var(--destructive))',
+                      ? "oklch(var(--chart-5))"
+                      : "oklch(var(--destructive))",
               width: `${percentage}%`,
             }}
           />
         </div>
       </div>
       {/* Rating value */}
-      <span className="shrink-0 text-xs font-medium text-muted-foreground tabular-nums min-w-[32px] text-right">
+      <span className="min-w-[32px] shrink-0 text-right font-medium text-muted-foreground text-xs tabular-nums">
         {clampedValue}/{max}
       </span>
     </div>

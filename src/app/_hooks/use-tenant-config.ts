@@ -27,23 +27,26 @@
  * ```
  */
 
-'use client';
+"use client";
 
-import type { TenantConfig } from '@prisma/client';
-import { api } from '@/trpc/react';
+import type { TenantConfig } from "@prisma/client";
+import { api } from "@/trpc/react";
 
 /**
  * Format context type for centralized formatting system
  */
-export type FormatContext = Pick<TenantConfig, 'locale' | 'timezone' | 'currency'>;
+export type FormatContext = Pick<
+  TenantConfig,
+  "locale" | "timezone" | "currency"
+>;
 
 /**
  * Default format context (fallback when tenant config not loaded)
  */
 const DEFAULT_FORMAT_CONTEXT: FormatContext = {
-  currency: 'COP',
-  locale: 'es-CO',
-  timezone: 'America/Bogota',
+  currency: "COP",
+  locale: "es-CO",
+  timezone: "America/Bogota",
 };
 
 /**

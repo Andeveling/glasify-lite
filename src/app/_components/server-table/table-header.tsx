@@ -25,13 +25,17 @@
  * @see REQ-001: Server-side sorting via URL params
  */
 
-'use client';
+"use client";
 
-import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { TableHead, TableRow, TableHeader as UITableHeader } from '@/components/ui/table';
-import { useServerParams } from '@/hooks/use-server-params';
-import type { ServerTableColumn } from './index';
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  TableHead,
+  TableRow,
+  TableHeader as UITableHeader,
+} from "@/components/ui/table";
+import { useServerParams } from "@/hooks/use-server-params";
+import type { ServerTableColumn } from "./index";
 
 export interface TableHeaderProps<T extends Record<string, unknown>> {
   /** Column definitions */
@@ -41,12 +45,20 @@ export interface TableHeaderProps<T extends Record<string, unknown>> {
 /**
  * Get sort icon based on current state
  */
-function getSortIcon(columnId: string, currentSortBy?: string | null, currentSortOrder?: string | null) {
+function getSortIcon(
+  columnId: string,
+  currentSortBy?: string | null,
+  currentSortOrder?: string | null
+) {
   if (currentSortBy !== columnId) {
     return <ArrowUpDown className="ml-2 size-4" />;
   }
 
-  return currentSortOrder === 'asc' ? <ArrowUp className="ml-2 size-4" /> : <ArrowDown className="ml-2 size-4" />;
+  return currentSortOrder === "asc" ? (
+    <ArrowUp className="ml-2 size-4" />
+  ) : (
+    <ArrowDown className="ml-2 size-4" />
+  );
 }
 
 /**
@@ -56,30 +68,36 @@ function getNextSortOrder(
   columnId: string,
   currentSortBy?: string | null,
   currentSortOrder?: string | null
-): 'asc' | 'desc' {
+): "asc" | "desc" {
   // If clicking on a different column, default to 'desc'
   if (currentSortBy !== columnId) {
-    return 'desc';
+    return "desc";
   }
 
   // Toggle between asc and desc
-  return currentSortOrder === 'asc' ? 'desc' : 'asc';
+  return currentSortOrder === "asc" ? "desc" : "asc";
 }
 
-export function TableHeader<T extends Record<string, unknown>>({ columns }: TableHeaderProps<T>) {
+export function TableHeader<T extends Record<string, unknown>>({
+  columns,
+}: TableHeaderProps<T>) {
   const { getParam, updateParams } = useServerParams();
 
-  const currentSortBy = getParam('sortBy');
-  const currentSortOrder = getParam('sortOrder');
+  const currentSortBy = getParam("sortBy");
+  const currentSortOrder = getParam("sortOrder");
 
   /**
    * Handle column header click for sorting
    */
   const handleSort = (columnId: string) => {
-    const nextOrder = getNextSortOrder(columnId, currentSortBy, currentSortOrder);
+    const nextOrder = getNextSortOrder(
+      columnId,
+      currentSortBy,
+      currentSortOrder
+    );
 
     updateParams({
-      page: '1', // Reset to first page on sort change
+      page: "1", // Reset to first page on sort change
       sortBy: columnId,
       sortOrder: nextOrder,
     });

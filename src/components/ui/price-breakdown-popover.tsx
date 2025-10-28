@@ -1,19 +1,30 @@
-'use client';
+"use client";
 
-import { Info } from 'lucide-react';
-import { Fragment } from 'react';
-import { useTenantConfig } from '@/app/_hooks/use-tenant-config';
-import { Button } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { formatCurrency } from '@/lib/format';
-import { cn } from '@/lib/utils';
+import { Info } from "lucide-react";
+import { Fragment } from "react";
+import { useTenantConfig } from "@/app/_hooks/use-tenant-config";
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { formatCurrency } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 // ============================================================================
 // Types
 // ============================================================================
 
-type PriceBreakdownCategory = 'model' | 'glass' | 'service' | 'adjustment';
+type PriceBreakdownCategory = "model" | "glass" | "service" | "adjustment";
 
 type PriceBreakdownItem = {
   amount: number;
@@ -73,7 +84,11 @@ type PriceBreakdownPopoverProps = {
  *   <PriceBreakdownPopover breakdown={breakdown} totalAmount={totalPrice} />
  * </div>
  */
-export function PriceBreakdownPopover({ breakdown, className, totalAmount }: PriceBreakdownPopoverProps) {
+export function PriceBreakdownPopover({
+  breakdown,
+  className,
+  totalAmount,
+}: PriceBreakdownPopoverProps) {
   const { formatContext } = useTenantConfig();
 
   // Group items by category
@@ -90,21 +105,26 @@ export function PriceBreakdownPopover({ breakdown, className, totalAmount }: Pri
 
   // Category labels in Spanish
   const categoryLabels: Record<PriceBreakdownCategory, string> = {
-    adjustment: 'Ajustes',
-    glass: 'Vidrio',
-    model: 'Producto',
-    service: 'Servicios',
+    adjustment: "Ajustes",
+    glass: "Vidrio",
+    model: "Producto",
+    service: "Servicios",
   };
 
   // Category order for display
-  const categoryOrder: PriceBreakdownCategory[] = ['model', 'glass', 'service', 'adjustment'];
+  const categoryOrder: PriceBreakdownCategory[] = [
+    "model",
+    "glass",
+    "service",
+    "adjustment",
+  ];
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
           aria-label="Ver desglose de precio"
-          className={cn('h-8 w-8 p-0', className)}
+          className={cn("h-8 w-8 p-0", className)}
           size="icon"
           type="button"
           variant="ghost"
@@ -128,35 +148,51 @@ export function PriceBreakdownPopover({ breakdown, className, totalAmount }: Pri
                 const items = groupedItems[category];
                 if (!items || items.length === 0) return null;
 
-                const categoryTotal = items.reduce((sum, item) => sum + item.amount, 0);
+                const categoryTotal = items.reduce(
+                  (sum, item) => sum + item.amount,
+                  0
+                );
 
                 return (
                   <Fragment key={category}>
                     {/* Category header */}
                     <TableRow className="bg-muted/50">
-                      <TableCell className="font-semibold text-xs uppercase text-muted-foreground" colSpan={2}>
+                      <TableCell
+                        className="font-semibold text-muted-foreground text-xs uppercase"
+                        colSpan={2}
+                      >
                         {categoryLabels[category]}
                       </TableCell>
                     </TableRow>
                     {/* Category items */}
                     {items.map((item, index) => (
                       <TableRow key={`${category}-${index}`}>
-                        <TableCell className="text-sm pl-6">{item.label}</TableCell>
+                        <TableCell className="pl-6 text-sm">
+                          {item.label}
+                        </TableCell>
                         <TableCell
-                          className={cn('text-right text-sm', item.amount < 0 && 'text-green-600 dark:text-green-400')}
+                          className={cn(
+                            "text-right text-sm",
+                            item.amount < 0 &&
+                              "text-green-600 dark:text-green-400"
+                          )}
                         >
-                          {formatCurrency(item.amount, { context: formatContext })}
+                          {formatCurrency(item.amount, {
+                            context: formatContext,
+                          })}
                         </TableCell>
                       </TableRow>
                     ))}
                     {/* Category subtotal (if multiple items) */}
                     {items.length > 1 && (
                       <TableRow className="border-b">
-                        <TableCell className="text-xs text-muted-foreground pl-6">
+                        <TableCell className="pl-6 text-muted-foreground text-xs">
                           Subtotal {categoryLabels[category].toLowerCase()}
                         </TableCell>
-                        <TableCell className="text-right text-xs font-medium text-muted-foreground">
-                          {formatCurrency(categoryTotal, { context: formatContext })}
+                        <TableCell className="text-right font-medium text-muted-foreground text-xs">
+                          {formatCurrency(categoryTotal, {
+                            context: formatContext,
+                          })}
                         </TableCell>
                       </TableRow>
                     )}

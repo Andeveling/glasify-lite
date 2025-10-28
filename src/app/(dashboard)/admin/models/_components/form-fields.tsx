@@ -4,19 +4,36 @@
  * Form field wrappers that use useFormContext() for cleaner code
  */
 
-'use client';
+"use client";
 
-import { format } from '@formkit/tempo';
-import { CalendarIcon } from 'lucide-react';
-import { useFormContext } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
+import { format } from "@formkit/tempo";
+import { CalendarIcon } from "lucide-react";
+import { useFormContext } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 type BaseFieldProps = {
   name: string;
@@ -29,7 +46,13 @@ type BaseFieldProps = {
 /**
  * Text Input Field
  */
-export function FormTextInput({ name, label, description, placeholder, required = false }: BaseFieldProps) {
+export function FormTextInput({
+  name,
+  label,
+  description,
+  placeholder,
+  required = false,
+}: BaseFieldProps) {
   const form = useFormContext();
 
   return (
@@ -39,10 +62,14 @@ export function FormTextInput({ name, label, description, placeholder, required 
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && '*'}
+            {label} {required && "*"}
           </FormLabel>
           <FormControl>
-            <Input placeholder={placeholder} {...field} value={field.value ?? ''} />
+            <Input
+              placeholder={placeholder}
+              {...field}
+              value={field.value ?? ""}
+            />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />
@@ -80,7 +107,7 @@ export function FormNumberInput({
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && '*'}
+            {label} {required && "*"}
           </FormLabel>
           <FormControl>
             <Input
@@ -90,8 +117,12 @@ export function FormNumberInput({
               step={step}
               type="number"
               {...field}
-              onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
-              value={field.value ?? ''}
+              onChange={(e) =>
+                field.onChange(
+                  e.target.value ? Number(e.target.value) : undefined
+                )
+              }
+              value={field.value ?? ""}
             />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
@@ -130,7 +161,7 @@ export function FormCurrencyInput({
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && '*'}
+            {label} {required && "*"}
           </FormLabel>
           <FormControl>
             <div className="relative">
@@ -144,8 +175,12 @@ export function FormCurrencyInput({
                 step={10 ** -decimals}
                 type="number"
                 {...field}
-                onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
-                value={field.value ?? ''}
+                onChange={(e) =>
+                  field.onChange(
+                    e.target.value ? Number(e.target.value) : undefined
+                  )
+                }
+                value={field.value ?? ""}
               />
             </div>
           </FormControl>
@@ -178,7 +213,7 @@ export function FormPercentageInput({
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && '*'}
+            {label} {required && "*"}
           </FormLabel>
           <FormControl>
             <div className="relative">
@@ -190,8 +225,12 @@ export function FormPercentageInput({
                 step="0.01"
                 type="number"
                 {...field}
-                onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
-                value={field.value ?? ''}
+                onChange={(e) =>
+                  field.onChange(
+                    e.target.value ? Number(e.target.value) : undefined
+                  )
+                }
+                value={field.value ?? ""}
               />
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground">
                 %
@@ -230,10 +269,15 @@ export function FormTextarea({
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && '*'}
+            {label} {required && "*"}
           </FormLabel>
           <FormControl>
-            <Textarea placeholder={placeholder} rows={rows} {...field} value={field.value ?? ''} />
+            <Textarea
+              placeholder={placeholder}
+              rows={rows}
+              {...field}
+              value={field.value ?? ""}
+            />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />
@@ -255,7 +299,14 @@ type SelectFieldProps = BaseFieldProps & {
   options: SelectOption[];
 };
 
-export function FormSelect({ name, label, description, placeholder, required = false, options }: SelectFieldProps) {
+export function FormSelect({
+  name,
+  label,
+  description,
+  placeholder,
+  required = false,
+  options,
+}: SelectFieldProps) {
   const form = useFormContext();
 
   return (
@@ -265,9 +316,9 @@ export function FormSelect({ name, label, description, placeholder, required = f
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && '*'}
+            {label} {required && "*"}
           </FormLabel>
-          <Select onValueChange={field.onChange} value={field.value ?? ''}>
+          <Select onValueChange={field.onChange} value={field.value ?? ""}>
             <FormControl>
               <SelectTrigger>
                 <SelectValue placeholder={placeholder} />
@@ -292,7 +343,12 @@ export function FormSelect({ name, label, description, placeholder, required = f
 /**
  * Date Picker Field (using shadcn/ui Calendar + Tempo)
  */
-export function FormDateInput({ name, label, description, required = false }: Omit<BaseFieldProps, 'placeholder'>) {
+export function FormDateInput({
+  name,
+  label,
+  description,
+  required = false,
+}: Omit<BaseFieldProps, "placeholder">) {
   const form = useFormContext();
 
   return (
@@ -302,25 +358,34 @@ export function FormDateInput({ name, label, description, required = false }: Om
       render={({ field }) => (
         <FormItem className="flex flex-col">
           <FormLabel>
-            {label} {required && '*'}
+            {label} {required && "*"}
           </FormLabel>
           <Popover>
             <PopoverTrigger asChild>
               <FormControl>
                 <Button
                   className={cn(
-                    'w-full justify-start pl-3 text-left font-normal',
-                    !field.value && 'text-muted-foreground'
+                    "w-full justify-start pl-3 text-left font-normal",
+                    !field.value && "text-muted-foreground"
                   )}
                   variant="outline"
                 >
                   <CalendarIcon className="mr-2 size-4" />
-                  {field.value ? format(field.value, 'DD/MM/YYYY', 'es-CO') : <span>Seleccionar fecha</span>}
+                  {field.value ? (
+                    format(field.value, "DD/MM/YYYY", "es-CO")
+                  ) : (
+                    <span>Seleccionar fecha</span>
+                  )}
                 </Button>
               </FormControl>
             </PopoverTrigger>
             <PopoverContent align="start" className="w-auto p-0">
-              <Calendar initialFocus mode="single" onSelect={field.onChange} selected={field.value} />
+              <Calendar
+                initialFocus
+                mode="single"
+                onSelect={field.onChange}
+                selected={field.value}
+              />
             </PopoverContent>
           </Popover>
           {description && <FormDescription>{description}</FormDescription>}

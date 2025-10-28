@@ -9,15 +9,15 @@
  * @module hooks/use-send-quote
  */
 
-'use client';
+"use client";
 
-import type { TRPCClientErrorLike } from '@trpc/client';
-import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
-import { toast } from 'sonner';
-import type { AppRouter } from '@/server/api/root';
-import type { SendToVendorInput } from '@/server/api/routers/quote/quote.schemas';
-import { api } from '@/trpc/react';
+import type { TRPCClientErrorLike } from "@trpc/client";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
+import type { AppRouter } from "@/server/api/root";
+import type { SendToVendorInput } from "@/server/api/routers/quote/quote.schemas";
+import { api } from "@/trpc/react";
 
 type TRPCError = TRPCClientErrorLike<AppRouter>;
 
@@ -70,101 +70,113 @@ export function useSendQuote(options: UseSendQuoteOptions = {}) {
   const router = useRouter();
   const utils = api.useUtils();
   const [isPending, startTransition] = useTransition();
-  const [optimisticQuoteId, setOptimisticQuoteId] = useState<string | null>(null);
+  const [optimisticQuoteId, setOptimisticQuoteId] = useState<string | null>(
+    null
+  );
 
-  const mutation = api.quote['send-to-vendor'].useMutation<UseSendQuoteContext>({
-    onError: (error, input, context) => {
-      // Rollback optimistic update
-      if (context?.previousQuote) {
-        utils.quote['get-by-id'].setData({ id: input.quoteId }, context.previousQuote);
-      }
+  const mutation = api.quote["send-to-vendor"].useMutation<UseSendQuoteContext>(
+    {
+      onError: (error, input, context) => {
+        // Rollback optimistic update
+        if (context?.previousQuote) {
+          utils.quote["get-by-id"].setData(
+            { id: input.quoteId },
+            context.previousQuote
+          );
+        }
 
-      setOptimisticQuoteId(null);
+        setOptimisticQuoteId(null);
 
-      // Dismiss loading toast
-      toast.dismiss(`send-quote-${input.quoteId}`);
+        // Dismiss loading toast
+        toast.dismiss(`send-quote-${input.quoteId}`);
 
-      // Show error toast with user-friendly message
-      const errorMessage = error.message || 'No se pudo enviar la cotización. Intenta nuevamente.';
-      toast.error('Error al enviar cotización', {
-        description: errorMessage,
-        duration: 5000,
-      });
-
-      // Call custom error handler
-      if (onError) {
-        onError(error);
-      }
-    },
-    onMutate: async (input) => {
-      // Cancel outgoing refetches to avoid overwriting optimistic update
-      await utils.quote['get-by-id'].cancel({ id: input.quoteId });
-
-      // Store quote ID for rollback
-      setOptimisticQuoteId(input.quoteId);
-
-      // Snapshot the previous value
-      const previousQuote = utils.quote['get-by-id'].getData({ id: input.quoteId });
-
-      // Optimistically update to 'sent' status
-      utils.quote['get-by-id'].setData({ id: input.quoteId }, (old) => {
-        if (!old) return old;
-
-        return {
-          ...old,
-          contactPhone: input.contactPhone,
-          sentAt: new Date(),
-          status: 'sent' as const,
-        };
-      });
-
-      // Show loading toast
-      toast.loading('Enviando cotización...', {
-        id: `send-quote-${input.quoteId}`,
-      });
-
-      return { previousQuote };
-    },
-
-    onSettled: () => {
-      setOptimisticQuoteId(null);
-    },
-
-    onSuccess: (data, input) => {
-      setOptimisticQuoteId(null);
-
-      // Dismiss loading toast
-      toast.dismiss(`send-quote-${input.quoteId}`);
-
-      // Show success toast
-      toast.success('¡Cotización enviada exitosamente!', {
-        description: 'Tu cotización ha sido enviada al fabricante. Recibirás respuesta en 24-48 horas.',
-        duration: 6000,
-      });
-
-      // Invalidate related queries to refetch fresh data
-      startTransition(async () => {
-        await Promise.all([
-          utils.quote['get-by-id'].invalidate({ id: input.quoteId }),
-          utils.quote['list-user-quotes'].invalidate(),
-        ]);
-      });
-
-      // Call custom success handler
-      if (onSuccess) {
-        onSuccess({
-          id: data.id,
-          sentAt: data.sentAt,
+        // Show error toast with user-friendly message
+        const errorMessage =
+          error.message ||
+          "No se pudo enviar la cotización. Intenta nuevamente.";
+        toast.error("Error al enviar cotización", {
+          description: errorMessage,
+          duration: 5000,
         });
-      }
 
-      // Redirect to quote detail page
-      if (redirectOnSuccess) {
-        router.push(`/dashboard/quotes/${data.id}`);
-        router.refresh();
-      }
-    },
-  });
+        // Call custom error handler
+        if (onError) {
+          onError(error);
+        }
+      },
+      onMutate: async (input) => {
+        // Cancel outgoing refetches to avoid overwriting optimistic update
+        await utils.quote["get-by-id"].cancel({ id: input.quoteId });
+
+        // Store quote ID for rollback
+        setOptimisticQuoteId(input.quoteId);
+
+        // Snapshot the previous value
+        const previousQuote = utils.quote["get-by-id"].getData({
+          id: input.quoteId,
+        });
+
+        // Optimistically update to 'sent' status
+        utils.quote["get-by-id"].setData({ id: input.quoteId }, (old) => {
+          if (!old) return old;
+
+          return {
+            ...old,
+            contactPhone: input.contactPhone,
+            sentAt: new Date(),
+            status: "sent" as const,
+          };
+        });
+
+        // Show loading toast
+        toast.loading("Enviando cotización...", {
+          id: `send-quote-${input.quoteId}`,
+        });
+
+        return { previousQuote };
+      },
+
+      onSettled: () => {
+        setOptimisticQuoteId(null);
+      },
+
+      onSuccess: (data, input) => {
+        setOptimisticQuoteId(null);
+
+        // Dismiss loading toast
+        toast.dismiss(`send-quote-${input.quoteId}`);
+
+        // Show success toast
+        toast.success("¡Cotización enviada exitosamente!", {
+          description:
+            "Tu cotización ha sido enviada al fabricante. Recibirás respuesta en 24-48 horas.",
+          duration: 6000,
+        });
+
+        // Invalidate related queries to refetch fresh data
+        startTransition(async () => {
+          await Promise.all([
+            utils.quote["get-by-id"].invalidate({ id: input.quoteId }),
+            utils.quote["list-user-quotes"].invalidate(),
+          ]);
+        });
+
+        // Call custom success handler
+        if (onSuccess) {
+          onSuccess({
+            id: data.id,
+            sentAt: data.sentAt,
+          });
+        }
+
+        // Redirect to quote detail page
+        if (redirectOnSuccess) {
+          router.push(`/dashboard/quotes/${data.id}`);
+          router.refresh();
+        }
+      },
+    }
+  );
 
   return {
     /**

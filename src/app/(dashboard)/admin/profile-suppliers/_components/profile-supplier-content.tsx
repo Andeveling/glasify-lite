@@ -10,33 +10,38 @@
  * - Render filters and list
  */
 
-'use client';
+"use client";
 
-import type { ProfileSupplier } from '@prisma/client';
-import { useState } from 'react';
-import { ProfileSupplierDialog } from './profile-supplier-dialog';
-import { ProfileSupplierFilters } from './profile-supplier-filters';
-import { ProfileSupplierList } from './profile-supplier-list';
+import type { ProfileSupplier } from "@prisma/client";
+import { useState } from "react";
+import { ProfileSupplierDialog } from "./profile-supplier-dialog";
+import { ProfileSupplierFilters } from "./profile-supplier-filters";
+import { ProfileSupplierList } from "./profile-supplier-list";
 
 type ProfileSupplierContentProps = {
-  initialData: Parameters<typeof ProfileSupplierList>[0]['initialData'];
-  searchParams: Parameters<typeof ProfileSupplierList>[0]['searchParams'];
+  initialData: Parameters<typeof ProfileSupplierList>[0]["initialData"];
+  searchParams: Parameters<typeof ProfileSupplierList>[0]["searchParams"];
 };
 
-export function ProfileSupplierContent({ initialData, searchParams }: ProfileSupplierContentProps) {
+export function ProfileSupplierContent({
+  initialData,
+  searchParams,
+}: ProfileSupplierContentProps) {
   // Dialog states
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create');
-  const [selectedSupplier, setSelectedSupplier] = useState<ProfileSupplier | undefined>(undefined);
+  const [dialogMode, setDialogMode] = useState<"create" | "edit">("create");
+  const [selectedSupplier, setSelectedSupplier] = useState<
+    ProfileSupplier | undefined
+  >(undefined);
 
   const handleCreateClick = () => {
-    setDialogMode('create');
+    setDialogMode("create");
     setSelectedSupplier(undefined);
     setDialogOpen(true);
   };
 
   const handleEditClick = (supplier: ProfileSupplier) => {
-    setDialogMode('edit');
+    setDialogMode("edit");
     setSelectedSupplier(supplier);
     setDialogOpen(true);
   };
@@ -52,10 +57,17 @@ export function ProfileSupplierContent({ initialData, searchParams }: ProfileSup
       />
 
       {/* Filters with create button */}
-      <ProfileSupplierFilters onCreateClick={handleCreateClick} searchParams={searchParams} />
+      <ProfileSupplierFilters
+        onCreateClick={handleCreateClick}
+        searchParams={searchParams}
+      />
 
       {/* Profile Suppliers List */}
-      <ProfileSupplierList initialData={initialData} onEditClick={handleEditClick} searchParams={searchParams} />
+      <ProfileSupplierList
+        initialData={initialData}
+        onEditClick={handleEditClick}
+        searchParams={searchParams}
+      />
     </>
   );
 }

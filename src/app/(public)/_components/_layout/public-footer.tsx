@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function PublicFooter() {
   return (
@@ -10,12 +10,18 @@ export default function PublicFooter() {
             <h3 className="mb-4 font-semibold text-sm">Glasify</h3>
             <ul className="space-y-2 text-foreground/60 text-sm">
               <li>
-                <Link className="transition-colors hover:text-foreground" href="/catalog">
+                <Link
+                  className="transition-colors hover:text-foreground"
+                  href="/catalog"
+                >
                   Acerca de
                 </Link>
               </li>
               <li>
-                <Link className="transition-colors hover:text-foreground" href="/catalog">
+                <Link
+                  className="transition-colors hover:text-foreground"
+                  href="/catalog"
+                >
                   Documentación
                 </Link>
               </li>
@@ -27,12 +33,18 @@ export default function PublicFooter() {
             <h3 className="mb-4 font-semibold text-sm">Productos</h3>
             <ul className="space-y-2 text-foreground/60 text-sm">
               <li>
-                <Link className="transition-colors hover:text-foreground" href="/catalog">
+                <Link
+                  className="transition-colors hover:text-foreground"
+                  href="/catalog"
+                >
                   Catálogo completo
                 </Link>
               </li>
               <li>
-                <Link className="transition-colors hover:text-foreground" href="/quote">
+                <Link
+                  className="transition-colors hover:text-foreground"
+                  href="/quote"
+                >
                   Cotizador
                 </Link>
               </li>
@@ -44,7 +56,8 @@ export default function PublicFooter() {
             <p className="text-foreground/60 text-sm">
               © 2025 Glasify Lite
               <br />
-              Cotizador inteligente de productos de vidrio para arquitectos e ingenieros.
+              Cotizador inteligente de productos de vidrio para arquitectos e
+              ingenieros.
             </p>
           </div>
         </div>

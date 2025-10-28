@@ -1,8 +1,14 @@
-'use client';
+"use client";
 
-import type { ReactNode } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import type { ReactNode } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface ChartContainerProps {
   /**
@@ -63,15 +69,21 @@ interface ChartContainerProps {
  * </ChartContainer>
  * ```
  */
-export function ChartContainer({ title, description, children, className, height = 'h-64' }: ChartContainerProps) {
+export function ChartContainer({
+  title,
+  description,
+  children,
+  className,
+  height = "h-64",
+}: ChartContainerProps) {
   return (
-    <Card className={cn('transition-shadow hover:shadow-md', className)}>
+    <Card className={cn("transition-shadow hover:shadow-md", className)}>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
       <CardContent>
-        <div className={cn('w-full', height)}>{children}</div>
+        <div className={cn("w-full", height)}>{children}</div>
       </CardContent>
     </Card>
   );

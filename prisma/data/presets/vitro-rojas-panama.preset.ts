@@ -29,13 +29,13 @@
  * @author Andres
  */
 
-import type { SeedPreset } from '../../seeders/seed-orchestrator';
-import { vitroRojasGlassSolutions } from '../vitro-rojas/glass-solutions.data';
-import { vitroRojasGlassTypes } from '../vitro-rojas/glass-types.data';
-import { vitroRojasCasementModels } from '../vitro-rojas/models-casement.data';
-import { vitroRojasSlidingModels } from '../vitro-rojas/models-sliding.data';
-import { vitroRojasProfileSuppliers } from '../vitro-rojas/profile-suppliers.data';
-import { vitroRojasServices } from '../vitro-rojas/services.data';
+import type { SeedPreset } from "../../seeders/seed-orchestrator";
+import { vitroRojasGlassSolutions } from "../vitro-rojas/glass-solutions.data";
+import { vitroRojasGlassTypes } from "../vitro-rojas/glass-types.data";
+import { vitroRojasCasementModels } from "../vitro-rojas/models-casement.data";
+import { vitroRojasSlidingModels } from "../vitro-rojas/models-sliding.data";
+import { vitroRojasProfileSuppliers } from "../vitro-rojas/profile-suppliers.data";
+import { vitroRojasServices } from "../vitro-rojas/services.data";
 
 /**
  * Preset completo para Vitro Rojas S.A.
@@ -49,7 +49,8 @@ import { vitroRojasServices } from '../vitro-rojas/services.data';
  * Ejecutar solo en instancia dedicada de Vitro Rojas.
  */
 export const vitroRojasPanamaPreset: SeedPreset = {
-  description: 'Vitro Rojas S.A. - Fabricante de ventanas y puertas de aluminio en Panamá',
+  description:
+    "Vitro Rojas S.A. - Fabricante de ventanas y puertas de aluminio en Panamá",
 
   // Soluciones de vidrio (4)
   glassSolutions: vitroRojasGlassSolutions,
@@ -59,7 +60,7 @@ export const vitroRojasPanamaPreset: SeedPreset = {
 
   // Modelos de ventanas/puertas (9)
   models: [...vitroRojasSlidingModels, ...vitroRojasCasementModels],
-  name: 'vitro-rojas-panama',
+  name: "vitro-rojas-panama",
 
   // Proveedores de perfiles (1)
   profileSuppliers: vitroRojasProfileSuppliers,

@@ -8,13 +8,13 @@
  * @module tests/integration/trpc-admin-auth
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 
-type UserRole = 'admin' | 'seller' | 'user';
+type UserRole = "admin" | "seller" | "user";
 
 // Helper function to check admin access (avoids TypeScript literal type warnings)
 function checkAdminAccess(role: UserRole): boolean {
-  return role === 'admin';
+  return role === "admin";
 }
 
 // Helper function to check if user IDs match
@@ -22,11 +22,11 @@ function checkUserMatch(id1: string, id2: string): boolean {
   return id1 === id2;
 }
 
-describe('tRPC Admin Procedures Authorization', () => {
-  describe('adminProcedure Access Control', () => {
-    it('should throw FORBIDDEN when non-admin user calls admin procedure', () => {
+describe("tRPC Admin Procedures Authorization", () => {
+  describe("adminProcedure Access Control", () => {
+    it("should throw FORBIDDEN when non-admin user calls admin procedure", () => {
       // ARRANGE: User with 'user' role attempting admin action
-      const userRole: UserRole = 'user';
+      const userRole: UserRole = "user";
       const procedureRequiresAdmin = true;
 
       // ACT: Simulate adminProcedure check
@@ -38,9 +38,9 @@ describe('tRPC Admin Procedures Authorization', () => {
       expect(shouldThrowForbidden).toBe(true);
     });
 
-    it('should throw FORBIDDEN when seller user calls admin procedure', () => {
+    it("should throw FORBIDDEN when seller user calls admin procedure", () => {
       // ARRANGE: User with 'seller' role attempting admin action
-      const userRole: UserRole = 'seller';
+      const userRole: UserRole = "seller";
       const procedureRequiresAdmin = true;
 
       // ACT: Simulate adminProcedure check
@@ -52,9 +52,9 @@ describe('tRPC Admin Procedures Authorization', () => {
       expect(shouldThrowForbidden).toBe(true);
     });
 
-    it('should allow admin user to call admin procedure', () => {
+    it("should allow admin user to call admin procedure", () => {
       // ARRANGE: User with 'admin' role
-      const userRole: UserRole = 'admin';
+      const userRole: UserRole = "admin";
       const procedureRequiresAdmin = true;
 
       // ACT: Simulate adminProcedure check
@@ -66,30 +66,36 @@ describe('tRPC Admin Procedures Authorization', () => {
       expect(shouldAllowAccess).toBe(true);
     });
 
-    it('should return Spanish error message for unauthorized access', () => {
+    it("should return Spanish error message for unauthorized access", () => {
       // ARRANGE: Non-admin user attempting admin procedure
-      const userRole: UserRole = 'seller';
+      const userRole: UserRole = "seller";
 
       // ACT: Simulate error message generation
       const isAuthorized = checkAdminAccess(userRole);
-      const errorMessage = isAuthorized ? null : 'Acceso denegado. Se requiere rol de administrador.';
+      const errorMessage = isAuthorized
+        ? null
+        : "Acceso denegado. Se requiere rol de administrador.";
 
       // ASSERT: Should return Spanish error
-      expect(errorMessage).toBe('Acceso denegado. Se requiere rol de administrador.');
+      expect(errorMessage).toBe(
+        "Acceso denegado. Se requiere rol de administrador."
+      );
     });
   });
 
-  describe('user.update-role Self-Demotion Prevention', () => {
-    it('should prevent admin from demoting themselves', () => {
+  describe("user.update-role Self-Demotion Prevention", () => {
+    it("should prevent admin from demoting themselves", () => {
       // ARRANGE: Admin attempting to change their own role
-      const currentUserId = 'admin-123';
-      const targetUserId = 'admin-123';
-      const currentRole: UserRole = 'admin';
-      const targetRole: UserRole = 'user';
+      const currentUserId = "admin-123";
+      const targetUserId = "admin-123";
+      const currentRole: UserRole = "admin";
+      const targetRole: UserRole = "user";
 
       // ACT: Simulate business rule check
       const isSelfDemotion =
-        checkUserMatch(currentUserId, targetUserId) && checkAdminAccess(currentRole) && !checkAdminAccess(targetRole);
+        checkUserMatch(currentUserId, targetUserId) &&
+        checkAdminAccess(currentRole) &&
+        !checkAdminAccess(targetRole);
       const shouldThrowForbidden = isSelfDemotion;
 
       // ASSERT: Should prevent self-demotion
@@ -97,16 +103,18 @@ describe('tRPC Admin Procedures Authorization', () => {
       expect(shouldThrowForbidden).toBe(true);
     });
 
-    it('should allow admin to demote other admins', () => {
+    it("should allow admin to demote other admins", () => {
       // ARRANGE: Admin demoting another admin
-      const currentUserId = 'admin-123';
-      const targetUserId = 'admin-456';
-      const currentRole: UserRole = 'admin';
-      const targetRole: UserRole = 'user';
+      const currentUserId = "admin-123";
+      const targetUserId = "admin-456";
+      const currentRole: UserRole = "admin";
+      const targetRole: UserRole = "user";
 
       // ACT: Simulate business rule check
       const isSelfDemotion =
-        checkUserMatch(currentUserId, targetUserId) && checkAdminAccess(currentRole) && !checkAdminAccess(targetRole);
+        checkUserMatch(currentUserId, targetUserId) &&
+        checkAdminAccess(currentRole) &&
+        !checkAdminAccess(targetRole);
       const shouldAllow = !isSelfDemotion;
 
       // ASSERT: Should allow demotion of others
@@ -114,16 +122,18 @@ describe('tRPC Admin Procedures Authorization', () => {
       expect(shouldAllow).toBe(true);
     });
 
-    it('should allow admin to promote themselves to admin (no-op)', () => {
+    it("should allow admin to promote themselves to admin (no-op)", () => {
       // ARRANGE: Admin "promoting" themselves to admin (no change)
-      const currentUserId = 'admin-123';
-      const targetUserId = 'admin-123';
-      const currentRole: UserRole = 'admin';
-      const targetRole: UserRole = 'admin';
+      const currentUserId = "admin-123";
+      const targetUserId = "admin-123";
+      const currentRole: UserRole = "admin";
+      const targetRole: UserRole = "admin";
 
       // ACT: Simulate business rule check
       const isSelfDemotion =
-        checkUserMatch(currentUserId, targetUserId) && checkAdminAccess(currentRole) && !checkAdminAccess(targetRole);
+        checkUserMatch(currentUserId, targetUserId) &&
+        checkAdminAccess(currentRole) &&
+        !checkAdminAccess(targetRole);
       const shouldAllow = !isSelfDemotion;
 
       // ASSERT: Should allow (no-op update)
@@ -131,35 +141,39 @@ describe('tRPC Admin Procedures Authorization', () => {
       expect(shouldAllow).toBe(true);
     });
 
-    it('should return Spanish error message for self-demotion attempt', () => {
+    it("should return Spanish error message for self-demotion attempt", () => {
       // ARRANGE: Admin attempting self-demotion
       const isSelfDemotion = true;
 
       // ACT: Generate error message
-      const errorMessage = isSelfDemotion ? 'No puedes cambiar tu propio rol de administrador.' : null;
+      const errorMessage = isSelfDemotion
+        ? "No puedes cambiar tu propio rol de administrador."
+        : null;
 
       // ASSERT: Should return Spanish error
-      expect(errorMessage).toBe('No puedes cambiar tu propio rol de administrador.');
+      expect(errorMessage).toBe(
+        "No puedes cambiar tu propio rol de administrador."
+      );
     });
   });
 
-  describe('Admin Procedure List', () => {
-    it('should list all admin-protected procedures', () => {
+  describe("Admin Procedure List", () => {
+    it("should list all admin-protected procedures", () => {
       // ARRANGE: List of procedures requiring admin role
       const adminProcedures = [
-        'catalog.create-model',
-        'catalog.update-model',
-        'catalog.delete-model',
-        'quote.list-all',
-        'quote.update-status',
-        'user.list-all',
-        'user.update-role',
+        "catalog.create-model",
+        "catalog.update-model",
+        "catalog.delete-model",
+        "quote.list-all",
+        "quote.update-status",
+        "user.list-all",
+        "user.update-role",
       ];
 
       // ACT: Verify procedure names
-      const hasCreateModel = adminProcedures.includes('catalog.create-model');
-      const hasListAllQuotes = adminProcedures.includes('quote.list-all');
-      const hasUpdateRole = adminProcedures.includes('user.update-role');
+      const hasCreateModel = adminProcedures.includes("catalog.create-model");
+      const hasListAllQuotes = adminProcedures.includes("quote.list-all");
+      const hasUpdateRole = adminProcedures.includes("user.update-role");
 
       // ASSERT: All admin procedures listed
       expect(hasCreateModel).toBe(true);
@@ -169,19 +183,19 @@ describe('tRPC Admin Procedures Authorization', () => {
     });
   });
 
-  describe('Winston Logging for Unauthorized Access', () => {
-    it('should log unauthorized admin procedure access attempts', () => {
+  describe("Winston Logging for Unauthorized Access", () => {
+    it("should log unauthorized admin procedure access attempts", () => {
       // ARRANGE: Non-admin user attempting admin procedure
-      const userId = 'user-123';
-      const userRole: UserRole = 'seller';
-      const attemptedProcedure = 'user.update-role';
+      const userId = "user-123";
+      const userRole: UserRole = "seller";
+      const attemptedProcedure = "user.update-role";
 
       // ACT: Simulate log entry creation
       const shouldLog = !checkAdminAccess(userRole);
       const logEntry = shouldLog
         ? {
-            level: 'warn',
-            message: 'Unauthorized admin procedure access attempt',
+            level: "warn",
+            message: "Unauthorized admin procedure access attempt",
             procedure: attemptedProcedure,
             role: userRole,
             timestamp: expect.any(String),
@@ -192,14 +206,14 @@ describe('tRPC Admin Procedures Authorization', () => {
       // ASSERT: Should create log entry
       expect(shouldLog).toBe(true);
       expect(logEntry).not.toBeNull();
-      expect(logEntry?.level).toBe('warn');
-      expect(logEntry?.role).toBe('seller');
+      expect(logEntry?.level).toBe("warn");
+      expect(logEntry?.role).toBe("seller");
     });
 
-    it('should not log successful admin procedure access', () => {
+    it("should not log successful admin procedure access", () => {
       // ARRANGE: Admin user calling admin procedure
-      const _userId = 'admin-123';
-      const userRole: UserRole = 'admin';
+      const _userId = "admin-123";
+      const userRole: UserRole = "admin";
 
       // ACT: Simulate log check
       const shouldLogWarning = !checkAdminAccess(userRole);

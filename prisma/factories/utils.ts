@@ -5,8 +5,8 @@
  * used across all seed factories.
  */
 
-import type { ZodError, ZodType } from 'zod';
-import type { FactoryResult, ValidationError } from './types';
+import type { ZodError, ZodType } from "zod";
+import type { FactoryResult, ValidationError } from "./types";
 
 // Constants
 const MM_TO_M_CONVERSION = 1000;
@@ -21,7 +21,10 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  * @param data - Data to validate
  * @returns FactoryResult with validation outcome
  */
-export function validateWithSchema<T>(schema: ZodType<T>, data: unknown): FactoryResult<T> {
+export function validateWithSchema<T>(
+  schema: ZodType<T>,
+  data: unknown
+): FactoryResult<T> {
   try {
     const validated = schema.parse(data);
     return {
@@ -39,8 +42,9 @@ export function validateWithSchema<T>(schema: ZodType<T>, data: unknown): Factor
     return {
       errors: [
         {
-          code: 'VALIDATION_ERROR',
-          message: error instanceof Error ? error.message : 'Unknown validation error',
+          code: "VALIDATION_ERROR",
+          message:
+            error instanceof Error ? error.message : "Unknown validation error",
           path: [],
         },
       ],
@@ -54,9 +58,9 @@ export function validateWithSchema<T>(schema: ZodType<T>, data: unknown): Factor
  */
 function isZodError(error: unknown): error is ZodError {
   return (
-    typeof error === 'object' &&
+    typeof error === "object" &&
     error !== null &&
-    'issues' in error &&
+    "issues" in error &&
     Array.isArray((error as { issues: unknown }).issues)
   );
 }
@@ -68,8 +72,8 @@ function mapZodErrors(error: ZodError): ValidationError[] {
   return error.issues.map((issue) => ({
     code: issue.code,
     context: {
-      expected: 'expected' in issue ? issue.expected : undefined,
-      received: 'received' in issue ? issue.received : undefined,
+      expected: "expected" in issue ? issue.expected : undefined,
+      received: "received" in issue ? issue.received : undefined,
     },
     message: issue.message,
     path: issue.path.map(String),
@@ -85,10 +89,15 @@ function mapZodErrors(error: ZodError): ValidationError[] {
  * @param fieldName - Field name for error messages
  * @returns Validation error or null if valid
  */
-export function validateRange(value: number, min: number, max: number, fieldName: string): ValidationError | null {
+export function validateRange(
+  value: number,
+  min: number,
+  max: number,
+  fieldName: string
+): ValidationError | null {
   if (value < min || value > max) {
     return {
-      code: 'OUT_OF_RANGE',
+      code: "OUT_OF_RANGE",
       context: { max, min, value },
       message: `${fieldName} must be between ${min} and ${max}, got ${value}`,
       path: [fieldName],
@@ -105,10 +114,14 @@ export function validateRange(value: number, min: number, max: number, fieldName
  * @param fieldPrefix - Field name prefix (e.g., "width", "height")
  * @returns Validation error or null if valid
  */
-export function validateMinMax(min: number, max: number, fieldPrefix: string): ValidationError | null {
+export function validateMinMax(
+  min: number,
+  max: number,
+  fieldPrefix: string
+): ValidationError | null {
   if (min >= max) {
     return {
-      code: 'INVALID_RANGE',
+      code: "INVALID_RANGE",
       context: { max, min },
       message: `${fieldPrefix} min (${min}) must be less than max (${max})`,
       path: [fieldPrefix],
@@ -124,11 +137,11 @@ export function validateMinMax(min: number, max: number, fieldPrefix: string): V
  * @returns Formatted price string
  */
 export function formatPriceCOP(price: number): string {
-  return new Intl.NumberFormat('es-CO', {
-    currency: 'COP',
+  return new Intl.NumberFormat("es-CO", {
+    currency: "COP",
     maximumFractionDigits: 0,
     minimumFractionDigits: 0,
-    style: 'currency',
+    style: "currency",
   }).format(price);
 }
 
@@ -147,7 +160,7 @@ export function validatePrice(
 ): ValidationError | null {
   if (price <= 0) {
     return {
-      code: 'INVALID_PRICE',
+      code: "INVALID_PRICE",
       context: { price },
       message: `${fieldName} must be positive, got ${price}`,
       path: [fieldName],
@@ -156,7 +169,7 @@ export function validatePrice(
 
   if (price > maxPrice) {
     return {
-      code: 'PRICE_TOO_HIGH',
+      code: "PRICE_TOO_HIGH",
       context: { maxPrice, price },
       message: `${fieldName} seems unreasonably high: ${formatPriceCOP(price)}`,
       path: [fieldName],
@@ -173,10 +186,13 @@ export function validatePrice(
  * @param fieldName - Field name for error messages
  * @returns Validation error or null if valid
  */
-export function validateNonEmpty<T>(array: T[], fieldName: string): ValidationError | null {
+export function validateNonEmpty<T>(
+  array: T[],
+  fieldName: string
+): ValidationError | null {
   if (array.length === 0) {
     return {
-      code: 'EMPTY_ARRAY',
+      code: "EMPTY_ARRAY",
       message: `${fieldName} must not be empty`,
       path: [fieldName],
     };
@@ -191,7 +207,10 @@ export function validateNonEmpty<T>(array: T[], fieldName: string): ValidationEr
  * @param overrides - Override values (optional)
  * @returns Merged object
  */
-export function mergeOverrides<T extends Record<string, unknown>>(defaults: T, overrides?: Record<string, unknown>): T {
+export function mergeOverrides<T extends Record<string, unknown>>(
+  defaults: T,
+  overrides?: Record<string, unknown>
+): T {
   if (!overrides) return defaults;
 
   return {
@@ -230,10 +249,10 @@ export function calculateAreaSqm(widthMm: number, heightMm: number): number {
 export function slugify(name: string): string {
   return name
     .toLowerCase()
-    .normalize('NFD') // Normalize accents
-    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric with hyphens
-    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+    .normalize("NFD") // Normalize accents
+    .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
+    .replace(/[^a-z0-9]+/g, "-") // Replace non-alphanumeric with hyphens
+    .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
 }
 
 /**
@@ -255,8 +274,11 @@ export function createIdentifier(prefix: string, name: string): string {
  */
 export function isValidColombianPhone(phone: string): boolean {
   // Colombian phones: 10 digits, starts with 3 (mobile) or fixed line
-  const cleanPhone = phone.replace(/\D/g, '');
-  return COLOMBIAN_MOBILE_REGEX.test(cleanPhone) || COLOMBIAN_LANDLINE_REGEX.test(cleanPhone);
+  const cleanPhone = phone.replace(/\D/g, "");
+  return (
+    COLOMBIAN_MOBILE_REGEX.test(cleanPhone) ||
+    COLOMBIAN_LANDLINE_REGEX.test(cleanPhone)
+  );
 }
 
 /**

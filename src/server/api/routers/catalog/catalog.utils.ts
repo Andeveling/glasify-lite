@@ -1,5 +1,5 @@
 // src/server/api/routers/catalog/catalog.utils.ts
-import type { Decimal } from '@prisma/client/runtime/library';
+import type { Decimal } from "@prisma/client/runtime/library";
 
 /**
  * Type representing a model with Decimal price fields from Prisma
@@ -32,7 +32,9 @@ type ModelWithDecimalFields = {
  * // serialized.basePrice is now a number, not Decimal
  * ```
  */
-export function serializeDecimalFields<T extends ModelWithDecimalFields>(model: T) {
+export function serializeDecimalFields<T extends ModelWithDecimalFields>(
+  model: T
+) {
   return {
     ...model,
     accessoryPrice: model.accessoryPrice?.toNumber() ?? null,

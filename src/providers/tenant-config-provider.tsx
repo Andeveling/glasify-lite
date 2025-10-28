@@ -7,9 +7,9 @@
  * @module providers/tenant-config-provider
  */
 
-'use client';
+"use client";
 
-import { createContext, useContext } from 'react';
+import { createContext, useContext } from "react";
 
 // ============================================================================
 // Types
@@ -86,8 +86,15 @@ type TenantConfigProviderProps = {
  * }
  * ```
  */
-export function TenantConfigProvider({ children, config }: TenantConfigProviderProps) {
-  return <TenantConfigContext.Provider value={config}>{children}</TenantConfigContext.Provider>;
+export function TenantConfigProvider({
+  children,
+  config,
+}: TenantConfigProviderProps) {
+  return (
+    <TenantConfigContext.Provider value={config}>
+      {children}
+    </TenantConfigContext.Provider>
+  );
 }
 
 // ============================================================================
@@ -121,7 +128,7 @@ export function useTenantConfig(): TenantConfigPublic {
   const context = useContext(TenantConfigContext);
 
   if (!context) {
-    throw new Error('useTenantConfig must be used within TenantConfigProvider');
+    throw new Error("useTenantConfig must be used within TenantConfigProvider");
   }
 
   return context;

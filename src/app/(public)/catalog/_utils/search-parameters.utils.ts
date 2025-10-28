@@ -24,13 +24,25 @@
  * Following Single Responsibility Principle - each function has one clear purpose.
  */
 
-import { ArrowDownAZ, ArrowDownZA, Building2, type LucideIcon, Search, SortAsc, SortDesc } from 'lucide-react';
+import {
+  ArrowDownAZ,
+  ArrowDownZA,
+  Building2,
+  type LucideIcon,
+  Search,
+  SortAsc,
+  SortDesc,
+} from "lucide-react";
 
 // ============================================================================
 // Types
 // ============================================================================
 
-export type CatalogSortOption = 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc';
+export type CatalogSortOption =
+  | "name-asc"
+  | "name-desc"
+  | "price-asc"
+  | "price-desc";
 
 export type SearchParameter = {
   key: string;
@@ -60,26 +72,27 @@ type BuildParametersInput = {
  * Maps sort types to their display labels and icons.
  * Follows Open/Closed Principle - extend by adding new entries.
  */
-export const SORT_CONFIGURATIONS: Record<CatalogSortOption, SortConfiguration> = {
-  'name-asc': {
-    icon: ArrowDownAZ,
-    label: 'A-Z',
-  },
-  'name-desc': {
-    icon: ArrowDownZA,
-    label: 'Z-A',
-  },
-  'price-asc': {
-    icon: SortAsc,
-    label: 'Precio ↑',
-  },
-  'price-desc': {
-    icon: SortDesc,
-    label: 'Precio ↓',
-  },
-} as const;
+export const SORT_CONFIGURATIONS: Record<CatalogSortOption, SortConfiguration> =
+  {
+    "name-asc": {
+      icon: ArrowDownAZ,
+      label: "A-Z",
+    },
+    "name-desc": {
+      icon: ArrowDownZA,
+      label: "Z-A",
+    },
+    "price-asc": {
+      icon: SortAsc,
+      label: "Precio ↑",
+    },
+    "price-desc": {
+      icon: SortDesc,
+      label: "Precio ↓",
+    },
+  } as const;
 
-export const DEFAULT_SORT: CatalogSortOption = 'name-asc';
+export const DEFAULT_SORT: CatalogSortOption = "name-asc";
 
 // ============================================================================
 // Pure Functions
@@ -97,7 +110,9 @@ export const DEFAULT_SORT: CatalogSortOption = 'name-asc';
  * // => { icon: SortAsc, label: 'Precio ↑' }
  * ```
  */
-export function getSortConfiguration(sortType: string | null | undefined): SortConfiguration | undefined {
+export function getSortConfiguration(
+  sortType: string | null | undefined
+): SortConfiguration | undefined {
   if (!sortType) {
     return;
   }
@@ -126,7 +141,9 @@ export function isDefaultSort(sortType: string | null | undefined): boolean {
  * @param searchQuery - The search query value
  * @returns Search parameter or undefined if no query
  */
-export function buildSearchParameter(searchQuery: string | null | undefined): SearchParameter | undefined {
+export function buildSearchParameter(
+  searchQuery: string | null | undefined
+): SearchParameter | undefined {
   if (!searchQuery) {
     return;
   }
@@ -134,7 +151,7 @@ export function buildSearchParameter(searchQuery: string | null | undefined): Se
   return {
     ariaLabel: `Quitar búsqueda: ${searchQuery}`,
     icon: Search,
-    key: 'search',
+    key: "search",
     label: searchQuery,
   };
 }
@@ -155,7 +172,7 @@ export function buildProfileSupplierParameter(
   return {
     ariaLabel: `Quitar filtro de ${profileSupplierName}`,
     icon: Building2,
-    key: 'profileSupplier',
+    key: "profileSupplier",
     label: profileSupplierName,
   };
 }
@@ -166,7 +183,9 @@ export function buildProfileSupplierParameter(
  * @param sortType - The sort type
  * @returns Search parameter or undefined if default sort
  */
-export function buildSortParameter(sortType: string | null | undefined): SearchParameter | undefined {
+export function buildSortParameter(
+  sortType: string | null | undefined
+): SearchParameter | undefined {
   // Don't show badge for default sort
   if (isDefaultSort(sortType)) return;
 
@@ -176,7 +195,7 @@ export function buildSortParameter(sortType: string | null | undefined): SearchP
   return {
     ariaLabel: `Quitar ordenamiento: ${config.label}`,
     icon: config.icon,
-    key: 'sort',
+    key: "sort",
     label: config.label,
   };
 }
@@ -204,7 +223,9 @@ export function buildSortParameter(sortType: string | null | undefined): SearchP
  * // ]
  * ```
  */
-export function buildActiveParameters(input: BuildParametersInput): SearchParameter[] {
+export function buildActiveParameters(
+  input: BuildParametersInput
+): SearchParameter[] {
   const { searchQuery, profileSupplierName, sortType } = input;
 
   // Build parameters using individual builder functions
@@ -215,5 +236,7 @@ export function buildActiveParameters(input: BuildParametersInput): SearchParame
   ];
 
   // Filter out undefined values
-  return parameters.filter((param): param is SearchParameter => param !== undefined);
+  return parameters.filter(
+    (param): param is SearchParameter => param !== undefined
+  );
 }

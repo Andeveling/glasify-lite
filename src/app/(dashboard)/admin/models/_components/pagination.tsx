@@ -5,9 +5,9 @@
  * Follows Single Responsibility Principle - only handles pagination UI
  */
 
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
 type PaginationProps = {
   currentPage: number;
@@ -15,7 +15,11 @@ type PaginationProps = {
   onPageChange: (page: number) => void;
 };
 
-export function Pagination({ currentPage, onPageChange, totalPages }: PaginationProps) {
+export function Pagination({
+  currentPage,
+  onPageChange,
+  totalPages,
+}: PaginationProps) {
   if (totalPages <= 1) return null;
 
   return (
@@ -24,7 +28,12 @@ export function Pagination({ currentPage, onPageChange, totalPages }: Pagination
         Página {currentPage} de {totalPages}
       </p>
       <div className="flex gap-2">
-        <Button disabled={currentPage === 1} onClick={() => onPageChange(currentPage - 1)} size="sm" variant="outline">
+        <Button
+          disabled={currentPage === 1}
+          onClick={() => onPageChange(currentPage - 1)}
+          size="sm"
+          variant="outline"
+        >
           Anterior
         </Button>
         <Button

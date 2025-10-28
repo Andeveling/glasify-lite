@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import type { Model } from '../_types/model.types';
-import { ModelDimensionsCard } from './model-dimensions';
-import { ModelFeatures } from './model-features';
-import { ModelInfo } from './model-info';
-import { ModelSpecifications } from './model-specifications';
-import { ProfileSupplierCard } from './profile-supplier-card';
+import type { Model } from "../_types/model.types";
+import { ModelDimensionsCard } from "./model-dimensions";
+import { ModelFeatures } from "./model-features";
+import { ModelInfo } from "./model-info";
+import { ModelSpecifications } from "./model-specifications";
+import { ProfileSupplierCard } from "./profile-supplier-card";
 
 type ModelSidebarProps = {
   model: Model;

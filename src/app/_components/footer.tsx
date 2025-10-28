@@ -1,9 +1,9 @@
-import { Mail, MapPin, Package, Phone } from 'lucide-react';
-import Link from 'next/link';
-import { cn } from '@/lib/utils';
+import { Mail, MapPin, Package, Phone } from "lucide-react";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 type FooterProps = {
-  variant?: 'full' | 'minimal';
+  variant?: "full" | "minimal";
   className?: string;
 };
 
@@ -11,10 +11,10 @@ type FooterProps = {
 // Update this annually or use a more dynamic approach after hydration
 const CURRENT_YEAR = 2024;
 
-export function Footer({ variant = 'full', className }: FooterProps) {
-  if (variant === 'minimal') {
+export function Footer({ variant = "full", className }: FooterProps) {
+  if (variant === "minimal") {
     return (
-      <footer className={cn('border-t bg-background px-4 py-6', className)}>
+      <footer className={cn("border-t bg-background px-4 py-6", className)}>
         <div className="container mx-auto text-center">
           <div className="flex items-center justify-center space-x-2 text-muted-foreground text-sm">
             <Package aria-hidden="true" className="h-4 w-4 text-primary" />
@@ -28,7 +28,7 @@ export function Footer({ variant = 'full', className }: FooterProps) {
   }
 
   return (
-    <footer className={cn('border-t bg-background', className)}>
+    <footer className={cn("border-t bg-background", className)}>
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Brand Section */}
@@ -39,8 +39,9 @@ export function Footer({ variant = 'full', className }: FooterProps) {
             </div>
 
             <p className="mt-2 max-w-md text-muted-foreground text-sm">
-              Cotizador inteligente de vidrios para profesionales y clientes. Calcula precios en tiempo real con los
-              mejores modelos disponibles en el mercado.
+              Cotizador inteligente de vidrios para profesionales y clientes.
+              Calcula precios en tiempo real con los mejores modelos disponibles
+              en el mercado.
             </p>
 
             <div className="mt-4 space-y-2">
@@ -76,7 +77,10 @@ export function Footer({ variant = 'full', className }: FooterProps) {
           {/* Quick Links */}
           <div>
             <h3 className="font-semibold text-sm">Enlaces Rápidos</h3>
-            <nav aria-label="Enlaces rápidos del pie de página" className="mt-4 space-y-2">
+            <nav
+              aria-label="Enlaces rápidos del pie de página"
+              className="mt-4 space-y-2"
+            >
               <Link
                 className="block text-muted-foreground text-sm hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"
                 href="/catalog"
@@ -102,9 +106,15 @@ export function Footer({ variant = 'full', className }: FooterProps) {
           <div>
             <h3 className="font-semibold text-sm">Soporte</h3>
             <div className="mt-4 space-y-2">
-              <div className="text-muted-foreground text-sm">Horario de atención:</div>
-              <div className="text-muted-foreground text-sm">Lun - Vie: 8:00 AM - 6:00 PM</div>
-              <div className="text-muted-foreground text-sm">Sáb: 8:00 AM - 12:00 PM</div>
+              <div className="text-muted-foreground text-sm">
+                Horario de atención:
+              </div>
+              <div className="text-muted-foreground text-sm">
+                Lun - Vie: 8:00 AM - 6:00 PM
+              </div>
+              <div className="text-muted-foreground text-sm">
+                Sáb: 8:00 AM - 12:00 PM
+              </div>
               <div className="mt-3 text-muted-foreground text-sm">
                 Tiempo de respuesta promedio:
                 <br />
@@ -119,7 +129,9 @@ export function Footer({ variant = 'full', className }: FooterProps) {
           <div className="flex items-center space-x-4">
             <span>© {CURRENT_YEAR} Glasify Lite</span>
             <span className="hidden sm:inline">•</span>
-            <span className="hidden sm:inline">Todos los derechos reservados</span>
+            <span className="hidden sm:inline">
+              Todos los derechos reservados
+            </span>
           </div>
 
           <div className="mt-4 flex items-center space-x-4 md:mt-0">

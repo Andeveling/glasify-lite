@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 /**
  * Supplier Distribution Chart Component
@@ -6,42 +6,59 @@
  * with supplier names and percentage legend
  */
 
-import { TrendingUp } from 'lucide-react';
-import { Cell, Legend, Pie, PieChart } from 'recharts';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { type ChartConfig, ChartContainer, ChartTooltip } from '@/components/ui/chart';
-import { formatNumber, formatPercent } from '@/lib/format';
-import type { SupplierDistribution } from '@/types/dashboard';
-import { EmptyDashboardState } from './empty-dashboard-state';
+import { TrendingUp } from "lucide-react";
+import { Cell, Legend, Pie, PieChart } from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+} from "@/components/ui/chart";
+import { formatNumber, formatPercent } from "@/lib/format";
+import type { SupplierDistribution } from "@/types/dashboard";
+import { EmptyDashboardState } from "./empty-dashboard-state";
 
 const PERCENTAGE_MULTIPLIER = 100;
 
 // Color palette for pie chart slices
-const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)'];
+const COLORS = [
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+];
 
 const chartConfig = {
   count: {
-    label: 'Cotizaciones',
+    label: "Cotizaciones",
   },
   supplierId1: {
-    color: 'var(--chart-1)',
-    label: 'Proveedor 1',
+    color: "var(--chart-1)",
+    label: "Proveedor 1",
   },
   supplierId2: {
-    color: 'var(--chart-2)',
-    label: 'Proveedor 2',
+    color: "var(--chart-2)",
+    label: "Proveedor 2",
   },
   supplierId3: {
-    color: 'var(--chart-3)',
-    label: 'Proveedor 3',
+    color: "var(--chart-3)",
+    label: "Proveedor 3",
   },
   supplierId4: {
-    color: 'var(--chart-4)',
-    label: 'Proveedor 4',
+    color: "var(--chart-4)",
+    label: "Proveedor 4",
   },
   supplierId5: {
-    color: 'var(--chart-5)',
-    label: 'Proveedor 5',
+    color: "var(--chart-5)",
+    label: "Proveedor 5",
   },
 } satisfies ChartConfig;
 
@@ -50,7 +67,10 @@ interface SupplierDistributionChartProps {
   tenantConfig?: { locale?: string } | null;
 }
 
-export function SupplierDistributionChart({ data, tenantConfig }: SupplierDistributionChartProps) {
+export function SupplierDistributionChart({
+  data,
+  tenantConfig,
+}: SupplierDistributionChartProps) {
   // Empty state check
   if (!data || data.length === 0) {
     return (
@@ -94,15 +114,29 @@ export function SupplierDistributionChart({ data, tenantConfig }: SupplierDistri
                     <p className="font-semibold text-sm">{tooltipData.name}</p>
                     <p className="mt-1 font-medium text-primary text-sm">
                       {tooltipData.count} cotizaciones (
-                      {formatPercent(tooltipData.percentage / PERCENTAGE_MULTIPLIER, { context: tenantConfig })})
+                      {formatPercent(
+                        tooltipData.percentage / PERCENTAGE_MULTIPLIER,
+                        { context: tenantConfig }
+                      )}
+                      )
                     </p>
                   </div>
                 );
               }}
             />
-            <Pie data={chartData} dataKey="count" label labelLine={false} nameKey="name" outerRadius={120}>
+            <Pie
+              data={chartData}
+              dataKey="count"
+              label
+              labelLine={false}
+              nameKey="name"
+              outerRadius={120}
+            >
               {chartData.map((_, index) => (
-                <Cell fill={COLORS[index % COLORS.length]} key={`cell-${index}`} />
+                <Cell
+                  fill={COLORS[index % COLORS.length]}
+                  key={`cell-${index}`}
+                />
               ))}
             </Pie>
             <Legend
@@ -110,8 +144,12 @@ export function SupplierDistributionChart({ data, tenantConfig }: SupplierDistri
                 const item = chartData.find((d) => d.name === value);
                 return (
                   <span className="text-xs">
-                    {value} -{' '}
-                    {item ? formatPercent(item.percentage / PERCENTAGE_MULTIPLIER, { context: tenantConfig }) : ''}
+                    {value} -{" "}
+                    {item
+                      ? formatPercent(item.percentage / PERCENTAGE_MULTIPLIER, {
+                          context: tenantConfig,
+                        })
+                      : ""}
                   </span>
                 );
               }}
@@ -119,16 +157,19 @@ export function SupplierDistributionChart({ data, tenantConfig }: SupplierDistri
               iconSize={12}
               iconType="circle"
               verticalAlign="bottom"
-              wrapperStyle={{ fontSize: '12px' }}
+              wrapperStyle={{ fontSize: "12px" }}
             />
           </PieChart>
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 font-medium leading-none">
-          Total de {formatNumber(totalQuotes)} cotizaciones <TrendingUp className="h-4 w-4" />
+          Total de {formatNumber(totalQuotes)} cotizaciones{" "}
+          <TrendingUp className="h-4 w-4" />
         </div>
-        <div className="text-muted-foreground leading-none">Distribución de cotizaciones por proveedor</div>
+        <div className="text-muted-foreground leading-none">
+          Distribución de cotizaciones por proveedor
+        </div>
       </CardFooter>
     </Card>
   );

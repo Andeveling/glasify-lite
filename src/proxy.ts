@@ -1,5 +1,5 @@
-import { headers } from 'next/headers';
-import { type NextRequest, NextResponse } from 'next/server';
+import { headers } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
 import {
   isAdminOnlyRoute,
   isDashboardHome,
@@ -8,8 +8,8 @@ import {
   isSellerOrAdminRoute,
   shouldSkipMiddleware,
   type UserRole,
-} from '@/lib/middleware-utils';
-import { auth } from '@/server/auth';
+} from "@/lib/middleware-utils";
+import { auth } from "@/server/auth";
 
 /**
  * Next.js Proxy for Authentication and Role-Based Access Control (RBAC)
@@ -48,39 +48,45 @@ export async function proxy(request: NextRequest) {
 
   // Redirect unauthenticated users from protected routes to catalog with signin modal
   if (isProtectedRoute(pathname) && !isLoggedIn) {
-    const catalogUrl = new URL('/catalog', request.url);
-    catalogUrl.searchParams.set('signin', 'true');
-    catalogUrl.searchParams.set('callbackUrl', pathname);
+    const catalogUrl = new URL("/catalog", request.url);
+    catalogUrl.searchParams.set("signin", "true");
+    catalogUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(catalogUrl);
   }
 
   // Block non-admin from admin-only routes (models, settings, tenant config)
-  if (isAdminOnlyRoute(pathname) && userRole !== 'admin') {
+  if (isAdminOnlyRoute(pathname) && userRole !== "admin") {
     // biome-ignore lint/suspicious/noConsole: Console logging is acceptable in middleware for security events
-    console.warn('[Middleware] Unauthorized admin-only route access attempt', {
+    console.warn("[Middleware] Unauthorized admin-only route access attempt", {
       path: pathname,
       role: userRole,
       timestamp: new Date().toISOString(),
       userId: session?.user?.id,
     });
-    return NextResponse.redirect(new URL('/my-quotes', request.url));
+    return NextResponse.redirect(new URL("/my-quotes", request.url));
   }
 
   // Block non-seller/non-admin from seller routes (quotes, users)
-  if (isSellerOrAdminRoute(pathname) && !['admin', 'seller'].includes(userRole || '')) {
+  if (
+    isSellerOrAdminRoute(pathname) &&
+    !["admin", "seller"].includes(userRole || "")
+  ) {
     // biome-ignore lint/suspicious/noConsole: Console logging is acceptable in middleware for security events
-    console.warn('[Middleware] Unauthorized seller/admin route access attempt', {
-      path: pathname,
-      role: userRole,
-      timestamp: new Date().toISOString(),
-      userId: session?.user?.id,
-    });
-    return NextResponse.redirect(new URL('/my-quotes', request.url));
+    console.warn(
+      "[Middleware] Unauthorized seller/admin route access attempt",
+      {
+        path: pathname,
+        role: userRole,
+        timestamp: new Date().toISOString(),
+        userId: session?.user?.id,
+      }
+    );
+    return NextResponse.redirect(new URL("/my-quotes", request.url));
   }
 
   // Redirect sellers from dashboard home to /dashboard/quotes
-  if (isDashboardHome(pathname) && userRole === 'seller') {
-    return NextResponse.redirect(new URL('/dashboard/quotes', request.url));
+  if (isDashboardHome(pathname) && userRole === "seller") {
+    return NextResponse.redirect(new URL("/dashboard/quotes", request.url));
   }
 
   // Allow all other authorized requests
@@ -97,6 +103,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
   ],
 };

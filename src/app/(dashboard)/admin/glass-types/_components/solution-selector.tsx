@@ -13,28 +13,41 @@
  * Used in: glass-type-form.tsx (Create/Edit Glass Types)
  */
 
-'use client';
+"use client";
 
-import { PerformanceRating } from '@prisma/client';
-import { Plus, Trash2 } from 'lucide-react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import type { CreateGlassTypeInput } from '@/lib/validations/admin/glass-type.schema';
-import { api } from '@/trpc/react';
+import { PerformanceRating } from "@prisma/client";
+import { Plus, Trash2 } from "lucide-react";
+import { useFieldArray, useFormContext } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import type { CreateGlassTypeInput } from "@/lib/validations/admin/glass-type.schema";
+import { api } from "@/trpc/react";
 
 /**
  * Performance rating display labels
  */
 const PERFORMANCE_LABELS: Record<PerformanceRating, string> = {
-  basic: 'Básico',
-  excellent: 'Excelente',
-  good: 'Bueno',
-  standard: 'Estándar',
-  very_good: 'Muy Bueno',
+  basic: "Básico",
+  excellent: "Excelente",
+  good: "Bueno",
+  standard: "Estándar",
+  very_good: "Muy Bueno",
 };
 
 /**
@@ -44,16 +57,18 @@ export function SolutionSelector() {
   const form = useFormContext<CreateGlassTypeInput>();
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: 'solutions',
+    name: "solutions",
   });
 
   // Fetch active solutions via tRPC
-  const { data: solutionsData, isLoading } = api.admin['glass-solution'].list.useQuery({
-    isActive: 'active',
+  const { data: solutionsData, isLoading } = api.admin[
+    "glass-solution"
+  ].list.useQuery({
+    isActive: "active",
     limit: 100,
     page: 1,
-    sortBy: 'sortOrder',
-    sortOrder: 'asc',
+    sortBy: "sortOrder",
+    sortOrder: "asc",
   });
 
   const solutions = solutionsData?.items ?? [];
@@ -66,7 +81,7 @@ export function SolutionSelector() {
       isPrimary: false,
       notes: undefined,
       performanceRating: PerformanceRating.standard,
-      solutionId: '',
+      solutionId: "",
     });
   };
 
@@ -74,12 +89,12 @@ export function SolutionSelector() {
    * Handle setting primary solution (only one can be primary)
    */
   const handleSetPrimary = (index: number) => {
-    const currentValues = form.getValues('solutions');
+    const currentValues = form.getValues("solutions");
     const updatedValues = currentValues.map((solution, idx) => ({
       ...solution,
       isPrimary: idx === index,
     }));
-    form.setValue('solutions', updatedValues);
+    form.setValue("solutions", updatedValues);
   };
 
   return (
@@ -88,10 +103,16 @@ export function SolutionSelector() {
         <div>
           <h3 className="font-medium text-lg">Soluciones de Vidrio</h3>
           <p className="text-muted-foreground text-sm">
-            Asigna soluciones (aislamiento, seguridad, etc.) con calificación de rendimiento
+            Asigna soluciones (aislamiento, seguridad, etc.) con calificación de
+            rendimiento
           </p>
         </div>
-        <Button onClick={handleAddSolution} size="sm" type="button" variant="outline">
+        <Button
+          onClick={handleAddSolution}
+          size="sm"
+          type="button"
+          variant="outline"
+        >
           <Plus className="mr-2 h-4 w-4" />
           Agregar Solución
         </Button>
@@ -100,7 +121,8 @@ export function SolutionSelector() {
       {fields.length === 0 && (
         <div className="rounded-lg border border-dashed p-8 text-center">
           <p className="text-muted-foreground text-sm">
-            No hay soluciones asignadas. Haz clic en "Agregar Solución" para comenzar.
+            No hay soluciones asignadas. Haz clic en "Agregar Solución" para
+            comenzar.
           </p>
         </div>
       )}
@@ -109,7 +131,12 @@ export function SolutionSelector() {
         <div className="space-y-4 rounded-lg border p-4" key={solutionField.id}>
           <div className="flex items-center justify-between">
             <h4 className="font-medium text-sm">Solución #{index + 1}</h4>
-            <Button onClick={() => remove(index)} size="sm" type="button" variant="ghost">
+            <Button
+              onClick={() => remove(index)}
+              size="sm"
+              type="button"
+              variant="ghost"
+            >
               <Trash2 className="h-4 w-4 text-destructive" />
             </Button>
           </div>
@@ -122,18 +149,24 @@ export function SolutionSelector() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Solución</FormLabel>
-                  <Select disabled={isLoading} onValueChange={field.onChange} value={field.value}>
+                  <Select
+                    disabled={isLoading}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecciona una solución" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {solutions.map((solution: { id: string; nameEs: string }) => (
-                        <SelectItem key={solution.id} value={solution.id}>
-                          {solution.nameEs}
-                        </SelectItem>
-                      ))}
+                      {solutions.map(
+                        (solution: { id: string; nameEs: string }) => (
+                          <SelectItem key={solution.id} value={solution.id}>
+                            {solution.nameEs}
+                          </SelectItem>
+                        )
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -155,11 +188,13 @@ export function SolutionSelector() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {Object.entries(PERFORMANCE_LABELS).map(([value, label]) => (
-                        <SelectItem key={value} value={value}>
-                          {label}
-                        </SelectItem>
-                      ))}
+                      {Object.entries(PERFORMANCE_LABELS).map(
+                        ([value, label]) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        )
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -177,21 +212,26 @@ export function SolutionSelector() {
                 <FormControl>
                   <RadioGroup
                     onValueChange={(value) => {
-                      if (value === 'true') {
+                      if (value === "true") {
                         handleSetPrimary(index);
                       }
                     }}
-                    value={field.value ? 'true' : 'false'}
+                    value={field.value ? "true" : "false"}
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem id={`primary-${index}`} value="true" />
-                      <FormLabel className="font-normal" htmlFor={`primary-${index}`}>
+                      <FormLabel
+                        className="font-normal"
+                        htmlFor={`primary-${index}`}
+                      >
                         Solución principal
                       </FormLabel>
                     </div>
                   </RadioGroup>
                 </FormControl>
-                <FormDescription className="mt-0">Solo una solución puede ser marcada como principal</FormDescription>
+                <FormDescription className="mt-0">
+                  Solo una solución puede ser marcada como principal
+                </FormDescription>
               </FormItem>
             )}
           />
@@ -208,7 +248,7 @@ export function SolutionSelector() {
                     className="resize-none"
                     placeholder="Notas adicionales sobre esta solución..."
                     {...field}
-                    value={field.value ?? ''}
+                    value={field.value ?? ""}
                   />
                 </FormControl>
                 <FormMessage />

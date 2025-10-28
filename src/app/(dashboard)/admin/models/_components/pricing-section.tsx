@@ -4,10 +4,16 @@
  * Base price, costs per mm, accessory price, and profit margin
  */
 
-'use client';
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FormCurrencyInput, FormPercentageInput } from './form-fields';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { FormCurrencyInput, FormPercentageInput } from "./form-fields";
 
 export function PricingSection() {
   return (

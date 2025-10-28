@@ -5,8 +5,8 @@
  * Uses skeleton components to provide visual feedback during data fetch.
  */
 
-import { ArrowLeft } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
+import { ArrowLeft } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function MyQuotesLoading() {
   return (

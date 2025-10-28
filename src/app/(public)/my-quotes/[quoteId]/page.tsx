@@ -7,13 +7,13 @@
  * @route /my-quotes/[quoteId]
  */
 
-import { TRPCError } from '@trpc/server';
-import { headers } from 'next/headers';
-import { notFound, redirect } from 'next/navigation';
-import logger from '@/lib/logger';
-import { auth } from '@/server/auth';
-import { api } from '@/trpc/server-client';
-import { QuoteDetailView } from './_components/quote-detail-view';
+import { TRPCError } from "@trpc/server";
+import { headers } from "next/headers";
+import { notFound, redirect } from "next/navigation";
+import logger from "@/lib/logger";
+import { auth } from "@/server/auth";
+import { api } from "@/trpc/server-client";
+import { QuoteDetailView } from "./_components/quote-detail-view";
 
 type MyQuoteDetailPageProps = {
   params: Promise<{
@@ -21,29 +21,34 @@ type MyQuoteDetailPageProps = {
   }>;
 };
 
-export default async function MyQuoteDetailPage({ params }: MyQuoteDetailPageProps) {
+export default async function MyQuoteDetailPage({
+  params,
+}: MyQuoteDetailPageProps) {
   // Check authentication
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
   if (!session?.user) {
-    logger.warn('[MyQuoteDetailPage] Unauthenticated user attempted to access quote', {
-      redirectTo: '/api/auth/signin',
-    });
+    logger.warn(
+      "[MyQuoteDetailPage] Unauthenticated user attempted to access quote",
+      {
+        redirectTo: "/api/auth/signin",
+      }
+    );
 
-    redirect('/api/auth/signin?callbackUrl=/my-quotes');
+    redirect("/api/auth/signin?callbackUrl=/my-quotes");
   }
 
   const { quoteId } = await params;
 
   try {
-    logger.info('[MyQuoteDetailPage] User accessing quote detail', {
+    logger.info("[MyQuoteDetailPage] User accessing quote detail", {
       quoteId,
       userId: session.user.id,
     });
 
-    const quote = await api.quote['get-by-id']({ id: quoteId });
+    const quote = await api.quote["get-by-id"]({ id: quoteId });
 
     return (
       <div className="container mx-auto max-w-7xl py-8">
@@ -52,8 +57,8 @@ export default async function MyQuoteDetailPage({ params }: MyQuoteDetailPagePro
     );
   } catch (error) {
     // If quote not found or access denied, show 404
-    if (error instanceof TRPCError && error.code === 'NOT_FOUND') {
-      logger.warn('[MyQuoteDetailPage] Quote not found or access denied', {
+    if (error instanceof TRPCError && error.code === "NOT_FOUND") {
+      logger.warn("[MyQuoteDetailPage] Quote not found or access denied", {
         error: error.message,
         quoteId,
         userId: session.user.id,
@@ -62,8 +67,8 @@ export default async function MyQuoteDetailPage({ params }: MyQuoteDetailPagePro
       notFound();
     }
 
-    logger.error('[MyQuoteDetailPage] Error loading quote', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    logger.error("[MyQuoteDetailPage] Error loading quote", {
+      error: error instanceof Error ? error.message : "Unknown error",
       quoteId,
       userId: session.user.id,
     });

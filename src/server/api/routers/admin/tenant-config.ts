@@ -6,9 +6,13 @@
  * @see /plan/refactor-manufacturer-to-tenant-config-1.md
  */
 
-import { updateTenantConfigSchema } from '../../../schemas/tenant.schema';
-import { getTenantConfig, updateTenantConfig } from '../../../utils/tenant';
-import { adminProcedure, createTRPCRouter, protectedProcedure } from '../../trpc';
+import { updateTenantConfigSchema } from "../../../schemas/tenant.schema";
+import { getTenantConfig, updateTenantConfig } from "../../../utils/tenant";
+import {
+  adminProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from "../../trpc";
 
 export const tenantConfigRouter = createTRPCRouter({
   /**
@@ -36,5 +40,7 @@ export const tenantConfigRouter = createTRPCRouter({
    * Update the singleton TenantConfig
    * Admin only - modifies global tenant configuration
    */
-  update: adminProcedure.input(updateTenantConfigSchema).mutation(({ input }) => updateTenantConfig(input)),
+  update: adminProcedure
+    .input(updateTenantConfigSchema)
+    .mutation(({ input }) => updateTenantConfig(input)),
 });

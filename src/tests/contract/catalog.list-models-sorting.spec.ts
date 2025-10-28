@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { testServer } from '../integration-setup';
+import { describe, expect, it } from "vitest";
+import { testServer } from "../integration-setup";
 
 /**
  * Contract Test: catalog.list-models with sorting
@@ -15,11 +15,11 @@ import { testServer } from '../integration-setup';
  * - Sorting must be processed server-side for consistency
  */
 
-describe('Contract: catalog.list-models with sorting - Issue002', () => {
-  it('Should_ReturnModelsSortedByName_When_SortNameAsc_Issue002', async () => {
+describe("Contract: catalog.list-models with sorting - Issue002", () => {
+  it("Should_ReturnModelsSortedByName_When_SortNameAsc_Issue002", async () => {
     // Act
-    const result = await testServer.catalog['list-models']({
-      sort: 'name-asc',
+    const result = await testServer.catalog["list-models"]({
+      sort: "name-asc",
     });
 
     // Assert
@@ -38,10 +38,10 @@ describe('Contract: catalog.list-models with sorting - Issue002', () => {
     }
   });
 
-  it('Should_ReturnModelsSortedByName_When_SortNameDesc_Issue002', async () => {
+  it("Should_ReturnModelsSortedByName_When_SortNameDesc_Issue002", async () => {
     // Act
-    const result = await testServer.catalog['list-models']({
-      sort: 'name-desc',
+    const result = await testServer.catalog["list-models"]({
+      sort: "name-desc",
     });
 
     // Assert
@@ -54,16 +54,18 @@ describe('Contract: catalog.list-models with sorting - Issue002', () => {
         const current = result.items[i];
         const next = result.items[i + 1];
         if (current && next) {
-          expect(current.name.localeCompare(next.name)).toBeGreaterThanOrEqual(0);
+          expect(current.name.localeCompare(next.name)).toBeGreaterThanOrEqual(
+            0
+          );
         }
       }
     }
   });
 
-  it('Should_ReturnModelsSortedByPrice_When_SortPriceAsc_Issue002', async () => {
+  it("Should_ReturnModelsSortedByPrice_When_SortPriceAsc_Issue002", async () => {
     // Act
-    const result = await testServer.catalog['list-models']({
-      sort: 'price-asc',
+    const result = await testServer.catalog["list-models"]({
+      sort: "price-asc",
     });
 
     // Assert
@@ -82,10 +84,10 @@ describe('Contract: catalog.list-models with sorting - Issue002', () => {
     }
   });
 
-  it('Should_ReturnModelsSortedByPrice_When_SortPriceDesc_Issue002', async () => {
+  it("Should_ReturnModelsSortedByPrice_When_SortPriceDesc_Issue002", async () => {
     // Act
-    const result = await testServer.catalog['list-models']({
-      sort: 'price-desc',
+    const result = await testServer.catalog["list-models"]({
+      sort: "price-desc",
     });
 
     // Assert
@@ -104,9 +106,9 @@ describe('Contract: catalog.list-models with sorting - Issue002', () => {
     }
   });
 
-  it('Should_UseDefaultSort_When_NoSortProvided_Issue002', async () => {
+  it("Should_UseDefaultSort_When_NoSortProvided_Issue002", async () => {
     // Act
-    const result = await testServer.catalog['list-models']({});
+    const result = await testServer.catalog["list-models"]({});
 
     // Assert - default should be name-asc
     expect(result.items).toBeDefined();
@@ -124,9 +126,9 @@ describe('Contract: catalog.list-models with sorting - Issue002', () => {
     }
   });
 
-  it('Should_CombineSortWithFilters_When_BothProvided_Issue002', async () => {
+  it("Should_CombineSortWithFilters_When_BothProvided_Issue002", async () => {
     // Arrange - get a manufacturer to filter by
-    const allModels = await testServer.catalog['list-models']({});
+    const allModels = await testServer.catalog["list-models"]({});
     if (allModels.items.length === 0 || !allModels.items[0]?.manufacturer) {
       // Skip test if no models or no manufacturer
       return;
@@ -135,9 +137,9 @@ describe('Contract: catalog.list-models with sorting - Issue002', () => {
     const manufacturerId = allModels.items[0].manufacturer.id;
 
     // Act
-    const result = await testServer.catalog['list-models']({
+    const result = await testServer.catalog["list-models"]({
       manufacturerId,
-      sort: 'price-desc',
+      sort: "price-desc",
     });
 
     // Assert

@@ -28,8 +28,15 @@
  * @see PAT-001: Server-first data tables
  */
 
-import type { ReactNode } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import type { ReactNode } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 /**
  * Column definition for table
@@ -48,7 +55,7 @@ export interface ServerTableColumn<T> {
   cell?: (item: T) => ReactNode;
 
   /** Column alignment */
-  align?: 'left' | 'center' | 'right';
+  align?: "left" | "center" | "right";
 
   /** Column width (CSS value) */
   width?: string;
@@ -108,7 +115,10 @@ function defaultRowKey<T extends Record<string, unknown>>(item: T): string {
 /**
  * Default cell renderer
  */
-function defaultCellRenderer<T extends Record<string, unknown>>(item: T, column: ServerTableColumn<T>): ReactNode {
+function defaultCellRenderer<T extends Record<string, unknown>>(
+  item: T,
+  column: ServerTableColumn<T>
+): ReactNode {
   const value = item[column.id];
 
   // Handle null/undefined
@@ -117,13 +127,13 @@ function defaultCellRenderer<T extends Record<string, unknown>>(item: T, column:
   }
 
   // Handle boolean
-  if (typeof value === 'boolean') {
-    return value ? 'Sí' : 'No';
+  if (typeof value === "boolean") {
+    return value ? "Sí" : "No";
   }
 
   // Handle Date
   if (value instanceof Date) {
-    return value.toLocaleDateString('es-AR');
+    return value.toLocaleDateString("es-AR");
   }
 
   // Handle string/number
@@ -133,9 +143,11 @@ function defaultCellRenderer<T extends Record<string, unknown>>(item: T, column:
 /**
  * Get alignment class from column alignment
  */
-function getAlignmentClass(align?: 'left' | 'center' | 'right'): string | undefined {
-  if (align === 'center') return 'text-center';
-  if (align === 'right') return 'text-right';
+function getAlignmentClass(
+  align?: "left" | "center" | "right"
+): string | undefined {
+  if (align === "center") return "text-center";
+  if (align === "right") return "text-right";
   return;
 }
 
@@ -147,7 +159,7 @@ function getAlignmentClass(align?: 'left' | 'center' | 'right'): string | undefi
 export function ServerTable<T extends Record<string, unknown>>({
   data,
   columns,
-  emptyMessage = 'No se encontraron resultados',
+  emptyMessage = "No se encontraron resultados",
   rowKey = defaultRowKey,
   emptyState,
   isLoading = false,
@@ -184,7 +196,11 @@ export function ServerTable<T extends Record<string, unknown>>({
           <TableHeader>
             <TableRow>
               {columns.map((column) => (
-                <TableHead className={getAlignmentClass(column.align)} key={column.id} style={{ width: column.width }}>
+                <TableHead
+                  className={getAlignmentClass(column.align)}
+                  key={column.id}
+                  style={{ width: column.width }}
+                >
                   {column.header}
                 </TableHead>
               ))}
@@ -194,8 +210,13 @@ export function ServerTable<T extends Record<string, unknown>>({
             {data.map((item) => (
               <TableRow key={rowKey(item)}>
                 {columns.map((column) => (
-                  <TableCell className={getAlignmentClass(column.align)} key={column.id}>
-                    {column.cell ? column.cell(item) : defaultCellRenderer(item, column)}
+                  <TableCell
+                    className={getAlignmentClass(column.align)}
+                    key={column.id}
+                  >
+                    {column.cell
+                      ? column.cell(item)
+                      : defaultCellRenderer(item, column)}
                   </TableCell>
                 ))}
               </TableRow>

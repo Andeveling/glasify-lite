@@ -10,7 +10,7 @@
  * @module tests/integration/quote/quote-generation
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 
 // ============================================================================
 // Test Data
@@ -24,20 +24,20 @@ const EXPECTED_MANUFACTURER_ID_LENGTH = 14; // Length of 'manufacturer-1'
 // Mock cart items (simulating sessionStorage data)
 const mockCartItems = [
   {
-    glassTypeId: 'glass-type-1',
+    glassTypeId: "glass-type-1",
     heightMm: 1500,
-    modelId: 'model-123',
-    modelName: 'Guardian Clear 6mm',
+    modelId: "model-123",
+    modelName: "Guardian Clear 6mm",
     pricePerSqm: 45_000,
     quantity: 1,
     totalPrice: 67_500,
     widthMm: 1000,
   },
   {
-    glassTypeId: 'glass-type-2',
+    glassTypeId: "glass-type-2",
     heightMm: 1200,
-    modelId: 'model-456',
-    modelName: 'VEKA Tempered 8mm',
+    modelId: "model-456",
+    modelName: "VEKA Tempered 8mm",
     pricePerSqm: 60_000,
     quantity: 2,
     totalPrice: 115_200,
@@ -47,34 +47,38 @@ const mockCartItems = [
 
 // Mock authenticated user session
 const mockAuthenticatedUser = {
-  email: 'test@example.com',
-  id: 'user-123',
-  name: 'Test User',
+  email: "test@example.com",
+  id: "user-123",
+  name: "Test User",
 };
 
 // Mock project details (form input)
 const mockProjectDetails = {
-  city: 'Bogotá',
-  phone: '+57 300 123 4567',
-  postalCode: '110111',
-  projectName: 'Proyecto Test Integration',
-  state: 'Cundinamarca',
-  street: 'Calle 123 #45-67',
+  city: "Bogotá",
+  phone: "+57 300 123 4567",
+  postalCode: "110111",
+  projectName: "Proyecto Test Integration",
+  state: "Cundinamarca",
+  street: "Calle 123 #45-67",
 };
 
 // ============================================================================
 // Integration Tests
 // ============================================================================
 
-describe('Quote Generation Integration (US4-T054)', () => {
-  describe('Quote Creation Logic', () => {
-    it('should calculate correct validity date (15 days from now)', () => {
+describe("Quote Generation Integration (US4-T054)", () => {
+  describe("Quote Creation Logic", () => {
+    it("should calculate correct validity date (15 days from now)", () => {
       // ARRANGE
       const createdAt = new Date();
-      const expectedValidityDate = new Date(createdAt.getTime() + QUOTE_VALIDITY_DAYS * MILLISECONDS_PER_DAY);
+      const expectedValidityDate = new Date(
+        createdAt.getTime() + QUOTE_VALIDITY_DAYS * MILLISECONDS_PER_DAY
+      );
 
       // ACT: Simulate quote service logic
-      const validUntil = new Date(createdAt.getTime() + QUOTE_VALIDITY_DAYS * MILLISECONDS_PER_DAY);
+      const validUntil = new Date(
+        createdAt.getTime() + QUOTE_VALIDITY_DAYS * MILLISECONDS_PER_DAY
+      );
 
       // ASSERT
       expect(validUntil.getTime()).toBe(expectedValidityDate.getTime());
@@ -85,7 +89,7 @@ describe('Quote Generation Integration (US4-T054)', () => {
       expect(diffInDays).toBe(QUOTE_VALIDITY_DAYS);
     });
 
-    it('should calculate total from cart items', () => {
+    it("should calculate total from cart items", () => {
       // ARRANGE: Cart items with known totals
       const items = mockCartItems;
 
@@ -96,7 +100,7 @@ describe('Quote Generation Integration (US4-T054)', () => {
       expect(total).toBe(EXPECTED_TOTAL_PRICE); // 67_500 + 115_200
     });
 
-    it('should format project address correctly', () => {
+    it("should format project address correctly", () => {
       // ARRANGE: Project details from form
       const details = mockProjectDetails;
 
@@ -104,7 +108,9 @@ describe('Quote Generation Integration (US4-T054)', () => {
       const fullAddress = `${details.street}, ${details.city}, ${details.state}, ${details.postalCode}`;
 
       // ASSERT: Address should be properly formatted
-      expect(fullAddress).toBe('Calle 123 #45-67, Bogotá, Cundinamarca, 110111');
+      expect(fullAddress).toBe(
+        "Calle 123 #45-67, Bogotá, Cundinamarca, 110111"
+      );
       expect(fullAddress).toContain(details.street);
       expect(fullAddress).toContain(details.city);
       expect(fullAddress).toContain(details.state);
@@ -112,11 +118,11 @@ describe('Quote Generation Integration (US4-T054)', () => {
     });
   });
 
-  describe('Quote Service Business Logic', () => {
-    it('should validate required fields before creating quote', () => {
+  describe("Quote Service Business Logic", () => {
+    it("should validate required fields before creating quote", () => {
       // ARRANGE: Missing required fields
       const incompleteData: Partial<typeof mockProjectDetails> = {
-        city: 'Bogotá',
+        city: "Bogotá",
         // Missing: street, state, postalCode
       };
 
@@ -131,7 +137,7 @@ describe('Quote Generation Integration (US4-T054)', () => {
       expect(hasPostalCode).toBe(false);
     });
 
-    it('should require at least one cart item', () => {
+    it("should require at least one cart item", () => {
       // ARRANGE: Empty cart
       const emptyCart: any[] = [];
 
@@ -142,7 +148,7 @@ describe('Quote Generation Integration (US4-T054)', () => {
       expect(hasItems).toBe(false);
     });
 
-    it('should require authenticated user', () => {
+    it("should require authenticated user", () => {
       // ARRANGE: No user session
       const unauthenticatedUser: typeof mockAuthenticatedUser | null = null;
 
@@ -154,20 +160,22 @@ describe('Quote Generation Integration (US4-T054)', () => {
     });
   });
 
-  describe('Database Transaction Integrity', () => {
-    it('should create Quote record with correct fields', () => {
+  describe("Database Transaction Integrity", () => {
+    it("should create Quote record with correct fields", () => {
       // ARRANGE: Simulated quote data
       const userId = mockAuthenticatedUser.id;
-      const manufacturerId = 'manufacturer-1'; // From first model
+      const manufacturerId = "manufacturer-1"; // From first model
       const total = 182_700;
       const createdAt = new Date();
-      const validUntil = new Date(createdAt.getTime() + QUOTE_VALIDITY_DAYS * MILLISECONDS_PER_DAY);
+      const validUntil = new Date(
+        createdAt.getTime() + QUOTE_VALIDITY_DAYS * MILLISECONDS_PER_DAY
+      );
 
       // ACT: Build Quote object (simulating Prisma create)
       const quote = {
         contactPhone: mockProjectDetails.phone,
         createdAt,
-        id: 'quote-test-123',
+        id: "quote-test-123",
         manufacturerId,
         projectCity: mockProjectDetails.city,
         projectName: mockProjectDetails.projectName,
@@ -191,9 +199,9 @@ describe('Quote Generation Integration (US4-T054)', () => {
       expect(quote.contactPhone).toBe(mockProjectDetails.phone);
     });
 
-    it('should create QuoteItem records for each cart item', () => {
+    it("should create QuoteItem records for each cart item", () => {
       // ARRANGE: Cart items to convert to QuoteItems
-      const quoteId = 'quote-test-123';
+      const quoteId = "quote-test-123";
       const cartItems = mockCartItems;
 
       // ACT: Build QuoteItems (simulating Prisma createMany)
@@ -227,7 +235,7 @@ describe('Quote Generation Integration (US4-T054)', () => {
       expect(quoteItems[1].totalPrice).toBe(mockCartItems[1].totalPrice);
     });
 
-    it('should rollback transaction if QuoteItem creation fails', () => {
+    it("should rollback transaction if QuoteItem creation fails", () => {
       // ARRANGE: Simulate transaction rollback scenario
       let quoteCreated = false;
       let transactionRolledBack = false;
@@ -237,7 +245,7 @@ describe('Quote Generation Integration (US4-T054)', () => {
         quoteCreated = true;
 
         // Step 2: Create QuoteItems (simulate failure)
-        throw new Error('Failed to create QuoteItems');
+        throw new Error("Failed to create QuoteItems");
       } catch {
         // Step 3: Rollback transaction
         transactionRolledBack = true;
@@ -250,22 +258,22 @@ describe('Quote Generation Integration (US4-T054)', () => {
     });
   });
 
-  describe('Manufacturer ID Resolution', () => {
-    it('should extract manufacturerId from first cart item model', () => {
+  describe("Manufacturer ID Resolution", () => {
+    it("should extract manufacturerId from first cart item model", () => {
       // ARRANGE: Cart with items from same manufacturer
       // ACT: Get manufacturerId from first model (simulating service logic)
       // In real service: const model = await db.model.findUnique({ where: { id: mockCartItems[0].modelId } })
-      const manufacturerId = 'manufacturer-1'; // Mocked from DB query
+      const manufacturerId = "manufacturer-1"; // Mocked from DB query
 
       // ASSERT: Should have manufacturerId
       expect(manufacturerId).toBeTruthy();
-      expect(typeof manufacturerId).toBe('string');
+      expect(typeof manufacturerId).toBe("string");
       expect(manufacturerId).toHaveLength(EXPECTED_MANUFACTURER_ID_LENGTH);
     });
 
-    it('should throw error if model not found', () => {
+    it("should throw error if model not found", () => {
       // ARRANGE: Invalid model ID
-      const invalidModelId = 'non-existent-model';
+      const invalidModelId = "non-existent-model";
 
       // ACT & ASSERT: Should throw error when model doesn't exist
       expect(() => {
@@ -275,12 +283,12 @@ describe('Quote Generation Integration (US4-T054)', () => {
         if (!model) {
           throw new Error(`Model with ID ${invalidModelId} not found`);
         }
-      }).toThrow('Model with ID non-existent-model not found');
+      }).toThrow("Model with ID non-existent-model not found");
     });
   });
 
-  describe('Server Action Input Validation', () => {
-    it('should accept valid project details and cart items', () => {
+  describe("Server Action Input Validation", () => {
+    it("should accept valid project details and cart items", () => {
       // ARRANGE: Valid input
       const input = {
         cartItems: mockCartItems,
@@ -304,9 +312,12 @@ describe('Quote Generation Integration (US4-T054)', () => {
       expect(hasRequiredProjectFields).toBe(true);
     });
 
-    it('should reject input with missing project details', () => {
+    it("should reject input with missing project details", () => {
       // ARRANGE: Invalid input (missing projectDetails)
-      const invalidInput: Partial<{ cartItems: typeof mockCartItems; projectDetails: typeof mockProjectDetails }> = {
+      const invalidInput: Partial<{
+        cartItems: typeof mockCartItems;
+        projectDetails: typeof mockProjectDetails;
+      }> = {
         cartItems: mockCartItems,
         // Missing: projectDetails
       };
@@ -318,7 +329,7 @@ describe('Quote Generation Integration (US4-T054)', () => {
       expect(hasProjectDetails).toBe(false);
     });
 
-    it('should reject input with empty cart items', () => {
+    it("should reject input with empty cart items", () => {
       // ARRANGE: Invalid input (empty cartItems)
       const invalidInput = {
         cartItems: [],

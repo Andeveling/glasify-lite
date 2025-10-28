@@ -7,15 +7,18 @@
  * @module tests/unit/hooks/use-debounced-cart-update
  */
 
-import { act, renderHook, waitFor } from '@testing-library/react';
-import { useEffect, useRef } from 'react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { act, renderHook, waitFor } from "@testing-library/react";
+import { useEffect, useRef } from "react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // ============================================================================
 // Mock Hook Implementation (to be created in src/)
 // ============================================================================
 
-type DebouncedUpdateFn = (itemId: string, updates: { name?: string; quantity?: number }) => void;
+type DebouncedUpdateFn = (
+  itemId: string,
+  updates: { name?: string; quantity?: number }
+) => void;
 
 /**
  * Debounced cart update hook
@@ -61,7 +64,7 @@ function useDebouncedCartUpdate(updateFn: DebouncedUpdateFn, delayMs = 300) {
 // Unit Tests
 // ============================================================================
 
-describe('useDebouncedCartUpdate', () => {
+describe("useDebouncedCartUpdate", () => {
   beforeEach(() => {
     vi.useFakeTimers();
   });
@@ -71,17 +74,19 @@ describe('useDebouncedCartUpdate', () => {
     vi.useRealTimers();
   });
 
-  it('should debounce rapid updates', async () => {
+  it("should debounce rapid updates", async () => {
     const mockUpdate = vi.fn();
-    const { result } = renderHook(() => useDebouncedCartUpdate(mockUpdate, 300));
+    const { result } = renderHook(() =>
+      useDebouncedCartUpdate(mockUpdate, 300)
+    );
 
     // Simulate rapid typing (3 keystrokes within debounce window)
     act(() => {
-      result.current.debouncedUpdate('item-1', { name: 'V' });
+      result.current.debouncedUpdate("item-1", { name: "V" });
       vi.advanceTimersByTime(50);
-      result.current.debouncedUpdate('item-1', { name: 'VE' });
+      result.current.debouncedUpdate("item-1", { name: "VE" });
       vi.advanceTimersByTime(50);
-      result.current.debouncedUpdate('item-1', { name: 'VEK' });
+      result.current.debouncedUpdate("item-1", { name: "VEK" });
     });
 
     // Should not have called update yet
@@ -95,21 +100,23 @@ describe('useDebouncedCartUpdate', () => {
     // Should have called update only once with final value
     await waitFor(() => {
       expect(mockUpdate).toHaveBeenCalledTimes(1);
-      expect(mockUpdate).toHaveBeenCalledWith('item-1', { name: 'VEK' });
+      expect(mockUpdate).toHaveBeenCalledWith("item-1", { name: "VEK" });
     });
   });
 
-  it('should debounce quantity spinner updates', async () => {
+  it("should debounce quantity spinner updates", async () => {
     const mockUpdate = vi.fn();
-    const { result } = renderHook(() => useDebouncedCartUpdate(mockUpdate, 300));
+    const { result } = renderHook(() =>
+      useDebouncedCartUpdate(mockUpdate, 300)
+    );
 
     // Simulate rapid quantity changes (user holding + button)
     act(() => {
-      result.current.debouncedUpdate('item-2', { quantity: 1 });
+      result.current.debouncedUpdate("item-2", { quantity: 1 });
       vi.advanceTimersByTime(100);
-      result.current.debouncedUpdate('item-2', { quantity: 2 });
+      result.current.debouncedUpdate("item-2", { quantity: 2 });
       vi.advanceTimersByTime(100);
-      result.current.debouncedUpdate('item-2', { quantity: 3 });
+      result.current.debouncedUpdate("item-2", { quantity: 3 });
     });
 
     // Should not have called update yet
@@ -123,19 +130,21 @@ describe('useDebouncedCartUpdate', () => {
     // Should have called update only once with final quantity
     await waitFor(() => {
       expect(mockUpdate).toHaveBeenCalledTimes(1);
-      expect(mockUpdate).toHaveBeenCalledWith('item-2', { quantity: 3 });
+      expect(mockUpdate).toHaveBeenCalledWith("item-2", { quantity: 3 });
     });
   });
 
-  it('should handle updates to different items independently', async () => {
+  it("should handle updates to different items independently", async () => {
     const mockUpdate = vi.fn();
-    const { result } = renderHook(() => useDebouncedCartUpdate(mockUpdate, 300));
+    const { result } = renderHook(() =>
+      useDebouncedCartUpdate(mockUpdate, 300)
+    );
 
     // Update two different items
     act(() => {
-      result.current.debouncedUpdate('item-1', { name: 'Item A' });
+      result.current.debouncedUpdate("item-1", { name: "Item A" });
       vi.advanceTimersByTime(150);
-      result.current.debouncedUpdate('item-2', { quantity: 5 });
+      result.current.debouncedUpdate("item-2", { quantity: 5 });
     });
 
     // Advance past first item's delay
@@ -152,13 +161,15 @@ describe('useDebouncedCartUpdate', () => {
     // This test documents current behavior - consider if per-item debounce needed
   });
 
-  it('should allow immediate flush', () => {
+  it("should allow immediate flush", () => {
     const mockUpdate = vi.fn();
-    const { result } = renderHook(() => useDebouncedCartUpdate(mockUpdate, 300));
+    const { result } = renderHook(() =>
+      useDebouncedCartUpdate(mockUpdate, 300)
+    );
 
     // Start an update
     act(() => {
-      result.current.debouncedUpdate('item-1', { name: 'VEKA-001' });
+      result.current.debouncedUpdate("item-1", { name: "VEKA-001" });
     });
 
     // Flush immediately (e.g., on blur or explicit save)
@@ -177,13 +188,15 @@ describe('useDebouncedCartUpdate', () => {
     expect(mockUpdate).not.toHaveBeenCalled();
   });
 
-  it('should cleanup pending updates on unmount', () => {
+  it("should cleanup pending updates on unmount", () => {
     const mockUpdate = vi.fn();
-    const { result, unmount } = renderHook(() => useDebouncedCartUpdate(mockUpdate, 300));
+    const { result, unmount } = renderHook(() =>
+      useDebouncedCartUpdate(mockUpdate, 300)
+    );
 
     // Start an update
     act(() => {
-      result.current.debouncedUpdate('item-1', { name: 'Test' });
+      result.current.debouncedUpdate("item-1", { name: "Test" });
     });
 
     // Unmount before debounce completes
@@ -198,12 +211,12 @@ describe('useDebouncedCartUpdate', () => {
     expect(mockUpdate).not.toHaveBeenCalled();
   });
 
-  it('should use default delay of 300ms when not specified', async () => {
+  it("should use default delay of 300ms when not specified", async () => {
     const mockUpdate = vi.fn();
     const { result } = renderHook(() => useDebouncedCartUpdate(mockUpdate)); // No delay param
 
     act(() => {
-      result.current.debouncedUpdate('item-1', { name: 'Test' });
+      result.current.debouncedUpdate("item-1", { name: "Test" });
     });
 
     // Should not fire before 300ms
@@ -222,12 +235,14 @@ describe('useDebouncedCartUpdate', () => {
     });
   });
 
-  it('should allow custom delay', async () => {
+  it("should allow custom delay", async () => {
     const mockUpdate = vi.fn();
-    const { result } = renderHook(() => useDebouncedCartUpdate(mockUpdate, 500)); // Custom 500ms
+    const { result } = renderHook(() =>
+      useDebouncedCartUpdate(mockUpdate, 500)
+    ); // Custom 500ms
 
     act(() => {
-      result.current.debouncedUpdate('item-1', { name: 'Test' });
+      result.current.debouncedUpdate("item-1", { name: "Test" });
     });
 
     // Should not fire before 500ms
@@ -246,13 +261,18 @@ describe('useDebouncedCartUpdate', () => {
     });
   });
 
-  it('should handle simultaneous name and quantity updates', async () => {
+  it("should handle simultaneous name and quantity updates", async () => {
     const mockUpdate = vi.fn();
-    const { result } = renderHook(() => useDebouncedCartUpdate(mockUpdate, 300));
+    const { result } = renderHook(() =>
+      useDebouncedCartUpdate(mockUpdate, 300)
+    );
 
     // User edits both name and quantity
     act(() => {
-      result.current.debouncedUpdate('item-1', { name: 'VEKA-001', quantity: 5 });
+      result.current.debouncedUpdate("item-1", {
+        name: "VEKA-001",
+        quantity: 5,
+      });
     });
 
     act(() => {
@@ -261,17 +281,22 @@ describe('useDebouncedCartUpdate', () => {
 
     await waitFor(() => {
       expect(mockUpdate).toHaveBeenCalledTimes(1);
-      expect(mockUpdate).toHaveBeenCalledWith('item-1', { name: 'VEKA-001', quantity: 5 });
+      expect(mockUpdate).toHaveBeenCalledWith("item-1", {
+        name: "VEKA-001",
+        quantity: 5,
+      });
     });
   });
 
-  it('should cancel previous update when new update queued', async () => {
+  it("should cancel previous update when new update queued", async () => {
     const mockUpdate = vi.fn();
-    const { result } = renderHook(() => useDebouncedCartUpdate(mockUpdate, 300));
+    const { result } = renderHook(() =>
+      useDebouncedCartUpdate(mockUpdate, 300)
+    );
 
     // First update
     act(() => {
-      result.current.debouncedUpdate('item-1', { name: 'Initial' });
+      result.current.debouncedUpdate("item-1", { name: "Initial" });
     });
 
     // Wait partway through debounce
@@ -281,7 +306,7 @@ describe('useDebouncedCartUpdate', () => {
 
     // Second update (should cancel first)
     act(() => {
-      result.current.debouncedUpdate('item-1', { name: 'Final' });
+      result.current.debouncedUpdate("item-1", { name: "Final" });
     });
 
     // Advance time
@@ -292,7 +317,7 @@ describe('useDebouncedCartUpdate', () => {
     // Should only call with final value, not initial
     await waitFor(() => {
       expect(mockUpdate).toHaveBeenCalledTimes(1);
-      expect(mockUpdate).toHaveBeenCalledWith('item-1', { name: 'Final' });
+      expect(mockUpdate).toHaveBeenCalledWith("item-1", { name: "Final" });
     });
   });
 });

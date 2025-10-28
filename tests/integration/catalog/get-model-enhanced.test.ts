@@ -1,14 +1,14 @@
-import { describe, expect, it } from 'vitest';
-import { appRouter } from '../../../src/server/api/root';
-import { db } from '../../../src/server/db';
+import { describe, expect, it } from "vitest";
+import { appRouter } from "../../../src/server/api/root";
+import { db } from "../../../src/server/db";
 
 /**
  * Integration tests for enhanced catalog queries with ProfileSupplier.materialType
  * These tests verify the end-to-end data flow from database to tRPC response
  */
-describe('Enhanced Catalog Model Query Integration', () => {
-  describe('get-model-by-id with ProfileSupplier.materialType', () => {
-    it('should include materialType in profileSupplier response', async () => {
+describe("Enhanced Catalog Model Query Integration", () => {
+  describe("get-model-by-id with ProfileSupplier.materialType", () => {
+    it("should include materialType in profileSupplier response", async () => {
       // Create tRPC caller
       const caller = appRouter.createCaller({ db, session: null });
 
@@ -28,7 +28,7 @@ describe('Enhanced Catalog Model Query Integration', () => {
           profileSupplier: {
             isNot: null,
           },
-          status: 'published',
+          status: "published",
         },
       });
 
@@ -40,7 +40,7 @@ describe('Enhanced Catalog Model Query Integration', () => {
       }
 
       // Call the tRPC query
-      const result = await caller.catalog['get-model-by-id']({
+      const result = await caller.catalog["get-model-by-id"]({
         modelId: modelWithSupplier.id,
       });
 
@@ -55,15 +55,19 @@ describe('Enhanced Catalog Model Query Integration', () => {
 
       if (result.profileSupplier) {
         expect(result.profileSupplier.id).toBeDefined();
-        expect(result.profileSupplier.name).toBe(modelWithSupplier.profileSupplier?.name);
+        expect(result.profileSupplier.name).toBe(
+          modelWithSupplier.profileSupplier?.name
+        );
         expect(result.profileSupplier.materialType).toBeDefined();
 
         // Verify materialType is a valid enum value
-        expect(['PVC', 'ALUMINUM', 'WOOD', 'MIXED']).toContain(result.profileSupplier.materialType);
+        expect(["PVC", "ALUMINUM", "WOOD", "MIXED"]).toContain(
+          result.profileSupplier.materialType
+        );
       }
     });
 
-    it('should handle models without profileSupplier gracefully', async () => {
+    it("should handle models without profileSupplier gracefully", async () => {
       const caller = appRouter.createCaller({ db, session: null });
 
       // Find a model without a profile supplier
@@ -73,7 +77,7 @@ describe('Enhanced Catalog Model Query Integration', () => {
         },
         where: {
           profileSupplierId: null,
-          status: 'published',
+          status: "published",
         },
       });
 
@@ -83,7 +87,7 @@ describe('Enhanced Catalog Model Query Integration', () => {
         return;
       }
 
-      const result = await caller.catalog['get-model-by-id']({
+      const result = await caller.catalog["get-model-by-id"]({
         modelId: modelWithoutSupplier.id,
       });
 
@@ -91,7 +95,7 @@ describe('Enhanced Catalog Model Query Integration', () => {
       expect(result.profileSupplier).toBeNull();
     });
 
-    it('should validate materialType enum values from database', async () => {
+    it("should validate materialType enum values from database", async () => {
       const caller = appRouter.createCaller({ db, session: null });
 
       // Get all published models with suppliers
@@ -109,7 +113,7 @@ describe('Enhanced Catalog Model Query Integration', () => {
           profileSupplier: {
             isNot: null,
           },
-          status: 'published',
+          status: "published",
         },
       });
 
@@ -120,27 +124,31 @@ describe('Enhanced Catalog Model Query Integration', () => {
 
       // Verify each model returns valid materialType via tRPC
       for (const model of modelsWithSuppliers) {
-        const result = await caller.catalog['get-model-by-id']({
+        const result = await caller.catalog["get-model-by-id"]({
           modelId: model.id,
         });
 
         expect(result.profileSupplier).not.toBeNull();
 
         if (result.profileSupplier) {
-          expect(['PVC', 'ALUMINUM', 'WOOD', 'MIXED']).toContain(result.profileSupplier.materialType);
+          expect(["PVC", "ALUMINUM", "WOOD", "MIXED"]).toContain(
+            result.profileSupplier.materialType
+          );
 
           // Verify it matches database value
-          expect(result.profileSupplier.materialType).toBe(model.profileSupplier?.materialType);
+          expect(result.profileSupplier.materialType).toBe(
+            model.profileSupplier?.materialType
+          );
         }
       }
     });
 
-    it('should maintain backward compatibility with existing fields', async () => {
+    it("should maintain backward compatibility with existing fields", async () => {
       const caller = appRouter.createCaller({ db, session: null });
 
       const anyModel = await db.model.findFirst({
         select: { id: true },
-        where: { status: 'published' },
+        where: { status: "published" },
       });
 
       if (!anyModel) {
@@ -148,7 +156,7 @@ describe('Enhanced Catalog Model Query Integration', () => {
         return;
       }
 
-      const result = await caller.catalog['get-model-by-id']({
+      const result = await caller.catalog["get-model-by-id"]({
         modelId: anyModel.id,
       });
 
@@ -164,21 +172,21 @@ describe('Enhanced Catalog Model Query Integration', () => {
       expect(result.maxHeightMm).toBeDefined();
       expect(result.compatibleGlassTypeIds).toBeDefined();
       expect(Array.isArray(result.compatibleGlassTypeIds)).toBe(true);
-      expect(result.status).toBe('published');
+      expect(result.status).toBe("published");
       expect(result.createdAt).toBeDefined();
       expect(result.updatedAt).toBeDefined();
 
       // profileSupplier can be null or object - both are valid
-      expect([null, 'object']).toContain(typeof result.profileSupplier);
+      expect([null, "object"]).toContain(typeof result.profileSupplier);
     });
 
-    it('should only return published models', async () => {
+    it("should only return published models", async () => {
       const caller = appRouter.createCaller({ db, session: null });
 
       // Try to get a draft model (if one exists)
       const draftModel = await db.model.findFirst({
         select: { id: true },
-        where: { status: 'draft' },
+        where: { status: "draft" },
       });
 
       if (!draftModel) {
@@ -189,15 +197,15 @@ describe('Enhanced Catalog Model Query Integration', () => {
 
       // Should throw error when trying to get draft model
       await expect(
-        caller.catalog['get-model-by-id']({
+        caller.catalog["get-model-by-id"]({
           modelId: draftModel.id,
         })
       ).rejects.toThrow(/no existe o no está disponible/);
     });
   });
 
-  describe('Material Type Data Quality', () => {
-    it('should verify active suppliers have materialType populated', async () => {
+  describe("Material Type Data Quality", () => {
+    it("should verify active suppliers have materialType populated", async () => {
       const activeSuppliers = await db.profileSupplier.findMany({
         select: {
           id: true,
@@ -210,11 +218,13 @@ describe('Enhanced Catalog Model Query Integration', () => {
       // All active suppliers should have materialType (validates Phase 1 T001)
       for (const supplier of activeSuppliers) {
         expect(supplier.materialType).not.toBeNull();
-        expect(['PVC', 'ALUMINUM', 'WOOD', 'MIXED']).toContain(supplier.materialType);
+        expect(["PVC", "ALUMINUM", "WOOD", "MIXED"]).toContain(
+          supplier.materialType
+        );
       }
     });
 
-    it('should verify models with suppliers can access materialType', async () => {
+    it("should verify models with suppliers can access materialType", async () => {
       const modelsWithSuppliers = await db.model.findMany({
         select: {
           id: true,
@@ -231,7 +241,7 @@ describe('Enhanced Catalog Model Query Integration', () => {
           profileSupplier: {
             isNot: null,
           },
-          status: 'published',
+          status: "published",
         },
       });
 
@@ -241,7 +251,9 @@ describe('Enhanced Catalog Model Query Integration', () => {
 
         if (model.profileSupplier) {
           expect(model.profileSupplier.materialType).toBeDefined();
-          expect(['PVC', 'ALUMINUM', 'WOOD', 'MIXED']).toContain(model.profileSupplier.materialType);
+          expect(["PVC", "ALUMINUM", "WOOD", "MIXED"]).toContain(
+            model.profileSupplier.materialType
+          );
         }
       }
     });

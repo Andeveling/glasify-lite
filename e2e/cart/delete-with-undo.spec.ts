@@ -7,7 +7,7 @@
  * @module e2e/cart/delete-with-undo
  */
 
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
 // ============================================================================
 // Constants
@@ -25,29 +25,29 @@ const BASE_WIDTH = 1000; // mm
 const BASE_HEIGHT = 1500; // mm
 const WIDTH_INCREMENT = 100; // mm
 
-test.describe('Cart - Delete with Undo UX', () => {
+test.describe("Cart - Delete with Undo UX", () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to catalog and add items to cart
-    await page.goto('/catalog');
+    await page.goto("/catalog");
 
     // Add first item to cart
     const firstModel = page.locator('[data-testid^="model-card-"]').first();
     await firstModel.click();
 
     // Configure and add to cart
-    await page.fill('input[name="widthMm"]', '1000');
-    await page.fill('input[name="heightMm"]', '1500');
+    await page.fill('input[name="widthMm"]', "1000");
+    await page.fill('input[name="heightMm"]', "1500");
     await page.click('button:has-text("Agregar al carrito")');
 
     // Wait for toast confirmation
-    await expect(page.locator('.sonner-toast')).toBeVisible();
+    await expect(page.locator(".sonner-toast")).toBeVisible();
     await page.waitForTimeout(TOAST_DISAPPEAR_TIMEOUT);
 
     // Navigate to cart
-    await page.goto('/cart');
+    await page.goto("/cart");
   });
 
-  test('should show smooth animation when deleting item', async ({ page }) => {
+  test("should show smooth animation when deleting item", async ({ page }) => {
     // Get cart item
     const cartItem = page.locator('[data-testid^="cart-item-"]').first();
 
@@ -67,24 +67,26 @@ test.describe('Cart - Delete with Undo UX', () => {
     await expect(toast).toBeVisible();
   });
 
-  test('should display toast with undo button', async ({ page }) => {
+  test("should display toast with undo button", async ({ page }) => {
     // Click delete on first item
     const deleteButton = page.locator('[data-testid="remove-button"]').first();
     await deleteButton.click();
 
     // Verify toast content
-    const toast = page.locator('.sonner-toast');
-    await expect(toast).toContainText('Artículo eliminado');
-    await expect(toast).toContainText('eliminado del carrito');
+    const toast = page.locator(".sonner-toast");
+    await expect(toast).toContainText("Artículo eliminado");
+    await expect(toast).toContainText("eliminado del carrito");
 
     // Verify undo button exists
     const undoButton = toast.locator('button:has-text("Deshacer")');
     await expect(undoButton).toBeVisible();
   });
 
-  test('should restore item when clicking undo', async ({ page }) => {
+  test("should restore item when clicking undo", async ({ page }) => {
     // Get initial items count
-    const initialCount = await page.locator('[data-testid^="cart-item-"]').count();
+    const initialCount = await page
+      .locator('[data-testid^="cart-item-"]')
+      .count();
 
     // Get item name before deletion
     const itemName = await page
@@ -100,30 +102,44 @@ test.describe('Cart - Delete with Undo UX', () => {
     await page.waitForTimeout(ANIMATION_DURATION);
 
     // Verify item count decreased
-    await expect(page.locator('[data-testid^="cart-item-"]')).toHaveCount(initialCount - 1);
+    await expect(page.locator('[data-testid^="cart-item-"]')).toHaveCount(
+      initialCount - 1
+    );
 
     // Click undo
-    const undoButton = page.locator('.sonner-toast button:has-text("Deshacer")');
+    const undoButton = page.locator(
+      '.sonner-toast button:has-text("Deshacer")'
+    );
     await undoButton.click();
 
     // Wait for restore
     await page.waitForTimeout(RESTORE_DELAY);
 
     // Verify item is restored
-    await expect(page.locator('[data-testid^="cart-item-"]')).toHaveCount(initialCount);
+    await expect(page.locator('[data-testid^="cart-item-"]')).toHaveCount(
+      initialCount
+    );
 
     // Verify restored item has correct name
     const restoredItem = page.locator('[data-testid^="cart-item-"]').first();
-    await expect(restoredItem.locator('[aria-label="Nombre del artículo"]')).toContainText(itemName || '');
+    await expect(
+      restoredItem.locator('[aria-label="Nombre del artículo"]')
+    ).toContainText(itemName || "");
 
     // Verify restore confirmation toast
-    const restoreToast = page.locator('.sonner-toast:has-text("Artículo restaurado")');
+    const restoreToast = page.locator(
+      '.sonner-toast:has-text("Artículo restaurado")'
+    );
     await expect(restoreToast).toBeVisible();
   });
 
-  test('should permanently delete item after undo timeout', async ({ page }) => {
+  test("should permanently delete item after undo timeout", async ({
+    page,
+  }) => {
     // Get initial items count
-    const initialCount = await page.locator('[data-testid^="cart-item-"]').count();
+    const initialCount = await page
+      .locator('[data-testid^="cart-item-"]')
+      .count();
 
     // Delete item
     await page.locator('[data-testid="remove-button"]').first().click();
@@ -132,34 +148,44 @@ test.describe('Cart - Delete with Undo UX', () => {
     await page.waitForTimeout(UNDO_TIMEOUT);
 
     // Verify item is still removed
-    await expect(page.locator('[data-testid^="cart-item-"]')).toHaveCount(initialCount - 1);
+    await expect(page.locator('[data-testid^="cart-item-"]')).toHaveCount(
+      initialCount - 1
+    );
 
     // Verify toast disappeared
     const toast = page.locator('.sonner-toast:has-text("Artículo eliminado")');
     await expect(toast).not.toBeVisible();
   });
 
-  test('should show success toast when updating quantity', async ({ page }) => {
+  test("should show success toast when updating quantity", async ({ page }) => {
     // Click increase quantity
-    const increaseButton = page.locator('[aria-label="Aumentar cantidad"]').first();
+    const increaseButton = page
+      .locator('[aria-label="Aumentar cantidad"]')
+      .first();
     await increaseButton.click();
 
     // Verify success toast
-    const toast = page.locator('.sonner-toast:has-text("Cantidad actualizada")');
+    const toast = page.locator(
+      '.sonner-toast:has-text("Cantidad actualizada")'
+    );
     await expect(toast).toBeVisible();
 
     // Verify toast description shows quantity change
-    await expect(toast).toContainText('→');
+    await expect(toast).toContainText("→");
   });
 
-  test('should show success toast when updating name', async ({ page }) => {
+  test("should show success toast when updating name", async ({ page }) => {
     // Click on name to edit
-    const nameButton = page.locator('[aria-label="Nombre del artículo"]').first();
+    const nameButton = page
+      .locator('[aria-label="Nombre del artículo"]')
+      .first();
     await nameButton.click();
 
     // Edit name
-    const nameInput = page.locator('input[aria-label="Editar nombre del artículo"]');
-    await nameInput.fill('Ventana Principal');
+    const nameInput = page.locator(
+      'input[aria-label="Editar nombre del artículo"]'
+    );
+    await nameInput.fill("Ventana Principal");
 
     // Save (blur)
     await nameInput.blur();
@@ -169,26 +195,31 @@ test.describe('Cart - Delete with Undo UX', () => {
     await expect(toast).toBeVisible();
 
     // Verify toast shows old and new names
-    await expect(toast).toContainText('→');
+    await expect(toast).toContainText("→");
   });
 
-  test('should handle multiple rapid deletions correctly', async ({ page }) => {
+  test("should handle multiple rapid deletions correctly", async ({ page }) => {
     // Add more items first
-    await page.goto('/catalog');
+    await page.goto("/catalog");
 
     for (let i = 0; i < 2; i++) {
       const model = page.locator('[data-testid^="model-card-"]').nth(i);
       await model.click();
-      await page.fill('input[name="widthMm"]', `${BASE_WIDTH + i * WIDTH_INCREMENT}`);
+      await page.fill(
+        'input[name="widthMm"]',
+        `${BASE_WIDTH + i * WIDTH_INCREMENT}`
+      );
       await page.fill('input[name="heightMm"]', `${BASE_HEIGHT}`);
       await page.click('button:has-text("Agregar al carrito")');
       await page.waitForTimeout(ADD_ITEM_DELAY);
     }
 
-    await page.goto('/cart');
+    await page.goto("/cart");
 
     // Get initial count
-    const initialCount = await page.locator('[data-testid^="cart-item-"]').count();
+    const initialCount = await page
+      .locator('[data-testid^="cart-item-"]')
+      .count();
 
     // Delete multiple items rapidly
     await page.locator('[data-testid="remove-button"]').first().click();
@@ -201,15 +232,19 @@ test.describe('Cart - Delete with Undo UX', () => {
 
     // Verify correct number of items removed
     await page.waitForTimeout(RESTORE_DELAY);
-    await expect(page.locator('[data-testid^="cart-item-"]')).toHaveCount(initialCount - 2);
+    await expect(page.locator('[data-testid^="cart-item-"]')).toHaveCount(
+      initialCount - 2
+    );
   });
 
-  test('should maintain visual state during updates', async ({ page }) => {
+  test("should maintain visual state during updates", async ({ page }) => {
     // Get cart item
     const cartItem = page.locator('[data-testid^="cart-item-"]').first();
 
     // Verify default opacity (100%)
-    const initialOpacity = await cartItem.evaluate((el) => window.getComputedStyle(el).opacity);
+    const initialOpacity = await cartItem.evaluate(
+      (el) => window.getComputedStyle(el).opacity
+    );
     expect(Number.parseFloat(initialOpacity)).toBeGreaterThan(FULL_OPACITY);
 
     // Click quantity button
@@ -221,7 +256,9 @@ test.describe('Cart - Delete with Undo UX', () => {
 
     // After transition completes, opacity should be back to 100%
     await page.waitForTimeout(ANIMATION_DURATION);
-    const finalOpacity = await cartItem.evaluate((el) => window.getComputedStyle(el).opacity);
+    const finalOpacity = await cartItem.evaluate(
+      (el) => window.getComputedStyle(el).opacity
+    );
     expect(Number.parseFloat(finalOpacity)).toBeGreaterThan(FULL_OPACITY);
   });
 });

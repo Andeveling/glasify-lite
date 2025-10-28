@@ -8,23 +8,23 @@
  * @module StatusConfig
  */
 
-import type { Quote } from '@prisma/client';
-import { FileText, type LucideIcon, Send, XCircle } from 'lucide-react';
+import type { Quote } from "@prisma/client";
+import { FileText, type LucideIcon, Send, XCircle } from "lucide-react";
 
 /**
  * Quote status type from Prisma schema
  */
-export type QuoteStatus = Quote['status'];
+export type QuoteStatus = Quote["status"];
 
 /**
  * Badge variant types (Shadcn/ui Badge component)
  */
-export type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline';
+export type BadgeVariant = "default" | "secondary" | "destructive" | "outline";
 
 /**
  * CTA action types
  */
-export type CTAAction = 'edit' | 'view' | 'duplicate' | 'resend';
+export type CTAAction = "edit" | "view" | "duplicate" | "resend";
 
 /**
  * Call-to-action configuration
@@ -68,42 +68,42 @@ export interface StatusConfig {
  */
 export const STATUS_CONFIG: Record<QuoteStatus, StatusConfig> = {
   canceled: {
-    color: 'destructive', // Red - negative state
+    color: "destructive", // Red - negative state
     cta: {
-      action: 'duplicate',
-      label: 'Duplicar',
+      action: "duplicate",
+      label: "Duplicar",
     },
     icon: XCircle,
-    iconName: 'x-circle',
-    label: 'Cancelada',
-    tooltip: 'Esta cotización fue cancelada y no está activa.',
-    variant: 'destructive',
+    iconName: "x-circle",
+    label: "Cancelada",
+    tooltip: "Esta cotización fue cancelada y no está activa.",
+    variant: "destructive",
   },
   draft: {
-    color: 'secondary', // Yellow/Amber - pending action
+    color: "secondary", // Yellow/Amber - pending action
     cta: {
-      action: 'view',
-      label: 'Ver detalles',
+      action: "view",
+      label: "Ver detalles",
     },
     icon: FileText,
-    iconName: 'file-text',
-    label: 'Borrador',
+    iconName: "file-text",
+    label: "Borrador",
     tooltip:
-      'Esta cotización fue generada desde el carrito y está lista para enviar. Revisa los detalles antes de enviarla.',
-    variant: 'secondary',
+      "Esta cotización fue generada desde el carrito y está lista para enviar. Revisa los detalles antes de enviarla.",
+    variant: "secondary",
   },
 
   sent: {
-    color: 'default', // Blue - informational
+    color: "default", // Blue - informational
     cta: {
-      action: 'view',
-      label: 'Ver detalles',
+      action: "view",
+      label: "Ver detalles",
     },
     icon: Send,
-    iconName: 'send',
-    label: 'Enviada',
-    tooltip: 'Cotización enviada al cliente. Pendiente de respuesta.',
-    variant: 'default',
+    iconName: "send",
+    label: "Enviada",
+    tooltip: "Cotización enviada al cliente. Pendiente de respuesta.",
+    variant: "default",
   },
 };
 
@@ -111,12 +111,12 @@ export const STATUS_CONFIG: Record<QuoteStatus, StatusConfig> = {
  * Default status configuration for unknown/invalid status
  */
 const DEFAULT_STATUS_CONFIG: StatusConfig = {
-  color: 'outline',
+  color: "outline",
   icon: FileText,
-  iconName: 'file-text',
-  label: 'Desconocido',
-  tooltip: 'Estado de cotización desconocido.',
-  variant: 'outline',
+  iconName: "file-text",
+  label: "Desconocido",
+  tooltip: "Estado de cotización desconocido.",
+  variant: "outline",
 };
 
 /**
@@ -133,7 +133,7 @@ const DEFAULT_STATUS_CONFIG: StatusConfig = {
  * ```
  */
 export function getStatusConfig(status: QuoteStatus | string): StatusConfig {
-  if (!status || typeof status !== 'string') {
+  if (!status || typeof status !== "string") {
     return DEFAULT_STATUS_CONFIG;
   }
 
@@ -162,7 +162,9 @@ export function getStatusLabel(status: QuoteStatus | string): string {
  * @param status - Quote status
  * @returns Lucide icon component
  */
-export function getStatusIconComponent(status: QuoteStatus | string): LucideIcon {
+export function getStatusIconComponent(
+  status: QuoteStatus | string
+): LucideIcon {
   return getStatusConfig(status).icon;
 }
 
@@ -227,7 +229,9 @@ export function getStatusColor(status: QuoteStatus | string): BadgeVariant {
  * // { label: 'Continuar editando', action: 'edit' }
  * ```
  */
-export function getStatusCTA(status: QuoteStatus | string): StatusCTA | undefined {
+export function getStatusCTA(
+  status: QuoteStatus | string
+): StatusCTA | undefined {
   return getStatusConfig(status).cta;
 }
 

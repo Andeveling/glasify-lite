@@ -1,18 +1,38 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
-import type { UseFormReturn } from 'react-hook-form';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Icons } from '@/components/ui/icons';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { api } from '@/trpc/react';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import type { UseFormReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Icons } from "@/components/ui/icons";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { api } from "@/trpc/react";
 
 // Constants to avoid magic numbers
 const MIN_DIMENSION = 100;
@@ -29,89 +49,131 @@ const modelFormSchema = z
     accessoryPrice: z.number().min(0).optional().nullable(),
     basePrice: z
       .number()
-      .min(0, 'El precio base debe ser mayor o igual a 0')
-      .max(MAX_PRICE, `El precio base no debe exceder ${MAX_PRICE.toLocaleString()}`),
+      .min(0, "El precio base debe ser mayor o igual a 0")
+      .max(
+        MAX_PRICE,
+        `El precio base no debe exceder ${MAX_PRICE.toLocaleString()}`
+      ),
     compatibleGlassTypeIds: z
-      .array(z.string().cuid('ID del tipo de vidrio debe ser válido'))
-      .min(1, 'Debe seleccionar al menos un tipo de vidrio compatible'),
+      .array(z.string().cuid("ID del tipo de vidrio debe ser válido"))
+      .min(1, "Debe seleccionar al menos un tipo de vidrio compatible"),
     costPerMmHeight: z
       .number()
-      .min(0, 'El costo por mm de altura debe ser mayor o igual a 0')
-      .max(MAX_COST_PER_MM, `El costo por mm de altura no debe exceder ${MAX_COST_PER_MM}`),
+      .min(0, "El costo por mm de altura debe ser mayor o igual a 0")
+      .max(
+        MAX_COST_PER_MM,
+        `El costo por mm de altura no debe exceder ${MAX_COST_PER_MM}`
+      ),
     costPerMmWidth: z
       .number()
-      .min(0, 'El costo por mm de ancho debe ser mayor o igual a 0')
-      .max(MAX_COST_PER_MM, `El costo por mm de ancho no debe exceder ${MAX_COST_PER_MM}`),
+      .min(0, "El costo por mm de ancho debe ser mayor o igual a 0")
+      .max(
+        MAX_COST_PER_MM,
+        `El costo por mm de ancho no debe exceder ${MAX_COST_PER_MM}`
+      ),
     id: z.string().cuid().optional(),
     maxHeightMm: z
       .number()
       .int()
-      .min(MIN_DIMENSION, `La altura máxima debe ser al menos ${MIN_DIMENSION}mm`)
-      .max(MAX_DIMENSION, `La altura máxima no debe exceder ${MAX_DIMENSION}mm`),
+      .min(
+        MIN_DIMENSION,
+        `La altura máxima debe ser al menos ${MIN_DIMENSION}mm`
+      )
+      .max(
+        MAX_DIMENSION,
+        `La altura máxima no debe exceder ${MAX_DIMENSION}mm`
+      ),
     maxWidthMm: z
       .number()
       .int()
-      .min(MIN_DIMENSION, `El ancho máximo debe ser al menos ${MIN_DIMENSION}mm`)
+      .min(
+        MIN_DIMENSION,
+        `El ancho máximo debe ser al menos ${MIN_DIMENSION}mm`
+      )
       .max(MAX_DIMENSION, `El ancho máximo no debe exceder ${MAX_DIMENSION}mm`),
     minHeightMm: z
       .number()
       .int()
-      .min(MIN_DIMENSION, `La altura mínima debe ser al menos ${MIN_DIMENSION}mm`)
-      .max(MAX_DIMENSION, `La altura mínima no debe exceder ${MAX_DIMENSION}mm`),
+      .min(
+        MIN_DIMENSION,
+        `La altura mínima debe ser al menos ${MIN_DIMENSION}mm`
+      )
+      .max(
+        MAX_DIMENSION,
+        `La altura mínima no debe exceder ${MAX_DIMENSION}mm`
+      ),
     minWidthMm: z
       .number()
       .int()
-      .min(MIN_DIMENSION, `El ancho mínimo debe ser al menos ${MIN_DIMENSION}mm`)
+      .min(
+        MIN_DIMENSION,
+        `El ancho mínimo debe ser al menos ${MIN_DIMENSION}mm`
+      )
       .max(MAX_DIMENSION, `El ancho mínimo no debe exceder ${MAX_DIMENSION}mm`),
     name: z
       .string()
-      .min(1, 'El nombre del modelo es requerido')
-      .max(MAX_NAME_LENGTH, `El nombre no debe exceder ${MAX_NAME_LENGTH} caracteres`),
-    profileSupplierId: z.string().cuid('ID del proveedor de perfiles debe ser válido').optional().nullable(),
-    status: z.enum(['draft', 'published']),
+      .min(1, "El nombre del modelo es requerido")
+      .max(
+        MAX_NAME_LENGTH,
+        `El nombre no debe exceder ${MAX_NAME_LENGTH} caracteres`
+      ),
+    profileSupplierId: z
+      .string()
+      .cuid("ID del proveedor de perfiles debe ser válido")
+      .optional()
+      .nullable(),
+    status: z.enum(["draft", "published"]),
   })
   .refine((data) => data.minWidthMm < data.maxWidthMm, {
-    message: 'El ancho mínimo debe ser menor al ancho máximo',
-    path: ['maxWidthMm'],
+    message: "El ancho mínimo debe ser menor al ancho máximo",
+    path: ["maxWidthMm"],
   })
   .refine((data) => data.minHeightMm < data.maxHeightMm, {
-    message: 'La altura mínima debe ser menor a la altura máxima',
-    path: ['maxHeightMm'],
+    message: "La altura mínima debe ser menor a la altura máxima",
+    path: ["maxHeightMm"],
   });
 
 type ModelFormData = z.infer<typeof modelFormSchema>;
 
 type ModelFormProps = {
   modelData?: Partial<ModelFormData>;
-  onSuccess?: (result: { modelId: string; status: 'draft' | 'published' }) => void;
+  onSuccess?: (result: {
+    modelId: string;
+    status: "draft" | "published";
+  }) => void;
   onCancel?: () => void;
 };
 
 type ModelFormApi = UseFormReturn<ModelFormData, unknown, ModelFormData>;
 
-type ModelFormControllerArgs = Pick<ModelFormProps, 'modelData' | 'onSuccess'>;
+type ModelFormControllerArgs = Pick<ModelFormProps, "modelData" | "onSuccess">;
 
 // Mock data for development - in a real app this would come from the API
 const MOCK_GLASS_TYPES = [
-  { id: 'cm1glass123456789abcdef01', name: 'Vidrio Templado 6mm' },
-  { id: 'cm1glass234567890bcdef012', name: 'Vidrio Laminado 8mm' },
-  { id: 'cm1glass345678901cdef0123', name: 'Doble Vidriado Hermético' },
+  { id: "cm1glass123456789abcdef01", name: "Vidrio Templado 6mm" },
+  { id: "cm1glass234567890bcdef012", name: "Vidrio Laminado 8mm" },
+  { id: "cm1glass345678901cdef0123", name: "Doble Vidriado Hermético" },
 ];
 
-function useModelFormController({ modelData, onSuccess }: ModelFormControllerArgs) {
+function useModelFormController({
+  modelData,
+  onSuccess,
+}: ModelFormControllerArgs) {
   const [isLoading, setIsLoading] = useState(false);
 
   // Fetch profile suppliers from tRPC
-  const { data: profileSuppliers, isLoading: isLoadingSuppliers } = api.admin['profile-supplier'].list.useQuery({
-    isActive: 'active',
+  const { data: profileSuppliers, isLoading: isLoadingSuppliers } = api.admin[
+    "profile-supplier"
+  ].list.useQuery({
+    isActive: "active",
     limit: 100,
     page: 1,
-    sortBy: 'name',
-    sortOrder: 'asc',
+    sortBy: "name",
+    sortOrder: "asc",
   });
 
   // Use the actual admin.model-upsert mutation
-  const modelUpsertMutation = api.admin['model-upsert'].useMutation({
+  const modelUpsertMutation = api.admin["model-upsert"].useMutation({
     onError: () => {
       setIsLoading(false);
     },
@@ -134,9 +196,9 @@ function useModelFormController({ modelData, onSuccess }: ModelFormControllerArg
       maxWidthMm: modelData?.maxWidthMm ?? DEFAULT_MAX_DIMENSION,
       minHeightMm: modelData?.minHeightMm ?? DEFAULT_MIN_DIMENSION,
       minWidthMm: modelData?.minWidthMm ?? DEFAULT_MIN_DIMENSION,
-      name: modelData?.name ?? '',
+      name: modelData?.name ?? "",
       profileSupplierId: modelData?.profileSupplierId ?? null,
-      status: modelData?.status ?? 'draft',
+      status: modelData?.status ?? "draft",
     },
     resolver: zodResolver(modelFormSchema),
   });
@@ -164,7 +226,14 @@ function useModelFormController({ modelData, onSuccess }: ModelFormControllerArg
 }
 
 export function ModelForm({ modelData, onSuccess, onCancel }: ModelFormProps) {
-  const { form, handleSubmit, isEditing, isLoading, isLoadingSuppliers, profileSuppliers } = useModelFormController({
+  const {
+    form,
+    handleSubmit,
+    isEditing,
+    isLoading,
+    isLoadingSuppliers,
+    profileSuppliers,
+  } = useModelFormController({
     modelData,
     onSuccess,
   });
@@ -172,17 +241,23 @@ export function ModelForm({ modelData, onSuccess, onCancel }: ModelFormProps) {
   return (
     <Card className="w-full max-w-2xl">
       <CardHeader>
-        <CardTitle>{isEditing ? 'Editar Modelo' : 'Crear Nuevo Modelo'}</CardTitle>
+        <CardTitle>
+          {isEditing ? "Editar Modelo" : "Crear Nuevo Modelo"}
+        </CardTitle>
         <CardDescription>
           {isEditing
-            ? 'Modifica los datos del modelo de vidrio existente'
-            : 'Ingresa los datos del nuevo modelo de vidrio'}
+            ? "Modifica los datos del modelo de vidrio existente"
+            : "Ingresa los datos del nuevo modelo de vidrio"}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form className="space-y-6" onSubmit={handleSubmit}>
-            <BasicInfoSection form={form} isLoadingSuppliers={isLoadingSuppliers} profileSuppliers={profileSuppliers} />
+            <BasicInfoSection
+              form={form}
+              isLoadingSuppliers={isLoadingSuppliers}
+              profileSuppliers={profileSuppliers}
+            />
 
             {/* Compatible Glass Types */}
             <GlassTypesSection form={form} />
@@ -195,13 +270,24 @@ export function ModelForm({ modelData, onSuccess, onCancel }: ModelFormProps) {
 
             {/* Form Actions */}
             <div className="flex gap-3 pt-6">
-              <Button className="min-w-[120px]" disabled={isLoading} type="submit">
-                {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
-                {isEditing ? 'Actualizar' : 'Crear'} Modelo
+              <Button
+                className="min-w-[120px]"
+                disabled={isLoading}
+                type="submit"
+              >
+                {isLoading && (
+                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                {isEditing ? "Actualizar" : "Crear"} Modelo
               </Button>
 
               {onCancel && (
-                <Button disabled={isLoading} onClick={onCancel} type="button" variant="outline">
+                <Button
+                  disabled={isLoading}
+                  onClick={onCancel}
+                  type="button"
+                  variant="outline"
+                >
                   Cancelar
                 </Button>
               )}
@@ -235,7 +321,9 @@ function BasicInfoSection({
             <FormControl>
               <Input placeholder="ej. Vidrio Templado 6mm" {...field} />
             </FormControl>
-            <FormDescription>Nombre descriptivo del modelo de vidrio</FormDescription>
+            <FormDescription>
+              Nombre descriptivo del modelo de vidrio
+            </FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -247,11 +335,19 @@ function BasicInfoSection({
         render={({ field }) => (
           <FormItem>
             <FormLabel>Proveedor de Perfiles (Opcional)</FormLabel>
-            <Select disabled={isLoadingSuppliers} onValueChange={field.onChange} value={field.value ?? undefined}>
+            <Select
+              disabled={isLoadingSuppliers}
+              onValueChange={field.onChange}
+              value={field.value ?? undefined}
+            >
               <FormControl>
                 <SelectTrigger>
                   <SelectValue
-                    placeholder={isLoadingSuppliers ? 'Cargando proveedores...' : 'Seleccionar proveedor (opcional)'}
+                    placeholder={
+                      isLoadingSuppliers
+                        ? "Cargando proveedores..."
+                        : "Seleccionar proveedor (opcional)"
+                    }
                   />
                 </SelectTrigger>
               </FormControl>
@@ -264,7 +360,9 @@ function BasicInfoSection({
                 ))}
               </SelectContent>
             </Select>
-            <FormDescription>Proveedor de perfiles para este modelo. Puede dejarse sin asignar.</FormDescription>
+            <FormDescription>
+              Proveedor de perfiles para este modelo. Puede dejarse sin asignar.
+            </FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -295,7 +393,9 @@ function BasicInfoSection({
                 </SelectItem>
               </SelectContent>
             </Select>
-            <FormDescription>Los modelos publicados aparecen en el catálogo público</FormDescription>
+            <FormDescription>
+              Los modelos publicados aparecen en el catálogo público
+            </FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -315,7 +415,10 @@ function GlassTypesSection({ form }: { form: ModelFormApi }) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Tipos de Vidrio</FormLabel>
-            <FormDescription>Selecciona los tipos de vidrio compatibles con este modelo (mínimo 1)</FormDescription>
+            <FormDescription>
+              Selecciona los tipos de vidrio compatibles con este modelo (mínimo
+              1)
+            </FormDescription>
             <div className="grid grid-cols-1 gap-2">
               {MOCK_GLASS_TYPES.map((glassType) => (
                 <label
@@ -328,7 +431,9 @@ function GlassTypesSection({ form }: { form: ModelFormApi }) {
                     onChange={(e) => {
                       const updatedValue = e.target.checked
                         ? [...field.value, glassType.id]
-                        : field.value.filter((id: string) => id !== glassType.id);
+                        : field.value.filter(
+                            (id: string) => id !== glassType.id
+                          );
                       field.onChange(updatedValue);
                     }}
                     type="checkbox"
@@ -456,7 +561,9 @@ function PricingSection({ form }: { form: ModelFormApi }) {
                 onChange={(e) => field.onChange(Number(e.target.value))}
               />
             </FormControl>
-            <FormDescription>Precio fijo base antes de cálculos por dimensión</FormDescription>
+            <FormDescription>
+              Precio fijo base antes de cálculos por dimensión
+            </FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -521,12 +628,14 @@ function PricingSection({ form }: { form: ModelFormApi }) {
                 {...field}
                 onChange={(e) => {
                   const value = e.target.value;
-                  field.onChange(value === '' ? null : Number(value));
+                  field.onChange(value === "" ? null : Number(value));
                 }}
-                value={field.value ?? ''}
+                value={field.value ?? ""}
               />
             </FormControl>
-            <FormDescription>Precio adicional por accesorios incluidos</FormDescription>
+            <FormDescription>
+              Precio adicional por accesorios incluidos
+            </FormDescription>
             <FormMessage />
           </FormItem>
         )}

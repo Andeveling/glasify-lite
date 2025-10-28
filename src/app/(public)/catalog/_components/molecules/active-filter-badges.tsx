@@ -1,9 +1,12 @@
-'use client';
+"use client";
 
-import { buildActiveParameters, type CatalogSortOption } from '@views/catalog/_utils/search-parameters.utils';
-import { X } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import {
+  buildActiveParameters,
+  type CatalogSortOption,
+} from "@views/catalog/_utils/search-parameters.utils";
+import { X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 interface ActiveSearchParametersProps {
   searchQuery: string;
@@ -63,14 +66,20 @@ export function ActiveSearchParameters({
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-muted-foreground text-xs">Parámetros de búsqueda:</span>
+      <span className="text-muted-foreground text-xs">
+        Parámetros de búsqueda:
+      </span>
 
       {activeParameters.map((param) => {
         const Icon = param.icon;
         const handleRemove = handlers[param.key];
 
         return (
-          <Badge className="gap-1.5 pr-1 pl-2" key={param.key} variant="secondary">
+          <Badge
+            className="gap-1.5 pr-1 pl-2"
+            key={param.key}
+            variant="secondary"
+          >
             <Icon className="size-3" />
             <span className="max-w-[200px] truncate">{param.label}</span>
             {handleRemove && (

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Loader2, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { Loader2, Trash2 } from "lucide-react";
+import { useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,8 +11,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 /**
  * Delete Confirmation Dialog Component
@@ -94,7 +94,9 @@ export function DeleteConfirmationDialog({
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
             <Trash2 className="size-5 text-destructive" />
-            {canDelete ? `¿Eliminar ${entityName}?` : `No se puede eliminar ${entityName}`}
+            {canDelete
+              ? `¿Eliminar ${entityName}?`
+              : `No se puede eliminar ${entityName}`}
           </AlertDialogTitle>
           <AlertDialogDescription className="space-y-3 text-left">
             <div>
@@ -104,14 +106,17 @@ export function DeleteConfirmationDialog({
                 </>
               ) : (
                 <>
-                  No puedes eliminar <strong>{entityLabel}</strong> porque tiene dependencias activas.
+                  No puedes eliminar <strong>{entityLabel}</strong> porque tiene
+                  dependencias activas.
                 </>
               )}
             </div>
 
             {hasDependencies && (
               <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3">
-                <div className="mb-2 font-semibold text-destructive text-sm">Dependencias encontradas:</div>
+                <div className="mb-2 font-semibold text-destructive text-sm">
+                  Dependencias encontradas:
+                </div>
                 <ul className="list-disc space-y-1 pl-5 text-sm">
                   {dependencies.map((dep, index) => (
                     <li key={`${dep.entity}-${index}`}>
@@ -120,7 +125,8 @@ export function DeleteConfirmationDialog({
                   ))}
                 </ul>
                 <div className="mt-3 text-muted-foreground text-xs">
-                  Elimina o actualiza estas dependencias antes de eliminar {entityLabel}.
+                  Elimina o actualiza estas dependencias antes de eliminar{" "}
+                  {entityLabel}.
                 </div>
               </div>
             )}
@@ -133,13 +139,16 @@ export function DeleteConfirmationDialog({
 
             {canDelete && !warningMessage && (
               <div className="text-muted-foreground text-sm">
-                Esta acción no se puede deshacer. El registro será eliminado permanentemente.
+                Esta acción no se puede deshacer. El registro será eliminado
+                permanentemente.
               </div>
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading || isConfirming}>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel disabled={loading || isConfirming}>
+            Cancelar
+          </AlertDialogCancel>
           {canDelete && (
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -174,11 +183,22 @@ export function DeleteConfirmationDialog({
 export interface DeleteButtonProps {
   onClick: () => void;
   disabled?: boolean;
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
-  size?: 'default' | 'sm' | 'lg' | 'icon';
+  variant?:
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link";
+  size?: "default" | "sm" | "lg" | "icon";
 }
 
-export function DeleteButton({ onClick, disabled = false, variant = 'destructive', size = 'sm' }: DeleteButtonProps) {
+export function DeleteButton({
+  onClick,
+  disabled = false,
+  variant = "destructive",
+  size = "sm",
+}: DeleteButtonProps) {
   return (
     <Button disabled={disabled} onClick={onClick} size={size} variant={variant}>
       <Trash2 className="mr-2 size-4" />

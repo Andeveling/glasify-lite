@@ -1,6 +1,6 @@
-import { AdminContentContainer } from '@/app/(dashboard)/admin/_components/admin-content-container';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import { AdminContentContainer } from "@/app/(dashboard)/admin/_components/admin-content-container";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Constants for skeleton counts matching dashboard layout
 const QUOTE_METRICS_COUNT = 4;
