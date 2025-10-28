@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "router": "colors",
   "basePath": "src/server/api/routers/colors.ts",
-  
+
   "procedures": {
     "list": {
       "type": "query",
@@ -41,8 +41,14 @@
             "_count": {
               "type": "object",
               "properties": {
-                "modelColors": { "type": "number", "description": "Number of models using this color" },
-                "quoteItems": { "type": "number", "description": "Number of quotes using this color" }
+                "modelColors": {
+                  "type": "number",
+                  "description": "Number of models using this color"
+                },
+                "quoteItems": {
+                  "type": "number",
+                  "description": "Number of quotes using this color"
+                }
               }
             }
           }

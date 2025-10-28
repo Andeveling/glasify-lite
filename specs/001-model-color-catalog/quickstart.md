@@ -386,12 +386,12 @@ CREATE INDEX "Color_isActive_idx" ON "Color"("isActive");
 
 ### Expected Performance
 
-| Operation | Target | Typical |
-|-----------|--------|---------|
-| List 100 colors (admin) | <100ms | ~40ms |
-| Get model with 10 colors | <50ms | ~25ms |
-| Create quote item with color | <150ms | ~80ms |
-| Client price recalculation | <200ms | <1ms (instant) |
+| Operation                    | Target | Typical        |
+| ---------------------------- | ------ | -------------- |
+| List 100 colors (admin)      | <100ms | ~40ms          |
+| Get model with 10 colors     | <50ms  | ~25ms          |
+| Create quote item with color | <150ms | ~80ms          |
+| Client price recalculation   | <200ms | <1ms (instant) |
 
 ---
 

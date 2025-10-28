@@ -28,15 +28,15 @@ This feature introduces **2 new entities** and extends **2 existing entities**:
 
 **Attributes**:
 
-| Field | Type | Constraints | Description |
-|-------|------|-------------|-------------|
-| `id` | String | PK, CUID | Unique identifier |
-| `name` | String(50) | NOT NULL | Commercial color name (e.g., "Blanco", "Nogal Europeo") |
-| `ralCode` | String(10) | NULLABLE, Regex: `^RAL \d{4}$` | Industry standard RAL code (e.g., "RAL 9010") |
-| `hexCode` | String(7) | NOT NULL, Regex: `^#[0-9A-Fa-f]{6}$` | Hexadecimal color code for UI rendering |
-| `isActive` | Boolean | NOT NULL, Default: true | Soft delete flag (false = hidden in new assignments) |
-| `createdAt` | DateTime | NOT NULL, Auto | Creation timestamp |
-| `updatedAt` | DateTime | NOT NULL, Auto | Last modification timestamp |
+| Field       | Type       | Constraints                          | Description                                             |
+| ----------- | ---------- | ------------------------------------ | ------------------------------------------------------- |
+| `id`        | String     | PK, CUID                             | Unique identifier                                       |
+| `name`      | String(50) | NOT NULL                             | Commercial color name (e.g., "Blanco", "Nogal Europeo") |
+| `ralCode`   | String(10) | NULLABLE, Regex: `^RAL \d{4}$`       | Industry standard RAL code (e.g., "RAL 9010")           |
+| `hexCode`   | String(7)  | NOT NULL, Regex: `^#[0-9A-Fa-f]{6}$` | Hexadecimal color code for UI rendering                 |
+| `isActive`  | Boolean    | NOT NULL, Default: true              | Soft delete flag (false = hidden in new assignments)    |
+| `createdAt` | DateTime   | NOT NULL, Auto                       | Creation timestamp                                      |
+| `updatedAt` | DateTime   | NOT NULL, Auto                       | Last modification timestamp                             |
 
 **Relationships**:
 - `modelColors` → ModelColor[] (one-to-many) - Models using this color
@@ -77,15 +77,15 @@ isActive: z.boolean().default(true)
 
 **Attributes**:
 
-| Field | Type | Constraints | Description |
-|-------|------|-------------|-------------|
-| `id` | String | PK, CUID | Unique identifier |
-| `modelId` | String | FK → Model.id, NOT NULL | Reference to window/door model |
-| `colorId` | String | FK → Color.id, NOT NULL | Reference to color catalog |
+| Field                 | Type         | Constraints                  | Description                          |
+| --------------------- | ------------ | ---------------------------- | ------------------------------------ |
+| `id`                  | String       | PK, CUID                     | Unique identifier                    |
+| `modelId`             | String       | FK → Model.id, NOT NULL      | Reference to window/door model       |
+| `colorId`             | String       | FK → Color.id, NOT NULL      | Reference to color catalog           |
 | `surchargePercentage` | Decimal(5,2) | NOT NULL, Range: 0.00-100.00 | Percentage added to model base price |
-| `isDefault` | Boolean | NOT NULL, Default: false | One color per model must be default |
-| `createdAt` | DateTime | NOT NULL, Auto | Assignment timestamp |
-| `updatedAt` | DateTime | NOT NULL, Auto | Last modification timestamp |
+| `isDefault`           | Boolean      | NOT NULL, Default: false     | One color per model must be default  |
+| `createdAt`           | DateTime     | NOT NULL, Auto               | Assignment timestamp                 |
+| `updatedAt`           | DateTime     | NOT NULL, Auto               | Last modification timestamp          |
 
 **Relationships**:
 - `model` → Model (many-to-one) - The window/door model
@@ -161,12 +161,12 @@ const defaultColor = await db.modelColor.findFirst({
 
 **New Fields**:
 
-| Field | Type | Constraints | Description |
-|-------|------|-------------|-------------|
-| `colorId` | String | FK → Color.id, NULLABLE | Reference to selected color (null = default or no colors) |
-| `colorSurchargePercentage` | Decimal(5,2) | NULLABLE | **SNAPSHOT** - Surcharge % at quote creation time |
-| `colorHexCode` | String(7) | NULLABLE | **SNAPSHOT** - Hex code for PDF generation |
-| `colorName` | String(50) | NULLABLE | **SNAPSHOT** - Color name for PDF display |
+| Field                      | Type         | Constraints             | Description                                               |
+| -------------------------- | ------------ | ----------------------- | --------------------------------------------------------- |
+| `colorId`                  | String       | FK → Color.id, NULLABLE | Reference to selected color (null = default or no colors) |
+| `colorSurchargePercentage` | Decimal(5,2) | NULLABLE                | **SNAPSHOT** - Surcharge % at quote creation time         |
+| `colorHexCode`             | String(7)    | NULLABLE                | **SNAPSHOT** - Hex code for PDF generation                |
+| `colorName`                | String(50)   | NULLABLE                | **SNAPSHOT** - Color name for PDF display                 |
 
 **New Relationships**:
 - `color` → Color (many-to-one, optional) - Selected color reference

@@ -368,16 +368,16 @@ const createColor = api.colors.create.useMutation({
 
 ## Summary of Decisions
 
-| Topic | Decision | Key Benefit |
-|-------|----------|-------------|
-| Color Storage | RAL (optional) + Hex (required) separate fields | Flexibility + validation |
-| Model-Color Relation | Explicit ModelColor junction table | Store surcharge + default flag |
-| Quote Immutability | Snapshot colorSurchargePercentage in QuoteItem | Historical prices never change |
-| Seeder Pattern | Upsert with composite unique key | Idempotent, safe to re-run |
-| Price Recalculation | Client-side calculation from pre-loaded data | <200ms performance goal met |
-| Color Deletion | Three-tier: prevent/soft-delete/hard-delete | Data integrity + cleanup |
-| SSR Cache Invalidation | invalidate() + router.refresh() both required | Correct UI updates with SSR |
-| Color Selector UX | Scrollable chips (mobile) / Grid (desktop) | Visual clarity + accessibility |
+| Topic                  | Decision                                        | Key Benefit                    |
+| ---------------------- | ----------------------------------------------- | ------------------------------ |
+| Color Storage          | RAL (optional) + Hex (required) separate fields | Flexibility + validation       |
+| Model-Color Relation   | Explicit ModelColor junction table              | Store surcharge + default flag |
+| Quote Immutability     | Snapshot colorSurchargePercentage in QuoteItem  | Historical prices never change |
+| Seeder Pattern         | Upsert with composite unique key                | Idempotent, safe to re-run     |
+| Price Recalculation    | Client-side calculation from pre-loaded data    | <200ms performance goal met    |
+| Color Deletion         | Three-tier: prevent/soft-delete/hard-delete     | Data integrity + cleanup       |
+| SSR Cache Invalidation | invalidate() + router.refresh() both required   | Correct UI updates with SSR    |
+| Color Selector UX      | Scrollable chips (mobile) / Grid (desktop)      | Visual clarity + accessibility |
 
 ---
 

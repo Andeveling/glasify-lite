@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "router": "modelColors",
   "basePath": "src/server/api/routers/model-colors.ts",
-  
+
   "procedures": {
     "listByModel": {
       "type": "query",
@@ -153,14 +153,14 @@
         "input": {
           "modelId": "clxModel123",
           "colorId": "clxColor002",
-          "surchargePercentage": 15.50,
+          "surchargePercentage": 15.5,
           "isDefault": false
         },
         "output": {
           "id": "clxMC003",
           "modelId": "clxModel123",
           "colorId": "clxColor002",
-          "surchargePercentage": 15.50,
+          "surchargePercentage": 15.5,
           "isDefault": false
         }
       }
@@ -308,7 +308,11 @@
               "type": "object",
               "properties": {
                 "colorId": { "type": "string", "format": "cuid" },
-                "surchargePercentage": { "type": "number", "minimum": 0, "maximum": 100 },
+                "surchargePercentage": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
                 "isDefault": { "type": "boolean", "default": false }
               },
               "required": ["colorId", "surchargePercentage"]
@@ -352,7 +356,11 @@
         "input": {
           "modelId": "clxModel456",
           "colors": [
-            { "colorId": "clxColor001", "surchargePercentage": 0, "isDefault": true },
+            {
+              "colorId": "clxColor001",
+              "surchargePercentage": 0,
+              "isDefault": true
+            },
             { "colorId": "clxColor002", "surchargePercentage": 10 },
             { "colorId": "clxColor005", "surchargePercentage": 22 }
           ]
@@ -361,9 +369,24 @@
           "modelId": "clxModel456",
           "assignedCount": 3,
           "assignments": [
-            { "id": "clxMC010", "colorId": "clxColor001", "surchargePercentage": 0, "isDefault": true },
-            { "id": "clxMC011", "colorId": "clxColor002", "surchargePercentage": 10, "isDefault": false },
-            { "id": "clxMC012", "colorId": "clxColor005", "surchargePercentage": 22, "isDefault": false }
+            {
+              "id": "clxMC010",
+              "colorId": "clxColor001",
+              "surchargePercentage": 0,
+              "isDefault": true
+            },
+            {
+              "id": "clxMC011",
+              "colorId": "clxColor002",
+              "surchargePercentage": 10,
+              "isDefault": false
+            },
+            {
+              "id": "clxMC012",
+              "colorId": "clxColor005",
+              "surchargePercentage": 22,
+              "isDefault": false
+            }
           ]
         }
       }

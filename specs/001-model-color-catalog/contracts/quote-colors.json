@@ -6,7 +6,7 @@
   "router": "quotes (extension)",
   "basePath": "src/server/api/routers/quotes.ts",
   "note": "These procedures are additions to the existing quotes router, not a new router",
-  
+
   "procedures": {
     "getModelColorsForQuote": {
       "type": "query",
@@ -27,7 +27,10 @@
         "type": "object",
         "properties": {
           "modelId": { "type": "string" },
-          "hasColors": { "type": "boolean", "description": "If false, no color selector shown in UI" },
+          "hasColors": {
+            "type": "boolean",
+            "description": "If false, no color selector shown in UI"
+          },
           "defaultColorId": {
             "type": "string",
             "nullable": true,
@@ -38,7 +41,10 @@
             "items": {
               "type": "object",
               "properties": {
-                "id": { "type": "string", "description": "colorId (not modelColorId)" },
+                "id": {
+                  "type": "string",
+                  "description": "colorId (not modelColorId)"
+                },
                 "name": { "type": "string" },
                 "hexCode": { "type": "string" },
                 "surchargePercentage": { "type": "number" },
@@ -109,11 +115,23 @@
       "output": {
         "type": "object",
         "properties": {
-          "basePrice": { "type": "number", "description": "Model base price (without color)" },
-          "colorSurcharge": { "type": "number", "description": "Amount added for color (0 if no color)" },
-          "colorSurchargePercentage": { "type": "number", "description": "Percentage applied" },
+          "basePrice": {
+            "type": "number",
+            "description": "Model base price (without color)"
+          },
+          "colorSurcharge": {
+            "type": "number",
+            "description": "Amount added for color (0 if no color)"
+          },
+          "colorSurchargePercentage": {
+            "type": "number",
+            "description": "Percentage applied"
+          },
           "glassPrice": { "type": "number" },
-          "subtotal": { "type": "number", "description": "(basePrice + colorSurcharge + glassPrice) * quantity" },
+          "subtotal": {
+            "type": "number",
+            "description": "(basePrice + colorSurcharge + glassPrice) * quantity"
+          },
           "selectedColor": {
             "type": "object",
             "nullable": true,
@@ -182,7 +200,15 @@
           "glassTypeId": { "type": "string", "format": "cuid" },
           "accessoryApplied": { "type": "boolean", "default": false }
         },
-        "required": ["quoteId", "modelId", "name", "quantity", "widthMm", "heightMm", "glassTypeId"]
+        "required": [
+          "quoteId",
+          "modelId",
+          "name",
+          "quantity",
+          "widthMm",
+          "heightMm",
+          "glassTypeId"
+        ]
       },
       "output": {
         "type": "object",
@@ -245,7 +271,7 @@
           "colorName": "Madera Roble Oscuro",
           "colorHexCode": "#794D35",
           "colorSurchargePercentage": 22,
-          "subtotal": 670.50
+          "subtotal": 670.5
         }
       }
     },
