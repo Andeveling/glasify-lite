@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/noMagicNumbers: It is not required */
 import { useMemo } from "react";
 import type {
   GlassSolutionOutput,
