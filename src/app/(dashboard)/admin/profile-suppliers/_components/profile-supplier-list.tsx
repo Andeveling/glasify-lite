@@ -190,7 +190,9 @@ export function ProfileSupplierList({
     },
     onSettled: () => {
       // Invalidate cache and refresh server data
-      void utils.admin["profile-supplier"].list.invalidate();
+      utils.admin["profile-supplier"].list.invalidate().catch(() => {
+        // Ignore cache invalidation errors - page refresh will handle state update
+      });
       router.refresh();
     },
   });
