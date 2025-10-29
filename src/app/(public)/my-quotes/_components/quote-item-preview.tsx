@@ -40,8 +40,9 @@ export type QuoteItemPreviewProps = {
  * Horizontal row of up to 3 product thumbnails.
  */
 export function QuoteItemPreview({ items, totalCount }: QuoteItemPreviewProps) {
-  const previewItems = items.slice(0, 3);
-  const remainingCount = (totalCount ?? items.length) - 3;
+  const MAX_PREVIEW_ITEMS = 3;
+  const previewItems = items.slice(0, MAX_PREVIEW_ITEMS);
+  const remainingCount = (totalCount ?? items.length) - previewItems.length;
 
   if (items.length === 0) {
     return null;

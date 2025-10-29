@@ -127,7 +127,11 @@ export function QuoteItemImage({
    * Optimize image URL via CDN
    */
   const optimizedImageUrl = shouldShowImage
-    ? getProductImageWithFallback(modelImageUrl, windowType, size as any)
+    ? getProductImageWithFallback(
+        modelImageUrl,
+        windowType,
+        size as QuoteItemImageSize
+      )
     : null;
 
   return (
@@ -164,37 +168,3 @@ export function QuoteItemImage({
     </button>
   );
 }
-
-/**
- * Usage Examples:
- *
- * ```tsx
- * // With product image
- * <QuoteItemImage
- *   modelName="VEKA Guardian 10mm"
- *   modelImageUrl="https://cdn.example.com/models/veka-guardian.jpg"
- *   windowType={WindowType.SLIDING_2_PANEL}
- *   size="md"
- *   onClick={() => openLightbox(item)}
- * />
- *
- * // With SVG fallback
- * <QuoteItemImage
- *   modelName="Ventana Corrediza"
- *   modelImageUrl={null}
- *   windowType={WindowType.SLIDING_2_PANEL}
- *   size="lg"
- *   onClick={() => openLightbox(item)}
- * />
- *
- * // Eager loading (above fold)
- * <QuoteItemImage
- *   modelName="Featured Product"
- *   modelImageUrl="https://cdn.example.com/featured.jpg"
- *   windowType={WindowType.FIXED_SINGLE}
- *   size="lg"
- *   eager
- *   onClick={() => openLightbox(item)}
- * />
- * ```
- */

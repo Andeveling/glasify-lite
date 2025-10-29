@@ -38,6 +38,11 @@ export function generateExportFilename(
 }
 
 /**
+ * Maximum length for sanitized project names
+ */
+const MAX_PROJECT_NAME_LENGTH = 50;
+
+/**
  * Sanitize project name for use in filename
  * - Removes special characters
  * - Replaces spaces with underscores
@@ -60,8 +65,8 @@ function sanitizeProjectName(name: string): string {
       .replace(/\s/g, "_")
       // Remove any remaining non-alphanumeric chars (except underscores and accented chars)
       .replace(/[^\w\u00C0-\u017F_]/g, "")
-      // Truncate to max 50 chars
-      .slice(0, 50)
+      // Truncate to max length
+      .slice(0, MAX_PROJECT_NAME_LENGTH)
       // Capitalize first letter of each word
       .split("_")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -94,12 +99,14 @@ function getFileExtension(format: ExportFormat): string {
   }
 }
 
+const MAX_FILENAME_LENGTH = 255;
+
 /**
  * Validate filename doesn't exceed system limits
  */
 export function validateFilename(filename: string): boolean {
   // Most filesystems support 255 chars
-  return filename.length <= 255;
+  return filename.length <= MAX_FILENAME_LENGTH;
 }
 
 /**

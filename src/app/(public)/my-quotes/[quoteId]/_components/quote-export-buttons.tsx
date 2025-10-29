@@ -38,11 +38,11 @@ export function QuoteExportButtons({
     useQuoteExport();
 
   const handlePDFExport = () => {
-    void exportPDF(quoteId);
+    exportPDF(quoteId);
   };
 
   const handleExcelExport = () => {
-    void exportExcel(quoteId);
+    exportExcel(quoteId);
   };
 
   const showText = variant === "full";
