@@ -101,7 +101,9 @@ export function ModelColorsList({
     onSuccess: () => {
       toast.success("Color eliminado del modelo");
       utils.admin["model-colors"].listByModel.invalidate().catch(undefined);
-      utils.admin["model-colors"].getAvailableColors.invalidate().catch(undefined);
+      utils.admin["model-colors"].getAvailableColors
+        .invalidate()
+        .catch(undefined);
       router.refresh();
     },
     onError: (error) => {
