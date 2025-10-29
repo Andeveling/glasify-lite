@@ -75,10 +75,10 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
       url: "/admin/services",
     },
     {
-      description: 'Logo y colores corporativos',
+      description: "Logo y colores corporativos",
       icon: Paintbrush,
-      title: 'Branding',
-      url: '/admin/branding',
+      title: "Branding",
+      url: "/admin/branding",
     },
   ];
 

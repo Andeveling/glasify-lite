@@ -67,7 +67,7 @@ export function ModelForm({
 
   // ✅ Track selected color and its surcharge percentage
   const [selectedColorId, setSelectedColorId] = useState<string | undefined>();
-  const [colorSurchargePercentage, setColorSurchargePercentage] = useState(0);
+  const [_colorSurchargePercentage, setColorSurchargePercentage] = useState(0);
 
   // ✅ Auto-scroll to success card when item is added
   const successCardRef = useScrollIntoView(justAddedToCart);
@@ -150,6 +150,7 @@ export function ModelForm({
     });
 
   // ✅ Build detailed price breakdown for popover
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex price breakdown calculation with multiple categories (model, glass, services, adjustments, color) and conditional formatting. Complexity is necessary for comprehensive pricing details.
   const priceBreakdown = useMemo(() => {
     const items: Array<{
       amount: number;

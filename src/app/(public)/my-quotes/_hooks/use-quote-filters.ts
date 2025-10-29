@@ -170,10 +170,11 @@ export function useQuoteFilters(currentParams: {
         clearTimeout(searchDebounceTimer);
       }
 
+      const DEBOUNCE_DELAY_MS = 300;
       // Set new timer for URL update (debounce 300ms)
       const timer = setTimeout(() => {
         updateURL(newFilters);
-      }, 300);
+      }, DEBOUNCE_DELAY_MS);
 
       setSearchDebounceTimer(timer);
     },

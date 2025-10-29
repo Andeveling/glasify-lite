@@ -1,14 +1,14 @@
-import { Paintbrush } from 'lucide-react';
-import type { Metadata } from 'next';
-import { api } from '@/trpc/server-client';
-import { BrandingConfigForm } from './_components/branding-config-form';
+import { Paintbrush } from "lucide-react";
+import type { Metadata } from "next";
+import { api } from "@/trpc/server-client";
+import { BrandingConfigForm } from "./_components/branding-config-form";
 
 export const metadata: Metadata = {
-  description: 'Configura el logo, colores y redes sociales de tu empresa',
-  title: 'Configuración de Branding | Admin',
+  description: "Configura el logo, colores y redes sociales de tu empresa",
+  title: "Configuración de Branding | Admin",
 };
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function BrandingPage() {
   const branding = await api.tenantConfig.getBranding();
@@ -19,7 +19,9 @@ export default async function BrandingPage() {
         <Paintbrush className="h-6 w-6" />
         <div>
           <h1 className="font-bold text-3xl">Configuración de Branding</h1>
-          <p className="text-muted-foreground">Personaliza la identidad visual de {branding.businessName}</p>
+          <p className="text-muted-foreground">
+            Personaliza la identidad visual de {branding.businessName}
+          </p>
         </div>
       </div>
 

@@ -8,6 +8,9 @@ import {
   sellerOrAdminProcedure,
 } from "../trpc";
 
+const MIN_SEARCH_LENGTH = 3;
+const MAX_SEARCH_LENGTH = 50;
+
 /**
  * Zod Validation Schemas
  * Task: T039 [P] [US5]
@@ -20,7 +23,7 @@ import {
 const listUsersInput = z
   .object({
     role: z.enum(UserRole).optional(),
-    search: z.string().min(1).max(100).optional(),
+    search: z.string().min(MIN_SEARCH_LENGTH).max(MAX_SEARCH_LENGTH).optional(),
   })
   .optional();
 

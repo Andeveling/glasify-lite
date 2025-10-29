@@ -63,9 +63,15 @@ export default async function ModelColorsPage({ params }: PageProps) {
     const model = await api.admin.model["get-by-id"]({ id: modelId });
 
     // Fetch assigned colors
-    const modelColors = await api.admin["model-colors"].listByModel({
+    const modelColorsRaw = await api.admin["model-colors"].listByModel({
       modelId,
     });
+
+    // Serialize Decimal fields for Client Component
+    const modelColors = modelColorsRaw.map((mc) => ({
+      ...mc,
+      surchargePercentage: mc.surchargePercentage.toNumber(),
+    }));
 
     // Fetch available colors for assignment
     const availableColors = await api.admin["model-colors"].getAvailableColors({
@@ -177,7 +183,7 @@ export default async function ModelColorsPage({ params }: PageProps) {
         </Card>
       </div>
     );
-  } catch (error) {
+  } catch {
     // Error is already logged by the tRPC procedure
     // Simply return 404 for end user
     notFound();

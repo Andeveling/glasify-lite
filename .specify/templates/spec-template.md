@@ -102,6 +102,37 @@
 - **[Entity 1]**: [What it represents, key attributes without implementation]
 - **[Entity 2]**: [What it represents, relationships to other entities]
 
+### File Organization *(include if feature involves forms/components)*
+
+<!--
+  ACTION REQUIRED: If feature includes forms or complex components, document
+  the expected file organization following SOLID architecture principles.
+  Reference: constitution.md - "One Job, One Place (SOLID Architecture)"
+-->
+
+For each form/complex component, structure must follow:
+```
+feature/
+├── _components/
+│   └── feature-form.tsx          # UI orchestration only (target <100 lines)
+├── _hooks/
+│   ├── use-feature-mutations.ts  # API mutations + cache invalidation
+│   └── use-feature-data.ts       # Data fetching with stale time
+├── _schemas/
+│   └── feature-form.schema.ts    # Zod validation schema
+├── _utils/
+│   └── feature-form.utils.ts     # getDefaults(), transform(), types
+└── _constants/
+    └── feature-form.constants.ts # Extracted magic numbers
+```
+
+**SOLID Requirements**:
+- Single Responsibility: Each file has one clear purpose
+- No magic numbers in components (extract to constants)
+- No inline schemas (extract to _schemas/)
+- No mutation logic in UI (extract to _hooks/)
+- No hardcoded defaults (extract to _utils/)
+
 ## Success Criteria *(mandatory)*
 
 <!--

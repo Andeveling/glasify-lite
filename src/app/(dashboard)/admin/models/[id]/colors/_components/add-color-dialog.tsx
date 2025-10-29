@@ -97,7 +97,9 @@ export function AddColorDialog({
     onSuccess: () => {
       toast.success("Color asignado correctamente");
       utils.admin["model-colors"].listByModel.invalidate().catch(undefined);
-      utils.admin["model-colors"].getAvailableColors.invalidate().catch(undefined);
+      utils.admin["model-colors"].getAvailableColors
+        .invalidate()
+        .catch(undefined);
       router.refresh();
       setOpen(false);
       form.reset();

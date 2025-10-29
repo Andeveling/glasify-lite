@@ -19,7 +19,10 @@ type GlobalErrorProps = {
 };
 
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
-  useEffect(() => {}, []);
+  useEffect(() => {
+    // Optional: Log error to external service
+    // console.error("Global error:", error);
+  }, []);
 
   return (
     <html lang="es">

@@ -227,7 +227,7 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
     },
     onSettled: () => {
       // Invalidate cache and refresh server data
-      void utils.admin.service.list.invalidate();
+      utils.admin.service.list.invalidate();
       router.refresh();
     },
   });

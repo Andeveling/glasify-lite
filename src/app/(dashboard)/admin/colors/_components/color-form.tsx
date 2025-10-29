@@ -75,7 +75,7 @@ export function ColorForm({ mode, defaultValues }: ColorFormProps) {
             {/* Color Preview */}
             <div className="flex items-center justify-center rounded-lg border border-dashed p-8">
               <div className="flex flex-col items-center gap-3">
-                <ColorChip hexCode={hexCode} size="lg" />
+                <ColorChip hexCode={hexCode ?? "#000000"} size="lg" />
                 <p className="font-medium text-muted-foreground text-sm">
                   Vista previa del color
                 </p>

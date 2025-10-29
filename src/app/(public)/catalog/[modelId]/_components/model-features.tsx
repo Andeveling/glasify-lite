@@ -59,10 +59,10 @@ export function ModelFeatures({ features }: ModelFeaturesProps) {
         <h3 className="font-semibold">Características Destacadas</h3>
       </div>
       <ul className="space-y-2.5">
-        {sortedFeatures.map((feature, index) => {
+        {sortedFeatures.map((feature) => {
           const isHighlight = isHighlightFeature(feature);
           return (
-            <li className="flex items-start gap-2 text-sm" key={index}>
+            <li className="flex items-start gap-2 text-sm" key={feature}>
               {isHighlight ? (
                 <Sparkles
                   aria-label="Característica destacada"

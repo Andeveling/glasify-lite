@@ -92,10 +92,10 @@ export function ProfileSupplierCard({ model }: ProfileSupplierCardProps) {
         <div className="border-t pt-3">
           <h5 className="mb-2 font-medium text-sm">Ventajas del Material</h5>
           <ul className="space-y-1.5">
-            {benefits.map((benefit, index) => (
+            {benefits.map((benefit) => (
               <li
                 className="flex items-start gap-2 text-muted-foreground text-sm"
-                key={index}
+                key={benefit}
               >
                 <CheckCircle2
                   aria-hidden="true"

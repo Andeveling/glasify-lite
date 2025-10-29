@@ -55,7 +55,7 @@ export function useServiceMutations({
     onSettled: () => {
       // Two-step cache invalidation for SSR with force-dynamic
       // Step 1: Invalidate TanStack Query cache
-      void utils.admin.service.list.invalidate();
+      utils.admin.service.list.invalidate();
       // Step 2: Refresh Next.js Server Component data
       router.refresh();
     },
@@ -84,7 +84,7 @@ export function useServiceMutations({
     },
     onSettled: () => {
       // Two-step cache invalidation for SSR with force-dynamic
-      void utils.admin.service.list.invalidate();
+      utils.admin.service.list.invalidate();
       router.refresh();
     },
   });

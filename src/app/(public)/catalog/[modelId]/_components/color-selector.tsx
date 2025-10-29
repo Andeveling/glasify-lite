@@ -3,7 +3,8 @@
  *
  * Visual color chip selector for quote configuration
  * - Displays available colors for model with surcharge badges
- * - Keyboard navigation (Arrow keys, Enter, Space)
+ * - Uses Radix UI RadioGroup for proper semantic HTML and accessibility
+ * - Keyboard navigation handled automatically by RadioGroup
  * - Accessible with ARIA labels in Spanish
  * - Calls onColorChange with colorId and surchargePercentage
  * - Auto-selects default color on mount
@@ -12,6 +13,7 @@
  * - Client Component for interactivity
  * - Fetches colors via tRPC (cached 5min server-side)
  * - Horizontal scroll for >6 colors, grid for ≤6
+ * - RadioGroupItem hidden (sr-only), label provides visual UI
  */
 
 "use client";
@@ -19,7 +21,15 @@
 import { useEffect, useState } from "react";
 import { ColorChip } from "@/app/(dashboard)/admin/colors/_components/color-chip";
 import { Badge } from "@/components/ui/badge";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { api } from "@/trpc/react";
+
+// Constants
+const COLOR_CACHE_MINUTES = 5;
+const MINUTES_TO_MS = 60_000;
+const COLOR_STALE_TIME_MS = COLOR_CACHE_MINUTES * MINUTES_TO_MS;
+const GRID_BREAKPOINT = 6;
+const SKELETON_ITEM_COUNT = 3;
 
 type ColorSelectorProps = {
   modelId: string;
@@ -54,7 +64,7 @@ export function ColorSelector({ modelId, onColorChange }: ColorSelectorProps) {
   const { data, isLoading } = api.quote["get-model-colors-for-quote"].useQuery(
     { modelId },
     {
-      staleTime: 5 * 60 * 1000, // 5 minutes (matches server cache)
+      staleTime: COLOR_STALE_TIME_MS, // 5 minutes (matches server cache)
     }
   );
 
@@ -72,40 +82,11 @@ export function ColorSelector({ modelId, onColorChange }: ColorSelectorProps) {
   }, [data, selectedColorId, onColorChange]);
 
   // Handle color selection
-  const handleColorSelect = (colorId: string, surchargePercentage: number) => {
-    setSelectedColorId(colorId);
-    onColorChange(colorId, surchargePercentage);
-  };
-
-  // Handle keyboard navigation
-  const handleKeyDown = (
-    event: React.KeyboardEvent,
-    colorId: string,
-    surchargePercentage: number,
-    index: number
-  ) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      handleColorSelect(colorId, surchargePercentage);
-    }
-
-    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
-      event.preventDefault();
-      const nextIndex = (index + 1) % (data?.colors.length ?? 0);
-      const nextButton = document.querySelector(
-        `[data-color-index="${nextIndex}"]`
-      ) as HTMLButtonElement;
-      nextButton?.focus();
-    }
-
-    if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
-      event.preventDefault();
-      const prevIndex =
-        (index - 1 + (data?.colors.length ?? 0)) % (data?.colors.length ?? 0);
-      const prevButton = document.querySelector(
-        `[data-color-index="${prevIndex}"]`
-      ) as HTMLButtonElement;
-      prevButton?.focus();
+  const handleColorSelect = (value: string) => {
+    const selectedColor = data?.colors.find((mc) => mc.color.id === value);
+    if (selectedColor) {
+      setSelectedColorId(value);
+      onColorChange(value, selectedColor.surchargePercentage);
     }
   };
 
@@ -115,10 +96,10 @@ export function ColorSelector({ modelId, onColorChange }: ColorSelectorProps) {
       <div className="space-y-2">
         <p className="font-medium text-sm">Cargando colores...</p>
         <div className="flex gap-2">
-          {[1, 2, 3].map((i) => (
+          {Array.from({ length: SKELETON_ITEM_COUNT }, () => (
             <div
               className="h-16 w-16 animate-pulse rounded-lg bg-muted"
-              key={i}
+              key={crypto.randomUUID()}
             />
           ))}
         </div>
@@ -126,11 +107,11 @@ export function ColorSelector({ modelId, onColorChange }: ColorSelectorProps) {
     );
   }
 
-  if (!(data && data.hasColors)) {
+  if (!data?.hasColors) {
     return null; // No color selector if model has no colors
   }
 
-  const useGrid = data.colors.length <= 6;
+  const useGrid = data.colors.length <= GRID_BREAKPOINT;
 
   return (
     <div className="space-y-3">
@@ -144,7 +125,7 @@ export function ColorSelector({ modelId, onColorChange }: ColorSelectorProps) {
         </Badge>
       </div>
 
-      <div
+      <RadioGroup
         aria-label="Selector de color"
         className={
           useGrid
@@ -152,31 +133,28 @@ export function ColorSelector({ modelId, onColorChange }: ColorSelectorProps) {
             : "flex gap-3 overflow-x-auto pb-2"
         }
         id="color-selector"
-        role="radiogroup"
+        onValueChange={handleColorSelect}
+        value={selectedColorId}
       >
-        {data.colors.map((modelColor, index) => {
+        {data.colors.map((modelColor) => {
           const isSelected = selectedColorId === modelColor.color.id;
           const surcharge = modelColor.surchargePercentage;
 
           return (
-            <button
-              aria-checked={isSelected}
-              aria-label={`${modelColor.color.name}${surcharge > 0 ? `, +${surcharge}%` : ""}`}
-              className={`flex flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+            <label
+              className={`flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all hover:border-primary has-[:focus-visible]:outline-none has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-offset-2 ${
                 isSelected
                   ? "border-primary bg-primary/5"
                   : "border-border bg-background"
               } ${useGrid ? "" : "min-w-[100px]"}`}
-              data-color-index={index}
+              htmlFor={modelColor.id}
               key={modelColor.id}
-              onClick={() => handleColorSelect(modelColor.color.id, surcharge)}
-              onKeyDown={(e) =>
-                handleKeyDown(e, modelColor.color.id, surcharge, index)
-              }
-              role="radio"
-              tabIndex={isSelected ? 0 : -1}
-              type="button"
             >
+              <RadioGroupItem
+                className="sr-only"
+                id={modelColor.id}
+                value={modelColor.color.id}
+              />
               <ColorChip hexCode={modelColor.color.hexCode} size="lg" />
               <div className="flex flex-col items-center gap-1">
                 <span className="text-center font-medium text-xs">
@@ -197,10 +175,10 @@ export function ColorSelector({ modelId, onColorChange }: ColorSelectorProps) {
                   </Badge>
                 )}
               </div>
-            </button>
+            </label>
           );
         })}
-      </div>
+      </RadioGroup>
     </div>
   );
 }

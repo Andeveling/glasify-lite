@@ -9,7 +9,7 @@
 
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useId } from "react";
 import { useCart } from "../_hooks/use-cart";
 import { useCartItemActions } from "../_hooks/use-cart-item-actions";
 import { CartItem } from "./cart-item";
@@ -33,6 +33,7 @@ const SKELETON_ITEMS_COUNT = 3;
  */
 export function CartPageContent() {
   const { items, summary, updateItem, removeItem, hydrated } = useCart();
+  const skeletonId = useId();
 
   // Initialize cart item actions hook (SOLID - SRP)
   const actions = useCartItemActions({
@@ -50,12 +51,15 @@ export function CartPageContent() {
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <div className="space-y-4">
-              {Array.from({ length: SKELETON_ITEMS_COUNT }).map((_, i) => (
-                <div
-                  className="h-32 animate-pulse rounded-lg border bg-muted"
-                  key={i}
-                />
-              ))}
+              {Array.from({ length: SKELETON_ITEMS_COUNT }).map(() => {
+                const id = `${skeletonId}`;
+                return (
+                  <div
+                    className="h-32 animate-pulse rounded-lg border bg-muted"
+                    key={id}
+                  />
+                );
+              })}
             </div>
           </div>
           <div className="h-64 animate-pulse rounded-lg border bg-muted" />

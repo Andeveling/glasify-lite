@@ -1,7 +1,7 @@
 # Glasify Lite Constitution
-**Version**: 2.1.2  
+**Version**: 2.2.0  
 **Ratified**: 2025-10-09  
-**Last Amended**: 2025-10-23
+**Last Amended**: 2025-10-28
 
 ---
 
@@ -66,22 +66,72 @@ For **technical implementation details**, code patterns, and specific framework 
 
 ---
 
-### 3. One Job, One Place
+### 3. One Job, One Place (SOLID Architecture)
 
-**What it means**: Each piece of code should do one thing and do it well.
+**What it means**: Each piece of code should do one thing and do it well. Components must be modular, testable, and easy to change.
 
-**Why it matters**: When code has multiple responsibilities, changes become risky. You might break one feature while fixing another.
+**Why it matters**: When code has multiple responsibilities, changes become risky. You might break one feature while fixing another. SOLID principles ensure code is maintainable long-term.
 
-**In practice**:
-- Separate user interface from business logic
-- Keep data fetching separate from data display
-- One file, one purpose
+**SOLID Principles Applied**:
+
+1. **Single Responsibility**: Each module has one reason to change
+   - Forms only handle UI and user interaction
+   - Hooks manage state and side effects
+   - Services handle business logic
+   - Utilities provide pure functions
+
+2. **Open/Closed**: Open for extension, closed for modification
+   - Add features through new files, not editing existing ones
+   - Use composition over inheritance
+   - Extract configuration and constants
+
+3. **Liskov Substitution**: Components can be replaced by variants
+   - Props interfaces are specific, not generic
+   - Variants maintain the same contract
+
+4. **Interface Segregation**: Specific interfaces, not generic ones
+   - Break large prop types into smaller, focused ones
+   - Don't force components to depend on props they don't use
+
+5. **Dependency Inversion**: Depend on abstractions
+   - Use hooks to abstract data fetching
+   - Use context for cross-cutting concerns
+   - Don't couple components to specific implementations
+
+**Mandatory File Organization**:
+
+Forms must follow this structure:
+```
+feature/
+├── _components/
+│   └── feature-form.tsx          # UI only (orchestration)
+├── _hooks/
+│   ├── use-feature-mutations.ts  # API mutations + cache
+│   └── use-feature-data.ts       # Data fetching
+├── _schemas/
+│   └── feature-form.schema.ts    # Zod validation
+├── _utils/
+│   └── feature-form.utils.ts     # Pure functions + types
+└── _constants/
+    └── feature-form.constants.ts # Magic numbers extracted
+```
+
+**Violations that MUST be refactored**:
+- ❌ Forms with 200+ lines containing mutations, validation, defaults, and UI
+- ❌ Magic numbers scattered in code (must extract to constants)
+- ❌ Inline Zod schemas in components (must extract to _schemas/)
+- ❌ Mutation logic in components (must extract to _hooks/)
+- ❌ Default values hardcoded in forms (must extract to _utils/)
+- ❌ Business logic mixed with UI rendering
 
 **Examples**:
-- ✅ `user-form.tsx` handles the form UI
-- ✅ `user-service.ts` handles saving user data
-- ✅ `user-validator.ts` checks if data is valid
-- ❌ One giant file that does everything
+- ✅ `user-form.tsx` handles UI orchestration (60 lines)
+- ✅ `use-user-mutations.ts` handles create/update + cache invalidation
+- ✅ `use-user-data.ts` fetches related data (roles, departments)
+- ✅ `user-form.schema.ts` contains Zod validation schema
+- ✅ `user-form.utils.ts` has getDefaultValues() and transformValues()
+- ✅ `user-form.constants.ts` has MIN_AGE, MAX_NAME_LENGTH, etc.
+- ❌ One 300-line file with everything mixed together
 
 ---
 
@@ -296,9 +346,9 @@ The constitution is the **ultimate authority** for engineering decisions. When i
 When principles conflict (rare), use this order:
 
 1. **Security From the Start** (no compromises on security)
-2. **Clarity Over Complexity** (readable code over clever code)
-3. **Server-First Performance** (fast for users)
-4. **One Job, One Place** (maintainability)
+2. **One Job, One Place (SOLID Architecture)** (maintainability and testability)
+3. **Clarity Over Complexity** (readable code over clever code)
+4. **Server-First Performance** (fast for users)
 5. **Flexible Testing** (quality assurance)
 6. **Extend, Don't Modify** (stability)
 7. **Track Everything Important** (observability)
@@ -329,22 +379,38 @@ If something is unclear:
 <!--
 Sync Impact Report
 
-- Version change: 2.1.1 → 2.1.2 (PATCH)
-- Modified principles: none (template alignment only)
-- Added sections: none
+- Version change: 2.1.2 → 2.2.0 (MINOR)
+- Modified principles:
+  * Principle 3: "One Job, One Place" → "One Job, One Place (SOLID Architecture)"
+    - Expanded with comprehensive SOLID principles guidance
+    - Added mandatory file organization structure for forms
+    - Listed specific violations that must be refactored
+    - Included code examples for proper architecture
+- Added sections:
+  * SOLID Principles Applied (5 principles with explanations)
+  * Mandatory File Organization (folder structure template)
+  * Violations that MUST be refactored (anti-patterns list)
 - Removed sections: none
-- Templates updated:
-  * .specify/templates/plan-template.md ✅ updated (enhanced Constitution Check section with specific principle references)
-  * .specify/templates/spec-template.md ✅ verified (already aligned)
-  * .specify/templates/tasks-template.md ✅ verified (already aligned)
-  * .specify/templates/checklist-template.md ✅ verified (already aligned)
-  * .specify/templates/agent-file-template.md ✅ verified (already aligned)
-- Follow-up TODOs: none
+- Templates requiring updates:
+  * .specify/templates/plan-template.md ⚠ PENDING (add SOLID architecture validation)
+  * .specify/templates/spec-template.md ⚠ PENDING (add file organization requirements)
+  * .specify/templates/tasks-template.md ⚠ PENDING (add refactoring task category)
+  * .github/copilot-instructions.md ✅ already contains detailed SOLID patterns
+- Follow-up TODOs:
+  * Update plan template to include SOLID architecture checklist
+  * Update spec template to require file organization structure
+  * Update tasks template with "refactor: SOLID compliance" task type
+  * Audit existing forms for SOLID violations (model-form.tsx ✅ completed, branding-config-form.tsx ✅ completed)
 - Changes summary:
-  * Enhanced plan-template.md Constitution Check section with concrete checklist items
-  * Added specific references to all 7 constitution principles
-  * Included technology constraints validation
-  * Added quality gates reference
-  * All templates now properly reference constitution principles where applicable
-- Rationale: PATCH version bump for template clarifications and improved consistency between constitution and templates
+  * MINOR version bump for new SOLID architecture principle
+  * Elevated SOLID from simple separation to comprehensive architectural guidance
+  * Established mandatory file organization patterns for all forms
+  * Created clear anti-patterns list for code review
+  * Updated principle priority to reflect importance of SOLID (now #2 after Security)
+- Rationale:
+  * Recent refactoring of model-form.tsx and branding-config-form.tsx revealed systematic SOLID violations
+  * Team needs clear, enforceable standards for component architecture
+  * Prevents future accumulation of technical debt in forms
+  * Improves testability, maintainability, and developer onboarding
+  * Aligns with existing .github/copilot-instructions.md guidance
 -->

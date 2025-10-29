@@ -39,7 +39,12 @@ Reference: `.specify/memory/constitution.md` - verify feature complies with all 
 - [ ] **Server-First Performance**: Heavy work done on server, appropriate caching strategy defined
   - [ ] Caching strategy documented (semi-static 30-60s, rarely-changing 5min, user-specific short/none)
   - [ ] SSR mutations use two-step invalidation: `invalidate()` + `router.refresh()`
-- [ ] **One Job, One Place**: Each module has single responsibility, clear separation of concerns
+- [ ] **One Job, One Place (SOLID Architecture)**: Modular architecture with clear separation
+  - [ ] Forms follow mandatory file organization (_components, _hooks, _schemas, _utils, _constants)
+  - [ ] No SOLID violations: forms <100 lines UI-only, mutations in hooks, schemas extracted
+  - [ ] Magic numbers extracted to constants file
+  - [ ] Default values in utils, not hardcoded
+  - [ ] Business logic separated from UI rendering
 - [ ] **Flexible Testing**: Testing strategy defined (before/during/after - all features require tests before merge)
 - [ ] **Extend, Don't Modify**: New features add code, don't change existing working code
 - [ ] **Security From the Start**: Input validation and authorization checks at every entry point
@@ -73,9 +78,9 @@ Reference: `.specify/memory/constitution.md` - verify feature complies with all 
 
 If principles conflict, documented resolution following priority order:
 1. Security From the Start (non-negotiable)
-2. Clarity Over Complexity
-3. Server-First Performance
-4. One Job, One Place
+2. One Job, One Place (SOLID Architecture) (maintainability and testability)
+3. Clarity Over Complexity
+4. Server-First Performance
 5. Flexible Testing
 6. Extend, Don't Modify
 7. Track Everything Important

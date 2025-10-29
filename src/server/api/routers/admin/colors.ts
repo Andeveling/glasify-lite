@@ -151,7 +151,9 @@ export const colorsRouter = createTRPCRouter({
 
       return color;
     } catch (error) {
-      if (error instanceof TRPCError) throw error;
+      if (error instanceof TRPCError) {
+        throw error;
+      }
 
       logger.error("Failed to get color", {
         userId: ctx.session?.user.id,
@@ -209,7 +211,9 @@ export const colorsRouter = createTRPCRouter({
 
         return color;
       } catch (error) {
-        if (error instanceof TRPCError) throw error;
+        if (error instanceof TRPCError) {
+          throw error;
+        }
 
         // Handle Prisma unique constraint violation
         if (
@@ -294,7 +298,9 @@ export const colorsRouter = createTRPCRouter({
 
         return color;
       } catch (error) {
-        if (error instanceof TRPCError) throw error;
+        if (error instanceof TRPCError) {
+          throw error;
+        }
 
         logger.error("Failed to update color", {
           userId: ctx.session?.user.id,
@@ -385,7 +391,9 @@ export const colorsRouter = createTRPCRouter({
           color: null,
         };
       } catch (error) {
-        if (error instanceof TRPCError) throw error;
+        if (error instanceof TRPCError) {
+          throw error;
+        }
 
         logger.error("Failed to delete color", {
           userId: ctx.session?.user.id,
@@ -437,7 +445,9 @@ export const colorsRouter = createTRPCRouter({
           canHardDelete: quoteCount === 0 && modelCount === 0, // Can hard delete only if no references
         };
       } catch (error) {
-        if (error instanceof TRPCError) throw error;
+        if (error instanceof TRPCError) {
+          throw error;
+        }
 
         logger.error("Failed to check color usage", {
           userId: ctx.session?.user.id,

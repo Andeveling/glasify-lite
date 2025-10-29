@@ -107,6 +107,8 @@ export function QuoteItemsGrid({
     );
   }
 
+  const EAGER_LOAD_LIMIT = 4;
+
   return (
     <>
       {/* Grid */}
@@ -118,12 +120,12 @@ export function QuoteItemsGrid({
           <div className="flex flex-col gap-2" key={item.id}>
             {/* Product thumbnail */}
             <QuoteItemImage
-              eager={eager && index < 4}
+              eager={eager && index < EAGER_LOAD_LIMIT}
               modelImageUrl={item.modelImageUrl}
               modelName={item.modelName}
               onClick={() => handleItemClick(item.id)}
               size="md"
-              windowType={item.windowType} // First 4 items eager
+              windowType={item.windowType} // First EAGER_LOAD_LIMIT items eager
             />
 
             {/* Product name */}

@@ -55,6 +55,7 @@ export function useGlassTypesByTab(
   glassTypes: GlassTypeOutput[],
   basePrice?: number
 ): GlassTab[] {
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex glass type grouping logic with deduplication, primary solution mapping, and fallback tabs. Necessary for proper glass solution categorization.
   const tabs = useMemo(() => {
     // Step 1: Map glass types to their PRIMARY solution only (deduplicate)
     const primarySolutionsMap = new Map<

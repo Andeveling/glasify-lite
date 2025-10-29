@@ -35,6 +35,14 @@ type ModelColorWithColor = ModelColor & {
   color: Color;
 };
 
+// Serialized version for Client Component (Decimal -> number)
+type SerializedModelColorWithColor = Omit<
+  ModelColorWithColor,
+  "surchargePercentage"
+> & {
+  surchargePercentage: number;
+};
+
 /**
  * Props for ModelColorRow
  *
@@ -55,7 +63,7 @@ type ModelColorWithColor = ModelColor & {
  * DO NOT rename to "Action" suffix - these are NOT Server Actions.
  */
 type ModelColorRowProps = {
-  modelColor: ModelColorWithColor;
+  modelColor: SerializedModelColorWithColor;
   onSurchargeChange: (id: string, surcharge: number) => void;
   onDefaultChange: (id: string) => void;
   onDelete: (id: string) => void;
