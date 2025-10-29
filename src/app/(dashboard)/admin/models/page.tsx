@@ -69,9 +69,11 @@ function ModelsTableSkeleton() {
       </div>
       <div className="rounded-md border">
         <div className="space-y-3 p-4">
-          {Array.from({ length: 10 }).map((_, i) => (
-            <Skeleton className="h-16 w-full" key={i} />
-          ))}
+          {Array.from({ length: 10 }, (_, i) => `model-skeleton-${i}`).map(
+            (key) => (
+              <Skeleton className="h-16 w-full" key={key} />
+            )
+          )}
         </div>
       </div>
     </div>

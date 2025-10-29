@@ -34,9 +34,17 @@ type ModelColorWithColor = ModelColor & {
   color: Color;
 };
 
+// Serialized version for Client Component (Decimal -> number)
+type SerializedModelColorWithColor = Omit<
+  ModelColorWithColor,
+  "surchargePercentage"
+> & {
+  surchargePercentage: number;
+};
+
 type ModelColorsListProps = {
   modelId: string;
-  initialColors: ModelColorWithColor[];
+  initialColors: SerializedModelColorWithColor[];
 };
 
 /**
@@ -50,22 +58,29 @@ export function ModelColorsList({
   const router = useRouter();
   const utils = api.useUtils();
 
-  // Query for real-time data (with initialData from SSR)
-  const { data: modelColors = initialColors } = api.admin[
+  // Query for real-time data (fallback to initialColors)
+  const { data: modelColorsRaw } = api.admin[
     "model-colors"
-  ].listByModel.useQuery({ modelId }, { initialData: initialColors });
+  ].listByModel.useQuery({ modelId });
+
+  // Serialize Decimal to number for display
+  const modelColors =
+    modelColorsRaw?.map((mc) => ({
+      ...mc,
+      surchargePercentage: mc.surchargePercentage.toNumber(),
+    })) ?? initialColors;
 
   // Update surcharge mutation
   const updateSurchargeMutation = api.admin[
     "model-colors"
   ].updateSurcharge.useMutation({
+    onError: (error) => {
+      toast.error(error.message || "Error al actualizar recargo");
+    },
     onSuccess: () => {
       toast.success("Recargo actualizado");
       utils.admin["model-colors"].listByModel.invalidate().catch(undefined);
       router.refresh();
-    },
-    onError: (error) => {
-      toast.error(error.message || "Error al actualizar recargo");
     },
   });
 

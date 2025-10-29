@@ -123,6 +123,13 @@ function ActionsMenu({
             Editar
           </Link>
         </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href={`/admin/models/${model.id}/colors`}>
+            <Palette className="mr-2 size-4" />
+            Gestionar colores
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
         <DropdownMenuItem
           className="text-destructive"
           onClick={() => onDelete(model.id, model.name)}
@@ -227,7 +234,7 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
       },
       onSettled: () => {
         // Always refetch after error or success to ensure sync with server
-        void utils.admin.model.list.invalidate();
+        utils.admin.model.list.invalidate().catch(undefined);
       },
     }
   );
@@ -316,19 +323,26 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
       align: "center",
       cell: (model) => {
         const colorCount = model._count.modelColors;
-        if (colorCount === 0) {
-          return (
-            <Badge variant="secondary">
-              <Palette className="mr-1 h-3 w-3" />
-              Sin colores
-            </Badge>
-          );
-        }
         return (
-          <Badge variant="default">
-            <Palette className="mr-1 h-3 w-3" />
-            {colorCount} {colorCount === 1 ? "color" : "colores"}
-          </Badge>
+          <Link href={`/admin/models/${model.id}/colors`}>
+            {colorCount === 0 ? (
+              <Badge
+                className="cursor-pointer hover:opacity-80"
+                variant="secondary"
+              >
+                <Palette className="mr-1 h-3 w-3" />
+                Sin colores
+              </Badge>
+            ) : (
+              <Badge
+                className="cursor-pointer hover:opacity-80"
+                variant="default"
+              >
+                <Palette className="mr-1 h-3 w-3" />
+                {colorCount} {colorCount === 1 ? "color" : "colores"}
+              </Badge>
+            )}
+          </Link>
         );
       },
       header: "Colores",
