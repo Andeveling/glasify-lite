@@ -257,14 +257,14 @@ feature/
 The following technologies are mandatory for consistency and team expertise:
 
 **Core Framework**:
-- Next.js 15 (App Router with React Server Components)
+- Next.js 16 (App Router with React Server Components)
 - TypeScript (strict mode enabled)
 
 **Backend**:
 - tRPC (type-safe API communication)
 - Prisma (database access)
 - PostgreSQL (database)
-- NextAuth.js (authentication)
+- Better Auth (authentication)
 
 **Frontend**:
 - React 19 (Server Components first)
