@@ -120,6 +120,7 @@ function PerformanceRating({ rating }: { rating: string }): React.ReactElement {
         {Array.from({ length: 5 }).map((_, i) => (
           <Star
             className={`h-4 w-4 ${i < ratingData.stars ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"}`}
+            // biome-ignore lint/suspicious/noArrayIndexKey: Rating stars are static presentational elements that never reorder, making array index as key safe.
             key={i}
           />
         ))}

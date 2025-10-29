@@ -150,6 +150,7 @@ export function ModelForm({
     });
 
   // ✅ Build detailed price breakdown for popover
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex price breakdown calculation with multiple categories (model, glass, services, adjustments, color) and conditional formatting. Complexity is necessary for comprehensive pricing details.
   const priceBreakdown = useMemo(() => {
     const items: Array<{
       amount: number;

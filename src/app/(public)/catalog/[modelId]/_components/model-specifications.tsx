@@ -123,6 +123,7 @@ function PerformanceRating({
               className={
                 i < stars ? "text-yellow-500" : "text-muted-foreground/30"
               }
+              // biome-ignore lint/suspicious/noArrayIndexKey: Rating stars are static presentational elements that never reorder, making array index as key safe.
               key={i}
             >
               ★

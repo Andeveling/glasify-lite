@@ -93,6 +93,7 @@ export function useQuoteExport(
     setIsDownloadingPDF(true);
 
     return new Promise((resolve) => {
+      // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex PDF export logic with error handling, file download, and success/error callbacks. Necessary for proper export flow.
       startPDFTransition(async () => {
         try {
           const result = await exportQuotePDF({
@@ -136,6 +137,7 @@ export function useQuoteExport(
     setIsDownloadingExcel(true);
 
     return new Promise((resolve) => {
+      // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex Excel export logic with error handling, file download, and success/error callbacks. Necessary for proper export flow.
       startExcelTransition(async () => {
         try {
           const result = await exportQuoteExcel({
