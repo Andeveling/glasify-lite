@@ -379,22 +379,38 @@ If something is unclear:
 <!--
 Sync Impact Report
 
-- Version change: 2.1.1 → 2.1.2 (PATCH)
-- Modified principles: none (template alignment only)
-- Added sections: none
+- Version change: 2.1.2 → 2.2.0 (MINOR)
+- Modified principles:
+  * Principle 3: "One Job, One Place" → "One Job, One Place (SOLID Architecture)"
+    - Expanded with comprehensive SOLID principles guidance
+    - Added mandatory file organization structure for forms
+    - Listed specific violations that must be refactored
+    - Included code examples for proper architecture
+- Added sections:
+  * SOLID Principles Applied (5 principles with explanations)
+  * Mandatory File Organization (folder structure template)
+  * Violations that MUST be refactored (anti-patterns list)
 - Removed sections: none
-- Templates updated:
-  * .specify/templates/plan-template.md ✅ updated (enhanced Constitution Check section with specific principle references)
-  * .specify/templates/spec-template.md ✅ verified (already aligned)
-  * .specify/templates/tasks-template.md ✅ verified (already aligned)
-  * .specify/templates/checklist-template.md ✅ verified (already aligned)
-  * .specify/templates/agent-file-template.md ✅ verified (already aligned)
-- Follow-up TODOs: none
+- Templates requiring updates:
+  * .specify/templates/plan-template.md ⚠ PENDING (add SOLID architecture validation)
+  * .specify/templates/spec-template.md ⚠ PENDING (add file organization requirements)
+  * .specify/templates/tasks-template.md ⚠ PENDING (add refactoring task category)
+  * .github/copilot-instructions.md ✅ already contains detailed SOLID patterns
+- Follow-up TODOs:
+  * Update plan template to include SOLID architecture checklist
+  * Update spec template to require file organization structure
+  * Update tasks template with "refactor: SOLID compliance" task type
+  * Audit existing forms for SOLID violations (model-form.tsx ✅ completed, branding-config-form.tsx ✅ completed)
 - Changes summary:
-  * Enhanced plan-template.md Constitution Check section with concrete checklist items
-  * Added specific references to all 7 constitution principles
-  * Included technology constraints validation
-  * Added quality gates reference
-  * All templates now properly reference constitution principles where applicable
-- Rationale: PATCH version bump for template clarifications and improved consistency between constitution and templates
+  * MINOR version bump for new SOLID architecture principle
+  * Elevated SOLID from simple separation to comprehensive architectural guidance
+  * Established mandatory file organization patterns for all forms
+  * Created clear anti-patterns list for code review
+  * Updated principle priority to reflect importance of SOLID (now #2 after Security)
+- Rationale:
+  * Recent refactoring of model-form.tsx and branding-config-form.tsx revealed systematic SOLID violations
+  * Team needs clear, enforceable standards for component architecture
+  * Prevents future accumulation of technical debt in forms
+  * Improves testability, maintainability, and developer onboarding
+  * Aligns with existing .github/copilot-instructions.md guidance
 -->
