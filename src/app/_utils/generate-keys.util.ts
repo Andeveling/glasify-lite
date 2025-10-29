@@ -10,6 +10,8 @@ export function generateKey() {
 
 /**
  * Creates an array of a specific length with unique keys for React rendering
+ * Use for dynamic/re-orderable lists where items may be reordered
+ * For skeleton loaders or static content, use generateStableKeyedArray instead
  * @param length - The length of the array to generate
  * @param prefix - Optional prefix for the generated keys (default: 'item')
  * @returns Array of objects with unique keys
@@ -17,7 +19,7 @@ export function generateKey() {
 export function generateKeyedArray(length: number, prefix = "item") {
   return Array.from({ length }, (_, index) => ({
     index,
-    key: `${prefix}-${generateKey()}-${index}`,
+    key: `${prefix}-${generateKey()}`,
   }));
 }
 

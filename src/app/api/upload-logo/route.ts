@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 import logger from "@/lib/logger";
 import { auth } from "@/server/auth";
-import { FileUploadService } from "@/server/services/file-upload.service";
+import { uploadLogo } from "@/server/services/file-upload.service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
 
     // Upload and optimize logo
     const tenantId = "1"; // Singleton tenant
-    const logoUrl = await FileUploadService.uploadLogo(file, tenantId);
+    const logoUrl = await uploadLogo(file, tenantId);
 
     logger.info("Logo subido exitosamente", {
       fileSize: file.size,

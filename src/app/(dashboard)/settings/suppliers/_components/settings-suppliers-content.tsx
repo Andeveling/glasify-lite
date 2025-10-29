@@ -164,7 +164,7 @@ export function SettingsSuppliersContent({
       toast.success("Proveedor creado", {
         description: "El proveedor se creó correctamente",
       });
-      void utils.admin["profile-supplier"].list.invalidate();
+      utils.admin["profile-supplier"].list.invalidate();
       setIsDialogOpen(false);
       form.reset();
     },
@@ -181,7 +181,7 @@ export function SettingsSuppliersContent({
       toast.success("Proveedor actualizado", {
         description: "Los cambios se guardaron correctamente",
       });
-      void utils.admin["profile-supplier"].list.invalidate();
+      utils.admin["profile-supplier"].list.invalidate();
       setIsDialogOpen(false);
       setSelectedSupplier(null);
       form.reset();
@@ -201,7 +201,7 @@ export function SettingsSuppliersContent({
       toast.success("Proveedor eliminado", {
         description: "El proveedor se eliminó correctamente",
       });
-      void utils.admin["profile-supplier"].list.invalidate();
+      utils.admin["profile-supplier"].list.invalidate();
     },
   });
 
@@ -215,7 +215,7 @@ export function SettingsSuppliersContent({
       },
       onSuccess: () => {
         toast.success("Estado actualizado");
-        void utils.admin["profile-supplier"].list.invalidate();
+        utils.admin["profile-supplier"].list.invalidate();
       },
     }
   );
