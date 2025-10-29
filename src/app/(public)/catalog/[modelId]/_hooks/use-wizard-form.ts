@@ -3,17 +3,17 @@
  * Uses React Hook Form for multi-step form state
  */
 
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { wizardFormSchema } from '../_schemas/wizard-form.schema';
-import type { WizardFormData } from '../_utils/wizard-form.utils';
-import { getWizardDefaults } from '../_utils/wizard-form.utils';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { wizardFormSchema } from "../_schemas/wizard-form.schema";
+import type { WizardFormData } from "../_utils/wizard-form.utils";
+import { getWizardDefaults } from "../_utils/wizard-form.utils";
 
 type UseWizardFormProps = {
-	modelId: string;
-	initialData?: Partial<WizardFormData>;
+  modelId: string;
+  initialData?: Partial<WizardFormData>;
 };
 
 /**
@@ -25,14 +25,14 @@ type UseWizardFormProps = {
  * @returns React Hook Form instance with wizard-specific defaults
  */
 export function useWizardForm({ modelId, initialData }: UseWizardFormProps) {
-	const form = useForm<WizardFormData>({
-		resolver: zodResolver(wizardFormSchema),
-		defaultValues: {
-			...getWizardDefaults(modelId),
-			...initialData,
-		},
-		mode: 'onChange', // Validate on change for instant feedback
-	});
+  const form = useForm<WizardFormData>({
+    resolver: zodResolver(wizardFormSchema),
+    defaultValues: {
+      ...getWizardDefaults(modelId),
+      ...initialData,
+    },
+    mode: "onChange", // Validate on change for instant feedback
+  });
 
-	return form;
+  return form;
 }

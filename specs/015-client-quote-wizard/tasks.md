@@ -102,26 +102,26 @@ description: "Task list for Client Quote Wizard implementation"
 ### Implementation for User Story 1
 
 **Constants & Utils**:
-- [ ] T012 [P] [US1] Create validation utils file `_utils/wizard-validation.utils.ts`
+- [X] T012 [P] [US1] Create validation utils file `_utils/wizard-validation.utils.ts`
   - Export validateDimensions(width, height) function with min/max checks
   - Export validateRoomLocation(value) function for custom text validation
   - Export validateGlassSolution(id, availableSolutions) function
 
 **Hooks**:
-- [ ] T013 [US1] Create form hook `_hooks/use-wizard-form.ts`
+- [X] T013 [US1] Create form hook `_hooks/use-wizard-form.ts`
   - Implement React Hook Form with wizardFormSchema
   - Initialize with getWizardDefaults(modelId)
   - Export form methods (register, setValue, watch, trigger, getValues)
   - Return currentStep state and form instance
   
-- [ ] T014 [US1] Create navigation hook `_hooks/use-wizard-navigation.ts`
+- [X] T014 [US1] Create navigation hook `_hooks/use-wizard-navigation.ts`
   - Implement goToNextStep() with step validation using trigger()
   - Implement goToPreviousStep() without validation
   - Implement jumpToStep(stepNumber) for progress indicator clicks
   - Manage currentStep state (1-4)
   - Return navigation methods and canGoNext boolean
   
-- [ ] T015 [US1] Create mutation hook `_hooks/use-add-to-budget.ts`
+- [X] T015 [US1] Create mutation hook `_hooks/use-add-to-budget.ts`
   - Use tRPC mutation budget.add-item with transformWizardToQuoteItem()
   - Include cache invalidation: `utils.budget.get-items.invalidate().catch(undefined)`
   - Include router.refresh() for SSR cache (if parent page uses force-dynamic)
@@ -129,60 +129,33 @@ description: "Task list for Client Quote Wizard implementation"
   - Export mutation with isLoading, mutate, isSuccess states
 
 **Step Components**:
-- [ ] T016 [P] [US1] Create Step 1 component `_components/quote-wizard/steps/location-step.tsx`
-  - Render Combobox with ROOM_LOCATIONS options
-  - Include "Otro" option with free-text input (max 100 chars)
-  - Integrate with React Hook Form (register, errors)
-  - Show validation errors in Spanish
-  - Mobile-friendly touch targets (≥44x44px)
-  
-- [ ] T017 [P] [US1] Create Step 2 component `_components/quote-wizard/steps/dimensions-step.tsx`
-  - Render width/height number inputs with units (mm)
-  - Display validation errors for min/max constraints (500-3000mm)
-  - Show real-time price calculation (debounced 300ms via useDebounce)
-  - Include optional color selector (RadioGroup or Select)
-  - Responsive layout: stacked on mobile (<768px), side-by-side on desktop
-  
-- [ ] T018 [P] [US1] Create Step 3 component `_components/quote-wizard/steps/glass-step.tsx`
-  - Render glass solutions as Card grid (2 cols mobile, 3-4 cols desktop)
-  - Display icon from GLASS_SOLUTION_ICONS based on category
-  - Show solution name, description, and price impact
-  - Highlight selected solution with border/background
-  - Use RadioGroup semantics for accessibility
-  
-- [ ] T019 [P] [US1] Create Step 4 component `_components/quote-wizard/steps/services-step.tsx`
-  - Render services as Checkbox list with labels and pricing
-  - Show total price update when services toggled
-  - Allow "skip" (no services selected) to be valid
-  - Display service descriptions as tooltips or helper text
-  
-- [ ] T020 [P] [US1] Create summary component `_components/quote-wizard/steps/summary-step.tsx`
-  - Display all selections: room location, dimensions, color, glass solution, services
-  - Show pricing breakdown: base price + color markup + glass solution + services
-  - Include "Editar" buttons for each section (jumpToStep navigation)
-  - Display final total with clear typography
-  - Render "Agregar al Presupuesto" button with loading state
+### Step Components (T016-T020) [P]
+- [X] T016: Create `_components/quote-wizard/steps/location-step.tsx` (Combobox with room locations)
+- [X] T017: Create `_components/quote-wizard/steps/dimensions-step.tsx` (Width/Height inputs with debounce)
+- [X] T018: Create `_components/quote-wizard/steps/glass-step.tsx` (Glass solution card grid)
+- [X] T019: Create `_components/quote-wizard/steps/services-step.tsx` (Multi-select services checkboxes)
+- [X] T020: Create `_components/quote-wizard/steps/summary-step.tsx` (Read-only summary view)
 
 **Orchestration Components**:
-- [ ] T021 [US1] Create progress indicator `_components/quote-wizard/wizard-progress.tsx`
+- [X] T021 [US1] Create progress indicator `_components/quote-wizard/wizard-stepper.tsx`
   - Display step numbers 1-4 with labels (mobile: numbers only, desktop: labels)
   - Highlight current step with distinct color
   - Mark completed steps with checkmark icon
   - Allow click navigation to previous steps (disabled for future steps)
   - Responsive design: horizontal on desktop, vertical on mobile (optional)
   
-- [ ] T022 [US1] Create step container `_components/quote-wizard/wizard-step-container.tsx`
+- [X] T022 [US1] Create navigation actions `_components/quote-wizard/wizard-actions.tsx`
   - Generic wrapper for each step with consistent padding/margins
   - Render "Atrás" button (hidden on step 1)
   - Render "Siguiente" button (changes to "Ver Resumen" on step 4)
   - Handle button click events via useWizardNavigation
   - Include loading states during validation
   
-- [ ] T023 [US1] Create main wizard orchestrator `_components/quote-wizard/quote-wizard.tsx` (<150 lines)
+- [X] T023 [US1] Create main wizard orchestrator `_components/quote-wizard/quote-wizard.tsx` (<150 lines)
   - Accept modelId and initialData (model, colors, glassSolutions, services) as props
-  - Render WizardProgress component
+  - Render WizardStepper component
   - Conditionally render current step component based on currentStep state
-  - Render WizardStepContainer with appropriate navigation buttons
+  - Render WizardActions with appropriate navigation buttons
   - On step 5 (summary), render SummaryStep with add-to-budget functionality
   - Handle successful addition: show success toast, reset form, redirect to budget (optional)
   - Use 'use client' directive (Client Component)
