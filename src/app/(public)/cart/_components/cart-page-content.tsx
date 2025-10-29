@@ -52,7 +52,7 @@ export function CartPageContent() {
           <div className="lg:col-span-2">
             <div className="space-y-4">
               {Array.from({ length: SKELETON_ITEMS_COUNT }).map(() => {
-                const id = `${skeletonId}-${crypto.randomUUID()}`;
+                const id = `${skeletonId}`;
                 return (
                   <div
                     className="h-32 animate-pulse rounded-lg border bg-muted"
