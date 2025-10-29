@@ -126,7 +126,7 @@ export function ColorSelector({ modelId, onColorChange }: ColorSelectorProps) {
     );
   }
 
-  if (!(data && data.hasColors)) {
+  if (!data?.hasColors) {
     return null; // No color selector if model has no colors
   }
 

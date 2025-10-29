@@ -1,62 +1,76 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Upload, X } from 'lucide-react';
-import Image from 'next/image';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
-import { api } from '@/trpc/react';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Upload, X } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { api } from "@/trpc/react";
 
 const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
 const e164PhoneRegex = /^\+[1-9]\d{1,14}$/;
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
-const ALLOWED_FILE_TYPES = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp'];
+const ALLOWED_FILE_TYPES = [
+  "image/png",
+  "image/jpeg",
+  "image/svg+xml",
+  "image/webp",
+];
 
 const socialUrlSchema = z
   .string()
-  .url({ message: 'URL inválida' })
+  .url({ message: "URL inválida" })
   .regex(/^https?:\/\/(www\.)?(facebook|instagram|linkedin)\.com/, {
-    message: 'URL debe ser de Facebook, Instagram o LinkedIn',
+    message: "URL debe ser de Facebook, Instagram o LinkedIn",
   })
   .optional()
-  .or(z.literal(''));
+  .or(z.literal(""));
 
 const brandingFormSchema = z.object({
   facebookUrl: socialUrlSchema,
   instagramUrl: socialUrlSchema,
   linkedinUrl: socialUrlSchema,
-  logoUrl: z.string().url().optional().or(z.literal('')),
+  logoUrl: z.string().url().optional().or(z.literal("")),
   primaryColor: z
     .string()
     .regex(hexColorRegex, {
-      message: 'Color debe estar en formato hexadecimal (#RRGGBB)',
+      message: "Color debe estar en formato hexadecimal (#RRGGBB)",
     })
     .optional(),
   secondaryColor: z
     .string()
     .regex(hexColorRegex, {
-      message: 'Color debe estar en formato hexadecimal (#RRGGBB)',
+      message: "Color debe estar en formato hexadecimal (#RRGGBB)",
     })
     .optional(),
   whatsappEnabled: z.boolean().optional(),
   whatsappNumber: z
     .string()
     .regex(e164PhoneRegex, {
-      message: 'Número WhatsApp inválido. Use formato internacional: +507-1234-5678',
+      message:
+        "Número WhatsApp inválido. Use formato internacional: +507-1234-5678",
     })
     .optional()
-    .or(z.literal('')),
+    .or(z.literal("")),
 });
 
 type BrandingFormValues = z.infer<typeof brandingFormSchema>;
 
-interface BrandingConfigFormProps {
+type BrandingConfigFormProps = {
   initialData: {
     businessName: string;
     facebookUrl: string | null;
@@ -68,57 +82,61 @@ interface BrandingConfigFormProps {
     whatsappEnabled: boolean;
     whatsappNumber: string | null;
   };
-}
+};
 
 export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
-  const [logoPreview, setLogoPreview] = useState<string | null>(initialData.logoUrl || null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(
+    initialData.logoUrl || null
+  );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const utils = api.useUtils();
   const updateBranding = api.tenantConfig.updateBranding.useMutation({
     onError: (error) => {
-      toast.error('Error al actualizar', {
+      toast.error("Error al actualizar", {
         description: error.message,
       });
     },
     onSuccess: async () => {
       await utils.tenantConfig.getBranding.invalidate();
-      toast.success('Branding actualizado', {
-        description: 'Los cambios se reflejarán inmediatamente.',
+      toast.success("Branding actualizado", {
+        description: "Los cambios se reflejarán inmediatamente.",
       });
     },
   });
 
   const form = useForm<BrandingFormValues>({
     defaultValues: {
-      facebookUrl: initialData.facebookUrl || '',
-      instagramUrl: initialData.instagramUrl || '',
-      linkedinUrl: initialData.linkedinUrl || '',
-      logoUrl: initialData.logoUrl || '',
-      primaryColor: initialData.primaryColor || '#3B82F6',
-      secondaryColor: initialData.secondaryColor || '#1E40AF',
+      facebookUrl: initialData.facebookUrl || "",
+      instagramUrl: initialData.instagramUrl || "",
+      linkedinUrl: initialData.linkedinUrl || "",
+      logoUrl: initialData.logoUrl || "",
+      primaryColor: initialData.primaryColor || "#3B82F6",
+      secondaryColor: initialData.secondaryColor || "#1E40AF",
       whatsappEnabled: initialData.whatsappEnabled,
-      whatsappNumber: initialData.whatsappNumber || '',
+      whatsappNumber: initialData.whatsappNumber || "",
     },
     resolver: zodResolver(brandingFormSchema),
   });
 
   const handleLogoSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     // Validate file type
     if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-      toast.error('Formato no permitido', {
-        description: 'Use PNG, JPEG, SVG o WEBP.',
+      toast.error("Formato no permitido", {
+        description: "Use PNG, JPEG, SVG o WEBP.",
       });
       return;
     }
 
     // Validate file size
     if (file.size > MAX_FILE_SIZE) {
-      toast.error('Archivo muy grande', {
-        description: 'El logo debe pesar menos de 2MB.',
+      toast.error("Archivo muy grande", {
+        description: "El logo debe pesar menos de 2MB.",
       });
       return;
     }
@@ -130,7 +148,7 @@ export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
   const handleRemoveLogo = () => {
     setSelectedFile(null);
     setLogoPreview(null);
-    form.setValue('logoUrl', '');
+    form.setValue("logoUrl", "");
   };
 
   const onSubmit = async (data: BrandingFormValues) => {
@@ -141,15 +159,15 @@ export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
         // Note: File upload via tRPC needs special handling
         // For now, we'll use a FormData API route
         const formData = new FormData();
-        formData.append('file', selectedFile);
+        formData.append("file", selectedFile);
 
-        const uploadResponse = await fetch('/api/upload-logo', {
+        const uploadResponse = await fetch("/api/upload-logo", {
           body: formData,
-          method: 'POST',
+          method: "POST",
         });
 
         if (!uploadResponse.ok) {
-          throw new Error('Error al subir logo');
+          throw new Error("Error al subir logo");
         }
 
         const uploadData = await uploadResponse.json();
@@ -161,8 +179,9 @@ export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
         logoUrl: logoUrl || undefined,
       });
     } catch (error) {
-      toast.error('Error', {
-        description: error instanceof Error ? error.message : 'Error desconocido',
+      toast.error("Error", {
+        description:
+          error instanceof Error ? error.message : "Error desconocido",
       });
     }
   };
@@ -185,7 +204,12 @@ export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
                     {logoPreview ? (
                       <div className="relative inline-block">
                         <div className="relative h-32 w-32 overflow-hidden rounded-lg border bg-muted">
-                          <Image alt="Logo preview" className="object-contain" fill src={logoPreview} />
+                          <Image
+                            alt="Logo preview"
+                            className="object-contain"
+                            fill
+                            src={logoPreview}
+                          />
                         </div>
                         <Button
                           className="-right-2 -top-2 absolute h-6 w-6 rounded-full"
@@ -210,7 +234,9 @@ export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
                     />
                   </div>
                 </FormControl>
-                <FormDescription>PNG, JPEG, SVG o WEBP. Máximo 2MB.</FormDescription>
+                <FormDescription>
+                  PNG, JPEG, SVG o WEBP. Máximo 2MB.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -272,7 +298,10 @@ export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
                 <FormItem>
                   <FormLabel>Facebook</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="https://facebook.com/tuempresa" />
+                    <Input
+                      {...field}
+                      placeholder="https://facebook.com/tuempresa"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -286,7 +315,10 @@ export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
                 <FormItem>
                   <FormLabel>Instagram</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="https://instagram.com/tuempresa" />
+                    <Input
+                      {...field}
+                      placeholder="https://instagram.com/tuempresa"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -300,7 +332,10 @@ export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
                 <FormItem>
                   <FormLabel>LinkedIn</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="https://linkedin.com/company/tuempresa" />
+                    <Input
+                      {...field}
+                      placeholder="https://linkedin.com/company/tuempresa"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -323,7 +358,9 @@ export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
                   <FormControl>
                     <Input {...field} placeholder="+507-1234-5678" />
                   </FormControl>
-                  <FormDescription>Formato internacional (E.164)</FormDescription>
+                  <FormDescription>
+                    Formato internacional (E.164)
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -336,10 +373,15 @@ export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel className="text-base">Botón WhatsApp</FormLabel>
-                    <FormDescription>Mostrar en catálogo y cotizaciones</FormDescription>
+                    <FormDescription>
+                      Mostrar en catálogo y cotizaciones
+                    </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -348,11 +390,16 @@ export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
         </div>
 
         <div className="flex justify-end gap-4">
-          <Button disabled={updateBranding.isPending} onClick={() => form.reset()} type="button" variant="outline">
+          <Button
+            disabled={updateBranding.isPending}
+            onClick={() => form.reset()}
+            type="button"
+            variant="outline"
+          >
             Cancelar
           </Button>
           <Button disabled={updateBranding.isPending} type="submit">
-            {updateBranding.isPending ? 'Guardando...' : 'Guardar Cambios'}
+            {updateBranding.isPending ? "Guardando..." : "Guardar Cambios"}
           </Button>
         </div>
       </form>

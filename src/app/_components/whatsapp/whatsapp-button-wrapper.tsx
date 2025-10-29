@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { api } from '@/trpc/react';
-import { WhatsAppButton } from './whatsapp-button';
+import { api } from "@/trpc/react";
+import { WhatsAppButton } from "./whatsapp-button";
 
-interface WhatsAppButtonWrapperProps {
+type WhatsAppButtonWrapperProps = {
   message: string;
-  variant?: 'floating' | 'inline';
+  variant?: "floating" | "inline";
   className?: string;
-}
+};
 
 /**
  * WhatsApp Button Wrapper
@@ -17,7 +17,11 @@ interface WhatsAppButtonWrapperProps {
  * US-010: Botón de WhatsApp en catálogo y cotización
  * REQ-010: Botón solo visible si tenant configuró WhatsApp
  */
-export function WhatsAppButtonWrapper({ message, variant = 'inline', className }: WhatsAppButtonWrapperProps) {
+export function WhatsAppButtonWrapper({
+  message,
+  variant = "inline",
+  className,
+}: WhatsAppButtonWrapperProps) {
   const { data: branding } = api.tenantConfig.getBranding.useQuery();
 
   if (!(branding?.whatsappEnabled && branding?.whatsappNumber)) {
@@ -25,6 +29,11 @@ export function WhatsAppButtonWrapper({ message, variant = 'inline', className }
   }
 
   return (
-    <WhatsAppButton className={className} message={message} phoneNumber={branding.whatsappNumber} variant={variant} />
+    <WhatsAppButton
+      className={className}
+      message={message}
+      phoneNumber={branding.whatsappNumber}
+      variant={variant}
+    />
   );
 }

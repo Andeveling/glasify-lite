@@ -9,9 +9,9 @@
  * TEC-008: CSS variables dinámicas para colores corporativos
  */
 
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext, useEffect } from "react";
 
 // ============================================================================
 // Types
@@ -69,11 +69,15 @@ export function BrandingProvider({ children, config }: BrandingProviderProps) {
   useEffect(() => {
     // Inject CSS variables in :root
     const root = document.documentElement;
-    root.style.setProperty('--brand-primary', config.primaryColor);
-    root.style.setProperty('--brand-secondary', config.secondaryColor);
+    root.style.setProperty("--brand-primary", config.primaryColor);
+    root.style.setProperty("--brand-secondary", config.secondaryColor);
   }, [config.primaryColor, config.secondaryColor]);
 
-  return <BrandingContext.Provider value={config}>{children}</BrandingContext.Provider>;
+  return (
+    <BrandingContext.Provider value={config}>
+      {children}
+    </BrandingContext.Provider>
+  );
 }
 
 // ============================================================================
@@ -111,7 +115,7 @@ export function useBranding(): BrandingConfig {
   const context = useContext(BrandingContext);
 
   if (!context) {
-    throw new Error('useBranding must be used within BrandingProvider');
+    throw new Error("useBranding must be used within BrandingProvider");
   }
 
   return context;

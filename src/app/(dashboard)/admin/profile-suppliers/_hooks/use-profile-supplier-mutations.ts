@@ -53,7 +53,7 @@ export function useProfileSupplierMutations({
     onSettled: () => {
       // Two-step cache invalidation for SSR with force-dynamic
       // Step 1: Invalidate TanStack Query cache
-      void utils.admin["profile-supplier"].list.invalidate();
+      utils.admin["profile-supplier"].list.invalidate();
       // Step 2: Refresh Next.js Server Component data
       router.refresh();
     },
@@ -84,7 +84,7 @@ export function useProfileSupplierMutations({
     },
     onSettled: () => {
       // Two-step cache invalidation for SSR with force-dynamic
-      void utils.admin["profile-supplier"].list.invalidate();
+      utils.admin["profile-supplier"].list.invalidate();
       router.refresh();
     },
     onSuccess: () => {
@@ -126,7 +126,7 @@ export function useProfileSupplierMutations({
     },
     onSettled: () => {
       // Two-step cache invalidation for SSR with force-dynamic
-      void utils.admin["profile-supplier"].list.invalidate();
+      utils.admin["profile-supplier"].list.invalidate();
       router.refresh();
     },
     onSuccess: () => {

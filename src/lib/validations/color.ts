@@ -77,8 +77,12 @@ export const colorListSchema = z.object({
     .optional()
     .default("all")
     .transform((val) => {
-      if (val === "active") return true;
-      if (val === "inactive") return false;
+      if (val === "active") {
+        return true;
+      }
+      if (val === "inactive") {
+        return false;
+      }
       return;
     }),
   sortBy: z.enum(["name", "createdAt", "updatedAt"]).default("name"),

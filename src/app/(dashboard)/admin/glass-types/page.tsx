@@ -54,8 +54,9 @@ type PageProps = {
 
 // Loading skeleton for the table
 function GlassTypesTableSkeleton() {
-  const skeletonIds = Array.from({ length: 10 }, (_, i) =>
-    `skeleton-${Date.now()}-${i}`
+  const skeletonIds = Array.from(
+    { length: 10 },
+    (_, i) => `skeleton-${Date.now()}-${i}`
   );
 
   return (

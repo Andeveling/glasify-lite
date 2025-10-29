@@ -67,7 +67,7 @@ export function ModelForm({
 
   // ✅ Track selected color and its surcharge percentage
   const [selectedColorId, setSelectedColorId] = useState<string | undefined>();
-  const [colorSurchargePercentage, setColorSurchargePercentage] = useState(0);
+  const [_colorSurchargePercentage, setColorSurchargePercentage] = useState(0);
 
   // ✅ Auto-scroll to success card when item is added
   const successCardRef = useScrollIntoView(justAddedToCart);
