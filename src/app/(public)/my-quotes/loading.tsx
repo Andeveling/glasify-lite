@@ -4,6 +4,7 @@
  * Displays a loading state while the server fetches user's quotes.
  * Uses skeleton components to provide visual feedback during data fetch.
  */
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: Not risk index */
 
 import { ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
