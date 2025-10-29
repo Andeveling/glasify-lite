@@ -4,7 +4,8 @@
  * Displays a loading state while the server fetches user's quotes.
  * Uses skeleton components to provide visual feedback during data fetch.
  */
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: Not risk index */
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: Using array index as key is acceptable here because skeleton items are purely presentational and do not require stable identity. */
+/** biome-ignore-all lint/style/noMagicNumbers: Magic numbers are used intentionally for animation delays and skeleton layout to match the design specification. */
 
 import { ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
