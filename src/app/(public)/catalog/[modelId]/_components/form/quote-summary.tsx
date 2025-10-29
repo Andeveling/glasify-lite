@@ -213,10 +213,10 @@ export function QuoteSummary({
                   Por qué no puedes añadir a cotización:
                 </p>
                 <ul className="space-y-1">
-                  {formErrors.map((formError, index) => (
+                  {formErrors.map((formError) => (
                     <li
                       className="flex items-start gap-2 text-destructive/90 text-sm"
-                      key={index}
+                      key={formError.field}
                     >
                       <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-destructive" />
                       <span>

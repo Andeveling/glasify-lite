@@ -162,9 +162,9 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
 
             // Close drawer
             setIsOpen(false);
-
+            const delay = 500;
             // Small delay for UX (show success message)
-            await new Promise((resolve) => setTimeout(resolve, 500));
+            await new Promise((resolve) => setTimeout(resolve, delay));
 
             // Redirect to quote detail
             router.push(`/my-quotes/${result.quoteId}`);

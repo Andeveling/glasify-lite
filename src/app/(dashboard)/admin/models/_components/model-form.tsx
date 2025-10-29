@@ -110,7 +110,7 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
     onSuccess: () => {
       toast.success("Modelo creado exitosamente");
       // SSR two-step pattern: invalidate cache + refresh server data
-      void utils.admin.model.list.invalidate();
+      utils.admin.model.list.invalidate();
       router.refresh(); // Force re-fetch server data
       router.push("/admin/models");
     },
@@ -123,8 +123,8 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
     onSuccess: (data) => {
       toast.success("Modelo actualizado exitosamente");
       // SSR two-step pattern: invalidate cache + refresh server data
-      void utils.admin.model.list.invalidate();
-      void utils.admin.model["get-by-id"].invalidate({ id: data.id });
+      utils.admin.model.list.invalidate();
+      utils.admin.model["get-by-id"].invalidate({ id: data.id });
       router.refresh(); // Force re-fetch server data
       router.push("/admin/models");
     },
