@@ -430,8 +430,9 @@ model QuoteItem {
   glassType   GlassType @relation(fields: [glassTypeId], references: [id], onDelete: Restrict)
 
   // User-editable item identification
-  name     String @db.VarChar(50)
-  quantity Int    @default(1)
+  name         String  @db.VarChar(50)
+  quantity     Int     @default(1)
+  roomLocation String? @db.VarChar(100) // Window location (e.g., "Alcoba principal", "Cocina")
 
   widthMm          Int
   heightMm         Int

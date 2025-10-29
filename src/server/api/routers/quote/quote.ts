@@ -37,6 +37,9 @@ const PERCENTAGE_DIVISOR = 100;
 const MAX_LIMIT = 100;
 const DEFAULT_LIMIT = 20;
 
+// Constants for room location field
+const MAX_ROOM_LOCATION_LENGTH = 100;
+
 // Input schemas
 export const calculateItemServiceInput = z.object({
   quantity: z.number().optional(),
@@ -85,6 +88,7 @@ export const calculateItemOutput = z.object({
 export const addItemInput = calculateItemInput.extend({
   colorId: z.cuid({ error: "ID del color debe ser válido" }).optional(), // T045: Color selection optional
   quoteId: z.cuid({ error: "ID de la cotización debe ser válido" }).optional(),
+  roomLocation: z.string().max(MAX_ROOM_LOCATION_LENGTH).optional(), // T008: Window location (wizard feature)
 });
 
 export const addItemOutput = z.object({
@@ -309,6 +313,7 @@ export const quoteRouter = createTRPCRouter({
               modelId: model.id,
               name: model.name, // Add the required name property
               quoteId: quote.id,
+              roomLocation: input.roomLocation, // T008: Save window location from wizard
               subtotal: finalSubtotal,
               widthMm: input.widthMm,
             },
