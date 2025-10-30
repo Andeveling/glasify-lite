@@ -25,7 +25,10 @@ type UseAddToBudgetProps = {
  * @param successAction - Optional callback after successful addition
  * @returns Mutation methods and state
  */
-export function useAddToBudget({ modelId, successAction }: UseAddToBudgetProps) {
+export function useAddToBudget({
+  modelId,
+  successAction,
+}: UseAddToBudgetProps) {
   const router = useRouter();
   const utils = api.useUtils();
   const { clear } = useWizardPersistence(modelId);

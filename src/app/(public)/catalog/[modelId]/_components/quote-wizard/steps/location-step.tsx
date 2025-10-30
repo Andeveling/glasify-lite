@@ -162,6 +162,7 @@ export function LocationStep({ form }: LocationStepProps) {
 
       {error && (
         <p
+          aria-live="polite"
           className="text-destructive text-sm"
           id="location-error"
           role="alert"

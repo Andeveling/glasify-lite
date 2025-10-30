@@ -31,28 +31,28 @@ function getStepButtonClasses(
   isPastOrCurrent: boolean
 ): string {
   const baseClasses = "min-h-[44px] min-w-[44px] rounded-full transition-all";
-  
+
   if (isCurrent) {
     return cn(
       baseClasses,
       "border-2 border-primary bg-primary text-primary-foreground"
     );
   }
-  
+
   if (isCompleted) {
     return cn(
       baseClasses,
       "bg-primary text-primary-foreground hover:bg-primary/90"
     );
   }
-  
+
   if (isPastOrCurrent) {
     return cn(
       baseClasses,
       "border-2 border-primary bg-background text-primary hover:bg-primary/10"
     );
   }
-  
+
   return cn(
     baseClasses,
     "cursor-not-allowed border-2 border-muted bg-background text-muted-foreground"
@@ -76,7 +76,8 @@ export function WizardStepper({
           const isCompleted = completedSteps.includes(step.number);
           const isCurrent = currentStep === step.number;
           const isPastOrCurrent = step.number <= currentStep;
-          const isClickable = isPastOrCurrent && onStepClickAction && !isCurrent;
+          const isClickable =
+            isPastOrCurrent && onStepClickAction && !isCurrent;
           const isLastStep = index === steps.length - 1;
 
           return (

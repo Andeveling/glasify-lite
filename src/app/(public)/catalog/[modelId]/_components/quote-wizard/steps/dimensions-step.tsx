@@ -99,6 +99,7 @@ export function DimensionsStep({
           </div>
           {widthError && (
             <p
+              aria-live="polite"
               className="text-destructive text-sm"
               id="width-error"
               role="alert"
@@ -137,6 +138,7 @@ export function DimensionsStep({
           </div>
           {heightError && (
             <p
+              aria-live="polite"
               className="text-destructive text-sm"
               id="height-error"
               role="alert"

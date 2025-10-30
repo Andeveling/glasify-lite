@@ -140,6 +140,7 @@ export function GlassStep({ form, availableSolutions }: GlassStepProps) {
 
       {error && (
         <p
+          aria-live="polite"
           className="text-destructive text-sm"
           id="glass-solution-error"
           role="alert"
