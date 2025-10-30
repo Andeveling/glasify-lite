@@ -60,7 +60,9 @@ export function DimensionsStep({
   return (
     <div className="space-y-6 pb-8">
       <div className="space-y-2">
-        <h3 className="font-medium text-base md:text-lg">Dimensiones del vidrio</h3>
+        <h3 className="font-medium text-base md:text-lg">
+          Dimensiones del vidrio
+        </h3>
         <p className="text-muted-foreground text-sm md:text-base">
           Ingresa el ancho y alto en milímetros (rango: {MIN_DIMENSION} -{" "}
           {MAX_DIMENSION} mm)

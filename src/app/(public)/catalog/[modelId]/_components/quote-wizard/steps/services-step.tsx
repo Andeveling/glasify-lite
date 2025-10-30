@@ -83,7 +83,9 @@ export function ServicesStep({ form, availableServices }: ServicesStepProps) {
   return (
     <div className="space-y-6 pb-8">
       <div className="space-y-2">
-        <h3 className="font-medium text-base md:text-lg">Servicios adicionales</h3>
+        <h3 className="font-medium text-base md:text-lg">
+          Servicios adicionales
+        </h3>
         <p className="text-muted-foreground text-sm md:text-base">
           Selecciona servicios opcionales para complementar tu ventana (puedes
           elegir varios)

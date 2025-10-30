@@ -121,7 +121,9 @@ export function GlassStep({ form, availableSolutions }: GlassStepProps) {
                       value={solution.id}
                     />
                   </div>
-                  <CardTitle className="text-base md:text-lg">{solution.nameEs}</CardTitle>
+                  <CardTitle className="text-base md:text-lg">
+                    {solution.nameEs}
+                  </CardTitle>
                 </CardHeader>
                 {solution.description && (
                   <CardContent>

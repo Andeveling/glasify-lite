@@ -23,6 +23,43 @@ type WizardStepperProps = {
 };
 
 /**
+ * Get button classes based on step state
+ */
+function getStepButtonClasses(
+  isCurrent: boolean,
+  isCompleted: boolean,
+  isPastOrCurrent: boolean
+): string {
+  const baseClasses = "min-h-[44px] min-w-[44px] rounded-full transition-all";
+  
+  if (isCurrent) {
+    return cn(
+      baseClasses,
+      "border-2 border-primary bg-primary text-primary-foreground"
+    );
+  }
+  
+  if (isCompleted) {
+    return cn(
+      baseClasses,
+      "bg-primary text-primary-foreground hover:bg-primary/90"
+    );
+  }
+  
+  if (isPastOrCurrent) {
+    return cn(
+      baseClasses,
+      "border-2 border-primary bg-background text-primary hover:bg-primary/10"
+    );
+  }
+  
+  return cn(
+    baseClasses,
+    "cursor-not-allowed border-2 border-muted bg-background text-muted-foreground"
+  );
+}
+
+/**
  * WizardStepper Component
  * Horizontal stepper with visual progress indication
  */
@@ -38,7 +75,8 @@ export function WizardStepper({
         {steps.map((step, index) => {
           const isCompleted = completedSteps.includes(step.number);
           const isCurrent = currentStep === step.number;
-          const isClickable = isCompleted && onStepClickAction;
+          const isPastOrCurrent = step.number <= currentStep;
+          const isClickable = isPastOrCurrent && onStepClickAction && !isCurrent;
           const isLastStep = index === steps.length - 1;
 
           return (
@@ -50,27 +88,21 @@ export function WizardStepper({
                 <Button
                   aria-current={isCurrent ? "step" : undefined}
                   aria-label={`${step.label}: ${step.description}`}
-                  className={cn(
-                    "min-h-[44px] min-w-[44px] rounded-full",
-                    isCurrent &&
-                      "border-2 border-primary bg-primary text-primary-foreground",
-                    isCompleted &&
-                      !isCurrent &&
-                      "bg-primary text-primary-foreground",
-                    !(isCompleted || isCurrent) &&
-                      "border-2 border-muted bg-background text-muted-foreground"
+                  className={getStepButtonClasses(
+                    isCurrent,
+                    isCompleted,
+                    isPastOrCurrent
                   )}
                   disabled={!isClickable}
                   onClick={() => onStepClickAction?.(step.number)}
                   size="icon"
+                  type="button"
                   variant="ghost"
                 >
                   {isCompleted && !isCurrent ? (
                     <Check className="h-5 w-5" />
                   ) : (
-                    <span className="font-medium text-base">
-                      {step.number}
-                    </span>
+                    <span className="font-medium text-base">{step.number}</span>
                   )}
                 </Button>
                 <div className="hidden min-w-0 flex-col md:flex">
