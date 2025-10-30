@@ -161,7 +161,7 @@ description: "Task list for Client Quote Wizard implementation"
   - Use 'use client' directive (Client Component)
 
 **Integration**:
-- [ ] T024 [US1] Integrate wizard into catalog page `src/app/(public)/catalog/[modelId]/page.tsx`
+- [x] T024 [US1] Integrate wizard into catalog page `src/app/(public)/catalog/[modelId]/page.tsx`
   - Import QuoteWizard component
   - Pass server-side fetched data (model, colors, glassSolutions, services) as props
   - Add conditional rendering: show wizard OR existing ModelFormWrapper (feature flag or role-based)
