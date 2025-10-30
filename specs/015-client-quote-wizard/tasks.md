@@ -301,34 +301,35 @@ description: "Task list for Client Quote Wizard implementation"
 ### Implementation for User Story 3
 
 **Hooks**:
-- [ ] T038 [US3] Create persistence hook `_hooks/use-wizard-persistence.ts`
+- [x] T038 [US3] Create persistence hook `_hooks/use-wizard-persistence.ts`
   - Implement saveToLocalStorage(modelId, data) with try-catch
   - Implement loadFromLocalStorage(modelId) with JSON.parse error handling
   - Implement clearLocalStorage(modelId)
   - Use key format: `${LOCALSTORAGE_KEY_PREFIX}-${modelId}`
   - Return save, load, clear methods and isAvailable boolean
   
-- [ ] T039 [US3] Integrate persistence into use-wizard-form.ts
+- [x] T039 [US3] Integrate persistence into use-wizard-form.ts
   - Call loadFromLocalStorage(modelId) on mount, merge with defaults
   - Use watch() to subscribe to form changes
   - Debounce saves with 500ms delay (avoid excessive writes)
   - Save to localStorage on each form change (debounced)
   
-- [ ] T040 [US3] Clear localStorage on successful budget addition in use-add-to-budget.ts
+- [x] T040 [US3] Clear localStorage on successful budget addition in use-add-to-budget.ts
   - Add onSuccess callback to mutation
   - Call clearLocalStorage(modelId) after successful API response
-  - Show toast notification: "Progreso guardado eliminado"
+  - ~~Show toast notification: "Progreso guardado eliminado"~~ (silent clear)
 
 **Error Handling**:
-- [ ] T041 [US3] Add localStorage error handling in use-wizard-persistence.ts
+- [x] T041 [US3] Add localStorage error handling in use-wizard-persistence.ts
   - Catch QuotaExceededError (localStorage full)
   - Catch SecurityError (localStorage disabled by browser)
-  - Log errors to console (English, development only)
+  - ~~Log errors to console (English, development only)~~ (silent fail per Biome rules)
   - Return isAvailable: false if localStorage not supported
   - Wizard continues working without persistence (graceful degradation)
 
 **Testing (Unit)**:
 - [ ] T042 [P] [US3] Write unit tests `__tests__/quote-wizard/use-wizard-persistence.test.ts`
+  - SKIPPED: Fast MVP iteration (P3 feature)
   - Test: saveToLocalStorage writes correct data structure
   - Test: loadFromLocalStorage returns saved data
   - Test: clearLocalStorage removes key
@@ -338,6 +339,7 @@ description: "Task list for Client Quote Wizard implementation"
 
 **Testing (E2E)**:
 - [ ] T043 [US3] Write E2E test `e2e/quote-wizard-persistence.spec.ts`
+  - SKIPPED: Fast MVP iteration (P3 feature)
   - Test: Fill wizard to step 3, refresh page, verify data restored
   - Test: Complete wizard, verify localStorage cleared after budget addition
   - Test: Disable localStorage (browser setting), verify wizard still works
