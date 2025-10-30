@@ -9,12 +9,12 @@
  * - Click to select, visual feedback
  * - Lazy loading and accessibility
  *
- * Integrates with react-hook-form using useFormContext
+ * Integrates with react-hook-form using useController for proper field registration
  * Manages both display and form state
  */
 
 import Image from "next/image";
-import { useFormContext } from "react-hook-form";
+import { useController, useFormContext } from "react-hook-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/trpc/react";
 import { ImageGalleryItem } from "./image-gallery-item";
@@ -73,9 +73,14 @@ export function ImageGallerySectionComponent({
   label = "Imagen del Modelo",
   description = "Selecciona una imagen de la galería disponible",
 }: ImageGallerySectionProps) {
-  // Connect to react-hook-form using context
-  const { watch, setValue } = useFormContext();
-  const currentValue = watch(name);
+  // Connect to react-hook-form using useController for proper field registration
+  const { control } = useFormContext();
+  const {
+    field: { value: currentValue, onChange },
+  } = useController({
+    control,
+    name,
+  });
 
   // Fetch gallery images from tRPC
   // Note: tRPC returns GalleryImage[] | GalleryError, but query guarantees empty array on error
@@ -89,22 +94,14 @@ export function ImageGallerySectionComponent({
   // Type assertion: we know it's always an array due to router implementation
   const images: typeof rawData = Array.isArray(rawData) ? rawData : [];
 
-  // Handle selection with proper form update
+  // Handle selection with proper form update using onChange from useController
   const handleSelectImage = (imageUrl: string) => {
-    setValue(name, imageUrl, {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    });
+    onChange(imageUrl);
   };
 
   // Handle clear with proper form update
   const handleClearImage = () => {
-    setValue(name, null, {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    });
+    onChange(null);
   };
 
   // Handle API error gracefully
@@ -152,11 +149,11 @@ export function ImageGallerySectionComponent({
       </div>
 
       {/* Debug Panel - Temporary for troubleshooting */}
-      <div className="rounded border border-blue-200 bg-blue-50 p-2">
+      {/* <div className="rounded border border-blue-200 bg-blue-50 p-2">
         <p className="font-mono text-blue-800 text-xs">
           🔍 Debug: currentValue = {JSON.stringify(currentValue)}
         </p>
-      </div>
+      </div> */}
 
       {/* Current Selection Preview */}
       {selectedImage ? (
