@@ -169,7 +169,7 @@ description: "Task list for Client Quote Wizard implementation"
   - Do NOT modify existing ModelFormWrapper or ModelSidebarWrapper
 
 **Testing (E2E)**:
-- [ ] T025 [US1] Write E2E test `e2e/quote-wizard.spec.ts`
+- [x] T025 [US1] Write E2E test `e2e/quote-wizard.spec.ts`
   - Test: Complete wizard flow from step 1 to summary
   - Test: Verify item added to budget cart after final confirmation
   - Test: Check progress indicator updates on each step

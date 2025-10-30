@@ -38,16 +38,21 @@ const STEPS = [
 
 type GlassSolution = {
   id: string;
+  key: string;
   name: string;
+  nameEs: string;
   description: string | null;
-  category: string;
+  icon: string | null;
+  sortOrder: number;
+  isActive: boolean;
 };
 
 type Service = {
   id: string;
   name: string;
-  description: string | null;
-  pricePerSqm: number;
+  type: "area" | "perimeter" | "fixed";
+  unit: "unit" | "sqm" | "ml";
+  rate: number;
 };
 
 type QuoteWizardProps = {

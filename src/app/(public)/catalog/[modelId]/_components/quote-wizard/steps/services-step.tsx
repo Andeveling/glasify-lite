@@ -21,14 +21,47 @@ import type { WizardFormData } from "../../../_utils/wizard-form.utils";
 type Service = {
   id: string;
   name: string;
-  description: string | null;
-  pricePerSqm: number;
+  type: "area" | "perimeter" | "fixed";
+  unit: "unit" | "sqm" | "ml";
+  rate: number;
 };
 
 type ServicesStepProps = {
   form: UseFormReturn<WizardFormData>;
   availableServices: Service[];
 };
+
+/**
+ * Get service type label in Spanish
+ */
+function getServiceTypeLabel(type: Service["type"]): string {
+  switch (type) {
+    case "area":
+      return "Por área";
+    case "perimeter":
+      return "Por perímetro";
+    case "fixed":
+      return "Fijo";
+    default:
+      return "Desconocido";
+  }
+}
+
+/**
+ * Get service unit label
+ */
+function getServiceUnitLabel(unit: Service["unit"]): string {
+  switch (unit) {
+    case "sqm":
+      return "m²";
+    case "ml":
+      return "ml";
+    case "unit":
+      return "unidad";
+    default:
+      return "unidad";
+  }
+}
 
 /**
  * ServicesStep Component
@@ -79,11 +112,9 @@ export function ServicesStep({ form, availableServices }: ServicesStepProps) {
                         <CardTitle className="text-base">
                           {service.name}
                         </CardTitle>
-                        {service.description && (
-                          <CardDescription className="mt-1 text-sm">
-                            {service.description}
-                          </CardDescription>
-                        )}
+                        <CardDescription className="mt-1 text-sm">
+                          Tipo: {getServiceTypeLabel(service.type)}
+                        </CardDescription>
                       </div>
                       <Checkbox
                         checked={isSelected}
@@ -97,7 +128,7 @@ export function ServicesStep({ form, availableServices }: ServicesStepProps) {
                   </CardHeader>
                   <CardContent>
                     <p className="font-medium text-muted-foreground text-sm">
-                      ${service.pricePerSqm.toFixed(2)} / m²
+                      ${service.rate.toFixed(2)} / {getServiceUnitLabel(service.unit)}
                     </p>
                   </CardContent>
                 </Card>

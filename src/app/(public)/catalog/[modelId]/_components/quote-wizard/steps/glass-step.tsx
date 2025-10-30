@@ -6,6 +6,16 @@
 "use client";
 
 import type { UseFormReturn } from "react-hook-form";
+import type { LucideIcon } from "lucide-react";
+import {
+  Home,
+  Layers,
+  Shield,
+  Snowflake,
+  Sparkles,
+  Volume2,
+  Zap,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -16,20 +26,48 @@ import {
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
-import { GLASS_SOLUTION_ICONS } from "../../../_constants/glass-solution-icons.constants";
 import type { WizardFormData } from "../../../_utils/wizard-form.utils";
 
 type GlassSolution = {
   id: string;
+  key: string;
   name: string;
+  nameEs: string;
   description: string | null;
-  category: string;
+  icon: string | null;
+  sortOrder: number;
+  isActive: boolean;
 };
 
 type GlassStepProps = {
   form: UseFormReturn<WizardFormData>;
   availableSolutions: GlassSolution[];
 };
+
+/**
+ * Icon mapping for glass solutions
+ * Maps icon names from DB to Lucide icon components
+ */
+const ICON_MAP: Record<string, LucideIcon> = {
+  Shield,
+  Snowflake,
+  Volume2,
+  Zap,
+  Sparkles,
+  Home,
+  Layers,
+};
+
+/**
+ * Get Lucide icon component by name
+ * Falls back to Layers icon if icon name not found
+ */
+function getIconComponent(iconName: string | null): LucideIcon {
+  if (!iconName) {
+    return Layers;
+  }
+  return ICON_MAP[iconName] ?? Layers;
+}
 
 /**
  * GlassStep Component
@@ -58,7 +96,7 @@ export function GlassStep({ form, availableSolutions }: GlassStepProps) {
         value={selectedSolutionId}
       >
         {availableSolutions.map((solution) => {
-          const Icon = GLASS_SOLUTION_ICONS[solution.category];
+          const Icon = getIconComponent(solution.icon);
           const isSelected = selectedSolutionId === solution.id;
 
           return (
@@ -76,14 +114,14 @@ export function GlassStep({ form, availableSolutions }: GlassStepProps) {
               >
                 <CardHeader className="space-y-3">
                   <div className="flex items-start justify-between">
-                    {Icon && <Icon className="h-6 w-6 text-primary" />}
+                    <Icon className="h-6 w-6 text-primary" />
                     <RadioGroupItem
                       className="min-h-[44px] min-w-[44px]"
                       id={`solution-${solution.id}`}
                       value={solution.id}
                     />
                   </div>
-                  <CardTitle className="text-base">{solution.name}</CardTitle>
+                  <CardTitle className="text-base">{solution.nameEs}</CardTitle>
                 </CardHeader>
                 {solution.description && (
                   <CardContent>

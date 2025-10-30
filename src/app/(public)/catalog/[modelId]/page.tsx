@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { api } from "@/trpc/server-client";
 import { ModelFormWrapper } from "./_components/form/model-form-wrapper";
 import { ModelSidebarWrapper } from "./_components/model-sidebar-wrapper";
+import { QuoteWizard } from "./_components/quote-wizard/quote-wizard";
 
 type PageProps = {
   params: Promise<{ modelId: string }>;
@@ -19,6 +20,15 @@ export default async function Page({ params }: PageProps) {
     notFound();
   }
 
+  // Fetch wizard data in parallel (glassSolutions and services)
+  const [glassSolutions, services] = await Promise.all([
+    api.catalog["list-glass-solutions"]({ modelId }),
+    api.catalog["list-services"]({}),
+  ]);
+
+  // Feature flag: Use wizard for now, can switch to ModelFormWrapper later
+  const useWizard = true;
+
   // Render with Suspense boundaries for secondary data
   return (
     <div className="min-h-screen bg-muted/30">
@@ -31,7 +41,15 @@ export default async function Page({ params }: PageProps) {
 
           {/* Form - Full width on mobile, right column on desktop */}
           <div>
-            <ModelFormWrapper serverModel={serverModel} />
+            {useWizard ? (
+              <QuoteWizard
+                modelId={modelId}
+                glassSolutions={glassSolutions}
+                services={services}
+              />
+            ) : (
+              <ModelFormWrapper serverModel={serverModel} />
+            )}
           </div>
         </div>
       </div>
