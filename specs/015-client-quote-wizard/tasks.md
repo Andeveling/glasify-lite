@@ -354,8 +354,9 @@ description: "Task list for Client Quote Wizard implementation"
 **Purpose**: Final UX improvements, accessibility, and edge case handling
 
 - [ ] T044 [P] Add loading skeleton to quote-wizard.tsx while fetching model data
-  - Use Shadcn Skeleton component for step containers
-  - Show during initial mount if data not yet available
+  - SKIPPED: Not applicable - wizard receives data as props from Server Component (SSR)
+  - No client-side data fetching, therefore no loading state
+  - If future refactor moves to client-side fetching, implement Skeleton for step containers
   
 - [ ] T045 [P] Add error boundary to quote-wizard.tsx
   - Catch rendering errors in step components
