@@ -358,10 +358,11 @@ description: "Task list for Client Quote Wizard implementation"
   - No client-side data fetching, therefore no loading state
   - If future refactor moves to client-side fetching, implement Skeleton for step containers
   
-- [ ] T045 [P] Add error boundary to quote-wizard.tsx
-  - Catch rendering errors in step components
-  - Display Spanish error message: "Ocurrió un error. Por favor, recarga la página."
-  - Include "Reintentar" button to reset wizard state
+- [x] T045 [P] Add error boundary to quote-wizard.tsx
+  - ✅ Catch rendering errors in step components (QuoteWizardErrorBoundary class component)
+  - ✅ Display Spanish error message: "Ocurrió un error inesperado. Por favor, recarga la página."
+  - ✅ Include "Reintentar" and "Recargar página" buttons to reset/recover
+  - ✅ Export wrapped QuoteWizard via index.tsx for automatic protection
   
 - [ ] T046 [P] Implement animations for step transitions (optional, uses Framer Motion)
   - Install framer-motion dependency if not present
