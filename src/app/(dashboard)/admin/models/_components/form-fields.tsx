@@ -154,6 +154,20 @@ export function FormCurrencyInput({
 }: CurrencyFieldProps) {
   const form = useFormContext();
 
+  // Determine step value based on decimal precision (avoid float precision issues)
+  const getStepValue = (decimalPlaces: number): string => {
+    const FOUR_DECIMALS = 4;
+    const TWO_DECIMALS = 2;
+
+    if (decimalPlaces === FOUR_DECIMALS) {
+      return "0.0001";
+    }
+    if (decimalPlaces === TWO_DECIMALS) {
+      return "0.01";
+    }
+    return "any";
+  };
+
   return (
     <FormField
       control={form.control}
@@ -172,7 +186,7 @@ export function FormCurrencyInput({
                 className="pl-7"
                 min={min}
                 placeholder={placeholder}
-                step={10 ** -decimals}
+                step={getStepValue(decimals)}
                 type="number"
                 {...field}
                 onChange={(e) =>

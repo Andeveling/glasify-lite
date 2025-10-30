@@ -1,6 +1,7 @@
 /**
  * Quote Wizard Container
  * Main orchestrator component integrating all wizard steps and logic
+ * Includes model header as integral part of the wizard experience
  */
 
 "use client";
@@ -20,6 +21,7 @@ import {
 import { useAddToBudget } from "../../_hooks/use-add-to-budget";
 import { useWizardForm } from "../../_hooks/use-wizard-form";
 import { useWizardNavigation } from "../../_hooks/use-wizard-navigation";
+import { ModelHeader } from "../model-header";
 import { DimensionsStep } from "./steps/dimensions-step";
 import { GlassStep } from "./steps/glass-step";
 import { LocationStep } from "./steps/location-step";
@@ -55,8 +57,20 @@ type Service = {
   rate: number;
 };
 
+type Model = {
+  id: string;
+  name: string;
+  basePrice: number;
+  imageUrl?: string | null;
+  profileSupplier?: {
+    id: string;
+    name: string;
+    materialType: string;
+  } | null;
+};
+
 type QuoteWizardProps = {
-  modelId: string;
+  model: Model;
   glassSolutions: GlassSolution[];
   services: Service[];
   onSuccessAction?: () => void;
@@ -65,9 +79,10 @@ type QuoteWizardProps = {
 /**
  * QuoteWizard Component
  * Full wizard experience for adding items to budget
+ * Integrates model header as the first visual element
  */
 export function QuoteWizard({
-  modelId,
+  model,
   glassSolutions,
   services,
   onSuccessAction,
@@ -75,7 +90,7 @@ export function QuoteWizard({
   const [calculatedPrice, setCalculatedPrice] = useState<number | undefined>();
 
   // Form management
-  const form = useWizardForm({ modelId });
+  const form = useWizardForm({ modelId: model.id });
 
   // Navigation logic
   const { currentStep, goToNextStep, goToPreviousStep, goToStep, canGoNext } =
@@ -85,7 +100,7 @@ export function QuoteWizard({
 
   // Mutation hook (with localStorage clearing on success)
   const { addItem, isLoading: isSubmitting } = useAddToBudget({
-    modelId,
+    modelId: model.id,
     successAction: onSuccessAction,
   });
 
@@ -130,6 +145,9 @@ export function QuoteWizard({
 
   return (
     <div className="mx-auto w-full max-w-4xl space-y-6">
+      {/* Model Header - Always visible as part of the wizard */}
+      <ModelHeader model={model} />
+
       {/* Stepper Navigation */}
       <WizardStepper
         completedSteps={completedSteps}

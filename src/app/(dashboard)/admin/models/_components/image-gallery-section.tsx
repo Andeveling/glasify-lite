@@ -89,6 +89,24 @@ export function ImageGallerySectionComponent({
   // Type assertion: we know it's always an array due to router implementation
   const images: typeof rawData = Array.isArray(rawData) ? rawData : [];
 
+  // Handle selection with proper form update
+  const handleSelectImage = (imageUrl: string) => {
+    setValue(name, imageUrl, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
+  };
+
+  // Handle clear with proper form update
+  const handleClearImage = () => {
+    setValue(name, null, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
+  };
+
   // Handle API error gracefully
   if (error) {
     return (
@@ -133,6 +151,13 @@ export function ImageGallerySectionComponent({
         )}
       </div>
 
+      {/* Debug Panel - Temporary for troubleshooting */}
+      <div className="rounded border border-blue-200 bg-blue-50 p-2">
+        <p className="font-mono text-blue-800 text-xs">
+          🔍 Debug: currentValue = {JSON.stringify(currentValue)}
+        </p>
+      </div>
+
       {/* Current Selection Preview */}
       {selectedImage ? (
         <div className="flex items-center gap-3 rounded-lg border border-primary bg-primary/5 p-3">
@@ -154,7 +179,7 @@ export function ImageGallerySectionComponent({
           <button
             aria-label="Deseleccionar imagen"
             className="font-medium text-primary text-xs transition-colors hover:text-primary/80"
-            onClick={() => setValue(name, null)}
+            onClick={handleClearImage}
             type="button"
           >
             Limpiar
@@ -179,7 +204,7 @@ export function ImageGallerySectionComponent({
               isSelected={currentValue === image.url}
               key={image.url}
               name={image.name}
-              onSelect={() => setValue(name, image.url)}
+              onSelect={() => handleSelectImage(image.url)}
               url={image.url}
             />
           ))}
