@@ -62,12 +62,12 @@ export function LocationStep({ form }: LocationStepProps) {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-8">
       <div className="space-y-2">
-        <Label className="font-medium text-base" htmlFor="room-location">
+        <Label className="font-medium text-base md:text-lg" htmlFor="room-location">
           ¿Dónde irá la ventana?
         </Label>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-sm md:text-base">
           Selecciona la ubicación de la ventana en tu hogar u oficina
         </p>
       </div>
@@ -77,7 +77,7 @@ export function LocationStep({ form }: LocationStepProps) {
           <Input
             aria-describedby={error ? "location-error" : undefined}
             aria-invalid={!!error}
-            className={cn("min-h-[44px]", error && "border-destructive")}
+            className={cn("min-h-[44px] text-base", error && "border-destructive")}
             id="custom-location"
             maxLength={100}
             onChange={(e) => handleCustomInput(e.target.value)}
@@ -105,7 +105,7 @@ export function LocationStep({ form }: LocationStepProps) {
               aria-expanded={open}
               aria-label="Seleccionar ubicación"
               className={cn(
-                "min-h-[44px] w-full justify-between",
+                "min-h-[44px] w-full justify-between text-base",
                 error && "border-destructive"
               )}
               role="combobox"

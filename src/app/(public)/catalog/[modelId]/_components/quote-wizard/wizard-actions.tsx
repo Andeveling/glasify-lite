@@ -36,10 +36,10 @@ export function WizardActions({
   const isFirstStep = currentStep === 1;
 
   return (
-    <div className="flex items-center justify-between gap-4 border-t bg-background p-4">
+    <div className="flex items-center justify-between gap-4 border-t bg-background p-4 md:p-6">
       {/* Previous Button */}
       <Button
-        className="min-h-[44px] min-w-[100px]"
+        className="min-h-[44px] min-w-[100px] px-4 py-3 md:px-6"
         disabled={isFirstStep || isSubmitting}
         onClick={onPreviousAction}
         size="lg"
@@ -58,7 +58,7 @@ export function WizardActions({
       {/* Next or Submit Button */}
       {isLastStep ? (
         <Button
-          className="min-h-[44px] min-w-[160px]"
+          className="min-h-[44px] min-w-[160px] px-4 py-3 md:px-6"
           disabled={!canGoNext || isSubmitting}
           onClick={onSubmitAction}
           size="lg"
@@ -75,7 +75,7 @@ export function WizardActions({
         </Button>
       ) : (
         <Button
-          className="min-h-[44px] min-w-[100px]"
+          className="min-h-[44px] min-w-[100px] px-4 py-3 md:px-6"
           disabled={!canGoNext || isSubmitting}
           onClick={onNextAction}
           size="lg"

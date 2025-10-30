@@ -5,7 +5,6 @@
 
 "use client";
 
-import type { UseFormReturn } from "react-hook-form";
 import type { LucideIcon } from "lucide-react";
 import {
   Home,
@@ -16,6 +15,7 @@ import {
   Volume2,
   Zap,
 } from "lucide-react";
+import type { UseFormReturn } from "react-hook-form";
 import {
   Card,
   CardContent,
@@ -82,16 +82,16 @@ export function GlassStep({ form, availableSolutions }: GlassStepProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
       <div className="space-y-2">
-        <h3 className="font-medium text-base">Tipo de vidrio</h3>
-        <p className="text-muted-foreground text-sm">
+        <h3 className="font-medium text-base md:text-lg">Tipo de vidrio</h3>
+        <p className="text-muted-foreground text-sm md:text-base">
           Selecciona la solución de vidrio que mejor se adapte a tus necesidades
         </p>
       </div>
 
       <RadioGroup
-        className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
         onValueChange={handleSolutionSelect}
         value={selectedSolutionId}
       >
@@ -112,16 +112,16 @@ export function GlassStep({ form, availableSolutions }: GlassStepProps) {
                   error && !isSelected && "border-destructive"
                 )}
               >
-                <CardHeader className="space-y-3">
+                <CardHeader className="space-y-3 p-4 sm:p-6">
                   <div className="flex items-start justify-between">
-                    <Icon className="h-6 w-6 text-primary" />
+                    <Icon className="h-8 w-8 text-primary sm:h-6 sm:w-6" />
                     <RadioGroupItem
                       className="min-h-[44px] min-w-[44px]"
                       id={`solution-${solution.id}`}
                       value={solution.id}
                     />
                   </div>
-                  <CardTitle className="text-base">{solution.nameEs}</CardTitle>
+                  <CardTitle className="text-base md:text-lg">{solution.nameEs}</CardTitle>
                 </CardHeader>
                 {solution.description && (
                   <CardContent>

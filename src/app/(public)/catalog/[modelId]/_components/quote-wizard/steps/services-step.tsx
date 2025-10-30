@@ -81,16 +81,17 @@ export function ServicesStep({ form, availableServices }: ServicesStepProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
       <div className="space-y-2">
-        <h3 className="font-medium text-base">Servicios adicionales</h3>
-        <p className="text-muted-foreground text-sm">
-          Selecciona los servicios que deseas agregar (opcional)
+        <h3 className="font-medium text-base md:text-lg">Servicios adicionales</h3>
+        <p className="text-muted-foreground text-sm md:text-base">
+          Selecciona servicios opcionales para complementar tu ventana (puedes
+          elegir varios)
         </p>
       </div>
 
       {availableServices.length > 0 ? (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-4">
           {availableServices.map((service) => {
             const isSelected = selectedServices.includes(service.id);
 
@@ -106,13 +107,13 @@ export function ServicesStep({ form, availableServices }: ServicesStepProps) {
                     isSelected && "border-primary bg-primary/5"
                   )}
                 >
-                  <CardHeader className="space-y-3">
+                  <CardHeader className="space-y-3 p-4 sm:p-6">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1">
-                        <CardTitle className="text-base">
+                        <CardTitle className="text-base md:text-lg">
                           {service.name}
                         </CardTitle>
-                        <CardDescription className="mt-1 text-sm">
+                        <CardDescription className="mt-1 text-sm md:text-base">
                           Tipo: {getServiceTypeLabel(service.type)}
                         </CardDescription>
                       </div>
@@ -128,7 +129,8 @@ export function ServicesStep({ form, availableServices }: ServicesStepProps) {
                   </CardHeader>
                   <CardContent>
                     <p className="font-medium text-muted-foreground text-sm">
-                      ${service.rate.toFixed(2)} / {getServiceUnitLabel(service.unit)}
+                      ${service.rate.toFixed(2)} /{" "}
+                      {getServiceUnitLabel(service.unit)}
                     </p>
                   </CardContent>
                 </Card>

@@ -43,8 +43,8 @@ export default async function Page({ params }: PageProps) {
           <div>
             {useWizard ? (
               <QuoteWizard
-                modelId={modelId}
                 glassSolutions={glassSolutions}
+                modelId={modelId}
                 services={services}
               />
             ) : (

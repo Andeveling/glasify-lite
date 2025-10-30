@@ -58,16 +58,16 @@ export function DimensionsStep({
   }, [debouncedWidth, debouncedHeight, onPriceCalculationAction]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
       <div className="space-y-2">
-        <h3 className="font-medium text-base">Dimensiones del vidrio</h3>
-        <p className="text-muted-foreground text-sm">
+        <h3 className="font-medium text-base md:text-lg">Dimensiones del vidrio</h3>
+        <p className="text-muted-foreground text-sm md:text-base">
           Ingresa el ancho y alto en milímetros (rango: {MIN_DIMENSION} -{" "}
           {MAX_DIMENSION} mm)
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-2">
         {/* Width Input */}
         <div className="space-y-2">
           <Label className="flex items-center gap-2" htmlFor="width">
@@ -77,6 +77,7 @@ export function DimensionsStep({
           <div className="relative">
             <Input
               id="width"
+              inputMode="numeric"
               max={MAX_DIMENSION}
               min={MIN_DIMENSION}
               placeholder="Ej: 1000"
@@ -86,7 +87,7 @@ export function DimensionsStep({
               aria-describedby={widthError ? "width-error" : undefined}
               aria-invalid={!!widthError}
               className={cn(
-                "min-h-[44px] pr-12",
+                "min-h-[44px] pr-12 text-base",
                 widthError && "border-destructive"
               )}
             />
@@ -114,6 +115,7 @@ export function DimensionsStep({
           <div className="relative">
             <Input
               id="height"
+              inputMode="numeric"
               max={MAX_DIMENSION}
               min={MIN_DIMENSION}
               placeholder="Ej: 1500"
@@ -123,7 +125,7 @@ export function DimensionsStep({
               aria-describedby={heightError ? "height-error" : undefined}
               aria-invalid={!!heightError}
               className={cn(
-                "min-h-[44px] pr-12",
+                "min-h-[44px] pr-12 text-base",
                 heightError && "border-destructive"
               )}
             />

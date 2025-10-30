@@ -51,7 +51,7 @@ export function WizardStepper({
                   aria-current={isCurrent ? "step" : undefined}
                   aria-label={`${step.label}: ${step.description}`}
                   className={cn(
-                    "h-8 w-8 rounded-full md:h-10 md:w-10",
+                    "min-h-[44px] min-w-[44px] rounded-full",
                     isCurrent &&
                       "border-2 border-primary bg-primary text-primary-foreground",
                     isCompleted &&
@@ -66,9 +66,9 @@ export function WizardStepper({
                   variant="ghost"
                 >
                   {isCompleted && !isCurrent ? (
-                    <Check className="h-4 w-4 md:h-5 md:w-5" />
+                    <Check className="h-5 w-5" />
                   ) : (
-                    <span className="font-medium text-sm md:text-base">
+                    <span className="font-medium text-base">
                       {step.number}
                     </span>
                   )}
