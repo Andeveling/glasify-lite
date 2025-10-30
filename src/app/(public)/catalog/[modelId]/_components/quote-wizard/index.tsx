@@ -15,12 +15,12 @@ type QuoteWizardWithErrorBoundaryProps = React.ComponentProps<
 /**
  * Quote Wizard with Error Boundary
  * Wrapped version for safe usage in pages
- * 
+ *
  * @example
  * ```tsx
  * import { QuoteWizard } from './_components/quote-wizard';
- * 
- * <QuoteWizard 
+ *
+ * <QuoteWizard
  *   modelId={modelId}
  *   glassSolutions={glassSolutions}
  *   services={services}
