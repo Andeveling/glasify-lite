@@ -10,21 +10,25 @@ import { toast } from "sonner";
 import { api } from "@/trpc/react";
 import type { WizardFormData } from "../_utils/wizard-form.utils";
 import { transformWizardToQuoteItem } from "../_utils/wizard-form.utils";
+import { useWizardPersistence } from "./use-wizard-persistence";
 
 type UseAddToBudgetProps = {
+  modelId: string; // Required for localStorage clearing
   successAction?: () => void; // Callback after successful addition (not a Server Action, just naming convention)
 };
 
 /**
  * Custom hook for adding wizard item to budget
- * Handles mutation, cache invalidation, SSR refresh, and user feedback
+ * Handles mutation, cache invalidation, SSR refresh, localStorage clearing, and user feedback
  *
+ * @param modelId - Model ID for localStorage key scoping
  * @param successAction - Optional callback after successful addition
  * @returns Mutation methods and state
  */
-export function useAddToBudget({ successAction }: UseAddToBudgetProps = {}) {
+export function useAddToBudget({ modelId, successAction }: UseAddToBudgetProps) {
   const router = useRouter();
   const utils = api.useUtils();
+  const { clear } = useWizardPersistence(modelId);
 
   const mutation = api.quote["add-item"].useMutation({
     onSuccess: () => {
@@ -35,6 +39,9 @@ export function useAddToBudget({ successAction }: UseAddToBudgetProps = {}) {
 
       // Step 2: Refresh router for SSR pages with force-dynamic
       router.refresh();
+
+      // Step 3: Clear localStorage (wizard auto-save data)
+      clear();
 
       // User feedback
       toast.success("Agregado al presupuesto", {

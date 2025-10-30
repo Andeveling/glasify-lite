@@ -83,8 +83,9 @@ export function QuoteWizard({
       form,
     });
 
-  // Mutation hook
+  // Mutation hook (with localStorage clearing on success)
   const { addItem, isLoading: isSubmitting } = useAddToBudget({
+    modelId,
     successAction: onSuccessAction,
   });
 
