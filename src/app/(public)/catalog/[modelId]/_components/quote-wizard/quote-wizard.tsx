@@ -6,6 +6,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   MM_TO_SQM,
@@ -19,7 +20,6 @@ import {
 import { useAddToBudget } from "../../_hooks/use-add-to-budget";
 import { useWizardForm } from "../../_hooks/use-wizard-form";
 import { useWizardNavigation } from "../../_hooks/use-wizard-navigation";
-import { transformWizardToQuoteItem } from "../../_utils/wizard-form.utils";
 import { DimensionsStep } from "./steps/dimensions-step";
 import { GlassStep } from "./steps/glass-step";
 import { LocationStep } from "./steps/location-step";
@@ -67,23 +67,20 @@ export function QuoteWizard({
   services,
   onSuccessAction,
 }: QuoteWizardProps) {
-  const [currentStep, setCurrentStep] = useState(1);
   const [calculatedPrice, setCalculatedPrice] = useState<number | undefined>();
 
   // Form management
   const form = useWizardForm({ modelId });
 
   // Navigation logic
-  const { goToNextStep, goToPreviousStep, goToStep, canGoNext } =
+  const { currentStep, goToNextStep, goToPreviousStep, goToStep, canGoNext } =
     useWizardNavigation({
       form,
-      currentStep,
-      setCurrentStep,
     });
 
   // Mutation hook
-  const { mutate: addToBudget, isPending: isSubmitting } = useAddToBudget({
-    onSuccessAction,
+  const { addItem, isLoading: isSubmitting } = useAddToBudget({
+    successAction: onSuccessAction,
   });
 
   // Handle price calculation callback from dimensions step
@@ -97,12 +94,16 @@ export function QuoteWizard({
   // Handle wizard submission
   const handleSubmit = () => {
     const formData = form.getValues();
-    const quoteItemInput = transformWizardToQuoteItem(formData);
+    const glassTypeId = formData.glassSolutionId;
 
-    addToBudget({
-      modelId,
-      ...quoteItemInput,
-    });
+    if (!glassTypeId) {
+      toast.error("Error", {
+        description: "Debes seleccionar un tipo de vidrio",
+      });
+      return;
+    }
+
+    addItem(formData, glassTypeId);
   };
 
   // Determine completed steps (all steps before current one)
