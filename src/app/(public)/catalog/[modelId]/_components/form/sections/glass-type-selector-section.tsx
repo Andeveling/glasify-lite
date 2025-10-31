@@ -1,9 +1,7 @@
 "use client";
 
 import { Gem } from "lucide-react";
-import { useMemo, useState } from "react";
 import { useFormContext } from "react-hook-form";
-import { formatCurrency } from "@/app/_utils/format-currency.util";
 import { FormSection } from "@/components/form-section";
 import {
   FormControl,
@@ -13,77 +11,98 @@ import {
 } from "@/components/ui/form";
 import { RadioGroup } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
 import type { GlassTypeOutput } from "@/server/api/routers/catalog";
 import { GlassTypeCardSimple } from "./_components/glass-type-card-simple";
+import type { GlassTab } from "./_hooks/use-glass-types-by-tab";
 import { useGlassTypesByTab } from "./_hooks/use-glass-types-by-tab";
 
 /**
- * Glass Type Selector Section Component (Template)
- *
- * SOLID Principles Applied:
- * - Single Responsibility: Only renders UI, delegates logic to hook
- * - Open/Closed: Extensible through props, closed to modification
- * - Liskov Substitution: Can swap card components
- * - Interface Segregation: Minimal props, only what's needed
- * - Dependency Inversion: Depends on abstractions (hook, components)
- *
- * Don't Make Me Think:
- * - Tabs group options by solution (clear mental model)
- * - Simplified cards (less cognitive load)
- * - No confusing filters or auto-hiding options
- * - Fast decision making
+ * Glass Type Selector Section - Organizes glass types by solution tabs
+ * Reduces cognitive load through clear categorization and minimal UI elements
  */
 
-type GlassTypeSelectorSectionProps = {
-  basePrice?: number; // Model base price for comparison
-  glassArea?: number; // Calculated glass area in m² (from parent form)
-  glassTypes: GlassTypeOutput[];
-  selectedSolutionId?: string; // Used to set default tab
+type TabsVariant = "full" | "simple" | "minimal";
+
+type TabsVariantConfig = {
+  showBadge: boolean;
+  showIcon: boolean;
+  showFullLabel: boolean; // Full label on mobile vs abbreviated
 };
+
+const TABS_VARIANT_CONFIGS: Record<TabsVariant, TabsVariantConfig> = {
+  // Full: Icons + badges + full labels (default for retrocompatibility)
+  full: {
+    showBadge: true,
+    showIcon: true,
+    showFullLabel: false, // Abbreviated on mobile
+  },
+  // Simple: Icons + labels, no badges (recommended - less visual noise)
+  simple: {
+    showBadge: false,
+    showIcon: true,
+    showFullLabel: true,
+  },
+  // Minimal: Only text labels (maximum simplicity)
+  minimal: {
+    showBadge: false,
+    showIcon: false,
+    showFullLabel: true,
+  },
+};
+
+type GlassTypeSelectorSectionProps = {
+  basePrice?: number;
+  glassTypes: GlassTypeOutput[];
+  selectedSolutionId?: string;
+  /** Variante de tabs (default: "full" para retrocompatibilidad) */
+  variant?: TabsVariant;
+  /** Configuración personalizada (sobrescribe la variante) */
+  customConfig?: Partial<TabsVariantConfig>;
+};
+
+/**
+ * Helper: Find default tab based on selected solution
+ */
+function findDefaultTab(
+  tabs: GlassTab[],
+  selectedSolutionId: string | undefined,
+  glassTypes: GlassTypeOutput[]
+): string | undefined {
+  if (!selectedSolutionId || tabs.length === 0) {
+    return tabs[0]?.key;
+  }
+
+  const matchingTab = tabs.find((tab) =>
+    tab.options.some((opt) =>
+      glassTypes
+        .find((gt) => gt.id === opt.id)
+        ?.solutions?.some((s) => s.solution.id === selectedSolutionId)
+    )
+  );
+
+  return matchingTab?.key ?? tabs[0]?.key;
+}
 
 export function GlassTypeSelectorSection({
   basePrice,
-  glassArea,
   glassTypes,
   selectedSolutionId,
+  variant = "full",
+  customConfig,
 }: GlassTypeSelectorSectionProps) {
-  const { control, watch } = useFormContext();
+  const { control } = useFormContext();
+
+  // Resolver configuración: custom > variant > default
+  const config: TabsVariantConfig = {
+    ...TABS_VARIANT_CONFIGS[variant],
+    ...customConfig,
+  };
 
   // Hook handles grouping by solution
   const tabs = useGlassTypesByTab(glassTypes, basePrice);
 
-  // Watch selected glass type
-  const selectedGlassTypeId = watch("glassType");
-
-  // Track active tab for visual feedback
-  const [activeTab, setActiveTab] = useState<string>();
-
-  // Find selected glass type details
-  const selectedGlassType = useMemo(() => {
-    if (!selectedGlassTypeId) {
-      return null;
-    }
-
-    for (const tab of tabs) {
-      const found = tab.options.find((opt) => opt.id === selectedGlassTypeId);
-      if (found) {
-        return found;
-      }
-    }
-    return null;
-  }, [selectedGlassTypeId, tabs]);
-
-  // Find default tab (selected solution or first tab)
-  const defaultTab = selectedSolutionId
-    ? (tabs.find((tab) =>
-        tab.options.some((opt) =>
-          glassTypes
-            .find((gt) => gt.id === opt.id)
-            ?.solutions?.some((s) => s.solution.id === selectedSolutionId)
-        )
-      )?.key ?? tabs[0]?.key)
-    : tabs[0]?.key;
+  // Find default tab (extracted to helper for clarity)
+  const defaultTab = findDefaultTab(tabs, selectedSolutionId, glassTypes);
 
   if (tabs.length === 0) {
     return null;
@@ -95,83 +114,37 @@ export function GlassTypeSelectorSection({
       icon={Gem}
       legend="Tipo de Cristal"
     >
-      <Tabs defaultValue={defaultTab} onValueChange={setActiveTab}>
-        {/* Selection Indicator - Always visible at top */}
-        {selectedGlassType && (
-          <div className="mb-6 rounded-lg border-2 border-primary bg-primary/10 p-4 dark:bg-purple-950/30">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900">
-                <Gem className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-              </div>
-              <div className="flex-1">
-                <p className="font-medium text-muted-foreground text-sm">
-                  Vidrio seleccionado
-                </p>
-                <p className="font-semibold text-foreground text-lg">
-                  {selectedGlassType.name}
-                </p>
-                {glassArea && glassArea > 0 && (
-                  <p className="text-muted-foreground text-xs">
-                    {glassArea.toFixed(2)} m² ×{" "}
-                    {formatCurrency(selectedGlassType.pricePerSqm)}/m²
-                  </p>
-                )}
-              </div>
-              <div className="text-right">
-                {glassArea && glassArea > 0 ? (
-                  <>
-                    <p className="font-bold text-2xl text-purple-600 dark:text-purple-400">
-                      {formatCurrency(
-                        selectedGlassType.pricePerSqm * glassArea
-                      )}
-                    </p>
-                    <p className="text-muted-foreground text-xs">
-                      total vidrio
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="font-bold text-2xl text-purple-600 dark:text-purple-400">
-                      {formatCurrency(selectedGlassType.pricePerSqm)}
-                    </p>
-                    <p className="text-muted-foreground text-xs">por m²</p>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Tabs navigation - VERSIÓN MEJORADA */}
-        <TabsList className="w-full justify-start">
+      <Tabs defaultValue={defaultTab}>
+        {/* Tabs navigation - Large, visually prominent */}
+        <TabsList className="w-full justify-start p-1.5">
           {tabs.map((tab) => {
             const Icon = tab.icon;
-            const isActive = (activeTab ?? defaultTab) === tab.key;
 
             return (
               <TabsTrigger
-                className={cn(
-                  "gap-2",
-                  isActive && "border-2 border-primary/20"
-                )}
+                className="gap-2 px-2 py-3 font-medium text-base"
                 key={tab.key}
                 value={tab.key}
               >
-                <Icon className={cn("size-4", isActive && "text-primary")} />
-                <span className="hidden sm:inline">{tab.label}</span>
-                <span className="sm:hidden">{tab.label.split(" ")[0]}</span>
+                {/* Icon (optional based on variant) */}
+                {config.showIcon && <Icon className="size-5" />}
 
-                {/* Badge con conteo de opciones */}
-                <span
-                  className={cn(
-                    "inline-flex items-center justify-center rounded-full px-2 py-0.5 font-semibold text-xs",
-                    isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted-foreground/20 text-muted-foreground"
-                  )}
-                >
-                  {tab.options.length}
-                </span>
+                {/* Label - responsive or full based on variant */}
+                {config.showFullLabel ? (
+                  <span>{tab.label}</span>
+                ) : (
+                  <>
+                    <span className="hidden sm:inline">{tab.label}</span>
+                    <span className="sm:hidden">{tab.label.split(" ")[0]}</span>
+                  </>
+                )}
+
+                {/* Badge with count (optional based on variant) */}
+                {config.showBadge && (
+                  <span className="inline-flex items-center justify-center rounded-full bg-muted-foreground/20 px-2 py-0.5 font-semibold text-muted-foreground text-xs">
+                    {tab.options.length}
+                  </span>
+                )}
               </TabsTrigger>
             );
           })}
@@ -187,21 +160,13 @@ export function GlassTypeSelectorSection({
                 <div>
                   {tabs.map((tab) => (
                     <TabsContent
-                      className="space-y-3"
+                      className="space-y-2"
                       key={tab.key}
                       value={tab.key}
                     >
-                      {/* Info text */}
-                      <p className="text-muted-foreground text-sm">
-                        {tab.options.length}{" "}
-                        {tab.options.length === 1 ? "opción" : "opciones"}{" "}
-                        disponible
-                        {tab.options.length === 1 ? "" : "s"}
-                      </p>
-
-                      {/* Radio group */}
+                      {/* Radio group - no redundant text */}
                       <RadioGroup
-                        className="space-y-2"
+                        className="space-y-1"
                         onValueChange={field.onChange}
                         value={field.value}
                       >
