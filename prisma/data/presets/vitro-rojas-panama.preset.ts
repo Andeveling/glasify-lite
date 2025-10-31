@@ -31,6 +31,7 @@
 
 import type { SeedPreset } from "../../seeders/seed-orchestrator";
 import { vitroRojasGlassSolutions } from "../vitro-rojas/glass-solutions.data";
+import { vitroRojasGlassTypeSolutionMappings } from "../vitro-rojas/glass-type-solution-mappings.data";
 import { vitroRojasGlassTypes } from "../vitro-rojas/glass-types.data";
 import { vitroRojasCasementModels } from "../vitro-rojas/models-casement.data";
 import { vitroRojasSlidingModels } from "../vitro-rojas/models-sliding.data";
@@ -57,6 +58,9 @@ export const vitroRojasPanamaPreset: SeedPreset = {
 
   // Tipos de vidrio (11)
   glassTypes: vitroRojasGlassTypes,
+
+  // Relaciones glass type <-> solution (17)
+  glassTypeSolutionMappings: vitroRojasGlassTypeSolutionMappings,
 
   // Modelos de ventanas/puertas (9)
   models: [...vitroRojasSlidingModels, ...vitroRojasCasementModels],

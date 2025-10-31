@@ -11,11 +11,13 @@
  */
 
 import type { PrismaClient } from "@prisma/client";
+import type { GlassTypeSolutionMapping } from "../data/vitro-rojas/glass-type-solution-mappings.data";
 import type { GlassSolutionInput } from "../factories/glass-solution.factory";
 import { createGlassSolution } from "../factories/glass-solution.factory";
 import type { GlassTypeInput } from "../factories/glass-type.factory";
 import { createGlassType } from "../factories/glass-type.factory";
-
+import type { GlassTypeSolutionInput } from "../factories/glass-type-solution.factory";
+import { createGlassTypeSolution } from "../factories/glass-type-solution.factory";
 import type { ModelInput } from "../factories/model.factory";
 import { createModel } from "../factories/model.factory";
 import type { ProfileSupplierInput } from "../factories/profile-supplier.factory";
@@ -47,6 +49,7 @@ export type SeedPreset = {
   models: ModelInput[];
   services: ServiceInput[];
   glassSolutions: GlassSolutionInput[];
+  glassTypeSolutionMappings?: GlassTypeSolutionMapping[];
 };
 
 /**
@@ -124,6 +127,7 @@ export class SeedOrchestrator {
   private readonly startTime: number;
   private readonly prisma: PrismaClient;
   private readonly options: SeedOptions;
+  private preset!: SeedPreset; // Will be set when run() is called
 
   constructor(prisma: PrismaClient, options: SeedOptions = {}) {
     this.prisma = prisma;
@@ -147,6 +151,7 @@ export class SeedOrchestrator {
    * Seed database with preset configuration
    */
   async seedWithPreset(preset: SeedPreset): Promise<SeedStats> {
+    this.preset = preset; // Store preset for use in other methods
     this.logger.section(`Seeding with preset: ${preset.name}`);
     this.logger.info(preset.description);
 
@@ -363,7 +368,8 @@ export class SeedOrchestrator {
               data: dataWithPrice,
             });
 
-        glassTypeIdMap.set(glassType.name, glassType.id);
+        // Use code as key for solution mapping (critical for glass-solution relationships)
+        glassTypeIdMap.set(glassType.code, glassType.id);
         this.stats.glassTypes.created++;
         this.logger.debug(`Created: ${glassType.name} (${glassType.id})`);
       } catch (error) {
@@ -612,29 +618,82 @@ export class SeedOrchestrator {
    */
   private async assignSolutionsToGlassTypes(
     glassTypes: Map<string, string>,
-    _solutions: Map<string, string>
+    solutions: Map<string, string>
   ): Promise<void> {
     this.logger.info(
       `Assigning solutions to ${glassTypes.size} glass types...`
     );
 
-    // DEPRECATED: Solution assignment logic removed in v2.0
-    // Solutions are now assigned via seed data, not auto-calculated from boolean flags
-    // The calculateGlassSolutions function used deprecated fields (isTempered, isLaminated, etc.)
-    // TODO: Re-implement solution inference from characteristics if needed
+    // Check if preset has explicit mappings
+    if (
+      !this.preset.glassTypeSolutionMappings ||
+      this.preset.glassTypeSolutionMappings.length === 0
+    ) {
+      this.logger.debug(
+        "No glass type solution mappings found in preset. Skipping."
+      );
+      this.logger.success(
+        `Glass type solutions: ${this.stats.glassTypeSolutions.created} created, ${this.stats.glassTypeSolutions.failed} failed`
+      );
+      return;
+    }
 
-    // Get all glass types from database
-    const glassTypesData = await this.prisma.glassType.findMany({
-      select: {
-        code: true,
-        id: true,
-        name: true,
-      },
-    });
+    // Create relationships based on mappings
+    for (const mapping of this.preset.glassTypeSolutionMappings) {
+      const glassTypeId = glassTypes.get(mapping.glassTypeCode);
+      const solutionId = solutions.get(mapping.solutionKey);
 
-    this.logger.debug(
-      `Processed ${glassTypesData.length} glass types for solution assignment`
-    );
+      if (!glassTypeId) {
+        this.logger.error(
+          `Glass type not found for code: ${mapping.glassTypeCode}`
+        );
+        this.stats.glassTypeSolutions.failed++;
+        continue;
+      }
+
+      if (!solutionId) {
+        this.logger.error(`Solution not found for key: ${mapping.solutionKey}`);
+        this.stats.glassTypeSolutions.failed++;
+        continue;
+      }
+
+      // Create GlassTypeSolution relationship using factory
+      const input: GlassTypeSolutionInput = {
+        glassTypeId,
+        solutionId,
+        isPrimary: mapping.isPrimary,
+        performanceRating: mapping.performanceRating,
+      };
+
+      const result = createGlassTypeSolution(input, {
+        skipValidation: this.options.skipValidation,
+      });
+
+      if (!result.success) {
+        this.logger.error(
+          `Failed to validate GlassTypeSolution: ${mapping.glassTypeCode} -> ${mapping.solutionKey}`,
+          result.errors
+        );
+        this.stats.glassTypeSolutions.failed++;
+        continue;
+      }
+
+      try {
+        await this.prisma.glassTypeSolution.create({
+          data: input, // Use input directly, not result.data
+        });
+        this.stats.glassTypeSolutions.created++;
+        this.logger.debug(
+          `  ✓ ${mapping.glassTypeCode} -> ${mapping.solutionKey} (${mapping.performanceRating}, primary: ${mapping.isPrimary})`
+        );
+      } catch (error) {
+        this.logger.error(
+          `Failed to create GlassTypeSolution: ${mapping.glassTypeCode} -> ${mapping.solutionKey}`,
+          error
+        );
+        this.stats.glassTypeSolutions.failed++;
+      }
+    }
 
     this.logger.success(
       `Glass type solutions: ${this.stats.glassTypeSolutions.created} created, ${this.stats.glassTypeSolutions.failed} failed`
