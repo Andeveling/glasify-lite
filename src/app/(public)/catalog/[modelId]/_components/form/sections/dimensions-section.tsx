@@ -153,6 +153,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
           name="width"
           onSliderChange={handleWidthSliderChange}
           suggestedValues={widthSuggestedValues}
+          variant="minimal"
         />
 
         <DimensionField
@@ -165,6 +166,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
           name="height"
           onSliderChange={handleHeightSliderChange}
           suggestedValues={heightSuggestedValues}
+          variant="minimal"
         />
       </div>
 
