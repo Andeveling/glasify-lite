@@ -3,8 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { toast } from "sonner";
-import { useCart } from "@/app/(public)/cart/_hooks/use-cart";
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { useScrollIntoView } from "@/hooks/use-scroll-into-view";
@@ -14,9 +12,13 @@ import type {
   ModelDetailOutput,
   ServiceOutput,
 } from "@/server/api/routers/catalog";
-import type { CreateCartItemInput } from "@/types/cart.types";
+import { useCartOperations } from "../../_hooks/use-cart-operations";
+import { useColorSelection } from "../../_hooks/use-color-selection";
+import { useGlassArea } from "../../_hooks/use-glass-area";
+import { usePriceBreakdown } from "../../_hooks/use-price-breakdown";
 import { usePriceCalculation } from "../../_hooks/use-price-calculation";
 import { useSolutionInference } from "../../_hooks/use-solution-inference";
+import { prepareCartItemInput } from "../../_utils/cart-item-mapper";
 import {
   createQuoteFormSchema,
   type QuoteFormValues,
@@ -30,22 +32,15 @@ import { GlassTypeSelectorSection } from "./sections/glass-type-selector-section
 import { ServicesSelectorSection } from "./sections/services-selector-section";
 
 // ============================================================================
-// Constants
-// ============================================================================
-
-/** Conversion factor from millimeters to meters */
-const MM_TO_METERS = 1000;
-
-// ============================================================================
 // Types
 // ============================================================================
 
 type ModelFormProps = {
-  model: ModelDetailOutput;
+  currency: string;
   glassTypes: GlassTypeOutput[];
+  model: ModelDetailOutput;
   services: ServiceOutput[];
   solutions: GlassSolutionOutput[];
-  currency: string;
 };
 
 // ============================================================================
@@ -53,21 +48,20 @@ type ModelFormProps = {
 // ============================================================================
 
 export function ModelForm({
-  model,
+  currency,
   glassTypes,
+  model,
   services,
   solutions,
-  currency,
 }: ModelFormProps) {
   const schema = useMemo(() => createQuoteFormSchema(model), [model]);
-  const { addItem } = useCart();
+
+  // ✅ Hooks: Separated concerns (SRP)
+  const { addToCart } = useCartOperations();
+  const { handleColorChange, selectedColorId } = useColorSelection();
 
   // ✅ Track if item was just added to cart
   const [justAddedToCart, setJustAddedToCart] = useState(false);
-
-  // ✅ Track selected color and its surcharge percentage
-  const [selectedColorId, setSelectedColorId] = useState<string | undefined>();
-  const [_colorSurchargePercentage, setColorSurchargePercentage] = useState(0);
 
   // ✅ Auto-scroll to success card when item is added
   const successCardRef = useScrollIntoView(justAddedToCart);
@@ -77,11 +71,11 @@ export function ModelForm({
     () => ({
       additionalServices: [],
       colorId: undefined,
-      glassType: glassTypes[0]?.id ?? "", // Pre-select first glass type (usually most common/budget)
-      height: model.minHeightMm, // Use minimum height as starting point
+      glassType: glassTypes[0]?.id ?? "",
+      height: model.minHeightMm,
       quantity: 1,
-      solution: "", // No solution selected by default (optional field)
-      width: model.minWidthMm, // Use minimum width as starting point
+      solution: "",
+      width: model.minWidthMm,
     }),
     [model.minWidthMm, model.minHeightMm, glassTypes]
   );
@@ -94,7 +88,6 @@ export function ModelForm({
   });
 
   // Watch form values for price calculation
-  // ✅ Optimization: Use useWatch with specific fields instead of form.watch() to prevent unnecessary re-renders
   const width = useWatch({ control: form.control, name: "width" });
   const height = useWatch({ control: form.control, name: "height" });
   const glassType = useWatch({ control: form.control, name: "glassType" });
@@ -107,36 +100,24 @@ export function ModelForm({
   // ✅ Get selected glass type object
   const selectedGlassType = glassTypes.find((gt) => gt.id === glassType);
 
-  // ✅ Calculate billable glass area in m² (applying discounts)
-  // This matches the server-side calculation in price-item.ts
-  const glassArea = useMemo(() => {
-    // Apply glass discounts (profiles take space)
-    const effectiveWidthMm = Math.max(
-      Number(width) - model.glassDiscountWidthMm,
-      0
-    );
-    const effectiveHeightMm = Math.max(
-      Number(height) - model.glassDiscountHeightMm,
-      0
-    );
+  // ✅ Calculate billable glass area using hook (SRP)
+  const glassArea = useGlassArea({
+    discounts: {
+      heightMm: model.glassDiscountHeightMm,
+      widthMm: model.glassDiscountWidthMm,
+    },
+    heightMm: Number(height) || 0,
+    widthMm: Number(width) || 0,
+  });
 
-    const widthM = effectiveWidthMm / MM_TO_METERS;
-    const heightM = effectiveHeightMm / MM_TO_METERS;
-
-    if (widthM > 0 && heightM > 0) {
-      return widthM * heightM;
-    }
-    return 0;
-  }, [width, height, model.glassDiscountWidthMm, model.glassDiscountHeightMm]);
-
-  // ✅ Infer solution from glass type (replaces manual selection)
+  // ✅ Infer solution from glass type
   const { inferredSolution } = useSolutionInference(
     selectedGlassType ?? null,
     solutions
   );
 
   // Calculate price in real-time with dimension validation
-  const { calculatedPrice, breakdown, error, isCalculating } =
+  const { breakdown, calculatedPrice, error, isCalculating } =
     usePriceCalculation({
       additionalServices,
       glassTypeId: glassType,
@@ -149,159 +130,69 @@ export function ModelForm({
       widthMm: Number(width) || 0,
     });
 
-  // ✅ Build detailed price breakdown for popover
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex price breakdown calculation with multiple categories (model, glass, services, adjustments, color) and conditional formatting. Complexity is necessary for comprehensive pricing details.
-  const priceBreakdown = useMemo(() => {
-    const items: Array<{
-      amount: number;
-      category: "model" | "glass" | "service" | "adjustment";
-      label: string;
-    }> = [];
+  // ✅ Build detailed price breakdown using hook (SRP)
+  const priceBreakdown = usePriceBreakdown({
+    breakdown,
+    glassArea,
+    model,
+    selectedGlassType,
+    services,
+  });
 
-    if (!breakdown) {
-      // Fallback: show base price only
-      items.push({
-        amount: Number(model.basePrice),
-        category: "model",
-        label: "Precio base del modelo",
-      });
-      return items;
-    }
+  // ✅ Prepare cart item data using pure function (SRP)
+  const cartItemInput = useMemo(
+    () =>
+      prepareCartItemInput({
+        additionalServiceIds: additionalServices,
+        calculatedPrice,
+        colorId: selectedColorId,
+        glassTypeId: glassType,
+        heightMm: Number(height) || 0,
+        inferredSolution,
+        model,
+        quantity: Number(quantity) || 1,
+        selectedGlassType,
+        widthMm: Number(width) || 0,
+      }),
+    [
+      additionalServices,
+      calculatedPrice,
+      selectedColorId,
+      glassType,
+      height,
+      inferredSolution,
+      model,
+      quantity,
+      selectedGlassType,
+      width,
+    ]
+  );
 
-    // ✅ Use glassArea (with discounts applied) instead of calculating again
-    // This matches server-side calculation in price-item.ts lines 131-142
-    const glassCost = selectedGlassType
-      ? glassArea * selectedGlassType.pricePerSqm
-      : 0;
-
-    // Model price (dimPrice includes base + area factor, but NOT glass cost)
-    const modelOnlyPrice = breakdown.dimPrice - glassCost;
-
-    if (modelOnlyPrice > 0) {
-      items.push({
-        amount: modelOnlyPrice,
-        category: "model",
-        label: "Precio base del modelo",
-      });
-    }
-
-    // Glass type (show area calculation with discounts applied)
-    if (glassCost > 0 && selectedGlassType) {
-      items.push({
-        amount: glassCost,
-        category: "glass",
-        label: `Vidrio ${selectedGlassType.name} (${glassArea.toFixed(2)} m²)`,
-      });
-    }
-
-    // Accessories
-    if (breakdown.accPrice > 0) {
-      items.push({
-        amount: breakdown.accPrice,
-        category: "model",
-        label: "Accesorios",
-      });
-    }
-
-    // Services
-    if (breakdown.services.length > 0) {
-      const servicesById = services.reduce(
-        (acc, svc) => {
-          acc[svc.id] = svc;
-          return acc;
-        },
-        {} as Record<string, ServiceOutput>
-      );
-
-      for (const svc of breakdown.services) {
-        const serviceData = servicesById[svc.serviceId];
-        if (serviceData) {
-          items.push({
-            amount: svc.amount,
-            category: "service",
-            label: serviceData.name,
-          });
-        }
-      }
-    }
-
-    // Adjustments
-    if (breakdown.adjustments.length > 0) {
-      for (const adj of breakdown.adjustments) {
-        items.push({
-          amount: adj.amount,
-          category: "adjustment",
-          label: adj.concept,
-        });
-      }
-    }
-
-    return items;
-  }, [breakdown, model.basePrice, services, glassArea, selectedGlassType]);
-
-  // ✅ Handler for color selection changes
-  const handleColorChange = (
-    colorId: string | undefined,
-    surchargePercentage: number
-  ) => {
-    setSelectedColorId(colorId);
-    setColorSurchargePercentage(surchargePercentage);
-    form.setValue("colorId", colorId);
-  };
-
-  // ✅ Prepare cart item data from form values (using inferred solution)
-  const cartItemInput: CreateCartItemInput & { unitPrice: number } = {
-    additionalServiceIds: additionalServices,
-    colorId: selectedColorId,
-    glassTypeId: glassType,
-    glassTypeName: selectedGlassType?.name ?? "",
-    heightMm: Number(height) || 0,
-    modelId: model.id,
-    modelName: model.name,
-    quantity: Number(quantity) || 1, // Use form quantity value
-    solutionId: inferredSolution?.id || undefined,
-    solutionName: inferredSolution?.nameEs || undefined,
-    unitPrice: calculatedPrice ?? model.basePrice,
-    widthMm: Number(width) || 0,
-  };
-
-  // ✅ Form submit handler - Add item to cart
+  // ✅ Form submit handler - Simplified using hook (SRP)
   const handleFormSubmit = () => {
-    try {
-      // Add item to cart (client-side)
-      addItem(cartItemInput);
+    const success = addToCart(cartItemInput, model.name);
 
-      // ✅ UX Enhancement: Reset form to default values for next configuration
+    if (success) {
       form.reset(defaultValues);
-
-      // ✅ UX Enhancement: Show success state (scroll handled by useScrollIntoView hook)
       setJustAddedToCart(true);
-
-      // Show success toast
-      toast.success("Item agregado al carrito", {
-        description: `${model.name} ha sido agregado exitosamente`,
-      });
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error && err.message.includes("no puedes agregar más")
-          ? "Has alcanzado el límite de 20 items en el carrito"
-          : "No se pudo agregar el item al carrito";
-
-      // Show error toast
-      toast.error("Error al agregar", {
-        description: errorMessage,
-      });
     }
   };
 
   // ✅ Handler to configure another item
   const handleConfigureAnother = () => {
     setJustAddedToCart(false);
-    setSelectedColorId(undefined);
-    setColorSurchargePercentage(0);
+    handleColorChange(undefined, 0);
     form.reset(defaultValues);
-    // Smooth scroll to top for better UX
     window.scrollTo({ behavior: "smooth", top: 0 });
+  };
+
+  // ✅ Wrapper to integrate color selection with form (Adapter pattern)
+  const handleColorChangeWithForm = (
+    colorId: string | undefined,
+    surchargePercentage: number
+  ) => {
+    handleColorChange(colorId, surchargePercentage);
+    form.setValue("colorId", colorId);
   };
 
   return (
@@ -344,7 +235,10 @@ export function ModelForm({
           </Card>
 
           {/* Color Selector - Only show if model has colors */}
-          <ColorSelector modelId={model.id} onColorChange={handleColorChange} />
+          <ColorSelector
+            modelId={model.id}
+            onColorChange={handleColorChangeWithForm}
+          />
 
           {/* Services Section - Only show if services are available (Don't Make Me Think principle) */}
           {services.length > 0 && (
