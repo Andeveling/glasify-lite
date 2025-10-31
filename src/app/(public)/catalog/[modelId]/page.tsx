@@ -23,16 +23,14 @@ export default async function Page({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-muted/30">
       <div className="container mx-auto max-w-7xl px-3 py-4 sm:px-4 sm:py-8">
-        <div className="grid gap-4 sm:gap-8 lg:grid-cols-[400px_1fr]">
+        <div className="flex flex-col md:col-2">
           {/* Sidebar - Only visible on desktop (lg breakpoint) */}
           <div className="hidden lg:block">
             <ModelSidebarWrapper serverModel={serverModel} />
           </div>
 
           {/* Form - Full width on mobile, right column on desktop */}
-          <div>
-            <ModelFormWrapper serverModel={serverModel} />
-          </div>
+          <ModelFormWrapper serverModel={serverModel} />
         </div>
       </div>
     </div>

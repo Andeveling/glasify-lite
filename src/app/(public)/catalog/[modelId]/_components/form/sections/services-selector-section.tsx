@@ -1,19 +1,19 @@
 "use client";
 
-import { CheckCircle2, Wrench } from "lucide-react";
+import { CheckCircle2, Maximize2, Package, Ruler, Wrench } from "lucide-react";
 import { useMemo } from "react";
 import type { Control } from "react-hook-form";
 import { useFormContext } from "react-hook-form";
 import { formatCurrency } from "@/app/_utils/format-currency.util";
 import { FormSection } from "@/components/form-section";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   FormControl,
   FormField,
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import type { ServiceOutput } from "@/server/api/routers/catalog";
 
@@ -33,6 +33,21 @@ const SERVICE_UNIT_LABELS = {
   unit: "unidad",
 } as const;
 
+// Icon mapping based on ServiceUnit from schema
+function getServiceIcon(unit: ServiceOutput["unit"]) {
+  const iconClass = "size-10 shrink-0";
+  switch (unit) {
+    case "sqm": // Surface area
+      return <Maximize2 className={iconClass} />;
+    case "ml": // Perimeter/linear meters
+      return <Ruler className={iconClass} />;
+    case "unit": // Fixed unit
+      return <Package className={iconClass} />;
+    default:
+      return <Wrench className={iconClass} />;
+  }
+}
+
 // Constants for dimension conversions
 const MM_TO_METERS = 1000;
 const PERIMETER_MULTIPLIER = 2;
@@ -50,6 +65,10 @@ type ServiceCardProps = {
   service: ServiceOutput;
 };
 
+/**
+ * ServiceCard - Horizontal layout with toggle switch
+ * Matches the design with icon based on unit type
+ */
 function ServiceCard({ control, service }: ServiceCardProps) {
   return (
     <FormField
@@ -59,77 +78,55 @@ function ServiceCard({ control, service }: ServiceCardProps) {
       render={({ field }) => {
         const isChecked = field.value?.includes(service.id) ?? false;
 
-        const cardClasses = cn(
-          "group relative flex items-start gap-3 rounded-lg border-2 p-4 transition-all duration-200",
-          "hover:border-primary/50 hover:shadow-md",
-          isChecked
-            ? "border-primary bg-primary/10 shadow-primary/20 shadow-sm ring-2 ring-primary/20"
-            : "border-border bg-card hover:bg-accent/5"
-        );
-
-        const labelClasses = cn(
-          "cursor-pointer font-medium text-base leading-tight transition-colors",
-          isChecked ? "text-primary" : "text-foreground"
-        );
-
-        const priceClasses = cn(
-          "font-bold text-lg transition-colors",
-          isChecked ? "text-primary" : "text-foreground"
-        );
-
-        const indicatorClasses = cn(
-          "-bottom-1 absolute right-0 left-0 h-1 rounded-b-lg transition-all duration-200",
-          isChecked ? "bg-primary" : "bg-transparent group-hover:bg-primary/20"
-        );
-
         return (
-          <FormItem className={cardClasses}>
-            <FormControl>
-              <Checkbox
-                checked={isChecked}
-                className="mt-0.5 size-5 transition-all duration-200"
-                id={`service-checkbox-${service.id}`}
-                onCheckedChange={(checked) => {
-                  const currentValue = field.value || [];
-                  const newValue = checked
-                    ? [...currentValue, service.id]
-                    : currentValue.filter((id: string) => id !== service.id);
-                  field.onChange(newValue);
-                }}
-              />
-            </FormControl>
-            <label
-              className="flex-1 cursor-pointer space-y-2"
-              htmlFor={`service-checkbox-${service.id}`}
+          <FormItem>
+            <Label
+              className={cn(
+                "flex cursor-pointer items-center justify-between gap-4 rounded-lg border bg-card p-4 transition-all duration-200",
+                "hover:border-primary/50 hover:bg-accent/5",
+                isChecked && "border-primary/30 bg-primary/5"
+              )}
+              htmlFor={`service-${service.id}`}
             >
-              <div className="flex items-start justify-between gap-2">
-                <span className={labelClasses}>{service.name}</span>
-                {isChecked && (
-                  <Badge
-                    className="fade-in zoom-in shrink-0 animate-in"
-                    variant="default"
-                  >
-                    Seleccionado
-                  </Badge>
-                )}
+              {/* Left: Icon + Content */}
+              <div className="flex flex-1 items-center gap-3">
+                <div
+                  className={cn(
+                    "flex items-center justify-center rounded-md p-2 transition-colors",
+                    isChecked ? "bg-primary/10 text-primary" : "bg-muted"
+                  )}
+                >
+                  {getServiceIcon(service.unit)}
+                </div>
+
+                <div className="flex-1 space-y-0.5">
+                  <h4 className="font-medium text-base leading-tight">
+                    {service.name}
+                  </h4>
+                  <p className="text-muted-foreground text-sm">
+                    {getServiceTypeLabel(service.type)} —{" "}
+                    {formatCurrency(service.rate)} por{" "}
+                    {getServiceUnitLabel(service.unit)}
+                  </p>
+                </div>
               </div>
 
-              <Badge className="text-xs" variant="outline">
-                {getServiceTypeLabel(service.type)}
-              </Badge>
-
-              <div className="flex items-baseline gap-2 pt-1">
-                <span className={priceClasses}>
-                  {formatCurrency(service.rate)}
-                </span>
-                <span className="text-muted-foreground text-xs">
-                  por {getServiceUnitLabel(service.unit)}
-                </span>
-              </div>
-            </label>
-
-            {/* Visual indicator line */}
-            <div className={indicatorClasses} />
+              {/* Right: Toggle Switch */}
+              <FormControl className="mr-4">
+                <Switch
+                  checked={isChecked}
+                  className="scale-150"
+                  id={`service-${service.id}`}
+                  onCheckedChange={(checked) => {
+                    const currentValue = field.value || [];
+                    const newValue = checked
+                      ? [...currentValue, service.id]
+                      : currentValue.filter((id: string) => id !== service.id);
+                    field.onChange(newValue);
+                  }}
+                />
+              </FormControl>
+            </Label>
           </FormItem>
         );
       }}
@@ -138,16 +135,16 @@ function ServiceCard({ control, service }: ServiceCardProps) {
 }
 
 /**
- * ServicesSelectorSection - Enhanced UX
+ * ServicesSelectorSection - Horizontal layout with toggle switches
  *
- * ## Mejoras implementadas:
- * - **Cards interactivos completos**: Todo el card es clickeable
- * - **Feedback visual claro**: Hover, selección, transiciones suaves
+ * ## Características del diseño:
+ * - **Layout vertical**: Cards apilados en una columna
+ * - **Toggle switches**: Switch component a la derecha
+ * - **Iconos dinámicos**: Basados en ServiceUnit (sqm → Maximize2, ml → Ruler, unit → Package)
+ * - **Feedback visual sutil**: Hover y estados de selección discretos
+ * - **Texto descriptivo**: Tipo de servicio + precio por unidad en subtitle
  * - **Contador de selección**: Badge mostrando servicios seleccionados
  * - **Estimación de costo**: Suma total de servicios seleccionados
- * - **Affordance mejorada**: Estados hover evidentes con shadow
- * - **Animaciones sutiles**: Transiciones duration-200 consistentes
- * - **Accesibilidad**: Labels, keyboard navigation, focus indicators
  */
 export function ServicesSelectorSection({
   services,
@@ -179,34 +176,30 @@ export function ServicesSelectorSection({
     ); // Convert mm to meters
   }, [width, height]);
 
-  // Calculate total estimated cost and total
-  const { selectedCount, estimatedTotal } = useMemo(() => {
-    const selectedServicesList = services.filter((s) =>
-      selectedServices.includes(s.id)
-    );
+  // Calculate total estimated cost and count
+  const selectedServicesList = services.filter((s) =>
+    selectedServices.includes(s.id)
+  );
 
-    const costPerUnit = selectedServicesList.reduce((sum, service) => {
-      switch (service.unit) {
-        case "sqm":
-          return sum + service.rate * area;
-        case "ml":
-          return sum + service.rate * perimeter;
-        case "unit":
-          return sum + service.rate;
-        default:
-          return sum;
-      }
-    }, 0);
+  const costPerUnit = selectedServicesList.reduce((sum, service) => {
+    switch (service.unit) {
+      case "sqm":
+        return sum + service.rate * area;
+      case "ml":
+        return sum + service.rate * perimeter;
+      case "unit":
+        return sum + service.rate;
+      default:
+        return sum;
+    }
+  }, 0);
 
-    return {
-      estimatedTotal: costPerUnit * quantity,
-      selectedCount: selectedServicesList.length,
-    };
-  }, [services, selectedServices, area, perimeter, quantity]);
+  const selectedCount = selectedServicesList.length;
+  const estimatedTotal = costPerUnit * quantity;
 
   return (
     <FormSection
-      description="Selecciona los servicios extra que desees agregar a tu cotización."
+      description="Añade los extras que necesites para completar tu pedido."
       icon={Wrench}
       legend="Servicios Adicionales"
     >
@@ -215,7 +208,7 @@ export function ServicesSelectorSection({
         name="additionalServices"
         render={() => (
           <FormItem>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="space-y-3">
               {services.map((service) => (
                 <ServiceCard
                   control={control}
@@ -230,11 +223,11 @@ export function ServicesSelectorSection({
       />
       {/* Selection Summary */}
       {selectedCount > 0 && (
-        <div className="mt-4 flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 p-3">
+        <div className="mt-4 flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-primary" />
+            <CheckCircle2 className="size-5 text-primary" />
             <p className="text-primary text-sm">
-              <strong>{selectedCount}</strong>{" "}
+              <strong className="font-semibold">{selectedCount}</strong>{" "}
               {selectedCount === 1
                 ? "servicio seleccionado"
                 : "servicios seleccionados"}
