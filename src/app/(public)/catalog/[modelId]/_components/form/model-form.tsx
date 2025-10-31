@@ -338,7 +338,6 @@ export function ModelForm({
           <Card className="p-4 sm:p-6">
             <GlassTypeSelectorSection
               basePrice={model.basePrice}
-              glassArea={glassArea}
               glassTypes={glassTypes}
               selectedSolutionId={inferredSolution?.id}
             />
