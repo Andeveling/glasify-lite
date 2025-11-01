@@ -1,6 +1,6 @@
 # Glasify Lite Development Guidelines
 
-**Last Updated**: 2025-10-28
+**Last Updated**: 2025-01-10
 **Constitution**: See `.specify/memory/constitution.md`
 
 ## Code Generation Priorities
@@ -45,6 +45,46 @@ When generating code for this repository:
 ---
 
 ## Critical Rules
+
+### Cache Components - Server-Side Caching
+
+⚠️ **IMPORTANT**: Next.js 16 Cache Components enable build-time prerendering. Certain APIs are **incompatible** with `"use cache"`.
+
+**Core APIs**:
+- `"use cache"` - Public cache (build-time prerendering)
+- `"use cache: private"` - Private cache (runtime prefetching, allows dynamic APIs)
+- `cacheLife(profile)` - Time-based revalidation
+- `cacheTag(tag)` - Tag-based invalidation
+
+**❌ FORBIDDEN in `"use cache"` functions**:
+- `headers()` and `cookies()` (dynamic data sources)
+- Winston logger (uses `headers()` internally)
+- `Date.now()` before dynamic data access
+- Route Segment Config exports (`dynamic`, `revalidate`, `runtime`)
+- Empty arrays from `generateStaticParams()`
+
+**✅ ALTERNATIVES**:
+- Use `performance.now()` for timing measurements (not `Date.now()`)
+- Use direct Prisma access for static pages (bypass tRPC)
+- Use `"use cache: private"` if you need `headers()`/`cookies()`
+- Wrap uncached data in `<Suspense>` boundaries
+- Return placeholder values in `generateStaticParams()`
+
+**Migration Pattern**:
+```typescript
+// ❌ BEFORE (incompatible)
+export const dynamic = 'force-static';
+const start = Date.now();
+logger.info('Action'); // uses headers()
+
+// ✅ AFTER (Cache Components compatible)
+export default async function Page() {
+  "use cache";
+  cacheLife("hours");
+  const start = performance.now(); // not Date.now()
+  // logger removed, use console in dev
+}
+```
 
 ### Winston Logger - Server-Side ONLY
 
@@ -228,16 +268,17 @@ src/app/(dashboard)/admin/models/
 4. **Create pages as Server Components** (delegate interactivity to Client Components)
 5. **For SSR mutations: Use `router.refresh()` after `invalidate()`** (two-step pattern)
 6. **Never use Winston logger in Client Components** (server-side only)
-7. **Apply RBAC patterns** (middleware, tRPC procedures, UI guards)
-8. **Use adminProcedure for admin-only APIs** (not manual role checks)
-9. **Use getQuoteFilter for data filtering** (role-based WHERE clauses)
-10. **Use server-optimized table pattern** (URL state, debounced search, database indexes)
-11. **Use centralized formatters from `@lib/format`** (with tenant context)
-12. **Implement optimistic UI for mutations** (with rollback on error)
-13. Apply SOLID principles and Atomic Design
-14. Use Next.js App Router folder structure
-15. Prioritize Server Components over Client Components
-16. Add metadata for SEO on public pages
+7. **Apply Cache Components patterns** (performance.now(), no headers in "use cache", Suspense boundaries)
+8. **Apply RBAC patterns** (middleware, tRPC procedures, UI guards)
+9. **Use adminProcedure for admin-only APIs** (not manual role checks)
+10. **Use getQuoteFilter for data filtering** (role-based WHERE clauses)
+11. **Use server-optimized table pattern** (URL state, debounced search, database indexes)
+12. **Use centralized formatters from `@lib/format`** (with tenant context)
+13. **Implement optimistic UI for mutations** (with rollback on error)
+14. Apply SOLID principles and Atomic Design
+15. Use Next.js App Router folder structure
+16. Prioritize Server Components over Client Components
+17. Add metadata for SEO on public pages
 17. Write testable and well-documented code
 18. Use Spanish only in UI text, everything else in English
 19. Never create Barrels (index.ts) or barrel files anywhere
@@ -294,7 +335,7 @@ Use simpler alternatives to ternary ops if possible
 No `any` or `unknown` as type constraints or initializing vars to `undefined`
 Avoid `void` op
 Use arrow fns vs function exprs
-Use `Date.now()` for milliseconds since Unix Epoch
+Use `performance.now()` for high-resolution timing (avoid `Date.now()` in cached functions)
 Use `.flatMap()` vs `map().flat()`
 Use `indexOf`/`lastIndexOf` vs `findIndex`/`findLastIndex` for simple lookups
 Use literal property access vs computed property access

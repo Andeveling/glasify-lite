@@ -1,7 +1,7 @@
 # Glasify Lite Constitution
-**Version**: 2.2.0  
+**Version**: 2.2.1  
 **Ratified**: 2025-10-09  
-**Last Amended**: 2025-10-28
+**Last Amended**: 2025-01-10
 
 ---
 
@@ -288,6 +288,73 @@ The following technologies are mandatory for consistency and team expertise:
 
 ---
 
+## Cache Components Best Practices
+
+Next.js 16 Cache Components enable build-time prerendering and runtime prefetching. Follow these rules to avoid incompatibility errors.
+
+### Core APIs
+
+- **`"use cache"`**: Public cache for build-time prerendering (static pages)
+- **`"use cache: private"`**: Private cache for runtime prefetching (allows dynamic APIs)
+- **`cacheLife(profile)`**: Time-based revalidation ("hours", "days", "max", custom)
+- **`cacheTag(tag)`**: Tag-based cache invalidation
+
+### Forbidden in `"use cache"` Functions
+
+These APIs are **incompatible** with public cache (build-time prerendering):
+
+- ❌ `headers()` and `cookies()` (dynamic data sources)
+- ❌ Winston logger (uses `headers()` internally)
+- ❌ `Date.now()` before accessing dynamic data (triggers prerendering issues)
+- ❌ Route Segment Config exports (`dynamic`, `revalidate`, `runtime`)
+- ❌ Empty arrays from `generateStaticParams()`
+
+### What to Use Instead
+
+- ✅ **`performance.now()`** for timing measurements (not system time)
+- ✅ **Direct Prisma access** for static cached pages (bypass tRPC)
+- ✅ **`"use cache: private"`** if you need `headers()`/`cookies()`
+- ✅ **`<Suspense>` boundaries** for uncached data in Server Components
+- ✅ **Placeholder values** in `generateStaticParams()` if no data available
+
+### Migration Pattern
+
+When enabling Cache Components:
+
+1. Remove all Route Segment Config exports
+2. Add `"use cache"` for static content
+3. Remove logger from cached functions
+4. Replace `Date.now()` with `performance.now()`
+5. Ensure `generateStaticParams()` returns non-empty arrays
+6. Wrap uncached data access in `<Suspense>`
+
+**Example**:
+```typescript
+// ❌ BEFORE (incompatible)
+export const dynamic = 'force-static';
+export default async function Page() {
+  const start = Date.now();
+  const data = await api.getData();
+  logger.info('Fetched data'); // uses headers()
+  return <div>{data}</div>;
+}
+
+// ✅ AFTER (Cache Components compatible)
+export default async function Page() {
+  "use cache";
+  cacheLife("hours");
+  
+  const start = performance.now(); // not Date.now()
+  const data = await prisma.findMany(); // not tRPC (avoids headers)
+  // logger removed - use console in development only
+  return <div>{data}</div>;
+}
+```
+
+---
+
+---
+
 ## Quality Gates
 
 All code changes must pass these checks before merging:
@@ -379,38 +446,38 @@ If something is unclear:
 <!--
 Sync Impact Report
 
-- Version change: 2.1.2 → 2.2.0 (MINOR)
-- Modified principles:
-  * Principle 3: "One Job, One Place" → "One Job, One Place (SOLID Architecture)"
-    - Expanded with comprehensive SOLID principles guidance
-    - Added mandatory file organization structure for forms
-    - Listed specific violations that must be refactored
-    - Included code examples for proper architecture
+- Version change: 2.2.0 → 2.2.1 (PATCH)
+- Modified sections:
+  * Technology Constraints → Added "Cache Components Best Practices" subsection
+    - Core APIs: "use cache", cacheLife(), cacheTag()
+    - Forbidden APIs in cached functions (headers, cookies, logger, Date.now())
+    - Recommended alternatives (performance.now(), Prisma direct, Suspense)
+    - Migration pattern with before/after example
 - Added sections:
-  * SOLID Principles Applied (5 principles with explanations)
-  * Mandatory File Organization (folder structure template)
-  * Violations that MUST be refactored (anti-patterns list)
+  * Cache Components Best Practices (practical migration guidance)
 - Removed sections: none
 - Templates requiring updates:
-  * .specify/templates/plan-template.md ⚠ PENDING (add SOLID architecture validation)
-  * .specify/templates/spec-template.md ⚠ PENDING (add file organization requirements)
-  * .specify/templates/tasks-template.md ⚠ PENDING (add refactoring task category)
-  * .github/copilot-instructions.md ✅ already contains detailed SOLID patterns
+  * .github/copilot-instructions.md ⚠ PENDING (add Cache Components section to Critical Rules)
+  * .specify/templates/plan-template.md ✅ no changes needed (architecture-agnostic)
+  * .specify/templates/spec-template.md ✅ no changes needed (feature-focused)
+  * .specify/templates/tasks-template.md ✅ no changes needed (task-focused)
 - Follow-up TODOs:
-  * Update plan template to include SOLID architecture checklist
-  * Update spec template to require file organization structure
-  * Update tasks template with "refactor: SOLID compliance" task type
-  * Audit existing forms for SOLID violations (model-form.tsx ✅ completed, branding-config-form.tsx ✅ completed)
+  * Update copilot-instructions.md with Cache Components critical rules
+  * Remove obsolete "Use Date.now()" lint rule from copilot-instructions
+  * Add Cache Components validation to code generation checklist
 - Changes summary:
-  * MINOR version bump for new SOLID architecture principle
-  * Elevated SOLID from simple separation to comprehensive architectural guidance
-  * Established mandatory file organization patterns for all forms
-  * Created clear anti-patterns list for code review
-  * Updated principle priority to reflect importance of SOLID (now #2 after Security)
+  * PATCH version bump for technical clarifications (not new principle)
+  * Documented Cache Components migration patterns discovered during Next.js 16 upgrade
+  * Provides actionable guidance for avoiding build errors
+  * Clarifies incompatible APIs and their alternatives
+  * Maintains "clarity over quantity" with concise, practical examples
 - Rationale:
-  * Recent refactoring of model-form.tsx and branding-config-form.tsx revealed systematic SOLID violations
-  * Team needs clear, enforceable standards for component architecture
-  * Prevents future accumulation of technical debt in forms
-  * Improves testability, maintainability, and developer onboarding
-  * Aligns with existing .github/copilot-instructions.md guidance
+  * Recent Cache Components migration revealed systematic incompatibilities
+  * Team needs clear guidance on forbidden APIs and alternatives
+  * performance.now() vs Date.now() distinction is critical for build success
+  * Prevents future Cache Components errors in new features
+  * Aligns with constitution principle of "Server-First Performance"
+  * Complements existing .github/copilot-instructions.md patterns
+  * Real-world migration example clarifies abstract concepts
 -->
+

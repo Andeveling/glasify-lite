@@ -228,7 +228,7 @@ export function ModelForm({
           {/* Flexbox layout: 1/3 (sticky) + vertical bar + 2/3 (form) en desktop, stack en mobile */}
           <div className="flex w-full flex-col gap-6 md:flex-row">
             {/* Left column: Sticky summary (1/3 width en desktop) */}
-            <div className="sticky top-40 w-full space-y-4 self-start md:w-1/3">
+            <div className="sticky top-18 w-full space-y-4 self-start md:w-1/3">
               <StickyPriceHeader
                 basePrice={model.basePrice}
                 breakdown={priceBreakdown}

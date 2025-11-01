@@ -91,7 +91,7 @@ export function VerticalScrollProgress({
   return (
     <div
       className={cn(
-        "sticky top-40 hidden h-[calc(100vh-12rem)] w-8 flex-col items-center py-8 md:flex",
+        "sticky top-18 hidden h-[calc(100vh-12rem)] w-8 flex-col items-center py-8 md:flex",
         className
       )}
     >
