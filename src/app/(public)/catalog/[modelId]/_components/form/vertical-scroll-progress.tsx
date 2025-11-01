@@ -75,15 +75,15 @@ export function VerticalScrollProgress({
     offset: ["start start", "end end"],
   });
 
-  // Transform scroll progress to colors (visual feedback)
+  // Transform scroll progress to colors (visual feedback) using hex colors
   const progressColor = useTransform(
     scrollYProgress,
     [0, PROGRESS_COLOR_STEP_1, PROGRESS_COLOR_STEP_2, 1],
     [
-      "hsl(var(--primary))",
-      "hsl(210, 100%, 50%)",
-      "hsl(180, 100%, 40%)",
-      "hsl(120, 100%, 35%)",
+      "#a855f7", // Primary purple
+      "#0ea5e9", // Cyan
+      "#10b981", // Emerald
+      "#ef4444", // Red
     ]
   );
 
@@ -92,9 +92,9 @@ export function VerticalScrollProgress({
     (step) => step.id === activeStep
   );
 
-  // Calculate discrete progress based on completed steps
+  // Calculate discrete progress based on completed steps (as percentage 0-100)
   const discreteProgress = (currentStepIndex + 1) / FORM_STEPS.length;
-  const discreteScaleY = useSpring(discreteProgress, {
+  const discreteHeight = useSpring(discreteProgress, {
     damping: SPRING_DAMPING,
     restDelta: SPRING_REST_DELTA,
     stiffness: SPRING_STIFFNESS,
@@ -111,10 +111,10 @@ export function VerticalScrollProgress({
       <div className="relative h-full w-2 overflow-hidden rounded-full bg-muted/50 shadow-inner">
         {/* Animated progress bar - Fills discretely by steps */}
         <motion.div
-          className="absolute inset-x-0 bottom-0 w-full origin-bottom rounded-full shadow-lg transition-colors"
+          className="absolute inset-x-0 bottom-0 w-full rounded-full shadow-lg transition-colors"
           style={{
             backgroundColor: progressColor,
-            scaleY: discreteScaleY,
+            height: discreteHeight,
           }}
         />
       </div>
