@@ -32,15 +32,17 @@ const createPrismaClient = () => {
       name: "slowQueryLogger",
       query: {
         async $allOperations({ operation, model, args, query }) {
-          const startTime = Date.now();
+          // Use performance.now() instead of Date.now() for better compatibility with Cache Components
+          // performance.now() is a high-resolution timer that doesn't trigger prerendering issues
+          const startTime = performance.now();
           const result = await query(args);
-          const duration = Date.now() - startTime;
+          const duration = performance.now() - startTime;
 
           // Log slow queries for performance analysis
           if (duration > SLOW_QUERY_THRESHOLD_MS) {
             logger.warn("Slow query detected", {
               args: JSON.stringify(args),
-              duration: `${duration}ms`,
+              duration: `${duration.toFixed(2)}ms`,
               model,
               operation,
               threshold: `${SLOW_QUERY_THRESHOLD_MS}ms`,
