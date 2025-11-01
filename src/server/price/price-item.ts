@@ -5,6 +5,7 @@ const MILLIMETERS_PER_METER = 1000;
 const MILLIMETERS_IN_METER = new Decimal(MILLIMETERS_PER_METER);
 const ROUND_SCALE = 2;
 const FIXED_QUANTITY_SCALE = 4;
+const PERCENTAGE_DIVISOR = 100;
 
 const toDecimal = (value: Decimal | number | string | null | undefined) =>
   value instanceof Decimal ? value : new Decimal(value ?? 0);
@@ -101,6 +102,12 @@ export type PriceItemCalculationInput = {
     discountWidthMm?: number;
     discountHeightMm?: number;
   };
+  /**
+   * Recargo porcentual por color (0-100)
+   * Se aplica SOLO a costos de perfil (basePrice + dimensionCosts + accessoryPrice)
+   * NO se aplica a vidrio ni servicios
+   */
+  colorSurchargePercentage?: number;
   includeAccessory?: boolean;
   services?: PriceServiceInput[];
   adjustments?: PriceAdjustmentInput[];
@@ -121,6 +128,8 @@ export type PriceItemAdjustmentResult = {
 export type PriceItemCalculationResult = {
   dimPrice: number;
   accPrice: number;
+  colorSurchargePercentage?: number;
+  colorSurchargeAmount?: number;
   services: PriceItemServiceResult[];
   adjustments: PriceItemAdjustmentResult[];
   subtotal: number;
@@ -138,7 +147,23 @@ export const calculatePriceItem = (
   const basePrice = toDecimal(input.model.basePrice);
   const widthCost = toDecimal(input.model.costPerMmWidth).mul(widthMm);
   const heightCost = toDecimal(input.model.costPerMmHeight).mul(heightMm);
-  // Cálculo opcional de vidrio
+
+  // Profile cost (base + dimensions) BEFORE color surcharge
+  const profileCostBeforeColor = basePrice.plus(widthCost).plus(heightCost);
+
+  // Apply color surcharge to profile cost (if provided)
+  const colorSurchargePercentage = input.colorSurchargePercentage ?? 0;
+  const colorSurchargeMultiplier = new Decimal(1).plus(
+    new Decimal(colorSurchargePercentage).dividedBy(PERCENTAGE_DIVISOR)
+  );
+  const profileCostWithColor = profileCostBeforeColor.mul(
+    colorSurchargeMultiplier
+  );
+  const colorSurchargeAmountDecimal = profileCostWithColor.minus(
+    profileCostBeforeColor
+  );
+
+  // Cálculo opcional de vidrio (NO affected by color surcharge)
   let glassPriceDecimal = new Decimal(0);
   if (input.glass && toDecimal(input.glass.pricePerSqm).greaterThan(0)) {
     const dW = Math.max(input.glass.discountWidthMm ?? 0, 0);
@@ -153,17 +178,16 @@ export const calculatePriceItem = (
     );
   }
 
-  const rawDimPrice = basePrice
-    .plus(widthCost)
-    .plus(heightCost)
-    .plus(glassPriceDecimal);
+  const rawDimPrice = profileCostWithColor.plus(glassPriceDecimal);
   const dimPriceDecimal = roundHalfUp(rawDimPrice);
 
+  // Apply color surcharge to accessory price (if enabled)
   const includeAccessory = Boolean(input.includeAccessory);
   const rawAccessoryPrice = includeAccessory
     ? toDecimal(input.model.accessoryPrice)
     : new Decimal(0);
-  const accPriceDecimal = roundHalfUp(rawAccessoryPrice);
+  const accessoryWithColor = rawAccessoryPrice.mul(colorSurchargeMultiplier);
+  const accPriceDecimal = roundHalfUp(accessoryWithColor);
 
   const dimensions = { heightMeters, widthMeters };
 
@@ -206,11 +230,19 @@ export const calculatePriceItem = (
     .plus(servicesTotal)
     .plus(adjustmentsTotal);
 
-  return {
+  const result: PriceItemCalculationResult = {
     accPrice: toRoundedNumber(accPriceDecimal),
     adjustments: adjustmentBreakdown,
     dimPrice: toRoundedNumber(dimPriceDecimal),
     services: serviceBreakdown,
     subtotal: toRoundedNumber(subtotalDecimal),
   };
+
+  // Add color surcharge info if applicable
+  if (colorSurchargePercentage > 0) {
+    result.colorSurchargePercentage = colorSurchargePercentage;
+    result.colorSurchargeAmount = toRoundedNumber(colorSurchargeAmountDecimal);
+  }
+
+  return result;
 };

@@ -88,7 +88,12 @@ const iconHoverVariants: Variants = {
 // Types
 // ============================================================================
 
-type PriceBreakdownCategory = "model" | "glass" | "service" | "adjustment";
+type PriceBreakdownCategory =
+  | "model"
+  | "glass"
+  | "service"
+  | "adjustment"
+  | "color";
 
 type PriceBreakdownItem = {
   amount: number;

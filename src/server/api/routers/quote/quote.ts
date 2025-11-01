@@ -32,6 +32,8 @@ import { sendQuoteToVendor } from "./quote.service";
 
 // Constants for percentage calculations
 const PERCENTAGE_DIVISOR = 100;
+const MIN_SURCHARGE_PERCENTAGE = 0;
+const MAX_SURCHARGE_PERCENTAGE = 100;
 
 // Constants for pagination
 const MAX_LIMIT = 100;
@@ -62,6 +64,19 @@ export const calculateItemInput = z.object({
   services: z.array(calculateItemServiceInput),
   unit: z.enum(["unit", "sqm", "ml"]),
   widthMm: z.number().int().min(1, { error: "Ancho debe ser mayor a 0 mm" }),
+  /**
+   * Optional color surcharge percentage (0-100)
+   * Applied to profile costs only (basePrice + dimensions + accessories)
+   */
+  colorSurchargePercentage: z
+    .number()
+    .min(MIN_SURCHARGE_PERCENTAGE, {
+      error: "Recargo debe ser mayor o igual a 0%",
+    })
+    .max(MAX_SURCHARGE_PERCENTAGE, {
+      error: "Recargo debe ser menor o igual a 100%",
+    })
+    .optional(),
 });
 
 // Output schemas
@@ -80,6 +95,8 @@ export const calculateItemAdjustmentOutput = z.object({
 export const calculateItemOutput = z.object({
   accPrice: z.number(),
   adjustments: z.array(calculateItemAdjustmentOutput),
+  colorSurchargeAmount: z.number().optional(),
+  colorSurchargePercentage: z.number().optional(),
   dimPrice: z.number(),
   services: z.array(calculateItemServiceOutput),
   subtotal: z.number(),
@@ -484,6 +501,7 @@ export const quoteRouter = createTRPCRouter({
         // Calculate price including glass area pricing (using direct pricePerSqm from GlassType)
         const itemCalculation = calculatePriceItem({
           adjustments: adjustmentInputs,
+          colorSurchargePercentage: input.colorSurchargePercentage,
           glass: {
             discountHeightMm: model.glassDiscountHeightMm,
             discountWidthMm: model.glassDiscountWidthMm,
@@ -502,6 +520,8 @@ export const quoteRouter = createTRPCRouter({
         });
 
         logger.info("Item price calculation completed", {
+          colorSurchargeAmount: itemCalculation.colorSurchargeAmount,
+          colorSurchargePercentage: itemCalculation.colorSurchargePercentage,
           modelId: input.modelId,
           subtotal: itemCalculation.subtotal,
         });

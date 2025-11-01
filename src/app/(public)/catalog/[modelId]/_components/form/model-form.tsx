@@ -1,8 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Palette } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { FormSection } from "@/components/form-section";
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { useScrollIntoView } from "@/hooks/use-scroll-into-view";
@@ -23,6 +25,7 @@ import {
   createQuoteFormSchema,
   type QuoteFormValues,
 } from "../../_utils/validation";
+
 import { ColorSelector } from "../color-selector";
 import { StickyPriceHeader } from "../sticky-price-header";
 import { AddedToCartActions } from "./added-to-cart-actions";
@@ -59,7 +62,8 @@ export function ModelForm({
 
   // ✅ Hooks: Separated concerns (SRP)
   const { addToCart } = useCartOperations();
-  const { handleColorChange, selectedColorId } = useColorSelection();
+  const { handleColorChange, selectedColorId, colorSurchargePercentage } =
+    useColorSelection();
 
   // ✅ Track if item was just added to cart
   const [justAddedToCart, setJustAddedToCart] = useState(false);
@@ -140,6 +144,7 @@ export function ModelForm({
   const { breakdown, calculatedPrice, error, isCalculating } =
     usePriceCalculation({
       additionalServices,
+      colorSurchargePercentage,
       glassTypeId: glassType,
       heightMm: Number(height) || 0,
       maxHeightMm: model.maxHeightMm,
@@ -266,7 +271,19 @@ export function ModelForm({
                   }}
                 />
               </Card>
-
+              {/* Color Selector - Only show if model has colors */}
+              <Card className="p-4 sm:p-6" ref={colorSectionRef}>
+                <FormSection
+                  description="Elige el color del perfil (aplica recargo al precio base)"
+                  icon={Palette}
+                  legend="Seleccione un Color"
+                >
+                  <ColorSelector
+                    modelId={model.id}
+                    onColorChange={handleColorChangeWithForm}
+                  />
+                </FormSection>
+              </Card>
               {/* Glass Type Selector with performance bars */}
               <Card className="p-4 sm:p-6" ref={glassTypeSectionRef}>
                 <GlassTypeSelectorSection
@@ -275,14 +292,6 @@ export function ModelForm({
                   selectedSolutionId={inferredSolution?.id}
                 />
               </Card>
-
-              {/* Color Selector - Only show if model has colors */}
-              <div ref={colorSectionRef}>
-                <ColorSelector
-                  modelId={model.id}
-                  onColorChange={handleColorChangeWithForm}
-                />
-              </div>
 
               {/* Services Section - Only show if services are available (Don't Make Me Think principle) */}
               <div ref={servicesSectionRef}>

@@ -25,6 +25,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { safeDecimalToNumber } from "@/lib/prisma-utils";
 import { api } from "@/trpc/server-client";
 import { AddColorDialog } from "./_components/add-color-dialog";
 import { ModelColorsList } from "./_components/model-colors-list";
@@ -70,7 +71,7 @@ export default async function ModelColorsPage({ params }: PageProps) {
     // Serialize Decimal fields for Client Component
     const modelColors = modelColorsRaw.map((mc) => ({
       ...mc,
-      surchargePercentage: mc.surchargePercentage.toNumber(),
+      surchargePercentage: safeDecimalToNumber(mc.surchargePercentage),
     }));
 
     // Fetch available colors for assignment

@@ -8,11 +8,13 @@ type UsePriceCalculationParams = {
   heightMm: number;
   modelId: string;
   widthMm: number;
-  // ✅ ADD: Model dimension constraints for validation
+  // ✅ Model dimension constraints for validation
   minWidthMm?: number;
   maxWidthMm?: number;
   minHeightMm?: number;
   maxHeightMm?: number;
+  // ✅ Color surcharge percentage (0-100)
+  colorSurchargePercentage?: number;
 };
 
 type UsePriceCalculationReturn = {
@@ -40,6 +42,7 @@ const DEBOUNCE_DELAY_MS = 300; // ✅ Optimized for real-time responsiveness
  * @param params.maxWidthMm - Ancho máximo permitido (opcional, validación client-side)
  * @param params.minHeightMm - Alto mínimo permitido (opcional, validación client-side)
  * @param params.maxHeightMm - Alto máximo permitido (opcional, validación client-side)
+ * @param params.colorSurchargePercentage - Porcentaje de recargo por color (0-100, opcional)
  * @returns Estado del cálculo con precio, desglose, error y bandera isCalculating
  */
 export function usePriceCalculation(
@@ -99,6 +102,10 @@ export function usePriceCalculation(
   const servicesRef = useRef(params.additionalServices);
   servicesRef.current = params.additionalServices;
 
+  // ✅ Store color surcharge in ref to avoid stale closures
+  const colorSurchargeRef = useRef(params.colorSurchargePercentage ?? 0);
+  colorSurchargeRef.current = params.colorSurchargePercentage ?? 0;
+
   // ✅ Debounced calculation effect with stable dependencies
   // biome-ignore lint/correctness/useExhaustiveDependencies: servicesKey is intentionally used to detect array changes
   useEffect(() => {
@@ -152,6 +159,7 @@ export function usePriceCalculation(
         })),
         unit: "unit", // Default unit for price calculation
         widthMm: params.widthMm,
+        colorSurchargePercentage: colorSurchargeRef.current,
       });
     }, DEBOUNCE_DELAY_MS);
 
@@ -170,6 +178,7 @@ export function usePriceCalculation(
     params.maxWidthMm,
     params.minHeightMm,
     params.maxHeightMm,
+    params.colorSurchargePercentage,
     servicesKey,
   ]);
 
