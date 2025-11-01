@@ -6,7 +6,6 @@ import Image from "next/image";
 import { useTenantConfig } from "@/app/_hooks/use-tenant-config";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { PriceBreakdownPopover } from "@/components/ui/price-breakdown-popover";
 import { formatCurrency } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -118,12 +117,9 @@ type StickyPriceHeaderProps = {
 
 export function StickyPriceHeader({
   basePrice,
-  breakdown,
   className,
   configSummary,
-  currency,
   currentPrice,
-  withBreakdown = false,
 }: StickyPriceHeaderProps) {
   const { formatContext } = useTenantConfig();
   const discount = basePrice - currentPrice;
@@ -137,12 +133,7 @@ export function StickyPriceHeader({
     : "Sin dimensiones";
 
   return (
-    <motion.div
-      animate="visible"
-      className="sticky top-18 z-10"
-      initial="hidden"
-      variants={containerVariants}
-    >
+    <motion.div animate="visible" initial="hidden" variants={containerVariants}>
       <Card
         className={cn(
           "sticky top-16 z-10 mt-0 border-b bg-background px-4 pt-0 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6",
@@ -199,43 +190,6 @@ export function StickyPriceHeader({
                   <span className="text-lg">{dimensionsText}</span>
                 </motion.div>
               )}
-
-              {/* Price display */}
-              <motion.div
-                className="flex flex-col items-start gap-1 sm:items-end"
-                variants={badgeVariants}
-              >
-                <p className="text-muted-foreground text-xs">
-                  Precio configurado
-                </p>
-                <div className="flex items-center gap-2">
-                  <motion.p
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="font-bold text-2xl leading-none md:text-3xl"
-                    initial={{ opacity: 0.8, scale: 0.98 }}
-                    key={currentPrice}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                  >
-                    {formatCurrency(currentPrice, { context: formatContext })}
-                  </motion.p>
-
-                  {/* Breakdown popover */}
-                  {withBreakdown && (
-                    <motion.div
-                      animate="rest"
-                      initial="rest"
-                      variants={iconHoverVariants}
-                      whileHover="hover"
-                    >
-                      <PriceBreakdownPopover
-                        breakdown={breakdown}
-                        currency={currency}
-                        totalAmount={currentPrice}
-                      />
-                    </motion.div>
-                  )}
-                </div>
-              </motion.div>
             </div>
           </div>
 

@@ -201,7 +201,7 @@ export function ModelForm({
         {/* Flexbox layout: 1/3 (sticky) + 2/3 (form) en desktop, stack en mobile */}
         <div className="flex w-full flex-col gap-6 md:flex-row">
           {/* Left column: Sticky summary (1/3 width en desktop) */}
-          <div className="w-full md:w-1/3">
+          <div className="sticky top-20 w-full space-y-4 self-start md:w-1/3">
             <StickyPriceHeader
               basePrice={model.basePrice}
               breakdown={priceBreakdown}
@@ -215,6 +215,14 @@ export function ModelForm({
               }}
               currency={currency}
               currentPrice={calculatedPrice ?? model.basePrice}
+            />
+            <QuoteSummary
+              basePrice={model.basePrice}
+              calculatedPrice={calculatedPrice}
+              currency={currency}
+              error={error}
+              isCalculating={isCalculating}
+              justAddedToCart={justAddedToCart}
             />
           </div>
 
@@ -253,14 +261,6 @@ export function ModelForm({
               </Card>
             )}
 
-            <QuoteSummary
-              basePrice={model.basePrice}
-              calculatedPrice={calculatedPrice}
-              currency={currency}
-              error={error}
-              isCalculating={isCalculating}
-              justAddedToCart={justAddedToCart}
-            />
             {/* ✅ Show success actions after adding to cart */}
             {justAddedToCart && (
               <AddedToCartActions
