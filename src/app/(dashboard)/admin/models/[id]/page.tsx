@@ -26,11 +26,9 @@ export const metadata: Metadata = {
   title: "Editar Modelo | Admin",
 };
 
-/**
- * Force dynamic rendering to ensure fresh data after mutations
- * Without this, the form won't show updated values after edit
- */
-export const dynamic = "force-dynamic";
+// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
+// Note: Dynamic by default, fresh data guaranteed without explicit export
+// TODO: Consider Suspense boundaries for better loading states after build verification
 
 export default async function EditModelPage({ params }: EditModelPageProps) {
   const { id } = await params;

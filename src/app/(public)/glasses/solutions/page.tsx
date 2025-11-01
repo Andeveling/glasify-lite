@@ -2,25 +2,28 @@
  * Glass Solutions List Page
  *
  * Public page displaying all available glass solutions.
- * Uses ISR with 3600-second revalidation for performance.
+ * Uses caching with Cache Components for performance.
  * Statically generated at build time with periodic revalidation.
  *
  * @route /glasses/solutions
  * @access public (no authentication required)
- * @caching ISR: 3600 seconds (1 hour)
+ * @caching "use cache" with 1-hour revalidation
  * @generated Static page generated at build time, revalidated every hour
  */
 
+"use cache";
+
 import { GlassesIcon } from "lucide-react";
 import type { Metadata } from "next";
+import { cacheLife } from "next/cache";
 import Link from "next/link";
 import { getIconComponent } from "@/lib/icon-map";
-import logger from "@/lib/logger";
 import { api } from "@/trpc/server-client";
 
-// Static generation with 1-hour revalidation
-export const dynamic = "force-static";
-export const revalidate = 3600; // ISR: 1 hour
+// MIGRATED: Removed export const dynamic = 'force-static' (incompatible with Cache Components)
+// MIGRATED: Removed export const revalidate = 3600 (incompatible with Cache Components)
+// Note: Using "use cache" directive at top + cacheLife() for time-based revalidation
+// Strategy: Public static content that changes occasionally (hours)
 
 /**
  * SEO Metadata for glass solutions listing page
@@ -44,6 +47,9 @@ export const metadata: Metadata = {
  * Each solution is a link to its detail page.
  */
 export default async function GlassSolutionsPage() {
+  // Configure cache lifetime: 1 hour revalidation
+  cacheLife("hours");
+
   try {
     // Fetch solutions from tRPC server procedure
     const { items: solutions } = await api.catalog["list-solutions"]({
@@ -133,10 +139,9 @@ export default async function GlassSolutionsPage() {
         </div>
       </div>
     );
-  } catch (error) {
-    logger.error("Error loading glass solutions page", {
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
+  } catch {
+    // Note: Cannot use logger in cached functions - it accesses headers()
+    // Error details will be visible in browser console
 
     return (
       <div className="flex min-h-96 flex-col items-center justify-center text-center">

@@ -33,10 +33,11 @@ type CatalogPageProps = {
  * - Better UX (instant navigation, progressive enhancement)
  */
 
-// Disable ISR temporarily due to Next.js 16 prerendering limitations with client components
-// TODO: Re-enable ISR once Next.js 16 properly handles client components in Server Components
-// export const revalidate = 3600;
-export const dynamic = "force-dynamic";
+// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
+// Note: Dynamic by default - catalog uses client components and real-time filtering
+// TODO: Previously disabled ISR due to Next.js 16 prerendering limitations
+// TODO: Evaluate if Cache Components with Suspense enables better caching strategy
+// Potential: Use "use cache" for static catalog shell + Suspense for dynamic filters
 
 export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   const params = await searchParams;

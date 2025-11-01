@@ -26,12 +26,9 @@ export const metadata: Metadata = {
   title: "Proveedores de Perfiles | Admin",
 };
 
-/**
- * SSR Configuration: Force dynamic rendering
- * - No caching for admin routes (always fresh data)
- * - Private dashboard routes don't benefit from ISR
- */
-export const dynamic = "force-dynamic";
+// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
+// Note: Admin routes are dynamic by default - no export needed
+// TODO: Consider Suspense boundaries for better loading UX after build verification
 
 type SearchParams = Promise<{
   isActive?: string;

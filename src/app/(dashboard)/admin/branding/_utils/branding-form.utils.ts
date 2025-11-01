@@ -21,8 +21,8 @@ export type BrandingInitialData = {
   instagramUrl: string | null;
   linkedinUrl: string | null;
   logoUrl: string | null;
-  primaryColor: string;
-  secondaryColor: string;
+  primaryColor: string | null;
+  secondaryColor: string | null;
   whatsappEnabled: boolean;
   whatsappNumber: string | null;
 };

@@ -30,8 +30,9 @@ import { api } from "@/trpc/server-client";
 import { AddColorDialog } from "./_components/add-color-dialog";
 import { ModelColorsList } from "./_components/model-colors-list";
 
-// Force SSR - no caching for admin dashboard
-export const dynamic = "force-dynamic";
+// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
+// Note: Admin routes are dynamic by default with Cache Components
+// TODO: Evaluate if Suspense boundaries are needed after build verification
 
 type PageProps = {
   params: Promise<{ id: string }>;

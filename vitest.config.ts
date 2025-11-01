@@ -23,11 +23,6 @@ export default defineConfig({
     exclude: ["**/node_modules/**", "**/dist/**", "**/e2e/**"],
     globals: true,
     pool: "threads",
-    poolOptions: {
-      threads: {
-        singleThread: true,
-      },
-    },
     setupFiles: ["./src/tests/setup.ts"],
   },
 });

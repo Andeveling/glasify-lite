@@ -8,11 +8,9 @@ export const metadata: Metadata = {
   title: "Dashboard | Admin - Glasify Lite",
 };
 
-/**
- * Force dynamic rendering (SSR) for real-time metrics
- * Dashboard data should always be fresh (no static generation)
- */
-export const dynamic = "force-dynamic";
+// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
+// Note: Everything is dynamic by default with Cache Components - no export needed
+// TODO: Will evaluate if Suspense boundaries are needed after analyzing build errors
 
 /**
  * Admin Dashboard Home Page

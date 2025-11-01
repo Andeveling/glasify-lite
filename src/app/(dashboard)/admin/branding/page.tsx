@@ -8,7 +8,9 @@ export const metadata: Metadata = {
   title: "Configuración de Branding | Admin",
 };
 
-export const dynamic = "force-dynamic";
+// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
+// Note: Dynamic by default - branding data is always fresh
+// TODO: Evaluate if Suspense improves UX after build verification
 
 export default async function BrandingPage() {
   const branding = await api.tenantConfig.getBranding();

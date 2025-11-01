@@ -4,8 +4,10 @@ import logger from "@/lib/logger";
 import { auth } from "@/server/auth";
 import { uploadLogo } from "@/server/services/file-upload.service";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+// MIGRATED: Removed export const runtime = "nodejs" (incompatible with Cache Components)
+// MIGRATED: Removed export const dynamic = "force-dynamic" (incompatible with Cache Components)
+// Note: nodejs runtime is default, dynamic is default with Cache Components
+// API routes are dynamic by default - no explicit export needed
 
 /**
  * POST /api/upload-logo

@@ -32,13 +32,9 @@ export const metadata: Metadata = {
   title: "Tipos de Vidrio | Admin",
 };
 
-/**
- * SSR Configuration: Force dynamic rendering
- * - No caching for admin routes (always fresh data)
- * - Suspense key triggers re-fetch when filters change
- * - Private dashboard routes don't benefit from ISR
- */
-export const dynamic = "force-dynamic";
+// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
+// Note: Admin routes are dynamic by default - no explicit export needed
+// TODO: Evaluate if Suspense boundaries improve UX after build verification
 
 type SearchParams = Promise<{
   isActive?: string;

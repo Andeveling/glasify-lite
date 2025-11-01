@@ -37,13 +37,10 @@ export const metadata: Metadata = {
   title: "Modelos | Admin",
 };
 
-/**
- * ISR Configuration: Revalidate every 30 seconds
- * - Server renders are cached for 30 seconds
- * - Suspense key triggers re-fetch when filters change
- * - Background revalidation on cache miss
- */
-export const revalidate = 30;
+// MIGRATED: Removed export const revalidate = 30 (incompatible with Cache Components)
+// Note: Admin routes are dynamic by default - no ISR needed
+// TODO: If caching is needed, use "use cache" + cacheLife() after build verification
+// Previous behavior: 30-second ISR with background revalidation
 
 type SearchParams = Promise<{
   status?: string;

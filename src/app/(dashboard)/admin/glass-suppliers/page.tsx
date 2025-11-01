@@ -25,12 +25,9 @@ export const metadata: Metadata = {
   title: "Proveedores de Vidrio | Admin",
 };
 
-/**
- * SSR Configuration: Force dynamic rendering
- * - No caching for admin routes (always fresh data)
- * - Private dashboard routes don't benefit from ISR
- */
-export const dynamic = "force-dynamic";
+// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
+// Note: Dynamic by default with Cache Components
+// TODO: Evaluate if Suspense boundaries improve UX after build verification
 
 type SearchParams = Promise<{
   country?: string;
