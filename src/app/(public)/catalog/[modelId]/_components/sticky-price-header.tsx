@@ -150,7 +150,7 @@ export function StickyPriceHeader({
           {/* Top section: Model Image - 4:3 aspect ratio */}
           {configSummary.modelImageUrl && (
             <motion.div
-              className="aspect-[4/3] overflow-hidden rounded-lg border bg-muted"
+              className="relative aspect-[4/3] w-full overflow-hidden bg-muted"
               variants={badgeVariants}
             >
               <Image
