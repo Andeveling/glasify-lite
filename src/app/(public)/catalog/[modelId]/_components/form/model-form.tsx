@@ -30,10 +30,10 @@ import { ColorSelector } from "../color-selector";
 import { StickyPriceHeader } from "../sticky-price-header";
 import { AddedToCartActions } from "./added-to-cart-actions";
 import { QuoteSummary } from "./quote-summary";
-import { ScrollProgressIndicator } from "./scroll-progress-indicator";
 import { DimensionsSection } from "./sections/dimensions-section";
 import { GlassTypeSelectorSection } from "./sections/glass-type-selector-section";
 import { ServicesSelectorSection } from "./sections/services-selector-section";
+import { VerticalScrollProgress } from "./vertical-scroll-progress";
 
 // ============================================================================
 // Types
@@ -223,15 +223,9 @@ export function ModelForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)}>
-        {/* Scroll Progress Indicator - Sticky at top */}
-        <ScrollProgressIndicator
-          containerRef={formContainerRef}
-          sectionRefs={sectionRefs}
-        />
-
         {/* Main form container for scroll tracking */}
         <div ref={formContainerRef}>
-          {/* Flexbox layout: 1/3 (sticky) + 2/3 (form) en desktop, stack en mobile */}
+          {/* Flexbox layout: 1/3 (sticky) + vertical bar + 2/3 (form) en desktop, stack en mobile */}
           <div className="flex w-full flex-col gap-6 md:flex-row">
             {/* Left column: Sticky summary (1/3 width en desktop) */}
             <div className="sticky top-40 w-full space-y-4 self-start md:w-1/3">
@@ -258,6 +252,12 @@ export function ModelForm({
                 justAddedToCart={justAddedToCart}
               />
             </div>
+
+            {/* Vertical scroll progress bar - Minimal and subtle */}
+            <VerticalScrollProgress
+              containerRef={formContainerRef}
+              sectionRefs={sectionRefs}
+            />
 
             {/* Right column: Form sections (2/3 width en desktop) */}
             <div className="w-full space-y-4 sm:space-y-6 md:w-2/3">

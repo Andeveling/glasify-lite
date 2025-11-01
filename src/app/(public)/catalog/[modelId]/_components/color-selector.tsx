@@ -19,10 +19,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ColorChip } from "@/app/(dashboard)/admin/colors/_components/color-chip";
 import { Badge } from "@/components/ui/badge";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { RadioGroup } from "@/components/ui/radio-group";
 import { api } from "@/trpc/react";
+import { ColorChipOption } from "./_components/color-chip-option";
 
 // Constants
 const COLOR_CACHE_MINUTES = 5;
@@ -136,48 +136,15 @@ export function ColorSelector({ modelId, onColorChange }: ColorSelectorProps) {
         onValueChange={handleColorSelect}
         value={selectedColorId}
       >
-        {data.colors.map((modelColor) => {
-          const isSelected = selectedColorId === modelColor.color.id;
-          const surcharge = modelColor.surchargePercentage;
-
-          return (
-            <label
-              className={`flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all hover:border-primary has-[:focus-visible]:outline-none has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-offset-2 ${
-                isSelected
-                  ? "border-primary bg-primary/5"
-                  : "border-border bg-background"
-              } ${useGrid ? "" : "min-w-[100px]"}`}
-              htmlFor={modelColor.id}
-              key={modelColor.id}
-            >
-              <RadioGroupItem
-                className="sr-only"
-                id={modelColor.id}
-                value={modelColor.color.id}
-              />
-              <ColorChip hexCode={modelColor.color.hexCode} size="lg" />
-              <div className="flex flex-col items-center gap-1">
-                <span className="text-center font-medium text-xs">
-                  {modelColor.color.name}
-                </span>
-                {modelColor.color.ralCode && (
-                  <span className="text-muted-foreground text-xs">
-                    {modelColor.color.ralCode}
-                  </span>
-                )}
-                {surcharge > 0 ? (
-                  <Badge className="text-xs" variant="secondary">
-                    +{surcharge}%
-                  </Badge>
-                ) : (
-                  <Badge className="text-xs" variant="outline">
-                    Incluido
-                  </Badge>
-                )}
-              </div>
-            </label>
-          );
-        })}
+        {data.colors.map((modelColor, index) => (
+          <ColorChipOption
+            index={index}
+            isSelected={selectedColorId === modelColor.color.id}
+            key={modelColor.id}
+            modelColor={modelColor}
+            useGrid={useGrid}
+          />
+        ))}
       </RadioGroup>
     </div>
   );

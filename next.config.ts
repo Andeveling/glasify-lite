@@ -4,10 +4,14 @@ import "./src/env.js";
 const PRISMA_REGEX = /[\\/]node_modules[\\/]@prisma[\\/]/;
 
 const config: NextConfig = {
-  // Performance optimizations
   compress: true,
   reactCompiler: true,
-
+  poweredByHeader: false,
+  reactStrictMode: true,
+  cacheComponents: true,
+  typescript: {
+    ignoreBuildErrors: false,
+  },
   // Security headers
   headers() {
     return Promise.resolve([
@@ -47,9 +51,6 @@ const config: NextConfig = {
     ],
   },
 
-  poweredByHeader: false,
-  reactStrictMode: true,
-
   // Configure external packages for serverless
   serverExternalPackages: ["@prisma/client"],
 
@@ -58,11 +59,6 @@ const config: NextConfig = {
     rules: {
       "*.svg": ["@svgr/webpack"],
     },
-  },
-
-  // TypeScript optimization
-  typescript: {
-    ignoreBuildErrors: false,
   },
 
   // Webpack optimizations
