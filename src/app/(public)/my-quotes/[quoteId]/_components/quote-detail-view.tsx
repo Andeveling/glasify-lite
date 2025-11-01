@@ -200,8 +200,10 @@ export function QuoteDetailView({
               </p>
               <p className="text-muted-foreground text-sm">
                 {quote.projectAddress.projectCity},{" "}
-                {quote.projectAddress.projectState}{" "}
-                {quote.projectAddress.projectPostalCode}
+                {quote.projectAddress.projectState}
+                {quote.projectAddress.projectPostalCode
+                  ? ` ${quote.projectAddress.projectPostalCode}`
+                  : ""}
               </p>
             </div>
           </div>

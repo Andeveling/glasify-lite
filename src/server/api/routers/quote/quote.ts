@@ -653,7 +653,7 @@ export const quoteRouter = createTRPCRouter({
           projectAddress: {
             projectCity: quote.projectCity ?? "",
             projectName: quote.projectName ?? "Sin nombre",
-            projectPostalCode: quote.projectPostalCode ?? "",
+            projectPostalCode: quote.projectPostalCode ?? undefined,
             projectState: quote.projectState ?? "",
             projectStreet: quote.projectStreet ?? "",
           },

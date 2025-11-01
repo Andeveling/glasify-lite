@@ -18,8 +18,8 @@ const DEFAULT_PAGE_SIZE = 20;
 const MAX_PROJECT_NAME_LENGTH = 100;
 const MAX_ADDRESS_LENGTH = 200;
 const MAX_PHONE_LENGTH = 20;
-const MAX_POSTAL_CODE_LENGTH = 20;
 const MAX_CART_ITEMS = 20;
+const CURRENCY_CODE_LENGTH = 3;
 
 // ============================================================================
 // Input Schemas - Queries
@@ -67,16 +67,16 @@ export type GetQuoteByIdInput = z.infer<typeof getQuoteByIdInput>;
 /**
  * Project address for quote generation
  */
+/**
+ * Project address schema for INPUT (quote generation)
+ * All fields are required when creating a new quote
+ */
 export const projectAddressSchema = z.object({
   projectCity: z.string().min(1, "Ciudad es requerida").max(MAX_ADDRESS_LENGTH),
   projectName: z
     .string()
     .min(1, "Nombre del proyecto es requerido")
     .max(MAX_PROJECT_NAME_LENGTH),
-  projectPostalCode: z
-    .string()
-    .min(1, "Código postal es requerido")
-    .max(MAX_POSTAL_CODE_LENGTH),
   projectState: z
     .string()
     .min(1, "Estado/región es requerido")
@@ -90,18 +90,34 @@ export const projectAddressSchema = z.object({
 export type ProjectAddressSchema = z.infer<typeof projectAddressSchema>;
 
 /**
+ * Project address schema for OUTPUT (reading quotes)
+ * Fields can be empty strings for backward compatibility with old quotes
+ */
+export const projectAddressOutputSchema = z.object({
+  projectCity: z.string(),
+  projectName: z.string(),
+  projectPostalCode: z.string().optional(),
+  projectState: z.string(),
+  projectStreet: z.string(),
+});
+
+export type ProjectAddressOutputSchema = z.infer<
+  typeof projectAddressOutputSchema
+>;
+
+/**
  * Cart item for quote generation
  */
 export const cartItemForQuoteSchema = z.object({
-  additionalServiceIds: z.array(z.string().cuid()),
+  additionalServiceIds: z.array(z.cuid()),
   glassTypeId: z.string().cuid(),
   glassTypeName: z.string(),
   heightMm: z.number().int().positive(),
-  modelId: z.string().cuid(),
+  modelId: z.cuid(),
   modelName: z.string(),
   name: z.string(),
   quantity: z.number().int().positive(),
-  solutionId: z.string().cuid().optional(),
+  solutionId: z.cuid().optional(),
   solutionName: z.string().optional(),
   unitPrice: z.number().nonnegative(),
   widthMm: z.number().int().positive(),
@@ -138,7 +154,7 @@ export type GenerateQuoteFromCartInput = z.infer<
 export const quoteListItemSchema = z.object({
   createdAt: z.date(),
   currency: z.string(),
-  id: z.string().cuid(),
+  id: z.cuid(),
   isExpired: z.boolean(),
   itemCount: z.number().int().nonnegative(),
   projectName: z.string(),
@@ -171,7 +187,7 @@ export type ListUserQuotesOutput = z.infer<typeof listUserQuotesOutput>;
 export const quoteItemDetailSchema = z.object({
   glassTypeName: z.string(),
   heightMm: z.number().int().positive(),
-  id: z.string().cuid(),
+  id: z.cuid(),
   modelName: z.string(),
   name: z.string(),
   quantity: z.number().int().positive(),
@@ -196,7 +212,7 @@ export const quoteDetailSchema = z.object({
   itemCount: z.number().int().nonnegative(),
   items: z.array(quoteItemDetailSchema),
   manufacturerName: z.string(),
-  projectAddress: projectAddressSchema,
+  projectAddress: projectAddressOutputSchema, // Use output schema (allows empty strings)
   sentAt: z.date().nullable(),
   status: z.enum(["draft", "sent", "canceled"]),
   total: z.number().nonnegative(),
@@ -267,14 +283,14 @@ export type GenerateQuoteFromCartOutput = z.infer<
  * ```
  */
 export const sendToVendorInput = z.object({
-  contactEmail: z.string().email("Correo electrónico inválido").optional(),
+  contactEmail: z.email("Correo electrónico inválido").optional(),
   contactPhone: z
     .string()
     .regex(
       /^\+?[1-9]\d{9,14}$/,
       "Formato de teléfono inválido. Debe incluir código de país (ej: +57 300 123 4567)"
     ),
-  quoteId: z.string().cuid("ID de cotización inválido"),
+  quoteId: z.cuid("ID de cotización inválido"),
 });
 
 export type SendToVendorInput = z.infer<typeof sendToVendorInput>;
@@ -299,9 +315,8 @@ export type SendToVendorInput = z.infer<typeof sendToVendorInput>;
  */
 export const sendToVendorOutput = z.object({
   contactEmail: z.string().optional(),
-  contactPhone: z.string(),
-  currency: z.string().length(3),
-  id: z.string().cuid(),
+  currency: z.string().length(CURRENCY_CODE_LENGTH),
+  id: z.cuid(),
   sentAt: z.date(),
   status: z.literal("sent"),
   total: z.number().nonnegative(),

@@ -10,6 +10,8 @@
 import { TRPCError } from "@trpc/server";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
+import { Suspense } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import logger from "@/lib/logger";
 import { auth } from "@/server/auth";
 import { api } from "@/trpc/server-client";
@@ -21,9 +23,7 @@ type MyQuoteDetailPageProps = {
   }>;
 };
 
-export default async function MyQuoteDetailPage({
-  params,
-}: MyQuoteDetailPageProps) {
+async function QuoteContent({ quoteId }: { quoteId: string }) {
   // Check authentication
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -40,8 +40,6 @@ export default async function MyQuoteDetailPage({
     redirect("/api/auth/signin?callbackUrl=/my-quotes");
   }
 
-  const { quoteId } = await params;
-
   try {
     logger.info("[MyQuoteDetailPage] User accessing quote detail", {
       quoteId,
@@ -50,11 +48,7 @@ export default async function MyQuoteDetailPage({
 
     const quote = await api.quote["get-by-id"]({ id: quoteId });
 
-    return (
-      <div className="container mx-auto max-w-7xl py-8">
-        <QuoteDetailView isPublicView quote={quote} />
-      </div>
-    );
+    return <QuoteDetailView isPublicView quote={quote} />;
   } catch (error) {
     // If quote not found or access denied, show 404
     if (error instanceof TRPCError && error.code === "NOT_FOUND") {
@@ -76,4 +70,24 @@ export default async function MyQuoteDetailPage({
     // Re-throw other errors
     throw error;
   }
+}
+
+export default async function MyQuoteDetailPage({
+  params,
+}: MyQuoteDetailPageProps) {
+  const { quoteId } = await params;
+
+  return (
+    <div className="container mx-auto max-w-7xl py-8">
+      <Suspense
+        fallback={
+          <div className="flex min-h-[400px] items-center justify-center">
+            <Spinner className="size-8" />
+          </div>
+        }
+      >
+        <QuoteContent quoteId={quoteId} />
+      </Suspense>
+    </div>
+  );
 }
