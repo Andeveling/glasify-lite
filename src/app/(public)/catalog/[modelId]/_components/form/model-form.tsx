@@ -198,71 +198,78 @@ export function ModelForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)}>
-        {/* ✅ Sticky Price Header - Always visible with config summary */}
-        <StickyPriceHeader
-          basePrice={model.basePrice}
-          breakdown={priceBreakdown}
-          configSummary={{
-            glassTypeName: selectedGlassType?.name,
-            heightMm: Number(height) || undefined,
-            modelName: model.name,
-            solutionName: inferredSolution?.nameEs,
-            widthMm: Number(width) || undefined,
-          }}
-          currency={currency}
-          currentPrice={calculatedPrice ?? model.basePrice}
-        />
-
-        <div className="space-y-4 pt-4 sm:space-y-6">
-          <Card className="p-4 sm:p-6">
-            <DimensionsSection
-              dimensions={{
-                maxHeight: model.maxHeightMm,
-                maxWidth: model.maxWidthMm,
-                minHeight: model.minHeightMm,
-                minWidth: model.minWidthMm,
-              }}
-            />
-          </Card>
-
-          {/* Glass Type Selector with performance bars */}
-          <Card className="p-4 sm:p-6">
-            <GlassTypeSelectorSection
+        {/* Flexbox layout: 1/3 (sticky) + 2/3 (form) en desktop, stack en mobile */}
+        <div className="flex w-full flex-col gap-6 md:flex-row">
+          {/* Left column: Sticky summary (1/3 width en desktop) */}
+          <div className="w-full md:w-1/3">
+            <StickyPriceHeader
               basePrice={model.basePrice}
-              glassTypes={glassTypes}
-              selectedSolutionId={inferredSolution?.id}
+              breakdown={priceBreakdown}
+              configSummary={{
+                glassTypeName: selectedGlassType?.name,
+                heightMm: Number(height) || undefined,
+                modelImageUrl: model.imageUrl || undefined,
+                modelName: model.name,
+                solutionName: inferredSolution?.nameEs,
+                widthMm: Number(width) || undefined,
+              }}
+              currency={currency}
+              currentPrice={calculatedPrice ?? model.basePrice}
             />
-          </Card>
+          </div>
 
-          {/* Color Selector - Only show if model has colors */}
-          <ColorSelector
-            modelId={model.id}
-            onColorChange={handleColorChangeWithForm}
-          />
-
-          {/* Services Section - Only show if services are available (Don't Make Me Think principle) */}
-          {services.length > 0 && (
+          {/* Right column: Form sections (2/3 width en desktop) */}
+          <div className="w-full space-y-4 sm:space-y-6 md:w-2/3">
             <Card className="p-4 sm:p-6">
-              <ServicesSelectorSection services={services} />
+              <DimensionsSection
+                dimensions={{
+                  maxHeight: model.maxHeightMm,
+                  maxWidth: model.maxWidthMm,
+                  minHeight: model.minHeightMm,
+                  minWidth: model.minWidthMm,
+                }}
+              />
             </Card>
-          )}
 
-          <QuoteSummary
-            basePrice={model.basePrice}
-            calculatedPrice={calculatedPrice}
-            currency={currency}
-            error={error}
-            isCalculating={isCalculating}
-            justAddedToCart={justAddedToCart}
-          />
-          {/* ✅ Show success actions after adding to cart */}
-          {justAddedToCart && (
-            <AddedToCartActions
-              modelName={model.name}
-              onConfigureAnotherAction={handleConfigureAnother}
-              ref={successCardRef}
+            {/* Glass Type Selector with performance bars */}
+            <Card className="p-4 sm:p-6">
+              <GlassTypeSelectorSection
+                basePrice={model.basePrice}
+                glassTypes={glassTypes}
+                selectedSolutionId={inferredSolution?.id}
+              />
+            </Card>
+
+            {/* Color Selector - Only show if model has colors */}
+            <ColorSelector
+              modelId={model.id}
+              onColorChange={handleColorChangeWithForm}
             />
-          )}
+
+            {/* Services Section - Only show if services are available (Don't Make Me Think principle) */}
+            {services.length > 0 && (
+              <Card className="p-4 sm:p-6">
+                <ServicesSelectorSection services={services} />
+              </Card>
+            )}
+
+            <QuoteSummary
+              basePrice={model.basePrice}
+              calculatedPrice={calculatedPrice}
+              currency={currency}
+              error={error}
+              isCalculating={isCalculating}
+              justAddedToCart={justAddedToCart}
+            />
+            {/* ✅ Show success actions after adding to cart */}
+            {justAddedToCart && (
+              <AddedToCartActions
+                modelName={model.name}
+                onConfigureAnotherAction={handleConfigureAnother}
+                ref={successCardRef}
+              />
+            )}
+          </div>
         </div>
       </form>
     </Form>

@@ -9,7 +9,9 @@ import type {
 } from "@/server/api/routers/catalog";
 import type { CreateCartItemInput } from "@/types/cart.types";
 
-export type CartItemInputWithPrice = CreateCartItemInput & { unitPrice: number };
+export type CartItemInputWithPrice = CreateCartItemInput & {
+  unitPrice: number;
+};
 
 type InferredSolution = {
   id: string;
