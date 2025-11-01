@@ -142,7 +142,7 @@ export function StickyPriceHeader({
     >
       <Card
         className={cn(
-          "sticky top-16 z-10 border-b bg-background px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6 md:py-4",
+          "sticky top-16 z-10 border-b bg-background px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6",
           className
         )}
       >
@@ -150,7 +150,7 @@ export function StickyPriceHeader({
           {/* Top section: Model Image - 4:3 aspect ratio */}
           {configSummary.modelImageUrl && (
             <motion.div
-              className="relative aspect-[4/3] w-full overflow-hidden bg-muted"
+              className="relative aspect-[4/3] w-full overflow-hidden"
               variants={badgeVariants}
             >
               <Image
