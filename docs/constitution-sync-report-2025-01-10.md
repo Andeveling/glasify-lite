@@ -97,13 +97,13 @@ Cache Components is a Next.js 16 feature already covered by "Server-First Perfor
 
 **Reason**: Cache Components are an implementation detail, not a planning concern.
 
-| Template | Status | Justification |
-|----------|--------|---------------|
-| `.specify/templates/spec-template.md` | ✅ No changes | Specs focus on features, not caching strategy |
-| `.specify/templates/plan-template.md` | ✅ No changes | Plans focus on tasks, not implementation patterns |
-| `.specify/templates/tasks-template.md` | ✅ No changes | Tasks focus on deliverables, not code-level rules |
-| `.specify/templates/checklist-template.md` | ✅ No changes | Checklists are feature-agnostic |
-| `.specify/templates/agent-file-template.md` | ✅ No changes | Agent files reference constitution directly |
+| Template                                    | Status       | Justification                                     |
+| ------------------------------------------- | ------------ | ------------------------------------------------- |
+| `.specify/templates/spec-template.md`       | ✅ No changes | Specs focus on features, not caching strategy     |
+| `.specify/templates/plan-template.md`       | ✅ No changes | Plans focus on tasks, not implementation patterns |
+| `.specify/templates/tasks-template.md`      | ✅ No changes | Tasks focus on deliverables, not code-level rules |
+| `.specify/templates/checklist-template.md`  | ✅ No changes | Checklists are feature-agnostic                   |
+| `.specify/templates/agent-file-template.md` | ✅ No changes | Agent files reference constitution directly       |
 
 **Propagation Strategy**: `.github/copilot-instructions.md` is the source of truth for code-level patterns. Agents read this file automatically during code generation.
 
