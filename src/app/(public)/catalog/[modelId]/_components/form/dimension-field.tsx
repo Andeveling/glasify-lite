@@ -143,18 +143,21 @@ export function DimensionField<T extends FieldValues>({
       name={name}
       render={({ field }) => {
         const fieldIsValid = isValid(field.value);
+        // Show inline range hint next to label only when description is hidden
+        const showInlineRangeHint = !config.showDescription;
 
         return (
           <FormItem className={config.spacingClassName}>
-            {/* Header: Label + Optional Validation Indicator */}
-            <div
-              className={
-                config.showValidationIndicator
-                  ? "flex items-center justify-between gap-2"
-                  : ""
-              }
-            >
-              <FormLabel className={config.labelClassName}>{label}</FormLabel>
+            {/* Header: Label + Optional Inline Range + Optional Validation Indicator */}
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <FormLabel className={config.labelClassName}>{label}</FormLabel>
+                {showInlineRangeHint && (
+                  <span className="text-muted-foreground text-xs">
+                    ({min} - {max} mm)
+                  </span>
+                )}
+              </div>
               {config.showValidationIndicator && (
                 <ValidationIndicator
                   isValid={fieldIsValid}
