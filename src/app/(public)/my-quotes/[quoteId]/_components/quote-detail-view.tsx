@@ -42,7 +42,6 @@ import {
 import { formatDate } from "@/lib/utils";
 import { useTenantConfig } from "@/providers/tenant-config-provider";
 import type { QuoteDetailSchema } from "@/server/api/routers/quote/quote.schemas";
-import { WindowType } from "@/types/window.types";
 import { QuoteStatusBadge } from "../../_components/quote-status-badge";
 import { QuoteExportButtons } from "./quote-export-buttons";
 import { type QuoteItemData, QuoteItemsGrid } from "./quote-items-grid";
@@ -65,16 +64,14 @@ export function QuoteDetailView({
     : "Volver a cotizaciones";
 
   // Transform quote items for grid display
-  // TODO: Add modelImageUrl and windowType to QuoteItemDetailSchema
   const gridItems: QuoteItemData[] = quote.items.map((item) => ({
     glassType: item.glassTypeName,
     height: item.heightMm ? Math.round(item.heightMm / 10) : null,
     id: item.id,
     manufacturer: quote.manufacturerName,
-    modelImageUrl: null, // TODO: Add to schema
+    modelImageUrl: item.modelImageUrl,
     modelName: item.modelName,
     width: item.widthMm ? Math.round(item.widthMm / 10) : null, // Convert mm to cm
-    windowType: WindowType.FIXED_SINGLE, // TODO: Add to schema
   }));
 
   return (

@@ -188,6 +188,7 @@ export const quoteItemDetailSchema = z.object({
   glassTypeName: z.string(),
   heightMm: z.number().int().positive(),
   id: z.cuid(),
+  modelImageUrl: z.string().nullable(),
   modelName: z.string(),
   name: z.string(),
   quantity: z.number().int().positive(),

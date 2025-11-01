@@ -56,9 +56,9 @@ export type ImageViewerDialogProps = {
   modelImageUrl: string | null;
 
   /**
-   * Window type for fallback/info
+   * Window type for fallback/info (optional, defaults to FIXED_SINGLE)
    */
-  windowType: WindowType;
+  windowType?: WindowType;
 
   /**
    * Product dimensions (formatted string)
@@ -86,7 +86,7 @@ export function ImageViewerDialog({
   onOpenChange,
   modelName,
   modelImageUrl,
-  windowType,
+  windowType = DEFAULT_WINDOW_TYPE,
   dimensions,
   specifications,
 }: ImageViewerDialogProps) {

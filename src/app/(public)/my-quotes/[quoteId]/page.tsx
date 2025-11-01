@@ -23,8 +23,51 @@ type MyQuoteDetailPageProps = {
   }>;
 };
 
-async function QuoteContent({ quoteId }: { quoteId: string }) {
-  // Check authentication
+async function QuoteContent({
+  quoteId,
+  userId,
+}: {
+  quoteId: string;
+  userId: string;
+}) {
+  try {
+    logger.info("[MyQuoteDetailPage] User accessing quote detail", {
+      quoteId,
+      userId,
+    });
+
+    const quote = await api.quote["get-by-id"]({ id: quoteId });
+
+    return <QuoteDetailView isPublicView quote={quote} />;
+  } catch (error) {
+    // If quote not found or access denied, show 404
+    if (error instanceof TRPCError && error.code === "NOT_FOUND") {
+      logger.warn("[MyQuoteDetailPage] Quote not found or access denied", {
+        error: error.message,
+        quoteId,
+        userId,
+      });
+
+      notFound();
+    }
+
+    logger.error("[MyQuoteDetailPage] Error loading quote", {
+      error: error instanceof Error ? error.message : "Unknown error",
+      quoteId,
+      userId,
+    });
+
+    // Re-throw other errors
+    throw error;
+  }
+}
+
+export default async function MyQuoteDetailPage({
+  params,
+}: MyQuoteDetailPageProps) {
+  const { quoteId } = await params;
+
+  // Check authentication OUTSIDE Suspense
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -40,43 +83,6 @@ async function QuoteContent({ quoteId }: { quoteId: string }) {
     redirect("/api/auth/signin?callbackUrl=/my-quotes");
   }
 
-  try {
-    logger.info("[MyQuoteDetailPage] User accessing quote detail", {
-      quoteId,
-      userId: session.user.id,
-    });
-
-    const quote = await api.quote["get-by-id"]({ id: quoteId });
-
-    return <QuoteDetailView isPublicView quote={quote} />;
-  } catch (error) {
-    // If quote not found or access denied, show 404
-    if (error instanceof TRPCError && error.code === "NOT_FOUND") {
-      logger.warn("[MyQuoteDetailPage] Quote not found or access denied", {
-        error: error.message,
-        quoteId,
-        userId: session.user.id,
-      });
-
-      notFound();
-    }
-
-    logger.error("[MyQuoteDetailPage] Error loading quote", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      quoteId,
-      userId: session.user.id,
-    });
-
-    // Re-throw other errors
-    throw error;
-  }
-}
-
-export default async function MyQuoteDetailPage({
-  params,
-}: MyQuoteDetailPageProps) {
-  const { quoteId } = await params;
-
   return (
     <div className="container mx-auto max-w-7xl py-8">
       <Suspense
@@ -86,7 +92,7 @@ export default async function MyQuoteDetailPage({
           </div>
         }
       >
-        <QuoteContent quoteId={quoteId} />
+        <QuoteContent quoteId={quoteId} userId={session.user.id} />
       </Suspense>
     </div>
   );

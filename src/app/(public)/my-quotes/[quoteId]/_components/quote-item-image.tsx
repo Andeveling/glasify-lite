@@ -56,9 +56,9 @@ export type QuoteItemImageProps = {
   modelImageUrl: string | null;
 
   /**
-   * Window type for SVG diagram fallback
+   * Window type for SVG diagram fallback (optional, defaults to FIXED_SINGLE)
    */
-  windowType: WindowType;
+  windowType?: WindowType;
 
   /**
    * Thumbnail size (default: md)
@@ -85,7 +85,7 @@ export type QuoteItemImageProps = {
 export function QuoteItemImage({
   modelName,
   modelImageUrl,
-  windowType,
+  windowType = DEFAULT_WINDOW_TYPE,
   size = "md",
   onClick,
   eager = false,
@@ -138,7 +138,7 @@ export function QuoteItemImage({
     <button
       aria-label={`Ver imagen de ${modelName}`}
       className={`
-        ${sizeConfig.container}relative aspect-square cursor-pointer overflow-hidden rounded-lg bg-muted transition-all hover:ring-2 hover:ring-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${!isImageLoaded && shouldShowImage ? "animate-pulse" : ""}
+        ${sizeConfig.container} relative aspect-square cursor-pointer overflow-hidden rounded-lg bg-muted transition-all hover:ring-2 hover:ring-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${!isImageLoaded && shouldShowImage ? "animate-pulse" : ""}
       `}
       data-testid="quote-item-image"
       onClick={onClick}
