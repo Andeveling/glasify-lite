@@ -2,8 +2,8 @@ import { Suspense } from "react";
 import { CatalogHeader } from "./_components/molecules/catalog-header";
 import { CatalogContent } from "./_components/organisms/catalog-content";
 import { CatalogFilterBarWrapper } from "./_components/organisms/catalog-filter-bar-wrapper";
-import { CatalogSkeleton } from "./_components/organisms/catalog-skeleton";
 import { CatalogFilterSkeleton } from "./_components/organisms/catalog-filter-skeleton";
+import { CatalogSkeleton } from "./_components/organisms/catalog-skeleton";
 import type { CatalogSearchParams } from "./_types/catalog-params";
 import { validateCatalogParams } from "./_types/catalog-params";
 
