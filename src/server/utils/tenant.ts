@@ -8,6 +8,7 @@
 
 import type { Prisma, PrismaClient, TenantConfig } from "@prisma/client";
 import type { DefaultArgs } from "@prisma/client/runtime/library";
+import { cacheLife } from "next/cache";
 import { db } from "../db";
 
 type TransactionClient = Omit<
@@ -18,6 +19,10 @@ type TransactionClient = Omit<
 /**
  * Get the singleton TenantConfig
  *
+ * IMPORTANT: This function uses "use cache" to prevent blocking routes.
+ * TenantConfig is a singleton that rarely changes, making it perfect for caching.
+ * Cache is revalidated every 24 hours (tenant config changes are infrequent).
+ *
  * @param client Optional Prisma client (for transactions)
  * @throws {Error} If no TenantConfig exists in the database
  * @returns Promise<TenantConfig> The tenant configuration
@@ -25,6 +30,11 @@ type TransactionClient = Omit<
 export async function getTenantConfig(
   client?: TransactionClient
 ): Promise<TenantConfig> {
+  "use cache";
+
+  // Cache for 24 hours - tenant config rarely changes
+  cacheLife("days");
+
   const prisma = client ?? db;
   const config = await prisma.tenantConfig.findFirst();
 

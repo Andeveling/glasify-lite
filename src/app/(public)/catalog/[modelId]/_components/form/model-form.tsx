@@ -297,7 +297,7 @@ export function ModelForm({
                 ref={colorSectionRef}
               >
                 <FormSection
-                  description="Elige el color del perfil (aplica recargo al precio base)"
+                  // description="Elige el color del perfil (aplica recargo al precio base)"
                   icon={Palette}
                   legend="Seleccione un Color"
                 >

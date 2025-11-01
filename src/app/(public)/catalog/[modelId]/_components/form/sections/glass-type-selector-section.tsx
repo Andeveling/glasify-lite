@@ -168,7 +168,7 @@ export function GlassTypeSelectorSection({
 
   return (
     <FormSection
-      description="Selecciona el tipo de cristal según la solución que necesites."
+      // description="Selecciona el tipo de cristal según la solución que necesites."
       icon={Gem}
       legend="Tipo de Cristal"
     >

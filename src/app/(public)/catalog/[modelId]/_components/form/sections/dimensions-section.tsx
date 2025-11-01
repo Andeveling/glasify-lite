@@ -138,7 +138,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
 
   return (
     <FormSection
-      description="Especifica las dimensiones del modelo que necesitas."
+      // description="Especifica las dimensiones del modelo que necesitas."
       icon={Ruler}
       legend="Dimensiones"
     >

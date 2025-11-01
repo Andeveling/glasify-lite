@@ -199,7 +199,7 @@ export function ServicesSelectorSection({
 
   return (
     <FormSection
-      description="Añade los extras que necesites para completar tu pedido."
+      // description="Añade los extras que necesites para completar tu pedido."
       icon={Wrench}
       legend="Servicios Adicionales"
     >
