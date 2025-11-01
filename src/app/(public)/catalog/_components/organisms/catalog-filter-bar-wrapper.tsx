@@ -8,8 +8,8 @@
  * @component Server Component
  */
 
-import { api } from "@/trpc/server-client";
 import type { CatalogSortOption } from "@views/catalog/_types/catalog-params";
+import { api } from "@/trpc/server-client";
 import { CatalogFilterBar } from "./catalog-filter-bar";
 
 type CatalogFilterBarWrapperProps = {
