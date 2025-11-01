@@ -113,6 +113,7 @@ type StickyPriceHeaderProps = {
   configSummary: ConfigSummary;
   currency?: string;
   currentPrice: number;
+  withBreakdown?: boolean;
 };
 
 export function StickyPriceHeader({
@@ -122,10 +123,12 @@ export function StickyPriceHeader({
   configSummary,
   currency,
   currentPrice,
+  withBreakdown = false,
 }: StickyPriceHeaderProps) {
   const { formatContext } = useTenantConfig();
   const discount = basePrice - currentPrice;
   const hasDiscount = discount > 0;
+  const showGlass = Boolean(configSummary.glassTypeName);
 
   // Format dimensions
   const hasDimensions = configSummary.widthMm && configSummary.heightMm;
@@ -142,7 +145,7 @@ export function StickyPriceHeader({
     >
       <Card
         className={cn(
-          "sticky top-16 z-10 border-b bg-background px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6",
+          "sticky top-16 z-10 mt-0 border-b bg-background px-4 pt-0 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6",
           className
         )}
       >
@@ -192,8 +195,8 @@ export function StickyPriceHeader({
                   className="flex items-center gap-1.5 text-muted-foreground"
                   variants={badgeVariants}
                 >
-                  <Ruler className="size-4 shrink-0" />
-                  <span className="text-sm">{dimensionsText}</span>
+                  <Ruler className="size-5 shrink-0" />
+                  <span className="text-lg">{dimensionsText}</span>
                 </motion.div>
               )}
 
@@ -217,25 +220,27 @@ export function StickyPriceHeader({
                   </motion.p>
 
                   {/* Breakdown popover */}
-                  <motion.div
-                    animate="rest"
-                    initial="rest"
-                    variants={iconHoverVariants}
-                    whileHover="hover"
-                  >
-                    <PriceBreakdownPopover
-                      breakdown={breakdown}
-                      currency={currency}
-                      totalAmount={currentPrice}
-                    />
-                  </motion.div>
+                  {withBreakdown && (
+                    <motion.div
+                      animate="rest"
+                      initial="rest"
+                      variants={iconHoverVariants}
+                      whileHover="hover"
+                    >
+                      <PriceBreakdownPopover
+                        breakdown={breakdown}
+                        currency={currency}
+                        totalAmount={currentPrice}
+                      />
+                    </motion.div>
+                  )}
                 </div>
               </motion.div>
             </div>
           </div>
 
           {/* Bottom row: Glass type + Solution + Discount badges */}
-          <div className="flex w-full flex-wrap items-center justify-between gap-2">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:flex-nowrap">
             {/* Glass type */}
             {configSummary.glassTypeName && (
               <motion.div
@@ -265,6 +270,7 @@ export function StickyPriceHeader({
             {hasDiscount && (
               <motion.div
                 animate={["visible", "pulse"]}
+                className={cn(showGlass && "sm:ml-auto")}
                 initial="hidden"
                 variants={discountVariants}
               >
@@ -286,7 +292,7 @@ export function StickyPriceHeader({
           {configSummary.modelName}
           {hasDimensions && `, dimensiones ${dimensionsText}`}
           {configSummary.glassTypeName &&
-            `, vidrio ${configSummary.glassTypeName}`}
+            `, Cristal ${configSummary.glassTypeName}`}
         </div>
       </Card>
     </motion.div>
