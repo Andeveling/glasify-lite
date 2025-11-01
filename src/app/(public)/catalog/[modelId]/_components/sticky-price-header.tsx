@@ -164,28 +164,29 @@ export function StickyPriceHeader({
             </motion.div>
           )}
 
-          {/* Middle section: Model info + Price - side by side */}
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            {/* Model name and basic info */}
-            <div className="flex min-w-0 flex-1 flex-col gap-2">
+          {/* Middle section: Name full-width, then dimensions + price distributed */}
+          <div className="flex flex-col gap-3">
+            {/* Name: takes full width */}
+            <motion.div
+              className="flex items-center gap-2"
+              variants={badgeVariants}
+            >
               <motion.div
-                className="flex items-center gap-2"
-                variants={badgeVariants}
+                animate="rest"
+                initial="rest"
+                variants={iconHoverVariants}
+                whileHover="hover"
               >
-                <motion.div
-                  animate="rest"
-                  initial="rest"
-                  variants={iconHoverVariants}
-                  whileHover="hover"
-                >
-                  <Package className="size-5 shrink-0 text-muted-foreground" />
-                </motion.div>
-                <h3 className="truncate font-semibold text-lg leading-none md:text-xl">
-                  {configSummary.modelName}
-                </h3>
+                <Package className="size-5 shrink-0 text-muted-foreground" />
               </motion.div>
+              <h3 className="truncate font-semibold text-lg leading-none md:text-xl">
+                {configSummary.modelName}
+              </h3>
+            </motion.div>
 
-              {/* Dimensions in subtitle */}
+            {/* Details row: dimensions (left) + price (right) */}
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+              {/* Dimensions */}
               {hasDimensions && (
                 <motion.div
                   className="flex items-center gap-1.5 text-muted-foreground"
@@ -195,46 +196,46 @@ export function StickyPriceHeader({
                   <span className="text-sm">{dimensionsText}</span>
                 </motion.div>
               )}
+
+              {/* Price display */}
+              <motion.div
+                className="flex flex-col items-start gap-1 sm:items-end"
+                variants={badgeVariants}
+              >
+                <p className="text-muted-foreground text-xs">
+                  Precio configurado
+                </p>
+                <div className="flex items-center gap-2">
+                  <motion.p
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="font-bold text-2xl leading-none md:text-3xl"
+                    initial={{ opacity: 0.8, scale: 0.98 }}
+                    key={currentPrice}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                  >
+                    {formatCurrency(currentPrice, { context: formatContext })}
+                  </motion.p>
+
+                  {/* Breakdown popover */}
+                  <motion.div
+                    animate="rest"
+                    initial="rest"
+                    variants={iconHoverVariants}
+                    whileHover="hover"
+                  >
+                    <PriceBreakdownPopover
+                      breakdown={breakdown}
+                      currency={currency}
+                      totalAmount={currentPrice}
+                    />
+                  </motion.div>
+                </div>
+              </motion.div>
             </div>
-
-            {/* Price display */}
-            <motion.div
-              className="flex flex-col items-start gap-1 md:items-end"
-              variants={badgeVariants}
-            >
-              <p className="text-muted-foreground text-xs">
-                Precio configurado
-              </p>
-              <div className="flex items-center gap-2">
-                <motion.p
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="font-bold text-2xl leading-none md:text-3xl"
-                  initial={{ opacity: 0.8, scale: 0.98 }}
-                  key={currentPrice}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                >
-                  {formatCurrency(currentPrice, { context: formatContext })}
-                </motion.p>
-
-                {/* Breakdown popover */}
-                <motion.div
-                  animate="rest"
-                  initial="rest"
-                  variants={iconHoverVariants}
-                  whileHover="hover"
-                >
-                  <PriceBreakdownPopover
-                    breakdown={breakdown}
-                    currency={currency}
-                    totalAmount={currentPrice}
-                  />
-                </motion.div>
-              </div>
-            </motion.div>
           </div>
 
           {/* Bottom row: Glass type + Solution + Discount badges */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex w-full flex-wrap items-center justify-between gap-2">
             {/* Glass type */}
             {configSummary.glassTypeName && (
               <motion.div
