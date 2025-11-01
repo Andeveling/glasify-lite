@@ -9,11 +9,12 @@
  */
 
 import { api } from "@/trpc/server-client";
+import type { CatalogSortOption } from "@views/catalog/_types/catalog-params";
 import { CatalogFilterBar } from "./catalog-filter-bar";
 
 type CatalogFilterBarWrapperProps = {
   currentProfileSupplier: string;
-  currentSort: "newest" | "price-asc" | "price-desc" | "name-asc";
+  currentSort: CatalogSortOption;
   searchQuery?: string;
 };
 

@@ -51,8 +51,8 @@ export function CartPageContent() {
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <div className="space-y-4">
-              {Array.from({ length: SKELETON_ITEMS_COUNT }).map(() => {
-                const id = `${skeletonId}`;
+              {Array.from({ length: SKELETON_ITEMS_COUNT }).map((_, index) => {
+                const id = `${skeletonId}-${index}`;
                 return (
                   <div
                     className="h-32 animate-pulse rounded-lg border bg-muted"
