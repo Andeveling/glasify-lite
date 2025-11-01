@@ -110,19 +110,29 @@ export function QuoteSummary({
   const getPriceDisplay = () => {
     if (isCalculating) {
       return (
-        <div className="flex items-center gap-2">
-          <Loader2 className="h-5 w-5 animate-spin text-primary" />
-          <span className="text-lg text-muted-foreground">Calculando...</span>
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <Loader2 className="size-8 animate-spin text-primary" />
+            <span className="text-lg text-muted-foreground">Calculando...</span>
+          </div>
+          <span className="text-muted-foreground text-xs">
+            Precio actualizado en tiempo real...
+          </span>
         </div>
       );
     }
 
     if (error || hasFormErrors) {
       return (
-        <div className="flex items-center gap-2">
-          <AlertCircle className="h-5 w-5 text-destructive" />
-          <span className="text-destructive text-lg">
-            {error || "Formulario incompleto"}
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="size-8 text-destructive" />
+            <span className="text-destructive text-lg">
+              {error || "Formulario incompleto"}
+            </span>
+          </div>
+          <span className="text-muted-foreground text-xs">
+            Revisa los errores a continuación
           </span>
         </div>
       );

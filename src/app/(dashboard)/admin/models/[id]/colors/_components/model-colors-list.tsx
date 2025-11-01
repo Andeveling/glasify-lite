@@ -27,6 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { safeDecimalToNumber } from "@/lib/prisma-utils";
 import { api } from "@/trpc/react";
 import { ModelColorRow } from "./model-color-row";
 
@@ -67,7 +68,7 @@ export function ModelColorsList({
   const modelColors =
     modelColorsRaw?.map((mc) => ({
       ...mc,
-      surchargePercentage: mc.surchargePercentage.toNumber(),
+      surchargePercentage: safeDecimalToNumber(mc.surchargePercentage),
     })) ?? initialColors;
 
   // Update surcharge mutation
