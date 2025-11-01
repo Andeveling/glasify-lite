@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useScroll, useSpring, useTransform } from "motion/react";
+import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useActiveFormStep } from "../../_hooks/use-active-form-step";
 import { FORM_STEPS, type FormStepId } from "./form-steps-config";
@@ -32,6 +33,8 @@ type VerticalScrollProgressProps = {
   containerRef: React.RefObject<HTMLDivElement | null>;
   /** Section refs for Intersection Observer tracking */
   sectionRefs: Record<FormStepId, React.RefObject<HTMLDivElement | null>>;
+  /** Callback to notify parent of active step changes */
+  onActiveStepChange?: (stepId: FormStepId) => void;
 };
 
 // ============================================================================
@@ -54,21 +57,22 @@ export function VerticalScrollProgress({
   className,
   containerRef,
   sectionRefs,
+  onActiveStepChange,
 }: VerticalScrollProgressProps) {
   // Use Intersection Observer for accurate step detection
   const activeStep = useActiveFormStep(sectionRefs);
+
+  // Notify parent when active step changes
+  useEffect(() => {
+    if (onActiveStepChange) {
+      onActiveStepChange(activeStep);
+    }
+  }, [activeStep, onActiveStepChange]);
 
   // Track scroll progress within the form container
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
-  });
-
-  // Smooth the scroll progress with spring animation
-  const scaleY = useSpring(scrollYProgress, {
-    damping: SPRING_DAMPING,
-    restDelta: SPRING_REST_DELTA,
-    stiffness: SPRING_STIFFNESS,
   });
 
   // Transform scroll progress to colors (visual feedback)
@@ -88,6 +92,14 @@ export function VerticalScrollProgress({
     (step) => step.id === activeStep
   );
 
+  // Calculate discrete progress based on completed steps
+  const discreteProgress = (currentStepIndex + 1) / FORM_STEPS.length;
+  const discreteScaleY = useSpring(discreteProgress, {
+    damping: SPRING_DAMPING,
+    restDelta: SPRING_REST_DELTA,
+    stiffness: SPRING_STIFFNESS,
+  });
+
   return (
     <div
       className={cn(
@@ -95,14 +107,14 @@ export function VerticalScrollProgress({
         className
       )}
     >
-      {/* Background track */}
-      <div className="relative h-full w-1 overflow-hidden rounded-full bg-muted/30">
-        {/* Animated progress bar */}
+      {/* Background track - More visible for loading effect */}
+      <div className="relative h-full w-2 overflow-hidden rounded-full bg-muted/50 shadow-inner">
+        {/* Animated progress bar - Fills discretely by steps */}
         <motion.div
-          className="absolute inset-x-0 top-0 w-full origin-top rounded-full"
+          className="absolute inset-x-0 bottom-0 w-full origin-bottom rounded-full shadow-lg transition-colors"
           style={{
             backgroundColor: progressColor,
-            scaleY,
+            scaleY: discreteScaleY,
           }}
         />
       </div>

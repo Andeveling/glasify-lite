@@ -1,15 +1,15 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { api } from "@/trpc/server-client";
 import { ModelFormWrapper } from "./_components/form/model-form-wrapper";
+import { ModelFormSkeleton } from "./_components/model-form-skeleton";
 
 type PageProps = {
   params: Promise<{ modelId: string }>;
 };
 
-export default async function Page({ params }: PageProps) {
-  const { modelId } = await params;
-
-  // Fetch model data (critical data - no Suspense)
+async function ModelPageContent({ modelId }: { modelId: string }) {
+  // Fetch model data (critical data - wrapped in Suspense)
   const serverModel = await api.catalog["get-model-by-id"]({ modelId }).catch(
     () => null
   );
@@ -28,5 +28,15 @@ export default async function Page({ params }: PageProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+export default async function Page({ params }: PageProps) {
+  const { modelId } = await params;
+
+  return (
+    <Suspense fallback={<ModelFormSkeleton />}>
+      <ModelPageContent modelId={modelId} />
+    </Suspense>
   );
 }

@@ -8,6 +8,7 @@ import { FormSection } from "@/components/form-section";
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { useScrollIntoView } from "@/hooks/use-scroll-into-view";
+import { cn } from "@/lib/utils";
 import type {
   GlassSolutionOutput,
   GlassTypeOutput,
@@ -29,6 +30,7 @@ import {
 import { ColorSelector } from "../color-selector";
 import { StickyPriceHeader } from "../sticky-price-header";
 import { AddedToCartActions } from "./added-to-cart-actions";
+import type { FormStepId } from "./form-steps-config";
 import { QuoteSummary } from "./quote-summary";
 import { DimensionsSection } from "./sections/dimensions-section";
 import { GlassTypeSelectorSection } from "./sections/glass-type-selector-section";
@@ -68,6 +70,10 @@ export function ModelForm({
   // ✅ Track if item was just added to cart
   const [justAddedToCart, setJustAddedToCart] = useState(false);
 
+  // ✅ Track active form step for visual focus
+  const [activeFormStep, setActiveFormStep] =
+    useState<FormStepId>("dimensions");
+
   // ✅ Auto-scroll to success card when item is added
   const successCardRef = useScrollIntoView(justAddedToCart);
 
@@ -76,8 +82,8 @@ export function ModelForm({
 
   // ✅ Refs for each form section (Intersection Observer)
   const dimensionsSectionRef = useRef<HTMLDivElement>(null);
-  const glassTypeSectionRef = useRef<HTMLDivElement>(null);
   const colorSectionRef = useRef<HTMLDivElement>(null);
+  const glassTypeSectionRef = useRef<HTMLDivElement>(null);
   const servicesSectionRef = useRef<HTMLDivElement>(null);
 
   const sectionRefs = useMemo(
@@ -256,12 +262,21 @@ export function ModelForm({
             {/* Vertical scroll progress bar - Minimal and subtle */}
             <VerticalScrollProgress
               containerRef={formContainerRef}
+              onActiveStepChange={setActiveFormStep}
               sectionRefs={sectionRefs}
             />
 
             {/* Right column: Form sections (2/3 width en desktop) */}
             <div className="w-full space-y-4 sm:space-y-6 md:w-2/3">
-              <Card className="p-4 sm:p-6" ref={dimensionsSectionRef}>
+              <Card
+                className={cn(
+                  "p-4 transition-all duration-300 sm:p-6",
+                  activeFormStep === "dimensions"
+                    ? "shadow-lg shadow-primary/20 ring-2 ring-primary"
+                    : ""
+                )}
+                ref={dimensionsSectionRef}
+              >
                 <DimensionsSection
                   dimensions={{
                     maxHeight: model.maxHeightMm,
@@ -272,7 +287,15 @@ export function ModelForm({
                 />
               </Card>
               {/* Color Selector - Only show if model has colors */}
-              <Card className="p-4 sm:p-6" ref={colorSectionRef}>
+              <Card
+                className={cn(
+                  "p-4 transition-all duration-300 sm:p-6",
+                  activeFormStep === "color"
+                    ? "shadow-lg shadow-primary/20 ring-2 ring-primary"
+                    : ""
+                )}
+                ref={colorSectionRef}
+              >
                 <FormSection
                   description="Elige el color del perfil (aplica recargo al precio base)"
                   icon={Palette}
@@ -285,7 +308,15 @@ export function ModelForm({
                 </FormSection>
               </Card>
               {/* Glass Type Selector with performance bars */}
-              <Card className="p-4 sm:p-6" ref={glassTypeSectionRef}>
+              <Card
+                className={cn(
+                  "p-4 transition-all duration-300 sm:p-6",
+                  activeFormStep === "glassType"
+                    ? "shadow-lg shadow-primary/20 ring-2 ring-primary"
+                    : ""
+                )}
+                ref={glassTypeSectionRef}
+              >
                 <GlassTypeSelectorSection
                   basePrice={model.basePrice}
                   glassTypes={glassTypes}
@@ -296,7 +327,14 @@ export function ModelForm({
               {/* Services Section - Only show if services are available (Don't Make Me Think principle) */}
               <div ref={servicesSectionRef}>
                 {services.length > 0 && (
-                  <Card className="p-4 sm:p-6">
+                  <Card
+                    className={cn(
+                      "p-4 transition-all duration-300 sm:p-6",
+                      activeFormStep === "services"
+                        ? "shadow-lg shadow-primary/20 ring-2 ring-primary"
+                        : ""
+                    )}
+                  >
                     <ServicesSelectorSection services={services} />
                   </Card>
                 )}

@@ -16,6 +16,12 @@ export type FormStep = {
 /**
  * Form steps in configuration order
  * Represents the logical flow of the quote wizard
+ *
+ * Order (requested by client):
+ * 1. Dimensiones (size)
+ * 2. Color (aesthetic choice - second priority)
+ * 3. Tipo de Vidrio (technical specs)
+ * 4. Servicios (add-ons)
  */
 export const FORM_STEPS: FormStep[] = [
   {
@@ -26,17 +32,17 @@ export const FORM_STEPS: FormStep[] = [
     order: 1,
   },
   {
-    description: "Selecciona el tipo de vidrio",
-    icon: "🔷",
-    id: "glassType",
-    label: "Tipo de Vidrio",
-    order: 2,
-  },
-  {
     description: "Elige un color (opcional)",
     icon: "🎨",
     id: "color",
     label: "Color",
+    order: 2,
+  },
+  {
+    description: "Selecciona el tipo de vidrio",
+    icon: "🔷",
+    id: "glassType",
+    label: "Tipo de Vidrio",
     order: 3,
   },
   {
