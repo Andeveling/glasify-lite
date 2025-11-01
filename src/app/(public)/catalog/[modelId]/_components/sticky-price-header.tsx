@@ -115,74 +115,6 @@ type StickyPriceHeaderProps = {
   currentPrice: number;
 };
 
-// ============================================================================
-// Component
-// ============================================================================
-
-/**
- * Sticky Price Header Component (Molecule)
- *
- * Displays real-time calculated price with configuration summary, using sticky
- * positioning to ensure critical information is always visible during scroll.
- *
- * ## Features
- * - **Sticky positioning**: Stays at top (z-10) during scroll
- * - **Configuration summary**: Model name, dimensions, glass type always visible
- * - **Backdrop blur**: Glass morphism effect for better readability
- * - **Price animation**: Smooth scale/fade effect when price updates
- * - **Breakdown popover**: Itemized price details on demand
- * - **Discount badge**: Shows savings when current price < base price
- * - **Responsive**:
- *   - Mobile (<768px): Price only, summary hidden
- *   - Tablet (768px-1024px): Price + compact summary
- *   - Desktop (>1024px): Full layout with all details
- * - **Accessibility**: ARIA labels, keyboard navigation, screen reader announcements
- *
- * ## Framer Motion Animations
- *
- * ### 1. Initial Entry (containerVariants)
- * - **Effect**: Slide down + fade in from -20px
- * - **Duration**: 300ms
- * - **Children**: Staggered 80ms apart
- * - **Purpose**: Smooth, non-distracting entrance
- *
- * ### 2. Badge Stagger (badgeVariants)
- * - **Effect**: Fade + scale (0.95 → 1.0) in sequence
- * - **Duration**: 200ms per badge
- * - **Purpose**: Progressive disclosure, visual hierarchy
- *
- * ### 3. Discount Pulse (discountVariants)
- * - **Effect**: Subtle scale pulse (1.0 → 1.05 → 1.0)
- * - **Duration**: 600ms
- * - **Repeat**: 3 times total (2 repeats)
- * - **Purpose**: Draw attention to savings without being obnoxious
- *
- * ### 4. Icon Hover (iconHoverVariants)
- * - **Effect**: Scale to 1.1 on hover
- * - **Duration**: 150ms
- * - **Purpose**: Tactile feedback, improves perceived responsiveness
- *
- * ### 5. Price Update
- * - **Effect**: Scale + opacity pulse when currentPrice changes
- * - **Key**: Changes trigger re-animation
- * - **Duration**: 200ms
- * - **Purpose**: Highlight price recalculation
- *
- * ## Accessibility
- * - All animations respect `prefers-reduced-motion` (Framer Motion default)
- * - Screen reader announcements for price changes
- * - Keyboard navigation fully supported
- * - Focus states preserved during animations
- *
- * ## Don't Make Me Think Compliance
- * - ✅ No hidden information: User always knows WHAT they're configuring
- * - ✅ Reduces cognitive load: No need to scroll up to remember configuration
- * - ✅ Visual hierarchy: Price (primary) + Config summary (secondary)
- * - ✅ Progressive disclosure: Details in popover, essentials always visible
- * - ✅ Motion as context: Animations support understanding, not decoration
- * - ✅ Performance: GPU-accelerated transforms only (scale, opacity)
- *
- */
 export function StickyPriceHeader({
   basePrice,
   breakdown,
@@ -214,62 +146,93 @@ export function StickyPriceHeader({
           className
         )}
       >
-        <div className="flex flex-col gap-4">
-          {/* Top row: Image + Model info + Price */}
-          <div className="flex items-center gap-4">
-            {/* Model Image */}
+        <div className="space-y-4">
+          {/* Main row: Image + Info + Price */}
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:gap-6">
+            {/* Left: Model Image - Thumbnail style */}
             {configSummary.modelImageUrl && (
               <motion.div
-                className="relative size-16 shrink-0 overflow-hidden rounded-lg border bg-muted md:size-20"
+                className="relative h-32 w-full shrink-0 overflow-hidden rounded-lg border bg-muted md:h-40 md:w-40"
                 variants={badgeVariants}
               >
                 <Image
                   alt={configSummary.modelName}
                   className="object-cover"
                   fill
-                  sizes="(max-width: 768px) 64px, 80px"
-                  src={configSummary.modelImageUrl}
+                  priority
+                  sizes="(max-width: 768px) 100vw, 160px"
+                  src={configSummary.modelImageUrl || "/placeholder.svg"}
                 />
               </motion.div>
             )}
 
-            {/* Model name and basic info */}
-            <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+            {/* Center: Model Info */}
+            <div className="flex min-w-0 flex-1 flex-col justify-start gap-3">
+              {/* Model name */}
               <motion.div
-                className="flex items-center gap-2"
+                className="space-y-1"
                 variants={badgeVariants}
               >
-                <motion.div
-                  animate="rest"
-                  initial="rest"
-                  variants={iconHoverVariants}
-                  whileHover="hover"
-                >
-                  <Package className="size-5 shrink-0 text-muted-foreground" />
-                </motion.div>
-                <h3 className="truncate font-semibold text-lg leading-none md:text-xl">
-                  {configSummary.modelName}
-                </h3>
+                <div className="flex items-center gap-2">
+                  <motion.div
+                    animate="rest"
+                    initial="rest"
+                    variants={iconHoverVariants}
+                    whileHover="hover"
+                  >
+                    <Package className="size-5 shrink-0 text-muted-foreground" />
+                  </motion.div>
+                  <h3 className="truncate font-semibold text-lg md:text-xl">
+                    {configSummary.modelName}
+                  </h3>
+                </div>
               </motion.div>
 
-              {/* Dimensions in subtitle */}
+              {/* Dimensions */}
               {hasDimensions && (
                 <motion.div
-                  className="flex items-center gap-1.5 text-muted-foreground"
+                  className="flex items-center gap-2 text-muted-foreground"
                   variants={badgeVariants}
                 >
                   <Ruler className="size-4 shrink-0" />
                   <span className="text-sm">{dimensionsText}</span>
                 </motion.div>
               )}
+
+              {/* Glass type + Solution in a row */}
+              {configSummary.glassTypeName && (
+                <motion.div
+                  className="flex flex-wrap items-center gap-2"
+                  variants={badgeVariants}
+                >
+                  <div className="flex items-center gap-1.5 rounded-md bg-purple-50 px-2.5 py-1.5 dark:bg-purple-950/30">
+                    <motion.div
+                      animate="rest"
+                      initial="rest"
+                      variants={iconHoverVariants}
+                      whileHover="hover"
+                    >
+                      <Gem className="size-4 text-purple-600 dark:text-purple-400" />
+                    </motion.div>
+                    <span className="font-medium text-purple-700 text-sm dark:text-purple-300">
+                      {configSummary.glassTypeName}
+                    </span>
+                  </div>
+                  {configSummary.solutionName && (
+                    <Badge className="h-5 px-2 text-xs" variant="outline">
+                      {configSummary.solutionName}
+                    </Badge>
+                  )}
+                </motion.div>
+              )}
             </div>
 
-            {/* Price display - Right aligned */}
+            {/* Right: Price Display */}
             <motion.div
-              className="flex shrink-0 flex-col items-end gap-1"
+              className="flex flex-col items-start gap-2 md:items-end md:whitespace-nowrap"
               variants={badgeVariants}
             >
-              <p className="text-muted-foreground text-xs">
+              <p className="text-muted-foreground text-xs md:text-sm">
                 Precio configurado
               </p>
               <div className="flex items-center gap-2">
@@ -297,53 +260,24 @@ export function StickyPriceHeader({
                   />
                 </motion.div>
               </div>
+
+              {/* Discount badge */}
+              {hasDiscount && (
+                <motion.div
+                  animate={["visible", "pulse"]}
+                  initial="hidden"
+                  variants={discountVariants}
+                >
+                  <Badge
+                    className="bg-green-500/10 text-green-700 hover:bg-green-500/20 dark:text-green-400"
+                    variant="outline"
+                  >
+                    Ahorro: {formatCurrency(discount, { context: formatContext })}
+                  </Badge>
+                </motion.div>
+              )}
             </motion.div>
           </div>
-
-          {/* Bottom row: Glass type + Solution + Discount badges */}
-          <div className="flex flex-wrap items-center gap-2">
-            {/* Glass type */}
-            {configSummary.glassTypeName && (
-              <motion.div
-                className="flex items-center gap-1.5 rounded-md bg-purple-50 px-2.5 py-1.5 dark:bg-purple-950/30"
-                variants={badgeVariants}
-              >
-                <motion.div
-                  animate="rest"
-                  initial="rest"
-                  variants={iconHoverVariants}
-                  whileHover="hover"
-                >
-                  <Gem className="size-4 text-purple-600 dark:text-purple-400" />
-                </motion.div>
-                <span className="font-medium text-purple-700 text-sm dark:text-purple-300">
-                  {configSummary.glassTypeName}
-                </span>
-                {configSummary.solutionName && (
-                  <Badge className="ml-1 h-5 px-1.5 text-xs" variant="outline">
-                    {configSummary.solutionName}
-                  </Badge>
-                )}
-              </motion.div>
-            )}
-
-            {/* Discount badge with pulse animation */}
-            {hasDiscount && (
-              <motion.div
-                animate={["visible", "pulse"]}
-                initial="hidden"
-                variants={discountVariants}
-              >
-                <Badge
-                  className="bg-green-500/10 text-green-700 hover:bg-green-500/20 dark:text-green-400"
-                  variant="outline"
-                >
-                  Ahorro: {formatCurrency(discount, { context: formatContext })}
-                </Badge>
-              </motion.div>
-            )}
-          </div>
-        </div>
 
         {/* Screen reader announcement for price changes */}
         <div aria-atomic="true" aria-live="polite" className="sr-only">
@@ -353,6 +287,7 @@ export function StickyPriceHeader({
           {hasDimensions && `, dimensiones ${dimensionsText}`}
           {configSummary.glassTypeName &&
             `, vidrio ${configSummary.glassTypeName}`}
+        </div>
         </div>
       </Card>
     </motion.div>
