@@ -138,6 +138,9 @@ importers:
       exceljs:
         specifier: ^4.4.0
         version: 4.4.0
+      haversine-distance:
+        specifier: ^1.2.4
+        version: 1.2.4
       immer:
         specifier: ^10.2.0
         version: 10.2.0
@@ -3548,6 +3551,9 @@ packages:
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
+
+  haversine-distance@1.2.4:
+    resolution: {integrity: sha512-8MHQBQXR7GXZJIvitCf/ux+gwLtWOxmXNNz5dReG+jJbuvaEoj6QIXlaIO3cPr433BFWM4jececJaLYpwxnZhg==}
 
   headers-polyfill@4.0.3:
     resolution: {integrity: sha512-IScLbePpkvO846sIwOtOTDjutRMWdXdJmXdMvk6gCBHxFO8d+QKOQedyZSxFTTFYRSmlgSTDtXqqq4pcenBXLQ==}
@@ -8904,6 +8910,8 @@ snapshots:
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
+
+  haversine-distance@1.2.4: {}
 
   headers-polyfill@4.0.3: {}
 

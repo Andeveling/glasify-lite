@@ -36,13 +36,13 @@ Next.js 16 App Router monorepo structure:
 
 **Purpose**: Project initialization and database schema setup
 
-- [ ] T001 Install required npm dependencies (haversine-distance)
-- [ ] T002 Create Prisma schema migration for ProjectAddress model in `prisma/schema.prisma`
-- [ ] T003 [P] Create Prisma schema migration for TenantConfig warehouse fields in `prisma/schema.prisma`
-- [ ] T004 [P] Create Prisma schema migration for Quote.projectAddressId FK in `prisma/schema.prisma`
-- [ ] T005 Generate Prisma migration SQL in `prisma/migrations/YYYYMMDDHHMMSS_add_project_address/`
-- [ ] T006 Run migration on development database
-- [ ] T007 Create data migration script for existing Quote addresses in `prisma/migrations-scripts/migrate-project-addresses.ts`
+- [x] T001 Install required npm dependencies (haversine-distance)
+- [x] T002 Create Prisma schema migration for ProjectAddress model in `prisma/schema.prisma`
+- [x] T003 [P] Create Prisma schema migration for TenantConfig warehouse fields in `prisma/schema.prisma`
+- [x] T004 [P] Create Prisma schema migration for Quote.projectAddressId FK in `prisma/schema.prisma`
+- [x] T005 Generate Prisma migration SQL in `prisma/migrations/YYYYMMDDHHMMSS_add_project_address/`
+- [x] T006 Run migration on development database
+- [x] T007 Create data migration script for existing Quote addresses in `prisma/migrations-scripts/migrate-project-addresses.ts`
 
 ---
 
@@ -52,24 +52,24 @@ Next.js 16 App Router monorepo structure:
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T008 Create ProjectAddress base types in `src/app/(dashboard)/admin/quotes/_types/address.types.ts`
-- [ ] T009 Create address validation schema with coordinate rules in `src/app/(dashboard)/admin/quotes/_schemas/project-address.schema.ts`
-- [ ] T010 [P] Create geocoding constants (API URL, timeout, rate limits) in `src/app/(dashboard)/admin/quotes/_constants/geocoding.constants.ts`
-- [ ] T011 [P] Create coordinate validation utility in `src/lib/utils/coordinates.ts`
-- [ ] T012 Implement Haversine distance calculator in `src/lib/utils/coordinates.ts`
-- [ ] T013 Create Nominatim geocoding service in `src/server/services/geocoding.service.ts`
+- [x] T008 Create ProjectAddress base types in `src/app/(dashboard)/admin/quotes/_types/address.types.ts`
+- [x] T009 Create address validation schema with coordinate rules in `src/app/(dashboard)/admin/quotes/_schemas/project-address.schema.ts`
+- [x] T010 [P] Create geocoding constants (API URL, timeout, rate limits) in `src/app/(dashboard)/admin/quotes/_constants/geocoding.constants.ts`
+- [x] T011 [P] Create coordinate validation utility in `src/lib/utils/coordinates.ts`
+- [x] T012 Implement Haversine distance calculator in `src/lib/utils/coordinates.ts`
+- [x] T013 Create Nominatim geocoding service in `src/server/services/geocoding.service.ts`
   - Implement searchAddress() with 5s timeout
   - Add User-Agent header for Nominatim compliance
   - Transform response to standardized schema
   - Add Winston logging (server-side only)
-- [ ] T014 Create transportation cost service in `src/server/services/transportation.service.ts`
+- [x] T014 Create transportation cost service in `src/server/services/transportation.service.ts`
   - Implement calculateTransportationCost() using Haversine
   - Read warehouse location from TenantConfig
   - Apply baseRate + perKmRate formula
-- [ ] T015 Create address tRPC router skeleton in `src/server/api/routers/address.ts`
-- [ ] T016 [P] Create geocoding tRPC router skeleton in `src/server/api/routers/geocoding.ts`
-- [ ] T017 [P] Create transportation tRPC router skeleton in `src/server/api/routers/transportation.ts`
-- [ ] T018 Export new routers in `src/server/api/root.ts`
+- [x] T015 Create address tRPC router skeleton in `src/server/api/routers/address.ts`
+- [x] T016 [P] Create geocoding tRPC router skeleton in `src/server/api/routers/geocoding.ts`
+- [x] T017 [P] Create transportation tRPC router skeleton in `src/server/api/routers/transportation.ts`
+- [x] T018 Export new routers in `src/server/api/root.ts`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -83,7 +83,7 @@ Next.js 16 App Router monorepo structure:
 
 ### E2E Tests for User Story 1
 
-- [ ] T019 [P] [US1] Create E2E test fixture for geocoding responses in `e2e/fixtures/geocoding-responses.json`
+- [x] T019 [P] [US1] Create E2E test fixture for geocoding responses in `e2e/fixtures/geocoding-responses.json`
 - [ ] T020 [US1] Create E2E test for address autocomplete flow in `e2e/delivery-address-autocomplete.spec.ts`
   - Test: Type city name → suggestions appear <500ms
   - Test: Select suggestion → coordinates populated
@@ -92,23 +92,23 @@ Next.js 16 App Router monorepo structure:
 
 ### tRPC Endpoints for User Story 1
 
-- [ ] T021 [P] [US1] Implement geocoding.search procedure in `src/server/api/routers/geocoding.ts`
+- [x] T021 [P] [US1] Implement geocoding.search procedure in `src/server/api/routers/geocoding.ts`
   - Input: query string, limit (default 5)
   - Call geocodingService.searchAddress()
   - Add rate limiting (1 req/sec using rate-limiter-flexible)
   - Return structured results with lat/lon/address components
   - Authorization: adminProcedure (admin/seller only)
-- [ ] T022 [P] [US1] Implement address.create procedure in `src/server/api/routers/address.ts`
+- [x] T022 [P] [US1] Implement address.create procedure in `src/server/api/routers/address.ts`
   - Input: projectAddressSchema validation
   - Prisma create with all fields
   - Return created ProjectAddress
   - Authorization: adminProcedure
-- [ ] T023 [P] [US1] Implement address.getById procedure in `src/server/api/routers/address.ts`
+- [x] T023 [P] [US1] Implement address.getById procedure in `src/server/api/routers/address.ts`
   - Input: id string
   - Prisma findUnique with quote relationship
   - Return ProjectAddress or NOT_FOUND
   - Authorization: adminProcedure or quote owner
-- [ ] T024 [P] [US1] Implement address.listByQuote procedure in `src/server/api/routers/address.ts`
+- [x] T024 [P] [US1] Implement address.listByQuote procedure in `src/server/api/routers/address.ts`
   - Input: quoteId string
   - Prisma findMany where quoteId
   - Return ProjectAddress array
@@ -116,29 +116,29 @@ Next.js 16 App Router monorepo structure:
 
 ### UI Components for User Story 1
 
-- [ ] T025 [US1] Create address formatter utility in `src/app/(dashboard)/admin/quotes/_utils/address-formatter.ts`
+- [x] T025 [US1] Create address formatter utility in `src/app/(dashboard)/admin/quotes/_utils/address-formatter.ts`
   - formatAddress(address): string - join non-null fields with ", "
   - parseCoordinates(lat, lon): { latitude, longitude } - validate ranges
-- [ ] T026 [US1] Create address defaults utility in `src/app/(dashboard)/admin/quotes/_utils/address-defaults.ts`
+- [x] T026 [US1] Create address defaults utility in `src/app/(dashboard)/admin/quotes/_utils/address-defaults.ts`
   - getEmptyAddress(): ProjectAddress - return initial state
-- [ ] T027 [US1] Create address autocomplete hook in `src/app/(dashboard)/admin/quotes/_hooks/use-address-autocomplete.ts`
+- [x] T027 [US1] Create address autocomplete hook in `src/app/(dashboard)/admin/quotes/_hooks/use-address-autocomplete.ts`
   - Use useDebouncedValue(query, 300ms)
   - Call api.geocoding.search.useQuery()
   - Return results array, isLoading, setQuery
-- [ ] T028 [US1] Create address mutations hook in `src/app/(dashboard)/admin/quotes/_hooks/use-address-mutations.ts`
+- [x] T028 [US1] Create address mutations hook in `src/app/(dashboard)/admin/quotes/_hooks/use-address-mutations.ts`
   - api.address.create.useMutation()
   - api.address.update.useMutation()
   - api.address.delete.useMutation()
   - Include utils.quote.getById.invalidate() + router.refresh()
   - Spanish toast notifications
-- [ ] T029 [US1] Create DeliveryAddressPicker component in `src/app/(dashboard)/admin/quotes/_components/delivery-address-picker.tsx`
+- [x] T029 [US1] Create DeliveryAddressPicker component in `src/app/(dashboard)/admin/quotes/_components/delivery-address-picker.tsx`
   - Shadcn Input + Popover + Command for autocomplete
   - Use useAddressAutocomplete hook
   - Display suggestions with displayName
   - On select: call onChange with full address + coordinates
   - Show loading state while fetching
   - Target: <150 lines (UI orchestration only)
-- [ ] T030 [US1] Integrate DeliveryAddressPicker into QuoteForm in `src/app/(dashboard)/admin/quotes/_components/quote-form.tsx`
+- [x] T030 [US1] Integrate DeliveryAddressPicker into QuoteForm in `src/app/(public)/cart/_components/quote-generation-drawer.tsx`
   - Add deliveryAddress field to form schema
   - Render DeliveryAddressPicker in form
   - Connect to useAddressMutations hook

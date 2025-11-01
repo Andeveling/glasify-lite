@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { generateQuoteFromCartAction } from "@/app/_actions/quote.actions";
 import { formatCurrency } from "@/app/_utils/format-currency.util";
+import { DeliveryAddressPicker } from "@/app/(dashboard)/admin/quotes/_components/delivery-address-picker";
 import { useCart } from "@/app/(public)/cart/_hooks/use-cart";
 import { Button } from "@/components/ui/button";
 import {
@@ -58,13 +59,26 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 
 const MAX_PROJECT_NAME_LENGTH = 100;
 const MAX_PROJECT_ADDRESS_LENGTH = 200;
-const MAX_POSTAL_CODE_LENGTH = 20;
 const MAX_PHONE_LENGTH = 20;
 
 const quoteGenerationFormSchema = z.object({
   contactPhone: z
     .string()
     .max(MAX_PHONE_LENGTH, "Teléfono muy largo")
+    .optional(),
+  deliveryAddress: z
+    .object({
+      city: z.string().nullish(),
+      country: z.string().nullish(),
+      district: z.string().nullish(),
+      label: z.string().nullish(),
+      latitude: z.number().nullish(),
+      longitude: z.number().nullish(),
+      postalCode: z.string().nullish(),
+      reference: z.string().nullish(),
+      region: z.string().nullish(),
+      street: z.string().nullish(),
+    })
     .optional(),
   projectCity: z
     .string()
@@ -74,10 +88,6 @@ const quoteGenerationFormSchema = z.object({
     .string()
     .max(MAX_PROJECT_NAME_LENGTH, "Nombre muy largo")
     .optional(),
-  projectPostalCode: z
-    .string()
-    .min(1, "Código postal es requerido")
-    .max(MAX_POSTAL_CODE_LENGTH, "Código postal muy largo"),
   projectState: z
     .string()
     .min(1, "Estado/Provincia es requerido")
@@ -97,9 +107,6 @@ type QuoteGenerationFormValues = z.infer<typeof quoteGenerationFormSchema>;
 export type QuoteGenerationDrawerProps = {
   /** Drawer trigger button */
   trigger: React.ReactNode;
-
-  /** Callback when drawer open state changes */
-  onOpenChange?: (open: boolean) => void;
 };
 
 // ============================================================================
@@ -130,9 +137,9 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
   const form = useForm<QuoteGenerationFormValues>({
     defaultValues: {
       contactPhone: "",
+      deliveryAddress: undefined,
       projectCity: "",
       projectName: "",
-      projectPostalCode: "",
       projectState: "",
       projectStreet: "",
     },
@@ -284,6 +291,30 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
                   )}
                 />
 
+                {/* Delivery Address with Geocoding (optional) */}
+                <FormField
+                  control={form.control}
+                  name="deliveryAddress"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Dirección de Entrega con Geocodificación (opcional)
+                      </FormLabel>
+                      <FormControl>
+                        <DeliveryAddressPicker
+                          disabled={isSubmitting}
+                          onChangeAction={(address) => {
+                            field.onChange(address);
+                          }}
+                          placeholder="Buscar dirección..."
+                          value={field.value}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 {/* Project Street */}
                 <FormField
                   control={form.control}
@@ -343,26 +374,7 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
                   )}
                 />
 
-                {/* Postal Code and Phone */}
-                <FormField
-                  control={form.control}
-                  name="projectPostalCode"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Código Postal *</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="110111"
-                          {...field}
-                          disabled={isSubmitting}
-                          maxLength={MAX_POSTAL_CODE_LENGTH}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
+                {/* Contact Phone */}
                 <FormField
                   control={form.control}
                   name="contactPhone"

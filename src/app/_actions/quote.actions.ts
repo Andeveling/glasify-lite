@@ -25,6 +25,22 @@ import type { CartItem } from "@/types/cart.types";
 // ============================================================================
 
 /**
+ * Delivery address with geocoding data (from client form)
+ */
+type DeliveryAddressInput = {
+  city?: string | null;
+  country?: string | null;
+  district?: string | null;
+  label?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  postalCode?: string | null;
+  reference?: string | null;
+  region?: string | null;
+  street?: string | null;
+};
+
+/**
  * Quote generation form input (from React Hook Form)
  */
 type QuoteGenerationFormInput = {
@@ -32,8 +48,8 @@ type QuoteGenerationFormInput = {
   projectStreet: string;
   projectCity: string;
   projectState: string;
-  projectPostalCode: string;
   contactPhone?: string;
+  deliveryAddress?: DeliveryAddressInput;
 };
 
 /**
@@ -137,10 +153,10 @@ export async function generateQuoteFromCartAction(
     const result = await generateQuoteFromCart(db, userId, {
       cartItems,
       contactPhone: formInput.contactPhone,
+      deliveryAddress: formInput.deliveryAddress,
       projectAddress: {
         projectCity: formInput.projectCity,
         projectName: formInput.projectName ?? "Sin nombre",
-        projectPostalCode: formInput.projectPostalCode,
         projectState: formInput.projectState,
         projectStreet: formInput.projectStreet,
       },

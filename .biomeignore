@@ -9,7 +9,8 @@ dist/
 build/
 out/
 coverage/
-prisma/
+prisma/migrations/
+prisma/migrations-scripts/
 
 # Dependencies
 node_modules/
