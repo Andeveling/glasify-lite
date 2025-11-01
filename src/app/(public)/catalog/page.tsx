@@ -1,9 +1,9 @@
 import { Suspense } from "react";
-import { api } from "@/trpc/server-client";
 import { CatalogHeader } from "./_components/molecules/catalog-header";
 import { CatalogContent } from "./_components/organisms/catalog-content";
-import { CatalogFilterBar } from "./_components/organisms/catalog-filter-bar";
+import { CatalogFilterBarWrapper } from "./_components/organisms/catalog-filter-bar-wrapper";
 import { CatalogSkeleton } from "./_components/organisms/catalog-skeleton";
+import { CatalogFilterSkeleton } from "./_components/organisms/catalog-filter-skeleton";
 import type { CatalogSearchParams } from "./_types/catalog-params";
 import { validateCatalogParams } from "./_types/catalog-params";
 
@@ -46,18 +46,6 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   const { searchQuery, page, manufacturerId, sort } =
     validateCatalogParams(params);
 
-  // Fetch profile suppliers for filter dropdown
-  const profileSuppliers = await api.catalog["list-manufacturers"]();
-
-  // Fetch total count for results display (lightweight query)
-  const totalData = await api.catalog["list-models"]({
-    limit: 1,
-    manufacturerId,
-    page: 1,
-    search: searchQuery,
-    sort,
-  });
-
   return (
     <div className="min-h-screen">
       <div className="container mx-auto max-w-7xl px-4 py-4 md:px-6 md:py-8">
@@ -67,13 +55,14 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           <CatalogHeader />
 
           {/* Row 2: Search (left) + Filters (right) on desktop */}
-          <CatalogFilterBar
-            currentProfileSupplier={manufacturerId ?? "all"}
-            currentSort={sort}
-            profileSuppliers={profileSuppliers}
-            searchQuery={searchQuery}
-            totalResults={totalData.total}
-          />
+          {/* Wrapped in Suspense to prevent blocking route */}
+          <Suspense fallback={<CatalogFilterSkeleton />}>
+            <CatalogFilterBarWrapper
+              currentProfileSupplier={manufacturerId ?? "all"}
+              currentSort={sort}
+              searchQuery={searchQuery}
+            />
+          </Suspense>
         </div>
 
         <Suspense

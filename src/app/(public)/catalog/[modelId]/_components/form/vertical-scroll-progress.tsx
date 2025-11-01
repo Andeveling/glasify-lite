@@ -13,12 +13,12 @@ import { FORM_STEPS, type FormStepId } from "./form-steps-config";
 const SPRING_STIFFNESS = 100;
 const SPRING_DAMPING = 30;
 const SPRING_REST_DELTA = 0.001;
-const DOT_SIZE = 8; // Size of step indicator dots in pixels
-const DOT_ACTIVE_SIZE = 12; // Active dot size
-const DOT_ACTIVE_SCALE = 1.5; // Scale multiplier for active dot
-const DOT_HOVER_SCALE = 1.8; // Scale on hover
-const DOT_INACTIVE_OPACITY = 0.3; // Opacity for pending dots
-const DOT_ACTIVE_OPACITY = 1; // Opacity for active/completed dots
+const DOT_SIZE = 10; // Size of step indicator dots in pixels
+const DOT_ACTIVE_SIZE = 14; // Active dot size
+const DOT_ACTIVE_SCALE = 1.8; // Scale multiplier for active dot
+const DOT_HOVER_SCALE = 2; // Scale on hover
+const DOT_INACTIVE_OPACITY = 2; // Opacity for pending dots
+const DOT_ACTIVE_OPACITY = 1.2; // Opacity for active/completed dots
 const ANIMATION_DURATION = 0.3;
 const PROGRESS_COLOR_STEP_1 = 0.33;
 const PROGRESS_COLOR_STEP_2 = 0.66;
@@ -100,6 +100,8 @@ export function VerticalScrollProgress({
     stiffness: SPRING_STIFFNESS,
   });
 
+  // console.log("Discrete Height:", discreteHeight);
+
   return (
     <div
       className={cn(
@@ -136,10 +138,10 @@ export function VerticalScrollProgress({
                     : DOT_INACTIVE_OPACITY,
               }}
               className={cn(
-                "rounded-full border-2 transition-colors",
+                "size-10 rounded-full border-2 transition-colors",
                 isActive &&
                   "border-primary bg-primary shadow-lg shadow-primary/50",
-                isCompleted && "border-green-500 bg-green-500",
+                isCompleted && "border-success bg-success",
                 isPending && "border-muted-foreground/30 bg-background"
               )}
               key={step.id}

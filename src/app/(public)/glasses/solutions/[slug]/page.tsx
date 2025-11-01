@@ -19,7 +19,6 @@ import { cacheLife } from "next/cache";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getIconComponent } from "@/lib/icon-map";
-import logger from "@/lib/logger";
 import { api } from "@/trpc/server-client";
 
 // MIGRATED: Removed export const dynamic = 'force-static' (incompatible with Cache Components)
@@ -96,11 +95,9 @@ export async function generateMetadata({
       },
       title: `${solution.nameEs} | Glasify Lite`,
     };
-  } catch (error) {
-    logger.error("Error generating metadata for glass solution", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      slug,
-    });
+  } catch {
+    // Note: Winston logger cannot be used here - incompatible with "use cache"
+    // Error will be visible in build output
 
     return {
       description: "Error al cargar la página de solución de vidrio.",
@@ -120,7 +117,6 @@ function PerformanceRating({ rating }: { rating: string }): React.ReactElement {
     excellent: { label: "Excelente", stars: 5 },
     good: { label: "Bueno", stars: 3 },
     standard: { label: "Estándar", stars: 2 },
-    // biome-ignore lint/style/useNamingConvention: Matches database enum value
     very_good: { label: "Muy Bueno", stars: 4 },
   };
 
@@ -296,11 +292,9 @@ export default async function GlassSolutionDetailPage({
         </div>
       </div>
     );
-  } catch (error) {
-    logger.error("Error loading glass solution detail page", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      slug,
-    });
+  } catch {
+    // Note: Winston logger cannot be used here - incompatible with "use cache"
+    // Error will be visible in build output
 
     notFound();
   }

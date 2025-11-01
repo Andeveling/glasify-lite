@@ -1,20 +1,17 @@
 import { PrismaClient } from "@prisma/client";
 
-import logger from "@/lib/logger";
-
 /**
- * Performance threshold for slow query logging (milliseconds)
- * Queries exceeding this duration will be logged with WARNING level
- */
-const SLOW_QUERY_THRESHOLD_MS = 500;
-
-/**
- * Creates a Prisma client with performance monitoring and slow query logging
+ * Creates a Prisma client with query logging in development
  *
  * Features:
- * - Query logging in development mode
- * - Slow query detection (>500ms) with Winston logging
- * - Query duration tracking for performance profiling
+ * - Query logging in development mode (via Prisma's built-in logger)
+ * - Error logging in all environments
+ *
+ * NOTE: Slow query monitoring was removed because:
+ * - Winston logger uses headers() internally (incompatible with "use cache")
+ * - console is disabled by Biome linting rules
+ * - This client is used in pre-rendered routes (/catalog/[modelId])
+ * - Prisma's built-in query logging is sufficient for development debugging
  *
  * @returns Configured PrismaClient instance
  */
@@ -25,35 +22,6 @@ const createPrismaClient = () => {
         ? ["query", "error", "warn"]
         : ["error"],
   });
-
-  // Performance monitoring: Log slow queries for optimization (development only)
-  if ((process.env.NODE_ENV ?? "development") !== "production") {
-    return client.$extends({
-      name: "slowQueryLogger",
-      query: {
-        async $allOperations({ operation, model, args, query }) {
-          // Use performance.now() instead of Date.now() for better compatibility with Cache Components
-          // performance.now() is a high-resolution timer that doesn't trigger prerendering issues
-          const startTime = performance.now();
-          const result = await query(args);
-          const duration = performance.now() - startTime;
-
-          // Log slow queries for performance analysis
-          if (duration > SLOW_QUERY_THRESHOLD_MS) {
-            logger.warn("Slow query detected", {
-              args: JSON.stringify(args),
-              duration: `${duration.toFixed(2)}ms`,
-              model,
-              operation,
-              threshold: `${SLOW_QUERY_THRESHOLD_MS}ms`,
-            });
-          }
-
-          return result;
-        },
-      },
-    });
-  }
 
   return client;
 };
