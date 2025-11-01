@@ -1,12 +1,12 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   CheckCircle2,
   LayoutGrid,
   RotateCcw,
   ShoppingCart,
 } from "lucide-react";
+import { motion } from "motion/react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";

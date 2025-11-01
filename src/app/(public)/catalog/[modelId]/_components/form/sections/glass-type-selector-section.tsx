@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Gem } from "lucide-react";
+import { motion } from "motion/react";
 import { useFormContext } from "react-hook-form";
 import { FormSection } from "@/components/form-section";
 import {

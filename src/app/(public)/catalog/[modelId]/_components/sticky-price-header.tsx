@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
 import { Gem, Package, Ruler } from "lucide-react";
+import { motion, type Variants } from "motion/react";
 import Image from "next/image";
 import { useTenantConfig } from "@/app/_hooks/use-tenant-config";
 import { Badge } from "@/components/ui/badge";

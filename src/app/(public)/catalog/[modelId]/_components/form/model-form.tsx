@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
@@ -27,6 +27,7 @@ import { ColorSelector } from "../color-selector";
 import { StickyPriceHeader } from "../sticky-price-header";
 import { AddedToCartActions } from "./added-to-cart-actions";
 import { QuoteSummary } from "./quote-summary";
+import { ScrollProgressIndicator } from "./scroll-progress-indicator";
 import { DimensionsSection } from "./sections/dimensions-section";
 import { GlassTypeSelectorSection } from "./sections/glass-type-selector-section";
 import { ServicesSelectorSection } from "./sections/services-selector-section";
@@ -65,6 +66,25 @@ export function ModelForm({
 
   // ✅ Auto-scroll to success card when item is added
   const successCardRef = useScrollIntoView(justAddedToCart);
+
+  // ✅ Ref for scroll progress tracking
+  const formContainerRef = useRef<HTMLDivElement>(null);
+
+  // ✅ Refs for each form section (Intersection Observer)
+  const dimensionsSectionRef = useRef<HTMLDivElement>(null);
+  const glassTypeSectionRef = useRef<HTMLDivElement>(null);
+  const colorSectionRef = useRef<HTMLDivElement>(null);
+  const servicesSectionRef = useRef<HTMLDivElement>(null);
+
+  const sectionRefs = useMemo(
+    () => ({
+      color: colorSectionRef,
+      dimensions: dimensionsSectionRef,
+      glassType: glassTypeSectionRef,
+      services: servicesSectionRef,
+    }),
+    []
+  );
 
   // ✅ UX Improvement: Pre-populate with minimum valid dimensions and first glass type
   const defaultValues = useMemo(
@@ -198,77 +218,90 @@ export function ModelForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)}>
-        {/* Flexbox layout: 1/3 (sticky) + 2/3 (form) en desktop, stack en mobile */}
-        <div className="flex w-full flex-col gap-6 md:flex-row">
-          {/* Left column: Sticky summary (1/3 width en desktop) */}
-          <div className="sticky top-20 w-full space-y-4 self-start md:w-1/3">
-            <StickyPriceHeader
-              basePrice={model.basePrice}
-              breakdown={priceBreakdown}
-              configSummary={{
-                glassTypeName: selectedGlassType?.name,
-                heightMm: Number(height) || undefined,
-                modelImageUrl: model.imageUrl || undefined,
-                modelName: model.name,
-                solutionName: inferredSolution?.nameEs,
-                widthMm: Number(width) || undefined,
-              }}
-              currency={currency}
-              currentPrice={calculatedPrice ?? model.basePrice}
-            />
-            <QuoteSummary
-              basePrice={model.basePrice}
-              calculatedPrice={calculatedPrice}
-              currency={currency}
-              error={error}
-              isCalculating={isCalculating}
-              justAddedToCart={justAddedToCart}
-            />
-          </div>
+        {/* Scroll Progress Indicator - Sticky at top */}
+        <ScrollProgressIndicator
+          containerRef={formContainerRef}
+          sectionRefs={sectionRefs}
+        />
 
-          {/* Right column: Form sections (2/3 width en desktop) */}
-          <div className="w-full space-y-4 sm:space-y-6 md:w-2/3">
-            <Card className="p-4 sm:p-6">
-              <DimensionsSection
-                dimensions={{
-                  maxHeight: model.maxHeightMm,
-                  maxWidth: model.maxWidthMm,
-                  minHeight: model.minHeightMm,
-                  minWidth: model.minWidthMm,
-                }}
-              />
-            </Card>
-
-            {/* Glass Type Selector with performance bars */}
-            <Card className="p-4 sm:p-6">
-              <GlassTypeSelectorSection
+        {/* Main form container for scroll tracking */}
+        <div ref={formContainerRef}>
+          {/* Flexbox layout: 1/3 (sticky) + 2/3 (form) en desktop, stack en mobile */}
+          <div className="flex w-full flex-col gap-6 md:flex-row">
+            {/* Left column: Sticky summary (1/3 width en desktop) */}
+            <div className="sticky top-40 w-full space-y-4 self-start md:w-1/3">
+              <StickyPriceHeader
                 basePrice={model.basePrice}
-                glassTypes={glassTypes}
-                selectedSolutionId={inferredSolution?.id}
+                breakdown={priceBreakdown}
+                configSummary={{
+                  glassTypeName: selectedGlassType?.name,
+                  heightMm: Number(height) || undefined,
+                  modelImageUrl: model.imageUrl || undefined,
+                  modelName: model.name,
+                  solutionName: inferredSolution?.nameEs,
+                  widthMm: Number(width) || undefined,
+                }}
+                currency={currency}
+                currentPrice={calculatedPrice ?? model.basePrice}
               />
-            </Card>
+              <QuoteSummary
+                basePrice={model.basePrice}
+                calculatedPrice={calculatedPrice}
+                currency={currency}
+                error={error}
+                isCalculating={isCalculating}
+                justAddedToCart={justAddedToCart}
+              />
+            </div>
 
-            {/* Color Selector - Only show if model has colors */}
-            <ColorSelector
-              modelId={model.id}
-              onColorChange={handleColorChangeWithForm}
-            />
-
-            {/* Services Section - Only show if services are available (Don't Make Me Think principle) */}
-            {services.length > 0 && (
-              <Card className="p-4 sm:p-6">
-                <ServicesSelectorSection services={services} />
+            {/* Right column: Form sections (2/3 width en desktop) */}
+            <div className="w-full space-y-4 sm:space-y-6 md:w-2/3">
+              <Card className="p-4 sm:p-6" ref={dimensionsSectionRef}>
+                <DimensionsSection
+                  dimensions={{
+                    maxHeight: model.maxHeightMm,
+                    maxWidth: model.maxWidthMm,
+                    minHeight: model.minHeightMm,
+                    minWidth: model.minWidthMm,
+                  }}
+                />
               </Card>
-            )}
 
-            {/* ✅ Show success actions after adding to cart */}
-            {justAddedToCart && (
-              <AddedToCartActions
-                modelName={model.name}
-                onConfigureAnotherAction={handleConfigureAnother}
-                ref={successCardRef}
-              />
-            )}
+              {/* Glass Type Selector with performance bars */}
+              <Card className="p-4 sm:p-6" ref={glassTypeSectionRef}>
+                <GlassTypeSelectorSection
+                  basePrice={model.basePrice}
+                  glassTypes={glassTypes}
+                  selectedSolutionId={inferredSolution?.id}
+                />
+              </Card>
+
+              {/* Color Selector - Only show if model has colors */}
+              <div ref={colorSectionRef}>
+                <ColorSelector
+                  modelId={model.id}
+                  onColorChange={handleColorChangeWithForm}
+                />
+              </div>
+
+              {/* Services Section - Only show if services are available (Don't Make Me Think principle) */}
+              <div ref={servicesSectionRef}>
+                {services.length > 0 && (
+                  <Card className="p-4 sm:p-6">
+                    <ServicesSelectorSection services={services} />
+                  </Card>
+                )}
+              </div>
+
+              {/* ✅ Show success actions after adding to cart */}
+              {justAddedToCart && (
+                <AddedToCartActions
+                  modelName={model.name}
+                  onConfigureAnotherAction={handleConfigureAnother}
+                  ref={successCardRef}
+                />
+              )}
+            </div>
           </div>
         </div>
       </form>
