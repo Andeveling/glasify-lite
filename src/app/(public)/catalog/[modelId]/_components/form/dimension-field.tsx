@@ -7,78 +7,18 @@ import {
   FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { ValidationIndicator } from "@/components/validation-indicator";
-
-/**
- * Configuración de variantes para el DimensionField
- * Define qué elementos se muestran en cada variante
- */
-type DimensionVariant = "full" | "simple" | "compact" | "minimal";
-
-type DimensionVariantConfig = {
-  showInput: boolean;
-  showSlider: boolean;
-  showSuggestedValues: boolean;
-  showValidationIndicator: boolean;
-  showDescription: boolean;
-  showFormMessage: boolean;
-  spacingClassName: string;
-  labelClassName: string;
-};
-
-/**
- * Configuraciones predefinidas para cada variante
- * Reduce carga cognitiva y optimiza para diferentes contextos
- */
-const VARIANT_CONFIGS: Record<DimensionVariant, DimensionVariantConfig> = {
-  // Full: Todas las características (valor por defecto - retrocompatibilidad)
-  full: {
-    showInput: true,
-    showSlider: true,
-    showSuggestedValues: true,
-    showValidationIndicator: true,
-    showDescription: true,
-    showFormMessage: true,
-    spacingClassName: "space-y-2",
-    labelClassName: "text-sm",
-  },
-  // Simple: Input, slider y validación (recomendado para mayoría de casos)
-  simple: {
-    showInput: true,
-    showSlider: true,
-    showSuggestedValues: false,
-    showValidationIndicator: true,
-    showDescription: true,
-    showFormMessage: true,
-    spacingClassName: "space-y-1.5",
-    labelClassName: "text-sm",
-  },
-  // Compact: Solo input y descripción (máxima reducción de carga cognitiva)
-  compact: {
-    showInput: true,
-    showSlider: false,
-    showSuggestedValues: false,
-    showValidationIndicator: false,
-    showDescription: false,
-    showFormMessage: true,
-    spacingClassName: "space-y-1",
-    labelClassName: "text-xs",
-  },
-  // Minimal: Solo input (para casos muy específicos)
-  minimal: {
-    showInput: true,
-    showSlider: false,
-    showSuggestedValues: false,
-    showValidationIndicator: false,
-    showDescription: false,
-    showFormMessage: false,
-    spacingClassName: "space-y-0.5",
-    labelClassName: "text-xs",
-  },
-};
+import {
+  type DimensionVariant,
+  type DimensionVariantConfig,
+  resolveVariantConfig,
+  shouldShowInlineRangeHint,
+} from "./dimension-field-config";
+import {
+  DimensionFieldHeader,
+  OptionalContent,
+} from "./dimension-field-header";
 
 type DimensionFieldProps<T extends FieldValues> = {
   control: Control<T>;
@@ -103,15 +43,6 @@ type DimensionFieldProps<T extends FieldValues> = {
  * @example
  * // Retrocompatibilidad (valor por defecto)
  * <DimensionField {...props} />
- *
- * // Versión simplificada (recomendada)
- * <DimensionField {...props} variant="simple" />
- *
- * // Versión compacta (máxima reducción de carga)
- * <DimensionField {...props} variant="compact" />
- *
- * // Configuración personalizada
- * <DimensionField {...props} customConfig={{ showSlider: false }} />
  */
 export function DimensionField<T extends FieldValues>({
   control,
@@ -126,16 +57,16 @@ export function DimensionField<T extends FieldValues>({
   variant = "full",
   customConfig,
 }: DimensionFieldProps<T>) {
-  // Resolver configuración: custom > variant > default
-  const config: DimensionVariantConfig = {
-    ...VARIANT_CONFIGS[variant],
-    ...customConfig,
-  };
+  // Resolve configuration using extracted function (Dependency Inversion)
+  const config = resolveVariantConfig(variant, customConfig);
 
   // Determine dimension type based on label
   const dimensionType = label.toLowerCase().includes("ancho")
     ? "width"
     : "height";
+
+  // Determine if inline range hint should be shown
+  const showInlineRangeHint = shouldShowInlineRangeHint(config);
 
   return (
     <FormField
@@ -143,31 +74,23 @@ export function DimensionField<T extends FieldValues>({
       name={name}
       render={({ field }) => {
         const fieldIsValid = isValid(field.value);
-        // Show inline range hint next to label only when description is hidden
-        const showInlineRangeHint = !config.showDescription;
 
         return (
           <FormItem className={config.spacingClassName}>
-            {/* Header: Label + Optional Inline Range + Optional Validation Indicator */}
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <FormLabel className={config.labelClassName}>{label}</FormLabel>
-                {showInlineRangeHint && (
-                  <span className="text-muted-foreground text-xs">
-                    ({min} - {max} mm)
-                  </span>
-                )}
-              </div>
-              {config.showValidationIndicator && (
-                <ValidationIndicator
-                  isValid={fieldIsValid}
-                  showIndicator={!!field.value}
-                />
-              )}
-            </div>
+            {/* Header component (extracted for Single Responsibility) */}
+            <DimensionFieldHeader
+              hasValue={!!field.value}
+              isValid={fieldIsValid}
+              label={label}
+              labelClassName={config.labelClassName}
+              max={max}
+              min={min}
+              showInlineRangeHint={showInlineRangeHint}
+              showValidationIndicator={config.showValidationIndicator}
+            />
 
-            {/* Main Input */}
-            {config.showInput && (
+            {/* Main Input (wrapped in OptionalContent) */}
+            <OptionalContent show={config.showInput}>
               <FormControl>
                 <DimensionInput
                   dimensionType={dimensionType}
@@ -179,42 +102,46 @@ export function DimensionField<T extends FieldValues>({
                   value={field.value}
                 />
               </FormControl>
-            )}
+            </OptionalContent>
 
             {/* Optional Slider */}
-            {config.showSlider && (
-              <div className="hidden sm:block">
-                <DimensionSlider
-                  max={max}
-                  min={min}
-                  onChange={onSliderChange}
-                  step={10}
-                  trackColor={fieldIsValid ? "muted" : "destructive"}
-                  value={localValue}
-                />
-              </div>
-            )}
+            <OptionalContent
+              className="hidden sm:block"
+              show={config.showSlider}
+            >
+              <DimensionSlider
+                max={max}
+                min={min}
+                onChange={onSliderChange}
+                step={10}
+                trackColor={fieldIsValid ? "muted" : "destructive"}
+                value={localValue}
+              />
+            </OptionalContent>
 
             {/* Optional Suggested Values */}
-            {config.showSuggestedValues && (
-              <div className="hidden lg:block">
-                <SuggestedValueBadges
-                  currentValue={field.value}
-                  onSelect={field.onChange}
-                  values={suggestedValues}
-                />
-              </div>
-            )}
+            <OptionalContent
+              className="hidden lg:block"
+              show={config.showSuggestedValues}
+            >
+              <SuggestedValueBadges
+                currentValue={field.value}
+                onSelect={field.onChange}
+                values={suggestedValues}
+              />
+            </OptionalContent>
 
             {/* Optional Description */}
-            {config.showDescription && (
+            <OptionalContent show={config.showDescription}>
               <FormDescription className="text-xs">
                 Rango: {min}-{max}mm
               </FormDescription>
-            )}
+            </OptionalContent>
 
             {/* Optional Error Message */}
-            {config.showFormMessage && <FormMessage />}
+            <OptionalContent show={config.showFormMessage}>
+              <FormMessage />
+            </OptionalContent>
           </FormItem>
         );
       }}
