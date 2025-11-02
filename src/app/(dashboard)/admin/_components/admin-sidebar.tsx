@@ -2,10 +2,10 @@
 
 import {
 	Factory,
+	FileText,
 	GlassWater,
 	Grid3x3,
 	Package,
-	Paintbrush,
 	Settings,
 	Sparkles,
 	Wrench,
@@ -13,7 +13,6 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { FC } from "react";
-
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
 import {
@@ -75,10 +74,10 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
 			url: "/admin/services",
 		},
 		{
-			description: "Logo y colores corporativos",
-			icon: Paintbrush,
-			title: "Branding",
-			url: "/admin/branding",
+			description: "Gestión de cotizaciones",
+			icon: FileText,
+			title: "Cotizaciones",
+			url: "/admin/quotes",
 		},
 	];
 
@@ -104,12 +103,6 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
 			title: "Soluciones de Vidrio",
 			url: "/admin/glass-solutions",
 		},
-		// {
-		//   description: 'Propiedades del vidrio',
-		//   icon: Settings,
-		//   title: 'Características de Vidrio',
-		//   url: '/admin/glass-characteristics',
-		// },
 	];
 
 	return (
@@ -132,6 +125,8 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
 			<SidebarContent>
 				{/* Main catalog entities */}
 				<NavMain items={navMain} />
+
+				{/* Tenant management */}
 
 				{/* Supplier management */}
 				<SidebarGroup className="group-data-[collapsible=icon]:hidden">
