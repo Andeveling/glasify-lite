@@ -55,6 +55,7 @@ type CatalogFiltersProps = {
  * Memory Leak Fix:
  * - Receives searchParams as props instead of calling useSearchParams()
  * - Prevents EventEmitter memory leak warning
+ * - Only one instance should be rendered per page (avoid duplicate listeners)
  *
  * Following UX best practices from Lollypop Design:
  * - Icon-first minimalist design
@@ -92,8 +93,8 @@ export function CatalogFilters({
   );
 
   return (
-    <div className="w-full space-y-3">
-      {/* Filter Controls */}
+    <div className="flex w-full flex-col gap-3">
+      {/* Filter Controls - Compact on desktop, stacked on mobile */}
       {showControls && (
         <div className="flex w-full flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-end">
           <div className="hidden items-center gap-2 text-muted-foreground text-sm md:flex">
@@ -164,21 +165,24 @@ export function CatalogFilters({
         </div>
       )}
 
-      {/* Active Search Parameters - Badges Section */}
-      {showBadges && hasActiveParameters && (
-        <ActiveSearchParameters
-          onClearAllAction={handleClearFilters}
-          onRemoveProfileSupplierAction={handleRemoveProfileSupplier}
-          onRemoveSearchAction={handleRemoveSearch}
-          onRemoveSortAction={handleRemoveSort}
-          searchQuery={currentSearchQuery ?? ""}
-          selectedProfileSupplierName={selectedProfileSupplierName ?? null}
-          sortType={currentSort as CatalogSortOption}
-        />
-      )}
+      {/* Full-width section for badges and result count */}
+      <div className="w-full space-y-3">
+        {/* Active Search Parameters - Badges Section */}
+        {showBadges && hasActiveParameters && (
+          <ActiveSearchParameters
+            onClearAllAction={handleClearFilters}
+            onRemoveProfileSupplierAction={handleRemoveProfileSupplier}
+            onRemoveSearchAction={handleRemoveSearch}
+            onRemoveSortAction={handleRemoveSort}
+            searchQuery={currentSearchQuery ?? ""}
+            selectedProfileSupplierName={selectedProfileSupplierName ?? null}
+            sortType={currentSort as CatalogSortOption}
+          />
+        )}
 
-      {/* Results count */}
-      {showResultCount && <ResultCount totalResults={totalResults} />}
+        {/* Results count */}
+        {showResultCount && <ResultCount totalResults={totalResults} />}
+      </div>
     </div>
   );
 }
