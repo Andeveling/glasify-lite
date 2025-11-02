@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "motion/react";
+import { Check } from "lucide-react";
+import { motion, type Variants } from "motion/react";
 import { ColorChip } from "@/app/(dashboard)/admin/colors/_components/color-chip";
 import { Badge } from "@/components/ui/badge";
 import { RadioGroupItem } from "@/components/ui/radio-group";
@@ -10,6 +11,17 @@ const COLOR_NAME_FONT_WEIGHT_SELECTED = 600;
 const COLOR_NAME_FONT_WEIGHT_UNSELECTED = 500;
 const SURCHARGE_BADGE_SCALE = 1.1;
 const COLOR_CHIP_STAGGER_DELAY = 0.05;
+const SELECTED_CHECK_STAGGER_DELAY = 0.1;
+
+// Animation variants for selected check icon (consistent with GlassTypeCardSimple)
+const selectedCheckVariants: Variants = {
+  initial: { scale: 0, rotate: -180 },
+  animate: {
+    scale: 1,
+    rotate: 0,
+    transition: { type: "spring", damping: 10, stiffness: 200 },
+  },
+};
 
 type ModelColorData = {
   id: string;
@@ -51,7 +63,7 @@ export function ColorChipOption({
       }}
     >
       <label
-        className={`flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all duration-300 has-[:focus-visible]:outline-none has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-offset-2 ${
+        className={`relative flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all duration-300 has-[:focus-visible]:outline-none has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-offset-2 ${
           isSelected
             ? "border-primary bg-primary/8 shadow-[0_0_15px_rgba(var(--primary-rgb),0.2)] hover:border-primary hover:bg-primary/10"
             : "border-border/60 bg-background hover:border-primary/40 hover:bg-muted/30"
@@ -123,14 +135,17 @@ export function ColorChipOption({
           </motion.div>
         </div>
 
-        {/* Selection indicator dot */}
+        {/* Selection indicator with check icon - Enhanced for better visibility */}
         {isSelected && (
           <motion.div
-            animate={{ scale: 1, opacity: 1 }}
-            className="-top-1.5 -right-1.5 absolute size-4 rounded-full bg-primary shadow-lg"
-            initial={{ scale: 0, opacity: 0 }}
-            transition={{ type: "spring", damping: 12, stiffness: 300 }}
-          />
+            animate="animate"
+            className="-top-2 -right-2 absolute flex size-6 items-center justify-center rounded-full bg-primary shadow-lg"
+            initial="initial"
+            transition={{ delay: SELECTED_CHECK_STAGGER_DELAY }}
+            variants={selectedCheckVariants}
+          >
+            <Check className="size-4 text-primary-foreground" />
+          </motion.div>
         )}
       </label>
     </motion.div>
