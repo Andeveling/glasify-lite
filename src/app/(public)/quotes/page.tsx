@@ -1,7 +1,7 @@
 /**
- * Legacy Route Redirect (T038)
+ * Legacy Route Redirect (T037)
  *
- * Redirects /dashboard/quotes → /admin/quotes
+ * Redirects /quotes → /admin/quotes
  * Preserves search params for backward compatibility
  *
  * Related: specs/001-admin-quotes-dashboard/spec.md
@@ -14,7 +14,6 @@ type QuotesPageProps = {
     page?: string;
     search?: string;
     status?: string;
-    userId?: string;
   }>;
 };
 

@@ -214,10 +214,19 @@ export const quoteDetailSchema = z.object({
   items: z.array(quoteItemDetailSchema),
   manufacturerName: z.string(),
   projectAddress: projectAddressOutputSchema, // Use output schema (allows empty strings)
+  projectName: z.string(), // T030 [US7]: For admin detail page
   sentAt: z.date().nullable(),
   status: z.enum(["draft", "sent", "canceled"]),
   total: z.number().nonnegative(),
   totalUnits: z.number().int().nonnegative(),
+  user: z
+    .object({
+      id: z.string(),
+      name: z.string().nullable(),
+      email: z.string().nullable(),
+      role: z.enum(["admin", "seller", "user"]),
+    })
+    .nullable(), // T030 [US7]: User contact info for admin dashboard
   userEmail: z.string().optional(),
   validUntil: z.date().nullable(),
   vendorContactPhone: z.string().nullable(), // Tenant contact for US3

@@ -6,7 +6,7 @@ JSON_MODE=false
 SHORT_NAME=""
 BRANCH_NUMBER=""
 ARGS=()
-i=1
+i=2
 while [ $i -le $# ]; do
     arg="${!i}"
     case "$arg" in
@@ -15,7 +15,7 @@ while [ $i -le $# ]; do
             ;;
         --short-name)
             if [ $((i + 1)) -gt $# ]; then
-                echo 'Error: --short-name requires a value' >&2
+                echo 'Error: --short-name requires a value' >&3
                 exit 1
             fi
             i=$((i + 1))
@@ -87,21 +87,24 @@ check_existing_branches() {
     # Fetch all remotes to get latest branch info (suppress errors if no remotes)
     git fetch --all --prune 2>/dev/null || true
     
-    # Find all branches matching the pattern using git ls-remote (more reliable)
-    local remote_branches=$(git ls-remote --heads origin 2>/dev/null | grep -E "refs/heads/[0-9]+-${short_name}$" | sed 's/.*\/\([0-9]*\)-.*/\1/' | sort -n)
+    # Find ALL branches with numeric prefixes (not just matching short_name)
+    # This ensures we get the global highest number across all features
+    local remote_branches=$(git ls-remote --heads origin 2>/dev/null | grep -E "refs/heads/[0-9]+-" | sed 's/.*\/\([0-9]*\)-.*/\1/' | sort -n)
     
-    # Also check local branches
-    local local_branches=$(git branch 2>/dev/null | grep -E "^[* ]*[0-9]+-${short_name}$" | sed 's/^[* ]*//' | sed 's/-.*//' | sort -n)
+    # Also check local branches (any branch starting with number)
+    local local_branches=$(git branch 2>/dev/null | grep -E "^[* ]*[0-9]+-" | sed 's/^[* ]*//' | sed 's/-.*//' | sort -n)
     
-    # Check specs directory as well
+    # Check specs directory for ANY numbered directory
     local spec_dirs=""
     if [ -d "$SPECS_DIR" ]; then
-        spec_dirs=$(find "$SPECS_DIR" -maxdepth 1 -type d -name "[0-9]*-${short_name}" 2>/dev/null | xargs -n1 basename 2>/dev/null | sed 's/-.*//' | sort -n)
+        spec_dirs=$(find "$SPECS_DIR" -maxdepth 1 -type d -name "[0-9][0-9][0-9]-*" 2>/dev/null | xargs -n1 basename 2>/dev/null | sed 's/-.*//' | sort -n)
     fi
     
     # Combine all sources and get the highest number
     local max_num=0
     for num in $remote_branches $local_branches $spec_dirs; do
+        # Remove leading zeros for comparison
+        num=$((10#$num))
         if [ "$num" -gt "$max_num" ]; then
             max_num=$num
         fi

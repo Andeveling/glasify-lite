@@ -33,12 +33,12 @@ body {
 :root {
   --background: oklch(0.98 0 0);
   --foreground: oklch(0.28 0.04 260.33);
-  --card: oklch(1.00 0 0);
+  --card: oklch(1 0 0);
   --card-foreground: oklch(0.28 0.04 260.33);
-  --popover: oklch(1.00 0 0);
+  --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.28 0.04 260.33);
-  --primary: oklch(0.59 0.20 277.06);
-  --primary-foreground: oklch(1.00 0 0);
+  --primary: oklch(0.59 0.2 277.06);
+  --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.93 0.01 261.82);
   --secondary-foreground: oklch(0.37 0.03 259.73);
   --muted: oklch(0.97 0 0);
@@ -48,20 +48,20 @@ body {
   --destructive: oklch(0.64 0.21 25.39);
   --border: oklch(0.87 0.01 261.81);
   --input: oklch(0.87 0.01 261.81);
-  --ring: oklch(0.59 0.20 277.06);
-  --chart-1: oklch(0.59 0.20 277.06);
+  --ring: oklch(0.59 0.2 277.06);
+  --chart-1: oklch(0.59 0.2 277.06);
   --chart-2: oklch(0.51 0.23 276.97);
   --chart-3: oklch(0.46 0.21 277.06);
-  --chart-4: oklch(0.40 0.18 277.16);
+  --chart-4: oklch(0.4 0.18 277.16);
   --chart-5: oklch(0.36 0.14 278.65);
   --sidebar: oklch(0.97 0 0);
   --sidebar-foreground: oklch(0.28 0.04 260.33);
-  --sidebar-primary: oklch(0.59 0.20 277.06);
-  --sidebar-primary-foreground: oklch(1.00 0 0);
+  --sidebar-primary: oklch(0.59 0.2 277.06);
+  --sidebar-primary-foreground: oklch(1 0 0);
   --sidebar-accent: oklch(0.93 0.03 273.66);
   --sidebar-accent-foreground: oklch(0.37 0.03 259.73);
   --sidebar-border: oklch(0.87 0.01 261.81);
-  --sidebar-ring: oklch(0.59 0.20 277.06);
+  --sidebar-ring: oklch(0.59 0.2 277.06);
 
   /* Alert colors - Separate from theme */
   --alert-success: oklch(0.65 0.19 142.5);
@@ -69,7 +69,7 @@ body {
   --alert-success-border: oklch(0.55 0.15 142.5);
   --alert-success-background: oklch(0.95 0.03 142.5);
 
-  --alert-warning: oklch(0.73 0.20 70);
+  --alert-warning: oklch(0.73 0.2 70);
   --alert-warning-foreground: oklch(0.25 0.04 65);
   --alert-warning-border: oklch(0.65 0.18 70);
   --alert-warning-background: oklch(0.98 0.05 70);
@@ -84,16 +84,21 @@ body {
   --font-mono: Geist Mono, Geist Mono Fallback, monospace;
 
   --radius: 0.9rem;
-  
-  --shadow-2xs: 0 1px 2px 0px oklch(0 0 0 / 0.10);
-  --shadow-xs: 0 1px 2px 0px oklch(0 0 0 / 0.10);
-  --shadow-sm: 0 1px 2px 0px oklch(0 0 0 / 0.15), 0 1px 2px -1px oklch(0 0 0 / 0.15);
-  --shadow: 0 1px 2px 0px oklch(0 0 0 / 0.15), 0 1px 2px -1px oklch(0 0 0 / 0.15);
-  --shadow-md: 0 1px 2px 0px oklch(0 0 0 / 0.15), 0 2px 4px -1px oklch(0 0 0 / 0.15);
-  --shadow-lg: 0 1px 2px 0px oklch(0 0 0 / 0.15), 0 4px 6px -1px oklch(0 0 0 / 0.15);
-  --shadow-xl: 0 1px 2px 0px oklch(0 0 0 / 0.15), 0 8px 10px -1px oklch(0 0 0 / 0.15);
+
+  --shadow-2xs: 0 1px 2px 0px oklch(0 0 0 / 0.1);
+  --shadow-xs: 0 1px 2px 0px oklch(0 0 0 / 0.1);
+  --shadow-sm:
+    0 1px 2px 0px oklch(0 0 0 / 0.15), 0 1px 2px -1px oklch(0 0 0 / 0.15);
+  --shadow:
+    0 1px 2px 0px oklch(0 0 0 / 0.15), 0 1px 2px -1px oklch(0 0 0 / 0.15);
+  --shadow-md:
+    0 1px 2px 0px oklch(0 0 0 / 0.15), 0 2px 4px -1px oklch(0 0 0 / 0.15);
+  --shadow-lg:
+    0 1px 2px 0px oklch(0 0 0 / 0.15), 0 4px 6px -1px oklch(0 0 0 / 0.15);
+  --shadow-xl:
+    0 1px 2px 0px oklch(0 0 0 / 0.15), 0 8px 10px -1px oklch(0 0 0 / 0.15);
   --shadow-2xl: 0 1px 2px 0px oklch(0 0 0 / 0.25);
-  
+
   --tracking-normal: -0.025em;
   --spacing: 0.22rem;
 }
@@ -118,10 +123,10 @@ body {
   --input: oklch(0.45 0.03 257.68);
   --ring: oklch(0.68 0.16 276.93);
   --chart-1: oklch(0.68 0.16 276.93);
-  --chart-2: oklch(0.59 0.20 277.06);
+  --chart-2: oklch(0.59 0.2 277.06);
   --chart-3: oklch(0.51 0.23 276.97);
   --chart-4: oklch(0.46 0.21 277.06);
-  --chart-5: oklch(0.40 0.18 277.16);
+  --chart-5: oklch(0.4 0.18 277.16);
   --sidebar: oklch(0.28 0.04 260.33);
   --sidebar-foreground: oklch(0.93 0.01 256.71);
   --sidebar-primary: oklch(0.68 0.16 276.93);
@@ -130,31 +135,36 @@ body {
   --sidebar-accent-foreground: oklch(0.87 0.01 261.81);
   --sidebar-border: oklch(0.45 0.03 257.68);
   --sidebar-ring: oklch(0.68 0.16 276.93);
-  
+
   /* Alert colors - Dark theme (Separate from theme) */
   --alert-success: oklch(0.75 0.18 142.5);
   --alert-success-foreground: oklch(0.98 0 0);
   --alert-success-border: oklch(0.65 0.15 142.5);
   --alert-success-background: oklch(0.25 0.04 142.5);
 
-  --alert-warning: oklch(0.78 0.20 70);
+  --alert-warning: oklch(0.78 0.2 70);
   --alert-warning-foreground: oklch(0.98 0 0);
   --alert-warning-border: oklch(0.65 0.18 70);
   --alert-warning-background: oklch(0.28 0.05 70);
 
   --alert-info: oklch(0.72 0.17 235);
   --alert-info-foreground: oklch(0.98 0 0);
-  --alert-info-border: oklch(0.60 0.13 235);
+  --alert-info-border: oklch(0.6 0.13 235);
   --alert-info-background: oklch(0.25 0.04 235);
-  
-  --shadow-2xs: 0 1px 2px 0px oklch(0.00 0 0 / 0.10);
-  --shadow-xs: 0 1px 2px 0px oklch(0.00 0 0 / 0.10);
-  --shadow-sm: 0 1px 2px 0px oklch(0.00 0 0 / 0.15), 0 1px 2px -1px oklch(0.00 0 0 / 0.15);
-  --shadow: 0 1px 2px 0px oklch(0.00 0 0 / 0.15), 0 1px 2px -1px oklch(0.00 0 0 / 0.15);
-  --shadow-md: 0 1px 2px 0px oklch(0.00 0 0 / 0.15), 0 2px 4px -1px oklch(0.00 0 0 / 0.15);
-  --shadow-lg: 0 1px 2px 0px oklch(0.00 0 0 / 0.15), 0 4px 6px -1px oklch(0.00 0 0 / 0.15);
-  --shadow-xl: 0 1px 2px 0px oklch(0.00 0 0 / 0.15), 0 8px 10px -1px oklch(0.00 0 0 / 0.15);
-  --shadow-2xl: 0 1px 2px 0px oklch(0.00 0 0 / 0.25);
+
+  --shadow-2xs: 0 1px 2px 0px oklch(0 0 0 / 0.1);
+  --shadow-xs: 0 1px 2px 0px oklch(0 0 0 / 0.1);
+  --shadow-sm:
+    0 1px 2px 0px oklch(0 0 0 / 0.15), 0 1px 2px -1px oklch(0 0 0 / 0.15);
+  --shadow:
+    0 1px 2px 0px oklch(0 0 0 / 0.15), 0 1px 2px -1px oklch(0 0 0 / 0.15);
+  --shadow-md:
+    0 1px 2px 0px oklch(0 0 0 / 0.15), 0 2px 4px -1px oklch(0 0 0 / 0.15);
+  --shadow-lg:
+    0 1px 2px 0px oklch(0 0 0 / 0.15), 0 4px 6px -1px oklch(0 0 0 / 0.15);
+  --shadow-xl:
+    0 1px 2px 0px oklch(0 0 0 / 0.15), 0 8px 10px -1px oklch(0 0 0 / 0.15);
+  --shadow-2xl: 0 1px 2px 0px oklch(0 0 0 / 0.25);
 }
 
 @theme inline {
@@ -215,4 +225,3 @@ body {
   --tracking-wider: calc(var(--tracking-normal) + 0.05em);
   --tracking-widest: calc(var(--tracking-normal) + 0.1em);
 }
-
