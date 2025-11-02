@@ -20,9 +20,6 @@ export const metadata: Metadata = {
 	description: "Vista detallada de cotización con información del creador",
 };
 
-// Force SSR - admin dashboard should always be fresh
-export const dynamic = "force-dynamic";
-
 type PageProps = {
 	params: Promise<{
 		quoteId: string;

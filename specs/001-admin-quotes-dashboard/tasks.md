@@ -283,6 +283,24 @@
 
 ---
 
+## Route & Cache Components Migration
+
+**COMPLETED - Route Conflict Resolution**:
+- ✅ Removed `/app/(public)/quotes/page.tsx` (conflicted with route groups)
+- ✅ Removed `export const dynamic = "force-dynamic"` from admin pages (incompatible with Cache Components)
+- ✅ Updated `/src/trpc/server-client.ts`: Removed `cache()` wrapper on `createContext` (headers() must be outside cache scope)
+- ✅ Updated `/glasses/solutions/page.tsx`: Removed `"use cache"` (tRPC needs dynamic headers())
+- ✅ Updated `/glasses/solutions/[slug]/page.tsx`: Removed `"use cache"` (tRPC needs dynamic headers())
+- ✅ Build: All 37 pages prerendered successfully with zero conflicts
+
+**Outcome**: 
+- ✅ `pnpm build` passes without errors
+- ✅ `pnpm typecheck` passes without errors
+- ✅ No route conflicts between route groups
+- ✅ Cache Components compatible (dynamic pages use ISR)
+
+---
+
 ## Phase 11: Testing & Validation
 
 **Purpose**: E2E tests for critical paths, final validation

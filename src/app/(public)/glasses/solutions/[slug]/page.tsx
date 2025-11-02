@@ -2,29 +2,25 @@
  * Glass Solution Detail Page
  *
  * Public page displaying individual glass solution with all assigned glass types.
- * Uses Cache Components with cacheLife for performance.
- * Statically generated for all solutions at build time with periodic revalidation.
+ * Rendered on-demand with ISR because tRPC requires headers() for context.
  *
  * @route /glasses/solutions/[slug]
  * @access public (no authentication required)
- * @caching "use cache" with 1-hour revalidation
+ * @caching dynamic with ISR
  * @staticGeneration generateStaticParams generates paths for all solutions
  */
 
-"use cache";
-
 import { ArrowLeft, Star } from "lucide-react";
 import type { Metadata } from "next";
-import { cacheLife } from "next/cache";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getIconComponent } from "@/lib/icon-map";
 import { api } from "@/trpc/server-client";
 
+// MIGRATED: Removed "use cache" (incompatible with headers() in tRPC context)
 // MIGRATED: Removed export const dynamic = 'force-static' (incompatible with Cache Components)
 // MIGRATED: Removed export const revalidate = 3600 (incompatible with Cache Components)
-// Note: Using "use cache" directive + cacheLife() for time-based revalidation
-// Strategy: Public static content (glass solutions) that changes occasionally (hours)
+// Note: Page is rendered on-demand with ISR because tRPC requires headers() for context
 
 /**
  * Generate static params for all glass solutions
@@ -147,9 +143,6 @@ export default async function GlassSolutionDetailPage({
 }: {
 	params: Promise<{ slug: string }>;
 }) {
-	// Configure cache lifetime: 1 hour revalidation
-	cacheLife("hours");
-
 	const { slug } = await params;
 
 	try {

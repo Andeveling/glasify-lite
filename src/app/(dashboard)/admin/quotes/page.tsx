@@ -28,9 +28,6 @@ export const metadata: Metadata = {
 	description: "Gestiona todas las cotizaciones del sistema",
 };
 
-// Force SSR - admin dashboard should always be fresh
-export const dynamic = "force-dynamic";
-
 type SearchParams = Promise<{
 	status?: string;
 	search?: string;

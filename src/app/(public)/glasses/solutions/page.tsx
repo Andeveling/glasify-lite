@@ -2,28 +2,24 @@
  * Glass Solutions List Page
  *
  * Public page displaying all available glass solutions.
- * Uses caching with Cache Components for performance.
- * Statically generated at build time with periodic revalidation.
+ * Marked as dynamic to allow access to headers() via tRPC.
  *
  * @route /glasses/solutions
  * @access public (no authentication required)
- * @caching "use cache" with 1-hour revalidation
- * @generated Static page generated at build time, revalidated every hour
+ * @caching dynamic (requires headers for auth context)
+ * @generated On-demand rendering with ISR
  */
-
-"use cache";
 
 import { GlassesIcon } from "lucide-react";
 import type { Metadata } from "next";
-import { cacheLife } from "next/cache";
 import Link from "next/link";
 import { getIconComponent } from "@/lib/icon-map";
 import { api } from "@/trpc/server-client";
 
+// MIGRATED: Removed "use cache" (incompatible with headers() in tRPC context)
 // MIGRATED: Removed export const dynamic = 'force-static' (incompatible with Cache Components)
 // MIGRATED: Removed export const revalidate = 3600 (incompatible with Cache Components)
-// Note: Using "use cache" directive at top + cacheLife() for time-based revalidation
-// Strategy: Public static content that changes occasionally (hours)
+// Note: Page is rendered on-demand with ISR because tRPC requires headers() for context
 
 /**
  * SEO Metadata for glass solutions listing page
@@ -47,9 +43,6 @@ export const metadata: Metadata = {
  * Each solution is a link to its detail page.
  */
 export default async function GlassSolutionsPage() {
-	// Configure cache lifetime: 1 hour revalidation
-	cacheLife("hours");
-
 	try {
 		// Fetch solutions from tRPC server procedure
 		const { items: solutions } = await api.catalog["list-solutions"]({
