@@ -588,6 +588,15 @@ export const quoteRouter = createTRPCRouter({
               },
             },
             // REFACTOR: No longer include manufacturer, use TenantConfig instead
+            // T009 [US7]: Include user info for admin quotes dashboard
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+              },
+            },
           },
           where: {
             id: input.id,
@@ -659,10 +668,12 @@ export const quoteRouter = createTRPCRouter({
             projectState: quote.projectState ?? "",
             projectStreet: quote.projectStreet ?? "",
           },
+          projectName: quote.projectName ?? "Sin nombre", // T030 [US7]: For admin detail page
           sentAt: quote.sentAt,
           status: quote.status,
           total: Number(quote.total),
           totalUnits: quote.items.reduce((sum, item) => sum + item.quantity, 0),
+          user: quote.user, // T030 [US7]: User contact info for admin dashboard
           userEmail: undefined,
           validUntil: quote.validUntil,
           vendorContactPhone: tenant.contactPhone, // US3: Vendor contact for confirmation message
