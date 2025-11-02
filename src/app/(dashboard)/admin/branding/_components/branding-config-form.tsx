@@ -54,10 +54,17 @@ export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
         logoUrl = await uploadLogoFile(selectedFile);
       }
 
-      await updateBranding({
-        ...data,
-        logoUrl: logoUrl || undefined,
-      });
+      // Prepare branding data - send all fields (empty strings are allowed)
+      const brandingData = {
+        facebookUrl: data.facebookUrl || "",
+        instagramUrl: data.instagramUrl || "",
+        linkedinUrl: data.linkedinUrl || "",
+        logoUrl: logoUrl || "",
+        whatsappEnabled: Boolean(data.whatsappEnabled),
+        whatsappNumber: data.whatsappNumber || "",
+      };
+
+      await updateBranding(brandingData);
     } catch (error) {
       toast.error("Error", {
         description:
@@ -123,7 +130,8 @@ export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
           />
         </div>
 
-        {/* Colors Section */}
+        {/* Colors Section - Disabled for future implementation */}
+        {/* TODO: Enable when color customization is ready
         <div className="space-y-4">
           <h3 className="font-semibold text-lg">Colores Corporativos</h3>
 
@@ -165,6 +173,7 @@ export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
             />
           </div>
         </div>
+        */}
 
         {/* Social Media Section */}
         <div className="space-y-4">

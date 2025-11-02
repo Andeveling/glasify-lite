@@ -56,8 +56,15 @@ export const tenantConfigRouter = createTRPCRouter({
   getBranding: publicProcedure.query(async ({ ctx }) => {
     const config = await ctx.db.tenantConfig.findFirst({
       select: {
-        id: true,
         businessName: true,
+        facebookUrl: true,
+        instagramUrl: true,
+        linkedinUrl: true,
+        logoUrl: true,
+        primaryColor: true,
+        secondaryColor: true,
+        whatsappEnabled: true,
+        whatsappNumber: true,
       },
     });
 
@@ -65,39 +72,87 @@ export const tenantConfigRouter = createTRPCRouter({
       throw new Error("Configuración de tenant no encontrada");
     }
 
-    return {
-      ...config,
-      logoUrl: null as string | null,
-      primaryColor: null as string | null,
-      secondaryColor: null as string | null,
-      facebookUrl: null as string | null,
-      instagramUrl: null as string | null,
-      linkedinUrl: null as string | null,
-      whatsappNumber: null as string | null,
-      whatsappEnabled: false,
-    };
+    return config;
   }),
 
   /**
    * Update branding configuration
    * Admin only - modifies branding settings
    * US-009: Configurar datos de branding del tenant
-   *
-   * Note: Branding fields not yet in schema, update when schema is migrated
    */
   updateBranding: adminProcedure
     .input(updateBrandingSchema)
     .mutation(async ({ ctx, input }) => {
       const tenantId = "1"; // Singleton tenant ID
 
-      // TODO: Implement when branding fields are added to TenantConfig schema
-      logger.info("Branding update requested (not yet implemented)", {
+      logger.info("Updating branding configuration", {
+        changes: Object.keys(input),
+        input,
         tenantId,
         userId: ctx.session.user.id,
-        changes: Object.keys(input),
       });
 
-      throw new Error("Branding fields not yet implemented in schema");
+      // Build update data object - only include fields that are present in input
+      const updateData: {
+        facebookUrl?: string | null;
+        instagramUrl?: string | null;
+        linkedinUrl?: string | null;
+        logoUrl?: string | null;
+        primaryColor?: string;
+        secondaryColor?: string;
+        whatsappEnabled?: boolean;
+        whatsappNumber?: string | null;
+      } = {};
+
+      // Social media URLs (convert empty strings to null)
+      if (input.facebookUrl !== undefined) {
+        updateData.facebookUrl = input.facebookUrl || null;
+      }
+      if (input.instagramUrl !== undefined) {
+        updateData.instagramUrl = input.instagramUrl || null;
+      }
+      if (input.linkedinUrl !== undefined) {
+        updateData.linkedinUrl = input.linkedinUrl || null;
+      }
+
+      // Logo URL
+      if (input.logoUrl !== undefined) {
+        updateData.logoUrl = input.logoUrl || null;
+      }
+
+      // Colors (optional, for future use)
+      if (input.primaryColor !== undefined) {
+        updateData.primaryColor = input.primaryColor;
+      }
+      if (input.secondaryColor !== undefined) {
+        updateData.secondaryColor = input.secondaryColor;
+      }
+
+      // WhatsApp settings
+      if (input.whatsappEnabled !== undefined) {
+        updateData.whatsappEnabled = input.whatsappEnabled;
+      }
+      if (input.whatsappNumber !== undefined) {
+        updateData.whatsappNumber = input.whatsappNumber || null;
+      }
+
+      logger.info("Prepared update data", {
+        tenantId,
+        updateData,
+        userId: ctx.session.user.id,
+      });
+
+      const updated = await ctx.db.tenantConfig.update({
+        data: updateData,
+        where: { id: tenantId },
+      });
+
+      logger.info("Branding configuration updated successfully", {
+        tenantId,
+        userId: ctx.session.user.id,
+      });
+
+      return updated;
     }),
 
   /**

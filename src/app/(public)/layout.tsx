@@ -18,7 +18,7 @@ export default function PublicLayout({
       <main className="flex-1">{children}</main>
       <PublicFooter />
       <WhatsAppButtonWrapper
-        message="Hola, estoy interesado en sus productos de vidrio"
+        message="Hola, estoy interesado en sus productos de cristalería. ¿Podrían ayudarme?"
         variant="floating"
       />
     </div>
