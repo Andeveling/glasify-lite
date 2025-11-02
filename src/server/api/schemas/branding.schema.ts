@@ -100,7 +100,8 @@ const logoSchema = z
       }
     },
     {
-      message: "Debe ser una URL válida o una ruta local (ej: /uploads/logo.svg)",
+      message:
+        "Debe ser una URL válida o una ruta local (ej: /uploads/logo.svg)",
     }
   );
 
