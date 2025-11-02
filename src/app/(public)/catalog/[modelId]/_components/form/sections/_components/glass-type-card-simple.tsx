@@ -87,7 +87,7 @@ export function GlassTypeCardSimple({
           <Icon
             className={cn(
               "size-6 transition-colors duration-300",
-              isSelected && "text-primary-foreground"
+              isSelected && "text-primary"
             )}
           />
         </motion.div>
@@ -105,10 +105,10 @@ export function GlassTypeCardSimple({
               )}
               transition={{ duration: 0.2 }}
             >
-              {option.title}
+              {option.name}
             </motion.h4>
             <p className="line-clamp-1 text-muted-foreground text-xs">
-              {option.name}
+              {option.title}
             </p>
           </div>
 

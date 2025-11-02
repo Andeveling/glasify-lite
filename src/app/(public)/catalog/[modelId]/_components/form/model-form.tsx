@@ -38,12 +38,32 @@ import { ServicesSelectorSection } from "./sections/services-selector-section";
 import { VerticalScrollProgress } from "./vertical-scroll-progress";
 
 // ============================================================================
+// Helpers
+// ============================================================================
+
+/**
+ * Get card className based on active form step
+ */
+function getCardClassName(
+  activeStep: FormStepId,
+  currentStep: FormStepId
+): string {
+  return cn(
+    "p-4 transition-all duration-300 sm:p-6",
+    activeStep === currentStep
+      ? "shadow-lg shadow-primary/20 ring-2 ring-primary"
+      : ""
+  );
+}
+
+// ============================================================================
 // Types
 // ============================================================================
 
 type ModelFormProps = {
   currency: string;
   glassTypes: GlassTypeOutput[];
+  hasColors: boolean;
   model: ModelDetailOutput;
   services: ServiceOutput[];
   solutions: GlassSolutionOutput[];
@@ -56,6 +76,7 @@ type ModelFormProps = {
 export function ModelForm({
   currency,
   glassTypes,
+  hasColors,
   model,
   services,
   solutions,
@@ -262,6 +283,8 @@ export function ModelForm({
             {/* Vertical scroll progress bar - Minimal and subtle */}
             <VerticalScrollProgress
               containerRef={formContainerRef}
+              hasColors={hasColors}
+              hasServices={services.length > 0}
               onActiveStepChange={setActiveFormStep}
               sectionRefs={sectionRefs}
             />
@@ -269,12 +292,7 @@ export function ModelForm({
             {/* Right column: Form sections (2/3 width en desktop) */}
             <div className="w-full space-y-4 sm:space-y-6 md:w-2/3">
               <Card
-                className={cn(
-                  "p-4 transition-all duration-300 sm:p-6",
-                  activeFormStep === "dimensions"
-                    ? "shadow-lg shadow-primary/20 ring-2 ring-primary"
-                    : ""
-                )}
+                className={getCardClassName(activeFormStep, "dimensions")}
                 ref={dimensionsSectionRef}
               >
                 <DimensionsSection
@@ -287,34 +305,26 @@ export function ModelForm({
                 />
               </Card>
               {/* Color Selector - Only show if model has colors */}
-              <Card
-                className={cn(
-                  "p-4 transition-all duration-300 sm:p-6",
-                  activeFormStep === "color"
-                    ? "shadow-lg shadow-primary/20 ring-2 ring-primary"
-                    : ""
-                )}
-                ref={colorSectionRef}
-              >
-                <FormSection
-                  // description="Elige el color del perfil (aplica recargo al precio base)"
-                  icon={Palette}
-                  legend="Seleccione un Color"
+              {hasColors && (
+                <Card
+                  className={getCardClassName(activeFormStep, "color")}
+                  ref={colorSectionRef}
                 >
-                  <ColorSelector
-                    modelId={model.id}
-                    onColorChange={handleColorChangeWithForm}
-                  />
-                </FormSection>
-              </Card>
+                  <FormSection
+                    // description="Elige el color del perfil (aplica recargo al precio base)"
+                    icon={Palette}
+                    legend="Seleccione un Color"
+                  >
+                    <ColorSelector
+                      modelId={model.id}
+                      onColorChange={handleColorChangeWithForm}
+                    />
+                  </FormSection>
+                </Card>
+              )}
               {/* Glass Type Selector with performance bars */}
               <Card
-                className={cn(
-                  "p-4 transition-all duration-300 sm:p-6",
-                  activeFormStep === "glassType"
-                    ? "shadow-lg shadow-primary/20 ring-2 ring-primary"
-                    : ""
-                )}
+                className={getCardClassName(activeFormStep, "glassType")}
                 ref={glassTypeSectionRef}
               >
                 <GlassTypeSelectorSection
@@ -328,12 +338,7 @@ export function ModelForm({
               <div ref={servicesSectionRef}>
                 {services.length > 0 && (
                   <Card
-                    className={cn(
-                      "p-4 transition-all duration-300 sm:p-6",
-                      activeFormStep === "services"
-                        ? "shadow-lg shadow-primary/20 ring-2 ring-primary"
-                        : ""
-                    )}
+                    className={getCardClassName(activeFormStep, "services")}
                   >
                     <ServicesSelectorSection services={services} />
                   </Card>

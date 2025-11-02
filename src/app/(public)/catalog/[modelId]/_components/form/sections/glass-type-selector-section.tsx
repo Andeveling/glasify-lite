@@ -174,7 +174,7 @@ export function GlassTypeSelectorSection({
     >
       <Tabs defaultValue={defaultTab}>
         {/* Tabs navigation - Large, visually prominent */}
-        <TabsList className="mb-2 flex h-20 w-full flex-wrap justify-start gap-2 py-1.5">
+        <TabsList className="mb-2 flex h-20 w-full flex-wrap justify-start gap-2 bg-transparent py-1.5">
           {tabs.map((tab, index) => {
             const Icon = tab.icon;
 
@@ -188,7 +188,7 @@ export function GlassTypeSelectorSection({
                 whileHover="hover"
               >
                 <TabsTrigger
-                  className="h-full gap-2 rounded-md border border-primary bg-primary/5 px-2 py-3 font-medium text-base"
+                  className="h-full gap-2 rounded-md border border-accent bg-accent/5 px-2 py-3 font-medium text-base"
                   value={tab.key}
                 >
                   {/* Icon (optional based on variant) */}
@@ -210,7 +210,7 @@ export function GlassTypeSelectorSection({
                   {config.showBadge && (
                     <motion.span
                       animate="animate"
-                      className="inline-flex items-center justify-center rounded-full bg-primary/20 px-2 py-0.5 font-semibold text-muted-foreground text-xs"
+                      className="inline-flex items-center justify-center rounded-full border bg-alert-success px-2 py-0.5 font-semibold text-muted-foreground text-xs"
                       variants={badgePulseVariants}
                     >
                       {tab.options.length}

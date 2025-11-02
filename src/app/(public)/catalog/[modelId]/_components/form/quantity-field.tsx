@@ -3,7 +3,6 @@ import type { Control, FieldValues, Path } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -155,10 +154,6 @@ export function QuantityField<T extends FieldValues>({
               </div>
             </FormControl>
 
-            <FormDescription>
-              Selecciona la cantidad de unidades que deseas cotizar (mínimo{" "}
-              {min}, máximo {max})
-            </FormDescription>
             <FormMessage />
           </FormItem>
         );

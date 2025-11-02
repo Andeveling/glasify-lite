@@ -43,7 +43,7 @@ export function DimensionInput({
     dimensionType === "width" ? ArrowRightLeft : ArrowDownUp;
 
   return (
-    <InputGroup className={cn("shadow-sm", className)}>
+    <InputGroup className={cn("shadow-none", className)}>
       <InputGroupInput
         className={cn(
           "border-0 bg-transparent text-center font-bold text-2xl shadow-none transition-all"
