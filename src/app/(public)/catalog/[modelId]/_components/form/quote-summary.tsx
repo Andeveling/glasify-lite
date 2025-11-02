@@ -182,9 +182,8 @@ export function QuoteSummary({
 
   return (
     <Card
-      className={cn("border-2 p-6 transition-all duration-200", {
+      className={cn("border p-6 transition-all duration-200", {
         "border-destructive/50 bg-destructive/5": cardState === "error",
-        "border-success/50 bg-success/5": cardState === "success",
       })}
       data-state={cardState}
     >

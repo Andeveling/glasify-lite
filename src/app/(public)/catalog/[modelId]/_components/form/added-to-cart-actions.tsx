@@ -43,13 +43,13 @@ export function AddedToCartActions({
         y: { damping: 15, stiffness: 100, type: "spring" },
       }}
     >
-      <Card className="border-2 border-success/50 bg-success/5 p-6">
+      <Card className="border-1 border-accent/60 bg-accent p-6">
         <div className="flex flex-col gap-6">
           {/* Success Message */}
           <div className="flex items-start gap-3">
-            <CheckCircle2 className="mt-0.5 size-6 shrink-0 text-success" />
+            <CheckCircle2 className="mt-0.5 size-10 shrink-0 text-success" />
             <div className="flex-1">
-              <h3 className="font-semibold text-lg text-success">
+              <h3 className="font-semibold text-accent-foreground text-lg">
                 ¡Agregado exitosamente!
               </h3>
               <p className="mt-1 text-muted-foreground text-sm">
@@ -68,7 +68,7 @@ export function AddedToCartActions({
               variant="default"
             >
               <RotateCcw className="size-5" />
-              <span>Configurar otro {modelName}</span>
+              <span>Configurar de nuevo</span>
             </Button>
 
             {/* Secondary Actions */}
@@ -100,11 +100,6 @@ export function AddedToCartActions({
               </Button>
             </div>
           </div>
-
-          {/* Helper Text */}
-          <p className="text-center text-muted-foreground text-xs sm:text-left">
-            Puedes continuar agregando items o proceder a generar tu cotización
-          </p>
         </div>
       </Card>
     </motion.div>
