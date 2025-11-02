@@ -9,12 +9,16 @@
  * - User name display with role badge (US4)
  * - Status and expiration badges (US2)
  * - Link to detail page
+ * - Uses centralized formatters from @lib/format
+ * - Respects TenantConfig for currency and locale
  */
 
 "use client";
 
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatCurrency, formatDateMedium } from "@/lib/format";
+import { useTenantConfig } from "@/providers/tenant-config-provider";
 import type { QuoteListItem as QuoteItem } from "../_types/quote-list.types";
 import { QuoteExpirationBadge } from "./quote-expiration-badge";
 import { QuoteRoleBadge } from "./quote-role-badge";
@@ -25,13 +29,14 @@ type QuoteListItemProps = {
 };
 
 export function QuoteListItem({ quote }: QuoteListItemProps) {
+	const tenantConfig = useTenantConfig();
+
 	const userName =
 		quote.user?.name || quote.user?.email || "Usuario desconocido";
-	const formattedDate = new Intl.DateTimeFormat("es-LA", {
-		year: "numeric",
-		month: "short",
-		day: "numeric",
-	}).format(quote.createdAt);
+	const formattedDate = formatDateMedium(quote.createdAt, tenantConfig);
+	const formattedTotal = formatCurrency(quote.total, {
+		context: tenantConfig,
+	});
 
 	return (
 		<Link href={`/admin/quotes/${quote.id}`}>
@@ -50,9 +55,7 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
 				<CardContent className="space-y-2">
 					<div className="flex items-center justify-between">
 						<span className="text-muted-foreground text-sm">Total</span>
-						<span className="font-semibold">
-							{quote.currency} {quote.total.toFixed(2)}
-						</span>
+						<span className="font-semibold">{formattedTotal}</span>
 					</div>
 					<div className="flex items-center justify-between">
 						<span className="text-muted-foreground text-sm">Cliente</span>

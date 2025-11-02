@@ -2,7 +2,8 @@
  * Admin Quote Detail Page (US7 - T030)
  *
  * Server Component for admin quote detail view
- * Displays full quote details + user contact information
+ * Displays full quote details including items, measurements, and export options
+ * Reuses QuoteDetailView component from public my-quotes for consistency
  *
  * Route: /admin/quotes/[quoteId]
  * Access: Admin only (protected by middleware)
@@ -11,93 +12,55 @@
 
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { BackLink } from "@/components/ui/back-link";
+import { Suspense } from "react";
+import { QuoteDetailView } from "@/app/(public)/my-quotes/[quoteId]/_components/quote-detail-view";
+import { Spinner } from "@/components/ui/spinner";
 import { api } from "@/trpc/server-client";
 import { UserContactInfo } from "./_components/user-contact-info";
 
 export const metadata: Metadata = {
-  title: "Detalle de Cotización | Admin",
-  description: "Vista detallada de cotización con información del creador",
+	title: "Detalle de Cotización | Admin",
+	description:
+		"Vista detallada de cotización con información del creador, modelos, medidas y opciones de exportación",
 };
 
 type PageProps = {
-  params: Promise<{
-    quoteId: string;
-  }>;
+	params: Promise<{
+		quoteId: string;
+	}>;
 };
 
+async function QuoteContent({ quoteId }: { quoteId: string }) {
+	// Fetch quote data with user information
+	const quote = await api.quote["get-by-id"]({ id: quoteId });
+
+	if (!quote) {
+		notFound();
+	}
+
+	return (
+		<div className="space-y-6">
+			{/* User Contact Info Section (US7) - Admin only */}
+			<UserContactInfo contactPhone={quote.contactPhone} user={quote.user} />
+
+			{/* Full Quote Details with items, measurements, and export buttons */}
+			<QuoteDetailView isPublicView={false} quote={quote} />
+		</div>
+	);
+}
+
 export default async function AdminQuoteDetailPage({ params }: PageProps) {
-  const { quoteId } = await params;
+	const { quoteId } = await params;
 
-  // Fetch quote data with user information
-  const quote = await api.quote["get-by-id"]({ id: quoteId });
-
-  if (!quote) {
-    notFound();
-  }
-
-  return (
-    <div className="space-y-6">
-      {/* Back link */}
-      <BackLink href="/admin/quotes" variant="outline">
-        Volver a cotizaciones
-      </BackLink>
-
-      {/* User Contact Info Section (US7) */}
-      <UserContactInfo contactPhone={quote.contactPhone} user={quote.user} />
-
-      {/* Quote Details */}
-      <div className="rounded-lg border bg-card p-6">
-        <h2 className="mb-4 font-semibold text-xl">
-          Detalles de la Cotización
-        </h2>
-
-        {/* Basic Info */}
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <p className="font-medium text-muted-foreground text-sm">
-              Proyecto
-            </p>
-            <p className="font-semibold">{quote.projectName || "Sin nombre"}</p>
-          </div>
-          <div>
-            <p className="font-medium text-muted-foreground text-sm">Estado</p>
-            <p className="font-semibold">{quote.status}</p>
-          </div>
-          <div>
-            <p className="font-medium text-muted-foreground text-sm">Total</p>
-            <p className="font-semibold">
-              {quote.currency} {quote.total.toFixed(2)}
-            </p>
-          </div>
-          <div>
-            <p className="font-medium text-muted-foreground text-sm">
-              Cantidad de Items
-            </p>
-            <p className="font-semibold">{quote.itemCount}</p>
-          </div>
-          {quote.validUntil && (
-            <div>
-              <p className="font-medium text-muted-foreground text-sm">
-                Válido hasta
-              </p>
-              <p className="font-semibold">
-                {new Intl.DateTimeFormat("es-LA").format(quote.validUntil)}
-              </p>
-            </div>
-          )}
-          <div>
-            <p className="font-medium text-muted-foreground text-sm">Creado</p>
-            <p className="font-semibold">
-              {new Intl.DateTimeFormat("es-LA", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              }).format(quote.createdAt)}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+	return (
+		<Suspense
+			fallback={
+				<div className="flex min-h-[400px] items-center justify-center">
+					<Spinner className="size-8" />
+				</div>
+			}
+		>
+			<QuoteContent quoteId={quoteId} />
+		</Suspense>
+	);
 }
