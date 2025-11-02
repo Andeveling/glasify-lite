@@ -23,8 +23,8 @@ import { api } from "@/trpc/server-client";
 import { ServicesContent } from "./_components/services-content";
 
 export const metadata: Metadata = {
-  description: "Administra los servicios adicionales para cotizaciones",
-  title: "Servicios | Admin",
+	description: "Administra los servicios adicionales para cotizaciones",
+	title: "Servicios | Admin",
 };
 
 // MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
@@ -32,85 +32,85 @@ export const metadata: Metadata = {
 // TODO: Consider Suspense boundaries for loading states after build verification
 
 type SearchParams = Promise<{
-  isActive?: string;
-  page?: string;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-  type?: string;
+	isActive?: string;
+	page?: string;
+	search?: string;
+	sortBy?: string;
+	sortOrder?: "asc" | "desc";
+	type?: string;
 }>;
 
 type PageProps = {
-  searchParams: SearchParams;
+	searchParams: SearchParams;
 };
 
 export default async function ServicesPage({ searchParams }: PageProps) {
-  const params = await searchParams;
+	const params = await searchParams;
 
-  // Parse search params (outside Suspense)
-  const page = Number(params.page) || 1;
-  const search =
-    params.search && params.search !== "" ? params.search : undefined;
-  const type = params.type && params.type !== "all" ? params.type : undefined;
-  const isActive = (
-    params.isActive && params.isActive !== "all" ? params.isActive : "all"
-  ) as "all" | "active" | "inactive";
-  const sortBy = (params.sortBy || "name") as
-    | "name"
-    | "createdAt"
-    | "updatedAt"
-    | "rate";
-  const sortOrder = (params.sortOrder || "asc") as "asc" | "desc";
+	// Parse search params (outside Suspense)
+	const page = Number(params.page) || 1;
+	const search =
+		params.search && params.search !== "" ? params.search : undefined;
+	const type = params.type && params.type !== "all" ? params.type : undefined;
+	const isActive = (
+		params.isActive && params.isActive !== "all" ? params.isActive : "all"
+	) as "all" | "active" | "inactive";
+	const sortBy = (params.sortBy || "name") as
+		| "name"
+		| "createdAt"
+		| "updatedAt"
+		| "rate";
+	const sortOrder = (params.sortOrder || "asc") as "asc" | "desc";
 
-  // Fetch data OUTSIDE Suspense to avoid EventEmitter memory leak
-  const initialData = await api.admin.service.list({
-    isActive,
-    limit: 20,
-    page,
-    search,
-    sortBy,
-    sortOrder,
-    type: (type === "all" ? "all" : type) as
-      | "all"
-      | "area"
-      | "perimeter"
-      | "fixed",
-  });
+	// Fetch data OUTSIDE Suspense to avoid EventEmitter memory leak
+	const initialData = await api.admin.service.list({
+		isActive,
+		limit: 20,
+		page,
+		search,
+		sortBy,
+		sortOrder,
+		type: (type === "all" ? "all" : type) as
+			| "all"
+			| "area"
+			| "perimeter"
+			| "fixed",
+	});
 
-  // Transform Decimal fields to number for Client Component serialization
-  const serializedData = {
-    ...initialData,
-    items: initialData.items.map((service) => ({
-      ...service,
-      rate: service.rate.toNumber(),
-    })),
-  };
+	// Transform Decimal fields to number for Client Component serialization
+	const serializedData = {
+		...initialData,
+		items: initialData.items.map((service) => ({
+			...service,
+			rate: service.rate.toNumber(),
+		})),
+	};
 
-  const searchParamsForClient = {
-    isActive,
-    page: String(page),
-    search,
-    sortBy,
-    sortOrder,
-    type,
-  };
+	const searchParamsForClient = {
+		isActive,
+		page: String(page),
+		search,
+		sortBy,
+		sortOrder,
+		type,
+	};
 
-  return (
-    <div className="space-y-6">
-      {/* Header - always visible */}
-      <div>
-        <h1 className="font-bold text-3xl tracking-tight">Servicios</h1>
-        <p className="text-muted-foreground">
-          Gestiona los servicios adicionales para cotizaciones (instalación,
-          entrega, etc.)
-        </p>
-      </div>
+	return (
+		<div className="space-y-6">
+			{/* Header - always visible */}
+			<div>
+				<h1 className="font-bold text-3xl tracking-tight">Servicios</h1>
+				<p className="text-muted-foreground">
+					Gestiona los servicios adicionales para cotizaciones (instalación,
+					entrega, etc.)
+				</p>
+			</div>
 
-      {/* Content with filters and table */}
-      <ServicesContent
-        initialData={serializedData}
-        searchParams={searchParamsForClient}
-      />
-    </div>
-  );
+			{/* Content with filters and table */}
+			<ServicesContent
+				initialData={serializedData}
+				searchParams={searchParamsForClient}
+			/>
+		</div>
+	);
 }

@@ -28,37 +28,37 @@ import type { CartItem } from "@/types/cart.types";
  * Delivery address with geocoding data (from client form)
  */
 type DeliveryAddressInput = {
-  city?: string | null;
-  country?: string | null;
-  district?: string | null;
-  label?: string | null;
-  latitude?: number | null;
-  longitude?: number | null;
-  postalCode?: string | null;
-  reference?: string | null;
-  region?: string | null;
-  street?: string | null;
+	city?: string | null;
+	country?: string | null;
+	district?: string | null;
+	label?: string | null;
+	latitude?: number | null;
+	longitude?: number | null;
+	postalCode?: string | null;
+	reference?: string | null;
+	region?: string | null;
+	street?: string | null;
 };
 
 /**
  * Quote generation form input (from React Hook Form)
  */
 type QuoteGenerationFormInput = {
-  projectName?: string;
-  projectStreet: string;
-  projectCity: string;
-  projectState: string;
-  contactPhone?: string;
-  deliveryAddress?: DeliveryAddressInput;
+	projectName?: string;
+	projectStreet: string;
+	projectCity: string;
+	projectState: string;
+	contactPhone?: string;
+	deliveryAddress?: DeliveryAddressInput;
 };
 
 /**
  * Quote generation result
  */
 type QuoteGenerationResult = {
-  success: boolean;
-  quoteId?: string;
-  error?: string;
+	success: boolean;
+	quoteId?: string;
+	error?: string;
 };
 
 // ============================================================================
@@ -91,103 +91,103 @@ type QuoteGenerationResult = {
  * ```
  */
 export async function generateQuoteFromCartAction(
-  formInput: QuoteGenerationFormInput,
-  cartItems: CartItem[]
+	formInput: QuoteGenerationFormInput,
+	cartItems: CartItem[],
 ): Promise<QuoteGenerationResult> {
-  const startTime = Date.now();
-  const correlationId = `quote-action-${Date.now()}`;
+	const startTime = Date.now();
+	const correlationId = `quote-action-${Date.now()}`;
 
-  try {
-    // 1. Authentication check
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+	try {
+		// 1. Authentication check
+		const session = await auth.api.getSession({
+			headers: await headers(),
+		});
 
-    if (!session?.user?.id) {
-      logger.warn("[QuoteAction] Unauthorized quote generation attempt", {
-        correlationId,
-      });
+		if (!session?.user?.id) {
+			logger.warn("[QuoteAction] Unauthorized quote generation attempt", {
+				correlationId,
+			});
 
-      return {
-        error: "Debes iniciar sesión para generar una cotización",
-        success: false,
-      };
-    }
+			return {
+				error: "Debes iniciar sesión para generar una cotización",
+				success: false,
+			};
+		}
 
-    const userId = session.user.id;
+		const userId = session.user.id;
 
-    logger.info("[QuoteAction] Starting quote generation", {
-      correlationId,
-      itemCount: cartItems.length,
-      userId,
-    });
+		logger.info("[QuoteAction] Starting quote generation", {
+			correlationId,
+			itemCount: cartItems.length,
+			userId,
+		});
 
-    // 2. Validation: Cart must not be empty
-    if (!cartItems || cartItems.length === 0) {
-      logger.warn("[QuoteAction] Empty cart detected", {
-        correlationId,
-        userId,
-      });
+		// 2. Validation: Cart must not be empty
+		if (!cartItems || cartItems.length === 0) {
+			logger.warn("[QuoteAction] Empty cart detected", {
+				correlationId,
+				userId,
+			});
 
-      return {
-        error:
-          "El carrito está vacío. Agrega items antes de generar una cotización.",
-        success: false,
-      };
-    }
+			return {
+				error:
+					"El carrito está vacío. Agrega items antes de generar una cotización.",
+				success: false,
+			};
+		}
 
-    // 3. Validate first cart item exists (for error handling)
-    const firstCartItem = cartItems[0];
-    if (!firstCartItem) {
-      logger.error("[QuoteAction] Cart is empty after validation", {
-        correlationId,
-      });
+		// 3. Validate first cart item exists (for error handling)
+		const firstCartItem = cartItems[0];
+		if (!firstCartItem) {
+			logger.error("[QuoteAction] Cart is empty after validation", {
+				correlationId,
+			});
 
-      return {
-        error: "El carrito está vacío. Por favor intenta nuevamente.",
-        success: false,
-      };
-    }
+			return {
+				error: "El carrito está vacío. Por favor intenta nuevamente.",
+				success: false,
+			};
+		}
 
-    // 4. Call quote service to generate quote
-    const result = await generateQuoteFromCart(db, userId, {
-      cartItems,
-      contactPhone: formInput.contactPhone,
-      deliveryAddress: formInput.deliveryAddress,
-      projectAddress: {
-        projectCity: formInput.projectCity,
-        projectName: formInput.projectName ?? "Sin nombre",
-        projectState: formInput.projectState,
-        projectStreet: formInput.projectStreet,
-      },
-    });
+		// 4. Call quote service to generate quote
+		const result = await generateQuoteFromCart(db, userId, {
+			cartItems,
+			contactPhone: formInput.contactPhone,
+			deliveryAddress: formInput.deliveryAddress,
+			projectAddress: {
+				projectCity: formInput.projectCity,
+				projectName: formInput.projectName ?? "Sin nombre",
+				projectState: formInput.projectState,
+				projectStreet: formInput.projectStreet,
+			},
+		});
 
-    logger.info("[QuoteAction] Quote generation completed successfully", {
-      correlationId,
-      duration: `${Date.now() - startTime}ms`,
-      quoteId: result.quoteId,
-      userId,
-    });
+		logger.info("[QuoteAction] Quote generation completed successfully", {
+			correlationId,
+			duration: `${Date.now() - startTime}ms`,
+			quoteId: result.quoteId,
+			userId,
+		});
 
-    return {
-      quoteId: result.quoteId,
-      success: true,
-    };
-  } catch (error) {
-    logger.error("[QuoteAction] Quote generation failed", {
-      correlationId,
-      duration: `${Date.now() - startTime}ms`,
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
+		return {
+			quoteId: result.quoteId,
+			success: true,
+		};
+	} catch (error) {
+		logger.error("[QuoteAction] Quote generation failed", {
+			correlationId,
+			duration: `${Date.now() - startTime}ms`,
+			error: error instanceof Error ? error.message : "Unknown error",
+		});
 
-    return {
-      error:
-        error instanceof Error
-          ? error.message
-          : "Error al generar la cotización. Por favor intenta nuevamente.",
-      success: false,
-    };
-  }
+		return {
+			error:
+				error instanceof Error
+					? error.message
+					: "Error al generar la cotización. Por favor intenta nuevamente.",
+			success: false,
+		};
+	}
 }
 
 /**
@@ -205,15 +205,15 @@ export async function generateQuoteFromCartAction(
  * ```
  */
 export async function redirectToQuoteGenerationAction(): Promise<void> {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+	const session = await auth.api.getSession({
+		headers: await headers(),
+	});
 
-  if (!session?.user?.id) {
-    // Redirect to sign-in with callback to quote generation page
-    redirect("/api/auth/signin?callbackUrl=/quote/new");
-  }
+	if (!session?.user?.id) {
+		// Redirect to sign-in with callback to quote generation page
+		redirect("/api/auth/signin?callbackUrl=/quote/new");
+	}
 
-  // User is authenticated, redirect to quote generation page
-  redirect("/quote/new");
+	// User is authenticated, redirect to quote generation page
+	redirect("/quote/new");
 }

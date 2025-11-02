@@ -3,7 +3,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+	return twMerge(clsx(inputs));
 }
 
 /**
@@ -14,20 +14,20 @@ export function cn(...inputs: ClassValue[]) {
  * @returns Formatted date string
  */
 export function formatDate(
-  date: Date | string,
-  locale = "es-CO",
-  _timezone = "America/Bogota"
+	date: Date | string,
+	locale = "es-CO",
+	_timezone = "America/Bogota",
 ): string {
-  try {
-    const dateObj = typeof date === "string" ? new Date(date) : date;
+	try {
+		const dateObj = typeof date === "string" ? new Date(date) : date;
 
-    if (Number.isNaN(dateObj.getTime())) {
-      return "Fecha inválida";
-    }
+		if (Number.isNaN(dateObj.getTime())) {
+			return "Fecha inválida";
+		}
 
-    // Use Tempo for consistent date formatting with tenant config
-    return tempoFormat(dateObj, "DD/MM/YYYY", locale);
-  } catch (_error) {
-    return "Fecha inválida";
-  }
+		// Use Tempo for consistent date formatting with tenant config
+		return tempoFormat(dateObj, "DD/MM/YYYY", locale);
+	} catch (_error) {
+		return "Fecha inválida";
+	}
 }

@@ -12,54 +12,54 @@
 import type { Quote } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import {
-  getStatusConfig,
-  getStatusIconComponent,
-  type QuoteStatus,
+	getStatusConfig,
+	getStatusIconComponent,
+	type QuoteStatus,
 } from "../_utils/status-config";
 
 /**
  * QuoteStatusBadge props
  */
 export type QuoteStatusBadgeProps = {
-  /** Quote status (draft, sent, canceled) */
-  status: QuoteStatus | Quote["status"];
+	/** Quote status (draft, sent, canceled) */
+	status: QuoteStatus | Quote["status"];
 
-  /** Show icon next to label (default: true) */
-  showIcon?: boolean;
+	/** Show icon next to label (default: true) */
+	showIcon?: boolean;
 
-  /** Enable tooltip on hover (default: true) */
-  showTooltip?: boolean;
+	/** Enable tooltip on hover (default: true) */
+	showTooltip?: boolean;
 
-  /** Additional CSS classes */
-  className?: string;
+	/** Additional CSS classes */
+	className?: string;
 
-  /** Badge size variant */
-  size?: "sm" | "default" | "lg";
+	/** Badge size variant */
+	size?: "sm" | "default" | "lg";
 };
 
 /**
  * Size variant classes for badge
  */
 const sizeVariants = {
-  default: "text-sm px-2.5 py-0.5",
-  lg: "text-base px-3 py-1",
-  sm: "text-xs px-2 py-0.5",
+	default: "text-sm px-2.5 py-0.5",
+	lg: "text-base px-3 py-1",
+	sm: "text-xs px-2 py-0.5",
 };
 
 /**
  * Icon size variants
  */
 const iconSizeVariants = {
-  default: "h-3.5 w-3.5",
-  lg: "h-4 w-4",
-  sm: "h-3 w-3",
+	default: "h-3.5 w-3.5",
+	lg: "h-4 w-4",
+	sm: "h-3 w-3",
 };
 
 /**
@@ -85,65 +85,65 @@ const iconSizeVariants = {
  * ```
  */
 export function QuoteStatusBadge({
-  status,
-  showIcon = true,
-  showTooltip = true,
-  className,
-  size = "default",
+	status,
+	showIcon = true,
+	showTooltip = true,
+	className,
+	size = "default",
 }: QuoteStatusBadgeProps) {
-  const config = getStatusConfig(status);
-  const IconComponent = getStatusIconComponent(status);
+	const config = getStatusConfig(status);
+	const IconComponent = getStatusIconComponent(status);
 
-  // Badge content
-  const badgeContent = (
-    <Badge
-      className={cn(
-        "inline-flex items-center gap-1.5 font-medium",
-        sizeVariants[size],
-        className
-      )}
-      data-status={status}
-      data-testid="quote-status-badge"
-      variant={config.variant}
-    >
-      {showIcon && (
-        <IconComponent
-          aria-hidden="true"
-          className={cn("flex-shrink-0", iconSizeVariants[size])}
-          data-testid="status-icon"
-        />
-      )}
-      <span data-testid="status-label">{config.label}</span>
-    </Badge>
-  );
+	// Badge content
+	const badgeContent = (
+		<Badge
+			className={cn(
+				"inline-flex items-center gap-1.5 font-medium",
+				sizeVariants[size],
+				className,
+			)}
+			data-status={status}
+			data-testid="quote-status-badge"
+			variant={config.variant}
+		>
+			{showIcon && (
+				<IconComponent
+					aria-hidden="true"
+					className={cn("flex-shrink-0", iconSizeVariants[size])}
+					data-testid="status-icon"
+				/>
+			)}
+			<span data-testid="status-label">{config.label}</span>
+		</Badge>
+	);
 
-  // Return without tooltip if disabled
-  if (!showTooltip) {
-    return badgeContent;
-  }
+	// Return without tooltip if disabled
+	if (!showTooltip) {
+		return badgeContent;
+	}
 
-  // Wrap with tooltip
-  return (
-    <TooltipProvider delayDuration={200}>
-      <Tooltip>
-        <TooltipTrigger asChild>{badgeContent}</TooltipTrigger>
-        <TooltipContent
-          align="center"
-          className="max-w-xs"
-          data-testid="status-tooltip"
-          side="bottom"
-        >
-          <p>{config.tooltip}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
+	// Wrap with tooltip
+	return (
+		<TooltipProvider delayDuration={200}>
+			<Tooltip>
+				<TooltipTrigger asChild>{badgeContent}</TooltipTrigger>
+				<TooltipContent
+					align="center"
+					className="max-w-xs"
+					data-testid="status-tooltip"
+					side="bottom"
+				>
+					<p>{config.tooltip}</p>
+				</TooltipContent>
+			</Tooltip>
+		</TooltipProvider>
+	);
 }
 
 export type {
-  QuoteStatus,
-  StatusConfig,
-  StatusCTA,
+	QuoteStatus,
+	StatusConfig,
+	StatusCTA,
 } from "../_utils/status-config";
 /**
  * Export status utilities for convenience
@@ -153,6 +153,6 @@ export type {
  */
 // biome-ignore lint/performance/noBarrelFile: Intentional re-export of closely related utilities
 export {
-  getStatusConfig,
-  getStatusIconComponent,
+	getStatusConfig,
+	getStatusIconComponent,
 } from "../_utils/status-config";

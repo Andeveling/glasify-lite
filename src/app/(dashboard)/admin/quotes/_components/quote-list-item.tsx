@@ -21,52 +21,52 @@ import { QuoteRoleBadge } from "./quote-role-badge";
 import { QuoteStatusBadge } from "./quote-status-badge";
 
 type QuoteListItemProps = {
-  quote: QuoteItem;
+	quote: QuoteItem;
 };
 
 export function QuoteListItem({ quote }: QuoteListItemProps) {
-  const userName =
-    quote.user?.name || quote.user?.email || "Usuario desconocido";
-  const formattedDate = new Intl.DateTimeFormat("es-LA", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  }).format(quote.createdAt);
+	const userName =
+		quote.user?.name || quote.user?.email || "Usuario desconocido";
+	const formattedDate = new Intl.DateTimeFormat("es-LA", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	}).format(quote.createdAt);
 
-  return (
-    <Link href={`/admin/quotes/${quote.id}`}>
-      <Card className="transition-colors hover:bg-accent">
-        <CardHeader>
-          <div className="flex items-start justify-between gap-2">
-            <CardTitle className="line-clamp-1 text-base">
-              {quote.projectName || "Sin nombre"}
-            </CardTitle>
-            <div className="flex shrink-0 gap-1">
-              <QuoteStatusBadge status={quote.status} />
-              <QuoteExpirationBadge validUntil={quote.validUntil} />
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground text-sm">Total</span>
-            <span className="font-semibold">
-              {quote.currency} {quote.total.toFixed(2)}
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground text-sm">Cliente</span>
-            <div className="flex items-center truncate text-sm">
-              <span className="truncate">{userName}</span>
-              {quote.user && <QuoteRoleBadge role={quote.user.role} />}
-            </div>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground text-sm">Fecha</span>
-            <span className="text-sm">{formattedDate}</span>
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
-  );
+	return (
+		<Link href={`/admin/quotes/${quote.id}`}>
+			<Card className="transition-colors hover:bg-accent">
+				<CardHeader>
+					<div className="flex items-start justify-between gap-2">
+						<CardTitle className="line-clamp-1 text-base">
+							{quote.projectName || "Sin nombre"}
+						</CardTitle>
+						<div className="flex shrink-0 gap-1">
+							<QuoteStatusBadge status={quote.status} />
+							<QuoteExpirationBadge validUntil={quote.validUntil} />
+						</div>
+					</div>
+				</CardHeader>
+				<CardContent className="space-y-2">
+					<div className="flex items-center justify-between">
+						<span className="text-muted-foreground text-sm">Total</span>
+						<span className="font-semibold">
+							{quote.currency} {quote.total.toFixed(2)}
+						</span>
+					</div>
+					<div className="flex items-center justify-between">
+						<span className="text-muted-foreground text-sm">Cliente</span>
+						<div className="flex items-center truncate text-sm">
+							<span className="truncate">{userName}</span>
+							{quote.user && <QuoteRoleBadge role={quote.user.role} />}
+						</div>
+					</div>
+					<div className="flex items-center justify-between">
+						<span className="text-muted-foreground text-sm">Fecha</span>
+						<span className="text-sm">{formattedDate}</span>
+					</div>
+				</CardContent>
+			</Card>
+		</Link>
+	);
 }

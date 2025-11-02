@@ -27,9 +27,9 @@ import { GlassTypesFilters } from "./_components/glass-types-filters";
 import { GlassTypesTable } from "./_components/glass-types-table";
 
 export const metadata: Metadata = {
-  description:
-    "Administra los tipos de vidrio con sus soluciones y características",
-  title: "Tipos de Vidrio | Admin",
+	description:
+		"Administra los tipos de vidrio con sus soluciones y características",
+	title: "Tipos de Vidrio | Admin",
 };
 
 // MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
@@ -37,138 +37,138 @@ export const metadata: Metadata = {
 // TODO: Evaluate if Suspense boundaries improve UX after build verification
 
 type SearchParams = Promise<{
-  isActive?: string;
-  page?: string;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
+	isActive?: string;
+	page?: string;
+	search?: string;
+	sortBy?: string;
+	sortOrder?: "asc" | "desc";
 }>;
 
 type PageProps = {
-  searchParams: SearchParams;
+	searchParams: SearchParams;
 };
 
 // Loading skeleton for the table
 function GlassTypesTableSkeleton() {
-  const skeletonIds = Array.from(
-    { length: 10 },
-    (_, i) => `skeleton-${Date.now()}-${i}`
-  );
+	const skeletonIds = Array.from(
+		{ length: 10 },
+		(_, i) => `skeleton-${Date.now()}-${i}`,
+	);
 
-  return (
-    <div className="rounded-md border">
-      <div className="space-y-3 p-4">
-        {skeletonIds.map((id) => (
-          <Skeleton className="h-16 w-full" key={id} />
-        ))}
-      </div>
-    </div>
-  );
+	return (
+		<div className="rounded-md border">
+			<div className="space-y-3 p-4">
+				{skeletonIds.map((id) => (
+					<Skeleton className="h-16 w-full" key={id} />
+				))}
+			</div>
+		</div>
+	);
 }
 
 // Server Component that fetches and renders the table
 async function GlassTypesTableContent({
-  page,
-  isActive,
-  search,
-  sortBy,
-  sortOrder,
+	page,
+	isActive,
+	search,
+	sortBy,
+	sortOrder,
 }: {
-  page: number;
-  isActive: "all" | "active" | "inactive";
-  search?: string;
-  sortBy: string;
-  sortOrder: "asc" | "desc";
+	page: number;
+	isActive: "all" | "active" | "inactive";
+	search?: string;
+	sortBy: string;
+	sortOrder: "asc" | "desc";
 }) {
-  // Fetch glass types data (heavy query inside Suspense)
-  const initialData = await api.admin["glass-type"].list({
-    isActive,
-    limit: 20,
-    page,
-    search,
-    sortBy: sortBy as "name" | "thicknessMm" | "pricePerSqm" | "createdAt",
-    sortOrder,
-  });
+	// Fetch glass types data (heavy query inside Suspense)
+	const initialData = await api.admin["glass-type"].list({
+		isActive,
+		limit: 20,
+		page,
+		search,
+		sortBy: sortBy as "name" | "thicknessMm" | "pricePerSqm" | "createdAt",
+		sortOrder,
+	});
 
-  // Transform Decimal fields to number for Client Component serialization
-  const serializedData = {
-    ...initialData,
-    items: initialData.items.map((glassType) => ({
-      ...glassType,
-      lightTransmission: glassType.lightTransmission?.toNumber() ?? null,
-      pricePerSqm: glassType.pricePerSqm.toNumber(),
-      solarFactor: glassType.solarFactor?.toNumber() ?? null,
-      uValue: glassType.uValue?.toNumber() ?? null,
-    })),
-  } as const;
+	// Transform Decimal fields to number for Client Component serialization
+	const serializedData = {
+		...initialData,
+		items: initialData.items.map((glassType) => ({
+			...glassType,
+			lightTransmission: glassType.lightTransmission?.toNumber() ?? null,
+			pricePerSqm: glassType.pricePerSqm.toNumber(),
+			solarFactor: glassType.solarFactor?.toNumber() ?? null,
+			uValue: glassType.uValue?.toNumber() ?? null,
+		})),
+	} as const;
 
-  return (
-    <GlassTypesTable
-      // biome-ignore lint/suspicious/noExplicitAny: Type mismatch between Prisma and Client types (Decimal vs number serialization)
-      initialData={serializedData as any}
-      searchParams={{
-        isActive,
-        page: String(page),
-        search,
-      }}
-    />
-  );
+	return (
+		<GlassTypesTable
+			// biome-ignore lint/suspicious/noExplicitAny: Type mismatch between Prisma and Client types (Decimal vs number serialization)
+			initialData={serializedData as any}
+			searchParams={{
+				isActive,
+				page: String(page),
+				search,
+			}}
+		/>
+	);
 }
 
 export default async function GlassTypesPage({ searchParams }: PageProps) {
-  const params = await searchParams;
+	const params = await searchParams;
 
-  // Parse search params (outside Suspense)
-  const page = Number(params.page) || 1;
-  const isActive = (
-    params.isActive && params.isActive !== "all" ? params.isActive : "all"
-  ) as "all" | "active" | "inactive";
-  const search = params.search || undefined;
-  const sortBy = params.sortBy || "name";
-  const sortOrder = (params.sortOrder || "asc") as "asc" | "desc";
+	// Parse search params (outside Suspense)
+	const page = Number(params.page) || 1;
+	const isActive = (
+		params.isActive && params.isActive !== "all" ? params.isActive : "all"
+	) as "all" | "active" | "inactive";
+	const search = params.search || undefined;
+	const sortBy = params.sortBy || "name";
+	const sortOrder = (params.sortOrder || "asc") as "asc" | "desc";
 
-  // Fetch suppliers for filter dropdown (lightweight query outside Suspense)
-  const suppliersData = await api.admin["glass-supplier"].list({
-    isActive: "active",
-    limit: 100,
-    page: 1,
-    sortBy: "name",
-    sortOrder: "asc",
-  });
+	// Fetch suppliers for filter dropdown (lightweight query outside Suspense)
+	const suppliersData = await api.admin["glass-supplier"].list({
+		isActive: "active",
+		limit: 100,
+		page: 1,
+		sortBy: "name",
+		sortOrder: "asc",
+	});
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="font-bold text-3xl tracking-tight">Tipos de Vidrio</h1>
-        <p className="text-muted-foreground">
-          Administra los tipos de vidrio con sus soluciones y características
-        </p>
-      </div>
+	return (
+		<div className="space-y-6">
+			{/* Header */}
+			<div>
+				<h1 className="font-bold text-3xl tracking-tight">Tipos de Vidrio</h1>
+				<p className="text-muted-foreground">
+					Administra los tipos de vidrio con sus soluciones y características
+				</p>
+			</div>
 
-      {/* Filters outside Suspense - always visible */}
-      <GlassTypesFilters
-        searchParams={{
-          isActive: params.isActive,
-          page: String(page),
-          search,
-        }}
-        suppliers={suppliersData.items}
-      />
+			{/* Filters outside Suspense - always visible */}
+			<GlassTypesFilters
+				searchParams={{
+					isActive: params.isActive,
+					page: String(page),
+					search,
+				}}
+				suppliers={suppliersData.items}
+			/>
 
-      {/* Table content inside Suspense - streaming */}
-      <Suspense
-        fallback={<GlassTypesTableSkeleton />}
-        key={`${search}-${page}-${isActive}-${sortBy}-${sortOrder}`}
-      >
-        <GlassTypesTableContent
-          isActive={isActive}
-          page={page}
-          search={search}
-          sortBy={sortBy}
-          sortOrder={sortOrder}
-        />
-      </Suspense>
-    </div>
-  );
+			{/* Table content inside Suspense - streaming */}
+			<Suspense
+				fallback={<GlassTypesTableSkeleton />}
+				key={`${search}-${page}-${isActive}-${sortBy}-${sortOrder}`}
+			>
+				<GlassTypesTableContent
+					isActive={isActive}
+					page={page}
+					search={search}
+					sortBy={sortBy}
+					sortOrder={sortOrder}
+				/>
+			</Suspense>
+		</div>
+	);
 }

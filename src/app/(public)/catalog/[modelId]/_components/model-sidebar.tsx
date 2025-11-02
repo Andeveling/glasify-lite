@@ -8,17 +8,17 @@ import { ModelSpecifications } from "./model-specifications";
 import { ProfileSupplierCard } from "./profile-supplier-card";
 
 type ModelSidebarProps = {
-  model: Model;
+	model: Model;
 };
 
 export function ModelSidebar({ model }: ModelSidebarProps) {
-  return (
-    <div className="space-y-4">
-      <ModelInfo model={model} />
-      <ModelSpecifications model={model} />
-      <ProfileSupplierCard model={model} />
-      <ModelDimensionsCard dimensions={model.dimensions} />
-      <ModelFeatures features={model.features} />
-    </div>
-  );
+	return (
+		<div className="space-y-4">
+			<ModelInfo model={model} />
+			<ModelSpecifications model={model} />
+			<ProfileSupplierCard model={model} />
+			<ModelDimensionsCard dimensions={model.dimensions} />
+			<ModelFeatures features={model.features} />
+		</div>
+	);
 }

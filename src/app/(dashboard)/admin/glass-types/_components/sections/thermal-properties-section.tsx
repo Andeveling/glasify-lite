@@ -18,51 +18,51 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FormNumberField } from "../form-fields/form-number-field";
 
 type ThermalPropertiesSectionProps = {
-  control: Control<FieldValues>;
+	control: Control<FieldValues>;
 };
 
 /**
  * Thermal and optical properties section component
  */
 export function ThermalPropertiesSection({
-  control,
+	control,
 }: ThermalPropertiesSectionProps) {
-  return (
-    <Card>
-      <CardContent className="grid gap-4 pt-6 md:grid-cols-3">
-        {/* U-Value */}
-        <FormNumberField
-          control={control}
-          description="Transmitancia térmica (opcional)"
-          label="Valor U (W/m²·K)"
-          max={10}
-          min={0}
-          name="uValue"
-          step={0.01}
-        />
+	return (
+		<Card>
+			<CardContent className="grid gap-4 pt-6 md:grid-cols-3">
+				{/* U-Value */}
+				<FormNumberField
+					control={control}
+					description="Transmitancia térmica (opcional)"
+					label="Valor U (W/m²·K)"
+					max={10}
+					min={0}
+					name="uValue"
+					step={0.01}
+				/>
 
-        {/* Solar Factor */}
-        <FormNumberField
-          control={control}
-          description="0.00-1.00 (opcional)"
-          label="Factor Solar (g)"
-          max={1}
-          min={0}
-          name="solarFactor"
-          step={0.01}
-        />
+				{/* Solar Factor */}
+				<FormNumberField
+					control={control}
+					description="0.00-1.00 (opcional)"
+					label="Factor Solar (g)"
+					max={1}
+					min={0}
+					name="solarFactor"
+					step={0.01}
+				/>
 
-        {/* Light Transmission */}
-        <FormNumberField
-          control={control}
-          description="0.00-1.00 (opcional)"
-          label="Transmisión de Luz"
-          max={1}
-          min={0}
-          name="lightTransmission"
-          step={0.01}
-        />
-      </CardContent>
-    </Card>
-  );
+				{/* Light Transmission */}
+				<FormNumberField
+					control={control}
+					description="0.00-1.00 (opcional)"
+					label="Transmisión de Luz"
+					max={1}
+					min={0}
+					name="lightTransmission"
+					step={0.01}
+				/>
+			</CardContent>
+		</Card>
+	);
 }

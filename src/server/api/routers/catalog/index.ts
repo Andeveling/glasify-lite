@@ -16,8 +16,8 @@ import { glassolutionsPublicQueries } from "./glass-solutions.queries";
  * Users interact with catalog only to configure items for quotes.
  */
 export const catalogRouter = createTRPCRouter({
-  ...catalogQueries._def.procedures,
-  ...glassolutionsPublicQueries._def.procedures,
+	...catalogQueries._def.procedures,
+	...glassolutionsPublicQueries._def.procedures,
 });
 
 // Export schemas for form validation (quote parametrization)

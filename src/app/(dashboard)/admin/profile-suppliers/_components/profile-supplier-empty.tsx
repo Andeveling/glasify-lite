@@ -13,39 +13,39 @@
 
 import { Factory } from "lucide-react";
 import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
+	Empty,
+	EmptyContent,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle,
 } from "@/components/ui/empty";
 
 type ProfileSupplierEmptyProps = {
-  hasFilters: boolean;
+	hasFilters: boolean;
 };
 
 export function ProfileSupplierEmpty({
-  hasFilters,
+	hasFilters,
 }: ProfileSupplierEmptyProps) {
-  return (
-    <Empty>
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <Factory />
-        </EmptyMedia>
-        <EmptyTitle>
-          {hasFilters
-            ? "No se encontraron proveedores"
-            : "No hay proveedores de perfiles"}
-        </EmptyTitle>
-        <EmptyDescription>
-          {hasFilters
-            ? "No se encontraron proveedores que coincidan con los filtros aplicados. Intenta ajustar los criterios de búsqueda."
-            : "Comienza agregando tu primer proveedor de perfiles para ventanas y puertas."}
-        </EmptyDescription>
-      </EmptyHeader>
-      <EmptyContent>{/* Create button is in filters component */}</EmptyContent>
-    </Empty>
-  );
+	return (
+		<Empty>
+			<EmptyHeader>
+				<EmptyMedia variant="icon">
+					<Factory />
+				</EmptyMedia>
+				<EmptyTitle>
+					{hasFilters
+						? "No se encontraron proveedores"
+						: "No hay proveedores de perfiles"}
+				</EmptyTitle>
+				<EmptyDescription>
+					{hasFilters
+						? "No se encontraron proveedores que coincidan con los filtros aplicados. Intenta ajustar los criterios de búsqueda."
+						: "Comienza agregando tu primer proveedor de perfiles para ventanas y puertas."}
+				</EmptyDescription>
+			</EmptyHeader>
+			<EmptyContent>{/* Create button is in filters component */}</EmptyContent>
+		</Empty>
+	);
 }

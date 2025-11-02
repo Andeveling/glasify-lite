@@ -19,34 +19,34 @@ import type { ServiceInput } from "../../factories/service.factory";
  * - Servicios fijos: Tarifa única por unidad
  */
 export const vitroRojasServices: ServiceInput[] = [
-  {
-    name: "Instalación de Ventanas",
-    rate: 15, // USD/m²
-    type: "area",
-    unit: "sqm",
-  },
-  {
-    name: "Sellado Perimetral",
-    rate: 3.5, // USD/ml
-    type: "perimeter",
-    unit: "ml",
-  },
-  {
-    name: "Desmonte de Ventana Existente",
-    rate: 25, // USD/unidad
-    type: "fixed",
-    unit: "unit",
-  },
-  {
-    name: "Servicio de Reposición",
-    rate: 35, // USD/unidad
-    type: "fixed",
-    unit: "unit",
-  },
-  {
-    name: "Protección para Obra",
-    rate: 2.5, // USD/m²
-    type: "area",
-    unit: "sqm",
-  },
+	{
+		name: "Instalación de Ventanas",
+		rate: 15, // USD/m²
+		type: "area",
+		unit: "sqm",
+	},
+	{
+		name: "Sellado Perimetral",
+		rate: 3.5, // USD/ml
+		type: "perimeter",
+		unit: "ml",
+	},
+	{
+		name: "Desmonte de Ventana Existente",
+		rate: 25, // USD/unidad
+		type: "fixed",
+		unit: "unit",
+	},
+	{
+		name: "Servicio de Reposición",
+		rate: 35, // USD/unidad
+		type: "fixed",
+		unit: "unit",
+	},
+	{
+		name: "Protección para Obra",
+		rate: 2.5, // USD/m²
+		type: "area",
+		unit: "sqm",
+	},
 ];

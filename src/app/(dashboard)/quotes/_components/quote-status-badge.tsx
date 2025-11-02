@@ -13,7 +13,7 @@ import { FileText, Send, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 type QuoteStatusBadgeProps = {
-  status: QuoteStatus;
+	status: QuoteStatus;
 };
 
 /**
@@ -21,28 +21,28 @@ type QuoteStatusBadgeProps = {
  * Defines visual appearance and user-facing text
  */
 const statusConfig = {
-  canceled: {
-    icon: XCircle,
-    label: "Cancelada",
-    variant: "destructive" as const,
-  },
-  draft: {
-    icon: FileText,
-    label: "Borrador",
-    variant: "secondary" as const,
-  },
-  sent: {
-    icon: Send,
-    label: "Enviada",
-    variant: "default" as const,
-  },
+	canceled: {
+		icon: XCircle,
+		label: "Cancelada",
+		variant: "destructive" as const,
+	},
+	draft: {
+		icon: FileText,
+		label: "Borrador",
+		variant: "secondary" as const,
+	},
+	sent: {
+		icon: Send,
+		label: "Enviada",
+		variant: "default" as const,
+	},
 } satisfies Record<
-  QuoteStatus,
-  {
-    variant: "default" | "secondary" | "destructive" | "outline";
-    label: string;
-    icon: React.ComponentType<{ className?: string }>;
-  }
+	QuoteStatus,
+	{
+		variant: "default" | "secondary" | "destructive" | "outline";
+		label: string;
+		icon: React.ComponentType<{ className?: string }>;
+	}
 >;
 
 /**
@@ -59,13 +59,13 @@ const statusConfig = {
  * ```
  */
 export function QuoteStatusBadge({ status }: QuoteStatusBadgeProps) {
-  const config = statusConfig[status];
-  const Icon = config.icon;
+	const config = statusConfig[status];
+	const Icon = config.icon;
 
-  return (
-    <Badge className="gap-1.5" variant={config.variant}>
-      <Icon className="h-3 w-3" />
-      {config.label}
-    </Badge>
-  );
+	return (
+		<Badge className="gap-1.5" variant={config.variant}>
+			<Icon className="h-3 w-3" />
+			{config.label}
+		</Badge>
+	);
 }

@@ -24,26 +24,26 @@ import { signIn } from "@/lib/auth-client";
 // ============================================================================
 
 export type SignInButtonProps = {
-  /** URL to redirect to after successful sign-in */
-  callbackUrl?: string;
+	/** URL to redirect to after successful sign-in */
+	callbackUrl?: string;
 
-  /** Custom button text (default: 'Iniciar sesión con Google') */
-  children?: React.ReactNode;
+	/** Custom button text (default: 'Iniciar sesión con Google') */
+	children?: React.ReactNode;
 
-  /** Button variant */
-  variant?:
-    | "default"
-    | "destructive"
-    | "outline"
-    | "secondary"
-    | "ghost"
-    | "link";
+	/** Button variant */
+	variant?:
+		| "default"
+		| "destructive"
+		| "outline"
+		| "secondary"
+		| "ghost"
+		| "link";
 
-  /** Button size */
-  size?: "default" | "sm" | "lg" | "icon";
+	/** Button size */
+	size?: "default" | "sm" | "lg" | "icon";
 
-  /** Custom CSS class */
-  className?: string;
+	/** Custom CSS class */
+	className?: string;
 };
 
 // ============================================================================
@@ -61,41 +61,41 @@ export type SignInButtonProps = {
  * ```
  */
 export function SignInButton({
-  callbackUrl = "/dashboard",
-  children = "Iniciar sesión con Google",
-  variant = "default",
-  size = "default",
-  className,
+	callbackUrl = "/dashboard",
+	children = "Iniciar sesión con Google",
+	variant = "default",
+	size = "default",
+	className,
 }: SignInButtonProps) {
-  const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
-  /**
-   * Handle Google OAuth sign-in
-   */
-  const handleSignIn = async () => {
-    try {
-      setIsLoading(true);
+	/**
+	 * Handle Google OAuth sign-in
+	 */
+	const handleSignIn = async () => {
+		try {
+			setIsLoading(true);
 
-      // Trigger Google OAuth flow
-      await signIn.social({
-        callbackURL: callbackUrl,
-        provider: "google",
-      });
-    } catch {
-      setIsLoading(false);
-    }
-  };
+			// Trigger Google OAuth flow
+			await signIn.social({
+				callbackURL: callbackUrl,
+				provider: "google",
+			});
+		} catch {
+			setIsLoading(false);
+		}
+	};
 
-  return (
-    <Button
-      className={className}
-      disabled={isLoading}
-      onClick={handleSignIn}
-      size={size}
-      type="button"
-      variant={variant}
-    >
-      {isLoading ? "Iniciando sesión..." : children}
-    </Button>
-  );
+	return (
+		<Button
+			className={className}
+			disabled={isLoading}
+			onClick={handleSignIn}
+			size={size}
+			type="button"
+			variant={variant}
+		>
+			{isLoading ? "Iniciando sesión..." : children}
+		</Button>
+	);
 }

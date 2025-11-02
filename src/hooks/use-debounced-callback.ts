@@ -55,48 +55,48 @@ const DEFAULT_DELAY = 300;
  * @returns Debounced version of the callback
  */
 export function useDebouncedCallback<T extends AnyFunction>(
-  callback: T,
-  delay: number = DEFAULT_DELAY
+	callback: T,
+	delay: number = DEFAULT_DELAY,
 ): T {
-  // Store timeout ID for cleanup
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+	// Store timeout ID for cleanup
+	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Store callback in ref to avoid re-creating debounced function on every render
-  const callbackRef = useRef<T>(callback);
+	// Store callback in ref to avoid re-creating debounced function on every render
+	const callbackRef = useRef<T>(callback);
 
-  // Update callback ref when callback changes
-  useEffect(() => {
-    callbackRef.current = callback;
-  }, [callback]);
+	// Update callback ref when callback changes
+	useEffect(() => {
+		callbackRef.current = callback;
+	}, [callback]);
 
-  // Cleanup timeout on unmount
-  useEffect(
-    () => () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    },
-    []
-  );
+	// Cleanup timeout on unmount
+	useEffect(
+		() => () => {
+			if (timeoutRef.current) {
+				clearTimeout(timeoutRef.current);
+			}
+		},
+		[],
+	);
 
-  // Create debounced function
-  const debouncedCallback = useCallback(
-    // biome-ignore lint/suspicious/noExplicitAny: Must match generic function signature
-    (...args: any[]) => {
-      // Clear existing timeout
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+	// Create debounced function
+	const debouncedCallback = useCallback(
+		// biome-ignore lint/suspicious/noExplicitAny: Must match generic function signature
+		(...args: any[]) => {
+			// Clear existing timeout
+			if (timeoutRef.current) {
+				clearTimeout(timeoutRef.current);
+			}
 
-      // Set new timeout
-      timeoutRef.current = setTimeout(() => {
-        callbackRef.current(...args);
-      }, delay);
-    },
-    [delay]
-  ) as T;
+			// Set new timeout
+			timeoutRef.current = setTimeout(() => {
+				callbackRef.current(...args);
+			}, delay);
+		},
+		[delay],
+	) as T;
 
-  return debouncedCallback;
+	return debouncedCallback;
 }
 
 /**
@@ -111,13 +111,13 @@ export function useDebouncedCallback<T extends AnyFunction>(
  * ```
  */
 export function useDebouncedState<T>(
-  initialValue: T,
-  delay: number = DEFAULT_DELAY
+	initialValue: T,
+	delay: number = DEFAULT_DELAY,
 ): [T, (newValue: T) => void] {
-  const valueRef = useRef<T>(initialValue);
-  const debouncedSetValue = useDebouncedCallback((newValue: T) => {
-    valueRef.current = newValue;
-  }, delay);
+	const valueRef = useRef<T>(initialValue);
+	const debouncedSetValue = useDebouncedCallback((newValue: T) => {
+		valueRef.current = newValue;
+	}, delay);
 
-  return [valueRef.current, debouncedSetValue];
+	return [valueRef.current, debouncedSetValue];
 }

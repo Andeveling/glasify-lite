@@ -8,10 +8,10 @@ import type { Decimal } from "@prisma/client/runtime/library";
  * so it needs to be converted to number or string.
  */
 type ModelWithDecimalFields = {
-  accessoryPrice?: Decimal | null;
-  basePrice: Decimal;
-  costPerMmHeight: Decimal;
-  costPerMmWidth: Decimal;
+	accessoryPrice?: Decimal | null;
+	basePrice: Decimal;
+	costPerMmHeight: Decimal;
+	costPerMmWidth: Decimal;
 };
 
 /**
@@ -33,15 +33,15 @@ type ModelWithDecimalFields = {
  * ```
  */
 export function serializeDecimalFields<T extends ModelWithDecimalFields>(
-  model: T
+	model: T,
 ) {
-  return {
-    ...model,
-    accessoryPrice: model.accessoryPrice?.toNumber() ?? null,
-    basePrice: model.basePrice.toNumber(),
-    costPerMmHeight: model.costPerMmHeight.toNumber(),
-    costPerMmWidth: model.costPerMmWidth.toNumber(),
-  };
+	return {
+		...model,
+		accessoryPrice: model.accessoryPrice?.toNumber() ?? null,
+		basePrice: model.basePrice.toNumber(),
+		costPerMmHeight: model.costPerMmHeight.toNumber(),
+		costPerMmWidth: model.costPerMmWidth.toNumber(),
+	};
 }
 
 /**
@@ -53,5 +53,5 @@ export function serializeDecimalFields<T extends ModelWithDecimalFields>(
  * @returns Object with serialized Decimal fields
  */
 export function serializeModel<T extends ModelWithDecimalFields>(model: T) {
-  return serializeDecimalFields(model);
+	return serializeDecimalFields(model);
 }

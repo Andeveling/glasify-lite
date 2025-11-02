@@ -3,13 +3,13 @@
 import type { UserRole } from "@prisma/client";
 import type { LucideIcon } from "lucide-react";
 import {
-  Calculator,
-  FileText,
-  Glasses,
-  LayoutDashboard,
-  Menu,
-  Package,
-  Settings,
+	Calculator,
+	FileText,
+	Glasses,
+	LayoutDashboard,
+	Menu,
+	Package,
+	Settings,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -25,12 +25,12 @@ import type { IconName, NavLink } from "./role-based-nav";
  * This allows Server Components to pass icon names as strings
  */
 const iconMap: Record<IconName, LucideIcon> = {
-  Calculator,
-  FileText,
-  Glasses,
-  LayoutDashboard,
-  Package,
-  Settings,
+	Calculator,
+	FileText,
+	Glasses,
+	LayoutDashboard,
+	Package,
+	Settings,
 };
 
 /**
@@ -38,50 +38,50 @@ const iconMap: Record<IconName, LucideIcon> = {
  * Renders a list of navigation links with active state highlighting
  */
 function NavigationItems({
-  items,
-  currentPath,
-  onItemClick,
+	items,
+	currentPath,
+	onItemClick,
 }: {
-  items: NavLink[];
-  currentPath: string;
-  onItemClick?: () => void;
+	items: NavLink[];
+	currentPath: string;
+	onItemClick?: () => void;
 }) {
-  return (
-    <>
-      {items.map((item) => {
-        const isActive =
-          currentPath === item.href ||
-          item.routes?.some((route) => currentPath.startsWith(route));
-        const IconComponent = iconMap[item.icon];
+	return (
+		<>
+			{items.map((item) => {
+				const isActive =
+					currentPath === item.href ||
+					item.routes?.some((route) => currentPath.startsWith(route));
+				const IconComponent = iconMap[item.icon];
 
-        return (
-          <Link
-            aria-current={isActive ? "page" : undefined}
-            aria-describedby={`nav-desc-${item.href.replace(/\//g, "-")}`}
-            className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-sm transition-colors",
-              "hover:bg-muted focus-visible:bg-muted focus-visible:outline-none",
-              isActive
-                ? "bg-muted text-primary"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-            href={item.href}
-            key={item.href}
-            onClick={onItemClick}
-          >
-            <IconComponent aria-hidden="true" className="h-4 w-4" />
-            {item.label}
-            <span
-              className="sr-only"
-              id={`nav-desc-${item.href.replace(/\//g, "-")}`}
-            >
-              {item.description}
-            </span>
-          </Link>
-        );
-      })}
-    </>
-  );
+				return (
+					<Link
+						aria-current={isActive ? "page" : undefined}
+						aria-describedby={`nav-desc-${item.href.replace(/\//g, "-")}`}
+						className={cn(
+							"flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-sm transition-colors",
+							"hover:bg-muted focus-visible:bg-muted focus-visible:outline-none",
+							isActive
+								? "bg-muted text-primary"
+								: "text-muted-foreground hover:text-foreground",
+						)}
+						href={item.href}
+						key={item.href}
+						onClick={onItemClick}
+					>
+						<IconComponent aria-hidden="true" className="h-4 w-4" />
+						{item.label}
+						<span
+							className="sr-only"
+							id={`nav-desc-${item.href.replace(/\//g, "-")}`}
+						>
+							{item.description}
+						</span>
+					</Link>
+				);
+			})}
+		</>
+	);
 }
 
 /**
@@ -106,112 +106,112 @@ function NavigationItems({
  * @param className - Optional CSS class for styling
  */
 export function NavigationMenu({
-  links,
-  userRole,
-  className,
+	links,
+	userRole,
+	className,
 }: {
-  links: NavLink[];
-  userRole?: UserRole;
-  className?: string;
+	links: NavLink[];
+	userRole?: UserRole;
+	className?: string;
 }) {
-  const pathname = usePathname();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+	const pathname = usePathname();
+	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const closeMobileMenu = () => setMobileMenuOpen(false);
+	const closeMobileMenu = () => setMobileMenuOpen(false);
 
-  // Determine menu title based on role
-  const getMenuTitle = () => {
-    if (userRole === "admin") {
-      return "Panel Administrativo";
-    }
-    if (userRole === "seller") {
-      return "Portal de Vendedor";
-    }
-    return "Glasify Lite";
-  };
+	// Determine menu title based on role
+	const getMenuTitle = () => {
+		if (userRole === "admin") {
+			return "Panel Administrativo";
+		}
+		if (userRole === "seller") {
+			return "Portal de Vendedor";
+		}
+		return "Glasify Lite";
+	};
 
-  // Determine menu description based on role
-  const getMenuDescription = () => {
-    if (userRole === "admin") {
-      return "Navegación del panel de control";
-    }
-    if (userRole === "seller") {
-      return "Gestiona tus cotizaciones";
-    }
-    return "Cotizador inteligente de vidrios";
-  };
+	// Determine menu description based on role
+	const getMenuDescription = () => {
+		if (userRole === "admin") {
+			return "Navegación del panel de control";
+		}
+		if (userRole === "seller") {
+			return "Gestiona tus cotizaciones";
+		}
+		return "Cotizador inteligente de vidrios";
+	};
 
-  const menuTitle = getMenuTitle();
-  const menuDescription = getMenuDescription();
-  const isAuthenticated = !!userRole;
+	const menuTitle = getMenuTitle();
+	const menuDescription = getMenuDescription();
+	const isAuthenticated = !!userRole;
 
-  return (
-    <nav
-      aria-label={
-        userRole === "admin"
-          ? "Navegación del panel administrativo"
-          : "Navegación principal"
-      }
-      className={cn("flex items-center space-x-4", className)}
-    >
-      {/* Desktop Navigation */}
-      <div className="hidden md:flex md:items-center md:space-x-1">
-        <NavigationItems currentPath={pathname} items={links} />
-      </div>
+	return (
+		<nav
+			aria-label={
+				userRole === "admin"
+					? "Navegación del panel administrativo"
+					: "Navegación principal"
+			}
+			className={cn("flex items-center space-x-4", className)}
+		>
+			{/* Desktop Navigation */}
+			<div className="hidden md:flex md:items-center md:space-x-1">
+				<NavigationItems currentPath={pathname} items={links} />
+			</div>
 
-      {/* Mobile Navigation */}
-      <div className="md:hidden">
-        <Sheet onOpenChange={setMobileMenuOpen} open={mobileMenuOpen}>
-          <SheetTrigger asChild>
-            <Button
-              aria-label="Abrir menú de navegación"
-              size="sm"
-              variant="outline"
-            >
-              <Menu className="h-4 w-4" />
-            </Button>
-          </SheetTrigger>
+			{/* Mobile Navigation */}
+			<div className="md:hidden">
+				<Sheet onOpenChange={setMobileMenuOpen} open={mobileMenuOpen}>
+					<SheetTrigger asChild>
+						<Button
+							aria-label="Abrir menú de navegación"
+							size="sm"
+							variant="outline"
+						>
+							<Menu className="h-4 w-4" />
+						</Button>
+					</SheetTrigger>
 
-          <SheetContent
-            aria-describedby="mobile-nav-description"
-            className="w-64 p-0"
-            side="left"
-          >
-            <div className="flex h-full flex-col">
-              <div className="border-b p-4">
-                <h2 className="font-semibold text-lg">{menuTitle}</h2>
-                <p
-                  className="text-muted-foreground text-sm"
-                  id="mobile-nav-description"
-                >
-                  {menuDescription}
-                </p>
-              </div>
+					<SheetContent
+						aria-describedby="mobile-nav-description"
+						className="w-64 p-0"
+						side="left"
+					>
+						<div className="flex h-full flex-col">
+							<div className="border-b p-4">
+								<h2 className="font-semibold text-lg">{menuTitle}</h2>
+								<p
+									className="text-muted-foreground text-sm"
+									id="mobile-nav-description"
+								>
+									{menuDescription}
+								</p>
+							</div>
 
-              <nav className="flex-1 space-y-1 p-4">
-                <NavigationItems
-                  currentPath={pathname}
-                  items={links}
-                  onItemClick={closeMobileMenu}
-                />
-              </nav>
+							<nav className="flex-1 space-y-1 p-4">
+								<NavigationItems
+									currentPath={pathname}
+									items={links}
+									onItemClick={closeMobileMenu}
+								/>
+							</nav>
 
-              {/* Sign In button for unauthenticated users */}
-              {!isAuthenticated && (
-                <div className="border-t p-4">
-                  <Link
-                    className="flex w-full items-center justify-center rounded-lg bg-primary px-3 py-2 font-medium text-primary-foreground text-sm hover:bg-primary/90"
-                    href="/signin"
-                    onClick={closeMobileMenu}
-                  >
-                    Iniciar Sesión
-                  </Link>
-                </div>
-              )}
-            </div>
-          </SheetContent>
-        </Sheet>
-      </div>
-    </nav>
-  );
+							{/* Sign In button for unauthenticated users */}
+							{!isAuthenticated && (
+								<div className="border-t p-4">
+									<Link
+										className="flex w-full items-center justify-center rounded-lg bg-primary px-3 py-2 font-medium text-primary-foreground text-sm hover:bg-primary/90"
+										href="/signin"
+										onClick={closeMobileMenu}
+									>
+										Iniciar Sesión
+									</Link>
+								</div>
+							)}
+						</div>
+					</SheetContent>
+				</Sheet>
+			</div>
+		</nav>
+	);
 }

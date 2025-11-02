@@ -13,37 +13,37 @@
 
 import { Factory } from "lucide-react";
 import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
+	Empty,
+	EmptyContent,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle,
 } from "@/components/ui/empty";
 
 type GlassSupplierEmptyProps = {
-  hasFilters: boolean;
+	hasFilters: boolean;
 };
 
 export function GlassSupplierEmpty({ hasFilters }: GlassSupplierEmptyProps) {
-  return (
-    <Empty>
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <Factory />
-        </EmptyMedia>
-        <EmptyTitle>
-          {hasFilters
-            ? "No se encontraron proveedores"
-            : "No hay proveedores de vidrio"}
-        </EmptyTitle>
-        <EmptyDescription>
-          {hasFilters
-            ? "No se encontraron proveedores que coincidan con los filtros aplicados. Intenta ajustar los criterios de búsqueda."
-            : "Comienza agregando tu primer proveedor de vidrio para gestionar los fabricantes."}
-        </EmptyDescription>
-      </EmptyHeader>
-      <EmptyContent>{/* Create button is in filters component */}</EmptyContent>
-    </Empty>
-  );
+	return (
+		<Empty>
+			<EmptyHeader>
+				<EmptyMedia variant="icon">
+					<Factory />
+				</EmptyMedia>
+				<EmptyTitle>
+					{hasFilters
+						? "No se encontraron proveedores"
+						: "No hay proveedores de vidrio"}
+				</EmptyTitle>
+				<EmptyDescription>
+					{hasFilters
+						? "No se encontraron proveedores que coincidan con los filtros aplicados. Intenta ajustar los criterios de búsqueda."
+						: "Comienza agregando tu primer proveedor de vidrio para gestionar los fabricantes."}
+				</EmptyDescription>
+			</EmptyHeader>
+			<EmptyContent>{/* Create button is in filters component */}</EmptyContent>
+		</Empty>
+	);
 }

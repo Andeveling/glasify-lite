@@ -23,77 +23,77 @@
 
 import { Plus } from "lucide-react";
 import {
-  type FilterDefinition,
-  TableFilters,
+	type FilterDefinition,
+	TableFilters,
 } from "@/app/_components/server-table/table-filters";
 import { TableSearch } from "@/app/_components/server-table/table-search";
 import { Button } from "@/components/ui/button";
 
 type ServicesFiltersProps = {
-  searchParams: {
-    isActive?: string;
-    page?: string;
-    search?: string;
-    type?: string;
-  };
-  onCreateClick?: () => void;
+	searchParams: {
+		isActive?: string;
+		page?: string;
+		search?: string;
+		type?: string;
+	};
+	onCreateClick?: () => void;
 };
 
 export function ServicesFilters({
-  searchParams,
-  onCreateClick,
+	searchParams,
+	onCreateClick,
 }: ServicesFiltersProps) {
-  /**
-   * Filter definitions
-   * Consistent with "Don't Make Me Think" principle:
-   * - Clear labels in Spanish
-   * - Logical grouping
-   * - Sensible defaults
-   */
-  const filters: FilterDefinition[] = [
-    {
-      defaultValue: "all",
-      id: "type",
-      label: "Tipo",
-      options: [
-        { label: "Todos", value: "all" },
-        { label: "Área (m²)", value: "area" },
-        { label: "Perímetro (ml)", value: "perimeter" },
-        { label: "Fijo (unidad)", value: "fixed" },
-      ],
-      type: "select",
-    },
-    {
-      defaultValue: "all",
-      id: "isActive",
-      label: "Estado",
-      options: [
-        { label: "Todos", value: "all" },
-        { label: "Activo", value: "active" },
-        { label: "Inactivo", value: "inactive" },
-      ],
-      type: "select",
-    },
-  ];
+	/**
+	 * Filter definitions
+	 * Consistent with "Don't Make Me Think" principle:
+	 * - Clear labels in Spanish
+	 * - Logical grouping
+	 * - Sensible defaults
+	 */
+	const filters: FilterDefinition[] = [
+		{
+			defaultValue: "all",
+			id: "type",
+			label: "Tipo",
+			options: [
+				{ label: "Todos", value: "all" },
+				{ label: "Área (m²)", value: "area" },
+				{ label: "Perímetro (ml)", value: "perimeter" },
+				{ label: "Fijo (unidad)", value: "fixed" },
+			],
+			type: "select",
+		},
+		{
+			defaultValue: "all",
+			id: "isActive",
+			label: "Estado",
+			options: [
+				{ label: "Todos", value: "all" },
+				{ label: "Activo", value: "active" },
+				{ label: "Inactivo", value: "inactive" },
+			],
+			type: "select",
+		},
+	];
 
-  return (
-    <div className="flex flex-wrap items-end justify-between gap-4">
-      {/* Search - max width to prevent huge inputs */}
-      <div className="max-w-sm flex-1">
-        <TableSearch
-          defaultValue={searchParams.search}
-          placeholder="Buscar por nombre..."
-        />
-      </div>
+	return (
+		<div className="flex flex-wrap items-end justify-between gap-4">
+			{/* Search - max width to prevent huge inputs */}
+			<div className="max-w-sm flex-1">
+				<TableSearch
+					defaultValue={searchParams.search}
+					placeholder="Buscar por nombre..."
+				/>
+			</div>
 
-      {/* Filters - reusable component that syncs with URL */}
-      <TableFilters filters={filters} />
+			{/* Filters - reusable component that syncs with URL */}
+			<TableFilters filters={filters} />
 
-      {/* Create button - always visible, clear action */}
-      <Button onClick={onCreateClick}>
-        <Plus className="mr-2 size-4" />
-        Nuevo Servicio
-      </Button>
-    </div>
-  );
+			{/* Create button - always visible, clear action */}
+			<Button onClick={onCreateClick}>
+				<Plus className="mr-2 size-4" />
+				Nuevo Servicio
+			</Button>
+		</div>
+	);
 }

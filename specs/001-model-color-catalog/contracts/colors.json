@@ -1,399 +1,399 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema",
-  "title": "Colors Router - Admin Color CRUD Operations",
-  "description": "tRPC procedures for managing the master color catalog (admin-only)",
-  "version": "1.0.0",
-  "router": "colors",
-  "basePath": "src/server/api/routers/colors.ts",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "Colors Router - Admin Color CRUD Operations",
+	"description": "tRPC procedures for managing the master color catalog (admin-only)",
+	"version": "1.0.0",
+	"router": "colors",
+	"basePath": "src/server/api/routers/colors.ts",
 
-  "procedures": {
-    "list": {
-      "type": "query",
-      "auth": "adminProcedure",
-      "description": "List all colors with optional filtering by active status",
-      "input": {
-        "type": "object",
-        "properties": {
-          "isActive": {
-            "type": "boolean",
-            "optional": true,
-            "description": "Filter by active status (undefined = all colors)"
-          },
-          "search": {
-            "type": "string",
-            "optional": true,
-            "description": "Search by color name (case-insensitive)"
-          }
-        }
-      },
-      "output": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": { "type": "string", "format": "cuid" },
-            "name": { "type": "string" },
-            "ralCode": { "type": "string", "nullable": true },
-            "hexCode": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
-            "isActive": { "type": "boolean" },
-            "createdAt": { "type": "string", "format": "date-time" },
-            "updatedAt": { "type": "string", "format": "date-time" },
-            "_count": {
-              "type": "object",
-              "properties": {
-                "modelColors": {
-                  "type": "number",
-                  "description": "Number of models using this color"
-                },
-                "quoteItems": {
-                  "type": "number",
-                  "description": "Number of quotes using this color"
-                }
-              }
-            }
-          }
-        }
-      },
-      "example": {
-        "input": { "isActive": true, "search": "gris" },
-        "output": [
-          {
-            "id": "clx123abc",
-            "name": "Gris Antracita",
-            "ralCode": "RAL 7016",
-            "hexCode": "#384043",
-            "isActive": true,
-            "createdAt": "2025-10-27T10:00:00Z",
-            "updatedAt": "2025-10-27T10:00:00Z",
-            "_count": { "modelColors": 5, "quoteItems": 12 }
-          }
-        ]
-      }
-    },
+	"procedures": {
+		"list": {
+			"type": "query",
+			"auth": "adminProcedure",
+			"description": "List all colors with optional filtering by active status",
+			"input": {
+				"type": "object",
+				"properties": {
+					"isActive": {
+						"type": "boolean",
+						"optional": true,
+						"description": "Filter by active status (undefined = all colors)"
+					},
+					"search": {
+						"type": "string",
+						"optional": true,
+						"description": "Search by color name (case-insensitive)"
+					}
+				}
+			},
+			"output": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"properties": {
+						"id": { "type": "string", "format": "cuid" },
+						"name": { "type": "string" },
+						"ralCode": { "type": "string", "nullable": true },
+						"hexCode": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+						"isActive": { "type": "boolean" },
+						"createdAt": { "type": "string", "format": "date-time" },
+						"updatedAt": { "type": "string", "format": "date-time" },
+						"_count": {
+							"type": "object",
+							"properties": {
+								"modelColors": {
+									"type": "number",
+									"description": "Number of models using this color"
+								},
+								"quoteItems": {
+									"type": "number",
+									"description": "Number of quotes using this color"
+								}
+							}
+						}
+					}
+				}
+			},
+			"example": {
+				"input": { "isActive": true, "search": "gris" },
+				"output": [
+					{
+						"id": "clx123abc",
+						"name": "Gris Antracita",
+						"ralCode": "RAL 7016",
+						"hexCode": "#384043",
+						"isActive": true,
+						"createdAt": "2025-10-27T10:00:00Z",
+						"updatedAt": "2025-10-27T10:00:00Z",
+						"_count": { "modelColors": 5, "quoteItems": 12 }
+					}
+				]
+			}
+		},
 
-    "getById": {
-      "type": "query",
-      "auth": "adminProcedure",
-      "description": "Get single color by ID with usage statistics",
-      "input": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "cuid",
-            "description": "Color ID"
-          }
-        },
-        "required": ["id"]
-      },
-      "output": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "name": { "type": "string" },
-          "ralCode": { "type": "string", "nullable": true },
-          "hexCode": { "type": "string" },
-          "isActive": { "type": "boolean" },
-          "createdAt": { "type": "string", "format": "date-time" },
-          "updatedAt": { "type": "string", "format": "date-time" },
-          "modelColors": {
-            "type": "array",
-            "description": "Models using this color",
-            "items": {
-              "type": "object",
-              "properties": {
-                "model": {
-                  "type": "object",
-                  "properties": {
-                    "id": { "type": "string" },
-                    "name": { "type": "string" }
-                  }
-                },
-                "surchargePercentage": { "type": "number" }
-              }
-            }
-          }
-        }
-      },
-      "errors": [
-        {
-          "code": "NOT_FOUND",
-          "message": "Color no encontrado"
-        }
-      ]
-    },
+		"getById": {
+			"type": "query",
+			"auth": "adminProcedure",
+			"description": "Get single color by ID with usage statistics",
+			"input": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "cuid",
+						"description": "Color ID"
+					}
+				},
+				"required": ["id"]
+			},
+			"output": {
+				"type": "object",
+				"properties": {
+					"id": { "type": "string" },
+					"name": { "type": "string" },
+					"ralCode": { "type": "string", "nullable": true },
+					"hexCode": { "type": "string" },
+					"isActive": { "type": "boolean" },
+					"createdAt": { "type": "string", "format": "date-time" },
+					"updatedAt": { "type": "string", "format": "date-time" },
+					"modelColors": {
+						"type": "array",
+						"description": "Models using this color",
+						"items": {
+							"type": "object",
+							"properties": {
+								"model": {
+									"type": "object",
+									"properties": {
+										"id": { "type": "string" },
+										"name": { "type": "string" }
+									}
+								},
+								"surchargePercentage": { "type": "number" }
+							}
+						}
+					}
+				}
+			},
+			"errors": [
+				{
+					"code": "NOT_FOUND",
+					"message": "Color no encontrado"
+				}
+			]
+		},
 
-    "create": {
-      "type": "mutation",
-      "auth": "adminProcedure",
-      "description": "Create new color in master catalog",
-      "input": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 50,
-            "description": "Commercial color name (e.g., 'Blanco', 'Nogal Europeo')"
-          },
-          "ralCode": {
-            "type": "string",
-            "pattern": "^RAL \\d{4}$",
-            "optional": true,
-            "description": "Industry standard RAL code (e.g., 'RAL 9010')"
-          },
-          "hexCode": {
-            "type": "string",
-            "pattern": "^#[0-9A-Fa-f]{6}$",
-            "description": "Hexadecimal color code (e.g., '#F3F3E9')"
-          },
-          "isActive": {
-            "type": "boolean",
-            "default": true,
-            "optional": true
-          }
-        },
-        "required": ["name", "hexCode"]
-      },
-      "output": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "name": { "type": "string" },
-          "ralCode": { "type": "string", "nullable": true },
-          "hexCode": { "type": "string" },
-          "isActive": { "type": "boolean" }
-        }
-      },
-      "validation": {
-        "uniqueConstraint": "name + hexCode combination must be unique",
-        "hexCodeFormat": "Must match ^#[0-9A-Fa-f]{6}$ regex",
-        "ralCodeFormat": "If provided, must match ^RAL \\d{4}$ regex"
-      },
-      "errors": [
-        {
-          "code": "CONFLICT",
-          "message": "Ya existe un color con este nombre y código hexadecimal",
-          "trigger": "Unique constraint violation on [name, hexCode]"
-        },
-        {
-          "code": "BAD_REQUEST",
-          "message": "Formato hexadecimal inválido. Use formato #RRGGBB",
-          "trigger": "hexCode fails regex validation"
-        }
-      ],
-      "example": {
-        "input": {
-          "name": "Verde Musgo",
-          "ralCode": "RAL 6025",
-          "hexCode": "#6B8E23"
-        },
-        "output": {
-          "id": "clx456def",
-          "name": "Verde Musgo",
-          "ralCode": "RAL 6025",
-          "hexCode": "#6B8E23",
-          "isActive": true
-        }
-      }
-    },
+		"create": {
+			"type": "mutation",
+			"auth": "adminProcedure",
+			"description": "Create new color in master catalog",
+			"input": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string",
+						"minLength": 1,
+						"maxLength": 50,
+						"description": "Commercial color name (e.g., 'Blanco', 'Nogal Europeo')"
+					},
+					"ralCode": {
+						"type": "string",
+						"pattern": "^RAL \\d{4}$",
+						"optional": true,
+						"description": "Industry standard RAL code (e.g., 'RAL 9010')"
+					},
+					"hexCode": {
+						"type": "string",
+						"pattern": "^#[0-9A-Fa-f]{6}$",
+						"description": "Hexadecimal color code (e.g., '#F3F3E9')"
+					},
+					"isActive": {
+						"type": "boolean",
+						"default": true,
+						"optional": true
+					}
+				},
+				"required": ["name", "hexCode"]
+			},
+			"output": {
+				"type": "object",
+				"properties": {
+					"id": { "type": "string" },
+					"name": { "type": "string" },
+					"ralCode": { "type": "string", "nullable": true },
+					"hexCode": { "type": "string" },
+					"isActive": { "type": "boolean" }
+				}
+			},
+			"validation": {
+				"uniqueConstraint": "name + hexCode combination must be unique",
+				"hexCodeFormat": "Must match ^#[0-9A-Fa-f]{6}$ regex",
+				"ralCodeFormat": "If provided, must match ^RAL \\d{4}$ regex"
+			},
+			"errors": [
+				{
+					"code": "CONFLICT",
+					"message": "Ya existe un color con este nombre y código hexadecimal",
+					"trigger": "Unique constraint violation on [name, hexCode]"
+				},
+				{
+					"code": "BAD_REQUEST",
+					"message": "Formato hexadecimal inválido. Use formato #RRGGBB",
+					"trigger": "hexCode fails regex validation"
+				}
+			],
+			"example": {
+				"input": {
+					"name": "Verde Musgo",
+					"ralCode": "RAL 6025",
+					"hexCode": "#6B8E23"
+				},
+				"output": {
+					"id": "clx456def",
+					"name": "Verde Musgo",
+					"ralCode": "RAL 6025",
+					"hexCode": "#6B8E23",
+					"isActive": true
+				}
+			}
+		},
 
-    "update": {
-      "type": "mutation",
-      "auth": "adminProcedure",
-      "description": "Update existing color (reflects in all models using it)",
-      "input": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "cuid"
-          },
-          "name": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 50,
-            "optional": true
-          },
-          "ralCode": {
-            "type": "string",
-            "pattern": "^RAL \\d{4}$",
-            "optional": true,
-            "nullable": true
-          },
-          "hexCode": {
-            "type": "string",
-            "pattern": "^#[0-9A-Fa-f]{6}$",
-            "optional": true
-          },
-          "isActive": {
-            "type": "boolean",
-            "optional": true
-          }
-        },
-        "required": ["id"]
-      },
-      "output": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "name": { "type": "string" },
-          "ralCode": { "type": "string", "nullable": true },
-          "hexCode": { "type": "string" },
-          "isActive": { "type": "boolean" }
-        }
-      },
-      "sideEffects": [
-        "All models using this color will reflect the updated name/hex immediately",
-        "Existing quotes are NOT affected (they have snapshots)"
-      ],
-      "errors": [
-        {
-          "code": "NOT_FOUND",
-          "message": "Color no encontrado"
-        },
-        {
-          "code": "CONFLICT",
-          "message": "Ya existe un color con este nombre y código hexadecimal"
-        }
-      ]
-    },
+		"update": {
+			"type": "mutation",
+			"auth": "adminProcedure",
+			"description": "Update existing color (reflects in all models using it)",
+			"input": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "cuid"
+					},
+					"name": {
+						"type": "string",
+						"minLength": 1,
+						"maxLength": 50,
+						"optional": true
+					},
+					"ralCode": {
+						"type": "string",
+						"pattern": "^RAL \\d{4}$",
+						"optional": true,
+						"nullable": true
+					},
+					"hexCode": {
+						"type": "string",
+						"pattern": "^#[0-9A-Fa-f]{6}$",
+						"optional": true
+					},
+					"isActive": {
+						"type": "boolean",
+						"optional": true
+					}
+				},
+				"required": ["id"]
+			},
+			"output": {
+				"type": "object",
+				"properties": {
+					"id": { "type": "string" },
+					"name": { "type": "string" },
+					"ralCode": { "type": "string", "nullable": true },
+					"hexCode": { "type": "string" },
+					"isActive": { "type": "boolean" }
+				}
+			},
+			"sideEffects": [
+				"All models using this color will reflect the updated name/hex immediately",
+				"Existing quotes are NOT affected (they have snapshots)"
+			],
+			"errors": [
+				{
+					"code": "NOT_FOUND",
+					"message": "Color no encontrado"
+				},
+				{
+					"code": "CONFLICT",
+					"message": "Ya existe un color con este nombre y código hexadecimal"
+				}
+			]
+		},
 
-    "delete": {
-      "type": "mutation",
-      "auth": "adminProcedure",
-      "description": "Delete color (with three-tier strategy: prevent/soft-delete/hard-delete)",
-      "input": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "cuid"
-          }
-        },
-        "required": ["id"]
-      },
-      "output": {
-        "type": "object",
-        "properties": {
-          "success": { "type": "boolean" },
-          "action": {
-            "type": "string",
-            "enum": ["prevented", "soft_deleted", "hard_deleted"]
-          },
-          "message": { "type": "string" }
-        }
-      },
-      "businessLogic": {
-        "tier1_prevent": "If color used in any QuoteItem, throw CONFLICT error",
-        "tier2_softDelete": "If color used in ModelColor, set isActive=false",
-        "tier3_hardDelete": "If no references exist, delete permanently"
-      },
-      "errors": [
-        {
-          "code": "NOT_FOUND",
-          "message": "Color no encontrado"
-        },
-        {
-          "code": "CONFLICT",
-          "message": "No se puede eliminar. Color usado en {count} cotizaciones",
-          "trigger": "Color referenced in QuoteItem table"
-        }
-      ],
-      "example": {
-        "input": { "id": "clx123abc" },
-        "outputScenario1": {
-          "success": false,
-          "action": "prevented",
-          "message": "No se puede eliminar. Color usado en 15 cotizaciones"
-        },
-        "outputScenario2": {
-          "success": true,
-          "action": "soft_deleted",
-          "message": "Color desactivado (usado en 3 modelos)"
-        },
-        "outputScenario3": {
-          "success": true,
-          "action": "hard_deleted",
-          "message": "Color eliminado exitosamente"
-        }
-      }
-    },
+		"delete": {
+			"type": "mutation",
+			"auth": "adminProcedure",
+			"description": "Delete color (with three-tier strategy: prevent/soft-delete/hard-delete)",
+			"input": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "cuid"
+					}
+				},
+				"required": ["id"]
+			},
+			"output": {
+				"type": "object",
+				"properties": {
+					"success": { "type": "boolean" },
+					"action": {
+						"type": "string",
+						"enum": ["prevented", "soft_deleted", "hard_deleted"]
+					},
+					"message": { "type": "string" }
+				}
+			},
+			"businessLogic": {
+				"tier1_prevent": "If color used in any QuoteItem, throw CONFLICT error",
+				"tier2_softDelete": "If color used in ModelColor, set isActive=false",
+				"tier3_hardDelete": "If no references exist, delete permanently"
+			},
+			"errors": [
+				{
+					"code": "NOT_FOUND",
+					"message": "Color no encontrado"
+				},
+				{
+					"code": "CONFLICT",
+					"message": "No se puede eliminar. Color usado en {count} cotizaciones",
+					"trigger": "Color referenced in QuoteItem table"
+				}
+			],
+			"example": {
+				"input": { "id": "clx123abc" },
+				"outputScenario1": {
+					"success": false,
+					"action": "prevented",
+					"message": "No se puede eliminar. Color usado en 15 cotizaciones"
+				},
+				"outputScenario2": {
+					"success": true,
+					"action": "soft_deleted",
+					"message": "Color desactivado (usado en 3 modelos)"
+				},
+				"outputScenario3": {
+					"success": true,
+					"action": "hard_deleted",
+					"message": "Color eliminado exitosamente"
+				}
+			}
+		},
 
-    "checkUsage": {
-      "type": "query",
-      "auth": "adminProcedure",
-      "description": "Check where a color is being used (for deletion warnings)",
-      "input": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "cuid"
-          }
-        },
-        "required": ["id"]
-      },
-      "output": {
-        "type": "object",
-        "properties": {
-          "colorId": { "type": "string" },
-          "canDelete": { "type": "boolean" },
-          "canHardDelete": { "type": "boolean" },
-          "usage": {
-            "type": "object",
-            "properties": {
-              "modelCount": { "type": "number" },
-              "quoteCount": { "type": "number" }
-            }
-          },
-          "recommendation": {
-            "type": "string",
-            "enum": ["can_hard_delete", "can_soft_delete", "cannot_delete"]
-          }
-        }
-      },
-      "example": {
-        "input": { "id": "clx123abc" },
-        "output": {
-          "colorId": "clx123abc",
-          "canDelete": false,
-          "canHardDelete": false,
-          "usage": {
-            "modelCount": 5,
-            "quoteCount": 12
-          },
-          "recommendation": "cannot_delete"
-        }
-      }
-    }
-  },
+		"checkUsage": {
+			"type": "query",
+			"auth": "adminProcedure",
+			"description": "Check where a color is being used (for deletion warnings)",
+			"input": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "cuid"
+					}
+				},
+				"required": ["id"]
+			},
+			"output": {
+				"type": "object",
+				"properties": {
+					"colorId": { "type": "string" },
+					"canDelete": { "type": "boolean" },
+					"canHardDelete": { "type": "boolean" },
+					"usage": {
+						"type": "object",
+						"properties": {
+							"modelCount": { "type": "number" },
+							"quoteCount": { "type": "number" }
+						}
+					},
+					"recommendation": {
+						"type": "string",
+						"enum": ["can_hard_delete", "can_soft_delete", "cannot_delete"]
+					}
+				}
+			},
+			"example": {
+				"input": { "id": "clx123abc" },
+				"output": {
+					"colorId": "clx123abc",
+					"canDelete": false,
+					"canHardDelete": false,
+					"usage": {
+						"modelCount": 5,
+						"quoteCount": 12
+					},
+					"recommendation": "cannot_delete"
+				}
+			}
+		}
+	},
 
-  "sharedTypes": {
-    "ColorSchema": {
-      "description": "Zod validation schema for color entity",
-      "location": "src/lib/validations/color.ts",
-      "schema": {
-        "name": "z.string().min(1).max(50)",
-        "ralCode": "z.string().regex(/^RAL \\d{4}$/).optional()",
-        "hexCode": "z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Formato hexadecimal inválido (#RRGGBB)')",
-        "isActive": "z.boolean().default(true)"
-      }
-    }
-  },
+	"sharedTypes": {
+		"ColorSchema": {
+			"description": "Zod validation schema for color entity",
+			"location": "src/lib/validations/color.ts",
+			"schema": {
+				"name": "z.string().min(1).max(50)",
+				"ralCode": "z.string().regex(/^RAL \\d{4}$/).optional()",
+				"hexCode": "z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Formato hexadecimal inválido (#RRGGBB)')",
+				"isActive": "z.boolean().default(true)"
+			}
+		}
+	},
 
-  "securityNotes": [
-    "All procedures require adminProcedure authentication (role-based access control)",
-    "Input validation enforced at Zod schema level before database operations",
-    "Unique constraint prevents duplicate colors at database level",
-    "Foreign key constraints prevent accidental data loss (CASCADE/RESTRICT)",
-    "Soft delete (isActive) preserves data integrity while hiding from UI"
-  ],
+	"securityNotes": [
+		"All procedures require adminProcedure authentication (role-based access control)",
+		"Input validation enforced at Zod schema level before database operations",
+		"Unique constraint prevents duplicate colors at database level",
+		"Foreign key constraints prevent accidental data loss (CASCADE/RESTRICT)",
+		"Soft delete (isActive) preserves data integrity while hiding from UI"
+	],
 
-  "performanceConsiderations": [
-    "list() query includes _count for usage statistics (1 additional join)",
-    "getById() uses eager loading (include) to minimize queries",
-    "checkUsage() runs 2 count queries (optimized with indexes)",
-    "Expected response times: list <50ms, getById <30ms, mutations <100ms"
-  ]
+	"performanceConsiderations": [
+		"list() query includes _count for usage statistics (1 additional join)",
+		"getById() uses eager loading (include) to minimize queries",
+		"checkUsage() runs 2 count queries (optimized with indexes)",
+		"Expected response times: list <50ms, getById <30ms, mutations <100ms"
+	]
 }

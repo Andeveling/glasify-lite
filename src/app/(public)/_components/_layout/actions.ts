@@ -9,8 +9,8 @@ import { auth } from "@/server/auth";
  * Redirects to catalog page after successful sign out
  */
 export async function handleSignOut() {
-  await auth.api.signOut({
-    headers: await headers(),
-  });
-  redirect("/catalog");
+	await auth.api.signOut({
+		headers: await headers(),
+	});
+	redirect("/catalog");
 }

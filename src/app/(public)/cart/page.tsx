@@ -28,9 +28,9 @@ import { CartPageContent } from "./_components/cart-page-content";
 // ============================================================================
 
 export const metadata: Metadata = {
-  description:
-    "Revisa y ajusta tus configuraciones de ventanas antes de generar una cotización formal",
-  title: "Carrito de Presupuesto",
+	description:
+		"Revisa y ajusta tus configuraciones de ventanas antes de generar una cotización formal",
+	title: "Carrito de Presupuesto",
 };
 
 // ============================================================================
@@ -43,5 +43,5 @@ export const metadata: Metadata = {
  * Renders the cart page with metadata and delegates interactivity to client component
  */
 export default function CartPage() {
-  return <CartPageContent />;
+	return <CartPageContent />;
 }

@@ -30,8 +30,8 @@ import logger from "@/lib/logger";
  * @see src/app/(public)/cart/_hooks/use-cart.ts
  */
 export function cartServerActionPlaceholder() {
-  logger.info("Cart actions are currently client-side only");
-  return { message: "Cart is managed client-side", success: true };
+	logger.info("Cart actions are currently client-side only");
+	return { message: "Cart is managed client-side", success: true };
 }
 
 // ============================================================================

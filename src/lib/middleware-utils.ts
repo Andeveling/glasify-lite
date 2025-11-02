@@ -39,10 +39,10 @@ const PUBLIC_ROUTES = ["/", "/catalog", "/api/auth"] as const;
  * Unauthenticated users will be redirected to catalog with signin modal
  */
 const PROTECTED_ROUTES = [
-  "/dashboard",
-  "/quotes",
-  "/quote",
-  "/my-quotes",
+	"/dashboard",
+	"/quotes",
+	"/quote",
+	"/my-quotes",
 ] as const;
 
 /**
@@ -50,9 +50,9 @@ const PROTECTED_ROUTES = [
  * Non-admin users will be redirected to /my-quotes
  */
 const ADMIN_ONLY_ROUTES = [
-  "/dashboard/models",
-  "/dashboard/settings",
-  "/dashboard/tenant",
+	"/dashboard/models",
+	"/dashboard/settings",
+	"/dashboard/tenant",
 ] as const;
 
 /**
@@ -60,8 +60,8 @@ const ADMIN_ONLY_ROUTES = [
  * Regular users will be redirected to /my-quotes
  */
 const SELLER_OR_ADMIN_ROUTES = [
-  "/dashboard/quotes",
-  "/dashboard/users",
+	"/dashboard/quotes",
+	"/dashboard/users",
 ] as const;
 
 /**
@@ -69,28 +69,28 @@ const SELLER_OR_ADMIN_ROUTES = [
  * Early return for public routes improves performance
  */
 export function isPublicRoute(pathname: string): boolean {
-  return PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
+	return PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
 }
 
 /**
  * Check if route is protected and requires authentication
  */
 export function isProtectedRoute(pathname: string): boolean {
-  return PROTECTED_ROUTES.some((route) => pathname.startsWith(route));
+	return PROTECTED_ROUTES.some((route) => pathname.startsWith(route));
 }
 
 /**
  * Check if route is admin-only
  */
 export function isAdminOnlyRoute(pathname: string): boolean {
-  return ADMIN_ONLY_ROUTES.some((route) => pathname.startsWith(route));
+	return ADMIN_ONLY_ROUTES.some((route) => pathname.startsWith(route));
 }
 
 /**
  * Check if route requires seller or admin role
  */
 export function isSellerOrAdminRoute(pathname: string): boolean {
-  return SELLER_OR_ADMIN_ROUTES.some((route) => pathname.startsWith(route));
+	return SELLER_OR_ADMIN_ROUTES.some((route) => pathname.startsWith(route));
 }
 
 /**
@@ -98,19 +98,19 @@ export function isSellerOrAdminRoute(pathname: string): boolean {
  * Includes: NextAuth API routes, static assets, images
  */
 export function shouldSkipMiddleware(pathname: string): boolean {
-  return (
-    pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/_next/static") ||
-    pathname.startsWith("/_next/image") ||
-    pathname === "/favicon.ico"
-  );
+	return (
+		pathname.startsWith("/api/auth") ||
+		pathname.startsWith("/_next/static") ||
+		pathname.startsWith("/_next/image") ||
+		pathname === "/favicon.ico"
+	);
 }
 
 /**
  * Check if pathname is dashboard home (with or without trailing slash)
  */
 export function isDashboardHome(pathname: string): boolean {
-  return pathname === "/dashboard" || pathname === "/dashboard/";
+	return pathname === "/dashboard" || pathname === "/dashboard/";
 }
 
 /**
@@ -122,22 +122,22 @@ export type UserRole = "admin" | "seller" | "user";
  * Check if user has required role for route
  */
 export function hasRequiredRole(
-  userRole: UserRole | undefined,
-  pathname: string
+	userRole: UserRole | undefined,
+	pathname: string,
 ): boolean {
-  if (isAdminOnlyRoute(pathname)) {
-    return userRole === "admin";
-  }
+	if (isAdminOnlyRoute(pathname)) {
+		return userRole === "admin";
+	}
 
-  if (isSellerOrAdminRoute(pathname)) {
-    return userRole === "admin" || userRole === "seller";
-  }
+	if (isSellerOrAdminRoute(pathname)) {
+		return userRole === "admin" || userRole === "seller";
+	}
 
-  // Protected routes require any authenticated user
-  if (isProtectedRoute(pathname)) {
-    return !!userRole;
-  }
+	// Protected routes require any authenticated user
+	if (isProtectedRoute(pathname)) {
+		return !!userRole;
+	}
 
-  // Public routes are accessible to everyone
-  return true;
+	// Public routes are accessible to everyone
+	return true;
 }

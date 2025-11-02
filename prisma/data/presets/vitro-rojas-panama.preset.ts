@@ -50,25 +50,25 @@ import { vitroRojasServices } from "../vitro-rojas/services.data";
  * Ejecutar solo en instancia dedicada de Vitro Rojas.
  */
 export const vitroRojasPanamaPreset: SeedPreset = {
-  description:
-    "Vitro Rojas S.A. - Fabricante de ventanas y puertas de aluminio en Panamá",
+	description:
+		"Vitro Rojas S.A. - Fabricante de ventanas y puertas de aluminio en Panamá",
 
-  // Soluciones de vidrio (4)
-  glassSolutions: vitroRojasGlassSolutions,
+	// Soluciones de vidrio (4)
+	glassSolutions: vitroRojasGlassSolutions,
 
-  // Tipos de vidrio (11)
-  glassTypes: vitroRojasGlassTypes,
+	// Tipos de vidrio (11)
+	glassTypes: vitroRojasGlassTypes,
 
-  // Relaciones glass type <-> solution (17)
-  glassTypeSolutionMappings: vitroRojasGlassTypeSolutionMappings,
+	// Relaciones glass type <-> solution (17)
+	glassTypeSolutionMappings: vitroRojasGlassTypeSolutionMappings,
 
-  // Modelos de ventanas/puertas (9)
-  models: [...vitroRojasSlidingModels, ...vitroRojasCasementModels],
-  name: "vitro-rojas-panama",
+	// Modelos de ventanas/puertas (9)
+	models: [...vitroRojasSlidingModels, ...vitroRojasCasementModels],
+	name: "vitro-rojas-panama",
 
-  // Proveedores de perfiles (1)
-  profileSuppliers: vitroRojasProfileSuppliers,
+	// Proveedores de perfiles (1)
+	profileSuppliers: vitroRojasProfileSuppliers,
 
-  // Servicios (5)
-  services: vitroRojasServices,
+	// Servicios (5)
+	services: vitroRojasServices,
 };

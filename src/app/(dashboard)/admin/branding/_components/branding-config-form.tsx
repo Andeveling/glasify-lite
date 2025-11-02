@@ -7,13 +7,13 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+	Form,
+	FormControl,
+	FormDescription,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -21,117 +21,117 @@ import { useBrandingMutation } from "../_hooks/use-branding-mutation";
 import { useLogoUpload } from "../_hooks/use-logo-upload";
 import { brandingFormSchema } from "../_schemas/branding-form.schema";
 import {
-  type BrandingFormValues,
-  type BrandingInitialData,
-  getBrandingFormDefaults,
-  uploadLogoFile,
+	type BrandingFormValues,
+	type BrandingInitialData,
+	getBrandingFormDefaults,
+	uploadLogoFile,
 } from "../_utils/branding-form.utils";
 
 type BrandingConfigFormProps = {
-  initialData: BrandingInitialData;
+	initialData: BrandingInitialData;
 };
 
 export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
-  const { updateBranding, isPending } = useBrandingMutation();
-  const { logoPreview, selectedFile, handleLogoSelect, handleRemoveLogo } =
-    useLogoUpload(initialData.logoUrl);
+	const { updateBranding, isPending } = useBrandingMutation();
+	const { logoPreview, selectedFile, handleLogoSelect, handleRemoveLogo } =
+		useLogoUpload(initialData.logoUrl);
 
-  const form = useForm<BrandingFormValues>({
-    defaultValues: getBrandingFormDefaults(initialData),
-    resolver: zodResolver(brandingFormSchema),
-  });
+	const form = useForm<BrandingFormValues>({
+		defaultValues: getBrandingFormDefaults(initialData),
+		resolver: zodResolver(brandingFormSchema),
+	});
 
-  const handleRemoveLogoWithForm = () => {
-    handleRemoveLogo();
-    form.setValue("logoUrl", "");
-  };
+	const handleRemoveLogoWithForm = () => {
+		handleRemoveLogo();
+		form.setValue("logoUrl", "");
+	};
 
-  const onSubmit = async (data: BrandingFormValues) => {
-    try {
-      // If new logo selected, upload it first
-      let logoUrl = data.logoUrl;
-      if (selectedFile) {
-        logoUrl = await uploadLogoFile(selectedFile);
-      }
+	const onSubmit = async (data: BrandingFormValues) => {
+		try {
+			// If new logo selected, upload it first
+			let logoUrl = data.logoUrl;
+			if (selectedFile) {
+				logoUrl = await uploadLogoFile(selectedFile);
+			}
 
-      // Prepare branding data - send all fields (empty strings are allowed)
-      const brandingData = {
-        facebookUrl: data.facebookUrl || "",
-        instagramUrl: data.instagramUrl || "",
-        linkedinUrl: data.linkedinUrl || "",
-        logoUrl: logoUrl || "",
-        whatsappEnabled: Boolean(data.whatsappEnabled),
-        whatsappNumber: data.whatsappNumber || "",
-      };
+			// Prepare branding data - send all fields (empty strings are allowed)
+			const brandingData = {
+				facebookUrl: data.facebookUrl || "",
+				instagramUrl: data.instagramUrl || "",
+				linkedinUrl: data.linkedinUrl || "",
+				logoUrl: logoUrl || "",
+				whatsappEnabled: Boolean(data.whatsappEnabled),
+				whatsappNumber: data.whatsappNumber || "",
+			};
 
-      await updateBranding(brandingData);
-    } catch (error) {
-      toast.error("Error", {
-        description:
-          error instanceof Error ? error.message : "Error desconocido",
-      });
-    }
-  };
+			await updateBranding(brandingData);
+		} catch (error) {
+			toast.error("Error", {
+				description:
+					error instanceof Error ? error.message : "Error desconocido",
+			});
+		}
+	};
 
-  return (
-    <Form {...form}>
-      <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
-        {/* Logo Section */}
-        <div className="space-y-4">
-          <h3 className="font-semibold text-lg">Logo Corporativo</h3>
+	return (
+		<Form {...form}>
+			<form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
+				{/* Logo Section */}
+				<div className="space-y-4">
+					<h3 className="font-semibold text-lg">Logo Corporativo</h3>
 
-          <FormField
-            control={form.control}
-            name="logoUrl"
-            render={() => (
-              <FormItem>
-                <FormLabel>Logo</FormLabel>
-                <FormControl>
-                  <div className="space-y-4">
-                    {logoPreview ? (
-                      <div className="relative inline-block">
-                        <div className="relative h-32 w-32 overflow-hidden rounded-lg border bg-muted">
-                          <Image
-                            alt="Logo preview"
-                            className="object-contain"
-                            fill
-                            src={logoPreview}
-                          />
-                        </div>
-                        <Button
-                          className="-right-2 -top-2 absolute h-6 w-6 rounded-full"
-                          onClick={handleRemoveLogoWithForm}
-                          size="icon"
-                          type="button"
-                          variant="destructive"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="flex h-32 w-32 items-center justify-center rounded-lg border-2 border-dashed bg-muted">
-                        <Upload className="h-8 w-8 text-muted-foreground" />
-                      </div>
-                    )}
+					<FormField
+						control={form.control}
+						name="logoUrl"
+						render={() => (
+							<FormItem>
+								<FormLabel>Logo</FormLabel>
+								<FormControl>
+									<div className="space-y-4">
+										{logoPreview ? (
+											<div className="relative inline-block">
+												<div className="relative h-32 w-32 overflow-hidden rounded-lg border bg-muted">
+													<Image
+														alt="Logo preview"
+														className="object-contain"
+														fill
+														src={logoPreview}
+													/>
+												</div>
+												<Button
+													className="-right-2 -top-2 absolute h-6 w-6 rounded-full"
+													onClick={handleRemoveLogoWithForm}
+													size="icon"
+													type="button"
+													variant="destructive"
+												>
+													<X className="h-4 w-4" />
+												</Button>
+											</div>
+										) : (
+											<div className="flex h-32 w-32 items-center justify-center rounded-lg border-2 border-dashed bg-muted">
+												<Upload className="h-8 w-8 text-muted-foreground" />
+											</div>
+										)}
 
-                    <Input
-                      accept="image/png,image/jpeg,image/svg+xml,image/webp"
-                      onChange={handleLogoSelect}
-                      type="file"
-                    />
-                  </div>
-                </FormControl>
-                <FormDescription>
-                  PNG, JPEG, SVG o WEBP. Máximo 2MB.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+										<Input
+											accept="image/png,image/jpeg,image/svg+xml,image/webp"
+											onChange={handleLogoSelect}
+											type="file"
+										/>
+									</div>
+								</FormControl>
+								<FormDescription>
+									PNG, JPEG, SVG o WEBP. Máximo 2MB.
+								</FormDescription>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				</div>
 
-        {/* Colors Section - Disabled for future implementation */}
-        {/* TODO: Enable when color customization is ready
+				{/* Colors Section - Disabled for future implementation */}
+				{/* TODO: Enable when color customization is ready
         <div className="space-y-4">
           <h3 className="font-semibold text-lg">Colores Corporativos</h3>
 
@@ -175,123 +175,123 @@ export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
         </div>
         */}
 
-        {/* Social Media Section */}
-        <div className="space-y-4">
-          <h3 className="font-semibold text-lg">Redes Sociales</h3>
+				{/* Social Media Section */}
+				<div className="space-y-4">
+					<h3 className="font-semibold text-lg">Redes Sociales</h3>
 
-          <div className="grid gap-4 md:grid-cols-3">
-            <FormField
-              control={form.control}
-              name="facebookUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Facebook</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="https://facebook.com/tuempresa"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+					<div className="grid gap-4 md:grid-cols-3">
+						<FormField
+							control={form.control}
+							name="facebookUrl"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Facebook</FormLabel>
+									<FormControl>
+										<Input
+											{...field}
+											placeholder="https://facebook.com/tuempresa"
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 
-            <FormField
-              control={form.control}
-              name="instagramUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Instagram</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="https://instagram.com/tuempresa"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+						<FormField
+							control={form.control}
+							name="instagramUrl"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Instagram</FormLabel>
+									<FormControl>
+										<Input
+											{...field}
+											placeholder="https://instagram.com/tuempresa"
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 
-            <FormField
-              control={form.control}
-              name="linkedinUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>LinkedIn</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="https://linkedin.com/company/tuempresa"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
+						<FormField
+							control={form.control}
+							name="linkedinUrl"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>LinkedIn</FormLabel>
+									<FormControl>
+										<Input
+											{...field}
+											placeholder="https://linkedin.com/company/tuempresa"
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</div>
+				</div>
 
-        {/* WhatsApp Section */}
-        <div className="space-y-4">
-          <h3 className="font-semibold text-lg">WhatsApp</h3>
+				{/* WhatsApp Section */}
+				<div className="space-y-4">
+					<h3 className="font-semibold text-lg">WhatsApp</h3>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <FormField
-              control={form.control}
-              name="whatsappNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Número de WhatsApp</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="+507-1234-5678" />
-                  </FormControl>
-                  <FormDescription>
-                    Formato internacional (E.164)
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+					<div className="grid gap-4 md:grid-cols-2">
+						<FormField
+							control={form.control}
+							name="whatsappNumber"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Número de WhatsApp</FormLabel>
+									<FormControl>
+										<Input {...field} placeholder="+507-1234-5678" />
+									</FormControl>
+									<FormDescription>
+										Formato internacional (E.164)
+									</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 
-            <FormField
-              control={form.control}
-              name="whatsappEnabled"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">Botón WhatsApp</FormLabel>
-                    <FormDescription>
-                      Mostrar en catálogo y cotizaciones
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
+						<FormField
+							control={form.control}
+							name="whatsappEnabled"
+							render={({ field }) => (
+								<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+									<div className="space-y-0.5">
+										<FormLabel className="text-base">Botón WhatsApp</FormLabel>
+										<FormDescription>
+											Mostrar en catálogo y cotizaciones
+										</FormDescription>
+									</div>
+									<FormControl>
+										<Switch
+											checked={field.value}
+											onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+					</div>
+				</div>
 
-        <div className="flex justify-end gap-4">
-          <Button
-            disabled={isPending}
-            onClick={() => form.reset()}
-            type="button"
-            variant="outline"
-          >
-            Cancelar
-          </Button>
-          <Button disabled={isPending} type="submit">
-            {isPending ? "Guardando..." : "Guardar Cambios"}
-          </Button>
-        </div>
-      </form>
-    </Form>
-  );
+				<div className="flex justify-end gap-4">
+					<Button
+						disabled={isPending}
+						onClick={() => form.reset()}
+						type="button"
+						variant="outline"
+					>
+						Cancelar
+					</Button>
+					<Button disabled={isPending} type="submit">
+						{isPending ? "Guardando..." : "Guardar Cambios"}
+					</Button>
+				</div>
+			</form>
+		</Form>
+	);
 }

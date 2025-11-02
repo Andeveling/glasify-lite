@@ -12,50 +12,50 @@ import { db } from "@/server/db";
  */
 
 export type ModelPriceChange = {
-  modelId: string;
-  basePrice: number;
-  costPerMmWidth: number;
-  costPerMmHeight: number;
-  reason?: string;
-  createdBy: string;
+	modelId: string;
+	basePrice: number;
+	costPerMmWidth: number;
+	costPerMmHeight: number;
+	reason?: string;
+	createdBy: string;
 };
 
 export type PriceHistoryRecord = {
-  id: string;
-  modelId: string;
-  basePrice: number;
-  costPerMmWidth: number;
-  costPerMmHeight: number;
-  reason: string | null;
-  effectiveFrom: Date;
-  createdBy: string | null;
-  createdAt: Date;
+	id: string;
+	modelId: string;
+	basePrice: number;
+	costPerMmWidth: number;
+	costPerMmHeight: number;
+	reason: string | null;
+	effectiveFrom: Date;
+	createdBy: string | null;
+	createdAt: Date;
 };
 
 /**
  * Convert Prisma Decimal to number
  */
 function toNumber(decimal: Prisma.Decimal): number {
-  return decimal.toNumber();
+	return decimal.toNumber();
 }
 
 /**
  * Convert ModelPriceHistory from Prisma to service interface
  */
 function toPriceHistoryRecord(
-  history: Prisma.ModelPriceHistoryGetPayload<object>
+	history: Prisma.ModelPriceHistoryGetPayload<object>,
 ): PriceHistoryRecord {
-  return {
-    basePrice: toNumber(history.basePrice),
-    costPerMmHeight: toNumber(history.costPerMmHeight),
-    costPerMmWidth: toNumber(history.costPerMmWidth),
-    createdAt: history.createdAt,
-    createdBy: history.createdBy,
-    effectiveFrom: history.effectiveFrom,
-    id: history.id,
-    modelId: history.modelId,
-    reason: history.reason,
-  };
+	return {
+		basePrice: toNumber(history.basePrice),
+		costPerMmHeight: toNumber(history.costPerMmHeight),
+		costPerMmWidth: toNumber(history.costPerMmWidth),
+		createdAt: history.createdAt,
+		createdBy: history.createdBy,
+		effectiveFrom: history.effectiveFrom,
+		id: history.id,
+		modelId: history.modelId,
+		reason: history.reason,
+	};
 }
 
 /**
@@ -63,40 +63,40 @@ function toPriceHistoryRecord(
  * Called automatically when model pricing is updated
  */
 export async function createModelPriceHistory(
-  change: ModelPriceChange
+	change: ModelPriceChange,
 ): Promise<PriceHistoryRecord> {
-  logger.info("Creating model price history record", {
-    basePrice: change.basePrice,
-    createdBy: change.createdBy,
-    modelId: change.modelId,
-  });
+	logger.info("Creating model price history record", {
+		basePrice: change.basePrice,
+		createdBy: change.createdBy,
+		modelId: change.modelId,
+	});
 
-  try {
-    const priceHistory = await db.modelPriceHistory.create({
-      data: {
-        basePrice: change.basePrice,
-        costPerMmHeight: change.costPerMmHeight,
-        costPerMmWidth: change.costPerMmWidth,
-        createdBy: change.createdBy,
-        effectiveFrom: new Date(),
-        modelId: change.modelId,
-        reason: change.reason ?? null,
-      },
-    });
+	try {
+		const priceHistory = await db.modelPriceHistory.create({
+			data: {
+				basePrice: change.basePrice,
+				costPerMmHeight: change.costPerMmHeight,
+				costPerMmWidth: change.costPerMmWidth,
+				createdBy: change.createdBy,
+				effectiveFrom: new Date(),
+				modelId: change.modelId,
+				reason: change.reason ?? null,
+			},
+		});
 
-    logger.info("Model price history record created successfully", {
-      id: priceHistory.id,
-      modelId: change.modelId,
-    });
+		logger.info("Model price history record created successfully", {
+			id: priceHistory.id,
+			modelId: change.modelId,
+		});
 
-    return toPriceHistoryRecord(priceHistory);
-  } catch (error) {
-    logger.error("Failed to create model price history record", {
-      error,
-      modelId: change.modelId,
-    });
-    throw error;
-  }
+		return toPriceHistoryRecord(priceHistory);
+	} catch (error) {
+		logger.error("Failed to create model price history record", {
+			error,
+			modelId: change.modelId,
+		});
+		throw error;
+	}
 }
 
 /**
@@ -104,31 +104,31 @@ export async function createModelPriceHistory(
  * Returns records ordered by most recent first
  */
 export async function getModelPriceHistory(
-  modelId: string,
-  limit = 10
+	modelId: string,
+	limit = 10,
 ): Promise<PriceHistoryRecord[]> {
-  logger.info("Fetching model price history", { limit, modelId });
+	logger.info("Fetching model price history", { limit, modelId });
 
-  try {
-    const history = await db.modelPriceHistory.findMany({
-      orderBy: { effectiveFrom: "desc" },
-      take: limit,
-      where: { modelId },
-    });
+	try {
+		const history = await db.modelPriceHistory.findMany({
+			orderBy: { effectiveFrom: "desc" },
+			take: limit,
+			where: { modelId },
+		});
 
-    logger.info("Model price history fetched successfully", {
-      modelId,
-      recordCount: history.length,
-    });
+		logger.info("Model price history fetched successfully", {
+			modelId,
+			recordCount: history.length,
+		});
 
-    return history.map(toPriceHistoryRecord);
-  } catch (error) {
-    logger.error("Failed to fetch model price history", {
-      error,
-      modelId,
-    });
-    throw error;
-  }
+		return history.map(toPriceHistoryRecord);
+	} catch (error) {
+		logger.error("Failed to fetch model price history", {
+			error,
+			modelId,
+		});
+		throw error;
+	}
 }
 
 /**
@@ -136,22 +136,22 @@ export async function getModelPriceHistory(
  * Used to determine if a price history record should be created
  */
 export function hasPriceChanged(
-  current: {
-    basePrice: number;
-    costPerMmWidth: number;
-    costPerMmHeight: number;
-  },
-  updated: {
-    basePrice: number;
-    costPerMmWidth: number;
-    costPerMmHeight: number;
-  }
+	current: {
+		basePrice: number;
+		costPerMmWidth: number;
+		costPerMmHeight: number;
+	},
+	updated: {
+		basePrice: number;
+		costPerMmWidth: number;
+		costPerMmHeight: number;
+	},
 ): boolean {
-  return (
-    current.basePrice !== updated.basePrice ||
-    current.costPerMmWidth !== updated.costPerMmWidth ||
-    current.costPerMmHeight !== updated.costPerMmHeight
-  );
+	return (
+		current.basePrice !== updated.basePrice ||
+		current.costPerMmWidth !== updated.costPerMmWidth ||
+		current.costPerMmHeight !== updated.costPerMmHeight
+	);
 }
 
 /**
@@ -159,27 +159,27 @@ export function hasPriceChanged(
  * Useful for comparing against current model price
  */
 export async function getLatestModelPrice(
-  modelId: string
+	modelId: string,
 ): Promise<PriceHistoryRecord | null> {
-  logger.info("Fetching latest model price", { modelId });
+	logger.info("Fetching latest model price", { modelId });
 
-  try {
-    const latestPrice = await db.modelPriceHistory.findFirst({
-      orderBy: { effectiveFrom: "desc" },
-      where: { modelId },
-    });
+	try {
+		const latestPrice = await db.modelPriceHistory.findFirst({
+			orderBy: { effectiveFrom: "desc" },
+			where: { modelId },
+		});
 
-    logger.info("Latest model price fetched", {
-      found: !!latestPrice,
-      modelId,
-    });
+		logger.info("Latest model price fetched", {
+			found: !!latestPrice,
+			modelId,
+		});
 
-    return latestPrice ? toPriceHistoryRecord(latestPrice) : null;
-  } catch (error) {
-    logger.error("Failed to fetch latest model price", {
-      error,
-      modelId,
-    });
-    throw error;
-  }
+		return latestPrice ? toPriceHistoryRecord(latestPrice) : null;
+	} catch (error) {
+		logger.error("Failed to fetch latest model price", {
+			error,
+			modelId,
+		});
+		throw error;
+	}
 }

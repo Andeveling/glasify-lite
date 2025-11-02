@@ -1,473 +1,473 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema",
-  "title": "Model Colors Router - Model Color Assignment Operations",
-  "description": "tRPC procedures for assigning colors to models with surcharge configuration (admin-only)",
-  "version": "1.0.0",
-  "router": "modelColors",
-  "basePath": "src/server/api/routers/model-colors.ts",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "Model Colors Router - Model Color Assignment Operations",
+	"description": "tRPC procedures for assigning colors to models with surcharge configuration (admin-only)",
+	"version": "1.0.0",
+	"router": "modelColors",
+	"basePath": "src/server/api/routers/model-colors.ts",
 
-  "procedures": {
-    "listByModel": {
-      "type": "query",
-      "auth": "adminProcedure",
-      "description": "Get all colors assigned to a specific model with surcharge data",
-      "input": {
-        "type": "object",
-        "properties": {
-          "modelId": {
-            "type": "string",
-            "format": "cuid",
-            "description": "Model ID"
-          }
-        },
-        "required": ["modelId"]
-      },
-      "output": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": { "type": "string" },
-            "colorId": { "type": "string" },
-            "color": {
-              "type": "object",
-              "properties": {
-                "id": { "type": "string" },
-                "name": { "type": "string" },
-                "ralCode": { "type": "string", "nullable": true },
-                "hexCode": { "type": "string" },
-                "isActive": { "type": "boolean" }
-              }
-            },
-            "surchargePercentage": { "type": "number" },
-            "isDefault": { "type": "boolean" },
-            "createdAt": { "type": "string", "format": "date-time" },
-            "updatedAt": { "type": "string", "format": "date-time" }
-          }
-        }
-      },
-      "businessLogic": {
-        "ordering": "Default color first, then by color name ASC",
-        "filtering": "Only active colors shown by default"
-      },
-      "example": {
-        "input": { "modelId": "clxModel123" },
-        "output": [
-          {
-            "id": "clxMC001",
-            "colorId": "clxColor001",
-            "color": {
-              "id": "clxColor001",
-              "name": "Blanco",
-              "ralCode": "RAL 9010",
-              "hexCode": "#F3F3E9",
-              "isActive": true
-            },
-            "surchargePercentage": 0,
-            "isDefault": true,
-            "createdAt": "2025-10-27T10:00:00Z",
-            "updatedAt": "2025-10-27T10:00:00Z"
-          },
-          {
-            "id": "clxMC002",
-            "colorId": "clxColor005",
-            "color": {
-              "id": "clxColor005",
-              "name": "Madera Roble Oscuro",
-              "ralCode": null,
-              "hexCode": "#794D35",
-              "isActive": true
-            },
-            "surchargePercentage": 22,
-            "isDefault": false,
-            "createdAt": "2025-10-27T11:00:00Z",
-            "updatedAt": "2025-10-27T11:00:00Z"
-          }
-        ]
-      }
-    },
+	"procedures": {
+		"listByModel": {
+			"type": "query",
+			"auth": "adminProcedure",
+			"description": "Get all colors assigned to a specific model with surcharge data",
+			"input": {
+				"type": "object",
+				"properties": {
+					"modelId": {
+						"type": "string",
+						"format": "cuid",
+						"description": "Model ID"
+					}
+				},
+				"required": ["modelId"]
+			},
+			"output": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"properties": {
+						"id": { "type": "string" },
+						"colorId": { "type": "string" },
+						"color": {
+							"type": "object",
+							"properties": {
+								"id": { "type": "string" },
+								"name": { "type": "string" },
+								"ralCode": { "type": "string", "nullable": true },
+								"hexCode": { "type": "string" },
+								"isActive": { "type": "boolean" }
+							}
+						},
+						"surchargePercentage": { "type": "number" },
+						"isDefault": { "type": "boolean" },
+						"createdAt": { "type": "string", "format": "date-time" },
+						"updatedAt": { "type": "string", "format": "date-time" }
+					}
+				}
+			},
+			"businessLogic": {
+				"ordering": "Default color first, then by color name ASC",
+				"filtering": "Only active colors shown by default"
+			},
+			"example": {
+				"input": { "modelId": "clxModel123" },
+				"output": [
+					{
+						"id": "clxMC001",
+						"colorId": "clxColor001",
+						"color": {
+							"id": "clxColor001",
+							"name": "Blanco",
+							"ralCode": "RAL 9010",
+							"hexCode": "#F3F3E9",
+							"isActive": true
+						},
+						"surchargePercentage": 0,
+						"isDefault": true,
+						"createdAt": "2025-10-27T10:00:00Z",
+						"updatedAt": "2025-10-27T10:00:00Z"
+					},
+					{
+						"id": "clxMC002",
+						"colorId": "clxColor005",
+						"color": {
+							"id": "clxColor005",
+							"name": "Madera Roble Oscuro",
+							"ralCode": null,
+							"hexCode": "#794D35",
+							"isActive": true
+						},
+						"surchargePercentage": 22,
+						"isDefault": false,
+						"createdAt": "2025-10-27T11:00:00Z",
+						"updatedAt": "2025-10-27T11:00:00Z"
+					}
+				]
+			}
+		},
 
-    "assign": {
-      "type": "mutation",
-      "auth": "adminProcedure",
-      "description": "Assign color to model with surcharge percentage",
-      "input": {
-        "type": "object",
-        "properties": {
-          "modelId": {
-            "type": "string",
-            "format": "cuid"
-          },
-          "colorId": {
-            "type": "string",
-            "format": "cuid"
-          },
-          "surchargePercentage": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 100,
-            "multipleOf": 0.01,
-            "description": "Percentage added to model base price (0-100)"
-          },
-          "isDefault": {
-            "type": "boolean",
-            "default": false,
-            "optional": true,
-            "description": "Mark as default color for this model"
-          }
-        },
-        "required": ["modelId", "colorId", "surchargePercentage"]
-      },
-      "output": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "modelId": { "type": "string" },
-          "colorId": { "type": "string" },
-          "surchargePercentage": { "type": "number" },
-          "isDefault": { "type": "boolean" }
-        }
-      },
-      "businessLogic": {
-        "defaultHandling": "If isDefault=true, automatically set previous default to false (transaction)",
-        "firstColorAutoDefault": "If this is the first color assigned to model, auto-set as default regardless of input",
-        "validation": "Check that both model and color exist before assignment"
-      },
-      "errors": [
-        {
-          "code": "NOT_FOUND",
-          "message": "Modelo o color no encontrado"
-        },
-        {
-          "code": "CONFLICT",
-          "message": "Este color ya está asignado a este modelo",
-          "trigger": "Unique constraint violation on [modelId, colorId]"
-        },
-        {
-          "code": "BAD_REQUEST",
-          "message": "El recargo debe estar entre 0% y 100%",
-          "trigger": "surchargePercentage out of range"
-        }
-      ],
-      "example": {
-        "input": {
-          "modelId": "clxModel123",
-          "colorId": "clxColor002",
-          "surchargePercentage": 15.5,
-          "isDefault": false
-        },
-        "output": {
-          "id": "clxMC003",
-          "modelId": "clxModel123",
-          "colorId": "clxColor002",
-          "surchargePercentage": 15.5,
-          "isDefault": false
-        }
-      }
-    },
+		"assign": {
+			"type": "mutation",
+			"auth": "adminProcedure",
+			"description": "Assign color to model with surcharge percentage",
+			"input": {
+				"type": "object",
+				"properties": {
+					"modelId": {
+						"type": "string",
+						"format": "cuid"
+					},
+					"colorId": {
+						"type": "string",
+						"format": "cuid"
+					},
+					"surchargePercentage": {
+						"type": "number",
+						"minimum": 0,
+						"maximum": 100,
+						"multipleOf": 0.01,
+						"description": "Percentage added to model base price (0-100)"
+					},
+					"isDefault": {
+						"type": "boolean",
+						"default": false,
+						"optional": true,
+						"description": "Mark as default color for this model"
+					}
+				},
+				"required": ["modelId", "colorId", "surchargePercentage"]
+			},
+			"output": {
+				"type": "object",
+				"properties": {
+					"id": { "type": "string" },
+					"modelId": { "type": "string" },
+					"colorId": { "type": "string" },
+					"surchargePercentage": { "type": "number" },
+					"isDefault": { "type": "boolean" }
+				}
+			},
+			"businessLogic": {
+				"defaultHandling": "If isDefault=true, automatically set previous default to false (transaction)",
+				"firstColorAutoDefault": "If this is the first color assigned to model, auto-set as default regardless of input",
+				"validation": "Check that both model and color exist before assignment"
+			},
+			"errors": [
+				{
+					"code": "NOT_FOUND",
+					"message": "Modelo o color no encontrado"
+				},
+				{
+					"code": "CONFLICT",
+					"message": "Este color ya está asignado a este modelo",
+					"trigger": "Unique constraint violation on [modelId, colorId]"
+				},
+				{
+					"code": "BAD_REQUEST",
+					"message": "El recargo debe estar entre 0% y 100%",
+					"trigger": "surchargePercentage out of range"
+				}
+			],
+			"example": {
+				"input": {
+					"modelId": "clxModel123",
+					"colorId": "clxColor002",
+					"surchargePercentage": 15.5,
+					"isDefault": false
+				},
+				"output": {
+					"id": "clxMC003",
+					"modelId": "clxModel123",
+					"colorId": "clxColor002",
+					"surchargePercentage": 15.5,
+					"isDefault": false
+				}
+			}
+		},
 
-    "updateSurcharge": {
-      "type": "mutation",
-      "auth": "adminProcedure",
-      "description": "Update surcharge percentage for existing model-color assignment",
-      "input": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "cuid",
-            "description": "ModelColor ID"
-          },
-          "surchargePercentage": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 100,
-            "multipleOf": 0.01
-          }
-        },
-        "required": ["id", "surchargePercentage"]
-      },
-      "output": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "surchargePercentage": { "type": "number" },
-          "updatedAt": { "type": "string", "format": "date-time" }
-        }
-      },
-      "sideEffects": [
-        "Only affects NEW quotes created after this update",
-        "Existing quotes maintain their snapshot surcharge percentage"
-      ],
-      "errors": [
-        {
-          "code": "NOT_FOUND",
-          "message": "Asignación de color no encontrada"
-        }
-      ]
-    },
+		"updateSurcharge": {
+			"type": "mutation",
+			"auth": "adminProcedure",
+			"description": "Update surcharge percentage for existing model-color assignment",
+			"input": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "cuid",
+						"description": "ModelColor ID"
+					},
+					"surchargePercentage": {
+						"type": "number",
+						"minimum": 0,
+						"maximum": 100,
+						"multipleOf": 0.01
+					}
+				},
+				"required": ["id", "surchargePercentage"]
+			},
+			"output": {
+				"type": "object",
+				"properties": {
+					"id": { "type": "string" },
+					"surchargePercentage": { "type": "number" },
+					"updatedAt": { "type": "string", "format": "date-time" }
+				}
+			},
+			"sideEffects": [
+				"Only affects NEW quotes created after this update",
+				"Existing quotes maintain their snapshot surcharge percentage"
+			],
+			"errors": [
+				{
+					"code": "NOT_FOUND",
+					"message": "Asignación de color no encontrada"
+				}
+			]
+		},
 
-    "setDefault": {
-      "type": "mutation",
-      "auth": "adminProcedure",
-      "description": "Mark a color as default for a model (unsets previous default)",
-      "input": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "cuid",
-            "description": "ModelColor ID to mark as default"
-          }
-        },
-        "required": ["id"]
-      },
-      "output": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "isDefault": { "type": "boolean" },
-          "previousDefaultId": {
-            "type": "string",
-            "nullable": true,
-            "description": "ID of ModelColor that was previously default (if any)"
-          }
-        }
-      },
-      "businessLogic": {
-        "transactional": "Must atomically update both new default (true) and old default (false)",
-        "singleDefault": "Only one ModelColor per model can have isDefault=true"
-      },
-      "example": {
-        "input": { "id": "clxMC005" },
-        "output": {
-          "id": "clxMC005",
-          "isDefault": true,
-          "previousDefaultId": "clxMC001"
-        }
-      }
-    },
+		"setDefault": {
+			"type": "mutation",
+			"auth": "adminProcedure",
+			"description": "Mark a color as default for a model (unsets previous default)",
+			"input": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "cuid",
+						"description": "ModelColor ID to mark as default"
+					}
+				},
+				"required": ["id"]
+			},
+			"output": {
+				"type": "object",
+				"properties": {
+					"id": { "type": "string" },
+					"isDefault": { "type": "boolean" },
+					"previousDefaultId": {
+						"type": "string",
+						"nullable": true,
+						"description": "ID of ModelColor that was previously default (if any)"
+					}
+				}
+			},
+			"businessLogic": {
+				"transactional": "Must atomically update both new default (true) and old default (false)",
+				"singleDefault": "Only one ModelColor per model can have isDefault=true"
+			},
+			"example": {
+				"input": { "id": "clxMC005" },
+				"output": {
+					"id": "clxMC005",
+					"isDefault": true,
+					"previousDefaultId": "clxMC001"
+				}
+			}
+		},
 
-    "unassign": {
-      "type": "mutation",
-      "auth": "adminProcedure",
-      "description": "Remove color assignment from model",
-      "input": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "cuid",
-            "description": "ModelColor ID to remove"
-          }
-        },
-        "required": ["id"]
-      },
-      "output": {
-        "type": "object",
-        "properties": {
-          "success": { "type": "boolean" },
-          "message": { "type": "string" }
-        }
-      },
-      "businessLogic": {
-        "defaultHandling": "If removing default color and other colors exist, auto-promote first color to default",
-        "lastColorWarning": "Warn if removing last color (model will have no colors)",
-        "cascadeDelete": "Foreign key CASCADE automatically removes this when model is deleted"
-      },
-      "errors": [
-        {
-          "code": "NOT_FOUND",
-          "message": "Asignación de color no encontrada"
-        }
-      ],
-      "example": {
-        "input": { "id": "clxMC003" },
-        "output": {
-          "success": true,
-          "message": "Color removido del modelo exitosamente"
-        }
-      }
-    },
+		"unassign": {
+			"type": "mutation",
+			"auth": "adminProcedure",
+			"description": "Remove color assignment from model",
+			"input": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "cuid",
+						"description": "ModelColor ID to remove"
+					}
+				},
+				"required": ["id"]
+			},
+			"output": {
+				"type": "object",
+				"properties": {
+					"success": { "type": "boolean" },
+					"message": { "type": "string" }
+				}
+			},
+			"businessLogic": {
+				"defaultHandling": "If removing default color and other colors exist, auto-promote first color to default",
+				"lastColorWarning": "Warn if removing last color (model will have no colors)",
+				"cascadeDelete": "Foreign key CASCADE automatically removes this when model is deleted"
+			},
+			"errors": [
+				{
+					"code": "NOT_FOUND",
+					"message": "Asignación de color no encontrada"
+				}
+			],
+			"example": {
+				"input": { "id": "clxMC003" },
+				"output": {
+					"success": true,
+					"message": "Color removido del modelo exitosamente"
+				}
+			}
+		},
 
-    "bulkAssign": {
-      "type": "mutation",
-      "auth": "adminProcedure",
-      "description": "Assign multiple colors to model in single transaction",
-      "input": {
-        "type": "object",
-        "properties": {
-          "modelId": {
-            "type": "string",
-            "format": "cuid"
-          },
-          "colors": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-              "type": "object",
-              "properties": {
-                "colorId": { "type": "string", "format": "cuid" },
-                "surchargePercentage": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 100
-                },
-                "isDefault": { "type": "boolean", "default": false }
-              },
-              "required": ["colorId", "surchargePercentage"]
-            }
-          }
-        },
-        "required": ["modelId", "colors"]
-      },
-      "output": {
-        "type": "object",
-        "properties": {
-          "modelId": { "type": "string" },
-          "assignedCount": { "type": "number" },
-          "assignments": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": { "type": "string" },
-                "colorId": { "type": "string" },
-                "surchargePercentage": { "type": "number" },
-                "isDefault": { "type": "boolean" }
-              }
-            }
-          }
-        }
-      },
-      "businessLogic": {
-        "transactional": "All assignments succeed or all fail (atomic transaction)",
-        "defaultValidation": "Only one color in array can have isDefault=true",
-        "duplicateHandling": "Skip colors already assigned (idempotent)"
-      },
-      "errors": [
-        {
-          "code": "BAD_REQUEST",
-          "message": "Solo un color puede ser predeterminado",
-          "trigger": "Multiple colors in array have isDefault=true"
-        }
-      ],
-      "example": {
-        "input": {
-          "modelId": "clxModel456",
-          "colors": [
-            {
-              "colorId": "clxColor001",
-              "surchargePercentage": 0,
-              "isDefault": true
-            },
-            { "colorId": "clxColor002", "surchargePercentage": 10 },
-            { "colorId": "clxColor005", "surchargePercentage": 22 }
-          ]
-        },
-        "output": {
-          "modelId": "clxModel456",
-          "assignedCount": 3,
-          "assignments": [
-            {
-              "id": "clxMC010",
-              "colorId": "clxColor001",
-              "surchargePercentage": 0,
-              "isDefault": true
-            },
-            {
-              "id": "clxMC011",
-              "colorId": "clxColor002",
-              "surchargePercentage": 10,
-              "isDefault": false
-            },
-            {
-              "id": "clxMC012",
-              "colorId": "clxColor005",
-              "surchargePercentage": 22,
-              "isDefault": false
-            }
-          ]
-        }
-      }
-    },
+		"bulkAssign": {
+			"type": "mutation",
+			"auth": "adminProcedure",
+			"description": "Assign multiple colors to model in single transaction",
+			"input": {
+				"type": "object",
+				"properties": {
+					"modelId": {
+						"type": "string",
+						"format": "cuid"
+					},
+					"colors": {
+						"type": "array",
+						"minItems": 1,
+						"items": {
+							"type": "object",
+							"properties": {
+								"colorId": { "type": "string", "format": "cuid" },
+								"surchargePercentage": {
+									"type": "number",
+									"minimum": 0,
+									"maximum": 100
+								},
+								"isDefault": { "type": "boolean", "default": false }
+							},
+							"required": ["colorId", "surchargePercentage"]
+						}
+					}
+				},
+				"required": ["modelId", "colors"]
+			},
+			"output": {
+				"type": "object",
+				"properties": {
+					"modelId": { "type": "string" },
+					"assignedCount": { "type": "number" },
+					"assignments": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"id": { "type": "string" },
+								"colorId": { "type": "string" },
+								"surchargePercentage": { "type": "number" },
+								"isDefault": { "type": "boolean" }
+							}
+						}
+					}
+				}
+			},
+			"businessLogic": {
+				"transactional": "All assignments succeed or all fail (atomic transaction)",
+				"defaultValidation": "Only one color in array can have isDefault=true",
+				"duplicateHandling": "Skip colors already assigned (idempotent)"
+			},
+			"errors": [
+				{
+					"code": "BAD_REQUEST",
+					"message": "Solo un color puede ser predeterminado",
+					"trigger": "Multiple colors in array have isDefault=true"
+				}
+			],
+			"example": {
+				"input": {
+					"modelId": "clxModel456",
+					"colors": [
+						{
+							"colorId": "clxColor001",
+							"surchargePercentage": 0,
+							"isDefault": true
+						},
+						{ "colorId": "clxColor002", "surchargePercentage": 10 },
+						{ "colorId": "clxColor005", "surchargePercentage": 22 }
+					]
+				},
+				"output": {
+					"modelId": "clxModel456",
+					"assignedCount": 3,
+					"assignments": [
+						{
+							"id": "clxMC010",
+							"colorId": "clxColor001",
+							"surchargePercentage": 0,
+							"isDefault": true
+						},
+						{
+							"id": "clxMC011",
+							"colorId": "clxColor002",
+							"surchargePercentage": 10,
+							"isDefault": false
+						},
+						{
+							"id": "clxMC012",
+							"colorId": "clxColor005",
+							"surchargePercentage": 22,
+							"isDefault": false
+						}
+					]
+				}
+			}
+		},
 
-    "getAvailableColors": {
-      "type": "query",
-      "auth": "adminProcedure",
-      "description": "Get colors NOT yet assigned to a model (for assignment UI)",
-      "input": {
-        "type": "object",
-        "properties": {
-          "modelId": {
-            "type": "string",
-            "format": "cuid"
-          }
-        },
-        "required": ["modelId"]
-      },
-      "output": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": { "type": "string" },
-            "name": { "type": "string" },
-            "ralCode": { "type": "string", "nullable": true },
-            "hexCode": { "type": "string" },
-            "isActive": { "type": "boolean" }
-          }
-        }
-      },
-      "businessLogic": {
-        "filtering": "Exclude colors already assigned to this model",
-        "activeOnly": "Only show active colors (isActive=true)"
-      },
-      "example": {
-        "input": { "modelId": "clxModel123" },
-        "output": [
-          {
-            "id": "clxColor003",
-            "name": "Negro Mate",
-            "ralCode": "RAL 9005",
-            "hexCode": "#101010",
-            "isActive": true
-          }
-        ]
-      }
-    }
-  },
+		"getAvailableColors": {
+			"type": "query",
+			"auth": "adminProcedure",
+			"description": "Get colors NOT yet assigned to a model (for assignment UI)",
+			"input": {
+				"type": "object",
+				"properties": {
+					"modelId": {
+						"type": "string",
+						"format": "cuid"
+					}
+				},
+				"required": ["modelId"]
+			},
+			"output": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"properties": {
+						"id": { "type": "string" },
+						"name": { "type": "string" },
+						"ralCode": { "type": "string", "nullable": true },
+						"hexCode": { "type": "string" },
+						"isActive": { "type": "boolean" }
+					}
+				}
+			},
+			"businessLogic": {
+				"filtering": "Exclude colors already assigned to this model",
+				"activeOnly": "Only show active colors (isActive=true)"
+			},
+			"example": {
+				"input": { "modelId": "clxModel123" },
+				"output": [
+					{
+						"id": "clxColor003",
+						"name": "Negro Mate",
+						"ralCode": "RAL 9005",
+						"hexCode": "#101010",
+						"isActive": true
+					}
+				]
+			}
+		}
+	},
 
-  "sharedTypes": {
-    "ModelColorSchema": {
-      "description": "Zod validation schema for model color assignment",
-      "location": "src/lib/validations/model-color.ts",
-      "schema": {
-        "modelId": "z.string().cuid()",
-        "colorId": "z.string().cuid()",
-        "surchargePercentage": "z.number().min(0).max(100).multipleOf(0.01)",
-        "isDefault": "z.boolean().default(false)"
-      }
-    }
-  },
+	"sharedTypes": {
+		"ModelColorSchema": {
+			"description": "Zod validation schema for model color assignment",
+			"location": "src/lib/validations/model-color.ts",
+			"schema": {
+				"modelId": "z.string().cuid()",
+				"colorId": "z.string().cuid()",
+				"surchargePercentage": "z.number().min(0).max(100).multipleOf(0.01)",
+				"isDefault": "z.boolean().default(false)"
+			}
+		}
+	},
 
-  "securityNotes": [
-    "All procedures require adminProcedure authentication",
-    "Transaction-based operations prevent race conditions (default color switching)",
-    "Foreign key constraints enforce referential integrity",
-    "Validation ensures surcharge range (0-100%) to prevent negative prices"
-  ],
+	"securityNotes": [
+		"All procedures require adminProcedure authentication",
+		"Transaction-based operations prevent race conditions (default color switching)",
+		"Foreign key constraints enforce referential integrity",
+		"Validation ensures surcharge range (0-100%) to prevent negative prices"
+	],
 
-  "performanceConsiderations": [
-    "listByModel() uses eager loading (1 query with join)",
-    "bulkAssign() batches inserts in single transaction",
-    "getAvailableColors() uses NOT IN subquery (indexed on colorId)",
-    "Expected response times: queries <30ms, mutations <100ms, bulk <200ms"
-  ],
+	"performanceConsiderations": [
+		"listByModel() uses eager loading (1 query with join)",
+		"bulkAssign() batches inserts in single transaction",
+		"getAvailableColors() uses NOT IN subquery (indexed on colorId)",
+		"Expected response times: queries <30ms, mutations <100ms, bulk <200ms"
+	],
 
-  "integrationNotes": {
-    "withPricingEngine": "Surcharge percentage applied only to model basePrice (not glass/services)",
-    "withQuoteSystem": "Quote creation captures snapshot of surchargePercentage at that moment",
-    "withCatalogUI": "Public catalog shows only isActive colors for selection"
-  }
+	"integrationNotes": {
+		"withPricingEngine": "Surcharge percentage applied only to model basePrice (not glass/services)",
+		"withQuoteSystem": "Quote creation captures snapshot of surchargePercentage at that moment",
+		"withCatalogUI": "Public catalog shows only isActive colors for selection"
+	}
 }

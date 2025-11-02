@@ -4,13 +4,13 @@
 
 import { formatDateShort } from "@/lib/format";
 import type {
-  DashboardPeriodType,
-  DateRange,
-  QuoteMetrics,
-  SupplierDistribution,
-  TopGlassType,
-  TopModel,
-  TrendDataPoint,
+	DashboardPeriodType,
+	DateRange,
+	QuoteMetrics,
+	SupplierDistribution,
+	TopGlassType,
+	TopModel,
+	TrendDataPoint,
 } from "@/types/dashboard";
 
 const DAYS_IN_WEEK = 7;
@@ -23,60 +23,60 @@ const MINUTES_PER_HOUR = 60;
 const HOURS_PER_DAY = 24;
 const MS_PER_SECOND = 1000;
 const MS_PER_DAY =
-  MS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY;
+	MS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY;
 
 // Catalog analytics constants
 const TOP_ITEMS_LIMIT = 5;
 
 export function getPeriodDateRange(period: DashboardPeriodType): DateRange {
-  const end = new Date();
-  const start = new Date();
-  let label: string;
+	const end = new Date();
+	const start = new Date();
+	let label: string;
 
-  if (period === "7d") {
-    start.setDate(start.getDate() - DAYS_IN_WEEK);
-    label = "Últimos 7 días";
-  } else if (period === "30d") {
-    start.setDate(start.getDate() - DAYS_IN_MONTH);
-    label = "Últimos 30 días";
-  } else if (period === "90d") {
-    start.setDate(start.getDate() - DAYS_IN_QUARTER);
-    label = "Últimos 90 días";
-  } else {
-    start.setFullYear(end.getFullYear(), 0, 1);
-    label = `Año ${end.getFullYear()}`;
-  }
+	if (period === "7d") {
+		start.setDate(start.getDate() - DAYS_IN_WEEK);
+		label = "Últimos 7 días";
+	} else if (period === "30d") {
+		start.setDate(start.getDate() - DAYS_IN_MONTH);
+		label = "Últimos 30 días";
+	} else if (period === "90d") {
+		start.setDate(start.getDate() - DAYS_IN_QUARTER);
+		label = "Últimos 90 días";
+	} else {
+		start.setFullYear(end.getFullYear(), 0, 1);
+		label = `Año ${end.getFullYear()}`;
+	}
 
-  return { end, label, start };
+	return { end, label, start };
 }
 
 export function calculateConversionRate(sent: number, total: number): number {
-  return total === 0 ? 0 : sent / total;
+	return total === 0 ? 0 : sent / total;
 }
 
 export function calculatePercentageChange(
-  current: number,
-  previous: number
+	current: number,
+	previous: number,
 ): number {
-  return previous === 0 ? 0 : (current - previous) / previous;
+	return previous === 0 ? 0 : (current - previous) / previous;
 }
 
 export function calculateQuoteMetrics(data: {
-  total: number;
-  draft: number;
-  sent: number;
-  canceled: number;
-  previousTotal: number;
+	total: number;
+	draft: number;
+	sent: number;
+	canceled: number;
+	previousTotal: number;
 }): QuoteMetrics {
-  return {
-    canceledQuotes: data.canceled,
-    conversionRate: calculateConversionRate(data.sent, data.total),
-    draftQuotes: data.draft,
-    percentageChange: calculatePercentageChange(data.total, data.previousTotal),
-    previousPeriodTotal: data.previousTotal,
-    sentQuotes: data.sent,
-    totalQuotes: data.total,
-  };
+	return {
+		canceledQuotes: data.canceled,
+		conversionRate: calculateConversionRate(data.sent, data.total),
+		draftQuotes: data.draft,
+		percentageChange: calculatePercentageChange(data.total, data.previousTotal),
+		previousPeriodTotal: data.previousTotal,
+		sentQuotes: data.sent,
+		totalQuotes: data.total,
+	};
 }
 
 /**
@@ -109,45 +109,45 @@ export function calculateQuoteMetrics(data: {
  * ```
  */
 export function aggregateQuotesByDate(
-  quotes: Array<{ createdAt: Date }>,
-  dateRange: DateRange,
-  tenantConfig?: { timezone?: string; locale?: string } | null
+	quotes: Array<{ createdAt: Date }>,
+	dateRange: DateRange,
+	tenantConfig?: { timezone?: string; locale?: string } | null,
 ): TrendDataPoint[] {
-  // Create map of date string -> count
-  const countsByDate = new Map<string, number>();
+	// Create map of date string -> count
+	const countsByDate = new Map<string, number>();
 
-  // Aggregate existing quotes
-  for (const quote of quotes) {
-    const dateKey = quote.createdAt.toISOString().split("T")[0]; // YYYY-MM-DD
-    if (dateKey) {
-      countsByDate.set(dateKey, (countsByDate.get(dateKey) ?? 0) + 1);
-    }
-  }
+	// Aggregate existing quotes
+	for (const quote of quotes) {
+		const dateKey = quote.createdAt.toISOString().split("T")[0]; // YYYY-MM-DD
+		if (dateKey) {
+			countsByDate.set(dateKey, (countsByDate.get(dateKey) ?? 0) + 1);
+		}
+	}
 
-  // Calculate number of days in range
-  const daysDiff = Math.ceil(
-    (dateRange.end.getTime() - dateRange.start.getTime()) / MS_PER_DAY
-  );
+	// Calculate number of days in range
+	const daysDiff = Math.ceil(
+		(dateRange.end.getTime() - dateRange.start.getTime()) / MS_PER_DAY,
+	);
 
-  // Fill gaps with zero counts
-  const result: TrendDataPoint[] = [];
-  const currentDate = new Date(dateRange.start);
+	// Fill gaps with zero counts
+	const result: TrendDataPoint[] = [];
+	const currentDate = new Date(dateRange.start);
 
-  for (let i = 0; i <= daysDiff; i++) {
-    const dateKey = currentDate.toISOString().split("T")[0];
+	for (let i = 0; i <= daysDiff; i++) {
+		const dateKey = currentDate.toISOString().split("T")[0];
 
-    if (dateKey) {
-      result.push({
-        count: countsByDate.get(dateKey) ?? 0,
-        date: dateKey,
-        label: formatDateShort(currentDate, tenantConfig),
-      });
-    }
+		if (dateKey) {
+			result.push({
+				count: countsByDate.get(dateKey) ?? 0,
+				date: dateKey,
+				label: formatDateShort(currentDate, tenantConfig),
+			});
+		}
 
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
+		currentDate.setDate(currentDate.getDate() + 1);
+	}
 
-  return result;
+	return result;
 }
 
 // =============================================================================
@@ -179,46 +179,46 @@ export function aggregateQuotesByDate(
  * ```
  */
 export function getTopModels(
-  quoteItems: Array<{
-    modelId: string;
-    model: {
-      name: string;
-      profileSupplier: { name: string } | null;
-    };
-  }>
+	quoteItems: Array<{
+		modelId: string;
+		model: {
+			name: string;
+			profileSupplier: { name: string } | null;
+		};
+	}>,
 ): TopModel[] {
-  // Count items by modelId
-  const countsByModel = new Map<
-    string,
-    { count: number; modelName: string; supplierName: string | null }
-  >();
+	// Count items by modelId
+	const countsByModel = new Map<
+		string,
+		{ count: number; modelName: string; supplierName: string | null }
+	>();
 
-  for (const item of quoteItems) {
-    const existing = countsByModel.get(item.modelId);
-    if (existing) {
-      existing.count += 1;
-    } else {
-      countsByModel.set(item.modelId, {
-        count: 1,
-        modelName: item.model.name,
-        supplierName: item.model.profileSupplier?.name ?? null,
-      });
-    }
-  }
+	for (const item of quoteItems) {
+		const existing = countsByModel.get(item.modelId);
+		if (existing) {
+			existing.count += 1;
+		} else {
+			countsByModel.set(item.modelId, {
+				count: 1,
+				modelName: item.model.name,
+				supplierName: item.model.profileSupplier?.name ?? null,
+			});
+		}
+	}
 
-  const totalItems = quoteItems.length;
+	const totalItems = quoteItems.length;
 
-  // Convert to array, calculate percentages, sort by count desc, limit to 5
-  return Array.from(countsByModel.entries())
-    .map(([modelId, data]) => ({
-      count: data.count,
-      modelId,
-      modelName: data.modelName,
-      percentage: totalItems === 0 ? 0 : data.count / totalItems,
-      supplierName: data.supplierName,
-    }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, TOP_ITEMS_LIMIT);
+	// Convert to array, calculate percentages, sort by count desc, limit to 5
+	return Array.from(countsByModel.entries())
+		.map(([modelId, data]) => ({
+			count: data.count,
+			modelId,
+			modelName: data.modelName,
+			percentage: totalItems === 0 ? 0 : data.count / totalItems,
+			supplierName: data.supplierName,
+		}))
+		.sort((a, b) => b.count - a.count)
+		.slice(0, TOP_ITEMS_LIMIT);
 }
 
 /**
@@ -246,54 +246,54 @@ export function getTopModels(
  * ```
  */
 export function getGlassTypeDistribution(
-  quoteItems: Array<{
-    glassTypeId: string;
-    glassType: {
-      name: string;
-      code: string;
-      manufacturer: string | null;
-    };
-  }>
+	quoteItems: Array<{
+		glassTypeId: string;
+		glassType: {
+			name: string;
+			code: string;
+			manufacturer: string | null;
+		};
+	}>,
 ): TopGlassType[] {
-  // Count items by glassTypeId
-  const countsByGlassType = new Map<
-    string,
-    {
-      count: number;
-      glassTypeCode: string;
-      glassTypeName: string;
-      manufacturer: string | null;
-    }
-  >();
+	// Count items by glassTypeId
+	const countsByGlassType = new Map<
+		string,
+		{
+			count: number;
+			glassTypeCode: string;
+			glassTypeName: string;
+			manufacturer: string | null;
+		}
+	>();
 
-  for (const item of quoteItems) {
-    const existing = countsByGlassType.get(item.glassTypeId);
-    if (existing) {
-      existing.count += 1;
-    } else {
-      countsByGlassType.set(item.glassTypeId, {
-        count: 1,
-        glassTypeCode: item.glassType.code,
-        glassTypeName: item.glassType.name,
-        manufacturer: item.glassType.manufacturer,
-      });
-    }
-  }
+	for (const item of quoteItems) {
+		const existing = countsByGlassType.get(item.glassTypeId);
+		if (existing) {
+			existing.count += 1;
+		} else {
+			countsByGlassType.set(item.glassTypeId, {
+				count: 1,
+				glassTypeCode: item.glassType.code,
+				glassTypeName: item.glassType.name,
+				manufacturer: item.glassType.manufacturer,
+			});
+		}
+	}
 
-  const totalItems = quoteItems.length;
+	const totalItems = quoteItems.length;
 
-  // Convert to array, calculate percentages, sort by count desc, limit to 5
-  return Array.from(countsByGlassType.entries())
-    .map(([glassTypeId, data]) => ({
-      count: data.count,
-      glassTypeCode: data.glassTypeCode,
-      glassTypeId,
-      glassTypeName: data.glassTypeName,
-      manufacturer: data.manufacturer,
-      percentage: totalItems === 0 ? 0 : data.count / totalItems,
-    }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, TOP_ITEMS_LIMIT);
+	// Convert to array, calculate percentages, sort by count desc, limit to 5
+	return Array.from(countsByGlassType.entries())
+		.map(([glassTypeId, data]) => ({
+			count: data.count,
+			glassTypeCode: data.glassTypeCode,
+			glassTypeId,
+			glassTypeName: data.glassTypeName,
+			manufacturer: data.manufacturer,
+			percentage: totalItems === 0 ? 0 : data.count / totalItems,
+		}))
+		.sort((a, b) => b.count - a.count)
+		.slice(0, TOP_ITEMS_LIMIT);
 }
 
 /**
@@ -321,44 +321,44 @@ export function getGlassTypeDistribution(
  * ```
  */
 export function getSupplierDistribution(
-  quoteItems: Array<{
-    model: {
-      profileSupplier: { id: string; name: string } | null;
-    };
-  }>
+	quoteItems: Array<{
+		model: {
+			profileSupplier: { id: string; name: string } | null;
+		};
+	}>,
 ): SupplierDistribution[] {
-  // Count items by supplierId (null for models without supplier)
-  const countsBySupplier = new Map<
-    string | null,
-    { count: number; supplierName: string }
-  >();
+	// Count items by supplierId (null for models without supplier)
+	const countsBySupplier = new Map<
+		string | null,
+		{ count: number; supplierName: string }
+	>();
 
-  for (const item of quoteItems) {
-    const supplierId = item.model.profileSupplier?.id ?? null;
-    const supplierName = item.model.profileSupplier?.name ?? "Sin fabricante";
+	for (const item of quoteItems) {
+		const supplierId = item.model.profileSupplier?.id ?? null;
+		const supplierName = item.model.profileSupplier?.name ?? "Sin fabricante";
 
-    const existing = countsBySupplier.get(supplierId);
-    if (existing) {
-      existing.count += 1;
-    } else {
-      countsBySupplier.set(supplierId, {
-        count: 1,
-        supplierName,
-      });
-    }
-  }
+		const existing = countsBySupplier.get(supplierId);
+		if (existing) {
+			existing.count += 1;
+		} else {
+			countsBySupplier.set(supplierId, {
+				count: 1,
+				supplierName,
+			});
+		}
+	}
 
-  const totalItems = quoteItems.length;
+	const totalItems = quoteItems.length;
 
-  // Convert to array, calculate percentages, sort by count desc
-  return Array.from(countsBySupplier.entries())
-    .map(([supplierId, data]) => ({
-      count: data.count,
-      percentage: totalItems === 0 ? 0 : data.count / totalItems,
-      supplierId,
-      supplierName: data.supplierName,
-    }))
-    .sort((a, b) => b.count - a.count);
+	// Convert to array, calculate percentages, sort by count desc
+	return Array.from(countsBySupplier.entries())
+		.map(([supplierId, data]) => ({
+			count: data.count,
+			percentage: totalItems === 0 ? 0 : data.count / totalItems,
+			supplierId,
+			supplierName: data.supplierName,
+		}))
+		.sort((a, b) => b.count - a.count);
 }
 
 /**
@@ -385,22 +385,22 @@ export function getSupplierDistribution(
  * ```
  */
 export function calculateMonetaryMetrics(
-  quotes: Array<{ total: { toNumber: () => number } }>
+	quotes: Array<{ total: { toNumber: () => number } }>,
 ): {
-  averageValue: number;
-  totalValue: number;
+	averageValue: number;
+	totalValue: number;
 } {
-  if (quotes.length === 0) {
-    return { averageValue: 0, totalValue: 0 };
-  }
+	if (quotes.length === 0) {
+		return { averageValue: 0, totalValue: 0 };
+	}
 
-  const totalValue = quotes.reduce(
-    (sum, quote) => sum + quote.total.toNumber(),
-    0
-  );
-  const averageValue = totalValue / quotes.length;
+	const totalValue = quotes.reduce(
+		(sum, quote) => sum + quote.total.toNumber(),
+		0,
+	);
+	const averageValue = totalValue / quotes.length;
 
-  return { averageValue, totalValue };
+	return { averageValue, totalValue };
 }
 
 /**
@@ -432,38 +432,38 @@ export function calculateMonetaryMetrics(
  * ```
  */
 export function groupQuotesByPriceRange(
-  quotes: Array<{ total: { toNumber: () => number } }>,
-  ranges: Array<{ label: string; max: number | null; min: number }> = [
-    { label: "0 - 1M", max: 1_000_000, min: 0 },
-    { label: "1M - 5M", max: 5_000_000, min: 1_000_000 },
-    { label: "5M - 10M", max: 10_000_000, min: 5_000_000 },
-    { label: "10M+", max: null, min: 10_000_000 },
-  ]
+	quotes: Array<{ total: { toNumber: () => number } }>,
+	ranges: Array<{ label: string; max: number | null; min: number }> = [
+		{ label: "0 - 1M", max: 1_000_000, min: 0 },
+		{ label: "1M - 5M", max: 5_000_000, min: 1_000_000 },
+		{ label: "5M - 10M", max: 10_000_000, min: 5_000_000 },
+		{ label: "10M+", max: null, min: 10_000_000 },
+	],
 ): Array<{ count: number; label: string; max: number | null; min: number }> {
-  // Initialize counts
-  const rangeCounts = ranges.map((range) => ({
-    count: 0,
-    label: range.label,
-    max: range.max,
-    min: range.min,
-  }));
+	// Initialize counts
+	const rangeCounts = ranges.map((range) => ({
+		count: 0,
+		label: range.label,
+		max: range.max,
+		min: range.min,
+	}));
 
-  // Group quotes into ranges
-  for (const quote of quotes) {
-    const value = quote.total.toNumber();
+	// Group quotes into ranges
+	for (const quote of quotes) {
+		const value = quote.total.toNumber();
 
-    for (const range of rangeCounts) {
-      const meetsMin = value >= range.min;
-      const meetsMax = range.max === null || value < range.max;
+		for (const range of rangeCounts) {
+			const meetsMin = value >= range.min;
+			const meetsMax = range.max === null || value < range.max;
 
-      if (meetsMin && meetsMax) {
-        range.count += 1;
-        break; // Quote belongs to only one range
-      }
-    }
-  }
+			if (meetsMin && meetsMax) {
+				range.count += 1;
+				break; // Quote belongs to only one range
+			}
+		}
+	}
 
-  return rangeCounts;
+	return rangeCounts;
 }
 
 /**
@@ -489,21 +489,21 @@ export function groupQuotesByPriceRange(
  * ```
  */
 export function calculatePeriodComparison(
-  current: number,
-  previous: number
+	current: number,
+	previous: number,
 ): {
-  current: number;
-  isPositive: boolean;
-  percentageChange: number;
-  previous: number;
+	current: number;
+	isPositive: boolean;
+	percentageChange: number;
+	previous: number;
 } {
-  const percentageChange = calculatePercentageChange(current, previous);
-  const isPositive = percentageChange >= 0;
+	const percentageChange = calculatePercentageChange(current, previous);
+	const isPositive = percentageChange >= 0;
 
-  return {
-    current,
-    isPositive,
-    percentageChange,
-    previous,
-  };
+	return {
+		current,
+		isPositive,
+		percentageChange,
+		previous,
+	};
 }

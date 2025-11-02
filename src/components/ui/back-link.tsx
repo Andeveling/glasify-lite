@@ -25,61 +25,61 @@ import { cn } from "@/lib/utils";
  */
 
 const backLinkVariants = cva("inline-flex items-center gap-2", {
-  defaultVariants: {
-    icon: "arrow",
-    variant: "ghost",
-  },
-  variants: {
-    icon: {
-      arrow: "",
-      chevron: "",
-      none: "",
-    },
-    variant: {
-      ghost: "",
-      link: "",
-      outline: "",
-    },
-  },
+	defaultVariants: {
+		icon: "arrow",
+		variant: "ghost",
+	},
+	variants: {
+		icon: {
+			arrow: "",
+			chevron: "",
+			none: "",
+		},
+		variant: {
+			ghost: "",
+			link: "",
+			outline: "",
+		},
+	},
 });
 
 export type BackLinkProps = {
-  /** Target URL for navigation */
-  href: string;
-  /** Link text content */
-  children: React.ReactNode;
-  /** Icon variant to display */
-  icon?: "arrow" | "chevron" | "none";
-  /** Button variant style */
-  variant?: "ghost" | "outline" | "link";
-  /** Button size */
-  size?: VariantProps<typeof buttonVariants>["size"];
-  /** Additional CSS classes */
-  className?: string;
+	/** Target URL for navigation */
+	href: string;
+	/** Link text content */
+	children: React.ReactNode;
+	/** Icon variant to display */
+	icon?: "arrow" | "chevron" | "none";
+	/** Button variant style */
+	variant?: "ghost" | "outline" | "link";
+	/** Button size */
+	size?: VariantProps<typeof buttonVariants>["size"];
+	/** Additional CSS classes */
+	className?: string;
 };
 
 export function BackLink({
-  children,
-  className,
-  href,
-  icon = "arrow",
-  size = "sm",
-  variant = "ghost",
+	children,
+	className,
+	href,
+	icon = "arrow",
+	size = "sm",
+	variant = "ghost",
 }: BackLinkProps) {
-  const IconComponent =
-    icon === "chevron" ? ChevronLeft : icon === "arrow" ? ArrowLeft : null;
+	const IconComponent =
+		icon === "chevron" ? ChevronLeft : icon === "arrow" ? ArrowLeft : null;
 
-  return (
-    <Button
-      asChild
-      className={cn(backLinkVariants({ variant }), className)}
-      size={size}
-      variant={variant}
-    >
-      <Link href={href}>
-        {IconComponent && <IconComponent className="h-4 w-4" />}
-        {children}
-      </Link>
-    </Button>
-  );
+	return (
+		<Button
+			asChild
+			className={cn(backLinkVariants({ variant }), className)}
+			size={size}
+			variant={variant}
+		>
+			<Link href={href}>
+				{IconComponent && <IconComponent className="h-4 w-4" />}
+				{children}
+			</Link>
+		</Button>
+	);
 }

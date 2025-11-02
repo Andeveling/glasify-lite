@@ -21,60 +21,60 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 type QuotesSearchProps = {
-  currentSearch?: string;
+	currentSearch?: string;
 };
 
 const SEARCH_DEBOUNCE_MS = 300;
 
 export function QuotesSearch({ currentSearch = "" }: QuotesSearchProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [searchValue, setSearchValue] = useState(currentSearch);
+	const router = useRouter();
+	const searchParams = useSearchParams();
+	const [searchValue, setSearchValue] = useState(currentSearch);
 
-  // Debounced URL update
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const params = new URLSearchParams(searchParams.toString());
+	// Debounced URL update
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			const params = new URLSearchParams(searchParams.toString());
 
-      if (searchValue) {
-        params.set("search", searchValue);
-      } else {
-        params.delete("search");
-      }
+			if (searchValue) {
+				params.set("search", searchValue);
+			} else {
+				params.delete("search");
+			}
 
-      // Reset to page 1 when search changes
-      params.delete("page");
+			// Reset to page 1 when search changes
+			params.delete("page");
 
-      router.push(`?${params.toString()}`);
-    }, SEARCH_DEBOUNCE_MS);
+			router.push(`?${params.toString()}`);
+		}, SEARCH_DEBOUNCE_MS);
 
-    return () => clearTimeout(timer);
-  }, [searchValue, router, searchParams]);
+		return () => clearTimeout(timer);
+	}, [searchValue, router, searchParams]);
 
-  const handleClear = () => {
-    setSearchValue("");
-  };
+	const handleClear = () => {
+		setSearchValue("");
+	};
 
-  return (
-    <div className="relative w-full max-w-sm">
-      <Search className="absolute top-2.5 left-2.5 size-4 text-muted-foreground" />
-      <Input
-        className="pr-8 pl-8"
-        onChange={(e) => setSearchValue(e.target.value)}
-        placeholder="Buscar por proyecto o usuario..."
-        type="search"
-        value={searchValue}
-      />
-      {searchValue && (
-        <Button
-          className="absolute top-0 right-0 size-9"
-          onClick={handleClear}
-          size="icon"
-          variant="ghost"
-        >
-          <X className="size-4" />
-        </Button>
-      )}
-    </div>
-  );
+	return (
+		<div className="relative w-full max-w-sm">
+			<Search className="absolute top-2.5 left-2.5 size-4 text-muted-foreground" />
+			<Input
+				className="pr-8 pl-8"
+				onChange={(e) => setSearchValue(e.target.value)}
+				placeholder="Buscar por proyecto o usuario..."
+				type="search"
+				value={searchValue}
+			/>
+			{searchValue && (
+				<Button
+					className="absolute top-0 right-0 size-9"
+					onClick={handleClear}
+					size="icon"
+					variant="ghost"
+				>
+					<X className="size-4" />
+				</Button>
+			)}
+		</div>
+	);
 }

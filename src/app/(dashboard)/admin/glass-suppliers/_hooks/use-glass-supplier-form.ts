@@ -17,21 +17,21 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 type UseGlassSupplierFormProps = {
-  mode: "create" | "edit";
-  open: boolean;
-  defaultValues?: FormValues & { id?: string };
+	mode: "create" | "edit";
+	open: boolean;
+	defaultValues?: FormValues & { id?: string };
 };
 
 // Create a schema with all required fields for the form (not API)
 const formSchema = z.object({
-  code: z.string().optional(),
-  contactEmail: z.string().optional(),
-  contactPhone: z.string().optional(),
-  country: z.string().optional(),
-  isActive: z.boolean(),
-  name: z.string(),
-  notes: z.string().optional(),
-  website: z.string().optional(),
+	code: z.string().optional(),
+	contactEmail: z.string().optional(),
+	contactPhone: z.string().optional(),
+	country: z.string().optional(),
+	isActive: z.boolean(),
+	name: z.string(),
+	notes: z.string().optional(),
+	website: z.string().optional(),
 });
 
 export type FormValues = z.infer<typeof formSchema>;
@@ -48,55 +48,55 @@ export type FormValues = z.infer<typeof formSchema>;
  * @returns form instance from React Hook Form
  */
 export function useGlassSupplierForm({
-  mode,
-  open,
-  defaultValues,
+	mode,
+	open,
+	defaultValues,
 }: UseGlassSupplierFormProps) {
-  const form = useForm<FormValues>({
-    defaultValues: {
-      code: "",
-      contactEmail: "",
-      contactPhone: "",
-      country: "",
-      isActive: true,
-      name: "",
-      notes: "",
-      website: "",
-    },
-    resolver: zodResolver(formSchema),
-  });
+	const form = useForm<FormValues>({
+		defaultValues: {
+			code: "",
+			contactEmail: "",
+			contactPhone: "",
+			country: "",
+			isActive: true,
+			name: "",
+			notes: "",
+			website: "",
+		},
+		resolver: zodResolver(formSchema),
+	});
 
-  /**
-   * Reset form when dialog state changes
-   * - Opening with existing data: reset to that data
-   * - Opening in create mode: reset to empty state
-   * - Closing: clear form for next use
-   */
-  useEffect(() => {
-    if (open && defaultValues) {
-      form.reset({
-        code: defaultValues.code ?? "",
-        contactEmail: defaultValues.contactEmail ?? "",
-        contactPhone: defaultValues.contactPhone ?? "",
-        country: defaultValues.country ?? "",
-        isActive: defaultValues.isActive ?? true,
-        name: defaultValues.name ?? "",
-        notes: defaultValues.notes ?? "",
-        website: defaultValues.website ?? "",
-      });
-    } else if (open && mode === "create") {
-      form.reset({
-        code: "",
-        contactEmail: "",
-        contactPhone: "",
-        country: "",
-        isActive: true,
-        name: "",
-        notes: "",
-        website: "",
-      });
-    }
-  }, [open, defaultValues, mode, form]);
+	/**
+	 * Reset form when dialog state changes
+	 * - Opening with existing data: reset to that data
+	 * - Opening in create mode: reset to empty state
+	 * - Closing: clear form for next use
+	 */
+	useEffect(() => {
+		if (open && defaultValues) {
+			form.reset({
+				code: defaultValues.code ?? "",
+				contactEmail: defaultValues.contactEmail ?? "",
+				contactPhone: defaultValues.contactPhone ?? "",
+				country: defaultValues.country ?? "",
+				isActive: defaultValues.isActive ?? true,
+				name: defaultValues.name ?? "",
+				notes: defaultValues.notes ?? "",
+				website: defaultValues.website ?? "",
+			});
+		} else if (open && mode === "create") {
+			form.reset({
+				code: "",
+				contactEmail: "",
+				contactPhone: "",
+				country: "",
+				isActive: true,
+				name: "",
+				notes: "",
+				website: "",
+			});
+		}
+	}, [open, defaultValues, mode, form]);
 
-  return { form };
+	return { form };
 }

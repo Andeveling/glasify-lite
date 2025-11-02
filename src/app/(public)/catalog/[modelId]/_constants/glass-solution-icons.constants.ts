@@ -7,9 +7,9 @@ import type { LucideIcon } from "lucide-react";
 import { Flame, Shield, Sun, Volume2 } from "lucide-react";
 
 export type GlassSolutionIconConfig = {
-  icon: LucideIcon;
-  label: string;
-  color: string;
+	icon: LucideIcon;
+	label: string;
+	color: string;
 };
 
 /**
@@ -17,33 +17,33 @@ export type GlassSolutionIconConfig = {
  * Colors use Tailwind CSS classes for consistency
  */
 export const GLASS_SOLUTION_ICONS: Record<string, GlassSolutionIconConfig> = {
-  thermal: {
-    icon: Flame,
-    label: "Térmico",
-    color: "text-orange-500",
-  },
-  acoustic: {
-    icon: Volume2,
-    label: "Acústico",
-    color: "text-blue-500",
-  },
-  solar: {
-    icon: Sun,
-    label: "Solar",
-    color: "text-yellow-500",
-  },
-  security: {
-    icon: Shield,
-    label: "Seguridad",
-    color: "text-green-500",
-  },
+	thermal: {
+		icon: Flame,
+		label: "Térmico",
+		color: "text-orange-500",
+	},
+	acoustic: {
+		icon: Volume2,
+		label: "Acústico",
+		color: "text-blue-500",
+	},
+	solar: {
+		icon: Sun,
+		label: "Solar",
+		color: "text-yellow-500",
+	},
+	security: {
+		icon: Shield,
+		label: "Seguridad",
+		color: "text-green-500",
+	},
 } as const;
 
 /**
  * Default icon configuration for unknown categories
  */
 export const DEFAULT_GLASS_ICON: GlassSolutionIconConfig = {
-  icon: Shield,
-  label: "Vidrio",
-  color: "text-gray-500",
+	icon: Shield,
+	label: "Vidrio",
+	color: "text-gray-500",
 };

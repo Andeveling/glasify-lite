@@ -24,22 +24,22 @@ import { auth } from "@/server/auth";
  * @returns Children if admin, fallback or null otherwise
  */
 export async function AdminOnly({
-  children,
-  fallback,
+	children,
+	fallback,
 }: {
-  children: ReactNode;
-  fallback?: ReactNode;
+	children: ReactNode;
+	fallback?: ReactNode;
 }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  const isAdmin = session?.user?.role === "admin";
+	const session = await auth.api.getSession({
+		headers: await headers(),
+	});
+	const isAdmin = session?.user?.role === "admin";
 
-  if (!isAdmin) {
-    return fallback ?? null;
-  }
+	if (!isAdmin) {
+		return fallback ?? null;
+	}
 
-  return <>{children}</>;
+	return <>{children}</>;
 }
 
 /**
@@ -62,23 +62,23 @@ export async function AdminOnly({
  * @returns Children if seller or admin, fallback or null otherwise
  */
 export async function SellerOnly({
-  children,
-  fallback,
+	children,
+	fallback,
 }: {
-  children: ReactNode;
-  fallback?: ReactNode;
+	children: ReactNode;
+	fallback?: ReactNode;
 }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  const isSeller = session?.user?.role === "seller";
-  const isAdmin = session?.user?.role === "admin";
+	const session = await auth.api.getSession({
+		headers: await headers(),
+	});
+	const isSeller = session?.user?.role === "seller";
+	const isAdmin = session?.user?.role === "admin";
 
-  if (!(isSeller || isAdmin)) {
-    return fallback ?? null;
-  }
+	if (!(isSeller || isAdmin)) {
+		return fallback ?? null;
+	}
 
-  return <>{children}</>;
+	return <>{children}</>;
 }
 
 /**
@@ -101,20 +101,20 @@ export async function SellerOnly({
  * @returns Children if authenticated, fallback or null otherwise
  */
 export async function AuthenticatedOnly({
-  children,
-  fallback,
+	children,
+	fallback,
 }: {
-  children: ReactNode;
-  fallback?: ReactNode;
+	children: ReactNode;
+	fallback?: ReactNode;
 }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  const isAuthenticated = !!session?.user;
+	const session = await auth.api.getSession({
+		headers: await headers(),
+	});
+	const isAuthenticated = !!session?.user;
 
-  if (!isAuthenticated) {
-    return fallback ?? null;
-  }
+	if (!isAuthenticated) {
+		return fallback ?? null;
+	}
 
-  return <>{children}</>;
+	return <>{children}</>;
 }

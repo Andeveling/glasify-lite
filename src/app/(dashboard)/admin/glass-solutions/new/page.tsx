@@ -12,23 +12,23 @@ import type { Metadata } from "next";
 import { GlassSolutionForm } from "../_components/glass-solution-form";
 
 export const metadata: Metadata = {
-  description: "Crear nueva solución de vidrio",
-  title: "Nueva Solución de Vidrio | Admin",
+	description: "Crear nueva solución de vidrio",
+	title: "Nueva Solución de Vidrio | Admin",
 };
 
 export default function NewGlassSolutionPage() {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-bold text-3xl tracking-tight">
-          Nueva Solución de Vidrio
-        </h1>
-        <p className="text-muted-foreground">
-          Crea una nueva solución base para tipos de vidrio
-        </p>
-      </div>
+	return (
+		<div className="space-y-6">
+			<div>
+				<h1 className="font-bold text-3xl tracking-tight">
+					Nueva Solución de Vidrio
+				</h1>
+				<p className="text-muted-foreground">
+					Crea una nueva solución base para tipos de vidrio
+				</p>
+			</div>
 
-      <GlassSolutionForm mode="create" />
-    </div>
-  );
+			<GlassSolutionForm mode="create" />
+		</div>
+	);
 }

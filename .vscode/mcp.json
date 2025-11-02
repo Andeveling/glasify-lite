@@ -1,27 +1,27 @@
 {
-  "servers": {
-    "serena": {
-      "type": "stdio",
-      "command": "uvx",
-      "args": [
-        "--from",
-        "git+https://github.com/oraios/serena",
-        "serena",
-        "start-mcp-server",
-        "--context",
-        "ide-assistant"
-      ]
-    },
-    "shadcn": {
-      "command": "npx",
-      "args": ["shadcn@latest", "mcp"]
-    },
-    "shadcnio": {
-      "url": "https://www.shadcn.io/api/mcp"
-    },
-    "next-devtools": {
-      "command": "npx",
-      "args": ["-y", "next-devtools-mcp@latest"]
-    }
-  }
+	"servers": {
+		"serena": {
+			"type": "stdio",
+			"command": "uvx",
+			"args": [
+				"--from",
+				"git+https://github.com/oraios/serena",
+				"serena",
+				"start-mcp-server",
+				"--context",
+				"ide-assistant"
+			]
+		},
+		"shadcn": {
+			"command": "npx",
+			"args": ["shadcn@latest", "mcp"]
+		},
+		"shadcnio": {
+			"url": "https://www.shadcn.io/api/mcp"
+		},
+		"next-devtools": {
+			"command": "npx",
+			"args": ["-y", "next-devtools-mcp@latest"]
+		}
+	}
 }

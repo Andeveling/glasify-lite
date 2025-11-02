@@ -18,40 +18,40 @@ import { Button } from "@/components/ui/button";
 import { FILTER_OPTIONS } from "../_constants/quote-filters.constants";
 
 type QuotesFiltersProps = {
-  currentStatus?: string;
+	currentStatus?: string;
 };
 
 export function QuotesFilters({ currentStatus = "all" }: QuotesFiltersProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+	const router = useRouter();
+	const searchParams = useSearchParams();
 
-  const handleFilterChange = (status: string) => {
-    const params = new URLSearchParams(searchParams.toString());
+	const handleFilterChange = (status: string) => {
+		const params = new URLSearchParams(searchParams.toString());
 
-    if (status === "all") {
-      params.delete("status");
-    } else {
-      params.set("status", status);
-    }
+		if (status === "all") {
+			params.delete("status");
+		} else {
+			params.set("status", status);
+		}
 
-    // Reset to page 1 when filter changes
-    params.delete("page");
+		// Reset to page 1 when filter changes
+		params.delete("page");
 
-    router.push(`?${params.toString()}`);
-  };
+		router.push(`?${params.toString()}`);
+	};
 
-  return (
-    <div className="flex flex-wrap gap-2">
-      {FILTER_OPTIONS.map((option) => (
-        <Button
-          key={option.value}
-          onClick={() => handleFilterChange(option.value)}
-          size="sm"
-          variant={currentStatus === option.value ? "default" : "outline"}
-        >
-          {option.label}
-        </Button>
-      ))}
-    </div>
-  );
+	return (
+		<div className="flex flex-wrap gap-2">
+			{FILTER_OPTIONS.map((option) => (
+				<Button
+					key={option.value}
+					onClick={() => handleFilterChange(option.value)}
+					size="sm"
+					variant={currentStatus === option.value ? "default" : "outline"}
+				>
+					{option.label}
+				</Button>
+			))}
+		</div>
+	);
 }

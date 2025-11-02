@@ -15,15 +15,15 @@ import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  address: addressRouter,
-  admin: adminRouter,
-  catalog: catalogRouter,
-  dashboard: dashboardRouter,
-  geocoding: geocodingRouter,
-  quote: quoteRouter,
-  tenantConfig: tenantConfigRouter,
-  transportation: transportationRouter,
-  user: userRouter,
+	address: addressRouter,
+	admin: adminRouter,
+	catalog: catalogRouter,
+	dashboard: dashboardRouter,
+	geocoding: geocodingRouter,
+	quote: quoteRouter,
+	tenantConfig: tenantConfigRouter,
+	transportation: transportationRouter,
+	user: userRouter,
 });
 
 // export type definition of API

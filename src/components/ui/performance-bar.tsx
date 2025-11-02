@@ -2,10 +2,10 @@
 
 import type { LucideIcon } from "lucide-react";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
@@ -14,13 +14,13 @@ import { cn } from "@/lib/utils";
 // ============================================================================
 
 type PerformanceBarProps = {
-  className?: string;
-  icon?: LucideIcon;
-  label?: string;
-  max?: number;
-  showLabel?: boolean;
-  tooltip?: string;
-  value: number;
+	className?: string;
+	icon?: LucideIcon;
+	label?: string;
+	max?: number;
+	showLabel?: boolean;
+	tooltip?: string;
+	value: number;
 };
 
 // ============================================================================
@@ -65,59 +65,59 @@ type PerformanceBarProps = {
  * ```
  */
 export function PerformanceBar({
-  className,
-  icon: Icon,
-  label,
-  max = 5,
-  showLabel = false,
-  tooltip,
-  value,
+	className,
+	icon: Icon,
+	label,
+	max = 5,
+	showLabel = false,
+	tooltip,
+	value,
 }: PerformanceBarProps) {
-  const clampedValue = Math.max(0, Math.min(max, value));
-  const percentage = (clampedValue / max) * 100;
+	const clampedValue = Math.max(0, Math.min(max, value));
+	const percentage = (clampedValue / max) * 100;
 
-  return (
-    <div className={cn("flex items-center gap-2", className)}>
-      {/* Icon with tooltip */}
-      {Icon && (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex shrink-0">
-                <Icon className="size-4 text-muted-foreground" />
-              </div>
-            </TooltipTrigger>
-            {tooltip && (
-              <TooltipContent className="max-w-xs" side="top">
-                <p className="text-xs">{tooltip}</p>
-              </TooltipContent>
-            )}
-          </Tooltip>
-        </TooltipProvider>
-      )}
-      {/* Progress bar with semantic color */}
-      <div className="relative min-w-0 flex-1">
-        <div className="relative h-2 w-full overflow-hidden rounded-full bg-muted">
-          <div
-            className="h-full rounded-full transition-all duration-500 ease-out"
-            style={{
-              backgroundColor:
-                percentage >= 80
-                  ? "oklch(var(--success))"
-                  : percentage >= 60
-                    ? "oklch(var(--chart-4))"
-                    : percentage >= 40
-                      ? "oklch(var(--chart-5))"
-                      : "oklch(var(--destructive))",
-              width: `${percentage}%`,
-            }}
-          />
-        </div>
-      </div>
-      {/* Rating value */}
-      <span className="min-w-[32px] shrink-0 text-right font-medium text-muted-foreground text-xs tabular-nums">
-        {clampedValue}/{max}
-      </span>
-    </div>
-  );
+	return (
+		<div className={cn("flex items-center gap-2", className)}>
+			{/* Icon with tooltip */}
+			{Icon && (
+				<TooltipProvider>
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<div className="flex shrink-0">
+								<Icon className="size-4 text-muted-foreground" />
+							</div>
+						</TooltipTrigger>
+						{tooltip && (
+							<TooltipContent className="max-w-xs" side="top">
+								<p className="text-xs">{tooltip}</p>
+							</TooltipContent>
+						)}
+					</Tooltip>
+				</TooltipProvider>
+			)}
+			{/* Progress bar with semantic color */}
+			<div className="relative min-w-0 flex-1">
+				<div className="relative h-2 w-full overflow-hidden rounded-full bg-muted">
+					<div
+						className="h-full rounded-full transition-all duration-500 ease-out"
+						style={{
+							backgroundColor:
+								percentage >= 80
+									? "oklch(var(--success))"
+									: percentage >= 60
+										? "oklch(var(--chart-4))"
+										: percentage >= 40
+											? "oklch(var(--chart-5))"
+											: "oklch(var(--destructive))",
+							width: `${percentage}%`,
+						}}
+					/>
+				</div>
+			</div>
+			{/* Rating value */}
+			<span className="min-w-[32px] shrink-0 text-right font-medium text-muted-foreground text-xs tabular-nums">
+				{clampedValue}/{max}
+			</span>
+		</div>
+	);
 }

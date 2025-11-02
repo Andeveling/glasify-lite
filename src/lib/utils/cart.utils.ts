@@ -27,11 +27,11 @@ const PRICE_TOLERANCE = 0.01; // Tolerance for floating-point comparison
  * @returns Total price (sum of all subtotals)
  */
 export function calculateCartTotal(items: CartItem[]): number {
-  if (!items || items.length === 0) {
-    return 0;
-  }
+	if (!items || items.length === 0) {
+		return 0;
+	}
 
-  return items.reduce((total, item) => total + item.subtotal, 0);
+	return items.reduce((total, item) => total + item.subtotal, 0);
 }
 
 /**
@@ -41,11 +41,11 @@ export function calculateCartTotal(items: CartItem[]): number {
  * @returns Total item count
  */
 export function calculateItemCount(items: CartItem[]): number {
-  if (!items || items.length === 0) {
-    return 0;
-  }
+	if (!items || items.length === 0) {
+		return 0;
+	}
 
-  return items.reduce((count, item) => count + item.quantity, 0);
+	return items.reduce((count, item) => count + item.quantity, 0);
 }
 
 /**
@@ -56,14 +56,14 @@ export function calculateItemCount(items: CartItem[]): number {
  * @returns Subtotal (unitPrice * quantity)
  */
 export function calculateItemSubtotal(
-  unitPrice: number,
-  quantity: number
+	unitPrice: number,
+	quantity: number,
 ): number {
-  if (unitPrice < 0 || quantity < 0) {
-    return 0;
-  }
+	if (unitPrice < 0 || quantity < 0) {
+		return 0;
+	}
 
-  return unitPrice * quantity;
+	return unitPrice * quantity;
 }
 
 /**
@@ -74,18 +74,18 @@ export function calculateItemSubtotal(
  * @returns Cart summary with totals and metadata
  */
 export function generateCartSummary(
-  items: CartItem[],
-  currency: string
+	items: CartItem[],
+	currency: string,
 ): CartSummary {
-  const itemCount = calculateItemCount(items);
-  const total = calculateCartTotal(items);
+	const itemCount = calculateItemCount(items);
+	const total = calculateCartTotal(items);
 
-  return {
-    currency,
-    isEmpty: items.length === 0,
-    itemCount,
-    total,
-  };
+	return {
+		currency,
+		isEmpty: items.length === 0,
+		itemCount,
+		total,
+	};
 }
 
 // ============================================================================
@@ -99,28 +99,28 @@ export function generateCartSummary(
  * @returns Validation result with error message if invalid
  */
 export function validateQuantity(quantity: number): {
-  valid: boolean;
-  error?: string;
+	valid: boolean;
+	error?: string;
 } {
-  if (!Number.isInteger(quantity)) {
-    return { error: "La cantidad debe ser un número entero", valid: false };
-  }
+	if (!Number.isInteger(quantity)) {
+		return { error: "La cantidad debe ser un número entero", valid: false };
+	}
 
-  if (quantity < CART_CONSTANTS.MIN_QUANTITY) {
-    return {
-      error: `La cantidad mínima es ${CART_CONSTANTS.MIN_QUANTITY}`,
-      valid: false,
-    };
-  }
+	if (quantity < CART_CONSTANTS.MIN_QUANTITY) {
+		return {
+			error: `La cantidad mínima es ${CART_CONSTANTS.MIN_QUANTITY}`,
+			valid: false,
+		};
+	}
 
-  if (quantity > CART_CONSTANTS.MAX_QUANTITY) {
-    return {
-      error: `La cantidad máxima es ${CART_CONSTANTS.MAX_QUANTITY}`,
-      valid: false,
-    };
-  }
+	if (quantity > CART_CONSTANTS.MAX_QUANTITY) {
+		return {
+			error: `La cantidad máxima es ${CART_CONSTANTS.MAX_QUANTITY}`,
+			valid: false,
+		};
+	}
 
-  return { valid: true };
+	return { valid: true };
 }
 
 /**
@@ -130,17 +130,17 @@ export function validateQuantity(quantity: number): {
  * @returns Validation result with error message if limit reached
  */
 export function validateCartLimit(currentItemCount: number): {
-  valid: boolean;
-  error?: string;
+	valid: boolean;
+	error?: string;
 } {
-  if (currentItemCount >= CART_CONSTANTS.MAX_ITEMS) {
-    return {
-      error: `No puedes agregar más de ${CART_CONSTANTS.MAX_ITEMS} items al carrito`,
-      valid: false,
-    };
-  }
+	if (currentItemCount >= CART_CONSTANTS.MAX_ITEMS) {
+		return {
+			error: `No puedes agregar más de ${CART_CONSTANTS.MAX_ITEMS} items al carrito`,
+			valid: false,
+		};
+	}
 
-  return { valid: true };
+	return { valid: true };
 }
 
 /**
@@ -152,106 +152,106 @@ export function validateCartLimit(currentItemCount: number): {
  * @returns Validation result with error message if invalid
  */
 export function validateCartItem(item: unknown): {
-  valid: boolean;
-  error?: string;
+	valid: boolean;
+	error?: string;
 } {
-  if (!item || typeof item !== "object") {
-    return { error: "Item inválido", valid: false };
-  }
+	if (!item || typeof item !== "object") {
+		return { error: "Item inválido", valid: false };
+	}
 
-  const cartItem = item as Partial<CartItem>;
+	const cartItem = item as Partial<CartItem>;
 
-  // Required string fields
-  const requiredStringFields: Array<keyof CartItem> = [
-    "id",
-    "modelId",
-    "modelName",
-    "glassTypeId",
-    "glassTypeName",
-    "name",
-    "createdAt",
-  ];
+	// Required string fields
+	const requiredStringFields: Array<keyof CartItem> = [
+		"id",
+		"modelId",
+		"modelName",
+		"glassTypeId",
+		"glassTypeName",
+		"name",
+		"createdAt",
+	];
 
-  for (const field of requiredStringFields) {
-    if (!cartItem[field] || typeof cartItem[field] !== "string") {
-      return { error: `Campo requerido: ${field}`, valid: false };
-    }
-  }
+	for (const field of requiredStringFields) {
+		if (!cartItem[field] || typeof cartItem[field] !== "string") {
+			return { error: `Campo requerido: ${field}`, valid: false };
+		}
+	}
 
-  // Required number fields
-  const requiredNumberFields: Array<keyof CartItem> = [
-    "widthMm",
-    "heightMm",
-    "quantity",
-    "unitPrice",
-    "subtotal",
-  ];
+	// Required number fields
+	const requiredNumberFields: Array<keyof CartItem> = [
+		"widthMm",
+		"heightMm",
+		"quantity",
+		"unitPrice",
+		"subtotal",
+	];
 
-  for (const field of requiredNumberFields) {
-    if (typeof cartItem[field] !== "number" || cartItem[field] === undefined) {
-      return { error: `Campo numérico requerido: ${field}`, valid: false };
-    }
-  }
+	for (const field of requiredNumberFields) {
+		if (typeof cartItem[field] !== "number" || cartItem[field] === undefined) {
+			return { error: `Campo numérico requerido: ${field}`, valid: false };
+		}
+	}
 
-  // Validate additionalServiceIds array
-  if (!Array.isArray(cartItem.additionalServiceIds)) {
-    return { error: "additionalServiceIds debe ser un array", valid: false };
-  }
+	// Validate additionalServiceIds array
+	if (!Array.isArray(cartItem.additionalServiceIds)) {
+		return { error: "additionalServiceIds debe ser un array", valid: false };
+	}
 
-  // Validate dimensions object
-  if (!cartItem.dimensions || typeof cartItem.dimensions !== "object") {
-    return { error: "Dimensiones requeridas", valid: false };
-  }
+	// Validate dimensions object
+	if (!cartItem.dimensions || typeof cartItem.dimensions !== "object") {
+		return { error: "Dimensiones requeridas", valid: false };
+	}
 
-  if (
-    cartItem.dimensions.widthMm !== undefined &&
-    cartItem.dimensions.widthMm <= 0
-  ) {
-    return { error: "El ancho debe ser positivo", valid: false };
-  }
+	if (
+		cartItem.dimensions.widthMm !== undefined &&
+		cartItem.dimensions.widthMm <= 0
+	) {
+		return { error: "El ancho debe ser positivo", valid: false };
+	}
 
-  if (
-    cartItem.dimensions.heightMm !== undefined &&
-    cartItem.dimensions.heightMm <= 0
-  ) {
-    return { error: "El alto debe ser positivo", valid: false };
-  }
+	if (
+		cartItem.dimensions.heightMm !== undefined &&
+		cartItem.dimensions.heightMm <= 0
+	) {
+		return { error: "El alto debe ser positivo", valid: false };
+	}
 
-  // Validate quantity
-  const quantityValidation = validateQuantity(cartItem.quantity ?? 0);
-  if (!quantityValidation.valid) {
-    return quantityValidation;
-  }
+	// Validate quantity
+	const quantityValidation = validateQuantity(cartItem.quantity ?? 0);
+	if (!quantityValidation.valid) {
+		return quantityValidation;
+	}
 
-  // Validate prices
-  if (cartItem.unitPrice !== undefined && cartItem.unitPrice < 0) {
-    return { error: "El precio unitario no puede ser negativo", valid: false };
-  }
+	// Validate prices
+	if (cartItem.unitPrice !== undefined && cartItem.unitPrice < 0) {
+		return { error: "El precio unitario no puede ser negativo", valid: false };
+	}
 
-  if (cartItem.subtotal !== undefined && cartItem.subtotal < 0) {
-    return { error: "El subtotal no puede ser negativo", valid: false };
-  }
+	if (cartItem.subtotal !== undefined && cartItem.subtotal < 0) {
+		return { error: "El subtotal no puede ser negativo", valid: false };
+	}
 
-  // Validate subtotal calculation
-  if (
-    cartItem.unitPrice !== undefined &&
-    cartItem.quantity !== undefined &&
-    cartItem.subtotal !== undefined
-  ) {
-    const expectedSubtotal = calculateItemSubtotal(
-      cartItem.unitPrice,
-      cartItem.quantity
-    );
-    // Allow small floating-point difference
-    if (Math.abs(cartItem.subtotal - expectedSubtotal) > PRICE_TOLERANCE) {
-      return {
-        error: "El subtotal no coincide con precio × cantidad",
-        valid: false,
-      };
-    }
-  }
+	// Validate subtotal calculation
+	if (
+		cartItem.unitPrice !== undefined &&
+		cartItem.quantity !== undefined &&
+		cartItem.subtotal !== undefined
+	) {
+		const expectedSubtotal = calculateItemSubtotal(
+			cartItem.unitPrice,
+			cartItem.quantity,
+		);
+		// Allow small floating-point difference
+		if (Math.abs(cartItem.subtotal - expectedSubtotal) > PRICE_TOLERANCE) {
+			return {
+				error: "El subtotal no coincide con precio × cantidad",
+				valid: false,
+			};
+		}
+	}
 
-  return { valid: true };
+	return { valid: true };
 }
 
 // ============================================================================
@@ -266,25 +266,25 @@ export function validateCartItem(item: unknown): {
  * @returns New cart item with updates applied
  */
 export function updateCartItem(
-  item: CartItem,
-  updates: Partial<Pick<CartItem, "name" | "quantity">>
+	item: CartItem,
+	updates: Partial<Pick<CartItem, "name" | "quantity">>,
 ): CartItem {
-  const updatedItem: CartItem = { ...item };
+	const updatedItem: CartItem = { ...item };
 
-  if (updates.name !== undefined) {
-    updatedItem.name = updates.name;
-  }
+	if (updates.name !== undefined) {
+		updatedItem.name = updates.name;
+	}
 
-  if (updates.quantity !== undefined) {
-    updatedItem.quantity = updates.quantity;
-    // Recalculate subtotal when quantity changes
-    updatedItem.subtotal = calculateItemSubtotal(
-      updatedItem.unitPrice,
-      updates.quantity
-    );
-  }
+	if (updates.quantity !== undefined) {
+		updatedItem.quantity = updates.quantity;
+		// Recalculate subtotal when quantity changes
+		updatedItem.subtotal = calculateItemSubtotal(
+			updatedItem.unitPrice,
+			updates.quantity,
+		);
+	}
 
-  return updatedItem;
+	return updatedItem;
 }
 
 /**
@@ -295,10 +295,10 @@ export function updateCartItem(
  * @returns Cart item if found, undefined otherwise
  */
 export function findCartItem(
-  items: CartItem[],
-  itemId: string
+	items: CartItem[],
+	itemId: string,
 ): CartItem | undefined {
-  return items.find((item) => item.id === itemId);
+	return items.find((item) => item.id === itemId);
 }
 
 /**
@@ -309,7 +309,7 @@ export function findCartItem(
  * @returns New cart items array without the removed item
  */
 export function removeCartItem(items: CartItem[], itemId: string): CartItem[] {
-  return items.filter((item) => item.id !== itemId);
+	return items.filter((item) => item.id !== itemId);
 }
 
 /**
@@ -321,14 +321,14 @@ export function removeCartItem(items: CartItem[], itemId: string): CartItem[] {
  * @returns True if all items are from same manufacturer, false otherwise
  */
 export function hasConsistentManufacturer(items: CartItem[]): boolean {
-  if (items.length === 0) {
-    return true;
-  }
+	if (items.length === 0) {
+		return true;
+	}
 
-  // Extract manufacturer ID from first item's modelId
-  // Assuming modelId contains manufacturer reference
-  // This is a placeholder - actual implementation depends on data structure
-  return true; // TODO: Implement when manufacturer validation is needed
+	// Extract manufacturer ID from first item's modelId
+	// Assuming modelId contains manufacturer reference
+	// This is a placeholder - actual implementation depends on data structure
+	return true; // TODO: Implement when manufacturer validation is needed
 }
 
 // ============================================================================
@@ -341,13 +341,13 @@ export function hasConsistentManufacturer(items: CartItem[]): boolean {
  * @returns Empty cart state
  */
 export function createEmptyCartState(): CartState {
-  return {
-    isLoading: false,
-    itemCount: 0,
-    items: [],
-    lastUpdated: new Date().toISOString(),
-    total: 0,
-  };
+	return {
+		isLoading: false,
+		itemCount: 0,
+		items: [],
+		lastUpdated: new Date().toISOString(),
+		total: 0,
+	};
 }
 
 /**
@@ -358,16 +358,16 @@ export function createEmptyCartState(): CartState {
  * @returns Updated cart state
  */
 export function updateCartState(
-  state: CartState,
-  items: CartItem[]
+	state: CartState,
+	items: CartItem[],
 ): CartState {
-  return {
-    ...state,
-    itemCount: calculateItemCount(items),
-    items,
-    lastUpdated: new Date().toISOString(),
-    total: calculateCartTotal(items),
-  };
+	return {
+		...state,
+		itemCount: calculateItemCount(items),
+		items,
+		lastUpdated: new Date().toISOString(),
+		total: calculateCartTotal(items),
+	};
 }
 
 // ============================================================================
@@ -381,8 +381,8 @@ export function updateCartState(
  * @returns True if value is CartItem
  */
 export function isCartItem(value: unknown): value is CartItem {
-  const validation = validateCartItem(value);
-  return validation.valid;
+	const validation = validateCartItem(value);
+	return validation.valid;
 }
 
 /**
@@ -392,9 +392,9 @@ export function isCartItem(value: unknown): value is CartItem {
  * @returns True if value is CartItem[]
  */
 export function isCartItemArray(value: unknown): value is CartItem[] {
-  if (!Array.isArray(value)) {
-    return false;
-  }
+	if (!Array.isArray(value)) {
+		return false;
+	}
 
-  return value.every(isCartItem);
+	return value.every(isCartItem);
 }

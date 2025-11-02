@@ -1,183 +1,183 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://glasify.io/schemas/glass-type-seed.v1.json",
-  "title": "Glass Type Seed Data Schema",
-  "description": "JSON schema for standardized glass type seed data used to populate the GlassType table",
-  "type": "object",
-  "required": ["version", "manufacturer", "glassTypes"],
-  "properties": {
-    "version": {
-      "type": "string",
-      "description": "Semantic version of the seed data format",
-      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
-      "examples": ["1.0", "1.1", "2.0"]
-    },
-    "manufacturer": {
-      "type": "string",
-      "description": "Primary manufacturer for this seed dataset",
-      "minLength": 2,
-      "maxLength": 100,
-      "examples": ["Tecnoglass", "Vitro", "Guardian"]
-    },
-    "glassTypes": {
-      "type": "array",
-      "description": "Array of glass type definitions",
-      "minItems": 1,
-      "items": {
-        "$ref": "#/definitions/GlassType"
-      }
-    }
-  },
-  "definitions": {
-    "GlassType": {
-      "type": "object",
-      "required": ["code", "name", "thicknessMm"],
-      "properties": {
-        "code": {
-          "type": "string",
-          "description": "Manufacturer product code (unique identifier)",
-          "pattern": "^[A-Z0-9\\/\\-]+$",
-          "minLength": 3,
-          "maxLength": 20,
-          "examples": ["N70/38", "R47/31", "SOLARBAN60"]
-        },
-        "name": {
-          "type": "string",
-          "description": "Full descriptive name of the glass type",
-          "minLength": 5,
-          "maxLength": 200,
-          "examples": [
-            "Neutral Low-E, 70% visible transmission",
-            "Reflective Light, 47% visible transmission"
-          ]
-        },
-        "series": {
-          "type": "string",
-          "description": "Product series or family",
-          "minLength": 2,
-          "maxLength": 50,
-          "examples": ["Serie-N", "Serie-R", "Solarban", "ClimaGuard"]
-        },
-        "manufacturer": {
-          "type": "string",
-          "description": "Manufacturer name (overrides root-level manufacturer if specified)",
-          "minLength": 2,
-          "maxLength": 100,
-          "examples": ["Tecnoglass", "Vitro", "Guardian"]
-        },
-        "thicknessMm": {
-          "type": "integer",
-          "description": "Glass thickness in millimeters",
-          "minimum": 3,
-          "maximum": 50,
-          "examples": [6, 8, 10, 12]
-        },
-        "uValue": {
-          "type": "number",
-          "description": "Thermal transmittance (U-value) in W/m²·K",
-          "minimum": 0.5,
-          "maximum": 6.0,
-          "examples": [1.7, 1.8, 2.5]
-        },
-        "solarFactor": {
-          "type": "number",
-          "description": "Solar Heat Gain Coefficient (SHGC), range 0.00-1.00",
-          "minimum": 0,
-          "maximum": 1,
-          "examples": [0.34, 0.45, 0.55]
-        },
-        "lightTransmission": {
-          "type": "number",
-          "description": "Visible light transmission percentage (0.00-1.00)",
-          "minimum": 0,
-          "maximum": 1,
-          "examples": [0.44, 0.7, 0.12]
-        },
-        "description": {
-          "type": "string",
-          "description": "Detailed technical description",
-          "maxLength": 1000,
-          "examples": [
-            "Neutral low-emissivity coating with balanced visible light and solar control"
-          ]
-        },
-        "sku": {
-          "type": "string",
-          "description": "SKU or catalog number (if different from code)",
-          "maxLength": 50
-        },
-        "solutions": {
-          "type": "array",
-          "description": "Glass solutions associated with this type",
-          "items": {
-            "$ref": "#/definitions/GlassSolutionLink"
-          }
-        }
-      }
-    },
-    "GlassSolutionLink": {
-      "type": "object",
-      "required": ["key", "performanceRating"],
-      "properties": {
-        "key": {
-          "type": "string",
-          "description": "Glass solution key (must match GlassSolution.key)",
-          "enum": [
-            "solar_control",
-            "energy_efficiency",
-            "security",
-            "acoustic",
-            "privacy",
-            "hurricane_resistance"
-          ],
-          "examples": ["solar_control", "energy_efficiency"]
-        },
-        "performanceRating": {
-          "type": "string",
-          "description": "Performance rating for this solution",
-          "enum": ["basic", "standard", "good", "very_good", "excellent"]
-        },
-        "isPrimary": {
-          "type": "boolean",
-          "description": "Whether this is the primary solution for this glass type",
-          "default": false
-        },
-        "notes": {
-          "type": "string",
-          "description": "Additional notes about this solution classification",
-          "maxLength": 500
-        }
-      }
-    }
-  },
-  "examples": [
-    {
-      "version": "1.0",
-      "manufacturer": "Tecnoglass",
-      "glassTypes": [
-        {
-          "code": "N70/38",
-          "name": "High Light Low-E, 70% visible transmission",
-          "series": "Serie-N",
-          "thicknessMm": 6,
-          "uValue": 1.8,
-          "solarFactor": 0.43,
-          "lightTransmission": 0.7,
-          "description": "Maximum daylight with energy efficiency",
-          "solutions": [
-            {
-              "key": "energy_efficiency",
-              "performanceRating": "very_good",
-              "isPrimary": true
-            },
-            {
-              "key": "solar_control",
-              "performanceRating": "standard",
-              "isPrimary": false
-            }
-          ]
-        }
-      ]
-    }
-  ]
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://glasify.io/schemas/glass-type-seed.v1.json",
+	"title": "Glass Type Seed Data Schema",
+	"description": "JSON schema for standardized glass type seed data used to populate the GlassType table",
+	"type": "object",
+	"required": ["version", "manufacturer", "glassTypes"],
+	"properties": {
+		"version": {
+			"type": "string",
+			"description": "Semantic version of the seed data format",
+			"pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+			"examples": ["1.0", "1.1", "2.0"]
+		},
+		"manufacturer": {
+			"type": "string",
+			"description": "Primary manufacturer for this seed dataset",
+			"minLength": 2,
+			"maxLength": 100,
+			"examples": ["Tecnoglass", "Vitro", "Guardian"]
+		},
+		"glassTypes": {
+			"type": "array",
+			"description": "Array of glass type definitions",
+			"minItems": 1,
+			"items": {
+				"$ref": "#/definitions/GlassType"
+			}
+		}
+	},
+	"definitions": {
+		"GlassType": {
+			"type": "object",
+			"required": ["code", "name", "thicknessMm"],
+			"properties": {
+				"code": {
+					"type": "string",
+					"description": "Manufacturer product code (unique identifier)",
+					"pattern": "^[A-Z0-9\\/\\-]+$",
+					"minLength": 3,
+					"maxLength": 20,
+					"examples": ["N70/38", "R47/31", "SOLARBAN60"]
+				},
+				"name": {
+					"type": "string",
+					"description": "Full descriptive name of the glass type",
+					"minLength": 5,
+					"maxLength": 200,
+					"examples": [
+						"Neutral Low-E, 70% visible transmission",
+						"Reflective Light, 47% visible transmission"
+					]
+				},
+				"series": {
+					"type": "string",
+					"description": "Product series or family",
+					"minLength": 2,
+					"maxLength": 50,
+					"examples": ["Serie-N", "Serie-R", "Solarban", "ClimaGuard"]
+				},
+				"manufacturer": {
+					"type": "string",
+					"description": "Manufacturer name (overrides root-level manufacturer if specified)",
+					"minLength": 2,
+					"maxLength": 100,
+					"examples": ["Tecnoglass", "Vitro", "Guardian"]
+				},
+				"thicknessMm": {
+					"type": "integer",
+					"description": "Glass thickness in millimeters",
+					"minimum": 3,
+					"maximum": 50,
+					"examples": [6, 8, 10, 12]
+				},
+				"uValue": {
+					"type": "number",
+					"description": "Thermal transmittance (U-value) in W/m²·K",
+					"minimum": 0.5,
+					"maximum": 6.0,
+					"examples": [1.7, 1.8, 2.5]
+				},
+				"solarFactor": {
+					"type": "number",
+					"description": "Solar Heat Gain Coefficient (SHGC), range 0.00-1.00",
+					"minimum": 0,
+					"maximum": 1,
+					"examples": [0.34, 0.45, 0.55]
+				},
+				"lightTransmission": {
+					"type": "number",
+					"description": "Visible light transmission percentage (0.00-1.00)",
+					"minimum": 0,
+					"maximum": 1,
+					"examples": [0.44, 0.7, 0.12]
+				},
+				"description": {
+					"type": "string",
+					"description": "Detailed technical description",
+					"maxLength": 1000,
+					"examples": [
+						"Neutral low-emissivity coating with balanced visible light and solar control"
+					]
+				},
+				"sku": {
+					"type": "string",
+					"description": "SKU or catalog number (if different from code)",
+					"maxLength": 50
+				},
+				"solutions": {
+					"type": "array",
+					"description": "Glass solutions associated with this type",
+					"items": {
+						"$ref": "#/definitions/GlassSolutionLink"
+					}
+				}
+			}
+		},
+		"GlassSolutionLink": {
+			"type": "object",
+			"required": ["key", "performanceRating"],
+			"properties": {
+				"key": {
+					"type": "string",
+					"description": "Glass solution key (must match GlassSolution.key)",
+					"enum": [
+						"solar_control",
+						"energy_efficiency",
+						"security",
+						"acoustic",
+						"privacy",
+						"hurricane_resistance"
+					],
+					"examples": ["solar_control", "energy_efficiency"]
+				},
+				"performanceRating": {
+					"type": "string",
+					"description": "Performance rating for this solution",
+					"enum": ["basic", "standard", "good", "very_good", "excellent"]
+				},
+				"isPrimary": {
+					"type": "boolean",
+					"description": "Whether this is the primary solution for this glass type",
+					"default": false
+				},
+				"notes": {
+					"type": "string",
+					"description": "Additional notes about this solution classification",
+					"maxLength": 500
+				}
+			}
+		}
+	},
+	"examples": [
+		{
+			"version": "1.0",
+			"manufacturer": "Tecnoglass",
+			"glassTypes": [
+				{
+					"code": "N70/38",
+					"name": "High Light Low-E, 70% visible transmission",
+					"series": "Serie-N",
+					"thicknessMm": 6,
+					"uValue": 1.8,
+					"solarFactor": 0.43,
+					"lightTransmission": 0.7,
+					"description": "Maximum daylight with energy efficiency",
+					"solutions": [
+						{
+							"key": "energy_efficiency",
+							"performanceRating": "very_good",
+							"isPrimary": true
+						},
+						{
+							"key": "solar_control",
+							"performanceRating": "standard",
+							"isPrimary": false
+						}
+					]
+				}
+			]
+		}
+	]
 }

@@ -42,62 +42,62 @@ const DEFAULT_RESULT_LIMIT = 5;
  * }
  */
 export function useAddressAutocomplete(options?: {
-  limit?: number;
-  minQueryLength?: number;
-  debounceMs?: number;
+	limit?: number;
+	minQueryLength?: number;
+	debounceMs?: number;
 }) {
-  const [query, setQuery] = useState("");
+	const [query, setQuery] = useState("");
 
-  // Debounce query to reduce API calls
-  const debouncedQuery = useDebounce(
-    query,
-    options?.debounceMs ?? DEBOUNCE_DELAY_MS
-  );
+	// Debounce query to reduce API calls
+	const debouncedQuery = useDebounce(
+		query,
+		options?.debounceMs ?? DEBOUNCE_DELAY_MS,
+	);
 
-  // Determine if query is valid for search
-  const minLength = options?.minQueryLength ?? MIN_QUERY_LENGTH;
-  const shouldSearch = debouncedQuery.length >= minLength;
+	// Determine if query is valid for search
+	const minLength = options?.minQueryLength ?? MIN_QUERY_LENGTH;
+	const shouldSearch = debouncedQuery.length >= minLength;
 
-  // Call geocoding API with debounced query
-  const { data, isLoading, error } = api.geocoding.search.useQuery(
-    {
-      query: debouncedQuery,
-      limit: options?.limit ?? DEFAULT_RESULT_LIMIT,
-    },
-    {
-      enabled: shouldSearch,
-      staleTime: 300_000, // 5 minutes - addresses don't change frequently
-      retry: 1, // Only retry once on failure
-    }
-  );
+	// Call geocoding API with debounced query
+	const { data, isLoading, error } = api.geocoding.search.useQuery(
+		{
+			query: debouncedQuery,
+			limit: options?.limit ?? DEFAULT_RESULT_LIMIT,
+		},
+		{
+			enabled: shouldSearch,
+			staleTime: 300_000, // 5 minutes - addresses don't change frequently
+			retry: 1, // Only retry once on failure
+		},
+	);
 
-  // Extract results from response
-  const results: GeocodingResult[] = data?.results ?? [];
-  const totalResults = data?.totalResults ?? 0;
-  const queryTime = data?.queryTime ?? 0;
+	// Extract results from response
+	const results: GeocodingResult[] = data?.results ?? [];
+	const totalResults = data?.totalResults ?? 0;
+	const queryTime = data?.queryTime ?? 0;
 
-  return {
-    // Search results
-    results,
-    totalResults,
-    queryTime,
+	return {
+		// Search results
+		results,
+		totalResults,
+		queryTime,
 
-    // Loading states
-    isLoading,
-    isSearching: shouldSearch && isLoading,
-    hasError: Boolean(error),
-    error: error?.message,
+		// Loading states
+		isLoading,
+		isSearching: shouldSearch && isLoading,
+		hasError: Boolean(error),
+		error: error?.message,
 
-    // Query control
-    query,
-    setQuery,
-    debouncedQuery,
+		// Query control
+		query,
+		setQuery,
+		debouncedQuery,
 
-    // Helper states
-    hasResults: results.length > 0,
-    isEmpty: shouldSearch && !isLoading && results.length === 0,
-    isIdle: !shouldSearch,
-  };
+		// Helper states
+		hasResults: results.length > 0,
+		isEmpty: shouldSearch && !isLoading && results.length === 0,
+		isIdle: !shouldSearch,
+	};
 }
 
 /**
@@ -122,30 +122,30 @@ export function useAddressAutocomplete(options?: {
  * }
  */
 export function useAddressAutocompleteWithSelection(options?: {
-  limit?: number;
-  minQueryLength?: number;
-  debounceMs?: number;
-  onSelect?: (result: GeocodingResult) => void;
+	limit?: number;
+	minQueryLength?: number;
+	debounceMs?: number;
+	onSelect?: (result: GeocodingResult) => void;
 }) {
-  const autocomplete = useAddressAutocomplete(options);
-  const [selectedResult, setSelectedResult] = useState<GeocodingResult | null>(
-    null
-  );
+	const autocomplete = useAddressAutocomplete(options);
+	const [selectedResult, setSelectedResult] = useState<GeocodingResult | null>(
+		null,
+	);
 
-  const selectResult = (result: GeocodingResult) => {
-    setSelectedResult(result);
-    options?.onSelect?.(result);
-  };
+	const selectResult = (result: GeocodingResult) => {
+		setSelectedResult(result);
+		options?.onSelect?.(result);
+	};
 
-  const clearSelection = () => {
-    setSelectedResult(null);
-  };
+	const clearSelection = () => {
+		setSelectedResult(null);
+	};
 
-  return {
-    ...autocomplete,
-    selectedResult,
-    selectResult,
-    clearSelection,
-    hasSelection: selectedResult !== null,
-  };
+	return {
+		...autocomplete,
+		selectedResult,
+		selectResult,
+		clearSelection,
+		hasSelection: selectedResult !== null,
+	};
 }

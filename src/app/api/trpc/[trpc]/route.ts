@@ -11,24 +11,24 @@ import { createTRPCContext } from "@/server/api/trpc";
  * handling a HTTP request (e.g. when you make requests from Client Components).
  */
 const createContext = async (req: NextRequest) =>
-  createTRPCContext({
-    headers: req.headers,
-  });
+	createTRPCContext({
+		headers: req.headers,
+	});
 
 const handler = (req: NextRequest) =>
-  fetchRequestHandler({
-    createContext: () => createContext(req),
-    endpoint: "/api/trpc",
-    onError:
-      env.NODE_ENV === "development"
-        ? ({ path, error }) => {
-            logger.error(
-              `❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`
-            );
-          }
-        : undefined,
-    req,
-    router: appRouter,
-  });
+	fetchRequestHandler({
+		createContext: () => createContext(req),
+		endpoint: "/api/trpc",
+		onError:
+			env.NODE_ENV === "development"
+				? ({ path, error }) => {
+						logger.error(
+							`❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`,
+						);
+					}
+				: undefined,
+		req,
+		router: appRouter,
+	});
 
 export { handler as GET, handler as POST };

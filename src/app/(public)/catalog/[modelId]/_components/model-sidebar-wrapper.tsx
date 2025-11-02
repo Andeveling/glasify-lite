@@ -5,18 +5,18 @@ import { ModelSidebar } from "./model-sidebar";
 import { ModelSidebarSkeleton } from "./model-sidebar-skeleton";
 
 type ModelSidebarWrapperProps = {
-  serverModel: Awaited<ReturnType<(typeof api.catalog)["get-model-by-id"]>>;
+	serverModel: Awaited<ReturnType<(typeof api.catalog)["get-model-by-id"]>>;
 };
 
 function ModelSidebarContent({ serverModel }: ModelSidebarWrapperProps) {
-  const modelDisplay = adaptModelFromServer(serverModel);
-  return <ModelSidebar model={modelDisplay} />;
+	const modelDisplay = adaptModelFromServer(serverModel);
+	return <ModelSidebar model={modelDisplay} />;
 }
 
 export function ModelSidebarWrapper({ serverModel }: ModelSidebarWrapperProps) {
-  return (
-    <Suspense fallback={<ModelSidebarSkeleton />}>
-      <ModelSidebarContent serverModel={serverModel} />
-    </Suspense>
-  );
+	return (
+		<Suspense fallback={<ModelSidebarSkeleton />}>
+			<ModelSidebarContent serverModel={serverModel} />
+		</Suspense>
+	);
 }

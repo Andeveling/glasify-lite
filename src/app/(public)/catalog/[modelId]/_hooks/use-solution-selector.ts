@@ -5,7 +5,7 @@ import { useFormContext } from "react-hook-form";
 import type { GlassSolutionOutput } from "@/server/api/routers/catalog";
 
 type UseSolutionSelectorProps = {
-  solutions: GlassSolutionOutput[];
+	solutions: GlassSolutionOutput[];
 };
 
 /**
@@ -16,46 +16,46 @@ type UseSolutionSelectorProps = {
  * @returns Solution selector state and handlers
  */
 export function useSolutionSelector({ solutions }: UseSolutionSelectorProps) {
-  const { setValue, watch } = useFormContext();
+	const { setValue, watch } = useFormContext();
 
-  // Watch both solution and glassType fields
-  const selectedSolutionId = watch("solution") as string | undefined;
-  const currentGlassType = watch("glassType") as string | undefined;
+	// Watch both solution and glassType fields
+	const selectedSolutionId = watch("solution") as string | undefined;
+	const currentGlassType = watch("glassType") as string | undefined;
 
-  // Find the selected solution object
-  const selectedSolution = useMemo(
-    () => solutions.find((s) => s.id === selectedSolutionId),
-    [solutions, selectedSolutionId]
-  );
+	// Find the selected solution object
+	const selectedSolution = useMemo(
+		() => solutions.find((s) => s.id === selectedSolutionId),
+		[solutions, selectedSolutionId],
+	);
 
-  /**
-   * Handle solution selection
-   * Clears glass type selection when solution changes
-   */
-  const handleSolutionChange = useCallback(
-    (solutionId: string) => {
-      setValue("solution", solutionId, { shouldValidate: true });
+	/**
+	 * Handle solution selection
+	 * Clears glass type selection when solution changes
+	 */
+	const handleSolutionChange = useCallback(
+		(solutionId: string) => {
+			setValue("solution", solutionId, { shouldValidate: true });
 
-      // Reset glass type when solution changes
-      if (currentGlassType) {
-        setValue("glassType", "", { shouldValidate: false });
-      }
-    },
-    [setValue, currentGlassType]
-  );
+			// Reset glass type when solution changes
+			if (currentGlassType) {
+				setValue("glassType", "", { shouldValidate: false });
+			}
+		},
+		[setValue, currentGlassType],
+	);
 
-  /**
-   * Check if a solution is currently selected
-   */
-  const isSolutionSelected = useCallback(
-    (solutionId: string) => selectedSolutionId === solutionId,
-    [selectedSolutionId]
-  );
+	/**
+	 * Check if a solution is currently selected
+	 */
+	const isSolutionSelected = useCallback(
+		(solutionId: string) => selectedSolutionId === solutionId,
+		[selectedSolutionId],
+	);
 
-  return {
-    handleSolutionChange,
-    isSolutionSelected,
-    selectedSolution,
-    selectedSolutionId,
-  };
+	return {
+		handleSolutionChange,
+		isSolutionSelected,
+		selectedSolution,
+		selectedSolutionId,
+	};
 }

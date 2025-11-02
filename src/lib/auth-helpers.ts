@@ -8,15 +8,15 @@ type Session = Awaited<ReturnType<typeof auth.api.getSession>>;
  * @returns Redirect URL path
  */
 export const getRedirectAfterSignIn = (session: Session): string => {
-  if (!session?.user) {
-    return "/catalog";
-  }
+	if (!session?.user) {
+		return "/catalog";
+	}
 
-  // Admin users go to dashboard
-  if (session.user.role === "admin") {
-    return "/dashboard";
-  }
+	// Admin users go to dashboard
+	if (session.user.role === "admin") {
+		return "/dashboard";
+	}
 
-  // Regular users go to their quotes
-  return "/my-quotes";
+	// Regular users go to their quotes
+	return "/my-quotes";
 };

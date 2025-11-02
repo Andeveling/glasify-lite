@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useSendQuote } from "@/hooks/use-send-quote";
 
 type SendQuoteButtonProps = {
-  quote: Pick<Quote, "id" | "status" | "contactPhone">;
+	quote: Pick<Quote, "id" | "status" | "contactPhone">;
 };
 
 /**
@@ -17,56 +17,56 @@ type SendQuoteButtonProps = {
  * Opens modal to capture/confirm contact information before sending
  */
 export function SendQuoteButton({ quote }: SendQuoteButtonProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { mutate: sendQuote, isPending } = useSendQuote();
-  // Only show button for draft quotes
-  if (quote.status !== "draft") {
-    return null;
-  }
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const { mutate: sendQuote, isPending } = useSendQuote();
+	// Only show button for draft quotes
+	if (quote.status !== "draft") {
+		return null;
+	}
 
-  const handleSendClick = () => {
-    setIsModalOpen(true);
-  };
+	const handleSendClick = () => {
+		setIsModalOpen(true);
+	};
 
-  const handleConfirmSend = (data: {
-    contactPhone: string;
-    contactEmail?: string;
-  }) => {
-    sendQuote(
-      {
-        contactEmail: data.contactEmail,
-        contactPhone: data.contactPhone,
-        quoteId: quote.id,
-      },
-      {
-        onSuccess: () => {
-          setIsModalOpen(false);
-        },
-      }
-    );
-  };
+	const handleConfirmSend = (data: {
+		contactPhone: string;
+		contactEmail?: string;
+	}) => {
+		sendQuote(
+			{
+				contactEmail: data.contactEmail,
+				contactPhone: data.contactPhone,
+				quoteId: quote.id,
+			},
+			{
+				onSuccess: () => {
+					setIsModalOpen(false);
+				},
+			},
+		);
+	};
 
-  return (
-    <>
-      <Button
-        className="gap-2"
-        disabled={isPending}
-        onClick={handleSendClick}
-        size="lg"
-      >
-        <Send className="h-4 w-4" />
-        {isPending ? "Enviando..." : "Enviar Cotización"}
-      </Button>
+	return (
+		<>
+			<Button
+				className="gap-2"
+				disabled={isPending}
+				onClick={handleSendClick}
+				size="lg"
+			>
+				<Send className="h-4 w-4" />
+				{isPending ? "Enviando..." : "Enviar Cotización"}
+			</Button>
 
-      <ContactInfoModal
-        defaultValues={{
-          contactPhone: quote.contactPhone ?? "",
-        }}
-        isLoading={isPending}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleConfirmSend}
-        open={isModalOpen}
-      />
-    </>
-  );
+			<ContactInfoModal
+				defaultValues={{
+					contactPhone: quote.contactPhone ?? "",
+				}}
+				isLoading={isPending}
+				onClose={() => setIsModalOpen(false)}
+				onSubmit={handleConfirmSend}
+				open={isModalOpen}
+			/>
+		</>
+	);
 }

@@ -4,8 +4,8 @@ import { db } from "@/server/db";
 import { DashboardContent } from "./metrics/_components/dashboard-content";
 
 export const metadata: Metadata = {
-  description: "Panel de métricas y estadísticas del negocio",
-  title: "Dashboard | Admin - Glasify Lite",
+	description: "Panel de métricas y estadísticas del negocio",
+	title: "Dashboard | Admin - Glasify Lite",
 };
 
 // MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
@@ -29,18 +29,18 @@ export const metadata: Metadata = {
  * Note: The old catalog overview moved to /admin/catalog (if needed)
  */
 export default async function AdminDashboardPage() {
-  // Fetch tenant config for formatting (timezone, locale, currency)
-  const tenantConfig = await db.tenantConfig.findFirst({
-    select: {
-      currency: true,
-      locale: true,
-      timezone: true,
-    },
-  });
+	// Fetch tenant config for formatting (timezone, locale, currency)
+	const tenantConfig = await db.tenantConfig.findFirst({
+		select: {
+			currency: true,
+			locale: true,
+			timezone: true,
+		},
+	});
 
-  return (
-    <AdminContentContainer maxWidth="full">
-      <DashboardContent tenantConfig={tenantConfig} />
-    </AdminContentContainer>
-  );
+	return (
+		<AdminContentContainer maxWidth="full">
+			<DashboardContent tenantConfig={tenantConfig} />
+		</AdminContentContainer>
+	);
 }

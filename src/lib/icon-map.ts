@@ -6,17 +6,17 @@
  */
 
 import {
-  Droplets,
-  Eye,
-  Home,
-  Layers,
-  type LucideIcon,
-  Shield,
-  Snowflake,
-  Sun,
-  Volume2,
-  Wind,
-  Zap,
+	Droplets,
+	Eye,
+	Home,
+	Layers,
+	type LucideIcon,
+	Shield,
+	Snowflake,
+	Sun,
+	Volume2,
+	Wind,
+	Zap,
 } from "lucide-react";
 
 /**
@@ -24,16 +24,16 @@ import {
  * Database stores icon names (strings), this map converts them to React components
  */
 export const iconMap: Record<string, LucideIcon> = {
-  Droplets,
-  Eye,
-  Home,
-  Layers,
-  Shield,
-  Snowflake,
-  Sun,
-  Volume2,
-  Wind,
-  Zap,
+	Droplets,
+	Eye,
+	Home,
+	Layers,
+	Shield,
+	Snowflake,
+	Sun,
+	Volume2,
+	Wind,
+	Zap,
 };
 
 /**
@@ -41,8 +41,8 @@ export const iconMap: Record<string, LucideIcon> = {
  * Returns the icon component or a fallback if not found
  */
 export function getIconComponent(iconName: string | null): LucideIcon {
-  if (!iconName) {
-    return Home;
-  }
-  return iconMap[iconName] || Home;
+	if (!iconName) {
+		return Home;
+	}
+	return iconMap[iconName] || Home;
 }

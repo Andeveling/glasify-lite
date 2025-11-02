@@ -47,7 +47,7 @@ const MIN_CURSOR_PAGE_SIZE = 1;
  * @returns Base64 encoded cursor
  */
 export function encodeCursor(value: string): string {
-  return Buffer.from(value).toString("base64");
+	return Buffer.from(value).toString("base64");
 }
 
 /**
@@ -58,11 +58,11 @@ export function encodeCursor(value: string): string {
  * @throws Error if cursor is invalid
  */
 export function decodeCursor(cursor: string): string {
-  try {
-    return Buffer.from(cursor, "base64").toString("utf-8");
-  } catch {
-    throw new Error("Invalid cursor format");
-  }
+	try {
+		return Buffer.from(cursor, "base64").toString("utf-8");
+	} catch {
+		throw new Error("Invalid cursor format");
+	}
 }
 
 /**
@@ -72,12 +72,12 @@ export function decodeCursor(cursor: string): string {
  * @returns True if cursor is valid
  */
 export function isValidCursor(cursor: string): boolean {
-  try {
-    const decoded = decodeCursor(cursor);
-    return decoded.length > 0;
-  } catch {
-    return false;
-  }
+	try {
+		const decoded = decodeCursor(cursor);
+		return decoded.length > 0;
+	} catch {
+		return false;
+	}
 }
 
 /**
@@ -88,31 +88,31 @@ export function isValidCursor(cursor: string): boolean {
  * @returns Prisma cursor pagination params
  */
 export function buildCursorPaginationParams(
-  cursor: string | undefined,
-  pageSize: number
+	cursor: string | undefined,
+	pageSize: number,
 ): {
-  take: number;
-  skip?: number;
-  cursor?: { id: string };
+	take: number;
+	skip?: number;
+	cursor?: { id: string };
 } {
-  const params: {
-    take: number;
-    skip?: number;
-    cursor?: { id: string };
-  } = {
-    take: Math.max(
-      MIN_CURSOR_PAGE_SIZE,
-      Math.min(MAX_CURSOR_PAGE_SIZE, pageSize)
-    ),
-  };
+	const params: {
+		take: number;
+		skip?: number;
+		cursor?: { id: string };
+	} = {
+		take: Math.max(
+			MIN_CURSOR_PAGE_SIZE,
+			Math.min(MAX_CURSOR_PAGE_SIZE, pageSize),
+		),
+	};
 
-  if (cursor) {
-    const decodedCursor = decodeCursor(cursor);
-    params.cursor = { id: decodedCursor };
-    params.skip = 1; // Skip the cursor itself
-  }
+	if (cursor) {
+		const decodedCursor = decodeCursor(cursor);
+		params.cursor = { id: decodedCursor };
+		params.skip = 1; // Skip the cursor itself
+	}
 
-  return params;
+	return params;
 }
 
 /**
@@ -123,25 +123,25 @@ export function buildCursorPaginationParams(
  * @returns Pagination metadata
  */
 export function buildCursorPaginationMeta<T extends { id: string }>(
-  items: T[],
-  pageSize: number
+	items: T[],
+	pageSize: number,
 ): {
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  startCursor: string | null;
-  endCursor: string | null;
+	hasNextPage: boolean;
+	hasPreviousPage: boolean;
+	startCursor: string | null;
+	endCursor: string | null;
 } {
-  const hasNextPage = items.length === pageSize;
-  const firstItem = items[0];
-  const lastItem = items.at(-1);
+	const hasNextPage = items.length === pageSize;
+	const firstItem = items[0];
+	const lastItem = items.at(-1);
 
-  const startCursor = firstItem ? encodeCursor(firstItem.id) : null;
-  const endCursor = lastItem ? encodeCursor(lastItem.id) : null;
+	const startCursor = firstItem ? encodeCursor(firstItem.id) : null;
+	const endCursor = lastItem ? encodeCursor(lastItem.id) : null;
 
-  return {
-    endCursor,
-    hasNextPage,
-    hasPreviousPage: false, // Not implemented in this version
-    startCursor,
-  };
+	return {
+		endCursor,
+		hasNextPage,
+		hasPreviousPage: false, // Not implemented in this version
+		startCursor,
+	};
 }

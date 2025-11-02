@@ -20,14 +20,14 @@ import { createContext, useContext } from "react";
  * Full TenantConfig is server-only, this is the public subset
  */
 export type TenantConfigPublic = {
-  /** ISO 4217 currency code (COP, USD, EUR, etc.) */
-  currency: string;
-  /** IETF BCP 47 locale (es-CO, en-US, etc.) */
-  locale: string;
-  /** IANA timezone (America/Bogota, etc.) */
-  timezone: string;
-  /** Quote validity in days */
-  quoteValidityDays: number;
+	/** ISO 4217 currency code (COP, USD, EUR, etc.) */
+	currency: string;
+	/** IETF BCP 47 locale (es-CO, en-US, etc.) */
+	locale: string;
+	/** IANA timezone (America/Bogota, etc.) */
+	timezone: string;
+	/** Quote validity in days */
+	quoteValidityDays: number;
 };
 
 // ============================================================================
@@ -41,8 +41,8 @@ const TenantConfigContext = createContext<TenantConfigPublic | null>(null);
 // ============================================================================
 
 type TenantConfigProviderProps = {
-  children: React.ReactNode;
-  config: TenantConfigPublic;
+	children: React.ReactNode;
+	config: TenantConfigPublic;
 };
 
 /**
@@ -87,14 +87,14 @@ type TenantConfigProviderProps = {
  * ```
  */
 export function TenantConfigProvider({
-  children,
-  config,
+	children,
+	config,
 }: TenantConfigProviderProps) {
-  return (
-    <TenantConfigContext.Provider value={config}>
-      {children}
-    </TenantConfigContext.Provider>
-  );
+	return (
+		<TenantConfigContext.Provider value={config}>
+			{children}
+		</TenantConfigContext.Provider>
+	);
 }
 
 // ============================================================================
@@ -125,11 +125,11 @@ export function TenantConfigProvider({
  * ```
  */
 export function useTenantConfig(): TenantConfigPublic {
-  const context = useContext(TenantConfigContext);
+	const context = useContext(TenantConfigContext);
 
-  if (!context) {
-    throw new Error("useTenantConfig must be used within TenantConfigProvider");
-  }
+	if (!context) {
+		throw new Error("useTenantConfig must be used within TenantConfigProvider");
+	}
 
-  return context;
+	return context;
 }

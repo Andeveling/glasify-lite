@@ -7,47 +7,47 @@
  */
 
 import {
-  formatCurrencyCompact as formatCurrencyCompactCore,
-  formatCurrency as formatCurrencyCore,
+	formatCurrencyCompact as formatCurrencyCompactCore,
+	formatCurrency as formatCurrencyCore,
 } from "@/lib/format";
 
 type FormatCurrencyOptions = {
-  /**
-   * Currency code (ISO 4217)
-   * @default 'COP' (Colombian Peso)
-   */
-  currency?: string;
-  /**
-   * Locale for formatting
-   * @default 'es-CO' (Spanish - Colombia)
-   */
-  locale?: string;
-  /**
-   * Number of decimal places
-   * @default 0
-   */
-  decimals?: number;
-  /**
-   * Display mode for currency (not fully supported in new system)
-   * - 'symbol': Show currency symbol (e.g., $)
-   * - 'code': Show currency code (e.g., COP)
-   * - 'name': Show currency name (e.g., Colombian Peso)
-   * @default 'symbol'
-   */
-  display?: "symbol" | "code" | "name";
-  /**
-   * Whether to use grouping separators (always enabled in new system)
-   * @default true
-   */
-  useGrouping?: boolean;
+	/**
+	 * Currency code (ISO 4217)
+	 * @default 'COP' (Colombian Peso)
+	 */
+	currency?: string;
+	/**
+	 * Locale for formatting
+	 * @default 'es-CO' (Spanish - Colombia)
+	 */
+	locale?: string;
+	/**
+	 * Number of decimal places
+	 * @default 0
+	 */
+	decimals?: number;
+	/**
+	 * Display mode for currency (not fully supported in new system)
+	 * - 'symbol': Show currency symbol (e.g., $)
+	 * - 'code': Show currency code (e.g., COP)
+	 * - 'name': Show currency name (e.g., Colombian Peso)
+	 * @default 'symbol'
+	 */
+	display?: "symbol" | "code" | "name";
+	/**
+	 * Whether to use grouping separators (always enabled in new system)
+	 * @default true
+	 */
+	useGrouping?: boolean;
 };
 
 const DEFAULT_OPTIONS: Required<FormatCurrencyOptions> = {
-  currency: "COP",
-  decimals: 0,
-  display: "symbol",
-  locale: "es-CO",
-  useGrouping: true,
+	currency: "COP",
+	decimals: 0,
+	display: "symbol",
+	locale: "es-CO",
+	useGrouping: true,
 };
 
 /**
@@ -66,19 +66,19 @@ const DEFAULT_OPTIONS: Required<FormatCurrencyOptions> = {
  * ```
  */
 export const formatCurrency = (
-  value: number,
-  options: FormatCurrencyOptions = {}
+	value: number,
+	options: FormatCurrencyOptions = {},
 ): string => {
-  const config = { ...DEFAULT_OPTIONS, ...options };
+	const config = { ...DEFAULT_OPTIONS, ...options };
 
-  return formatCurrencyCore(value, {
-    context: {
-      currency: config.currency,
-      locale: config.locale,
-      timezone: "America/Bogota", // Default timezone, not used for currency
-    },
-    decimals: config.decimals,
-  });
+	return formatCurrencyCore(value, {
+		context: {
+			currency: config.currency,
+			locale: config.locale,
+			timezone: "America/Bogota", // Default timezone, not used for currency
+		},
+		decimals: config.decimals,
+	});
 };
 
 /**
@@ -96,12 +96,12 @@ export const formatCurrency = (
  * ```
  */
 export const formatCOP = (value: number, showDecimals = false): string =>
-  formatCurrency(value, {
-    currency: "COP",
-    decimals: showDecimals ? 2 : 0,
-    display: "symbol",
-    locale: "es-CO",
-  });
+	formatCurrency(value, {
+		currency: "COP",
+		decimals: showDecimals ? 2 : 0,
+		display: "symbol",
+		locale: "es-CO",
+	});
 
 /**
  * Formats a price specifically for US Dollars (USD) - Panama
@@ -119,12 +119,12 @@ export const formatCOP = (value: number, showDecimals = false): string =>
  * ```
  */
 export const formatUSD = (value: number, decimals = 2): string =>
-  formatCurrency(value, {
-    currency: "USD",
-    decimals,
-    display: "symbol",
-    locale: "es-PA",
-  });
+	formatCurrency(value, {
+		currency: "USD",
+		decimals,
+		display: "symbol",
+		locale: "es-PA",
+	});
 
 /**
  * Formats a price with compact notation for large numbers
@@ -140,16 +140,16 @@ export const formatUSD = (value: number, decimals = 2): string =>
  * ```
  */
 export const formatCurrencyCompact = (
-  value: number,
-  options: Omit<FormatCurrencyOptions, "decimals"> = {}
+	value: number,
+	options: Omit<FormatCurrencyOptions, "decimals"> = {},
 ): string => {
-  const config = { ...DEFAULT_OPTIONS, ...options };
+	const config = { ...DEFAULT_OPTIONS, ...options };
 
-  return formatCurrencyCompactCore(value, {
-    currency: config.currency,
-    locale: config.locale,
-    timezone: "America/Bogota", // Default timezone, not used for currency
-  });
+	return formatCurrencyCompactCore(value, {
+		currency: config.currency,
+		locale: config.locale,
+		timezone: "America/Bogota", // Default timezone, not used for currency
+	});
 };
 
 /**
@@ -166,49 +166,49 @@ export const formatCurrencyCompact = (
  * ```
  */
 export const parseCurrency = (
-  formattedValue: string,
-  locale = "es-CO"
+	formattedValue: string,
+	locale = "es-CO",
 ): number => {
-  try {
-    // Sample number to detect separators
-    const sampleNumber = 1234.56;
+	try {
+		// Sample number to detect separators
+		const sampleNumber = 1234.56;
 
-    // Remove currency symbols and non-numeric characters except decimal separators
-    const parts = new Intl.NumberFormat(locale).formatToParts(sampleNumber);
-    const groupSeparator =
-      parts.find((part) => part.type === "group")?.value || ".";
-    const decimalSeparator =
-      parts.find((part) => part.type === "decimal")?.value || ",";
+		// Remove currency symbols and non-numeric characters except decimal separators
+		const parts = new Intl.NumberFormat(locale).formatToParts(sampleNumber);
+		const groupSeparator =
+			parts.find((part) => part.type === "group")?.value || ".";
+		const decimalSeparator =
+			parts.find((part) => part.type === "decimal")?.value || ",";
 
-    const cleaned = formattedValue
-      .replace(/[^\d.,]/g, "") // Remove non-numeric except . and ,
-      .replace(new RegExp(`\\${groupSeparator}`, "g"), "") // Remove group separators
-      .replace(decimalSeparator, "."); // Normalize decimal separator
+		const cleaned = formattedValue
+			.replace(/[^\d.,]/g, "") // Remove non-numeric except . and ,
+			.replace(new RegExp(`\\${groupSeparator}`, "g"), "") // Remove group separators
+			.replace(decimalSeparator, "."); // Normalize decimal separator
 
-    return Number.parseFloat(cleaned) || 0;
-  } catch {
-    return 0;
-  }
+		return Number.parseFloat(cleaned) || 0;
+	} catch {
+		return 0;
+	}
 };
 
 /**
  * Currency codes commonly used in the application
  */
 export const CurrencyCodes = {
-  cop: "COP", // Colombian Peso
-  eur: "EUR", // Euro
-  mxn: "MXN", // Mexican Peso
-  pab: "PAB", // Panamanian Balboa
-  usd: "USD", // US Dollar
+	cop: "COP", // Colombian Peso
+	eur: "EUR", // Euro
+	mxn: "MXN", // Mexican Peso
+	pab: "PAB", // Panamanian Balboa
+	usd: "USD", // US Dollar
 } as const;
 
 /**
  * Locale codes commonly used in the application
  */
 export const LocaleCodes = {
-  enUs: "en-US", // English (United States)
-  esCo: "es-CO", // Spanish (Colombia)
-  esEs: "es-ES", // Spanish (Spain)
-  esMx: "es-MX", // Spanish (Mexico)
-  esPa: "es-PA", // Spanish (Panama)
+	enUs: "en-US", // English (United States)
+	esCo: "es-CO", // Spanish (Colombia)
+	esEs: "es-ES", // Spanish (Spain)
+	esMx: "es-MX", // Spanish (Mexico)
+	esPa: "es-PA", // Spanish (Panama)
 } as const;

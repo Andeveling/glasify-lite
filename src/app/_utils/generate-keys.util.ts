@@ -5,7 +5,7 @@ import { createId } from "@paralleldrive/cuid2";
  * @returns A unique string suitable for React keys
  */
 export function generateKey() {
-  return createId();
+	return createId();
 }
 
 /**
@@ -17,10 +17,10 @@ export function generateKey() {
  * @returns Array of objects with unique keys
  */
 export function generateKeyedArray(length: number, prefix = "item") {
-  return Array.from({ length }, (_, index) => ({
-    index,
-    key: `${prefix}-${generateKey()}`,
-  }));
+	return Array.from({ length }, (_, index) => ({
+		index,
+		key: `${prefix}-${generateKey()}`,
+	}));
 }
 
 /**
@@ -31,8 +31,8 @@ export function generateKeyedArray(length: number, prefix = "item") {
  * @returns Array of objects with stable keys
  */
 export function generateStableKeyedArray(length: number, prefix: string) {
-  return Array.from({ length }, (_, index) => ({
-    index,
-    key: `${prefix}-${index}`,
-  }));
+	return Array.from({ length }, (_, index) => ({
+		index,
+		key: `${prefix}-${index}`,
+	}));
 }

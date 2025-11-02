@@ -23,11 +23,11 @@ import { formatCurrency } from "@/app/_utils/format-currency.util";
 import { SignInModal } from "@/components/signin-modal";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+	CardTitle,
 } from "@/components/ui/card";
 import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
@@ -39,14 +39,14 @@ import { QuoteGenerationDrawer } from "./quote-generation-drawer";
 // ============================================================================
 
 export type CartSummaryProps = {
-  /** Cart summary data */
-  summary: CartSummaryType;
+	/** Cart summary data */
+	summary: CartSummaryType;
 
-  /** Whether quote generation is in progress */
-  isGenerating?: boolean;
+	/** Whether quote generation is in progress */
+	isGenerating?: boolean;
 
-  /** Custom CSS class */
-  className?: string;
+	/** Custom CSS class */
+	className?: string;
 };
 
 // ============================================================================
@@ -64,116 +64,116 @@ export type CartSummaryProps = {
  * ```
  */
 export function CartSummary({
-  summary,
-  isGenerating = false,
-  className,
+	summary,
+	isGenerating = false,
+	className,
 }: CartSummaryProps) {
-  const [showSignInModal, setShowSignInModal] = useState(false);
-  const { data: session, isPending: isLoading } = useSession();
-  const isAuthenticated = !!session?.user;
+	const [showSignInModal, setShowSignInModal] = useState(false);
+	const { data: session, isPending: isLoading } = useSession();
+	const isAuthenticated = !!session?.user;
 
-  /**
-   * Handle "Generate Quote" button click
-   *
-   * Opens sign-in modal if unauthenticated
-   */
-  const handleGenerateQuote = () => {
-    // Check authentication before proceeding
-    if (!isAuthenticated) {
-      // Open sign-in modal instead of redirecting
-      setShowSignInModal(true);
-      return;
-    }
-  };
+	/**
+	 * Handle "Generate Quote" button click
+	 *
+	 * Opens sign-in modal if unauthenticated
+	 */
+	const handleGenerateQuote = () => {
+		// Check authentication before proceeding
+		if (!isAuthenticated) {
+			// Open sign-in modal instead of redirecting
+			setShowSignInModal(true);
+			return;
+		}
+	};
 
-  return (
-    <>
-      <Card className={cn("sticky top-4", className)}>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <ShoppingCart className="size-5" />
-            Resumen de presupuesto
-          </CardTitle>
-        </CardHeader>
+	return (
+		<>
+			<Card className={cn("sticky top-4", className)}>
+				<CardHeader>
+					<CardTitle className="flex items-center gap-2">
+						<ShoppingCart className="size-5" />
+						Resumen de presupuesto
+					</CardTitle>
+				</CardHeader>
 
-        <CardContent className="space-y-4">
-          {/* Item count */}
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Artículos en carrito</span>
-            <span className="font-medium">{summary.itemCount}</span>
-          </div>
+				<CardContent className="space-y-4">
+					{/* Item count */}
+					<div className="flex items-center justify-between text-sm">
+						<span className="text-muted-foreground">Artículos en carrito</span>
+						<span className="font-medium">{summary.itemCount}</span>
+					</div>
 
-          {/* Divider */}
-          <div className="h-px bg-border" />
+					{/* Divider */}
+					<div className="h-px bg-border" />
 
-          {/* Total */}
-          <div className="flex items-center justify-between">
-            <span className="font-medium text-base">Total</span>
-            <div className="text-right">
-              <p className="font-bold text-2xl">
-                {formatCurrency(summary.total, {
-                  currency: summary.currency,
-                  decimals: summary.currency === "USD" ? 2 : 0,
-                  locale: summary.currency === "USD" ? "es-PA" : "es-CO",
-                })}
-              </p>
-              <p className="text-muted-foreground text-xs">IVA incluido</p>
-            </div>
-          </div>
-        </CardContent>
+					{/* Total */}
+					<div className="flex items-center justify-between">
+						<span className="font-medium text-base">Total</span>
+						<div className="text-right">
+							<p className="font-bold text-2xl">
+								{formatCurrency(summary.total, {
+									currency: summary.currency,
+									decimals: summary.currency === "USD" ? 2 : 0,
+									locale: summary.currency === "USD" ? "es-PA" : "es-CO",
+								})}
+							</p>
+							<p className="text-muted-foreground text-xs">IVA incluido</p>
+						</div>
+					</div>
+				</CardContent>
 
-        <CardFooter className="flex-col gap-2">
-          {isAuthenticated ? (
-            /* Authenticated: Show drawer trigger */
-            <QuoteGenerationDrawer
-              trigger={
-                <Button
-                  className="w-full"
-                  disabled={summary.isEmpty || isGenerating || isLoading}
-                  size="lg"
-                  type="button"
-                >
-                  {isGenerating ? "Generando..." : "Generar cotización"}
-                </Button>
-              }
-            />
-          ) : (
-            /* Unauthenticated: Show button that opens sign-in modal */
-            <Button
-              className="w-full"
-              disabled={summary.isEmpty || isGenerating || isLoading}
-              onClick={handleGenerateQuote}
-              size="lg"
-              type="button"
-            >
-              {isGenerating ? "Generando..." : "Generar cotización"}
-            </Button>
-          )}
+				<CardFooter className="flex-col gap-2">
+					{isAuthenticated ? (
+						/* Authenticated: Show drawer trigger */
+						<QuoteGenerationDrawer
+							trigger={
+								<Button
+									className="w-full"
+									disabled={summary.isEmpty || isGenerating || isLoading}
+									size="lg"
+									type="button"
+								>
+									{isGenerating ? "Generando..." : "Generar cotización"}
+								</Button>
+							}
+						/>
+					) : (
+						/* Unauthenticated: Show button that opens sign-in modal */
+						<Button
+							className="w-full"
+							disabled={summary.isEmpty || isGenerating || isLoading}
+							onClick={handleGenerateQuote}
+							size="lg"
+							type="button"
+						>
+							{isGenerating ? "Generando..." : "Generar cotización"}
+						</Button>
+					)}
 
-          {/* Auth hint for unauthenticated users */}
-          {isAuthenticated || summary.isEmpty ? null : (
-            <p className="text-center text-muted-foreground text-xs">
-              Se requiere autenticación para generar cotizaciones
-            </p>
-          )}
-        </CardFooter>
+					{/* Auth hint for unauthenticated users */}
+					{isAuthenticated || summary.isEmpty ? null : (
+						<p className="text-center text-muted-foreground text-xs">
+							Se requiere autenticación para generar cotizaciones
+						</p>
+					)}
+				</CardFooter>
 
-        {/* Empty cart helper text */}
-        {summary.isEmpty && (
-          <div className="px-6 pb-4">
-            <p className="text-center text-muted-foreground text-sm">
-              Agrega artículos al carrito para generar una cotización
-            </p>
-          </div>
-        )}
-      </Card>
+				{/* Empty cart helper text */}
+				{summary.isEmpty && (
+					<div className="px-6 pb-4">
+						<p className="text-center text-muted-foreground text-sm">
+							Agrega artículos al carrito para generar una cotización
+						</p>
+					</div>
+				)}
+			</Card>
 
-      {/* Sign-in modal for unauthenticated users */}
-      <SignInModal
-        callbackUrl="/cart"
-        onOpenChangeAction={setShowSignInModal}
-        open={showSignInModal}
-      />
-    </>
-  );
+			{/* Sign-in modal for unauthenticated users */}
+			<SignInModal
+				callbackUrl="/cart"
+				onOpenChangeAction={setShowSignInModal}
+				open={showSignInModal}
+			/>
+		</>
+	);
 }

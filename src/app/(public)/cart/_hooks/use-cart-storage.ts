@@ -31,39 +31,39 @@ const STORAGE_VERSION = 1;
  * @returns Cart items or empty array if storage is empty/invalid
  */
 export function loadCartFromStorage(): CartItem[] {
-  // Client-side only
-  if (typeof window === "undefined") {
-    return [];
-  }
+	// Client-side only
+	if (typeof window === "undefined") {
+		return [];
+	}
 
-  try {
-    const rawData = sessionStorage.getItem(CART_CONSTANTS.STORAGE_KEY);
+	try {
+		const rawData = sessionStorage.getItem(CART_CONSTANTS.STORAGE_KEY);
 
-    if (!rawData) {
-      return [];
-    }
+		if (!rawData) {
+			return [];
+		}
 
-    const storageData: CartStorageData = JSON.parse(rawData) as CartStorageData;
+		const storageData: CartStorageData = JSON.parse(rawData) as CartStorageData;
 
-    // Version check (for future migrations)
-    if (storageData.version !== STORAGE_VERSION) {
-      // Clear outdated storage
-      clearCartStorage();
-      return [];
-    }
+		// Version check (for future migrations)
+		if (storageData.version !== STORAGE_VERSION) {
+			// Clear outdated storage
+			clearCartStorage();
+			return [];
+		}
 
-    // Validate items array
-    if (!Array.isArray(storageData.items)) {
-      clearCartStorage();
-      return [];
-    }
+		// Validate items array
+		if (!Array.isArray(storageData.items)) {
+			clearCartStorage();
+			return [];
+		}
 
-    return storageData.items;
-  } catch (_error) {
-    // Clear corrupted storage
-    clearCartStorage();
-    return [];
-  }
+		return storageData.items;
+	} catch (_error) {
+		// Clear corrupted storage
+		clearCartStorage();
+		return [];
+	}
 }
 
 /**
@@ -76,59 +76,59 @@ export function loadCartFromStorage(): CartItem[] {
  * @returns True if save succeeded, false otherwise
  */
 export function saveCartToStorage(items: CartItem[]): boolean {
-  // Client-side only
-  if (typeof window === "undefined") {
-    return false;
-  }
+	// Client-side only
+	if (typeof window === "undefined") {
+		return false;
+	}
 
-  try {
-    const storageData: CartStorageData = {
-      items,
-      lastModified: new Date().toISOString(),
-      version: STORAGE_VERSION,
-    };
+	try {
+		const storageData: CartStorageData = {
+			items,
+			lastModified: new Date().toISOString(),
+			version: STORAGE_VERSION,
+		};
 
-    const serialized = JSON.stringify(storageData);
-    sessionStorage.setItem(CART_CONSTANTS.STORAGE_KEY, serialized);
+		const serialized = JSON.stringify(storageData);
+		sessionStorage.setItem(CART_CONSTANTS.STORAGE_KEY, serialized);
 
-    // Emit custom event to notify all useCartStorage hooks about the change
-    window.dispatchEvent(
-      new CustomEvent("cart-updated", {
-        detail: { items },
-      })
-    );
+		// Emit custom event to notify all useCartStorage hooks about the change
+		window.dispatchEvent(
+			new CustomEvent("cart-updated", {
+				detail: { items },
+			}),
+		);
 
-    return true;
-  } catch (error) {
-    // Handle quota exceeded error
-    if (error instanceof DOMException && error.name === "QuotaExceededError") {
-      // sessionStorage quota exceeded - could implement user notification here
-    }
+		return true;
+	} catch (error) {
+		// Handle quota exceeded error
+		if (error instanceof DOMException && error.name === "QuotaExceededError") {
+			// sessionStorage quota exceeded - could implement user notification here
+		}
 
-    return false;
-  }
+		return false;
+	}
 }
 
 /**
  * Clear cart from sessionStorage
  */
 export function clearCartStorage(): void {
-  if (typeof window === "undefined") {
-    return;
-  }
+	if (typeof window === "undefined") {
+		return;
+	}
 
-  try {
-    sessionStorage.removeItem(CART_CONSTANTS.STORAGE_KEY);
+	try {
+		sessionStorage.removeItem(CART_CONSTANTS.STORAGE_KEY);
 
-    // Emit event to notify all hooks about cart clear
-    window.dispatchEvent(
-      new CustomEvent("cart-updated", {
-        detail: { items: [] },
-      })
-    );
-  } catch {
-    // Silently fail - storage operations are non-critical
-  }
+		// Emit event to notify all hooks about cart clear
+		window.dispatchEvent(
+			new CustomEvent("cart-updated", {
+				detail: { items: [] },
+			}),
+		);
+	} catch {
+		// Silently fail - storage operations are non-critical
+	}
 }
 
 // ============================================================================
@@ -156,72 +156,72 @@ export function clearCartStorage(): void {
  * ```
  */
 export function useCartStorage() {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [isHydrated, setIsHydrated] = useState(false);
+	const [items, setItems] = useState<CartItem[]>([]);
+	const [isHydrated, setIsHydrated] = useState(false);
 
-  // Hydrate from sessionStorage on mount
-  useEffect(() => {
-    const loadedItems = loadCartFromStorage();
-    setItems(loadedItems);
-    setIsHydrated(true);
+	// Hydrate from sessionStorage on mount
+	useEffect(() => {
+		const loadedItems = loadCartFromStorage();
+		setItems(loadedItems);
+		setIsHydrated(true);
 
-    // Listen for cart updates from other components
-    const handleCartUpdate = (event: Event) => {
-      const customEvent = event as CustomEvent<{ items: CartItem[] }>;
-      setItems(customEvent.detail.items);
-    };
+		// Listen for cart updates from other components
+		const handleCartUpdate = (event: Event) => {
+			const customEvent = event as CustomEvent<{ items: CartItem[] }>;
+			setItems(customEvent.detail.items);
+		};
 
-    window.addEventListener("cart-updated", handleCartUpdate);
+		window.addEventListener("cart-updated", handleCartUpdate);
 
-    return () => {
-      window.removeEventListener("cart-updated", handleCartUpdate);
-    };
-  }, []);
+		return () => {
+			window.removeEventListener("cart-updated", handleCartUpdate);
+		};
+	}, []);
 
-  /**
-   * Save items to storage and update state
-   */
-  const saveItems = useCallback((newItems: CartItem[]) => {
-    const success = saveCartToStorage(newItems);
+	/**
+	 * Save items to storage and update state
+	 */
+	const saveItems = useCallback((newItems: CartItem[]) => {
+		const success = saveCartToStorage(newItems);
 
-    if (success) {
-      setItems(newItems);
-    }
+		if (success) {
+			setItems(newItems);
+		}
 
-    return success;
-  }, []);
+		return success;
+	}, []);
 
-  /**
-   * Clear all items from storage and state
-   */
-  const clearItems = useCallback(() => {
-    clearCartStorage();
-    setItems([]);
-  }, []);
+	/**
+	 * Clear all items from storage and state
+	 */
+	const clearItems = useCallback(() => {
+		clearCartStorage();
+		setItems([]);
+	}, []);
 
-  /**
-   * Get current storage size (for debugging/monitoring)
-   */
-  const getStorageSize = useCallback((): number => {
-    if (typeof window === "undefined") {
-      return 0;
-    }
+	/**
+	 * Get current storage size (for debugging/monitoring)
+	 */
+	const getStorageSize = useCallback((): number => {
+		if (typeof window === "undefined") {
+			return 0;
+		}
 
-    try {
-      const rawData = sessionStorage.getItem(CART_CONSTANTS.STORAGE_KEY);
-      return rawData ? new Blob([rawData]).size : 0;
-    } catch {
-      return 0;
-    }
-  }, []);
+		try {
+			const rawData = sessionStorage.getItem(CART_CONSTANTS.STORAGE_KEY);
+			return rawData ? new Blob([rawData]).size : 0;
+		} catch {
+			return 0;
+		}
+	}, []);
 
-  return {
-    clearItems,
-    getStorageSize,
-    isHydrated,
-    items,
-    saveItems,
-  };
+	return {
+		clearItems,
+		getStorageSize,
+		isHydrated,
+		items,
+		saveItems,
+	};
 }
 
 // ============================================================================
@@ -238,13 +238,13 @@ export function useCartStorage() {
  * @returns Cleanup function
  */
 export function useCartStorageListener(_callback: (items: CartItem[]) => void) {
-  useEffect(() => {
-    // sessionStorage is tab-specific, no cross-tab sync needed
-    // This is intentionally empty but kept for API consistency
-    // If we switch to localStorage in the future, implement here
+	useEffect(() => {
+		// sessionStorage is tab-specific, no cross-tab sync needed
+		// This is intentionally empty but kept for API consistency
+		// If we switch to localStorage in the future, implement here
 
-    return () => {
-      // Cleanup (currently no-op)
-    };
-  }, []);
+		return () => {
+			// Cleanup (currently no-op)
+		};
+	}, []);
 }

@@ -1,252 +1,252 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://glasify.io/schemas/migration-report.v1.json",
-  "title": "Glass Taxonomy Migration Report Schema",
-  "description": "JSON schema for migration status and results reporting",
-  "type": "object",
-  "required": ["migrationId", "status", "startedAt", "steps"],
-  "properties": {
-    "migrationId": {
-      "type": "string",
-      "description": "Unique identifier for this migration run",
-      "examples": ["migration_20250121_123456"]
-    },
-    "status": {
-      "type": "string",
-      "description": "Overall migration status",
-      "enum": ["pending", "in_progress", "completed", "failed", "rolled_back"]
-    },
-    "startedAt": {
-      "type": "string",
-      "format": "date-time",
-      "description": "ISO 8601 timestamp when migration started"
-    },
-    "completedAt": {
-      "type": "string",
-      "format": "date-time",
-      "description": "ISO 8601 timestamp when migration completed"
-    },
-    "error": {
-      "type": "string",
-      "description": "Error message if migration failed",
-      "maxLength": 5000
-    },
-    "steps": {
-      "type": "array",
-      "description": "Individual migration steps with status",
-      "items": {
-        "$ref": "#/definitions/MigrationStep"
-      }
-    },
-    "summary": {
-      "$ref": "#/definitions/MigrationSummary"
-    }
-  },
-  "definitions": {
-    "MigrationStep": {
-      "type": "object",
-      "required": ["step", "status"],
-      "properties": {
-        "step": {
-          "type": "string",
-          "description": "Step identifier",
-          "examples": [
-            "seed_glass_types",
-            "seed_glass_solutions",
-            "migrate_tenant_abc123"
-          ]
-        },
-        "status": {
-          "type": "string",
-          "enum": ["pending", "in_progress", "completed", "failed", "skipped"]
-        },
-        "startedAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "completedAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "recordsProcessed": {
-          "type": "integer",
-          "minimum": 0,
-          "description": "Number of records processed in this step"
-        },
-        "recordsSkipped": {
-          "type": "integer",
-          "minimum": 0,
-          "description": "Number of records skipped (e.g., duplicates)"
-        },
-        "recordsFailed": {
-          "type": "integer",
-          "minimum": 0,
-          "description": "Number of records that failed processing"
-        },
-        "error": {
-          "type": "string",
-          "description": "Error message if step failed"
-        },
-        "details": {
-          "type": "object",
-          "description": "Step-specific details (flexible structure)",
-          "additionalProperties": true
-        }
-      }
-    },
-    "MigrationSummary": {
-      "type": "object",
-      "description": "Aggregated migration statistics",
-      "properties": {
-        "totalSteps": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "completedSteps": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "failedSteps": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "glassTypes": {
-          "$ref": "#/definitions/EntityMigrationStats"
-        },
-        "glassSolutions": {
-          "$ref": "#/definitions/EntityMigrationStats"
-        },
-        "tenants": {
-          "$ref": "#/definitions/TenantMigrationStats"
-        },
-        "quotes": {
-          "$ref": "#/definitions/QuoteMigrationStats"
-        }
-      }
-    },
-    "EntityMigrationStats": {
-      "type": "object",
-      "properties": {
-        "seeded": {
-          "type": "integer",
-          "description": "Number of seed records created"
-        },
-        "migrated": {
-          "type": "integer",
-          "description": "Number of custom records migrated to standard"
-        },
-        "preserved": {
-          "type": "integer",
-          "description": "Number of custom records preserved as legacy"
-        },
-        "deleted": {
-          "type": "integer",
-          "description": "Number of duplicate records deleted"
-        }
-      }
-    },
-    "TenantMigrationStats": {
-      "type": "object",
-      "properties": {
-        "total": {
-          "type": "integer",
-          "description": "Total tenants in system"
-        },
-        "migrated": {
-          "type": "integer",
-          "description": "Tenants successfully migrated"
-        },
-        "failed": {
-          "type": "integer",
-          "description": "Tenants that failed migration"
-        }
-      }
-    },
-    "QuoteMigrationStats": {
-      "type": "object",
-      "properties": {
-        "total": {
-          "type": "integer",
-          "description": "Total quotes in system"
-        },
-        "verified": {
-          "type": "integer",
-          "description": "Quotes verified to reference valid glass types"
-        },
-        "broken": {
-          "type": "integer",
-          "description": "Quotes with broken glass type references (requires manual review)"
-        }
-      }
-    }
-  },
-  "examples": [
-    {
-      "migrationId": "migration_20250121_123456",
-      "status": "completed",
-      "startedAt": "2025-01-21T10:00:00Z",
-      "completedAt": "2025-01-21T10:05:32Z",
-      "steps": [
-        {
-          "step": "seed_glass_types",
-          "status": "completed",
-          "startedAt": "2025-01-21T10:00:00Z",
-          "completedAt": "2025-01-21T10:00:15Z",
-          "recordsProcessed": 30,
-          "recordsSkipped": 0,
-          "recordsFailed": 0
-        },
-        {
-          "step": "seed_glass_solutions",
-          "status": "completed",
-          "startedAt": "2025-01-21T10:00:15Z",
-          "completedAt": "2025-01-21T10:00:18Z",
-          "recordsProcessed": 6,
-          "recordsSkipped": 0,
-          "recordsFailed": 0
-        },
-        {
-          "step": "migrate_tenant_abc123",
-          "status": "completed",
-          "startedAt": "2025-01-21T10:00:18Z",
-          "completedAt": "2025-01-21T10:02:30Z",
-          "recordsProcessed": 15,
-          "recordsSkipped": 3,
-          "recordsFailed": 0,
-          "details": {
-            "customTypesPreserved": 2,
-            "customTypesMigrated": 10,
-            "customTypesDeleted": 3
-          }
-        }
-      ],
-      "summary": {
-        "totalSteps": 8,
-        "completedSteps": 8,
-        "failedSteps": 0,
-        "glassTypes": {
-          "seeded": 30,
-          "migrated": 45,
-          "preserved": 5,
-          "deleted": 10
-        },
-        "glassSolutions": {
-          "seeded": 6,
-          "migrated": 0,
-          "preserved": 0,
-          "deleted": 0
-        },
-        "tenants": {
-          "total": 5,
-          "migrated": 5,
-          "failed": 0
-        },
-        "quotes": {
-          "total": 150,
-          "verified": 150,
-          "broken": 0
-        }
-      }
-    }
-  ]
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://glasify.io/schemas/migration-report.v1.json",
+	"title": "Glass Taxonomy Migration Report Schema",
+	"description": "JSON schema for migration status and results reporting",
+	"type": "object",
+	"required": ["migrationId", "status", "startedAt", "steps"],
+	"properties": {
+		"migrationId": {
+			"type": "string",
+			"description": "Unique identifier for this migration run",
+			"examples": ["migration_20250121_123456"]
+		},
+		"status": {
+			"type": "string",
+			"description": "Overall migration status",
+			"enum": ["pending", "in_progress", "completed", "failed", "rolled_back"]
+		},
+		"startedAt": {
+			"type": "string",
+			"format": "date-time",
+			"description": "ISO 8601 timestamp when migration started"
+		},
+		"completedAt": {
+			"type": "string",
+			"format": "date-time",
+			"description": "ISO 8601 timestamp when migration completed"
+		},
+		"error": {
+			"type": "string",
+			"description": "Error message if migration failed",
+			"maxLength": 5000
+		},
+		"steps": {
+			"type": "array",
+			"description": "Individual migration steps with status",
+			"items": {
+				"$ref": "#/definitions/MigrationStep"
+			}
+		},
+		"summary": {
+			"$ref": "#/definitions/MigrationSummary"
+		}
+	},
+	"definitions": {
+		"MigrationStep": {
+			"type": "object",
+			"required": ["step", "status"],
+			"properties": {
+				"step": {
+					"type": "string",
+					"description": "Step identifier",
+					"examples": [
+						"seed_glass_types",
+						"seed_glass_solutions",
+						"migrate_tenant_abc123"
+					]
+				},
+				"status": {
+					"type": "string",
+					"enum": ["pending", "in_progress", "completed", "failed", "skipped"]
+				},
+				"startedAt": {
+					"type": "string",
+					"format": "date-time"
+				},
+				"completedAt": {
+					"type": "string",
+					"format": "date-time"
+				},
+				"recordsProcessed": {
+					"type": "integer",
+					"minimum": 0,
+					"description": "Number of records processed in this step"
+				},
+				"recordsSkipped": {
+					"type": "integer",
+					"minimum": 0,
+					"description": "Number of records skipped (e.g., duplicates)"
+				},
+				"recordsFailed": {
+					"type": "integer",
+					"minimum": 0,
+					"description": "Number of records that failed processing"
+				},
+				"error": {
+					"type": "string",
+					"description": "Error message if step failed"
+				},
+				"details": {
+					"type": "object",
+					"description": "Step-specific details (flexible structure)",
+					"additionalProperties": true
+				}
+			}
+		},
+		"MigrationSummary": {
+			"type": "object",
+			"description": "Aggregated migration statistics",
+			"properties": {
+				"totalSteps": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"completedSteps": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"failedSteps": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"glassTypes": {
+					"$ref": "#/definitions/EntityMigrationStats"
+				},
+				"glassSolutions": {
+					"$ref": "#/definitions/EntityMigrationStats"
+				},
+				"tenants": {
+					"$ref": "#/definitions/TenantMigrationStats"
+				},
+				"quotes": {
+					"$ref": "#/definitions/QuoteMigrationStats"
+				}
+			}
+		},
+		"EntityMigrationStats": {
+			"type": "object",
+			"properties": {
+				"seeded": {
+					"type": "integer",
+					"description": "Number of seed records created"
+				},
+				"migrated": {
+					"type": "integer",
+					"description": "Number of custom records migrated to standard"
+				},
+				"preserved": {
+					"type": "integer",
+					"description": "Number of custom records preserved as legacy"
+				},
+				"deleted": {
+					"type": "integer",
+					"description": "Number of duplicate records deleted"
+				}
+			}
+		},
+		"TenantMigrationStats": {
+			"type": "object",
+			"properties": {
+				"total": {
+					"type": "integer",
+					"description": "Total tenants in system"
+				},
+				"migrated": {
+					"type": "integer",
+					"description": "Tenants successfully migrated"
+				},
+				"failed": {
+					"type": "integer",
+					"description": "Tenants that failed migration"
+				}
+			}
+		},
+		"QuoteMigrationStats": {
+			"type": "object",
+			"properties": {
+				"total": {
+					"type": "integer",
+					"description": "Total quotes in system"
+				},
+				"verified": {
+					"type": "integer",
+					"description": "Quotes verified to reference valid glass types"
+				},
+				"broken": {
+					"type": "integer",
+					"description": "Quotes with broken glass type references (requires manual review)"
+				}
+			}
+		}
+	},
+	"examples": [
+		{
+			"migrationId": "migration_20250121_123456",
+			"status": "completed",
+			"startedAt": "2025-01-21T10:00:00Z",
+			"completedAt": "2025-01-21T10:05:32Z",
+			"steps": [
+				{
+					"step": "seed_glass_types",
+					"status": "completed",
+					"startedAt": "2025-01-21T10:00:00Z",
+					"completedAt": "2025-01-21T10:00:15Z",
+					"recordsProcessed": 30,
+					"recordsSkipped": 0,
+					"recordsFailed": 0
+				},
+				{
+					"step": "seed_glass_solutions",
+					"status": "completed",
+					"startedAt": "2025-01-21T10:00:15Z",
+					"completedAt": "2025-01-21T10:00:18Z",
+					"recordsProcessed": 6,
+					"recordsSkipped": 0,
+					"recordsFailed": 0
+				},
+				{
+					"step": "migrate_tenant_abc123",
+					"status": "completed",
+					"startedAt": "2025-01-21T10:00:18Z",
+					"completedAt": "2025-01-21T10:02:30Z",
+					"recordsProcessed": 15,
+					"recordsSkipped": 3,
+					"recordsFailed": 0,
+					"details": {
+						"customTypesPreserved": 2,
+						"customTypesMigrated": 10,
+						"customTypesDeleted": 3
+					}
+				}
+			],
+			"summary": {
+				"totalSteps": 8,
+				"completedSteps": 8,
+				"failedSteps": 0,
+				"glassTypes": {
+					"seeded": 30,
+					"migrated": 45,
+					"preserved": 5,
+					"deleted": 10
+				},
+				"glassSolutions": {
+					"seeded": 6,
+					"migrated": 0,
+					"preserved": 0,
+					"deleted": 0
+				},
+				"tenants": {
+					"total": 5,
+					"migrated": 5,
+					"failed": 0
+				},
+				"quotes": {
+					"total": 150,
+					"verified": 150,
+					"broken": 0
+				}
+			}
+		}
+	]
 }

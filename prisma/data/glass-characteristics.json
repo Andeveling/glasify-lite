@@ -1,125 +1,125 @@
 {
-  "version": "1.0",
-  "characteristics": [
-    {
-      "key": "tempered",
-      "name": "Tempered Glass",
-      "nameEs": "Vidrio Templado",
-      "description": "Vidrio tratado térmicamente para aumentar su resistencia. Se rompe en fragmentos pequeños y menos peligrosos. Cumple con EN 12150 y ASTM C1048.",
-      "category": "safety",
-      "sortOrder": 1
-    },
-    {
-      "key": "laminated",
-      "name": "Laminated Glass",
-      "nameEs": "Vidrio Laminado",
-      "description": "Dos o más capas de vidrio unidas con PVB. Los fragmentos permanecen adheridos al romperse. Cumple con EN ISO 12543 y ASTM C1172.",
-      "category": "safety",
-      "sortOrder": 2
-    },
-    {
-      "key": "low_e",
-      "name": "Low-E Coating",
-      "nameEs": "Bajo Emisivo",
-      "description": "Recubrimiento de baja emisividad que reduce la transferencia de calor. Mejora eficiencia energética manteniendo temperaturas interiores estables.",
-      "category": "thermal",
-      "sortOrder": 3
-    },
-    {
-      "key": "triple_glazed",
-      "name": "Triple Glazing",
-      "nameEs": "Triple Acristalamiento",
-      "description": "Tres capas de vidrio con dos cámaras de aire o gas. Aislamiento térmico y acústico superior. U-value típico: 0.6-1.2 W/m²K.",
-      "category": "thermal",
-      "sortOrder": 4
-    },
-    {
-      "key": "acoustic",
-      "name": "Acoustic Insulation",
-      "nameEs": "Aislamiento Acústico",
-      "description": "PVB acústico especializado o vidrio con espesores asimétricos. Reduce ruido exterior 30-50dB. Cumple con ISO 717-1.",
-      "category": "acoustic",
-      "sortOrder": 5
-    },
-    {
-      "key": "hurricane_resistant",
-      "name": "Hurricane Resistant",
-      "nameEs": "Resistente a Huracanes",
-      "description": "Laminado de alto impacto certificado para zonas de huracanes. Resiste proyectiles a más de 50 mph. Cumple con ASTM E1996 y Miami-Dade.",
-      "category": "safety",
-      "sortOrder": 6
-    },
-    {
-      "key": "reflective",
-      "name": "Reflective Coating",
-      "nameEs": "Recubrimiento Reflectivo",
-      "description": "Capa metálica que refleja radiación solar. Reduce ganancia de calor y proporciona privacidad. Control solar SHGC: 0.20-0.40.",
-      "category": "coating",
-      "sortOrder": 7
-    },
-    {
-      "key": "tinted",
-      "name": "Tinted Glass",
-      "nameEs": "Vidrio Tintado",
-      "description": "Color incorporado en la masa del vidrio (gris, bronce, verde, azul). Reduce transmisión de luz y calor. Factor solar: 0.55-0.70.",
-      "category": "coating",
-      "sortOrder": 8
-    },
-    {
-      "key": "clear_float",
-      "name": "Clear Float",
-      "nameEs": "Flotado Claro",
-      "description": "Vidrio float estándar sin recubrimientos. Alta transparencia (89-90%). Base para la mayoría de productos procesados.",
-      "category": "substrate",
-      "sortOrder": 9
-    },
-    {
-      "key": "ultra_clear",
-      "name": "Ultra Clear / Low Iron",
-      "nameEs": "Ultra Claro",
-      "description": "Vidrio con bajo contenido de hierro. Transparencia excepcional (>91%). Sin tinte verdoso. Ideal para exhibición y arquitectura premium.",
-      "category": "substrate",
-      "sortOrder": 10
-    },
-    {
-      "key": "insulated",
-      "name": "Insulated Glass Unit (IGU)",
-      "nameEs": "Doble Acristalamiento",
-      "description": "Dos o más vidrios separados por cámara de aire o gas argón. Mejora aislamiento térmico y acústico. U-value típico: 1.4-2.8 W/m²K.",
-      "category": "thermal",
-      "sortOrder": 11
-    },
-    {
-      "key": "heat_strengthened",
-      "name": "Heat Strengthened",
-      "nameEs": "Termo-Reforzado",
-      "description": "Tratamiento térmico intermedio entre recocido y templado. Aproximadamente 2x más resistente que vidrio recocido. Menos propenso a roturas espontáneas.",
-      "category": "safety",
-      "sortOrder": 12
-    },
-    {
-      "key": "self_cleaning",
-      "name": "Self-Cleaning",
-      "nameEs": "Auto-Limpiante",
-      "description": "Recubrimiento fotocatalítico que descompone suciedad orgánica con luz UV. Agua de lluvia enjuaga residuos. Reduce necesidad de limpieza manual.",
-      "category": "coating",
-      "sortOrder": 13
-    },
-    {
-      "key": "fire_resistant",
-      "name": "Fire Resistant",
-      "nameEs": "Resistente al Fuego",
-      "description": "Vidrio especial que mantiene integridad durante exposición al fuego. Clasificaciones EI 30, EI 60, EI 90 minutos. Cumple con EN 1634-1.",
-      "category": "safety",
-      "sortOrder": 14
-    },
-    {
-      "key": "bulletproof",
-      "name": "Bullet Resistant",
-      "nameEs": "Antibalas",
-      "description": "Múltiples capas de vidrio y policarbonato. Detiene balas de diferentes calibres según nivel UL 752. Para alta seguridad y aplicaciones militares.",
-      "category": "safety",
-      "sortOrder": 15
-    }
-  ]
+	"version": "1.0",
+	"characteristics": [
+		{
+			"key": "tempered",
+			"name": "Tempered Glass",
+			"nameEs": "Vidrio Templado",
+			"description": "Vidrio tratado térmicamente para aumentar su resistencia. Se rompe en fragmentos pequeños y menos peligrosos. Cumple con EN 12150 y ASTM C1048.",
+			"category": "safety",
+			"sortOrder": 1
+		},
+		{
+			"key": "laminated",
+			"name": "Laminated Glass",
+			"nameEs": "Vidrio Laminado",
+			"description": "Dos o más capas de vidrio unidas con PVB. Los fragmentos permanecen adheridos al romperse. Cumple con EN ISO 12543 y ASTM C1172.",
+			"category": "safety",
+			"sortOrder": 2
+		},
+		{
+			"key": "low_e",
+			"name": "Low-E Coating",
+			"nameEs": "Bajo Emisivo",
+			"description": "Recubrimiento de baja emisividad que reduce la transferencia de calor. Mejora eficiencia energética manteniendo temperaturas interiores estables.",
+			"category": "thermal",
+			"sortOrder": 3
+		},
+		{
+			"key": "triple_glazed",
+			"name": "Triple Glazing",
+			"nameEs": "Triple Acristalamiento",
+			"description": "Tres capas de vidrio con dos cámaras de aire o gas. Aislamiento térmico y acústico superior. U-value típico: 0.6-1.2 W/m²K.",
+			"category": "thermal",
+			"sortOrder": 4
+		},
+		{
+			"key": "acoustic",
+			"name": "Acoustic Insulation",
+			"nameEs": "Aislamiento Acústico",
+			"description": "PVB acústico especializado o vidrio con espesores asimétricos. Reduce ruido exterior 30-50dB. Cumple con ISO 717-1.",
+			"category": "acoustic",
+			"sortOrder": 5
+		},
+		{
+			"key": "hurricane_resistant",
+			"name": "Hurricane Resistant",
+			"nameEs": "Resistente a Huracanes",
+			"description": "Laminado de alto impacto certificado para zonas de huracanes. Resiste proyectiles a más de 50 mph. Cumple con ASTM E1996 y Miami-Dade.",
+			"category": "safety",
+			"sortOrder": 6
+		},
+		{
+			"key": "reflective",
+			"name": "Reflective Coating",
+			"nameEs": "Recubrimiento Reflectivo",
+			"description": "Capa metálica que refleja radiación solar. Reduce ganancia de calor y proporciona privacidad. Control solar SHGC: 0.20-0.40.",
+			"category": "coating",
+			"sortOrder": 7
+		},
+		{
+			"key": "tinted",
+			"name": "Tinted Glass",
+			"nameEs": "Vidrio Tintado",
+			"description": "Color incorporado en la masa del vidrio (gris, bronce, verde, azul). Reduce transmisión de luz y calor. Factor solar: 0.55-0.70.",
+			"category": "coating",
+			"sortOrder": 8
+		},
+		{
+			"key": "clear_float",
+			"name": "Clear Float",
+			"nameEs": "Flotado Claro",
+			"description": "Vidrio float estándar sin recubrimientos. Alta transparencia (89-90%). Base para la mayoría de productos procesados.",
+			"category": "substrate",
+			"sortOrder": 9
+		},
+		{
+			"key": "ultra_clear",
+			"name": "Ultra Clear / Low Iron",
+			"nameEs": "Ultra Claro",
+			"description": "Vidrio con bajo contenido de hierro. Transparencia excepcional (>91%). Sin tinte verdoso. Ideal para exhibición y arquitectura premium.",
+			"category": "substrate",
+			"sortOrder": 10
+		},
+		{
+			"key": "insulated",
+			"name": "Insulated Glass Unit (IGU)",
+			"nameEs": "Doble Acristalamiento",
+			"description": "Dos o más vidrios separados por cámara de aire o gas argón. Mejora aislamiento térmico y acústico. U-value típico: 1.4-2.8 W/m²K.",
+			"category": "thermal",
+			"sortOrder": 11
+		},
+		{
+			"key": "heat_strengthened",
+			"name": "Heat Strengthened",
+			"nameEs": "Termo-Reforzado",
+			"description": "Tratamiento térmico intermedio entre recocido y templado. Aproximadamente 2x más resistente que vidrio recocido. Menos propenso a roturas espontáneas.",
+			"category": "safety",
+			"sortOrder": 12
+		},
+		{
+			"key": "self_cleaning",
+			"name": "Self-Cleaning",
+			"nameEs": "Auto-Limpiante",
+			"description": "Recubrimiento fotocatalítico que descompone suciedad orgánica con luz UV. Agua de lluvia enjuaga residuos. Reduce necesidad de limpieza manual.",
+			"category": "coating",
+			"sortOrder": 13
+		},
+		{
+			"key": "fire_resistant",
+			"name": "Fire Resistant",
+			"nameEs": "Resistente al Fuego",
+			"description": "Vidrio especial que mantiene integridad durante exposición al fuego. Clasificaciones EI 30, EI 60, EI 90 minutos. Cumple con EN 1634-1.",
+			"category": "safety",
+			"sortOrder": 14
+		},
+		{
+			"key": "bulletproof",
+			"name": "Bullet Resistant",
+			"nameEs": "Antibalas",
+			"description": "Múltiples capas de vidrio y policarbonato. Detiene balas de diferentes calibres según nivel UL 752. Para alta seguridad y aplicaciones militares.",
+			"category": "safety",
+			"sortOrder": 15
+		}
+	]
 }

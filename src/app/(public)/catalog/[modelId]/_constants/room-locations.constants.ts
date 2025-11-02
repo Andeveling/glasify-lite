@@ -4,15 +4,15 @@
  */
 
 export const ROOM_LOCATIONS = [
-  "Alcoba principal",
-  "Alcoba secundaria",
-  "Sala / Comedor",
-  "Cocina",
-  "Baño principal",
-  "Baño secundario",
-  "Oficina / Estudio",
-  "Balcón / Terraza",
-  "Escalera / Pasillo",
+	"Alcoba principal",
+	"Alcoba secundaria",
+	"Sala / Comedor",
+	"Cocina",
+	"Baño principal",
+	"Baño secundario",
+	"Oficina / Estudio",
+	"Balcón / Terraza",
+	"Escalera / Pasillo",
 ] as const;
 
 export type RoomLocationOption = (typeof ROOM_LOCATIONS)[number];

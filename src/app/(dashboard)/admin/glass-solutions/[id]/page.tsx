@@ -13,43 +13,43 @@ import { api } from "@/trpc/server-client";
 import { GlassSolutionForm } from "../_components/glass-solution-form";
 
 type EditGlassSolutionPageProps = {
-  params: Promise<{ id: string }>;
+	params: Promise<{ id: string }>;
 };
 
 export async function generateMetadata({
-  params,
+	params,
 }: EditGlassSolutionPageProps): Promise<Metadata> {
-  const { id } = await params;
-  const solution = await api.admin["glass-solution"].getById({ id });
+	const { id } = await params;
+	const solution = await api.admin["glass-solution"].getById({ id });
 
-  return {
-    description: `Editar solución de vidrio: ${solution?.name ?? "No encontrada"}`,
-    title: `Editar ${solution?.name ?? "Solución"} | Admin`,
-  };
+	return {
+		description: `Editar solución de vidrio: ${solution?.name ?? "No encontrada"}`,
+		title: `Editar ${solution?.name ?? "Solución"} | Admin`,
+	};
 }
 
 export default async function EditGlassSolutionPage({
-  params,
+	params,
 }: EditGlassSolutionPageProps) {
-  const { id } = await params;
-  const solution = await api.admin["glass-solution"].getById({ id });
+	const { id } = await params;
+	const solution = await api.admin["glass-solution"].getById({ id });
 
-  if (!solution) {
-    notFound();
-  }
+	if (!solution) {
+		notFound();
+	}
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-bold text-3xl tracking-tight">
-          Editar Solución de Vidrio
-        </h1>
-        <p className="text-muted-foreground">
-          Actualiza la información de la solución: {solution.name}
-        </p>
-      </div>
+	return (
+		<div className="space-y-6">
+			<div>
+				<h1 className="font-bold text-3xl tracking-tight">
+					Editar Solución de Vidrio
+				</h1>
+				<p className="text-muted-foreground">
+					Actualiza la información de la solución: {solution.name}
+				</p>
+			</div>
 
-      <GlassSolutionForm defaultValues={solution} mode="edit" />
-    </div>
-  );
+			<GlassSolutionForm defaultValues={solution} mode="edit" />
+		</div>
+	);
 }

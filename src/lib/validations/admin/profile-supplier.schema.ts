@@ -9,13 +9,13 @@
 
 import { z } from "zod";
 import {
-  activeFilterSchema,
-  longText,
-  optionalSpanishText,
-  paginationSchema,
-  searchQuerySchema,
-  sortOrderSchema,
-  spanishText,
+	activeFilterSchema,
+	longText,
+	optionalSpanishText,
+	paginationSchema,
+	searchQuerySchema,
+	sortOrderSchema,
+	spanishText,
 } from "../shared.schema";
 
 /**
@@ -37,28 +37,28 @@ export type MaterialType = z.infer<typeof materialTypeEnum>;
  * Shared fields for create/update operations
  */
 const baseProfileSupplierSchema = z.object({
-  isActive: z
-    .boolean()
-    .default(true)
-    .describe("Whether this supplier is active for selection"),
+	isActive: z
+		.boolean()
+		.default(true)
+		.describe("Whether this supplier is active for selection"),
 
-  materialType: materialTypeEnum.describe(
-    "Type of material the supplier provides"
-  ),
-  name: spanishText
-    .min(
-      MIN_NAME_LENGTH,
-      `El nombre debe tener al menos ${MIN_NAME_LENGTH} caracteres`
-    )
-    .max(
-      MAX_NAME_LENGTH,
-      `El nombre no puede exceder ${MAX_NAME_LENGTH} caracteres`
-    )
-    .describe("Supplier name (e.g., Rehau, Deceuninck, Azembla)"),
+	materialType: materialTypeEnum.describe(
+		"Type of material the supplier provides",
+	),
+	name: spanishText
+		.min(
+			MIN_NAME_LENGTH,
+			`El nombre debe tener al menos ${MIN_NAME_LENGTH} caracteres`,
+		)
+		.max(
+			MAX_NAME_LENGTH,
+			`El nombre no puede exceder ${MAX_NAME_LENGTH} caracteres`,
+		)
+		.describe("Supplier name (e.g., Rehau, Deceuninck, Azembla)"),
 
-  notes: optionalSpanishText
-    .pipe(longText)
-    .describe("Additional notes about the supplier"),
+	notes: optionalSpanishText
+		.pipe(longText)
+		.describe("Additional notes about the supplier"),
 });
 
 /**
@@ -68,7 +68,7 @@ const baseProfileSupplierSchema = z.object({
 export const createProfileSupplierSchema = baseProfileSupplierSchema;
 
 export type CreateProfileSupplierInput = z.infer<
-  typeof createProfileSupplierSchema
+	typeof createProfileSupplierSchema
 >;
 
 /**
@@ -76,12 +76,12 @@ export type CreateProfileSupplierInput = z.infer<
  * Used for PUT /api/trpc/admin/profile-supplier.update
  */
 export const updateProfileSupplierSchema = z.object({
-  data: baseProfileSupplierSchema.partial(),
-  id: z.string().cuid("ID inválido"),
+	data: baseProfileSupplierSchema.partial(),
+	id: z.string().cuid("ID inválido"),
 });
 
 export type UpdateProfileSupplierInput = z.infer<
-  typeof updateProfileSupplierSchema
+	typeof updateProfileSupplierSchema
 >;
 
 /**
@@ -95,23 +95,23 @@ export type UpdateProfileSupplierInput = z.infer<
  * - Sorting (name, materialType, createdAt)
  */
 export const listProfileSuppliersSchema = z.object({
-  // Pagination
-  ...paginationSchema.shape,
-  isActive: activeFilterSchema.optional().describe("Filter by active status"),
+	// Pagination
+	...paginationSchema.shape,
+	isActive: activeFilterSchema.optional().describe("Filter by active status"),
 
-  // Filters
-  materialType: materialTypeEnum.optional().describe("Filter by material type"),
+	// Filters
+	materialType: materialTypeEnum.optional().describe("Filter by material type"),
 
-  // Search
-  search: searchQuerySchema.optional().describe("Search by supplier name"),
+	// Search
+	search: searchQuerySchema.optional().describe("Search by supplier name"),
 
-  // Sorting
-  sortBy: z.enum(["name", "materialType", "createdAt"]).default("name"),
-  sortOrder: sortOrderSchema,
+	// Sorting
+	sortBy: z.enum(["name", "materialType", "createdAt"]).default("name"),
+	sortOrder: sortOrderSchema,
 });
 
 export type ListProfileSuppliersInput = z.infer<
-  typeof listProfileSuppliersSchema
+	typeof listProfileSuppliersSchema
 >;
 
 /**
@@ -119,11 +119,11 @@ export type ListProfileSuppliersInput = z.infer<
  * Used for GET /api/trpc/admin/profile-supplier.getById
  */
 export const getProfileSupplierByIdSchema = z.object({
-  id: z.string().cuid("ID inválido"),
+	id: z.string().cuid("ID inválido"),
 });
 
 export type GetProfileSupplierByIdInput = z.infer<
-  typeof getProfileSupplierByIdSchema
+	typeof getProfileSupplierByIdSchema
 >;
 
 /**
@@ -131,11 +131,11 @@ export type GetProfileSupplierByIdInput = z.infer<
  * Used for DELETE /api/trpc/admin/profile-supplier.delete
  */
 export const deleteProfileSupplierSchema = z.object({
-  id: z.string().cuid("ID inválido"),
+	id: z.string().cuid("ID inválido"),
 });
 
 export type DeleteProfileSupplierInput = z.infer<
-  typeof deleteProfileSupplierSchema
+	typeof deleteProfileSupplierSchema
 >;
 
 /**
@@ -143,16 +143,16 @@ export type DeleteProfileSupplierInput = z.infer<
  * Used for response validation
  */
 export const profileSupplierSchema = z
-  .object({
-    createdAt: z.date(),
-    id: z.string().cuid(),
-    isActive: z.boolean(),
-    materialType: materialTypeEnum,
-    name: z.string(),
-    notes: z.string().nullable(),
-    updatedAt: z.date(),
-  })
-  .passthrough(); // Allow Prisma's _count field
+	.object({
+		createdAt: z.date(),
+		id: z.string().cuid(),
+		isActive: z.boolean(),
+		materialType: materialTypeEnum,
+		name: z.string(),
+		notes: z.string().nullable(),
+		updatedAt: z.date(),
+	})
+	.passthrough(); // Allow Prisma's _count field
 
 export type ProfileSupplierOutput = z.infer<typeof profileSupplierSchema>;
 
@@ -160,13 +160,13 @@ export type ProfileSupplierOutput = z.infer<typeof profileSupplierSchema>;
  * List ProfileSuppliers Output Schema
  */
 export const listProfileSuppliersOutputSchema = z.object({
-  items: z.array(profileSupplierSchema),
-  limit: z.number().int().positive(),
-  page: z.number().int().positive(),
-  total: z.number().int().nonnegative(),
-  totalPages: z.number().int().nonnegative(),
+	items: z.array(profileSupplierSchema),
+	limit: z.number().int().positive(),
+	page: z.number().int().positive(),
+	total: z.number().int().nonnegative(),
+	totalPages: z.number().int().nonnegative(),
 });
 
 export type ListProfileSuppliersOutput = z.infer<
-  typeof listProfileSuppliersOutputSchema
+	typeof listProfileSuppliersOutputSchema
 >;

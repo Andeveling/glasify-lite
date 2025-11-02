@@ -4,31 +4,31 @@
  */
 
 import type {
-  GlassTypeOutput,
-  ModelDetailOutput,
+	GlassTypeOutput,
+	ModelDetailOutput,
 } from "@/server/api/routers/catalog";
 import type { CreateCartItemInput } from "@/types/cart.types";
 
 export type CartItemInputWithPrice = CreateCartItemInput & {
-  unitPrice: number;
+	unitPrice: number;
 };
 
 type InferredSolution = {
-  id: string;
-  nameEs: string;
+	id: string;
+	nameEs: string;
 } | null;
 
 type PrepareCartItemParams = {
-  additionalServiceIds: string[];
-  calculatedPrice: number | undefined;
-  colorId: string | undefined;
-  glassTypeId: string;
-  heightMm: number;
-  inferredSolution: InferredSolution;
-  model: ModelDetailOutput;
-  quantity: number;
-  selectedGlassType: GlassTypeOutput | undefined;
-  widthMm: number;
+	additionalServiceIds: string[];
+	calculatedPrice: number | undefined;
+	colorId: string | undefined;
+	glassTypeId: string;
+	heightMm: number;
+	inferredSolution: InferredSolution;
+	model: ModelDetailOutput;
+	quantity: number;
+	selectedGlassType: GlassTypeOutput | undefined;
+	widthMm: number;
 };
 
 /**
@@ -52,29 +52,29 @@ type PrepareCartItemParams = {
  * })
  */
 export function prepareCartItemInput({
-  additionalServiceIds,
-  calculatedPrice,
-  colorId,
-  glassTypeId,
-  heightMm,
-  inferredSolution,
-  model,
-  quantity,
-  selectedGlassType,
-  widthMm,
+	additionalServiceIds,
+	calculatedPrice,
+	colorId,
+	glassTypeId,
+	heightMm,
+	inferredSolution,
+	model,
+	quantity,
+	selectedGlassType,
+	widthMm,
 }: PrepareCartItemParams): CartItemInputWithPrice {
-  return {
-    additionalServiceIds,
-    colorId,
-    glassTypeId,
-    glassTypeName: selectedGlassType?.name ?? "",
-    heightMm,
-    modelId: model.id,
-    modelName: model.name,
-    quantity,
-    solutionId: inferredSolution?.id || undefined,
-    solutionName: inferredSolution?.nameEs || undefined,
-    unitPrice: calculatedPrice ?? model.basePrice,
-    widthMm,
-  };
+	return {
+		additionalServiceIds,
+		colorId,
+		glassTypeId,
+		glassTypeName: selectedGlassType?.name ?? "",
+		heightMm,
+		modelId: model.id,
+		modelName: model.name,
+		quantity,
+		solutionId: inferredSolution?.id || undefined,
+		solutionName: inferredSolution?.nameEs || undefined,
+		unitPrice: calculatedPrice ?? model.basePrice,
+		widthMm,
+	};
 }

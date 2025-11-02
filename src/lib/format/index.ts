@@ -20,20 +20,20 @@ type FormatContext = Pick<TenantConfig, "locale" | "timezone" | "currency">;
  * Default format context (fallback when tenant config not available)
  */
 const DEFAULT_CONTEXT: FormatContext = {
-  currency: "COP",
-  locale: "es-CO",
-  timezone: "America/Bogota",
+	currency: "COP",
+	locale: "es-CO",
+	timezone: "America/Bogota",
 };
 
 /**
  * Get format context or use defaults
  */
 function getContext(context?: Partial<FormatContext> | null): FormatContext {
-  return {
-    currency: context?.currency ?? DEFAULT_CONTEXT.currency,
-    locale: context?.locale ?? DEFAULT_CONTEXT.locale,
-    timezone: context?.timezone ?? DEFAULT_CONTEXT.timezone,
-  };
+	return {
+		currency: context?.currency ?? DEFAULT_CONTEXT.currency,
+		locale: context?.locale ?? DEFAULT_CONTEXT.locale,
+		timezone: context?.timezone ?? DEFAULT_CONTEXT.timezone,
+	};
 }
 
 // =============================================================================
@@ -52,18 +52,18 @@ function getContext(context?: Partial<FormatContext> | null): FormatContext {
  * ```
  */
 function formatDate(
-  date: Date | string,
-  formatStyle: string | { date?: string; time?: string } = { date: "medium" },
-  context?: Partial<FormatContext> | null
+	date: Date | string,
+	formatStyle: string | { date?: string; time?: string } = { date: "medium" },
+	context?: Partial<FormatContext> | null,
 ): string {
-  const { locale, timezone } = getContext(context);
+	const { locale, timezone } = getContext(context);
 
-  return tempoFormat({
-    date,
-    format: formatStyle as never,
-    locale,
-    tz: timezone,
-  });
+	return tempoFormat({
+		date,
+		format: formatStyle as never,
+		locale,
+		tz: timezone,
+	});
 }
 
 /**
@@ -77,10 +77,10 @@ function formatDate(
  * ```
  */
 function formatDateFull(
-  date: Date | string,
-  context?: Partial<FormatContext> | null
+	date: Date | string,
+	context?: Partial<FormatContext> | null,
 ): string {
-  return formatDate(date, { date: "full" }, context);
+	return formatDate(date, { date: "full" }, context);
 }
 
 /**
@@ -94,10 +94,10 @@ function formatDateFull(
  * ```
  */
 function formatDateLong(
-  date: Date | string,
-  context?: Partial<FormatContext> | null
+	date: Date | string,
+	context?: Partial<FormatContext> | null,
 ): string {
-  return formatDate(date, { date: "long" }, context);
+	return formatDate(date, { date: "long" }, context);
 }
 
 /**
@@ -111,10 +111,10 @@ function formatDateLong(
  * ```
  */
 function formatDateMedium(
-  date: Date | string,
-  context?: Partial<FormatContext> | null
+	date: Date | string,
+	context?: Partial<FormatContext> | null,
 ): string {
-  return formatDate(date, { date: "medium" }, context);
+	return formatDate(date, { date: "medium" }, context);
 }
 
 /**
@@ -128,10 +128,10 @@ function formatDateMedium(
  * ```
  */
 function formatDateShort(
-  date: Date | string,
-  context?: Partial<FormatContext> | null
+	date: Date | string,
+	context?: Partial<FormatContext> | null,
 ): string {
-  return formatDate(date, { date: "short" }, context);
+	return formatDate(date, { date: "short" }, context);
 }
 
 /**
@@ -145,12 +145,12 @@ function formatDateShort(
  * ```
  */
 function formatDateTime(
-  date: Date | string,
-  dateStyle: "full" | "long" | "medium" | "short" = "medium",
-  timeStyle: "full" | "long" | "medium" | "short" = "short",
-  context?: Partial<FormatContext> | null
+	date: Date | string,
+	dateStyle: "full" | "long" | "medium" | "short" = "medium",
+	timeStyle: "full" | "long" | "medium" | "short" = "short",
+	context?: Partial<FormatContext> | null,
 ): string {
-  return formatDate(date, { date: dateStyle, time: timeStyle }, context);
+	return formatDate(date, { date: dateStyle, time: timeStyle }, context);
 }
 
 /**
@@ -164,11 +164,11 @@ function formatDateTime(
  * ```
  */
 function formatTime(
-  date: Date | string,
-  style: "full" | "long" | "medium" | "short" = "short",
-  context?: Partial<FormatContext> | null
+	date: Date | string,
+	style: "full" | "long" | "medium" | "short" = "short",
+	context?: Partial<FormatContext> | null,
 ): string {
-  return formatDate(date, { time: style }, context);
+	return formatDate(date, { time: style }, context);
 }
 
 /**
@@ -184,11 +184,11 @@ function formatTime(
  * ```
  */
 function formatDateCustom(
-  date: Date | string,
-  formatTokens: string,
-  context?: Partial<FormatContext> | null
+	date: Date | string,
+	formatTokens: string,
+	context?: Partial<FormatContext> | null,
 ): string {
-  return formatDate(date, formatTokens, context);
+	return formatDate(date, formatTokens, context);
 }
 
 // =============================================================================
@@ -207,28 +207,28 @@ function formatDateCustom(
  * ```
  */
 function formatCurrency(
-  amount: number,
-  options?: {
-    decimals?: number;
-    context?: Partial<FormatContext> | null;
-  }
+	amount: number,
+	options?: {
+		decimals?: number;
+		context?: Partial<FormatContext> | null;
+	},
 ): string {
-  const { currency, locale } = getContext(options?.context);
-  // Default: COP (0 decimals), USD/EUR (2 decimals)
-  // Can be overridden with options.decimals for precision cases (e.g., pricing with 3-4 decimals)
-  const decimals = options?.decimals ?? (currency === "COP" ? 0 : 2);
+	const { currency, locale } = getContext(options?.context);
+	// Default: COP (0 decimals), USD/EUR (2 decimals)
+	// Can be overridden with options.decimals for precision cases (e.g., pricing with 3-4 decimals)
+	const decimals = options?.decimals ?? (currency === "COP" ? 0 : 2);
 
-  try {
-    return new Intl.NumberFormat(locale, {
-      currency,
-      maximumFractionDigits: decimals,
-      minimumFractionDigits: decimals,
-      style: "currency",
-    }).format(amount);
-  } catch {
-    // Fallback if Intl fails
-    return `${currency} ${amount.toFixed(decimals)}`;
-  }
+	try {
+		return new Intl.NumberFormat(locale, {
+			currency,
+			maximumFractionDigits: decimals,
+			minimumFractionDigits: decimals,
+			style: "currency",
+		}).format(amount);
+	} catch {
+		// Fallback if Intl fails
+		return `${currency} ${amount.toFixed(decimals)}`;
+	}
 }
 
 /**
@@ -242,22 +242,22 @@ function formatCurrency(
  * ```
  */
 function formatCurrencyCompact(
-  amount: number,
-  context?: Partial<FormatContext> | null
+	amount: number,
+	context?: Partial<FormatContext> | null,
 ): string {
-  const { currency, locale } = getContext(context);
+	const { currency, locale } = getContext(context);
 
-  try {
-    return new Intl.NumberFormat(locale, {
-      compactDisplay: "short",
-      currency,
-      maximumFractionDigits: 1,
-      notation: "compact",
-      style: "currency",
-    }).format(amount);
-  } catch {
-    return formatCurrency(amount, { context });
-  }
+	try {
+		return new Intl.NumberFormat(locale, {
+			compactDisplay: "short",
+			currency,
+			maximumFractionDigits: 1,
+			notation: "compact",
+			style: "currency",
+		}).format(amount);
+	} catch {
+		return formatCurrency(amount, { context });
+	}
 }
 
 // =============================================================================
@@ -275,23 +275,23 @@ function formatCurrencyCompact(
  * ```
  */
 function formatNumber(
-  value: number,
-  options?: {
-    decimals?: number;
-    context?: Partial<FormatContext> | null;
-  }
+	value: number,
+	options?: {
+		decimals?: number;
+		context?: Partial<FormatContext> | null;
+	},
 ): string {
-  const { locale } = getContext(options?.context);
-  const decimals = options?.decimals ?? 0;
+	const { locale } = getContext(options?.context);
+	const decimals = options?.decimals ?? 0;
 
-  try {
-    return new Intl.NumberFormat(locale, {
-      maximumFractionDigits: decimals,
-      minimumFractionDigits: decimals,
-    }).format(value);
-  } catch {
-    return value.toFixed(decimals);
-  }
+	try {
+		return new Intl.NumberFormat(locale, {
+			maximumFractionDigits: decimals,
+			minimumFractionDigits: decimals,
+		}).format(value);
+	} catch {
+		return value.toFixed(decimals);
+	}
 }
 
 /**
@@ -304,25 +304,25 @@ function formatNumber(
  * ```
  */
 function formatPercent(
-  value: number,
-  options?: {
-    decimals?: number;
-    context?: Partial<FormatContext> | null;
-  }
+	value: number,
+	options?: {
+		decimals?: number;
+		context?: Partial<FormatContext> | null;
+	},
 ): string {
-  const percentMultiplier = 100;
-  const { locale } = getContext(options?.context);
-  const decimals = options?.decimals ?? 0;
+	const percentMultiplier = 100;
+	const { locale } = getContext(options?.context);
+	const decimals = options?.decimals ?? 0;
 
-  try {
-    return new Intl.NumberFormat(locale, {
-      maximumFractionDigits: decimals,
-      minimumFractionDigits: decimals,
-      style: "percent",
-    }).format(value);
-  } catch {
-    return `${(value * percentMultiplier).toFixed(decimals)}%`;
-  }
+	try {
+		return new Intl.NumberFormat(locale, {
+			maximumFractionDigits: decimals,
+			minimumFractionDigits: decimals,
+			style: "percent",
+		}).format(value);
+	} catch {
+		return `${(value * percentMultiplier).toFixed(decimals)}%`;
+	}
 }
 
 // =============================================================================
@@ -339,22 +339,22 @@ function formatPercent(
  * ```
  */
 function formatDimensions(
-  width: number,
-  height: number,
-  context?: Partial<FormatContext> | null
+	width: number,
+	height: number,
+	context?: Partial<FormatContext> | null,
 ): string {
-  const { locale } = getContext(context);
+	const { locale } = getContext(context);
 
-  try {
-    const formatter = new Intl.NumberFormat(locale, {
-      maximumFractionDigits: 0,
-      minimumFractionDigits: 0,
-    });
+	try {
+		const formatter = new Intl.NumberFormat(locale, {
+			maximumFractionDigits: 0,
+			minimumFractionDigits: 0,
+		});
 
-    return `${formatter.format(width)}mm × ${formatter.format(height)}mm`;
-  } catch {
-    return `${width}mm × ${height}mm`;
-  }
+		return `${formatter.format(width)}mm × ${formatter.format(height)}mm`;
+	} catch {
+		return `${width}mm × ${height}mm`;
+	}
 }
 
 /**
@@ -367,10 +367,10 @@ function formatDimensions(
  * ```
  */
 function formatArea(
-  value: number,
-  context?: Partial<FormatContext> | null
+	value: number,
+	context?: Partial<FormatContext> | null,
 ): string {
-  return `${formatNumber(value, { context, decimals: 2 })} m²`;
+	return `${formatNumber(value, { context, decimals: 2 })} m²`;
 }
 
 /**
@@ -385,11 +385,11 @@ function formatArea(
  * ```
  */
 function formatThickness(
-  value: number,
-  context?: Partial<FormatContext> | null
+	value: number,
+	context?: Partial<FormatContext> | null,
 ): string {
-  const hasDecimals = value % 1 !== 0;
-  return `${formatNumber(value, { context, decimals: hasDecimals ? 1 : 0 })}mm`;
+	const hasDecimals = value % 1 !== 0;
+	return `${formatNumber(value, { context, decimals: hasDecimals ? 1 : 0 })}mm`;
 }
 
 // =============================================================================
@@ -397,21 +397,21 @@ function formatThickness(
 // =============================================================================
 
 export {
-  formatDate,
-  formatDateCustom,
-  formatDateFull,
-  formatDateLong,
-  formatDateMedium,
-  formatDateShort,
-  formatDateTime,
-  formatTime,
-  formatCurrency,
-  formatCurrencyCompact,
-  formatNumber,
-  formatPercent,
-  formatDimensions,
-  formatArea,
-  formatThickness,
+	formatDate,
+	formatDateCustom,
+	formatDateFull,
+	formatDateLong,
+	formatDateMedium,
+	formatDateShort,
+	formatDateTime,
+	formatTime,
+	formatCurrency,
+	formatCurrencyCompact,
+	formatNumber,
+	formatPercent,
+	formatDimensions,
+	formatArea,
+	formatThickness,
 };
 
 export type { FormatContext };

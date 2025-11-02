@@ -16,25 +16,25 @@ import { AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 type QuoteExpirationBadgeProps = {
-  validUntil: Date | null;
+	validUntil: Date | null;
 };
 
 export function QuoteExpirationBadge({
-  validUntil,
+	validUntil,
 }: QuoteExpirationBadgeProps) {
-  if (!validUntil) {
-    return null;
-  }
+	if (!validUntil) {
+		return null;
+	}
 
-  const isExpired = validUntil < new Date();
-  if (!isExpired) {
-    return null;
-  }
+	const isExpired = validUntil < new Date();
+	if (!isExpired) {
+		return null;
+	}
 
-  return (
-    <Badge variant="destructive">
-      <AlertTriangle className="mr-1 size-3" />
-      Expirada
-    </Badge>
-  );
+	return (
+		<Badge variant="destructive">
+			<AlertTriangle className="mr-1 size-3" />
+			Expirada
+		</Badge>
+	);
 }

@@ -8,8 +8,8 @@
 const MM_TO_METERS = 1000;
 
 export type GlassDiscounts = {
-  heightMm: number;
-  widthMm: number;
+	heightMm: number;
+	widthMm: number;
 };
 
 /**
@@ -25,19 +25,19 @@ export type GlassDiscounts = {
  * // Returns: (950/1000) * (1950/1000) = 1.8525 m²
  */
 export function calculateGlassArea(
-  widthMm: number,
-  heightMm: number,
-  discounts: GlassDiscounts
+	widthMm: number,
+	heightMm: number,
+	discounts: GlassDiscounts,
 ): number {
-  // Apply glass discounts (profiles take space)
-  const effectiveWidthMm = Math.max(widthMm - discounts.widthMm, 0);
-  const effectiveHeightMm = Math.max(heightMm - discounts.heightMm, 0);
+	// Apply glass discounts (profiles take space)
+	const effectiveWidthMm = Math.max(widthMm - discounts.widthMm, 0);
+	const effectiveHeightMm = Math.max(heightMm - discounts.heightMm, 0);
 
-  const widthM = effectiveWidthMm / MM_TO_METERS;
-  const heightM = effectiveHeightMm / MM_TO_METERS;
+	const widthM = effectiveWidthMm / MM_TO_METERS;
+	const heightM = effectiveHeightMm / MM_TO_METERS;
 
-  if (widthM > 0 && heightM > 0) {
-    return widthM * heightM;
-  }
-  return 0;
+	if (widthM > 0 && heightM > 0) {
+		return widthM * heightM;
+	}
+	return 0;
 }

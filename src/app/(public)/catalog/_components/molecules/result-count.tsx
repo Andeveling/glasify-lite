@@ -4,7 +4,7 @@ import { getResultCountParts } from "@views/catalog/_utils/text-formatting.utils
 import { Separator } from "@/components/ui/separator";
 
 type ResultCountProps = {
-  totalResults?: number;
+	totalResults?: number;
 };
 
 /**
@@ -21,30 +21,30 @@ type ResultCountProps = {
  * - text-formatting.utils.ts (formatResultCount, getResultCountParts)
  */
 export function ResultCount({ totalResults }: ResultCountProps) {
-  if (totalResults === undefined) {
-    return null;
-  }
+	if (totalResults === undefined) {
+		return null;
+	}
 
-  const { count, hasResults } = getResultCountParts(totalResults);
+	const { count, hasResults } = getResultCountParts(totalResults);
 
-  return (
-    <>
-      <Separator className="my-2" />
-      <div className="text-muted-foreground text-sm">
-        {!hasResults && <span>No se encontraron resultados</span>}
-        {hasResults && totalResults === 1 && (
-          <span>
-            <strong className="font-medium text-foreground">{count}</strong>{" "}
-            modelo encontrado
-          </span>
-        )}
-        {hasResults && totalResults > 1 && (
-          <span>
-            <strong className="font-medium text-foreground">{count}</strong>{" "}
-            modelos encontrados
-          </span>
-        )}
-      </div>
-    </>
-  );
+	return (
+		<>
+			<Separator className="my-2" />
+			<div className="text-muted-foreground text-sm">
+				{!hasResults && <span>No se encontraron resultados</span>}
+				{hasResults && totalResults === 1 && (
+					<span>
+						<strong className="font-medium text-foreground">{count}</strong>{" "}
+						modelo encontrado
+					</span>
+				)}
+				{hasResults && totalResults > 1 && (
+					<span>
+						<strong className="font-medium text-foreground">{count}</strong>{" "}
+						modelos encontrados
+					</span>
+				)}
+			</div>
+		</>
+	);
 }

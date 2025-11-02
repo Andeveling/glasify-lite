@@ -22,62 +22,62 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  * @returns FactoryResult with validation outcome
  */
 export function validateWithSchema<T>(
-  schema: ZodType<T>,
-  data: unknown
+	schema: ZodType<T>,
+	data: unknown,
 ): FactoryResult<T> {
-  try {
-    const validated = schema.parse(data);
-    return {
-      data: validated,
-      success: true,
-    };
-  } catch (error) {
-    if (isZodError(error)) {
-      return {
-        errors: mapZodErrors(error),
-        success: false,
-      };
-    }
+	try {
+		const validated = schema.parse(data);
+		return {
+			data: validated,
+			success: true,
+		};
+	} catch (error) {
+		if (isZodError(error)) {
+			return {
+				errors: mapZodErrors(error),
+				success: false,
+			};
+		}
 
-    return {
-      errors: [
-        {
-          code: "VALIDATION_ERROR",
-          message:
-            error instanceof Error ? error.message : "Unknown validation error",
-          path: [],
-        },
-      ],
-      success: false,
-    };
-  }
+		return {
+			errors: [
+				{
+					code: "VALIDATION_ERROR",
+					message:
+						error instanceof Error ? error.message : "Unknown validation error",
+					path: [],
+				},
+			],
+			success: false,
+		};
+	}
 }
 
 /**
  * Type guard for ZodError
  */
 function isZodError(error: unknown): error is ZodError {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "issues" in error &&
-    Array.isArray((error as { issues: unknown }).issues)
-  );
+	return (
+		typeof error === "object" &&
+		error !== null &&
+		"issues" in error &&
+		Array.isArray((error as { issues: unknown }).issues)
+	);
 }
 
 /**
  * Maps Zod errors to our ValidationError format
  */
 function mapZodErrors(error: ZodError): ValidationError[] {
-  return error.issues.map((issue) => ({
-    code: issue.code,
-    context: {
-      expected: "expected" in issue ? issue.expected : undefined,
-      received: "received" in issue ? issue.received : undefined,
-    },
-    message: issue.message,
-    path: issue.path.map(String),
-  }));
+	return error.issues.map((issue) => ({
+		code: issue.code,
+		context: {
+			expected: "expected" in issue ? issue.expected : undefined,
+			received: "received" in issue ? issue.received : undefined,
+		},
+		message: issue.message,
+		path: issue.path.map(String),
+	}));
 }
 
 /**
@@ -90,20 +90,20 @@ function mapZodErrors(error: ZodError): ValidationError[] {
  * @returns Validation error or null if valid
  */
 export function validateRange(
-  value: number,
-  min: number,
-  max: number,
-  fieldName: string
+	value: number,
+	min: number,
+	max: number,
+	fieldName: string,
 ): ValidationError | null {
-  if (value < min || value > max) {
-    return {
-      code: "OUT_OF_RANGE",
-      context: { max, min, value },
-      message: `${fieldName} must be between ${min} and ${max}, got ${value}`,
-      path: [fieldName],
-    };
-  }
-  return null;
+	if (value < min || value > max) {
+		return {
+			code: "OUT_OF_RANGE",
+			context: { max, min, value },
+			message: `${fieldName} must be between ${min} and ${max}, got ${value}`,
+			path: [fieldName],
+		};
+	}
+	return null;
 }
 
 /**
@@ -115,19 +115,19 @@ export function validateRange(
  * @returns Validation error or null if valid
  */
 export function validateMinMax(
-  min: number,
-  max: number,
-  fieldPrefix: string
+	min: number,
+	max: number,
+	fieldPrefix: string,
 ): ValidationError | null {
-  if (min >= max) {
-    return {
-      code: "INVALID_RANGE",
-      context: { max, min },
-      message: `${fieldPrefix} min (${min}) must be less than max (${max})`,
-      path: [fieldPrefix],
-    };
-  }
-  return null;
+	if (min >= max) {
+		return {
+			code: "INVALID_RANGE",
+			context: { max, min },
+			message: `${fieldPrefix} min (${min}) must be less than max (${max})`,
+			path: [fieldPrefix],
+		};
+	}
+	return null;
 }
 
 /**
@@ -137,12 +137,12 @@ export function validateMinMax(
  * @returns Formatted price string
  */
 export function formatPriceCOP(price: number): string {
-  return new Intl.NumberFormat("es-CO", {
-    currency: "COP",
-    maximumFractionDigits: 0,
-    minimumFractionDigits: 0,
-    style: "currency",
-  }).format(price);
+	return new Intl.NumberFormat("es-CO", {
+		currency: "COP",
+		maximumFractionDigits: 0,
+		minimumFractionDigits: 0,
+		style: "currency",
+	}).format(price);
 }
 
 /**
@@ -154,29 +154,29 @@ export function formatPriceCOP(price: number): string {
  * @returns Validation error or null if valid
  */
 export function validatePrice(
-  price: number,
-  fieldName: string,
-  maxPrice = 100_000_000 // 100M COP
+	price: number,
+	fieldName: string,
+	maxPrice = 100_000_000, // 100M COP
 ): ValidationError | null {
-  if (price <= 0) {
-    return {
-      code: "INVALID_PRICE",
-      context: { price },
-      message: `${fieldName} must be positive, got ${price}`,
-      path: [fieldName],
-    };
-  }
+	if (price <= 0) {
+		return {
+			code: "INVALID_PRICE",
+			context: { price },
+			message: `${fieldName} must be positive, got ${price}`,
+			path: [fieldName],
+		};
+	}
 
-  if (price > maxPrice) {
-    return {
-      code: "PRICE_TOO_HIGH",
-      context: { maxPrice, price },
-      message: `${fieldName} seems unreasonably high: ${formatPriceCOP(price)}`,
-      path: [fieldName],
-    };
-  }
+	if (price > maxPrice) {
+		return {
+			code: "PRICE_TOO_HIGH",
+			context: { maxPrice, price },
+			message: `${fieldName} seems unreasonably high: ${formatPriceCOP(price)}`,
+			path: [fieldName],
+		};
+	}
 
-  return null;
+	return null;
 }
 
 /**
@@ -187,17 +187,17 @@ export function validatePrice(
  * @returns Validation error or null if valid
  */
 export function validateNonEmpty<T>(
-  array: T[],
-  fieldName: string
+	array: T[],
+	fieldName: string,
 ): ValidationError | null {
-  if (array.length === 0) {
-    return {
-      code: "EMPTY_ARRAY",
-      message: `${fieldName} must not be empty`,
-      path: [fieldName],
-    };
-  }
-  return null;
+	if (array.length === 0) {
+		return {
+			code: "EMPTY_ARRAY",
+			message: `${fieldName} must not be empty`,
+			path: [fieldName],
+		};
+	}
+	return null;
 }
 
 /**
@@ -208,17 +208,17 @@ export function validateNonEmpty<T>(
  * @returns Merged object
  */
 export function mergeOverrides<T extends Record<string, unknown>>(
-  defaults: T,
-  overrides?: Record<string, unknown>
+	defaults: T,
+	overrides?: Record<string, unknown>,
 ): T {
-  if (!overrides) {
-    return defaults;
-  }
+	if (!overrides) {
+		return defaults;
+	}
 
-  return {
-    ...defaults,
-    ...overrides,
-  } as T;
+	return {
+		...defaults,
+		...overrides,
+	} as T;
 }
 
 /**
@@ -228,7 +228,7 @@ export function mergeOverrides<T extends Record<string, unknown>>(
  * @returns Meters
  */
 export function mmToMeters(mm: number): number {
-  return mm / MM_TO_M_CONVERSION;
+	return mm / MM_TO_M_CONVERSION;
 }
 
 /**
@@ -239,7 +239,7 @@ export function mmToMeters(mm: number): number {
  * @returns Area in square meters
  */
 export function calculateAreaSqm(widthMm: number, heightMm: number): number {
-  return mmToMeters(widthMm) * mmToMeters(heightMm);
+	return mmToMeters(widthMm) * mmToMeters(heightMm);
 }
 
 /**
@@ -249,12 +249,12 @@ export function calculateAreaSqm(widthMm: number, heightMm: number): number {
  * @returns Slug (lowercase, hyphenated)
  */
 export function slugify(name: string): string {
-  return name
-    .toLowerCase()
-    .normalize("NFD") // Normalize accents
-    .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
-    .replace(/[^a-z0-9]+/g, "-") // Replace non-alphanumeric with hyphens
-    .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
+	return name
+		.toLowerCase()
+		.normalize("NFD") // Normalize accents
+		.replace(/[\u0300-\u036f]/g, "") // Remove diacritics
+		.replace(/[^a-z0-9]+/g, "-") // Replace non-alphanumeric with hyphens
+		.replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
 }
 
 /**
@@ -265,7 +265,7 @@ export function slugify(name: string): string {
  * @returns Unique identifier
  */
 export function createIdentifier(prefix: string, name: string): string {
-  return `${prefix}-${slugify(name)}`;
+	return `${prefix}-${slugify(name)}`;
 }
 
 /**
@@ -275,12 +275,12 @@ export function createIdentifier(prefix: string, name: string): string {
  * @returns Whether phone is valid
  */
 export function isValidColombianPhone(phone: string): boolean {
-  // Colombian phones: 10 digits, starts with 3 (mobile) or fixed line
-  const cleanPhone = phone.replace(/\D/g, "");
-  return (
-    COLOMBIAN_MOBILE_REGEX.test(cleanPhone) ||
-    COLOMBIAN_LANDLINE_REGEX.test(cleanPhone)
-  );
+	// Colombian phones: 10 digits, starts with 3 (mobile) or fixed line
+	const cleanPhone = phone.replace(/\D/g, "");
+	return (
+		COLOMBIAN_MOBILE_REGEX.test(cleanPhone) ||
+		COLOMBIAN_LANDLINE_REGEX.test(cleanPhone)
+	);
 }
 
 /**
@@ -290,5 +290,5 @@ export function isValidColombianPhone(phone: string): boolean {
  * @returns Whether email is valid
  */
 export function isValidEmail(email: string): boolean {
-  return EMAIL_REGEX.test(email);
+	return EMAIL_REGEX.test(email);
 }

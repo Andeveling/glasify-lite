@@ -17,36 +17,36 @@ import { ColorsFilters } from "./colors-filters";
 import { ColorsList } from "./colors-list";
 
 type ColorsContentProps = {
-  initialData: Parameters<typeof ColorsList>[0]["initialData"];
-  searchParams: Parameters<typeof ColorsList>[0]["searchParams"];
+	initialData: Parameters<typeof ColorsList>[0]["initialData"];
+	searchParams: Parameters<typeof ColorsList>[0]["searchParams"];
 };
 
 export function ColorsContent({
-  initialData,
-  searchParams,
+	initialData,
+	searchParams,
 }: ColorsContentProps) {
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+	const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
-  const handleCreateClick = () => {
-    setCreateDialogOpen(true);
-  };
+	const handleCreateClick = () => {
+		setCreateDialogOpen(true);
+	};
 
-  // If create dialog is open, navigate to create page instead
-  if (createDialogOpen) {
-    window.location.href = "/admin/colors/new";
-    return null;
-  }
+	// If create dialog is open, navigate to create page instead
+	if (createDialogOpen) {
+		window.location.href = "/admin/colors/new";
+		return null;
+	}
 
-  return (
-    <>
-      {/* Filters with create button */}
-      <ColorsFilters
-        onCreateClickAction={handleCreateClick}
-        searchParams={searchParams}
-      />
+	return (
+		<>
+			{/* Filters with create button */}
+			<ColorsFilters
+				onCreateClickAction={handleCreateClick}
+				searchParams={searchParams}
+			/>
 
-      {/* Colors List */}
-      <ColorsList initialData={initialData} searchParams={searchParams} />
-    </>
-  );
+			{/* Colors List */}
+			<ColorsList initialData={initialData} searchParams={searchParams} />
+		</>
+	);
 }

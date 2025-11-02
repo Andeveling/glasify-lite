@@ -38,29 +38,29 @@
  * - UNKNOWN: Unknown/custom window type - uses default diagram
  */
 export type WindowType =
-  | "french-2-panel"
-  | "french-4-panel"
-  | "sliding-2-panel"
-  | "sliding-3-panel"
-  | "sliding-4-panel"
-  | "fixed-single"
-  | "picture-window"
-  | "casement-left"
-  | "casement-right"
-  | "casement-double"
-  | "awning"
-  | "hopper"
-  | "tilt-turn"
-  | "bay-window"
-  | "bow-window"
-  | "corner"
-  | "double-hung"
-  | "single-hung"
-  | "transom"
-  | "louvre"
-  | "pivot"
-  | "skylight"
-  | "unknown";
+	| "french-2-panel"
+	| "french-4-panel"
+	| "sliding-2-panel"
+	| "sliding-3-panel"
+	| "sliding-4-panel"
+	| "fixed-single"
+	| "picture-window"
+	| "casement-left"
+	| "casement-right"
+	| "casement-double"
+	| "awning"
+	| "hopper"
+	| "tilt-turn"
+	| "bay-window"
+	| "bow-window"
+	| "corner"
+	| "double-hung"
+	| "single-hung"
+	| "transom"
+	| "louvre"
+	| "pivot"
+	| "skylight"
+	| "unknown";
 
 /**
  * Window type constants
@@ -68,45 +68,45 @@ export type WindowType =
  * Provides enum-like access to window type values
  */
 export const WindowType = {
-  // === Awning & Hopper (Proyectantes) ===
-  AWNING: "awning" as const,
-  BAY_WINDOW: "bay-window" as const,
-  BOW_WINDOW: "bow-window" as const,
-  CASEMENT_DOUBLE: "casement-double" as const,
+	// === Awning & Hopper (Proyectantes) ===
+	AWNING: "awning" as const,
+	BAY_WINDOW: "bay-window" as const,
+	BOW_WINDOW: "bow-window" as const,
+	CASEMENT_DOUBLE: "casement-double" as const,
 
-  // === Casement Windows (Ventanas Abatibles) ===
-  CASEMENT_LEFT: "casement-left" as const,
-  CASEMENT_RIGHT: "casement-right" as const,
-  CORNER: "corner" as const,
+	// === Casement Windows (Ventanas Abatibles) ===
+	CASEMENT_LEFT: "casement-left" as const,
+	CASEMENT_RIGHT: "casement-right" as const,
+	CORNER: "corner" as const,
 
-  // === Double Hung & Single Hung (Guillotina) ===
-  DOUBLE_HUNG: "double-hung" as const,
+	// === Double Hung & Single Hung (Guillotina) ===
+	DOUBLE_HUNG: "double-hung" as const,
 
-  // === Fixed Windows (Ventanas Fijas) ===
-  FIXED_SINGLE: "fixed-single" as const,
-  // === French Doors (Puertas Francesas) ===
-  FRENCH_2_PANEL: "french-2-panel" as const,
-  FRENCH_4_PANEL: "french-4-panel" as const,
-  HOPPER: "hopper" as const,
-  LOUVRE: "louvre" as const,
-  PICTURE_WINDOW: "picture-window" as const,
-  PIVOT: "pivot" as const,
-  SINGLE_HUNG: "single-hung" as const,
-  SKYLIGHT: "skylight" as const,
+	// === Fixed Windows (Ventanas Fijas) ===
+	FIXED_SINGLE: "fixed-single" as const,
+	// === French Doors (Puertas Francesas) ===
+	FRENCH_2_PANEL: "french-2-panel" as const,
+	FRENCH_4_PANEL: "french-4-panel" as const,
+	HOPPER: "hopper" as const,
+	LOUVRE: "louvre" as const,
+	PICTURE_WINDOW: "picture-window" as const,
+	PIVOT: "pivot" as const,
+	SINGLE_HUNG: "single-hung" as const,
+	SKYLIGHT: "skylight" as const,
 
-  // === Sliding Windows (Ventanas Corredizas) ===
-  SLIDING_2_PANEL: "sliding-2-panel" as const,
-  SLIDING_3_PANEL: "sliding-3-panel" as const,
-  SLIDING_4_PANEL: "sliding-4-panel" as const,
+	// === Sliding Windows (Ventanas Corredizas) ===
+	SLIDING_2_PANEL: "sliding-2-panel" as const,
+	SLIDING_3_PANEL: "sliding-3-panel" as const,
+	SLIDING_4_PANEL: "sliding-4-panel" as const,
 
-  // === Specialty Windows ===
-  TILT_TURN: "tilt-turn" as const,
+	// === Specialty Windows ===
+	TILT_TURN: "tilt-turn" as const,
 
-  // === Additional Types ===
-  TRANSOM: "transom" as const,
+	// === Additional Types ===
+	TRANSOM: "transom" as const,
 
-  // === Fallback ===
-  UNKNOWN: "unknown" as const,
+	// === Fallback ===
+	UNKNOWN: "unknown" as const,
 } as const;
 
 /**
@@ -115,26 +115,26 @@ export const WindowType = {
  * Provides human-readable labels and descriptions for each window type
  */
 export type WindowTypeMetadata = {
-  /** Window type enum value */
-  type: WindowType;
+	/** Window type enum value */
+	type: WindowType;
 
-  /** Display name in Spanish (for UI) */
-  label: string;
+	/** Display name in Spanish (for UI) */
+	label: string;
 
-  /** Short description */
-  description: string;
+	/** Short description */
+	description: string;
 
-  /** Common use cases */
-  useCases: string[];
+	/** Common use cases */
+	useCases: string[];
 
-  /** Number of operable panels */
-  operablePanels: number;
+	/** Number of operable panels */
+	operablePanels: number;
 
-  /** Total number of panels */
-  totalPanels: number;
+	/** Total number of panels */
+	totalPanels: number;
 
-  /** Operation mechanism */
-  operation: "sliding" | "swinging" | "fixed" | "tilt" | "pivot" | "vertical";
+	/** Operation mechanism */
+	operation: "sliding" | "swinging" | "fixed" | "tilt" | "pivot" | "vertical";
 };
 
 /**
@@ -143,23 +143,23 @@ export type WindowTypeMetadata = {
  * Maps WindowType to SVG file path and rendering options
  */
 export type WindowDiagram = {
-  /** Window type */
-  type: WindowType;
+	/** Window type */
+	type: WindowType;
 
-  /** Relative path to SVG file from /public */
-  svgPath: string;
+	/** Relative path to SVG file from /public */
+	svgPath: string;
 
-  /** SVG viewBox dimensions */
-  viewBox: {
-    width: number;
-    height: number;
-  };
+	/** SVG viewBox dimensions */
+	viewBox: {
+		width: number;
+		height: number;
+	};
 
-  /** Recommended aspect ratio for rendering */
-  aspectRatio: number;
+	/** Recommended aspect ratio for rendering */
+	aspectRatio: number;
 
-  /** Alternative text for accessibility */
-  altText: string;
+	/** Alternative text for accessibility */
+	altText: string;
 };
 
 /**
@@ -168,23 +168,23 @@ export type WindowDiagram = {
  * Used for quote items with dimensional data
  */
 export type WindowDimensions = {
-  /** Width in centimeters */
-  width: number;
+	/** Width in centimeters */
+	width: number;
 
-  /** Height in centimeters */
-  height: number;
+	/** Height in centimeters */
+	height: number;
 
-  /** Computed area in square meters */
-  area: number;
+	/** Computed area in square meters */
+	area: number;
 
-  /** Unit for area display */
-  unit: "m²" | "cm²";
+	/** Unit for area display */
+	unit: "m²" | "cm²";
 
-  /** Optional: Number of panels */
-  panels?: number;
+	/** Optional: Number of panels */
+	panels?: number;
 
-  /** Optional: Glass thickness in millimeters */
-  glassThickness?: number;
+	/** Optional: Glass thickness in millimeters */
+	glassThickness?: number;
 };
 
 /**
@@ -193,36 +193,36 @@ export type WindowDimensions = {
  * Complete specification for a window product in a quote
  */
 export type WindowProduct = {
-  /** Window type */
-  type: WindowType;
+	/** Window type */
+	type: WindowType;
 
-  /** Dimensions */
-  dimensions: WindowDimensions;
+	/** Dimensions */
+	dimensions: WindowDimensions;
 
-  /** Optional: Model/product name */
-  modelName?: string;
+	/** Optional: Model/product name */
+	modelName?: string;
 
-  /** Optional: Manufacturer */
-  manufacturer?: string;
+	/** Optional: Manufacturer */
+	manufacturer?: string;
 
-  /** Optional: Glass type (tempered, laminated, etc.) */
-  glassType?: string;
+	/** Optional: Glass type (tempered, laminated, etc.) */
+	glassType?: string;
 
-  /** Optional: Frame material (aluminum, PVC, wood) */
-  frameMaterial?: string;
+	/** Optional: Frame material (aluminum, PVC, wood) */
+	frameMaterial?: string;
 
-  /** Optional: Color/finish */
-  color?: string;
+	/** Optional: Color/finish */
+	color?: string;
 
-  /** Optional: Additional features */
-  features?: string[];
+	/** Optional: Additional features */
+	features?: string[];
 };
 
 /**
  * Type guard to check if a string is a valid WindowType
  */
 export function isWindowType(value: string): value is WindowType {
-  return Object.values(WindowType).includes(value as WindowType);
+	return Object.values(WindowType).includes(value as WindowType);
 }
 
 /**
@@ -234,65 +234,65 @@ export const DEFAULT_WINDOW_TYPE = WindowType.FIXED_SINGLE;
  * Window type categories for grouping in UI
  */
 export const WINDOW_TYPE_CATEGORIES = {
-  casement: [
-    WindowType.CASEMENT_LEFT,
-    WindowType.CASEMENT_RIGHT,
-    WindowType.CASEMENT_DOUBLE,
-  ],
+	casement: [
+		WindowType.CASEMENT_LEFT,
+		WindowType.CASEMENT_RIGHT,
+		WindowType.CASEMENT_DOUBLE,
+	],
 
-  fixed: [WindowType.FIXED_SINGLE, WindowType.PICTURE_WINDOW],
-  french: [WindowType.FRENCH_2_PANEL, WindowType.FRENCH_4_PANEL],
+	fixed: [WindowType.FIXED_SINGLE, WindowType.PICTURE_WINDOW],
+	french: [WindowType.FRENCH_2_PANEL, WindowType.FRENCH_4_PANEL],
 
-  hung: [WindowType.DOUBLE_HUNG, WindowType.SINGLE_HUNG],
+	hung: [WindowType.DOUBLE_HUNG, WindowType.SINGLE_HUNG],
 
-  other: [
-    WindowType.TRANSOM,
-    WindowType.LOUVRE,
-    WindowType.PIVOT,
-    WindowType.SKYLIGHT,
-  ],
+	other: [
+		WindowType.TRANSOM,
+		WindowType.LOUVRE,
+		WindowType.PIVOT,
+		WindowType.SKYLIGHT,
+	],
 
-  projecting: [WindowType.AWNING, WindowType.HOPPER],
+	projecting: [WindowType.AWNING, WindowType.HOPPER],
 
-  sliding: [
-    WindowType.SLIDING_2_PANEL,
-    WindowType.SLIDING_3_PANEL,
-    WindowType.SLIDING_4_PANEL,
-  ],
+	sliding: [
+		WindowType.SLIDING_2_PANEL,
+		WindowType.SLIDING_3_PANEL,
+		WindowType.SLIDING_4_PANEL,
+	],
 
-  specialty: [
-    WindowType.TILT_TURN,
-    WindowType.BAY_WINDOW,
-    WindowType.BOW_WINDOW,
-    WindowType.CORNER,
-  ],
+	specialty: [
+		WindowType.TILT_TURN,
+		WindowType.BAY_WINDOW,
+		WindowType.BOW_WINDOW,
+		WindowType.CORNER,
+	],
 } as const;
 
 /**
  * Window type display labels (Spanish)
  */
 export const WINDOW_TYPE_LABELS: Record<WindowType, string> = {
-  [WindowType.FRENCH_2_PANEL]: "Puerta Francesa 2 Hojas",
-  [WindowType.FRENCH_4_PANEL]: "Puerta Francesa 4 Hojas",
-  [WindowType.SLIDING_2_PANEL]: "Ventana Corrediza 2 Hojas",
-  [WindowType.SLIDING_3_PANEL]: "Ventana Corrediza 3 Hojas",
-  [WindowType.SLIDING_4_PANEL]: "Ventana Corrediza 4 Hojas",
-  [WindowType.FIXED_SINGLE]: "Ventana Fija",
-  [WindowType.PICTURE_WINDOW]: "Ventanal Panorámico",
-  [WindowType.CASEMENT_LEFT]: "Ventana Abatible Izquierda",
-  [WindowType.CASEMENT_RIGHT]: "Ventana Abatible Derecha",
-  [WindowType.CASEMENT_DOUBLE]: "Ventana Abatible Doble",
-  [WindowType.AWNING]: "Ventana Proyectante Superior",
-  [WindowType.HOPPER]: "Ventana Proyectante Inferior",
-  [WindowType.TILT_TURN]: "Ventana Oscilobatiente",
-  [WindowType.BAY_WINDOW]: "Ventana Bahía",
-  [WindowType.BOW_WINDOW]: "Ventana Arco",
-  [WindowType.CORNER]: "Ventana Esquinera",
-  [WindowType.DOUBLE_HUNG]: "Ventana Guillotina Doble",
-  [WindowType.SINGLE_HUNG]: "Ventana Guillotina Simple",
-  [WindowType.TRANSOM]: "Ventana Montante",
-  [WindowType.LOUVRE]: "Ventana Celosía",
-  [WindowType.PIVOT]: "Ventana Pivotante",
-  [WindowType.SKYLIGHT]: "Tragaluz",
-  [WindowType.UNKNOWN]: "Tipo Desconocido",
+	[WindowType.FRENCH_2_PANEL]: "Puerta Francesa 2 Hojas",
+	[WindowType.FRENCH_4_PANEL]: "Puerta Francesa 4 Hojas",
+	[WindowType.SLIDING_2_PANEL]: "Ventana Corrediza 2 Hojas",
+	[WindowType.SLIDING_3_PANEL]: "Ventana Corrediza 3 Hojas",
+	[WindowType.SLIDING_4_PANEL]: "Ventana Corrediza 4 Hojas",
+	[WindowType.FIXED_SINGLE]: "Ventana Fija",
+	[WindowType.PICTURE_WINDOW]: "Ventanal Panorámico",
+	[WindowType.CASEMENT_LEFT]: "Ventana Abatible Izquierda",
+	[WindowType.CASEMENT_RIGHT]: "Ventana Abatible Derecha",
+	[WindowType.CASEMENT_DOUBLE]: "Ventana Abatible Doble",
+	[WindowType.AWNING]: "Ventana Proyectante Superior",
+	[WindowType.HOPPER]: "Ventana Proyectante Inferior",
+	[WindowType.TILT_TURN]: "Ventana Oscilobatiente",
+	[WindowType.BAY_WINDOW]: "Ventana Bahía",
+	[WindowType.BOW_WINDOW]: "Ventana Arco",
+	[WindowType.CORNER]: "Ventana Esquinera",
+	[WindowType.DOUBLE_HUNG]: "Ventana Guillotina Doble",
+	[WindowType.SINGLE_HUNG]: "Ventana Guillotina Simple",
+	[WindowType.TRANSOM]: "Ventana Montante",
+	[WindowType.LOUVRE]: "Ventana Celosía",
+	[WindowType.PIVOT]: "Ventana Pivotante",
+	[WindowType.SKYLIGHT]: "Tragaluz",
+	[WindowType.UNKNOWN]: "Tipo Desconocido",
 };

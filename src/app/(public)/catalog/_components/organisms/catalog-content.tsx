@@ -6,10 +6,10 @@ import { calculateTotalPages } from "@views/catalog/_utils/catalog.utils";
 import { api } from "@/trpc/server-client";
 
 type CatalogContentProps = {
-  manufacturerId?: string;
-  page: number;
-  searchQuery?: string;
-  sort?: "name-asc" | "name-desc" | "price-asc" | "price-desc";
+	manufacturerId?: string;
+	page: number;
+	searchQuery?: string;
+	sort?: "name-asc" | "name-desc" | "price-asc" | "price-desc";
 };
 
 const ITEMS_PER_PAGE = 20;
@@ -33,41 +33,41 @@ const ITEMS_PER_PAGE = 20;
  * - Easy to test (mock API)
  */
 export async function CatalogContent({
-  manufacturerId,
-  page,
-  searchQuery,
-  sort = "name-asc",
+	manufacturerId,
+	page,
+	searchQuery,
+	sort = "name-asc",
 }: CatalogContentProps) {
-  try {
-    // Fetch models on the server - this is cached and revalidated
-    const data = await api.catalog["list-models"]({
-      limit: ITEMS_PER_PAGE,
-      manufacturerId,
-      page,
-      search: searchQuery,
-      sort,
-    });
+	try {
+		// Fetch models on the server - this is cached and revalidated
+		const data = await api.catalog["list-models"]({
+			limit: ITEMS_PER_PAGE,
+			manufacturerId,
+			page,
+			search: searchQuery,
+			sort,
+		});
 
-    const hasActiveFilters = Boolean(searchQuery || manufacturerId);
-    const { items: models, total } = data;
-    const totalPages = calculateTotalPages(total, ITEMS_PER_PAGE);
+		const hasActiveFilters = Boolean(searchQuery || manufacturerId);
+		const { items: models, total } = data;
+		const totalPages = calculateTotalPages(total, ITEMS_PER_PAGE);
 
-    // Empty state
-    if (models.length === 0) {
-      return <CatalogEmpty hasActiveFilters={hasActiveFilters} />;
-    }
+		// Empty state
+		if (models.length === 0) {
+			return <CatalogEmpty hasActiveFilters={hasActiveFilters} />;
+		}
 
-    // Render models grid
-    return (
-      <main>
-        <CatalogGrid models={models} />
-        {totalPages > 1 && (
-          <CatalogPagination currentPage={page} totalPages={totalPages} />
-        )}
-      </main>
-    );
-  } catch (_error) {
-    // Error state
-    return <CatalogError />;
-  }
+		// Render models grid
+		return (
+			<main>
+				<CatalogGrid models={models} />
+				{totalPages > 1 && (
+					<CatalogPagination currentPage={page} totalPages={totalPages} />
+				)}
+			</main>
+		);
+	} catch (_error) {
+		// Error state
+		return <CatalogError />;
+	}
 }

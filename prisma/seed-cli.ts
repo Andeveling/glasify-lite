@@ -28,128 +28,128 @@ import { SeedOrchestrator } from "./seeders/seed-orchestrator";
  * Available presets registry
  */
 const PRESETS: Record<string, SeedPreset> = {
-  "demo-client": demoClientPreset,
-  "full-catalog": fullCatalogPreset,
-  minimal: minimalPreset,
-  "vidrios-la-equidad-colombia": vidriosLaEquidadColombiaPreset,
-  "vitro-rojas-panama": vitroRojasPanamaPreset,
+	"demo-client": demoClientPreset,
+	"full-catalog": fullCatalogPreset,
+	minimal: minimalPreset,
+	"vidrios-la-equidad-colombia": vidriosLaEquidadColombiaPreset,
+	"vitro-rojas-panama": vitroRojasPanamaPreset,
 };
 
 /**
  * CLI configuration
  */
 type CliOptions = {
-  preset: string;
-  verbose: boolean;
-  skipValidation: boolean;
-  continueOnError: boolean;
-  help: boolean;
+	preset: string;
+	verbose: boolean;
+	skipValidation: boolean;
+	continueOnError: boolean;
+	help: boolean;
 };
 
 /**
  * Parse command-line arguments
  */
 function parseCliArgs(): CliOptions {
-  const { values } = parseArgs({
-    options: {
-      "continue-on-error": {
-        default: false,
-        type: "boolean",
-      },
-      help: {
-        default: false,
-        short: "h",
-        type: "boolean",
-      },
-      preset: {
-        default: "minimal",
-        short: "p",
-        type: "string",
-      },
-      "skip-validation": {
-        default: false,
-        type: "boolean",
-      },
-      verbose: {
-        default: false,
-        short: "v",
-        type: "boolean",
-      },
-    },
-    strict: true,
-  });
+	const { values } = parseArgs({
+		options: {
+			"continue-on-error": {
+				default: false,
+				type: "boolean",
+			},
+			help: {
+				default: false,
+				short: "h",
+				type: "boolean",
+			},
+			preset: {
+				default: "minimal",
+				short: "p",
+				type: "string",
+			},
+			"skip-validation": {
+				default: false,
+				type: "boolean",
+			},
+			verbose: {
+				default: false,
+				short: "v",
+				type: "boolean",
+			},
+		},
+		strict: true,
+	});
 
-  return {
-    continueOnError: values["continue-on-error"] ?? false,
-    help: values.help ?? false,
-    preset: values.preset ?? "minimal",
-    skipValidation: values["skip-validation"] ?? false,
-    verbose: values.verbose ?? false,
-  };
+	return {
+		continueOnError: values["continue-on-error"] ?? false,
+		help: values.help ?? false,
+		preset: values.preset ?? "minimal",
+		skipValidation: values["skip-validation"] ?? false,
+		verbose: values.verbose ?? false,
+	};
 }
 
 /**
  * Print CLI help
  */
 function printHelp(): void {
-  // TODO: Implement help message (currently unused)
+	// TODO: Implement help message (currently unused)
 }
 
 /**
  * Validate preset name
  */
 function validatePreset(presetName: string): void {
-  const availablePresets = Object.keys(PRESETS);
+	const availablePresets = Object.keys(PRESETS);
 
-  if (!availablePresets.includes(presetName)) {
-    process.exit(1);
-  }
+	if (!availablePresets.includes(presetName)) {
+		process.exit(1);
+	}
 }
 
 /**
  * Main seed function
  */
 async function main(): Promise<void> {
-  const options = parseCliArgs();
+	const options = parseCliArgs();
 
-  // Show help and exit
-  if (options.help) {
-    printHelp();
-    process.exit(0);
-  }
+	// Show help and exit
+	if (options.help) {
+		printHelp();
+		process.exit(0);
+	}
 
-  // Validate preset
-  validatePreset(options.preset);
+	// Validate preset
+	validatePreset(options.preset);
 
-  const preset = PRESETS[options.preset];
-  if (!preset) {
-    process.exit(1);
-  }
+	const preset = PRESETS[options.preset];
+	if (!preset) {
+		process.exit(1);
+	}
 
-  try {
-    // Create orchestrator
-    const orchestrator = new SeedOrchestrator(db, {
-      continueOnError: options.continueOnError,
-      skipValidation: options.skipValidation,
-      verbose: options.verbose,
-    });
+	try {
+		// Create orchestrator
+		const orchestrator = new SeedOrchestrator(db, {
+			continueOnError: options.continueOnError,
+			skipValidation: options.skipValidation,
+			verbose: options.verbose,
+		});
 
-    // Run seeding
-    const stats = await orchestrator.seedWithPreset(preset);
+		// Run seeding
+		const stats = await orchestrator.seedWithPreset(preset);
 
-    // Exit with appropriate code
-    if (stats.totalFailed > 0) {
-      process.exit(1);
-    }
-    process.exit(0);
-  } catch (_error) {
-    process.exit(1);
-  } finally {
-    await db.$disconnect();
-  }
+		// Exit with appropriate code
+		if (stats.totalFailed > 0) {
+			process.exit(1);
+		}
+		process.exit(0);
+	} catch (_error) {
+		process.exit(1);
+	} finally {
+		await db.$disconnect();
+	}
 }
 
 // Run CLI
 main().catch((_error) => {
-  process.exit(1);
+	process.exit(1);
 });

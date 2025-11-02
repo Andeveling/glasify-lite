@@ -16,91 +16,91 @@ import { api } from "@/trpc/server-client";
 import { UserContactInfo } from "./_components/user-contact-info";
 
 export const metadata: Metadata = {
-  title: "Detalle de Cotización | Admin",
-  description: "Vista detallada de cotización con información del creador",
+	title: "Detalle de Cotización | Admin",
+	description: "Vista detallada de cotización con información del creador",
 };
 
 // Force SSR - admin dashboard should always be fresh
 export const dynamic = "force-dynamic";
 
 type PageProps = {
-  params: Promise<{
-    quoteId: string;
-  }>;
+	params: Promise<{
+		quoteId: string;
+	}>;
 };
 
 export default async function AdminQuoteDetailPage({ params }: PageProps) {
-  const { quoteId } = await params;
+	const { quoteId } = await params;
 
-  // Fetch quote data with user information
-  const quote = await api.quote["get-by-id"]({ id: quoteId });
+	// Fetch quote data with user information
+	const quote = await api.quote["get-by-id"]({ id: quoteId });
 
-  if (!quote) {
-    notFound();
-  }
+	if (!quote) {
+		notFound();
+	}
 
-  return (
-    <div className="space-y-6">
-      {/* Back link */}
-      <BackLink href="/admin/quotes" variant="outline">
-        Volver a cotizaciones
-      </BackLink>
+	return (
+		<div className="space-y-6">
+			{/* Back link */}
+			<BackLink href="/admin/quotes" variant="outline">
+				Volver a cotizaciones
+			</BackLink>
 
-      {/* User Contact Info Section (US7) */}
-      <UserContactInfo contactPhone={quote.contactPhone} user={quote.user} />
+			{/* User Contact Info Section (US7) */}
+			<UserContactInfo contactPhone={quote.contactPhone} user={quote.user} />
 
-      {/* Quote Details */}
-      <div className="rounded-lg border bg-card p-6">
-        <h2 className="mb-4 font-semibold text-xl">
-          Detalles de la Cotización
-        </h2>
+			{/* Quote Details */}
+			<div className="rounded-lg border bg-card p-6">
+				<h2 className="mb-4 font-semibold text-xl">
+					Detalles de la Cotización
+				</h2>
 
-        {/* Basic Info */}
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <p className="font-medium text-muted-foreground text-sm">
-              Proyecto
-            </p>
-            <p className="font-semibold">{quote.projectName || "Sin nombre"}</p>
-          </div>
-          <div>
-            <p className="font-medium text-muted-foreground text-sm">Estado</p>
-            <p className="font-semibold">{quote.status}</p>
-          </div>
-          <div>
-            <p className="font-medium text-muted-foreground text-sm">Total</p>
-            <p className="font-semibold">
-              {quote.currency} {quote.total.toFixed(2)}
-            </p>
-          </div>
-          <div>
-            <p className="font-medium text-muted-foreground text-sm">
-              Cantidad de Items
-            </p>
-            <p className="font-semibold">{quote.itemCount}</p>
-          </div>
-          {quote.validUntil && (
-            <div>
-              <p className="font-medium text-muted-foreground text-sm">
-                Válido hasta
-              </p>
-              <p className="font-semibold">
-                {new Intl.DateTimeFormat("es-LA").format(quote.validUntil)}
-              </p>
-            </div>
-          )}
-          <div>
-            <p className="font-medium text-muted-foreground text-sm">Creado</p>
-            <p className="font-semibold">
-              {new Intl.DateTimeFormat("es-LA", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              }).format(quote.createdAt)}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+				{/* Basic Info */}
+				<div className="grid gap-4 sm:grid-cols-2">
+					<div>
+						<p className="font-medium text-muted-foreground text-sm">
+							Proyecto
+						</p>
+						<p className="font-semibold">{quote.projectName || "Sin nombre"}</p>
+					</div>
+					<div>
+						<p className="font-medium text-muted-foreground text-sm">Estado</p>
+						<p className="font-semibold">{quote.status}</p>
+					</div>
+					<div>
+						<p className="font-medium text-muted-foreground text-sm">Total</p>
+						<p className="font-semibold">
+							{quote.currency} {quote.total.toFixed(2)}
+						</p>
+					</div>
+					<div>
+						<p className="font-medium text-muted-foreground text-sm">
+							Cantidad de Items
+						</p>
+						<p className="font-semibold">{quote.itemCount}</p>
+					</div>
+					{quote.validUntil && (
+						<div>
+							<p className="font-medium text-muted-foreground text-sm">
+								Válido hasta
+							</p>
+							<p className="font-semibold">
+								{new Intl.DateTimeFormat("es-LA").format(quote.validUntil)}
+							</p>
+						</div>
+					)}
+					<div>
+						<p className="font-medium text-muted-foreground text-sm">Creado</p>
+						<p className="font-semibold">
+							{new Intl.DateTimeFormat("es-LA", {
+								year: "numeric",
+								month: "long",
+								day: "numeric",
+							}).format(quote.createdAt)}
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 }
