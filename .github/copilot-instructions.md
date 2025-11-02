@@ -16,6 +16,8 @@ When generating code for this repository:
 ---
 
 ## Active Technologies
+- TypeScript 5.9.3 (strict mode), Node.js ES2022 + Next.js 16.0.1 (App Router), React 19.2.0, tRPC 11.6.0, Prisma 6.18.0, Zod 4.1.12, React Hook Form 7.64.0 (001-delivery-address)
+- PostgreSQL (existing instance) - add `ProjectAddress` model, modify `Quote` and `TenantConfig` models (001-delivery-address)
 
 **Language/Runtime**:
 - TypeScript 5.9.3 (strict mode), Node.js (ES2022 target)
@@ -511,3 +513,6 @@ Use Next.js `<Image>` comp vs `<img>` el
 Use Next.js `next/head` or App Router metadata API vs `<head>` el
 No importing `next/document` in page files
 No importing `next/head` in `_document.tsx`. Use `<Head>` from `next/document` instead
+
+## Recent Changes
+- 001-delivery-address: Added TypeScript 5.9.3 (strict mode), Node.js ES2022 + Next.js 16.0.1 (App Router), React 19.2.0, tRPC 11.6.0, Prisma 6.18.0, Zod 4.1.12, React Hook Form 7.64.0

@@ -13,11 +13,10 @@ import type { CartItem } from "./cart.types";
 // ============================================================================
 // Quote Input Types
 // ============================================================================
-
 /**
  * Project address input for quote generation
  *
- * All fields required for structured address storage
+ * Fields required for structured address storage
  */
 export type QuoteProjectAddress = {
   /** Project name or identifier */
@@ -31,9 +30,22 @@ export type QuoteProjectAddress = {
 
   /** State/region */
   projectState: string;
+};
 
-  /** Postal code */
-  projectPostalCode: string;
+/**
+ * Delivery address with geocoding data (from client)
+ */
+export type DeliveryAddressInput = {
+  city?: string | null;
+  country?: string | null;
+  district?: string | null;
+  label?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  postalCode?: string | null;
+  reference?: string | null;
+  region?: string | null;
+  street?: string | null;
 };
 
 /**
@@ -50,6 +62,9 @@ export type GenerateQuoteInput = {
 
   /** Optional contact phone */
   contactPhone?: string;
+
+  /** Optional delivery address with geocoding data */
+  deliveryAddress?: DeliveryAddressInput;
 
   /**
    * @deprecated Manufacturer ID (deprecated field, kept for backward compatibility)

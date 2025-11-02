@@ -68,3 +68,34 @@ export function getStepProgress(currentStep: number): number {
   const PERCENTAGE_MULTIPLIER = 100;
   return Math.round((currentStep / FORM_STEPS.length) * PERCENTAGE_MULTIPLIER);
 }
+
+/**
+ * Filter steps based on feature availability
+ * Used to hide steps that don't apply to the current model/configuration
+ *
+ * @param options - Feature flags to determine which steps to show
+ * @returns Filtered array of form steps
+ */
+export function getAvailableSteps(options: {
+  hasColors?: boolean;
+  hasServices?: boolean;
+}): FormStep[] {
+  return FORM_STEPS.filter((step) => {
+    // Always show dimensions and glass type
+    if (step.id === "dimensions" || step.id === "glassType") {
+      return true;
+    }
+
+    // Only show color step if model has colors
+    if (step.id === "color") {
+      return options.hasColors ?? false;
+    }
+
+    // Only show services step if services are available
+    if (step.id === "services") {
+      return options.hasServices ?? false;
+    }
+
+    return true;
+  });
+}

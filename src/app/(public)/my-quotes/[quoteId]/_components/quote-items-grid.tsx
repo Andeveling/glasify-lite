@@ -15,7 +15,6 @@
 "use client";
 
 import { useState } from "react";
-import type { WindowType } from "@/types/window.types";
 import { ImageViewerDialog } from "./image-viewer-dialog";
 import { QuoteItemImage } from "./quote-item-image";
 
@@ -26,7 +25,6 @@ export type QuoteItemData = {
   id: string;
   modelName: string;
   modelImageUrl: string | null;
-  windowType: WindowType;
   width: number | null;
   height: number | null;
   glassType?: string;
@@ -125,7 +123,6 @@ export function QuoteItemsGrid({
               modelName={item.modelName}
               onClick={() => handleItemClick(item.id)}
               size="md"
-              windowType={item.windowType} // First EAGER_LOAD_LIMIT items eager
             />
 
             {/* Product name */}
@@ -159,7 +156,6 @@ export function QuoteItemsGrid({
             thickness: selectedItem.thickness,
             treatment: selectedItem.treatment,
           }}
-          windowType={selectedItem.windowType}
         />
       )}
     </>
@@ -173,13 +169,12 @@ export function QuoteItemsGrid({
  * // In QuoteDetailView
  * const items = quote.items.map(item => ({
  *   id: item.id,
- *   modelName: item.model.name,
- *   modelImageUrl: item.model.imageUrl,
- *   windowType: item.windowType,
- *   width: item.width,
- *   height: item.height,
- *   glassType: item.glassType?.name,
- *   manufacturer: item.model.manufacturer.name,
+ *   modelName: item.modelName,
+ *   modelImageUrl: item.modelImageUrl,
+ *   width: item.widthMm ? Math.round(item.widthMm / 10) : null,
+ *   height: item.heightMm ? Math.round(item.heightMm / 10) : null,
+ *   glassType: item.glassTypeName,
+ *   manufacturer: quote.manufacturerName,
  * }));
  *
  * <QuoteItemsGrid items={items} eager />

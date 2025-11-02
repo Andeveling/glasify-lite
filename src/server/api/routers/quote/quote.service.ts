@@ -8,6 +8,7 @@
  */
 
 import type { PrismaClient } from "@prisma/client";
+import { Decimal } from "@prisma/client/runtime/library";
 import { TRPCError } from "@trpc/server";
 import logger from "@/lib/logger";
 import { getQuoteValidityDays, getTenantCurrency } from "@/server/utils/tenant";
@@ -26,6 +27,165 @@ export type GenerateQuoteResult = {
   total: number;
   itemCount: number;
 };
+
+/**
+ * Quote metadata for creation
+ */
+type QuoteMetadata = {
+  currency: string;
+  validUntil: Date;
+  total: number;
+};
+
+/**
+ * Calculate quote metadata (currency, validity, total)
+ *
+ * @param tx - Prisma transaction client
+ * @param cartItems - Cart items to calculate total
+ * @returns Quote metadata
+ */
+async function calculateQuoteMetadata(
+  tx: Parameters<Parameters<PrismaClient["$transaction"]>[0]>[0],
+  cartItems: CartItem[]
+): Promise<QuoteMetadata> {
+  const currency = await getTenantCurrency(tx);
+  const quoteValidityDays = await getQuoteValidityDays(tx);
+
+  const now = new Date();
+  const validUntil = new Date(now);
+  validUntil.setDate(validUntil.getDate() + quoteValidityDays);
+
+  const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+
+  return { currency, validUntil, total };
+}
+
+/**
+ * Create quote record
+ *
+ * @param tx - Prisma transaction client
+ * @param userId - User ID
+ * @param input - Quote input
+ * @param metadata - Quote metadata
+ * @returns Created quote
+ */
+async function createQuoteRecord(
+  tx: Parameters<Parameters<PrismaClient["$transaction"]>[0]>[0],
+  userId: string,
+  input: GenerateQuoteInput,
+  metadata: QuoteMetadata
+) {
+  return await tx.quote.create({
+    data: {
+      contactPhone: input.contactPhone,
+      currency: metadata.currency,
+      projectCity: input.projectAddress.projectCity,
+      projectName: input.projectAddress.projectName,
+      projectState: input.projectAddress.projectState,
+      projectStreet: input.projectAddress.projectStreet,
+      status: "draft",
+      total: metadata.total,
+      userId,
+      validUntil: metadata.validUntil,
+    },
+  });
+}
+
+/**
+ * Convert coordinate to Decimal if valid
+ *
+ * @param coordinate - Coordinate value
+ * @returns Decimal or null
+ */
+function coordinateToDecimal(
+  coordinate: number | null | undefined
+): Decimal | null {
+  if (coordinate === null || coordinate === undefined) {
+    return null;
+  }
+  return new Decimal(coordinate);
+}
+
+/**
+ * Create delivery address if provided
+ *
+ * @param tx - Prisma transaction client
+ * @param quoteId - Quote ID
+ * @param deliveryAddress - Delivery address input
+ * @param correlationId - Correlation ID for logging
+ */
+async function createDeliveryAddress(
+  tx: Parameters<Parameters<PrismaClient["$transaction"]>[0]>[0],
+  quoteId: string,
+  deliveryAddress: GenerateQuoteInput["deliveryAddress"],
+  correlationId: string
+): Promise<void> {
+  if (!deliveryAddress) {
+    return;
+  }
+
+  try {
+    await tx.projectAddress.create({
+      data: {
+        city: deliveryAddress.city ?? null,
+        country: deliveryAddress.country ?? "Colombia",
+        district: deliveryAddress.district ?? null,
+        label: deliveryAddress.label ?? null,
+        latitude: coordinateToDecimal(deliveryAddress.latitude),
+        longitude: coordinateToDecimal(deliveryAddress.longitude),
+        postalCode: deliveryAddress.postalCode ?? null,
+        quoteId,
+        reference: deliveryAddress.reference ?? null,
+        region: deliveryAddress.region ?? null,
+        street: deliveryAddress.street ?? null,
+      },
+    });
+
+    logger.info("[QuoteService] ProjectAddress created", {
+      correlationId,
+      quoteId,
+    });
+  } catch (error) {
+    logger.warn("[QuoteService] Failed to create ProjectAddress", {
+      correlationId,
+      error: error instanceof Error ? error.message : "Unknown error",
+      quoteId,
+    });
+    // Continue without project address - it's optional
+  }
+}
+
+/**
+ * Create quote items from cart items
+ *
+ * @param tx - Prisma transaction client
+ * @param quoteId - Quote ID
+ * @param cartItems - Cart items
+ * @returns Number of items created
+ */
+async function createQuoteItems(
+  tx: Parameters<Parameters<PrismaClient["$transaction"]>[0]>[0],
+  quoteId: string,
+  cartItems: CartItem[]
+): Promise<number> {
+  const quoteItemsData = cartItems.map((cartItem) => ({
+    accessoryApplied: false,
+    glassTypeId: cartItem.glassTypeId,
+    heightMm: cartItem.heightMm,
+    modelId: cartItem.modelId,
+    name: cartItem.name,
+    quantity: cartItem.quantity,
+    quoteId,
+    subtotal: cartItem.subtotal,
+    widthMm: cartItem.widthMm,
+  }));
+
+  await tx.quoteItem.createMany({
+    data: quoteItemsData,
+  });
+
+  return quoteItemsData.length;
+}
 
 /**
  * Generate a formal quote from cart items
@@ -76,79 +236,40 @@ export async function generateQuoteFromCart(
 
     // Execute quote creation in a transaction
     const result = await db.$transaction(async (tx) => {
-      // 1. Get tenant configuration for currency and quote validity period
-      const currency = await getTenantCurrency(tx);
-      const quoteValidityDays = await getQuoteValidityDays(tx);
-
-      // 2. Calculate validUntil date
-      const now = new Date();
-      const validUntil = new Date(now);
-      validUntil.setDate(validUntil.getDate() + quoteValidityDays);
-
-      // 3. Calculate total from cart items
-      const total = input.cartItems.reduce(
-        (sum, item) => sum + item.subtotal,
-        0
-      );
+      // 1. Calculate quote metadata (currency, validity, total)
+      const metadata = await calculateQuoteMetadata(tx, input.cartItems);
 
       logger.info("[QuoteService] Quote metadata calculated", {
         correlationId,
-        currency,
-        total,
-        validUntil: validUntil.toISOString(),
+        currency: metadata.currency,
+        total: metadata.total,
+        validUntil: metadata.validUntil.toISOString(),
       });
 
-      // 4. Create Quote with project address
-      const quote = await tx.quote.create({
-        data: {
-          contactPhone: input.contactPhone,
-          currency,
-          projectCity: input.projectAddress.projectCity,
-          projectName: input.projectAddress.projectName,
-          projectPostalCode: input.projectAddress.projectPostalCode,
-          projectState: input.projectAddress.projectState,
-          projectStreet: input.projectAddress.projectStreet,
-          status: "draft", // Initial status: pending review/send (read-only, not editable after creation)
-          total,
-          userId,
-          validUntil,
-          // Items will be created below
-        },
-      });
+      // 2. Create quote record
+      const quote = await createQuoteRecord(tx, userId, input, metadata);
 
       logger.info("[QuoteService] Quote record created", {
         correlationId,
         quoteId: quote.id,
       });
 
-      // 5. Create QuoteItems from CartItems
-      const quoteItemsData = input.cartItems.map((cartItem) => ({
-        accessoryApplied: false, // Default value
-        glassTypeId: cartItem.glassTypeId,
-        heightMm: cartItem.heightMm,
-        modelId: cartItem.modelId,
-        name: cartItem.name, // User-editable name from cart
-        quantity: cartItem.quantity,
-        quoteId: quote.id,
-        // Note: solutionId is not stored in QuoteItem - solution is associated with GlassType
-        subtotal: cartItem.subtotal, // Price locked at quote generation time
-        widthMm: cartItem.widthMm,
-      }));
+      // 3. Create delivery address if provided
+      await createDeliveryAddress(
+        tx,
+        quote.id,
+        input.deliveryAddress,
+        correlationId
+      );
 
-      await tx.quoteItem.createMany({
-        data: quoteItemsData,
-      });
+      // 4. Create quote items
+      const itemCount = await createQuoteItems(tx, quote.id, input.cartItems);
 
       logger.info("[QuoteService] QuoteItems created", {
         correlationId,
-        itemCount: quoteItemsData.length,
+        itemCount,
         quoteId: quote.id,
       });
-
-      // Note: Additional services handling skipped for MVP
-      // Services from cart (additionalServiceIds) would require fetching service details
-      // to calculate amount and determine unit. This will be implemented in a future iteration.
-      // For now, quote items are created without services.
 
       logger.info("[QuoteService] Quote generation completed successfully", {
         correlationId,
@@ -158,10 +279,10 @@ export async function generateQuoteFromCart(
       });
 
       return {
-        itemCount: quoteItemsData.length,
+        itemCount,
         quoteId: quote.id,
         total: Number(quote.total),
-        validUntil: quote.validUntil ?? validUntil,
+        validUntil: quote.validUntil ?? metadata.validUntil,
       };
     });
 

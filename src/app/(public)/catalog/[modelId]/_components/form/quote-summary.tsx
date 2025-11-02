@@ -11,6 +11,7 @@ import { useFormContext } from "react-hook-form";
 import { formatCurrency } from "@/app/_utils/format-currency.util";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
 type QuoteSummaryProps = {
@@ -81,7 +82,7 @@ export function QuoteSummary({
     if (error) {
       return {
         helperText: "Ajusta los valores para calcular el precio",
-        icon: <AlertCircle className="h-4 w-4 text-destructive" />,
+        icon: <AlertCircle className="size-5 text-destructive" />,
       };
     }
 
@@ -89,7 +90,7 @@ export function QuoteSummary({
     if (isCalculating) {
       return {
         helperText: "Calculando precio en tiempo real...",
-        icon: <Loader2 className="h-4 w-4 animate-spin text-primary" />,
+        icon: <Loader2 className="size-5 animate-spin text-primary" />,
       };
     }
 
@@ -97,7 +98,7 @@ export function QuoteSummary({
     if (hasValidCalculation && isValid) {
       return {
         helperText: "Precio calculado según tus especificaciones",
-        icon: <CheckCircle className="h-4 w-4 text-success" />,
+        icon: <CheckCircle className="size-5 text-green-700" />,
       };
     }
 
@@ -142,7 +143,7 @@ export function QuoteSummary({
       <div className="flex flex-col gap-1">
         <span
           className={cn(
-            "font-bold text-2xl transition-colors",
+            "font-bold text-3xl transition-colors",
             hasValidCalculation ? "text-primary" : "text-foreground"
           )}
         >
@@ -182,9 +183,8 @@ export function QuoteSummary({
 
   return (
     <Card
-      className={cn("border-2 p-6 transition-all duration-200", {
+      className={cn("border p-6 transition-all duration-200", {
         "border-destructive/50 bg-destructive/5": cardState === "error",
-        "border-success/50 bg-success/5": cardState === "success",
       })}
       data-state={cardState}
     >
@@ -192,12 +192,8 @@ export function QuoteSummary({
         {/* Price and Status Row */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex-1">
-            <div className="flex items-center gap-3">{priceDisplay}</div>
-            <div className="mt-2 flex items-center gap-2">
-              {statusContent.icon}
-              <p className="text-muted-foreground text-xs">
-                {statusContent.helperText}
-              </p>
+            <div className="flex items-center gap-3 text-4xl">
+              {priceDisplay}
             </div>
           </div>
           <Button
@@ -211,6 +207,13 @@ export function QuoteSummary({
             <ShoppingCart className="mr-2 size-5" />
             {getButtonText()}
           </Button>
+        </div>
+        <Separator />
+        <div className="mt-2 flex items-center gap-2">
+          {statusContent.icon}
+          <p className="text-muted-foreground text-xs">
+            {statusContent.helperText}
+          </p>
         </div>
 
         {/* Error List - Only show when button is disabled due to form errors */}

@@ -60,7 +60,7 @@ export function GlassTypeCardSimple({
     >
       <Label
         className={cn(
-          "group relative flex cursor-pointer items-center gap-3 rounded-xl border-2 p-4 transition-all duration-300",
+          "group relative flex cursor-pointer items-center gap-3 rounded-xl border p-4 transition-all duration-300",
           "hover:scale-[1.02] hover:shadow-md",
           "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-offset-2",
           isSelected
@@ -86,8 +86,8 @@ export function GlassTypeCardSimple({
         >
           <Icon
             className={cn(
-              "size-6 transition-colors duration-300",
-              isSelected && "text-primary-foreground"
+              "size-10 transition-colors duration-300",
+              isSelected && "text-primary"
             )}
           />
         </motion.div>
@@ -105,10 +105,10 @@ export function GlassTypeCardSimple({
               )}
               transition={{ duration: 0.2 }}
             >
-              {option.title}
+              {option.name}
             </motion.h4>
             <p className="line-clamp-1 text-muted-foreground text-xs">
-              {option.name}
+              {option.title}
             </p>
           </div>
 

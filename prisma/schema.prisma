@@ -216,6 +216,18 @@ model TenantConfig {
   /// WhatsApp: Enable floating button in catalog and quotes
   whatsappEnabled Boolean @default(false)
 
+  /// Warehouse location and transportation rates (Feature: 001-delivery-address)
+  /// Warehouse latitude coordinate (WGS84, -90 to +90, 7 decimal places)
+  warehouseLatitude  Decimal? @db.Decimal(10, 7)
+  /// Warehouse longitude coordinate (WGS84, -180 to +180, 7 decimal places)
+  warehouseLongitude Decimal? @db.Decimal(10, 7)
+  /// Warehouse city name for display (e.g., "Buga")
+  warehouseCity      String?  @db.VarChar(100)
+  /// Fixed base cost for transportation (e.g., 50000 COP)
+  transportBaseRate  Decimal? @db.Decimal(10, 2)
+  /// Cost per kilometer (e.g., 1000 COP per km)
+  transportPerKmRate Decimal? @db.Decimal(10, 2)
+
   /// Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -392,9 +404,13 @@ model Quote {
 
   // Project information (structured address fields)
   projectName       String? @db.VarChar(100)
+  /// @deprecated Use ProjectAddress relationship instead. Maintained for backward compatibility.
   projectStreet     String? @db.VarChar(200)
+  /// @deprecated Use ProjectAddress relationship instead. Maintained for backward compatibility.
   projectCity       String? @db.VarChar(100)
+  /// @deprecated Use ProjectAddress relationship instead. Maintained for backward compatibility.
   projectState      String? @db.VarChar(100)
+  /// @deprecated Use ProjectAddress relationship instead. Maintained for backward compatibility.
   projectPostalCode String? @db.VarChar(20)
 
   createdAt   DateTime     @default(now())
@@ -402,6 +418,9 @@ model Quote {
   sentAt      DateTime? // Timestamp when quote was sent to vendor (Feature 005)
   items       QuoteItem[]
   adjustments Adjustment[]
+
+  /// Optional delivery address with geocoding (Feature: 001-delivery-address)
+  projectAddress ProjectAddress?
 
   // Performance indexes for quote queries (TASK-013)
   // Original index
@@ -732,6 +751,44 @@ model ModelColor {
   @@unique([modelId, colorId]) // Prevent duplicate color assignments per model
   @@index([modelId, isDefault]) // Optimize default color lookup
   @@index([colorId]) // Reverse lookup (which models use this color)
+}
+
+/// ProjectAddress - Structured delivery location for quotes
+/// Represents the geographic delivery address with geocoding support
+/// Feature: 001-delivery-address
+
+model ProjectAddress {
+  id         String   @id @default(cuid())
+  /// Foreign key to Quote (optional for backward compatibility)
+  quoteId    String?  @unique
+  quote      Quote?   @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  /// User-defined label (e.g., "Obra Principal", "Bodega Cliente")
+  label      String?  @db.VarChar(100)
+  /// Country name (e.g., "Colombia")
+  country    String?  @db.VarChar(100)
+  /// Department/State (e.g., "Antioquia")
+  region     String?  @db.VarChar(100)
+  /// City/Municipality (e.g., "Medellín")
+  city       String?  @db.VarChar(100)
+  /// Neighborhood/District (e.g., "Barrio Granada")
+  district   String?  @db.VarChar(100)
+  /// Street address (e.g., "Calle 45 #23-10")
+  street     String?  @db.VarChar(200)
+  /// Landmark/reference (e.g., "Frente a finca Los Arrayanes")
+  reference  String?  @db.VarChar(200)
+  /// Latitude coordinate (WGS84, -90 to +90, 7 decimal places)
+  latitude   Decimal? @db.Decimal(10, 7)
+  /// Longitude coordinate (WGS84, -180 to +180, 7 decimal places)
+  longitude  Decimal? @db.Decimal(10, 7)
+  /// Postal/ZIP code (optional for LATAM rural areas)
+  postalCode String?  @db.VarChar(20)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  /// Indexes for common queries
+  @@index([quoteId]) // FK lookup (most common query)
+  @@index([city]) // Search/filter by city
+  @@index([latitude, longitude]) // Geospatial queries (future: radius search)
 }
 
 // DEPRECATED MODELS SECTION

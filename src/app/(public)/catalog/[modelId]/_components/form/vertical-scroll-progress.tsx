@@ -1,10 +1,10 @@
 "use client";
 
 import { motion, useScroll, useSpring, useTransform } from "motion/react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useActiveFormStep } from "../../_hooks/use-active-form-step";
-import { FORM_STEPS, type FormStepId } from "./form-steps-config";
+import { type FormStepId, getAvailableSteps } from "./form-steps-config";
 
 // ============================================================================
 // Constants
@@ -35,6 +35,9 @@ type VerticalScrollProgressProps = {
   sectionRefs: Record<FormStepId, React.RefObject<HTMLDivElement | null>>;
   /** Callback to notify parent of active step changes */
   onActiveStepChange?: (stepId: FormStepId) => void;
+  /** Feature flags to determine which steps to show */
+  hasColors?: boolean;
+  hasServices?: boolean;
 };
 
 // ============================================================================
@@ -58,7 +61,15 @@ export function VerticalScrollProgress({
   containerRef,
   sectionRefs,
   onActiveStepChange,
+  hasColors = false,
+  hasServices = false,
 }: VerticalScrollProgressProps) {
+  // Filter steps based on feature availability
+  const availableSteps = useMemo(
+    () => getAvailableSteps({ hasColors, hasServices }),
+    [hasColors, hasServices]
+  );
+
   // Use Intersection Observer for accurate step detection
   const activeStep = useActiveFormStep(sectionRefs);
 
@@ -88,12 +99,12 @@ export function VerticalScrollProgress({
   );
 
   // Get current step index
-  const currentStepIndex = FORM_STEPS.findIndex(
+  const currentStepIndex = availableSteps.findIndex(
     (step) => step.id === activeStep
   );
 
   // Calculate discrete progress based on completed steps (as percentage 0-100)
-  const discreteProgress = (currentStepIndex + 1) / FORM_STEPS.length;
+  const discreteProgress = (currentStepIndex + 1) / availableSteps.length;
   const discreteHeight = useSpring(discreteProgress, {
     damping: SPRING_DAMPING,
     restDelta: SPRING_REST_DELTA,
@@ -123,7 +134,7 @@ export function VerticalScrollProgress({
 
       {/* Step indicators */}
       <div className="absolute inset-y-0 flex flex-col items-center justify-around py-8">
-        {FORM_STEPS.map((step, index) => {
+        {availableSteps.map((step, index) => {
           const isActive = step.id === activeStep;
           const isCompleted = index < currentStepIndex;
           const isPending = !(isActive || isCompleted);
@@ -167,7 +178,7 @@ export function VerticalScrollProgress({
           initial={{ opacity: 0 }}
           whileHover={{ opacity: 1 }}
         >
-          {FORM_STEPS.find((s) => s.id === activeStep)?.label}
+          {availableSteps.find((s) => s.id === activeStep)?.label}
         </motion.div>
       </div>
     </div>

@@ -571,6 +571,7 @@ export const quoteRouter = createTRPCRouter({
                 model: {
                   select: {
                     id: true,
+                    imageUrl: true,
                     name: true,
                   },
                 },
@@ -640,6 +641,7 @@ export const quoteRouter = createTRPCRouter({
             glassTypeName: item.glassType.name,
             heightMm: item.heightMm,
             id: item.id,
+            modelImageUrl: item.model.imageUrl,
             modelName: item.model.name,
             name: item.name,
             quantity: item.quantity,
@@ -653,7 +655,7 @@ export const quoteRouter = createTRPCRouter({
           projectAddress: {
             projectCity: quote.projectCity ?? "",
             projectName: quote.projectName ?? "Sin nombre",
-            projectPostalCode: quote.projectPostalCode ?? "",
+            projectPostalCode: quote.projectPostalCode ?? undefined,
             projectState: quote.projectState ?? "",
             projectStreet: quote.projectStreet ?? "",
           },

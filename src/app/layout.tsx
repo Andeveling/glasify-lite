@@ -7,6 +7,7 @@ import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Fira_Code, Geist, Inter, Lora } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { Suspense } from "react";
 import { Toaster } from "sonner";
 import { TRPCReactProvider } from "@/trpc/react";
 import { NavigationLoader } from "./_components/navigation-loader";
@@ -63,7 +64,9 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body suppressHydrationWarning>
-        <NavigationLoader />
+        <Suspense fallback={null}>
+          <NavigationLoader />
+        </Suspense>
         <ReactScan />
         <BrandingProvider
           config={{

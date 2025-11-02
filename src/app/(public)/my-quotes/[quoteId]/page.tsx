@@ -10,6 +10,8 @@
 import { TRPCError } from "@trpc/server";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
+import { Suspense } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import logger from "@/lib/logger";
 import { auth } from "@/server/auth";
 import { api } from "@/trpc/server-client";
@@ -21,10 +23,51 @@ type MyQuoteDetailPageProps = {
   }>;
 };
 
+async function QuoteContent({
+  quoteId,
+  userId,
+}: {
+  quoteId: string;
+  userId: string;
+}) {
+  try {
+    logger.info("[MyQuoteDetailPage] User accessing quote detail", {
+      quoteId,
+      userId,
+    });
+
+    const quote = await api.quote["get-by-id"]({ id: quoteId });
+
+    return <QuoteDetailView isPublicView quote={quote} />;
+  } catch (error) {
+    // If quote not found or access denied, show 404
+    if (error instanceof TRPCError && error.code === "NOT_FOUND") {
+      logger.warn("[MyQuoteDetailPage] Quote not found or access denied", {
+        error: error.message,
+        quoteId,
+        userId,
+      });
+
+      notFound();
+    }
+
+    logger.error("[MyQuoteDetailPage] Error loading quote", {
+      error: error instanceof Error ? error.message : "Unknown error",
+      quoteId,
+      userId,
+    });
+
+    // Re-throw other errors
+    throw error;
+  }
+}
+
 export default async function MyQuoteDetailPage({
   params,
 }: MyQuoteDetailPageProps) {
-  // Check authentication
+  const { quoteId } = await params;
+
+  // Check authentication OUTSIDE Suspense
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -40,40 +83,17 @@ export default async function MyQuoteDetailPage({
     redirect("/api/auth/signin?callbackUrl=/my-quotes");
   }
 
-  const { quoteId } = await params;
-
-  try {
-    logger.info("[MyQuoteDetailPage] User accessing quote detail", {
-      quoteId,
-      userId: session.user.id,
-    });
-
-    const quote = await api.quote["get-by-id"]({ id: quoteId });
-
-    return (
-      <div className="container mx-auto max-w-7xl py-8">
-        <QuoteDetailView isPublicView quote={quote} />
-      </div>
-    );
-  } catch (error) {
-    // If quote not found or access denied, show 404
-    if (error instanceof TRPCError && error.code === "NOT_FOUND") {
-      logger.warn("[MyQuoteDetailPage] Quote not found or access denied", {
-        error: error.message,
-        quoteId,
-        userId: session.user.id,
-      });
-
-      notFound();
-    }
-
-    logger.error("[MyQuoteDetailPage] Error loading quote", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      quoteId,
-      userId: session.user.id,
-    });
-
-    // Re-throw other errors
-    throw error;
-  }
+  return (
+    <div className="container mx-auto max-w-7xl py-8">
+      <Suspense
+        fallback={
+          <div className="flex min-h-[400px] items-center justify-center">
+            <Spinner className="size-8" />
+          </div>
+        }
+      >
+        <QuoteContent quoteId={quoteId} userId={session.user.id} />
+      </Suspense>
+    </div>
+  );
 }

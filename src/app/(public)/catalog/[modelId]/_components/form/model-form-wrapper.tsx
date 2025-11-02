@@ -23,6 +23,12 @@ async function ModelFormData({ serverModel }: ModelFormWrapperProps) {
     modelId: serverModel.id,
   });
 
+  // Check if model has colors (for conditional rendering in form)
+  const colorData = await api.quote["get-model-colors-for-quote"]({
+    modelId: serverModel.id,
+  });
+  const hasColors = colorData.hasColors;
+
   // Fetch tenant currency directly from utility (Server Component - no tRPC overhead)
   // Public data - no authentication required
   const tenantConfig = await getTenantConfig();
@@ -32,6 +38,7 @@ async function ModelFormData({ serverModel }: ModelFormWrapperProps) {
     <ModelForm
       currency={currency}
       glassTypes={glassTypes}
+      hasColors={hasColors}
       model={serverModel}
       services={services}
       solutions={solutions}

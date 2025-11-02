@@ -10,6 +10,12 @@ import { CatalogFilters } from "@views/catalog/_components/organisms/catalog-fil
  * Mobile: Stacked vertically
  *
  * Composes filter components following Open/Closed Principle
+ *
+ * Memory Leak Fix:
+ * - Uses single CatalogFilters instance instead of two separate instances
+ * - Previous implementation rendered CatalogFilters twice (controls + badges)
+ * - Each instance created event listeners, causing MaxListenersExceededWarning
+ * - Now uses props to control visibility of sections within single instance
  */
 export function CatalogFilterBar({
   searchQuery,
@@ -26,37 +32,25 @@ export function CatalogFilterBar({
 }) {
   return (
     <div className="space-y-4">
-      {/* Row 1: Search (left) + Filters (right) - Side by side on desktop */}
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        {/* Search - Takes most of the space on desktop */}
+      {/* Search + Filters row */}
+      <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div className="flex-1">
           <CatalogSearch initialValue={searchQuery} />
         </div>
 
-        {/* Filters (sort, supplier) - Right aligned on desktop */}
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-3">
+        {/* Single CatalogFilters instance - shows all sections */}
+        <div className="w-full md:w-auto">
           <CatalogFilters
             currentProfileSupplier={currentProfileSupplier}
             currentSearchQuery={searchQuery}
             currentSort={currentSort}
             profileSuppliers={profileSuppliers}
-            showBadges={false}
-            showResultCount={false}
-            totalResults={undefined}
+            showBadges={true}
+            showControls={true}
+            showResultCount={true}
+            totalResults={totalResults}
           />
         </div>
-      </div>
-
-      {/* Row 2: Active filters badges + result count (full width) */}
-      <div>
-        <CatalogFilters
-          currentProfileSupplier={currentProfileSupplier}
-          currentSearchQuery={searchQuery}
-          currentSort={currentSort}
-          profileSuppliers={profileSuppliers}
-          showControls={false}
-          totalResults={totalResults}
-        />
       </div>
     </div>
   );
