@@ -25,6 +25,9 @@ type AddedToCartActionsProps = {
  * Accepts ref prop for auto-scroll functionality.
  * Uses Framer Motion for smooth entrance animation.
  *
+ * UX Enhancement: Works with useScrollResetForm hook to auto-reset form
+ * when user scrolls up without clicking any action (Don't Make Me Think).
+ *
  * @component
  */
 export function AddedToCartActions({
@@ -54,6 +57,9 @@ export function AddedToCartActions({
 							</h3>
 							<p className="mt-1 text-muted-foreground text-sm">
 								<strong>{modelName}</strong> ha sido agregado a tu carrito
+							</p>
+							<p className="mt-2 text-muted-foreground text-xs italic">
+								💡 Puedes hacer scroll arriba para configurar otra ventana
 							</p>
 						</div>
 					</div>

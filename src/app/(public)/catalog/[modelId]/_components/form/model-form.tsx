@@ -20,6 +20,7 @@ import { useColorSelection } from "../../_hooks/use-color-selection";
 import { useGlassArea } from "../../_hooks/use-glass-area";
 import { usePriceBreakdown } from "../../_hooks/use-price-breakdown";
 import { usePriceCalculation } from "../../_hooks/use-price-calculation";
+import { useScrollResetForm } from "../../_hooks/use-scroll-reset-form";
 import { useSolutionInference } from "../../_hooks/use-solution-inference";
 import { prepareCartItemInput } from "../../_utils/cart-item-mapper";
 import {
@@ -246,6 +247,14 @@ export function ModelForm({
 		handleColorChange(colorId, surchargePercentage);
 		form.setValue("colorId", colorId);
 	};
+
+	// ✅ UX Enhancement: Auto-reset form when user scrolls up after adding to cart
+	useScrollResetForm({
+		isFormSubmitted: justAddedToCart,
+		onReset: handleConfigureAnother,
+		scrollThreshold: 100,
+		successCardRef,
+	});
 
 	return (
 		<Form {...form}>
