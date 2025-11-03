@@ -27,7 +27,6 @@ import {
 	createQuoteFormSchema,
 	type QuoteFormValues,
 } from "../../_utils/validation";
-
 import { ColorSelector } from "../color-selector";
 import { StickyPriceHeader } from "../sticky-price-header";
 import { AddedToCartActions } from "./added-to-cart-actions";
@@ -352,6 +351,15 @@ export function ModelForm({
 									</Card>
 								)}
 							</div>
+
+							{/* Quote Summary with submit button - Duplicate for better UX at end of form */}
+							<QuoteSummary
+								basePrice={model.basePrice}
+								calculatedPrice={calculatedPrice}
+								error={error}
+								isCalculating={isCalculating}
+								justAddedToCart={justAddedToCart}
+							/>
 
 							{/* ✅ Show success actions after adding to cart */}
 							{justAddedToCart && (
