@@ -273,7 +273,6 @@ export function ModelForm({
 							<QuoteSummary
 								basePrice={model.basePrice}
 								calculatedPrice={calculatedPrice}
-								currency={currency}
 								error={error}
 								isCalculating={isCalculating}
 								justAddedToCart={justAddedToCart}

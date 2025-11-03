@@ -13,11 +13,11 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { formatCurrency } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { useTenantConfig } from "@/providers/tenant-config-provider";
 
 type QuoteSummaryProps = {
 	basePrice: number;
 	calculatedPrice?: number;
-	currency: string;
 	error?: string;
 	isCalculating?: boolean;
 	justAddedToCart?: boolean;
@@ -38,11 +38,11 @@ const FIELD_LABELS: Record<string, string> = {
 export function QuoteSummary({
 	basePrice,
 	calculatedPrice,
-	currency,
 	error,
 	isCalculating,
 	justAddedToCart = false,
 }: QuoteSummaryProps) {
+	const tenantConfig = useTenantConfig();
 	const {
 		formState: { errors, isValid },
 	} = useFormContext();
@@ -147,11 +147,7 @@ export function QuoteSummary({
 						hasValidCalculation ? "text-primary" : "text-foreground",
 					)}
 				>
-					{formatCurrency(displayPrice, {
-						currency,
-						decimals: 0,
-						locale: "es-CO",
-					})}
+					{formatCurrency(displayPrice, { context: tenantConfig })}
 				</span>
 				<span className="text-muted-foreground text-xs">
 					{hasValidCalculation ? "Precio calculado" : "Precio base estimado"}

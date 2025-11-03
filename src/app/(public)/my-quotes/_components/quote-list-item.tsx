@@ -17,12 +17,13 @@
 import { Copy, Edit3, Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { formatCurrency } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import { formatCurrency } from "@/lib/format";
 import { cn, formatDate } from "@/lib/utils";
+import { useTenantConfig } from "@/providers/tenant-config-provider";
 import type { QuoteListItemSchema } from "@/server/api/routers/quote/quote.schemas";
 import { getStatusCTA } from "../_utils/status-config";
 import { QuoteStatusBadge } from "./quote-status-badge";
@@ -32,6 +33,7 @@ type QuoteListItemProps = {
 };
 
 export function QuoteListItem({ quote }: QuoteListItemProps) {
+	const tenantConfig = useTenantConfig();
 	const router = useRouter();
 	const [isPending, startTransition] = useTransition();
 	const [loadingAction, setLoadingAction] = useState<string | null>(null);
@@ -146,11 +148,7 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
 					<div className="text-right">
 						<div className="text-muted-foreground text-sm">Total</div>
 						<div className="font-bold text-lg">
-							{formatCurrency(quote.total, {
-								currency: quote.currency,
-								decimals: quote.currency === "USD" ? 2 : 0,
-								locale: quote.currency === "USD" ? "es-PA" : "es-CO",
-							})}
+							{formatCurrency(quote.total, { context: tenantConfig })}
 						</div>
 					</div>
 
