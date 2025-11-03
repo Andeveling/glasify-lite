@@ -1,0 +1,71 @@
+{
+	"procedure": "cart.validateGlassCompatibility",
+	"type": "query",
+	"description": "Check if a glass type is compatible with a specific model (used for client-side validation before submit)",
+	"input": {
+		"type": "object",
+		"required": ["modelId", "glassTypeId"],
+		"properties": {
+			"modelId": {
+				"type": "string",
+				"format": "uuid",
+				"description": "ID of the model to check compatibility against"
+			},
+			"glassTypeId": {
+				"type": "string",
+				"format": "uuid",
+				"description": "ID of the glass type to validate"
+			}
+		}
+	},
+	"output": {
+		"type": "object",
+		"properties": {
+			"compatible": {
+				"type": "boolean",
+				"description": "True if glass type is compatible with model"
+			},
+			"message": {
+				"type": "string",
+				"description": "User-friendly message (Spanish) explaining result"
+			}
+		}
+	},
+	"errors": {
+		"NOT_FOUND": [
+			{
+				"code": "MODEL_NOT_FOUND",
+				"message": "Modelo no encontrado"
+			},
+			{
+				"code": "GLASS_TYPE_NOT_FOUND",
+				"message": "Tipo de vidrio no encontrado"
+			}
+		]
+	},
+	"authorization": {
+		"required": false,
+		"note": "Public query - no authentication needed"
+	},
+	"validation": {
+		"server": [
+			"Verify model exists",
+			"Verify glass type exists",
+			"Query ModelGlassType junction table"
+		]
+	},
+	"performance": {
+		"expected": "<100ms (simple junction table lookup)",
+		"caching": "5 minute cache (glass compatibility rarely changes)"
+	},
+	"example": {
+		"input": {
+			"modelId": "clq1234567890",
+			"glassTypeId": "clq9876543210"
+		},
+		"output": {
+			"compatible": true,
+			"message": "Este vidrio es compatible con el modelo seleccionado"
+		}
+	}
+}
