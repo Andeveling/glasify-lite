@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { BackLink } from "@/components/ui/back-link";
 import { api } from "@/trpc/server-client";
 import { ModelFormWrapper } from "./_components/form/model-form-wrapper";
 import { ModelFormSkeleton } from "./_components/model-form-skeleton";
@@ -21,8 +22,12 @@ async function ModelPageContent({ modelId }: { modelId: string }) {
 	// Render with Suspense boundaries for secondary data
 	return (
 		<div className="min-h-screen bg-muted/30">
-			<div className="container mx-auto max-w-7xl px-3 py-4 sm:px-4 sm:py-8">
-				<div className="flex flex-col">
+			<div className="container mx-auto max-w-7xl px-3 py-4 sm:px-4 sm:py-8 space-x-2">
+				{/* Back navigation */}
+				<BackLink href="/catalog" icon="chevron" variant="link">
+					Volver al Catálogo
+				</BackLink>
+				<div className="flex flex-col gap-4">
 					{/* Form - Full width on mobile, right column on desktop */}
 					<ModelFormWrapper serverModel={serverModel} />
 				</div>

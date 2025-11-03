@@ -4,6 +4,7 @@ En las vistas de catálogo y el formulario de modelo, se ha identificado la ause
 
 **Recomendación:**
 - Agregar botones de navegación hacia atrás en estas vistas para mejorar la experiencia del usuario.
+  `/src/components/ui/back-link.tsx`
 
 ### Observación sobre la búsqueda de rangos de medidas y direcciones de apertura
 
