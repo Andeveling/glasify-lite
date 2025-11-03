@@ -12,31 +12,37 @@ import logger from "@/lib/logger";
 import { updateTenantConfigSchema } from "../../../schemas/tenant.schema";
 import { getTenantConfig, updateTenantConfig } from "../../../utils/tenant";
 import { updateBrandingSchema } from "../../schemas/branding.schema";
-import {
-	adminProcedure,
-	createTRPCRouter,
-	protectedProcedure,
-	publicProcedure,
-} from "../../trpc";
+import { adminProcedure, createTRPCRouter, publicProcedure } from "../../trpc";
 
 export const tenantConfigRouter = createTRPCRouter({
 	/**
 	 * Get the singleton TenantConfig
+	 *
+	 * Changed from protectedProcedure to publicProcedure because:
+	 * - Used by public components (CartIndicator, price formatters)
+	 * - Contains non-sensitive data (currency, quote validity, business name)
+	 * - No security risk exposing this information
 	 */
-	get: protectedProcedure.query(() => getTenantConfig()),
+	get: publicProcedure.query(() => getTenantConfig()),
 
 	/**
 	 * Get only currency from TenantConfig
+	 *
+	 * Changed from protectedProcedure to publicProcedure because:
+	 * - Currency is needed for price display on public pages
+	 * - Non-sensitive information
 	 */
-	getCurrency: protectedProcedure.query(async () => {
+	getCurrency: publicProcedure.query(async () => {
 		const config = await getTenantConfig();
 		return config.currency;
 	}),
 
 	/**
 	 * Get only quote validity days from TenantConfig
+	 *
+	 * Remains publicProcedure - shown to users before they create quotes
 	 */
-	getQuoteValidityDays: protectedProcedure.query(async () => {
+	getQuoteValidityDays: publicProcedure.query(async () => {
 		const config = await getTenantConfig();
 		return config.quoteValidityDays;
 	}),
@@ -164,7 +170,7 @@ export const tenantConfigRouter = createTRPCRouter({
 	 */
 	uploadLogo: adminProcedure
 		.input(z.object({ file: z.instanceof(File) }))
-		.mutation(async ({ input }) => {
+		.mutation(async ({ input: _input }) => {
 			// TODO: Implement when logoUrl field is added to TenantConfig schema
 			throw new Error("Logo upload not yet implemented in schema");
 		}),

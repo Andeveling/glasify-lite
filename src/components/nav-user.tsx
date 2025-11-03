@@ -1,7 +1,7 @@
 "use client";
 
 import { LogOut } from "lucide-react";
-import { handleSignOut } from "@/app/(public)/_components/_layout/actions";
+import { handleSignOut } from "@/app/_actions/auth.actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
 	DropdownMenu,
@@ -71,9 +71,13 @@ export function NavUser({
 							</div>
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem onClick={handleSignOut}>
-							<LogOut />
-							Cerrar sesión
+						<DropdownMenuItem asChild>
+							<form action={handleSignOut}>
+								<button className="flex w-full items-center" type="submit">
+									<LogOut />
+									Cerrar sesión
+								</button>
+							</form>
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>

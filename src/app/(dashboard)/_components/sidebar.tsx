@@ -1,5 +1,6 @@
 import { FileText, Home, LogOut, Package, Settings } from "lucide-react";
 import Link from "next/link";
+import { handleSignOut } from "@/app/_actions/auth.actions";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -89,14 +90,7 @@ export default function DashboardSidebar({ session }: DashboardSidebarProps) {
 								</div>
 							</div>
 							<Separator className="my-2" />
-							<form
-								action={async () => {
-									"use server";
-									const { auth: betterAuth } = await import("@/server/auth");
-									const { headers } = await import("next/headers");
-									await betterAuth.api.signOut({ headers: await headers() });
-								}}
-							>
+							<form action={handleSignOut}>
 								<Button
 									className="w-full justify-start"
 									size="sm"

@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { CartIndicator } from "@/app/_components/cart-indicator";
 import { RoleBasedNav } from "@/app/_components/role-based-nav";
-import { auth } from "@/server/auth";
+import { getServerSession } from "@/lib/server-auth";
 import { GuestMenu } from "./guest-menu";
 import { UserMenu } from "./user-menu";
 
@@ -15,11 +15,12 @@ import { UserMenu } from "./user-menu";
  * - Role-based navigation menu
  * - Shopping cart indicator
  * - User menu (authenticated) or guest menu
+ *
+ * Note: Uses getServerSession() helper which properly handles
+ * Next.js 16 caching and revalidation after logout/login
  */
 export default async function Header() {
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
+	const session = await getServerSession();
 
 	return (
 		<header className="sticky top-0 z-50 border-border border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
