@@ -1,11 +1,11 @@
 "use client";
 
 import { Check, Sparkles } from "lucide-react";
-import { formatCurrency } from "@/app/_utils/format-currency.util";
 import { Label } from "@/components/ui/label";
 import { PerformanceRatingBadge } from "@/components/ui/performance-rating-badge";
 import { PriceImpactBadge } from "@/components/ui/price-impact-badge";
 import { RadioGroupItem } from "@/components/ui/radio-group";
+import { formatCurrency } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { PerformanceRating } from "@/server/api/routers/catalog";
 import type { GlassTypeOption } from "../_hooks/use-glass-type-options";

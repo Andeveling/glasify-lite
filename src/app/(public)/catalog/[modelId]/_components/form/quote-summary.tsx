@@ -8,10 +8,10 @@ import {
 	XCircle,
 } from "lucide-react";
 import { useFormContext } from "react-hook-form";
-import { formatCurrency } from "@/app/_utils/format-currency.util";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { formatCurrency } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 type QuoteSummaryProps = {

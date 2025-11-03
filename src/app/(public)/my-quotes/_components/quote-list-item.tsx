@@ -17,7 +17,7 @@
 import { Copy, Edit3, Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { formatCurrency } from "@/app/_utils/format-currency.util";
+import { formatCurrency } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";

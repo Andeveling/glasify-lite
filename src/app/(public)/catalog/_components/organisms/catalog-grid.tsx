@@ -1,5 +1,5 @@
 import { ModelCard } from "@views/catalog/_components/molecules/model-card";
-import { formatCurrency } from "@/app/_utils/format-currency.util";
+import { formatCurrency } from "@/lib/format";
 
 type Model = {
 	accessoryPrice: number | null;

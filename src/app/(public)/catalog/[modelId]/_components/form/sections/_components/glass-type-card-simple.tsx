@@ -2,10 +2,10 @@
 
 import { Check } from "lucide-react";
 import { motion, type Variants } from "motion/react";
-import { formatCurrency } from "@/app/_utils/format-currency.util";
 import { Label } from "@/components/ui/label";
 import { PerformanceRatingBadge } from "@/components/ui/performance-rating-badge";
 import { RadioGroupItem } from "@/components/ui/radio-group";
+import { formatCurrency } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { PerformanceRating } from "@/server/api/routers/catalog";
 import type { GlassTypeOption } from "../_hooks/use-glass-type-options";

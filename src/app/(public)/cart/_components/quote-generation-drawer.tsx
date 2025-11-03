@@ -25,7 +25,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { generateQuoteFromCartAction } from "@/app/_actions/quote.actions";
-import { formatCurrency } from "@/app/_utils/format-currency.util";
 import { DeliveryAddressPicker } from "@/app/(dashboard)/admin/quotes/_components/delivery-address-picker";
 import { useCart } from "@/app/(public)/cart/_hooks/use-cart";
 import { Button } from "@/components/ui/button";
@@ -52,6 +51,8 @@ import { PhoneInput } from "@/components/ui/phone-input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Spinner } from "@/components/ui/spinner";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { formatCurrency } from "@/lib/format";
+import { useTenantConfig } from "@/providers/tenant-config-provider";
 
 // ============================================================================
 // Validation Schema
@@ -127,6 +128,7 @@ export type QuoteGenerationDrawerProps = {
  * ```
  */
 export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
+	const tenantConfig = useTenantConfig();
 	const router = useRouter();
 	const { items: cartItems, clearCart, summary } = useCart();
 	const [isOpen, setIsOpen] = useState(false);
@@ -262,9 +264,7 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
 											<p className="font-medium text-sm">Total</p>
 											<p className="font-bold text-lg">
 												{formatCurrency(summary.total, {
-													currency: summary.currency,
-													decimals: 0,
-													locale: "es-CO",
+													context: tenantConfig,
 												})}
 											</p>
 										</div>

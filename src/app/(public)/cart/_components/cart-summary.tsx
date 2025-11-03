@@ -19,7 +19,6 @@
 
 import { ShoppingCart } from "lucide-react";
 import { useState } from "react";
-import { formatCurrency } from "@/app/_utils/format-currency.util";
 import { SignInModal } from "@/components/signin-modal";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,7 +29,9 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { useSession } from "@/lib/auth-client";
+import { formatCurrency } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { useTenantConfig } from "@/providers/tenant-config-provider";
 import type { CartSummary as CartSummaryType } from "@/types/cart.types";
 import { QuoteGenerationDrawer } from "./quote-generation-drawer";
 
@@ -68,6 +69,7 @@ export function CartSummary({
 	isGenerating = false,
 	className,
 }: CartSummaryProps) {
+	const tenantConfig = useTenantConfig();
 	const [showSignInModal, setShowSignInModal] = useState(false);
 	const { data: session, isPending: isLoading } = useSession();
 	const isAuthenticated = !!session?.user;
@@ -111,11 +113,7 @@ export function CartSummary({
 						<span className="font-medium text-base">Total</span>
 						<div className="text-right">
 							<p className="font-bold text-2xl">
-								{formatCurrency(summary.total, {
-									currency: summary.currency,
-									decimals: summary.currency === "USD" ? 2 : 0,
-									locale: summary.currency === "USD" ? "es-PA" : "es-CO",
-								})}
+								{formatCurrency(summary.total, { context: tenantConfig })}
 							</p>
 							<p className="text-muted-foreground text-xs">IVA incluido</p>
 						</div>

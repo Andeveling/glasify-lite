@@ -19,10 +19,11 @@
 
 import { Check, Minus, Pencil, Plus, Trash2, X } from "lucide-react";
 import { memo, useState, useTransition } from "react";
-import { formatCurrency } from "@/app/_utils/format-currency.util";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { formatCurrency } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { useTenantConfig } from "@/providers/tenant-config-provider";
 import type { CartItem as CartItemType } from "@/types/cart.types";
 import { CART_CONSTANTS } from "@/types/cart.types";
 import { DeleteCartItemDialog } from "./delete-cart-item-dialog";
@@ -43,9 +44,6 @@ export type CartItemProps = {
 
 	/** Callback when item is removed */
 	onRemove?: (itemId: string) => void;
-
-	/** Currency code (COP for Colombia, USD for Panama) */
-	currency?: string;
 
 	/** Whether updates are in progress */
 	isUpdating?: boolean;
@@ -78,9 +76,9 @@ const CartItemComponent = ({
 	onUpdateName,
 	onUpdateQuantity,
 	onRemove,
-	currency = "COP",
 	isUpdating = false,
 }: CartItemProps) => {
+	const tenantConfig = useTenantConfig();
 	const [editedName, setEditedName] = useState(item.name);
 	const [editMode, setEditMode] = useState(false);
 	const [nameError, setNameError] = useState<string | null>(null);
@@ -315,11 +313,7 @@ const CartItemComponent = ({
 				</fieldset>
 				<span className="text-muted-foreground text-xs">
 					Precio unitario:{" "}
-					{formatCurrency(item.unitPrice, {
-						currency,
-						decimals: currency === "USD" ? 2 : 0,
-						locale: currency === "USD" ? "es-PA" : "es-CO",
-					})}
+					{formatCurrency(item.unitPrice, { context: tenantConfig })}
 				</span>
 			</div>
 
@@ -328,11 +322,7 @@ const CartItemComponent = ({
 				<div className="text-right">
 					<p className="text-muted-foreground text-sm">Subtotal</p>
 					<p className="font-semibold text-lg" data-testid="subtotal">
-						{formatCurrency(item.subtotal, {
-							currency,
-							decimals: currency === "USD" ? 2 : 0,
-							locale: currency === "USD" ? "es-PA" : "es-CO",
-						})}
+						{formatCurrency(item.subtotal, { context: tenantConfig })}
 					</p>
 				</div>
 			</div>
@@ -392,10 +382,7 @@ export const CartItem = memo(CartItemComponent, (prevProps, nextProps) => {
 	}
 
 	// Re-render if state props changed
-	if (
-		prevProps.isUpdating !== nextProps.isUpdating ||
-		prevProps.currency !== nextProps.currency
-	) {
+	if (prevProps.isUpdating !== nextProps.isUpdating) {
 		return false; // Props changed, re-render
 	}
 

@@ -4,7 +4,6 @@ import { CheckCircle2, Maximize2, Package, Ruler, Wrench } from "lucide-react";
 import { useMemo } from "react";
 import type { Control } from "react-hook-form";
 import { useFormContext } from "react-hook-form";
-import { formatCurrency } from "@/app/_utils/format-currency.util";
 import { FormSection } from "@/components/form-section";
 import {
 	FormControl,
@@ -14,6 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { formatCurrency } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { ServiceOutput } from "@/server/api/routers/catalog";
 

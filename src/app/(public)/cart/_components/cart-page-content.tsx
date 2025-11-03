@@ -133,7 +133,6 @@ export function CartPageContent() {
 								key={item.id}
 							>
 								<CartItem
-									currency={summary.currency}
 									item={item}
 									onRemove={handleRemoveItem}
 									onUpdateName={handleUpdateName}

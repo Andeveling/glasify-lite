@@ -1,6 +1,7 @@
 import Image from "next/image";
-import { formatCurrency } from "@/app/_utils/format-currency.util";
 import { Card, CardContent } from "@/components/ui/card";
+import { formatCurrency } from "@/lib/format";
+import { useTenantConfig } from "@/providers/tenant-config-provider";
 import type { Model } from "../_types/model.types";
 
 type ModelInfoProps = {
@@ -8,6 +9,8 @@ type ModelInfoProps = {
 };
 
 export function ModelInfo({ model }: ModelInfoProps) {
+	const tenantConfig = useTenantConfig();
+
 	return (
 		<Card className="overflow-hidden p-0">
 			{/* Image Section */}
@@ -29,7 +32,7 @@ export function ModelInfo({ model }: ModelInfoProps) {
 						Precio Base
 					</p>
 					<p className="font-bold text-3xl text-foreground">
-						{formatCurrency(model.basePrice, { currency: model.currency })}
+						{formatCurrency(model.basePrice, { context: tenantConfig })}
 					</p>
 				</div>
 			</CardContent>
