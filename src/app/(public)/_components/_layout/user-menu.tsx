@@ -1,8 +1,9 @@
 "use client";
 
-import { FileText, LogOut, Moon, Sun, User } from "lucide-react";
+import { FileText, Loader2, LogOut, Moon, Sun, User } from "lucide-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -21,20 +22,44 @@ type UserMenuProps = {
 
 export function UserMenu({ userName, userEmail }: UserMenuProps) {
 	const { theme, setTheme } = useTheme();
+	const [isSigningOut, setIsSigningOut] = useState(false);
+	const [isPending, startTransition] = useTransition();
 
 	const onSignOut = async () => {
-		await handleSignOut();
+		setIsSigningOut(true);
+		startTransition(async () => {
+			try {
+				await handleSignOut();
+			} catch (error) {
+				// Error handling - redirect should happen anyway
+				console.error("Sign out error:", error);
+			} finally {
+				// This might not execute if redirect happens first
+				setIsSigningOut(false);
+			}
+		});
 	};
 
 	const toggleTheme = () => {
 		setTheme(theme === "dark" ? "light" : "dark");
 	};
 
+	const isLoading = isSigningOut || isPending;
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button aria-label="Menú de usuario" size="icon" variant="outline">
-					<User className="h-5 w-5" />
+				<Button
+					aria-label="Menú de usuario"
+					disabled={isLoading}
+					size="icon"
+					variant="outline"
+				>
+					{isLoading ? (
+						<Loader2 className="h-5 w-5 animate-spin" />
+					) : (
+						<User className="h-5 w-5" />
+					)}
 					<span className="sr-only">Menú de usuario</span>
 				</Button>
 			</DropdownMenuTrigger>
@@ -52,14 +77,14 @@ export function UserMenu({ userName, userEmail }: UserMenuProps) {
 					</div>
 				</DropdownMenuLabel>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem asChild>
+				<DropdownMenuItem asChild disabled={isLoading}>
 					<Link className="w-full cursor-pointer" href="/my-quotes">
 						<FileText className="mr-2 h-4 w-4" />
 						<span>Mis Cotizaciones</span>
 					</Link>
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem onClick={toggleTheme}>
+				<DropdownMenuItem disabled={isLoading} onClick={toggleTheme}>
 					{theme === "dark" ? (
 						<Sun className="mr-2 h-4 w-4" />
 					) : (
@@ -68,9 +93,18 @@ export function UserMenu({ userName, userEmail }: UserMenuProps) {
 					<span>Cambiar a {theme === "dark" ? "Claro" : "Oscuro"}</span>
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem onClick={onSignOut}>
-					<LogOut className="mr-2 h-4 w-4" />
-					<span>Cerrar Sesión</span>
+				<DropdownMenuItem disabled={isLoading} onClick={onSignOut}>
+					{isLoading ? (
+						<>
+							<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+							<span>Cerrando sesión...</span>
+						</>
+					) : (
+						<>
+							<LogOut className="mr-2 h-4 w-4" />
+							<span>Cerrar Sesión</span>
+						</>
+					)}
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

@@ -11,6 +11,7 @@
  * - Loading states and redirecting overlay
  * - Cart summary visible in drawer
  * - Auto-closes and redirects on success
+ * - Real-time session verification (prevents stale cache issues)
  *
  * @module app/(public)/cart/_components/quote-generation-drawer
  */
@@ -20,7 +21,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -51,6 +52,7 @@ import { PhoneInput } from "@/components/ui/phone-input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Spinner } from "@/components/ui/spinner";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { useSession } from "@/lib/auth-client";
 import { formatCurrency } from "@/lib/format";
 import { useTenantConfig } from "@/providers/tenant-config-provider";
 
@@ -135,6 +137,20 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [isRedirecting, setIsRedirecting] = useState(false);
 	const isDesktop = useMediaQuery("(min-width: 768px)");
+
+	// ✅ Session verification - prevents stale cache issues
+	const { data: session, error: sessionError } = useSession();
+
+	// ✅ Effect: Close drawer if session is lost while drawer is open
+	useEffect(() => {
+		const hasValidSession = !!session?.user && !sessionError;
+
+		// If drawer is open but session is invalid, close it
+		if (isOpen && !hasValidSession) {
+			setIsOpen(false);
+			toast.error("Sesión expirada. Por favor, inicia sesión nuevamente.");
+		}
+	}, [session, sessionError, isOpen]);
 
 	const form = useForm<QuoteGenerationFormValues>({
 		defaultValues: {

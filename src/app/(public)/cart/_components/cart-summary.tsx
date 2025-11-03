@@ -11,6 +11,7 @@
  * - Empty cart detection
  * - Loading/disabled states
  * - Authentication check before quote generation
+ * - Real-time session verification (no stale cache)
  *
  * @module app/(public)/cart/_components/cart-summary
  */
@@ -18,7 +19,7 @@
 "use client";
 
 import { ShoppingCart } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SignInModal } from "@/components/signin-modal";
 import { Button } from "@/components/ui/button";
 import {
@@ -71,21 +72,42 @@ export function CartSummary({
 }: CartSummaryProps) {
 	const tenantConfig = useTenantConfig();
 	const [showSignInModal, setShowSignInModal] = useState(false);
-	const { data: session, isPending: isLoading } = useSession();
-	const isAuthenticated = !!session?.user;
+
+	// ✅ Better Auth session hook with real-time updates
+	const { data: session, isPending: isSessionLoading, error } = useSession();
+
+	// ✅ Track authentication state - force re-check on session changes
+	const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+	// ✅ Effect: Update auth state when session changes (handles logout/login)
+	useEffect(() => {
+		// Session is valid if user exists and no error
+		const hasValidSession = !!session?.user && !error;
+		setIsAuthenticated(hasValidSession);
+	}, [session, error]);
 
 	/**
 	 * Handle "Generate Quote" button click
 	 *
+	 * Verifies authentication in real-time before proceeding
 	 * Opens sign-in modal if unauthenticated
+	 * Prevents event propagation to stop drawer from opening
 	 */
-	const handleGenerateQuote = () => {
-		// Check authentication before proceeding
-		if (!isAuthenticated) {
-			// Open sign-in modal instead of redirecting
+	const handleGenerateQuote = (event: React.MouseEvent<HTMLButtonElement>) => {
+		// ✅ Real-time authentication check (not cached)
+		const hasValidSession = !!session?.user && !error;
+
+		if (!hasValidSession) {
+			// Prevent drawer from opening
+			event.preventDefault();
+			event.stopPropagation();
+
+			// Open sign-in modal for unauthenticated users
 			setShowSignInModal(true);
 			return;
 		}
+
+		// User is authenticated - drawer will open normally via trigger
 	};
 
 	return (
@@ -121,32 +143,20 @@ export function CartSummary({
 				</CardContent>
 
 				<CardFooter className="flex-col gap-2">
-					{isAuthenticated ? (
-						/* Authenticated: Show drawer trigger */
-						<QuoteGenerationDrawer
-							trigger={
-								<Button
-									className="w-full"
-									disabled={summary.isEmpty || isGenerating || isLoading}
-									size="lg"
-									type="button"
-								>
-									{isGenerating ? "Generando..." : "Generar cotización"}
-								</Button>
-							}
-						/>
-					) : (
-						/* Unauthenticated: Show button that opens sign-in modal */
-						<Button
-							className="w-full"
-							disabled={summary.isEmpty || isGenerating || isLoading}
-							onClick={handleGenerateQuote}
-							size="lg"
-							type="button"
-						>
-							{isGenerating ? "Generando..." : "Generar cotización"}
-						</Button>
-					)}
+					{/* Unified button UI with auth check on click */}
+					<QuoteGenerationDrawer
+						trigger={
+							<Button
+								className="w-full"
+								disabled={summary.isEmpty || isGenerating || isSessionLoading}
+								onClick={handleGenerateQuote}
+								size="lg"
+								type="button"
+							>
+								{isGenerating ? "Generando..." : "Generar cotización"}
+							</Button>
+						}
+					/>
 
 					{/* Auth hint for unauthenticated users */}
 					{isAuthenticated || summary.isEmpty ? null : (
