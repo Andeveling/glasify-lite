@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { FormLabel } from "@/components/ui/form";
 import { ValidationIndicator } from "@/components/validation-indicator";
+import { cn } from "@/lib/utils";
 
 /**
  * Props for DimensionFieldHeader component
@@ -45,10 +46,12 @@ export function DimensionFieldHeader({
 }: DimensionFieldHeaderProps) {
 	return (
 		<div className="flex items-center justify-between gap-2">
-			<div className="flex items-center gap-2">
-				<FormLabel className={labelClassName}>{label}</FormLabel>
+			<div className="flex items-center gap-2 text-base">
+				<FormLabel className={labelClassName}>
+					<span className="text-base">{label}</span>
+				</FormLabel>
 				{showInlineRangeHint && (
-					<span className="text-muted-foreground text-xs">
+					<span className="text-muted-foreground">
 						({min} - {max} mm)
 					</span>
 				)}
