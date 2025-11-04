@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import { BackLink } from "@/components/ui/back-link";
 import { CatalogHeader } from "./_components/molecules/catalog-header";
 import { CatalogContent } from "./_components/organisms/catalog-content";
 import { CatalogFilterBarWrapper } from "./_components/organisms/catalog-filter-bar-wrapper";

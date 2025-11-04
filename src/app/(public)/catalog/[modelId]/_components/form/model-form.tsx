@@ -264,8 +264,8 @@ export function ModelForm({
 				<div ref={formContainerRef}>
 					{/* Flexbox layout: 1/3 (sticky) + vertical bar + 2/3 (form) en desktop, stack en mobile */}
 					<div className="flex w-full flex-col gap-6 md:flex-row">
-						{/* Left column: Sticky summary (1/3 width en desktop) */}
-						<div className="sticky top-18 w-full space-y-4 self-start md:w-1/3">
+						{/* Left column: Sticky summary (1/3 width en desktop) - No sticky en mobile para evitar z-index conflicts */}
+						<div className="w-full space-y-4 md:sticky md:top-18 md:w-1/3 md:self-start">
 							<StickyPriceHeader
 								basePrice={model.basePrice}
 								breakdown={priceBreakdown}
@@ -280,13 +280,15 @@ export function ModelForm({
 								currency={currency}
 								currentPrice={calculatedPrice ?? model.basePrice}
 							/>
-							<QuoteSummary
-								basePrice={model.basePrice}
-								calculatedPrice={calculatedPrice}
-								error={error}
-								isCalculating={isCalculating}
-								justAddedToCart={justAddedToCart}
-							/>
+							<div className="hidden lg:block">
+								<QuoteSummary
+									basePrice={model.basePrice}
+									calculatedPrice={calculatedPrice}
+									error={error}
+									isCalculating={isCalculating}
+									justAddedToCart={justAddedToCart}
+								/>
+							</div>
 						</div>
 
 						{/* Vertical scroll progress bar - Minimal and subtle */}

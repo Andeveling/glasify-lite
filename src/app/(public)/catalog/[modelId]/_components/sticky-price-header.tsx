@@ -139,7 +139,12 @@ export function StickyPriceHeader({
 
 	return (
 		<motion.div animate="visible" initial="hidden" variants={containerVariants}>
-			<Card className={cn("sticky top-16 z-10 mt-0 p-4", className)}>
+			<Card
+				className={cn(
+					"relative mt-0 p-4 md:sticky md:top-16 md:z-10",
+					className,
+				)}
+			>
 				<div className="flex flex-col gap-4">
 					{/* Top section: Model Image - 4:3 aspect ratio */}
 					{configSummary.modelImageUrl && (

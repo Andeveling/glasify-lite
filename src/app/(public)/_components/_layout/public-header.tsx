@@ -1,4 +1,3 @@
-import { headers } from "next/headers";
 import Link from "next/link";
 import { CartIndicator } from "@/app/_components/cart-indicator";
 import { RoleBasedNav } from "@/app/_components/role-based-nav";
