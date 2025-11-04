@@ -7,7 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added - Scroll Progress Indicator for Quote Configuration Wizard (2025-11-01)
+### Added
+
+- **Edición de items del carrito con cambio de dimensiones y tipo de vidrio** (#019) (2025-01-11)
+  - Modal de edición de items con validación en tiempo real
+  - Cambio de dimensiones (ancho x alto) con validación de rangos (100-3000mm)
+  - Selector de tipo de vidrio con filtrado por compatibilidad del modelo
+  - Recálculo de precio solo al confirmar (optimización UX)
+  - Estados de carga con spinner y deshabilitación de inputs
+  - Error boundary para manejo de errores en español
+  - Skeleton loader para estados de carga
+  - Mejoras de accesibilidad: focus management, ARIA labels, navegación por teclado
+  - Tests: 6 integration tests + 13 E2E tests
+
+### Improved
+
+- **Modal de edición con componentes mejorados para consistencia UX** (#019-ENHANCEMENT) (2025-01-11)
+  - Reemplazado `Input` básico por `DimensionField` (reutilizado del catálogo)
+  - Agregado Combobox con búsqueda para selección de tipo de vidrio
+  - Mejora de consistencia UX entre catálogo y carrito
+  - Componente compacto optimizado para espacio del modal
+  - Mejor feedback visual de validación de dimensiones
+
+### Fixed
+
+- **Imágenes de modelos no se mostraban en el carrito** (#019-BUGFIX-001) (2025-01-11)
+  - Agregado `modelImageUrl` a `CreateCartItemInput` type
+  - Actualizado `prepareCartItemInput()` para incluir imagen del modelo
+  - Actualizado hook `useCart` para guardar `modelImageUrl` en sessionStorage
+  - Ahora todas las imágenes se muestran correctamente con fallback a placeholder
+
+- **Modal de edición mostraba precio actual como $ 0** (#019-BUGFIX-002) (2025-01-11)
+  - Agregado campo `subtotal` al tipo `CartItemWithRelations`
+  - Actualizado `adaptCartItemToEditFormat()` para incluir precio del item
+  - Simplificado cálculo de precio en el modal para usar `item.subtotal` directamente
+  - Ahora el indicador de precio muestra correctamente el subtotal formateado
+
+- Scroll Progress Indicator for Quote Configuration Wizard (2025-11-01)
 
 #### Summary
 - **Objetivo**: Mejorar orientación del usuario durante configuración mostrando progreso visual de pasos

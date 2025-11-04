@@ -42,6 +42,15 @@ export const listGlassSolutionsInput = z
 	})
 	.optional();
 
+export const getAvailableGlassTypesInput = z.object({
+	modelId: z.cuid("ID del modelo debe ser válido"),
+});
+
+export const validateGlassCompatibilityInput = z.object({
+	modelId: z.cuid("ID del modelo debe ser válido"),
+	glassTypeId: z.cuid("ID del tipo de vidrio debe ser válido"),
+});
+
 // ========================================
 // OUTPUT SCHEMAS
 // ========================================
@@ -213,6 +222,21 @@ export const glassTypeOutput = z.object({
 
 export const listGlassTypesOutput = z.array(glassTypeOutput);
 
+export const availableGlassTypeOutput = z.object({
+	id: z.string(),
+	name: z.string(),
+	pricePerSqm: z.number(),
+	thicknessMm: z.number(),
+	description: z.string().nullable(),
+});
+
+export const listAvailableGlassTypesOutput = z.array(availableGlassTypeOutput);
+
+export const glassCompatibilityOutput = z.object({
+	compatible: z.boolean(),
+	message: z.string(),
+});
+
 // ========================================
 // TYPE EXPORTS (para reutilizar en forms)
 // ========================================
@@ -231,3 +255,14 @@ export type GlassTypeSolutionOutput = z.infer<typeof glassTypeSolutionOutput>;
 export type ListGlassSolutionsOutput = z.infer<typeof listGlassSolutionsOutput>;
 export type GlassTypeOutput = z.infer<typeof glassTypeOutput>;
 export type ListGlassTypesOutput = z.infer<typeof listGlassTypesOutput>;
+export type GetAvailableGlassTypesInput = z.infer<
+	typeof getAvailableGlassTypesInput
+>;
+export type AvailableGlassTypeOutput = z.infer<typeof availableGlassTypeOutput>;
+export type ListAvailableGlassTypesOutput = z.infer<
+	typeof listAvailableGlassTypesOutput
+>;
+export type ValidateGlassCompatibilityInput = z.infer<
+	typeof validateGlassCompatibilityInput
+>;
+export type GlassCompatibilityOutput = z.infer<typeof glassCompatibilityOutput>;

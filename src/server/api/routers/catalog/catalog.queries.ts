@@ -2,7 +2,10 @@
 import logger from "@/lib/logger";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import {
+	getAvailableGlassTypesInput,
 	getModelByIdInput,
+	glassCompatibilityOutput,
+	listAvailableGlassTypesOutput,
 	listGlassSolutionsInput,
 	listGlassSolutionsOutput,
 	listGlassTypesInput,
@@ -12,6 +15,7 @@ import {
 	listServicesInput,
 	listServicesOutput,
 	modelDetailOutput,
+	validateGlassCompatibilityInput,
 } from "./catalog.schemas";
 import { serializeDecimalFields } from "./catalog.utils";
 
@@ -451,6 +455,137 @@ export const catalogQueries = createTRPCRouter({
 
 				throw new Error(
 					"No se pudieron cargar los servicios. Intente nuevamente.",
+				);
+			}
+		}),
+
+	/**
+	 * Get available glass types for a model
+	 * @public
+	 */
+	"get-available-glass-types": publicProcedure
+		.input(getAvailableGlassTypesInput)
+		.output(listAvailableGlassTypesOutput)
+		.query(async ({ ctx, input }) => {
+			try {
+				logger.info("Fetching glass types for model", {
+					modelId: input.modelId,
+				});
+
+				// Get model with compatible glass type IDs
+				const model = await ctx.db.model.findUnique({
+					where: {
+						id: input.modelId,
+					},
+					select: {
+						compatibleGlassTypeIds: true,
+					},
+				});
+
+				if (!model) {
+					throw new Error("Modelo no encontrado");
+				}
+
+				// Fetch glass types that are compatible with this model
+				const glassTypes = await ctx.db.glassType.findMany({
+					where: {
+						id: {
+							in: model.compatibleGlassTypeIds,
+						},
+					},
+					select: {
+						id: true,
+						name: true,
+						pricePerSqm: true,
+						thicknessMm: true,
+						description: true,
+					},
+					orderBy: {
+						pricePerSqm: "asc", // Cheapest first
+					},
+				});
+
+				// Serialize Decimal fields
+				const serializedGlassTypes = glassTypes.map((gt) => ({
+					id: gt.id,
+					name: gt.name,
+					pricePerSqm: gt.pricePerSqm.toNumber(),
+					thicknessMm: gt.thicknessMm,
+					description: gt.description,
+				}));
+
+				logger.info("Successfully fetched glass types for model", {
+					modelId: input.modelId,
+					count: serializedGlassTypes.length,
+				});
+
+				return serializedGlassTypes;
+			} catch (error) {
+				logger.error("Error fetching glass types for model", {
+					modelId: input.modelId,
+					error: error instanceof Error ? error.message : "Unknown error",
+				});
+
+				throw new Error(
+					"No se pudieron cargar los tipos de vidrio. Intente nuevamente.",
+				);
+			}
+		}),
+
+	/**
+	 * Validate if a glass type is compatible with a model
+	 * @public
+	 */
+	"validate-glass-compatibility": publicProcedure
+		.input(validateGlassCompatibilityInput)
+		.output(glassCompatibilityOutput)
+		.query(async ({ ctx, input }) => {
+			try {
+				logger.info("Validating glass compatibility", {
+					modelId: input.modelId,
+					glassTypeId: input.glassTypeId,
+				});
+
+				// Get model with compatible glass type IDs
+				const model = await ctx.db.model.findUnique({
+					where: {
+						id: input.modelId,
+					},
+					select: {
+						compatibleGlassTypeIds: true,
+					},
+				});
+
+				if (!model) {
+					throw new Error("Modelo no encontrado");
+				}
+
+				// Check if glass type ID is in the compatible list
+				const compatible = model.compatibleGlassTypeIds.includes(
+					input.glassTypeId,
+				);
+
+				logger.info("Glass compatibility validation result", {
+					modelId: input.modelId,
+					glassTypeId: input.glassTypeId,
+					compatible,
+				});
+
+				return {
+					compatible,
+					message: compatible
+						? "Este vidrio es compatible"
+						: "Este vidrio no es compatible con el modelo",
+				};
+			} catch (error) {
+				logger.error("Error validating glass compatibility", {
+					modelId: input.modelId,
+					glassTypeId: input.glassTypeId,
+					error: error instanceof Error ? error.message : "Unknown error",
+				});
+
+				throw new Error(
+					"No se pudo validar la compatibilidad del vidrio. Intente nuevamente.",
 				);
 			}
 		}),

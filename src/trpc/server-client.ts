@@ -17,18 +17,18 @@ import { createQueryClient } from "./query-client";
  * The headers are passed as arguments to the cached createContext function.
  */
 const createContext = async () => {
-  const heads = new Headers(await headers());
-  heads.set("x-trpc-source", "rsc");
+	const heads = new Headers(await headers());
+	heads.set("x-trpc-source", "rsc");
 
-  return createTRPCContext({
-    headers: heads,
-  });
+	return createTRPCContext({
+		headers: heads,
+	});
 };
 
 const getQueryClient = cache(createQueryClient);
 const caller = createCaller(createContext);
 
 export const { trpc: api, HydrateClient } = createHydrationHelpers<AppRouter>(
-  caller,
-  getQueryClient
+	caller,
+	getQueryClient,
 );

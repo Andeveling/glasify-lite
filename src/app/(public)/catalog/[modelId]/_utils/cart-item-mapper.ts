@@ -22,6 +22,7 @@ type PrepareCartItemParams = {
 	additionalServiceIds: string[];
 	calculatedPrice: number | undefined;
 	colorId: string | undefined;
+	colorSurchargePercentage?: number; // Color surcharge from ModelColor
 	glassTypeId: string;
 	heightMm: number;
 	inferredSolution: InferredSolution;
@@ -55,6 +56,7 @@ export function prepareCartItemInput({
 	additionalServiceIds,
 	calculatedPrice,
 	colorId,
+	colorSurchargePercentage,
 	glassTypeId,
 	heightMm,
 	inferredSolution,
@@ -66,10 +68,12 @@ export function prepareCartItemInput({
 	return {
 		additionalServiceIds,
 		colorId,
+		colorSurchargePercentage,
 		glassTypeId,
 		glassTypeName: selectedGlassType?.name ?? "",
 		heightMm,
 		modelId: model.id,
+		modelImageUrl: model.imageUrl,
 		modelName: model.name,
 		quantity,
 		solutionId: inferredSolution?.id || undefined,

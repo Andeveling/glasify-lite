@@ -112,7 +112,7 @@ export function CartSummary({
 
 	return (
 		<>
-			<Card className={cn("sticky top-4", className)}>
+			<Card className={cn("sticky top-18", className)}>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
 						<ShoppingCart className="size-5" />

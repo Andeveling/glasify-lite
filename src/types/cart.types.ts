@@ -25,6 +25,9 @@ export type CartItem = {
 	/** Denormalized model name for display */
 	modelName: string;
 
+	/** Model image URL for display (optional) */
+	modelImageUrl?: string | null;
+
 	/** Reference to GlassType.id */
 	glassTypeId: string;
 
@@ -51,6 +54,9 @@ export type CartItem = {
 
 	/** Optional reference to ModelColor.id */
 	colorId?: string;
+
+	/** Color surcharge percentage (snapshot from ModelColor at cart creation) */
+	colorSurchargePercentage?: number;
 
 	/** User-editable name (auto-generated: "VEKA-001") */
 	name: string;
@@ -113,6 +119,7 @@ export type CartSummary = {
 export type CreateCartItemInput = {
 	modelId: string;
 	modelName: string;
+	modelImageUrl?: string | null;
 	glassTypeId: string;
 	glassTypeName: string;
 	solutionId?: string;
@@ -122,6 +129,8 @@ export type CreateCartItemInput = {
 	quantity?: number;
 	additionalServiceIds?: string[];
 	colorId?: string;
+	/** Color surcharge percentage (snapshot from ModelColor at cart creation) */
+	colorSurchargePercentage?: number;
 };
 
 /**

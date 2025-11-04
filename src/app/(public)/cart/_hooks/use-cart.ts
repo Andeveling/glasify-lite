@@ -49,6 +49,9 @@ type UseCartReturn = {
 	/** Update existing item */
 	updateItem: (id: string, updates: Omit<UpdateCartItemInput, "id">) => void;
 
+	/** Replace entire cart item (for complete updates including dimensions, glassType, etc.) */
+	replaceItem: (id: string, item: CartItem) => void;
+
 	/** Remove item from cart */
 	removeItem: (id: string) => void;
 
@@ -142,6 +145,7 @@ export function useCart(): UseCartReturn {
 			const newItem: CartItem = {
 				additionalServiceIds: input.additionalServiceIds ?? [],
 				colorId: input.colorId,
+				colorSurchargePercentage: input.colorSurchargePercentage,
 				createdAt: new Date().toISOString(),
 				dimensions: {
 					heightMm: input.heightMm,
@@ -152,6 +156,7 @@ export function useCart(): UseCartReturn {
 				heightMm: input.heightMm,
 				id: itemId,
 				modelId: input.modelId,
+				modelImageUrl: input.modelImageUrl,
 				modelName: input.modelName,
 				name: itemName,
 				quantity,
@@ -161,6 +166,17 @@ export function useCart(): UseCartReturn {
 				unitPrice: input.unitPrice,
 				widthMm: input.widthMm,
 			};
+
+			// 🔍 DEBUG: Log item being added with services
+			console.log("🔍 [Cart] Adding item to cart:", {
+				itemId,
+				name: itemName,
+				additionalServiceIds: newItem.additionalServiceIds,
+				servicesCount: newItem.additionalServiceIds.length,
+				colorId: newItem.colorId,
+				colorSurchargePercentage: newItem.colorSurchargePercentage,
+				unitPrice: input.unitPrice,
+			});
 
 			// Update state
 			const updatedItems = [...items, newItem];
@@ -187,6 +203,27 @@ export function useCart(): UseCartReturn {
 
 			// Update items array
 			const updatedItems = items.map((i) => (i.id === id ? updatedItem : i));
+			setItems(updatedItems);
+			saveItems(updatedItems);
+		},
+		[items, saveItems],
+	);
+
+	/**
+	 * Replace entire cart item (for complete updates)
+	 * Used when updating dimensions, glass type, etc. that require price recalculation
+	 */
+	const replaceItem = useCallback(
+		(id: string, newItem: CartItem) => {
+			const existingItem = findCartItem(items, id);
+
+			if (!existingItem) {
+				const error = new Error(`Item ${id} no encontrado en el carrito`);
+				throw error;
+			}
+
+			// Replace entire item
+			const updatedItems = items.map((i) => (i.id === id ? newItem : i));
 			setItems(updatedItems);
 			saveItems(updatedItems);
 		},
@@ -278,6 +315,7 @@ export function useCart(): UseCartReturn {
 		hydrated: isHydrated,
 		items,
 		removeItem,
+		replaceItem,
 		restoreItem,
 		summary,
 		updateItem,
