@@ -72,6 +72,16 @@ export function useCartItemMutations() {
 					throw new Error(`Item ${input.itemId} no encontrado en el carrito`);
 				}
 
+				// 🔍 DEBUG: Log current item services
+				console.log("🔍 [Cart Edit] Current item:", {
+					itemId: currentItem.id,
+					name: currentItem.name,
+					additionalServiceIds: currentItem.additionalServiceIds,
+					servicesCount: currentItem.additionalServiceIds?.length ?? 0,
+					colorId: currentItem.colorId,
+					colorSurchargePercentage: currentItem.colorSurchargePercentage,
+				});
+
 				// Step 1: Recalculate price if dimensions or glass type changed
 				const needsRecalculation =
 					input.widthMm !== currentItem.widthMm ||
@@ -82,6 +92,18 @@ export function useCartItemMutations() {
 				let newSubtotal = currentItem.subtotal;
 
 				if (needsRecalculation) {
+					// 🔍 DEBUG: Log services being sent to API
+					const servicesForCalculation =
+						currentItem.additionalServiceIds?.map((serviceId) => ({
+							serviceId,
+						})) ?? [];
+
+					console.log("🔍 [Cart Edit] Recalculating with services:", {
+						servicesForCalculation,
+						rawServiceIds: currentItem.additionalServiceIds,
+						colorSurchargePercentage: currentItem.colorSurchargePercentage,
+					});
+
 					const priceResult = await calculatePriceMutation.mutateAsync({
 						modelId: currentItem.modelId,
 						widthMm: input.widthMm,
@@ -89,9 +111,16 @@ export function useCartItemMutations() {
 						glassTypeId: input.glassTypeId,
 						quantity: input.quantity,
 						unit: "unit" as const,
-						services: [], // No services in cart items (added at quote generation)
+						services: servicesForCalculation,
 						adjustments: [], // No adjustments in cart items
 						colorSurchargePercentage: currentItem.colorSurchargePercentage ?? 0,
+					});
+
+					console.log("🔍 [Cart Edit] Price result:", {
+						subtotal: priceResult.subtotal,
+						servicesInResult: priceResult.services,
+						colorSurchargePercentage: priceResult.colorSurchargePercentage,
+						colorSurchargeAmount: priceResult.colorSurchargeAmount,
 					});
 
 					newUnitPrice = priceResult.subtotal;

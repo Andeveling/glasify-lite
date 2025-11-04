@@ -145,6 +145,7 @@ export function useCart(): UseCartReturn {
 			const newItem: CartItem = {
 				additionalServiceIds: input.additionalServiceIds ?? [],
 				colorId: input.colorId,
+				colorSurchargePercentage: input.colorSurchargePercentage,
 				createdAt: new Date().toISOString(),
 				dimensions: {
 					heightMm: input.heightMm,
@@ -165,6 +166,17 @@ export function useCart(): UseCartReturn {
 				unitPrice: input.unitPrice,
 				widthMm: input.widthMm,
 			};
+
+			// 🔍 DEBUG: Log item being added with services
+			console.log("🔍 [Cart] Adding item to cart:", {
+				itemId,
+				name: itemName,
+				additionalServiceIds: newItem.additionalServiceIds,
+				servicesCount: newItem.additionalServiceIds.length,
+				colorId: newItem.colorId,
+				colorSurchargePercentage: newItem.colorSurchargePercentage,
+				unitPrice: input.unitPrice,
+			});
 
 			// Update state
 			const updatedItems = [...items, newItem];
