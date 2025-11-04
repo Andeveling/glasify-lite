@@ -91,7 +91,7 @@ export function useCartItemMutations() {
 						unit: "unit" as const,
 						services: [], // No services in cart items (added at quote generation)
 						adjustments: [], // No adjustments in cart items
-						colorSurchargePercentage: 0, // TODO: Add color support
+						colorSurchargePercentage: currentItem.colorSurchargePercentage ?? 0,
 					});
 
 					newUnitPrice = priceResult.subtotal;

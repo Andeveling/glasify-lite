@@ -55,6 +55,9 @@ export type CartItem = {
 	/** Optional reference to ModelColor.id */
 	colorId?: string;
 
+	/** Color surcharge percentage (snapshot from ModelColor at cart creation) */
+	colorSurchargePercentage?: number;
+
 	/** User-editable name (auto-generated: "VEKA-001") */
 	name: string;
 
@@ -126,6 +129,8 @@ export type CreateCartItemInput = {
 	quantity?: number;
 	additionalServiceIds?: string[];
 	colorId?: string;
+	/** Color surcharge percentage (snapshot from ModelColor at cart creation) */
+	colorSurchargePercentage?: number;
 };
 
 /**
