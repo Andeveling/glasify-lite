@@ -1,6 +1,7 @@
 import { addressRouter } from "@/server/api/routers/address";
 import { adminRouter } from "@/server/api/routers/admin/admin";
 import { tenantConfigRouter } from "@/server/api/routers/admin/tenant-config";
+import { cartRouter } from "@/server/api/routers/cart";
 import { catalogRouter } from "@/server/api/routers/catalog";
 import { dashboardRouter } from "@/server/api/routers/dashboard";
 import { geocodingRouter } from "@/server/api/routers/geocoding";
@@ -17,6 +18,7 @@ import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 export const appRouter = createTRPCRouter({
 	address: addressRouter,
 	admin: adminRouter,
+	cart: cartRouter,
 	catalog: catalogRouter,
 	dashboard: dashboardRouter,
 	geocoding: geocodingRouter,

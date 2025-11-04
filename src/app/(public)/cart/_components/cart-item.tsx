@@ -26,6 +26,10 @@ import { cn } from "@/lib/utils";
 import { useTenantConfig } from "@/providers/tenant-config-provider";
 import type { CartItem as CartItemType } from "@/types/cart.types";
 import { CART_CONSTANTS } from "@/types/cart.types";
+import { UI_TEXT } from "../_constants/cart-item.constants";
+import { adaptCartItemToEditFormat } from "../_utils/cart-item-edit.utils";
+import { CartItemEditModal } from "./cart-item-edit-modal";
+import { CartItemImage } from "./cart-item-image";
 import { DeleteCartItemDialog } from "./delete-cart-item-dialog";
 
 // ============================================================================
@@ -84,6 +88,7 @@ const CartItemComponent = ({
 	const [nameError, setNameError] = useState<string | null>(null);
 	const [isPending, startTransition] = useTransition();
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+	const [showEditModal, setShowEditModal] = useState(false);
 
 	// ============================================================================
 	// Handlers
@@ -179,10 +184,18 @@ const CartItemComponent = ({
 				isInAction && "opacity-70",
 				// Default state
 				!isInAction && "scale-100 opacity-100",
-				"md:grid-cols-[2fr_3fr_1fr_1fr_auto]",
+				"md:grid-cols-[auto_2fr_3fr_1fr_1fr_auto]",
 			)}
 			data-testid={`cart-item-${item.id}`}
 		>
+			{/* Column 0: Model Image */}
+			<div className="hidden md:block">
+				<CartItemImage
+					modelImageUrl={item.modelImageUrl}
+					modelName={item.modelName}
+				/>
+			</div>
+
 			{/* Column 1: Name (editable) */}
 			<div className="flex flex-col gap-1">
 				{editMode ? (
@@ -270,6 +283,19 @@ const CartItemComponent = ({
 						{item.additionalServiceIds.length}
 					</p>
 				)}
+				{/* Edit button */}
+				<Button
+					aria-label="Editar dimensiones y vidrio"
+					className="mt-2 w-fit"
+					disabled={isUpdating}
+					onClick={() => setShowEditModal(true)}
+					size="sm"
+					type="button"
+					variant="outline"
+				>
+					<Pencil className="mr-2 size-3" />
+					{UI_TEXT.EDIT_BUTTON}
+				</Button>
 			</div>
 
 			{/* Column 3: Quantity controls */}
@@ -349,6 +375,13 @@ const CartItemComponent = ({
 				onConfirm={handleConfirmDelete}
 				onOpenChange={setShowDeleteDialog}
 				open={showDeleteDialog}
+			/>
+
+			{/* Edit dimensions and glass type modal */}
+			<CartItemEditModal
+				item={adaptCartItemToEditFormat(item)}
+				onOpenChange={setShowEditModal}
+				open={showEditModal}
 			/>
 		</div>
 	);

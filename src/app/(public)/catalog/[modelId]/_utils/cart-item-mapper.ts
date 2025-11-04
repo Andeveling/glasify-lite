@@ -70,6 +70,7 @@ export function prepareCartItemInput({
 		glassTypeName: selectedGlassType?.name ?? "",
 		heightMm,
 		modelId: model.id,
+		modelImageUrl: model.imageUrl,
 		modelName: model.name,
 		quantity,
 		solutionId: inferredSolution?.id || undefined,

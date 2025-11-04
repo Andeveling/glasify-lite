@@ -25,6 +25,9 @@ export type CartItem = {
 	/** Denormalized model name for display */
 	modelName: string;
 
+	/** Model image URL for display (optional) */
+	modelImageUrl?: string | null;
+
 	/** Reference to GlassType.id */
 	glassTypeId: string;
 
@@ -113,6 +116,7 @@ export type CartSummary = {
 export type CreateCartItemInput = {
 	modelId: string;
 	modelName: string;
+	modelImageUrl?: string | null;
 	glassTypeId: string;
 	glassTypeName: string;
 	solutionId?: string;
