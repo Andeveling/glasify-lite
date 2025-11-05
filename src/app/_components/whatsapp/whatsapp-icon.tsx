@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 /**
  * WhatsappIcon - Ícono animado para el botón CTA de WhatsApp
