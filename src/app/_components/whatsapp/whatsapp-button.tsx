@@ -1,8 +1,16 @@
 "use client";
 
 import { MessageCircle } from "lucide-react";
+import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { WhatsappIcon } from "./whatsapp-icon";
 
 type WhatsAppButtonProps = {
 	phoneNumber: string;
@@ -39,21 +47,55 @@ export function WhatsAppButton({
 
 	if (variant === "floating") {
 		return (
-			<button
-				aria-label="Contactar por WhatsApp"
-				className={cn(
-					"fixed right-6 bottom-6 z-50",
-					"flex h-14 w-14 items-center justify-center",
-					"rounded-full bg-[#25D366] text-white shadow-lg",
-					"transition-all hover:scale-110 hover:shadow-xl",
-					"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2",
-					className,
-				)}
-				onClick={handleClick}
-				type="button"
-			>
-				<MessageCircle className="h-7 w-7" />
-			</button>
+			<TooltipProvider delayDuration={300}>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<motion.button
+							aria-label="Contactar por WhatsApp"
+							className={cn(
+								"fixed right-6 bottom-6 z-50",
+								"flex h-16 w-16 items-center justify-center",
+								"rounded-full bg-[#25D366] text-white shadow-lg",
+								"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2",
+								className,
+							)}
+							onClick={handleClick}
+							type="button"
+							initial={{ scale: 1, opacity: 0.9 }}
+							animate={{
+								scale: [1, 1.08, 1],
+								boxShadow: [
+									"0 4px 24px 0 rgba(37, 211, 102, 0.4)",
+									"0 8px 32px 0 rgba(37, 211, 102, 0.6)",
+									"0 4px 24px 0 rgba(37, 211, 102, 0.4)",
+								],
+							}}
+							transition={{
+								duration: 2.2,
+								repeat: Infinity,
+								repeatType: "loop",
+								ease: "easeInOut",
+							}}
+							whileHover={{
+								scale: 1.13,
+								boxShadow:
+									"0 0 0 6px rgba(37, 211, 102, 0.2), 0 8px 32px 0 rgba(37, 211, 102, 0.6)",
+								transition: { duration: 0.3 },
+							}}
+							whileTap={{ scale: 0.97, transition: { duration: 0.1 } }}
+						>
+							<span className="sr-only">Contactar por WhatsApp</span>
+							<WhatsappIcon />
+						</motion.button>
+					</TooltipTrigger>
+					<TooltipContent
+						side="left"
+						className="bg-[#25D366] text-white font-semibold text-sm px-3 py-2 rounded-lg shadow-xl border-0"
+					>
+						¿Necesitás ayuda? ¡Chatea por WhatsApp!
+					</TooltipContent>
+				</Tooltip>
+			</TooltipProvider>
 		);
 	}
 
