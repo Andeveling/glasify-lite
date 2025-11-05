@@ -11,44 +11,44 @@ export const MAX_PAGE_LIMIT = 100;
 // ========================================
 
 export const listModelsInput = z.object({
-	limit: z
-		.number()
-		.min(MIN_PAGE_LIMIT)
-		.max(MAX_PAGE_LIMIT)
-		.default(DEFAULT_PAGE_LIMIT),
-	manufacturerId: z.cuid("ID del fabricante debe ser válido").optional(),
-	page: z.number().min(1).default(1),
-	search: z.string().optional(),
-	sort: z
-		.enum(["name-asc", "name-desc", "price-asc", "price-desc"])
-		.default("name-asc"),
+  limit: z
+    .number()
+    .min(MIN_PAGE_LIMIT)
+    .max(MAX_PAGE_LIMIT)
+    .default(DEFAULT_PAGE_LIMIT),
+  manufacturerId: z.cuid("ID del fabricante debe ser válido").optional(),
+  page: z.number().min(1).default(1),
+  search: z.string().optional(),
+  sort: z
+    .enum(["name-asc", "name-desc", "price-asc", "price-desc"])
+    .default("name-asc"),
 });
 
 export const getModelByIdInput = z.object({
-	modelId: z.cuid("ID del modelo debe ser válido"),
+  modelId: z.cuid("ID del modelo debe ser válido"),
 });
 
 export const listServicesInput = z.object({
-	// Services are now global, no longer tied to a specific manufacturer
+  // Services are now global, no longer tied to a specific manufacturer
 });
 
 export const listGlassTypesInput = z.object({
-	glassTypeIds: z.array(z.cuid("ID del tipo de vidrio debe ser válido")),
+  glassTypeIds: z.array(z.cuid("ID del tipo de vidrio debe ser válido")),
 });
 
 export const listGlassSolutionsInput = z
-	.object({
-		modelId: z.cuid("ID del modelo debe ser válido").optional(),
-	})
-	.optional();
+  .object({
+    modelId: z.cuid("ID del modelo debe ser válido").optional(),
+  })
+  .optional();
 
 export const getAvailableGlassTypesInput = z.object({
-	modelId: z.cuid("ID del modelo debe ser válido"),
+  modelId: z.cuid("ID del modelo debe ser válido"),
 });
 
 export const validateGlassCompatibilityInput = z.object({
-	modelId: z.cuid("ID del modelo debe ser válido"),
-	glassTypeId: z.cuid("ID del tipo de vidrio debe ser válido"),
+  modelId: z.cuid("ID del modelo debe ser válido"),
+  glassTypeId: z.cuid("ID del tipo de vidrio debe ser válido"),
 });
 
 // ========================================
@@ -56,76 +56,76 @@ export const validateGlassCompatibilityInput = z.object({
 // ========================================
 
 export const manufacturerOutput = z.object({
-	currency: z.string(),
-	id: z.string(),
-	name: z.string(),
-	quoteValidityDays: z.number(),
+  currency: z.string(),
+  id: z.string(),
+  name: z.string(),
+  quoteValidityDays: z.number(),
 });
 
 export const modelSummaryOutput = z.object({
-	accessoryPrice: z.number().nullable(),
-	basePrice: z.number(),
-	compatibleGlassTypeIds: z.array(z.string()),
-	costPerMmHeight: z.number(),
-	costPerMmWidth: z.number(),
-	createdAt: z.date(),
-	id: z.string(),
-	imageUrl: z.string().nullable(),
-	maxHeightMm: z.number(),
-	maxWidthMm: z.number(),
-	minHeightMm: z.number(),
-	minWidthMm: z.number(),
-	name: z.string(),
-	profileSupplier: z
-		.object({
-			id: z.string(),
-			name: z.string(),
-		})
-		.nullable(),
-	status: z.enum(["draft", "published"]),
-	updatedAt: z.date(),
+  accessoryPrice: z.number().nullable(),
+  basePrice: z.number(),
+  compatibleGlassTypeIds: z.array(z.string()),
+  costPerMmHeight: z.number(),
+  costPerMmWidth: z.number(),
+  createdAt: z.date(),
+  id: z.string(),
+  imageUrl: z.string().nullable(),
+  maxHeightMm: z.number(),
+  maxWidthMm: z.number(),
+  minHeightMm: z.number(),
+  minWidthMm: z.number(),
+  name: z.string(),
+  profileSupplier: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+    })
+    .nullable(),
+  status: z.enum(["draft", "published"]),
+  updatedAt: z.date(),
 });
 
 export const listModelsOutput = z.object({
-	items: z.array(modelSummaryOutput),
-	total: z.number(),
+  items: z.array(modelSummaryOutput),
+  total: z.number(),
 });
 
 export const modelDetailOutput = z.object({
-	accessoryPrice: z.number().nullable(),
-	basePrice: z.number(),
-	compatibleGlassTypeIds: z.array(z.string()),
-	costPerMmHeight: z.number(),
-	costPerMmWidth: z.number(),
-	createdAt: z.date(),
-	glassDiscountHeightMm: z.number(),
-	glassDiscountWidthMm: z.number(),
-	id: z.string(),
-	imageUrl: z.string().nullable(),
-	maxHeightMm: z.number(),
-	maxWidthMm: z.number(),
-	minHeightMm: z.number(),
-	minWidthMm: z.number(),
-	name: z.string(),
-	profileSupplier: z
-		.object({
-			id: z.string(),
-			materialType: z.enum(["PVC", "ALUMINUM", "WOOD", "MIXED"]),
-			name: z.string(),
-		})
-		.nullable(),
-	status: z.enum(["draft", "published"]),
-	updatedAt: z.date(),
+  accessoryPrice: z.number().nullable(),
+  basePrice: z.number(),
+  compatibleGlassTypeIds: z.array(z.string()),
+  costPerMmHeight: z.number(),
+  costPerMmWidth: z.number(),
+  createdAt: z.date(),
+  glassDiscountHeightMm: z.number(),
+  glassDiscountWidthMm: z.number(),
+  id: z.string(),
+  imageUrl: z.string().nullable(),
+  maxHeightMm: z.number(),
+  maxWidthMm: z.number(),
+  minHeightMm: z.number(),
+  minWidthMm: z.number(),
+  name: z.string(),
+  profileSupplier: z
+    .object({
+      id: z.string(),
+      materialType: z.enum(["PVC", "ALUMINUM", "WOOD", "MIXED"]),
+      name: z.string(),
+    })
+    .nullable(),
+  status: z.enum(["draft", "published"]),
+  updatedAt: z.date(),
 });
 
 export const serviceOutput = z.object({
-	createdAt: z.date(),
-	id: z.string(),
-	name: z.string(),
-	rate: z.number(),
-	type: z.enum(["area", "perimeter", "fixed"]),
-	unit: z.enum(["unit", "sqm", "ml"]),
-	updatedAt: z.date(),
+  createdAt: z.date(),
+  id: z.string(),
+  name: z.string(),
+  rate: z.number(),
+  type: z.enum(["area", "perimeter", "fixed"]),
+  unit: z.enum(["unit", "sqm", "ml"]),
+  updatedAt: z.date(),
 });
 
 export const listServicesOutput = z.array(serviceOutput);
@@ -135,11 +135,11 @@ export const listServicesOutput = z.array(serviceOutput);
 // ========================================
 
 export const performanceRating = z.enum([
-	"basic",
-	"standard",
-	"good",
-	"very_good",
-	"excellent",
+  "basic",
+  "standard",
+  "good",
+  "very_good",
+  "excellent",
 ]);
 
 // ========================================
@@ -147,28 +147,28 @@ export const performanceRating = z.enum([
 // ========================================
 
 export const glassSolutionOutput = z.object({
-	createdAt: z.date(),
-	description: z.string().nullable(),
-	icon: z.string().nullable(),
-	id: z.string(),
-	isActive: z.boolean(),
-	key: z.string(),
-	name: z.string(),
-	nameEs: z.string(),
-	sortOrder: z.number(),
-	updatedAt: z.date(),
+  createdAt: z.date(),
+  description: z.string().nullable(),
+  icon: z.string().nullable(),
+  id: z.string(),
+  isActive: z.boolean(),
+  key: z.string(),
+  name: z.string(),
+  nameEs: z.string(),
+  sortOrder: z.number(),
+  updatedAt: z.date(),
 });
 
 export const glassTypeSolutionOutput = z.object({
-	createdAt: z.date(),
-	glassTypeId: z.string(),
-	id: z.string(),
-	isPrimary: z.boolean(),
-	notes: z.string().nullable(),
-	performanceRating,
-	solution: glassSolutionOutput,
-	solutionId: z.string(),
-	updatedAt: z.date(),
+  createdAt: z.date(),
+  glassTypeId: z.string(),
+  id: z.string(),
+  isPrimary: z.boolean(),
+  notes: z.string().nullable(),
+  performanceRating,
+  solution: glassSolutionOutput,
+  solutionId: z.string(),
+  updatedAt: z.date(),
 });
 
 export const listGlassSolutionsOutput = z.array(glassSolutionOutput);
@@ -178,63 +178,63 @@ export const listGlassSolutionsOutput = z.array(glassSolutionOutput);
 // ========================================
 
 export const glassCharacteristicOutput = z.object({
-	category: z.string(),
-	createdAt: z.date(),
-	description: z.string().nullable(),
-	id: z.string(),
-	isActive: z.boolean(),
-	key: z.string(),
-	name: z.string(),
-	nameEs: z.string(),
-	sortOrder: z.number(),
-	updatedAt: z.date(),
+  category: z.string(),
+  createdAt: z.date(),
+  description: z.string().nullable(),
+  id: z.string(),
+  isActive: z.boolean(),
+  key: z.string(),
+  name: z.string(),
+  nameEs: z.string(),
+  sortOrder: z.number(),
+  updatedAt: z.date(),
 });
 
 export const glassTypeCharacteristicOutput = z.object({
-	certification: z.string().nullable().optional(),
-	characteristic: glassCharacteristicOutput,
-	characteristicId: z.string(),
-	createdAt: z.date(),
-	glassTypeId: z.string(),
-	id: z.string(),
-	notes: z.string().nullable().optional(),
-	value: z.string().nullable(),
+  certification: z.string().nullable().optional(),
+  characteristic: glassCharacteristicOutput,
+  characteristicId: z.string(),
+  createdAt: z.date(),
+  glassTypeId: z.string(),
+  id: z.string(),
+  notes: z.string().nullable().optional(),
+  value: z.string().nullable(),
 });
 
 export const glassTypeOutput = z.object({
-	characteristics: z.array(glassTypeCharacteristicOutput).optional(), // Many-to-Many characteristics
-	code: z.string(), // Unique glass type code
-	createdAt: z.date(),
-	description: z.string().nullable().optional(),
-	id: z.string(),
-	isActive: z.boolean().optional(),
-	isSeeded: z.boolean(), // Whether this is a seeded glass type
-	manufacturer: z.string().nullable().optional(), // Brand identifier
-	name: z.string(),
-	pricePerSqm: z.number(), // Price per square meter
-	seedVersion: z.string().nullable().optional(), // Seed data version
-	series: z.string().nullable().optional(), // Product series identifier
-	solutions: z.array(glassTypeSolutionOutput).optional(), // Many-to-Many solutions
-	thicknessMm: z.number(),
-	updatedAt: z.date(),
-	uValue: z.number().nullable(),
+  characteristics: z.array(glassTypeCharacteristicOutput).optional(), // Many-to-Many characteristics
+  code: z.string(), // Unique glass type code
+  createdAt: z.date(),
+  description: z.string().nullable().optional(),
+  id: z.string(),
+  isActive: z.boolean().optional(),
+  isSeeded: z.boolean(), // Whether this is a seeded glass type
+  manufacturer: z.string().nullable().optional(), // Brand identifier
+  name: z.string(),
+  pricePerSqm: z.number(), // Price per square meter
+  seedVersion: z.string().nullable().optional(), // Seed data version
+  series: z.string().nullable().optional(), // Product series identifier
+  solutions: z.array(glassTypeSolutionOutput).optional(), // Many-to-Many solutions
+  thicknessMm: z.number(),
+  updatedAt: z.date(),
+  uValue: z.number().nullable(),
 });
 
 export const listGlassTypesOutput = z.array(glassTypeOutput);
 
 export const availableGlassTypeOutput = z.object({
-	id: z.string(),
-	name: z.string(),
-	pricePerSqm: z.number(),
-	thicknessMm: z.number(),
-	description: z.string().nullable(),
+  id: z.string(),
+  name: z.string(),
+  pricePerSqm: z.number(),
+  thicknessMm: z.number(),
+  description: z.string().nullable(),
 });
 
 export const listAvailableGlassTypesOutput = z.array(availableGlassTypeOutput);
 
 export const glassCompatibilityOutput = z.object({
-	compatible: z.boolean(),
-	message: z.string(),
+  compatible: z.boolean(),
+  message: z.string(),
 });
 
 // ========================================
@@ -256,13 +256,13 @@ export type ListGlassSolutionsOutput = z.infer<typeof listGlassSolutionsOutput>;
 export type GlassTypeOutput = z.infer<typeof glassTypeOutput>;
 export type ListGlassTypesOutput = z.infer<typeof listGlassTypesOutput>;
 export type GetAvailableGlassTypesInput = z.infer<
-	typeof getAvailableGlassTypesInput
+  typeof getAvailableGlassTypesInput
 >;
 export type AvailableGlassTypeOutput = z.infer<typeof availableGlassTypeOutput>;
 export type ListAvailableGlassTypesOutput = z.infer<
-	typeof listAvailableGlassTypesOutput
+  typeof listAvailableGlassTypesOutput
 >;
 export type ValidateGlassCompatibilityInput = z.infer<
-	typeof validateGlassCompatibilityInput
+  typeof validateGlassCompatibilityInput
 >;
 export type GlassCompatibilityOutput = z.infer<typeof glassCompatibilityOutput>;

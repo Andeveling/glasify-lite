@@ -7,9 +7,9 @@ import { AdminBreadcrumbs } from "./_components/admin-breadcrumbs";
 import { AdminSidebar } from "./_components/admin-sidebar";
 
 export const metadata: Metadata = {
-	description: "Panel de administración para gestionar catálogo de productos",
-	robots: "noindex, nofollow", // Admin pages should not be indexed
-	title: "Admin Dashboard | Glasify Lite",
+  description: "Panel de administración para gestionar catálogo de productos",
+  robots: "noindex, nofollow", // Admin pages should not be indexed
+  title: "Admin Dashboard | Glasify Lite",
 };
 
 /**
@@ -33,34 +33,34 @@ export const metadata: Metadata = {
  * @see https://ui.shadcn.com/blocks - dashboard-01 block
  */
 export default async function AdminLayout({
-	children,
+  children,
 }: {
-	children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-	// Verify admin role (defense-in-depth: middleware also checks)
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
+  // Verify admin role (defense-in-depth: middleware also checks)
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-	if (!session?.user || session.user.role !== "admin") {
-		redirect("/catalog");
-	}
+  if (!session?.user || session.user.role !== "admin") {
+    redirect("/catalog");
+  }
 
-	return (
-		<SidebarProvider defaultOpen>
-			<AdminSidebar
-				user={{
-					avatar: session.user.image ?? undefined,
-					email: session.user.email ?? "",
-					name: session.user.name ?? "Admin",
-				}}
-			/>
-			<SidebarInset>
-				<header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b bg-background px-6">
-					<AdminBreadcrumbs />
-				</header>
-				<main className="flex flex-1 flex-col gap-4 p-4">{children}</main>
-			</SidebarInset>
-		</SidebarProvider>
-	);
+  return (
+    <SidebarProvider defaultOpen>
+      <AdminSidebar
+        user={{
+          avatar: session.user.image ?? undefined,
+          email: session.user.email ?? "",
+          name: session.user.name ?? "Admin",
+        }}
+      />
+      <SidebarInset>
+        <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b bg-background px-6">
+          <AdminBreadcrumbs />
+        </header>
+        <main className="flex flex-1 flex-col gap-4 p-4">{children}</main>
+      </SidebarInset>
+    </SidebarProvider>
+  );
 }

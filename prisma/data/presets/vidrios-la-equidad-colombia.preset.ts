@@ -52,27 +52,27 @@ import { vidriosLaEquidadServices } from "../vidrios-la-equidad/services.data";
  * Ejecutar solo en instancia dedicada de Vidrios La Equidad.
  */
 export const vidriosLaEquidadColombiaPreset: SeedPreset = {
-	description:
-		"Vidrios La Equidad - Fabricante e instalador de ventanas, puertas y divisiones en Valle del Cauca",
+  description:
+    "Vidrios La Equidad - Fabricante e instalador de ventanas, puertas y divisiones en Valle del Cauca",
 
-	// Soluciones de vidrio (5)
-	glassSolutions: vidriosLaEquidadGlassSolutions,
+  // Soluciones de vidrio (5)
+  glassSolutions: vidriosLaEquidadGlassSolutions,
 
-	// Tipos de vidrio (10)
-	glassTypes: vidriosLaEquidadGlassTypes,
+  // Tipos de vidrio (10)
+  glassTypes: vidriosLaEquidadGlassTypes,
 
-	// Modelos de ventanas/puertas (9)
-	models: [
-		...vidriosLaEquidadAluminumSlidingModels,
-		...vidriosLaEquidadAluminumCasementModels,
-		...vidriosLaEquidadPVCModels,
-	],
+  // Modelos de ventanas/puertas (9)
+  models: [
+    ...vidriosLaEquidadAluminumSlidingModels,
+    ...vidriosLaEquidadAluminumCasementModels,
+    ...vidriosLaEquidadPVCModels,
+  ],
 
-	name: "vidrios-la-equidad-colombia",
+  name: "vidrios-la-equidad-colombia",
 
-	// Proveedores de perfiles (2)
-	profileSuppliers: vidriosLaEquidadProfileSuppliers,
+  // Proveedores de perfiles (2)
+  profileSuppliers: vidriosLaEquidadProfileSuppliers,
 
-	// Servicios (6)
-	services: vidriosLaEquidadServices,
+  // Servicios (6)
+  services: vidriosLaEquidadServices,
 };

@@ -6,20 +6,20 @@
  */
 
 import {
-	DEGREES_TO_RADIANS_FACTOR,
-	EARTH_RADIUS_METERS,
-	MAX_LATITUDE,
-	MAX_LONGITUDE,
-	MIN_LATITUDE,
-	MIN_LONGITUDE,
+  DEGREES_TO_RADIANS_FACTOR,
+  EARTH_RADIUS_METERS,
+  MAX_LATITUDE,
+  MAX_LONGITUDE,
+  MIN_LATITUDE,
+  MIN_LONGITUDE,
 } from "@/app/(dashboard)/admin/quotes/_constants/geocoding.constants";
 
 /**
  * Coordinate pair type
  */
 export type Coordinates = {
-	latitude: number;
-	longitude: number;
+  latitude: number;
+  longitude: number;
 };
 
 /**
@@ -30,17 +30,17 @@ export type Coordinates = {
  * @throws Error if coordinates are out of range
  */
 export function validateCoordinates(latitude: number, longitude: number): void {
-	if (latitude < MIN_LATITUDE || latitude > MAX_LATITUDE) {
-		throw new Error(
-			`Latitud inválida: ${latitude}. Debe estar entre ${MIN_LATITUDE} y ${MAX_LATITUDE}.`,
-		);
-	}
+  if (latitude < MIN_LATITUDE || latitude > MAX_LATITUDE) {
+    throw new Error(
+      `Latitud inválida: ${latitude}. Debe estar entre ${MIN_LATITUDE} y ${MAX_LATITUDE}.`
+    );
+  }
 
-	if (longitude < MIN_LONGITUDE || longitude > MAX_LONGITUDE) {
-		throw new Error(
-			`Longitud inválida: ${longitude}. Debe estar entre ${MIN_LONGITUDE} y ${MAX_LONGITUDE}.`,
-		);
-	}
+  if (longitude < MIN_LONGITUDE || longitude > MAX_LONGITUDE) {
+    throw new Error(
+      `Longitud inválida: ${longitude}. Debe estar entre ${MIN_LONGITUDE} y ${MAX_LONGITUDE}.`
+    );
+  }
 }
 
 /**
@@ -61,32 +61,32 @@ export function validateCoordinates(latitude: number, longitude: number): void {
  * console.log(distance / 1000); // ~238.7 km
  */
 export function haversineDistance(
-	point1: Coordinates,
-	point2: Coordinates,
+  point1: Coordinates,
+  point2: Coordinates
 ): number {
-	// Validate inputs
-	validateCoordinates(point1.latitude, point1.longitude);
-	validateCoordinates(point2.latitude, point2.longitude);
+  // Validate inputs
+  validateCoordinates(point1.latitude, point1.longitude);
+  validateCoordinates(point2.latitude, point2.longitude);
 
-	// Convert degrees to radians
-	const DEGREES_TO_RADIANS = Math.PI / DEGREES_TO_RADIANS_FACTOR;
-	const toRadians = (degrees: number) => degrees * DEGREES_TO_RADIANS;
+  // Convert degrees to radians
+  const DEGREES_TO_RADIANS = Math.PI / DEGREES_TO_RADIANS_FACTOR;
+  const toRadians = (degrees: number) => degrees * DEGREES_TO_RADIANS;
 
-	const φ1 = toRadians(point1.latitude);
-	const φ2 = toRadians(point2.latitude);
-	const Δφ = toRadians(point2.latitude - point1.latitude);
-	const Δλ = toRadians(point2.longitude - point1.longitude);
+  const φ1 = toRadians(point1.latitude);
+  const φ2 = toRadians(point2.latitude);
+  const Δφ = toRadians(point2.latitude - point1.latitude);
+  const Δλ = toRadians(point2.longitude - point1.longitude);
 
-	// Haversine formula
-	const a =
-		Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-		Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+  // Haversine formula
+  const a =
+    Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+    Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
 
-	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-	const distance = EARTH_RADIUS_METERS * c;
+  const distance = EARTH_RADIUS_METERS * c;
 
-	return distance;
+  return distance;
 }
 
 /**
@@ -97,20 +97,20 @@ export function haversineDistance(
  * @returns Coordinate pair as numbers
  */
 export function parseCoordinates(
-	latitude: number | { toNumber: () => number } | null,
-	longitude: number | { toNumber: () => number } | null,
+  latitude: number | { toNumber: () => number } | null,
+  longitude: number | { toNumber: () => number } | null
 ): Coordinates | null {
-	if (latitude === null || longitude === null) {
-		return null;
-	}
+  if (latitude === null || longitude === null) {
+    return null;
+  }
 
-	const lat = typeof latitude === "number" ? latitude : latitude.toNumber();
-	const lon = typeof longitude === "number" ? longitude : longitude.toNumber();
+  const lat = typeof latitude === "number" ? latitude : latitude.toNumber();
+  const lon = typeof longitude === "number" ? longitude : longitude.toNumber();
 
-	validateCoordinates(lat, lon);
+  validateCoordinates(lat, lon);
 
-	return {
-		latitude: lat,
-		longitude: lon,
-	};
+  return {
+    latitude: lat,
+    longitude: lon,
+  };
 }

@@ -10,10 +10,10 @@ const LOGO_MAX_WIDTH = 500;
 const LOGO_MAX_HEIGHT = 500;
 const LOGO_QUALITY = 90;
 const ALLOWED_MIMES = [
-	"image/png",
-	"image/jpeg",
-	"image/svg+xml",
-	"image/webp",
+  "image/png",
+  "image/jpeg",
+  "image/svg+xml",
+  "image/webp",
 ];
 
 /**
@@ -36,55 +36,55 @@ const ALLOWED_MIMES = [
  * @throws Error if validation fails
  */
 export async function uploadLogo(
-	file: File,
-	tenantId: string,
+  file: File,
+  tenantId: string
 ): Promise<string> {
-	// Validate file type
-	if (!ALLOWED_MIMES.includes(file.type)) {
-		throw new Error(
-			"Formato de imagen no permitido. Use PNG, JPEG, SVG o WEBP.",
-		);
-	}
+  // Validate file type
+  if (!ALLOWED_MIMES.includes(file.type)) {
+    throw new Error(
+      "Formato de imagen no permitido. Use PNG, JPEG, SVG o WEBP."
+    );
+  }
 
-	// Validate file size
-	if (file.size > MAX_FILE_SIZE) {
-		throw new Error("El logo debe pesar menos de 2MB.");
-	}
+  // Validate file size
+  if (file.size > MAX_FILE_SIZE) {
+    throw new Error("El logo debe pesar menos de 2MB.");
+  }
 
-	// Create tenant upload directory
-	const tenantDir = path.join(UPLOAD_DIR, tenantId);
-	await fs.mkdir(tenantDir, { recursive: true });
+  // Create tenant upload directory
+  const tenantDir = path.join(UPLOAD_DIR, tenantId);
+  await fs.mkdir(tenantDir, { recursive: true });
 
-	// Generate unique filename
-	const extension = path.extname(file.name);
-	const filename = `logo-${randomUUID()}${extension}`;
-	const filePath = path.join(tenantDir, filename);
+  // Generate unique filename
+  const extension = path.extname(file.name);
+  const filename = `logo-${randomUUID()}${extension}`;
+  const filePath = path.join(tenantDir, filename);
 
-	// Convert File to Buffer
-	const buffer = Buffer.from(await file.arrayBuffer());
+  // Convert File to Buffer
+  const buffer = Buffer.from(await file.arrayBuffer());
 
-	// Optimize image (skip SVG)
-	if (file.type !== "image/svg+xml") {
-		const optimized = await sharp(buffer)
-			.resize(LOGO_MAX_WIDTH, LOGO_MAX_HEIGHT, {
-				fit: "inside",
-				withoutEnlargement: true,
-			})
-			.png({ quality: LOGO_QUALITY })
-			.toBuffer();
+  // Optimize image (skip SVG)
+  if (file.type !== "image/svg+xml") {
+    const optimized = await sharp(buffer)
+      .resize(LOGO_MAX_WIDTH, LOGO_MAX_HEIGHT, {
+        fit: "inside",
+        withoutEnlargement: true,
+      })
+      .png({ quality: LOGO_QUALITY })
+      .toBuffer();
 
-		await fs.writeFile(filePath, optimized);
-		logger.info("Logo optimizado y guardado", {
-			tenantId,
-			size: optimized.length,
-		});
-	} else {
-		await fs.writeFile(filePath, buffer);
-		logger.info("Logo SVG guardado", { tenantId });
-	}
+    await fs.writeFile(filePath, optimized);
+    logger.info("Logo optimizado y guardado", {
+      tenantId,
+      size: optimized.length,
+    });
+  } else {
+    await fs.writeFile(filePath, buffer);
+    logger.info("Logo SVG guardado", { tenantId });
+  }
 
-	// Return public URL
-	return `/uploads/tenants/${tenantId}/${filename}`;
+  // Return public URL
+  return `/uploads/tenants/${tenantId}/${filename}`;
 }
 
 /**
@@ -93,11 +93,11 @@ export async function uploadLogo(
  * @param logoUrl - Public URL of logo to delete
  */
 export async function deleteLogo(logoUrl: string): Promise<void> {
-	const filePath = path.join(process.cwd(), "public", logoUrl);
-	try {
-		await fs.unlink(filePath);
-		logger.info("Logo anterior eliminado", { logoUrl });
-	} catch (error) {
-		logger.warn("No se pudo eliminar logo anterior", { logoUrl, error });
-	}
+  const filePath = path.join(process.cwd(), "public", logoUrl);
+  try {
+    await fs.unlink(filePath);
+    logger.info("Logo anterior eliminado", { logoUrl });
+  } catch (error) {
+    logger.warn("No se pudo eliminar logo anterior", { logoUrl, error });
+  }
 }

@@ -2,39 +2,39 @@
 
 import type { ReactNode } from "react";
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 type ChartContainerProps = {
-	/**
-	 * Chart title displayed in the header
-	 */
-	title: string;
+  /**
+   * Chart title displayed in the header
+   */
+  title: string;
 
-	/**
-	 * Optional description/subtitle for the chart
-	 */
-	description?: string;
+  /**
+   * Optional description/subtitle for the chart
+   */
+  description?: string;
 
-	/**
-	 * Recharts component (LineChart, BarChart, PieChart, etc.)
-	 */
-	children: ReactNode;
+  /**
+   * Recharts component (LineChart, BarChart, PieChart, etc.)
+   */
+  children: ReactNode;
 
-	/**
-	 * Additional CSS classes for the card
-	 */
-	className?: string;
+  /**
+   * Additional CSS classes for the card
+   */
+  className?: string;
 
-	/**
-	 * Height class for the chart content area (default: h-64)
-	 */
-	height?: string;
+  /**
+   * Height class for the chart content area (default: h-64)
+   */
+  height?: string;
 };
 
 /**
@@ -70,21 +70,21 @@ type ChartContainerProps = {
  * ```
  */
 export function ChartContainer({
-	title,
-	description,
-	children,
-	className,
-	height = "h-64",
+  title,
+  description,
+  children,
+  className,
+  height = "h-64",
 }: ChartContainerProps) {
-	return (
-		<Card className={cn("transition-shadow hover:shadow-md", className)}>
-			<CardHeader>
-				<CardTitle>{title}</CardTitle>
-				{description && <CardDescription>{description}</CardDescription>}
-			</CardHeader>
-			<CardContent>
-				<div className={cn("w-full", height)}>{children}</div>
-			</CardContent>
-		</Card>
-	);
+  return (
+    <Card className={cn("transition-shadow hover:shadow-md", className)}>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        {description && <CardDescription>{description}</CardDescription>}
+      </CardHeader>
+      <CardContent>
+        <div className={cn("w-full", height)}>{children}</div>
+      </CardContent>
+    </Card>
+  );
 }

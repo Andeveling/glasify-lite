@@ -17,58 +17,58 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 
 export function useServerFilters() {
-	const router = useRouter();
-	const pathname = usePathname();
-	const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-	/**
-	 * Updates a single filter parameter in URL
-	 * Resets to page 1 when filter changes
-	 */
-	const updateFilter = useCallback(
-		(key: string, value: string) => {
-			const params = new URLSearchParams(searchParams.toString());
+  /**
+   * Updates a single filter parameter in URL
+   * Resets to page 1 when filter changes
+   */
+  const updateFilter = useCallback(
+    (key: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
 
-			// Remove param if default value
-			if (value === "all" || value === "" || !value) {
-				params.delete(key);
-			} else {
-				params.set(key, value);
-			}
+      // Remove param if default value
+      if (value === "all" || value === "" || !value) {
+        params.delete(key);
+      } else {
+        params.set(key, value);
+      }
 
-			// Reset to page 1 when filtering (except for page param itself)
-			if (key !== "page") {
-				params.delete("page");
-			}
+      // Reset to page 1 when filtering (except for page param itself)
+      if (key !== "page") {
+        params.delete("page");
+      }
 
-			// Update URL (triggers server-side refetch)
-			router.push(`${pathname}?${params.toString()}`);
-		},
-		[pathname, router, searchParams],
-	);
+      // Update URL (triggers server-side refetch)
+      router.push(`${pathname}?${params.toString()}`);
+    },
+    [pathname, router, searchParams]
+  );
 
-	/**
-	 * Gets current value of a filter from URL
-	 */
-	const getFilterValue = useCallback(
-		(key: string, defaultValue = "all") =>
-			searchParams.get(key) ?? defaultValue,
-		[searchParams],
-	);
+  /**
+   * Gets current value of a filter from URL
+   */
+  const getFilterValue = useCallback(
+    (key: string, defaultValue = "all") =>
+      searchParams.get(key) ?? defaultValue,
+    [searchParams]
+  );
 
-	/**
-	 * Updates page number in URL
-	 */
-	const updatePage = useCallback(
-		(page: number) => {
-			updateFilter("page", page.toString());
-		},
-		[updateFilter],
-	);
+  /**
+   * Updates page number in URL
+   */
+  const updatePage = useCallback(
+    (page: number) => {
+      updateFilter("page", page.toString());
+    },
+    [updateFilter]
+  );
 
-	return {
-		getFilterValue,
-		updateFilter,
-		updatePage,
-	};
+  return {
+    getFilterValue,
+    updateFilter,
+    updatePage,
+  };
 }

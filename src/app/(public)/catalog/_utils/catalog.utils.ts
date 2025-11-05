@@ -13,7 +13,7 @@
  * @returns Formatted range string (e.g., "500 - 2000 mm")
  */
 export function formatRange(min: number, max: number): string {
-	return `${min} - ${max} mm`;
+  return `${min} - ${max} mm`;
 }
 
 /**
@@ -24,10 +24,10 @@ export function formatRange(min: number, max: number): string {
  * @returns Total number of pages
  */
 export function calculateTotalPages(
-	total: number,
-	itemsPerPage: number,
+  total: number,
+  itemsPerPage: number
 ): number {
-	return Math.ceil(total / itemsPerPage);
+  return Math.ceil(total / itemsPerPage);
 }
 
 /**
@@ -38,10 +38,10 @@ export function calculateTotalPages(
  * @returns Whether to show ellipsis
  */
 export function shouldShowEllipsis(
-	currentPage: number,
-	previousPage: number | undefined,
+  currentPage: number,
+  previousPage: number | undefined
 ): boolean {
-	return previousPage !== undefined && currentPage - previousPage > 1;
+  return previousPage !== undefined && currentPage - previousPage > 1;
 }
 
 /**
@@ -51,31 +51,31 @@ export function shouldShowEllipsis(
  * @returns Transformed model data for UI
  */
 export type RawModel = {
-	id: string;
-	name: string;
-	manufacturer: { id: string; name: string } | null;
-	basePrice: number;
-	minWidthMm: number;
-	maxWidthMm: number;
-	minHeightMm: number;
-	maxHeightMm: number;
-	compatibleGlassTypeIds: string[];
+  id: string;
+  name: string;
+  manufacturer: { id: string; name: string } | null;
+  basePrice: number;
+  minWidthMm: number;
+  maxWidthMm: number;
+  minHeightMm: number;
+  maxHeightMm: number;
+  compatibleGlassTypeIds: string[];
 };
 
 export type DisplayModel = {
-	id: string;
-	name: string;
-	manufacturer?: string;
-	basePrice: string;
-	range: {
-		width: [number, number];
-		height: [number, number];
-	};
-	compatibleGlassTypes: Array<{
-		id: string;
-		name: string;
-		type: string;
-	}>;
+  id: string;
+  name: string;
+  manufacturer?: string;
+  basePrice: string;
+  range: {
+    width: [number, number];
+    height: [number, number];
+  };
+  compatibleGlassTypes: Array<{
+    id: string;
+    name: string;
+    type: string;
+  }>;
 };
 
 /**
@@ -83,17 +83,17 @@ export type DisplayModel = {
  * Note: This is a placeholder. In a real app, you'd format currency here.
  */
 export function transformModelForDisplay(
-	model: RawModel,
-	formatCurrency: (amount: number) => string,
+  model: RawModel,
+  formatCurrency: (amount: number) => string
 ): Omit<DisplayModel, "compatibleGlassTypes"> {
-	return {
-		basePrice: formatCurrency(model.basePrice),
-		id: model.id,
-		manufacturer: model.manufacturer?.name,
-		name: model.name,
-		range: {
-			height: [model.minHeightMm, model.maxHeightMm],
-			width: [model.minWidthMm, model.maxWidthMm],
-		},
-	};
+  return {
+    basePrice: formatCurrency(model.basePrice),
+    id: model.id,
+    manufacturer: model.manufacturer?.name,
+    name: model.name,
+    range: {
+      height: [model.minHeightMm, model.maxHeightMm],
+      width: [model.minWidthMm, model.maxWidthMm],
+    },
+  };
 }

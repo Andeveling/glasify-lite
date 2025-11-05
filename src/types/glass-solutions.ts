@@ -23,12 +23,12 @@ const RATING_BASIC = 20;
  * Represents the top solutions for a window model
  */
 export type HighlightedSolution = {
-	/** Lucide icon name (Shield, Snowflake, Volume2, Sparkles) */
-	icon?: string;
-	/** Solution name in Spanish (from GlassSolution.nameEs) */
-	nameEs: string;
-	/** Best performance rating found across compatible glass types */
-	rating: PerformanceRating;
+  /** Lucide icon name (Shield, Snowflake, Volume2, Sparkles) */
+  icon?: string;
+  /** Solution name in Spanish (from GlassSolution.nameEs) */
+  nameEs: string;
+  /** Best performance rating found across compatible glass types */
+  rating: PerformanceRating;
 };
 
 /**
@@ -36,14 +36,14 @@ export type HighlightedSolution = {
  * Used to calculate scores and determine top solutions
  */
 export type SolutionAggregation = {
-	id: string;
-	nameEs: string;
-	icon?: string;
-	bestRating: PerformanceRating;
-	count: number;
-	isPrimary: boolean;
-	sortOrder: number;
-	score: number;
+  id: string;
+  nameEs: string;
+  icon?: string;
+  bestRating: PerformanceRating;
+  count: number;
+  isPrimary: boolean;
+  sortOrder: number;
+  score: number;
 };
 
 /**
@@ -51,20 +51,20 @@ export type SolutionAggregation = {
  * Higher score = better performance
  */
 export function getRatingScore(rating: PerformanceRating): number {
-	switch (rating) {
-		case "excellent":
-			return RATING_EXCELLENT;
-		case "very_good":
-			return RATING_VERY_GOOD;
-		case "good":
-			return RATING_GOOD;
-		case "standard":
-			return RATING_STANDARD;
-		case "basic":
-			return RATING_BASIC;
-		default:
-			return RATING_BASIC;
-	}
+  switch (rating) {
+    case "excellent":
+      return RATING_EXCELLENT;
+    case "very_good":
+      return RATING_VERY_GOOD;
+    case "good":
+      return RATING_GOOD;
+    case "standard":
+      return RATING_STANDARD;
+    case "basic":
+      return RATING_BASIC;
+    default:
+      return RATING_BASIC;
+  }
 }
 
 /**
@@ -76,13 +76,13 @@ export function getRatingScore(rating: PerformanceRating): number {
  * 3. Frequency multiplier: count * 5 points
  */
 export function calculateSolutionScore(solution: {
-	bestRating: PerformanceRating;
-	isPrimary: boolean;
-	count: number;
+  bestRating: PerformanceRating;
+  isPrimary: boolean;
+  count: number;
 }): number {
-	return (
-		getRatingScore(solution.bestRating) +
-		(solution.isPrimary ? PRIMARY_SOLUTION_BONUS : 0) +
-		solution.count * FREQUENCY_MULTIPLIER
-	);
+  return (
+    getRatingScore(solution.bestRating) +
+    (solution.isPrimary ? PRIMARY_SOLUTION_BONUS : 0) +
+    solution.count * FREQUENCY_MULTIPLIER
+  );
 }

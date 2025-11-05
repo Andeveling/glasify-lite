@@ -11,7 +11,7 @@
 "use client";
 
 type SessionProviderProps = {
-	children: React.ReactNode;
+  children: React.ReactNode;
 };
 
 /**
@@ -22,7 +22,7 @@ type SessionProviderProps = {
  * useSession() from auth-client handles reactive session updates.
  */
 export function SessionProvider({ children }: SessionProviderProps) {
-	// Better Auth handles session state internally via nano-store
-	// No external provider wrapper needed
-	return children;
+  // Better Auth handles session state internally via nano-store
+  // No external provider wrapper needed
+  return children;
 }

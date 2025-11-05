@@ -4,19 +4,19 @@ import { MessageCircle } from "lucide-react";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { WhatsappIcon } from "./whatsapp-icon";
 
 type WhatsAppButtonProps = {
-	phoneNumber: string;
-	message: string;
-	variant?: "floating" | "inline";
-	className?: string;
+  phoneNumber: string;
+  message: string;
+  variant?: "floating" | "inline";
+  className?: string;
 };
 
 /**
@@ -33,81 +33,88 @@ type WhatsAppButtonProps = {
  * @param className - Additional CSS classes
  */
 export function WhatsAppButton({
-	phoneNumber,
-	message,
-	variant = "inline",
-	className,
+  phoneNumber,
+  message,
+  variant = "inline",
+  className,
 }: WhatsAppButtonProps) {
-	const handleClick = () => {
-		const cleanPhone = phoneNumber.replace(/[^0-9+]/g, "");
-		const encodedMessage = encodeURIComponent(message);
-		const url = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
-		window.open(url, "_blank", "noopener,noreferrer");
-	};
+  const WHATSAPP_BUTTON_ANIMATION_SCALE_BASE = 1;
+  const WHATSAPP_BUTTON_ANIMATION_SCALE_HOVER = 1.08;
 
-	if (variant === "floating") {
-		return (
-			<TooltipProvider delayDuration={300}>
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<motion.button
-							aria-label="Contactar por WhatsApp"
-							className={cn(
-								"fixed right-6 bottom-6 z-50",
-								"flex h-16 w-16 items-center justify-center",
-								"rounded-full bg-[#25D366] text-white shadow-lg",
-								"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2",
-								className,
-							)}
-							onClick={handleClick}
-							type="button"
-							initial={{ scale: 1, opacity: 0.9 }}
-							animate={{
-								scale: [1, 1.08, 1],
-								boxShadow: [
-									"0 4px 24px 0 rgba(37, 211, 102, 0.4)",
-									"0 8px 32px 0 rgba(37, 211, 102, 0.6)",
-									"0 4px 24px 0 rgba(37, 211, 102, 0.4)",
-								],
-							}}
-							transition={{
-								duration: 2.2,
-								repeat: Infinity,
-								repeatType: "loop",
-								ease: "easeInOut",
-							}}
-							whileHover={{
-								scale: 1.13,
-								boxShadow:
-									"0 0 0 6px rgba(37, 211, 102, 0.2), 0 8px 32px 0 rgba(37, 211, 102, 0.6)",
-								transition: { duration: 0.3 },
-							}}
-							whileTap={{ scale: 0.97, transition: { duration: 0.1 } }}
-						>
-							<span className="sr-only">Contactar por WhatsApp</span>
-							<WhatsappIcon />
-						</motion.button>
-					</TooltipTrigger>
-					<TooltipContent
-						side="left"
-						className="bg-[#25D366] text-white font-semibold text-sm px-3 py-2 rounded-lg shadow-xl border-0"
-					>
-						¿Necesitás ayuda? ¡Chatea por WhatsApp!
-					</TooltipContent>
-				</Tooltip>
-			</TooltipProvider>
-		);
-	}
+  const handleClick = () => {
+    const cleanPhone = phoneNumber.replace(/[^0-9+]/g, "");
+    const encodedMessage = encodeURIComponent(message);
+    const url = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
 
-	return (
-		<Button
-			aria-label="Contactar por WhatsApp"
-			className={cn("bg-[#25D366] hover:bg-[#1EBE57]", "text-white", className)}
-			onClick={handleClick}
-			type="button"
-		>
-			<MessageCircle className="mr-2 h-4 w-4" />
-			Contactar por WhatsApp
-		</Button>
-	);
+  if (variant === "floating") {
+    return (
+      <TooltipProvider delayDuration={300}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <motion.button
+              animate={{
+                scale: [
+                  WHATSAPP_BUTTON_ANIMATION_SCALE_BASE,
+                  WHATSAPP_BUTTON_ANIMATION_SCALE_HOVER,
+                  WHATSAPP_BUTTON_ANIMATION_SCALE_BASE,
+                ],
+                boxShadow: [
+                  "0 4px 24px 0 rgba(37, 211, 102, 0.4)",
+                  "0 8px 32px 0 rgba(37, 211, 102, 0.6)",
+                  "0 4px 24px 0 rgba(37, 211, 102, 0.4)",
+                ],
+              }}
+              aria-label="Contactar por WhatsApp"
+              className={cn(
+                "fixed right-6 bottom-6 z-50",
+                "flex h-16 w-16 items-center justify-center",
+                "rounded-full bg-[#25D366] text-white shadow-lg",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2",
+                className
+              )}
+              initial={{ scale: 1, opacity: 0.9 }}
+              onClick={handleClick}
+              transition={{
+                duration: 2.2,
+                repeat: Number.POSITIVE_INFINITY,
+                repeatType: "loop",
+                ease: "easeInOut",
+              }}
+              type="button"
+              whileHover={{
+                scale: 1.13,
+                boxShadow:
+                  "0 0 0 6px rgba(37, 211, 102, 0.2), 0 8px 32px 0 rgba(37, 211, 102, 0.6)",
+                transition: { duration: 0.3 },
+              }}
+              whileTap={{ scale: 0.97, transition: { duration: 0.1 } }}
+            >
+              <span className="sr-only">Contactar por WhatsApp</span>
+              <WhatsappIcon />
+            </motion.button>
+          </TooltipTrigger>
+          <TooltipContent
+            className="rounded-lg border-0 bg-[#25D366] px-3 py-2 font-semibold text-sm text-white shadow-xl"
+            side="left"
+          >
+            ¿Necesitás ayuda? ¡Escríbenos!
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  }
+
+  return (
+    <Button
+      aria-label="Contactar por WhatsApp"
+      className={cn("bg-[#25D366] hover:bg-[#1EBE57]", "text-white", className)}
+      onClick={handleClick}
+      type="button"
+    >
+      <MessageCircle className="mr-2 h-4 w-4" />
+      Contactar por WhatsApp
+    </Button>
+  );
 }

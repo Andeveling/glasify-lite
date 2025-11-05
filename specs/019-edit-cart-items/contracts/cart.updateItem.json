@@ -1,193 +1,193 @@
 {
-	"procedure": "cart.updateItem",
-	"type": "mutation",
-	"description": "Update dimensions, glass type, and other editable fields of a cart item (QuoteItem in draft status)",
-	"input": {
-		"type": "object",
-		"required": ["itemId", "widthMm", "heightMm", "glassTypeId"],
-		"properties": {
-			"itemId": {
-				"type": "string",
-				"format": "cuid",
-				"description": "ID of the QuoteItem to edit"
-			},
-			"widthMm": {
-				"type": "integer",
-				"minimum": 100,
-				"maximum": 3000,
-				"description": "New width in millimeters (model-specific validation on server)"
-			},
-			"heightMm": {
-				"type": "integer",
-				"minimum": 100,
-				"maximum": 3000,
-				"description": "New height in millimeters (model-specific validation on server)"
-			},
-			"glassTypeId": {
-				"type": "string",
-				"format": "uuid",
-				"description": "ID of the new glass type (must be compatible with model)"
-			},
-			"name": {
-				"type": "string",
-				"minLength": 1,
-				"maxLength": 50,
-				"description": "Optional: User-defined item name"
-			},
-			"roomLocation": {
-				"type": "string",
-				"maxLength": 100,
-				"description": "Optional: Room location (e.g., 'Alcoba principal')"
-			},
-			"quantity": {
-				"type": "integer",
-				"minimum": 1,
-				"default": 1,
-				"description": "Optional: Item quantity (future feature)"
-			}
-		}
-	},
-	"output": {
-		"type": "object",
-		"properties": {
-			"success": {
-				"type": "boolean",
-				"description": "Indicates if update was successful"
-			},
-			"item": {
-				"type": "object",
-				"description": "Updated QuoteItem with recalculated price",
-				"properties": {
-					"id": { "type": "string" },
-					"quoteId": { "type": "string" },
-					"modelId": { "type": "string" },
-					"glassTypeId": { "type": "string" },
-					"name": { "type": "string" },
-					"quantity": { "type": "integer" },
-					"roomLocation": { "type": "string", "nullable": true },
-					"widthMm": { "type": "integer" },
-					"heightMm": { "type": "integer" },
-					"subtotal": { "type": "string", "format": "decimal" },
-					"colorId": { "type": "string", "nullable": true },
-					"colorSurchargePercentage": {
-						"type": "string",
-						"format": "decimal",
-						"nullable": true
-					},
-					"updatedAt": { "type": "string", "format": "date-time" },
-					"model": {
-						"type": "object",
-						"properties": {
-							"id": { "type": "string" },
-							"name": { "type": "string" },
-							"imageUrl": { "type": "string", "nullable": true }
-						}
-					},
-					"glassType": {
-						"type": "object",
-						"properties": {
-							"id": { "type": "string" },
-							"name": { "type": "string" },
-							"pricePerM2": { "type": "string", "format": "decimal" }
-						}
-					}
-				}
-			},
-			"quoteTotal": {
-				"type": "string",
-				"format": "decimal",
-				"description": "Updated total for the entire quote (cart)"
-			}
-		}
-	},
-	"errors": {
-		"BAD_REQUEST": [
-			{
-				"code": "DIMENSIONS_OUT_OF_RANGE",
-				"message": "Las dimensiones exceden los límites permitidos por el modelo",
-				"details": "widthMm or heightMm outside model.minWidth/maxWidth/minHeight/maxHeight"
-			},
-			{
-				"code": "GLASS_INCOMPATIBLE",
-				"message": "El vidrio seleccionado no es compatible con este modelo",
-				"details": "glassTypeId not found in ModelGlassType junction for this model"
-			},
-			{
-				"code": "INVALID_ITEM_ID",
-				"message": "Item de carrito no encontrado",
-				"details": "itemId does not exist or does not belong to user's draft quote"
-			}
-		],
-		"UNAUTHORIZED": [
-			{
-				"code": "NOT_OWNER",
-				"message": "No tienes permiso para editar este item",
-				"details": "User does not own the quote containing this item"
-			}
-		],
-		"FORBIDDEN": [
-			{
-				"code": "QUOTE_NOT_DRAFT",
-				"message": "No se puede editar un item de una cotización ya enviada",
-				"details": "Quote status is not 'draft' (already sent/approved)"
-			}
-		]
-	},
-	"authorization": {
-		"required": false,
-		"note": "Authenticated users: check userId match. Anonymous users: check sessionId match (future feature)."
-	},
-	"validation": {
-		"client": "Zod schema in cart-item-edit.schema.ts",
-		"server": [
-			"Verify quote exists and status = 'draft'",
-			"Verify user owns quote (userId or sessionId)",
-			"Load model to get dimension constraints",
-			"Validate widthMm/heightMm against model min/max",
-			"Query ModelGlassType to verify compatibility",
-			"Calculate new subtotal using pricing engine",
-			"Update QuoteItem and Quote.total in transaction"
-		]
-	},
-	"side-effects": [
-		"Updates QuoteItem.widthMm, heightMm, glassTypeId, name (optional), roomLocation (optional)",
-		"Recalculates QuoteItem.subtotal",
-		"Recalculates Quote.total (sum of all item subtotals)",
-		"Updates QuoteItem.updatedAt timestamp",
-		"Logs edit event (Winston - server-side only)"
-	],
-	"performance": {
-		"expected": "<2s for calculation and database update",
-		"optimization": "Single transaction for item + quote total update"
-	},
-	"example": {
-		"input": {
-			"itemId": "clq1a2b3c4d5e6f7g8h9i0j1",
-			"widthMm": 1200,
-			"heightMm": 1500,
-			"glassTypeId": "clq9876543210",
-			"name": "Ventana sala principal",
-			"roomLocation": "Sala"
-		},
-		"output": {
-			"success": true,
-			"item": {
-				"id": "clq1a2b3c4d5e6f7g8h9i0j1",
-				"widthMm": 1200,
-				"heightMm": 1500,
-				"glassTypeId": "clq9876543210",
-				"subtotal": "345.60",
-				"updatedAt": "2025-11-03T15:30:00Z",
-				"model": {
-					"name": "Ventana Corrediza 2 Hojas",
-					"imageUrl": "/models/ventana-corrediza.jpg"
-				},
-				"glassType": {
-					"name": "Vidrio Templado 6mm",
-					"pricePerM2": "192.00"
-				}
-			},
-			"quoteTotal": "1245.80"
-		}
-	}
+  "procedure": "cart.updateItem",
+  "type": "mutation",
+  "description": "Update dimensions, glass type, and other editable fields of a cart item (QuoteItem in draft status)",
+  "input": {
+    "type": "object",
+    "required": ["itemId", "widthMm", "heightMm", "glassTypeId"],
+    "properties": {
+      "itemId": {
+        "type": "string",
+        "format": "cuid",
+        "description": "ID of the QuoteItem to edit"
+      },
+      "widthMm": {
+        "type": "integer",
+        "minimum": 100,
+        "maximum": 3000,
+        "description": "New width in millimeters (model-specific validation on server)"
+      },
+      "heightMm": {
+        "type": "integer",
+        "minimum": 100,
+        "maximum": 3000,
+        "description": "New height in millimeters (model-specific validation on server)"
+      },
+      "glassTypeId": {
+        "type": "string",
+        "format": "uuid",
+        "description": "ID of the new glass type (must be compatible with model)"
+      },
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 50,
+        "description": "Optional: User-defined item name"
+      },
+      "roomLocation": {
+        "type": "string",
+        "maxLength": 100,
+        "description": "Optional: Room location (e.g., 'Alcoba principal')"
+      },
+      "quantity": {
+        "type": "integer",
+        "minimum": 1,
+        "default": 1,
+        "description": "Optional: Item quantity (future feature)"
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "description": "Indicates if update was successful"
+      },
+      "item": {
+        "type": "object",
+        "description": "Updated QuoteItem with recalculated price",
+        "properties": {
+          "id": { "type": "string" },
+          "quoteId": { "type": "string" },
+          "modelId": { "type": "string" },
+          "glassTypeId": { "type": "string" },
+          "name": { "type": "string" },
+          "quantity": { "type": "integer" },
+          "roomLocation": { "type": "string", "nullable": true },
+          "widthMm": { "type": "integer" },
+          "heightMm": { "type": "integer" },
+          "subtotal": { "type": "string", "format": "decimal" },
+          "colorId": { "type": "string", "nullable": true },
+          "colorSurchargePercentage": {
+            "type": "string",
+            "format": "decimal",
+            "nullable": true
+          },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "model": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "imageUrl": { "type": "string", "nullable": true }
+            }
+          },
+          "glassType": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "pricePerM2": { "type": "string", "format": "decimal" }
+            }
+          }
+        }
+      },
+      "quoteTotal": {
+        "type": "string",
+        "format": "decimal",
+        "description": "Updated total for the entire quote (cart)"
+      }
+    }
+  },
+  "errors": {
+    "BAD_REQUEST": [
+      {
+        "code": "DIMENSIONS_OUT_OF_RANGE",
+        "message": "Las dimensiones exceden los límites permitidos por el modelo",
+        "details": "widthMm or heightMm outside model.minWidth/maxWidth/minHeight/maxHeight"
+      },
+      {
+        "code": "GLASS_INCOMPATIBLE",
+        "message": "El vidrio seleccionado no es compatible con este modelo",
+        "details": "glassTypeId not found in ModelGlassType junction for this model"
+      },
+      {
+        "code": "INVALID_ITEM_ID",
+        "message": "Item de carrito no encontrado",
+        "details": "itemId does not exist or does not belong to user's draft quote"
+      }
+    ],
+    "UNAUTHORIZED": [
+      {
+        "code": "NOT_OWNER",
+        "message": "No tienes permiso para editar este item",
+        "details": "User does not own the quote containing this item"
+      }
+    ],
+    "FORBIDDEN": [
+      {
+        "code": "QUOTE_NOT_DRAFT",
+        "message": "No se puede editar un item de una cotización ya enviada",
+        "details": "Quote status is not 'draft' (already sent/approved)"
+      }
+    ]
+  },
+  "authorization": {
+    "required": false,
+    "note": "Authenticated users: check userId match. Anonymous users: check sessionId match (future feature)."
+  },
+  "validation": {
+    "client": "Zod schema in cart-item-edit.schema.ts",
+    "server": [
+      "Verify quote exists and status = 'draft'",
+      "Verify user owns quote (userId or sessionId)",
+      "Load model to get dimension constraints",
+      "Validate widthMm/heightMm against model min/max",
+      "Query ModelGlassType to verify compatibility",
+      "Calculate new subtotal using pricing engine",
+      "Update QuoteItem and Quote.total in transaction"
+    ]
+  },
+  "side-effects": [
+    "Updates QuoteItem.widthMm, heightMm, glassTypeId, name (optional), roomLocation (optional)",
+    "Recalculates QuoteItem.subtotal",
+    "Recalculates Quote.total (sum of all item subtotals)",
+    "Updates QuoteItem.updatedAt timestamp",
+    "Logs edit event (Winston - server-side only)"
+  ],
+  "performance": {
+    "expected": "<2s for calculation and database update",
+    "optimization": "Single transaction for item + quote total update"
+  },
+  "example": {
+    "input": {
+      "itemId": "clq1a2b3c4d5e6f7g8h9i0j1",
+      "widthMm": 1200,
+      "heightMm": 1500,
+      "glassTypeId": "clq9876543210",
+      "name": "Ventana sala principal",
+      "roomLocation": "Sala"
+    },
+    "output": {
+      "success": true,
+      "item": {
+        "id": "clq1a2b3c4d5e6f7g8h9i0j1",
+        "widthMm": 1200,
+        "heightMm": 1500,
+        "glassTypeId": "clq9876543210",
+        "subtotal": "345.60",
+        "updatedAt": "2025-11-03T15:30:00Z",
+        "model": {
+          "name": "Ventana Corrediza 2 Hojas",
+          "imageUrl": "/models/ventana-corrediza.jpg"
+        },
+        "glassType": {
+          "name": "Vidrio Templado 6mm",
+          "pricePerM2": "192.00"
+        }
+      },
+      "quoteTotal": "1245.80"
+    }
+  }
 }

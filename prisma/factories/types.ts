@@ -11,69 +11,69 @@ import type { z } from "zod";
  * Common options for all factory functions
  */
 export type FactoryOptions = {
-	/**
-	 * Whether to skip validation (useful for performance in trusted environments)
-	 * @default false
-	 */
-	skipValidation?: boolean;
+  /**
+   * Whether to skip validation (useful for performance in trusted environments)
+   * @default false
+   */
+  skipValidation?: boolean;
 
-	/**
-	 * Override default values with partial data
-	 */
-	overrides?: Record<string, unknown>;
+  /**
+   * Override default values with partial data
+   */
+  overrides?: Record<string, unknown>;
 };
 
 /**
  * Result of a factory operation with validation
  */
 export type FactoryResult<T> = {
-	/**
-	 * Whether validation succeeded
-	 */
-	success: boolean;
+  /**
+   * Whether validation succeeded
+   */
+  success: boolean;
 
-	/**
-	 * The created data (if successful)
-	 */
-	data?: T;
+  /**
+   * The created data (if successful)
+   */
+  data?: T;
 
-	/**
-	 * Validation errors (if failed)
-	 */
-	errors?: ValidationError[];
+  /**
+   * Validation errors (if failed)
+   */
+  errors?: ValidationError[];
 };
 
 /**
  * Structured validation error
  */
 export type ValidationError = {
-	/**
-	 * Field path (e.g., "pricePerSqm", "dimensions.minWidth")
-	 */
-	path: string[];
+  /**
+   * Field path (e.g., "pricePerSqm", "dimensions.minWidth")
+   */
+  path: string[];
 
-	/**
-	 * Human-readable error message
-	 */
-	message: string;
+  /**
+   * Human-readable error message
+   */
+  message: string;
 
-	/**
-	 * Error code for programmatic handling
-	 */
-	code: string;
+  /**
+   * Error code for programmatic handling
+   */
+  code: string;
 
-	/**
-	 * Additional context about the error
-	 */
-	context?: Record<string, unknown>;
+  /**
+   * Additional context about the error
+   */
+  context?: Record<string, unknown>;
 };
 
 /**
  * Base factory function type
  */
 export type Factory<TInput, TOutput> = (
-	input: TInput,
-	options?: FactoryOptions,
+  input: TInput,
+  options?: FactoryOptions
 ) => FactoryResult<TOutput>;
 
 /**
@@ -86,43 +86,43 @@ export type InferSchema<T extends z.ZodType> = z.infer<T>;
  * Factory metadata for documentation
  */
 export type FactoryMetadata = {
-	/**
-	 * Factory name
-	 */
-	name: string;
+  /**
+   * Factory name
+   */
+  name: string;
 
-	/**
-	 * Description of what this factory creates
-	 */
-	description: string;
+  /**
+   * Description of what this factory creates
+   */
+  description: string;
 
-	/**
-	 * Version of the factory (for tracking changes)
-	 */
-	version: string;
+  /**
+   * Version of the factory (for tracking changes)
+   */
+  version: string;
 
-	/**
-	 * Data sources used (URLs, documentation references)
-	 */
-	sources?: string[];
+  /**
+   * Data sources used (URLs, documentation references)
+   */
+  sources?: string[];
 };
 
 /**
  * Preset configuration type
  */
 export type PresetConfig<T = unknown> = {
-	/**
-	 * Preset name
-	 */
-	name: string;
+  /**
+   * Preset name
+   */
+  name: string;
 
-	/**
-	 * Preset description
-	 */
-	description: string;
+  /**
+   * Preset description
+   */
+  description: string;
 
-	/**
-	 * Data to seed
-	 */
-	data: T;
+  /**
+   * Data to seed
+   */
+  data: T;
 };

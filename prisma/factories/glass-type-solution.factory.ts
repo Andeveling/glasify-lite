@@ -29,37 +29,37 @@ const THICKNESS_DVH_THICK = 20;
  * Glass characteristics for rating calculation
  */
 export type GlassCharacteristics = {
-	isLaminated: boolean;
-	isLowE: boolean;
-	isTempered: boolean;
-	isTripleGlazed: boolean;
-	purpose: string;
-	thicknessMm: number;
+  isLaminated: boolean;
+  isLowE: boolean;
+  isTempered: boolean;
+  isTripleGlazed: boolean;
+  purpose: string;
+  thicknessMm: number;
 };
 
 /**
  * Solution assignment result
  */
 export type SolutionAssignment = {
-	isPrimary: boolean;
-	performanceRating: PerformanceRating;
-	solutionKey: string;
+  isPrimary: boolean;
+  performanceRating: PerformanceRating;
+  solutionKey: string;
 };
 
 /**
  * Zod schema for GlassTypeSolution input validation
  */
 const glassTypeSolutionSchema = z.object({
-	glassTypeId: z.string().cuid(),
-	isPrimary: z.boolean(),
-	performanceRating: z.enum([
-		"basic",
-		"standard",
-		"good",
-		"very_good",
-		"excellent",
-	]),
-	solutionId: z.string().cuid(),
+  glassTypeId: z.string().cuid(),
+  isPrimary: z.boolean(),
+  performanceRating: z.enum([
+    "basic",
+    "standard",
+    "good",
+    "very_good",
+    "excellent",
+  ]),
+  solutionId: z.string().cuid(),
 });
 
 /**
@@ -84,36 +84,36 @@ export type GlassTypeSolutionInput = z.infer<typeof glassTypeSolutionSchema>;
  * - 5: Excellent (multi-layer laminated tempered)
  */
 export function calculateSecurityRating(
-	glass: GlassCharacteristics,
+  glass: GlassCharacteristics
 ): PerformanceRating {
-	let score = 1;
+  let score = 1;
 
-	if (glass.isTempered) {
-		score += 1;
-	}
-	if (glass.isLaminated) {
-		score += 2;
-	}
-	if (glass.thicknessMm >= THICKNESS_STANDARD) {
-		score += 1;
-	}
-	if (glass.isLaminated && glass.isTempered) {
-		score += 1; // Bonus for combination
-	}
+  if (glass.isTempered) {
+    score += 1;
+  }
+  if (glass.isLaminated) {
+    score += 2;
+  }
+  if (glass.thicknessMm >= THICKNESS_STANDARD) {
+    score += 1;
+  }
+  if (glass.isLaminated && glass.isTempered) {
+    score += 1; // Bonus for combination
+  }
 
-	if (score >= RATING_EXCELLENT) {
-		return "excellent";
-	}
-	if (score >= RATING_VERY_GOOD) {
-		return "very_good";
-	}
-	if (score >= RATING_GOOD) {
-		return "good";
-	}
-	if (score >= RATING_STANDARD) {
-		return "standard";
-	}
-	return "basic";
+  if (score >= RATING_EXCELLENT) {
+    return "excellent";
+  }
+  if (score >= RATING_VERY_GOOD) {
+    return "very_good";
+  }
+  if (score >= RATING_GOOD) {
+    return "good";
+  }
+  if (score >= RATING_STANDARD) {
+    return "standard";
+  }
+  return "basic";
 }
 
 /**
@@ -134,41 +134,41 @@ export function calculateSecurityRating(
  * - 5 (Excellent): 45+ dB
  */
 export function calculateSoundInsulationRating(
-	glass: GlassCharacteristics,
+  glass: GlassCharacteristics
 ): PerformanceRating {
-	let score = 1;
+  let score = 1;
 
-	// Base score from thickness
-	if (glass.thicknessMm >= THICKNESS_STANDARD) {
-		score += 1;
-	}
-	if (glass.thicknessMm >= THICKNESS_DVH_MIN) {
-		score += 1;
-	}
+  // Base score from thickness
+  if (glass.thicknessMm >= THICKNESS_STANDARD) {
+    score += 1;
+  }
+  if (glass.thicknessMm >= THICKNESS_DVH_MIN) {
+    score += 1;
+  }
 
-	// Laminated glass significantly improves acoustic performance
-	if (glass.isLaminated) {
-		score += 2;
-	}
+  // Laminated glass significantly improves acoustic performance
+  if (glass.isLaminated) {
+    score += 2;
+  }
 
-	// Triple glazing with air/gas chambers
-	if (glass.isTripleGlazed) {
-		score += 1;
-	}
+  // Triple glazing with air/gas chambers
+  if (glass.isTripleGlazed) {
+    score += 1;
+  }
 
-	if (score >= RATING_EXCELLENT) {
-		return "excellent";
-	}
-	if (score >= RATING_VERY_GOOD) {
-		return "very_good";
-	}
-	if (score >= RATING_GOOD) {
-		return "good";
-	}
-	if (score >= RATING_STANDARD) {
-		return "standard";
-	}
-	return "basic";
+  if (score >= RATING_EXCELLENT) {
+    return "excellent";
+  }
+  if (score >= RATING_VERY_GOOD) {
+    return "very_good";
+  }
+  if (score >= RATING_GOOD) {
+    return "good";
+  }
+  if (score >= RATING_STANDARD) {
+    return "standard";
+  }
+  return "basic";
 }
 
 /**
@@ -189,41 +189,41 @@ export function calculateSoundInsulationRating(
  * - 5 (Excellent): U < 1.2
  */
 export function calculateThermalInsulationRating(
-	glass: GlassCharacteristics,
+  glass: GlassCharacteristics
 ): PerformanceRating {
-	let score = 1;
+  let score = 1;
 
-	// Thicker glass or DVH configuration
-	if (glass.thicknessMm >= THICKNESS_DVH_MIN) {
-		score += 1; // Likely DVH
-	}
-	if (glass.thicknessMm >= THICKNESS_DVH_THICK) {
-		score += 1; // Definitely DVH
-	}
+  // Thicker glass or DVH configuration
+  if (glass.thicknessMm >= THICKNESS_DVH_MIN) {
+    score += 1; // Likely DVH
+  }
+  if (glass.thicknessMm >= THICKNESS_DVH_THICK) {
+    score += 1; // Definitely DVH
+  }
 
-	// Low-E coating significantly reduces U-value
-	if (glass.isLowE) {
-		score += 2;
-	}
+  // Low-E coating significantly reduces U-value
+  if (glass.isLowE) {
+    score += 2;
+  }
 
-	// Triple glazing
-	if (glass.isTripleGlazed) {
-		score += 1;
-	}
+  // Triple glazing
+  if (glass.isTripleGlazed) {
+    score += 1;
+  }
 
-	if (score >= RATING_EXCELLENT) {
-		return "excellent";
-	}
-	if (score >= RATING_VERY_GOOD) {
-		return "very_good";
-	}
-	if (score >= RATING_GOOD) {
-		return "good";
-	}
-	if (score >= RATING_STANDARD) {
-		return "standard";
-	}
-	return "basic";
+  if (score >= RATING_EXCELLENT) {
+    return "excellent";
+  }
+  if (score >= RATING_VERY_GOOD) {
+    return "very_good";
+  }
+  if (score >= RATING_GOOD) {
+    return "good";
+  }
+  if (score >= RATING_STANDARD) {
+    return "standard";
+  }
+  return "basic";
 }
 
 /**
@@ -235,36 +235,36 @@ export function calculateThermalInsulationRating(
  * - DVH (double glazing): Standard improvement
  */
 export function calculateEnergyEfficiencyRating(
-	glass: GlassCharacteristics,
+  glass: GlassCharacteristics
 ): PerformanceRating {
-	let score = 1;
+  let score = 1;
 
-	if (glass.thicknessMm >= THICKNESS_DVH_MIN) {
-		score += 1; // DVH
-	}
-	if (glass.isLowE) {
-		score += 2; // Low-E is key for energy efficiency
-	}
-	if (glass.isTripleGlazed) {
-		score += 1;
-	}
-	if (glass.isLowE && glass.isTripleGlazed) {
-		score += 1; // Bonus
-	}
+  if (glass.thicknessMm >= THICKNESS_DVH_MIN) {
+    score += 1; // DVH
+  }
+  if (glass.isLowE) {
+    score += 2; // Low-E is key for energy efficiency
+  }
+  if (glass.isTripleGlazed) {
+    score += 1;
+  }
+  if (glass.isLowE && glass.isTripleGlazed) {
+    score += 1; // Bonus
+  }
 
-	if (score >= RATING_EXCELLENT) {
-		return "excellent";
-	}
-	if (score >= RATING_VERY_GOOD) {
-		return "very_good";
-	}
-	if (score >= RATING_GOOD) {
-		return "good";
-	}
-	if (score >= RATING_STANDARD) {
-		return "standard";
-	}
-	return "basic";
+  if (score >= RATING_EXCELLENT) {
+    return "excellent";
+  }
+  if (score >= RATING_VERY_GOOD) {
+    return "very_good";
+  }
+  if (score >= RATING_GOOD) {
+    return "good";
+  }
+  if (score >= RATING_STANDARD) {
+    return "standard";
+  }
+  return "basic";
 }
 
 /**
@@ -292,79 +292,79 @@ export function calculateEnergyEfficiencyRating(
  * ```
  */
 export function calculateGlassSolutions(
-	glass: GlassCharacteristics,
+  glass: GlassCharacteristics
 ): SolutionAssignment[] {
-	const solutions: SolutionAssignment[] = [];
+  const solutions: SolutionAssignment[] = [];
 
-	// Security rating (all glasses have some level of security)
-	const securityRating = calculateSecurityRating(glass);
-	if (securityRating !== "basic" || glass.purpose === "security") {
-		solutions.push({
-			isPrimary: glass.purpose === "security",
-			performanceRating: securityRating,
-			solutionKey: "security",
-		});
-	}
+  // Security rating (all glasses have some level of security)
+  const securityRating = calculateSecurityRating(glass);
+  if (securityRating !== "basic" || glass.purpose === "security") {
+    solutions.push({
+      isPrimary: glass.purpose === "security",
+      performanceRating: securityRating,
+      solutionKey: "security",
+    });
+  }
 
-	// Sound insulation (laminated or thick glass)
-	if (glass.isLaminated || glass.thicknessMm >= THICKNESS_STANDARD) {
-		const soundRating = calculateSoundInsulationRating(glass);
-		solutions.push({
-			isPrimary: false, // Rarely the primary purpose
-			performanceRating: soundRating,
-			solutionKey: "sound_insulation",
-		});
-	}
+  // Sound insulation (laminated or thick glass)
+  if (glass.isLaminated || glass.thicknessMm >= THICKNESS_STANDARD) {
+    const soundRating = calculateSoundInsulationRating(glass);
+    solutions.push({
+      isPrimary: false, // Rarely the primary purpose
+      performanceRating: soundRating,
+      solutionKey: "sound_insulation",
+    });
+  }
 
-	// Thermal insulation (DVH, Low-E, triple glazing)
-	if (
-		glass.thicknessMm >= THICKNESS_DVH_MIN ||
-		glass.isLowE ||
-		glass.isTripleGlazed
-	) {
-		const thermalRating = calculateThermalInsulationRating(glass);
-		solutions.push({
-			isPrimary: glass.purpose === "insulation",
-			performanceRating: thermalRating,
-			solutionKey: "thermal_insulation",
-		});
-	}
+  // Thermal insulation (DVH, Low-E, triple glazing)
+  if (
+    glass.thicknessMm >= THICKNESS_DVH_MIN ||
+    glass.isLowE ||
+    glass.isTripleGlazed
+  ) {
+    const thermalRating = calculateThermalInsulationRating(glass);
+    solutions.push({
+      isPrimary: glass.purpose === "insulation",
+      performanceRating: thermalRating,
+      solutionKey: "thermal_insulation",
+    });
+  }
 
-	// Energy efficiency (Low-E is key indicator)
-	if (glass.isLowE || glass.isTripleGlazed) {
-		const energyRating = calculateEnergyEfficiencyRating(glass);
-		solutions.push({
-			isPrimary: false, // Related to thermal but distinct
-			performanceRating: energyRating,
-			solutionKey: "energy_efficiency",
-		});
-	}
+  // Energy efficiency (Low-E is key indicator)
+  if (glass.isLowE || glass.isTripleGlazed) {
+    const energyRating = calculateEnergyEfficiencyRating(glass);
+    solutions.push({
+      isPrimary: false, // Related to thermal but distinct
+      performanceRating: energyRating,
+      solutionKey: "energy_efficiency",
+    });
+  }
 
-	// Decorative
-	if (glass.purpose === "decorative") {
-		solutions.push({
-			isPrimary: true,
-			performanceRating: "standard", // Decorative doesn't have performance grades
-			solutionKey: "decorative",
-		});
-	}
+  // Decorative
+  if (glass.purpose === "decorative") {
+    solutions.push({
+      isPrimary: true,
+      performanceRating: "standard", // Decorative doesn't have performance grades
+      solutionKey: "decorative",
+    });
+  }
 
-	// General purpose (fallback for simple glasses)
-	if (glass.purpose === "general" || solutions.length === 0) {
-		solutions.push({
-			isPrimary: glass.purpose === "general",
-			performanceRating: "standard",
-			solutionKey: "general",
-		});
-	}
+  // General purpose (fallback for simple glasses)
+  if (glass.purpose === "general" || solutions.length === 0) {
+    solutions.push({
+      isPrimary: glass.purpose === "general",
+      performanceRating: "standard",
+      solutionKey: "general",
+    });
+  }
 
-	// Ensure at least one solution is primary
-	if (!solutions.some((s) => s.isPrimary) && solutions.length > 0) {
-		// biome-ignore lint/style/noNonNullAssertion: we check length > 0
-		solutions[0]!.isPrimary = true;
-	}
+  // Ensure at least one solution is primary
+  if (!solutions.some((s) => s.isPrimary) && solutions.length > 0) {
+    // biome-ignore lint/style/noNonNullAssertion: we check length > 0
+    solutions[0]!.isPrimary = true;
+  }
 
-	return solutions;
+  return solutions;
 }
 
 /**
@@ -389,23 +389,23 @@ export function calculateGlassSolutions(
  * ```
  */
 export function createGlassTypeSolution(
-	input: GlassTypeSolutionInput,
-	options: FactoryOptions = {},
+  input: GlassTypeSolutionInput,
+  options: FactoryOptions = {}
 ): FactoryResult<GlassTypeSolutionInput> {
-	// Phase 1: Zod schema validation
-	if (!options.skipValidation) {
-		const schemaValidation = validateWithSchema(glassTypeSolutionSchema, input);
-		if (!schemaValidation.success) {
-			return schemaValidation;
-		}
-	}
+  // Phase 1: Zod schema validation
+  if (!options.skipValidation) {
+    const schemaValidation = validateWithSchema(glassTypeSolutionSchema, input);
+    if (!schemaValidation.success) {
+      return schemaValidation;
+    }
+  }
 
-	// Phase 2: Business logic validation
-	// No additional business rules needed beyond Zod schema
+  // Phase 2: Business logic validation
+  // No additional business rules needed beyond Zod schema
 
-	// Success: return validated data
-	return {
-		data: input,
-		success: true,
-	};
+  // Success: return validated data
+  return {
+    data: input,
+    success: true,
+  };
 }

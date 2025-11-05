@@ -14,23 +14,23 @@ import dynamic from "next/dynamic";
 // Dynamic import with SSR disabled to prevent hydration mismatch
 // CartIndicator uses sessionStorage which is not available during SSR
 const CartIndicator = dynamic(
-	() =>
-		import("./cart-indicator").then((mod) => ({
-			default: mod.CartIndicator,
-		})),
-	{
-		ssr: false,
-		loading: () => (
-			<div className="h-10 w-10 animate-pulse rounded-md bg-muted" />
-		),
-	},
+  () =>
+    import("./cart-indicator").then((mod) => ({
+      default: mod.CartIndicator,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-10 w-10 animate-pulse rounded-md bg-muted" />
+    ),
+  }
 );
 
 type CartIndicatorWrapperProps = {
-	/** Display variant */
-	variant?: "default" | "compact";
-	/** Optional className for styling */
-	className?: string;
+  /** Display variant */
+  variant?: "default" | "compact";
+  /** Optional className for styling */
+  className?: string;
 };
 
 /**
@@ -38,8 +38,8 @@ type CartIndicatorWrapperProps = {
  * Must be a Client Component to use dynamic() with ssr: false
  */
 export function CartIndicatorWrapper({
-	variant = "default",
-	className,
+  variant = "default",
+  className,
 }: CartIndicatorWrapperProps) {
-	return <CartIndicator className={className} variant={variant} />;
+  return <CartIndicator className={className} variant={variant} />;
 }

@@ -13,8 +13,8 @@ import { transformWizardToQuoteItem } from "../_utils/wizard-form.utils";
 import { useWizardPersistence } from "./use-wizard-persistence";
 
 type UseAddToBudgetProps = {
-	modelId: string; // Required for localStorage clearing
-	successAction?: () => void; // Callback after successful addition (not a Server Action, just naming convention)
+  modelId: string; // Required for localStorage clearing
+  successAction?: () => void; // Callback after successful addition (not a Server Action, just naming convention)
 };
 
 /**
@@ -26,57 +26,57 @@ type UseAddToBudgetProps = {
  * @returns Mutation methods and state
  */
 export function useAddToBudget({
-	modelId,
-	successAction,
+  modelId,
+  successAction,
 }: UseAddToBudgetProps) {
-	const router = useRouter();
-	const utils = api.useUtils();
-	const { clear } = useWizardPersistence(modelId);
+  const router = useRouter();
+  const utils = api.useUtils();
+  const { clear } = useWizardPersistence(modelId);
 
-	const mutation = api.quote["add-item"].useMutation({
-		onSuccess: () => {
-			// Step 1: Invalidate budget cache
-			utils.quote.invalidate().catch(() => {
-				// Ignore invalidation errors
-			});
+  const mutation = api.quote["add-item"].useMutation({
+    onSuccess: () => {
+      // Step 1: Invalidate budget cache
+      utils.quote.invalidate().catch(() => {
+        // Ignore invalidation errors
+      });
 
-			// Step 2: Refresh router for SSR pages with force-dynamic
-			router.refresh();
+      // Step 2: Refresh router for SSR pages with force-dynamic
+      router.refresh();
 
-			// Step 3: Clear localStorage (wizard auto-save data)
-			clear();
+      // Step 3: Clear localStorage (wizard auto-save data)
+      clear();
 
-			// User feedback
-			toast.success("Agregado al presupuesto", {
-				description: "El ítem se agregó correctamente a tu cotización",
-			});
+      // User feedback
+      toast.success("Agregado al presupuesto", {
+        description: "El ítem se agregó correctamente a tu cotización",
+      });
 
-			// Execute callback
-			successAction?.();
-		},
-		onError: (error) => {
-			toast.error("Error al agregar", {
-				description:
-					error.message || "No se pudo agregar el ítem al presupuesto",
-			});
-		},
-	});
+      // Execute callback
+      successAction?.();
+    },
+    onError: (error) => {
+      toast.error("Error al agregar", {
+        description:
+          error.message || "No se pudo agregar el ítem al presupuesto",
+      });
+    },
+  });
 
-	/**
-	 * Add wizard item to budget
-	 * @param formData - Complete wizard form data
-	 * @param glassTypeId - Selected glass type ID (from glass solution)
-	 */
-	const addItem = (formData: WizardFormData, glassTypeId: string) => {
-		const payload = transformWizardToQuoteItem(formData, glassTypeId);
-		mutation.mutate(payload);
-	};
+  /**
+   * Add wizard item to budget
+   * @param formData - Complete wizard form data
+   * @param glassTypeId - Selected glass type ID (from glass solution)
+   */
+  const addItem = (formData: WizardFormData, glassTypeId: string) => {
+    const payload = transformWizardToQuoteItem(formData, glassTypeId);
+    mutation.mutate(payload);
+  };
 
-	return {
-		addItem,
-		isLoading: mutation.isPending,
-		isSuccess: mutation.isSuccess,
-		isError: mutation.isError,
-		error: mutation.error,
-	};
+  return {
+    addItem,
+    isLoading: mutation.isPending,
+    isSuccess: mutation.isSuccess,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }

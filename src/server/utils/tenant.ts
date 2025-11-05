@@ -12,8 +12,8 @@ import { cacheLife } from "next/cache";
 import { db } from "../db";
 
 type TransactionClient = Omit<
-	PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
-	"$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
+  PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
+  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
 >;
 
 /**
@@ -28,23 +28,23 @@ type TransactionClient = Omit<
  * @returns Promise<TenantConfig> The tenant configuration
  */
 export async function getTenantConfig(
-	client?: TransactionClient,
+  client?: TransactionClient
 ): Promise<TenantConfig> {
-	"use cache";
+  "use cache";
 
-	// Cache for 24 hours - tenant config rarely changes
-	cacheLife("days");
+  // Cache for 24 hours - tenant config rarely changes
+  cacheLife("days");
 
-	const prisma = client ?? db;
-	const config = await prisma.tenantConfig.findFirst();
+  const prisma = client ?? db;
+  const config = await prisma.tenantConfig.findFirst();
 
-	if (!config) {
-		throw new Error(
-			"No TenantConfig found in database. Run migration script to create one.",
-		);
-	}
+  if (!config) {
+    throw new Error(
+      "No TenantConfig found in database. Run migration script to create one."
+    );
+  }
 
-	return config;
+  return config;
 }
 
 /**
@@ -55,23 +55,23 @@ export async function getTenantConfig(
  * @returns Promise<Partial<TenantConfig>> Selected fields
  */
 export async function getTenantConfigSelect<
-	T extends Prisma.TenantConfigSelect,
+  T extends Prisma.TenantConfigSelect,
 >(
-	select: T,
-	client?: TransactionClient,
+  select: T,
+  client?: TransactionClient
 ): Promise<Prisma.TenantConfigGetPayload<{ select: T }>> {
-	const prisma = client ?? db;
-	const config = await prisma.tenantConfig.findFirst({
-		select,
-	});
+  const prisma = client ?? db;
+  const config = await prisma.tenantConfig.findFirst({
+    select,
+  });
 
-	if (!config) {
-		throw new Error(
-			"No TenantConfig found in database. Run migration script to create one.",
-		);
-	}
+  if (!config) {
+    throw new Error(
+      "No TenantConfig found in database. Run migration script to create one."
+    );
+  }
 
-	return config;
+  return config;
 }
 
 /**
@@ -82,16 +82,16 @@ export async function getTenantConfigSelect<
  * @returns Promise<TenantConfig> Updated configuration
  */
 export async function updateTenantConfig(
-	data: Prisma.TenantConfigUpdateInput,
-	client?: TransactionClient,
+  data: Prisma.TenantConfigUpdateInput,
+  client?: TransactionClient
 ): Promise<TenantConfig> {
-	const prisma = client ?? db;
-	const existing = await getTenantConfig(prisma);
+  const prisma = client ?? db;
+  const existing = await getTenantConfig(prisma);
 
-	return prisma.tenantConfig.update({
-		data,
-		where: { id: existing.id },
-	});
+  return prisma.tenantConfig.update({
+    data,
+    where: { id: existing.id },
+  });
 }
 
 /**
@@ -101,11 +101,11 @@ export async function updateTenantConfig(
  * @returns Promise<string> ISO 4217 currency code
  */
 export async function getTenantCurrency(
-	client?: TransactionClient,
+  client?: TransactionClient
 ): Promise<string> {
-	const config = await getTenantConfigSelect({ currency: true }, client);
+  const config = await getTenantConfigSelect({ currency: true }, client);
 
-	return config.currency;
+  return config.currency;
 }
 
 /**
@@ -115,12 +115,12 @@ export async function getTenantCurrency(
  * @returns Promise<number> Quote validity in days
  */
 export async function getQuoteValidityDays(
-	client?: TransactionClient,
+  client?: TransactionClient
 ): Promise<number> {
-	const config = await getTenantConfigSelect(
-		{ quoteValidityDays: true },
-		client,
-	);
+  const config = await getTenantConfigSelect(
+    { quoteValidityDays: true },
+    client
+  );
 
-	return config.quoteValidityDays;
+  return config.quoteValidityDays;
 }

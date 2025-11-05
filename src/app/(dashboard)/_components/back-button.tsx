@@ -10,14 +10,14 @@ import { Button } from "@/components/ui/button";
  * Used in error pages to allow users to go back to previous page.
  */
 export function BackButton() {
-	const handleBack = () => {
-		window.history.back();
-	};
+  const handleBack = () => {
+    window.history.back();
+  };
 
-	return (
-		<Button className="gap-2" onClick={handleBack} variant="ghost">
-			<ArrowLeft className="h-4 w-4" />
-			Página Anterior
-		</Button>
-	);
+  return (
+    <Button className="gap-2" onClick={handleBack} variant="ghost">
+      <ArrowLeft className="h-4 w-4" />
+      Página Anterior
+    </Button>
+  );
 }

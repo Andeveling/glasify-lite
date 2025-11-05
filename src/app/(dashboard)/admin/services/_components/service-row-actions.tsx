@@ -15,27 +15,27 @@
 import { Pencil, Power, PowerOff, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 
 type ServiceRowActionsProps = {
-	/** Service ID */
-	serviceId: string;
-	/** Service name for accessibility */
-	serviceName: string;
-	/** Whether the service is currently active */
-	isActive: boolean;
-	/** Whether actions are currently loading */
-	isLoading?: boolean;
-	/** Callback when edit button is clicked */
-	onEditAction: (serviceId: string) => void;
-	/** Callback when toggle active button is clicked */
-	onToggleActiveAction: (serviceId: string, currentState: boolean) => void;
-	/** Callback when delete button is clicked */
-	onDeleteAction: (serviceId: string, serviceName: string) => void;
+  /** Service ID */
+  serviceId: string;
+  /** Service name for accessibility */
+  serviceName: string;
+  /** Whether the service is currently active */
+  isActive: boolean;
+  /** Whether actions are currently loading */
+  isLoading?: boolean;
+  /** Callback when edit button is clicked */
+  onEditAction: (serviceId: string) => void;
+  /** Callback when toggle active button is clicked */
+  onToggleActiveAction: (serviceId: string, currentState: boolean) => void;
+  /** Callback when delete button is clicked */
+  onDeleteAction: (serviceId: string, serviceName: string) => void;
 };
 
 /**
@@ -61,77 +61,77 @@ type ServiceRowActionsProps = {
  * ```
  */
 export function ServiceRowActions({
-	serviceId,
-	serviceName,
-	isActive,
-	isLoading = false,
-	onEditAction,
-	onToggleActiveAction,
-	onDeleteAction,
+  serviceId,
+  serviceName,
+  isActive,
+  isLoading = false,
+  onEditAction,
+  onToggleActiveAction,
+  onDeleteAction,
 }: ServiceRowActionsProps) {
-	return (
-		<div className="flex items-center justify-end gap-2">
-			<TooltipProvider>
-				{/* Edit Button */}
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<Button
-							disabled={isLoading}
-							onClick={() => onEditAction(serviceId)}
-							size="sm"
-							variant="ghost"
-						>
-							<Pencil className="h-4 w-4" />
-							<span className="sr-only">Editar {serviceName}</span>
-						</Button>
-					</TooltipTrigger>
-					<TooltipContent>
-						<p>Editar servicio</p>
-					</TooltipContent>
-				</Tooltip>
+  return (
+    <div className="flex items-center justify-end gap-2">
+      <TooltipProvider>
+        {/* Edit Button */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              disabled={isLoading}
+              onClick={() => onEditAction(serviceId)}
+              size="sm"
+              variant="ghost"
+            >
+              <Pencil className="h-4 w-4" />
+              <span className="sr-only">Editar {serviceName}</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Editar servicio</p>
+          </TooltipContent>
+        </Tooltip>
 
-				{/* Toggle Active Button */}
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<Button
-							disabled={isLoading}
-							onClick={() => onToggleActiveAction(serviceId, isActive)}
-							size="sm"
-							variant="ghost"
-						>
-							{isActive ? (
-								<PowerOff className="h-4 w-4 text-orange-500" />
-							) : (
-								<Power className="h-4 w-4 text-green-500" />
-							)}
-							<span className="sr-only">
-								{isActive ? "Desactivar" : "Activar"} {serviceName}
-							</span>
-						</Button>
-					</TooltipTrigger>
-					<TooltipContent>
-						<p>{isActive ? "Desactivar" : "Activar"} servicio</p>
-					</TooltipContent>
-				</Tooltip>
+        {/* Toggle Active Button */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              disabled={isLoading}
+              onClick={() => onToggleActiveAction(serviceId, isActive)}
+              size="sm"
+              variant="ghost"
+            >
+              {isActive ? (
+                <PowerOff className="h-4 w-4 text-orange-500" />
+              ) : (
+                <Power className="h-4 w-4 text-green-500" />
+              )}
+              <span className="sr-only">
+                {isActive ? "Desactivar" : "Activar"} {serviceName}
+              </span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{isActive ? "Desactivar" : "Activar"} servicio</p>
+          </TooltipContent>
+        </Tooltip>
 
-				{/* Delete Button */}
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<Button
-							disabled={isLoading}
-							onClick={() => onDeleteAction(serviceId, serviceName)}
-							size="sm"
-							variant="ghost"
-						>
-							<Trash2 className="h-4 w-4 text-destructive" />
-							<span className="sr-only">Eliminar {serviceName}</span>
-						</Button>
-					</TooltipTrigger>
-					<TooltipContent>
-						<p>Eliminar servicio</p>
-					</TooltipContent>
-				</Tooltip>
-			</TooltipProvider>
-		</div>
-	);
+        {/* Delete Button */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              disabled={isLoading}
+              onClick={() => onDeleteAction(serviceId, serviceName)}
+              size="sm"
+              variant="ghost"
+            >
+              <Trash2 className="h-4 w-4 text-destructive" />
+              <span className="sr-only">Eliminar {serviceName}</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Eliminar servicio</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
+  );
 }

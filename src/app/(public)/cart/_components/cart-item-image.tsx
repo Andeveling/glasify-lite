@@ -9,19 +9,19 @@
 
 import Image from "next/image";
 import {
-	CART_ITEM_IMAGE_SIZE,
-	DEFAULT_MODEL_PLACEHOLDER,
+  CART_ITEM_IMAGE_SIZE,
+  DEFAULT_MODEL_PLACEHOLDER,
 } from "../_constants/cart-item.constants";
 
 interface CartItemImageProps {
-	/**
-	 * Model image URL (null/undefined shows placeholder)
-	 */
-	modelImageUrl: string | null | undefined;
-	/**
-	 * Model name for alt text accessibility
-	 */
-	modelName: string;
+  /**
+   * Model image URL (null/undefined shows placeholder)
+   */
+  modelImageUrl: string | null | undefined;
+  /**
+   * Model name for alt text accessibility
+   */
+  modelName: string;
 }
 
 /**
@@ -31,22 +31,22 @@ interface CartItemImageProps {
  * Falls back to placeholder image when modelImageUrl is missing.
  */
 export function CartItemImage({
-	modelImageUrl,
-	modelName,
+  modelImageUrl,
+  modelName,
 }: CartItemImageProps) {
-	const imageSrc = modelImageUrl ?? DEFAULT_MODEL_PLACEHOLDER;
-	const altText = `Imagen de ${modelName}`;
+  const imageSrc = modelImageUrl ?? DEFAULT_MODEL_PLACEHOLDER;
+  const altText = `Imagen de ${modelName}`;
 
-	return (
-		<div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-			<Image
-				src={imageSrc}
-				alt={altText}
-				width={CART_ITEM_IMAGE_SIZE}
-				height={CART_ITEM_IMAGE_SIZE}
-				className="h-full w-full object-cover"
-				priority={false}
-			/>
-		</div>
-	);
+  return (
+    <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+      <Image
+        alt={altText}
+        className="h-full w-full object-cover"
+        height={CART_ITEM_IMAGE_SIZE}
+        priority={false}
+        src={imageSrc}
+        width={CART_ITEM_IMAGE_SIZE}
+      />
+    </div>
+  );
 }

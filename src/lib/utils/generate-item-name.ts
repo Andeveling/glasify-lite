@@ -43,26 +43,26 @@ const WORD_SEPARATOR_REGEX = /[\s\-_]/;
  * extractModelPrefix("modelo-especial") → "MODELO"
  */
 export function extractModelPrefix(modelName: string): string {
-	if (!modelName || typeof modelName !== "string") {
-		return "ITEM";
-	}
+  if (!modelName || typeof modelName !== "string") {
+    return "ITEM";
+  }
 
-	const cleaned = modelName.trim();
-	if (cleaned.length === 0) {
-		return "ITEM";
-	}
+  const cleaned = modelName.trim();
+  if (cleaned.length === 0) {
+    return "ITEM";
+  }
 
-	// Extract first word (stop at space, hyphen, underscore)
-	const firstWord = cleaned.split(WORD_SEPARATOR_REGEX)[0];
+  // Extract first word (stop at space, hyphen, underscore)
+  const firstWord = cleaned.split(WORD_SEPARATOR_REGEX)[0];
 
-	if (!firstWord) {
-		return "ITEM";
-	}
+  if (!firstWord) {
+    return "ITEM";
+  }
 
-	// Convert to uppercase and limit length
-	const prefix = firstWord.toUpperCase().slice(0, MAX_PREFIX_LENGTH);
+  // Convert to uppercase and limit length
+  const prefix = firstWord.toUpperCase().slice(0, MAX_PREFIX_LENGTH);
 
-	return prefix;
+  return prefix;
 }
 
 /**
@@ -86,35 +86,35 @@ export function extractModelPrefix(modelName: string): string {
  * findNextSequence("GUARDIAN", cartItems) → "001"
  */
 export function findNextSequence(
-	prefix: string,
-	existingItems: CartItem[],
+  prefix: string,
+  existingItems: CartItem[]
 ): string {
-	if (!prefix || typeof prefix !== "string") {
-		return "001";
-	}
+  if (!prefix || typeof prefix !== "string") {
+    return "001";
+  }
 
-	if (!existingItems || existingItems.length === 0) {
-		return "001";
-	}
+  if (!existingItems || existingItems.length === 0) {
+    return "001";
+  }
 
-	// Pattern: {PREFIX}-{SEQUENCE}
-	const prefixPattern = new RegExp(`^${prefix}-(\\d+)$`, "i");
+  // Pattern: {PREFIX}-{SEQUENCE}
+  const prefixPattern = new RegExp(`^${prefix}-(\\d+)$`, "i");
 
-	// Find all items matching this prefix
-	const matchingSequences = existingItems
-		.map((item) => {
-			const match = item.name.match(prefixPattern);
-			return match?.[1] ? Number.parseInt(match[1], 10) : 0;
-		})
-		.filter((seq) => seq > 0);
+  // Find all items matching this prefix
+  const matchingSequences = existingItems
+    .map((item) => {
+      const match = item.name.match(prefixPattern);
+      return match?.[1] ? Number.parseInt(match[1], 10) : 0;
+    })
+    .filter((seq) => seq > 0);
 
-	// Find highest sequence number
-	const maxSequence =
-		matchingSequences.length > 0 ? Math.max(...matchingSequences) : 0;
+  // Find highest sequence number
+  const maxSequence =
+    matchingSequences.length > 0 ? Math.max(...matchingSequences) : 0;
 
-	// Return next sequence (zero-padded to 3 digits)
-	const nextSequence = maxSequence + 1;
-	return nextSequence.toString().padStart(SEQUENCE_PADDING, "0");
+  // Return next sequence (zero-padded to 3 digits)
+  const nextSequence = maxSequence + 1;
+  return nextSequence.toString().padStart(SEQUENCE_PADDING, "0");
 }
 
 /**
@@ -135,31 +135,31 @@ export function findNextSequence(
  * @throws Never - Always returns a valid name (fallback to "ITEM-XXX")
  */
 export function generateItemName(
-	modelName: string,
-	existingItems: CartItem[],
+  modelName: string,
+  existingItems: CartItem[]
 ): string {
-	try {
-		const prefix = extractModelPrefix(modelName);
-		const sequence = findNextSequence(prefix, existingItems);
-		const generatedName = `${prefix}-${sequence}`;
+  try {
+    const prefix = extractModelPrefix(modelName);
+    const sequence = findNextSequence(prefix, existingItems);
+    const generatedName = `${prefix}-${sequence}`;
 
-		// Final safety check: ensure name is unique
-		const isUnique = !existingItems.some((item) => item.name === generatedName);
+    // Final safety check: ensure name is unique
+    const isUnique = !existingItems.some((item) => item.name === generatedName);
 
-		if (!isUnique) {
-			// Extremely unlikely: collision detected, append timestamp
-			const timestamp = Date.now()
-				.toString()
-				.slice(-COLLISION_TIMESTAMP_LENGTH);
-			return `${prefix}-${sequence}-${timestamp}`;
-		}
+    if (!isUnique) {
+      // Extremely unlikely: collision detected, append timestamp
+      const timestamp = Date.now()
+        .toString()
+        .slice(-COLLISION_TIMESTAMP_LENGTH);
+      return `${prefix}-${sequence}-${timestamp}`;
+    }
 
-		return generatedName;
-	} catch {
-		// Fallback: use generic name with timestamp
-		const timestamp = Date.now().toString().slice(-FALLBACK_TIMESTAMP_LENGTH);
-		return `ITEM-${timestamp}`;
-	}
+    return generatedName;
+  } catch {
+    // Fallback: use generic name with timestamp
+    const timestamp = Date.now().toString().slice(-FALLBACK_TIMESTAMP_LENGTH);
+    return `ITEM-${timestamp}`;
+  }
 }
 
 // ============================================================================
@@ -175,28 +175,28 @@ export function generateItemName(
  * @returns True if name is unique, false if duplicate found
  */
 export function isNameUnique(
-	name: string,
-	existingItems: CartItem[],
-	excludeItemId?: string,
+  name: string,
+  existingItems: CartItem[],
+  excludeItemId?: string
 ): boolean {
-	if (!name || typeof name !== "string") {
-		return false;
-	}
+  if (!name || typeof name !== "string") {
+    return false;
+  }
 
-	const trimmedName = name.trim();
-	if (trimmedName.length === 0) {
-		return false;
-	}
+  const trimmedName = name.trim();
+  if (trimmedName.length === 0) {
+    return false;
+  }
 
-	return !existingItems.some((item) => {
-		// Skip if this is the item being updated
-		if (excludeItemId && item.id === excludeItemId) {
-			return false;
-		}
+  return !existingItems.some((item) => {
+    // Skip if this is the item being updated
+    if (excludeItemId && item.id === excludeItemId) {
+      return false;
+    }
 
-		// Case-insensitive comparison
-		return item.name.toLowerCase() === trimmedName.toLowerCase();
-	});
+    // Case-insensitive comparison
+    return item.name.toLowerCase() === trimmedName.toLowerCase();
+  });
 }
 
 /**
@@ -208,27 +208,27 @@ export function isNameUnique(
  * @returns Validation result with error message if invalid
  */
 export function validateItemName(
-	name: string,
-	existingItems: CartItem[],
-	excludeItemId?: string,
+  name: string,
+  existingItems: CartItem[],
+  excludeItemId?: string
 ): { valid: boolean; error?: string } {
-	if (!name || typeof name !== "string") {
-		return { error: "El nombre es requerido", valid: false };
-	}
+  if (!name || typeof name !== "string") {
+    return { error: "El nombre es requerido", valid: false };
+  }
 
-	const trimmedName = name.trim();
+  const trimmedName = name.trim();
 
-	if (trimmedName.length === 0) {
-		return { error: "El nombre no puede estar vacío", valid: false };
-	}
+  if (trimmedName.length === 0) {
+    return { error: "El nombre no puede estar vacío", valid: false };
+  }
 
-	if (trimmedName.length > MAX_NAME_LENGTH) {
-		return { error: "El nombre no puede exceder 50 caracteres", valid: false };
-	}
+  if (trimmedName.length > MAX_NAME_LENGTH) {
+    return { error: "El nombre no puede exceder 50 caracteres", valid: false };
+  }
 
-	if (!isNameUnique(trimmedName, existingItems, excludeItemId)) {
-		return { error: "Ya existe un item con este nombre", valid: false };
-	}
+  if (!isNameUnique(trimmedName, existingItems, excludeItemId)) {
+    return { error: "Ya existe un item con este nombre", valid: false };
+  }
 
-	return { valid: true };
+  return { valid: true };
 }

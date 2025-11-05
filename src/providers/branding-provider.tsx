@@ -21,10 +21,10 @@ import { createContext, useContext, useEffect } from "react";
  * Branding configuration for Client Components
  */
 export type BrandingConfig = {
-	logoUrl: string | null;
-	primaryColor: string;
-	secondaryColor: string;
-	businessName: string;
+  logoUrl: string | null;
+  primaryColor: string;
+  secondaryColor: string;
+  businessName: string;
 };
 
 // ============================================================================
@@ -38,8 +38,8 @@ const BrandingContext = createContext<BrandingConfig | null>(null);
 // ============================================================================
 
 type BrandingProviderProps = {
-	children: React.ReactNode;
-	config: BrandingConfig;
+  children: React.ReactNode;
+  config: BrandingConfig;
 };
 
 /**
@@ -66,18 +66,18 @@ type BrandingProviderProps = {
  * ```
  */
 export function BrandingProvider({ children, config }: BrandingProviderProps) {
-	useEffect(() => {
-		// Inject CSS variables in :root
-		const root = document.documentElement;
-		root.style.setProperty("--brand-primary", config.primaryColor);
-		root.style.setProperty("--brand-secondary", config.secondaryColor);
-	}, [config.primaryColor, config.secondaryColor]);
+  useEffect(() => {
+    // Inject CSS variables in :root
+    const root = document.documentElement;
+    root.style.setProperty("--brand-primary", config.primaryColor);
+    root.style.setProperty("--brand-secondary", config.secondaryColor);
+  }, [config.primaryColor, config.secondaryColor]);
 
-	return (
-		<BrandingContext.Provider value={config}>
-			{children}
-		</BrandingContext.Provider>
-	);
+  return (
+    <BrandingContext.Provider value={config}>
+      {children}
+    </BrandingContext.Provider>
+  );
 }
 
 // ============================================================================
@@ -112,11 +112,11 @@ export function BrandingProvider({ children, config }: BrandingProviderProps) {
  * ```
  */
 export function useBranding(): BrandingConfig {
-	const context = useContext(BrandingContext);
+  const context = useContext(BrandingContext);
 
-	if (!context) {
-		throw new Error("useBranding must be used within BrandingProvider");
-	}
+  if (!context) {
+    throw new Error("useBranding must be used within BrandingProvider");
+  }
 
-	return context;
+  return context;
 }

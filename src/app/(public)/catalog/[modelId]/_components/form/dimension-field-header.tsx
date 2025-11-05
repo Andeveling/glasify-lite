@@ -1,21 +1,20 @@
 import type { ReactNode } from "react";
 import { FormLabel } from "@/components/ui/form";
 import { ValidationIndicator } from "@/components/validation-indicator";
-import { cn } from "@/lib/utils";
 
 /**
  * Props for DimensionFieldHeader component
  * Interface Segregation Principle: Only what's needed for header rendering
  */
 type DimensionFieldHeaderProps = {
-	label: string;
-	labelClassName: string;
-	showInlineRangeHint: boolean;
-	min: number;
-	max: number;
-	showValidationIndicator: boolean;
-	isValid: boolean;
-	hasValue: boolean;
+  label: string;
+  labelClassName: string;
+  showInlineRangeHint: boolean;
+  min: number;
+  max: number;
+  showValidationIndicator: boolean;
+  isValid: boolean;
+  hasValue: boolean;
 };
 
 /**
@@ -35,41 +34,41 @@ type DimensionFieldHeaderProps = {
  * />
  */
 export function DimensionFieldHeader({
-	label,
-	labelClassName,
-	showInlineRangeHint,
-	min,
-	max,
-	showValidationIndicator,
-	isValid,
-	hasValue,
+  label,
+  labelClassName,
+  showInlineRangeHint,
+  min,
+  max,
+  showValidationIndicator,
+  isValid,
+  hasValue,
 }: DimensionFieldHeaderProps) {
-	return (
-		<div className="flex items-center justify-between gap-2">
-			<div className="flex items-center gap-2 text-base">
-				<FormLabel className={labelClassName}>
-					<span className="text-base">{label}</span>
-				</FormLabel>
-				{showInlineRangeHint && (
-					<span className="text-muted-foreground">
-						({min} - {max} mm)
-					</span>
-				)}
-			</div>
-			{showValidationIndicator && (
-				<ValidationIndicator isValid={isValid} showIndicator={hasValue} />
-			)}
-		</div>
-	);
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center gap-2 text-base">
+        <FormLabel className={labelClassName}>
+          <span className="text-base">{label}</span>
+        </FormLabel>
+        {showInlineRangeHint && (
+          <span className="text-muted-foreground">
+            ({min} - {max} mm)
+          </span>
+        )}
+      </div>
+      {showValidationIndicator && (
+        <ValidationIndicator isValid={isValid} showIndicator={hasValue} />
+      )}
+    </div>
+  );
 }
 
 /**
  * Props for optional content wrapper
  */
 type OptionalContentProps = {
-	show: boolean;
-	children: ReactNode;
-	className?: string;
+  show: boolean;
+  children: ReactNode;
+  className?: string;
 };
 
 /**
@@ -78,17 +77,17 @@ type OptionalContentProps = {
  * Reduces repetitive {condition && <Component />} patterns
  */
 export function OptionalContent({
-	show,
-	children,
-	className,
+  show,
+  children,
+  className,
 }: OptionalContentProps) {
-	if (!show) {
-		return null;
-	}
+  if (!show) {
+    return null;
+  }
 
-	if (className) {
-		return <div className={className}>{children}</div>;
-	}
+  if (className) {
+    return <div className={className}>{children}</div>;
+  }
 
-	return children;
+  return children;
 }

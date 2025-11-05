@@ -4,32 +4,32 @@
  */
 
 import type {
-	GlassTypeOutput,
-	ModelDetailOutput,
+  GlassTypeOutput,
+  ModelDetailOutput,
 } from "@/server/api/routers/catalog";
 import type { CreateCartItemInput } from "@/types/cart.types";
 
 export type CartItemInputWithPrice = CreateCartItemInput & {
-	unitPrice: number;
+  unitPrice: number;
 };
 
 type InferredSolution = {
-	id: string;
-	nameEs: string;
+  id: string;
+  nameEs: string;
 } | null;
 
 type PrepareCartItemParams = {
-	additionalServiceIds: string[];
-	calculatedPrice: number | undefined;
-	colorId: string | undefined;
-	colorSurchargePercentage?: number; // Color surcharge from ModelColor
-	glassTypeId: string;
-	heightMm: number;
-	inferredSolution: InferredSolution;
-	model: ModelDetailOutput;
-	quantity: number;
-	selectedGlassType: GlassTypeOutput | undefined;
-	widthMm: number;
+  additionalServiceIds: string[];
+  calculatedPrice: number | undefined;
+  colorId: string | undefined;
+  colorSurchargePercentage?: number; // Color surcharge from ModelColor
+  glassTypeId: string;
+  heightMm: number;
+  inferredSolution: InferredSolution;
+  model: ModelDetailOutput;
+  quantity: number;
+  selectedGlassType: GlassTypeOutput | undefined;
+  widthMm: number;
 };
 
 /**
@@ -53,32 +53,32 @@ type PrepareCartItemParams = {
  * })
  */
 export function prepareCartItemInput({
-	additionalServiceIds,
-	calculatedPrice,
-	colorId,
-	colorSurchargePercentage,
-	glassTypeId,
-	heightMm,
-	inferredSolution,
-	model,
-	quantity,
-	selectedGlassType,
-	widthMm,
+  additionalServiceIds,
+  calculatedPrice,
+  colorId,
+  colorSurchargePercentage,
+  glassTypeId,
+  heightMm,
+  inferredSolution,
+  model,
+  quantity,
+  selectedGlassType,
+  widthMm,
 }: PrepareCartItemParams): CartItemInputWithPrice {
-	return {
-		additionalServiceIds,
-		colorId,
-		colorSurchargePercentage,
-		glassTypeId,
-		glassTypeName: selectedGlassType?.name ?? "",
-		heightMm,
-		modelId: model.id,
-		modelImageUrl: model.imageUrl,
-		modelName: model.name,
-		quantity,
-		solutionId: inferredSolution?.id || undefined,
-		solutionName: inferredSolution?.nameEs || undefined,
-		unitPrice: calculatedPrice ?? model.basePrice,
-		widthMm,
-	};
+  return {
+    additionalServiceIds,
+    colorId,
+    colorSurchargePercentage,
+    glassTypeId,
+    glassTypeName: selectedGlassType?.name ?? "",
+    heightMm,
+    modelId: model.id,
+    modelImageUrl: model.imageUrl,
+    modelName: model.name,
+    quantity,
+    solutionId: inferredSolution?.id || undefined,
+    solutionName: inferredSolution?.nameEs || undefined,
+    unitPrice: calculatedPrice ?? model.basePrice,
+    widthMm,
+  };
 }

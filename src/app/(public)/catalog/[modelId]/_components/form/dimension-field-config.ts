@@ -13,14 +13,14 @@ export type DimensionVariant = "full" | "simple" | "compact" | "minimal";
  * Configuration shape for dimension field display
  */
 export type DimensionVariantConfig = {
-	showInput: boolean;
-	showSlider: boolean;
-	showSuggestedValues: boolean;
-	showValidationIndicator: boolean;
-	showDescription: boolean;
-	showFormMessage: boolean;
-	spacingClassName: string;
-	labelClassName: string;
+  showInput: boolean;
+  showSlider: boolean;
+  showSuggestedValues: boolean;
+  showValidationIndicator: boolean;
+  showDescription: boolean;
+  showFormMessage: boolean;
+  spacingClassName: string;
+  labelClassName: string;
 };
 
 /**
@@ -28,65 +28,65 @@ export type DimensionVariantConfig = {
  * Reduces cognitive load and optimizes for different contexts
  */
 export const VARIANT_CONFIGS: Record<DimensionVariant, DimensionVariantConfig> =
-	{
-		// Full: All features (default for backward compatibility)
-		full: {
-			showInput: true,
-			showSlider: true,
-			showSuggestedValues: true,
-			showValidationIndicator: true,
-			showDescription: true,
-			showFormMessage: true,
-			spacingClassName: "space-y-2",
-			labelClassName: "text-sm",
-		},
-		// Simple: Input, slider and validation (recommended for most cases)
-		simple: {
-			showInput: true,
-			showSlider: true,
-			showSuggestedValues: false,
-			showValidationIndicator: true,
-			showDescription: true,
-			showFormMessage: true,
-			spacingClassName: "space-y-1.5",
-			labelClassName: "text-sm",
-		},
-		// Compact: Input only with description (maximum cognitive load reduction)
-		compact: {
-			showInput: true,
-			showSlider: false,
-			showSuggestedValues: false,
-			showValidationIndicator: false,
-			showDescription: false,
-			showFormMessage: true,
-			spacingClassName: "space-y-1",
-			labelClassName: "text-xs",
-		},
-		// Minimal: Input only (for very specific cases)
-		minimal: {
-			showInput: true,
-			showSlider: false,
-			showSuggestedValues: false,
-			showValidationIndicator: false,
-			showDescription: false,
-			showFormMessage: false,
-			spacingClassName: "space-y-0.5",
-			labelClassName: "text-xs",
-		},
-	};
+  {
+    // Full: All features (default for backward compatibility)
+    full: {
+      showInput: true,
+      showSlider: true,
+      showSuggestedValues: true,
+      showValidationIndicator: true,
+      showDescription: true,
+      showFormMessage: true,
+      spacingClassName: "space-y-2",
+      labelClassName: "text-sm",
+    },
+    // Simple: Input, slider and validation (recommended for most cases)
+    simple: {
+      showInput: true,
+      showSlider: true,
+      showSuggestedValues: false,
+      showValidationIndicator: true,
+      showDescription: true,
+      showFormMessage: true,
+      spacingClassName: "space-y-1.5",
+      labelClassName: "text-sm",
+    },
+    // Compact: Input only with description (maximum cognitive load reduction)
+    compact: {
+      showInput: true,
+      showSlider: false,
+      showSuggestedValues: false,
+      showValidationIndicator: false,
+      showDescription: false,
+      showFormMessage: true,
+      spacingClassName: "space-y-1",
+      labelClassName: "text-xs",
+    },
+    // Minimal: Input only (for very specific cases)
+    minimal: {
+      showInput: true,
+      showSlider: false,
+      showSuggestedValues: false,
+      showValidationIndicator: false,
+      showDescription: false,
+      showFormMessage: false,
+      spacingClassName: "space-y-0.5",
+      labelClassName: "text-xs",
+    },
+  };
 
 /**
  * Resolves final configuration by merging variant config with custom overrides
  * Open/Closed Principle: Config is open for extension via customConfig
  */
 export function resolveVariantConfig(
-	variant: DimensionVariant,
-	customConfig?: Partial<DimensionVariantConfig>,
+  variant: DimensionVariant,
+  customConfig?: Partial<DimensionVariantConfig>
 ): DimensionVariantConfig {
-	return {
-		...VARIANT_CONFIGS[variant],
-		...customConfig,
-	};
+  return {
+    ...VARIANT_CONFIGS[variant],
+    ...customConfig,
+  };
 }
 
 /**
@@ -94,7 +94,7 @@ export function resolveVariantConfig(
  * Logic extracted for testability and reusability
  */
 export function shouldShowInlineRangeHint(
-	config: DimensionVariantConfig,
+  config: DimensionVariantConfig
 ): boolean {
-	return !config.showDescription;
+  return !config.showDescription;
 }

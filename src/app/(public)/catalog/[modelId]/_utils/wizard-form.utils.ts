@@ -8,15 +8,15 @@
  * Represents all data collected through the 4-step wizard
  */
 export type WizardFormData = {
-	roomLocation: string;
-	width: number;
-	height: number;
-	colorId: string | null;
-	glassSolutionId: string | null;
-	selectedServices?: string[]; // Optional with default empty array
-	modelId: string;
-	currentStep: number;
-	lastUpdated: string;
+  roomLocation: string;
+  width: number;
+  height: number;
+  colorId: string | null;
+  glassSolutionId: string | null;
+  selectedServices?: string[]; // Optional with default empty array
+  modelId: string;
+  currentStep: number;
+  lastUpdated: string;
 };
 
 /**
@@ -25,17 +25,17 @@ export type WizardFormData = {
  * @returns Default form data with empty/initial values
  */
 export function getWizardDefaults(modelId: string): WizardFormData {
-	return {
-		colorId: null,
-		currentStep: 1,
-		glassSolutionId: null,
-		height: 0,
-		lastUpdated: new Date().toISOString(),
-		modelId,
-		roomLocation: "",
-		selectedServices: [],
-		width: 0,
-	};
+  return {
+    colorId: null,
+    currentStep: 1,
+    glassSolutionId: null,
+    height: 0,
+    lastUpdated: new Date().toISOString(),
+    modelId,
+    roomLocation: "",
+    selectedServices: [],
+    width: 0,
+  };
 }
 
 /**
@@ -47,24 +47,24 @@ export function getWizardDefaults(modelId: string): WizardFormData {
  * @returns Payload for quote.add-item tRPC mutation
  */
 export function transformWizardToQuoteItem(
-	data: WizardFormData,
-	glassTypeId: string,
+  data: WizardFormData,
+  glassTypeId: string
 ) {
-	return {
-		adjustments: [], // No adjustments in wizard flow
-		colorId: data.colorId ?? undefined,
-		glassTypeId,
-		heightMm: data.height,
-		modelId: data.modelId,
-		quantity: 1, // Wizard always creates single item
-		roomLocation: data.roomLocation || undefined,
-		services: (data.selectedServices ?? []).map((serviceId) => ({
-			quantity: 1, // Default quantity for wizard
-			serviceId,
-		})),
-		unit: "unit" as const, // Wizard always uses unit pricing
-		widthMm: data.width,
-	};
+  return {
+    adjustments: [], // No adjustments in wizard flow
+    colorId: data.colorId ?? undefined,
+    glassTypeId,
+    heightMm: data.height,
+    modelId: data.modelId,
+    quantity: 1, // Wizard always creates single item
+    roomLocation: data.roomLocation || undefined,
+    services: (data.selectedServices ?? []).map((serviceId) => ({
+      quantity: 1, // Default quantity for wizard
+      serviceId,
+    })),
+    unit: "unit" as const, // Wizard always uses unit pricing
+    widthMm: data.width,
+  };
 }
 
 /**

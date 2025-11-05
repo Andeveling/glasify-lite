@@ -1,10 +1,10 @@
 "use client";
 
 import {
-	CheckCircle2,
-	LayoutGrid,
-	RotateCcw,
-	ShoppingCart,
+  CheckCircle2,
+  LayoutGrid,
+  RotateCcw,
+  ShoppingCart,
 } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
@@ -12,9 +12,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 type AddedToCartActionsProps = {
-	modelName: string;
-	onConfigureAnotherAction: () => void;
-	ref?: React.Ref<HTMLDivElement>;
+  modelName: string;
+  onConfigureAnotherAction: () => void;
+  ref?: React.Ref<HTMLDivElement>;
 };
 
 /**
@@ -31,83 +31,83 @@ type AddedToCartActionsProps = {
  * @component
  */
 export function AddedToCartActions({
-	modelName,
-	onConfigureAnotherAction,
-	ref,
+  modelName,
+  onConfigureAnotherAction,
+  ref,
 }: AddedToCartActionsProps) {
-	return (
-		<motion.div
-			animate={{ opacity: 1, scale: 1, y: 0 }}
-			initial={{ opacity: 0, scale: 0.95, y: 20 }}
-			ref={ref}
-			transition={{
-				duration: 0.4,
-				ease: "easeOut",
-				y: { damping: 15, stiffness: 100, type: "spring" },
-			}}
-		>
-			<Card className="border-1 border-accent/60 bg-accent p-6">
-				<div className="flex flex-col gap-6">
-					{/* Success Message */}
-					<div className="flex items-start gap-3">
-						<CheckCircle2 className="mt-0.5 size-10 shrink-0 text-success" />
-						<div className="flex-1">
-							<h3 className="font-semibold text-accent-foreground text-lg">
-								¡Agregado exitosamente!
-							</h3>
-							<p className="mt-1 text-muted-foreground text-sm">
-								<strong>{modelName}</strong> ha sido agregado a tu carrito
-							</p>
-							<p className="mt-2 text-muted-foreground text-xs italic">
-								💡 Puedes hacer scroll arriba para configurar otra ventana
-							</p>
-						</div>
-					</div>
+  return (
+    <motion.div
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      initial={{ opacity: 0, scale: 0.95, y: 20 }}
+      ref={ref}
+      transition={{
+        duration: 0.4,
+        ease: "easeOut",
+        y: { damping: 15, stiffness: 100, type: "spring" },
+      }}
+    >
+      <Card className="border-1 border-accent/60 bg-accent p-6">
+        <div className="flex flex-col gap-6">
+          {/* Success Message */}
+          <div className="flex items-start gap-3">
+            <CheckCircle2 className="mt-0.5 size-10 shrink-0 text-success" />
+            <div className="flex-1">
+              <h3 className="font-semibold text-accent-foreground text-lg">
+                ¡Agregado exitosamente!
+              </h3>
+              <p className="mt-1 text-muted-foreground text-sm">
+                <strong>{modelName}</strong> ha sido agregado a tu carrito
+              </p>
+              <p className="mt-2 text-muted-foreground text-xs italic">
+                💡 Puedes hacer scroll arriba para configurar otra ventana
+              </p>
+            </div>
+          </div>
 
-					{/* Action Buttons */}
-					<div className="flex flex-col gap-3 sm:flex-row">
-						{/* Primary Action: Configure Another */}
-						<Button
-							className="flex-1 justify-start gap-2"
-							onClick={onConfigureAnotherAction}
-							size="lg"
-							variant="default"
-						>
-							<RotateCcw className="size-5" />
-							<span>Configurar de nuevo</span>
-						</Button>
+          {/* Action Buttons */}
+          <div className="flex flex-col gap-3 sm:flex-row">
+            {/* Primary Action: Configure Another */}
+            <Button
+              className="flex-1 justify-start gap-2"
+              onClick={onConfigureAnotherAction}
+              size="lg"
+              variant="default"
+            >
+              <RotateCcw className="size-5" />
+              <span>Configurar de nuevo</span>
+            </Button>
 
-						{/* Secondary Actions */}
-						<div className="flex gap-3 sm:flex-row">
-							<Button
-								asChild
-								className="flex-1 justify-start gap-2 sm:flex-initial"
-								size="lg"
-								variant="outline"
-							>
-								<Link href="/catalog" prefetch>
-									<LayoutGrid className="size-5" />
-									<span className="sm:hidden">Explorar catálogo</span>
-									<span className="hidden sm:inline">Catálogo</span>
-								</Link>
-							</Button>
+            {/* Secondary Actions */}
+            <div className="flex gap-3 sm:flex-row">
+              <Button
+                asChild
+                className="flex-1 justify-start gap-2 sm:flex-initial"
+                size="lg"
+                variant="outline"
+              >
+                <Link href="/catalog" prefetch>
+                  <LayoutGrid className="size-5" />
+                  <span className="sm:hidden">Explorar catálogo</span>
+                  <span className="hidden sm:inline">Catálogo</span>
+                </Link>
+              </Button>
 
-							<Button
-								asChild
-								className="flex-1 justify-start gap-2 sm:flex-initial"
-								size="lg"
-								variant="outline"
-							>
-								<Link href="/cart" prefetch>
-									<ShoppingCart className="size-5" />
-									<span className="sm:hidden">Ver carrito</span>
-									<span className="hidden sm:inline">Carrito</span>
-								</Link>
-							</Button>
-						</div>
-					</div>
-				</div>
-			</Card>
-		</motion.div>
-	);
+              <Button
+                asChild
+                className="flex-1 justify-start gap-2 sm:flex-initial"
+                size="lg"
+                variant="outline"
+              >
+                <Link href="/cart" prefetch>
+                  <ShoppingCart className="size-5" />
+                  <span className="sm:hidden">Ver carrito</span>
+                  <span className="hidden sm:inline">Carrito</span>
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </motion.div>
+  );
 }

@@ -26,10 +26,10 @@ const MAX_NOTES_LENGTH = 500;
  * Zod schema for ProfileSupplier input validation
  */
 const profileSupplierInputSchema = z.object({
-	isActive: z.boolean().default(true),
-	materialType: z.enum(["PVC", "ALUMINUM", "WOOD", "MIXED"]),
-	name: z.string().min(MIN_SUPPLIER_NAME_LENGTH).max(MAX_SUPPLIER_NAME_LENGTH),
-	notes: z.string().max(MAX_NOTES_LENGTH).optional(),
+  isActive: z.boolean().default(true),
+  materialType: z.enum(["PVC", "ALUMINUM", "WOOD", "MIXED"]),
+  name: z.string().min(MIN_SUPPLIER_NAME_LENGTH).max(MAX_SUPPLIER_NAME_LENGTH),
+  notes: z.string().max(MAX_NOTES_LENGTH).optional(),
 });
 
 /**
@@ -59,41 +59,41 @@ export type ProfileSupplierInput = z.infer<typeof profileSupplierInputSchema>;
  * ```
  */
 export function createProfileSupplier(
-	input: ProfileSupplierInput,
-	options?: FactoryOptions,
+  input: ProfileSupplierInput,
+  options?: FactoryOptions
 ): FactoryResult<Prisma.ProfileSupplierCreateInput> {
-	// Merge overrides if provided
-	const data = mergeOverrides(input, options?.overrides);
+  // Merge overrides if provided
+  const data = mergeOverrides(input, options?.overrides);
 
-	// Skip validation if requested
-	if (options?.skipValidation) {
-		return {
-			data: data as Prisma.ProfileSupplierCreateInput,
-			success: true,
-		};
-	}
+  // Skip validation if requested
+  if (options?.skipValidation) {
+    return {
+      data: data as Prisma.ProfileSupplierCreateInput,
+      success: true,
+    };
+  }
 
-	// Validate with Zod schema
-	const schemaResult = validateWithSchema(profileSupplierInputSchema, data);
-	if (!schemaResult.success) {
-		return schemaResult;
-	}
+  // Validate with Zod schema
+  const schemaResult = validateWithSchema(profileSupplierInputSchema, data);
+  if (!schemaResult.success) {
+    return schemaResult;
+  }
 
-	const validated = schemaResult.data;
-	if (!validated) {
-		return {
-			errors: [
-				{ code: "VALIDATION_ERROR", message: "Validation failed", path: [] },
-			],
-			success: false,
-		};
-	}
+  const validated = schemaResult.data;
+  if (!validated) {
+    return {
+      errors: [
+        { code: "VALIDATION_ERROR", message: "Validation failed", path: [] },
+      ],
+      success: false,
+    };
+  }
 
-	// Return validated data ready for Prisma
-	return {
-		data: validated as Prisma.ProfileSupplierCreateInput,
-		success: true,
-	};
+  // Return validated data ready for Prisma
+  return {
+    data: validated as Prisma.ProfileSupplierCreateInput,
+    success: true,
+  };
 }
 
 /**
@@ -104,10 +104,10 @@ export function createProfileSupplier(
  * @returns Array of FactoryResults
  */
 export function createProfileSuppliers(
-	inputs: ProfileSupplierInput[],
-	options?: FactoryOptions,
+  inputs: ProfileSupplierInput[],
+  options?: FactoryOptions
 ): FactoryResult<Prisma.ProfileSupplierCreateInput>[] {
-	return inputs.map((input) => createProfileSupplier(input, options));
+  return inputs.map((input) => createProfileSupplier(input, options));
 }
 
 /**
@@ -117,31 +117,31 @@ export function createProfileSuppliers(
  * @returns Array of successful data objects
  */
 export function getSuccessfulProfileSuppliers(
-	results: FactoryResult<Prisma.ProfileSupplierCreateInput>[],
+  results: FactoryResult<Prisma.ProfileSupplierCreateInput>[]
 ): Prisma.ProfileSupplierCreateInput[] {
-	return results
-		.filter(
-			(
-				result,
-			): result is FactoryResult<Prisma.ProfileSupplierCreateInput> & {
-				success: true;
-				data: Prisma.ProfileSupplierCreateInput;
-			} => result.success && result.data !== undefined,
-		)
-		.map((result) => result.data);
+  return results
+    .filter(
+      (
+        result
+      ): result is FactoryResult<Prisma.ProfileSupplierCreateInput> & {
+        success: true;
+        data: Prisma.ProfileSupplierCreateInput;
+      } => result.success && result.data !== undefined
+    )
+    .map((result) => result.data);
 }
 
 /**
  * Factory metadata
  */
 export const profileSupplierFactoryMetadata: FactoryMetadata = {
-	description:
-		"Creates validated ProfileSupplier seed data for window/door profile manufacturers",
-	name: "ProfileSupplierFactory",
-	sources: [
-		"docs/context/alumina.info.md",
-		"docs/context/veka-example.info.md",
-		"https://www.deceuninck.co/",
-	],
-	version: "1.0.0",
+  description:
+    "Creates validated ProfileSupplier seed data for window/door profile manufacturers",
+  name: "ProfileSupplierFactory",
+  sources: [
+    "docs/context/alumina.info.md",
+    "docs/context/veka-example.info.md",
+    "https://www.deceuninck.co/",
+  ],
+  version: "1.0.0",
 };

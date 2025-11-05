@@ -1,53 +1,53 @@
 {
-	"version": "1.0",
-	"solutions": [
-		{
-			"key": "solar_control",
-			"name": "Solar Control",
-			"nameEs": "Control Solar",
-			"description": "Productos de vidrio diseñados para reducir la ganancia de calor solar y minimizar los costos de refrigeración. Presentan recubrimientos reflectivos o bajo-emisivos que bloquean la radiación infrarroja mientras mantienen la transmisión de luz visible. Ideal para climas cálidos y edificios con altas cargas de refrigeración.",
-			"icon": "Sun",
-			"sortOrder": 1
-		},
-		{
-			"key": "energy_efficiency",
-			"name": "Energy Efficiency",
-			"nameEs": "Eficiencia Energética",
-			"description": "Vidrio con recubrimiento de baja emisividad (Low-E) que reduce la transferencia de calor a través de las ventanas. Mantiene los edificios más cálidos en invierno y más frescos en verano al reflejar la radiación térmica. Esencial para certificaciones de construcción sostenible como LEED, EDGE y otras.",
-			"icon": "Zap",
-			"sortOrder": 2
-		},
-		{
-			"key": "security",
-			"name": "Security & Safety",
-			"nameEs": "Seguridad",
-			"description": "Productos de vidrio laminado y templado que brindan protección contra entrada forzada, rotura accidental e impacto humano. Incluye laminados con PVB que mantienen los fragmentos de vidrio unidos cuando se rompen, y vidrio templado termo-reforzado que se fragmenta en pedazos pequeños menos dañinos.",
-			"icon": "Shield",
-			"sortOrder": 3
-		},
-		{
-			"key": "acoustic",
-			"name": "Acoustic Insulation",
-			"nameEs": "Aislamiento Acústico",
-			"description": "Vidrio laminado con intercapas de PVB acústico especializado que amortiguan las vibraciones sonoras. Reduce la transmisión de ruido exterior en 30-50dB según la composición del vidrio. Esencial para edificios cerca de aeropuertos, autopistas y fuentes de ruido urbano.",
-			"icon": "Volume2",
-			"sortOrder": 4
-		},
-		{
-			"key": "privacy",
-			"name": "Privacy & Aesthetics",
-			"nameEs": "Privacidad",
-			"description": "Vidrio tintado, reflectivo y decorativo que limita la visibilidad desde el exterior mientras mantiene las vistas interiores. Incluye tintes bronce, gris, verde y azul, así como opciones de vidrio esmerilado y con patrones. Equilibra la privacidad con la luz natural.",
-			"icon": "Eye",
-			"sortOrder": 5
-		},
-		{
-			"key": "hurricane_resistance",
-			"name": "Hurricane & Impact Resistance",
-			"nameEs": "Resistencia a Huracanes",
-			"description": "Vidrio laminado resistente al impacto certificado para soportar escombros arrastrados por el viento en zonas de huracanes (ASTM E1996, Código de Construcción de Florida). Cuenta con múltiples capas de PVB que previenen la penetración de proyectiles que viajan a más de 50 mph. Requerido para construcción costera en regiones propensas a tormentas.",
-			"icon": "CloudRain",
-			"sortOrder": 6
-		}
-	]
+  "version": "1.0",
+  "solutions": [
+    {
+      "key": "solar_control",
+      "name": "Solar Control",
+      "nameEs": "Control Solar",
+      "description": "Productos de vidrio diseñados para reducir la ganancia de calor solar y minimizar los costos de refrigeración. Presentan recubrimientos reflectivos o bajo-emisivos que bloquean la radiación infrarroja mientras mantienen la transmisión de luz visible. Ideal para climas cálidos y edificios con altas cargas de refrigeración.",
+      "icon": "Sun",
+      "sortOrder": 1
+    },
+    {
+      "key": "energy_efficiency",
+      "name": "Energy Efficiency",
+      "nameEs": "Eficiencia Energética",
+      "description": "Vidrio con recubrimiento de baja emisividad (Low-E) que reduce la transferencia de calor a través de las ventanas. Mantiene los edificios más cálidos en invierno y más frescos en verano al reflejar la radiación térmica. Esencial para certificaciones de construcción sostenible como LEED, EDGE y otras.",
+      "icon": "Zap",
+      "sortOrder": 2
+    },
+    {
+      "key": "security",
+      "name": "Security & Safety",
+      "nameEs": "Seguridad",
+      "description": "Productos de vidrio laminado y templado que brindan protección contra entrada forzada, rotura accidental e impacto humano. Incluye laminados con PVB que mantienen los fragmentos de vidrio unidos cuando se rompen, y vidrio templado termo-reforzado que se fragmenta en pedazos pequeños menos dañinos.",
+      "icon": "Shield",
+      "sortOrder": 3
+    },
+    {
+      "key": "acoustic",
+      "name": "Acoustic Insulation",
+      "nameEs": "Aislamiento Acústico",
+      "description": "Vidrio laminado con intercapas de PVB acústico especializado que amortiguan las vibraciones sonoras. Reduce la transmisión de ruido exterior en 30-50dB según la composición del vidrio. Esencial para edificios cerca de aeropuertos, autopistas y fuentes de ruido urbano.",
+      "icon": "Volume2",
+      "sortOrder": 4
+    },
+    {
+      "key": "privacy",
+      "name": "Privacy & Aesthetics",
+      "nameEs": "Privacidad",
+      "description": "Vidrio tintado, reflectivo y decorativo que limita la visibilidad desde el exterior mientras mantiene las vistas interiores. Incluye tintes bronce, gris, verde y azul, así como opciones de vidrio esmerilado y con patrones. Equilibra la privacidad con la luz natural.",
+      "icon": "Eye",
+      "sortOrder": 5
+    },
+    {
+      "key": "hurricane_resistance",
+      "name": "Hurricane & Impact Resistance",
+      "nameEs": "Resistencia a Huracanes",
+      "description": "Vidrio laminado resistente al impacto certificado para soportar escombros arrastrados por el viento en zonas de huracanes (ASTM E1996, Código de Construcción de Florida). Cuenta con múltiples capas de PVB que previenen la penetración de proyectiles que viajan a más de 50 mph. Requerido para construcción costera en regiones propensas a tormentas.",
+      "icon": "CloudRain",
+      "sortOrder": 6
+    }
+  ]
 }

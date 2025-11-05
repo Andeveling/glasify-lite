@@ -32,15 +32,15 @@ const MIN_SURCHARGE = 0;
 const MAX_SURCHARGE = 100;
 
 type ModelColorWithColor = ModelColor & {
-	color: Color;
+  color: Color;
 };
 
 // Serialized version for Client Component (Decimal -> number)
 type SerializedModelColorWithColor = Omit<
-	ModelColorWithColor,
-	"surchargePercentage"
+  ModelColorWithColor,
+  "surchargePercentage"
 > & {
-	surchargePercentage: number;
+  surchargePercentage: number;
 };
 
 /**
@@ -63,11 +63,11 @@ type SerializedModelColorWithColor = Omit<
  * DO NOT rename to "Action" suffix - these are NOT Server Actions.
  */
 type ModelColorRowProps = {
-	modelColor: SerializedModelColorWithColor;
-	onSurchargeChange: (id: string, surcharge: number) => void;
-	onDefaultChange: (id: string) => void;
-	onDelete: (id: string) => void;
-	isUpdating?: boolean;
+  modelColor: SerializedModelColorWithColor;
+  onSurchargeChange: (id: string, surcharge: number) => void;
+  onDefaultChange: (id: string) => void;
+  onDelete: (id: string) => void;
+  isUpdating?: boolean;
 };
 
 /**
@@ -75,111 +75,111 @@ type ModelColorRowProps = {
  * Handles inline editing with debounced updates
  */
 export function ModelColorRow({
-	modelColor,
-	onSurchargeChange,
-	onDefaultChange,
-	onDelete,
-	isUpdating = false,
+  modelColor,
+  onSurchargeChange,
+  onDefaultChange,
+  onDelete,
+  isUpdating = false,
 }: ModelColorRowProps) {
-	const [surcharge, setSurcharge] = useState(
-		Number(modelColor.surchargePercentage),
-	);
+  const [surcharge, setSurcharge] = useState(
+    Number(modelColor.surchargePercentage)
+  );
 
-	// Debounce surcharge changes (500ms delay)
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			const originalSurcharge = Number(modelColor.surchargePercentage);
-			if (
-				surcharge !== originalSurcharge &&
-				surcharge >= MIN_SURCHARGE &&
-				surcharge <= MAX_SURCHARGE
-			) {
-				onSurchargeChange(modelColor.id, surcharge);
-			}
-		}, SURCHARGE_DEBOUNCE_MS);
+  // Debounce surcharge changes (500ms delay)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const originalSurcharge = Number(modelColor.surchargePercentage);
+      if (
+        surcharge !== originalSurcharge &&
+        surcharge >= MIN_SURCHARGE &&
+        surcharge <= MAX_SURCHARGE
+      ) {
+        onSurchargeChange(modelColor.id, surcharge);
+      }
+    }, SURCHARGE_DEBOUNCE_MS);
 
-		return () => clearTimeout(timer);
-	}, [
-		surcharge,
-		modelColor.id,
-		modelColor.surchargePercentage,
-		onSurchargeChange,
-	]);
+    return () => clearTimeout(timer);
+  }, [
+    surcharge,
+    modelColor.id,
+    modelColor.surchargePercentage,
+    onSurchargeChange,
+  ]);
 
-	const handleSurchargeChange = (value: string) => {
-		const numValue = Number.parseFloat(value);
-		if (!Number.isNaN(numValue)) {
-			setSurcharge(Math.max(MIN_SURCHARGE, Math.min(MAX_SURCHARGE, numValue)));
-		}
-	};
+  const handleSurchargeChange = (value: string) => {
+    const numValue = Number.parseFloat(value);
+    if (!Number.isNaN(numValue)) {
+      setSurcharge(Math.max(MIN_SURCHARGE, Math.min(MAX_SURCHARGE, numValue)));
+    }
+  };
 
-	return (
-		<TableRow className={isUpdating ? "opacity-50" : ""}>
-			{/* Color Preview */}
-			<TableCell>
-				<ColorChip hexCode={modelColor.color.hexCode} size="md" />
-			</TableCell>
+  return (
+    <TableRow className={isUpdating ? "opacity-50" : ""}>
+      {/* Color Preview */}
+      <TableCell>
+        <ColorChip hexCode={modelColor.color.hexCode} size="md" />
+      </TableCell>
 
-			{/* Color Name */}
-			<TableCell className="font-medium">{modelColor.color.name}</TableCell>
+      {/* Color Name */}
+      <TableCell className="font-medium">{modelColor.color.name}</TableCell>
 
-			{/* RAL Code */}
-			<TableCell className="text-muted-foreground">
-				{modelColor.color.ralCode ?? "—"}
-			</TableCell>
+      {/* RAL Code */}
+      <TableCell className="text-muted-foreground">
+        {modelColor.color.ralCode ?? "—"}
+      </TableCell>
 
-			{/* Hex Code */}
-			<TableCell className="font-mono text-sm">
-				{modelColor.color.hexCode}
-			</TableCell>
+      {/* Hex Code */}
+      <TableCell className="font-mono text-sm">
+        {modelColor.color.hexCode}
+      </TableCell>
 
-			{/* Surcharge Input (editable) */}
-			<TableCell>
-				<div className="flex items-center gap-2">
-					<Input
-						className="w-20"
-						disabled={isUpdating}
-						max={100}
-						min={0}
-						onChange={(e) => handleSurchargeChange(e.target.value)}
-						step={0.01}
-						type="number"
-						value={surcharge}
-					/>
-					<span className="text-muted-foreground text-sm">%</span>
-				</div>
-			</TableCell>
+      {/* Surcharge Input (editable) */}
+      <TableCell>
+        <div className="flex items-center gap-2">
+          <Input
+            className="w-20"
+            disabled={isUpdating}
+            max={100}
+            min={0}
+            onChange={(e) => handleSurchargeChange(e.target.value)}
+            step={0.01}
+            type="number"
+            value={surcharge}
+          />
+          <span className="text-muted-foreground text-sm">%</span>
+        </div>
+      </TableCell>
 
-			{/* Default Checkbox */}
-			<TableCell>
-				<div className="flex items-center gap-2">
-					<Checkbox
-						checked={modelColor.isDefault}
-						disabled={isUpdating || modelColor.isDefault}
-						id={`default-${modelColor.id}`}
-						onCheckedChange={() => onDefaultChange(modelColor.id)}
-					/>
-					<Label
-						className="cursor-pointer text-sm"
-						htmlFor={`default-${modelColor.id}`}
-					>
-						{modelColor.isDefault ? "Por defecto" : "Establecer"}
-					</Label>
-				</div>
-			</TableCell>
+      {/* Default Checkbox */}
+      <TableCell>
+        <div className="flex items-center gap-2">
+          <Checkbox
+            checked={modelColor.isDefault}
+            disabled={isUpdating || modelColor.isDefault}
+            id={`default-${modelColor.id}`}
+            onCheckedChange={() => onDefaultChange(modelColor.id)}
+          />
+          <Label
+            className="cursor-pointer text-sm"
+            htmlFor={`default-${modelColor.id}`}
+          >
+            {modelColor.isDefault ? "Por defecto" : "Establecer"}
+          </Label>
+        </div>
+      </TableCell>
 
-			{/* Remove Button */}
-			<TableCell>
-				<Button
-					disabled={isUpdating}
-					onClick={() => onDelete(modelColor.id)}
-					size="sm"
-					variant="ghost"
-				>
-					<Trash2 className="h-4 w-4" />
-					<span className="sr-only">Eliminar color</span>
-				</Button>
-			</TableCell>
-		</TableRow>
-	);
+      {/* Remove Button */}
+      <TableCell>
+        <Button
+          disabled={isUpdating}
+          onClick={() => onDelete(modelColor.id)}
+          size="sm"
+          variant="ghost"
+        >
+          <Trash2 className="h-4 w-4" />
+          <span className="sr-only">Eliminar color</span>
+        </Button>
+      </TableCell>
+    </TableRow>
+  );
 }

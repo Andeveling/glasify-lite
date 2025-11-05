@@ -15,25 +15,25 @@ const SCROLL_DELAY_MS = 100;
  * return <div ref={successRef}>Success!</div>
  */
 export function useScrollIntoView<T extends HTMLElement = HTMLDivElement>(
-	shouldScroll: boolean,
-	options: ScrollIntoViewOptions = {
-		behavior: "smooth",
-		block: "start",
-		inline: "nearest",
-	},
+  shouldScroll: boolean,
+  options: ScrollIntoViewOptions = {
+    behavior: "smooth",
+    block: "start",
+    inline: "nearest",
+  }
 ) {
-	const ref = useRef<T>(null);
+  const ref = useRef<T>(null);
 
-	useEffect(() => {
-		if (shouldScroll && ref.current) {
-			// Small delay to ensure DOM is fully updated
-			const timeoutId = setTimeout(() => {
-				ref.current?.scrollIntoView(options);
-			}, SCROLL_DELAY_MS);
+  useEffect(() => {
+    if (shouldScroll && ref.current) {
+      // Small delay to ensure DOM is fully updated
+      const timeoutId = setTimeout(() => {
+        ref.current?.scrollIntoView(options);
+      }, SCROLL_DELAY_MS);
 
-			return () => clearTimeout(timeoutId);
-		}
-	}, [shouldScroll, options]);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [shouldScroll, options]);
 
-	return ref;
+  return ref;
 }

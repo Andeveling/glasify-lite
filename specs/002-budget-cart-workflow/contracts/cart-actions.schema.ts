@@ -26,16 +26,16 @@ const MAX_ITEM_NAME_LENGTH = 50;
  * Progressive enhancement: Works via form submission or programmatic call
  */
 export const addToCartInput = z.object({
-	additionalServiceIds: z.array(z.string().cuid()).default([]),
-	glassTypeId: z.string().cuid("ID del tipo de vidrio debe ser válido"),
-	glassTypeName: z.string().min(1, "Nombre del tipo de vidrio es requerido"),
-	heightMm: z.number().int().positive("Alto debe ser positivo"),
-	modelId: z.string().cuid("ID del modelo debe ser válido"),
-	modelName: z.string().min(1, "Nombre del modelo es requerido"),
-	quantity: z.number().int().positive("Cantidad debe ser positiva").default(1),
-	solutionId: z.string().cuid().optional(),
-	solutionName: z.string().optional(),
-	widthMm: z.number().int().positive("Ancho debe ser positivo"),
+  additionalServiceIds: z.array(z.string().cuid()).default([]),
+  glassTypeId: z.string().cuid("ID del tipo de vidrio debe ser válido"),
+  glassTypeName: z.string().min(1, "Nombre del tipo de vidrio es requerido"),
+  heightMm: z.number().int().positive("Alto debe ser positivo"),
+  modelId: z.string().cuid("ID del modelo debe ser válido"),
+  modelName: z.string().min(1, "Nombre del modelo es requerido"),
+  quantity: z.number().int().positive("Cantidad debe ser positiva").default(1),
+  solutionId: z.string().cuid().optional(),
+  solutionName: z.string().optional(),
+  widthMm: z.number().int().positive("Ancho debe ser positivo"),
 });
 
 export type AddToCartInput = z.infer<typeof addToCartInput>;
@@ -46,22 +46,22 @@ export type AddToCartInput = z.infer<typeof addToCartInput>;
  * Server Action: updateCartItemAction
  */
 export const updateCartItemInput = z
-	.object({
-		itemId: z.string().cuid("ID del item debe ser válido"),
-		name: z
-			.string()
-			.min(1, "Nombre es requerido")
-			.max(MAX_ITEM_NAME_LENGTH, "Nombre muy largo")
-			.optional(),
-		quantity: z
-			.number()
-			.int()
-			.positive("Cantidad debe ser positiva")
-			.optional(),
-	})
-	.refine((data) => data.name !== undefined || data.quantity !== undefined, {
-		message: "Debe proporcionar nombre o cantidad para actualizar",
-	});
+  .object({
+    itemId: z.string().cuid("ID del item debe ser válido"),
+    name: z
+      .string()
+      .min(1, "Nombre es requerido")
+      .max(MAX_ITEM_NAME_LENGTH, "Nombre muy largo")
+      .optional(),
+    quantity: z
+      .number()
+      .int()
+      .positive("Cantidad debe ser positiva")
+      .optional(),
+  })
+  .refine((data) => data.name !== undefined || data.quantity !== undefined, {
+    message: "Debe proporcionar nombre o cantidad para actualizar",
+  });
 
 export type UpdateCartItemInput = z.infer<typeof updateCartItemInput>;
 
@@ -71,7 +71,7 @@ export type UpdateCartItemInput = z.infer<typeof updateCartItemInput>;
  * Server Action: removeFromCartAction
  */
 export const removeFromCartInput = z.object({
-	itemId: z.string().cuid("ID del item debe ser válido"),
+  itemId: z.string().cuid("ID del item debe ser válido"),
 });
 
 export type RemoveFromCartInput = z.infer<typeof removeFromCartInput>;
@@ -82,9 +82,9 @@ export type RemoveFromCartInput = z.infer<typeof removeFromCartInput>;
  * Server Action: clearCartAction
  */
 export const clearCartInput = z.object({
-	confirm: z.literal(true).refine((val) => val === true, {
-		message: "Debe confirmar antes de vaciar el carrito",
-	}),
+  confirm: z.literal(true).refine((val) => val === true, {
+    message: "Debe confirmar antes de vaciar el carrito",
+  }),
 });
 
 export type ClearCartInput = z.infer<typeof clearCartInput>;
@@ -97,21 +97,21 @@ export type ClearCartInput = z.infer<typeof clearCartInput>;
  * Cart item structure (matches client-side CartItem interface)
  */
 export const cartItemSchema = z.object({
-	additionalServiceIds: z.array(z.string().cuid()),
-	createdAt: z.string().datetime(),
-	glassTypeId: z.string().cuid(),
-	glassTypeName: z.string(),
-	heightMm: z.number().int().positive(),
-	id: z.string().cuid(),
-	modelId: z.string().cuid(),
-	modelName: z.string(),
-	name: z.string(),
-	quantity: z.number().int().positive(),
-	solutionId: z.string().cuid().optional(),
-	solutionName: z.string().optional(),
-	subtotal: z.number().nonnegative(),
-	unitPrice: z.number().nonnegative(),
-	widthMm: z.number().int().positive(),
+  additionalServiceIds: z.array(z.string().cuid()),
+  createdAt: z.string().datetime(),
+  glassTypeId: z.string().cuid(),
+  glassTypeName: z.string(),
+  heightMm: z.number().int().positive(),
+  id: z.string().cuid(),
+  modelId: z.string().cuid(),
+  modelName: z.string(),
+  name: z.string(),
+  quantity: z.number().int().positive(),
+  solutionId: z.string().cuid().optional(),
+  solutionName: z.string().optional(),
+  subtotal: z.number().nonnegative(),
+  unitPrice: z.number().nonnegative(),
+  widthMm: z.number().int().positive(),
 });
 
 export type CartItemSchema = z.infer<typeof cartItemSchema>;
@@ -121,27 +121,27 @@ export type CartItemSchema = z.infer<typeof cartItemSchema>;
  * Uses discriminated union for success/error states
  */
 export const cartActionResponse = z.discriminatedUnion("success", [
-	z.object({
-		data: z.object({
-			item: cartItemSchema.optional(),
-			itemCount: z.number().int().nonnegative().optional(),
-			items: z.array(cartItemSchema).optional(),
-			total: z.number().nonnegative().optional(),
-		}),
-		success: z.literal(true),
-	}),
-	z.object({
-		error: z.object({
-			code: z.enum([
-				"VALIDATION_ERROR",
-				"NOT_FOUND",
-				"LIMIT_EXCEEDED",
-				"UNKNOWN",
-			]),
-			message: z.string(),
-		}),
-		success: z.literal(false),
-	}),
+  z.object({
+    data: z.object({
+      item: cartItemSchema.optional(),
+      itemCount: z.number().int().nonnegative().optional(),
+      items: z.array(cartItemSchema).optional(),
+      total: z.number().nonnegative().optional(),
+    }),
+    success: z.literal(true),
+  }),
+  z.object({
+    error: z.object({
+      code: z.enum([
+        "VALIDATION_ERROR",
+        "NOT_FOUND",
+        "LIMIT_EXCEEDED",
+        "UNKNOWN",
+      ]),
+      message: z.string(),
+    }),
+    success: z.literal(false),
+  }),
 ]);
 
 export type CartActionResponse = z.infer<typeof cartActionResponse>;
@@ -151,10 +151,10 @@ export type CartActionResponse = z.infer<typeof cartActionResponse>;
 // ============================================================================
 
 export const cartActionMeta = {
-	addToCart: { span: "cart.add-to-cart" },
-	clearCart: { span: "cart.clear" },
-	removeFromCart: { span: "cart.remove-item" },
-	updateCartItem: { span: "cart.update-item" },
+  addToCart: { span: "cart.add-to-cart" },
+  clearCart: { span: "cart.clear" },
+  removeFromCart: { span: "cart.remove-item" },
+  updateCartItem: { span: "cart.update-item" },
 } as const;
 
 // ============================================================================

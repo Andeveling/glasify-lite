@@ -19,12 +19,12 @@ export type ImageSize = "sm" | "md" | "lg" | "xl";
  * Image size dimensions (width x height in pixels)
  */
 export const IMAGE_SIZES: Record<ImageSize, { width: number; height: number }> =
-	{
-		lg: { height: 320, width: 320 }, // Detail view
-		md: { height: 160, width: 160 }, // Grid thumbnail
-		sm: { height: 80, width: 80 }, // List item preview
-		xl: { height: 640, width: 640 }, // Lightbox/full view
-	};
+  {
+    lg: { height: 320, width: 320 }, // Detail view
+    md: { height: 160, width: 160 }, // Grid thumbnail
+    sm: { height: 80, width: 80 }, // List item preview
+    xl: { height: 640, width: 640 }, // Lightbox/full view
+  };
 
 /**
  * CDN configuration (placeholder - update with actual CDN)
@@ -61,33 +61,33 @@ export type ImageFormat = (typeof SUPPORTED_FORMATS)[number];
  * ```
  */
 export function getOptimizedImageUrl(
-	imageUrl: string | null | undefined,
-	size: ImageSize = "md",
-	format: ImageFormat = "webp",
+  imageUrl: string | null | undefined,
+  size: ImageSize = "md",
+  format: ImageFormat = "webp"
 ): string {
-	if (!imageUrl) {
-		return DEFAULT_PLACEHOLDER;
-	}
+  if (!imageUrl) {
+    return DEFAULT_PLACEHOLDER;
+  }
 
-	// If CDN is configured, use it
-	if (CDN_BASE_URL) {
-		const dimensions = IMAGE_SIZES[size];
-		const params = new URLSearchParams({
-			fit: "cover",
-			fmt: format,
-			h: dimensions.height.toString(),
-			q: "85", // Quality 85%
-			w: dimensions.width.toString(),
-		});
+  // If CDN is configured, use it
+  if (CDN_BASE_URL) {
+    const dimensions = IMAGE_SIZES[size];
+    const params = new URLSearchParams({
+      fit: "cover",
+      fmt: format,
+      h: dimensions.height.toString(),
+      q: "85", // Quality 85%
+      w: dimensions.width.toString(),
+    });
 
-		const baseUrl = imageUrl.startsWith("http")
-			? imageUrl
-			: `${CDN_BASE_URL}${imageUrl}`;
-		return `${baseUrl}?${params.toString()}`;
-	}
+    const baseUrl = imageUrl.startsWith("http")
+      ? imageUrl
+      : `${CDN_BASE_URL}${imageUrl}`;
+    return `${baseUrl}?${params.toString()}`;
+  }
 
-	// No CDN: return original URL
-	return imageUrl;
+  // No CDN: return original URL
+  return imageUrl;
 }
 
 /**
@@ -112,22 +112,22 @@ export function getOptimizedImageUrl(
  * ```
  */
 export function getProductImageWithFallback(
-	productImageUrl: string | null | undefined,
-	windowType?: WindowType | string | null,
-	size: ImageSize = "md",
+  productImageUrl: string | null | undefined,
+  windowType?: WindowType | string | null,
+  size: ImageSize = "md"
 ): string {
-	// Priority 1: Product image
-	if (productImageUrl) {
-		return getOptimizedImageUrl(productImageUrl, size);
-	}
+  // Priority 1: Product image
+  if (productImageUrl) {
+    return getOptimizedImageUrl(productImageUrl, size);
+  }
 
-	// Priority 2: Window diagram SVG
-	if (windowType) {
-		return getWindowDiagramPath(windowType);
-	}
+  // Priority 2: Window diagram SVG
+  if (windowType) {
+    return getWindowDiagramPath(windowType);
+  }
 
-	// Priority 3: Default placeholder
-	return DEFAULT_PLACEHOLDER;
+  // Priority 3: Default placeholder
+  return DEFAULT_PLACEHOLDER;
 }
 
 /**
@@ -137,7 +137,7 @@ export function getProductImageWithFallback(
  * @returns True if URL is external (starts with http/https)
  */
 export function isExternalImage(url: string): boolean {
-	return url.startsWith("http://") || url.startsWith("https://");
+  return url.startsWith("http://") || url.startsWith("https://");
 }
 
 /**
@@ -147,7 +147,7 @@ export function isExternalImage(url: string): boolean {
  * @returns True if URL ends with .svg
  */
 export function isSvgImage(url: string): boolean {
-	return url.toLowerCase().endsWith(".svg");
+  return url.toLowerCase().endsWith(".svg");
 }
 
 /**
@@ -166,41 +166,41 @@ export function isSvgImage(url: string): boolean {
  * ```
  */
 export function generateSrcSet(
-	imageUrl: string | null | undefined,
-	size: ImageSize = "md",
+  imageUrl: string | null | undefined,
+  size: ImageSize = "md"
 ): string | undefined {
-	if (!imageUrl || isSvgImage(imageUrl)) {
-		return; // SVGs don't need srcset
-	}
+  if (!imageUrl || isSvgImage(imageUrl)) {
+    return; // SVGs don't need srcset
+  }
 
-	const dimensions = IMAGE_SIZES[size];
+  const dimensions = IMAGE_SIZES[size];
 
-	if (!CDN_BASE_URL) {
-		return; // No CDN, no optimization
-	}
+  if (!CDN_BASE_URL) {
+    return; // No CDN, no optimization
+  }
 
-	const variants = [
-		{ descriptor: "1x", scale: 1 },
-		{ descriptor: "2x", scale: 2 },
-		{ descriptor: "3x", scale: 3 },
-	];
+  const variants = [
+    { descriptor: "1x", scale: 1 },
+    { descriptor: "2x", scale: 2 },
+    { descriptor: "3x", scale: 3 },
+  ];
 
-	return variants
-		.map(({ scale, descriptor }) => {
-			const params = new URLSearchParams({
-				fit: "cover",
-				fmt: "webp",
-				h: (dimensions.height * scale).toString(),
-				q: "85",
-				w: (dimensions.width * scale).toString(),
-			});
+  return variants
+    .map(({ scale, descriptor }) => {
+      const params = new URLSearchParams({
+        fit: "cover",
+        fmt: "webp",
+        h: (dimensions.height * scale).toString(),
+        q: "85",
+        w: (dimensions.width * scale).toString(),
+      });
 
-			const baseUrl = imageUrl.startsWith("http")
-				? imageUrl
-				: `${CDN_BASE_URL}${imageUrl}`;
-			return `${baseUrl}?${params.toString()} ${descriptor}`;
-		})
-		.join(", ");
+      const baseUrl = imageUrl.startsWith("http")
+        ? imageUrl
+        : `${CDN_BASE_URL}${imageUrl}`;
+      return `${baseUrl}?${params.toString()} ${descriptor}`;
+    })
+    .join(", ");
 }
 
 /**
@@ -210,10 +210,10 @@ export function generateSrcSet(
  * @returns Width and height in pixels
  */
 export function getImageDimensions(size: ImageSize): {
-	width: number;
-	height: number;
+  width: number;
+  height: number;
 } {
-	return IMAGE_SIZES[size];
+  return IMAGE_SIZES[size];
 }
 
 /**
@@ -227,15 +227,15 @@ export function getImageDimensions(size: ImageSize): {
  * @returns Preload link props
  */
 export function getImagePreloadProps(imageUrl: string, size: ImageSize = "md") {
-	const dimensions = IMAGE_SIZES[size];
+  const dimensions = IMAGE_SIZES[size];
 
-	return {
-		as: "image",
-		href: getOptimizedImageUrl(imageUrl, size),
-		imageSizes: `${dimensions.width}px`,
-		imageSrcSet: generateSrcSet(imageUrl, size),
-		rel: "preload",
-	};
+  return {
+    as: "image",
+    href: getOptimizedImageUrl(imageUrl, size),
+    imageSizes: `${dimensions.width}px`,
+    imageSrcSet: generateSrcSet(imageUrl, size),
+    rel: "preload",
+  };
 }
 
 /**
@@ -245,27 +245,27 @@ export function getImagePreloadProps(imageUrl: string, size: ImageSize = "md") {
  * @returns True if URL is valid (http/https or relative path)
  */
 export function isValidImageUrl(url: string | null | undefined): boolean {
-	if (!url) {
-		return false;
-	}
+  if (!url) {
+    return false;
+  }
 
-	// Allow relative paths
-	if (url.startsWith("/")) {
-		return true;
-	}
+  // Allow relative paths
+  if (url.startsWith("/")) {
+    return true;
+  }
 
-	// Allow data URIs
-	if (url.startsWith("data:image/")) {
-		return true;
-	}
+  // Allow data URIs
+  if (url.startsWith("data:image/")) {
+    return true;
+  }
 
-	// Allow external URLs (http/https)
-	try {
-		const parsed = new URL(url);
-		return parsed.protocol === "http:" || parsed.protocol === "https:";
-	} catch {
-		return false;
-	}
+  // Allow external URLs (http/https)
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -278,10 +278,10 @@ export function isValidImageUrl(url: string | null | undefined): boolean {
  * @returns Loading strategy ('lazy' | 'eager')
  */
 export function getImageLoadingStrategy(
-	isAboveFold = false,
-	priority = false,
+  isAboveFold = false,
+  priority = false
 ): "lazy" | "eager" {
-	return priority || isAboveFold ? "eager" : "lazy";
+  return priority || isAboveFold ? "eager" : "lazy";
 }
 
 /**
@@ -298,23 +298,23 @@ export function getImageLoadingStrategy(
  * ```
  */
 export function formatImageAltText(
-	productName?: string | null,
-	windowType?: WindowType | string | null,
+  productName?: string | null,
+  windowType?: WindowType | string | null
 ): string {
-	if (!(productName || windowType)) {
-		return "Imagen de producto";
-	}
+  if (!(productName || windowType)) {
+    return "Imagen de producto";
+  }
 
-	const parts: string[] = [];
+  const parts: string[] = [];
 
-	if (productName) {
-		parts.push(productName);
-	}
+  if (productName) {
+    parts.push(productName);
+  }
 
-	if (windowType) {
-		// Import WindowType labels if needed
-		parts.push(`Tipo: ${windowType}`);
-	}
+  if (windowType) {
+    // Import WindowType labels if needed
+    parts.push(`Tipo: ${windowType}`);
+  }
 
-	return parts.join(" - ");
+  return parts.join(" - ");
 }

@@ -1,14 +1,14 @@
 import { useEffect, useRef } from "react";
 
 type UseScrollResetFormOptions = {
-	/** Whether the form was just submitted (item added to cart) */
-	isFormSubmitted: boolean;
-	/** Callback to reset the form state */
-	onReset: () => void;
-	/** Success card ref to track its position */
-	successCardRef: React.RefObject<HTMLDivElement | null>;
-	/** Minimum scroll distance (in pixels) upward to trigger reset */
-	scrollThreshold?: number;
+  /** Whether the form was just submitted (item added to cart) */
+  isFormSubmitted: boolean;
+  /** Callback to reset the form state */
+  onReset: () => void;
+  /** Success card ref to track its position */
+  successCardRef: React.RefObject<HTMLDivElement | null>;
+  /** Minimum scroll distance (in pixels) upward to trigger reset */
+  scrollThreshold?: number;
 };
 
 /**
@@ -40,62 +40,62 @@ type UseScrollResetFormOptions = {
  * ```
  */
 export function useScrollResetForm({
-	isFormSubmitted,
-	onReset,
-	scrollThreshold = 100,
-	successCardRef,
+  isFormSubmitted,
+  onReset,
+  scrollThreshold = 100,
+  successCardRef,
 }: UseScrollResetFormOptions) {
-	const lastScrollY = useRef(0);
-	const hasUserInteracted = useRef(false);
+  const lastScrollY = useRef(0);
+  const hasUserInteracted = useRef(false);
 
-	useEffect(() => {
-		// Only activate scroll detection when form is submitted
-		if (!isFormSubmitted) {
-			hasUserInteracted.current = false;
-			return;
-		}
+  useEffect(() => {
+    // Only activate scroll detection when form is submitted
+    if (!isFormSubmitted) {
+      hasUserInteracted.current = false;
+      return;
+    }
 
-		const handleScroll = () => {
-			const currentScrollY = window.scrollY;
-			const scrollDelta = lastScrollY.current - currentScrollY;
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const scrollDelta = lastScrollY.current - currentScrollY;
 
-			// Check if scrolling up (positive delta means upward scroll)
-			const isScrollingUp = scrollDelta > 0;
+      // Check if scrolling up (positive delta means upward scroll)
+      const isScrollingUp = scrollDelta > 0;
 
-			// Get success card position
-			const successCardElement = successCardRef.current;
-			if (!successCardElement) return;
+      // Get success card position
+      const successCardElement = successCardRef.current;
+      if (!successCardElement) return;
 
-			const successCardTop =
-				successCardElement.getBoundingClientRect().top + window.scrollY;
-			const isAboveSuccessCard = currentScrollY < successCardTop - 200; // 200px buffer
+      const successCardTop =
+        successCardElement.getBoundingClientRect().top + window.scrollY;
+      const isAboveSuccessCard = currentScrollY < successCardTop - 200; // 200px buffer
 
-			// If user scrolls up past threshold and is above success card
-			if (
-				isScrollingUp &&
-				scrollDelta > scrollThreshold &&
-				isAboveSuccessCard &&
-				!hasUserInteracted.current
-			) {
-				// Mark that we've detected the scroll pattern
-				hasUserInteracted.current = true;
+      // If user scrolls up past threshold and is above success card
+      if (
+        isScrollingUp &&
+        scrollDelta > scrollThreshold &&
+        isAboveSuccessCard &&
+        !hasUserInteracted.current
+      ) {
+        // Mark that we've detected the scroll pattern
+        hasUserInteracted.current = true;
 
-				// Reset the form with a small delay for better UX
-				setTimeout(() => {
-					onReset();
-				}, 100);
-			}
+        // Reset the form with a small delay for better UX
+        setTimeout(() => {
+          onReset();
+        }, 100);
+      }
 
-			// Update last scroll position
-			lastScrollY.current = currentScrollY;
-		};
+      // Update last scroll position
+      lastScrollY.current = currentScrollY;
+    };
 
-		// Attach scroll listener
-		window.addEventListener("scroll", handleScroll, { passive: true });
+    // Attach scroll listener
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
-		// Cleanup
-		return () => {
-			window.removeEventListener("scroll", handleScroll);
-		};
-	}, [isFormSubmitted, onReset, scrollThreshold, successCardRef]);
+    // Cleanup
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isFormSubmitted, onReset, scrollThreshold, successCardRef]);
 }

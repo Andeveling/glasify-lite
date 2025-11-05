@@ -26,23 +26,23 @@ import type { ModelInput } from "../../factories/model.factory";
  * Configuración: 1 paño móvil + 1 paño fijo
  */
 export const pvcSliding2Panes: ModelInput = {
-	accessoryPrice: 150_000, // COP - Herrajes europeos de alta calidad
-	basePrice: 520_000, // COP/m² - PVC premium
-	compatibleGlassTypeIds: ["placeholder"],
-	costNotes:
-		"Precio base $520.000/m². Sistema PVC Deceuninck con aislamiento térmico y acústico superior.",
-	costPerMmHeight: 45,
-	costPerMmWidth: 50,
-	glassDiscountHeightMm: 70,
-	glassDiscountWidthMm: 10,
-	maxHeightMm: 2400,
-	maxWidthMm: 3000,
-	minHeightMm: 600,
-	minWidthMm: 800,
-	name: "Ventana PVC Deceuninck Corrediza 2 Paños",
-	profileSupplierName: "Deceuninck",
-	profitMarginPercentage: 38,
-	status: "published",
+  accessoryPrice: 150_000, // COP - Herrajes europeos de alta calidad
+  basePrice: 520_000, // COP/m² - PVC premium
+  compatibleGlassTypeIds: ["placeholder"],
+  costNotes:
+    "Precio base $520.000/m². Sistema PVC Deceuninck con aislamiento térmico y acústico superior.",
+  costPerMmHeight: 45,
+  costPerMmWidth: 50,
+  glassDiscountHeightMm: 70,
+  glassDiscountWidthMm: 10,
+  maxHeightMm: 2400,
+  maxWidthMm: 3000,
+  minHeightMm: 600,
+  minWidthMm: 800,
+  name: "Ventana PVC Deceuninck Corrediza 2 Paños",
+  profileSupplierName: "Deceuninck",
+  profitMarginPercentage: 38,
+  status: "published",
 };
 
 /**
@@ -52,23 +52,23 @@ export const pvcSliding2Panes: ModelInput = {
  * Excelente hermeticidad y aislamiento
  */
 export const pvcCasement1Panel: ModelInput = {
-	accessoryPrice: 180_000, // COP - Herrajes de apertura premium
-	basePrice: 560_000, // COP/m²
-	compatibleGlassTypeIds: ["placeholder"],
-	costNotes:
-		"Precio base $560.000/m². Sistema abatible PVC con hermeticidad superior.",
-	costPerMmHeight: 48,
-	costPerMmWidth: 52,
-	glassDiscountHeightMm: 75,
-	glassDiscountWidthMm: 12,
-	maxHeightMm: 2200,
-	maxWidthMm: 1200,
-	minHeightMm: 600,
-	minWidthMm: 600,
-	name: "Ventana PVC Deceuninck Abatible 1 Hoja",
-	profileSupplierName: "Deceuninck",
-	profitMarginPercentage: 38,
-	status: "published",
+  accessoryPrice: 180_000, // COP - Herrajes de apertura premium
+  basePrice: 560_000, // COP/m²
+  compatibleGlassTypeIds: ["placeholder"],
+  costNotes:
+    "Precio base $560.000/m². Sistema abatible PVC con hermeticidad superior.",
+  costPerMmHeight: 48,
+  costPerMmWidth: 52,
+  glassDiscountHeightMm: 75,
+  glassDiscountWidthMm: 12,
+  maxHeightMm: 2200,
+  maxWidthMm: 1200,
+  minHeightMm: 600,
+  minWidthMm: 600,
+  name: "Ventana PVC Deceuninck Abatible 1 Hoja",
+  profileSupplierName: "Deceuninck",
+  profitMarginPercentage: 38,
+  status: "published",
 };
 
 /**
@@ -78,30 +78,30 @@ export const pvcCasement1Panel: ModelInput = {
  * Ideal para espacios amplios que requieren ventilación
  */
 export const pvcCasement2Panels: ModelInput = {
-	accessoryPrice: 220_000, // COP
-	basePrice: 590_000, // COP/m²
-	compatibleGlassTypeIds: ["placeholder"],
-	costNotes:
-		"Precio base $590.000/m². Sistema abatible doble hoja con máxima eficiencia energética.",
-	costPerMmHeight: 50,
-	costPerMmWidth: 55,
-	glassDiscountHeightMm: 75,
-	glassDiscountWidthMm: 15,
-	maxHeightMm: 2200,
-	maxWidthMm: 2400,
-	minHeightMm: 600,
-	minWidthMm: 1200,
-	name: "Ventana PVC Deceuninck Abatible 2 Hojas",
-	profileSupplierName: "Deceuninck",
-	profitMarginPercentage: 38,
-	status: "published",
+  accessoryPrice: 220_000, // COP
+  basePrice: 590_000, // COP/m²
+  compatibleGlassTypeIds: ["placeholder"],
+  costNotes:
+    "Precio base $590.000/m². Sistema abatible doble hoja con máxima eficiencia energética.",
+  costPerMmHeight: 50,
+  costPerMmWidth: 55,
+  glassDiscountHeightMm: 75,
+  glassDiscountWidthMm: 15,
+  maxHeightMm: 2200,
+  maxWidthMm: 2400,
+  minHeightMm: 600,
+  minWidthMm: 1200,
+  name: "Ventana PVC Deceuninck Abatible 2 Hojas",
+  profileSupplierName: "Deceuninck",
+  profitMarginPercentage: 38,
+  status: "published",
 };
 
 /**
  * All PVC Deceuninck models
  */
 export const vidriosLaEquidadPVCModels: ModelInput[] = [
-	pvcSliding2Panes,
-	pvcCasement1Panel,
-	pvcCasement2Panels,
+  pvcSliding2Panes,
+  pvcCasement1Panel,
+  pvcCasement2Panels,
 ];

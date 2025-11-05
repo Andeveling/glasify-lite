@@ -38,17 +38,17 @@ import { auth } from "@/server/auth";
  * ```
  */
 export async function handleSignOut() {
-	// Sign out user via Better Auth
-	await auth.api.signOut({
-		headers: await headers(),
-	});
+  // Sign out user via Better Auth
+  await auth.api.signOut({
+    headers: await headers(),
+  });
 
-	// ✅ CRITICAL: Revalidate all routes to clear cached session data
-	// This forces Server Components to re-fetch session on next render
-	// Without this, Next.js 16 serves stale cached pages with old session
-	revalidatePath("/", "layout");
+  // ✅ CRITICAL: Revalidate all routes to clear cached session data
+  // This forces Server Components to re-fetch session on next render
+  // Without this, Next.js 16 serves stale cached pages with old session
+  revalidatePath("/", "layout");
 
-	// ✅ CRITICAL: Redirect to public page
-	// This ensures user leaves protected pages and clears any client state
-	redirect("/catalog");
+  // ✅ CRITICAL: Redirect to public page
+  // This ensures user leaves protected pages and clears any client state
+  redirect("/catalog");
 }

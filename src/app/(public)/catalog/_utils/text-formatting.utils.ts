@@ -10,9 +10,9 @@
 // ============================================================================
 
 export type PluralOptions = {
-	zero?: string;
-	one: string;
-	other: string;
+  zero?: string;
+  one: string;
+  other: string;
 };
 
 // ============================================================================
@@ -33,7 +33,7 @@ export type PluralOptions = {
  * ```
  */
 export function formatNumber(num: number, locale = "es-AR"): string {
-	return new Intl.NumberFormat(locale).format(num);
+  return new Intl.NumberFormat(locale).format(num);
 }
 
 /**
@@ -59,15 +59,15 @@ export function formatNumber(num: number, locale = "es-AR"): string {
  * ```
  */
 export function pluralize(count: number, options: PluralOptions): string {
-	if (count === 0 && options.zero !== undefined) {
-		return options.zero;
-	}
+  if (count === 0 && options.zero !== undefined) {
+    return options.zero;
+  }
 
-	if (count === 1) {
-		return options.one;
-	}
+  if (count === 1) {
+    return options.one;
+  }
 
-	return options.other;
+  return options.other;
 }
 
 /**
@@ -88,11 +88,11 @@ export function pluralize(count: number, options: PluralOptions): string {
  * ```
  */
 export function formatResultCount(count: number): string {
-	return pluralize(count, {
-		one: `${formatNumber(count)} modelo encontrado`,
-		other: `${formatNumber(count)} modelos encontrados`,
-		zero: "No se encontraron resultados",
-	});
+  return pluralize(count, {
+    one: `${formatNumber(count)} modelo encontrado`,
+    other: `${formatNumber(count)} modelos encontrados`,
+    zero: "No se encontraron resultados",
+  });
 }
 
 /**
@@ -112,18 +112,18 @@ export function formatResultCount(count: number): string {
  * ```
  */
 export function getResultCountParts(count: number): {
-	count: string | null;
-	hasResults: boolean;
+  count: string | null;
+  hasResults: boolean;
 } {
-	if (count === 0) {
-		return {
-			count: null,
-			hasResults: false,
-		};
-	}
+  if (count === 0) {
+    return {
+      count: null,
+      hasResults: false,
+    };
+  }
 
-	return {
-		count: formatNumber(count),
-		hasResults: true,
-	};
+  return {
+    count: formatNumber(count),
+    hasResults: true,
+  };
 }

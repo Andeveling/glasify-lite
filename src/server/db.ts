@@ -16,26 +16,26 @@ import { PrismaClient } from "@prisma/client";
  * @returns Configured PrismaClient instance
  */
 const createPrismaClient = () => {
-	const client = new PrismaClient({
-		log:
-			(process.env.NODE_ENV ?? "development") === "development"
-				? ["query", "error", "warn"]
-				: ["error"],
-	});
+  const client = new PrismaClient({
+    log:
+      (process.env.NODE_ENV ?? "development") === "development"
+        ? ["query", "error", "warn"]
+        : ["error"],
+  });
 
-	return client;
+  return client;
 };
 
 const globalForPrisma = globalThis as unknown as {
-	prisma: ReturnType<typeof createPrismaClient> | undefined;
+  prisma: ReturnType<typeof createPrismaClient> | undefined;
 };
 
 // Export the db client
 // In development, this is extended with performance monitoring
 // In production, this is a standard PrismaClient
 export const db = (globalForPrisma.prisma ??
-	createPrismaClient()) as unknown as PrismaClient;
+  createPrismaClient()) as unknown as PrismaClient;
 
 if ((process.env.NODE_ENV ?? "development") !== "production") {
-	globalForPrisma.prisma = db as ReturnType<typeof createPrismaClient>;
+  globalForPrisma.prisma = db as ReturnType<typeof createPrismaClient>;
 }

@@ -15,30 +15,30 @@ import { formatDate } from "@/lib/utils";
 import type { TenantConfigPublic } from "@/providers/tenant-config-provider";
 
 type QuoteValidityNoteProps = {
-	/** Quote validity date (null for no limit) */
-	validUntil: Date | null;
-	/** Tenant configuration for formatting */
-	tenantConfig: TenantConfigPublic;
+  /** Quote validity date (null for no limit) */
+  validUntil: Date | null;
+  /** Tenant configuration for formatting */
+  tenantConfig: TenantConfigPublic;
 };
 
 export function QuoteValidityNote({
-	tenantConfig,
-	validUntil,
+  tenantConfig,
+  validUntil,
 }: QuoteValidityNoteProps) {
-	const { locale, timezone } = tenantConfig;
+  const { locale, timezone } = tenantConfig;
 
-	return (
-		<Card className="border-muted bg-muted/50">
-			<CardContent className="pt-6">
-				<p className="text-muted-foreground text-sm">
-					<strong>Nota:</strong> Esta cotización tiene una validez de{" "}
-					{validUntil
-						? `hasta el ${formatDate(validUntil, locale, timezone)}`
-						: "sin límite"}
-					. Los precios están bloqueados al momento de la generación de la
-					cotización.
-				</p>
-			</CardContent>
-		</Card>
-	);
+  return (
+    <Card className="border-muted bg-muted/50">
+      <CardContent className="pt-6">
+        <p className="text-muted-foreground text-sm">
+          <strong>Nota:</strong> Esta cotización tiene una validez de{" "}
+          {validUntil
+            ? `hasta el ${formatDate(validUntil, locale, timezone)}`
+            : "sin límite"}
+          . Los precios están bloqueados al momento de la generación de la
+          cotización.
+        </p>
+      </CardContent>
+    </Card>
+  );
 }

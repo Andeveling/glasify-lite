@@ -15,11 +15,11 @@
  * - WebP: Modern format, better compression than JPEG/PNG
  */
 export const ALLOWED_EXTENSIONS = [
-	".svg",
-	".png",
-	".jpg",
-	".jpeg",
-	".webp",
+  ".svg",
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".webp",
 ] as const;
 
 /**
@@ -47,7 +47,7 @@ const CACHE_MINUTES = 5;
 const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
 export const GALLERY_CACHE_TTL_MS =
-	CACHE_MINUTES * SECONDS_PER_MINUTE * MS_PER_SECOND;
+  CACHE_MINUTES * SECONDS_PER_MINUTE * MS_PER_SECOND;
 
 /**
  * Maximum number of images to load before warning about performance

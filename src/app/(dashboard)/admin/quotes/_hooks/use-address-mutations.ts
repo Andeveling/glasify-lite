@@ -41,130 +41,130 @@ import { api } from "@/trpc/react";
  * }
  */
 export function useAddressMutations(options?: {
-	onSuccess?: () => void;
-	onError?: (error: unknown) => void;
+  onSuccess?: () => void;
+  onError?: (error: unknown) => void;
 }) {
-	const router = useRouter();
-	const utils = api.useUtils();
+  const router = useRouter();
+  const utils = api.useUtils();
 
-	/**
-	 * Create new address mutation
-	 */
-	const createMutation = api.address.create.useMutation({
-		onSuccess: () => {
-			// Step 1: Invalidate query cache
-			utils.address.invalidate().catch(() => {
-				// Ignore cache invalidation errors
-			});
-			utils.quote.invalidate().catch(() => {
-				// Ignore cache invalidation errors
-			});
+  /**
+   * Create new address mutation
+   */
+  const createMutation = api.address.create.useMutation({
+    onSuccess: () => {
+      // Step 1: Invalidate query cache
+      utils.address.invalidate().catch(() => {
+        // Ignore cache invalidation errors
+      });
+      utils.quote.invalidate().catch(() => {
+        // Ignore cache invalidation errors
+      });
 
-			// Step 2: Re-fetch server data (SSR pattern)
-			router.refresh();
+      // Step 2: Re-fetch server data (SSR pattern)
+      router.refresh();
 
-			// Step 3: User feedback
-			toast.success("Dirección de entrega guardada correctamente");
+      // Step 3: User feedback
+      toast.success("Dirección de entrega guardada correctamente");
 
-			// Step 4: Custom callback
-			options?.onSuccess?.();
-		},
-		onError: (error) => {
-			toast.error(error.message || "Error al guardar la dirección de entrega");
-			options?.onError?.(error);
-		},
-	});
+      // Step 4: Custom callback
+      options?.onSuccess?.();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Error al guardar la dirección de entrega");
+      options?.onError?.(error);
+    },
+  });
 
-	/**
-	 * Update existing address mutation
-	 */
-	const updateMutation = api.address.update.useMutation({
-		onSuccess: () => {
-			// Step 1: Invalidate query cache
-			utils.address.invalidate().catch(() => {
-				// Ignore cache invalidation errors
-			});
-			utils.quote.invalidate().catch(() => {
-				// Ignore cache invalidation errors
-			});
+  /**
+   * Update existing address mutation
+   */
+  const updateMutation = api.address.update.useMutation({
+    onSuccess: () => {
+      // Step 1: Invalidate query cache
+      utils.address.invalidate().catch(() => {
+        // Ignore cache invalidation errors
+      });
+      utils.quote.invalidate().catch(() => {
+        // Ignore cache invalidation errors
+      });
 
-			// Step 2: Re-fetch server data (SSR pattern)
-			router.refresh();
+      // Step 2: Re-fetch server data (SSR pattern)
+      router.refresh();
 
-			// Step 3: User feedback
-			toast.success("Dirección de entrega actualizada correctamente");
+      // Step 3: User feedback
+      toast.success("Dirección de entrega actualizada correctamente");
 
-			// Step 4: Custom callback
-			options?.onSuccess?.();
-		},
-		onError: (error) => {
-			toast.error(
-				error.message || "Error al actualizar la dirección de entrega",
-			);
-			options?.onError?.(error);
-		},
-	});
+      // Step 4: Custom callback
+      options?.onSuccess?.();
+    },
+    onError: (error) => {
+      toast.error(
+        error.message || "Error al actualizar la dirección de entrega"
+      );
+      options?.onError?.(error);
+    },
+  });
 
-	/**
-	 * Delete address mutation
-	 */
-	const deleteMutation = api.address.delete.useMutation({
-		onSuccess: () => {
-			// Step 1: Invalidate query cache
-			utils.address.invalidate().catch(() => {
-				// Ignore cache invalidation errors
-			});
-			utils.quote.invalidate().catch(() => {
-				// Ignore cache invalidation errors
-			});
+  /**
+   * Delete address mutation
+   */
+  const deleteMutation = api.address.delete.useMutation({
+    onSuccess: () => {
+      // Step 1: Invalidate query cache
+      utils.address.invalidate().catch(() => {
+        // Ignore cache invalidation errors
+      });
+      utils.quote.invalidate().catch(() => {
+        // Ignore cache invalidation errors
+      });
 
-			// Step 2: Re-fetch server data (SSR pattern)
-			router.refresh();
+      // Step 2: Re-fetch server data (SSR pattern)
+      router.refresh();
 
-			// Step 3: User feedback
-			toast.success("Dirección de entrega eliminada correctamente");
+      // Step 3: User feedback
+      toast.success("Dirección de entrega eliminada correctamente");
 
-			// Step 4: Custom callback
-			options?.onSuccess?.();
-		},
-		onError: (error) => {
-			toast.error(error.message || "Error al eliminar la dirección de entrega");
-			options?.onError?.(error);
-		},
-	});
+      // Step 4: Custom callback
+      options?.onSuccess?.();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Error al eliminar la dirección de entrega");
+      options?.onError?.(error);
+    },
+  });
 
-	return {
-		// Create
-		createAddress: (data: ProjectAddressInput) => createMutation.mutate(data),
-		createAddressAsync: (data: ProjectAddressInput) =>
-			createMutation.mutateAsync(data),
-		isCreating: createMutation.isPending,
-		createError: createMutation.error,
+  return {
+    // Create
+    createAddress: (data: ProjectAddressInput) => createMutation.mutate(data),
+    createAddressAsync: (data: ProjectAddressInput) =>
+      createMutation.mutateAsync(data),
+    isCreating: createMutation.isPending,
+    createError: createMutation.error,
 
-		// Update
-		updateAddress: (id: string, data: Partial<ProjectAddressInput>) =>
-			updateMutation.mutate({ id, data }),
-		updateAddressAsync: (id: string, data: Partial<ProjectAddressInput>) =>
-			updateMutation.mutateAsync({ id, data }),
-		isUpdating: updateMutation.isPending,
-		updateError: updateMutation.error,
+    // Update
+    updateAddress: (id: string, data: Partial<ProjectAddressInput>) =>
+      updateMutation.mutate({ id, data }),
+    updateAddressAsync: (id: string, data: Partial<ProjectAddressInput>) =>
+      updateMutation.mutateAsync({ id, data }),
+    isUpdating: updateMutation.isPending,
+    updateError: updateMutation.error,
 
-		// Delete
-		deleteAddress: (id: string) => deleteMutation.mutate({ id }),
-		deleteAddressAsync: (id: string) => deleteMutation.mutateAsync({ id }),
-		isDeleting: deleteMutation.isPending,
-		deleteError: deleteMutation.error,
+    // Delete
+    deleteAddress: (id: string) => deleteMutation.mutate({ id }),
+    deleteAddressAsync: (id: string) => deleteMutation.mutateAsync({ id }),
+    isDeleting: deleteMutation.isPending,
+    deleteError: deleteMutation.error,
 
-		// Combined states
-		isMutating:
-			createMutation.isPending ||
-			updateMutation.isPending ||
-			deleteMutation.isPending,
-		hasError:
-			Boolean(createMutation.error) ||
-			Boolean(updateMutation.error) ||
-			Boolean(deleteMutation.error),
-	};
+    // Combined states
+    isMutating:
+      createMutation.isPending ||
+      updateMutation.isPending ||
+      deleteMutation.isPending,
+    hasError:
+      Boolean(createMutation.error) ||
+      Boolean(updateMutation.error) ||
+      Boolean(deleteMutation.error),
+  };
 }
 
 /**
@@ -181,42 +181,42 @@ export function useAddressMutations(options?: {
  * }
  */
 export function useAddressQueries(params?: {
-	addressId?: string;
-	quoteId?: string;
+  addressId?: string;
+  quoteId?: string;
 }) {
-	// Get address by ID
-	const addressQuery = api.address.getById.useQuery(
-		{ id: params?.addressId ?? "" },
-		{
-			enabled: Boolean(params?.addressId),
-			staleTime: 60_000, // 1 minute
-		},
-	);
+  // Get address by ID
+  const addressQuery = api.address.getById.useQuery(
+    { id: params?.addressId ?? "" },
+    {
+      enabled: Boolean(params?.addressId),
+      staleTime: 60_000, // 1 minute
+    }
+  );
 
-	// List addresses by quote
-	const addressListQuery = api.address.listByQuote.useQuery(
-		{ quoteId: params?.quoteId ?? "" },
-		{
-			enabled: Boolean(params?.quoteId),
-			staleTime: 60_000, // 1 minute
-		},
-	);
+  // List addresses by quote
+  const addressListQuery = api.address.listByQuote.useQuery(
+    { quoteId: params?.quoteId ?? "" },
+    {
+      enabled: Boolean(params?.quoteId),
+      staleTime: 60_000, // 1 minute
+    }
+  );
 
-	return {
-		// Single address
-		address: addressQuery.data,
-		isLoadingAddress: addressQuery.isLoading,
-		addressError: addressQuery.error,
-		refetchAddress: addressQuery.refetch,
+  return {
+    // Single address
+    address: addressQuery.data,
+    isLoadingAddress: addressQuery.isLoading,
+    addressError: addressQuery.error,
+    refetchAddress: addressQuery.refetch,
 
-		// Address list
-		addresses: addressListQuery.data ?? [],
-		isLoadingAddresses: addressListQuery.isLoading,
-		addressesError: addressListQuery.error,
-		refetchAddresses: addressListQuery.refetch,
+    // Address list
+    addresses: addressListQuery.data ?? [],
+    isLoadingAddresses: addressListQuery.isLoading,
+    addressesError: addressListQuery.error,
+    refetchAddresses: addressListQuery.refetch,
 
-		// Combined states
-		isLoading: addressQuery.isLoading || addressListQuery.isLoading,
-		hasError: Boolean(addressQuery.error) || Boolean(addressListQuery.error),
-	};
+    // Combined states
+    isLoading: addressQuery.isLoading || addressListQuery.isLoading,
+    hasError: Boolean(addressQuery.error) || Boolean(addressListQuery.error),
+  };
 }

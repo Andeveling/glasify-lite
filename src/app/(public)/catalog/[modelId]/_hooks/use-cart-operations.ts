@@ -9,7 +9,7 @@ import { useCart } from "@/app/(public)/cart/_hooks/use-cart";
 import type { CartItemInputWithPrice } from "../_utils/cart-item-mapper";
 
 type UseCartOperationsReturn = {
-	addToCart: (item: CartItemInputWithPrice, modelName: string) => boolean;
+  addToCart: (item: CartItemInputWithPrice, modelName: string) => boolean;
 };
 
 /**
@@ -26,35 +26,35 @@ type UseCartOperationsReturn = {
  * }
  */
 export function useCartOperations(): UseCartOperationsReturn {
-	const { addItem } = useCart();
+  const { addItem } = useCart();
 
-	const addToCart = useCallback(
-		(item: CartItemInputWithPrice, modelName: string): boolean => {
-			try {
-				addItem(item);
+  const addToCart = useCallback(
+    (item: CartItemInputWithPrice, modelName: string): boolean => {
+      try {
+        addItem(item);
 
-				toast.success("Item agregado al carrito", {
-					description: `${modelName} ha sido agregado exitosamente`,
-				});
+        toast.success("Item agregado al carrito", {
+          description: `${modelName} ha sido agregado exitosamente`,
+        });
 
-				return true;
-			} catch (err) {
-				const errorMessage =
-					err instanceof Error && err.message.includes("no puedes agregar más")
-						? "Has alcanzado el límite de 20 items en el carrito"
-						: "No se pudo agregar el item al carrito";
+        return true;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error && err.message.includes("no puedes agregar más")
+            ? "Has alcanzado el límite de 20 items en el carrito"
+            : "No se pudo agregar el item al carrito";
 
-				toast.error("Error al agregar", {
-					description: errorMessage,
-				});
+        toast.error("Error al agregar", {
+          description: errorMessage,
+        });
 
-				return false;
-			}
-		},
-		[addItem],
-	);
+        return false;
+      }
+    },
+    [addItem]
+  );
 
-	return {
-		addToCart,
-	};
+  return {
+    addToCart,
+  };
 }

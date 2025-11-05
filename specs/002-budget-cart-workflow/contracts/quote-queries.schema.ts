@@ -35,17 +35,17 @@ const MAX_POSTAL_CODE_LENGTH = 20;
  * Location: server/api/routers/quote.ts
  */
 export const listUserQuotesInput = z.object({
-	limit: z
-		.number()
-		.int()
-		.positive()
-		.max(MAX_PAGE_SIZE)
-		.default(DEFAULT_PAGE_SIZE),
-	page: z.number().int().positive().default(1),
-	search: z.string().min(1).max(MAX_PROJECT_NAME_LENGTH).optional(),
-	sortBy: z.enum(["createdAt", "total", "projectName"]).default("createdAt"),
-	sortOrder: z.enum(["asc", "desc"]).default("desc"),
-	status: z.enum(["PENDING", "APPROVED", "REJECTED", "EXPIRED"]).optional(),
+  limit: z
+    .number()
+    .int()
+    .positive()
+    .max(MAX_PAGE_SIZE)
+    .default(DEFAULT_PAGE_SIZE),
+  page: z.number().int().positive().default(1),
+  search: z.string().min(1).max(MAX_PROJECT_NAME_LENGTH).optional(),
+  sortBy: z.enum(["createdAt", "total", "projectName"]).default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+  status: z.enum(["PENDING", "APPROVED", "REJECTED", "EXPIRED"]).optional(),
 });
 
 export type ListUserQuotesInput = z.infer<typeof listUserQuotesInput>;
@@ -54,14 +54,14 @@ export type ListUserQuotesInput = z.infer<typeof listUserQuotesInput>;
  * Quote item in list response
  */
 const quoteListItemSchema = z.object({
-	createdAt: z.date(),
-	id: z.string().cuid(),
-	itemCount: z.number().int().nonnegative(),
-	projectAddress: z.string().nullable(),
-	projectName: z.string(),
-	status: z.enum(["PENDING", "APPROVED", "REJECTED", "EXPIRED"]),
-	total: z.number().nonnegative(),
-	validUntil: z.date(),
+  createdAt: z.date(),
+  id: z.string().cuid(),
+  itemCount: z.number().int().nonnegative(),
+  projectAddress: z.string().nullable(),
+  projectName: z.string(),
+  status: z.enum(["PENDING", "APPROVED", "REJECTED", "EXPIRED"]),
+  total: z.number().nonnegative(),
+  validUntil: z.date(),
 });
 
 export type QuoteListItem = z.infer<typeof quoteListItemSchema>;
@@ -70,14 +70,14 @@ export type QuoteListItem = z.infer<typeof quoteListItemSchema>;
  * List user quotes response
  */
 export const listUserQuotesOutput = z.object({
-	items: z.array(quoteListItemSchema),
-	pagination: z.object({
-		hasMore: z.boolean(),
-		limit: z.number().int().positive(),
-		page: z.number().int().positive(),
-		total: z.number().int().nonnegative(),
-		totalPages: z.number().int().nonnegative(),
-	}),
+  items: z.array(quoteListItemSchema),
+  pagination: z.object({
+    hasMore: z.boolean(),
+    limit: z.number().int().positive(),
+    page: z.number().int().positive(),
+    total: z.number().int().nonnegative(),
+    totalPages: z.number().int().nonnegative(),
+  }),
 });
 
 export type ListUserQuotesOutput = z.infer<typeof listUserQuotesOutput>;
@@ -89,7 +89,7 @@ export type ListUserQuotesOutput = z.infer<typeof listUserQuotesOutput>;
  * Location: server/api/routers/quote.ts
  */
 export const getQuoteByIdInput = z.object({
-	id: z.string().cuid("ID de cotización debe ser válido"),
+  id: z.string().cuid("ID de cotización debe ser válido"),
 });
 
 export type GetQuoteByIdInput = z.infer<typeof getQuoteByIdInput>;
@@ -98,23 +98,23 @@ export type GetQuoteByIdInput = z.infer<typeof getQuoteByIdInput>;
  * Quote item details (nested in quote)
  */
 const quoteItemDetailSchema = z.object({
-	accessories: z.array(
-		z.object({
-			id: z.string().cuid(),
-			name: z.string(),
-			price: z.number().nonnegative(),
-		}),
-	),
-	glassTypeName: z.string(),
-	heightMm: z.number().int().positive(),
-	id: z.string().cuid(),
-	modelName: z.string(),
-	name: z.string(),
-	quantity: z.number().int().positive(),
-	solutionName: z.string().nullable(),
-	subtotal: z.number().nonnegative(),
-	unitPrice: z.number().nonnegative(),
-	widthMm: z.number().int().positive(),
+  accessories: z.array(
+    z.object({
+      id: z.string().cuid(),
+      name: z.string(),
+      price: z.number().nonnegative(),
+    })
+  ),
+  glassTypeName: z.string(),
+  heightMm: z.number().int().positive(),
+  id: z.string().cuid(),
+  modelName: z.string(),
+  name: z.string(),
+  quantity: z.number().int().positive(),
+  solutionName: z.string().nullable(),
+  subtotal: z.number().nonnegative(),
+  unitPrice: z.number().nonnegative(),
+  widthMm: z.number().int().positive(),
 });
 
 export type QuoteItemDetail = z.infer<typeof quoteItemDetailSchema>;
@@ -123,25 +123,25 @@ export type QuoteItemDetail = z.infer<typeof quoteItemDetailSchema>;
  * Full quote details response
  */
 export const getQuoteByIdOutput = z.object({
-	contactAddress: z.string().nullable(),
-	contactPhone: z.string().nullable(),
-	createdAt: z.date(),
-	id: z.string().cuid(),
-	items: z.array(quoteItemDetailSchema),
-	projectCity: z.string().nullable(),
-	projectName: z.string(),
-	projectPostalCode: z.string().nullable(),
-	projectState: z.string().nullable(),
-	projectStreet: z.string().nullable(),
-	status: z.enum(["PENDING", "APPROVED", "REJECTED", "EXPIRED"]),
-	total: z.number().nonnegative(),
-	updatedAt: z.date(),
-	user: z.object({
-		email: z.string().email().nullable(),
-		id: z.string(),
-		name: z.string().nullable(),
-	}),
-	validUntil: z.date(),
+  contactAddress: z.string().nullable(),
+  contactPhone: z.string().nullable(),
+  createdAt: z.date(),
+  id: z.string().cuid(),
+  items: z.array(quoteItemDetailSchema),
+  projectCity: z.string().nullable(),
+  projectName: z.string(),
+  projectPostalCode: z.string().nullable(),
+  projectState: z.string().nullable(),
+  projectStreet: z.string().nullable(),
+  status: z.enum(["PENDING", "APPROVED", "REJECTED", "EXPIRED"]),
+  total: z.number().nonnegative(),
+  updatedAt: z.date(),
+  user: z.object({
+    email: z.string().email().nullable(),
+    id: z.string(),
+    name: z.string().nullable(),
+  }),
+  validUntil: z.date(),
 });
 
 export type GetQuoteByIdOutput = z.infer<typeof getQuoteByIdOutput>;
@@ -157,68 +157,68 @@ export type GetQuoteByIdOutput = z.infer<typeof getQuoteByIdOutput>;
  * Location: app/_actions/quote.actions.ts
  */
 export const generateQuoteFromCartInput = z.object({
-	cartItems: z
-		.array(
-			z.object({
-				additionalServiceIds: z.array(z.string().cuid()),
-				glassTypeId: z.string().cuid(),
-				heightMm: z.number().int().positive(),
-				id: z.string().cuid(),
-				modelId: z.string().cuid(),
-				name: z.string().min(1).max(MAX_ITEM_NAME_LENGTH),
-				quantity: z.number().int().positive(),
-				solutionId: z.string().cuid().optional(),
-				widthMm: z.number().int().positive(),
-			}),
-		)
-		.min(1, "El carrito debe tener al menos un item"),
-	contactAddress: z.string().min(1).max(MAX_PROJECT_ADDRESS_LENGTH).optional(),
-	contactPhone: z.string().min(1).max(MAX_PHONE_LENGTH).optional(),
-	projectCity: z.string().min(1).max(MAX_PROJECT_ADDRESS_LENGTH).optional(),
-	projectName: z
-		.string()
-		.min(1, "Nombre del proyecto es requerido")
-		.max(MAX_PROJECT_NAME_LENGTH, "Nombre muy largo"),
-	projectPostalCode: z.string().min(1).max(MAX_POSTAL_CODE_LENGTH).optional(),
-	projectState: z.string().min(1).max(MAX_PROJECT_ADDRESS_LENGTH).optional(),
-	projectStreet: z.string().min(1).max(MAX_PROJECT_ADDRESS_LENGTH).optional(),
+  cartItems: z
+    .array(
+      z.object({
+        additionalServiceIds: z.array(z.string().cuid()),
+        glassTypeId: z.string().cuid(),
+        heightMm: z.number().int().positive(),
+        id: z.string().cuid(),
+        modelId: z.string().cuid(),
+        name: z.string().min(1).max(MAX_ITEM_NAME_LENGTH),
+        quantity: z.number().int().positive(),
+        solutionId: z.string().cuid().optional(),
+        widthMm: z.number().int().positive(),
+      })
+    )
+    .min(1, "El carrito debe tener al menos un item"),
+  contactAddress: z.string().min(1).max(MAX_PROJECT_ADDRESS_LENGTH).optional(),
+  contactPhone: z.string().min(1).max(MAX_PHONE_LENGTH).optional(),
+  projectCity: z.string().min(1).max(MAX_PROJECT_ADDRESS_LENGTH).optional(),
+  projectName: z
+    .string()
+    .min(1, "Nombre del proyecto es requerido")
+    .max(MAX_PROJECT_NAME_LENGTH, "Nombre muy largo"),
+  projectPostalCode: z.string().min(1).max(MAX_POSTAL_CODE_LENGTH).optional(),
+  projectState: z.string().min(1).max(MAX_PROJECT_ADDRESS_LENGTH).optional(),
+  projectStreet: z.string().min(1).max(MAX_PROJECT_ADDRESS_LENGTH).optional(),
 });
 
 export type GenerateQuoteFromCartInput = z.infer<
-	typeof generateQuoteFromCartInput
+  typeof generateQuoteFromCartInput
 >;
 
 /**
  * Quote generation response
  */
 export const generateQuoteFromCartOutput = z.discriminatedUnion("success", [
-	z.object({
-		data: z.object({
-			itemCount: z.number().int().positive(),
-			quoteId: z.string().cuid(),
-			total: z.number().nonnegative(),
-			validUntil: z.date(),
-		}),
-		success: z.literal(true),
-	}),
-	z.object({
-		error: z.object({
-			code: z.enum([
-				"VALIDATION_ERROR",
-				"UNAUTHORIZED",
-				"CART_EMPTY",
-				"PRICE_CHANGED",
-				"UNKNOWN",
-			]),
-			details: z.record(z.string(), z.unknown()).optional(),
-			message: z.string(),
-		}),
-		success: z.literal(false),
-	}),
+  z.object({
+    data: z.object({
+      itemCount: z.number().int().positive(),
+      quoteId: z.string().cuid(),
+      total: z.number().nonnegative(),
+      validUntil: z.date(),
+    }),
+    success: z.literal(true),
+  }),
+  z.object({
+    error: z.object({
+      code: z.enum([
+        "VALIDATION_ERROR",
+        "UNAUTHORIZED",
+        "CART_EMPTY",
+        "PRICE_CHANGED",
+        "UNKNOWN",
+      ]),
+      details: z.record(z.string(), z.unknown()).optional(),
+      message: z.string(),
+    }),
+    success: z.literal(false),
+  }),
 ]);
 
 export type GenerateQuoteFromCartOutput = z.infer<
-	typeof generateQuoteFromCartOutput
+  typeof generateQuoteFromCartOutput
 >;
 
 /**
@@ -228,32 +228,32 @@ export type GenerateQuoteFromCartOutput = z.infer<
  * Location: app/_actions/quote.actions.ts
  */
 export const updateQuoteStatusInput = z.object({
-	id: z.string().cuid("ID de cotización debe ser válido"),
-	status: z.enum(["PENDING", "APPROVED", "REJECTED", "EXPIRED"]),
+  id: z.string().cuid("ID de cotización debe ser válido"),
+  status: z.enum(["PENDING", "APPROVED", "REJECTED", "EXPIRED"]),
 });
 
 export type UpdateQuoteStatusInput = z.infer<typeof updateQuoteStatusInput>;
 
 export const updateQuoteStatusOutput = z.discriminatedUnion("success", [
-	z.object({
-		data: z.object({
-			id: z.string().cuid(),
-			status: z.enum(["PENDING", "APPROVED", "REJECTED", "EXPIRED"]),
-		}),
-		success: z.literal(true),
-	}),
-	z.object({
-		error: z.object({
-			code: z.enum([
-				"VALIDATION_ERROR",
-				"NOT_FOUND",
-				"UNAUTHORIZED",
-				"UNKNOWN",
-			]),
-			message: z.string(),
-		}),
-		success: z.literal(false),
-	}),
+  z.object({
+    data: z.object({
+      id: z.string().cuid(),
+      status: z.enum(["PENDING", "APPROVED", "REJECTED", "EXPIRED"]),
+    }),
+    success: z.literal(true),
+  }),
+  z.object({
+    error: z.object({
+      code: z.enum([
+        "VALIDATION_ERROR",
+        "NOT_FOUND",
+        "UNAUTHORIZED",
+        "UNKNOWN",
+      ]),
+      message: z.string(),
+    }),
+    success: z.literal(false),
+  }),
 ]);
 
 export type UpdateQuoteStatusOutput = z.infer<typeof updateQuoteStatusOutput>;
@@ -263,8 +263,8 @@ export type UpdateQuoteStatusOutput = z.infer<typeof updateQuoteStatusOutput>;
 // ============================================================================
 
 export const quoteActionMeta = {
-	generateFromCart: { span: "quote.generate-from-cart" },
-	updateStatus: { span: "quote.update-status" },
+  generateFromCart: { span: "quote.generate-from-cart" },
+  updateStatus: { span: "quote.update-status" },
 } as const;
 
 // ============================================================================

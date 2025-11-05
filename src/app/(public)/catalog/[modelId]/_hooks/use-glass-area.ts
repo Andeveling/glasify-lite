@@ -5,14 +5,14 @@
 
 import { useMemo } from "react";
 import {
-	calculateGlassArea,
-	type GlassDiscounts,
+  calculateGlassArea,
+  type GlassDiscounts,
 } from "../_utils/glass-area-calculator";
 
 type UseGlassAreaParams = {
-	heightMm: number;
-	widthMm: number;
-	discounts: GlassDiscounts;
+  heightMm: number;
+  widthMm: number;
+  discounts: GlassDiscounts;
 };
 
 /**
@@ -32,18 +32,18 @@ type UseGlassAreaParams = {
  * });
  */
 export function useGlassArea({
-	discounts,
-	heightMm,
-	widthMm,
+  discounts,
+  heightMm,
+  widthMm,
 }: UseGlassAreaParams): number {
-	const { widthMm: discountWidthMm, heightMm: discountHeightMm } = discounts;
+  const { widthMm: discountWidthMm, heightMm: discountHeightMm } = discounts;
 
-	return useMemo(
-		() =>
-			calculateGlassArea(widthMm, heightMm, {
-				heightMm: discountHeightMm,
-				widthMm: discountWidthMm,
-			}),
-		[widthMm, heightMm, discountWidthMm, discountHeightMm],
-	);
+  return useMemo(
+    () =>
+      calculateGlassArea(widthMm, heightMm, {
+        heightMm: discountHeightMm,
+        widthMm: discountWidthMm,
+      }),
+    [widthMm, heightMm, discountWidthMm, discountHeightMm]
+  );
 }

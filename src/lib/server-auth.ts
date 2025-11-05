@@ -48,8 +48,9 @@ import { auth } from "@/server/auth";
  * }
  * ```
  */
-export const getServerSession = cache(async () => {
-	return await auth.api.getSession({
-		headers: await headers(),
-	});
-});
+export const getServerSession = cache(
+  async () =>
+    await auth.api.getSession({
+      headers: await headers(),
+    })
+);

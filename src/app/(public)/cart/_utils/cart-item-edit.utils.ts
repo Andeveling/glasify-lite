@@ -15,24 +15,24 @@ import type { CartItemEditInput } from "../_schemas/cart-item-edit.schema";
  * Cart item with all required relations for editing
  */
 export type CartItemWithRelations = {
-	id: string;
-	widthMm: number;
-	heightMm: number;
-	glassTypeId: string;
-	name: string | null;
-	roomLocation: string | null;
-	quantity: number;
-	subtotal: number; // Current price of the item
-	model: {
-		id: string;
-		name: string;
-		imageUrl: string | null;
-	};
-	glassType: {
-		id: string;
-		name: string;
-		pricePerM2: string;
-	};
+  id: string;
+  widthMm: number;
+  heightMm: number;
+  glassTypeId: string;
+  name: string | null;
+  roomLocation: string | null;
+  quantity: number;
+  subtotal: number; // Current price of the item
+  model: {
+    id: string;
+    name: string;
+    imageUrl: string | null;
+  };
+  glassType: {
+    id: string;
+    name: string;
+    pricePerM2: string;
+  };
 };
 
 /**
@@ -42,28 +42,28 @@ export type CartItemWithRelations = {
  * @returns Cart item with relations structure for edit modal
  */
 export function adaptCartItemToEditFormat(
-	item: CartItem,
+  item: CartItem
 ): CartItemWithRelations {
-	return {
-		id: item.id,
-		widthMm: item.widthMm,
-		heightMm: item.heightMm,
-		glassTypeId: item.glassTypeId,
-		name: item.name,
-		roomLocation: null, // Not available in client-side cart
-		quantity: item.quantity,
-		subtotal: item.subtotal,
-		model: {
-			id: item.modelId,
-			name: item.modelName,
-			imageUrl: item.modelImageUrl ?? null,
-		},
-		glassType: {
-			id: item.glassTypeId,
-			name: item.glassTypeName,
-			pricePerM2: "0", // Price will be recalculated by backend
-		},
-	};
+  return {
+    id: item.id,
+    widthMm: item.widthMm,
+    heightMm: item.heightMm,
+    glassTypeId: item.glassTypeId,
+    name: item.name,
+    roomLocation: null, // Not available in client-side cart
+    quantity: item.quantity,
+    subtotal: item.subtotal,
+    model: {
+      id: item.modelId,
+      name: item.modelName,
+      imageUrl: item.modelImageUrl ?? null,
+    },
+    glassType: {
+      id: item.glassTypeId,
+      name: item.glassTypeName,
+      pricePerM2: "0", // Price will be recalculated by backend
+    },
+  };
 }
 
 /**
@@ -73,16 +73,16 @@ export function adaptCartItemToEditFormat(
  * @returns Form default values matching schema
  */
 export function getDefaultCartItemValues(
-	item: CartItemWithRelations,
+  item: CartItemWithRelations
 ): Omit<CartItemEditInput, "itemId"> {
-	return {
-		widthMm: item.widthMm,
-		heightMm: item.heightMm,
-		glassTypeId: item.glassTypeId,
-		name: item.name ?? undefined,
-		roomLocation: item.roomLocation ?? undefined,
-		quantity: item.quantity,
-	};
+  return {
+    widthMm: item.widthMm,
+    heightMm: item.heightMm,
+    glassTypeId: item.glassTypeId,
+    name: item.name ?? undefined,
+    roomLocation: item.roomLocation ?? undefined,
+    quantity: item.quantity,
+  };
 }
 
 /**
@@ -93,16 +93,16 @@ export function getDefaultCartItemValues(
  * @returns Complete mutation input
  */
 export function transformEditData(
-	itemId: string,
-	formData: Omit<CartItemEditInput, "itemId">,
+  itemId: string,
+  formData: Omit<CartItemEditInput, "itemId">
 ): CartItemEditInput {
-	return {
-		itemId,
-		widthMm: formData.widthMm,
-		heightMm: formData.heightMm,
-		glassTypeId: formData.glassTypeId,
-		name: formData.name,
-		roomLocation: formData.roomLocation,
-		quantity: formData.quantity,
-	};
+  return {
+    itemId,
+    widthMm: formData.widthMm,
+    heightMm: formData.heightMm,
+    glassTypeId: formData.glassTypeId,
+    name: formData.name,
+    roomLocation: formData.roomLocation,
+    quantity: formData.quantity,
+  };
 }

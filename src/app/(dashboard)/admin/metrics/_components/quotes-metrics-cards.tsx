@@ -9,19 +9,19 @@ import { MetricCard } from "./metric-card";
 const PERCENTAGE_MULTIPLIER = 100;
 
 type QuotesMetricsCardsProps = {
-	/**
-	 * Quote metrics data from tRPC query
-	 */
-	metrics: QuoteMetrics;
+  /**
+   * Quote metrics data from tRPC query
+   */
+  metrics: QuoteMetrics;
 
-	/**
-	 * Tenant configuration for formatting (locale, currency, timezone)
-	 */
-	tenantConfig?: {
-		locale?: string;
-		currency?: string;
-		timezone?: string;
-	} | null;
+  /**
+   * Tenant configuration for formatting (locale, currency, timezone)
+   */
+  tenantConfig?: {
+    locale?: string;
+    currency?: string;
+    timezone?: string;
+  } | null;
 };
 
 /**
@@ -57,45 +57,45 @@ type QuotesMetricsCardsProps = {
  * ```
  */
 export function QuotesMetricsCards({
-	metrics,
-	tenantConfig,
+  metrics,
+  tenantConfig,
 }: QuotesMetricsCardsProps) {
-	// Format conversion rate using centralized formatter
-	const conversionRateFormatted = formatPercent(metrics.conversionRate, {
-		context: tenantConfig,
-	});
+  // Format conversion rate using centralized formatter
+  const conversionRateFormatted = formatPercent(metrics.conversionRate, {
+    context: tenantConfig,
+  });
 
-	return (
-		<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-			<MetricCard
-				description="En el período"
-				icon={FileText}
-				title="Total de Cotizaciones"
-				trend={metrics.percentageChange * PERCENTAGE_MULTIPLIER}
-				value={metrics.totalQuotes}
-			/>
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <MetricCard
+        description="En el período"
+        icon={FileText}
+        title="Total de Cotizaciones"
+        trend={metrics.percentageChange * PERCENTAGE_MULTIPLIER}
+        value={metrics.totalQuotes}
+      />
 
-			<MetricCard
-				description="Sin enviar"
-				icon={FileCheck}
-				title="Borradores"
-				value={metrics.draftQuotes}
-			/>
+      <MetricCard
+        description="Sin enviar"
+        icon={FileCheck}
+        title="Borradores"
+        value={metrics.draftQuotes}
+      />
 
-			<MetricCard
-				description="Esperando respuesta"
-				icon={Send}
-				title="Enviadas"
-				value={metrics.sentQuotes}
-			/>
+      <MetricCard
+        description="Esperando respuesta"
+        icon={Send}
+        title="Enviadas"
+        value={metrics.sentQuotes}
+      />
 
-			<MetricCard
-				description="Enviadas / Total"
-				icon={FileX}
-				title="Tasa de Conversión"
-				trend={metrics.percentageChange * PERCENTAGE_MULTIPLIER}
-				value={conversionRateFormatted}
-			/>
-		</div>
-	);
+      <MetricCard
+        description="Enviadas / Total"
+        icon={FileX}
+        title="Tasa de Conversión"
+        trend={metrics.percentageChange * PERCENTAGE_MULTIPLIER}
+        value={conversionRateFormatted}
+      />
+    </div>
+  );
 }

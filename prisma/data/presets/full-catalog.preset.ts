@@ -38,7 +38,7 @@ export const fullGlassTypes: GlassTypeInput[] = glassTypesCatalog;
  * All profile suppliers from catalog
  */
 export const fullProfileSuppliers: ProfileSupplierInput[] =
-	profileSuppliersCatalog;
+  profileSuppliersCatalog;
 
 /**
  * All models from catalog
@@ -63,69 +63,69 @@ export const fullGlassSolutions = glassSolutionsCatalog;
  * Full catalog preset configuration
  */
 export const fullCatalogPreset = {
-	coverage: {
-		glassCategories: [
-			"Monolithic (4mm-8mm)",
-			"Tempered (6mm-12mm)",
-			"Laminated (6mm-10mm)",
-			"Double Glazing (20mm-28mm)",
-			"Low-E coated",
-			"Solar control",
-			"Acoustic specialty",
-		],
-		profileMaterials: [
-			"PVC (Premium European)",
-			"Aluminum (Local & Imported)",
-			"Wood (Limited)",
-		],
-		serviceCategories: [
-			"Installation (standard/premium/high-rise)",
-			"Sealing & waterproofing",
-			"Surface treatments",
-			"Glass treatments & films",
-			"Hardware & accessories",
-			"Demolition & removal",
-			"Maintenance & repair",
-		],
-		solutionCategories: [
-			"Security & safety",
-			"Thermal insulation",
-			"Sound insulation",
-			"Energy efficiency",
-			"Decorative & privacy",
-			"General purpose",
-		],
-		suppliers: {
-			aluminum: ["Alumina", "Sistemas Europeos", "Aluminio Económico"],
-			pvc: ["Deceuninck", "Rehau", "VEKA"],
-		},
-	},
-	description:
-		"Catálogo completo con todos los datos del mercado colombiano disponibles",
-	glassSolutions: fullGlassSolutions,
-	glassTypes: fullGlassTypes,
-	models: fullModels,
-	name: "full-catalog",
-	profileSuppliers: fullProfileSuppliers,
-	services: fullServices,
-	stats: {
-		glassSolutions: fullGlassSolutions.length,
-		glassTypes: fullGlassTypes.length,
-		models: fullModels.length,
-		profileSuppliers: fullProfileSuppliers.length,
-		services: fullServices.length,
-		total:
-			fullGlassTypes.length +
-			fullProfileSuppliers.length +
-			fullModels.length +
-			fullServices.length +
-			fullGlassSolutions.length,
-	},
-	useCases: [
-		"Production database initialization",
-		"Complete feature testing",
-		"Full market analysis and reporting",
-		"Maximum product variety for customer choice",
-		"Comprehensive price comparison",
-	],
+  coverage: {
+    glassCategories: [
+      "Monolithic (4mm-8mm)",
+      "Tempered (6mm-12mm)",
+      "Laminated (6mm-10mm)",
+      "Double Glazing (20mm-28mm)",
+      "Low-E coated",
+      "Solar control",
+      "Acoustic specialty",
+    ],
+    profileMaterials: [
+      "PVC (Premium European)",
+      "Aluminum (Local & Imported)",
+      "Wood (Limited)",
+    ],
+    serviceCategories: [
+      "Installation (standard/premium/high-rise)",
+      "Sealing & waterproofing",
+      "Surface treatments",
+      "Glass treatments & films",
+      "Hardware & accessories",
+      "Demolition & removal",
+      "Maintenance & repair",
+    ],
+    solutionCategories: [
+      "Security & safety",
+      "Thermal insulation",
+      "Sound insulation",
+      "Energy efficiency",
+      "Decorative & privacy",
+      "General purpose",
+    ],
+    suppliers: {
+      aluminum: ["Alumina", "Sistemas Europeos", "Aluminio Económico"],
+      pvc: ["Deceuninck", "Rehau", "VEKA"],
+    },
+  },
+  description:
+    "Catálogo completo con todos los datos del mercado colombiano disponibles",
+  glassSolutions: fullGlassSolutions,
+  glassTypes: fullGlassTypes,
+  models: fullModels,
+  name: "full-catalog",
+  profileSuppliers: fullProfileSuppliers,
+  services: fullServices,
+  stats: {
+    glassSolutions: fullGlassSolutions.length,
+    glassTypes: fullGlassTypes.length,
+    models: fullModels.length,
+    profileSuppliers: fullProfileSuppliers.length,
+    services: fullServices.length,
+    total:
+      fullGlassTypes.length +
+      fullProfileSuppliers.length +
+      fullModels.length +
+      fullServices.length +
+      fullGlassSolutions.length,
+  },
+  useCases: [
+    "Production database initialization",
+    "Complete feature testing",
+    "Full market analysis and reporting",
+    "Maximum product variety for customer choice",
+    "Comprehensive price comparison",
+  ],
 } as const;

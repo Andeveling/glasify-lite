@@ -15,11 +15,11 @@ import { SolutionSelector } from "../solution-selector";
  * Solutions section component (wrapper)
  */
 export function SolutionsSection() {
-	return (
-		<Card>
-			<CardContent className="pt-6">
-				<SolutionSelector />
-			</CardContent>
-		</Card>
-	);
+  return (
+    <Card>
+      <CardContent className="pt-6">
+        <SolutionSelector />
+      </CardContent>
+    </Card>
+  );
 }

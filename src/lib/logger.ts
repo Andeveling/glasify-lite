@@ -25,10 +25,10 @@
 
 // Type definition for logger interface
 type Logger = {
-	info: (message: string, meta?: Record<string, unknown>) => void;
-	warn: (message: string, meta?: Record<string, unknown>) => void;
-	error: (message: string, meta?: Record<string, unknown>) => void;
-	debug: (message: string, meta?: Record<string, unknown>) => void;
+  info: (message: string, meta?: Record<string, unknown>) => void;
+  warn: (message: string, meta?: Record<string, unknown>) => void;
+  error: (message: string, meta?: Record<string, unknown>) => void;
+  debug: (message: string, meta?: Record<string, unknown>) => void;
 };
 
 // Check if we're on the server
@@ -43,133 +43,133 @@ let isInitializing = false;
  * Uses dynamic imports to avoid bundling Winston in client
  */
 async function initializeWinston(): Promise<Logger> {
-	if (!isServer) {
-		// Return no-op logger for client-side
-		return {
-			debug: () => {},
-			error: () => {},
-			info: () => {},
-			warn: () => {},
-		};
-	}
+  if (!isServer) {
+    // Return no-op logger for client-side
+    return {
+      debug: () => {},
+      error: () => {},
+      info: () => {},
+      warn: () => {},
+    };
+  }
 
-	if (winstonLogger) {
-		return winstonLogger;
-	}
+  if (winstonLogger) {
+    return winstonLogger;
+  }
 
-	if (isInitializing) {
-		// Wait for initialization to complete
-		await new Promise((resolve) => setTimeout(resolve, 100));
-		return winstonLogger || getFallbackLogger();
-	}
+  if (isInitializing) {
+    // Wait for initialization to complete
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    return winstonLogger || getFallbackLogger();
+  }
 
-	isInitializing = true;
+  isInitializing = true;
 
-	try {
-		// Dynamic imports for server-only modules
-		const winston = await import("winston");
-		const path = await import("node:path");
+  try {
+    // Dynamic imports for server-only modules
+    const winston = await import("winston");
+    const path = await import("node:path");
 
-		const isDevelopment = process.env.NODE_ENV !== "production";
-		const LogDir = path.join(process.cwd(), "logs");
+    const isDevelopment = process.env.NODE_ENV !== "production";
+    const LogDir = path.join(process.cwd(), "logs");
 
-		// Custom format for console output (colorized and readable)
-		const consoleFormat = winston.format.combine(
-			winston.format.colorize(),
-			winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-			winston.format.printf((info) => {
-				const { timestamp, level, message, ...meta } = info as {
-					timestamp: string;
-					level: string;
-					message: string;
-					[key: string]: unknown;
-				};
+    // Custom format for console output (colorized and readable)
+    const consoleFormat = winston.format.combine(
+      winston.format.colorize(),
+      winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+      winston.format.printf((info) => {
+        const { timestamp, level, message, ...meta } = info as {
+          timestamp: string;
+          level: string;
+          message: string;
+          [key: string]: unknown;
+        };
 
-				let msg = `${timestamp} [${level}]: ${message}`;
+        let msg = `${timestamp} [${level}]: ${message}`;
 
-				const metaKeys = Object.keys(meta).filter(
-					(key) => !["service", "environment"].includes(key),
-				);
+        const metaKeys = Object.keys(meta).filter(
+          (key) => !["service", "environment"].includes(key)
+        );
 
-				if (metaKeys.length > 0) {
-					msg += `\n${JSON.stringify(meta, null, 2)}`;
-				}
+        if (metaKeys.length > 0) {
+          msg += `\n${JSON.stringify(meta, null, 2)}`;
+        }
 
-				return msg;
-			}),
-		);
+        return msg;
+      })
+    );
 
-		// Custom format for file output (JSON for easy parsing)
-		const fileFormat = winston.format.combine(
-			winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-			winston.format.errors({ stack: true }),
-			winston.format.json(),
-		);
+    // Custom format for file output (JSON for easy parsing)
+    const fileFormat = winston.format.combine(
+      winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+      winston.format.errors({ stack: true }),
+      winston.format.json()
+    );
 
-		// Create Winston logger instance
-		const logger = winston.createLogger({
-			defaultMeta: {
-				environment: process.env.NODE_ENV || "development",
-				service: "glasify-lite",
-			},
-			exceptionHandlers: [
-				new winston.transports.File({
-					filename: path.join(LogDir, "exceptions.log"),
-					format: fileFormat,
-					maxFiles: 5,
-					maxsize: 5_242_880, // 5MB
-				}),
-			],
-			level: isDevelopment ? "debug" : "info",
-			rejectionHandlers: [
-				new winston.transports.File({
-					filename: path.join(LogDir, "rejections.log"),
-					format: fileFormat,
-					maxFiles: 5,
-					maxsize: 5_242_880, // 5MB
-				}),
-			],
-			transports: [
-				new winston.transports.Console({
-					format: consoleFormat,
-				}),
-				new winston.transports.File({
-					filename: path.join(LogDir, "error.log"),
-					format: fileFormat,
-					level: "error",
-					maxFiles: 5,
-					maxsize: 5_242_880, // 5MB
-				}),
-				new winston.transports.File({
-					filename: path.join(LogDir, "combined.log"),
-					format: fileFormat,
-					maxFiles: 10,
-					maxsize: 5_242_880, // 5MB
-				}),
-			],
-		});
+    // Create Winston logger instance
+    const logger = winston.createLogger({
+      defaultMeta: {
+        environment: process.env.NODE_ENV || "development",
+        service: "glasify-lite",
+      },
+      exceptionHandlers: [
+        new winston.transports.File({
+          filename: path.join(LogDir, "exceptions.log"),
+          format: fileFormat,
+          maxFiles: 5,
+          maxsize: 5_242_880, // 5MB
+        }),
+      ],
+      level: isDevelopment ? "debug" : "info",
+      rejectionHandlers: [
+        new winston.transports.File({
+          filename: path.join(LogDir, "rejections.log"),
+          format: fileFormat,
+          maxFiles: 5,
+          maxsize: 5_242_880, // 5MB
+        }),
+      ],
+      transports: [
+        new winston.transports.Console({
+          format: consoleFormat,
+        }),
+        new winston.transports.File({
+          filename: path.join(LogDir, "error.log"),
+          format: fileFormat,
+          level: "error",
+          maxFiles: 5,
+          maxsize: 5_242_880, // 5MB
+        }),
+        new winston.transports.File({
+          filename: path.join(LogDir, "combined.log"),
+          format: fileFormat,
+          maxFiles: 10,
+          maxsize: 5_242_880, // 5MB
+        }),
+      ],
+    });
 
-		if (isDevelopment) {
-			logger.add(
-				new winston.transports.File({
-					filename: path.join(LogDir, "debug.log"),
-					format: fileFormat,
-					level: "debug",
-					maxFiles: 3,
-					maxsize: 5_242_880, // 5MB
-				}),
-			);
-		}
+    if (isDevelopment) {
+      logger.add(
+        new winston.transports.File({
+          filename: path.join(LogDir, "debug.log"),
+          format: fileFormat,
+          level: "debug",
+          maxFiles: 3,
+          maxsize: 5_242_880, // 5MB
+        })
+      );
+    }
 
-		winstonLogger = logger as unknown as Logger;
-		isInitializing = false;
-		return winstonLogger;
-	} catch (error) {
-		isInitializing = false;
-		// biome-ignore lint/suspicious/noConsole: Fallback error logging
-		console.error("Failed to initialize Winston logger:", error);
-		return getFallbackLogger();
-	}
+    winstonLogger = logger as unknown as Logger;
+    isInitializing = false;
+    return winstonLogger;
+  } catch (error) {
+    isInitializing = false;
+    // biome-ignore lint/suspicious/noConsole: Fallback error logging
+    console.error("Failed to initialize Winston logger:", error);
+    return getFallbackLogger();
+  }
 }
 
 /**
@@ -177,50 +177,50 @@ async function initializeWinston(): Promise<Logger> {
  * Used when Winston cannot be initialized
  */
 function getFallbackLogger(): Logger {
-	return {
-		debug: (msg: string, meta?: Record<string, unknown>) => {
-			if (process.env.NODE_ENV !== "production") {
-				// biome-ignore lint/suspicious/noConsole: Fallback logger
-				console.debug(`[DEBUG] ${msg}`, meta || "");
-			}
-		},
-		error: (msg: string, meta?: Record<string, unknown>) => {
-			// biome-ignore lint/suspicious/noConsole: Fallback logger
-			console.error(`[ERROR] ${msg}`, meta || "");
-		},
-		info: (msg: string, meta?: Record<string, unknown>) => {
-			// biome-ignore lint/suspicious/noConsole: Fallback logger
-			console.log(`[INFO] ${msg}`, meta || "");
-		},
-		warn: (msg: string, meta?: Record<string, unknown>) => {
-			// biome-ignore lint/suspicious/noConsole: Fallback logger
-			console.warn(`[WARN] ${msg}`, meta || "");
-		},
-	};
+  return {
+    debug: (msg: string, meta?: Record<string, unknown>) => {
+      if (process.env.NODE_ENV !== "production") {
+        // biome-ignore lint/suspicious/noConsole: Fallback logger
+        console.debug(`[DEBUG] ${msg}`, meta || "");
+      }
+    },
+    error: (msg: string, meta?: Record<string, unknown>) => {
+      // biome-ignore lint/suspicious/noConsole: Fallback logger
+      console.error(`[ERROR] ${msg}`, meta || "");
+    },
+    info: (msg: string, meta?: Record<string, unknown>) => {
+      // biome-ignore lint/suspicious/noConsole: Fallback logger
+      console.log(`[INFO] ${msg}`, meta || "");
+    },
+    warn: (msg: string, meta?: Record<string, unknown>) => {
+      // biome-ignore lint/suspicious/noConsole: Fallback logger
+      console.warn(`[WARN] ${msg}`, meta || "");
+    },
+  };
 }
 
 // Export the logger with async initialization
 const logger: Logger = {
-	debug: (message: string, meta?: Record<string, unknown>) => {
-		initializeWinston()
-			.then((winston) => winston.debug(message, meta))
-			.catch((_err) => getFallbackLogger().debug(message, meta));
-	},
-	error: (message: string, meta?: Record<string, unknown>) => {
-		initializeWinston()
-			.then((winston) => winston.error(message, meta))
-			.catch((_err) => getFallbackLogger().error(message, meta));
-	},
-	info: (message: string, meta?: Record<string, unknown>) => {
-		initializeWinston()
-			.then((winston) => winston.info(message, meta))
-			.catch((_err) => getFallbackLogger().info(message, meta));
-	},
-	warn: (message: string, meta?: Record<string, unknown>) => {
-		initializeWinston()
-			.then((winston) => winston.warn(message, meta))
-			.catch((_err) => getFallbackLogger().warn(message, meta));
-	},
+  debug: (message: string, meta?: Record<string, unknown>) => {
+    initializeWinston()
+      .then((winston) => winston.debug(message, meta))
+      .catch((_err) => getFallbackLogger().debug(message, meta));
+  },
+  error: (message: string, meta?: Record<string, unknown>) => {
+    initializeWinston()
+      .then((winston) => winston.error(message, meta))
+      .catch((_err) => getFallbackLogger().error(message, meta));
+  },
+  info: (message: string, meta?: Record<string, unknown>) => {
+    initializeWinston()
+      .then((winston) => winston.info(message, meta))
+      .catch((_err) => getFallbackLogger().info(message, meta));
+  },
+  warn: (message: string, meta?: Record<string, unknown>) => {
+    initializeWinston()
+      .then((winston) => winston.warn(message, meta))
+      .catch((_err) => getFallbackLogger().warn(message, meta));
+  },
 };
 
 export default logger;

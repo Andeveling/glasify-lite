@@ -5,22 +5,22 @@
 
 import { useMemo } from "react";
 import type {
-	GlassTypeOutput,
-	ModelDetailOutput,
-	ServiceOutput,
+  GlassTypeOutput,
+  ModelDetailOutput,
+  ServiceOutput,
 } from "@/server/api/routers/catalog";
 import type { PriceItemCalculationResult } from "@/server/price/price-item";
 import {
-	buildPriceBreakdown,
-	type PriceBreakdownItem,
+  buildPriceBreakdown,
+  type PriceBreakdownItem,
 } from "../_utils/price-breakdown-builder";
 
 type UsePriceBreakdownParams = {
-	breakdown: PriceItemCalculationResult | undefined;
-	glassArea: number;
-	model: ModelDetailOutput;
-	selectedGlassType: GlassTypeOutput | undefined;
-	services: ServiceOutput[];
+  breakdown: PriceItemCalculationResult | undefined;
+  glassArea: number;
+  model: ModelDetailOutput;
+  selectedGlassType: GlassTypeOutput | undefined;
+  services: ServiceOutput[];
 };
 
 /**
@@ -39,21 +39,21 @@ type UsePriceBreakdownParams = {
  * });
  */
 export function usePriceBreakdown({
-	breakdown,
-	glassArea,
-	model,
-	selectedGlassType,
-	services,
+  breakdown,
+  glassArea,
+  model,
+  selectedGlassType,
+  services,
 }: UsePriceBreakdownParams): PriceBreakdownItem[] {
-	return useMemo(
-		() =>
-			buildPriceBreakdown({
-				breakdown: breakdown ?? null,
-				glassArea,
-				model,
-				selectedGlassType,
-				services,
-			}),
-		[breakdown, glassArea, model, selectedGlassType, services],
-	);
+  return useMemo(
+    () =>
+      buildPriceBreakdown({
+        breakdown: breakdown ?? null,
+        glassArea,
+        model,
+        selectedGlassType,
+        services,
+      }),
+    [breakdown, glassArea, model, selectedGlassType, services]
+  );
 }

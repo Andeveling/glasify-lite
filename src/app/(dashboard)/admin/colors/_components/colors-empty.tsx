@@ -11,37 +11,37 @@
 
 import { Palette } from "lucide-react";
 import {
-	Empty,
-	EmptyDescription,
-	EmptyHeader,
-	EmptyMedia,
-	EmptyTitle,
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
 } from "@/components/ui/empty";
 
 type ColorsEmptyProps = {
-	searchTerm?: string;
+  searchTerm?: string;
 };
 
 export function ColorsEmpty({ searchTerm }: ColorsEmptyProps) {
-	const hasSearch = Boolean(searchTerm?.trim());
+  const hasSearch = Boolean(searchTerm?.trim());
 
-	return (
-		<Empty className="border-0 bg-transparent">
-			<EmptyHeader>
-				<EmptyMedia variant="icon">
-					<Palette className="h-6 w-6 text-muted-foreground" />
-				</EmptyMedia>
-				<div>
-					<EmptyTitle>
-						{hasSearch ? "Sin resultados" : "Sin colores"}
-					</EmptyTitle>
-					<EmptyDescription>
-						{hasSearch
-							? "No hay colores que coincidan con la búsqueda. Intenta con otros términos."
-							: "Aún no hay colores registrados. Crea uno para comenzar."}
-					</EmptyDescription>
-				</div>
-			</EmptyHeader>
-		</Empty>
-	);
+  return (
+    <Empty className="border-0 bg-transparent">
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <Palette className="h-6 w-6 text-muted-foreground" />
+        </EmptyMedia>
+        <div>
+          <EmptyTitle>
+            {hasSearch ? "Sin resultados" : "Sin colores"}
+          </EmptyTitle>
+          <EmptyDescription>
+            {hasSearch
+              ? "No hay colores que coincidan con la búsqueda. Intenta con otros términos."
+              : "Aún no hay colores registrados. Crea uno para comenzar."}
+          </EmptyDescription>
+        </div>
+      </EmptyHeader>
+    </Empty>
+  );
 }

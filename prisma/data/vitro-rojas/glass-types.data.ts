@@ -29,18 +29,18 @@ import type { GlassTypeInput } from "../../factories/glass-type.factory";
  * Precios en USD/m² - Mercado Panamá
  */
 const generalPurposeGlassTypes: GlassTypeInput[] = [
-	{
-		code: "VR_CLEAR6",
-		name: "Vidrio Claro 6mm",
-		pricePerSqm: 12.5,
-		thicknessMm: 6,
-	},
-	{
-		code: "VR_CLEAR8",
-		name: "Vidrio Claro 8mm",
-		pricePerSqm: 15.0,
-		thicknessMm: 8,
-	},
+  {
+    code: "VR_CLEAR6",
+    name: "Vidrio Claro 6mm",
+    pricePerSqm: 12.5,
+    thicknessMm: 6,
+  },
+  {
+    code: "VR_CLEAR8",
+    name: "Vidrio Claro 8mm",
+    pricePerSqm: 15.0,
+    thicknessMm: 8,
+  },
 ];
 
 /**
@@ -54,24 +54,24 @@ const generalPurposeGlassTypes: GlassTypeInput[] = [
  * - Laminado 8.38mm (8+8) → 8mm
  */
 const securityGlassTypes: GlassTypeInput[] = [
-	{
-		code: "VR_LAM6",
-		name: "Vidrio Laminado 6.38mm (6+6)",
-		pricePerSqm: 28.5, // +$16 USD/m² sobre claro 6mm
-		thicknessMm: 6,
-	},
-	{
-		code: "VR_LAM8",
-		name: "Vidrio Laminado 8.38mm (8+8)",
-		pricePerSqm: 32.5, // +$17.5 USD/m² sobre claro 8mm
-		thicknessMm: 8,
-	},
-	{
-		code: "VR_TEMP6",
-		name: "Vidrio Templado 6mm",
-		pricePerSqm: 20.0, // +$7.5 USD/m² sobre claro 6mm
-		thicknessMm: 6,
-	},
+  {
+    code: "VR_LAM6",
+    name: "Vidrio Laminado 6.38mm (6+6)",
+    pricePerSqm: 28.5, // +$16 USD/m² sobre claro 6mm
+    thicknessMm: 6,
+  },
+  {
+    code: "VR_LAM8",
+    name: "Vidrio Laminado 8.38mm (8+8)",
+    pricePerSqm: 32.5, // +$17.5 USD/m² sobre claro 8mm
+    thicknessMm: 8,
+  },
+  {
+    code: "VR_TEMP6",
+    name: "Vidrio Templado 6mm",
+    pricePerSqm: 20.0, // +$7.5 USD/m² sobre claro 6mm
+    thicknessMm: 6,
+  },
 ];
 
 /**
@@ -86,20 +86,20 @@ const securityGlassTypes: GlassTypeInput[] = [
  * - DVH 18.5mm (6-6.5-6) → 19mm
  */
 const insulationGlassTypes: GlassTypeInput[] = [
-	{
-		code: "VR_DVH16",
-		name: "DVH 16mm (6-4-6)",
-		pricePerSqm: 45.0, // Premium por aislamiento térmico
-		thicknessMm: 16,
-		uValue: 2.8, // W/m²K
-	},
-	{
-		code: "VR_DVH18",
-		name: "DVH 18.5mm (6-6.5-6)",
-		pricePerSqm: 52.5, // Mejor aislamiento = precio más alto
-		thicknessMm: 19,
-		uValue: 2.7, // W/m²K - Mejor aislamiento
-	},
+  {
+    code: "VR_DVH16",
+    name: "DVH 16mm (6-4-6)",
+    pricePerSqm: 45.0, // Premium por aislamiento térmico
+    thicknessMm: 16,
+    uValue: 2.8, // W/m²K
+  },
+  {
+    code: "VR_DVH18",
+    name: "DVH 18.5mm (6-6.5-6)",
+    pricePerSqm: 52.5, // Mejor aislamiento = precio más alto
+    thicknessMm: 19,
+    uValue: 2.7, // W/m²K - Mejor aislamiento
+  },
 ];
 
 /**
@@ -113,30 +113,30 @@ const insulationGlassTypes: GlassTypeInput[] = [
  * - Laminado Gris 6.38mm → 6mm
  */
 const decorativeGlassTypes: GlassTypeInput[] = [
-	{
-		code: "VR_GRAY6",
-		name: "Vidrio Gris 6mm",
-		pricePerSqm: 22.0, // +$9.5 USD/m² sobre claro
-		thicknessMm: 6,
-	},
-	{
-		code: "VR_BRONZE6",
-		name: "Vidrio Bronce 6mm",
-		pricePerSqm: 22.0, // +$9.5 USD/m² sobre claro
-		thicknessMm: 6,
-	},
-	{
-		code: "VR_REFL6",
-		name: "Vidrio Reflectivo 6mm",
-		pricePerSqm: 25.0, // +$12.5 USD/m² sobre claro (más premium)
-		thicknessMm: 6,
-	},
-	{
-		code: "VR_LAMGRAY6",
-		name: "Vidrio Laminado Gris 6.38mm",
-		pricePerSqm: 35.0, // Combinado: laminado + tintado
-		thicknessMm: 6,
-	},
+  {
+    code: "VR_GRAY6",
+    name: "Vidrio Gris 6mm",
+    pricePerSqm: 22.0, // +$9.5 USD/m² sobre claro
+    thicknessMm: 6,
+  },
+  {
+    code: "VR_BRONZE6",
+    name: "Vidrio Bronce 6mm",
+    pricePerSqm: 22.0, // +$9.5 USD/m² sobre claro
+    thicknessMm: 6,
+  },
+  {
+    code: "VR_REFL6",
+    name: "Vidrio Reflectivo 6mm",
+    pricePerSqm: 25.0, // +$12.5 USD/m² sobre claro (más premium)
+    thicknessMm: 6,
+  },
+  {
+    code: "VR_LAMGRAY6",
+    name: "Vidrio Laminado Gris 6.38mm",
+    pricePerSqm: 35.0, // Combinado: laminado + tintado
+    thicknessMm: 6,
+  },
 ];
 
 /**
@@ -144,8 +144,8 @@ const decorativeGlassTypes: GlassTypeInput[] = [
  * Total: 11 tipos (2 general + 3 security + 2 insulation + 4 decorative)
  */
 export const vitroRojasGlassTypes: GlassTypeInput[] = [
-	...generalPurposeGlassTypes,
-	...securityGlassTypes,
-	...insulationGlassTypes,
-	...decorativeGlassTypes,
+  ...generalPurposeGlassTypes,
+  ...securityGlassTypes,
+  ...insulationGlassTypes,
+  ...decorativeGlassTypes,
 ];
