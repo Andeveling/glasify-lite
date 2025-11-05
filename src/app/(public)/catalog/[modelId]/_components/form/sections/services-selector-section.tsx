@@ -1,7 +1,6 @@
 "use client";
 
-import { CheckCircle2, Maximize2, Package, Ruler, Wrench } from "lucide-react";
-import { useMemo } from "react";
+import { Maximize2, Package, Ruler, Wrench } from "lucide-react";
 import type { Control } from "react-hook-form";
 import { useFormContext } from "react-hook-form";
 import { FormSection } from "@/components/form-section";
@@ -47,10 +46,6 @@ function getServiceIcon(unit: ServiceOutput["unit"]) {
       return <Wrench className={iconClass} />;
   }
 }
-
-// Constants for dimension conversions
-const MM_TO_METERS = 1000;
-const PERIMETER_MULTIPLIER = 2;
 
 function getServiceTypeLabel(type: ServiceOutput["type"]): string {
   return SERVICE_TYPE_LABELS[type];
@@ -149,53 +144,7 @@ function ServiceCard({ control, service }: ServiceCardProps) {
 export function ServicesSelectorSection({
   services,
 }: ServicesSelectorSectionProps) {
-  const { control, watch } = useFormContext();
-  const selectedServices = watch("additionalServices") || [];
-
-  // Watch dimensions and quantity for accurate calculations
-  const width = watch("width") ?? 0;
-  const height = watch("height") ?? 0;
-  const quantity = watch("quantity") ?? 1;
-
-  // Calculate measurements
-  const area = useMemo(() => {
-    const hasValidDimensions = width > 0 && height > 0;
-    if (!hasValidDimensions) {
-      return 0;
-    }
-    return (width / MM_TO_METERS) * (height / MM_TO_METERS); // Convert mm to m²
-  }, [width, height]);
-
-  const perimeter = useMemo(() => {
-    const hasValidDimensions = width > 0 && height > 0;
-    if (!hasValidDimensions) {
-      return 0;
-    }
-    return (
-      PERIMETER_MULTIPLIER * (width / MM_TO_METERS + height / MM_TO_METERS)
-    ); // Convert mm to meters
-  }, [width, height]);
-
-  // Calculate total estimated cost and count
-  const selectedServicesList = services.filter((s) =>
-    selectedServices.includes(s.id)
-  );
-
-  const costPerUnit = selectedServicesList.reduce((sum, service) => {
-    switch (service.unit) {
-      case "sqm":
-        return sum + service.rate * area;
-      case "ml":
-        return sum + service.rate * perimeter;
-      case "unit":
-        return sum + service.rate;
-      default:
-        return sum;
-    }
-  }, 0);
-
-  const selectedCount = selectedServicesList.length;
-  const estimatedTotal = costPerUnit * quantity;
+  const { control } = useFormContext();
 
   return (
     <FormSection
@@ -221,24 +170,6 @@ export function ServicesSelectorSection({
           </FormItem>
         )}
       />
-      {/* Selection Summary */}
-      {selectedCount > 0 && (
-        <div className="mt-4 flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="size-5 text-primary" />
-            <p className="text-primary text-sm">
-              <strong className="font-semibold">{selectedCount}</strong>{" "}
-              {selectedCount === 1
-                ? "servicio seleccionado"
-                : "servicios seleccionados"}
-            </p>
-          </div>
-          <p className="font-semibold text-primary text-sm">
-            +{formatCurrency(estimatedTotal)}{" "}
-            <span className="font-normal opacity-70">base</span>
-          </p>
-        </div>
-      )}
     </FormSection>
   );
 }

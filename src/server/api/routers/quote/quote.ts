@@ -1,8 +1,14 @@
 /** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: TODO: Refactorizar */
+
+import { CalculateItemPrice } from "@domain/pricing/use-cases/calculate-item-price";
 import type { Prisma, Quote } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import logger from "@/lib/logger";
+import {
+  adaptDomainToTRPC,
+  adaptTRPCToDomain,
+} from "@/server/api/routers/quote/price-adapter";
 import {
   createTRPCRouter,
   getQuoteFilter,
@@ -10,11 +16,6 @@ import {
   publicProcedure,
   sellerOrAdminProcedure,
 } from "@/server/api/trpc";
-import {
-  calculatePriceItem,
-  type PriceAdjustmentInput,
-  type PriceServiceInput,
-} from "@/server/price/price-item";
 import { sendQuoteNotification } from "@/server/services/email";
 import {
   getQuoteValidityDays,
@@ -204,14 +205,30 @@ export const quoteRouter = createTRPCRouter({
                 validUntil,
               },
             });
-          } // Get services data
-          const serviceInputs: PriceServiceInput[] = [];
+          }
+
+          // Fetch glass type for validation
+          const glassType = await tx.glassType.findUnique({
+            where: { id: input.glassTypeId },
+          });
+          if (!glassType) {
+            throw new Error("Tipo de vidrio no encontrado");
+          }
+
+          // Fetch services for domain calculation
+          const domainServices: Array<{
+            serviceId: string;
+            name: string;
+            unit: "unit" | "sqm" | "ml";
+            rate: number;
+            minimumBillingUnit?: number;
+            quantityOverride?: number;
+          }> = [];
+
           if (input.services.length > 0) {
             const serviceIds = input.services.map((s) => s.serviceId);
             const services = await tx.service.findMany({
-              where: {
-                id: { in: serviceIds },
-              },
+              where: { id: { in: serviceIds } },
             });
 
             for (const serviceInput of input.services) {
@@ -223,51 +240,56 @@ export const quoteRouter = createTRPCRouter({
                   `Servicio ${serviceInput.serviceId} no encontrado`
                 );
               }
-              serviceInputs.push({
-                minimumBillingUnit: service.minimumBillingUnit,
-                quantityOverride: serviceInput.quantity,
-                rate: service.rate,
+              domainServices.push({
                 serviceId: service.id,
-                type: service.type,
-                unit: service.unit,
+                name: service.name,
+                unit: service.unit as "unit" | "sqm" | "ml",
+                rate: service.rate.toNumber(),
+                minimumBillingUnit: service.minimumBillingUnit?.toNumber(),
+                quantityOverride: serviceInput.quantity,
               });
             }
-          } // Convert adjustments
-          const adjustmentInputs: PriceAdjustmentInput[] =
-            input.adjustments.map((adj) => ({
-              concept: adj.concept,
-              sign: adj.sign,
-              unit: adj.unit,
-              value: adj.value,
-            }));
-
-          // Fetch glass type for validation
-          const glassType = await tx.glassType.findUnique({
-            where: { id: input.glassTypeId },
-          });
-          if (!glassType) {
-            throw new Error("Tipo de vidrio no encontrado");
           }
 
-          // Calculate price including glass area pricing (using direct pricePerSqm from GlassType)
-          const itemCalculation = calculatePriceItem({
-            adjustments: adjustmentInputs,
-            glass: {
-              discountHeightMm: model.glassDiscountHeightMm,
-              discountWidthMm: model.glassDiscountWidthMm,
-              pricePerSqm: glassType.pricePerSqm,
-            },
-            heightMm: input.heightMm,
-            includeAccessory: Boolean(model.accessoryPrice),
-            model: {
-              accessoryPrice: model.accessoryPrice,
-              basePrice: model.basePrice,
-              costPerMmHeight: model.costPerMmHeight,
-              costPerMmWidth: model.costPerMmWidth,
-            },
-            services: serviceInputs,
+          // Convert adjustments to domain format
+          const domainAdjustments = input.adjustments.map((adj) => ({
+            adjustmentId: `adj-${Date.now()}-${Math.random()}`,
+            concept: adj.concept,
+            unit: adj.unit,
+            value: adj.value,
+            sign: adj.sign,
+          }));
+
+          // Build tRPC input for adapter
+          const adapterInput = {
             widthMm: input.widthMm,
-          });
+            heightMm: input.heightMm,
+            modelPrices: {
+              basePrice: model.basePrice.toNumber(),
+              costPerMmWidth: model.costPerMmWidth.toNumber(),
+              costPerMmHeight: model.costPerMmHeight.toNumber(),
+              minWidthMm: model.minWidthMm,
+              minHeightMm: model.minHeightMm,
+              accessoryPrice: model.accessoryPrice?.toNumber(),
+            },
+            colorSurchargePercentage: 0, // Will be applied separately if color selected
+            glass: {
+              pricePerSqm: glassType.pricePerSqm.toNumber(),
+              discountWidthMm: model.glassDiscountWidthMm,
+              discountHeightMm: model.glassDiscountHeightMm,
+            },
+            services: domainServices,
+            adjustments: domainAdjustments,
+          };
+
+          // Transform to domain input
+          const domainInput = adaptTRPCToDomain(adapterInput);
+
+          // Execute domain use case
+          const domainResult = CalculateItemPrice.execute(domainInput);
+
+          // Transform domain result back to tRPC output
+          const itemCalculation = adaptDomainToTRPC(domainResult);
 
           // T045: Fetch color snapshot if colorId provided
           let colorSnapshot: {
@@ -450,7 +472,14 @@ export const quoteRouter = createTRPCRouter({
         }
 
         // Get services data
-        const serviceInputs: PriceServiceInput[] = [];
+        const domainServices: Array<{
+          serviceId: string;
+          name: string;
+          unit: "unit" | "sqm" | "ml";
+          rate: number;
+          minimumBillingUnit?: number;
+          quantityOverride?: number;
+        }> = [];
         if (input.services.length > 0) {
           const serviceIds = input.services.map((s) => s.serviceId);
           const services = await ctx.db.service.findMany({
@@ -468,26 +497,25 @@ export const quoteRouter = createTRPCRouter({
                 `Servicio ${serviceInput.serviceId} no encontrado`
               );
             }
-            serviceInputs.push({
-              minimumBillingUnit: service.minimumBillingUnit,
-              quantityOverride: serviceInput.quantity,
-              rate: service.rate,
+            domainServices.push({
               serviceId: service.id,
-              type: service.type,
+              name: service.name,
               unit: service.unit,
+              rate: service.rate.toNumber(),
+              minimumBillingUnit: service.minimumBillingUnit?.toNumber(),
+              quantityOverride: serviceInput.quantity,
             });
           }
         }
 
-        // Convert adjustments
-        const adjustmentInputs: PriceAdjustmentInput[] = input.adjustments.map(
-          (adj) => ({
-            concept: adj.concept,
-            sign: adj.sign,
-            unit: adj.unit,
-            value: adj.value,
-          })
-        );
+        // Convert adjustments to domain format
+        const domainAdjustments = input.adjustments.map((adj) => ({
+          adjustmentId: `adj-${Date.now()}-${Math.random()}`, // Generate temporary ID
+          concept: adj.concept,
+          unit: adj.unit,
+          value: adj.value,
+          sign: adj.sign,
+        }));
 
         // Fetch glass type for validation
         const glassType = await ctx.db.glassType.findUnique({
@@ -497,26 +525,39 @@ export const quoteRouter = createTRPCRouter({
           throw new Error("Tipo de vidrio no encontrado");
         }
 
-        // Calculate price including glass area pricing (using direct pricePerSqm from GlassType)
-        const itemCalculation = calculatePriceItem({
-          adjustments: adjustmentInputs,
+        // Build tRPC input for adapter
+        const adapterInput = {
+          widthMm: input.widthMm,
+          heightMm: input.heightMm,
+          modelPrices: {
+            basePrice: model.basePrice.toNumber(),
+            costPerMmWidth: model.costPerMmWidth.toNumber(),
+            costPerMmHeight: model.costPerMmHeight.toNumber(),
+            minWidthMm: model.minWidthMm,
+            minHeightMm: model.minHeightMm,
+            accessoryPrice: model.accessoryPrice?.toNumber(),
+          },
           colorSurchargePercentage: input.colorSurchargePercentage,
           glass: {
-            discountHeightMm: model.glassDiscountHeightMm,
+            pricePerSqm: glassType.pricePerSqm.toNumber(),
             discountWidthMm: model.glassDiscountWidthMm,
-            pricePerSqm: glassType.pricePerSqm,
+            discountHeightMm: model.glassDiscountHeightMm,
           },
-          heightMm: input.heightMm,
-          includeAccessory: Boolean(model.accessoryPrice),
-          model: {
-            accessoryPrice: model.accessoryPrice,
-            basePrice: model.basePrice,
-            costPerMmHeight: model.costPerMmHeight,
-            costPerMmWidth: model.costPerMmWidth,
-          },
-          services: serviceInputs,
-          widthMm: input.widthMm,
-        });
+          services: domainServices,
+          adjustments: domainAdjustments,
+        };
+
+        // Transform to domain input
+        const domainInput = adaptTRPCToDomain(adapterInput);
+
+        // Execute domain use case
+        const domainResult = CalculateItemPrice.execute(domainInput);
+
+        // Transform domain result back to tRPC output
+        const itemCalculation = adaptDomainToTRPC(
+          domainResult,
+          input.colorSurchargePercentage
+        );
 
         logger.info("Item price calculation completed", {
           colorSurchargeAmount: itemCalculation.colorSurchargeAmount,
@@ -1296,14 +1337,31 @@ export const quoteRouter = createTRPCRouter({
           });
         }
 
-        // Get services data
-        const serviceInputs: PriceServiceInput[] = [];
+        // Fetch glass type for validation
+        const glassType = await ctx.db.glassType.findUnique({
+          where: { id: input.glassTypeId },
+        });
+        if (!glassType) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Tipo de vidrio no encontrado",
+          });
+        }
+
+        // Fetch services for domain calculation
+        const domainServices: Array<{
+          serviceId: string;
+          name: string;
+          unit: "unit" | "sqm" | "ml";
+          rate: number;
+          minimumBillingUnit?: number;
+          quantityOverride?: number;
+        }> = [];
+
         if (input.services.length > 0) {
           const serviceIds = input.services.map((s) => s.serviceId);
           const services = await ctx.db.service.findMany({
-            where: {
-              id: { in: serviceIds },
-            },
+            where: { id: { in: serviceIds } },
           });
 
           for (const serviceInput of input.services) {
@@ -1316,57 +1374,56 @@ export const quoteRouter = createTRPCRouter({
                 message: `Servicio ${serviceInput.serviceId} no encontrado`,
               });
             }
-            serviceInputs.push({
-              minimumBillingUnit: service.minimumBillingUnit,
-              quantityOverride: serviceInput.quantity,
-              rate: service.rate,
+            domainServices.push({
               serviceId: service.id,
-              type: service.type,
-              unit: service.unit,
+              name: service.name,
+              unit: service.unit as "unit" | "sqm" | "ml",
+              rate: service.rate.toNumber(),
+              minimumBillingUnit: service.minimumBillingUnit?.toNumber(),
+              quantityOverride: serviceInput.quantity,
             });
           }
         }
 
-        // Convert adjustments
-        const adjustmentInputs: PriceAdjustmentInput[] = input.adjustments.map(
-          (adj) => ({
-            concept: adj.concept,
-            sign: adj.sign,
-            unit: adj.unit,
-            value: adj.value,
-          })
-        );
+        // Convert adjustments to domain format
+        const domainAdjustments = input.adjustments.map((adj) => ({
+          adjustmentId: `adj-${Date.now()}-${Math.random()}`,
+          concept: adj.concept,
+          unit: adj.unit,
+          value: adj.value,
+          sign: adj.sign,
+        }));
 
-        // Fetch glass type for validation
-        const glassType = await ctx.db.glassType.findUnique({
-          where: { id: input.glassTypeId },
-        });
-        if (!glassType) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Tipo de vidrio no encontrado",
-          });
-        }
-
-        // Calculate base price
-        const calculation = calculatePriceItem({
-          adjustments: adjustmentInputs,
-          glass: {
-            discountHeightMm: model.glassDiscountHeightMm,
-            discountWidthMm: model.glassDiscountWidthMm,
-            pricePerSqm: glassType.pricePerSqm,
-          },
-          heightMm: input.heightMm,
-          includeAccessory: Boolean(model.accessoryPrice),
-          model: {
-            accessoryPrice: model.accessoryPrice,
-            basePrice: model.basePrice,
-            costPerMmHeight: model.costPerMmHeight,
-            costPerMmWidth: model.costPerMmWidth,
-          },
-          services: serviceInputs,
+        // Build tRPC input for adapter
+        const adapterInput = {
           widthMm: input.widthMm,
-        });
+          heightMm: input.heightMm,
+          modelPrices: {
+            basePrice: model.basePrice.toNumber(),
+            costPerMmWidth: model.costPerMmWidth.toNumber(),
+            costPerMmHeight: model.costPerMmHeight.toNumber(),
+            minWidthMm: model.minWidthMm,
+            minHeightMm: model.minHeightMm,
+            accessoryPrice: model.accessoryPrice?.toNumber(),
+          },
+          colorSurchargePercentage: 0, // Will be calculated below if colorId provided
+          glass: {
+            pricePerSqm: glassType.pricePerSqm.toNumber(),
+            discountWidthMm: model.glassDiscountWidthMm,
+            discountHeightMm: model.glassDiscountHeightMm,
+          },
+          services: domainServices,
+          adjustments: domainAdjustments,
+        };
+
+        // Transform to domain input
+        const domainInput = adaptTRPCToDomain(adapterInput);
+
+        // Execute domain use case
+        const domainResult = CalculateItemPrice.execute(domainInput);
+
+        // Transform domain result back to tRPC output
+        const calculation = adaptDomainToTRPC(domainResult);
 
         // Calculate color surcharge if colorId provided
         let colorSurcharge = 0;
