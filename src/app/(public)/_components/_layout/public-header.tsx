@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "@/app/_components/brand-logo";
 import { CartIndicatorWrapper } from "@/app/_components/cart-indicator-wrapper";
 import { RoleBasedNav } from "@/app/_components/role-based-nav";
 import { getServerSession } from "@/lib/server-auth";
@@ -10,7 +11,7 @@ import { UserMenu } from "./user-menu";
  * Task: T033 [US4] - Integrated RoleBasedNav for role-based navigation
  *
  * Server Component that renders the header with:
- * - Logo/brand
+ * - Logo/brand (from NEXT_PUBLIC_COMPANY_LOGO_URL or text fallback)
  * - Role-based navigation menu
  * - Shopping cart indicator
  * - User menu (authenticated) or guest menu
@@ -27,8 +28,11 @@ export default async function Header() {
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
           {/* Logo y Navegación Principal */}
           <div className="flex items-center gap-8">
-            <Link className="flex items-center" href="/catalog">
-              <span className="font-bold text-xl tracking-tight">GLASIFY</span>
+            <Link
+              className="flex items-center transition-opacity hover:opacity-80"
+              href="/catalog"
+            >
+              <BrandLogo size="md" withText />
             </Link>
             {/* Role-Based Navigation: Shows appropriate links based on user role */}
             <RoleBasedNav className="hidden md:flex" />

@@ -9,6 +9,8 @@ const {
   BETTER_AUTH_SECRET,
   BASE_URL,
   DATABASE_URL,
+  NEXT_PUBLIC_COMPANY_LOGO_URL,
+  NEXT_PUBLIC_COMPANY_NAME,
   NODE_ENV,
 } = process.env;
 
@@ -19,7 +21,8 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_COMPANY_LOGO_URL: z.url().or(z.literal("")).optional(),
+    NEXT_PUBLIC_COMPANY_NAME: z.string().optional(),
   },
   /**
    * Makes it so that empty strings are treated as undefined. `SOME_VAR: z.string()` and
@@ -38,6 +41,8 @@ export const env = createEnv({
     BASE_URL,
     BETTER_AUTH_SECRET,
     DATABASE_URL,
+    NEXT_PUBLIC_COMPANY_LOGO_URL,
+    NEXT_PUBLIC_COMPANY_NAME,
     NODE_ENV,
   },
   /**
@@ -53,7 +58,7 @@ export const env = createEnv({
       process.env.NODE_ENV === "production"
         ? z.string()
         : z.string().optional(),
-    DATABASE_URL: z.url(),
+    DATABASE_URL: z.string().url(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
