@@ -1,11 +1,28 @@
 pre-commit:
-  commands:
-    biome:
-      glob: "**/*.{js,jsx,ts,tsx,json,jsonc,css,md,mdx}"
-      exclude: "src/styles/globals.css"
-      run: pnpm dlx biome fix {staged_files} && pnpm dlx biome check --diagnostic-level=error {staged_files}
+  parallel: true
+  jobs:
+    # TypeScript/JavaScript - una sola ejecución con --write
+    - name: biome-code
+      glob: "**/*.{ts,tsx,js,jsx}"
+      exclude: "node_modules/|.next/|dist/|build/|prisma/migrations/"
+      run: pnpm biome check --write --no-errors-on-unmatched {staged_files}
+      stage_fixed: true
+
+    # JSON/JSONC - configuraciones sin procesar package locks
+    - name: biome-json
+      glob: "**/*.{json,jsonc}"
+      exclude: "node_modules/|.next/|dist/|build/|pnpm-lock.yaml|package-lock.json"
+      run: pnpm biome check --write --no-errors-on-unmatched {staged_files}
+      stage_fixed: true
+
+    # Markdown
+    - name: biome-markdown
+      glob: "**/*.{md,mdx}"
+      exclude: "node_modules/|.next/|dist/|CHANGELOG.md"
+      run: pnpm biome check --write --no-errors-on-unmatched {staged_files}
       stage_fixed: true
 
 commit-msg:
   jobs:
-    - run: pnpm dlx commitlint --edit $1
+    - name: commitlint
+      run: pnpm commitlint --edit $1
