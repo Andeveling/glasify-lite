@@ -55,10 +55,10 @@ describe("PriceCalculation", () => {
       });
 
       // Glass area: (1000-10) × (2000-10) / 1000000 = 990 × 1990 / 1000000 = 1.9701 m²
-      // Glass cost: 1.97 × 50 = 98.50
-      expect(result.glassCost.toNumber()).toBe(98.5);
+      // Glass cost: 1.9701 × 50 = 98.505 ≈ 98.51
+      expect(result.glassCost.toNumber()).toBe(98.51);
       expect(result.profileCost.toNumber()).toBe(560);
-      expect(result.subtotal.toNumber()).toBe(658.5);
+      expect(result.subtotal.toNumber()).toBe(658.51);
     });
   });
 
@@ -116,10 +116,10 @@ describe("PriceCalculation", () => {
       });
 
       // Profile with color: 616
-      // Glass NO color: 98.50
+      // Glass NO color: 98.51
       expect(result.profileCost.toNumber()).toBe(616);
-      expect(result.glassCost.toNumber()).toBe(98.5);
-      expect(result.subtotal.toNumber()).toBe(714.5);
+      expect(result.glassCost.toNumber()).toBe(98.51);
+      expect(result.subtotal.toNumber()).toBe(714.51);
     });
   });
 
@@ -158,8 +158,12 @@ describe("PriceCalculation", () => {
 
       expect(result.services).toHaveLength(2);
 
-      const svc1 = result.services.find((s) => s.serviceId === "svc-1");
-      const svc2 = result.services.find((s) => s.serviceId === "svc-2");
+      const svc1 = result.services.find(
+        (s: { serviceId: string }) => s.serviceId === "svc-1"
+      );
+      const svc2 = result.services.find(
+        (s: { serviceId: string }) => s.serviceId === "svc-2"
+      );
 
       if (svc1 && svc2) {
         // Service 1: 1 × 100 = 100
@@ -236,8 +240,12 @@ describe("PriceCalculation", () => {
 
       expect(result.adjustments).toHaveLength(2);
 
-      const adj1 = result.adjustments.find((a) => a.adjustmentId === "adj-1");
-      const adj2 = result.adjustments.find((a) => a.adjustmentId === "adj-2");
+      const adj1 = result.adjustments.find(
+        (a: { adjustmentId: string }) => a.adjustmentId === "adj-1"
+      );
+      const adj2 = result.adjustments.find(
+        (a: { adjustmentId: string }) => a.adjustmentId === "adj-2"
+      );
 
       if (adj1 && adj2) {
         // Adjustment 1: +20 (2.0 m² × 10)
@@ -318,18 +326,18 @@ describe("PriceCalculation", () => {
       });
 
       // Profile with color: 616
-      // Glass: 98.50
+      // Glass: 98.51
       // Accessory with color: 55
       // Service: 100
       // Adjustment: -30
-      // Total: 616 + 98.50 + 55 + 100 - 30 = 839.50
+      // Total: 616 + 98.51 + 55 + 100 - 30 = 839.51
 
       expect(result.profileCost.toNumber()).toBe(616);
-      expect(result.glassCost.toNumber()).toBe(98.5);
+      expect(result.glassCost.toNumber()).toBe(98.51);
       expect(result.accessoryCost.toNumber()).toBe(55);
       expect(result.services).toHaveLength(1);
       expect(result.adjustments).toHaveLength(1);
-      expect(result.subtotal.toNumber()).toBe(839.5);
+      expect(result.subtotal.toNumber()).toBe(839.51);
     });
   });
 });
