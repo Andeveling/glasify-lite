@@ -55,22 +55,11 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
         label: "Dashboard",
       },
       {
-        description: "Gestionar modelos y precios de vidrio",
-        href: "/admin/models",
+        description: "Explorar catálogo de productos",
+        href: "/catalog",
         icon: "Package",
-        label: "Modelos",
-      },
-      {
-        description: "Ver y gestionar todas las cotizaciones",
-        href: "/dashboard/quotes",
-        icon: "FileText",
-        label: "Cotizaciones",
-      },
-      {
-        description: "Configuración del sistema",
-        href: "/dashboard/settings",
-        icon: "Settings",
-        label: "Configuración",
+        label: "Catálogo",
+        routes: ["/catalog"],
       },
     ];
   }
@@ -92,13 +81,13 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
         label: "Catálogo",
         routes: ["/catalog"],
       },
-      {
-        description: "Descubrir soluciones de vidrio especializadas",
-        href: "/glasses/solutions",
-        icon: "Glasses",
-        label: "Soluciones",
-        routes: ["/glasses/solutions"],
-      },
+      // {
+      //   description: "Descubrir soluciones de vidrio especializadas",
+      //   href: "/glasses/solutions",
+      //   icon: "Glasses",
+      //   label: "Soluciones",
+      //   routes: ["/glasses/solutions"],
+      // },
     ];
   }
 
@@ -112,13 +101,13 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
         label: "Catálogo",
         routes: ["/catalog"],
       },
-      {
-        description: "Descubrir soluciones de vidrio especializadas",
-        href: "/glasses/solutions",
-        icon: "Glasses",
-        label: "Soluciones",
-        routes: ["/glasses/solutions"],
-      },
+      // {
+      //   description: "Descubrir soluciones de vidrio especializadas",
+      //   href: "/glasses/solutions",
+      //   icon: "Glasses",
+      //   label: "Soluciones",
+      //   routes: ["/glasses/solutions"],
+      // },
       {
         description: "Ver mis cotizaciones",
         href: "/my-quotes",
@@ -138,13 +127,13 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
       label: "Catálogo",
       routes: ["/catalog"],
     },
-    {
-      description: "Descubrir soluciones de vidrio especializadas",
-      href: "/glasses/solutions",
-      icon: "Glasses",
-      label: "Soluciones",
-      routes: ["/glasses/solutions"],
-    },
+    // {
+    //   description: "Descubrir soluciones de vidrio especializadas",
+    //   href: "/glasses/solutions",
+    //   icon: "Glasses",
+    //   label: "Soluciones",
+    //   routes: ["/glasses/solutions"],
+    // },
   ];
 }
 
