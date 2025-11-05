@@ -554,13 +554,13 @@ src/domain/pricing/
 
 ## Risks & Mitigation
 
-| Risk | Impact | Probability | Mitigation |
-|------|--------|-------------|------------|
-| Calculation logic errors in refactor | High | Medium | Comprehensive test suite with real-world test cases before migration |
-| Performance regression | Medium | Low | Benchmark tests to verify <50ms requirement |
-| Breaking existing API contracts | High | Medium | Adapter pattern ensures backward compatibility |
-| Team learning curve for hexagonal architecture | Medium | High | Documentation and code examples with clear patterns |
-| Incomplete edge case coverage | Medium | Medium | Review existing production data for edge cases |
+| Risk                                           | Impact | Probability | Mitigation                                                           |
+| ---------------------------------------------- | ------ | ----------- | -------------------------------------------------------------------- |
+| Calculation logic errors in refactor           | High   | Medium      | Comprehensive test suite with real-world test cases before migration |
+| Performance regression                         | Medium | Low         | Benchmark tests to verify <50ms requirement                          |
+| Breaking existing API contracts                | High   | Medium      | Adapter pattern ensures backward compatibility                       |
+| Team learning curve for hexagonal architecture | Medium | High        | Documentation and code examples with clear patterns                  |
+| Incomplete edge case coverage                  | Medium | Medium      | Review existing production data for edge cases                       |
 
 ---
 
