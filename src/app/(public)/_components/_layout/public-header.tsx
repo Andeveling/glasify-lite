@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BrandLogo } from "@/app/_components/brand-logo";
 import { CartIndicatorWrapper } from "@/app/_components/cart-indicator-wrapper";
 import { RoleBasedNav } from "@/app/_components/role-based-nav";
+import { SocialMediaLinks } from "@/app/_components/social-media-links";
 import { getServerSession } from "@/lib/server-auth";
 import { GuestMenu } from "./guest-menu";
 import { UserMenu } from "./user-menu";
@@ -40,6 +41,9 @@ export default async function Header() {
 
           {/* Acciones: Carrito y Menú de Usuario */}
           <div className="flex items-center gap-3">
+            <div className="mr-10">
+              <SocialMediaLinks className="hidden md:flex" variant="compact" />
+            </div>
             <CartIndicatorWrapper variant="compact" />
             {session?.user ? (
               <UserMenu
