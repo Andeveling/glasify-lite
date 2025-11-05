@@ -9,6 +9,17 @@
 
 ---
 
+## Clarifications
+
+### Session 2025-11-05
+
+- **Q**: How is color surcharge applied in the calculation sequence? → **A**: Color surcharge applies to basePrice AND costPerMm (width/height) individually before summing, not to the final profile cost
+- **Q**: Which components receive profit margin? → **A**: Profit margin applies ONLY to model costs (profile + accessories), NOT to glass or services
+- **Q**: Where must price calculations execute for security? → **A**: All price calculations must occur in backend (server-side) due to sensitivity
+- **Q**: How are services priced relative to model pricing? → **A**: Services calculate independently based on their unit and minimums, without profit margin applied
+
+---
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Accurate Price Calculation with Minimum Dimensions (Priority: P1)
@@ -35,29 +46,33 @@
 
 ---
 
-### User Story 2 - Profit Margin as Sales Price Percentage (Priority: P1)
+### User Story 2 - Profit Margin on Model Only (Priority: P1)
 
-**Description**: The system applies profit margin as a percentage of the final sales price (not as markup), ensuring that the company's target profit margin is accurately reflected in the pricing shown to customers.
+**Description**: The system applies profit margin as a percentage of the sales price, but ONLY to the model costs (profile + accessories). Glass and services are priced independently without profit margin.
 
-**Why this priority**: This ensures accurate profitability calculations. Using incorrect margin formula leads to incorrect financial projections and pricing strategy failures.
+**Why this priority**: This ensures accurate profitability calculations on manufactured components while allowing transparent third-party costs (glass, services) to pass through without markup.
 
-**Independent Test**: Can be fully tested by providing a cost total and profit margin percentage, then verifying the sales price matches the formula: `salesPrice = costTotal / (1 - marginPercentage)`.
+**Independent Test**: Can be fully tested by providing model cost (profile + accessories) and profit margin percentage, then verifying the model sales price matches the formula: `modelSalesPrice = modelCost / (1 - marginPercentage)`, while glass and services add to final price without margin.
 
 **Acceptance Scenarios**:
 
-1. **Given** a total cost of $220 and profit margin of 20%  
+1. **Given** profile cost=$160, accessory=$50, glass=$148, services=$190, profit margin=20%  
    **When** system calculates sales price  
-   **Then** sales price = $220 / (1 - 0.20) = $220 / 0.80 = $275  
-   **And** profit = $275 - $220 = $55 (which is 20% of $275) ✅
+   **Then** modelCost = $160 + $50 = $210  
+   **And** modelSalesPrice = $210 / (1 - 0.20) = $210 / 0.80 = $262.50  
+   **And** finalSalesPrice = $262.50 + $148 + $190 = $600.50  
+   **And** profit on model = $262.50 - $210 = $52.50 (which is 20% of $262.50) ✅
 
-2. **Given** a total cost of $100 and profit margin of 25%  
+2. **Given** profile cost=$100, accessory=$0, glass=$0, services=$0, profit margin=25%  
    **When** system calculates sales price  
-   **Then** sales price = $100 / 0.75 = $133.33  
-   **And** profit = $33.33 (which is 25% of $133.33) ✅
+   **Then** modelCost = $100  
+   **And** modelSalesPrice = $100 / 0.75 = $133.33  
+   **And** finalSalesPrice = $133.33 (no glass or services to add)
 
-3. **Given** a total cost of $500 and profit margin of 0%  
+3. **Given** any configuration with profit margin=0%  
    **When** system calculates sales price  
-   **Then** sales price = $500 (no margin applied)
+   **Then** modelSalesPrice = modelCost (no margin)  
+   **And** finalSalesPrice = modelCost + glass + services
 
 ---
 
@@ -89,24 +104,31 @@
 
 ### User Story 4 - Color Surcharge Application (Priority: P2)
 
-**Description**: When a customer selects a color, the system applies the color surcharge percentage to profile and accessory costs only (not to glass or services).
+**Description**: When a customer selects a color, the system applies the color surcharge percentage to the base price AND to the per-millimeter costs BEFORE calculating the total profile cost.
 
-**Why this priority**: Ensures color premiums are applied correctly to manufacturing costs that are actually affected by color selection.
+**Why this priority**: Ensures color premiums are applied correctly at the component level, affecting both fixed and variable costs of manufacturing.
 
-**Independent Test**: Can be fully tested by providing profile cost, accessory cost, and color surcharge, then verifying only those components are multiplied by `(1 + surchargePercentage)`.
+**Independent Test**: Can be fully tested by providing base price, per-mm costs, and color surcharge, then verifying the formula: `(basePrice × colorMultiplier) + (costPerMmWidth × colorMultiplier × extraWidth) + (costPerMmHeight × colorMultiplier × extraHeight)`.
 
 **Acceptance Scenarios**:
 
-1. **Given** profile cost $1,900, accessory $50, glass $148, services $190, color surcharge 10%  
+1. **Given** basePrice=$100, costPerMmWidth=$0.10, costPerMmHeight=$0.10, minWidth=800mm, minHeight=800mm, dimensions=1000mm×1200mm, color surcharge=10%  
    **When** system applies color surcharge  
-   **Then** profile cost = $1,900 × 1.10 = $2,090  
-   **And** accessory cost = $50 × 1.10 = $55  
-   **And** glass cost = $148 (unchanged)  
-   **And** services cost = $190 (unchanged)
+   **Then** basePriceWithColor = $100 × 1.10 = $110  
+   **And** widthCostWithColor = ($0.10 × 1.10) × 200mm = $0.11 × 200 = $22  
+   **And** heightCostWithColor = ($0.10 × 1.10) × 400mm = $0.11 × 400 = $44  
+   **And** total profile cost = $110 + $22 + $44 = $176
 
-2. **Given** any costs and color surcharge 0%  
+2. **Given** same configuration with color surcharge=0%  
    **When** system applies color surcharge  
-   **Then** all costs remain unchanged
+   **Then** basePriceWithColor = $100 × 1.00 = $100  
+   **And** widthCostWithColor = $0.10 × 200 = $20  
+   **And** heightCostWithColor = $0.10 × 400 = $40  
+   **And** total profile cost = $100 + $20 + $40 = $160
+
+3. **Given** any configuration with color selected  
+   **When** system calculates total price  
+   **Then** glass cost and service costs remain unchanged (color surcharge NOT applied)
 
 ---
 
@@ -189,75 +211,91 @@
 
 **Core Calculation Logic**
 
-- **FR-001**: System MUST calculate profile cost using formula: `basePrice + (costPerMmWidth × max(width - minWidth, 0)) + (costPerMmHeight × max(height - minHeight, 0))`
+- **FR-001**: System MUST calculate profile cost with color surcharge applied to each component using formula: `(basePrice × colorMultiplier) + (costPerMmWidth × colorMultiplier × max(width - minWidth, 0)) + (costPerMmHeight × colorMultiplier × max(height - minHeight, 0))` where `colorMultiplier = 1 + (colorSurchargePercentage / 100)`
 
 - **FR-002**: System MUST calculate billable glass area using formula: `((width - glassDiscountWidth) × (height - glassDiscountHeight)) / 1,000,000 m²`
 
 - **FR-003**: System MUST calculate glass cost using formula: `billableArea × pricePerSqm`
 
-- **FR-004**: System MUST apply color surcharge to profile cost and accessory cost using formula: `cost × (1 + colorSurchargePercentage / 100)`
+- **FR-004**: System MUST apply color surcharge to base price, cost-per-mm-width, and cost-per-mm-height individually BEFORE calculating total profile cost
 
-- **FR-005**: System MUST NOT apply color surcharge to glass cost or service costs
+- **FR-005**: System MUST apply color surcharge to accessory cost using formula: `accessoryCost × (1 + colorSurchargePercentage / 100)`
 
-- **FR-006**: System MUST calculate sales price from total cost using profit margin formula: `salesPrice = totalCost / (1 - profitMarginPercentage / 100)`
+- **FR-006**: System MUST NOT apply color surcharge to glass cost or service costs
 
-- **FR-007**: System MUST validate that profit margin percentage is less than 100% (exclusive)
+- **FR-007**: System MUST calculate model cost as: `profileCost + accessoryCost` (both with color surcharge applied if applicable)
+
+- **FR-008**: System MUST apply profit margin ONLY to model cost (profile + accessories) using formula: `modelSalesPrice = modelCost / (1 - profitMarginPercentage / 100)`
+
+- **FR-009**: System MUST NOT apply profit margin to glass cost or service costs
+
+- **FR-010**: System MUST calculate final sales price as: `modelSalesPrice + glassCost + sum(serviceCosts)`
+
+- **FR-011**: System MUST validate that profit margin percentage is less than 100% (exclusive)
 
 **Service Calculations**
 
-- **FR-008**: System MUST calculate fixed service quantity as 1 (or quantityOverride if provided)
+- **FR-012**: System MUST calculate fixed service quantity as 1 (or quantityOverride if provided)
 
-- **FR-009**: System MUST calculate area service quantity as `(widthMeters × heightMeters)` in square meters
+- **FR-013**: System MUST calculate area service quantity as `(widthMeters × heightMeters)` in square meters
 
-- **FR-010**: System MUST calculate perimeter service quantity as `((widthMeters + heightMeters) × 2)` in linear meters
+- **FR-014**: System MUST calculate perimeter service quantity as `((widthMeters + heightMeters) × 2)` in linear meters
 
-- **FR-011**: System MUST apply minimum billing unit to area/perimeter services when calculated quantity is below minimum
+- **FR-015**: System MUST apply minimum billing unit to area/perimeter services when calculated quantity is below minimum
 
-- **FR-012**: System MUST calculate service amount using formula: `serviceRate × quantity`
+- **FR-016**: System MUST calculate service amount using formula: `serviceRate × quantity`
 
 **Adjustments**
 
-- **FR-013**: System MUST support positive and negative adjustments based on sign configuration
+- **FR-017**: System MUST support positive and negative adjustments based on sign configuration
 
-- **FR-014**: System MUST calculate adjustment quantity based on unit type (same as services: unit, sqm, ml)
+- **FR-018**: System MUST calculate adjustment quantity based on unit type (same as services: unit, sqm, ml)
 
-- **FR-015**: System MUST calculate adjustment amount using formula: `±(adjustmentValue × quantity)`
+- **FR-019**: System MUST calculate adjustment amount using formula: `±(adjustmentValue × quantity)`
 
 **Mathematical Precision**
 
-- **FR-016**: System MUST use decimal arithmetic for all monetary calculations (no floating-point)
+- **FR-020**: System MUST use decimal arithmetic for all monetary calculations (no floating-point)
 
-- **FR-017**: System MUST round all monetary values to 2 decimal places using ROUND_HALF_UP method
+- **FR-021**: System MUST round all monetary values to 2 decimal places using ROUND_HALF_UP method
 
-- **FR-018**: System MUST round service quantities to 2 decimal places using ROUND_HALF_UP method
+- **FR-022**: System MUST round service quantities to 2 decimal places using ROUND_HALF_UP method
 
-- **FR-019**: System MUST round fixed service quantities to 4 decimal places using ROUND_HALF_UP method
+- **FR-023**: System MUST round fixed service quantities to 4 decimal places using ROUND_HALF_UP method
 
-- **FR-020**: System MUST ensure all calculations are deterministic (same inputs always produce same outputs)
+- **FR-024**: System MUST ensure all calculations are deterministic (same inputs always produce same outputs)
 
 **Input Handling**
 
-- **FR-021**: System MUST accept dimensions in millimeters (integer or decimal)
+- **FR-025**: System MUST accept dimensions in millimeters (integer or decimal)
 
-- **FR-022**: System MUST accept monetary values as Decimal, number, or string types
+- **FR-026**: System MUST accept monetary values as Decimal, number, or string types
 
-- **FR-023**: System MUST normalize all inputs to Decimal type before calculations
+- **FR-027**: System MUST normalize all inputs to Decimal type before calculations
 
-- **FR-024**: System MUST treat dimensions below minimum as equal to minimum (no error)
+- **FR-028**: System MUST treat dimensions below minimum as equal to minimum (no error)
 
-- **FR-025**: System MUST clamp negative effective dimensions (after discounts) to zero
+- **FR-029**: System MUST clamp negative effective dimensions (after discounts) to zero
 
 **Output Format**
 
-- **FR-026**: System MUST return breakdown containing: dimPrice, accPrice, glassCost, services[], adjustments[], subtotal
+- **FR-030**: System MUST return breakdown containing: modelCost, modelSalesPrice, glassCost, services[], adjustments[], finalSalesPrice
 
-- **FR-027**: System MUST include colorSurchargePercentage and colorSurchargeAmount in breakdown when applicable
+- **FR-031**: System MUST include colorSurchargePercentage and colorSurchargeAmount in breakdown when applicable
 
-- **FR-028**: System MUST include profitMarginPercentage and profitMarginAmount in breakdown when applicable
+- **FR-032**: System MUST include profitMarginPercentage and profitMarginAmount in breakdown when applicable
 
-- **FR-029**: System MUST return all service items with: serviceId, unit, quantity, amount
+- **FR-033**: System MUST return all service items with: serviceId, unit, quantity, amount
 
-- **FR-030**: System MUST return all adjustment items with: concept, amount
+- **FR-034**: System MUST return all adjustment items with: concept, amount
+
+**Security & Backend Enforcement**
+
+- **FR-035**: System MUST execute ALL price calculations on the backend (server-side) for security and data integrity
+
+- **FR-036**: System MUST NOT trust any price calculations performed on the client-side
+
+- **FR-037**: System MUST validate all calculation inputs on the backend before processing
 
 ### Non-Functional Requirements
 
@@ -310,11 +348,14 @@
 - Adjustments: array of `{ concept, unit, sign, value }`
 
 **PriceCalculationResult** - Complete breakdown of calculated price:
-- Component costs: `profileCost`, `glassCost`, `accessoryCost`
-- Modifiers applied: `colorSurchargeAmount`, `profitMarginAmount`
-- Service details: `services[]` with `{ serviceId, unit, quantity, amount }`
+- Model components: `profileCost` (with color), `accessoryCost` (with color), `modelCost` (sum of both)
+- Model with margin: `modelSalesPrice` (after applying profit margin to modelCost)
+- Glass component: `glassCost` (no color, no margin)
+- Service details: `services[]` with `{ serviceId, unit, quantity, amount }` (no margin)
 - Adjustment details: `adjustments[]` with `{ concept, amount }`
-- Totals: `costTotal` (before margin), `salesPrice` (after margin)
+- Color modifier: `colorSurchargeAmount` (total amount added by color to model)
+- Profit modifier: `profitMarginAmount` (total amount added by margin to model)
+- Final total: `finalSalesPrice` = modelSalesPrice + glassCost + sum(services) + sum(adjustments)
 
 **Dimensions** - Normalized dimension data:
 - Input dimensions: `widthMm`, `heightMm`
@@ -467,13 +508,19 @@ src/domain/pricing/
 
 6. **Profit Margin Limit**: Profit margin must be less than 100%. Higher values are mathematically invalid for the formula `salesPrice = cost / (1 - margin)`.
 
-7. **Color Surcharge Scope**: Color surcharge applies only to profile and accessory costs, not to glass or services. This matches current business logic.
+7. **Color Surcharge Application**: Color surcharge applies to basePrice, costPerMmWidth, costPerMmHeight, and accessoryPrice individually BEFORE final calculation. It does NOT apply to glass or services.
 
-8. **Service Minimum Billing**: Minimum billing unit only applies to area and perimeter services, not fixed services.
+8. **Profit Margin Scope**: Profit margin applies ONLY to model costs (profile + accessories). It does NOT apply to glass costs or service costs, which pass through at their cost price.
 
-9. **Dimension Units**: All dimensions are in millimeters (mm). No other units are supported.
+9. **Service Pricing Independence**: Services are priced based on their unit of measure and minimum billing units, without any profit margin markup.
 
-10. **Framework Decoupling**: Domain logic will be completely independent of Next.js, tRPC, and Prisma. Adapters will handle all framework-specific concerns.
+10. **Backend Calculation Security**: ALL price calculations MUST occur server-side for security and data integrity. Client-side calculations are for display only and never trusted.
+
+11. **Service Minimum Billing**: Minimum billing unit only applies to area and perimeter services, not fixed services.
+
+12. **Dimension Units**: All dimensions are in millimeters (mm). No other units are supported.
+
+13. **Framework Decoupling**: Domain logic will be completely independent of Next.js, tRPC, and Prisma. Adapters will handle all framework-specific concerns.
 
 ---
 
