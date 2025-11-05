@@ -4,6 +4,7 @@
  * Tests for the pricing logic in src/server/price/price-item.ts
  * Focus on minimum billing unit feature for area/perimeter services
  */
+/** biome-ignore-all lint/style/noMagicNumbers: Los test no requieren números mágicos */
 
 import type { ServiceType, ServiceUnit } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";

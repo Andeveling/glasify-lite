@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: TODO: Refactorizar */
 import type { Prisma, Quote } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
