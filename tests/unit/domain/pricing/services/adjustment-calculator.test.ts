@@ -22,8 +22,11 @@ describe("AdjustmentCalculator", () => {
       },
     ];
 
-    const result = AdjustmentCalculator.calculateAdjustments(adjustments, dimensions);
-  expect(result).toHaveLength(1);
+    const result = AdjustmentCalculator.calculateAdjustments(
+      adjustments,
+      dimensions
+    );
+    expect(result).toHaveLength(1);
     const first = result[0];
     expect(first).toBeDefined();
     if (first) {
@@ -51,8 +54,11 @@ describe("AdjustmentCalculator", () => {
       },
     ];
 
-  const result = AdjustmentCalculator.calculateAdjustments(adjustments, dimensions);
-  expect(result).toHaveLength(1);
+    const result = AdjustmentCalculator.calculateAdjustments(
+      adjustments,
+      dimensions
+    );
+    expect(result).toHaveLength(1);
     const firstNeg = result[0];
     expect(firstNeg).toBeDefined();
     if (firstNeg) {
