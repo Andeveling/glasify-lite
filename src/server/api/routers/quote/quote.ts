@@ -1351,11 +1351,11 @@ export const quoteRouter = createTRPCRouter({
         // Fetch services for domain calculation
         const domainServices: Array<{
           serviceId: string;
-          type: "polishing" | "installation" | "coating";
+          name: string;
           unit: "unit" | "sqm" | "ml";
           rate: number;
-          minimumBillingUnit: number;
-          quantityOverride: number | null;
+          minimumBillingUnit?: number;
+          quantityOverride?: number;
         }> = [];
 
         if (input.services.length > 0) {
@@ -1375,39 +1375,54 @@ export const quoteRouter = createTRPCRouter({
               });
             }
             domainServices.push({
-              minimumBillingUnit: service.minimumBillingUnit,
-              quantityOverride: serviceInput.quantity,
-              rate: service.rate.toNumber(),
               serviceId: service.id,
-              type: service.type as "polishing" | "installation" | "coating",
+              name: service.name,
               unit: service.unit as "unit" | "sqm" | "ml",
+              rate: service.rate.toNumber(),
+              minimumBillingUnit: service.minimumBillingUnit?.toNumber(),
+              quantityOverride: serviceInput.quantity,
             });
           }
         }
 
-        // Build domain input via adapter
-        const domainInput = adaptTRPCToDomain({
-          adjustments: input.adjustments,
+        // Convert adjustments to domain format
+        const domainAdjustments = input.adjustments.map((adj) => ({
+          adjustmentId: `adj-${Date.now()}-${Math.random()}`,
+          concept: adj.concept,
+          unit: adj.unit,
+          value: adj.value,
+          sign: adj.sign,
+        }));
+
+        // Build tRPC input for adapter
+        const adapterInput = {
+          widthMm: input.widthMm,
+          heightMm: input.heightMm,
+          modelPrices: {
+            basePrice: model.basePrice.toNumber(),
+            costPerMmWidth: model.costPerMmWidth.toNumber(),
+            costPerMmHeight: model.costPerMmHeight.toNumber(),
+            minWidthMm: model.minWidthMm,
+            minHeightMm: model.minHeightMm,
+            accessoryPrice: model.accessoryPrice?.toNumber(),
+          },
           colorSurchargePercentage: 0, // Will be calculated below if colorId provided
           glass: {
-            discountHeightMm: model.glassDiscountHeightMm,
-            discountWidthMm: model.glassDiscountWidthMm,
             pricePerSqm: glassType.pricePerSqm.toNumber(),
-          },
-          heightMm: input.heightMm,
-          model: {
-            accessoryPrice: model.accessoryPrice?.toNumber() ?? null,
-            basePrice: model.basePrice.toNumber(),
-            costPerMmHeight: model.costPerMmHeight.toNumber(),
-            costPerMmWidth: model.costPerMmWidth.toNumber(),
-            includeAccessory: Boolean(model.accessoryPrice),
+            discountWidthMm: model.glassDiscountWidthMm,
+            discountHeightMm: model.glassDiscountHeightMm,
           },
           services: domainServices,
-          widthMm: input.widthMm,
-        });
+          adjustments: domainAdjustments,
+        };
 
-        // Calculate via domain layer
+        // Transform to domain input
+        const domainInput = adaptTRPCToDomain(adapterInput);
+
+        // Execute domain use case
         const domainResult = CalculateItemPrice.execute(domainInput);
+
+        // Transform domain result back to tRPC output
         const calculation = adaptDomainToTRPC(domainResult);
 
         // Calculate color surcharge if colorId provided
