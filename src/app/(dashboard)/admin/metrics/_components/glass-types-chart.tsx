@@ -42,23 +42,23 @@ const chartConfig = {
 	},
 	glassTypeId1: {
 		color: "var(--chart-1)",
-		label: "Vidrio 1",
+		label: "cristal 1",
 	},
 	glassTypeId2: {
 		color: "var(--chart-2)",
-		label: "Vidrio 2",
+		label: "cristal 2",
 	},
 	glassTypeId3: {
 		color: "var(--chart-3)",
-		label: "Vidrio 3",
+		label: "cristal 3",
 	},
 	glassTypeId4: {
 		color: "var(--chart-4)",
-		label: "Vidrio 4",
+		label: "cristal 4",
 	},
 	glassTypeId5: {
 		color: "var(--chart-5)",
-		label: "Vidrio 5",
+		label: "cristal 5",
 	},
 } satisfies ChartConfig;
 
@@ -72,8 +72,8 @@ export function GlassTypesChart({ data, tenantConfig }: GlassTypesChartProps) {
 	if (!data || data.length === 0) {
 		return (
 			<EmptyDashboardState
-				description="No hay cotizaciones en este período para mostrar tipos de vidrio populares"
-				title="Sin datos de tipos de vidrio"
+				description="No hay cotizaciones en este período para mostrar tipos de cristal populares"
+				title="Sin datos de tipos de cristal"
 			/>
 		);
 	}
@@ -91,8 +91,8 @@ export function GlassTypesChart({ data, tenantConfig }: GlassTypesChartProps) {
 	return (
 		<Card className="flex flex-col">
 			<CardHeader className="items-center pb-0">
-				<CardTitle>Tipos de Vidrio Más Usados</CardTitle>
-				<CardDescription>Top 5 vidrios por cantidad de uso</CardDescription>
+				<CardTitle>Tipos de Cristal Más Usados</CardTitle>
+				<CardDescription>Top 5 cristals por cantidad de uso</CardDescription>
 			</CardHeader>
 			<CardContent className="flex-1 pb-0">
 				<ChartContainer
@@ -173,7 +173,7 @@ export function GlassTypesChart({ data, tenantConfig }: GlassTypesChartProps) {
 					<TrendingUp className="h-4 w-4" />
 				</div>
 				<div className="text-muted-foreground leading-none">
-					Distribución de tipos de vidrio en cotizaciones
+					Distribución de tipos de cristal en cotizaciones
 				</div>
 			</CardFooter>
 		</Card>

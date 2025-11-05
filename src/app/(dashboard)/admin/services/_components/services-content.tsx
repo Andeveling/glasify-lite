@@ -37,7 +37,7 @@ export function ServicesContent({
 			{/* Create Dialog */}
 			<ServiceDialog
 				mode="create"
-				onOpenChange={setCreateDialogOpen}
+				onOpenChangeAction={setCreateDialogOpen}
 				open={createDialogOpen}
 			/>
 

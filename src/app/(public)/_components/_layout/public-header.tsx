@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CartIndicator } from "@/app/_components/cart-indicator";
+import { CartIndicatorWrapper } from "@/app/_components/cart-indicator-wrapper";
 import { RoleBasedNav } from "@/app/_components/role-based-nav";
 import { getServerSession } from "@/lib/server-auth";
 import { GuestMenu } from "./guest-menu";
@@ -36,7 +36,7 @@ export default async function Header() {
 
 					{/* Acciones: Carrito y Menú de Usuario */}
 					<div className="flex items-center gap-3">
-						<CartIndicator variant="compact" />
+						<CartIndicatorWrapper variant="compact" />
 						{session?.user ? (
 							<UserMenu
 								userEmail={session.user.email}

@@ -127,12 +127,12 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
 	// Delete mutation
 	const deleteMutation = api.admin["glass-type"].delete.useMutation({
 		onError: (error) => {
-			toast.error("Error al eliminar tipo de vidrio", {
+			toast.error("Error al eliminar tipo de cristal", {
 				description: error.message,
 			});
 		},
 		onSuccess: () => {
-			toast.success("Tipo de vidrio eliminado correctamente");
+			toast.success("Tipo de cristal eliminado correctamente");
 			setDeleteDialogOpen(false);
 			setGlassTypeToDelete(null);
 			utils.admin["glass-type"].list.invalidate().catch(undefined);
@@ -169,7 +169,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
 			<Card>
 				<CardHeader>
 					<CardTitle>Filtros</CardTitle>
-					<CardDescription>Busca y filtra tipos de vidrio</CardDescription>
+					<CardDescription>Busca y filtra tipos de cristal</CardDescription>
 				</CardHeader>
 				<CardContent className="grid gap-4 md:grid-cols-3">
 					{/* Search */}
@@ -219,7 +219,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
 					<div className="flex items-end">
 						<Button className="w-full" onClick={handleCreateClick}>
 							<Plus className="mr-2 size-4" />
-							Nuevo Tipo de Vidrio
+							Nuevo Tipo de cristal
 						</Button>
 					</div>
 				</CardContent>
@@ -228,9 +228,9 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
 			{/* Table */}
 			<Card>
 				<CardHeader>
-					<CardTitle>Tipos de Vidrio ({data?.total ?? 0})</CardTitle>
+					<CardTitle>Tipos de Cristal ({data?.total ?? 0})</CardTitle>
 					<CardDescription>
-						Mostrando {glassTypes.length} de {data?.total ?? 0} tipos de vidrio
+						Mostrando {glassTypes.length} de {data?.total ?? 0} tipos de cristal
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
@@ -259,7 +259,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
 										className="text-center text-muted-foreground"
 										colSpan={6}
 									>
-										No se encontraron tipos de vidrio
+										No se encontraron tipos de cristal
 									</TableCell>
 								</TableRow>
 							)}
@@ -360,7 +360,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
 			<DeleteConfirmationDialog
 				dependencies={[]}
 				entityLabel={glassTypeToDelete?.name ?? ""}
-				entityName="tipo de vidrio"
+				entityName="tipo de cristal"
 				loading={deleteMutation.isPending}
 				onConfirm={handleConfirmDelete}
 				onOpenChange={setDeleteDialogOpen}

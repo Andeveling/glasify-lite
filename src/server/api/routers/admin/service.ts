@@ -16,6 +16,7 @@ import {
 	deleteServiceSchema,
 	getServiceByIdSchema,
 	listServicesSchema,
+	toggleServiceActiveSchema,
 	updateServiceSchema,
 } from "@/lib/validations/admin/service.schema";
 import { adminProcedure, createTRPCRouter } from "@/server/api/trpc";
@@ -256,6 +257,50 @@ export const serviceRouter = createTRPCRouter({
 
 			logger.info("Service updated", {
 				serviceId: updatedService.id,
+				userId: ctx.session.user.id,
+			});
+
+			return updatedService;
+		}),
+
+	/**
+	 * Toggle Service Active Status
+	 * PATCH /api/trpc/admin.service.toggleActive
+	 *
+	 * Activates or deactivates a service
+	 */
+	toggleActive: adminProcedure
+		.input(toggleServiceActiveSchema)
+		.mutation(async ({ ctx, input }) => {
+			const { id, isActive } = input;
+
+			// Verify service exists
+			const currentService = await ctx.db.service.findUnique({
+				select: { id: true, name: true },
+				where: { id },
+			});
+
+			if (!currentService) {
+				logger.warn("Service not found for toggle active", {
+					serviceId: id,
+					userId: ctx.session.user.id,
+				});
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Servicio no encontrado",
+				});
+			}
+
+			// Update service active status
+			const updatedService = await ctx.db.service.update({
+				data: { isActive },
+				where: { id },
+			});
+
+			logger.info("Service active status toggled", {
+				isActive,
+				serviceId: updatedService.id,
+				serviceName: updatedService.name,
 				userId: ctx.session.user.id,
 			});
 

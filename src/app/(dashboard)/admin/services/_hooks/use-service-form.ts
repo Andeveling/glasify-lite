@@ -24,6 +24,7 @@ type FormValues = {
 	type: ServiceType;
 	unit: ServiceUnit;
 	rate: number;
+	minimumBillingUnit?: number | null;
 };
 
 type UseServiceFormProps = {
@@ -49,6 +50,7 @@ export function useServiceForm({
 }: UseServiceFormProps) {
 	const form = useForm<FormValues>({
 		defaultValues: {
+			minimumBillingUnit: defaultValues?.minimumBillingUnit?.toNumber() ?? null,
 			name: defaultValues?.name ?? "",
 			rate: defaultValues?.rate?.toNumber() ?? 0,
 			type: defaultValues?.type ?? "fixed",
@@ -57,6 +59,9 @@ export function useServiceForm({
 		resolver: zodResolver(createServiceSchema),
 	});
 
+	// Watch type to show/hide minimumBillingUnit field
+	const watchedType = form.watch("type");
+
 	/**
 	 * Auto-assign unit based on service type
 	 * This ensures consistency between type and unit
@@ -64,6 +69,11 @@ export function useServiceForm({
 	const handleTypeChange = (type: ServiceType) => {
 		form.setValue("type", type);
 		form.setValue("unit", TYPE_TO_UNIT_MAP[type]);
+
+		// Clear minimum when switching to fixed
+		if (type === "fixed") {
+			form.setValue("minimumBillingUnit", null);
+		}
 	};
 
 	/**
@@ -74,6 +84,8 @@ export function useServiceForm({
 	useEffect(() => {
 		if (open && defaultValues) {
 			form.reset({
+				minimumBillingUnit:
+					defaultValues.minimumBillingUnit?.toNumber() ?? null,
 				name: defaultValues.name,
 				rate: defaultValues.rate.toNumber(),
 				type: defaultValues.type,
@@ -81,6 +93,7 @@ export function useServiceForm({
 			});
 		} else if (open && mode === "create") {
 			form.reset({
+				minimumBillingUnit: null,
 				name: "",
 				rate: 0,
 				type: "fixed",
@@ -92,6 +105,7 @@ export function useServiceForm({
 	return {
 		form,
 		handleTypeChange,
+		watchedType,
 	};
 }
 

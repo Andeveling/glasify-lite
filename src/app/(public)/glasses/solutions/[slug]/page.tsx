@@ -191,7 +191,7 @@ export default async function GlassSolutionDetailPage({
 					{solution.glassTypes.length > 0 ? (
 						<div>
 							<h2 className="mb-6 font-bold text-2xl">
-								Tipos de Vidrio Disponibles
+								Tipos de Cristal Disponibles
 							</h2>
 
 							<div className="grid gap-4 md:grid-cols-2">

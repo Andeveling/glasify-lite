@@ -55,8 +55,8 @@ const modelFormSchema = z
 				`El precio base no debe exceder ${MAX_PRICE.toLocaleString()}`,
 			),
 		compatibleGlassTypeIds: z
-			.array(z.string().cuid("ID del tipo de vidrio debe ser válido"))
-			.min(1, "Debe seleccionar al menos un tipo de vidrio compatible"),
+			.array(z.string().cuid("ID del tipo de cristal debe ser válido"))
+			.min(1, "Debe seleccionar al menos un tipo de cristal compatible"),
 		costPerMmHeight: z
 			.number()
 			.min(0, "El costo por mm de altura debe ser mayor o igual a 0")
@@ -150,8 +150,8 @@ type ModelFormControllerArgs = Pick<ModelFormProps, "modelData" | "onSuccess">;
 
 // Mock data for development - in a real app this would come from the API
 const MOCK_GLASS_TYPES = [
-	{ id: "cm1glass123456789abcdef01", name: "Vidrio Templado 6mm" },
-	{ id: "cm1glass234567890bcdef012", name: "Vidrio Laminado 8mm" },
+	{ id: "cm1glass123456789abcdef01", name: "cristal Templado 6mm" },
+	{ id: "cm1glass234567890bcdef012", name: "cristal Laminado 8mm" },
 	{ id: "cm1glass345678901cdef0123", name: "Doble Vidriado Hermético" },
 ];
 
@@ -246,8 +246,8 @@ export function ModelForm({ modelData, onSuccess, onCancel }: ModelFormProps) {
 				</CardTitle>
 				<CardDescription>
 					{isEditing
-						? "Modifica los datos del modelo de vidrio existente"
-						: "Ingresa los datos del nuevo modelo de vidrio"}
+						? "Modifica los datos del modelo de cristal existente"
+						: "Ingresa los datos del nuevo modelo de cristal"}
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
@@ -319,10 +319,10 @@ function BasicInfoSection({
 					<FormItem>
 						<FormLabel>Nombre del Modelo</FormLabel>
 						<FormControl>
-							<Input placeholder="ej. Vidrio Templado 6mm" {...field} />
+							<Input placeholder="ej. cristal Templado 6mm" {...field} />
 						</FormControl>
 						<FormDescription>
-							Nombre descriptivo del modelo de vidrio
+							Nombre descriptivo del modelo de cristal
 						</FormDescription>
 						<FormMessage />
 					</FormItem>
@@ -407,17 +407,17 @@ function BasicInfoSection({
 function GlassTypesSection({ form }: { form: ModelFormApi }) {
 	return (
 		<div className="space-y-4">
-			<h3 className="font-medium text-lg">Tipos de Vidrio Compatibles</h3>
+			<h3 className="font-medium text-lg">Tipos de Paneles Compatibles</h3>
 
 			<FormField
 				control={form.control}
 				name="compatibleGlassTypeIds"
 				render={({ field }) => (
 					<FormItem>
-						<FormLabel>Tipos de Vidrio</FormLabel>
+						<FormLabel>Tipos de Cristal</FormLabel>
 						<FormDescription>
-							Selecciona los tipos de vidrio compatibles con este modelo (mínimo
-							1)
+							Selecciona los tipos de cristal compatibles con este modelo
+							(mínimo 1)
 						</FormDescription>
 						<div className="grid grid-cols-1 gap-2">
 							{MOCK_GLASS_TYPES.map((glassType) => (

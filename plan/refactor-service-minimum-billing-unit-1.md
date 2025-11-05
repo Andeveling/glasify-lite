@@ -68,11 +68,11 @@ Este plan implementa la capacidad de definir unidades mínimas de cobro para ser
 
 **GOAL-001**: Actualizar el modelo `Service` en Prisma para soportar `minimumBillingUnit`
 
-| Task     | Description                                                                                          | Completed | Date |
-| -------- | ---------------------------------------------------------------------------------------------------- | --------- | ---- |
-| TASK-001 | Agregar campo `minimumBillingUnit` a modelo `Service` en `prisma/schema.prisma`                      |           |      |
-| TASK-002 | Generar y aplicar migración con `pnpm prisma migrate dev --name add_minimum_billing_unit_to_service` |           |      |
-| TASK-003 | Verificar que la migración sea idempotente y no afecte datos existentes                              |           |      |
+| Task     | Description                                                                                          | Completed | Date       |
+| -------- | ---------------------------------------------------------------------------------------------------- | --------- | ---------- |
+| TASK-001 | Agregar campo `minimumBillingUnit` a modelo `Service` en `prisma/schema.prisma`                      | ✅         | 2025-01-04 |
+| TASK-002 | Generar y aplicar migración con `pnpm prisma migrate dev --name add_minimum_billing_unit_to_service` | ✅         | 2025-01-04 |
+| TASK-003 | Verificar que la migración sea idempotente y no afecte datos existentes                              | ✅         | 2025-01-04 |
 
 **TASK-001 Details**:
 ```prisma
@@ -101,11 +101,11 @@ model Service {
 
 **GOAL-002**: Actualizar la lógica de cálculo de servicios en `price-item.ts` para respetar `minimumBillingUnit`
 
-| Task     | Description                                                                                                 | Completed | Date |
-| -------- | ----------------------------------------------------------------------------------------------------------- | --------- | ---- |
-| TASK-004 | Actualizar `PriceServiceInput` type para incluir `minimumBillingUnit?: Decimal \| number \| string \| null` |           |      |
-| TASK-005 | Modificar función `computeServiceQuantity` para aplicar lógica de mínimo                                    |           |      |
-| TASK-006 | Agregar unit tests para validar cálculo con/sin `minimumBillingUnit`                                        |           |      |
+| Task     | Description                                                                                                 | Completed | Date       |
+| -------- | ----------------------------------------------------------------------------------------------------------- | --------- | ---------- |
+| TASK-004 | Actualizar `PriceServiceInput` type para incluir `minimumBillingUnit?: Decimal \| number \| string \| null` | ✅         | 2025-01-04 |
+| TASK-005 | Modificar función `computeServiceQuantity` para aplicar lógica de mínimo                                    | ✅         | 2025-01-04 |
+| TASK-006 | Agregar unit tests para validar cálculo con/sin `minimumBillingUnit`                                        | ✅         | 2025-01-04 |
 
 **TASK-005 Details**:
 ```typescript
@@ -154,13 +154,13 @@ const computeServiceQuantity = (
 
 **GOAL-003**: Actualizar procedures de `Service` para persistir y retornar `minimumBillingUnit`
 
-| Task     | Description                                                                                                   | Completed | Date |
-| -------- | ------------------------------------------------------------------------------------------------------------- | --------- | ---- |
-| TASK-007 | Actualizar `quote.calculate-item` mutation para incluir `minimumBillingUnit` al construir `PriceServiceInput` |           |      |
-| TASK-008 | Actualizar `quote.add-item` mutation para incluir `minimumBillingUnit` al crear `QuoteItemService`            |           |      |
-| TASK-009 | Actualizar `admin.service.list` para incluir `minimumBillingUnit` en el select                                |           |      |
-| TASK-010 | Actualizar `admin.service.create` para aceptar y validar `minimumBillingUnit`                                 |           |      |
-| TASK-011 | Actualizar `admin.service.update` para aceptar y validar `minimumBillingUnit`                                 |           |      |
+| Task     | Description                                                                                                   | Completed | Date       |
+| -------- | ------------------------------------------------------------------------------------------------------------- | --------- | ---------- |
+| TASK-007 | Actualizar `quote.calculate-item` mutation para incluir `minimumBillingUnit` al construir `PriceServiceInput` | ✅         | 2025-01-04 |
+| TASK-008 | Actualizar `quote.add-item` mutation para incluir `minimumBillingUnit` al crear `QuoteItemService`            | ✅         | 2025-01-04 |
+| TASK-009 | Actualizar `admin.service.list` para incluir `minimumBillingUnit` en el select                                | ✅         | 2025-01-04 |
+| TASK-010 | Actualizar `admin.service.create` para aceptar y validar `minimumBillingUnit`                                 | ✅         | 2025-01-04 |
+| TASK-011 | Actualizar `admin.service.update` para aceptar y validar `minimumBillingUnit`                                 | ✅         | 2025-01-04 |
 
 **TASK-007 Details**:
 ```typescript
@@ -198,11 +198,11 @@ for (const svc of input.services) {
 
 **GOAL-004**: Actualizar schemas de validación Zod para `minimumBillingUnit`
 
-| Task     | Description                                                                        | Completed | Date |
-| -------- | ---------------------------------------------------------------------------------- | --------- | ---- |
-| TASK-012 | Actualizar `baseServiceSchema` en `src/lib/validations/admin/service.schema.ts`    |           |      |
-| TASK-013 | Agregar regla de validación condicional: requerido solo si type = area o perimeter |           |      |
-| TASK-014 | Actualizar tipos exportados `CreateServiceInput` y `UpdateServiceInput`            |           |      |
+| Task     | Description                                                                        | Completed | Date       |
+| -------- | ---------------------------------------------------------------------------------- | --------- | ---------- |
+| TASK-012 | Actualizar `baseServiceSchema` en `src/lib/validations/admin/service.schema.ts`    | ✅         | 2025-01-04 |
+| TASK-013 | Agregar regla de validación condicional: requerido solo si type = area o perimeter | ✅         | 2025-01-04 |
+| TASK-014 | Actualizar tipos exportados `CreateServiceInput` y `UpdateServiceInput`            | ✅         | 2025-01-04 |
 
 **TASK-012 Details**:
 ```typescript
@@ -248,13 +248,13 @@ const baseServiceSchema = z.object({
 
 **GOAL-005**: Agregar campo `minimumBillingUnit` a formularios de servicio
 
-| Task     | Description                                                                              | Completed | Date |
-| -------- | ---------------------------------------------------------------------------------------- | --------- | ---- |
-| TASK-015 | Actualizar `service-dialog.tsx` para incluir campo condicional de unidad mínima          |           |      |
-| TASK-016 | Actualizar `use-service-form.ts` hook para manejar `minimumBillingUnit` en defaultValues |           |      |
-| TASK-017 | Actualizar `use-service-mutations.ts` para incluir `minimumBillingUnit` en create/update |           |      |
-| TASK-018 | Actualizar `services-table.tsx` para mostrar unidad mínima (opcional)                    |           |      |
-| TASK-019 | Agregar tooltip/descripción que explique el propósito del campo                          |           |      |
+| Task     | Description                                                                              | Completed | Date       |
+| -------- | ---------------------------------------------------------------------------------------- | --------- | ---------- |
+| TASK-015 | Actualizar `service-dialog.tsx` para incluir campo condicional de unidad mínima          | ✅         | 2025-01-04 |
+| TASK-016 | Actualizar `use-service-form.ts` hook para manejar `minimumBillingUnit` en defaultValues | ✅         | 2025-01-04 |
+| TASK-017 | Actualizar `use-service-mutations.ts` para incluir `minimumBillingUnit` en create/update | ✅         | 2025-01-04 |
+| TASK-018 | Actualizar `services-table.tsx` para mostrar unidad mínima (opcional)                    |           |            |
+| TASK-019 | Agregar tooltip/descripción que explique el propósito del campo                          | ✅         | 2025-01-04 |
 
 **TASK-015 Details**:
 ```tsx
@@ -428,12 +428,12 @@ describe("computeServiceQuantity with minimumBillingUnit", () => {
 
 **GOAL-007**: Documentar la nueva funcionalidad
 
-| Task     | Description                                                               | Completed | Date |
-| -------- | ------------------------------------------------------------------------- | --------- | ---- |
-| TASK-024 | Actualizar comentarios en `schema.prisma` para campo `minimumBillingUnit` |           |      |
-| TASK-025 | Agregar sección en `docs/architecture.md` sobre lógica de unidad mínima   |           |      |
-| TASK-026 | Actualizar `CHANGELOG.md` con entry de feature                            |           |      |
-| TASK-027 | Crear entrada en wiki/knowledge base para administradores (cómo usar)     |           |      |
+| Task     | Description                                                               | Completed | Date       |
+| -------- | ------------------------------------------------------------------------- | --------- | ---------- |
+| TASK-024 | Actualizar comentarios en `schema.prisma` para campo `minimumBillingUnit` | ✅         | 2025-01-04 |
+| TASK-025 | Agregar sección en `docs/architecture.md` sobre lógica de unidad mínima   |           |            |
+| TASK-026 | Actualizar `CHANGELOG.md` con entry de feature                            | ✅         | 2025-01-04 |
+| TASK-027 | Crear entrada en wiki/knowledge base para administradores (cómo usar)     |           |            |
 
 **TASK-026 CHANGELOG Entry**:
 ```markdown

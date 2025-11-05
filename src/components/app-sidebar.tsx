@@ -43,7 +43,7 @@ const data = {
 		},
 		{
 			icon: GlassWater,
-			title: "Tipos de Vidrio",
+			title: "Tipos de Cristal",
 			url: "/admin/glass-types",
 		},
 		{

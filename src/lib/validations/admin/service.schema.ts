@@ -42,26 +42,47 @@ const serviceUnitSchema = z.nativeEnum(ServiceUnit, {
  * Base Service Schema
  * Shared fields for create/update operations
  */
-const baseServiceSchema = z.object({
-	name: spanishText
-		.min(
-			MIN_NAME_LENGTH,
-			`El nombre debe tener al menos ${MIN_NAME_LENGTH} caracteres`,
-		)
-		.max(
-			MAX_NAME_LENGTH,
-			`El nombre no puede exceder ${MAX_NAME_LENGTH} caracteres`,
-		)
-		.describe("Service name (e.g., Instalación, Entrega)"),
+const baseServiceSchema = z
+	.object({
+		name: spanishText
+			.min(
+				MIN_NAME_LENGTH,
+				`El nombre debe tener al menos ${MIN_NAME_LENGTH} caracteres`,
+			)
+			.max(
+				MAX_NAME_LENGTH,
+				`El nombre no puede exceder ${MAX_NAME_LENGTH} caracteres`,
+			)
+			.describe("Service name (e.g., Instalación, Entrega)"),
 
-	rate: priceValidator
-		.positive("La tarifa debe ser mayor a cero")
-		.describe("Service rate (always positive, services add cost)"),
+		rate: priceValidator
+			.positive("La tarifa debe ser mayor a cero")
+			.describe("Service rate (always positive, services add cost)"),
 
-	type: serviceTypeSchema.describe("Service type (area, perimeter, fixed)"),
+		type: serviceTypeSchema.describe("Service type (area, perimeter, fixed)"),
 
-	unit: serviceUnitSchema.describe("Measurement unit (unit, sqm, ml)"),
-});
+		unit: serviceUnitSchema.describe("Measurement unit (unit, sqm, ml)"),
+
+		minimumBillingUnit: z
+			.number()
+			.positive("La unidad mínima debe ser mayor a cero")
+			.optional()
+			.nullable()
+			.describe("Minimum billing unit (only for area/perimeter services)"),
+	})
+	.refine(
+		(data) => {
+			// If type is 'fixed', minimumBillingUnit must be null/undefined
+			if (data.type === "fixed" && data.minimumBillingUnit) {
+				return false;
+			}
+			return true;
+		},
+		{
+			message: "La unidad mínima solo aplica a servicios tipo área o perímetro",
+			path: ["minimumBillingUnit"],
+		},
+	);
 
 /**
  * Create Service Schema
@@ -144,3 +165,17 @@ export const deleteServiceSchema = z.object({
 });
 
 export type DeleteServiceInput = z.infer<typeof deleteServiceSchema>;
+
+/**
+ * Toggle Service Active Status Schema
+ */
+export const toggleServiceActiveSchema = z.object({
+	id: z.string().cuid("ID de servicio inválido"),
+	isActive: z.boolean({
+		message: "El estado activo debe ser verdadero o falso",
+	}),
+});
+
+export type ToggleServiceActiveInput = z.infer<
+	typeof toggleServiceActiveSchema
+>;

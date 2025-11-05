@@ -377,11 +377,17 @@ model GlassType {
 }
 
 model Service {
-  id            String             @id @default(cuid())
-  name          String
-  type          ServiceType
-  unit          ServiceUnit
-  rate          Decimal            @db.Decimal(12, 4)
+  id   String      @id @default(cuid())
+  name String
+  type ServiceType
+  unit ServiceUnit
+  rate Decimal     @db.Decimal(12, 4)
+
+  /// Unidad mínima de cobro (aplica solo a servicios tipo area/perimeter)
+  /// Ejemplo: Si minimumBillingUnit = 1.0 y el área calculada es 0.25m², se cobra 1.0m²
+  /// NULL significa que no hay mínimo (se cobra la cantidad calculada)
+  minimumBillingUnit Decimal? @db.Decimal(10, 4)
+
   isActive      Boolean            @default(true)
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt

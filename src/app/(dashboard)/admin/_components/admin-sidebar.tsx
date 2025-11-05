@@ -64,7 +64,7 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
 		{
 			description: "Configuraciones de vidrio",
 			icon: GlassWater,
-			title: "Tipos de Vidrio",
+			title: "Tipos de Cristal",
 			url: "/admin/glass-types",
 		},
 		{

@@ -52,9 +52,19 @@ const computeServiceQuantity = (
 	}
 
 	const baseQuantity = unitQuantity(service.unit, dimensions);
+
 	if (typeof service.quantityOverride === "number") {
 		return roundHalfUp(new Decimal(service.quantityOverride));
 	}
+
+	// Apply minimum billing unit if provided (only for area/perimeter services)
+	if (service.minimumBillingUnit) {
+		const minimumDecimal = toDecimal(service.minimumBillingUnit);
+		return baseQuantity.greaterThan(minimumDecimal)
+			? baseQuantity
+			: minimumDecimal;
+	}
+
 	return baseQuantity;
 };
 
@@ -74,6 +84,7 @@ export type PriceServiceInput = {
 	unit: ServiceUnit;
 	rate: Decimal | number | string;
 	quantityOverride?: number;
+	minimumBillingUnit?: Decimal | number | string | null;
 };
 
 export type PriceAdjustmentInput = {

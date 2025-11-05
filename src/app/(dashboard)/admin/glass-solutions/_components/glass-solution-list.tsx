@@ -175,7 +175,7 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
 								<TableHead>Nombre</TableHead>
 								<TableHead>Nombre (ES)</TableHead>
 								<TableHead>Orden</TableHead>
-								<TableHead>Tipos de Vidrio</TableHead>
+								<TableHead>Tipos de Cristal</TableHead>
 								<TableHead>Estado</TableHead>
 								<TableHead className="text-right">Acciones</TableHead>
 							</TableRow>

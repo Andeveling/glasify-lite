@@ -140,7 +140,6 @@ export const quoteRouter = createTRPCRouter({
 				});
 
 				// First, calculate the item to get the subtotal
-				// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex business logic for quote item creation with multiple validations, pricing calculations, and database operations in a transaction. This complexity is necessary and justified.
 				const calculation = await ctx.db.$transaction(async (tx) => {
 					// Get model data (profileSupplier is the new relation)
 					const model = await tx.model.findUnique({
@@ -224,6 +223,7 @@ export const quoteRouter = createTRPCRouter({
 								);
 							}
 							serviceInputs.push({
+								minimumBillingUnit: service.minimumBillingUnit,
 								quantityOverride: serviceInput.quantity,
 								rate: service.rate,
 								serviceId: service.id,
@@ -231,9 +231,7 @@ export const quoteRouter = createTRPCRouter({
 								unit: service.unit,
 							});
 						}
-					}
-
-					// Convert adjustments
+					} // Convert adjustments
 					const adjustmentInputs: PriceAdjustmentInput[] =
 						input.adjustments.map((adj) => ({
 							concept: adj.concept,
@@ -409,7 +407,6 @@ export const quoteRouter = createTRPCRouter({
 	"calculate-item": publicProcedure
 		.input(calculateItemInput)
 		.output(calculateItemOutput)
-		// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex price calculation logic with multiple validations for models, glass types, services, and adjustments. Complexity is necessary for comprehensive business logic.
 		.mutation(async ({ ctx, input }) => {
 			try {
 				logger.info("Starting item price calculation", {
@@ -471,6 +468,7 @@ export const quoteRouter = createTRPCRouter({
 							);
 						}
 						serviceInputs.push({
+							minimumBillingUnit: service.minimumBillingUnit,
 							quantityOverride: serviceInput.quantity,
 							rate: service.rate,
 							serviceId: service.id,
@@ -1081,7 +1079,6 @@ export const quoteRouter = createTRPCRouter({
 					quoteId: input.quoteId,
 				});
 
-				// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex quote submission logic with status validation, item verification, contact updates, and email notification handling. Complexity is inherent to the business requirements.
 				const result = await ctx.db.$transaction(async (tx) => {
 					// Get quote with all related data
 					const quote = await tx.quote.findUnique({
@@ -1283,7 +1280,6 @@ export const quoteRouter = createTRPCRouter({
 					.optional(),
 			}),
 		)
-		// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex price calculation query with model validation, service processing, glass type lookup, and color surcharge calculations. Necessary for complete pricing logic.
 		.query(async ({ ctx, input }) => {
 			try {
 				// Calculate base price without color
@@ -1320,6 +1316,7 @@ export const quoteRouter = createTRPCRouter({
 							});
 						}
 						serviceInputs.push({
+							minimumBillingUnit: service.minimumBillingUnit,
 							quantityOverride: serviceInput.quantity,
 							rate: service.rate,
 							serviceId: service.id,

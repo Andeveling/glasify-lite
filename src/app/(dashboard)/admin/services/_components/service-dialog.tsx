@@ -59,7 +59,7 @@ import { useServiceMutations } from "../_hooks/use-service-mutations";
 type ServiceDialogProps = {
 	mode: "create" | "edit";
 	open: boolean;
-	onOpenChange: (open: boolean) => void;
+	onOpenChangeAction: (open: boolean) => void;
 	defaultValues?: Service;
 };
 
@@ -91,11 +91,11 @@ const SERVICE_TYPE_OPTIONS: {
 export function ServiceDialog({
 	mode,
 	open,
-	onOpenChange,
+	onOpenChangeAction,
 	defaultValues,
 }: ServiceDialogProps) {
 	// Custom hooks for separation of concerns
-	const { form, handleTypeChange } = useServiceForm({
+	const { form, handleTypeChange, watchedType } = useServiceForm({
 		defaultValues,
 		mode,
 		open,
@@ -103,7 +103,7 @@ export function ServiceDialog({
 
 	const { handleCreate, handleUpdate, isPending } = useServiceMutations({
 		onSuccess: () => {
-			onOpenChange(false);
+			onOpenChangeAction(false);
 			form.reset();
 		},
 	});
@@ -118,7 +118,7 @@ export function ServiceDialog({
 	};
 
 	return (
-		<Dialog onOpenChange={onOpenChange} open={open}>
+		<Dialog onOpenChange={onOpenChangeAction} open={open}>
 			<DialogContent className="max-w-2xl">
 				<DialogHeader>
 					<DialogTitle>
@@ -207,6 +207,45 @@ export function ServiceDialog({
 							render={({ field }) => <input type="hidden" {...field} />}
 						/>
 
+						{/* Minimum Billing Unit - Only visible for area/perimeter services */}
+						{(watchedType === "area" || watchedType === "perimeter") && (
+							<FormField
+								control={form.control}
+								name="minimumBillingUnit"
+								render={({ field }) => (
+									<FormItem className="w-full">
+										<FormLabel>Unidad Mínima de Cobro (Opcional)</FormLabel>
+										<FormControl>
+											<Input
+												{...field}
+												className="w-full"
+												disabled={isPending}
+												min="0.01"
+												onChange={(e) =>
+													field.onChange(
+														e.target.value
+															? Number.parseFloat(e.target.value)
+															: null,
+													)
+												}
+												placeholder="Ej: 1.0"
+												step="0.01"
+												type="number"
+												value={field.value ?? ""}
+											/>
+										</FormControl>
+										<FormDescription>
+											Cantidad mínima a cobrar (en{" "}
+											{watchedType === "area" ? "m²" : "ml"}). Si el cálculo es
+											menor, se cobra el mínimo. Ejemplo: Si mínimo = 1.0m² y
+											área = 0.25m², se cobra 1.0m².
+										</FormDescription>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						)}
+
 						{/* Service Rate */}
 						<FormField
 							control={form.control}
@@ -239,7 +278,7 @@ export function ServiceDialog({
 						<DialogFooter>
 							<Button
 								disabled={isPending}
-								onClick={() => onOpenChange(false)}
+								onClick={() => onOpenChangeAction(false)}
 								type="button"
 								variant="outline"
 							>

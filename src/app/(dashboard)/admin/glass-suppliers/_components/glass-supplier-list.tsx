@@ -134,7 +134,7 @@ export function GlassSupplierList({
 									<TableHead className="w-[10%]">Código</TableHead>
 									<TableHead className="w-[20%]">País</TableHead>
 									<TableHead className="w-[15%] text-center">
-										Tipos de Vidrio
+										Tipos de Cristal
 									</TableHead>
 									<TableHead className="w-[15%]">Estado</TableHead>
 									<TableHead className="w-[10%] text-right">Acciones</TableHead>

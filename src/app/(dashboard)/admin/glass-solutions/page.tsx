@@ -4,8 +4,8 @@ import { api } from "@/trpc/server-client";
 import { GlassSolutionList } from "./_components/glass-solution-list";
 
 export const metadata: Metadata = {
-	description: "Gestiona las soluciones base para tipos de vidrio",
-	title: "Soluciones de Vidrio | Admin",
+	description: "Gestiona las soluciones base para tipos de cristal",
+	title: "Soluciones de cristal | Admin",
 };
 
 export default async function GlassSolutionsPage() {
@@ -20,10 +20,10 @@ export default async function GlassSolutionsPage() {
 		<div className="space-y-6">
 			<div className="space-y-2">
 				<h1 className="font-bold text-3xl tracking-tight">
-					Soluciones de Vidrio
+					Soluciones de cristal
 				</h1>
 				<p className="text-muted-foreground">
-					Gestiona las soluciones base para tipos de vidrio
+					Gestiona las soluciones base para tipos de cristal
 				</p>
 			</div>
 

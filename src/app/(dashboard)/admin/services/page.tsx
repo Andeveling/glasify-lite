@@ -83,6 +83,7 @@ export default async function ServicesPage({ searchParams }: PageProps) {
 		items: initialData.items.map((service) => ({
 			...service,
 			rate: service.rate.toNumber(),
+			minimumBillingUnit: service.minimumBillingUnit?.toNumber() ?? null,
 		})),
 	};
 

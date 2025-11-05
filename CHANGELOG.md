@@ -9,6 +9,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Activar/Desactivar Servicios** (2025-01-04)
+  - Nuevo procedimiento tRPC `admin.service.toggleActive` para cambiar el estado activo de servicios
+  - Botón de toggle en tabla de servicios con íconos Power/PowerOff
+  - Actualización optimista con rollback en caso de error
+  - Tooltips descriptivos para cada acción (editar, activar/desactivar, eliminar)
+  - Schema de validación `toggleServiceActiveSchema` con tipos TypeScript
+  - Logging de cambios de estado en Winston para auditoría
+  - Badge "Inactivo" en servicios desactivados para mejor visibilidad
+
+- **Refactorización SOLID de ServicesList** (2025-01-04)
+  - Aplicados principios SOLID (Single Responsibility, Dependency Inversion, Interface Segregation)
+  - Creado hook `useServiceActions` para centralizar lógica de mutaciones
+  - Creado componente `ServiceRowActions` para encapsular botones de acción
+  - Separación de responsabilidades: presentación vs lógica de negocio
+  - Manejo asíncrono mejorado con `mutateAsync`
+  - Código más testeable y mantenible
+
+- **Unidad Mínima de Cobro para Servicios** (2025-01-04)
+  - Los servicios tipo `area` (m²) y `perimeter` (ml) ahora soportan una unidad mínima de cobro configurable
+  - Permite cobrar un mínimo (ej: 1m²) cuando el cálculo real es menor (ej: 0.25m² se factura como 1m²)
+  - Nuevo campo `minimumBillingUnit` en modelo `Service` (Decimal nullable, opcional)
+  - Lógica de cálculo actualizada en `src/server/price/price-item.ts` con formula: `MAX(calculatedQuantity, minimumBillingUnit ?? 0)`
+  - Validación Zod condicional: solo acepta valores en servicios tipo area/perimeter, rechaza en tipo fixed
+  - UI actualizado en formulario de servicios con campo condicional (solo visible para area/perimeter)
+  - Campo con descripción clara del propósito y ejemplo de uso
+  - Migración de base de datos: `20251104134605_add_minimum_billing_unit_to_service`
+  - Tests: 10 unit tests cubriendo todos los escenarios (area, perimeter, fixed, edge cases)
+  - Backward compatible: servicios existentes funcionan sin cambios (NULL = sin mínimo)
+
 - **Edición de items del carrito con cambio de dimensiones y tipo de vidrio** (#019) (2025-01-11)
   - Modal de edición de items con validación en tiempo real
   - Cambio de dimensiones (ancho x alto) con validación de rangos (100-3000mm)
@@ -30,6 +59,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Mejor feedback visual de validación de dimensiones
 
 ### Fixed
+
+- **Error de hidratación en CartIndicator** (2025-01-04)
+  - Creado `CartIndicatorWrapper` Client Component para prevenir hydration mismatch
+  - `CartIndicator` ahora se carga con `dynamic()` y `ssr: false` para evitar conflictos con sessionStorage
+  - Agregado skeleton loader durante la carga del componente
+  - Solucionado error: "Hydration failed because the server rendered HTML didn't match the client"
+  - El carrito ahora se renderiza correctamente sin errores de consola en Next.js 16
 
 - **Imágenes de modelos no se mostraban en el carrito** (#019-BUGFIX-001) (2025-01-11)
   - Agregado `modelImageUrl` a `CreateCartItemInput` type

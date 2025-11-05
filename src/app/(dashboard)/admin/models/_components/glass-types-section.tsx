@@ -36,7 +36,7 @@ export function GlassTypesSection({ glassTypes }: GlassTypesSectionProps) {
 	return (
 		<Card className="h-fit">
 			<CardHeader>
-				<CardTitle>Tipos de Vidrio</CardTitle>
+				<CardTitle>Tipos de Cristal</CardTitle>
 				<CardDescription>Selecciona los compatibles</CardDescription>
 			</CardHeader>
 			<CardContent>
