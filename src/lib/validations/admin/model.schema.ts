@@ -87,15 +87,14 @@ const baseModelSchema = z
       .min(1, "Debe seleccionar al menos un tipo de vidrio compatible")
       .describe("Array of compatible GlassType IDs"),
 
-    costNotes: optionalSpanishText
-      .pipe(
-        z
-          .string()
-          .max(
-            MAX_COST_NOTES_LENGTH,
-            `Las notas no pueden exceder ${MAX_COST_NOTES_LENGTH} caracteres`
-          )
+    costNotes: z
+      .string()
+      .max(
+        MAX_COST_NOTES_LENGTH,
+        `Las notas no pueden exceder ${MAX_COST_NOTES_LENGTH} caracteres`
       )
+      .optional()
+      .nullable()
       .describe("Notes about cost structure"),
 
     costPerMmHeight: z
