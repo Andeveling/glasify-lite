@@ -73,6 +73,7 @@ type TRPCPriceInput = {
   heightMm: number;
   modelPrices: TRPCModelPrices;
   colorSurchargePercentage?: number;
+  profitMarginPercentage?: number;
   glass?: TRPCGlassPricing;
   services?: TRPCService[];
   adjustments?: TRPCAdjustment[];
@@ -179,6 +180,7 @@ export function adaptTRPCToDomain(
     dimensions,
     modelPrices,
     colorMultiplier,
+    profitMarginPercentage: input.profitMarginPercentage,
     glass,
     services,
     adjustments,

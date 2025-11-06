@@ -538,6 +538,7 @@ export const quoteRouter = createTRPCRouter({
             accessoryPrice: model.accessoryPrice?.toNumber(),
           },
           colorSurchargePercentage: input.colorSurchargePercentage,
+          profitMarginPercentage: model.profitMarginPercentage?.toNumber(),
           glass: {
             pricePerSqm: glassType.pricePerSqm.toNumber(),
             discountWidthMm: model.glassDiscountWidthMm,

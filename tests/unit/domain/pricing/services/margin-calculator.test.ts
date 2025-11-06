@@ -79,6 +79,25 @@ describe("MarginCalculator", () => {
   });
 
   describe("edge cases", () => {
+    it("should calculate margin on sales price (not on cost)", () => {
+      // This test demonstrates the CORRECT formula vs the WRONG formula
+
+      const cost = new Money(100);
+      const margin = 20; // 20% margin on SALES price
+
+      const result = MarginCalculator.calculateSalesPrice(cost, margin);
+
+      // ✅ CORRECT (margin on sales):
+      // salesPrice = cost / (1 - margin%) = 100 / 0.80 = $125
+      // Verification: (125 - 100) / 125 = 25/125 = 0.20 = 20% ✓
+      expect(result.toNumber()).toBe(125);
+
+      // ❌ WRONG formula would be:
+      // salesPrice = cost * (1 + margin%) = 100 * 1.20 = $120
+      // This gives: (120 - 100) / 120 = 20/120 = 0.1667 = 16.67% ✗
+      expect(result.toNumber()).not.toBe(120);
+    });
+
     it("should handle margin close to 100% (very high profit)", () => {
       const result = MarginCalculator.calculateModelSalesPrice({
         modelCost: new Money(100),

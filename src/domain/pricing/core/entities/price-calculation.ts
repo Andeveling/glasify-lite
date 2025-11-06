@@ -8,6 +8,7 @@
 import { AccessoryCalculator } from "../services/accessory-calculator";
 import { AdjustmentCalculator } from "../services/adjustment-calculator";
 import { GlassCalculator } from "../services/glass-calculator";
+import { MarginCalculator } from "../services/margin-calculator";
 import { ProfileCalculator } from "../services/profile-calculator";
 import type { ServiceAmountInput } from "../services/service-calculator";
 import { ServiceCalculator } from "../services/service-calculator";
@@ -55,6 +56,8 @@ export type PriceCalculationInput = {
   modelPrices: ModelPrices;
   /** Color surcharge multiplier (1.0 = no surcharge, 1.1 = 10% surcharge) */
   colorMultiplier: number;
+  /** Optional profit margin percentage (0-100) applied to model costs only */
+  profitMarginPercentage?: number;
   /** Optional glass pricing configuration */
   glass?: GlassPricing;
   /** Optional services to include */
@@ -73,11 +76,15 @@ export type PriceCalculationResult = {
   glassCost: Money;
   /** Accessory cost (with color surcharge if applicable) */
   accessoryCost: Money;
+  /** Model cost (profile + glass + accessory) - base for profit margin */
+  modelCost: Money;
+  /** Model sales price (modelCost with profit margin applied) */
+  modelSalesPrice: Money;
   /** Service breakdown */
   services: ServiceResult[];
   /** Adjustment breakdown */
   adjustments: AdjustmentResult[];
-  /** Final subtotal (sum of all components) */
+  /** Final subtotal (modelSalesPrice + services + adjustments) */
   subtotal: Money;
 };
 
@@ -107,8 +114,10 @@ export const PriceCalculation = {
    * 1. Profile cost (base + dimensions + color surcharge)
    * 2. Glass cost (NOT affected by color)
    * 3. Accessory cost (with color surcharge)
-   * 4. Services (NOT affected by color)
-   * 5. Adjustments (positive or negative)
+   * 4. Model cost (profile + glass + accessory)
+   * 5. Apply profit margin to model cost → model sales price
+   * 6. Services (NOT affected by color or margin)
+   * 7. Adjustments (positive or negative)
    *
    * @param input - Complete calculation input
    * @returns Immutable price breakdown with all components
@@ -118,6 +127,7 @@ export const PriceCalculation = {
       dimensions,
       modelPrices,
       colorMultiplier,
+      profitMarginPercentage,
       glass,
       services,
       adjustments,
@@ -150,20 +160,32 @@ export const PriceCalculation = {
         )
       : new Money(0);
 
-    // 4. Calculate services (NOT affected by color)
+    // 4. Calculate model cost (profile + glass + accessory)
+    const modelCost = profileCost.add(glassCost).add(accessoryCost);
+
+    // 5. Apply profit margin to model cost (NOT to services)
+    const modelSalesPrice =
+      profitMarginPercentage && profitMarginPercentage > 0
+        ? MarginCalculator.calculateSalesPrice(
+            modelCost,
+            profitMarginPercentage
+          )
+        : modelCost;
+
+    // 6. Calculate services (NOT affected by color or margin)
     const serviceResults: ServiceResult[] = services
       ? services.map((service) =>
           ServiceCalculator.calculateServiceAmount(service, dimensions)
         )
       : [];
 
-    // 5. Calculate adjustments (positive or negative)
+    // 7. Calculate adjustments (positive or negative)
     const adjustmentResults: AdjustmentResult[] = adjustments
       ? AdjustmentCalculator.calculateAdjustments(adjustments, dimensions)
       : [];
 
-    // 6. Calculate subtotal (sum all components)
-    let subtotal = profileCost.add(glassCost).add(accessoryCost);
+    // 8. Calculate subtotal (modelSalesPrice + services + adjustments)
+    let subtotal = modelSalesPrice;
 
     // Add service amounts
     for (const service of serviceResults) {
@@ -179,6 +201,8 @@ export const PriceCalculation = {
       profileCost,
       glassCost,
       accessoryCost,
+      modelCost,
+      modelSalesPrice,
       services: serviceResults,
       adjustments: adjustmentResults,
       subtotal,

@@ -48,6 +48,7 @@ export const catalogQueries = createTRPCRouter({
             minHeightMm: true,
             minWidthMm: true,
             name: true,
+            profitMarginPercentage: true, // Include profit margin for display pricing
             profileSupplier: {
               select: {
                 id: true,
@@ -372,6 +373,7 @@ export const catalogQueries = createTRPCRouter({
             minHeightMm: true,
             minWidthMm: true,
             name: true,
+            profitMarginPercentage: true, // Include profit margin for display pricing
             profileSupplier: {
               select: {
                 id: true,
