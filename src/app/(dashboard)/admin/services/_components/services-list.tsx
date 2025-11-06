@@ -221,7 +221,7 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
                   <TableHead>Tipo</TableHead>
                   <TableHead>Unidad</TableHead>
                   <TableHead className="text-right">Tarifa</TableHead>
-                  <TableHead className="w-[100px] text-right">
+                  <TableHead className="w-[200px] text-center">
                     Acciones
                   </TableHead>
                 </TableRow>
@@ -248,7 +248,7 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
                     <TableCell className="text-right">
                       {formatCurrency(service.rate)}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-center">
                       <ServiceRowActions
                         isActive={service.isActive ?? true}
                         isLoading={isLoading}

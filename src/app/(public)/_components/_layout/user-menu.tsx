@@ -3,7 +3,8 @@
 import { FileText, Loader2, LogOut, Moon, Sun, User } from "lucide-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
+import { handleSignOut } from "@/app/_actions/auth.actions";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,59 +14,32 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { authClient, useSession } from "@/lib/auth-client";
 
 type UserMenuProps = {
   userName?: string | null;
   userEmail?: string | null;
 };
 
-export function UserMenu({
-  userName: initialUserName,
-  userEmail: initialUserEmail,
-}: UserMenuProps) {
+export function UserMenu({ userName, userEmail }: UserMenuProps) {
   const { theme, setTheme } = useTheme();
-  const [isSigningOut, setIsSigningOut] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  // Use Better Auth session hook for reactive updates
-  const { data: session } = useSession();
-
-  // Prefer session data over initial props for reactivity
-  const userName = session?.user?.name ?? initialUserName;
-  const userEmail = session?.user?.email ?? initialUserEmail;
-
   /**
-   * Handle user sign out using Better Auth client
+   * Handle sign out with full page reload
    *
-   * Uses authClient.signOut() which:
-   * - Invalidates session cookie
-   * - Clears Better Auth cache automatically (cookie-cache)
-   * - Triggers useSession() to refetch
+   * Uses handleSignOut Server Action followed by window.location.href
+   * to ensure clean state and avoid "Failed to get session" errors.
    *
-   * FIXME: Using window.location.href instead of router.push() as a temporary solution
-   * because router.refresh() + useSession() are not updating the UI consistently after logout.
-   * This forces a full page reload to ensure Header component shows GuestMenu.
-   *
-   * Ideal solution would be: authClient.signOut() → useSession() updates → router.refresh()
-   * but there seems to be a race condition or cache issue preventing immediate UI update.
+   * The full reload is necessary because:
+   * - Server Components cache session within request
+   * - revalidatePath can cause race conditions
+   * - Hard reload guarantees fresh session fetch
    */
-  const onSignOut = async () => {
-    setIsSigningOut(true);
+  const onSignOut = () => {
     startTransition(async () => {
-      try {
-        // Better Auth client handles cookie invalidation
-        await authClient.signOut();
-
-        // FIXME: Hard reload to force UI update
-        // Using window.location instead of Next.js navigation
-        // to guarantee Header re-renders with fresh session state
-        window.location.href = "/catalog";
-      } catch (error) {
-        console.error("Sign out error:", error);
-        // Even on error, force reload to clear any stale state
-        window.location.href = "/catalog";
-      }
+      await handleSignOut();
+      // Hard reload to ensure clean state
+      window.location.href = "/catalog";
     });
   };
 
@@ -73,7 +47,7 @@ export function UserMenu({
     setTheme(theme === "dark" ? "light" : "dark");
   };
 
-  const isLoading = isSigningOut || isPending;
+  const isLoading = isPending;
 
   return (
     <DropdownMenu>

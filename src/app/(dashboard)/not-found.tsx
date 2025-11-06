@@ -66,7 +66,7 @@ export default function DashboardNotFound() {
               </h3>
 
               <div className="grid gap-3 md:grid-cols-2">
-                <Link href="/dashboard">
+                <Link href="/admin">
                   <Button className="h-auto w-full p-4" variant="default">
                     <div className="flex flex-col items-center gap-2">
                       <BarChart3 className="h-5 w-5" />
@@ -80,7 +80,7 @@ export default function DashboardNotFound() {
                   </Button>
                 </Link>
 
-                <Link href="/dashboard/models">
+                <Link href="/admin/models">
                   <Button className="h-auto w-full p-4" variant="outline">
                     <div className="flex flex-col items-center gap-2">
                       <Package className="h-5 w-5" />
@@ -94,7 +94,7 @@ export default function DashboardNotFound() {
                   </Button>
                 </Link>
 
-                <Link href="/dashboard/quotes">
+                <Link href="/admin/quotes">
                   <Button className="h-auto w-full p-4" variant="outline">
                     <div className="flex flex-col items-center gap-2">
                       <FileText className="h-5 w-5" />
@@ -108,7 +108,7 @@ export default function DashboardNotFound() {
                   </Button>
                 </Link>
 
-                <Link href="/dashboard/settings">
+                <Link href="/admin/settings">
                   <Button className="h-auto w-full p-4" variant="outline">
                     <div className="flex flex-col items-center gap-2">
                       <Settings className="h-5 w-5" />
@@ -124,7 +124,7 @@ export default function DashboardNotFound() {
               </div>
 
               <div className="flex flex-col items-center gap-2 pt-4">
-                <Link href="/dashboard">
+                <Link href="/admin">
                   <Button className="gap-2" variant="ghost">
                     <Home className="h-4 w-4" />
                     Volver al Dashboard
@@ -158,7 +158,7 @@ export default function DashboardNotFound() {
                     Para problemas de acceso o permisos, verifica tu{" "}
                     <Link
                       className="text-primary underline hover:no-underline"
-                      href="/dashboard/settings"
+                      href="/admin/settings"
                     >
                       configuración de usuario
                     </Link>

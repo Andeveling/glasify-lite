@@ -22,6 +22,10 @@ type SocialMediaLinksProps = {
  * Server Component that renders social media links from TenantConfig.
  * Only renders if URLs are configured (non-empty).
  *
+ * Uses Cache Components ("use cache") for static prerendering.
+ * This allows Next.js to cache the component during build time,
+ * resulting in instant visibility without blocking the page.
+ *
  * SVG icons are rendered inline and inherit currentColor for easy theming.
  * Supported platforms:
  * - Facebook (facebookUrl)
@@ -40,7 +44,9 @@ export async function SocialMediaLinks({
   variant = "default",
   className,
 }: SocialMediaLinksProps) {
-  // Fetch tenant config (cached by Prisma)
+  "use cache";
+
+  // Fetch tenant config (cached at build time)
   const tenantConfig = await db.tenantConfig.findUnique({
     where: { id: "1" },
     select: {
