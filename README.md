@@ -191,6 +191,8 @@ glasify-lite/
 ├── docs/                         # Project documentation
 │   ├── architecture.md           # Architecture with RBAC section
 │   └── prd.md                    # Product Requirements Document
+│   └── deployment/               # Deployment guides
+│       └── neon-vercel.md        # Deploy to Neon (DB) + Vercel (App)
 │
 └── specs/                        # Feature specifications
     └── 009-role-based-access/    # RBAC implementation spec
@@ -279,11 +281,18 @@ docs: update RBAC architecture diagram
 
 ## Documentation
 
+## Documentation
+
 - **[Architecture](./docs/architecture.md)** - Complete system architecture with RBAC
 - **[Pricing Domain](./src/domain/pricing/README.md)** - Pure domain layer with hexagonal architecture
 - **[PRD](./docs/prd.md)** - Product Requirements Document v1.6
 - **[CHANGELOG](./CHANGELOG.md)** - Version history and changes
 - **[Copilot Instructions](./.github/copilot-instructions.md)** - Development guidelines
+
+### Deployment Guides
+
+- **[Neon + Vercel Deployment](./docs/deployment/neon-vercel.md)** - Complete guide to deploy database and app
+- **[Neon MCP Quick Start](./docs/deployment/neon-mcp-quickstart.md)** - Set up Neon MCP server in VS Code
 
 ---
 
