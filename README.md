@@ -265,6 +265,7 @@ See `docs/architecture.md` for complete RBAC documentation.
 - **Atomic Design**: atoms (ui/) → molecules → organisms (_components/) → pages
 - **Server-First**: Leverage RSC, minimize client-side JavaScript
 - **Type Safety**: End-to-end TypeScript with Zod validation
+- **Hexagonal Architecture**: Pure domain layer with ports & adapters (see [Pricing Domain](./src/domain/pricing/README.md))
 
 ### Commit Convention
 Follow Conventional Commits format:
@@ -279,6 +280,7 @@ docs: update RBAC architecture diagram
 ## Documentation
 
 - **[Architecture](./docs/architecture.md)** - Complete system architecture with RBAC
+- **[Pricing Domain](./src/domain/pricing/README.md)** - Pure domain layer with hexagonal architecture
 - **[PRD](./docs/prd.md)** - Product Requirements Document v1.6
 - **[CHANGELOG](./CHANGELOG.md)** - Version history and changes
 - **[Copilot Instructions](./.github/copilot-instructions.md)** - Development guidelines

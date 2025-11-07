@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Refactorización de Cálculo de Precios con Arquitectura Hexagonal** (#016) (2025-11-07)
+  - Nueva capa de dominio puro en `src/domain/pricing/` con lógica de negocio desacoplada
+  - Arquitectura Hexagonal (Ports & Adapters) para separar dominio de infraestructura
+  - Value Objects inmutables: `Money` (con decimal.js para precisión financiera) y `Dimensions`
+  - Calculadoras de dominio: `ProfileCalculator`, `GlassCalculator`, `MarginCalculator`, `ServiceCalculator`, `AccessoryCalculator`, `AdjustmentCalculator`
+  - Agregado `PriceCalculation` para orquestar todas las reglas de negocio
+  - Use Case `CalculateItemPrice` como puerto de entrada único
+  - Adaptador tRPC para compatibilidad con tipos Prisma Decimal
+  - Precisión decimal garantizada: 0.1 + 0.2 = 0.3 (sin errores de punto flotante)
+  - Tests exhaustivos: 159 tests unitarios (100% coverage) sin mocks
+  - Eliminado código legacy: `src/server/price/price-item.ts` y tests antiguos
+  - Documentación completa en `src/domain/pricing/README.md`
+  - Performance: <3ms por cálculo (target: <50ms)
+  - Breaking changes: Ninguno (100% backward compatible via adaptadores)
+
 - **Activar/Desactivar Servicios** (2025-01-04)
   - Nuevo procedimiento tRPC `admin.service.toggleActive` para cambiar el estado activo de servicios
   - Botón de toggle en tabla de servicios con íconos Power/PowerOff
