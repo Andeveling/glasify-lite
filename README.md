@@ -191,6 +191,8 @@ glasify-lite/
 ├── docs/                         # Project documentation
 │   ├── architecture.md           # Architecture with RBAC section
 │   └── prd.md                    # Product Requirements Document
+│   └── deployment/               # Deployment guides
+│       └── neon-vercel.md        # Deploy to Neon (DB) + Vercel (App)
 │
 └── specs/                        # Feature specifications
     └── 009-role-based-access/    # RBAC implementation spec
