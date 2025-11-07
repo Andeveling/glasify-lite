@@ -89,7 +89,7 @@ export default function SignInForm({
 
       // Better Auth Google sign in
       await signIn.social({
-        callbackURL: "/dashboard",
+        callbackURL: "/admin",
         provider: "google",
       });
     } catch {

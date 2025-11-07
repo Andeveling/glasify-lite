@@ -1,6 +1,7 @@
 "use client";
 
 import { LogOut } from "lucide-react";
+import { useTransition } from "react";
 import { handleSignOut } from "@/app/_actions/auth.actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -28,6 +29,26 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+  const [isPending, startTransition] = useTransition();
+
+  /**
+   * Handle sign out with full page reload
+   *
+   * Uses handleSignOut Server Action followed by window.location.href
+   * to ensure clean state and avoid "Failed to get session" errors.
+   *
+   * The full reload is necessary because:
+   * - Server Components cache session within request
+   * - revalidatePath can cause race conditions
+   * - Hard reload guarantees fresh session fetch
+   */
+  const onSignOut = () => {
+    startTransition(async () => {
+      await handleSignOut();
+      // Hard reload to ensure clean state
+      window.location.href = "/catalog";
+    });
+  };
 
   return (
     <SidebarMenu>
@@ -71,13 +92,15 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <form action={handleSignOut}>
-                <button className="flex w-full items-center" type="submit">
-                  <LogOut />
-                  Cerrar sesión
-                </button>
-              </form>
+            <DropdownMenuItem asChild disabled={isPending}>
+              <button
+                className="flex w-full cursor-pointer items-center"
+                onClick={onSignOut}
+                type="button"
+              >
+                <LogOut />
+                {isPending ? "Cerrando sesión..." : "Cerrar sesión"}
+              </button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

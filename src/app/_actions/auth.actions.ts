@@ -9,9 +9,7 @@
 
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { auth } from "@/server/auth";
 
 /**
@@ -19,36 +17,34 @@ import { auth } from "@/server/auth";
  *
  * Performs complete logout flow for Next.js 16 + Better Auth:
  * 1. Signs out user session via Better Auth API
- * 2. Revalidates all routes to clear cached session data
- * 3. Redirects to catalog page (public)
+ * 2. Returns success to trigger client-side full reload
  *
- * This ensures:
- * - Session cookie is deleted
- * - Server Components fetch fresh session data
- * - Client-side useSession() refetches
- * - User is redirected away from protected pages
+ * Note: We use window.location.href for full page reload instead of
+ * Next.js redirect() to avoid "Failed to get session" errors on
+ * subsequent navigation. This ensures clean state on logout.
  *
- * @example
+ * @example Client Component
  * ```tsx
  * import { handleSignOut } from "@/app/_actions/auth.actions";
+ * import { useTransition } from "react";
  *
- * <form action={handleSignOut}>
- *   <Button type="submit">Cerrar Sesión</Button>
- * </form>
+ * const [isPending, startTransition] = useTransition();
+ *
+ * const onSignOut = () => {
+ *   startTransition(async () => {
+ *     await handleSignOut();
+ *     window.location.href = "/catalog";
+ *   });
+ * };
  * ```
  */
 export async function handleSignOut() {
   // Sign out user via Better Auth
+  // This deletes the session cookie automatically
   await auth.api.signOut({
     headers: await headers(),
   });
 
-  // ✅ CRITICAL: Revalidate all routes to clear cached session data
-  // This forces Server Components to re-fetch session on next render
-  // Without this, Next.js 16 serves stale cached pages with old session
-  revalidatePath("/", "layout");
-
-  // ✅ CRITICAL: Redirect to public page
-  // This ensures user leaves protected pages and clears any client state
-  redirect("/catalog");
+  // Return success - client will handle redirect with full reload
+  // This avoids "Failed to get session" errors on navigation
 }

@@ -261,7 +261,7 @@ function QuickActions() {
           <Button asChild className="h-auto justify-start p-4">
             <Link
               className="flex flex-col items-start gap-1"
-              href="/dashboard/models"
+              href="/admin/models"
             >
               <div className="flex items-center gap-2">
                 <Plus className="h-4 w-4" />

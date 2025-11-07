@@ -88,14 +88,17 @@ const data = {
       url: "/admin/glass-solutions",
     },
   ],
-  user: {
-    avatar: "/avatars/shadcn.jpg",
-    email: "admin@glasify.com",
-    name: "Admin",
-  },
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  user?: {
+    name: string;
+    email: string;
+    avatar: string;
+  } | null;
+}
+
+export function AppSidebar({ user, ...props }: AppSidebarProps) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -154,9 +157,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/* Secondary navigation */}
         <NavSecondary className="mt-auto" items={data.navSecondary} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
+      <SidebarFooter>{user && <NavUser user={user} />}</SidebarFooter>
     </Sidebar>
   );
 }
