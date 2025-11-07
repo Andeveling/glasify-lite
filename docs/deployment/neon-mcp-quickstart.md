@@ -86,13 +86,13 @@ pnpm seed:full      # Catálogo completo
 
 ### Ventajas vs conexión directa
 
-| Aspecto | MCP Server | Conexión Directa |
-|---------|------------|------------------|
-| Credenciales | Ocultas en VS Code | En `.env` |
-| Cambio de branch | UI visual en VS Code | Editar `.env` |
-| Desarrollo offline | ❌ Requiere internet | ✅ Con PostgreSQL local |
-| Velocidad | Proxy local (rápido) | Depende de latencia |
-| Migraciones complejas | ⚠️ Puede fallar | ✅ Más estable |
+| Aspecto               | MCP Server           | Conexión Directa       |
+| --------------------- | -------------------- | ---------------------- |
+| Credenciales          | Ocultas en VS Code   | En `.env`              |
+| Cambio de branch      | UI visual en VS Code | Editar `.env`          |
+| Desarrollo offline    | ❌ Requiere internet  | ✅ Con PostgreSQL local |
+| Velocidad             | Proxy local (rápido) | Depende de latencia    |
+| Migraciones complejas | ⚠️ Puede fallar       | ✅ Más estable          |
 
 ### Recomendaciones
 
