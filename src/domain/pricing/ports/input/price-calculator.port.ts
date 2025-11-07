@@ -13,7 +13,7 @@
 export type {
   PriceCalculationInput,
   PriceCalculationResult,
-} from '@/domain/pricing/core/entities/price-calculation';
+} from "@/domain/pricing/core/entities/price-calculation";
 
 /**
  * Input port for price calculation use case
@@ -42,8 +42,8 @@ export type PriceCalculatorPort = {
    * @throws Error if validation fails (e.g., margin >= 100%)
    */
   calculateItemPrice(
-    input: import('@/domain/pricing/core/entities/price-calculation').PriceCalculationInput
-  ): Promise<import('@/domain/pricing/core/entities/price-calculation').PriceCalculationResult>;
+    input: import("@/domain/pricing/core/entities/price-calculation").PriceCalculationInput
+  ): Promise<
+    import("@/domain/pricing/core/entities/price-calculation").PriceCalculationResult
+  >;
 };
-
-

@@ -8,14 +8,12 @@
  * 3. Backward compatibility with existing `calculatePriceItem` API
  * 4. Edge case handling (Decimal types, null values, optional fields)
  */
-/** biome-ignore-all lint/style/noMagicNumbers: <explanation> */
-
-// biome-ignore lint/style/noMagicNumbers: Test file with expected numeric literal values for assertions
+/** biome-ignore-all lint/style/noMagicNumbers: Test file contains expected numeric values for assertions */
 
 import { Decimal } from "@prisma/client/runtime/library";
 import { describe, expect, it } from "vitest";
+import type { PriceItemCalculationInput } from "@/domain/pricing/adapters/trpc/price-calculator.adapter";
 import { calculateItemPriceAdapter } from "@/domain/pricing/adapters/trpc/price-calculator.adapter";
-import type { PriceItemCalculationInput } from "@/server/price/price-item";
 
 describe("calculateItemPriceAdapter", () => {
   describe("Basic Price Calculation", () => {
