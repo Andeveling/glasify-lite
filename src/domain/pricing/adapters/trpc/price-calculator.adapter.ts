@@ -15,10 +15,59 @@ import { Dimensions } from "@/domain/pricing/core/entities/dimensions";
 import { Money } from "@/domain/pricing/core/entities/money";
 import type { ServiceUnit } from "@/domain/pricing/core/types";
 import { CalculateItemPrice } from "@/domain/pricing/use-cases/calculate-item-price";
-import type {
-  PriceItemCalculationInput,
-  PriceItemCalculationResult,
-} from "@/server/price/price-item";
+
+/**
+ * Legacy tRPC types for backward compatibility
+ * These types maintain the existing API contract
+ */
+export type PriceItemCalculationInput = {
+  widthMm: number;
+  heightMm: number;
+  model: {
+    basePrice: Decimal | number;
+    costPerMmWidth: Decimal | number;
+    costPerMmHeight: Decimal | number;
+    accessoryPrice?: Decimal | number | null;
+  };
+  includeAccessory?: boolean;
+  colorSurchargePercentage?: number;
+  glass?: {
+    pricePerSqm: Decimal | number;
+    discountWidthMm?: number;
+    discountHeightMm?: number;
+  };
+  services?: Array<{
+    serviceId: string;
+    type: "fixed" | "variable";
+    unit: string;
+    rate: Decimal | number;
+    minimumBillingUnit?: Decimal | number;
+    quantityOverride?: number;
+  }>;
+  adjustments?: Array<{
+    concept: string;
+    unit: string;
+    sign: "positive" | "negative";
+    value: Decimal | number;
+  }>;
+};
+
+export type PriceItemCalculationResult = {
+  dimPrice: number;
+  accPrice: number;
+  colorSurchargePercentage?: number;
+  colorSurchargeAmount?: number;
+  services: Array<{
+    serviceId: string;
+    quantity: number;
+    amount: number;
+  }>;
+  adjustments: Array<{
+    concept: string;
+    amount: number;
+  }>;
+  subtotal: number;
+};
 
 /**
  * Constants for percentage calculations
