@@ -13,7 +13,7 @@ post_date: "2025-11-07"
 
 ## Objetivo
 
-Configurar una base de datos PostgreSQL administrada en Neon y desplegar la app Next.js 15 en Vercel usando Prisma 6.17.0. Incluye migraciones, seeds y variables de entorno.
+Configurar una base de datos PostgreSQL administrada en Neon y desplegar la app Next.js 16 en Vercel usando Prisma 6.17.0. Incluye migraciones, seeds y variables de entorno.
 
 ## Requisitos
 
