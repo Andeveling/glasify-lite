@@ -15,7 +15,8 @@
     "noEmit": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "jsx": "preserve",
+    "jsx": "react-jsx",
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
     "plugins": [
       {
         "name": "next"
@@ -33,7 +34,8 @@
       "@views/catalog/*": ["./src/app/(public)/catalog/*"],
       "@views/components/*": ["./src/app/_components/*"],
       "@views/dashboard/*": ["./src/app/(dashboard)/*"],
-      "@views/quote/*": ["./src/app/(public)/quote/*"]
+      "@views/quote/*": ["./src/app/(public)/quote/*"],
+      "@domain/pricing/*": ["./src/domain/pricing/*"]
     },
     "strictNullChecks": true
   },
@@ -44,16 +46,8 @@
     "**/*.cjs",
     "**/*.js",
     ".next/types/**/*.ts",
-    "src/app/(public)/catalog/[modelId]/page.tsx.bak"
+    "src/app/(public)/catalog/[modelId]/page.tsx.bak",
+    ".next/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/*.spec.ts",
-    "**/*.spec.tsx",
-    "src/tests/**/*",
-    "__tests__/**/*",
-    "e2e/**/*"
-  ]
+  "exclude": ["node_modules", "e2e/**/*"]
 }

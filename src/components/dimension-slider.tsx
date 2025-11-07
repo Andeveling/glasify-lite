@@ -1,5 +1,5 @@
-import { Slider } from '@/components/ui/slider';
-import { cn } from '@/lib/utils';
+import { Slider } from "@/components/ui/slider";
+import { cn } from "@/lib/utils";
 
 type DimensionSliderProps = {
   value: number;
@@ -7,7 +7,7 @@ type DimensionSliderProps = {
   min: number;
   max: number;
   step?: number;
-  trackColor?: 'muted' | 'secondary' | 'border' | 'destructive' | 'success';
+  trackColor?: "muted" | "secondary" | "border" | "destructive" | "success";
   className?: string;
 };
 
@@ -23,7 +23,7 @@ export function DimensionSlider({
   min,
   max,
   step = 10,
-  trackColor = 'secondary',
+  trackColor = "secondary",
   className,
 }: DimensionSliderProps) {
   // Map track colors to Tailwind classes for the empty track
@@ -36,10 +36,10 @@ export function DimensionSlider({
   };
 
   return (
-    <div className={cn('px-2', className)}>
+    <div className={cn("px-2", className)}>
       <Slider
         className={cn(
-          'my-4 h-3 rounded-2xl border-2 p-1 [&_[role=slider]]:h-5 [&_[role=slider]]:w-5',
+          "my-4 h-3 rounded-2xl border-2 p-1 [&_[role=slider]]:h-5 [&_[role=slider]]:w-5",
           trackColorMap[trackColor]
         )}
         max={max}

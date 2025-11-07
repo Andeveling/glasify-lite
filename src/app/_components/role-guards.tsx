@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react';
-import { auth } from '@/server/auth';
+import { headers } from "next/headers";
+import type { ReactNode } from "react";
+import { auth } from "@/server/auth";
 
 /**
  * Admin Only Component
@@ -22,9 +23,17 @@ import { auth } from '@/server/auth';
  * @param fallback - Optional content to render for non-admins
  * @returns Children if admin, fallback or null otherwise
  */
-export async function AdminOnly({ children, fallback }: { children: ReactNode; fallback?: ReactNode }) {
-  const session = await auth();
-  const isAdmin = session?.user?.role === 'admin';
+export async function AdminOnly({
+  children,
+  fallback,
+}: {
+  children: ReactNode;
+  fallback?: ReactNode;
+}) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  const isAdmin = session?.user?.role === "admin";
 
   if (!isAdmin) {
     return fallback ?? null;
@@ -52,10 +61,18 @@ export async function AdminOnly({ children, fallback }: { children: ReactNode; f
  * @param fallback - Optional content to render for non-sellers
  * @returns Children if seller or admin, fallback or null otherwise
  */
-export async function SellerOnly({ children, fallback }: { children: ReactNode; fallback?: ReactNode }) {
-  const session = await auth();
-  const isSeller = session?.user?.role === 'seller';
-  const isAdmin = session?.user?.role === 'admin';
+export async function SellerOnly({
+  children,
+  fallback,
+}: {
+  children: ReactNode;
+  fallback?: ReactNode;
+}) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  const isSeller = session?.user?.role === "seller";
+  const isAdmin = session?.user?.role === "admin";
 
   if (!(isSeller || isAdmin)) {
     return fallback ?? null;
@@ -83,8 +100,16 @@ export async function SellerOnly({ children, fallback }: { children: ReactNode; 
  * @param fallback - Optional content to render for guests
  * @returns Children if authenticated, fallback or null otherwise
  */
-export async function AuthenticatedOnly({ children, fallback }: { children: ReactNode; fallback?: ReactNode }) {
-  const session = await auth();
+export async function AuthenticatedOnly({
+  children,
+  fallback,
+}: {
+  children: ReactNode;
+  fallback?: ReactNode;
+}) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
   const isAuthenticated = !!session?.user;
 
   if (!isAuthenticated) {

@@ -1,10 +1,16 @@
-'use client';
+"use client";
 
-import { Filter, Search, X } from 'lucide-react';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Filter, Search, X } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type FilterOptions = {
   manufacturerId?: string;
@@ -19,19 +25,30 @@ type ModelFilterProps = {
   onFilterChange: (filters: FilterOptions) => void;
 };
 
-export function ModelFilter({ manufacturers, types, initialFilters = {}, onFilterChange }: ModelFilterProps) {
-  const [searchQuery, setSearchQuery] = useState(initialFilters.q || '');
-  const [selectedManufacturer, setSelectedManufacturer] = useState(initialFilters.manufacturerId || 'all');
-  const [selectedType, setSelectedType] = useState(initialFilters.type || 'all');
+export function ModelFilter({
+  manufacturers,
+  types,
+  initialFilters = {},
+  onFilterChange,
+}: ModelFilterProps) {
+  const [searchQuery, setSearchQuery] = useState(initialFilters.q || "");
+  const [selectedManufacturer, setSelectedManufacturer] = useState(
+    initialFilters.manufacturerId || "all"
+  );
+  const [selectedType, setSelectedType] = useState(
+    initialFilters.type || "all"
+  );
 
   const hasActiveFilters = Boolean(
-    searchQuery || (selectedManufacturer && selectedManufacturer !== 'all') || (selectedType && selectedType !== 'all')
+    searchQuery ||
+      (selectedManufacturer && selectedManufacturer !== "all") ||
+      (selectedType && selectedType !== "all")
   );
 
   const clearAllFilters = () => {
-    setSearchQuery('');
-    setSelectedManufacturer('all');
-    setSelectedType('all');
+    setSearchQuery("");
+    setSelectedManufacturer("all");
+    setSelectedType("all");
     onFilterChange({});
   };
 
@@ -43,10 +60,10 @@ export function ModelFilter({ manufacturers, types, initialFilters = {}, onFilte
     if (value.trim()) {
       filters.q = value.trim();
     }
-    if (selectedManufacturer && selectedManufacturer !== 'all') {
+    if (selectedManufacturer && selectedManufacturer !== "all") {
       filters.manufacturerId = selectedManufacturer;
     }
-    if (selectedType && selectedType !== 'all') {
+    if (selectedType && selectedType !== "all") {
       filters.type = selectedType;
     }
 
@@ -60,10 +77,10 @@ export function ModelFilter({ manufacturers, types, initialFilters = {}, onFilte
     if (searchQuery.trim()) {
       filters.q = searchQuery.trim();
     }
-    if (value && value !== 'all') {
+    if (value && value !== "all") {
       filters.manufacturerId = value;
     }
-    if (selectedType && selectedType !== 'all') {
+    if (selectedType && selectedType !== "all") {
       filters.type = selectedType;
     }
     onFilterChange(filters);
@@ -75,34 +92,34 @@ export function ModelFilter({ manufacturers, types, initialFilters = {}, onFilte
     if (searchQuery.trim()) {
       filters.q = searchQuery.trim();
     }
-    if (selectedManufacturer && selectedManufacturer !== 'all') {
+    if (selectedManufacturer && selectedManufacturer !== "all") {
       filters.manufacturerId = selectedManufacturer;
     }
-    if (value && value !== 'all') {
+    if (value && value !== "all") {
       filters.type = value;
     }
     onFilterChange(filters);
   };
 
   const _removeManufacturerFilter = () => {
-    setSelectedManufacturer('all');
+    setSelectedManufacturer("all");
     const filters: FilterOptions = {};
     if (searchQuery.trim()) {
       filters.q = searchQuery.trim();
     }
-    if (selectedType && selectedType !== 'all') {
+    if (selectedType && selectedType !== "all") {
       filters.type = selectedType;
     }
     onFilterChange(filters);
   };
 
   const _removeTypeFilter = () => {
-    setSelectedType('all');
+    setSelectedType("all");
     const filters: FilterOptions = {};
     if (searchQuery.trim()) {
       filters.q = searchQuery.trim();
     }
-    if (selectedManufacturer && selectedManufacturer !== 'all') {
+    if (selectedManufacturer && selectedManufacturer !== "all") {
       filters.manufacturerId = selectedManufacturer;
     }
     onFilterChange(filters);
@@ -140,7 +157,10 @@ export function ModelFilter({ manufacturers, types, initialFilters = {}, onFilte
         </div>
 
         {/* Fabricante Filter */}
-        <Select onValueChange={handleManufacturerChange} value={selectedManufacturer}>
+        <Select
+          onValueChange={handleManufacturerChange}
+          value={selectedManufacturer}
+        >
           <SelectTrigger aria-label="Filtrar por fabricante">
             <SelectValue placeholder="Todos los manufacturer" />
           </SelectTrigger>

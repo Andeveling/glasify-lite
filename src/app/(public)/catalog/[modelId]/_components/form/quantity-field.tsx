@@ -1,9 +1,20 @@
-import { Minus, Package, Plus } from 'lucide-react';
-import type { Control, FieldValues, Path } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/input-group';
-import { cn } from '@/lib/utils';
+import { Minus, Package, Plus } from "lucide-react";
+import type { Control, FieldValues, Path } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from "@/components/ui/input-group";
+import { cn } from "@/lib/utils";
 
 type QuantityFieldProps<T extends FieldValues> = {
   control: Control<T>;
@@ -29,7 +40,12 @@ type QuantityFieldProps<T extends FieldValues> = {
  * - Disabled states prevent invalid inputs
  * - Harmonious button design with consistent spacing and sizing
  */
-export function QuantityField<T extends FieldValues>({ control, max = 999, min = 1, name }: QuantityFieldProps<T>) {
+export function QuantityField<T extends FieldValues>({
+  control,
+  max = 999,
+  min = 1,
+  name,
+}: QuantityFieldProps<T>) {
   return (
     <FormField
       control={control}
@@ -53,8 +69,8 @@ export function QuantityField<T extends FieldValues>({ control, max = 999, min =
 
         const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           const value = e.target.value;
-          if (value === '') {
-            field.onChange('');
+          if (value === "") {
+            field.onChange("");
             return;
           }
           const numValue = Number(value);
@@ -82,10 +98,10 @@ export function QuantityField<T extends FieldValues>({ control, max = 999, min =
                 {/* Decrement Button */}
                 <Button
                   className={cn(
-                    'shrink-0 rounded-lg transition-all duration-200',
+                    "shrink-0 rounded-lg transition-all duration-200",
                     canDecrement
-                      ? 'hover:bg-primary/10 hover:text-primary hover:shadow-md'
-                      : 'cursor-not-allowed opacity-40'
+                      ? "hover:bg-primary/10 hover:text-primary hover:shadow-md"
+                      : "cursor-not-allowed opacity-40"
                   )}
                   disabled={!canDecrement}
                   onClick={handleDecrement}
@@ -108,7 +124,7 @@ export function QuantityField<T extends FieldValues>({ control, max = 999, min =
                     onChange={handleInputChange}
                     placeholder={String(min)}
                     type="number"
-                    value={field.value || ''}
+                    value={field.value || ""}
                   />
                   <InputGroupAddon align="inline-end">
                     <InputGroupText>Unidades</InputGroupText>
@@ -121,10 +137,10 @@ export function QuantityField<T extends FieldValues>({ control, max = 999, min =
                 {/* Increment Button */}
                 <Button
                   className={cn(
-                    'shrink-0 rounded-lg transition-all duration-200',
+                    "shrink-0 rounded-lg transition-all duration-200",
                     canIncrement
-                      ? 'hover:bg-primary/10 hover:text-primary hover:shadow-md'
-                      : 'cursor-not-allowed opacity-40'
+                      ? "hover:bg-primary/10 hover:text-primary hover:shadow-md"
+                      : "cursor-not-allowed opacity-40"
                   )}
                   disabled={!canIncrement}
                   onClick={handleIncrement}
@@ -138,9 +154,6 @@ export function QuantityField<T extends FieldValues>({ control, max = 999, min =
               </div>
             </FormControl>
 
-            <FormDescription>
-              Selecciona la cantidad de unidades que deseas cotizar (mínimo {min}, máximo {max})
-            </FormDescription>
             <FormMessage />
           </FormItem>
         );

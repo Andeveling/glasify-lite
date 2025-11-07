@@ -30,12 +30,12 @@
  * @see TECH-002: tRPC procedures for list/filter/sort
  */
 
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from "@prisma/client";
 
 /**
  * Search configuration for building WHERE clauses
  */
-export interface SearchConfig {
+export type SearchConfig = {
   /**
    * Fields to search with ILIKE (case-insensitive partial match)
    * Used for full-text search across multiple columns
@@ -59,32 +59,35 @@ export interface SearchConfig {
    * Example: { createdAt: 'createdAt' }
    */
   dateRange?: Record<string, string>;
-}
+};
 
 /**
  * Parsed filter parameters from URL
  */
-export interface FilterParams {
+export type FilterParams = {
   search?: string;
   [key: string]: string | number | boolean | undefined;
-}
+};
 
 /**
  * Parsed sort parameters from URL
  */
-export interface SortParams {
+export type SortParams = {
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
-}
+  sortOrder?: "asc" | "desc";
+};
 
 /**
  * Build search OR clause
  */
-function buildSearchClause(search: string, searchFields: string[]): Record<string, unknown>[] {
+function buildSearchClause(
+  search: string,
+  searchFields: string[]
+): Record<string, unknown>[] {
   return searchFields.map((field) => ({
     [field]: {
       contains: search,
-      mode: 'insensitive' as Prisma.QueryMode,
+      mode: "insensitive" as Prisma.QueryMode,
     },
   }));
 }
@@ -92,12 +95,15 @@ function buildSearchClause(search: string, searchFields: string[]): Record<strin
 /**
  * Build exact match filters
  */
-function buildExactFilters(filters: FilterParams, exactConfig: Record<string, string>): Record<string, unknown> {
+function buildExactFilters(
+  filters: FilterParams,
+  exactConfig: Record<string, string>
+): Record<string, unknown> {
   const exactFilters: Record<string, unknown> = {};
 
   for (const [filterKey, dbField] of Object.entries(exactConfig)) {
     const value = filters[filterKey];
-    if (value !== undefined && value !== null && value !== '') {
+    if (value !== undefined && value !== null && value !== "") {
       exactFilters[dbField] = value;
     }
   }
@@ -108,7 +114,10 @@ function buildExactFilters(filters: FilterParams, exactConfig: Record<string, st
 /**
  * Build numeric range filters
  */
-function buildRangeFilters(filters: FilterParams, rangeConfig: Record<string, string>): Record<string, unknown> {
+function buildRangeFilters(
+  filters: FilterParams,
+  rangeConfig: Record<string, string>
+): Record<string, unknown> {
   const rangeFilters: Record<string, unknown> = {};
 
   for (const [filterKey, dbField] of Object.entries(rangeConfig)) {
@@ -118,10 +127,12 @@ function buildRangeFilters(filters: FilterParams, rangeConfig: Record<string, st
     if (minValue !== undefined || maxValue !== undefined) {
       rangeFilters[dbField] = {};
       if (minValue !== undefined) {
-        (rangeFilters[dbField] as Record<string, unknown>).gte = Number(minValue);
+        (rangeFilters[dbField] as Record<string, unknown>).gte =
+          Number(minValue);
       }
       if (maxValue !== undefined) {
-        (rangeFilters[dbField] as Record<string, unknown>).lte = Number(maxValue);
+        (rangeFilters[dbField] as Record<string, unknown>).lte =
+          Number(maxValue);
       }
     }
   }
@@ -145,10 +156,14 @@ function buildDateRangeFilters(
     if (startDate !== undefined || endDate !== undefined) {
       dateFilters[dbField] = {};
       if (startDate !== undefined) {
-        (dateFilters[dbField] as Record<string, unknown>).gte = new Date(String(startDate));
+        (dateFilters[dbField] as Record<string, unknown>).gte = new Date(
+          String(startDate)
+        );
       }
       if (endDate !== undefined) {
-        (dateFilters[dbField] as Record<string, unknown>).lte = new Date(String(endDate));
+        (dateFilters[dbField] as Record<string, unknown>).lte = new Date(
+          String(endDate)
+        );
       }
     }
   }
@@ -201,12 +216,13 @@ export function buildTableWhereClause<T extends Record<string, unknown>>(
  */
 export function buildTableOrderByClause<T extends Record<string, unknown>>(
   sort: SortParams,
-  defaultSort: { sortBy: string; sortOrder: 'asc' | 'desc' } = {
-    sortBy: 'createdAt',
-    sortOrder: 'desc',
+  defaultSort: { sortBy: string; sortOrder: "asc" | "desc" } = {
+    sortBy: "createdAt",
+    sortOrder: "desc",
   }
 ): T {
-  const { sortBy = defaultSort.sortBy, sortOrder = defaultSort.sortOrder } = sort;
+  const { sortBy = defaultSort.sortBy, sortOrder = defaultSort.sortOrder } =
+    sort;
 
   return {
     [sortBy]: sortOrder,
@@ -220,8 +236,13 @@ export function buildTableOrderByClause<T extends Record<string, unknown>>(
  * @param allowedFields - Array of allowed field names
  * @returns True if field is allowed, false otherwise
  */
-export function isValidSortField(sortBy: string | undefined, allowedFields: string[]): boolean {
-  if (!sortBy) return true; // Allow no sort field (use default)
+export function isValidSortField(
+  sortBy: string | undefined,
+  allowedFields: string[]
+): boolean {
+  if (!sortBy) {
+    return true; // Allow no sort field (use default)
+  }
   return allowedFields.includes(sortBy);
 }
 
@@ -238,9 +259,15 @@ const MAX_PAGE_SIZE = 100;
  * @param pageSize - Number of items per page
  * @returns Prisma skip and take parameters
  */
-export function buildPaginationParams(page: number, pageSize: number): { skip: number; take: number } {
+export function buildPaginationParams(
+  page: number,
+  pageSize: number
+): { skip: number; take: number } {
   const currentPage = Math.max(1, page); // Ensure page is at least 1
-  const itemsPerPage = Math.max(MIN_PAGE_SIZE, Math.min(MAX_PAGE_SIZE, pageSize));
+  const itemsPerPage = Math.max(
+    MIN_PAGE_SIZE,
+    Math.min(MAX_PAGE_SIZE, pageSize)
+  );
 
   return {
     skip: (currentPage - 1) * itemsPerPage,

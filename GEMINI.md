@@ -154,7 +154,7 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Don't use configured elements.
 - Don't hardcode sensitive data like API keys and tokens.
 - Don't let variable declarations shadow variables from outer scopes.
-- Don't use the TypeScript directive @ts-ignore.
+- Don't use the TypeScript directive <!-- Import failed: ts-ignore. - ENOENT: no such file or directory, access '/home/andres/Proyectos/glasify-lite/ts-ignore.' -->
 - Prevent duplicate polyfills from Polyfill.io.
 - Don't use useless backreferences in regular expressions that always match empty strings.
 - Don't use unnecessary escapes in string literals.

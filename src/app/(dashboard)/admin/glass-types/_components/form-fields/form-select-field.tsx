@@ -12,18 +12,31 @@
  * @module _components/form-fields/form-select-field
  */
 
-'use client';
+"use client";
 
-import type { Control, FieldPath, FieldValues } from 'react-hook-form';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import type { Control, FieldPath, FieldValues } from "react-hook-form";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-interface SelectOption {
+type SelectOption = {
   value: string;
   label: string;
-}
+};
 
-interface FormSelectFieldProps<TFieldValues extends FieldValues> {
+type FormSelectFieldProps<TFieldValues extends FieldValues> = {
   control: Control<TFieldValues>;
   name: FieldPath<TFieldValues>;
   label: string;
@@ -32,7 +45,7 @@ interface FormSelectFieldProps<TFieldValues extends FieldValues> {
   options: SelectOption[];
   required?: boolean;
   disabled?: boolean;
-}
+};
 
 /**
  * Reusable select field component
@@ -41,7 +54,7 @@ export function FormSelectField<TFieldValues extends FieldValues>({
   control,
   name,
   label,
-  placeholder = 'Selecciona una opción',
+  placeholder = "Selecciona una opción",
   description,
   options,
   required = false,
@@ -55,9 +68,13 @@ export function FormSelectField<TFieldValues extends FieldValues>({
         <FormItem>
           <FormLabel>
             {label}
-            {required && ' *'}
+            {required && " *"}
           </FormLabel>
-          <Select disabled={disabled} onValueChange={field.onChange} value={field.value}>
+          <Select
+            disabled={disabled}
+            onValueChange={field.onChange}
+            value={field.value}
+          >
             <FormControl>
               <SelectTrigger>
                 <SelectValue placeholder={placeholder} />

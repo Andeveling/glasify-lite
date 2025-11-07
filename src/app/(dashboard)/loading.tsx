@@ -1,6 +1,7 @@
-import { generateStableKeyedArray } from '@/app/_utils/generate-keys.util';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { Skeleton } from '@/components/ui/skeleton';
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: Using array index as key is acceptable here because skeleton items are purely presentational and do not require stable identity. */
+/** biome-ignore-all lint/style/noMagicNumbers: Magic numbers are used intentionally for animation delays and skeleton layout to match the design specification. */
+import { generateStableKeyedArray } from "@/app/_utils/generate-keys.util";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const NAV_SKELETON_COUNT = 6;
 const STATS_CARD_COUNT = 4;
@@ -9,10 +10,13 @@ const TABLE_ROW_COUNT = 8;
 const TABLE_CELL_COUNT = 5;
 
 export default function DashboardLoading() {
-  const navItems = generateStableKeyedArray(NAV_SKELETON_COUNT, 'nav-skeleton');
-  const statsCards = generateStableKeyedArray(STATS_CARD_COUNT, 'stats-card');
-  const tableHeaders = generateStableKeyedArray(TABLE_HEADER_COUNT, 'table-header');
-  const tableRows = generateStableKeyedArray(TABLE_ROW_COUNT, 'table-row');
+  const navItems = generateStableKeyedArray(NAV_SKELETON_COUNT, "nav-skeleton");
+  const statsCards = generateStableKeyedArray(STATS_CARD_COUNT, "stats-card");
+  const tableHeaders = generateStableKeyedArray(
+    TABLE_HEADER_COUNT,
+    "table-header"
+  );
+  const tableRows = generateStableKeyedArray(TABLE_ROW_COUNT, "table-row");
 
   return (
     <div className="flex h-screen bg-background">
@@ -68,7 +72,10 @@ export default function DashboardLoading() {
           {/* Stats cards skeleton */}
           <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {statsCards.map((item) => (
-              <div className="space-y-3 rounded-lg border border-border p-4" key={item.key}>
+              <div
+                className="space-y-3 rounded-lg border border-border p-4"
+                key={item.key}
+              >
                 <div className="flex items-center justify-between">
                   <Skeleton className="h-4 w-20" />
                   <Skeleton className="h-4 w-4" />
@@ -100,9 +107,15 @@ export default function DashboardLoading() {
 
               {/* Table rows */}
               {tableRows.map((rowItem) => {
-                const tableCells = generateStableKeyedArray(TABLE_CELL_COUNT, `table-cell-${rowItem.index}`);
+                const tableCells = generateStableKeyedArray(
+                  TABLE_CELL_COUNT,
+                  `table-cell-${rowItem.index}`
+                );
                 return (
-                  <div className="flex space-x-4 border-border border-b p-4 last:border-b-0" key={rowItem.key}>
+                  <div
+                    className="flex space-x-4 border-border border-b p-4 last:border-b-0"
+                    key={rowItem.key}
+                  >
                     {tableCells.map((cellItem) => (
                       <Skeleton className="h-4 flex-1" key={cellItem.key} />
                     ))}
@@ -112,14 +125,6 @@ export default function DashboardLoading() {
             </div>
           </div>
         </main>
-      </div>
-
-      {/* Loading overlay */}
-      <div className="fixed inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-        <div className="space-y-4 text-center">
-          <LoadingSpinner size="lg" />
-          <p className="text-muted-foreground text-sm">Cargando panel de administración...</p>
-        </div>
       </div>
     </div>
   );

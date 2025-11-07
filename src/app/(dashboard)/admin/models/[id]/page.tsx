@@ -7,10 +7,14 @@
  * Route: /admin/models/[id]
  */
 
-import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { api } from '@/trpc/server-client';
-import { ModelForm } from '../_components/model-form';
+import { Palette } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { api } from "@/trpc/server-client";
+import { ModelForm } from "../_components/model-form";
 
 type EditModelPageProps = {
   params: Promise<{
@@ -19,30 +23,41 @@ type EditModelPageProps = {
 };
 
 export const metadata: Metadata = {
-  title: 'Editar Modelo | Admin',
+  title: "Editar Modelo | Admin",
 };
+
+// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
+// Note: Dynamic by default, fresh data guaranteed without explicit export
+// TODO: Consider Suspense boundaries for better loading states after build verification
 
 export default async function EditModelPage({ params }: EditModelPageProps) {
   const { id } = await params;
 
   // Fetch model with all relations (cost breakdown, price history)
-  const model = await api.admin.model['get-by-id']({ id });
+  const model = await api.admin.model["get-by-id"]({ id });
 
   if (!model) {
     notFound();
   }
 
+  // Fetch assigned colors count for badge (T040)
+  const modelColors = await api.admin["model-colors"].listByModel({
+    modelId: id,
+  });
+  const colorCount = modelColors.length;
+
   // Transform Decimal fields to numbers for form
   const defaultValues = {
-    accessoryPrice: model.accessoryPrice?.toNumber() ?? null,
+    accessoryPrice: model.accessoryPrice?.toNumber(),
     basePrice: model.basePrice.toNumber(),
     compatibleGlassTypeIds: model.compatibleGlassTypeIds,
-    costNotes: model.costNotes,
+    costNotes: model.costNotes ?? undefined,
     costPerMmHeight: model.costPerMmHeight.toNumber(),
     costPerMmWidth: model.costPerMmWidth.toNumber(),
     glassDiscountHeightMm: model.glassDiscountHeightMm,
     glassDiscountWidthMm: model.glassDiscountWidthMm,
     id: model.id,
+    imageUrl: model.imageUrl ?? undefined,
     lastCostReviewDate: model.lastCostReviewDate,
     maxHeightMm: model.maxHeightMm,
     maxWidthMm: model.maxWidthMm,
@@ -50,17 +65,33 @@ export default async function EditModelPage({ params }: EditModelPageProps) {
     minWidthMm: model.minWidthMm,
     name: model.name,
     profileSupplierId: model.profileSupplierId,
-    profitMarginPercentage: model.profitMarginPercentage?.toNumber() ?? null,
+    profitMarginPercentage: model.profitMarginPercentage?.toNumber(),
     status: model.status,
   };
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-bold text-3xl tracking-tight">Editar Modelo</h1>
-        <p className="text-muted-foreground">
-          Edita el modelo <span className="font-medium">{model.name}</span>
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="font-bold text-3xl tracking-tight">Editar Modelo</h1>
+          <p className="text-muted-foreground">
+            Edita el modelo <span className="font-medium">{model.name}</span>
+          </p>
+        </div>
+
+        {/* T040: Configurar Colores button with color count badge */}
+        <Button asChild variant="outline">
+          <Link href={`/admin/models/${id}/colors`}>
+            <Palette className="mr-2 h-4 w-4" />
+            Configurar Colores
+            <Badge
+              className="ml-2"
+              variant={colorCount === 0 ? "secondary" : "default"}
+            >
+              {colorCount} {colorCount === 1 ? "color" : "colores"}
+            </Badge>
+          </Link>
+        </Button>
       </div>
 
       <ModelForm initialData={defaultValues} mode="edit" modelId={model.id} />
@@ -73,27 +104,45 @@ export default async function EditModelPage({ params }: EditModelPageProps) {
             <table className="w-full">
               <thead className="border-b bg-muted/50">
                 <tr>
-                  <th className="px-4 py-3 text-left font-medium text-sm">Fecha</th>
-                  <th className="px-4 py-3 text-left font-medium text-sm">Precio Base</th>
-                  <th className="px-4 py-3 text-left font-medium text-sm">Costo/mm Ancho</th>
-                  <th className="px-4 py-3 text-left font-medium text-sm">Costo/mm Alto</th>
-                  <th className="px-4 py-3 text-left font-medium text-sm">Razón</th>
+                  <th className="px-4 py-3 text-left font-medium text-sm">
+                    Fecha
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-sm">
+                    Precio Base
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-sm">
+                    Costo/mm Ancho
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-sm">
+                    Costo/mm Alto
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-sm">
+                    Razón
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {model.priceHistory.map((history) => (
                   <tr className="border-b last:border-0" key={history.id}>
                     <td className="px-4 py-3 text-sm">
-                      {new Date(history.createdAt).toLocaleDateString('es-ES', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
+                      {new Date(history.createdAt).toLocaleDateString("es-ES", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
                       })}
                     </td>
-                    <td className="px-4 py-3 font-mono text-sm">${history.basePrice.toLocaleString()}</td>
-                    <td className="px-4 py-3 font-mono text-sm">${history.costPerMmWidth.toLocaleString()}</td>
-                    <td className="px-4 py-3 font-mono text-sm">${history.costPerMmHeight.toLocaleString()}</td>
-                    <td className="px-4 py-3 text-muted-foreground text-sm">{history.reason}</td>
+                    <td className="px-4 py-3 font-mono text-sm">
+                      ${history.basePrice.toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3 font-mono text-sm">
+                      ${history.costPerMmWidth.toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3 font-mono text-sm">
+                      ${history.costPerMmHeight.toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground text-sm">
+                      {history.reason}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -110,24 +159,38 @@ export default async function EditModelPage({ params }: EditModelPageProps) {
             <table className="w-full">
               <thead className="border-b bg-muted/50">
                 <tr>
-                  <th className="px-4 py-3 text-left font-medium text-sm">Componente</th>
-                  <th className="px-4 py-3 text-left font-medium text-sm">Tipo de Costo</th>
-                  <th className="px-4 py-3 text-left font-medium text-sm">Costo Unitario</th>
-                  <th className="px-4 py-3 text-left font-medium text-sm">Notas</th>
+                  <th className="px-4 py-3 text-left font-medium text-sm">
+                    Componente
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-sm">
+                    Tipo de Costo
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-sm">
+                    Costo Unitario
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-sm">
+                    Notas
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {model.costBreakdown.map((item) => (
                   <tr className="border-b last:border-0" key={item.id}>
-                    <td className="px-4 py-3 font-medium text-sm">{item.component}</td>
-                    <td className="px-4 py-3 text-sm">
-                      {item.costType === 'fixed' && 'Fijo'}
-                      {item.costType === 'per_mm_width' && 'Por mm ancho'}
-                      {item.costType === 'per_mm_height' && 'Por mm alto'}
-                      {item.costType === 'per_sqm' && 'Por m²'}
+                    <td className="px-4 py-3 font-medium text-sm">
+                      {item.component}
                     </td>
-                    <td className="px-4 py-3 font-mono text-sm">${item.unitCost.toLocaleString()}</td>
-                    <td className="px-4 py-3 text-muted-foreground text-sm">{item.notes || '—'}</td>
+                    <td className="px-4 py-3 text-sm">
+                      {item.costType === "fixed" && "Fijo"}
+                      {item.costType === "per_mm_width" && "Por mm ancho"}
+                      {item.costType === "per_mm_height" && "Por mm alto"}
+                      {item.costType === "per_sqm" && "Por m²"}
+                    </td>
+                    <td className="px-4 py-3 font-mono text-sm">
+                      ${item.unitCost.toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground text-sm">
+                      {item.notes || "—"}
+                    </td>
                   </tr>
                 ))}
               </tbody>

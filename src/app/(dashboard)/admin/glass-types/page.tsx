@@ -19,34 +19,29 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from 'next';
-import { Suspense } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
-import { api } from '@/trpc/server-client';
-import { GlassTypesFilters } from './_components/glass-types-filters';
-import { GlassTypesTable } from './_components/glass-types-table';
+import type { Metadata } from "next";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/trpc/server-client";
+import { GlassTypesFilters } from "./_components/glass-types-filters";
+import { GlassTypesTable } from "./_components/glass-types-table";
 
 export const metadata: Metadata = {
-  description: 'Administra los tipos de vidrio con sus soluciones y características',
-  title: 'Tipos de Vidrio | Admin',
+  description:
+    "Administra los tipos de cristal con sus soluciones y características",
+  title: "Tipos de Cristal | Admin",
 };
 
-/**
- * SSR Configuration: Force dynamic rendering
- * - No caching for admin routes (always fresh data)
- * - Suspense key triggers re-fetch when filters change
- * - Private dashboard routes don't benefit from ISR
- */
-export const dynamic = 'force-dynamic';
+// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
+// Note: Admin routes are dynamic by default - no explicit export needed
+// TODO: Evaluate if Suspense boundaries improve UX after build verification
 
 type SearchParams = Promise<{
-  purpose?: string;
-  glassSupplierId?: string;
   isActive?: string;
   page?: string;
   search?: string;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }>;
 
 type PageProps = {
@@ -55,11 +50,16 @@ type PageProps = {
 
 // Loading skeleton for the table
 function GlassTypesTableSkeleton() {
+  const skeletonIds = Array.from(
+    { length: 10 },
+    (_, i) => `skeleton-${Date.now()}-${i}`
+  );
+
   return (
     <div className="rounded-md border">
       <div className="space-y-3 p-4">
-        {Array.from({ length: 10 }).map((_, i) => (
-          <Skeleton className="h-16 w-full" key={i} />
+        {skeletonIds.map((id) => (
+          <Skeleton className="h-16 w-full" key={id} />
         ))}
       </div>
     </div>
@@ -69,30 +69,24 @@ function GlassTypesTableSkeleton() {
 // Server Component that fetches and renders the table
 async function GlassTypesTableContent({
   page,
-  purpose,
-  glassSupplierId,
   isActive,
   search,
   sortBy,
   sortOrder,
 }: {
   page: number;
-  purpose?: string;
-  glassSupplierId?: string;
-  isActive: 'all' | 'active' | 'inactive';
+  isActive: "all" | "active" | "inactive";
   search?: string;
   sortBy: string;
-  sortOrder: 'asc' | 'desc';
+  sortOrder: "asc" | "desc";
 }) {
   // Fetch glass types data (heavy query inside Suspense)
-  const initialData = await api.admin['glass-type'].list({
-    glassSupplierId,
+  const initialData = await api.admin["glass-type"].list({
     isActive,
     limit: 20,
     page,
-    purpose: purpose as 'general' | 'insulation' | 'security' | 'decorative' | undefined,
     search,
-    sortBy: sortBy as 'name' | 'thicknessMm' | 'pricePerSqm' | 'createdAt' | 'purpose',
+    sortBy: sortBy as "name" | "thicknessMm" | "pricePerSqm" | "createdAt",
     sortOrder,
   });
 
@@ -106,16 +100,15 @@ async function GlassTypesTableContent({
       solarFactor: glassType.solarFactor?.toNumber() ?? null,
       uValue: glassType.uValue?.toNumber() ?? null,
     })),
-  };
+  } as const;
 
   return (
     <GlassTypesTable
-      initialData={serializedData}
+      // biome-ignore lint/suspicious/noExplicitAny: Type mismatch between Prisma and Client types (Decimal vs number serialization)
+      initialData={serializedData as any}
       searchParams={{
-        glassSupplierId,
         isActive,
         page: String(page),
-        purpose,
         search,
       }}
     />
@@ -127,41 +120,37 @@ export default async function GlassTypesPage({ searchParams }: PageProps) {
 
   // Parse search params (outside Suspense)
   const page = Number(params.page) || 1;
-  const purpose = params.purpose && params.purpose !== 'all' ? params.purpose : undefined;
-  const glassSupplierId =
-    params.glassSupplierId && params.glassSupplierId !== 'all' ? params.glassSupplierId : undefined;
-  const isActive = (params.isActive && params.isActive !== 'all' ? params.isActive : 'all') as
-    | 'all'
-    | 'active'
-    | 'inactive';
+  const isActive = (
+    params.isActive && params.isActive !== "all" ? params.isActive : "all"
+  ) as "all" | "active" | "inactive";
   const search = params.search || undefined;
-  const sortBy = params.sortBy || 'name';
-  const sortOrder = (params.sortOrder || 'asc') as 'asc' | 'desc';
+  const sortBy = params.sortBy || "name";
+  const sortOrder = (params.sortOrder || "asc") as "asc" | "desc";
 
   // Fetch suppliers for filter dropdown (lightweight query outside Suspense)
-  const suppliersData = await api.admin['glass-supplier'].list({
-    isActive: 'active',
+  const suppliersData = await api.admin["glass-supplier"].list({
+    isActive: "active",
     limit: 100,
     page: 1,
-    sortBy: 'name',
-    sortOrder: 'asc',
+    sortBy: "name",
+    sortOrder: "asc",
   });
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="font-bold text-3xl tracking-tight">Tipos de Vidrio</h1>
-        <p className="text-muted-foreground">Administra los tipos de vidrio con sus soluciones y características</p>
+        <h1 className="font-bold text-3xl tracking-tight">Tipos de Cristal</h1>
+        <p className="text-muted-foreground">
+          Administra los tipos de cristal con sus soluciones y características
+        </p>
       </div>
 
       {/* Filters outside Suspense - always visible */}
       <GlassTypesFilters
         searchParams={{
-          glassSupplierId: params.glassSupplierId,
           isActive: params.isActive,
           page: String(page),
-          purpose: params.purpose,
           search,
         }}
         suppliers={suppliersData.items}
@@ -170,13 +159,11 @@ export default async function GlassTypesPage({ searchParams }: PageProps) {
       {/* Table content inside Suspense - streaming */}
       <Suspense
         fallback={<GlassTypesTableSkeleton />}
-        key={`${search}-${page}-${purpose}-${glassSupplierId}-${isActive}-${sortBy}-${sortOrder}`}
+        key={`${search}-${page}-${isActive}-${sortBy}-${sortOrder}`}
       >
         <GlassTypesTableContent
-          glassSupplierId={glassSupplierId}
           isActive={isActive}
           page={page}
-          purpose={purpose}
           search={search}
           sortBy={sortBy}
           sortOrder={sortOrder}

@@ -12,17 +12,17 @@
  * @module QuoteItemPreview
  */
 
-import type { WindowType } from '@/types/window.types';
-import { QuoteItemImage } from '../[quoteId]/_components/quote-item-image';
+import type { WindowType } from "@/types/window.types";
+import { QuoteItemImage } from "../[quoteId]/_components/quote-item-image";
 
-export interface QuoteItemPreviewData {
+export type QuoteItemPreviewData = {
   id: string;
   modelName: string;
   modelImageUrl: string | null;
   windowType: WindowType;
-}
+};
 
-export interface QuoteItemPreviewProps {
+export type QuoteItemPreviewProps = {
   /**
    * All quote items (only first 3 will be shown)
    */
@@ -32,7 +32,7 @@ export interface QuoteItemPreviewProps {
    * Total item count for "+N more" indicator
    */
   totalCount?: number;
-}
+};
 
 /**
  * QuoteItemPreview Component
@@ -40,8 +40,9 @@ export interface QuoteItemPreviewProps {
  * Horizontal row of up to 3 product thumbnails.
  */
 export function QuoteItemPreview({ items, totalCount }: QuoteItemPreviewProps) {
-  const previewItems = items.slice(0, 3);
-  const remainingCount = (totalCount ?? items.length) - 3;
+  const MAX_PREVIEW_ITEMS = 3;
+  const previewItems = items.slice(0, MAX_PREVIEW_ITEMS);
+  const remainingCount = (totalCount ?? items.length) - previewItems.length;
 
   if (items.length === 0) {
     return null;

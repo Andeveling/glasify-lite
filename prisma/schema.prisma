@@ -3,11 +3,15 @@
 
 generator client {
   provider = "prisma-client-js"
+  // Optimización para Vercel (reduce tamaño del bundle)
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  // DIRECT_URL solo para migraciones (Neon pooling)
+  directUrl = env("DIRECT_URL")
 }
 
 enum ModelStatus {
@@ -31,6 +35,7 @@ enum ServiceUnit {
 /// - draft: Generated from cart, pending review/send (read-only, not editable)
 /// - sent: Sent to vendor/client, awaiting response
 /// - canceled: Canceled and no longer active
+
 enum QuoteStatus {
   draft
   sent
@@ -49,6 +54,7 @@ enum AdjustmentSign {
 
 /// @deprecated Use GlassSolution + GlassTypeSolution Many-to-Many instead.
 /// This enum will be removed in v2.0. Maintained for backward compatibility only.
+
 enum GlassPurpose {
   general
   insulation
@@ -82,6 +88,7 @@ enum MaterialType {
 /// - admin: Full access (models, all quotes, tenant config)
 /// - seller: Limited access (own quotes, catalog)
 /// - user: Client access (own quotes, catalog browsing)
+
 enum UserRole {
   admin
   seller
@@ -89,45 +96,55 @@ enum UserRole {
 }
 
 // Necessary for Next auth
-model Account {
-  id                       String  @id @default(cuid())
-  userId                   String
-  type                     String
-  provider                 String
-  providerAccountId        String
-  refresh_token            String? // @db.Text
-  access_token             String? // @db.Text
-  expires_at               Int?
-  token_type               String?
-  scope                    String?
-  id_token                 String? // @db.Text
-  session_state            String?
-  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  refresh_token_expires_in Int?
 
-  @@unique([provider, providerAccountId])
+model Account {
+  id                   String    @id @default(cuid())
+  accountId            String    @map("providerAccountId")
+  providerId           String    @map("provider")
+  accessToken          String?   @map("access_token")
+  refreshToken         String?   @map("refresh_token")
+  accessTokenExpiresAt DateTime? @map("expires_at")
+  idToken              String?   @map("id_token")
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+
+  @@unique([providerId, accountId])
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  expiresAt DateTime @map("expires")
+  token     String   @unique @map("sessionToken")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ipAddress String?
+  userAgent String?
 }
 
 model User {
-  id                String                  @id @default(cuid())
-  name              String?
-  email             String?                 @unique
-  emailVerified     DateTime?
-  image             String?
-  role              UserRole                @default(user)
-  accounts          Account[]
-  sessions          Session[]
-  quotes            Quote[]
-  priceChanges      ModelPriceHistory[]
-  glassPriceChanges GlassTypePriceHistory[]
+  id            String   @id @default(cuid())
+  name          String?
+  email         String?  @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  role          UserRole @default(user)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  accounts     Account[]
+  sessions     Session[]
+  quotes       Quote[]
+  priceChanges ModelPriceHistory[]
 
   @@index([role])
 }
@@ -140,10 +157,22 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier, value])
+}
+
 /// Multi-Tenant Configuration (Single Tenant per deployment)
 /// This is a singleton table that stores the tenant-level configuration.
 /// In the current implementation, there should only be ONE record in this table with id = "1".
 /// The fixed ID enforces the singleton pattern at the database level.
+
 model TenantConfig {
   id String @id @default("1")
 
@@ -167,15 +196,55 @@ model TenantConfig {
   contactPhone    String?
   businessAddress String?
 
+  /// Branding: Logo URL (path to uploaded file)
+  logoUrl String?
+
+  /// Branding: Primary brand color (hex format: #RRGGBB)
+  primaryColor String @default("#3B82F6")
+
+  /// Branding: Secondary brand color (hex format: #RRGGBB)
+  secondaryColor String @default("#1E40AF")
+
+  /// Social Media: Facebook page URL
+  facebookUrl String?
+
+  /// Social Media: Instagram profile URL
+  instagramUrl String?
+
+  /// Social Media: LinkedIn company URL
+  linkedinUrl String?
+
+  /// WhatsApp: Contact number in E.164 format (+[country][number])
+  whatsappNumber String?
+
+  /// WhatsApp: Enable floating button in catalog and quotes
+  whatsappEnabled Boolean @default(false)
+
+  /// Warehouse location and transportation rates (Feature: 001-delivery-address)
+  /// Warehouse latitude coordinate (WGS84, -90 to +90, 7 decimal places)
+  warehouseLatitude  Decimal? @db.Decimal(10, 7)
+  /// Warehouse longitude coordinate (WGS84, -180 to +180, 7 decimal places)
+  warehouseLongitude Decimal? @db.Decimal(10, 7)
+  /// Warehouse city name for display (e.g., "Buga")
+  warehouseCity      String?  @db.VarChar(100)
+  /// Fixed base cost for transportation (e.g., 50000 COP)
+  transportBaseRate  Decimal? @db.Decimal(10, 2)
+  /// Cost per kilometer (e.g., 1000 COP per km)
+  transportPerKmRate Decimal? @db.Decimal(10, 2)
+
   /// Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  /// Glass suppliers (for future multi-tenancy support)
+  glassSuppliers GlassSupplier[]
 
   @@index([currency])
 }
 
 /// Profile Supplier
 /// Represents manufacturers of window/door profiles (Rehau, Deceuninck, Azembla, etc.)
+
 model ProfileSupplier {
   id           String       @id @default(cuid())
   /// Supplier name (Rehau, Deceuninck, Azembla, etc.)
@@ -196,6 +265,7 @@ model ProfileSupplier {
 
 /// @deprecated This model will be removed in v2.0. Migrated to TenantConfig + ProfileSupplier.
 /// DO NOT use this model in new code. Use TenantConfig for business config and ProfileSupplier for profile manufacturers.
+
 model Manufacturer {
   id                String   @id @default(cuid())
   name              String
@@ -212,15 +282,16 @@ model Model {
   profileSupplierId      String?
   profileSupplier        ProfileSupplier?     @relation(fields: [profileSupplierId], references: [id], onDelete: SetNull)
   name                   String
+  imageUrl               String?              @default("")
   status                 ModelStatus          @default(draft)
   minWidthMm             Int
   maxWidthMm             Int
   minHeightMm            Int
   maxHeightMm            Int
-  basePrice              Decimal              @db.Decimal(12, 2)
+  basePrice              Decimal              @db.Decimal(12, 4)
   costPerMmWidth         Decimal              @db.Decimal(12, 4)
   costPerMmHeight        Decimal              @db.Decimal(12, 4)
-  accessoryPrice         Decimal?             @db.Decimal(12, 2)
+  accessoryPrice         Decimal?             @db.Decimal(12, 4)
   /// Descuento fijo por lado para el cálculo del vidrio facturable (mm)
   /// Fórmula: anchoEfectivo = widthMm - glassDiscountWidthMm; altoEfectivo = heightMm - glassDiscountHeightMm
   /// El área de vidrio facturable se calcula con los valores efectivos (en m²) y se multiplica por el pricePerSqm del GlassType.
@@ -238,40 +309,34 @@ model Model {
   quoteItems             QuoteItem[]
   costBreakdown          ModelCostBreakdown[]
   priceHistory           ModelPriceHistory[]
+  modelColors            ModelColor[] // Colors assigned to this model with surcharges
 
   // Performance indexes for admin table queries (TASK-011)
+  // Search by model name
+  // Filter by status (draft/published)
+  // Sort by creation date
+  // Sort by last update
   @@index([profileSupplierId, status])
-  @@index([name]) // Search by model name
-  @@index([status]) // Filter by status (draft/published)
-  @@index([createdAt(sort: Desc)]) // Sort by creation date
-  @@index([updatedAt(sort: Desc)]) // Sort by last update
+  @@index([name])
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
+  @@index([updatedAt(sort: Desc)])
 }
 
 model GlassType {
   id                String                    @id @default(cuid())
-  name              String
-  /// @deprecated Use solutions relationship instead. This field will be removed in v2.0.
-  /// Legacy single-purpose classification. Replaced by Many-to-Many GlassTypeSolution.
-  /// Maintained for backward compatibility only.
-  purpose           GlassPurpose
+  name              String                    @unique
+  /// Manufacturer product code (e.g., "N70/38", "ClimaGuard 80/70")
+  code              String                    @unique
+  /// Product line grouping (e.g., "Serie-N", "Serie-R", "ClimaGuard")
+  series            String?
+  /// Manufacturer name (e.g., "Tecnoglass", "Guardian", "Vitro")
+  manufacturer      String?
   thicknessMm       Int
-  /// Precio por metro cuadrado del vidrio (referencia currency de TenantConfig)
-  pricePerSqm       Decimal                   @db.Decimal(12, 2)
+  /// Price per square meter for this glass type
+  pricePerSqm       Decimal                   @db.Decimal(12, 4)
   /// Transmitancia térmica (W/m²·K) — opcional si aplica
   uValue            Decimal?                  @db.Decimal(5, 2)
-  /// @deprecated Use characteristics relationship instead. Will be removed in v2.0.
-  isTempered        Boolean                   @default(false)
-  /// @deprecated Use characteristics relationship instead. Will be removed in v2.0.
-  isLaminated       Boolean                   @default(false)
-  /// @deprecated Use characteristics relationship instead. Will be removed in v2.0.
-  isLowE            Boolean                   @default(false)
-  /// @deprecated Use characteristics relationship instead. Will be removed in v2.0.
-  isTripleGlazed    Boolean                   @default(false)
-  // New fields for enhanced structure
-  glassSupplierId   String?
-  glassSupplier     GlassSupplier?            @relation(fields: [glassSupplierId], references: [id], onDelete: SetNull)
-  /// SKU or product code from supplier
-  sku               String?                   @unique
   /// Detailed description of the glass type
   description       String?
   /// Solar factor (g-value) — 0.00 to 1.00
@@ -282,30 +347,51 @@ model GlassType {
   isActive          Boolean                   @default(true)
   /// Date of last technical review
   lastReviewDate    DateTime?
+  /// Flag for seed-generated types (true) vs tenant-created custom types (false)
+  isSeeded          Boolean                   @default(false)
+  /// Seed data version (e.g., "1.0", "1.1") for idempotent updates
+  seedVersion       String?
   createdAt         DateTime                  @default(now())
   updatedAt         DateTime                  @updatedAt
   quoteItems        QuoteItem[]
   solutions         GlassTypeSolution[]
   characteristics   GlassTypeCharacteristic[]
-  priceHistory      GlassTypePriceHistory[]
 
-  // Performance indexes for admin table queries (TASK-012)
-  @@index([name]) // Search by glass type name
-  @@index([purpose]) // Filter by purpose (deprecated but still indexed)
-  @@index([glassSupplierId]) // Filter by supplier
-  @@index([isActive]) // Filter by active status
-  @@index([thicknessMm]) // Sort/filter by thickness
-  @@index([createdAt(sort: Desc)]) // Sort by creation date
-  @@index([updatedAt(sort: Desc)]) // Sort by last update
-  @@index([sku]) // Unique SKU lookup
+  // Performance indexes for admin table queries (TASK-012, TK-015-001)
+  // Search by glass type name
+  // Search by manufacturer code
+  // Filter by product series
+  // Filter by manufacturer
+  // Filter by active status
+  // Filter seeded vs custom types
+  // Sort/filter by thickness
+  // Sort/filter by price
+  // Sort by creation date
+  // Sort by last update
+  @@index([name])
+  @@index([code])
+  @@index([series])
+  @@index([manufacturer])
+  @@index([isActive])
+  @@index([isSeeded])
+  @@index([thicknessMm])
+  @@index([pricePerSqm])
+  @@index([createdAt(sort: Desc)])
+  @@index([updatedAt(sort: Desc)])
 }
 
 model Service {
-  id            String             @id @default(cuid())
-  name          String
-  type          ServiceType
-  unit          ServiceUnit
-  rate          Decimal            @db.Decimal(12, 4)
+  id   String      @id @default(cuid())
+  name String
+  type ServiceType
+  unit ServiceUnit
+  rate Decimal     @db.Decimal(12, 4)
+
+  /// Unidad mínima de cobro (aplica solo a servicios tipo area/perimeter)
+  /// Ejemplo: Si minimumBillingUnit = 1.0 y el área calculada es 0.25m², se cobra 1.0m²
+  /// NULL significa que no hay mínimo (se cobra la cantidad calculada)
+  minimumBillingUnit Decimal? @db.Decimal(10, 4)
+
   isActive      Boolean            @default(true)
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
@@ -320,7 +406,7 @@ model Quote {
   user           User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
   status         QuoteStatus @default(draft)
   currency       String      @db.Char(3)
-  total          Decimal     @default(0) @db.Decimal(12, 2)
+  total          Decimal     @default(0) @db.Decimal(12, 4)
   validUntil     DateTime?
   contactPhone   String?
   /// @deprecated Use structured project fields instead. Will be removed in v2.0.
@@ -328,9 +414,13 @@ model Quote {
 
   // Project information (structured address fields)
   projectName       String? @db.VarChar(100)
+  /// @deprecated Use ProjectAddress relationship instead. Maintained for backward compatibility.
   projectStreet     String? @db.VarChar(200)
+  /// @deprecated Use ProjectAddress relationship instead. Maintained for backward compatibility.
   projectCity       String? @db.VarChar(100)
+  /// @deprecated Use ProjectAddress relationship instead. Maintained for backward compatibility.
   projectState      String? @db.VarChar(100)
+  /// @deprecated Use ProjectAddress relationship instead. Maintained for backward compatibility.
   projectPostalCode String? @db.VarChar(20)
 
   createdAt   DateTime     @default(now())
@@ -339,14 +429,24 @@ model Quote {
   items       QuoteItem[]
   adjustments Adjustment[]
 
+  /// Optional delivery address with geocoding (Feature: 001-delivery-address)
+  projectAddress ProjectAddress?
+
   // Performance indexes for quote queries (TASK-013)
-  @@index([userId]) // Original index
-  @@index([userId, status]) // Composite index for filtering by user + status
-  @@index([userId, createdAt(sort: Desc)]) // Optimized for sorting by createdAt DESC
-  @@index([userId, validUntil]) // Optimized for expired quotes filtering
-  @@index([projectName]) // Search by project name
-  @@index([status]) // Filter by status (draft/sent/canceled)
-  @@index([createdAt(sort: Desc)]) // Sort by creation date (all quotes)
+  // Original index
+  // Composite index for filtering by user + status
+  // Optimized for sorting by createdAt DESC
+  // Optimized for expired quotes filtering
+  // Search by project name
+  // Filter by status (draft/sent/canceled)
+  // Sort by creation date (all quotes)
+  @@index([userId])
+  @@index([userId, status])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([userId, validUntil])
+  @@index([projectName])
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
 }
 
 model QuoteItem {
@@ -359,19 +459,29 @@ model QuoteItem {
   glassType   GlassType @relation(fields: [glassTypeId], references: [id], onDelete: Restrict)
 
   // User-editable item identification
-  name     String @db.VarChar(50)
-  quantity Int    @default(1)
+  name         String  @db.VarChar(50)
+  quantity     Int     @default(1)
+  roomLocation String? @db.VarChar(100) // Window location (e.g., "Alcoba principal", "Cocina")
 
   widthMm          Int
   heightMm         Int
-  accessoryApplied Boolean            @default(false)
-  subtotal         Decimal            @db.Decimal(12, 2)
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  services         QuoteItemService[]
-  adjustments      Adjustment[]
+  accessoryApplied Boolean @default(false)
+  subtotal         Decimal @db.Decimal(12, 4)
+
+  // Color selection (optional) - Snapshot for quote immutability
+  colorId                  String? // Reference to selected color (nullable - color optional)
+  color                    Color?   @relation(fields: [colorId], references: [id], onDelete: Restrict)
+  colorSurchargePercentage Decimal? @db.Decimal(5, 2) // Snapshot of surcharge at quote creation
+  colorHexCode             String?  @db.VarChar(7) // Snapshot of hex code for PDF rendering
+  colorName                String?  @db.VarChar(50) // Snapshot of color name for display
+
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  services    QuoteItemService[]
+  adjustments Adjustment[]
 
   @@index([quoteId])
+  @@index([colorId])
 }
 
 model QuoteItemService {
@@ -382,7 +492,7 @@ model QuoteItemService {
   service     Service     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   unit        ServiceUnit
   quantity    Decimal     @db.Decimal(12, 4)
-  amount      Decimal     @db.Decimal(12, 2)
+  amount      Decimal     @db.Decimal(12, 4)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
@@ -400,7 +510,7 @@ model Adjustment {
   quote       Quote?          @relation(fields: [quoteId], references: [id], onDelete: Cascade)
   quoteItemId String?
   quoteItem   QuoteItem?      @relation(fields: [quoteItemId], references: [id], onDelete: Cascade)
-  amount      Decimal         @db.Decimal(12, 2)
+  amount      Decimal         @db.Decimal(12, 4)
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 
@@ -410,6 +520,7 @@ model Adjustment {
 
 /// Desglose de componentes de costo para cada modelo
 /// Permite al admin definir y ajustar cada componente que conforma el precio final
+
 model ModelCostBreakdown {
   id        String   @id @default(cuid())
   modelId   String
@@ -431,12 +542,13 @@ model ModelCostBreakdown {
 
 /// Historial de cambios de precio de los modelos
 /// Permite rastrear cuándo y por qué cambiaron los precios
+
 model ModelPriceHistory {
   id              String   @id @default(cuid())
   modelId         String
   model           Model    @relation(fields: [modelId], references: [id], onDelete: Cascade)
   /// Precio base en el momento del cambio
-  basePrice       Decimal  @db.Decimal(12, 2)
+  basePrice       Decimal  @db.Decimal(12, 4)
   /// Costo por mm de ancho en el momento del cambio
   costPerMmWidth  Decimal  @db.Decimal(12, 4)
   /// Costo por mm de alto en el momento del cambio
@@ -456,10 +568,14 @@ model ModelPriceHistory {
 
 /// Soluciones de vidrio (categorías de uso)
 /// Permite clasificar vidrios según su propósito principal (seguridad, térmico, acústico, etc.)
+
 model GlassSolution {
   id          String              @id @default(cuid())
   /// Clave única para identificar la solución (ej: 'security', 'thermal_insulation')
   key         String              @unique
+  /// URL-friendly slug para rutas dinámicas (ej: 'solar-control', 'energy-efficiency')
+  /// Derivado de `key` reemplazando guiones bajos con guiones (kebab-case)
+  slug        String              @unique @db.VarChar(100)
   /// Nombre técnico en inglés
   name        String
   /// Nombre comercial en español
@@ -472,16 +588,23 @@ model GlassSolution {
   sortOrder   Int                 @default(0)
   /// Si la solución está activa para mostrarse a usuarios
   isActive    Boolean             @default(true)
+  /// Flag for seed-generated solutions (true) vs custom solutions (false)
+  isSeeded    Boolean             @default(false)
+  /// Seed data version (e.g., "1.0", "1.1") for idempotent updates
+  seedVersion String?
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
   glassTypes  GlassTypeSolution[]
 
   @@index([sortOrder])
   @@index([isActive])
+  @@index([isSeeded])
+  @@index([slug])
 }
 
 /// Tabla pivote: Relación Many-to-Many entre GlassType y GlassSolution
 /// Permite que un vidrio pertenezca a múltiples soluciones con calificación de rendimiento
+
 model GlassTypeSolution {
   id                String            @id @default(cuid())
   glassTypeId       String
@@ -505,35 +628,41 @@ model GlassTypeSolution {
 
 /// Glass Supplier
 /// Represents glass manufacturers (Guardian, Saint-Gobain, Pilkington, AGC, Vitro, etc.)
+/// Note: Currently single-tenant, tenantConfigId optional for backward compatibility
+
 model GlassSupplier {
-  id           String      @id @default(cuid())
+  id             String        @id @default(cuid())
+  /// Optional tenant config ID for multi-tenancy support (currently unused in single-tenant mode)
+  tenantConfigId String?       @default("1")
+  tenantConfig   TenantConfig? @relation(fields: [tenantConfigId], references: [id], onDelete: SetNull)
   /// Supplier name (Guardian, Saint-Gobain, Pilkington, etc.)
-  name         String      @unique
+  name           String        @unique
   /// Short code for the supplier (e.g., 'GRD' for Guardian)
-  code         String?     @unique
+  code           String?       @unique
   /// Country where the supplier is based
-  country      String?
+  country        String?
   /// Official website URL
-  website      String?
+  website        String?
   /// Contact email for orders/inquiries
-  contactEmail String?
+  contactEmail   String?
   /// Contact phone number
-  contactPhone String?
+  contactPhone   String?
   /// Whether this supplier is active for selection
-  isActive     Boolean     @default(true)
+  isActive       Boolean       @default(true)
   /// Additional notes about the supplier
-  notes        String?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  glassTypes   GlassType[]
+  notes          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   @@index([isActive])
   @@index([code])
+  @@index([tenantConfigId])
 }
 
 /// Glass Characteristic
 /// Flexible characteristic definitions for glass properties (tempered, laminated, low-e, etc.)
 /// Replaces rigid boolean fields with extensible Many-to-Many relationship
+
 model GlassCharacteristic {
   id          String                    @id @default(cuid())
   /// Unique key for the characteristic (e.g., 'tempered', 'laminated', 'low_e')
@@ -550,17 +679,23 @@ model GlassCharacteristic {
   isActive    Boolean                   @default(true)
   /// Display order (lower = higher priority)
   sortOrder   Int                       @default(0)
+  /// Flag for seed-generated characteristics (true) vs custom characteristics (false)
+  isSeeded    Boolean                   @default(false)
+  /// Seed data version (e.g., "1.0", "1.1") for idempotent updates
+  seedVersion String?
   createdAt   DateTime                  @default(now())
   updatedAt   DateTime                  @updatedAt
   glassTypes  GlassTypeCharacteristic[]
 
   @@index([category])
   @@index([isActive])
+  @@index([isSeeded])
 }
 
 /// Glass Type Characteristic (Pivot Table)
 /// Many-to-Many relationship between GlassType and GlassCharacteristic
 /// Allows a glass type to have multiple characteristics with optional values
+
 model GlassTypeCharacteristic {
   id               String              @id @default(cuid())
   glassTypeId      String
@@ -580,23 +715,97 @@ model GlassTypeCharacteristic {
   @@index([characteristicId])
 }
 
-/// Glass Type Price History
-/// Tracks price changes over time with audit trail
-model GlassTypePriceHistory {
-  id            String    @id @default(cuid())
-  glassTypeId   String
-  glassType     GlassType @relation(fields: [glassTypeId], references: [id], onDelete: Cascade)
-  /// Price per square meter at the time of this record
-  pricePerSqm   Decimal   @db.Decimal(12, 2)
-  /// Reason for the price change (e.g., 'material cost increase', 'market adjustment')
-  reason        String?
-  /// Date from which this price is effective
-  effectiveFrom DateTime
-  /// User who created this price record
-  createdBy     String?
-  createdByUser User?     @relation(fields: [createdBy], references: [id], onDelete: SetNull)
-  createdAt     DateTime  @default(now())
+// COLOR CATALOG SYSTEM
+// Master color catalog with model-specific color assignments and surcharges
+// Implements snapshot pattern for quote immutability (colorId + denormalized fields in QuoteItem)
 
-  @@index([glassTypeId, effectiveFrom])
-  @@index([createdBy])
+/// Color - Master catalog of available colors
+/// Global catalog shared across all tenants, seeded with 10 industry-standard colors
+
+model Color {
+  id          String       @id @default(cuid())
+  /// Commercial color name (e.g., "Blanco", "Nogal Europeo")
+  name        String       @db.VarChar(50)
+  /// Industry standard RAL code (optional, e.g., "RAL 9010")
+  ralCode     String?      @db.VarChar(10)
+  /// Hexadecimal color code for UI rendering (#RRGGBB format)
+  hexCode     String       @db.VarChar(7)
+  /// Soft delete flag (false = hidden in new assignments, but preserved in existing)
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  modelColors ModelColor[] // Models using this color
+  quoteItems  QuoteItem[] // Quotes with this color selected
+
+  @@unique([name, hexCode]) // Prevent duplicate colors
+  @@index([isActive]) // Filter active colors
+  @@index([name]) // Search by name
 }
+
+/// ModelColor - Junction table linking Model to Color with model-specific surcharge
+/// Implements Many-to-Many relationship with additional business data
+
+model ModelColor {
+  id                  String   @id @default(cuid())
+  modelId             String
+  model               Model    @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  colorId             String
+  color               Color    @relation(fields: [colorId], references: [id], onDelete: Restrict)
+  /// Percentage surcharge added to model base price (0.00-100.00)
+  surchargePercentage Decimal  @db.Decimal(5, 2)
+  /// One color per model must be default (auto-selected if client doesn't choose)
+  isDefault           Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@unique([modelId, colorId]) // Prevent duplicate color assignments per model
+  @@index([modelId, isDefault]) // Optimize default color lookup
+  @@index([colorId]) // Reverse lookup (which models use this color)
+}
+
+/// ProjectAddress - Structured delivery location for quotes
+/// Represents the geographic delivery address with geocoding support
+/// Feature: 001-delivery-address
+
+model ProjectAddress {
+  id         String   @id @default(cuid())
+  /// Foreign key to Quote (optional for backward compatibility)
+  quoteId    String?  @unique
+  quote      Quote?   @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  /// User-defined label (e.g., "Obra Principal", "Bodega Cliente")
+  label      String?  @db.VarChar(100)
+  /// Country name (e.g., "Colombia")
+  country    String?  @db.VarChar(100)
+  /// Department/State (e.g., "Antioquia")
+  region     String?  @db.VarChar(100)
+  /// City/Municipality (e.g., "Medellín")
+  city       String?  @db.VarChar(100)
+  /// Neighborhood/District (e.g., "Barrio Granada")
+  district   String?  @db.VarChar(100)
+  /// Street address (e.g., "Calle 45 #23-10")
+  street     String?  @db.VarChar(200)
+  /// Landmark/reference (e.g., "Frente a finca Los Arrayanes")
+  reference  String?  @db.VarChar(200)
+  /// Latitude coordinate (WGS84, -90 to +90, 7 decimal places)
+  latitude   Decimal? @db.Decimal(10, 7)
+  /// Longitude coordinate (WGS84, -180 to +180, 7 decimal places)
+  longitude  Decimal? @db.Decimal(10, 7)
+  /// Postal/ZIP code (optional for LATAM rural areas)
+  postalCode String?  @db.VarChar(20)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  /// Indexes for common queries
+  @@index([quoteId]) // FK lookup (most common query)
+  @@index([city]) // Search/filter by city
+  @@index([latitude, longitude]) // Geospatial queries (future: radius search)
+}
+
+// DEPRECATED MODELS SECTION
+// The following models/features are deprecated and will be removed in future versions
+// DO NOT use these in new code
+
+/// @deprecated: TenantGlassTypePrice model removed in v2.0
+/// For MVP simplicity, pricePerSqm is now a direct field in GlassType model
+/// Each app instance has its own database, so tenant-specific pricing is not needed
+/// Historical price tracking can be implemented later if needed

@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "description": "Geocoding API mock responses for E2E tests - Feature: 001-delivery-address",
+  "medellin": {
+    "results": [
+      {
+        "placeId": "235128003",
+        "displayName": "Medellín, Antioquia, Colombia",
+        "latitude": 6.2476,
+        "longitude": -75.5658,
+        "address": {
+          "city": "Medellín",
+          "state": "Antioquia",
+          "country": "Colombia",
+          "countryCode": "co",
+          "postcode": null
+        },
+        "boundingBox": {
+          "south": 6.1291,
+          "north": 6.3661,
+          "west": -75.6439,
+          "east": -75.4877
+        }
+      },
+      {
+        "placeId": "235128004",
+        "displayName": "Medellín, Valle del Cauca, Colombia",
+        "latitude": 4.0883,
+        "longitude": -76.2375,
+        "address": {
+          "city": "Medellín",
+          "state": "Valle del Cauca",
+          "country": "Colombia",
+          "countryCode": "co",
+          "postcode": null
+        },
+        "boundingBox": {
+          "south": 4.0783,
+          "north": 4.0983,
+          "west": -76.2475,
+          "east": -76.2275
+        }
+      }
+    ],
+    "totalResults": 2,
+    "queryTime": 450
+  },
+  "bogota": {
+    "results": [
+      {
+        "placeId": "235047589",
+        "displayName": "Bogotá, Distrito Capital, Colombia",
+        "latitude": 4.711,
+        "longitude": -74.0721,
+        "address": {
+          "city": "Bogotá",
+          "state": "Distrito Capital",
+          "country": "Colombia",
+          "countryCode": "co",
+          "postcode": null
+        },
+        "boundingBox": {
+          "south": 4.4689,
+          "north": 4.8372,
+          "west": -74.2234,
+          "east": -73.9993
+        }
+      }
+    ],
+    "totalResults": 1,
+    "queryTime": 380
+  },
+  "cali": {
+    "results": [
+      {
+        "placeId": "235127801",
+        "displayName": "Cali, Valle del Cauca, Colombia",
+        "latitude": 3.4516,
+        "longitude": -76.532,
+        "address": {
+          "city": "Cali",
+          "state": "Valle del Cauca",
+          "country": "Colombia",
+          "countryCode": "co",
+          "postcode": null
+        },
+        "boundingBox": {
+          "south": 3.3358,
+          "north": 3.5412,
+          "west": -76.5898,
+          "east": -76.4742
+        }
+      }
+    ],
+    "totalResults": 1,
+    "queryTime": 420
+  },
+  "buga": {
+    "results": [
+      {
+        "placeId": "235127912",
+        "displayName": "Guadalajara de Buga, Valle del Cauca, Colombia",
+        "latitude": 3.9009,
+        "longitude": -76.2978,
+        "address": {
+          "city": "Guadalajara de Buga",
+          "state": "Valle del Cauca",
+          "country": "Colombia",
+          "countryCode": "co",
+          "postcode": "762001"
+        },
+        "boundingBox": {
+          "south": 3.8509,
+          "north": 3.9509,
+          "west": -76.3478,
+          "east": -76.2478
+        }
+      }
+    ],
+    "totalResults": 1,
+    "queryTime": 395
+  },
+  "specificAddress": {
+    "results": [
+      {
+        "placeId": "235128156",
+        "displayName": "Calle 72 #10-34, Bogotá, Distrito Capital, Colombia",
+        "latitude": 4.6533,
+        "longitude": -74.0836,
+        "address": {
+          "city": "Bogotá",
+          "state": "Distrito Capital",
+          "country": "Colombia",
+          "countryCode": "co",
+          "postcode": "110221"
+        },
+        "boundingBox": {
+          "south": 4.6523,
+          "north": 4.6543,
+          "west": -74.0846,
+          "east": -74.0826
+        }
+      }
+    ],
+    "totalResults": 1,
+    "queryTime": 485
+  },
+  "noResults": {
+    "results": [],
+    "totalResults": 0,
+    "queryTime": 320
+  },
+  "timeout": {
+    "error": "La búsqueda de dirección excedió el tiempo límite de 5 segundos",
+    "code": "TIMEOUT"
+  },
+  "apiError": {
+    "error": "Error al buscar dirección: Nominatim API error: 503 Service Unavailable",
+    "code": "SERVICE_UNAVAILABLE"
+  }
+}

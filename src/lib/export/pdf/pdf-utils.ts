@@ -1,38 +1,11 @@
 /**
  * PDF Utility Functions
  *
- * Helper functions for PDF generation including formatting,
- * image encoding, and data transformation.
+ * Helper functions for PDF generation including image encoding and data transformation.
+ * For currency and date formatting, use @/lib/format instead (already imported in QuotePDFDocument).
  *
- * @deprecated formatCurrency, formatDate, formatDateSpanish
- * Use @/lib/format instead for tenant-aware formatting
+ * @deprecated Use formatCurrency and formatDateFull from @/lib/format with context option
  */
-
-import { formatCurrency as formatCurrencyCore, formatDateCustom, formatDateFull } from '@/lib/format';
-
-/**
- * Format number as currency (legacy wrapper)
- * @deprecated Use formatCurrency from @/lib/format with TenantConfig context
- */
-export function formatCurrency(amount: number, currency = 'COP'): string {
-  return formatCurrencyCore(amount, { context: { currency, locale: 'es-CO', timezone: 'America/Bogota' } });
-}
-
-/**
- * Format date as YYYY-MM-DD (legacy wrapper)
- * @deprecated Use formatDateCustom from @/lib/format with TenantConfig context
- */
-export function formatDate(date: string | Date): string {
-  return formatDateCustom(date, 'YYYY-MM-DD');
-}
-
-/**
- * Format date as human-readable Spanish date (legacy wrapper)
- * @deprecated Use formatDateFull from @/lib/format with TenantConfig context
- */
-export function formatDateSpanish(date: string | Date): string {
-  return formatDateFull(date, { currency: 'COP', locale: 'es-CO', timezone: 'America/Bogota' });
-}
 
 /**
  * Encode image URL to base64 for embedding in PDF
@@ -64,7 +37,10 @@ export function truncateText(text: string, maxLength: number): string {
 /**
  * Calculate number of pages needed based on items count
  */
-export function calculatePageCount(itemsCount: number, itemsPerPage = 15): number {
+export function calculatePageCount(
+  itemsCount: number,
+  itemsPerPage = 15
+): number {
   return Math.ceil(itemsCount / itemsPerPage);
 }
 
@@ -94,12 +70,12 @@ export function formatDimensions(dimensions: string): string {
  */
 export function getGlassTypeName(type: string): string {
   const typeMap: Record<string, string> = {
-    clear: 'Claro',
-    frosted: 'Esmerilado',
-    insulated: 'Termo-acústico',
-    laminated: 'Laminado',
-    tempered: 'Templado',
-    tinted: 'Polarizado',
+    clear: "Claro",
+    frosted: "Esmerilado",
+    insulated: "Termo-acústico",
+    laminated: "Laminado",
+    tempered: "Templado",
+    tinted: "Polarizado",
   };
 
   return typeMap[type.toLowerCase()] || type;
@@ -113,7 +89,7 @@ export function sanitizeText(text: string): string {
   return (
     text
       // biome-ignore lint/suspicious/noControlCharactersInRegex: Control characters removal is intentional for PDF security
-      .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
+      .replace(/[\u0000-\u001F\u007F-\u009F]/g, "") // Remove control characters
       .trim()
   );
 }

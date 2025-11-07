@@ -1,11 +1,11 @@
-import { Suspense } from 'react';
-import { api } from '@/trpc/server-client';
-import { CatalogHeader } from './_components/molecules/catalog-header';
-import { CatalogContent } from './_components/organisms/catalog-content';
-import { CatalogFilterBar } from './_components/organisms/catalog-filter-bar';
-import { CatalogSkeleton } from './_components/organisms/catalog-skeleton';
-import type { CatalogSearchParams } from './_types/catalog-params';
-import { validateCatalogParams } from './_types/catalog-params';
+import { Suspense } from "react";
+import { CatalogHeader } from "./_components/molecules/catalog-header";
+import { CatalogContent } from "./_components/organisms/catalog-content";
+import { CatalogFilterBarWrapper } from "./_components/organisms/catalog-filter-bar-wrapper";
+import { CatalogFilterSkeleton } from "./_components/organisms/catalog-filter-skeleton";
+import { CatalogSkeleton } from "./_components/organisms/catalog-skeleton";
+import type { CatalogSearchParams } from "./_types/catalog-params";
+import { validateCatalogParams } from "./_types/catalog-params";
 
 type SearchParams = Promise<CatalogSearchParams>;
 
@@ -33,45 +33,48 @@ type CatalogPageProps = {
  * - Better UX (instant navigation, progressive enhancement)
  */
 
-// Disable ISR temporarily due to Next.js 15 prerendering limitations with client components
-// TODO: Re-enable ISR once Next.js 15 properly handles client components in Server Components
-// export const revalidate = 3600;
-export const dynamic = 'force-dynamic';
+// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
+// Note: Dynamic by default - catalog uses client components and real-time filtering
+// TODO: Previously disabled ISR due to Next.js 16 prerendering limitations
+// TODO: Evaluate if Cache Components with Suspense enables better caching strategy
+// Potential: Use "use cache" for static catalog shell + Suspense for dynamic filters
 
 export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   const params = await searchParams;
 
   // Validate and normalize parameters
-  const { searchQuery, page, manufacturerId, sort } = validateCatalogParams(params);
-
-  // Fetch profile suppliers for filter dropdown
-  const profileSuppliers = await api.catalog['list-manufacturers']();
-
-  // Fetch total count for results display (lightweight query)
-  const totalData = await api.catalog['list-models']({
-    limit: 1,
-    manufacturerId,
-    page: 1,
-    search: searchQuery,
-    sort,
-  });
+  const { searchQuery, page, manufacturerId, sort } =
+    validateCatalogParams(params);
 
   return (
     <div className="min-h-screen">
       <div className="container mx-auto max-w-7xl px-4 py-4 md:px-6 md:py-8">
-        <CatalogHeader />
+        {/* Header + Search + Filters in desktop row */}
+        <div className="mb-8 space-y-4">
+          {/* Row 1: Title + Subtitle */}
+          <CatalogHeader />
 
-        {/* Nuevo layout armónico: barra de búsqueda y filtros + badges */}
-        <CatalogFilterBar
-          currentProfileSupplier={manufacturerId ?? 'all'}
-          currentSort={sort}
-          profileSuppliers={profileSuppliers}
-          searchQuery={searchQuery}
-          totalResults={totalData.total}
-        />
+          {/* Row 2: Search (left) + Filters (right) on desktop */}
+          {/* Wrapped in Suspense to prevent blocking route */}
+          <Suspense fallback={<CatalogFilterSkeleton />}>
+            <CatalogFilterBarWrapper
+              currentProfileSupplier={manufacturerId ?? "all"}
+              currentSort={sort}
+              searchQuery={searchQuery}
+            />
+          </Suspense>
+        </div>
 
-        <Suspense fallback={<CatalogSkeleton />} key={`${searchQuery}-${page}-${manufacturerId}-${sort}`}>
-          <CatalogContent manufacturerId={manufacturerId} page={page} searchQuery={searchQuery} sort={sort} />
+        <Suspense
+          fallback={<CatalogSkeleton />}
+          key={`${searchQuery}-${page}-${manufacturerId}-${sort}`}
+        >
+          <CatalogContent
+            manufacturerId={manufacturerId}
+            page={page}
+            searchQuery={searchQuery}
+            sort={sort}
+          />
         </Suspense>
       </div>
     </div>

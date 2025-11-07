@@ -1,7 +1,7 @@
 # Glasify Lite Constitution
-**Version**: 2.1.1  
+**Version**: 2.2.1  
 **Ratified**: 2025-10-09  
-**Last Amended**: 2025-01-20
+**Last Amended**: 2025-01-10
 
 ---
 
@@ -66,22 +66,72 @@ For **technical implementation details**, code patterns, and specific framework 
 
 ---
 
-### 3. One Job, One Place
+### 3. One Job, One Place (SOLID Architecture)
 
-**What it means**: Each piece of code should do one thing and do it well.
+**What it means**: Each piece of code should do one thing and do it well. Components must be modular, testable, and easy to change.
 
-**Why it matters**: When code has multiple responsibilities, changes become risky. You might break one feature while fixing another.
+**Why it matters**: When code has multiple responsibilities, changes become risky. You might break one feature while fixing another. SOLID principles ensure code is maintainable long-term.
 
-**In practice**:
-- Separate user interface from business logic
-- Keep data fetching separate from data display
-- One file, one purpose
+**SOLID Principles Applied**:
+
+1. **Single Responsibility**: Each module has one reason to change
+   - Forms only handle UI and user interaction
+   - Hooks manage state and side effects
+   - Services handle business logic
+   - Utilities provide pure functions
+
+2. **Open/Closed**: Open for extension, closed for modification
+   - Add features through new files, not editing existing ones
+   - Use composition over inheritance
+   - Extract configuration and constants
+
+3. **Liskov Substitution**: Components can be replaced by variants
+   - Props interfaces are specific, not generic
+   - Variants maintain the same contract
+
+4. **Interface Segregation**: Specific interfaces, not generic ones
+   - Break large prop types into smaller, focused ones
+   - Don't force components to depend on props they don't use
+
+5. **Dependency Inversion**: Depend on abstractions
+   - Use hooks to abstract data fetching
+   - Use context for cross-cutting concerns
+   - Don't couple components to specific implementations
+
+**Mandatory File Organization**:
+
+Forms must follow this structure:
+```
+feature/
+├── _components/
+│   └── feature-form.tsx          # UI only (orchestration)
+├── _hooks/
+│   ├── use-feature-mutations.ts  # API mutations + cache
+│   └── use-feature-data.ts       # Data fetching
+├── _schemas/
+│   └── feature-form.schema.ts    # Zod validation
+├── _utils/
+│   └── feature-form.utils.ts     # Pure functions + types
+└── _constants/
+    └── feature-form.constants.ts # Magic numbers extracted
+```
+
+**Violations that MUST be refactored**:
+- ❌ Forms with 200+ lines containing mutations, validation, defaults, and UI
+- ❌ Magic numbers scattered in code (must extract to constants)
+- ❌ Inline Zod schemas in components (must extract to _schemas/)
+- ❌ Mutation logic in components (must extract to _hooks/)
+- ❌ Default values hardcoded in forms (must extract to _utils/)
+- ❌ Business logic mixed with UI rendering
 
 **Examples**:
-- ✅ `user-form.tsx` handles the form UI
-- ✅ `user-service.ts` handles saving user data
-- ✅ `user-validator.ts` checks if data is valid
-- ❌ One giant file that does everything
+- ✅ `user-form.tsx` handles UI orchestration (60 lines)
+- ✅ `use-user-mutations.ts` handles create/update + cache invalidation
+- ✅ `use-user-data.ts` fetches related data (roles, departments)
+- ✅ `user-form.schema.ts` contains Zod validation schema
+- ✅ `user-form.utils.ts` has getDefaultValues() and transformValues()
+- ✅ `user-form.constants.ts` has MIN_AGE, MAX_NAME_LENGTH, etc.
+- ❌ One 300-line file with everything mixed together
 
 ---
 
@@ -207,14 +257,14 @@ For **technical implementation details**, code patterns, and specific framework 
 The following technologies are mandatory for consistency and team expertise:
 
 **Core Framework**:
-- Next.js 15 (App Router with React Server Components)
+- Next.js 16 (App Router with React Server Components)
 - TypeScript (strict mode enabled)
 
 **Backend**:
 - tRPC (type-safe API communication)
 - Prisma (database access)
 - PostgreSQL (database)
-- NextAuth.js (authentication)
+- Better Auth (authentication)
 
 **Frontend**:
 - React 19 (Server Components first)
@@ -235,6 +285,73 @@ The following technologies are mandatory for consistency and team expertise:
 - ❌ Alternative form libraries without approval
 - ❌ CSS frameworks other than TailwindCSS
 - ❌ Winston logger in browser code (server-side only)
+
+---
+
+## Cache Components Best Practices
+
+Next.js 16 Cache Components enable build-time prerendering and runtime prefetching. Follow these rules to avoid incompatibility errors.
+
+### Core APIs
+
+- **`"use cache"`**: Public cache for build-time prerendering (static pages)
+- **`"use cache: private"`**: Private cache for runtime prefetching (allows dynamic APIs)
+- **`cacheLife(profile)`**: Time-based revalidation ("hours", "days", "max", custom)
+- **`cacheTag(tag)`**: Tag-based cache invalidation
+
+### Forbidden in `"use cache"` Functions
+
+These APIs are **incompatible** with public cache (build-time prerendering):
+
+- ❌ `headers()` and `cookies()` (dynamic data sources)
+- ❌ Winston logger (uses `headers()` internally)
+- ❌ `Date.now()` before accessing dynamic data (triggers prerendering issues)
+- ❌ Route Segment Config exports (`dynamic`, `revalidate`, `runtime`)
+- ❌ Empty arrays from `generateStaticParams()`
+
+### What to Use Instead
+
+- ✅ **`performance.now()`** for timing measurements (not system time)
+- ✅ **Direct Prisma access** for static cached pages (bypass tRPC)
+- ✅ **`"use cache: private"`** if you need `headers()`/`cookies()`
+- ✅ **`<Suspense>` boundaries** for uncached data in Server Components
+- ✅ **Placeholder values** in `generateStaticParams()` if no data available
+
+### Migration Pattern
+
+When enabling Cache Components:
+
+1. Remove all Route Segment Config exports
+2. Add `"use cache"` for static content
+3. Remove logger from cached functions
+4. Replace `Date.now()` with `performance.now()`
+5. Ensure `generateStaticParams()` returns non-empty arrays
+6. Wrap uncached data access in `<Suspense>`
+
+**Example**:
+```typescript
+// ❌ BEFORE (incompatible)
+export const dynamic = 'force-static';
+export default async function Page() {
+  const start = Date.now();
+  const data = await api.getData();
+  logger.info('Fetched data'); // uses headers()
+  return <div>{data}</div>;
+}
+
+// ✅ AFTER (Cache Components compatible)
+export default async function Page() {
+  "use cache";
+  cacheLife("hours");
+  
+  const start = performance.now(); // not Date.now()
+  const data = await prisma.findMany(); // not tRPC (avoids headers)
+  // logger removed - use console in development only
+  return <div>{data}</div>;
+}
+```
+
+---
 
 ---
 
@@ -296,9 +413,9 @@ The constitution is the **ultimate authority** for engineering decisions. When i
 When principles conflict (rare), use this order:
 
 1. **Security From the Start** (no compromises on security)
-2. **Clarity Over Complexity** (readable code over clever code)
-3. **Server-First Performance** (fast for users)
-4. **One Job, One Place** (maintainability)
+2. **One Job, One Place (SOLID Architecture)** (maintainability and testability)
+3. **Clarity Over Complexity** (readable code over clever code)
+4. **Server-First Performance** (fast for users)
 5. **Flexible Testing** (quality assurance)
 6. **Extend, Don't Modify** (stability)
 7. **Track Everything Important** (observability)
@@ -329,19 +446,38 @@ If something is unclear:
 <!--
 Sync Impact Report
 
-- Version change: 2.1.0 → 2.1.1 (PATCH)
-- Modified principles:
-  * Server-First Performance: Added explicit guidance on cache refresh pattern with router.refresh()
+- Version change: 2.2.0 → 2.2.1 (PATCH)
+- Modified sections:
+  * Technology Constraints → Added "Cache Components Best Practices" subsection
+    - Core APIs: "use cache", cacheLife(), cacheTag()
+    - Forbidden APIs in cached functions (headers, cookies, logger, Date.now())
+    - Recommended alternatives (performance.now(), Prisma direct, Suspense)
+    - Migration pattern with before/after example
 - Added sections:
-  * Cache Refresh After Changes (clarification under Server-First Performance)
+  * Cache Components Best Practices (practical migration guidance)
 - Removed sections: none
-- Templates updated:
-  * .github/copilot-instructions.md ✅ updated (added SSR Cache Invalidation pattern)
-  * AGENTS.md ✅ updated (documented router.refresh() pattern)
-- Follow-up TODOs: none
+- Templates requiring updates:
+  * .github/copilot-instructions.md ⚠ PENDING (add Cache Components section to Critical Rules)
+  * .specify/templates/plan-template.md ✅ no changes needed (architecture-agnostic)
+  * .specify/templates/spec-template.md ✅ no changes needed (feature-focused)
+  * .specify/templates/tasks-template.md ✅ no changes needed (task-focused)
+- Follow-up TODOs:
+  * Update copilot-instructions.md with Cache Components critical rules
+  * Remove obsolete "Use Date.now()" lint rule from copilot-instructions
+  * Add Cache Components validation to code generation checklist
 - Changes summary:
-  * Clarified that SSR pages with force-dynamic need router.refresh() after mutations
-  * Added plain language explanation of why browser doesn't auto-update with SSR
-  * Documented the two-step pattern: invalidate cache + refresh server data
-  * Provided concrete examples of when to use router.refresh()
+  * PATCH version bump for technical clarifications (not new principle)
+  * Documented Cache Components migration patterns discovered during Next.js 16 upgrade
+  * Provides actionable guidance for avoiding build errors
+  * Clarifies incompatible APIs and their alternatives
+  * Maintains "clarity over quantity" with concise, practical examples
+- Rationale:
+  * Recent Cache Components migration revealed systematic incompatibilities
+  * Team needs clear guidance on forbidden APIs and alternatives
+  * performance.now() vs Date.now() distinction is critical for build success
+  * Prevents future Cache Components errors in new features
+  * Aligns with constitution principle of "Server-First Performance"
+  * Complements existing .github/copilot-instructions.md patterns
+  * Real-world migration example clarifies abstract concepts
 -->
+

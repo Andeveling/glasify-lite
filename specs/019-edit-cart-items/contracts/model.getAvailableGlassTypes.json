@@ -1,0 +1,100 @@
+{
+  "procedure": "model.getAvailableGlassTypes",
+  "type": "query",
+  "description": "Get all glass types compatible with a specific model (for populating glass type dropdown in edit modal)",
+  "input": {
+    "type": "object",
+    "required": ["modelId"],
+    "properties": {
+      "modelId": {
+        "type": "string",
+        "format": "uuid",
+        "description": "ID of the model"
+      }
+    }
+  },
+  "output": {
+    "type": "array",
+    "description": "List of compatible glass types",
+    "items": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Glass type ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name (e.g., 'Vidrio Templado 6mm')"
+        },
+        "pricePerM2": {
+          "type": "string",
+          "format": "decimal",
+          "description": "Base price per square meter"
+        },
+        "thickness": {
+          "type": "integer",
+          "nullable": true,
+          "description": "Glass thickness in mm"
+        },
+        "description": {
+          "type": "string",
+          "nullable": true,
+          "description": "Optional glass type description"
+        }
+      }
+    }
+  },
+  "errors": {
+    "NOT_FOUND": [
+      {
+        "code": "MODEL_NOT_FOUND",
+        "message": "Modelo no encontrado"
+      }
+    ]
+  },
+  "authorization": {
+    "required": false,
+    "note": "Public query - catalog data"
+  },
+  "validation": {
+    "server": [
+      "Verify model exists",
+      "Join ModelGlassType to get compatible glass types",
+      "Order by price ascending (most economical first)"
+    ]
+  },
+  "performance": {
+    "expected": "<200ms (includes join + ordering)",
+    "caching": "5 minute cache (catalog data, rarely changes)",
+    "optimization": "Index on ModelGlassType.modelId for fast lookup"
+  },
+  "example": {
+    "input": {
+      "modelId": "clq1234567890"
+    },
+    "output": [
+      {
+        "id": "clq9876543210",
+        "name": "Vidrio Claro 4mm",
+        "pricePerM2": "125.50",
+        "thickness": 4,
+        "description": "Vidrio transparente estándar"
+      },
+      {
+        "id": "clq9876543211",
+        "name": "Vidrio Templado 6mm",
+        "pricePerM2": "192.00",
+        "thickness": 6,
+        "description": "Vidrio de seguridad templado"
+      },
+      {
+        "id": "clq9876543212",
+        "name": "Vidrio Laminado 6.38mm",
+        "pricePerM2": "245.75",
+        "thickness": 6,
+        "description": "Doble vidrio con capa intermedia"
+      }
+    ]
+  }
+}

@@ -11,8 +11,10 @@
  * - Progressive loading indicators
  * - Smooth transitions matching the actual content layout
  */
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: Using array index as key is acceptable here because skeleton items are purely presentational and do not require stable identity. */
+/** biome-ignore-all lint/style/noMagicNumbers: Magic numbers are used intentionally for animation delays and skeleton layout to match the design specification. */
 
-import { Spinner } from '@/components/ui/spinner';
+import { Spinner } from "@/components/ui/spinner";
 
 export default function QuoteDetailLoading() {
   return (
@@ -20,7 +22,9 @@ export default function QuoteDetailLoading() {
       {/* Header with animated spinner and pulse text */}
       <div className="mb-8 flex items-center justify-center gap-3">
         <Spinner className="size-6 text-primary" />
-        <p className="animate-pulse text-muted-foreground">Cargando cotización...</p>
+        <p className="animate-pulse text-muted-foreground">
+          Cargando cotización...
+        </p>
       </div>
 
       {/* Back button skeleton */}
@@ -96,7 +100,10 @@ export default function QuoteDetailLoading() {
             <div
               className="fade-in animate-in space-y-4 overflow-hidden rounded-lg border bg-card p-4 opacity-0"
               key={itemIndex}
-              style={{ animationDelay: `${itemIndex * 100}ms`, animationFillMode: 'forwards' }}
+              style={{
+                animationDelay: `${itemIndex * 100}ms`,
+                animationFillMode: "forwards",
+              }}
             >
               {/* Item image with centered spinner */}
               <div className="relative">
@@ -129,7 +136,9 @@ export default function QuoteDetailLoading() {
                     >
                       <div
                         className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                        style={{ animationDelay: `${200 + specItemIndex * 50}ms` }}
+                        style={{
+                          animationDelay: `${200 + specItemIndex * 50}ms`,
+                        }}
                       />
                     </div>
                   ))}

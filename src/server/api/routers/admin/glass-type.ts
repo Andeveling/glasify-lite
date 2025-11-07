@@ -10,27 +10,24 @@
  * Handles Many-to-Many relationships: solutions, characteristics
  */
 
-import type { Prisma } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
-import logger from '@/lib/logger';
+import type { Prisma } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
+import logger from "@/lib/logger";
 import {
   createGlassTypeSchema,
   deleteGlassTypeSchema,
   getGlassTypeByIdOutputSchema,
   listGlassTypesSchema,
   updateGlassTypeSchema,
-} from '@/lib/validations/admin/glass-type.schema';
-import { adminProcedure, createTRPCRouter } from '@/server/api/trpc';
-import { createGlassTypePriceHistory } from '@/server/services/glass-price-history.service';
-import { canDeleteGlassType } from '@/server/services/referential-integrity.service';
+} from "@/lib/validations/admin/glass-type.schema";
+import { adminProcedure, createTRPCRouter } from "@/server/api/trpc";
+import { canDeleteGlassType } from "@/server/services/referential-integrity.service";
 
 /**
  * Helper: Build where clause for list query
  */
 function buildWhereClause(input: {
   search?: string;
-  purpose?: 'general' | 'insulation' | 'security' | 'decorative';
-  glassSupplierId?: string;
   solutionId?: string;
   isActive?: boolean;
   thicknessMin?: number;
@@ -38,38 +35,28 @@ function buildWhereClause(input: {
 }): Prisma.GlassTypeWhereInput {
   const where: Prisma.GlassTypeWhereInput = {};
 
-  // Search by name, SKU, or description
+  // Search by name, code, or description
   if (input.search) {
     where.OR = [
       {
         name: {
           contains: input.search,
-          mode: 'insensitive',
+          mode: "insensitive",
         },
       },
       {
-        sku: {
+        code: {
           contains: input.search,
-          mode: 'insensitive',
+          mode: "insensitive",
         },
       },
       {
         description: {
           contains: input.search,
-          mode: 'insensitive',
+          mode: "insensitive",
         },
       },
     ];
-  }
-
-  // Filter by purpose
-  if (input.purpose) {
-    where.purpose = input.purpose;
-  }
-
-  // Filter by glass supplier
-  if (input.glassSupplierId) {
-    where.glassSupplierId = input.glassSupplierId;
   }
 
   // Filter by assigned solution
@@ -105,27 +92,30 @@ function buildWhereClause(input: {
 /**
  * Helper: Build orderBy clause for list query
  */
-function buildOrderByClause(sortBy: string, sortOrder: 'asc' | 'desc'): Prisma.GlassTypeOrderByWithRelationInput {
+function buildOrderByClause(
+  sortBy: string,
+  sortOrder: "asc" | "desc"
+): Prisma.GlassTypeOrderByWithRelationInput {
   const orderBy: Prisma.GlassTypeOrderByWithRelationInput = {};
 
   switch (sortBy) {
-    case 'name':
+    case "name":
       orderBy.name = sortOrder;
       break;
-    case 'thicknessMm':
+    case "code":
+      orderBy.code = sortOrder;
+      break;
+    case "thicknessMm":
       orderBy.thicknessMm = sortOrder;
       break;
-    case 'pricePerSqm':
-      orderBy.pricePerSqm = sortOrder;
+    case "manufacturer":
+      orderBy.manufacturer = sortOrder;
       break;
-    case 'purpose':
-      orderBy.purpose = sortOrder;
-      break;
-    case 'createdAt':
+    case "createdAt":
       orderBy.createdAt = sortOrder;
       break;
     default:
-      orderBy.name = 'asc'; // Default sort
+      orderBy.name = "asc"; // Default sort
   }
 
   return orderBy;
@@ -142,157 +132,118 @@ export const glassTypeRouter = createTRPCRouter({
    * Creates a new glass type with solutions and characteristics
    */
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex CRUD with multiple validation steps required
-  create: adminProcedure.input(createGlassTypeSchema).mutation(async ({ ctx, input }) => {
-    // Check for duplicate name
-    const existingByName = await ctx.db.glassType.findFirst({
-      where: { name: input.name },
-    });
-
-    if (existingByName) {
-      throw new TRPCError({
-        code: 'CONFLICT',
-        message: 'Ya existe un tipo de vidrio con este nombre',
-      });
-    }
-
-    // Check for duplicate SKU (if provided)
-    if (input.sku) {
-      const existingBySku = await ctx.db.glassType.findUnique({
-        where: { sku: input.sku },
+  create: adminProcedure
+    .input(createGlassTypeSchema)
+    .mutation(async ({ ctx, input }) => {
+      // Check for duplicate name
+      const existingByName = await ctx.db.glassType.findFirst({
+        where: { name: input.name },
       });
 
-      if (existingBySku) {
+      if (existingByName) {
         throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Ya existe un tipo de vidrio con este SKU',
-        });
-      }
-    }
-
-    // Validate glass supplier exists (if provided)
-    if (input.glassSupplierId) {
-      const supplier = await ctx.db.glassSupplier.findUnique({
-        where: { id: input.glassSupplierId },
-      });
-
-      if (!supplier) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Proveedor de vidrio no encontrado',
+          code: "CONFLICT",
+          message: "Ya existe un tipo de vidrio con este nombre",
         });
       }
 
-      if (!supplier.isActive) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'El proveedor de vidrio está inactivo',
+      // Validate all solution IDs exist and are active
+      if (input.solutions.length > 0) {
+        const solutionIds = input.solutions.map((s) => s.solutionId);
+        const foundSolutions = await ctx.db.glassSolution.findMany({
+          where: { id: { in: solutionIds } },
         });
-      }
-    }
 
-    // Validate all solution IDs exist and are active
-    if (input.solutions.length > 0) {
-      const solutionIds = input.solutions.map((s) => s.solutionId);
-      const foundSolutions = await ctx.db.glassSolution.findMany({
-        where: { id: { in: solutionIds } },
-      });
+        if (foundSolutions.length !== solutionIds.length) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Una o más soluciones no fueron encontradas",
+          });
+        }
 
-      if (foundSolutions.length !== solutionIds.length) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Una o más soluciones no fueron encontradas',
-        });
-      }
-
-      const inactiveSolution = foundSolutions.find((s) => !s.isActive);
-      if (inactiveSolution) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: `La solución "${inactiveSolution.nameEs}" está inactiva`,
-        });
-      }
-    }
-
-    // Validate all characteristic IDs exist and are active
-    if (input.characteristics.length > 0) {
-      const characteristicIds = input.characteristics.map((c) => c.characteristicId);
-      const foundCharacteristics = await ctx.db.glassCharacteristic.findMany({
-        where: { id: { in: characteristicIds } },
-      });
-
-      if (foundCharacteristics.length !== characteristicIds.length) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Una o más características no fueron encontradas',
-        });
+        const inactiveSolution = foundSolutions.find((s) => !s.isActive);
+        if (inactiveSolution) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `La solución "${inactiveSolution.nameEs}" está inactiva`,
+          });
+        }
       }
 
-      const inactiveCharacteristic = foundCharacteristics.find((c) => !c.isActive);
-      if (inactiveCharacteristic) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: `La característica "${inactiveCharacteristic.nameEs}" está inactiva`,
+      // Validate all characteristic IDs exist and are active
+      if (input.characteristics.length > 0) {
+        const characteristicIds = input.characteristics.map(
+          (c) => c.characteristicId
+        );
+        const foundCharacteristics = await ctx.db.glassCharacteristic.findMany({
+          where: { id: { in: characteristicIds } },
         });
+
+        if (foundCharacteristics.length !== characteristicIds.length) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Una o más características no fueron encontradas",
+          });
+        }
+
+        const inactiveCharacteristic = foundCharacteristics.find(
+          (c) => !c.isActive
+        );
+        if (inactiveCharacteristic) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `La característica "${inactiveCharacteristic.nameEs}" está inactiva`,
+          });
+        }
       }
-    }
 
-    // Create glass type with nested creates
-    const { solutions, characteristics, ...baseData } = input;
+      // Create glass type with nested creates
+      const { solutions, characteristics, ...baseData } = input;
 
-    const glassType = await ctx.db.glassType.create({
-      data: {
-        ...baseData,
-        characteristics: {
-          create: characteristics.map((char) => ({
-            certification: char.certification,
-            characteristicId: char.characteristicId,
-            notes: char.notes,
-            value: char.value,
-          })),
-        },
-        solutions: {
-          create: solutions.map((sol) => ({
-            isPrimary: sol.isPrimary,
-            notes: sol.notes,
-            performanceRating: sol.performanceRating,
-            solutionId: sol.solutionId,
-          })),
-        },
-      },
-      include: {
-        characteristics: {
-          include: {
-            characteristic: true,
+      const glassType = await ctx.db.glassType.create({
+        data: {
+          ...baseData,
+          characteristics: {
+            create: characteristics.map((char) => ({
+              certification: char.certification,
+              characteristicId: char.characteristicId,
+              notes: char.notes,
+              value: char.value,
+            })),
+          },
+          solutions: {
+            create: solutions.map((sol) => ({
+              isPrimary: sol.isPrimary,
+              notes: sol.notes,
+              performanceRating: sol.performanceRating,
+              solutionId: sol.solutionId,
+            })),
           },
         },
-        glassSupplier: true,
-        solutions: {
-          include: {
-            solution: true,
+        include: {
+          characteristics: {
+            include: {
+              characteristic: true,
+            },
+          },
+          solutions: {
+            include: {
+              solution: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    // Create initial price history record
-    await createGlassTypePriceHistory({
-      createdBy: ctx.session.user.id,
-      glassTypeId: glassType.id,
-      pricePerSqm: glassType.pricePerSqm.toNumber(),
-      reason: 'Precio inicial',
-    });
+      logger.info("Glass type created", {
+        characteristicsCount: characteristics.length,
+        glassTypeId: glassType.id,
+        glassTypeName: glassType.name,
+        solutionsCount: solutions.length,
+        userId: ctx.session.user.id,
+      });
 
-    logger.info('Glass type created', {
-      characteristicsCount: characteristics.length,
-      glassTypeId: glassType.id,
-      glassTypeName: glassType.name,
-      pricePerSqm: glassType.pricePerSqm.toNumber(),
-      solutionsCount: solutions.length,
-      userId: ctx.session.user.id,
-    });
-
-    return glassType;
-  }),
+      return glassType;
+    }),
 
   /**
    * Delete Glass Type
@@ -302,42 +253,44 @@ export const glassTypeRouter = createTRPCRouter({
    * Uses referential integrity service to check dependencies
    * Cascades to solutions and characteristics (handled by Prisma)
    */
-  delete: adminProcedure.input(deleteGlassTypeSchema).mutation(async ({ ctx, input }) => {
-    // Check if exists
-    const existing = await ctx.db.glassType.findUnique({
-      where: { id: input.id },
-    });
-
-    if (!existing) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Tipo de vidrio no encontrado',
+  delete: adminProcedure
+    .input(deleteGlassTypeSchema)
+    .mutation(async ({ ctx, input }) => {
+      // Check if exists
+      const existing = await ctx.db.glassType.findUnique({
+        where: { id: input.id },
       });
-    }
 
-    // Check referential integrity
-    const integrityCheck = await canDeleteGlassType(input.id);
+      if (!existing) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Tipo de vidrio no encontrado",
+        });
+      }
 
-    if (!integrityCheck.canDelete) {
-      throw new TRPCError({
-        code: 'CONFLICT',
-        message: integrityCheck.message,
+      // Check referential integrity
+      const integrityCheck = await canDeleteGlassType(input.id);
+
+      if (!integrityCheck.canDelete) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: integrityCheck.message,
+        });
+      }
+
+      // Delete glass type (cascades to solutions, characteristics, price history)
+      await ctx.db.glassType.delete({
+        where: { id: input.id },
       });
-    }
 
-    // Delete glass type (cascades to solutions, characteristics, price history)
-    await ctx.db.glassType.delete({
-      where: { id: input.id },
-    });
+      logger.warn("Glass type deleted", {
+        glassTypeId: input.id,
+        glassTypeName: existing.name,
+        userId: ctx.session.user.id,
+      });
 
-    logger.warn('Glass type deleted', {
-      glassTypeId: input.id,
-      glassTypeName: existing.name,
-      userId: ctx.session.user.id,
-    });
-
-    return { success: true };
-  }),
+      return { success: true };
+    }),
 
   /**
    * Get Glass Type by ID
@@ -373,14 +326,8 @@ export const glassTypeRouter = createTRPCRouter({
             },
             orderBy: {
               characteristic: {
-                sortOrder: 'asc',
+                sortOrder: "asc",
               },
-            },
-          },
-          glassSupplier: {
-            select: {
-              id: true,
-              name: true,
             },
           },
           solutions: {
@@ -397,11 +344,11 @@ export const glassTypeRouter = createTRPCRouter({
             },
             orderBy: [
               {
-                isPrimary: 'desc',
+                isPrimary: "desc",
               },
               {
                 solution: {
-                  sortOrder: 'asc',
+                  sortOrder: "asc",
                 },
               },
             ],
@@ -412,8 +359,8 @@ export const glassTypeRouter = createTRPCRouter({
 
       if (!glassType) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Tipo de vidrio no encontrado',
+          code: "NOT_FOUND",
+          message: "Tipo de vidrio no encontrado",
         });
       }
 
@@ -421,12 +368,11 @@ export const glassTypeRouter = createTRPCRouter({
       const serializedGlassType = {
         ...glassType,
         lightTransmission: glassType.lightTransmission?.toNumber() ?? null,
-        pricePerSqm: glassType.pricePerSqm.toNumber(),
         solarFactor: glassType.solarFactor?.toNumber() ?? null,
         uValue: glassType.uValue?.toNumber() ?? null,
       };
 
-      logger.info('Glass type retrieved', {
+      logger.info("Glass type retrieved", {
         glassTypeId: input.id,
         glassTypeName: glassType.name,
         userId: ctx.session.user.id,
@@ -442,80 +388,81 @@ export const glassTypeRouter = createTRPCRouter({
    * Supports pagination, search, filtering, and sorting
    * Includes solution and supplier info in results
    */
-  list: adminProcedure.input(listGlassTypesSchema).query(async ({ ctx, input }) => {
-    const { page, limit, sortBy, sortOrder, isActive, ...restFilters } = input;
+  list: adminProcedure
+    .input(listGlassTypesSchema)
+    .query(async ({ ctx, input }) => {
+      const { page, limit, sortBy, sortOrder, isActive, ...restFilters } =
+        input;
 
-    const where = buildWhereClause({
-      ...restFilters,
-      isActive: isActive ? (isActive === 'all' ? undefined : isActive === 'active') : undefined,
-    });
-    const orderBy = buildOrderByClause(sortBy, sortOrder);
+      const where = buildWhereClause({
+        ...restFilters,
+        isActive: isActive
+          ? isActive === "all"
+            ? undefined
+            : isActive === "active"
+          : undefined,
+      });
+      const orderBy = buildOrderByClause(sortBy, sortOrder);
 
-    // Get total count
-    const total = await ctx.db.glassType.count({ where });
+      // Get total count
+      const total = await ctx.db.glassType.count({ where });
 
-    // Get paginated items with related data
-    const items = await ctx.db.glassType.findMany({
-      include: {
-        // biome-ignore lint/style/useNamingConvention: Prisma special _count field
-        _count: {
-          select: {
-            characteristics: true,
-            quoteItems: true,
-            solutions: true,
-          },
-        },
-        glassSupplier: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        solutions: {
-          include: {
-            solution: {
-              select: {
-                id: true,
-                key: true,
-                nameEs: true,
-              },
+      // Get paginated items with related data
+      const items = await ctx.db.glassType.findMany({
+        include: {
+          // biome-ignore lint/style/useNamingConvention: Prisma special _count field
+          _count: {
+            select: {
+              characteristics: true,
+              quoteItems: true,
+              solutions: true,
             },
           },
-          orderBy: [
-            {
-              isPrimary: 'desc',
-            },
-            {
+          solutions: {
+            include: {
               solution: {
-                sortOrder: 'asc',
+                select: {
+                  id: true,
+                  key: true,
+                  nameEs: true,
+                },
               },
             },
-          ],
+            orderBy: [
+              {
+                isPrimary: "desc",
+              },
+              {
+                solution: {
+                  sortOrder: "asc",
+                },
+              },
+            ],
+          },
         },
-      },
-      orderBy,
-      skip: (page - 1) * limit,
-      take: limit,
-      where,
-    });
+        orderBy,
+        skip: (page - 1) * limit,
+        take: limit,
+        where,
+      });
 
-    const totalPages = Math.ceil(total / limit);
+      const totalPages = Math.ceil(total / limit);
 
-    logger.info('Glass types listed', {
-      itemCount: items.length,
-      page,
-      total,
-      userId: ctx.session.user.id,
-    });
+      logger.info("Glass types listed", {
+        itemCount: items.length,
+        page,
+        total,
+        userId: ctx.session.user.id,
+      });
 
-    return {
-      items,
-      limit,
-      page,
-      total,
-      totalPages,
-    };
-  }),
+      return {
+        items,
+        limit,
+        page,
+        total,
+        totalPages,
+      };
+    }),
 
   /**
    * Update Glass Type
@@ -525,196 +472,148 @@ export const glassTypeRouter = createTRPCRouter({
    * Creates price history record if pricePerSqm changes
    */
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex CRUD with multiple validation steps required
-  update: adminProcedure.input(updateGlassTypeSchema).mutation(async ({ ctx, input }) => {
-    const { id, data } = input;
+  update: adminProcedure
+    .input(updateGlassTypeSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { id, data } = input;
 
-    // Check if exists
-    const existing = await ctx.db.glassType.findUnique({
-      where: { id },
-    });
-
-    if (!existing) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Tipo de vidrio no encontrado',
-      });
-    }
-
-    // Check for duplicate name (excluding current)
-    if (data.name) {
-      const existingByName = await ctx.db.glassType.findFirst({
-        where: {
-          AND: [{ name: data.name }, { NOT: { id } }],
-        },
+      // Check if exists
+      const existing = await ctx.db.glassType.findUnique({
+        where: { id },
       });
 
-      if (existingByName) {
+      if (!existing) {
         throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Ya existe un tipo de vidrio con este nombre',
-        });
-      }
-    }
-
-    // Check for duplicate SKU (excluding current)
-    if (data.sku) {
-      const existingBySku = await ctx.db.glassType.findFirst({
-        where: {
-          AND: [{ sku: data.sku }, { NOT: { id } }],
-        },
-      });
-
-      if (existingBySku) {
-        throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Ya existe un tipo de vidrio con este SKU',
-        });
-      }
-    }
-
-    // Validate glass supplier exists and is active (if provided)
-    if (data.glassSupplierId !== undefined && data.glassSupplierId) {
-      const supplier = await ctx.db.glassSupplier.findUnique({
-        where: { id: data.glassSupplierId },
-      });
-
-      if (!supplier) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Proveedor de vidrio no encontrado',
+          code: "NOT_FOUND",
+          message: "Tipo de vidrio no encontrado",
         });
       }
 
-      if (!supplier.isActive) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'El proveedor de vidrio está inactivo',
+      // Check for duplicate name (excluding current)
+      if (data.name) {
+        const existingByName = await ctx.db.glassType.findFirst({
+          where: {
+            AND: [{ name: data.name }, { NOT: { id } }],
+          },
         });
-      }
-    }
 
-    // Validate solutions (if provided)
-    if (data.solutions && data.solutions.length > 0) {
-      const solutionIds = data.solutions.map((s) => s.solutionId);
-      const updatedSolutions = await ctx.db.glassSolution.findMany({
-        where: { id: { in: solutionIds } },
-      });
-
-      if (updatedSolutions.length !== solutionIds.length) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Una o más soluciones no fueron encontradas',
-        });
+        if (existingByName) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "Ya existe un tipo de vidrio con este nombre",
+          });
+        }
       }
 
-      const inactiveSolution = updatedSolutions.find((s) => !s.isActive);
-      if (inactiveSolution) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: `La solución "${inactiveSolution.nameEs}" está inactiva`,
+      // Validate solutions (if provided)
+      if (data.solutions && data.solutions.length > 0) {
+        const solutionIds = data.solutions.map((s) => s.solutionId);
+        const updatedSolutions = await ctx.db.glassSolution.findMany({
+          where: { id: { in: solutionIds } },
         });
+
+        if (updatedSolutions.length !== solutionIds.length) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Una o más soluciones no fueron encontradas",
+          });
+        }
+
+        const inactiveSolution = updatedSolutions.find((s) => !s.isActive);
+        if (inactiveSolution) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `La solución "${inactiveSolution.nameEs}" está inactiva`,
+          });
+        }
       }
-    }
 
-    // Validate characteristics (if provided)
-    if (data.characteristics && data.characteristics.length > 0) {
-      const characteristicIds = data.characteristics.map((c) => c.characteristicId);
-      const updatedCharacteristics = await ctx.db.glassCharacteristic.findMany({
-        where: { id: { in: characteristicIds } },
-      });
+      // Validate characteristics (if provided)
+      if (data.characteristics && data.characteristics.length > 0) {
+        const characteristicIds = data.characteristics.map(
+          (c) => c.characteristicId
+        );
+        const updatedCharacteristics =
+          await ctx.db.glassCharacteristic.findMany({
+            where: { id: { in: characteristicIds } },
+          });
 
-      if (updatedCharacteristics.length !== characteristicIds.length) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Una o más características no fueron encontradas',
-        });
+        if (updatedCharacteristics.length !== characteristicIds.length) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Una o más características no fueron encontradas",
+          });
+        }
+
+        const inactiveCharacteristic = updatedCharacteristics.find(
+          (c) => !c.isActive
+        );
+        if (inactiveCharacteristic) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `La característica "${inactiveCharacteristic.nameEs}" está inactiva`,
+          });
+        }
       }
 
-      const inactiveCharacteristic = updatedCharacteristics.find((c) => !c.isActive);
-      if (inactiveCharacteristic) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: `La característica "${inactiveCharacteristic.nameEs}" está inactiva`,
-        });
+      // Extract solutions and characteristics from data
+      const { solutions, characteristics, ...baseData } = data;
+
+      // Prepare update data
+      const updateData: Prisma.GlassTypeUpdateInput = { ...baseData };
+
+      // Replace solutions (delete all, create new)
+      if (solutions !== undefined) {
+        updateData.solutions = {
+          create: solutions.map((sol) => ({
+            isPrimary: sol.isPrimary,
+            notes: sol.notes,
+            performanceRating: sol.performanceRating,
+            solutionId: sol.solutionId,
+          })),
+          deleteMany: {},
+        };
       }
-    }
 
-    // Extract solutions and characteristics from data
-    const { solutions, characteristics, ...baseData } = data;
+      // Replace characteristics (delete all, create new)
+      if (characteristics !== undefined) {
+        updateData.characteristics = {
+          create: characteristics.map((char) => ({
+            certification: char.certification,
+            characteristicId: char.characteristicId,
+            notes: char.notes,
+            value: char.value,
+          })),
+          deleteMany: {},
+        };
+      }
 
-    // Prepare update data
-    const updateData: Prisma.GlassTypeUpdateInput = { ...baseData };
-
-    // Replace solutions (delete all, create new)
-    if (solutions !== undefined) {
-      updateData.solutions = {
-        create: solutions.map((sol) => ({
-          isPrimary: sol.isPrimary,
-          notes: sol.notes,
-          performanceRating: sol.performanceRating,
-          solutionId: sol.solutionId,
-        })),
-        deleteMany: {},
-      };
-    }
-
-    // Replace characteristics (delete all, create new)
-    if (characteristics !== undefined) {
-      updateData.characteristics = {
-        create: characteristics.map((char) => ({
-          certification: char.certification,
-          characteristicId: char.characteristicId,
-          notes: char.notes,
-          value: char.value,
-        })),
-        deleteMany: {},
-      };
-    }
-
-    // Update glass type
-    const glassType = await ctx.db.glassType.update({
-      data: updateData,
-      include: {
-        characteristics: {
-          include: {
-            characteristic: true,
+      // Update glass type
+      const glassType = await ctx.db.glassType.update({
+        data: updateData,
+        include: {
+          characteristics: {
+            include: {
+              characteristic: true,
+            },
+          },
+          solutions: {
+            include: {
+              solution: true,
+            },
           },
         },
-        glassSupplier: true,
-        solutions: {
-          include: {
-            solution: true,
-          },
-        },
-      },
-      where: { id },
-    });
+        where: { id },
+      });
 
-    // Create price history if price changed
-    if (data.pricePerSqm !== undefined) {
-      const oldPrice = existing.pricePerSqm.toNumber();
-      const newPrice = glassType.pricePerSqm.toNumber();
+      logger.info("Glass type updated", {
+        characteristicsReplaced: characteristics !== undefined,
+        glassTypeId: glassType.id,
+        glassTypeName: glassType.name,
+        solutionsReplaced: solutions !== undefined,
+        userId: ctx.session.user.id,
+      });
 
-      if (oldPrice !== newPrice) {
-        await createGlassTypePriceHistory({
-          createdBy: ctx.session.user.id,
-          glassTypeId: glassType.id,
-          pricePerSqm: newPrice,
-          reason: `Cambio de precio: ${oldPrice} → ${newPrice}`,
-        });
-      }
-    }
-
-    logger.info('Glass type updated', {
-      characteristicsReplaced: characteristics !== undefined,
-      glassTypeId: glassType.id,
-      glassTypeName: glassType.name,
-      priceChanged:
-        data.pricePerSqm !== undefined && existing.pricePerSqm.toNumber() !== glassType.pricePerSqm.toNumber(),
-      solutionsReplaced: solutions !== undefined,
-      userId: ctx.session.user.id,
-    });
-
-    return glassType;
-  }),
+      return glassType;
+    }),
 });

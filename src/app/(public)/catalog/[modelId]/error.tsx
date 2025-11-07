@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { AlertTriangle, Home, RefreshCcw } from 'lucide-react';
-import { BackLink } from '@/components/ui/back-link';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { AlertTriangle, Home, RefreshCcw } from "lucide-react";
+import { BackLink } from "@/components/ui/back-link";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 type ErrorProps = {
   error: Error & { digest?: string };
@@ -22,7 +22,8 @@ export default function ErrorPage({ error, reset }: ErrorProps) {
           <h1 className="mb-2 font-bold text-2xl">Algo salió mal</h1>
 
           <p className="mb-6 text-muted-foreground">
-            Ocurrió un error al cargar los detalles del modelo. Por favor, intenta nuevamente.
+            Ocurrió un error al cargar los detalles del modelo. Por favor,
+            intenta nuevamente.
           </p>
 
           {error.digest && (
@@ -32,12 +33,23 @@ export default function ErrorPage({ error, reset }: ErrorProps) {
           )}
 
           <div className="flex w-full flex-col gap-3 sm:flex-row">
-            <Button className="flex-1" onClick={reset} size="lg" variant="default">
+            <Button
+              className="flex-1"
+              onClick={reset}
+              size="lg"
+              variant="default"
+            >
               <RefreshCcw className="mr-2 h-4 w-4" />
               Intentar de nuevo
             </Button>
 
-            <BackLink className="flex-1" href="/catalog" icon="none" size="lg" variant="outline">
+            <BackLink
+              className="flex-1"
+              href="/catalog"
+              icon="none"
+              size="lg"
+              variant="outline"
+            >
               <Home className="mr-2 h-4 w-4" />
               Volver al catálogo
             </BackLink>

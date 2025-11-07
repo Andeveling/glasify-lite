@@ -9,7 +9,6 @@
     "**/*.spec.ts",
     "**/*.spec.tsx",
     "tests/**/*",
-    "src/tests/**/*",
-    "__tests__/**/*"
+    "src/tests/**/*"
   ]
 }

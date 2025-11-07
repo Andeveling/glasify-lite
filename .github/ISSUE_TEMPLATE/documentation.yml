@@ -1,0 +1,59 @@
+name: 📚 Documentation
+description: Request improvements or additions to documentation
+title: "[Docs]: "
+labels: ["documentation", "good first issue"]
+body:
+  - type: dropdown
+    id: doc-type
+    attributes:
+      label: Documentation Type
+      description: What type of documentation is this?
+      options:
+        - API Documentation
+        - User Guide
+        - Developer Guide
+        - Tutorial
+        - FAQ
+        - README Updates
+        - Code Comments
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: doc-request
+    attributes:
+      label: Documentation Request
+      description: What documentation needs to be created or improved?
+      placeholder: "The documentation should cover..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-state
+    attributes:
+      label: Current State
+      description: What is the current state of this documentation?
+      placeholder: |
+        - [ ] Documentation doesn't exist
+        - [ ] Documentation is outdated
+        - [ ] Documentation is incomplete
+        - [ ] Documentation is unclear
+
+  - type: textarea
+    id: target-audience
+    attributes:
+      label: Target Audience
+      description: Who is the intended audience for this documentation?
+      placeholder: "This documentation is for..."
+
+  - type: textarea
+    id: success-criteria
+    attributes:
+      label: Success Criteria
+      description: What would make this documentation successful?
+      placeholder: |
+        - [ ] Clear and concise
+        - [ ] Includes examples
+        - [ ] Easy to follow
+        - [ ] Addresses common questions

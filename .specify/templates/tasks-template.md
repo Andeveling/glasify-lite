@@ -1,4 +1,5 @@
 ---
+
 description: "Task list template for feature implementation"
 ---
 
@@ -7,16 +8,24 @@ description: "Task list template for feature implementation"
 **Input**: Design documents from `/specs/[###-feature-name]/`
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
 
+**Constitution Compliance**: Tasks must follow principles from `.specify/memory/constitution.md`. Key reminders:
+- **Flexible Testing**: Tests can be written before/during/after coding, but ALL features need tests before merge
+- **One Job, One Place**: Each task should have single responsibility
+- **Clarity Over Complexity**: Use descriptive task names and clear file paths
+- **Security From the Start**: Include validation and authorization tasks
+
 **Tests**: The examples below include test tasks. Tests are OPTIONAL - only include them if explicitly requested in the feature specification.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
 ## Format: `[ID] [P?] [Story] Description`
+
 - **[P]**: Can run in parallel (different files, no dependencies)
 - **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
 - Include exact file paths in descriptions
 
 ## Path Conventions
+
 - **Single project**: `src/`, `tests/` at repository root
 - **Web app**: `backend/src/`, `frontend/src/`
 - **Mobile**: `api/src/`, `ios/src/` or `android/src/`
@@ -60,11 +69,14 @@ description: "Task list template for feature implementation"
 Examples of foundational tasks (adjust based on your project):
 
 - [ ] T004 Setup database schema and migrations framework
-- [ ] T005 [P] Implement authentication/authorization framework
+- [ ] T005 [P] Implement authentication/authorization framework (Constitution: Security From the Start)
 - [ ] T006 [P] Setup API routing and middleware structure
 - [ ] T007 Create base models/entities that all stories depend on
-- [ ] T008 Configure error handling and logging infrastructure
+- [ ] T008 Configure error handling and logging infrastructure (Constitution: Track Everything Important)
+  - Winston logger for server-side only (NEVER in Client Components)
+  - Spanish error messages for users, English for technical logs
 - [ ] T009 Setup environment configuration management
+- [ ] T010 [P] Configure Zod schemas for input validation (Constitution: Security From the Start)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -78,7 +90,7 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 1 (OPTIONAL - only if tests requested) ⚠️
 
-**NOTE**: Tests MAY be written before, during, or after implementation (Pragmatic Testing Discipline). However, tests MUST exist and pass before merging the feature.
+> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
 - [ ] T010 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py
 - [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py
@@ -143,7 +155,75 @@ Examples of foundational tasks (adjust based on your project):
 
 ---
 
-## Phase N: Polish & Cross-Cutting Concerns
+## Phase N: SOLID Refactoring (If Needed)
+
+**Purpose**: Refactor existing coupled code to meet SOLID architecture standards before adding new features
+
+**CRITICAL**: If modifying existing forms/components that violate SOLID principles, complete this phase FIRST before implementing new features. See `.specify/memory/constitution.md` Principle #3.
+
+**File Organization Checklist** (per feature):
+- [ ] Create `_constants/` folder with magic numbers extracted
+- [ ] Create `_schemas/` folder with Zod validation schemas
+- [ ] Create `_hooks/` folder with mutations and data fetching
+- [ ] Create `_utils/` folder with transformations and types
+- [ ] Ensure `_components/` has UI orchestration only (<100 lines)
+
+**SOLID Refactoring Tasks**:
+
+**Extract Constants**:
+- [ ] TXXX [P] Extract magic numbers to `_constants/[feature].constants.ts`
+  - MIN/MAX values, DEFAULT values, regex patterns, file size limits
+  - Use descriptive UPPER_SNAKE_CASE names
+  - Export as named constants
+
+**Extract Schemas**:
+- [ ] TXXX [P] Extract Zod schemas to `_schemas/[feature].schema.ts`
+  - Move all `z.object()` definitions from components
+  - Import constants from `_constants/`
+  - Export for reuse in multiple components/tests
+
+**Extract Mutations**:
+- [ ] TXXX Create mutation hook in `_hooks/use-[feature]-mutation.ts`
+  - Move all `useMutation()` calls from component
+  - Include cache invalidation with `.invalidate().catch(undefined)`
+  - Include `router.refresh()` for SSR pages with `force-dynamic`
+  - Add Spanish toast notifications
+  - Export single hook with all mutation methods
+
+**Extract Data Fetching**:
+- [ ] TXXX Create data hook in `_hooks/use-[feature]-data.ts`
+  - Move all `useQuery()` calls from component
+  - Set appropriate `staleTime` for each query
+  - Return data with fallback defaults
+  - Export single hook with all data methods
+
+**Extract Utilities**:
+- [ ] TXXX [P] Create utility functions in `_utils/[feature].utils.ts`
+  - Move transformation functions (transformFormValues, etc.)
+  - Move default generation (getFormDefaults)
+  - Move validation functions
+  - Use destructuring to avoid cyclomatic complexity >15
+  - Export types: FormValues, InitialData, etc.
+
+**Reduce Component**:
+- [ ] TXXX Refactor `_components/[feature].tsx` to UI orchestration only
+  - Component should be <100 lines
+  - Only imports: hooks, schemas, constants, UI components
+  - Only responsibilities: rendering, local UI state, event handlers
+  - No business logic, no inline schemas, no magic numbers
+  - Use custom hooks for all external interactions
+
+**Validation**:
+- [ ] TXXX Run `pnpm ultracite fix` - ensure 0 linting errors
+- [ ] TXXX Verify component <100 lines (excluding imports/types)
+- [ ] TXXX Verify no SOLID violations (see constitution.md)
+- [ ] TXXX Test all functionality still works after refactoring
+
+**Checkpoint**: All SOLID violations resolved, code is modular and testable
+
+---
+
+## Phase N+1: Polish & Cross-Cutting Concerns
 
 **Purpose**: Improvements that affect multiple user stories
 
@@ -162,7 +242,12 @@ Examples of foundational tasks (adjust based on your project):
 
 - **Setup (Phase 1)**: No dependencies - can start immediately
 - **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories
+- **SOLID Refactoring (Phase N)**: Optional, depends on whether feature modifies existing coupled code
+  - Execute BEFORE implementing new features on existing components
+  - See `.specify/memory/constitution.md` Principle #3 for violations
+  - Examples: Forms >100 lines, inline schemas, mutations in components, magic numbers
 - **User Stories (Phase 3+)**: All depend on Foundational phase completion
+  - If modifying existing code, also depends on SOLID Refactoring completion
   - User stories can then proceed in parallel (if staffed)
   - Or sequentially in priority order (P1 → P2 → P3)
 - **Polish (Final Phase)**: Depends on all desired user stories being complete
@@ -175,7 +260,7 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Within Each User Story
 
-- Tests (if included) MAY be written before, during, or after implementation, but MUST exist before merge
+- Tests (if included) MUST be written and FAIL before implementation
 - Models before services
 - Services before endpoints
 - Core implementation before integration
@@ -242,10 +327,7 @@ With multiple developers:
 - [P] tasks = different files, no dependencies
 - [Story] label maps task to specific user story for traceability
 - Each user story should be independently completable and testable
-- Tests MAY be written before, during, or after implementation (but MUST exist before merge)
+- Verify tests fail before implementing
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
-
-
-

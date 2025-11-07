@@ -17,21 +17,18 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from 'next';
-import { api } from '@/trpc/server-client';
-import { ProfileSupplierContent } from './_components/profile-supplier-content';
+import type { Metadata } from "next";
+import { api } from "@/trpc/server-client";
+import { ProfileSupplierContent } from "./_components/profile-supplier-content";
 
 export const metadata: Metadata = {
-  description: 'Administra los fabricantes de perfiles (ventanas y puertas)',
-  title: 'Proveedores de Perfiles | Admin',
+  description: "Administra los fabricantes de perfiles (ventanas y puertas)",
+  title: "Proveedores de Perfiles | Admin",
 };
 
-/**
- * SSR Configuration: Force dynamic rendering
- * - No caching for admin routes (always fresh data)
- * - Private dashboard routes don't benefit from ISR
- */
-export const dynamic = 'force-dynamic';
+// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
+// Note: Admin routes are dynamic by default - no export needed
+// TODO: Consider Suspense boundaries for better loading UX after build verification
 
 type SearchParams = Promise<{
   isActive?: string;
@@ -39,32 +36,45 @@ type SearchParams = Promise<{
   page?: string;
   search?: string;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }>;
 
 type PageProps = {
   searchParams: SearchParams;
 };
 
-export default async function ProfileSuppliersPage({ searchParams }: PageProps) {
+export default async function ProfileSuppliersPage({
+  searchParams,
+}: PageProps) {
   const params = await searchParams;
 
   // Parse search params (outside Suspense)
   const page = Number(params.page) || 1;
-  const search = params.search && params.search !== '' ? params.search : undefined;
-  const materialType = params.materialType && params.materialType !== 'all' ? params.materialType : undefined;
-  const isActive = (params.isActive && params.isActive !== 'all' ? params.isActive : 'all') as
-    | 'all'
-    | 'active'
-    | 'inactive';
-  const sortBy = (params.sortBy || 'name') as 'name' | 'createdAt' | 'materialType';
-  const sortOrder = (params.sortOrder || 'asc') as 'asc' | 'desc';
+  const search =
+    params.search && params.search !== "" ? params.search : undefined;
+  const materialType =
+    params.materialType && params.materialType !== "all"
+      ? params.materialType
+      : undefined;
+  const isActive = (
+    params.isActive && params.isActive !== "all" ? params.isActive : "all"
+  ) as "all" | "active" | "inactive";
+  const sortBy = (params.sortBy || "name") as
+    | "name"
+    | "createdAt"
+    | "materialType";
+  const sortOrder = (params.sortOrder || "asc") as "asc" | "desc";
 
   // Fetch data OUTSIDE Suspense to avoid EventEmitter memory leak
-  const initialData = await api.admin['profile-supplier'].list({
+  const initialData = await api.admin["profile-supplier"].list({
     isActive,
     limit: 20,
-    materialType: materialType as 'PVC' | 'ALUMINUM' | 'WOOD' | 'MIXED' | undefined,
+    materialType: materialType as
+      | "PVC"
+      | "ALUMINUM"
+      | "WOOD"
+      | "MIXED"
+      | undefined,
     page,
     search,
     sortBy,
@@ -84,12 +94,19 @@ export default async function ProfileSuppliersPage({ searchParams }: PageProps) 
     <div className="space-y-6">
       {/* Header - always visible */}
       <div>
-        <h1 className="font-bold text-3xl tracking-tight">Proveedores de Perfiles</h1>
-        <p className="text-muted-foreground">Administra los fabricantes de perfiles para ventanas y puertas</p>
+        <h1 className="font-bold text-3xl tracking-tight">
+          Proveedores de Perfiles
+        </h1>
+        <p className="text-muted-foreground">
+          Administra los fabricantes de perfiles para ventanas y puertas
+        </p>
       </div>
 
       {/* Content with filters and table */}
-      <ProfileSupplierContent initialData={initialData} searchParams={searchParamsForClient} />
+      <ProfileSupplierContent
+        initialData={initialData}
+        searchParams={searchParamsForClient}
+      />
     </div>
   );
 }

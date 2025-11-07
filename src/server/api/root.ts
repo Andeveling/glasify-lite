@@ -1,34 +1,28 @@
-import { adminRouter } from '@/server/api/routers/admin/admin';
-import { glassSolutionRouter } from '@/server/api/routers/admin/glass-solution';
-import { glassSupplierRouter } from '@/server/api/routers/admin/glass-supplier';
-import { glassTypeRouter } from '@/server/api/routers/admin/glass-type';
-import { modelRouter } from '@/server/api/routers/admin/model';
-import { profileSupplierRouter } from '@/server/api/routers/admin/profile-supplier';
-import { serviceRouter } from '@/server/api/routers/admin/service';
-import { tenantConfigRouter } from '@/server/api/routers/admin/tenant-config';
-import { catalogRouter } from '@/server/api/routers/catalog';
-import { quoteRouter } from '@/server/api/routers/quote/quote';
-import { userRouter } from '@/server/api/routers/user';
-import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc';
+import { addressRouter } from "@/server/api/routers/address";
+import { adminRouter } from "@/server/api/routers/admin/admin";
+import { tenantConfigRouter } from "@/server/api/routers/admin/tenant-config";
+import { catalogRouter } from "@/server/api/routers/catalog";
+import { dashboardRouter } from "@/server/api/routers/dashboard";
+import { geocodingRouter } from "@/server/api/routers/geocoding";
+import { quoteRouter } from "@/server/api/routers/quote/quote";
+import { transportationRouter } from "@/server/api/routers/transportation";
+import { userRouter } from "@/server/api/routers/user";
+import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 
 /**
- * This is the primary router for your server.
+ * This is the primary router for the server.
  *
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  admin: createTRPCRouter({
-    ...adminRouter._def.record,
-    'glass-solution': glassSolutionRouter,
-    'glass-supplier': glassSupplierRouter,
-    'glass-type': glassTypeRouter,
-    model: modelRouter,
-    'profile-supplier': profileSupplierRouter,
-    service: serviceRouter,
-  }),
+  address: addressRouter,
+  admin: adminRouter,
   catalog: catalogRouter,
+  dashboard: dashboardRouter,
+  geocoding: geocodingRouter,
   quote: quoteRouter,
   tenantConfig: tenantConfigRouter,
+  transportation: transportationRouter,
   user: userRouter,
 });
 

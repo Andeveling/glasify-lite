@@ -1,5 +1,7 @@
 // src/server/api/routers/catalog/catalog.utils.ts
-import type { Decimal } from '@prisma/client/runtime/library';
+import type { Decimal } from "@prisma/client/runtime/library";
+import { Money } from "@/domain/pricing/core/entities/money";
+import { MarginCalculator } from "@/domain/pricing/core/services/margin-calculator";
 
 /**
  * Type representing a model with Decimal price fields from Prisma
@@ -12,6 +14,7 @@ type ModelWithDecimalFields = {
   basePrice: Decimal;
   costPerMmHeight: Decimal;
   costPerMmWidth: Decimal;
+  profitMarginPercentage?: Decimal | null;
 };
 
 /**
@@ -21,24 +24,47 @@ type ModelWithDecimalFields = {
  * JSON serialization in tRPC responses. All monetary values and dimensions
  * are converted using the `.toNumber()` method.
  *
+ * **Profit Margin Application**:
+ * - Uses domain layer (MarginCalculator) for correct margin calculation
+ * - Formula: salesPrice = cost / (1 - marginPercentage/100)
+ * - Example: basePrice=$100, profitMargin=20% → salesPrice=$125
+ * - Verification: ($125 - $100) / $125 = 25/125 = 0.2 = 20% ✓
+ * - This ensures catalog displays public-facing prices with correct margin
+ *
  * @template T - Model type extending ModelWithDecimalFields
  * @param model - Prisma model with Decimal fields
- * @returns Object with Decimal fields converted to numbers
+ * @returns Object with Decimal fields converted to numbers and profit margin applied to basePrice
  *
  * @example
  * ```typescript
  * const model = await db.model.findUnique({ where: { id } });
  * const serialized = serializeDecimalFields(model);
- * // serialized.basePrice is now a number, not Decimal
+ * // serialized.basePrice includes profit margin (public sales price)
  * ```
  */
-export function serializeDecimalFields<T extends ModelWithDecimalFields>(model: T) {
+export function serializeDecimalFields<T extends ModelWithDecimalFields>(
+  model: T
+) {
+  // Calculate final base price with profit margin using domain layer
+  const rawBasePrice = model.basePrice.toNumber();
+  const profitMargin = model.profitMarginPercentage?.toNumber() ?? 0;
+
+  // Use MarginCalculator from domain for correct margin calculation
+  // Formula: salesPrice = cost / (1 - margin%)
+  const basePriceMoney = new Money(rawBasePrice);
+  const salesPriceMoney = MarginCalculator.calculateSalesPrice(
+    basePriceMoney,
+    profitMargin
+  );
+  const finalBasePrice = salesPriceMoney.toNumber();
+
   return {
     ...model,
     accessoryPrice: model.accessoryPrice?.toNumber() ?? null,
-    basePrice: model.basePrice.toNumber(),
+    basePrice: finalBasePrice, // Public-facing price with profit margin
     costPerMmHeight: model.costPerMmHeight.toNumber(),
     costPerMmWidth: model.costPerMmWidth.toNumber(),
+    profitMarginPercentage: profitMargin, // Keep as number for reference
   };
 }
 

@@ -1,7 +1,16 @@
-import type { GlassType, Model, Prisma, ProfileSupplier } from '@prisma/client';
-import { z } from 'zod';
-import logger from '@/lib/logger';
-import { adminProcedure, createTRPCRouter } from '@/server/api/trpc';
+import type { GlassType, Model, Prisma, ProfileSupplier } from "@prisma/client";
+import { z } from "zod";
+import logger from "@/lib/logger";
+import { colorsRouter } from "@/server/api/routers/admin/colors";
+import { galleryRouter } from "@/server/api/routers/admin/gallery";
+import { glassSolutionRouter } from "@/server/api/routers/admin/glass-solution";
+import { glassSupplierRouter } from "@/server/api/routers/admin/glass-supplier";
+import { glassTypeRouter } from "@/server/api/routers/admin/glass-type";
+import { modelRouter } from "@/server/api/routers/admin/model";
+import { modelColorsRouter } from "@/server/api/routers/admin/model-colors";
+import { profileSupplierRouter } from "@/server/api/routers/admin/profile-supplier";
+import { serviceRouter } from "@/server/api/routers/admin/service";
+import { adminProcedure, createTRPCRouter } from "@/server/api/trpc";
 
 // Helper functions to reduce complexity
 async function validateProfileSupplierExists(
@@ -13,13 +22,16 @@ async function validateProfileSupplierExists(
   });
 
   if (!supplier) {
-    throw new Error('Proveedor de perfiles no encontrado');
+    throw new Error("Proveedor de perfiles no encontrado");
   }
 
   return supplier;
 }
 
-async function validateGlassTypesExist(tx: Prisma.TransactionClient, glassTypeIds: string[]): Promise<GlassType[]> {
+async function validateGlassTypesExist(
+  tx: Prisma.TransactionClient,
+  glassTypeIds: string[]
+): Promise<GlassType[]> {
   const glassTypes = await tx.glassType.findMany({
     where: {
       id: { in: glassTypeIds },
@@ -27,7 +39,7 @@ async function validateGlassTypesExist(tx: Prisma.TransactionClient, glassTypeId
   });
 
   if (glassTypes.length !== glassTypeIds.length) {
-    throw new Error('Uno o más tipos de vidrio no encontrados');
+    throw new Error("Uno o más tipos de vidrio no encontrados");
   }
 
   return glassTypes;
@@ -36,39 +48,54 @@ async function validateGlassTypesExist(tx: Prisma.TransactionClient, glassTypeId
 // Input schemas
 export const modelUpsertInput = z.object({
   accessoryPrice: z.number().min(0).optional().nullable(),
-  basePrice: z.number().min(0, 'Precio base debe ser mayor o igual a 0'),
+  basePrice: z.number().min(0, "Precio base debe ser mayor o igual a 0"),
   compatibleGlassTypeIds: z
-    .array(z.cuid('ID del tipo de vidrio debe ser válido'))
-    .min(1, 'Debe seleccionar al menos un tipo de vidrio compatible'),
-  costPerMmHeight: z.number().min(0, 'Costo por mm de alto debe ser mayor o igual a 0'),
-  costPerMmWidth: z.number().min(0, 'Costo por mm de ancho debe ser mayor o igual a 0'),
+    .array(z.cuid("ID del tipo de vidrio debe ser válido"))
+    .min(1, "Debe seleccionar al menos un tipo de vidrio compatible"),
+  costPerMmHeight: z
+    .number()
+    .min(0, "Costo por mm de alto debe ser mayor o igual a 0"),
+  costPerMmWidth: z
+    .number()
+    .min(0, "Costo por mm de ancho debe ser mayor o igual a 0"),
   id: z.cuid().optional(), // If provided, update; otherwise, create
-  maxHeightMm: z.number().int().min(1, 'Alto máximo debe ser mayor a 0 mm'),
-  maxWidthMm: z.number().int().min(1, 'Ancho máximo debe ser mayor a 0 mm'),
-  minHeightMm: z.number().int().min(1, 'Alto mínimo debe ser mayor a 0 mm'),
-  minWidthMm: z.number().int().min(1, 'Ancho mínimo debe ser mayor a 0 mm'),
+  maxHeightMm: z.number().int().min(1, "Alto máximo debe ser mayor a 0 mm"),
+  maxWidthMm: z.number().int().min(1, "Ancho máximo debe ser mayor a 0 mm"),
+  minHeightMm: z.number().int().min(1, "Alto mínimo debe ser mayor a 0 mm"),
+  minWidthMm: z.number().int().min(1, "Ancho mínimo debe ser mayor a 0 mm"),
   name: z.preprocess(
-    (value) => (typeof value === 'string' ? value.trim() : ''),
-    z.string().min(1, 'Nombre del modelo es requerido')
+    (value) => (typeof value === "string" ? value.trim() : ""),
+    z.string().min(1, "Nombre del modelo es requerido")
   ),
-  profileSupplierId: z.string().cuid('ID del proveedor de perfiles debe ser válido').optional().nullable(),
-  status: z.enum(['draft', 'published']).default('draft'),
+  profileSupplierId: z
+    .string()
+    .cuid("ID del proveedor de perfiles debe ser válido")
+    .optional()
+    .nullable(),
+  status: z.enum(["draft", "published"]).default("draft"),
 });
 
 // Output schemas
 export const modelUpsertOutput = z.object({
   message: z.string(),
   modelId: z.string(),
-  status: z.enum(['draft', 'published']),
+  status: z.enum(["draft", "published"]),
 });
 
 export const adminRouter = createTRPCRouter({
-  'model-upsert': adminProcedure
+  colors: colorsRouter,
+  gallery: galleryRouter,
+  "glass-solution": glassSolutionRouter,
+  "glass-supplier": glassSupplierRouter,
+  "glass-type": glassTypeRouter,
+  model: modelRouter,
+  "model-colors": modelColorsRouter,
+  "model-upsert": adminProcedure
     .input(modelUpsertInput)
     .output(modelUpsertOutput)
     .mutation(async ({ ctx, input }) => {
       try {
-        logger.info('Starting model upsert', {
+        logger.info("Starting model upsert", {
           modelId: input.id,
           name: input.name,
           profileSupplierId: input.profileSupplierId,
@@ -76,10 +103,10 @@ export const adminRouter = createTRPCRouter({
 
         // Validate dimension constraints
         if (input.minWidthMm >= input.maxWidthMm) {
-          throw new Error('Ancho mínimo debe ser menor al ancho máximo');
+          throw new Error("Ancho mínimo debe ser menor al ancho máximo");
         }
         if (input.minHeightMm >= input.maxHeightMm) {
-          throw new Error('Alto mínimo debe ser menor al alto máximo');
+          throw new Error("Alto mínimo debe ser menor al alto máximo");
         }
 
         const result = await ctx.db.$transaction(async (tx) => {
@@ -116,7 +143,7 @@ export const adminRouter = createTRPCRouter({
             });
 
             if (!existingModel) {
-              throw new Error('Modelo no encontrado');
+              throw new Error("Modelo no encontrado");
             }
 
             modelRecord = await tx.model.update({
@@ -131,12 +158,16 @@ export const adminRouter = createTRPCRouter({
             const existingModel = await tx.model.findFirst({
               where: {
                 name: input.name,
-                ...(input.profileSupplierId && { profileSupplierId: input.profileSupplierId }),
+                ...(input.profileSupplierId && {
+                  profileSupplierId: input.profileSupplierId,
+                }),
               },
             });
 
             if (existingModel) {
-              throw new Error(`Ya existe un modelo con el nombre "${input.name}"`);
+              throw new Error(
+                `Ya existe un modelo con el nombre "${input.name}"`
+              );
             }
 
             modelRecord = await tx.model.create({
@@ -153,7 +184,7 @@ export const adminRouter = createTRPCRouter({
           };
         });
 
-        logger.info('Model upsert completed successfully', {
+        logger.info("Model upsert completed successfully", {
           isUpdate: Boolean(input.id),
           modelId: result.modelId,
           name: input.name,
@@ -162,16 +193,20 @@ export const adminRouter = createTRPCRouter({
 
         return result;
       } catch (error) {
-        logger.error('Error during model upsert', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error during model upsert", {
+          error: error instanceof Error ? error.message : "Unknown error",
           modelId: input.id,
           name: input.name,
           profileSupplierId: input.profileSupplierId,
         });
 
         const errorMessage =
-          error instanceof Error ? error.message : 'No se pudo guardar el modelo. Intente nuevamente.';
+          error instanceof Error
+            ? error.message
+            : "No se pudo guardar el modelo. Intente nuevamente.";
         throw new Error(errorMessage);
       }
     }),
+  "profile-supplier": profileSupplierRouter,
+  service: serviceRouter,
 });

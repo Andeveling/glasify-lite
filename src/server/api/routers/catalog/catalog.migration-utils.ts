@@ -5,7 +5,7 @@
  * @deprecated These utilities will be removed in v2.0 along with the purpose field
  */
 
-import type { GlassPurpose, GlassTypeSolution } from '@prisma/client';
+import type { GlassPurpose, GlassTypeSolution } from "@prisma/client";
 
 /**
  * Maps deprecated GlassPurpose enum values to GlassSolution keys
@@ -18,13 +18,13 @@ import type { GlassPurpose, GlassTypeSolution } from '@prisma/client';
  */
 export function mapPurposeToSolutionKey(purpose: GlassPurpose): string {
   const mapping: Record<GlassPurpose, string> = {
-    decorative: 'decorative',
-    general: 'general',
-    insulation: 'thermal_insulation',
-    security: 'security',
+    decorative: "decorative",
+    general: "general",
+    insulation: "thermal_insulation",
+    security: "security",
   };
 
-  return mapping[purpose] ?? 'general';
+  return mapping[purpose] ?? "general";
 }
 
 /**
@@ -52,7 +52,15 @@ export function ensureGlassHasSolutions<
       }
     >;
   },
->(glassType: T, availableSolutions: Array<{ id: string; key: string; nameEs: string; icon: string }>): T['solutions'] {
+>(
+  glassType: T,
+  availableSolutions: Array<{
+    id: string;
+    key: string;
+    nameEs: string;
+    icon: string;
+  }>
+): T["solutions"] {
   // If glass already has solutions, return them
   if (glassType.solutions && glassType.solutions.length > 0) {
     return glassType.solutions;
@@ -60,41 +68,43 @@ export function ensureGlassHasSolutions<
 
   // Fallback: Derive solution from purpose field
   const solutionKey = mapPurposeToSolutionKey(glassType.purpose);
-  const fallbackSolution = availableSolutions.find((s) => s.key === solutionKey);
+  const fallbackSolution = availableSolutions.find(
+    (s) => s.key === solutionKey
+  );
 
   if (!fallbackSolution) {
     // Ultimate fallback: return general solution
-    const generalSolution = availableSolutions.find((s) => s.key === 'general');
+    const generalSolution = availableSolutions.find((s) => s.key === "general");
     if (!generalSolution) {
       // No solutions available at all - return empty array
-      return [] as T['solutions'];
+      return [] as T["solutions"];
     }
 
     return [
       {
-        glassTypeId: '',
-        id: 'fallback-general',
+        glassTypeId: "",
+        id: "fallback-general",
         isPrimary: true,
-        notes: 'Fallback from purpose field (general)',
-        performanceRating: 'standard',
+        notes: "Fallback from purpose field (general)",
+        performanceRating: "standard",
         solution: generalSolution,
         solutionId: generalSolution.id,
       },
-    ] as T['solutions'];
+    ] as T["solutions"];
   }
 
   // Return synthetic solution based on purpose
   return [
     {
-      glassTypeId: '',
+      glassTypeId: "",
       id: `fallback-${solutionKey}`,
       isPrimary: true,
       notes: `Fallback from purpose field (${glassType.purpose})`,
-      performanceRating: 'standard',
+      performanceRating: "standard",
       solution: fallbackSolution,
       solutionId: fallbackSolution.id,
     },
-  ] as T['solutions'];
+  ] as T["solutions"];
 }
 
 /**
@@ -105,7 +115,11 @@ export function ensureGlassHasSolutions<
  *
  * @deprecated This check will be removed in v2.0
  */
-export function isUsingFallbackSolutions(solutions: Array<{ id: string }> | undefined): boolean {
-  if (!solutions || solutions.length === 0) return false;
-  return solutions.some((s) => s.id.startsWith('fallback-'));
+export function isUsingFallbackSolutions(
+  solutions: Array<{ id: string }> | undefined
+): boolean {
+  if (!solutions || solutions.length === 0) {
+    return false;
+  }
+  return solutions.some((s) => s.id.startsWith("fallback-"));
 }

@@ -12,39 +12,39 @@
  * @module QuoteItemImage
  */
 
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { type KeyboardEvent, useCallback, useState } from 'react';
-import { WindowDiagram } from '@/components/quote/window-diagram';
-import { getProductImageWithFallback } from '@/lib/utils/image-utils';
-import type { WindowType } from '@/types/window.types';
-import { DEFAULT_WINDOW_TYPE } from '@/types/window.types';
+import Image from "next/image";
+import { type KeyboardEvent, useCallback, useState } from "react";
+import { WindowDiagram } from "@/components/quote/window-diagram";
+import { getProductImageWithFallback } from "@/lib/utils/image-utils";
+import type { WindowType } from "@/types/window.types";
+import { DEFAULT_WINDOW_TYPE } from "@/types/window.types";
 
 /**
  * Size configuration for responsive thumbnails
  */
 const SIZE_CONFIG = {
   lg: {
-    container: 'h-32 w-32', // 128px
+    container: "h-32 w-32", // 128px
     imageSize: 128,
-    sizes: '(max-width: 768px) 96px, 128px',
+    sizes: "(max-width: 768px) 96px, 128px",
   },
   md: {
-    container: 'h-24 w-24', // 96px
+    container: "h-24 w-24", // 96px
     imageSize: 96,
-    sizes: '(max-width: 768px) 64px, 96px',
+    sizes: "(max-width: 768px) 64px, 96px",
   },
   sm: {
-    container: 'h-16 w-16', // 64px
+    container: "h-16 w-16", // 64px
     imageSize: 64,
-    sizes: '64px',
+    sizes: "64px",
   },
 } as const;
 
 export type QuoteItemImageSize = keyof typeof SIZE_CONFIG;
 
-export interface QuoteItemImageProps {
+export type QuoteItemImageProps = {
   /**
    * Product model name for alt text
    */
@@ -56,9 +56,9 @@ export interface QuoteItemImageProps {
   modelImageUrl: string | null;
 
   /**
-   * Window type for SVG diagram fallback
+   * Window type for SVG diagram fallback (optional, defaults to FIXED_SINGLE)
    */
-  windowType: WindowType;
+  windowType?: WindowType;
 
   /**
    * Thumbnail size (default: md)
@@ -74,7 +74,7 @@ export interface QuoteItemImageProps {
    * Disable lazy loading (use for above-the-fold images)
    */
   eager?: boolean;
-}
+};
 
 /**
  * QuoteItemImage Component
@@ -85,8 +85,8 @@ export interface QuoteItemImageProps {
 export function QuoteItemImage({
   modelName,
   modelImageUrl,
-  windowType,
-  size = 'md',
+  windowType = DEFAULT_WINDOW_TYPE,
+  size = "md",
   onClick,
   eager = false,
 }: QuoteItemImageProps) {
@@ -115,7 +115,7 @@ export function QuoteItemImage({
    */
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLButtonElement>) => {
-      if (event.key === 'Enter' || event.key === ' ') {
+      if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
         onClick?.();
       }
@@ -127,14 +127,18 @@ export function QuoteItemImage({
    * Optimize image URL via CDN
    */
   const optimizedImageUrl = shouldShowImage
-    ? getProductImageWithFallback(modelImageUrl, windowType, size as any)
+    ? getProductImageWithFallback(
+        modelImageUrl,
+        windowType,
+        size as QuoteItemImageSize
+      )
     : null;
 
   return (
     <button
       aria-label={`Ver imagen de ${modelName}`}
       className={`
-        ${sizeConfig.container}relative aspect-square cursor-pointer overflow-hidden rounded-lg bg-muted transition-all hover:ring-2 hover:ring-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${!isImageLoaded && shouldShowImage ? 'animate-pulse' : ''}
+        ${sizeConfig.container} relative aspect-square cursor-pointer overflow-hidden rounded-lg bg-muted transition-all hover:ring-2 hover:ring-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${!isImageLoaded && shouldShowImage ? "animate-pulse" : ""}
       `}
       data-testid="quote-item-image"
       onClick={onClick}
@@ -146,7 +150,7 @@ export function QuoteItemImage({
           alt={modelName}
           className="object-cover"
           fill
-          loading={eager ? 'eager' : 'lazy'}
+          loading={eager ? "eager" : "lazy"}
           onError={handleImageError}
           onLoad={handleImageLoad}
           sizes={sizeConfig.sizes}
@@ -154,43 +158,13 @@ export function QuoteItemImage({
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center p-2">
-          <WindowDiagram className="object-contain" size={size} type={windowType || DEFAULT_WINDOW_TYPE} />
+          <WindowDiagram
+            className="object-contain"
+            size={size}
+            type={windowType || DEFAULT_WINDOW_TYPE}
+          />
         </div>
       )}
     </button>
   );
 }
-
-/**
- * Usage Examples:
- *
- * ```tsx
- * // With product image
- * <QuoteItemImage
- *   modelName="VEKA Guardian 10mm"
- *   modelImageUrl="https://cdn.example.com/models/veka-guardian.jpg"
- *   windowType={WindowType.SLIDING_2_PANEL}
- *   size="md"
- *   onClick={() => openLightbox(item)}
- * />
- *
- * // With SVG fallback
- * <QuoteItemImage
- *   modelName="Ventana Corrediza"
- *   modelImageUrl={null}
- *   windowType={WindowType.SLIDING_2_PANEL}
- *   size="lg"
- *   onClick={() => openLightbox(item)}
- * />
- *
- * // Eager loading (above fold)
- * <QuoteItemImage
- *   modelName="Featured Product"
- *   modelImageUrl="https://cdn.example.com/featured.jpg"
- *   windowType={WindowType.FIXED_SINGLE}
- *   size="lg"
- *   eager
- *   onClick={() => openLightbox(item)}
- * />
- * ```
- */

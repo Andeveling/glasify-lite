@@ -1,4 +1,5 @@
-import Link from 'next/link';
+import Link from "next/link";
+import { SocialMediaLinks } from "@/app/_components/social-media-links";
 
 export default function PublicFooter() {
   return (
@@ -7,15 +8,21 @@ export default function PublicFooter() {
         <div className="grid gap-8 md:grid-cols-3">
           {/* Company Info */}
           <div>
-            <h3 className="mb-4 font-semibold text-sm">Glasify</h3>
+            <h3 className="mb-4 font-semibold text-sm">Vitro Rojas</h3>
             <ul className="space-y-2 text-foreground/60 text-sm">
               <li>
-                <Link className="transition-colors hover:text-foreground" href="/catalog">
+                <Link
+                  className="transition-colors hover:text-foreground"
+                  href="/catalog"
+                >
                   Acerca de
                 </Link>
               </li>
               <li>
-                <Link className="transition-colors hover:text-foreground" href="/catalog">
+                <Link
+                  className="transition-colors hover:text-foreground"
+                  href="/catalog"
+                >
                   Documentación
                 </Link>
               </li>
@@ -27,13 +34,11 @@ export default function PublicFooter() {
             <h3 className="mb-4 font-semibold text-sm">Productos</h3>
             <ul className="space-y-2 text-foreground/60 text-sm">
               <li>
-                <Link className="transition-colors hover:text-foreground" href="/catalog">
+                <Link
+                  className="transition-colors hover:text-foreground"
+                  href="/catalog"
+                >
                   Catálogo completo
-                </Link>
-              </li>
-              <li>
-                <Link className="transition-colors hover:text-foreground" href="/quote">
-                  Cotizador
                 </Link>
               </li>
             </ul>
@@ -41,11 +46,12 @@ export default function PublicFooter() {
 
           {/* Legal */}
           <div>
-            <p className="text-foreground/60 text-sm">
-              © 2025 Glasify Lite
+            <p className="mb-4 text-foreground/60 text-sm">
+              © 2025 Vitro Rojas
               <br />
-              Cotizador inteligente de productos de vidrio para arquitectos e ingenieros.
+              Cotizador inteligente de productos de vidrio.
             </p>
+            <SocialMediaLinks variant="default" />
           </div>
         </div>
       </div>

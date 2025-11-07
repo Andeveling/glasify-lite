@@ -1,11 +1,10 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useSession } from 'next-auth/react';
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -13,10 +12,19 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { PhoneInput } from '@/components/ui/phone-input';
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { useSession } from "@/lib/auth-client";
 
 /**
  * Contact information schema matching backend validation
@@ -24,19 +32,19 @@ import { PhoneInput } from '@/components/ui/phone-input';
  * Email: Automatically filled from session, not editable
  */
 const contactSchema = z.object({
-  contactEmail: z.email('Correo electrónico inválido'),
-  contactPhone: z.string().min(1, 'El teléfono es requerido'),
+  contactEmail: z.email("Correo electrónico inválido"),
+  contactPhone: z.string().min(1, "El teléfono es requerido"),
 });
 
 type ContactFormValues = z.infer<typeof contactSchema>;
 
-interface ContactInfoModalProps {
+type ContactInfoModalProps = {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: ContactFormValues) => void;
   defaultValues?: Partial<ContactFormValues>;
   isLoading?: boolean;
-}
+};
 
 /**
  * Unified modal to capture or confirm contact information before sending quote
@@ -55,14 +63,20 @@ interface ContactInfoModalProps {
  * />
  * ```
  */
-export function ContactInfoModal({ open, onClose, onSubmit, defaultValues, isLoading = false }: ContactInfoModalProps) {
+export function ContactInfoModal({
+  open,
+  onClose,
+  onSubmit,
+  defaultValues,
+  isLoading = false,
+}: ContactInfoModalProps) {
   const { data: session } = useSession();
-  const userEmail = session?.user?.email ?? '';
+  const userEmail = session?.user?.email ?? "";
 
   const form = useForm<ContactFormValues>({
     defaultValues: {
       contactEmail: userEmail,
-      contactPhone: defaultValues?.contactPhone ?? '',
+      contactPhone: defaultValues?.contactPhone ?? "",
     },
     resolver: zodResolver(contactSchema),
   });
@@ -70,7 +84,7 @@ export function ContactInfoModal({ open, onClose, onSubmit, defaultValues, isLoa
   // Update email when session changes or modal opens
   useEffect(() => {
     if (open && userEmail) {
-      form.setValue('contactEmail', userEmail);
+      form.setValue("contactEmail", userEmail);
     }
   }, [open, userEmail, form]);
 
@@ -91,7 +105,8 @@ export function ContactInfoModal({ open, onClose, onSubmit, defaultValues, isLoa
         <DialogHeader>
           <DialogTitle>Información de Contacto</DialogTitle>
           <DialogDescription>
-            Confirma tu información de contacto para que el fabricante pueda responder tu cotización.
+            Confirma tu información de contacto para que el fabricante pueda
+            responder tu cotización.
           </DialogDescription>
         </DialogHeader>
 
@@ -114,8 +129,8 @@ export function ContactInfoModal({ open, onClose, onSubmit, defaultValues, isLoa
                     />
                   </FormControl>
                   <FormDescription>
-                    Este es tu correo registrado, pero puedes modificarlo si deseas que la respuesta llegue a otro
-                    contacto.
+                    Este es tu correo registrado, pero puedes modificarlo si
+                    deseas que la respuesta llegue a otro contacto.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -138,7 +153,8 @@ export function ContactInfoModal({ open, onClose, onSubmit, defaultValues, isLoa
                     />
                   </FormControl>
                   <FormDescription>
-                    Selecciona tu país y escribe tu número. Ejemplo: 300 123 4567 (Colombia)
+                    Selecciona tu país y escribe tu número. Ejemplo: 300 123
+                    4567 (Colombia)
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -146,11 +162,16 @@ export function ContactInfoModal({ open, onClose, onSubmit, defaultValues, isLoa
             />
 
             <DialogFooter>
-              <Button disabled={isLoading} onClick={handleClose} type="button" variant="outline">
+              <Button
+                disabled={isLoading}
+                onClick={handleClose}
+                type="button"
+                variant="outline"
+              >
                 Cancelar
               </Button>
               <Button disabled={isLoading} type="submit">
-                {isLoading ? 'Enviando...' : 'Enviar Cotización'}
+                {isLoading ? "Enviando..." : "Enviar Cotización"}
               </Button>
             </DialogFooter>
           </form>

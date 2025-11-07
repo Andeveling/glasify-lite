@@ -11,21 +11,30 @@
  * - Empty cart detection
  * - Loading/disabled states
  * - Authentication check before quote generation
+ * - Real-time session verification (no stale cache)
  *
  * @module app/(public)/cart/_components/cart-summary
  */
 
-'use client';
+"use client";
 
-import { ShoppingCart } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
-import { formatCurrency } from '@/app/_utils/format-currency.util';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
-import type { CartSummary as CartSummaryType } from '@/types/cart.types';
-import { QuoteGenerationDrawer } from './quote-generation-drawer';
+import { ShoppingCart } from "lucide-react";
+import { useEffect, useState } from "react";
+import { SignInModal } from "@/components/signin-modal";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useSession } from "@/lib/auth-client";
+import { formatCurrency } from "@/lib/format";
+import { cn } from "@/lib/utils";
+import { useTenantConfig } from "@/providers/tenant-config-provider";
+import type { CartSummary as CartSummaryType } from "@/types/cart.types";
+import { QuoteGenerationDrawer } from "./quote-generation-drawer";
 
 // ============================================================================
 // Types
@@ -34,9 +43,6 @@ import { QuoteGenerationDrawer } from './quote-generation-drawer';
 export type CartSummaryProps = {
   /** Cart summary data */
   summary: CartSummaryType;
-
-  /** Callback when "Generate Quote" is clicked (only called if authenticated) */
-  onGenerateQuote?: () => void;
 
   /** Whether quote generation is in progress */
   isGenerating?: boolean;
@@ -59,111 +65,123 @@ export type CartSummaryProps = {
  * />
  * ```
  */
-export function CartSummary({ summary, onGenerateQuote, isGenerating = false, className }: CartSummaryProps) {
-  const router = useRouter();
-  const { status } = useSession();
-  const isAuthenticated = status === 'authenticated';
-  const isLoading = status === 'loading';
+export function CartSummary({
+  summary,
+  isGenerating = false,
+  className,
+}: CartSummaryProps) {
+  const tenantConfig = useTenantConfig();
+  const [showSignInModal, setShowSignInModal] = useState(false);
+
+  // ✅ Better Auth session hook with real-time updates
+  const { data: session, isPending: isSessionLoading, error } = useSession();
+
+  // ✅ Track authentication state - force re-check on session changes
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // ✅ Effect: Update auth state when session changes (handles logout/login)
+  useEffect(() => {
+    // Session is valid if user exists and no error
+    const hasValidSession = !!session?.user && !error;
+    setIsAuthenticated(hasValidSession);
+  }, [session, error]);
 
   /**
    * Handle "Generate Quote" button click
    *
-   * Redirects to sign-in if unauthenticated, otherwise opens drawer
+   * Verifies authentication in real-time before proceeding
+   * Opens sign-in modal if unauthenticated
+   * Prevents event propagation to stop drawer from opening
    */
-  const handleGenerateQuote = () => {
-    // Check authentication before proceeding
-    if (!isAuthenticated) {
-      // Redirect to sign-in with callback to cart page
-      router.push('/api/auth/signin?callbackUrl=/cart');
+  const handleGenerateQuote = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // ✅ Real-time authentication check (not cached)
+    const hasValidSession = !!session?.user && !error;
+
+    if (!hasValidSession) {
+      // Prevent drawer from opening
+      event.preventDefault();
+      event.stopPropagation();
+
+      // Open sign-in modal for unauthenticated users
+      setShowSignInModal(true);
       return;
     }
 
-    // User is authenticated, trigger will open drawer
-    // Callback is optional and only used for custom behavior
-    if (onGenerateQuote) {
-      onGenerateQuote();
-    }
+    // User is authenticated - drawer will open normally via trigger
   };
 
   return (
-    <Card className={cn('sticky top-4', className)}>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <ShoppingCart className="size-5" />
-          Resumen de presupuesto
-        </CardTitle>
-      </CardHeader>
+    <>
+      <Card className={cn("sticky top-18", className)}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ShoppingCart className="size-5" />
+            Resumen de presupuesto
+          </CardTitle>
+        </CardHeader>
 
-      <CardContent className="space-y-4">
-        {/* Item count */}
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Artículos en carrito</span>
-          <span className="font-medium">{summary.itemCount}</span>
-        </div>
-
-        {/* Divider */}
-        <div className="h-px bg-border" />
-
-        {/* Total */}
-        <div className="flex items-center justify-between">
-          <span className="font-medium text-base">Total</span>
-          <div className="text-right">
-            <p className="font-bold text-2xl">
-              {formatCurrency(summary.total, {
-                currency: summary.currency,
-                decimals: summary.currency === 'USD' ? 2 : 0,
-                locale: summary.currency === 'USD' ? 'es-PA' : 'es-CO',
-              })}
-            </p>
-            <p className="text-muted-foreground text-xs">IVA incluido</p>
+        <CardContent className="space-y-4">
+          {/* Item count */}
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">Artículos en carrito</span>
+            <span className="font-medium">{summary.itemCount}</span>
           </div>
-        </div>
-      </CardContent>
 
-      <CardFooter className="flex-col gap-2">
-        {isAuthenticated ? (
-          /* Authenticated: Show drawer trigger */
+          {/* Divider */}
+          <div className="h-px bg-border" />
+
+          {/* Total */}
+          <div className="flex items-center justify-between">
+            <span className="font-medium text-base">Total</span>
+            <div className="text-right">
+              <p className="font-bold text-2xl">
+                {formatCurrency(summary.total, { context: tenantConfig })}
+              </p>
+              <p className="text-muted-foreground text-xs">IVA incluido</p>
+            </div>
+          </div>
+        </CardContent>
+
+        <CardFooter className="flex-col gap-2">
+          {/* Unified button UI with auth check on click */}
           <QuoteGenerationDrawer
             trigger={
               <Button
                 className="w-full"
-                disabled={summary.isEmpty || isGenerating || isLoading}
+                disabled={summary.isEmpty || isGenerating || isSessionLoading}
+                onClick={handleGenerateQuote}
                 size="lg"
                 type="button"
               >
-                {isGenerating ? 'Generando...' : 'Generar cotización'}
+                {isGenerating ? "Generando..." : "Generar cotización"}
               </Button>
             }
           />
-        ) : (
-          /* Unauthenticated: Show regular button that redirects to sign-in */
-          <Button
-            className="w-full"
-            disabled={summary.isEmpty || isGenerating || isLoading}
-            onClick={handleGenerateQuote}
-            size="lg"
-            type="button"
-          >
-            {isGenerating ? 'Generando...' : 'Generar cotización'}
-          </Button>
-        )}
 
-        {/* Auth hint for unauthenticated users */}
-        {isAuthenticated || summary.isEmpty ? null : (
-          <p className="text-center text-muted-foreground text-xs">
-            Se requiere autenticación para generar cotizaciones
-          </p>
-        )}
-      </CardFooter>
+          {/* Auth hint for unauthenticated users */}
+          {isAuthenticated || summary.isEmpty ? null : (
+            <p className="text-center text-muted-foreground text-xs">
+              Se requiere autenticación para generar cotizaciones
+            </p>
+          )}
+        </CardFooter>
 
-      {/* Empty cart helper text */}
-      {summary.isEmpty && (
-        <div className="px-6 pb-4">
-          <p className="text-center text-muted-foreground text-sm">
-            Agrega artículos al carrito para generar una cotización
-          </p>
-        </div>
-      )}
-    </Card>
+        {/* Empty cart helper text */}
+        {summary.isEmpty && (
+          <div className="px-6 pb-4">
+            <p className="text-center text-muted-foreground text-sm">
+              Agrega artículos al carrito para generar una cotización
+            </p>
+          </div>
+        )}
+      </Card>
+
+      {/* Sign-in modal for unauthenticated users */}
+      <SignInModal
+        callbackUrl="/cart"
+        onOpenChangeAction={setShowSignInModal}
+        open={showSignInModal}
+      />
+    </>
   );
 }

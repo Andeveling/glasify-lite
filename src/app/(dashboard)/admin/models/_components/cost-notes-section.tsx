@@ -4,10 +4,16 @@
  * Notes and last cost review date
  */
 
-'use client';
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FormDateInput, FormTextarea } from './form-fields';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { FormDateInput, FormTextarea } from "./form-fields";
 
 export function CostNotesSection() {
   return (
@@ -25,7 +31,11 @@ export function CostNotesSection() {
           rows={3}
         />
 
-        <FormDateInput description="Última fecha de revisión" label="Revisión de Costos" name="lastCostReviewDate" />
+        <FormDateInput
+          description="Última fecha de revisión"
+          label="Revisión de Costos"
+          name="lastCostReviewDate"
+        />
       </CardContent>
     </Card>
   );

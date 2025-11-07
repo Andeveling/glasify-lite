@@ -1,5 +1,5 @@
-import { ModelCard } from '@views/catalog/_components/molecules/model-card';
-import { formatCurrency } from '@/app/_utils/format-currency.util';
+import { ModelCard } from "@views/catalog/_components/molecules/model-card";
+import { formatCurrency } from "@/lib/format";
 
 type Model = {
   accessoryPrice: number | null;
@@ -9,6 +9,7 @@ type Model = {
   costPerMmWidth: number;
   createdAt: Date;
   id: string;
+  imageUrl: string | null;
   profileSupplier: {
     id: string;
     name: string;
@@ -34,17 +35,33 @@ function getMockHighlightedSolutions(modelId: string) {
   // Mock data - different solutions for different models
   const mockSolutions = [
     [
-      { icon: 'Shield', nameEs: 'Seguridad', rating: 'excellent' as const },
-      { icon: 'Snowflake', nameEs: 'Aislamiento Térmico', rating: 'very_good' as const },
+      { icon: "Shield", nameEs: "Seguridad", rating: "excellent" as const },
+      {
+        icon: "Snowflake",
+        nameEs: "Aislamiento Térmico",
+        rating: "very_good" as const,
+      },
     ],
     [
-      { icon: 'Volume2', nameEs: 'Aislamiento Acústico', rating: 'excellent' as const },
-      { icon: 'Shield', nameEs: 'Seguridad', rating: 'good' as const },
+      {
+        icon: "Volume2",
+        nameEs: "Aislamiento Acústico",
+        rating: "excellent" as const,
+      },
+      { icon: "Shield", nameEs: "Seguridad", rating: "good" as const },
     ],
     [
-      { icon: 'Snowflake', nameEs: 'Aislamiento Térmico', rating: 'excellent' as const },
-      { icon: 'Sparkles', nameEs: 'Decorativo', rating: 'very_good' as const },
-      { icon: 'Volume2', nameEs: 'Aislamiento Acústico', rating: 'good' as const },
+      {
+        icon: "Snowflake",
+        nameEs: "Aislamiento Térmico",
+        rating: "excellent" as const,
+      },
+      { icon: "Sparkles", nameEs: "Decorativo", rating: "very_good" as const },
+      {
+        icon: "Volume2",
+        nameEs: "Aislamiento Acústico",
+        rating: "good" as const,
+      },
     ],
   ];
 
@@ -74,7 +91,7 @@ export function CatalogGrid({ models }: CatalogGridProps) {
   return (
     <div className="space-y-8">
       {/* Models grid - responsive and clean */}
-      <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {models.map((model) => (
           <li key={model.id}>
             <ModelCard
@@ -82,6 +99,7 @@ export function CatalogGrid({ models }: CatalogGridProps) {
               compatibleGlassTypes={[]}
               highlightedSolutions={getMockHighlightedSolutions(model.id)}
               id={model.id}
+              imageUrl={model.imageUrl}
               name={model.name}
               profileSupplier={model.profileSupplier?.name}
               range={{

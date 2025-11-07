@@ -7,11 +7,11 @@
  * @module app/(public)/cart/_hooks/use-cart-storage
  */
 
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
-import type { CartItem, CartStorageData } from '@/types/cart.types';
-import { CART_CONSTANTS } from '@/types/cart.types';
+import { useCallback, useEffect, useState } from "react";
+import type { CartItem, CartStorageData } from "@/types/cart.types";
+import { CART_CONSTANTS } from "@/types/cart.types";
 
 // ============================================================================
 // Constants
@@ -32,7 +32,7 @@ const STORAGE_VERSION = 1;
  */
 export function loadCartFromStorage(): CartItem[] {
   // Client-side only
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return [];
   }
 
@@ -77,7 +77,7 @@ export function loadCartFromStorage(): CartItem[] {
  */
 export function saveCartToStorage(items: CartItem[]): boolean {
   // Client-side only
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return false;
   }
 
@@ -93,7 +93,7 @@ export function saveCartToStorage(items: CartItem[]): boolean {
 
     // Emit custom event to notify all useCartStorage hooks about the change
     window.dispatchEvent(
-      new CustomEvent('cart-updated', {
+      new CustomEvent("cart-updated", {
         detail: { items },
       })
     );
@@ -101,7 +101,7 @@ export function saveCartToStorage(items: CartItem[]): boolean {
     return true;
   } catch (error) {
     // Handle quota exceeded error
-    if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+    if (error instanceof DOMException && error.name === "QuotaExceededError") {
       // sessionStorage quota exceeded - could implement user notification here
     }
 
@@ -113,7 +113,7 @@ export function saveCartToStorage(items: CartItem[]): boolean {
  * Clear cart from sessionStorage
  */
 export function clearCartStorage(): void {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return;
   }
 
@@ -122,7 +122,7 @@ export function clearCartStorage(): void {
 
     // Emit event to notify all hooks about cart clear
     window.dispatchEvent(
-      new CustomEvent('cart-updated', {
+      new CustomEvent("cart-updated", {
         detail: { items: [] },
       })
     );
@@ -171,10 +171,10 @@ export function useCartStorage() {
       setItems(customEvent.detail.items);
     };
 
-    window.addEventListener('cart-updated', handleCartUpdate);
+    window.addEventListener("cart-updated", handleCartUpdate);
 
     return () => {
-      window.removeEventListener('cart-updated', handleCartUpdate);
+      window.removeEventListener("cart-updated", handleCartUpdate);
     };
   }, []);
 
@@ -203,7 +203,7 @@ export function useCartStorage() {
    * Get current storage size (for debugging/monitoring)
    */
   const getStorageSize = useCallback((): number => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return 0;
     }
 

@@ -1,5 +1,9 @@
-import { useMemo } from 'react';
-import type { GlassSolutionOutput, GlassTypeOutput } from '@/server/api/routers/catalog';
+/** biome-ignore-all lint/style/noMagicNumbers: It is not required */
+import { useMemo } from "react";
+import type {
+  GlassSolutionOutput,
+  GlassTypeOutput,
+} from "@/server/api/routers/catalog";
 
 // ============================================================================
 // Types
@@ -25,15 +29,15 @@ type InferredSolution = {
  */
 function performanceToNumeric(rating: string | undefined): number {
   switch (rating) {
-    case 'excellent':
+    case "excellent":
       return 5;
-    case 'very_good':
+    case "very_good":
       return 4;
-    case 'good':
+    case "good":
       return 3;
-    case 'standard':
+    case "standard":
       return 2;
-    case 'basic':
+    case "basic":
       return 1;
     default:
       return 3; // Default to "good" if undefined
@@ -44,76 +48,138 @@ function performanceToNumeric(rating: string | undefined): number {
  * Calculate acoustic rating based on glass characteristics
  */
 function calculateAcousticRating(glassType: GlassTypeOutput | null): number {
-  if (!glassType) return 3;
+  if (!glassType) {
+    return 3;
+  }
 
   let rating = 2; // Base rating
+  const characteristics = glassType.characteristics ?? [];
 
   // Laminated glass provides better sound insulation
-  if (glassType.isLaminated) rating += 2;
+  const hasLaminated = characteristics.some((c) =>
+    c.characteristic?.key?.includes("laminated")
+  );
+  if (hasLaminated) {
+    rating += 2;
+  }
 
   // Triple glazing significantly improves acoustic performance
-  if (glassType.isTripleGlazed) rating += 1;
+  const hasTripleGlazed = characteristics.some((c) =>
+    c.characteristic?.key?.includes("triple")
+  );
+  if (hasTripleGlazed) {
+    rating += 1;
+  }
 
   // Thicker glass improves sound reduction
-  if (glassType.thicknessMm >= 10) rating += 1;
+  const MinThickAcoustic = 10;
+  const MaxRating = 5;
+  if (glassType.thicknessMm >= MinThickAcoustic) {
+    rating += 1;
+  }
 
-  return Math.min(5, rating);
+  return Math.min(MaxRating, rating);
 }
 
 /**
  * Calculate thermal rating based on glass characteristics
  */
 function calculateThermalRating(glassType: GlassTypeOutput | null): number {
-  if (!glassType) return 3;
+  if (!glassType) {
+    return 3;
+  }
 
   let rating = 2; // Base rating
+  const characteristics = glassType.characteristics ?? [];
 
   // Low-E coating significantly improves thermal performance
-  if (glassType.isLowE) rating += 2;
+  const hasLowE = characteristics.some(
+    (c) =>
+      c.characteristic?.key?.includes("low_e") ||
+      c.characteristic?.key?.includes("lowE")
+  );
+  if (hasLowE) {
+    rating += 2;
+  }
 
   // Triple glazing provides excellent insulation
-  if (glassType.isTripleGlazed) rating += 1;
+  const hasTripleGlazed = characteristics.some((c) =>
+    c.characteristic?.key?.includes("triple")
+  );
+  if (hasTripleGlazed) {
+    rating += 1;
+  }
 
   // U-value (lower is better for thermal insulation)
-  if (glassType.uValue && glassType.uValue < 1.5) rating += 1;
-  else if (glassType.uValue && glassType.uValue < 2.5) rating += 0;
+  const ExcellentUvalue = 1.5;
+  const GoodUvalue = 2.5;
+  const MaxRating = 5;
+  if (glassType.uValue && glassType.uValue < ExcellentUvalue) {
+    rating += 1;
+  } else if (glassType.uValue && glassType.uValue < GoodUvalue) {
+    rating += 0;
+  }
 
-  return Math.min(5, rating);
+  return Math.min(MaxRating, rating);
 }
 
 /**
  * Calculate security rating based on glass characteristics
  */
 function calculateSecurityRating(glassType: GlassTypeOutput | null): number {
-  if (!glassType) return 3;
+  if (!glassType) {
+    return 3;
+  }
 
   let rating = 2; // Base rating
 
+  // Check for laminated or tempered characteristics
+  const characteristics = glassType.characteristics ?? [];
+  const hasLaminated = characteristics.some((c) =>
+    c.characteristic?.key?.includes("laminated")
+  );
+  const hasTempered = characteristics.some((c) =>
+    c.characteristic?.key?.includes("tempered")
+  );
+
   // Tempered glass provides safety (but not security against intrusion)
-  if (glassType.isTempered) rating += 1;
+  if (hasTempered) {
+    rating += 1;
+  }
 
   // Laminated glass is the best for security (holds together when broken)
-  if (glassType.isLaminated) rating += 2;
+  if (hasLaminated) {
+    rating += 2;
+  }
 
   // Thickness adds to security
-  if (glassType.thicknessMm >= 8) rating += 1;
-
-  return Math.min(5, rating);
+  const MinThickSecurity = 8;
+  const MaxRating = 5;
+  if (glassType.thicknessMm >= MinThickSecurity) {
+    rating += 1;
+  }
+  return Math.min(MaxRating, rating);
 }
 
 /**
  * Infer primary solution from glass type characteristics
- * Priority: Primary solution > Highest performance rating > Purpose-based fallback
+ * Priority: Primary solution > Highest performance rating
  */
 function inferPrimarySolution(
   glassType: GlassTypeOutput | null,
   availableSolutions: GlassSolutionOutput[]
 ): GlassSolutionOutput | null {
-  if (!glassType) return null;
+  if (!glassType) {
+    return null;
+  }
 
   // Priority 1: Use primary solution if defined
-  const primarySolution = glassType.solutions?.find((s) => s.isPrimary)?.solution;
-  if (primarySolution) return primarySolution;
+  const primarySolution = glassType.solutions?.find(
+    (s) => s.isPrimary
+  )?.solution;
+  if (primarySolution) {
+    return primarySolution;
+  }
 
   // Priority 2: Find solution with highest performance rating
   // Safety check: only reduce if array has elements
@@ -124,21 +190,13 @@ function inferPrimarySolution(
       const currentRating = performanceToNumeric(current.performanceRating);
       return currentRating > bestRating ? current : best;
     })?.solution;
-    if (bestSolution) return bestSolution;
+    if (bestSolution) {
+      return bestSolution;
+    }
   }
 
-  // Priority 3: Fallback to purpose-based mapping
-  const purposeToSolutionKey: Record<string, string> = {
-    decorative: 'decorative',
-    general: 'general_use',
-    insulation: 'thermal_insulation',
-    security: 'security',
-  };
-
-  const solutionKey = purposeToSolutionKey[glassType.purpose];
-  const fallbackSolution = availableSolutions.find((s) => s.key === solutionKey);
-
-  return fallbackSolution ?? null;
+  // Fallback: return first available solution
+  return availableSolutions.length > 0 ? (availableSolutions[0] ?? null) : null;
 }
 
 // ============================================================================
@@ -187,7 +245,9 @@ export function useSolutionInference(
 } {
   const inferredSolution = useMemo(() => {
     const primarySolution = inferPrimarySolution(glassType, availableSolutions);
-    if (!primarySolution) return null;
+    if (!primarySolution) {
+      return null;
+    }
 
     const securityRating = calculateSecurityRating(glassType);
     const thermalRating = calculateThermalRating(glassType);

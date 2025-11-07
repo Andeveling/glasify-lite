@@ -1,7 +1,14 @@
 /** biome-ignore-all lint/style/noMagicNumbers: Este archivo es un preview visual 2D, los valores "mágicos" están justificados por UX y proporciones visuales, no por lógica de negocio ni cálculos reutilizables. No se requiere refactorizar a constantes globales ni reutilizables aquí. */
-import { Maximize2, Minimize2, Ruler, Shield, ThermometerSun, Volume2 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-import { StatBadge } from '@/components/ui/stat-badge';
+import {
+  Maximize2,
+  Minimize2,
+  Ruler,
+  Shield,
+  ThermometerSun,
+  Volume2,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { StatBadge } from "@/components/ui/stat-badge";
 
 type Window2DPreviewProps = {
   acousticRating?: number;
@@ -19,7 +26,7 @@ type Window2DPreviewProps = {
 
 export function Window2DPreview({
   acousticRating = 3,
-  className = '',
+  className = "",
   glassTypeName,
   height,
   securityRating = 3,
@@ -37,17 +44,21 @@ export function Window2DPreview({
   // biome-ignore lint/correctness/useExhaustiveDependencies: Las dependencias están bien definidas, no es necesario agregar canvasRef ni animationRef
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!(canvas && width && height)) return;
+    if (!(canvas && width && height)) {
+      return;
+    }
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      return;
+    }
 
     // Get CSS variables
     const style = getComputedStyle(document.documentElement);
-    const primaryColor = style.getPropertyValue('--primary').trim();
-    const mutedColor = style.getPropertyValue('--muted').trim();
-    const backgroundColor = style.getPropertyValue('--background').trim();
-    const foregroundColor = style.getPropertyValue('--foreground').trim();
+    const primaryColor = style.getPropertyValue("--primary").trim();
+    const mutedColor = style.getPropertyValue("--muted").trim();
+    const backgroundColor = style.getPropertyValue("--background").trim();
+    const foregroundColor = style.getPropertyValue("--foreground").trim();
 
     // Set canvas size
     const dpr = window.devicePixelRatio || 1;
@@ -84,7 +95,10 @@ export function Window2DPreview({
       // Background gradient using CSS variables
       const bgGradient = ctx.createLinearGradient(0, 0, 0, rect.height);
       bgGradient.addColorStop(0, `oklch(from ${backgroundColor} l c h / 0.95)`);
-      bgGradient.addColorStop(0.5, `oklch(from ${backgroundColor} calc(l * 1.1) c h / 1)`);
+      bgGradient.addColorStop(
+        0.5,
+        `oklch(from ${backgroundColor} calc(l * 1.1) c h / 1)`
+      );
       bgGradient.addColorStop(1, `oklch(from ${backgroundColor} l c h / 0.95)`);
       ctx.fillStyle = bgGradient;
       ctx.fillRect(0, 0, rect.width, rect.height);
@@ -113,15 +127,28 @@ export function Window2DPreview({
         y + windowHeight - frameWidth
       );
       glassGradient.addColorStop(0, `oklch(from ${primaryColor} l c h / 0.2)`);
-      glassGradient.addColorStop(0.5, `oklch(from ${primaryColor} l c h / 0.3)`);
+      glassGradient.addColorStop(
+        0.5,
+        `oklch(from ${primaryColor} l c h / 0.3)`
+      );
       glassGradient.addColorStop(1, `oklch(from ${primaryColor} l c h / 0.1)`);
 
       ctx.fillStyle = glassGradient;
-      ctx.fillRect(x + frameWidth, y + frameWidth, windowWidth - frameWidth * 2, windowHeight - frameWidth * 2);
+      ctx.fillRect(
+        x + frameWidth,
+        y + frameWidth,
+        windowWidth - frameWidth * 2,
+        windowHeight - frameWidth * 2
+      );
 
       // Center mullion (vertical divider)
       ctx.fillStyle = `oklch(from ${mutedColor} calc(l * 0.7) c h)`;
-      ctx.fillRect(centerX - mullionWidth / 2, y + frameWidth, mullionWidth, windowHeight - frameWidth * 2);
+      ctx.fillRect(
+        centerX - mullionWidth / 2,
+        y + frameWidth,
+        mullionWidth,
+        windowHeight - frameWidth * 2
+      );
 
       // Glass pane highlights
       ctx.shadowBlur = 0;
@@ -133,8 +160,8 @@ export function Window2DPreview({
         x + frameWidth + 40,
         y + frameWidth + 40
       );
-      leftHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
-      leftHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      leftHighlight.addColorStop(0, "rgba(255, 255, 255, 0.3)");
+      leftHighlight.addColorStop(1, "rgba(255, 255, 255, 0)");
       ctx.fillStyle = leftHighlight;
       ctx.fillRect(
         x + frameWidth,
@@ -150,8 +177,8 @@ export function Window2DPreview({
         centerX + mullionWidth / 2 + 40,
         y + frameWidth + 40
       );
-      rightHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
-      rightHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      rightHighlight.addColorStop(0, "rgba(255, 255, 255, 0.3)");
+      rightHighlight.addColorStop(1, "rgba(255, 255, 255, 0)");
       ctx.fillStyle = rightHighlight;
       ctx.fillRect(
         centerX + mullionWidth / 2,
@@ -167,7 +194,11 @@ export function Window2DPreview({
       const gridSpacing = 20;
 
       // Left pane grid
-      for (let i = 0; i < (windowWidth - frameWidth * 2 - mullionWidth) / 2; i += gridSpacing) {
+      for (
+        let i = 0;
+        i < (windowWidth - frameWidth * 2 - mullionWidth) / 2;
+        i += gridSpacing
+      ) {
         ctx.beginPath();
         ctx.moveTo(x + frameWidth + i, y + frameWidth);
         ctx.lineTo(x + frameWidth + i, y + windowHeight - frameWidth);
@@ -175,17 +206,29 @@ export function Window2DPreview({
       }
 
       // Right pane grid
-      for (let i = 0; i < (windowWidth - frameWidth * 2 - mullionWidth) / 2; i += gridSpacing) {
+      for (
+        let i = 0;
+        i < (windowWidth - frameWidth * 2 - mullionWidth) / 2;
+        i += gridSpacing
+      ) {
         ctx.beginPath();
         ctx.moveTo(centerX + mullionWidth / 2 + i, y + frameWidth);
-        ctx.lineTo(centerX + mullionWidth / 2 + i, y + windowHeight - frameWidth);
+        ctx.lineTo(
+          centerX + mullionWidth / 2 + i,
+          y + windowHeight - frameWidth
+        );
         ctx.stroke();
       }
 
       // Frame bevels for 3D effect
-      const bevelGradient = ctx.createLinearGradient(x, y, x + frameWidth, y + frameWidth);
-      bevelGradient.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
-      bevelGradient.addColorStop(1, 'rgba(0, 0, 0, 0.2)');
+      const bevelGradient = ctx.createLinearGradient(
+        x,
+        y,
+        x + frameWidth,
+        y + frameWidth
+      );
+      bevelGradient.addColorStop(0, "rgba(255, 255, 255, 0.2)");
+      bevelGradient.addColorStop(1, "rgba(0, 0, 0, 0.2)");
 
       // Top bevel
       ctx.fillStyle = bevelGradient;
@@ -197,10 +240,11 @@ export function Window2DPreview({
       // Measurements using primary color
       if (showMeasurements) {
         ctx.shadowBlur = 0;
-        ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.font =
+          '12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
         ctx.fillStyle = `oklch(from ${primaryColor} l c h)`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
 
         // Width measurement
         const widthY = y + windowHeight + 35;
@@ -233,7 +277,12 @@ export function Window2DPreview({
         const widthText = `${width}mm`;
         const textWidth = ctx.measureText(widthText).width;
         ctx.fillStyle = `oklch(from ${backgroundColor} l c h / 0.95)`;
-        ctx.fillRect(centerX - textWidth / 2 - 6, widthY - 10, textWidth + 12, 20);
+        ctx.fillRect(
+          centerX - textWidth / 2 - 6,
+          widthY - 10,
+          textWidth + 12,
+          20
+        );
         ctx.fillStyle = `oklch(from ${primaryColor} l c h)`;
         ctx.fillText(widthText, centerX, widthY);
 
@@ -270,15 +319,16 @@ export function Window2DPreview({
         ctx.fillStyle = `oklch(from ${backgroundColor} l c h / 0.95)`;
         ctx.fillRect(-heightTextWidth / 2 - 6, -10, heightTextWidth + 12, 20);
         ctx.fillStyle = `oklch(from ${primaryColor} l c h)`;
-        ctx.textAlign = 'center';
+        ctx.textAlign = "center";
         ctx.fillText(heightText, 0, 0);
         ctx.restore();
       }
 
       // Scale reference using foreground color
-      ctx.font = '11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      ctx.font =
+        '11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
       ctx.fillStyle = `oklch(from ${foregroundColor} l c h / 0.5)`;
-      ctx.textAlign = 'left';
+      ctx.textAlign = "left";
       ctx.fillText(`Escala: 1:${Math.round(1 / scale)}`, 12, rect.height - 12);
 
       animationRef.current = requestAnimationFrame(draw);
@@ -296,7 +346,7 @@ export function Window2DPreview({
   return (
     <div className={`relative ${className}`}>
       <canvas
-        className={`w-full rounded-lg bg-gradient-to-br from-background via-card to-background shadow-md transition-all duration-300 ${isExpanded ? 'h-[600px]' : 'h-[400px]'}`}
+        className={`w-full rounded-lg bg-gradient-to-br from-background via-card to-background shadow-md transition-all duration-300 ${isExpanded ? "h-[600px]" : "h-[400px]"}`}
         ref={canvasRef}
       />
 
@@ -319,7 +369,9 @@ export function Window2DPreview({
               </div>
               <div className="flex justify-between gap-6 border-border border-t pt-1">
                 <span className="text-muted-foreground">Área:</span>
-                <span className="font-mono text-foreground">{((width * height) / 1_000_000).toFixed(2)}m²</span>
+                <span className="font-mono text-foreground">
+                  {((width * height) / 1_000_000).toFixed(2)}m²
+                </span>
               </div>
             </div>
           </div>
@@ -339,7 +391,12 @@ export function Window2DPreview({
                 tooltip="Aislamiento térmico y eficiencia energética"
                 value={thermalRating}
               />
-              <StatBadge icon={Volume2} label="Acústico" tooltip="Reducción de ruido exterior" value={acousticRating} />
+              <StatBadge
+                icon={Volume2}
+                label="Acústico"
+                tooltip="Reducción de ruido exterior"
+                value={acousticRating}
+              />
             </div>
           )}
 
@@ -349,7 +406,7 @@ export function Window2DPreview({
               <button
                 className="group rounded-lg border border-border bg-card/95 p-2 shadow-sm backdrop-blur-sm transition-all hover:bg-accent hover:text-accent-foreground"
                 onClick={() => setIsExpanded(!isExpanded)}
-                title={isExpanded ? 'Contraer' : 'Expandir'}
+                title={isExpanded ? "Contraer" : "Expandir"}
                 type="button"
               >
                 {isExpanded ? (
@@ -368,14 +425,18 @@ export function Window2DPreview({
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-sm border border-primary/50 bg-gradient-to-br from-primary/40 to-primary/20 shadow-xs" />
                   <span className="text-muted-foreground">Vidrio:</span>
-                  <span className="font-medium text-foreground">{glassTypeName}</span>
+                  <span className="font-medium text-foreground">
+                    {glassTypeName}
+                  </span>
                 </div>
               )}
               {solutionName && (
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-sm border border-muted bg-muted shadow-xs" />
                   <span className="text-muted-foreground">Solución:</span>
-                  <span className="font-medium text-foreground">{solutionName}</span>
+                  <span className="font-medium text-foreground">
+                    {solutionName}
+                  </span>
                 </div>
               )}
               {!(glassTypeName || solutionName) && (

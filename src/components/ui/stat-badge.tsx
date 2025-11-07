@@ -1,7 +1,12 @@
-import type { LucideIcon } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
+import type { LucideIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 // ============================================================================
 // Types
@@ -26,18 +31,26 @@ type StatBadgeProps = {
  * - 4-5: Good (green)
  */
 function getPerformanceColor(value: number): string {
-  if (value >= 4) return 'text-green-600 dark:text-green-400';
-  if (value === 3) return 'text-yellow-600 dark:text-yellow-400';
-  return 'text-red-600 dark:text-red-400';
+  if (value >= 4) {
+    return "text-green-600 dark:text-green-400";
+  }
+  if (value === 3) {
+    return "text-yellow-600 dark:text-yellow-400";
+  }
+  return "text-red-600 dark:text-red-400";
 }
 
 /**
  * Get background color based on performance value
  */
 function getPerformanceBg(value: number): string {
-  if (value >= 4) return 'bg-green-50 dark:bg-green-950/20';
-  if (value === 3) return 'bg-yellow-50 dark:bg-yellow-950/20';
-  return 'bg-red-50 dark:bg-red-950/20';
+  if (value >= 4) {
+    return "bg-green-50 dark:bg-green-950/20";
+  }
+  if (value === 3) {
+    return "bg-yellow-50 dark:bg-yellow-950/20";
+  }
+  return "bg-red-50 dark:bg-red-950/20";
 }
 
 /**
@@ -49,7 +62,10 @@ function renderCircles(value: number): React.ReactNode {
       {Array.from({ length: 5 }).map((_, index) => (
         <div
           aria-hidden="true"
-          className={cn('h-1 w-1 rounded-full', index < value ? 'bg-current' : 'bg-muted')}
+          className={cn(
+            "h-1 w-1 rounded-full",
+            index < value ? "bg-current" : "bg-muted"
+          )}
           key={index}
         />
       ))}
@@ -97,14 +113,28 @@ function renderCircles(value: number): React.ReactNode {
  *   <StatBadge icon={Volume2} label="Acústico" value={4} />
  * </div>
  */
-export function StatBadge({ className, icon: Icon, label, tooltip, value }: StatBadgeProps) {
+export function StatBadge({
+  className,
+  icon: Icon,
+  label,
+  tooltip,
+  value,
+}: StatBadgeProps) {
   const colorClass = getPerformanceColor(value);
   const bgClass = getPerformanceBg(value);
 
   const badge = (
-    <Badge className={cn('flex items-center gap-1.5 px-2 py-1', bgClass, colorClass, className)} variant="outline">
+    <Badge
+      className={cn(
+        "flex items-center gap-1.5 px-2 py-1",
+        bgClass,
+        colorClass,
+        className
+      )}
+      variant="outline"
+    >
       <Icon aria-hidden="true" className="h-3 w-3" />
-      <span className="text-xs font-medium">{label}</span>
+      <span className="font-medium text-xs">{label}</span>
       {renderCircles(value)}
       <span className="sr-only">
         {label}: {value} de 5

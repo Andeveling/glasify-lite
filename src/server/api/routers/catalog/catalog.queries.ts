@@ -1,8 +1,11 @@
 // src/server/api/routers/catalog/catalog.queries.ts
-import logger from '@/lib/logger';
-import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
+import logger from "@/lib/logger";
+import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import {
+  getAvailableGlassTypesInput,
   getModelByIdInput,
+  glassCompatibilityOutput,
+  listAvailableGlassTypesOutput,
   listGlassSolutionsInput,
   listGlassSolutionsOutput,
   listGlassTypesInput,
@@ -12,20 +15,21 @@ import {
   listServicesInput,
   listServicesOutput,
   modelDetailOutput,
-} from './catalog.schemas';
-import { serializeDecimalFields } from './catalog.utils';
+  validateGlassCompatibilityInput,
+} from "./catalog.schemas";
+import { serializeDecimalFields } from "./catalog.utils";
 
 export const catalogQueries = createTRPCRouter({
   /**
    * Get a single model by ID
    * @public
    */
-  'get-model-by-id': publicProcedure
+  "get-model-by-id": publicProcedure
     .input(getModelByIdInput)
     .output(modelDetailOutput)
     .query(async ({ ctx, input }) => {
       try {
-        logger.info('Getting model by ID', { modelId: input.modelId });
+        logger.info("Getting model by ID", { modelId: input.modelId });
 
         const model = await ctx.db.model.findUnique({
           select: {
@@ -38,11 +42,13 @@ export const catalogQueries = createTRPCRouter({
             glassDiscountHeightMm: true,
             glassDiscountWidthMm: true,
             id: true,
+            imageUrl: true,
             maxHeightMm: true,
             maxWidthMm: true,
             minHeightMm: true,
             minWidthMm: true,
             name: true,
+            profitMarginPercentage: true, // Include profit margin for display pricing
             profileSupplier: {
               select: {
                 id: true,
@@ -55,34 +61,41 @@ export const catalogQueries = createTRPCRouter({
           },
           where: {
             id: input.modelId,
-            status: 'published',
+            status: "published",
           },
         });
 
         if (!model) {
-          logger.warn('Model not found or not published', { modelId: input.modelId });
-          throw new Error('El modelo solicitado no existe o no está disponible.');
+          logger.warn("Model not found or not published", {
+            modelId: input.modelId,
+          });
+          throw new Error(
+            "El modelo solicitado no existe o no está disponible."
+          );
         }
 
         const serializedModel = serializeDecimalFields(model);
 
-        logger.info('Successfully retrieved model', {
+        logger.info("Successfully retrieved model", {
           modelId: input.modelId,
           modelName: model.name,
         });
 
         return serializedModel;
       } catch (error) {
-        logger.error('Error getting model by ID', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error getting model by ID", {
+          error: error instanceof Error ? error.message : "Unknown error",
           modelId: input.modelId,
         });
 
-        if (error instanceof Error && error.message.includes('no existe o no está disponible')) {
+        if (
+          error instanceof Error &&
+          error.message.includes("no existe o no está disponible")
+        ) {
           throw error;
         }
 
-        throw new Error('No se pudo cargar el modelo. Intente nuevamente.');
+        throw new Error("No se pudo cargar el modelo. Intente nuevamente.");
       }
     }),
 
@@ -91,13 +104,13 @@ export const catalogQueries = createTRPCRouter({
    * Used for solution selector UI
    * @public
    */
-  'list-glass-solutions': publicProcedure
+  "list-glass-solutions": publicProcedure
     .input(listGlassSolutionsInput)
     .output(listGlassSolutionsOutput)
     .query(async ({ ctx, input }) => {
       try {
         const params = input ?? {};
-        logger.info('Listing glass solutions', { modelId: params.modelId });
+        logger.info("Listing glass solutions", { modelId: params.modelId });
 
         // If modelId is provided, filter solutions by compatible glass types
         if (params.modelId) {
@@ -108,12 +121,12 @@ export const catalogQueries = createTRPCRouter({
           });
 
           if (!model) {
-            throw new Error('Modelo no encontrado');
+            throw new Error("Modelo no encontrado");
           }
 
           // Get solutions that have at least one glass type compatible with this model
           const solutions = await ctx.db.glassSolution.findMany({
-            orderBy: { sortOrder: 'asc' },
+            orderBy: { sortOrder: "asc" },
             where: {
               AND: [
                 { isActive: true },
@@ -130,7 +143,7 @@ export const catalogQueries = createTRPCRouter({
             },
           });
 
-          logger.info('Successfully retrieved filtered glass solutions', {
+          logger.info("Successfully retrieved filtered glass solutions", {
             count: solutions.length,
             modelId: params.modelId,
           });
@@ -140,22 +153,24 @@ export const catalogQueries = createTRPCRouter({
 
         // No filter: return all active solutions
         const solutions = await ctx.db.glassSolution.findMany({
-          orderBy: { sortOrder: 'asc' },
+          orderBy: { sortOrder: "asc" },
           where: { isActive: true },
         });
 
-        logger.info('Successfully retrieved glass solutions', {
+        logger.info("Successfully retrieved glass solutions", {
           count: solutions.length,
         });
 
         return solutions;
       } catch (error) {
-        logger.error('Error listing glass solutions', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error listing glass solutions", {
+          error: error instanceof Error ? error.message : "Unknown error",
           modelId: input?.modelId,
         });
 
-        throw new Error('No se pudieron cargar las soluciones de vidrio. Intente nuevamente.');
+        throw new Error(
+          "No se pudieron cargar las soluciones de vidrio. Intente nuevamente."
+        );
       }
     }),
 
@@ -169,41 +184,43 @@ export const catalogQueries = createTRPCRouter({
    *
    * @public
    */
-  'list-glass-types': publicProcedure
+  "list-glass-types": publicProcedure
     .input(listGlassTypesInput)
     .output(listGlassTypesOutput)
     .query(async ({ ctx, input }) => {
       try {
-        logger.info('Listing glass types by IDs', {
+        logger.info("Listing glass types by IDs", {
           count: input.glassTypeIds.length,
         });
 
         const glassTypes = await ctx.db.glassType.findMany({
-          orderBy: { name: 'asc' },
+          orderBy: { name: "asc" },
           select: {
             characteristics: {
               include: {
                 characteristic: true,
               },
-              orderBy: { characteristic: { name: 'asc' } },
+              orderBy: { characteristic: { name: "asc" } },
             },
+            code: true,
             createdAt: true,
             description: true,
-            glassSupplierId: true,
             id: true,
             isActive: true,
-            isLaminated: true,
-            isLowE: true,
-            isTempered: true,
-            isTripleGlazed: true,
+            isSeeded: true,
+            manufacturer: true,
             name: true,
             pricePerSqm: true,
-            purpose: true,
+            seedVersion: true,
+            series: true,
             solutions: {
               include: {
                 solution: true,
               },
-              orderBy: [{ isPrimary: 'desc' }, { solution: { sortOrder: 'asc' } }],
+              orderBy: [
+                { isPrimary: "desc" },
+                { solution: { sortOrder: "asc" } },
+              ],
             },
             thicknessMm: true,
             updatedAt: true,
@@ -214,24 +231,26 @@ export const catalogQueries = createTRPCRouter({
           },
         });
 
-        // Serialize Decimal fields (pricePerSqm, uValue)
+        // Serialize Decimal fields (uValue, pricePerSqm)
         const serializedGlassTypes = glassTypes.map((glassType) => ({
           ...glassType,
           pricePerSqm: glassType.pricePerSqm.toNumber(),
           uValue: glassType.uValue?.toNumber() ?? null,
         }));
 
-        logger.info('Successfully retrieved glass types', {
+        logger.info("Successfully retrieved glass types", {
           count: serializedGlassTypes.length,
         });
 
         return serializedGlassTypes;
       } catch (error) {
-        logger.error('Error listing glass types', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error listing glass types", {
+          error: error instanceof Error ? error.message : "Unknown error",
         });
 
-        throw new Error('No se pudieron cargar los tipos de vidrio. Intente nuevamente.');
+        throw new Error(
+          "No se pudieron cargar los tipos de vidrio. Intente nuevamente."
+        );
       }
     }),
 
@@ -241,12 +260,12 @@ export const catalogQueries = createTRPCRouter({
    * Following "Don't Make Me Think" principle - avoid showing empty options
    * @public
    */
-  'list-manufacturers': publicProcedure.query(async ({ ctx }) => {
+  "list-manufacturers": publicProcedure.query(async ({ ctx }) => {
     try {
-      logger.info('Listing profile suppliers with published models for filter');
+      logger.info("Listing profile suppliers with published models for filter");
 
       const profileSuppliers = await ctx.db.profileSupplier.findMany({
-        orderBy: { name: 'asc' },
+        orderBy: { name: "asc" },
         select: {
           id: true,
           name: true,
@@ -257,7 +276,7 @@ export const catalogQueries = createTRPCRouter({
             {
               models: {
                 some: {
-                  status: 'published',
+                  status: "published",
                 },
               },
             },
@@ -265,17 +284,22 @@ export const catalogQueries = createTRPCRouter({
         },
       });
 
-      logger.info('Successfully retrieved profile suppliers with published models', {
-        count: profileSuppliers.length,
-      });
+      logger.info(
+        "Successfully retrieved profile suppliers with published models",
+        {
+          count: profileSuppliers.length,
+        }
+      );
 
       return profileSuppliers;
     } catch (error) {
-      logger.error('Error listing profile suppliers', {
-        error: error instanceof Error ? error.message : 'Unknown error',
+      logger.error("Error listing profile suppliers", {
+        error: error instanceof Error ? error.message : "Unknown error",
       });
 
-      throw new Error('No se pudieron cargar los proveedores de perfiles. Intente nuevamente.');
+      throw new Error(
+        "No se pudieron cargar los proveedores de perfiles. Intente nuevamente."
+      );
     }
   }),
 
@@ -283,12 +307,12 @@ export const catalogQueries = createTRPCRouter({
    * List models with pagination, filtering, and sorting
    * @public
    */
-  'list-models': publicProcedure
+  "list-models": publicProcedure
     .input(listModelsInput)
     .output(listModelsOutput)
     .query(async ({ ctx, input }) => {
       try {
-        logger.info('Listing models', {
+        logger.info("Listing models", {
           limit: input.limit,
           page: input.page,
           profileSupplierId: input.manufacturerId,
@@ -298,29 +322,31 @@ export const catalogQueries = createTRPCRouter({
 
         // Build where clause
         const whereClause = {
-          ...(input.manufacturerId && { profileSupplierId: input.manufacturerId }),
+          ...(input.manufacturerId && {
+            profileSupplierId: input.manufacturerId,
+          }),
           ...(input.search && {
             name: {
               contains: input.search,
-              mode: 'insensitive' as const,
+              mode: "insensitive" as const,
             },
           }),
-          status: 'published' as const,
+          status: "published" as const,
         };
 
         // Build orderBy clause
         const orderByClause = (() => {
           switch (input.sort) {
-            case 'name-asc':
-              return { name: 'asc' as const };
-            case 'name-desc':
-              return { name: 'desc' as const };
-            case 'price-asc':
-              return { basePrice: 'asc' as const };
-            case 'price-desc':
-              return { basePrice: 'desc' as const };
+            case "name-asc":
+              return { name: "asc" as const };
+            case "name-desc":
+              return { name: "desc" as const };
+            case "price-asc":
+              return { basePrice: "asc" as const };
+            case "price-desc":
+              return { basePrice: "desc" as const };
             default:
-              return { name: 'asc' as const };
+              return { name: "asc" as const };
           }
         })();
 
@@ -341,11 +367,13 @@ export const catalogQueries = createTRPCRouter({
             costPerMmWidth: true,
             createdAt: true,
             id: true,
+            imageUrl: true,
             maxHeightMm: true,
             maxWidthMm: true,
             minHeightMm: true,
             minWidthMm: true,
             name: true,
+            profitMarginPercentage: true, // Include profit margin for display pricing
             profileSupplier: {
               select: {
                 id: true,
@@ -363,7 +391,7 @@ export const catalogQueries = createTRPCRouter({
         // Serialize Decimal fields
         const serializedModels = models.map(serializeDecimalFields);
 
-        logger.info('Successfully retrieved models', {
+        logger.info("Successfully retrieved models", {
           count: serializedModels.length,
           manufacturerId: input.manufacturerId,
           page: input.page,
@@ -376,12 +404,14 @@ export const catalogQueries = createTRPCRouter({
           total,
         };
       } catch (error) {
-        logger.error('Error listing models', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error listing models", {
+          error: error instanceof Error ? error.message : "Unknown error",
           manufacturerId: input.manufacturerId,
         });
 
-        throw new Error('No se pudieron cargar los modelos. Intente nuevamente.');
+        throw new Error(
+          "No se pudieron cargar los modelos. Intente nuevamente."
+        );
       }
     }),
 
@@ -389,15 +419,15 @@ export const catalogQueries = createTRPCRouter({
    * List services by manufacturer for parametrization form
    * @public
    */
-  'list-services': publicProcedure
+  "list-services": publicProcedure
     .input(listServicesInput)
     .output(listServicesOutput)
     .query(async ({ ctx }) => {
       try {
-        logger.info('Listing services');
+        logger.info("Listing services");
 
         const services = await ctx.db.service.findMany({
-          orderBy: { name: 'asc' },
+          orderBy: { name: "asc" },
           select: {
             createdAt: true,
             id: true,
@@ -415,17 +445,150 @@ export const catalogQueries = createTRPCRouter({
           rate: service.rate.toNumber(),
         }));
 
-        logger.info('Successfully retrieved services', {
+        logger.info("Successfully retrieved services", {
           count: serializedServices.length,
         });
 
         return serializedServices;
       } catch (error) {
-        logger.error('Error listing services', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error listing services", {
+          error: error instanceof Error ? error.message : "Unknown error",
         });
 
-        throw new Error('No se pudieron cargar los servicios. Intente nuevamente.');
+        throw new Error(
+          "No se pudieron cargar los servicios. Intente nuevamente."
+        );
+      }
+    }),
+
+  /**
+   * Get available glass types for a model
+   * @public
+   */
+  "get-available-glass-types": publicProcedure
+    .input(getAvailableGlassTypesInput)
+    .output(listAvailableGlassTypesOutput)
+    .query(async ({ ctx, input }) => {
+      try {
+        logger.info("Fetching glass types for model", {
+          modelId: input.modelId,
+        });
+
+        // Get model with compatible glass type IDs
+        const model = await ctx.db.model.findUnique({
+          where: {
+            id: input.modelId,
+          },
+          select: {
+            compatibleGlassTypeIds: true,
+          },
+        });
+
+        if (!model) {
+          throw new Error("Modelo no encontrado");
+        }
+
+        // Fetch glass types that are compatible with this model
+        const glassTypes = await ctx.db.glassType.findMany({
+          where: {
+            id: {
+              in: model.compatibleGlassTypeIds,
+            },
+          },
+          select: {
+            id: true,
+            name: true,
+            pricePerSqm: true,
+            thicknessMm: true,
+            description: true,
+          },
+          orderBy: {
+            pricePerSqm: "asc", // Cheapest first
+          },
+        });
+
+        // Serialize Decimal fields
+        const serializedGlassTypes = glassTypes.map((gt) => ({
+          id: gt.id,
+          name: gt.name,
+          pricePerSqm: gt.pricePerSqm.toNumber(),
+          thicknessMm: gt.thicknessMm,
+          description: gt.description,
+        }));
+
+        logger.info("Successfully fetched glass types for model", {
+          modelId: input.modelId,
+          count: serializedGlassTypes.length,
+        });
+
+        return serializedGlassTypes;
+      } catch (error) {
+        logger.error("Error fetching glass types for model", {
+          modelId: input.modelId,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+
+        throw new Error(
+          "No se pudieron cargar los tipos de vidrio. Intente nuevamente."
+        );
+      }
+    }),
+
+  /**
+   * Validate if a glass type is compatible with a model
+   * @public
+   */
+  "validate-glass-compatibility": publicProcedure
+    .input(validateGlassCompatibilityInput)
+    .output(glassCompatibilityOutput)
+    .query(async ({ ctx, input }) => {
+      try {
+        logger.info("Validating glass compatibility", {
+          modelId: input.modelId,
+          glassTypeId: input.glassTypeId,
+        });
+
+        // Get model with compatible glass type IDs
+        const model = await ctx.db.model.findUnique({
+          where: {
+            id: input.modelId,
+          },
+          select: {
+            compatibleGlassTypeIds: true,
+          },
+        });
+
+        if (!model) {
+          throw new Error("Modelo no encontrado");
+        }
+
+        // Check if glass type ID is in the compatible list
+        const compatible = model.compatibleGlassTypeIds.includes(
+          input.glassTypeId
+        );
+
+        logger.info("Glass compatibility validation result", {
+          modelId: input.modelId,
+          glassTypeId: input.glassTypeId,
+          compatible,
+        });
+
+        return {
+          compatible,
+          message: compatible
+            ? "Este vidrio es compatible"
+            : "Este vidrio no es compatible con el modelo",
+        };
+      } catch (error) {
+        logger.error("Error validating glass compatibility", {
+          modelId: input.modelId,
+          glassTypeId: input.glassTypeId,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+
+        throw new Error(
+          "No se pudo validar la compatibilidad del vidrio. Intente nuevamente."
+        );
       }
     }),
 });

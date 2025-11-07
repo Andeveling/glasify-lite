@@ -25,6 +25,9 @@ export type CartItem = {
   /** Denormalized model name for display */
   modelName: string;
 
+  /** Model image URL for display (optional) */
+  modelImageUrl?: string | null;
+
   /** Reference to GlassType.id */
   glassTypeId: string;
 
@@ -48,6 +51,12 @@ export type CartItem = {
 
   /** Array of Service.id references */
   additionalServiceIds: string[];
+
+  /** Optional reference to ModelColor.id */
+  colorId?: string;
+
+  /** Color surcharge percentage (snapshot from ModelColor at cart creation) */
+  colorSurchargePercentage?: number;
 
   /** User-editable name (auto-generated: "VEKA-001") */
   name: string;
@@ -110,6 +119,7 @@ export type CartSummary = {
 export type CreateCartItemInput = {
   modelId: string;
   modelName: string;
+  modelImageUrl?: string | null;
   glassTypeId: string;
   glassTypeName: string;
   solutionId?: string;
@@ -118,6 +128,9 @@ export type CreateCartItemInput = {
   heightMm: number;
   quantity?: number;
   additionalServiceIds?: string[];
+  colorId?: string;
+  /** Color surcharge percentage (snapshot from ModelColor at cart creation) */
+  colorSurchargePercentage?: number;
 };
 
 /**
@@ -139,7 +152,11 @@ export type UpdateCartItemInput = {
  */
 export type CartValidationError = {
   /** Error code */
-  code: 'DUPLICATE_NAME' | 'CART_LIMIT_EXCEEDED' | 'INVALID_QUANTITY' | 'ITEM_NOT_FOUND';
+  code:
+    | "DUPLICATE_NAME"
+    | "CART_LIMIT_EXCEEDED"
+    | "INVALID_QUANTITY"
+    | "ITEM_NOT_FOUND";
 
   /** Human-readable error message */
   message: string;
@@ -168,7 +185,7 @@ export const CART_CONSTANTS = {
   MIN_QUANTITY: 1,
 
   /** SessionStorage key for cart data */
-  STORAGE_KEY: 'glasify_cart',
+  STORAGE_KEY: "glasify_cart",
 } as const;
 
 /**

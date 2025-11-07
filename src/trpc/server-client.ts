@@ -1,31 +1,34 @@
-import 'server-only';
+import "server-only";
 
-import { createHydrationHelpers } from '@trpc/react-query/rsc';
-import { headers } from 'next/headers';
-import { cache } from 'react';
+import { createHydrationHelpers } from "@trpc/react-query/rsc";
+import { headers } from "next/headers";
+import { cache } from "react";
 
-import { type AppRouter, createCaller } from '@/server/api/root';
-import { createTRPCContext } from '@/server/api/trpc';
-import { createQueryClient } from './query-client';
+import { type AppRouter, createCaller } from "@/server/api/root";
+import { createTRPCContext } from "@/server/api/trpc";
+import { createQueryClient } from "./query-client";
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
  * handling a tRPC call from a React Server Component.
  *
- * NOTE: We can safely use cache() here because auth() is no longer wrapped with cache(),
- * which prevents the WeakMap key errors that occurred when multiple cache() wrappers
- * were used with Headers objects.
+ * NOTE: headers() is called OUTSIDE of cache() because it's a dynamic data source.
+ * Cache Components in Next.js 16 don't allow dynamic APIs inside "use cache" functions.
+ * The headers are passed as arguments to the cached createContext function.
  */
-const createContext = cache(async () => {
+const createContext = async () => {
   const heads = new Headers(await headers());
-  heads.set('x-trpc-source', 'rsc');
+  heads.set("x-trpc-source", "rsc");
 
   return createTRPCContext({
     headers: heads,
   });
-});
+};
 
 const getQueryClient = cache(createQueryClient);
 const caller = createCaller(createContext);
 
-export const { trpc: api, HydrateClient } = createHydrationHelpers<AppRouter>(caller, getQueryClient);
+export const { trpc: api, HydrateClient } = createHydrationHelpers<AppRouter>(
+  caller,
+  getQueryClient
+);

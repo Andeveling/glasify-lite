@@ -13,17 +13,30 @@
  * Used in: glass-type-form.tsx (Create/Edit Glass Types)
  */
 
-'use client';
+"use client";
 
-import { Plus, Trash2 } from 'lucide-react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import type { CreateGlassTypeInput } from '@/lib/validations/admin/glass-type.schema';
-import { api } from '@/trpc/react';
+import { Plus, Trash2 } from "lucide-react";
+import { useFieldArray, useFormContext } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import type { CreateGlassTypeInput } from "@/lib/validations/admin/glass-type.schema";
+import { api } from "@/trpc/react";
 
 /**
  * Characteristic Selector Component
@@ -32,19 +45,21 @@ export function CharacteristicSelector() {
   const form = useFormContext<CreateGlassTypeInput>();
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: 'characteristics',
+    name: "characteristics",
   });
 
   // Fetch active characteristics via tRPC
   // Note: glassCharacteristic router will be created in future tasks (US7)
   // For now, use empty array or fetch via Server Component prop
-  const { data: characteristicsData, isLoading } = api.admin['glass-solution'].list.useQuery(
+  const { data: characteristicsData, isLoading } = api.admin[
+    "glass-solution"
+  ].list.useQuery(
     {
-      isActive: 'active',
+      isActive: "active",
       limit: 100,
       page: 1,
-      sortBy: 'sortOrder',
-      sortOrder: 'asc',
+      sortBy: "sortOrder",
+      sortOrder: "asc",
     },
     {
       // Temporarily disabled until glass-characteristic router is created
@@ -61,7 +76,7 @@ export function CharacteristicSelector() {
   const handleAddCharacteristic = () => {
     append({
       certification: undefined,
-      characteristicId: '',
+      characteristicId: "",
       notes: undefined,
       value: undefined,
     });
@@ -73,10 +88,16 @@ export function CharacteristicSelector() {
         <div>
           <h3 className="font-medium text-lg">Características del Vidrio</h3>
           <p className="text-muted-foreground text-sm">
-            Asigna características técnicas (templado, laminado, low-e, etc.) con valores y certificaciones
+            Asigna características técnicas (templado, laminado, low-e, etc.)
+            con valores y certificaciones
           </p>
         </div>
-        <Button onClick={handleAddCharacteristic} size="sm" type="button" variant="outline">
+        <Button
+          onClick={handleAddCharacteristic}
+          size="sm"
+          type="button"
+          variant="outline"
+        >
           <Plus className="mr-2 h-4 w-4" />
           Agregar Característica
         </Button>
@@ -85,7 +106,8 @@ export function CharacteristicSelector() {
       {fields.length === 0 && (
         <div className="rounded-lg border border-dashed p-8 text-center">
           <p className="text-muted-foreground text-sm">
-            No hay características asignadas. Haz clic en "Agregar Característica" para comenzar.
+            No hay características asignadas. Haz clic en "Agregar
+            Característica" para comenzar.
           </p>
         </div>
       )}
@@ -94,7 +116,12 @@ export function CharacteristicSelector() {
         <div className="space-y-4 rounded-lg border p-4" key={field.id}>
           <div className="flex items-center justify-between">
             <h4 className="font-medium text-sm">Característica #{index + 1}</h4>
-            <Button onClick={() => remove(index)} size="sm" type="button" variant="ghost">
+            <Button
+              onClick={() => remove(index)}
+              size="sm"
+              type="button"
+              variant="ghost"
+            >
               <Trash2 className="h-4 w-4 text-destructive" />
             </Button>
           </div>
@@ -124,7 +151,10 @@ export function CharacteristicSelector() {
                         </SelectItem>
                       ) : (
                         characteristics.map((characteristic) => (
-                          <SelectItem key={characteristic.id} value={characteristic.id}>
+                          <SelectItem
+                            key={characteristic.id}
+                            value={characteristic.id}
+                          >
                             {characteristic.nameEs}
                           </SelectItem>
                         ))
@@ -133,8 +163,8 @@ export function CharacteristicSelector() {
                   </Select>
                   <FormDescription>
                     {characteristics.length === 0
-                      ? 'Primero debes crear características en el módulo de administración'
-                      : 'Selecciona una característica técnica del vidrio'}
+                      ? "Primero debes crear características en el módulo de administración"
+                      : "Selecciona una característica técnica del vidrio"}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -149,9 +179,15 @@ export function CharacteristicSelector() {
                 <FormItem>
                   <FormLabel>Valor (opcional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ej: 6.38mm, 4+4mm, etc." {...fieldProps} value={fieldProps.value ?? ''} />
+                    <Input
+                      placeholder="Ej: 6.38mm, 4+4mm, etc."
+                      {...fieldProps}
+                      value={fieldProps.value ?? ""}
+                    />
                   </FormControl>
-                  <FormDescription>Valor específico si aplica (ej: espesor de laminado)</FormDescription>
+                  <FormDescription>
+                    Valor específico si aplica (ej: espesor de laminado)
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -166,9 +202,15 @@ export function CharacteristicSelector() {
               <FormItem>
                 <FormLabel>Certificación (opcional)</FormLabel>
                 <FormControl>
-                  <Input placeholder="Ej: EN 12150, EN 14449, etc." {...fieldProps} value={fieldProps.value ?? ''} />
+                  <Input
+                    placeholder="Ej: EN 12150, EN 14449, etc."
+                    {...fieldProps}
+                    value={fieldProps.value ?? ""}
+                  />
                 </FormControl>
-                <FormDescription>Referencia de certificación técnica si aplica</FormDescription>
+                <FormDescription>
+                  Referencia de certificación técnica si aplica
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -186,7 +228,7 @@ export function CharacteristicSelector() {
                     className="resize-none"
                     placeholder="Notas adicionales sobre esta característica..."
                     {...fieldProps}
-                    value={fieldProps.value ?? ''}
+                    value={fieldProps.value ?? ""}
                   />
                 </FormControl>
                 <FormMessage />

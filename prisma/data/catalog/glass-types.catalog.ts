@@ -15,7 +15,7 @@
  * @lastUpdated 2025-01-10
  */
 
-import type { GlassTypeInput } from '../../factories/glass-type.factory';
+import type { GlassTypeInput } from "../../factories/glass-type.factory";
 
 /**
  * Common glass types available in Colombian market
@@ -33,33 +33,18 @@ export const glassTypesCatalog: GlassTypeInput[] = [
   // MONOLÍTICO (Float/Crudo) - Basic Glass
   // ==========================================
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'Vidrio Monolítico 4mm',
-    pricePerSqm: 28_000, // COP
-    purpose: 'general',
+    code: "MONO4",
+    name: "Vidrio Monolítico 4mm",
     thicknessMm: 4,
   },
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'Vidrio Monolítico 6mm',
-    pricePerSqm: 35_000, // COP
-    purpose: 'general',
+    code: "MONO6",
+    name: "Vidrio Monolítico 6mm",
     thicknessMm: 6,
   },
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'Vidrio Monolítico 8mm',
-    pricePerSqm: 45_000, // COP
-    purpose: 'general',
+    code: "MONO8",
+    name: "Vidrio Monolítico 8mm",
     thicknessMm: 8,
   },
 
@@ -67,43 +52,23 @@ export const glassTypesCatalog: GlassTypeInput[] = [
   // TEMPLADO - Safety Glass (5x stronger)
   // ==========================================
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: true,
-    isTripleGlazed: false,
-    name: 'Vidrio Templado 6mm',
-    pricePerSqm: 65_000, // COP
-    purpose: 'security',
+    code: "TEMP6",
+    name: "Vidrio Templado 6mm",
     thicknessMm: 6,
   },
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: true,
-    isTripleGlazed: false,
-    name: 'Vidrio Templado 8mm',
-    pricePerSqm: 85_000, // COP
-    purpose: 'security',
+    code: "TEMP8",
+    name: "Vidrio Templado 8mm",
     thicknessMm: 8,
   },
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: true,
-    isTripleGlazed: false,
-    name: 'Vidrio Templado 10mm',
-    pricePerSqm: 105_000, // COP
-    purpose: 'security',
+    code: "TEMP10",
+    name: "Vidrio Templado 10mm",
     thicknessMm: 10,
   },
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: true,
-    isTripleGlazed: false,
-    name: 'Vidrio Templado 12mm',
-    pricePerSqm: 130_000, // COP
-    purpose: 'security',
+    code: "TEMP12",
+    name: "Vidrio Templado 12mm",
     thicknessMm: 12,
   },
 
@@ -111,43 +76,23 @@ export const glassTypesCatalog: GlassTypeInput[] = [
   // LAMINADO - Security Glass (retains fragments)
   // ==========================================
   {
-    isLaminated: true,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'Vidrio Laminado 6mm (3+3)',
-    pricePerSqm: 95_000, // COP
-    purpose: 'security',
+    code: "LAM6",
+    name: "Vidrio Laminado 6mm (3+3)",
     thicknessMm: 6,
   },
   {
-    isLaminated: true,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'Vidrio Laminado 8mm (4+4)',
-    pricePerSqm: 115_000, // COP
-    purpose: 'security',
+    code: "LAM8",
+    name: "Vidrio Laminado 8mm (4+4)",
     thicknessMm: 8,
   },
   {
-    isLaminated: true,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'Vidrio Laminado 10mm (5+5)',
-    pricePerSqm: 135_000, // COP
-    purpose: 'security',
+    code: "LAM10",
+    name: "Vidrio Laminado 10mm (5+5)",
     thicknessMm: 10,
   },
   {
-    isLaminated: true,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'Vidrio Laminado Acústico 10mm',
-    pricePerSqm: 155_000, // COP
-    purpose: 'insulation',
+    code: "LAM10",
+    name: "Vidrio Laminado Acústico 10mm",
     thicknessMm: 10,
   },
 
@@ -155,35 +100,20 @@ export const glassTypesCatalog: GlassTypeInput[] = [
   // DVH (Doble Vidrio Hermético) - Insulated Glass
   // ==========================================
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'DVH 20mm (4-12-4)',
-    pricePerSqm: 120_000, // COP
-    purpose: 'insulation',
+    code: "DVH20",
+    name: "DVH 20mm (4-12-4)",
     thicknessMm: 20,
     uValue: 2.8, // W/m²·K
   },
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'DVH 24mm (6-12-6)',
-    pricePerSqm: 145_000, // COP
-    purpose: 'insulation',
+    code: "DVH24",
+    name: "DVH 24mm (6-12-6)",
     thicknessMm: 24,
     uValue: 2.6, // W/m²·K
   },
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'DVH 28mm (6-16-6)',
-    pricePerSqm: 165_000, // COP
-    purpose: 'insulation',
+    code: "DVH28",
+    name: "DVH 28mm (6-16-6)",
     thicknessMm: 28,
     uValue: 2.4, // W/m²·K
   },
@@ -192,24 +122,14 @@ export const glassTypesCatalog: GlassTypeInput[] = [
   // LOW-E (Baja Emisividad) - Energy Efficient
   // ==========================================
   {
-    isLaminated: false,
-    isLowE: true,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'DVH Low-E 24mm (6-12-6)',
-    pricePerSqm: 185_000, // COP
-    purpose: 'insulation',
+    code: "DVH24",
+    name: "DVH Low-E 24mm (6-12-6)",
     thicknessMm: 24,
     uValue: 1.8, // W/m²·K (mejor aislamiento)
   },
   {
-    isLaminated: false,
-    isLowE: true,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'DVH Low-E 28mm (6-16-6)',
-    pricePerSqm: 210_000, // COP
-    purpose: 'insulation',
+    code: "DVH28",
+    name: "DVH Low-E 28mm (6-16-6)",
     thicknessMm: 28,
     uValue: 1.6, // W/m²·K
   },
@@ -218,23 +138,13 @@ export const glassTypesCatalog: GlassTypeInput[] = [
   // CONTROL SOLAR / REFLECTIVO
   // ==========================================
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'Vidrio Reflectivo 6mm',
-    pricePerSqm: 75_000, // COP
-    purpose: 'general',
+    code: "REFL6",
+    name: "Vidrio Reflectivo 6mm",
     thicknessMm: 6,
   },
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'DVH Control Solar 24mm (6-12-6)',
-    pricePerSqm: 195_000, // COP
-    purpose: 'insulation',
+    code: "DVH24",
+    name: "DVH Control Solar 24mm (6-12-6)",
     thicknessMm: 24,
     uValue: 2.2, // W/m²·K
   },
@@ -243,62 +153,78 @@ export const glassTypesCatalog: GlassTypeInput[] = [
   // ESPECIALIDADES
   // ==========================================
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'Vidrio Esmerilado 6mm',
-    pricePerSqm: 55_000, // COP
-    purpose: 'decorative',
+    code: "GLASS6",
+    name: "Vidrio Esmerilado 6mm",
     thicknessMm: 6,
   },
   {
-    isLaminated: true,
-    isLowE: false,
-    isTempered: true,
-    isTripleGlazed: false,
-    name: 'Vidrio Templado + Laminado 12mm (6+6)',
-    pricePerSqm: 180_000, // COP
-    purpose: 'security',
+    code: "TEMP12",
+    name: "Vidrio Templado + Laminado 12mm (6+6)",
     thicknessMm: 12,
   },
 ];
 
 /**
- * Glass types grouped by purpose for easy filtering
+ * DEPRECATED: Glass types grouped by purpose
+ * Purpose field was removed in v2.0
+ * Use characteristics relationships instead for filtering
  */
-export const glassTypesByPurpose = {
-  decorative: glassTypesCatalog.filter((g) => g.purpose === 'decorative'),
-  general: glassTypesCatalog.filter((g) => g.purpose === 'general'),
-  insulation: glassTypesCatalog.filter((g) => g.purpose === 'insulation'),
-  security: glassTypesCatalog.filter((g) => g.purpose === 'security'),
-};
+// export const glassTypesByPurpose = {
+//   decorative: glassTypesCatalog.filter((g) => g.purpose === 'decorative'),
+//   general: glassTypesCatalog.filter((g) => g.purpose === 'general'),
+//   insulation: glassTypesCatalog.filter((g) => g.purpose === 'insulation'),
+//   security: glassTypesCatalog.filter((g) => g.purpose === 'security'),
+// };
 
 /**
  * Recommended glass types for different applications
  */
 export const recommendedGlassTypes = {
-  budget: ['Vidrio Monolítico 4mm', 'Vidrio Monolítico 6mm', 'Vidrio Templado 6mm'],
-  commercial: ['Vidrio Templado 10mm', 'DVH Low-E 28mm (6-16-6)', 'Vidrio Templado + Laminado 12mm (6+6)'],
-  premium: ['DVH Low-E 28mm (6-16-6)', 'Vidrio Templado + Laminado 12mm (6+6)', 'DVH Control Solar 24mm (6-12-6)'],
-  residential: ['Vidrio Templado 6mm', 'DVH 24mm (6-12-6)', 'Vidrio Laminado 6mm (3+3)'],
+  budget: [
+    "Vidrio Monolítico 4mm",
+    "Vidrio Monolítico 6mm",
+    "Vidrio Templado 6mm",
+  ],
+  commercial: [
+    "Vidrio Templado 10mm",
+    "DVH Low-E 28mm (6-16-6)",
+    "Vidrio Templado + Laminado 12mm (6+6)",
+  ],
+  premium: [
+    "DVH Low-E 28mm (6-16-6)",
+    "Vidrio Templado + Laminado 12mm (6+6)",
+    "DVH Control Solar 24mm (6-12-6)",
+  ],
+  residential: [
+    "Vidrio Templado 6mm",
+    "DVH 24mm (6-12-6)",
+    "Vidrio Laminado 6mm (3+3)",
+  ],
 };
 
 /**
  * Glass types grouped by category
  */
 export const glassTypesByCategory = {
-  doubleGlazing: glassTypesCatalog.filter((g) => g.name.toLowerCase().includes('dvh')),
-  laminated: glassTypesCatalog.filter((g) => g.name.toLowerCase().includes('laminado')),
-  monolithic: glassTypesCatalog.filter((g) => g.name.toLowerCase().includes('monolítico')),
+  doubleGlazing: glassTypesCatalog.filter((g) =>
+    g.name.toLowerCase().includes("dvh")
+  ),
+  laminated: glassTypesCatalog.filter((g) =>
+    g.name.toLowerCase().includes("laminado")
+  ),
+  monolithic: glassTypesCatalog.filter((g) =>
+    g.name.toLowerCase().includes("monolítico")
+  ),
   specialty: glassTypesCatalog.filter(
     (g) =>
-      g.name.toLowerCase().includes('low-e') ||
-      g.name.toLowerCase().includes('control solar') ||
-      g.name.toLowerCase().includes('reflectivo') ||
-      g.name.toLowerCase().includes('acústico')
+      g.name.toLowerCase().includes("low-e") ||
+      g.name.toLowerCase().includes("control solar") ||
+      g.name.toLowerCase().includes("reflectivo") ||
+      g.name.toLowerCase().includes("acústico")
   ),
   tempered: glassTypesCatalog.filter(
-    (g) => g.name.toLowerCase().includes('templado') && !g.name.toLowerCase().includes('laminado')
+    (g) =>
+      g.name.toLowerCase().includes("templado") &&
+      !g.name.toLowerCase().includes("laminado")
   ),
 };

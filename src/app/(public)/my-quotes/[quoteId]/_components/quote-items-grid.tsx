@@ -12,30 +12,28 @@
  * @module QuoteItemsGrid
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import type { WindowType } from '@/types/window.types';
-import { ImageViewerDialog } from './image-viewer-dialog';
-import { QuoteItemImage } from './quote-item-image';
+import { useState } from "react";
+import { ImageViewerDialog } from "./image-viewer-dialog";
+import { QuoteItemImage } from "./quote-item-image";
 
 /**
  * Quote item data structure for grid
  */
-export interface QuoteItemData {
+export type QuoteItemData = {
   id: string;
   modelName: string;
   modelImageUrl: string | null;
-  windowType: WindowType;
   width: number | null;
   height: number | null;
   glassType?: string;
   manufacturer?: string;
   thickness?: string;
   treatment?: string;
-}
+};
 
-export interface QuoteItemsGridProps {
+export type QuoteItemsGridProps = {
   /**
    * Quote items to display
    */
@@ -50,7 +48,7 @@ export interface QuoteItemsGridProps {
    * Custom empty state message
    */
   emptyMessage?: string;
-}
+};
 
 /**
  * QuoteItemsGrid Component
@@ -60,7 +58,7 @@ export interface QuoteItemsGridProps {
 export function QuoteItemsGrid({
   items,
   eager = false,
-  emptyMessage = 'No hay elementos en esta cotización',
+  emptyMessage = "No hay elementos en esta cotización",
 }: QuoteItemsGridProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
@@ -88,8 +86,13 @@ export function QuoteItemsGrid({
   /**
    * Format dimensions for display
    */
-  const formatDimensions = (width: number | null, height: number | null): string | undefined => {
-    if (!(width && height)) return;
+  const formatDimensions = (
+    width: number | null,
+    height: number | null
+  ): string | undefined => {
+    if (!(width && height)) {
+      return;
+    }
     return `${width} × ${height} cm`;
   };
 
@@ -102,30 +105,38 @@ export function QuoteItemsGrid({
     );
   }
 
+  const EAGER_LOAD_LIMIT = 4;
+
   return (
     <>
       {/* Grid */}
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4" data-testid="quote-items-grid">
+      <div
+        className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4"
+        data-testid="quote-items-grid"
+      >
         {items.map((item, index) => (
           <div className="flex flex-col gap-2" key={item.id}>
             {/* Product thumbnail */}
             <QuoteItemImage
-              eager={eager && index < 4}
+              eager={eager && index < EAGER_LOAD_LIMIT}
               modelImageUrl={item.modelImageUrl}
               modelName={item.modelName}
               onClick={() => handleItemClick(item.id)}
               size="md"
-              windowType={item.windowType} // First 4 items eager
             />
 
             {/* Product name */}
             <div className="min-h-10">
-              <p className="line-clamp-2 font-medium text-sm leading-tight">{item.modelName}</p>
+              <p className="line-clamp-2 font-medium text-sm leading-tight">
+                {item.modelName}
+              </p>
             </div>
 
             {/* Dimensions */}
             {(item.width || item.height) && (
-              <p className="text-muted-foreground text-xs">{formatDimensions(item.width, item.height)}</p>
+              <p className="text-muted-foreground text-xs">
+                {formatDimensions(item.width, item.height)}
+              </p>
             )}
           </div>
         ))}
@@ -145,7 +156,6 @@ export function QuoteItemsGrid({
             thickness: selectedItem.thickness,
             treatment: selectedItem.treatment,
           }}
-          windowType={selectedItem.windowType}
         />
       )}
     </>
@@ -159,13 +169,12 @@ export function QuoteItemsGrid({
  * // In QuoteDetailView
  * const items = quote.items.map(item => ({
  *   id: item.id,
- *   modelName: item.model.name,
- *   modelImageUrl: item.model.imageUrl,
- *   windowType: item.windowType,
- *   width: item.width,
- *   height: item.height,
- *   glassType: item.glassType?.name,
- *   manufacturer: item.model.manufacturer.name,
+ *   modelName: item.modelName,
+ *   modelImageUrl: item.modelImageUrl,
+ *   width: item.widthMm ? Math.round(item.widthMm / 10) : null,
+ *   height: item.heightMm ? Math.round(item.heightMm / 10) : null,
+ *   glassType: item.glassTypeName,
+ *   manufacturer: quote.manufacturerName,
  * }));
  *
  * <QuoteItemsGrid items={items} eager />

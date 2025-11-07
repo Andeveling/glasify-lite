@@ -24,13 +24,18 @@
  * @see REQ-001: Server-side pagination via URL params
  */
 
-'use client';
+"use client";
 
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useServerParams } from '@/hooks/use-server-params';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useServerParams } from "@/hooks/use-server-params";
 
-export interface TablePaginationProps {
+export type TablePaginationProps = {
   /** Current page number (1-indexed) */
   currentPage: number;
 
@@ -45,7 +50,7 @@ export interface TablePaginationProps {
 
   /** Show item count */
   showItemCount?: boolean;
-}
+};
 
 export function TablePagination({
   currentPage,
@@ -63,16 +68,20 @@ export function TablePagination({
    * Navigate to specific page
    */
   const goToPage = (page: number) => {
-    if (page < 1 || page > totalPages || page === currentPage) return;
-    updateParam('page', page);
+    if (page < 1 || page > totalPages || page === currentPage) {
+      return;
+    }
+    updateParam("page", page);
   };
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex w-full items-center justify-between">
       {/* Item count */}
       {showItemCount && (
         <div className="text-muted-foreground text-sm">
-          Total: <span className="font-medium text-foreground">{totalItems}</span> item{totalItems !== 1 ? 's' : ''}
+          Total:{" "}
+          <span className="font-medium text-foreground">{totalItems}</span> item
+          {totalItems !== 1 ? "s" : ""}
         </div>
       )}
 

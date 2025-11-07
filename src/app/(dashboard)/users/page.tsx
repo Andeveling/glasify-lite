@@ -1,6 +1,12 @@
-import { Users } from 'lucide-react';
-import type { Metadata } from 'next';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Users } from "lucide-react";
+import type { Metadata } from "next";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 /**
  * User Management Page
@@ -33,16 +39,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
  * - RoleBadge (Component) - Visual indicator of user role
  */
 export const metadata: Metadata = {
-  description: 'Administra roles y permisos de usuarios del sistema',
-  title: 'Gestión de Usuarios - Glasify',
+  description: "Administra roles y permisos de usuarios del sistema",
+  title: "Gestión de Usuarios - Glasify",
 };
 
 export default function UsersPage() {
   return (
     <div className="container mx-auto max-w-7xl p-6">
       <div className="mb-8">
-        <h1 className="font-bold text-3xl tracking-tight">Gestión de Usuarios</h1>
-        <p className="text-muted-foreground">Administra roles y permisos de usuarios del sistema</p>
+        <h1 className="font-bold text-3xl tracking-tight">
+          Gestión de Usuarios
+        </h1>
+        <p className="text-muted-foreground">
+          Administra roles y permisos de usuarios del sistema
+        </p>
       </div>
 
       <Card>
@@ -51,13 +61,17 @@ export default function UsersPage() {
             <Users className="h-5 w-5 text-muted-foreground" />
             <CardTitle>Usuarios del Sistema</CardTitle>
           </div>
-          <CardDescription>Esta funcionalidad estará disponible próximamente</CardDescription>
+          <CardDescription>
+            Esta funcionalidad estará disponible próximamente
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="rounded-lg border border-muted-foreground/25 border-dashed bg-muted/50 p-8 text-center">
             <Users className="mx-auto h-12 w-12 text-muted-foreground/50" />
             <h3 className="mt-4 font-semibold text-lg">Próximamente</h3>
-            <p className="mt-2 text-muted-foreground text-sm">La interfaz de gestión de usuarios está en desarrollo.</p>
+            <p className="mt-2 text-muted-foreground text-sm">
+              La interfaz de gestión de usuarios está en desarrollo.
+            </p>
           </div>
 
           <div className="space-y-4">
@@ -93,9 +107,14 @@ export default function UsersPage() {
           <div className="rounded-lg bg-muted p-4">
             <p className="font-medium text-sm">Nota para Desarrolladores</p>
             <p className="mt-1 text-muted-foreground text-xs">
-              Los endpoints de tRPC ya están implementados:{' '}
-              <code className="rounded bg-background px-1 py-0.5">user.list-all</code> y{' '}
-              <code className="rounded bg-background px-1 py-0.5">user.update-role</code>
+              Los endpoints de tRPC ya están implementados:{" "}
+              <code className="rounded bg-background px-1 py-0.5">
+                user.list-all
+              </code>{" "}
+              y{" "}
+              <code className="rounded bg-background px-1 py-0.5">
+                user.update-role
+              </code>
             </p>
             <p className="mt-2 text-muted-foreground text-xs">
               Ver TODO comments en este archivo para detalles de implementación.

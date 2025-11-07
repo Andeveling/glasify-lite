@@ -1,16 +1,21 @@
-'use client';
+"use client";
 
-import { buildActiveParameters, type CatalogSortOption } from '@views/catalog/_utils/search-parameters.utils';
-import { X } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import {
+  buildActiveParameters,
+  type CatalogSortOption,
+} from "@views/catalog/_utils/search-parameters.utils";
+import { X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 type ActiveSearchParametersProps = {
-  searchQuery?: string | null;
-  selectedProfileSupplierName?: string | null;
-  sortType?: CatalogSortOption | null;
-  onRemoveSearch?: () => void;
-  onRemoveProfileSupplier?: () => void;
-  onRemoveSort?: () => void;
+  searchQuery: string;
+  selectedProfileSupplierName: string | null;
+  sortType: CatalogSortOption;
+  onRemoveSearchAction?: () => void;
+  onRemoveProfileSupplierAction?: () => void;
+  onRemoveSortAction?: () => void;
+  onClearAllAction?: () => void;
 };
 
 /**
@@ -31,13 +36,14 @@ type ActiveSearchParametersProps = {
  * - Fully accessible with ARIA labels
  * - Testable utilities in search-parameters.utils.ts
  */
-export default function ActiveSearchParameters({
+export function ActiveSearchParameters({
   searchQuery,
   selectedProfileSupplierName,
   sortType,
-  onRemoveSearch,
-  onRemoveProfileSupplier,
-  onRemoveSort,
+  onRemoveSearchAction,
+  onRemoveProfileSupplierAction,
+  onRemoveSortAction,
+  onClearAllAction,
 }: ActiveSearchParametersProps) {
   // Build active parameters using pure function
   const activeParameters = buildActiveParameters({
@@ -48,9 +54,9 @@ export default function ActiveSearchParameters({
 
   // Map handlers to parameter keys
   const handlers: Record<string, (() => void) | undefined> = {
-    profileSupplier: onRemoveProfileSupplier,
-    search: onRemoveSearch,
-    sort: onRemoveSort,
+    profileSupplier: onRemoveProfileSupplierAction,
+    search: onRemoveSearchAction,
+    sort: onRemoveSortAction,
   };
 
   // Don't render if no active parameters
@@ -60,14 +66,20 @@ export default function ActiveSearchParameters({
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-muted-foreground text-xs">Parámetros de búsqueda:</span>
+      <span className="text-muted-foreground text-xs">
+        Parámetros de búsqueda:
+      </span>
 
       {activeParameters.map((param) => {
         const Icon = param.icon;
         const handleRemove = handlers[param.key];
 
         return (
-          <Badge className="gap-1.5 pr-1 pl-2" key={param.key} variant="secondary">
+          <Badge
+            className="gap-1.5 pr-1 pl-2"
+            key={param.key}
+            variant="secondary"
+          >
             <Icon className="size-3" />
             <span className="max-w-[200px] truncate">{param.label}</span>
             {handleRemove && (
@@ -83,6 +95,19 @@ export default function ActiveSearchParameters({
           </Badge>
         );
       })}
+
+      {/* Clear all button */}
+      {onClearAllAction && (
+        <Button
+          aria-label="Limpiar todos los parámetros de búsqueda"
+          className="h-6 gap-1 px-2 py-0 text-xs"
+          onClick={onClearAllAction}
+          variant="ghost"
+        >
+          <X className="size-3" />
+          <span>Limpiar</span>
+        </Button>
+      )}
     </div>
   );
 }

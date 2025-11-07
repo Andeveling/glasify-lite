@@ -15,10 +15,10 @@
  * @version 1.0.0
  */
 
-import type { GlassTypeInput } from '../../factories/glass-type.factory';
-import type { ModelInput } from '../../factories/model.factory';
-import type { ProfileSupplierInput } from '../../factories/profile-supplier.factory';
-import type { ServiceInput } from '../../factories/service.factory';
+import type { GlassTypeInput } from "../../factories/glass-type.factory";
+import type { ModelInput } from "../../factories/model.factory";
+import type { ProfileSupplierInput } from "../../factories/profile-supplier.factory";
+import type { ServiceInput } from "../../factories/service.factory";
 import {
   decorativeSolution,
   energyEfficiencySolution,
@@ -26,7 +26,7 @@ import {
   securitySolution,
   soundInsulationSolution,
   thermalInsulationSolution,
-} from '../catalog/glass-solutions.catalog';
+} from "../catalog/glass-solutions.catalog";
 import {
   aluminaKoncept50,
   aluminaKoncept70,
@@ -34,7 +34,7 @@ import {
   deceuninckElegantBatiente,
   deceuninckInouticS5500,
   deceuninckZendowS4100,
-} from '../catalog/models.catalog';
+} from "../catalog/models.catalog";
 import {
   advancedWaterproofing,
   aluminumAnodizing,
@@ -46,7 +46,7 @@ import {
   premiumInstallation,
   safetyFilm,
   standardInstallation,
-} from '../catalog/services.catalog';
+} from "../catalog/services.catalog";
 
 // ==========================================
 // GLASS TYPES (10 diverse types)
@@ -58,110 +58,60 @@ import {
 export const demoGlassTypes: GlassTypeInput[] = [
   // Monolithic
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'Vidrio Monolítico 4mm',
-    pricePerSqm: 28_000,
-    purpose: 'general',
+    code: "DEMO_MONO4",
+    name: "Vidrio Monolítico 4mm",
     thicknessMm: 4,
   },
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'Vidrio Monolítico 6mm',
-    pricePerSqm: 35_000,
-    purpose: 'general',
+    code: "DEMO_MONO6",
+    name: "Vidrio Monolítico 6mm",
     thicknessMm: 6,
   },
   // Tempered
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: true,
-    isTripleGlazed: false,
-    name: 'Vidrio Templado 6mm',
-    pricePerSqm: 65_000,
-    purpose: 'security',
+    code: "DEMO_TEMP6",
+    name: "Vidrio Templado 6mm",
     thicknessMm: 6,
   },
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: true,
-    isTripleGlazed: false,
-    name: 'Vidrio Templado 10mm',
-    pricePerSqm: 95_000,
-    purpose: 'security',
+    code: "DEMO_TEMP10",
+    name: "Vidrio Templado 10mm",
     thicknessMm: 10,
   },
   // Laminated
   {
-    isLaminated: true,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'Vidrio Laminado 6mm (3+3)',
-    pricePerSqm: 85_000,
-    purpose: 'security',
+    code: "DEMO_LAM6",
+    name: "Vidrio Laminado 6mm (3+3)",
     thicknessMm: 6,
   },
   {
-    isLaminated: true,
-    isLowE: false,
-    isTempered: true,
-    isTripleGlazed: false,
-    name: 'Vidrio Templado + Laminado 10mm (5+5)',
-    pricePerSqm: 145_000,
-    purpose: 'security',
+    code: "DEMO_TEMPLAM10",
+    name: "Vidrio Templado + Laminado 10mm (5+5)",
     thicknessMm: 10,
   },
   // DVH (Double Glazing)
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'DVH 20mm (6-8-6)',
-    pricePerSqm: 110_000,
-    purpose: 'insulation',
+    code: "DEMO_DVH20",
+    name: "DVH 20mm (6-8-6)",
     thicknessMm: 20,
     uValue: 3.0,
   },
   {
-    isLaminated: false,
-    isLowE: false,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'DVH 24mm (6-12-6)',
-    pricePerSqm: 120_000,
-    purpose: 'insulation',
+    code: "DEMO_DVH24",
+    name: "DVH 24mm (6-12-6)",
     thicknessMm: 24,
     uValue: 2.8,
   },
   // Low-E
   {
-    isLaminated: false,
-    isLowE: true,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'DVH Low-E 24mm (6-12-6)',
-    pricePerSqm: 165_000,
-    purpose: 'insulation',
+    code: "DEMO_LOWE24",
+    name: "DVH Low-E 24mm (6-12-6)",
     thicknessMm: 24,
     uValue: 1.8,
   },
   {
-    isLaminated: false,
-    isLowE: true,
-    isTempered: false,
-    isTripleGlazed: false,
-    name: 'DVH Low-E 28mm (6-16-6)',
-    pricePerSqm: 180_000,
-    purpose: 'insulation',
+    code: "DEMO_LOWE28",
+    name: "DVH Low-E 28mm (6-16-6)",
     thicknessMm: 28,
     uValue: 1.6,
   },
@@ -177,27 +127,31 @@ export const demoGlassTypes: GlassTypeInput[] = [
 export const demoProfileSuppliers: ProfileSupplierInput[] = [
   {
     isActive: true,
-    materialType: 'PVC',
-    name: 'Deceuninck',
-    notes: 'Premium PVC profiles from Belgium. High thermal efficiency, multi-chamber system.',
+    materialType: "PVC",
+    name: "Deceuninck",
+    notes:
+      "Premium PVC profiles from Belgium. High thermal efficiency, multi-chamber system.",
   },
   {
     isActive: true,
-    materialType: 'PVC',
-    name: 'Rehau',
-    notes: 'German PVC manufacturer. Excellent UV resistance for tropical climates.',
+    materialType: "PVC",
+    name: "Rehau",
+    notes:
+      "German PVC manufacturer. Excellent UV resistance for tropical climates.",
   },
   {
     isActive: true,
-    materialType: 'ALUMINUM',
-    name: 'Alumina',
-    notes: 'Colombian aluminum manufacturer. Local production, competitive pricing.',
+    materialType: "ALUMINUM",
+    name: "Alumina",
+    notes:
+      "Colombian aluminum manufacturer. Local production, competitive pricing.",
   },
   {
     isActive: true,
-    materialType: 'ALUMINUM',
-    name: 'Sistemas Europeos',
-    notes: 'High-end aluminum systems. Thermal break technology, commercial projects.',
+    materialType: "ALUMINUM",
+    name: "Sistemas Europeos",
+    notes:
+      "High-end aluminum systems. Thermal break technology, commercial projects.",
   },
 ];
 
@@ -264,11 +218,12 @@ export const demoGlassSolutions = [
  * Demo client preset configuration
  */
 export const demoClientPreset = {
-  description: 'Configuración realista para demostraciones con clientes y presentaciones comerciales',
+  description:
+    "Configuración realista para demostraciones con clientes y presentaciones comerciales",
   glassSolutions: demoGlassSolutions,
   glassTypes: demoGlassTypes,
   models: demoModels,
-  name: 'demo-client',
+  name: "demo-client",
   profileSuppliers: demoProfileSuppliers,
   services: demoServices,
   stats: {
@@ -285,9 +240,9 @@ export const demoClientPreset = {
       demoGlassSolutions.length,
   },
   useCases: [
-    'Client presentations showing realistic product catalog',
-    'Sales demos with diverse pricing tiers',
-    'MVP showcase for investors',
-    'Training new sales team members',
+    "Client presentations showing realistic product catalog",
+    "Sales demos with diverse pricing tiers",
+    "MVP showcase for investors",
+    "Training new sales team members",
   ],
 } as const;

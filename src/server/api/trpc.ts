@@ -7,15 +7,15 @@
  * need to use are documented accordingly near the end.
  */
 
-import type { Prisma } from '@prisma/client';
-import { initTRPC, TRPCError } from '@trpc/server';
-import type { Session } from 'next-auth';
-import superjson from 'superjson';
-import { ZodError } from 'zod';
+import type { Prisma } from "@prisma/client";
+import { initTRPC, TRPCError } from "@trpc/server";
+import { headers } from "next/headers";
+import superjson from "superjson";
+import { ZodError } from "zod";
 
-import logger from '@/lib/logger';
-import { auth } from '@/server/auth';
-import { db } from '@/server/db';
+import logger from "@/lib/logger";
+import { auth } from "@/server/auth";
+import { db } from "@/server/db";
 
 /**
  * 1. CONTEXT
@@ -30,7 +30,9 @@ import { db } from '@/server/db';
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   return {
     db,
@@ -52,7 +54,8 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
       ...shape,
       data: {
         ...shape.data,
-        zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
+        zodError:
+          error.cause instanceof ZodError ? error.cause.flatten() : null,
       },
     };
   },
@@ -89,7 +92,7 @@ export const createTRPCRouter = t.router;
 const timingMiddleware = t.middleware(async ({ next, path }) => {
   const _start = Date.now();
 
-  if (t._config.isDev && (process.env.NODE_ENV ?? 'development') !== 'test') {
+  if (t._config.isDev && (process.env.NODE_ENV ?? "development") !== "test") {
     // artificial delay in dev
     const MaxDelayMs = 400;
     const MinDelayMs = 100;
@@ -122,17 +125,19 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(timingMiddleware).use(({ ctx, next }) => {
-  if (!ctx.session?.user) {
-    throw new TRPCError({ code: 'UNAUTHORIZED' });
-  }
-  return next({
-    ctx: {
-      // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
-    },
+export const protectedProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    if (!ctx.session?.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return next({
+      ctx: {
+        // infers the `session` as non-nullable
+        session: { ...ctx.session, user: ctx.session.user },
+      },
+    });
   });
-});
 
 /**
  * Server Action procedure (public)
@@ -142,15 +147,17 @@ export const protectedProcedure = t.procedure.use(timingMiddleware).use(({ ctx, 
  *
  * @see https://trpc.io/blog/trpc-actions
  */
-export const serverActionProcedure = t.procedure.use(timingMiddleware).use(({ ctx, next }) => {
-  // Add Server Action context metadata
-  return next({
-    ctx: {
-      ...ctx,
-      actionType: 'server-action' as const,
-    },
+export const serverActionProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    // Add Server Action context metadata
+    return next({
+      ctx: {
+        ...ctx,
+        actionType: "server-action" as const,
+      },
+    });
   });
-});
 
 /**
  * Protected Server Action procedure
@@ -158,17 +165,19 @@ export const serverActionProcedure = t.procedure.use(timingMiddleware).use(({ ct
  * Server Action that requires authentication.
  * Combines auth check with Server Action context.
  */
-export const protectedActionProcedure = serverActionProcedure.use(({ ctx, next }) => {
-  if (!ctx.session?.user) {
-    throw new TRPCError({ code: 'UNAUTHORIZED' });
+export const protectedActionProcedure = serverActionProcedure.use(
+  ({ ctx, next }) => {
+    if (!ctx.session?.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return next({
+      ctx: {
+        ...ctx,
+        session: { ...ctx.session, user: ctx.session.user },
+      },
+    });
   }
-  return next({
-    ctx: {
-      ...ctx,
-      session: { ...ctx.session, user: ctx.session.user },
-    },
-  });
-});
+);
 
 /**
  * Admin-only procedure
@@ -179,15 +188,15 @@ export const protectedActionProcedure = serverActionProcedure.use(({ ctx, next }
  * @see https://trpc.io/docs/server/authorization
  */
 export const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (ctx.session.user.role !== 'admin') {
-    logger.warn('Unauthorized admin procedure access attempt', {
+  if (ctx.session.user.role !== "admin") {
+    logger.warn("Unauthorized admin procedure access attempt", {
       role: ctx.session.user.role,
       timestamp: new Date().toISOString(),
       userId: ctx.session.user.id,
     });
     throw new TRPCError({
-      code: 'FORBIDDEN',
-      message: 'Acceso denegado. Se requiere rol de administrador.',
+      code: "FORBIDDEN",
+      message: "Acceso denegado. Se requiere rol de administrador.",
     });
   }
   return next({ ctx });
@@ -202,15 +211,15 @@ export const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
  * @see https://trpc.io/docs/server/authorization
  */
 export const sellerProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (!['admin', 'seller'].includes(ctx.session.user.role)) {
-    logger.warn('Unauthorized seller procedure access attempt', {
+  if (!["admin", "seller"].includes(ctx.session.user.role)) {
+    logger.warn("Unauthorized seller procedure access attempt", {
       role: ctx.session.user.role,
       timestamp: new Date().toISOString(),
       userId: ctx.session.user.id,
     });
     throw new TRPCError({
-      code: 'FORBIDDEN',
-      message: 'Acceso denegado. Se requiere rol de vendedor o administrador.',
+      code: "FORBIDDEN",
+      message: "Acceso denegado. Se requiere rol de vendedor o administrador.",
     });
   }
   return next({ ctx });
@@ -227,21 +236,27 @@ export const sellerProcedure = protectedProcedure.use(({ ctx, next }) => {
 export const sellerOrAdminProcedure = sellerProcedure;
 
 /**
- * Role-based quote filter helper
+ * Get role-based filter for quote queries
  *
- * Returns Prisma where clause based on user role for quote queries.
  * - Admin/Seller: Returns empty object (sees all quotes)
  * - User: Returns filter to see only their own quotes
  *
- * @param session - NextAuth session with user role
+ * @param session - Better Auth session with user role
  * @returns Prisma where clause for quote filtering
  */
-export function getQuoteFilter(session: Session): Prisma.QuoteWhereInput {
+export function getQuoteFilter(
+  session: Awaited<ReturnType<typeof auth.api.getSession>>
+): Prisma.QuoteWhereInput {
   // Admins and sellers see all quotes
-  if (session.user.role === 'admin' || session.user.role === 'seller') {
+  if (session?.user?.role === "admin" || session?.user?.role === "seller") {
     return {};
   }
 
   // Regular users see only their own quotes
-  return { userId: session.user.id };
+  if (session?.user?.id) {
+    return { userId: session.user.id };
+  }
+
+  // No session - no access
+  return { userId: "" };
 }

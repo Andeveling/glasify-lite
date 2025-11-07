@@ -1,8 +1,14 @@
-import { FileQuestion } from 'lucide-react';
-import Link from 'next/link';
-import { BackButton } from '@/components/back-button';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { FileQuestion } from "lucide-react";
+import Link from "next/link";
+import { BackButton } from "@/components/back-button";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function NotFound() {
   return (
@@ -13,7 +19,9 @@ export default function NotFound() {
             <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-muted">
               <FileQuestion className="h-12 w-12 text-muted-foreground" />
             </div>
-            <CardTitle className="font-bold text-6xl tracking-tight">404</CardTitle>
+            <CardTitle className="font-bold text-6xl tracking-tight">
+              404
+            </CardTitle>
             <CardTitle className="text-2xl">Página no encontrada</CardTitle>
             <CardDescription className="text-lg">
               Lo sentimos, la página que buscas no existe o ha sido movida.
@@ -34,11 +42,11 @@ export default function NotFound() {
             {/* Additional Help */}
             <div className="text-center text-muted-foreground text-sm">
               <p>
-                ¿Necesitas ayuda?{' '}
+                ¿Necesitas ayuda?{" "}
                 <Button asChild className="h-auto p-0" size="sm" variant="link">
                   <Link href="/catalog">Explora nuestro catálogo</Link>
-                </Button>{' '}
-                o{' '}
+                </Button>{" "}
+                o{" "}
                 <Button asChild className="h-auto p-0" size="sm" variant="link">
                   <Link href="/signin">inicia sesión</Link>
                 </Button>

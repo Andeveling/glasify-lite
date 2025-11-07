@@ -1,13 +1,28 @@
-import { AlertTriangle, BarChart3, FileText, Home, Package, Settings, Shield } from 'lucide-react';
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BackButton } from './_components/back-button';
+import {
+  AlertTriangle,
+  BarChart3,
+  FileText,
+  Home,
+  Package,
+  Settings,
+  Shield,
+} from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { BackButton } from "./_components/back-button";
 
 export const metadata: Metadata = {
-  description: 'La página de administración que buscas no existe o no tienes permisos para acceder a ella',
-  title: 'Página No Encontrada - Panel de Administración | Glasify',
+  description:
+    "La página de administración que buscas no existe o no tienes permisos para acceder a ella",
+  title: "Página No Encontrada - Panel de Administración | Glasify",
 };
 
 export default function DashboardNotFound() {
@@ -19,9 +34,12 @@ export default function DashboardNotFound() {
             <div className="mb-4 flex justify-center">
               <AlertTriangle className="h-16 w-16 text-muted-foreground" />
             </div>
-            <CardTitle className="font-bold text-3xl">Página No Encontrada</CardTitle>
+            <CardTitle className="font-bold text-3xl">
+              Página No Encontrada
+            </CardTitle>
             <CardDescription className="text-lg">
-              La página de administración que buscas no existe o no tienes permisos para acceder a ella.
+              La página de administración que buscas no existe o no tienes
+              permisos para acceder a ella.
             </CardDescription>
           </CardHeader>
 
@@ -31,62 +49,74 @@ export default function DashboardNotFound() {
               <div className="flex items-center justify-center gap-2 text-destructive">
                 <Shield className="h-5 w-5" />
                 <p className="font-medium text-sm">
-                  <strong>Error 404:</strong> Recurso de administración no encontrado
+                  <strong>Error 404:</strong> Recurso de administración no
+                  encontrado
                 </p>
               </div>
               <p className="mt-2 text-muted-foreground text-xs">
-                Verifica que la URL sea correcta y que tengas los permisos necesarios
+                Verifica que la URL sea correcta y que tengas los permisos
+                necesarios
               </p>
             </div>
 
             {/* Admin navigation options */}
             <div className="space-y-4">
-              <h3 className="mb-4 text-center font-semibold text-lg">Acceso Rápido al Panel de Control</h3>
+              <h3 className="mb-4 text-center font-semibold text-lg">
+                Acceso Rápido al Panel de Control
+              </h3>
 
               <div className="grid gap-3 md:grid-cols-2">
-                <Link href="/dashboard">
+                <Link href="/admin">
                   <Button className="h-auto w-full p-4" variant="default">
                     <div className="flex flex-col items-center gap-2">
                       <BarChart3 className="h-5 w-5" />
                       <div className="text-center">
                         <div className="font-medium">Dashboard</div>
-                        <div className="text-xs opacity-90">Panel principal</div>
+                        <div className="text-xs opacity-90">
+                          Panel principal
+                        </div>
                       </div>
                     </div>
                   </Button>
                 </Link>
 
-                <Link href="/dashboard/models">
+                <Link href="/admin/models">
                   <Button className="h-auto w-full p-4" variant="outline">
                     <div className="flex flex-col items-center gap-2">
                       <Package className="h-5 w-5" />
                       <div className="text-center">
                         <div className="font-medium">Modelos</div>
-                        <div className="text-xs opacity-90">Gestión de productos</div>
+                        <div className="text-xs opacity-90">
+                          Gestión de productos
+                        </div>
                       </div>
                     </div>
                   </Button>
                 </Link>
 
-                <Link href="/dashboard/quotes">
+                <Link href="/admin/quotes">
                   <Button className="h-auto w-full p-4" variant="outline">
                     <div className="flex flex-col items-center gap-2">
                       <FileText className="h-5 w-5" />
                       <div className="text-center">
                         <div className="font-medium">Cotizaciones</div>
-                        <div className="text-xs opacity-90">Gestión de presupuestos</div>
+                        <div className="text-xs opacity-90">
+                          Gestión de presupuestos
+                        </div>
                       </div>
                     </div>
                   </Button>
                 </Link>
 
-                <Link href="/dashboard/settings">
+                <Link href="/admin/settings">
                   <Button className="h-auto w-full p-4" variant="outline">
                     <div className="flex flex-col items-center gap-2">
                       <Settings className="h-5 w-5" />
                       <div className="text-center">
                         <div className="font-medium">Configuración</div>
-                        <div className="text-xs opacity-90">Ajustes del sistema</div>
+                        <div className="text-xs opacity-90">
+                          Ajustes del sistema
+                        </div>
                       </div>
                     </div>
                   </Button>
@@ -94,7 +124,7 @@ export default function DashboardNotFound() {
               </div>
 
               <div className="flex flex-col items-center gap-2 pt-4">
-                <Link href="/dashboard">
+                <Link href="/admin">
                   <Button className="gap-2" variant="ghost">
                     <Home className="h-4 w-4" />
                     Volver al Dashboard
@@ -115,15 +145,21 @@ export default function DashboardNotFound() {
 
                 <div className="space-y-2 text-muted-foreground text-sm">
                   <p>
-                    Si crees que esto es un error del sistema,{' '}
-                    <a className="text-primary underline hover:no-underline" href="mailto:admin@glasify.com">
+                    Si crees que esto es un error del sistema,{" "}
+                    <a
+                      className="text-primary underline hover:no-underline"
+                      href="mailto:admin@glasify.com"
+                    >
                       contacta al administrador
                     </a>
                   </p>
 
                   <p>
-                    Para problemas de acceso o permisos, verifica tu{' '}
-                    <Link className="text-primary underline hover:no-underline" href="/dashboard/settings">
+                    Para problemas de acceso o permisos, verifica tu{" "}
+                    <Link
+                      className="text-primary underline hover:no-underline"
+                      href="/admin/settings"
+                    >
                       configuración de usuario
                     </Link>
                   </p>
@@ -143,7 +179,9 @@ export default function DashboardNotFound() {
                     <div className="flex justify-between">
                       <span>Timestamp:</span>
                       <span className="font-mono" suppressHydrationWarning>
-                        {typeof window !== 'undefined' ? new Date().toLocaleString('es-AR') : '---'}
+                        {typeof window !== "undefined"
+                          ? new Date().toLocaleString("es-AR")
+                          : "---"}
                       </span>
                     </div>
                   </div>

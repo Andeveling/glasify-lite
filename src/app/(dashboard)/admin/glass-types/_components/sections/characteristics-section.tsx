@@ -6,10 +6,10 @@
  * @module _components/sections/characteristics-section
  */
 
-'use client';
+"use client";
 
-import { Card, CardContent } from '@/components/ui/card';
-import { CharacteristicSelector } from '../characteristic-selector';
+import { Card, CardContent } from "@/components/ui/card";
+import { CharacteristicSelector } from "../characteristic-selector";
 
 /**
  * Characteristics section component (wrapper)

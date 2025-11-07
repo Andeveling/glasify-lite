@@ -1,12 +1,12 @@
-import type React from 'react';
+import type React from "react";
 
-export type GlassPurpose = 'general' | 'insulation' | 'security' | 'decorative';
+export type GlassPurpose = "general" | "insulation" | "security" | "decorative";
 
-export type PriceIndicator = 'budget' | 'standard' | 'premium';
+export type PriceIndicator = "budget" | "standard" | "premium";
 
-export type ServiceType = 'area' | 'perimeter' | 'fixed';
+export type ServiceType = "area" | "perimeter" | "fixed";
 
-export type MaterialType = 'PVC' | 'ALUMINUM' | 'WOOD' | 'MIXED';
+export type MaterialType = "PVC" | "ALUMINUM" | "WOOD" | "MIXED";
 
 export type ProfileSupplier = {
   id: string;

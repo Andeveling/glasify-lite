@@ -1,48 +1,61 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { signIn } from 'next-auth/react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Icons } from '@/components/ui/icons';
-import { Input } from '@/components/ui/input';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Icons } from "@/components/ui/icons";
+import { Input } from "@/components/ui/input";
+import { signIn } from "@/lib/auth-client";
 
 // Constants
 const MIN_PASSWORD_LENGTH = 6;
 
 // Zod schema as single source of truth for form validation
 const signInFormSchema = z.object({
-  email: z.string().min(1, 'El email es requerido').email('Ingresa un email válido'),
+  email: z
+    .string()
+    .min(1, "El email es requerido")
+    .email("Ingresa un email válido"),
   password: z
     .string()
-    .min(1, 'La contraseña es requerida')
-    .min(MIN_PASSWORD_LENGTH, `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres`),
+    .min(1, "La contraseña es requerida")
+    .min(
+      MIN_PASSWORD_LENGTH,
+      `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres`
+    ),
 });
 
 type SignInFormValues = z.infer<typeof signInFormSchema>;
 
 type SignInFormProps = {
-  onSubmit?: (values: SignInFormValues) => Promise<void>;
-  onGoogleSignIn?: () => Promise<void>;
   isLoading?: boolean;
   error?: string | null;
 };
 
-export default function SignInForm({ onSubmit, onGoogleSignIn, isLoading = false, error }: SignInFormProps) {
+export default function SignInForm({
+  isLoading = false,
+  error,
+}: SignInFormProps) {
   const [isCredentialsLoading, setIsCredentialsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   // React Hook Form with Zod resolver as single source of truth
   const form = useForm<SignInFormValues>({
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
-    mode: 'onBlur',
+    mode: "onBlur",
     resolver: zodResolver(signInFormSchema),
   });
 
@@ -50,25 +63,20 @@ export default function SignInForm({ onSubmit, onGoogleSignIn, isLoading = false
     try {
       setIsCredentialsLoading(true);
 
-      if (onSubmit) {
-        await onSubmit(values);
-      } else {
-        // Default NextAuth credentials sign in
-        const result = await signIn('credentials', {
-          email: values.email,
-          password: values.password,
-          redirect: false,
-        });
+      // Better Auth credentials sign in
+      const result = await signIn.email({
+        email: values.email,
+        password: values.password,
+      });
 
-        if (result?.error) {
-          form.setError('root', {
-            message: 'Email o contraseña incorrectos',
-          });
-        }
+      if (result?.error) {
+        form.setError("root", {
+          message: "Email o contraseña incorrectos",
+        });
       }
     } catch {
-      form.setError('root', {
-        message: 'Error al iniciar sesión. Intenta nuevamente.',
+      form.setError("root", {
+        message: "Error al iniciar sesión. Intenta nuevamente.",
       });
     } finally {
       setIsCredentialsLoading(false);
@@ -79,16 +87,14 @@ export default function SignInForm({ onSubmit, onGoogleSignIn, isLoading = false
     try {
       setIsGoogleLoading(true);
 
-      if (onGoogleSignIn) {
-        await onGoogleSignIn();
-      } else {
-        // Default NextAuth Google sign in
-        // Redirect will be handled by middleware based on user role
-        await signIn('google', { callbackUrl: '/auth/callback' });
-      }
+      // Better Auth Google sign in
+      await signIn.social({
+        callbackURL: "/admin",
+        provider: "google",
+      });
     } catch {
-      form.setError('root', {
-        message: 'Error al conectar con Google. Intenta nuevamente.',
+      form.setError("root", {
+        message: "Error al conectar con Google. Intenta nuevamente.",
       });
     } finally {
       setIsGoogleLoading(false);
@@ -120,12 +126,17 @@ export default function SignInForm({ onSubmit, onGoogleSignIn, isLoading = false
           <span className="w-full border-border border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-card px-3 text-muted-foreground">O con tu email</span>
+          <span className="bg-card px-3 text-muted-foreground">
+            O con tu email
+          </span>
         </div>
       </div>
 
       <Form {...form}>
-        <form className="space-y-4" onSubmit={form.handleSubmit(handleCredentialsSubmit)}>
+        <form
+          className="space-y-4"
+          onSubmit={form.handleSubmit(handleCredentialsSubmit)}
+        >
           <FormField
             control={form.control}
             name="email"
@@ -155,8 +166,13 @@ export default function SignInForm({ onSubmit, onGoogleSignIn, isLoading = false
             render={({ field }) => (
               <FormItem>
                 <div className="flex items-center justify-between">
-                  <FormLabel className="font-medium text-sm">Contraseña</FormLabel>
-                  <button className="text-primary text-sm hover:underline" type="button">
+                  <FormLabel className="font-medium text-sm">
+                    Contraseña
+                  </FormLabel>
+                  <button
+                    className="text-primary text-sm hover:underline"
+                    type="button"
+                  >
                     ¿Olvidaste tu contraseña?
                   </button>
                 </div>
@@ -184,8 +200,15 @@ export default function SignInForm({ onSubmit, onGoogleSignIn, isLoading = false
             </div>
           )}
 
-          <Button className="h-11 w-full font-medium" disabled={isSubmitDisabled} size="lg" type="submit">
-            {isCredentialsLoading && <Icons.spinner className="mr-2 h-5 w-5 animate-spin" />}
+          <Button
+            className="h-11 w-full font-medium"
+            disabled={isSubmitDisabled}
+            size="lg"
+            type="submit"
+          >
+            {isCredentialsLoading && (
+              <Icons.spinner className="mr-2 h-5 w-5 animate-spin" />
+            )}
             Iniciar Sesión
           </Button>
         </form>

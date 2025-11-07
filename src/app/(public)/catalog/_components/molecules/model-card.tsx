@@ -1,14 +1,13 @@
-'use client';
+"use client";
 
 import {
-  ProductDimensions,
   ProductImagePlaceholder,
-  ProductInfo,
   ProductPrice,
-  ProductSolutions,
-} from '@views/catalog/_components/molecules/model-card-atoms';
-import Link from 'next/link';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+} from "@views/catalog/_components/molecules/model-card-atoms";
+import { Maximize2 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
 
 type ModelCardProps = {
   id: string;
@@ -19,6 +18,11 @@ type ModelCardProps = {
     height: [number, number];
   };
   basePrice: string;
+  /**
+   * Optional URL to model design image
+   * If provided, shows real image; otherwise shows placeholder
+   */
+  imageUrl?: string | null;
   compatibleGlassTypes: Array<{
     id: string;
     name: string;
@@ -28,55 +32,98 @@ type ModelCardProps = {
   highlightedSolutions?: Array<{
     icon?: string;
     nameEs: string;
-    rating: 'excellent' | 'very_good' | 'good' | 'standard' | 'basic';
+    rating: "excellent" | "very_good" | "good" | "standard" | "basic";
   }>;
 };
 
 /**
- * ModelCard - Pure Presentational Component
- * Issue: #002-ui-ux-requirements
+ * ModelCard - Enhanced Presentational Component
+ * Optimized for "Don't Make Me Think" principle
  *
- * Displays model information in a clean, minimalist card.
- * Inspired by Saleor Storefront design principles.
- *
- * Responsibilities (Single Responsibility Principle):
- * - Compose atomic components into card layout
- * - Provide navigation link
- * - Display highlighted glass solutions
- * - No business logic, pure presentation
- *
- * Benefits:
- * - Easy to test (just snapshot tests)
- * - Easy to maintain (no complex logic)
- * - Composed from reusable atoms
- * - Follows Atomic Design methodology
+ * Shows essential information:
+ * - Product image (visual anchor)
+ * - Product name (what is it)
+ * - Dimension ranges (key specification)
+ * - Price (decision factor)
+ * - Link to details
  */
-export function ModelCard({ id, name, profileSupplier, range, basePrice, highlightedSolutions }: ModelCardProps) {
+export function ModelCard({
+  id,
+  name,
+  basePrice,
+  imageUrl,
+  range,
+}: ModelCardProps) {
+  const minWidth = Math.round(range.width[0]);
+  const maxWidth = Math.round(range.width[1]);
+  const minHeight = Math.round(range.height[0]);
+  const maxHeight = Math.round(range.height[1]);
+
   return (
     <Card
       aria-label={`Tarjeta del modelo ${name}`}
-      className="group p-0 pb-2 transition-opacity hover:opacity-80"
+      className="group flex flex-col overflow-hidden py-0 transition-all duration-300 hover:border-primary/50 hover:shadow-xl"
       data-testid="model-card"
     >
-      <Link className="block space-y-3" href={`/catalog/${id}`}>
-        {/* Product Image */}
-        <ProductImagePlaceholder productName={name} />
-
-        {/* Product Info */}
-        <CardContent className="space-y-2 px-3 py-0">
-          {/* Glass Solutions - Highlighted features */}
-          {highlightedSolutions && highlightedSolutions.length > 0 && (
-            <ProductSolutions solutions={highlightedSolutions} />
+      <Link className="w-full" href={`/catalog/${id}`}>
+        {/* Image Section */}
+        <div className="relative h-64 w-full overflow-hidden bg-transparent">
+          {imageUrl ? (
+            <Image
+              alt={`Imagen del modelo ${name}`}
+              className="h-full w-full object-contain p-1 transition-transform duration-300 group-hover:scale-105"
+              fill
+              priority={false}
+              sizes="(max-width: 768px) 100vw, 50vw"
+              src={imageUrl || "/placeholder.svg"}
+            />
+          ) : (
+            <ProductImagePlaceholder productName={name} />
           )}
+        </div>
 
-          <ProductInfo name={name} profileSupplier={profileSupplier} />
-          <ProductDimensions heightRange={range.height} widthRange={range.width} />
+        {/* Content Section */}
+        <CardContent className="flex flex-1 flex-col gap-2 p-3">
+          {/* Model Name */}
+          <h4 className="truncate font-semibold text-base text-foreground transition-colors group-hover:text-primary">
+            {name}
+          </h4>
+
+          {/* Dimensions Section */}
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-muted-foreground text-xs">
+              <Maximize2 className="h-4 w-4" />
+              <span className="font-medium">Dimensiones</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <div className="space-y-0.5">
+                <p className="text-muted-foreground text-xs">Ancho</p>
+                <p className="font-semibold">
+                  {minWidth}
+                  <span className="text-muted-foreground text-xs"> - </span>
+                  {maxWidth}
+                  <span className="text-muted-foreground text-xs">mm</span>
+                </p>
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-muted-foreground text-xs">Alto</p>
+                <p className="font-semibold">
+                  {minHeight}
+                  <span className="text-muted-foreground text-xs"> - </span>
+                  {maxHeight}
+                  <span className="text-muted-foreground text-xs">mm</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex w-full items-center justify-between pt-1">
+            <span className="font-medium text-muted-foreground text-xs">
+              Precio base
+            </span>
+            <ProductPrice price={basePrice} />
+          </div>
         </CardContent>
-
-        {/* Product Price */}
-        <CardFooter className="flex justify-end px-3">
-          <ProductPrice price={basePrice} />
-        </CardFooter>
       </Link>
     </Card>
   );

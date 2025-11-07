@@ -1,11 +1,11 @@
-import { Suspense } from 'react';
-import type { api } from '@/trpc/server-client';
-import { adaptModelFromServer } from '../_utils/adapters';
-import { ModelSidebar } from './model-sidebar';
-import { ModelSidebarSkeleton } from './model-sidebar-skeleton';
+import { Suspense } from "react";
+import type { api } from "@/trpc/server-client";
+import { adaptModelFromServer } from "../_utils/adapters";
+import { ModelSidebar } from "./model-sidebar";
+import { ModelSidebarSkeleton } from "./model-sidebar-skeleton";
 
 type ModelSidebarWrapperProps = {
-  serverModel: Awaited<ReturnType<(typeof api.catalog)['get-model-by-id']>>;
+  serverModel: Awaited<ReturnType<(typeof api.catalog)["get-model-by-id"]>>;
 };
 
 function ModelSidebarContent({ serverModel }: ModelSidebarWrapperProps) {

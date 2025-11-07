@@ -12,11 +12,11 @@
  * @module app/(public)/cart/_hooks/use-cart-item-actions
  */
 
-'use client';
+"use client";
 
-import { useCallback } from 'react';
-import { toast } from 'sonner';
-import type { CartItem } from '@/types/cart.types';
+import { useCallback } from "react";
+import { toast } from "sonner";
+import type { CartItem } from "@/types/cart.types";
 
 // ============================================================================
 // Types
@@ -70,7 +70,10 @@ type UseCartItemActionsReturn = {
  * }
  * ```
  */
-export function useCartItemActions({ onUpdateItem, onRemoveItem }: UseCartItemActionsParams): UseCartItemActionsReturn {
+export function useCartItemActions({
+  onUpdateItem,
+  onRemoveItem,
+}: UseCartItemActionsParams): UseCartItemActionsReturn {
   /**
    * Update item name
    */
@@ -86,7 +89,7 @@ export function useCartItemActions({ onUpdateItem, onRemoveItem }: UseCartItemAc
       onUpdateItem(item.id, { name: trimmedName });
 
       // Success toast
-      toast.success('Nombre actualizado', {
+      toast.success("Nombre actualizado", {
         description: `"${item.name}" → "${trimmedName}"`,
         duration: 2000,
       });
@@ -107,7 +110,7 @@ export function useCartItemActions({ onUpdateItem, onRemoveItem }: UseCartItemAc
       onUpdateItem(item.id, { quantity: newQuantity });
 
       // Success toast
-      toast.success('Cantidad actualizada', {
+      toast.success("Cantidad actualizada", {
         description: `${item.name}: ${item.quantity} → ${newQuantity}`,
         duration: 2000,
       });
@@ -127,7 +130,7 @@ export function useCartItemActions({ onUpdateItem, onRemoveItem }: UseCartItemAc
       onRemoveItem(item.id);
 
       // Success toast
-      toast.success('Artículo eliminado', {
+      toast.success("Artículo eliminado", {
         description: `"${item.name}" eliminado del carrito`,
         duration: 2000,
       });

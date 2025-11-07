@@ -25,14 +25,14 @@
  * - icon: Lucide icon name for UI
  * - sortOrder: Display order in UI (lower = higher priority)
  */
-export interface GlassSolutionRecord {
+export type GlassSolutionRecord = {
   description: string;
   icon: string;
   key: string;
   name: string;
   nameEs: string;
   sortOrder: number;
-}
+};
 
 /**
  * Security Solution
@@ -45,11 +45,11 @@ export interface GlassSolutionRecord {
  * Key features: Tempered glass, laminated glass, thick glazing
  */
 export const securitySolution: GlassSolutionRecord = {
-  description: 'Protección contra impactos, rotura y acceso no autorizado',
-  icon: 'Shield',
-  key: 'security',
-  name: 'Security',
-  nameEs: 'Seguridad',
+  description: "Protección contra impactos, rotura y acceso no autorizado",
+  icon: "Shield",
+  key: "security",
+  name: "Security",
+  nameEs: "Seguridad",
   sortOrder: 1,
 };
 
@@ -67,11 +67,11 @@ export const securitySolution: GlassSolutionRecord = {
  * - Triple Low-E with argon: ~0.5-1.0 W/m²·K
  */
 export const thermalInsulationSolution: GlassSolutionRecord = {
-  description: 'Reducción de pérdida de calor y mejora de eficiencia térmica',
-  icon: 'Snowflake',
-  key: 'thermal_insulation',
-  name: 'Thermal Insulation',
-  nameEs: 'Aislamiento Térmico',
+  description: "Reducción de pérdida de calor y mejora de eficiencia térmica",
+  icon: "Snowflake",
+  key: "thermal_insulation",
+  name: "Thermal Insulation",
+  nameEs: "Aislamiento Térmico",
   sortOrder: 2,
 };
 
@@ -89,11 +89,11 @@ export const thermalInsulationSolution: GlassSolutionRecord = {
  * - DVH laminated: ~40-45 dB
  */
 export const soundInsulationSolution: GlassSolutionRecord = {
-  description: 'Reducción de ruido exterior para mayor confort acústico',
-  icon: 'Volume2',
-  key: 'sound_insulation',
-  name: 'Sound Insulation',
-  nameEs: 'Insonorización',
+  description: "Reducción de ruido exterior para mayor confort acústico",
+  icon: "Volume2",
+  key: "sound_insulation",
+  name: "Sound Insulation",
+  nameEs: "Insonorización",
   sortOrder: 3,
 };
 
@@ -109,11 +109,12 @@ export const soundInsulationSolution: GlassSolutionRecord = {
  * Complements thermal insulation
  */
 export const energyEfficiencySolution: GlassSolutionRecord = {
-  description: 'Ahorro energético mediante tecnología Low-E y doble/triple acristalamiento',
-  icon: 'Zap',
-  key: 'energy_efficiency',
-  name: 'Energy Efficiency',
-  nameEs: 'Eficiencia Energética',
+  description:
+    "Ahorro energético mediante tecnología Low-E y doble/triple acristalamiento",
+  icon: "Zap",
+  key: "energy_efficiency",
+  name: "Energy Efficiency",
+  nameEs: "Eficiencia Energética",
   sortOrder: 4,
 };
 
@@ -129,11 +130,11 @@ export const energyEfficiencySolution: GlassSolutionRecord = {
  * Primary focus: appearance and privacy, not performance
  */
 export const decorativeSolution: GlassSolutionRecord = {
-  description: 'Estética, privacidad y elementos decorativos',
-  icon: 'Sparkles',
-  key: 'decorative',
-  name: 'Decorative',
-  nameEs: 'Decorativo',
+  description: "Estética, privacidad y elementos decorativos",
+  icon: "Sparkles",
+  key: "decorative",
+  name: "Decorative",
+  nameEs: "Decorativo",
   sortOrder: 5,
 };
 
@@ -148,11 +149,11 @@ export const decorativeSolution: GlassSolutionRecord = {
  * Fallback for glasses without specific purpose
  */
 export const generalPurposeSolution: GlassSolutionRecord = {
-  description: 'Solución estándar para uso general',
-  icon: 'Home',
-  key: 'general',
-  name: 'General Purpose',
-  nameEs: 'Uso General',
+  description: "Solución estándar para uso general",
+  icon: "Home",
+  key: "general",
+  name: "General Purpose",
+  nameEs: "Uso General",
   sortOrder: 6,
 };
 

@@ -1,16 +1,21 @@
-import { ArrowDownUp, ArrowRightLeft } from 'lucide-react';
-import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/input-group';
-import { cn } from '@/lib/utils';
+import { ArrowDownUp, ArrowRightLeft } from "lucide-react";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from "@/components/ui/input-group";
+import { cn } from "@/lib/utils";
 
 type DimensionInputProps = {
-  value: number | '';
-  onChange: (value: number | '') => void;
+  value: number | "";
+  onChange: (value: number | "") => void;
   min: number;
   max: number;
   placeholder: string;
   isValid: boolean;
   unit?: string;
-  dimensionType?: 'width' | 'height';
+  dimensionType?: "width" | "height";
   className?: string;
 };
 
@@ -27,22 +32,25 @@ export function DimensionInput({
   max,
   placeholder,
   isValid,
-  unit = 'mm',
-  dimensionType = 'width',
+  unit = "mm",
+  dimensionType = "width",
   className,
 }: DimensionInputProps) {
-  const hasValue = value !== '';
+  const hasValue = value !== "";
 
   // Select icon based on dimension type
-  const DimensionIcon = dimensionType === 'width' ? ArrowRightLeft : ArrowDownUp;
+  const DimensionIcon =
+    dimensionType === "width" ? ArrowRightLeft : ArrowDownUp;
 
   return (
-    <InputGroup className={cn('shadow-sm', className)}>
+    <InputGroup className={cn("shadow-none", className)}>
       <InputGroupInput
-        className={cn('border-0 bg-transparent text-center font-bold text-2xl shadow-none transition-all')}
+        className={cn(
+          "border-0 bg-transparent text-center font-bold text-2xl shadow-none transition-all"
+        )}
         max={max}
         min={min}
-        onChange={(e) => onChange(e.target.value ? Number(e.target.value) : '')}
+        onChange={(e) => onChange(e.target.value ? Number(e.target.value) : "")}
         placeholder={placeholder}
         step="1"
         type="number"
@@ -50,10 +58,10 @@ export function DimensionInput({
       />
       <InputGroupAddon>
         <DimensionIcon
-          className={cn('h-4 w-4', {
-            'text-destructive': hasValue && !isValid,
-            'text-muted-foreground': !hasValue,
-            'text-success': hasValue && isValid,
+          className={cn("h-4 w-4", {
+            "text-destructive": hasValue && !isValid,
+            "text-muted-foreground": !hasValue,
+            "text-success": hasValue && isValid,
           })}
         />
       </InputGroupAddon>

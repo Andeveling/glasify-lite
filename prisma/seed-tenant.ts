@@ -1,8 +1,14 @@
 /** biome-ignore-all lint/suspicious/noConsole: seed script requires console logging */
-import type { MaterialType, PrismaClient } from '@prisma/client';
-import { envSeed } from '../src/env-seed';
-import { createGlassCharacteristics, GLASS_CHARACTERISTIC_PRESETS } from './factories/glass-characteristic.factory';
-import { createGlassSuppliers, GLASS_SUPPLIER_PRESETS } from './factories/glass-supplier.factory';
+import type { MaterialType, PrismaClient } from "@prisma/client";
+import { envSeed } from "../src/env-seed";
+import {
+  createGlassCharacteristics,
+  GLASS_CHARACTERISTIC_PRESETS,
+} from "./factories/glass-characteristic.factory";
+import {
+  createGlassSuppliers,
+  GLASS_SUPPLIER_PRESETS,
+} from "./factories/glass-supplier.factory";
 
 /**
  * TenantConfig Singleton - Business Configuration
@@ -34,53 +40,41 @@ const profileSuppliers: Array<{
 }> = [
   {
     isActive: true,
-    materialType: 'PVC',
-    name: 'Rehau',
+    materialType: "PVC",
+    name: "Rehau",
   },
   {
     isActive: true,
-    materialType: 'PVC',
-    name: 'Deceuninck',
+    materialType: "PVC",
+    name: "Deceuninck",
   },
   {
     isActive: true,
-    materialType: 'ALUMINUM',
-    name: 'Azembla',
+    materialType: "ALUMINUM",
+    name: "Azembla",
   },
   {
     isActive: true,
-    materialType: 'ALUMINUM',
-    name: 'Aluflex',
+    materialType: "ALUMINUM",
+    name: "Aluflex",
   },
   {
     isActive: false,
-    materialType: 'PVC',
-    name: 'VEKA', // Inactive supplier example
+    materialType: "PVC",
+    name: "VEKA", // Inactive supplier example
   },
 ];
 
 /**
- * Seed TenantConfig singleton and ProfileSupplier records
- *
- * This function ensures:
- * 1. Only ONE TenantConfig record exists (singleton pattern)
- * 2. ProfileSupplier records are created/updated with proper data
- * 3. Data is idempotent (safe to run multiple times)
- *
- * @param prisma - Prisma client instance
+ * Seed TenantConfig singleton
  */
-export async function seedTenant(prisma: PrismaClient) {
-  console.log('🔄 Seeding tenant configuration and profile suppliers...');
-
-  // ==========================================
-  // STEP 1: Create/Update TenantConfig Singleton
-  // ==========================================
-  console.log('📋 Creating TenantConfig singleton...');
+async function seedTenantConfig(prisma: PrismaClient) {
+  console.log(" Creating TenantConfig singleton...");
 
   const tenantConfig = await prisma.tenantConfig.upsert({
     create: tenantConfigData,
     update: tenantConfigData,
-    where: { id: '1' }, // Singleton always has id = '1'
+    where: { id: "1" }, // Singleton always has id = '1'
   });
 
   console.log(`✅ TenantConfig created: ${tenantConfig.businessName}`);
@@ -98,10 +92,14 @@ export async function seedTenant(prisma: PrismaClient) {
     console.log(`   Address: ${tenantConfig.businessAddress}`);
   }
 
-  // ==========================================
-  // STEP 2: Create/Update ProfileSupplier Records
-  // ==========================================
-  console.log('\n🏭 Creating profile suppliers...');
+  return tenantConfig;
+}
+
+/**
+ * Seed ProfileSupplier records
+ */
+async function seedProfileSuppliers(prisma: PrismaClient) {
+  console.log("\n🏭 Creating profile suppliers...");
 
   const createdSuppliers = await Promise.all(
     profileSuppliers.map((supplier) =>
@@ -113,26 +111,22 @@ export async function seedTenant(prisma: PrismaClient) {
     )
   );
 
-  console.log(`✅ Created/updated ${createdSuppliers.length} profile suppliers:`);
+  console.log(
+    `✅ Created/updated ${createdSuppliers.length} profile suppliers:`
+  );
   for (const supplier of createdSuppliers) {
-    const status = supplier.isActive ? '✓' : '✗';
+    const status = supplier.isActive ? "✓" : "✗";
     console.log(`   ${status} ${supplier.name} (${supplier.materialType})`);
   }
 
-  // ==========================================
-  // STEP 3: Summary Statistics
-  // ==========================================
-  console.log('\n📊 Tenant Seed Summary:');
-  console.log('   TenantConfig: 1 record (singleton)');
-  console.log(`   ProfileSuppliers: ${createdSuppliers.length} records`);
-  console.log(`   Active Suppliers: ${createdSuppliers.filter((s) => s.isActive).length}`);
-  console.log(`   PVC Suppliers: ${createdSuppliers.filter((s) => s.materialType === 'PVC').length}`);
-  console.log(`   ALUMINUM Suppliers: ${createdSuppliers.filter((s) => s.materialType === 'ALUMINUM').length}`);
+  return createdSuppliers;
+}
 
-  // ==========================================
-  // STEP 4: Create/Update GlassSupplier Records
-  // ==========================================
-  console.log('\n🏭 Creating glass suppliers...');
+/**
+ * Seed GlassSupplier records
+ */
+async function seedGlassSuppliers(prisma: PrismaClient) {
+  console.log("\n🏭 Creating glass suppliers...");
 
   const glassSupplierData = Object.values(GLASS_SUPPLIER_PRESETS);
   const glassSupplierResults = createGlassSuppliers(glassSupplierData);
@@ -150,18 +144,26 @@ export async function seedTenant(prisma: PrismaClient) {
     )
   );
 
-  console.log(`✅ Created/updated ${createdGlassSuppliers.length} glass suppliers:`);
+  console.log(
+    `✅ Created/updated ${createdGlassSuppliers.length} glass suppliers:`
+  );
   for (const supplier of createdGlassSuppliers) {
-    const status = supplier.isActive ? '✓' : '✗';
-    console.log(`   ${status} ${supplier.name} (${supplier.code || 'N/A'})`);
+    const status = supplier.isActive ? "✓" : "✗";
+    console.log(`   ${status} ${supplier.name} (${supplier.code || "N/A"})`);
   }
 
-  // ==========================================
-  // STEP 5: Create/Update GlassCharacteristic Records
-  // ==========================================
-  console.log('\n🔍 Creating glass characteristics...');
+  return createdGlassSuppliers;
+}
 
-  const characteristicResults = createGlassCharacteristics(GLASS_CHARACTERISTIC_PRESETS);
+/**
+ * Seed GlassCharacteristic records
+ */
+async function seedGlassCharacteristics(prisma: PrismaClient) {
+  console.log("\n🔍 Creating glass characteristics...");
+
+  const characteristicResults = createGlassCharacteristics(
+    GLASS_CHARACTERISTIC_PRESETS
+  );
   const validCharacteristics = characteristicResults
     .filter((r) => r.success)
     .map((r) => r.data as NonNullable<typeof r.data>);
@@ -176,7 +178,9 @@ export async function seedTenant(prisma: PrismaClient) {
     )
   );
 
-  console.log(`✅ Created/updated ${createdCharacteristics.length} glass characteristics:`);
+  console.log(
+    `✅ Created/updated ${createdCharacteristics.length} glass characteristics:`
+  );
   const characteristicsByCategory = createdCharacteristics.reduce(
     (acc, char) => {
       if (!acc[char.category]) {
@@ -191,27 +195,68 @@ export async function seedTenant(prisma: PrismaClient) {
   for (const [category, chars] of Object.entries(characteristicsByCategory)) {
     console.log(`   📁 ${category}: ${chars.length} characteristics`);
     for (const char of chars) {
-      const status = char.isActive ? '✓' : '✗';
+      const status = char.isActive ? "✓" : "✗";
       console.log(`      ${status} ${char.nameEs} (${char.key})`);
     }
   }
 
-  // ==========================================
-  // STEP 6: Updated Summary Statistics
-  // ==========================================
-  console.log('\n📊 Tenant Seed Summary:');
-  console.log('   TenantConfig: 1 record (singleton)');
-  console.log(`   ProfileSuppliers: ${createdSuppliers.length} records`);
-  console.log(`   Active Suppliers: ${createdSuppliers.filter((s) => s.isActive).length}`);
-  console.log(`   PVC Suppliers: ${createdSuppliers.filter((s) => s.materialType === 'PVC').length}`);
-  console.log(`   ALUMINUM Suppliers: ${createdSuppliers.filter((s) => s.materialType === 'ALUMINUM').length}`);
+  return createdCharacteristics;
+}
+
+/**
+ * Print tenant seed summary
+ */
+function printTenantSummary(
+  createdProfileSuppliers: Awaited<ReturnType<typeof seedProfileSuppliers>>,
+  createdGlassSuppliers: Awaited<ReturnType<typeof seedGlassSuppliers>>,
+  createdCharacteristics: Awaited<ReturnType<typeof seedGlassCharacteristics>>
+) {
+  console.log("\n📊 Tenant Seed Summary:");
+  console.log("   TenantConfig: 1 record (singleton)");
+  console.log(`   ProfileSuppliers: ${createdProfileSuppliers.length} records`);
+  console.log(
+    `   Active Suppliers: ${createdProfileSuppliers.filter((s) => s.isActive).length}`
+  );
+  console.log(
+    `   PVC Suppliers: ${createdProfileSuppliers.filter((s) => s.materialType === "PVC").length}`
+  );
+  console.log(
+    `   ALUMINUM Suppliers: ${createdProfileSuppliers.filter((s) => s.materialType === "ALUMINUM").length}`
+  );
   console.log(`   GlassSuppliers: ${createdGlassSuppliers.length} records`);
-  console.log(`   GlassCharacteristics: ${createdCharacteristics.length} records`);
+  console.log(
+    `   GlassCharacteristics: ${createdCharacteristics.length} records`
+  );
+}
+
+/**
+ * Seed TenantConfig singleton and ProfileSupplier records
+ *
+ * This function ensures:
+ * 1. Only ONE TenantConfig record exists (singleton pattern)
+ * 2. ProfileSupplier records are created/updated with proper data
+ * 3. Data is idempotent (safe to run multiple times)
+ *
+ * @param prisma - Prisma client instance
+ */
+export async function seedTenant(prisma: PrismaClient) {
+  console.log("🔄 Seeding tenant configuration and profile suppliers...");
+
+  const tenantConfig = await seedTenantConfig(prisma);
+  const createdProfileSuppliers = await seedProfileSuppliers(prisma);
+  const createdGlassSuppliers = await seedGlassSuppliers(prisma);
+  const createdCharacteristics = await seedGlassCharacteristics(prisma);
+
+  printTenantSummary(
+    createdProfileSuppliers,
+    createdGlassSuppliers,
+    createdCharacteristics
+  );
 
   return {
     characteristics: createdCharacteristics,
     glassSuppliers: createdGlassSuppliers,
-    profileSuppliers: createdSuppliers,
+    profileSuppliers: createdProfileSuppliers,
     tenantConfig,
   };
 }

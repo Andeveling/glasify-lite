@@ -4,10 +4,16 @@
  * Base price, costs per mm, accessory price, and profit margin
  */
 
-'use client';
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FormCurrencyInput, FormPercentageInput } from './form-fields';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { FormCurrencyInput, FormPercentageInput } from "./form-fields";
 
 export function PricingSection() {
   return (
@@ -33,18 +39,20 @@ export function PricingSection() {
           <h4 className="font-medium text-sm">Costos Variables</h4>
           <div className="grid gap-4 md:grid-cols-2">
             <FormCurrencyInput
+              decimals={4}
               description="Costo adicional por milímetro de ancho"
               label="Costo por mm Ancho"
               name="costPerMmWidth"
-              placeholder="0.00"
+              placeholder="0.0000"
               required
             />
 
             <FormCurrencyInput
+              decimals={4}
               description="Costo adicional por milímetro de alto"
               label="Costo por mm Alto"
               name="costPerMmHeight"
-              placeholder="0.00"
+              placeholder="0.0000"
               required
             />
           </div>

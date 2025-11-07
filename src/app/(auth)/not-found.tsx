@@ -1,7 +1,7 @@
-import { ArrowLeft, UserX } from 'lucide-react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowLeft, UserX } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 /**
  * Auth Not Found Page
@@ -17,11 +17,15 @@ export default function AuthNotFound() {
             <UserX className="h-10 w-10 text-destructive" />
           </div>
           <CardTitle className="text-2xl">Página no encontrada</CardTitle>
-          <p className="text-muted-foreground text-sm">La página de autenticación que buscas no existe.</p>
+          <p className="text-muted-foreground text-sm">
+            La página de autenticación que buscas no existe.
+          </p>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="text-center text-muted-foreground text-sm">
-            <p>Puede que el enlace sea incorrecto o la página haya sido movida.</p>
+            <p>
+              Puede que el enlace sea incorrecto o la página haya sido movida.
+            </p>
           </div>
 
           <div className="space-y-3">

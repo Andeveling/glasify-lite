@@ -1,0 +1,91 @@
+name: 📋 Specification Implementation
+description: Create an issue to implement a feature from a specification file
+title: "[Spec]: Implement ${feature_name}"
+labels: ["specification", "implementation", "feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue is created to implement a feature based on a specification file.
+
+  - type: input
+    id: spec-file
+    attributes:
+      label: Specification File
+      description: Path to the specification file
+      placeholder: "docs/specs/feature-name.md"
+    validations:
+      required: true
+
+  - type: textarea
+    id: feature-overview
+    attributes:
+      label: Feature Overview
+      description: Brief overview of the feature from the specification
+      placeholder: "This feature implements..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: requirements
+    attributes:
+      label: Requirements
+      description: Key requirements extracted from the specification
+      placeholder: |
+        - [ ] Requirement 1
+        - [ ] Requirement 2
+        - [ ] Requirement 3
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Define what constitutes completion of this feature
+      placeholder: |
+        - [ ] Criteria 1
+        - [ ] Criteria 2
+        - [ ] Criteria 3
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-approach
+    attributes:
+      label: Technical Approach
+      description: High-level technical approach for implementation
+      placeholder: "This will be implemented by..."
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Implementation Complexity
+      description: Estimated complexity of this implementation
+      options:
+        - Low - Simple implementation
+        - Medium - Moderate complexity
+        - High - Complex implementation
+        - Very High - Requires significant research/design
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: List any dependencies or prerequisites for this implementation
+      placeholder: |
+        - Depends on #123
+        - Requires library X
+        - Needs design approval
+
+  - type: textarea
+    id: testing-strategy
+    attributes:
+      label: Testing Strategy
+      description: How will this feature be tested?
+      placeholder: |
+        - Unit tests for...
+        - Integration tests for...
+        - Manual testing of...

@@ -5,34 +5,29 @@
  * Respects tenant's currency and locale settings
  */
 
-'use client';
+"use client";
 
-import { formatCurrency } from '@/app/_utils/format-currency.util';
-import { useTenantCurrency } from './use-tenant-currency';
+import { formatCurrency } from "@/lib/format";
+import { useTenantConfig } from "@/providers/tenant-config-provider";
 
 export function useCurrencyFormatter() {
-  const { currency, locale, isLoading } = useTenantCurrency();
+  const tenantConfig = useTenantConfig();
 
   const formatPrice = (value: number, showDecimals = false): string =>
     formatCurrency(value, {
-      currency,
+      context: tenantConfig,
       decimals: showDecimals ? 2 : 0,
-      display: 'symbol',
-      locale,
     });
 
   const formatPriceCompact = (value: number): string =>
     formatCurrency(value, {
-      currency,
-      display: 'symbol',
-      locale,
+      context: tenantConfig,
     });
 
   return {
-    currency,
+    currency: tenantConfig.currency,
     formatPrice,
     formatPriceCompact,
-    isLoadingConfig: isLoading,
-    locale,
+    locale: tenantConfig.locale,
   };
 }

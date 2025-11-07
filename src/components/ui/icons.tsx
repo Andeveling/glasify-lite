@@ -1,7 +1,7 @@
-import { Loader2 } from 'lucide-react';
+import { Loader2 } from "lucide-react";
 
 export const Icons = {
-  google: ({ className, ...props }: React.ComponentProps<'svg'>) => (
+  google: ({ className, ...props }: React.ComponentProps<"svg">) => (
     <svg
       aria-hidden="true"
       className={className}

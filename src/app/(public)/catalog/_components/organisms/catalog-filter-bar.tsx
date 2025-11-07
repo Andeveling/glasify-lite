@@ -1,23 +1,21 @@
-'use client';
+"use client";
 
-import { CatalogSearch } from '@views/catalog/_components/molecules/catalog-search';
-import { CatalogFilters } from '@views/catalog/_components/organisms/catalog-filters';
+import { CatalogSearch } from "@views/catalog/_components/molecules/catalog-search";
+import { CatalogFilters } from "@views/catalog/_components/organisms/catalog-filters";
 
 /**
- * CatalogFilterBar - Grid layout for search + filters + badges
- * Issue: #002-ui-ux-requirements
+ * CatalogFilterBar - Single row layout for search + filters
  *
- * Composes filter components following Open/Closed Principle:
- * - First row: search (left), filter controls (right)
- * - Second row: active search parameters and result count (full width)
+ * Desktop: All controls in one row
+ * Mobile: Stacked vertically
  *
- * Each responsibility is delegated to specialized components:
- * - CatalogSearch: Handles search input
- * - CatalogFilters: Orchestrates filter controls, badges, and result count
+ * Composes filter components following Open/Closed Principle
  *
  * Memory Leak Fix:
- * - Passes searchParams as props instead of each component calling useSearchParams()
- * - Prevents EventEmitter memory leak warning
+ * - Uses single CatalogFilters instance instead of two separate instances
+ * - Previous implementation rendered CatalogFilters twice (controls + badges)
+ * - Each instance created event listeners, causing MaxListenersExceededWarning
+ * - Now uses props to control visibility of sections within single instance
  */
 export function CatalogFilterBar({
   searchQuery,
@@ -33,32 +31,26 @@ export function CatalogFilterBar({
   currentSort?: string;
 }) {
   return (
-    <div className="grid w-full grid-cols-1 gap-y-2 md:grid-cols-12 md:gap-x-6">
-      {/* Row 1: Search (left), Filters (right) */}
-      <div className="md:col-span-5 lg:col-span-6">
-        <CatalogSearch initialValue={searchQuery} />
-      </div>
-      <div className="flex items-center justify-end md:col-span-7 lg:col-span-6">
-        <CatalogFilters
-          currentProfileSupplier={currentProfileSupplier}
-          currentSearchQuery={searchQuery}
-          currentSort={currentSort}
-          profileSuppliers={profileSuppliers}
-          showBadges={false}
-          showResultCount={false}
-          totalResults={undefined}
-        />
-      </div>
-      {/* Row 2: Search parameters badges + result count (full width) */}
-      <div className="md:col-span-12 lg:col-span-12">
-        <CatalogFilters
-          currentProfileSupplier={currentProfileSupplier}
-          currentSearchQuery={searchQuery}
-          currentSort={currentSort}
-          profileSuppliers={profileSuppliers}
-          showControls={false}
-          totalResults={totalResults}
-        />
+    <div className="space-y-4">
+      {/* Search + Filters row */}
+      <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+        <div className="flex-1">
+          <CatalogSearch initialValue={searchQuery} />
+        </div>
+
+        {/* Single CatalogFilters instance - shows all sections */}
+        <div className="w-full md:w-auto">
+          <CatalogFilters
+            currentProfileSupplier={currentProfileSupplier}
+            currentSearchQuery={searchQuery}
+            currentSort={currentSort}
+            profileSuppliers={profileSuppliers}
+            showBadges={true}
+            showControls={true}
+            showResultCount={true}
+            totalResults={totalResults}
+          />
+        </div>
       </div>
     </div>
   );

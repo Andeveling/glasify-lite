@@ -1,19 +1,22 @@
-import type { Metadata } from 'next';
-import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
-import { auth } from '@/server/auth';
-import { SettingsPageContent } from './_components/settings-page-content';
+import type { Metadata } from "next";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
+import { auth } from "@/server/auth";
+import { SettingsPageContent } from "./_components/settings-page-content";
 
 export const metadata: Metadata = {
-  description: 'Administra las preferencias y configuración del sistema',
-  title: 'Configuración - Glasify',
+  description: "Administra las preferencias y configuración del sistema",
+  title: "Configuración - Glasify",
 };
 
 export default async function SettingsPage() {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session?.user) {
-    redirect('/signin');
+    redirect("/signin");
   }
 
   return (

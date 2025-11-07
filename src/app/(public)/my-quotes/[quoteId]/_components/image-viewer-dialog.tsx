@@ -14,21 +14,27 @@
  * @module ImageViewerDialog
  */
 
-'use client';
+"use client";
 
-import { X } from 'lucide-react';
-import Image from 'next/image';
-import { useEffect } from 'react';
-import { WindowDiagram } from '@/components/quote/window-diagram';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Dialog, DialogClose, DialogContent, DialogOverlay, DialogTitle } from '@/components/ui/dialog';
-import { VisuallyHidden } from '@/components/ui/visually-hidden';
-import { getProductImageWithFallback } from '@/lib/utils/image-utils';
-import type { WindowType } from '@/types/window.types';
-import { DEFAULT_WINDOW_TYPE, WINDOW_TYPE_LABELS } from '@/types/window.types';
+import { X } from "lucide-react";
+import Image from "next/image";
+import { useEffect } from "react";
+import { WindowDiagram } from "@/components/quote/window-diagram";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogOverlay,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { VisuallyHidden } from "@/components/ui/visually-hidden";
+import { getProductImageWithFallback } from "@/lib/utils/image-utils";
+import type { WindowType } from "@/types/window.types";
+import { DEFAULT_WINDOW_TYPE, WINDOW_TYPE_LABELS } from "@/types/window.types";
 
-export interface ImageViewerDialogProps {
+export type ImageViewerDialogProps = {
   /**
    * Dialog open state
    */
@@ -50,9 +56,9 @@ export interface ImageViewerDialogProps {
   modelImageUrl: string | null;
 
   /**
-   * Window type for fallback/info
+   * Window type for fallback/info (optional, defaults to FIXED_SINGLE)
    */
-  windowType: WindowType;
+  windowType?: WindowType;
 
   /**
    * Product dimensions (formatted string)
@@ -68,7 +74,7 @@ export interface ImageViewerDialogProps {
     thickness?: string;
     treatment?: string;
   };
-}
+};
 
 /**
  * ImageViewerDialog Component
@@ -80,34 +86,42 @@ export function ImageViewerDialog({
   onOpenChange,
   modelName,
   modelImageUrl,
-  windowType,
+  windowType = DEFAULT_WINDOW_TYPE,
   dimensions,
   specifications,
 }: ImageViewerDialogProps) {
   const hasImage = Boolean(modelImageUrl);
-  const optimizedImageUrl = hasImage ? getProductImageWithFallback(modelImageUrl, windowType, 'xl') : null;
+  const optimizedImageUrl = hasImage
+    ? getProductImageWithFallback(modelImageUrl, windowType, "xl")
+    : null;
 
-  const windowTypeLabel = WINDOW_TYPE_LABELS[windowType] ?? WINDOW_TYPE_LABELS[DEFAULT_WINDOW_TYPE];
+  const windowTypeLabel =
+    WINDOW_TYPE_LABELS[windowType] ?? WINDOW_TYPE_LABELS[DEFAULT_WINDOW_TYPE];
 
   /**
    * Handle keyboard shortcuts
    */
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      return;
+    }
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         onOpenChange(false);
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [open, onOpenChange]);
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogOverlay className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm" data-testid="dialog-overlay" />
+      <DialogOverlay
+        className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm"
+        data-testid="dialog-overlay"
+      />
       <DialogContent
         aria-label={`Visor de imagen: ${modelName}`}
         className="fixed top-[50%] left-[50%] z-50 max-h-[90vh] w-[90vw] max-w-6xl translate-x-[-50%] translate-y-[-50%] overflow-hidden border-border bg-card p-0 shadow-2xl focus:outline-none"
@@ -147,7 +161,11 @@ export function ImageViewerDialog({
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-background/10 backdrop-blur-lg">
               <div className="max-w-2xl p-8">
-                <WindowDiagram className="mx-auto" size="xl" type={windowType || DEFAULT_WINDOW_TYPE} />
+                <WindowDiagram
+                  className="mx-auto"
+                  size="xl"
+                  type={windowType || DEFAULT_WINDOW_TYPE}
+                />
               </div>
             </div>
           )}
@@ -159,41 +177,47 @@ export function ImageViewerDialog({
             <div className="grid gap-2 text-sm md:grid-cols-2 lg:grid-cols-3">
               {/* Window Type */}
               <div>
-                <span className="font-semibold">Tipo:</span> <span>{windowTypeLabel}</span>
+                <span className="font-semibold">Tipo:</span>{" "}
+                <span>{windowTypeLabel}</span>
               </div>
 
               {/* Dimensions */}
               {dimensions && (
                 <div>
-                  <span className="font-semibold">Dimensiones:</span> <span>{dimensions}</span>
+                  <span className="font-semibold">Dimensiones:</span>{" "}
+                  <span>{dimensions}</span>
                 </div>
               )}
 
               {/* Glass Type */}
               {specifications?.glassType && (
                 <div>
-                  <span className="font-semibold">Vidrio:</span> <span>{specifications.glassType}</span>
+                  <span className="font-semibold">Vidrio:</span>{" "}
+                  <span>{specifications.glassType}</span>
                 </div>
               )}
 
               {/* Manufacturer */}
               {specifications?.manufacturer && (
                 <div>
-                  <span className="font-semibold">Fabricante:</span> <span>{specifications.manufacturer}</span>
+                  <span className="font-semibold">Fabricante:</span>{" "}
+                  <span>{specifications.manufacturer}</span>
                 </div>
               )}
 
               {/* Thickness */}
               {specifications?.thickness && (
                 <div>
-                  <span className="font-semibold">Espesor:</span> <span>{specifications.thickness}</span>
+                  <span className="font-semibold">Espesor:</span>{" "}
+                  <span>{specifications.thickness}</span>
                 </div>
               )}
 
               {/* Treatment */}
               {specifications?.treatment && (
                 <div>
-                  <span className="font-semibold">Tratamiento:</span> <span>{specifications.treatment}</span>
+                  <span className="font-semibold">Tratamiento:</span>{" "}
+                  <span>{specifications.treatment}</span>
                 </div>
               )}
             </div>

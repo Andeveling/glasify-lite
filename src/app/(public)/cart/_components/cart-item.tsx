@@ -15,17 +15,22 @@
  * @module app/(public)/cart/_components/cart-item
  */
 
-'use client';
+"use client";
 
-import { Check, Minus, Pencil, Plus, Trash2, X } from 'lucide-react';
-import { memo, useState, useTransition } from 'react';
-import { formatCurrency } from '@/app/_utils/format-currency.util';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
-import type { CartItem as CartItemType } from '@/types/cart.types';
-import { CART_CONSTANTS } from '@/types/cart.types';
-import { DeleteCartItemDialog } from './delete-cart-item-dialog';
+import { Check, Minus, Pencil, Plus, Trash2, X } from "lucide-react";
+import { memo, useState, useTransition } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { formatCurrency } from "@/lib/format";
+import { cn } from "@/lib/utils";
+import { useTenantConfig } from "@/providers/tenant-config-provider";
+import type { CartItem as CartItemType } from "@/types/cart.types";
+import { CART_CONSTANTS } from "@/types/cart.types";
+import { UI_TEXT } from "../_constants/cart-item.constants";
+import { adaptCartItemToEditFormat } from "../_utils/cart-item-edit.utils";
+import { CartItemEditModal } from "./cart-item-edit-modal";
+import { CartItemImage } from "./cart-item-image";
+import { DeleteCartItemDialog } from "./delete-cart-item-dialog";
 
 // ============================================================================
 // Types
@@ -43,9 +48,6 @@ export type CartItemProps = {
 
   /** Callback when item is removed */
   onRemove?: (itemId: string) => void;
-
-  /** Currency code (COP for Colombia, USD for Panama) */
-  currency?: string;
 
   /** Whether updates are in progress */
   isUpdating?: boolean;
@@ -78,14 +80,15 @@ const CartItemComponent = ({
   onUpdateName,
   onUpdateQuantity,
   onRemove,
-  currency = 'COP',
   isUpdating = false,
 }: CartItemProps) => {
+  const tenantConfig = useTenantConfig();
   const [editedName, setEditedName] = useState(item.name);
   const [editMode, setEditMode] = useState(false);
   const [nameError, setNameError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   // ============================================================================
   // Handlers
@@ -102,7 +105,7 @@ const CartItemComponent = ({
 
     // Validate name
     if (trimmedName.length === 0) {
-      setNameError('El nombre no puede estar vacío');
+      setNameError("El nombre no puede estar vacío");
       setEditedName(item.name); // Reset to original
       return;
     }
@@ -135,7 +138,10 @@ const CartItemComponent = ({
     const newQuantity = item.quantity + delta;
 
     // Validate bounds
-    if (newQuantity < CART_CONSTANTS.MIN_QUANTITY || newQuantity > CART_CONSTANTS.MAX_QUANTITY) {
+    if (
+      newQuantity < CART_CONSTANTS.MIN_QUANTITY ||
+      newQuantity > CART_CONSTANTS.MAX_QUANTITY
+    ) {
       return;
     }
 
@@ -172,16 +178,24 @@ const CartItemComponent = ({
   return (
     <div
       className={cn(
-        'grid grid-cols-1 gap-4 rounded-lg border p-4',
-        'transition-all duration-150 ease-in-out',
+        "grid grid-cols-1 gap-4 rounded-lg border p-4",
+        "transition-all duration-150 ease-in-out",
         // Updating animation: subtle opacity
-        isInAction && 'opacity-70',
+        isInAction && "opacity-70",
         // Default state
-        !isInAction && 'scale-100 opacity-100',
-        'md:grid-cols-[2fr_3fr_1fr_1fr_auto]'
+        !isInAction && "scale-100 opacity-100",
+        "md:grid-cols-[auto_2fr_3fr_1fr_1fr_auto]"
       )}
       data-testid={`cart-item-${item.id}`}
     >
+      {/* Column 0: Model Image */}
+      <div className="hidden md:block">
+        <CartItemImage
+          modelImageUrl={item.modelImageUrl}
+          modelName={item.modelName}
+        />
+      </div>
+
       {/* Column 1: Name (editable) */}
       <div className="flex flex-col gap-1">
         {editMode ? (
@@ -196,11 +210,11 @@ const CartItemComponent = ({
                 onBlur={handleNameSave}
                 onChange={(e) => setEditedName(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
+                  if (e.key === "Enter") {
                     e.preventDefault();
                     handleNameSave();
                   }
-                  if (e.key === 'Escape') {
+                  if (e.key === "Escape") {
                     e.preventDefault();
                     handleNameCancel();
                   }
@@ -231,7 +245,9 @@ const CartItemComponent = ({
                 <X className="size-4" />
               </Button>
             </div>
-            {nameError && <p className="text-destructive text-sm">{nameError}</p>}
+            {nameError && (
+              <p className="text-destructive text-sm">{nameError}</p>
+            )}
           </>
         ) : (
           <button
@@ -253,7 +269,8 @@ const CartItemComponent = ({
       {/* Column 2: Configuration details */}
       <div className="flex flex-col gap-1 text-sm">
         <p>
-          <span className="font-medium">Dimensiones:</span> {item.widthMm} × {item.heightMm} mm
+          <span className="font-medium">Dimensiones:</span> {item.widthMm} ×{" "}
+          {item.heightMm} mm
         </p>
         {item.solutionName && (
           <p>
@@ -262,18 +279,37 @@ const CartItemComponent = ({
         )}
         {item.additionalServiceIds.length > 0 && (
           <p>
-            <span className="font-medium">Servicios:</span> {item.additionalServiceIds.length}
+            <span className="font-medium">Servicios:</span>{" "}
+            {item.additionalServiceIds.length}
           </p>
         )}
+        {/* Edit button */}
+        <Button
+          aria-label="Editar dimensiones y vidrio"
+          className="mt-2 w-fit"
+          disabled={isUpdating}
+          onClick={() => setShowEditModal(true)}
+          size="sm"
+          type="button"
+          variant="outline"
+        >
+          <Pencil className="mr-2 size-3" />
+          {UI_TEXT.EDIT_BUTTON}
+        </Button>
       </div>
 
       {/* Column 3: Quantity controls */}
       <div className="flex flex-col items-start justify-center gap-2 md:items-center">
-        <fieldset aria-label="Controles de cantidad" className="flex items-center gap-1">
+        <fieldset
+          aria-label="Controles de cantidad"
+          className="flex items-center gap-1"
+        >
           <Button
             aria-label="Disminuir cantidad"
             className="size-8"
-            disabled={item.quantity <= CART_CONSTANTS.MIN_QUANTITY || isUpdating}
+            disabled={
+              item.quantity <= CART_CONSTANTS.MIN_QUANTITY || isUpdating
+            }
             onClick={() => handleQuantityChange(-1)}
             size="icon"
             type="button"
@@ -290,7 +326,9 @@ const CartItemComponent = ({
           <Button
             aria-label="Aumentar cantidad"
             className="size-8"
-            disabled={item.quantity >= CART_CONSTANTS.MAX_QUANTITY || isUpdating}
+            disabled={
+              item.quantity >= CART_CONSTANTS.MAX_QUANTITY || isUpdating
+            }
             onClick={() => handleQuantityChange(1)}
             size="icon"
             type="button"
@@ -300,12 +338,8 @@ const CartItemComponent = ({
           </Button>
         </fieldset>
         <span className="text-muted-foreground text-xs">
-          Precio unitario:{' '}
-          {formatCurrency(item.unitPrice, {
-            currency,
-            decimals: currency === 'USD' ? 2 : 0,
-            locale: currency === 'USD' ? 'es-PA' : 'es-CO',
-          })}
+          Precio unitario:{" "}
+          {formatCurrency(item.unitPrice, { context: tenantConfig })}
         </span>
       </div>
 
@@ -314,11 +348,7 @@ const CartItemComponent = ({
         <div className="text-right">
           <p className="text-muted-foreground text-sm">Subtotal</p>
           <p className="font-semibold text-lg" data-testid="subtotal">
-            {formatCurrency(item.subtotal, {
-              currency,
-              decimals: currency === 'USD' ? 2 : 0,
-              locale: currency === 'USD' ? 'es-PA' : 'es-CO',
-            })}
+            {formatCurrency(item.subtotal, { context: tenantConfig })}
           </p>
         </div>
       </div>
@@ -345,6 +375,13 @@ const CartItemComponent = ({
         onConfirm={handleConfirmDelete}
         onOpenChange={setShowDeleteDialog}
         open={showDeleteDialog}
+      />
+
+      {/* Edit dimensions and glass type modal */}
+      <CartItemEditModal
+        item={adaptCartItemToEditFormat(item)}
+        onOpenChange={setShowEditModal}
+        open={showEditModal}
       />
     </div>
   );
@@ -378,7 +415,7 @@ export const CartItem = memo(CartItemComponent, (prevProps, nextProps) => {
   }
 
   // Re-render if state props changed
-  if (prevProps.isUpdating !== nextProps.isUpdating || prevProps.currency !== nextProps.currency) {
+  if (prevProps.isUpdating !== nextProps.isUpdating) {
     return false; // Props changed, re-render
   }
 

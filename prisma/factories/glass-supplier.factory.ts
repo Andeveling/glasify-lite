@@ -13,10 +13,10 @@
  * @version 1.0.0
  */
 
-import type { Prisma } from '@prisma/client';
-import { z } from 'zod';
-import type { FactoryMetadata, FactoryOptions, FactoryResult } from './types';
-import { mergeOverrides, validateWithSchema } from './utils';
+import type { Prisma } from "@prisma/client";
+import { z } from "zod";
+import type { FactoryMetadata, FactoryOptions, FactoryResult } from "./types";
+import { mergeOverrides, validateWithSchema } from "./utils";
 
 // Validation constants
 const MIN_SUPPLIER_NAME_LENGTH = 2;
@@ -30,13 +30,13 @@ const MAX_NOTES_LENGTH = 500;
  */
 const glassSupplierInputSchema = z.object({
   code: z.string().max(MAX_CODE_LENGTH).optional(),
-  contactEmail: z.string().email().optional().or(z.literal('')),
+  contactEmail: z.string().email().optional().or(z.literal("")),
   contactPhone: z.string().optional(),
   country: z.string().max(MAX_COUNTRY_LENGTH).optional(),
   isActive: z.boolean().default(true),
   name: z.string().min(MIN_SUPPLIER_NAME_LENGTH).max(MAX_SUPPLIER_NAME_LENGTH),
   notes: z.string().max(MAX_NOTES_LENGTH).optional(),
-  website: z.string().url().optional().or(z.literal('')),
+  website: z.string().url().optional().or(z.literal("")),
 });
 
 /**
@@ -92,7 +92,9 @@ export function createGlassSupplier(
   const validated = schemaResult.data;
   if (!validated) {
     return {
-      errors: [{ code: 'VALIDATION_ERROR', message: 'Validation failed', path: [] }],
+      errors: [
+        { code: "VALIDATION_ERROR", message: "Validation failed", path: [] },
+      ],
       success: false,
     };
   }
@@ -133,9 +135,9 @@ export function createGlassSuppliers(
  * Metadata about this factory
  */
 export const glassSupplierFactoryMetadata: FactoryMetadata = {
-  description: 'Factory for creating validated GlassSupplier seed data',
-  name: 'GlassSupplierFactory',
-  version: '1.0.0',
+  description: "Factory for creating validated GlassSupplier seed data",
+  name: "GlassSupplierFactory",
+  version: "1.0.0",
 };
 
 /**
@@ -143,48 +145,48 @@ export const glassSupplierFactoryMetadata: FactoryMetadata = {
  */
 export const GLASS_SUPPLIER_PRESETS = {
   AGC: {
-    code: 'AGC',
-    contactEmail: 'info@agc-glass.eu',
-    country: 'Belgium',
+    code: "AGC",
+    contactEmail: "info@agc-glass.eu",
+    country: "Belgium",
     isActive: true,
-    name: 'AGC Glass Europe',
-    notes: 'Leading global glass manufacturer with presence in Europe',
-    website: 'https://www.agc-glass.eu',
+    name: "AGC Glass Europe",
+    notes: "Leading global glass manufacturer with presence in Europe",
+    website: "https://www.agc-glass.eu",
   },
   GUARDIAN: {
-    code: 'GRD',
-    contactEmail: 'info@guardianglass.com',
-    country: 'United States',
+    code: "GRD",
+    contactEmail: "info@guardianglass.com",
+    country: "United States",
     isActive: true,
-    name: 'Guardian Glass',
-    notes: 'Leading manufacturer of float glass and fabricated glass products',
-    website: 'https://www.guardianglass.com',
+    name: "Guardian Glass",
+    notes: "Leading manufacturer of float glass and fabricated glass products",
+    website: "https://www.guardianglass.com",
   },
   PILKINGTON: {
-    code: 'PLK',
-    contactEmail: 'pilkington@nsg.com',
-    country: 'United Kingdom',
+    code: "PLK",
+    contactEmail: "pilkington@nsg.com",
+    country: "United Kingdom",
     isActive: true,
-    name: 'Pilkington',
-    notes: 'Pioneer in float glass manufacturing, part of NSG Group',
-    website: 'https://www.pilkington.com',
+    name: "Pilkington",
+    notes: "Pioneer in float glass manufacturing, part of NSG Group",
+    website: "https://www.pilkington.com",
   },
   SAINT_GOBAIN: {
-    code: 'SGG',
-    contactEmail: 'contact@saint-gobain-glass.com',
-    country: 'France',
+    code: "SGG",
+    contactEmail: "contact@saint-gobain-glass.com",
+    country: "France",
     isActive: true,
-    name: 'Saint-Gobain',
-    notes: 'World leader in glass manufacturing and distribution',
-    website: 'https://www.saint-gobain-glass.com',
+    name: "Saint-Gobain",
+    notes: "World leader in glass manufacturing and distribution",
+    website: "https://www.saint-gobain-glass.com",
   },
   VITRO: {
-    code: 'VIT',
-    contactEmail: 'info@vitro.com',
-    country: 'Mexico',
+    code: "VIT",
+    contactEmail: "info@vitro.com",
+    country: "Mexico",
     isActive: true,
-    name: 'Vitro Architectural Glass',
-    notes: 'Leading glass manufacturer in North and South America',
-    website: 'https://www.vitroglazings.com',
+    name: "Vitro Architectural Glass",
+    notes: "Leading glass manufacturer in North and South America",
+    website: "https://www.vitroglazings.com",
   },
 } as const;

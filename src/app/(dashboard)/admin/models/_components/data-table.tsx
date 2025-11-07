@@ -14,9 +14,14 @@
  * For server-side filtering, use ServerFilters component with URL search params.
  */
 
-'use client';
+"use client";
 
-import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from '@tanstack/react-table';
+import type {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
+} from "@tanstack/react-table";
 import {
   flexRender,
   getCoreRowModel,
@@ -24,34 +29,58 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+} from "@tanstack/react-table";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
-interface DataTableProps<TData, TValue> {
+type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchKey?: string;
   searchPlaceholder?: string;
   toolbarSlot?: React.ReactNode;
-}
+};
 
 const PAGE_SIZE_10 = 10;
 const PAGE_SIZE_20 = 20;
 const PAGE_SIZE_30 = 30;
 const PAGE_SIZE_40 = 40;
 const PAGE_SIZE_50 = 50;
-const PAGE_SIZES = [PAGE_SIZE_10, PAGE_SIZE_20, PAGE_SIZE_30, PAGE_SIZE_40, PAGE_SIZE_50] as const;
+const PAGE_SIZES = [
+  PAGE_SIZE_10,
+  PAGE_SIZE_20,
+  PAGE_SIZE_30,
+  PAGE_SIZE_40,
+  PAGE_SIZE_50,
+] as const;
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   searchKey,
-  searchPlaceholder = 'Buscar...',
+  searchPlaceholder = "Buscar...",
   toolbarSlot,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -88,13 +117,17 @@ export function DataTable<TData, TValue>({
         <div className="flex items-center justify-between">
           <Input
             className="max-w-sm"
-            onChange={(event) => table.getColumn(searchKey)?.setFilterValue(event.target.value)}
+            onChange={(event) =>
+              table.getColumn(searchKey)?.setFilterValue(event.target.value)
+            }
             placeholder={searchPlaceholder}
-            value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ''}
+            value={
+              (table.getColumn(searchKey)?.getFilterValue() as string) ?? ""
+            }
           />
           <div className="text-muted-foreground text-sm">
-            {table.getFilteredSelectedRowModel().rows.length} de {table.getFilteredRowModel().rows.length} fila(s)
-            seleccionada(s).
+            {table.getFilteredSelectedRowModel().rows.length} de{" "}
+            {table.getFilteredRowModel().rows.length} fila(s) seleccionada(s).
           </div>
         </div>
       )}
@@ -107,7 +140,12 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -116,15 +154,26 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow data-state={row.getIsSelected() && 'selected'} key={row.id}>
+                <TableRow
+                  data-state={row.getIsSelected() && "selected"}
+                  key={row.id}
+                >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell className="h-24 text-center" colSpan={columns.length}>
+                <TableCell
+                  className="h-24 text-center"
+                  colSpan={columns.length}
+                >
                   No se encontraron resultados.
                 </TableCell>
               </TableRow>
@@ -145,7 +194,9 @@ export function DataTable<TData, TValue>({
               value={`${table.getState().pagination.pageSize}`}
             >
               <SelectTrigger className="h-8 w-[70px]">
-                <SelectValue placeholder={table.getState().pagination.pageSize} />
+                <SelectValue
+                  placeholder={table.getState().pagination.pageSize}
+                />
               </SelectTrigger>
               <SelectContent side="top">
                 {PAGE_SIZES.map((pageSize) => (
@@ -157,7 +208,8 @@ export function DataTable<TData, TValue>({
             </Select>
           </div>
           <div className="flex w-[100px] items-center justify-center font-medium text-sm">
-            Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
+            Página {table.getState().pagination.pageIndex + 1} de{" "}
+            {table.getPageCount()}
           </div>
         </div>
 

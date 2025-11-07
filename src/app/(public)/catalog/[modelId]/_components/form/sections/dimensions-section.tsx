@@ -1,11 +1,11 @@
-import { Ruler } from 'lucide-react';
-import { useCallback, useMemo } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { FormSection } from '@/components/form-section';
-import { useDebouncedDimension } from '../../../_hooks/use-debounced-dimension';
-import { DimensionField } from '../dimension-field';
-import { DimensionValidationAlert } from '../dimension-validation-alert';
-import { QuantityField } from '../quantity-field';
+import { Ruler } from "lucide-react";
+import { useCallback, useMemo } from "react";
+import { useFormContext, useWatch } from "react-hook-form";
+import { FormSection } from "@/components/form-section";
+import { useDebouncedDimension } from "../../../_hooks/use-debounced-dimension";
+import { DimensionField } from "../dimension-field";
+import { DimensionValidationAlert } from "../dimension-validation-alert";
+import { QuantityField } from "../quantity-field";
 
 type ModelDimensions = {
   minWidth: number;
@@ -24,7 +24,11 @@ type DimensionsSectionProps = {
  * @param max - Valor máximo del rango
  * @param count - Cantidad de valores a generar (default: 5)
  */
-function generateSuggestedValues(min: number, max: number, count = 5): number[] {
+function generateSuggestedValues(
+  min: number,
+  max: number,
+  count = 5
+): number[] {
   const range = max - min;
   const step = range / (count - 1);
 
@@ -39,37 +43,45 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
   const { control, setValue } = useFormContext();
 
   // Watch values para el preview
-  const width = useWatch({ control, name: 'width' });
-  const height = useWatch({ control, name: 'height' });
+  const width = useWatch({ control, name: "width" });
+  const height = useWatch({ control, name: "height" });
 
   // ✅ Stable setValue callbacks to prevent infinite loops
-  const setWidthValue = useCallback((value: number) => setValue('width', value, { shouldValidate: true }), [setValue]);
+  const setWidthValue = useCallback(
+    (value: number) => setValue("width", value, { shouldValidate: true }),
+    [setValue]
+  );
 
   const setHeightValue = useCallback(
-    (value: number) => setValue('height', value, { shouldValidate: true }),
+    (value: number) => setValue("height", value, { shouldValidate: true }),
     [setValue]
   );
 
   // ✅ Use custom debounced dimension hook for width
-  const { localValue: localWidth, setLocalValue: setLocalWidth } = useDebouncedDimension({
-    initialValue: width || dimensions.minWidth,
-    max: dimensions.maxWidth,
-    min: dimensions.minWidth,
-    setValue: setWidthValue,
-    value: width,
-  });
+  const { localValue: localWidth, setLocalValue: setLocalWidth } =
+    useDebouncedDimension({
+      initialValue: width || dimensions.minWidth,
+      max: dimensions.maxWidth,
+      min: dimensions.minWidth,
+      setValue: setWidthValue,
+      value: width,
+    });
 
   // ✅ Use custom debounced dimension hook for height
-  const { localValue: localHeight, setLocalValue: setLocalHeight } = useDebouncedDimension({
-    initialValue: height || dimensions.minHeight,
-    max: dimensions.maxHeight,
-    min: dimensions.minHeight,
-    setValue: setHeightValue,
-    value: height,
-  });
+  const { localValue: localHeight, setLocalValue: setLocalHeight } =
+    useDebouncedDimension({
+      initialValue: height || dimensions.minHeight,
+      max: dimensions.maxHeight,
+      min: dimensions.minHeight,
+      setValue: setHeightValue,
+      value: height,
+    });
 
   // ✅ Memoize validation function to avoid recreation
-  const isValidDimension = useCallback((value: number, min: number, max: number) => value >= min && value <= max, []);
+  const isValidDimension = useCallback(
+    (value: number, min: number, max: number) => value >= min && value <= max,
+    []
+  );
 
   // ✅ Optimized handlers for sliders - no debounce needed (handled by hook)
   const handleWidthSliderChange = useCallback(
@@ -95,12 +107,14 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
 
   // ✅ Memoize validation check functions
   const isWidthValid = useCallback(
-    (value: number) => isValidDimension(value, dimensions.minWidth, dimensions.maxWidth),
+    (value: number) =>
+      isValidDimension(value, dimensions.minWidth, dimensions.maxWidth),
     [dimensions.minWidth, dimensions.maxWidth, isValidDimension]
   );
 
   const isHeightValid = useCallback(
-    (value: number) => isValidDimension(value, dimensions.minHeight, dimensions.maxHeight),
+    (value: number) =>
+      isValidDimension(value, dimensions.minHeight, dimensions.maxHeight),
     [dimensions.minHeight, dimensions.maxHeight, isValidDimension]
   );
 
@@ -117,11 +131,17 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
 
   // Check if validation alert should show
   const showValidationAlert =
-    (width && !isValidDimension(width, dimensions.minWidth, dimensions.maxWidth)) ||
-    (height && !isValidDimension(height, dimensions.minHeight, dimensions.maxHeight));
+    (width &&
+      !isValidDimension(width, dimensions.minWidth, dimensions.maxWidth)) ||
+    (height &&
+      !isValidDimension(height, dimensions.minHeight, dimensions.maxHeight));
 
   return (
-    <FormSection description="Especifica las dimensiones del vidrio requeridas." icon={Ruler} legend="Dimensiones">
+    <FormSection
+      // description="Especifica las dimensiones del modelo que necesitas."
+      icon={Ruler}
+      legend="Dimensiones"
+    >
       <div className="grid gap-6 sm:grid-cols-2">
         <DimensionField
           control={control}
@@ -133,6 +153,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
           name="width"
           onSliderChange={handleWidthSliderChange}
           suggestedValues={widthSuggestedValues}
+          variant="minimal"
         />
 
         <DimensionField
@@ -145,6 +166,7 @@ export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
           name="height"
           onSliderChange={handleHeightSliderChange}
           suggestedValues={heightSuggestedValues}
+          variant="minimal"
         />
       </div>
 

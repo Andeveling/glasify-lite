@@ -5,9 +5,15 @@
  * Following Single Responsibility Principle - each hook has one clear purpose.
  */
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
+import { useDebouncedCallback } from "use-debounce";
 
 /**
  * Hook for managing URL search parameters
@@ -53,7 +59,10 @@ export function useQueryParams() {
     [createQueryString, pathname, router]
   );
 
-  const getParam = useCallback((key: string) => searchParams.get(key), [searchParams]);
+  const getParam = useCallback(
+    (key: string) => searchParams.get(key),
+    [searchParams]
+  );
 
   return {
     createQueryString,
@@ -72,14 +81,14 @@ export function useQueryParams() {
  * @param debounceMs - Debounce delay in milliseconds
  * @returns Search state and handlers
  */
-export function useDebouncedSearch(initialValue = '', debounceMs = 300) {
+export function useDebouncedSearch(initialValue = "", debounceMs = 300) {
   const [query, setQuery] = useState(initialValue);
   const [isPending, startTransition] = useTransition();
   const { searchParams, updateQueryParams } = useQueryParams();
 
   // Sync input value when URL search params change externally
   useEffect(() => {
-    const urlQuery = searchParams.get('q') ?? '';
+    const urlQuery = searchParams.get("q") ?? "";
     setQuery(urlQuery);
   }, [searchParams]);
 
@@ -102,7 +111,7 @@ export function useDebouncedSearch(initialValue = '', debounceMs = 300) {
   );
 
   const handleClear = useCallback(() => {
-    setQuery('');
+    setQuery("");
     startTransition(() => {
       updateQueryParams({
         page: null,
@@ -137,16 +146,20 @@ export function usePagination(currentPage: number, totalPages: number) {
       const queryString = createQueryString({
         page: page === 1 ? null : page.toString(),
       });
-      return queryString ? `?${queryString}` : '';
+      return queryString ? `?${queryString}` : "";
     },
     [createQueryString]
   );
 
   const getVisiblePages = useCallback(() => {
-    return Array.from({ length: totalPages }, (_, i) => i + 1).filter((page) => {
-      // Show first page, last page, current page, and 1 page on each side
-      return page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1;
-    });
+    return Array.from({ length: totalPages }, (_, i) => i + 1).filter(
+      (page) => {
+        // Show first page, last page, current page, and 1 page on each side
+        return (
+          page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1
+        );
+      }
+    );
   }, [currentPage, totalPages]);
 
   const hasPrevious = currentPage > 1;
@@ -185,11 +198,15 @@ export function useCatalogFilters(
   const router = useRouter();
   const pathname = usePathname();
 
-  const { currentProfileSupplier = 'all', currentSort = 'name-asc', currentSearchQuery } = params;
+  const {
+    currentProfileSupplier = "all",
+    currentSort = "name-asc",
+    currentSearchQuery,
+  } = params;
 
   // Get profile supplier name for badge display
   const selectedProfileSupplierName = useMemo(() => {
-    if (currentProfileSupplier === 'all') {
+    if (currentProfileSupplier === "all") {
       return null;
     }
     return profileSuppliers.find((s) => s.id === currentProfileSupplier)?.name;
@@ -203,18 +220,18 @@ export function useCatalogFilters(
 
       // Preserve current parameters
       if (currentSearchQuery) {
-        urlParams.set('q', currentSearchQuery);
+        urlParams.set("q", currentSearchQuery);
       }
-      if (currentProfileSupplier && currentProfileSupplier !== 'all') {
-        urlParams.set('manufacturer', currentProfileSupplier);
+      if (currentProfileSupplier && currentProfileSupplier !== "all") {
+        urlParams.set("manufacturer", currentProfileSupplier);
       }
-      if (currentSort && currentSort !== 'name-asc') {
-        urlParams.set('sort', currentSort);
+      if (currentSort && currentSort !== "name-asc") {
+        urlParams.set("sort", currentSort);
       }
 
       // Apply updates
       for (const [key, value] of Object.entries(updates)) {
-        if (value === null || value === '') {
+        if (value === null || value === "") {
           urlParams.delete(key);
         } else {
           urlParams.set(key, value);
@@ -229,7 +246,7 @@ export function useCatalogFilters(
   const handleProfileSupplierChange = useCallback(
     (value: string) => {
       const queryString = createQueryString({
-        manufacturer: value === 'all' ? null : value,
+        manufacturer: value === "all" ? null : value,
         page: null, // Reset to page 1 when filtering
       });
 
@@ -251,11 +268,11 @@ export function useCatalogFilters(
   );
 
   const handleRemoveProfileSupplier = useCallback(() => {
-    handleProfileSupplierChange('all');
+    handleProfileSupplierChange("all");
   }, [handleProfileSupplierChange]);
 
   const handleRemoveSort = useCallback(() => {
-    handleSortChange('name-asc');
+    handleSortChange("name-asc");
   }, [handleSortChange]);
 
   const handleRemoveSearch = useCallback(() => {
@@ -272,7 +289,9 @@ export function useCatalogFilters(
   }, [pathname, router]);
 
   const hasActiveParameters =
-    currentProfileSupplier !== 'all' || currentSort !== 'name-asc' || Boolean(currentSearchQuery);
+    currentProfileSupplier !== "all" ||
+    currentSort !== "name-asc" ||
+    Boolean(currentSearchQuery);
 
   return {
     currentProfileSupplier,

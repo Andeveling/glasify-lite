@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import type { PriceItemCalculationResult } from '@/server/price/price-item';
-import { api } from '@/trpc/react';
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { PriceItemCalculationResult } from "@/server/price/price-item";
+import { api } from "@/trpc/react";
 
 type UsePriceCalculationParams = {
   additionalServices: string[];
@@ -8,11 +8,13 @@ type UsePriceCalculationParams = {
   heightMm: number;
   modelId: string;
   widthMm: number;
-  // ✅ ADD: Model dimension constraints for validation
+  // ✅ Model dimension constraints for validation
   minWidthMm?: number;
   maxWidthMm?: number;
   minHeightMm?: number;
   maxHeightMm?: number;
+  // ✅ Color surcharge percentage (0-100)
+  colorSurchargePercentage?: number;
 };
 
 type UsePriceCalculationReturn = {
@@ -40,30 +42,40 @@ const DEBOUNCE_DELAY_MS = 300; // ✅ Optimized for real-time responsiveness
  * @param params.maxWidthMm - Ancho máximo permitido (opcional, validación client-side)
  * @param params.minHeightMm - Alto mínimo permitido (opcional, validación client-side)
  * @param params.maxHeightMm - Alto máximo permitido (opcional, validación client-side)
+ * @param params.colorSurchargePercentage - Porcentaje de recargo por color (0-100, opcional)
  * @returns Estado del cálculo con precio, desglose, error y bandera isCalculating
  */
-export function usePriceCalculation(params: UsePriceCalculationParams): UsePriceCalculationReturn {
+export function usePriceCalculation(
+  params: UsePriceCalculationParams
+): UsePriceCalculationReturn {
   const [isCalculating, setIsCalculating] = useState(false);
-  const [calculatedPrice, setCalculatedPrice] = useState<number | undefined>(undefined);
-  const [breakdown, setBreakdown] = useState<PriceItemCalculationResult | undefined>(undefined);
+  const [calculatedPrice, setCalculatedPrice] = useState<number | undefined>(
+    undefined
+  );
+  const [breakdown, setBreakdown] = useState<
+    PriceItemCalculationResult | undefined
+  >(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const calculateMutation = api.quote['calculate-item'].useMutation({
+  const calculateMutation = api.quote["calculate-item"].useMutation({
     onError: (err) => {
       setIsCalculating(false);
       setCalculatedPrice(undefined);
       setBreakdown(undefined);
 
       // ✅ User-friendly error messages in Spanish
-      let errorMessage = 'Error al calcular el precio. Intenta nuevamente.';
+      let errorMessage = "Error al calcular el precio. Intenta nuevamente.";
 
-      if (err.message.includes('no encontrado') || err.message.includes('no disponible')) {
-        errorMessage = 'Modelo no disponible';
-      } else if (err.message.includes('no compatible')) {
-        errorMessage = 'Tipo de vidrio no compatible';
-      } else if (err.message.includes('debe estar entre')) {
-        errorMessage = 'Dimensiones fuera del rango permitido';
+      if (
+        err.message.includes("no encontrado") ||
+        err.message.includes("no disponible")
+      ) {
+        errorMessage = "Modelo no disponible";
+      } else if (err.message.includes("no compatible")) {
+        errorMessage = "Tipo de vidrio no compatible";
+      } else if (err.message.includes("debe estar entre")) {
+        errorMessage = "Dimensiones fuera del rango permitido";
       }
 
       setError(errorMessage);
@@ -81,17 +93,28 @@ export function usePriceCalculation(params: UsePriceCalculationParams): UsePrice
   mutateRef.current = calculateMutation.mutate;
 
   // ✅ Create stable serialized dependency for services array
-  const servicesKey = useMemo(() => JSON.stringify(params.additionalServices), [params.additionalServices]);
+  const servicesKey = useMemo(
+    () => JSON.stringify(params.additionalServices),
+    [params.additionalServices]
+  );
 
   // ✅ Store services in ref for stable access
   const servicesRef = useRef(params.additionalServices);
   servicesRef.current = params.additionalServices;
 
+  // ✅ Store color surcharge in ref to avoid stale closures
+  const colorSurchargeRef = useRef(params.colorSurchargePercentage ?? 0);
+  colorSurchargeRef.current = params.colorSurchargePercentage ?? 0;
+
   // ✅ Debounced calculation effect with stable dependencies
   // biome-ignore lint/correctness/useExhaustiveDependencies: servicesKey is intentionally used to detect array changes
   useEffect(() => {
     // ✅ VALIDATION 1: Check if we have all required data
-    const hasRequiredData = params.modelId && params.glassTypeId && params.heightMm > 0 && params.widthMm > 0;
+    const hasRequiredData =
+      params.modelId &&
+      params.glassTypeId &&
+      params.heightMm > 0 &&
+      params.widthMm > 0;
 
     if (!hasRequiredData) {
       setCalculatedPrice(undefined);
@@ -111,7 +134,7 @@ export function usePriceCalculation(params: UsePriceCalculationParams): UsePrice
       // ✅ Don't call API if dimensions are out of range
       setCalculatedPrice(undefined);
       setBreakdown(undefined);
-      setError('Dimensiones fuera del rango permitido');
+      setError("Dimensiones fuera del rango permitido");
       setIsCalculating(false);
       return;
     }
@@ -134,8 +157,9 @@ export function usePriceCalculation(params: UsePriceCalculationParams): UsePrice
         services: servicesRef.current.map((serviceId: string) => ({
           serviceId,
         })),
-        unit: 'unit', // Default unit for price calculation
+        unit: "unit", // Default unit for price calculation
         widthMm: params.widthMm,
+        colorSurchargePercentage: colorSurchargeRef.current,
       });
     }, DEBOUNCE_DELAY_MS);
 
@@ -154,6 +178,7 @@ export function usePriceCalculation(params: UsePriceCalculationParams): UsePrice
     params.maxWidthMm,
     params.minHeightMm,
     params.maxHeightMm,
+    params.colorSurchargePercentage,
     servicesKey,
   ]);
 

@@ -11,10 +11,10 @@
  * - Resets to page 1 when filters change
  */
 
-'use client';
+"use client";
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback } from 'react';
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback } from "react";
 
 export function useServerFilters() {
   const router = useRouter();
@@ -30,15 +30,15 @@ export function useServerFilters() {
       const params = new URLSearchParams(searchParams.toString());
 
       // Remove param if default value
-      if (value === 'all' || value === '' || !value) {
+      if (value === "all" || value === "" || !value) {
         params.delete(key);
       } else {
         params.set(key, value);
       }
 
       // Reset to page 1 when filtering (except for page param itself)
-      if (key !== 'page') {
-        params.delete('page');
+      if (key !== "page") {
+        params.delete("page");
       }
 
       // Update URL (triggers server-side refetch)
@@ -51,7 +51,8 @@ export function useServerFilters() {
    * Gets current value of a filter from URL
    */
   const getFilterValue = useCallback(
-    (key: string, defaultValue = 'all') => searchParams.get(key) ?? defaultValue,
+    (key: string, defaultValue = "all") =>
+      searchParams.get(key) ?? defaultValue,
     [searchParams]
   );
 
@@ -60,7 +61,7 @@ export function useServerFilters() {
    */
   const updatePage = useCallback(
     (page: number) => {
-      updateFilter('page', page.toString());
+      updateFilter("page", page.toString());
     },
     [updateFilter]
   );

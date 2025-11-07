@@ -1,11 +1,18 @@
-'use client';
+"use client";
 
-import ActiveSearchParameters from '@views/catalog/_components/molecules/active-filter-badges';
-import { ResultCount } from '@views/catalog/_components/molecules/result-count';
-import { useCatalogFilters } from '@views/catalog/_hooks/use-catalog';
-import type { CatalogSortOption } from '@views/catalog/_utils/search-parameters.utils';
-import { ArrowDownAZ, ArrowDownZA, ArrowUpDown, Building2, Filter, SortAsc, SortDesc, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ActiveSearchParameters } from "@views/catalog/_components/molecules/active-filter-badges";
+import { ResultCount } from "@views/catalog/_components/molecules/result-count";
+import { useCatalogFilters } from "@views/catalog/_hooks/use-catalog";
+import type { CatalogSortOption } from "@views/catalog/_utils/search-parameters.utils";
+import {
+  ArrowDownAZ,
+  ArrowDownZA,
+  ArrowUpDown,
+  Building2,
+  Filter,
+  SortAsc,
+  SortDesc,
+} from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -14,7 +21,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
 type CatalogFiltersProps = {
   profileSuppliers?: Array<{
@@ -48,6 +55,7 @@ type CatalogFiltersProps = {
  * Memory Leak Fix:
  * - Receives searchParams as props instead of calling useSearchParams()
  * - Prevents EventEmitter memory leak warning
+ * - Only one instance should be rendered per page (avoid duplicate listeners)
  *
  * Following UX best practices from Lollypop Design:
  * - Icon-first minimalist design
@@ -61,8 +69,8 @@ export function CatalogFilters({
   showControls = true,
   showBadges = true,
   showResultCount = true,
-  currentProfileSupplier = 'all',
-  currentSort = 'name-asc',
+  currentProfileSupplier = "all",
+  currentSort = "name-asc",
   currentSearchQuery,
 }: CatalogFiltersProps) {
   // Delegate all logic to custom hook (SRP - Single Responsibility)
@@ -85,32 +93,22 @@ export function CatalogFilters({
   );
 
   return (
-    <div className="mb-4 space-y-4">
-      {/* Filter Controls */}
+    <div className="flex w-full flex-col gap-3">
+      {/* Filter Controls - Compact on desktop, stacked on mobile */}
       {showControls && (
-        <div className="flex flex-wrap items-center justify-end gap-3">
-          {/* Clear all parameters button */}
-          {hasActiveParameters && (
-            <Button
-              aria-label="Limpiar todos los parámetros de búsqueda"
-              className="gap-2"
-              onClick={handleClearFilters}
-              size="icon"
-              variant="ghost"
-            >
-              <X className="size-4" />
-              <span className="sr-only hidden lg:not-sr-only">Limpiar</span>
-            </Button>
-          )}
-          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+        <div className="flex w-full flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-end">
+          <div className="hidden items-center gap-2 text-muted-foreground text-sm md:flex">
             <Filter className="size-4" />
-            <span className="sr-only hidden md:not-sr-only">Filtros</span>
+            <span>Filtros</span>
           </div>
 
           {/* Profile Supplier filter */}
           {profileSuppliers.length > 0 && (
-            <Select onValueChange={handleProfileSupplierChange} value={currentProfileSupplier}>
-              <SelectTrigger className="w-[160px] gap-2 md:w-[180px]">
+            <Select
+              onValueChange={handleProfileSupplierChange}
+              value={currentProfileSupplier}
+            >
+              <SelectTrigger className="w-full gap-2 md:w-auto md:min-w-[180px]">
                 <Building2 className="size-4 opacity-70" />
                 <SelectValue placeholder="Proveedor" />
               </SelectTrigger>
@@ -130,7 +128,7 @@ export function CatalogFilters({
 
           {/* Sort filter */}
           <Select onValueChange={handleSortChange} value={currentSort}>
-            <SelectTrigger className="w-[160px] gap-2 md:w-[180px]">
+            <SelectTrigger className="w-full gap-2 md:w-auto md:min-w-[180px]">
               <ArrowUpDown className="size-4 opacity-70" />
               <SelectValue placeholder="Ordenar" />
             </SelectTrigger>
@@ -167,20 +165,24 @@ export function CatalogFilters({
         </div>
       )}
 
-      {/* Active Search Parameters - Badges Section */}
-      {showBadges && (
-        <ActiveSearchParameters
-          onRemoveProfileSupplier={handleRemoveProfileSupplier}
-          onRemoveSearch={handleRemoveSearch}
-          onRemoveSort={handleRemoveSort}
-          searchQuery={currentSearchQuery}
-          selectedProfileSupplierName={selectedProfileSupplierName}
-          sortType={currentSort as CatalogSortOption}
-        />
-      )}
+      {/* Full-width section for badges and result count */}
+      <div className="w-full space-y-3">
+        {/* Active Search Parameters - Badges Section */}
+        {showBadges && hasActiveParameters && (
+          <ActiveSearchParameters
+            onClearAllAction={handleClearFilters}
+            onRemoveProfileSupplierAction={handleRemoveProfileSupplier}
+            onRemoveSearchAction={handleRemoveSearch}
+            onRemoveSortAction={handleRemoveSort}
+            searchQuery={currentSearchQuery ?? ""}
+            selectedProfileSupplierName={selectedProfileSupplierName ?? null}
+            sortType={currentSort as CatalogSortOption}
+          />
+        )}
 
-      {/* Results count */}
-      {showResultCount && <ResultCount totalResults={totalResults} />}
+        {/* Results count */}
+        {showResultCount && <ResultCount totalResults={totalResults} />}
+      </div>
     </div>
   );
 }

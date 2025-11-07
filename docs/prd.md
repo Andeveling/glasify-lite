@@ -10,7 +10,7 @@ ai_note: "yes"
 summary: "Especificación actualizada de Glasify Lite v1.6 - Herramienta de pre-venta on-demand que reduce la fricción del primer contacto cliente-fabricante de semanas a minutos. NO es una tienda e-commerce, es un acelerador de cotización con gestión de catálogo para admins."
 post_date: "2025-10-14"
 version: "1.6.0"
-last_updated: "2025-10-19"
+last_updated: "2025-10-20"
 ---
 
 # PRD: Glasify Lite v1.6
@@ -53,7 +53,7 @@ Admin → Configura catálogo → Actualiza precios → Habilita cotizaciones pr
 | Propiedad                | Valor                                 |
 | ------------------------ | ------------------------------------- |
 | **Versión**              | 1.6.0                                 |
-| **Última actualización** | 2025-10-14                            |
+| **Última actualización** | 2025-10-20                            |
 | **Estado**               | ✅ En producción (funcionalidades MVP) |
 | **Próxima versión**      | v2.0 (Q2 2026)                        |
 
@@ -520,30 +520,72 @@ Pricing Engine recalcula automáticamente en cotizaciones nuevas
 - ⏳ **Inventario de Materias Primas**: Stock de perfiles, vidrios, accesorios (no productos terminados)
 - ⏳ **Facturación Básica**: Generación de facturas desde Quotes (no contabilidad completa)
 
-- ⏳ **Plataforma de Agentes IA (RAG + MCP Tools)**:
-  - RAG por tenant (vector store aislado) sobre catálogo, documentación y chats para respuestas fundamentadas en español.
-  - MCP server con Tools invocables: CatalogSearch, BudgetBuilder, QuoteDraft, GeoNoiseEstimator, SupplierAvailability, CRMCreateLead, AdminModelWizard, PriceChangeAdvisor.
-  - Roles de agentes: Asistente de Cliente (chat de compra), Coach Comercial (estrategias y resúmenes), Asistente de Admin (configuración y data‑quality).
-  - Flujo ejemplo: “Quiero una ventana para el ruido” → ciudad/zona (consentimiento) → estimación de dB ambiente → 3 opciones por presupuesto con atenuación aproximada → draft de Quote → lead en CRM.
-  - KPIs IA iniciales: tiempo a propuesta asistida < 3 min; aceptación de recomendaciones > 30%; error de estimación dB ±3–5 (cuando haya validación en campo).
+- ⏳ **Extensiones con IA (Enfoque Incremental y Pragmático)**:
+  
+  **Filosofía**: Integración básica con API de LLM usando prompts estáticos y estructurados para funcionalidades específicas. Activación secuencial de features IA según demanda real confirmada por usuarios piloto (mínimo 3 usuarios solicitando + prompt validado manualmente).
+  
+  **4 Funcionalidades Candidatas** (priorizadas por valor/complejidad):
+  
+  1. **Generador de resúmenes de cotización**: Crea brief ejecutivo de una cotización para facilitar la comunicación comercial con estrategias de cierre.
+  
+  2. **Asistente de cálculo de precios**: Calcula valor base y genera desglose de precios por mm² en anchos y altos; permite ajustes ágiles de tarifa y estima impacto en cotizaciones de catálogo.
+  
+  3. **Sugerencias de soluciones de vidrio**: Dado un propósito (térmico, acústico, seguridad) y contexto (ubicación, tipo de edificio), recomienda 2-3 opciones de modelos + vidrio del catálogo con justificación técnica.
+  
+  4. **Asistente de FAQ**: Responde preguntas frecuentes sobre el proceso, productos y servicios usando contexto estático del tenant (sin búsqueda semántica).
+  
+  **Arquitectura Pragmática**:
+  - API directa a proveedor de LLM (OpenAI, Anthropic, Google) con prompts versionados en código.
+  - Context injection estructurado: datos del catálogo, configs de tenant y parámetros de solicitud inyectados de forma predecible.
+  - Rate limiting y fallbacks: límites por tenant/usuario, timeout 10s, fallback automático a flujo manual si falla.
+  - Logging y evaluación: todas las interacciones IA se registran para análisis; métricas de uso, satisfacción y precisión.
+  
+  **Criterios de Activación por Feature**:
+  - Mínimo 3 usuarios piloto solicitan la funcionalidad.
+  - Prompt base probado manualmente con 10+ casos reales.
+  - Toggle por tenant para habilitar/deshabilitar en runtime.
+  - Plan de medición definido (KPI específico, p. ej., % adopción > 40%, tiempo ahorrado > 2 min).
+  
+  **KPIs Iniciales IA** (por feature activada):
+  - Adopción > 40% de usuarios que acceden a la feature.
+  - Satisfacción (thumbs up/down) > 70%.
+  - Reducción de tiempo en tarea objetivo > 30%.
 
-### Arquitectura IA (visión v2.x)
+### Arquitectura IA (Enfoque Incremental)
 
-Nota de activación condicionada: IA se activará únicamente cuando se cumpla la meta colectiva del Programa Aliados Fundadores (USD 4,000). Antes de esa meta, IA permanece en planificación sin despliegue.
+**Nota de Activación Condicionada**: IA se activará de forma incremental cuando se cumpla la meta colectiva del Programa Aliados Fundadores (USD 4,000). Antes de esa meta, el foco es el core (catálogo, cotización, Budget, PDF/Excel, reportes de asesor). Las features IA se desarrollan bajo demanda validada.
 
-- RAG por tenant: index de catálogo y documentos técnicos con citas en respuestas; grounding estricto para minimizar alucinaciones.
-- MCP server con tools: orquestación de acciones de negocio (consulta catálogo, creación Budget/Quote, sincronización CRM, estimación de ruido, sugerencias de precios/modelos).
-- Orquestación multi‑agente: Cliente (asistente de compra), Comercial (coach y resumidor), Admin (configuración y limpieza de datos).
-- Guardrails: PII redaction, consentimiento explícito para geolocalización, rate limits, auditoría de herramientas invocadas.
-- Evaluación continua: harness de prompts + tests de regresión (utilidad, seguridad, precisión); telemetría para medición de impacto y toggles por tenant.
+**Componentes Principales**:
+- **API Directa a LLM**: Integración con OpenAI, Anthropic o Google mediante API HTTP estándar; sin infraestructura compleja de vectores o agentes inicialmente.
+- **Prompts Estáticos Versionados**: Cada feature IA tiene su prompt almacenado en código con versionado explícito para rollbacks y A/B testing.
+- **Guardrails Técnicos**:
+  - PII filtering: validación de que no se envían datos personales sensibles (nombres, emails, teléfonos, direcciones completas).
+  - Rate limiting: límites por tenant (ej. 50 requests/día) y por usuario (ej. 20/día).
+  - Timeouts: máximo 10s por request; fallback automático a flujo manual si falla.
+  - Sanitización de outputs: validación de que las respuestas no incluyen información inventada o peligrosa.
+- **Observabilidad y Control**:
+  - Logging completo: timestamp, tenant, feature, input (sanitizado), output, latencia, tokens usados.
+  - Toggle por tenant: cada feature IA puede habilitarse/deshabilitarse en runtime sin deploy.
+  - Métricas de uso: requests/día, tasa de error, satisfacción (thumbs up/down), tiempo ahorrado estimado.
+  - Dashboard de costes: monitoreo de gasto por feature y por tenant para evaluar sostenibilidad.
+- **Testing y Validación**:
+  - Test suite de regresión: conjunto de casos reales (10-20 por feature) ejecutados antes de cada deploy.
+  - Validación manual: outputs revisados por experto técnico antes de activar feature para usuarios generales.
+  - Feedback loop: usuarios pueden reportar respuestas incorrectas o poco útiles; revisión semanal de reportes.
 
-### Riesgos y mitigaciones (IA)
+**Evolución Futura** (condicional a escala y presupuesto):
+- RAG por tenant cuando haya suficiente contenido propietario (documentación técnica, catálogos extensos, conversaciones históricas).
+- MCP server con tools para integraciones complejas (CRM, estimaciones, sincronización de inventario).
+- Fine-tuning de modelos si hay dataset > 1000 ejemplos y ROI claro vs. prompts estáticos.
 
-- Alucinaciones/precisión: RAG con citas, thresholds de confianza y disclaimers en estimaciones (especialmente dB); fallback a flujo manual.
-- Privacidad/PII: consentimiento para geolocalización; anonimización/retención limitada; controles y aislamiento por tenant.
-- Sesgos/explicabilidad: revisiones periódicas, datasets balanceados y explicaciones de recomendaciones.
-- Cumplimiento legal: términos claros de uso de datos, opt‑out por tenant, auditoría exportable.
-- Coste/latencia: cachés, herramientas locales cuando aplique, colas y SLAs por operación crítica; presupuesto de tokens y observabilidad.
+### Riesgos y Mitigaciones (IA)
+
+- **Alucinaciones/Precisión**: Prompts con instrucciones explícitas para ceñirse a datos estructurados del catálogo; disclaimers claros en respuestas; tests de regresión con casos reales antes de activar feature. Fallback a flujos manuales si no hay confianza suficiente.
+- **Privacidad/PII**: Datos sensibles de clientes (nombres, direcciones, contactos) nunca se envían a API de LLM; solo specs técnicas, dimensiones y contexto anónimo. Logs de interacción con retención limitada (30 días) y anonimizados.
+- **Sesgos y Explicabilidad**: Revisiones manuales de outputs antes de generalizar; explicaciones simples de por qué se recomienda X solución (basadas en reglas técnicas claras).
+- **Cumplimiento Legal**: Términos claros de uso de IA en la plataforma; posibilidad de opt-out por tenant; transparencia sobre qué datos se usan para contexto.
+- **Coste/Latencia**: Límites de llamadas por tenant/usuario (ej. 50/día); timeouts cortos (10s); cacheo de respuestas para consultas repetidas; monitoreo de costes por feature para evaluar sostenibilidad.
+- **Activación Gradual**: Cada feature requiere validación en piloto (3+ usuarios, 2+ semanas de prueba) antes de habilitar para todos; posibilidad de revertir rápidamente si hay problemas.
 
 **Filosofía**: Glasify hace **una cosa muy bien** (cotización rápida con contexto), e integra con sistemas especializados para el resto.
 

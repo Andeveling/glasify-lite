@@ -7,10 +7,10 @@
  * @module app/(public)/cart/_hooks/use-cart
  */
 
-'use client';
+"use client";
 
-import { createId } from '@paralleldrive/cuid2';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createId } from "@paralleldrive/cuid2";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   calculateItemSubtotal,
   findCartItem,
@@ -18,11 +18,16 @@ import {
   removeCartItem,
   updateCartItem,
   validateCartLimit,
-} from '@/lib/utils/cart.utils';
-import { generateItemName } from '@/lib/utils/generate-item-name';
-import { useTenantConfig } from '@/providers/tenant-config-provider';
-import type { CartItem, CartSummary, CreateCartItemInput, UpdateCartItemInput } from '@/types/cart.types';
-import { useCartStorage } from './use-cart-storage';
+} from "@/lib/utils/cart.utils";
+import { generateItemName } from "@/lib/utils/generate-item-name";
+import { useTenantConfig } from "@/providers/tenant-config-provider";
+import type {
+  CartItem,
+  CartSummary,
+  CreateCartItemInput,
+  UpdateCartItemInput,
+} from "@/types/cart.types";
+import { useCartStorage } from "./use-cart-storage";
 
 // ============================================================================
 // Types
@@ -42,7 +47,10 @@ type UseCartReturn = {
   addItem: (input: CreateCartItemInput & { unitPrice: number }) => void;
 
   /** Update existing item */
-  updateItem: (id: string, updates: Omit<UpdateCartItemInput, 'id'>) => void;
+  updateItem: (id: string, updates: Omit<UpdateCartItemInput, "id">) => void;
+
+  /** Replace entire cart item (for complete updates including dimensions, glassType, etc.) */
+  replaceItem: (id: string, item: CartItem) => void;
 
   /** Remove item from cart */
   removeItem: (id: string) => void;
@@ -95,7 +103,12 @@ type UseCartReturn = {
  * ```
  */
 export function useCart(): UseCartReturn {
-  const { items: storedItems, saveItems, clearItems, isHydrated } = useCartStorage();
+  const {
+    items: storedItems,
+    saveItems,
+    clearItems,
+    isHydrated,
+  } = useCartStorage();
   const { currency } = useTenantConfig();
   const [items, setItems] = useState<CartItem[]>([]);
 
@@ -131,6 +144,8 @@ export function useCart(): UseCartReturn {
       // Create new cart item
       const newItem: CartItem = {
         additionalServiceIds: input.additionalServiceIds ?? [],
+        colorId: input.colorId,
+        colorSurchargePercentage: input.colorSurchargePercentage,
         createdAt: new Date().toISOString(),
         dimensions: {
           heightMm: input.heightMm,
@@ -141,6 +156,7 @@ export function useCart(): UseCartReturn {
         heightMm: input.heightMm,
         id: itemId,
         modelId: input.modelId,
+        modelImageUrl: input.modelImageUrl,
         modelName: input.modelName,
         name: itemName,
         quantity,
@@ -150,6 +166,17 @@ export function useCart(): UseCartReturn {
         unitPrice: input.unitPrice,
         widthMm: input.widthMm,
       };
+
+      // 🔍 DEBUG: Log item being added with services
+      console.log("🔍 [Cart] Adding item to cart:", {
+        itemId,
+        name: itemName,
+        additionalServiceIds: newItem.additionalServiceIds,
+        servicesCount: newItem.additionalServiceIds.length,
+        colorId: newItem.colorId,
+        colorSurchargePercentage: newItem.colorSurchargePercentage,
+        unitPrice: input.unitPrice,
+      });
 
       // Update state
       const updatedItems = [...items, newItem];
@@ -163,7 +190,7 @@ export function useCart(): UseCartReturn {
    * Update existing cart item
    */
   const updateItem = useCallback(
-    (id: string, updates: Omit<UpdateCartItemInput, 'id'>) => {
+    (id: string, updates: Omit<UpdateCartItemInput, "id">) => {
       const item = findCartItem(items, id);
 
       if (!item) {
@@ -176,6 +203,27 @@ export function useCart(): UseCartReturn {
 
       // Update items array
       const updatedItems = items.map((i) => (i.id === id ? updatedItem : i));
+      setItems(updatedItems);
+      saveItems(updatedItems);
+    },
+    [items, saveItems]
+  );
+
+  /**
+   * Replace entire cart item (for complete updates)
+   * Used when updating dimensions, glass type, etc. that require price recalculation
+   */
+  const replaceItem = useCallback(
+    (id: string, newItem: CartItem) => {
+      const existingItem = findCartItem(items, id);
+
+      if (!existingItem) {
+        const error = new Error(`Item ${id} no encontrado en el carrito`);
+        throw error;
+      }
+
+      // Replace entire item
+      const updatedItems = items.map((i) => (i.id === id ? newItem : i));
       setItems(updatedItems);
       saveItems(updatedItems);
     },
@@ -212,7 +260,9 @@ export function useCart(): UseCartReturn {
       if (existingItem) {
         // Item already in cart, just update it
         const updatedItem = updateCartItem(existingItem, item);
-        const updatedItems = items.map((i) => (i.id === item.id ? updatedItem : i));
+        const updatedItems = items.map((i) =>
+          i.id === item.id ? updatedItem : i
+        );
         setItems(updatedItems);
         saveItems(updatedItems);
         return;
@@ -244,13 +294,19 @@ export function useCart(): UseCartReturn {
   /**
    * Get item by ID
    */
-  const getItemById = useCallback((id: string): CartItem | undefined => findCartItem(items, id), [items]);
+  const getItemById = useCallback(
+    (id: string): CartItem | undefined => findCartItem(items, id),
+    [items]
+  );
 
   /**
    * Cart summary (memoized)
    * Uses tenant currency from config (single source of truth)
    */
-  const summary = useMemo((): CartSummary => generateCartSummary(items, currency), [items, currency]);
+  const summary = useMemo(
+    (): CartSummary => generateCartSummary(items, currency),
+    [items, currency]
+  );
 
   return {
     addItem,
@@ -259,6 +315,7 @@ export function useCart(): UseCartReturn {
     hydrated: isHydrated,
     items,
     removeItem,
+    replaceItem,
     restoreItem,
     summary,
     updateItem,

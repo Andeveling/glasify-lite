@@ -13,12 +13,18 @@
  * @module app/(public)/cart/_components/empty-cart-state
  */
 
-'use client';
+"use client";
 
-import { ShoppingCart } from 'lucide-react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
+import { ShoppingCart } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 
 // ============================================================================
 // Types
@@ -48,9 +54,9 @@ export type EmptyCartStateProps = {
  * ```
  */
 export function EmptyCartState({
-  message = 'Tu carrito está vacío',
-  ctaText = 'Explorar catálogo',
-  catalogUrl = '/catalog',
+  message = "Tu carrito está vacío",
+  ctaText = "Explorar catálogo",
+  catalogUrl = "/catalog",
 }: EmptyCartStateProps) {
   return (
     <Empty>

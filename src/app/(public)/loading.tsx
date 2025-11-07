@@ -1,11 +1,16 @@
-import { generateStableKeyedArray } from '@/app/_utils/generate-keys.util';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { Skeleton } from '@/components/ui/skeleton';
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: Using array index as key is acceptable here because skeleton items are purely presentational and do not require stable identity. */
+/** biome-ignore-all lint/style/noMagicNumbers: Magic numbers are used intentionally for animation delays and skeleton layout to match the design specification. */
+import { generateStableKeyedArray } from "@/app/_utils/generate-keys.util";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const PUBLIC_CATALOG_SKELETON_COUNT = 8;
 
 export default function PublicLoading() {
-  const catalogItems = generateStableKeyedArray(PUBLIC_CATALOG_SKELETON_COUNT, 'catalog-skeleton');
+  const catalogItems = generateStableKeyedArray(
+    PUBLIC_CATALOG_SKELETON_COUNT,
+    "catalog-skeleton"
+  );
 
   return (
     <div className="container mx-auto px-4 py-8">

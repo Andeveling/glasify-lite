@@ -9,8 +9,8 @@
  * @see https://env.t3.gg/docs/core
  */
 
-import { createEnv } from '@t3-oss/env-nextjs';
-import { z } from 'zod';
+import { createEnv } from "@t3-oss/env-nextjs";
+import { z } from "zod";
 
 // Constants for validation
 const CURRENCY_CODE_LENGTH = 3;
@@ -53,7 +53,7 @@ export const envSeed = createEnv({
      * @example "Calle 123 #45-67, Bogotá, Colombia"
      * @optional
      */
-    TENANT_BUSINESS_ADDRESS: z.string().optional().or(z.literal('')),
+    TENANT_BUSINESS_ADDRESS: z.string().optional().or(z.literal("")),
     // ============================================================
     // TENANT CONFIGURATION (Required for TenantConfig seed)
     // ============================================================
@@ -64,7 +64,7 @@ export const envSeed = createEnv({
      * @required
      */
     TENANT_BUSINESS_NAME: z.string().min(1, {
-      message: 'TENANT_BUSINESS_NAME is required for seed scripts',
+      message: "TENANT_BUSINESS_NAME is required for seed scripts",
     }),
 
     // ============================================================
@@ -76,14 +76,14 @@ export const envSeed = createEnv({
      * @example "ventas@glasify.com"
      * @optional
      */
-    TENANT_CONTACT_EMAIL: z.email().optional().or(z.literal('')),
+    TENANT_CONTACT_EMAIL: z.email().optional().or(z.literal("")),
 
     /**
      * Business contact phone number (any format)
      * @example "+57 300 123 4567", "(601) 234-5678"
      * @optional
      */
-    TENANT_CONTACT_PHONE: z.string().optional().or(z.literal('')),
+    TENANT_CONTACT_PHONE: z.string().optional().or(z.literal("")),
 
     /**
      * ISO 4217 currency code (3 characters)
@@ -93,9 +93,9 @@ export const envSeed = createEnv({
      */
     TENANT_CURRENCY: z
       .string()
-      .length(CURRENCY_CODE_LENGTH, 'Currency must be a 3-character ISO code')
+      .length(CURRENCY_CODE_LENGTH, "Currency must be a 3-character ISO code")
       .toUpperCase()
-      .default('COP'),
+      .default("COP"),
 
     /**
      * Locale for date/number formatting (IETF BCP 47 language tag)
@@ -105,8 +105,11 @@ export const envSeed = createEnv({
      */
     TENANT_LOCALE: z
       .string()
-      .regex(/^[a-z]{2}-[A-Z]{2}$/, 'Locale must be in format: xx-XX (e.g., es-CO)')
-      .default('es-CO'),
+      .regex(
+        /^[a-z]{2}-[A-Z]{2}$/,
+        "Locale must be in format: xx-XX (e.g., es-CO)"
+      )
+      .default("es-CO"),
 
     /**
      * Number of days a quote is valid before expiring
@@ -127,7 +130,7 @@ export const envSeed = createEnv({
      * @default "America/Bogota"
      * @required
      */
-    TENANT_TIMEZONE: z.string().min(1).default('America/Bogota'),
+    TENANT_TIMEZONE: z.string().min(1).default("America/Bogota"),
   },
 
   /**

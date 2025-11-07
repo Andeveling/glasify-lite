@@ -11,17 +11,36 @@
  * - Spanish UI text
  */
 
-'use client';
+"use client";
 
-import type { CostType } from '@prisma/client';
-import { Plus, Trash2 } from 'lucide-react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+import type { CostType } from "@prisma/client";
+import { Plus, Trash2 } from "lucide-react";
+import { useFieldArray, useFormContext } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 type CostBreakdownItem = {
   component: string;
@@ -41,14 +60,14 @@ type ModelCostBreakdownProps = {
 // Map CostType enum to localized labels
 function getCostTypeLabel(type: CostType) {
   switch (type) {
-    case 'fixed':
-      return 'Fijo';
-    case 'per_mm_height':
-      return 'Por mm de alto';
-    case 'per_mm_width':
-      return 'Por mm de ancho';
-    case 'per_sqm':
-      return 'Por m²';
+    case "fixed":
+      return "Fijo";
+    case "per_mm_height":
+      return "Por mm de alto";
+    case "per_mm_width":
+      return "Por mm de ancho";
+    case "per_sqm":
+      return "Por m²";
     default:
       return type;
   }
@@ -59,32 +78,34 @@ function getCostTypeLabel(type: CostType) {
  */
 function getCostTypeDescription(type: CostType) {
   switch (type) {
-    case 'fixed':
-      return 'Costo fijo independiente de las dimensiones';
-    case 'per_mm_height':
-      return 'Costo calculado por milímetro de altura';
-    case 'per_mm_width':
-      return 'Costo calculado por milímetro de ancho';
-    case 'per_sqm':
-      return 'Costo calculado por metro cuadrado';
+    case "fixed":
+      return "Costo fijo independiente de las dimensiones";
+    case "per_mm_height":
+      return "Costo calculado por milímetro de altura";
+    case "per_mm_width":
+      return "Costo calculado por milímetro de ancho";
+    case "per_sqm":
+      return "Costo calculado por metro cuadrado";
     default:
-      return '';
+      return "";
   }
 }
 
-export function ModelCostBreakdown({ readOnly = false }: ModelCostBreakdownProps) {
+export function ModelCostBreakdown({
+  readOnly = false,
+}: ModelCostBreakdownProps) {
   const form = useFormContext();
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: 'costBreakdown',
+    name: "costBreakdown",
   });
 
   const handleAddComponent = () => {
     append({
-      component: '',
-      costType: 'fixed',
-      notes: '',
+      component: "",
+      costType: "fixed",
+      notes: "",
       unitCost: 0,
     } satisfies CostBreakdownItem);
   };
@@ -94,7 +115,8 @@ export function ModelCostBreakdown({ readOnly = false }: ModelCostBreakdownProps
       <CardHeader>
         <CardTitle>Desglose de Costos</CardTitle>
         <CardDescription>
-          Define los componentes de costo de este modelo (perfiles, herrajes, mano de obra, etc.)
+          Define los componentes de costo de este modelo (perfiles, herrajes,
+          mano de obra, etc.)
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -102,7 +124,12 @@ export function ModelCostBreakdown({ readOnly = false }: ModelCostBreakdownProps
           <div className="py-8 text-center text-muted-foreground">
             <p>No hay componentes de costo definidos.</p>
             {!readOnly && (
-              <Button className="mt-4" onClick={handleAddComponent} type="button" variant="outline">
+              <Button
+                className="mt-4"
+                onClick={handleAddComponent}
+                type="button"
+                variant="outline"
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Agregar Componente
               </Button>
@@ -128,7 +155,9 @@ export function ModelCostBreakdown({ readOnly = false }: ModelCostBreakdownProps
                               placeholder="ej. perfil_vertical, herrajes, mano_obra"
                             />
                           </FormControl>
-                          <FormDescription>Identificador del componente de costo</FormDescription>
+                          <FormDescription>
+                            Identificador del componente de costo
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -142,14 +171,25 @@ export function ModelCostBreakdown({ readOnly = false }: ModelCostBreakdownProps
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Tipo de Costo *</FormLabel>
-                            <Select defaultValue={field.value} disabled={readOnly} onValueChange={field.onChange}>
+                            <Select
+                              defaultValue={field.value}
+                              disabled={readOnly}
+                              onValueChange={field.onChange}
+                            >
                               <FormControl>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Selecciona el tipo" />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {(['fixed', 'per_mm_width', 'per_mm_height', 'per_sqm'] as CostType[]).map((type) => (
+                                {(
+                                  [
+                                    "fixed",
+                                    "per_mm_width",
+                                    "per_mm_height",
+                                    "per_sqm",
+                                  ] as CostType[]
+                                ).map((type) => (
                                   <SelectItem key={type} value={type}>
                                     {getCostTypeLabel(type)}
                                   </SelectItem>
@@ -157,7 +197,8 @@ export function ModelCostBreakdown({ readOnly = false }: ModelCostBreakdownProps
                               </SelectContent>
                             </Select>
                             <FormDescription>
-                              {field.value && getCostTypeDescription(field.value as CostType)}
+                              {field.value &&
+                                getCostTypeDescription(field.value as CostType)}
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
@@ -176,13 +217,19 @@ export function ModelCostBreakdown({ readOnly = false }: ModelCostBreakdownProps
                                 {...field}
                                 disabled={readOnly}
                                 min="0"
-                                onChange={(e) => field.onChange(Number.parseFloat(e.target.value))}
+                                onChange={(e) =>
+                                  field.onChange(
+                                    Number.parseFloat(e.target.value)
+                                  )
+                                }
                                 placeholder="0.00"
                                 step="0.01"
                                 type="number"
                               />
                             </FormControl>
-                            <FormDescription>Costo en la moneda del fabricante</FormDescription>
+                            <FormDescription>
+                              Costo en la moneda del fabricante
+                            </FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -212,7 +259,12 @@ export function ModelCostBreakdown({ readOnly = false }: ModelCostBreakdownProps
                     {/* Remove Button */}
                     {!readOnly && (
                       <div className="flex justify-end">
-                        <Button onClick={() => remove(index)} size="sm" type="button" variant="destructive">
+                        <Button
+                          onClick={() => remove(index)}
+                          size="sm"
+                          type="button"
+                          variant="destructive"
+                        >
                           <Trash2 className="mr-2 h-4 w-4" />
                           Eliminar Componente
                         </Button>
@@ -224,7 +276,12 @@ export function ModelCostBreakdown({ readOnly = false }: ModelCostBreakdownProps
             ))}
 
             {!readOnly && (
-              <Button className="w-full" onClick={handleAddComponent} type="button" variant="outline">
+              <Button
+                className="w-full"
+                onClick={handleAddComponent}
+                type="button"
+                variant="outline"
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Agregar Componente
               </Button>

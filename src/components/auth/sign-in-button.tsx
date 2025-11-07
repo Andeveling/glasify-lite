@@ -13,11 +13,11 @@
  * @module components/auth/sign-in-button
  */
 
-'use client';
+"use client";
 
-import { signIn } from 'next-auth/react';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { signIn } from "@/lib/auth-client";
 
 // ============================================================================
 // Types
@@ -31,19 +31,19 @@ export type SignInButtonProps = {
   children?: React.ReactNode;
 
   /** Button variant */
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  variant?:
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link";
 
   /** Button size */
-  size?: 'default' | 'sm' | 'lg' | 'icon';
+  size?: "default" | "sm" | "lg" | "icon";
 
   /** Custom CSS class */
   className?: string;
-
-  /** Callback on sign-in success */
-  onSuccess?: () => void;
-
-  /** Callback on sign-in error */
-  onError?: (error: Error) => void;
 };
 
 // ============================================================================
@@ -61,13 +61,11 @@ export type SignInButtonProps = {
  * ```
  */
 export function SignInButton({
-  callbackUrl = '/dashboard',
-  children = 'Iniciar sesión con Google',
-  variant = 'default',
-  size = 'default',
+  callbackUrl = "/dashboard",
+  children = "Iniciar sesión con Google",
+  variant = "default",
+  size = "default",
   className,
-  onSuccess,
-  onError,
 }: SignInButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -79,18 +77,11 @@ export function SignInButton({
       setIsLoading(true);
 
       // Trigger Google OAuth flow
-      await signIn('google', {
-        callbackUrl,
-        redirect: true,
+      await signIn.social({
+        callbackURL: callbackUrl,
+        provider: "google",
       });
-
-      // Success callback (may not execute if redirect happens immediately)
-      onSuccess?.();
-    } catch (error) {
-      // Error callback
-      const errorObj = error instanceof Error ? error : new Error('Sign-in failed');
-      onError?.(errorObj);
-
+    } catch {
       setIsLoading(false);
     }
   };
@@ -104,7 +95,7 @@ export function SignInButton({
       type="button"
       variant={variant}
     >
-      {isLoading ? 'Iniciando sesión...' : children}
+      {isLoading ? "Iniciando sesión..." : children}
     </Button>
   );
 }

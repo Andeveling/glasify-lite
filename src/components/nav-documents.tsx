@@ -1,6 +1,12 @@
-'use client';
+"use client";
 
-import { Folder, type LucideIcon, MoreHorizontal, Share, Trash } from 'lucide-react';
+import {
+  Folder,
+  type LucideIcon,
+  MoreHorizontal,
+  Share,
+  Trash,
+} from "lucide-react";
 
 import {
   DropdownMenu,
@@ -8,7 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -17,7 +23,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar';
+} from "@/components/ui/sidebar";
 
 export function NavDocuments({
   items,
@@ -44,15 +50,18 @@ export function NavDocuments({
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuAction className="rounded-sm data-[state=open]:bg-accent" showOnHover>
+                <SidebarMenuAction
+                  className="rounded-sm data-[state=open]:bg-accent"
+                  showOnHover
+                >
                   <MoreHorizontal />
                   <span className="sr-only">More</span>
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                align={isMobile ? 'end' : 'start'}
+                align={isMobile ? "end" : "start"}
                 className="w-24 rounded-lg"
-                side={isMobile ? 'bottom' : 'right'}
+                side={isMobile ? "bottom" : "right"}
               >
                 <DropdownMenuItem>
                   <Folder />

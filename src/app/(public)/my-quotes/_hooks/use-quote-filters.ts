@@ -1,20 +1,26 @@
-'use client';
+"use client";
 
-import { usePathname, useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
+import { usePathname, useRouter } from "next/navigation";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
 
 /**
  * Quote filter types
  */
-export type QuoteStatus = 'draft' | 'sent' | 'canceled';
+export type QuoteStatus = "draft" | "sent" | "canceled";
 
-export type QuoteSortOption = 'newest' | 'oldest' | 'price-high' | 'price-low';
+export type QuoteSortOption = "newest" | "oldest" | "price-high" | "price-low";
 
-export interface QuoteFilters {
+export type QuoteFilters = {
   status?: QuoteStatus;
   searchQuery: string;
   sortBy: QuoteSortOption;
-}
+};
 
 /**
  * Custom hook for managing quote filters with URL synchronization
@@ -59,7 +65,11 @@ export function useQuoteFilters(currentParams: {
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
 
-  const { currentStatus, currentSort = 'newest', currentSearchQuery = '' } = currentParams;
+  const {
+    currentStatus,
+    currentSort = "newest",
+    currentSearchQuery = "",
+  } = currentParams;
 
   // Initialize filters from props (received from Server Component)
   const [filters, setFilters] = useState<QuoteFilters>({
@@ -69,7 +79,8 @@ export function useQuoteFilters(currentParams: {
   });
 
   // Debounce timer for search
-  const [searchDebounceTimer, setSearchDebounceTimer] = useState<NodeJS.Timeout | null>(null);
+  const [searchDebounceTimer, setSearchDebounceTimer] =
+    useState<NodeJS.Timeout | null>(null);
 
   /**
    * Build query string from current state
@@ -81,18 +92,18 @@ export function useQuoteFilters(currentParams: {
 
       // Preserve current parameters
       if (currentSearchQuery) {
-        params.set('q', currentSearchQuery);
+        params.set("q", currentSearchQuery);
       }
       if (currentStatus) {
-        params.set('status', currentStatus);
+        params.set("status", currentStatus);
       }
-      if (currentSort && currentSort !== 'newest') {
-        params.set('sort', currentSort);
+      if (currentSort && currentSort !== "newest") {
+        params.set("sort", currentSort);
       }
 
       // Apply updates
       for (const [key, value] of Object.entries(updates)) {
-        if (value === null || value === '') {
+        if (value === null || value === "") {
           params.delete(key);
         } else {
           params.set(key, value);
@@ -118,7 +129,10 @@ export function useQuoteFilters(currentParams: {
       updates.q = newFilters.searchQuery || null;
 
       // Update or remove sort param (don't add if default)
-      updates.sort = newFilters.sortBy && newFilters.sortBy !== 'newest' ? newFilters.sortBy : null;
+      updates.sort =
+        newFilters.sortBy && newFilters.sortBy !== "newest"
+          ? newFilters.sortBy
+          : null;
 
       const queryString = createQueryString(updates);
       const newURL = queryString ? `${pathname}?${queryString}` : pathname;
@@ -156,10 +170,11 @@ export function useQuoteFilters(currentParams: {
         clearTimeout(searchDebounceTimer);
       }
 
+      const DEBOUNCE_DELAY_MS = 300;
       // Set new timer for URL update (debounce 300ms)
       const timer = setTimeout(() => {
         updateURL(newFilters);
-      }, 300);
+      }, DEBOUNCE_DELAY_MS);
 
       setSearchDebounceTimer(timer);
     },
@@ -183,8 +198,8 @@ export function useQuoteFilters(currentParams: {
    */
   const clearFilters = useCallback(() => {
     const newFilters: QuoteFilters = {
-      searchQuery: '',
-      sortBy: 'newest',
+      searchQuery: "",
+      sortBy: "newest",
       status: undefined,
     };
     setFilters(newFilters);
@@ -197,9 +212,15 @@ export function useQuoteFilters(currentParams: {
   const activeFiltersCount = useMemo(() => {
     let count = 0;
 
-    if (filters.status) count++;
-    if (filters.searchQuery) count++;
-    if (filters.sortBy && filters.sortBy !== 'newest') count++;
+    if (filters.status) {
+      count++;
+    }
+    if (filters.searchQuery) {
+      count++;
+    }
+    if (filters.sortBy && filters.sortBy !== "newest") {
+      count++;
+    }
 
     return count;
   }, [filters]);
@@ -207,7 +228,10 @@ export function useQuoteFilters(currentParams: {
   /**
    * Check if any filters are active
    */
-  const hasActiveFilters = useMemo(() => activeFiltersCount > 0, [activeFiltersCount]);
+  const hasActiveFilters = useMemo(
+    () => activeFiltersCount > 0,
+    [activeFiltersCount]
+  );
 
   // Cleanup debounce timer on unmount
   useEffect(

@@ -1,324 +1,380 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMemo, useState } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
-import { toast } from 'sonner';
-import { useCart } from '@/app/(public)/cart/_hooks/use-cart';
-import { Card } from '@/components/ui/card';
-import { Form } from '@/components/ui/form';
-import { useScrollIntoView } from '@/hooks/use-scroll-into-view';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Palette } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { FormSection } from "@/components/form-section";
+import { Card } from "@/components/ui/card";
+import { Form } from "@/components/ui/form";
+import { useScrollIntoView } from "@/hooks/use-scroll-into-view";
+import { cn } from "@/lib/utils";
 import type {
   GlassSolutionOutput,
   GlassTypeOutput,
   ModelDetailOutput,
   ServiceOutput,
-} from '@/server/api/routers/catalog';
-import type { CreateCartItemInput } from '@/types/cart.types';
-import { usePriceCalculation } from '../../_hooks/use-price-calculation';
-import { useSolutionInference } from '../../_hooks/use-solution-inference';
-import { createQuoteFormSchema, type QuoteFormValues } from '../../_utils/validation';
-import { StickyPriceHeader } from '../sticky-price-header';
-import { AddedToCartActions } from './added-to-cart-actions';
-import { QuoteSummary } from './quote-summary';
-import { DimensionsSection } from './sections/dimensions-section';
-import { GlassTypeSelectorSection } from './sections/glass-type-selector-section';
-import { ServicesSelectorSection } from './sections/services-selector-section';
+} from "@/server/api/routers/catalog";
+import { useCartOperations } from "../../_hooks/use-cart-operations";
+import { useColorSelection } from "../../_hooks/use-color-selection";
+import { useGlassArea } from "../../_hooks/use-glass-area";
+import { usePriceBreakdown } from "../../_hooks/use-price-breakdown";
+import { usePriceCalculation } from "../../_hooks/use-price-calculation";
+import { useScrollResetForm } from "../../_hooks/use-scroll-reset-form";
+import { useSolutionInference } from "../../_hooks/use-solution-inference";
+import { prepareCartItemInput } from "../../_utils/cart-item-mapper";
+import {
+  createQuoteFormSchema,
+  type QuoteFormValues,
+} from "../../_utils/validation";
+import { ColorSelector } from "../color-selector";
+import { StickyPriceHeader } from "../sticky-price-header";
+import { AddedToCartActions } from "./added-to-cart-actions";
+import type { FormStepId } from "./form-steps-config";
+import { QuoteSummary } from "./quote-summary";
+import { DimensionsSection } from "./sections/dimensions-section";
+import { GlassTypeSelectorSection } from "./sections/glass-type-selector-section";
+import { ServicesSelectorSection } from "./sections/services-selector-section";
+import { VerticalScrollProgress } from "./vertical-scroll-progress";
 
 // ============================================================================
-// Constants
+// Helpers
 // ============================================================================
 
-/** Conversion factor from millimeters to meters */
-const MM_TO_METERS = 1000;
+/**
+ * Get card className based on active form step
+ */
+function getCardClassName(
+  activeStep: FormStepId,
+  currentStep: FormStepId
+): string {
+  return cn(
+    "p-4 transition-all duration-300 sm:p-6",
+    activeStep === currentStep
+      ? "shadow-lg shadow-primary/20 ring-2 ring-primary"
+      : ""
+  );
+}
 
 // ============================================================================
 // Types
 // ============================================================================
 
 type ModelFormProps = {
-  model: ModelDetailOutput;
+  currency: string;
   glassTypes: GlassTypeOutput[];
+  hasColors: boolean;
+  model: ModelDetailOutput;
   services: ServiceOutput[];
   solutions: GlassSolutionOutput[];
-  currency: string;
 };
 
 // ============================================================================
 // Component
 // ============================================================================
 
-export function ModelForm({ model, glassTypes, services, solutions, currency }: ModelFormProps) {
+export function ModelForm({
+  currency,
+  glassTypes,
+  hasColors,
+  model,
+  services,
+  solutions,
+}: ModelFormProps) {
   const schema = useMemo(() => createQuoteFormSchema(model), [model]);
-  const { addItem } = useCart();
+
+  // ✅ Hooks: Separated concerns (SRP)
+  const { addToCart } = useCartOperations();
+  const { handleColorChange, selectedColorId, colorSurchargePercentage } =
+    useColorSelection();
 
   // ✅ Track if item was just added to cart
   const [justAddedToCart, setJustAddedToCart] = useState(false);
 
+  // ✅ Track active form step for visual focus
+  const [activeFormStep, setActiveFormStep] =
+    useState<FormStepId>("dimensions");
+
   // ✅ Auto-scroll to success card when item is added
   const successCardRef = useScrollIntoView(justAddedToCart);
+
+  // ✅ Ref for scroll progress tracking
+  const formContainerRef = useRef<HTMLDivElement>(null);
+
+  // ✅ Refs for each form section (Intersection Observer)
+  const dimensionsSectionRef = useRef<HTMLDivElement>(null);
+  const colorSectionRef = useRef<HTMLDivElement>(null);
+  const glassTypeSectionRef = useRef<HTMLDivElement>(null);
+  const servicesSectionRef = useRef<HTMLDivElement>(null);
+
+  const sectionRefs = useMemo(
+    () => ({
+      color: colorSectionRef,
+      dimensions: dimensionsSectionRef,
+      glassType: glassTypeSectionRef,
+      services: servicesSectionRef,
+    }),
+    []
+  );
 
   // ✅ UX Improvement: Pre-populate with minimum valid dimensions and first glass type
   const defaultValues = useMemo(
     () => ({
       additionalServices: [],
-      glassType: glassTypes[0]?.id ?? '', // Pre-select first glass type (usually most common/budget)
-      height: model.minHeightMm, // Use minimum height as starting point
+      colorId: undefined,
+      glassType: glassTypes[0]?.id ?? "",
+      height: model.minHeightMm,
       quantity: 1,
-      solution: '', // No solution selected by default (optional field)
-      width: model.minWidthMm, // Use minimum width as starting point
+      solution: "",
+      width: model.minWidthMm,
     }),
     [model.minWidthMm, model.minHeightMm, glassTypes]
   );
 
   const form = useForm<QuoteFormValues>({
     defaultValues,
-    mode: 'onChange',
+    mode: "onChange",
     // @ts-expect-error - zodResolver with z.coerce has type inference issues
     resolver: zodResolver(schema),
   });
 
   // Watch form values for price calculation
-  // ✅ Optimization: Use useWatch with specific fields instead of form.watch() to prevent unnecessary re-renders
-  const width = useWatch({ control: form.control, name: 'width' });
-  const height = useWatch({ control: form.control, name: 'height' });
-  const glassType = useWatch({ control: form.control, name: 'glassType' });
-  const quantity = useWatch({ control: form.control, name: 'quantity' });
-  const additionalServices = useWatch({ control: form.control, name: 'additionalServices' });
+  const width = useWatch({ control: form.control, name: "width" });
+  const height = useWatch({ control: form.control, name: "height" });
+  const glassType = useWatch({ control: form.control, name: "glassType" });
+  const quantity = useWatch({ control: form.control, name: "quantity" });
+  const additionalServices = useWatch({
+    control: form.control,
+    name: "additionalServices",
+  });
 
   // ✅ Get selected glass type object
   const selectedGlassType = glassTypes.find((gt) => gt.id === glassType);
 
-  // ✅ Calculate billable glass area in m² (applying discounts)
-  // This matches the server-side calculation in price-item.ts
-  const glassArea = useMemo(() => {
-    // Apply glass discounts (profiles take space)
-    const effectiveWidthMm = Math.max(Number(width) - model.glassDiscountWidthMm, 0);
-    const effectiveHeightMm = Math.max(Number(height) - model.glassDiscountHeightMm, 0);
-
-    const widthM = effectiveWidthMm / MM_TO_METERS;
-    const heightM = effectiveHeightMm / MM_TO_METERS;
-
-    if (widthM > 0 && heightM > 0) {
-      return widthM * heightM;
-    }
-    return 0;
-  }, [width, height, model.glassDiscountWidthMm, model.glassDiscountHeightMm]);
-
-  // ✅ Infer solution from glass type (replaces manual selection)
-  const { inferredSolution } = useSolutionInference(selectedGlassType ?? null, solutions);
-
-  // Calculate price in real-time with dimension validation
-  const { calculatedPrice, breakdown, error, isCalculating } = usePriceCalculation({
-    additionalServices,
-    glassTypeId: glassType,
+  // ✅ Calculate billable glass area using hook (SRP)
+  const glassArea = useGlassArea({
+    discounts: {
+      heightMm: model.glassDiscountHeightMm,
+      widthMm: model.glassDiscountWidthMm,
+    },
     heightMm: Number(height) || 0,
-    maxHeightMm: model.maxHeightMm,
-    maxWidthMm: model.maxWidthMm,
-    minHeightMm: model.minHeightMm,
-    minWidthMm: model.minWidthMm,
-    modelId: model.id,
     widthMm: Number(width) || 0,
   });
 
-  // ✅ Build detailed price breakdown for popover
-  const priceBreakdown = useMemo(() => {
-    const items: Array<{ amount: number; category: 'model' | 'glass' | 'service' | 'adjustment'; label: string }> = [];
+  // ✅ Infer solution from glass type
+  const { inferredSolution } = useSolutionInference(
+    selectedGlassType ?? null,
+    solutions
+  );
 
-    if (!breakdown) {
-      // Fallback: show base price only
-      items.push({
-        amount: Number(model.basePrice),
-        category: 'model',
-        label: 'Precio base del modelo',
-      });
-      return items;
-    }
+  // Calculate price in real-time with dimension validation
+  const { breakdown, calculatedPrice, error, isCalculating } =
+    usePriceCalculation({
+      additionalServices,
+      colorSurchargePercentage,
+      glassTypeId: glassType,
+      heightMm: Number(height) || 0,
+      maxHeightMm: model.maxHeightMm,
+      maxWidthMm: model.maxWidthMm,
+      minHeightMm: model.minHeightMm,
+      minWidthMm: model.minWidthMm,
+      modelId: model.id,
+      widthMm: Number(width) || 0,
+    });
 
-    // ✅ Use glassArea (with discounts applied) instead of calculating again
-    // This matches server-side calculation in price-item.ts lines 131-142
-    const glassCost = selectedGlassType ? glassArea * selectedGlassType.pricePerSqm : 0;
+  // ✅ Build detailed price breakdown using hook (SRP)
+  const priceBreakdown = usePriceBreakdown({
+    breakdown,
+    glassArea,
+    model,
+    selectedGlassType,
+    services,
+  });
 
-    // Model price (dimPrice includes base + area factor, but NOT glass cost)
-    const modelOnlyPrice = breakdown.dimPrice - glassCost;
+  // ✅ Prepare cart item data using pure function (SRP)
+  const cartItemInput = useMemo(
+    () =>
+      prepareCartItemInput({
+        additionalServiceIds: additionalServices,
+        calculatedPrice,
+        colorId: selectedColorId,
+        colorSurchargePercentage,
+        glassTypeId: glassType,
+        heightMm: Number(height) || 0,
+        inferredSolution,
+        model,
+        quantity: Number(quantity) || 1,
+        selectedGlassType,
+        widthMm: Number(width) || 0,
+      }),
+    [
+      additionalServices,
+      calculatedPrice,
+      selectedColorId,
+      colorSurchargePercentage,
+      glassType,
+      height,
+      inferredSolution,
+      model,
+      quantity,
+      selectedGlassType,
+      width,
+    ]
+  );
 
-    if (modelOnlyPrice > 0) {
-      items.push({
-        amount: modelOnlyPrice,
-        category: 'model',
-        label: 'Precio base del modelo',
-      });
-    }
-
-    // Glass type (show area calculation with discounts applied)
-    if (glassCost > 0 && selectedGlassType) {
-      items.push({
-        amount: glassCost,
-        category: 'glass',
-        label: `Vidrio ${selectedGlassType.name} (${glassArea.toFixed(2)} m²)`,
-      });
-    }
-
-    // Accessories
-    if (breakdown.accPrice > 0) {
-      items.push({
-        amount: breakdown.accPrice,
-        category: 'model',
-        label: 'Accesorios',
-      });
-    }
-
-    // Services
-    if (breakdown.services.length > 0) {
-      const servicesById = services.reduce(
-        (acc, svc) => {
-          acc[svc.id] = svc;
-          return acc;
-        },
-        {} as Record<string, ServiceOutput>
-      );
-
-      for (const svc of breakdown.services) {
-        const serviceData = servicesById[svc.serviceId];
-        if (serviceData) {
-          items.push({
-            amount: svc.amount,
-            category: 'service',
-            label: serviceData.name,
-          });
-        }
-      }
-    }
-
-    // Adjustments
-    if (breakdown.adjustments.length > 0) {
-      for (const adj of breakdown.adjustments) {
-        items.push({
-          amount: adj.amount,
-          category: 'adjustment',
-          label: adj.concept,
-        });
-      }
-    }
-
-    return items;
-  }, [breakdown, model.basePrice, services, glassArea, selectedGlassType]);
-
-  // ✅ Prepare cart item data from form values (using inferred solution)
-  const cartItemInput: CreateCartItemInput & { unitPrice: number } = {
-    additionalServiceIds: additionalServices,
-    glassTypeId: glassType,
-    glassTypeName: selectedGlassType?.name ?? '',
-    heightMm: Number(height) || 0,
-    modelId: model.id,
-    modelName: model.name,
-    quantity: Number(quantity) || 1, // Use form quantity value
-    solutionId: inferredSolution?.id || undefined,
-    solutionName: inferredSolution?.nameEs || undefined,
-    unitPrice: calculatedPrice ?? model.basePrice,
-    widthMm: Number(width) || 0,
-  };
-
-  // ✅ Form submit handler - Add item to cart
+  // ✅ Form submit handler - Simplified using hook (SRP)
   const handleFormSubmit = () => {
-    try {
-      // Add item to cart (client-side)
-      addItem(cartItemInput);
+    const success = addToCart(cartItemInput, model.name);
 
-      // ✅ UX Enhancement: Reset form to default values for next configuration
+    if (success) {
       form.reset(defaultValues);
-
-      // ✅ UX Enhancement: Show success state (scroll handled by useScrollIntoView hook)
       setJustAddedToCart(true);
-
-      // Show success toast
-      toast.success('Item agregado al carrito', {
-        description: `${model.name} ha sido agregado exitosamente`,
-      });
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error && err.message.includes('no puedes agregar más')
-          ? 'Has alcanzado el límite de 20 items en el carrito'
-          : 'No se pudo agregar el item al carrito';
-
-      // Show error toast
-      toast.error('Error al agregar', {
-        description: errorMessage,
-      });
     }
   };
 
   // ✅ Handler to configure another item
   const handleConfigureAnother = () => {
     setJustAddedToCart(false);
+    handleColorChange(undefined, 0);
     form.reset(defaultValues);
-    // Smooth scroll to top for better UX
-    window.scrollTo({ behavior: 'smooth', top: 0 });
+    window.scrollTo({ behavior: "smooth", top: 0 });
   };
+
+  // ✅ Wrapper to integrate color selection with form (Adapter pattern)
+  const handleColorChangeWithForm = (
+    colorId: string | undefined,
+    surchargePercentage: number
+  ) => {
+    handleColorChange(colorId, surchargePercentage);
+    form.setValue("colorId", colorId);
+  };
+
+  // ✅ UX Enhancement: Auto-reset form when user scrolls up after adding to cart
+  useScrollResetForm({
+    isFormSubmitted: justAddedToCart,
+    onReset: handleConfigureAnother,
+    scrollThreshold: 100,
+    successCardRef,
+  });
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)}>
-        {/* ✅ Sticky Price Header - Always visible with config summary */}
-        <StickyPriceHeader
-          basePrice={model.basePrice}
-          breakdown={priceBreakdown}
-          configSummary={{
-            glassTypeName: selectedGlassType?.name,
-            heightMm: Number(height) || undefined,
-            modelName: model.name,
-            solutionName: inferredSolution?.nameEs,
-            widthMm: Number(width) || undefined,
-          }}
-          currency={currency}
-          currentPrice={calculatedPrice ?? model.basePrice}
-        />
+        {/* Main form container for scroll tracking */}
+        <div ref={formContainerRef}>
+          {/* Flexbox layout: 1/3 (sticky) + vertical bar + 2/3 (form) en desktop, stack en mobile */}
+          <div className="flex w-full flex-col gap-6 md:flex-row">
+            {/* Left column: Sticky summary (1/3 width en desktop) - No sticky en mobile para evitar z-index conflicts */}
+            <div className="w-full space-y-4 md:sticky md:top-18 md:w-1/3 md:self-start">
+              <StickyPriceHeader
+                basePrice={model.basePrice}
+                breakdown={priceBreakdown}
+                configSummary={{
+                  glassTypeName: selectedGlassType?.name,
+                  heightMm: Number(height) || undefined,
+                  modelImageUrl: model.imageUrl || undefined,
+                  modelName: model.name,
+                  solutionName: inferredSolution?.nameEs,
+                  widthMm: Number(width) || undefined,
+                }}
+                currency={currency}
+                currentPrice={calculatedPrice ?? model.basePrice}
+              />
+              <div className="hidden lg:block">
+                <QuoteSummary
+                  basePrice={model.basePrice}
+                  calculatedPrice={calculatedPrice}
+                  error={error}
+                  isCalculating={isCalculating}
+                  justAddedToCart={justAddedToCart}
+                />
+              </div>
+            </div>
 
-        <div className="space-y-6 pt-4">
-          <Card className="p-6">
-            <DimensionsSection
-              dimensions={{
-                maxHeight: model.maxHeightMm,
-                maxWidth: model.maxWidthMm,
-                minHeight: model.minHeightMm,
-                minWidth: model.minWidthMm,
-              }}
+            {/* Vertical scroll progress bar - Minimal and subtle */}
+            <VerticalScrollProgress
+              containerRef={formContainerRef}
+              hasColors={hasColors}
+              hasServices={services.length > 0}
+              onActiveStepChange={setActiveFormStep}
+              sectionRefs={sectionRefs}
             />
-          </Card>
 
-          {/* Glass Type Selector with performance bars */}
-          <Card className="p-6">
-            <GlassTypeSelectorSection
-              basePrice={model.basePrice}
-              glassArea={glassArea}
-              glassTypes={glassTypes}
-              selectedSolutionId={inferredSolution?.id}
-            />
-          </Card>
+            {/* Right column: Form sections (2/3 width en desktop) */}
+            <div className="w-full space-y-4 sm:space-y-6 md:w-2/3">
+              <Card
+                className={getCardClassName(activeFormStep, "dimensions")}
+                ref={dimensionsSectionRef}
+              >
+                <DimensionsSection
+                  dimensions={{
+                    maxHeight: model.maxHeightMm,
+                    maxWidth: model.maxWidthMm,
+                    minHeight: model.minHeightMm,
+                    minWidth: model.minWidthMm,
+                  }}
+                />
+              </Card>
+              {/* Color Selector - Only show if model has colors */}
+              {hasColors && (
+                <Card
+                  className={getCardClassName(activeFormStep, "color")}
+                  ref={colorSectionRef}
+                >
+                  <FormSection
+                    // description="Elige el color del perfil (aplica recargo al precio base)"
+                    icon={Palette}
+                    legend="Seleccione un Color"
+                  >
+                    <ColorSelector
+                      modelId={model.id}
+                      onColorChange={handleColorChangeWithForm}
+                    />
+                  </FormSection>
+                </Card>
+              )}
+              {/* Glass Type Selector with performance bars */}
+              <Card
+                className={getCardClassName(activeFormStep, "glassType")}
+                ref={glassTypeSectionRef}
+              >
+                <GlassTypeSelectorSection
+                  basePrice={model.basePrice}
+                  glassTypes={glassTypes}
+                  selectedSolutionId={inferredSolution?.id}
+                />
+              </Card>
 
-          {/* Services Section - Only show if services are available (Don't Make Me Think principle) */}
-          {services.length > 0 && (
-            <Card className="p-6">
-              <ServicesSelectorSection services={services} />
-            </Card>
-          )}
+              {/* Services Section - Only show if services are available (Don't Make Me Think principle) */}
+              <div ref={servicesSectionRef}>
+                {services.length > 0 && (
+                  <Card
+                    className={getCardClassName(activeFormStep, "services")}
+                  >
+                    <ServicesSelectorSection services={services} />
+                  </Card>
+                )}
+              </div>
 
-          <QuoteSummary
-            basePrice={model.basePrice}
-            calculatedPrice={calculatedPrice}
-            currency={currency}
-            error={error}
-            isCalculating={isCalculating}
-            justAddedToCart={justAddedToCart}
-          />
-          {/* ✅ Show success actions after adding to cart */}
-          {justAddedToCart && (
-            <AddedToCartActions
-              modelName={model.name}
-              onConfigureAnother={handleConfigureAnother}
-              ref={successCardRef}
-            />
-          )}
+              {/* Quote Summary with submit button - Duplicate for better UX at end of form */}
+              <QuoteSummary
+                basePrice={model.basePrice}
+                calculatedPrice={calculatedPrice}
+                error={error}
+                isCalculating={isCalculating}
+                justAddedToCart={justAddedToCart}
+              />
+
+              {/* ✅ Show success actions after adding to cart */}
+              {justAddedToCart && (
+                <AddedToCartActions
+                  modelName={model.name}
+                  onConfigureAnotherAction={handleConfigureAnother}
+                  ref={successCardRef}
+                />
+              )}
+            </div>
+          </div>
         </div>
       </form>
     </Form>

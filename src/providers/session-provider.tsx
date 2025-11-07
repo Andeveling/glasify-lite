@@ -1,42 +1,28 @@
 /**
  * Session Provider
  *
- * Wraps application with NextAuth SessionProvider for client-side session access.
- * Required for useSession() hook to work in Client Components.
+ * Wraps application with Better Auth for client-side session access.
+ * Better Auth uses nano-store internally, so no additional provider wrapper is needed.
+ * The auth-client is already reactive and will update across the app.
  *
  * @module providers/session-provider
  */
 
-'use client';
-
-import type { Session } from 'next-auth';
-import { SessionProvider as NextAuthSessionProvider } from 'next-auth/react';
+"use client";
 
 type SessionProviderProps = {
   children: React.ReactNode;
-  session?: Session | null;
 };
 
 /**
- * Session Provider Component
+ * Session Provider Component (Deprecated - kept for compatibility)
  *
- * Wraps children with NextAuth SessionProvider.
- * Allows client components to access session via useSession() hook.
- *
- * @example
- * ```tsx
- * // In root layout or route layout
- * import { SessionProvider } from '@/providers/session-provider';
- *
- * export default function Layout({ children }) {
- *   return (
- *     <SessionProvider>
- *       {children}
- *     </SessionProvider>
- *   );
- * }
- * ```
+ * Better Auth manages session state internally via nano-store.
+ * This provider is now a simple pass-through component.
+ * useSession() from auth-client handles reactive session updates.
  */
-export function SessionProvider({ children, session }: SessionProviderProps) {
-  return <NextAuthSessionProvider session={session}>{children}</NextAuthSessionProvider>;
+export function SessionProvider({ children }: SessionProviderProps) {
+  // Better Auth handles session state internally via nano-store
+  // No external provider wrapper needed
+  return children;
 }

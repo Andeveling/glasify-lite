@@ -13,22 +13,27 @@
  * - Main component orchestrates composition
  */
 
-'use client';
+"use client";
 
-import { FileText, Lightbulb, Star, ThermometerSun } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Form } from '@/components/ui/form';
-import type { GetGlassTypeByIdOutput } from '@/lib/validations/admin/glass-type.schema';
-import { useGlassTypeForm } from '../_hooks/use-glass-type-form';
-import { FormActions } from './form-actions';
-import { BasicInfoSection } from './sections/basic-info-section';
-import { CharacteristicsSection } from './sections/characteristics-section';
-import { SolutionsSection } from './sections/solutions-section';
-import { ThermalPropertiesSection } from './sections/thermal-properties-section';
+import { FileText, Lightbulb, Star, ThermometerSun } from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Form } from "@/components/ui/form";
+import type { GetGlassTypeByIdOutput } from "@/lib/validations/admin/glass-type.schema";
+import { useGlassTypeForm } from "../_hooks/use-glass-type-form";
+import { FormActions } from "./form-actions";
+import { BasicInfoSection } from "./sections/basic-info-section";
+import { CharacteristicsSection } from "./sections/characteristics-section";
+import { SolutionsSection } from "./sections/solutions-section";
+import { ThermalPropertiesSection } from "./sections/thermal-properties-section";
 
 type GlassTypeFormProps = {
-  mode: 'create' | 'edit';
+  mode: "create" | "edit";
   defaultValues?: GetGlassTypeByIdOutput;
 };
 
@@ -47,7 +52,11 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
     <Form {...form}>
       {/* @ts-expect-error - Type mismatch between Zod schema and RHF Control types */}
       <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
-        <Accordion className="space-y-4" defaultValue={['basic']} type="multiple">
+        <Accordion
+          className="space-y-4"
+          defaultValue={["basic"]}
+          type="multiple"
+        >
           {/* Basic Information Section */}
           <AccordionItem className="rounded-lg border" value="basic">
             <AccordionTrigger className="rounded-lg bg-gradient-to-r from-muted to-muted/50 px-4 py-3 transition-colors hover:bg-muted/80 hover:no-underline">
@@ -104,7 +113,11 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
         </Accordion>
 
         {/* Form Actions */}
-        <FormActions isLoading={isLoading} mode={mode} onCancel={() => router.back()} />
+        <FormActions
+          isLoading={isLoading}
+          mode={mode}
+          onCancel={() => router.back()}
+        />
       </form>
     </Form>
   );

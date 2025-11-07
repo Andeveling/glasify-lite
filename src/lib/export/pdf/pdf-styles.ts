@@ -5,35 +5,35 @@
  * Used by QuotePDFDocument component.
  */
 
-import { StyleSheet } from '@react-pdf/renderer';
+import { StyleSheet } from "@react-pdf/renderer";
 
 /**
  * PDF Color Palette
  */
 export const pdfColors = {
   // Neutral colors
-  black: '#000000',
-  error: '#ef4444', // Red-500
-  gray50: '#f9fafb',
-  gray100: '#f3f4f6',
-  gray200: '#e5e7eb',
-  gray300: '#d1d5db',
-  gray400: '#9ca3af',
-  gray500: '#6b7280',
-  gray600: '#4b5563',
-  gray700: '#374151',
-  gray800: '#1f2937',
-  gray900: '#111827',
-  info: '#3b82f6', // Blue-500
+  black: "#000000",
+  error: "#ef4444", // Red-500
+  gray50: "#f9fafb",
+  gray100: "#f3f4f6",
+  gray200: "#e5e7eb",
+  gray300: "#d1d5db",
+  gray400: "#9ca3af",
+  gray500: "#6b7280",
+  gray600: "#4b5563",
+  gray700: "#374151",
+  gray800: "#1f2937",
+  gray900: "#111827",
+  info: "#3b82f6", // Blue-500
   // Primary colors
-  primary: '#2563eb', // Blue-600
-  primaryDark: '#1e40af', // Blue-800
-  primaryLight: '#dbeafe', // Blue-100
+  primary: "#2563eb", // Blue-600
+  primaryDark: "#1e40af", // Blue-800
+  primaryLight: "#dbeafe", // Blue-100
 
   // Semantic colors
-  success: '#10b981', // Green-500
-  warning: '#f59e0b', // Amber-500
-  white: '#ffffff',
+  success: "#10b981", // Green-500
+  warning: "#f59e0b", // Amber-500
+  white: "#ffffff",
 } as const;
 
 /**
@@ -46,9 +46,9 @@ export const pdfFonts = {
     tight: 1.2,
   },
   sizes: {
-    '2xl': 18,
-    '3xl': 24,
-    '4xl': 32,
+    "2xl": 18,
+    "3xl": 24,
+    "4xl": 32,
     base: 12,
     lg: 14,
     sm: 10,
@@ -67,8 +67,8 @@ export const pdfFonts = {
  * PDF Spacing
  */
 export const pdfSpacing = {
-  '2xl': 32,
-  '3xl': 48,
+  "2xl": 32,
+  "3xl": 48,
   lg: 16,
   md: 12,
   sm: 8,
@@ -99,23 +99,23 @@ export const pdfLayout = {
  * PDF Styles
  */
 export const pdfStyles = StyleSheet.create({
-  colDescription: { width: '25%' },
-  colDimensions: { width: '15%' },
-
-  // Column Widths
-  colItem: { width: '30%' },
-  colQuantity: { width: '10%' },
-  colSubtotal: { width: '10%' },
-  colUnitPrice: { width: '10%' },
+  // Column Widths - Optimized for better text wrapping and readability
+  // Total: 100% (20% + 20% + 15% + 12% + 16% + 17%)
+  colDescription: { width: "20%" },
+  colDimensions: { width: "15%" },
+  colItem: { width: "20%" },
+  colQuantity: { width: "12%" },
+  colSubtotal: { width: "17%" },
+  colUnitPrice: { width: "16%" },
   companyLogo: {
     height: 40,
-    objectFit: 'contain',
+    objectFit: "contain",
     width: 120,
   },
   companyName: {
     color: pdfColors.primary,
-    fontSize: pdfFonts.sizes['2xl'],
-    fontWeight: 'bold',
+    fontSize: pdfFonts.sizes["2xl"],
+    fontWeight: "bold",
   },
 
   // Footer
@@ -123,40 +123,40 @@ export const pdfStyles = StyleSheet.create({
     borderTopColor: pdfColors.gray300,
     borderTopWidth: 1,
     bottom: 30,
-    flexDirection: 'column',
+    flexDirection: "column",
     gap: pdfSpacing.sm,
     left: 40,
     paddingTop: pdfSpacing.md,
-    position: 'absolute',
+    position: "absolute",
     right: 40,
   },
   footerBold: {
     color: pdfColors.gray800,
-    fontWeight: 'semibold',
+    fontWeight: "semibold",
   },
   footerText: {
     color: pdfColors.gray600,
     fontSize: pdfFonts.sizes.xs,
-    textAlign: 'center',
+    textAlign: "center",
   },
 
   // Header
   header: {
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
     borderBottomColor: pdfColors.primary,
     borderBottomWidth: 2,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: pdfSpacing.xl,
     paddingBottom: pdfSpacing.md,
   },
   headerLeft: {
-    flexDirection: 'column',
+    flexDirection: "column",
     gap: pdfSpacing.xs,
   },
   headerRight: {
-    alignItems: 'flex-end',
-    flexDirection: 'column',
+    alignItems: "flex-end",
+    flexDirection: "column",
     gap: pdfSpacing.xs,
   },
   mb: {
@@ -169,8 +169,8 @@ export const pdfStyles = StyleSheet.create({
   page: {
     backgroundColor: pdfColors.white,
     color: pdfColors.gray900,
-    flexDirection: 'column',
-    fontFamily: 'Helvetica',
+    flexDirection: "column",
+    fontFamily: "Helvetica",
     fontSize: pdfFonts.sizes.base,
     padding: pdfLayout.page.padding,
     paddingBottom: pdfLayout.page.paddingBottom,
@@ -179,20 +179,20 @@ export const pdfStyles = StyleSheet.create({
   pageNumber: {
     color: pdfColors.gray500,
     fontSize: pdfFonts.sizes.xs,
-    textAlign: 'center',
+    textAlign: "center",
   },
   projectInfo: {
-    flexDirection: 'column',
+    flexDirection: "column",
     gap: pdfSpacing.xs,
   },
   projectLabel: {
     color: pdfColors.gray700,
     fontSize: pdfFonts.sizes.sm,
-    fontWeight: 'semibold',
+    fontWeight: "semibold",
     minWidth: 80,
   },
   projectRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: pdfSpacing.sm,
   },
 
@@ -215,53 +215,61 @@ export const pdfStyles = StyleSheet.create({
   quoteNumber: {
     color: pdfColors.gray800,
     fontSize: pdfFonts.sizes.lg,
-    fontWeight: 'semibold',
+    fontWeight: "semibold",
   },
   sectionTitle: {
     color: pdfColors.gray900,
     fontSize: pdfFonts.sizes.lg,
-    fontWeight: 'semibold',
+    fontWeight: "semibold",
     marginBottom: pdfSpacing.sm,
   },
   table: {
     borderColor: pdfColors.gray300,
     borderRadius: pdfLayout.borders.radius,
     borderWidth: 1,
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
   },
   tableCell: {
     color: pdfColors.gray900,
+    flex: 1,
     fontSize: pdfFonts.sizes.sm,
     padding: pdfSpacing.xs,
   },
   tableCellCenter: {
-    textAlign: 'center',
+    textAlign: "center",
   },
   tableCellLeft: {
-    textAlign: 'left',
+    textAlign: "left",
   },
   tableCellRight: {
-    textAlign: 'right',
+    textAlign: "right",
   },
   tableHeader: {
     backgroundColor: pdfColors.primary,
     borderTopLeftRadius: pdfLayout.borders.radius,
     borderTopRightRadius: pdfLayout.borders.radius,
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row",
+    gap: 0,
     padding: pdfSpacing.sm,
   },
   tableHeaderCell: {
+    alignItems: "center",
     color: pdfColors.white,
+    display: "flex",
+    flex: 1,
     fontSize: pdfFonts.sizes.sm,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    justifyContent: "center",
+    textAlign: "center",
   },
   tableRow: {
+    alignItems: "flex-start",
     borderBottomColor: pdfColors.gray200,
     borderBottomWidth: 1,
-    flexDirection: 'row',
-    minHeight: 40,
+    flexDirection: "row",
+    minHeight: 50,
     padding: pdfSpacing.sm,
   },
   tableRowEven: {
@@ -275,7 +283,7 @@ export const pdfStyles = StyleSheet.create({
 
   // Utility Classes
   textBold: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   textGray: {
     color: pdfColors.gray600,
@@ -284,12 +292,12 @@ export const pdfStyles = StyleSheet.create({
     color: pdfColors.primary,
   },
   textSemibold: {
-    fontWeight: 'semibold',
+    fontWeight: "semibold",
   },
   totalLabel: {
     color: pdfColors.gray900,
     fontSize: pdfFonts.sizes.lg,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   totalRow: {
     borderBottomColor: pdfColors.primary,
@@ -303,25 +311,25 @@ export const pdfStyles = StyleSheet.create({
   totalsRow: {
     borderBottomColor: pdfColors.gray200,
     borderBottomWidth: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingVertical: pdfSpacing.xs,
   },
 
   // Totals Section
   totalsSection: {
-    marginLeft: 'auto',
+    marginLeft: "auto",
     marginTop: pdfSpacing.lg,
-    width: '40%',
+    width: "40%",
   },
   totalsValue: {
     color: pdfColors.gray900,
     fontSize: pdfFonts.sizes.base,
-    fontWeight: 'semibold',
+    fontWeight: "semibold",
   },
   totalValue: {
     color: pdfColors.primary,
     fontSize: pdfFonts.sizes.lg,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });

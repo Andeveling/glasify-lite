@@ -25,14 +25,14 @@
  * @see REQ-001: URL-based table state
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 /**
  * Default pagination constants
  */
 const DEFAULT_PAGE = 1;
 const DEFAULT_PAGE_SIZE = 20;
-const DEFAULT_SORT_ORDER = 'desc';
+const DEFAULT_SORT_ORDER = "desc";
 
 /**
  * Base table parameters schema
@@ -47,7 +47,7 @@ const baseTableParamsSchema = z.object({
 
   // Sorting
   sortBy: z.string().optional(),
-  sortOrder: z.enum(['asc', 'desc']).default(DEFAULT_SORT_ORDER),
+  sortOrder: z.enum(["asc", "desc"]).default(DEFAULT_SORT_ORDER),
 });
 
 /**
@@ -58,7 +58,7 @@ export type BaseTableParams = z.infer<typeof baseTableParamsSchema>;
 /**
  * Parser configuration options
  */
-export interface TableParserConfig {
+export type TableParserConfig = {
   /**
    * Default number of items per page
    */
@@ -78,7 +78,7 @@ export interface TableParserConfig {
    * Additional filter schemas to merge with base schema
    */
   filterSchema?: z.ZodObject<z.ZodRawShape>;
-}
+};
 
 /**
  * Parse and validate table search parameters from URL
@@ -87,11 +87,20 @@ export interface TableParserConfig {
  * @param config - Parser configuration
  * @returns Validated and sanitized table parameters
  */
-export async function parseTableSearchParams<T extends z.ZodRawShape = Record<string, never>>(
-  searchParams: Record<string, string | string[] | undefined> | Promise<Record<string, string | string[] | undefined>>,
+export async function parseTableSearchParams<
+  T extends z.ZodRawShape = Record<string, never>,
+>(
+  searchParams:
+    | Record<string, string | string[] | undefined>
+    | Promise<Record<string, string | string[] | undefined>>,
   config: TableParserConfig = {}
 ): Promise<BaseTableParams & z.infer<z.ZodObject<T>>> {
-  const { defaultPageSize = DEFAULT_PAGE_SIZE, maxPageSize = 100, allowedSortFields, filterSchema } = config;
+  const {
+    defaultPageSize = DEFAULT_PAGE_SIZE,
+    maxPageSize = 100,
+    allowedSortFields,
+    filterSchema,
+  } = config;
 
   // Await searchParams if it's a Promise (Next.js 15 async searchParams)
   const params = await searchParams;
@@ -109,7 +118,12 @@ export async function parseTableSearchParams<T extends z.ZodRawShape = Record<st
   // Build schema with configuration
   // biome-ignore lint/suspicious/noExplicitAny: Dynamic schema building requires any
   let schema: any = baseTableParamsSchema.extend({
-    pageSize: z.coerce.number().int().positive().max(maxPageSize).default(defaultPageSize),
+    pageSize: z.coerce
+      .number()
+      .int()
+      .positive()
+      .max(maxPageSize)
+      .default(defaultPageSize),
   });
 
   // Add allowed sort field validation
@@ -153,11 +167,13 @@ export function createFilterSchema<T extends z.ZodRawShape>(shape: T) {
  * @param params - Validated table parameters
  * @returns URLSearchParams object
  */
-export function buildSearchParams(params: Partial<BaseTableParams & Record<string, unknown>>): URLSearchParams {
+export function buildSearchParams(
+  params: Partial<BaseTableParams & Record<string, unknown>>
+): URLSearchParams {
   const searchParams = new URLSearchParams();
 
   for (const [key, value] of Object.entries(params)) {
-    if (value !== undefined && value !== null && value !== '') {
+    if (value !== undefined && value !== null && value !== "") {
       searchParams.set(key, String(value));
     }
   }
@@ -172,7 +188,10 @@ export function buildSearchParams(params: Partial<BaseTableParams & Record<strin
  * @param pageSize - Items per page
  * @returns Total number of pages
  */
-export function calculateTotalPages(totalCount: number, pageSize: number): number {
+export function calculateTotalPages(
+  totalCount: number,
+  pageSize: number
+): number {
   return Math.ceil(totalCount / pageSize);
 }
 

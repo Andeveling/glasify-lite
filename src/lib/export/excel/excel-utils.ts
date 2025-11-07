@@ -63,7 +63,7 @@ export function getTotalFormula(subtotalCell: string, taxCell: string): string {
  * getColumnLetter(26) // Returns: "AA"
  */
 export function getColumnLetter(index: number): string {
-  let column = '';
+  let column = "";
   let idx = index;
 
   while (idx >= 0) {
@@ -93,7 +93,12 @@ export function getCellReference(rowIndex: number, colIndex: number): string {
  * @example
  * getRangeReference(0, 0, 4, 2) // Returns: "A1:C5"
  */
-export function getRangeReference(startRow: number, startCol: number, endRow: number, endCol: number): string {
+export function getRangeReference(
+  startRow: number,
+  startCol: number,
+  endRow: number,
+  endCol: number
+): string {
   const startCell = getCellReference(startRow, startCol);
   const endCell = getCellReference(endRow, endCol);
   return `${startCell}:${endCell}`;
@@ -107,7 +112,11 @@ export function getRangeReference(startRow: number, startCol: number, endRow: nu
  * @param maxWidth - Maximum width
  * @returns Optimal column width
  */
-export function calculateColumnWidth(content: string, minWidth = 10, maxWidth = 50): number {
+export function calculateColumnWidth(
+  content: string,
+  minWidth = 10,
+  maxWidth = 50
+): number {
   // Approximate character width (1 char ≈ 1.2 width units in Excel)
   const approximateWidth = content.length * 1.2;
   return Math.max(minWidth, Math.min(approximateWidth, maxWidth));
@@ -122,23 +131,23 @@ export function sanitizeExcelText(text: string): string {
 
   // Prevent formula injection
   if (
-    sanitized.startsWith('=') ||
-    sanitized.startsWith('+') ||
-    sanitized.startsWith('-') ||
-    sanitized.startsWith('@')
+    sanitized.startsWith("=") ||
+    sanitized.startsWith("+") ||
+    sanitized.startsWith("-") ||
+    sanitized.startsWith("@")
   ) {
     sanitized = `'${sanitized}`;
   }
 
   // biome-ignore lint/suspicious/noControlCharactersInRegex: Control characters removal is intentional for Excel security
-  return sanitized.replace(/[\u0000-\u001F\u007F-\u009F]/g, '').trim();
+  return sanitized.replace(/[\u0000-\u001F\u007F-\u009F]/g, "").trim();
 }
 
 /**
  * Format date for Excel
  */
 export function formatDateForExcel(date: string | Date): Date {
-  return typeof date === 'string' ? new Date(date) : date;
+  return typeof date === "string" ? new Date(date) : date;
 }
 
 /**
@@ -148,7 +157,10 @@ export function formatDateForExcel(date: string | Date): Date {
  * @param unitPriceCell - Cell reference for unit price (e.g., "E5")
  * @returns Excel formula string
  */
-export function getItemSubtotalFormula(quantityCell: string, unitPriceCell: string): string {
+export function getItemSubtotalFormula(
+  quantityCell: string,
+  unitPriceCell: string
+): string {
   return `=${quantityCell}*${unitPriceCell}`;
 }
 
@@ -158,10 +170,10 @@ export function getItemSubtotalFormula(quantityCell: string, unitPriceCell: stri
 export function applyNumberFormat(format: string, value: number): string {
   // This is just for documentation - Excel handles actual formatting
   // Return string representation for preview
-  if (format.includes('$')) {
-    return `$${value.toLocaleString('es-CO')}`;
+  if (format.includes("$")) {
+    return `$${value.toLocaleString("es-CO")}`;
   }
-  return value.toLocaleString('es-CO');
+  return value.toLocaleString("es-CO");
 }
 
 /**
@@ -170,7 +182,7 @@ export function applyNumberFormat(format: string, value: number): string {
  */
 export function sanitizeWorksheetName(name: string, maxLength = 31): string {
   return name
-    .replace(/[/\\?*[\]]/g, '') // Remove invalid characters
+    .replace(/[/\\?*[\]]/g, "") // Remove invalid characters
     .slice(0, maxLength) // Limit length
     .trim();
 }
