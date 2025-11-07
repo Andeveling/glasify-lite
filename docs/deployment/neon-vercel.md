@@ -50,6 +50,29 @@ Neon recomienda usar PgBouncer + `sslmode=require` en producción.
 
 Referencias oficiales: https://neon.tech/docs/guides/prisma
 
+### Configuración MCP Server Neon (Desarrollo Local)
+
+Si usas el MCP server de Neon en VS Code, puedes gestionar la base de datos directamente desde el editor:
+
+1. **Instala la extensión MCP** en VS Code
+2. **Conecta a tu branch de Neon**:
+   - Organization: Tu organización
+   - Project: `vitro-rojas` (o el nombre de tu proyecto)
+   - Branch: `development` (o el branch que uses)
+3. **Copia el LOCAL CONNECTION STRING** desde el panel MCP
+4. **Actualiza `.env` local**:
+   ```bash
+   DATABASE_URL="postgresql://neon:mpg@localhost:5432/<database_name>"
+   ```
+
+**Ventajas del MCP Server**:
+- Desarrollo offline (proxy local)
+- Exploración de schema visual
+- Queries directas desde VS Code
+- Branch switching sin cambiar DATABASE_URL
+
+**Nota**: El MCP server crea un proxy local en `localhost:5432`. No uses esto en producción; solo para desarrollo.
+
 ## Paso 2: Configurar Prisma con Neon
 
 El proyecto ya usa `prisma.config.ts` para cargar `.env` y define el comando de seed:
@@ -64,6 +87,35 @@ export default defineConfig({
 ```
 
 Asegúrate de tener `.env` local con `DATABASE_URL` apuntando a Neon (o a una DB local si prefieres desarrollar offline).
+
+### Workflow con MCP Server + Prisma
+
+**Desarrollo con branch local (MCP)**:
+
+```bash
+# 1. Conecta el MCP server al branch 'development' en VS Code
+# 2. Copia la connection string local del panel MCP
+# 3. Actualiza .env con la URL local
+echo 'DATABASE_URL="postgresql://neon:mpg@localhost:5432/neondb"' > .env
+
+# 4. Genera el cliente Prisma
+pnpm prisma generate
+
+# 5. Aplica migraciones (en el branch remoto vía proxy)
+pnpm db:migrate
+
+# 6. Seed datos de desarrollo
+pnpm seed:minimal
+```
+
+**Cambiar entre branches de Neon**:
+
+1. En el panel MCP, selecciona otro branch (ej: `staging`, `production`)
+2. Copia la nueva connection string
+3. Actualiza `DATABASE_URL` en `.env`
+4. Ejecuta `pnpm prisma generate` si el schema cambió
+
+**Ventaja**: Trabajas con datos reales de Neon sin exponer credenciales productivas.
 
 ## Paso 3: Ejecutar migraciones y seed (local o CI)
 
@@ -153,10 +205,45 @@ Ejecuta de forma controlada (por ejemplo, solo una vez tras crear la base de dat
 
 ## Troubleshooting
 
-- Error TLS/SSL: agrega `sslmode=require` a `DATABASE_URL`
-- Timeouts: agrega `pgbouncer=true&connect_timeout=10`
-- Migraciones no aplican: asegúrate de usar `prisma migrate deploy` (no `db push`) y que `DATABASE_URL` apunte a la base correcta
-- 500 en producción: revisa variables de entorno en Vercel (faltantes o mal escritas)
+### Errores comunes de conexión
+
+- **Error TLS/SSL**: agrega `sslmode=require` a `DATABASE_URL`
+- **Timeouts**: agrega `pgbouncer=true&connect_timeout=10`
+- **Migraciones no aplican**: asegúrate de usar `prisma migrate deploy` (no `db push`) y que `DATABASE_URL` apunte a la base correcta
+- **500 en producción**: revisa variables de entorno en Vercel (faltantes o mal escritas)
+
+### Troubleshooting MCP Server
+
+**Error "Could not connect to branch"**:
+1. Verifica que el proyecto y branch existen en Neon
+2. Revisa credenciales de la organización en VS Code
+3. Reinicia la conexión MCP desde el panel
+
+**Error "Connection refused localhost:5432"**:
+1. Asegúrate de que el MCP server esté conectado (estado verde)
+2. Verifica que no haya otro servicio usando el puerto 5432
+3. Desconecta y reconecta el MCP server
+
+**Migraciones fallan con MCP server**:
+1. El MCP proxy puede tener limitaciones con comandos DDL complejos
+2. Para migraciones críticas, usa la connection string directa de Neon
+3. Ejemplo:
+   ```bash
+   # Usa URL directa para migraciones
+   DATABASE_URL="postgresql://user:pass@ep-xxx.us-east-2.aws.neon.tech/neondb?sslmode=require" pnpm db:migrate
+   ```
+
+**Schema desincronizado entre MCP y Neon**:
+1. Refresca la conexión en el panel MCP (botón de actualizar)
+2. Ejecuta `pnpm prisma generate` para regenerar el cliente
+3. Si persiste, desconecta y reconecta al branch correcto
+
+### Mejores prácticas con MCP
+
+- Usa MCP server para desarrollo y exploración rápida
+- Para migraciones productivas, usa la URL directa de Neon
+- Mantén un branch `development` separado en Neon para no afectar producción
+- Cambia de branch según el entorno (dev/staging/prod) usando el panel MCP
 
 ## Anexos
 
