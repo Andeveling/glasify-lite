@@ -2,7 +2,7 @@ import type { GlassType, Model, Prisma, ProfileSupplier } from "@prisma/client";
 import { z } from "zod";
 import logger from "@/lib/logger";
 import { colorsRouter } from "@/server/api/routers/admin/colors"; // ✅ Clean architecture
-import { galleryRouter } from "@/server/api/routers/admin/gallery/gallery";
+import { galleryRouter } from "@/server/api/routers/admin/gallery/gallery.router"; // ✅ Clean architecture (centralized logic)
 import { glassSolutionRouter } from "@/server/api/routers/admin/glass-solution";
 import { glassSupplierRouter } from "@/server/api/routers/admin/glass-supplier"; // ✅ Clean architecture
 import { glassTypeRouter } from "@/server/api/routers/admin/glass-type/glass-type.router"; // ✅ Clean architecture (Drizzle ORM)
