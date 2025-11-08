@@ -208,7 +208,7 @@ export const quoteDetailSchema = z.object({
   contactPhone: z.string().nullable(),
   createdAt: z.date(),
   currency: z.string(),
-  id: z.string().cuid(),
+  id: z.cuid(),
   isExpired: z.boolean(),
   itemCount: z.number().int().nonnegative(),
   items: z.array(quoteItemDetailSchema),

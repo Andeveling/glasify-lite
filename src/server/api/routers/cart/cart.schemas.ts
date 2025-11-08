@@ -8,122 +8,96 @@
  */
 
 import { z } from "zod";
+import {
+  createSelectSchema,
+  createInsertSchema,
+} from "drizzle-zod";
+import { quoteItems } from "@/server/db/schema";
 
 // ============================================================================
-// Constants
+// HELPER SCHEMAS
 // ============================================================================
 
 const MAX_ITEM_NAME_LENGTH = 50;
 
 // ============================================================================
-// Input Schemas
+// DATABASE SCHEMAS
 // ============================================================================
+export const SelectCartItemSchema = createSelectSchema(quoteItems, {
+  id: z.string().cuid2(),
+  quoteId: z.string().cuid2(),
+  modelId: z.string().cuid2(),
+  glassTypeId: z.string().cuid2(),
+  colorId: z.string().cuid2().optional().nullable(),
+});
 
-/**
- * Add item to cart
- *
- * Used for cart add operations
- */
-export const addToCartInput = z.object({
-  additionalServiceIds: z.array(z.string().cuid()).default([]),
-  glassTypeId: z.string().cuid("ID del tipo de vidrio debe ser válido"),
-  glassTypeName: z.string().min(1, "Nombre del tipo de vidrio es requerido"),
+export const InsertCartItemSchema = createInsertSchema(quoteItems, {
+  id: z.string().cuid2(),
+  quoteId: z.string().cuid2(),
+  modelId: z.string().cuid2(),
+  glassTypeId: z.string().cuid2(),
+  colorId: z.string().cuid2().optional().nullable(),
   heightMm: z.number().int().positive("Alto debe ser positivo"),
-  modelId: z.string().cuid("ID del modelo debe ser válido"),
-  modelName: z.string().min(1, "Nombre del modelo es requerido"),
-  quantity: z.number().int().positive("Cantidad debe ser positiva").default(1),
-  solutionId: z.string().cuid().optional(),
-  solutionName: z.string().optional(),
   widthMm: z.number().int().positive("Ancho debe ser positivo"),
+  quantity: z.number().int().positive("Cantidad debe ser positiva").default(1),
+  name: z.string().min(1, "Nombre es requerido").max(MAX_ITEM_NAME_LENGTH),
 });
-
-export type AddToCartInput = z.infer<typeof addToCartInput>;
-
-/**
- * Update cart item (name or quantity)
- */
-export const updateCartItemInput = z
-  .object({
-    itemId: z.string().cuid("ID del item debe ser válido"),
-    name: z
-      .string()
-      .min(1, "Nombre es requerido")
-      .max(MAX_ITEM_NAME_LENGTH, "Nombre muy largo")
-      .optional(),
-    quantity: z
-      .number()
-      .int()
-      .positive("Cantidad debe ser positiva")
-      .optional(),
-  })
-  .refine((data) => data.name !== undefined || data.quantity !== undefined, {
-    message: "Debe proporcionar nombre o cantidad para actualizar",
-  });
-
-export type UpdateCartItemInput = z.infer<typeof updateCartItemInput>;
-
-/**
- * Remove item from cart
- */
-export const removeFromCartInput = z.object({
-  itemId: z.string().cuid("ID del item debe ser válido"),
-});
-
-export type RemoveFromCartInput = z.infer<typeof removeFromCartInput>;
-
-/**
- * Clear entire cart
- */
-export const clearCartInput = z.object({
-  confirm: z.literal(true).refine((val) => val === true, {
-    message: "Debe confirmar antes de vaciar el carrito",
-  }),
-});
-
-export type ClearCartInput = z.infer<typeof clearCartInput>;
 
 // ============================================================================
-// Output Schemas
+// INPUT SCHEMAS
 // ============================================================================
 
-/**
- * Cart item structure (matches client-side CartItem interface)
- */
-export const cartItemSchema = z.object({
-  additionalServiceIds: z.array(z.string().cuid()),
-  createdAt: z.string().datetime(),
-  glassTypeId: z.string().cuid(),
-  glassTypeName: z.string(),
-  heightMm: z.number().int().positive(),
-  id: z.string().cuid(),
-  modelId: z.string().cuid(),
-  modelName: z.string(),
-  name: z.string(),
-  quantity: z.number().int().positive(),
+export const addToCartInput = InsertCartItemSchema.pick({
+  modelId: true,
+  glassTypeId: true,
+  heightMm: true,
+  widthMm: true,
+  quantity: true,
+  name: true,
+  colorId: true,
+}).extend({
+  additionalServiceIds: z.array(z.string().cuid()).default([]),
   solutionId: z.string().cuid().optional(),
-  solutionName: z.string().optional(),
+});
+
+export const updateCartItemInput = InsertCartItemSchema.pick({
+  id: true,
+  name: true,
+  quantity: true,
+}).partial().required({
+  id: true,
+});
+
+export const removeFromCartInput = InsertCartItemSchema.pick({
+  id: true,
+});
+
+export const clearCartInput = z.object({});
+
+// ============================================================================
+// OUTPUT SCHEMAS
+// ============================================================================
+
+export const CartItemOutput = SelectCartItemSchema.extend({
   subtotal: z.number().nonnegative(),
   unitPrice: z.number().nonnegative(),
-  widthMm: z.number().int().positive(),
+  modelName: z.string(),
+  glassTypeName: z.string(),
+  solutionName: z.string().optional(),
 });
 
-export type CartItemSchema = z.infer<typeof cartItemSchema>;
-
-/**
- * Cart operation response
- * Uses discriminated union for success/error states
- */
-export const cartActionResponse = z.discriminatedUnion("success", [
+export const CartActionResponse = z.discriminatedUnion("success", [
   z.object({
+    success: z.literal(true),
     data: z.object({
-      item: cartItemSchema.optional(),
+      item: CartItemOutput.optional(),
+      items: z.array(CartItemOutput).optional(),
       itemCount: z.number().int().nonnegative().optional(),
-      items: z.array(cartItemSchema).optional(),
       total: z.number().nonnegative().optional(),
     }),
-    success: z.literal(true),
   }),
   z.object({
+    success: z.literal(false),
     error: z.object({
       code: z.enum([
         "VALIDATION_ERROR",
@@ -133,8 +107,12 @@ export const cartActionResponse = z.discriminatedUnion("success", [
       ]),
       message: z.string(),
     }),
-    success: z.literal(false),
   }),
 ]);
 
-export type CartActionResponse = z.infer<typeof cartActionResponse>;
+export type AddToCartInput = z.infer<typeof addToCartInput>;
+export type UpdateCartItemInput = z.infer<typeof updateCartItemInput>;
+export type RemoveFromCartInput = z.infer<typeof removeFromCartInput>;
+export type ClearCartInput = z.infer<typeof clearCartInput>;
+export type CartItemSchema = z.infer<typeof CartItemOutput>;
+export type CartActionResponse = z.infer<typeof CartActionResponse>;

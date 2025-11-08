@@ -2,9 +2,7 @@
  * Dashboard tRPC Router
  * Provides metrics and analytics for dashboard views
  */
-
 import { and, eq, gte, lte, type SQLWrapper } from "drizzle-orm";
-import { z } from "zod";
 import logger from "@/lib/logger";
 import {
   glassTypes,
@@ -25,6 +23,14 @@ import {
   groupQuotesByPriceRange,
 } from "@/server/services/dashboard-metrics";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import {
+  CatalogAnalyticsOutput,
+  getDashboardPeriodInput,
+  MonetaryMetricsOutput,
+  PriceRangesOutput,
+  QuotesMetricsOutput,
+  QuotesTrendOutput,
+} from "./dashboard/dashboard.schemas";
 
 // Time conversion constants
 const SECONDS_PER_MINUTE = 60;
@@ -35,29 +41,26 @@ const MS_PER_DAY =
   MS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY;
 
 /**
- * Helper to convert Drizzle decimal strings to Prisma-like objects
- * Drizzle returns decimal fields as strings, but services expect objects with toNumber()
+ * Helper to convert Drizzle decimal strings to service-compatible objects.
+ * Drizzle returns decimal fields as strings, but services expect objects with a `toNumber()` method.
  */
-function mapDecimalString(value: string): { toNumber: () => number } {
-  return {
-    toNumber: () => Number.parseFloat(value),
-  };
-}
+const mapDecimalString = (value: string): { toNumber: () => number } => ({
+  toNumber: () => Number.parseFloat(value),
+});
 
 /**
- * Helper to convert array of Drizzle quote objects to service-compatible format
+ * Helper to convert an array of Drizzle quote objects to a service-compatible format.
  */
-function mapQuotesTotalForService(
+const mapQuotesTotalForService = (
   quoteData: Array<{ total: string }>
-): Array<{ total: { toNumber: () => number } }> {
-  return quoteData.map((quote) => ({
+): Array<{ total: { toNumber: () => number } }> =>
+  quoteData.map((quote) => ({
     total: mapDecimalString(quote.total),
   }));
-}
 
 /**
- * Temporary type for mapped quote items to avoid 'any'
- * TODO: Refactor service functions to accept Drizzle format natively
+ * Temporary type for mapped quote items to avoid 'any'.
+ * TODO: Refactor service functions to accept Drizzle format natively.
  */
 type MappedQuoteItem = {
   glassType: {
@@ -77,32 +80,23 @@ type MappedQuoteItem = {
 };
 
 /**
- * Dashboard period input schema
- */
-const dashboardPeriodInput = z.object({
-  period: z.enum(["7d", "30d", "90d", "year"]).default("30d"),
-});
-
-/**
  * Dashboard Router
- * All procedures require authentication (protectedProcedure)
+ * All procedures require authentication (protectedProcedure).
  */
 export const dashboardRouter = createTRPCRouter({
   /**
-   * Get catalog analytics (top models, glass types, supplier distribution)
-   * Returns aggregated analytics based on quote items in selected period
+   * Get catalog analytics (top models, glass types, supplier distribution).
+   * Returns aggregated analytics based on quote items in the selected period.
    */
   getCatalogAnalytics: protectedProcedure
-    .input(dashboardPeriodInput)
+    .input(getDashboardPeriodInput)
+    .output(CatalogAnalyticsOutput)
     .query(async ({ ctx, input }) => {
       try {
         const { period } = input;
         const { session, db } = ctx;
-
-        // Get date range for period
         const dateRange = getPeriodDateRange(period);
 
-        // Build where conditions for quotes based on RBAC
         const whereConditions: SQLWrapper[] = [
           gte(quotes.createdAt, dateRange.start),
           lte(quotes.createdAt, dateRange.end),
@@ -111,9 +105,6 @@ export const dashboardRouter = createTRPCRouter({
           whereConditions.push(eq(quotes.userId, session.user.id));
         }
 
-        // Fetch quote items joined with quotes, models, and glass types
-        // Note: Drizzle doesn't have built-in find().select().where() with relations like Prisma
-        // We need to use join queries or fetch separately and filter/map
         const fetchedQuoteItems = await db
           .select({
             glassTypeCode: glassTypes.code,
@@ -135,10 +126,6 @@ export const dashboardRouter = createTRPCRouter({
           )
           .where(and(...whereConditions));
 
-        // FIXME: Drizzle returns nested objects vs flat Prisma structure
-        // Service functions expect Prisma shape {model: {name, profileSupplier: {id, name}}}
-        // But Drizzle flattens to {modelName, profileSupplierId, profileSupplierName}
-        // Need to reshape data or refactor service functions for Drizzle compatibility
         const mappedQuoteItems = fetchedQuoteItems.map((item) => ({
           glassType: {
             code: item.glassTypeCode,
@@ -156,7 +143,6 @@ export const dashboardRouter = createTRPCRouter({
           modelId: item.modelId,
         }));
 
-        // Calculate analytics using service layer functions
         const topModels = getTopModels(mappedQuoteItems as MappedQuoteItem[]);
         const topGlassTypes = getGlassTypeDistribution(
           mappedQuoteItems as MappedQuoteItem[]
@@ -190,20 +176,18 @@ export const dashboardRouter = createTRPCRouter({
     }),
 
   /**
-   * Get monetary metrics (total value, average value)
-   * Returns aggregated monetary metrics from Quote.total
+   * Get monetary metrics (total value, average value).
+   * Returns aggregated monetary metrics from Quote.total.
    */
   getMonetaryMetrics: protectedProcedure
-    .input(dashboardPeriodInput)
+    .input(getDashboardPeriodInput)
+    .output(MonetaryMetricsOutput)
     .query(async ({ ctx, input }) => {
       try {
         const { period } = input;
         const { session, db } = ctx;
-
-        // Get date range for current period
         const dateRange = getPeriodDateRange(period);
 
-        // Build where conditions based on RBAC
         const whereConditions: SQLWrapper[] = [
           gte(quotes.createdAt, dateRange.start),
           lte(quotes.createdAt, dateRange.end),
@@ -212,18 +196,15 @@ export const dashboardRouter = createTRPCRouter({
           whereConditions.push(eq(quotes.userId, session.user.id));
         }
 
-        // Fetch quotes with total field (Decimal type)
         const currentQuotes = await db
           .select({ total: quotes.total })
           .from(quotes)
           .where(and(...whereConditions));
 
-        // Calculate current period metrics
         const currentMetrics = calculateMonetaryMetrics(
           mapQuotesTotalForService(currentQuotes)
         );
 
-        // Get previous period for comparison
         const previousEnd = new Date(dateRange.start);
         const previousStart = new Date(previousEnd);
         const periodLength =
@@ -247,14 +228,12 @@ export const dashboardRouter = createTRPCRouter({
           mapQuotesTotalForService(previousQuotes)
         );
 
-        // Calculate percentage change
         const percentageChange =
           previousMetrics.totalValue === 0
             ? 0
             : (currentMetrics.totalValue - previousMetrics.totalValue) /
               previousMetrics.totalValue;
 
-        // Get tenant config for currency and locale
         const tenantConfig = await db
           .select({
             currency: tenantConfigs.currency,
@@ -292,20 +271,18 @@ export const dashboardRouter = createTRPCRouter({
     }),
 
   /**
-   * Get price range distribution
-   * Groups quotes into configurable price ranges
+   * Get price range distribution.
+   * Groups quotes into configurable price ranges.
    */
   getPriceRanges: protectedProcedure
-    .input(dashboardPeriodInput)
+    .input(getDashboardPeriodInput)
+    .output(PriceRangesOutput)
     .query(async ({ ctx, input }) => {
       try {
         const { period } = input;
         const { session, db } = ctx;
-
-        // Get date range for period
         const dateRange = getPeriodDateRange(period);
 
-        // Build where conditions based on RBAC
         const whereConditions: SQLWrapper[] = [
           gte(quotes.createdAt, dateRange.start),
           lte(quotes.createdAt, dateRange.end),
@@ -314,25 +291,21 @@ export const dashboardRouter = createTRPCRouter({
           whereConditions.push(eq(quotes.userId, session.user.id));
         }
 
-        // Fetch quotes with total field
         const priceRangeQuotes = await db
           .select({ total: quotes.total })
           .from(quotes)
           .where(and(...whereConditions));
 
-        // Group quotes by price range
         const rangeDistribution = groupQuotesByPriceRange(
           mapQuotesTotalForService(priceRangeQuotes)
         );
 
-        // Calculate percentages
         const totalQuotes = priceRangeQuotes.length;
         const rangesWithPercentage = rangeDistribution.map((range) => ({
           ...range,
           percentage: totalQuotes === 0 ? 0 : range.count / totalQuotes,
         }));
 
-        // Get tenant config for currency
         const tenantConfig = await db
           .select({ currency: tenantConfigs.currency })
           .from(tenantConfigs)
@@ -359,21 +332,20 @@ export const dashboardRouter = createTRPCRouter({
         throw error;
       }
     }),
+
   /**
-   * Get quote metrics for dashboard
-   * Returns aggregated quote statistics based on selected period
+   * Get quote metrics for the dashboard.
+   * Returns aggregated quote statistics based on the selected period.
    */
   getQuotesMetrics: protectedProcedure
-    .input(dashboardPeriodInput)
+    .input(getDashboardPeriodInput)
+    .output(QuotesMetricsOutput)
     .query(async ({ ctx, input }) => {
       try {
         const { period } = input;
         const { session, db } = ctx;
-
-        // Get date range for period
         const dateRange = getPeriodDateRange(period);
 
-        // Build where conditions based on RBAC
         const whereConditions: SQLWrapper[] = [
           gte(quotes.createdAt, dateRange.start),
           lte(quotes.createdAt, dateRange.end),
@@ -382,13 +354,11 @@ export const dashboardRouter = createTRPCRouter({
           whereConditions.push(eq(quotes.userId, session.user.id));
         }
 
-        // Get current period quotes
         const metricsQuotes = await db
           .select({ status: quotes.status })
           .from(quotes)
           .where(and(...whereConditions));
 
-        // Count by status
         const total = metricsQuotes.length;
         const draft = metricsQuotes.filter((q) => q.status === "draft").length;
         const sent = metricsQuotes.filter((q) => q.status === "sent").length;
@@ -396,7 +366,6 @@ export const dashboardRouter = createTRPCRouter({
           (q) => q.status === "canceled"
         ).length;
 
-        // Get previous period for comparison
         const prevPeriodLength = Math.floor(
           (dateRange.end.getTime() - dateRange.start.getTime()) / MS_PER_DAY
         );
@@ -419,7 +388,6 @@ export const dashboardRouter = createTRPCRouter({
           .where(and(...prevConditions))
           .then((result) => result.length);
 
-        // Calculate metrics using service layer
         const metrics = calculateQuoteMetrics({
           canceled,
           draft,
@@ -449,26 +417,18 @@ export const dashboardRouter = createTRPCRouter({
     }),
 
   /**
-   * Get quote trend data for chart visualization
-   * Returns daily aggregated quote counts for the selected period
-   *
-   * Features:
-   * - RBAC filtering (admin sees all, seller sees own)
-   * - Zero-filling for days without quotes
-   * - Pre-formatted dates using @lib/format (tenant timezone/locale)
-   * - Winston logging for monitoring
+   * Get quote trend data for chart visualization.
+   * Returns daily aggregated quote counts for the selected period.
    */
   getQuotesTrend: protectedProcedure
-    .input(dashboardPeriodInput)
+    .input(getDashboardPeriodInput)
+    .output(QuotesTrendOutput)
     .query(async ({ ctx, input }) => {
       try {
         const { period } = input;
         const { session, db } = ctx;
-
-        // Get date range for period
         const dateRange = getPeriodDateRange(period);
 
-        // Build where conditions based on RBAC
         const whereConditions: SQLWrapper[] = [
           gte(quotes.createdAt, dateRange.start),
           lte(quotes.createdAt, dateRange.end),
@@ -477,13 +437,11 @@ export const dashboardRouter = createTRPCRouter({
           whereConditions.push(eq(quotes.userId, session.user.id));
         }
 
-        // Fetch quotes with only createdAt (minimal data for performance)
         const trendQuotes = await db
           .select({ createdAt: quotes.createdAt })
           .from(quotes)
           .where(and(...whereConditions));
 
-        // Get tenant config for date formatting (timezone, locale)
         const tenantConfig = await db
           .select({
             locale: tenantConfigs.locale,
@@ -493,8 +451,6 @@ export const dashboardRouter = createTRPCRouter({
           .limit(1)
           .then((result) => result[0]);
 
-        // Aggregate by date using service layer
-        // formatDateShort from @lib/format will use tenant timezone/locale
         const trendData = aggregateQuotesByDate(
           trendQuotes,
           dateRange,
