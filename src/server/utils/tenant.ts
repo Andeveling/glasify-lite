@@ -30,11 +30,6 @@ type TransactionClient = Omit<
 export async function getTenantConfig(
   client?: TransactionClient
 ): Promise<TenantConfig> {
-  "use cache";
-
-  // Cache for 24 hours - tenant config rarely changes
-  cacheLife("days");
-
   const prisma = client ?? db;
   const config = await prisma.tenantConfig.findFirst();
 

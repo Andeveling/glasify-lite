@@ -8,7 +8,9 @@ const config: NextConfig = {
   reactCompiler: true,
   poweredByHeader: false,
   reactStrictMode: true,
-  cacheComponents: true,
+  // Disable Cache Components temporarily to allow build without database
+  // Re-enable after deployment when DATABASE_URL is available
+  cacheComponents: false,
   typescript: {
     ignoreBuildErrors: false,
   },
