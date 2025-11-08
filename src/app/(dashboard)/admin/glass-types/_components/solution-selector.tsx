@@ -15,10 +15,18 @@
 
 "use client";
 
-import { PerformanceRating } from "@prisma/client";
 import { Plus, Trash2 } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+
+// Define PerformanceRating enum locally to avoid Prisma import issues
+const PerformanceRating = {
+  BASIC: "BASIC",
+  STANDARD: "STANDARD",
+  GOOD: "GOOD",
+  VERY_GOOD: "VERY_GOOD",
+  EXCELLENT: "EXCELLENT",
+} as const;
 import {
   FormControl,
   FormDescription,
