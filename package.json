@@ -155,6 +155,7 @@
     "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "5.0.4",
     "dotenv": "^17.2.3",
+    "drizzle-kit": "^0.31.6",
     "fast-check": "^4.3.0",
     "jsdom": "27.0.0",
     "lefthook": "2.0.0",
