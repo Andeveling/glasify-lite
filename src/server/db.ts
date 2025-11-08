@@ -57,12 +57,10 @@ const globalForPrisma = globalThis as unknown as {
   prisma: ReturnType<typeof createPrismaClient> | undefined;
 };
 
-// Export the db client
-// In development, this is extended with performance monitoring
-// In production, this is a standard PrismaClient
-export const db = (globalForPrisma.prisma ??
-  createPrismaClient()) as unknown as PrismaClient;
+// Export the db client with proper type inference
+// The type is inferred from createPrismaClient(), which includes all generated models
+export const db = globalForPrisma.prisma ?? createPrismaClient();
 
 if ((process.env.NODE_ENV ?? "development") !== "production") {
-  globalForPrisma.prisma = db as ReturnType<typeof createPrismaClient>;
+  globalForPrisma.prisma = db;
 }
