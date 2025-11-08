@@ -7,13 +7,13 @@
  * @see https://env.t3.gg/docs/nextjs
  * @see https://create.t3.gg/en/usage/env-variables
  */
+/** biome-ignore-all lint/style/noMagicNumbers: <explanation> */
 
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
 // Constants for validation
 const CURRENCY_CODE_LENGTH = 3;
-const DEFAULT_QUOTE_VALIDITY_DAYS = 15;
 
 export const env = createEnv({
   // ============================================================
