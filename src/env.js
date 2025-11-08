@@ -21,7 +21,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    NEXT_PUBLIC_COMPANY_LOGO_URL: z.string().url().optional().or(z.literal("")),
+    NEXT_PUBLIC_COMPANY_LOGO_URL: z.url().optional().or(z.literal("")),
     NEXT_PUBLIC_COMPANY_NAME: z.string().optional(),
   },
   /**
