@@ -8,7 +8,6 @@
  * Includes referential integrity check for deletions
  */
 
-import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import logger from "@/lib/logger";
 import {

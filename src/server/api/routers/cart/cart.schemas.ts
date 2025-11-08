@@ -7,11 +7,8 @@
  * @module server/api/routers/cart/cart.schemas
  */
 
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
-import {
-  createSelectSchema,
-  createInsertSchema,
-} from "drizzle-zod";
 import { quoteItems } from "@/server/db/schema";
 
 // ============================================================================
@@ -64,9 +61,11 @@ export const updateCartItemInput = InsertCartItemSchema.pick({
   id: true,
   name: true,
   quantity: true,
-}).partial().required({
-  id: true,
-});
+})
+  .partial()
+  .required({
+    id: true,
+  });
 
 export const removeFromCartInput = InsertCartItemSchema.pick({
   id: true,
@@ -81,6 +80,7 @@ export const clearCartInput = z.object({});
 export const CartItemOutput = SelectCartItemSchema.extend({
   subtotal: z.number().nonnegative(),
   unitPrice: z.number().nonnegative(),
+  colorSurchargePercentage: z.number().nonnegative().nullable(),
   modelName: z.string(),
   glassTypeName: z.string(),
   solutionName: z.string().optional(),
