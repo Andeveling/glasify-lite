@@ -9,7 +9,7 @@
  * - ISO 717-1: Acoustics - Sound insulation
  * - ISO 10077: Thermal performance of windows/doors
  * - EN 356: Glass in building - Security glazing
-/**
+ *
  * @version 1.0.0
  * @date 2025-01-28
  */
