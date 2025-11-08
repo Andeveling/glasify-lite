@@ -45,7 +45,10 @@ export const profileSupplierSelectSchema = createSelectSchema(
   {
     name: z.string().max(FIELD_LENGTHS.PROFILE_SUPPLIER.NAME).min(1),
     materialType: z.enum(MATERIAL_TYPE_VALUES),
-    isActive: z.boolean(),
+    isActive: z.preprocess(
+      (val) => val === "true" || val === true,
+      z.boolean()
+    ),
     notes: z.string().max(FIELD_LENGTHS.PROFILE_SUPPLIER.NOTES).optional(),
   }
 );
@@ -56,7 +59,12 @@ export const profileSupplierInsertSchema = createInsertSchema(
     id: z.cuid().optional(),
     name: z.string().max(FIELD_LENGTHS.PROFILE_SUPPLIER.NAME).min(1),
     materialType: z.enum(MATERIAL_TYPE_VALUES),
-    isActive: z.boolean().optional(),
+    isActive: z
+      .preprocess(
+        (val) => (val === true || val === "true" ? "true" : "false"),
+        z.string()
+      )
+      .optional(),
     notes: z.string().max(FIELD_LENGTHS.PROFILE_SUPPLIER.NOTES).optional(),
   }
 ).omit({ createdAt: true, updatedAt: true });
@@ -66,7 +74,10 @@ export const profileSupplierUpdateSchema = createUpdateSchema(
   {
     name: z.string().max(FIELD_LENGTHS.PROFILE_SUPPLIER.NAME).min(1),
     materialType: z.enum(MATERIAL_TYPE_VALUES),
-    isActive: z.boolean(),
+    isActive: z.preprocess(
+      (val) => (val === true || val === "true" ? "true" : "false"),
+      z.string()
+    ),
     notes: z.string().max(FIELD_LENGTHS.PROFILE_SUPPLIER.NOTES).optional(),
   }
 )

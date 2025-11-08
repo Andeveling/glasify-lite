@@ -13,11 +13,11 @@ import { TRPCError } from "@trpc/server";
 import type { db } from "@/server/db/drizzle";
 import type { MaterialType } from "@/server/db/schemas/enums.schema";
 import type {
-  GetListInput,
   CreateInput,
-  UpdateInput,
-  ProfileSupplierWithUsageOutput,
+  GetListInput,
   ProfileSupplierListOutput,
+  ProfileSupplierWithUsageOutput,
+  UpdateInput,
   UsageCheckOutput,
 } from "./profile-supplier.schemas";
 import {
@@ -35,8 +35,8 @@ import {
   logProfileSupplierCreated,
   logProfileSupplierCreateError,
   logProfileSupplierCreateStart,
-  logProfileSupplierDeleteError,
   logProfileSupplierDeleted,
+  logProfileSupplierDeleteError,
   logProfileSupplierDeleteStart,
   logProfileSupplierFetchError,
   logProfileSupplierFetchStart,
@@ -220,14 +220,16 @@ export async function createProfileSupplier(
     if (existing) {
       throw new TRPCError({
         code: "CONFLICT",
-        message: "Ya existe un proveedor de perfiles con ese nombre y tipo de material",
+        message:
+          "Ya existe un proveedor de perfiles con ese nombre y tipo de material",
       });
     }
 
     // Create profile supplier
     const profileSupplier = await createProfileSupplierRepo(client, {
       ...input,
-      isActive: input.isActive !== undefined ? String(input.isActive) : undefined,
+      isActive:
+        input.isActive !== undefined ? String(input.isActive) : undefined,
     });
 
     if (!profileSupplier) {
@@ -314,7 +316,8 @@ export async function updateProfileSupplier(
       if (duplicate) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "Ya existe un proveedor de perfiles con ese nombre y tipo de material",
+          message:
+            "Ya existe un proveedor de perfiles con ese nombre y tipo de material",
         });
       }
     }
@@ -328,11 +331,16 @@ export async function updateProfileSupplier(
     } = {
       name: input.name,
       materialType: input.materialType,
-      isActive: input.isActive !== undefined ? String(input.isActive) : undefined,
+      isActive:
+        input.isActive !== undefined ? String(input.isActive) : undefined,
       notes: input.notes,
     };
 
-    const updated = await updateProfileSupplierRepo(client, input.id, updateData);
+    const updated = await updateProfileSupplierRepo(
+      client,
+      input.id,
+      updateData
+    );
 
     if (!updated) {
       throw new TRPCError({
