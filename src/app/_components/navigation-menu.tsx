@@ -1,6 +1,5 @@
 "use client";
 
-import type { UserRole } from "@/lib/types/prisma-types";
 import type { LucideIcon } from "lucide-react";
 import {
   Calculator,
@@ -16,6 +15,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import type { UserRole } from "@/lib/types/prisma-types";
 import { cn } from "@/lib/utils";
 import type { IconName, NavLink } from "./role-based-nav";
 

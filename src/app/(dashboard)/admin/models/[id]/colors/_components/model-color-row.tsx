@@ -84,7 +84,7 @@ type SerializedModelColorWithColor = Omit<
  *
  * DO NOT rename to "Action" suffix - these are NOT Server Actions.
  */
-// @ts-ignore - False positive: Client-to-Client callbacks don't need serialization
+// @ts-expect-error - False positive: Client-to-Client callbacks don't need serialization
 type ModelColorRowProps = {
   modelColor: SerializedModelColorWithColor;
   onSurchargeChange: (id: string, surcharge: number) => void;

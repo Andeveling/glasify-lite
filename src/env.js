@@ -1,9 +1,9 @@
 /**
  * Environment Variables Validation
- * 
+ *
  * Validates all environment variables used by the application at build time.
  * Uses @t3-oss/env-nextjs for type-safe runtime validation with Zod schemas.
- * 
+ *
  * @see https://env.t3.gg/docs/nextjs
  * @see https://create.t3.gg/en/usage/env-variables
  */
@@ -84,7 +84,8 @@ export const env = createEnv({
     NEXT_PUBLIC_COMPANY_NAME: process.env.NEXT_PUBLIC_COMPANY_NAME,
     NEXT_PUBLIC_VERCEL_ENV: process.env.NEXT_PUBLIC_VERCEL_ENV,
     NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
-    NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL: process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL,
+    NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL:
+      process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL,
 
     // System
     NODE_ENV: process.env.NODE_ENV,
@@ -115,7 +116,7 @@ export const env = createEnv({
     // ============================================================
     // AUTHENTICATION
     // ============================================================
-    
+
     /**
      * Admin user email (optional)
      * User with this email gets admin role and dashboard access

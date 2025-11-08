@@ -19,7 +19,6 @@
 
 "use client";
 
-import type { MaterialType } from "@/lib/types/prisma-types";
 import Link from "next/link";
 import {
   type FilterDefinition,
@@ -27,6 +26,7 @@ import {
 } from "@/app/_components/server-table/table-filters";
 import { TableSearch } from "@/app/_components/server-table/table-search";
 import { Button } from "@/components/ui/button";
+import type { MaterialType } from "@/lib/types/prisma-types";
 
 /**
  * Supplier data type

@@ -10,7 +10,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Service, ServiceType, ServiceUnit } from "@/lib/types/prisma-types";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -40,6 +39,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type {
+  Service,
+  ServiceType,
+  ServiceUnit,
+} from "@/lib/types/prisma-types";
 import {
   createServiceSchema,
   MAX_NAME_LENGTH,

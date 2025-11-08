@@ -20,7 +20,6 @@
 
 "use client";
 
-import type { MaterialType, ProfileSupplier } from "@/lib/types/prisma-types";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -50,6 +49,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import type { MaterialType, ProfileSupplier } from "@/lib/types/prisma-types";
 import {
   MAX_NAME_LENGTH,
   MIN_NAME_LENGTH,

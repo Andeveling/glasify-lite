@@ -1,20 +1,16 @@
 import { sql } from "drizzle-orm";
 import {
-  pgTable,
-  pgEnum,
-  text,
-  varchar,
-  integer,
   boolean,
-  timestamp,
   decimal,
-  numeric,
-  jsonb,
-  uniqueIndex,
   index,
-  foreignKey,
+  integer,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  uniqueIndex,
+  varchar,
 } from "drizzle-orm/pg-core";
-import { cuid } from "@paralleldrive/cuid2";
 
 // ==========================================
 // ENUMS
@@ -41,10 +37,7 @@ export const quoteStatusEnum = pgEnum("QuoteStatus", [
 ]);
 
 // Adjustment scope enum
-export const adjustmentScopeEnum = pgEnum("AdjustmentScope", [
-  "item",
-  "quote",
-]);
+export const adjustmentScopeEnum = pgEnum("AdjustmentScope", ["item", "quote"]);
 
 // Adjustment sign enum
 export const adjustmentSignEnum = pgEnum("AdjustmentSign", [
@@ -366,9 +359,10 @@ export const models = pgTable(
     updatedAt: timestamp("updatedAt").defaultNow().notNull(),
   },
   (table) => ({
-    profileSupplierStatusIdx: index(
-      "Model_profileSupplierId_status_idx"
-    ).on(table.profileSupplierId, table.status),
+    profileSupplierStatusIdx: index("Model_profileSupplierId_status_idx").on(
+      table.profileSupplierId,
+      table.status
+    ),
     nameIdx: index("Model_name_idx").on(table.name),
     statusIdx: index("Model_status_idx").on(table.status),
     createdAtIdx: index("Model_createdAt_idx").on(table.createdAt),
@@ -462,9 +456,7 @@ export const glassTypes = pgTable(
     nameIdx: index("GlassType_name_idx").on(table.name),
     codeIdx: index("GlassType_code_idx").on(table.code),
     seriesIdx: index("GlassType_series_idx").on(table.series),
-    manufacturerIdx: index("GlassType_manufacturer_idx").on(
-      table.manufacturer
-    ),
+    manufacturerIdx: index("GlassType_manufacturer_idx").on(table.manufacturer),
     isActiveIdx: index("GlassType_isActive_idx").on(table.isActive),
     isSeededIdx: index("GlassType_isSeeded_idx").on(table.isSeeded),
     thicknessMmIdx: index("GlassType_thicknessMm_idx").on(table.thicknessMm),
@@ -525,9 +517,7 @@ export const glassTypeSolutions = pgTable(
     solutionIdIdx: index("GlassTypeSolution_solutionId_idx").on(
       table.solutionId
     ),
-    isPrimaryIdx: index("GlassTypeSolution_isPrimary_idx").on(
-      table.isPrimary
-    ),
+    isPrimaryIdx: index("GlassTypeSolution_isPrimary_idx").on(table.isPrimary),
   })
 );
 
@@ -576,8 +566,9 @@ export const glassTypeCharacteristics = pgTable(
     glassTypeIdIdx: index("GlassTypeCharacteristic_glassTypeId_idx").on(
       table.glassTypeId
     ),
-    characteristicIdIdx: index("GlassTypeCharacteristic_characteristicId_idx")
-      .on(table.characteristicId),
+    characteristicIdIdx: index(
+      "GlassTypeCharacteristic_characteristicId_idx"
+    ).on(table.characteristicId),
   })
 );
 
@@ -621,9 +612,7 @@ export const quotes = pgTable(
     userId: varchar("userId", { length: 256 }),
     status: quoteStatusEnum("status").default("draft").notNull(),
     currency: varchar("currency", { length: 3 }).notNull(),
-    total: decimal("total", { precision: 12, scale: 4 })
-      .default("0")
-      .notNull(),
+    total: decimal("total", { precision: 12, scale: 4 }).default("0").notNull(),
     validUntil: timestamp("validUntil"),
     contactPhone: varchar("contactPhone", { length: 20 }),
     contactAddress: text("contactAddress"),

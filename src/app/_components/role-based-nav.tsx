@@ -1,5 +1,5 @@
-import type { UserRole } from "@/lib/types/prisma-types";
 import { headers } from "next/headers";
+import type { UserRole } from "@/lib/types/prisma-types";
 import { auth } from "@/server/auth";
 import { NavigationMenu } from "./navigation-menu";
 

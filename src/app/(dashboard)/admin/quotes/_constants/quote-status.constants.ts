@@ -1,5 +1,5 @@
-import type { QuoteStatus } from "@/lib/types/prisma-types";
 import { Clock, Send, X } from "lucide-react";
+import type { QuoteStatus } from "@/lib/types/prisma-types";
 
 /**
  * Configuration for quote status badges

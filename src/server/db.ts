@@ -1,9 +1,8 @@
-import { PrismaClient } from "@prisma/client";
 import { neonConfig } from "@neondatabase/serverless";
 import { PrismaNeon } from "@prisma/adapter-neon";
+import { PrismaClient } from "@prisma/client";
 import ws from "ws";
 import { env } from "@/env";
-
 
 const { DATABASE_URL, PRISMA_CONNECTION_LIMIT } = env;
 // Configure Neon WebSocket for Node.js environment
@@ -34,10 +33,10 @@ const createPrismaClient = () => {
 
   // Limit connections during build to prevent Neon "too many connections" errors
   // Neon Free Tier: max 1 connection, Paid: adjust based on your plan
-  const connectionLimit = PRISMA_CONNECTION_LIMIT 
+  const connectionLimit = PRISMA_CONNECTION_LIMIT
     ? `?connection_limit=${PRISMA_CONNECTION_LIMIT}`
     : "";
-  
+
   const finalConnectionString = connectionString.includes("?")
     ? connectionString // Already has query params
     : `${connectionString}${connectionLimit}`;
