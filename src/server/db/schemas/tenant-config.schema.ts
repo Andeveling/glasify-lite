@@ -127,7 +127,6 @@ export const tenantConfigSelectSchema = createSelectSchema(tenantConfigs, {
     .regex(/^[a-z]{2}(-[A-Z]{2})?$/), // IETF BCP 47 format
   timezone: z.string().max(FIELD_LENGTHS.TENANT_CONFIG.TIMEZONE),
   contactEmail: z
-    .string()
     .email()
     .max(FIELD_LENGTHS.TENANT_CONFIG.CONTACT_EMAIL)
     .optional(),
@@ -146,21 +145,9 @@ export const tenantConfigSelectSchema = createSelectSchema(tenantConfigs, {
     .optional(),
   primaryColor: z.string().regex(/^#[0-9A-F]{6}$/i),
   secondaryColor: z.string().regex(/^#[0-9A-F]{6}$/i),
-  facebookUrl: z
-    .string()
-    .url()
-    .max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL)
-    .optional(),
-  instagramUrl: z
-    .string()
-    .url()
-    .max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL)
-    .optional(),
-  linkedinUrl: z
-    .string()
-    .url()
-    .max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL)
-    .optional(),
+  facebookUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).optional(),
+  instagramUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).optional(),
+  linkedinUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).optional(),
   whatsappNumber: z
     .string()
     .regex(/^\+\d{1,15}$/)
@@ -202,7 +189,6 @@ export const tenantConfigInsertSchema = createInsertSchema(tenantConfigs, {
     .optional(),
   timezone: z.string().max(FIELD_LENGTHS.TENANT_CONFIG.TIMEZONE).optional(),
   contactEmail: z
-    .string()
     .email()
     .max(FIELD_LENGTHS.TENANT_CONFIG.CONTACT_EMAIL)
     .optional(),
@@ -214,11 +200,7 @@ export const tenantConfigInsertSchema = createInsertSchema(tenantConfigs, {
     .string()
     .max(FIELD_LENGTHS.TENANT_CONFIG.BUSINESS_ADDRESS)
     .optional(),
-  logoUrl: z
-    .string()
-    .url()
-    .max(FIELD_LENGTHS.TENANT_CONFIG.LOGO_URL)
-    .optional(),
+  logoUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.LOGO_URL).optional(),
   primaryColor: z
     .string()
     .regex(/^#[0-9A-F]{6}$/i)
@@ -227,21 +209,9 @@ export const tenantConfigInsertSchema = createInsertSchema(tenantConfigs, {
     .string()
     .regex(/^#[0-9A-F]{6}$/i)
     .optional(),
-  facebookUrl: z
-    .string()
-    .url()
-    .max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL)
-    .optional(),
-  instagramUrl: z
-    .string()
-    .url()
-    .max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL)
-    .optional(),
-  linkedinUrl: z
-    .string()
-    .url()
-    .max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL)
-    .optional(),
+  facebookUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).optional(),
+  instagramUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).optional(),
+  linkedinUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).optional(),
   whatsappNumber: z
     .string()
     .regex(/^\+\d{1,15}$/)
@@ -282,7 +252,6 @@ export const tenantConfigUpdateSchema = createUpdateSchema(tenantConfigs, {
     .regex(/^[a-z]{2}(-[A-Z]{2})?$/),
   timezone: z.string().max(FIELD_LENGTHS.TENANT_CONFIG.TIMEZONE),
   contactEmail: z
-    .string()
     .email()
     .max(FIELD_LENGTHS.TENANT_CONFIG.CONTACT_EMAIL)
     .optional(),
@@ -294,28 +263,12 @@ export const tenantConfigUpdateSchema = createUpdateSchema(tenantConfigs, {
     .string()
     .max(FIELD_LENGTHS.TENANT_CONFIG.BUSINESS_ADDRESS)
     .optional(),
-  logoUrl: z
-    .string()
-    .url()
-    .max(FIELD_LENGTHS.TENANT_CONFIG.LOGO_URL)
-    .optional(),
+  logoUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.LOGO_URL).optional(),
   primaryColor: z.string().regex(/^#[0-9A-F]{6}$/i),
   secondaryColor: z.string().regex(/^#[0-9A-F]{6}$/i),
-  facebookUrl: z
-    .string()
-    .url()
-    .max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL)
-    .optional(),
-  instagramUrl: z
-    .string()
-    .url()
-    .max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL)
-    .optional(),
-  linkedinUrl: z
-    .string()
-    .url()
-    .max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL)
-    .optional(),
+  facebookUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).optional(),
+  instagramUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).optional(),
+  linkedinUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).optional(),
   whatsappNumber: z
     .string()
     .regex(/^\+\d{1,15}$/)
