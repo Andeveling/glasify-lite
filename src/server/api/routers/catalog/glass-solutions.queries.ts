@@ -9,8 +9,11 @@
  */
 
 import { z } from "zod";
-import logger from "@/lib/logger";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import {
+  getGlassSolutionBySlug,
+  getGlassSolutionsList,
+} from "./catalog.service";
 
 /**
  * Input schema: Get glass solution by slug
@@ -27,7 +30,6 @@ const glassTypeSummaryForSolution = z.object({
   id: z.string(),
   isPrimary: z.boolean(),
   name: z.string(),
-  notes: z.string().nullable(),
   performanceRating: z.enum([
     "basic",
     "standard",
@@ -80,11 +82,11 @@ const listSolutionsOutput = z.object({
   ),
 });
 
-export const glassolutionsPublicQueries = createTRPCRouter({
+export const glassSolutionsPublicQueries = createTRPCRouter({
   /**
    * Get glass solution details by slug
    *
-   * Includes all assigned glass types with performance ratings and notes
+   * Includes all assigned glass types with performance ratings
    *
    * @public
    * @param slug - URL-friendly slug (e.g., 'solar-control', 'energy-efficiency')
@@ -93,85 +95,10 @@ export const glassolutionsPublicQueries = createTRPCRouter({
   "get-by-slug": publicProcedure
     .input(getGlassSolutionBySlugInput)
     .output(getGlassSolutionBySlugOutput)
-    .query(async ({ ctx, input }) => {
-      try {
-        logger.info("Fetching glass solution by slug", { slug: input.slug });
+    .query(async ({ ctx, input }) =>
+      getGlassSolutionBySlug(ctx.db, input.slug)
+    ),
 
-        const solution = await ctx.db.glassSolution.findUnique({
-          select: {
-            description: true,
-            glassTypes: {
-              orderBy: { performanceRating: "desc" as const },
-              select: {
-                glassType: {
-                  select: {
-                    code: true,
-                    id: true,
-                    name: true,
-                    pricePerSqm: true,
-                    thicknessMm: true,
-                  },
-                },
-                isPrimary: true,
-                notes: true,
-                performanceRating: true,
-              },
-            },
-            icon: true,
-            id: true,
-            isActive: true,
-            key: true,
-            name: true,
-            nameEs: true,
-            slug: true,
-            sortOrder: true,
-          },
-          where: { isActive: true, slug: input.slug },
-        });
-
-        if (!solution) {
-          logger.warn("Glass solution not found by slug", { slug: input.slug });
-          throw new Error("La solución de vidrio solicitada no existe.");
-        }
-
-        // Transform the related glass types
-        const glassTypes = solution.glassTypes.map((assignment) => ({
-          code: assignment.glassType.code,
-          id: assignment.glassType.id,
-          isPrimary: assignment.isPrimary,
-          name: assignment.glassType.name,
-          notes: assignment.notes,
-          performanceRating: assignment.performanceRating,
-          pricePerSqm: assignment.glassType.pricePerSqm.toString(),
-          thicknessMm: assignment.glassType.thicknessMm,
-        }));
-
-        logger.info("Successfully retrieved glass solution by slug", {
-          glassTypeCount: glassTypes.length,
-          slug: input.slug,
-          solutionName: solution.nameEs,
-        });
-
-        return {
-          description: solution.description,
-          glassTypes,
-          icon: solution.icon,
-          id: solution.id,
-          isActive: solution.isActive,
-          key: solution.key,
-          name: solution.name,
-          nameEs: solution.nameEs,
-          slug: solution.slug,
-          sortOrder: solution.sortOrder,
-        };
-      } catch (error) {
-        logger.error("Error fetching glass solution by slug", {
-          error: error instanceof Error ? error.message : "Unknown error",
-          slug: input.slug,
-        });
-        throw error;
-      }
-    }),
   /**
    * List all active glass solutions
    *
@@ -181,61 +108,11 @@ export const glassolutionsPublicQueries = createTRPCRouter({
   "list-solutions": publicProcedure
     .input(listSolutionsInput)
     .output(listSolutionsOutput)
-    .query(async ({ ctx, input }) => {
-      try {
-        logger.info("Fetching glass solutions list", {
-          limit: input.limit,
-          page: input.page,
-          search: input.search,
-        });
-
-        const where = {
-          isActive: true,
-          ...(input.search && {
-            OR: [
-              { key: { contains: input.search, mode: "insensitive" as const } },
-              {
-                name: { contains: input.search, mode: "insensitive" as const },
-              },
-              {
-                nameEs: {
-                  contains: input.search,
-                  mode: "insensitive" as const,
-                },
-              },
-            ],
-          }),
-        };
-
-        const items = await ctx.db.glassSolution.findMany({
-          orderBy: { sortOrder: "asc" },
-          select: {
-            description: true,
-            icon: true,
-            id: true,
-            isActive: true,
-            key: true,
-            name: true,
-            nameEs: true,
-            slug: true,
-            sortOrder: true,
-          },
-          skip: (input.page - 1) * input.limit,
-          take: input.limit,
-          where,
-        });
-
-        logger.info("Successfully retrieved glass solutions list", {
-          count: items.length,
-          page: input.page,
-        });
-
-        return { items };
-      } catch (error) {
-        logger.error("Error fetching glass solutions list", {
-          error: error instanceof Error ? error.message : "Unknown error",
-        });
-        throw error;
-      }
-    }),
+    .query(async ({ ctx, input }) =>
+      getGlassSolutionsList(ctx.db, {
+        limit: input.limit,
+        page: input.page,
+        search: input.search,
+      })
+    ),
 });

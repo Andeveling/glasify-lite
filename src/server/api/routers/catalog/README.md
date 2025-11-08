@@ -1,345 +1,268 @@
-# Catalog Router
+# Catalog Module - Architecture Documentation
 
-Router de tRPC para operaciones relacionadas con el catálogo de modelos de vidrio.
+**Last Updated**: 2025-01-XX  
+**Migration**: Prisma → Drizzle ORM  
+**Architecture**: Clean Architecture + SOLID Principles
 
-## 📁 Estructura de Archivos
+## Overview
 
-```
-catalog/
-├── README.md              # Esta guía
-├── index.ts              # Router principal (barrel file)
-├── catalog.schemas.ts    # Schemas de Zod para validación
-├── catalog.queries.ts    # Procedimientos de lectura (queries)
-├── catalog.mutations.ts  # Procedimientos de escritura (mutations) - NO EN USO
-└── catalog.utils.ts      # Funciones helper (serialización Decimal)
-```
+The **catalog module** handles all READ operations for:
+- Models (glass window/door models from manufacturers)
+- Glass types and solutions
+- Manufacturers (profile suppliers)
+- Services (installation, measurement, etc.)
 
-## 🎯 Propósito
+All procedures are **public** (no authentication required) and used by:
+- Public catalog pages (`/catalog`)
+- Quote parametrization forms
+- Glass solutions pages (`/glasses/solutions`)
 
-Este router maneja **solo operaciones de lectura (READ)** del catálogo:
-- ✅ Listar modelos con filtros y paginación
-- ✅ Obtener detalles de un modelo específico
-- ✅ Listar fabricantes para filtros
+---
 
-**Nota**: Las operaciones de escritura (crear/editar modelos) son exclusivas del **admin router** y requieren autenticación.
-
-## 🔄 Flujo de Usuario
+## Directory Structure
 
 ```
-Usuario → /catalog (lista de modelos)
-       ↓
-       Selecciona modelo
-       ↓
-       /catalog/[modelId] (vista de parametrización)
-       ├─ Columna 1: Info del modelo (contexto)
-       └─ Columna 2: Formulario de configuración
-            ├─ Ancho (mm)
-            ├─ Alto (mm)
-            ├─ Cantidad
-            └─ Servicios adicionales
-            ↓
-            [Añadir a Cotización] → Quote Router
-```
-
-## 📋 Procedures Disponibles
-
-### `list-models`
-Lista modelos con filtros, búsqueda, ordenamiento y paginación.
-
-**Tipo**: `publicProcedure.query`
-
-**Input**:
-```typescript
-{
-  search?: string;           // Búsqueda por nombre
-  manufacturerId?: string;   // Filtrar por fabricante
-  page?: number;            // Página actual (default: 1)
-  limit?: number;           // Items por página (default: 20, max: 100)
-  sort?: 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc'; // Default: 'name-asc'
-}
-```
-
-**Output**:
-```typescript
-{
-  items: ModelSummary[];    // Array de modelos serializados
-  total: number;           // Total de items (para paginación)
-}
-```
-
-**Ejemplo de uso**:
-```typescript
-// Client Component
-const { data } = api.catalog['list-models'].useQuery({
-  search: 'Guardian',
-  manufacturerId: 'clxx123',
-  page: 1,
-  limit: 20,
-  sort: 'price-asc',
-});
-
-// Server Component
-const { items, total } = await api.catalog['list-models']({
-  search: searchQuery,
-  page: currentPage,
-});
+src/server/api/routers/catalog/
+├── index.ts                           # Router entry point (merges all routers)
+├── catalog.queries.ts                 # Main catalog tRPC procedures
+├── catalog.schemas.ts                 # Zod input/output schemas
+├── catalog.service.ts                 # Business logic orchestration
+├── catalog.utils.ts                   # Decimal serialization utilities
+├── glass-solutions.queries.ts         # Glass solutions tRPC procedures
+├── repositories/
+│   └── catalog-repository.ts          # Data access layer (Drizzle queries)
+└── utils/
+    └── catalog-logger.ts              # Structured logging
 ```
 
 ---
 
-### `get-model-by-id`
-Obtiene los detalles completos de un modelo específico (incluye info completa del fabricante).
+## Architecture Layers
 
-**Tipo**: `publicProcedure.query`
+### 1. **Presentation Layer** (tRPC Procedures)
+- **Files**: `catalog.queries.ts`, `glass-solutions.queries.ts`
+- **Responsibility**: HTTP API endpoints, input validation, output serialization
+- **Pattern**: Thin controllers that delegate to service layer
 
-**Input**:
+**Example**:
 ```typescript
-{
-  modelId: string;  // CUID del modelo
+"get-model-by-id": publicProcedure
+  .input(getModelByIdInput)
+  .output(modelDetailOutput)
+  .query(async ({ ctx, input }) => getModelById(ctx.db, input.modelId))
+```
+
+### 2. **Business Logic Layer** (Services)
+- **File**: `catalog.service.ts`
+- **Responsibility**: Orchestration, error handling, logging, decimal serialization
+- **Pattern**: Pure functions that call repository layer
+
+**Example**:
+```typescript
+export async function getModelById(db: DrizzleDb, modelId: string) {
+  logModelFetchStart(modelId);
+  const model = await findModelById(db, modelId);
+  if (!model) throw new TRPCError({ code: "NOT_FOUND", ... });
+  return serializeDecimalFields(model);
 }
 ```
 
-**Output**:
+### 3. **Data Access Layer** (Repositories)
+- **File**: `repositories/catalog-repository.ts`
+- **Responsibility**: Database queries using Drizzle ORM
+- **Pattern**: Query builders with type safety
+
+**Example**:
 ```typescript
-{
-  id: string;
-  name: string;
-  status: 'draft' | 'published';
-  basePrice: number;
-  costPerMmWidth: number;
-  costPerMmHeight: number;
-  accessoryPrice: number | null;
-  minWidthMm: number;
-  maxWidthMm: number;
-  minHeightMm: number;
-  maxHeightMm: number;
-  compatibleGlassTypeIds: string[];
-  manufacturer: {
-    id: string;
-    name: string;
-    currency: string;
-    quoteValidityDays: number;
-  } | null;
-  createdAt: Date;
-  updatedAt: Date;
+export async function findModelById(db: DrizzleDb, modelId: string) {
+  return await db
+    .select({ /* fields */ })
+    .from(models)
+    .leftJoin(profileSuppliers, eq(models.profileSupplierId, profileSuppliers.id))
+    .where(eq(models.id, modelId))
+    .then((rows) => rows[0] ?? null);
 }
 ```
 
-**Ejemplo de uso**:
+### 4. **Cross-Cutting Concerns** (Utils)
+- **Files**: `catalog.utils.ts`, `utils/catalog-logger.ts`
+- **Responsibility**: Reusable utilities (logging, serialization)
+
+---
+
+## Drizzle ORM Specifics
+
+### Decimal/Numeric Types
+Drizzle stores `NUMERIC`/`DECIMAL` as **strings** for precision. Use `serializeDecimalFields()` to convert to numbers:
+
 ```typescript
-// Client Component
-const { data: model } = api.catalog['get-model-by-id'].useQuery({
-  modelId: params.modelId,
+// catalog.utils.ts
+export function serializeDecimalFields<T>(entity: T) {
+  return {
+    ...entity,
+    basePrice: Number.parseFloat(entity.basePrice),
+    thicknessMm: Number.parseFloat(entity.thicknessMm),
+    // ... all numeric fields
+  };
+}
+```
+
+### Boolean Types
+Some tables store booleans as strings (`"true"` / `"false"`):
+- `profileSuppliers.isActive` → stored as text
+- `glassTypes.isSeeded` → stored as text
+
+Use `serializeDecimalFields()` to convert these too:
+```typescript
+result.isSeeded = entity.isSeeded === "true";
+```
+
+### Join Patterns
+Drizzle uses explicit joins (no implicit relations like Prisma):
+
+```typescript
+// BEFORE (Prisma)
+prisma.model.findUnique({
+  where: { id },
+  include: { profileSupplier: true },
 });
 
-// Server Component
-const model = await api.catalog['get-model-by-id']({
-  modelId: params.modelId,
-});
+// AFTER (Drizzle)
+db.select({
+  ...models,
+  profileSupplier: { id: profileSuppliers.id, name: profileSuppliers.name },
+})
+.from(models)
+.leftJoin(profileSuppliers, eq(models.profileSupplierId, profileSuppliers.id))
+.where(eq(models.id, id));
 ```
 
 ---
 
-### `list-manufacturers`
-Lista todos los fabricantes disponibles (para filtros).
+## SOLID Principles Applied
 
-**Tipo**: `publicProcedure.query`
+### Single Responsibility Principle (SRP)
+- **Repository**: Only database queries
+- **Service**: Only business logic orchestration
+- **Queries**: Only HTTP/tRPC interface
+- **Utils**: Only reusable helpers
 
-**Input**: Ninguno
+### Open/Closed Principle (OCP)
+- Services are open for extension (add new functions) but closed for modification (existing functions don't change)
+- Serialization utilities are generic and reusable
 
-**Output**:
-```typescript
-Array<{
-  id: string;
-  name: string;
-}>
-```
+### Dependency Inversion Principle (DIP)
+- High-level modules (services) don't depend on low-level modules (repositories)
+- Both depend on abstractions (DrizzleDb type, function contracts)
 
-**Ejemplo de uso**:
-```typescript
-// Server Component
-const manufacturers = await api.catalog['list-manufacturers']();
+### Interface Segregation Principle (ISP)
+- Functions have specific, minimal interfaces
+- Example: `findModelById` only needs `db` and `modelId`, not entire context
 
-// Client Component
-const { data: manufacturers } = api.catalog['list-manufacturers'].useQuery();
-```
+### Liskov Substitution Principle (LSP)
+- Any Drizzle client (node-postgres or neon-http) can be used interchangeably
 
-## 🛠️ Utilities
+---
 
-### `serializeDecimalFields`
-Convierte campos `Decimal` de Prisma a `number` para serialización JSON.
+## Error Handling
 
-**Uso interno**: Llamado automáticamente en los procedures para manejar campos de precios y dimensiones.
+All services throw `TRPCError` with Spanish messages:
 
 ```typescript
-// Prisma retorna Decimal, pero JSON necesita number
-const model = await ctx.db.model.findUnique({...});
-const serialized = serializeDecimalFields(model);
-// serialized.basePrice es number, no Decimal
-```
-
-## 📝 Schemas Reutilizables
-
-Los schemas de Zod exportados en `catalog.schemas.ts` pueden reutilizarse en:
-
-### ✅ Validación de Formularios (React Hook Form)
-
-```typescript
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { modelParametrizationSchema } from '@/server/api/routers/catalog';
-
-const form = useForm({
-  resolver: zodResolver(modelParametrizationSchema),
-  defaultValues: {
-    modelId: model.id,
-    widthMm: 1000,
-    heightMm: 1500,
-    quantity: 1,
-  },
+throw new TRPCError({
+  code: "NOT_FOUND",
+  message: "El modelo solicitado no existe o no está disponible.",
 });
 ```
 
-### ✅ Extensión de Schemas
+Error codes:
+- `NOT_FOUND`: Resource doesn't exist
+- `INTERNAL_SERVER_ERROR`: Database or unexpected errors
+
+---
+
+## Testing Strategy
+
+### Unit Tests
+Test services with mocked repositories:
 
 ```typescript
-import { z } from 'zod';
-import { modelDetailOutput } from '@/server/api/routers/catalog';
-
-// Extender schema existente
-const modelWithCalculation = modelDetailOutput.extend({
-  totalPrice: z.number(),
-  estimatedDeliveryDays: z.number(),
-});
-
-// Hacer campos opcionales para edición
-const updateModelSchema = modelDetailOutput.partial();
-
-// Seleccionar solo campos necesarios
-const modelPreviewSchema = modelDetailOutput.pick({
-  id: true,
-  name: true,
-  basePrice: true,
-});
-```
-
-## 🚨 Reglas Importantes
-
-### ✅ DO (Hacer)
-- **Siempre** validar inputs con Zod schemas
-- **Siempre** serializar campos Decimal antes de retornar
-- **Siempre** filtrar por `status: 'published'` en queries públicas
-- **Siempre** usar logging estructurado con Winston
-- **Siempre** manejar errores con mensajes en español para usuarios
-
-### ❌ DON'T (No Hacer)
-- **Nunca** exponer modelos en estado `draft` en procedures públicos
-- **Nunca** retornar campos Decimal sin serializar (causará error de JSON)
-- **Nunca** usar `any` en tipos (usar tipos específicos de Prisma)
-- **Nunca** agregar mutations aquí (pertenecen al admin router)
-- **Nunca** hardcodear IDs en queries (siempre usar parámetros)
-
-## 🔒 Seguridad
-
-- **Procedures públicos**: Solo lectura, modelos publicados únicamente
-- **Validación estricta**: Todos los inputs validados con Zod
-- **Error handling**: Mensajes genéricos al usuario, detalles en logs
-- **SQL Injection**: Prevenido por Prisma ORM (queries parametrizadas)
-
-## 🧪 Testing
-
-```typescript
-// tests/integration/catalog/catalog.router.test.ts
-import { appRouter } from '@/server/api/root';
-import { createInnerTRPCContext } from '@/server/api/trpc';
-
-describe('catalog.router', () => {
-  it('should list published models only', async () => {
-    const ctx = await createInnerTRPCContext({ session: null });
-    const caller = appRouter.createCaller(ctx);
-    
-    const result = await caller.catalog['list-models']({
-      page: 1,
-      limit: 20,
-    });
-    
-    expect(result.items.every(m => m.status === 'published')).toBe(true);
-  });
-
-  it('should get model by id with manufacturer info', async () => {
-    const ctx = await createInnerTRPCContext({ session: null });
-    const caller = appRouter.createCaller(ctx);
-    
-    const model = await caller.catalog['get-model-by-id']({
-      modelId: 'clxx123',
-    });
-    
-    expect(model.manufacturer).toBeDefined();
-    expect(model.manufacturer?.currency).toBeDefined();
+describe("getModelById", () => {
+  it("should throw NOT_FOUND when model doesn't exist", async () => {
+    const mockDb = { /* mock findModelById to return null */ };
+    await expect(getModelById(mockDb, "invalid-id")).rejects.toThrow("NOT_FOUND");
   });
 });
 ```
 
-## 📚 Referencias
+### Integration Tests
+Test repositories with real Drizzle client (test database):
 
-- [tRPC v11 Documentation](https://trpc.io/docs/v11)
-- [Zod Schema Documentation](https://zod.dev)
-- [Prisma Decimal Type](https://www.prisma.io/docs/concepts/components/prisma-client/field-types#decimal)
-- [React Hook Form with Zod](https://react-hook-form.com/get-started#SchemaValidation)
-
-## 🔄 Arquitectura SOLID
-
-Este router sigue los principios SOLID:
-
-- **Single Responsibility**: Cada archivo tiene una responsabilidad clara
-  - `index.ts`: Combinar procedures
-  - `catalog.schemas.ts`: Definir validaciones
-  - `catalog.queries.ts`: Lógica de lectura
-  - `catalog.utils.ts`: Funciones helper puras
-
-- **Open/Closed**: Extensible sin modificar código existente
-  - Los schemas se pueden extender con `.extend()`, `.pick()`, `.omit()`
-  - Nuevas queries se agregan sin modificar las existentes
-
-- **Liskov Substitution**: Los schemas son intercambiables
-  - `modelSummaryOutput` puede reemplazar a `modelDetailOutput` en contextos básicos
-
-- **Interface Segregation**: Schemas específicos para cada caso
-  - `modelSummaryOutput` para listas (campos mínimos)
-  - `modelDetailOutput` para detalles (campos completos)
-
-- **Dependency Inversion**: Depende de abstracciones
-  - Router depende de `createTRPCRouter`, no de implementación concreta
-  - Procedures usan `ctx.db` (abstracción), no Prisma directamente
-
-## 📝 Notas Adicionales
-
-### Barrel File Exception
-El archivo `index.ts` está exceptuado de la regla `noBarrelFile` de Biome porque:
-- Es necesario para combinar procedures en tRPC
-- Es un patrón arquitectónico válido en este contexto
-- No afecta tree-shaking porque tRPC optimiza el bundle
-
-### Decimal Serialization
-Los campos `Decimal` de Prisma deben convertirse a `number`:
 ```typescript
-// ❌ MAL: Retornar Decimal directamente
-return model;
-
-// ✅ BIEN: Serializar antes de retornar
-return serializeDecimalFields(model);
-```
-
-### Status Filtering
-Siempre filtrar por `status: 'published'` en procedures públicos:
-```typescript
-where: {
-  status: 'published', // Solo modelos publicados
-}
+describe("findModelById", () => {
+  it("should return model with profile supplier", async () => {
+    const model = await findModelById(testDb, seedModelId);
+    expect(model).toBeDefined();
+    expect(model.profileSupplier).toBeDefined();
+  });
+});
 ```
 
 ---
 
-**Última actualización**: 5 de octubre de 2025
-**Autor**: Glasify Development Team
-**Versión**: 1.0.0
+## Migration Notes (Prisma → Drizzle)
+
+### What Changed
+
+1. **No more Prisma Client**
+   - BEFORE: `prisma.model.findUnique()`
+   - AFTER: `db.select().from(models).where(eq(...))`
+
+2. **Explicit Joins**
+   - BEFORE: `include: { profileSupplier: true }`
+   - AFTER: `.leftJoin(profileSuppliers, eq(...))`
+
+3. **Decimal Serialization**
+   - BEFORE: `Decimal.toNumber()`
+   - AFTER: `Number.parseFloat(stringValue)`
+
+4. **Boolean Conversion**
+   - BEFORE: `isActive: boolean`
+   - AFTER: `isActive: "true" | "false"` → convert with `=== "true"`
+
+5. **No Relation Filtering**
+   - BEFORE: `where: { profileSupplier: { isActive: true } }`
+   - AFTER: Explicit join + `and(eq(models.status, "published"), eq(profileSuppliers.isActive, "true"))`
+
+### Files Removed
+- `catalog.mutations.ts` - Empty stub file
+- `catalog.migration-utils.ts` - Deprecated Prisma migration utilities
+
+---
+
+## Future Improvements
+
+1. **Caching**: Add Redis caching for catalog queries (TTL: 1 hour)
+2. **Pagination**: Implement cursor-based pagination for large datasets
+3. **Search**: Add full-text search using PostgreSQL `ts_vector`
+4. **Filtering**: Add advanced filters (price range, dimensions, glass type)
+5. **Sorting**: Support more sort options (popularity, newest, etc.)
+
+---
+
+## Related Documentation
+
+- **Domain Layer**: `src/domain/pricing/` - Money, MarginCalculator
+- **Database Schema**: `src/server/db/schema/` - Drizzle table definitions
+- **Quote Module**: `src/server/api/routers/quote/` - Similar clean architecture
+
+---
+
+## Maintainers
+
+- **Architecture**: Clean Architecture + SOLID
+- **ORM**: Drizzle ORM (not Prisma)
+- **Logging**: Winston (server-side only)
+- **Validation**: Zod schemas
+
+For questions, see: `.github/copilot-instructions.md`
