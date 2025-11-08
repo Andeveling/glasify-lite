@@ -12,7 +12,6 @@
  *
  * Pattern: Custom Hook - Single Responsibility (Mutation Logic)
  */
-/** biome-ignore-all assist/source/useSortedKeys: <explanation> */
 
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";

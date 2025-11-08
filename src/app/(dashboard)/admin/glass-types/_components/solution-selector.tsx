@@ -28,9 +28,6 @@ const PerformanceRating = {
   excellent: "excellent",
 } as const;
 
-// Extract type from the enum object
-type PerformanceRating = (typeof PerformanceRating)[keyof typeof PerformanceRating];
-
 import {
   FormControl,
   FormDescription,

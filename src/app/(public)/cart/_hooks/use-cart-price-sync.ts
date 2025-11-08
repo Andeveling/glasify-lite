@@ -188,7 +188,7 @@ export function useCartPriceSync({
    */
   // eslint-disable-next-line react-hooks/exhaustive-deps
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Dependencies intentionally exclude refs to prevent infinite loops
   useEffect(() => {
     const currentItemIds = new Set(itemsRef.current.map((item) => item.id));
     const trackedIds = Array.from(previousQuantitiesRef.current.keys());
