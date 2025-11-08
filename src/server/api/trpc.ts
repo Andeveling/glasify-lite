@@ -7,7 +7,6 @@
  * need to use are documented accordingly near the end.
  */
 
-import type { Prisma } from "@prisma/client";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { headers } from "next/headers";
 import superjson from "superjson";
@@ -238,25 +237,25 @@ export const sellerOrAdminProcedure = sellerProcedure;
 /**
  * Get role-based filter for quote queries
  *
- * - Admin/Seller: Returns empty object (sees all quotes)
- * - User: Returns filter to see only their own quotes
+ * - Admin/Seller: Returns userId as undefined (sees all quotes)
+ * - User: Returns their userId (sees only their own quotes)
  *
  * @param session - Better Auth session with user role
- * @returns Prisma where clause for quote filtering
+ * @returns userId for filtering or undefined for no filter
  */
 export function getQuoteFilter(
   session: Awaited<ReturnType<typeof auth.api.getSession>>
-): Prisma.QuoteWhereInput {
+): string | undefined {
   // Admins and sellers see all quotes
   if (session?.user?.role === "admin" || session?.user?.role === "seller") {
-    return {};
+    return;
   }
 
   // Regular users see only their own quotes
   if (session?.user?.id) {
-    return { userId: session.user.id };
+    return session.user.id;
   }
 
-  // No session - no access
-  return { userId: "" };
+  // No session - no access (empty string will match nothing)
+  return "";
 }

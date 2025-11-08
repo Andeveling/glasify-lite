@@ -22,6 +22,7 @@
  * - logs/exceptions.log: Uncaught exceptions
  * - logs/rejections.log: Unhandled promise rejections
  */
+/** biome-ignore-all lint/suspicious/noEmptyBlockStatements: <explanation> */
 
 // Type definition for logger interface
 type Logger = {

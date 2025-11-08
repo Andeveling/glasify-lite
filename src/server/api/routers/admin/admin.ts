@@ -1,7 +1,7 @@
 import type { GlassType, Model, Prisma, ProfileSupplier } from "@prisma/client";
 import { z } from "zod";
 import logger from "@/lib/logger";
-import { colorsRouter } from "@/server/api/routers/admin/colors";
+import { colorsRouter } from "@/server/api/routers/admin/colors"; // ✅ Now uses clean architecture
 import { galleryRouter } from "@/server/api/routers/admin/gallery";
 import { glassSolutionRouter } from "@/server/api/routers/admin/glass-solution";
 import { glassSupplierRouter } from "@/server/api/routers/admin/glass-supplier";
