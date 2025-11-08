@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { PriceItemCalculationResult } from "@/server/price/price-item";
+import type { PriceItemCalculationResult } from "@/domain/pricing/adapters/trpc/price-calculator.adapter";
 import { api } from "@/trpc/react";
 
 type UsePriceCalculationParams = {

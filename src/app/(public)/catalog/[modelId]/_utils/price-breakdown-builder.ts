@@ -8,7 +8,7 @@ import type {
   ModelDetailOutput,
   ServiceOutput,
 } from "@/server/api/routers/catalog";
-import type { PriceItemCalculationResult } from "@/server/price/price-item";
+import type { PriceItemCalculationResult } from "@/domain/pricing/adapters/trpc/price-calculator.adapter";
 
 export type PriceBreakdownItem = {
   amount: number;
