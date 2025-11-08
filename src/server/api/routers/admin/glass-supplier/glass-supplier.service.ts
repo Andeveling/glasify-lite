@@ -1,15 +1,15 @@
 /**
- * Glass Supplier Service - Business Logic Layer
+ * Glass Supplier Service
  *
- * Orchestrates data access and applies business rules.
- * Implements three-tier deletion strategy:
- * - Tier 1: Prevent deletion if used in glass types (hard constraint via FK)
- * - Tier 2: Soft delete if used in glass types (isActive = false)
- * - Tier 3: Hard delete if no references exist
+ * Business logic layer for glass supplier management operations
  *
- * @module server/api/routers/admin/glass-supplier/glass-supplier.service
+ * Handles:
+ * - CRUD operations with validation
+ * - Three-tier deletion strategy (soft delete if in use, hard delete if clean)
+ * - Usage tracking via foreign key relationships with glass types
+ * - isActive boolean ↔ string transformation for database compatibility
  */
-/** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: <explanation> */
+
 import { TRPCError } from "@trpc/server";
 import type { db } from "@/server/db/drizzle";
 import type {
@@ -263,6 +263,7 @@ export async function checkGlassSupplierUsage(
  * @returns Created glass supplier with usage count
  * @throws TRPCError if name exists or database error
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Business logic requires multiple validation branches
 export async function createGlassSupplier(
   client: DbClient,
   userId: string,
@@ -351,6 +352,7 @@ export async function createGlassSupplier(
  * @returns Updated glass supplier with usage count
  * @throws TRPCError if not found, name conflict, or database error
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Update logic requires validation and conflict checks
 export async function updateGlassSupplier(
   client: DbClient,
   userId: string,

@@ -1,14 +1,14 @@
 import type { GlassType, Model, Prisma, ProfileSupplier } from "@prisma/client";
 import { z } from "zod";
 import logger from "@/lib/logger";
-import { colorsRouter } from "@/server/api/routers/admin/colors"; // ✅ Now uses clean architecture
+import { colorsRouter } from "@/server/api/routers/admin/colors"; // ✅ Clean architecture
 import { galleryRouter } from "@/server/api/routers/admin/gallery";
 import { glassSolutionRouter } from "@/server/api/routers/admin/glass-solution";
-import { glassSupplierRouter } from "@/server/api/routers/admin/glass-supplier";
+import { glassSupplierRouter } from "@/server/api/routers/admin/glass-supplier"; // ✅ Clean architecture
 import { glassTypeRouter } from "@/server/api/routers/admin/glass-type";
 import { modelRouter } from "@/server/api/routers/admin/model";
-import { modelColorsRouter } from "@/server/api/routers/admin/model-colors";
-import { profileSupplierRouter } from "@/server/api/routers/admin/profile-supplier";
+import { modelColorsRouter } from "@/server/api/routers/admin/model-colors"; // ✅ Clean architecture (organized, pending Drizzle migration)
+import { profileSupplierRouter } from "@/server/api/routers/admin/profile-supplier"; // ✅ Clean architecture
 import { serviceRouter } from "@/server/api/routers/admin/service";
 import { adminProcedure, createTRPCRouter } from "@/server/api/trpc";
 

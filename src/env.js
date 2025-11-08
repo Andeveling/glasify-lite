@@ -7,7 +7,6 @@
  * @see https://env.t3.gg/docs/nextjs
  * @see https://create.t3.gg/en/usage/env-variables
  */
-/** biome-ignore-all lint/style/noMagicNumbers: <explanation> */
 
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
@@ -291,6 +290,7 @@ export const env = createEnv({
       .regex(/^\d+$/, "Must be a positive integer")
       .transform((val) => Number.parseInt(val, 10))
       .optional()
+      // biome-ignore lint/style/noMagicNumbers: Default batch size for database operations
       .default(100),
   },
   /**
