@@ -17,7 +17,6 @@
  */
 
 import { TRPCError } from "@trpc/server";
-import type { DrizzleClient } from "@/server/db";
 import type { CartItem } from "@/types/cart.types";
 import type { GenerateQuoteInput } from "@/types/quote.types";
 import {
@@ -102,7 +101,7 @@ export type SendQuoteToVendorResult = {
  * 4. Create delivery address (optional)
  * 5. Create quote items
  *
- * @param db - Prisma client instance
+ * @param db - Drizzle client instance
  * @param userId - Authenticated user ID
  * @param input - Cart items and project details
  * @returns Quote creation result
@@ -110,7 +109,7 @@ export type SendQuoteToVendorResult = {
  *
  * @example
  * ```typescript
- * const result = await generateQuoteFromCart(prisma, 'user123', {
+ * const result = await generateQuoteFromCart(db, 'user123', {
  *   cartItems: [...],
  *   projectAddress: { ... },
  *   deliveryAddress: { ... }
@@ -118,7 +117,7 @@ export type SendQuoteToVendorResult = {
  * ```
  */
 export async function generateQuoteFromCart(
-  db: DrizzleClient,
+  db: typeof import("@/server/db/drizzle").db,
   userId: string,
   input: GenerateQuoteInput
 ): Promise<GenerateQuoteResult> {
@@ -207,14 +206,14 @@ export async function generateQuoteFromCart(
  *
  * Status transition: draft → sent (immutable, no rollback)
  *
- * @param db - Prisma client instance
+ * @param db - Drizzle client instance
  * @param params - Quote ID, user ID, contact info
  * @returns Updated quote with sent status
  * @throws TRPCError if validation fails
  *
  * @example
  * ```typescript
- * const result = await sendQuoteToVendor(prisma, {
+ * const result = await sendQuoteToVendor(db, {
  *   quoteId: 'cuid123',
  *   userId: 'user456',
  *   contactPhone: '+573001234567',
@@ -223,7 +222,7 @@ export async function generateQuoteFromCart(
  * ```
  */
 export async function sendQuoteToVendor(
-  db: DrizzleClient,
+  db: typeof import("@/server/db/drizzle").db,
   params: SendQuoteToVendorParams
 ): Promise<SendQuoteToVendorResult> {
   const startTime = Date.now();
