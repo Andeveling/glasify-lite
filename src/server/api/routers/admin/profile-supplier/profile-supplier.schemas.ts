@@ -7,6 +7,7 @@
  * @module server/api/routers/admin/profile-supplier/profile-supplier.schemas
  */
 import { z } from "zod";
+import { MATERIAL_TYPE_VALUES } from "@/server/db/schemas/enums.schema";
 import {
   profileSupplierInsertSchema,
   profileSupplierSelectSchema,
@@ -37,7 +38,7 @@ export const ProfileSupplierUpdateSchema = profileSupplierUpdateSchema;
  * Get single profile supplier by ID
  */
 export const getByIdInput = z.object({
-  id: z.string().uuid("ID debe ser un UUID válido"),
+  id: z.uuid("ID debe ser un UUID válido"),
 });
 
 /**
@@ -47,7 +48,7 @@ export const getListInput = z.object({
   page: z.number().int().positive().default(DEFAULT_PAGE),
   limit: z.number().int().positive().max(MAX_LIMIT).default(DEFAULT_LIMIT),
   search: z.string().optional(),
-  materialType: z.enum(["ALUMINIO", "PVC"]).optional(),
+  materialType: z.enum(MATERIAL_TYPE_VALUES).optional(),
   isActive: z.enum(["all", "active", "inactive"]).default("all"),
   sortBy: z.enum(["name", "materialType", "createdAt"]).default("name"),
   sortOrder: z.enum(["asc", "desc"]).default("asc"),

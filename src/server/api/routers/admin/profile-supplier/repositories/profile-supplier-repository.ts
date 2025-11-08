@@ -6,9 +6,10 @@
  *
  * @module server/api/routers/admin/profile-supplier/repositories/profile-supplier-repository
  */
-import { and, count, desc, eq, ilike, type SQL } from "drizzle-orm";
+import { and, count, desc, eq, ilike, ne, type SQL } from "drizzle-orm";
 import type { db } from "@/server/db/drizzle";
 import { models, profileSuppliers } from "@/server/db/schema";
+import type { MaterialType } from "@/server/db/schemas/enums.schema";
 
 // Type inference from Drizzle db instance
 type DbClient = typeof db;
@@ -61,24 +62,27 @@ export async function findProfileSupplierByIdWithUsage(
 }
 
 /**
- * Find profile supplier by name (for duplicate check)
+ * Find profile supplier by name and material type (case-insensitive, exact match)
  *
  * @param client - Drizzle client instance
- * @param name - Supplier name
- * @param excludeId - Optional ID to exclude (for updates)
+ * @param name - Profile supplier name
+ * @param materialType - Material type
+ * @param excludeId - Optional ID to exclude from results (for update checks)
  * @returns Profile supplier or null
  */
 export async function findProfileSupplierByName(
   client: DbClient,
   name: string,
+  materialType: MaterialType,
   excludeId?: string
 ) {
-  const conditions: SQL[] = [eq(profileSuppliers.name, name)];
+  const conditions: SQL[] = [
+    eq(profileSuppliers.name, name),
+    eq(profileSuppliers.materialType, materialType),
+  ];
 
   if (excludeId) {
-    conditions.push(
-      sql`${profileSuppliers.id} != ${excludeId}`
-    );
+    conditions.push(ne(profileSuppliers.id, excludeId));
   }
 
   return await client
@@ -99,7 +103,7 @@ export async function countProfileSuppliers(
   client: DbClient,
   filters: {
     search?: string;
-    materialType?: string;
+    materialType?: MaterialType;
     isActive?: "all" | "active" | "inactive";
   }
 ) {
@@ -140,7 +144,7 @@ export async function findProfileSuppliers(
     page: number;
     limit: number;
     search?: string;
-    materialType?: string;
+    materialType?: MaterialType;
     isActive?: "all" | "active" | "inactive";
     sortBy: "name" | "materialType" | "createdAt";
     sortOrder: "asc" | "desc";
@@ -164,12 +168,20 @@ export async function findProfileSuppliers(
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
   const skip = (options.page - 1) * options.limit;
-  const orderColumn =
-    options.sortBy === "name"
-      ? profileSuppliers.name
-      : options.sortBy === "materialType"
-        ? profileSuppliers.materialType
-        : profileSuppliers.createdAt;
+
+  // Determine sort column
+  let orderColumn:
+    | typeof profileSuppliers.name
+    | typeof profileSuppliers.materialType
+    | typeof profileSuppliers.createdAt;
+  if (options.sortBy === "name") {
+    orderColumn = profileSuppliers.name;
+  } else if (options.sortBy === "materialType") {
+    orderColumn = profileSuppliers.materialType;
+  } else {
+    orderColumn = profileSuppliers.createdAt;
+  }
+
   const orderFn = options.sortOrder === "desc" ? desc : undefined;
 
   // Fetch suppliers
@@ -211,7 +223,7 @@ export async function createProfileSupplier(
   client: DbClient,
   data: {
     name: string;
-    materialType: "ALUMINIO" | "PVC";
+    materialType: MaterialType;
     isActive?: string;
     notes?: string | null;
   }
@@ -234,12 +246,12 @@ export async function createProfileSupplier(
 export async function updateProfileSupplier(
   client: DbClient,
   supplierId: string,
-  data: Partial<{
-    name: string;
-    materialType: "ALUMINIO" | "PVC";
-    isActive: string;
-    notes: string | null;
-  }>
+  data: {
+    name?: string;
+    materialType?: MaterialType;
+    isActive?: string;
+    notes?: string | null;
+  }
 ) {
   const [supplier] = await client
     .update(profileSuppliers)
