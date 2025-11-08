@@ -1,4 +1,4 @@
-import type { QuoteStatus } from "@prisma/client";
+import type { QuoteStatus } from "@/lib/types/prisma-types";
 import { Clock, Send, X } from "lucide-react";
 
 /**

@@ -12,7 +12,7 @@
  */
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { MaterialType, ProfileSupplier } from "@prisma/client";
+import type { MaterialType, ProfileSupplier } from "@/lib/types/prisma-types";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { createProfileSupplierSchema } from "@/lib/validations/admin/profile-supplier.schema";

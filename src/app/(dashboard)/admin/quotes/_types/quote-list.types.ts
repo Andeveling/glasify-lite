@@ -1,4 +1,4 @@
-import type { QuoteStatus } from "@prisma/client";
+import type { QuoteStatus } from "@/lib/types/prisma-types";
 
 /**
  * Lightweight DTO for quote list view
