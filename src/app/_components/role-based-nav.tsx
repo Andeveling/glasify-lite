@@ -1,4 +1,4 @@
-import type { UserRole } from "@prisma/client";
+import type { UserRole } from "@/lib/types/prisma-types";
 import { headers } from "next/headers";
 import { auth } from "@/server/auth";
 import { NavigationMenu } from "./navigation-menu";

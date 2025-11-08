@@ -17,7 +17,27 @@
 
 "use client";
 
-import type { Color, ModelColor } from "@prisma/client";
+// Local type definitions to avoid Prisma import issues
+type Color = {
+  id: string;
+  name: string;
+  hexCode: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type ModelColor = {
+  id: string;
+  modelId: string;
+  colorId: string;
+  surchargePercentage: number;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  color: Color;
+};
+
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {

@@ -10,7 +10,7 @@
 
 "use client";
 
-import type { ServiceType, ServiceUnit } from "@prisma/client";
+import type { ServiceType, ServiceUnit } from "@/lib/types/prisma-types";
 import { Pencil, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

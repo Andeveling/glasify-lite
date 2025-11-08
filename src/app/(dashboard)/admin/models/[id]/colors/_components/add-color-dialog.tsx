@@ -17,8 +17,17 @@
 
 "use client";
 
+// Local type definition to avoid Prisma import issues
+type Color = {
+  id: string;
+  name: string;
+  hexCode: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Color } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";

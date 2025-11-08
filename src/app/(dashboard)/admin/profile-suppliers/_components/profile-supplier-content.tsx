@@ -12,7 +12,7 @@
 
 "use client";
 
-import type { ProfileSupplier } from "@prisma/client";
+import type { ProfileSupplier } from "@/lib/types/prisma-types";
 import { useState } from "react";
 import { ProfileSupplierDialog } from "./profile-supplier-dialog";
 import { ProfileSupplierFilters } from "./profile-supplier-filters";

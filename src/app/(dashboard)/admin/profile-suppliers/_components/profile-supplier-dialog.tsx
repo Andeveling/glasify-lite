@@ -20,7 +20,7 @@
 
 "use client";
 
-import type { MaterialType, ProfileSupplier } from "@prisma/client";
+import type { MaterialType, ProfileSupplier } from "@/lib/types/prisma-types";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";

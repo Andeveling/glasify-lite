@@ -27,7 +27,7 @@
 
 "use client";
 
-import type { MaterialType, ProfileSupplier } from "@prisma/client";
+import type { MaterialType, ProfileSupplier } from "@/lib/types/prisma-types";
 import { Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

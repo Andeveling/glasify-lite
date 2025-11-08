@@ -21,7 +21,7 @@
 
 "use client";
 
-import type { MaterialType, ModelStatus } from "@prisma/client";
+import type { MaterialType, ModelStatus } from "@/lib/types/prisma-types";
 import { MoreHorizontal, Palette, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";

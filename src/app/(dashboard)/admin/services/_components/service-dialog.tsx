@@ -21,7 +21,7 @@
 
 "use client";
 
-import type { Service, ServiceType } from "@prisma/client";
+import type { Service, ServiceType } from "@/lib/types/prisma-types";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
