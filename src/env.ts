@@ -12,6 +12,7 @@ const {
   NEXT_PUBLIC_COMPANY_LOGO_URL,
   NEXT_PUBLIC_COMPANY_NAME,
   NODE_ENV,
+  PRISMA_CONNECTION_LIMIT,
 } = process.env;
 
 export const env = createEnv({
@@ -44,6 +45,7 @@ export const env = createEnv({
     NEXT_PUBLIC_COMPANY_LOGO_URL,
     NEXT_PUBLIC_COMPANY_NAME,
     NODE_ENV,
+    PRISMA_CONNECTION_LIMIT,
   },
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
@@ -62,6 +64,11 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
+    PRISMA_CONNECTION_LIMIT: z
+      .string()
+      .regex(/^\d+$/, "Must be a positive integer")
+      .transform((val) => Number.parseInt(val, 10))
+      .optional(),
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

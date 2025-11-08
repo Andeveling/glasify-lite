@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "prisma generate && next build",
+    "build": "next build",
     "lint": "npx ultracite check",
     "lint:fix": "npx ultracite fix",
     "lint:unsafe": "npx ultracite fix --unsafe",
@@ -148,6 +148,7 @@
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "@types/three": "^0.180.0",
+    "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "5.0.4",
     "dotenv": "^17.2.3",
     "fast-check": "^4.3.0",

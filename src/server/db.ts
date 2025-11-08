@@ -2,7 +2,10 @@ import { PrismaClient } from "@prisma/client";
 import { neonConfig } from "@neondatabase/serverless";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import ws from "ws";
+import { env } from "@/env";
 
+
+const { DATABASE_URL, PRISMA_CONNECTION_LIMIT } = env;
 // Configure Neon WebSocket for Node.js environment
 neonConfig.webSocketConstructor = ws;
 
@@ -23,7 +26,7 @@ neonConfig.webSocketConstructor = ws;
  * @returns Configured PrismaClient instance with Neon adapter
  */
 const createPrismaClient = () => {
-  const connectionString = process.env.DATABASE_URL;
+  const connectionString = DATABASE_URL;
 
   if (!connectionString) {
     throw new Error("DATABASE_URL environment variable is not set");
@@ -31,8 +34,8 @@ const createPrismaClient = () => {
 
   // Limit connections during build to prevent Neon "too many connections" errors
   // Neon Free Tier: max 1 connection, Paid: adjust based on your plan
-  const connectionLimit = process.env.PRISMA_CONNECTION_LIMIT 
-    ? `?connection_limit=${process.env.PRISMA_CONNECTION_LIMIT}`
+  const connectionLimit = PRISMA_CONNECTION_LIMIT 
+    ? `?connection_limit=${PRISMA_CONNECTION_LIMIT}`
     : "";
   
   const finalConnectionString = connectionString.includes("?")
