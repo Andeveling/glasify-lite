@@ -15,7 +15,7 @@ import { ZodError } from "zod";
 
 import logger from "@/lib/logger";
 import { auth } from "@/server/auth";
-import { db } from "@/server/db";
+import { db } from "@/server/db/drizzle";
 
 /**
  * 1. CONTEXT

@@ -36,6 +36,18 @@ export const MATERIAL_TYPE_VALUES = [
 ] as const;
 export const USER_ROLE_VALUES = ["admin", "seller", "user"] as const;
 
+// Export types for TypeScript usage
+export type UserRole = (typeof USER_ROLE_VALUES)[number];
+export type QuoteStatus = (typeof QUOTE_STATUS_VALUES)[number];
+export type ModelStatus = (typeof MODEL_STATUS_VALUES)[number];
+export type ServiceType = (typeof SERVICE_TYPE_VALUES)[number];
+export type ServiceUnit = (typeof SERVICE_UNIT_VALUES)[number];
+export type AdjustmentScope = (typeof ADJUSTMENT_SCOPE_VALUES)[number];
+export type AdjustmentSign = (typeof ADJUSTMENT_SIGN_VALUES)[number];
+export type PerformanceRating = (typeof PERFORMANCE_RATING_VALUES)[number];
+export type CostType = (typeof COST_TYPE_VALUES)[number];
+export type MaterialType = (typeof MATERIAL_TYPE_VALUES)[number];
+
 // Create pgEnum instances using the constant values
 export const modelStatusEnum = pgEnum("ModelStatus", MODEL_STATUS_VALUES);
 export const serviceTypeEnum = pgEnum("ServiceType", SERVICE_TYPE_VALUES);

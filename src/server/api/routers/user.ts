@@ -1,7 +1,8 @@
-import { UserRole } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { eq, ilike, or, type SQL, sql } from "drizzle-orm";
 import { z } from "zod";
 import logger from "@/lib/logger";
+import { quotes, USER_ROLE_VALUES, users } from "@/server/db/schema";
 import {
   adminProcedure,
   createTRPCRouter,
@@ -22,7 +23,7 @@ const MAX_SEARCH_LENGTH = 50;
  */
 const listUsersInput = z
   .object({
-    role: z.enum(UserRole).optional(),
+    role: z.enum(USER_ROLE_VALUES).optional(),
     search: z.string().min(MIN_SEARCH_LENGTH).max(MAX_SEARCH_LENGTH).optional(),
   })
   .optional();
@@ -35,7 +36,7 @@ const listUsersInput = z
  * Spanish error messages for user-facing validation
  */
 const updateUserRoleInput = z.object({
-  role: z.enum(UserRole),
+  role: z.enum(USER_ROLE_VALUES),
   userId: z.string().cuid({
     error: "ID de usuario inválido",
   }),
@@ -51,7 +52,7 @@ const listUsersOutput = z.array(
     id: z.string(),
     name: z.string().nullable(),
     quoteCount: z.number(),
-    role: z.nativeEnum(UserRole),
+    role: z.enum(USER_ROLE_VALUES),
   })
 );
 
@@ -61,7 +62,7 @@ const listUsersOutput = z.array(
 const updateUserRoleOutput = z.object({
   email: z.string().nullable(),
   id: z.string(),
-  role: z.nativeEnum(UserRole),
+  role: z.enum(USER_ROLE_VALUES),
 });
 
 /**
@@ -108,61 +109,50 @@ export const userRouter = createTRPCRouter({
           viewerRole: ctx.session.user.role,
         });
 
-        // Build where clause with optional filters
-        const where = {
-          ...(input?.role && { role: input.role }),
-          ...(input?.search && {
-            OR: [
-              {
-                name: {
-                  contains: input.search,
-                  mode: "insensitive" as const,
-                },
-              },
-              {
-                email: {
-                  contains: input.search,
-                  mode: "insensitive" as const,
-                },
-              },
-            ],
-          }),
-        };
+        // Build where conditions
+        const conditions: SQL<unknown>[] = [];
 
-        // Fetch users with quote count
-        const users = await ctx.db.user.findMany({
-          orderBy: {
-            email: "asc",
-          },
-          select: {
-            _count: {
-              select: {
-                quotes: true,
-              },
-            },
-            email: true,
-            id: true,
-            name: true,
-            role: true,
-          },
-          where,
-        });
+        if (input?.role) {
+          conditions.push(eq(users.role, input.role));
+        }
 
-        // Map to output format
-        const usersWithQuoteCount = users.map((user) => ({
-          email: user.email,
-          id: user.id,
-          name: user.name,
-          quoteCount: user._count.quotes,
-          role: user.role,
-        }));
+        if (input?.search) {
+          const searchCondition = or(
+            ilike(users.name, `%${input.search}%`),
+            ilike(users.email, `%${input.search}%`)
+          );
+          if (searchCondition) {
+            conditions.push(searchCondition);
+          }
+        }
+
+        // Fetch users with quote count using subquery
+        const usersWithQuotes = await ctx.db
+          .select({
+            id: users.id,
+            name: users.name,
+            email: users.email,
+            role: users.role,
+            quoteCount: sql<number>`(
+              SELECT COUNT(*)::int 
+              FROM ${quotes} 
+              WHERE ${quotes.userId} = ${users.id}
+            )`,
+          })
+          .from(users)
+          .where(
+            conditions.length > 0
+              ? sql`${sql.join(conditions, sql` AND `)}`
+              : undefined
+          )
+          .orderBy(users.email);
 
         logger.info("[US5] Users listed successfully", {
           adminId: ctx.session.user.id,
-          count: usersWithQuoteCount.length,
+          count: usersWithQuotes.length,
         });
 
-        return usersWithQuoteCount;
+        return usersWithQuotes;
       } catch (error) {
         logger.error("[US5] Error listing users", {
           adminId: ctx.session.user.id,
@@ -217,10 +207,11 @@ export const userRouter = createTRPCRouter({
         }
 
         // Fetch current user data for logging
-        const currentUser = await ctx.db.user.findUnique({
-          select: { email: true, role: true },
-          where: { id: input.userId },
-        });
+        const [currentUser] = await ctx.db
+          .select({ email: users.email, role: users.role })
+          .from(users)
+          .where(eq(users.id, input.userId))
+          .limit(1);
 
         if (!currentUser) {
           logger.warn("[US5] User not found for role update", {
@@ -235,15 +226,20 @@ export const userRouter = createTRPCRouter({
         }
 
         // Update user role
-        const updatedUser = await ctx.db.user.update({
-          data: { role: input.role },
-          select: {
-            email: true,
-            id: true,
-            role: true,
-          },
-          where: { id: input.userId },
-        });
+        const updatedUsers = await ctx.db
+          .update(users)
+          .set({ role: input.role })
+          .where(eq(users.id, input.userId))
+          .returning();
+
+        const updatedUser = updatedUsers[0];
+
+        if (!updatedUser) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Error al actualizar el rol del usuario",
+          });
+        }
 
         // Log role change for audit trail
         logger.info("[US5] User role updated successfully", {
