@@ -2,24 +2,22 @@
  * Quote Schemas - Zod validation schemas for quote operations
  *
  * These schemas define the contracts for quote-related tRPC procedures.
- * Follows the same pattern as catalog.schemas.ts
+ * Extends and reuses DB schemas from @/server/db/schemas
  *
  * @module server/api/routers/quote/quote.schemas
  */
 
 import { z } from "zod";
+import { QUOTE_FIELD_LENGTHS } from "@/server/db/schemas/constants/quote.constants";
+import { QUOTE_STATUS_VALUES } from "@/server/db/schemas/enums.schema";
 
 // ============================================================================
-// Constants
+// Constants - tRPC-specific (pagination, business rules)
 // ============================================================================
 
 const MAX_PAGE_SIZE = 100;
 const DEFAULT_PAGE_SIZE = 20;
-const MAX_PROJECT_NAME_LENGTH = 100;
-const MAX_ADDRESS_LENGTH = 200;
-const MAX_PHONE_LENGTH = 20;
 const MAX_CART_ITEMS = 20;
-const CURRENCY_CODE_LENGTH = 3;
 
 // ============================================================================
 // Input Schemas - Queries
@@ -44,7 +42,7 @@ export const listUserQuotesInput = z.object({
     .enum(["createdAt", "sentAt", "validUntil", "total"])
     .default("createdAt"),
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
-  status: z.enum(["draft", "sent", "canceled"]).optional(),
+  status: z.enum(QUOTE_STATUS_VALUES).optional(),
 });
 
 export type ListUserQuotesInput = z.infer<typeof listUserQuotesInput>;
@@ -55,7 +53,7 @@ export type ListUserQuotesInput = z.infer<typeof listUserQuotesInput>;
  * tRPC Query: quote['get-by-id']
  */
 export const getQuoteByIdInput = z.object({
-  id: z.string().cuid("ID de cotización debe ser válido"),
+  id: z.cuid("ID de cotización debe ser válido"),
 });
 
 export type GetQuoteByIdInput = z.infer<typeof getQuoteByIdInput>;
@@ -65,26 +63,27 @@ export type GetQuoteByIdInput = z.infer<typeof getQuoteByIdInput>;
 // ============================================================================
 
 /**
- * Project address for quote generation
- */
-/**
  * Project address schema for INPUT (quote generation)
  * All fields are required when creating a new quote
+ * Reuses QUOTE_FIELD_LENGTHS from DB constants
  */
 export const projectAddressSchema = z.object({
-  projectCity: z.string().min(1, "Ciudad es requerida").max(MAX_ADDRESS_LENGTH),
+  projectCity: z
+    .string()
+    .min(1, "Ciudad es requerida")
+    .max(QUOTE_FIELD_LENGTHS.PROJECT_CITY),
   projectName: z
     .string()
     .min(1, "Nombre del proyecto es requerido")
-    .max(MAX_PROJECT_NAME_LENGTH),
+    .max(QUOTE_FIELD_LENGTHS.PROJECT_NAME),
   projectState: z
     .string()
     .min(1, "Estado/región es requerido")
-    .max(MAX_ADDRESS_LENGTH),
+    .max(QUOTE_FIELD_LENGTHS.PROJECT_STATE),
   projectStreet: z
     .string()
     .min(1, "Dirección es requerida")
-    .max(MAX_ADDRESS_LENGTH),
+    .max(QUOTE_FIELD_LENGTHS.PROJECT_STREET),
 });
 
 export type ProjectAddressSchema = z.infer<typeof projectAddressSchema>;
@@ -110,7 +109,7 @@ export type ProjectAddressOutputSchema = z.infer<
  */
 export const cartItemForQuoteSchema = z.object({
   additionalServiceIds: z.array(z.cuid()),
-  glassTypeId: z.string().cuid(),
+  glassTypeId: z.cuid(),
   glassTypeName: z.string(),
   heightMm: z.number().int().positive(),
   modelId: z.cuid(),
@@ -135,7 +134,7 @@ export const generateQuoteFromCartInput = z.object({
     .array(cartItemForQuoteSchema)
     .min(1, "El carrito debe contener al menos un item")
     .max(MAX_CART_ITEMS, "El carrito no puede tener más de 20 items"),
-  contactPhone: z.string().max(MAX_PHONE_LENGTH).optional(),
+  contactPhone: z.string().optional(), // No max length constraint - flexible for international formats
   manufacturerId: z.string().cuid("ID del fabricante debe ser válido"),
   projectAddress: projectAddressSchema,
 });
@@ -153,13 +152,13 @@ export type GenerateQuoteFromCartInput = z.infer<
  */
 export const quoteListItemSchema = z.object({
   createdAt: z.date(),
-  currency: z.string(),
+  currency: z.string().length(QUOTE_FIELD_LENGTHS.CURRENCY), // ISO 4217 (e.g., "COP", "USD")
   id: z.cuid(),
   isExpired: z.boolean(),
   itemCount: z.number().int().nonnegative(),
   projectName: z.string(),
   sentAt: z.date().nullable(),
-  status: z.enum(["draft", "sent", "canceled"]),
+  status: z.enum(QUOTE_STATUS_VALUES), // Reuse DB enum values
   total: z.number().nonnegative(),
   validUntil: z.date().nullable(),
 });
@@ -207,7 +206,7 @@ export type QuoteItemDetailSchema = z.infer<typeof quoteItemDetailSchema>;
 export const quoteDetailSchema = z.object({
   contactPhone: z.string().nullable(),
   createdAt: z.date(),
-  currency: z.string(),
+  currency: z.string().length(QUOTE_FIELD_LENGTHS.CURRENCY), // ISO 4217
   id: z.cuid(),
   isExpired: z.boolean(),
   itemCount: z.number().int().nonnegative(),
@@ -216,7 +215,7 @@ export const quoteDetailSchema = z.object({
   projectAddress: projectAddressOutputSchema, // Use output schema (allows empty strings)
   projectName: z.string(), // T030 [US7]: For admin detail page
   sentAt: z.date().nullable(),
-  status: z.enum(["draft", "sent", "canceled"]),
+  status: z.enum(QUOTE_STATUS_VALUES), // Reuse DB enum values
   total: z.number().nonnegative(),
   totalUnits: z.number().int().nonnegative(),
   user: z
@@ -325,7 +324,7 @@ export type SendToVendorInput = z.infer<typeof sendToVendorInput>;
  */
 export const sendToVendorOutput = z.object({
   contactEmail: z.string().optional(),
-  currency: z.string().length(CURRENCY_CODE_LENGTH),
+  currency: z.string().length(QUOTE_FIELD_LENGTHS.CURRENCY), // Reuse DB constant (ISO 4217)
   id: z.cuid(),
   sentAt: z.date(),
   status: z.literal("sent"),
