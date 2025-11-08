@@ -11,7 +11,7 @@ import {
   createUpdateSchema,
 } from "drizzle-zod";
 import { z } from "zod";
-import { FIELD_LENGTHS } from "./constants";
+import { FIELD_LENGTHS } from "./constants/constants";
 import { users } from "./user.schema";
 
 export const sessions = pgTable(

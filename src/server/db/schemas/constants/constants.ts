@@ -55,6 +55,24 @@ export const FIELD_LENGTHS = {
     WHATSAPP_NUMBER: 15, // E.164 format
     WAREHOUSE_CITY: 100,
   },
+  // Profile Supplier
+  PROFILE_SUPPLIER: {
+    ID: 36, // CUID length
+    NAME: 255,
+    NOTES: 1000,
+  },
+  // Manufacturer (deprecated)
+  MANUFACTURER: {
+    ID: 36, // CUID length
+    NAME: 255,
+  },
+  // Model
+  MODEL: {
+    ID: 36, // CUID length
+    NAME: 255,
+    IMAGE_URL: 2048,
+    COST_NOTES: 2000,
+  },
 } as const;
 
 /**

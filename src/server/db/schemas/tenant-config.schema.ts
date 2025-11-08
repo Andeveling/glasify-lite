@@ -5,7 +5,11 @@ import {
   createUpdateSchema,
 } from "drizzle-zod";
 import { z } from "zod";
-import { FIELD_LENGTHS, GEO_CONSTRAINTS, ISO_CONSTRAINTS } from "./constants";
+import {
+  FIELD_LENGTHS,
+  GEO_CONSTRAINTS,
+  ISO_CONSTRAINTS,
+} from "./constants/constants";
 
 export const tenantConfigs = pgTable(
   "TenantConfig",
