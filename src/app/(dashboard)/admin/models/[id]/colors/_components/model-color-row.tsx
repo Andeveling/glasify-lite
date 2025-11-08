@@ -21,6 +21,7 @@ type Color = {
   id: string;
   name: string;
   hexCode: string;
+  ralCode?: string | null;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -32,6 +33,7 @@ type ModelColor = {
   colorId: string;
   surchargePercentage: number;
   isActive: boolean;
+  isDefault?: boolean;
   createdAt: Date;
   updatedAt: Date;
   color: Color;
@@ -82,6 +84,7 @@ type SerializedModelColorWithColor = Omit<
  *
  * DO NOT rename to "Action" suffix - these are NOT Server Actions.
  */
+// @ts-ignore - False positive: Client-to-Client callbacks don't need serialization
 type ModelColorRowProps = {
   modelColor: SerializedModelColorWithColor;
   onSurchargeChange: (id: string, surcharge: number) => void;

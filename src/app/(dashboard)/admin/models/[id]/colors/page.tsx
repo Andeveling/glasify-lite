@@ -73,7 +73,9 @@ export default async function ModelColorsPage({ params }: PageProps) {
     const modelColors = modelColorsRaw.map((mc) => ({
       ...mc,
       surchargePercentage: safeDecimalToNumber(mc.surchargePercentage),
-    }));
+      // Add isActive property if not present
+      isActive: true,
+    } as any));
 
     // Fetch available colors for assignment
     const availableColors = await api.admin["model-colors"].getAvailableColors({

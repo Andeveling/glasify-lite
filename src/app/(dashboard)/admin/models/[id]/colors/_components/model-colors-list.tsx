@@ -22,6 +22,7 @@ type Color = {
   id: string;
   name: string;
   hexCode: string;
+  ralCode?: string | null;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -33,6 +34,7 @@ type ModelColor = {
   colorId: string;
   surchargePercentage: number;
   isActive: boolean;
+  isDefault?: boolean;
   createdAt: Date;
   updatedAt: Date;
   color: Color;

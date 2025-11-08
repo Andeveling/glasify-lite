@@ -22,6 +22,7 @@ type Color = {
   id: string;
   name: string;
   hexCode: string;
+  ralCode?: string | null;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
