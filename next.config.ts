@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import "./src/env.js";
+import "./src/env";
 
 const PRISMA_REGEX = /[\\/]node_modules[\\/]@prisma[\\/]/;
 
