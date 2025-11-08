@@ -21,7 +21,7 @@ export const quoteQueries = createTRPCRouter({
    * Users can only access their own quotes.
    */
   "get-by-id": protectedProcedure
-    .input(z.object({ quoteId: z.string().cuid() }))
+    .input(z.object({ quoteId: z.cuid() }))
     .query(async ({ ctx, input }) => {
       const quote = await findQuoteByIdWithItems(ctx.db, input.quoteId);
 
