@@ -66,13 +66,8 @@ export const glassSupplierSelectSchema = createSelectSchema(glassSuppliers, {
   name: z.string().max(GLASS_SUPPLIER_FIELD_LENGTHS.NAME).min(1),
   code: z.string().max(GLASS_SUPPLIER_FIELD_LENGTHS.CODE).optional(),
   country: z.string().max(GLASS_SUPPLIER_FIELD_LENGTHS.COUNTRY).optional(),
-  website: z
-    .string()
-    .url()
-    .max(GLASS_SUPPLIER_FIELD_LENGTHS.WEBSITE)
-    .optional(),
+  website: z.url().max(GLASS_SUPPLIER_FIELD_LENGTHS.WEBSITE).optional(),
   contactEmail: z
-    .string()
     .email()
     .max(GLASS_SUPPLIER_FIELD_LENGTHS.CONTACT_EMAIL)
     .optional(),
@@ -80,7 +75,7 @@ export const glassSupplierSelectSchema = createSelectSchema(glassSuppliers, {
     .string()
     .max(GLASS_SUPPLIER_FIELD_LENGTHS.CONTACT_PHONE)
     .optional(),
-  isActive: z.boolean(),
+  isActive: z.preprocess((val) => val === "true" || val === true, z.boolean()),
   notes: z.string().max(GLASS_SUPPLIER_FIELD_LENGTHS.NOTES).optional(),
   tenantConfigId: z.string().optional(),
 });
@@ -104,7 +99,12 @@ export const glassSupplierInsertSchema = createInsertSchema(glassSuppliers, {
     .string()
     .max(GLASS_SUPPLIER_FIELD_LENGTHS.CONTACT_PHONE)
     .optional(),
-  isActive: z.boolean().optional(),
+  isActive: z
+    .preprocess(
+      (val) => (val === true || val === "true" ? "true" : "false"),
+      z.string()
+    )
+    .optional(),
   notes: z.string().max(GLASS_SUPPLIER_FIELD_LENGTHS.NOTES).optional(),
   tenantConfigId: z.string().optional(),
 }).omit({ createdAt: true, updatedAt: true });
@@ -127,7 +127,10 @@ export const glassSupplierUpdateSchema = createUpdateSchema(glassSuppliers, {
     .string()
     .max(GLASS_SUPPLIER_FIELD_LENGTHS.CONTACT_PHONE)
     .optional(),
-  isActive: z.boolean(),
+  isActive: z.preprocess(
+    (val) => (val === true || val === "true" ? "true" : "false"),
+    z.string()
+  ),
   notes: z.string().max(GLASS_SUPPLIER_FIELD_LENGTHS.NOTES).optional(),
   tenantConfigId: z.string().optional(),
 })

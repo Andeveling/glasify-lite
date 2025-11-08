@@ -1,5 +1,6 @@
 import {
   decimal,
+  foreignKey,
   index,
   pgTable,
   text,
@@ -17,6 +18,7 @@ import {
   GLASS_TYPE_FIELD_LENGTHS,
   GLASS_TYPE_PRECISION,
 } from "./constants/glass-type.constants";
+import { glassSuppliers } from "./glass-supplier.schema";
 
 export const glassTypes = pgTable(
   "GlassType",
@@ -33,6 +35,9 @@ export const glassTypes = pgTable(
     series: varchar("series", { length: GLASS_TYPE_FIELD_LENGTHS.SERIES }),
     manufacturer: varchar("manufacturer", {
       length: GLASS_TYPE_FIELD_LENGTHS.MANUFACTURER,
+    }),
+    glassSupplierId: varchar("glassSupplierId", {
+      length: GLASS_TYPE_FIELD_LENGTHS.ID,
     }),
     thicknessMm: text("thicknessMm").notNull(),
     pricePerSqm: decimal("pricePerSqm", {
@@ -71,10 +76,16 @@ export const glassTypes = pgTable(
       .notNull(),
   },
   (table) => [
+    foreignKey({
+      columns: [table.glassSupplierId],
+      foreignColumns: [glassSuppliers.id],
+      name: "GlassType_glassSupplierId_fkey",
+    }).onDelete("set null"),
     index("GlassType_name_idx").on(table.name),
     index("GlassType_code_idx").on(table.code),
     index("GlassType_series_idx").on(table.series),
     index("GlassType_manufacturer_idx").on(table.manufacturer),
+    index("GlassType_glassSupplierId_idx").on(table.glassSupplierId),
     index("GlassType_isActive_idx").on(table.isActive),
     index("GlassType_isSeeded_idx").on(table.isSeeded),
     index("GlassType_thicknessMm_idx").on(table.thicknessMm),
@@ -92,6 +103,7 @@ export const glassTypeSelectSchema = createSelectSchema(glassTypes, {
     .string()
     .max(GLASS_TYPE_FIELD_LENGTHS.MANUFACTURER)
     .optional(),
+  glassSupplierId: z.string().optional(),
   thicknessMm: z
     .number()
     .int()
@@ -125,6 +137,7 @@ export const glassTypeInsertSchema = createInsertSchema(glassTypes, {
     .string()
     .max(GLASS_TYPE_FIELD_LENGTHS.MANUFACTURER)
     .optional(),
+  glassSupplierId: z.string().optional(),
   thicknessMm: z
     .number()
     .int()
@@ -157,6 +170,7 @@ export const glassTypeUpdateSchema = createUpdateSchema(glassTypes, {
     .string()
     .max(GLASS_TYPE_FIELD_LENGTHS.MANUFACTURER)
     .optional(),
+  glassSupplierId: z.string().optional(),
   thicknessMm: z
     .number()
     .int()
