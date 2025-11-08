@@ -1,14 +1,8 @@
 // src/server/api/routers/catalog/catalog.queries.ts
-import { eq, and, inArray, desc, asc, sql } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import logger from "@/lib/logger";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import {
-  models,
-  profileSuppliers,
-  glassTypes,
-  glassSolutions,
-  services,
-} from "@/server/db/schema";
+import { models, profileSuppliers } from "@/server/db/schema";
 import {
   getAvailableGlassTypesInput,
   getModelByIdInput,
@@ -65,11 +59,13 @@ export const catalogQueries = createTRPCRouter({
             profileSupplierMaterialType: profileSuppliers.materialType,
           })
           .from(models)
-          .innerJoin(profileSuppliers, eq(models.profileSupplierId, profileSuppliers.id))
-          .where(and(
-            eq(models.id, input.modelId),
-            eq(models.status, "published")
-          ))
+          .innerJoin(
+            profileSuppliers,
+            eq(models.profileSupplierId, profileSuppliers.id)
+          )
+          .where(
+            and(eq(models.id, input.modelId), eq(models.status, "published"))
+          )
           .limit(1);
 
         const model = modelData[0];
@@ -97,7 +93,9 @@ export const catalogQueries = createTRPCRouter({
           profileSupplierMaterialType: undefined,
         };
 
-        const serializedModel = serializeDecimalFields(modelWithProfileSupplier);
+        const serializedModel = serializeDecimalFields(
+          modelWithProfileSupplier
+        );
 
         logger.info("Successfully retrieved model", {
           modelId: input.modelId,

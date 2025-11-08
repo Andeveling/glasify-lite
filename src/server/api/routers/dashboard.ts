@@ -158,7 +158,9 @@ export const dashboardRouter = createTRPCRouter({
 
         // Calculate analytics using service layer functions
         const topModels = getTopModels(mappedQuoteItems as MappedQuoteItem[]);
-        const topGlassTypes = getGlassTypeDistribution(mappedQuoteItems as MappedQuoteItem[]);
+        const topGlassTypes = getGlassTypeDistribution(
+          mappedQuoteItems as MappedQuoteItem[]
+        );
         const supplierDistribution = getSupplierDistribution(
           mappedQuoteItems as MappedQuoteItem[]
         );
