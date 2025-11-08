@@ -1,6 +1,14 @@
 // src/server/api/routers/catalog/catalog.queries.ts
+import { eq, and, inArray, desc, asc, sql } from "drizzle-orm";
 import logger from "@/lib/logger";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import {
+  models,
+  profileSuppliers,
+  glassTypes,
+  glassSolutions,
+  services,
+} from "@/server/db/schema";
 import {
   getAvailableGlassTypesInput,
   getModelByIdInput,
@@ -31,39 +39,40 @@ export const catalogQueries = createTRPCRouter({
       try {
         logger.info("Getting model by ID", { modelId: input.modelId });
 
-        const model = await ctx.db.model.findUnique({
-          select: {
-            accessoryPrice: true,
-            basePrice: true,
-            compatibleGlassTypeIds: true,
-            costPerMmHeight: true,
-            costPerMmWidth: true,
-            createdAt: true,
-            glassDiscountHeightMm: true,
-            glassDiscountWidthMm: true,
-            id: true,
-            imageUrl: true,
-            maxHeightMm: true,
-            maxWidthMm: true,
-            minHeightMm: true,
-            minWidthMm: true,
-            name: true,
-            profitMarginPercentage: true, // Include profit margin for display pricing
-            profileSupplier: {
-              select: {
-                id: true,
-                materialType: true,
-                name: true,
-              },
-            },
-            status: true,
-            updatedAt: true,
-          },
-          where: {
-            id: input.modelId,
-            status: "published",
-          },
-        });
+        const modelData = await ctx.db
+          .select({
+            accessoryPrice: models.accessoryPrice,
+            basePrice: models.basePrice,
+            compatibleGlassTypeIds: models.compatibleGlassTypeIds,
+            costPerMmHeight: models.costPerMmHeight,
+            costPerMmWidth: models.costPerMmWidth,
+            createdAt: models.createdAt,
+            glassDiscountHeightMm: models.glassDiscountHeightMm,
+            glassDiscountWidthMm: models.glassDiscountWidthMm,
+            id: models.id,
+            imageUrl: models.imageUrl,
+            maxHeightMm: models.maxHeightMm,
+            maxWidthMm: models.maxWidthMm,
+            minHeightMm: models.minHeightMm,
+            minWidthMm: models.minWidthMm,
+            name: models.name,
+            profitMarginPercentage: models.profitMarginPercentage,
+            status: models.status,
+            updatedAt: models.updatedAt,
+            // ProfileSupplier fields
+            profileSupplierId: profileSuppliers.id,
+            profileSupplierName: profileSuppliers.name,
+            profileSupplierMaterialType: profileSuppliers.materialType,
+          })
+          .from(models)
+          .innerJoin(profileSuppliers, eq(models.profileSupplierId, profileSuppliers.id))
+          .where(and(
+            eq(models.id, input.modelId),
+            eq(models.status, "published")
+          ))
+          .limit(1);
+
+        const model = modelData[0];
 
         if (!model) {
           logger.warn("Model not found or not published", {
@@ -74,7 +83,21 @@ export const catalogQueries = createTRPCRouter({
           );
         }
 
-        const serializedModel = serializeDecimalFields(model);
+        // Map Drizzle flattened result to expected nested structure
+        const modelWithProfileSupplier = {
+          ...model,
+          profileSupplier: {
+            id: model.profileSupplierId,
+            name: model.profileSupplierName,
+            materialType: model.profileSupplierMaterialType,
+          },
+          // Remove flattened fields to avoid duplication
+          profileSupplierId: undefined,
+          profileSupplierName: undefined,
+          profileSupplierMaterialType: undefined,
+        };
+
+        const serializedModel = serializeDecimalFields(modelWithProfileSupplier);
 
         logger.info("Successfully retrieved model", {
           modelId: input.modelId,
@@ -115,16 +138,21 @@ export const catalogQueries = createTRPCRouter({
         // If modelId is provided, filter solutions by compatible glass types
         if (params.modelId) {
           // First, get the model's compatible glass type IDs
-          const model = await ctx.db.model.findUnique({
-            select: { compatibleGlassTypeIds: true },
-            where: { id: params.modelId },
-          });
+          const modelData = await ctx.db
+            .select({ compatibleGlassTypeIds: models.compatibleGlassTypeIds })
+            .from(models)
+            .where(eq(models.id, params.modelId))
+            .limit(1);
+
+          const model = modelData[0];
 
           if (!model) {
             throw new Error("Modelo no encontrado");
           }
 
           // Get solutions that have at least one glass type compatible with this model
+          // TODO: This requires complex join logic with glassSolution -> glassTypes -> glassTypeId
+          // For now, using Prisma syntax as placeholder - needs Drizzle relation handling
           const solutions = await ctx.db.glassSolution.findMany({
             orderBy: { sortOrder: "asc" },
             where: {

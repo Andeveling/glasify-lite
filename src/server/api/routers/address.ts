@@ -16,9 +16,11 @@
  */
 
 import { TRPCError } from "@trpc/server";
+import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { projectAddressSchema } from "@/app/(dashboard)/admin/quotes/_schemas/project-address.schema";
 import logger from "@/lib/logger";
+import { projectAddresses } from "@/server/db/schema";
 import { adminProcedure, createTRPCRouter } from "../trpc";
 
 /**
@@ -47,21 +49,32 @@ export const addressRouter = createTRPCRouter({
         });
 
         // Create address with all validated fields
-        const address = await ctx.db.projectAddress.create({
-          data: {
-            quoteId: input.quoteId,
-            label: input.label,
-            country: input.country,
-            region: input.region,
-            city: input.city,
-            district: input.district,
-            street: input.street,
-            reference: input.reference,
-            latitude: input.latitude,
-            longitude: input.longitude,
-            postalCode: input.postalCode,
-          },
-        });
+        const values: typeof projectAddresses.$inferInsert = {
+          quoteId: input.quoteId,
+          label: input.label,
+          country: input.country,
+          region: input.region,
+          city: input.city,
+          district: input.district,
+          street: input.street,
+          reference: input.reference,
+          latitude: input.latitude?.toString(),
+          longitude: input.longitude?.toString(),
+          postalCode: input.postalCode,
+        };
+
+        const addresses = await ctx.db
+          .insert(projectAddresses)
+          .values(values)
+          .returning();
+
+        const address = addresses[0];
+        if (!address) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Error al crear la dirección de entrega",
+          });
+        }
 
         logger.info("Project address created successfully", {
           userId: ctx.session.user.id,
@@ -107,10 +120,12 @@ export const addressRouter = createTRPCRouter({
           addressId: input.id,
         });
 
-        const address = await ctx.db.projectAddress.findUnique({
-          where: { id: input.id },
-          include: { quote: true },
-        });
+        const address = await ctx.db
+          .select()
+          .from(projectAddresses)
+          .where(eq(projectAddresses.id, input.id))
+          .limit(1)
+          .then((result) => result[0]);
 
         if (!address) {
           throw new TRPCError({
@@ -168,21 +183,51 @@ export const addressRouter = createTRPCRouter({
           addressId: input.id,
         });
 
-        const address = await ctx.db.projectAddress.update({
-          where: { id: input.id },
-          data: {
-            label: input.data.label,
-            country: input.data.country,
-            region: input.data.region,
-            city: input.data.city,
-            district: input.data.district,
-            street: input.data.street,
-            reference: input.data.reference,
-            latitude: input.data.latitude,
-            longitude: input.data.longitude,
-            postalCode: input.data.postalCode,
-          },
-        });
+        const updateValues: Partial<typeof projectAddresses.$inferInsert> = {};
+        if (input.data.label !== undefined) {
+          updateValues.label = input.data.label;
+        }
+        if (input.data.country !== undefined) {
+          updateValues.country = input.data.country;
+        }
+        if (input.data.region !== undefined) {
+          updateValues.region = input.data.region;
+        }
+        if (input.data.city !== undefined) {
+          updateValues.city = input.data.city;
+        }
+        if (input.data.district !== undefined) {
+          updateValues.district = input.data.district;
+        }
+        if (input.data.street !== undefined) {
+          updateValues.street = input.data.street;
+        }
+        if (input.data.reference !== undefined) {
+          updateValues.reference = input.data.reference;
+        }
+        if (input.data.latitude !== undefined) {
+          updateValues.latitude = input.data.latitude.toString();
+        }
+        if (input.data.longitude !== undefined) {
+          updateValues.longitude = input.data.longitude.toString();
+        }
+        if (input.data.postalCode !== undefined) {
+          updateValues.postalCode = input.data.postalCode;
+        }
+
+        const addresses = await ctx.db
+          .update(projectAddresses)
+          .set(updateValues)
+          .where(eq(projectAddresses.id, input.id))
+          .returning();
+
+        const address = addresses[0];
+        if (!address) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Error al actualizar la dirección de entrega",
+          });
+        }
 
         logger.info("Project address updated successfully", {
           userId: ctx.session.user.id,
@@ -228,9 +273,9 @@ export const addressRouter = createTRPCRouter({
           addressId: input.id,
         });
 
-        await ctx.db.projectAddress.delete({
-          where: { id: input.id },
-        });
+        await ctx.db
+          .delete(projectAddresses)
+          .where(eq(projectAddresses.id, input.id));
 
         logger.info("Project address deleted successfully", {
           userId: ctx.session.user.id,
@@ -276,10 +321,11 @@ export const addressRouter = createTRPCRouter({
           quoteId: input.quoteId,
         });
 
-        const addresses = await ctx.db.projectAddress.findMany({
-          where: { quoteId: input.quoteId },
-          orderBy: { createdAt: "desc" },
-        });
+        const addresses = await ctx.db
+          .select()
+          .from(projectAddresses)
+          .where(eq(projectAddresses.quoteId, input.quoteId))
+          .orderBy(desc(projectAddresses.createdAt));
 
         logger.info("Project addresses listed successfully", {
           userId: ctx.session.user.id,
