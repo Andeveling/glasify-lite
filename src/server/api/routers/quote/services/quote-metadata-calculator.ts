@@ -4,13 +4,9 @@
  * Single Responsibility: Calculate currency, validity, and totals
  * Open/Closed: Open for extension (new metadata fields), closed for modification
  *
- * NOTE: Currently uses Prisma types during migration to Drizzle.
- * This module will be updated once Drizzle migration is complete.
- *
  * @module server/api/routers/quote/services/quote-metadata-calculator
  */
 
-import type { TransactionClient } from "@/server/utils/tenant";
 import { getQuoteValidityDays, getTenantCurrency } from "@/server/utils/tenant";
 import type { CartItem } from "@/types/cart.types";
 
@@ -54,12 +50,13 @@ function calculateValidityDate(quoteValidityDays: number): Date {
  * - Validity date (current date + configured days)
  * - Total from cart items subtotals
  *
- * @param db - Database transaction client (Prisma during migration, Drizzle later)
+ * @param db - Drizzle database client
  * @param cartItems - Cart items to calculate total
  * @returns Quote metadata
  */
 export async function calculateQuoteMetadata(
-  db: TransactionClient,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  db: any,
   cartItems: CartItem[]
 ): Promise<QuoteMetadata> {
   const [currency, quoteValidityDays] = await Promise.all([
