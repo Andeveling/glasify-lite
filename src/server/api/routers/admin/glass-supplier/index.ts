@@ -12,10 +12,12 @@
  * @module server/api/routers/admin/glass-supplier
  */
 import { createTRPCRouter } from "@/server/api/trpc";
+import { glassSupplierMutations } from "./glass-supplier.mutations";
+import { glassSupplierQueries } from "./glass-supplier.queries";
 
-// Temporary empty router - will be completed with queries and mutations
 export const glassSupplierRouter = createTRPCRouter({
-  // TODO: Add queries and mutations
+  ...glassSupplierQueries._def.procedures,
+  ...glassSupplierMutations._def.procedures,
 });
 
 // Export schemas for form validation
