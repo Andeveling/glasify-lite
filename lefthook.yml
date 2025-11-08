@@ -26,3 +26,25 @@ commit-msg:
   jobs:
     - name: commitlint
       run: pnpm commitlint --edit $1
+
+# ============================================================
+# PRE-PUSH HOOK: Verificación completa antes de push
+# ============================================================
+# Ejecuta checks exhaustivos para evitar romper CI/CD
+# - TypeScript type checking (tsc --noEmit)
+# - Biome linting sin auto-fix (para detectar errores)
+# - Prisma schema validation
+# 
+# Si algún check falla, el push se cancela
+# ============================================================
+pre-push:
+  parallel: false  # Ejecutar en secuencia para mejor output
+  jobs:
+    - name: typescript-check
+      run: pnpm tsc --noEmit --pretty
+      
+    - name: biome-check
+      run: pnpm biome check --no-errors-on-unmatched src/
+      
+    - name: prisma-validate
+      run: pnpm prisma validate

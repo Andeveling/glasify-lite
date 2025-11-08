@@ -19,14 +19,18 @@ import { Plus, Trash2 } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 
-// Define PerformanceRating enum locally to avoid Prisma import issues
+// Define PerformanceRating enum locally to match Prisma schema
 const PerformanceRating = {
-  BASIC: "BASIC",
-  STANDARD: "STANDARD",
-  GOOD: "GOOD",
-  VERY_GOOD: "VERY_GOOD",
-  EXCELLENT: "EXCELLENT",
+  basic: "basic",
+  standard: "standard",
+  good: "good",
+  very_good: "very_good",
+  excellent: "excellent",
 } as const;
+
+// Extract type from the enum object
+type PerformanceRating = (typeof PerformanceRating)[keyof typeof PerformanceRating];
+
 import {
   FormControl,
   FormDescription,
@@ -50,7 +54,7 @@ import { api } from "@/trpc/react";
 /**
  * Performance rating display labels
  */
-const PERFORMANCE_LABELS: Record<PerformanceRating, string> = {
+const PERFORMANCE_LABELS: Record<string, string> = {
   basic: "Básico",
   excellent: "Excelente",
   good: "Bueno",
