@@ -5,7 +5,7 @@ import { colorsRouter } from "@/server/api/routers/admin/colors"; // ✅ Clean a
 import { galleryRouter } from "@/server/api/routers/admin/gallery";
 import { glassSolutionRouter } from "@/server/api/routers/admin/glass-solution";
 import { glassSupplierRouter } from "@/server/api/routers/admin/glass-supplier"; // ✅ Clean architecture
-import { glassTypeRouter } from "@/server/api/routers/admin/glass-type";
+import { glassTypeRouter } from "@/server/api/routers/admin/glass-type/glass-type.router"; // ✅ Clean architecture (Drizzle ORM)
 import { modelRouter } from "@/server/api/routers/admin/model";
 import { modelColorsRouter } from "@/server/api/routers/admin/model-colors"; // ✅ Clean architecture (organized, pending Drizzle migration)
 import { profileSupplierRouter } from "@/server/api/routers/admin/profile-supplier"; // ✅ Clean architecture
