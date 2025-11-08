@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { GlassSolution } from "@prisma/client";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -42,7 +41,19 @@ import { IconSelector } from "./icon-selector";
 
 type GlassSolutionFormProps = {
   mode: "create" | "edit";
-  defaultValues?: GlassSolution;
+  defaultValues?: {
+    id: string;
+    key: string;
+    name: string;
+    nameEs: string;
+    description: string | null;
+    sortOrder: number;
+    icon: string | null;
+    isActive: boolean;
+    slug: string;
+    createdAt: Date;
+    updatedAt: Date;
+  };
 };
 
 type FormValues = {
