@@ -29,8 +29,18 @@ const createPrismaClient = () => {
     throw new Error("DATABASE_URL environment variable is not set");
   }
 
+  // Limit connections during build to prevent Neon "too many connections" errors
+  // Neon Free Tier: max 1 connection, Paid: adjust based on your plan
+  const connectionLimit = process.env.PRISMA_CONNECTION_LIMIT 
+    ? `?connection_limit=${process.env.PRISMA_CONNECTION_LIMIT}`
+    : "";
+  
+  const finalConnectionString = connectionString.includes("?")
+    ? connectionString // Already has query params
+    : `${connectionString}${connectionLimit}`;
+
   // Create Neon adapter for serverless connections
-  const adapter = new PrismaNeon({ connectionString });
+  const adapter = new PrismaNeon({ connectionString: finalConnectionString });
 
   const client = new PrismaClient({
     adapter,
