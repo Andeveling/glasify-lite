@@ -139,7 +139,7 @@ export function ProfileSupplierList({
             }
             return {
               ...old,
-              items: old.items.filter((item) => item.id !== variables.id),
+              items: old.items.filter((item: ProfileSupplier) => item.id !== variables.id),
               total: old.total - 1,
             };
           }
