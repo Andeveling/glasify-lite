@@ -1,9 +1,16 @@
 import { PrismaClient } from "@prisma/client";
+import { neonConfig } from "@neondatabase/serverless";
+import { PrismaNeon } from "@prisma/adapter-neon";
+import ws from "ws";
+
+// Configure Neon WebSocket for Node.js environment
+neonConfig.webSocketConstructor = ws;
 
 /**
- * Creates a Prisma client with query logging in development
+ * Creates a Prisma client with Neon adapter and query logging in development
  *
  * Features:
+ * - Neon WebSocket adapter for optimized serverless connections
  * - Query logging in development mode (via Prisma's built-in logger)
  * - Error logging in all environments
  *
@@ -13,10 +20,20 @@ import { PrismaClient } from "@prisma/client";
  * - This client is used in pre-rendered routes (/catalog/[modelId])
  * - Prisma's built-in query logging is sufficient for development debugging
  *
- * @returns Configured PrismaClient instance
+ * @returns Configured PrismaClient instance with Neon adapter
  */
 const createPrismaClient = () => {
+  const connectionString = process.env.DATABASE_URL;
+
+  if (!connectionString) {
+    throw new Error("DATABASE_URL environment variable is not set");
+  }
+
+  // Create Neon adapter for serverless connections
+  const adapter = new PrismaNeon({ connectionString });
+
   const client = new PrismaClient({
+    adapter,
     log:
       (process.env.NODE_ENV ?? "development") === "development"
         ? ["query", "error", "warn"]
