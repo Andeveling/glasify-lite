@@ -437,11 +437,17 @@ describe("{module} procedures", () => {
 6. ✅ Create `{module}.mutations.ts` with write procedures
 7. ✅ Create `index.ts` combining both routers + exporting schemas
 8. ✅ Run `biome check --fix` to ensure zero errors
-9. ✅ Import router in `/src/server/api/routers/admin.ts` or `root.ts`
+9. ✅ Import router in `/src/server/api/routers/admin/admin.ts` (for admin modules) or `/src/server/api/root.ts` (for public/global modules)
+
+**Router Composition**:
+- **Admin modules**: Import in `admin/admin.ts` (admin-only access)
+- **Public/Global modules**: Import directly in `root.ts` (mixed access levels)
+- Example: `tenant-config` is in `root.ts` because it has both public queries and admin mutations
 
 **References**:
 - ✅ glass-solution: `/src/server/api/routers/admin/glass-solution/` (Production-ready)
 - ✅ address: `/src/server/api/routers/admin/address/` (Production-ready)
+- ✅ tenant-config: `/src/server/api/routers/admin/tenant-config/` (Public + Admin pattern)
 
 ---
 

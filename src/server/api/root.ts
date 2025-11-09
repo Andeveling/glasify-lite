@@ -1,3 +1,12 @@
+/**
+ * Primary tRPC Router - Application Entry Point
+ *
+ * Aggregates all feature routers following Clean Architecture.
+ * Each router follows Repository → Service → Queries/Mutations → Index pattern.
+ *
+ * @module server/api/root
+ */
+
 import { addressRouter } from "@/server/api/routers/address";
 import { adminRouter } from "@/server/api/routers/admin/admin";
 import { tenantConfigRouter } from "@/server/api/routers/admin/tenant-config";
@@ -17,13 +26,13 @@ import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
  */
 export const appRouter = createTRPCRouter({
   address: addressRouter,
-  admin: adminRouter,
+  admin: adminRouter, // Admin-only procedures (aggregates all admin modules)
   cart: cartRouter,
   catalog: catalogRouter,
   dashboard: dashboardRouter,
   geocoding: geocodingRouter,
   quote: quoteRouter,
-  tenantConfig: tenantConfigRouter,
+  tenantConfig: tenantConfigRouter, // Public + Admin (global configuration)
   transportation: transportationRouter,
   user: userRouter,
 });
