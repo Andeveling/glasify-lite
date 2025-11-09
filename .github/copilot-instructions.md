@@ -45,6 +45,131 @@ PostgreSQL Database (Drizzle ORM)
 
 ---
 
+## 🎯 T3 Stack Data Access Pattern (Server Components)
+
+### The Golden Rule
+
+**Server Components MUST use tRPC server-side caller, NEVER direct database queries or utility functions.**
+
+This enforces:
+- ✅ Proper authorization at tRPC procedure layer
+- ✅ Input validation via Zod schemas
+- ✅ Consistent error handling and logging
+- ✅ Type-safe API contracts
+- ✅ Testable architecture with Repository Pattern
+
+### Architecture Flow
+
+```
+Server Component (page.tsx, layout.tsx, async components)
+    ↓ imports
+tRPC Server-Side Caller (api from @/trpc/server-client)
+    ↓ calls
+tRPC Procedure (publicProcedure, protectedProcedure, adminProcedure)
+    ↓ uses
+Repository Interface (IQuoteRepository, ITenantRepository)
+    ↓ implements
+Drizzle ORM Queries
+    ↓ executes
+PostgreSQL Database
+```
+
+### Correct Pattern
+
+```typescript
+// ✅ CORRECT: Server Component using tRPC caller
+import { api } from "@/trpc/server-client";
+
+export default async function MyPage() {
+  // Type-safe, validated, authorized data access
+  const data = await api.tenantConfig.getBranding();
+  const quotes = await api.quote["list-user-quotes"]({ page: 1 });
+  
+  return <div>{data.businessName}</div>;
+}
+```
+
+### Incorrect Patterns
+
+```typescript
+// ❌ WRONG: Direct database import
+import { db } from "@/server/db/drizzle";
+import { tenantConfigs } from "@/server/db/schema";
+
+export default async function MyPage() {
+  // Bypasses authorization, validation, error handling
+  const data = await db.select().from(tenantConfigs).limit(1);
+  return <div>{data[0]?.businessName}</div>;
+}
+
+// ❌ WRONG: Direct utility function call
+import { getTenantConfig } from "@/server/utils/tenant";
+
+export default async function MyPage() {
+  // Bypasses tRPC procedure layer
+  const config = await getTenantConfig();
+  return <div>{config.businessName}</div>;
+}
+```
+
+### Why This Matters
+
+**Security**: tRPC procedures enforce RBAC (adminProcedure, protectedProcedure, getQuoteFilter)
+**Validation**: Zod schemas validate all inputs before database queries
+**Maintainability**: Single point of change for business logic
+**Testability**: Easy to mock tRPC procedures in tests
+**Type Safety**: Full TypeScript inference from procedure to component
+
+### Utility Functions Role
+
+Utility functions in `/server/utils/` are **internal helpers for tRPC procedures**, not for direct use in components:
+
+```typescript
+// ✅ CORRECT: Utility function used INSIDE tRPC procedure
+export const tenantConfigQueries = createTRPCRouter({
+  get: publicProcedure.query(async () => {
+    const config = await getTenantConfig(); // Internal helper
+    return serializeTenantConfig(config);
+  }),
+});
+
+// ❌ WRONG: Utility function called directly from Server Component
+// This bypasses the tRPC layer
+const config = await getTenantConfig();
+```
+
+### Client Components vs Server Components
+
+```typescript
+// Client Component: Use TanStack Query hooks
+"use client";
+import { api } from "@/trpc/react";
+
+export function MyClientComponent() {
+  const { data } = api.tenantConfig.getBranding.useQuery();
+  return <div>{data?.businessName}</div>;
+}
+
+// Server Component: Use tRPC server-side caller
+import { api } from "@/trpc/server-client";
+
+export default async function MyServerComponent() {
+  const data = await api.tenantConfig.getBranding();
+  return <div>{data.businessName}</div>;
+}
+```
+
+### Reference Implementation
+
+See these files for correct patterns:
+- **tRPC Server Caller**: `src/trpc/server-client.ts`
+- **Server Component Example**: `src/app/(public)/my-quotes/page.tsx`
+- **Client Component Example**: `src/app/(dashboard)/settings/tenant/page.tsx`
+- **tRPC Router Example**: `src/server/api/routers/admin/tenant-config/index.ts`
+- **Repository Pattern**: `src/server/api/repositories/quote.repository.ts`
+
+---
+
 ## 🔐 RBAC Authorization Pattern (Multi-Layer)
 
 ### Layer 1: tRPC Procedures (Server-Side Gate)
@@ -503,25 +628,26 @@ src/app/(dashboard)/admin/models/
 
 1. Detect exact project versions
 2. Follow established codebase patterns
-3. **For dashboard routes: Use SSR with `dynamic = 'force-dynamic'`** (no ISR)
-4. **Create pages as Server Components** (delegate interactivity to Client Components)
-5. **For SSR mutations: Use `router.refresh()` after `invalidate()`** (two-step pattern)
-6. **Never use Winston logger in Client Components** (server-side only)
-7. **Apply Cache Components patterns** (performance.now(), no headers in "use cache", Suspense boundaries)
-8. **Apply RBAC patterns** (middleware, tRPC procedures, UI guards)
-9. **Use adminProcedure for admin-only APIs** (not manual role checks)
-10. **Use getQuoteFilter for data filtering** (role-based WHERE clauses)
-11. **Use server-optimized table pattern** (URL state, debounced search, database indexes)
-12. **Use centralized formatters from `@lib/format`** (with tenant context)
-13. **Implement optimistic UI for mutations** (with rollback on error)
-14. Apply SOLID principles and Atomic Design
-15. Use Next.js App Router folder structure
-16. Prioritize Server Components over Client Components
-17. Add metadata for SEO on public pages
-17. Write testable and well-documented code
-18. Use Spanish only in UI text, everything else in English
-19. Never create Barrels (index.ts) or barrel files anywhere
-20. Follow project naming and organization conventions
+3. **Use T3 Stack pattern: Server Components call tRPC, NOT db/utils** (see T3 Stack section)
+4. **For dashboard routes: Use SSR with `dynamic = 'force-dynamic'`** (no ISR)
+5. **Create pages as Server Components** (delegate interactivity to Client Components)
+6. **For SSR mutations: Use `router.refresh()` after `invalidate()`** (two-step pattern)
+7. **Never use Winston logger in Client Components** (server-side only)
+8. **Apply Cache Components patterns** (performance.now(), no headers in "use cache", Suspense boundaries)
+9. **Apply RBAC patterns** (middleware, tRPC procedures, UI guards)
+10. **Use adminProcedure for admin-only APIs** (not manual role checks)
+11. **Use getQuoteFilter for data filtering** (role-based WHERE clauses)
+12. **Use server-optimized table pattern** (URL state, debounced search, database indexes)
+13. **Use centralized formatters from `@lib/format`** (with tenant context)
+14. **Implement optimistic UI for mutations** (with rollback on error)
+15. Apply SOLID principles and Atomic Design
+16. Use Next.js App Router folder structure
+17. Prioritize Server Components over Client Components
+18. Add metadata for SEO on public pages
+19. Write testable and well-documented code
+20. Use Spanish only in UI text, everything else in English
+21. Never create Barrels (index.ts) or barrel files anywhere
+22. Follow project naming and organization conventions
 
 
 Avoid `accessKey` attr and distracting els

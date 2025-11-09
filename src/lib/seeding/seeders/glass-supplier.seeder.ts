@@ -164,8 +164,12 @@ export class GlassSupplierSeeder extends BaseSeeder<GlassSupplierCreateInput> {
         } catch (error) {
           failed++;
           errors.push({ index: globalIndex, error });
-          const errorMessage = error instanceof Error ? error.message : String(error);
-          this.logger?.error?.(`✗ Failed to upsert "${item.name}": ${errorMessage}`, error instanceof Error ? error : undefined);
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
+          this.logger?.error?.(
+            `✗ Failed to upsert "${item.name}": ${errorMessage}`,
+            error instanceof Error ? error : undefined
+          );
           if (!options?.continueOnError) {
             break;
           }

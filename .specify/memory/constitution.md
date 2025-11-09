@@ -1,5 +1,5 @@
 # Glasify Lite Constitution
-**Version**: 2.3.0  
+**Version**: 2.3.1  
 **Ratified**: 2025-10-09  
 **Last Amended**: 2025-11-09
 
@@ -23,6 +23,8 @@ Write simple, understandable code. Use descriptive names, small functions with s
 ### 2. Server-First Performance
 
 Process data on the server, not the client. Cache appropriately and refresh views after mutations. Server-side processing is faster, more secure, and provides better user experience.
+
+**Data Access Pattern**: Server Components MUST use type-safe API layer (e.g., tRPC server-side caller), never direct database queries or utility functions. This ensures proper authorization, validation, and maintains architectural boundaries.
 
 ---
 
@@ -160,44 +162,33 @@ When principles conflict:
 ---
 
 <!--
-Sync Impact Report
+Sync Impact Report (2025-11-09)
 
-- Version change: 2.2.1 → 2.3.0 (MINOR)
+- Version change: 2.3.0 → 2.3.1 (PATCH)
 - Modified principles:
-  * All 7 core principles compacted and made framework-agnostic
-  * Removed Next.js, tRPC, Drizzle-specific examples from principles
-  * Generalized "Track Everything Important" (was Winston-specific)
-  * Simplified "Server-First Performance" (removed Next.js caching details)
-- Removed sections:
-  * "Technology Constraints" section (moved to copilot-instructions.md)
-  * "Cache Components Best Practices" section (moved to copilot-instructions.md)
-  * Framework-specific stack requirements (moved to copilot-instructions.md)
+  * Principle 2 "Server-First Performance": Added explicit Data Access Pattern requirement
+  * Clarified: Server Components MUST use type-safe API layer (tRPC caller), not direct DB/utilities
 - Added sections:
-  * "Technology Governance" (framework-agnostic technology change policy)
+  * Data Access Pattern guidance in Principle 2
 - Templates requiring updates:
-  * .github/copilot-instructions.md ⚠ MUST ADD: Technology stack details, Cache Components rules, Winston usage patterns, Next.js SSR patterns
+  * .github/copilot-instructions.md ✅ UPDATED: Added T3 Stack Data Access Pattern section
   * .specify/templates/plan-template.md ✅ no changes needed (already references constitution)
   * .specify/templates/spec-template.md ✅ no changes needed (feature-focused)
   * .specify/templates/tasks-template.md ✅ no changes needed (task-focused)
-- Follow-up TODOs:
-  * Move "Technology Constraints" section to .github/copilot-instructions.md
-  * Move "Cache Components Best Practices" to .github/copilot-instructions.md
-  * Ensure copilot-instructions.md has all framework-specific patterns
-  * Verify no constitution references to specific frameworks remain
+- Follow-up TODOs: None
 - Changes summary:
-  * MINOR version bump: Material simplification aligns with SpecKit guidance
-  * Constitution now framework-agnostic and principle-focused
-  * Reduced from ~490 to ~150 lines (70% reduction)
-  * Technical details delegated to copilot-instructions.md
-  * Plain language accessible to non-technical team members
-  * Principles remain testable and actionable
+  * PATCH version bump: Clarification of existing principle (Server-First Performance)
+  * Added concrete guidance on Server Component data access pattern
+  * Enforces T3 Stack architectural boundary (Server Component → tRPC → Repository → DB)
+  * No principle additions/removals, only clarification of implementation expectations
+  * Maintains framework-agnostic language while pointing to architectural requirements
 - Rationale:
-  * SpecKit recommends constitution focus on principles, not implementation
-  * Technical details (Next.js, tRPC, Cache Components) belong in copilot-instructions.md
-  * Framework-agnostic principles survive technology migrations
-  * Easier for non-technical stakeholders to understand governance
-  * Reduces duplication between constitution and copilot-instructions
-  * Aligns with industry best practices for engineering constitutions
-  * Maintains all 7 core principles with clearer, more concise language
+  * Recent codebase audit revealed direct utility function calls in Server Components
+  * T3 Stack best practice: Server Components should use tRPC server-side caller
+  * Ensures proper authorization, validation, and architectural consistency
+  * Prevents security vulnerabilities from bypassing tRPC procedures
+  * Aligns with existing Repository Pattern already documented in copilot-instructions.md
+  * Clarification needed to prevent future violations of architectural boundaries
 -->
+
 
