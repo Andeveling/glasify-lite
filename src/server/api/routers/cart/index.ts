@@ -7,8 +7,8 @@
  */
 
 import { createTRPCRouter } from "@/server/api/trpc";
-import { cartQueries } from "./cart.queries";
 import { cartMutations } from "./cart.mutations";
+import { cartQueries } from "./cart.queries";
 
 /**
  * Combined cart router
