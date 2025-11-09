@@ -1,13 +1,20 @@
 /**
- * Transportation Constants
+ * Transportation Constants - DEPRECATED
  *
- * Configuration values for transportation calculations
- *
- * @module server/api/routers/transportation/transportation.constants
+ * @deprecated Use constants from lib/constants instead
+ * - Coordinate ranges: @lib/constants/coordinate.constants
+ * - Transportation config: @lib/constants/transportation.constants
  */
 
-// Coordinate validation ranges
-export const LATITUDE_MIN = -90;
-export const LATITUDE_MAX = 90;
-export const LONGITUDE_MIN = -180;
-export const LONGITUDE_MAX = 180;
+// Re-export for backwards compatibility
+export {
+  DISTANCE_PRECISION_DIVISOR,
+  DISTANCE_PRECISION_MULTIPLIER,
+  EARTH_RADIUS_METERS,
+  LATITUDE_MAX,
+  LATITUDE_MIN,
+  LONGITUDE_MAX,
+  LONGITUDE_MIN,
+} from "@/lib/constants/coordinate.constants";
+
+export { TRANSPORTATION_MAX_DISTANCE_KM } from "@/lib/constants/transportation.constants";

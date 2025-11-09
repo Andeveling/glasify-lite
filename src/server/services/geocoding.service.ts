@@ -15,17 +15,18 @@
  * User-Agent: Required by Nominatim to identify the application
  */
 
+import { MILLISECONDS_TO_SECONDS_DIVISOR } from "@/lib/constants/coordinate.constants";
 import {
   GEOCODING_API_TIMEOUT_MS,
   GEOCODING_API_URL,
   GEOCODING_DEFAULT_LANGUAGE,
-  MILLISECONDS_TO_SECONDS_DIVISOR,
-} from "@/app/(dashboard)/admin/quotes/_constants/geocoding.constants";
+  GEOCODING_USER_AGENT,
+} from "@/lib/constants/geocoding.constants";
+import logger from "@/lib/logger";
 import type {
   GeocodingResponse,
   GeocodingResult,
-} from "@/app/(dashboard)/admin/quotes/_types/address.types";
-import logger from "@/lib/logger";
+} from "@/server/types/geocoding.types";
 
 /**
  * Nominatim API response structure
@@ -105,7 +106,7 @@ export async function searchAddress(
       // Make API request with User-Agent header (required by Nominatim)
       const response = await fetch(url, {
         headers: {
-          "User-Agent": "Glasify-Lite/1.0 (Contact: admin@glasify.com)",
+          "User-Agent": GEOCODING_USER_AGENT,
         },
         signal: controller.signal,
       });

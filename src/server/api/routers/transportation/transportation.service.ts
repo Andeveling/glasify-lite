@@ -14,15 +14,15 @@ import {
   DISTANCE_PRECISION_DIVISOR,
   DISTANCE_PRECISION_MULTIPLIER,
   EARTH_RADIUS_METERS,
-  TRANSPORTATION_MAX_DISTANCE_KM,
-} from "@/app/(dashboard)/admin/quotes/_constants/geocoding.constants";
-import type {
-  TransportationCost,
-  WarehouseLocation,
-} from "@/app/(dashboard)/admin/quotes/_types/address.types";
+} from "@/lib/constants/coordinate.constants";
+import { TRANSPORTATION_MAX_DISTANCE_KM } from "@/lib/constants/transportation.constants";
 import logger from "@/lib/logger";
 import { haversineDistance } from "@/lib/utils/coordinates";
 import type { db } from "@/server/db/drizzle";
+import type {
+  TransportationCost,
+  WarehouseLocation,
+} from "@/server/types/transportation.types";
 import { getTenantConfig } from "./repositories/transportation-repository";
 import {
   type SerializedTenantConfig,

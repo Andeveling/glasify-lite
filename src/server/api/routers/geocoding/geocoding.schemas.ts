@@ -12,7 +12,7 @@ import {
   GEOCODING_MAX_LIMIT,
   GEOCODING_QUERY_MAX_LENGTH,
   GEOCODING_QUERY_MIN_LENGTH,
-} from "./geocoding.constants";
+} from "@/lib/constants/geocoding.constants";
 
 /**
  * Geocoding search input schema
