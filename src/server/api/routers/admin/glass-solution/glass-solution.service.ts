@@ -89,7 +89,12 @@ export async function createGlassSolutionService(
       key: created.key,
     });
 
-    return created;
+    return {
+      ...created,
+      description: created.description ?? undefined,
+      icon: created.icon ?? undefined,
+      seedVersion: created.seedVersion ?? undefined,
+    };
   } catch (error) {
     if (error instanceof TRPCError) {
       throw error;
@@ -145,7 +150,12 @@ export async function getGlassSolutionByIdService(
       glassSolutionId: solution.id,
     });
 
-    return solution;
+    return {
+      ...solution,
+      description: solution.description ?? undefined,
+      icon: solution.icon ?? undefined,
+      seedVersion: solution.seedVersion ?? undefined,
+    };
   } catch (error) {
     if (error instanceof TRPCError) {
       throw error;
@@ -241,6 +251,35 @@ export async function listGlassSolutionsService(
 }
 
 /**
+ * Validate update input - checks existence and key uniqueness
+ * Extracted helper to reduce cognitive complexity
+ */
+async function validateUpdateInput(
+  client: DbClient,
+  input: UpdateInput
+): Promise<void> {
+  const existing = await findGlassSolutionById(client, input.id);
+  if (!existing) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Solución de vidrio no encontrada",
+    });
+  }
+
+  if (!input.data.key || input.data.key === existing.key) {
+    return; // No key change, no need to validate
+  }
+
+  const conflicting = await findGlassSolutionById(client, input.data.key);
+  if (conflicting) {
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: "Ya existe una solución con esta clave",
+    });
+  }
+}
+
+/**
  * Update glass solution
  *
  * Validates:
@@ -264,25 +303,7 @@ export async function updateGlassSolutionService(
       glassSolutionId: input.id,
     });
 
-    // Check if exists
-    const existing = await findGlassSolutionById(client, input.id);
-    if (!existing) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "Solución de vidrio no encontrada",
-      });
-    }
-
-    // If updating key, check uniqueness
-    if (input.data.key && input.data.key !== existing.key) {
-      const conflicting = await findGlassSolutionById(client, input.data.key);
-      if (conflicting) {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: "Ya existe una solución con esta clave",
-        });
-      }
-    }
+    await validateUpdateInput(client, input);
 
     const updated = await updateGlassSolution(client, input.id, input.data);
 
@@ -299,7 +320,12 @@ export async function updateGlassSolutionService(
       key: updated.key,
     });
 
-    return updated;
+    return {
+      ...updated,
+      description: updated.description ?? undefined,
+      icon: updated.icon ?? undefined,
+      seedVersion: updated.seedVersion ?? undefined,
+    };
   } catch (error) {
     if (error instanceof TRPCError) {
       throw error;
@@ -368,7 +394,12 @@ export async function deleteGlassSolutionService(
       key: deleted.key,
     });
 
-    return deleted;
+    return {
+      ...deleted,
+      description: deleted.description ?? undefined,
+      icon: deleted.icon ?? undefined,
+      seedVersion: deleted.seedVersion ?? undefined,
+    };
   } catch (error) {
     if (error instanceof TRPCError) {
       throw error;
