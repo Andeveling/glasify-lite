@@ -1,8 +1,6 @@
 import type { NextConfig } from "next";
 import "./src/env";
 
-const PRISMA_REGEX = /[\\/]node_modules[\\/]@prisma[\\/]/;
-
 const config: NextConfig = {
   compress: true,
   reactCompiler: true,
@@ -58,23 +56,6 @@ const config: NextConfig = {
     rules: {
       "*.svg": ["@svgr/webpack"],
     },
-  },
-
-  // Webpack optimizations
-  webpack: (webpackConfig, { dev, isServer }) => {
-    const isProduction = dev === false && isServer === false;
-    if (isProduction) {
-      webpackConfig.optimization.splitChunks.cacheGroups = {
-        ...webpackConfig.optimization.splitChunks.cacheGroups,
-        prisma: {
-          chunks: "all",
-          name: "prisma",
-          priority: 20,
-          test: PRISMA_REGEX,
-        },
-      };
-    }
-    return webpackConfig;
   },
 };
 

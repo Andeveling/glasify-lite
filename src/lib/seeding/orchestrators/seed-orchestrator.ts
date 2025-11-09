@@ -9,9 +9,9 @@
  */
 
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { tenantConfigs } from "../../../server/db/schemas/tenant-config.schema";
 import { glassSuppliers } from "../../../server/db/schemas/glass-supplier.schema";
 import { profileSuppliers } from "../../../server/db/schemas/profile-supplier.schema";
+import { tenantConfigs } from "../../../server/db/schemas/tenant-config.schema";
 import { GlassSupplierSeeder } from "../seeders/glass-supplier.seeder";
 import { ProfileSupplierSeeder } from "../seeders/profile-supplier.seeder";
 import type { ISeederLogger } from "../types/base.types";

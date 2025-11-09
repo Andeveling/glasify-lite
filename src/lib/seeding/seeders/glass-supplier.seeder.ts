@@ -119,6 +119,91 @@ export class GlassSupplierSeeder extends BaseSeeder<GlassSupplierCreateInput> {
   }
 
   /**
+   * Process single item with error handling
+   * @private
+   */
+  private async processItem(
+    item: GlassSupplierCreateInput,
+    globalIndex: number
+  ): Promise<{
+    inserted: number;
+    updated: number;
+    failed: number;
+    error?: { index: number; error: unknown };
+  }> {
+    try {
+      const result = await this.upsertItem(item);
+      if (result.inserted) {
+        this.logger?.debug?.(`✓ Inserted: ${item.name}`);
+        return { inserted: 1, updated: 0, failed: 0 };
+      }
+      if (result.updated) {
+        this.logger?.debug?.(`✓ Updated: ${item.name}`);
+        return { inserted: 0, updated: 1, failed: 0 };
+      }
+      this.logger?.error?.(`✗ Failed (no insert/update): ${item.name}`);
+      return { inserted: 0, updated: 0, failed: 1 };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      this.logger?.error?.(
+        `✗ Failed to upsert "${item.name}": ${errorMessage}`,
+        error instanceof Error ? error : undefined
+      );
+      return {
+        inserted: 0,
+        updated: 0,
+        failed: 1,
+        error: { index: globalIndex, error },
+      };
+    }
+  }
+
+  /**
+   * Process batch with early exit on error
+   * @private
+   */
+  private async processBatch(
+    batch: GlassSupplierCreateInput[],
+    startIndex: number,
+    options?: SeederOptions
+  ): Promise<{
+    inserted: number;
+    updated: number;
+    failed: number;
+    errors: Array<{ index: number; error: unknown }>;
+    shouldStop: boolean;
+  }> {
+    let inserted = 0;
+    let updated = 0;
+    let failed = 0;
+    const errors: Array<{ index: number; error: unknown }> = [];
+
+    for (let j = 0; j < batch.length; j++) {
+      const item = batch[j];
+      if (!item) {
+        continue;
+      }
+
+      const globalIndex = startIndex + j;
+      const result = await this.processItem(item, globalIndex);
+
+      inserted += result.inserted;
+      updated += result.updated;
+      failed += result.failed;
+
+      if (result.error) {
+        errors.push(result.error);
+        if (!options?.continueOnError) {
+          return { inserted, updated, failed, errors, shouldStop: true };
+        }
+      }
+    }
+
+    return { inserted, updated, failed, errors, shouldStop: false };
+  }
+
+  /**
    * Upsert glass suppliers (insert or update by name)
    * Updates existing records or creates new ones
    *
@@ -144,40 +229,14 @@ export class GlassSupplierSeeder extends BaseSeeder<GlassSupplierCreateInput> {
 
     for (let i = 0; i < data.length; i += batchSize) {
       const batch = data.slice(i, i + batchSize);
+      const batchResult = await this.processBatch(batch, i, options);
 
-      for (let j = 0; j < batch.length; j++) {
-        const item = batch[j];
-        const globalIndex = i + j;
+      inserted += batchResult.inserted;
+      updated += batchResult.updated;
+      failed += batchResult.failed;
+      errors.push(...batchResult.errors);
 
-        try {
-          const result = await this.upsertItem(item);
-          if (result.inserted) {
-            inserted++;
-            this.logger?.debug?.(`✓ Inserted: ${item.name}`);
-          } else if (result.updated) {
-            updated++;
-            this.logger?.debug?.(`✓ Updated: ${item.name}`);
-          } else {
-            failed++;
-            this.logger?.error?.(`✗ Failed (no insert/update): ${item.name}`);
-          }
-        } catch (error) {
-          failed++;
-          errors.push({ index: globalIndex, error });
-          const errorMessage =
-            error instanceof Error ? error.message : String(error);
-          this.logger?.error?.(
-            `✗ Failed to upsert "${item.name}": ${errorMessage}`,
-            error instanceof Error ? error : undefined
-          );
-          if (!options?.continueOnError) {
-            break;
-          }
-        }
-      }
-
-      // If continueOnError is false and we have errors, break outer loop
-      if (!options?.continueOnError && errors.length > 0) {
+      if (batchResult.shouldStop) {
         break;
       }
     }

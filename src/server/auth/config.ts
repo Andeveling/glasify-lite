@@ -4,7 +4,10 @@ import { nextCookies } from "better-auth/next-js";
 import { eq } from "drizzle-orm";
 import { env } from "@/env";
 import { db } from "@/server/db/drizzle";
+import { accounts } from "@/server/db/schemas/account.schema";
+import { sessions } from "@/server/db/schemas/session.schema";
 import { users } from "@/server/db/schemas/user.schema";
+import { verifications } from "@/server/db/schemas/verification.schema";
 
 const {
   BASE_URL,
@@ -51,6 +54,12 @@ export const auth = betterAuth({
   },
   database: drizzleAdapter(db, {
     provider: "pg",
+    schema: {
+      user: users,
+      session: sessions,
+      account: accounts,
+      verification: verifications,
+    },
   }),
 
   plugins: [
