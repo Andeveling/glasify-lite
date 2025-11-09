@@ -5,7 +5,7 @@
  * Supports both @react-pdf/renderer and exceljs libraries.
  */
 
-import type { Quote } from "@prisma/client";
+import type { Quote } from "@/server/db/schema";
 
 /**
  * Supported export formats

@@ -2,7 +2,6 @@
  * Model Colors Management Page
  *
  * Admin page for configuring colors assigned to a specific model
- * - SSR with force-dynamic for fresh data
  * - Lists all assigned colors with usage statistics
  * - Add new color assignments
  * - Edit surcharges inline
@@ -30,13 +29,72 @@ import { api } from "@/trpc/server-client";
 import { AddColorDialog } from "./_components/add-color-dialog";
 import { ModelColorsList } from "./_components/model-colors-list";
 
-// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
-// Note: Admin routes are dynamic by default with Cache Components
-// TODO: Evaluate if Suspense boundaries are needed after build verification
-
 type PageProps = {
   params: Promise<{ id: string }>;
 };
+
+/**
+ * Serialized model color for Client Component consumption
+ * Keeps full color data for component compatibility
+ */
+type SerializedModelColor = {
+  id: string;
+  colorId: string;
+  modelId: string;
+  isDefault: boolean;
+  isActive: boolean;
+  surchargePercentage: number;
+  color: {
+    id: string;
+    name: string;
+    ralCode: string | null;
+    hexCode: string;
+    isActive: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+/**
+ * Serialize model colors from database format to client format
+ * Converts Decimal surchargePercentage to number for safe client-side usage
+ */
+function serializeModelColors(
+  colors: Array<{
+    id: string;
+    colorId: string;
+    modelId: string;
+    isDefault: boolean;
+    surchargePercentage: number;
+    color: {
+      id: string;
+      name: string;
+      ralCode: string | null;
+      hexCode: string;
+      isActive: boolean;
+      createdAt: Date;
+      updatedAt: Date;
+    };
+    createdAt: Date;
+    updatedAt: Date;
+  }>
+): SerializedModelColor[] {
+  return colors.map((modelColor) => ({
+    ...modelColor,
+    isActive: true,
+    surchargePercentage: safeDecimalToNumber(modelColor.surchargePercentage),
+  }));
+}
+
+/**
+ * Find the default color name from a list of model colors
+ * Returns the color name or fallback if none is set
+ */
+function getDefaultColorName(colors: SerializedModelColor[]): string {
+  return colors.find((mc) => mc.isDefault)?.color.name ?? "Ninguno";
+}
 
 export async function generateMetadata({
   params,
@@ -61,29 +119,16 @@ export default async function ModelColorsPage({ params }: PageProps) {
   const { id: modelId } = await params;
 
   try {
-    // Fetch model details
-    const model = await api.admin.model["get-by-id"]({ id: modelId });
+    // Fetch model details and available colors in parallel
+    const [model, modelColorsRaw, availableColors] = await Promise.all([
+      api.admin.model["get-by-id"]({ id: modelId }),
+      api.admin["model-colors"].listByModel({ modelId }),
+      api.admin["model-colors"].getAvailableColors({ modelId }),
+    ]);
 
-    // Fetch assigned colors
-    const modelColorsRaw = await api.admin["model-colors"].listByModel({
-      modelId,
-    });
-
-    // Serialize Decimal fields for Client Component
-    const modelColors = modelColorsRaw.map(
-      (mc) =>
-        ({
-          ...mc,
-          surchargePercentage: safeDecimalToNumber(mc.surchargePercentage),
-          // Add isActive property if not present
-          isActive: true,
-        }) as any
-    );
-
-    // Fetch available colors for assignment
-    const availableColors = await api.admin["model-colors"].getAvailableColors({
-      modelId,
-    });
+    // Serialize colors for client-side consumption
+    const modelColors = serializeModelColors(modelColorsRaw);
+    const defaultColorName = getDefaultColorName(modelColors);
 
     return (
       <div className="container mx-auto space-y-6 py-8">
@@ -128,12 +173,7 @@ export default async function ModelColorsPage({ params }: PageProps) {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Color por defecto:</span>
-              <span className="font-semibold">
-                {modelColors.find(
-                  (mc: { isDefault: boolean; color: { name: string } }) =>
-                    mc.isDefault
-                )?.color.name || "Ninguno"}
-              </span>
+              <span className="font-semibold">{defaultColorName}</span>
             </div>
           </CardContent>
         </Card>
@@ -169,8 +209,8 @@ export default async function ModelColorsPage({ params }: PageProps) {
           <CardContent className="space-y-2 text-muted-foreground text-sm">
             <ul className="list-inside list-disc space-y-1">
               <li>
-                El <strong>recargo porcentual</strong> se aplica únicamente al
-                precio base del modelo
+                El <strong>recargo porcentual</strong> se aplica al precio base
+                del modelo
               </li>
               <li>
                 El <strong>color por defecto</strong> se selecciona
@@ -181,8 +221,8 @@ export default async function ModelColorsPage({ params }: PageProps) {
                 modelo
               </li>
               <li>
-                Los cambios de recargo se guardan automáticamente después de
-                500ms
+                Los cambios de recargo se guardan automáticamente (con debounce
+                de 500ms)
               </li>
               <li>Los colores inactivos no aparecen en el catálogo público</li>
             </ul>

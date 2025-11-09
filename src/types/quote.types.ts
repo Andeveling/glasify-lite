@@ -7,7 +7,7 @@
  * @module types/quote.types
  */
 
-import type { QuoteStatus } from "@prisma/client";
+import type { QuoteStatus } from "@/server/db/schema";
 import type { CartItem } from "./cart.types";
 
 // ============================================================================
