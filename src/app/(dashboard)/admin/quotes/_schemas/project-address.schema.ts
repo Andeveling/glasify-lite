@@ -6,10 +6,8 @@
  */
 
 import { z } from "zod";
+import { geocodingSearchInputSchema } from "@/server/api/routers/geocoding/geocoding.schemas";
 import {
-  GEOCODING_DEFAULT_LANGUAGE,
-  GEOCODING_DEFAULT_LIMIT,
-  GEOCODING_MAX_LIMIT,
   MAX_CITY_LENGTH,
   MAX_COUNTRY_LENGTH,
   MAX_DISTRICT_LENGTH,
@@ -77,18 +75,11 @@ export type ProjectAddressInput = z.infer<typeof projectAddressSchema>;
 
 /**
  * Geocoding search input schema
+ *
+ * Re-exported from the geocoding module
+ * See: src/server/api/routers/geocoding/geocoding.schemas.ts
  */
-export const geocodingSearchSchema = z.object({
-  query: z.string().min(1, "La consulta de búsqueda es requerida"),
-  limit: z
-    .number()
-    .int()
-    .min(1)
-    .max(GEOCODING_MAX_LIMIT)
-    .optional()
-    .default(GEOCODING_DEFAULT_LIMIT),
-  acceptLanguage: z.string().optional().default(GEOCODING_DEFAULT_LANGUAGE),
-});
+export const geocodingSearchSchema = geocodingSearchInputSchema;
 
 /**
  * Transportation cost input schema

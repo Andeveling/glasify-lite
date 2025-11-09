@@ -21,8 +21,14 @@ import {
 export const geocodingSearchInputSchema = z.object({
   query: z
     .string()
-    .min(GEOCODING_QUERY_MIN_LENGTH, "La búsqueda debe tener al menos 3 caracteres")
-    .max(GEOCODING_QUERY_MAX_LENGTH, "La búsqueda no puede exceder 500 caracteres")
+    .min(
+      GEOCODING_QUERY_MIN_LENGTH,
+      "La búsqueda debe tener al menos 3 caracteres"
+    )
+    .max(
+      GEOCODING_QUERY_MAX_LENGTH,
+      "La búsqueda no puede exceder 500 caracteres"
+    )
     .describe("Address search string (e.g., 'Calle 72, Bogotá')"),
 
   limit: z
@@ -86,10 +92,7 @@ export const geocodingResponseSchema = z.object({
   results: z
     .array(geocodingResultSchema)
     .describe("Array of geocoding results"),
-  totalResults: z
-    .number()
-    .int()
-    .describe("Total number of results returned"),
+  totalResults: z.number().int().describe("Total number of results returned"),
   queryTime: z.number().int().describe("Query execution time in milliseconds"),
 });
 

@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Refactorización Modular del Router de Geocoding** (2025-01-15)
+  - Migración de `/src/server/api/routers/geocoding.ts` (monolítico 92 líneas) a arquitectura modular Clean Architecture
+  - Nueva estructura `/src/server/api/routers/geocoding/`:
+    - `repositories/geocoding-repository.ts` - Capa de acceso a datos (stub para caching futuro)
+    - `geocoding.schemas.ts` - Validación con Zod (input/output, tipos de Nominatim)
+    - `geocoding.constants.ts` - Rangos de búsqueda, timeouts, límites de API
+    - `geocoding.queries.ts` - Procedimientos tRPC (search de direcciones)
+    - `index.ts` - Composición del router
+    - `README.md` - Documentación completa (endpoints, rate limiting, integración)
+  - Eliminado archivo legacy: `/src/server/api/routers/geocoding.ts` → mantiene re-export para compatibilidad
+  - Actualización en `src/app/(dashboard)/admin/quotes/_schemas/project-address.schema.ts` para importar desde módulo
+  - Mejoras: Single source of truth en schemas, end-to-end type safety (API → Zod → Service)
+  - Patrón: Schemas → Queries → Router (consistente con Transportation y otros módulos)
+
 - **Refactorización Modular del Router de Transportación** (2025-01-15)
   - Migración de `/src/server/api/routers/transportation.ts` (monolítico 130+ líneas) a arquitectura modular Clean Architecture
   - Nueva estructura `/src/server/api/routers/transportation/`:
