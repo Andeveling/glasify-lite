@@ -4,14 +4,14 @@
  * Pure functions with no ORM dependencies - generates POJOs only
  */
 
-import { createSuccessResult } from '../utils/validation.utils';
-import type { FactoryOptions, FactoryResult } from '../types/base.types';
-import type { ProfileSupplierCreateInput } from '../schemas/profile-supplier.schema';
+import type { ProfileSupplierCreateInput } from "../schemas/profile-supplier.schema";
 import {
-  profileSupplierSchema,
-  MaterialTypeEnum,
   ALL_SUPPLIERS,
-} from '../schemas/profile-supplier.schema';
+  MaterialTypeEnum,
+  profileSupplierSchema,
+} from "../schemas/profile-supplier.schema";
+import type { FactoryOptions, FactoryResult } from "../types/base.types";
+import { createSuccessResult } from "../utils/validation.utils";
 
 // Constants
 const ACTIVE_PROBABILITY = 0.9;
@@ -40,19 +40,19 @@ function randomInt(min: number, max: number): number {
  */
 function generateSupplierName(): string {
   const brands = [
-    'Rehau',
-    'Deceuninck',
-    'Azembla',
-    'Aluminios',
-    'Fabricaciones',
-    'Perfiles',
-    'Sistemas',
-    'Marcos',
-    'Ventanas',
-    'Constructor',
+    "Rehau",
+    "Deceuninck",
+    "Azembla",
+    "Aluminios",
+    "Fabricaciones",
+    "Perfiles",
+    "Sistemas",
+    "Marcos",
+    "Ventanas",
+    "Constructor",
   ];
 
-  const suffixes = ['Pro', 'XL', '360', 'Plus', 'Elite', 'Standard'];
+  const suffixes = ["Pro", "XL", "360", "Plus", "Elite", "Standard"];
 
   // 60% chance: Brand name only
   if (randomBoolean(BRAND_ONLY_PROBABILITY)) {
@@ -75,13 +75,13 @@ function generateNotes(): string | null {
   }
 
   const templates = [
-    'Premium quality, eco-friendly materials',
-    'Industrial aluminum profiles for structural glazing',
-    'Thermally optimized frames',
-    'Colombian manufacturer, affordable quality',
-    'German engineering quality',
-    'Architectural systems',
-    'Supplies both PVC and aluminum profiles',
+    "Premium quality, eco-friendly materials",
+    "Industrial aluminum profiles for structural glazing",
+    "Thermally optimized frames",
+    "Colombian manufacturer, affordable quality",
+    "German engineering quality",
+    "Architectural systems",
+    "Supplies both PVC and aluminum profiles",
   ];
 
   return randomElement(templates).substring(0, NOTES_MAX_LENGTH);
@@ -102,7 +102,7 @@ function generateNotes(): string | null {
  * ```
  */
 export function generateProfileSupplier(
-  options?: FactoryOptions<ProfileSupplierCreateInput>,
+  options?: FactoryOptions<ProfileSupplierCreateInput>
 ): FactoryResult<ProfileSupplierCreateInput> {
   const materialTypes = MaterialTypeEnum.options;
 
@@ -127,8 +127,8 @@ export function generateProfileSupplier(
         errors: parsed.error.issues.map((err) => ({
           code: err.code,
           context: {
-            expected: 'expected' in err ? err.expected : undefined,
-            received: 'received' in err ? err.received : undefined,
+            expected: "expected" in err ? err.expected : undefined,
+            received: "received" in err ? err.received : undefined,
           },
           message: err.message,
           path: err.path.map(String),
@@ -157,7 +157,7 @@ export function generateProfileSupplier(
  */
 export function generateProfileSuppliers(
   count: number,
-  options?: FactoryOptions<ProfileSupplierCreateInput>,
+  options?: FactoryOptions<ProfileSupplierCreateInput>
 ): FactoryResult<ProfileSupplierCreateInput>[] {
   return Array.from({ length: count }, () => generateProfileSupplier(options));
 }
@@ -178,15 +178,20 @@ export function generateProfileSuppliers(
  */
 export function generateProfileSupplierBatch(
   count: number,
-  options?: FactoryOptions<ProfileSupplierCreateInput>,
+  options?: FactoryOptions<ProfileSupplierCreateInput>
 ): ProfileSupplierCreateInput[] {
   const results = generateProfileSuppliers(count, options);
   const validResults = results
-    .filter((r): r is FactoryResult<ProfileSupplierCreateInput> & { success: true; data: ProfileSupplierCreateInput } => 
-      r.success && r.data !== undefined
+    .filter(
+      (
+        r
+      ): r is FactoryResult<ProfileSupplierCreateInput> & {
+        success: true;
+        data: ProfileSupplierCreateInput;
+      } => r.success && r.data !== undefined
     )
     .map((r) => r.data);
-  
+
   return validResults.slice(0, count);
 }
 
@@ -204,8 +209,8 @@ export function generateProfileSupplierBatch(
  * ```
  */
 export function generateProfileSupplierWithMaterial(
-  materialType: 'PVC' | 'ALUMINUM' | 'WOOD' | 'MIXED',
-  options?: FactoryOptions<ProfileSupplierCreateInput>,
+  materialType: "PVC" | "ALUMINUM" | "WOOD" | "MIXED",
+  options?: FactoryOptions<ProfileSupplierCreateInput>
 ): FactoryResult<ProfileSupplierCreateInput> {
   return generateProfileSupplier({
     ...options,
@@ -231,7 +236,7 @@ export function generateProfileSupplierWithMaterial(
  */
 export function generateProfileSupplierFromPreset(
   presetIndex?: number,
-  options?: FactoryOptions<ProfileSupplierCreateInput>,
+  options?: FactoryOptions<ProfileSupplierCreateInput>
 ): FactoryResult<ProfileSupplierCreateInput> {
   const index = presetIndex ?? randomInt(0, ALL_SUPPLIERS.length - 1);
   const preset = ALL_SUPPLIERS[index];
@@ -257,7 +262,7 @@ export function generateProfileSupplierFromPreset(
  * ```
  */
 export function generateInactiveProfileSupplier(
-  options?: FactoryOptions<ProfileSupplierCreateInput>,
+  options?: FactoryOptions<ProfileSupplierCreateInput>
 ): FactoryResult<ProfileSupplierCreateInput> {
   return generateProfileSupplier({
     ...options,
@@ -282,7 +287,7 @@ export function generateInactiveProfileSupplier(
  */
 export function generateProfileSupplierWithName(
   name: string,
-  options?: FactoryOptions<ProfileSupplierCreateInput>,
+  options?: FactoryOptions<ProfileSupplierCreateInput>
 ): FactoryResult<ProfileSupplierCreateInput> {
   return generateProfileSupplier({
     ...options,
@@ -307,7 +312,7 @@ export function generateProfileSupplierWithName(
  */
 export function generateProfileSupplierWithNotes(
   notes: string,
-  options?: FactoryOptions<ProfileSupplierCreateInput>,
+  options?: FactoryOptions<ProfileSupplierCreateInput>
 ): FactoryResult<ProfileSupplierCreateInput> {
   return generateProfileSupplier({
     ...options,

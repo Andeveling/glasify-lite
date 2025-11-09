@@ -37,9 +37,9 @@ export class ProfileSupplierSeeder extends BaseSeeder<ProfileSupplierCreateInput
    */
   constructor(
     db: NodePgDatabase,
-    logger: ISeederLogger = new ConsoleSeederLogger(),
+    logger: ISeederLogger = new ConsoleSeederLogger()
   ) {
-    super(db, logger, 'ProfileSupplier');
+    super(db, logger, "ProfileSupplier");
     this.drizzle = db;
   }
 
@@ -94,8 +94,8 @@ export class ProfileSupplierSeeder extends BaseSeeder<ProfileSupplierCreateInput
    * @returns Number of deleted records
    */
   async clearInactive(): Promise<number> {
-    const { eq } = await import('drizzle-orm');
-    
+    const { eq } = await import("drizzle-orm");
+
     const deleted = await this.drizzle
       .delete(profileSuppliers)
       .where(eq(profileSuppliers.isActive, "false"))

@@ -17,14 +17,14 @@ const connectionString =
 
 if (!connectionString) {
   throw new Error(
-    "DATABASE_URL_TEST or DATABASE_URL is not defined. Please check your .env files.",
+    "DATABASE_URL_TEST or DATABASE_URL is not defined. Please check your .env files."
   );
 }
 
 /**
  * Create a test database client
  * Uses node-postgres with connection pooling
- * 
+ *
  * @returns Drizzle database client configured for tests
  */
 export function createTestDb() {
@@ -51,7 +51,7 @@ export function createTestDb() {
 /**
  * Wait for database to be ready
  * Useful for CI environments
- * 
+ *
  * @param maxAttempts - Maximum number of connection attempts
  * @param delayMs - Delay between attempts in milliseconds
  */
@@ -68,7 +68,7 @@ export async function waitForDb(maxAttempts = 10, delayMs = 1000) {
       if (attempt === maxAttempts) {
         await pool.end();
         throw new Error(
-          `Database not ready after ${maxAttempts} attempts: ${error}`,
+          `Database not ready after ${maxAttempts} attempts: ${error}`
         );
       }
       await new Promise((resolve) => setTimeout(resolve, delayMs));

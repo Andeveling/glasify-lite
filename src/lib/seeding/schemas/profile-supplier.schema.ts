@@ -4,7 +4,7 @@
  * Generated from Drizzle schema, ORM-agnostic
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // Validation constraints
 const SUPPLIER_NAME_MIN_LENGTH = 2;
@@ -15,7 +15,7 @@ const SUPPLIER_NOTES_MAX_LENGTH = 500;
  * Material types for ProfileSupplier
  * Determines the type of material the supplier provides
  */
-export const MaterialTypeEnum = z.enum(['PVC', 'ALUMINUM', 'WOOD', 'MIXED']);
+export const MaterialTypeEnum = z.enum(["PVC", "ALUMINUM", "WOOD", "MIXED"]);
 
 export type MaterialType = z.infer<typeof MaterialTypeEnum>;
 
@@ -35,11 +35,7 @@ export const profileSupplierSchema = z.object({
    * Generated automatically if not provided
    * @default Generated CUID
    */
-  id: z
-    .string()
-    .cuid('Must be valid CUID format')
-    .optional()
-    .or(z.literal('')),
+  id: z.string().cuid("Must be valid CUID format").optional().or(z.literal("")),
 
   /**
    * Supplier name (unique across all suppliers)
@@ -54,11 +50,17 @@ export const profileSupplierSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(SUPPLIER_NAME_MIN_LENGTH, 'Supplier name must be at least 2 characters')
-    .max(SUPPLIER_NAME_MAX_LENGTH, 'Supplier name must not exceed 100 characters')
+    .min(
+      SUPPLIER_NAME_MIN_LENGTH,
+      "Supplier name must be at least 2 characters"
+    )
+    .max(
+      SUPPLIER_NAME_MAX_LENGTH,
+      "Supplier name must not exceed 100 characters"
+    )
     .regex(
       /^[a-zA-Z0-9\s\-&()]+$/,
-      'Supplier name can only contain letters, numbers, spaces, hyphens, ampersands and parentheses',
+      "Supplier name can only contain letters, numbers, spaces, hyphens, ampersands and parentheses"
     ),
 
   /**
@@ -93,7 +95,7 @@ export const profileSupplierSchema = z.object({
   notes: z
     .string()
     .trim()
-    .max(SUPPLIER_NOTES_MAX_LENGTH, 'Notes must not exceed 500 characters')
+    .max(SUPPLIER_NOTES_MAX_LENGTH, "Notes must not exceed 500 characters")
     .nullable()
     .optional(),
 
@@ -127,14 +129,18 @@ export const profileSupplierCreateInput = profileSupplierSchema.omit({
   updatedAt: true,
 });
 
-export type ProfileSupplierCreateInput = z.infer<typeof profileSupplierCreateInput>;
+export type ProfileSupplierCreateInput = z.infer<
+  typeof profileSupplierCreateInput
+>;
 
 /**
  * ProfileSupplier with optional fields (for partial updates)
  */
 export const profileSupplierUpdateInput = profileSupplierCreateInput.partial();
 
-export type ProfileSupplierUpdateInput = z.infer<typeof profileSupplierUpdateInput>;
+export type ProfileSupplierUpdateInput = z.infer<
+  typeof profileSupplierUpdateInput
+>;
 
 /**
  * Presets for common ProfileSupplier configurations
@@ -146,22 +152,22 @@ export type ProfileSupplierUpdateInput = z.infer<typeof profileSupplierUpdateInp
  */
 export const PVC_SUPPLIERS: readonly ProfileSupplierCreateInput[] = [
   {
-    name: 'Rehau',
-    materialType: 'PVC',
+    name: "Rehau",
+    materialType: "PVC",
     isActive: true,
-    notes: 'Premium German PVC frame system, eco-friendly',
+    notes: "Premium German PVC frame system, eco-friendly",
   },
   {
-    name: 'Deceuninck',
-    materialType: 'PVC',
+    name: "Deceuninck",
+    materialType: "PVC",
     isActive: true,
-    notes: 'Belgian quality, thermally optimized frames',
+    notes: "Belgian quality, thermally optimized frames",
   },
   {
-    name: 'Azembla',
-    materialType: 'PVC',
+    name: "Azembla",
+    materialType: "PVC",
     isActive: true,
-    notes: 'Colombian manufacturer, affordable quality',
+    notes: "Colombian manufacturer, affordable quality",
   },
 ] as const;
 
@@ -170,16 +176,16 @@ export const PVC_SUPPLIERS: readonly ProfileSupplierCreateInput[] = [
  */
 export const ALUMINUM_SUPPLIERS: readonly ProfileSupplierCreateInput[] = [
   {
-    name: 'Aluminios ABC',
-    materialType: 'ALUMINUM',
+    name: "Aluminios ABC",
+    materialType: "ALUMINUM",
     isActive: true,
-    notes: 'Industrial aluminum profiles for structural glazing',
+    notes: "Industrial aluminum profiles for structural glazing",
   },
   {
-    name: 'Hydro Aluminum',
-    materialType: 'ALUMINUM',
+    name: "Hydro Aluminum",
+    materialType: "ALUMINUM",
     isActive: true,
-    notes: 'Architectural aluminum systems',
+    notes: "Architectural aluminum systems",
   },
 ] as const;
 
@@ -188,10 +194,10 @@ export const ALUMINUM_SUPPLIERS: readonly ProfileSupplierCreateInput[] = [
  */
 export const MIXED_SUPPLIERS: readonly ProfileSupplierCreateInput[] = [
   {
-    name: 'Universal Profiles',
-    materialType: 'MIXED',
+    name: "Universal Profiles",
+    materialType: "MIXED",
     isActive: true,
-    notes: 'Supplies both PVC and aluminum profiles',
+    notes: "Supplies both PVC and aluminum profiles",
   },
 ] as const;
 

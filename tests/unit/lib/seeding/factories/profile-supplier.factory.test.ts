@@ -1,20 +1,20 @@
 /** biome-ignore-all lint/style/noMagicNumbers: Test file with expected numeric literal values for assertions */
 
+import { describe, expect, it } from "vitest";
 import {
   ALL_SUPPLIERS,
   MaterialTypeEnum,
   type ProfileSupplier,
 } from "@/lib/seeding/schemas/profile-supplier.schema";
-import { describe, expect, it } from "vitest";
 import {
   generateInactiveProfileSupplier,
   generateProfileSupplier,
   generateProfileSupplierBatch,
   generateProfileSupplierFromPreset,
+  generateProfileSuppliers,
   generateProfileSupplierWithMaterial,
   generateProfileSupplierWithName,
   generateProfileSupplierWithNotes,
-  generateProfileSuppliers,
 } from "../../../../../src/lib/seeding/factories/profile-supplier.factory";
 
 describe("ProfileSupplier Factory", () => {
@@ -30,7 +30,7 @@ describe("ProfileSupplier Factory", () => {
         expect(result.data.name.length).toBeLessThanOrEqual(100);
         expect(result.data.materialType).toBeDefined();
         expect(["PVC", "ALUMINUM", "WOOD", "MIXED"]).toContain(
-          result.data.materialType,
+          result.data.materialType
         );
         expect(typeof result.data.isActive).toBe("boolean");
       }
@@ -242,7 +242,7 @@ describe("ProfileSupplier Factory", () => {
   describe("generateProfileSupplierWithMaterial", () => {
     it("should generate PVC supplier", () => {
       const result = generateProfileSupplierWithMaterial(
-        MaterialTypeEnum.enum.PVC,
+        MaterialTypeEnum.enum.PVC
       );
 
       expect(result.success).toBe(true);
@@ -253,7 +253,7 @@ describe("ProfileSupplier Factory", () => {
 
     it("should generate ALUMINUM supplier", () => {
       const result = generateProfileSupplierWithMaterial(
-        MaterialTypeEnum.enum.ALUMINUM,
+        MaterialTypeEnum.enum.ALUMINUM
       );
 
       expect(result.success).toBe(true);
@@ -264,7 +264,7 @@ describe("ProfileSupplier Factory", () => {
 
     it("should generate WOOD supplier", () => {
       const result = generateProfileSupplierWithMaterial(
-        MaterialTypeEnum.enum.WOOD,
+        MaterialTypeEnum.enum.WOOD
       );
 
       expect(result.success).toBe(true);
@@ -275,7 +275,7 @@ describe("ProfileSupplier Factory", () => {
 
     it("should generate MIXED supplier", () => {
       const result = generateProfileSupplierWithMaterial(
-        MaterialTypeEnum.enum.MIXED,
+        MaterialTypeEnum.enum.MIXED
       );
 
       expect(result.success).toBe(true);
@@ -289,7 +289,7 @@ describe("ProfileSupplier Factory", () => {
         MaterialTypeEnum.enum.PVC,
         {
           overrides: { isActive: false },
-        },
+        }
       );
 
       expect(result.success).toBe(true);
@@ -308,7 +308,7 @@ describe("ProfileSupplier Factory", () => {
       expect(result.success).toBe(true);
       if (result.success && result.data) {
         expect(ALL_SUPPLIERS.some((p) => p.name === result.data?.name)).toBe(
-          true,
+          true
         );
       }
     });
@@ -320,7 +320,7 @@ describe("ProfileSupplier Factory", () => {
       expect(result.success).toBe(true);
       if (result.success && result.data) {
         expect(ALL_SUPPLIERS.some((p) => p.name === result.data?.name)).toBe(
-          true,
+          true
         );
       }
     });
@@ -332,7 +332,7 @@ describe("ProfileSupplier Factory", () => {
       expect(result.success).toBe(true);
       if (result.success && result.data) {
         expect(ALL_SUPPLIERS.some((p) => p.name === result.data?.name)).toBe(
-          true,
+          true
         );
       }
     });
@@ -343,7 +343,7 @@ describe("ProfileSupplier Factory", () => {
       expect(result.success).toBe(true);
       if (result.success && result.data) {
         expect(ALL_SUPPLIERS.some((p) => p.name === result.data?.name)).toBe(
-          true,
+          true
         );
       }
     });
