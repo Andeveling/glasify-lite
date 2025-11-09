@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { db } from "@/server/db";
+import { api } from "@/trpc/server-client";
 
 type SocialMediaLinksProps = {
   /**
@@ -44,21 +44,13 @@ export async function SocialMediaLinks({
   variant = "default",
   className,
 }: SocialMediaLinksProps) {
-  // Fetch tenant config
-  const tenantConfig = await db.tenantConfig.findUnique({
-    where: { id: "1" },
-    select: {
-      facebookUrl: true,
-      instagramUrl: true,
-      linkedinUrl: true,
-    },
-  });
+  // Fetch tenant branding configuration using tRPC server-side caller
+  // Following T3 Stack best practice: Server Components use tRPC caller, not direct DB queries
+  const branding = await api.tenantConfig.getBranding();
 
   // No config found or all URLs empty
   const hasAnySocialUrl =
-    tenantConfig?.facebookUrl ||
-    tenantConfig?.instagramUrl ||
-    tenantConfig?.linkedinUrl;
+    branding.facebookUrl || branding.instagramUrl || branding.linkedinUrl;
 
   if (!hasAnySocialUrl) {
     return null;
@@ -74,11 +66,11 @@ export async function SocialMediaLinks({
       className={cn("flex items-center gap-4", className)}
       data-testid="social-media-links"
     >
-      {tenantConfig.facebookUrl && (
+      {branding.facebookUrl && (
         <Link
           aria-label="Facebook"
           className="text-muted-foreground transition-colors hover:text-foreground"
-          href={tenantConfig.facebookUrl}
+          href={branding.facebookUrl}
           rel="noopener noreferrer"
           target="_blank"
         >
@@ -95,11 +87,11 @@ export async function SocialMediaLinks({
         </Link>
       )}
 
-      {tenantConfig.instagramUrl && (
+      {branding.instagramUrl && (
         <Link
           aria-label="Instagram"
           className="text-muted-foreground transition-colors hover:text-foreground"
-          href={tenantConfig.instagramUrl}
+          href={branding.instagramUrl}
           rel="noopener noreferrer"
           target="_blank"
         >
@@ -116,11 +108,11 @@ export async function SocialMediaLinks({
         </Link>
       )}
 
-      {tenantConfig.linkedinUrl && (
+      {branding.linkedinUrl && (
         <Link
           aria-label="LinkedIn"
           className="text-muted-foreground transition-colors hover:text-foreground"
-          href={tenantConfig.linkedinUrl}
+          href={branding.linkedinUrl}
           rel="noopener noreferrer"
           target="_blank"
         >

@@ -64,11 +64,12 @@ export async function getQuoteValidityDays(
     .from(tenantConfigs)
     .limit(1);
 
-  if (!result[0]) {
+  const tenantConfig = result[0];
+  if (!tenantConfig?.quoteValidityDays) {
     throw new Error(
       "No TenantConfig found in database. Run migration script to create one."
     );
   }
 
-  return Number.parseInt(result[0].quoteValidityDays, 10);
+  return tenantConfig.quoteValidityDays;
 }

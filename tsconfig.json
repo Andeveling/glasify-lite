@@ -50,13 +50,5 @@
     "src/app/(public)/catalog/[modelId]/page.tsx.bak",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "e2e/**/*",
-    "prisma/factories/**/*",
-    "prisma/seeders/**/*",
-    "prisma/data/**/*",
-    "prisma/seed-cli.ts",
-    "prisma/seed-tenant.ts"
-  ]
+  "exclude": ["node_modules", "e2e/**/*"]
 }
