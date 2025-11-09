@@ -3,14 +3,14 @@
  * @description Adapter that bridges tRPC infrastructure with domain pricing layer
  *
  * This adapter:
- * 1. Transforms tRPC input (Prisma Decimal, existing structure) → Domain input (Money, Dimensions)
+ * 1. Transforms tRPC input (Decimal, existing structure) → Domain input (Money, Dimensions)
  * 2. Calls domain use case (CalculateItemPrice)
  * 3. Transforms domain result → tRPC output (backward compatible with existing API)
  *
  * Maintains 100% backward compatibility with existing `calculatePriceItem` function.
  */
 
-import { Decimal } from "@prisma/client/runtime/library";
+import Decimal from "decimal.js";
 import { Dimensions } from "@/domain/pricing/core/entities/dimensions";
 import { Money } from "@/domain/pricing/core/entities/money";
 import type { ServiceUnit } from "@/domain/pricing/core/types";

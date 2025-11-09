@@ -12,8 +12,7 @@
  * @version 1.0.0
  */
 
-import type { Prisma } from "@prisma/client";
-import { Decimal } from "@prisma/client/runtime/library";
+import Decimal from "decimal.js";
 import { z } from "zod";
 import type {
   FactoryMetadata,
