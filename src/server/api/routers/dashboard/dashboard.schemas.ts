@@ -32,7 +32,7 @@ export const CatalogAnalyticsOutput = z.object({
   ),
   supplierDistribution: z.array(
     z.object({
-      supplierId: z.string(),
+      supplierId: z.string().nullable(), // null for models without supplier
       supplierName: z.string(),
       count: z.number(),
     })

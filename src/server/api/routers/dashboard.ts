@@ -41,45 +41,6 @@ const MS_PER_DAY =
   MS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY;
 
 /**
- * Helper to convert Drizzle decimal strings to service-compatible objects.
- * Drizzle returns decimal fields as strings, but services expect objects with a `toNumber()` method.
- */
-const mapDecimalString = (value: string): { toNumber: () => number } => ({
-  toNumber: () => Number.parseFloat(value),
-});
-
-/**
- * Helper to convert an array of Drizzle quote objects to a service-compatible format.
- */
-const mapQuotesTotalForService = (
-  quoteData: Array<{ total: string }>
-): Array<{ total: { toNumber: () => number } }> =>
-  quoteData.map((quote) => ({
-    total: mapDecimalString(quote.total),
-  }));
-
-/**
- * Temporary type for mapped quote items to avoid 'any'.
- * TODO: Refactor service functions to accept Drizzle format natively.
- */
-type MappedQuoteItem = {
-  glassType: {
-    code: string;
-    manufacturer: string;
-    name: string;
-  };
-  glassTypeId: string;
-  model: {
-    name: string;
-    profileSupplier: {
-      id: string;
-      name: string;
-    };
-  };
-  modelId: string;
-};
-
-/**
  * Dashboard Router
  * All procedures require authentication (protectedProcedure).
  */
@@ -143,13 +104,9 @@ export const dashboardRouter = createTRPCRouter({
           modelId: item.modelId,
         }));
 
-        const topModels = getTopModels(mappedQuoteItems as MappedQuoteItem[]);
-        const topGlassTypes = getGlassTypeDistribution(
-          mappedQuoteItems as MappedQuoteItem[]
-        );
-        const supplierDistribution = getSupplierDistribution(
-          mappedQuoteItems as MappedQuoteItem[]
-        );
+        const topModels = getTopModels(mappedQuoteItems);
+        const topGlassTypes = getGlassTypeDistribution(mappedQuoteItems);
+        const supplierDistribution = getSupplierDistribution(mappedQuoteItems);
 
         logger.info("Catalog analytics calculated", {
           period,
@@ -201,8 +158,13 @@ export const dashboardRouter = createTRPCRouter({
           .from(quotes)
           .where(and(...whereConditions));
 
+        // Convert Drizzle decimal strings to service format inline
         const currentMetrics = calculateMonetaryMetrics(
-          mapQuotesTotalForService(currentQuotes)
+          currentQuotes.map((quote) => ({
+            total: {
+              toNumber: () => Number.parseFloat(quote.total),
+            },
+          }))
         );
 
         const previousEnd = new Date(dateRange.start);
@@ -224,8 +186,13 @@ export const dashboardRouter = createTRPCRouter({
           .from(quotes)
           .where(and(...previousConditions));
 
+        // Convert Drizzle decimal strings to service format inline
         const previousMetrics = calculateMonetaryMetrics(
-          mapQuotesTotalForService(previousQuotes)
+          previousQuotes.map((quote) => ({
+            total: {
+              toNumber: () => Number.parseFloat(quote.total),
+            },
+          }))
         );
 
         const percentageChange =
@@ -296,15 +263,16 @@ export const dashboardRouter = createTRPCRouter({
           .from(quotes)
           .where(and(...whereConditions));
 
+        // Convert Drizzle decimal strings to service format inline
         const rangeDistribution = groupQuotesByPriceRange(
-          mapQuotesTotalForService(priceRangeQuotes)
+          priceRangeQuotes.map((quote) => ({
+            total: {
+              toNumber: () => Number.parseFloat(quote.total),
+            },
+          }))
         );
 
         const totalQuotes = priceRangeQuotes.length;
-        const rangesWithPercentage = rangeDistribution.map((range) => ({
-          ...range,
-          percentage: totalQuotes === 0 ? 0 : range.count / totalQuotes,
-        }));
 
         const tenantConfig = await db
           .select({ currency: tenantConfigs.currency })
@@ -314,7 +282,7 @@ export const dashboardRouter = createTRPCRouter({
 
         logger.info("Price range distribution calculated", {
           period,
-          ranges: rangesWithPercentage.length,
+          ranges: rangeDistribution.length,
           role: session.user.role,
           totalQuotes,
           userId: session.user.id,
@@ -322,7 +290,11 @@ export const dashboardRouter = createTRPCRouter({
 
         return {
           currency: tenantConfig?.currency ?? "COP",
-          ranges: rangesWithPercentage,
+          ranges: rangeDistribution.map((range) => ({
+            range: range.label, // Transform 'label' to 'range' for schema
+            count: range.count,
+            percentage: totalQuotes === 0 ? 0 : range.count / totalQuotes,
+          })),
         };
       } catch (error) {
         logger.error("Error calculating price ranges", {

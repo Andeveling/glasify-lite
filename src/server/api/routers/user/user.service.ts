@@ -8,10 +8,15 @@
  * Separates database access from presentation logic.
  */
 
-import type { db } from "@/server/db/drizzle";
 import { eq, ilike, or, sql } from "drizzle-orm";
 import logger from "@/lib/logger";
-import { quotes, users, type User, type USER_ROLE_VALUES } from "@/server/db/schema";
+import type { db } from "@/server/db/drizzle";
+import {
+  quotes,
+  type USER_ROLE_VALUES,
+  type User,
+  users,
+} from "@/server/db/schema";
 
 // Type inference from Drizzle db instance
 type DbClient = typeof db;
@@ -71,7 +76,9 @@ export async function listUsersWithQuoteCount(
 
   // Build WHERE clause - combine all conditions with AND
   const whereClause =
-    conditions.length > 0 ? sql`${sql.join(conditions, sql` AND `)}` : undefined;
+    conditions.length > 0
+      ? sql`${sql.join(conditions, sql` AND `)}`
+      : undefined;
 
   // Query users with quote count aggregation
   const usersWithQuotes = (await client

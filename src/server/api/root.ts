@@ -16,7 +16,7 @@ import { dashboardRouter } from "@/server/api/routers/dashboard";
 import { geocodingRouter } from "@/server/api/routers/geocoding";
 import { quoteRouter } from "@/server/api/routers/quote";
 import { transportationRouter } from "@/server/api/routers/transportation";
-import { userRouter } from "@/server/api/routers/user";
+import { userRouter } from "@/server/api/routers/user/index";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 
 /**

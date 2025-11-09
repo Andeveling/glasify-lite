@@ -183,37 +183,31 @@ export const addressRouter = createTRPCRouter({
           addressId: input.id,
         });
 
-        const updateValues: Partial<typeof projectAddresses.$inferInsert> = {};
-        if (input.data.label !== undefined) {
-          updateValues.label = input.data.label;
-        }
-        if (input.data.country !== undefined) {
-          updateValues.country = input.data.country;
-        }
-        if (input.data.region !== undefined) {
-          updateValues.region = input.data.region;
-        }
-        if (input.data.city !== undefined) {
-          updateValues.city = input.data.city;
-        }
-        if (input.data.district !== undefined) {
-          updateValues.district = input.data.district;
-        }
-        if (input.data.street !== undefined) {
-          updateValues.street = input.data.street;
-        }
-        if (input.data.reference !== undefined) {
-          updateValues.reference = input.data.reference;
-        }
-        if (input.data.latitude !== undefined) {
-          updateValues.latitude = input.data.latitude.toString();
-        }
-        if (input.data.longitude !== undefined) {
-          updateValues.longitude = input.data.longitude.toString();
-        }
-        if (input.data.postalCode !== undefined) {
-          updateValues.postalCode = input.data.postalCode;
-        }
+        // Build update object using spread operator pattern
+        const updateValues: Partial<typeof projectAddresses.$inferInsert> = {
+          ...(input.data.label !== undefined && { label: input.data.label }),
+          ...(input.data.country !== undefined && {
+            country: input.data.country,
+          }),
+          ...(input.data.region !== undefined && { region: input.data.region }),
+          ...(input.data.city !== undefined && { city: input.data.city }),
+          ...(input.data.district !== undefined && {
+            district: input.data.district,
+          }),
+          ...(input.data.street !== undefined && { street: input.data.street }),
+          ...(input.data.reference !== undefined && {
+            reference: input.data.reference,
+          }),
+          ...(input.data.latitude !== undefined && {
+            latitude: input.data.latitude.toString(),
+          }),
+          ...(input.data.longitude !== undefined && {
+            longitude: input.data.longitude.toString(),
+          }),
+          ...(input.data.postalCode !== undefined && {
+            postalCode: input.data.postalCode,
+          }),
+        };
 
         const addresses = await ctx.db
           .update(projectAddresses)

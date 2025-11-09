@@ -21,6 +21,7 @@ import {
   extractWarehouseLocation,
 } from "@/server/services/transportation.service";
 import { adminProcedure, createTRPCRouter } from "../trpc";
+import { serializeTenantConfig } from "./admin/tenant-config/tenant-config.utils";
 
 /**
  * Transportation Router
@@ -62,16 +63,14 @@ export const transportationRouter = createTRPCRouter({
           });
         }
 
+        // Serialize Drizzle types (text/decimal strings) to service types (number/boolean)
+        const serializedConfig = serializeTenantConfig(tenantConfig);
+
         // Calculate cost using transportation service
-        // TODO: Fix type mismatch between Drizzle schema and service expectations
-        // Drizzle returns string types for dates/decimals, service expects Date/number
-        // FIXME: tenant-config schema using text() instead of timestamp() for dates
         const cost = calculateTransportationCost(
           input.deliveryLatitude,
           input.deliveryLongitude,
-          tenantConfig as unknown as Parameters<
-            typeof calculateTransportationCost
-          >[2],
+          serializedConfig,
           input.deliveryCity
         );
 
@@ -133,15 +132,11 @@ export const transportationRouter = createTRPCRouter({
         });
       }
 
+      // Serialize Drizzle types (text/decimal strings) to service types (number/boolean)
+      const serializedConfig = serializeTenantConfig(tenantConfig);
+
       // Extract warehouse location
-      // TODO: Fix type mismatch between Drizzle schema and service expectations
-      // Drizzle returns string types for dates/decimals, service expects Date/number
-      // FIXME: tenant-config schema using text() instead of timestamp() for dates
-      const warehouse = extractWarehouseLocation(
-        tenantConfig as unknown as Parameters<
-          typeof extractWarehouseLocation
-        >[0]
-      );
+      const warehouse = extractWarehouseLocation(serializedConfig);
 
       if (!warehouse) {
         logger.warn("Warehouse location not configured", {
