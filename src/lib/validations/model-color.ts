@@ -14,8 +14,8 @@ const MAX_SURCHARGE = 100;
  * Used when assigning a color to a model
  */
 export const modelColorAssignSchema = z.object({
-  modelId: z.string().cuid({ message: "ID de modelo inválido" }),
-  colorId: z.string().cuid({ message: "ID de color inválido" }),
+  modelId: z.cuid({ message: "ID de modelo inválido" }),
+  colorId: z.cuid({ message: "ID de color inválido" }),
   surchargePercentage: z
     .number()
     .min(MIN_SURCHARGE, {

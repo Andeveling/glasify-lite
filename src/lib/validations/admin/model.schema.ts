@@ -1,3 +1,7 @@
+// Regex para validar formato ISO 8601 (YYYY-MM-DDTHH:mm:ssZ)
+const ISO_DATETIME_REGEX =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/;
+
 /**
  * Model (Window/Door Product) Validation Schemas
  *
@@ -8,8 +12,8 @@
  * Relations: profileSupplier (Many-to-One), costBreakdown (One-to-Many), priceHistory (One-to-Many)
  */
 
-import { ModelStatus } from "@prisma/client";
 import { z } from "zod";
+import { MODEL_STATUS_VALUES } from "@/server/db/schemas/enums.schema";
 import {
   optionalSpanishText,
   paginationSchema,
@@ -33,9 +37,9 @@ export const MAX_PROFIT_MARGIN = 100;
 export const MAX_COST_NOTES_LENGTH = 500;
 
 /**
- * ModelStatus enum schema (Prisma enum)
+ * ModelStatus enum schema (Drizzle enum values)
  */
-const modelStatusSchema = z.nativeEnum(ModelStatus, {
+const modelStatusSchema = z.enum(MODEL_STATUS_VALUES, {
   message: "El estado del modelo debe ser: draft o published",
 });
 
@@ -54,7 +58,7 @@ function createDimensionRefinement(
 ) {
   if (data.minWidthMm > data.maxWidthMm) {
     ctx.addIssue({
-      code: z.ZodIssueCode.custom,
+      code: "custom",
       message: "El ancho mínimo no puede ser mayor que el ancho máximo",
       path: ["minWidthMm"],
     });
@@ -62,7 +66,7 @@ function createDimensionRefinement(
 
   if (data.minHeightMm > data.maxHeightMm) {
     ctx.addIssue({
-      code: z.ZodIssueCode.custom,
+      code: "custom",
       message: "El alto mínimo no puede ser mayor que el alto máximo",
       path: ["minHeightMm"],
     });
@@ -83,7 +87,7 @@ const baseModelSchema = z
     basePrice: priceValidator.describe("Base price in tenant currency"),
 
     compatibleGlassTypeIds: z
-      .array(z.string().cuid("ID de tipo de vidrio inválido"))
+      .array(z.cuid("ID de tipo de vidrio inválido"))
       .min(1, "Debe seleccionar al menos un tipo de vidrio compatible")
       .describe("Array of compatible GlassType IDs"),
 
@@ -137,9 +141,7 @@ const baseModelSchema = z
 
     imageUrl: z
       .union([
-        z
-          .string()
-          .url("La URL de la imagen debe ser válida"), // Absolute URLs
+        z.url("La URL de la imagen debe ser válida"), // Absolute URLs
         z
           .string()
           .regex(/^\/[^\s]*$/, "La ruta de la imagen debe comenzar con /"), // Relative paths starting with /
@@ -159,7 +161,10 @@ const baseModelSchema = z
       .or(
         z
           .string()
-          .datetime()
+          .refine((str) => ISO_DATETIME_REGEX.test(str), {
+            message:
+              "La fecha debe estar en formato ISO 8601 (YYYY-MM-DDTHH:mm:ssZ)",
+          })
           .transform((str) => new Date(str))
       )
       .describe("Last cost review date"),

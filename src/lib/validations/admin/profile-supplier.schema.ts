@@ -8,6 +8,8 @@
  */
 
 import { z } from "zod";
+import { PROFILE_SUPPLIER_FIELD_LENGTHS } from "@/server/db/schemas/constants/profile-supplier.constants";
+import { MATERIAL_TYPE_VALUES } from "@/server/db/schemas/enums.schema";
 import {
   activeFilterSchema,
   longText,
@@ -22,15 +24,13 @@ import {
  * Constants
  */
 export const MIN_NAME_LENGTH = 2;
-export const MAX_NAME_LENGTH = 100;
+export const MAX_NAME_LENGTH = PROFILE_SUPPLIER_FIELD_LENGTHS.NAME;
 
 /**
  * Material Type Enum
- * Matches Prisma enum MaterialType
+ * Centralizado desde enums.schema.ts
  */
-export const materialTypeEnum = z.enum(["PVC", "ALUMINUM", "WOOD", "MIXED"]);
-
-export type MaterialType = z.infer<typeof materialTypeEnum>;
+export const materialTypeEnum = z.enum([...MATERIAL_TYPE_VALUES]);
 
 /**
  * Base ProfileSupplier Schema

@@ -8,6 +8,7 @@
  */
 
 import { z } from "zod";
+import { GLASS_SOLUTION_FIELD_LENGTHS } from "@/server/db/schemas/constants/glass-solution.constants";
 import {
   activeFilterSchema,
   longText,
@@ -22,9 +23,9 @@ import {
  * Constants
  */
 export const MIN_KEY_LENGTH = 2;
-export const MAX_KEY_LENGTH = 50;
+export const MAX_KEY_LENGTH = GLASS_SOLUTION_FIELD_LENGTHS.KEY;
 export const MIN_NAME_LENGTH = 2;
-export const MAX_NAME_LENGTH = 50;
+export const MAX_NAME_LENGTH = GLASS_SOLUTION_FIELD_LENGTHS.NAME;
 export const MIN_SORT_ORDER = 0;
 export const MAX_SORT_ORDER = 100;
 
@@ -167,7 +168,6 @@ export type ListGlassSolutionsInput = z.infer<typeof listGlassSolutionsSchema>;
 export const listGlassSolutionsOutputSchema = z.object({
   items: z.array(
     z.object({
-      // biome-ignore lint/style/useNamingConvention: Prisma generated field
       _count: z.object({
         glassTypes: z.number(),
       }),

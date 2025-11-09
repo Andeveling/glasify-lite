@@ -8,8 +8,15 @@
  * Relations: quoteServices (One-to-Many)
  */
 
-import { ServiceType, ServiceUnit } from "@prisma/client";
 import { z } from "zod";
+import type {
+  ServiceType,
+  ServiceUnit,
+} from "@/server/db/schemas/enums.schema";
+import {
+  SERVICE_TYPE_VALUES,
+  SERVICE_UNIT_VALUES,
+} from "@/server/db/schemas/enums.schema";
 import {
   paginationSchema,
   priceValidator,
@@ -25,16 +32,22 @@ export const MIN_NAME_LENGTH = 2;
 export const MAX_NAME_LENGTH = 100;
 
 /**
- * ServiceType enum schema (Prisma enum)
+ * Enum value arrays for validation
  */
-const serviceTypeSchema = z.nativeEnum(ServiceType, {
+export const SERVICE_TYPE_VALUES_ARRAY = [...SERVICE_TYPE_VALUES];
+export const SERVICE_UNIT_VALUES_ARRAY = [...SERVICE_UNIT_VALUES];
+
+/**
+ * ServiceType enum schema (Drizzle-compatible)
+ */
+const serviceTypeSchema = z.enum(SERVICE_TYPE_VALUES_ARRAY, {
   message: "El tipo de servicio debe ser: area, perimeter o fixed",
 });
 
 /**
- * ServiceUnit enum schema (Prisma enum)
+ * ServiceUnit enum schema (Drizzle-compatible)
  */
-const serviceUnitSchema = z.nativeEnum(ServiceUnit, {
+const serviceUnitSchema = z.enum(SERVICE_UNIT_VALUES_ARRAY, {
   message: "La unidad de medida debe ser: unit, sqm o ml",
 });
 
@@ -97,7 +110,7 @@ export type CreateServiceInput = z.infer<typeof createServiceSchema>;
  */
 export const updateServiceSchema = z.object({
   data: baseServiceSchema.partial(),
-  id: z.string().cuid("ID de servicio inválido"),
+  id: z.cuid("ID de servicio inválido"),
 });
 
 export type UpdateServiceInput = z.infer<typeof updateServiceSchema>;
@@ -152,7 +165,7 @@ export type ListServicesOutput = {
  * Get Service by ID Schema
  */
 export const getServiceByIdSchema = z.object({
-  id: z.string().cuid("ID de servicio inválido"),
+  id: z.cuid("ID de servicio inválido"),
 });
 
 export type GetServiceByIdInput = z.infer<typeof getServiceByIdSchema>;
@@ -161,7 +174,7 @@ export type GetServiceByIdInput = z.infer<typeof getServiceByIdSchema>;
  * Delete Service Schema
  */
 export const deleteServiceSchema = z.object({
-  id: z.string().cuid("ID de servicio inválido"),
+  id: z.cuid("ID de servicio inválido"),
 });
 
 export type DeleteServiceInput = z.infer<typeof deleteServiceSchema>;
@@ -170,7 +183,7 @@ export type DeleteServiceInput = z.infer<typeof deleteServiceSchema>;
  * Toggle Service Active Status Schema
  */
 export const toggleServiceActiveSchema = z.object({
-  id: z.string().cuid("ID de servicio inválido"),
+  id: z.cuid("ID de servicio inválido"),
   isActive: z.boolean({
     message: "El estado activo debe ser verdadero o falso",
   }),

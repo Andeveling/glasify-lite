@@ -1,14 +1,18 @@
 import { z } from "zod";
 
+// Validation constants (declaradas arriba para uso global)
+const MAX_COLOR_NAME_LENGTH = 50;
+const RAL_CODE_PATTERN = /^RAL \d{4}$/;
+const HEX_CODE_PATTERN = /^#[0-9A-Fa-f]{6}$/;
+
 /**
  * Zod validation schemas for Color catalog management
  * Used in admin color CRUD operations (tRPC colors router)
  */
 
-// Validation constants
-const MAX_COLOR_NAME_LENGTH = 50;
-const RAL_CODE_PATTERN = /^RAL \d{4}$/;
-const HEX_CODE_PATTERN = /^#[0-9A-Fa-f]{6}$/;
+const MAX_SEARCH_LENGTH = 100;
+const MAX_LIST_LIMIT = 100;
+const DEFAULT_LIST_LIMIT = 20;
 
 /**
  * Base color validation schema
@@ -67,10 +71,17 @@ export const colorIdSchema = z.object({
  */
 export const colorListSchema = z.object({
   page: z.number().int().positive().default(1),
-  limit: z.number().int().positive().max(100).default(20),
+  limit: z
+    .number()
+    .int()
+    .positive()
+    .max(MAX_LIST_LIMIT)
+    .default(DEFAULT_LIST_LIMIT),
   search: z
     .string()
-    .max(100, { message: "La búsqueda no puede exceder 100 caracteres" })
+    .max(MAX_SEARCH_LENGTH, {
+      message: `La búsqueda no puede exceder ${MAX_SEARCH_LENGTH} caracteres`,
+    })
     .optional(),
   isActive: z
     .enum(["all", "active", "inactive"])

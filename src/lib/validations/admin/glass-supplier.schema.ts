@@ -8,6 +8,7 @@
  */
 
 import { z } from "zod";
+import { GLASS_SUPPLIER_FIELD_LENGTHS } from "@/server/db/schemas/constants/glass-supplier.constants";
 import {
   activeFilterSchema,
   longText,
@@ -22,13 +23,13 @@ import {
  * Constants
  */
 export const MIN_NAME_LENGTH = 2;
-export const MAX_NAME_LENGTH = 100;
+export const MAX_NAME_LENGTH = GLASS_SUPPLIER_FIELD_LENGTHS.NAME;
 export const MIN_CODE_LENGTH = 2;
-export const MAX_CODE_LENGTH = 10;
+export const MAX_CODE_LENGTH = GLASS_SUPPLIER_FIELD_LENGTHS.CODE;
 export const MIN_COUNTRY_LENGTH = 2;
-export const MAX_COUNTRY_LENGTH = 100;
+export const MAX_COUNTRY_LENGTH = GLASS_SUPPLIER_FIELD_LENGTHS.COUNTRY;
 export const MIN_PHONE_LENGTH = 7;
-export const MAX_PHONE_LENGTH = 20;
+export const MAX_PHONE_LENGTH = GLASS_SUPPLIER_FIELD_LENGTHS.CONTACT_PHONE;
 
 /**
  * Email validation (optional, but valid when provided)

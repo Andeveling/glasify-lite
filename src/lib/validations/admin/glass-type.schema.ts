@@ -17,8 +17,8 @@
  * - Added: code (required), series, manufacturer, isSeeded, seedVersion
  */
 
-import { PerformanceRating } from "@prisma/client";
 import { z } from "zod";
+import { PERFORMANCE_RATING_VALUES } from "@/server/db/schemas/enums.schema";
 import {
   activeFilterSchema,
   longText,
@@ -53,7 +53,7 @@ export const MAX_CHARACTERISTIC_VALUE_LENGTH = 100;
  * PerformanceRating enum schema (Prisma enum)
  * Used in GlassTypeSolution relationship
  */
-const performanceRatingSchema = z.nativeEnum(PerformanceRating, {
+const performanceRatingSchema = z.enum(PERFORMANCE_RATING_VALUES, {
   message:
     "La calificación debe ser: basic, standard, good, very_good, o excellent",
 });
@@ -385,7 +385,7 @@ export type ListGlassTypesInput = z.infer<typeof listGlassTypesSchema>;
 export const listGlassTypesOutputSchema = z.object({
   items: z.array(
     z.object({
-      // biome-ignore lint/style/useNamingConvention: Prisma generated field
+      // Prisma generated field
       _count: z.object({
         characteristics: z.number(),
         quoteItems: z.number(),
@@ -433,7 +433,7 @@ export type ListGlassTypesOutput = z.infer<typeof listGlassTypesOutputSchema>;
  * Includes full relations (solutions, characteristics)
  */
 export const getGlassTypeByIdOutputSchema = z.object({
-  // biome-ignore lint/style/useNamingConvention: Prisma generated field
+  // Prisma generated field
   _count: z.object({
     characteristics: z.number(),
     quoteItems: z.number(),
