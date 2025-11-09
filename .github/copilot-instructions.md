@@ -1,17 +1,249 @@
 # Glasify Lite Development Guidelines
 
-**Last Updated**: 2025-01-10
+**Last Updated**: 2025-11-09
 **Constitution**: See `.specify/memory/constitution.md`
+**Architecture**: Next.js 16 App Router + tRPC + Drizzle ORM + PostgreSQL
 
 ## Code Generation Priorities
-
-When generating code for this repository:
 
 1. **Version Compatibility**: Always detect and respect exact versions of languages, frameworks and libraries
 2. **Context Files**: Prioritize patterns defined in `.github/instructions/` directory
 3. **Codebase Patterns**: When context files don't provide guidance, scan codebase for established patterns
 4. **Architectural Consistency**: Maintain Next.js 16 App Router + tRPC style and boundaries
 5. **Code Quality**: Prioritize maintainability, performance, security, accessibility and testability
+
+---
+
+## 🏗️ Architecture Layers (Big Picture)
+
+### Data Flow: Client → tRPC → Repository → Database
+
+```
+UI Components (Client/Server)
+    ↓ (tRPC API calls)
+tRPC Routers (/src/server/api/routers)
+    ↓ (uses repositories)
+Repositories (/src/server/api/repositories) ← **Abstraction Layer**
+    ↓ (Drizzle queries)
+PostgreSQL Database (Drizzle ORM)
+```
+
+**Key Pattern**: Repository Pattern for testability and abstraction
+- See `src/server/api/repositories/quote.repository.ts` for reference implementation
+- Repositories implement interfaces (e.g., `IQuoteRepository`) for dependency inversion
+- tRPC procedures depend on interfaces, not concrete implementations
+- Easy to mock in tests: `createQuoteRepository()` factory returns interface
+
+### Service Boundaries
+
+- **`/app/(public)/*`**: Unauthenticated catalog, glass solutions, cart
+- **`/app/(dashboard)/admin/*`**: Admin-only CRUD (models, services, suppliers, branding)
+- **`/app/(dashboard)/my-quotes/*`**: User's own quotes (role-filtered)
+- **`/server/api/routers/catalog/*`**: Public catalog queries (no auth)
+- **`/server/api/routers/admin/*`**: Admin-only mutations (uses `adminProcedure`)
+- **`/server/api/routers/quote/*`**: User quotes (uses `getQuoteFilter()` for RBAC)
+
+---
+
+## 🔐 RBAC Authorization Pattern (Multi-Layer)
+
+### Layer 1: tRPC Procedures (Server-Side Gate)
+
+```typescript
+// Public: No auth required
+export const catalogRouter = createTRPCRouter({
+  "list-models": publicProcedure.query(/* ... */),
+});
+
+// Protected: Any authenticated user
+export const quoteRouter = createTRPCRouter({
+  create: protectedProcedure.mutation(/* ... */),
+});
+
+// Admin-only: Throws FORBIDDEN if not admin
+export const adminRouter = createTRPCRouter({
+  "delete-model": adminProcedure.mutation(/* ... */),
+});
+
+// Seller or Admin: Both roles allowed
+export const reportRouter = createTRPCRouter({
+  "export-quotes": sellerOrAdminProcedure.query(/* ... */),
+});
+```
+
+**Source**: `src/server/api/trpc.ts` lines 189-235
+
+### Layer 2: Role-Based Data Filtering
+
+```typescript
+// Admins/Sellers see ALL quotes, Users see ONLY their own
+export function getQuoteFilter(session): string | undefined {
+  if (session?.user?.role === "admin" || session?.user?.role === "seller") {
+    return undefined; // No filter = all quotes
+  }
+  return session?.user?.id; // Filter by userId
+}
+```
+
+**Usage in queries**:
+```typescript
+const userId = getQuoteFilter(ctx.session); // Returns undefined for admin
+const quotes = await db.select().from(quotes)
+  .where(userId ? eq(quotes.userId, userId) : undefined);
+```
+
+**Source**: `src/server/api/trpc.ts` line 250+
+
+### Layer 3: UI Guards (UX Only, NOT Security)
+
+Server Components check role for conditional rendering, but NEVER rely on this for security.
+
+```typescript
+// Example: Show admin link only if admin (UX)
+{session?.user?.role === "admin" && <Link href="/admin">Admin Panel</Link>}
+```
+
+⚠️ **Critical**: UI guards are UX enhancements. Security is enforced at tRPC/database layers.
+
+---
+
+## 🔄 SSR Cache Invalidation (Two-Step Pattern)
+
+### When You See SSR Pages
+
+Admin routes use **SSR** (not ISR). After mutations, you MUST refresh both caches:
+
+```typescript
+// ❌ WRONG: Only invalidates TanStack Query cache
+const mutation = api.admin.deleteModel.useMutation({
+  onSuccess: () => {
+    void utils.admin.listModels.invalidate();
+  },
+});
+
+// ✅ CORRECT: Invalidates both caches
+const mutation = api.admin.deleteModel.useMutation({
+  onSettled: () => {
+    void utils.admin.listModels.invalidate(); // Step 1: TanStack Query cache
+    router.refresh();                         // Step 2: Next.js Server Component data
+  },
+});
+```
+
+**Why both steps?**
+1. `invalidate()` clears TanStack Query client cache
+2. `router.refresh()` forces Next.js to re-fetch server data
+
+Without `router.refresh()`, UI won't update because Server Components don't re-fetch.
+
+**Pattern Location**: See `AGENTS.md` for full implementation checklist
+**Real Example**: `src/app/(dashboard)/admin/models/_components/delete-model-dialog.tsx`
+
+---
+
+## 📦 Developer Workflows (Non-Obvious Commands)
+
+### Database Workflows
+
+```bash
+# Generate Drizzle schema from database.ts
+pnpm db:generate
+
+# Push schema changes (development only, skips migrations)
+pnpm db:push
+
+# Run migrations (production)
+pnpm db:migrate
+
+# Open Drizzle Studio (database GUI)
+pnpm db:studio
+
+# Verify Drizzle setup
+pnpm db:verify
+```
+
+### Seeding Strategies
+
+```bash
+# Minimal seed (1 tenant, 1 admin, basic catalog)
+pnpm seed:minimal
+
+# Demo client seed (adds sample client quotes)
+pnpm seed:demo
+
+# Full catalog (all models, glass types, suppliers)
+pnpm seed:full
+
+# Glass taxonomy only (solutions + types)
+pnpm seed:glass-taxonomy
+```
+
+### Migration Scripts (Data Migrations, Not Schema)
+
+```bash
+# Migrate static glass taxonomy to database
+pnpm migrate:glass-taxonomy
+
+# Dry-run mode (preview changes without applying)
+pnpm migrate:glass-taxonomy:dry
+
+# Create initial price history for existing records
+pnpm migrate:price-history
+```
+
+### Testing Workflows
+
+```bash
+# Run all tests (Vitest)
+pnpm test
+
+# Watch mode (re-run on file changes)
+pnpm test:watch
+
+# Test UI (browser interface)
+pnpm test:ui
+
+# E2E tests (Playwright)
+pnpm test:e2e
+
+# E2E UI mode (interactive debugging)
+pnpm test:e2e:ui
+
+# Auth-specific tests (unit + integration + E2E)
+pnpm test:auth
+```
+
+### Logging and Debugging
+
+```bash
+# Test Winston logger configuration
+pnpm logger:test
+
+# View live logs (tail -f)
+pnpm logs:view
+
+# View error logs only
+pnpm logs:errors
+
+# Clean all log files
+pnpm logs:clean
+```
+
+### Production Deployment (Vercel)
+
+```bash
+# Pull production environment variables
+pnpm vercel:env:pull
+
+# Run migrations on production database
+pnpm vercel:migrate
+
+# Seed production database
+pnpm vercel:seed
+
+# Full production setup (all 3 steps above)
+pnpm production:setup
+```
 
 ---
 
