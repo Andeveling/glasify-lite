@@ -8,11 +8,11 @@
 import {
   DEGREES_TO_RADIANS_FACTOR,
   EARTH_RADIUS_METERS,
-  MAX_LATITUDE,
-  MAX_LONGITUDE,
-  MIN_LATITUDE,
-  MIN_LONGITUDE,
-} from "@/app/(dashboard)/admin/quotes/_constants/geocoding.constants";
+  LATITUDE_MAX,
+  LATITUDE_MIN,
+  LONGITUDE_MAX,
+  LONGITUDE_MIN,
+} from "@/lib/constants/coordinate.constants";
 
 /**
  * Coordinate pair type
@@ -30,15 +30,15 @@ export type Coordinates = {
  * @throws Error if coordinates are out of range
  */
 export function validateCoordinates(latitude: number, longitude: number): void {
-  if (latitude < MIN_LATITUDE || latitude > MAX_LATITUDE) {
+  if (latitude < LATITUDE_MIN || latitude > LATITUDE_MAX) {
     throw new Error(
-      `Latitud inválida: ${latitude}. Debe estar entre ${MIN_LATITUDE} y ${MAX_LATITUDE}.`
+      `Latitud inválida: ${latitude}. Debe estar entre ${LATITUDE_MIN} y ${LATITUDE_MAX}.`
     );
   }
 
-  if (longitude < MIN_LONGITUDE || longitude > MAX_LONGITUDE) {
+  if (longitude < LONGITUDE_MIN || longitude > LONGITUDE_MAX) {
     throw new Error(
-      `Longitud inválida: ${longitude}. Debe estar entre ${MIN_LONGITUDE} y ${MAX_LONGITUDE}.`
+      `Longitud inválida: ${longitude}. Debe estar entre ${LONGITUDE_MIN} y ${LONGITUDE_MAX}.`
     );
   }
 }
