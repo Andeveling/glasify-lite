@@ -7,15 +7,15 @@
 
 "use server";
 
-import type { QuoteStatus } from "@prisma/client";
-import type { Decimal } from "@prisma/client/runtime/library";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { writeQuoteExcel } from "@/lib/export/excel/quote-excel-workbook";
 import { renderQuotePDF } from "@/lib/export/pdf/quote-pdf-document";
 import logger from "@/lib/logger";
+import { createCaller } from "@/server/api/root";
+import { createTRPCContext } from "@/server/api/trpc";
 import { auth } from "@/server/auth";
-import { db } from "@/server/db";
+import type { QuoteStatus } from "@/server/db/schemas/enums.schema";
 import type {
   ExportFormat,
   ExportResult,
@@ -57,23 +57,27 @@ type ExportQuoteInput = z.infer<typeof exportQuoteInputSchema>;
 
 /**
  * Calculate totals from quote items
- * Uses unknown type for complex Prisma includes
  */
-function calculateQuoteTotals(quote: { items: unknown[]; total: Decimal }) {
+function calculateQuoteTotals(quote: {
+  items: { subtotal: string | null }[];
+  total: string | null;
+}) {
   // Calculate subtotal from items
-  const subtotal = quote.items.reduce((sum: number, item: unknown) => {
-    const typedItem = item as { subtotal: Decimal };
-    return sum + Number(typedItem.subtotal);
+  const subtotal = quote.items.reduce((sum, item) => {
+    const itemSubtotal = item.subtotal ? Number(item.subtotal) : 0;
+    return sum + itemSubtotal;
   }, 0);
 
   //Tax and discount are not yet implemented in the schema
   // They will be calculated from adjustments in future iterations
 
+  const total = quote.total ? Number(quote.total) : 0;
+
   return {
     discount: undefined,
     subtotal,
     tax: undefined,
-    total: Number(quote.total),
+    total,
   };
 }
 
@@ -83,6 +87,8 @@ function calculateQuoteTotals(quote: { items: unknown[]; total: Decimal }) {
  * @param input - Quote ID and format
  * @returns ExportResult with base64-encoded PDF data
  */
+
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: PDF export requires multiple validation and processing steps
 export async function exportQuotePDF(
   input: ExportQuoteInput
 ): Promise<ExportResult> {
@@ -107,44 +113,13 @@ export async function exportQuotePDF(
       };
     }
 
-    // Fetch quote with all required relations
-    const quoteData = await db.quote.findUnique({
-      include: {
-        adjustments: true,
-        items: {
-          include: {
-            glassType: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-            model: {
-              include: {
-                profileSupplier: {
-                  select: {
-                    id: true,
-                    name: true,
-                  },
-                },
-              },
-            },
-          },
-          orderBy: { createdAt: "asc" },
-        },
-        user: {
-          select: {
-            email: true,
-            id: true,
-            name: true,
-          },
-        },
-      },
-      where: { id: quoteId },
-    });
+    // Fetch quote via tRPC (SOLID: no direct db import)
+    const ctx = await createTRPCContext({ headers: await headers() });
+    const caller = createCaller(ctx);
 
-    // Verify quote exists
-    const quote = quoteData;
+    const quote = await caller.quote["get-for-export"]({ quoteId });
+
+    // Verify quote exists (tRPC throws NOT_FOUND if not exists)
     if (!quote) {
       logger.warn("Quote not found for PDF export", { quoteId });
       return {
@@ -188,9 +163,13 @@ export async function exportQuotePDF(
         timezone: "America/Santiago",
       },
       items: quote.items.map((item) => {
-        const widthM = item.widthMm / MM_TO_METERS;
-        const heightM = item.heightMm / MM_TO_METERS;
+        const widthMm = item.widthMm ?? 0;
+        const heightMm = item.heightMm ?? 0;
+        const widthM = widthMm / MM_TO_METERS;
+        const heightM = heightMm / MM_TO_METERS;
         const area = widthM * heightM;
+        const quantity = item.quantity ?? 1;
+        const subtotal = Number(item.subtotal ?? 0);
 
         return {
           dimensions: {
@@ -205,27 +184,27 @@ export async function exportQuotePDF(
             colorSurchargePercentage: item.colorSurchargePercentage
               ? Number(item.colorSurchargePercentage)
               : undefined,
-            type: item.glassType.name,
+            type: item.glassTypeName ?? "Vidrio",
           },
           id: item.id,
-          name: item.name,
+          name: item.name ?? "Producto sin nombre",
           product: {
-            manufacturer: item.model?.profileSupplier?.name,
-            name: item.model?.name ?? "Producto",
+            manufacturer: item.profileSupplierName ?? undefined,
+            name: item.modelName ?? "Producto",
           },
-          quantity: item.quantity,
-          subtotal: Number(item.subtotal),
-          unitPrice: Number(item.subtotal) / item.quantity,
+          quantity,
+          subtotal,
+          unitPrice: subtotal / quantity,
         };
       }),
       quote: {
         createdAt: quote.createdAt,
         id: quote.id,
         itemCount: quote.items.length,
-        projectName: quote.projectName || "Sin nombre",
+        projectName: quote.projectName ?? "Sin nombre",
         status: quote.status,
-        totalAmount: Number(quote.total),
-        validUntil: quote.validUntil || getDefaultValidityDate(),
+        totalAmount: Number(quote.total ?? 0),
+        validUntil: quote.validUntil ?? getDefaultValidityDate(),
       },
       totals,
     };
@@ -278,6 +257,8 @@ export async function exportQuotePDF(
  * @param input - Quote ID and format
  * @returns ExportResult with base64-encoded Excel data
  */
+
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Excel export requires multiple validation and processing steps
 export async function exportQuoteExcel(
   input: ExportQuoteInput
 ): Promise<ExportResult> {
@@ -302,57 +283,13 @@ export async function exportQuoteExcel(
       };
     }
 
-    // Fetch quote with all required relations
-    const quoteData = await db.quote.findUnique({
-      include: {
-        adjustments: true,
-        items: {
-          include: {
-            glassType: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-            model: {
-              include: {
-                profileSupplier: {
-                  select: {
-                    id: true,
-                    name: true,
-                  },
-                },
-              },
-            },
-          },
-          orderBy: { createdAt: "asc" },
-        },
-        user: {
-          select: {
-            email: true,
-            id: true,
-            name: true,
-          },
-        },
-      },
-      where: { id: quoteId },
-    });
+    // Fetch quote via tRPC (SOLID: no direct db import)
+    const ctx = await createTRPCContext({ headers: await headers() });
+    const caller = createCaller(ctx);
 
-    // Verify quote exists
-    // Type assertion for complex Prisma include with all relations
-    const quote = quoteData as Record<string, unknown> & {
-      id: string;
-      userId: string;
-      projectName: string | null;
-      status: QuoteStatus;
-      total: Decimal;
-      currency: string;
-      contactPhone: string | null;
-      createdAt: Date;
-      validUntil: Date | null;
-      items: Record<string, unknown>[];
-      user: { name: string | null; email: string | null } | null;
-    };
+    const quote = await caller.quote["get-for-export"]({ quoteId });
+
+    // Verify quote exists (tRPC throws NOT_FOUND if not exists)
     if (!quote) {
       logger.warn("Quote not found for Excel export", { quoteId });
       return {
@@ -456,53 +393,39 @@ export async function exportQuoteExcel(
         locale: "es-CL",
         timezone: "America/Santiago",
       },
-      items: quote.items.map(
-        (rawItem: Record<string, unknown>, index: number): ExcelItemInfo => {
-          // Type assertion for Prisma item with all relations
-          const item = rawItem as {
-            id: string;
-            name: string;
-            quantity: number;
-            widthMm: number;
-            heightMm: number;
-            subtotal: Decimal;
-            glassType: { name: string };
-            model: {
-              name: string;
-              profileSupplier?: { name: string };
-              category?: { name: string };
-            } | null;
-          };
+      items: quote.items.map((item, index): ExcelItemInfo => {
+        const widthMm = item.widthMm ?? 0;
+        const heightMm = item.heightMm ?? 0;
+        const widthM = widthMm / MM_TO_METERS;
+        const heightM = heightMm / MM_TO_METERS;
+        const area = widthM * heightM;
+        const quantity = item.quantity ?? 1;
+        const subtotal = Number(item.subtotal ?? 0);
 
-          const widthM = item.widthMm / MM_TO_METERS;
-          const heightM = item.heightMm / MM_TO_METERS;
-          const area = widthM * heightM;
-
-          return {
-            area,
-            category: item.model?.category?.name,
-            glassType: item.glassType.name,
-            height: heightM,
-            id: item.id,
-            itemNumber: index + 1,
-            manufacturer: item.model?.profileSupplier?.name,
-            name: item.name,
-            productName: item.model?.name ?? "Producto",
-            quantity: item.quantity,
-            subtotal: Number(item.subtotal),
-            unitPrice: Number(item.subtotal) / item.quantity,
-            width: widthM,
-          };
-        }
-      ),
+        return {
+          area,
+          category: undefined, // Category not available in current schema
+          glassType: item.glassTypeName ?? "Vidrio",
+          height: heightM,
+          id: item.id,
+          itemNumber: index + 1,
+          manufacturer: item.profileSupplierName ?? undefined,
+          name: item.name ?? "Producto sin nombre",
+          productName: item.modelName ?? "Producto",
+          quantity,
+          subtotal,
+          unitPrice: subtotal / quantity,
+          width: widthM,
+        };
+      }),
       quote: {
         createdAt: quote.createdAt,
         id: quote.id,
         itemCount: quote.items.length,
-        projectName: quote.projectName || "Sin nombre",
+        projectName: quote.projectName ?? "Sin nombre",
         status: quote.status,
-        totalAmount: Number(quote.total),
-        validUntil: quote.validUntil || getDefaultValidityDate(),
+        totalAmount: Number(quote.total ?? 0),
+        validUntil: quote.validUntil ?? getDefaultValidityDate(),
       },
       totals,
     };

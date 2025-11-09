@@ -10,8 +10,16 @@
  */
 
 import { eq } from "drizzle-orm";
-import type { DrizzleClient } from "@/server/db";
-import { projectAddresses, quoteItems, quotes } from "@/server/db/schema";
+import type { DrizzleClient } from "@/server/db/index";
+import {
+  glassTypes,
+  models,
+  profileSuppliers,
+  projectAddresses,
+  quoteItems,
+  quotes,
+  users,
+} from "@/server/db/schema";
 import type { CartItem } from "@/types/cart.types";
 import type { GenerateQuoteInput } from "@/types/quote.types";
 import type { QuoteMetadata } from "../services/quote-metadata-calculator";
@@ -144,7 +152,7 @@ export async function createQuoteItems(
   const insertedItems = await db
     .insert(quoteItems)
     .values(quoteItemsData)
-    .returning({ id: quoteItems.id });
+    .returning();
 
   // TODO: Insert services when CartItem includes full service data (quantity, unit, amount)
   // Currently additionalServiceIds only contains service IDs
@@ -180,14 +188,7 @@ export async function updateQuoteToSent(
       status: updateData.status,
     })
     .where(eq(quotes.id, quoteId))
-    .returning({
-      contactPhone: quotes.contactPhone,
-      currency: quotes.currency,
-      id: quotes.id,
-      sentAt: quotes.sentAt,
-      status: quotes.status,
-      total: quotes.total,
-    });
+    .returning();
 
   if (!updated) {
     throw new Error("Failed to update quote");
@@ -242,5 +243,102 @@ export async function findQuoteByIdWithItems(
     items,
     status: firstRow.status,
     userId: firstRow.userId,
+  };
+}
+
+/**
+ * Find quote by ID with full details for export
+ *
+ * Returns complete quote data including user, items with all relations,
+ * adjustments, and calculated totals for PDF/Excel export.
+ *
+ * @param db - Drizzle client
+ * @param quoteId - Quote ID
+ * @returns Complete quote data or null
+ */
+export async function findQuoteForExport(db: DrizzleClient, quoteId: string) {
+  const results = await db
+    .select({
+      // Quote fields
+      quoteId: quotes.id,
+      contactPhone: quotes.contactPhone,
+      createdAt: quotes.createdAt,
+      currency: quotes.currency,
+      projectName: quotes.projectName,
+      status: quotes.status,
+      total: quotes.total,
+      userId: quotes.userId,
+      validUntil: quotes.validUntil,
+      // Quote item fields
+      itemColorHexCode: quoteItems.colorHexCode,
+      itemColorName: quoteItems.colorName,
+      itemColorSurchargePercentage: quoteItems.colorSurchargePercentage,
+      itemHeightMm: quoteItems.heightMm,
+      itemId: quoteItems.id,
+      itemName: quoteItems.name,
+      itemQuantity: quoteItems.quantity,
+      itemSubtotal: quoteItems.subtotal,
+      itemWidthMm: quoteItems.widthMm,
+      // Related entity names
+      glassTypeName: glassTypes.name,
+      modelName: models.name,
+      profileSupplierName: profileSuppliers.name,
+      // User fields
+      userEmail: users.email,
+      userName: users.name,
+    })
+    .from(quotes)
+    .leftJoin(quoteItems, eq(quotes.id, quoteItems.quoteId))
+    .leftJoin(glassTypes, eq(quoteItems.glassTypeId, glassTypes.id))
+    .leftJoin(models, eq(quoteItems.modelId, models.id))
+    .leftJoin(
+      profileSuppliers,
+      eq(models.profileSupplierId, profileSuppliers.id)
+    )
+    .leftJoin(users, eq(quotes.userId, users.id))
+    .where(eq(quotes.id, quoteId));
+
+  if (results.length === 0) {
+    return null;
+  }
+
+  const firstRow = results[0];
+  if (!firstRow) {
+    return null;
+  }
+
+  // Group items
+  const items = results
+    .filter((row) => row.itemId !== null)
+    .map((row) => ({
+      colorHexCode: row.itemColorHexCode,
+      colorName: row.itemColorName,
+      colorSurchargePercentage: row.itemColorSurchargePercentage,
+      glassTypeName: row.glassTypeName,
+      heightMm: row.itemHeightMm,
+      id: row.itemId ?? "",
+      modelName: row.modelName,
+      name: row.itemName,
+      profileSupplierName: row.profileSupplierName,
+      quantity: row.itemQuantity,
+      subtotal: row.itemSubtotal,
+      widthMm: row.itemWidthMm,
+    }));
+
+  return {
+    contactPhone: firstRow.contactPhone,
+    createdAt: firstRow.createdAt,
+    currency: firstRow.currency,
+    id: firstRow.quoteId,
+    items,
+    projectName: firstRow.projectName,
+    status: firstRow.status,
+    total: firstRow.total,
+    user: {
+      email: firstRow.userEmail,
+      name: firstRow.userName,
+    },
+    userId: firstRow.userId,
+    validUntil: firstRow.validUntil,
   };
 }

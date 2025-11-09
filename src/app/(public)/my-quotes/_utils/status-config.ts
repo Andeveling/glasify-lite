@@ -8,13 +8,13 @@
  * @module StatusConfig
  */
 
-import type { Quote } from "@prisma/client";
 import { FileText, type LucideIcon, Send, XCircle } from "lucide-react";
 
 /**
- * Quote status type from Prisma schema
+ * Quote status values (centralizado, sin dependencia de Prisma)
  */
-export type QuoteStatus = Quote["status"];
+export const QUOTE_STATUS_VALUES = ["draft", "sent", "canceled"] as const;
+export type QuoteStatus = (typeof QUOTE_STATUS_VALUES)[number];
 
 /**
  * Badge variant types (Shadcn/ui Badge component)

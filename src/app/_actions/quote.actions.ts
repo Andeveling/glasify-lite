@@ -15,9 +15,9 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import logger from "@/lib/logger";
-import { generateQuoteFromCart } from "@/server/api/routers/quote/quote.service";
+import { createCaller } from "@/server/api/root";
+import { createTRPCContext } from "@/server/api/trpc";
 import { auth } from "@/server/auth";
-import { db } from "@/server/db";
 import type { CartItem } from "@/types/cart.types";
 
 // ============================================================================
@@ -149,8 +149,11 @@ export async function generateQuoteFromCartAction(
       };
     }
 
-    // 4. Call quote service to generate quote
-    const result = await generateQuoteFromCart(db, userId, {
+    // 4. Call quote service via tRPC (SOLID: no direct db import)
+    const ctx = await createTRPCContext({ headers: await headers() });
+    const caller = createCaller(ctx);
+
+    const result = await caller.quote["generate-from-cart"]({
       cartItems,
       contactPhone: formInput.contactPhone,
       deliveryAddress: formInput.deliveryAddress,

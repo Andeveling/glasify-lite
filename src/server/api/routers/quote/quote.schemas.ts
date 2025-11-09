@@ -89,6 +89,28 @@ export const projectAddressSchema = z.object({
 export type ProjectAddressSchema = z.infer<typeof projectAddressSchema>;
 
 /**
+ * Delivery address schema
+ *
+ * Optional geocoded delivery address for quote
+ */
+export const deliveryAddressSchema = z
+  .object({
+    city: z.string().optional().nullable(),
+    country: z.string().optional().nullable(),
+    district: z.string().optional().nullable(),
+    label: z.string().optional().nullable(),
+    latitude: z.number().optional().nullable(),
+    longitude: z.number().optional().nullable(),
+    postalCode: z.string().optional().nullable(),
+    reference: z.string().optional().nullable(),
+    region: z.string().optional().nullable(),
+    street: z.string().optional().nullable(),
+  })
+  .optional();
+
+export type DeliveryAddressSchema = z.infer<typeof deliveryAddressSchema>;
+
+/**
  * Project address schema for OUTPUT (reading quotes)
  * Fields can be empty strings for backward compatibility with old quotes
  */
@@ -135,7 +157,15 @@ export const generateQuoteFromCartInput = z.object({
     .min(1, "El carrito debe contener al menos un item")
     .max(MAX_CART_ITEMS, "El carrito no puede tener más de 20 items"),
   contactPhone: z.string().optional(), // No max length constraint - flexible for international formats
-  manufacturerId: z.string().cuid("ID del fabricante debe ser válido"),
+  deliveryAddress: deliveryAddressSchema,
+  /**
+   * @deprecated Manufacturer ID (deprecated field, kept for backward compatibility)
+   * Currency and validity are now obtained from TenantConfig singleton.
+   */
+  manufacturerId: z
+    .string()
+    .cuid("ID del fabricante debe ser válido")
+    .optional(),
   projectAddress: projectAddressSchema,
 });
 

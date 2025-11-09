@@ -11,7 +11,10 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { listUserQuotesInput } from "./quote.schemas";
-import { findQuoteByIdWithItems } from "./repositories/quote-repository";
+import {
+  findQuoteByIdWithItems,
+  findQuoteForExport,
+} from "./repositories/quote-repository";
 
 export const quoteQueries = createTRPCRouter({
   /**
@@ -37,6 +40,39 @@ export const quoteQueries = createTRPCRouter({
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "No tienes permiso para ver esta cotización",
+        });
+      }
+
+      return quote;
+    }),
+
+  /**
+   * Get quote for export with complete data
+   *
+   * Returns quote with all fields needed for PDF/Excel export including:
+   * - All quote fields (contactPhone, currency, projectName, total, validUntil, etc.)
+   * - User info (name, email)
+   * - All items with complete data (dimensions, subtotals, glass type, model, supplier names)
+   *
+   * Users can only access their own quotes.
+   */
+  "get-for-export": protectedProcedure
+    .input(z.object({ quoteId: z.cuid() }))
+    .query(async ({ ctx, input }) => {
+      const quote = await findQuoteForExport(ctx.db, input.quoteId);
+
+      if (!quote) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Cotización no encontrada",
+        });
+      }
+
+      // Verify ownership
+      if (quote.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "No tienes permiso para exportar esta cotización",
         });
       }
 

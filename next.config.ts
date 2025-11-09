@@ -53,9 +53,6 @@ const config: NextConfig = {
     ],
   },
 
-  // Configure external packages for serverless
-  serverExternalPackages: ["@prisma/client"],
-
   // Turbopack configuration
   turbopack: {
     rules: {

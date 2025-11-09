@@ -47,6 +47,7 @@ export const quoteMutations = createTRPCRouter({
         manufacturerId: input.manufacturerId,
         projectAddress: input.projectAddress,
         contactPhone: input.contactPhone,
+        deliveryAddress: input.deliveryAddress,
       };
 
       return await generateQuoteFromCart(

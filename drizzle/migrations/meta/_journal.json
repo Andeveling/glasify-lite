@@ -8,6 +8,13 @@
       "when": 1762616949877,
       "tag": "20251108154909_initial_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1762690471415,
+      "tag": "20251109121431_lean_tana_nile",
+      "breakpoints": true
     }
   ]
 }
