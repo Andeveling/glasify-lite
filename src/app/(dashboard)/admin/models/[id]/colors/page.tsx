@@ -25,7 +25,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { safeDecimalToNumber } from "@/lib/prisma-utils";
+import { safeDecimalToNumber } from "@/lib/drizzle-utils";
 import { api } from "@/trpc/server-client";
 import { AddColorDialog } from "./_components/add-color-dialog";
 import { ModelColorsList } from "./_components/model-colors-list";

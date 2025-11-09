@@ -49,7 +49,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { safeDecimalToNumber } from "@/lib/prisma-utils";
+import { safeDecimalToNumber } from "@/lib/drizzle-utils";
 import { api } from "@/trpc/react";
 import { ModelColorRow } from "./model-color-row";
 

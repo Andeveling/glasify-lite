@@ -1,4 +1,12 @@
-import { decimal, index, pgTable, text, varchar } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  decimal,
+  index,
+  integer,
+  pgTable,
+  text,
+  varchar,
+} from "drizzle-orm/pg-core";
 import {
   createInsertSchema,
   createSelectSchema,
@@ -10,6 +18,9 @@ import {
   GEO_CONSTRAINTS,
   ISO_CONSTRAINTS,
 } from "./constants/constants";
+
+// Default values
+const DEFAULT_QUOTE_VALIDITY_DAYS = 15;
 
 export const tenantConfigs = pgTable(
   "TenantConfig",
@@ -24,9 +35,9 @@ export const tenantConfigs = pgTable(
       length: FIELD_LENGTHS.TENANT_CONFIG.BUSINESS_NAME,
     }).notNull(),
     currency: varchar("currency", { length: 3 }).notNull(), // ISO 4217 currency code
-    quoteValidityDays: text("quoteValidityDays")
+    quoteValidityDays: integer("quoteValidityDays")
       .notNull()
-      .$defaultFn(() => "15"),
+      .$defaultFn(() => DEFAULT_QUOTE_VALIDITY_DAYS),
     locale: varchar("locale", {
       length: FIELD_LENGTHS.TENANT_CONFIG.LOCALE,
     })
@@ -75,9 +86,9 @@ export const tenantConfigs = pgTable(
     whatsappNumber: varchar("whatsappNumber", {
       length: FIELD_LENGTHS.TENANT_CONFIG.WHATSAPP_NUMBER,
     }),
-    whatsappEnabled: text("whatsappEnabled")
+    whatsappEnabled: boolean("whatsappEnabled")
       .notNull()
-      .$defaultFn(() => "false"),
+      .$defaultFn(() => false),
 
     // Warehouse location and transportation (001-delivery-address)
     warehouseLatitude: decimal("warehouseLatitude", {
@@ -129,30 +140,30 @@ export const tenantConfigSelectSchema = createSelectSchema(tenantConfigs, {
   contactEmail: z
     .email()
     .max(FIELD_LENGTHS.TENANT_CONFIG.CONTACT_EMAIL)
-    .optional(),
+    .nullable(),
   contactPhone: z
     .string()
     .max(FIELD_LENGTHS.TENANT_CONFIG.CONTACT_PHONE)
-    .optional(),
+    .nullable(),
   businessAddress: z
     .string()
     .max(FIELD_LENGTHS.TENANT_CONFIG.BUSINESS_ADDRESS)
-    .optional(),
+    .nullable(),
   logoUrl: z
     .string()
     .url()
     .max(FIELD_LENGTHS.TENANT_CONFIG.LOGO_URL)
-    .optional(),
+    .nullable(),
   primaryColor: z.string().regex(/^#[0-9A-F]{6}$/i),
   secondaryColor: z.string().regex(/^#[0-9A-F]{6}$/i),
-  facebookUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).optional(),
-  instagramUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).optional(),
-  linkedinUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).optional(),
+  facebookUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).nullable(),
+  instagramUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).nullable(),
+  linkedinUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).nullable(),
   whatsappNumber: z
     .string()
     .regex(/^\+\d{1,15}$/)
     .max(FIELD_LENGTHS.TENANT_CONFIG.WHATSAPP_NUMBER)
-    .optional(), // E.164 format
+    .nullable(), // E.164 format
   whatsappEnabled: z.boolean(),
   warehouseLatitude: z
     .number()
@@ -181,59 +192,59 @@ export const tenantConfigInsertSchema = createInsertSchema(tenantConfigs, {
     .string()
     .length(ISO_CONSTRAINTS.CURRENCY_CODE_LENGTH)
     .regex(/^[A-Z]{3}$/),
-  quoteValidityDays: z.number().int().positive().optional(),
+  quoteValidityDays: z.number().int().positive(),
   locale: z
     .string()
     .max(FIELD_LENGTHS.TENANT_CONFIG.LOCALE)
     .regex(/^[a-z]{2}(-[A-Z]{2})?$/)
-    .optional(),
-  timezone: z.string().max(FIELD_LENGTHS.TENANT_CONFIG.TIMEZONE).optional(),
+    .nullable(),
+  timezone: z.string().max(FIELD_LENGTHS.TENANT_CONFIG.TIMEZONE).nullable(),
   contactEmail: z
     .email()
     .max(FIELD_LENGTHS.TENANT_CONFIG.CONTACT_EMAIL)
-    .optional(),
+    .nullable(),
   contactPhone: z
     .string()
     .max(FIELD_LENGTHS.TENANT_CONFIG.CONTACT_PHONE)
-    .optional(),
+    .nullable(),
   businessAddress: z
     .string()
     .max(FIELD_LENGTHS.TENANT_CONFIG.BUSINESS_ADDRESS)
-    .optional(),
-  logoUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.LOGO_URL).optional(),
+    .nullable(),
+  logoUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.LOGO_URL).nullable(),
   primaryColor: z
     .string()
     .regex(/^#[0-9A-F]{6}$/i)
-    .optional(),
+    .nullable(),
   secondaryColor: z
     .string()
     .regex(/^#[0-9A-F]{6}$/i)
-    .optional(),
-  facebookUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).optional(),
-  instagramUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).optional(),
-  linkedinUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).optional(),
+    .nullable(),
+  facebookUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).nullable(),
+  instagramUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).nullable(),
+  linkedinUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).nullable(),
   whatsappNumber: z
     .string()
     .regex(/^\+\d{1,15}$/)
     .max(FIELD_LENGTHS.TENANT_CONFIG.WHATSAPP_NUMBER)
-    .optional(),
-  whatsappEnabled: z.boolean().optional(),
+    .nullable(),
+  whatsappEnabled: z.boolean(),
   warehouseLatitude: z
     .number()
     .min(GEO_CONSTRAINTS.LATITUDE.MIN)
     .max(GEO_CONSTRAINTS.LATITUDE.MAX)
-    .optional(),
+    .nullable(),
   warehouseLongitude: z
     .number()
     .min(GEO_CONSTRAINTS.LONGITUDE.MIN)
     .max(GEO_CONSTRAINTS.LONGITUDE.MAX)
-    .optional(),
+    .nullable(),
   warehouseCity: z
     .string()
     .max(FIELD_LENGTHS.TENANT_CONFIG.WAREHOUSE_CITY)
-    .optional(),
-  transportBaseRate: z.number().nonnegative().optional(),
-  transportPerKmRate: z.number().nonnegative().optional(),
+    .nullable(),
+  transportBaseRate: z.number().nonnegative().nullable(),
+  transportPerKmRate: z.number().nonnegative().nullable(),
 }).omit({ id: true, createdAt: true, updatedAt: true });
 
 export const tenantConfigUpdateSchema = createUpdateSchema(tenantConfigs, {
@@ -254,43 +265,43 @@ export const tenantConfigUpdateSchema = createUpdateSchema(tenantConfigs, {
   contactEmail: z
     .email()
     .max(FIELD_LENGTHS.TENANT_CONFIG.CONTACT_EMAIL)
-    .optional(),
+    .nullable(),
   contactPhone: z
     .string()
     .max(FIELD_LENGTHS.TENANT_CONFIG.CONTACT_PHONE)
-    .optional(),
+    .nullable(),
   businessAddress: z
     .string()
     .max(FIELD_LENGTHS.TENANT_CONFIG.BUSINESS_ADDRESS)
-    .optional(),
-  logoUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.LOGO_URL).optional(),
+    .nullable(),
+  logoUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.LOGO_URL).nullable(),
   primaryColor: z.string().regex(/^#[0-9A-F]{6}$/i),
   secondaryColor: z.string().regex(/^#[0-9A-F]{6}$/i),
-  facebookUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).optional(),
-  instagramUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).optional(),
-  linkedinUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).optional(),
+  facebookUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).nullable(),
+  instagramUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).nullable(),
+  linkedinUrl: z.url().max(FIELD_LENGTHS.TENANT_CONFIG.SOCIAL_URL).nullable(),
   whatsappNumber: z
     .string()
     .regex(/^\+\d{1,15}$/)
     .max(FIELD_LENGTHS.TENANT_CONFIG.WHATSAPP_NUMBER)
-    .optional(),
+    .nullable(),
   whatsappEnabled: z.boolean(),
   warehouseLatitude: z
     .number()
     .min(GEO_CONSTRAINTS.LATITUDE.MIN)
     .max(GEO_CONSTRAINTS.LATITUDE.MAX)
-    .optional(),
+    .nullable(),
   warehouseLongitude: z
     .number()
     .min(GEO_CONSTRAINTS.LONGITUDE.MIN)
     .max(GEO_CONSTRAINTS.LONGITUDE.MAX)
-    .optional(),
+    .nullable(),
   warehouseCity: z
     .string()
     .max(FIELD_LENGTHS.TENANT_CONFIG.WAREHOUSE_CITY)
-    .optional(),
-  transportBaseRate: z.number().nonnegative().optional(),
-  transportPerKmRate: z.number().nonnegative().optional(),
+    .nullable(),
+  transportBaseRate: z.number().nonnegative().nullable(),
+  transportPerKmRate: z.number().nonnegative().nullable(),
 })
   .partial()
   .omit({ id: true, createdAt: true, updatedAt: true });
@@ -298,5 +309,5 @@ export const tenantConfigUpdateSchema = createUpdateSchema(tenantConfigs, {
 /**
  * TypeScript types inferred from schemas
  */
-export type TenantConfig = typeof tenantConfigs.$inferSelect;
-export type NewTenantConfig = typeof tenantConfigs.$inferInsert;
+export type TenantConfig = z.infer<typeof tenantConfigSelectSchema>;
+export type NewTenantConfig = z.infer<typeof tenantConfigInsertSchema>;
