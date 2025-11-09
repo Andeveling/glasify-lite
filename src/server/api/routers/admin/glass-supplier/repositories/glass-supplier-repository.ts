@@ -130,14 +130,13 @@ export async function countGlassSuppliers(
   const conditions: SQL[] = [];
 
   if (filters.search) {
-    const searchCondition = or(
-      ilike(glassSuppliers.name, `%${filters.search}%`),
-      ilike(glassSuppliers.code, `%${filters.search}%`),
-      ilike(glassSuppliers.country, `%${filters.search}%`)
+    conditions.push(
+      or(
+        ilike(glassSuppliers.name, `%${filters.search}%`),
+        ilike(glassSuppliers.code, `%${filters.search}%`),
+        ilike(glassSuppliers.country, `%${filters.search}%`)
+      ) as SQL
     );
-    if (searchCondition) {
-      conditions.push(searchCondition);
-    }
   }
 
   if (filters.country) {
@@ -159,6 +158,31 @@ export async function countGlassSuppliers(
 }
 
 /**
+ * Column lookup table - Strategy Pattern
+ * Maps sort keys to column references
+ */
+const SORT_COLUMNS = {
+  name: glassSuppliers.name,
+  code: glassSuppliers.code,
+  country: glassSuppliers.country,
+  createdAt: glassSuppliers.createdAt,
+} as const;
+
+/**
+ * Build order by expression for sorting
+ *
+ * Uses Strategy Pattern (lookup table) to eliminate nested conditionals.
+ * Returns the appropriate column with direction applied.
+ */
+function buildOrderByExpression(
+  sortBy: keyof typeof SORT_COLUMNS,
+  sortOrder: "asc" | "desc"
+) {
+  const column = SORT_COLUMNS[sortBy];
+  return sortOrder === "desc" ? desc(column) : column;
+}
+
+/**
  * Find glass suppliers with pagination and filters
  *
  * @param client - Drizzle client instance
@@ -173,21 +197,20 @@ export async function findGlassSuppliers(
     search?: string;
     country?: string;
     isActive?: "all" | "active" | "inactive";
-    sortBy: "name" | "code" | "country" | "createdAt";
+    sortBy: keyof typeof SORT_COLUMNS;
     sortOrder: "asc" | "desc";
   }
 ) {
   const conditions: SQL[] = [];
 
   if (options.search) {
-    const searchCondition = or(
-      ilike(glassSuppliers.name, `%${options.search}%`),
-      ilike(glassSuppliers.code, `%${options.search}%`),
-      ilike(glassSuppliers.country, `%${options.search}%`)
+    conditions.push(
+      or(
+        ilike(glassSuppliers.name, `%${options.search}%`),
+        ilike(glassSuppliers.code, `%${options.search}%`),
+        ilike(glassSuppliers.country, `%${options.search}%`)
+      ) as SQL
     );
-    if (searchCondition) {
-      conditions.push(searchCondition);
-    }
   }
 
   if (options.country) {
@@ -200,33 +223,18 @@ export async function findGlassSuppliers(
   }
 
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
-
   const skip = (options.page - 1) * options.limit;
-
-  // Determine sort column
-  let orderColumn:
-    | typeof glassSuppliers.name
-    | typeof glassSuppliers.code
-    | typeof glassSuppliers.country
-    | typeof glassSuppliers.createdAt;
-  if (options.sortBy === "name") {
-    orderColumn = glassSuppliers.name;
-  } else if (options.sortBy === "code") {
-    orderColumn = glassSuppliers.code;
-  } else if (options.sortBy === "country") {
-    orderColumn = glassSuppliers.country;
-  } else {
-    orderColumn = glassSuppliers.createdAt;
-  }
-
-  const orderFn = options.sortOrder === "desc" ? desc : undefined;
+  const orderByExpression = buildOrderByExpression(
+    options.sortBy,
+    options.sortOrder
+  );
 
   // Fetch suppliers
   const supplierRows = await client
     .select()
     .from(glassSuppliers)
     .where(whereClause)
-    .orderBy(orderFn ? orderFn(orderColumn) : orderColumn)
+    .orderBy(orderByExpression)
     .limit(options.limit)
     .offset(skip);
 
