@@ -1,6 +1,10 @@
 /** biome-ignore-all lint/suspicious/noConsole: seed script requires console logging */
-import type { MaterialType, PrismaClient } from "@prisma/client";
 import { envSeed } from "../src/env-seed";
+import { ConsoleSeederLogger } from "../src/lib/seeding/contracts/seeder.interface";
+import { generateProfileSupplierBatch } from "../src/lib/seeding/factories/profile-supplier.factory";
+import type { MaterialType } from "../src/lib/seeding/schemas/profile-supplier.schema";
+import { ProfileSupplierSeeder } from "../src/lib/seeding/seeders/profile-supplier.seeder";
+import { db } from "../src/server/db/drizzle";
 import {
   createGlassCharacteristics,
   GLASS_CHARACTERISTIC_PRESETS,
@@ -97,11 +101,23 @@ async function seedTenantConfig(prisma: PrismaClient) {
 
 /**
  * Seed ProfileSupplier records
+ *
+ * This function runs BOTH Prisma (old) and Drizzle (new) seeders in parallel
+ * to validate the migration works correctly without breaking existing functionality.
  */
 async function seedProfileSuppliers(prisma: PrismaClient) {
   console.log("\n🏭 Creating profile suppliers...");
 
-  const createdSuppliers = await Promise.all(
+  // Initialize Drizzle seeder (cast to NodePgDatabase for local dev)
+  const logger = new ConsoleSeederLogger();
+  // biome-ignore lint/suspicious/noExplicitAny: MVP - db type union needs casting
+  const drizzleSeeder = new ProfileSupplierSeeder(db as any, logger);
+
+  // Generate data using new factory
+  const factoryData = generateProfileSupplierBatch(profileSuppliers.length);
+
+  // Run OLD Prisma seeder (keep existing functionality)
+  const prismaSuppliers = await Promise.all(
     profileSuppliers.map((supplier) =>
       prisma.profileSupplier.upsert({
         create: supplier,
@@ -112,14 +128,31 @@ async function seedProfileSuppliers(prisma: PrismaClient) {
   );
 
   console.log(
-    `✅ Created/updated ${createdSuppliers.length} profile suppliers:`
+    `✅ [PRISMA] Created/updated ${prismaSuppliers.length} profile suppliers:`
   );
-  for (const supplier of createdSuppliers) {
+  for (const supplier of prismaSuppliers) {
     const status = supplier.isActive ? "✓" : "✗";
     console.log(`   ${status} ${supplier.name} (${supplier.materialType})`);
   }
 
-  return createdSuppliers;
+  // Run NEW Drizzle seeder (parallel validation)
+  console.log("\n🔄 [DRIZZLE] Running new seeder in parallel...");
+  const drizzleResult = await drizzleSeeder.seed(factoryData);
+
+  if (drizzleResult.success) {
+    console.log(
+      `✅ [DRIZZLE] Inserted: ${drizzleResult.inserted}, Updated: ${drizzleResult.updated}, Failed: ${drizzleResult.failed}`
+    );
+  } else {
+    console.warn(
+      `⚠️  [DRIZZLE] Seeder completed with ${drizzleResult.errors.length} errors:`
+    );
+    for (const error of drizzleResult.errors) {
+      console.warn(`   - [${error.index}] ${error.error.message}`);
+    }
+  }
+
+  return prismaSuppliers;
 }
 
 /**

@@ -16,12 +16,12 @@ When generating code for this repository:
 ---
 
 ## Active Technologies
-- TypeScript 5.9.3 (strict mode), Node.js ES2022 + Next.js 16.0.1 (App Router), React 19.2.0, tRPC 11.6.0, Prisma 6.18.0, Zod 4.1.12, React Hook Form 7.64.0 (001-delivery-address)
+- TypeScript 5.9.3 (strict mode), Node.js ES2022 + Next.js 16.0.1 (App Router), React 19.2.0, tRPC 11.6.0, Drizzle 6.18.0, Zod 4.1.12, React Hook Form 7.64.0 (001-delivery-address)
 - PostgreSQL (existing instance) - add `ProjectAddress` model, modify `Quote` and `TenantConfig` models (001-delivery-address)
 - TypeScript 5.9.3 (strict mode), Node.js ES2022 + Next.js 16.0.1 (App Router), React 19.2.0, tRPC 11.6.0, Zod 4.1.12 (001-admin-quotes-dashboard)
 - PostgreSQL (existing schema - Quote, User, QuoteStatus enum) (001-admin-quotes-dashboard)
 - TypeScript 5.9.3 (strict mode), Node.js ES2022 + Next.js 16.0.1 (App Router), React 19.2.0, tRPC 11.6.0, React Hook Form 7.64.0, Zod 4.1.12, TanStack Query 5.90.2 (019-edit-cart-items)
-- PostgreSQL via Prisma 6.18.0 (existing schema - CartItem, Model, GlassType entities) (019-edit-cart-items)
+- PostgreSQL via Drizzle 6.18.0 (existing schema - CartItem, Model, GlassType entities) (019-edit-cart-items)
 
 **Language/Runtime**:
 - TypeScript 5.9.3 (strict mode), Node.js (ES2022 target)
@@ -31,7 +31,7 @@ When generating code for this repository:
 
 **Core Dependencies**:
 - tRPC 11.6.0 (type-safe API)
-- Prisma 6.18.0 (PostgreSQL ORM)
+- Drizzle 6.18.0 (PostgreSQL ORM)
 - Better Auth 1.2.7 (authentication)
 - TanStack Query 5.90.2 (React Query)
 - Zod 4.1.12 (schema validation)
@@ -71,7 +71,7 @@ When generating code for this repository:
 
 **✅ ALTERNATIVES**:
 - Use `performance.now()` for timing measurements (not `Date.now()`)
-- Use direct Prisma access for static pages (bypass tRPC)
+- Use direct Drizzle access for static pages (bypass tRPC)
 - Use `"use cache: private"` if you need `headers()`/`cookies()`
 - Wrap uncached data in `<Suspense>` boundaries
 - Return placeholder values in `generateStaticParams()`
@@ -169,11 +169,11 @@ glasify-lite/
 │   │   ├── logger.ts                 # Winston singleton (SERVER-SIDE ONLY)
 │   │   └── utils.ts                  # Helper functions
 │   ├── providers/                    # React Context providers
-│   ├── server/                       # Backend logic (tRPC, Prisma)
+│   ├── server/                       # Backend logic (tRPC, Drizzle)
 │   │   ├── api/routers/              # tRPC routers (kebab-case procedures)
 │   │   ├── auth/                     # NextAuth config
 │   │   ├── services/                 # Business logic services
-│   │   └── db.ts                     # Prisma singleton client
+│   │   └── db.ts                     # Drizzle singleton client
 │   ├── trpc/                         # tRPC client configuration
 │   ├── middleware.ts                 # Next.js middleware
 │   └── env.js                        # Environment validation

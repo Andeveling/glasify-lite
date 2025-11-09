@@ -78,15 +78,15 @@ Este plan establece una arquitectura de factories y seeders completamente indepe
 
 **GOAL-001**: Crear nueva arquitectura base ORM-agnostic sin romper sistema existente
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-001 | Crear `/src/lib/seeding/` directory structure | | |
-| TASK-002 | Crear `/src/lib/seeding/types/base.types.ts` con tipos base ORM-agnostic | | |
-| TASK-003 | Crear `/src/lib/seeding/utils/validation.utils.ts` con utilities Zod | | |
-| TASK-004 | Crear `/src/lib/seeding/utils/decimal.utils.ts` para manejo de decimales | | |
-| TASK-005 | Crear `/src/lib/seeding/contracts/seeder.interface.ts` con contratos de seeders | | |
-| TASK-006 | Migrar utilities de `/prisma/factories/utils.ts` a nueva ubicación | | |
-| TASK-007 | Crear tests unitarios para utilities (`validation.utils.test.ts`) | | |
+| Task     | Description                                                                     | Completed | Date |
+| -------- | ------------------------------------------------------------------------------- | --------- | ---- |
+| TASK-001 | Crear `/src/lib/seeding/` directory structure                                   |           |      |
+| TASK-002 | Crear `/src/lib/seeding/types/base.types.ts` con tipos base ORM-agnostic        |           |      |
+| TASK-003 | Crear `/src/lib/seeding/utils/validation.utils.ts` con utilities Zod            |           |      |
+| TASK-004 | Crear `/src/lib/seeding/utils/decimal.utils.ts` para manejo de decimales        |           |      |
+| TASK-005 | Crear `/src/lib/seeding/contracts/seeder.interface.ts` con contratos de seeders |           |      |
+| TASK-006 | Migrar utilities de `/prisma/factories/utils.ts` a nueva ubicación              |           |      |
+| TASK-007 | Crear tests unitarios para utilities (`validation.utils.test.ts`)               |           |      |
 
 **Estructura esperada**:
 ```
@@ -109,15 +109,15 @@ src/lib/seeding/
 
 **GOAL-002**: Migrar ProfileSupplier factory como caso piloto (entidad simple, sin relaciones complejas)
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-008 | Crear Zod schema derivado: `/src/lib/seeding/schemas/profile-supplier.schema.ts` | | |
-| TASK-009 | Crear factory ORM-agnostic: `/src/lib/seeding/factories/profile-supplier.factory.ts` | | |
-| TASK-010 | Crear seeder Drizzle: `/src/lib/seeding/seeders/profile-supplier.seeder.ts` | | |
-| TASK-011 | Crear unit tests para factory (sin DB): `profile-supplier.factory.test.ts` | | |
-| TASK-012 | Crear integration tests para seeder: `profile-supplier.seeder.test.ts` | | |
-| TASK-013 | Actualizar `/prisma/seed-tenant.ts` para usar nueva implementación (parallel) | | |
-| TASK-014 | Validar seeding funcional con ambos sistemas (old + new) | | |
+| Task     | Description                                                                          | Completed | Date |
+| -------- | ------------------------------------------------------------------------------------ | --------- | ---- |
+| TASK-008 | Crear Zod schema derivado: `/src/lib/seeding/schemas/profile-supplier.schema.ts`     |           |      |
+| TASK-009 | Crear factory ORM-agnostic: `/src/lib/seeding/factories/profile-supplier.factory.ts` |           |      |
+| TASK-010 | Crear seeder Drizzle: `/src/lib/seeding/seeders/profile-supplier.seeder.ts`          |           |      |
+| TASK-011 | Crear unit tests para factory (sin DB): `profile-supplier.factory.test.ts`           |           |      |
+| TASK-012 | Crear integration tests para seeder: `profile-supplier.seeder.test.ts`               |           |      |
+| TASK-013 | Actualizar `/prisma/seed-tenant.ts` para usar nueva implementación (parallel)        |           |      |
+| TASK-014 | Validar seeding funcional con ambos sistemas (old + new)                             |           |      |
 
 **Validation criteria**:
 - Factory genera objetos válidos sin base de datos
@@ -131,15 +131,15 @@ src/lib/seeding/
 
 **GOAL-003**: Migrar GlassSupplier factory (segunda entidad simple)
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-015 | Crear Zod schema: `/src/lib/seeding/schemas/glass-supplier.schema.ts` | | |
-| TASK-016 | Crear factory: `/src/lib/seeding/factories/glass-supplier.factory.ts` | | |
-| TASK-017 | Crear seeder: `/src/lib/seeding/seeders/glass-supplier.seeder.ts` | | |
-| TASK-018 | Crear unit tests: `glass-supplier.factory.test.ts` | | |
-| TASK-019 | Crear integration tests: `glass-supplier.seeder.test.ts` | | |
-| TASK-020 | Actualizar `/prisma/seed-tenant.ts` para usar nueva implementación | | |
-| TASK-021 | Validar seeding funcional | | |
+| Task     | Description                                                           | Completed | Date |
+| -------- | --------------------------------------------------------------------- | --------- | ---- |
+| TASK-015 | Crear Zod schema: `/src/lib/seeding/schemas/glass-supplier.schema.ts` |           |      |
+| TASK-016 | Crear factory: `/src/lib/seeding/factories/glass-supplier.factory.ts` |           |      |
+| TASK-017 | Crear seeder: `/src/lib/seeding/seeders/glass-supplier.seeder.ts`     |           |      |
+| TASK-018 | Crear unit tests: `glass-supplier.factory.test.ts`                    |           |      |
+| TASK-019 | Crear integration tests: `glass-supplier.seeder.test.ts`              |           |      |
+| TASK-020 | Actualizar `/prisma/seed-tenant.ts` para usar nueva implementación    |           |      |
+| TASK-021 | Validar seeding funcional                                             |           |      |
 
 ---
 
@@ -147,15 +147,15 @@ src/lib/seeding/
 
 **GOAL-004**: Migrar GlassCharacteristic factory (tercera entidad simple)
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-022 | Crear Zod schema: `/src/lib/seeding/schemas/glass-characteristic.schema.ts` | | |
-| TASK-023 | Crear factory: `/src/lib/seeding/factories/glass-characteristic.factory.ts` | | |
-| TASK-024 | Crear seeder: `/src/lib/seeding/seeders/glass-characteristic.seeder.ts` | | |
-| TASK-025 | Crear unit tests: `glass-characteristic.factory.test.ts` | | |
-| TASK-026 | Crear integration tests: `glass-characteristic.seeder.test.ts` | | |
-| TASK-027 | Actualizar `/prisma/seed-tenant.ts` para usar nueva implementación | | |
-| TASK-028 | Validar seeding funcional | | |
+| Task     | Description                                                                 | Completed | Date |
+| -------- | --------------------------------------------------------------------------- | --------- | ---- |
+| TASK-022 | Crear Zod schema: `/src/lib/seeding/schemas/glass-characteristic.schema.ts` |           |      |
+| TASK-023 | Crear factory: `/src/lib/seeding/factories/glass-characteristic.factory.ts` |           |      |
+| TASK-024 | Crear seeder: `/src/lib/seeding/seeders/glass-characteristic.seeder.ts`     |           |      |
+| TASK-025 | Crear unit tests: `glass-characteristic.factory.test.ts`                    |           |      |
+| TASK-026 | Crear integration tests: `glass-characteristic.seeder.test.ts`              |           |      |
+| TASK-027 | Actualizar `/prisma/seed-tenant.ts` para usar nueva implementación          |           |      |
+| TASK-028 | Validar seeding funcional                                                   |           |      |
 
 ---
 
@@ -163,15 +163,15 @@ src/lib/seeding/
 
 **GOAL-005**: Migrar Service factory (entidad con Decimal handling)
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-029 | Crear Zod schema: `/src/lib/seeding/schemas/service.schema.ts` | | |
-| TASK-030 | Implementar factory con Decimal.js: `/src/lib/seeding/factories/service.factory.ts` | | |
-| TASK-031 | Crear seeder: `/src/lib/seeding/seeders/service.seeder.ts` | | |
-| TASK-032 | Crear unit tests: `service.factory.test.ts` (validar decimal handling) | | |
-| TASK-033 | Crear integration tests: `service.seeder.test.ts` | | |
-| TASK-034 | Actualizar orchestrator para usar nueva implementación | | |
-| TASK-035 | Validar seeding funcional | | |
+| Task     | Description                                                                         | Completed | Date |
+| -------- | ----------------------------------------------------------------------------------- | --------- | ---- |
+| TASK-029 | Crear Zod schema: `/src/lib/seeding/schemas/service.schema.ts`                      |           |      |
+| TASK-030 | Implementar factory con Decimal.js: `/src/lib/seeding/factories/service.factory.ts` |           |      |
+| TASK-031 | Crear seeder: `/src/lib/seeding/seeders/service.seeder.ts`                          |           |      |
+| TASK-032 | Crear unit tests: `service.factory.test.ts` (validar decimal handling)              |           |      |
+| TASK-033 | Crear integration tests: `service.seeder.test.ts`                                   |           |      |
+| TASK-034 | Actualizar orchestrator para usar nueva implementación                              |           |      |
+| TASK-035 | Validar seeding funcional                                                           |           |      |
 
 ---
 
@@ -179,15 +179,15 @@ src/lib/seeding/
 
 **GOAL-006**: Migrar GlassType factory (entidad con relaciones y campos complejos)
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-036 | Crear Zod schema: `/src/lib/seeding/schemas/glass-type.schema.ts` | | |
-| TASK-037 | Implementar factory: `/src/lib/seeding/factories/glass-type.factory.ts` | | |
-| TASK-038 | Crear seeder con FK handling: `/src/lib/seeding/seeders/glass-type.seeder.ts` | | |
-| TASK-039 | Crear unit tests: `glass-type.factory.test.ts` | | |
-| TASK-040 | Crear integration tests: `glass-type.seeder.test.ts` | | |
-| TASK-041 | Actualizar orchestrator para manejar relaciones | | |
-| TASK-042 | Validar seeding funcional con relaciones | | |
+| Task     | Description                                                                   | Completed | Date |
+| -------- | ----------------------------------------------------------------------------- | --------- | ---- |
+| TASK-036 | Crear Zod schema: `/src/lib/seeding/schemas/glass-type.schema.ts`             |           |      |
+| TASK-037 | Implementar factory: `/src/lib/seeding/factories/glass-type.factory.ts`       |           |      |
+| TASK-038 | Crear seeder con FK handling: `/src/lib/seeding/seeders/glass-type.seeder.ts` |           |      |
+| TASK-039 | Crear unit tests: `glass-type.factory.test.ts`                                |           |      |
+| TASK-040 | Crear integration tests: `glass-type.seeder.test.ts`                          |           |      |
+| TASK-041 | Actualizar orchestrator para manejar relaciones                               |           |      |
+| TASK-042 | Validar seeding funcional con relaciones                                      |           |      |
 
 ---
 
@@ -195,15 +195,15 @@ src/lib/seeding/
 
 **GOAL-007**: Migrar GlassSolution factory (entidad con slug generation)
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-043 | Crear Zod schema: `/src/lib/seeding/schemas/glass-solution.schema.ts` | | |
-| TASK-044 | Implementar factory: `/src/lib/seeding/factories/glass-solution.factory.ts` | | |
-| TASK-045 | Crear seeder: `/src/lib/seeding/seeders/glass-solution.seeder.ts` | | |
-| TASK-046 | Crear unit tests: `glass-solution.factory.test.ts` | | |
-| TASK-047 | Crear integration tests: `glass-solution.seeder.test.ts` | | |
-| TASK-048 | Actualizar orchestrator | | |
-| TASK-049 | Validar seeding funcional | | |
+| Task     | Description                                                                 | Completed | Date |
+| -------- | --------------------------------------------------------------------------- | --------- | ---- |
+| TASK-043 | Crear Zod schema: `/src/lib/seeding/schemas/glass-solution.schema.ts`       |           |      |
+| TASK-044 | Implementar factory: `/src/lib/seeding/factories/glass-solution.factory.ts` |           |      |
+| TASK-045 | Crear seeder: `/src/lib/seeding/seeders/glass-solution.seeder.ts`           |           |      |
+| TASK-046 | Crear unit tests: `glass-solution.factory.test.ts`                          |           |      |
+| TASK-047 | Crear integration tests: `glass-solution.seeder.test.ts`                    |           |      |
+| TASK-048 | Actualizar orchestrator                                                     |           |      |
+| TASK-049 | Validar seeding funcional                                                   |           |      |
 
 ---
 
@@ -211,15 +211,15 @@ src/lib/seeding/
 
 **GOAL-008**: Migrar Model factory (entidad más compleja con múltiples Decimals y validaciones)
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-050 | Crear Zod schema: `/src/lib/seeding/schemas/model.schema.ts` | | |
-| TASK-051 | Implementar factory con validaciones complejas: `/src/lib/seeding/factories/model.factory.ts` | | |
-| TASK-052 | Crear seeder: `/src/lib/seeding/seeders/model.seeder.ts` | | |
-| TASK-053 | Crear unit tests extensivos: `model.factory.test.ts` | | |
-| TASK-054 | Crear integration tests: `model.seeder.test.ts` | | |
-| TASK-055 | Actualizar orchestrator para manejar Model seeding | | |
-| TASK-056 | Validar seeding funcional con todos los presets | | |
+| Task     | Description                                                                                   | Completed | Date |
+| -------- | --------------------------------------------------------------------------------------------- | --------- | ---- |
+| TASK-050 | Crear Zod schema: `/src/lib/seeding/schemas/model.schema.ts`                                  |           |      |
+| TASK-051 | Implementar factory con validaciones complejas: `/src/lib/seeding/factories/model.factory.ts` |           |      |
+| TASK-052 | Crear seeder: `/src/lib/seeding/seeders/model.seeder.ts`                                      |           |      |
+| TASK-053 | Crear unit tests extensivos: `model.factory.test.ts`                                          |           |      |
+| TASK-054 | Crear integration tests: `model.seeder.test.ts`                                               |           |      |
+| TASK-055 | Actualizar orchestrator para manejar Model seeding                                            |           |      |
+| TASK-056 | Validar seeding funcional con todos los presets                                               |           |      |
 
 ---
 
@@ -227,16 +227,16 @@ src/lib/seeding/
 
 **GOAL-009**: Refactorizar Seed Orchestrator para arquitectura ORM-agnostic
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-057 | Crear nuevo orchestrator: `/src/lib/seeding/orchestrators/seed-orchestrator.ts` | | |
-| TASK-058 | Implementar dependency injection para seeders (ISeeder interface) | | |
-| TASK-059 | Implementar preset loading desde `/src/lib/seeding/presets/` | | |
-| TASK-060 | Crear logging system independiente de Prisma | | |
-| TASK-061 | Implementar error handling y rollback strategies | | |
-| TASK-062 | Migrar todos los presets existentes a nueva estructura | | |
-| TASK-063 | Crear tests para orchestrator: `seed-orchestrator.test.ts` | | |
-| TASK-064 | Validar seeding completo con todos los presets | | |
+| Task     | Description                                                                     | Completed | Date |
+| -------- | ------------------------------------------------------------------------------- | --------- | ---- |
+| TASK-057 | Crear nuevo orchestrator: `/src/lib/seeding/orchestrators/seed-orchestrator.ts` |           |      |
+| TASK-058 | Implementar dependency injection para seeders (ISeeder interface)               |           |      |
+| TASK-059 | Implementar preset loading desde `/src/lib/seeding/presets/`                    |           |      |
+| TASK-060 | Crear logging system independiente de Prisma                                    |           |      |
+| TASK-061 | Implementar error handling y rollback strategies                                |           |      |
+| TASK-062 | Migrar todos los presets existentes a nueva estructura                          |           |      |
+| TASK-063 | Crear tests para orchestrator: `seed-orchestrator.test.ts`                      |           |      |
+| TASK-064 | Validar seeding completo con todos los presets                                  |           |      |
 
 ---
 
@@ -244,14 +244,14 @@ src/lib/seeding/
 
 **GOAL-010**: Migrar seed scripts para usar nueva arquitectura
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-065 | Crear nuevo seed CLI: `/src/lib/seeding/cli/seed.cli.ts` | | |
-| TASK-066 | Migrar `prisma/seed-tenant.ts` a `/src/lib/seeding/scripts/seed-tenant.ts` | | |
-| TASK-067 | Migrar `prisma/seed-cli.ts` a `/src/lib/seeding/scripts/seed-cli.ts` | | |
-| TASK-068 | Actualizar `package.json` scripts para usar nueva ubicación | | |
-| TASK-069 | Crear documentación de uso: `/src/lib/seeding/README.md` | | |
-| TASK-070 | Validar todos los comandos seed funcionan correctamente | | |
+| Task     | Description                                                                | Completed | Date |
+| -------- | -------------------------------------------------------------------------- | --------- | ---- |
+| TASK-065 | Crear nuevo seed CLI: `/src/lib/seeding/cli/seed.cli.ts`                   |           |      |
+| TASK-066 | Migrar `prisma/seed-tenant.ts` a `/src/lib/seeding/scripts/seed-tenant.ts` |           |      |
+| TASK-067 | Migrar `prisma/seed-cli.ts` a `/src/lib/seeding/scripts/seed-cli.ts`       |           |      |
+| TASK-068 | Actualizar `package.json` scripts para usar nueva ubicación                |           |      |
+| TASK-069 | Crear documentación de uso: `/src/lib/seeding/README.md`                   |           |      |
+| TASK-070 | Validar todos los comandos seed funcionan correctamente                    |           |      |
 
 ---
 
@@ -259,15 +259,15 @@ src/lib/seeding/
 
 **GOAL-011**: Eliminar código legacy de Prisma factories y seeders
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-071 | Marcar `/prisma/factories/` como deprecated (agregar README.md) | | |
-| TASK-072 | Marcar `/prisma/seeders/` como deprecated | | |
-| TASK-073 | Eliminar imports de `@prisma/client` en factories | | |
-| TASK-074 | Eliminar imports de `Decimal` de Prisma (usar decimal.js) | | |
-| TASK-075 | Actualizar imports en todo el proyecto para usar nueva ubicación | | |
-| TASK-076 | Ejecutar tests E2E completos de seeding | | |
-| TASK-077 | Actualizar informe de auditoría Prisma (`docs/informe-auditoria-prisma.md`) | | |
+| Task     | Description                                                                 | Completed | Date |
+| -------- | --------------------------------------------------------------------------- | --------- | ---- |
+| TASK-071 | Marcar `/prisma/factories/` como deprecated (agregar README.md)             |           |      |
+| TASK-072 | Marcar `/prisma/seeders/` como deprecated                                   |           |      |
+| TASK-073 | Eliminar imports de `@prisma/client` en factories                           |           |      |
+| TASK-074 | Eliminar imports de `Decimal` de Prisma (usar decimal.js)                   |           |      |
+| TASK-075 | Actualizar imports en todo el proyecto para usar nueva ubicación            |           |      |
+| TASK-076 | Ejecutar tests E2E completos de seeding                                     |           |      |
+| TASK-077 | Actualizar informe de auditoría Prisma (`docs/informe-auditoria-prisma.md`) |           |      |
 
 ---
 
@@ -275,16 +275,16 @@ src/lib/seeding/
 
 **GOAL-012**: Validación final y documentación completa
 
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-078 | Ejecutar seeding completo en ambiente fresh (todas las entidades) | | |
-| TASK-079 | Validar performance benchmarks (comparar old vs new) | | |
-| TASK-080 | Crear migration guide: `/docs/architecture/seeding-migration-guide.md` | | |
-| TASK-081 | Actualizar ADRs (Architecture Decision Records) | | |
-| TASK-082 | Crear video/tutorial de nueva arquitectura (opcional) | | |
-| TASK-083 | Eliminar `/prisma/factories/` y `/prisma/seeders/` directories | | |
-| TASK-084 | Actualizar CHANGELOG.md con cambios | | |
-| TASK-085 | Crear PR con revisión completa de arquitectura | | |
+| Task     | Description                                                            | Completed | Date |
+| -------- | ---------------------------------------------------------------------- | --------- | ---- |
+| TASK-078 | Ejecutar seeding completo en ambiente fresh (todas las entidades)      |           |      |
+| TASK-079 | Validar performance benchmarks (comparar old vs new)                   |           |      |
+| TASK-080 | Crear migration guide: `/docs/architecture/seeding-migration-guide.md` |           |      |
+| TASK-081 | Actualizar ADRs (Architecture Decision Records)                        |           |      |
+| TASK-082 | Crear video/tutorial de nueva arquitectura (opcional)                  |           |      |
+| TASK-083 | Eliminar `/prisma/factories/` y `/prisma/seeders/` directories         |           |      |
+| TASK-084 | Actualizar CHANGELOG.md con cambios                                    |           |      |
+| TASK-085 | Crear PR con revisión completa de arquitectura                         |           |      |
 
 ---
 
