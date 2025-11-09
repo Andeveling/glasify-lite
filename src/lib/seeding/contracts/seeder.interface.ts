@@ -204,4 +204,18 @@ export class ConsoleSeederLogger implements ISeederLogger {
   debug(): void {
     // No-op: seeders should use server-side logging only
   }
+
+  /**
+   * Log section title
+   */
+  section(): void {
+    // No-op: seeders should use server-side logging only
+  }
+
+  /**
+   * Log success message
+   */
+  success(): void {
+    // No-op: seeders should use server-side logging only
+  }
 }

@@ -202,4 +202,6 @@ export type ISeederLogger = {
   warn(message: string): void;
   error(message: string, error?: Error): void;
   debug(message: string): void;
+  section(title: string): void;
+  success(message: string): void;
 };
