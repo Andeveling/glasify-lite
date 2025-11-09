@@ -117,12 +117,8 @@
           "name": "Account_userId_fkey",
           "tableFrom": "Account",
           "tableTo": "User",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -246,12 +242,8 @@
           "name": "Adjustment_quoteId_fkey",
           "tableFrom": "Adjustment",
           "tableTo": "Quote",
-          "columnsFrom": [
-            "quoteId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["quoteId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -259,12 +251,8 @@
           "name": "Adjustment_quoteItemId_fkey",
           "tableFrom": "Adjustment",
           "tableTo": "QuoteItem",
-          "columnsFrom": [
-            "quoteItemId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["quoteItemId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -362,10 +350,7 @@
         "Color_name_hexCode_key": {
           "name": "Color_name_hexCode_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "name",
-            "hexCode"
-          ]
+          "columns": ["name", "hexCode"]
         }
       },
       "policies": {},
@@ -504,9 +489,7 @@
         "GlassCharacteristic_key_unique": {
           "name": "GlassCharacteristic_key_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "key"
-          ]
+          "columns": ["key"]
         }
       },
       "policies": {},
@@ -666,16 +649,12 @@
         "GlassSolution_key_unique": {
           "name": "GlassSolution_key_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "key"
-          ]
+          "columns": ["key"]
         },
         "GlassSolution_slug_unique": {
           "name": "GlassSolution_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -783,12 +762,8 @@
           "name": "GlassSupplier_tenantConfigId_fkey",
           "tableFrom": "GlassSupplier",
           "tableTo": "TenantConfig",
-          "columnsFrom": [
-            "tenantConfigId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenantConfigId"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -798,16 +773,12 @@
         "GlassSupplier_name_unique": {
           "name": "GlassSupplier_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
+          "columns": ["name"]
         },
         "GlassSupplier_code_unique": {
           "name": "GlassSupplier_code_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "code"
-          ]
+          "columns": ["code"]
         }
       },
       "policies": {},
@@ -1081,16 +1052,12 @@
         "GlassType_name_unique": {
           "name": "GlassType_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
+          "columns": ["name"]
         },
         "GlassType_code_unique": {
           "name": "GlassType_code_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "code"
-          ]
+          "columns": ["code"]
         }
       },
       "policies": {},
@@ -1189,12 +1156,8 @@
           "name": "GlassTypeCharacteristic_glassTypeId_fkey",
           "tableFrom": "GlassTypeCharacteristic",
           "tableTo": "GlassType",
-          "columnsFrom": [
-            "glassTypeId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["glassTypeId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1202,12 +1165,8 @@
           "name": "GlassTypeCharacteristic_characteristicId_fkey",
           "tableFrom": "GlassTypeCharacteristic",
           "tableTo": "GlassCharacteristic",
-          "columnsFrom": [
-            "characteristicId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["characteristicId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1217,10 +1176,7 @@
         "GlassTypeCharacteristic_glassTypeId_characteristicId_key": {
           "name": "GlassTypeCharacteristic_glassTypeId_characteristicId_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "glassTypeId",
-            "characteristicId"
-          ]
+          "columns": ["glassTypeId", "characteristicId"]
         }
       },
       "policies": {},
@@ -1314,12 +1270,8 @@
           "name": "GlassTypeSolution_glassTypeId_fkey",
           "tableFrom": "GlassTypeSolution",
           "tableTo": "GlassType",
-          "columnsFrom": [
-            "glassTypeId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["glassTypeId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1327,12 +1279,8 @@
           "name": "GlassTypeSolution_solutionId_fkey",
           "tableFrom": "GlassTypeSolution",
           "tableTo": "GlassSolution",
-          "columnsFrom": [
-            "solutionId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["solutionId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1342,10 +1290,7 @@
         "GlassTypeSolution_glassTypeId_solutionId_key": {
           "name": "GlassTypeSolution_glassTypeId_solutionId_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "glassTypeId",
-            "solutionId"
-          ]
+          "columns": ["glassTypeId", "solutionId"]
         }
       },
       "policies": {},
@@ -1639,12 +1584,8 @@
           "name": "Model_profileSupplierId_fkey",
           "tableFrom": "Model",
           "tableTo": "ProfileSupplier",
-          "columnsFrom": [
-            "profileSupplierId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["profileSupplierId"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1732,12 +1673,8 @@
           "name": "ModelColor_modelId_fkey",
           "tableFrom": "ModelColor",
           "tableTo": "Model",
-          "columnsFrom": [
-            "modelId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["modelId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1745,12 +1682,8 @@
           "name": "ModelColor_colorId_fkey",
           "tableFrom": "ModelColor",
           "tableTo": "Color",
-          "columnsFrom": [
-            "colorId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["colorId"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         }
@@ -1760,10 +1693,7 @@
         "ModelColor_modelId_colorId_key": {
           "name": "ModelColor_modelId_colorId_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "modelId",
-            "colorId"
-          ]
+          "columns": ["modelId", "colorId"]
         }
       },
       "policies": {},
@@ -1869,12 +1799,8 @@
           "name": "ModelCostBreakdown_modelId_fkey",
           "tableFrom": "ModelCostBreakdown",
           "tableTo": "Model",
-          "columnsFrom": [
-            "modelId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["modelId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1973,12 +1899,8 @@
           "name": "ModelPriceHistory_modelId_fkey",
           "tableFrom": "ModelPriceHistory",
           "tableTo": "Model",
-          "columnsFrom": [
-            "modelId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["modelId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1986,12 +1908,8 @@
           "name": "ModelPriceHistory_createdBy_fkey",
           "tableFrom": "ModelPriceHistory",
           "tableTo": "User",
-          "columnsFrom": [
-            "createdBy"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["createdBy"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -2088,9 +2006,7 @@
         "ProfileSupplier_name_unique": {
           "name": "ProfileSupplier_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
+          "columns": ["name"]
         }
       },
       "policies": {},
@@ -2246,12 +2162,8 @@
           "name": "ProjectAddress_quoteId_fkey",
           "tableFrom": "ProjectAddress",
           "tableTo": "Quote",
-          "columnsFrom": [
-            "quoteId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["quoteId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2261,9 +2173,7 @@
         "ProjectAddress_quoteId_unique": {
           "name": "ProjectAddress_quoteId_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "quoteId"
-          ]
+          "columns": ["quoteId"]
         }
       },
       "policies": {},
@@ -2504,12 +2414,8 @@
           "name": "Quote_userId_fkey",
           "tableFrom": "Quote",
           "tableTo": "User",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -2666,12 +2572,8 @@
           "name": "QuoteItem_quoteId_fkey",
           "tableFrom": "QuoteItem",
           "tableTo": "Quote",
-          "columnsFrom": [
-            "quoteId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["quoteId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2679,12 +2581,8 @@
           "name": "QuoteItem_modelId_fkey",
           "tableFrom": "QuoteItem",
           "tableTo": "Model",
-          "columnsFrom": [
-            "modelId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["modelId"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         },
@@ -2692,12 +2590,8 @@
           "name": "QuoteItem_glassTypeId_fkey",
           "tableFrom": "QuoteItem",
           "tableTo": "GlassType",
-          "columnsFrom": [
-            "glassTypeId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["glassTypeId"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         }
@@ -2770,12 +2664,8 @@
           "name": "QuoteItemService_quoteItemId_fkey",
           "tableFrom": "QuoteItemService",
           "tableTo": "QuoteItem",
-          "columnsFrom": [
-            "quoteItemId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["quoteItemId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2783,12 +2673,8 @@
           "name": "QuoteItemService_serviceId_fkey",
           "tableFrom": "QuoteItemService",
           "tableTo": "Service",
-          "columnsFrom": [
-            "serviceId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["serviceId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2798,10 +2684,7 @@
         "QuoteItemService_quoteItemId_serviceId_key": {
           "name": "QuoteItemService_quoteItemId_serviceId_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "quoteItemId",
-            "serviceId"
-          ]
+          "columns": ["quoteItemId", "serviceId"]
         }
       },
       "policies": {},
@@ -2972,12 +2855,8 @@
           "name": "Session_userId_fkey",
           "tableFrom": "Session",
           "tableTo": "User",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3242,9 +3121,7 @@
         "User_email_unique": {
           "name": "User_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -3382,103 +3259,57 @@
     "public.AdjustmentScope": {
       "name": "AdjustmentScope",
       "schema": "public",
-      "values": [
-        "item",
-        "quote"
-      ]
+      "values": ["item", "quote"]
     },
     "public.AdjustmentSign": {
       "name": "AdjustmentSign",
       "schema": "public",
-      "values": [
-        "positive",
-        "negative"
-      ]
+      "values": ["positive", "negative"]
     },
     "public.CostType": {
       "name": "CostType",
       "schema": "public",
-      "values": [
-        "fixed",
-        "per_mm_width",
-        "per_mm_height",
-        "per_sqm"
-      ]
+      "values": ["fixed", "per_mm_width", "per_mm_height", "per_sqm"]
     },
     "public.GlassPurpose": {
       "name": "GlassPurpose",
       "schema": "public",
-      "values": [
-        "general",
-        "insulation",
-        "security",
-        "decorative"
-      ]
+      "values": ["general", "insulation", "security", "decorative"]
     },
     "public.MaterialType": {
       "name": "MaterialType",
       "schema": "public",
-      "values": [
-        "PVC",
-        "ALUMINUM",
-        "WOOD",
-        "MIXED"
-      ]
+      "values": ["PVC", "ALUMINUM", "WOOD", "MIXED"]
     },
     "public.ModelStatus": {
       "name": "ModelStatus",
       "schema": "public",
-      "values": [
-        "draft",
-        "published"
-      ]
+      "values": ["draft", "published"]
     },
     "public.PerformanceRating": {
       "name": "PerformanceRating",
       "schema": "public",
-      "values": [
-        "basic",
-        "standard",
-        "good",
-        "very_good",
-        "excellent"
-      ]
+      "values": ["basic", "standard", "good", "very_good", "excellent"]
     },
     "public.QuoteStatus": {
       "name": "QuoteStatus",
       "schema": "public",
-      "values": [
-        "draft",
-        "sent",
-        "canceled"
-      ]
+      "values": ["draft", "sent", "canceled"]
     },
     "public.ServiceType": {
       "name": "ServiceType",
       "schema": "public",
-      "values": [
-        "area",
-        "perimeter",
-        "fixed"
-      ]
+      "values": ["area", "perimeter", "fixed"]
     },
     "public.ServiceUnit": {
       "name": "ServiceUnit",
       "schema": "public",
-      "values": [
-        "unit",
-        "sqm",
-        "ml"
-      ]
+      "values": ["unit", "sqm", "ml"]
     },
     "public.UserRole": {
       "name": "UserRole",
       "schema": "public",
-      "values": [
-        "admin",
-        "seller",
-        "user"
-      ]
+      "values": ["admin", "seller", "user"]
     }
   },
   "schemas": {},
