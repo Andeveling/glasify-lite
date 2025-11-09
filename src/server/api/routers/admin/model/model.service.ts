@@ -133,8 +133,12 @@ function serializeModel<
     glassDiscountHeightMm: Number(model.glassDiscountHeightMm),
     profileSupplierId: model.profileSupplierId ?? undefined,
     lastCostReviewDate: model.lastCostReviewDate ?? undefined,
-    profitMarginPercentage: model.profitMarginPercentage ? Number(model.profitMarginPercentage) : undefined,
-    accessoryPrice: model.accessoryPrice ? Number(model.accessoryPrice) : undefined,
+    profitMarginPercentage: model.profitMarginPercentage
+      ? Number(model.profitMarginPercentage)
+      : undefined,
+    accessoryPrice: model.accessoryPrice
+      ? Number(model.accessoryPrice)
+      : undefined,
     costNotes: model.costNotes ?? undefined,
   };
 }
@@ -142,9 +146,9 @@ function serializeModel<
 /**
  * Serialize cost breakdown - Convert Drizzle decimal strings to numbers and null to undefined
  */
-function serializeCostBreakdown<T extends { unitCost: string; notes: string | null }>(
-  breakdown: T
-) {
+function serializeCostBreakdown<
+  T extends { unitCost: string; notes: string | null },
+>(breakdown: T) {
   return {
     ...breakdown,
     unitCost: Number(breakdown.unitCost),
