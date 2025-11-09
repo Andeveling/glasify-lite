@@ -100,6 +100,77 @@ function hasPriceChanges(
 }
 
 /**
+ * Serialize model - Convert Drizzle decimal strings to numbers and null to undefined
+ */
+function serializeModel<
+  T extends {
+    basePrice: string;
+    costPerMmWidth: string;
+    costPerMmHeight: string;
+    minWidthMm: string;
+    maxWidthMm: string;
+    minHeightMm: string;
+    maxHeightMm: string;
+    glassDiscountWidthMm: string;
+    glassDiscountHeightMm: string;
+    profileSupplierId: string | null;
+    lastCostReviewDate: Date | null;
+    profitMarginPercentage: string | null;
+    accessoryPrice: string | null;
+    costNotes: string | null;
+  },
+>(model: T) {
+  return {
+    ...model,
+    basePrice: Number(model.basePrice),
+    costPerMmWidth: Number(model.costPerMmWidth),
+    costPerMmHeight: Number(model.costPerMmHeight),
+    minWidthMm: Number(model.minWidthMm),
+    maxWidthMm: Number(model.maxWidthMm),
+    minHeightMm: Number(model.minHeightMm),
+    maxHeightMm: Number(model.maxHeightMm),
+    glassDiscountWidthMm: Number(model.glassDiscountWidthMm),
+    glassDiscountHeightMm: Number(model.glassDiscountHeightMm),
+    profileSupplierId: model.profileSupplierId ?? undefined,
+    lastCostReviewDate: model.lastCostReviewDate ?? undefined,
+    profitMarginPercentage: model.profitMarginPercentage ? Number(model.profitMarginPercentage) : undefined,
+    accessoryPrice: model.accessoryPrice ? Number(model.accessoryPrice) : undefined,
+    costNotes: model.costNotes ?? undefined,
+  };
+}
+
+/**
+ * Serialize cost breakdown - Convert Drizzle decimal strings to numbers and null to undefined
+ */
+function serializeCostBreakdown<T extends { unitCost: string; notes: string | null }>(
+  breakdown: T
+) {
+  return {
+    ...breakdown,
+    unitCost: Number(breakdown.unitCost),
+    notes: breakdown.notes ?? undefined,
+  };
+}
+
+/**
+ * Serialize price history - Convert Drizzle decimal strings to numbers
+ */
+function serializePriceHistory<
+  T extends {
+    basePrice: string;
+    costPerMmWidth: string;
+    costPerMmHeight: string;
+  },
+>(history: T) {
+  return {
+    ...history,
+    basePrice: Number(history.basePrice),
+    costPerMmWidth: Number(history.costPerMmWidth),
+    costPerMmHeight: Number(history.costPerMmHeight),
+  };
+}
+
+/**
  * Transform flat repository model to nested profileSupplier structure
  */
 function transformModelWithSupplier<
@@ -156,10 +227,14 @@ export async function getModelById(
       userId,
     });
 
+    // Serialize all numeric fields and transform relations
+    const serializedModel = serializeModel(model);
+    const transformedModel = transformModelWithSupplier(serializedModel);
+
     return {
-      ...transformModelWithSupplier(model),
-      costBreakdown,
-      priceHistory,
+      ...transformedModel,
+      costBreakdown: costBreakdown.map(serializeCostBreakdown),
+      priceHistory: priceHistory.map(serializePriceHistory),
     };
   } catch (error) {
     if (error instanceof TRPCError) {
@@ -212,7 +287,9 @@ export async function listModels(
     });
 
     return {
-      items: items.map((item) => transformModelWithSupplier(item)),
+      items: items.map((item) =>
+        transformModelWithSupplier(serializeModel(item))
+      ),
       totalPages,
       total,
     };
@@ -243,6 +320,10 @@ export async function createModel(
     costPerMmHeight: number;
     compatibleGlassTypeIds: string[];
     status: "draft" | "published";
+    minWidthMm: number;
+    maxWidthMm: number;
+    minHeightMm: number;
+    maxHeightMm: number;
   },
   userId: string
 ) {
@@ -265,11 +346,10 @@ export async function createModel(
       costPerMmHeight: data.costPerMmHeight.toString(),
       compatibleGlassTypeIds: data.compatibleGlassTypeIds,
       status: data.status,
-      // Required fields with defaults
-      minWidthMm: "0",
-      maxWidthMm: "0",
-      minHeightMm: "0",
-      maxHeightMm: "0",
+      minWidthMm: data.minWidthMm.toString(),
+      maxWidthMm: data.maxWidthMm.toString(),
+      minHeightMm: data.minHeightMm.toString(),
+      maxHeightMm: data.maxHeightMm.toString(),
     });
 
     if (!model) {
@@ -279,7 +359,7 @@ export async function createModel(
       });
     }
 
-    return transformModelWithSupplier(model);
+    return transformModelWithSupplier(serializeModel(model));
   } catch (error) {
     logger.error("Error creating model", {
       error: error instanceof Error ? error.message : String(error),
@@ -360,7 +440,7 @@ export async function updateModel(
       userId,
     });
 
-    return transformModelWithSupplier(updatedModel);
+    return transformModelWithSupplier(serializeModel(updatedModel));
   } catch (error) {
     if (error instanceof TRPCError) {
       throw error;
@@ -486,7 +566,7 @@ export async function addCostBreakdown(
       });
     }
 
-    return costBreakdown;
+    return serializeCostBreakdown(costBreakdown);
   } catch (error) {
     if (error instanceof TRPCError) {
       throw error;
@@ -567,7 +647,7 @@ export async function updateCostBreakdown(
       userId,
     });
 
-    return costBreakdown;
+    return serializeCostBreakdown(costBreakdown);
   } catch (error) {
     if (error instanceof TRPCError) {
       throw error;

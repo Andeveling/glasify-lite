@@ -60,19 +60,24 @@ export const getModelByIdInput = z.object({
 /**
  * Create model input schema - reuse from Drizzle insert schema
  */
-export const createModelInput = modelInsertSchema.pick({
-  name: true,
-  profileSupplierId: true,
-  basePrice: true,
-  costPerMmWidth: true,
-  costPerMmHeight: true,
-  compatibleGlassTypeIds: true,
-  status: true,
-  minWidthMm: true,
-  maxWidthMm: true,
-  minHeightMm: true,
-  maxHeightMm: true,
-});
+export const createModelInput = modelInsertSchema
+  .pick({
+    name: true,
+    profileSupplierId: true,
+    basePrice: true,
+    costPerMmWidth: true,
+    costPerMmHeight: true,
+    compatibleGlassTypeIds: true,
+    status: true,
+    minWidthMm: true,
+    maxWidthMm: true,
+    minHeightMm: true,
+    maxHeightMm: true,
+  })
+  .extend({
+    compatibleGlassTypeIds: z.array(z.string().cuid()).default([]),
+    status: z.enum(["draft", "published"]).default("draft"),
+  });
 
 /**
  * Update model input schema - reuse from Drizzle update schema
@@ -120,9 +125,18 @@ export const deleteCostBreakdownInput = z.object({
 
 /**
  * Model output schema - extends drizzle-zod auto-generated SELECT schema
- * Adds relation fields
+ * Adds relation fields. Note: numeric fields (decimals) are converted in service layer
  */
 export const modelOutput = modelSelectSchema.extend({
+  basePrice: z.number(),
+  costPerMmWidth: z.number(),
+  costPerMmHeight: z.number(),
+  minWidthMm: z.number(),
+  maxWidthMm: z.number(),
+  minHeightMm: z.number(),
+  maxHeightMm: z.number(),
+  glassDiscountWidthMm: z.number(),
+  glassDiscountHeightMm: z.number(),
   profileSupplier: z
     .object({
       id: z.string(),
@@ -136,7 +150,7 @@ export const modelOutput = modelSelectSchema.extend({
  * Model detail output schema (with cost breakdowns and price history)
  */
 export const modelDetailOutput = modelOutput.extend({
-  costBreakdowns: z.array(
+  costBreakdown: z.array(
     modelCostBreakdownSelectSchema.extend({
       unitCost: z.number(),
     })
@@ -159,9 +173,14 @@ export const modelDetailOutput = modelOutput.extend({
 /**
  * Cost breakdown output schema
  */
-export const costBreakdownOutput = modelCostBreakdownSelectSchema.extend({
-  unitCost: z.number(),
-});
+export const costBreakdownOutput = modelCostBreakdownSelectSchema
+  .extend({
+    unitCost: z.number(),
+  })
+  .transform((data) => ({
+    ...data,
+    notes: data.notes ?? undefined, // Convert null to undefined
+  }));
 
 /**
  * List models output schema
