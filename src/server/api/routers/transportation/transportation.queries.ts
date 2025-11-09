@@ -9,6 +9,7 @@
  */
 
 import { protectedProcedure } from "@/server/api/trpc";
+import { db } from "@/server/db/drizzle";
 import {
   calculateCostInput,
   transportationCostOutput,
@@ -18,7 +19,6 @@ import {
   calculateTransportationCostService,
   getWarehouseLocationService,
 } from "./transportation.service";
-import { db } from "@/server/db/drizzle";
 
 /**
  * Calculate transportation cost to delivery location

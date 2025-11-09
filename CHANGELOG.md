@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Refactorización Modular del Router de Transportación** (2025-01-15)
+  - Migración de `/src/server/api/routers/transportation.ts` (monolítico 130+ líneas) a arquitectura modular Clean Architecture
+  - Nueva estructura `/src/server/api/routers/transportation/`:
+    - `repositories/transportation-repository.ts` - Capa de acceso a datos (Drizzle ORM)
+    - `transportation.schemas.ts` - Validación con Zod (input/output)
+    - `transportation.constants.ts` - Rangos de coordenadas y validación
+    - `transportation.utils.ts` - Serialización de tipos Drizzle a números
+    - `transportation.service.ts` - Lógica de negocio (cálculo de distancias con Haversine)
+    - `transportation.queries.ts` - Procedimientos tRPC (calculate-cost, warehouse-location)
+    - `index.ts` - Composición del router
+  - Eliminados archivos legacy: `/src/server/api/routers/transportation.ts` y `/src/server/services/transportation.service.ts`
+  - Mejoras: 42% reducción de líneas, single source of truth en schemas, end-to-end type safety (DB → Zod → API)
+  - Patrón: Repository → Schemas → Service → Queries → Router (reutilizable en otros módulos)
+  - Compatible: Import en `root.ts` automáticamente resuelve `index.ts` del directorio
+
+### Removed
+
+- **Archivos de Servicio Sin Uso Identificados** (2025-01-15)
+  - ✅ Eliminado: `src/server/services/model-price-history.service.ts` (legacy, sin referencias)
+  - ✅ Eliminado: `src/server/services/transportation.service.ts` (movido a ruta correcta en router)
+  - 🔍 Verificado pero no eliminado: `src/server/services/referential-integrity.service.ts` (solo definiciones, cero imports externos)
+
 ### Added
 
 - **Refactorización de Cálculo de Precios con Arquitectura Hexagonal** (#016) (2025-11-07)
@@ -228,7 +252,6 @@ const progressColor = useTransform(
 - Hint de rango (min-max mm) junto al label en variantes `compact` y `minimal`
 - Evita duplicación de información (solo se muestra cuando no hay descripción completa)
 - Header flex consistente para alineación visual mejorada
-
 #### Beneficios Técnicos
 
 **Testabilidad** (+300%):
@@ -243,7 +266,6 @@ const progressColor = useTransform(
 
 **Escalabilidad**:
 - `OptionalContent` reutilizable en otros componentes
-- Fácil composición de nuevas variantes
 - Extensible sin modificar código existente (OCP)
 
 #### Métricas
@@ -252,7 +274,6 @@ const progressColor = useTransform(
 | ------------------ | -------------- | ------------- | ----------------- |
 | Líneas por archivo | 220            | 70 + 80 + 95  | Modularidad +250% |
 | Responsabilidades  | 4 en 1 archivo | 1 por archivo | Cohesión 4x       |
-| Acoplamiento       | Alto           | Bajo          | Desacoplado ✅     |
 | Testabilidad       | Difícil        | Fácil         | +300%             |
 
 #### Compatibilidad
@@ -260,7 +281,6 @@ const progressColor = useTransform(
 ✅ **100% backward compatible**
 - API pública sin cambios
 - Props idénticas
-- Comportamiento visual igual
 - Todos los tests pasan sin modificaciones
 - `DimensionsSection` y otros consumidores funcionan sin cambios
 
@@ -272,7 +292,6 @@ const progressColor = useTransform(
 
 ---
 
-### Analysis - StickyPriceHeader: Transparency & "Don't Make Me Think" Review (2025-01-15)
 
 #### Executive Summary
 - **Issue**: Component hides critical pricing information (base price, services, breakdown)
@@ -285,7 +304,6 @@ const progressColor = useTransform(
    - Impact: Discounts feel illegitimate
    - Fix: Show tachado price + % savings
    - Effort: 30 minutes
-
 2. **Breakdown Oculto**: Price components hidden in popover (friction)
    - Impact: User confusion, "Why $500?"
    - Fix: Expandible breakdown, visible by default (desktop)

@@ -19,10 +19,7 @@ type DbClient = typeof db;
  * @returns TenantConfig record or null if not found
  */
 export async function getTenantConfig(client: DbClient) {
-  const result = await client
-    .select()
-    .from(tenantConfigs)
-    .limit(1);
+  const result = await client.select().from(tenantConfigs).limit(1);
 
   return result[0] ?? null;
 }

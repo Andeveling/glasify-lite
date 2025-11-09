@@ -10,7 +10,10 @@
  */
 
 import { createTRPCRouter } from "@/server/api/trpc";
-import { calculateCostQuery, getWarehouseLocationQuery } from "./transportation.queries";
+import {
+  calculateCostQuery,
+  getWarehouseLocationQuery,
+} from "./transportation.queries";
 
 export const transportationRouter = createTRPCRouter({
   "calculate-cost": calculateCostQuery,
