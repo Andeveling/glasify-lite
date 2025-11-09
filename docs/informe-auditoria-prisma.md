@@ -8,16 +8,16 @@
 
 ## 📊 RESUMEN EJECUTIVO
 
-| Métrica | Valor | Estado |
-|---------|-------|--------|
-| **Importes @prisma/client** | 19 | ⚠️ Crítico |
-| **Importes prisma-types** | 23 | ⚠️ Crítico |
-| **Importes Decimal (Prisma)** | 2 | ⚠️ Crítico |
-| **Archivos Seed (PrismaClient)** | 3 | ⚠️ Crítico |
-| **Factory Files (PrismaClient)** | 7 | ⚠️ Crítico |
-| **Archivos de Migración (PrismaClient)** | 1+ | ⚠️ Crítico |
-| **Archivos ya migrados a Drizzle** | 25+ | ✅ Completado |
-| **Decimal handling (ya modernizado)** | 2 | ✅ Completado |
+| Métrica                                  | Valor | Estado       |
+| ---------------------------------------- | ----- | ------------ |
+| **Importes @prisma/client**              | 19    | ⚠️ Crítico    |
+| **Importes prisma-types**                | 23    | ⚠️ Crítico    |
+| **Importes Decimal (Prisma)**            | 2     | ⚠️ Crítico    |
+| **Archivos Seed (PrismaClient)**         | 3     | ⚠️ Crítico    |
+| **Factory Files (PrismaClient)**         | 7     | ⚠️ Crítico    |
+| **Archivos de Migración (PrismaClient)** | 1+    | ⚠️ Crítico    |
+| **Archivos ya migrados a Drizzle**       | 25+   | ✅ Completado |
+| **Decimal handling (ya modernizado)**    | 2     | ✅ Completado |
 
 ---
 
@@ -25,17 +25,17 @@
 
 ### 1.1 Seed & Factory Scripts (10 archivos)
 
-| Archivo | Línea | Propósito | Criticidad |
-|---------|-------|----------|-----------|
-| `/prisma/seed-tenant.ts` | 2 | Inicialización de base de datos | CRÍTICA |
-| `/prisma/migrations-scripts/migrate-project-addresses.ts` | 24 | Migración manual con PrismaClient | CRÍTICA |
-| `/prisma/factories/glass-type.factory.ts` | 14 | Generación de entidades GlassType | CRÍTICA |
-| `/prisma/factories/model.factory.ts` | 3,16 | Generación de entidades Model + Decimal | CRÍTICA |
-| `/prisma/factories/service.factory.ts` | 3 | Generación de entidades Service | CRÍTICA |
-| `/prisma/factories/glass-solution.factory.ts` | 3 | Generación de entidades GlassSolution | CRÍTICA |
-| `/prisma/factories/glass-characteristic.factory.ts` | 3 | Generación de entidades GlassCharacteristic | CRÍTICA |
-| `/prisma/factories/glass-supplier.factory.ts` | 3 | Generación de entidades GlassSupplier | CRÍTICA |
-| `/prisma/factories/profile-supplier.factory.ts` | 3 | Generación de entidades ProfileSupplier | CRÍTICA |
+| Archivo                                                   | Línea | Propósito                                   | Criticidad |
+| --------------------------------------------------------- | ----- | ------------------------------------------- | ---------- |
+| `/prisma/seed-tenant.ts`                                  | 2     | Inicialización de base de datos             | CRÍTICA    |
+| `/prisma/migrations-scripts/migrate-project-addresses.ts` | 24    | Migración manual con PrismaClient           | CRÍTICA    |
+| `/prisma/factories/glass-type.factory.ts`                 | 14    | Generación de entidades GlassType           | CRÍTICA    |
+| `/prisma/factories/model.factory.ts`                      | 3,16  | Generación de entidades Model + Decimal     | CRÍTICA    |
+| `/prisma/factories/service.factory.ts`                    | 3     | Generación de entidades Service             | CRÍTICA    |
+| `/prisma/factories/glass-solution.factory.ts`             | 3     | Generación de entidades GlassSolution       | CRÍTICA    |
+| `/prisma/factories/glass-characteristic.factory.ts`       | 3     | Generación de entidades GlassCharacteristic | CRÍTICA    |
+| `/prisma/factories/glass-supplier.factory.ts`             | 3     | Generación de entidades GlassSupplier       | CRÍTICA    |
+| `/prisma/factories/profile-supplier.factory.ts`           | 3     | Generación de entidades ProfileSupplier     | CRÍTICA    |
 
 **Impacto**: Imposibilidad de ejecutar seeding, factory pattern. Sistema sin datos de prueba.
 
@@ -43,10 +43,10 @@
 
 ### 1.2 Adapters & Servicios (2 archivos)
 
-| Archivo | Línea | Propósito | Criticidad |
-|---------|-------|----------|-----------|
-| `/src/domain/pricing/adapters/trpc/price-calculator.adapter.ts` | 13 | Adaptador de cálculo de precios | MEDIA |
-| `/tests/benchmarks/price-calculator.adapter.test.ts` | 13 | Tests de benchmarks | MEDIA |
+| Archivo                                                         | Línea | Propósito                       | Criticidad |
+| --------------------------------------------------------------- | ----- | ------------------------------- | ---------- |
+| `/src/domain/pricing/adapters/trpc/price-calculator.adapter.ts` | 13    | Adaptador de cálculo de precios | MEDIA      |
+| `/tests/benchmarks/price-calculator.adapter.test.ts`            | 13    | Tests de benchmarks             | MEDIA      |
 
 **Impacto**: Decimal handling aún acoplado a Prisma. Tests dependientes de Prisma.
 
@@ -158,15 +158,15 @@ Ya está implementado en:
 
 ## 🟢 YA MIGRADO A DRIZZLE ✅
 
-| Componente | Ubicación | Estado |
-|-----------|-----------|--------|
-| **Esquemas Drizzle** | `/src/server/db/schemas/` | ✅ Completo |
-| **Constantes compartidas** | `/src/server/db/schemas/constants/` | ✅ Completo |
-| **tRPC Routers** | `/src/server/api/routers/` | ✅ Funcional |
-| **Utilidades Drizzle** | `/src/lib/drizzle-utils.ts` | ✅ Nuevo |
-| **Server Actions (refactored)** | `/src/app/actions/` | ✅ Completo |
-| **Admin Pages** | `/src/app/(dashboard)/admin/` | ✅ Funcional |
-| **Public Components** | `/src/app/(public)/` | ✅ Funcional |
+| Componente                      | Ubicación                           | Estado      |
+| ------------------------------- | ----------------------------------- | ----------- |
+| **Esquemas Drizzle**            | `/src/server/db/schemas/`           | ✅ Completo  |
+| **Constantes compartidas**      | `/src/server/db/schemas/constants/` | ✅ Completo  |
+| **tRPC Routers**                | `/src/server/api/routers/`          | ✅ Funcional |
+| **Utilidades Drizzle**          | `/src/lib/drizzle-utils.ts`         | ✅ Nuevo     |
+| **Server Actions (refactored)** | `/src/app/actions/`                 | ✅ Completo  |
+| **Admin Pages**                 | `/src/app/(dashboard)/admin/`       | ✅ Funcional |
+| **Public Components**           | `/src/app/(public)/`                | ✅ Funcional |
 
 ---
 
