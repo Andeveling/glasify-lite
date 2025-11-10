@@ -33,7 +33,7 @@ import {
  */
 export const projectAddressSchema = z
   .object({
-    quoteId: z.string().cuid().optional(),
+    quoteId: z.string().uuid().optional(),
     label: z.string().max(MAX_LABEL_LENGTH).optional(),
     country: z.string().max(MAX_COUNTRY_LENGTH).optional(),
     region: z.string().max(MAX_REGION_LENGTH).optional(),

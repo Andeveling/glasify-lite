@@ -26,14 +26,14 @@ const MAX_ITEM_NAME_LENGTH = 50;
  * Progressive enhancement: Works via form submission or programmatic call
  */
 export const addToCartInput = z.object({
-  additionalServiceIds: z.array(z.string().cuid()).default([]),
-  glassTypeId: z.string().cuid("ID del tipo de vidrio debe ser válido"),
+  additionalServiceIds: z.array(z.string().uuid()).default([]),
+  glassTypeId: z.string().uuid("ID del tipo de vidrio debe ser válido"),
   glassTypeName: z.string().min(1, "Nombre del tipo de vidrio es requerido"),
   heightMm: z.number().int().positive("Alto debe ser positivo"),
-  modelId: z.string().cuid("ID del modelo debe ser válido"),
+  modelId: z.string().uuid("ID del modelo debe ser válido"),
   modelName: z.string().min(1, "Nombre del modelo es requerido"),
   quantity: z.number().int().positive("Cantidad debe ser positiva").default(1),
-  solutionId: z.string().cuid().optional(),
+  solutionId: z.string().uuid().optional(),
   solutionName: z.string().optional(),
   widthMm: z.number().int().positive("Ancho debe ser positivo"),
 });
@@ -47,7 +47,7 @@ export type AddToCartInput = z.infer<typeof addToCartInput>;
  */
 export const updateCartItemInput = z
   .object({
-    itemId: z.string().cuid("ID del item debe ser válido"),
+    itemId: z.string().uuid("ID del item debe ser válido"),
     name: z
       .string()
       .min(1, "Nombre es requerido")
@@ -71,7 +71,7 @@ export type UpdateCartItemInput = z.infer<typeof updateCartItemInput>;
  * Server Action: removeFromCartAction
  */
 export const removeFromCartInput = z.object({
-  itemId: z.string().cuid("ID del item debe ser válido"),
+  itemId: z.string().uuid("ID del item debe ser válido"),
 });
 
 export type RemoveFromCartInput = z.infer<typeof removeFromCartInput>;
@@ -97,17 +97,17 @@ export type ClearCartInput = z.infer<typeof clearCartInput>;
  * Cart item structure (matches client-side CartItem interface)
  */
 export const cartItemSchema = z.object({
-  additionalServiceIds: z.array(z.string().cuid()),
+  additionalServiceIds: z.array(z.string().uuid()),
   createdAt: z.string().datetime(),
-  glassTypeId: z.string().cuid(),
+  glassTypeId: z.string().uuid(),
   glassTypeName: z.string(),
   heightMm: z.number().int().positive(),
-  id: z.string().cuid(),
-  modelId: z.string().cuid(),
+  id: z.string().uuid(),
+  modelId: z.string().uuid(),
   modelName: z.string(),
   name: z.string(),
   quantity: z.number().int().positive(),
-  solutionId: z.string().cuid().optional(),
+  solutionId: z.string().uuid().optional(),
   solutionName: z.string().optional(),
   subtotal: z.number().nonnegative(),
   unitPrice: z.number().nonnegative(),
@@ -170,7 +170,7 @@ export const cartActionMeta = {
  *
  * import { serverActionProcedure } from '@/server/api/trpc';
  * import { addToCartInput, cartActionResponse, cartActionMeta } from './contracts/cart-actions.schema';
- * import { cuid } from '@paralleldrive/cuid2';
+ * import {.uuid } from '@paralleldrive.uuid2';
  *
  * export const addToCartAction = serverActionProcedure
  *   .meta(cartActionMeta.addToCart)
@@ -192,7 +192,7 @@ export const cartActionMeta = {
  *       const name = `${prefix}-001`; // Simplified (actual logic in useCart)
  *
  *       const item = {
- *         id: cuid(),
+ *         id:.uuid(),
  *         ...input,
  *         name,
  *         unitPrice: price.total,

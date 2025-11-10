@@ -1,13 +1,20 @@
 import type { Config } from "drizzle-kit";
 import { defineConfig } from "drizzle-kit";
+import { config } from "dotenv";
 
-// Load environment variables from .env.local or .env.production
-// Using dynamic import to avoid issues with .env loading
+// Load environment variables from .env.local first, then .env
+// Drizzle Studio needs explicit env loading
+config({ path: ".env.local" });
+config({ path: ".env" });
+
 const dbUrl = process.env.DATABASE_URL;
 const directUrl = process.env.DIRECT_URL;
 
 if (!dbUrl) {
-  throw new Error("DATABASE_URL is not defined in environment variables");
+  throw new Error(
+    "DATABASE_URL is not defined in environment variables. " +
+    "Make sure .env.local or .env file exists with DATABASE_URL set."
+  );
 }
 
 export default defineConfig({
@@ -20,7 +27,9 @@ export default defineConfig({
   // Database dialect
   dialect: "postgresql",
 
-  // Database connection - use DIRECT_URL for Neon pooling
+  // Database connection - use DIRECT_URL for Neon direct connection (bypasses pooling)
+  // IMPORTANT: DIRECT_URL is required for Drizzle Studio with Neon
+  // It provides a direct PostgreSQL connection instead of HTTP/WebSocket
   dbCredentials: {
     url: directUrl || dbUrl,
   },

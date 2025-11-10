@@ -55,7 +55,7 @@ export type ListUserQuotesInput = z.infer<typeof listUserQuotesInput>;
  */
 const quoteListItemSchema = z.object({
   createdAt: z.date(),
-  id: z.string().cuid(),
+  id: z.string().uuid(),
   itemCount: z.number().int().nonnegative(),
   projectAddress: z.string().nullable(),
   projectName: z.string(),
@@ -89,7 +89,7 @@ export type ListUserQuotesOutput = z.infer<typeof listUserQuotesOutput>;
  * Location: server/api/routers/quote.ts
  */
 export const getQuoteByIdInput = z.object({
-  id: z.string().cuid("ID de cotización debe ser válido"),
+  id: z.string().uuid("ID de cotización debe ser válido"),
 });
 
 export type GetQuoteByIdInput = z.infer<typeof getQuoteByIdInput>;
@@ -100,14 +100,14 @@ export type GetQuoteByIdInput = z.infer<typeof getQuoteByIdInput>;
 const quoteItemDetailSchema = z.object({
   accessories: z.array(
     z.object({
-      id: z.string().cuid(),
+      id: z.string().uuid(),
       name: z.string(),
       price: z.number().nonnegative(),
     })
   ),
   glassTypeName: z.string(),
   heightMm: z.number().int().positive(),
-  id: z.string().cuid(),
+  id: z.string().uuid(),
   modelName: z.string(),
   name: z.string(),
   quantity: z.number().int().positive(),
@@ -126,7 +126,7 @@ export const getQuoteByIdOutput = z.object({
   contactAddress: z.string().nullable(),
   contactPhone: z.string().nullable(),
   createdAt: z.date(),
-  id: z.string().cuid(),
+  id: z.string().uuid(),
   items: z.array(quoteItemDetailSchema),
   projectCity: z.string().nullable(),
   projectName: z.string(),
@@ -160,14 +160,14 @@ export const generateQuoteFromCartInput = z.object({
   cartItems: z
     .array(
       z.object({
-        additionalServiceIds: z.array(z.string().cuid()),
-        glassTypeId: z.string().cuid(),
+        additionalServiceIds: z.array(z.string().uuid()),
+        glassTypeId: z.string().uuid(),
         heightMm: z.number().int().positive(),
-        id: z.string().cuid(),
-        modelId: z.string().cuid(),
+        id: z.string().uuid(),
+        modelId: z.string().uuid(),
         name: z.string().min(1).max(MAX_ITEM_NAME_LENGTH),
         quantity: z.number().int().positive(),
-        solutionId: z.string().cuid().optional(),
+        solutionId: z.string().uuid().optional(),
         widthMm: z.number().int().positive(),
       })
     )
@@ -195,7 +195,7 @@ export const generateQuoteFromCartOutput = z.discriminatedUnion("success", [
   z.object({
     data: z.object({
       itemCount: z.number().int().positive(),
-      quoteId: z.string().cuid(),
+      quoteId: z.string().uuid(),
       total: z.number().nonnegative(),
       validUntil: z.date(),
     }),
@@ -228,7 +228,7 @@ export type GenerateQuoteFromCartOutput = z.infer<
  * Location: app/_actions/quote.actions.ts
  */
 export const updateQuoteStatusInput = z.object({
-  id: z.string().cuid("ID de cotización debe ser válido"),
+  id: z.string().uuid("ID de cotización debe ser válido"),
   status: z.enum(["PENDING", "APPROVED", "REJECTED", "EXPIRED"]),
 });
 
@@ -237,7 +237,7 @@ export type UpdateQuoteStatusInput = z.infer<typeof updateQuoteStatusInput>;
 export const updateQuoteStatusOutput = z.discriminatedUnion("success", [
   z.object({
     data: z.object({
-      id: z.string().cuid(),
+      id: z.string().uuid(),
       status: z.enum(["PENDING", "APPROVED", "REJECTED", "EXPIRED"]),
     }),
     success: z.literal(true),

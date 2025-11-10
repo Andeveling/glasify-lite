@@ -512,3 +512,34 @@ export async function listAllGlassSolutions(db: DrizzleDb) {
 
   return result;
 }
+
+// ============================================================================
+// Model Color Queries
+// ============================================================================
+
+/**
+ * List colors available for a specific model
+ */
+export async function listModelColors(db: DrizzleDb, modelId: string) {
+  const { colors, modelColors } = await import("@/server/db/schema");
+  
+  const result = await db
+    .select({
+      id: modelColors.id,
+      colorId: colors.id,
+      colorName: colors.name,
+      hexCode: colors.hexCode,
+      ralCode: colors.ralCode,
+      surchargePercentage: modelColors.surchargePercentage,
+      isDefault: modelColors.isDefault,
+    })
+    .from(modelColors)
+    .innerJoin(colors, eq(modelColors.colorId, colors.id))
+    .where(and(
+      eq(modelColors.modelId, modelId),
+      eq(colors.isActive, true)
+    ))
+    .orderBy(modelColors.isDefault); // Default color first
+
+  return result;
+}

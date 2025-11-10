@@ -24,7 +24,7 @@ async function ModelFormData({ serverModel }: ModelFormWrapperProps) {
   });
 
   // Check if model has colors (for conditional rendering in form)
-  const colorData = await api.quote["get-model-colors-for-quote"]({
+  const colorData = await api.catalog["get-model-colors-for-quote"]({
     modelId: serverModel.id,
   });
   const hasColors = colorData.hasColors;

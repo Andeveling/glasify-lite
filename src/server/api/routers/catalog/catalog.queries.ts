@@ -3,12 +3,14 @@ import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import {
   getAvailableGlassTypesInput,
   getModelByIdInput,
+  getModelColorsInput,
   glassCompatibilityOutput,
   listAvailableGlassTypesOutput,
   listGlassSolutionsInput,
   listGlassSolutionsOutput,
   listGlassTypesInput,
   listGlassTypesOutput,
+  listModelColorsOutput,
   listModelsInput,
   listModelsOutput,
   listServicesInput,
@@ -21,6 +23,7 @@ import {
   getCompatibleGlassTypes,
   getGlassTypesList,
   getModelById,
+  getModelColors,
   getModelsList,
   getProfileSuppliersList,
   getServicesList,
@@ -126,4 +129,13 @@ export const catalogQueries = createTRPCRouter({
           input.glassTypeId
         )
     ),
+
+  /**
+   * Get colors available for a model
+   * @public
+   */
+  "get-model-colors-for-quote": publicProcedure
+    .input(getModelColorsInput)
+    .output(listModelColorsOutput)
+    .query(async ({ ctx, input }) => await getModelColors(ctx.db, input.modelId)),
 });

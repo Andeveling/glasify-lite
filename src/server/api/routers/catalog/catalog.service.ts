@@ -499,3 +499,51 @@ export async function validateGlassCompatibility(
     });
   }
 }
+
+// ============================================================================
+// Model Color Services
+// ============================================================================
+
+/**
+ * Get colors available for a model
+ *
+ * @param db - Drizzle client instance
+ * @param modelId - UUID of the model
+ * @returns List of colors with surcharge information
+ * @throws TRPCError if database query fails
+ */
+export async function getModelColors(db: DrizzleDb, modelId: string) {
+  try {
+    const { listModelColors } = await import("./repositories/catalog-repository");
+    
+    const rawColors = await listModelColors(db, modelId);
+    
+    // Transform to expected format
+    const colors = rawColors.map((color) => ({
+      id: color.id,
+      color: {
+        id: color.colorId,
+        name: color.colorName,
+        hexCode: color.hexCode,
+        ralCode: color.ralCode,
+      },
+      surchargePercentage: Number(color.surchargePercentage) || 0,
+      isDefault: color.isDefault,
+    }));
+    
+    // Find default color
+    const defaultColor = colors.find((c) => c.isDefault);
+    
+    return {
+      hasColors: colors.length > 0,
+      defaultColorId: defaultColor?.color.id,
+      colors,
+    };
+  } catch (error) {
+    throw new TRPCError({
+      cause: error,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "No se pudieron cargar los colores del modelo. Intente nuevamente.",
+    });
+  }
+}

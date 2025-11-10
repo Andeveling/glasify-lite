@@ -54,6 +54,10 @@ export const validateGlassCompatibilityInput = z.object({
   glassTypeId: z.uuid("ID del tipo de vidrio debe ser válido"),
 });
 
+export const getModelColorsInput = z.object({
+  modelId: z.string().uuid("ID del modelo debe ser un UUID válido"),
+});
+
 // ========================================
 // OUTPUT SCHEMAS
 // ========================================
@@ -132,6 +136,24 @@ export const serviceOutput = z.object({
 });
 
 export const listServicesOutput = z.array(serviceOutput);
+
+export const modelColorOutput = z.object({
+  id: z.string(),
+  color: z.object({
+    id: z.string(),
+    name: z.string(),
+    hexCode: z.string(),
+    ralCode: z.string().nullable(),
+  }),
+  surchargePercentage: z.number(),
+  isDefault: z.boolean(),
+});
+
+export const listModelColorsOutput = z.object({
+  hasColors: z.boolean(),
+  defaultColorId: z.string().optional(),
+  colors: z.array(modelColorOutput),
+});
 
 // ========================================
 // GLASS SOLUTIONS SCHEMAS

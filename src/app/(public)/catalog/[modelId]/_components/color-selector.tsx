@@ -61,7 +61,7 @@ export function ColorSelector({ modelId, onColorChange }: ColorSelectorProps) {
   const [selectedColorId, setSelectedColorId] = useState<string | undefined>();
 
   // Fetch model colors
-  const { data, isLoading } = api.quote["get-model-colors-for-quote"].useQuery(
+  const { data, isLoading } = api.catalog["get-model-colors-for-quote"].useQuery(
     { modelId },
     {
       staleTime: COLOR_STALE_TIME_MS, // 5 minutes (matches server cache)
