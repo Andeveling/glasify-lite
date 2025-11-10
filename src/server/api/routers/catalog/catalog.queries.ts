@@ -137,5 +137,7 @@ export const catalogQueries = createTRPCRouter({
   "get-model-colors-for-quote": publicProcedure
     .input(getModelColorsInput)
     .output(listModelColorsOutput)
-    .query(async ({ ctx, input }) => await getModelColors(ctx.db, input.modelId)),
+    .query(
+      async ({ ctx, input }) => await getModelColors(ctx.db, input.modelId)
+    ),
 });

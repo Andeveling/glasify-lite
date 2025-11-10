@@ -522,7 +522,7 @@ export async function listAllGlassSolutions(db: DrizzleDb) {
  */
 export async function listModelColors(db: DrizzleDb, modelId: string) {
   const { colors, modelColors } = await import("@/server/db/schema");
-  
+
   const result = await db
     .select({
       id: modelColors.id,
@@ -535,10 +535,7 @@ export async function listModelColors(db: DrizzleDb, modelId: string) {
     })
     .from(modelColors)
     .innerJoin(colors, eq(modelColors.colorId, colors.id))
-    .where(and(
-      eq(modelColors.modelId, modelId),
-      eq(colors.isActive, true)
-    ))
+    .where(and(eq(modelColors.modelId, modelId), eq(colors.isActive, true)))
     .orderBy(modelColors.isDefault); // Default color first
 
   return result;

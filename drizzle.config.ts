@@ -1,6 +1,6 @@
+import { config } from "dotenv";
 import type { Config } from "drizzle-kit";
 import { defineConfig } from "drizzle-kit";
-import { config } from "dotenv";
 
 // Load environment variables from .env.local first, then .env
 // Drizzle Studio needs explicit env loading
@@ -13,7 +13,7 @@ const directUrl = process.env.DIRECT_URL;
 if (!dbUrl) {
   throw new Error(
     "DATABASE_URL is not defined in environment variables. " +
-    "Make sure .env.local or .env file exists with DATABASE_URL set."
+      "Make sure .env.local or .env file exists with DATABASE_URL set."
   );
 }
 

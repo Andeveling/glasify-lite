@@ -514,10 +514,12 @@ export async function validateGlassCompatibility(
  */
 export async function getModelColors(db: DrizzleDb, modelId: string) {
   try {
-    const { listModelColors } = await import("./repositories/catalog-repository");
-    
+    const { listModelColors } = await import(
+      "./repositories/catalog-repository"
+    );
+
     const rawColors = await listModelColors(db, modelId);
-    
+
     // Transform to expected format
     const colors = rawColors.map((color) => ({
       id: color.id,
@@ -530,10 +532,10 @@ export async function getModelColors(db: DrizzleDb, modelId: string) {
       surchargePercentage: Number(color.surchargePercentage) || 0,
       isDefault: color.isDefault,
     }));
-    
+
     // Find default color
     const defaultColor = colors.find((c) => c.isDefault);
-    
+
     return {
       hasColors: colors.length > 0,
       defaultColorId: defaultColor?.color.id,
@@ -543,7 +545,8 @@ export async function getModelColors(db: DrizzleDb, modelId: string) {
     throw new TRPCError({
       cause: error,
       code: "INTERNAL_SERVER_ERROR",
-      message: "No se pudieron cargar los colores del modelo. Intente nuevamente.",
+      message:
+        "No se pudieron cargar los colores del modelo. Intente nuevamente.",
     });
   }
 }
