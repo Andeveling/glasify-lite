@@ -170,7 +170,7 @@ const glassTypeSolutionInputSchema = z.object({
 
   solutionId: z
     .string()
-    .cuid("ID de solución inválido")
+    .uuid("ID de solución inválido")
     .describe("Glass solution ID"),
 });
 
@@ -195,7 +195,7 @@ const glassTypeCharacteristicInputSchema = z.object({
 
   characteristicId: z
     .string()
-    .cuid("ID de característica inválido")
+    .uuid("ID de característica inválido")
     .describe("Glass characteristic ID"),
 
   notes: optionalSpanishText
@@ -334,7 +334,7 @@ export const updateGlassTypeSchema = z.object({
       )
       .describe("Replace all solutions"),
   }),
-  id: z.string().cuid("ID de tipo de vidrio inválido"),
+  id: z.string().uuid("ID de tipo de vidrio inválido"),
 });
 
 export type UpdateGlassTypeInput = z.infer<typeof updateGlassTypeSchema>;
@@ -350,7 +350,7 @@ export const listGlassTypesSchema = paginationSchema.extend({
 
   solutionId: z
     .string()
-    .cuid("ID de solución inválido")
+    .uuid("ID de solución inválido")
     .optional()
     .describe("Filter by assigned solution"),
 
@@ -498,7 +498,7 @@ export type GetGlassTypeByIdOutput = z.infer<
  * Requires ID only
  */
 export const deleteGlassTypeSchema = z.object({
-  id: z.string().cuid("ID de tipo de vidrio inválido"),
+  id: z.string().uuid("ID de tipo de vidrio inválido"),
 });
 
 export type DeleteGlassTypeInput = z.infer<typeof deleteGlassTypeSchema>;

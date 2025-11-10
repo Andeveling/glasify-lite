@@ -8,68 +8,109 @@ import { models } from "@/server/db/schemas/model.schema";
 
 const sampleModels = [
   {
+    id: crypto.randomUUID(),
     name: "Ventana Corrediza Standard",
-    code: "VCS-100",
-    category: "window",
-    subcategory: "sliding",
-    description: "Ventana corrediza de aluminio para uso residencial",
-    isActive: true,
+    imageUrl: "",
+    status: "draft" as const,
+    minWidthMm: "500",
+    maxWidthMm: "2000",
+    minHeightMm: "500",
+    maxHeightMm: "2000",
+    basePrice: "150.00",
+    costPerMmWidth: "0.05",
+    costPerMmHeight: "0.05",
+    glassDiscountWidthMm: "0",
+    glassDiscountHeightMm: "0",
+    compatibleGlassTypeIds: [],
   },
   {
+    id: crypto.randomUUID(),
     name: "Puerta Batiente Premium",
-    code: "PBP-200",
-    category: "door",
-    subcategory: "hinged",
-    description: "Puerta batiente de aluminio con marco reforzado",
-    isActive: true,
+    imageUrl: "",
+    status: "draft" as const,
+    minWidthMm: "700",
+    maxWidthMm: "1200",
+    minHeightMm: "1800",
+    maxHeightMm: "2400",
+    basePrice: "250.00",
+    costPerMmWidth: "0.08",
+    costPerMmHeight: "0.08",
+    glassDiscountWidthMm: "0",
+    glassDiscountHeightMm: "0",
+    compatibleGlassTypeIds: [],
   },
   {
+    id: crypto.randomUUID(),
     name: "Ventana Proyectante",
-    code: "VPR-150",
-    category: "window",
-    subcategory: "awning",
-    description: "Ventana proyectante con sistema de apertura superior",
-    isActive: true,
+    imageUrl: "",
+    status: "draft" as const,
+    minWidthMm: "400",
+    maxWidthMm: "1500",
+    minHeightMm: "400",
+    maxHeightMm: "1500",
+    basePrice: "180.00",
+    costPerMmWidth: "0.06",
+    costPerMmHeight: "0.06",
+    glassDiscountWidthMm: "0",
+    glassDiscountHeightMm: "0",
+    compatibleGlassTypeIds: [],
   },
   {
+    id: crypto.randomUUID(),
     name: "Puerta Corrediza Doble",
-    code: "PCD-300",
-    category: "door",
-    subcategory: "sliding",
-    description: "Puerta corrediza doble para espacios amplios",
-    isActive: true,
+    imageUrl: "",
+    status: "draft" as const,
+    minWidthMm: "1400",
+    maxWidthMm: "3000",
+    minHeightMm: "1800",
+    maxHeightMm: "2400",
+    basePrice: "350.00",
+    costPerMmWidth: "0.10",
+    costPerMmHeight: "0.10",
+    glassDiscountWidthMm: "0",
+    glassDiscountHeightMm: "0",
+    compatibleGlassTypeIds: [],
   },
   {
+    id: crypto.randomUUID(),
     name: "Ventana Fija Panorámica",
-    code: "VFP-180",
-    category: "window",
-    subcategory: "fixed",
-    description: "Ventana fija de gran formato para máxima iluminación",
-    isActive: true,
+    imageUrl: "",
+    status: "draft" as const,
+    minWidthMm: "800",
+    maxWidthMm: "3500",
+    minHeightMm: "800",
+    maxHeightMm: "2500",
+    basePrice: "200.00",
+    costPerMmWidth: "0.07",
+    costPerMmHeight: "0.07",
+    glassDiscountWidthMm: "0",
+    glassDiscountHeightMm: "0",
+    compatibleGlassTypeIds: [],
   },
 ];
 
 async function seedModels() {
   console.log("🌱 Seeding sample models...\n");
 
-  try {
-    for (const model of sampleModels) {
-      const result = await db
-        .insert(models)
-        .values(model)
-        .onConflictDoNothing({ target: models.code })
-        .returning();
+  let created = 0;
 
-      if (result.length > 0) {
-        console.log(`✓ Created: ${model.name} (${model.code})`);
-      } else {
-        console.log(`⊘ Skipped (exists): ${model.name} (${model.code})`);
+  try {
+    // First, check if models already exist
+    const existing = await db.select({ name: models.name }).from(models);
+    const existingNames = new Set(existing.map((m) => m.name));
+
+    for (const model of sampleModels) {
+      if (existingNames.has(model.name)) {
+        console.log(`⊘ Skipped (exists): ${model.name}`);
+        continue;
       }
+
+      await db.insert(models).values(model);
+      console.log(`✓ Created: ${model.name}`);
+      created++;
     }
 
-    console.log(
-      `\n✅ Seeding completed! Created ${sampleModels.length} models`
-    );
+    console.log(`\n✅ Seeding completed! Created ${created} models`);
   } catch (error) {
     console.error("❌ Error seeding models:", error);
     process.exit(1);

@@ -77,7 +77,7 @@ export type CreateProfileSupplierInput = z.infer<
  */
 export const updateProfileSupplierSchema = z.object({
   data: baseProfileSupplierSchema.partial(),
-  id: z.string().cuid("ID inválido"),
+  id: z.string().uuid("ID inválido"),
 });
 
 export type UpdateProfileSupplierInput = z.infer<
@@ -119,7 +119,7 @@ export type ListProfileSuppliersInput = z.infer<
  * Used for GET /api/trpc/admin/profile-supplier.getById
  */
 export const getProfileSupplierByIdSchema = z.object({
-  id: z.string().cuid("ID inválido"),
+  id: z.string().uuid("ID inválido"),
 });
 
 export type GetProfileSupplierByIdInput = z.infer<
@@ -131,7 +131,7 @@ export type GetProfileSupplierByIdInput = z.infer<
  * Used for DELETE /api/trpc/admin/profile-supplier.delete
  */
 export const deleteProfileSupplierSchema = z.object({
-  id: z.string().cuid("ID inválido"),
+  id: z.string().uuid("ID inválido"),
 });
 
 export type DeleteProfileSupplierInput = z.infer<
@@ -145,7 +145,7 @@ export type DeleteProfileSupplierInput = z.infer<
 export const profileSupplierSchema = z
   .object({
     createdAt: z.date(),
-    id: z.string().cuid(),
+    id: z.string().uuid(),
     isActive: z.boolean(),
     materialType: materialTypeEnum,
     name: z.string(),

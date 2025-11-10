@@ -110,7 +110,7 @@ export type CreateServiceInput = z.infer<typeof createServiceSchema>;
  */
 export const updateServiceSchema = z.object({
   data: baseServiceSchema.partial(),
-  id: z.cuid("ID de servicio inválido"),
+  id: z.uuid("ID de servicio inválido"),
 });
 
 export type UpdateServiceInput = z.infer<typeof updateServiceSchema>;
@@ -165,7 +165,7 @@ export type ListServicesOutput = {
  * Get Service by ID Schema
  */
 export const getServiceByIdSchema = z.object({
-  id: z.cuid("ID de servicio inválido"),
+  id: z.uuid("ID de servicio inválido"),
 });
 
 export type GetServiceByIdInput = z.infer<typeof getServiceByIdSchema>;
@@ -174,7 +174,7 @@ export type GetServiceByIdInput = z.infer<typeof getServiceByIdSchema>;
  * Delete Service Schema
  */
 export const deleteServiceSchema = z.object({
-  id: z.cuid("ID de servicio inválido"),
+  id: z.uuid("ID de servicio inválido"),
 });
 
 export type DeleteServiceInput = z.infer<typeof deleteServiceSchema>;
@@ -183,7 +183,7 @@ export type DeleteServiceInput = z.infer<typeof deleteServiceSchema>;
  * Toggle Service Active Status Schema
  */
 export const toggleServiceActiveSchema = z.object({
-  id: z.cuid("ID de servicio inválido"),
+  id: z.uuid("ID de servicio inválido"),
   isActive: z.boolean({
     message: "El estado activo debe ser verdadero o falso",
   }),

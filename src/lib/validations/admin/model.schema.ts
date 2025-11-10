@@ -87,7 +87,7 @@ const baseModelSchema = z
     basePrice: priceValidator.describe("Base price in tenant currency"),
 
     compatibleGlassTypeIds: z
-      .array(z.cuid("ID de tipo de vidrio inválido"))
+      .array(z.string().uuid("ID de tipo de vidrio inválido"))
       .min(1, "Debe seleccionar al menos un tipo de vidrio compatible")
       .describe("Array of compatible GlassType IDs"),
 
@@ -234,7 +234,7 @@ const baseModelSchema = z
 
     profileSupplierId: z
       .string()
-      .cuid("ID de proveedor inválido")
+      .uuid("ID de proveedor inválido")
       .optional()
       .nullable()
       .describe("Profile supplier (manufacturer) ID"),
@@ -288,7 +288,7 @@ export const updateModelSchema = z.object({
       );
     }
   }),
-  id: z.string().cuid("ID de modelo inválido"),
+  id: z.uuid("ID de modelo inválido"),
 });
 
 export type UpdateModelInput = z.infer<typeof updateModelSchema>;
@@ -300,7 +300,7 @@ export type UpdateModelInput = z.infer<typeof updateModelSchema>;
 export const listModelsSchema = paginationSchema.extend({
   profileSupplierId: z
     .string()
-    .cuid("ID de proveedor inválido")
+    .uuid("ID de proveedor inválido")
     .optional()
     .describe("Filter by profile supplier"),
 
@@ -325,7 +325,7 @@ export type ListModelsInput = z.infer<typeof listModelsSchema>;
  * Get Model by ID Schema
  */
 export const getModelByIdSchema = z.object({
-  id: z.string().cuid("ID de modelo inválido"),
+  id: z.string().uuid("ID de modelo inválido"),
 });
 
 export type GetModelByIdInput = z.infer<typeof getModelByIdSchema>;
@@ -334,7 +334,7 @@ export type GetModelByIdInput = z.infer<typeof getModelByIdSchema>;
  * Delete Model Schema
  */
 export const deleteModelSchema = z.object({
-  id: z.string().cuid("ID de modelo inválido"),
+  id: z.string().uuid("ID de modelo inválido"),
 });
 
 export type DeleteModelInput = z.infer<typeof deleteModelSchema>;
@@ -392,7 +392,7 @@ const baseCostBreakdownSchema = z.object({
  */
 export const addCostBreakdownSchema = z.object({
   data: baseCostBreakdownSchema,
-  modelId: z.string().cuid("ID de modelo inválido"),
+  modelId: z.string().uuid("ID de modelo inválido"),
 });
 
 export type AddCostBreakdownInput = z.infer<typeof addCostBreakdownSchema>;
@@ -402,7 +402,7 @@ export type AddCostBreakdownInput = z.infer<typeof addCostBreakdownSchema>;
  */
 export const updateCostBreakdownSchema = z.object({
   data: baseCostBreakdownSchema.partial(),
-  id: z.string().cuid("ID de componente de costo inválido"),
+  id: z.string().uuid("ID de componente de costo inválido"),
 });
 
 export type UpdateCostBreakdownInput = z.infer<
@@ -413,7 +413,7 @@ export type UpdateCostBreakdownInput = z.infer<
  * Delete Cost Breakdown Schema
  */
 export const deleteCostBreakdownSchema = z.object({
-  id: z.string().cuid("ID de componente de costo inválido"),
+  id: z.string().uuid("ID de componente de costo inválido"),
 });
 
 export type DeleteCostBreakdownInput = z.infer<

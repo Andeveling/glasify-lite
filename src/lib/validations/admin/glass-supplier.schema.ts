@@ -140,7 +140,7 @@ export type CreateGlassSupplierInput = z.infer<
  */
 export const updateGlassSupplierSchema = z.object({
   data: baseGlassSupplierSchema.partial(),
-  id: z.string().cuid("ID de proveedor inválido"),
+  id: z.string().uuid("ID de proveedor inválido"),
 });
 
 export type UpdateGlassSupplierInput = z.infer<
@@ -198,7 +198,7 @@ export type GlassSupplierListOutput = z.infer<
  * Delete Glass Supplier Schema
  */
 export const deleteGlassSupplierSchema = z.object({
-  id: z.string().cuid("ID de proveedor inválido"),
+  id: z.string().uuid("ID de proveedor inválido"),
 });
 
 export type DeleteGlassSupplierInput = z.infer<
@@ -209,7 +209,7 @@ export type DeleteGlassSupplierInput = z.infer<
  * Get Glass Supplier by ID Schema
  */
 export const getGlassSupplierByIdSchema = z.object({
-  id: z.string().cuid("ID de proveedor inválido"),
+  id: z.string().uuid("ID de proveedor inválido"),
 });
 
 export type GetGlassSupplierByIdInput = z.infer<

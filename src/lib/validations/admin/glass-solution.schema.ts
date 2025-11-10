@@ -138,7 +138,7 @@ export type CreateGlassSolutionInput = z.infer<
  */
 export const updateGlassSolutionSchema = z.object({
   data: baseGlassSolutionSchema.partial(),
-  id: z.string().cuid("ID de solución inválido"),
+  id: z.string().uuid("ID de solución inválido"),
 });
 
 export type UpdateGlassSolutionInput = z.infer<
@@ -200,7 +200,7 @@ export type GlassSolutionListOutput = z.infer<
  * Delete Glass Solution Schema
  */
 export const deleteGlassSolutionSchema = z.object({
-  id: z.string().cuid("ID de solución inválido"),
+  id: z.string().uuid("ID de solución inválido"),
 });
 
 export type DeleteGlassSolutionInput = z.infer<
@@ -211,7 +211,7 @@ export type DeleteGlassSolutionInput = z.infer<
  * Get Glass Solution by ID Schema
  */
 export const getGlassSolutionByIdSchema = z.object({
-  id: z.string().cuid("ID de solución inválido"),
+  id: z.string().uuid("ID de solución inválido"),
 });
 
 export type GetGlassSolutionByIdInput = z.infer<
