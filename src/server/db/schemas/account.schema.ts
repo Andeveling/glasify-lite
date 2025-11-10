@@ -61,7 +61,7 @@ export const accounts = pgTable(
  */
 export const accountSelectSchema = createSelectSchema(accounts);
 export const accountInsertSchema = createInsertSchema(accounts, {
-  id: z.cuid(),
+  id: z.uuid(),
   accountId: z.string().max(FIELD_LENGTHS.ACCOUNT.ACCOUNT_ID),
   providerId: z.string().max(FIELD_LENGTHS.ACCOUNT.PROVIDER_ID),
   accessToken: z.string().max(FIELD_LENGTHS.ACCOUNT.ACCESS_TOKEN).optional(),
@@ -69,7 +69,7 @@ export const accountInsertSchema = createInsertSchema(accounts, {
   idToken: z.string().max(FIELD_LENGTHS.ACCOUNT.ID_TOKEN).optional(),
   scope: z.string().max(FIELD_LENGTHS.ACCOUNT.SCOPE).optional(),
   password: z.string().max(FIELD_LENGTHS.ACCOUNT.PASSWORD).optional(),
-  userId: z.string().cuid(),
+  userId: z.string().uuid(),
 }).omit({ createdAt: true, updatedAt: true });
 
 export const accountUpdateSchema = createUpdateSchema(accounts, {

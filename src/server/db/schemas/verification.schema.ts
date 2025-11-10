@@ -40,7 +40,7 @@ export const verificationSelectSchema = createSelectSchema(verifications, {
 });
 
 export const verificationInsertSchema = createInsertSchema(verifications, {
-  id: z.cuid().optional(),
+  id: z.uuid().optional(),
   identifier: z.string().max(FIELD_LENGTHS.VERIFICATION.IDENTIFIER),
   value: z.string().max(FIELD_LENGTHS.VERIFICATION.VALUE),
 }).omit({ createdAt: true, updatedAt: true });

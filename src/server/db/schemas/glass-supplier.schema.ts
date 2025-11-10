@@ -81,7 +81,7 @@ export const glassSupplierSelectSchema = createSelectSchema(glassSuppliers, {
 });
 
 export const glassSupplierInsertSchema = createInsertSchema(glassSuppliers, {
-  id: z.cuid().optional(),
+  id: z.uuid().optional(),
   name: z.string().max(GLASS_SUPPLIER_FIELD_LENGTHS.NAME).min(1),
   code: z.string().max(GLASS_SUPPLIER_FIELD_LENGTHS.CODE).optional(),
   country: z.string().max(GLASS_SUPPLIER_FIELD_LENGTHS.COUNTRY).optional(),

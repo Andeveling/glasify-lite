@@ -70,7 +70,7 @@ export const colorSelectSchema = createSelectSchema(colors, {
 });
 
 export const colorInsertSchema = createInsertSchema(colors, {
-  id: z.cuid().optional(),
+  id: z.uuid().optional(),
   name: z.string().max(COLOR_FIELD_LENGTHS.NAME).min(1),
   ralCode: z
     .string()

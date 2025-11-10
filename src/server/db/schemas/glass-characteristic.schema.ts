@@ -116,7 +116,7 @@ export const glassCharacteristicSelectSchema = createSelectSchema(
 export const glassCharacteristicInsertSchema = createInsertSchema(
   glassCharacteristics,
   {
-    id: z.cuid().optional(),
+    id: z.uuid().optional(),
     key: z.string().max(GLASS_CHARACTERISTIC_FIELD_LENGTHS.KEY).min(1),
     name: z.string().max(GLASS_CHARACTERISTIC_FIELD_LENGTHS.NAME).min(1),
     nameEs: z.string().max(GLASS_CHARACTERISTIC_FIELD_LENGTHS.NAME_ES).min(1),

@@ -112,7 +112,7 @@ export const quotes = pgTable(
  * Zod schemas for Quote validation
  */
 export const quoteSelectSchema = createSelectSchema(quotes, {
-  userId: z.string().cuid().nullable(),
+  userId: z.string().uuid().nullable(),
   status: z.enum(QUOTE_STATUS_VALUES),
   currency: z.string().length(QUOTE_FIELD_LENGTHS.CURRENCY),
   total: z.number().nonnegative(),
@@ -131,8 +131,8 @@ export const quoteSelectSchema = createSelectSchema(quotes, {
 });
 
 export const quoteInsertSchema = createInsertSchema(quotes, {
-  id: z.cuid().optional(),
-  userId: z.string().cuid().optional(),
+  id: z.uuid().optional(),
+  userId: z.string().uuid().optional(),
   status: z.enum(QUOTE_STATUS_VALUES).optional(),
   currency: z.string().length(QUOTE_FIELD_LENGTHS.CURRENCY),
   total: z.number().nonnegative().optional(),
@@ -151,7 +151,7 @@ export const quoteInsertSchema = createInsertSchema(quotes, {
 }).omit({ createdAt: true, updatedAt: true });
 
 export const quoteUpdateSchema = createUpdateSchema(quotes, {
-  userId: z.string().cuid(),
+  userId: z.string().uuid(),
   status: z.enum(QUOTE_STATUS_VALUES),
   currency: z.string().length(QUOTE_FIELD_LENGTHS.CURRENCY),
   total: z.number().nonnegative(),

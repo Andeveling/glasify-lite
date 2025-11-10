@@ -79,23 +79,23 @@ export const modelColors = pgTable(
  * Zod schemas for ModelColor validation
  */
 export const modelColorSelectSchema = createSelectSchema(modelColors, {
-  modelId: z.string().cuid(),
-  colorId: z.string().cuid(),
+  modelId: z.string().uuid(),
+  colorId: z.string().uuid(),
   surchargePercentage: z.number().nonnegative(),
   isDefault: z.boolean(),
 });
 
 export const modelColorInsertSchema = createInsertSchema(modelColors, {
-  id: z.cuid().optional(),
-  modelId: z.string().cuid(),
-  colorId: z.string().cuid(),
+  id: z.uuid().optional(),
+  modelId: z.string().uuid(),
+  colorId: z.string().uuid(),
   surchargePercentage: z.number().nonnegative(),
   isDefault: z.boolean().optional(),
 }).omit({ createdAt: true, updatedAt: true });
 
 export const modelColorUpdateSchema = createUpdateSchema(modelColors, {
-  modelId: z.string().cuid(),
-  colorId: z.string().cuid(),
+  modelId: z.string().uuid(),
+  colorId: z.string().uuid(),
   surchargePercentage: z.number().nonnegative(),
   isDefault: z.boolean(),
 })

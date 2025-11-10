@@ -78,7 +78,7 @@ export const modelCostBreakdowns = pgTable(
 export const modelCostBreakdownSelectSchema = createSelectSchema(
   modelCostBreakdowns,
   {
-    modelId: z.string().cuid(),
+    modelId: z.string().uuid(),
     component: z
       .string()
       .max(MODEL_COST_BREAKDOWN_FIELD_LENGTHS.COMPONENT)
@@ -92,8 +92,8 @@ export const modelCostBreakdownSelectSchema = createSelectSchema(
 export const modelCostBreakdownInsertSchema = createInsertSchema(
   modelCostBreakdowns,
   {
-    id: z.cuid().optional(),
-    modelId: z.string().cuid(),
+    id: z.uuid().optional(),
+    modelId: z.string().uuid(),
     component: z
       .string()
       .max(MODEL_COST_BREAKDOWN_FIELD_LENGTHS.COMPONENT)
@@ -107,7 +107,7 @@ export const modelCostBreakdownInsertSchema = createInsertSchema(
 export const modelCostBreakdownUpdateSchema = createUpdateSchema(
   modelCostBreakdowns,
   {
-    modelId: z.string().cuid(),
+    modelId: z.string().uuid(),
     component: z
       .string()
       .max(MODEL_COST_BREAKDOWN_FIELD_LENGTHS.COMPONENT)

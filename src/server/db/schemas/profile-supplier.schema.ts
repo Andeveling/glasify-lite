@@ -56,7 +56,7 @@ export const profileSupplierSelectSchema = createSelectSchema(
 export const profileSupplierInsertSchema = createInsertSchema(
   profileSuppliers,
   {
-    id: z.cuid().optional(),
+    id: z.uuid().optional(),
     name: z.string().max(FIELD_LENGTHS.PROFILE_SUPPLIER.NAME).min(1),
     materialType: z.enum(MATERIAL_TYPE_VALUES),
     isActive: z

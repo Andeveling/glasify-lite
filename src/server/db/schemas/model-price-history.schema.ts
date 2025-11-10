@@ -95,40 +95,40 @@ export const modelPriceHistories = pgTable(
 export const modelPriceHistorySelectSchema = createSelectSchema(
   modelPriceHistories,
   {
-    modelId: z.string().cuid(),
+    modelId: z.string().uuid(),
     basePrice: z.number().nonnegative(),
     costPerMmWidth: z.number().nonnegative(),
     costPerMmHeight: z.number().nonnegative(),
     reason: z.string().optional(),
     effectiveFrom: z.date(),
-    createdBy: z.string().cuid().nullable(),
+    createdBy: z.string().uuid().nullable(),
   }
 );
 
 export const modelPriceHistoryInsertSchema = createInsertSchema(
   modelPriceHistories,
   {
-    id: z.cuid().optional(),
-    modelId: z.string().cuid(),
+    id: z.uuid().optional(),
+    modelId: z.string().uuid(),
     basePrice: z.number().nonnegative(),
     costPerMmWidth: z.number().nonnegative(),
     costPerMmHeight: z.number().nonnegative(),
     reason: z.string().optional(),
     effectiveFrom: z.date(),
-    createdBy: z.string().cuid().optional(),
+    createdBy: z.string().uuid().optional(),
   }
 ).omit({ createdAt: true });
 
 export const modelPriceHistoryUpdateSchema = createUpdateSchema(
   modelPriceHistories,
   {
-    modelId: z.string().cuid(),
+    modelId: z.string().uuid(),
     basePrice: z.number().nonnegative(),
     costPerMmWidth: z.number().nonnegative(),
     costPerMmHeight: z.number().nonnegative(),
     reason: z.string(),
     effectiveFrom: z.date(),
-    createdBy: z.string().cuid(),
+    createdBy: z.string().uuid(),
   }
 )
   .partial()

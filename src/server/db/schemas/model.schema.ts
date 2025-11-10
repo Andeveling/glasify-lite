@@ -100,14 +100,14 @@ export const modelSelectSchema = createSelectSchema(models, {
   accessoryPrice: z.number().nonnegative().optional(),
   glassDiscountWidthMm: z.number().int().nonnegative(),
   glassDiscountHeightMm: z.number().int().nonnegative(),
-  compatibleGlassTypeIds: z.array(z.string().cuid()),
+  compatibleGlassTypeIds: z.array(z.string().uuid()),
   profitMarginPercentage: z.number().nonnegative().optional(),
   costNotes: z.string().max(FIELD_LENGTHS.MODEL.COST_NOTES).optional(),
-  profileSupplierId: z.string().cuid().optional(),
+  profileSupplierId: z.string().uuid().optional(),
 });
 
 export const modelInsertSchema = createInsertSchema(models, {
-  id: z.cuid().optional(),
+  id: z.string().uuid().optional(),
   name: z.string().max(FIELD_LENGTHS.MODEL.NAME).min(1),
   imageUrl: z.string().url().max(FIELD_LENGTHS.MODEL.IMAGE_URL).optional(),
   status: z.enum(MODEL_STATUS_VALUES).optional(),
@@ -121,11 +121,11 @@ export const modelInsertSchema = createInsertSchema(models, {
   accessoryPrice: z.number().nonnegative().optional(),
   glassDiscountWidthMm: z.number().int().nonnegative().optional(),
   glassDiscountHeightMm: z.number().int().nonnegative().optional(),
-  compatibleGlassTypeIds: z.array(z.string().cuid()).optional(),
+  compatibleGlassTypeIds: z.array(z.string().uuid()).optional(),
   profitMarginPercentage: z.number().nonnegative().optional(),
   lastCostReviewDate: z.date().optional(),
   costNotes: z.string().max(FIELD_LENGTHS.MODEL.COST_NOTES).optional(),
-  profileSupplierId: z.string().cuid().optional(),
+  profileSupplierId: z.string().uuid().optional(),
 }).omit({ createdAt: true, updatedAt: true });
 
 export const modelUpdateSchema = createUpdateSchema(models, {
@@ -142,11 +142,11 @@ export const modelUpdateSchema = createUpdateSchema(models, {
   accessoryPrice: z.number().nonnegative().optional(),
   glassDiscountWidthMm: z.number().int().nonnegative(),
   glassDiscountHeightMm: z.number().int().nonnegative(),
-  compatibleGlassTypeIds: z.array(z.string().cuid()),
+  compatibleGlassTypeIds: z.array(z.string().uuid()),
   profitMarginPercentage: z.number().nonnegative().optional(),
   lastCostReviewDate: z.date().optional(),
   costNotes: z.string().max(FIELD_LENGTHS.MODEL.COST_NOTES).optional(),
-  profileSupplierId: z.string().cuid().optional(),
+  profileSupplierId: z.string().uuid().optional(),
 })
   .partial()
   .omit({ id: true, createdAt: true, updatedAt: true });

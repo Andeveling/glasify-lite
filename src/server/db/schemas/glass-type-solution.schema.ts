@@ -79,8 +79,8 @@ export const glassTypeSolutions = pgTable(
 export const glassTypeSolutionSelectSchema = createSelectSchema(
   glassTypeSolutions,
   {
-    glassTypeId: z.string().cuid(),
-    solutionId: z.string().cuid(),
+    glassTypeId: z.string().uuid(),
+    solutionId: z.string().uuid(),
     performanceRating: z.enum(PERFORMANCE_RATING_VALUES),
     isPrimary: z.boolean(),
   }
@@ -89,9 +89,9 @@ export const glassTypeSolutionSelectSchema = createSelectSchema(
 export const glassTypeSolutionInsertSchema = createInsertSchema(
   glassTypeSolutions,
   {
-    id: z.cuid().optional(),
-    glassTypeId: z.string().cuid(),
-    solutionId: z.string().cuid(),
+    id: z.uuid().optional(),
+    glassTypeId: z.string().uuid(),
+    solutionId: z.string().uuid(),
     performanceRating: z.enum(PERFORMANCE_RATING_VALUES),
     isPrimary: z.boolean().optional(),
   }
@@ -100,8 +100,8 @@ export const glassTypeSolutionInsertSchema = createInsertSchema(
 export const glassTypeSolutionUpdateSchema = createUpdateSchema(
   glassTypeSolutions,
   {
-    glassTypeId: z.string().cuid(),
-    solutionId: z.string().cuid(),
+    glassTypeId: z.string().uuid(),
+    solutionId: z.string().uuid(),
     performanceRating: z.enum(PERFORMANCE_RATING_VALUES),
     isPrimary: z.boolean(),
   }

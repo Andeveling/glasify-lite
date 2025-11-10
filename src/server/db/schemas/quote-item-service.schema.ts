@@ -74,8 +74,8 @@ export const quoteItemServices = pgTable(
 export const quoteItemServiceSelectSchema = createSelectSchema(
   quoteItemServices,
   {
-    quoteItemId: z.string().cuid(),
-    serviceId: z.string().cuid(),
+    quoteItemId: z.string().uuid(),
+    serviceId: z.string().uuid(),
     unit: z.enum(SERVICE_UNIT_VALUES),
     quantity: z.number().positive(),
     amount: z.number().nonnegative(),
@@ -85,9 +85,9 @@ export const quoteItemServiceSelectSchema = createSelectSchema(
 export const quoteItemServiceInsertSchema = createInsertSchema(
   quoteItemServices,
   {
-    id: z.cuid().optional(),
-    quoteItemId: z.string().cuid(),
-    serviceId: z.string().cuid(),
+    id: z.uuid().optional(),
+    quoteItemId: z.string().uuid(),
+    serviceId: z.string().uuid(),
     unit: z.enum(SERVICE_UNIT_VALUES),
     quantity: z.number().positive(),
     amount: z.number().nonnegative(),
@@ -97,8 +97,8 @@ export const quoteItemServiceInsertSchema = createInsertSchema(
 export const quoteItemServiceUpdateSchema = createUpdateSchema(
   quoteItemServices,
   {
-    quoteItemId: z.string().cuid(),
-    serviceId: z.string().cuid(),
+    quoteItemId: z.string().uuid(),
+    serviceId: z.string().uuid(),
     unit: z.enum(SERVICE_UNIT_VALUES),
     quantity: z.number().positive(),
     amount: z.number().nonnegative(),

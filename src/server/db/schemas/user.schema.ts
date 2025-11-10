@@ -17,7 +17,7 @@ import { userRoleEnum } from "./enums.schema";
  * Field length limits for User table
  */
 const USER_FIELD_LENGTHS = {
-  ID: 36, // CUID length
+  ID: 36, //.uuid length
   NAME: 255,
   EMAIL: 320, // RFC 5321 limit
   IMAGE_URL: 2048,
@@ -51,7 +51,7 @@ export const userSelectSchema = createSelectSchema(users, {
   name: z.string().max(USER_FIELD_LENGTHS.NAME).optional(),
 });
 export const userInsertSchema = createInsertSchema(users, {
-  id: z.cuid(),
+  id: z.uuid(),
   email: z.email().max(USER_FIELD_LENGTHS.EMAIL).optional(),
   name: z.string().max(USER_FIELD_LENGTHS.NAME).optional(),
 }).omit({ createdAt: true, updatedAt: true });

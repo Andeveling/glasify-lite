@@ -112,7 +112,7 @@ export const projectAddresses = pgTable(
  * Zod schemas for ProjectAddress validation
  */
 export const projectAddressSelectSchema = createSelectSchema(projectAddresses, {
-  quoteId: z.string().cuid().optional(),
+  quoteId: z.string().uuid().optional(),
   label: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.LABEL).optional(),
   country: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.COUNTRY).optional(),
   region: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.REGION).optional(),
@@ -137,8 +137,8 @@ export const projectAddressSelectSchema = createSelectSchema(projectAddresses, {
 });
 
 export const projectAddressInsertSchema = createInsertSchema(projectAddresses, {
-  id: z.cuid().optional(),
-  quoteId: z.string().cuid().optional(),
+  id: z.uuid().optional(),
+  quoteId: z.string().uuid().optional(),
   label: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.LABEL).optional(),
   country: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.COUNTRY).optional(),
   region: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.REGION).optional(),
@@ -163,7 +163,7 @@ export const projectAddressInsertSchema = createInsertSchema(projectAddresses, {
 }).omit({ createdAt: true, updatedAt: true });
 
 export const projectAddressUpdateSchema = createUpdateSchema(projectAddresses, {
-  quoteId: z.string().cuid(),
+  quoteId: z.string().uuid(),
   label: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.LABEL),
   country: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.COUNTRY),
   region: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.REGION),

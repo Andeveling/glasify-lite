@@ -129,7 +129,7 @@ export const glassTypeSelectSchema = createSelectSchema(glassTypes, {
 });
 
 export const glassTypeInsertSchema = createInsertSchema(glassTypes, {
-  id: z.cuid().optional(),
+  id: z.uuid().optional(),
   name: z.string().max(GLASS_TYPE_FIELD_LENGTHS.NAME).min(1),
   code: z.string().max(GLASS_TYPE_FIELD_LENGTHS.CODE).min(1),
   series: z.string().max(GLASS_TYPE_FIELD_LENGTHS.SERIES).optional(),

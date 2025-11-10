@@ -115,7 +115,7 @@ export const glassSolutionSelectSchema = createSelectSchema(glassSolutions, {
 });
 
 export const glassSolutionInsertSchema = createInsertSchema(glassSolutions, {
-  id: z.cuid().optional(),
+  id: z.uuid().optional(),
   key: z.string().max(GLASS_SOLUTION_FIELD_LENGTHS.KEY).min(1),
   slug: z.string().max(GLASS_SOLUTION_FIELD_LENGTHS.SLUG).min(1),
   name: z.string().max(GLASS_SOLUTION_FIELD_LENGTHS.NAME).min(1),

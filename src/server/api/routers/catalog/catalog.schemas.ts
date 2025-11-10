@@ -16,7 +16,7 @@ export const listModelsInput = z.object({
     .min(MIN_PAGE_LIMIT)
     .max(MAX_PAGE_LIMIT)
     .default(DEFAULT_PAGE_LIMIT),
-  manufacturerId: z.cuid("ID del fabricante debe ser válido").optional(),
+  manufacturerId: z.uuid("ID del fabricante debe ser válido").optional(),
   page: z.number().min(1).default(1),
   search: z.string().optional(),
   sort: z
@@ -25,7 +25,7 @@ export const listModelsInput = z.object({
 });
 
 export const getModelByIdInput = z.object({
-  modelId: z.cuid("ID del modelo debe ser válido"),
+  modelId: z.uuid("ID del modelo debe ser un UUID válido"),
 });
 
 export const listServicesInput = z.object({
@@ -33,22 +33,25 @@ export const listServicesInput = z.object({
 });
 
 export const listGlassTypesInput = z.object({
-  glassTypeIds: z.array(z.cuid("ID del tipo de vidrio debe ser válido")),
+  glassTypeIds: z.array(z.uuid("ID del tipo de vidrio debe ser válido")),
 });
 
 export const listGlassSolutionsInput = z
   .object({
-    modelId: z.cuid("ID del modelo debe ser válido").optional(),
+    modelId: z
+      .string()
+      .uuid("ID del modelo debe ser un UUID válido")
+      .optional(),
   })
   .optional();
 
 export const getAvailableGlassTypesInput = z.object({
-  modelId: z.cuid("ID del modelo debe ser válido"),
+  modelId: z.string().uuid("ID del modelo debe ser un UUID válido"),
 });
 
 export const validateGlassCompatibilityInput = z.object({
-  modelId: z.cuid("ID del modelo debe ser válido"),
-  glassTypeId: z.cuid("ID del tipo de vidrio debe ser válido"),
+  modelId: z.string().uuid("ID del modelo debe ser un UUID válido"),
+  glassTypeId: z.uuid("ID del tipo de vidrio debe ser válido"),
 });
 
 // ========================================

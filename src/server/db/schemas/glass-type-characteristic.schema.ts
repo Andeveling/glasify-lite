@@ -83,8 +83,8 @@ export const glassTypeCharacteristics = pgTable(
 export const glassTypeCharacteristicSelectSchema = createSelectSchema(
   glassTypeCharacteristics,
   {
-    glassTypeId: z.string().cuid(),
-    characteristicId: z.string().cuid(),
+    glassTypeId: z.string().uuid(),
+    characteristicId: z.string().uuid(),
     value: z
       .string()
       .max(GLASS_TYPE_CHARACTERISTIC_FIELD_LENGTHS.VALUE)
@@ -100,9 +100,9 @@ export const glassTypeCharacteristicSelectSchema = createSelectSchema(
 export const glassTypeCharacteristicInsertSchema = createInsertSchema(
   glassTypeCharacteristics,
   {
-    id: z.cuid().optional(),
-    glassTypeId: z.string().cuid(),
-    characteristicId: z.string().cuid(),
+    id: z.uuid().optional(),
+    glassTypeId: z.string().uuid(),
+    characteristicId: z.string().uuid(),
     value: z
       .string()
       .max(GLASS_TYPE_CHARACTERISTIC_FIELD_LENGTHS.VALUE)
@@ -118,8 +118,8 @@ export const glassTypeCharacteristicInsertSchema = createInsertSchema(
 export const glassTypeCharacteristicUpdateSchema = createUpdateSchema(
   glassTypeCharacteristics,
   {
-    glassTypeId: z.string().cuid(),
-    characteristicId: z.string().cuid(),
+    glassTypeId: z.string().uuid(),
+    characteristicId: z.string().uuid(),
     value: z.string().max(GLASS_TYPE_CHARACTERISTIC_FIELD_LENGTHS.VALUE),
     certification: z
       .string()

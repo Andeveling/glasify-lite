@@ -85,20 +85,20 @@ export const adjustmentSelectSchema = createSelectSchema(adjustments, {
   unit: z.enum(SERVICE_UNIT_VALUES),
   value: z.number().nonnegative(),
   sign: z.enum(ADJUSTMENT_SIGN_VALUES),
-  quoteId: z.string().cuid().nullable(),
-  quoteItemId: z.string().cuid().nullable(),
+  quoteId: z.string().uuid().nullable(),
+  quoteItemId: z.string().uuid().nullable(),
   amount: z.number(),
 });
 
 export const adjustmentInsertSchema = createInsertSchema(adjustments, {
-  id: z.cuid().optional(),
+  id: z.uuid().optional(),
   scope: z.enum(ADJUSTMENT_SCOPE_VALUES),
   concept: z.string().max(ADJUSTMENT_FIELD_LENGTHS.CONCEPT).min(1),
   unit: z.enum(SERVICE_UNIT_VALUES),
   value: z.number().nonnegative(),
   sign: z.enum(ADJUSTMENT_SIGN_VALUES),
-  quoteId: z.string().cuid().optional(),
-  quoteItemId: z.string().cuid().optional(),
+  quoteId: z.string().uuid().optional(),
+  quoteItemId: z.string().uuid().optional(),
   amount: z.number(),
 }).omit({ createdAt: true, updatedAt: true });
 
@@ -108,8 +108,8 @@ export const adjustmentUpdateSchema = createUpdateSchema(adjustments, {
   unit: z.enum(SERVICE_UNIT_VALUES),
   value: z.number().nonnegative(),
   sign: z.enum(ADJUSTMENT_SIGN_VALUES),
-  quoteId: z.string().cuid(),
-  quoteItemId: z.string().cuid(),
+  quoteId: z.string().uuid(),
+  quoteItemId: z.string().uuid(),
   amount: z.number(),
 })
   .partial()

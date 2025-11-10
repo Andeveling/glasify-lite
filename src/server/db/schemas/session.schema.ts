@@ -54,9 +54,9 @@ export const sessionSelectSchema = createSelectSchema(sessions, {
 });
 
 export const sessionInsertSchema = createInsertSchema(sessions, {
-  id: z.cuid().optional(),
+  id: z.uuid().optional(),
   token: z.string().max(FIELD_LENGTHS.SESSION.TOKEN),
-  userId: z.string().cuid(),
+  userId: z.string().uuid(),
   ipAddress: z.string().max(FIELD_LENGTHS.SESSION.IP_ADDRESS).optional(),
   userAgent: z.string().max(FIELD_LENGTHS.SESSION.USER_AGENT).optional(),
 }).omit({ createdAt: true, updatedAt: true });

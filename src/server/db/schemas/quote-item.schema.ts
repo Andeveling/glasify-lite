@@ -109,10 +109,10 @@ export const quoteItems = pgTable(
  * Zod schemas for QuoteItem validation
  */
 export const quoteItemSelectSchema = createSelectSchema(quoteItems, {
-  quoteId: z.string().cuid(),
-  modelId: z.string().cuid(),
-  glassTypeId: z.string().cuid(),
-  colorId: z.string().cuid().nullable(),
+  quoteId: z.string().uuid(),
+  modelId: z.string().uuid(),
+  glassTypeId: z.string().uuid(),
+  colorId: z.string().uuid().nullable(),
   name: z.string().max(QUOTE_ITEM_FIELD_LENGTHS.NAME).min(1),
   quantity: z.number().int().positive(),
   roomLocation: z
@@ -132,11 +132,11 @@ export const quoteItemSelectSchema = createSelectSchema(quoteItems, {
 });
 
 export const quoteItemInsertSchema = createInsertSchema(quoteItems, {
-  id: z.cuid().optional(),
-  quoteId: z.string().cuid(),
-  modelId: z.string().cuid(),
-  glassTypeId: z.string().cuid(),
-  colorId: z.string().cuid().optional(),
+  id: z.uuid().optional(),
+  quoteId: z.string().uuid(),
+  modelId: z.string().uuid(),
+  glassTypeId: z.string().uuid(),
+  colorId: z.string().uuid().optional(),
   name: z.string().max(QUOTE_ITEM_FIELD_LENGTHS.NAME).min(1),
   quantity: z.number().int().positive().optional(),
   roomLocation: z
@@ -156,10 +156,10 @@ export const quoteItemInsertSchema = createInsertSchema(quoteItems, {
 }).omit({ createdAt: true, updatedAt: true });
 
 export const quoteItemUpdateSchema = createUpdateSchema(quoteItems, {
-  quoteId: z.string().cuid(),
-  modelId: z.string().cuid(),
-  glassTypeId: z.string().cuid(),
-  colorId: z.string().cuid(),
+  quoteId: z.string().uuid(),
+  modelId: z.string().uuid(),
+  glassTypeId: z.string().uuid(),
+  colorId: z.string().uuid(),
   name: z.string().max(QUOTE_ITEM_FIELD_LENGTHS.NAME).min(1),
   quantity: z.number().int().positive(),
   roomLocation: z.string().max(QUOTE_ITEM_FIELD_LENGTHS.ROOM_LOCATION),

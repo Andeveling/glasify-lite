@@ -62,7 +62,7 @@ export const serviceSelectSchema = createSelectSchema(services, {
 });
 
 export const serviceInsertSchema = createInsertSchema(services, {
-  id: z.cuid().optional(),
+  id: z.uuid().optional(),
   name: z.string().max(SERVICE_FIELD_LENGTHS.NAME).min(1),
   type: z.enum(SERVICE_TYPE_VALUES),
   unit: z.enum(SERVICE_UNIT_VALUES),

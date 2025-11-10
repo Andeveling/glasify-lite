@@ -43,7 +43,7 @@ export const manufacturerSelectSchema = createSelectSchema(manufacturers, {
 });
 
 export const manufacturerInsertSchema = createInsertSchema(manufacturers, {
-  id: z.cuid().optional(),
+  id: z.uuid().optional(),
   name: z.string().max(FIELD_LENGTHS.MANUFACTURER.NAME).min(1),
   currency: z
     .string()
