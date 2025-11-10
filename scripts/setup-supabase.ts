@@ -1,12 +1,12 @@
 #!/usr/bin/env tsx
 /**
  * Interactive Supabase Configuration Setup
- * 
+ *
  * This script helps you configure Supabase connection in .env.local
- * 
+ *
  * Usage:
  *   pnpm supabase:setup
- * 
+ *
  * What it does:
  * 1. Prompts for your Supabase connection string
  * 2. Validates the URL format
@@ -58,9 +58,7 @@ async function main() {
   }
 
   if (!databaseUrl.includes("pooler.supabase.com:6543")) {
-    console.warn(
-      "\n⚠️  Warning: URL should use transaction pooler (port 6543)"
-    );
+    console.warn("\n⚠️  Warning: URL should use transaction pooler (port 6543)");
     console.warn("   Example: aws-0-us-east-1.pooler.supabase.com:6543");
     const confirm = await rl.question("\nContinue anyway? (y/N): ");
     if (confirm.toLowerCase() !== "y") {
