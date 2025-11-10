@@ -1,39 +1,12 @@
-import { config } from "dotenv";
+import "dotenv/config";
 
-config({ path: ".env.local" });
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import { env } from "@/env";
 
-const connectionString = process.env.DATABASE_URL;
+const connectionString = env.DATABASE_URL;
 
-if (!connectionString) {
-  throw new Error(
-    "DATABASE_URL is not defined. Please check your .env.local file."
-  );
-}
-
-// Detect if we're using local Neon (localhost) or cloud Neon
-const isLocalNeon = connectionString.includes("localhost");
-
-/**
- * Drizzle ORM database client
- * - Uses node-postgres for local Neon development
- * - Uses neon-http for cloud Neon (serverless)
- */
-export const db = await (async () => {
-  if (isLocalNeon) {
-    // Local Neon: use node-postgres
-    const { drizzle: drizzleNodePg } = await import(
-      "drizzle-orm/node-postgres"
-    );
-    const { Pool } = await import("pg");
-
-    const pool = new Pool({ connectionString });
-    return drizzleNodePg({ client: pool, casing: "snake_case" });
-  }
-
-  // Cloud Neon: use neon-http (serverless)
-  const { drizzle: drizzleNeonHttp } = await import("drizzle-orm/neon-http");
-  const { neon } = await import("@neondatabase/serverless");
-
-  const sql = neon(connectionString);
-  return drizzleNeonHttp({ client: sql, casing: "snake_case" });
-})();
+// Supabase uses transaction pooling (port 6543) which requires prepare: false
+// This is the recommended configuration for Drizzle + Supabase
+export const client = postgres(connectionString, { prepare: false });
+export const db = drizzle(client);

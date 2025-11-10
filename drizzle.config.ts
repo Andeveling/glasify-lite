@@ -8,7 +8,6 @@ config({ path: ".env.local" });
 config({ path: ".env" });
 
 const dbUrl = process.env.DATABASE_URL;
-const directUrl = process.env.DIRECT_URL;
 
 if (!dbUrl) {
   throw new Error(
@@ -27,11 +26,10 @@ export default defineConfig({
   // Database dialect
   dialect: "postgresql",
 
-  // Database connection - use DIRECT_URL for Neon direct connection (bypasses pooling)
-  // IMPORTANT: DIRECT_URL is required for Drizzle Studio with Neon
-  // It provides a direct PostgreSQL connection instead of HTTP/WebSocket
+  // Database connection - Supabase uses transaction pooling (port 6543)
+  // Only one URL needed (no separate DIRECT_URL like Neon)
   dbCredentials: {
-    url: directUrl || dbUrl,
+    url: dbUrl,
   },
 
   // Migration settings
