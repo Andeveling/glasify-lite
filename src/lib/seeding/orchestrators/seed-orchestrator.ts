@@ -167,6 +167,12 @@ export class DrizzleSeedOrchestrator {
   private readonly db: NodePgDatabase;
   private readonly options: SeedOptions;
 
+  // ID maps for FK resolution
+  private readonly profileSupplierIdMap = new Map<string, string>();
+  private readonly glassSupplierIdMap = new Map<string, string>();
+  private readonly glassTypeIdMap = new Map<string, string>();
+  private readonly glassSolutionIdMap = new Map<string, string>();
+
   constructor(db: NodePgDatabase, options: SeedOptions = {}) {
     this.db = db;
     this.options = options;
@@ -439,6 +445,15 @@ export class DrizzleSeedOrchestrator {
       this.stats.glassSolutions.updated = result.updated;
       this.stats.glassSolutions.failed = result.failed;
 
+      // Capture IDs for FK resolution (by key)
+      const insertedSolutions = await this.db.select().from(glassSolutions);
+      for (const solution of insertedSolutions) {
+        this.glassSolutionIdMap.set(solution.key, solution.id);
+      }
+      this.logger.debug(
+        `Captured ${this.glassSolutionIdMap.size} glass solution IDs for FK resolution`
+      );
+
       this.logger.success(
         `Glass solutions: ${result.inserted} inserted, ${result.updated} updated, ${result.failed} failed`
       );
@@ -479,6 +494,15 @@ export class DrizzleSeedOrchestrator {
       this.stats.profileSuppliers.created = result.inserted;
       this.stats.profileSuppliers.updated = result.updated;
       this.stats.profileSuppliers.failed = result.failed;
+
+      // Capture IDs for FK resolution
+      const insertedSuppliers = await this.db.select().from(profileSuppliers);
+      for (const supplier of insertedSuppliers) {
+        this.profileSupplierIdMap.set(supplier.name, supplier.id);
+      }
+      this.logger.debug(
+        `Captured ${this.profileSupplierIdMap.size} profile supplier IDs for FK resolution`
+      );
 
       this.logger.success(
         `Profile suppliers: ${result.inserted} inserted, ${result.updated} updated, ${result.failed} failed`
@@ -523,6 +547,17 @@ export class DrizzleSeedOrchestrator {
       this.stats.glassSuppliers.updated = result.updated;
       this.stats.glassSuppliers.failed = result.failed;
 
+      // Capture IDs for FK resolution (by code)
+      const insertedSuppliers = await this.db.select().from(glassSuppliers);
+      for (const supplier of insertedSuppliers) {
+        if (supplier.code) {
+          this.glassSupplierIdMap.set(supplier.code, supplier.id);
+        }
+      }
+      this.logger.debug(
+        `Captured ${this.glassSupplierIdMap.size} glass supplier IDs for FK resolution`
+      );
+
       this.logger.success(
         `Glass suppliers: ${result.inserted} inserted, ${result.updated} updated, ${result.failed} failed`
       );
@@ -537,6 +572,7 @@ export class DrizzleSeedOrchestrator {
 
   /**
    * Seed glass types using Drizzle seeder
+   * Resolves glassSupplierId FK and captures IDs for glass type solutions
    */
   private async seedGlassTypes(glassTypesList: NewGlassType[]): Promise<void> {
     if (!glassTypesList) {
@@ -548,13 +584,47 @@ export class DrizzleSeedOrchestrator {
     this.logger.info(`Seeding ${glassTypesList.length} glass types...`);
 
     try {
-      const result = await seeder.upsert(glassTypesList, {
+      // Resolve glassSupplierId FK if we have glass supplier IDs
+      const resolvedGlassTypes = glassTypesList.map((gt) => {
+        // Try to resolve FK by matching supplier code in glass type code
+        // Example: "GUARD-CLR-6" → supplier code "GUARDIAN"
+        let glassSupplierId = gt.glassSupplierId;
+
+        if (!glassSupplierId && this.glassSupplierIdMap.size > 0) {
+          // Try to match by code prefix
+          const gtCode = gt.code?.toUpperCase() || "";
+          for (const [code, id] of this.glassSupplierIdMap.entries()) {
+            if (gtCode.startsWith(code)) {
+              glassSupplierId = id;
+              this.logger.debug(
+                `Resolved glassSupplierId for "${gt.name}" using code "${code}"`
+              );
+              break;
+            }
+          }
+        }
+
+        return { ...gt, glassSupplierId };
+      });
+
+      const result = await seeder.upsert(resolvedGlassTypes, {
         continueOnError: this.options.continueOnError,
       });
 
       this.stats.glassTypes.created = result.inserted;
       this.stats.glassTypes.updated = result.updated;
       this.stats.glassTypes.failed = result.failed;
+
+      // Capture IDs for FK resolution in glass type solutions (by code)
+      const insertedGlassTypes = await this.db.select().from(glassTypes);
+      for (const glassType of insertedGlassTypes) {
+        if (glassType.code) {
+          this.glassTypeIdMap.set(glassType.code, glassType.id);
+        }
+      }
+      this.logger.debug(
+        `Captured ${this.glassTypeIdMap.size} glass type IDs for FK resolution`
+      );
 
       this.logger.success(
         `Glass types: ${result.inserted} inserted, ${result.updated} updated, ${result.failed} failed`
@@ -570,6 +640,7 @@ export class DrizzleSeedOrchestrator {
 
   /**
    * Seed models using Drizzle seeder
+   * Resolves profileSupplierId FK
    */
   private async seedModels(modelsList: NewModel[]): Promise<void> {
     if (!modelsList) {
@@ -581,7 +652,36 @@ export class DrizzleSeedOrchestrator {
     this.logger.info(`Seeding ${modelsList.length} models...`);
 
     try {
-      const result = await seeder.upsert(modelsList, {
+      // Resolve profileSupplierId FK and ensure compatibleGlassTypeIds is an array
+      const resolvedModels = modelsList.map((model) => {
+        let profileSupplierId = model.profileSupplierId;
+
+        // If FK is null and we have profile suppliers, try to assign the first one
+        if (!profileSupplierId && this.profileSupplierIdMap.size > 0) {
+          // Use first active aluminum supplier as default
+          const defaultSupplierName = "Aluminios Panamá";
+          profileSupplierId =
+            this.profileSupplierIdMap.get(defaultSupplierName) ||
+            Array.from(this.profileSupplierIdMap.values())[0];
+
+          if (profileSupplierId) {
+            this.logger.debug(
+              `Assigned default profileSupplierId to model "${model.name}"`
+            );
+          }
+        }
+
+        // Ensure compatibleGlassTypeIds is always an array (fix Drizzle empty array serialization)
+        const compatibleGlassTypeIds = Array.isArray(
+          model.compatibleGlassTypeIds
+        )
+          ? model.compatibleGlassTypeIds
+          : [];
+
+        return { ...model, profileSupplierId, compatibleGlassTypeIds };
+      });
+
+      const result = await seeder.upsert(resolvedModels, {
         continueOnError: this.options.continueOnError,
       });
 
@@ -653,7 +753,7 @@ export class DrizzleSeedOrchestrator {
     this.logger.info(`Seeding ${servicesList.length} services...`);
 
     try {
-      // Transform data to match NewService schema
+      // Transform only isActive to string - rate and minimumBillingUnit are decimals in DB
       const transformedServices = servicesList.map((s) => {
         let isActive = "true";
         if (typeof s.isActive === "boolean") {
@@ -664,10 +764,6 @@ export class DrizzleSeedOrchestrator {
 
         return {
           ...s,
-          rate: String(s.rate),
-          minimumBillingUnit: s.minimumBillingUnit
-            ? String(s.minimumBillingUnit)
-            : undefined,
           isActive,
         };
       });

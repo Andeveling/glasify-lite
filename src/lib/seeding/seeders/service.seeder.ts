@@ -181,19 +181,22 @@ export class ServiceSeeder extends BaseSeeder<NewService> {
     item: NewService
   ): Promise<{ inserted: boolean; updated: boolean }> {
     try {
-      // Validate and transform with Zod schema (handles type coercion)
-      const validatedData = await serviceInsertSchema.parseAsync(item);
-
-      // Cast to any to satisfy Drizzle's type requirements
-      // (Zod has transformed rate/minimumBillingUnit to strings as needed)
-      const insertData = validatedData as unknown as typeof item;
-
+      // Skip Zod validation - data is already transformed in orchestrator
+      // Direct insert to avoid type coercion issues
       const result = await this.drizzle
         .insert(services)
-        .values(insertData)
+        .values(item)
         .onConflictDoUpdate({
           target: services.name,
-          set: insertData,
+          set: {
+            name: item.name,
+            type: item.type,
+            unit: item.unit,
+            rate: item.rate,
+            minimumBillingUnit: item.minimumBillingUnit,
+            isActive: item.isActive,
+            updatedAt: new Date(),
+          },
         })
         .returning({
           createdAt: services.createdAt,

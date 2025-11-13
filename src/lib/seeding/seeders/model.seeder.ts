@@ -4,6 +4,7 @@
  * Implements BaseSeeder<T> contract for dependency injection
  */
 
+import { sql } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { models, type NewModel } from "@/server/db/schemas/model.schema";
 import { BaseSeeder, ConsoleSeederLogger } from "../contracts/seeder.interface";
@@ -181,12 +182,26 @@ export class ModelSeeder extends BaseSeeder<NewModel> {
     item: NewModel
   ): Promise<{ inserted: boolean; updated: boolean }> {
     try {
-      const result = await this.drizzle
-        .insert(models)
-        .values(item)
-        .onConflictDoUpdate({
-          target: models.name,
-          set: {
+      // Fix Drizzle empty array serialization issue
+      // When compatibleGlassTypeIds is empty array [], Drizzle sends {} to PostgreSQL
+      // We need to use sql`ARRAY[]::text[]` for empty arrays
+      const compatibleGlassTypeIds = 
+        item.compatibleGlassTypeIds && item.compatibleGlassTypeIds.length > 0
+          ? item.compatibleGlassTypeIds
+          : sql`ARRAY[]::text[]`;
+
+      // Check if model exists by name (no unique constraint on name, so we can't use onConflict)
+      const existing = await this.drizzle
+        .select({ id: models.id, createdAt: models.createdAt })
+        .from(models)
+        .where(sql`${models.name} = ${item.name}`)
+        .limit(1);
+
+      if (existing.length > 0 && existing[0]) {
+        // Update existing model
+        await this.drizzle
+          .update(models)
+          .set({
             profileSupplierId: item.profileSupplierId,
             imageUrl: item.imageUrl,
             status: item.status,
@@ -200,27 +215,28 @@ export class ModelSeeder extends BaseSeeder<NewModel> {
             accessoryPrice: item.accessoryPrice,
             glassDiscountWidthMm: item.glassDiscountWidthMm,
             glassDiscountHeightMm: item.glassDiscountHeightMm,
-            compatibleGlassTypeIds: item.compatibleGlassTypeIds,
+            compatibleGlassTypeIds,
             profitMarginPercentage: item.profitMarginPercentage,
             lastCostReviewDate: item.lastCostReviewDate,
             costNotes: item.costNotes,
-          },
-        })
-        .returning({
-          createdAt: models.createdAt,
-          updatedAt: models.updatedAt,
-        });
+            updatedAt: new Date(),
+          })
+          .where(sql`${models.id} = ${existing[0].id}`);
 
-      if (result.length > 0) {
-        const rec = result[0];
-        if (rec?.createdAt && rec?.updatedAt) {
-          const isNew = rec.createdAt.getTime() === rec.updatedAt.getTime();
-          return { inserted: isNew, updated: !isNew };
-        }
+        return { inserted: false, updated: true };
       }
 
-      return { inserted: false, updated: false };
+      // Insert new model
+      await this.drizzle
+        .insert(models)
+        .values({ ...item, compatibleGlassTypeIds });
+
+      return { inserted: true, updated: false };
     } catch (error) {
+      // Log full error for debugging
+      if (error instanceof Error && error.cause) {
+        this.logger.error("PostgreSQL Error Details", error.cause as Error);
+      }
       throw new Error(
         `Failed to upsert model "${item.name}": ${error instanceof Error ? error.message : String(error)}`
       );

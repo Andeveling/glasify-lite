@@ -164,6 +164,10 @@ async function seed() {
     console.log("\nStatistics:");
     // biome-ignore lint/suspicious/noConsole: Console is allowed in CLI scripts
     console.log(
+      `  Glass Characteristics: ${stats.glassCharacteristics.created} created, ${stats.glassCharacteristics.updated} updated`
+    );
+    // biome-ignore lint/suspicious/noConsole: Console is allowed in CLI scripts
+    console.log(
       `  Glass Solutions: ${stats.glassSolutions.created} created, ${stats.glassSolutions.updated} updated`
     );
     // biome-ignore lint/suspicious/noConsole: Console is allowed in CLI scripts
@@ -173,6 +177,22 @@ async function seed() {
     // biome-ignore lint/suspicious/noConsole: Console is allowed in CLI scripts
     console.log(
       `  Glass Suppliers: ${stats.glassSuppliers.created} created, ${stats.glassSuppliers.updated} updated`
+    );
+    // biome-ignore lint/suspicious/noConsole: Console is allowed in CLI scripts
+    console.log(
+      `  Glass Types: ${stats.glassTypes.created} created, ${stats.glassTypes.updated} updated`
+    );
+    // biome-ignore lint/suspicious/noConsole: Console is allowed in CLI scripts
+    console.log(
+      `  Models: ${stats.models.created} created, ${stats.models.updated} updated`
+    );
+    // biome-ignore lint/suspicious/noConsole: Console is allowed in CLI scripts
+    console.log(
+      `  Glass Type Solutions: ${stats.glassTypeSolutions.created} created, ${stats.glassTypeSolutions.updated} updated`
+    );
+    // biome-ignore lint/suspicious/noConsole: Console is allowed in CLI scripts
+    console.log(
+      `  Services: ${stats.services.created} created, ${stats.services.updated} updated`
     );
     // biome-ignore lint/suspicious/noConsole: Console is allowed in CLI scripts
     console.log(
