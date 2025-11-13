@@ -15,7 +15,7 @@
  * TENANT_TIMEZONE="America/Panama"
  * TENANT_QUOTE_VALIDITY_DAYS="15"
  * TENANT_CONTACT_EMAIL="ventas@vitrorojas.com"
- * TENANT_CONTACT_PHONE="+507-123-4567"
+ * TENANT_CONTACT_PHONE="+50769471483"
  * TENANT_BUSINESS_ADDRESS="Ciudad de Panamá, Panamá"
  * ```
  *
@@ -27,7 +27,7 @@ export const vitroRojasTenantConfig = {
   businessAddress: "Ciudad de Panamá, Panamá",
   businessName: "Vitro Rojas S.A.",
   contactEmail: "ventas@vitrorojas.com",
-  contactPhone: "+507-123-4567",
+  contactPhone: "+50769471483",
   currency: "USD", // Dólar estadounidense (moneda oficial de Panamá)
   locale: "es-PA", // Español de Panamá
   quoteValidityDays: 15, // 15 días de validez para cotizaciones

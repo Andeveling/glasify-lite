@@ -1,201 +1,205 @@
 /**
- * Vitro Rojas - Glass Types
+ * Vitro Rojas - Glass Types Data
  *
- * Tipos de vidrio comunes en el mercado panameño.
- * Precios en USD según sistema de cotización Vitro Rojas.
+ * Tipos de vidrio disponibles en inventario de Vitro Rojas.
+ * Incluye vidrios de Guardian, Saint-Gobain, AGC y Vitro.
  *
- * Adicionales por tipo de vidrio (sobre precio base de ventana):
- * - Claro: Incluido en precio base
- * - Laminado: +$15 USD/m²
- * - Gris/Bronce: +$10 USD/m²
- * - Reflectivo: +$15 USD/m²
- * - Laminado Gris/Bronce: +$18 USD/m²
+ * Nota: glassSupplierId se resolverá dinámicamente después de insertar suppliers
+ * Por ahora usamos null y actualizaremos en el preset
  *
- * Data source:
- * - Vitro Rojas S.A. - Instrucciones de Corte y Presupuesto
- * - Extralum Panama - Fichas técnicas (espesores compatibles)
- * - Mercado panameño (precios de referencia)
+ * Características técnicas:
+ * - thicknessMm: Espesor en milímetros (text field)
+ * - pricePerSqm: Precio por metro cuadrado en USD (decimal as string)
+ * - uValue: Valor U de aislamiento térmico W/(m²·K) (decimal as string)
+ * - solarFactor: Factor solar g-value 0-1 (decimal as string)
+ * - lightTransmission: Transmisión de luz visible 0-1 (decimal as string)
  *
  * @version 1.0.0
- * @date 2025-01-21
+ * @date 2025-11-13
  */
 
-/**
- * Tipos de vidrio para uso general (económico)
- *
- * Aplicación: Ventanas residenciales estándar sin requerimientos especiales
- * Precios en USD/m² - Mercado Panamá
- */
-const generalPurposeGlassTypes = [
+export const vitroRojasGlassTypes = [
+  // Guardian Glass - Clear Float
   {
-    code: "VR_CLEAR6",
-    name: "Vidrio Claro 6mm",
-    thicknessMm: 6,
-    pricePerSqm: 12.5,
-    isActive: true,
-    isSeeded: true,
+    name: "Guardian Clear 6mm",
+    code: "GUARD-CLR-6",
+    series: "ClimaGuard",
+    manufacturer: "Guardian Glass",
+    glassSupplierId: null, // Se asignará después
+    thicknessMm: "6",
+    pricePerSqm: "25.50",
+    uValue: "5.8",
+    description: "Vidrio flotado claro estándar de 6mm",
+    solarFactor: "0.87",
+    lightTransmission: "0.90",
+    isActive: "true",
+    lastReviewDate: new Date("2025-11-01"),
+    isSeeded: "true",
     seedVersion: "1.0.0",
   },
   {
-    code: "VR_CLEAR8",
-    name: "Vidrio Claro 8mm",
-    thicknessMm: 8,
-    pricePerSqm: 15.0,
-    isActive: true,
-    isSeeded: true,
+    name: "Guardian Clear 8mm",
+    code: "GUARD-CLR-8",
+    series: "ClimaGuard",
+    manufacturer: "Guardian Glass",
+    glassSupplierId: null,
+    thicknessMm: "8",
+    pricePerSqm: "32.00",
+    uValue: "5.7",
+    description: "Vidrio flotado claro estándar de 8mm",
+    solarFactor: "0.85",
+    lightTransmission: "0.88",
+    isActive: "true",
+    lastReviewDate: new Date("2025-11-01"),
+    isSeeded: "true",
     seedVersion: "1.0.0",
   },
-] as const;
 
-/**
- * Tipos de vidrio para seguridad (laminados y templados)
- *
- * Aplicación: Áreas con riesgo de impacto, seguridad anti-robo
- * Precios en USD/m² - Mercado Panamá (premium sobre vidrio claro)
- *
- * Nota: Los espesores se redondean al entero más cercano
- * - Laminado 6.38mm (6+6) → 6mm
- * - Laminado 8.38mm (8+8) → 8mm
- */
-const securityGlassTypes = [
+  // Guardian Glass - Low-E
   {
-    code: "VR_LAM6",
-    name: "Vidrio Laminado 6.38mm (6+6)",
-    thicknessMm: 6,
-    pricePerSqm: 28.5,
-    description: "+$16 USD/m² sobre claro 6mm",
-    isActive: true,
-    isSeeded: true,
+    name: "Guardian SunGuard Solar Low-E 6mm",
+    code: "GUARD-LOWE-6",
+    series: "SunGuard",
+    manufacturer: "Guardian Glass",
+    glassSupplierId: null,
+    thicknessMm: "6",
+    pricePerSqm: "45.00",
+    uValue: "1.6",
+    description: "Vidrio Low-E con control solar para clima tropical",
+    solarFactor: "0.35",
+    lightTransmission: "0.70",
+    isActive: "true",
+    lastReviewDate: new Date("2025-11-01"),
+    isSeeded: "true",
     seedVersion: "1.0.0",
   },
-  {
-    code: "VR_LAM8",
-    name: "Vidrio Laminado 8.38mm (8+8)",
-    thicknessMm: 8,
-    pricePerSqm: 32.5,
-    description: "+$17.5 USD/m² sobre claro 8mm",
-    isActive: true,
-    isSeeded: true,
-    seedVersion: "1.0.0",
-  },
-  {
-    code: "VR_TEMP6",
-    name: "Vidrio Templado 6mm",
-    thicknessMm: 6,
-    pricePerSqm: 20.0,
-    description: "+$7.5 USD/m² sobre claro 6mm",
-    isActive: true,
-    isSeeded: true,
-    seedVersion: "1.0.0",
-  },
-] as const;
 
-/**
- * Tipos de vidrio para aislamiento térmico y eficiencia energética (DVH)
- *
- * Aplicación: Áreas con aire acondicionado, reducción de consumo energético
- * Precios en USD/m² - Mercado Panamá (premium)
- * Compatible con: Sistema Corredizo Europa Clásica (DVH 16-18.5mm)
- * Compatible con: Sistema Abatible Europa (DVH 12.5-18.5mm)
- *
- * Nota: Espesores redondeados al entero más cercano
- * - DVH 18.5mm (6-6.5-6) → 19mm
- */
-const insulationGlassTypes = [
+  // Saint-Gobain - Acoustic
   {
-    code: "VR_DVH16",
-    name: "DVH 16mm (6-4-6)",
-    thicknessMm: 16,
-    pricePerSqm: 45.0,
-    description: "Premium por aislamiento térmico",
-    uValue: 2.8,
-    isActive: true,
-    isSeeded: true,
+    name: "Saint-Gobain SGG Stadip Silence 8mm",
+    code: "SG-ACOUSTIC-8",
+    series: "Stadip Silence",
+    manufacturer: "Saint-Gobain",
+    glassSupplierId: null,
+    thicknessMm: "8",
+    pricePerSqm: "65.00",
+    uValue: "2.8",
+    description: "Vidrio laminado acústico, reducción de ruido 35dB",
+    solarFactor: "0.75",
+    lightTransmission: "0.82",
+    isActive: "true",
+    lastReviewDate: new Date("2025-11-01"),
+    isSeeded: "true",
     seedVersion: "1.0.0",
   },
-  {
-    code: "VR_DVH18",
-    name: "DVH 18.5mm (6-6.5-6)",
-    thicknessMm: 19,
-    pricePerSqm: 52.5,
-    description: "Mejor aislamiento, W/m²K más bajo",
-    uValue: 2.7,
-    isActive: true,
-    isSeeded: true,
-    seedVersion: "1.0.0",
-  },
-] as const;
 
-/**
- * Tipos de vidrio decorativos (tintados y reflectivos)
- *
- * Aplicación: Control solar, privacidad, estética
- * Precios en USD/m² - Mercado Panamá
- * Funcionalidad: Reducen paso de luz y calor
- *
- * Nota: Espesores redondeados al entero más cercano
- * - Laminado Gris 6.38mm → 6mm
- */
-const decorativeGlassTypes = [
+  // Saint-Gobain - Security
   {
-    code: "VR_GRAY6",
-    name: "Vidrio Gris 6mm",
-    thicknessMm: 6,
-    pricePerSqm: 22.0,
-    description: "+$9.5 USD/m² sobre claro",
-    isActive: true,
-    isSeeded: true,
+    name: "Saint-Gobain SGG Securit 10mm",
+    code: "SG-TEMP-10",
+    series: "Securit",
+    manufacturer: "Saint-Gobain",
+    glassSupplierId: null,
+    thicknessMm: "10",
+    pricePerSqm: "55.00",
+    uValue: "5.5",
+    description: "Vidrio templado de seguridad 10mm",
+    solarFactor: "0.83",
+    lightTransmission: "0.87",
+    isActive: "true",
+    lastReviewDate: new Date("2025-11-01"),
+    isSeeded: "true",
     seedVersion: "1.0.0",
   },
-  {
-    code: "VR_BRONZE6",
-    name: "Vidrio Bronce 6mm",
-    thicknessMm: 6,
-    pricePerSqm: 22.0,
-    description: "+$9.5 USD/m² sobre claro",
-    isActive: true,
-    isSeeded: true,
-    seedVersion: "1.0.0",
-  },
-  {
-    code: "VR_REFL6",
-    name: "Vidrio Reflectivo 6mm",
-    thicknessMm: 6,
-    pricePerSqm: 25.0,
-    description: "+$12.5 USD/m² sobre claro (más premium)",
-    isActive: true,
-    isSeeded: true,
-    seedVersion: "1.0.0",
-  },
-  {
-    code: "VR_LAMGRAY6",
-    name: "Vidrio Laminado Gris 6.38mm",
-    thicknessMm: 6,
-    pricePerSqm: 35.0,
-    description: "Combinado: laminado + tintado",
-    isActive: true,
-    isSeeded: true,
-    seedVersion: "1.0.0",
-  },
-] as const;
 
-/**
- * Todos los tipos de vidrio para Vitro Rojas
- * Total: 11 tipos (2 general + 3 security + 2 insulation + 4 decorative)
- */
-export const vitroRojasGlassTypes: Array<{
-  code: string;
-  name: string;
-  thicknessMm: number;
-  pricePerSqm: number;
-  description?: string;
-  uValue?: number;
-  isActive: boolean;
-  isSeeded: boolean;
-  seedVersion: string;
-}> = [
-  ...generalPurposeGlassTypes,
-  ...securityGlassTypes,
-  ...insulationGlassTypes,
-  ...decorativeGlassTypes,
+  // AGC Glass - Solar Control
+  {
+    name: "AGC Sunergy Clear 6mm",
+    code: "AGC-SUNERGY-6",
+    series: "Sunergy",
+    manufacturer: "AGC Glass",
+    glassSupplierId: null,
+    thicknessMm: "6",
+    pricePerSqm: "48.00",
+    uValue: "1.7",
+    description: "Vidrio con control solar de alta performance",
+    solarFactor: "0.38",
+    lightTransmission: "0.75",
+    isActive: "true",
+    lastReviewDate: new Date("2025-11-01"),
+    isSeeded: "true",
+    seedVersion: "1.0.0",
+  },
+  {
+    name: "AGC Stopray Vision 50 - 6mm",
+    code: "AGC-STOPRAY-6",
+    series: "Stopray",
+    manufacturer: "AGC Glass",
+    glassSupplierId: null,
+    thicknessMm: "6",
+    pricePerSqm: "52.00",
+    uValue: "1.5",
+    description: "Vidrio reflectivo con excelente control solar",
+    solarFactor: "0.32",
+    lightTransmission: "0.50",
+    isActive: "true",
+    lastReviewDate: new Date("2025-11-01"),
+    isSeeded: "true",
+    seedVersion: "1.0.0",
+  },
+
+  // Vitro Architectural Glass - Standard
+  {
+    name: "Vitro Claro 6mm",
+    code: "VITRO-CLR-6",
+    series: "Standard",
+    manufacturer: "Vitro Architectural Glass",
+    glassSupplierId: null,
+    thicknessMm: "6",
+    pricePerSqm: "22.00",
+    uValue: "5.8",
+    description: "Vidrio flotado claro estándar económico",
+    solarFactor: "0.87",
+    lightTransmission: "0.89",
+    isActive: "true",
+    lastReviewDate: new Date("2025-11-01"),
+    isSeeded: "true",
+    seedVersion: "1.0.0",
+  },
+  {
+    name: "Vitro Tintado Gris 6mm",
+    code: "VITRO-GREY-6",
+    series: "Tinted",
+    manufacturer: "Vitro Architectural Glass",
+    glassSupplierId: null,
+    thicknessMm: "6",
+    pricePerSqm: "28.00",
+    uValue: "5.7",
+    description: "Vidrio tintado gris para control solar",
+    solarFactor: "0.65",
+    lightTransmission: "0.45",
+    isActive: "true",
+    lastReviewDate: new Date("2025-11-01"),
+    isSeeded: "true",
+    seedVersion: "1.0.0",
+  },
+
+  // Cristales Centroamericanos - Local Stock
+  {
+    name: "Cristalca Float Claro 4mm",
+    code: "CRISTALCA-CLR-4",
+    series: "Basic",
+    manufacturer: "Cristales Centroamericanos",
+    glassSupplierId: null,
+    thicknessMm: "4",
+    pricePerSqm: "18.00",
+    uValue: "5.9",
+    description: "Vidrio flotado claro básico, stock local",
+    solarFactor: "0.88",
+    lightTransmission: "0.91",
+    isActive: "true",
+    lastReviewDate: new Date("2025-11-01"),
+    isSeeded: "true",
+    seedVersion: "1.0.0",
+  },
 ];

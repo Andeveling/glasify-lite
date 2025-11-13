@@ -1,94 +1,145 @@
 /**
- * Vitro Rojas - Glass Solutions
+ * Vitro Rojas - Glass Solutions Data
  *
- * Soluciones de vidrio para diferentes necesidades del mercado panameño
+ * Soluciones de vidrio disponibles en el catálogo de Vitro Rojas.
+ * Clasificación basada en casos de uso y necesidades del cliente.
  *
- * Nota: Las soluciones se vinculan con GlassTypes mediante el campo 'purpose'
- * (general, security, insulation, decorative)
+ * Categorías principales:
+ * - Seguridad
+ * - Eficiencia energética
+ * - Confort acústico
+ * - Privacidad
+ * - Diseño
  *
  * @version 1.0.0
- * @date 2025-01-21
+ * @date 2025-11-13
  */
 
-import type { NewGlassSolution } from "@/server/db/schemas/glass-solution.schema";
-
-/**
- * Soluciones de vidrio para Vitro Rojas
- *
- * Adaptadas al mercado panameño con terminología local
- */
-export const vitroRojasGlassSolutions: NewGlassSolution[] = [
+export const vitroRojasGlassSolutions = [
+  // Seguridad
   {
     key: "security",
-    slug: "security",
-    name: "Security Glass",
-    nameEs: "Vidrio de Seguridad",
+    name: "Security",
+    nameEs: "Seguridad",
     description:
-      "Vidrio laminado y templado para mayor seguridad contra impactos y robos.",
-    icon: "Shield",
+      "Glass solutions for protection against break-ins and accidents",
+    icon: "shield",
     sortOrder: 1,
     isActive: true,
     isSeeded: true,
     seedVersion: "1.0.0",
   },
   {
-    key: "thermal_insulation",
-    slug: "thermal-insulation",
-    name: "Thermal Insulation Glass",
-    nameEs: "Vidrio de Aislamiento Térmico",
+    key: "hurricane_impact",
+    name: "Hurricane Impact",
+    nameEs: "Impacto de Huracán",
     description:
-      "DVH (Doble Vidrio Hermético) para aislamiento térmico y ahorro energético.",
-    icon: "Snowflake",
+      "Reinforced glass designed to withstand hurricane-force winds and debris",
+    icon: "wind",
     sortOrder: 2,
     isActive: true,
     isSeeded: true,
     seedVersion: "1.0.0",
   },
-  {
-    key: "decorative",
-    slug: "decorative",
-    name: "Decorative Glass",
-    nameEs: "Vidrio Decorativo",
-    description: "Vidrios tintados y reflectivos para privacidad y estética.",
-    icon: "Sparkles",
-    sortOrder: 3,
-    isActive: true,
-    isSeeded: true,
-    seedVersion: "1.0.0",
-  },
-  {
-    key: "general",
-    slug: "general",
-    name: "General Purpose Glass",
-    nameEs: "Vidrio General",
-    description: "Vidrio claro simple para uso residencial estándar.",
-    icon: "Home",
-    sortOrder: 4,
-    isActive: true,
-    isSeeded: true,
-    seedVersion: "1.0.0",
-  },
-  {
-    key: "sound_insulation",
-    slug: "sound-insulation",
-    name: "Sound Insulation Glass",
-    nameEs: "Vidrio de Aislamiento Acústico",
-    description: "Vidrio laminado acústico para reducción de ruido exterior.",
-    icon: "Volume2",
-    sortOrder: 5,
-    isActive: true,
-    isSeeded: true,
-    seedVersion: "1.0.0",
-  },
+
+  // Eficiencia Energética
   {
     key: "energy_efficiency",
-    slug: "energy-efficiency",
-    name: "Energy Efficiency Glass",
-    nameEs: "Vidrio de Eficiencia Energética",
+    name: "Energy Efficiency",
+    nameEs: "Eficiencia Energética",
     description:
-      "Vidrio de baja emisividad (Low-E) para control solar y térmico.",
-    icon: "Zap",
-    sortOrder: 6,
+      "Glass solutions to reduce energy costs through thermal insulation",
+    icon: "zap",
+    sortOrder: 10,
+    isActive: true,
+    isSeeded: true,
+    seedVersion: "1.0.0",
+  },
+  {
+    key: "solar_control",
+    name: "Solar Control",
+    nameEs: "Control Solar",
+    description:
+      "Reduces heat gain from sunlight while maintaining natural light",
+    icon: "sun",
+    sortOrder: 11,
+    isActive: true,
+    isSeeded: true,
+    seedVersion: "1.0.0",
+  },
+
+  // Confort Acústico
+  {
+    key: "noise_reduction",
+    name: "Noise Reduction",
+    nameEs: "Reducción de Ruido",
+    description: "Acoustic glass solutions for sound insulation",
+    icon: "volume-x",
+    sortOrder: 20,
+    isActive: true,
+    isSeeded: true,
+    seedVersion: "1.0.0",
+  },
+
+  // Privacidad
+  {
+    key: "privacy",
+    name: "Privacy",
+    nameEs: "Privacidad",
+    description:
+      "Glass solutions that obscure vision while allowing light transmission",
+    icon: "eye-off",
+    sortOrder: 30,
+    isActive: true,
+    isSeeded: true,
+    seedVersion: "1.0.0",
+  },
+
+  // Diseño y Estética
+  {
+    key: "aesthetic",
+    name: "Aesthetic",
+    nameEs: "Estética",
+    description: "Decorative and design-focused glass solutions",
+    icon: "palette",
+    sortOrder: 40,
+    isActive: true,
+    isSeeded: true,
+    seedVersion: "1.0.0",
+  },
+  {
+    key: "natural_light",
+    name: "Natural Light",
+    nameEs: "Luz Natural",
+    description: "Maximize natural daylight while controlling glare and heat",
+    icon: "sun",
+    sortOrder: 41,
+    isActive: true,
+    isSeeded: true,
+    seedVersion: "1.0.0",
+  },
+
+  // Aplicaciones Especiales
+  {
+    key: "coastal_protection",
+    name: "Coastal Protection",
+    nameEs: "Protección Costera",
+    description:
+      "Corrosion-resistant glass for coastal and marine environments",
+    icon: "anchor",
+    sortOrder: 50,
+    isActive: true,
+    isSeeded: true,
+    seedVersion: "1.0.0",
+  },
+  {
+    key: "uv_protection",
+    name: "UV Protection",
+    nameEs: "Protección UV",
+    description:
+      "Blocks harmful UV radiation to protect interiors and occupants",
+    icon: "shield",
+    sortOrder: 51,
     isActive: true,
     isSeeded: true,
     seedVersion: "1.0.0",

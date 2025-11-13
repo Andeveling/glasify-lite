@@ -1,38 +1,57 @@
 /**
- * Vitro Rojas - Profile Suppliers
+ * Vitro Rojas - Profile Suppliers Data
  *
- * Data source: Extralum Panama documentation
- * - Sistema Corredizo VC Panamá
- * - Sistema Abatible Europa
- * - Sistema Corredizo Europa Clásica
+ * Proveedores de perfiles de aluminio para ventanas y puertas.
+ * Incluye los principales fabricantes que trabajan con Vitro Rojas en Panamá.
+ *
+ * Material Types:
+ * - ALUMINUM: Perfiles de aluminio (más común)
+ * - PVC: Perfiles de PVC
+ * - WOOD: Perfiles de madera
+ * - MIXED: Sistemas mixtos (ej. aluminio-madera)
  *
  * @version 1.0.0
- * @date 2025-01-21
+ * @date 2025-11-13
  */
 
-import type { NewProfileSupplier } from "@/server/db/schemas/profile-supplier.schema";
-
-/**
- * Extralum - Único proveedor de perfiles de aluminio para Vitro Rojas
- *
- * Productos:
- * - Serie VC Panamá (espesores 1.10-1.52mm)
- * - Serie Europa Clásica (espesores 1.10-1.70mm)
- * - Serie Europa Abatible (espesores 1.10-1.50mm)
- */
-export const vitroRojasProfileSuppliers: NewProfileSupplier[] = [
+export const vitroRojasProfileSuppliers = [
   {
-    name: "Aluminios Técnicos S.A.",
-    materialType: "ALUMINUM",
-    isActive: "true",
+    name: "Aluminios Panamá S.A.",
+    materialType: "ALUMINUM" as const,
+    isActive: true,
     notes:
-      "Distribuidor de perfiles de aluminio en Panamá. Series: VC Panamá (corredizo económico), Europa Clásica (corredizo premium 3 vías), Europa Abatible (apertura interna/externa con corte 45°).",
+      "Proveedor principal de perfiles de aluminio. Distribuidor autorizado de sistemas europeos.",
   },
   {
-    name: "PVC Solutions Panamá",
-    materialType: "PVC",
-    isActive: "true",
+    name: "Perfiles del Istmo",
+    materialType: "ALUMINUM" as const,
+    isActive: true,
     notes:
-      "Proveedor de perfiles de PVC para sistemas de ventanas. Especializado en sistemas corredizos y abatibles con aislamiento térmico mejorado.",
+      "Especializado en sistemas de aluminio arquitectónico. Productos de alta gama.",
+  },
+  {
+    name: "Alumicorp Panamá",
+    materialType: "ALUMINUM" as const,
+    isActive: true,
+    notes: "Perfiles de aluminio estándar y económicos. Buen stock local.",
+  },
+  {
+    name: "Ventanas PVC Premium",
+    materialType: "PVC" as const,
+    isActive: true,
+    notes: "Especialista en sistemas de PVC para clima tropical.",
+  },
+  {
+    name: "Maderas Finas del Darién",
+    materialType: "WOOD" as const,
+    isActive: false,
+    notes:
+      "Perfiles de madera tropical. Uso limitado por mantenimiento en clima húmedo.",
+  },
+  {
+    name: "Sistemas Mixtos Elite",
+    materialType: "MIXED" as const,
+    isActive: true,
+    notes: "Sistemas híbridos aluminio-madera para proyectos premium.",
   },
 ];

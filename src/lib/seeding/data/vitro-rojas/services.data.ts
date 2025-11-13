@@ -1,62 +1,150 @@
 /**
- * Vitro Rojas - Services
+ * Vitro Rojas - Services Data
  *
- * Servicios típicos de instalación y mantenimiento de ventanas/puertas
- * en el mercado panameño.
+ * Servicios adicionales ofrecidos por Vitro Rojas.
+ * Incluye instalación, transporte, y servicios especializados.
  *
- * Schema: service.schema.ts
- * - name: string (max 255)
- * - type: enum ("area" | "perimeter" | "fixed")
- * - unit: enum ("unit" | "sqm" | "ml")
- * - rate: decimal (precision 12, scale 4) - USD per unit/sqm/ml
- * - minimumBillingUnit: decimal optional
- * - isActive: boolean (stored as "true"/"false" string)
+ * Service Types:
+ * - area: Cobro por área (m²) - ej. instalación
+ * - perimeter: Cobro por perímetro (ml) - ej. sellado
+ * - fixed: Cobro fijo por unidad - ej. transporte
  *
- * Categorías:
- * - Instalación: Servicios medidos por área (m²)
- * - Sellado: Servicios medidos por perímetro (ml)
- * - Servicios fijos: Tarifa única por unidad
+ * Units:
+ * - sqm: Metro cuadrado (m²)
+ * - ml: Metro lineal
+ * - unit: Unidad
+ *
+ * Notas:
+ * - rate es number en preset pero se convierte a string en seeder
+ * - minimumBillingUnit define cantidad mínima facturable
+ * - isActive controla visibilidad en cotizaciones
  *
  * @version 1.0.0
- * @date 2025-11-09
+ * @date 2025-11-13
  */
 
-import type { NewService } from "@/server/db/schemas/service.schema";
+export const vitroRojasServices = [
+  // Instalación
+  {
+    name: "Instalación Estándar",
+    type: "area" as const,
+    unit: "sqm" as const,
+    rate: 15.0,
+    minimumBillingUnit: 2,
+    isActive: true,
+  },
+  {
+    name: "Instalación Premium (Altura > 3m)",
+    type: "area" as const,
+    unit: "sqm" as const,
+    rate: 25.0,
+    minimumBillingUnit: 2,
+    isActive: true,
+  },
+  {
+    name: "Instalación Urgente (24h)",
+    type: "area" as const,
+    unit: "sqm" as const,
+    rate: 35.0,
+    minimumBillingUnit: 2,
+    isActive: true,
+  },
 
-export const vitroRojasServices: NewService[] = [
+  // Sellado y Acabados
   {
-    name: "Instalación",
-    rate: "15", // USD/m² - stored as string in decimal field
-    type: "area",
-    unit: "sqm",
-    isActive: "true",
+    name: "Sellado con Silicón",
+    type: "perimeter" as const,
+    unit: "ml" as const,
+    rate: 3.5,
+    minimumBillingUnit: 5,
+    isActive: true,
   },
   {
-    name: "Sellado Perimetral",
-    rate: "3.5", // USD/ml
-    type: "perimeter",
-    unit: "ml",
-    isActive: "true",
+    name: "Sellado Estructural",
+    type: "perimeter" as const,
+    unit: "ml" as const,
+    rate: 6.0,
+    minimumBillingUnit: 5,
+    isActive: true,
+  },
+
+  // Transporte
+  {
+    name: "Transporte Local (Ciudad de Panamá)",
+    type: "fixed" as const,
+    unit: "unit" as const,
+    rate: 50.0,
+    minimumBillingUnit: 1,
+    isActive: true,
   },
   {
-    name: "Desmonte de Ventana",
-    rate: "25", // USD/unidad
-    type: "fixed",
-    unit: "unit",
-    isActive: "true",
+    name: "Transporte Interior (Provincias)",
+    type: "fixed" as const,
+    unit: "unit" as const,
+    rate: 120.0,
+    minimumBillingUnit: 1,
+    isActive: true,
+  },
+
+  // Servicios Especiales
+  {
+    name: "Remoción de Ventana Existente",
+    type: "fixed" as const,
+    unit: "unit" as const,
+    rate: 35.0,
+    minimumBillingUnit: 1,
+    isActive: true,
   },
   {
-    name: "Servicio de Reposición",
-    rate: "35", // USD/unidad
-    type: "fixed",
-    unit: "unit",
-    isActive: "true",
+    name: "Tratamiento Marco Existente",
+    type: "perimeter" as const,
+    unit: "ml" as const,
+    rate: 8.0,
+    minimumBillingUnit: 3,
+    isActive: true,
   },
   {
-    name: "Protección para Obra",
-    rate: "2.5", // USD/m²
-    type: "area",
-    unit: "sqm",
-    isActive: "true",
+    name: "Templado de Vidrio (Servicio Externo)",
+    type: "area" as const,
+    unit: "sqm" as const,
+    rate: 22.0,
+    minimumBillingUnit: 1,
+    isActive: true,
+  },
+  {
+    name: "Laminado de Vidrio (Servicio Externo)",
+    type: "area" as const,
+    unit: "sqm" as const,
+    rate: 28.0,
+    minimumBillingUnit: 1,
+    isActive: true,
+  },
+
+  // Mantenimiento
+  {
+    name: "Mantenimiento Preventivo Anual",
+    type: "fixed" as const,
+    unit: "unit" as const,
+    rate: 45.0,
+    minimumBillingUnit: 1,
+    isActive: true,
+  },
+  {
+    name: "Reparación de Herrajes",
+    type: "fixed" as const,
+    unit: "unit" as const,
+    rate: 30.0,
+    minimumBillingUnit: 1,
+    isActive: true,
+  },
+
+  // Servicios Desactivados (ejemplo)
+  {
+    name: "Instalación Experimental (Beta)",
+    type: "area" as const,
+    unit: "sqm" as const,
+    rate: 40.0,
+    minimumBillingUnit: 5,
+    isActive: false,
   },
 ];
