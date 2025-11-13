@@ -136,6 +136,8 @@ function generateServiceName(
       return randomElement(perimeterServices);
     case "fixed":
       return randomElement(fixedServices);
+    default:
+      return randomElement(fixedServices);
   }
 }
 
@@ -151,6 +153,8 @@ function getUnitForType(
     case "perimeter":
       return "ml";
     case "fixed":
+      return "unit";
+    default:
       return "unit";
   }
 }
@@ -170,6 +174,9 @@ function generateRate(type: (typeof SERVICE_TYPE_VALUES)[number]): string {
       value = randomInt(MIN_PERIMETER_RATE, MAX_PERIMETER_RATE);
       break;
     case "fixed":
+      value = randomInt(MIN_FIXED_RATE, MAX_FIXED_RATE);
+      break;
+    default:
       value = randomInt(MIN_FIXED_RATE, MAX_FIXED_RATE);
       break;
   }
