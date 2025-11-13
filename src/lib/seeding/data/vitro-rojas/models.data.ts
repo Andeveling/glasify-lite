@@ -19,12 +19,12 @@
  */
 
 export const vitroRojasModels = [
-  // Ventanas Corredizas - Aluminios Panamá
+  // Sliding Windows - Most popular category
   {
-    profileSupplierId: null, // Se asignará después
-    name: "Ventana Corrediza 2 Hojas - Aluminio",
-    imageUrl: "/models/ventana-corrediza-2h.jpg",
-    status: "active" as const,
+    profileSupplierId: null, // Will be resolved to "Aluminios Panamá" in preset
+    name: "Ventana Corrediza 2 Hojas",
+    imageUrl: "/models/sliding-window-2h.jpg",
+    status: "published" as const,
     minWidthMm: "600",
     maxWidthMm: "2000",
     minHeightMm: "600",
@@ -35,7 +35,7 @@ export const vitroRojasModels = [
     accessoryPrice: "25.00",
     glassDiscountWidthMm: "50",
     glassDiscountHeightMm: "50",
-    compatibleGlassTypeIds: [], // Se asignará después
+    compatibleGlassTypeIds: [],
     profitMarginPercentage: "35.00",
     lastCostReviewDate: new Date("2025-11-01"),
     costNotes: "Incluye herrajes estándar y juntas de goma",
@@ -44,7 +44,7 @@ export const vitroRojasModels = [
     profileSupplierId: null,
     name: "Ventana Corrediza 3 Hojas - Aluminio",
     imageUrl: "/models/ventana-corrediza-3h.jpg",
-    status: "active" as const,
+    status: "published" as const,
     minWidthMm: "900",
     maxWidthMm: "3000",
     minHeightMm: "600",
@@ -66,7 +66,7 @@ export const vitroRojasModels = [
     profileSupplierId: null,
     name: "Ventana Proyectante 1 Hoja - Premium",
     imageUrl: "/models/ventana-proyectante-1h.jpg",
-    status: "active" as const,
+    status: "published" as const,
     minWidthMm: "400",
     maxWidthMm: "1200",
     minHeightMm: "400",
@@ -88,7 +88,7 @@ export const vitroRojasModels = [
     profileSupplierId: null,
     name: "Ventana Fija - Económica",
     imageUrl: "/models/ventana-fija.jpg",
-    status: "active" as const,
+    status: "published" as const,
     minWidthMm: "300",
     maxWidthMm: "2500",
     minHeightMm: "300",
@@ -110,7 +110,7 @@ export const vitroRojasModels = [
     profileSupplierId: null,
     name: "Puerta Corrediza 2 Hojas - Aluminio",
     imageUrl: "/models/puerta-corrediza-2h.jpg",
-    status: "active" as const,
+    status: "published" as const,
     minWidthMm: "1400",
     maxWidthMm: "2400",
     minHeightMm: "2000",
@@ -131,7 +131,7 @@ export const vitroRojasModels = [
     profileSupplierId: null,
     name: "Puerta Batiente 1 Hoja - Aluminio",
     imageUrl: "/models/puerta-batiente-1h.jpg",
-    status: "active" as const,
+    status: "published" as const,
     minWidthMm: "700",
     maxWidthMm: "1000",
     minHeightMm: "2000",
@@ -153,7 +153,7 @@ export const vitroRojasModels = [
     profileSupplierId: null,
     name: "Ventana Corrediza 2 Hojas - PVC",
     imageUrl: "/models/ventana-pvc-2h.jpg",
-    status: "active" as const,
+    status: "published" as const,
     minWidthMm: "600",
     maxWidthMm: "1800",
     minHeightMm: "600",
@@ -175,7 +175,7 @@ export const vitroRojasModels = [
     profileSupplierId: null,
     name: "Ventana Oscilobatiente - Aluminio-Madera",
     imageUrl: "/models/ventana-oscilobatiente-premium.jpg",
-    status: "active" as const,
+    status: "published" as const,
     minWidthMm: "500",
     maxWidthMm: "1400",
     minHeightMm: "600",
