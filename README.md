@@ -1,9 +1,42 @@
 # Glasify Lite - Glass Quotation Management System
 
 **Project Type**: Full-stack glass quotation management application  
-**Tech Stack**: Next.js 15 (App Router) + tRPC + Prisma + PostgreSQL  
+**Tech Stack**: Next.js 16 (App Router) + tRPC + Drizzle ORM + PostgreSQL (Supabase)  
 **Status**: MVP with RBAC implementation in progress  
-**Last Updated**: 15 de octubre de 2025
+**Last Updated**: 10 de noviembre de 2025
+
+---
+
+## 🚀 Quick Start with Supabase
+
+### Option 1: Automated Setup (Recommended)
+
+```bash
+# 1. Install dependencies
+pnpm install
+
+# 2. Configure Supabase (interactive)
+pnpm supabase:setup-envs
+
+# 3. Sync database schema
+pnpm db:push
+
+# 4. Seed initial data
+pnpm seed:minimal
+
+# 5. Start development
+pnpm dev
+```
+
+### Option 2: Manual Setup
+
+1. Create project at [supabase.com](https://supabase.com)
+2. Get connection string: **Settings → Database → URI**
+3. Copy `.env.local.template` to `.env.local`
+4. Paste your connection string
+5. Run `pnpm db:push && pnpm seed:minimal && pnpm dev`
+
+📖 **Full Guide**: [docs/supabase-setup.md](./docs/supabase-setup.md)
 
 ---
 
@@ -56,29 +89,30 @@ Glasify Lite is a pre-sale on-demand quotation tool designed for glass and windo
 ## Tech Stack
 
 ### Core Framework
-- **Next.js 15.2.3** - App Router with React Server Components 19.0.0
-- **TypeScript 5.8.2** - Strict mode with ES2022 target
+- **Next.js 16.0.1** - App Router with React Server Components 19.2.0
+- **TypeScript 5.9.3** - Strict mode with ES2022 target
 - **Node.js** - Runtime with ES Modules
 
 ### Backend
-- **tRPC 11.0.0** - Type-safe API layer with kebab-case procedures
-- **Prisma 6.16.2** - PostgreSQL ORM with migrations
-- **NextAuth.js 5.0.0-beta.25** - Authentication with Google OAuth + RBAC
-- **Zod 4.1.1** - End-to-end schema validation
+- **tRPC 11.6.0** - Type-safe API layer with kebab-case procedures
+- **Drizzle ORM 0.44.7** - PostgreSQL ORM with migrations
+- **Better Auth 1.2.7** - Authentication with OAuth + RBAC
+- **Zod 4.1.12** - End-to-end schema validation
+- **Supabase** - PostgreSQL database hosting (transaction pooling)
 
 ### Frontend
-- **React 19.0.0** - Server Components first architecture
-- **TanStack Query 5.69.0** - Data fetching and caching
+- **React 19.2.0** - Server Components first architecture
+- **TanStack Query 5.90.2** - Data fetching and caching
 - **Shadcn/ui + Radix UI** - Accessible component library
-- **TailwindCSS 4.0.15** - Utility-first styling
-- **React Hook Form 7.63.0** - Form state management
+- **TailwindCSS 4.1.14** - Utility-first styling
+- **React Hook Form 7.64.0** - Form state management
 
 ### Development Tools
-- **Ultracite 5.4.4 + Biome 2.2.4** - Linting and formatting
-- **Vitest 3.2.4** - Unit and integration tests (jsdom)
-- **Playwright 1.55.1** - End-to-end tests
-- **Winston 3.17.0** - Server-side logging (middleware, tRPC only)
-- **Lefthook 1.13.4** - Git hooks for code quality
+- **Ultracite 6.0.4 + Biome 2.3.0** - Linting and formatting
+- **Vitest 4.0.4** - Unit and integration tests (jsdom)
+- **Playwright 1.56.0** - End-to-end tests
+- **Winston 3.18.3** - Server-side logging (middleware, tRPC only)
+- **Lefthook 2.0.0** - Git hooks for code quality
 
 ---
 
