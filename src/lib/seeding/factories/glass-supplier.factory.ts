@@ -1,10 +1,51 @@
+// Presets y diccionarios para suppliers
+export const GLASS_SUPPLIER_PRESETS = [
+  "Vidriera Nacional S.A.",
+  "Guardian Glass Panamá",
+  "Saint-Gobain",
+  "Pilkington",
+  "Vitro",
+  "AGC Glass",
+  "Cristalería Moderna",
+  "Vidrios Lux",
+  "Vidrios del Pacífico",
+  "Vidrios y Soluciones",
+];
+
+export const SUPPLIER_CODES: Record<string, string> = {
+  "Vidriera Nacional S.A.": "VNAT",
+  "Guardian Glass Panamá": "GGPA",
+  "Saint-Gobain": "SGOB",
+  Pilkington: "PILK",
+  Vitro: "VITR",
+  "AGC Glass": "AGCG",
+  "Cristalería Moderna": "CRMO",
+  "Vidrios Lux": "VLUX",
+  "Vidrios del Pacífico": "VDPA",
+  "Vidrios y Soluciones": "VYSO",
+};
+
+export const SUPPLIER_COUNTRIES: Record<string, string> = {
+  "Vidriera Nacional S.A.": "Panamá",
+  "Guardian Glass Panamá": "Panamá",
+  "Saint-Gobain": "Francia",
+  Pilkington: "Reino Unido",
+  Vitro: "México",
+  "AGC Glass": "Japón",
+  "Cristalería Moderna": "Colombia",
+  "Vidrios Lux": "Colombia",
+  "Vidrios del Pacífico": "Chile",
+  "Vidrios y Soluciones": "Argentina",
+};
+
 /**
  * @file GlassSupplier Factory
  * @description Generates type-safe test data for GlassSupplier seeding
  * Pure functions with no ORM dependencies - generates POJOs only
  */
 
-import type { NewGlassSupplier } from "@/server/db/schema";
+import type { NewGlassSupplier } from "@/server/db/schemas/glass-supplier.schema";
+import { glassSupplierInsertSchema } from "@/server/db/schemas/glass-supplier.schema";
 import type { FactoryOptions, FactoryResult } from "../types/base.types";
 import { createSuccessResult } from "../utils/validation.utils";
 
@@ -184,6 +225,7 @@ export function generateGlassSupplier(
     contactPhone: generatePhone(),
     isActive: randomBoolean(ACTIVE_PROBABILITY) ? "true" : "false",
     notes: generateNotes(),
+    tenantConfigId: "1", // default for seed
   };
 
   const data = {
@@ -193,7 +235,7 @@ export function generateGlassSupplier(
 
   // Validate before returning
   if (!options?.skipValidation) {
-    const parsed = glassSupplierSchema.safeParse(data);
+    const parsed = glassSupplierInsertSchema.safeParse(data);
     if (!parsed.success) {
       return {
         success: false,

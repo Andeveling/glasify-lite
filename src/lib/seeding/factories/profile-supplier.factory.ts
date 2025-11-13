@@ -1,9 +1,28 @@
+// Presets de suppliers reales
+export const ALL_SUPPLIERS: NewProfileSupplier[] = [
+  { name: "Rehau", materialType: "PVC", isActive: "true" },
+  { name: "Deceuninck", materialType: "PVC", isActive: "true" },
+  { name: "Azembla", materialType: "PVC", isActive: "true" },
+  {
+    name: "Aluminios Técnicos S.A.",
+    materialType: "ALUMINUM",
+    isActive: "true",
+  },
+  { name: "PVC Solutions Panamá", materialType: "PVC", isActive: "true" },
+  { name: "Perfiles Elite", materialType: "ALUMINUM", isActive: "true" },
+  { name: "Sistemas Modernos", materialType: "MIXED", isActive: "true" },
+  { name: "Marcos y Ventanas", materialType: "WOOD", isActive: "true" },
+];
+
 /**
  * @file ProfileSupplier Factory
  * @description Generates type-safe test data for ProfileSupplier seeding
  * Pure functions with no ORM dependencies - generates POJOs only
  */
 
+import { MATERIAL_TYPE_VALUES } from "@/server/db/schemas/enums.schema";
+import type { NewProfileSupplier } from "@/server/db/schemas/profile-supplier.schema";
+import { profileSupplierInsertSchema } from "@/server/db/schemas/profile-supplier.schema";
 import type { FactoryOptions, FactoryResult } from "../types/base.types";
 import { createSuccessResult } from "../utils/validation.utils";
 
@@ -96,15 +115,15 @@ function generateNotes(): string | null {
  * ```
  */
 export function generateProfileSupplier(
-  options?: FactoryOptions<ProfileSupplierCreateInput>
-): FactoryResult<ProfileSupplierCreateInput> {
-  const materialTypes = MaterialTypeEnum.options;
+  options?: FactoryOptions<NewProfileSupplier>
+): FactoryResult<NewProfileSupplier> {
+  const materialTypes = MATERIAL_TYPE_VALUES;
 
-  const defaults: ProfileSupplierCreateInput = {
+  const defaults: NewProfileSupplier = {
     name: generateSupplierName(),
     materialType: randomElement(materialTypes),
-    isActive: randomBoolean(ACTIVE_PROBABILITY),
-    notes: generateNotes(),
+    isActive: randomBoolean(ACTIVE_PROBABILITY) ? "true" : "false",
+    notes: generateNotes() ?? undefined,
   };
 
   const data = {
@@ -114,7 +133,7 @@ export function generateProfileSupplier(
 
   // Validate before returning
   if (!options?.skipValidation) {
-    const parsed = profileSupplierSchema.safeParse(data);
+    const parsed = profileSupplierInsertSchema.safeParse(data);
     if (!parsed.success) {
       return {
         success: false,
@@ -151,8 +170,8 @@ export function generateProfileSupplier(
  */
 export function generateProfileSuppliers(
   count: number,
-  options?: FactoryOptions<ProfileSupplierCreateInput>
-): FactoryResult<ProfileSupplierCreateInput>[] {
+  options?: FactoryOptions<NewProfileSupplier>
+): FactoryResult<NewProfileSupplier>[] {
   return Array.from({ length: count }, () => generateProfileSupplier(options));
 }
 
@@ -172,16 +191,16 @@ export function generateProfileSuppliers(
  */
 export function generateProfileSupplierBatch(
   count: number,
-  options?: FactoryOptions<ProfileSupplierCreateInput>
-): ProfileSupplierCreateInput[] {
+  options?: FactoryOptions<NewProfileSupplier>
+): NewProfileSupplier[] {
   const results = generateProfileSuppliers(count, options);
   const validResults = results
     .filter(
       (
         r
-      ): r is FactoryResult<ProfileSupplierCreateInput> & {
+      ): r is FactoryResult<NewProfileSupplier> & {
         success: true;
-        data: ProfileSupplierCreateInput;
+        data: NewProfileSupplier;
       } => r.success && r.data !== undefined
     )
     .map((r) => r.data);
@@ -204,8 +223,8 @@ export function generateProfileSupplierBatch(
  */
 export function generateProfileSupplierWithMaterial(
   materialType: "PVC" | "ALUMINUM" | "WOOD" | "MIXED",
-  options?: FactoryOptions<ProfileSupplierCreateInput>
-): FactoryResult<ProfileSupplierCreateInput> {
+  options?: FactoryOptions<NewProfileSupplier>
+): FactoryResult<NewProfileSupplier> {
   return generateProfileSupplier({
     ...options,
     overrides: {
@@ -230,8 +249,8 @@ export function generateProfileSupplierWithMaterial(
  */
 export function generateProfileSupplierFromPreset(
   presetIndex?: number,
-  options?: FactoryOptions<ProfileSupplierCreateInput>
-): FactoryResult<ProfileSupplierCreateInput> {
+  options?: FactoryOptions<NewProfileSupplier>
+): FactoryResult<NewProfileSupplier> {
   const index = presetIndex ?? randomInt(0, ALL_SUPPLIERS.length - 1);
   const preset = ALL_SUPPLIERS[index];
 
@@ -256,13 +275,13 @@ export function generateProfileSupplierFromPreset(
  * ```
  */
 export function generateInactiveProfileSupplier(
-  options?: FactoryOptions<ProfileSupplierCreateInput>
-): FactoryResult<ProfileSupplierCreateInput> {
+  options?: FactoryOptions<NewProfileSupplier>
+): FactoryResult<NewProfileSupplier> {
   return generateProfileSupplier({
     ...options,
     overrides: {
       ...options?.overrides,
-      isActive: false,
+      isActive: "false",
     },
   });
 }
@@ -281,8 +300,8 @@ export function generateInactiveProfileSupplier(
  */
 export function generateProfileSupplierWithName(
   name: string,
-  options?: FactoryOptions<ProfileSupplierCreateInput>
-): FactoryResult<ProfileSupplierCreateInput> {
+  options?: FactoryOptions<NewProfileSupplier>
+): FactoryResult<NewProfileSupplier> {
   return generateProfileSupplier({
     ...options,
     overrides: {
@@ -306,8 +325,8 @@ export function generateProfileSupplierWithName(
  */
 export function generateProfileSupplierWithNotes(
   notes: string,
-  options?: FactoryOptions<ProfileSupplierCreateInput>
-): FactoryResult<ProfileSupplierCreateInput> {
+  options?: FactoryOptions<NewProfileSupplier>
+): FactoryResult<NewProfileSupplier> {
   return generateProfileSupplier({
     ...options,
     overrides: {

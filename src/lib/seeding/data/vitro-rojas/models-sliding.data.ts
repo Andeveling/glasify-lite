@@ -20,8 +20,7 @@
  * @date 2025-01-21
  */
 
-import type { ModelInput } from "../../factories/model.factory";
-
+import type { NewModel } from "@/server/db/schemas/model.schema";
 /**
  * Sistema Corredizo VC Panamá
  *
@@ -42,7 +41,7 @@ import type { ModelInput } from "../../factories/model.factory";
  * - Ancho fijo (O): 250-1600mm
  * - Alto fijo (O): 272-1850mm
  */
-export const vcPanama2Panos: ModelInput = {
+export const vcPanama2Panos: NewModel = {
   accessoryPrice: 45, // USD - Rodines, cerraduras, felpas
   basePrice: 130, // USD/m²
   compatibleGlassTypeIds: ["placeholder"], // Se populará automáticamente con todos los tipos de vidrio
@@ -67,7 +66,7 @@ export const vcPanama2Panos: ModelInput = {
  *
  * Configuración: 2 paños móviles + 1 paño fijo central
  */
-export const vcPanama3Panos: ModelInput = {
+export const vcPanama3Panos: NewModel = {
   accessoryPrice: 65, // USD - Más rodines y cerraduras
   basePrice: 150, // USD/m²
   compatibleGlassTypeIds: ["placeholder"],
@@ -91,7 +90,7 @@ export const vcPanama3Panos: ModelInput = {
  *
  * Configuración: 2 paños móviles centrales + 2 paños fijos laterales
  */
-export const vcPanama4Panos: ModelInput = {
+export const vcPanama4Panos: NewModel = {
   accessoryPrice: 85, // USD - Mayor cantidad de accesorios
   basePrice: 165, // USD/m²
   compatibleGlassTypeIds: ["placeholder"],
@@ -129,7 +128,7 @@ export const vcPanama4Panos: ModelInput = {
  * - Ancho fijo (O): 402-1600mm
  * - Alto fijo (O): 320-2800mm
  */
-export const europaClasica2Panos: ModelInput = {
+export const europaClasica2Panos: NewModel = {
   accessoryPrice: 55, // USD - Accesorios premium
   basePrice: 140, // USD/m² (premium sobre VC)
   compatibleGlassTypeIds: ["placeholder"],
@@ -152,7 +151,7 @@ export const europaClasica2Panos: ModelInput = {
 /**
  * Europa Clásica 3 Paños (XOX)
  */
-export const europaClasica3Panos: ModelInput = {
+export const europaClasica3Panos: NewModel = {
   accessoryPrice: 75, // USD
   basePrice: 160, // USD/m²
   compatibleGlassTypeIds: ["placeholder"],
@@ -174,7 +173,7 @@ export const europaClasica3Panos: ModelInput = {
 /**
  * Europa Clásica 4 Paños (OXXO)
  */
-export const europaClasica4Panos: ModelInput = {
+export const europaClasica4Panos: NewModel = {
   accessoryPrice: 95, // USD
   basePrice: 175, // USD/m²
   compatibleGlassTypeIds: ["placeholder"],
@@ -197,7 +196,7 @@ export const europaClasica4Panos: ModelInput = {
  * Todos los modelos de sistemas corredizos
  * Total: 6 modelos (3 VC Panamá + 3 Europa Clásica)
  */
-export const vitroRojasSlidingModels: ModelInput[] = [
+export const vitroRojasSlidingModels: NewModel[] = [
   vcPanama2Panos,
   vcPanama3Panos,
   vcPanama4Panos,
