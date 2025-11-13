@@ -2,6 +2,7 @@ import {
   decimal,
   foreignKey,
   index,
+  integer,
   pgTable,
   text,
   timestamp,
@@ -33,10 +34,10 @@ export const models = pgTable(
     status: modelStatusEnum("status")
       .notNull()
       .$defaultFn(() => "draft"),
-    minWidthMm: text("minWidthMm").notNull(),
-    maxWidthMm: text("maxWidthMm").notNull(),
-    minHeightMm: text("minHeightMm").notNull(),
-    maxHeightMm: text("maxHeightMm").notNull(),
+    minWidthMm: integer("minWidthMm").notNull(),
+    maxWidthMm: integer("maxWidthMm").notNull(),
+    minHeightMm: integer("minHeightMm").notNull(),
+    maxHeightMm: integer("maxHeightMm").notNull(),
     basePrice: decimal("basePrice", { precision: 12, scale: 4 }).notNull(),
     costPerMmWidth: decimal("costPerMmWidth", {
       precision: 12,
@@ -47,12 +48,12 @@ export const models = pgTable(
       scale: 4,
     }).notNull(),
     accessoryPrice: decimal("accessoryPrice", { precision: 12, scale: 4 }),
-    glassDiscountWidthMm: text("glassDiscountWidthMm")
+    glassDiscountWidthMm: integer("glassDiscountWidthMm")
       .notNull()
-      .$defaultFn(() => "0"),
-    glassDiscountHeightMm: text("glassDiscountHeightMm")
+      .$defaultFn(() => 0),
+    glassDiscountHeightMm: integer("glassDiscountHeightMm")
       .notNull()
-      .$defaultFn(() => "0"),
+      .$defaultFn(() => 0),
     compatibleGlassTypeIds: text("compatibleGlassTypeIds")
       .array()
       .notNull()

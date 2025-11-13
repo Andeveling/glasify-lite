@@ -185,7 +185,7 @@ export class ModelSeeder extends BaseSeeder<NewModel> {
       // Fix Drizzle empty array serialization issue
       // When compatibleGlassTypeIds is empty array [], Drizzle sends {} to PostgreSQL
       // We need to use sql`ARRAY[]::text[]` for empty arrays
-      const compatibleGlassTypeIds = 
+      const compatibleGlassTypeIds =
         item.compatibleGlassTypeIds && item.compatibleGlassTypeIds.length > 0
           ? item.compatibleGlassTypeIds
           : sql`ARRAY[]::text[]`;

@@ -1,8 +1,8 @@
 import {
+  boolean,
   decimal,
   index,
   pgTable,
-  text,
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -40,9 +40,9 @@ export const services = pgTable(
       precision: SERVICE_DECIMAL_PRECISION.MINIMUM_BILLING_UNIT.precision,
       scale: SERVICE_DECIMAL_PRECISION.MINIMUM_BILLING_UNIT.scale,
     }),
-    isActive: text("isActive")
+    isActive: boolean("isActive")
       .notNull()
-      .$defaultFn(() => "true"),
+      .$defaultFn(() => true),
     createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
     updatedAt: timestamp("updatedAt", { mode: "date" })
       .defaultNow()
@@ -58,7 +58,7 @@ export const serviceSelectSchema = createSelectSchema(services, {
   unit: z.enum(SERVICE_UNIT_VALUES),
   rate: z.string(),
   minimumBillingUnit: z.string().optional(),
-  isActive: z.enum(["true", "false"]),
+  isActive: z.boolean(),
 });
 
 export const serviceInsertSchema = createInsertSchema(services, {
@@ -68,7 +68,7 @@ export const serviceInsertSchema = createInsertSchema(services, {
   unit: z.enum(SERVICE_UNIT_VALUES),
   rate: z.string(),
   minimumBillingUnit: z.string().optional(),
-  isActive: z.enum(["true", "false"]).optional(),
+  isActive: z.boolean().optional(),
 }).omit({ createdAt: true, updatedAt: true });
 
 export const serviceUpdateSchema = createUpdateSchema(services, {
@@ -77,7 +77,7 @@ export const serviceUpdateSchema = createUpdateSchema(services, {
   unit: z.enum(SERVICE_UNIT_VALUES),
   rate: z.string(),
   minimumBillingUnit: z.string().optional(),
-  isActive: z.enum(["true", "false"]),
+  isActive: z.boolean(),
 })
   .partial()
   .omit({ id: true, createdAt: true, updatedAt: true });

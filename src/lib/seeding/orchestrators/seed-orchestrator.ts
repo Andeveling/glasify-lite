@@ -753,17 +753,24 @@ export class DrizzleSeedOrchestrator {
     this.logger.info(`Seeding ${servicesList.length} services...`);
 
     try {
-      // Transform only isActive to string - rate and minimumBillingUnit are decimals in DB
+      // Transform data to match Drizzle schema expectations
+      // - rate and minimumBillingUnit: string (Zod schema for decimal fields)
+      // - isActive: boolean (Drizzle schema uses boolean())
       const transformedServices = servicesList.map((s) => {
-        let isActive = "true";
+        // Convert isActive to boolean if it's a string
+        let isActive = true;
         if (typeof s.isActive === "boolean") {
-          isActive = s.isActive ? "true" : "false";
-        } else if (s.isActive) {
           isActive = s.isActive;
+        } else if (s.isActive === "false") {
+          isActive = false;
         }
 
         return {
           ...s,
+          rate: String(s.rate),
+          minimumBillingUnit: s.minimumBillingUnit
+            ? String(s.minimumBillingUnit)
+            : undefined,
           isActive,
         };
       });
