@@ -1,126 +1,81 @@
 /**
- * @file ProfileSupplier Seeder
- * @description Persists ProfileSupplier data using Drizzle ORM
+ * @file GlassSolution Seeder
+ * @description Persists GlassSolution data using Drizzle ORM
  * Implements BaseSeeder<T> contract for dependency injection
  */
 
+import { eq } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { profileSuppliers } from "@/server/db/schemas/profile-supplier.schema";
+import { glassSolutions } from "@/server/db/schemas/glass-solution.schema";
 import { BaseSeeder, ConsoleSeederLogger } from "../contracts/seeder.interface";
-import type { ProfileSupplierCreateInput } from "../schemas/profile-supplier.schema";
+import type { GlassSolutionCreateInput } from "../schemas/glass-solution.schema";
 import type {
   ISeederLogger,
   SeederOptions,
   SeederResult,
 } from "../types/base.types";
 
+const DEFAULT_BATCH_SIZE = 100;
+
 /**
- * ProfileSupplierSeeder
- * Handles persistence of ProfileSupplier entities using Drizzle
+ * Helper: Generate slug from key (snake_case → kebab-case)
+ */
+function generateSlug(key: string): string {
+  return key.replace(/_/g, "-");
+}
+
+/**
+ * GlassSolutionSeeder
+ * Handles persistence of GlassSolution entities using Drizzle
  *
  * @example
  * ```typescript
  * import { db } from '@/server/db';
  *
- * const seeder = new ProfileSupplierSeeder(db);
- * const result = await seeder.seed(data);
- * console.log(`Inserted: ${result.inserted}, Failed: ${result.failed}`);
+ * const seeder = new GlassSolutionSeeder(db);
+ * const result = await seeder.upsert(data);
+ * console.log(`Inserted: ${result.inserted}, Updated: ${result.updated}`);
  * ```
  */
-export class ProfileSupplierSeeder extends BaseSeeder<ProfileSupplierCreateInput> {
-  /**
-   * Drizzle database client (type-safe)
-   * @internal
-   */
+export class GlassSolutionSeeder extends BaseSeeder<GlassSolutionCreateInput> {
   private readonly drizzle: NodePgDatabase;
 
-  /**
-   * Constructor
-   * @param db - Drizzle database client
-   * @param logger - Logger instance (optional, defaults to ConsoleSeederLogger)
-   */
   constructor(
     db: NodePgDatabase,
     logger: ISeederLogger = new ConsoleSeederLogger()
   ) {
-    super(db, logger, "ProfileSupplier");
+    super(db, logger, "GlassSolution");
     this.drizzle = db;
   }
 
   /**
-   * Insert a batch of ProfileSuppliers
+   * Insert a batch of GlassSolutions
    * Implements BaseSeeder abstract method
-   *
-   * @param batch - Array of ProfileSupplier data to insert
-   * @returns Number of inserted records
-   * @internal
    */
   protected async insertBatch(
-    batch: ProfileSupplierCreateInput[]
+    batch: GlassSolutionCreateInput[]
   ): Promise<number> {
-    // Transform data to match Drizzle schema expectations
-    const drizzleData = batch.map((item) => ({
+    const batchWithSlug = batch.map((item) => ({
       ...item,
-      // Convert boolean to string for Drizzle (isActive is stored as text)
-      isActive: item.isActive ? "true" : "false",
-      // Ensure notes is undefined (not null) if not provided
-      notes: item.notes ?? undefined,
+      slug: generateSlug(item.key),
     }));
 
     const result = await this.drizzle
-      .insert(profileSuppliers)
-      .values(drizzleData)
-      .returning({ id: profileSuppliers.id });
+      .insert(glassSolutions)
+      .values(batchWithSlug)
+      .onConflictDoNothing({ target: glassSolutions.key })
+      .returning({ id: glassSolutions.id });
 
     return result.length;
   }
 
   /**
-   * Clear all ProfileSuppliers from database
-   * WARNING: This deletes ALL records. Use with caution.
-   *
-   * @returns Number of deleted records
-   */
-  async clear(): Promise<number> {
-    const deleted = await this.drizzle
-      .delete(profileSuppliers)
-      .returning({ id: profileSuppliers.id });
-
-    this.logger.info(`🗑️  Cleared ${deleted.length} ProfileSupplier records`);
-
-    return deleted.length;
-  }
-
-  /**
-   * Clear only inactive ProfileSuppliers
-   * Safer alternative to clear() - keeps active suppliers
-   *
-   * @returns Number of deleted records
-   */
-  async clearInactive(): Promise<number> {
-    const { eq } = await import("drizzle-orm");
-
-    const deleted = await this.drizzle
-      .delete(profileSuppliers)
-      .where(eq(profileSuppliers.isActive, "false"))
-      .returning({ id: profileSuppliers.id });
-
-    this.logger.info(
-      `🗑️  Cleared ${deleted.length} inactive ProfileSupplier records`
-    );
-
-    return deleted.length;
-  }
-
-  /**
-   * Upsert (insert or update) ProfileSuppliers by unique name
-   * Ensures idempotent seeding across runs
+   * Upsert glass solutions (insert or update by key)
    */
   async upsert(
-    data: ProfileSupplierCreateInput[],
+    data: GlassSolutionCreateInput[],
     options?: SeederOptions
   ): Promise<SeederResult> {
-    const DEFAULT_BATCH_SIZE = 100;
     const batchSize = options?.batchSize ?? DEFAULT_BATCH_SIZE;
     let inserted = 0;
     let updated = 0;
@@ -154,11 +109,11 @@ export class ProfileSupplierSeeder extends BaseSeeder<ProfileSupplierCreateInput
   }
 
   /**
-   * Process a batch sequentially with error handling
+   * Process a batch sequentially
    * @private
    */
   private async processBatch(
-    batch: ProfileSupplierCreateInput[],
+    batch: GlassSolutionCreateInput[],
     startIndex: number,
     options?: SeederOptions
   ): Promise<{
@@ -181,6 +136,7 @@ export class ProfileSupplierSeeder extends BaseSeeder<ProfileSupplierCreateInput
 
       const globalIndex = startIndex + j;
       const result = await this.processItem(item, globalIndex);
+
       inserted += result.inserted;
       updated += result.updated;
       failed += result.failed;
@@ -197,11 +153,11 @@ export class ProfileSupplierSeeder extends BaseSeeder<ProfileSupplierCreateInput
   }
 
   /**
-   * Upsert a single item by name
+   * Process a single item with error handling
    * @private
    */
   private async processItem(
-    item: ProfileSupplierCreateInput,
+    item: GlassSolutionCreateInput,
     globalIndex: number
   ): Promise<{
     inserted: number;
@@ -212,18 +168,18 @@ export class ProfileSupplierSeeder extends BaseSeeder<ProfileSupplierCreateInput
     try {
       const { inserted, updated } = await this.upsertItem(item);
       if (inserted) {
-        this.logger?.debug?.(`✓ Inserted: ${item.name}`);
+        this.logger?.debug?.(`✓ Inserted: ${item.key}`);
         return { inserted: 1, updated: 0, failed: 0 };
       }
       if (updated) {
-        this.logger?.debug?.(`✓ Updated: ${item.name}`);
+        this.logger?.debug?.(`✓ Updated: ${item.key}`);
         return { inserted: 0, updated: 1, failed: 0 };
       }
-      this.logger?.error?.(`✗ Failed (no insert/update): ${item.name}`);
+      this.logger?.error?.(`✗ Failed (no insert/update): ${item.key}`);
       return { inserted: 0, updated: 0, failed: 1 };
     } catch (error) {
       const errMsg = error instanceof Error ? error.message : String(error);
-      this.logger?.error?.(`✗ Failed to upsert "${item.name}": ${errMsg}`);
+      this.logger?.error?.(`✗ Failed to upsert "${item.key}": ${errMsg}`);
       return {
         inserted: 0,
         updated: 0,
@@ -238,33 +194,64 @@ export class ProfileSupplierSeeder extends BaseSeeder<ProfileSupplierCreateInput
    * @private
    */
   private async upsertItem(
-    item: ProfileSupplierCreateInput
+    item: GlassSolutionCreateInput
   ): Promise<{ inserted: boolean; updated: boolean }> {
     const insertData = {
       ...item,
-      isActive: item.isActive ? "true" : "false",
-      notes: item.notes ?? undefined,
+      slug: generateSlug(item.key),
     };
 
     const result = await this.drizzle
-      .insert(profileSuppliers)
+      .insert(glassSolutions)
       .values(insertData)
       .onConflictDoUpdate({
-        target: profileSuppliers.name,
+        target: glassSolutions.key,
         set: {
-          materialType: insertData.materialType,
+          name: insertData.name,
+          nameEs: insertData.nameEs,
+          description: insertData.description,
+          icon: insertData.icon,
+          sortOrder: insertData.sortOrder,
           isActive: insertData.isActive,
-          notes: insertData.notes,
-          updatedAt: new Date().toISOString(),
+          isSeeded: insertData.isSeeded,
+          seedVersion: insertData.seedVersion,
+          slug: insertData.slug,
+          updatedAt: new Date(),
         },
       })
-      .returning({ createdAt: profileSuppliers.createdAt, updatedAt: profileSuppliers.updatedAt });
+      .returning({
+        createdAt: glassSolutions.createdAt,
+        updatedAt: glassSolutions.updatedAt,
+      });
 
     if (result.length > 0) {
       const rec = result[0];
-      const isNew = rec.createdAt === rec.updatedAt;
-      return { inserted: isNew, updated: !isNew };
+      if (rec) {
+        const isNew = rec.createdAt.getTime() === rec.updatedAt.getTime();
+        return { inserted: isNew, updated: !isNew };
+      }
     }
+
     return { inserted: false, updated: false };
+  }
+
+  /**
+   * Clear all GlassSolutions
+   */
+  async clear(): Promise<number> {
+    const result = await this.drizzle.delete(glassSolutions).returning();
+    return result.length;
+  }
+
+  /**
+   * Clear only inactive GlassSolutions
+   */
+  async clearInactive(): Promise<number> {
+    const result = await this.drizzle
+      .delete(glassSolutions)
+      .where(eq(glassSolutions.isActive, false))
+      .returning();
+
+    return result.length;
   }
 }

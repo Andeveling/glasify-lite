@@ -10,48 +10,11 @@
  * @date 2025-01-21
  */
 
-import type { GlassSolutionInput } from "../../factories/glass-solution.factory";
+import type { NewGlassSolution } from "@/server/db/schemas/glass-solution.schema";
 
 /**
  * Soluciones de vidrio para Vitro Rojas
  *
  * Adaptadas al mercado panameño con terminología local
  */
-export const vitroRojasGlassSolutions: GlassSolutionInput[] = [
-  {
-    description:
-      "Vidrio claro simple para uso residencial estándar. Ideal para ventanas donde no se requieren características especiales.",
-    icon: "Home",
-    key: "general",
-    name: "General Purpose",
-    nameEs: "Uso General",
-    sortOrder: 1,
-  },
-  {
-    description:
-      "Vidrio laminado y templado para mayor seguridad contra impactos y robos. Recomendado para puertas, plantas bajas y áreas vulnerables.",
-    icon: "Shield",
-    key: "security",
-    name: "Security",
-    nameEs: "Seguridad",
-    sortOrder: 2,
-  },
-  {
-    description:
-      "DVH (Doble Vidrio Hermético) para aislamiento térmico y ahorro energético. Ideal para espacios con aire acondicionado en clima tropical.",
-    icon: "Snowflake",
-    key: "energy_efficiency",
-    name: "Thermal Insulation",
-    nameEs: "Aislamiento Térmico",
-    sortOrder: 3,
-  },
-  {
-    description:
-      "Vidrios tintados (Gris, Bronce) y reflectivos para control solar, privacidad y estética. Reducen el paso de luz y calor.",
-    icon: "Sparkles",
-    key: "decorative",
-    name: "Decorative",
-    nameEs: "Decorativo",
-    sortOrder: 4,
-  },
-];
+export const vitroRojasGlassSolutions: NewGlassSolution[] = [];

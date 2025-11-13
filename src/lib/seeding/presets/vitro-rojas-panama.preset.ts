@@ -9,6 +9,7 @@
  */
 
 import type { SeedPreset } from "../orchestrators/seed-orchestrator";
+import { vitroRojasGlassSolutions } from "../data/vitro-rojas/glass-solutions.data";
 
 /**
  * Vitro Rojas glass suppliers (production data)
@@ -63,6 +64,7 @@ const vitroRojasProfileSuppliers: SeedPreset["profileSuppliers"] = [
 export const vitroRojasPanamaPreset: SeedPreset = {
   name: "vitro-rojas-panama",
   description: "Production configuration for Vitro Rojas Panama client",
+  glassSolutions: vitroRojasGlassSolutions,
   profileSuppliers: vitroRojasProfileSuppliers,
   glassSuppliers: vitroRojasGlassSuppliers,
 };

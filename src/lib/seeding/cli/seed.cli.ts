@@ -164,6 +164,10 @@ async function seed() {
     console.log("\nStatistics:");
     // biome-ignore lint/suspicious/noConsole: Console is allowed in CLI scripts
     console.log(
+      `  Glass Solutions: ${stats.glassSolutions.created} created, ${stats.glassSolutions.updated} updated`
+    );
+    // biome-ignore lint/suspicious/noConsole: Console is allowed in CLI scripts
+    console.log(
       `  Profile Suppliers: ${stats.profileSuppliers.created} created, ${stats.profileSuppliers.updated} updated`
     );
     // biome-ignore lint/suspicious/noConsole: Console is allowed in CLI scripts
