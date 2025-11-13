@@ -9,16 +9,30 @@
  */
 
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
+import {
+  glassCharacteristics,
+  type NewGlassCharacteristic,
+} from "../../../server/db/schemas/glass-characteristic.schema";
 import { glassSolutions } from "../../../server/db/schemas/glass-solution.schema";
 import { glassSuppliers } from "../../../server/db/schemas/glass-supplier.schema";
-import { profileSuppliers } from "../../../server/db/schemas/profile-supplier.schema";
 import {
-  type NewService,
-  services,
-} from "../../../server/db/schemas/service.schema";
+  glassTypes,
+  type NewGlassType,
+} from "../../../server/db/schemas/glass-type.schema";
+import {
+  glassTypeSolutions,
+  type NewGlassTypeSolution,
+} from "../../../server/db/schemas/glass-type-solution.schema";
+import { models, type NewModel } from "../../../server/db/schemas/model.schema";
+import { profileSuppliers } from "../../../server/db/schemas/profile-supplier.schema";
+import { services } from "../../../server/db/schemas/service.schema";
 import { tenantConfigs } from "../../../server/db/schemas/tenant-config.schema";
+import { GlassCharacteristicSeeder } from "../seeders/glass-characteristic.seeder";
 import { GlassSolutionSeeder } from "../seeders/glass-solution.seeder";
 import { GlassSupplierSeeder } from "../seeders/glass-supplier.seeder";
+import { GlassTypeSeeder } from "../seeders/glass-type.seeder";
+import { GlassTypeSolutionSeeder } from "../seeders/glass-type-solution.seeder";
+import { ModelSeeder } from "../seeders/model.seeder";
 import { ProfileSupplierSeeder } from "../seeders/profile-supplier.seeder";
 import { ServiceSeeder } from "../seeders/service.seeder";
 import type { ISeederLogger } from "../types/base.types";
@@ -76,6 +90,7 @@ export class OrchestratorLogger implements ISeederLogger {
 export type SeedPreset = {
   name: string;
   description: string;
+  glassCharacteristics?: NewGlassCharacteristic[];
   glassSolutions?: Array<{
     key: string;
     name: string;
@@ -103,6 +118,9 @@ export type SeedPreset = {
     isActive: boolean;
     notes?: string | null;
   }>;
+  glassTypes?: NewGlassType[];
+  models?: NewModel[];
+  glassTypeSolutions?: NewGlassTypeSolution[];
   services?: Array<{
     name: string;
     type: "area" | "perimeter" | "fixed";
@@ -117,9 +135,13 @@ export type SeedPreset = {
  * Seed statistics
  */
 export type SeedStats = {
+  glassCharacteristics: { created: number; updated: number; failed: number };
   glassSolutions: { created: number; updated: number; failed: number };
   profileSuppliers: { created: number; updated: number; failed: number };
   glassSuppliers: { created: number; updated: number; failed: number };
+  glassTypes: { created: number; updated: number; failed: number };
+  models: { created: number; updated: number; failed: number };
+  glassTypeSolutions: { created: number; updated: number; failed: number };
   services: { created: number; updated: number; failed: number };
   totalCreated: number;
   totalUpdated: number;
@@ -150,9 +172,13 @@ export class DrizzleSeedOrchestrator {
     this.options = options;
     this.logger = new OrchestratorLogger(options.verbose);
     this.stats = {
+      glassCharacteristics: { created: 0, updated: 0, failed: 0 },
       glassSolutions: { created: 0, updated: 0, failed: 0 },
       profileSuppliers: { created: 0, updated: 0, failed: 0 },
       glassSuppliers: { created: 0, updated: 0, failed: 0 },
+      glassTypes: { created: 0, updated: 0, failed: 0 },
+      models: { created: 0, updated: 0, failed: 0 },
+      glassTypeSolutions: { created: 0, updated: 0, failed: 0 },
       services: { created: 0, updated: 0, failed: 0 },
       totalCreated: 0,
       totalUpdated: 0,
@@ -204,8 +230,20 @@ export class DrizzleSeedOrchestrator {
       await this.db.delete(services);
       this.logger.info("✓ Deleted services");
 
+      await this.db.delete(glassTypeSolutions);
+      this.logger.info("✓ Deleted glass type solutions");
+
+      await this.db.delete(models);
+      this.logger.info("✓ Deleted models");
+
+      await this.db.delete(glassTypes);
+      this.logger.info("✓ Deleted glass types");
+
       await this.db.delete(glassSolutions);
       this.logger.info("✓ Deleted glass solutions");
+
+      await this.db.delete(glassCharacteristics);
+      this.logger.info("✓ Deleted glass characteristics");
 
       await this.db.delete(glassSuppliers);
       this.logger.info("✓ Deleted glass suppliers");
@@ -224,6 +262,7 @@ export class DrizzleSeedOrchestrator {
   /**
    * Seed database with a preset configuration
    */
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Orchestrator coordinates multiple seeders sequentially
   async seedWithPreset(
     preset: SeedPreset,
     options?: { fresh?: boolean }
@@ -239,49 +278,88 @@ export class DrizzleSeedOrchestrator {
       }
 
       // Step 0.5: Seed TenantConfig singleton (REQUIRED by foreign keys)
-      this.logger.section("Step 0.5/3: TenantConfig Singleton");
+      this.logger.section("Step 0.5/8: TenantConfig Singleton");
       await this.seedTenantConfig();
 
-      // Step 1: Seed glass solutions (independent entity)
+      // Step 1: Seed glass characteristics (independent entity)
+      if (
+        preset.glassCharacteristics &&
+        preset.glassCharacteristics.length > 0
+      ) {
+        this.logger.section("Step 1/8: Glass Characteristics");
+        await this.seedGlassCharacteristics(preset.glassCharacteristics);
+      }
+
+      // Step 2: Seed glass solutions (independent entity)
       if (preset.glassSolutions && preset.glassSolutions.length > 0) {
-        this.logger.section("Step 1/3: Glass Solutions");
+        this.logger.section("Step 2/8: Glass Solutions");
         await this.seedGlassSolutions(preset.glassSolutions);
       }
 
-      // Step 2: Seed profile suppliers (independent entity)
+      // Step 3: Seed profile suppliers (independent entity)
       if (preset.profileSuppliers && preset.profileSuppliers.length > 0) {
-        this.logger.section("Step 2/3: Profile Suppliers");
+        this.logger.section("Step 3/8: Profile Suppliers");
         await this.seedProfileSuppliers(preset.profileSuppliers);
       }
 
-      // Step 3: Seed glass suppliers (has TenantConfig FK)
+      // Step 4: Seed glass suppliers (has TenantConfig FK)
       if (preset.glassSuppliers && preset.glassSuppliers.length > 0) {
-        this.logger.section("Step 3/3: Glass Suppliers");
+        this.logger.section("Step 4/8: Glass Suppliers");
         await this.seedGlassSuppliers(preset.glassSuppliers);
       }
 
-      // Step 4: Seed services (independent entity)
+      // Step 5: Seed glass types (depends on glass suppliers)
+      if (preset.glassTypes && preset.glassTypes.length > 0) {
+        this.logger.section("Step 5/8: Glass Types");
+        await this.seedGlassTypes(preset.glassTypes);
+      }
+
+      // Step 6: Seed models (depends on profile suppliers)
+      if (preset.models && preset.models.length > 0) {
+        this.logger.section("Step 6/8: Models");
+        await this.seedModels(preset.models);
+      }
+
+      // Step 7: Seed glass type solutions (depends on glass types + glass solutions)
+      if (preset.glassTypeSolutions && preset.glassTypeSolutions.length > 0) {
+        this.logger.section("Step 7/8: Glass Type Solutions");
+        await this.seedGlassTypeSolutions(preset.glassTypeSolutions);
+      }
+
+      // Step 8: Seed services (independent entity)
       if (preset.services && preset.services.length > 0) {
-        this.logger.section("Step 4/4: Services");
+        this.logger.section("Step 8/8: Services");
         await this.seedServices(preset.services);
       }
 
       // Calculate final stats
       this.stats.durationMs = Date.now() - this.startTime;
       this.stats.totalCreated =
+        this.stats.glassCharacteristics.created +
         this.stats.glassSolutions.created +
         this.stats.profileSuppliers.created +
         this.stats.glassSuppliers.created +
+        this.stats.glassTypes.created +
+        this.stats.models.created +
+        this.stats.glassTypeSolutions.created +
         this.stats.services.created;
       this.stats.totalUpdated =
+        this.stats.glassCharacteristics.updated +
         this.stats.glassSolutions.updated +
         this.stats.profileSuppliers.updated +
         this.stats.glassSuppliers.updated +
+        this.stats.glassTypes.updated +
+        this.stats.models.updated +
+        this.stats.glassTypeSolutions.updated +
         this.stats.services.updated;
       this.stats.totalFailed =
+        this.stats.glassCharacteristics.failed +
         this.stats.glassSolutions.failed +
         this.stats.profileSuppliers.failed +
         this.stats.glassSuppliers.failed +
+        this.stats.glassTypes.failed +
+        this.stats.models.failed +
+        this.stats.glassTypeSolutions.failed +
         this.stats.services.failed;
 
       // Print summary
@@ -292,6 +370,43 @@ export class DrizzleSeedOrchestrator {
       const errorObj = error instanceof Error ? error : undefined;
       this.logger.error?.("Seed orchestration failed", errorObj);
       throw error;
+    }
+  }
+
+  /**
+   * Seed glass characteristics using Drizzle seeder
+   */
+  private async seedGlassCharacteristics(
+    characteristics: NewGlassCharacteristic[]
+  ): Promise<void> {
+    if (!characteristics) {
+      return;
+    }
+
+    const seeder = new GlassCharacteristicSeeder(this.db, this.logger);
+
+    this.logger.info(
+      `Seeding ${characteristics.length} glass characteristics...`
+    );
+
+    try {
+      const result = await seeder.upsert(characteristics, {
+        continueOnError: this.options.continueOnError,
+      });
+
+      this.stats.glassCharacteristics.created = result.inserted;
+      this.stats.glassCharacteristics.updated = result.updated;
+      this.stats.glassCharacteristics.failed = result.failed;
+
+      this.logger.success(
+        `Glass characteristics: ${result.inserted} inserted, ${result.updated} updated, ${result.failed} failed`
+      );
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : undefined;
+      this.logger.error("Failed to seed glass characteristics", errorObj);
+      if (!this.options.continueOnError) {
+        throw error;
+      }
     }
   }
 
@@ -310,7 +425,13 @@ export class DrizzleSeedOrchestrator {
     this.logger.info(`Seeding ${solutions.length} glass solutions...`);
 
     try {
-      const result = await seeder.upsert(solutions, {
+      // Transform to include slug (kebab-case version of key)
+      const transformedSolutions = solutions.map((s) => ({
+        ...s,
+        slug: s.key.toLowerCase().replace(/_/g, "-"),
+      }));
+
+      const result = await seeder.upsert(transformedSolutions, {
         continueOnError: this.options.continueOnError,
       });
 
@@ -415,6 +536,109 @@ export class DrizzleSeedOrchestrator {
   }
 
   /**
+   * Seed glass types using Drizzle seeder
+   */
+  private async seedGlassTypes(glassTypesList: NewGlassType[]): Promise<void> {
+    if (!glassTypesList) {
+      return;
+    }
+
+    const seeder = new GlassTypeSeeder(this.db, this.logger);
+
+    this.logger.info(`Seeding ${glassTypesList.length} glass types...`);
+
+    try {
+      const result = await seeder.upsert(glassTypesList, {
+        continueOnError: this.options.continueOnError,
+      });
+
+      this.stats.glassTypes.created = result.inserted;
+      this.stats.glassTypes.updated = result.updated;
+      this.stats.glassTypes.failed = result.failed;
+
+      this.logger.success(
+        `Glass types: ${result.inserted} inserted, ${result.updated} updated, ${result.failed} failed`
+      );
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : undefined;
+      this.logger.error("Failed to seed glass types", errorObj);
+      if (!this.options.continueOnError) {
+        throw error;
+      }
+    }
+  }
+
+  /**
+   * Seed models using Drizzle seeder
+   */
+  private async seedModels(modelsList: NewModel[]): Promise<void> {
+    if (!modelsList) {
+      return;
+    }
+
+    const seeder = new ModelSeeder(this.db, this.logger);
+
+    this.logger.info(`Seeding ${modelsList.length} models...`);
+
+    try {
+      const result = await seeder.upsert(modelsList, {
+        continueOnError: this.options.continueOnError,
+      });
+
+      this.stats.models.created = result.inserted;
+      this.stats.models.updated = result.updated;
+      this.stats.models.failed = result.failed;
+
+      this.logger.success(
+        `Models: ${result.inserted} inserted, ${result.updated} updated, ${result.failed} failed`
+      );
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : undefined;
+      this.logger.error("Failed to seed models", errorObj);
+      if (!this.options.continueOnError) {
+        throw error;
+      }
+    }
+  }
+
+  /**
+   * Seed glass type solutions using Drizzle seeder
+   */
+  private async seedGlassTypeSolutions(
+    glassTypeSolutionsList: NewGlassTypeSolution[]
+  ): Promise<void> {
+    if (!glassTypeSolutionsList) {
+      return;
+    }
+
+    const seeder = new GlassTypeSolutionSeeder(this.db, this.logger);
+
+    this.logger.info(
+      `Seeding ${glassTypeSolutionsList.length} glass type solutions...`
+    );
+
+    try {
+      const result = await seeder.upsert(glassTypeSolutionsList, {
+        continueOnError: this.options.continueOnError,
+      });
+
+      this.stats.glassTypeSolutions.created = result.inserted;
+      this.stats.glassTypeSolutions.updated = result.updated;
+      this.stats.glassTypeSolutions.failed = result.failed;
+
+      this.logger.success(
+        `Glass type solutions: ${result.inserted} inserted, ${result.updated} updated, ${result.failed} failed`
+      );
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : undefined;
+      this.logger.error("Failed to seed glass type solutions", errorObj);
+      if (!this.options.continueOnError) {
+        throw error;
+      }
+    }
+  }
+
+  /**
    * Seed services using Drizzle seeder
    */
   private async seedServices(
@@ -429,10 +653,26 @@ export class DrizzleSeedOrchestrator {
     this.logger.info(`Seeding ${servicesList.length} services...`);
 
     try {
-      // Convert to NewService type (services data is already typed as NewService[])
-      const servicesData = servicesList as NewService[];
+      // Transform data to match NewService schema
+      const transformedServices = servicesList.map((s) => {
+        let isActive = "true";
+        if (typeof s.isActive === "boolean") {
+          isActive = s.isActive ? "true" : "false";
+        } else if (s.isActive) {
+          isActive = s.isActive;
+        }
 
-      const result = await seeder.upsert(servicesData, {
+        return {
+          ...s,
+          rate: String(s.rate),
+          minimumBillingUnit: s.minimumBillingUnit
+            ? String(s.minimumBillingUnit)
+            : undefined,
+          isActive,
+        };
+      });
+
+      const result = await seeder.upsert(transformedServices, {
         continueOnError: this.options.continueOnError,
       });
 
