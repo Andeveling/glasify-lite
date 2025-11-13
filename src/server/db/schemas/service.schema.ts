@@ -56,9 +56,9 @@ export const serviceSelectSchema = createSelectSchema(services, {
   name: z.string().max(SERVICE_FIELD_LENGTHS.NAME).min(1),
   type: z.enum(SERVICE_TYPE_VALUES),
   unit: z.enum(SERVICE_UNIT_VALUES),
-  rate: z.number().nonnegative(),
-  minimumBillingUnit: z.number().positive().optional(),
-  isActive: z.boolean(),
+  rate: z.string(),
+  minimumBillingUnit: z.string().optional(),
+  isActive: z.enum(["true", "false"]),
 });
 
 export const serviceInsertSchema = createInsertSchema(services, {
@@ -66,18 +66,18 @@ export const serviceInsertSchema = createInsertSchema(services, {
   name: z.string().max(SERVICE_FIELD_LENGTHS.NAME).min(1),
   type: z.enum(SERVICE_TYPE_VALUES),
   unit: z.enum(SERVICE_UNIT_VALUES),
-  rate: z.number().nonnegative(),
-  minimumBillingUnit: z.number().positive().optional(),
-  isActive: z.boolean().optional(),
+  rate: z.string(),
+  minimumBillingUnit: z.string().optional(),
+  isActive: z.enum(["true", "false"]).optional(),
 }).omit({ createdAt: true, updatedAt: true });
 
 export const serviceUpdateSchema = createUpdateSchema(services, {
   name: z.string().max(SERVICE_FIELD_LENGTHS.NAME).min(1),
   type: z.enum(SERVICE_TYPE_VALUES),
   unit: z.enum(SERVICE_UNIT_VALUES),
-  rate: z.number().nonnegative(),
-  minimumBillingUnit: z.number().positive().optional(),
-  isActive: z.boolean(),
+  rate: z.string(),
+  minimumBillingUnit: z.string().optional(),
+  isActive: z.enum(["true", "false"]),
 })
   .partial()
   .omit({ id: true, createdAt: true, updatedAt: true });

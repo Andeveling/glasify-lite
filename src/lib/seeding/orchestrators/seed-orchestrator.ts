@@ -12,10 +12,15 @@ import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { glassSolutions } from "../../../server/db/schemas/glass-solution.schema";
 import { glassSuppliers } from "../../../server/db/schemas/glass-supplier.schema";
 import { profileSuppliers } from "../../../server/db/schemas/profile-supplier.schema";
+import {
+  type NewService,
+  services,
+} from "../../../server/db/schemas/service.schema";
 import { tenantConfigs } from "../../../server/db/schemas/tenant-config.schema";
 import { GlassSolutionSeeder } from "../seeders/glass-solution.seeder";
 import { GlassSupplierSeeder } from "../seeders/glass-supplier.seeder";
 import { ProfileSupplierSeeder } from "../seeders/profile-supplier.seeder";
+import { ServiceSeeder } from "../seeders/service.seeder";
 import type { ISeederLogger } from "../types/base.types";
 
 /**
@@ -98,6 +103,14 @@ export type SeedPreset = {
     isActive: boolean;
     notes?: string | null;
   }>;
+  services?: Array<{
+    name: string;
+    type: "area" | "perimeter" | "fixed";
+    unit: "unit" | "sqm" | "ml";
+    rate: number;
+    minimumBillingUnit?: number;
+    isActive?: "true" | "false" | boolean;
+  }>;
 };
 
 /**
@@ -107,6 +120,7 @@ export type SeedStats = {
   glassSolutions: { created: number; updated: number; failed: number };
   profileSuppliers: { created: number; updated: number; failed: number };
   glassSuppliers: { created: number; updated: number; failed: number };
+  services: { created: number; updated: number; failed: number };
   totalCreated: number;
   totalUpdated: number;
   totalFailed: number;
@@ -139,6 +153,7 @@ export class DrizzleSeedOrchestrator {
       glassSolutions: { created: 0, updated: 0, failed: 0 },
       profileSuppliers: { created: 0, updated: 0, failed: 0 },
       glassSuppliers: { created: 0, updated: 0, failed: 0 },
+      services: { created: 0, updated: 0, failed: 0 },
       totalCreated: 0,
       totalUpdated: 0,
       totalFailed: 0,
@@ -186,6 +201,9 @@ export class DrizzleSeedOrchestrator {
       this.logger.info("Deleting all data from database...");
 
       // Delete in reverse order of dependencies
+      await this.db.delete(services);
+      this.logger.info("✓ Deleted services");
+
       await this.db.delete(glassSolutions);
       this.logger.info("✓ Deleted glass solutions");
 
@@ -242,20 +260,29 @@ export class DrizzleSeedOrchestrator {
         await this.seedGlassSuppliers(preset.glassSuppliers);
       }
 
+      // Step 4: Seed services (independent entity)
+      if (preset.services && preset.services.length > 0) {
+        this.logger.section("Step 4/4: Services");
+        await this.seedServices(preset.services);
+      }
+
       // Calculate final stats
       this.stats.durationMs = Date.now() - this.startTime;
       this.stats.totalCreated =
         this.stats.glassSolutions.created +
         this.stats.profileSuppliers.created +
-        this.stats.glassSuppliers.created;
+        this.stats.glassSuppliers.created +
+        this.stats.services.created;
       this.stats.totalUpdated =
         this.stats.glassSolutions.updated +
         this.stats.profileSuppliers.updated +
-        this.stats.glassSuppliers.updated;
+        this.stats.glassSuppliers.updated +
+        this.stats.services.updated;
       this.stats.totalFailed =
         this.stats.glassSolutions.failed +
         this.stats.profileSuppliers.failed +
-        this.stats.glassSuppliers.failed;
+        this.stats.glassSuppliers.failed +
+        this.stats.services.failed;
 
       // Print summary
       this.printSummary();
@@ -381,6 +408,44 @@ export class DrizzleSeedOrchestrator {
     } catch (error) {
       const errorObj = error instanceof Error ? error : undefined;
       this.logger.error("Failed to seed glass suppliers", errorObj);
+      if (!this.options.continueOnError) {
+        throw error;
+      }
+    }
+  }
+
+  /**
+   * Seed services using Drizzle seeder
+   */
+  private async seedServices(
+    servicesList: SeedPreset["services"]
+  ): Promise<void> {
+    if (!servicesList) {
+      return;
+    }
+
+    const seeder = new ServiceSeeder(this.db, this.logger);
+
+    this.logger.info(`Seeding ${servicesList.length} services...`);
+
+    try {
+      // Convert to NewService type (services data is already typed as NewService[])
+      const servicesData = servicesList as NewService[];
+
+      const result = await seeder.upsert(servicesData, {
+        continueOnError: this.options.continueOnError,
+      });
+
+      this.stats.services.created = result.inserted;
+      this.stats.services.updated = result.updated;
+      this.stats.services.failed = result.failed;
+
+      this.logger.success(
+        `Services: ${result.inserted} inserted, ${result.updated} updated, ${result.failed} failed`
+      );
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : undefined;
+      this.logger.error("Failed to seed services", errorObj);
       if (!this.options.continueOnError) {
         throw error;
       }

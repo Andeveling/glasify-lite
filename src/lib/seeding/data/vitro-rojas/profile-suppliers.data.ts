@@ -22,9 +22,17 @@ import type { NewProfileSupplier } from "@/server/db/schemas/profile-supplier.sc
  */
 export const vitroRojasProfileSuppliers: NewProfileSupplier[] = [
   {
+    name: "Aluminios Técnicos S.A.",
     materialType: "ALUMINUM",
-    name: "Extralum",
+    isActive: "true",
     notes:
       "Distribuidor de perfiles de aluminio en Panamá. Series: VC Panamá (corredizo económico), Europa Clásica (corredizo premium 3 vías), Europa Abatible (apertura interna/externa con corte 45°).",
+  },
+  {
+    name: "PVC Solutions Panamá",
+    materialType: "PVC",
+    isActive: "true",
+    notes:
+      "Proveedor de perfiles de PVC para sistemas de ventanas. Especializado en sistemas corredizos y abatibles con aislamiento térmico mejorado.",
   },
 ];

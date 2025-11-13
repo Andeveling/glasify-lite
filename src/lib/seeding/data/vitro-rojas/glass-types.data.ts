@@ -20,28 +20,32 @@
  * @date 2025-01-21
  */
 
-import type { GlassTypeInput } from "../../factories/glass-type.factory";
-
 /**
  * Tipos de vidrio para uso general (económico)
  *
  * Aplicación: Ventanas residenciales estándar sin requerimientos especiales
  * Precios en USD/m² - Mercado Panamá
  */
-const generalPurposeGlassTypes: GlassTypeInput[] = [
+const generalPurposeGlassTypes = [
   {
     code: "VR_CLEAR6",
     name: "Vidrio Claro 6mm",
-    pricePerSqm: 12.5,
     thicknessMm: 6,
+    pricePerSqm: 12.5,
+    isActive: true,
+    isSeeded: true,
+    seedVersion: "1.0.0",
   },
   {
     code: "VR_CLEAR8",
     name: "Vidrio Claro 8mm",
-    pricePerSqm: 15.0,
     thicknessMm: 8,
+    pricePerSqm: 15.0,
+    isActive: true,
+    isSeeded: true,
+    seedVersion: "1.0.0",
   },
-];
+] as const;
 
 /**
  * Tipos de vidrio para seguridad (laminados y templados)
@@ -53,26 +57,38 @@ const generalPurposeGlassTypes: GlassTypeInput[] = [
  * - Laminado 6.38mm (6+6) → 6mm
  * - Laminado 8.38mm (8+8) → 8mm
  */
-const securityGlassTypes: GlassTypeInput[] = [
+const securityGlassTypes = [
   {
     code: "VR_LAM6",
     name: "Vidrio Laminado 6.38mm (6+6)",
-    pricePerSqm: 28.5, // +$16 USD/m² sobre claro 6mm
     thicknessMm: 6,
+    pricePerSqm: 28.5,
+    description: "+$16 USD/m² sobre claro 6mm",
+    isActive: true,
+    isSeeded: true,
+    seedVersion: "1.0.0",
   },
   {
     code: "VR_LAM8",
     name: "Vidrio Laminado 8.38mm (8+8)",
-    pricePerSqm: 32.5, // +$17.5 USD/m² sobre claro 8mm
     thicknessMm: 8,
+    pricePerSqm: 32.5,
+    description: "+$17.5 USD/m² sobre claro 8mm",
+    isActive: true,
+    isSeeded: true,
+    seedVersion: "1.0.0",
   },
   {
     code: "VR_TEMP6",
     name: "Vidrio Templado 6mm",
-    pricePerSqm: 20.0, // +$7.5 USD/m² sobre claro 6mm
     thicknessMm: 6,
+    pricePerSqm: 20.0,
+    description: "+$7.5 USD/m² sobre claro 6mm",
+    isActive: true,
+    isSeeded: true,
+    seedVersion: "1.0.0",
   },
-];
+] as const;
 
 /**
  * Tipos de vidrio para aislamiento térmico y eficiencia energética (DVH)
@@ -85,22 +101,30 @@ const securityGlassTypes: GlassTypeInput[] = [
  * Nota: Espesores redondeados al entero más cercano
  * - DVH 18.5mm (6-6.5-6) → 19mm
  */
-const insulationGlassTypes: GlassTypeInput[] = [
+const insulationGlassTypes = [
   {
     code: "VR_DVH16",
     name: "DVH 16mm (6-4-6)",
-    pricePerSqm: 45.0, // Premium por aislamiento térmico
     thicknessMm: 16,
-    uValue: 2.8, // W/m²K
+    pricePerSqm: 45.0,
+    description: "Premium por aislamiento térmico",
+    uValue: 2.8,
+    isActive: true,
+    isSeeded: true,
+    seedVersion: "1.0.0",
   },
   {
     code: "VR_DVH18",
     name: "DVH 18.5mm (6-6.5-6)",
-    pricePerSqm: 52.5, // Mejor aislamiento = precio más alto
     thicknessMm: 19,
-    uValue: 2.7, // W/m²K - Mejor aislamiento
+    pricePerSqm: 52.5,
+    description: "Mejor aislamiento, W/m²K más bajo",
+    uValue: 2.7,
+    isActive: true,
+    isSeeded: true,
+    seedVersion: "1.0.0",
   },
-];
+] as const;
 
 /**
  * Tipos de vidrio decorativos (tintados y reflectivos)
@@ -112,38 +136,64 @@ const insulationGlassTypes: GlassTypeInput[] = [
  * Nota: Espesores redondeados al entero más cercano
  * - Laminado Gris 6.38mm → 6mm
  */
-const decorativeGlassTypes: GlassTypeInput[] = [
+const decorativeGlassTypes = [
   {
     code: "VR_GRAY6",
     name: "Vidrio Gris 6mm",
-    pricePerSqm: 22.0, // +$9.5 USD/m² sobre claro
     thicknessMm: 6,
+    pricePerSqm: 22.0,
+    description: "+$9.5 USD/m² sobre claro",
+    isActive: true,
+    isSeeded: true,
+    seedVersion: "1.0.0",
   },
   {
     code: "VR_BRONZE6",
     name: "Vidrio Bronce 6mm",
-    pricePerSqm: 22.0, // +$9.5 USD/m² sobre claro
     thicknessMm: 6,
+    pricePerSqm: 22.0,
+    description: "+$9.5 USD/m² sobre claro",
+    isActive: true,
+    isSeeded: true,
+    seedVersion: "1.0.0",
   },
   {
     code: "VR_REFL6",
     name: "Vidrio Reflectivo 6mm",
-    pricePerSqm: 25.0, // +$12.5 USD/m² sobre claro (más premium)
     thicknessMm: 6,
+    pricePerSqm: 25.0,
+    description: "+$12.5 USD/m² sobre claro (más premium)",
+    isActive: true,
+    isSeeded: true,
+    seedVersion: "1.0.0",
   },
   {
     code: "VR_LAMGRAY6",
     name: "Vidrio Laminado Gris 6.38mm",
-    pricePerSqm: 35.0, // Combinado: laminado + tintado
     thicknessMm: 6,
+    pricePerSqm: 35.0,
+    description: "Combinado: laminado + tintado",
+    isActive: true,
+    isSeeded: true,
+    seedVersion: "1.0.0",
   },
-];
+] as const;
 
 /**
  * Todos los tipos de vidrio para Vitro Rojas
  * Total: 11 tipos (2 general + 3 security + 2 insulation + 4 decorative)
  */
-export const vitroRojasGlassTypes: GlassTypeInput[] = [
+export const vitroRojasGlassTypes: Array<{
+  code: string;
+  name: string;
+  thicknessMm: number;
+  pricePerSqm: number;
+  description?: string;
+  uValue?: number;
+  isActive: boolean;
+  isSeeded: boolean;
+  seedVersion: string;
+}> = [
   ...generalPurposeGlassTypes,
   ...securityGlassTypes,
   ...insulationGlassTypes,

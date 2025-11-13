@@ -9,6 +9,7 @@
  */
 
 import { vitroRojasGlassSolutions } from "../data/vitro-rojas/glass-solutions.data";
+import { vitroRojasServices } from "../data/vitro-rojas/services.data";
 import type { SeedPreset } from "../orchestrators/seed-orchestrator";
 
 /**
@@ -67,4 +68,5 @@ export const vitroRojasPanamaPreset: SeedPreset = {
   glassSolutions: vitroRojasGlassSolutions,
   profileSuppliers: vitroRojasProfileSuppliers,
   glassSuppliers: vitroRojasGlassSuppliers,
+  services: vitroRojasServices,
 };
