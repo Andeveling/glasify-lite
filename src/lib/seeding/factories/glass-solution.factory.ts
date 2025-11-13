@@ -4,8 +4,8 @@
  * Pure functions with no ORM dependencies - generates POJOs only
  */
 
-import type { GlassSolutionCreateInput } from "../schemas/glass-solution.schema";
-import { glassSolutionCreateSchema } from "../schemas/glass-solution.schema";
+import type { NewGlassSolution } from "@/server/db/schemas";
+import { glassSolutionInsertSchema } from "@/server/db/schemas/glass-solution.schema";
 import type { FactoryOptions, FactoryResult } from "../types/base.types";
 import { createSuccessResult } from "../utils/validation.utils";
 
@@ -97,14 +97,15 @@ function generateDescription(key: string): string {
  * ```
  */
 export function generateGlassSolution(
-  options?: FactoryOptions<GlassSolutionCreateInput>
-): FactoryResult<GlassSolutionCreateInput> {
+  options?: FactoryOptions<NewGlassSolution>
+): FactoryResult<NewGlassSolution> {
   const preset = randomElement(PRESET_SOLUTIONS);
 
-  const defaults: GlassSolutionCreateInput = {
+  const defaults: NewGlassSolution = {
     key: preset.key,
     name: preset.name,
     nameEs: preset.nameEs,
+    slug: preset.key.replace(/_/g, "-"),
     description: generateDescription(preset.key),
     icon: randomBoolean(HAS_ICON_PROBABILITY) ? preset.icon : undefined,
     sortOrder: randomInt(1, MAX_SORT_ORDER),
@@ -120,7 +121,7 @@ export function generateGlassSolution(
 
   // Validate before returning
   if (!options?.skipValidation) {
-    const parsed = glassSolutionCreateSchema.safeParse(data);
+    const parsed = glassSolutionInsertSchema.safeParse(data);
     if (!parsed.success) {
       return {
         success: false,
@@ -150,8 +151,8 @@ export function generateGlassSolution(
  */
 export function generateGlassSolutions(
   count: number,
-  options?: FactoryOptions<GlassSolutionCreateInput>
-): FactoryResult<GlassSolutionCreateInput>[] {
+  options?: FactoryOptions<NewGlassSolution>
+): FactoryResult<NewGlassSolution>[] {
   return Array.from({ length: count }, () => generateGlassSolution(options));
 }
 
@@ -164,16 +165,16 @@ export function generateGlassSolutions(
  */
 export function generateGlassSolutionBatch(
   count: number,
-  options?: FactoryOptions<GlassSolutionCreateInput>
-): GlassSolutionCreateInput[] {
+  options?: FactoryOptions<NewGlassSolution>
+): NewGlassSolution[] {
   const results = generateGlassSolutions(count, options);
   const validResults = results
     .filter(
       (
         r
-      ): r is FactoryResult<GlassSolutionCreateInput> & {
+      ): r is FactoryResult<NewGlassSolution> & {
         success: true;
-        data: GlassSolutionCreateInput;
+        data: NewGlassSolution;
       } => r.success && r.data !== undefined
     )
     .map((r) => r.data);
@@ -190,8 +191,8 @@ export function generateGlassSolutionBatch(
  */
 export function generateGlassSolutionByKey(
   key: string,
-  options?: FactoryOptions<GlassSolutionCreateInput>
-): FactoryResult<GlassSolutionCreateInput> {
+  options?: FactoryOptions<NewGlassSolution>
+): FactoryResult<NewGlassSolution> {
   const preset = PRESET_SOLUTIONS.find((s) => s.key === key);
   if (!preset) {
     return {
@@ -225,8 +226,8 @@ export function generateGlassSolutionByKey(
  * @returns FactoryResult with inactive solution
  */
 export function generateInactiveGlassSolution(
-  options?: FactoryOptions<GlassSolutionCreateInput>
-): FactoryResult<GlassSolutionCreateInput> {
+  options?: FactoryOptions<NewGlassSolution>
+): FactoryResult<NewGlassSolution> {
   return generateGlassSolution({
     ...options,
     overrides: {

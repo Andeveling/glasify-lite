@@ -4,12 +4,6 @@
  * Pure functions with no ORM dependencies - generates POJOs only
  */
 
-import type { ProfileSupplierCreateInput } from "../schemas/profile-supplier.schema";
-import {
-  ALL_SUPPLIERS,
-  MaterialTypeEnum,
-  profileSupplierSchema,
-} from "../schemas/profile-supplier.schema";
 import type { FactoryOptions, FactoryResult } from "../types/base.types";
 import { createSuccessResult } from "../utils/validation.utils";
 

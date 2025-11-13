@@ -8,8 +8,8 @@
  * @date 2025-11-09
  */
 
-import type { SeedPreset } from "../orchestrators/seed-orchestrator";
 import { vitroRojasGlassSolutions } from "../data/vitro-rojas/glass-solutions.data";
+import type { SeedPreset } from "../orchestrators/seed-orchestrator";
 
 /**
  * Vitro Rojas glass suppliers (production data)

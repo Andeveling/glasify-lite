@@ -10,7 +10,7 @@
  * @date 2025-01-21
  */
 
-import type { ProfileSupplierInput } from "../../factories/profile-supplier.factory";
+import type { NewProfileSupplier } from "@/server/db/schemas/profile-supplier.schema";
 
 /**
  * Extralum - Único proveedor de perfiles de aluminio para Vitro Rojas
@@ -20,9 +20,8 @@ import type { ProfileSupplierInput } from "../../factories/profile-supplier.fact
  * - Serie Europa Clásica (espesores 1.10-1.70mm)
  * - Serie Europa Abatible (espesores 1.10-1.50mm)
  */
-export const vitroRojasProfileSuppliers: ProfileSupplierInput[] = [
+export const vitroRojasProfileSuppliers: NewProfileSupplier[] = [
   {
-    isActive: true,
     materialType: "ALUMINUM",
     name: "Extralum",
     notes:

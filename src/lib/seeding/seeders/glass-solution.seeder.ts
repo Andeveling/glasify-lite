@@ -6,9 +6,11 @@
 
 import { eq } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { glassSolutions } from "@/server/db/schemas/glass-solution.schema";
+import {
+  glassSolutions,
+  type NewGlassSolution,
+} from "@/server/db/schemas/glass-solution.schema";
 import { BaseSeeder, ConsoleSeederLogger } from "../contracts/seeder.interface";
-import type { GlassSolutionCreateInput } from "../schemas/glass-solution.schema";
 import type {
   ISeederLogger,
   SeederOptions,
@@ -37,7 +39,7 @@ function generateSlug(key: string): string {
  * console.log(`Inserted: ${result.inserted}, Updated: ${result.updated}`);
  * ```
  */
-export class GlassSolutionSeeder extends BaseSeeder<GlassSolutionCreateInput> {
+export class GlassSolutionSeeder extends BaseSeeder<NewGlassSolution> {
   private readonly drizzle: NodePgDatabase;
 
   constructor(
@@ -52,9 +54,7 @@ export class GlassSolutionSeeder extends BaseSeeder<GlassSolutionCreateInput> {
    * Insert a batch of GlassSolutions
    * Implements BaseSeeder abstract method
    */
-  protected async insertBatch(
-    batch: GlassSolutionCreateInput[]
-  ): Promise<number> {
+  protected async insertBatch(batch: NewGlassSolution[]): Promise<number> {
     const batchWithSlug = batch.map((item) => ({
       ...item,
       slug: generateSlug(item.key),
@@ -73,7 +73,7 @@ export class GlassSolutionSeeder extends BaseSeeder<GlassSolutionCreateInput> {
    * Upsert glass solutions (insert or update by key)
    */
   async upsert(
-    data: GlassSolutionCreateInput[],
+    data: NewGlassSolution[],
     options?: SeederOptions
   ): Promise<SeederResult> {
     const batchSize = options?.batchSize ?? DEFAULT_BATCH_SIZE;
@@ -113,7 +113,7 @@ export class GlassSolutionSeeder extends BaseSeeder<GlassSolutionCreateInput> {
    * @private
    */
   private async processBatch(
-    batch: GlassSolutionCreateInput[],
+    batch: NewGlassSolution[],
     startIndex: number,
     options?: SeederOptions
   ): Promise<{
@@ -157,7 +157,7 @@ export class GlassSolutionSeeder extends BaseSeeder<GlassSolutionCreateInput> {
    * @private
    */
   private async processItem(
-    item: GlassSolutionCreateInput,
+    item: NewGlassSolution,
     globalIndex: number
   ): Promise<{
     inserted: number;
@@ -194,7 +194,7 @@ export class GlassSolutionSeeder extends BaseSeeder<GlassSolutionCreateInput> {
    * @private
    */
   private async upsertItem(
-    item: GlassSolutionCreateInput
+    item: NewGlassSolution
   ): Promise<{ inserted: boolean; updated: boolean }> {
     const insertData = {
       ...item,

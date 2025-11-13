@@ -4,13 +4,7 @@
  * Pure functions with no ORM dependencies - generates POJOs only
  */
 
-import type { GlassSupplierCreateInput } from "../schemas/glass-supplier.schema";
-import {
-  GLASS_SUPPLIER_PRESETS,
-  glassSupplierSchema,
-  SUPPLIER_CODES,
-  SUPPLIER_COUNTRIES,
-} from "../schemas/glass-supplier.schema";
+import type { NewGlassSupplier } from "@/server/db/schema";
 import type { FactoryOptions, FactoryResult } from "../types/base.types";
 import { createSuccessResult } from "../utils/validation.utils";
 
@@ -177,11 +171,11 @@ function generateNotes(): string {
  * ```
  */
 export function generateGlassSupplier(
-  options?: FactoryOptions<GlassSupplierCreateInput>
-): FactoryResult<GlassSupplierCreateInput> {
+  options?: FactoryOptions<NewGlassSupplier>
+): FactoryResult<NewGlassSupplier> {
   const name = options?.overrides?.name ?? generateSupplierName();
 
-  const defaults: GlassSupplierCreateInput = {
+  const defaults: NewGlassSupplier = {
     name,
     code: generateSupplierCode(name),
     country: generateCountry(name),
@@ -236,8 +230,8 @@ export function generateGlassSupplier(
  */
 export function generateGlassSuppliers(
   count: number,
-  options?: FactoryOptions<GlassSupplierCreateInput>
-): FactoryResult<GlassSupplierCreateInput>[] {
+  options?: FactoryOptions<NewGlassSupplier>
+): FactoryResult<NewGlassSupplier>[] {
   return Array.from({ length: count }, () => generateGlassSupplier(options));
 }
 
@@ -257,16 +251,16 @@ export function generateGlassSuppliers(
  */
 export function generateGlassSupplierBatch(
   count: number,
-  options?: FactoryOptions<GlassSupplierCreateInput>
-): GlassSupplierCreateInput[] {
+  options?: FactoryOptions<NewGlassSupplier>
+): NewGlassSupplier[] {
   const results = generateGlassSuppliers(count, options);
   const validResults = results
     .filter(
       (
         r
-      ): r is FactoryResult<GlassSupplierCreateInput> & {
+      ): r is FactoryResult<NewGlassSupplier> & {
         success: true;
-        data: GlassSupplierCreateInput;
+        data: NewGlassSupplier;
       } => r.success && r.data !== undefined
     )
     .map((r) => r.data);
@@ -289,8 +283,8 @@ export function generateGlassSupplierBatch(
  */
 export function generatePresetGlassSupplier(
   name: (typeof GLASS_SUPPLIER_PRESETS)[number],
-  options?: FactoryOptions<GlassSupplierCreateInput>
-): FactoryResult<GlassSupplierCreateInput> {
+  options?: FactoryOptions<NewGlassSupplier>
+): FactoryResult<NewGlassSupplier> {
   return generateGlassSupplier({
     ...options,
     overrides: {
@@ -323,8 +317,8 @@ export function generatePresetGlassSupplier(
  */
 export function generateActiveGlassSupplierBatch(
   count: number,
-  options?: FactoryOptions<GlassSupplierCreateInput>
-): GlassSupplierCreateInput[] {
+  options?: FactoryOptions<NewGlassSupplier>
+): NewGlassSupplier[] {
   return generateGlassSupplierBatch(count, {
     ...options,
     overrides: {

@@ -258,7 +258,10 @@ export class ProfileSupplierSeeder extends BaseSeeder<ProfileSupplierCreateInput
           updatedAt: new Date().toISOString(),
         },
       })
-      .returning({ createdAt: profileSuppliers.createdAt, updatedAt: profileSuppliers.updatedAt });
+      .returning({
+        createdAt: profileSuppliers.createdAt,
+        updatedAt: profileSuppliers.updatedAt,
+      });
 
     if (result.length > 0) {
       const rec = result[0];
