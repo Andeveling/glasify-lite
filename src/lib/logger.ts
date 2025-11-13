@@ -22,8 +22,8 @@
  * - logs/exceptions.log: Uncaught exceptions
  * - logs/rejections.log: Unhandled promise rejections
  */
-/** biome-ignore-all lint/style/noMagicNumbers: It is not necesari  */
-// biome-ignore-all lint/suspicious/noEmptyBlockStatements
+/** biome-ignore-all lint/suspicious/noEmptyBlockStatements: It is not necessary  */
+/** biome-ignore-all lint/style/noMagicNumbers: It is not necessary  */
 
 // Type definition for logger interface
 type Logger = {
