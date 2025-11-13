@@ -70,7 +70,8 @@ export default async function RootLayout({
         <ReactScan />
         <BrandingProvider
           config={{
-            businessName: tenantConfig.businessName,
+            businessName: (tenantConfig as { businessName: string })
+              .businessName,
             logoUrl: "/favicon.ico",
             primaryColor: "#3b82f6",
             secondaryColor: "#1e40af",
@@ -78,10 +79,11 @@ export default async function RootLayout({
         >
           <TenantConfigProvider
             config={{
-              currency: tenantConfig.currency,
-              locale: tenantConfig.locale,
-              quoteValidityDays: tenantConfig.quoteValidityDays,
-              timezone: tenantConfig.timezone,
+              currency: (tenantConfig as { currency: string }).currency,
+              locale: (tenantConfig as { locale: string }).locale,
+              quoteValidityDays: (tenantConfig as { quoteValidityDays: number })
+                .quoteValidityDays,
+              timezone: (tenantConfig as { timezone: string }).timezone,
             }}
           >
             <SessionProvider>

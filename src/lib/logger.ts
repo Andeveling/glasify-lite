@@ -22,7 +22,8 @@
  * - logs/exceptions.log: Uncaught exceptions
  * - logs/rejections.log: Unhandled promise rejections
  */
-/** biome-ignore-all lint/suspicious/noEmptyBlockStatements: <explanation> */
+/** biome-ignore-all lint/style/noMagicNumbers: It is not necesari  */
+// biome-ignore-all lint/suspicious/noEmptyBlockStatements
 
 // Type definition for logger interface
 type Logger = {
@@ -46,6 +47,7 @@ let isInitializing = false;
 async function initializeWinston(): Promise<Logger> {
   if (!isServer) {
     // Return no-op logger for client-side
+    // No-op logger for client-side: do nothing
     return {
       debug: () => {},
       error: () => {},

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Bootstrap default TenantConfig on first run to prevent 500 error at startup. Falls back to env vars (TENANT_*) or safe defaults and logs a warning. Root layout now consumes config safely. (2025-11-12)
+
 ### Changed
 
 - **Refactorización Modular del Router de Geocoding** (2025-01-15)
