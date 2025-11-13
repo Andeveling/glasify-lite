@@ -34,7 +34,6 @@ src/lib/seeding/
 ├── presets/                         # Data configurations
 ├── seeders/                         # Database operations
 ├── factories/                       # Test data generation
-├── schemas/                         # Zod validation
 ├── data/                            # Reference data (from prisma/)
 ├── contracts/                       # Base classes
 ├── types/                           # Type definitions
@@ -50,12 +49,11 @@ src/lib/seeding/
 - ❌ `prisma/seed-cli.ts`, `prisma/seed-tenant.ts`
 - ❌ `prisma/migrations/` (using Drizzle now)
 
-### Moved (Reference Data)
+### Moved (Reference Data)---
+
 - ✅ `prisma/data/vitro-rojas/` → `src/lib/seeding/data/vitro-rojas/`
 - ✅ `prisma/data/glass-*.json` → `src/lib/seeding/data/`
 - ✅ `prisma/migrations-scripts/` → `scripts/migrations/`
 - ✅ `prisma/schema.prisma` → `docs/reference/` (archived)
 
----
 
-For full documentation, see `docs/seeders/` directory.

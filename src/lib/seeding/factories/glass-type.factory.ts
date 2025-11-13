@@ -9,18 +9,21 @@
  * - Physical properties (thickness)
  * - Pricing and supplier information
  */
+/** biome-ignore-all lint/style/noMagicNumbers: Domain-specific constants for glass dimensions, thermal and solar properties */
 
+import type { z } from "zod";
 import {
   GLASS_TYPE_CONSTRAINTS,
   GLASS_TYPE_FIELD_LENGTHS,
 } from "@/server/db/schemas/constants/glass-type.constants";
-import type { NewGlassType } from "@/server/db/schemas/glass-type.schema";
 import { glassTypeInsertSchema } from "@/server/db/schemas/glass-type.schema";
 import type { FactoryOptions, FactoryResult } from "../types/base.types";
 import { createSuccessResult } from "../utils/validation.utils";
 
+// Infer type from Zod schema (not table schema) to match validation
+type GlassTypeInsertInput = z.infer<typeof glassTypeInsertSchema>;
+
 // Constants
-const DEFAULT_PRICE_PER_SQM = "50000.00"; // COP
 const ACTIVE_PROBABILITY = 0.9;
 const HAS_DESCRIPTION_PROBABILITY = 0.7;
 const HAS_MANUFACTURER_PROBABILITY = 0.8;
@@ -124,56 +127,53 @@ function generateDescription(): string | undefined {
  * Lower is better for insulation
  * Range: 0.5 (triple-glazed Low-E) to 6.0 (single clear)
  */
-function generateUValue(): string | undefined {
+function generateUValue(): number | undefined {
   if (!randomBoolean(0.7)) {
     return;
   }
 
-  const value = randomDecimal(1.0, 5.8, 2);
-  return value.toFixed(2);
+  return randomDecimal(1.0, 5.8, 2);
 }
 
 /**
  * Generate solar factor (g-value)
  * 0.0 (fully reflective) to 1.0 (clear glass)
  */
-function generateSolarFactor(): string | undefined {
+function generateSolarFactor(): number | undefined {
   if (!randomBoolean(0.6)) {
     return;
   }
 
-  const value = randomDecimal(
+  return randomDecimal(
     GLASS_TYPE_CONSTRAINTS.SOLAR_FACTOR.min,
     GLASS_TYPE_CONSTRAINTS.SOLAR_FACTOR.max,
     2
   );
-  return value.toFixed(2);
 }
 
 /**
  * Generate light transmission
  * 0.0 (opaque) to 1.0 (ultra-clear)
  */
-function generateLightTransmission(): string | undefined {
+function generateLightTransmission(): number | undefined {
   if (!randomBoolean(0.6)) {
     return;
   }
 
-  const value = randomDecimal(
+  return randomDecimal(
     GLASS_TYPE_CONSTRAINTS.LIGHT_TRANSMISSION.min,
     GLASS_TYPE_CONSTRAINTS.LIGHT_TRANSMISSION.max,
     2
   );
-  return value.toFixed(2);
 }
 
 /**
  * Generate price per square meter
  */
-function generatePricePerSqm(): string {
+function generatePricePerSqm(): number {
   const basePrice = 50_000; // COP
   const variation = randomInt(-20_000, 100_000);
-  return (basePrice + variation).toFixed(2);
+  return basePrice + variation;
 }
 
 /**
@@ -191,14 +191,14 @@ function generatePricePerSqm(): string {
  * ```
  */
 export function generateGlassType(
-  options?: FactoryOptions<NewGlassType>
-): FactoryResult<NewGlassType> {
+  options?: FactoryOptions<GlassTypeInsertInput>
+): FactoryResult<GlassTypeInsertInput> {
   const thickness = randomElement(STANDARD_THICKNESSES);
 
-  const defaults: NewGlassType = {
+  const defaults: GlassTypeInsertInput = {
     name: generateGlassName(),
     code: generateGlassCode(),
-    thicknessMm: thickness.toString(),
+    thicknessMm: thickness,
     pricePerSqm: generatePricePerSqm(),
     manufacturer: randomBoolean(HAS_MANUFACTURER_PROBABILITY)
       ? randomElement(GLASS_MANUFACTURERS)
@@ -211,9 +211,9 @@ export function generateGlassType(
     uValue: generateUValue(),
     solarFactor: generateSolarFactor(),
     lightTransmission: generateLightTransmission(),
-    isActive: randomBoolean(ACTIVE_PROBABILITY) ? "true" : "false",
+    isActive: randomBoolean(ACTIVE_PROBABILITY),
     lastReviewDate: undefined,
-    isSeeded: "false",
+    isSeeded: false,
     seedVersion: undefined,
   };
 
@@ -244,18 +244,15 @@ export function generateGlassType(
     const validatedData = parsed.data;
 
     // Warn about high U-value (poor insulation)
-    if (
-      validatedData.uValue &&
-      Number.parseFloat(validatedData.uValue) > HIGH_U_VALUE_THRESHOLD
-    ) {
+    if (validatedData.uValue && validatedData.uValue > HIGH_U_VALUE_THRESHOLD) {
       // This is a warning, not an error - still return success
       // You could log this if needed: console.warn('High U-value detected')
     }
 
     // Check solar factor vs light transmission consistency
     if (validatedData.solarFactor && validatedData.lightTransmission) {
-      const solarFactor = Number.parseFloat(validatedData.solarFactor);
-      const lightTrans = Number.parseFloat(validatedData.lightTransmission);
+      const solarFactor = validatedData.solarFactor;
+      const lightTrans = validatedData.lightTransmission;
 
       if (solarFactor > lightTrans + SOLAR_FACTOR_TRANSMISSION_TOLERANCE) {
         return {
@@ -287,8 +284,8 @@ export function generateGlassType(
  */
 export function generateGlassTypes(
   count: number,
-  options?: FactoryOptions<NewGlassType>
-): FactoryResult<NewGlassType>[] {
+  options?: FactoryOptions<GlassTypeInsertInput>
+): FactoryResult<GlassTypeInsertInput>[] {
   return Array.from({ length: count }, () => generateGlassType(options));
 }
 
@@ -297,16 +294,16 @@ export function generateGlassTypes(
  */
 export function generateGlassTypeBatch(
   count: number,
-  options?: FactoryOptions<NewGlassType>
-): NewGlassType[] {
+  options?: FactoryOptions<GlassTypeInsertInput>
+): GlassTypeInsertInput[] {
   const results = generateGlassTypes(count, options);
   const validResults = results
     .filter(
       (
         r
-      ): r is FactoryResult<NewGlassType> & {
+      ): r is FactoryResult<GlassTypeInsertInput> & {
         success: true;
-        data: NewGlassType;
+        data: GlassTypeInsertInput;
       } => r.success && r.data !== undefined
     )
     .map((r) => r.data);
@@ -319,13 +316,13 @@ export function generateGlassTypeBatch(
  */
 export function generateGlassTypeWithThickness(
   thicknessMm: number,
-  options?: FactoryOptions<NewGlassType>
-): FactoryResult<NewGlassType> {
+  options?: FactoryOptions<GlassTypeInsertInput>
+): FactoryResult<GlassTypeInsertInput> {
   return generateGlassType({
     ...options,
     overrides: {
       ...options?.overrides,
-      thicknessMm: thicknessMm.toString(),
+      thicknessMm,
     },
   });
 }
@@ -334,15 +331,15 @@ export function generateGlassTypeWithThickness(
  * Generate Low-E glass (thermal efficiency)
  */
 export function generateLowEGlassType(
-  options?: FactoryOptions<NewGlassType>
-): FactoryResult<NewGlassType> {
+  options?: FactoryOptions<GlassTypeInsertInput>
+): FactoryResult<GlassTypeInsertInput> {
   return generateGlassType({
     ...options,
     overrides: {
       name: "Low-E Coating",
-      uValue: randomDecimal(0.8, 1.5, 2).toFixed(2), // Excellent thermal performance
-      solarFactor: randomDecimal(0.3, 0.5, 2).toFixed(2), // Medium solar control
-      lightTransmission: randomDecimal(0.6, 0.8, 2).toFixed(2), // Good light transmission
+      uValue: randomDecimal(0.8, 1.5, 2), // Excellent thermal performance
+      solarFactor: randomDecimal(0.3, 0.5, 2), // Medium solar control
+      lightTransmission: randomDecimal(0.6, 0.8, 2), // Good light transmission
       ...options?.overrides,
     },
   });
@@ -352,14 +349,14 @@ export function generateLowEGlassType(
  * Generate solar control glass
  */
 export function generateSolarControlGlassType(
-  options?: FactoryOptions<NewGlassType>
-): FactoryResult<NewGlassType> {
+  options?: FactoryOptions<GlassTypeInsertInput>
+): FactoryResult<GlassTypeInsertInput> {
   return generateGlassType({
     ...options,
     overrides: {
       name: "Control Solar",
-      solarFactor: randomDecimal(0.15, 0.35, 2).toFixed(2), // Strong solar blocking
-      lightTransmission: randomDecimal(0.3, 0.6, 2).toFixed(2), // Moderate light
+      solarFactor: randomDecimal(0.15, 0.35, 2), // Strong solar blocking
+      lightTransmission: randomDecimal(0.3, 0.6, 2), // Moderate light
       ...options?.overrides,
     },
   });
@@ -369,15 +366,16 @@ export function generateSolarControlGlassType(
  * Generate clear glass (standard)
  */
 export function generateClearGlassType(
-  options?: FactoryOptions<NewGlassType>
-): FactoryResult<NewGlassType> {
+  options?: FactoryOptions<GlassTypeInsertInput>
+): FactoryResult<GlassTypeInsertInput> {
+  const DEFAULT_PRICE = 50_000;
   return generateGlassType({
     ...options,
     overrides: {
       name: "Transparente",
-      solarFactor: randomDecimal(0.75, 0.87, 2).toFixed(2), // High solar transmission
-      lightTransmission: randomDecimal(0.85, 0.92, 2).toFixed(2), // Excellent clarity
-      pricePerSqm: DEFAULT_PRICE_PER_SQM,
+      solarFactor: randomDecimal(0.75, 0.87, 2), // High solar transmission
+      lightTransmission: randomDecimal(0.85, 0.92, 2), // Excellent clarity
+      pricePerSqm: DEFAULT_PRICE,
       ...options?.overrides,
     },
   });
@@ -387,13 +385,13 @@ export function generateClearGlassType(
  * Generate inactive glass type
  */
 export function generateInactiveGlassType(
-  options?: FactoryOptions<NewGlassType>
-): FactoryResult<NewGlassType> {
+  options?: FactoryOptions<GlassTypeInsertInput>
+): FactoryResult<GlassTypeInsertInput> {
   return generateGlassType({
     ...options,
     overrides: {
       ...options?.overrides,
-      isActive: "false",
+      isActive: false,
     },
   });
 }
@@ -403,13 +401,13 @@ export function generateInactiveGlassType(
  */
 export function generateSeededGlassType(
   seedVersion = "1.0",
-  options?: FactoryOptions<NewGlassType>
-): FactoryResult<NewGlassType> {
+  options?: FactoryOptions<GlassTypeInsertInput>
+): FactoryResult<GlassTypeInsertInput> {
   return generateGlassType({
     ...options,
     overrides: {
       ...options?.overrides,
-      isSeeded: "true",
+      isSeeded: true,
       seedVersion,
     },
   });
@@ -420,8 +418,8 @@ export function generateSeededGlassType(
  */
 export function generateGlassTypeWithSupplier(
   glassSupplierId: string,
-  options?: FactoryOptions<NewGlassType>
-): FactoryResult<NewGlassType> {
+  options?: FactoryOptions<GlassTypeInsertInput>
+): FactoryResult<GlassTypeInsertInput> {
   return generateGlassType({
     ...options,
     overrides: {
