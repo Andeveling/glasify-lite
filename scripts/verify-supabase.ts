@@ -16,10 +16,146 @@ import postgres from "postgres";
 config({ path: ".env.local" });
 
 const DATABASE_URL = process.env.DATABASE_URL;
+const PREVIEW_LEN = 80;
 
-async function main() {
-  console.log("\n🔍 Verifying Supabase Configuration\n");
+type Mode = "transaction" | "session" | "direct" | "unknown";
 
+function detectMode(url: URL): { mode: Mode; details: string } {
+  const host = url.hostname;
+  const port = url.port;
+  const user = url.username;
+
+  if (
+    host.startsWith("db.") &&
+    host.endsWith(".supabase.co") &&
+    port === "6543" &&
+    user === "postgres"
+  ) {
+    return {
+      mode: "transaction",
+      details: `user=${user} host=${host} port=${port}`,
+    };
+  }
+  if (
+    host.includes("pooler.supabase.com") &&
+    port === "5432" &&
+    user.includes("postgres.")
+  ) {
+    return {
+      mode: "session",
+      details: `user=${user} host=${host} port=${port}`,
+    };
+  }
+  if (
+    host.startsWith("db.") &&
+    host.endsWith(".supabase.co") &&
+    port === "5432" &&
+    user === "postgres"
+  ) {
+    return {
+      mode: "direct",
+      details: `user=${user} host=${host} port=${port}`,
+    };
+  }
+  return { mode: "unknown", details: `user=${user} host=${host} port=${port}` };
+}
+
+function validateScheme(url: URL) {
+  if (url.protocol !== "postgresql:" && url.protocol !== "postgres:") {
+    console.error("❌ URL must start with postgresql:// or postgres://");
+    console.log(`   Found: ${url.protocol}//`);
+    process.exit(1);
+  }
+}
+
+function printMode(mode: Mode, details: string) {
+  switch (mode) {
+    case "transaction":
+      console.log("✅ Using Transaction Pooler (recommended for Drizzle)");
+      break;
+    case "session":
+      console.log("✅ Using Session Pooler (IPv4 proxy)");
+      console.log(
+        "   Tip: For serverless/short-lived tasks prefer Transaction mode on port 6543"
+      );
+      break;
+    case "direct":
+      console.log("✅ Using Direct Connection (IPv6)");
+      console.log(
+        "   Tip: Prefer Transaction Pooler (6543) for Drizzle Kit and broader compatibility"
+      );
+      break;
+    default:
+      console.warn("⚠️  Unrecognized Supabase connection format");
+      console.log(`   ${details}`);
+      console.log("   Refer to: Dashboard → Connect to copy an official URI");
+  }
+}
+
+function recommendMode(mode: Mode) {
+  if (mode !== "transaction") {
+    console.warn("⚠️  Warning: Not using Transaction Pooler (port 6543)");
+    console.log(
+      "   Drizzle recommends Transaction mode for migrations and serverless"
+    );
+  }
+}
+
+async function testConnection(url: string) {
+  console.log("\n📡 Testing database connection...");
+  let client: ReturnType<typeof postgres> | null = null;
+  try {
+    client = postgres(url, {
+      prepare: false,
+      max: 1,
+      connect_timeout: 10,
+    });
+
+    const result = await client`SELECT version(), current_database()`;
+    if (!(result.length > 0 && result[0])) {
+      return;
+    }
+
+    console.log("\n✅ Connection successful!\n");
+    console.log("📊 Database Info:");
+    console.log(
+      `   PostgreSQL: ${result[0].version?.split(" ")[1] ?? "unknown"}`
+    );
+    console.log(`   Database: ${result[0].current_database ?? "unknown"}`);
+
+    const tables = await client`
+        SELECT table_name 
+        FROM information_schema.tables 
+        WHERE table_schema = 'public'
+        ORDER BY table_name
+      `;
+
+    console.log(`\n📋 Tables found: ${tables.length}`);
+    if (tables.length > 0) {
+      console.log("\n   Tables:");
+      for (const table of tables.slice(0, 10)) {
+        console.log(`   - ${table.table_name}`);
+      }
+      if (tables.length > 10) {
+        console.log(`   ... and ${tables.length - 10} more`);
+      }
+    } else {
+      console.log("\n⚠️  No tables found. Run 'pnpm db:push' to sync schema.");
+    }
+
+    console.log("\n✅ Supabase is correctly configured!\n");
+    console.log("📋 Next steps:");
+    console.log("   1. Run 'pnpm db:push' to sync your schema");
+    console.log("   2. Run 'pnpm db:studio' to open Drizzle Studio");
+    console.log("   3. Run 'pnpm seed:minimal' to seed initial data\n");
+  } finally {
+    if (client) {
+      await client.end();
+    }
+  }
+}
+
+function getUrlOrExit(): { url: URL; raw: string } {
   // Check DATABASE_URL exists
   if (!DATABASE_URL) {
     console.error("❌ DATABASE_URL not found in .env.local");
@@ -27,32 +163,32 @@ async function main() {
     process.exit(1);
   }
 
-  console.log("✅ DATABASE_URL found");
-
-  // Check URL format
-  if (!DATABASE_URL.startsWith("postgresql://postgres.")) {
-    console.error("❌ Invalid Supabase URL format");
-    console.log("   Expected: postgresql://postgres.[PROJECT-REF]...");
-    console.log(`   Found: ${DATABASE_URL.substring(0, 50)}...`);
+  // Parse URL and validate format
+  try {
+    return { url: new URL(DATABASE_URL), raw: DATABASE_URL };
+  } catch {
+    console.error("❌ DATABASE_URL is not a valid URL");
+    console.log(`   Found: ${DATABASE_URL.substring(0, PREVIEW_LEN)}...`);
     process.exit(1);
   }
+}
 
-  console.log("✅ URL format is correct");
+async function main() {
+  console.log("\n🔍 Verifying Supabase Configuration\n");
 
-  // Check for transaction pooler (port 6543)
-  if (DATABASE_URL.includes("pooler.supabase.com:6543")) {
-    console.log("✅ Using transaction pooler (port 6543)");
-  } else {
-    console.warn(
-      "⚠️  Warning: Not using transaction pooler (recommended port 6543)"
-    );
-    console.log(
-      "   Current URL may use session mode which is slower with Drizzle"
-    );
-  }
+  const { url, raw } = getUrlOrExit();
+  console.log("✅ DATABASE_URL found");
+
+  validateScheme(url);
+
+  const { mode, details } = detectMode(url);
+  printMode(mode, details);
+
+  // Recommend Transaction Pooler
+  recommendMode(mode);
 
   // Check for password placeholder
-  if (DATABASE_URL.includes("[YOUR-PASSWORD]")) {
+  if (raw.includes("[YOUR-PASSWORD]")) {
     console.error("❌ Password placeholder not replaced");
     console.log("   Replace [YOUR-PASSWORD] with your actual password");
     process.exit(1);
@@ -60,56 +196,8 @@ async function main() {
 
   console.log("✅ Password is set");
 
-  // Test database connection
-  console.log("\n📡 Testing database connection...");
-
-  let client: ReturnType<typeof postgres> | null = null;
-
   try {
-    client = postgres(DATABASE_URL, {
-      prepare: false,
-      max: 1,
-      connect_timeout: 10,
-    });
-
-    // Test query
-    const result = await client`SELECT version(), current_database()`;
-
-    if (result.length > 0 && result[0]) {
-      console.log("\n✅ Connection successful!\n");
-      console.log("📊 Database Info:");
-      console.log(
-        `   PostgreSQL: ${result[0].version?.split(" ")[1] ?? "unknown"}`
-      );
-      console.log(`   Database: ${result[0].current_database ?? "unknown"}`);
-
-      // Test schema access
-      const tables = await client`
-        SELECT table_name 
-        FROM information_schema.tables 
-        WHERE table_schema = 'public'
-        ORDER BY table_name
-      `;
-
-      console.log(`\n📋 Tables found: ${tables.length}`);
-      if (tables.length > 0) {
-        console.log("\n   Tables:");
-        for (const table of tables.slice(0, 10)) {
-          console.log(`   - ${table.table_name}`);
-        }
-        if (tables.length > 10) {
-          console.log(`   ... and ${tables.length - 10} more`);
-        }
-      } else {
-        console.log("\n⚠️  No tables found. Run 'pnpm db:push' to sync schema.");
-      }
-
-      console.log("\n✅ Supabase is correctly configured!\n");
-      console.log("📋 Next steps:");
-      console.log("   1. Run 'pnpm db:push' to sync your schema");
-      console.log("   2. Run 'pnpm db:studio' to open Drizzle Studio");
-      console.log("   3. Run 'pnpm seed:minimal' to seed initial data\n");
-    }
+    await testConnection(raw);
   } catch (error) {
     console.error("\n❌ Connection failed\n");
 
@@ -139,10 +227,6 @@ async function main() {
     }
 
     process.exit(1);
-  } finally {
-    if (client) {
-      await client.end();
-    }
   }
 }
 

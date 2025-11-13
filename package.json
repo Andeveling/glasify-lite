@@ -19,7 +19,7 @@
     "db:pull": "drizzle-kit pull",
     "db:check": "drizzle-kit check",
     "db:up": "drizzle-kit up",
-    "db:verify": "tsx scripts/verify-drizzle-setup.ts",
+    "supabase:verify": "tsx scripts/verify-supabase.ts",
     "supabase:setup": "tsx scripts/setup-supabase.ts",
     "neon:setup": "tsx scripts/setup-neon-cloud.ts",
     "neon:verify": "tsx scripts/verify-neon-config.ts",
