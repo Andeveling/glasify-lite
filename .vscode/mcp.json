@@ -1,17 +1,5 @@
 {
   "servers": {
-    "serena": {
-      "type": "stdio",
-      "command": "uvx",
-      "args": [
-        "--from",
-        "git+https://github.com/oraios/serena",
-        "serena",
-        "start-mcp-server",
-        "--context",
-        "ide-assistant"
-      ]
-    },
     "shadcn": {
       "command": "npx",
       "args": ["shadcn@latest", "mcp"]
