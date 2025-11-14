@@ -23,9 +23,14 @@ import { api } from "@/trpc/server-client";
 import { ServicesContent } from "./_components/services-content";
 
 export const metadata: Metadata = {
-  description: "Administra los servicios adicionales para cotizaciones",
-  title: "Servicios | Admin",
+  description: "Administra los servicios y sus tarifas: instalación, transporte, acabados",
+  title: "Gestión de Servicios | Admin",
 };
+
+// Force dynamic rendering - requires database connection
+export const dynamic = 'force-dynamic';
+
+export default async function ServicesPage(
 
 // MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
 // Note: Admin routes are dynamic by default with Cache Components

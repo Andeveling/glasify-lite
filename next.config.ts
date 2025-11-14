@@ -8,8 +8,9 @@ const config: NextConfig = {
   reactCompiler: true,
   poweredByHeader: false,
   reactStrictMode: true,
-  // Disable Cache Components temporarily to allow build without database
-  // Re-enable after deployment when DATABASE_URL is available
+  // Keep Cache Components disabled until pages are refactored with "use cache" directives
+  // Route Segment Config (dynamic = 'force-dynamic') is incompatible with cacheComponents
+  // See: https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config
   cacheComponents: false,
   typescript: {
     ignoreBuildErrors: false,
