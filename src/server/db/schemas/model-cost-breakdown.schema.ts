@@ -84,7 +84,7 @@ export const modelCostBreakdownSelectSchema = createSelectSchema(
       .max(MODEL_COST_BREAKDOWN_FIELD_LENGTHS.COMPONENT)
       .min(1),
     costType: z.enum(COST_TYPE_VALUES),
-    unitCost: z.number().nonnegative(),
+    unitCost: z.string(),
     notes: z.string().max(MODEL_COST_BREAKDOWN_FIELD_LENGTHS.NOTES).optional(),
   }
 );
@@ -99,7 +99,7 @@ export const modelCostBreakdownInsertSchema = createInsertSchema(
       .max(MODEL_COST_BREAKDOWN_FIELD_LENGTHS.COMPONENT)
       .min(1),
     costType: z.enum(COST_TYPE_VALUES),
-    unitCost: z.number().nonnegative(),
+    unitCost: z.string(),
     notes: z.string().max(MODEL_COST_BREAKDOWN_FIELD_LENGTHS.NOTES).optional(),
   }
 ).omit({ createdAt: true, updatedAt: true });
@@ -113,7 +113,7 @@ export const modelCostBreakdownUpdateSchema = createUpdateSchema(
       .max(MODEL_COST_BREAKDOWN_FIELD_LENGTHS.COMPONENT)
       .min(1),
     costType: z.enum(COST_TYPE_VALUES),
-    unitCost: z.number().nonnegative(),
+    unitCost: z.string(),
     notes: z.string().max(MODEL_COST_BREAKDOWN_FIELD_LENGTHS.NOTES),
   }
 )

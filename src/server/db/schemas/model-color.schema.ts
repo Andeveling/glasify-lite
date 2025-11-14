@@ -81,7 +81,7 @@ export const modelColors = pgTable(
 export const modelColorSelectSchema = createSelectSchema(modelColors, {
   modelId: z.string().uuid(),
   colorId: z.string().uuid(),
-  surchargePercentage: z.number().nonnegative(),
+  surchargePercentage: z.string(),
   isDefault: z.boolean(),
 });
 
@@ -89,14 +89,14 @@ export const modelColorInsertSchema = createInsertSchema(modelColors, {
   id: z.uuid().optional(),
   modelId: z.string().uuid(),
   colorId: z.string().uuid(),
-  surchargePercentage: z.number().nonnegative(),
+  surchargePercentage: z.string(),
   isDefault: z.boolean().optional(),
 }).omit({ createdAt: true, updatedAt: true });
 
 export const modelColorUpdateSchema = createUpdateSchema(modelColors, {
   modelId: z.string().uuid(),
   colorId: z.string().uuid(),
-  surchargePercentage: z.number().nonnegative(),
+  surchargePercentage: z.string(),
   isDefault: z.boolean(),
 })
   .partial()

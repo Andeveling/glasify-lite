@@ -77,8 +77,8 @@ export const quoteItemServiceSelectSchema = createSelectSchema(
     quoteItemId: z.string().uuid(),
     serviceId: z.string().uuid(),
     unit: z.enum(SERVICE_UNIT_VALUES),
-    quantity: z.number().positive(),
-    amount: z.number().nonnegative(),
+    quantity: z.string(),
+    amount: z.string(),
   }
 );
 
@@ -89,8 +89,8 @@ export const quoteItemServiceInsertSchema = createInsertSchema(
     quoteItemId: z.string().uuid(),
     serviceId: z.string().uuid(),
     unit: z.enum(SERVICE_UNIT_VALUES),
-    quantity: z.number().positive(),
-    amount: z.number().nonnegative(),
+    quantity: z.string(),
+    amount: z.string(),
   }
 ).omit({ createdAt: true, updatedAt: true });
 

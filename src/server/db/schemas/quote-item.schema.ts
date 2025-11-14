@@ -122,8 +122,8 @@ export const quoteItemSelectSchema = createSelectSchema(quoteItems, {
   widthMm: z.number().int().positive(),
   heightMm: z.number().int().positive(),
   accessoryApplied: z.boolean(),
-  subtotal: z.number().nonnegative(),
-  colorSurchargePercentage: z.number().nonnegative().optional(),
+  subtotal: z.string(),
+  colorSurchargePercentage: z.string().optional(),
   colorHexCode: z
     .string()
     .regex(/^#[0-9A-Fa-f]{6}$/)
@@ -146,8 +146,8 @@ export const quoteItemInsertSchema = createInsertSchema(quoteItems, {
   widthMm: z.number().int().positive(),
   heightMm: z.number().int().positive(),
   accessoryApplied: z.boolean().optional(),
-  subtotal: z.number().nonnegative(),
-  colorSurchargePercentage: z.number().nonnegative().optional(),
+  subtotal: z.string(),
+  colorSurchargePercentage: z.string().optional(),
   colorHexCode: z
     .string()
     .regex(/^#[0-9A-Fa-f]{6}$/)
@@ -166,8 +166,8 @@ export const quoteItemUpdateSchema = createUpdateSchema(quoteItems, {
   widthMm: z.number().int().positive(),
   heightMm: z.number().int().positive(),
   accessoryApplied: z.boolean(),
-  subtotal: z.number().nonnegative(),
-  colorSurchargePercentage: z.number().nonnegative(),
+  subtotal: z.string(),
+  colorSurchargePercentage: z.string(),
   colorHexCode: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
   colorName: z.string().max(QUOTE_ITEM_FIELD_LENGTHS.COLOR_NAME),
 })

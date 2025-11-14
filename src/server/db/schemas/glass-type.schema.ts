@@ -109,19 +109,11 @@ export const glassTypeSelectSchema = createSelectSchema(glassTypes, {
     .int()
     .min(GLASS_TYPE_CONSTRAINTS.THICKNESS_MM.min)
     .max(GLASS_TYPE_CONSTRAINTS.THICKNESS_MM.max),
-  pricePerSqm: z.number().nonnegative(),
-  uValue: z.number().nonnegative().optional(),
+  pricePerSqm: z.string(),
+  uValue: z.string().optional(),
   description: z.string().max(GLASS_TYPE_FIELD_LENGTHS.DESCRIPTION).optional(),
-  solarFactor: z
-    .number()
-    .min(GLASS_TYPE_CONSTRAINTS.SOLAR_FACTOR.min)
-    .max(GLASS_TYPE_CONSTRAINTS.SOLAR_FACTOR.max)
-    .optional(),
-  lightTransmission: z
-    .number()
-    .min(GLASS_TYPE_CONSTRAINTS.LIGHT_TRANSMISSION.min)
-    .max(GLASS_TYPE_CONSTRAINTS.LIGHT_TRANSMISSION.max)
-    .optional(),
+  solarFactor: z.string().optional(),
+  lightTransmission: z.string().optional(),
   isActive: z.boolean(),
   lastReviewDate: z.date().optional(),
   isSeeded: z.boolean(),
@@ -143,19 +135,11 @@ export const glassTypeInsertSchema = createInsertSchema(glassTypes, {
     .int()
     .min(GLASS_TYPE_CONSTRAINTS.THICKNESS_MM.min)
     .max(GLASS_TYPE_CONSTRAINTS.THICKNESS_MM.max),
-  pricePerSqm: z.number().nonnegative(),
-  uValue: z.number().nonnegative().optional(),
+  pricePerSqm: z.string(),
+  uValue: z.string().optional(),
   description: z.string().max(GLASS_TYPE_FIELD_LENGTHS.DESCRIPTION).optional(),
-  solarFactor: z
-    .number()
-    .min(GLASS_TYPE_CONSTRAINTS.SOLAR_FACTOR.min)
-    .max(GLASS_TYPE_CONSTRAINTS.SOLAR_FACTOR.max)
-    .optional(),
-  lightTransmission: z
-    .number()
-    .min(GLASS_TYPE_CONSTRAINTS.LIGHT_TRANSMISSION.min)
-    .max(GLASS_TYPE_CONSTRAINTS.LIGHT_TRANSMISSION.max)
-    .optional(),
+  solarFactor: z.string().optional(),
+  lightTransmission: z.string().optional(),
   isActive: z.boolean().optional(),
   lastReviewDate: z.date().optional(),
   isSeeded: z.boolean().optional(),
@@ -176,19 +160,11 @@ export const glassTypeUpdateSchema = createUpdateSchema(glassTypes, {
     .int()
     .min(GLASS_TYPE_CONSTRAINTS.THICKNESS_MM.min)
     .max(GLASS_TYPE_CONSTRAINTS.THICKNESS_MM.max),
-  pricePerSqm: z.number().nonnegative(),
-  uValue: z.number().nonnegative().optional(),
+  pricePerSqm: z.string(),
+  uValue: z.string().optional(),
   description: z.string().max(GLASS_TYPE_FIELD_LENGTHS.DESCRIPTION).optional(),
-  solarFactor: z
-    .number()
-    .min(GLASS_TYPE_CONSTRAINTS.SOLAR_FACTOR.min)
-    .max(GLASS_TYPE_CONSTRAINTS.SOLAR_FACTOR.max)
-    .optional(),
-  lightTransmission: z
-    .number()
-    .min(GLASS_TYPE_CONSTRAINTS.LIGHT_TRANSMISSION.min)
-    .max(GLASS_TYPE_CONSTRAINTS.LIGHT_TRANSMISSION.max)
-    .optional(),
+  solarFactor: z.string().optional(),
+  lightTransmission: z.string().optional(),
   isActive: z.boolean(),
   lastReviewDate: z.date().optional(),
   isSeeded: z.boolean(),

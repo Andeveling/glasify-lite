@@ -39,7 +39,7 @@ export const vitroRojasServices = [
     unit: "sqm" as const,
     rate: 25.0,
     minimumBillingUnit: 2,
-    isActive: true,
+    isActive: false,
   },
   {
     name: "Instalación Urgente (24h)",
@@ -47,7 +47,7 @@ export const vitroRojasServices = [
     unit: "sqm" as const,
     rate: 35.0,
     minimumBillingUnit: 2,
-    isActive: true,
+    isActive: false,
   },
 
   // Sellado y Acabados
@@ -57,7 +57,7 @@ export const vitroRojasServices = [
     unit: "ml" as const,
     rate: 3.5,
     minimumBillingUnit: 5,
-    isActive: true,
+    isActive: false,
   },
   {
     name: "Sellado Estructural",
@@ -65,7 +65,7 @@ export const vitroRojasServices = [
     unit: "ml" as const,
     rate: 6.0,
     minimumBillingUnit: 5,
-    isActive: true,
+    isActive: false,
   },
 
   // Transporte
@@ -75,7 +75,7 @@ export const vitroRojasServices = [
     unit: "unit" as const,
     rate: 50.0,
     minimumBillingUnit: 1,
-    isActive: true,
+    isActive: false,
   },
   {
     name: "Transporte Interior (Provincias)",
@@ -83,7 +83,7 @@ export const vitroRojasServices = [
     unit: "unit" as const,
     rate: 120.0,
     minimumBillingUnit: 1,
-    isActive: true,
+    isActive: false,
   },
 
   // Servicios Especiales
@@ -93,7 +93,7 @@ export const vitroRojasServices = [
     unit: "unit" as const,
     rate: 35.0,
     minimumBillingUnit: 1,
-    isActive: true,
+    isActive: false,
   },
   {
     name: "Tratamiento Marco Existente",
@@ -101,7 +101,7 @@ export const vitroRojasServices = [
     unit: "ml" as const,
     rate: 8.0,
     minimumBillingUnit: 3,
-    isActive: true,
+    isActive: false,
   },
   {
     name: "Templado de Vidrio (Servicio Externo)",
@@ -109,7 +109,7 @@ export const vitroRojasServices = [
     unit: "sqm" as const,
     rate: 22.0,
     minimumBillingUnit: 1,
-    isActive: true,
+    isActive: false,
   },
   {
     name: "Laminado de Vidrio (Servicio Externo)",
@@ -117,7 +117,7 @@ export const vitroRojasServices = [
     unit: "sqm" as const,
     rate: 28.0,
     minimumBillingUnit: 1,
-    isActive: true,
+    isActive: false,
   },
 
   // Mantenimiento
@@ -127,7 +127,7 @@ export const vitroRojasServices = [
     unit: "unit" as const,
     rate: 45.0,
     minimumBillingUnit: 1,
-    isActive: true,
+    isActive: false,
   },
   {
     name: "Reparación de Herrajes",
@@ -135,7 +135,7 @@ export const vitroRojasServices = [
     unit: "unit" as const,
     rate: 30.0,
     minimumBillingUnit: 1,
-    isActive: true,
+    isActive: false,
   },
 
   // Servicios Desactivados (ejemplo)

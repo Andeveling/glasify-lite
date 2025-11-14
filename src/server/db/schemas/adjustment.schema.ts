@@ -83,11 +83,11 @@ export const adjustmentSelectSchema = createSelectSchema(adjustments, {
   scope: z.enum(ADJUSTMENT_SCOPE_VALUES),
   concept: z.string().max(ADJUSTMENT_FIELD_LENGTHS.CONCEPT).min(1),
   unit: z.enum(SERVICE_UNIT_VALUES),
-  value: z.number().nonnegative(),
+  value: z.string(),
   sign: z.enum(ADJUSTMENT_SIGN_VALUES),
   quoteId: z.string().uuid().nullable(),
   quoteItemId: z.string().uuid().nullable(),
-  amount: z.number(),
+  amount: z.string(),
 });
 
 export const adjustmentInsertSchema = createInsertSchema(adjustments, {
@@ -95,7 +95,7 @@ export const adjustmentInsertSchema = createInsertSchema(adjustments, {
   scope: z.enum(ADJUSTMENT_SCOPE_VALUES),
   concept: z.string().max(ADJUSTMENT_FIELD_LENGTHS.CONCEPT).min(1),
   unit: z.enum(SERVICE_UNIT_VALUES),
-  value: z.number().nonnegative(),
+  value: z.string(),
   sign: z.enum(ADJUSTMENT_SIGN_VALUES),
   quoteId: z.string().uuid().optional(),
   quoteItemId: z.string().uuid().optional(),

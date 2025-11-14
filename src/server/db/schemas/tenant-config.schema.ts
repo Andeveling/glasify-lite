@@ -165,22 +165,14 @@ export const tenantConfigSelectSchema = createSelectSchema(tenantConfigs, {
     .max(FIELD_LENGTHS.TENANT_CONFIG.WHATSAPP_NUMBER)
     .nullable(), // E.164 format
   whatsappEnabled: z.boolean(),
-  warehouseLatitude: z
-    .number()
-    .min(GEO_CONSTRAINTS.LATITUDE.MIN)
-    .max(GEO_CONSTRAINTS.LATITUDE.MAX)
-    .optional(),
-  warehouseLongitude: z
-    .number()
-    .min(GEO_CONSTRAINTS.LONGITUDE.MIN)
-    .max(GEO_CONSTRAINTS.LONGITUDE.MAX)
-    .optional(),
+  warehouseLatitude: z.string().optional(),
+  warehouseLongitude: z.string().optional(),
   warehouseCity: z
     .string()
     .max(FIELD_LENGTHS.TENANT_CONFIG.WAREHOUSE_CITY)
     .optional(),
-  transportBaseRate: z.number().nonnegative().optional(),
-  transportPerKmRate: z.number().nonnegative().optional(),
+  transportBaseRate: z.string().optional(),
+  transportPerKmRate: z.string().optional(),
 });
 
 export const tenantConfigInsertSchema = createInsertSchema(tenantConfigs, {

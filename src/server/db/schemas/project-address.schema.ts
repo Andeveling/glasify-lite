@@ -13,7 +13,6 @@ import {
 } from "drizzle-zod";
 import { z } from "zod";
 import {
-  PROJECT_ADDRESS_CONSTRAINTS,
   PROJECT_ADDRESS_DECIMAL_PRECISION,
   PROJECT_ADDRESS_FIELD_LENGTHS,
 } from "./constants/project-address.constants";
@@ -120,16 +119,8 @@ export const projectAddressSelectSchema = createSelectSchema(projectAddresses, {
   district: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.DISTRICT).optional(),
   street: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.STREET).optional(),
   reference: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.REFERENCE).optional(),
-  latitude: z
-    .number()
-    .min(PROJECT_ADDRESS_CONSTRAINTS.LATITUDE_MIN)
-    .max(PROJECT_ADDRESS_CONSTRAINTS.LATITUDE_MAX)
-    .optional(),
-  longitude: z
-    .number()
-    .min(PROJECT_ADDRESS_CONSTRAINTS.LONGITUDE_MIN)
-    .max(PROJECT_ADDRESS_CONSTRAINTS.LONGITUDE_MAX)
-    .optional(),
+  latitude: z.string().optional(),
+  longitude: z.string().optional(),
   postalCode: z
     .string()
     .max(PROJECT_ADDRESS_FIELD_LENGTHS.POSTAL_CODE)
@@ -146,16 +137,8 @@ export const projectAddressInsertSchema = createInsertSchema(projectAddresses, {
   district: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.DISTRICT).optional(),
   street: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.STREET).optional(),
   reference: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.REFERENCE).optional(),
-  latitude: z
-    .number()
-    .min(PROJECT_ADDRESS_CONSTRAINTS.LATITUDE_MIN)
-    .max(PROJECT_ADDRESS_CONSTRAINTS.LATITUDE_MAX)
-    .optional(),
-  longitude: z
-    .number()
-    .min(PROJECT_ADDRESS_CONSTRAINTS.LONGITUDE_MIN)
-    .max(PROJECT_ADDRESS_CONSTRAINTS.LONGITUDE_MAX)
-    .optional(),
+  latitude: z.string().optional(),
+  longitude: z.string().optional(),
   postalCode: z
     .string()
     .max(PROJECT_ADDRESS_FIELD_LENGTHS.POSTAL_CODE)
@@ -171,14 +154,8 @@ export const projectAddressUpdateSchema = createUpdateSchema(projectAddresses, {
   district: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.DISTRICT),
   street: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.STREET),
   reference: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.REFERENCE),
-  latitude: z
-    .number()
-    .min(PROJECT_ADDRESS_CONSTRAINTS.LATITUDE_MIN)
-    .max(PROJECT_ADDRESS_CONSTRAINTS.LATITUDE_MAX),
-  longitude: z
-    .number()
-    .min(PROJECT_ADDRESS_CONSTRAINTS.LONGITUDE_MIN)
-    .max(PROJECT_ADDRESS_CONSTRAINTS.LONGITUDE_MAX),
+  latitude: z.string(),
+  longitude: z.string(),
   postalCode: z.string().max(PROJECT_ADDRESS_FIELD_LENGTHS.POSTAL_CODE),
 })
   .partial()
