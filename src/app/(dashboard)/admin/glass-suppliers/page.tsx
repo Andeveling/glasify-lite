@@ -21,13 +21,13 @@ import { api } from "@/trpc/server-client";
 import { GlassSupplierList } from "./_components/glass-supplier-list";
 
 export const metadata: Metadata = {
-  description: "Administra los fabricantes de vidrio",
+  description:
+    "Gestiona los proveedores de vidrio y sus relaciones con tipos de vidrio",
   title: "Proveedores de Vidrio | Admin",
 };
 
-// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
-// Note: Dynamic by default with Cache Components
-// TODO: Evaluate if Suspense boundaries improve UX after build verification
+// Force dynamic rendering - requires database connection
+export const dynamic = "force-dynamic";
 
 type SearchParams = Promise<{
   country?: string;

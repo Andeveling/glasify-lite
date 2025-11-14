@@ -31,12 +31,6 @@ export const metadata: Metadata = {
 // Force dynamic rendering - requires database connection
 export const dynamic = 'force-dynamic';
 
-export default async function ColorsPage(
-
-// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
-// Note: Admin routes are dynamic by default - no export needed
-// TODO: Will evaluate if Suspense boundaries improve UX after build verification
-
 type SearchParams = Promise<{
   isActive?: string;
   page?: string;

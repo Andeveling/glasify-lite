@@ -30,12 +30,6 @@ export const metadata: Metadata = {
 // Force dynamic rendering - requires database connection
 export const dynamic = 'force-dynamic';
 
-export default async function EditModelPage(
-
-// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
-// Note: Dynamic by default, fresh data guaranteed without explicit export
-// TODO: Consider Suspense boundaries for better loading states after build verification
-
 export default async function EditModelPage({ params }: EditModelPageProps) {
   const { id } = await params;
 

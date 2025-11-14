@@ -4,14 +4,13 @@ import { db } from "@/server/db";
 import { DashboardContent } from "./metrics/_components/dashboard-content";
 
 export const metadata: Metadata = {
-  description: "Panel de control del administrador con estadísticas y acciones rápidas",
+  description:
+    "Panel de control del administrador con estadísticas y acciones rápidas",
   title: "Dashboard Administrativo | Glasify Lite",
 };
 
 // Force dynamic rendering - requires database connection
-export const dynamic = 'force-dynamic';
-
-export default async function AdminDashboard(
+export const dynamic = "force-dynamic";
 
 // MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
 // Note: Everything is dynamic by default with Cache Components - no export needed

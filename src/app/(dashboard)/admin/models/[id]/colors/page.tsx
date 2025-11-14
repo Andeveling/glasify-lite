@@ -30,9 +30,8 @@ import { api } from "@/trpc/server-client";
 import { AddColorDialog } from "./_components/add-color-dialog";
 import { ModelColorsList } from "./_components/model-colors-list";
 
-// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
-// Note: Admin routes are dynamic by default with Cache Components
-// TODO: Evaluate if Suspense boundaries are needed after build verification
+// Force dynamic rendering - requires database connection
+export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -77,6 +76,7 @@ export default async function ModelColorsPage({ params }: PageProps) {
           surchargePercentage: safeDecimalToNumber(mc.surchargePercentage),
           // Add isActive property if not present
           isActive: true,
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         }) as any
     );
 
