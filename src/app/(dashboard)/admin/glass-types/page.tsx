@@ -33,9 +33,7 @@ export const metadata: Metadata = {
 };
 
 // Force dynamic rendering - requires database connection
-export const dynamic = 'force-dynamic';
-
-export default async function GlassTypesPage(
+export const dynamic = "force-dynamic";
 
 // MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
 // Note: Admin routes are dynamic by default - no explicit export needed
