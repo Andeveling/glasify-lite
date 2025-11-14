@@ -22,14 +22,13 @@ import { api } from "@/trpc/server-client";
 import { ProfileSupplierContent } from "./_components/profile-supplier-content";
 
 export const metadata: Metadata = {
-  description: "Administra los proveedores de perfiles de ventanas y puertas (PVC, Aluminio, Madera, Mixtos)",
+  description:
+    "Administra los proveedores de perfiles de ventanas y puertas (PVC, Aluminio, Madera, Mixtos)",
   title: "Gestión de Proveedores de Perfiles | Admin",
 };
 
 // Force dynamic rendering - requires database connection
-export const dynamic = 'force-dynamic';
-
-export default async function ProfileSuppliersPage(
+export const dynamic = "force-dynamic";
 
 // MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
 // Note: Admin routes are dynamic by default - no export needed
