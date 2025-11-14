@@ -23,12 +23,13 @@ type EditModelPageProps = {
 };
 
 export const metadata: Metadata = {
-  description: "Edita un modelo de ventana o puerta: precios, dimensiones y configuración",
+  description:
+    "Edita un modelo de ventana o puerta: precios, dimensiones y configuración",
   title: "Editar Modelo | Admin",
 };
 
 // Force dynamic rendering - requires database connection
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function EditModelPage({ params }: EditModelPageProps) {
   const { id } = await params;

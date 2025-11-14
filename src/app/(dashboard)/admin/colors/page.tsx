@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 };
 
 // Force dynamic rendering - requires database connection
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 type SearchParams = Promise<{
   isActive?: string;
