@@ -11,6 +11,7 @@
 # database
 /prisma/db.sqlite
 /prisma/db.sqlite-journal
+src/generated/prisma-client
 db.sqlite
 
 # prisma generated client
