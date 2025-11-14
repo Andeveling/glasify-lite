@@ -18,11 +18,7 @@ import {
  * Validation ensures all required fields are present and properly formatted
  */
 const tenantConfigData = {
-  businessAddress: envSeed.TENANT_BUSINESS_ADDRESS || undefined,
   businessName: envSeed.TENANT_BUSINESS_NAME,
-  // Optional contact fields (undefined if not provided)
-  contactEmail: envSeed.TENANT_CONTACT_EMAIL || undefined,
-  contactPhone: envSeed.TENANT_CONTACT_PHONE || undefined,
   currency: envSeed.TENANT_CURRENCY,
   locale: envSeed.TENANT_LOCALE,
   quoteValidityDays: envSeed.TENANT_QUOTE_VALIDITY_DAYS,

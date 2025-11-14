@@ -9,6 +9,7 @@
  * @see https://env.t3.gg/docs/core
  */
 
+import "dotenv/config";
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 

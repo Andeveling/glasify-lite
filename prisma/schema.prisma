@@ -3,9 +3,7 @@
 
 generator client {
   provider   = "prisma-client-js"
-  // Use client engine (no Rust binaries) for serverless/edge environments
-  // Reduces bundle size and prevents deployment issues on Vercel
-  engineType = "client"
+  engineType = "library"
   // Optimización para Vercel (reduce tamaño del bundle)
   output     = "../node_modules/.prisma/client"
 }

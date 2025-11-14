@@ -4,12 +4,12 @@
  */
 
 import { useMemo } from "react";
+import type { PriceItemCalculationResult } from "@/domain/pricing/adapters/trpc/price-calculator.adapter";
 import type {
   GlassTypeOutput,
   ModelDetailOutput,
   ServiceOutput,
 } from "@/server/api/routers/catalog";
-import type { PriceItemCalculationResult } from "@/domain/pricing/adapters/trpc/price-calculator.adapter";
 import {
   buildPriceBreakdown,
   type PriceBreakdownItem,
