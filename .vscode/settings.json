@@ -46,5 +46,6 @@
   },
   "[typescriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
-  }
+  },
+  "accessibility.verbosity.terminal": false
 }
