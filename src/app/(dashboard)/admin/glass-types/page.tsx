@@ -28,9 +28,14 @@ import { GlassTypesTable } from "./_components/glass-types-table";
 
 export const metadata: Metadata = {
   description:
-    "Administra los tipos de cristal con sus soluciones y características",
-  title: "Tipos de Cristal | Admin",
+    "Administra tipos de vidrio: espesores, características técnicas, precios y compatibilidad",
+  title: "Gestión de Tipos de Vidrio | Admin",
 };
+
+// Force dynamic rendering - requires database connection
+export const dynamic = 'force-dynamic';
+
+export default async function GlassTypesPage(
 
 // MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
 // Note: Admin routes are dynamic by default - no explicit export needed

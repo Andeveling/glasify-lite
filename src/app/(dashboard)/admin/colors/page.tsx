@@ -23,9 +23,15 @@ import { api } from "@/trpc/server-client";
 import { ColorsContent } from "./_components/colors-content";
 
 export const metadata: Metadata = {
-  description: "Administra el catálogo de colores para modelos de ventanas",
-  title: "Catálogo de Colores | Admin",
+  description:
+    "Administra los colores disponibles para ventanas y puertas, configura recargos y asociaciones con modelos",
+  title: "Gestión de Colores | Admin",
 };
+
+// Force dynamic rendering - requires database connection
+export const dynamic = 'force-dynamic';
+
+export default async function ColorsPage(
 
 // MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
 // Note: Admin routes are dynamic by default - no export needed
