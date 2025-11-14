@@ -9,7 +9,8 @@
 import type { UpdateTenantConfigInput } from "./tenant-config.schemas";
 
 /**
- * Serialize tenant config - Convert Drizzle text/decimal strings to proper types
+ * Serialize tenant config - Convert Drizzle text strings to proper types
+ * Note: decimal fields stay as strings (Drizzle decimal returns string)
  */
 export function serializeTenantConfig<
   T extends {
@@ -25,18 +26,11 @@ export function serializeTenantConfig<
     ...config,
     quoteValidityDays: Number(config.quoteValidityDays),
     whatsappEnabled: config.whatsappEnabled === "true",
-    warehouseLatitude: config.warehouseLatitude
-      ? Number(config.warehouseLatitude)
-      : undefined,
-    warehouseLongitude: config.warehouseLongitude
-      ? Number(config.warehouseLongitude)
-      : undefined,
-    transportBaseRate: config.transportBaseRate
-      ? Number(config.transportBaseRate)
-      : undefined,
-    transportPerKmRate: config.transportPerKmRate
-      ? Number(config.transportPerKmRate)
-      : undefined,
+    // Decimal fields stay as strings (no conversion)
+    warehouseLatitude: config.warehouseLatitude ?? undefined,
+    warehouseLongitude: config.warehouseLongitude ?? undefined,
+    transportBaseRate: config.transportBaseRate ?? undefined,
+    transportPerKmRate: config.transportPerKmRate ?? undefined,
   };
 }
 

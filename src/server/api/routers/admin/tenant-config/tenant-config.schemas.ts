@@ -42,15 +42,13 @@ export const updateBrandingInput = tenantConfigUpdateSchema.pick({
 
 /**
  * Tenant config output schema - extends drizzle-zod auto-generated SELECT schema
- * Converts Drizzle types (text/decimal) to proper API types (number/boolean)
+ * Converts text fields to proper API types (number/boolean)
+ * Note: decimal fields stay as strings (Drizzle returns strings for decimal)
  */
 export const tenantConfigOutput = tenantConfigSelectSchema.extend({
   quoteValidityDays: z.number().int().positive(),
   whatsappEnabled: z.boolean(),
-  warehouseLatitude: z.number().optional(),
-  warehouseLongitude: z.number().optional(),
-  transportBaseRate: z.number().optional(),
-  transportPerKmRate: z.number().optional(),
+  // DO NOT override decimal fields - they stay as strings from selectSchema
 });
 
 /**
