@@ -64,11 +64,13 @@ export function useScrollResetForm({
 
       // Get success card position
       const successCardElement = successCardRef.current;
-      if (!successCardElement) return;
-
+      if (!successCardElement) {
+        return;
+      }
+      const X_BUFFER = 200;
       const successCardTop =
         successCardElement.getBoundingClientRect().top + window.scrollY;
-      const isAboveSuccessCard = currentScrollY < successCardTop - 200; // 200px buffer
+      const isAboveSuccessCard = currentScrollY < successCardTop - X_BUFFER; // 200px buffer
 
       // If user scrolls up past threshold and is above success card
       if (
@@ -79,11 +81,11 @@ export function useScrollResetForm({
       ) {
         // Mark that we've detected the scroll pattern
         hasUserInteracted.current = true;
-
+        const MS_DELAY = 100;
         // Reset the form with a small delay for better UX
         setTimeout(() => {
           onReset();
-        }, 100);
+        }, MS_DELAY);
       }
 
       // Update last scroll position
