@@ -64,8 +64,11 @@ export const serviceFilterInput = z.object({
 
 // ✅ Output schema - with type conversions
 export const serviceOutput = SelectServiceSchema.extend({
-  rate: z.number(), // decimal string → number
-  minimumBillingUnit: z.number().nullable(),
+  rate: z.string().transform((val) => Number.parseFloat(val)), // decimal string → number
+  minimumBillingUnit: z
+    .string()
+    .nullable()
+    .transform((val) => (val ? Number.parseFloat(val) : null)),
   createdAt: z.date(),
   updatedAt: z.date(),
 });

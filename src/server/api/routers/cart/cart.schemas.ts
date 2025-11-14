@@ -78,9 +78,12 @@ export const clearCartInput = z.object({});
 // ============================================================================
 
 export const CartItemOutput = SelectCartItemSchema.extend({
-  subtotal: z.number().nonnegative(),
+  subtotal: z.string().transform((val) => Number.parseFloat(val)),
   unitPrice: z.number().nonnegative(),
-  colorSurchargePercentage: z.number().nonnegative().nullable(),
+  colorSurchargePercentage: z
+    .string()
+    .nullable()
+    .transform((val) => (val ? Number.parseFloat(val) : null)),
   modelName: z.string(),
   glassTypeName: z.string(),
   solutionName: z.string().optional(),

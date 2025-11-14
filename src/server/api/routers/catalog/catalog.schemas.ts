@@ -70,11 +70,14 @@ export const manufacturerOutput = z.object({
 });
 
 export const modelSummaryOutput = z.object({
-  accessoryPrice: z.number().nullable(),
-  basePrice: z.number(),
+  accessoryPrice: z
+    .string()
+    .nullable()
+    .transform((val) => (val ? Number.parseFloat(val) : null)),
+  basePrice: z.string().transform((val) => Number.parseFloat(val)),
   compatibleGlassTypeIds: z.array(z.string()),
-  costPerMmHeight: z.number(),
-  costPerMmWidth: z.number(),
+  costPerMmHeight: z.string().transform((val) => Number.parseFloat(val)),
+  costPerMmWidth: z.string().transform((val) => Number.parseFloat(val)),
   createdAt: z.date(),
   id: z.string(),
   imageUrl: z.string().nullable(),
@@ -99,11 +102,14 @@ export const listModelsOutput = z.object({
 });
 
 export const modelDetailOutput = z.object({
-  accessoryPrice: z.number().nullable(),
-  basePrice: z.number(),
+  accessoryPrice: z
+    .string()
+    .nullable()
+    .transform((val) => (val ? Number.parseFloat(val) : null)),
+  basePrice: z.string().transform((val) => Number.parseFloat(val)),
   compatibleGlassTypeIds: z.array(z.string()),
-  costPerMmHeight: z.number(),
-  costPerMmWidth: z.number(),
+  costPerMmHeight: z.string().transform((val) => Number.parseFloat(val)),
+  costPerMmWidth: z.string().transform((val) => Number.parseFloat(val)),
   createdAt: z.date(),
   glassDiscountHeightMm: z.number(),
   glassDiscountWidthMm: z.number(),
@@ -129,7 +135,7 @@ export const serviceOutput = z.object({
   createdAt: z.date(),
   id: z.string(),
   name: z.string(),
-  rate: z.number(),
+  rate: z.string().transform((val) => Number.parseFloat(val)),
   type: z.enum(["area", "perimeter", "fixed"]),
   unit: z.enum(["unit", "sqm", "ml"]),
   updatedAt: z.date(),
@@ -145,7 +151,7 @@ export const modelColorOutput = z.object({
     hexCode: z.string(),
     ralCode: z.string().nullable(),
   }),
-  surchargePercentage: z.number(),
+  surchargePercentage: z.string().transform((val) => Number.parseFloat(val)),
   isDefault: z.boolean(),
 });
 
@@ -236,13 +242,16 @@ export const glassTypeOutput = z.object({
   isSeeded: z.boolean(), // Whether this is a seeded glass type
   manufacturer: z.string().nullable().optional(), // Brand identifier
   name: z.string(),
-  pricePerSqm: z.number(), // Price per square meter
+  pricePerSqm: z.string().transform((val) => Number.parseFloat(val)), // Price per square meter
   seedVersion: z.string().nullable().optional(), // Seed data version
   series: z.string().nullable().optional(), // Product series identifier
   solutions: z.array(glassTypeSolutionOutput).optional(), // Many-to-Many solutions
   thicknessMm: z.number(),
   updatedAt: z.date(),
-  uValue: z.number().nullable(),
+  uValue: z
+    .string()
+    .nullable()
+    .transform((val) => (val ? Number.parseFloat(val) : null)),
 });
 
 export const listGlassTypesOutput = z.array(glassTypeOutput);
@@ -250,7 +259,7 @@ export const listGlassTypesOutput = z.array(glassTypeOutput);
 export const availableGlassTypeOutput = z.object({
   id: z.string(),
   name: z.string(),
-  pricePerSqm: z.number(),
+  pricePerSqm: z.string().transform((val) => Number.parseFloat(val)),
   thicknessMm: z.number(),
   description: z.string().nullable(),
 });

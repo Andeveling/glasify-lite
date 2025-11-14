@@ -3,7 +3,6 @@ import type { Config } from "drizzle-kit";
 import { defineConfig } from "drizzle-kit";
 
 config({ path: ".env.local" });
-config({ path: ".env" });
 
 const dbUrl = process.env.DATABASE_URL;
 

@@ -124,19 +124,10 @@ export const deleteCostBreakdownInput = z.object({
 // ============================================================================
 
 /**
- * Model output schema - extends drizzle-zod auto-generated SELECT schema
- * Adds relation fields. Note: numeric fields (decimals) are converted in service layer
+ * Model output base schema - extends drizzle-zod with profileSupplier relation
+ * Use this as base for further extensions before transformation
  */
-export const modelOutput = modelSelectSchema.extend({
-  basePrice: z.number(),
-  costPerMmWidth: z.number(),
-  costPerMmHeight: z.number(),
-  minWidthMm: z.number(),
-  maxWidthMm: z.number(),
-  minHeightMm: z.number(),
-  maxHeightMm: z.number(),
-  glassDiscountWidthMm: z.number(),
-  glassDiscountHeightMm: z.number(),
+const modelOutputBase = modelSelectSchema.extend({
   profileSupplier: z
     .object({
       id: z.string(),
@@ -147,40 +138,77 @@ export const modelOutput = modelSelectSchema.extend({
 });
 
 /**
- * Model detail output schema (with cost breakdowns and price history)
+ * Model output schema - transforms decimal strings to numbers for frontend compatibility
  */
-export const modelDetailOutput = modelOutput.extend({
-  costBreakdown: z.array(
-    modelCostBreakdownSelectSchema.extend({
-      unitCost: z.number(),
-    })
-  ),
-  priceHistory: z.array(
-    z.object({
-      id: z.string(),
-      modelId: z.string(),
-      basePrice: z.number(),
-      costPerMmWidth: z.number(),
-      costPerMmHeight: z.number(),
-      reason: z.string().nullable(),
-      effectiveFrom: z.date(),
-      createdBy: z.string().nullable(),
-      createdAt: z.date(),
-    })
-  ),
-});
+export const modelOutput = modelOutputBase.transform((data) => ({
+  ...data,
+  basePrice: Number.parseFloat(data.basePrice),
+  costPerMmWidth: Number.parseFloat(data.costPerMmWidth),
+  costPerMmHeight: Number.parseFloat(data.costPerMmHeight),
+  accessoryPrice: data.accessoryPrice
+    ? Number.parseFloat(data.accessoryPrice)
+    : null,
+  profitMarginPercentage: data.profitMarginPercentage
+    ? Number.parseFloat(data.profitMarginPercentage)
+    : null,
+}));
 
 /**
- * Cost breakdown output schema
+ * Model detail output schema (with cost breakdowns and price history)
+ * Transforms all decimal fields to numbers for frontend compatibility
  */
-export const costBreakdownOutput = modelCostBreakdownSelectSchema
+export const modelDetailOutput = modelOutputBase
   .extend({
-    unitCost: z.number(),
+    costBreakdown: z.array(
+      modelCostBreakdownSelectSchema.transform((data) => ({
+        ...data,
+        unitCost: Number.parseFloat(data.unitCost),
+      }))
+    ),
+    priceHistory: z.array(
+      z
+        .object({
+          id: z.string(),
+          modelId: z.string(),
+          basePrice: z.string(),
+          costPerMmWidth: z.string(),
+          costPerMmHeight: z.string(),
+          reason: z.string().nullable(),
+          effectiveFrom: z.date(),
+          createdBy: z.string().nullable(),
+          createdAt: z.date(),
+        })
+        .transform((data) => ({
+          ...data,
+          basePrice: Number.parseFloat(data.basePrice),
+          costPerMmWidth: Number.parseFloat(data.costPerMmWidth),
+          costPerMmHeight: Number.parseFloat(data.costPerMmHeight),
+        }))
+    ),
   })
   .transform((data) => ({
     ...data,
-    notes: data.notes ?? undefined, // Convert null to undefined
+    basePrice: Number.parseFloat(data.basePrice),
+    costPerMmWidth: Number.parseFloat(data.costPerMmWidth),
+    costPerMmHeight: Number.parseFloat(data.costPerMmHeight),
+    accessoryPrice: data.accessoryPrice
+      ? Number.parseFloat(data.accessoryPrice)
+      : null,
+    profitMarginPercentage: data.profitMarginPercentage
+      ? Number.parseFloat(data.profitMarginPercentage)
+      : null,
   }));
+
+/**
+ * Cost breakdown output schema - transforms decimal strings to numbers
+ */
+export const costBreakdownOutput = modelCostBreakdownSelectSchema.transform(
+  (data) => ({
+    ...data,
+    unitCost: Number.parseFloat(data.unitCost),
+    notes: data.notes ?? undefined, // Convert null to undefined
+  })
+);
 
 /**
  * List models output schema
