@@ -8,7 +8,6 @@
 
 import type { Prisma, PrismaClient, TenantConfig } from "@prisma/client";
 import type { DefaultArgs } from "@prisma/client/runtime/library";
-import { cacheLife } from "next/cache";
 import { db } from "../db";
 
 type TransactionClient = Omit<
@@ -30,11 +29,6 @@ type TransactionClient = Omit<
 export async function getTenantConfig(
   client?: TransactionClient
 ): Promise<TenantConfig> {
-  "use cache";
-
-  // Cache for 24 hours - tenant config rarely changes
-  cacheLife("days");
-
   const prisma = client ?? db;
   const config = await prisma.tenantConfig.findFirst();
 

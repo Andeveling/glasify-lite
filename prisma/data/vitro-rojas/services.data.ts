@@ -20,7 +20,7 @@ import type { ServiceInput } from "../../factories/service.factory";
  */
 export const vitroRojasServices: ServiceInput[] = [
   {
-    name: "Instalación de Ventanas",
+    name: "Instalación",
     rate: 15, // USD/m²
     type: "area",
     unit: "sqm",
@@ -32,7 +32,7 @@ export const vitroRojasServices: ServiceInput[] = [
     unit: "ml",
   },
   {
-    name: "Desmonte de Ventana Existente",
+    name: "Desmonte de Ventana",
     rate: 25, // USD/unidad
     type: "fixed",
     unit: "unit",

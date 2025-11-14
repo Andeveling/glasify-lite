@@ -44,9 +44,7 @@ export async function SocialMediaLinks({
   variant = "default",
   className,
 }: SocialMediaLinksProps) {
-  "use cache";
-
-  // Fetch tenant config (cached at build time)
+  // Fetch tenant config
   const tenantConfig = await db.tenantConfig.findUnique({
     where: { id: "1" },
     select: {

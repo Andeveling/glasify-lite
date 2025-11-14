@@ -7,13 +7,13 @@
 
 "use client";
 
-import type { MaterialType, ModelStatus } from "@prisma/client";
 import { Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useCurrencyFormatter } from "@/app/_hooks/use-currency-formatter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
+import type { MaterialType, ModelStatus } from "@prisma/client";
 
 type ModelData = {
   id: string;
@@ -34,7 +34,7 @@ type ModelData = {
 
 type ModelTableRowProps = {
   model: ModelData;
-  onDeleteClick: (id: string, name: string) => void;
+  onDeleteClickAction: (id: string, name: string) => void;
 };
 
 const statusLabels: Record<ModelStatus, string> = {
@@ -54,7 +54,10 @@ const getStatusVariant = (
   return "outline";
 };
 
-export function ModelTableRow({ model, onDeleteClick }: ModelTableRowProps) {
+export function ModelTableRow({
+  model,
+  onDeleteClickAction,
+}: ModelTableRowProps) {
   const { formatPrice } = useCurrencyFormatter();
 
   return (
@@ -98,7 +101,7 @@ export function ModelTableRow({ model, onDeleteClick }: ModelTableRowProps) {
             </Link>
           </Button>
           <Button
-            onClick={() => onDeleteClick(model.id, model.name)}
+            onClick={() => onDeleteClickAction(model.id, model.name)}
             size="icon"
             variant="ghost"
           >

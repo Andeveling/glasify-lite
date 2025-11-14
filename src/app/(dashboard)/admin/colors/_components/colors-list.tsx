@@ -104,7 +104,9 @@ export function ColorsList({ initialData, searchParams }: ColorsListProps) {
             }
             return {
               ...old,
-              items: old.items.filter((item) => item.id !== variables.id),
+              items: old.items.filter(
+                (item: SerializedColor) => item.id !== variables.id
+              ),
               total: old.total - 1,
             };
           }

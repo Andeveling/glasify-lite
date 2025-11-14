@@ -10,7 +10,6 @@
  */
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { MaterialType } from "@prisma/client";
 import {
   Building2,
   Loader2,
@@ -24,7 +23,6 @@ import {
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -68,6 +66,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import type { MaterialType } from "@prisma/client";
 import {
   type CreateProfileSupplierInput,
   createProfileSupplierSchema,

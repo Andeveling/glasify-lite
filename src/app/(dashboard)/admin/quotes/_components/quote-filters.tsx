@@ -11,12 +11,12 @@
 
 "use client";
 
-import type { QuoteStatus } from "@prisma/client";
 import { FileText, Search, Send, XCircle } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import type { QuoteStatus } from "@prisma/client";
 
 type QuoteFiltersProps = {
   /** Current active status filter (from URL) */

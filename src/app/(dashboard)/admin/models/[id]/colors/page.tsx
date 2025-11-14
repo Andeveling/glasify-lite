@@ -70,10 +70,15 @@ export default async function ModelColorsPage({ params }: PageProps) {
     });
 
     // Serialize Decimal fields for Client Component
-    const modelColors = modelColorsRaw.map((mc) => ({
-      ...mc,
-      surchargePercentage: safeDecimalToNumber(mc.surchargePercentage),
-    }));
+    const modelColors = modelColorsRaw.map(
+      (mc) =>
+        ({
+          ...mc,
+          surchargePercentage: safeDecimalToNumber(mc.surchargePercentage),
+          // Add isActive property if not present
+          isActive: true,
+        }) as any
+    );
 
     // Fetch available colors for assignment
     const availableColors = await api.admin["model-colors"].getAvailableColors({
