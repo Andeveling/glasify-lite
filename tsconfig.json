@@ -27,6 +27,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
+      "@prisma/client": ["./src/generated/prisma-client"],
       "@server/*": ["./src/server/*"],
       "@styles/*": ["./src/styles/*"],
       "@trpc/*": ["./src/trpc/*"],
@@ -57,6 +58,7 @@
     "prisma/seeders/**/*",
     "prisma/data/**/*",
     "prisma/seed-cli.ts",
-    "prisma/seed-tenant.ts"
+    "prisma/seed-tenant.ts",
+    "src/generated/**/*"
   ]
 }
