@@ -48,7 +48,7 @@
     "editor.defaultFormatter": "biomejs.biome"
   },
   "accessibility.verbosity.terminal": false,
-  "accessibility.voice.speechLanguage": "es-ES",
+  "accessibility.voice.speechLanguage": "es-MX",
   "accessibility.voice.speechTimeout": 2000,
   "accessibility.voice.autoSynthesize": "on",
   "accessibility.voice.keywordActivation": "chatInContext"

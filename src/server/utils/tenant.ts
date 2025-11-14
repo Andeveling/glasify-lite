@@ -8,7 +8,6 @@
 
 import type { Prisma, PrismaClient, TenantConfig } from "@prisma/client";
 import type { DefaultArgs } from "@prisma/client/runtime/library";
-import { cacheLife } from "next/cache";
 import { db } from "../db";
 
 type TransactionClient = Omit<

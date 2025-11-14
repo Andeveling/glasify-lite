@@ -3,12 +3,12 @@
  * Pure utility for building detailed price breakdown items from calculation results
  */
 
+import type { PriceItemCalculationResult } from "@/domain/pricing/adapters/trpc/price-calculator.adapter";
 import type {
   GlassTypeOutput,
   ModelDetailOutput,
   ServiceOutput,
 } from "@/server/api/routers/catalog";
-import type { PriceItemCalculationResult } from "@/domain/pricing/adapters/trpc/price-calculator.adapter";
 
 export type PriceBreakdownItem = {
   amount: number;
