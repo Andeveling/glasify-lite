@@ -293,9 +293,18 @@ export const catalogQueries = createTRPCRouter({
 
       return profileSuppliers;
     } catch (error) {
+      // Log the full error details for debugging
       logger.error("Error listing profile suppliers", {
         error: error instanceof Error ? error.message : "Unknown error",
+        errorName: error instanceof Error ? error.name : "Unknown",
+        errorStack: error instanceof Error ? error.stack : "No stack trace",
+        errorDetails: JSON.stringify(error, null, 2),
       });
+
+      // Re-throw the original error for better debugging in production logs
+      if (error instanceof Error) {
+        throw error;
+      }
 
       throw new Error(
         "No se pudieron cargar los proveedores de perfiles. Intente nuevamente."
