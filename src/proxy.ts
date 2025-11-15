@@ -12,23 +12,23 @@ import {
 import { auth } from "@/server/auth";
 
 /**
- * Next.js Middleware for Authentication and Role-Based Access Control (RBAC)
+ * Next.js Proxy for Authentication and Role-Based Access Control (RBAC)
  *
  * Flow:
- * 1. Skip middleware for static assets and auth API routes (early return)
+ * 1. Skip proxy for static assets and auth API routes (early return)
  * 2. Skip auth check for public routes (early return)
  * 3. Get session for protected routes
  * 4. Redirect unauthenticated users to /catalog?signin=true
  * 5. Check role-based access (admin, seller, user)
  * 6. Allow authorized requests
  *
- * Note: For Next.js 15.2.0+, middleware runs with Node.js runtime enabled,
+ * Note: For Next.js 15.2.0+, proxy runs with Node.js runtime enabled,
  * allowing direct use of auth.api.getSession()
  */
-export async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Early return: Skip middleware for static assets and auth API routes
+  // Early return: Skip proxy for static assets and auth API routes
   if (shouldSkipMiddleware(pathname)) {
     return NextResponse.next();
   }
@@ -56,8 +56,8 @@ export async function middleware(request: NextRequest) {
 
   // Block non-admin from admin-only routes (models, settings, tenant config)
   if (isAdminOnlyRoute(pathname) && userRole !== "admin") {
-    // biome-ignore lint/suspicious/noConsole: Console logging is acceptable in middleware for security events
-    console.warn("[Middleware] Unauthorized admin-only route access attempt", {
+    // biome-ignore lint/suspicious/noConsole: Console logging is acceptable in proxy for security events
+    console.warn("[Proxy] Unauthorized admin-only route access attempt", {
       path: pathname,
       role: userRole,
       timestamp: new Date().toISOString(),
@@ -71,9 +71,9 @@ export async function middleware(request: NextRequest) {
     isSellerOrAdminRoute(pathname) &&
     !["admin", "seller"].includes(userRole || "")
   ) {
-    // biome-ignore lint/suspicious/noConsole: Console logging is acceptable in middleware for security events
+    // biome-ignore lint/suspicious/noConsole: Console logging is acceptable in proxy for security events
     console.warn(
-      "[Middleware] Unauthorized seller/admin route access attempt",
+      "[Proxy] Unauthorized seller/admin route access attempt",
       {
         path: pathname,
         role: userRole,
