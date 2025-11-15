@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 // Force dynamic rendering - requires database connection
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function BrandingPage() {
   const branding = await api.tenantConfig.getBranding();
