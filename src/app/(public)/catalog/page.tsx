@@ -33,11 +33,25 @@ type CatalogPageProps = {
  * - Better UX (instant navigation, progressive enhancement)
  */
 
-// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
-// Note: Dynamic by default - catalog uses client components and real-time filtering
-// TODO: Previously disabled ISR due to Next.js 16 prerendering limitations
-// TODO: Evaluate if Cache Components with Suspense enables better caching strategy
-// Potential: Use "use cache" for static catalog shell + Suspense for dynamic filters
+/**
+ * CRITICAL: Dynamic rendering required to prevent build failures
+ *
+ * This page uses PublicLayout which contains:
+ * - PublicFooter > SocialMediaLinks (queries db.tenantConfig.findUnique())
+ *
+ * If this page attempts static prerendering, the build fails with:
+ * "Can't reach database server" because DATABASE_URL may not be available
+ * during build time in CI/CD environments (Vercel, GitHub Actions).
+ *
+ * Suspense boundaries alone are insufficient - we must force dynamic rendering
+ * to completely prevent prerendering attempts.
+ *
+ * DO NOT REMOVE unless:
+ * 1. PublicLayout no longer contains database queries
+ * 2. All DB queries are moved to client components
+ * 3. Build process guarantees DATABASE_URL availability
+ */
+export const dynamic = "force-dynamic";
 
 export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   const params = await searchParams;

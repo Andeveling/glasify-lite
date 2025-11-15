@@ -17,6 +17,14 @@ import { auth } from "@/server/auth";
 import { api } from "@/trpc/server-client";
 import { QuoteDetailView } from "./_components/quote-detail-view";
 
+/**
+ * CRITICAL: Dynamic rendering required
+ *
+ * This page uses headers() for authentication and PublicLayout with database queries.
+ * Already dynamic due to headers() but explicit declaration prevents accidental removal.
+ */
+export const dynamic = "force-dynamic";
+
 type MyQuoteDetailPageProps = {
   params: Promise<{
     quoteId: string;
