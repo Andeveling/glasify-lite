@@ -117,12 +117,22 @@ export function FormNumberInput({
               step={step}
               type="number"
               {...field}
+              onBlur={(e) => {
+                const value = e.target.value;
+                // On blur: validate and set final value (0 if empty, or parsed number)
+                field.onChange(value === "" ? 0 : Number(value));
+                field.onBlur();
+              }}
               onChange={(e) => {
                 const value = e.target.value;
-                // Allow empty string (user clearing field) or convert to number
+                // On change: allow empty string temporarily without validation
                 field.onChange(value === "" ? undefined : Number(value));
               }}
-              value={field.value === undefined || field.value === null ? "" : field.value}
+              value={
+                field.value === undefined || field.value === null
+                  ? ""
+                  : field.value
+              }
             />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
@@ -189,12 +199,22 @@ export function FormCurrencyInput({
                 step={getStepValue(decimals)}
                 type="number"
                 {...field}
+                onBlur={(e) => {
+                  const value = e.target.value;
+                  // On blur: validate and set final value (0 if empty, or parsed number)
+                  field.onChange(value === "" ? 0 : Number(value));
+                  field.onBlur();
+                }}
                 onChange={(e) => {
                   const value = e.target.value;
-                  // Allow empty string (user clearing field) or convert to number
+                  // On change: allow empty string temporarily without validation
                   field.onChange(value === "" ? undefined : Number(value));
                 }}
-                value={field.value === undefined || field.value === null ? "" : field.value}
+                value={
+                  field.value === undefined || field.value === null
+                    ? ""
+                    : field.value
+                }
               />
             </div>
           </FormControl>
@@ -239,12 +259,22 @@ export function FormPercentageInput({
                 step="0.01"
                 type="number"
                 {...field}
+                onBlur={(e) => {
+                  const value = e.target.value;
+                  // On blur: validate and set final value (0 if empty, or parsed number)
+                  field.onChange(value === "" ? 0 : Number(value));
+                  field.onBlur();
+                }}
                 onChange={(e) => {
                   const value = e.target.value;
-                  // Allow empty string (user clearing field) or convert to number
+                  // On change: allow empty string temporarily without validation
                   field.onChange(value === "" ? undefined : Number(value));
                 }}
-                value={field.value === undefined || field.value === null ? "" : field.value}
+                value={
+                  field.value === undefined || field.value === null
+                    ? ""
+                    : field.value
+                }
               />
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground">
                 %

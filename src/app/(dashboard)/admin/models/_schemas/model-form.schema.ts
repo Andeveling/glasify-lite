@@ -11,13 +11,13 @@ import {
 
 export const modelFormSchema = z.object({
   accessoryPrice: z.number().min(0).optional().nullable(),
-  basePrice: z.number().min(0),
+  basePrice: z.number().min(0).optional().nullable(),
   compatibleGlassTypeIds: z
     .array(z.string())
     .min(1, "Debe seleccionar al menos un tipo de vidrio"),
   costNotes: z.string().optional().nullable(),
-  costPerMmHeight: z.number().min(0),
-  costPerMmWidth: z.number().min(0),
+  costPerMmHeight: z.number().min(0).optional().nullable(),
+  costPerMmWidth: z.number().min(0).optional().nullable(),
   glassDiscountHeightMm: z.number().int().min(0).default(0),
   glassDiscountWidthMm: z.number().int().min(0).default(0),
   imageUrl: z
