@@ -21,7 +21,7 @@ export function CatalogSkeleton() {
       {/* Skeleton grid - igual que CatalogGrid */}
       <ul
         aria-label="Cargando productos..."
-        className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
+        className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4"
       >
         {generateStableKeyedArray(skeletonItemsCount, "catalog-skeleton").map(
           (item) => (
