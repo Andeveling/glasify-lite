@@ -1,8 +1,8 @@
+import { env } from "@/env";
 import { cn } from "@/lib/utils";
 import { BrandingProvider } from "@/providers/branding-provider";
 import { SessionProvider } from "@/providers/session-provider";
 import { TenantConfigProvider } from "@/providers/tenant-config-provider";
-import { getTenantConfig } from "@/server/utils/tenant";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Fira_Code, Geist, Inter, Lora } from "next/font/google";
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
     "Glasify Lite - Cotizador Inteligente de productos de aluminio y pvc arquitectónico",
 };
 
-// Force dynamic rendering - fetches tenant config from database
-export const dynamic = "force-dynamic";
+// Remove dynamic rendering - now using build-time env vars instead of DB queries
+// This allows static page generation while maintaining tenant-specific config
 
 const geist = Geist({
   display: "swap",
@@ -48,12 +48,18 @@ const firaCode = Fira_Code({
   variable: "--font-fira-code-mono",
 });
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  // Fetch tenant config once at root level (Server Component)
-  // This makes currency, locale, timezone available to all Client Components
-  const tenantConfig = await getTenantConfig();
+  // Use build-time env vars instead of database fetch
+  // This allows static generation while keeping tenant config
+  const tenantConfig = {
+    businessName: env.NEXT_PUBLIC_TENANT_BUSINESS_NAME,
+    currency: env.NEXT_PUBLIC_TENANT_CURRENCY,
+    locale: env.NEXT_PUBLIC_TENANT_LOCALE,
+    quoteValidityDays: env.NEXT_PUBLIC_TENANT_QUOTE_VALIDITY_DAYS,
+    timezone: env.NEXT_PUBLIC_TENANT_TIMEZONE,
+  };
 
   return (
     <html
