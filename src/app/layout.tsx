@@ -21,6 +21,9 @@ export const metadata: Metadata = {
     "Glasify Lite - Cotizador Inteligente de productos de aluminio y pvc arquitectónico",
 };
 
+// Force dynamic rendering - fetches tenant config from database
+export const dynamic = "force-dynamic";
+
 const geist = Geist({
   display: "swap",
   subsets: ["latin"],
