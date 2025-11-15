@@ -332,6 +332,7 @@ export const env = createEnv({
       .regex(/^\d+$/, "Must be a positive integer")
       .transform((val) => Number.parseInt(val, 10))
       .optional()
+      // biome-ignore lint/style/noMagicNumbers: Not necessary to create constant
       .default(100),
   },
   /**
