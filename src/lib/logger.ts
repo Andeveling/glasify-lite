@@ -73,11 +73,10 @@ async function initializeWinston(): Promise<Logger> {
       return winstonLogger;
     }
 
-    // Dynamic imports for server-only modules
+    // Dynamic imports for server-only modules (development only)
     const winston = await import("winston");
     const path = await import("node:path");
 
-    const isDevelopment = process.env.NODE_ENV !== "production";
     const LogDir = path.join(process.cwd(), "logs");
 
     // Custom format for console output (colorized and readable)
@@ -127,7 +126,7 @@ async function initializeWinston(): Promise<Logger> {
           maxsize: 5_242_880, // 5MB
         }),
       ],
-      level: isDevelopment ? "debug" : "info",
+      level: "debug",
       rejectionHandlers: [
         new winston.transports.File({
           filename: path.join(LogDir, "rejections.log"),
@@ -156,17 +155,16 @@ async function initializeWinston(): Promise<Logger> {
       ],
     });
 
-    if (isDevelopment) {
-      logger.add(
-        new winston.transports.File({
-          filename: path.join(LogDir, "debug.log"),
-          format: fileFormat,
-          level: "debug",
-          maxFiles: 3,
-          maxsize: 5_242_880, // 5MB
-        })
-      );
-    }
+    // Add debug log file (development only)
+    logger.add(
+      new winston.transports.File({
+        filename: path.join(LogDir, "debug.log"),
+        format: fileFormat,
+        level: "debug",
+        maxFiles: 3,
+        maxsize: 5_242_880, // 5MB
+      })
+    );
 
     winstonLogger = logger as unknown as Logger;
     isInitializing = false;
