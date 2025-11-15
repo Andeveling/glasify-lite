@@ -90,8 +90,9 @@ export default async function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
-// Configure which routes to run proxy on
+// Configure proxy runtime and matcher
 export const config = {
+  runtime: "nodejs", // Use Node.js runtime for Better Auth compatibility
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
