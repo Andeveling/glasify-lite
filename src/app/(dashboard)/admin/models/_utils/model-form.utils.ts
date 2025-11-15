@@ -9,7 +9,6 @@ import {
   DEFAULT_MAX_WIDTH_MM,
   DEFAULT_MIN_HEIGHT_MM,
   DEFAULT_MIN_WIDTH_MM,
-  MIN_DIMENSION_MM,
 } from "../_constants/model-form.constants";
 import type { modelFormSchema } from "../_schemas/model-form.schema";
 
@@ -18,12 +17,16 @@ export type ModelFormValues = z.infer<typeof modelFormSchema>;
 /**
  * Transform form values to API-compatible format
  * Converts null to undefined for backend compatibility
+ * Converts undefined to 0 for required numeric fields
  */
 export function transformModelFormValues(values: ModelFormValues) {
   return {
     ...values,
     accessoryPrice: values.accessoryPrice ?? undefined,
+    basePrice: values.basePrice ?? 0,
     costNotes: values.costNotes ?? undefined,
+    costPerMmHeight: values.costPerMmHeight ?? 0,
+    costPerMmWidth: values.costPerMmWidth ?? 0,
     imageUrl: values.imageUrl ?? undefined,
     lastCostReviewDate: values.lastCostReviewDate ?? undefined,
     profileSupplierId: values.profileSupplierId ?? undefined,
@@ -39,11 +42,11 @@ export function getModelFormDefaults(
 ): ModelFormValues {
   const {
     accessoryPrice = null,
-    basePrice = MIN_DIMENSION_MM,
+    basePrice = null,
     compatibleGlassTypeIds = [],
     costNotes = null,
-    costPerMmHeight = 0,
-    costPerMmWidth = 0,
+    costPerMmHeight = null,
+    costPerMmWidth = null,
     glassDiscountHeightMm = 0,
     glassDiscountWidthMm = 0,
     lastCostReviewDate = null,
