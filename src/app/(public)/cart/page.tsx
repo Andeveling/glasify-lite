@@ -21,12 +21,12 @@ import { CartPageContent } from "./_components/cart-page-content";
 
 /**
  * Force dynamic rendering to prevent build-time prerendering.
- * 
- * CRITICAL: This page is wrapped in a layout that includes components 
+ *
+ * CRITICAL: This page is wrapped in a layout that includes components
  * (SocialMediaLinks in PublicFooter) that query the database.
- * Without this, Next.js tries to prerender at build time and fails 
+ * Without this, Next.js tries to prerender at build time and fails
  * if DATABASE_URL is not configured in the build environment.
- * 
+ *
  * @see https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic
  */
 export const dynamic = "force-dynamic";
