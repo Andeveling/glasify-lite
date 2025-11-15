@@ -17,6 +17,19 @@ import { z } from "zod";
 const CURRENCY_CODE_LENGTH = 3;
 const DEFAULT_QUOTE_VALIDITY_DAYS = 15;
 
+// Unified environment variables extraction
+const {
+  NEXT_PUBLIC_TENANT_BUSINESS_ADDRESS,
+  NEXT_PUBLIC_TENANT_BUSINESS_NAME,
+  NEXT_PUBLIC_TENANT_CONTACT_EMAIL,
+  NEXT_PUBLIC_TENANT_CONTACT_PHONE,
+  NEXT_PUBLIC_TENANT_CURRENCY,
+  NEXT_PUBLIC_TENANT_LOCALE,
+  NEXT_PUBLIC_TENANT_QUOTE_VALIDITY_DAYS,
+  NEXT_PUBLIC_TENANT_TIMEZONE,
+  SKIP_ENV_VALIDATION,
+} = process.env;
+
 export const envSeed = createEnv({
   /**
    * Client-side environment variables (not used in seed)
@@ -35,14 +48,14 @@ export const envSeed = createEnv({
    * Only include variables that should be validated
    */
   runtimeEnv: {
-    TENANT_BUSINESS_ADDRESS: process.env.TENANT_BUSINESS_ADDRESS,
-    TENANT_BUSINESS_NAME: process.env.TENANT_BUSINESS_NAME,
-    TENANT_CONTACT_EMAIL: process.env.TENANT_CONTACT_EMAIL,
-    TENANT_CONTACT_PHONE: process.env.TENANT_CONTACT_PHONE,
-    TENANT_CURRENCY: process.env.TENANT_CURRENCY,
-    TENANT_LOCALE: process.env.TENANT_LOCALE,
-    TENANT_QUOTE_VALIDITY_DAYS: process.env.TENANT_QUOTE_VALIDITY_DAYS,
-    TENANT_TIMEZONE: process.env.TENANT_TIMEZONE,
+    TENANT_BUSINESS_ADDRESS: NEXT_PUBLIC_TENANT_BUSINESS_ADDRESS,
+    TENANT_BUSINESS_NAME: NEXT_PUBLIC_TENANT_BUSINESS_NAME,
+    TENANT_CONTACT_EMAIL: NEXT_PUBLIC_TENANT_CONTACT_EMAIL,
+    TENANT_CONTACT_PHONE: NEXT_PUBLIC_TENANT_CONTACT_PHONE,
+    TENANT_CURRENCY: NEXT_PUBLIC_TENANT_CURRENCY,
+    TENANT_LOCALE: NEXT_PUBLIC_TENANT_LOCALE,
+    TENANT_QUOTE_VALIDITY_DAYS: NEXT_PUBLIC_TENANT_QUOTE_VALIDITY_DAYS,
+    TENANT_TIMEZONE: NEXT_PUBLIC_TENANT_TIMEZONE,
   },
   /**
    * Server-side environment variables for seed scripts
@@ -138,5 +151,5 @@ export const envSeed = createEnv({
    * Skip validation during build (seed runs separately)
    * This prevents errors during Next.js build when seed vars aren't needed
    */
-  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+  skipValidation: !!SKIP_ENV_VALIDATION,
 });
