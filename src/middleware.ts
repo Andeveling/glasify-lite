@@ -12,20 +12,20 @@ import {
 import { auth } from "@/server/auth";
 
 /**
- * Next.js Proxy for Authentication and Role-Based Access Control (RBAC)
+ * Next.js Middleware for Authentication and Role-Based Access Control (RBAC)
  *
  * Flow:
- * 1. Skip proxy for static assets and auth API routes (early return)
+ * 1. Skip middleware for static assets and auth API routes (early return)
  * 2. Skip auth check for public routes (early return)
  * 3. Get session for protected routes
  * 4. Redirect unauthenticated users to /catalog?signin=true
  * 5. Check role-based access (admin, seller, user)
  * 6. Allow authorized requests
  *
- * Note: For Next.js 15.2.0+, proxy runs with Node.js runtime enabled,
+ * Note: For Next.js 15.2.0+, middleware runs with Node.js runtime enabled,
  * allowing direct use of auth.api.getSession()
  */
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Early return: Skip middleware for static assets and auth API routes
