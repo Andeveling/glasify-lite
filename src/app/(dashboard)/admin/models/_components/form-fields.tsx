@@ -117,12 +117,12 @@ export function FormNumberInput({
               step={step}
               type="number"
               {...field}
-              onChange={(e) =>
-                field.onChange(
-                  e.target.value ? Number(e.target.value) : undefined
-                )
-              }
-              value={field.value ?? ""}
+              onChange={(e) => {
+                const value = e.target.value;
+                // Allow empty string (user clearing field) or convert to number
+                field.onChange(value === "" ? undefined : Number(value));
+              }}
+              value={field.value === undefined || field.value === null ? "" : field.value}
             />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
@@ -189,12 +189,12 @@ export function FormCurrencyInput({
                 step={getStepValue(decimals)}
                 type="number"
                 {...field}
-                onChange={(e) =>
-                  field.onChange(
-                    e.target.value ? Number(e.target.value) : undefined
-                  )
-                }
-                value={field.value ?? ""}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // Allow empty string (user clearing field) or convert to number
+                  field.onChange(value === "" ? undefined : Number(value));
+                }}
+                value={field.value === undefined || field.value === null ? "" : field.value}
               />
             </div>
           </FormControl>
@@ -239,12 +239,12 @@ export function FormPercentageInput({
                 step="0.01"
                 type="number"
                 {...field}
-                onChange={(e) =>
-                  field.onChange(
-                    e.target.value ? Number(e.target.value) : undefined
-                  )
-                }
-                value={field.value ?? ""}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // Allow empty string (user clearing field) or convert to number
+                  field.onChange(value === "" ? undefined : Number(value));
+                }}
+                value={field.value === undefined || field.value === null ? "" : field.value}
               />
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground">
                 %

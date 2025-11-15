@@ -37,6 +37,7 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
     defaultValues: getModelFormDefaults(initialData),
     // @ts-expect-error - Zod .default() causes type inference issues with react-hook-form
     resolver: zodResolver(modelFormSchema),
+    mode: "onBlur",
   });
 
   const handleSubmit = (values: ModelFormValues) => {
