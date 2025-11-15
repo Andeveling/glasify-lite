@@ -66,6 +66,13 @@ async function initializeWinston(): Promise<Logger> {
   isInitializing = true;
 
   try {
+    // Skip Winston initialization in production (Vercel is read-only)
+    if (process.env.NODE_ENV === "production") {
+      isInitializing = false;
+      winstonLogger = getFallbackLogger();
+      return winstonLogger;
+    }
+
     // Dynamic imports for server-only modules
     const winston = await import("winston");
     const path = await import("node:path");
