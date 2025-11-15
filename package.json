@@ -47,10 +47,6 @@
     "test:auth:e2e": "playwright test e2e/auth",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "logger:test": "tsx scripts/test-logger.ts",
-    "logs:clean": "rm -f logs/*.log",
-    "logs:view": "tail -f logs/combined.log",
-    "logs:errors": "tail -f logs/error.log",
     "migrate:glass-chars": "tsx scripts/migrate-glass-characteristics.ts",
     "migrate:glass-chars:dry": "tsx scripts/migrate-glass-characteristics.ts --dry-run",
     "migrate:price-history": "tsx scripts/create-initial-price-history.ts",
@@ -128,7 +124,6 @@
     "tailwind-merge": "3.3.1",
     "use-debounce": "10.0.6",
     "vaul": "^1.1.2",
-    "winston": "3.18.3",
     "ws": "^8.18.3",
     "zod": "4.1.12",
     "zustand": "^5.0.8"
