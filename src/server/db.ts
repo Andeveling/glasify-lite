@@ -39,8 +39,7 @@ const globalForPrisma = globalThis as unknown as {
 
 // Singleton pattern: reuse client across hot reloads in development
 // In production (serverless), each invocation creates a new client (expected behavior)
-export const db: PrismaClient =
-  globalForPrisma.prisma ?? createPrismaClient();
+export const db: PrismaClient = globalForPrisma.prisma ?? createPrismaClient();
 
 // Store client in global scope to prevent multiple instances in development
 if (process.env.NODE_ENV !== "production") {
