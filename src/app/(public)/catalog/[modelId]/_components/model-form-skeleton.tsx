@@ -25,7 +25,7 @@ export function ModelFormSkeleton() {
   );
 
   const main = (
-    <>
+    <div className="space-y-6">
       {/* Dimensions Section Skeleton */}
       <Card className="p-6">
         <Skeleton className="mb-2 h-6 w-1/3" />
@@ -82,8 +82,8 @@ export function ModelFormSkeleton() {
           <Skeleton className="h-12 w-full sm:w-48" />
         </div>
       </Card>
-    </>
+    </div>
   );
 
-  return <ModelFormLayout sidebar={sidebar} main={main} />;
+  return <ModelFormLayout main={main} sidebar={sidebar} />;
 }
