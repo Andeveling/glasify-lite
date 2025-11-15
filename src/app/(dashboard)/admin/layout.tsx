@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   title: "Admin Dashboard | Glasify Lite",
 };
 
+// Force dynamic rendering - uses headers() and auth
+export const dynamic = "force-dynamic";
+
 /**
  * Admin Dashboard Layout
  *
