@@ -2,10 +2,30 @@
 /** biome-ignore-all lint/style/noMagicNumbers: Magic numbers are used intentionally for animation delays and skeleton layout to match the design specification. */
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ModelFormLayout } from "./model-form-layout";
 
 export function ModelFormSkeleton() {
-  return (
-    <div className="space-y-6">
+  const sidebar = (
+    <Card className="space-y-4 p-6">
+      {/* Model name skeleton */}
+      <Skeleton className="h-6 w-3/4" />
+
+      {/* Dimensions skeleton */}
+      <Skeleton className="h-4 w-1/2" />
+
+      {/* Price skeleton */}
+      <div className="space-y-2 pt-4">
+        <Skeleton className="h-8 w-2/3" />
+        <Skeleton className="h-4 w-1/2" />
+      </div>
+
+      {/* Add to cart button skeleton */}
+      <Skeleton className="h-12 w-full" />
+    </Card>
+  );
+
+  const main = (
+    <>
       {/* Dimensions Section Skeleton */}
       <Card className="p-6">
         <Skeleton className="mb-2 h-6 w-1/3" />
@@ -62,6 +82,8 @@ export function ModelFormSkeleton() {
           <Skeleton className="h-12 w-full sm:w-48" />
         </div>
       </Card>
-    </div>
+    </>
   );
+
+  return <ModelFormLayout sidebar={sidebar} main={main} />;
 }

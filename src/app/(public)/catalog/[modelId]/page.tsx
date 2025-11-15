@@ -41,6 +41,7 @@ export default async function Page({ params }: PageProps) {
 
   return (
     <Suspense fallback={<ModelFormSkeleton />}>
+      <ModelFormSkeleton />
       <ModelPageContent modelId={modelId} />
     </Suspense>
   );
