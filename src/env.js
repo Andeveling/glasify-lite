@@ -35,6 +35,40 @@ export const env = createEnv({
     NEXT_PUBLIC_COMPANY_NAME: z.string().optional(),
 
     /**
+     * Tenant business name (build-time config)
+     * @example "Vitro Rojas S.A.S."
+     */
+    NEXT_PUBLIC_TENANT_BUSINESS_NAME: z.string().min(1),
+
+    /**
+     * Tenant currency code (ISO 4217)
+     * @example "COP", "USD", "EUR"
+     */
+    NEXT_PUBLIC_TENANT_CURRENCY: z.string().length(CURRENCY_CODE_LENGTH),
+
+    /**
+     * Tenant locale (BCP 47 language tag)
+     * @example "es-CO", "en-US"
+     */
+    NEXT_PUBLIC_TENANT_LOCALE: z.string().min(2),
+
+    /**
+     * Quote validity in days
+     * @default 15
+     */
+    NEXT_PUBLIC_TENANT_QUOTE_VALIDITY_DAYS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .default(DEFAULT_QUOTE_VALIDITY_DAYS),
+
+    /**
+     * Tenant timezone (IANA timezone identifier)
+     * @example "America/Bogota", "America/New_York"
+     */
+    NEXT_PUBLIC_TENANT_TIMEZONE: z.string().min(1),
+
+    /**
      * Vercel environment name
      * Auto-set by Vercel to: "production", "preview", "development"
      */
@@ -82,6 +116,13 @@ export const env = createEnv({
     // Client-side (public)
     NEXT_PUBLIC_COMPANY_LOGO_URL: process.env.NEXT_PUBLIC_COMPANY_LOGO_URL,
     NEXT_PUBLIC_COMPANY_NAME: process.env.NEXT_PUBLIC_COMPANY_NAME,
+    NEXT_PUBLIC_TENANT_BUSINESS_NAME:
+      process.env.NEXT_PUBLIC_TENANT_BUSINESS_NAME,
+    NEXT_PUBLIC_TENANT_CURRENCY: process.env.NEXT_PUBLIC_TENANT_CURRENCY,
+    NEXT_PUBLIC_TENANT_LOCALE: process.env.NEXT_PUBLIC_TENANT_LOCALE,
+    NEXT_PUBLIC_TENANT_QUOTE_VALIDITY_DAYS:
+      process.env.NEXT_PUBLIC_TENANT_QUOTE_VALIDITY_DAYS,
+    NEXT_PUBLIC_TENANT_TIMEZONE: process.env.NEXT_PUBLIC_TENANT_TIMEZONE,
     NEXT_PUBLIC_VERCEL_ENV: process.env.NEXT_PUBLIC_VERCEL_ENV,
     NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
     NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL:
