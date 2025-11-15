@@ -29,7 +29,6 @@ import {
 } from "../../_utils/validation";
 import { ColorSelector } from "../color-selector";
 import { StickyPriceHeader } from "../sticky-price-header";
-import { ModelFormLayout } from "../model-form-layout";
 import { AddedToCartActions } from "./added-to-cart-actions";
 import type { FormStepId } from "./form-steps-config";
 import { QuoteSummary } from "./quote-summary";
@@ -263,100 +262,25 @@ export function ModelForm({
       <form onSubmit={form.handleSubmit(handleFormSubmit)}>
         {/* Main form container for scroll tracking */}
         <div ref={formContainerRef}>
-          <ModelFormLayout
-            sidebar={
-              <div className="w-full space-y-4">
-                <StickyPriceHeader
-                  basePrice={model.basePrice}
-                  breakdown={priceBreakdown}
-                  configSummary={{
-                    glassTypeName: selectedGlassType?.name,
-                    heightMm: Number(height) || undefined,
-                    modelImageUrl: model.imageUrl || undefined,
-                    modelName: model.name,
-                    solutionName: inferredSolution?.nameEs,
-                    widthMm: Number(width) || undefined,
-                  }}
-                  currency={currency}
-                  currentPrice={calculatedPrice ?? model.basePrice}
-                />
-                <div className="hidden lg:block">
-                  <QuoteSummary
-                    basePrice={model.basePrice}
-                    calculatedPrice={calculatedPrice}
-                    error={error}
-                    isCalculating={isCalculating}
-                    justAddedToCart={justAddedToCart}
-                  />
-                </div>
-              </div>
-            }
-            main={
-              <>
-                {/* Vertical scroll progress bar - Minimal and subtle */}
-                <VerticalScrollProgress
-                  containerRef={formContainerRef}
-                  hasColors={hasColors}
-                  hasServices={services.length > 0}
-                  onActiveStepChange={setActiveFormStep}
-                  sectionRefs={sectionRefs}
-                />
-
-                {/* Form sections */}
-                <Card
-                  className={getCardClassName(activeFormStep, "dimensions")}
-                  ref={dimensionsSectionRef}
-                >
-                  <DimensionsSection
-                    dimensions={{
-                      maxHeight: model.maxHeightMm,
-                      maxWidth: model.maxWidthMm,
-                      minHeight: model.minHeightMm,
-                      minWidth: model.minWidthMm,
-                    }}
-                  />
-                </Card>
-                {/* Color Selector - Only show if model has colors */}
-                {hasColors && (
-                  <Card
-                    className={getCardClassName(activeFormStep, "color")}
-                    ref={colorSectionRef}
-                  >
-                    <FormSection
-                      icon={Palette}
-                      legend="Seleccione un Color"
-                    >
-                      <ColorSelector
-                        modelId={model.id}
-                        onColorChange={handleColorChangeWithForm}
-                      />
-                    </FormSection>
-                  </Card>
-                )}
-                {/* Glass Type Selector with performance bars */}
-                <Card
-                  className={getCardClassName(activeFormStep, "glassType")}
-                  ref={glassTypeSectionRef}
-                >
-                  <GlassTypeSelectorSection
-                    basePrice={model.basePrice}
-                    glassTypes={glassTypes}
-                    selectedSolutionId={inferredSolution?.id}
-                  />
-                </Card>
-
-                {/* Services Section - Only show if services are available (Don't Make Me Think principle) */}
-                <div ref={servicesSectionRef}>
-                  {services.length > 0 && (
-                    <Card
-                      className={getCardClassName(activeFormStep, "services")}
-                    >
-                      <ServicesSelectorSection services={services} />
-                    </Card>
-                  )}
-                </div>
-
-                {/* Quote Summary with submit button - Duplicate for better UX at end of form */}
+          {/* Flexbox layout: 1/3 (sticky) + vertical bar + 2/3 (form) en desktop, stack en mobile */}
+          <div className="flex w-full flex-col gap-6 md:flex-row">
+            {/* Left column: Sticky summary (1/3 width en desktop) - No sticky en mobile para evitar z-index conflicts */}
+            <div className="w-full space-y-4 md:sticky md:top-18 md:w-1/3 md:self-start">
+              <StickyPriceHeader
+                basePrice={model.basePrice}
+                breakdown={priceBreakdown}
+                configSummary={{
+                  glassTypeName: selectedGlassType?.name,
+                  heightMm: Number(height) || undefined,
+                  modelImageUrl: model.imageUrl || undefined,
+                  modelName: model.name,
+                  solutionName: inferredSolution?.nameEs,
+                  widthMm: Number(width) || undefined,
+                }}
+                currency={currency}
+                currentPrice={calculatedPrice ?? model.basePrice}
+              />
+              <div className="hidden lg:block">
                 <QuoteSummary
                   basePrice={model.basePrice}
                   calculatedPrice={calculatedPrice}
@@ -364,18 +288,93 @@ export function ModelForm({
                   isCalculating={isCalculating}
                   justAddedToCart={justAddedToCart}
                 />
+              </div>
+            </div>
 
-                {/* ✅ Show success actions after adding to cart */}
-                {justAddedToCart && (
-                  <AddedToCartActions
-                    modelName={model.name}
-                    onConfigureAnotherAction={handleConfigureAnother}
-                    ref={successCardRef}
-                  />
+            {/* Vertical scroll progress bar - Minimal and subtle */}
+            <VerticalScrollProgress
+              containerRef={formContainerRef}
+              hasColors={hasColors}
+              hasServices={services.length > 0}
+              onActiveStepChange={setActiveFormStep}
+              sectionRefs={sectionRefs}
+            />
+
+            {/* Right column: Form sections (2/3 width en desktop) */}
+            <div className="w-full space-y-4 sm:space-y-6 md:w-2/3">
+              <Card
+                className={getCardClassName(activeFormStep, "dimensions")}
+                ref={dimensionsSectionRef}
+              >
+                <DimensionsSection
+                  dimensions={{
+                    maxHeight: model.maxHeightMm,
+                    maxWidth: model.maxWidthMm,
+                    minHeight: model.minHeightMm,
+                    minWidth: model.minWidthMm,
+                  }}
+                />
+              </Card>
+              {/* Color Selector - Only show if model has colors */}
+              {hasColors && (
+                <Card
+                  className={getCardClassName(activeFormStep, "color")}
+                  ref={colorSectionRef}
+                >
+                  <FormSection
+                    // description="Elige el color del perfil (aplica recargo al precio base)"
+                    icon={Palette}
+                    legend="Seleccione un Color"
+                  >
+                    <ColorSelector
+                      modelId={model.id}
+                      onColorChange={handleColorChangeWithForm}
+                    />
+                  </FormSection>
+                </Card>
+              )}
+              {/* Glass Type Selector with performance bars */}
+              <Card
+                className={getCardClassName(activeFormStep, "glassType")}
+                ref={glassTypeSectionRef}
+              >
+                <GlassTypeSelectorSection
+                  basePrice={model.basePrice}
+                  glassTypes={glassTypes}
+                  selectedSolutionId={inferredSolution?.id}
+                />
+              </Card>
+
+              {/* Services Section - Only show if services are available (Don't Make Me Think principle) */}
+              <div ref={servicesSectionRef}>
+                {services.length > 0 && (
+                  <Card
+                    className={getCardClassName(activeFormStep, "services")}
+                  >
+                    <ServicesSelectorSection services={services} />
+                  </Card>
                 )}
-              </>
-            }
-          />
+              </div>
+
+              {/* Quote Summary with submit button - Duplicate for better UX at end of form */}
+              <QuoteSummary
+                basePrice={model.basePrice}
+                calculatedPrice={calculatedPrice}
+                error={error}
+                isCalculating={isCalculating}
+                justAddedToCart={justAddedToCart}
+              />
+
+              {/* ✅ Show success actions after adding to cart */}
+              {justAddedToCart && (
+                <AddedToCartActions
+                  modelName={model.name}
+                  onConfigureAnotherAction={handleConfigureAnother}
+                  ref={successCardRef}
+                />
+              )}
+            </div>
+          </div>
         </div>
       </form>
     </Form>
