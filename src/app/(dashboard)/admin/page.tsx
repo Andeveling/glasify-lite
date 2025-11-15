@@ -12,10 +12,6 @@ export const metadata: Metadata = {
 // Force dynamic rendering - requires database connection
 export const dynamic = "force-dynamic";
 
-// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
-// Note: Everything is dynamic by default with Cache Components - no export needed
-// TODO: Will evaluate if Suspense boundaries are needed after analyzing build errors
-
 /**
  * Admin Dashboard Home Page
  *

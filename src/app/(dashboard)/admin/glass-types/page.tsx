@@ -35,10 +35,6 @@ export const metadata: Metadata = {
 // Force dynamic rendering - requires database connection
 export const dynamic = "force-dynamic";
 
-// MIGRATED: Removed export const dynamic = 'force-dynamic' (incompatible with Cache Components)
-// Note: Admin routes are dynamic by default - no explicit export needed
-// TODO: Evaluate if Suspense boundaries improve UX after build verification
-
 type SearchParams = Promise<{
   isActive?: string;
   page?: string;
