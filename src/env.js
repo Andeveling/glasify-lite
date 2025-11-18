@@ -19,6 +19,7 @@ const DEFAULT_EXPORT_MAX_ITEMS = 100;
 // Unified environment variables extraction
 const {
   // Client-side variables
+  NEXT_PUBLIC_BASE_URL,
   NEXT_PUBLIC_COMPANY_LOGO_URL,
   NEXT_PUBLIC_COMPANY_NAME,
   NEXT_PUBLIC_TENANT_BUSINESS_NAME,
@@ -50,6 +51,7 @@ const {
 
 export const env = createEnv({
   client: {
+    NEXT_PUBLIC_BASE_URL: z.string().url().optional(),
     NEXT_PUBLIC_COMPANY_LOGO_URL: z.url().optional().or(z.literal("")),
     NEXT_PUBLIC_COMPANY_NAME: z.string().optional(),
     NEXT_PUBLIC_TENANT_BUSINESS_NAME: z.string().min(1),
@@ -76,6 +78,7 @@ export const env = createEnv({
   emptyStringAsUndefined: true,
   runtimeEnv: {
     // Client-side variables
+    NEXT_PUBLIC_BASE_URL,
     NEXT_PUBLIC_COMPANY_LOGO_URL,
     NEXT_PUBLIC_COMPANY_NAME,
     NEXT_PUBLIC_TENANT_BUSINESS_NAME,
