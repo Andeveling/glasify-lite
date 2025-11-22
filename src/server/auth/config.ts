@@ -22,7 +22,7 @@ const isAdmin = (email: string | null | undefined): boolean => {
  */
 export const auth = betterAuth({
   appName: "Glasify",
-  baseURL: env.BASE_URL || "http://localhost:3000",
+  baseURL: env.BASE_URL || env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
 
   callbacks: {
     async signIn({
