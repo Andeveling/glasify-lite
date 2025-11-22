@@ -21,7 +21,9 @@ const isAdmin = (email: string | null | undefined): boolean => {
  */
 export const auth = betterAuth({
   appName: "Glasify",
-  baseURL: env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
+  // Use BASE_URL (server-side) or fallback to NEXT_PUBLIC_BASE_URL
+  // In production, BASE_URL should be set to https://glasify-lite.vercel.app
+  baseURL: env.BASE_URL || env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
 
   callbacks: {
     async signIn({
