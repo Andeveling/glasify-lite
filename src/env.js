@@ -51,12 +51,22 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_BASE_URL: z.string().url().optional(),
     NEXT_PUBLIC_TENANT_BUSINESS_NAME: z.string().min(1),
-    NEXT_PUBLIC_TENANT_CONTACT_EMAIL: z.email().optional().or(z.literal("")),
-    NEXT_PUBLIC_TENANT_CONTACT_PHONE: z.string().optional().or(z.literal("")),
+    NEXT_PUBLIC_TENANT_CONTACT_EMAIL: z
+      .string()
+      .email()
+      .optional()
+      .or(z.literal(""))
+      .transform((val) => (val === "" ? undefined : val)),
+    NEXT_PUBLIC_TENANT_CONTACT_PHONE: z
+      .string()
+      .optional()
+      .or(z.literal(""))
+      .transform((val) => (val === "" ? undefined : val)),
     NEXT_PUBLIC_TENANT_BUSINESS_ADDRESS: z
       .string()
       .optional()
-      .or(z.literal("")),
+      .or(z.literal(""))
+      .transform((val) => (val === "" ? undefined : val)),
     NEXT_PUBLIC_TENANT_CURRENCY: z.string().length(CURRENCY_CODE_LENGTH),
     NEXT_PUBLIC_TENANT_LOCALE: z.string().min(2),
     NEXT_PUBLIC_TENANT_QUOTE_VALIDITY_DAYS: z.coerce
@@ -124,10 +134,23 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    TENANT_BUSINESS_ADDRESS: z.string().optional().or(z.literal("")),
+    TENANT_BUSINESS_ADDRESS: z
+      .string()
+      .optional()
+      .or(z.literal(""))
+      .transform((val) => (val === "" ? undefined : val)),
     TENANT_BUSINESS_NAME: z.string().optional(),
-    TENANT_CONTACT_EMAIL: z.string().email().optional().or(z.literal("")),
-    TENANT_CONTACT_PHONE: z.string().optional().or(z.literal("")),
+    TENANT_CONTACT_EMAIL: z
+      .string()
+      .email()
+      .optional()
+      .or(z.literal(""))
+      .transform((val) => (val === "" ? undefined : val)),
+    TENANT_CONTACT_PHONE: z
+      .string()
+      .optional()
+      .or(z.literal(""))
+      .transform((val) => (val === "" ? undefined : val)),
     TENANT_CURRENCY: z
       .string()
       .length(CURRENCY_CODE_LENGTH, "Must be 3-character ISO code")
@@ -144,7 +167,12 @@ export const env = createEnv({
       .optional(),
     TENANT_TIMEZONE: z.string().optional(),
     RESEND_API_KEY: z.string().optional(),
-    FROM_EMAIL: z.email().optional().or(z.literal("")),
+    FROM_EMAIL: z
+      .string()
+      .email()
+      .optional()
+      .or(z.literal(""))
+      .transform((val) => (val === "" ? undefined : val)),
     EXPORT_PDF_PAGE_SIZE: z
       .enum(["A4", "LETTER", "LEGAL"])
       .optional()
