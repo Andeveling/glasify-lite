@@ -20,8 +20,6 @@ const DEFAULT_EXPORT_MAX_ITEMS = 100;
 const {
   // Client-side variables
   NEXT_PUBLIC_BASE_URL,
-  NEXT_PUBLIC_COMPANY_LOGO_URL,
-  NEXT_PUBLIC_COMPANY_NAME,
   NEXT_PUBLIC_TENANT_BUSINESS_NAME,
   NEXT_PUBLIC_TENANT_CONTACT_EMAIL,
   NEXT_PUBLIC_TENANT_CONTACT_PHONE,
@@ -52,8 +50,6 @@ const {
 export const env = createEnv({
   client: {
     NEXT_PUBLIC_BASE_URL: z.string().url().optional(),
-    NEXT_PUBLIC_COMPANY_LOGO_URL: z.url().optional().or(z.literal("")),
-    NEXT_PUBLIC_COMPANY_NAME: z.string().optional(),
     NEXT_PUBLIC_TENANT_BUSINESS_NAME: z.string().min(1),
     NEXT_PUBLIC_TENANT_CONTACT_EMAIL: z.email().optional().or(z.literal("")),
     NEXT_PUBLIC_TENANT_CONTACT_PHONE: z.string().optional().or(z.literal("")),
@@ -79,8 +75,6 @@ export const env = createEnv({
   runtimeEnv: {
     // Client-side variables
     NEXT_PUBLIC_BASE_URL,
-    NEXT_PUBLIC_COMPANY_LOGO_URL,
-    NEXT_PUBLIC_COMPANY_NAME,
     NEXT_PUBLIC_TENANT_BUSINESS_NAME,
     NEXT_PUBLIC_TENANT_CONTACT_EMAIL,
     NEXT_PUBLIC_TENANT_CONTACT_PHONE,
