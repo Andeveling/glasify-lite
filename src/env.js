@@ -1,188 +1,62 @@
 /**
- * Environment Variables Validation
+ * Environment Variables
  *
- * Validates all environment variables used by the application at build time.
- * Uses @t3-oss/env-nextjs for type-safe runtime validation with Zod schemas.
- *
- * @see https://env.t3.gg/docs/nextjs
- * @see https://create.t3.gg/en/usage/env-variables
+ * Simple direct access to environment variables without complex validation.
+ * Variables are read from process.env with sensible defaults.
  */
 
-import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
-
-// Constants for validation
-const CURRENCY_CODE_LENGTH = 3;
+// Constants
 const DEFAULT_QUOTE_VALIDITY_DAYS = 15;
 const DEFAULT_EXPORT_MAX_ITEMS = 100;
 
-// Unified environment variables extraction
-const {
-  // Client-side variables
-  NEXT_PUBLIC_BASE_URL,
-  NEXT_PUBLIC_TENANT_BUSINESS_NAME,
-  NEXT_PUBLIC_TENANT_CONTACT_EMAIL,
-  NEXT_PUBLIC_TENANT_CONTACT_PHONE,
-  NEXT_PUBLIC_TENANT_BUSINESS_ADDRESS,
-  NEXT_PUBLIC_TENANT_CURRENCY,
-  NEXT_PUBLIC_TENANT_LOCALE,
-  NEXT_PUBLIC_TENANT_QUOTE_VALIDITY_DAYS,
-  NEXT_PUBLIC_TENANT_TIMEZONE,
-  NEXT_PUBLIC_VERCEL_ENV,
-  NEXT_PUBLIC_VERCEL_URL,
-  NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL,
-  // Server-side variables
-  ADMIN_EMAIL,
-  AUTH_GOOGLE_ID,
-  AUTH_GOOGLE_SECRET,
-  BASE_URL,
-  BETTER_AUTH_SECRET,
-  DATABASE_URL,
-  PRISMA_CONNECTION_LIMIT,
-  NODE_ENV,
-  RESEND_API_KEY,
-  FROM_EMAIL,
-  EXPORT_PDF_PAGE_SIZE,
-  EXPORT_MAX_ITEMS,
-  SKIP_ENV_VALIDATION,
-} = process.env;
+// Helper to get env var with default
+const getEnv = (key, defaultValue = "") => process.env[key] || defaultValue;
 
-export const env = createEnv({
-  client: {
-    NEXT_PUBLIC_BASE_URL: z.string().url().optional(),
-    NEXT_PUBLIC_TENANT_BUSINESS_NAME: z.string().min(1),
-    NEXT_PUBLIC_TENANT_CONTACT_EMAIL: z
-      .string()
-      .email()
-      .optional()
-      .or(z.literal(""))
-      .transform((val) => (val === "" ? undefined : val)),
-    NEXT_PUBLIC_TENANT_CONTACT_PHONE: z
-      .string()
-      .optional()
-      .or(z.literal(""))
-      .transform((val) => (val === "" ? undefined : val)),
-    NEXT_PUBLIC_TENANT_BUSINESS_ADDRESS: z
-      .string()
-      .optional()
-      .or(z.literal(""))
-      .transform((val) => (val === "" ? undefined : val)),
-    NEXT_PUBLIC_TENANT_CURRENCY: z.string().length(CURRENCY_CODE_LENGTH),
-    NEXT_PUBLIC_TENANT_LOCALE: z.string().min(2),
-    NEXT_PUBLIC_TENANT_QUOTE_VALIDITY_DAYS: z.coerce
-      .number()
-      .int()
-      .positive()
-      .default(DEFAULT_QUOTE_VALIDITY_DAYS),
-    NEXT_PUBLIC_TENANT_TIMEZONE: z.string().min(1),
-    NEXT_PUBLIC_VERCEL_ENV: z
-      .enum(["production", "preview", "development"])
-      .optional(),
-    NEXT_PUBLIC_VERCEL_URL: z.string().optional(),
-    NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL: z.string().optional(),
-  },
-  emptyStringAsUndefined: true,
-  runtimeEnv: {
-    // Client-side variables
-    NEXT_PUBLIC_BASE_URL,
-    NEXT_PUBLIC_TENANT_BUSINESS_NAME,
-    NEXT_PUBLIC_TENANT_CONTACT_EMAIL,
-    NEXT_PUBLIC_TENANT_CONTACT_PHONE,
-    NEXT_PUBLIC_TENANT_BUSINESS_ADDRESS,
-    NEXT_PUBLIC_TENANT_CURRENCY,
-    NEXT_PUBLIC_TENANT_LOCALE,
-    NEXT_PUBLIC_TENANT_QUOTE_VALIDITY_DAYS,
-    NEXT_PUBLIC_TENANT_TIMEZONE,
-    NEXT_PUBLIC_VERCEL_ENV,
-    NEXT_PUBLIC_VERCEL_URL,
-    NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL,
-    // Server-side variables
-    ADMIN_EMAIL,
-    AUTH_GOOGLE_ID,
-    AUTH_GOOGLE_SECRET,
-    BASE_URL,
-    BETTER_AUTH_SECRET,
-    DATABASE_URL,
-    PRISMA_CONNECTION_LIMIT,
-    NODE_ENV,
-    TENANT_BUSINESS_ADDRESS: NEXT_PUBLIC_TENANT_BUSINESS_ADDRESS,
-    TENANT_BUSINESS_NAME: NEXT_PUBLIC_TENANT_BUSINESS_NAME,
-    TENANT_CONTACT_EMAIL: NEXT_PUBLIC_TENANT_CONTACT_EMAIL,
-    TENANT_CONTACT_PHONE: NEXT_PUBLIC_TENANT_CONTACT_PHONE,
-    TENANT_CURRENCY: NEXT_PUBLIC_TENANT_CURRENCY,
-    TENANT_LOCALE: NEXT_PUBLIC_TENANT_LOCALE,
-    TENANT_QUOTE_VALIDITY_DAYS: NEXT_PUBLIC_TENANT_QUOTE_VALIDITY_DAYS,
-    TENANT_TIMEZONE: NEXT_PUBLIC_TENANT_TIMEZONE,
-    RESEND_API_KEY,
-    FROM_EMAIL,
-    EXPORT_PDF_PAGE_SIZE,
-    EXPORT_MAX_ITEMS,
-  },
-  server: {
-    ADMIN_EMAIL: z.email().optional(),
-    AUTH_GOOGLE_ID: z.string(),
-    AUTH_GOOGLE_SECRET: z.string(),
-    BASE_URL: z.url().optional(),
-    BETTER_AUTH_SECRET:
-      NODE_ENV === "production" ? z.string() : z.string().optional(),
-    DATABASE_URL: z.url(),
-    PRISMA_CONNECTION_LIMIT: z
-      .string()
-      .regex(/^\d+$/, "Must be a positive integer")
-      .transform((val) => Number.parseInt(val, 10))
-      .optional(),
-    NODE_ENV: z
-      .enum(["development", "test", "production"])
-      .default("development"),
-    TENANT_BUSINESS_ADDRESS: z
-      .string()
-      .optional()
-      .or(z.literal(""))
-      .transform((val) => (val === "" ? undefined : val)),
-    TENANT_BUSINESS_NAME: z.string().optional(),
-    TENANT_CONTACT_EMAIL: z
-      .string()
-      .email()
-      .optional()
-      .or(z.literal(""))
-      .transform((val) => (val === "" ? undefined : val)),
-    TENANT_CONTACT_PHONE: z
-      .string()
-      .optional()
-      .or(z.literal(""))
-      .transform((val) => (val === "" ? undefined : val)),
-    TENANT_CURRENCY: z
-      .string()
-      .length(CURRENCY_CODE_LENGTH, "Must be 3-character ISO code")
-      .toUpperCase()
-      .optional(),
-    TENANT_LOCALE: z
-      .string()
-      .regex(/^[a-z]{2}-[A-Z]{2}$/, "Format: xx-XX (e.g., es-CO)")
-      .optional(),
-    TENANT_QUOTE_VALIDITY_DAYS: z
-      .string()
-      .regex(/^\d+$/, "Must be a positive integer")
-      .transform((val) => Number.parseInt(val, 10))
-      .optional(),
-    TENANT_TIMEZONE: z.string().optional(),
-    RESEND_API_KEY: z.string().optional(),
-    FROM_EMAIL: z
-      .string()
-      .email()
-      .optional()
-      .or(z.literal(""))
-      .transform((val) => (val === "" ? undefined : val)),
-    EXPORT_PDF_PAGE_SIZE: z
-      .enum(["A4", "LETTER", "LEGAL"])
-      .optional()
-      .default("A4"),
-    EXPORT_MAX_ITEMS: z
-      .string()
-      .regex(/^\d+$/, "Must be a positive integer")
-      .transform((val) => Number.parseInt(val, 10))
-      .optional()
-      .default(DEFAULT_EXPORT_MAX_ITEMS),
-  },
-  skipValidation: !!SKIP_ENV_VALIDATION,
-});
+// Helper to parse int with default
+const getEnvInt = (key, defaultValue) => {
+  const val = process.env[key];
+  return val ? Number.parseInt(val, 10) : defaultValue;
+};
+
+// Export simple env object
+export const env = {
+  // Client-side variables (NEXT_PUBLIC_*)
+  NEXT_PUBLIC_BASE_URL: getEnv("NEXT_PUBLIC_BASE_URL"),
+  NEXT_PUBLIC_TENANT_BUSINESS_NAME: getEnv("NEXT_PUBLIC_TENANT_BUSINESS_NAME", "Vitro Rojas Panamá"),
+  NEXT_PUBLIC_TENANT_CONTACT_EMAIL: getEnv("NEXT_PUBLIC_TENANT_CONTACT_EMAIL"),
+  NEXT_PUBLIC_TENANT_CONTACT_PHONE: getEnv("NEXT_PUBLIC_TENANT_CONTACT_PHONE"),
+  NEXT_PUBLIC_TENANT_BUSINESS_ADDRESS: getEnv("NEXT_PUBLIC_TENANT_BUSINESS_ADDRESS"),
+  NEXT_PUBLIC_TENANT_CURRENCY: getEnv("NEXT_PUBLIC_TENANT_CURRENCY", "USD"),
+  NEXT_PUBLIC_TENANT_LOCALE: getEnv("NEXT_PUBLIC_TENANT_LOCALE", "es-PA"),
+  NEXT_PUBLIC_TENANT_QUOTE_VALIDITY_DAYS: getEnvInt("NEXT_PUBLIC_TENANT_QUOTE_VALIDITY_DAYS", DEFAULT_QUOTE_VALIDITY_DAYS),
+  NEXT_PUBLIC_TENANT_TIMEZONE: getEnv("NEXT_PUBLIC_TENANT_TIMEZONE", "America/Panama"),
+  NEXT_PUBLIC_VERCEL_ENV: getEnv("NEXT_PUBLIC_VERCEL_ENV"),
+  NEXT_PUBLIC_VERCEL_URL: getEnv("NEXT_PUBLIC_VERCEL_URL"),
+  NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL: getEnv("NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL"),
+
+  // Server-side variables
+  ADMIN_EMAIL: getEnv("ADMIN_EMAIL"),
+  AUTH_GOOGLE_ID: getEnv("AUTH_GOOGLE_ID"),
+  AUTH_GOOGLE_SECRET: getEnv("AUTH_GOOGLE_SECRET"),
+  BASE_URL: getEnv("BASE_URL"),
+  BETTER_AUTH_SECRET: getEnv("BETTER_AUTH_SECRET"),
+  DATABASE_URL: getEnv("DATABASE_URL"),
+  PRISMA_CONNECTION_LIMIT: getEnvInt("PRISMA_CONNECTION_LIMIT", undefined),
+  NODE_ENV: getEnv("NODE_ENV", "development"),
+  
+  // Tenant aliases (server-side access to NEXT_PUBLIC_*)
+  TENANT_BUSINESS_ADDRESS: getEnv("NEXT_PUBLIC_TENANT_BUSINESS_ADDRESS"),
+  TENANT_BUSINESS_NAME: getEnv("NEXT_PUBLIC_TENANT_BUSINESS_NAME", "Vitro Rojas Panamá"),
+  TENANT_CONTACT_EMAIL: getEnv("NEXT_PUBLIC_TENANT_CONTACT_EMAIL"),
+  TENANT_CONTACT_PHONE: getEnv("NEXT_PUBLIC_TENANT_CONTACT_PHONE"),
+  TENANT_CURRENCY: getEnv("NEXT_PUBLIC_TENANT_CURRENCY", "USD"),
+  TENANT_LOCALE: getEnv("NEXT_PUBLIC_TENANT_LOCALE", "es-PA"),
+  TENANT_QUOTE_VALIDITY_DAYS: getEnvInt("NEXT_PUBLIC_TENANT_QUOTE_VALIDITY_DAYS", DEFAULT_QUOTE_VALIDITY_DAYS),
+  TENANT_TIMEZONE: getEnv("NEXT_PUBLIC_TENANT_TIMEZONE", "America/Panama"),
+  
+  // Export configuration
+  RESEND_API_KEY: getEnv("RESEND_API_KEY"),
+  FROM_EMAIL: getEnv("FROM_EMAIL"),
+  EXPORT_PDF_PAGE_SIZE: getEnv("EXPORT_PDF_PAGE_SIZE", "A4"),
+  EXPORT_MAX_ITEMS: getEnvInt("EXPORT_MAX_ITEMS", DEFAULT_EXPORT_MAX_ITEMS),
+};
