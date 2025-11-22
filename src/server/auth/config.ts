@@ -21,10 +21,7 @@ const isAdmin = (email: string | null | undefined): boolean => {
  */
 export const auth = betterAuth({
   appName: "Glasify",
-  baseURL:
-    process.env.BASE_URL ||
-    process.env.NEXT_PUBLIC_BASE_URL ||
-    "https://glasify-lite.vercel.app",
+  baseURL: "https://glasify-lite.vercel.app",
 
   callbacks: {
     async signIn({
