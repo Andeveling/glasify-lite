@@ -2,7 +2,6 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 
-import { env } from "@/env";
 import { db } from "@/server/db";
 
 /**
@@ -10,10 +9,10 @@ import { db } from "@/server/db";
  * Compares against the ADMIN_EMAIL environment variable
  */
 const isAdmin = (email: string | null | undefined): boolean => {
-  if (!(email && env.ADMIN_EMAIL)) {
+  if (!(email && process.env.ADMIN_EMAIL)) {
     return false;
   }
-  return email.toLowerCase() === env.ADMIN_EMAIL.toLowerCase();
+  return email.toLowerCase() === process.env.ADMIN_EMAIL.toLowerCase();
 };
 
 /**
@@ -22,7 +21,10 @@ const isAdmin = (email: string | null | undefined): boolean => {
  */
 export const auth = betterAuth({
   appName: "Glasify",
-  baseURL: env.BASE_URL || env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
+  baseURL:
+    process.env.BASE_URL ||
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    "https://glasify-lite.vercel.app",
 
   callbacks: {
     async signIn({
@@ -47,14 +49,15 @@ export const auth = betterAuth({
   plugins: [
     nextCookies(), // MUST be last plugin
   ],
-  secret: env.BETTER_AUTH_SECRET || "development-secret-change-in-production",
+  secret:
+    process.env.BETTER_AUTH_SECRET || "development-secret-change-in-production",
 
   socialProviders: {
     google: {
       // Always request refresh token and ask user to select account
       accessType: "offline",
-      clientId: env.AUTH_GOOGLE_ID,
-      clientSecret: env.AUTH_GOOGLE_SECRET,
+      clientId: process.env.AUTH_GOOGLE_ID as string,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
       prompt: "select_account consent",
     },
   },
