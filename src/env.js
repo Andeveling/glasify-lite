@@ -22,6 +22,7 @@ const getEnvInt = (key, defaultValue) => {
 export const env = {
   // Client-side variables (NEXT_PUBLIC_*)
   NEXT_PUBLIC_BASE_URL: getEnv("NEXT_PUBLIC_BASE_URL"),
+  NEXT_PUBLIC_BETTER_AUTH_URL: getEnv("NEXT_PUBLIC_BETTER_AUTH_URL"),
   NEXT_PUBLIC_TENANT_BUSINESS_NAME: getEnv(
     "NEXT_PUBLIC_TENANT_BUSINESS_NAME",
     "Vitro Rojas Panamá"
@@ -53,6 +54,7 @@ export const env = {
   AUTH_GOOGLE_SECRET: getEnv("AUTH_GOOGLE_SECRET"),
   BASE_URL: getEnv("BASE_URL"),
   BETTER_AUTH_SECRET: getEnv("BETTER_AUTH_SECRET"),
+  BETTER_AUTH_URL: getEnv("BETTER_AUTH_URL"),
   DATABASE_URL: getEnv("DATABASE_URL"),
   PRISMA_CONNECTION_LIMIT: getEnvInt("PRISMA_CONNECTION_LIMIT", undefined),
   NODE_ENV: getEnv("NODE_ENV", "development"),

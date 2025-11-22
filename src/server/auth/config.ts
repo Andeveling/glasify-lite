@@ -18,12 +18,13 @@ const isAdmin = (email: string | null | undefined): boolean => {
 /**
  * Better Auth instance configuration
  * Handles authentication with Google OAuth, session management, and RBAC
+ * 
+ * Note: Better Auth will automatically detect baseURL from BETTER_AUTH_URL env var
+ * @see https://www.better-auth.com/docs/concepts/base-url
  */
 export const auth = betterAuth({
   appName: "Glasify",
-  // Use BASE_URL (server-side) or fallback to NEXT_PUBLIC_BASE_URL
-  // In production, BASE_URL should be set to https://glasify-lite.vercel.app
-  baseURL: env.BASE_URL || env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
+  // Don't set baseURL here - let Better Auth auto-detect from BETTER_AUTH_URL env var
 
   callbacks: {
     async signIn({
