@@ -32,6 +32,8 @@ import { CharacteristicsSection } from "./sections/characteristics-section";
 import { SolutionsSection } from "./sections/solutions-section";
 import { ThermalPropertiesSection } from "./sections/thermal-properties-section";
 
+
+
 type GlassTypeFormProps = {
   mode: "create" | "edit";
   defaultValues?: GetGlassTypeByIdOutput;
@@ -48,10 +50,12 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
     mode,
   });
 
+  console.log("defaultValues", defaultValues);
+
   return (
     <Form {...form}>
       {/* @ts-expect-error - Type mismatch between Zod schema and RHF Control types */}
-      <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
+      <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit, (errors) => console.error("Form Errors:", errors))}>
         <Accordion
           className="space-y-4"
           defaultValue={["basic"]}
@@ -118,6 +122,7 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
           mode={mode}
           onCancel={() => router.back()}
         />
+
       </form>
     </Form>
   );

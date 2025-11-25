@@ -30,19 +30,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { FormCheckboxField } from "../form-fields/form-checkbox-field";
 import { FormNumberField } from "../form-fields/form-number-field";
-import { FormSelectField } from "../form-fields/form-select-field";
 import { FormTextareaField } from "../form-fields/form-textarea-field";
 
 type BasicInfoSectionProps = {
   control: Control<FieldValues>;
 };
 
-const PURPOSE_OPTIONS = [
-  { label: "General", value: "general" },
-  { label: "Aislamiento", value: "insulation" },
-  { label: "Seguridad", value: "security" },
-  { label: "Decorativo", value: "decorative" },
-];
+
 
 /**
  * Basic information section component
@@ -72,13 +66,31 @@ export function BasicInfoSection({ control }: BasicInfoSectionProps) {
           control={control}
           name="name"
           render={({ field }) => (
-            <FormItem className="md:col-span-2 md:row-start-2">
+            <FormItem>
               <FormLabel>Nombre *</FormLabel>
               <FormControl>
                 <Input placeholder="Ej: Vidrio Templado 6mm" {...field} />
               </FormControl>
               <FormDescription>
                 Nombre descriptivo del tipo de vidrio
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Code */}
+        <FormField
+          control={control}
+          name="code"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Código *</FormLabel>
+              <FormControl>
+                <Input placeholder="Ej: VT-6MM" {...field} />
+              </FormControl>
+              <FormDescription>
+                Código único del producto
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -105,37 +117,6 @@ export function BasicInfoSection({ control }: BasicInfoSectionProps) {
           name="pricePerSqm"
           required
           step={0.01}
-        />
-
-        {/* Purpose */}
-        <FormSelectField
-          control={control}
-          description="Clasificación de uso (legacy)"
-          label="Propósito"
-          name="purpose"
-          options={PURPOSE_OPTIONS}
-          placeholder="Selecciona un propósito"
-          required
-        />
-
-        {/* SKU */}
-        <FormField
-          control={control}
-          name="sku"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>SKU</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Ej: VT-6MM-001"
-                  {...field}
-                  value={field.value ?? ""}
-                />
-              </FormControl>
-              <FormDescription>Código del proveedor (opcional)</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
         />
 
         {/* Description */}
