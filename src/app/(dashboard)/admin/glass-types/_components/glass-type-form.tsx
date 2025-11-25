@@ -53,7 +53,6 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
 
   return (
     <Form {...form}>
-      {/* @ts-expect-error - Type mismatch between Zod schema and RHF Control types */}
       <form
         className="space-y-6"
         onSubmit={form.handleSubmit(handleSubmit, (errors) =>
