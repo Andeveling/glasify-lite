@@ -10,7 +10,7 @@
  * @version 1.0.0
  */
 
-import type { PrismaClient } from "@prisma/client";
+import type { Prisma, PrismaClient } from "@prisma/client";
 import type { GlassTypeSolutionMapping } from "../data/vitro-rojas/glass-type-solution-mappings.data";
 import type { GlassSolutionInput } from "../factories/glass-solution.factory";
 import { createGlassSolution } from "../factories/glass-solution.factory";
@@ -44,6 +44,7 @@ const DEFAULT_GLASS_PRICE_PER_SQM = 50_000.0; // Default price in CLP currency
 export type SeedPreset = {
   name: string;
   description: string;
+  colors?: Prisma.ColorCreateInput[];
   glassTypes: GlassTypeInput[];
   profileSuppliers: ProfileSupplierInput[];
   models: ModelInput[];
@@ -56,6 +57,7 @@ export type SeedPreset = {
  * Seed statistics
  */
 export type SeedStats = {
+  colors: { created: number; failed: number };
   glassTypes: { created: number; failed: number };
   profileSuppliers: { created: number; failed: number };
   models: { created: number; failed: number };
@@ -134,6 +136,7 @@ export class SeedOrchestrator {
     this.options = options;
     this.logger = new SeedLogger(options.verbose);
     this.stats = {
+      colors: { created: 0, failed: 0 },
       durationMs: 0,
       glassSolutions: { created: 0, failed: 0 },
       glassTypeSolutions: { created: 0, failed: 0 },
@@ -161,38 +164,43 @@ export class SeedOrchestrator {
       await this.cleanDatabase();
 
       // Step 0: Seed TenantConfig singleton (ALWAYS FIRST - business configuration)
-      this.logger.section("Step 1/8: TenantConfig Singleton");
+      this.logger.section("Step 1/9: TenantConfig Singleton");
       await seedTenant(this.prisma);
 
-      // Step 1: Seed profile suppliers (no dependencies)
-      this.logger.section("Step 2/8: Profile Suppliers");
+      // Step 1: Seed colors (no dependencies)
+      this.logger.section("Step 2/9: Colors");
+      await this.seedColors(preset.colors ?? []);
+
+      // Step 2: Seed profile suppliers (no dependencies)
+      this.logger.section("Step 3/9: Profile Suppliers");
       const suppliers = await this.seedProfileSuppliers(
         preset.profileSuppliers
       );
 
-      // Step 2: Seed glass types (no dependencies)
-      this.logger.section("Step 3/8: Glass Types");
+      // Step 3: Seed glass types (no dependencies)
+      this.logger.section("Step 4/9: Glass Types");
       const glassTypes = await this.seedGlassTypes(preset.glassTypes);
 
-      // Step 3: Seed models (depends on suppliers and glass types)
-      this.logger.section("Step 4/8: Window/Door Models");
+      // Step 4: Seed models (depends on suppliers and glass types)
+      this.logger.section("Step 5/9: Window/Door Models");
       await this.seedModels(preset.models, suppliers, glassTypes);
 
-      // Step 4: Seed services (no dependencies)
-      this.logger.section("Step 5/8: Services");
+      // Step 5: Seed services (no dependencies)
+      this.logger.section("Step 6/9: Services");
       await this.seedServices(preset.services);
 
-      // Step 5: Seed glass solutions (no dependencies)
-      this.logger.section("Step 6/8: Glass Solutions");
+      // Step 6: Seed glass solutions (no dependencies)
+      this.logger.section("Step 7/9: Glass Solutions");
       const solutions = await this.seedGlassSolutions(preset.glassSolutions);
 
-      // Step 6: Assign solutions to glass types (depends on glass types and solutions)
-      this.logger.section("Step 7/8: Assign Solutions to Glass Types");
+      // Step 7: Assign solutions to glass types (depends on glass types and solutions)
+      this.logger.section("Step 8/9: Assign Solutions to Glass Types");
       await this.assignSolutionsToGlassTypes(glassTypes, solutions);
 
       // Calculate final stats
       this.stats.durationMs = Date.now() - this.startTime;
       this.stats.totalCreated =
+        this.stats.colors.created +
         this.stats.glassTypes.created +
         this.stats.profileSuppliers.created +
         this.stats.models.created +
@@ -200,6 +208,7 @@ export class SeedOrchestrator {
         this.stats.glassSolutions.created +
         this.stats.glassTypeSolutions.created;
       this.stats.totalFailed =
+        this.stats.colors.failed +
         this.stats.glassTypes.failed +
         this.stats.profileSuppliers.failed +
         this.stats.models.failed +
@@ -226,6 +235,9 @@ export class SeedOrchestrator {
       this.logger.info("Cleaning existing data...");
 
       // Delete in order of dependencies (reverse of creation)
+      // ModelColor (depends on Model and Color)
+      await this.prisma.modelColor.deleteMany({});
+
       // GlassTypeCharacteristic (depends on GlassType and GlassCharacteristic)
       await this.prisma.glassTypeCharacteristic.deleteMany({});
 
@@ -235,6 +247,9 @@ export class SeedOrchestrator {
 
       // Model (depends on ProfileSupplier)
       await this.prisma.model.deleteMany({});
+
+      // Color (independent, but referenced by ModelColor)
+      await this.prisma.color.deleteMany({});
 
       // Service (independent)
       await this.prisma.service.deleteMany({});
@@ -258,6 +273,64 @@ export class SeedOrchestrator {
         throw error;
       }
     }
+  }
+
+  /**
+   * Seed colors
+   */
+  private async seedColors(
+    colors: Prisma.ColorCreateInput[]
+  ): Promise<Map<string, string>> {
+    const colorIdMap = new Map<string, string>();
+
+    if (!colors || colors.length === 0) {
+      this.logger.debug("No colors to seed. Skipping.");
+      return colorIdMap;
+    }
+
+    this.logger.info(`Seeding ${colors.length} colors...`);
+
+    for (const colorInput of colors) {
+      try {
+        // Check if color already exists (by name + hexCode unique constraint)
+        const existing = await this.prisma.color.findUnique({
+          where: {
+            name_hexCode: {
+              name: colorInput.name,
+              hexCode: colorInput.hexCode,
+            },
+          },
+        });
+
+        // Upsert color
+        const color = existing
+          ? await this.prisma.color.update({
+              data: colorInput,
+              where: { id: existing.id },
+            })
+          : await this.prisma.color.create({
+              data: colorInput,
+            });
+
+        colorIdMap.set(colorInput.name, color.id);
+        this.stats.colors.created++;
+        this.logger.debug(
+          `${existing ? "Updated" : "Created"}: ${color.name} (${color.hexCode})`
+        );
+      } catch (error) {
+        this.logger.error(`Failed to create color: ${colorInput.name}`, error);
+        this.stats.colors.failed++;
+        if (!this.options.continueOnError) {
+          throw error;
+        }
+      }
+    }
+
+    this.logger.success(
+      `Colors: ${this.stats.colors.created} created, ${this.stats.colors.failed} failed`
+    );
+
+    return colorIdMap;
   }
 
   /**
@@ -725,6 +798,9 @@ export class SeedOrchestrator {
 
     console.log("\n📊 Statistics:");
     console.log("   TenantConfig: 1 singleton (always created)");
+    console.log(
+      `   Colors: ${this.stats.colors.created} created, ${this.stats.colors.failed} failed`
+    );
     console.log(
       `   Profile Suppliers: ${this.stats.profileSuppliers.created} created, ${this.stats.profileSuppliers.failed} failed`
     );
