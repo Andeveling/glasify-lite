@@ -1,12 +1,12 @@
 "use client";
 
+import type { Quote } from "@prisma/client";
 import { Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ContactInfoModal } from "@/app/_components/contact-info-modal";
 import { Button } from "@/components/ui/button";
 import { useSendQuote } from "@/hooks/use-send-quote";
-import type { Quote } from "@prisma/client";
 
 type SendQuoteButtonProps = {
   quote: Pick<Quote, "id" | "status" | "contactPhone">;

@@ -6,7 +6,7 @@ import { env } from "@/env";
 /**
  * Better Auth client for client-side authentication operations
  * Used in React components, hooks, and client-side actions
- * 
+ *
  * Note: Better Auth will auto-detect baseURL from NEXT_PUBLIC_BETTER_AUTH_URL
  * @see https://www.better-auth.com/docs/concepts/base-url
  */

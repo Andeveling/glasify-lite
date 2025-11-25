@@ -36,8 +36,6 @@ type BasicInfoSectionProps = {
   control: Control<FieldValues>;
 };
 
-
-
 /**
  * Basic information section component
  */
@@ -89,9 +87,7 @@ export function BasicInfoSection({ control }: BasicInfoSectionProps) {
               <FormControl>
                 <Input placeholder="Ej: VT-6MM" {...field} />
               </FormControl>
-              <FormDescription>
-                Código único del producto
-              </FormDescription>
+              <FormDescription>Código único del producto</FormDescription>
               <FormMessage />
             </FormItem>
           )}

@@ -6,6 +6,7 @@
 
 "use client";
 
+import type { MaterialType, ModelStatus } from "@prisma/client";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -21,7 +22,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { MaterialType, ModelStatus } from "@prisma/client";
 
 export type Model = {
   id: string;

@@ -12,7 +12,6 @@
  * - Field components (molecules) provide reusable form inputs
  * - Main component orchestrates composition
  */
-/** biome-ignore-all lint/suspicious/noConsole: <explanation> */
 
 "use client";
 
@@ -49,16 +48,9 @@ export function GlassTypeForm({ mode, defaultValues }: GlassTypeFormProps) {
     mode,
   });
 
-  console.log("defaultValues", defaultValues);
-
   return (
     <Form {...form}>
-      <form
-        className="space-y-6"
-        onSubmit={form.handleSubmit(handleSubmit, (errors) =>
-          console.error("Form Errors:", errors)
-        )}
-      >
+      <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
         <Accordion
           className="space-y-4"
           defaultValue={["basic"]}
