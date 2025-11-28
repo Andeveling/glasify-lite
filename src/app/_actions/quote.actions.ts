@@ -42,12 +42,16 @@ type DeliveryAddressInput = {
 
 /**
  * Quote generation form input (from React Hook Form)
+ *
+ * Note: projectStreet, projectCity, projectState can be derived from
+ * deliveryAddress if not provided directly. The transform logic ensures
+ * backward compatibility with existing Quote schema.
  */
 type QuoteGenerationFormInput = {
   projectName?: string;
-  projectStreet: string;
-  projectCity: string;
-  projectState: string;
+  projectStreet?: string;
+  projectCity?: string;
+  projectState?: string;
   contactPhone?: string;
   deliveryAddress?: DeliveryAddressInput;
 };
@@ -149,17 +153,28 @@ export async function generateQuoteFromCartAction(
       };
     }
 
-    // 4. Call quote service to generate quote
+    // 4. Derive project address fields from geocoded address if not provided
+    // This ensures backward compatibility with existing Quote schema
+    const deliveryAddress = formInput.deliveryAddress;
+    const projectAddress = {
+      projectCity:
+        formInput.projectCity || deliveryAddress?.city || "Sin ciudad",
+      projectName: formInput.projectName ?? "Sin nombre",
+      projectState:
+        formInput.projectState || deliveryAddress?.region || "Sin estado",
+      projectStreet:
+        formInput.projectStreet ||
+        deliveryAddress?.street ||
+        deliveryAddress?.label ||
+        "Sin dirección",
+    };
+
+    // 5. Call quote service to generate quote
     const result = await generateQuoteFromCart(db, userId, {
       cartItems,
       contactPhone: formInput.contactPhone,
-      deliveryAddress: formInput.deliveryAddress,
-      projectAddress: {
-        projectCity: formInput.projectCity,
-        projectName: formInput.projectName ?? "Sin nombre",
-        projectState: formInput.projectState,
-        projectStreet: formInput.projectStreet,
-      },
+      deliveryAddress,
+      projectAddress,
     });
 
     logger.info("[QuoteAction] Quote generation completed successfully", {
