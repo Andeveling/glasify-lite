@@ -40,21 +40,29 @@ function generateSuggestedValues(
 }
 
 export function DimensionsSection({ dimensions }: DimensionsSectionProps) {
-  const { control, setValue } = useFormContext();
+  const { control, setValue, trigger } = useFormContext();
 
   // Watch values para el preview
   const width = useWatch({ control, name: "width" });
   const height = useWatch({ control, name: "height" });
 
-  // ✅ Stable setValue callbacks to prevent infinite loops
+  // ✅ Stable setValue callbacks with explicit revalidation to prevent stale errors
   const setWidthValue = useCallback(
-    (value: number) => setValue("width", value, { shouldValidate: true }),
-    [setValue]
+    (value: number) => {
+      setValue("width", value, { shouldValidate: true });
+      // Force revalidation to clear stale errors immediately
+      trigger("width");
+    },
+    [setValue, trigger]
   );
 
   const setHeightValue = useCallback(
-    (value: number) => setValue("height", value, { shouldValidate: true }),
-    [setValue]
+    (value: number) => {
+      setValue("height", value, { shouldValidate: true });
+      // Force revalidation to clear stale errors immediately
+      trigger("height");
+    },
+    [setValue, trigger]
   );
 
   // ✅ Use custom debounced dimension hook for width
