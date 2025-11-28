@@ -17,7 +17,12 @@
 /**
  * Performance rating enum (matches Prisma schema)
  */
-export type PerformanceRating = "LOW" | "MEDIUM" | "HIGH" | "EXCELLENT";
+export type PerformanceRating =
+  | "basic"
+  | "standard"
+  | "good"
+  | "very_good"
+  | "excellent";
 
 /**
  * Mapping input structure
@@ -51,13 +56,13 @@ export const vitroRojasGlassTypeSolutionMappings: GlassTypeSolutionMapping[] = [
   {
     glassTypeCode: "VR_CLEAR6",
     isPrimary: true,
-    performanceRating: "MEDIUM",
+    performanceRating: "standard",
     solutionKey: "general",
   },
   {
     glassTypeCode: "VR_CLEAR8",
     isPrimary: true,
-    performanceRating: "HIGH",
+    performanceRating: "good",
     solutionKey: "general",
   },
 
@@ -67,19 +72,19 @@ export const vitroRojasGlassTypeSolutionMappings: GlassTypeSolutionMapping[] = [
   {
     glassTypeCode: "VR_LAM6",
     isPrimary: true,
-    performanceRating: "HIGH",
+    performanceRating: "good",
     solutionKey: "security",
   },
   {
     glassTypeCode: "VR_LAM8",
     isPrimary: true,
-    performanceRating: "HIGH",
+    performanceRating: "very_good",
     solutionKey: "security",
   },
   {
     glassTypeCode: "VR_TEMP6",
     isPrimary: true,
-    performanceRating: "HIGH",
+    performanceRating: "good",
     solutionKey: "security",
   },
 
@@ -89,13 +94,13 @@ export const vitroRojasGlassTypeSolutionMappings: GlassTypeSolutionMapping[] = [
   {
     glassTypeCode: "VR_DVH16",
     isPrimary: true,
-    performanceRating: "HIGH",
+    performanceRating: "very_good",
     solutionKey: "energy_efficiency",
   },
   {
     glassTypeCode: "VR_DVH18",
     isPrimary: true,
-    performanceRating: "EXCELLENT",
+    performanceRating: "excellent",
     solutionKey: "energy_efficiency",
   },
 
@@ -105,25 +110,25 @@ export const vitroRojasGlassTypeSolutionMappings: GlassTypeSolutionMapping[] = [
   {
     glassTypeCode: "VR_GRAY6",
     isPrimary: true,
-    performanceRating: "HIGH",
+    performanceRating: "good",
     solutionKey: "decorative",
   },
   {
     glassTypeCode: "VR_BRONZE6",
     isPrimary: true,
-    performanceRating: "HIGH",
+    performanceRating: "good",
     solutionKey: "decorative",
   },
   {
     glassTypeCode: "VR_REFL6",
     isPrimary: true,
-    performanceRating: "HIGH",
+    performanceRating: "very_good",
     solutionKey: "decorative",
   },
   {
     glassTypeCode: "VR_LAMGRAY6",
     isPrimary: true,
-    performanceRating: "EXCELLENT",
+    performanceRating: "excellent",
     solutionKey: "decorative",
   },
 
@@ -135,13 +140,13 @@ export const vitroRojasGlassTypeSolutionMappings: GlassTypeSolutionMapping[] = [
   {
     glassTypeCode: "VR_LAM6",
     isPrimary: false,
-    performanceRating: "MEDIUM",
+    performanceRating: "standard",
     solutionKey: "decorative",
   },
   {
     glassTypeCode: "VR_LAM8",
     isPrimary: false,
-    performanceRating: "MEDIUM",
+    performanceRating: "good",
     solutionKey: "decorative",
   },
 
@@ -149,13 +154,13 @@ export const vitroRojasGlassTypeSolutionMappings: GlassTypeSolutionMapping[] = [
   {
     glassTypeCode: "VR_DVH16",
     isPrimary: false,
-    performanceRating: "MEDIUM",
+    performanceRating: "standard",
     solutionKey: "security",
   },
   {
     glassTypeCode: "VR_DVH18",
     isPrimary: false,
-    performanceRating: "HIGH",
+    performanceRating: "good",
     solutionKey: "security",
   },
 
@@ -163,7 +168,7 @@ export const vitroRojasGlassTypeSolutionMappings: GlassTypeSolutionMapping[] = [
   {
     glassTypeCode: "VR_LAMGRAY6",
     isPrimary: false,
-    performanceRating: "HIGH",
+    performanceRating: "very_good",
     solutionKey: "security",
   },
 ];

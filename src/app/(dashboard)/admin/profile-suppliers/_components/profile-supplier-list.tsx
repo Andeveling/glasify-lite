@@ -27,6 +27,7 @@
 
 "use client";
 
+import type { MaterialType, ProfileSupplier } from "@prisma/client";
 import { Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -43,7 +44,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { MaterialType, ProfileSupplier } from "@prisma/client";
 import { api } from "@/trpc/react";
 import { ProfileSupplierEmpty } from "./profile-supplier-empty";
 

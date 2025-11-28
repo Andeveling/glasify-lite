@@ -21,6 +21,7 @@
 
 "use client";
 
+import type { Service, ServiceType } from "@prisma/client";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -48,7 +49,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Service, ServiceType } from "@prisma/client";
 import {
   MAX_NAME_LENGTH,
   MIN_NAME_LENGTH,

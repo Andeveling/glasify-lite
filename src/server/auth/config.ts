@@ -18,7 +18,7 @@ const isAdmin = (email: string | null | undefined): boolean => {
 /**
  * Better Auth instance configuration
  * Handles authentication with Google OAuth, session management, and RBAC
- * 
+ *
  * Note: Better Auth will automatically detect baseURL from BETTER_AUTH_URL env var
  * @see https://www.better-auth.com/docs/concepts/base-url
  */

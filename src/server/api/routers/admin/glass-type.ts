@@ -368,6 +368,7 @@ export const glassTypeRouter = createTRPCRouter({
       const serializedGlassType = {
         ...glassType,
         lightTransmission: glassType.lightTransmission?.toNumber() ?? null,
+        pricePerSqm: glassType.pricePerSqm.toNumber(),
         solarFactor: glassType.solarFactor?.toNumber() ?? null,
         uValue: glassType.uValue?.toNumber() ?? null,
       };
@@ -563,7 +564,8 @@ export const glassTypeRouter = createTRPCRouter({
       const updateData: Prisma.GlassTypeUpdateInput = { ...baseData };
 
       // Replace solutions (delete all, create new)
-      if (solutions !== undefined) {
+      // Only update if solutions array is provided AND has elements
+      if (solutions !== undefined && solutions.length > 0) {
         updateData.solutions = {
           create: solutions.map((sol) => ({
             isPrimary: sol.isPrimary,
@@ -576,7 +578,8 @@ export const glassTypeRouter = createTRPCRouter({
       }
 
       // Replace characteristics (delete all, create new)
-      if (characteristics !== undefined) {
+      // Only update if characteristics array is provided AND has elements
+      if (characteristics !== undefined && characteristics.length > 0) {
         updateData.characteristics = {
           create: characteristics.map((char) => ({
             certification: char.certification,
