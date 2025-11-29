@@ -61,6 +61,13 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
         label: "Catálogo",
         routes: ["/catalog"],
       },
+      {
+        description: "Ver mis cotizaciones",
+        href: "/my-quotes",
+        icon: "FileText",
+        label: "Mis Cotizaciones",
+        routes: ["/my-quotes"],
+      },
     ];
   }
 

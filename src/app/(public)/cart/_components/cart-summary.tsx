@@ -137,7 +137,9 @@ export function CartSummary({
               <p className="font-bold text-2xl">
                 {formatCurrency(summary.total, { context: tenantConfig })}
               </p>
-              <p className="text-muted-foreground text-xs">IVA incluido</p>
+              <p className="text-muted-foreground text-xs">
+                Impuestos no incluido
+              </p>
             </div>
           </div>
         </CardContent>

@@ -23,7 +23,7 @@ export function QuotePDFDocument({ data }: QuotePDFDocumentProps) {
   return (
     <Document
       author={data.company.name}
-      creator="Glasify - Quote Management System"
+      creator={data.company.name}
       subject={`Cotización #${data.quote.id}`}
       title={`Cotización - ${data.quote.projectName}`}
     >
@@ -68,7 +68,7 @@ function PDFHeader({ data }: QuotePDFDocumentProps) {
 
       <View style={pdfStyles.headerRight}>
         <Text style={pdfStyles.quoteNumber}>Cotización</Text>
-        <Text style={pdfStyles.quoteNumber}>#{data.quote.id.slice(0, 8)}</Text>
+        <Text style={pdfStyles.quoteNumber}>Código: {data.quote.id}</Text>
         <Text style={pdfStyles.quoteDate}>
           Fecha: {formatDateFull(data.quote.createdAt, data.formatting)}
         </Text>
