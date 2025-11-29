@@ -2,7 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { useForm, type Resolver } from "react-hook-form";
+import Link from "next/link";
+import { type Resolver, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useModelCatalogData } from "../_hooks/use-model-catalog-data";
@@ -19,7 +20,6 @@ import { DimensionsSection } from "./dimensions-section";
 import { GlassTypesSection } from "./glass-types-section";
 import { ImageGallerySectionComponent } from "./image-gallery-section";
 import { PricingSection } from "./pricing-section";
-import Link from "next/link";
 
 type ModelFormProps = {
   mode: "create" | "edit";
@@ -31,7 +31,6 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
   const { suppliers, glassTypes } = useModelCatalogData();
   const { createModel, updateModel, isCreating, isUpdating } =
     useModelMutations();
-
 
   const form = useForm<ModelFormValues>({
     defaultValues: getModelFormDefaults(initialData),
@@ -76,29 +75,22 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
 
         {/* Sticky Action Bar */}
         <div className="sticky bottom-0 z-10 flex items-center justify-between gap-4 rounded-lg border bg-card p-4 shadow-lg">
-          <div className="text-sm text-red-600">
-            <ul className="list-disc pl-5 space-y-1">
+          <div className="text-red-600 text-sm">
+            <ul className="list-disc space-y-1 pl-5">
               {Object.entries(form.formState.errors).map(([field, error]) => (
-                <li key={field}>
-                 {error?.message ?? 'Error'}
-                </li>
+                <li key={field}>{error?.message ?? "Error"}</li>
               ))}
             </ul>
           </div>
-         <div className="flex items-center gap-2">
-           <Button
-            variant="outline"
-            asChild    
-          >
-            <Link href="/admin/models">
-              Cancelar
-            </Link>
-          </Button>
-          <Button disabled={isLoading} type="submit">
-            {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
-            {mode === "create" ? "Crear Modelo" : "Actualizar Modelo"}
-          </Button>
-         </div>
+          <div className="flex items-center gap-2">
+            <Button asChild variant="outline">
+              <Link href="/admin/models">Cancelar</Link>
+            </Button>
+            <Button disabled={isLoading} type="submit">
+              {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+              {mode === "create" ? "Crear Modelo" : "Actualizar Modelo"}
+            </Button>
+          </div>
         </div>
       </form>
     </Form>
