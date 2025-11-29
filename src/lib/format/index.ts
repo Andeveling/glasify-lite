@@ -393,6 +393,102 @@ function formatThickness(
 }
 
 // =============================================================================
+// TAX FORMATTING
+// =============================================================================
+
+/**
+ * Tax configuration context (extends FormatContext with tax fields)
+ */
+type TaxContext = FormatContext & {
+  taxName?: string | null;
+  taxRate?: number | null;
+  taxEnabled?: boolean;
+  taxDescription?: string | null;
+};
+
+/**
+ * Format tax label with name and percentage
+ *
+ * @example
+ * ```ts
+ * formatTaxLabel({ taxName: 'IVA', taxRate: 0.19, taxEnabled: true })
+ * // "IVA (19%)"
+ *
+ * formatTaxLabel({ taxName: 'ITBMS', taxRate: 0.07, taxEnabled: true })
+ * // "ITBMS (7%)"
+ *
+ * formatTaxLabel({ taxEnabled: false })
+ * // null
+ * ```
+ */
+function formatTaxLabel(context?: Partial<TaxContext> | null): string | null {
+  // Validate all required fields exist
+  if (!context?.taxEnabled) {
+    return null;
+  }
+
+  const taxName = context.taxName;
+  const taxRate = context.taxRate;
+
+  if (taxName == null || taxRate == null) {
+    return null;
+  }
+
+  const percentMultiplier = 100;
+  const percentage = taxRate * percentMultiplier;
+  // Show decimal only if needed (e.g., 7% not 7.00%, but 10.5% if applicable)
+  const formattedPercentage =
+    percentage % 1 === 0 ? percentage.toFixed(0) : percentage.toFixed(1);
+
+  return `${taxName} (${formattedPercentage}%)`;
+}
+
+/**
+ * Calculate tax amount from subtotal
+ *
+ * @example
+ * ```ts
+ * calculateTax(100000, { taxRate: 0.19, taxEnabled: true })
+ * // 19000
+ *
+ * calculateTax(100000, { taxRate: 0.07, taxEnabled: true })
+ * // 7000
+ *
+ * calculateTax(100000, { taxEnabled: false })
+ * // 0
+ * ```
+ */
+function calculateTax(
+  subtotal: number,
+  context?: Partial<TaxContext> | null
+): number {
+  if (!context?.taxEnabled || context.taxRate == null) {
+    return 0;
+  }
+
+  return subtotal * context.taxRate;
+}
+
+/**
+ * Calculate total with tax
+ *
+ * @example
+ * ```ts
+ * calculateTotalWithTax(100000, { taxRate: 0.19, taxEnabled: true })
+ * // 119000
+ *
+ * calculateTotalWithTax(100000, { taxEnabled: false })
+ * // 100000
+ * ```
+ */
+function calculateTotalWithTax(
+  subtotal: number,
+  context?: Partial<TaxContext> | null
+): number {
+  return subtotal + calculateTax(subtotal, context);
+}
+
+// =============================================================================
 // EXPORTS
 // =============================================================================
 
@@ -412,6 +508,10 @@ export {
   formatDimensions,
   formatArea,
   formatThickness,
+  // Tax utilities
+  formatTaxLabel,
+  calculateTax,
+  calculateTotalWithTax,
 };
 
-export type { FormatContext };
+export type { FormatContext, TaxContext };

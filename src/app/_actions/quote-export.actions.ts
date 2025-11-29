@@ -57,22 +57,33 @@ type ExportQuoteInput = z.infer<typeof exportQuoteInputSchema>;
 
 /**
  * Calculate totals from quote items
- * Uses unknown type for complex Prisma includes
+ * Uses tax fields from Quote record (historical snapshot from TenantConfig)
  */
-function calculateQuoteTotals(quote: { items: unknown[]; total: Decimal }) {
+function calculateQuoteTotals(quote: {
+  items: unknown[];
+  taxAmount: Decimal | null;
+  taxName: string | null;
+  taxRate: Decimal | null;
+  total: Decimal;
+}) {
   // Calculate subtotal from items
   const subtotal = quote.items.reduce((sum: number, item: unknown) => {
     const typedItem = item as { subtotal: Decimal };
     return sum + Number(typedItem.subtotal);
   }, 0);
 
-  //Tax and discount are not yet implemented in the schema
-  // They will be calculated from adjustments in future iterations
+  // Get tax from Quote record (historical snapshot at creation time)
+  const tax = quote.taxAmount ? Number(quote.taxAmount) : undefined;
+  const taxName = quote.taxName ?? undefined;
+  const taxRate = quote.taxRate ? Number(quote.taxRate) : undefined;
 
   return {
     discount: undefined,
     subtotal,
-    tax: undefined,
+    tax,
+    taxDescription: undefined, // Legal description not stored in Quote
+    taxName,
+    taxRate,
     total: Number(quote.total),
   };
 }
@@ -352,6 +363,9 @@ export async function exportQuoteExcel(
       validUntil: Date | null;
       items: Record<string, unknown>[];
       user: { name: string | null; email: string | null } | null;
+      taxAmount: Decimal | null;
+      taxName: string | null;
+      taxRate: Decimal | null;
     };
     if (!quote) {
       logger.warn("Quote not found for Excel export", { quoteId });

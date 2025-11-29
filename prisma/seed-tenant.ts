@@ -22,8 +22,13 @@ const tenantConfigData = {
   currency: envSeed.TENANT_CURRENCY,
   locale: envSeed.TENANT_LOCALE,
   quoteValidityDays: envSeed.TENANT_QUOTE_VALIDITY_DAYS,
+  // Tax configuration
+  taxDescription: envSeed.TENANT_TAX_DESCRIPTION,
+  taxEnabled: envSeed.TENANT_TAX_ENABLED,
+  taxName: envSeed.TENANT_TAX_NAME,
+  taxRate: envSeed.TENANT_TAX_RATE > 0 ? envSeed.TENANT_TAX_RATE : null,
   timezone: envSeed.TENANT_TIMEZONE,
-} as const;
+};
 
 /**
  * ProfileSupplier Records - Window/Door Profile Manufacturers
@@ -86,6 +91,21 @@ async function seedTenantConfig(prisma: PrismaClient) {
   }
   if (tenantConfig.businessAddress) {
     console.log(`   Address: ${tenantConfig.businessAddress}`);
+  }
+  // Tax configuration logging
+  if (tenantConfig.taxEnabled) {
+    const PERCENT_MULTIPLIER = 100;
+    const taxRatePercent = tenantConfig.taxRate
+      ? Number(tenantConfig.taxRate) * PERCENT_MULTIPLIER
+      : 0;
+    console.log(
+      `   Tax: ${tenantConfig.taxName} (${taxRatePercent}%) - Enabled`
+    );
+    if (tenantConfig.taxDescription) {
+      console.log(`   Tax Legal: ${tenantConfig.taxDescription}`);
+    }
+  } else {
+    console.log("   Tax: Disabled");
   }
 
   return tenantConfig;

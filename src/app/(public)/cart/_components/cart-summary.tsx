@@ -30,7 +30,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useSession } from "@/lib/auth-client";
-import { formatCurrency } from "@/lib/format";
+import {
+  calculateTax,
+  calculateTotalWithTax,
+  formatCurrency,
+  formatTaxLabel,
+} from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { useTenantConfig } from "@/providers/tenant-config-provider";
 import type { CartSummary as CartSummaryType } from "@/types/cart.types";
@@ -130,16 +135,54 @@ export function CartSummary({
           {/* Divider */}
           <div className="h-px bg-border" />
 
+          {/* Subtotal - shown when tax is enabled */}
+          {tenantConfig.taxEnabled && (
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Subtotal</span>
+              <span className="font-medium">
+                {formatCurrency(summary.total, { context: tenantConfig })}
+              </span>
+            </div>
+          )}
+
+          {/* Tax - shown when tax is enabled */}
+          {tenantConfig.taxEnabled && tenantConfig.taxRate != null && (
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">
+                {formatTaxLabel(tenantConfig) ?? "Impuesto"}
+              </span>
+              <span className="font-medium">
+                {formatCurrency(calculateTax(summary.total, tenantConfig), {
+                  context: tenantConfig,
+                })}
+              </span>
+            </div>
+          )}
+
           {/* Total */}
           <div className="flex items-center justify-between">
             <span className="font-medium text-base">Total</span>
             <div className="text-right">
               <p className="font-bold text-2xl">
-                {formatCurrency(summary.total, { context: tenantConfig })}
+                {formatCurrency(
+                  tenantConfig.taxEnabled
+                    ? calculateTotalWithTax(summary.total, tenantConfig)
+                    : summary.total,
+                  { context: tenantConfig }
+                )}
               </p>
-              <p className="text-muted-foreground text-xs">
-                Impuestos no incluido
-              </p>
+              {/* Tax note - only show if tax is disabled */}
+              {!tenantConfig.taxEnabled && (
+                <p className="text-muted-foreground text-xs">
+                  Impuestos no incluido
+                </p>
+              )}
+              {/* Tax description - show legal note if provided */}
+              {tenantConfig.taxEnabled && tenantConfig.taxDescription && (
+                <p className="text-muted-foreground text-xs">
+                  {tenantConfig.taxDescription}
+                </p>
+              )}
             </div>
           </div>
         </CardContent>

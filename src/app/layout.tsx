@@ -58,6 +58,10 @@ export default function RootLayout({
     currency: env.NEXT_PUBLIC_TENANT_CURRENCY,
     locale: env.NEXT_PUBLIC_TENANT_LOCALE,
     quoteValidityDays: env.NEXT_PUBLIC_TENANT_QUOTE_VALIDITY_DAYS,
+    taxDescription: env.NEXT_PUBLIC_TENANT_TAX_DESCRIPTION,
+    taxEnabled: env.NEXT_PUBLIC_TENANT_TAX_ENABLED,
+    taxName: env.NEXT_PUBLIC_TENANT_TAX_NAME,
+    taxRate: env.NEXT_PUBLIC_TENANT_TAX_RATE,
     timezone: env.NEXT_PUBLIC_TENANT_TIMEZONE,
   };
 
@@ -90,6 +94,10 @@ export default function RootLayout({
               currency: tenantConfig.currency,
               locale: tenantConfig.locale,
               quoteValidityDays: tenantConfig.quoteValidityDays,
+              taxDescription: tenantConfig.taxDescription,
+              taxEnabled: tenantConfig.taxEnabled,
+              taxName: tenantConfig.taxName,
+              taxRate: tenantConfig.taxRate,
               timezone: tenantConfig.timezone,
             }}
           >

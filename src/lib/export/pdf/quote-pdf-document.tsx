@@ -8,7 +8,7 @@
  */
 
 import { Document, Image, Page, Text, View } from "@react-pdf/renderer";
-import { formatCurrency, formatDateFull } from "@/lib/format";
+import { formatCurrency, formatDateFull, formatTaxLabel } from "@/lib/format";
 import type { QuotePDFData } from "@/types/export.types";
 import { pdfColors, pdfStyles } from "./pdf-styles";
 
@@ -278,6 +278,13 @@ function PDFItemsTable({ data }: QuotePDFDocumentProps) {
  * PDF Totals Section Component
  */
 function PDFTotals({ data }: QuotePDFDocumentProps) {
+  // Build tax label from totals config (e.g., "IVA (19%)" or "ITBMS (7%)")
+  const taxLabel = formatTaxLabel({
+    taxEnabled: data.totals.tax != null && data.totals.tax > 0,
+    taxName: data.totals.taxName,
+    taxRate: data.totals.taxRate ?? undefined,
+  });
+
   return (
     <View style={pdfStyles.totalsSection}>
       {/* Subtotal */}
@@ -288,10 +295,10 @@ function PDFTotals({ data }: QuotePDFDocumentProps) {
         </Text>
       </View>
 
-      {/* Tax */}
-      {data.totals.tax !== undefined && data.totals.tax > 0 && (
+      {/* Tax - Dynamic label based on tenant config */}
+      {data.totals.tax != null && data.totals.tax > 0 && taxLabel && (
         <View style={pdfStyles.totalsRow}>
-          <Text style={pdfStyles.totalsLabel}>IVA (19%):</Text>
+          <Text style={pdfStyles.totalsLabel}>{taxLabel}:</Text>
           <Text style={pdfStyles.totalsValue}>
             {formatCurrency(data.totals.tax, { context: data.formatting })}
           </Text>

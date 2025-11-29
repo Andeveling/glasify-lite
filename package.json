@@ -2,6 +2,7 @@
   "name": "glasify-litle",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "prisma generate && next build",
     "lint": "npx ultracite check",
@@ -144,6 +145,7 @@
     "@types/three": "^0.180.0",
     "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "5.0.4",
+    "baseline-browser-mapping": "^2.8.32",
     "dotenv": "^17.2.3",
     "fast-check": "^4.3.0",
     "jsdom": "27.0.0",
@@ -172,7 +174,8 @@
   "pnpm": {
     "overrides": {
       "@types/react": "19.2.2",
-      "@types/react-dom": "19.2.2"
+      "@types/react-dom": "19.2.2",
+      "baseline-browser-mapping": "^2.8.32"
     }
   }
 }

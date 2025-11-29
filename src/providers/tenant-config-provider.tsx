@@ -28,6 +28,15 @@ export type TenantConfigPublic = {
   timezone: string;
   /** Quote validity in days */
   quoteValidityDays: number;
+  /** Tax configuration */
+  /** Tax name (e.g., "IVA", "ITBMS") */
+  taxName?: string | null;
+  /** Tax rate as decimal (e.g., 0.19, 0.07) */
+  taxRate?: number | null;
+  /** Whether tax is enabled */
+  taxEnabled?: boolean;
+  /** Legal description for tax display */
+  taxDescription?: string | null;
 };
 
 // ============================================================================
