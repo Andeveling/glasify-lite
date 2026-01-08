@@ -3,6 +3,7 @@
 import { Gem, Package, Ruler } from "lucide-react";
 import { motion, type Variants } from "motion/react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { useTenantConfig } from "@/app/_hooks/use-tenant-config";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -108,6 +109,32 @@ type StickyPriceHeaderProps = {
   withBreakdown?: boolean;
 };
 
+// ============================================================================
+// Helpers
+// ============================================================================
+
+/**
+ * Returns variant prop for motion elements based on mount state
+ * Prevents hydration mismatch by disabling animations during SSR
+ */
+function getVariants(isMounted: boolean, variants: Variants) {
+  return isMounted ? variants : undefined;
+}
+
+/**
+ * Returns animation props for motion elements based on mount state
+ */
+function getAnimationProps(isMounted: boolean, initial: string, animate: string | string[]) {
+  return {
+    animate: isMounted ? animate : undefined,
+    initial: isMounted ? initial : undefined,
+  };
+}
+
+// ============================================================================
+// Component
+// ============================================================================
+
 export function StickyPriceHeader({
   basePrice,
   className,
@@ -119,6 +146,12 @@ export function StickyPriceHeader({
   const hasDiscount = discount > 0;
   const showGlass = Boolean(configSummary.glassTypeName);
 
+  // Disable animations during SSR to prevent hydration mismatch
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   // Format dimensions
   const hasDimensions = configSummary.widthMm && configSummary.heightMm;
   const dimensionsText = hasDimensions
@@ -126,7 +159,10 @@ export function StickyPriceHeader({
     : "Sin dimensiones";
 
   return (
-    <motion.div animate="visible" initial="hidden" variants={containerVariants}>
+    <motion.div
+      {...getAnimationProps(isMounted, "hidden", "visible")}
+      variants={getVariants(isMounted, containerVariants)}
+    >
       <Card
         className={cn(
           "relative mt-0 p-4 md:sticky md:top-16 md:z-10",
@@ -138,7 +174,7 @@ export function StickyPriceHeader({
           {configSummary.modelImageUrl && (
             <motion.div
               className="relative aspect-4/3 w-full overflow-hidden"
-              variants={badgeVariants}
+              variants={getVariants(isMounted, badgeVariants)}
             >
               <Image
                 alt={configSummary.modelName}
@@ -156,7 +192,7 @@ export function StickyPriceHeader({
             {/* Name: takes full width */}
             <motion.div
               className="flex items-center gap-2"
-              variants={badgeVariants}
+              variants={getVariants(isMounted, badgeVariants)}
             >
               <div className="transition-transform duration-150 ease-out hover:scale-110">
                 <Package className="size-5 shrink-0 text-muted-foreground" />
@@ -172,7 +208,7 @@ export function StickyPriceHeader({
               {hasDimensions && (
                 <motion.div
                   className="flex items-center gap-1.5 text-muted-foreground"
-                  variants={badgeVariants}
+                  variants={getVariants(isMounted, badgeVariants)}
                 >
                   <Ruler className="size-5 shrink-0" />
                   <span className="text-lg">{dimensionsText}</span>
@@ -187,7 +223,7 @@ export function StickyPriceHeader({
             {configSummary.glassTypeName && (
               <motion.div
                 className="flex items-center gap-1.5 rounded-md bg-purple-50 px-2.5 py-1.5 dark:bg-purple-950/30"
-                variants={badgeVariants}
+                variants={getVariants(isMounted, badgeVariants)}
               >
                 <div className="transition-transform duration-150 ease-out hover:scale-110">
                   <Gem className="size-4 text-purple-600 dark:text-purple-400" />
@@ -206,10 +242,9 @@ export function StickyPriceHeader({
             {/* Discount badge with pulse animation */}
             {hasDiscount && (
               <motion.div
-                animate={["visible", "pulse"]}
+                {...getAnimationProps(isMounted, "hidden", ["visible", "pulse"])}
                 className={cn(showGlass && "sm:ml-auto")}
-                initial="hidden"
-                variants={discountVariants}
+                variants={getVariants(isMounted, discountVariants)}
               >
                 <Badge
                   className="bg-green-500/10 text-green-700 hover:bg-green-500/20 dark:text-green-400"
