@@ -93,7 +93,7 @@ export function NavigationLoader() {
               width: PROGRESS_WIDTH_KEYFRAMES,
               x: PROGRESS_POSITION_KEYFRAMES,
             }}
-            className="h-full bg-gradient-to-r from-primary via-primary/80 to-primary"
+            className="h-full bg-linear-to-r from-primary via-primary/80 to-primary"
             exit={{ opacity: 0, width: "100%" }}
             initial={{ width: "0%", x: "0%" }}
             transition={{
@@ -106,7 +106,7 @@ export function NavigationLoader() {
           {/* Shimmer overlay effect */}
           <motion.div
             animate={{ x: SHIMMER_END_POSITION }}
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+            className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent"
             initial={{ x: SHIMMER_START_POSITION }}
             transition={{
               duration: SHIMMER_DURATION_SECONDS,

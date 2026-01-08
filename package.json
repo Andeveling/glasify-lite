@@ -62,7 +62,7 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "@formkit/tempo": "^0.1.2",
+    "@formkit/tempo": "^1.0.0",
     "@hookform/resolvers": "5.2.2",
     "@neondatabase/serverless": "^1.0.2",
     "@paralleldrive/cuid2": "^3.1.0",
@@ -104,13 +104,9 @@
     "decimal.js": "^10.6.0",
     "exceljs": "^4.4.0",
     "haversine-distance": "^1.2.4",
-    "immer": "^10.2.0",
-    "lucide-react": "0.548.0",
-<<<<<<< HEAD
+    "immer": "^11.1.3",
+    "lucide-react": "0.562.0",
     "motion": "^12.23.24",
-=======
-    "motion": "^12.24.12",
->>>>>>> 5c2f5c7d6 (chore: remove pnpm-workspace.yaml file)
     "next": "16.0.7",
     "next-themes": "0.4.6",
     "radix-ui": "^1.4.3",
@@ -175,11 +171,9 @@
       "pnpm dlx ultracite fix"
     ]
   },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "19.2.2",
-      "@types/react-dom": "19.2.2",
-      "baseline-browser-mapping": "^2.8.32"
-    }
+  "overrides": {
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "baseline-browser-mapping": "^2.8.32"
   }
 }

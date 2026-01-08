@@ -15,7 +15,6 @@ import { cn } from "@/lib/utils";
 
 // Animation constants
 const PULSE_SCALE_PEAK = 1.05;
-const ICON_HOVER_SCALE = 1.1;
 
 /**
  * Container animation: Slide down + fade in on mount
@@ -70,17 +69,6 @@ const discountVariants: Variants = {
       repeat: 2, // Pulse 3 times total
       repeatDelay: 0.3,
     },
-  },
-};
-
-/**
- * Icon hover: Subtle lift effect
- */
-const iconHoverVariants: Variants = {
-  rest: { scale: 1 },
-  hover: {
-    scale: ICON_HOVER_SCALE,
-    transition: { duration: 0.15, ease: "easeOut" },
   },
 };
 
@@ -149,7 +137,7 @@ export function StickyPriceHeader({
           {/* Top section: Model Image - 4:3 aspect ratio */}
           {configSummary.modelImageUrl && (
             <motion.div
-              className="relative aspect-[4/3] w-full overflow-hidden"
+              className="relative aspect-4/3 w-full overflow-hidden"
               variants={badgeVariants}
             >
               <Image
@@ -170,14 +158,9 @@ export function StickyPriceHeader({
               className="flex items-center gap-2"
               variants={badgeVariants}
             >
-              <motion.div
-                animate="rest"
-                initial="rest"
-                variants={iconHoverVariants}
-                whileHover="hover"
-              >
+              <div className="transition-transform duration-150 ease-out hover:scale-110">
                 <Package className="size-5 shrink-0 text-muted-foreground" />
-              </motion.div>
+              </div>
               <h3 className="truncate font-semibold text-lg leading-none md:text-xl">
                 {configSummary.modelName}
               </h3>
@@ -206,14 +189,9 @@ export function StickyPriceHeader({
                 className="flex items-center gap-1.5 rounded-md bg-purple-50 px-2.5 py-1.5 dark:bg-purple-950/30"
                 variants={badgeVariants}
               >
-                <motion.div
-                  animate="rest"
-                  initial="rest"
-                  variants={iconHoverVariants}
-                  whileHover="hover"
-                >
+                <div className="transition-transform duration-150 ease-out hover:scale-110">
                   <Gem className="size-4 text-purple-600 dark:text-purple-400" />
-                </motion.div>
+                </div>
                 <span className="font-medium text-purple-700 text-sm dark:text-purple-300">
                   {configSummary.glassTypeName}
                 </span>
