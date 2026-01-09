@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/correctness/noUnusedVariables: Debemos programar una issue para solicitar cambios en este componente de desaparecer el precio. ocultarlo */
 "use client";
 
 import { Maximize2, Package, Ruler, Wrench } from "lucide-react";
@@ -12,7 +13,6 @@ import {
 } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { formatCurrency } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { ServiceOutput } from "@/server/api/routers/catalog";
 
@@ -99,9 +99,10 @@ function ServiceCard({ control, service }: ServiceCardProps) {
                     {service.name}
                   </h4>
                   <p className="text-muted-foreground text-sm">
-                    {getServiceTypeLabel(service.type)} —{" "}
-                    {formatCurrency(service.rate)} por{" "}
-                    {getServiceUnitLabel(service.unit)}
+                    {getServiceTypeLabel(service.type)}
+                    {/* TODO: Se solicito que en algunos casos es mejor no mostrar */}
+                    {/* {formatCurrency(service.rate)} por{" "}
+                    {getServiceUnitLabel(service.unit)} */}
                   </p>
                 </div>
               </div>
