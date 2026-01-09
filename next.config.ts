@@ -8,8 +8,7 @@ const config: NextConfig = {
   reactCompiler: true,
   poweredByHeader: false,
   reactStrictMode: true,
-  // Keep Cache Components disabled globally due to incompatibility with dynamic routes
-  // Individual components can still use "use cache" directive for granular caching
+  // Keep Cache Components disabled until pages are refactored with "use cache" directives
   // Route Segment Config (dynamic = 'force-dynamic') is incompatible with cacheComponents
   // See: https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config
   cacheComponents: false,
