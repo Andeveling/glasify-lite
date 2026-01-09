@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { BrandLogo } from "@/app/_components/brand-logo";
 import { CartIndicatorWrapper } from "@/app/_components/cart-indicator-wrapper";
 import { RoleBasedNav } from "@/app/_components/role-based-nav";
@@ -42,7 +43,12 @@ export default async function Header() {
           {/* Acciones: Carrito y Menú de Usuario */}
           <div className="flex items-center gap-3">
             <div className="mr-10">
-              <SocialMediaLinks className="hidden md:flex" variant="compact" />
+              <Suspense fallback={<div className="hidden h-5 w-20 md:block" />}>
+                <SocialMediaLinks
+                  className="hidden md:flex"
+                  variant="compact"
+                />
+              </Suspense>
             </div>
             <CartIndicatorWrapper variant="compact" />
             {session?.user ? (

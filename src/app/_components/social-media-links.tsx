@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { unstable_cache } from "next/cache";
 import { cn } from "@/lib/utils";
 import { db } from "@/server/db";
 
@@ -22,9 +23,8 @@ type SocialMediaLinksProps = {
  * Server Component that renders social media links from TenantConfig.
  * Only renders if URLs are configured (non-empty).
  *
- * Uses Cache Components ("use cache") for static prerendering.
- * This allows Next.js to cache the component during build time,
- * resulting in instant visibility without blocking the page.
+ * Uses Next.js unstable_cache for efficient database query caching.
+ * This prevents unnecessary re-fetches and improves performance.
  *
  * SVG icons are rendered inline and inherit currentColor for easy theming.
  * Supported platforms:
@@ -40,19 +40,32 @@ type SocialMediaLinksProps = {
  * // In footer
  * <SocialMediaLinks variant="default" />
  */
+
+// Cached database query for tenant social media config
+const getTenantSocialMedia = unstable_cache(
+  async () => {
+    return db.tenantConfig.findUnique({
+      where: { id: "1" },
+      select: {
+        facebookUrl: true,
+        instagramUrl: true,
+        linkedinUrl: true,
+      },
+    });
+  },
+  ["tenant-social-media"],
+  {
+    revalidate: 3600, // Cache for 1 hour
+    tags: ["tenant-config"],
+  }
+);
+
 export async function SocialMediaLinks({
   variant = "default",
   className,
 }: SocialMediaLinksProps) {
-  // Fetch tenant config
-  const tenantConfig = await db.tenantConfig.findUnique({
-    where: { id: "1" },
-    select: {
-      facebookUrl: true,
-      instagramUrl: true,
-      linkedinUrl: true,
-    },
-  });
+  // Fetch tenant config with caching
+  const tenantConfig = await getTenantSocialMedia();
 
   // No config found or all URLs empty
   const hasAnySocialUrl =

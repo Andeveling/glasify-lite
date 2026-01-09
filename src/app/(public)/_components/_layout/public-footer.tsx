@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { SocialMediaLinks } from "@/app/_components/social-media-links";
 
 export default function PublicFooter() {
@@ -51,7 +52,9 @@ export default function PublicFooter() {
               <br />
               Cotizador inteligente de productos de vidrio.
             </p>
-            <SocialMediaLinks variant="default" />
+            <Suspense fallback={<div className="h-6 w-24" />}>
+              <SocialMediaLinks variant="default" />
+            </Suspense>
           </div>
         </div>
       </div>

@@ -563,8 +563,21 @@ export const glassTypeRouter = createTRPCRouter({
       // Prepare update data
       const updateData: Prisma.GlassTypeUpdateInput = { ...baseData };
 
-      // Replace solutions (delete all, create new)
-      // Only update if solutions array is provided AND has elements
+      // Delete existing solutions FIRST (separate operation to avoid constraint violation)
+      if (solutions !== undefined && solutions.length > 0) {
+        await ctx.db.glassTypeSolution.deleteMany({
+          where: { glassTypeId: id },
+        });
+      }
+
+      // Delete existing characteristics FIRST (separate operation to avoid constraint violation)
+      if (characteristics !== undefined && characteristics.length > 0) {
+        await ctx.db.glassTypeCharacteristic.deleteMany({
+          where: { glassTypeId: id },
+        });
+      }
+
+      // Now add the new relations
       if (solutions !== undefined && solutions.length > 0) {
         updateData.solutions = {
           create: solutions.map((sol) => ({
@@ -573,12 +586,9 @@ export const glassTypeRouter = createTRPCRouter({
             performanceRating: sol.performanceRating,
             solutionId: sol.solutionId,
           })),
-          deleteMany: {},
         };
       }
 
-      // Replace characteristics (delete all, create new)
-      // Only update if characteristics array is provided AND has elements
       if (characteristics !== undefined && characteristics.length > 0) {
         updateData.characteristics = {
           create: characteristics.map((char) => ({
@@ -587,7 +597,6 @@ export const glassTypeRouter = createTRPCRouter({
             notes: char.notes,
             value: char.value,
           })),
-          deleteMany: {},
         };
       }
 

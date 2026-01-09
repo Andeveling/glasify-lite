@@ -1,10 +1,7 @@
+/** biome-ignore-all lint/correctness/noUnusedFunctionParameters: Debemos implementar un cambio a futuro para hacer un rework ala card y que sea configurable desde el formulario de models */
 "use client";
 
-import {
-  ProductImagePlaceholder,
-  ProductPrice,
-} from "@views/catalog/_components/molecules/model-card-atoms";
-import { Maximize2 } from "lucide-react";
+import { ProductImagePlaceholder } from "@views/catalog/_components/molecules/model-card-atoms";
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
@@ -54,10 +51,10 @@ export function ModelCard({
   imageUrl,
   range,
 }: ModelCardProps) {
-  const minWidth = Math.round(range.width[0]);
-  const maxWidth = Math.round(range.width[1]);
-  const minHeight = Math.round(range.height[0]);
-  const maxHeight = Math.round(range.height[1]);
+  // const minWidth = Math.round(range.width[0]);
+  // const maxWidth = Math.round(range.width[1]);
+  // const minHeight = Math.round(range.height[0]);
+  // const maxHeight = Math.round(range.height[1]);
 
   return (
     <Card
@@ -90,7 +87,9 @@ export function ModelCard({
           </h4>
 
           {/* Dimensions Section */}
-          <div className="space-y-1">
+          {/* TODO: Próximamente se plantea una actualizacion que permita configurar si se oculta o no esta sección desde el formulario de models*/}
+          {/* algunos clientes Solicitaron no mostrar esta info */}
+          {/* <div className="space-y-1">
             <div className="flex items-center gap-2 text-muted-foreground text-xs">
               <Maximize2 className="h-4 w-4" />
               <span className="font-medium">Dimensiones</span>
@@ -115,14 +114,15 @@ export function ModelCard({
                 </p>
               </div>
             </div>
-          </div>
+          </div> */}
 
-          <div className="flex w-full items-center justify-between pt-1">
+          {/* Esto también se solicito ocultar y se debe configurar a futuro */}
+          {/* <div className="flex w-full items-center justify-between pt-1">
             <span className="font-medium text-muted-foreground text-xs">
               Precio base
             </span>
             <ProductPrice price={basePrice} />
-          </div>
+          </div> */}
         </CardContent>
       </Link>
     </Card>

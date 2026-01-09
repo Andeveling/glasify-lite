@@ -124,7 +124,11 @@ function getVariants(isMounted: boolean, variants: Variants) {
 /**
  * Returns animation props for motion elements based on mount state
  */
-function getAnimationProps(isMounted: boolean, initial: string, animate: string | string[]) {
+function getAnimationProps(
+  isMounted: boolean,
+  initial: string,
+  animate: string | string[]
+) {
   return {
     animate: isMounted ? animate : undefined,
     initial: isMounted ? initial : undefined,
@@ -242,7 +246,10 @@ export function StickyPriceHeader({
             {/* Discount badge with pulse animation */}
             {hasDiscount && (
               <motion.div
-                {...getAnimationProps(isMounted, "hidden", ["visible", "pulse"])}
+                {...getAnimationProps(isMounted, "hidden", [
+                  "visible",
+                  "pulse",
+                ])}
                 className={cn(showGlass && "sm:ml-auto")}
                 variants={getVariants(isMounted, discountVariants)}
               >

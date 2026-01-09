@@ -10,7 +10,7 @@ export function ProductImagePlaceholder({
     <div className="flex h-full w-full items-center justify-center bg-muted">
       <div className="text-center">
         <div className="mb-2 text-4xl text-muted-foreground">📦</div>
-        <p className="text-muted-foreground text-sm">{productName}</p>
+        <p className="text-base text-muted-foreground">{productName}</p>
       </div>
     </div>
   );
