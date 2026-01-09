@@ -350,30 +350,15 @@ export async function exportQuoteExcel(
     });
 
     // Verify quote exists
-    // Type assertion for complex Prisma include with all relations
-    const quote = quoteData as Record<string, unknown> & {
-      id: string;
-      userId: string;
-      projectName: string | null;
-      status: QuoteStatus;
-      total: Decimal;
-      currency: string;
-      contactPhone: string | null;
-      createdAt: Date;
-      validUntil: Date | null;
-      items: Record<string, unknown>[];
-      user: { name: string | null; email: string | null } | null;
-      taxAmount: Decimal | null;
-      taxName: string | null;
-      taxRate: Decimal | null;
-    };
-    if (!quote) {
+    if (!quoteData) {
       logger.warn("Quote not found for Excel export", { quoteId });
       return {
         error: "Cotización no encontrada.",
         success: false,
       };
     }
+
+    const quote = quoteData;
 
     // Verify ownership
     if (quote.userId !== session.user.id) {

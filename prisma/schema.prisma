@@ -281,6 +281,10 @@ model Quote {
   /// @deprecated Use ProjectAddress relationship instead. Maintained for backward compatibility.
   projectStreet     String?         @db.VarChar(200)
   sentAt            DateTime?
+  /// Tax configuration (historical snapshot from TenantConfig at quote creation)
+  taxAmount         Decimal?        @db.Decimal(12, 4)
+  taxName           String?         @db.VarChar(20)
+  taxRate           Decimal?        @db.Decimal(5, 4)
   adjustments       Adjustment[]
   projectAddress    ProjectAddress?
   user              User?           @relation(fields: [userId], references: [id])
