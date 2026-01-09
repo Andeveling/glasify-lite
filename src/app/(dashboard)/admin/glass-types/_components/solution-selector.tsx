@@ -10,46 +10,35 @@
  * - Mark one solution as primary (radio button behavior)
  * - Add optional notes for each solution
  *
+ * Performance Optimizations:
+ * - Extracted each field to SolutionFieldItem (prevents unnecessary re-renders)
+ * - Memoized callbacks with useCallback
+ * - Memoized performance labels (constant object)
+ *
  * Used in: glass-type-form.tsx (Create/Edit Glass Types)
  */
 
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
+import { useCallback, useMemo } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import type { CreateGlassTypeInput } from "@/lib/validations/admin/glass-type.schema";
+import { api } from "@/trpc/react";
+import { SolutionFieldItem } from "./solution-field-item";
 
 // Define PerformanceRating enum locally to match Prisma schema
 const PerformanceRating = {
   basic: "basic",
-  standard: "standard",
-  good: "good",
-  very_good: "very_good",
   excellent: "excellent",
+  good: "good",
+  standard: "standard",
+  very_good: "very_good",
 } as const;
 
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import type { CreateGlassTypeInput } from "@/lib/validations/admin/glass-type.schema";
-import { api } from "@/trpc/react";
-
 /**
- * Performance rating display labels
+ * Performance rating display labels (memoized constant)
  */
 const PERFORMANCE_LABELS: Record<string, string> = {
   basic: "Básico",
@@ -80,31 +69,49 @@ export function SolutionSelector() {
     sortOrder: "asc",
   });
 
-  const solutions = solutionsData?.items ?? [];
+  // Memoize solutions array to prevent unnecessary re-renders
+  const solutions = useMemo(
+    () => solutionsData?.items ?? [],
+    [solutionsData?.items]
+  );
 
   /**
-   * Handle adding new solution
+   * Handle adding new solution (memoized to prevent re-creation)
    */
-  const handleAddSolution = () => {
+  const handleAddSolution = useCallback(() => {
     append({
       isPrimary: false,
       notes: undefined,
       performanceRating: PerformanceRating.standard,
       solutionId: "",
     });
-  };
+  }, [append]);
 
   /**
-   * Handle setting primary solution (only one can be primary)
+   * Handle setting primary solution (memoized to prevent re-creation)
+   * Only one can be primary
    */
-  const handleSetPrimary = (index: number) => {
-    const currentValues = form.getValues("solutions");
-    const updatedValues = currentValues.map((solution, idx) => ({
-      ...solution,
-      isPrimary: idx === index,
-    }));
-    form.setValue("solutions", updatedValues);
-  };
+  const handleSetPrimary = useCallback(
+    (index: number) => {
+      const currentValues = form.getValues("solutions");
+      const updatedValues = currentValues.map((solution, idx) => ({
+        ...solution,
+        isPrimary: idx === index,
+      }));
+      form.setValue("solutions", updatedValues);
+    },
+    [form]
+  );
+
+  /**
+   * Handle removing solution (memoized to prevent re-creation)
+   */
+  const handleRemove = useCallback(
+    (index: number) => {
+      remove(index);
+    },
+    [remove]
+  );
 
   return (
     <div className="space-y-4">
@@ -137,134 +144,16 @@ export function SolutionSelector() {
       )}
 
       {fields.map((solutionField, index) => (
-        <div className="space-y-4 rounded-lg border p-4" key={solutionField.id}>
-          <div className="flex items-center justify-between">
-            <h4 className="font-medium text-sm">Solución #{index + 1}</h4>
-            <Button
-              onClick={() => remove(index)}
-              size="sm"
-              type="button"
-              variant="ghost"
-            >
-              <Trash2 className="h-4 w-4 text-destructive" />
-            </Button>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            {/* Solution Selector */}
-            <FormField
-              control={form.control}
-              name={`solutions.${index}.solutionId`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Solución</FormLabel>
-                  <Select
-                    disabled={isLoading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona una solución" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {solutions.map(
-                        (solution: { id: string; nameEs: string }) => (
-                          <SelectItem key={solution.id} value={solution.id}>
-                            {solution.nameEs}
-                          </SelectItem>
-                        )
-                      )}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Performance Rating Selector */}
-            <FormField
-              control={form.control}
-              name={`solutions.${index}.performanceRating`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Calificación de Rendimiento</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona calificación" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {Object.entries(PERFORMANCE_LABELS).map(
-                        ([value, label]) => (
-                          <SelectItem key={value} value={value}>
-                            {label}
-                          </SelectItem>
-                        )
-                      )}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          {/* Primary Solution Radio */}
-          <FormField
-            control={form.control}
-            name={`solutions.${index}.isPrimary`}
-            render={({ field }) => (
-              <FormItem className="flex items-center space-x-2 space-y-0">
-                <FormControl>
-                  <RadioGroup
-                    onValueChange={(value) => {
-                      if (value === "true") {
-                        handleSetPrimary(index);
-                      }
-                    }}
-                    value={field.value ? "true" : "false"}
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem id={`primary-${index}`} value="true" />
-                      <FormLabel
-                        className="font-normal"
-                        htmlFor={`primary-${index}`}
-                      >
-                        Solución principal
-                      </FormLabel>
-                    </div>
-                  </RadioGroup>
-                </FormControl>
-                <FormDescription className="mt-0">
-                  Solo una solución puede ser marcada como principal
-                </FormDescription>
-              </FormItem>
-            )}
-          />
-
-          {/* Notes Textarea */}
-          <FormField
-            control={form.control}
-            name={`solutions.${index}.notes`}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Notas (opcional)</FormLabel>
-                <FormControl>
-                  <Textarea
-                    className="resize-none"
-                    placeholder="Notas adicionales sobre esta solución..."
-                    {...field}
-                    value={field.value ?? ""}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+        <SolutionFieldItem
+          key={solutionField.id}
+          fieldId={solutionField.id}
+          index={index}
+          solutions={solutions}
+          performanceLabels={PERFORMANCE_LABELS}
+          isLoading={isLoading}
+          onRemove={handleRemove}
+          onSetPrimary={handleSetPrimary}
+        />
       ))}
     </div>
   );

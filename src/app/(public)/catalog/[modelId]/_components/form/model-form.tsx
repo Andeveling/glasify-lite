@@ -122,13 +122,13 @@ export function ModelForm({
     () => ({
       additionalServices: [],
       colorId: undefined,
-      glassType: glassTypes[0]?.id ?? "",
+      glassType: "",
       height: model.minHeightMm,
       quantity: 1,
       solution: "",
       width: model.minWidthMm,
     }),
-    [model.minWidthMm, model.minHeightMm, glassTypes]
+    [model.minWidthMm, model.minHeightMm]
   );
 
   const form = useForm<QuoteFormValues>({

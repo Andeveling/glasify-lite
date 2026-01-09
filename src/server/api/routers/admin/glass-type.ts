@@ -368,6 +368,7 @@ export const glassTypeRouter = createTRPCRouter({
       const serializedGlassType = {
         ...glassType,
         lightTransmission: glassType.lightTransmission?.toNumber() ?? null,
+        pricePerSqm: glassType.pricePerSqm.toNumber(),
         solarFactor: glassType.solarFactor?.toNumber() ?? null,
         uValue: glassType.uValue?.toNumber() ?? null,
       };
@@ -562,8 +563,22 @@ export const glassTypeRouter = createTRPCRouter({
       // Prepare update data
       const updateData: Prisma.GlassTypeUpdateInput = { ...baseData };
 
-      // Replace solutions (delete all, create new)
-      if (solutions !== undefined) {
+      // Delete existing solutions FIRST (separate operation to avoid constraint violation)
+      if (solutions !== undefined && solutions.length > 0) {
+        await ctx.db.glassTypeSolution.deleteMany({
+          where: { glassTypeId: id },
+        });
+      }
+
+      // Delete existing characteristics FIRST (separate operation to avoid constraint violation)
+      if (characteristics !== undefined && characteristics.length > 0) {
+        await ctx.db.glassTypeCharacteristic.deleteMany({
+          where: { glassTypeId: id },
+        });
+      }
+
+      // Now add the new relations
+      if (solutions !== undefined && solutions.length > 0) {
         updateData.solutions = {
           create: solutions.map((sol) => ({
             isPrimary: sol.isPrimary,
@@ -571,12 +586,10 @@ export const glassTypeRouter = createTRPCRouter({
             performanceRating: sol.performanceRating,
             solutionId: sol.solutionId,
           })),
-          deleteMany: {},
         };
       }
 
-      // Replace characteristics (delete all, create new)
-      if (characteristics !== undefined) {
+      if (characteristics !== undefined && characteristics.length > 0) {
         updateData.characteristics = {
           create: characteristics.map((char) => ({
             certification: char.certification,
@@ -584,7 +597,6 @@ export const glassTypeRouter = createTRPCRouter({
             notes: char.notes,
             value: char.value,
           })),
-          deleteMany: {},
         };
       }
 

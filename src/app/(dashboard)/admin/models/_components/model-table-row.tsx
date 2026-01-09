@@ -7,13 +7,13 @@
 
 "use client";
 
+import type { MaterialType, ModelStatus } from "@prisma/client";
 import { Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useCurrencyFormatter } from "@/app/_hooks/use-currency-formatter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
-import type { MaterialType, ModelStatus } from "@prisma/client";
 
 type ModelData = {
   id: string;

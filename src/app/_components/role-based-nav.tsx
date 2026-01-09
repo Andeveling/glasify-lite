@@ -1,5 +1,5 @@
-import { headers } from "next/headers";
 import type { UserRole } from "@prisma/client";
+import { headers } from "next/headers";
 import { auth } from "@/server/auth";
 import { NavigationMenu } from "./navigation-menu";
 
@@ -60,6 +60,13 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
         icon: "Package",
         label: "Catálogo",
         routes: ["/catalog"],
+      },
+      {
+        description: "Ver mis cotizaciones",
+        href: "/my-quotes",
+        icon: "FileText",
+        label: "Mis Cotizaciones",
+        routes: ["/my-quotes"],
       },
     ];
   }

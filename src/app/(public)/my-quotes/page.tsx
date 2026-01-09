@@ -7,6 +7,14 @@ import { api } from "@/trpc/server-client";
 import { EmptyQuotesState } from "./_components/empty-quotes-state";
 import { QuotesTable } from "./_components/quotes-table";
 
+/**
+ * CRITICAL: Dynamic rendering required
+ *
+ * This page uses headers() for authentication and PublicLayout with database queries.
+ * Already dynamic due to headers() but explicit declaration prevents accidental removal.
+ */
+export const dynamic = "force-dynamic";
+
 type MyQuotesPageProps = {
   searchParams?: Promise<{
     page?: string;

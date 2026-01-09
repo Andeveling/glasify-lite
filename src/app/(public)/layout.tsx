@@ -16,7 +16,10 @@ export default function PublicLayout({
         <PublicHeader />
       </Suspense>
       <main className="flex-1">{children}</main>
-      <PublicFooter />
+      {/* Wrap PublicFooter in Suspense to prevent blocking build (SocialMediaLinks queries DB) */}
+      <Suspense fallback={<div className="h-64" />}>
+        <PublicFooter />
+      </Suspense>
       <WhatsAppButtonWrapper
         message="Hola, estoy interesado en sus productos de cristalería. ¿Podrían ayudarme?"
         variant="floating"

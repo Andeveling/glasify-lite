@@ -7,6 +7,7 @@
  */
 
 import ExcelJS from "exceljs";
+import { formatTaxLabel } from "@/lib/format";
 import type { QuoteExcelData } from "@/types/export.types";
 import {
   excelAlignments,
@@ -24,6 +25,47 @@ import {
   getSubtotalFormula,
   sanitizeExcelText,
 } from "./excel-utils";
+
+/**
+ * Add tax row to summary sheet if tax is configured
+ *
+ * @returns Number of rows added (0 or 1)
+ */
+function addTaxRowToSummary(
+  sheet: ExcelJS.Worksheet,
+  data: QuoteExcelData,
+  currentRow: number,
+  subtotalCellRef: string
+): number {
+  const taxLabel = formatTaxLabel({
+    taxEnabled: data.totals.tax != null && data.totals.tax > 0,
+    taxName: data.totals.taxName,
+    taxRate: data.totals.taxRate ?? undefined,
+  });
+
+  if (data.totals.tax == null || data.totals.tax <= 0 || !taxLabel) {
+    return 0;
+  }
+
+  const taxRow = sheet.getRow(currentRow);
+  taxRow.getCell(1).value = `${taxLabel}:`;
+  taxRow.getCell(1).font = excelFonts.body;
+
+  // Use formula for tax calculation: =Subtotal*TaxRate
+  if (data.totals.taxRate != null) {
+    taxRow.getCell(2).value = {
+      formula: `=${subtotalCellRef}*${data.totals.taxRate}`,
+      result: data.totals.tax,
+    };
+  } else {
+    taxRow.getCell(2).value = data.totals.tax;
+  }
+
+  taxRow.getCell(2).font = excelFonts.body;
+  taxRow.getCell(2).numFmt = excelNumberFormats.currency;
+
+  return 1;
+}
 
 /**
  * Create complete Excel workbook for quote
@@ -153,18 +195,11 @@ function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
   subtotalRow.getCell(2).value = data.totals.subtotal;
   subtotalRow.getCell(2).font = excelFonts.body;
   subtotalRow.getCell(2).numFmt = excelNumberFormats.currency;
+  const subtotalCellRef = `B${currentRow}`; // Store reference for tax formula
   currentRow++;
 
-  // Tax (if applicable)
-  if (data.totals.tax !== undefined && data.totals.tax > 0) {
-    const taxRow = sheet.getRow(currentRow);
-    taxRow.getCell(1).value = "IVA (19%):";
-    taxRow.getCell(1).font = excelFonts.body;
-    taxRow.getCell(2).value = data.totals.tax;
-    taxRow.getCell(2).font = excelFonts.body;
-    taxRow.getCell(2).numFmt = excelNumberFormats.currency;
-    currentRow++;
-  }
+  // Tax (if applicable) - Dynamic label based on tenant config
+  currentRow += addTaxRowToSummary(sheet, data, currentRow, subtotalCellRef);
 
   // Discount (if applicable)
   if (data.totals.discount !== undefined && data.totals.discount > 0) {

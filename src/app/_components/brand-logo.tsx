@@ -1,5 +1,3 @@
-import Image from "next/image";
-import { env } from "@/env";
 import { cn } from "@/lib/utils";
 
 type BrandLogoProps = {
@@ -19,7 +17,7 @@ type BrandLogoProps = {
 
   /**
    * Whether to display text alongside the logo
-   * - true: shows "GLASIFY" next to logo
+   * - true: shows "Vitro Rojas" next to logo
    * - false: logo only
    */
   withText?: boolean;
@@ -31,16 +29,6 @@ type BrandLogoProps = {
    */
   href?: string;
 };
-
-/**
- * Logo dimensions by size variant
- */
-const LOGO_DIMENSIONS = {
-  sm: { width: 32, height: 32 },
-  md: { width: 40, height: 40 },
-  lg: { width: 64, height: 64 },
-  xl: { width: 96, height: 96 },
-} as const;
 
 /**
  * Text size classes aligned with logo size
@@ -55,13 +43,8 @@ const TEXT_SIZES = {
 /**
  * BrandLogo Component
  *
- * Flexible logo component that:
- * - Loads URL from NEXT_PUBLIC_COMPANY_LOGO_URL env var
- * - Supports relative paths (/logo.png) and absolute URLs
- * - Gracefully falls back to text "GLASIFY" if no logo configured
- * - Optimizes images with Next.js Image component
- * - Responsive sizing with size variants
- * - Optional text branding alongside logo
+ * Displays "Vitro Rojas" brand text with optional sizing.
+ * Simplified component without logo image support.
  *
  * @example
  * // In header with text
@@ -69,11 +52,11 @@ const TEXT_SIZES = {
  *
  * @example
  * // Hero section, large logo only
- * <BrandLogo size="lg" />
+ * <BrandLogo size="lg" withText />
  *
  * @example
  * // Mobile header, compact
- * <BrandLogo size="sm" />
+ * <BrandLogo size="sm" withText />
  */
 export function BrandLogo({
   size = "md",
@@ -81,52 +64,13 @@ export function BrandLogo({
   withText = false,
   href,
 }: BrandLogoProps) {
-  const logoUrl = env.NEXT_PUBLIC_COMPANY_LOGO_URL;
-  const dimensions = LOGO_DIMENSIONS[size];
   const textSize = TEXT_SIZES[size];
-
-  /**
-   * Determine if logo URL is relative or absolute
-   * - Absolute: starts with http://, https://, or data:
-   * - Relative: starts with / or is just a filename
-   */
-  const isAbsoluteUrl =
-    logoUrl?.startsWith("http://") ||
-    logoUrl?.startsWith("https://") ||
-    logoUrl?.startsWith("data:");
 
   const content = (
     <div
       className={cn("flex items-center gap-2", className)}
       data-testid="brand-logo"
     >
-      {logoUrl ? (
-        <div className="flex-shrink-0">
-          {isAbsoluteUrl ? (
-            // Absolute URL: use Image with unoptimized for CDN URLs
-            <Image
-              alt="Company logo"
-              className="h-auto w-auto"
-              height={dimensions.height}
-              priority
-              src={logoUrl}
-              unoptimized={isAbsoluteUrl}
-              width={dimensions.width}
-            />
-          ) : (
-            // Relative path: use Image with optimization
-            <Image
-              alt="Company logo"
-              className="h-auto w-auto"
-              height={dimensions.height}
-              priority
-              src={logoUrl}
-              width={dimensions.width}
-            />
-          )}
-        </div>
-      ) : null}
-
       {withText && (
         <span
           className={cn(

@@ -12,6 +12,7 @@ import type {
   CreateGlassTypeInput,
   GetGlassTypeByIdOutput,
   GlassTypeCharacteristicInput,
+  GlassTypeSolutionInput,
 } from "@/lib/validations/admin/glass-type.schema";
 
 const DEFAULT_THICKNESS_MM = 6;
@@ -36,6 +37,20 @@ function transformCharacteristics(
 }
 
 /**
+ * Transform solutions array from backend to form format
+ */
+function transformSolutions(
+  solutions: GetGlassTypeByIdOutput["solutions"]
+): GlassTypeSolutionInput[] {
+  return solutions.map((s) => ({
+    isPrimary: s.isPrimary,
+    notes: s.notes ?? undefined,
+    performanceRating: s.performanceRating,
+    solutionId: s.solutionId,
+  }));
+}
+
+/**
  * Convert nullable number to optional number
  */
 function toOptionalNumber(
@@ -53,6 +68,8 @@ function getEmptyDefaults(): FormDefaults {
     code: "",
     isActive: true,
     name: "",
+    pricePerSqm: 0,
+    solutions: [],
     thicknessMm: DEFAULT_THICKNESS_MM,
   };
 }
@@ -79,8 +96,10 @@ export function useFormDefaults(
       lightTransmission: toOptionalNumber(defaultValues.lightTransmission),
       manufacturer: defaultValues.manufacturer ?? undefined,
       name: defaultValues.name ?? "",
+      pricePerSqm: defaultValues.pricePerSqm ?? 0,
       series: defaultValues.series ?? undefined,
       solarFactor: toOptionalNumber(defaultValues.solarFactor),
+      solutions: transformSolutions(defaultValues.solutions),
       thicknessMm: defaultValues.thicknessMm ?? DEFAULT_THICKNESS_MM,
       uValue: toOptionalNumber(defaultValues.uValue),
     };

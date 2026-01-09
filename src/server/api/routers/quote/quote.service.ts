@@ -11,7 +11,7 @@ import type { PrismaClient } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";
 import { TRPCError } from "@trpc/server";
 import logger from "@/lib/logger";
-import { getQuoteValidityDays, getTenantCurrency } from "@/server/utils/tenant";
+import { getTenantConfigSelect } from "@/server/utils/tenant";
 import type { CartItem } from "@/types/cart.types";
 import type { GenerateQuoteInput } from "@/types/quote.types";
 
@@ -35,29 +35,63 @@ type QuoteMetadata = {
   currency: string;
   validUntil: Date;
   total: number;
+  /** Tax configuration (from TenantConfig) */
+  taxName: string | null;
+  taxRate: Decimal | null;
+  taxAmount: Decimal | null;
 };
 
 /**
- * Calculate quote metadata (currency, validity, total)
+ * Calculate quote metadata (currency, validity, total, tax)
  *
  * @param tx - Prisma transaction client
  * @param cartItems - Cart items to calculate total
- * @returns Quote metadata
+ * @returns Quote metadata including tax configuration
  */
 async function calculateQuoteMetadata(
   tx: Parameters<Parameters<PrismaClient["$transaction"]>[0]>[0],
   cartItems: CartItem[]
 ): Promise<QuoteMetadata> {
-  const currency = await getTenantCurrency(tx);
-  const quoteValidityDays = await getQuoteValidityDays(tx);
+  // Get tenant config with tax fields
+  const tenantConfig = await getTenantConfigSelect(
+    {
+      currency: true,
+      quoteValidityDays: true,
+      taxEnabled: true,
+      taxName: true,
+      taxRate: true,
+    },
+    tx
+  );
 
   const now = new Date();
   const validUntil = new Date(now);
-  validUntil.setDate(validUntil.getDate() + quoteValidityDays);
+  validUntil.setDate(validUntil.getDate() + tenantConfig.quoteValidityDays);
 
-  const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+  const subtotal = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
 
-  return { currency, validUntil, total };
+  // Calculate tax if enabled
+  let taxName: string | null = null;
+  let taxRate: Decimal | null = null;
+  let taxAmount: Decimal | null = null;
+  let total = subtotal;
+
+  if (tenantConfig.taxEnabled && tenantConfig.taxRate) {
+    taxName = tenantConfig.taxName;
+    taxRate = tenantConfig.taxRate;
+    const taxAmountNumber = subtotal * Number(tenantConfig.taxRate);
+    taxAmount = new Decimal(taxAmountNumber);
+    total = subtotal + taxAmountNumber;
+  }
+
+  return {
+    currency: tenantConfig.currency,
+    taxAmount,
+    taxName,
+    taxRate,
+    total,
+    validUntil,
+  };
 }
 
 /**
@@ -66,7 +100,7 @@ async function calculateQuoteMetadata(
  * @param tx - Prisma transaction client
  * @param userId - User ID
  * @param input - Quote input
- * @param metadata - Quote metadata
+ * @param metadata - Quote metadata (includes tax configuration)
  * @returns Created quote
  */
 async function createQuoteRecord(
@@ -84,6 +118,10 @@ async function createQuoteRecord(
       projectState: input.projectAddress.projectState,
       projectStreet: input.projectAddress.projectStreet,
       status: "draft",
+      // Tax fields (historical record from TenantConfig at creation time)
+      taxAmount: metadata.taxAmount,
+      taxName: metadata.taxName,
+      taxRate: metadata.taxRate,
       total: metadata.total,
       userId,
       validUntil: metadata.validUntil,

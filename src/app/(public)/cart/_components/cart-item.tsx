@@ -20,6 +20,7 @@
 import { Check, Minus, Pencil, Plus, Trash2, X } from "lucide-react";
 import { memo, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -176,7 +177,7 @@ const CartItemComponent = ({
   const isInAction = isUpdating || isPending;
 
   return (
-    <div
+    <Card
       className={cn(
         "grid grid-cols-1 gap-4 rounded-lg border p-4",
         "transition-all duration-150 ease-in-out",
@@ -383,7 +384,7 @@ const CartItemComponent = ({
         onOpenChange={setShowEditModal}
         open={showEditModal}
       />
-    </div>
+    </Card>
   );
 };
 

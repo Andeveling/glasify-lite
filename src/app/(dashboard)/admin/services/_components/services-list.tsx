@@ -28,6 +28,7 @@
 
 "use client";
 
+import type { Service, ServiceType, ServiceUnit } from "@prisma/client";
 import { useState } from "react";
 import { DeleteConfirmationDialog } from "@/app/_components/delete-confirmation-dialog";
 import { TablePagination } from "@/app/_components/server-table/table-pagination";
@@ -42,11 +43,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/format";
-import type {
-  Service,
-  ServiceType,
-  ServiceUnit,
-} from "@prisma/client";
 import { useServiceActions } from "../_hooks/use-service-actions";
 import { ServiceDialog } from "./service-dialog";
 import { ServiceRowActions } from "./service-row-actions";

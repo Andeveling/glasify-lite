@@ -25,10 +25,10 @@ import { auth } from "@/server/auth";
  * Note: For Next.js 15.2.0+, proxy runs with Node.js runtime enabled,
  * allowing direct use of auth.api.getSession()
  */
-export async function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Early return: Skip middleware for static assets and auth API routes
+  // Early return: Skip proxy for static assets and auth API routes
   if (shouldSkipMiddleware(pathname)) {
     return NextResponse.next();
   }
@@ -56,8 +56,8 @@ export async function proxy(request: NextRequest) {
 
   // Block non-admin from admin-only routes (models, settings, tenant config)
   if (isAdminOnlyRoute(pathname) && userRole !== "admin") {
-    // biome-ignore lint/suspicious/noConsole: Console logging is acceptable in middleware for security events
-    console.warn("[Middleware] Unauthorized admin-only route access attempt", {
+    // biome-ignore lint/suspicious/noConsole: Console logging is acceptable in proxy for security events
+    console.warn("[Proxy] Unauthorized admin-only route access attempt", {
       path: pathname,
       role: userRole,
       timestamp: new Date().toISOString(),
@@ -71,16 +71,13 @@ export async function proxy(request: NextRequest) {
     isSellerOrAdminRoute(pathname) &&
     !["admin", "seller"].includes(userRole || "")
   ) {
-    // biome-ignore lint/suspicious/noConsole: Console logging is acceptable in middleware for security events
-    console.warn(
-      "[Middleware] Unauthorized seller/admin route access attempt",
-      {
-        path: pathname,
-        role: userRole,
-        timestamp: new Date().toISOString(),
-        userId: session?.user?.id,
-      }
-    );
+    // biome-ignore lint/suspicious/noConsole: Console logging is acceptable in proxy for security events
+    console.warn("[Proxy] Unauthorized seller/admin route access attempt", {
+      path: pathname,
+      role: userRole,
+      timestamp: new Date().toISOString(),
+      userId: session?.user?.id,
+    });
     return NextResponse.redirect(new URL("/my-quotes", request.url));
   }
 
@@ -93,7 +90,8 @@ export async function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
-// Configure which routes to run proxy on
+// Configure proxy matcher
+// Note: Proxy always runs on Node.js runtime in Next.js 16+ (cannot be configured)
 export const config = {
   matcher: [
     /*

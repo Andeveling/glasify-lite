@@ -7,7 +7,9 @@
  */
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { Resolver } from "react-hook-form";
 import { useForm } from "react-hook-form";
+import type { z } from "zod";
 import {
   type CreateGlassTypeInput,
   createGlassTypeSchema,
@@ -21,6 +23,12 @@ type UseGlassTypeFormOptions = {
   defaultValues?: GetGlassTypeByIdOutput;
   onSuccessCallback?: () => void;
 };
+
+/**
+ * Form data type - uses z.output to get the type with defaults applied
+ * This resolves the conflict between Zod's .default() and React Hook Form's strict typing
+ */
+type FormData = z.output<typeof createGlassTypeSchema>;
 
 /**
  * Main form hook - orchestrates form state, validation and mutations
@@ -38,21 +46,23 @@ export function useGlassTypeForm({
     onSuccessCallback,
   });
 
-  // Combine form state with mutations
-  // Note: Type assertion needed due to Zod schema defaults vs strict RHF types
-  const form = useForm<CreateGlassTypeInput>({
-    defaultValues: formDefaults as CreateGlassTypeInput,
+  // Form uses output type (after Zod applies defaults)
+  // Note: Explicit resolver typing avoids Zod/RHF type conflicts with .default()
+  const form = useForm<FormData>({
+    defaultValues: formDefaults as FormData,
     mode: "onChange",
-    // @ts-expect-error - Zod default() creates optional fields that conflict with RHF's strict typing
-    resolver: zodResolver(createGlassTypeSchema),
+    resolver: zodResolver(createGlassTypeSchema) as Resolver<FormData>,
   });
 
-  const handleSubmit = (data: CreateGlassTypeInput) => {
+  const handleSubmit = (data: FormData) => {
+    // Cast to input type for API (type is compatible after validation)
+    const inputData = data as unknown as CreateGlassTypeInput;
+
     if (mode === "create") {
-      createMutation.mutate(data);
+      createMutation.mutate(inputData);
     } else if (defaultValues) {
       updateMutation.mutate({
-        data,
+        data: inputData,
         id: defaultValues.id,
       });
     }

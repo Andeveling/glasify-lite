@@ -17,10 +17,25 @@ import { notFound } from "next/navigation";
 import { getIconComponent } from "@/lib/icon-map";
 import { api } from "@/trpc/server-client";
 
-// MIGRATED: Removed "use cache" (incompatible with headers() in tRPC context)
-// MIGRATED: Removed export const dynamic = 'force-static' (incompatible with Cache Components)
-// MIGRATED: Removed export const revalidate = 3600 (incompatible with Cache Components)
-// Note: Page is rendered on-demand with ISR because tRPC requires headers() for context
+/**
+ * CRITICAL: Dynamic rendering required to prevent build failures
+ *
+ * This page uses PublicLayout which contains:
+ * - PublicFooter > SocialMediaLinks (queries db.tenantConfig.findUnique())
+ *
+ * If this page attempts static prerendering, the build fails with:
+ * "Can't reach database server" because DATABASE_URL may not be available
+ * during build time in CI/CD environments (Vercel, GitHub Actions).
+ *
+ * Additionally, tRPC requires headers() for context which is incompatible
+ * with static generation.
+ *
+ * DO NOT REMOVE unless:
+ * 1. PublicLayout no longer contains database queries
+ * 2. All DB queries are moved to client components
+ * 3. tRPC no longer requires headers() for context
+ */
+export const dynamic = "force-dynamic";
 
 /**
  * Generate static params for all glass solutions

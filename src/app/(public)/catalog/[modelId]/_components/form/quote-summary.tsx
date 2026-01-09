@@ -241,14 +241,14 @@ export function QuoteSummary({
 
         {/* Calculation Error - Only show when there's a calculation error (not form errors) */}
         {error && !hasFormErrors && (
-          <div className="rounded-lg border border-[var(--color-warning)]/20 bg-[var(--color-warning)]/10 p-4">
+          <div className="rounded-lg border border-(--color-warning)/20 bg-(--color-warning)/10 p-4">
             <div className="flex items-start gap-3">
-              <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-warning)]" />
+              <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-(--color-warning)" />
               <div className="flex-1">
-                <p className="font-medium text-[var(--color-warning-foreground)] text-sm">
+                <p className="font-medium text-(--color-warning-foreground) text-sm">
                   Error de cálculo:
                 </p>
-                <p className="mt-1 text-[var(--color-warning-foreground)]/80 text-sm">
+                <p className="mt-1 text-(--color-warning-foreground)/80 text-sm">
                   {error}
                 </p>
               </div>

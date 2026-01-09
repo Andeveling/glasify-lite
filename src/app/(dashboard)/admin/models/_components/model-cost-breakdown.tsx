@@ -13,6 +13,7 @@
 
 "use client";
 
+import type { CostType } from "@prisma/client";
 import { Plus, Trash2 } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -40,7 +41,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import type { CostType } from "@prisma/client";
 
 type CostBreakdownItem = {
   component: string;

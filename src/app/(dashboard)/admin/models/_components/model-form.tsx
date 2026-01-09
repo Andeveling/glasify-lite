@@ -2,8 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import Link from "next/link";
+import { type Resolver, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useModelCatalogData } from "../_hooks/use-model-catalog-data";
@@ -28,15 +28,13 @@ type ModelFormProps = {
 };
 
 export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
-  const router = useRouter();
   const { suppliers, glassTypes } = useModelCatalogData();
   const { createModel, updateModel, isCreating, isUpdating } =
     useModelMutations();
 
   const form = useForm<ModelFormValues>({
     defaultValues: getModelFormDefaults(initialData),
-    // @ts-expect-error - Zod .default() causes type inference issues with react-hook-form
-    resolver: zodResolver(modelFormSchema),
+    resolver: zodResolver(modelFormSchema) as Resolver<ModelFormValues>,
     mode: "onBlur",
   });
 
@@ -57,7 +55,6 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
 
   return (
     <Form {...form}>
-      {/* @ts-expect-error - Type mismatch between Zod schema with .default() and react-hook-form inference */}
       <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
         {/* Main Form Grid */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -77,18 +74,23 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
         </div>
 
         {/* Sticky Action Bar */}
-        <div className="sticky bottom-0 z-10 flex items-center justify-end gap-4 rounded-lg border bg-card p-4 shadow-lg">
-          <Button
-            onClick={() => router.push("/admin/models")}
-            type="button"
-            variant="outline"
-          >
-            Cancelar
-          </Button>
-          <Button disabled={isLoading} type="submit">
-            {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
-            {mode === "create" ? "Crear Modelo" : "Actualizar Modelo"}
-          </Button>
+        <div className="sticky bottom-0 z-10 flex items-center justify-between gap-4 rounded-lg border bg-card p-4 shadow-lg">
+          <div className="text-red-600 text-sm">
+            <ul className="list-disc space-y-1 pl-5">
+              {Object.entries(form.formState.errors).map(([field, error]) => (
+                <li key={field}>{error?.message ?? "Error"}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button asChild variant="outline">
+              <Link href="/admin/models">Cancelar</Link>
+            </Button>
+            <Button disabled={isLoading} type="submit">
+              {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+              {mode === "create" ? "Crear Modelo" : "Actualizar Modelo"}
+            </Button>
+          </div>
         </div>
       </form>
     </Form>

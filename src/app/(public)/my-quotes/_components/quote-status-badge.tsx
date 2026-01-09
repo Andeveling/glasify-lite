@@ -9,6 +9,7 @@
 
 "use client";
 
+import type { Quote } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
@@ -16,7 +17,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { Quote } from "@prisma/client";
 import { cn } from "@/lib/utils";
 import {
   getStatusConfig,

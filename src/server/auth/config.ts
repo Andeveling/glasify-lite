@@ -1,7 +1,6 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
-
 import { env } from "@/env";
 import { db } from "@/server/db";
 
@@ -19,10 +18,13 @@ const isAdmin = (email: string | null | undefined): boolean => {
 /**
  * Better Auth instance configuration
  * Handles authentication with Google OAuth, session management, and RBAC
+ *
+ * Note: Better Auth will automatically detect baseURL from BETTER_AUTH_URL env var
+ * @see https://www.better-auth.com/docs/concepts/base-url
  */
 export const auth = betterAuth({
   appName: "Glasify",
-  baseURL: env.BASE_URL || "http://localhost:3000",
+  // Don't set baseURL here - let Better Auth auto-detect from BETTER_AUTH_URL env var
 
   callbacks: {
     async signIn({
@@ -53,7 +55,7 @@ export const auth = betterAuth({
     google: {
       // Always request refresh token and ask user to select account
       accessType: "offline",
-      clientId: env.AUTH_GOOGLE_ID,
+      clientId: env.AUTH_GOOGLE_ID as string,
       clientSecret: env.AUTH_GOOGLE_SECRET,
       prompt: "select_account consent",
     },

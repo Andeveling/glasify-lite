@@ -10,6 +10,7 @@
 
 "use client";
 
+import type { ServiceType, ServiceUnit } from "@prisma/client";
 import { Pencil, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/format";
-import type { ServiceType, ServiceUnit } from "@prisma/client";
 
 type SerializedService = {
   id: string;

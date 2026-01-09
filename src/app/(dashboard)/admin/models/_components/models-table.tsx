@@ -21,6 +21,7 @@
 
 "use client";
 
+import type { MaterialType, ModelStatus } from "@prisma/client";
 import { MoreHorizontal, Palette, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -41,7 +42,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { formatCurrency } from "@/lib/format";
-import type { MaterialType, ModelStatus } from "@prisma/client";
 import type { RouterOutputs } from "@/trpc/react";
 import { api } from "@/trpc/react";
 

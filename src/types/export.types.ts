@@ -122,6 +122,13 @@ export type QuotePDFData = {
     tax?: number;
     discount?: number;
     total: number;
+    /** Tax configuration (from TenantConfig or Quote record) */
+    /** Tax name (e.g., "IVA", "ITBMS") */
+    taxName?: string | null;
+    /** Tax rate as decimal (e.g., 0.19, 0.07) */
+    taxRate?: number | null;
+    /** Legal description for tax */
+    taxDescription?: string | null;
   };
 };
 
@@ -196,6 +203,13 @@ export type QuoteExcelData = {
     tax?: number;
     discount?: number;
     total: number;
+    /** Tax configuration (from TenantConfig or Quote record) */
+    /** Tax name (e.g., "IVA", "ITBMS") */
+    taxName?: string | null;
+    /** Tax rate as decimal (e.g., 0.19, 0.07) */
+    taxRate?: number | null;
+    /** Legal description for tax */
+    taxDescription?: string | null;
   };
 };
 

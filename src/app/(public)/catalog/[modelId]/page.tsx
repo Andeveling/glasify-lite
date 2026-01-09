@@ -5,6 +5,14 @@ import { api } from "@/trpc/server-client";
 import { ModelFormWrapper } from "./_components/form/model-form-wrapper";
 import { ModelFormSkeleton } from "./_components/model-form-skeleton";
 
+/**
+ * CRITICAL: Dynamic rendering required to prevent build failures
+ *
+ * This page uses PublicLayout which contains database queries.
+ * Force dynamic rendering to prevent prerendering attempts.
+ */
+export const dynamic = "force-dynamic";
+
 type PageProps = {
   params: Promise<{ modelId: string }>;
 };

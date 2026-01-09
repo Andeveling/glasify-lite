@@ -12,8 +12,8 @@
  *            prices (One-to-Many via TenantGlassTypePrice)
  *
  * Breaking Changes (v2.0):
- * - Removed: purpose (use solutions instead), pricePerSqm (use TenantGlassTypePrice),
- *            sku (use code), glassSupplierId (use manufacturer string)
+ * - Removed: purpose (use solutions instead), sku (use code),
+ *            glassSupplierId (use manufacturer string)
  * - Added: code (required), series, manufacturer, isSeeded, seedVersion
  */
 
@@ -287,12 +287,17 @@ const baseGlassTypeSchema = z.object({
 export const createGlassTypeSchema = baseGlassTypeSchema.extend({
   characteristics: z
     .array(glassTypeCharacteristicInputSchema)
+    .optional()
+    .default([])
     .describe("Glass characteristics to assign"),
 
   solutions: z
     .array(glassTypeSolutionInputSchema)
+    .optional()
+    .default([])
     .refine(
       (solutions) => {
+        if (!solutions) return true;
         const primaryCount = solutions.filter((s) => s.isPrimary).length;
         return primaryCount <= 1;
       },
@@ -355,7 +360,7 @@ export const listGlassTypesSchema = paginationSchema.extend({
     .describe("Filter by assigned solution"),
 
   sortBy: z
-    .enum(["name", "thicknessMm", "pricePerSqm", "createdAt", "purpose"])
+    .enum(["name", "thicknessMm", "pricePerSqm", "createdAt"])
     .default("name")
     .describe("Sort field"),
 
@@ -401,6 +406,7 @@ export const listGlassTypesOutputSchema = z.object({
       lightTransmission: z.number().nullable(),
       manufacturer: z.string().nullable(),
       name: z.string(),
+      pricePerSqm: z.number(),
       seedVersion: z.string().nullable(),
       series: z.string().nullable(),
       solarFactor: z.number().nullable(),
@@ -465,6 +471,7 @@ export const getGlassTypeByIdOutputSchema = z.object({
   lightTransmission: z.number().nullable(),
   manufacturer: z.string().nullable(),
   name: z.string(),
+  pricePerSqm: z.number(),
   seedVersion: z.string().nullable(),
   series: z.string().nullable(),
   solarFactor: z.number().nullable(),

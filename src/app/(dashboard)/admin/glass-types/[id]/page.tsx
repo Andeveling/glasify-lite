@@ -38,7 +38,6 @@ export default async function EditGlassTypePage({
   if (!glassType) {
     notFound();
   }
-
   return (
     <div className="flex h-full flex-col gap-6 overflow-hidden p-0">
       <div className="space-y-2">

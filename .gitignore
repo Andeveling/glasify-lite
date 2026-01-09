@@ -14,9 +14,6 @@
 src/generated/prisma-client
 db.sqlite
 
-# prisma generated client
-/src/generated/prisma-client
-
 # next.js
 /.next/
 /out/
@@ -60,3 +57,4 @@ test-results/
 **/test-results/
 **/playwright-report/
 public/modern-aluminum-sliding-window.jpg
+.env.vercel.production

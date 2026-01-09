@@ -1,4 +1,6 @@
+import { useCallback } from "react";
 import type { Control, FieldValues, Path } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { DimensionInput } from "@/components/dimension-input";
 import { DimensionSlider } from "@/components/dimension-slider";
 import { SuggestedValueBadges } from "@/components/suggested-value-badges";
@@ -57,6 +59,8 @@ export function DimensionField<T extends FieldValues>({
   variant = "full",
   customConfig,
 }: DimensionFieldProps<T>) {
+  const { trigger } = useFormContext();
+
   // Resolve configuration using extracted function (Dependency Inversion)
   const config = resolveVariantConfig(variant, customConfig);
 
@@ -67,6 +71,16 @@ export function DimensionField<T extends FieldValues>({
 
   // Determine if inline range hint should be shown
   const showInlineRangeHint = shouldShowInlineRangeHint(config);
+
+  // Enhanced onChange handler that forces revalidation to prevent stale errors
+  const handleInputChange = useCallback(
+    (inputValue: number | "", fieldOnChange: (val: number | "") => void) => {
+      fieldOnChange(inputValue);
+      // Force immediate revalidation to sync error state with current value
+      trigger(name);
+    },
+    [trigger, name]
+  );
 
   return (
     <FormField
@@ -97,7 +111,7 @@ export function DimensionField<T extends FieldValues>({
                   isValid={fieldIsValid}
                   max={max}
                   min={min}
-                  onChange={field.onChange}
+                  onChange={(value) => handleInputChange(value, field.onChange)}
                   placeholder={String(min)}
                   value={field.value}
                 />
@@ -126,7 +140,7 @@ export function DimensionField<T extends FieldValues>({
             >
               <SuggestedValueBadges
                 currentValue={field.value}
-                onSelect={field.onChange}
+                onSelect={(val) => handleInputChange(val, field.onChange)}
                 values={suggestedValues}
               />
             </OptionalContent>

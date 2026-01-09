@@ -27,7 +27,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@prisma/client": ["./src/generated/prisma-client"],
       "@server/*": ["./src/server/*"],
       "@styles/*": ["./src/styles/*"],
       "@trpc/*": ["./src/trpc/*"],
