@@ -195,11 +195,16 @@ export async function calculatePriceWithColorUseCase(
   const domainServices = input.services.map((serviceInput) => {
     const service = services.find((s) => s.id === serviceInput.serviceId);
     return {
-      serviceId: service?.id,
-      name: service?.name,
-      unit: service?.unit as "unit" | "sqm" | "ml",
-      rate: service?.rate.toNumber(),
-      minimumBillingUnit: service?.minimumBillingUnit?.toNumber(),
+      // biome-ignore lint/style/noNonNullAssertion: validated above
+      serviceId: service!.id,
+      // biome-ignore lint/style/noNonNullAssertion: validated above
+      name: service!.name,
+      // biome-ignore lint/style/noNonNullAssertion: validated above
+      unit: service!.unit as "unit" | "sqm" | "ml",
+      // biome-ignore lint/style/noNonNullAssertion: validated above
+      rate: service!.rate.toNumber(),
+      // biome-ignore lint/style/noNonNullAssertion: validated above
+      minimumBillingUnit: service!.minimumBillingUnit?.toNumber(),
       quantityOverride: serviceInput.quantity,
     };
   });

@@ -738,6 +738,10 @@ export const quoteRouter = createTRPCRouter({
    * Public procedure - accessible in catalog without authentication
    * Cached for 5 minutes (colors rarely change)
    */
+  /**
+   * Get model colors for quote
+   * TASK-D02: Refactored to use getModelColorsForQuoteUseCase (placeholder)
+   */
   "get-model-colors-for-quote": publicProcedure
     .input(
       z.object({
@@ -746,46 +750,30 @@ export const quoteRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       try {
-        const modelColors = await ctx.db.modelColor.findMany({
-          include: {
-            color: true,
-          },
-          orderBy: [
-            { isDefault: "desc" }, // Default first
-            { color: { name: "asc" } }, // Then alphabetically
-          ],
-          where: {
-            color: {
-              isActive: true,
-            },
-            modelId: input.modelId,
-          },
+        logger.info("Fetching model colors for quote", {
+          modelId: input.modelId,
         });
 
-        const defaultColor = modelColors.find((mc) => mc.isDefault);
+        // TODO Phase D: Implement full use-case after extending QuoteRepository
+        // For now, use legacy query logic
+        const { getModelColorsForQuoteUseCase } = await import(
+          "@domain/quotes/use-cases/get-model-colors-for-quote"
+        );
+        const { createGetModelColorsForQuoteDeps } = await import(
+          "@domain/quotes/di/quote.container"
+        );
+
+        const deps = createGetModelColorsForQuoteDeps(ctx.db);
+
+        const result = await getModelColorsForQuoteUseCase(input, deps);
 
         logger.info("Model colors fetched for quote", {
-          colorCount: modelColors.length,
-          defaultColorId: defaultColor?.colorId,
+          colorCount: result.colors.length,
+          defaultColorId: result.defaultColorId,
           modelId: input.modelId,
         });
 
-        return {
-          colors: modelColors.map((mc) => ({
-            color: {
-              hexCode: mc.color.hexCode,
-              id: mc.color.id,
-              name: mc.color.name,
-              ralCode: mc.color.ralCode,
-            },
-            id: mc.id,
-            isDefault: mc.isDefault,
-            surchargePercentage: mc.surchargePercentage.toNumber(),
-          })),
-          defaultColorId: defaultColor?.colorId ?? null,
-          hasColors: modelColors.length > 0,
-          modelId: input.modelId,
-        };
+        return result;
       } catch (error) {
         logger.error("Error fetching model colors for quote", {
           error: error instanceof Error ? error.message : "Unknown error",

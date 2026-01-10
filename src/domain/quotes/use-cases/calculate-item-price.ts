@@ -162,11 +162,16 @@ export async function calculateItemPriceUseCase(
     const service = services.find((s) => s.id === serviceInput.serviceId);
     // Ya validamos arriba que existe
     return {
-      serviceId: service?.id,
-      name: service?.name,
-      unit: service?.unit as "unit" | "sqm" | "ml",
-      rate: service?.rate.toNumber(),
-      minimumBillingUnit: service?.minimumBillingUnit?.toNumber(),
+      // biome-ignore lint/style/noNonNullAssertion: validated above
+      serviceId: service!.id,
+      // biome-ignore lint/style/noNonNullAssertion: validated above
+      name: service!.name,
+      // biome-ignore lint/style/noNonNullAssertion: validated above
+      unit: service!.unit as "unit" | "sqm" | "ml",
+      // biome-ignore lint/style/noNonNullAssertion: validated above
+      rate: service!.rate.toNumber(),
+      // biome-ignore lint/style/noNonNullAssertion: validated above
+      minimumBillingUnit: service!.minimumBillingUnit?.toNumber(),
       quantityOverride: serviceInput.quantity,
     };
   });

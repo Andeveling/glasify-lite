@@ -426,3 +426,16 @@ export function createAddItemWithColorDeps(
     "createAddItemWithColorDeps: En desarrollo (Phase D) - extender QuoteRepository primero"
   );
 }
+
+/**
+ * Crea las dependencias para GetModelColorsForQuote use-case (placeholder)
+ * TODO Phase D: Implementar después de extender QuoteRepository
+ */
+export function createGetModelColorsForQuoteDeps(
+  _db: PrismaClient
+  // biome-ignore lint/suspicious/noExplicitAny: placeholder implementation
+): any {
+  throw new Error(
+    "createGetModelColorsForQuoteDeps: En desarrollo (Phase D) - extender QuoteRepository primero"
+  );
+}
