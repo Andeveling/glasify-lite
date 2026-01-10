@@ -238,8 +238,6 @@ test.describe("Cart - Price Recalculation Timing", () => {
     // Wait for price to update
     await page.waitForTimeout(WAIT_LONG_MS);
 
-
-
     // Verify price NOW updated in cart
     const priceAfterSave = await page
       .locator(
@@ -259,6 +257,7 @@ test.describe("Cart - Price Recalculation Timing", () => {
     // Wait for modal
     await page.waitForSelector('role=dialog[name="Editar Item"]');
 
+    // Verify recalculation note is visible
     // Verify recalculation note is visible
     const note = page.locator('text="El precio se recalculará al confirmar"');
     await expect(note).toBeVisible();
