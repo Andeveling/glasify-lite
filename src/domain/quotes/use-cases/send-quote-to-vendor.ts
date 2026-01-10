@@ -101,7 +101,9 @@ export class QuoteEmptyError extends Error {
   code = "BAD_REQUEST" as const;
 
   constructor() {
-    super("No puedes enviar una cotización vacía. Agrega al menos un producto.");
+    super(
+      "No puedes enviar una cotización vacía. Agrega al menos un producto."
+    );
     this.name = "QuoteEmptyError";
   }
 }
@@ -159,4 +161,3 @@ export async function sendQuoteToVendorUseCase(
     currency: updatedQuote.currency,
   };
 }
-

@@ -8,31 +8,32 @@
  * Este módulo ES la única parte que conoce tanto Prisma como los use-cases.
  */
 
-import type { PrismaClient } from "@prisma/client";
 import { CalculateItemPrice } from "@domain/pricing/use-cases/calculate-item-price";
+import type { PrismaClient } from "@prisma/client";
 import {
-  adaptTRPCToDomain,
   adaptDomainToTRPC,
+  adaptTRPCToDomain,
 } from "@/server/api/routers/quote/price-adapter";
 import {
-  getTenantCurrency,
   getQuoteValidityDays,
   getTenantConfigSelect,
+  getTenantCurrency,
 } from "@/server/utils/tenant";
 
 import type { AddItemToQuoteDeps } from "../use-cases/add-item-to-quote";
 import type { CalculateItemPriceDeps } from "../use-cases/calculate-item-price";
-import type { GetQuoteByIdDeps } from "../use-cases/get-quote-by-id";
-import type { ListUserQuotesDeps, QuoteListFilters } from "../use-cases/list-user-quotes";
-import type { SendQuoteToVendorDeps } from "../use-cases/send-quote-to-vendor";
 import type { CalculatePriceWithColorDeps } from "../use-cases/calculate-price-with-color";
+import type { GetQuoteByIdDeps } from "../use-cases/get-quote-by-id";
+import type {
+  ListUserQuotesDeps,
+  QuoteListFilters,
+} from "../use-cases/list-user-quotes";
+import type { SendQuoteToVendorDeps } from "../use-cases/send-quote-to-vendor";
 
 /**
  * Crea las dependencias para AddItemToQuote use-case
  */
-export function createAddItemToQuoteDeps(
-  db: PrismaClient
-): AddItemToQuoteDeps {
+export function createAddItemToQuoteDeps(db: PrismaClient): AddItemToQuoteDeps {
   return {
     findModel: (id) =>
       db.model.findUnique({
@@ -55,15 +56,14 @@ export function createAddItemToQuoteDeps(
         where: { id },
       }),
 
-    createQuote: async (input) => {
-      return db.quote.create({
+    createQuote: async (input) =>
+      db.quote.create({
         data: {
           currency: input.currency,
           status: "draft",
           validUntil: input.validUntil,
         },
-      });
-    },
+      }),
 
     createQuoteItem: (input) =>
       db.quoteItem.create({
@@ -132,7 +132,10 @@ export function createAddItemToQuoteDeps(
 
       const domainInput = adaptTRPCToDomain(adapterInput);
       const domainResult = CalculateItemPrice.execute(domainInput);
-      const result = adaptDomainToTRPC(domainResult, input.colorSurchargePercentage);
+      const result = adaptDomainToTRPC(
+        domainResult,
+        input.colorSurchargePercentage
+      );
 
       return {
         subtotal: result.subtotal,
@@ -232,7 +235,7 @@ export function createListUserQuotesDeps(db: PrismaClient): ListUserQuotesDeps {
       type WhereInput = {
         userId?: string;
         status?: typeof filters.status;
-        AND?: Array<Record<string, unknown>>;
+        AND?: Record<string, unknown>[];
       };
 
       const where: WhereInput = {
@@ -240,15 +243,12 @@ export function createListUserQuotesDeps(db: PrismaClient): ListUserQuotesDeps {
         ...(filters.status && { status: filters.status }),
       };
 
-      const andConditions: Array<Record<string, unknown>> = [];
+      const andConditions: Record<string, unknown>[] = [];
 
       // Filter expired quotes if not including them
       if (!filters.includeExpired) {
         andConditions.push({
-          OR: [
-            { validUntil: null },
-            { validUntil: { gte: new Date() } },
-          ],
+          OR: [{ validUntil: null }, { validUntil: { gte: new Date() } }],
         });
       }
 
@@ -257,7 +257,9 @@ export function createListUserQuotesDeps(db: PrismaClient): ListUserQuotesDeps {
         andConditions.push({
           OR: [
             { projectName: { contains: filters.search, mode: "insensitive" } },
-            { projectStreet: { contains: filters.search, mode: "insensitive" } },
+            {
+              projectStreet: { contains: filters.search, mode: "insensitive" },
+            },
             {
               items: {
                 some: {
@@ -319,7 +321,9 @@ export function createSendQuoteToVendorDeps(
         },
       });
 
-      if (!quote) return null;
+      if (!quote) {
+        return null;
+      }
 
       return {
         ...quote,
@@ -387,7 +391,9 @@ export function createCalculatePriceWithColorDeps(
         },
       });
 
-      if (!modelColor) return null;
+      if (!modelColor) {
+        return null;
+      }
 
       return {
         surchargePercentage: modelColor.surchargePercentage.toNumber(),
@@ -406,4 +412,17 @@ export function createCalculatePriceWithColorDeps(
       return adaptDomainToTRPC(domainResult);
     },
   };
+}
+
+/**
+ * Crea las dependencias para AddItemWithColor use-case (placeholder)
+ * TODO Phase D: Implementar después de extender QuoteRepository
+ */
+export function createAddItemWithColorDeps(
+  _db: PrismaClient
+  // biome-ignore lint/suspicious/noExplicitAny: placeholder implementation
+): any {
+  throw new Error(
+    "createAddItemWithColorDeps: En desarrollo (Phase D) - extender QuoteRepository primero"
+  );
 }

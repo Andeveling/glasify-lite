@@ -106,8 +106,7 @@ export async function listUserQuotesUseCase(
   deps: ListUserQuotesDeps
 ): Promise<ListUserQuotesOutput> {
   // 1. Aplicar filtro de rol (admin ve todo, otros ven solo propias)
-  const userIdFilter =
-    input.userRole === "admin" ? undefined : input.userId;
+  const userIdFilter = input.userRole === "admin" ? undefined : input.userId;
 
   // 2. Construir filtros para repositorio
   const filters: QuoteListFilters = {

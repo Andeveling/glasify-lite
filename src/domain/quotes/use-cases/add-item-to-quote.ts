@@ -13,11 +13,11 @@
  */
 
 import type {
-  Model,
   GlassType,
-  Service,
+  Model,
   Quote,
   QuoteItem,
+  Service,
 } from "@prisma/client";
 import {
   validateDimensions,

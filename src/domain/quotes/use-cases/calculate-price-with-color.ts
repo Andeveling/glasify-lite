@@ -180,7 +180,8 @@ export async function calculatePriceWithColorUseCase(
 
   // 3. Fetch services (si hay)
   const serviceIds = input.services.map((s) => s.serviceId);
-  const services = serviceIds.length > 0 ? await deps.findServices(serviceIds) : [];
+  const services =
+    serviceIds.length > 0 ? await deps.findServices(serviceIds) : [];
 
   // Validar que todos los servicios existen
   for (const serviceInput of input.services) {
@@ -194,11 +195,11 @@ export async function calculatePriceWithColorUseCase(
   const domainServices = input.services.map((serviceInput) => {
     const service = services.find((s) => s.id === serviceInput.serviceId);
     return {
-      serviceId: service!.id,
-      name: service!.name,
-      unit: service!.unit as "unit" | "sqm" | "ml",
-      rate: service!.rate.toNumber(),
-      minimumBillingUnit: service!.minimumBillingUnit?.toNumber(),
+      serviceId: service?.id,
+      name: service?.name,
+      unit: service?.unit as "unit" | "sqm" | "ml",
+      rate: service?.rate.toNumber(),
+      minimumBillingUnit: service?.minimumBillingUnit?.toNumber(),
       quantityOverride: serviceInput.quantity,
     };
   });
@@ -250,7 +251,8 @@ export async function calculatePriceWithColorUseCase(
 
     colorSurchargePercentage = modelColor.surchargePercentage;
     // Aplicar surcharge SOLO al dimPrice (precio del modelo)
-    colorSurcharge = calculation.dimPrice * (colorSurchargePercentage / PERCENTAGE_DIVISOR);
+    colorSurcharge =
+      calculation.dimPrice * (colorSurchargePercentage / PERCENTAGE_DIVISOR);
   }
 
   const totalWithColor = calculation.subtotal + colorSurcharge;

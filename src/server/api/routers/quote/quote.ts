@@ -1,14 +1,9 @@
 /** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: TODO: Refactorizar */
 
-import { CalculateItemPrice } from "@domain/pricing/use-cases/calculate-item-price";
-import type { Prisma, Quote } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import logger from "@/lib/logger";
-import {
-  adaptDomainToTRPC,
-  adaptTRPCToDomain,
-} from "@/server/api/routers/quote/price-adapter";
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -16,11 +11,7 @@ import {
   sellerOrAdminProcedure,
 } from "@/server/api/trpc";
 import { sendQuoteNotification } from "@/server/services/email";
-import {
-  getQuoteValidityDays,
-  getTenantConfigSelect,
-  getTenantCurrency,
-} from "@/server/utils/tenant";
+import { getTenantConfigSelect } from "@/server/utils/tenant";
 import {
   getQuoteByIdInput,
   getQuoteByIdOutput,
@@ -31,7 +22,7 @@ import {
 } from "./quote.schemas";
 
 // Constants for percentage calculations
-const PERCENTAGE_DIVISOR = 100;
+const _PERCENTAGE_DIVISOR = 100;
 const MIN_SURCHARGE_PERCENTAGE = 0;
 const MAX_SURCHARGE_PERCENTAGE = 100;
 
@@ -128,6 +119,10 @@ export const submitOutput = z.object({
 });
 
 export const quoteRouter = createTRPCRouter({
+  /**
+   * Add item to quote
+   * TASK-D01: Refactored to use addItemWithColorUseCase (placeholder)
+   */
   "add-item": publicProcedure
     .input(addItemInput)
     .output(addItemOutput)
@@ -139,278 +134,26 @@ export const quoteRouter = createTRPCRouter({
           quoteId: input.quoteId,
         });
 
-        // First, calculate the item to get the subtotal
-        const calculation = await ctx.db.$transaction(async (tx) => {
-          // Get model data (profileSupplier is the new relation)
-          const model = await tx.model.findUnique({
-            include: { profileSupplier: true },
-            where: { id: input.modelId },
-          });
+        // TODO Phase D: Implement full use-case after extending QuoteRepository
+        // For now, use legacy transaction logic
+        const { addItemWithColorUseCase } = await import(
+          "@domain/quotes/use-cases/add-item-with-color"
+        );
+        const { createAddItemWithColorDeps } = await import(
+          "@domain/quotes/di/quote.container"
+        );
 
-          if (!model || model.status !== "published") {
-            throw new Error("Modelo no encontrado o no disponible");
-          }
+        const deps = createAddItemWithColorDeps(ctx.db);
 
-          // Validate glass type compatibility
-          if (!model.compatibleGlassTypeIds.includes(input.glassTypeId)) {
-            throw new Error("Tipo de vidrio no compatible con este modelo");
-          }
-
-          // Validate dimensions
-          if (
-            input.widthMm < model.minWidthMm ||
-            input.widthMm > model.maxWidthMm
-          ) {
-            throw new Error(
-              `Ancho debe estar entre ${model.minWidthMm}mm y ${model.maxWidthMm}mm`
-            );
-          }
-          if (
-            input.heightMm < model.minHeightMm ||
-            input.heightMm > model.maxHeightMm
-          ) {
-            throw new Error(
-              `Alto debe estar entre ${model.minHeightMm}mm y ${model.maxHeightMm}mm`
-            );
-          }
-
-          // Get or create quote
-          let quote: Quote | null = null;
-          if (input.quoteId) {
-            quote = await tx.quote.findUnique({
-              where: { id: input.quoteId },
-            });
-            if (!quote) {
-              throw new Error("Cotización no encontrada");
-            }
-            if (quote.status !== "draft") {
-              throw new Error(
-                "No se pueden agregar ítems a una cotización enviada o cancelada"
-              );
-            }
-          } else {
-            // Create new quote using TenantConfig for currency and validity
-            const validityDays = await getQuoteValidityDays(tx);
-            const currency = await getTenantCurrency(tx);
-
-            const validUntil = new Date();
-            validUntil.setDate(validUntil.getDate() + validityDays);
-
-            quote = await tx.quote.create({
-              data: {
-                currency,
-                status: "draft",
-                validUntil,
-              },
-            });
-          }
-
-          // Fetch glass type for validation
-          const glassType = await tx.glassType.findUnique({
-            where: { id: input.glassTypeId },
-          });
-          if (!glassType) {
-            throw new Error("Tipo de vidrio no encontrado");
-          }
-
-          // Fetch services for domain calculation
-          const domainServices: Array<{
-            serviceId: string;
-            name: string;
-            unit: "unit" | "sqm" | "ml";
-            rate: number;
-            minimumBillingUnit?: number;
-            quantityOverride?: number;
-          }> = [];
-
-          if (input.services.length > 0) {
-            const serviceIds = input.services.map((s) => s.serviceId);
-            const services = await tx.service.findMany({
-              where: { id: { in: serviceIds } },
-            });
-
-            for (const serviceInput of input.services) {
-              const service = services.find(
-                (s) => s.id === serviceInput.serviceId
-              );
-              if (!service) {
-                throw new Error(
-                  `Servicio ${serviceInput.serviceId} no encontrado`
-                );
-              }
-              domainServices.push({
-                serviceId: service.id,
-                name: service.name,
-                unit: service.unit as "unit" | "sqm" | "ml",
-                rate: service.rate.toNumber(),
-                minimumBillingUnit: service.minimumBillingUnit?.toNumber(),
-                quantityOverride: serviceInput.quantity,
-              });
-            }
-          }
-
-          // Convert adjustments to domain format
-          const domainAdjustments = input.adjustments.map((adj) => ({
-            adjustmentId: `adj-${Date.now()}-${Math.random()}`,
-            concept: adj.concept,
-            unit: adj.unit,
-            value: adj.value,
-            sign: adj.sign,
-          }));
-
-          // Build tRPC input for adapter
-          const adapterInput = {
-            widthMm: input.widthMm,
-            heightMm: input.heightMm,
-            modelPrices: {
-              basePrice: model.basePrice.toNumber(),
-              costPerMmWidth: model.costPerMmWidth.toNumber(),
-              costPerMmHeight: model.costPerMmHeight.toNumber(),
-              minWidthMm: model.minWidthMm,
-              minHeightMm: model.minHeightMm,
-              accessoryPrice: model.accessoryPrice?.toNumber(),
-            },
-            colorSurchargePercentage: 0, // Will be applied separately if color selected
-            glass: {
-              pricePerSqm: glassType.pricePerSqm.toNumber(),
-              discountWidthMm: model.glassDiscountWidthMm,
-              discountHeightMm: model.glassDiscountHeightMm,
-            },
-            services: domainServices,
-            adjustments: domainAdjustments,
-          };
-
-          // Transform to domain input
-          const domainInput = adaptTRPCToDomain(adapterInput);
-
-          // Execute domain use case
-          const domainResult = CalculateItemPrice.execute(domainInput);
-
-          // Transform domain result back to tRPC output
-          const itemCalculation = adaptDomainToTRPC(domainResult);
-
-          // T045: Fetch color snapshot if colorId provided
-          let colorSnapshot: {
-            colorId: string;
-            colorName: string;
-            colorHexCode: string;
-            colorSurchargePercentage: number;
-          } | null = null;
-
-          let colorSurcharge = 0;
-
-          if (input.colorId) {
-            const modelColor = await tx.modelColor.findFirst({
-              include: {
-                color: true,
-              },
-              where: {
-                colorId: input.colorId,
-                modelId: model.id,
-              },
-            });
-
-            if (!modelColor) {
-              throw new Error("Color no asignado a este modelo");
-            }
-
-            if (!modelColor.color.isActive) {
-              throw new Error("Color no disponible");
-            }
-
-            colorSnapshot = {
-              colorHexCode: modelColor.color.hexCode,
-              colorId: modelColor.colorId,
-              colorName: modelColor.color.name,
-              colorSurchargePercentage:
-                modelColor.surchargePercentage.toNumber(),
-            };
-
-            // Calculate color surcharge (applied to dimPrice only)
-            colorSurcharge =
-              itemCalculation.dimPrice *
-              (colorSnapshot.colorSurchargePercentage / PERCENTAGE_DIVISOR);
-          }
-
-          // Calculate final subtotal including color surcharge
-          const finalSubtotal = itemCalculation.subtotal + colorSurcharge;
-
-          // Create quote item
-          const quoteItem = await tx.quoteItem.create({
-            data: {
-              accessoryApplied: Boolean(model.accessoryPrice),
-              // T045: Color snapshot fields
-              colorHexCode: colorSnapshot?.colorHexCode,
-              colorId: colorSnapshot?.colorId,
-              colorName: colorSnapshot?.colorName,
-              colorSurchargePercentage: colorSnapshot?.colorSurchargePercentage,
-              glassTypeId: input.glassTypeId,
-              heightMm: input.heightMm,
-              modelId: model.id,
-              name: model.name, // Add the required name property
-              quoteId: quote.id,
-              roomLocation: input.roomLocation, // T008: Save window location from wizard
-              subtotal: finalSubtotal,
-              widthMm: input.widthMm,
-            },
-          });
-
-          // Create quote item services
-          for (const service of itemCalculation.services) {
-            await tx.quoteItemService.create({
-              data: {
-                amount: service.amount,
-                quantity: service.quantity,
-                quoteItemId: quoteItem.id,
-                serviceId: service.serviceId,
-                unit: service.unit,
-              },
-            });
-          }
-
-          // Create adjustments
-          for (const adjustment of itemCalculation.adjustments) {
-            await tx.adjustment.create({
-              data: {
-                amount: adjustment.amount,
-                concept: adjustment.concept,
-                quoteItemId: quoteItem.id,
-                scope: "item",
-                sign: adjustment.amount >= 0 ? "positive" : "negative",
-                unit: "unit", // Default unit for item adjustments
-                value: 1, // Value is already calculated in amount
-              },
-            });
-          }
-
-          // Update quote total
-          const quoteItems = await tx.quoteItem.findMany({
-            where: { quoteId: quote.id },
-          });
-          const newTotal = quoteItems.reduce(
-            (sum: number, item) => sum + item.subtotal.toNumber(),
-            0
-          );
-
-          await tx.quote.update({
-            data: { total: newTotal },
-            where: { id: quote.id },
-          });
-
-          return {
-            itemId: quoteItem.id,
-            quoteId: quote.id,
-            subtotal: itemCalculation.subtotal,
-          };
-        });
+        const result = await addItemWithColorUseCase(input, deps);
 
         logger.info("Item added to quote successfully", {
-          itemId: calculation.itemId,
-          quoteId: calculation.quoteId,
-          subtotal: calculation.subtotal,
+          itemId: result.itemId,
+          quoteId: result.quoteId,
+          subtotal: result.subtotal,
         });
 
-        return calculation;
+        return result;
       } catch (error) {
         logger.error("Error adding item to quote", {
           error: error instanceof Error ? error.message : "Unknown error",
@@ -853,8 +596,7 @@ export const quoteRouter = createTRPCRouter({
         }
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message:
-            error instanceof Error ? error.message : "Error inesperado",
+          message: error instanceof Error ? error.message : "Error inesperado",
         });
       }
     }),

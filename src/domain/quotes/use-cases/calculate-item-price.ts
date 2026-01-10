@@ -12,11 +12,11 @@
 
 import type { GlassType, Model, Service } from "@prisma/client";
 import {
+  validateColorSurcharge,
   validateDimensions,
   validateGlassTypeCompatibility,
   validateModelAvailability,
   validateQuantity,
-  validateColorSurcharge,
 } from "../services/quote-validator.service";
 
 /**
@@ -146,7 +146,8 @@ export async function calculateItemPriceUseCase(
 
   // 4. Fetch services (si hay)
   const serviceIds = input.services.map((s) => s.serviceId);
-  const services = serviceIds.length > 0 ? await deps.findServices(serviceIds) : [];
+  const services =
+    serviceIds.length > 0 ? await deps.findServices(serviceIds) : [];
 
   // Validar que todos los servicios existen
   for (const serviceInput of input.services) {
@@ -161,11 +162,11 @@ export async function calculateItemPriceUseCase(
     const service = services.find((s) => s.id === serviceInput.serviceId);
     // Ya validamos arriba que existe
     return {
-      serviceId: service!.id,
-      name: service!.name,
-      unit: service!.unit as "unit" | "sqm" | "ml",
-      rate: service!.rate.toNumber(),
-      minimumBillingUnit: service!.minimumBillingUnit?.toNumber(),
+      serviceId: service?.id,
+      name: service?.name,
+      unit: service?.unit as "unit" | "sqm" | "ml",
+      rate: service?.rate.toNumber(),
+      minimumBillingUnit: service?.minimumBillingUnit?.toNumber(),
       quantityOverride: serviceInput.quantity,
     };
   });
