@@ -36,7 +36,8 @@
       "@views/components/*": ["./src/app/_components/*"],
       "@views/dashboard/*": ["./src/app/(dashboard)/*"],
       "@views/quote/*": ["./src/app/(public)/quote/*"],
-      "@domain/pricing/*": ["./src/domain/pricing/*"]
+      "@domain/pricing/*": ["./src/domain/pricing/*"],
+      "@domain/quotes/*": ["./src/domain/quotes/*"]
     },
     "strictNullChecks": true
   },
