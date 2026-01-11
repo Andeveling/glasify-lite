@@ -1,5 +1,5 @@
 // src/server/api/routers/catalog/catalog.utils.ts
-import type { Decimal } from "@prisma/generated/client/runtime/library";
+import type { Decimal } from "decimal.js";
 import { Money } from "@/domain/pricing/core/entities/money";
 import { MarginCalculator } from "@/domain/pricing/core/services/margin-calculator";
 

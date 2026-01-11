@@ -10,7 +10,7 @@
  * Maintains 100% backward compatibility with existing `calculatePriceItem` function.
  */
 
-import { Decimal } from "@prisma/generated/client/runtime/library";
+import { Decimal } from "decimal.js";
 import { Dimensions } from "@/domain/pricing/core/entities/dimensions";
 import { Money } from "@/domain/pricing/core/entities/money";
 import type { ServiceUnit } from "@/domain/pricing/core/types";

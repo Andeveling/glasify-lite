@@ -5,7 +5,7 @@
  * Purpose: TypeScript types for ProjectAddress entity
  */
 
-import type { Decimal } from "@prisma/generated/client/runtime/library";
+import type { Decimal } from "decimal.js";
 
 /**
  * ProjectAddress entity from Prisma

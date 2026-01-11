@@ -1,8 +1,12 @@
-// Load environment variables from .env file
+// Load environment variables from .env.local and .env files
 // Required when using prisma.config.ts (Prisma skips auto-loading .env)
 // @see https://www.prisma.io/docs/orm/reference/prisma-config-reference#using-environment-variables
-import "dotenv/config";
+import { config } from "dotenv";
 import { defineConfig, env } from "prisma/config";
+
+// Load .env.local first (takes precedence), then .env
+config({ path: ".env.local" });
+config();
 
 /**
  * Prisma Configuration (v7)

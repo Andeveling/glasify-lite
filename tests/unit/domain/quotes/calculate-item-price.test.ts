@@ -5,7 +5,7 @@
  * Solo validan lógica de negocio pura con mocks.
  */
 
-import type { Decimal } from "@prisma/generated/client/runtime/library";
+import type { Decimal } from "decimal.js";
 import { describe, expect, it, vi } from "vitest";
 import {
   type CalculateItemPriceDeps,

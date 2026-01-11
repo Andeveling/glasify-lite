@@ -8,7 +8,7 @@
  */
 
 import type { PrismaClient } from "@prisma/generated/client";
-import { Decimal } from "@prisma/generated/client/runtime/library";
+import { Decimal } from "decimal.js";
 import { TRPCError } from "@trpc/server";
 import logger from "@/lib/logger";
 import { getTenantConfigSelect } from "@/server/utils/tenant";
