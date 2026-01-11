@@ -30,7 +30,7 @@
  * @see TECH-002: tRPC procedures for list/filter/sort
  */
 
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/generated/client";
 
 /**
  * Search configuration for building WHERE clauses

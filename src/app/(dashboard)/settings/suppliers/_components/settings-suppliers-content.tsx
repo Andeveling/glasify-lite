@@ -10,7 +10,7 @@
  */
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { MaterialType } from "@prisma/client";
+import type { MaterialType } from "@prisma/generated/client";
 import {
   Building2,
   Loader2,

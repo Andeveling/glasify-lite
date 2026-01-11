@@ -7,8 +7,8 @@
  * @module server/api/routers/quote/quote.service
  */
 
-import type { PrismaClient } from "@prisma/client";
-import { Decimal } from "@prisma/client/runtime/library";
+import type { PrismaClient } from "@prisma/generated/client";
+import { Decimal } from "@prisma/generated/client/runtime/library";
 import { TRPCError } from "@trpc/server";
 import logger from "@/lib/logger";
 import { getTenantConfigSelect } from "@/server/utils/tenant";

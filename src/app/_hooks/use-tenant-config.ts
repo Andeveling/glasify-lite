@@ -29,7 +29,7 @@
 
 "use client";
 
-import type { TenantConfig } from "@prisma/client";
+import type { TenantConfig } from "@prisma/generated/client";
 import { api } from "@/trpc/react";
 
 /**

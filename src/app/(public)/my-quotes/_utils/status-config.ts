@@ -8,7 +8,7 @@
  * @module StatusConfig
  */
 
-import type { Quote } from "@prisma/client";
+import type { Quote } from "@prisma/generated/client";
 import { FileText, type LucideIcon, Send, XCircle } from "lucide-react";
 
 /**

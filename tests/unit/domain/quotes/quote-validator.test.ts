@@ -5,7 +5,7 @@
  * Solo validan lógica de negocio pura.
  */
 
-import type { Model, QuoteStatus } from "@prisma/client";
+import type { Model, QuoteStatus } from "@prisma/generated/client";
 import { describe, expect, it } from "vitest";
 import {
   type ValidationError,

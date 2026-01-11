@@ -11,7 +11,7 @@
  * Usa repositories (ports) para acceso a datos.
  */
 
-import type { Quote, QuoteStatus } from "@prisma/client";
+import type { Quote, QuoteStatus } from "@prisma/generated/client";
 import { validateQuoteStatus } from "../services/quote-validator.service";
 
 /**

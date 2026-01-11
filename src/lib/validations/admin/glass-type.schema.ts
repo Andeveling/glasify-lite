@@ -17,7 +17,7 @@
  * - Added: code (required), series, manufacturer, isSeeded, seedVersion
  */
 
-import { PerformanceRating } from "@prisma/client";
+import { PerformanceRating } from "@prisma/generated/client";
 import { z } from "zod";
 import {
   activeFilterSchema,

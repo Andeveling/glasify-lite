@@ -11,7 +11,7 @@
  * Usa repositories (ports) para acceso a datos.
  */
 
-import type { GlassType, Model, Service } from "@prisma/client";
+import type { GlassType, Model, Service } from "@prisma/generated/client";
 import {
   validateDimensions,
   validateGlassTypeCompatibility,

@@ -8,7 +8,7 @@
  * - La infraestructura implementa CÓMO (adapter)
  */
 
-import type { Quote, QuoteItem, QuoteStatus } from "@prisma/client";
+import type { Quote, QuoteItem, QuoteStatus } from "@prisma/generated/client";
 
 /**
  * Filters para listar quotes

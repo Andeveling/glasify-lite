@@ -9,7 +9,7 @@
  */
 
 import { CalculateItemPrice } from "@domain/pricing/use-cases/calculate-item-price";
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@prisma/generated/client";
 import {
   adaptDomainToTRPC,
   adaptTRPCToDomain,

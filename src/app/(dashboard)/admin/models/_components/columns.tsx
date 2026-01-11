@@ -6,7 +6,7 @@
 
 "use client";
 
-import type { MaterialType, ModelStatus } from "@prisma/client";
+import type { MaterialType, ModelStatus } from "@prisma/generated/client";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";

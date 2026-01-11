@@ -7,7 +7,7 @@
  * @module types/dashboard
  */
 
-import type { TenantConfig } from "@prisma/client";
+import type { TenantConfig } from "@prisma/generated/client";
 
 // =============================================================================
 // ENUMS

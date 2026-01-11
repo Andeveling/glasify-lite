@@ -5,7 +5,7 @@
  * Used across tRPC procedures and UI components.
  */
 
-import type { PerformanceRating } from "@prisma/client";
+import type { PerformanceRating } from "@prisma/generated/client";
 
 /** Scoring constants for solution prioritization */
 const PRIMARY_SOLUTION_BONUS = 20;

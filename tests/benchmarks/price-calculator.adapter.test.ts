@@ -10,7 +10,7 @@
  */
 /** biome-ignore-all lint/style/noMagicNumbers: Test file contains expected numeric values for assertions */
 
-import { Decimal } from "@prisma/client/runtime/library";
+import { Decimal } from "@prisma/generated/client/runtime/library";
 import { describe, expect, it } from "vitest";
 import type { PriceItemCalculationInput } from "@/domain/pricing/adapters/trpc/price-calculator.adapter";
 import { calculateItemPriceAdapter } from "@/domain/pricing/adapters/trpc/price-calculator.adapter";
