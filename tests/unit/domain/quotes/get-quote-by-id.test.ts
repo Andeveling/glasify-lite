@@ -4,13 +4,14 @@
  * Estos tests NO requieren base de datos.
  * Solo validan lógica de negocio pura con mocks.
  */
+/** biome-ignore-all lint/style/noMagicNumbers: Test file uses fixed dates and numeric literals for deterministic assertions */
 
 import { describe, expect, it, vi } from "vitest";
 import {
-  getQuoteByIdUseCase,
+  AuthorizationError,
   type GetQuoteByIdDeps,
   type GetQuoteByIdInput,
-  AuthorizationError,
+  getQuoteByIdUseCase,
 } from "@/domain/quotes/use-cases/get-quote-by-id";
 
 // Constants for test data
@@ -48,10 +49,12 @@ function createMockQuoteWithItems(overrides = {}) {
         quantity: 2,
         subtotal: 750_000,
         glassType: { id: "glass-1", name: "Vidrio Templado 6mm" },
-        model: { id: "model-1", name: "Ventana Corrediza", imageUrl: "/models/corrediza.png" },
-        services: [
-          { service: { id: "service-1", name: "Instalación" } },
-        ],
+        model: {
+          id: "model-1",
+          name: "Ventana Corrediza",
+          imageUrl: "/models/corrediza.png",
+        },
+        services: [{ service: { id: "service-1", name: "Instalación" } }],
       },
     ],
     user: {
@@ -65,7 +68,9 @@ function createMockQuoteWithItems(overrides = {}) {
 }
 
 // Input válido base
-function createValidInput(overrides: Partial<GetQuoteByIdInput> = {}): GetQuoteByIdInput {
+function createValidInput(
+  overrides: Partial<GetQuoteByIdInput> = {}
+): GetQuoteByIdInput {
   return {
     quoteId: TEST_QUOTE_ID,
     userId: TEST_USER_ID,
@@ -75,7 +80,9 @@ function createValidInput(overrides: Partial<GetQuoteByIdInput> = {}): GetQuoteB
 }
 
 // Dependencies mock factory
-function createMockDeps(overrides: Partial<GetQuoteByIdDeps> = {}): GetQuoteByIdDeps {
+function createMockDeps(
+  overrides: Partial<GetQuoteByIdDeps> = {}
+): GetQuoteByIdDeps {
   return {
     findQuoteWithDetails: vi.fn().mockResolvedValue(createMockQuoteWithItems()),
     getTenantBusinessName: vi.fn().mockResolvedValue(TEST_BUSINESS_NAME),
@@ -100,7 +107,9 @@ describe("GetQuoteByIdUseCase", () => {
         await getQuoteByIdUseCase(input, deps);
       } catch (error) {
         expect((error as AuthorizationError).code).toBe("NOT_FOUND");
-        expect((error as AuthorizationError).message).toBe("Cotización no encontrada");
+        expect((error as AuthorizationError).message).toBe(
+          "Cotización no encontrada"
+        );
       }
     });
   });
@@ -114,7 +123,9 @@ describe("GetQuoteByIdUseCase", () => {
         await getQuoteByIdUseCase(input, deps);
       } catch (error) {
         expect((error as AuthorizationError).code).toBe("FORBIDDEN");
-        expect((error as AuthorizationError).message).toContain("No tienes permiso");
+        expect((error as AuthorizationError).message).toContain(
+          "No tienes permiso"
+        );
       }
     });
 
@@ -175,9 +186,11 @@ describe("GetQuoteByIdUseCase", () => {
       const input = createValidInput();
       const futureDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
       const deps = createMockDeps({
-        findQuoteWithDetails: vi.fn().mockResolvedValue(
-          createMockQuoteWithItems({ validUntil: futureDate })
-        ),
+        findQuoteWithDetails: vi
+          .fn()
+          .mockResolvedValue(
+            createMockQuoteWithItems({ validUntil: futureDate })
+          ),
       });
 
       const result = await getQuoteByIdUseCase(input, deps);
@@ -189,9 +202,11 @@ describe("GetQuoteByIdUseCase", () => {
       const input = createValidInput();
       const pastDate = new Date("2024-01-01");
       const deps = createMockDeps({
-        findQuoteWithDetails: vi.fn().mockResolvedValue(
-          createMockQuoteWithItems({ validUntil: pastDate })
-        ),
+        findQuoteWithDetails: vi
+          .fn()
+          .mockResolvedValue(
+            createMockQuoteWithItems({ validUntil: pastDate })
+          ),
       });
 
       const result = await getQuoteByIdUseCase(input, deps);
@@ -226,7 +241,11 @@ describe("GetQuoteByIdUseCase", () => {
           createMockQuoteWithItems({
             items: [
               { ...createMockQuoteWithItems().items[0], quantity: 3 },
-              { ...createMockQuoteWithItems().items[0], id: "item-2", quantity: 5 },
+              {
+                ...createMockQuoteWithItems().items[0],
+                id: "item-2",
+                quantity: 5,
+              },
             ],
           })
         ),
@@ -255,9 +274,11 @@ describe("GetQuoteByIdUseCase", () => {
       // Use admin role since null userId quote has no owner
       const input = createValidInput({ userRole: "admin" });
       const deps = createMockDeps({
-        findQuoteWithDetails: vi.fn().mockResolvedValue(
-          createMockQuoteWithItems({ user: null, userId: null })
-        ),
+        findQuoteWithDetails: vi
+          .fn()
+          .mockResolvedValue(
+            createMockQuoteWithItems({ user: null, userId: null })
+          ),
       });
 
       const result = await getQuoteByIdUseCase(input, deps);

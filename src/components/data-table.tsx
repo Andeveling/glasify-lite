@@ -130,6 +130,16 @@ function DragHandle({ id }: { id: number }) {
   );
 }
 
+// Toast delay for demo save actions (in milliseconds)
+const DEMO_SAVE_DELAY_MS = 1000;
+
+// Pagination size options
+// biome-ignore lint/style/noMagicNumbers: These are the valid page size options
+const PAGE_SIZE_OPTIONS = [10, 20, 30, 40, 50];
+
+// Month abbreviation length
+const MONTH_ABBREVIATION_LENGTH = 3;
+
 const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     cell: ({ row }) => <DragHandle id={row.original.id} />,
@@ -199,11 +209,14 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            error: "Error",
-            loading: `Saving ${row.original.header}`,
-            success: "Done",
-          });
+          toast.promise(
+            new Promise((resolve) => setTimeout(resolve, DEMO_SAVE_DELAY_MS)),
+            {
+              error: "Error",
+              loading: `Saving ${row.original.header}`,
+              success: "Done",
+            }
+          );
         }}
       >
         <Label className="sr-only" htmlFor={`${row.original.id}-target`}>
@@ -224,11 +237,14 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            error: "Error",
-            loading: `Saving ${row.original.header}`,
-            success: "Done",
-          });
+          toast.promise(
+            new Promise((resolve) => setTimeout(resolve, DEMO_SAVE_DELAY_MS)),
+            {
+              error: "Error",
+              loading: `Saving ${row.original.header}`,
+              success: "Done",
+            }
+          );
         }}
       >
         <Label className="sr-only" htmlFor={`${row.original.id}-limit`}>
@@ -540,7 +556,7 @@ export function DataTable({
                   />
                 </SelectTrigger>
                 <SelectContent side="top">
-                  {[10, 20, 30, 40, 50].map((pageSize) => (
+                  {PAGE_SIZE_OPTIONS.map((pageSize) => (
                     <SelectItem key={pageSize} value={`${pageSize}`}>
                       {pageSize}
                     </SelectItem>
@@ -669,7 +685,9 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                     axisLine={false}
                     dataKey="month"
                     hide
-                    tickFormatter={(value) => value.slice(0, 3)}
+                    tickFormatter={(value) =>
+                      value.slice(0, MONTH_ABBREVIATION_LENGTH)
+                    }
                     tickLine={false}
                     tickMargin={8}
                   />

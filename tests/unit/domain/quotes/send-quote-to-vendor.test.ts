@@ -4,16 +4,17 @@
  * Estos tests NO requieren base de datos.
  * Solo validan lógica de negocio pura con mocks.
  */
+/** biome-ignore-all lint/style/noMagicNumbers: This a test file with fixed dates and numbers */
 
 import { describe, expect, it, vi } from "vitest";
 import {
-  sendQuoteToVendorUseCase,
-  type SendQuoteToVendorDeps,
-  type SendQuoteToVendorInput,
-  QuoteNotFoundError,
-  QuoteUnauthorizedError,
   QuoteAlreadySentError,
   QuoteEmptyError,
+  QuoteNotFoundError,
+  QuoteUnauthorizedError,
+  type SendQuoteToVendorDeps,
+  type SendQuoteToVendorInput,
+  sendQuoteToVendorUseCase,
 } from "@/domain/quotes/use-cases/send-quote-to-vendor";
 
 // Constants for test data
@@ -22,8 +23,15 @@ const TEST_USER_ID = "user-456";
 const TEST_OTHER_USER_ID = "user-789";
 const TEST_PHONE = "+573001234567";
 const TEST_EMAIL = "test@example.com";
-const TEST_TOTAL = 1500000;
+const TEST_TOTAL = 1_500_000;
 const TEST_CURRENCY = "COP";
+
+// Time-related constants for test fixtures
+const DAYS_VALID_UNTIL_QUOTE = 7;
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const TEST_VALID_UNTIL = new Date(
+  Date.now() + DAYS_VALID_UNTIL_QUOTE * MS_PER_DAY
+);
 
 // Mock de quote válida
 function createMockQuote(overrides = {}) {
@@ -36,14 +44,16 @@ function createMockQuote(overrides = {}) {
     currency: TEST_CURRENCY,
     contactPhone: null,
     createdAt: new Date(),
-    validUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    validUntil: new Date(TEST_VALID_UNTIL.getTime()),
     itemCount: 3,
     ...overrides,
   };
 }
 
 // Input válido base
-function createValidInput(overrides: Partial<SendQuoteToVendorInput> = {}): SendQuoteToVendorInput {
+function createValidInput(
+  overrides: Partial<SendQuoteToVendorInput> = {}
+): SendQuoteToVendorInput {
   return {
     quoteId: TEST_QUOTE_ID,
     userId: TEST_USER_ID,
@@ -54,7 +64,9 @@ function createValidInput(overrides: Partial<SendQuoteToVendorInput> = {}): Send
 }
 
 // Dependencies mock factory
-function createMockDeps(overrides: Partial<SendQuoteToVendorDeps> = {}): SendQuoteToVendorDeps {
+function createMockDeps(
+  overrides: Partial<SendQuoteToVendorDeps> = {}
+): SendQuoteToVendorDeps {
   return {
     findQuoteWithItemCount: vi.fn().mockResolvedValue(createMockQuote()),
     updateQuoteToSent: vi.fn().mockResolvedValue({
@@ -114,9 +126,11 @@ describe("SendQuoteToVendorUseCase", () => {
       const sentDate = new Date("2025-01-05");
       const input = createValidInput();
       const deps = createMockDeps({
-        findQuoteWithItemCount: vi.fn().mockResolvedValue(
-          createMockQuote({ status: "sent", sentAt: sentDate })
-        ),
+        findQuoteWithItemCount: vi
+          .fn()
+          .mockResolvedValue(
+            createMockQuote({ status: "sent", sentAt: sentDate })
+          ),
       });
 
       await expect(sendQuoteToVendorUseCase(input, deps)).rejects.toThrow(
@@ -127,9 +141,9 @@ describe("SendQuoteToVendorUseCase", () => {
     it("should throw QuoteAlreadySentError when quote is canceled", async () => {
       const input = createValidInput();
       const deps = createMockDeps({
-        findQuoteWithItemCount: vi.fn().mockResolvedValue(
-          createMockQuote({ status: "canceled" })
-        ),
+        findQuoteWithItemCount: vi
+          .fn()
+          .mockResolvedValue(createMockQuote({ status: "canceled" })),
       });
 
       await expect(sendQuoteToVendorUseCase(input, deps)).rejects.toThrow(
@@ -142,9 +156,9 @@ describe("SendQuoteToVendorUseCase", () => {
     it("should throw QuoteEmptyError when quote has no items", async () => {
       const input = createValidInput();
       const deps = createMockDeps({
-        findQuoteWithItemCount: vi.fn().mockResolvedValue(
-          createMockQuote({ itemCount: 0 })
-        ),
+        findQuoteWithItemCount: vi
+          .fn()
+          .mockResolvedValue(createMockQuote({ itemCount: 0 })),
       });
 
       await expect(sendQuoteToVendorUseCase(input, deps)).rejects.toThrow(
@@ -158,9 +172,9 @@ describe("SendQuoteToVendorUseCase", () => {
     it("should succeed when quote has at least one item", async () => {
       const input = createValidInput();
       const deps = createMockDeps({
-        findQuoteWithItemCount: vi.fn().mockResolvedValue(
-          createMockQuote({ itemCount: 1 })
-        ),
+        findQuoteWithItemCount: vi
+          .fn()
+          .mockResolvedValue(createMockQuote({ itemCount: 1 })),
       });
 
       const result = await sendQuoteToVendorUseCase(input, deps);

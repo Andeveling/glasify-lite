@@ -65,11 +65,11 @@ export const CharacteristicFieldItem = memo(
         <div className="flex items-center justify-between">
           <h4 className="font-medium text-sm">Característica #{index + 1}</h4>
           <Button
+            disabled={isPending}
             onClick={() => onRemove(index)}
             size="sm"
             type="button"
             variant="ghost"
-            disabled={isPending}
           >
             <Trash2 className="h-4 w-4 text-destructive" />
           </Button>
@@ -135,10 +135,10 @@ export const CharacteristicFieldItem = memo(
                 <FormLabel>Valor (opcional)</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Ej: 6.38mm, 4+4mm, etc."
                     {...field}
-                    value={field.value ?? ""}
                     disabled={isPending}
+                    placeholder="Ej: 6.38mm, 4+4mm, etc."
+                    value={field.value ?? ""}
                   />
                 </FormControl>
                 <FormDescription>
@@ -159,10 +159,10 @@ export const CharacteristicFieldItem = memo(
               <FormLabel>Certificación (opcional)</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Ej: EN 12150, EN 14449, etc."
                   {...field}
-                  value={field.value ?? ""}
                   disabled={isPending}
+                  placeholder="Ej: EN 12150, EN 14449, etc."
+                  value={field.value ?? ""}
                 />
               </FormControl>
               <FormDescription>
@@ -183,10 +183,10 @@ export const CharacteristicFieldItem = memo(
               <FormControl>
                 <Textarea
                   className="resize-none"
-                  placeholder="Notas adicionales sobre esta característica..."
                   {...field}
-                  value={field.value ?? ""}
                   disabled={isPending}
+                  placeholder="Notas adicionales sobre esta característica..."
+                  value={field.value ?? ""}
                 />
               </FormControl>
               <FormMessage />

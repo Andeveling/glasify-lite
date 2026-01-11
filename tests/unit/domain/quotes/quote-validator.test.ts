@@ -5,6 +5,7 @@
  * Solo validan lógica de negocio pura.
  */
 
+import type { Model, QuoteStatus } from "@prisma/client";
 import { describe, expect, it } from "vitest";
 import {
   type ValidationError,
@@ -15,7 +16,6 @@ import {
   validateQuantity,
   validateQuoteStatus,
 } from "@/domain/quotes/services/quote-validator.service";
-import type { Model, QuoteStatus } from "@prisma/client";
 
 describe("QuoteValidatorService", () => {
   describe("validateGlassTypeCompatibility", () => {

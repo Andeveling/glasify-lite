@@ -297,7 +297,9 @@ export const createGlassTypeSchema = baseGlassTypeSchema.extend({
     .default([])
     .refine(
       (solutions) => {
-        if (!solutions) return true;
+        if (!solutions) {
+          return true;
+        }
         const primaryCount = solutions.filter((s) => s.isPrimary).length;
         return primaryCount <= 1;
       },
@@ -390,7 +392,6 @@ export type ListGlassTypesInput = z.infer<typeof listGlassTypesSchema>;
 export const listGlassTypesOutputSchema = z.object({
   items: z.array(
     z.object({
-      // biome-ignore lint/style/useNamingConvention: Prisma generated field
       _count: z.object({
         characteristics: z.number(),
         quoteItems: z.number(),
@@ -439,7 +440,6 @@ export type ListGlassTypesOutput = z.infer<typeof listGlassTypesOutputSchema>;
  * Includes full relations (solutions, characteristics)
  */
 export const getGlassTypeByIdOutputSchema = z.object({
-  // biome-ignore lint/style/useNamingConvention: Prisma generated field
   _count: z.object({
     characteristics: z.number(),
     quoteItems: z.number(),

@@ -117,11 +117,11 @@ export function CharacteristicSelector() {
 
       {fields.map((field, index) => (
         <CharacteristicFieldItem
-          key={field.id}
+          characteristics={characteristics}
           fieldId={field.id}
           index={index}
-          characteristics={characteristics}
           isLoading={isLoading}
+          key={field.id}
           onRemove={handleRemove}
         />
       ))}

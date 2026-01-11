@@ -122,6 +122,77 @@ function buildOrderByClause(
 }
 
 /**
+ * Helper: Parse isActive filter value to boolean or undefined
+ */
+function parseIsActiveFilter(isActive?: string): boolean | undefined {
+  return isActive === "active" ? true : undefined;
+}
+
+/**
+ * Helper: Validate solutions for update/create operations
+ */
+async function validateSolutions(
+  db: typeof import("@/server/db").db,
+  solutions: Array<{ solutionId: string }> | undefined
+): Promise<void> {
+  if (!solutions || solutions.length === 0) {
+    return;
+  }
+
+  const solutionIds = solutions.map((s) => s.solutionId);
+  const foundSolutions = await db.glassSolution.findMany({
+    where: { id: { in: solutionIds } },
+  });
+
+  if (foundSolutions.length !== solutionIds.length) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Una o más soluciones no fueron encontradas",
+    });
+  }
+
+  const inactiveSolution = foundSolutions.find((s) => !s.isActive);
+  if (inactiveSolution) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: `La solución "${inactiveSolution.nameEs}" está inactiva`,
+    });
+  }
+}
+
+/**
+ * Helper: Validate characteristics for update/create operations
+ */
+async function validateCharacteristics(
+  db: typeof import("@/server/db").db,
+  characteristics: Array<{ characteristicId: string }> | undefined
+): Promise<void> {
+  if (!characteristics || characteristics.length === 0) {
+    return;
+  }
+
+  const characteristicIds = characteristics.map((c) => c.characteristicId);
+  const foundCharacteristics = await db.glassCharacteristic.findMany({
+    where: { id: { in: characteristicIds } },
+  });
+
+  if (foundCharacteristics.length !== characteristicIds.length) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Una o más características no fueron encontradas",
+    });
+  }
+
+  const inactiveCharacteristic = foundCharacteristics.find((c) => !c.isActive);
+  if (inactiveCharacteristic) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: `La característica "${inactiveCharacteristic.nameEs}" está inactiva`,
+    });
+  }
+}
+
+/**
  * Glass Type Router
  */
 export const glassTypeRouter = createTRPCRouter({
@@ -131,7 +202,6 @@ export const glassTypeRouter = createTRPCRouter({
    *
    * Creates a new glass type with solutions and characteristics
    */
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex CRUD with multiple validation steps required
   create: adminProcedure
     .input(createGlassTypeSchema)
     .mutation(async ({ ctx, input }) => {
@@ -148,54 +218,10 @@ export const glassTypeRouter = createTRPCRouter({
       }
 
       // Validate all solution IDs exist and are active
-      if (input.solutions.length > 0) {
-        const solutionIds = input.solutions.map((s) => s.solutionId);
-        const foundSolutions = await ctx.db.glassSolution.findMany({
-          where: { id: { in: solutionIds } },
-        });
-
-        if (foundSolutions.length !== solutionIds.length) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Una o más soluciones no fueron encontradas",
-          });
-        }
-
-        const inactiveSolution = foundSolutions.find((s) => !s.isActive);
-        if (inactiveSolution) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: `La solución "${inactiveSolution.nameEs}" está inactiva`,
-          });
-        }
-      }
+      await validateSolutions(ctx.db, input.solutions);
 
       // Validate all characteristic IDs exist and are active
-      if (input.characteristics.length > 0) {
-        const characteristicIds = input.characteristics.map(
-          (c) => c.characteristicId
-        );
-        const foundCharacteristics = await ctx.db.glassCharacteristic.findMany({
-          where: { id: { in: characteristicIds } },
-        });
-
-        if (foundCharacteristics.length !== characteristicIds.length) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Una o más características no fueron encontradas",
-          });
-        }
-
-        const inactiveCharacteristic = foundCharacteristics.find(
-          (c) => !c.isActive
-        );
-        if (inactiveCharacteristic) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: `La característica "${inactiveCharacteristic.nameEs}" está inactiva`,
-          });
-        }
-      }
+      await validateCharacteristics(ctx.db, input.characteristics);
 
       // Create glass type with nested creates
       const { solutions, characteristics, ...baseData } = input;
@@ -304,7 +330,6 @@ export const glassTypeRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const glassType = await ctx.db.glassType.findUnique({
         include: {
-          // biome-ignore lint/style/useNamingConvention: Prisma special _count field
           _count: {
             select: {
               characteristics: true,
@@ -397,11 +422,7 @@ export const glassTypeRouter = createTRPCRouter({
 
       const where = buildWhereClause({
         ...restFilters,
-        isActive: isActive
-          ? isActive === "all"
-            ? undefined
-            : isActive === "active"
-          : undefined,
+        isActive: parseIsActiveFilter(isActive),
       });
       const orderBy = buildOrderByClause(sortBy, sortOrder);
 
@@ -411,7 +432,6 @@ export const glassTypeRouter = createTRPCRouter({
       // Get paginated items with related data
       const items = await ctx.db.glassType.findMany({
         include: {
-          // biome-ignore lint/style/useNamingConvention: Prisma special _count field
           _count: {
             select: {
               characteristics: true,
@@ -472,7 +492,6 @@ export const glassTypeRouter = createTRPCRouter({
    * Updates glass type with optional solutions/characteristics replacement
    * Creates price history record if pricePerSqm changes
    */
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex CRUD with multiple validation steps required
   update: adminProcedure
     .input(updateGlassTypeSchema)
     .mutation(async ({ ctx, input }) => {
@@ -507,55 +526,10 @@ export const glassTypeRouter = createTRPCRouter({
       }
 
       // Validate solutions (if provided)
-      if (data.solutions && data.solutions.length > 0) {
-        const solutionIds = data.solutions.map((s) => s.solutionId);
-        const updatedSolutions = await ctx.db.glassSolution.findMany({
-          where: { id: { in: solutionIds } },
-        });
-
-        if (updatedSolutions.length !== solutionIds.length) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Una o más soluciones no fueron encontradas",
-          });
-        }
-
-        const inactiveSolution = updatedSolutions.find((s) => !s.isActive);
-        if (inactiveSolution) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: `La solución "${inactiveSolution.nameEs}" está inactiva`,
-          });
-        }
-      }
+      await validateSolutions(ctx.db, data.solutions);
 
       // Validate characteristics (if provided)
-      if (data.characteristics && data.characteristics.length > 0) {
-        const characteristicIds = data.characteristics.map(
-          (c) => c.characteristicId
-        );
-        const updatedCharacteristics =
-          await ctx.db.glassCharacteristic.findMany({
-            where: { id: { in: characteristicIds } },
-          });
-
-        if (updatedCharacteristics.length !== characteristicIds.length) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Una o más características no fueron encontradas",
-          });
-        }
-
-        const inactiveCharacteristic = updatedCharacteristics.find(
-          (c) => !c.isActive
-        );
-        if (inactiveCharacteristic) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: `La característica "${inactiveCharacteristic.nameEs}" está inactiva`,
-          });
-        }
-      }
+      await validateCharacteristics(ctx.db, data.characteristics);
 
       // Extract solutions and characteristics from data
       const { solutions, characteristics, ...baseData } = data;

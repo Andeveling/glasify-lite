@@ -10,13 +10,13 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { CART_ITEM_IMAGE_SIZE } from "../_constants/cart-item.constants";
 
-interface CartSkeletonProps {
+type CartSkeletonProps = {
   /**
    * Number of skeleton items to display
    * @default 3
    */
   count?: number;
-}
+};
 
 /**
  * Cart item skeleton loader

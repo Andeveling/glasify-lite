@@ -76,7 +76,7 @@ export default async function ModelColorsPage({ params }: PageProps) {
           surchargePercentage: safeDecimalToNumber(mc.surchargePercentage),
           // Add isActive property if not present
           isActive: true,
-          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+          // biome-ignore lint/suspicious/noExplicitAny: Type coercion is required for serialization helper here
         }) as any
     );
 

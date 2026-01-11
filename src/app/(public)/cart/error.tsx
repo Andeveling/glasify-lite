@@ -9,13 +9,12 @@
  * @module app/(public)/cart/error
  */
 
-import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
-interface CartErrorProps {
+type CartErrorProps = {
   error: Error & { digest?: string };
   reset: () => void;
-}
+};
 
 /**
  * Cart page error boundary
@@ -24,12 +23,6 @@ interface CartErrorProps {
  * Shows Spanish error message and retry button.
  */
 export default function CartError({ error, reset }: CartErrorProps) {
-  useEffect(() => {
-    // Log error to console in development
-    // Note: Winston logger cannot be used here (client-side component)
-    console.error("Cart error:", error);
-  }, [error]);
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-6">

@@ -118,7 +118,8 @@ test.describe("Cart - Price Recalculation Timing", () => {
 
     // Verify modal price unchanged
     const updatedModalPrice = await page
-      .locator('role=dialog[name="Editar Item"]').getByText(PRICE_TEXT_REGEX)')
+      .locator('role=dialog[name="Editar Item"]')
+      .getByText(PRICE_TEXT_REGEX)
       .textContent();
 
     expect(updatedModalPrice).toBe(modalPrice);
@@ -157,7 +158,8 @@ test.describe("Cart - Price Recalculation Timing", () => {
 
     // Get modal price
     const modalPrice = await page
-      .locator('role=dialog[name="Editar Item"]').getByText(PRICE_TEXT_REGEX)')
+      .locator('role=dialog[name="Editar Item"]')
+      .getByText(PRICE_TEXT_REGEX)
       .textContent();
 
     // Open glass type dropdown

@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { unstable_cache } from "next/cache";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { db } from "@/server/db";
 
@@ -43,16 +43,15 @@ type SocialMediaLinksProps = {
 
 // Cached database query for tenant social media config
 const getTenantSocialMedia = unstable_cache(
-  async () => {
-    return db.tenantConfig.findUnique({
+  async () =>
+    db.tenantConfig.findUnique({
       where: { id: "1" },
       select: {
         facebookUrl: true,
         instagramUrl: true,
         linkedinUrl: true,
       },
-    });
-  },
+    }),
   ["tenant-social-media"],
   {
     revalidate: 3600, // Cache for 1 hour

@@ -72,6 +72,18 @@ function buildWhereClause(input: {
 }
 
 /**
+ * Helper: Convert isActive filter string to boolean for Prisma
+ */
+function parseIsActiveFilter(
+  isActive?: "all" | "active" | "inactive"
+): boolean | null {
+  if (!isActive || isActive === "all") {
+    return null;
+  }
+  return isActive === "active";
+}
+
+/**
  * Helper: Build orderBy clause for list query
  */
 function buildOrderByClause(
@@ -242,11 +254,7 @@ export const glassSupplierRouter = createTRPCRouter({
 
       const where = buildWhereClause({
         ...restFilters,
-        isActive: isActive
-          ? isActive === "all"
-            ? undefined
-            : isActive === "active"
-          : undefined,
+        isActive: parseIsActiveFilter(isActive) ?? undefined,
       });
       const orderBy = buildOrderByClause(sortBy, sortOrder);
 

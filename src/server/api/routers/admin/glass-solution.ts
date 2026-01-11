@@ -30,6 +30,18 @@ function generateSlugFromKey(key: string): string {
 }
 
 /**
+ * Helper: Convert isActive filter string to boolean for Prisma
+ */
+function parseIsActiveFilter(
+  isActive?: "all" | "active" | "inactive"
+): boolean | null {
+  if (!isActive || isActive === "all") {
+    return null;
+  }
+  return isActive === "active";
+}
+
+/**
  * Helper: Build where clause for list query
  */
 function buildWhereClause(input: {
@@ -198,7 +210,6 @@ export const glassSolutionRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const glassSolution = await ctx.db.glassSolution.findUnique({
         include: {
-          // biome-ignore lint/style/useNamingConvention: Prisma generated field
           _count: {
             select: {
               glassTypes: true,
@@ -238,11 +249,7 @@ export const glassSolutionRouter = createTRPCRouter({
 
       const where = buildWhereClause({
         ...restFilters,
-        isActive: isActive
-          ? isActive === "all"
-            ? undefined
-            : isActive === "active"
-          : undefined,
+        isActive: parseIsActiveFilter(isActive) ?? undefined,
       });
       const orderBy = buildOrderByClause(sortBy, sortOrder);
 
@@ -252,7 +259,6 @@ export const glassSolutionRouter = createTRPCRouter({
       // Get paginated items with glass type count
       const items = await ctx.db.glassSolution.findMany({
         include: {
-          // biome-ignore lint/style/useNamingConvention: Prisma generated field
           _count: {
             select: {
               glassTypes: true,

@@ -101,6 +101,7 @@ export function WindowDiagram({
   background = "transparent",
 }: WindowDiagramProps) {
   const diagram = getWindowDiagram(type);
+  const dimensions = getSizeDimensions(size);
 
   return (
     <div
@@ -113,13 +114,15 @@ export function WindowDiagram({
       )}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
+      {/* biome-ignore lint/performance/noImgElement: SVG diagrams loaded dynamically, Next Image not suitable */}
       <img
         alt={alt ?? diagram.altText}
         className="h-full w-full object-contain p-1"
         decoding="async"
+        height={dimensions.height}
         loading="lazy"
         src={diagram.svgPath}
-        {...getSizeDimensions(size)}
+        width={dimensions.width}
       />
     </div>
   );
