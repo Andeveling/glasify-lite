@@ -8,7 +8,7 @@ import type {
   GlassTypeOutput,
   ModelDetailOutput,
   ServiceOutput,
-} from "@/server/api/routers/catalog";
+} from "@/server/api/routers/catalog/catalog.schemas";
 
 export type PriceBreakdownItem = {
   amount: number;

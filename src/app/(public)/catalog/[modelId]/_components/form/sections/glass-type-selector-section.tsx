@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/form";
 import { RadioGroup } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { GlassTypeOutput } from "@/server/api/routers/catalog";
+import type { GlassTypeOutput } from "@/server/api/routers/catalog/catalog.schemas";
 import { GlassTypeCardSimple } from "./_components/glass-type-card-simple";
 import type { GlassTab } from "./_hooks/use-glass-types-by-tab";
 import { useGlassTypesByTab } from "./_hooks/use-glass-types-by-tab";

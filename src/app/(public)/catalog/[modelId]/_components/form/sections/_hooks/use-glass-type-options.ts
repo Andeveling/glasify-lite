@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import type {
   GlassTypeOutput,
   PerformanceRating,
-} from "@/server/api/routers/catalog";
+} from "@/server/api/routers/catalog/catalog.schemas";
 import {
   buildGlassFeatures,
   calculatePerformanceRatings,

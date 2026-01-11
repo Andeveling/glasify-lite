@@ -24,7 +24,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
-import type { GlassSolutionOutput } from "@/server/api/routers/catalog";
+import type { GlassSolutionOutput } from "@/server/api/routers/catalog/catalog.schemas";
 import { useSolutionSelector } from "../../../_hooks/use-solution-selector";
 
 /**

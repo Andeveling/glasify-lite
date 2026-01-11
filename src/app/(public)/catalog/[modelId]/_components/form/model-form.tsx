@@ -14,7 +14,7 @@ import type {
   GlassTypeOutput,
   ModelDetailOutput,
   ServiceOutput,
-} from "@/server/api/routers/catalog";
+} from "@/server/api/routers/catalog/catalog.schemas";
 import { useCartOperations } from "../../_hooks/use-cart-operations";
 import { useColorSelection } from "../../_hooks/use-color-selection";
 import { useGlassArea } from "../../_hooks/use-glass-area";
