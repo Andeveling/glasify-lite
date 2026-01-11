@@ -7,7 +7,7 @@
  * need to use are documented accordingly near the end.
  */
 
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/generated/client";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { headers } from "next/headers";
 import superjson from "superjson";

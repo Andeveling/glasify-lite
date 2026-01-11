@@ -5,6 +5,15 @@
  * formulas, and data transformation.
  */
 
+// ASCII code for letter 'A' (used for Excel column letter conversion)
+const ASCII_CODE_A = 65;
+
+// Number of letters in the alphabet
+const ALPHABET_LENGTH = 26;
+
+// Excel column width factor (characters to width units)
+const EXCEL_CHAR_WIDTH_FACTOR = 1.2;
+
 /**
  * Format number as Colombian Peso currency for Excel
  */
@@ -67,8 +76,9 @@ export function getColumnLetter(index: number): string {
   let idx = index;
 
   while (idx >= 0) {
-    column = String.fromCharCode(65 + (idx % 26)) + column;
-    idx = Math.floor(idx / 26) - 1;
+    column =
+      String.fromCharCode(ASCII_CODE_A + (idx % ALPHABET_LENGTH)) + column;
+    idx = Math.floor(idx / ALPHABET_LENGTH) - 1;
   }
 
   return column;
@@ -118,7 +128,7 @@ export function calculateColumnWidth(
   maxWidth = 50
 ): number {
   // Approximate character width (1 char ≈ 1.2 width units in Excel)
-  const approximateWidth = content.length * 1.2;
+  const approximateWidth = content.length * EXCEL_CHAR_WIDTH_FACTOR;
   return Math.max(minWidth, Math.min(approximateWidth, maxWidth));
 }
 

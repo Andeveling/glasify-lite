@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/performance/noNamespaceImport: <explanation> */
+// biome-ignore-all lint/performance/noNamespaceImport: Shadcn UI generated component
 "use client";
 
 import { CheckIcon, ChevronsUpDown } from "lucide-react";

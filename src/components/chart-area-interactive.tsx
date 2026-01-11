@@ -28,6 +28,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 export const description = "An interactive area chart";
 
+// Time range constants in days
+const DAYS_IN_WEEK = 7;
+const DAYS_IN_MONTH = 30;
+const DAYS_IN_QUARTER = 90;
+
 const chartData = [
   { date: "2024-04-01", desktop: 222, mobile: 150 },
   { date: "2024-04-02", desktop: 97, mobile: 180 },
@@ -149,11 +154,11 @@ export function ChartAreaInteractive() {
   const filteredData = chartData.filter((item) => {
     const date = new Date(item.date);
     const referenceDate = new Date("2024-06-30");
-    let daysToSubtract = 90;
+    let daysToSubtract = DAYS_IN_QUARTER;
     if (timeRange === "30d") {
-      daysToSubtract = 30;
+      daysToSubtract = DAYS_IN_MONTH;
     } else if (timeRange === "7d") {
-      daysToSubtract = 7;
+      daysToSubtract = DAYS_IN_WEEK;
     }
     const startDate = new Date(referenceDate);
     startDate.setDate(startDate.getDate() - daysToSubtract);

@@ -26,6 +26,9 @@ import {
 } from "@/lib/validations/model-color";
 import { adminProcedure, createTRPCRouter } from "@/server/api/trpc";
 
+// Business constants
+const MAX_SURCHARGE_PERCENTAGE = 100;
+
 /**
  * ModelColors Router
  */
@@ -438,7 +441,10 @@ export const modelColorsRouter = createTRPCRouter({
         assignments: z.array(
           z.object({
             colorId: z.string().cuid(),
-            surchargePercentage: z.number().min(0).max(100),
+            surchargePercentage: z
+              .number()
+              .min(0)
+              .max(MAX_SURCHARGE_PERCENTAGE),
           })
         ),
       })

@@ -144,24 +144,12 @@ export function validateCartLimit(currentItemCount: number): {
 }
 
 /**
- * Validate cart item structure
- *
- * Ensures item has all required fields and valid values
- *
- * @param item - Cart item to validate
- * @returns Validation result with error message if invalid
+ * Validate required string fields in cart item
  */
-export function validateCartItem(item: unknown): {
+function validateRequiredStringFields(cartItem: Partial<CartItem>): {
   valid: boolean;
   error?: string;
 } {
-  if (!item || typeof item !== "object") {
-    return { error: "Item inválido", valid: false };
-  }
-
-  const cartItem = item as Partial<CartItem>;
-
-  // Required string fields
   const requiredStringFields: Array<keyof CartItem> = [
     "id",
     "modelId",
@@ -178,7 +166,16 @@ export function validateCartItem(item: unknown): {
     }
   }
 
-  // Required number fields
+  return { valid: true };
+}
+
+/**
+ * Validate required number fields in cart item
+ */
+function validateRequiredNumberFields(cartItem: Partial<CartItem>): {
+  valid: boolean;
+  error?: string;
+} {
   const requiredNumberFields: Array<keyof CartItem> = [
     "widthMm",
     "heightMm",
@@ -193,12 +190,16 @@ export function validateCartItem(item: unknown): {
     }
   }
 
-  // Validate additionalServiceIds array
-  if (!Array.isArray(cartItem.additionalServiceIds)) {
-    return { error: "additionalServiceIds debe ser un array", valid: false };
-  }
+  return { valid: true };
+}
 
-  // Validate dimensions object
+/**
+ * Validate cart item dimensions
+ */
+function validateDimensions(cartItem: Partial<CartItem>): {
+  valid: boolean;
+  error?: string;
+} {
   if (!cartItem.dimensions || typeof cartItem.dimensions !== "object") {
     return { error: "Dimensiones requeridas", valid: false };
   }
@@ -217,13 +218,16 @@ export function validateCartItem(item: unknown): {
     return { error: "El alto debe ser positivo", valid: false };
   }
 
-  // Validate quantity
-  const quantityValidation = validateQuantity(cartItem.quantity ?? 0);
-  if (!quantityValidation.valid) {
-    return quantityValidation;
-  }
+  return { valid: true };
+}
 
-  // Validate prices
+/**
+ * Validate cart item prices
+ */
+function validatePrices(cartItem: Partial<CartItem>): {
+  valid: boolean;
+  error?: string;
+} {
   if (cartItem.unitPrice !== undefined && cartItem.unitPrice < 0) {
     return { error: "El precio unitario no puede ser negativo", valid: false };
   }
@@ -249,6 +253,62 @@ export function validateCartItem(item: unknown): {
         valid: false,
       };
     }
+  }
+
+  return { valid: true };
+}
+
+/**
+ * Validate cart item structure
+ *
+ * Ensures item has all required fields and valid values
+ *
+ * @param item - Cart item to validate
+ * @returns Validation result with error message if invalid
+ */
+export function validateCartItem(item: unknown): {
+  valid: boolean;
+  error?: string;
+} {
+  if (!item || typeof item !== "object") {
+    return { error: "Item inválido", valid: false };
+  }
+
+  const cartItem = item as Partial<CartItem>;
+
+  // Validate required string fields
+  const stringValidation = validateRequiredStringFields(cartItem);
+  if (!stringValidation.valid) {
+    return stringValidation;
+  }
+
+  // Validate required number fields
+  const numberValidation = validateRequiredNumberFields(cartItem);
+  if (!numberValidation.valid) {
+    return numberValidation;
+  }
+
+  // Validate additionalServiceIds array
+  if (!Array.isArray(cartItem.additionalServiceIds)) {
+    return { error: "additionalServiceIds debe ser un array", valid: false };
+  }
+
+  // Validate dimensions
+  const dimensionsValidation = validateDimensions(cartItem);
+  if (!dimensionsValidation.valid) {
+    return dimensionsValidation;
+  }
+
+  // Validate quantity
+  const quantityValidation = validateQuantity(cartItem.quantity ?? 0);
+  if (!quantityValidation.valid) {
+    return quantityValidation;
+  }
+
+  // Validate prices
+  const pricesValidation = validatePrices(cartItem);
+  if (!pricesValidation.valid) {
+    return pricesValidation;
   }
 
   return { valid: true };

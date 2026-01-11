@@ -25,6 +25,12 @@ import {
 import type { GalleryError, GalleryImage } from "./types";
 
 /**
+ * Regular expression to match file extensions
+ * Matches: .svg, .png, .jpg, etc.
+ */
+const FILE_EXTENSION_REGEX = /\.[^/.]+$/;
+
+/**
  * Convert kebab-case filename to Title Case display name
  *
  * Examples:
@@ -43,7 +49,7 @@ import type { GalleryError, GalleryImage } from "./types";
  */
 function formatImageName(filename: string): string {
   // Remove extension (e.g., "practicable.svg" → "practicable")
-  const nameWithoutExt = filename.replace(/\.[^/.]+$/, "");
+  const nameWithoutExt = filename.replace(FILE_EXTENSION_REGEX, "");
 
   // Split by hyphens and capitalize each word
   return nameWithoutExt

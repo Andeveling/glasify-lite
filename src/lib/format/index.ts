@@ -9,7 +9,7 @@
  */
 
 import { format as tempoFormat } from "@formkit/tempo";
-import type { TenantConfig } from "@prisma/client";
+import type { TenantConfig } from "@prisma/generated/client";
 
 /**
  * Formatting context from TenantConfig

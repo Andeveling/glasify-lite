@@ -1,4 +1,4 @@
-import type { Quote } from "@prisma/client";
+import type { Quote } from "@prisma/generated/client";
 import logger from "@/lib/logger";
 import { getTenantConfig } from "../utils/tenant";
 

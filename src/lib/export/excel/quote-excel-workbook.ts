@@ -26,6 +26,9 @@ import {
   sanitizeExcelText,
 } from "./excel-utils";
 
+// Quote ID display length (first N characters)
+const QUOTE_ID_DISPLAY_LENGTH = 8;
+
 /**
  * Add tax row to summary sheet if tax is configured
  *
@@ -128,7 +131,7 @@ function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
 
   // Quote details
   const quoteDetails = [
-    ["Cotización #:", data.quote.id.slice(0, 8)],
+    ["Cotización #:", data.quote.id.slice(0, QUOTE_ID_DISPLAY_LENGTH)],
     ["Proyecto:", sanitizeExcelText(data.quote.projectName)],
     ["Estado:", data.quote.status === "draft" ? "Borrador" : data.quote.status],
     ["Fecha de creación:", formatDateForExcel(data.quote.createdAt)],

@@ -145,14 +145,14 @@ export function SolutionSelector() {
 
       {fields.map((solutionField, index) => (
         <SolutionFieldItem
-          key={solutionField.id}
           fieldId={solutionField.id}
           index={index}
-          solutions={solutions}
-          performanceLabels={PERFORMANCE_LABELS}
           isLoading={isLoading}
+          key={solutionField.id}
           onRemove={handleRemove}
           onSetPrimary={handleSetPrimary}
+          performanceLabels={PERFORMANCE_LABELS}
+          solutions={solutions}
         />
       ))}
     </div>

@@ -8,7 +8,7 @@
  * Includes referential integrity check for deletions
  */
 
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/generated/client";
 import { TRPCError } from "@trpc/server";
 import logger from "@/lib/logger";
 import {
@@ -69,6 +69,18 @@ function buildWhereClause(input: {
   }
 
   return where;
+}
+
+/**
+ * Helper: Convert isActive filter string to boolean for Prisma
+ */
+function parseIsActiveFilter(
+  isActive?: "all" | "active" | "inactive"
+): boolean | null {
+  if (!isActive || isActive === "all") {
+    return null;
+  }
+  return isActive === "active";
 }
 
 /**
@@ -242,11 +254,7 @@ export const glassSupplierRouter = createTRPCRouter({
 
       const where = buildWhereClause({
         ...restFilters,
-        isActive: isActive
-          ? isActive === "all"
-            ? undefined
-            : isActive === "active"
-          : undefined,
+        isActive: parseIsActiveFilter(isActive) ?? undefined,
       });
       const orderBy = buildOrderByClause(sortBy, sortOrder);
 

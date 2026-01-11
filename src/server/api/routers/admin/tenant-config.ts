@@ -170,7 +170,7 @@ export const tenantConfigRouter = createTRPCRouter({
    */
   uploadLogo: adminProcedure
     .input(z.object({ file: z.instanceof(File) }))
-    .mutation(async ({ input: _input }) => {
+    .mutation(({ input: _input }) => {
       // TODO: Implement when logoUrl field is added to TenantConfig schema
       throw new Error("Logo upload not yet implemented in schema");
     }),

@@ -167,17 +167,6 @@ export function useCart(): UseCartReturn {
         widthMm: input.widthMm,
       };
 
-      // 🔍 DEBUG: Log item being added with services
-      console.log("🔍 [Cart] Adding item to cart:", {
-        itemId,
-        name: itemName,
-        additionalServiceIds: newItem.additionalServiceIds,
-        servicesCount: newItem.additionalServiceIds.length,
-        colorId: newItem.colorId,
-        colorSurchargePercentage: newItem.colorSurchargePercentage,
-        unitPrice: input.unitPrice,
-      });
-
       // Update state
       const updatedItems = [...items, newItem];
       setItems(updatedItems);

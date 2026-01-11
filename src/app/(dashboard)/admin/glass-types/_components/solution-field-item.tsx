@@ -68,11 +68,11 @@ export const SolutionFieldItem = memo(function SolutionFieldItemComponent({
       <div className="flex items-center justify-between">
         <h4 className="font-medium text-sm">Solución #{index + 1}</h4>
         <Button
+          disabled={isPending}
           onClick={() => onRemove(index)}
           size="sm"
           type="button"
           variant="ghost"
-          disabled={isPending}
         >
           <Trash2 className="h-4 w-4 text-destructive" />
         </Button>
@@ -195,10 +195,10 @@ export const SolutionFieldItem = memo(function SolutionFieldItemComponent({
             <FormControl>
               <Textarea
                 className="resize-none"
-                placeholder="Notas adicionales sobre esta solución..."
                 {...field}
-                value={field.value ?? ""}
                 disabled={isPending}
+                placeholder="Notas adicionales sobre esta solución..."
+                value={field.value ?? ""}
               />
             </FormControl>
             <FormMessage />

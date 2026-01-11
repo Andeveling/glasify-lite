@@ -4,7 +4,7 @@
  * @see /plan/refactor-manufacturer-to-tenant-config-1.md
  */
 
-import { MaterialType } from "@prisma/client";
+import { MaterialType } from "@prisma/generated/client";
 import { z } from "zod";
 
 // Validation constants

@@ -9,7 +9,7 @@ import type {
   GlassTypeOutput,
   ModelDetailOutput,
   ServiceOutput,
-} from "@/server/api/routers/catalog";
+} from "@/server/api/routers/catalog/catalog.schemas";
 import {
   buildPriceBreakdown,
   type PriceBreakdownItem,

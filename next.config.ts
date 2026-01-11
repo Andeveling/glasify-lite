@@ -62,6 +62,13 @@ const config: NextConfig = {
     rules: {
       "*.svg": ["@svgr/webpack"],
     },
+    resolveAlias: {
+      // Use browser-safe Prisma client for client-side code
+      "@prisma/generated/client": {
+        browser: "./prisma/generated/client/browser.ts",
+        default: "./prisma/generated/client/client.ts",
+      },
+    },
   },
 
   // Webpack optimizations
@@ -78,6 +85,15 @@ const config: NextConfig = {
         },
       };
     }
+
+    // Use browser-safe Prisma client for client-side bundles
+    if (!isServer) {
+      webpackConfig.resolve.alias = {
+        ...webpackConfig.resolve.alias,
+        "@prisma/generated/client$": "./prisma/generated/client/browser.ts",
+      };
+    }
+
     return webpackConfig;
   },
 };

@@ -14,6 +14,15 @@
  */
 
 import { zodResolver } from "@hookform/resolvers/zod";
+
+// Time constants
+const SECONDS_PER_MINUTE = 60;
+const MS_PER_SECOND = 1000;
+const MS_PER_MINUTE = SECONDS_PER_MINUTE * MS_PER_SECOND;
+const STALE_TIME_MINUTES = 5; // minutes to keep glass types cached
+const STALE_TIME_MS = STALE_TIME_MINUTES * MS_PER_MINUTE; // 5 minutes
+const FOCUS_DELAY_MS = 100; // delay used when focusing inputs after modal open
+
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -77,11 +86,11 @@ type CartItemEditFormData = {
   quantity: number;
 };
 
-interface CartItemEditModalProps {
+type CartItemEditModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   item: CartItemWithRelations;
-}
+};
 
 /**
  * Cart item edit modal component
@@ -111,7 +120,7 @@ export function CartItemEditModal({
   const { data: availableGlassTypes, isLoading: isLoadingGlassTypes } =
     api.catalog["get-available-glass-types"].useQuery(
       { modelId: item.model.id },
-      { enabled: open, staleTime: 5 * 60 * 1000 }
+      { enabled: open, staleTime: STALE_TIME_MS }
     );
 
   // Initialize form
@@ -130,15 +139,19 @@ export function CartItemEditModal({
 
       setTimeout(() => {
         firstInputRef.current?.focus();
-      }, 100);
+      }, FOCUS_DELAY_MS);
     }
   }, [open, item, form]);
 
   // Sync local dimension state with form
   useEffect(() => {
     const subscription = form.watch((value) => {
-      if (value.widthMm) setLocalWidth(value.widthMm);
-      if (value.heightMm) setLocalHeight(value.heightMm);
+      if (value.widthMm) {
+        setLocalWidth(value.widthMm);
+      }
+      if (value.heightMm) {
+        setLocalHeight(value.heightMm);
+      }
     });
     return () => subscription.unsubscribe();
   }, [form]);
@@ -172,7 +185,9 @@ export function CartItemEditModal({
   return (
     <Dialog
       onOpenChange={(newOpen) => {
-        if (isPending && !newOpen) return;
+        if (isPending && !newOpen) {
+          return;
+        }
         onOpenChange(newOpen);
       }}
       open={open}

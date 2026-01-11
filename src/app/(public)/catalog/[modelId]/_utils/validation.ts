@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { ModelDetailOutput } from "@/server/api/routers/catalog";
+import type { ModelDetailOutput } from "@/server/api/routers/catalog/catalog.schemas";
 
 const MAX_QUANTITY = 100;
 const MIN_QUANTITY = 1;

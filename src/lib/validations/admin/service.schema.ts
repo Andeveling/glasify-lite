@@ -8,7 +8,7 @@
  * Relations: quoteServices (One-to-Many)
  */
 
-import { ServiceType, ServiceUnit } from "@prisma/client";
+import { ServiceType, ServiceUnit } from "@prisma/generated/client";
 import { z } from "zod";
 import {
   paginationSchema,

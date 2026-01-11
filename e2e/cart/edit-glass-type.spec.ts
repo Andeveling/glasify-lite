@@ -12,6 +12,10 @@
 
 import { expect, test } from "@playwright/test";
 
+// Test constants
+const PRICE_FORMAT_REGEX = /\$[\d,]+\.\d{2}\/m²/;
+const WAIT_FOR_UPDATE_MS = 1000;
+
 test.describe("Cart - Edit Glass Type", () => {
   test.beforeEach(async ({ page }) => {
     // Setup: Navigate to cart page with items
@@ -73,7 +77,7 @@ test.describe("Cart - Edit Glass Type", () => {
 
     // Verify each option shows name and price
     for (const option of options) {
-      expect(option).toMatch(/\$[\d,]+\.\d{2}\/m²/); // Price format
+      expect(option).toMatch(PRICE_FORMAT_REGEX); // Price format
     }
   });
 
@@ -133,7 +137,7 @@ test.describe("Cart - Edit Glass Type", () => {
     });
 
     // Wait for price to update
-    await page.waitForTimeout(1000); // Allow for optimistic UI update
+    await page.waitForTimeout(WAIT_FOR_UPDATE_MS); // Allow for optimistic UI update
 
     // Get new price
     const newPrice = await page
@@ -255,7 +259,7 @@ test.describe("Cart - Edit Glass Type", () => {
     });
 
     // Wait for total to update
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(WAIT_FOR_UPDATE_MS);
 
     // Get new cart total
     const newTotal = await page

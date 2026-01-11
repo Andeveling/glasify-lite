@@ -8,7 +8,7 @@
  * Relations: profileSupplier (Many-to-One), costBreakdown (One-to-Many), priceHistory (One-to-Many)
  */
 
-import { ModelStatus } from "@prisma/client";
+import { ModelStatus } from "@prisma/generated/client";
 import { z } from "zod";
 import {
   optionalSpanishText,

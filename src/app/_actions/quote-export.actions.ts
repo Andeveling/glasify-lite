@@ -7,8 +7,8 @@
 
 "use server";
 
-import type { QuoteStatus } from "@prisma/client";
-import type { Decimal } from "@prisma/client/runtime/library";
+import type { QuoteStatus } from "@prisma/generated/client";
+import type { Decimal } from "decimal.js";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { writeQuoteExcel } from "@/lib/export/excel/quote-excel-workbook";

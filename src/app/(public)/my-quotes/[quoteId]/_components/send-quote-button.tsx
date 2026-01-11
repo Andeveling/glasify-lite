@@ -1,6 +1,6 @@
 "use client";
 
-import type { Quote } from "@prisma/client";
+import type { Quote } from "@prisma/generated/client";
 import { Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

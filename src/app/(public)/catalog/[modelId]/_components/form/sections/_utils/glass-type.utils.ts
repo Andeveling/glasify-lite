@@ -1,4 +1,4 @@
-import type { GlassTypeOutput } from "@/server/api/routers/catalog";
+import type { GlassTypeOutput } from "@/server/api/routers/catalog/catalog.schemas";
 
 /**
  * Glass Type Utilities

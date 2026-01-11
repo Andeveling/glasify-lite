@@ -11,7 +11,7 @@
 
 "use client";
 
-import type { QuoteStatus } from "@prisma/client";
+import type { QuoteStatus } from "@prisma/generated/client";
 import { FileText, Search, Send, XCircle } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";

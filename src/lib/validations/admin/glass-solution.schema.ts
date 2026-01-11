@@ -167,7 +167,6 @@ export type ListGlassSolutionsInput = z.infer<typeof listGlassSolutionsSchema>;
 export const listGlassSolutionsOutputSchema = z.object({
   items: z.array(
     z.object({
-      // biome-ignore lint/style/useNamingConvention: Prisma generated field
       _count: z.object({
         glassTypes: z.number(),
       }),
