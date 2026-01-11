@@ -6,12 +6,17 @@
  * @see /plan/refactor-manufacturer-to-tenant-config-1.md
  */
 
-import type { Prisma, PrismaClient, TenantConfig } from "@prisma/client";
-import type { DefaultArgs } from "@prisma/client/runtime/library";
+import type {
+  Prisma,
+  PrismaClient,
+  TenantConfig,
+} from "@prisma/generated/client";
 import { db } from "../db";
 
+// Simplified TransactionClient type for Prisma v7
+// Omits client-level methods, compatible with transaction clients
 type TransactionClient = Omit<
-  PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
+  PrismaClient,
   "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
 >;
 

@@ -18,6 +18,10 @@ export default defineConfig({
       "@views/dashboard": resolve(__dirname, "./src/app/(dashboard)"),
       "@views/quote": resolve(__dirname, "./src/app/(public)/quote"),
       "@domain/pricing": resolve(__dirname, "./src/domain/pricing"),
+      "@prisma/generated/client": resolve(
+        __dirname,
+        "./prisma/generated/client"
+      ),
     },
   },
   test: {

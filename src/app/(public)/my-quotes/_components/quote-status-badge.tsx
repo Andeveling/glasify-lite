@@ -9,7 +9,7 @@
 
 "use client";
 
-import type { Quote } from "@prisma/client";
+import type { Quote } from "@prisma/generated/client";
 import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,

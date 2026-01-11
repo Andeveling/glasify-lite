@@ -4,7 +4,7 @@
  * Implementa QuoteRepository usando Prisma como ORM.
  */
 
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@prisma/generated/client";
 import type {
   CreateQuoteInput,
   CreateQuoteItemInput,

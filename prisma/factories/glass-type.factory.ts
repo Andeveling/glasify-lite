@@ -13,8 +13,8 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import type { PrismaClient } from "@prisma/client";
 import { z } from "zod";
+import type { PrismaClient } from "./generated/client";
 import type {
   FactoryMetadata,
   FactoryOptions,

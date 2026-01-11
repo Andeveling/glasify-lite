@@ -10,7 +10,7 @@
  * Handles Many-to-Many relationships: solutions, characteristics
  */
 
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/generated/client";
 import { TRPCError } from "@trpc/server";
 import logger from "@/lib/logger";
 import {

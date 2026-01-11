@@ -12,7 +12,7 @@
  * totalCost = baseRate + (distanceKm * perKmRate)
  */
 
-import type { TenantConfig } from "@prisma/client";
+import type { TenantConfig } from "@prisma/generated/client";
 import {
   DISTANCE_PRECISION_DIVISOR,
   DISTANCE_PRECISION_MULTIPLIER,

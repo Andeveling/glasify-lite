@@ -19,7 +19,7 @@
 
 "use client";
 
-import type { MaterialType } from "@prisma/client";
+import type { MaterialType } from "@prisma/generated/client";
 import Link from "next/link";
 import {
   type FilterDefinition,

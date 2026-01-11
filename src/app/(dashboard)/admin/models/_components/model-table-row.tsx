@@ -7,7 +7,7 @@
 
 "use client";
 
-import type { MaterialType, ModelStatus } from "@prisma/client";
+import type { MaterialType, ModelStatus } from "@prisma/generated/client";
 import { Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useCurrencyFormatter } from "@/app/_hooks/use-currency-formatter";

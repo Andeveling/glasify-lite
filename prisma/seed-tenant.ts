@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/suspicious/noConsole: seed script requires console logging */
-import type { MaterialType, PrismaClient } from "@prisma/client";
+
 import { envSeed } from "../src/env-seed";
 import {
   createGlassCharacteristics,
@@ -9,6 +9,7 @@ import {
   createGlassSuppliers,
   GLASS_SUPPLIER_PRESETS,
 } from "./factories/glass-supplier.factory";
+import type { MaterialType, PrismaClient } from "./generated/client";
 
 /**
  * TenantConfig Singleton - Business Configuration

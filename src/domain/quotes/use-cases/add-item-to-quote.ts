@@ -18,7 +18,7 @@ import type {
   Quote,
   QuoteItem,
   Service,
-} from "@prisma/client";
+} from "@prisma/generated/client";
 import {
   validateDimensions,
   validateGlassTypeCompatibility,

@@ -10,7 +10,12 @@
  * Usa repositories (ports) para acceso a datos.
  */
 
-import type { Quote, QuoteItem, QuoteStatus, User } from "@prisma/client";
+import type {
+  Quote,
+  QuoteItem,
+  QuoteStatus,
+  User,
+} from "@prisma/generated/client";
 
 /**
  * Input para obtener una quote por ID

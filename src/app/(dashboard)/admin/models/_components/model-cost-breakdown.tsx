@@ -13,7 +13,7 @@
 
 "use client";
 
-import type { CostType } from "@prisma/client";
+import type { CostType } from "@prisma/generated/client";
 import { Plus, Trash2 } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";

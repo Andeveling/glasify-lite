@@ -10,7 +10,6 @@
  * @version 1.0.0
  */
 
-import type { Prisma, PrismaClient } from "@prisma/client";
 import type { GlassTypeSolutionMapping } from "../data/vitro-rojas/glass-type-solution-mappings.data";
 import type { GlassSolutionInput } from "../factories/glass-solution.factory";
 import { createGlassSolution } from "../factories/glass-solution.factory";
@@ -25,6 +24,7 @@ import { createProfileSupplier } from "../factories/profile-supplier.factory";
 import type { ServiceInput } from "../factories/service.factory";
 import { createService } from "../factories/service.factory";
 import { seedTenant } from "../seed-tenant";
+import type { Prisma, PrismaClient } from "./generated/client";
 
 /**
  * Helper: Generate URL-friendly slug from key

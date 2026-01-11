@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@prisma/generated/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import logger from "@/lib/logger";

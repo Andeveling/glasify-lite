@@ -9,8 +9,8 @@
  * - EN 356: Glass in building - Security glazing
  */
 
-import type { PerformanceRating } from "@prisma/client";
 import { z } from "zod";
+import type { PerformanceRating } from "./generated/client";
 import type { FactoryOptions, FactoryResult } from "./types";
 import { validateWithSchema } from "./utils";
 

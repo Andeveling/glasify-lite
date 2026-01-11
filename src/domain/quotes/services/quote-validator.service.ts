@@ -5,7 +5,7 @@
  * NO depende de Prisma ni de ninguna implementación específica de persistencia.
  */
 
-import type { Model, QuoteStatus } from "@prisma/client";
+import type { Model, QuoteStatus } from "@prisma/generated/client";
 
 export class ValidationError extends Error {
   code: string;
