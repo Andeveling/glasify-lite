@@ -5,7 +5,7 @@
  * @deprecated These utilities will be removed in v2.0 along with the purpose field
  */
 
-import type { GlassPurpose, GlassTypeSolution } from "@prisma/client";
+import type { GlassPurpose, GlassTypeSolution } from "@prisma/generated/client";
 
 /**
  * Maps deprecated GlassPurpose enum values to GlassSolution keys

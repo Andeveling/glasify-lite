@@ -20,7 +20,12 @@ const isValidGlassTypeId = (id: string) =>
 
 const isValidItemId = (id: string) => CUID_REGEX.test(id);
 
+// Name/room length limits used by zod schema
+const MAX_NAME_LENGTH = 50;
+const MAX_ROOM_LOCATION_LENGTH = 100;
+
 /**
+ *
  * Cart item edit input schema
  *
  * Validates user input before submission to tRPC mutation.
@@ -65,14 +70,14 @@ export const cartItemEditSchema = z.object({
     }),
   name: z
     .string()
-    .max(50, {
-      message: "El nombre no puede exceder 50 caracteres",
+    .max(MAX_NAME_LENGTH, {
+      message: `El nombre no puede exceder ${MAX_NAME_LENGTH} caracteres`,
     })
     .optional(),
   roomLocation: z
     .string()
-    .max(100, {
-      message: "La ubicación no puede exceder 100 caracteres",
+    .max(MAX_ROOM_LOCATION_LENGTH, {
+      message: `La ubicación no puede exceder ${MAX_ROOM_LOCATION_LENGTH} caracteres`,
     })
     .optional(),
   quantity: z

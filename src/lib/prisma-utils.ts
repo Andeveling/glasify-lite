@@ -3,7 +3,7 @@
  * Helper functions for working with Prisma types in Client/Server boundary
  */
 
-import type { Decimal } from "@prisma/client/runtime/library";
+import type { Decimal } from "decimal.js";
 
 /**
  * Safely convert Prisma Decimal to number

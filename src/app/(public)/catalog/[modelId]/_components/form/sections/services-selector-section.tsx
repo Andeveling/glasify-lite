@@ -14,7 +14,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
-import type { ServiceOutput } from "@/server/api/routers/catalog";
+import type { ServiceOutput } from "@/server/api/routers/catalog/catalog.schemas";
 
 type ServicesSelectorSectionProps = {
   services: ServiceOutput[];

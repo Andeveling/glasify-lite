@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import type {
   GlassSolutionOutput,
   GlassTypeOutput,
-} from "@/server/api/routers/catalog";
+} from "@/server/api/routers/catalog/catalog.schemas";
 
 // ============================================================================
 // Types

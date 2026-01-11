@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import { Home, Shield, Snowflake, Sparkles, Volume2, Zap } from "lucide-react";
 import { useMemo } from "react";
-import type { GlassTypeOutput } from "@/server/api/routers/catalog";
+import type { GlassTypeOutput } from "@/server/api/routers/catalog/catalog.schemas";
 import {
   buildGlassFeatures,
   calculatePerformanceRatings,

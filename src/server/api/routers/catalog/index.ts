@@ -21,4 +21,5 @@ export const catalogRouter = createTRPCRouter({
 });
 
 // Export schemas for form validation (quote parametrization)
-export * from "./catalog.schemas";
+// Removed barrel export to improve performance
+// export * from "./catalog.schemas";

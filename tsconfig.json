@@ -26,6 +26,10 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
+      "@prisma/generated/client": ["./prisma/generated/client/client.ts"],
+      "@prisma/generated/client/runtime/library": [
+        "./prisma/generated/client/internal/prismaNamespace.ts"
+      ],
       "@/*": ["./src/*"],
       "@server/*": ["./src/server/*"],
       "@styles/*": ["./src/styles/*"],
@@ -36,7 +40,8 @@
       "@views/components/*": ["./src/app/_components/*"],
       "@views/dashboard/*": ["./src/app/(dashboard)/*"],
       "@views/quote/*": ["./src/app/(public)/quote/*"],
-      "@domain/pricing/*": ["./src/domain/pricing/*"]
+      "@domain/pricing/*": ["./src/domain/pricing/*"],
+      "@domain/quotes/*": ["./src/domain/quotes/*"]
     },
     "strictNullChecks": true
   },

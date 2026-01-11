@@ -10,7 +10,11 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Service, ServiceType, ServiceUnit } from "@prisma/client";
+import type {
+  Service,
+  ServiceType,
+  ServiceUnit,
+} from "@prisma/generated/client";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";

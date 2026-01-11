@@ -3,6 +3,10 @@
 # These are necessary for Tailwind CSS to work properly
 src/styles/globals.css
 
+# shadcn/ui generated components
+# These are auto-generated and should not be linted manually
+src/components/ui/
+
 # Build outputs and generated files
 .next/
 dist/

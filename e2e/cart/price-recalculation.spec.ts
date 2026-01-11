@@ -9,6 +9,12 @@
 
 import { expect, test } from "@playwright/test";
 
+// Test constants
+const PRICE_TEXT_REGEX = /Precio actual/;
+const WAIT_SHORT_MS = 200;
+const WAIT_MEDIUM_MS = 500;
+const WAIT_LONG_MS = 1000;
+
 test.describe("Cart - Price Recalculation Timing", () => {
   test.beforeEach(async ({ page }) => {
     // Setup: Navigate to cart page with items
@@ -41,7 +47,8 @@ test.describe("Cart - Price Recalculation Timing", () => {
 
     // Get current price displayed in modal
     const modalPrice = await page
-      .locator('role=dialog[name="Editar Item"] >> text=/Precio actual/')
+      .locator('role=dialog[name="Editar Item"]')
+      .getByText(PRICE_TEXT_REGEX)
       .textContent();
 
     // Verify modal shows original price
@@ -52,11 +59,12 @@ test.describe("Cart - Price Recalculation Timing", () => {
     await widthInput.fill("1500");
 
     // Wait for potential price update (should NOT happen)
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(WAIT_MEDIUM_MS);
 
     // Verify modal price still shows original value
     const updatedModalPrice = await page
-      .locator('role=dialog[name="Editar Item"] >> text=/Precio actual/')
+      .locator('role=dialog[name="Editar Item"]')
+      .getByText(PRICE_TEXT_REGEX)
       .textContent();
 
     expect(updatedModalPrice).toBe(modalPrice);
@@ -97,7 +105,8 @@ test.describe("Cart - Price Recalculation Timing", () => {
 
     // Get modal price
     const modalPrice = await page
-      .locator('role=dialog[name="Editar Item"] >> text=/Precio actual/')
+      .locator('role=dialog[name="Editar Item"]')
+      .getByText(PRICE_TEXT_REGEX)
       .textContent();
 
     // Change height input
@@ -105,11 +114,12 @@ test.describe("Cart - Price Recalculation Timing", () => {
     await heightInput.fill("2000");
 
     // Wait for potential price update (should NOT happen)
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(WAIT_MEDIUM_MS);
 
     // Verify modal price unchanged
     const updatedModalPrice = await page
-      .locator('role=dialog[name="Editar Item"] >> text=/Precio actual/')
+      .locator('role=dialog[name="Editar Item"]')
+      .getByText(PRICE_TEXT_REGEX)
       .textContent();
 
     expect(updatedModalPrice).toBe(modalPrice);
@@ -118,7 +128,7 @@ test.describe("Cart - Price Recalculation Timing", () => {
     await page.click('role=button[name="Cancelar"]');
 
     // Verify cart price unchanged
-    await page.waitForTimeout(200);
+    await page.waitForTimeout(WAIT_SHORT_MS);
     const finalPrice = await page
       .locator(
         '[data-testid="cart-item"]:first-child [data-testid="item-subtotal"]'
@@ -148,7 +158,8 @@ test.describe("Cart - Price Recalculation Timing", () => {
 
     // Get modal price
     const modalPrice = await page
-      .locator('role=dialog[name="Editar Item"] >> text=/Precio actual/')
+      .locator('role=dialog[name="Editar Item"]')
+      .getByText(PRICE_TEXT_REGEX)
       .textContent();
 
     // Open glass type dropdown
@@ -164,11 +175,12 @@ test.describe("Cart - Price Recalculation Timing", () => {
     }
 
     // Wait for potential price update (should NOT happen)
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(WAIT_MEDIUM_MS);
 
     // Verify modal price unchanged
     const updatedModalPrice = await page
-      .locator('role=dialog[name="Editar Item"] >> text=/Precio actual/')
+      .locator('role=dialog[name="Editar Item"]')
+      .getByText(PRICE_TEXT_REGEX)
       .textContent();
 
     expect(updatedModalPrice).toBe(modalPrice);
@@ -177,7 +189,7 @@ test.describe("Cart - Price Recalculation Timing", () => {
     await page.click('role=button[name="Cancelar"]');
 
     // Verify cart price unchanged
-    await page.waitForTimeout(200);
+    await page.waitForTimeout(WAIT_SHORT_MS);
     const finalPrice = await page
       .locator(
         '[data-testid="cart-item"]:first-child [data-testid="item-subtotal"]'
@@ -208,7 +220,7 @@ test.describe("Cart - Price Recalculation Timing", () => {
     await page.fill('role=spinbutton[name="Alto (mm)"]', "2500");
 
     // Verify price NOT updated yet
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(WAIT_MEDIUM_MS);
     const priceBeforeSave = await page
       .locator(
         '[data-testid="cart-item"]:first-child [data-testid="item-subtotal"]'
@@ -226,7 +238,7 @@ test.describe("Cart - Price Recalculation Timing", () => {
     });
 
     // Wait for price to update
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(WAIT_LONG_MS);
 
     // Verify price NOW updated in cart
     const priceAfterSave = await page
@@ -247,6 +259,8 @@ test.describe("Cart - Price Recalculation Timing", () => {
     // Wait for modal
     await page.waitForSelector('role=dialog[name="Editar Item"]');
 
+    // Verify recalculation note is visible
+    // Verify recalculation note is visible
     // Verify recalculation note is visible
     const note = page.locator('text="El precio se recalculará al confirmar"');
     await expect(note).toBeVisible();

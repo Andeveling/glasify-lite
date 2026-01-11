@@ -16,7 +16,7 @@
  * @date 2025-11-24
  */
 
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "./generated/client";
 
 /**
  * Colores estándar Vitro Rojas

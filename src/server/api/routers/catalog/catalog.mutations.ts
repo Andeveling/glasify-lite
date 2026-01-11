@@ -3,6 +3,9 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 
+// Validation constants
+const MIN_MODEL_NAME_LENGTH = 3;
+
 export const catalogMutations = createTRPCRouter({
   /**
    * Create a new model (admin only)
@@ -13,7 +16,7 @@ export const catalogMutations = createTRPCRouter({
       z.object({
         basePrice: z.number().positive(),
         manufacturerId: z.cuid(),
-        name: z.string().min(3),
+        name: z.string().min(MIN_MODEL_NAME_LENGTH),
         // ... otros campos
       })
     )
@@ -31,7 +34,7 @@ export const catalogMutations = createTRPCRouter({
       z.object({
         basePrice: z.number().positive().optional(),
         id: z.cuid(),
-        name: z.string().min(3).optional(),
+        name: z.string().min(MIN_MODEL_NAME_LENGTH).optional(),
         // ... otros campos
       })
     )

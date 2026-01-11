@@ -1,4 +1,9 @@
-import type { GlassType, Model, Prisma, ProfileSupplier } from "@prisma/client";
+import type {
+  GlassType,
+  Model,
+  Prisma,
+  ProfileSupplier,
+} from "@prisma/generated/client";
 import { z } from "zod";
 import logger from "@/lib/logger";
 import { colorsRouter } from "@/server/api/routers/admin/colors";

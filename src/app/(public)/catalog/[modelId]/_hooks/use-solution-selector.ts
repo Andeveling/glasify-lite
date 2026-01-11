@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo } from "react";
 import { useFormContext } from "react-hook-form";
-import type { GlassSolutionOutput } from "@/server/api/routers/catalog";
+import type { GlassSolutionOutput } from "@/server/api/routers/catalog/catalog.schemas";
 
 type UseSolutionSelectorProps = {
   solutions: GlassSolutionOutput[];

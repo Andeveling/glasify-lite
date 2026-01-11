@@ -1,4 +1,4 @@
-import type { ModelDetailOutput } from "@/server/api/routers/catalog";
+import type { ModelDetailOutput } from "@/server/api/routers/catalog/catalog.schemas";
 import type { Model } from "../_types/model.types";
 import { MATERIAL_BENEFITS } from "./material-benefits";
 

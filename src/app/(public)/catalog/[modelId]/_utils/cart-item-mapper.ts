@@ -6,7 +6,7 @@
 import type {
   GlassTypeOutput,
   ModelDetailOutput,
-} from "@/server/api/routers/catalog";
+} from "@/server/api/routers/catalog/catalog.schemas";
 import type { CreateCartItemInput } from "@/types/cart.types";
 
 export type CartItemInputWithPrice = CreateCartItemInput & {

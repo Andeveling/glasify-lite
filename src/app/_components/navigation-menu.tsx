@@ -1,6 +1,6 @@
 "use client";
 
-import type { UserRole } from "@prisma/client";
+import type { UserRole } from "@prisma/generated/client";
 import type { LucideIcon } from "lucide-react";
 import {
   Calculator,

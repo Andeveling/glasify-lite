@@ -1,27 +1,17 @@
 /** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: TODO: Refactorizar */
 
-import { CalculateItemPrice } from "@domain/pricing/use-cases/calculate-item-price";
-import type { Prisma, Quote } from "@prisma/client";
+import type { Prisma } from "@prisma/generated/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import logger from "@/lib/logger";
 import {
-  adaptDomainToTRPC,
-  adaptTRPCToDomain,
-} from "@/server/api/routers/quote/price-adapter";
-import {
   createTRPCRouter,
-  getQuoteFilter,
   protectedProcedure,
   publicProcedure,
   sellerOrAdminProcedure,
 } from "@/server/api/trpc";
 import { sendQuoteNotification } from "@/server/services/email";
-import {
-  getQuoteValidityDays,
-  getTenantConfigSelect,
-  getTenantCurrency,
-} from "@/server/utils/tenant";
+import { getTenantConfigSelect } from "@/server/utils/tenant";
 import {
   getQuoteByIdInput,
   getQuoteByIdOutput,
@@ -30,10 +20,9 @@ import {
   sendToVendorInput,
   sendToVendorOutput,
 } from "./quote.schemas";
-import { sendQuoteToVendor } from "./quote.service";
 
 // Constants for percentage calculations
-const PERCENTAGE_DIVISOR = 100;
+const _PERCENTAGE_DIVISOR = 100;
 const MIN_SURCHARGE_PERCENTAGE = 0;
 const MAX_SURCHARGE_PERCENTAGE = 100;
 
@@ -130,6 +119,10 @@ export const submitOutput = z.object({
 });
 
 export const quoteRouter = createTRPCRouter({
+  /**
+   * Add item to quote
+   * TASK-D01: Refactored to use addItemWithColorUseCase (placeholder)
+   */
   "add-item": publicProcedure
     .input(addItemInput)
     .output(addItemOutput)
@@ -141,278 +134,26 @@ export const quoteRouter = createTRPCRouter({
           quoteId: input.quoteId,
         });
 
-        // First, calculate the item to get the subtotal
-        const calculation = await ctx.db.$transaction(async (tx) => {
-          // Get model data (profileSupplier is the new relation)
-          const model = await tx.model.findUnique({
-            include: { profileSupplier: true },
-            where: { id: input.modelId },
-          });
+        // TODO Phase D: Implement full use-case after extending QuoteRepository
+        // For now, use legacy transaction logic
+        const { addItemWithColorUseCase } = await import(
+          "@domain/quotes/use-cases/add-item-with-color"
+        );
+        const { createAddItemWithColorDeps } = await import(
+          "@domain/quotes/di/quote.container"
+        );
 
-          if (!model || model.status !== "published") {
-            throw new Error("Modelo no encontrado o no disponible");
-          }
+        const deps = createAddItemWithColorDeps(ctx.db);
 
-          // Validate glass type compatibility
-          if (!model.compatibleGlassTypeIds.includes(input.glassTypeId)) {
-            throw new Error("Tipo de vidrio no compatible con este modelo");
-          }
-
-          // Validate dimensions
-          if (
-            input.widthMm < model.minWidthMm ||
-            input.widthMm > model.maxWidthMm
-          ) {
-            throw new Error(
-              `Ancho debe estar entre ${model.minWidthMm}mm y ${model.maxWidthMm}mm`
-            );
-          }
-          if (
-            input.heightMm < model.minHeightMm ||
-            input.heightMm > model.maxHeightMm
-          ) {
-            throw new Error(
-              `Alto debe estar entre ${model.minHeightMm}mm y ${model.maxHeightMm}mm`
-            );
-          }
-
-          // Get or create quote
-          let quote: Quote | null = null;
-          if (input.quoteId) {
-            quote = await tx.quote.findUnique({
-              where: { id: input.quoteId },
-            });
-            if (!quote) {
-              throw new Error("Cotización no encontrada");
-            }
-            if (quote.status !== "draft") {
-              throw new Error(
-                "No se pueden agregar ítems a una cotización enviada o cancelada"
-              );
-            }
-          } else {
-            // Create new quote using TenantConfig for currency and validity
-            const validityDays = await getQuoteValidityDays(tx);
-            const currency = await getTenantCurrency(tx);
-
-            const validUntil = new Date();
-            validUntil.setDate(validUntil.getDate() + validityDays);
-
-            quote = await tx.quote.create({
-              data: {
-                currency,
-                status: "draft",
-                validUntil,
-              },
-            });
-          }
-
-          // Fetch glass type for validation
-          const glassType = await tx.glassType.findUnique({
-            where: { id: input.glassTypeId },
-          });
-          if (!glassType) {
-            throw new Error("Tipo de vidrio no encontrado");
-          }
-
-          // Fetch services for domain calculation
-          const domainServices: Array<{
-            serviceId: string;
-            name: string;
-            unit: "unit" | "sqm" | "ml";
-            rate: number;
-            minimumBillingUnit?: number;
-            quantityOverride?: number;
-          }> = [];
-
-          if (input.services.length > 0) {
-            const serviceIds = input.services.map((s) => s.serviceId);
-            const services = await tx.service.findMany({
-              where: { id: { in: serviceIds } },
-            });
-
-            for (const serviceInput of input.services) {
-              const service = services.find(
-                (s) => s.id === serviceInput.serviceId
-              );
-              if (!service) {
-                throw new Error(
-                  `Servicio ${serviceInput.serviceId} no encontrado`
-                );
-              }
-              domainServices.push({
-                serviceId: service.id,
-                name: service.name,
-                unit: service.unit as "unit" | "sqm" | "ml",
-                rate: service.rate.toNumber(),
-                minimumBillingUnit: service.minimumBillingUnit?.toNumber(),
-                quantityOverride: serviceInput.quantity,
-              });
-            }
-          }
-
-          // Convert adjustments to domain format
-          const domainAdjustments = input.adjustments.map((adj) => ({
-            adjustmentId: `adj-${Date.now()}-${Math.random()}`,
-            concept: adj.concept,
-            unit: adj.unit,
-            value: adj.value,
-            sign: adj.sign,
-          }));
-
-          // Build tRPC input for adapter
-          const adapterInput = {
-            widthMm: input.widthMm,
-            heightMm: input.heightMm,
-            modelPrices: {
-              basePrice: model.basePrice.toNumber(),
-              costPerMmWidth: model.costPerMmWidth.toNumber(),
-              costPerMmHeight: model.costPerMmHeight.toNumber(),
-              minWidthMm: model.minWidthMm,
-              minHeightMm: model.minHeightMm,
-              accessoryPrice: model.accessoryPrice?.toNumber(),
-            },
-            colorSurchargePercentage: 0, // Will be applied separately if color selected
-            glass: {
-              pricePerSqm: glassType.pricePerSqm.toNumber(),
-              discountWidthMm: model.glassDiscountWidthMm,
-              discountHeightMm: model.glassDiscountHeightMm,
-            },
-            services: domainServices,
-            adjustments: domainAdjustments,
-          };
-
-          // Transform to domain input
-          const domainInput = adaptTRPCToDomain(adapterInput);
-
-          // Execute domain use case
-          const domainResult = CalculateItemPrice.execute(domainInput);
-
-          // Transform domain result back to tRPC output
-          const itemCalculation = adaptDomainToTRPC(domainResult);
-
-          // T045: Fetch color snapshot if colorId provided
-          let colorSnapshot: {
-            colorId: string;
-            colorName: string;
-            colorHexCode: string;
-            colorSurchargePercentage: number;
-          } | null = null;
-
-          let colorSurcharge = 0;
-
-          if (input.colorId) {
-            const modelColor = await tx.modelColor.findFirst({
-              include: {
-                color: true,
-              },
-              where: {
-                colorId: input.colorId,
-                modelId: model.id,
-              },
-            });
-
-            if (!modelColor) {
-              throw new Error("Color no asignado a este modelo");
-            }
-
-            if (!modelColor.color.isActive) {
-              throw new Error("Color no disponible");
-            }
-
-            colorSnapshot = {
-              colorHexCode: modelColor.color.hexCode,
-              colorId: modelColor.colorId,
-              colorName: modelColor.color.name,
-              colorSurchargePercentage:
-                modelColor.surchargePercentage.toNumber(),
-            };
-
-            // Calculate color surcharge (applied to dimPrice only)
-            colorSurcharge =
-              itemCalculation.dimPrice *
-              (colorSnapshot.colorSurchargePercentage / PERCENTAGE_DIVISOR);
-          }
-
-          // Calculate final subtotal including color surcharge
-          const finalSubtotal = itemCalculation.subtotal + colorSurcharge;
-
-          // Create quote item
-          const quoteItem = await tx.quoteItem.create({
-            data: {
-              accessoryApplied: Boolean(model.accessoryPrice),
-              // T045: Color snapshot fields
-              colorHexCode: colorSnapshot?.colorHexCode,
-              colorId: colorSnapshot?.colorId,
-              colorName: colorSnapshot?.colorName,
-              colorSurchargePercentage: colorSnapshot?.colorSurchargePercentage,
-              glassTypeId: input.glassTypeId,
-              heightMm: input.heightMm,
-              modelId: model.id,
-              name: model.name, // Add the required name property
-              quoteId: quote.id,
-              roomLocation: input.roomLocation, // T008: Save window location from wizard
-              subtotal: finalSubtotal,
-              widthMm: input.widthMm,
-            },
-          });
-
-          // Create quote item services
-          for (const service of itemCalculation.services) {
-            await tx.quoteItemService.create({
-              data: {
-                amount: service.amount,
-                quantity: service.quantity,
-                quoteItemId: quoteItem.id,
-                serviceId: service.serviceId,
-                unit: service.unit,
-              },
-            });
-          }
-
-          // Create adjustments
-          for (const adjustment of itemCalculation.adjustments) {
-            await tx.adjustment.create({
-              data: {
-                amount: adjustment.amount,
-                concept: adjustment.concept,
-                quoteItemId: quoteItem.id,
-                scope: "item",
-                sign: adjustment.amount >= 0 ? "positive" : "negative",
-                unit: "unit", // Default unit for item adjustments
-                value: 1, // Value is already calculated in amount
-              },
-            });
-          }
-
-          // Update quote total
-          const quoteItems = await tx.quoteItem.findMany({
-            where: { quoteId: quote.id },
-          });
-          const newTotal = quoteItems.reduce(
-            (sum: number, item) => sum + item.subtotal.toNumber(),
-            0
-          );
-
-          await tx.quote.update({
-            data: { total: newTotal },
-            where: { id: quote.id },
-          });
-
-          return {
-            itemId: quoteItem.id,
-            quoteId: quote.id,
-            subtotal: itemCalculation.subtotal,
-          };
-        });
+        const result = await addItemWithColorUseCase(input, deps);
 
         logger.info("Item added to quote successfully", {
-          itemId: calculation.itemId,
-          quoteId: calculation.quoteId,
-          subtotal: calculation.subtotal,
+          itemId: result.itemId,
+          quoteId: result.quoteId,
+          subtotal: result.subtotal,
         });
 
-        return calculation;
+        return result;
       } catch (error) {
         logger.error("Error adding item to quote", {
           error: error instanceof Error ? error.message : "Unknown error",
@@ -427,170 +168,69 @@ export const quoteRouter = createTRPCRouter({
         throw new Error(errorMessage);
       }
     }),
+
+  /**
+   * Calculate item price
+   * TASK-C02: Refactored to use calculateItemPriceUseCase
+   */
   "calculate-item": publicProcedure
     .input(calculateItemInput)
     .output(calculateItemOutput)
     .mutation(async ({ ctx, input }) => {
+      const { calculateItemPriceUseCase } = await import(
+        "@domain/quotes/use-cases/calculate-item-price"
+      );
+      const { createCalculateItemPriceDeps } = await import(
+        "@domain/quotes/di/quote.container"
+      );
+
       try {
         logger.info("Starting item price calculation", {
           dimensions: { heightMm: input.heightMm, widthMm: input.widthMm },
-          glassTypeId: input.glassTypeId,
           modelId: input.modelId,
         });
 
-        // Get model data (needed for ranges, pricing and discounts)
-        const model = await ctx.db.model.findUnique({
-          include: { profileSupplier: true },
-          where: { id: input.modelId },
-        });
-
-        if (!model || model.status !== "published") {
-          throw new Error("Modelo no encontrado o no disponible");
-        }
-
-        // Validate glass type compatibility
-        if (!model.compatibleGlassTypeIds.includes(input.glassTypeId)) {
-          throw new Error("Tipo de vidrio no compatible con este modelo");
-        }
-
-        // Validate dimensions
-        if (
-          input.widthMm < model.minWidthMm ||
-          input.widthMm > model.maxWidthMm
-        ) {
-          throw new Error(
-            `Ancho debe estar entre ${model.minWidthMm}mm y ${model.maxWidthMm}mm`
-          );
-        }
-        if (
-          input.heightMm < model.minHeightMm ||
-          input.heightMm > model.maxHeightMm
-        ) {
-          throw new Error(
-            `Alto debe estar entre ${model.minHeightMm}mm y ${model.maxHeightMm}mm`
-          );
-        }
-
-        // Get services data
-        const domainServices: Array<{
-          serviceId: string;
-          name: string;
-          unit: "unit" | "sqm" | "ml";
-          rate: number;
-          minimumBillingUnit?: number;
-          quantityOverride?: number;
-        }> = [];
-        if (input.services.length > 0) {
-          const serviceIds = input.services.map((s) => s.serviceId);
-          const services = await ctx.db.service.findMany({
-            where: {
-              id: { in: serviceIds },
-            },
-          });
-
-          for (const serviceInput of input.services) {
-            const service = services.find(
-              (s) => s.id === serviceInput.serviceId
-            );
-            if (!service) {
-              throw new Error(
-                `Servicio ${serviceInput.serviceId} no encontrado`
-              );
-            }
-            domainServices.push({
-              serviceId: service.id,
-              name: service.name,
-              unit: service.unit,
-              rate: service.rate.toNumber(),
-              minimumBillingUnit: service.minimumBillingUnit?.toNumber(),
-              quantityOverride: serviceInput.quantity,
-            });
-          }
-        }
-
-        // Convert adjustments to domain format
-        const domainAdjustments = input.adjustments.map((adj) => ({
-          adjustmentId: `adj-${Date.now()}-${Math.random()}`, // Generate temporary ID
-          concept: adj.concept,
-          unit: adj.unit,
-          value: adj.value,
-          sign: adj.sign,
-        }));
-
-        // Fetch glass type for validation
-        const glassType = await ctx.db.glassType.findUnique({
-          where: { id: input.glassTypeId },
-        });
-        if (!glassType) {
-          throw new Error("Tipo de vidrio no encontrado");
-        }
-
-        // Build tRPC input for adapter
-        const adapterInput = {
-          widthMm: input.widthMm,
-          heightMm: input.heightMm,
-          modelPrices: {
-            basePrice: model.basePrice.toNumber(),
-            costPerMmWidth: model.costPerMmWidth.toNumber(),
-            costPerMmHeight: model.costPerMmHeight.toNumber(),
-            minWidthMm: model.minWidthMm,
-            minHeightMm: model.minHeightMm,
-            accessoryPrice: model.accessoryPrice?.toNumber(),
-          },
-          colorSurchargePercentage: input.colorSurchargePercentage,
-          profitMarginPercentage: model.profitMarginPercentage?.toNumber(),
-          glass: {
-            pricePerSqm: glassType.pricePerSqm.toNumber(),
-            discountWidthMm: model.glassDiscountWidthMm,
-            discountHeightMm: model.glassDiscountHeightMm,
-          },
-          services: domainServices,
-          adjustments: domainAdjustments,
-        };
-
-        // Transform to domain input
-        const domainInput = adaptTRPCToDomain(adapterInput);
-
-        // Execute domain use case
-        const domainResult = CalculateItemPrice.execute(domainInput);
-
-        // Transform domain result back to tRPC output
-        const itemCalculation = adaptDomainToTRPC(
-          domainResult,
-          input.colorSurchargePercentage
-        );
+        const deps = createCalculateItemPriceDeps(ctx.db);
+        const result = await calculateItemPriceUseCase(input, deps);
 
         logger.info("Item price calculation completed", {
-          colorSurchargeAmount: itemCalculation.colorSurchargeAmount,
-          colorSurchargePercentage: itemCalculation.colorSurchargePercentage,
           modelId: input.modelId,
-          subtotal: itemCalculation.subtotal,
+          subtotal: result.subtotal,
         });
 
-        return itemCalculation;
+        return result;
       } catch (error) {
         logger.error("Error calculating item price", {
           error: error instanceof Error ? error.message : "Unknown error",
           modelId: input.modelId,
         });
 
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "No se pudo calcular el precio del ítem. Intente nuevamente.";
-        throw new Error(errorMessage);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message:
+            error instanceof Error
+              ? error.message
+              : "No se pudo calcular el precio del ítem.",
+        });
       }
     }),
 
   /**
    * Get quote by ID with full details
    * Task: T068 [P] [US5]
-   * Updated: T025 [US2] - Add ownership check (admin can view any quote)
+   * TASK-C03: Refactored to use getQuoteByIdUseCase
    */
   "get-by-id": protectedProcedure
     .input(getQuoteByIdInput)
     .output(getQuoteByIdOutput)
     .query(async ({ ctx, input }) => {
+      const { getQuoteByIdUseCase, AuthorizationError } = await import(
+        "@domain/quotes/use-cases/get-quote-by-id"
+      );
+      const { createGetQuoteByIdDeps } = await import(
+        "@domain/quotes/di/quote.container"
+      );
+
       try {
         logger.info("[US5] Fetching quote by ID", {
           quoteId: input.id,
@@ -598,144 +238,33 @@ export const quoteRouter = createTRPCRouter({
           userRole: ctx.session.user.role,
         });
 
-        // First, fetch the quote without userId filter
-        const quote = await ctx.db.quote.findUnique({
-          include: {
-            items: {
-              include: {
-                glassType: {
-                  select: {
-                    id: true,
-                    name: true,
-                  },
-                },
-                model: {
-                  select: {
-                    id: true,
-                    imageUrl: true,
-                    name: true,
-                  },
-                },
-                services: {
-                  include: {
-                    service: {
-                      select: {
-                        id: true,
-                        name: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-            // REFACTOR: No longer include manufacturer, use TenantConfig instead
-            // T009 [US7]: Include user info for admin quotes dashboard
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                role: true,
-              },
-            },
-          },
-          where: {
-            id: input.id,
-          },
-        });
-
-        if (!quote) {
-          logger.warn("[US5] Quote not found", {
+        const deps = createGetQuoteByIdDeps(ctx.db);
+        const result = await getQuoteByIdUseCase(
+          {
             quoteId: input.id,
             userId: ctx.session.user.id,
-          });
-
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Cotización no encontrada",
-          });
-        }
-
-        // Ownership check: user can only access quote if they own it OR they are admin
-        const isOwner = quote.userId === ctx.session.user.id;
-        const isAdmin = ctx.session.user.role === "admin";
-
-        if (!(isOwner || isAdmin)) {
-          logger.warn("[US2] Unauthorized quote access attempt", {
-            quoteId: input.id,
-            quoteOwnerId: quote.userId,
-            requestUserId: ctx.session.user.id,
-            userRole: ctx.session.user.role,
-          });
-
-          throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "No tienes permiso para acceder a esta cotización",
-          });
-        }
-
-        // Get tenant business name and contact for display (US3)
-        const tenant = await getTenantConfigSelect(
-          { businessName: true, contactPhone: true },
-          ctx.db
+            userRole: ctx.session.user.role as "admin" | "seller" | "user",
+          },
+          deps
         );
 
-        const result = {
-          contactPhone: quote.contactPhone,
-          createdAt: quote.createdAt,
-          currency: quote.currency,
-          id: quote.id,
-          isExpired: quote.validUntil ? quote.validUntil < new Date() : false,
-          itemCount: quote.items.length,
-          items: quote.items.map((item) => ({
-            glassTypeName: item.glassType.name,
-            heightMm: item.heightMm,
-            id: item.id,
-            modelImageUrl: item.model.imageUrl,
-            modelName: item.model.name,
-            name: item.name,
-            quantity: item.quantity,
-            serviceNames: item.services.map((s) => s.service.name),
-            solutionName: undefined, // TODO: Add solution support
-            subtotal: Number(item.subtotal),
-            unitPrice: Number(item.subtotal) / item.quantity,
-            widthMm: item.widthMm,
-          })),
-          manufacturerName: tenant.businessName, // REFACTOR: Now from TenantConfig
-          projectAddress: {
-            projectCity: quote.projectCity ?? "",
-            projectName: quote.projectName ?? "Sin nombre",
-            projectPostalCode: quote.projectPostalCode ?? undefined,
-            projectState: quote.projectState ?? "",
-            projectStreet: quote.projectStreet ?? "",
-          },
-          projectName: quote.projectName ?? "Sin nombre", // T030 [US7]: For admin detail page
-          sentAt: quote.sentAt,
-          status: quote.status,
-          total: Number(quote.total),
-          totalUnits: quote.items.reduce((sum, item) => sum + item.quantity, 0),
-          user: quote.user, // T030 [US7]: User contact info for admin dashboard
-          userEmail: undefined,
-          validUntil: quote.validUntil,
-          vendorContactPhone: tenant.contactPhone, // US3: Vendor contact for confirmation message
-        };
-
         logger.info("[US5] Quote fetched successfully", {
-          itemCount: quote.items.length,
+          itemCount: result.itemCount,
           quoteId: input.id,
-          userId: ctx.session.user.id,
         });
 
         return result;
       } catch (error) {
-        if (error instanceof TRPCError) {
-          throw error;
+        if (error instanceof AuthorizationError) {
+          throw new TRPCError({
+            code: error.code,
+            message: error.message,
+          });
         }
 
         logger.error("[US5] Error fetching quote", {
           error: error instanceof Error ? error.message : "Unknown error",
           quoteId: input.id,
-          userId: ctx.session.user.id,
         });
 
         throw new TRPCError({
@@ -938,133 +467,54 @@ export const quoteRouter = createTRPCRouter({
   /**
    * List user quotes with pagination and filtering
    * Task: T068 [P] [US5]
-   * Updated: T024 [US2] - Role-based filtering (admin sees all, others see own)
+   * TASK-C04: Refactored to use listUserQuotesUseCase
    */
   "list-user-quotes": protectedProcedure
     .input(listUserQuotesInput)
     .output(listUserQuotesOutput)
     .query(async ({ ctx, input }) => {
+      const { listUserQuotesUseCase } = await import(
+        "@domain/quotes/use-cases/list-user-quotes"
+      );
+      const { createListUserQuotesDeps } = await import(
+        "@domain/quotes/di/quote.container"
+      );
+
       try {
         logger.info("[US5] Fetching user quotes", {
           includeExpired: input.includeExpired,
           limit: input.limit,
           page: input.page,
-          search: input.search,
-          sortBy: input.sortBy,
-          sortOrder: input.sortOrder,
-          status: input.status,
           userId: ctx.session.user.id,
           userRole: ctx.session.user.role,
         });
 
-        const skip = (input.page - 1) * input.limit;
-
-        // Build where clause with role-based filtering
-        const roleFilter = getQuoteFilter(ctx.session);
-
-        const baseWhere = {
-          ...roleFilter, // Apply role-based filtering (admin sees all, others see own)
-          status: input.status,
-        };
-
-        // Combine filters using AND
-        const andConditions: Prisma.QuoteWhereInput[] = [];
-
-        // Filter expired quotes if not including them
-        if (!input.includeExpired) {
-          andConditions.push({
-            OR: [{ validUntil: null }, { validUntil: { gte: new Date() } }],
-          });
-        }
-
-        // Search filter for project name, address, or items
-        if (input.search) {
-          andConditions.push({
-            OR: [
-              {
-                projectName: {
-                  contains: input.search,
-                  mode: "insensitive" as const,
-                },
-              },
-              {
-                projectStreet: {
-                  contains: input.search,
-                  mode: "insensitive" as const,
-                },
-              },
-              {
-                items: {
-                  some: {
-                    name: {
-                      contains: input.search,
-                      mode: "insensitive" as const,
-                    },
-                  },
-                },
-              },
-            ],
-          });
-        }
-
-        const where = {
-          ...baseWhere,
-          ...(andConditions.length > 0 ? { AND: andConditions } : {}),
-        };
-
-        // Execute query with pagination
-        const [quotes, total] = await Promise.all([
-          ctx.db.quote.findMany({
-            include: {
-              _count: {
-                select: { items: true },
-              },
-            },
-            orderBy: {
-              [input.sortBy]: input.sortOrder,
-            },
-            skip,
-            take: input.limit,
-            where,
-          }),
-          ctx.db.quote.count({ where }),
-        ]);
-
-        const totalPages = Math.ceil(total / input.limit);
-
-        const result = {
-          hasNextPage: input.page < totalPages,
-          hasPreviousPage: input.page > 1,
-          limit: input.limit,
-          page: input.page,
-          quotes: quotes.map((quote) => ({
-            createdAt: quote.createdAt,
-            currency: quote.currency,
-            id: quote.id,
-            isExpired: quote.validUntil ? quote.validUntil < new Date() : false,
-            itemCount: quote._count.items,
-            projectName: quote.projectName ?? "Sin nombre",
-            sentAt: quote.sentAt,
-            status: quote.status,
-            total: Number(quote.total),
-            validUntil: quote.validUntil,
-          })),
-          total,
-          totalPages,
-        };
+        const deps = createListUserQuotesDeps(ctx.db);
+        const result = await listUserQuotesUseCase(
+          {
+            userId: ctx.session.user.id,
+            userRole: ctx.session.user.role as "admin" | "seller" | "user",
+            page: input.page,
+            limit: input.limit,
+            sortBy: input.sortBy,
+            sortOrder: input.sortOrder,
+            status: input.status,
+            search: input.search,
+            includeExpired: input.includeExpired,
+          },
+          deps
+        );
 
         logger.info("[US5] User quotes fetched successfully", {
-          count: quotes.length,
-          page: input.page,
-          total,
-          userId: ctx.session.user.id,
+          count: result.quotes.length,
+          page: result.page,
+          total: result.total,
         });
 
         return result;
       } catch (error) {
         logger.error("[US5] Error fetching user quotes", {
           error: error instanceof Error ? error.message : "Unknown error",
-          input,
           userId: ctx.session.user.id,
         });
 
@@ -1082,34 +532,73 @@ export const quoteRouter = createTRPCRouter({
 
   /**
    * Send draft quote to vendor for professional review
-   *
-   * **Protected**: Requires authentication
-   * **Status Transition**: draft → sent (immutable, no rollback)
-   * **Validation**: Quote must exist, belong to user, be in 'draft' status, and have items
-   *
-   * @example
-   * ```typescript
-   * // Client call
-   * const result = await trpc.quote['send-to-vendor'].mutate({
-   *   quoteId: 'cuid123',
-   *   contactPhone: '+573001234567',
-   *   contactEmail: 'user@example.com' // optional
-   * });
-   * ```
+   * TASK-C05: Refactored to use sendQuoteToVendorUseCase
    */
   "send-to-vendor": protectedProcedure
     .input(sendToVendorInput)
     .output(sendToVendorOutput)
     .mutation(async ({ ctx, input }) => {
-      // Delegate to service layer for business logic
-      const result = await sendQuoteToVendor(ctx.db, {
-        contactEmail: input.contactEmail,
-        contactPhone: input.contactPhone,
-        quoteId: input.quoteId,
-        userId: ctx.session.user.id,
-      });
+      const {
+        sendQuoteToVendorUseCase,
+        QuoteNotFoundError,
+        QuoteUnauthorizedError,
+        QuoteAlreadySentError,
+        QuoteEmptyError,
+      } = await import("@domain/quotes/use-cases/send-quote-to-vendor");
+      const { createSendQuoteToVendorDeps } = await import(
+        "@domain/quotes/di/quote.container"
+      );
 
-      return result;
+      try {
+        logger.info("Sending quote to vendor", {
+          quoteId: input.quoteId,
+          userId: ctx.session.user.id,
+        });
+
+        const deps = createSendQuoteToVendorDeps(ctx.db);
+        const result = await sendQuoteToVendorUseCase(
+          {
+            quoteId: input.quoteId,
+            userId: ctx.session.user.id,
+            contactPhone: input.contactPhone,
+            contactEmail: input.contactEmail,
+          },
+          deps
+        );
+
+        logger.info("Quote sent to vendor successfully", {
+          quoteId: result.id,
+          sentAt: result.sentAt,
+        });
+
+        return result;
+      } catch (error) {
+        logger.error("Error sending quote to vendor", {
+          error: error instanceof Error ? error.message : "Unknown error",
+          quoteId: input.quoteId,
+        });
+
+        // Map domain errors to tRPC errors
+        if (error instanceof QuoteNotFoundError) {
+          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
+        }
+        if (error instanceof QuoteUnauthorizedError) {
+          throw new TRPCError({ code: "FORBIDDEN", message: error.message });
+        }
+        if (error instanceof QuoteAlreadySentError) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+        }
+        if (error instanceof QuoteEmptyError) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+        }
+        if (error instanceof TRPCError) {
+          throw error;
+        }
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: error instanceof Error ? error.message : "Error inesperado",
+        });
+      }
     }),
 
   submit: publicProcedure
@@ -1249,6 +738,10 @@ export const quoteRouter = createTRPCRouter({
    * Public procedure - accessible in catalog without authentication
    * Cached for 5 minutes (colors rarely change)
    */
+  /**
+   * Get model colors for quote
+   * TASK-D02: Refactored to use getModelColorsForQuoteUseCase (placeholder)
+   */
   "get-model-colors-for-quote": publicProcedure
     .input(
       z.object({
@@ -1257,46 +750,30 @@ export const quoteRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       try {
-        const modelColors = await ctx.db.modelColor.findMany({
-          include: {
-            color: true,
-          },
-          orderBy: [
-            { isDefault: "desc" }, // Default first
-            { color: { name: "asc" } }, // Then alphabetically
-          ],
-          where: {
-            color: {
-              isActive: true,
-            },
-            modelId: input.modelId,
-          },
+        logger.info("Fetching model colors for quote", {
+          modelId: input.modelId,
         });
 
-        const defaultColor = modelColors.find((mc) => mc.isDefault);
+        // TODO Phase D: Implement full use-case after extending QuoteRepository
+        // For now, use legacy query logic
+        const { getModelColorsForQuoteUseCase } = await import(
+          "@domain/quotes/use-cases/get-model-colors-for-quote"
+        );
+        const { createGetModelColorsForQuoteDeps } = await import(
+          "@domain/quotes/di/quote.container"
+        );
+
+        const deps = createGetModelColorsForQuoteDeps(ctx.db);
+
+        const result = await getModelColorsForQuoteUseCase(input, deps);
 
         logger.info("Model colors fetched for quote", {
-          colorCount: modelColors.length,
-          defaultColorId: defaultColor?.colorId,
+          colorCount: result.colors.length,
+          defaultColorId: result.defaultColorId,
           modelId: input.modelId,
         });
 
-        return {
-          colors: modelColors.map((mc) => ({
-            color: {
-              hexCode: mc.color.hexCode,
-              id: mc.color.id,
-              name: mc.color.name,
-              ralCode: mc.color.ralCode,
-            },
-            id: mc.id,
-            isDefault: mc.isDefault,
-            surchargePercentage: mc.surchargePercentage.toNumber(),
-          })),
-          defaultColorId: defaultColor?.colorId ?? null,
-          hasColors: modelColors.length > 0,
-          modelId: input.modelId,
-        };
+        return result;
       } catch (error) {
         logger.error("Error fetching model colors for quote", {
           error: error instanceof Error ? error.message : "Unknown error",
@@ -1311,8 +788,7 @@ export const quoteRouter = createTRPCRouter({
 
   /**
    * T044: Calculate Price with Color
-   * Server-side price calculation with color surcharge
-   * Prevents client-side tampering
+   * TASK-C06: Refactored to use calculatePriceWithColorUseCase
    */
   "calculate-price-with-color": publicProcedure
     .input(
@@ -1324,174 +800,30 @@ export const quoteRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
+      const { calculatePriceWithColorUseCase } = await import(
+        "@domain/quotes/use-cases/calculate-price-with-color"
+      );
+      const { createCalculatePriceWithColorDeps } = await import(
+        "@domain/quotes/di/quote.container"
+      );
+
       try {
-        // Calculate base price without color
-        const model = await ctx.db.model.findUnique({
-          include: { profileSupplier: true },
-          where: { id: input.modelId },
+        logger.info("Calculating price with color", {
+          colorId: input.colorId,
+          modelId: input.modelId,
         });
 
-        if (!model) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Modelo no encontrado",
-          });
-        }
-
-        // Fetch glass type for validation
-        const glassType = await ctx.db.glassType.findUnique({
-          where: { id: input.glassTypeId },
-        });
-        if (!glassType) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Tipo de vidrio no encontrado",
-          });
-        }
-
-        // Fetch services for domain calculation
-        const domainServices: Array<{
-          serviceId: string;
-          name: string;
-          unit: "unit" | "sqm" | "ml";
-          rate: number;
-          minimumBillingUnit?: number;
-          quantityOverride?: number;
-        }> = [];
-
-        if (input.services.length > 0) {
-          const serviceIds = input.services.map((s) => s.serviceId);
-          const services = await ctx.db.service.findMany({
-            where: { id: { in: serviceIds } },
-          });
-
-          for (const serviceInput of input.services) {
-            const service = services.find(
-              (s) => s.id === serviceInput.serviceId
-            );
-            if (!service) {
-              throw new TRPCError({
-                code: "NOT_FOUND",
-                message: `Servicio ${serviceInput.serviceId} no encontrado`,
-              });
-            }
-            domainServices.push({
-              serviceId: service.id,
-              name: service.name,
-              unit: service.unit as "unit" | "sqm" | "ml",
-              rate: service.rate.toNumber(),
-              minimumBillingUnit: service.minimumBillingUnit?.toNumber(),
-              quantityOverride: serviceInput.quantity,
-            });
-          }
-        }
-
-        // Convert adjustments to domain format
-        const domainAdjustments = input.adjustments.map((adj) => ({
-          adjustmentId: `adj-${Date.now()}-${Math.random()}`,
-          concept: adj.concept,
-          unit: adj.unit,
-          value: adj.value,
-          sign: adj.sign,
-        }));
-
-        // Build tRPC input for adapter
-        const adapterInput = {
-          widthMm: input.widthMm,
-          heightMm: input.heightMm,
-          modelPrices: {
-            basePrice: model.basePrice.toNumber(),
-            costPerMmWidth: model.costPerMmWidth.toNumber(),
-            costPerMmHeight: model.costPerMmHeight.toNumber(),
-            minWidthMm: model.minWidthMm,
-            minHeightMm: model.minHeightMm,
-            accessoryPrice: model.accessoryPrice?.toNumber(),
-          },
-          colorSurchargePercentage: 0, // Will be calculated below if colorId provided
-          glass: {
-            pricePerSqm: glassType.pricePerSqm.toNumber(),
-            discountWidthMm: model.glassDiscountWidthMm,
-            discountHeightMm: model.glassDiscountHeightMm,
-          },
-          services: domainServices,
-          adjustments: domainAdjustments,
-        };
-
-        // Transform to domain input
-        const domainInput = adaptTRPCToDomain(adapterInput);
-
-        // Execute domain use case
-        const domainResult = CalculateItemPrice.execute(domainInput);
-
-        // Transform domain result back to tRPC output
-        const calculation = adaptDomainToTRPC(domainResult);
-
-        // Calculate color surcharge if colorId provided
-        let colorSurcharge = 0;
-        let colorSurchargePercentage = 0;
-
-        if (input.colorId) {
-          const modelColor = await ctx.db.modelColor.findFirst({
-            include: {
-              color: true,
-            },
-            where: {
-              colorId: input.colorId,
-              modelId: input.modelId,
-            },
-          });
-
-          if (!modelColor) {
-            throw new TRPCError({
-              code: "NOT_FOUND",
-              message: "Color no asignado a este modelo",
-            });
-          }
-
-          if (!modelColor.color.isActive) {
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: "Color no disponible",
-            });
-          }
-
-          colorSurchargePercentage = modelColor.surchargePercentage.toNumber();
-          // Apply surcharge ONLY to model base price (dimPrice in calculation)
-          colorSurcharge =
-            calculation.dimPrice *
-            (colorSurchargePercentage / PERCENTAGE_DIVISOR);
-        }
-
-        const totalWithColor = calculation.subtotal + colorSurcharge;
+        const deps = createCalculatePriceWithColorDeps(ctx.db);
+        const result = await calculatePriceWithColorUseCase(input, deps);
 
         logger.info("Price calculated with color", {
           colorId: input.colorId,
-          colorSurcharge,
-          colorSurchargePercentage,
+          colorSurcharge: result.colorSurcharge,
           modelId: input.modelId,
-          totalWithColor,
+          totalWithColor: result.totalWithColor,
         });
 
-        return {
-          basePrice: calculation.subtotal,
-          breakdown: {
-            accPrice: calculation.accPrice,
-            adjustments: calculation.adjustments.map((adj) => ({
-              amount: adj.amount,
-              concept: adj.concept,
-            })),
-            color: colorSurcharge,
-            dimPrice: calculation.dimPrice,
-            services: calculation.services.map((svc) => ({
-              amount: svc.amount,
-              quantity: svc.quantity,
-              serviceId: svc.serviceId,
-              unit: svc.unit,
-            })),
-          },
-          colorSurcharge,
-          totalWithColor,
-        };
+        return result;
       } catch (error) {
         if (error instanceof TRPCError) {
           throw error;
