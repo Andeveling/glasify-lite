@@ -10,8 +10,8 @@
  * @version 1.0.0
  */
 
-import type { Prisma } from "@prisma/client";
 import { z } from "zod";
+import type { Prisma } from "./generated/client";
 import type {
   FactoryMetadata,
   FactoryOptions,

@@ -9,8 +9,8 @@
  *   pnpm tsx prisma/seeders/assign-colors-to-model.ts
  */
 
-import { PrismaClient } from "@prisma/client";
 import logger from "../../src/lib/logger";
+import { PrismaClient } from "./generated/client";
 
 const prisma = new PrismaClient();
 
