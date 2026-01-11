@@ -428,14 +428,38 @@ export function createAddItemWithColorDeps(
 }
 
 /**
- * Crea las dependencias para GetModelColorsForQuote use-case (placeholder)
- * TODO Phase D: Implementar después de extender QuoteRepository
+ * Crea las dependencias para GetModelColorsForQuote use-case
+ * NOTE: Temporary direct implementation until QuoteRepository is extended in Phase D
  */
-export function createGetModelColorsForQuoteDeps(
-  _db: PrismaClient
-  // biome-ignore lint/suspicious/noExplicitAny: placeholder implementation
-): any {
-  throw new Error(
-    "createGetModelColorsForQuoteDeps: En desarrollo (Phase D) - extender QuoteRepository primero"
-  );
+export function createGetModelColorsForQuoteDeps(db: PrismaClient) {
+  return {
+    quoteRepository: {
+      findModelColorsByModelId: async (modelId: string) => {
+        const modelColors = await db.modelColor.findMany({
+          where: {
+            modelId,
+            color: {
+              isActive: true,
+            },
+          },
+          include: {
+            color: true,
+          },
+          orderBy: [{ isDefault: "desc" }, { color: { name: "asc" } }],
+        });
+
+        return modelColors.map((mc) => ({
+          id: mc.id,
+          isDefault: mc.isDefault,
+          surchargePercentage: mc.surchargePercentage.toNumber(),
+          color: {
+            id: mc.color.id,
+            name: mc.color.name,
+            hexCode: mc.color.hexCode,
+            ralCode: mc.color.ralCode,
+          },
+        }));
+      },
+    },
+  };
 }

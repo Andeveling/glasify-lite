@@ -8,8 +8,8 @@
  */
 
 import type { PrismaClient } from "@prisma/generated/client";
-import { Decimal } from "decimal.js";
 import { TRPCError } from "@trpc/server";
+import { Decimal } from "decimal.js";
 import logger from "@/lib/logger";
 import { getTenantConfigSelect } from "@/server/utils/tenant";
 import type { CartItem } from "@/types/cart.types";

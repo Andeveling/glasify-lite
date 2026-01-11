@@ -11,14 +11,16 @@
  * - Identifies default color for the model
  */
 
-import type { QuoteRepository } from "../repositories/quote.repository";
-
 export type GetModelColorsForQuoteInput = {
   modelId: string;
 };
 
 export type GetModelColorsForQuoteDependencies = {
-  quoteRepository: QuoteRepository;
+  quoteRepository: {
+    findModelColorsByModelId: (
+      modelId: string
+    ) => Promise<ModelColorForQuote[]>;
+  };
 };
 
 export type ModelColorForQuote = {
@@ -41,18 +43,25 @@ export type GetModelColorsForQuoteResult = {
 };
 
 /**
- * Get model colors for quote (placeholder implementation)
+ * Get model colors for quote
  *
- * TODO Phase D:
- * - Extend QuoteRepository with findModelColorsByModelId method
- * - Implement color filtering and sorting logic
- * - Return properly formatted color data
+ * Returns all active colors available for a model with surcharge info.
+ * Colors are sorted: default first, then alphabetically by name.
  */
-export function getModelColorsForQuoteUseCase(
-  _input: GetModelColorsForQuoteInput,
-  _deps: GetModelColorsForQuoteDependencies
+export async function getModelColorsForQuoteUseCase(
+  input: GetModelColorsForQuoteInput,
+  deps: GetModelColorsForQuoteDependencies
 ): Promise<GetModelColorsForQuoteResult> {
-  throw new Error(
-    "getModelColorsForQuoteUseCase: En desarrollo (Phase D) - extender QuoteRepository primero"
+  const colors = await deps.quoteRepository.findModelColorsByModelId(
+    input.modelId
   );
+
+  const defaultColor = colors.find((c) => c.isDefault);
+
+  return {
+    modelId: input.modelId,
+    hasColors: colors.length > 0,
+    defaultColorId: defaultColor?.color.id ?? null,
+    colors,
+  };
 }
