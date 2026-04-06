@@ -10,6 +10,7 @@
  * @version 1.0.0
  */
 
+import { stringifyCompatibleGlassTypeIds } from "../../src/lib/utils/compatible-glass-types";
 import type { GlassTypeSolutionMapping } from "../data/vitro-rojas/glass-type-solution-mappings.data";
 import type { GlassSolutionInput } from "../factories/glass-solution.factory";
 import { createGlassSolution } from "../factories/glass-solution.factory";
@@ -487,7 +488,7 @@ export class SeedOrchestrator {
     }
 
     // Replace PLACEHOLDER glass type IDs with actual IDs
-    const compatibleGlassTypeIds = Array.from(glassTypeIdMap.values());
+    const glassTypeIdsArray = Array.from(glassTypeIdMap.values());
 
     // Remove profileSupplierName (factory artifact) and add profileSupplierId
     const { profileSupplierName: _unused, ...modelData } = result.data;
@@ -502,7 +503,8 @@ export class SeedOrchestrator {
       ? await this.prisma.model.update({
           data: {
             ...modelData,
-            compatibleGlassTypeIds,
+            compatibleGlassTypeIds:
+              stringifyCompatibleGlassTypeIds(glassTypeIdsArray),
             profileSupplierId: supplierId,
           },
           where: { id: existingModel.id },
@@ -510,7 +512,8 @@ export class SeedOrchestrator {
       : await this.prisma.model.create({
           data: {
             ...modelData,
-            compatibleGlassTypeIds,
+            compatibleGlassTypeIds:
+              stringifyCompatibleGlassTypeIds(glassTypeIdsArray),
             profileSupplierId: supplierId,
           },
         });

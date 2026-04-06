@@ -1,5 +1,6 @@
 // src/server/api/routers/catalog/catalog.queries.ts
 import logger from "@/lib/logger";
+import { parseCompatibleGlassTypeIds } from "@/lib/utils/compatible-glass-types";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import {
   getAvailableGlassTypesInput,
@@ -76,12 +77,20 @@ export const catalogQueries = createTRPCRouter({
 
         const serializedModel = serializeDecimalFields(model);
 
+        // Parse compatibleGlassTypeIds from JSON string to array
+        const compatibleGlassTypeIds = parseCompatibleGlassTypeIds(
+          model.compatibleGlassTypeIds
+        );
+
         logger.info("Successfully retrieved model", {
           modelId: input.modelId,
           modelName: model.name,
         });
 
-        return serializedModel;
+        return {
+          ...serializedModel,
+          compatibleGlassTypeIds,
+        };
       } catch (error) {
         logger.error("Error getting model by ID", {
           error: error instanceof Error ? error.message : "Unknown error",
@@ -124,6 +133,11 @@ export const catalogQueries = createTRPCRouter({
             throw new Error("Modelo no encontrado");
           }
 
+          // Parse JSON string to array for Prisma in: query
+          const compatibleGlassTypeIds = parseCompatibleGlassTypeIds(
+            model.compatibleGlassTypeIds
+          );
+
           // Get solutions that have at least one glass type compatible with this model
           const solutions = await ctx.db.glassSolution.findMany({
             orderBy: { sortOrder: "asc" },
@@ -134,7 +148,7 @@ export const catalogQueries = createTRPCRouter({
                   glassTypes: {
                     some: {
                       glassTypeId: {
-                        in: model.compatibleGlassTypeIds,
+                        in: compatibleGlassTypeIds,
                       },
                     },
                   },
@@ -397,8 +411,16 @@ export const catalogQueries = createTRPCRouter({
           where: whereClause,
         });
 
-        // Serialize Decimal fields
-        const serializedModels = models.map(serializeDecimalFields);
+        // Serialize Decimal fields and parse compatibleGlassTypeIds
+        const serializedModels = models.map((model) => {
+          const serialized = serializeDecimalFields(model);
+          return {
+            ...serialized,
+            compatibleGlassTypeIds: parseCompatibleGlassTypeIds(
+              model.compatibleGlassTypeIds
+            ),
+          };
+        });
 
         logger.info("Successfully retrieved models", {
           count: serializedModels.length,
@@ -497,11 +519,16 @@ export const catalogQueries = createTRPCRouter({
           throw new Error("Modelo no encontrado");
         }
 
+        // Parse JSON string to array for Prisma in: query
+        const compatibleGlassTypeIds = parseCompatibleGlassTypeIds(
+          model.compatibleGlassTypeIds
+        );
+
         // Fetch glass types that are compatible with this model
         const glassTypes = await ctx.db.glassType.findMany({
           where: {
             id: {
-              in: model.compatibleGlassTypeIds,
+              in: compatibleGlassTypeIds,
             },
           },
           select: {
@@ -571,10 +598,11 @@ export const catalogQueries = createTRPCRouter({
           throw new Error("Modelo no encontrado");
         }
 
-        // Check if glass type ID is in the compatible list
-        const compatible = model.compatibleGlassTypeIds.includes(
-          input.glassTypeId
+        // Parse JSON string to array and check compatibility
+        const compatibleGlassTypeIds = parseCompatibleGlassTypeIds(
+          model.compatibleGlassTypeIds
         );
+        const compatible = compatibleGlassTypeIds.includes(input.glassTypeId);
 
         logger.info("Glass compatibility validation result", {
           modelId: input.modelId,

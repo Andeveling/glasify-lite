@@ -13,6 +13,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { parseCompatibleGlassTypeIds } from "@/lib/utils/compatible-glass-types";
 import { api } from "@/trpc/server-client";
 import { ModelForm } from "../_components/model-form";
 
@@ -51,7 +52,7 @@ export default async function EditModelPage({ params }: EditModelPageProps) {
   const defaultValues = {
     accessoryPrice: model.accessoryPrice?.toNumber(),
     basePrice: model.basePrice.toNumber(),
-    compatibleGlassTypeIds: model.compatibleGlassTypeIds,
+    compatibleGlassTypeIds: parseCompatibleGlassTypeIds(model.compatibleGlassTypeIds),
     costNotes: model.costNotes ?? undefined,
     costPerMmHeight: model.costPerMmHeight.toNumber(),
     costPerMmWidth: model.costPerMmWidth.toNumber(),

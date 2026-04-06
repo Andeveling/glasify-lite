@@ -1,161 +1,96 @@
-# AGENTS.md - Glasify Lite Project Rules
+# AGENTS.md — Glasify Lite
 
-> Documento maestro de reglas y verdades del proyecto para agentes IA.
+## Stack (Verificado Abril 2026)
 
-## Verdad del Proyecto
+| Component | Version | Notes |
+|-----------|---------|-------|
+| Next.js | 16.2.2 | App Router, Turbopack |
+| React | 19.2.0 | Server Components |
+| Prisma | 7.2.0 | **SQLite** via libsql adapter |
+| DB | SQLite | File: `./prisma/dev.db` |
+| tRPC | 11.6.0 | superjson transformer |
+| better-auth | 1.5.6 | Auth provider |
+| Tailwind | 4.1.14 | CSS-first (no .config.js) |
+| Biome | 2.3.0 | Lint + format |
+| Zod | 4.1.12 | Validation |
 
-### Stack Tecnologico (Versiones Exactas - Enero 2026)
-
-| Categoria | Tecnologia | Version | Notas Criticas |
-|-----------|------------|---------|----------------|
-| Framework | Next.js | 16.0.7 | App Router, Turbopack, React Compiler |
-| UI | React | 19.2.0 | Server Components, use(), Actions |
-| Estilos | Tailwind CSS | 4.1.14 | **CSS-first, SIN tailwind.config.js** |
-| Componentes | Shadcn/Radix | 3.5.0 | Estilo new-york, RSC habilitado |
-| API | tRPC | 11.6.0 | Con superjson transformer |
-| ORM | Prisma | 6.18.0 | Adapter Neon para serverless |
-| DB | PostgreSQL | Neon | Serverless, pooling incluido |
-| Auth | better-auth | 1.4.10 | Google OAuth, RBAC basico |
-| State | Zustand | 5.x | Store global |
-| Queries | TanStack Query | 5.x | Via tRPC |
-| Testing | Vitest | 4.x | Unit + Integration |
-| E2E | Playwright | 1.56 | Tests end-to-end |
-| Linter | Biome | 2.3 | Reemplaza ESLint + Prettier |
-
-### Estructura de Carpetas
-
-```
-glasify-lite/
-├── src/
-│   ├── app/                 # App Router (rutas)
-│   │   ├── (auth)/          # Rutas autenticacion
-│   │   ├── (dashboard)/     # Panel admin
-│   │   ├── (public)/        # Rutas publicas
-│   │   └── _components/     # Componentes de app
-│   ├── components/
-│   │   └── ui/              # Componentes Shadcn
-│   ├── server/
-│   │   ├── api/             # tRPC routers
-│   │   ├── auth/            # better-auth config
-│   │   └── services/        # Servicios dominio
-│   ├── lib/                 # Utilidades
-│   ├── hooks/               # React hooks
-│   ├── domain/              # Logica de negocio
-│   ├── styles/              # CSS (Tailwind v4)
-│   └── trpc/                # Cliente tRPC
-├── prisma/
-│   ├── schema.prisma
-│   └── seeders/
-├── tests/                   # Vitest tests
-├── e2e/                     # Playwright tests
-└── .opencode/               # Configuracion agentes
-```
-
-### Aliases TypeScript
-
-| Alias | Path |
-|-------|------|
-| `@/*` | `./src/*` |
-| `@server/*` | `./src/server/*` |
-| `@ui/*` | `./src/components/ui/*` |
-| `@styles/*` | `./src/styles/*` |
-| `@trpc/*` | `./src/trpc/*` |
-| `@domain/pricing/*` | `./src/domain/pricing/*` |
-
----
-
-## Reglas Criticas
-
-### 1. Tailwind CSS v4 - Arquitectura CSS-First
-
-**PROHIBIDO:**
-- Crear o buscar `tailwind.config.js`
-- Usar sintaxis de configuracion JS
-- Asumir que existen plugins JS
-
-**OBLIGATORIO:**
-- Toda configuracion en `src/styles/globals.css`
-- Usar `@theme inline { }` para extender
-- Variables CSS con sintaxis OKLCH
-
-### 2. SSR Cache Invalidation Pattern
-
-Cuando una pagina usa `force-dynamic` y pasa datos SSR como props:
-
-```typescript
-const mutation = api.feature.action.useMutation({
-  onSettled: () => {
-    void utils.feature.query.invalidate();  // Paso 1: Limpiar cache
-    router.refresh();                        // Paso 2: Re-fetch SSR
-  },
-});
-```
-
-**Ambos pasos son obligatorios.** Sin `router.refresh()`, la UI no se actualiza.
-
-### 3. Convenciones de Codigo
-
-- **Clases condicionales**: Usar `cn()` de `@/lib/utils`
-- **Componentes UI**: Ubicar en `src/components/ui/`
-- **Variantes**: Usar CVA (class-variance-authority)
-- **Schemas**: Colocar junto al router tRPC o en `src/server/schemas/`
-- **Tipos**: Preferir inferencia de Zod sobre tipos manuales
-
-### 4. Procedimientos tRPC
-
-| Procedimiento | Uso |
-|---------------|-----|
-| `publicProcedure` | Endpoints sin auth |
-| `protectedProcedure` | Requiere sesion |
-| `adminProcedure` | Requiere rol admin |
-
----
-
-## Lazy Loading de Skills
-
-Los agentes deben cargar skills bajo demanda:
-
-| Skill | Cargar cuando... |
-|-------|------------------|
-| `tailwind-v4` | Se modifiquen estilos o se agreguen colores/animaciones |
-| `trpc` | Se creen o modifiquen endpoints API |
-| `prisma` | Se modifique schema o se creen queries |
-
-**Ubicacion:** `.opencode/skills/[nombre]/SKILL.md`
-
----
-
-## Comandos Frecuentes
+## Critical Commands
 
 ```bash
-# Desarrollo
-pnpm dev              # Next.js con Turbopack
+# DB (SQLite — DATABASE_URL required)
+DATABASE_URL="file:./prisma/dev.db" pnpm db:push      # Sync schema to DB
+pnpm prisma generate                                     # Regenerate client
+pnpm seed:minimal                                       # Seed with minimal preset
+pnpm seed --preset=vitro-rojas-panama                  # Real client data
 
-# Base de datos
-pnpm db:push          # Push schema (dev)
-pnpm db:generate      # Crear migracion
-pnpm db:studio        # GUI Prisma
+# Dev
+pnpm dev                                                # Next dev with turbo
+pnpm build                                              # prisma generate && next build
 
-# Linting
-pnpm lint             # Verificar con Biome
-pnpm lint:fix         # Auto-fix
-
-# Testing
-pnpm test             # Vitest
-pnpm test:e2e         # Playwright
-
-# Build
-pnpm build            # Build produccion
-pnpm typecheck        # Verificar tipos
+# Quality
+pnpm lint:errors                                        # Biome errors only
+pnpm typecheck                                          # tsc --noEmit
+pnpm test                                               # Vitest
 ```
 
----
+## Architecture Notes
 
-## Dominio del Negocio
+### Prisma Client Location
+**Generated to `prisma/generated/client`**, NOT `node_modules/@prisma/client`. Import from generated path:
+```ts
+import { PrismaClient } from "./generated/client"
+```
 
-**Glasify** es un SaaS multi-tenant para vidrieria que maneja:
-- Catalogo de modelos de vidrio
-- Cotizaciones automatizadas
-- Configuracion por tenant (moneda, locale, branding)
-- Calculo de precios con caracteristicas de vidrio
-- Gestion de proveedores y transporte
+### Prisma 7 SQLite Adapter
+Uses `@prisma/adapter-libsql` + `@libsql/client`. Config in `prisma.config.ts`. The `DATABASE_URL` env var or fallback `file:./prisma/dev.db` is used.
+
+### compatibleGlassTypeIds Field
+**This field is a JSON string** (not an array) due to SQLite limitations. When reading: `JSON.parse(model.compatibleGlassTypeIds)`. When writing: `JSON.stringify(array)`. 30+ files in the codebase still assume it's an array — this is a known architectural debt.
+
+### Schema @map() Annotations
+Account/Session models use `@map()` for legacy NextAuth compatibility. Don't remove these.
+
+### Seed Presets
+- `minimal` — CI/testing only
+- `vitro-rojas-panama` — **Primary client** (Panama aluminum windows)
+- `vidrios-la-equidad-colombia` — Secondary client
+- `demo-client`, `full-catalog` — Other presets
+
+## Known Issues
+
+1. **compatibleGlassTypeIds**: Mismatch between schema (String/JSON) and codebase (expects String[]). See `openspec/changes/migrate-sqlite-compatible-glass-array/proposal.md`
+
+2. **better-sqlite3 won't compile** on Node 25. Use `@libsql/client` + `@prisma/adapter-libsql` instead.
+
+3. **Schema-seeders drift**: TenantConfig schema may not match what seeders expect. Check fields before running seeds.
+
+## Directory Structure (Key Paths)
+
+```
+prisma/
+├── schema.prisma              # Schema fuente
+├── generated/client/           # Prisma client generado
+├── seed-cli.ts                # Seed orchestrator
+├── seeders/                    # Individual seeders
+├── data/presets/              # Seed presets por cliente
+│   └── vitro-rojas-panama/   # Client data
+src/
+├── server/
+│   ├── db.ts                  # Prisma client singleton
+│   └── api/routers/           # tRPC routers
+├── domain/                    # Business logic
+└── app/                       # Next.js App Router
+```
+
+## Env Variables
+
+```
+DATABASE_URL=file:./prisma/dev.db    # SQLite path (required for prisma commands)
+```
+
+## Don't
+
+- Don't `import { PrismaClient } from "@prisma/client"` — use the generated client
+- Don't assume `compatibleGlassTypeIds` is an array — it's a JSON string
+- Don't use `better-sqlite3` directly — use `@libsql/client`
+- Don't edit `prisma/generated/client/` — it's generated

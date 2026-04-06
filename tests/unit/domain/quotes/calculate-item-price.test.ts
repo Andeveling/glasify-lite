@@ -63,7 +63,7 @@ function createMockModel(overrides = {}) {
     profitMarginPercentage: mockDecimal(DEFAULT_PROFIT_MARGIN_PERCENTAGE),
     glassDiscountWidthMm: DEFAULT_GLASS_DISCOUNT_WIDTH_MM,
     glassDiscountHeightMm: DEFAULT_GLASS_DISCOUNT_HEIGHT_MM,
-    compatibleGlassTypeIds: ["glass-1", "glass-2"],
+    compatibleGlassTypeIds: '["glass-1","glass-2"]',
     profileSupplier: { id: "supplier-1", name: "Proveedor A" },
     ...overrides,
   };

@@ -1,4 +1,5 @@
 import logger from "@/lib/logger";
+import { parseCompatibleGlassTypeIds } from "@/lib/utils/compatible-glass-types";
 import { db } from "@/server/db";
 
 /**
@@ -194,15 +195,18 @@ export async function canDeleteGlassType(
     where: { glassTypeId },
   });
 
-  // Note: compatibleGlassTypeIds is an array field in Model
-  // Check if any model has this glass type in their compatible list
-  const modelsWithThisGlassType = await db.model.findMany({
-    select: { id: true },
-    where: {
-      compatibleGlassTypeIds: {
-        has: glassTypeId,
-      },
-    },
+  // Note: compatibleGlassTypeIds is stored as JSON string in SQLite
+  // We must fetch all models and filter manually since SQLite doesn't support array operators
+  const allModels = await db.model.findMany({
+    select: { id: true, compatibleGlassTypeIds: true },
+  });
+
+  // Filter models where compatibleGlassTypeIds array includes the glassTypeId
+  const modelsWithThisGlassType = allModels.filter((model) => {
+    const compatibleGlassTypeIds = parseCompatibleGlassTypeIds(
+      model.compatibleGlassTypeIds
+    );
+    return compatibleGlassTypeIds.includes(glassTypeId);
   });
 
   const dependencies: DependencyCheck[] = [];

@@ -13,6 +13,7 @@
 import type { Prisma } from "@prisma/generated/client";
 import { TRPCError } from "@trpc/server";
 import logger from "@/lib/logger";
+import { stringifyCompatibleGlassTypeIds } from "@/lib/utils/compatible-glass-types";
 import {
   addCostBreakdownSchema,
   createModelSchema,
@@ -191,9 +192,14 @@ export const modelRouter = createTRPCRouter({
         });
       }
 
-      // Create model
+      // Create model (serialize compatibleGlassTypeIds for SQLite storage)
       const model = await ctx.db.model.create({
-        data: input,
+        data: {
+          ...input,
+          compatibleGlassTypeIds: stringifyCompatibleGlassTypeIds(
+            input.compatibleGlassTypeIds
+          ),
+        },
         include: {
           profileSupplier: true,
         },
@@ -511,9 +517,18 @@ export const modelRouter = createTRPCRouter({
           data.costPerMmHeight.toString() !==
             currentModel.costPerMmHeight.toString());
 
-      // Update model
+      // Update model (serialize compatibleGlassTypeIds for SQLite storage if present)
+      const updateData = {
+        ...data,
+        ...(data.compatibleGlassTypeIds && {
+          compatibleGlassTypeIds: stringifyCompatibleGlassTypeIds(
+            data.compatibleGlassTypeIds
+          ),
+        }),
+      };
+
       const updatedModel = await ctx.db.model.update({
-        data,
+        data: updateData,
         include: {
           profileSupplier: true,
         },

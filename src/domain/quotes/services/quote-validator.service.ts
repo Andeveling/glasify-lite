@@ -6,6 +6,7 @@
  */
 
 import type { Model, QuoteStatus } from "@prisma/generated/client";
+import { parseCompatibleGlassTypeIds } from "@/lib/utils/compatible-glass-types";
 
 export class ValidationError extends Error {
   code: string;
@@ -21,7 +22,11 @@ export function validateGlassTypeCompatibility(
   model: Model,
   glassTypeId: string
 ): void {
-  if (!model.compatibleGlassTypeIds.includes(glassTypeId)) {
+  // Parse JSON string to array before checking compatibility
+  const compatibleGlassTypeIds = parseCompatibleGlassTypeIds(
+    model.compatibleGlassTypeIds
+  );
+  if (!compatibleGlassTypeIds.includes(glassTypeId)) {
     throw new ValidationError(
       `Tipo de vidrio no compatible con el modelo ${model.name}`,
       "INCOMPATIBLE_GLASS_TYPE"

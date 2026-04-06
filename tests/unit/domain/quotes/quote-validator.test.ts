@@ -23,7 +23,7 @@ describe("QuoteValidatorService", () => {
       const model = {
         id: "model-1",
         name: "Ventana Corrediza",
-        compatibleGlassTypeIds: ["glass-1", "glass-2"],
+        compatibleGlassTypeIds: '["glass-1","glass-2"]',
       } as Model;
 
       expect(() => {
@@ -35,7 +35,7 @@ describe("QuoteValidatorService", () => {
       const model = {
         id: "model-1",
         name: "Ventana Corrediza",
-        compatibleGlassTypeIds: ["glass-1", "glass-2"],
+        compatibleGlassTypeIds: '["glass-1","glass-2"]',
       } as Model;
 
       expect(() => {
@@ -47,7 +47,7 @@ describe("QuoteValidatorService", () => {
       const model = {
         id: "model-1",
         name: "Ventana Batiente",
-        compatibleGlassTypeIds: ["glass-1"],
+        compatibleGlassTypeIds: '["glass-1"]',
       } as Model;
 
       try {
