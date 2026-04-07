@@ -1,8 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import SignInForm from "@/app/(auth)/_components/signin-form";
 import {
   Dialog,
   DialogContent,
@@ -10,8 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Icons } from "@/components/ui/icons";
-import { signIn } from "@/lib/auth-client";
 
 // ============================================================================
 // Types
@@ -35,34 +31,7 @@ type SignInModalProps = {
 export function SignInModal({
   open,
   onOpenChangeAction,
-  callbackUrl: defaultCallbackUrl,
 }: SignInModalProps) {
-  const searchParams = useSearchParams();
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // Get callbackUrl from prop, query params, or default to /catalog
-  const callbackUrl =
-    defaultCallbackUrl || searchParams.get("callbackUrl") || "/catalog";
-
-  /**
-   * Handle Google OAuth sign-in
-   */
-  const handleGoogleSignIn = async () => {
-    try {
-      setIsGoogleLoading(true);
-      setError(null);
-
-      await signIn.social({
-        callbackURL: callbackUrl,
-        provider: "google",
-      });
-      // Note: User will be redirected by signIn, modal closes via redirect
-    } catch {
-      setError("Error al conectar con Google. Intenta nuevamente.");
-      setIsGoogleLoading(false);
-    }
-  };
 
   return (
     <Dialog onOpenChange={onOpenChangeAction} open={open}>
@@ -78,35 +47,12 @@ export function SignInModal({
           <div className="space-y-2 text-center">
             <DialogTitle className="text-2xl">Iniciar Sesión</DialogTitle>
             <DialogDescription className="text-base">
-              Usa Google para acceder rápidamente
+              Ingresa tus credenciales
             </DialogDescription>
           </div>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          {/* Error message */}
-          {error && (
-            <div className="rounded-md bg-destructive/10 p-3 text-destructive text-sm">
-              {error}
-            </div>
-          )}
-
-          {/* OAuth Providers - Solo Google */}
-          <Button
-            className="w-full"
-            disabled={isGoogleLoading}
-            onClick={handleGoogleSignIn}
-            size="lg"
-            type="button"
-          >
-            {isGoogleLoading ? (
-              <Icons.spinner className="mr-2 h-5 w-5 animate-spin" />
-            ) : (
-              <Icons.google className="mr-2 h-5 w-5" />
-            )}
-            Continuar con Google
-          </Button>
-        </div>
+        <SignInForm />
       </DialogContent>
     </Dialog>
   );

@@ -60,8 +60,6 @@ export const env = {
 
   // Server-side variables
   ADMIN_EMAIL: getEnv("ADMIN_EMAIL"),
-  AUTH_GOOGLE_ID: getEnv("AUTH_GOOGLE_ID"),
-  AUTH_GOOGLE_SECRET: getEnv("AUTH_GOOGLE_SECRET"),
   BASE_URL: getEnv("BASE_URL"),
   BETTER_AUTH_SECRET: getEnv("BETTER_AUTH_SECRET"),
   BETTER_AUTH_URL: getEnv("BETTER_AUTH_URL"),

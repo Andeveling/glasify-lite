@@ -47,7 +47,6 @@ export default function SignInForm({
   error,
 }: SignInFormProps) {
   const [isCredentialsLoading, setIsCredentialsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   // React Hook Form with Zod resolver as single source of truth
   const form = useForm<SignInFormValues>({
@@ -83,55 +82,10 @@ export default function SignInForm({
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    try {
-      setIsGoogleLoading(true);
-
-      // Better Auth Google sign in
-      await signIn.social({
-        callbackURL: "/admin",
-        provider: "google",
-      });
-    } catch {
-      form.setError("root", {
-        message: "Error al conectar con Google. Intenta nuevamente.",
-      });
-    } finally {
-      setIsGoogleLoading(false);
-    }
-  };
-
-  const isSubmitDisabled = isLoading || isCredentialsLoading || isGoogleLoading;
+  const isSubmitDisabled = isLoading || isCredentialsLoading;
 
   return (
     <div className="space-y-6">
-      <Button
-        className="h-11 w-full bg-transparent font-medium"
-        disabled={isSubmitDisabled}
-        onClick={handleGoogleSignIn}
-        size="lg"
-        type="button"
-        variant="outline"
-      >
-        {isGoogleLoading ? (
-          <Icons.spinner className="mr-2 h-5 w-5 animate-spin" />
-        ) : (
-          <Icons.google className="mr-2 h-5 w-5" />
-        )}
-        Continuar con Google
-      </Button>
-
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-border border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-card px-3 text-muted-foreground">
-            O con tu email
-          </span>
-        </div>
-      </div>
-
       <Form {...form}>
         <form
           className="space-y-4"
