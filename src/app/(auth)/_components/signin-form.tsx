@@ -72,7 +72,11 @@ export default function SignInForm({
         form.setError("root", {
           message: "Email o contraseña incorrectos",
         });
+        return;
       }
+
+      // Redirect to admin dashboard on success
+      window.location.href = "/admin";
     } catch {
       form.setError("root", {
         message: "Error al iniciar sesión. Intenta nuevamente.",
