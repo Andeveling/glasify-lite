@@ -16,24 +16,27 @@ import { auth } from "@/server/auth";
  * Server Action to handle user sign out
  *
  * Performs complete logout flow for Next.js 16 + Better Auth:
- * 1. Signs out user session via Better Auth API
- * 2. Returns success to trigger client-side full reload
+ * 1. Signs out user session via Better Auth API (deletes session cookie)
+ * 2. Returns success - client handles redirect with useNavigate
  *
- * Note: We use window.location.href for full page reload instead of
- * Next.js redirect() to avoid "Failed to get session" errors on
- * subsequent navigation. This ensures clean state on logout.
+ * IMPORTANT: After sign-out, use router.push() or navigate.push() in the
+ * client component. Do NOT use window.location.href - the session cookie
+ * is properly invalidated by Better Auth and a clean navigation is sufficient.
  *
  * @example Client Component
  * ```tsx
+ * "use client";
  * import { handleSignOut } from "@/app/_actions/auth.actions";
+ * import { useNavigate } from "@/hooks/use-navigate";
  * import { useTransition } from "react";
  *
  * const [isPending, startTransition] = useTransition();
+ * const navigate = useNavigate();
  *
  * const onSignOut = () => {
  *   startTransition(async () => {
  *     await handleSignOut();
- *     window.location.href = "/catalog";
+ *     navigate.push("/catalog");
  *   });
  * };
  * ```

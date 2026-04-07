@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -50,6 +51,7 @@ export default function SignUpForm({
   isLoading = false,
   error,
 }: SignUpFormProps) {
+  const router = useRouter();
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
 
   // React Hook Form with Zod resolver as single source of truth
@@ -89,7 +91,7 @@ export default function SignUpForm({
       }
 
       // Redirect to admin on success
-      window.location.href = "/admin";
+      router.push("/admin");
     } catch {
       form.setError("root", {
         message: "Error al crear la cuenta. Intenta nuevamente.",

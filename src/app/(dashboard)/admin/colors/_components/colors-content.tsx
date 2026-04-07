@@ -12,6 +12,7 @@
 
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ColorsFilters } from "./colors-filters";
 import { ColorsList } from "./colors-list";
@@ -25,6 +26,7 @@ export function ColorsContent({
   initialData,
   searchParams,
 }: ColorsContentProps) {
+  const router = useRouter();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const handleCreateClick = () => {
@@ -33,7 +35,7 @@ export function ColorsContent({
 
   // If create dialog is open, navigate to create page instead
   if (createDialogOpen) {
-    window.location.href = "/admin/colors/new";
+    router.push("/admin/colors/new");
     return null;
   }
 

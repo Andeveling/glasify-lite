@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertTriangle, Home, RotateCcw, ShieldAlert } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -53,6 +54,7 @@ export default function AuthError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const router = useRouter();
   const errorType = getErrorType(error);
 
   useEffect(() => {
@@ -64,11 +66,11 @@ export default function AuthError({
   }, []);
 
   const handleGoHome = () => {
-    window.location.href = "/";
+    router.push("/");
   };
 
   const handleTrySignIn = () => {
-    window.location.href = "/signin";
+    router.push("/signin");
   };
 
   const shouldShowRetry = errorType !== "session" && errorType !== "auth";

@@ -8,6 +8,7 @@ import {
   Settings,
   Shield,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -136,6 +137,7 @@ export default function DashboardError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const router = useRouter();
   const errorType = getErrorType(error);
 
   useEffect(() => {
@@ -147,15 +149,15 @@ export default function DashboardError({
   }, []);
 
   const handleGoHome = () => {
-    window.location.href = "/dashboard";
+    router.push("/dashboard");
   };
 
   const handleGoToPublic = () => {
-    window.location.href = "/catalog";
+    router.push("/catalog");
   };
 
   const handleReload = () => {
-    window.location.reload();
+    router.refresh();
   };
 
   return (

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 /**
@@ -10,6 +11,8 @@ import { Button } from "@/components/ui/button";
  * Provides user with retry option.
  */
 export function CatalogError() {
+  const router = useRouter();
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center">
@@ -20,7 +23,7 @@ export function CatalogError() {
           No se pudieron cargar los modelos de vidrio. Por favor, intente
           nuevamente.
         </p>
-        <Button onClick={() => window.location.reload()}>Reintentar</Button>
+        <Button onClick={() => router.refresh()}>Reintentar</Button>
       </div>
     </div>
   );

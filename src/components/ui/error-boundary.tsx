@@ -14,6 +14,18 @@ type ErrorBoundaryProps = {
   showReload?: boolean;
   showHome?: boolean;
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
+  /**
+   * Optional navigation function for home button.
+   * If not provided, falls back to window.location.href.
+   * Prefer passing this prop to use Next.js router.
+   */
+  onGoHome?: () => void;
+  /**
+   * Optional reload function for reload button.
+   * If not provided, falls back to window.location.reload.
+   * Prefer passing this prop to use Next.js router.refresh().
+   */
+  onReload?: () => void;
 };
 
 type ErrorBoundaryState = {
@@ -41,12 +53,16 @@ export class ErrorBoundary extends Component<
 
   handleReload = () => {
     this.setState({ error: undefined, hasError: false });
-    window.location.reload();
+    // Use prop if provided, otherwise fall back to window.location
+    // This is intentional for error boundaries - when React state is corrupted,
+    // a full page reload is often the safest option
+    this.props.onReload?.() ?? window.location.reload();
   };
 
   handleGoHome = () => {
     this.setState({ error: undefined, hasError: false });
-    window.location.href = "/";
+    // Use prop if provided (router.push("/")), otherwise fall back
+    this.props.onGoHome?.() ?? (window.location.href = "/");
   };
 
   handleRetry = () => {

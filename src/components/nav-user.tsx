@@ -1,6 +1,7 @@
 "use client";
 
 import { LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { handleSignOut } from "@/app/_actions/auth.actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -28,25 +29,21 @@ export function NavUser({
     avatar: string;
   };
 }) {
+  const router = useRouter();
   const { isMobile } = useSidebar();
   const [isPending, startTransition] = useTransition();
 
   /**
-   * Handle sign out with full page reload
+   * Handle sign out
    *
-   * Uses handleSignOut Server Action followed by window.location.href
-   * to ensure clean state and avoid "Failed to get session" errors.
-   *
-   * The full reload is necessary because:
-   * - Server Components cache session within request
-   * - revalidatePath can cause race conditions
-   * - Hard reload guarantees fresh session fetch
+   * Uses handleSignOut Server Action followed by router.push.
+   * Better Auth invalidates the session cookie server-side,
+   * so a clean navigation is sufficient - no hard reload needed.
    */
   const onSignOut = () => {
     startTransition(async () => {
       await handleSignOut();
-      // Hard reload to ensure clean state
-      window.location.href = "/catalog";
+      router.push("/catalog");
     });
   };
 

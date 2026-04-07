@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertTriangle, Home, RefreshCw, RotateCcw } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -12,6 +13,8 @@ export default function PublicError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const router = useRouter();
+
   useEffect(() => {
     // Log the error to error reporting service
     // In production, use proper error reporting service like Sentry
@@ -23,7 +26,7 @@ export default function PublicError({
   }, []);
 
   const handleGoHome = () => {
-    window.location.href = "/catalog";
+    router.push("/catalog");
   };
 
   const isNetworkError =
@@ -93,7 +96,7 @@ export default function PublicError({
             {isNetworkError && (
               <Button
                 className="flex-1"
-                onClick={() => window.location.reload()}
+                onClick={() => router.refresh()}
                 variant="outline"
               >
                 <RefreshCw className="mr-2 h-4 w-4" />

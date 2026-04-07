@@ -1,7 +1,7 @@
 "use client";
 
 import { LogIn, Moon, Sun, User } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { SignInModal } from "@/components/signin-modal";
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function GuestMenu() {
+  const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const [showSignInModal, setShowSignInModal] = useState(false);
   const searchParams = useSearchParams();
@@ -30,11 +31,11 @@ export function GuestMenu() {
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.delete("signin");
       const newUrl = newSearchParams.toString()
-        ? `${window.location.pathname}?${newSearchParams.toString()}`
-        : window.location.pathname;
+        ? `${pathname}?${newSearchParams.toString()}`
+        : pathname;
       router.replace(newUrl);
     }
-  }, [searchParams, router]);
+  }, [searchParams, router, pathname]);
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");

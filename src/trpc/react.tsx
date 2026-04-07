@@ -72,8 +72,17 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
   );
 }
 
+/**
+ * Get the base URL for tRPC requests.
+ *
+ * NOTE: Using window.location.origin here is intentional and necessary.
+ * This is NOT for navigation - it's for constructing HTTP request URLs
+ * to the tRPC API endpoint. Unlike navigation which should use Next.js
+ * router, HTTP requests need to know the actual origin to construct URLs.
+ */
 function getBaseUrl() {
   if (typeof window !== "undefined") {
+    // Browser: get origin from window (e.g., "http://localhost:3000")
     return window.location.origin;
   }
   if (process.env.VERCEL_URL) {

@@ -9,6 +9,7 @@
  * @module app/(public)/cart/error
  */
 
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 type CartErrorProps = {
@@ -23,6 +24,8 @@ type CartErrorProps = {
  * Shows Spanish error message and retry button.
  */
 export default function CartError({ error, reset }: CartErrorProps) {
+  const router = useRouter();
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-6">
@@ -47,12 +50,7 @@ export default function CartError({ error, reset }: CartErrorProps) {
             Recargar
           </Button>
 
-          <Button
-            onClick={() => {
-              window.location.href = "/";
-            }}
-            variant="outline"
-          >
+          <Button onClick={() => router.push("/")} variant="outline">
             Volver al inicio
           </Button>
         </div>
