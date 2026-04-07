@@ -5,8 +5,8 @@ import type {
   ProfileSupplier,
 } from "@prisma/generated/client";
 import { z } from "zod";
-import { stringifyCompatibleGlassTypeIds } from "@/lib/utils/compatible-glass-types";
 import logger from "@/lib/logger";
+import { stringifyCompatibleGlassTypeIds } from "@/lib/utils/compatible-glass-types";
 import { colorsRouter } from "@/server/api/routers/admin/colors";
 import { galleryRouter } from "@/server/api/routers/admin/gallery";
 import { glassSolutionRouter } from "@/server/api/routers/admin/glass-solution";
@@ -127,7 +127,9 @@ export const adminRouter = createTRPCRouter({
           const modelData = {
             accessoryPrice: input.accessoryPrice,
             basePrice: input.basePrice,
-            compatibleGlassTypeIds: stringifyCompatibleGlassTypeIds(input.compatibleGlassTypeIds),
+            compatibleGlassTypeIds: stringifyCompatibleGlassTypeIds(
+              input.compatibleGlassTypeIds
+            ),
             costPerMmHeight: input.costPerMmHeight,
             costPerMmWidth: input.costPerMmWidth,
             maxHeightMm: input.maxHeightMm,

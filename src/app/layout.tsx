@@ -6,13 +6,13 @@ import { TenantConfigProvider } from "@/providers/tenant-config-provider";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Fira_Code, Geist, Inter, Lora } from "next/font/google";
+import Script from "next/script";
 import { ThemeProvider } from "next-themes";
 import { Suspense } from "react";
 import { Toaster } from "sonner";
 import { TRPCReactProvider } from "@/trpc/react";
 import { NavigationLoader } from "./_components/navigation-loader";
 import { ReactScan } from "./_components/react-scan";
-import Script from "next/script";
 
 export const metadata: Metadata = {
   description:
@@ -72,7 +72,7 @@ export default function RootLayout({
         geist.variable,
         inter.variable,
         lora.variable,
-        firaCode.variable,
+        firaCode.variable
       )}
       lang="es"
       suppressHydrationWarning
@@ -80,8 +80,8 @@ export default function RootLayout({
       <head>
         {process.env.NODE_ENV === "development" && (
           <Script
-            src="//unpkg.com/react-grab/dist/index.global.js"
             crossOrigin="anonymous"
+            src="//unpkg.com/react-grab/dist/index.global.js"
             strategy="beforeInteractive"
           />
         )}

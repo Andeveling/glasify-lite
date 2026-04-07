@@ -28,11 +28,7 @@ type SignInModalProps = {
 // Component
 // ============================================================================
 
-export function SignInModal({
-  open,
-  onOpenChangeAction,
-}: SignInModalProps) {
-
+export function SignInModal({ open, onOpenChangeAction }: SignInModalProps) {
   return (
     <Dialog onOpenChange={onOpenChangeAction} open={open}>
       <DialogContent className="sm:max-w-md">

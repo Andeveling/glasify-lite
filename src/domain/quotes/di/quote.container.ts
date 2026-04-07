@@ -8,12 +8,12 @@
  * Este módulo ES la única parte que conoce tanto Prisma como los use-cases.
  */
 
+import { Dimensions } from "@domain/pricing/core/entities/dimensions";
+import { Money } from "@domain/pricing/core/entities/money";
+import type { PriceCalculationResult } from "@domain/pricing/core/entities/price-calculation";
+import type { ServiceUnit } from "@domain/pricing/core/types";
 import { CalculateItemPrice } from "@domain/pricing/use-cases/calculate-item-price";
 import type { PrismaClient } from "@prisma/generated/client";
-import {
-  adaptDomainToTRPC,
-  adaptTRPCToDomain,
-} from "@/server/api/routers/quote/price-adapter";
 import {
   getQuoteValidityDays,
   getTenantConfigSelect,
@@ -29,6 +29,182 @@ import type {
   QuoteListFilters,
 } from "../use-cases/list-user-quotes";
 import type { SendQuoteToVendorDeps } from "../use-cases/send-quote-to-vendor";
+
+// =============================================================================
+// Internal Price Adaptation Functions (formerly in @/server/api/routers/quote/price-adapter)
+// =============================================================================
+// These functions transform between tRPC/Prisma formats and domain format.
+// Kept internal to this module to avoid circular dependencies with the server layer.
+
+const PERCENTAGE_DIVISOR = 100;
+const BASE_MULTIPLIER = 1.0;
+
+// Type for the input that CalculateItemPrice.execute expects
+type DomainPriceInput = Parameters<typeof CalculateItemPrice.execute>[0];
+
+// Type for tRPC-style input used in the container
+type TrpcPriceInput = {
+  widthMm: number;
+  heightMm: number;
+  modelPrices: {
+    basePrice: number;
+    costPerMmWidth: number;
+    costPerMmHeight: number;
+    minWidthMm: number;
+    minHeightMm: number;
+    accessoryPrice?: number;
+  };
+  colorSurchargePercentage?: number;
+  profitMarginPercentage?: number;
+  glass?: {
+    pricePerSqm: number;
+    discountWidthMm?: number;
+    discountHeightMm?: number;
+  };
+  services?: Array<{
+    serviceId: string;
+    name: string;
+    unit: "unit" | "sqm" | "ml";
+    rate: number;
+    minimumBillingUnit?: number;
+    quantityOverride?: number;
+  }>;
+  adjustments?: Array<{
+    adjustmentId: string;
+    concept: string;
+    unit: "unit" | "sqm" | "ml";
+    value: number;
+    sign: "positive" | "negative";
+  }>;
+};
+
+/**
+ * Transform tRPC input to domain PriceCalculationInput
+ */
+function adaptTRPCToDomain(input: TrpcPriceInput): DomainPriceInput {
+  const dimensions = new Dimensions({
+    widthMm: input.widthMm,
+    heightMm: input.heightMm,
+    minWidthMm: input.modelPrices.minWidthMm,
+    minHeightMm: input.modelPrices.minHeightMm,
+  });
+
+  const modelPrices = {
+    basePrice: new Money(input.modelPrices.basePrice),
+    costPerMmWidth: new Money(input.modelPrices.costPerMmWidth),
+    costPerMmHeight: new Money(input.modelPrices.costPerMmHeight),
+    accessoryPrice: input.modelPrices.accessoryPrice
+      ? new Money(input.modelPrices.accessoryPrice)
+      : undefined,
+  };
+
+  const colorMultiplier = input.colorSurchargePercentage
+    ? BASE_MULTIPLIER + input.colorSurchargePercentage / PERCENTAGE_DIVISOR
+    : BASE_MULTIPLIER;
+
+  const glass = input.glass
+    ? {
+        pricePerSqm: new Money(input.glass.pricePerSqm),
+        discountWidthMm: input.glass.discountWidthMm,
+        discountHeightMm: input.glass.discountHeightMm,
+      }
+    : undefined;
+
+  const services = input.services?.map((s) => ({
+    serviceId: s.serviceId,
+    name: s.name,
+    unit: s.unit as ServiceUnit,
+    rate: new Money(s.rate),
+    minimumBillingUnit: s.minimumBillingUnit,
+    quantityOverride: s.quantityOverride,
+  }));
+
+  const adjustments = input.adjustments?.map((adj) => ({
+    adjustmentId: adj.adjustmentId,
+    concept: adj.concept,
+    unit: adj.unit as ServiceUnit,
+    value: adj.value,
+    isPositive: adj.sign === "positive",
+  }));
+
+  return {
+    dimensions,
+    modelPrices,
+    colorMultiplier,
+    profitMarginPercentage: input.profitMarginPercentage,
+    glass,
+    services,
+    adjustments,
+  };
+}
+
+/**
+ * Transform domain result to tRPC output format
+ */
+function adaptDomainToTRPC(
+  result: PriceCalculationResult,
+  colorSurchargePercentage?: number
+): {
+  dimPrice: number;
+  accPrice: number;
+  colorSurchargePercentage?: number;
+  colorSurchargeAmount?: number;
+  services: Array<{
+    serviceId: string;
+    unit: ServiceUnit;
+    quantity: number;
+    amount: number;
+  }>;
+  adjustments: Array<{ concept: string; amount: number }>;
+  subtotal: number;
+} {
+  const dimPrice = result.profileCost.add(result.glassCost).toNumber();
+
+  const services = result.services.map((svc) => ({
+    serviceId: svc.serviceId,
+    unit: svc.unit,
+    quantity: svc.quantity,
+    amount: svc.amount,
+  }));
+
+  const adjustments = result.adjustments.map((adj) => ({
+    concept: adj.concept,
+    amount: adj.amount,
+  }));
+
+  const output: {
+    dimPrice: number;
+    accPrice: number;
+    colorSurchargePercentage?: number;
+    colorSurchargeAmount?: number;
+    services: Array<{
+      serviceId: string;
+      unit: ServiceUnit;
+      quantity: number;
+      amount: number;
+    }>;
+    adjustments: Array<{ concept: string; amount: number }>;
+    subtotal: number;
+  } = {
+    dimPrice,
+    accPrice: result.accessoryCost.toNumber(),
+    services,
+    adjustments,
+    subtotal: result.subtotal.toNumber(),
+  };
+
+  if (colorSurchargePercentage !== undefined && colorSurchargePercentage > 0) {
+    output.colorSurchargePercentage = colorSurchargePercentage;
+    const multiplier =
+      BASE_MULTIPLIER + colorSurchargePercentage / PERCENTAGE_DIVISOR;
+    const profilePlusAccessory = result.profileCost.add(result.accessoryCost);
+    const surchargeMultiplier = 1 - 1 / multiplier;
+    const surchargeAmount = profilePlusAccessory.multiply(surchargeMultiplier);
+    output.colorSurchargeAmount = surchargeAmount.toNumber();
+  }
+
+  return output;
+}
 
 /**
  * Crea las dependencias para AddItemToQuote use-case

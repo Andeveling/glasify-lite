@@ -19,6 +19,7 @@ const MAX_PROJECT_NAME_LENGTH = 100;
 const MAX_ADDRESS_LENGTH = 200;
 const MAX_PHONE_LENGTH = 20;
 const MAX_CART_ITEMS = 20;
+const MAX_QUOTE_ITEMS = 50;
 const CURRENCY_CODE_LENGTH = 3;
 
 // ============================================================================
@@ -142,6 +143,69 @@ export const generateQuoteFromCartInput = z.object({
 
 export type GenerateQuoteFromCartInput = z.infer<
   typeof generateQuoteFromCartInput
+>;
+
+/**
+ * Admin quote creation - item input
+ * Simplified item structure for admin quote creation
+ */
+export const createQuoteItemInput = z.object({
+  glassTypeId: z.string().cuid({ message: "ID del tipo de vidrio inválido" }),
+  heightMm: z
+    .number()
+    .int()
+    .positive({ message: "Alto debe ser mayor a 0 mm" }),
+  modelId: z.string().cuid({ message: "ID del modelo inválido" }),
+  quantity: z
+    .number()
+    .int()
+    .positive({ message: "Cantidad debe ser mayor a 0" }),
+  widthMm: z
+    .number()
+    .int()
+    .positive({ message: "Ancho debe ser mayor a 0 mm" }),
+});
+
+export type CreateQuoteItemInput = z.infer<typeof createQuoteItemInput>;
+
+/**
+ * Admin quote creation input
+ *
+ * tRPC Mutation: quote['create-quote-from-items']
+ * Access: adminProcedure only
+ */
+export const createQuoteFromItemsInput = z.object({
+  /**
+   * Optional client ID. If not provided, quote is created unassigned.
+   */
+  clientId: z.string().cuid().optional(),
+  items: z
+    .array(createQuoteItemInput)
+    .min(1, "La cotización debe tener al menos un ítem")
+    .max(MAX_QUOTE_ITEMS, "La cotización no puede tener más de 50 ítems"),
+  projectAddress: projectAddressSchema,
+  projectName: z
+    .string()
+    .min(1, "Nombre del proyecto es requerido")
+    .max(MAX_PROJECT_NAME_LENGTH),
+});
+
+export type CreateQuoteFromItemsInput = z.infer<
+  typeof createQuoteFromItemsInput
+>;
+
+/**
+ * Admin quote creation output
+ */
+export const createQuoteFromItemsOutput = z.object({
+  itemCount: z.number().int().nonnegative(),
+  quoteId: z.string().cuid(),
+  total: z.number().nonnegative(),
+  validUntil: z.date(),
+});
+
+export type CreateQuoteFromItemsOutput = z.infer<
+  typeof createQuoteFromItemsOutput
 >;
 
 // ============================================================================

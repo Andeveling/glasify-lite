@@ -52,7 +52,9 @@ export default async function EditModelPage({ params }: EditModelPageProps) {
   const defaultValues = {
     accessoryPrice: model.accessoryPrice?.toNumber(),
     basePrice: model.basePrice.toNumber(),
-    compatibleGlassTypeIds: parseCompatibleGlassTypeIds(model.compatibleGlassTypeIds),
+    compatibleGlassTypeIds: parseCompatibleGlassTypeIds(
+      model.compatibleGlassTypeIds
+    ),
     costNotes: model.costNotes ?? undefined,
     costPerMmHeight: model.costPerMmHeight.toNumber(),
     costPerMmWidth: model.costPerMmWidth.toNumber(),

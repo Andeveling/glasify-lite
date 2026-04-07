@@ -5,6 +5,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import logger from "@/lib/logger";
 import {
+  adminProcedure,
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
@@ -13,6 +14,8 @@ import {
 import { sendQuoteNotification } from "@/server/services/email";
 import { getTenantConfigSelect } from "@/server/utils/tenant";
 import {
+  createQuoteFromItemsInput,
+  createQuoteFromItemsOutput,
   getQuoteByIdInput,
   getQuoteByIdOutput,
   listUserQuotesInput,
@@ -25,6 +28,11 @@ import {
 const _PERCENTAGE_DIVISOR = 100;
 const MIN_SURCHARGE_PERCENTAGE = 0;
 const MAX_SURCHARGE_PERCENTAGE = 100;
+
+// Constants for admin quote creation
+const SQUARE_MM_IN_SQM = 1_000_000;
+const ID_GENERATION_RADIX = 36;
+const ID_RANDOM_SLICE = 2;
 
 // Constants for pagination
 const MAX_LIMIT = 100;
@@ -835,6 +843,144 @@ export const quoteRouter = createTRPCRouter({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Error al calcular el precio con color",
+        });
+      }
+    }),
+
+  /**
+   * Create quote from items (Admin)
+   *
+   * Admin-only mutation to create a quote directly from item specifications.
+   * Calculates prices internally and creates quote in a transaction.
+   *
+   * Access: adminProcedure only
+   */
+  "create-quote-from-items": adminProcedure
+    .input(createQuoteFromItemsInput)
+    .output(createQuoteFromItemsOutput)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        logger.info("Admin creating quote from items", {
+          clientId: input.clientId,
+          itemCount: input.items.length,
+          projectName: input.projectName,
+        });
+
+        const { generateQuoteFromCart } = await import("./quote.service");
+
+        // Transform items to cart item format with calculated prices
+        const calculatedItems = await Promise.all(
+          input.items.map(async (item) => {
+            // Calculate item price
+            const priceResult = await ctx.db.$transaction(async (tx) => {
+              const [model, glassType] = await Promise.all([
+                tx.model.findUnique({
+                  where: { id: item.modelId },
+                  select: {
+                    basePrice: true,
+                    costPerMmWidth: true,
+                    costPerMmHeight: true,
+                    name: true,
+                  },
+                }),
+                tx.glassType.findUnique({
+                  where: { id: item.glassTypeId },
+                  select: { pricePerSqm: true, name: true },
+                }),
+              ]);
+
+              if (!model) {
+                throw new TRPCError({
+                  code: "BAD_REQUEST",
+                  message: `Modelo no encontrado: ${item.modelId}`,
+                });
+              }
+
+              if (!glassType) {
+                throw new TRPCError({
+                  code: "BAD_REQUEST",
+                  message: `Tipo de vidrio no encontrado: ${item.glassTypeId}`,
+                });
+              }
+
+              // Calculate area and base price
+              const areaSqm = (item.widthMm * item.heightMm) / SQUARE_MM_IN_SQM;
+              const widthCost = item.widthMm * Number(model.costPerMmWidth);
+              const heightCost = item.heightMm * Number(model.costPerMmHeight);
+              const glassCost = areaSqm * Number(glassType.pricePerSqm);
+              const unitPrice =
+                Number(model.basePrice) + widthCost + heightCost + glassCost;
+              const subtotal = unitPrice * item.quantity;
+              const itemId = `item-${Date.now()}-${Math.random().toString(ID_GENERATION_RADIX).slice(ID_RANDOM_SLICE)}`;
+
+              return {
+                id: itemId,
+                modelId: item.modelId,
+                modelName: model.name,
+                glassTypeId: item.glassTypeId,
+                glassTypeName: glassType.name,
+                widthMm: item.widthMm,
+                heightMm: item.heightMm,
+                quantity: item.quantity,
+                additionalServiceIds: [],
+                name: `${model.name} - ${glassType.name}`,
+                unitPrice,
+                subtotal,
+                createdAt: new Date().toISOString(),
+                dimensions: {
+                  widthMm: item.widthMm,
+                  heightMm: item.heightMm,
+                },
+              };
+            });
+
+            return priceResult;
+          })
+        );
+
+        // Get userId - either from clientId or use admin's userId
+        const userId = input.clientId ?? ctx.session.user.id;
+
+        // Generate quote using existing service
+        const result = await generateQuoteFromCart(ctx.db, userId, {
+          cartItems: calculatedItems,
+          contactPhone: undefined,
+          manufacturerId: undefined,
+          projectAddress: {
+            projectCity: input.projectAddress.projectCity,
+            projectName: input.projectName,
+            projectState: input.projectAddress.projectState,
+            projectStreet: input.projectAddress.projectStreet,
+          },
+        });
+
+        logger.info("Admin quote created successfully", {
+          clientId: input.clientId,
+          itemCount: result.itemCount,
+          quoteId: result.quoteId,
+          total: result.total,
+        });
+
+        return {
+          itemCount: result.itemCount,
+          quoteId: result.quoteId,
+          total: result.total,
+          validUntil: result.validUntil,
+        };
+      } catch (error) {
+        if (error instanceof TRPCError) {
+          throw error;
+        }
+        logger.error("Error creating quote from items", {
+          error: error instanceof Error ? error.message : "Unknown error",
+          itemCount: input.items.length,
+        });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Error al crear la cotización. Intente nuevamente.",
         });
       }
     }),

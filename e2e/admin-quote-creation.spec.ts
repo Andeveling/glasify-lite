@@ -8,7 +8,10 @@
  */
 
 import { expect, test } from "@playwright/test";
-import { createAdminSession, injectAuthCookies } from "./helpers/test-auth-helper";
+import {
+  createAdminSession,
+  injectAuthCookies,
+} from "./helpers/test-auth-helper";
 
 // Test constants
 const NEW_QUOTE_URL = "/admin/quotes/new";
@@ -31,7 +34,7 @@ test.describe("Admin Quote Creation", () => {
     await page.goto(NEW_QUOTE_URL);
 
     // Wait for form to load
-    await page.waitForSelector('text=Información del Proyecto', {
+    await page.waitForSelector("text=Información del Proyecto", {
       state: "visible",
       timeout: 15_000,
     });
@@ -50,24 +53,16 @@ test.describe("Admin Quote Creation", () => {
       page.locator('label:has-text("Nombre del Proyecto")')
     ).toBeVisible();
 
-    await expect(
-      page.locator('label:has-text("Dirección")')
-    ).toBeVisible();
+    await expect(page.locator('label:has-text("Dirección")')).toBeVisible();
 
-    await expect(
-      page.locator('label:has-text("Ciudad")')
-    ).toBeVisible();
+    await expect(page.locator('label:has-text("Ciudad")')).toBeVisible();
 
-    await expect(
-      page.locator('label:has-text("Estado/Región")')
-    ).toBeVisible();
+    await expect(page.locator('label:has-text("Estado/Región")')).toBeVisible();
   });
 
   test("should display items section with add button", async ({ page }) => {
     // Verify items section header
-    await expect(
-      page.locator('text=Ítems de la Cotización')
-    ).toBeVisible();
+    await expect(page.locator("text=Ítems de la Cotización")).toBeVisible();
 
     // Verify add item button exists
     const addButton = page.locator('button:has-text("Agregar Ítem")');
@@ -76,14 +71,12 @@ test.describe("Admin Quote Creation", () => {
 
   test("should show catalog selectors in first item row", async ({ page }) => {
     // Verify model selector exists
-    const modelSelector = page.locator(
-      'label:has-text("Modelo") + * >> nth=0'
-    ).first();
+    const modelSelector = page
+      .locator('label:has-text("Modelo") + * >> nth=0')
+      .first();
 
     // Verify glass type selector exists
-    const glassTypeSelector = page.locator(
-      'label:has-text("Tipo de Vidrio")'
-    );
+    const glassTypeSelector = page.locator('label:has-text("Tipo de Vidrio")');
 
     // Verify dimension inputs exist
     const widthInput = page.locator('label:has-text("Ancho (mm)")');
@@ -140,10 +133,9 @@ test.describe("Admin Quote Creation", () => {
     await addButton.click();
 
     // Wait for second row to appear
-    await page.waitForSelector(
-      'label:has-text("Modelo") >> nth=1',
-      { state: "visible" }
-    );
+    await page.waitForSelector('label:has-text("Modelo") >> nth=1', {
+      state: "visible",
+    });
 
     // Should now have 2 model selectors
     const modelSelectors = page.locator('label:has-text("Modelo")');
@@ -156,10 +148,9 @@ test.describe("Admin Quote Creation", () => {
     await addButton.click();
 
     // Wait for second row
-    await page.waitForSelector(
-      'label:has-text("Modelo") >> nth=1',
-      { state: "visible" }
-    );
+    await page.waitForSelector('label:has-text("Modelo") >> nth=1', {
+      state: "visible",
+    });
 
     // Find and click the delete button on the second row
     // (the last delete button should be for the last item)

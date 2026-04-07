@@ -19,18 +19,18 @@ import { db } from "@/server/db";
 /**
  * Test user structure returned by testUtils.createUser
  */
-export interface TestUser {
+export type TestUser = {
   id: string;
   email: string;
   name?: string;
   emailVerified?: boolean;
   image?: string | null;
-}
+};
 
 /**
  * Authenticated session with cookies for Playwright
  */
-export interface AuthSession {
+export type AuthSession = {
   /** The session token */
   token: string;
   /** Session expiry */
@@ -47,12 +47,12 @@ export interface AuthSession {
     secure: boolean;
     sameSite: "Lax" | "Strict" | "None";
   }>;
-}
+};
 
 /**
  * Resolved test context from auth.$context
  */
-interface TestContext {
+type TestContext = {
   test: {
     createUser: (data: { email: string; name?: string }) => TestUser;
     saveUser: (user: TestUser) => Promise<TestUser>;
@@ -69,21 +69,26 @@ interface TestContext {
         sameSite?: "Lax" | "Strict" | "None";
       }>;
     }>;
-    getAuthHeaders: (data: { userId: string }) => Promise<Record<string, string>>;
-    getCookies: (data: { userId: string; domain: string }) => Promise<AuthSession["cookies"]>;
+    getAuthHeaders: (data: {
+      userId: string;
+    }) => Promise<Record<string, string>>;
+    getCookies: (data: {
+      userId: string;
+      domain: string;
+    }) => Promise<AuthSession["cookies"]>;
   };
-}
+};
 
 /**
  * Get the test context from auth.$context
  * This will fail if testUtils plugin is not enabled
  */
 async function getTestContext(): Promise<TestContext["test"]> {
-  const ctx = await auth.$context as TestContext;
+  const ctx = (await auth.$context) as TestContext;
   if (!ctx.test) {
     throw new Error(
       "testUtils not available in auth context.\n" +
-        "Ensure BETTER_AUTH_TEST_UTILS=\"true\" is set in .env.local and restart the dev server."
+        'Ensure BETTER_AUTH_TEST_UTILS="true" is set in .env.local and restart the dev server.'
     );
   }
   return ctx.test;
@@ -128,9 +133,12 @@ export async function setUserRole(
  * @param userId - User ID
  * @returns User or null
  */
-export async function getUserById(
-  userId: string
-): Promise<{ id: string; email: string; name?: string | null; role: string } | null> {
+export async function getUserById(userId: string): Promise<{
+  id: string;
+  email: string;
+  name?: string | null;
+  role: string;
+} | null> {
   const user = await db.user.findUnique({
     where: { id: userId },
     select: { id: true, email: true, name: true, role: true },
