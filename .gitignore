@@ -58,3 +58,4 @@ test-results/
 **/playwright-report/
 public/modern-aluminum-sliding-window.jpg
 .env.vercel.production
+.playwright-cli/
