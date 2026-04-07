@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -46,6 +47,7 @@ export default function SignInForm({
   isLoading = false,
   error,
 }: SignInFormProps) {
+  const router = useRouter();
   const [isCredentialsLoading, setIsCredentialsLoading] = useState(false);
 
   // React Hook Form with Zod resolver as single source of truth
@@ -76,7 +78,7 @@ export default function SignInForm({
       }
 
       // Redirect to admin dashboard on success
-      window.location.href = "/admin";
+      router.push("/admin");
     } catch {
       form.setError("root", {
         message: "Error al iniciar sesión. Intenta nuevamente.",
