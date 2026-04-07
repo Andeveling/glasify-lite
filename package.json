@@ -23,6 +23,7 @@
     "seed:glass-types": "tsx prisma/seeders/glass-types.seeder.ts",
     "seed:glass-solutions": "tsx prisma/seeders/glass-solutions.seeder.ts",
     "seed:glass-characteristics": "tsx prisma/seeders/glass-characteristics.seeder.ts",
+    "seed:admin": "tsx prisma/seed-admin.ts",
     "seed:glass-taxonomy": "pnpm seed:glass-solutions && pnpm seed:glass-types",
     "migrate:static-glass-taxonomy": "tsx scripts/migrate-static-glass-taxonomy.ts",
     "migrate:glass-taxonomy": "tsx scripts/migrate-glass-taxonomy.ts",
