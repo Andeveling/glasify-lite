@@ -926,7 +926,6 @@ export type QuoteItemCreateOrConnectWithoutModelInput = {
 
 export type QuoteItemCreateManyModelInputEnvelope = {
   data: Prisma.QuoteItemCreateManyModelInput | Prisma.QuoteItemCreateManyModelInput[]
-  skipDuplicates?: boolean
 }
 
 export type QuoteItemUpsertWithWhereUniqueWithoutModelInput = {
@@ -1017,7 +1016,6 @@ export type QuoteItemCreateOrConnectWithoutGlassTypeInput = {
 
 export type QuoteItemCreateManyGlassTypeInputEnvelope = {
   data: Prisma.QuoteItemCreateManyGlassTypeInput | Prisma.QuoteItemCreateManyGlassTypeInput[]
-  skipDuplicates?: boolean
 }
 
 export type QuoteItemUpsertWithWhereUniqueWithoutGlassTypeInput = {
@@ -1085,7 +1083,6 @@ export type QuoteItemCreateOrConnectWithoutQuoteInput = {
 
 export type QuoteItemCreateManyQuoteInputEnvelope = {
   data: Prisma.QuoteItemCreateManyQuoteInput | Prisma.QuoteItemCreateManyQuoteInput[]
-  skipDuplicates?: boolean
 }
 
 export type QuoteItemUpsertWithWhereUniqueWithoutQuoteInput = {
@@ -1353,7 +1350,6 @@ export type QuoteItemCreateOrConnectWithoutColorInput = {
 
 export type QuoteItemCreateManyColorInputEnvelope = {
   data: Prisma.QuoteItemCreateManyColorInput | Prisma.QuoteItemCreateManyColorInput[]
-  skipDuplicates?: boolean
 }
 
 export type QuoteItemUpsertWithWhereUniqueWithoutColorInput = {
@@ -2553,7 +2549,6 @@ export type QuoteItemCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * The data used to create many QuoteItems.
    */
   data: Prisma.QuoteItemCreateManyInput | Prisma.QuoteItemCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -2572,7 +2567,6 @@ export type QuoteItemCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Exten
    * The data used to create many QuoteItems.
    */
   data: Prisma.QuoteItemCreateManyInput | Prisma.QuoteItemCreateManyInput[]
-  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

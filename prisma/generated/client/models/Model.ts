@@ -66,6 +66,7 @@ export type ModelMinAggregateOutputType = {
   costPerMmWidth: runtime.Decimal | null
   costPerMmHeight: runtime.Decimal | null
   accessoryPrice: runtime.Decimal | null
+  compatibleGlassTypeIds: string | null
   createdAt: Date | null
   updatedAt: Date | null
   glassDiscountHeightMm: number | null
@@ -89,6 +90,7 @@ export type ModelMaxAggregateOutputType = {
   costPerMmWidth: runtime.Decimal | null
   costPerMmHeight: runtime.Decimal | null
   accessoryPrice: runtime.Decimal | null
+  compatibleGlassTypeIds: string | null
   createdAt: Date | null
   updatedAt: Date | null
   glassDiscountHeightMm: number | null
@@ -166,6 +168,7 @@ export type ModelMinAggregateInputType = {
   costPerMmWidth?: true
   costPerMmHeight?: true
   accessoryPrice?: true
+  compatibleGlassTypeIds?: true
   createdAt?: true
   updatedAt?: true
   glassDiscountHeightMm?: true
@@ -189,6 +192,7 @@ export type ModelMaxAggregateInputType = {
   costPerMmWidth?: true
   costPerMmHeight?: true
   accessoryPrice?: true
+  compatibleGlassTypeIds?: true
   createdAt?: true
   updatedAt?: true
   glassDiscountHeightMm?: true
@@ -323,7 +327,7 @@ export type ModelGroupByOutputType = {
   costPerMmWidth: runtime.Decimal
   costPerMmHeight: runtime.Decimal
   accessoryPrice: runtime.Decimal | null
-  compatibleGlassTypeIds: string[]
+  compatibleGlassTypeIds: string
   createdAt: Date
   updatedAt: Date
   glassDiscountHeightMm: number
@@ -370,7 +374,7 @@ export type ModelWhereInput = {
   costPerMmWidth?: Prisma.DecimalFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.DecimalNullableFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.StringNullableListFilter<"Model">
+  compatibleGlassTypeIds?: Prisma.StringFilter<"Model"> | string
   createdAt?: Prisma.DateTimeFilter<"Model"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Model"> | Date | string
   glassDiscountHeightMm?: Prisma.IntFilter<"Model"> | number
@@ -431,7 +435,7 @@ export type ModelWhereUniqueInput = Prisma.AtLeast<{
   costPerMmWidth?: Prisma.DecimalFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.DecimalNullableFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.StringNullableListFilter<"Model">
+  compatibleGlassTypeIds?: Prisma.StringFilter<"Model"> | string
   createdAt?: Prisma.DateTimeFilter<"Model"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Model"> | Date | string
   glassDiscountHeightMm?: Prisma.IntFilter<"Model"> | number
@@ -492,7 +496,7 @@ export type ModelScalarWhereWithAggregatesInput = {
   costPerMmWidth?: Prisma.DecimalWithAggregatesFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalWithAggregatesFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.DecimalNullableWithAggregatesFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.StringNullableListFilter<"Model">
+  compatibleGlassTypeIds?: Prisma.StringWithAggregatesFilter<"Model"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Model"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Model"> | Date | string
   glassDiscountHeightMm?: Prisma.IntWithAggregatesFilter<"Model"> | number
@@ -516,7 +520,7 @@ export type ModelCreateInput = {
   costPerMmWidth: runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight: runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelCreatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds: string
   createdAt?: Date | string
   updatedAt?: Date | string
   glassDiscountHeightMm?: number
@@ -544,7 +548,7 @@ export type ModelUncheckedCreateInput = {
   costPerMmWidth: runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight: runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelCreatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds: string
   createdAt?: Date | string
   updatedAt?: Date | string
   glassDiscountHeightMm?: number
@@ -572,7 +576,7 @@ export type ModelUpdateInput = {
   costPerMmWidth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelUpdatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   glassDiscountHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -600,7 +604,7 @@ export type ModelUncheckedUpdateInput = {
   costPerMmWidth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelUpdatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   glassDiscountHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -628,7 +632,7 @@ export type ModelCreateManyInput = {
   costPerMmWidth: runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight: runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelCreatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds: string
   createdAt?: Date | string
   updatedAt?: Date | string
   glassDiscountHeightMm?: number
@@ -652,7 +656,7 @@ export type ModelUpdateManyMutationInput = {
   costPerMmWidth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelUpdatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   glassDiscountHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -675,7 +679,7 @@ export type ModelUncheckedUpdateManyInput = {
   costPerMmWidth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelUpdatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   glassDiscountHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -695,14 +699,6 @@ export type ModelListRelationFilter = {
 
 export type ModelOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
-}
-
-export type StringNullableListFilter<$PrismaModel = never> = {
-  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
-  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
-  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
-  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
-  isEmpty?: boolean
 }
 
 export type ModelCountOrderByAggregateInput = {
@@ -755,6 +751,7 @@ export type ModelMaxOrderByAggregateInput = {
   costPerMmWidth?: Prisma.SortOrder
   costPerMmHeight?: Prisma.SortOrder
   accessoryPrice?: Prisma.SortOrder
+  compatibleGlassTypeIds?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   glassDiscountHeightMm?: Prisma.SortOrder
@@ -778,6 +775,7 @@ export type ModelMinOrderByAggregateInput = {
   costPerMmWidth?: Prisma.SortOrder
   costPerMmHeight?: Prisma.SortOrder
   accessoryPrice?: Prisma.SortOrder
+  compatibleGlassTypeIds?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   glassDiscountHeightMm?: Prisma.SortOrder
@@ -850,10 +848,6 @@ export type ModelUncheckedUpdateManyWithoutProfileSupplierNestedInput = {
   deleteMany?: Prisma.ModelScalarWhereInput | Prisma.ModelScalarWhereInput[]
 }
 
-export type ModelCreatecompatibleGlassTypeIdsInput = {
-  set: string[]
-}
-
 export type EnumModelStatusFieldUpdateOperationsInput = {
   set?: $Enums.ModelStatus
 }
@@ -864,11 +858,6 @@ export type DecimalFieldUpdateOperationsInput = {
   decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
   multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
   divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
-}
-
-export type ModelUpdatecompatibleGlassTypeIdsInput = {
-  set?: string[]
-  push?: string | string[]
 }
 
 export type ModelCreateNestedOneWithoutQuoteItemsInput = {
@@ -939,7 +928,7 @@ export type ModelCreateWithoutProfileSupplierInput = {
   costPerMmWidth: runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight: runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelCreatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds: string
   createdAt?: Date | string
   updatedAt?: Date | string
   glassDiscountHeightMm?: number
@@ -966,7 +955,7 @@ export type ModelUncheckedCreateWithoutProfileSupplierInput = {
   costPerMmWidth: runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight: runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelCreatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds: string
   createdAt?: Date | string
   updatedAt?: Date | string
   glassDiscountHeightMm?: number
@@ -988,7 +977,6 @@ export type ModelCreateOrConnectWithoutProfileSupplierInput = {
 
 export type ModelCreateManyProfileSupplierInputEnvelope = {
   data: Prisma.ModelCreateManyProfileSupplierInput | Prisma.ModelCreateManyProfileSupplierInput[]
-  skipDuplicates?: boolean
 }
 
 export type ModelUpsertWithWhereUniqueWithoutProfileSupplierInput = {
@@ -1022,7 +1010,7 @@ export type ModelScalarWhereInput = {
   costPerMmWidth?: Prisma.DecimalFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.DecimalNullableFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.StringNullableListFilter<"Model">
+  compatibleGlassTypeIds?: Prisma.StringFilter<"Model"> | string
   createdAt?: Prisma.DateTimeFilter<"Model"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Model"> | Date | string
   glassDiscountHeightMm?: Prisma.IntFilter<"Model"> | number
@@ -1046,7 +1034,7 @@ export type ModelCreateWithoutQuoteItemsInput = {
   costPerMmWidth: runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight: runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelCreatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds: string
   createdAt?: Date | string
   updatedAt?: Date | string
   glassDiscountHeightMm?: number
@@ -1073,7 +1061,7 @@ export type ModelUncheckedCreateWithoutQuoteItemsInput = {
   costPerMmWidth: runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight: runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelCreatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds: string
   createdAt?: Date | string
   updatedAt?: Date | string
   glassDiscountHeightMm?: number
@@ -1116,7 +1104,7 @@ export type ModelUpdateWithoutQuoteItemsInput = {
   costPerMmWidth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelUpdatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   glassDiscountHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1143,7 +1131,7 @@ export type ModelUncheckedUpdateWithoutQuoteItemsInput = {
   costPerMmWidth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelUpdatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   glassDiscountHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1170,7 +1158,7 @@ export type ModelCreateWithoutCostBreakdownInput = {
   costPerMmWidth: runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight: runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelCreatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds: string
   createdAt?: Date | string
   updatedAt?: Date | string
   glassDiscountHeightMm?: number
@@ -1197,7 +1185,7 @@ export type ModelUncheckedCreateWithoutCostBreakdownInput = {
   costPerMmWidth: runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight: runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelCreatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds: string
   createdAt?: Date | string
   updatedAt?: Date | string
   glassDiscountHeightMm?: number
@@ -1240,7 +1228,7 @@ export type ModelUpdateWithoutCostBreakdownInput = {
   costPerMmWidth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelUpdatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   glassDiscountHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1267,7 +1255,7 @@ export type ModelUncheckedUpdateWithoutCostBreakdownInput = {
   costPerMmWidth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelUpdatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   glassDiscountHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1294,7 +1282,7 @@ export type ModelCreateWithoutPriceHistoryInput = {
   costPerMmWidth: runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight: runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelCreatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds: string
   createdAt?: Date | string
   updatedAt?: Date | string
   glassDiscountHeightMm?: number
@@ -1321,7 +1309,7 @@ export type ModelUncheckedCreateWithoutPriceHistoryInput = {
   costPerMmWidth: runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight: runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelCreatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds: string
   createdAt?: Date | string
   updatedAt?: Date | string
   glassDiscountHeightMm?: number
@@ -1364,7 +1352,7 @@ export type ModelUpdateWithoutPriceHistoryInput = {
   costPerMmWidth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelUpdatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   glassDiscountHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1391,7 +1379,7 @@ export type ModelUncheckedUpdateWithoutPriceHistoryInput = {
   costPerMmWidth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelUpdatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   glassDiscountHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1418,7 +1406,7 @@ export type ModelCreateWithoutModelColorsInput = {
   costPerMmWidth: runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight: runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelCreatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds: string
   createdAt?: Date | string
   updatedAt?: Date | string
   glassDiscountHeightMm?: number
@@ -1445,7 +1433,7 @@ export type ModelUncheckedCreateWithoutModelColorsInput = {
   costPerMmWidth: runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight: runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelCreatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds: string
   createdAt?: Date | string
   updatedAt?: Date | string
   glassDiscountHeightMm?: number
@@ -1488,7 +1476,7 @@ export type ModelUpdateWithoutModelColorsInput = {
   costPerMmWidth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelUpdatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   glassDiscountHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1515,7 +1503,7 @@ export type ModelUncheckedUpdateWithoutModelColorsInput = {
   costPerMmWidth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelUpdatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   glassDiscountHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1542,7 +1530,7 @@ export type ModelCreateManyProfileSupplierInput = {
   costPerMmWidth: runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight: runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelCreatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds: string
   createdAt?: Date | string
   updatedAt?: Date | string
   glassDiscountHeightMm?: number
@@ -1565,7 +1553,7 @@ export type ModelUpdateWithoutProfileSupplierInput = {
   costPerMmWidth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelUpdatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   glassDiscountHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1592,7 +1580,7 @@ export type ModelUncheckedUpdateWithoutProfileSupplierInput = {
   costPerMmWidth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelUpdatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   glassDiscountHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1619,7 +1607,7 @@ export type ModelUncheckedUpdateManyWithoutProfileSupplierInput = {
   costPerMmWidth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costPerMmHeight?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   accessoryPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.ModelUpdatecompatibleGlassTypeIdsInput | string[]
+  compatibleGlassTypeIds?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   glassDiscountHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1829,7 +1817,10 @@ export type $ModelPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     costPerMmWidth: runtime.Decimal
     costPerMmHeight: runtime.Decimal
     accessoryPrice: runtime.Decimal | null
-    compatibleGlassTypeIds: string[]
+    /**
+     * JSON array of glass type IDs compatible with this model
+     */
+    compatibleGlassTypeIds: string
     createdAt: Date
     updatedAt: Date
     glassDiscountHeightMm: number
@@ -2292,7 +2283,7 @@ export interface ModelFieldRefs {
   readonly costPerMmWidth: Prisma.FieldRef<"Model", 'Decimal'>
   readonly costPerMmHeight: Prisma.FieldRef<"Model", 'Decimal'>
   readonly accessoryPrice: Prisma.FieldRef<"Model", 'Decimal'>
-  readonly compatibleGlassTypeIds: Prisma.FieldRef<"Model", 'String[]'>
+  readonly compatibleGlassTypeIds: Prisma.FieldRef<"Model", 'String'>
   readonly createdAt: Prisma.FieldRef<"Model", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Model", 'DateTime'>
   readonly glassDiscountHeightMm: Prisma.FieldRef<"Model", 'Int'>
@@ -2531,7 +2522,6 @@ export type ModelCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * The data used to create many Models.
    */
   data: Prisma.ModelCreateManyInput | Prisma.ModelCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -2550,7 +2540,6 @@ export type ModelCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * The data used to create many Models.
    */
   data: Prisma.ModelCreateManyInput | Prisma.ModelCreateManyInput[]
-  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

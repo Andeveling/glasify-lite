@@ -500,7 +500,6 @@ export type ModelCostBreakdownCreateOrConnectWithoutModelInput = {
 
 export type ModelCostBreakdownCreateManyModelInputEnvelope = {
   data: Prisma.ModelCostBreakdownCreateManyModelInput | Prisma.ModelCostBreakdownCreateManyModelInput[]
-  skipDuplicates?: boolean
 }
 
 export type ModelCostBreakdownUpsertWithWhereUniqueWithoutModelInput = {
@@ -1320,7 +1319,6 @@ export type ModelCostBreakdownCreateManyArgs<ExtArgs extends runtime.Types.Exten
    * The data used to create many ModelCostBreakdowns.
    */
   data: Prisma.ModelCostBreakdownCreateManyInput | Prisma.ModelCostBreakdownCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1339,7 +1337,6 @@ export type ModelCostBreakdownCreateManyAndReturnArgs<ExtArgs extends runtime.Ty
    * The data used to create many ModelCostBreakdowns.
    */
   data: Prisma.ModelCostBreakdownCreateManyInput | Prisma.ModelCostBreakdownCreateManyInput[]
-  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

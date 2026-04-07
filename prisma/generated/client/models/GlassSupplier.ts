@@ -548,7 +548,6 @@ export type GlassSupplierCreateOrConnectWithoutTenantConfigInput = {
 
 export type GlassSupplierCreateManyTenantConfigInputEnvelope = {
   data: Prisma.GlassSupplierCreateManyTenantConfigInput | Prisma.GlassSupplierCreateManyTenantConfigInput[]
-  skipDuplicates?: boolean
 }
 
 export type GlassSupplierUpsertWithWhereUniqueWithoutTenantConfigInput = {
@@ -1427,7 +1426,6 @@ export type GlassSupplierCreateManyArgs<ExtArgs extends runtime.Types.Extensions
    * The data used to create many GlassSuppliers.
    */
   data: Prisma.GlassSupplierCreateManyInput | Prisma.GlassSupplierCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1446,7 +1444,6 @@ export type GlassSupplierCreateManyAndReturnArgs<ExtArgs extends runtime.Types.E
    * The data used to create many GlassSuppliers.
    */
   data: Prisma.GlassSupplierCreateManyInput | Prisma.GlassSupplierCreateManyInput[]
-  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

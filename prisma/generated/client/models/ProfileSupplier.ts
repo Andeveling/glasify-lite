@@ -1203,7 +1203,6 @@ export type ProfileSupplierCreateManyArgs<ExtArgs extends runtime.Types.Extensio
    * The data used to create many ProfileSuppliers.
    */
   data: Prisma.ProfileSupplierCreateManyInput | Prisma.ProfileSupplierCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1222,7 +1221,6 @@ export type ProfileSupplierCreateManyAndReturnArgs<ExtArgs extends runtime.Types
    * The data used to create many ProfileSuppliers.
    */
   data: Prisma.ProfileSupplierCreateManyInput | Prisma.ProfileSupplierCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**

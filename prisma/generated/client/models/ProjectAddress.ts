@@ -20,20 +20,8 @@ export type ProjectAddressModel = runtime.Types.Result.DefaultSelection<Prisma.$
 
 export type AggregateProjectAddress = {
   _count: ProjectAddressCountAggregateOutputType | null
-  _avg: ProjectAddressAvgAggregateOutputType | null
-  _sum: ProjectAddressSumAggregateOutputType | null
   _min: ProjectAddressMinAggregateOutputType | null
   _max: ProjectAddressMaxAggregateOutputType | null
-}
-
-export type ProjectAddressAvgAggregateOutputType = {
-  latitude: runtime.Decimal | null
-  longitude: runtime.Decimal | null
-}
-
-export type ProjectAddressSumAggregateOutputType = {
-  latitude: runtime.Decimal | null
-  longitude: runtime.Decimal | null
 }
 
 export type ProjectAddressMinAggregateOutputType = {
@@ -46,8 +34,6 @@ export type ProjectAddressMinAggregateOutputType = {
   district: string | null
   street: string | null
   reference: string | null
-  latitude: runtime.Decimal | null
-  longitude: runtime.Decimal | null
   postalCode: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -63,8 +49,6 @@ export type ProjectAddressMaxAggregateOutputType = {
   district: string | null
   street: string | null
   reference: string | null
-  latitude: runtime.Decimal | null
-  longitude: runtime.Decimal | null
   postalCode: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -80,24 +64,12 @@ export type ProjectAddressCountAggregateOutputType = {
   district: number
   street: number
   reference: number
-  latitude: number
-  longitude: number
   postalCode: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
-
-export type ProjectAddressAvgAggregateInputType = {
-  latitude?: true
-  longitude?: true
-}
-
-export type ProjectAddressSumAggregateInputType = {
-  latitude?: true
-  longitude?: true
-}
 
 export type ProjectAddressMinAggregateInputType = {
   id?: true
@@ -109,8 +81,6 @@ export type ProjectAddressMinAggregateInputType = {
   district?: true
   street?: true
   reference?: true
-  latitude?: true
-  longitude?: true
   postalCode?: true
   createdAt?: true
   updatedAt?: true
@@ -126,8 +96,6 @@ export type ProjectAddressMaxAggregateInputType = {
   district?: true
   street?: true
   reference?: true
-  latitude?: true
-  longitude?: true
   postalCode?: true
   createdAt?: true
   updatedAt?: true
@@ -143,8 +111,6 @@ export type ProjectAddressCountAggregateInputType = {
   district?: true
   street?: true
   reference?: true
-  latitude?: true
-  longitude?: true
   postalCode?: true
   createdAt?: true
   updatedAt?: true
@@ -189,18 +155,6 @@ export type ProjectAddressAggregateArgs<ExtArgs extends runtime.Types.Extensions
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
-   * Select which fields to average
-  **/
-  _avg?: ProjectAddressAvgAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
-   * Select which fields to sum
-  **/
-  _sum?: ProjectAddressSumAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
    * Select which fields to find the minimum value
   **/
   _min?: ProjectAddressMinAggregateInputType
@@ -231,8 +185,6 @@ export type ProjectAddressGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   _count?: ProjectAddressCountAggregateInputType | true
-  _avg?: ProjectAddressAvgAggregateInputType
-  _sum?: ProjectAddressSumAggregateInputType
   _min?: ProjectAddressMinAggregateInputType
   _max?: ProjectAddressMaxAggregateInputType
 }
@@ -247,14 +199,10 @@ export type ProjectAddressGroupByOutputType = {
   district: string | null
   street: string | null
   reference: string | null
-  latitude: runtime.Decimal | null
-  longitude: runtime.Decimal | null
   postalCode: string | null
   createdAt: Date
   updatedAt: Date
   _count: ProjectAddressCountAggregateOutputType | null
-  _avg: ProjectAddressAvgAggregateOutputType | null
-  _sum: ProjectAddressSumAggregateOutputType | null
   _min: ProjectAddressMinAggregateOutputType | null
   _max: ProjectAddressMaxAggregateOutputType | null
 }
@@ -287,8 +235,6 @@ export type ProjectAddressWhereInput = {
   district?: Prisma.StringNullableFilter<"ProjectAddress"> | string | null
   street?: Prisma.StringNullableFilter<"ProjectAddress"> | string | null
   reference?: Prisma.StringNullableFilter<"ProjectAddress"> | string | null
-  latitude?: Prisma.DecimalNullableFilter<"ProjectAddress"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: Prisma.DecimalNullableFilter<"ProjectAddress"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   postalCode?: Prisma.StringNullableFilter<"ProjectAddress"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ProjectAddress"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ProjectAddress"> | Date | string
@@ -305,8 +251,6 @@ export type ProjectAddressOrderByWithRelationInput = {
   district?: Prisma.SortOrderInput | Prisma.SortOrder
   street?: Prisma.SortOrderInput | Prisma.SortOrder
   reference?: Prisma.SortOrderInput | Prisma.SortOrder
-  latitude?: Prisma.SortOrderInput | Prisma.SortOrder
-  longitude?: Prisma.SortOrderInput | Prisma.SortOrder
   postalCode?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -326,8 +270,6 @@ export type ProjectAddressWhereUniqueInput = Prisma.AtLeast<{
   district?: Prisma.StringNullableFilter<"ProjectAddress"> | string | null
   street?: Prisma.StringNullableFilter<"ProjectAddress"> | string | null
   reference?: Prisma.StringNullableFilter<"ProjectAddress"> | string | null
-  latitude?: Prisma.DecimalNullableFilter<"ProjectAddress"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: Prisma.DecimalNullableFilter<"ProjectAddress"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   postalCode?: Prisma.StringNullableFilter<"ProjectAddress"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ProjectAddress"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ProjectAddress"> | Date | string
@@ -344,16 +286,12 @@ export type ProjectAddressOrderByWithAggregationInput = {
   district?: Prisma.SortOrderInput | Prisma.SortOrder
   street?: Prisma.SortOrderInput | Prisma.SortOrder
   reference?: Prisma.SortOrderInput | Prisma.SortOrder
-  latitude?: Prisma.SortOrderInput | Prisma.SortOrder
-  longitude?: Prisma.SortOrderInput | Prisma.SortOrder
   postalCode?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ProjectAddressCountOrderByAggregateInput
-  _avg?: Prisma.ProjectAddressAvgOrderByAggregateInput
   _max?: Prisma.ProjectAddressMaxOrderByAggregateInput
   _min?: Prisma.ProjectAddressMinOrderByAggregateInput
-  _sum?: Prisma.ProjectAddressSumOrderByAggregateInput
 }
 
 export type ProjectAddressScalarWhereWithAggregatesInput = {
@@ -369,8 +307,6 @@ export type ProjectAddressScalarWhereWithAggregatesInput = {
   district?: Prisma.StringNullableWithAggregatesFilter<"ProjectAddress"> | string | null
   street?: Prisma.StringNullableWithAggregatesFilter<"ProjectAddress"> | string | null
   reference?: Prisma.StringNullableWithAggregatesFilter<"ProjectAddress"> | string | null
-  latitude?: Prisma.DecimalNullableWithAggregatesFilter<"ProjectAddress"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: Prisma.DecimalNullableWithAggregatesFilter<"ProjectAddress"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   postalCode?: Prisma.StringNullableWithAggregatesFilter<"ProjectAddress"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ProjectAddress"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ProjectAddress"> | Date | string
@@ -385,8 +321,6 @@ export type ProjectAddressCreateInput = {
   district?: string | null
   street?: string | null
   reference?: string | null
-  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   postalCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -403,8 +337,6 @@ export type ProjectAddressUncheckedCreateInput = {
   district?: string | null
   street?: string | null
   reference?: string | null
-  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   postalCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -419,8 +351,6 @@ export type ProjectAddressUpdateInput = {
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -437,8 +367,6 @@ export type ProjectAddressUncheckedUpdateInput = {
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -454,8 +382,6 @@ export type ProjectAddressCreateManyInput = {
   district?: string | null
   street?: string | null
   reference?: string | null
-  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   postalCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -470,8 +396,6 @@ export type ProjectAddressUpdateManyMutationInput = {
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -487,8 +411,6 @@ export type ProjectAddressUncheckedUpdateManyInput = {
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -509,16 +431,9 @@ export type ProjectAddressCountOrderByAggregateInput = {
   district?: Prisma.SortOrder
   street?: Prisma.SortOrder
   reference?: Prisma.SortOrder
-  latitude?: Prisma.SortOrder
-  longitude?: Prisma.SortOrder
   postalCode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-}
-
-export type ProjectAddressAvgOrderByAggregateInput = {
-  latitude?: Prisma.SortOrder
-  longitude?: Prisma.SortOrder
 }
 
 export type ProjectAddressMaxOrderByAggregateInput = {
@@ -531,8 +446,6 @@ export type ProjectAddressMaxOrderByAggregateInput = {
   district?: Prisma.SortOrder
   street?: Prisma.SortOrder
   reference?: Prisma.SortOrder
-  latitude?: Prisma.SortOrder
-  longitude?: Prisma.SortOrder
   postalCode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -548,16 +461,9 @@ export type ProjectAddressMinOrderByAggregateInput = {
   district?: Prisma.SortOrder
   street?: Prisma.SortOrder
   reference?: Prisma.SortOrder
-  latitude?: Prisma.SortOrder
-  longitude?: Prisma.SortOrder
   postalCode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-}
-
-export type ProjectAddressSumOrderByAggregateInput = {
-  latitude?: Prisma.SortOrder
-  longitude?: Prisma.SortOrder
 }
 
 export type ProjectAddressCreateNestedOneWithoutQuoteInput = {
@@ -601,8 +507,6 @@ export type ProjectAddressCreateWithoutQuoteInput = {
   district?: string | null
   street?: string | null
   reference?: string | null
-  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   postalCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -617,8 +521,6 @@ export type ProjectAddressUncheckedCreateWithoutQuoteInput = {
   district?: string | null
   street?: string | null
   reference?: string | null
-  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   postalCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -649,8 +551,6 @@ export type ProjectAddressUpdateWithoutQuoteInput = {
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -665,8 +565,6 @@ export type ProjectAddressUncheckedUpdateWithoutQuoteInput = {
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -684,8 +582,6 @@ export type ProjectAddressSelect<ExtArgs extends runtime.Types.Extensions.Intern
   district?: boolean
   street?: boolean
   reference?: boolean
-  latitude?: boolean
-  longitude?: boolean
   postalCode?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -702,8 +598,6 @@ export type ProjectAddressSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   district?: boolean
   street?: boolean
   reference?: boolean
-  latitude?: boolean
-  longitude?: boolean
   postalCode?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -720,8 +614,6 @@ export type ProjectAddressSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   district?: boolean
   street?: boolean
   reference?: boolean
-  latitude?: boolean
-  longitude?: boolean
   postalCode?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -738,14 +630,12 @@ export type ProjectAddressSelectScalar = {
   district?: boolean
   street?: boolean
   reference?: boolean
-  latitude?: boolean
-  longitude?: boolean
   postalCode?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProjectAddressOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "quoteId" | "label" | "country" | "region" | "city" | "district" | "street" | "reference" | "latitude" | "longitude" | "postalCode" | "createdAt" | "updatedAt", ExtArgs["result"]["projectAddress"]>
+export type ProjectAddressOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "quoteId" | "label" | "country" | "region" | "city" | "district" | "street" | "reference" | "postalCode" | "createdAt" | "updatedAt", ExtArgs["result"]["projectAddress"]>
 export type ProjectAddressInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   quote?: boolean | Prisma.ProjectAddress$quoteArgs<ExtArgs>
 }
@@ -795,14 +685,6 @@ export type $ProjectAddressPayload<ExtArgs extends runtime.Types.Extensions.Inte
      * Landmark/reference (e.g., "Frente a finca Los Arrayanes")
      */
     reference: string | null
-    /**
-     * Latitude coordinate (WGS84, -90 to +90, 7 decimal places)
-     */
-    latitude: runtime.Decimal | null
-    /**
-     * Longitude coordinate (WGS84, -180 to +180, 7 decimal places)
-     */
-    longitude: runtime.Decimal | null
     /**
      * Postal/ZIP code (optional for LATAM rural areas)
      */
@@ -1242,8 +1124,6 @@ export interface ProjectAddressFieldRefs {
   readonly district: Prisma.FieldRef<"ProjectAddress", 'String'>
   readonly street: Prisma.FieldRef<"ProjectAddress", 'String'>
   readonly reference: Prisma.FieldRef<"ProjectAddress", 'String'>
-  readonly latitude: Prisma.FieldRef<"ProjectAddress", 'Decimal'>
-  readonly longitude: Prisma.FieldRef<"ProjectAddress", 'Decimal'>
   readonly postalCode: Prisma.FieldRef<"ProjectAddress", 'String'>
   readonly createdAt: Prisma.FieldRef<"ProjectAddress", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ProjectAddress", 'DateTime'>
@@ -1476,7 +1356,6 @@ export type ProjectAddressCreateManyArgs<ExtArgs extends runtime.Types.Extension
    * The data used to create many ProjectAddresses.
    */
   data: Prisma.ProjectAddressCreateManyInput | Prisma.ProjectAddressCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1495,7 +1374,6 @@ export type ProjectAddressCreateManyAndReturnArgs<ExtArgs extends runtime.Types.
    * The data used to create many ProjectAddresses.
    */
   data: Prisma.ProjectAddressCreateManyInput | Prisma.ProjectAddressCreateManyInput[]
-  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

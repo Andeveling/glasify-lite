@@ -1452,7 +1452,6 @@ export type GlassSolutionCreateManyArgs<ExtArgs extends runtime.Types.Extensions
    * The data used to create many GlassSolutions.
    */
   data: Prisma.GlassSolutionCreateManyInput | Prisma.GlassSolutionCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1471,7 +1470,6 @@ export type GlassSolutionCreateManyAndReturnArgs<ExtArgs extends runtime.Types.E
    * The data used to create many GlassSolutions.
    */
   data: Prisma.GlassSolutionCreateManyInput | Prisma.GlassSolutionCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**

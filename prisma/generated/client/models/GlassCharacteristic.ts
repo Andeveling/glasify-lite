@@ -1416,7 +1416,6 @@ export type GlassCharacteristicCreateManyArgs<ExtArgs extends runtime.Types.Exte
    * The data used to create many GlassCharacteristics.
    */
   data: Prisma.GlassCharacteristicCreateManyInput | Prisma.GlassCharacteristicCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1435,7 +1434,6 @@ export type GlassCharacteristicCreateManyAndReturnArgs<ExtArgs extends runtime.T
    * The data used to create many GlassCharacteristics.
    */
   data: Prisma.GlassCharacteristicCreateManyInput | Prisma.GlassCharacteristicCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**

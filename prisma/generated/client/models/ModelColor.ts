@@ -522,7 +522,6 @@ export type ModelColorCreateOrConnectWithoutModelInput = {
 
 export type ModelColorCreateManyModelInputEnvelope = {
   data: Prisma.ModelColorCreateManyModelInput | Prisma.ModelColorCreateManyModelInput[]
-  skipDuplicates?: boolean
 }
 
 export type ModelColorUpsertWithWhereUniqueWithoutModelInput = {
@@ -579,7 +578,6 @@ export type ModelColorCreateOrConnectWithoutColorInput = {
 
 export type ModelColorCreateManyColorInputEnvelope = {
   data: Prisma.ModelColorCreateManyColorInput | Prisma.ModelColorCreateManyColorInput[]
-  skipDuplicates?: boolean
 }
 
 export type ModelColorUpsertWithWhereUniqueWithoutColorInput = {
@@ -1413,7 +1411,6 @@ export type ModelColorCreateManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * The data used to create many ModelColors.
    */
   data: Prisma.ModelColorCreateManyInput | Prisma.ModelColorCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1432,7 +1429,6 @@ export type ModelColorCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Exte
    * The data used to create many ModelColors.
    */
   data: Prisma.ModelColorCreateManyInput | Prisma.ModelColorCreateManyInput[]
-  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

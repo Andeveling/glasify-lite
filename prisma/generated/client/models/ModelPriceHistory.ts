@@ -576,7 +576,6 @@ export type ModelPriceHistoryCreateOrConnectWithoutCreatedByUserInput = {
 
 export type ModelPriceHistoryCreateManyCreatedByUserInputEnvelope = {
   data: Prisma.ModelPriceHistoryCreateManyCreatedByUserInput | Prisma.ModelPriceHistoryCreateManyCreatedByUserInput[]
-  skipDuplicates?: boolean
 }
 
 export type ModelPriceHistoryUpsertWithWhereUniqueWithoutCreatedByUserInput = {
@@ -639,7 +638,6 @@ export type ModelPriceHistoryCreateOrConnectWithoutModelInput = {
 
 export type ModelPriceHistoryCreateManyModelInputEnvelope = {
   data: Prisma.ModelPriceHistoryCreateManyModelInput | Prisma.ModelPriceHistoryCreateManyModelInput[]
-  skipDuplicates?: boolean
 }
 
 export type ModelPriceHistoryUpsertWithWhereUniqueWithoutModelInput = {
@@ -1513,7 +1511,6 @@ export type ModelPriceHistoryCreateManyArgs<ExtArgs extends runtime.Types.Extens
    * The data used to create many ModelPriceHistories.
    */
   data: Prisma.ModelPriceHistoryCreateManyInput | Prisma.ModelPriceHistoryCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1532,7 +1529,6 @@ export type ModelPriceHistoryCreateManyAndReturnArgs<ExtArgs extends runtime.Typ
    * The data used to create many ModelPriceHistories.
    */
   data: Prisma.ModelPriceHistoryCreateManyInput | Prisma.ModelPriceHistoryCreateManyInput[]
-  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

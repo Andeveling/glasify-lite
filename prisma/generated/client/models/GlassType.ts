@@ -1893,7 +1893,6 @@ export type GlassTypeCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * The data used to create many GlassTypes.
    */
   data: Prisma.GlassTypeCreateManyInput | Prisma.GlassTypeCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1912,7 +1911,6 @@ export type GlassTypeCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Exten
    * The data used to create many GlassTypes.
    */
   data: Prisma.GlassTypeCreateManyInput | Prisma.GlassTypeCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**

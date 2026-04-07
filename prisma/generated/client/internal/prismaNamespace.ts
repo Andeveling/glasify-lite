@@ -2308,9 +2308,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
  */
 
 export const TransactionIsolationLevel = runtime.makeStrictEnum({
-  ReadUncommitted: 'ReadUncommitted',
-  ReadCommitted: 'ReadCommitted',
-  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 } as const)
 
@@ -2405,6 +2402,10 @@ export const TenantConfigScalarFieldEnum = {
   linkedinUrl: 'linkedinUrl',
   whatsappNumber: 'whatsappNumber',
   whatsappEnabled: 'whatsappEnabled',
+  taxEnabled: 'taxEnabled',
+  taxName: 'taxName',
+  taxRate: 'taxRate',
+  taxDescription: 'taxDescription',
   transportBaseRate: 'transportBaseRate',
   transportPerKmRate: 'transportPerKmRate',
   warehouseCity: 'warehouseCity',
@@ -2731,8 +2732,6 @@ export const ProjectAddressScalarFieldEnum = {
   district: 'district',
   street: 'street',
   reference: 'reference',
-  latitude: 'latitude',
-  longitude: 'longitude',
   postalCode: 'postalCode',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -2747,14 +2746,6 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
-
-
-export const QueryMode = {
-  default: 'default',
-  insensitive: 'insensitive'
-} as const
-
-export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
 export const NullsOrder = {
@@ -2779,23 +2770,9 @@ export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 
 
 
 /**
- * Reference to a field of type 'String[]'
- */
-export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
-    
-
-
-/**
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
-    
-
-
-/**
- * Reference to a field of type 'DateTime[]'
- */
-export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
     
 
 
@@ -2814,23 +2791,9 @@ export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
 
 
 /**
- * Reference to a field of type 'UserRole[]'
- */
-export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole[]'>
-    
-
-
-/**
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -2842,23 +2805,9 @@ export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
- * Reference to a field of type 'Decimal[]'
- */
-export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
-    
-
-
-/**
  * Reference to a field of type 'MaterialType'
  */
 export type EnumMaterialTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MaterialType'>
-    
-
-
-/**
- * Reference to a field of type 'MaterialType[]'
- */
-export type ListEnumMaterialTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MaterialType[]'>
     
 
 
@@ -2870,23 +2819,9 @@ export type EnumModelStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Pris
 
 
 /**
- * Reference to a field of type 'ModelStatus[]'
- */
-export type ListEnumModelStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ModelStatus[]'>
-    
-
-
-/**
  * Reference to a field of type 'ServiceType'
  */
 export type EnumServiceTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ServiceType'>
-    
-
-
-/**
- * Reference to a field of type 'ServiceType[]'
- */
-export type ListEnumServiceTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ServiceType[]'>
     
 
 
@@ -2898,23 +2833,9 @@ export type EnumServiceUnitFieldRefInput<$PrismaModel> = FieldRefInputType<$Pris
 
 
 /**
- * Reference to a field of type 'ServiceUnit[]'
- */
-export type ListEnumServiceUnitFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ServiceUnit[]'>
-    
-
-
-/**
  * Reference to a field of type 'QuoteStatus'
  */
 export type EnumQuoteStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QuoteStatus'>
-    
-
-
-/**
- * Reference to a field of type 'QuoteStatus[]'
- */
-export type ListEnumQuoteStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QuoteStatus[]'>
     
 
 
@@ -2926,23 +2847,9 @@ export type EnumAdjustmentScopeFieldRefInput<$PrismaModel> = FieldRefInputType<$
 
 
 /**
- * Reference to a field of type 'AdjustmentScope[]'
- */
-export type ListEnumAdjustmentScopeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AdjustmentScope[]'>
-    
-
-
-/**
  * Reference to a field of type 'AdjustmentSign'
  */
 export type EnumAdjustmentSignFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AdjustmentSign'>
-    
-
-
-/**
- * Reference to a field of type 'AdjustmentSign[]'
- */
-export type ListEnumAdjustmentSignFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AdjustmentSign[]'>
     
 
 
@@ -2954,13 +2861,6 @@ export type EnumCostTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
 
 
 /**
- * Reference to a field of type 'CostType[]'
- */
-export type ListEnumCostTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CostType[]'>
-    
-
-
-/**
  * Reference to a field of type 'PerformanceRating'
  */
 export type EnumPerformanceRatingFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PerformanceRating'>
@@ -2968,23 +2868,9 @@ export type EnumPerformanceRatingFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
- * Reference to a field of type 'PerformanceRating[]'
- */
-export type ListEnumPerformanceRatingFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PerformanceRating[]'>
-    
-
-
-/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-/**
- * Reference to a field of type 'Float[]'
- */
-export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 /**

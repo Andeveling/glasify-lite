@@ -1055,7 +1055,6 @@ export type ManufacturerCreateManyArgs<ExtArgs extends runtime.Types.Extensions.
    * The data used to create many Manufacturers.
    */
   data: Prisma.ManufacturerCreateManyInput | Prisma.ManufacturerCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1074,7 +1073,6 @@ export type ManufacturerCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * The data used to create many Manufacturers.
    */
   data: Prisma.ManufacturerCreateManyInput | Prisma.ManufacturerCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**

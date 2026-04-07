@@ -506,7 +506,6 @@ export type GlassTypeSolutionCreateOrConnectWithoutGlassTypeInput = {
 
 export type GlassTypeSolutionCreateManyGlassTypeInputEnvelope = {
   data: Prisma.GlassTypeSolutionCreateManyGlassTypeInput | Prisma.GlassTypeSolutionCreateManyGlassTypeInput[]
-  skipDuplicates?: boolean
 }
 
 export type GlassTypeSolutionUpsertWithWhereUniqueWithoutGlassTypeInput = {
@@ -566,7 +565,6 @@ export type GlassTypeSolutionCreateOrConnectWithoutSolutionInput = {
 
 export type GlassTypeSolutionCreateManySolutionInputEnvelope = {
   data: Prisma.GlassTypeSolutionCreateManySolutionInput | Prisma.GlassTypeSolutionCreateManySolutionInput[]
-  skipDuplicates?: boolean
 }
 
 export type GlassTypeSolutionUpsertWithWhereUniqueWithoutSolutionInput = {
@@ -1417,7 +1415,6 @@ export type GlassTypeSolutionCreateManyArgs<ExtArgs extends runtime.Types.Extens
    * The data used to create many GlassTypeSolutions.
    */
   data: Prisma.GlassTypeSolutionCreateManyInput | Prisma.GlassTypeSolutionCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1436,7 +1433,6 @@ export type GlassTypeSolutionCreateManyAndReturnArgs<ExtArgs extends runtime.Typ
    * The data used to create many GlassTypeSolutions.
    */
   data: Prisma.GlassTypeSolutionCreateManyInput | Prisma.GlassTypeSolutionCreateManyInput[]
-  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

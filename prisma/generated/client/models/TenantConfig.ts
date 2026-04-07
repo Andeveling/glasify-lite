@@ -28,6 +28,7 @@ export type AggregateTenantConfig = {
 
 export type TenantConfigAvgAggregateOutputType = {
   quoteValidityDays: number | null
+  taxRate: runtime.Decimal | null
   transportBaseRate: runtime.Decimal | null
   transportPerKmRate: runtime.Decimal | null
   warehouseLatitude: runtime.Decimal | null
@@ -36,6 +37,7 @@ export type TenantConfigAvgAggregateOutputType = {
 
 export type TenantConfigSumAggregateOutputType = {
   quoteValidityDays: number | null
+  taxRate: runtime.Decimal | null
   transportBaseRate: runtime.Decimal | null
   transportPerKmRate: runtime.Decimal | null
   warehouseLatitude: runtime.Decimal | null
@@ -62,6 +64,10 @@ export type TenantConfigMinAggregateOutputType = {
   linkedinUrl: string | null
   whatsappNumber: string | null
   whatsappEnabled: boolean | null
+  taxEnabled: boolean | null
+  taxName: string | null
+  taxRate: runtime.Decimal | null
+  taxDescription: string | null
   transportBaseRate: runtime.Decimal | null
   transportPerKmRate: runtime.Decimal | null
   warehouseCity: string | null
@@ -89,6 +95,10 @@ export type TenantConfigMaxAggregateOutputType = {
   linkedinUrl: string | null
   whatsappNumber: string | null
   whatsappEnabled: boolean | null
+  taxEnabled: boolean | null
+  taxName: string | null
+  taxRate: runtime.Decimal | null
+  taxDescription: string | null
   transportBaseRate: runtime.Decimal | null
   transportPerKmRate: runtime.Decimal | null
   warehouseCity: string | null
@@ -116,6 +126,10 @@ export type TenantConfigCountAggregateOutputType = {
   linkedinUrl: number
   whatsappNumber: number
   whatsappEnabled: number
+  taxEnabled: number
+  taxName: number
+  taxRate: number
+  taxDescription: number
   transportBaseRate: number
   transportPerKmRate: number
   warehouseCity: number
@@ -127,6 +141,7 @@ export type TenantConfigCountAggregateOutputType = {
 
 export type TenantConfigAvgAggregateInputType = {
   quoteValidityDays?: true
+  taxRate?: true
   transportBaseRate?: true
   transportPerKmRate?: true
   warehouseLatitude?: true
@@ -135,6 +150,7 @@ export type TenantConfigAvgAggregateInputType = {
 
 export type TenantConfigSumAggregateInputType = {
   quoteValidityDays?: true
+  taxRate?: true
   transportBaseRate?: true
   transportPerKmRate?: true
   warehouseLatitude?: true
@@ -161,6 +177,10 @@ export type TenantConfigMinAggregateInputType = {
   linkedinUrl?: true
   whatsappNumber?: true
   whatsappEnabled?: true
+  taxEnabled?: true
+  taxName?: true
+  taxRate?: true
+  taxDescription?: true
   transportBaseRate?: true
   transportPerKmRate?: true
   warehouseCity?: true
@@ -188,6 +208,10 @@ export type TenantConfigMaxAggregateInputType = {
   linkedinUrl?: true
   whatsappNumber?: true
   whatsappEnabled?: true
+  taxEnabled?: true
+  taxName?: true
+  taxRate?: true
+  taxDescription?: true
   transportBaseRate?: true
   transportPerKmRate?: true
   warehouseCity?: true
@@ -215,6 +239,10 @@ export type TenantConfigCountAggregateInputType = {
   linkedinUrl?: true
   whatsappNumber?: true
   whatsappEnabled?: true
+  taxEnabled?: true
+  taxName?: true
+  taxRate?: true
+  taxDescription?: true
   transportBaseRate?: true
   transportPerKmRate?: true
   warehouseCity?: true
@@ -329,6 +357,10 @@ export type TenantConfigGroupByOutputType = {
   linkedinUrl: string | null
   whatsappNumber: string | null
   whatsappEnabled: boolean
+  taxEnabled: boolean
+  taxName: string | null
+  taxRate: runtime.Decimal | null
+  taxDescription: string | null
   transportBaseRate: runtime.Decimal | null
   transportPerKmRate: runtime.Decimal | null
   warehouseCity: string | null
@@ -379,6 +411,10 @@ export type TenantConfigWhereInput = {
   linkedinUrl?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
   whatsappNumber?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
   whatsappEnabled?: Prisma.BoolFilter<"TenantConfig"> | boolean
+  taxEnabled?: Prisma.BoolFilter<"TenantConfig"> | boolean
+  taxName?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
+  taxRate?: Prisma.DecimalNullableFilter<"TenantConfig"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  taxDescription?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
   transportBaseRate?: Prisma.DecimalNullableFilter<"TenantConfig"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transportPerKmRate?: Prisma.DecimalNullableFilter<"TenantConfig"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   warehouseCity?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
@@ -407,6 +443,10 @@ export type TenantConfigOrderByWithRelationInput = {
   linkedinUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   whatsappNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   whatsappEnabled?: Prisma.SortOrder
+  taxEnabled?: Prisma.SortOrder
+  taxName?: Prisma.SortOrderInput | Prisma.SortOrder
+  taxRate?: Prisma.SortOrderInput | Prisma.SortOrder
+  taxDescription?: Prisma.SortOrderInput | Prisma.SortOrder
   transportBaseRate?: Prisma.SortOrderInput | Prisma.SortOrder
   transportPerKmRate?: Prisma.SortOrderInput | Prisma.SortOrder
   warehouseCity?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -438,6 +478,10 @@ export type TenantConfigWhereUniqueInput = Prisma.AtLeast<{
   linkedinUrl?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
   whatsappNumber?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
   whatsappEnabled?: Prisma.BoolFilter<"TenantConfig"> | boolean
+  taxEnabled?: Prisma.BoolFilter<"TenantConfig"> | boolean
+  taxName?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
+  taxRate?: Prisma.DecimalNullableFilter<"TenantConfig"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  taxDescription?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
   transportBaseRate?: Prisma.DecimalNullableFilter<"TenantConfig"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transportPerKmRate?: Prisma.DecimalNullableFilter<"TenantConfig"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   warehouseCity?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
@@ -466,6 +510,10 @@ export type TenantConfigOrderByWithAggregationInput = {
   linkedinUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   whatsappNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   whatsappEnabled?: Prisma.SortOrder
+  taxEnabled?: Prisma.SortOrder
+  taxName?: Prisma.SortOrderInput | Prisma.SortOrder
+  taxRate?: Prisma.SortOrderInput | Prisma.SortOrder
+  taxDescription?: Prisma.SortOrderInput | Prisma.SortOrder
   transportBaseRate?: Prisma.SortOrderInput | Prisma.SortOrder
   transportPerKmRate?: Prisma.SortOrderInput | Prisma.SortOrder
   warehouseCity?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -501,6 +549,10 @@ export type TenantConfigScalarWhereWithAggregatesInput = {
   linkedinUrl?: Prisma.StringNullableWithAggregatesFilter<"TenantConfig"> | string | null
   whatsappNumber?: Prisma.StringNullableWithAggregatesFilter<"TenantConfig"> | string | null
   whatsappEnabled?: Prisma.BoolWithAggregatesFilter<"TenantConfig"> | boolean
+  taxEnabled?: Prisma.BoolWithAggregatesFilter<"TenantConfig"> | boolean
+  taxName?: Prisma.StringNullableWithAggregatesFilter<"TenantConfig"> | string | null
+  taxRate?: Prisma.DecimalNullableWithAggregatesFilter<"TenantConfig"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  taxDescription?: Prisma.StringNullableWithAggregatesFilter<"TenantConfig"> | string | null
   transportBaseRate?: Prisma.DecimalNullableWithAggregatesFilter<"TenantConfig"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transportPerKmRate?: Prisma.DecimalNullableWithAggregatesFilter<"TenantConfig"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   warehouseCity?: Prisma.StringNullableWithAggregatesFilter<"TenantConfig"> | string | null
@@ -528,6 +580,10 @@ export type TenantConfigCreateInput = {
   linkedinUrl?: string | null
   whatsappNumber?: string | null
   whatsappEnabled?: boolean
+  taxEnabled?: boolean
+  taxName?: string | null
+  taxRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  taxDescription?: string | null
   transportBaseRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transportPerKmRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   warehouseCity?: string | null
@@ -556,6 +612,10 @@ export type TenantConfigUncheckedCreateInput = {
   linkedinUrl?: string | null
   whatsappNumber?: string | null
   whatsappEnabled?: boolean
+  taxEnabled?: boolean
+  taxName?: string | null
+  taxRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  taxDescription?: string | null
   transportBaseRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transportPerKmRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   warehouseCity?: string | null
@@ -584,6 +644,10 @@ export type TenantConfigUpdateInput = {
   linkedinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  taxEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  taxName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  taxDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transportBaseRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transportPerKmRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   warehouseCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -612,6 +676,10 @@ export type TenantConfigUncheckedUpdateInput = {
   linkedinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  taxEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  taxName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  taxDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transportBaseRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transportPerKmRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   warehouseCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -640,6 +708,10 @@ export type TenantConfigCreateManyInput = {
   linkedinUrl?: string | null
   whatsappNumber?: string | null
   whatsappEnabled?: boolean
+  taxEnabled?: boolean
+  taxName?: string | null
+  taxRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  taxDescription?: string | null
   transportBaseRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transportPerKmRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   warehouseCity?: string | null
@@ -667,6 +739,10 @@ export type TenantConfigUpdateManyMutationInput = {
   linkedinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  taxEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  taxName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  taxDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transportBaseRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transportPerKmRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   warehouseCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -694,6 +770,10 @@ export type TenantConfigUncheckedUpdateManyInput = {
   linkedinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  taxEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  taxName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  taxDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transportBaseRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transportPerKmRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   warehouseCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -721,6 +801,10 @@ export type TenantConfigCountOrderByAggregateInput = {
   linkedinUrl?: Prisma.SortOrder
   whatsappNumber?: Prisma.SortOrder
   whatsappEnabled?: Prisma.SortOrder
+  taxEnabled?: Prisma.SortOrder
+  taxName?: Prisma.SortOrder
+  taxRate?: Prisma.SortOrder
+  taxDescription?: Prisma.SortOrder
   transportBaseRate?: Prisma.SortOrder
   transportPerKmRate?: Prisma.SortOrder
   warehouseCity?: Prisma.SortOrder
@@ -730,6 +814,7 @@ export type TenantConfigCountOrderByAggregateInput = {
 
 export type TenantConfigAvgOrderByAggregateInput = {
   quoteValidityDays?: Prisma.SortOrder
+  taxRate?: Prisma.SortOrder
   transportBaseRate?: Prisma.SortOrder
   transportPerKmRate?: Prisma.SortOrder
   warehouseLatitude?: Prisma.SortOrder
@@ -756,6 +841,10 @@ export type TenantConfigMaxOrderByAggregateInput = {
   linkedinUrl?: Prisma.SortOrder
   whatsappNumber?: Prisma.SortOrder
   whatsappEnabled?: Prisma.SortOrder
+  taxEnabled?: Prisma.SortOrder
+  taxName?: Prisma.SortOrder
+  taxRate?: Prisma.SortOrder
+  taxDescription?: Prisma.SortOrder
   transportBaseRate?: Prisma.SortOrder
   transportPerKmRate?: Prisma.SortOrder
   warehouseCity?: Prisma.SortOrder
@@ -783,6 +872,10 @@ export type TenantConfigMinOrderByAggregateInput = {
   linkedinUrl?: Prisma.SortOrder
   whatsappNumber?: Prisma.SortOrder
   whatsappEnabled?: Prisma.SortOrder
+  taxEnabled?: Prisma.SortOrder
+  taxName?: Prisma.SortOrder
+  taxRate?: Prisma.SortOrder
+  taxDescription?: Prisma.SortOrder
   transportBaseRate?: Prisma.SortOrder
   transportPerKmRate?: Prisma.SortOrder
   warehouseCity?: Prisma.SortOrder
@@ -792,6 +885,7 @@ export type TenantConfigMinOrderByAggregateInput = {
 
 export type TenantConfigSumOrderByAggregateInput = {
   quoteValidityDays?: Prisma.SortOrder
+  taxRate?: Prisma.SortOrder
   transportBaseRate?: Prisma.SortOrder
   transportPerKmRate?: Prisma.SortOrder
   warehouseLatitude?: Prisma.SortOrder
@@ -855,6 +949,10 @@ export type TenantConfigCreateWithoutGlassSuppliersInput = {
   linkedinUrl?: string | null
   whatsappNumber?: string | null
   whatsappEnabled?: boolean
+  taxEnabled?: boolean
+  taxName?: string | null
+  taxRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  taxDescription?: string | null
   transportBaseRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transportPerKmRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   warehouseCity?: string | null
@@ -882,6 +980,10 @@ export type TenantConfigUncheckedCreateWithoutGlassSuppliersInput = {
   linkedinUrl?: string | null
   whatsappNumber?: string | null
   whatsappEnabled?: boolean
+  taxEnabled?: boolean
+  taxName?: string | null
+  taxRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  taxDescription?: string | null
   transportBaseRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transportPerKmRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   warehouseCity?: string | null
@@ -925,6 +1027,10 @@ export type TenantConfigUpdateWithoutGlassSuppliersInput = {
   linkedinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  taxEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  taxName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  taxDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transportBaseRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transportPerKmRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   warehouseCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -952,6 +1058,10 @@ export type TenantConfigUncheckedUpdateWithoutGlassSuppliersInput = {
   linkedinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  taxEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  taxName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  taxDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transportBaseRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transportPerKmRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   warehouseCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1010,6 +1120,10 @@ export type TenantConfigSelect<ExtArgs extends runtime.Types.Extensions.Internal
   linkedinUrl?: boolean
   whatsappNumber?: boolean
   whatsappEnabled?: boolean
+  taxEnabled?: boolean
+  taxName?: boolean
+  taxRate?: boolean
+  taxDescription?: boolean
   transportBaseRate?: boolean
   transportPerKmRate?: boolean
   warehouseCity?: boolean
@@ -1039,6 +1153,10 @@ export type TenantConfigSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   linkedinUrl?: boolean
   whatsappNumber?: boolean
   whatsappEnabled?: boolean
+  taxEnabled?: boolean
+  taxName?: boolean
+  taxRate?: boolean
+  taxDescription?: boolean
   transportBaseRate?: boolean
   transportPerKmRate?: boolean
   warehouseCity?: boolean
@@ -1066,6 +1184,10 @@ export type TenantConfigSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   linkedinUrl?: boolean
   whatsappNumber?: boolean
   whatsappEnabled?: boolean
+  taxEnabled?: boolean
+  taxName?: boolean
+  taxRate?: boolean
+  taxDescription?: boolean
   transportBaseRate?: boolean
   transportPerKmRate?: boolean
   warehouseCity?: boolean
@@ -1093,6 +1215,10 @@ export type TenantConfigSelectScalar = {
   linkedinUrl?: boolean
   whatsappNumber?: boolean
   whatsappEnabled?: boolean
+  taxEnabled?: boolean
+  taxName?: boolean
+  taxRate?: boolean
+  taxDescription?: boolean
   transportBaseRate?: boolean
   transportPerKmRate?: boolean
   warehouseCity?: boolean
@@ -1100,7 +1226,7 @@ export type TenantConfigSelectScalar = {
   warehouseLongitude?: boolean
 }
 
-export type TenantConfigOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "businessName" | "currency" | "quoteValidityDays" | "locale" | "timezone" | "contactEmail" | "contactPhone" | "businessAddress" | "createdAt" | "updatedAt" | "logoUrl" | "primaryColor" | "secondaryColor" | "facebookUrl" | "instagramUrl" | "linkedinUrl" | "whatsappNumber" | "whatsappEnabled" | "transportBaseRate" | "transportPerKmRate" | "warehouseCity" | "warehouseLatitude" | "warehouseLongitude", ExtArgs["result"]["tenantConfig"]>
+export type TenantConfigOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "businessName" | "currency" | "quoteValidityDays" | "locale" | "timezone" | "contactEmail" | "contactPhone" | "businessAddress" | "createdAt" | "updatedAt" | "logoUrl" | "primaryColor" | "secondaryColor" | "facebookUrl" | "instagramUrl" | "linkedinUrl" | "whatsappNumber" | "whatsappEnabled" | "taxEnabled" | "taxName" | "taxRate" | "taxDescription" | "transportBaseRate" | "transportPerKmRate" | "warehouseCity" | "warehouseLatitude" | "warehouseLongitude", ExtArgs["result"]["tenantConfig"]>
 export type TenantConfigInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   glassSuppliers?: boolean | Prisma.TenantConfig$glassSuppliersArgs<ExtArgs>
   _count?: boolean | Prisma.TenantConfigCountOutputTypeDefaultArgs<ExtArgs>
@@ -1178,6 +1304,13 @@ export type $TenantConfigPayload<ExtArgs extends runtime.Types.Extensions.Intern
      * WhatsApp: Enable floating button in catalog and quotes
      */
     whatsappEnabled: boolean
+    /**
+     * Tax configuration
+     */
+    taxEnabled: boolean
+    taxName: string | null
+    taxRate: runtime.Decimal | null
+    taxDescription: string | null
     /**
      * Fixed base cost for transportation (e.g., 50000 COP)
      */
@@ -1642,6 +1775,10 @@ export interface TenantConfigFieldRefs {
   readonly linkedinUrl: Prisma.FieldRef<"TenantConfig", 'String'>
   readonly whatsappNumber: Prisma.FieldRef<"TenantConfig", 'String'>
   readonly whatsappEnabled: Prisma.FieldRef<"TenantConfig", 'Boolean'>
+  readonly taxEnabled: Prisma.FieldRef<"TenantConfig", 'Boolean'>
+  readonly taxName: Prisma.FieldRef<"TenantConfig", 'String'>
+  readonly taxRate: Prisma.FieldRef<"TenantConfig", 'Decimal'>
+  readonly taxDescription: Prisma.FieldRef<"TenantConfig", 'String'>
   readonly transportBaseRate: Prisma.FieldRef<"TenantConfig", 'Decimal'>
   readonly transportPerKmRate: Prisma.FieldRef<"TenantConfig", 'Decimal'>
   readonly warehouseCity: Prisma.FieldRef<"TenantConfig", 'String'>
@@ -1876,7 +2013,6 @@ export type TenantConfigCreateManyArgs<ExtArgs extends runtime.Types.Extensions.
    * The data used to create many TenantConfigs.
    */
   data: Prisma.TenantConfigCreateManyInput | Prisma.TenantConfigCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1895,7 +2031,6 @@ export type TenantConfigCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * The data used to create many TenantConfigs.
    */
   data: Prisma.TenantConfigCreateManyInput | Prisma.TenantConfigCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**

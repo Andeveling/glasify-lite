@@ -478,7 +478,6 @@ export type GlassTypeCharacteristicCreateOrConnectWithoutGlassTypeInput = {
 
 export type GlassTypeCharacteristicCreateManyGlassTypeInputEnvelope = {
   data: Prisma.GlassTypeCharacteristicCreateManyGlassTypeInput | Prisma.GlassTypeCharacteristicCreateManyGlassTypeInput[]
-  skipDuplicates?: boolean
 }
 
 export type GlassTypeCharacteristicUpsertWithWhereUniqueWithoutGlassTypeInput = {
@@ -535,7 +534,6 @@ export type GlassTypeCharacteristicCreateOrConnectWithoutCharacteristicInput = {
 
 export type GlassTypeCharacteristicCreateManyCharacteristicInputEnvelope = {
   data: Prisma.GlassTypeCharacteristicCreateManyCharacteristicInput | Prisma.GlassTypeCharacteristicCreateManyCharacteristicInput[]
-  skipDuplicates?: boolean
 }
 
 export type GlassTypeCharacteristicUpsertWithWhereUniqueWithoutCharacteristicInput = {
@@ -1372,7 +1370,6 @@ export type GlassTypeCharacteristicCreateManyArgs<ExtArgs extends runtime.Types.
    * The data used to create many GlassTypeCharacteristics.
    */
   data: Prisma.GlassTypeCharacteristicCreateManyInput | Prisma.GlassTypeCharacteristicCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1391,7 +1388,6 @@ export type GlassTypeCharacteristicCreateManyAndReturnArgs<ExtArgs extends runti
    * The data used to create many GlassTypeCharacteristics.
    */
   data: Prisma.GlassTypeCharacteristicCreateManyInput | Prisma.GlassTypeCharacteristicCreateManyInput[]
-  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

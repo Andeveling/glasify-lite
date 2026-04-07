@@ -552,7 +552,6 @@ export type QuoteItemServiceCreateOrConnectWithoutServiceInput = {
 
 export type QuoteItemServiceCreateManyServiceInputEnvelope = {
   data: Prisma.QuoteItemServiceCreateManyServiceInput | Prisma.QuoteItemServiceCreateManyServiceInput[]
-  skipDuplicates?: boolean
 }
 
 export type QuoteItemServiceUpsertWithWhereUniqueWithoutServiceInput = {
@@ -612,7 +611,6 @@ export type QuoteItemServiceCreateOrConnectWithoutQuoteItemInput = {
 
 export type QuoteItemServiceCreateManyQuoteItemInputEnvelope = {
   data: Prisma.QuoteItemServiceCreateManyQuoteItemInput | Prisma.QuoteItemServiceCreateManyQuoteItemInput[]
-  skipDuplicates?: boolean
 }
 
 export type QuoteItemServiceUpsertWithWhereUniqueWithoutQuoteItemInput = {
@@ -1454,7 +1452,6 @@ export type QuoteItemServiceCreateManyArgs<ExtArgs extends runtime.Types.Extensi
    * The data used to create many QuoteItemServices.
    */
   data: Prisma.QuoteItemServiceCreateManyInput | Prisma.QuoteItemServiceCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1473,7 +1470,6 @@ export type QuoteItemServiceCreateManyAndReturnArgs<ExtArgs extends runtime.Type
    * The data used to create many QuoteItemServices.
    */
   data: Prisma.QuoteItemServiceCreateManyInput | Prisma.QuoteItemServiceCreateManyInput[]
-  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

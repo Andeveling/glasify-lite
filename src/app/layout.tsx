@@ -12,6 +12,7 @@ import { Toaster } from "sonner";
 import { TRPCReactProvider } from "@/trpc/react";
 import { NavigationLoader } from "./_components/navigation-loader";
 import { ReactScan } from "./_components/react-scan";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   description:
@@ -71,11 +72,20 @@ export default function RootLayout({
         geist.variable,
         inter.variable,
         lora.variable,
-        firaCode.variable
+        firaCode.variable,
       )}
       lang="es"
       suppressHydrationWarning
     >
+      <head>
+        {process.env.NODE_ENV === "development" && (
+          <Script
+            src="//unpkg.com/react-grab/dist/index.global.js"
+            crossOrigin="anonymous"
+            strategy="beforeInteractive"
+          />
+        )}
+      </head>
       <body suppressHydrationWarning>
         <Suspense fallback={null}>
           <NavigationLoader />

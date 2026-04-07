@@ -85,9 +85,6 @@ export type ModelName = (typeof ModelName)[keyof typeof ModelName]
  */
 
 export const TransactionIsolationLevel = {
-  ReadUncommitted: 'ReadUncommitted',
-  ReadCommitted: 'ReadCommitted',
-  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 } as const
 
@@ -182,6 +179,10 @@ export const TenantConfigScalarFieldEnum = {
   linkedinUrl: 'linkedinUrl',
   whatsappNumber: 'whatsappNumber',
   whatsappEnabled: 'whatsappEnabled',
+  taxEnabled: 'taxEnabled',
+  taxName: 'taxName',
+  taxRate: 'taxRate',
+  taxDescription: 'taxDescription',
   transportBaseRate: 'transportBaseRate',
   transportPerKmRate: 'transportPerKmRate',
   warehouseCity: 'warehouseCity',
@@ -508,8 +509,6 @@ export const ProjectAddressScalarFieldEnum = {
   district: 'district',
   street: 'street',
   reference: 'reference',
-  latitude: 'latitude',
-  longitude: 'longitude',
   postalCode: 'postalCode',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -524,14 +523,6 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
-
-
-export const QueryMode = {
-  default: 'default',
-  insensitive: 'insensitive'
-} as const
-
-export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
 export const NullsOrder = {
