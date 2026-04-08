@@ -59,9 +59,7 @@ Account/Session models use `@map()` for legacy NextAuth compatibility. Don't rem
 ## Known Issues
 
 1. **compatibleGlassTypeIds**: Mismatch between schema (String/JSON) and codebase (expects String[]). See `openspec/changes/migrate-sqlite-compatible-glass-array/proposal.md`
-
 2. **better-sqlite3 won't compile** on Node 25. Use `@libsql/client` + `@prisma/adapter-libsql` instead.
-
 3. **Schema-seeders drift**: TenantConfig schema may not match what seeders expect. Check fields before running seeds.
 
 ## Directory Structure (Key Paths)
@@ -94,3 +92,7 @@ DATABASE_URL=file:./prisma/dev.db    # SQLite path (required for prisma commands
 - Don't assume `compatibleGlassTypeIds` is an array — it's a JSON string
 - Don't use `better-sqlite3` directly — use `@libsql/client`
 - Don't edit `prisma/generated/client/` — it's generated
+- Don't use comments this lied the code not
+
+## Codigo
+- Condigo autodocumentado, no se necesitan comentarios adicionales. Si algo no es claro, es un indicativo de que el código podría ser refactorizado para mejorar su legibilidad.
