@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, EyeOff } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -8,19 +8,30 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+} from "@/components/ui/input-group";
 import { Input } from "@/components/ui/input";
 import { signIn } from "@/lib/auth-client";
 
-const MIN_PASSWORD_LENGTH = 6;
+const MIN_PASSWORD_LENGTH = 8;
 
 const signInFormSchema = z.object({
   email: z
@@ -64,31 +75,69 @@ function PasswordInput({
   }, []);
 
   return (
-    <div className="relative">
+    <InputGroup>
+      <InputGroupAddon align={"inline-start"}>
+        <Lock className="h-4 w-4 text-muted-foreground" />
+      </InputGroupAddon>
       <Input
         autoCapitalize="none"
         autoComplete="current-password"
         autoCorrect="off"
-        className="h-12 pr-10"
+        className="h-11 mx-2 my-1 pl-8 pr-10"
         disabled={disabled}
         placeholder={placeholder}
         type={isVisible ? "text" : "password"}
         value={value}
         onChange={onChange}
       />
-      <button
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+      <InputGroupAddon align={"inline-end"}>
+        <button
+          className="text-muted-foreground hover:text-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 transition-colors"
+          disabled={disabled}
+          type="button"
+          onClick={toggleVisibility}
+        >
+          {isVisible ? (
+            <EyeOff className="h-4 w-4" />
+          ) : (
+            <Eye className="h-4 w-4" />
+          )}
+        </button>
+      </InputGroupAddon>
+    </InputGroup>
+  );
+}
+
+interface EmailInputProps {
+  value: string;
+  onChange: (...event: unknown[]) => void;
+  disabled?: boolean;
+  placeholder?: string;
+}
+
+function EmailInput({
+  value,
+  onChange,
+  disabled,
+  placeholder,
+}: EmailInputProps) {
+  return (
+    <InputGroup>
+      <InputGroupAddon align={"inline-start"}>
+        <Mail className="h-4 w-4 text-muted-foreground" />
+      </InputGroupAddon>
+      <Input
+        autoCapitalize="none"
+        autoComplete="email"
+        autoCorrect="off"
+        className="h-11 pl-10 mx-6 my-1"
         disabled={disabled}
-        type="button"
-        onClick={toggleVisibility}
-      >
-        {isVisible ? (
-          <EyeOff className="h-5 w-5" />
-        ) : (
-          <Eye className="h-5 w-5" />
-        )}
-      </button>
-    </div>
+        placeholder={placeholder}
+        type="email"
+        value={value}
+        onChange={onChange}
+      />
+    </InputGroup>
   );
 }
 
@@ -138,139 +187,117 @@ export default function SignInForm({
   const isSubmitDisabled = isLoading || isCredentialsLoading;
 
   return (
-    <div className="space-y-6">
-      <Form {...form}>
+    <Card className="w-full sm:max-w-md">
+      <CardHeader>
+        <CardTitle>Iniciar Sesión</CardTitle>
+        <CardDescription>
+          Ingresa tus credenciales para acceder a tu cuenta
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
         <form
-          className="space-y-5"
+          id="signin-form"
           onSubmit={form.handleSubmit(handleCredentialsSubmit)}
         >
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem className="space-y-2">
-                <FormLabel className="text-sm font-medium">Email</FormLabel>
-                <FormControl>
-                  <Input
-                    autoCapitalize="none"
-                    autoComplete="email"
-                    autoCorrect="off"
-                    className="h-12"
-                    disabled={isSubmitDisabled}
-                    placeholder="tu@ejemplo.com"
-                    type="email"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <FieldGroup>
+            <Field data-invalid={!!form.formState.errors.email}>
+              <FieldLabel htmlFor="signin-email">Email</FieldLabel>
+              <EmailInput
+                disabled={isSubmitDisabled}
+                onChange={form.register("email").onChange}
+                placeholder="tu@ejemplo.com"
+                value={form.watch("email")}
+              />
+              {form.formState.errors.email && (
+                <FieldError errors={[form.formState.errors.email]} />
+              )}
+            </Field>
 
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <FormLabel className="text-sm font-medium">
-                    Contraseña
-                  </FormLabel>
-                  <button
-                    className="text-primary text-sm hover:underline focus:outline-none disabled:pointer-events-none disabled:opacity-50"
-                    disabled={isSubmitDisabled}
-                    type="button"
-                  >
-                    ¿Olvidaste tu contraseña?
-                  </button>
-                </div>
-                <FormControl>
-                  <PasswordInput
-                    disabled={isSubmitDisabled}
-                    placeholder="••••••••"
-                    value={field.value}
-                    onChange={field.onChange}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <Field data-invalid={!!form.formState.errors.password}>
+              <div className="flex items-center justify-between">
+                <FieldLabel htmlFor="signin-password">Contraseña</FieldLabel>
+                <button
+                  className="text-primary text-xs hover:underline focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+                  disabled={isSubmitDisabled}
+                  type="button"
+                >
+                  ¿Olvidaste tu contraseña?
+                </button>
+              </div>
+              <PasswordInput
+                disabled={isSubmitDisabled}
+                placeholder="••••••••"
+                value={form.watch("password")}
+                onChange={form.register("password").onChange}
+              />
+              {form.formState.errors.password && (
+                <FieldError errors={[form.formState.errors.password]} />
+              )}
+            </Field>
 
-          <FormField
-            control={form.control}
-            name="rememberMe"
-            render={({ field }) => (
-              <FormItem className="flex items-center gap-3 space-y-0">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    className="h-5 w-5"
-                    disabled={isSubmitDisabled}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <FormLabel className="text-sm font-normal cursor-pointer">
+            <Field>
+              <div className="flex items-center gap-2.5">
+                <Checkbox
+                  checked={form.watch("rememberMe")}
+                  className="h-4 w-4"
+                  disabled={isSubmitDisabled}
+                  id="signin-remember"
+                  onCheckedChange={form.register("rememberMe").onChange}
+                />
+                <FieldLabel
+                  className="text-sm font-normal cursor-pointer text-muted-foreground"
+                  htmlFor="signin-remember"
+                >
                   Recordar mi sesión
-                </FormLabel>
-              </FormItem>
-            )}
-          />
+                </FieldLabel>
+              </div>
+            </Field>
+          </FieldGroup>
 
           {(form.formState.errors.root || error) && (
-            <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-destructive text-sm flex items-center gap-2">
-              <svg
-                className="h-4 w-4 shrink-0"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
-                />
-              </svg>
+            <div className="flex items-center gap-2.5 rounded-lg border border-destructive/40 bg-destructive/10 px-3.5 py-3 text-sm text-destructive">
+              <AlertCircle className="h-4 w-4 shrink-0" />
               {form.formState.errors.root?.message || error}
             </div>
           )}
-
-          <Button
-            className="h-12 w-full text-base font-medium"
-            disabled={isSubmitDisabled}
-            type="submit"
-          >
-            {isCredentialsLoading ? (
-              <span className="flex items-center gap-2">
-                <svg
-                  className="h-5 w-5 animate-spin"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                Iniciando sesión...
-              </span>
-            ) : (
-              "Iniciar Sesión"
-            )}
-          </Button>
         </form>
-      </Form>
-    </div>
+      </CardContent>
+      <CardFooter>
+        <Button
+          className="h-11 w-full text-sm font-medium tracking-wide"
+          disabled={isSubmitDisabled}
+          form="signin-form"
+          type="submit"
+        >
+          {isCredentialsLoading ? (
+            <span className="flex items-center gap-2">
+              <svg
+                className="h-4 w-4 animate-spin"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              Iniciando sesión...
+            </span>
+          ) : (
+            "Iniciar Sesión"
+          )}
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
 

@@ -159,10 +159,7 @@ export default function AuthLayout({
             </p>
           </div>
 
-          {/* Auth form content in card */}
-          <Card className="shadow-xl border-border/40">
-            <CardContent className="p-8">{children}</CardContent>
-          </Card>
+          <div className="p-8">{children}</div>
 
           {/* Back to catalog link */}
           <p className="px-8 text-center text-muted-foreground text-sm">

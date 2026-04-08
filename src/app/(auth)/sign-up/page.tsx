@@ -1,5 +1,5 @@
-import Link from "next/link";
 import AuthCard from "@/app/(auth)/_components/auth-card";
+import Link from "next/link";
 import SignUpForm from "./_components/signup-form";
 
 export default function SignUpPage() {
