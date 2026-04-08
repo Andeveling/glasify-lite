@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+pnpm format
+pnpm lint:fix
+# ======== GGA START ========
+# Gentleman Guardian Angel - Code Review
+gga run || exit 1
+# ======== GGA END ========
