@@ -12,35 +12,33 @@
  */
 
 export type GetModelColorsForQuoteInput = {
-  modelId: string;
-};
+  modelId: string
+}
 
 export type GetModelColorsForQuoteDependencies = {
   quoteRepository: {
-    findModelColorsByModelId: (
-      modelId: string
-    ) => Promise<ModelColorForQuote[]>;
-  };
-};
+    findModelColorsByModelId: (modelId: string) => Promise<ModelColorForQuote[]>
+  }
+}
 
 export type ModelColorForQuote = {
-  id: string;
-  isDefault: boolean;
-  surchargePercentage: number;
+  id: string
+  isDefault: boolean
+  surchargePercentage: number
   color: {
-    id: string;
-    name: string;
-    hexCode: string;
-    ralCode: string | null;
-  };
-};
+    id: string
+    name: string
+    hexCode: string
+    ralCode: string | null
+  }
+}
 
 export type GetModelColorsForQuoteResult = {
-  modelId: string;
-  hasColors: boolean;
-  defaultColorId: string | null;
-  colors: ModelColorForQuote[];
-};
+  modelId: string
+  hasColors: boolean
+  defaultColorId: string | null
+  colors: ModelColorForQuote[]
+}
 
 /**
  * Get model colors for quote
@@ -50,18 +48,16 @@ export type GetModelColorsForQuoteResult = {
  */
 export async function getModelColorsForQuoteUseCase(
   input: GetModelColorsForQuoteInput,
-  deps: GetModelColorsForQuoteDependencies
+  deps: GetModelColorsForQuoteDependencies,
 ): Promise<GetModelColorsForQuoteResult> {
-  const colors = await deps.quoteRepository.findModelColorsByModelId(
-    input.modelId
-  );
+  const colors = await deps.quoteRepository.findModelColorsByModelId(input.modelId)
 
-  const defaultColor = colors.find((c) => c.isDefault);
+  const defaultColor = colors.find((c) => c.isDefault)
 
   return {
     modelId: input.modelId,
     hasColors: colors.length > 0,
     defaultColorId: defaultColor?.color.id ?? null,
     colors,
-  };
+  }
 }

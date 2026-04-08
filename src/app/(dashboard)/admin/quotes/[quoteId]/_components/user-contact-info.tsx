@@ -11,17 +11,17 @@
  * - Handles deleted user gracefully
  */
 
-"use client";
+'use client'
 
-import { Mail, Phone, User } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { QuoteRoleBadge } from "../../_components/quote-role-badge";
-import type { UserContactInfo as UserInfo } from "../../_types/quote-list.types";
+import { Mail, Phone, User } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { QuoteRoleBadge } from '../../_components/quote-role-badge'
+import type { UserContactInfo as UserInfo } from '../../_types/quote-list.types'
 
 type UserContactInfoProps = {
-  user: UserInfo | null;
-  contactPhone?: string | null;
-};
+  user: UserInfo | null
+  contactPhone?: string | null
+}
 
 export function UserContactInfo({ user, contactPhone }: UserContactInfoProps) {
   // Handle deleted user
@@ -38,10 +38,10 @@ export function UserContactInfo({ user, contactPhone }: UserContactInfoProps) {
           <p className="text-muted-foreground text-sm">Usuario desconocido</p>
         </CardContent>
       </Card>
-    );
+    )
   }
 
-  const displayName = user.name || user.email || "Usuario desconocido";
+  const displayName = user.name || user.email || 'Usuario desconocido'
 
   return (
     <Card>
@@ -78,9 +78,7 @@ export function UserContactInfo({ user, contactPhone }: UserContactInfoProps) {
         {/* Phone (from Quote.contactPhone) */}
         {contactPhone && (
           <div>
-            <p className="font-medium text-muted-foreground text-sm">
-              Teléfono
-            </p>
+            <p className="font-medium text-muted-foreground text-sm">Teléfono</p>
             <a
               className="flex items-center gap-2 text-primary hover:underline"
               href={`tel:${contactPhone}`}
@@ -92,5 +90,5 @@ export function UserContactInfo({ user, contactPhone }: UserContactInfoProps) {
         )}
       </CardContent>
     </Card>
-  );
+  )
 }

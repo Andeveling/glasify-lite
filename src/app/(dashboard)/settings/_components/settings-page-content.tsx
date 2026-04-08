@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Bell,
   CreditCard,
@@ -13,17 +13,11 @@ import {
   Shield,
   Smartphone,
   User,
-} from "lucide-react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+} from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Form,
   FormControl,
@@ -32,32 +26,32 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
+import { Switch } from '@/components/ui/switch'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
 
-const PROFILE_BIO_MAX_LENGTH = 160;
-const PROFILE_NAME_MIN_LENGTH = 2;
-const PROFILE_NAME_MAX_LENGTH = 50;
-const BUSINESS_ADDRESS_MIN_LENGTH = 5;
-const BUSINESS_ADDRESS_MAX_LENGTH = 200;
-const BUSINESS_NAME_MIN_LENGTH = 2;
-const BUSINESS_NAME_MAX_LENGTH = 100;
-const BUSINESS_MARGIN_MIN = 0;
-const BUSINESS_MARGIN_MAX = 100;
-const DEFAULT_BUSINESS_MARGIN = 25;
-const PHONE_NUMBER_REGEX = /^[+]?[0-9\s\-()]+$/;
+const PROFILE_BIO_MAX_LENGTH = 160
+const PROFILE_NAME_MIN_LENGTH = 2
+const PROFILE_NAME_MAX_LENGTH = 50
+const BUSINESS_ADDRESS_MIN_LENGTH = 5
+const BUSINESS_ADDRESS_MAX_LENGTH = 200
+const BUSINESS_NAME_MIN_LENGTH = 2
+const BUSINESS_NAME_MAX_LENGTH = 100
+const BUSINESS_MARGIN_MIN = 0
+const BUSINESS_MARGIN_MAX = 100
+const DEFAULT_BUSINESS_MARGIN = 25
+const PHONE_NUMBER_REGEX = /^[+]?[0-9\s\-()]+$/
 
 // Form schemas for each settings section
 const profileFormSchema = z.object({
@@ -65,94 +59,88 @@ const profileFormSchema = z.object({
     .string()
     .max(
       PROFILE_BIO_MAX_LENGTH,
-      `La biografía no puede exceder ${PROFILE_BIO_MAX_LENGTH} caracteres`
+      `La biografía no puede exceder ${PROFILE_BIO_MAX_LENGTH} caracteres`,
     )
     .optional(),
-  email: z
-    .string()
-    .email("Ingresa un email válido")
-    .min(1, "El email es requerido"),
+  email: z.string().email('Ingresa un email válido').min(1, 'El email es requerido'),
   name: z
     .string()
     .min(
       PROFILE_NAME_MIN_LENGTH,
-      `El nombre debe tener al menos ${PROFILE_NAME_MIN_LENGTH} caracteres`
+      `El nombre debe tener al menos ${PROFILE_NAME_MIN_LENGTH} caracteres`,
     )
     .max(
       PROFILE_NAME_MAX_LENGTH,
-      `El nombre no puede exceder ${PROFILE_NAME_MAX_LENGTH} caracteres`
+      `El nombre no puede exceder ${PROFILE_NAME_MAX_LENGTH} caracteres`,
     ),
   phone: z
     .string()
     .optional()
     .refine((val) => !val || PHONE_NUMBER_REGEX.test(val), {
-      message: "Formato de teléfono inválido",
+      message: 'Formato de teléfono inválido',
     }),
-});
+})
 
 const notificationFormSchema = z.object({
   emailNotifications: z.boolean(),
   marketingEmails: z.boolean(),
   newQuoteAlert: z.boolean(),
   pushNotifications: z.boolean(),
-  reportFrequency: z.enum(["daily", "weekly", "monthly"]),
+  reportFrequency: z.enum(['daily', 'weekly', 'monthly']),
   statusUpdateAlert: z.boolean(),
-});
+})
 
 const businessFormSchema = z.object({
   address: z
     .string()
     .min(
       BUSINESS_ADDRESS_MIN_LENGTH,
-      `La dirección debe tener al menos ${BUSINESS_ADDRESS_MIN_LENGTH} caracteres`
+      `La dirección debe tener al menos ${BUSINESS_ADDRESS_MIN_LENGTH} caracteres`,
     )
     .max(
       BUSINESS_ADDRESS_MAX_LENGTH,
-      `La dirección no puede exceder ${BUSINESS_ADDRESS_MAX_LENGTH} caracteres`
+      `La dirección no puede exceder ${BUSINESS_ADDRESS_MAX_LENGTH} caracteres`,
     ),
   companyName: z
     .string()
     .min(
       BUSINESS_NAME_MIN_LENGTH,
-      `El nombre de la empresa debe tener al menos ${BUSINESS_NAME_MIN_LENGTH} caracteres`
+      `El nombre de la empresa debe tener al menos ${BUSINESS_NAME_MIN_LENGTH} caracteres`,
     )
     .max(
       BUSINESS_NAME_MAX_LENGTH,
-      `El nombre de la empresa no puede exceder ${BUSINESS_NAME_MAX_LENGTH} caracteres`
+      `El nombre de la empresa no puede exceder ${BUSINESS_NAME_MAX_LENGTH} caracteres`,
     ),
-  currency: z.enum(["ARS", "USD", "EUR"]),
+  currency: z.enum(['ARS', 'USD', 'EUR']),
   defaultMargin: z
     .number()
-    .min(BUSINESS_MARGIN_MIN, "El margen no puede ser negativo")
-    .max(
-      BUSINESS_MARGIN_MAX,
-      `El margen no puede superar el ${BUSINESS_MARGIN_MAX}%`
-    ),
+    .min(BUSINESS_MARGIN_MIN, 'El margen no puede ser negativo')
+    .max(BUSINESS_MARGIN_MAX, `El margen no puede superar el ${BUSINESS_MARGIN_MAX}%`),
   taxId: z
     .string()
-    .min(1, "El CUIT/CUIL es requerido")
-    .regex(/^[0-9-]+$/, "Formato de CUIT/CUIL inválido"),
+    .min(1, 'El CUIT/CUIL es requerido')
+    .regex(/^[0-9-]+$/, 'Formato de CUIT/CUIL inválido'),
   timezone: z.string(),
-});
+})
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
-type NotificationFormValues = z.infer<typeof notificationFormSchema>;
-type BusinessFormValues = z.infer<typeof businessFormSchema>;
+type ProfileFormValues = z.infer<typeof profileFormSchema>
+type NotificationFormValues = z.infer<typeof notificationFormSchema>
+type BusinessFormValues = z.infer<typeof businessFormSchema>
 
 function ProfileSettings() {
   const form = useForm<ProfileFormValues>({
     defaultValues: {
-      bio: "Administrador del sistema de cotizaciones Glasify",
-      email: "admin@glasify.com",
-      name: "Administrador Glasify",
-      phone: "+54 11 1234-5678",
+      bio: 'Administrador del sistema de cotizaciones Glasify',
+      email: 'admin@glasify.com',
+      name: 'Administrador Glasify',
+      phone: '+54 11 1234-5678',
     },
     resolver: zodResolver(profileFormSchema),
-  });
+  })
 
   const onSubmit = (data: ProfileFormValues) => {
-    form.reset(data);
-  };
+    form.reset(data)
+  }
 
   return (
     <Card>
@@ -192,8 +180,7 @@ function ProfileSettings() {
                     <Input placeholder="tu@email.com" type="email" {...field} />
                   </FormControl>
                   <FormDescription>
-                    Tu dirección de email para notificaciones y recuperación de
-                    cuenta
+                    Tu dirección de email para notificaciones y recuperación de cuenta
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -230,9 +217,7 @@ function ProfileSettings() {
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Breve descripción que aparece en tu perfil
-                  </FormDescription>
+                  <FormDescription>Breve descripción que aparece en tu perfil</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -246,7 +231,7 @@ function ProfileSettings() {
         </Form>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 function NotificationSettings() {
@@ -256,15 +241,15 @@ function NotificationSettings() {
       marketingEmails: false,
       newQuoteAlert: true,
       pushNotifications: false,
-      reportFrequency: "weekly",
+      reportFrequency: 'weekly',
       statusUpdateAlert: true,
     },
     resolver: zodResolver(notificationFormSchema),
-  });
+  })
 
   const onSubmit = (data: NotificationFormValues) => {
-    form.reset(data);
-  };
+    form.reset(data)
+  }
 
   return (
     <Card>
@@ -295,10 +280,7 @@ function NotificationSettings() {
                       </FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -319,10 +301,7 @@ function NotificationSettings() {
                       </FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -340,19 +319,13 @@ function NotificationSettings() {
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">
-                        Nuevas Cotizaciones
-                      </FormLabel>
+                      <FormLabel className="text-base">Nuevas Cotizaciones</FormLabel>
                       <FormDescription>
-                        Alertas cuando se reciban nuevas solicitudes de
-                        cotización
+                        Alertas cuando se reciban nuevas solicitudes de cotización
                       </FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -364,19 +337,13 @@ function NotificationSettings() {
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">
-                        Cambios de Estado
-                      </FormLabel>
+                      <FormLabel className="text-base">Cambios de Estado</FormLabel>
                       <FormDescription>
-                        Notificaciones cuando cambie el estado de las
-                        cotizaciones
+                        Notificaciones cuando cambie el estado de las cotizaciones
                       </FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -388,18 +355,13 @@ function NotificationSettings() {
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">
-                        Emails de Marketing
-                      </FormLabel>
+                      <FormLabel className="text-base">Emails de Marketing</FormLabel>
                       <FormDescription>
                         Recibir noticias, actualizaciones y ofertas especiales
                       </FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -414,10 +376,7 @@ function NotificationSettings() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Frecuencia de Reportes</FormLabel>
-                  <Select
-                    defaultValue={field.value}
-                    onValueChange={field.onChange}
-                  >
+                  <Select defaultValue={field.value} onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecciona la frecuencia" />
@@ -445,25 +404,25 @@ function NotificationSettings() {
         </Form>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 function BusinessSettings() {
   const form = useForm<BusinessFormValues>({
     defaultValues: {
-      address: "Av. Corrientes 1234, CABA, Argentina",
-      companyName: "Glasify Solutions SRL",
-      currency: "ARS",
+      address: 'Av. Corrientes 1234, CABA, Argentina',
+      companyName: 'Glasify Solutions SRL',
+      currency: 'ARS',
       defaultMargin: DEFAULT_BUSINESS_MARGIN,
-      taxId: "30-12345678-9",
-      timezone: "America/Argentina/Buenos_Aires",
+      taxId: '30-12345678-9',
+      timezone: 'America/Argentina/Buenos_Aires',
     },
     resolver: zodResolver(businessFormSchema),
-  });
+  })
 
   const onSubmit = (data: BusinessFormValues) => {
-    form.reset(data);
-  };
+    form.reset(data)
+  }
 
   return (
     <Card>
@@ -502,9 +461,7 @@ function BusinessSettings() {
                   <FormControl>
                     <Input placeholder="30-12345678-9" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    Número de identificación fiscal de la empresa
-                  </FormDescription>
+                  <FormDescription>Número de identificación fiscal de la empresa</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -543,9 +500,7 @@ function BusinessSettings() {
                         placeholder="25"
                         type="number"
                         {...field}
-                        onChange={(e) =>
-                          field.onChange(Number.parseFloat(e.target.value) || 0)
-                        }
+                        onChange={(e) => field.onChange(Number.parseFloat(e.target.value) || 0)}
                       />
                     </FormControl>
                     <FormDescription>
@@ -562,28 +517,19 @@ function BusinessSettings() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Moneda</FormLabel>
-                    <Select
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                    >
+                    <Select defaultValue={field.value} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="ARS">
-                          Peso Argentino (ARS)
-                        </SelectItem>
-                        <SelectItem value="USD">
-                          Dólar Estadounidense (USD)
-                        </SelectItem>
+                        <SelectItem value="ARS">Peso Argentino (ARS)</SelectItem>
+                        <SelectItem value="USD">Dólar Estadounidense (USD)</SelectItem>
                         <SelectItem value="EUR">Euro (EUR)</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormDescription>
-                      Moneda por defecto para las cotizaciones
-                    </FormDescription>
+                    <FormDescription>Moneda por defecto para las cotizaciones</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -596,36 +542,21 @@ function BusinessSettings() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Zona Horaria</FormLabel>
-                  <Select
-                    defaultValue={field.value}
-                    onValueChange={field.onChange}
-                  >
+                  <Select defaultValue={field.value} onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="America/Argentina/Buenos_Aires">
-                        Buenos Aires
-                      </SelectItem>
-                      <SelectItem value="America/Argentina/Cordoba">
-                        Córdoba
-                      </SelectItem>
-                      <SelectItem value="America/Argentina/Mendoza">
-                        Mendoza
-                      </SelectItem>
-                      <SelectItem value="America/Montevideo">
-                        Montevideo
-                      </SelectItem>
-                      <SelectItem value="America/Sao_Paulo">
-                        São Paulo
-                      </SelectItem>
+                      <SelectItem value="America/Argentina/Buenos_Aires">Buenos Aires</SelectItem>
+                      <SelectItem value="America/Argentina/Cordoba">Córdoba</SelectItem>
+                      <SelectItem value="America/Argentina/Mendoza">Mendoza</SelectItem>
+                      <SelectItem value="America/Montevideo">Montevideo</SelectItem>
+                      <SelectItem value="America/Sao_Paulo">São Paulo</SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormDescription>
-                    Zona horaria para fechas y reportes del sistema
-                  </FormDescription>
+                  <FormDescription>Zona horaria para fechas y reportes del sistema</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -639,7 +570,7 @@ function BusinessSettings() {
         </Form>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 function SystemSettings() {
@@ -647,9 +578,7 @@ function SystemSettings() {
     <Card>
       <CardHeader>
         <CardTitle>Sistema</CardTitle>
-        <CardDescription>
-          Configuraciones avanzadas del sistema y mantenimiento
-        </CardDescription>
+        <CardDescription>Configuraciones avanzadas del sistema y mantenimiento</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
@@ -728,7 +657,7 @@ function SystemSettings() {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 export function SettingsPageContent() {
@@ -749,10 +678,7 @@ export function SettingsPageContent() {
             <User className="h-4 w-4" />
             <span className="hidden md:inline">Perfil</span>
           </TabsTrigger>
-          <TabsTrigger
-            className="flex items-center gap-2"
-            value="notifications"
-          >
+          <TabsTrigger className="flex items-center gap-2" value="notifications">
             <Bell className="h-4 w-4" />
             <span className="hidden md:inline">Notificaciones</span>
           </TabsTrigger>
@@ -783,5 +709,5 @@ export function SettingsPageContent() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

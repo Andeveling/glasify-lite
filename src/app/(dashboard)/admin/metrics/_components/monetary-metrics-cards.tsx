@@ -1,27 +1,21 @@
-"use client";
+'use client'
 
-import { TrendingDown, TrendingUp } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { formatCurrency, formatPercent } from "@/lib/format";
-import type { MonetaryMetrics } from "@/types/dashboard";
+import { TrendingDown, TrendingUp } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { formatCurrency, formatPercent } from '@/lib/format'
+import type { MonetaryMetrics } from '@/types/dashboard'
 
 type MonetaryMetricsCardsProps = {
   /**
    * Monetary metrics from tRPC query
    */
-  data: MonetaryMetrics;
+  data: MonetaryMetrics
 
   /**
    * Tenant configuration for currency/locale formatting
    */
-  tenantConfig?: { currency?: string; locale?: string } | null;
-};
+  tenantConfig?: { currency?: string; locale?: string } | null
+}
 
 /**
  * MonetaryMetricsCards Component
@@ -50,15 +44,12 @@ type MonetaryMetricsCardsProps = {
  * />
  * ```
  */
-export function MonetaryMetricsCards({
-  data,
-  tenantConfig,
-}: MonetaryMetricsCardsProps) {
-  const { totalValue, averageValue, percentageChange } = data;
+export function MonetaryMetricsCards({ data, tenantConfig }: MonetaryMetricsCardsProps) {
+  const { totalValue, averageValue, percentageChange } = data
 
-  const isPositiveTrend = percentageChange >= 0;
-  const TrendIcon = isPositiveTrend ? TrendingUp : TrendingDown;
-  const trendColor = isPositiveTrend ? "text-green-600" : "text-red-600";
+  const isPositiveTrend = percentageChange >= 0
+  const TrendIcon = isPositiveTrend ? TrendingUp : TrendingDown
+  const trendColor = isPositiveTrend ? 'text-green-600' : 'text-red-600'
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -128,11 +119,9 @@ export function MonetaryMetricsCards({
           <div className="font-bold text-2xl">
             {formatCurrency(averageValue, { context: tenantConfig })}
           </div>
-          <CardDescription className="mt-1">
-            Valor promedio por cotización
-          </CardDescription>
+          <CardDescription className="mt-1">Valor promedio por cotización</CardDescription>
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

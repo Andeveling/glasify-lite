@@ -33,12 +33,12 @@
 /**
  * Maximum page size for cursor pagination
  */
-const MAX_CURSOR_PAGE_SIZE = 100;
+const MAX_CURSOR_PAGE_SIZE = 100
 
 /**
  * Minimum page size for cursor pagination
  */
-const MIN_CURSOR_PAGE_SIZE = 1;
+const MIN_CURSOR_PAGE_SIZE = 1
 
 /**
  * Encode a cursor value to Base64
@@ -47,7 +47,7 @@ const MIN_CURSOR_PAGE_SIZE = 1;
  * @returns Base64 encoded cursor
  */
 export function encodeCursor(value: string): string {
-  return Buffer.from(value).toString("base64");
+  return Buffer.from(value).toString('base64')
 }
 
 /**
@@ -59,9 +59,9 @@ export function encodeCursor(value: string): string {
  */
 export function decodeCursor(cursor: string): string {
   try {
-    return Buffer.from(cursor, "base64").toString("utf-8");
+    return Buffer.from(cursor, 'base64').toString('utf-8')
   } catch {
-    throw new Error("Invalid cursor format");
+    throw new Error('Invalid cursor format')
   }
 }
 
@@ -73,10 +73,10 @@ export function decodeCursor(cursor: string): string {
  */
 export function isValidCursor(cursor: string): boolean {
   try {
-    const decoded = decodeCursor(cursor);
-    return decoded.length > 0;
+    const decoded = decodeCursor(cursor)
+    return decoded.length > 0
   } catch {
-    return false;
+    return false
   }
 }
 
@@ -89,30 +89,27 @@ export function isValidCursor(cursor: string): boolean {
  */
 export function buildCursorPaginationParams(
   cursor: string | undefined,
-  pageSize: number
+  pageSize: number,
 ): {
-  take: number;
-  skip?: number;
-  cursor?: { id: string };
+  take: number
+  skip?: number
+  cursor?: { id: string }
 } {
   const params: {
-    take: number;
-    skip?: number;
-    cursor?: { id: string };
+    take: number
+    skip?: number
+    cursor?: { id: string }
   } = {
-    take: Math.max(
-      MIN_CURSOR_PAGE_SIZE,
-      Math.min(MAX_CURSOR_PAGE_SIZE, pageSize)
-    ),
-  };
-
-  if (cursor) {
-    const decodedCursor = decodeCursor(cursor);
-    params.cursor = { id: decodedCursor };
-    params.skip = 1; // Skip the cursor itself
+    take: Math.max(MIN_CURSOR_PAGE_SIZE, Math.min(MAX_CURSOR_PAGE_SIZE, pageSize)),
   }
 
-  return params;
+  if (cursor) {
+    const decodedCursor = decodeCursor(cursor)
+    params.cursor = { id: decodedCursor }
+    params.skip = 1 // Skip the cursor itself
+  }
+
+  return params
 }
 
 /**
@@ -124,24 +121,24 @@ export function buildCursorPaginationParams(
  */
 export function buildCursorPaginationMeta<T extends { id: string }>(
   items: T[],
-  pageSize: number
+  pageSize: number,
 ): {
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  startCursor: string | null;
-  endCursor: string | null;
+  hasNextPage: boolean
+  hasPreviousPage: boolean
+  startCursor: string | null
+  endCursor: string | null
 } {
-  const hasNextPage = items.length === pageSize;
-  const firstItem = items[0];
-  const lastItem = items.at(-1);
+  const hasNextPage = items.length === pageSize
+  const firstItem = items[0]
+  const lastItem = items.at(-1)
 
-  const startCursor = firstItem ? encodeCursor(firstItem.id) : null;
-  const endCursor = lastItem ? encodeCursor(lastItem.id) : null;
+  const startCursor = firstItem ? encodeCursor(firstItem.id) : null
+  const endCursor = lastItem ? encodeCursor(lastItem.id) : null
 
   return {
     endCursor,
     hasNextPage,
     hasPreviousPage: false, // Not implemented in this version
     startCursor,
-  };
+  }
 }

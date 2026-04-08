@@ -12,11 +12,11 @@
  * @module app/(public)/cart/_hooks/use-cart-item-actions
  */
 
-"use client";
+'use client'
 
-import { useCallback } from "react";
-import { toast } from "sonner";
-import type { CartItem } from "@/types/cart.types";
+import { useCallback } from 'react'
+import { toast } from 'sonner'
+import type { CartItem } from '@/types/cart.types'
 
 // ============================================================================
 // Types
@@ -24,22 +24,22 @@ import type { CartItem } from "@/types/cart.types";
 
 type UseCartItemActionsParams = {
   /** Callback to update item in storage */
-  onUpdateItem: (itemId: string, updates: Partial<CartItem>) => void;
+  onUpdateItem: (itemId: string, updates: Partial<CartItem>) => void
 
   /** Callback to remove item from storage */
-  onRemoveItem: (itemId: string) => void;
-};
+  onRemoveItem: (itemId: string) => void
+}
 
 type UseCartItemActionsReturn = {
   /** Update item name with validation */
-  updateName: (item: CartItem, newName: string) => void;
+  updateName: (item: CartItem, newName: string) => void
 
   /** Update item quantity with validation */
-  updateQuantity: (item: CartItem, newQuantity: number) => void;
+  updateQuantity: (item: CartItem, newQuantity: number) => void
 
   /** Remove item (to be called after confirmation) */
-  removeItem: (item: CartItem) => void;
-};
+  removeItem: (item: CartItem) => void
+}
 
 // ============================================================================
 // Hook Implementation
@@ -79,23 +79,23 @@ export function useCartItemActions({
    */
   const updateName = useCallback(
     (item: CartItem, newName: string) => {
-      const trimmedName = newName.trim();
+      const trimmedName = newName.trim()
 
       if (trimmedName === item.name) {
-        return; // No change
+        return // No change
       }
 
       // Optimistic update
-      onUpdateItem(item.id, { name: trimmedName });
+      onUpdateItem(item.id, { name: trimmedName })
 
       // Success toast
-      toast.success("Nombre actualizado", {
+      toast.success('Nombre actualizado', {
         description: `"${item.name}" → "${trimmedName}"`,
         duration: 2000,
-      });
+      })
     },
-    [onUpdateItem]
-  );
+    [onUpdateItem],
+  )
 
   /**
    * Update item quantity
@@ -103,20 +103,20 @@ export function useCartItemActions({
   const updateQuantity = useCallback(
     (item: CartItem, newQuantity: number) => {
       if (newQuantity === item.quantity) {
-        return; // No change
+        return // No change
       }
 
       // Optimistic update
-      onUpdateItem(item.id, { quantity: newQuantity });
+      onUpdateItem(item.id, { quantity: newQuantity })
 
       // Success toast
-      toast.success("Cantidad actualizada", {
+      toast.success('Cantidad actualizada', {
         description: `${item.name}: ${item.quantity} → ${newQuantity}`,
         duration: 2000,
-      });
+      })
     },
-    [onUpdateItem]
-  );
+    [onUpdateItem],
+  )
 
   /**
    * Remove item from cart
@@ -127,20 +127,20 @@ export function useCartItemActions({
   const removeItem = useCallback(
     (item: CartItem) => {
       // Remove from storage
-      onRemoveItem(item.id);
+      onRemoveItem(item.id)
 
       // Success toast
-      toast.success("Artículo eliminado", {
+      toast.success('Artículo eliminado', {
         description: `"${item.name}" eliminado del carrito`,
         duration: 2000,
-      });
+      })
     },
-    [onRemoveItem]
-  );
+    [onRemoveItem],
+  )
 
   return {
     removeItem,
     updateName,
     updateQuantity,
-  };
+  }
 }

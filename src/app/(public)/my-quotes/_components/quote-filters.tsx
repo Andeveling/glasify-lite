@@ -1,38 +1,38 @@
-"use client";
+'use client'
 
-import { Filter, Search, SortAsc, X } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Filter, Search, SortAsc, X } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import type { QuoteSortOption, QuoteStatus } from "../_hooks/use-quote-filters";
-import { useQuoteFilters } from "../_hooks/use-quote-filters";
+} from '@/components/ui/select'
+import type { QuoteSortOption, QuoteStatus } from '../_hooks/use-quote-filters'
+import { useQuoteFilters } from '../_hooks/use-quote-filters'
 
 /**
  * Status filter options with Spanish labels
  */
-const STATUS_OPTIONS: Array<{ value: QuoteStatus | "all"; label: string }> = [
-  { label: "Todas", value: "all" },
-  { label: "En edición", value: "draft" },
-  { label: "Enviada al cliente", value: "sent" },
-  { label: "Cancelada", value: "canceled" },
-];
+const STATUS_OPTIONS: Array<{ value: QuoteStatus | 'all'; label: string }> = [
+  { label: 'Todas', value: 'all' },
+  { label: 'En edición', value: 'draft' },
+  { label: 'Enviada al cliente', value: 'sent' },
+  { label: 'Cancelada', value: 'canceled' },
+]
 
 /**
  * Sort options with Spanish labels
  */
 const SORT_OPTIONS: Array<{ value: QuoteSortOption; label: string }> = [
-  { label: "Más recientes", value: "newest" },
-  { label: "Más antiguas", value: "oldest" },
-  { label: "Mayor valor", value: "price-high" },
-  { label: "Menor valor", value: "price-low" },
-];
+  { label: 'Más recientes', value: 'newest' },
+  { label: 'Más antiguas', value: 'oldest' },
+  { label: 'Mayor valor', value: 'price-high' },
+  { label: 'Menor valor', value: 'price-low' },
+]
 
 /**
  * Quote Filters Component
@@ -69,9 +69,9 @@ export function QuoteFilters({
   currentSort,
   currentSearchQuery,
 }: {
-  currentStatus?: QuoteStatus;
-  currentSort?: QuoteSortOption;
-  currentSearchQuery?: string;
+  currentStatus?: QuoteStatus
+  currentSort?: QuoteSortOption
+  currentSearchQuery?: string
 }) {
   const {
     filters,
@@ -86,39 +86,39 @@ export function QuoteFilters({
     currentSearchQuery,
     currentSort,
     currentStatus,
-  });
+  })
 
   /**
    * Handle status filter change
    */
   const handleStatusChange = (value: string) => {
-    if (value === "all") {
-      setStatus(undefined);
+    if (value === 'all') {
+      setStatus(undefined)
     } else {
-      setStatus(value as QuoteStatus);
+      setStatus(value as QuoteStatus)
     }
-  };
+  }
 
   /**
    * Handle sort change
    */
   const handleSortChange = (value: string) => {
-    setSortBy(value as QuoteSortOption);
-  };
+    setSortBy(value as QuoteSortOption)
+  }
 
   /**
    * Handle search input change
    */
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
+    setSearchQuery(e.target.value)
+  }
 
   /**
    * Clear search input
    */
   const handleClearSearch = () => {
-    setSearchQuery("");
-  };
+    setSearchQuery('')
+  }
 
   return (
     <div className="space-y-4">
@@ -131,7 +131,7 @@ export function QuoteFilters({
             <Select
               disabled={isPending}
               onValueChange={handleStatusChange}
-              value={filters.status ?? "all"}
+              value={filters.status ?? 'all'}
             >
               <SelectTrigger
                 aria-label="Filtrar cotizaciones por estado"
@@ -180,11 +180,7 @@ export function QuoteFilters({
 
         {/* Right Side: Sort Select */}
         <div className="w-full sm:w-48">
-          <Select
-            disabled={isPending}
-            onValueChange={handleSortChange}
-            value={filters.sortBy}
-          >
+          <Select disabled={isPending} onValueChange={handleSortChange} value={filters.sortBy}>
             <SelectTrigger
               aria-label="Ordenar cotizaciones"
               className="w-full"
@@ -208,9 +204,7 @@ export function QuoteFilters({
       {hasActiveFilters && (
         <div className="flex items-center justify-between rounded-md border bg-muted/50 p-3">
           <div className="flex items-center gap-2">
-            <span className="text-muted-foreground text-sm">
-              Filtros activos:
-            </span>
+            <span className="text-muted-foreground text-sm">Filtros activos:</span>
             <Badge data-testid="active-filters-count" variant="secondary">
               {activeFiltersCount}
             </Badge>
@@ -231,11 +225,9 @@ export function QuoteFilters({
       {/* Loading State Indicator */}
       {isPending && (
         <div className="flex items-center justify-center py-2">
-          <div className="text-muted-foreground text-sm">
-            Aplicando filtros...
-          </div>
+          <div className="text-muted-foreground text-sm">Aplicando filtros...</div>
         </div>
       )}
     </div>
-  );
+  )
 }

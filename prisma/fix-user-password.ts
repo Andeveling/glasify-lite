@@ -26,11 +26,16 @@ async function fixUserPassword() {
   const accounts = await db.account.findMany({ where: { userId: user.id } });
   console.log("Existing accounts:", accounts.length);
   for (const a of accounts) {
-    console.log("  -", a.providerId, "| password:", a.password ? "SET" : "NULL");
+    console.log(
+      "  -",
+      a.providerId,
+      "| password:",
+      a.password ? "SET" : "NULL"
+    );
   }
 
   // Find or create email/password account
-  let account = accounts.find((a) => a.providerId === "credential");
+  const account = accounts.find((a) => a.providerId === "credential");
 
   if (account) {
     // Update existing credential account

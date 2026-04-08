@@ -11,16 +11,16 @@
  * const { results, isLoading, query, setQuery } = useAddressAutocomplete();
  */
 
-"use client";
+'use client'
 
-import { useState } from "react";
-import type { GeocodingResult } from "@/app/(dashboard)/admin/quotes/_types/address.types";
-import { useDebounce } from "@/hooks/use-debounce-value";
-import { api } from "@/trpc/react";
+import { useState } from 'react'
+import type { GeocodingResult } from '@/app/(dashboard)/admin/quotes/_types/address.types'
+import { useDebounce } from '@/hooks/use-debounce-value'
+import { api } from '@/trpc/react'
 
-const DEBOUNCE_DELAY_MS = 300;
-const MIN_QUERY_LENGTH = 3;
-const DEFAULT_RESULT_LIMIT = 5;
+const DEBOUNCE_DELAY_MS = 300
+const MIN_QUERY_LENGTH = 3
+const DEFAULT_RESULT_LIMIT = 5
 
 /**
  * Hook for address autocomplete with debounced search
@@ -42,21 +42,18 @@ const DEFAULT_RESULT_LIMIT = 5;
  * }
  */
 export function useAddressAutocomplete(options?: {
-  limit?: number;
-  minQueryLength?: number;
-  debounceMs?: number;
+  limit?: number
+  minQueryLength?: number
+  debounceMs?: number
 }) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('')
 
   // Debounce query to reduce API calls
-  const debouncedQuery = useDebounce(
-    query,
-    options?.debounceMs ?? DEBOUNCE_DELAY_MS
-  );
+  const debouncedQuery = useDebounce(query, options?.debounceMs ?? DEBOUNCE_DELAY_MS)
 
   // Determine if query is valid for search
-  const minLength = options?.minQueryLength ?? MIN_QUERY_LENGTH;
-  const shouldSearch = debouncedQuery.length >= minLength;
+  const minLength = options?.minQueryLength ?? MIN_QUERY_LENGTH
+  const shouldSearch = debouncedQuery.length >= minLength
 
   // Call geocoding API with debounced query
   const { data, isLoading, error } = api.geocoding.search.useQuery(
@@ -68,13 +65,13 @@ export function useAddressAutocomplete(options?: {
       enabled: shouldSearch,
       staleTime: 300_000, // 5 minutes - addresses don't change frequently
       retry: 1, // Only retry once on failure
-    }
-  );
+    },
+  )
 
   // Extract results from response
-  const results: GeocodingResult[] = data?.results ?? [];
-  const totalResults = data?.totalResults ?? 0;
-  const queryTime = data?.queryTime ?? 0;
+  const results: GeocodingResult[] = data?.results ?? []
+  const totalResults = data?.totalResults ?? 0
+  const queryTime = data?.queryTime ?? 0
 
   return {
     // Search results
@@ -97,7 +94,7 @@ export function useAddressAutocomplete(options?: {
     hasResults: results.length > 0,
     isEmpty: shouldSearch && !isLoading && results.length === 0,
     isIdle: !shouldSearch,
-  };
+  }
 }
 
 /**
@@ -122,24 +119,22 @@ export function useAddressAutocomplete(options?: {
  * }
  */
 export function useAddressAutocompleteWithSelection(options?: {
-  limit?: number;
-  minQueryLength?: number;
-  debounceMs?: number;
-  onSelect?: (result: GeocodingResult) => void;
+  limit?: number
+  minQueryLength?: number
+  debounceMs?: number
+  onSelect?: (result: GeocodingResult) => void
 }) {
-  const autocomplete = useAddressAutocomplete(options);
-  const [selectedResult, setSelectedResult] = useState<GeocodingResult | null>(
-    null
-  );
+  const autocomplete = useAddressAutocomplete(options)
+  const [selectedResult, setSelectedResult] = useState<GeocodingResult | null>(null)
 
   const selectResult = (result: GeocodingResult) => {
-    setSelectedResult(result);
-    options?.onSelect?.(result);
-  };
+    setSelectedResult(result)
+    options?.onSelect?.(result)
+  }
 
   const clearSelection = () => {
-    setSelectedResult(null);
-  };
+    setSelectedResult(null)
+  }
 
   return {
     ...autocomplete,
@@ -147,5 +142,5 @@ export function useAddressAutocompleteWithSelection(options?: {
     selectResult,
     clearSelection,
     hasSelection: selectedResult !== null,
-  };
+  }
 }

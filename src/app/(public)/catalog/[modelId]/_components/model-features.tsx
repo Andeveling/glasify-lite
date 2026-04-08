@@ -1,19 +1,19 @@
-import { Award, Info, Sparkles } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Award, Info, Sparkles } from 'lucide-react'
+import { Card } from '@/components/ui/card'
 
 type ModelFeaturesProps = {
-  features: string[];
-};
+  features: string[]
+}
 
 // ✅ Move to module scope - created once, not on every render
 const HIGHLIGHT_KEYWORDS = [
-  "excelente",
-  "máxima",
-  "excepcional",
-  "alta reducción",
-  "óptimo",
-  "superior",
-];
+  'excelente',
+  'máxima',
+  'excepcional',
+  'alta reducción',
+  'óptimo',
+  'superior',
+]
 
 /**
  * Determines if a feature highlights exceptional performance
@@ -21,9 +21,7 @@ const HIGHLIGHT_KEYWORDS = [
  * @returns true if feature contains highlight keywords
  */
 function isHighlightFeature(feature: string): boolean {
-  return HIGHLIGHT_KEYWORDS.some((keyword) =>
-    feature.toLowerCase().includes(keyword)
-  );
+  return HIGHLIGHT_KEYWORDS.some((keyword) => feature.toLowerCase().includes(keyword))
 }
 
 /**
@@ -40,17 +38,17 @@ function isHighlightFeature(feature: string): boolean {
 export function ModelFeatures({ features }: ModelFeaturesProps) {
   // Sort features so highlights come first
   const sortedFeatures = [...features].sort((a, b) => {
-    const aIsHighlight = isHighlightFeature(a);
-    const bIsHighlight = isHighlightFeature(b);
+    const aIsHighlight = isHighlightFeature(a)
+    const bIsHighlight = isHighlightFeature(b)
 
     // If both are highlights or both are not, maintain original order
     if (aIsHighlight === bIsHighlight) {
-      return 0;
+      return 0
     }
 
     // Highlights come first
-    return aIsHighlight ? -1 : 1;
-  });
+    return aIsHighlight ? -1 : 1
+  })
 
   return (
     <Card className="p-6">
@@ -60,7 +58,7 @@ export function ModelFeatures({ features }: ModelFeaturesProps) {
       </div>
       <ul className="space-y-2.5">
         {sortedFeatures.map((feature) => {
-          const isHighlight = isHighlightFeature(feature);
+          const isHighlight = isHighlightFeature(feature)
           return (
             <li className="flex items-start gap-2 text-sm" key={feature}>
               {isHighlight ? (
@@ -69,22 +67,15 @@ export function ModelFeatures({ features }: ModelFeaturesProps) {
                   className="mt-0.5 h-4 w-4 shrink-0 text-yellow-500"
                 />
               ) : (
-                <Award
-                  aria-hidden="true"
-                  className="mt-0.5 h-4 w-4 shrink-0 text-primary/70"
-                />
+                <Award aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-primary/70" />
               )}
-              <span
-                className={
-                  isHighlight ? "font-medium" : "text-muted-foreground"
-                }
-              >
+              <span className={isHighlight ? 'font-medium' : 'text-muted-foreground'}>
                 {feature}
               </span>
             </li>
-          );
+          )
         })}
       </ul>
     </Card>
-  );
+  )
 }

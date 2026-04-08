@@ -1,26 +1,20 @@
-"use client";
+'use client'
 
-import { usePathname, useRouter } from "next/navigation";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-} from "react";
+import { usePathname, useRouter } from 'next/navigation'
+import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 
 /**
  * Quote filter types
  */
-export type QuoteStatus = "draft" | "sent" | "canceled";
+export type QuoteStatus = 'draft' | 'sent' | 'canceled'
 
-export type QuoteSortOption = "newest" | "oldest" | "price-high" | "price-low";
+export type QuoteSortOption = 'newest' | 'oldest' | 'price-high' | 'price-low'
 
 export type QuoteFilters = {
-  status?: QuoteStatus;
-  searchQuery: string;
-  sortBy: QuoteSortOption;
-};
+  status?: QuoteStatus
+  searchQuery: string
+  sortBy: QuoteSortOption
+}
 
 /**
  * Custom hook for managing quote filters with URL synchronization
@@ -57,30 +51,25 @@ export type QuoteFilters = {
  * ```
  */
 export function useQuoteFilters(currentParams: {
-  currentStatus?: QuoteStatus;
-  currentSort?: QuoteSortOption;
-  currentSearchQuery?: string;
+  currentStatus?: QuoteStatus
+  currentSort?: QuoteSortOption
+  currentSearchQuery?: string
 }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
+  const router = useRouter()
+  const pathname = usePathname()
+  const [isPending, startTransition] = useTransition()
 
-  const {
-    currentStatus,
-    currentSort = "newest",
-    currentSearchQuery = "",
-  } = currentParams;
+  const { currentStatus, currentSort = 'newest', currentSearchQuery = '' } = currentParams
 
   // Initialize filters from props (received from Server Component)
   const [filters, setFilters] = useState<QuoteFilters>({
     searchQuery: currentSearchQuery,
     sortBy: currentSort,
     status: currentStatus,
-  });
+  })
 
   // Debounce timer for search
-  const [searchDebounceTimer, setSearchDebounceTimer] =
-    useState<NodeJS.Timeout | null>(null);
+  const [searchDebounceTimer, setSearchDebounceTimer] = useState<NodeJS.Timeout | null>(null)
 
   /**
    * Build query string from current state
@@ -88,160 +77,154 @@ export function useQuoteFilters(currentParams: {
    */
   const createQueryString = useCallback(
     (updates: Record<string, string | null>) => {
-      const params = new URLSearchParams();
+      const params = new URLSearchParams()
 
       // Preserve current parameters
       if (currentSearchQuery) {
-        params.set("q", currentSearchQuery);
+        params.set('q', currentSearchQuery)
       }
       if (currentStatus) {
-        params.set("status", currentStatus);
+        params.set('status', currentStatus)
       }
-      if (currentSort && currentSort !== "newest") {
-        params.set("sort", currentSort);
+      if (currentSort && currentSort !== 'newest') {
+        params.set('sort', currentSort)
       }
 
       // Apply updates
       for (const [key, value] of Object.entries(updates)) {
-        if (value === null || value === "") {
-          params.delete(key);
+        if (value === null || value === '') {
+          params.delete(key)
         } else {
-          params.set(key, value);
+          params.set(key, value)
         }
       }
 
-      return params.toString();
+      return params.toString()
     },
-    [currentSearchQuery, currentStatus, currentSort]
-  );
+    [currentSearchQuery, currentStatus, currentSort],
+  )
 
   /**
    * Update URL with current filters
    */
   const updateURL = useCallback(
     (newFilters: QuoteFilters) => {
-      const updates: Record<string, string | null> = {};
+      const updates: Record<string, string | null> = {}
 
       // Update or remove status param
-      updates.status = newFilters.status || null;
+      updates.status = newFilters.status || null
 
       // Update or remove search param
-      updates.q = newFilters.searchQuery || null;
+      updates.q = newFilters.searchQuery || null
 
       // Update or remove sort param (don't add if default)
-      updates.sort =
-        newFilters.sortBy && newFilters.sortBy !== "newest"
-          ? newFilters.sortBy
-          : null;
+      updates.sort = newFilters.sortBy && newFilters.sortBy !== 'newest' ? newFilters.sortBy : null
 
-      const queryString = createQueryString(updates);
-      const newURL = queryString ? `${pathname}?${queryString}` : pathname;
+      const queryString = createQueryString(updates)
+      const newURL = queryString ? `${pathname}?${queryString}` : pathname
 
       // Use replace to avoid adding to browser history
       startTransition(() => {
-        router.replace(newURL, { scroll: false });
-      });
+        router.replace(newURL, { scroll: false })
+      })
     },
-    [pathname, router, createQueryString]
-  );
+    [pathname, router, createQueryString],
+  )
 
   /**
    * Set status filter
    */
   const setStatus = useCallback(
     (status: QuoteStatus | undefined) => {
-      const newFilters = { ...filters, status };
-      setFilters(newFilters);
-      updateURL(newFilters);
+      const newFilters = { ...filters, status }
+      setFilters(newFilters)
+      updateURL(newFilters)
     },
-    [filters, updateURL]
-  );
+    [filters, updateURL],
+  )
 
   /**
    * Set search query (debounced)
    */
   const setSearchQuery = useCallback(
     (query: string) => {
-      const newFilters = { ...filters, searchQuery: query };
-      setFilters(newFilters);
+      const newFilters = { ...filters, searchQuery: query }
+      setFilters(newFilters)
 
       // Clear existing timer
       if (searchDebounceTimer) {
-        clearTimeout(searchDebounceTimer);
+        clearTimeout(searchDebounceTimer)
       }
 
-      const DEBOUNCE_DELAY_MS = 300;
+      const DEBOUNCE_DELAY_MS = 300
       // Set new timer for URL update (debounce 300ms)
       const timer = setTimeout(() => {
-        updateURL(newFilters);
-      }, DEBOUNCE_DELAY_MS);
+        updateURL(newFilters)
+      }, DEBOUNCE_DELAY_MS)
 
-      setSearchDebounceTimer(timer);
+      setSearchDebounceTimer(timer)
     },
-    [filters, searchDebounceTimer, updateURL]
-  );
+    [filters, searchDebounceTimer, updateURL],
+  )
 
   /**
    * Set sort option
    */
   const setSortBy = useCallback(
     (sortBy: QuoteSortOption) => {
-      const newFilters = { ...filters, sortBy };
-      setFilters(newFilters);
-      updateURL(newFilters);
+      const newFilters = { ...filters, sortBy }
+      setFilters(newFilters)
+      updateURL(newFilters)
     },
-    [filters, updateURL]
-  );
+    [filters, updateURL],
+  )
 
   /**
    * Clear all filters
    */
   const clearFilters = useCallback(() => {
     const newFilters: QuoteFilters = {
-      searchQuery: "",
-      sortBy: "newest",
+      searchQuery: '',
+      sortBy: 'newest',
       status: undefined,
-    };
-    setFilters(newFilters);
-    updateURL(newFilters);
-  }, [updateURL]);
+    }
+    setFilters(newFilters)
+    updateURL(newFilters)
+  }, [updateURL])
 
   /**
    * Count active filters (excluding defaults)
    */
   const activeFiltersCount = useMemo(() => {
-    let count = 0;
+    let count = 0
 
     if (filters.status) {
-      count++;
+      count++
     }
     if (filters.searchQuery) {
-      count++;
+      count++
     }
-    if (filters.sortBy && filters.sortBy !== "newest") {
-      count++;
+    if (filters.sortBy && filters.sortBy !== 'newest') {
+      count++
     }
 
-    return count;
-  }, [filters]);
+    return count
+  }, [filters])
 
   /**
    * Check if any filters are active
    */
-  const hasActiveFilters = useMemo(
-    () => activeFiltersCount > 0,
-    [activeFiltersCount]
-  );
+  const hasActiveFilters = useMemo(() => activeFiltersCount > 0, [activeFiltersCount])
 
   // Cleanup debounce timer on unmount
   useEffect(
     () => () => {
       if (searchDebounceTimer) {
-        clearTimeout(searchDebounceTimer);
+        clearTimeout(searchDebounceTimer)
       }
     },
-    [searchDebounceTimer]
-  );
+    [searchDebounceTimer],
+  )
 
   return {
     activeFiltersCount,
@@ -252,5 +235,5 @@ export function useQuoteFilters(currentParams: {
     setSearchQuery,
     setSortBy,
     setStatus,
-  };
+  }
 }

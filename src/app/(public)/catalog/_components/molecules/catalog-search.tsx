@@ -1,18 +1,18 @@
-"use client";
+'use client'
 
-import { useDebouncedSearch } from "@views/catalog/_hooks/use-catalog";
-import { Search, X } from "lucide-react";
+import { useDebouncedSearch } from '@views/catalog/_hooks/use-catalog'
+import { Search, X } from 'lucide-react'
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from "@/components/ui/input-group";
-import { Spinner } from "@/components/ui/spinner";
+} from '@/components/ui/input-group'
+import { Spinner } from '@/components/ui/spinner'
 
 type CatalogSearchProps = {
-  initialValue?: string;
-};
+  initialValue?: string
+}
 
 /**
  * CatalogSearch - Presentational Component
@@ -29,9 +29,8 @@ type CatalogSearchProps = {
  * - Easy to maintain (no complex logic)
  * - Reusable (logic extracted to hook)
  */
-export function CatalogSearch({ initialValue = "" }: CatalogSearchProps) {
-  const { query, isPending, handleSearchChange, handleClear } =
-    useDebouncedSearch(initialValue);
+export function CatalogSearch({ initialValue = '' }: CatalogSearchProps) {
+  const { query, isPending, handleSearchChange, handleClear } = useDebouncedSearch(initialValue)
 
   return (
     <div>
@@ -68,5 +67,5 @@ export function CatalogSearch({ initialValue = "" }: CatalogSearchProps) {
         </InputGroup>
       </div>
     </div>
-  );
+  )
 }

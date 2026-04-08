@@ -9,163 +9,131 @@
  * @module app/(dashboard)/admin/quotes/new/_components/quote-item-row
  */
 
-"use client";
+'use client'
 
-import { Trash2 } from "lucide-react";
-import { useMemo } from "react";
-import { useFormContext, useWatch } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Trash2 } from 'lucide-react'
+import { useMemo } from 'react'
+import { useFormContext, useWatch } from 'react-hook-form'
+import { Button } from '@/components/ui/button'
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { parseCompatibleGlassTypeIds } from "@/lib/utils/compatible-glass-types";
-import type { AdminQuoteItemValues } from "./schemas/admin-quote-form.schema";
+} from '@/components/ui/select'
+import { parseCompatibleGlassTypeIds } from '@/lib/utils/compatible-glass-types'
+import type { AdminQuoteItemValues } from './schemas/admin-quote-form.schema'
 
 type QuoteItemRowProps = {
   fields: {
-    id: string;
-    glassTypeId: string;
-    heightMm: number;
-    modelId: string;
-    quantity: number;
-    widthMm: number;
-  }[];
+    id: string
+    glassTypeId: string
+    heightMm: number
+    modelId: string
+    quantity: number
+    widthMm: number
+  }[]
   glassTypes: {
-    id: string;
-    name: string;
-    thicknessMm: number;
-    pricePerSqm: number;
-  }[];
-  index: number;
+    id: string
+    name: string
+    thicknessMm: number
+    pricePerSqm: number
+  }[]
+  index: number
   models: {
-    id: string;
-    name: string;
-    basePrice: number;
-    costPerMmWidth: number;
-    costPerMmHeight: number;
-    compatibleGlassTypeIds: string[];
-  }[];
-  onRemove: (index: number) => void;
-};
+    id: string
+    name: string
+    basePrice: number
+    costPerMmWidth: number
+    costPerMmHeight: number
+    compatibleGlassTypeIds: string[]
+  }[]
+  onRemove: (index: number) => void
+}
 
-const SQUARE_MM_IN_SQM = 1_000_000;
-const DECIMAL_ROUNDING_FACTOR = 100;
+const SQUARE_MM_IN_SQM = 1_000_000
+const DECIMAL_ROUNDING_FACTOR = 100
 
-export function QuoteItemRow({
-  fields,
-  glassTypes,
-  index,
-  models,
-  onRemove,
-}: QuoteItemRowProps) {
+export function QuoteItemRow({ fields, glassTypes, index, models, onRemove }: QuoteItemRowProps) {
   const form = useFormContext<{
-    items: AdminQuoteItemValues[];
-  }>();
+    items: AdminQuoteItemValues[]
+  }>()
 
   // Watch the modelId for this row to filter compatible glass types
   const selectedModelId = useWatch({
     control: form.control,
     name: `items.${index}.modelId`,
-  });
+  })
 
   // Watch other fields for price calculation
   const selectedGlassTypeId = useWatch({
     control: form.control,
     name: `items.${index}.glassTypeId`,
-  });
+  })
   const widthMm = useWatch({
     control: form.control,
     name: `items.${index}.widthMm`,
-  });
+  })
   const heightMm = useWatch({
     control: form.control,
     name: `items.${index}.heightMm`,
-  });
+  })
   const quantity = useWatch({
     control: form.control,
     name: `items.${index}.quantity`,
-  });
+  })
 
   // Get compatible glass types based on selected model
   const compatibleGlassTypes = useMemo(() => {
     if (!selectedModelId) {
-      return glassTypes;
+      return glassTypes
     }
 
-    const model = models.find((m) => m.id === selectedModelId);
+    const model = models.find((m) => m.id === selectedModelId)
     if (!model) {
-      return glassTypes;
+      return glassTypes
     }
 
     // compatibleGlassTypeIds may already be parsed or a JSON string
     const compatibleIds = Array.isArray(model.compatibleGlassTypeIds)
       ? model.compatibleGlassTypeIds
-      : parseCompatibleGlassTypeIds(model.compatibleGlassTypeIds);
+      : parseCompatibleGlassTypeIds(model.compatibleGlassTypeIds)
 
     if (compatibleIds.length === 0) {
-      return glassTypes; // Show all if no restrictions
+      return glassTypes // Show all if no restrictions
     }
 
-    return glassTypes.filter((gt) => compatibleIds.includes(gt.id));
-  }, [selectedModelId, models, glassTypes]);
+    return glassTypes.filter((gt) => compatibleIds.includes(gt.id))
+  }, [selectedModelId, models, glassTypes])
 
   // Calculate price for this item
   const itemPrice = useMemo(() => {
-    if (
-      !(
-        selectedModelId &&
-        selectedGlassTypeId &&
-        widthMm &&
-        heightMm &&
-        quantity
-      )
-    ) {
-      return null;
+    if (!(selectedModelId && selectedGlassTypeId && widthMm && heightMm && quantity)) {
+      return null
     }
 
-    const model = models.find((m) => m.id === selectedModelId);
-    const glassType = glassTypes.find((gt) => gt.id === selectedGlassTypeId);
+    const model = models.find((m) => m.id === selectedModelId)
+    const glassType = glassTypes.find((gt) => gt.id === selectedGlassTypeId)
 
     if (!(model && glassType)) {
-      return null;
+      return null
     }
 
-    const areaSqm = (widthMm * heightMm) / SQUARE_MM_IN_SQM;
-    const widthCost = widthMm * model.costPerMmWidth;
-    const heightCost = heightMm * model.costPerMmHeight;
-    const glassCost = areaSqm * glassType.pricePerSqm;
-    const unitPrice = model.basePrice + widthCost + heightCost + glassCost;
-    const subtotal = unitPrice * quantity;
+    const areaSqm = (widthMm * heightMm) / SQUARE_MM_IN_SQM
+    const widthCost = widthMm * model.costPerMmWidth
+    const heightCost = heightMm * model.costPerMmHeight
+    const glassCost = areaSqm * glassType.pricePerSqm
+    const unitPrice = model.basePrice + widthCost + heightCost + glassCost
+    const subtotal = unitPrice * quantity
 
     return {
-      unitPrice:
-        Math.round(unitPrice * DECIMAL_ROUNDING_FACTOR) /
-        DECIMAL_ROUNDING_FACTOR,
-      subtotal:
-        Math.round(subtotal * DECIMAL_ROUNDING_FACTOR) /
-        DECIMAL_ROUNDING_FACTOR,
-    };
-  }, [
-    selectedModelId,
-    selectedGlassTypeId,
-    widthMm,
-    heightMm,
-    quantity,
-    models,
-    glassTypes,
-  ]);
+      unitPrice: Math.round(unitPrice * DECIMAL_ROUNDING_FACTOR) / DECIMAL_ROUNDING_FACTOR,
+      subtotal: Math.round(subtotal * DECIMAL_ROUNDING_FACTOR) / DECIMAL_ROUNDING_FACTOR,
+    }
+  }, [selectedModelId, selectedGlassTypeId, widthMm, heightMm, quantity, models, glassTypes])
 
   return (
     <div className="grid grid-cols-1 gap-4 rounded-lg border p-4 md:grid-cols-13 md:items-end">
@@ -177,7 +145,7 @@ export function QuoteItemRow({
           <FormItem className="md:col-span-4">
             <FormLabel>Modelo</FormLabel>
             <FormControl>
-              <Select onValueChange={field.onChange} value={field.value || ""}>
+              <Select onValueChange={field.onChange} value={field.value || ''}>
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar modelo" />
                 </SelectTrigger>
@@ -203,7 +171,7 @@ export function QuoteItemRow({
           <FormItem className="md:col-span-3">
             <FormLabel>Tipo de Vidrio</FormLabel>
             <FormControl>
-              <Select onValueChange={field.onChange} value={field.value || ""}>
+              <Select onValueChange={field.onChange} value={field.value || ''}>
                 <SelectTrigger>
                   <SelectValue placeholder="Vidrio" />
                 </SelectTrigger>
@@ -234,7 +202,7 @@ export function QuoteItemRow({
                 min={1}
                 onChange={(e) => field.onChange(Number(e.target.value))}
                 type="number"
-                value={field.value || ""}
+                value={field.value || ''}
               />
             </FormControl>
             <FormMessage />
@@ -255,7 +223,7 @@ export function QuoteItemRow({
                 min={1}
                 onChange={(e) => field.onChange(Number(e.target.value))}
                 type="number"
-                value={field.value || ""}
+                value={field.value || ''}
               />
             </FormControl>
             <FormMessage />
@@ -276,7 +244,7 @@ export function QuoteItemRow({
                 min={1}
                 onChange={(e) => field.onChange(Number(e.target.value))}
                 type="number"
-                value={field.value || ""}
+                value={field.value || ''}
               />
             </FormControl>
             <FormMessage />
@@ -291,9 +259,7 @@ export function QuoteItemRow({
             <span className="text-muted-foreground text-xs">
               ${itemPrice.unitPrice.toLocaleString()} c/u
             </span>
-            <p className="font-medium">
-              ${itemPrice.subtotal.toLocaleString()}
-            </p>
+            <p className="font-medium">${itemPrice.subtotal.toLocaleString()}</p>
           </div>
         ) : (
           <span className="text-muted-foreground text-sm">—</span>
@@ -313,5 +279,5 @@ export function QuoteItemRow({
         </Button>
       </div>
     </div>
-  );
+  )
 }

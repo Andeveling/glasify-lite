@@ -3,14 +3,14 @@
  * Handles cart mutations with toast notifications
  */
 
-import { useCallback } from "react";
-import { toast } from "sonner";
-import { useCart } from "@/app/(public)/cart/_hooks/use-cart";
-import type { CartItemInputWithPrice } from "../_utils/cart-item-mapper";
+import { useCallback } from 'react'
+import { toast } from 'sonner'
+import { useCart } from '@/app/(public)/cart/_hooks/use-cart'
+import type { CartItemInputWithPrice } from '../_utils/cart-item-mapper'
 
 type UseCartOperationsReturn = {
-  addToCart: (item: CartItemInputWithPrice, modelName: string) => boolean;
-};
+  addToCart: (item: CartItemInputWithPrice, modelName: string) => boolean
+}
 
 /**
  * Handle cart operations with user feedback
@@ -26,35 +26,35 @@ type UseCartOperationsReturn = {
  * }
  */
 export function useCartOperations(): UseCartOperationsReturn {
-  const { addItem } = useCart();
+  const { addItem } = useCart()
 
   const addToCart = useCallback(
     (item: CartItemInputWithPrice, modelName: string): boolean => {
       try {
-        addItem(item);
+        addItem(item)
 
-        toast.success("Item agregado al carrito", {
+        toast.success('Item agregado al carrito', {
           description: `${modelName} ha sido agregado exitosamente`,
-        });
+        })
 
-        return true;
+        return true
       } catch (err) {
         const errorMessage =
-          err instanceof Error && err.message.includes("no puedes agregar más")
-            ? "Has alcanzado el límite de 20 items en el carrito"
-            : "No se pudo agregar el item al carrito";
+          err instanceof Error && err.message.includes('no puedes agregar más')
+            ? 'Has alcanzado el límite de 20 items en el carrito'
+            : 'No se pudo agregar el item al carrito'
 
-        toast.error("Error al agregar", {
+        toast.error('Error al agregar', {
           description: errorMessage,
-        });
+        })
 
-        return false;
+        return false
       }
     },
-    [addItem]
-  );
+    [addItem],
+  )
 
   return {
     addToCart,
-  };
+  }
 }

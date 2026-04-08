@@ -12,9 +12,9 @@
  * @module _components/form-fields/form-textarea-field
  */
 
-"use client";
+'use client'
 
-import type { Control, FieldPath, FieldValues } from "react-hook-form";
+import type { Control, FieldPath, FieldValues } from 'react-hook-form'
 import {
   FormControl,
   FormDescription,
@@ -22,22 +22,22 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/form'
+import { Textarea } from '@/components/ui/textarea'
 
 type FormTextareaFieldProps<TFieldValues extends FieldValues> = {
-  control: Control<TFieldValues>;
-  name: FieldPath<TFieldValues>;
-  label: string;
-  placeholder?: string;
-  description?: string;
-  rows?: number; // prefer rows over height for reliable sizing
-  maxLength?: number;
-  showCharCount?: boolean;
-  required?: boolean;
-  disabled?: boolean;
-  className?: string; // allow grid span / layout classes
-};
+  control: Control<TFieldValues>
+  name: FieldPath<TFieldValues>
+  label: string
+  placeholder?: string
+  description?: string
+  rows?: number // prefer rows over height for reliable sizing
+  maxLength?: number
+  showCharCount?: boolean
+  required?: boolean
+  disabled?: boolean
+  className?: string // allow grid span / layout classes
+}
 
 /**
  * Reusable textarea field component
@@ -63,7 +63,7 @@ export function FormTextareaField<TFieldValues extends FieldValues>({
         <FormItem className={className}>
           <FormLabel>
             {label}
-            {required && " *"}
+            {required && ' *'}
           </FormLabel>
           <FormControl>
             <Textarea
@@ -72,7 +72,7 @@ export function FormTextareaField<TFieldValues extends FieldValues>({
               maxLength={maxLength}
               placeholder={placeholder}
               rows={rows}
-              value={field.value ?? ""}
+              value={field.value ?? ''}
             />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
@@ -85,5 +85,5 @@ export function FormTextareaField<TFieldValues extends FieldValues>({
         </FormItem>
       )}
     />
-  );
+  )
 }

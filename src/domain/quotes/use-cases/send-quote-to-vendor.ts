@@ -11,100 +11,98 @@
  * Usa repositories (ports) para acceso a datos.
  */
 
-import type { Quote, QuoteStatus } from "@prisma/generated/client";
-import { validateQuoteStatus } from "../services/quote-validator.service";
+import type { Quote, QuoteStatus } from '@prisma/generated/client'
+import { validateQuoteStatus } from '../services/quote-validator.service'
 
 /**
  * Input para enviar quote al vendedor
  */
 export type SendQuoteToVendorInput = {
-  quoteId: string;
-  userId: string;
-  contactPhone: string;
-  contactEmail?: string;
-};
+  quoteId: string
+  userId: string
+  contactPhone: string
+  contactEmail?: string
+}
 
 /**
  * Output del use-case
  */
 export type SendQuoteToVendorOutput = {
-  id: string;
-  status: "sent";
-  sentAt: Date;
-  contactPhone: string;
-  contactEmail?: string;
-  total: number;
-  currency: string;
-};
+  id: string
+  status: 'sent'
+  sentAt: Date
+  contactPhone: string
+  contactEmail?: string
+  total: number
+  currency: string
+}
 
 /**
  * Quote con item count (del repositorio)
  */
 type QuoteWithItemCount = Quote & {
-  itemCount: number;
-};
+  itemCount: number
+}
 
 /**
  * Dependencies (ports) que necesita el use-case
  */
 export type SendQuoteToVendorDeps = {
   // Repository
-  findQuoteWithItemCount: (id: string) => Promise<QuoteWithItemCount | null>;
+  findQuoteWithItemCount: (id: string) => Promise<QuoteWithItemCount | null>
   updateQuoteToSent: (
     id: string,
     contactPhone: string,
-    sentAt: Date
+    sentAt: Date,
   ) => Promise<{
-    id: string;
-    status: QuoteStatus;
-    sentAt: Date | null;
-    contactPhone: string | null;
-    total: number;
-    currency: string;
-  }>;
-};
+    id: string
+    status: QuoteStatus
+    sentAt: Date | null
+    contactPhone: string | null
+    total: number
+    currency: string
+  }>
+}
 
 /**
  * Errores de negocio
  */
 export class QuoteNotFoundError extends Error {
-  code = "NOT_FOUND" as const;
+  code = 'NOT_FOUND' as const
 
   constructor() {
-    super("Cotización no encontrada.");
-    this.name = "QuoteNotFoundError";
+    super('Cotización no encontrada.')
+    this.name = 'QuoteNotFoundError'
   }
 }
 
 export class QuoteUnauthorizedError extends Error {
-  code = "FORBIDDEN" as const;
+  code = 'FORBIDDEN' as const
 
   constructor() {
-    super("No tienes permiso para enviar esta cotización.");
-    this.name = "QuoteUnauthorizedError";
+    super('No tienes permiso para enviar esta cotización.')
+    this.name = 'QuoteUnauthorizedError'
   }
 }
 
 export class QuoteAlreadySentError extends Error {
-  code = "BAD_REQUEST" as const;
-  sentAt: Date | null;
+  code = 'BAD_REQUEST' as const
+  sentAt: Date | null
 
   constructor(sentAt: Date | null) {
-    const dateStr = sentAt?.toLocaleDateString("es-CO") ?? "anteriormente";
-    super(`Esta cotización ya fue enviada el ${dateStr}.`);
-    this.name = "QuoteAlreadySentError";
-    this.sentAt = sentAt;
+    const dateStr = sentAt?.toLocaleDateString('es-CO') ?? 'anteriormente'
+    super(`Esta cotización ya fue enviada el ${dateStr}.`)
+    this.name = 'QuoteAlreadySentError'
+    this.sentAt = sentAt
   }
 }
 
 export class QuoteEmptyError extends Error {
-  code = "BAD_REQUEST" as const;
+  code = 'BAD_REQUEST' as const
 
   constructor() {
-    super(
-      "No puedes enviar una cotización vacía. Agrega al menos un producto."
-    );
-    this.name = "QuoteEmptyError";
+    super('No puedes enviar una cotización vacía. Agrega al menos un producto.')
+    this.name = 'QuoteEmptyError'
   }
 }
 
@@ -116,48 +114,44 @@ export class QuoteEmptyError extends Error {
  */
 export async function sendQuoteToVendorUseCase(
   input: SendQuoteToVendorInput,
-  deps: SendQuoteToVendorDeps
+  deps: SendQuoteToVendorDeps,
 ): Promise<SendQuoteToVendorOutput> {
   // 1. Fetch quote con item count
-  const quote = await deps.findQuoteWithItemCount(input.quoteId);
+  const quote = await deps.findQuoteWithItemCount(input.quoteId)
 
   // 2. Validar que existe
   if (!quote) {
-    throw new QuoteNotFoundError();
+    throw new QuoteNotFoundError()
   }
 
   // 3. Validar ownership
   if (quote.userId !== input.userId) {
-    throw new QuoteUnauthorizedError();
+    throw new QuoteUnauthorizedError()
   }
 
   // 4. Validar estado (debe ser 'draft')
   try {
-    validateQuoteStatus(quote.status, "enviar");
+    validateQuoteStatus(quote.status, 'enviar')
   } catch {
-    throw new QuoteAlreadySentError(quote.sentAt);
+    throw new QuoteAlreadySentError(quote.sentAt)
   }
 
   // 5. Validar que tiene items
   if (quote.itemCount === 0) {
-    throw new QuoteEmptyError();
+    throw new QuoteEmptyError()
   }
 
   // 6. Ejecutar update
-  const now = new Date();
-  const updatedQuote = await deps.updateQuoteToSent(
-    input.quoteId,
-    input.contactPhone,
-    now
-  );
+  const now = new Date()
+  const updatedQuote = await deps.updateQuoteToSent(input.quoteId, input.contactPhone, now)
 
   return {
     id: updatedQuote.id,
-    status: "sent",
+    status: 'sent',
     sentAt: updatedQuote.sentAt ?? now,
     contactPhone: updatedQuote.contactPhone ?? input.contactPhone,
     contactEmail: input.contactEmail,
     total: updatedQuote.total,
     currency: updatedQuote.currency,
-  };
+  }
 }

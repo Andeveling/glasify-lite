@@ -13,17 +13,11 @@
  * - Main component orchestrates composition
  */
 
-"use client";
+'use client'
 
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Form,
   FormControl,
@@ -32,53 +26,49 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import type { ColorUpdateInput } from "@/lib/validations/color";
-import { useColorForm } from "../_hooks/use-color-form";
-import { ColorChip } from "./color-chip";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
+import type { ColorUpdateInput } from '@/lib/validations/color'
+import { useColorForm } from '../_hooks/use-color-form'
+import { ColorChip } from './color-chip'
 
 type ColorFormProps = {
-  mode: "create" | "edit";
-  defaultValues?: ColorUpdateInput & { id: string };
-};
+  mode: 'create' | 'edit'
+  defaultValues?: ColorUpdateInput & { id: string }
+}
 
 /**
  * Main color form component
  * Handles creation and editing of colors with validation
  */
 export function ColorForm({ mode, defaultValues }: ColorFormProps) {
-  const router = useRouter();
+  const router = useRouter()
   const { form, onSubmit, isLoading } = useColorForm({
     defaultValues,
     mode,
-  });
+  })
 
-  const hexCode = form.watch("hexCode");
+  const hexCode = form.watch('hexCode')
 
   return (
     <Form {...form}>
       <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
         <Card>
           <CardHeader>
-            <CardTitle>
-              {mode === "create" ? "Crear Nuevo Color" : "Editar Color"}
-            </CardTitle>
+            <CardTitle>{mode === 'create' ? 'Crear Nuevo Color' : 'Editar Color'}</CardTitle>
             <CardDescription>
-              {mode === "create"
-                ? "Completa los datos del nuevo color para el catálogo"
-                : "Modifica los datos del color existente"}
+              {mode === 'create'
+                ? 'Completa los datos del nuevo color para el catálogo'
+                : 'Modifica los datos del color existente'}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Color Preview */}
             <div className="flex items-center justify-center rounded-lg border border-dashed p-8">
               <div className="flex flex-col items-center gap-3">
-                <ColorChip hexCode={hexCode ?? "#000000"} size="lg" />
-                <p className="font-medium text-muted-foreground text-sm">
-                  Vista previa del color
-                </p>
+                <ColorChip hexCode={hexCode ?? '#000000'} size="lg" />
+                <p className="font-medium text-muted-foreground text-sm">Vista previa del color</p>
               </div>
             </div>
 
@@ -90,10 +80,7 @@ export function ColorForm({ mode, defaultValues }: ColorFormProps) {
                 <FormItem>
                   <FormLabel>Nombre del Color *</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Ej: Blanco, Negro Mate, Gris Antracita"
-                      {...field}
-                    />
+                    <Input placeholder="Ej: Blanco, Negro Mate, Gris Antracita" {...field} />
                   </FormControl>
                   <FormDescription>
                     Nombre descriptivo del color (único en el sistema)
@@ -114,12 +101,10 @@ export function ColorForm({ mode, defaultValues }: ColorFormProps) {
                     <Input
                       placeholder="Ej: RAL 9010, RAL 7016"
                       {...field}
-                      value={field.value ?? ""}
+                      value={field.value ?? ''}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Código RAL estándar en formato "RAL XXXX"
-                  </FormDescription>
+                  <FormDescription>Código RAL estándar en formato "RAL XXXX"</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -141,9 +126,7 @@ export function ColorForm({ mode, defaultValues }: ColorFormProps) {
                       maxLength={7}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Código hexadecimal del color (formato #RRGGBB)
-                  </FormDescription>
+                  <FormDescription>Código hexadecimal del color (formato #RRGGBB)</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -158,15 +141,11 @@ export function ColorForm({ mode, defaultValues }: ColorFormProps) {
                   <div className="space-y-0.5">
                     <FormLabel className="text-base">Estado Activo</FormLabel>
                     <FormDescription>
-                      Los colores activos están disponibles para asignar a
-                      modelos
+                      Los colores activos están disponibles para asignar a modelos
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                 </FormItem>
               )}
@@ -190,15 +169,15 @@ export function ColorForm({ mode, defaultValues }: ColorFormProps) {
         </div>
       </form>
     </Form>
-  );
+  )
 }
 
 /**
  * Get button label based on loading state and form mode
  */
-function getButtonLabel(isLoading: boolean, mode: "create" | "edit"): string {
+function getButtonLabel(isLoading: boolean, mode: 'create' | 'edit'): string {
   if (isLoading) {
-    return "Guardando...";
+    return 'Guardando...'
   }
-  return mode === "create" ? "Crear Color" : "Guardar Cambios";
+  return mode === 'create' ? 'Crear Color' : 'Guardar Cambios'
 }

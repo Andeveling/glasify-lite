@@ -14,56 +14,53 @@
  * - Optimistic updates with rollback on error
  */
 
-"use client";
+'use client'
 
 // Local type definitions to avoid Prisma import issues
 type Color = {
-  id: string;
-  name: string;
-  hexCode: string;
-  ralCode?: string | null;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-};
+  id: string
+  name: string
+  hexCode: string
+  ralCode?: string | null
+  isActive: boolean
+  createdAt: Date
+  updatedAt: Date
+}
 
 type ModelColor = {
-  id: string;
-  modelId: string;
-  colorId: string;
-  surchargePercentage: number;
-  isActive: boolean;
-  isDefault?: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  color: Color;
-};
+  id: string
+  modelId: string
+  colorId: string
+  surchargePercentage: number
+  isActive: boolean
+  isDefault?: boolean
+  createdAt: Date
+  updatedAt: Date
+  color: Color
+}
 
-import { Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { ColorChip } from "@/app/(dashboard)/admin/colors/_components/color-chip";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { TableCell, TableRow } from "@/components/ui/table";
+import { Trash2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { ColorChip } from '@/app/(dashboard)/admin/colors/_components/color-chip'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { TableCell, TableRow } from '@/components/ui/table'
 
 // Surcharge management constants
-const SURCHARGE_DEBOUNCE_MS = 500;
-const MIN_SURCHARGE = 0;
-const MAX_SURCHARGE = 100;
+const SURCHARGE_DEBOUNCE_MS = 500
+const MIN_SURCHARGE = 0
+const MAX_SURCHARGE = 100
 
 type ModelColorWithColor = ModelColor & {
-  color: Color;
-};
+  color: Color
+}
 
 // Serialized version for Client Component (Decimal -> number)
-type SerializedModelColorWithColor = Omit<
-  ModelColorWithColor,
-  "surchargePercentage"
-> & {
-  surchargePercentage: number;
-};
+type SerializedModelColorWithColor = Omit<ModelColorWithColor, 'surchargePercentage'> & {
+  surchargePercentage: number
+}
 
 /**
  * Props for ModelColorRow
@@ -85,12 +82,12 @@ type SerializedModelColorWithColor = Omit<
  * DO NOT rename to "Action" suffix - these are NOT Server Actions.
  */
 type ModelColorRowProps = {
-  modelColor: SerializedModelColorWithColor;
-  onSurchargeChange: (id: string, surcharge: number) => void;
-  onDefaultChange: (id: string) => void;
-  onDelete: (id: string) => void;
-  isUpdating?: boolean;
-};
+  modelColor: SerializedModelColorWithColor
+  onSurchargeChange: (id: string, surcharge: number) => void
+  onDefaultChange: (id: string) => void
+  onDelete: (id: string) => void
+  isUpdating?: boolean
+}
 
 /**
  * Single row displaying color assignment details
@@ -103,40 +100,33 @@ export function ModelColorRow({
   onDelete,
   isUpdating = false,
 }: ModelColorRowProps) {
-  const [surcharge, setSurcharge] = useState(
-    Number(modelColor.surchargePercentage)
-  );
+  const [surcharge, setSurcharge] = useState(Number(modelColor.surchargePercentage))
 
   // Debounce surcharge changes (500ms delay)
   useEffect(() => {
     const timer = setTimeout(() => {
-      const originalSurcharge = Number(modelColor.surchargePercentage);
+      const originalSurcharge = Number(modelColor.surchargePercentage)
       if (
         surcharge !== originalSurcharge &&
         surcharge >= MIN_SURCHARGE &&
         surcharge <= MAX_SURCHARGE
       ) {
-        onSurchargeChange(modelColor.id, surcharge);
+        onSurchargeChange(modelColor.id, surcharge)
       }
-    }, SURCHARGE_DEBOUNCE_MS);
+    }, SURCHARGE_DEBOUNCE_MS)
 
-    return () => clearTimeout(timer);
-  }, [
-    surcharge,
-    modelColor.id,
-    modelColor.surchargePercentage,
-    onSurchargeChange,
-  ]);
+    return () => clearTimeout(timer)
+  }, [surcharge, modelColor.id, modelColor.surchargePercentage, onSurchargeChange])
 
   const handleSurchargeChange = (value: string) => {
-    const numValue = Number.parseFloat(value);
+    const numValue = Number.parseFloat(value)
     if (!Number.isNaN(numValue)) {
-      setSurcharge(Math.max(MIN_SURCHARGE, Math.min(MAX_SURCHARGE, numValue)));
+      setSurcharge(Math.max(MIN_SURCHARGE, Math.min(MAX_SURCHARGE, numValue)))
     }
-  };
+  }
 
   return (
-    <TableRow className={isUpdating ? "opacity-50" : ""}>
+    <TableRow className={isUpdating ? 'opacity-50' : ''}>
       {/* Color Preview */}
       <TableCell>
         <ColorChip hexCode={modelColor.color.hexCode} size="md" />
@@ -146,14 +136,10 @@ export function ModelColorRow({
       <TableCell className="font-medium">{modelColor.color.name}</TableCell>
 
       {/* RAL Code */}
-      <TableCell className="text-muted-foreground">
-        {modelColor.color.ralCode ?? "—"}
-      </TableCell>
+      <TableCell className="text-muted-foreground">{modelColor.color.ralCode ?? '—'}</TableCell>
 
       {/* Hex Code */}
-      <TableCell className="font-mono text-sm">
-        {modelColor.color.hexCode}
-      </TableCell>
+      <TableCell className="font-mono text-sm">{modelColor.color.hexCode}</TableCell>
 
       {/* Surcharge Input (editable) */}
       <TableCell>
@@ -181,11 +167,8 @@ export function ModelColorRow({
             id={`default-${modelColor.id}`}
             onCheckedChange={() => onDefaultChange(modelColor.id)}
           />
-          <Label
-            className="cursor-pointer text-sm"
-            htmlFor={`default-${modelColor.id}`}
-          >
-            {modelColor.isDefault ? "Por defecto" : "Establecer"}
+          <Label className="cursor-pointer text-sm" htmlFor={`default-${modelColor.id}`}>
+            {modelColor.isDefault ? 'Por defecto' : 'Establecer'}
           </Label>
         </div>
       </TableCell>
@@ -203,5 +186,5 @@ export function ModelColorRow({
         </Button>
       </TableCell>
     </TableRow>
-  );
+  )
 }

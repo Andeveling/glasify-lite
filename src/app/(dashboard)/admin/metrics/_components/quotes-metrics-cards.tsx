@@ -1,28 +1,28 @@
-"use client";
+'use client'
 
-import { FileCheck, FileText, FileX, Send } from "lucide-react";
-import { formatPercent } from "@/lib/format";
-import type { QuoteMetrics } from "@/types/dashboard";
-import { MetricCard } from "./metric-card";
+import { FileCheck, FileText, FileX, Send } from 'lucide-react'
+import { formatPercent } from '@/lib/format'
+import type { QuoteMetrics } from '@/types/dashboard'
+import { MetricCard } from './metric-card'
 
 // Conversion constant for decimal to percentage display
-const PERCENTAGE_MULTIPLIER = 100;
+const PERCENTAGE_MULTIPLIER = 100
 
 type QuotesMetricsCardsProps = {
   /**
    * Quote metrics data from tRPC query
    */
-  metrics: QuoteMetrics;
+  metrics: QuoteMetrics
 
   /**
    * Tenant configuration for formatting (locale, currency, timezone)
    */
   tenantConfig?: {
-    locale?: string;
-    currency?: string;
-    timezone?: string;
-  } | null;
-};
+    locale?: string
+    currency?: string
+    timezone?: string
+  } | null
+}
 
 /**
  * QuotesMetricsCards Component
@@ -56,14 +56,11 @@ type QuotesMetricsCardsProps = {
  * />
  * ```
  */
-export function QuotesMetricsCards({
-  metrics,
-  tenantConfig,
-}: QuotesMetricsCardsProps) {
+export function QuotesMetricsCards({ metrics, tenantConfig }: QuotesMetricsCardsProps) {
   // Format conversion rate using centralized formatter
   const conversionRateFormatted = formatPercent(metrics.conversionRate, {
     context: tenantConfig,
-  });
+  })
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -97,5 +94,5 @@ export function QuotesMetricsCards({
         value={conversionRateFormatted}
       />
     </div>
-  );
+  )
 }

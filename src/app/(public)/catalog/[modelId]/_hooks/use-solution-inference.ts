@@ -1,24 +1,24 @@
 /** biome-ignore-all lint/style/noMagicNumbers: It is not required */
-import { useMemo } from "react";
+import { useMemo } from 'react'
 import type {
   GlassSolutionOutput,
   GlassTypeOutput,
-} from "@/server/api/routers/catalog/catalog.schemas";
+} from '@/server/api/routers/catalog/catalog.schemas'
 
 // ============================================================================
 // Types
 // ============================================================================
 
 type InferredSolution = {
-  acousticRating: number; // 1-5 scale
-  description: string | null;
-  icon: string | null;
-  id: string;
-  name: string;
-  nameEs: string;
-  securityRating: number; // 1-5 scale
-  thermalRating: number; // 1-5 scale
-};
+  acousticRating: number // 1-5 scale
+  description: string | null
+  icon: string | null
+  id: string
+  name: string
+  nameEs: string
+  securityRating: number // 1-5 scale
+  thermalRating: number // 1-5 scale
+}
 
 // ============================================================================
 // Helpers
@@ -29,18 +29,18 @@ type InferredSolution = {
  */
 function performanceToNumeric(rating: string | undefined): number {
   switch (rating) {
-    case "excellent":
-      return 5;
-    case "very_good":
-      return 4;
-    case "good":
-      return 3;
-    case "standard":
-      return 2;
-    case "basic":
-      return 1;
+    case 'excellent':
+      return 5
+    case 'very_good':
+      return 4
+    case 'good':
+      return 3
+    case 'standard':
+      return 2
+    case 'basic':
+      return 1
     default:
-      return 3; // Default to "good" if undefined
+      return 3 // Default to "good" if undefined
   }
 }
 
@@ -49,36 +49,32 @@ function performanceToNumeric(rating: string | undefined): number {
  */
 function calculateAcousticRating(glassType: GlassTypeOutput | null): number {
   if (!glassType) {
-    return 3;
+    return 3
   }
 
-  let rating = 2; // Base rating
-  const characteristics = glassType.characteristics ?? [];
+  let rating = 2 // Base rating
+  const characteristics = glassType.characteristics ?? []
 
   // Laminated glass provides better sound insulation
-  const hasLaminated = characteristics.some((c) =>
-    c.characteristic?.key?.includes("laminated")
-  );
+  const hasLaminated = characteristics.some((c) => c.characteristic?.key?.includes('laminated'))
   if (hasLaminated) {
-    rating += 2;
+    rating += 2
   }
 
   // Triple glazing significantly improves acoustic performance
-  const hasTripleGlazed = characteristics.some((c) =>
-    c.characteristic?.key?.includes("triple")
-  );
+  const hasTripleGlazed = characteristics.some((c) => c.characteristic?.key?.includes('triple'))
   if (hasTripleGlazed) {
-    rating += 1;
+    rating += 1
   }
 
   // Thicker glass improves sound reduction
-  const MinThickAcoustic = 10;
-  const MaxRating = 5;
+  const MinThickAcoustic = 10
+  const MaxRating = 5
   if (glassType.thicknessMm >= MinThickAcoustic) {
-    rating += 1;
+    rating += 1
   }
 
-  return Math.min(MaxRating, rating);
+  return Math.min(MaxRating, rating)
 }
 
 /**
@@ -86,41 +82,37 @@ function calculateAcousticRating(glassType: GlassTypeOutput | null): number {
  */
 function calculateThermalRating(glassType: GlassTypeOutput | null): number {
   if (!glassType) {
-    return 3;
+    return 3
   }
 
-  let rating = 2; // Base rating
-  const characteristics = glassType.characteristics ?? [];
+  let rating = 2 // Base rating
+  const characteristics = glassType.characteristics ?? []
 
   // Low-E coating significantly improves thermal performance
   const hasLowE = characteristics.some(
-    (c) =>
-      c.characteristic?.key?.includes("low_e") ||
-      c.characteristic?.key?.includes("lowE")
-  );
+    (c) => c.characteristic?.key?.includes('low_e') || c.characteristic?.key?.includes('lowE'),
+  )
   if (hasLowE) {
-    rating += 2;
+    rating += 2
   }
 
   // Triple glazing provides excellent insulation
-  const hasTripleGlazed = characteristics.some((c) =>
-    c.characteristic?.key?.includes("triple")
-  );
+  const hasTripleGlazed = characteristics.some((c) => c.characteristic?.key?.includes('triple'))
   if (hasTripleGlazed) {
-    rating += 1;
+    rating += 1
   }
 
   // U-value (lower is better for thermal insulation)
-  const ExcellentUvalue = 1.5;
-  const GoodUvalue = 2.5;
-  const MaxRating = 5;
+  const ExcellentUvalue = 1.5
+  const GoodUvalue = 2.5
+  const MaxRating = 5
   if (glassType.uValue && glassType.uValue < ExcellentUvalue) {
-    rating += 1;
+    rating += 1
   } else if (glassType.uValue && glassType.uValue < GoodUvalue) {
-    rating += 0;
+    rating += 0
   }
 
-  return Math.min(MaxRating, rating);
+  return Math.min(MaxRating, rating)
 }
 
 /**
@@ -128,37 +120,33 @@ function calculateThermalRating(glassType: GlassTypeOutput | null): number {
  */
 function calculateSecurityRating(glassType: GlassTypeOutput | null): number {
   if (!glassType) {
-    return 3;
+    return 3
   }
 
-  let rating = 2; // Base rating
+  let rating = 2 // Base rating
 
   // Check for laminated or tempered characteristics
-  const characteristics = glassType.characteristics ?? [];
-  const hasLaminated = characteristics.some((c) =>
-    c.characteristic?.key?.includes("laminated")
-  );
-  const hasTempered = characteristics.some((c) =>
-    c.characteristic?.key?.includes("tempered")
-  );
+  const characteristics = glassType.characteristics ?? []
+  const hasLaminated = characteristics.some((c) => c.characteristic?.key?.includes('laminated'))
+  const hasTempered = characteristics.some((c) => c.characteristic?.key?.includes('tempered'))
 
   // Tempered glass provides safety (but not security against intrusion)
   if (hasTempered) {
-    rating += 1;
+    rating += 1
   }
 
   // Laminated glass is the best for security (holds together when broken)
   if (hasLaminated) {
-    rating += 2;
+    rating += 2
   }
 
   // Thickness adds to security
-  const MinThickSecurity = 8;
-  const MaxRating = 5;
+  const MinThickSecurity = 8
+  const MaxRating = 5
   if (glassType.thicknessMm >= MinThickSecurity) {
-    rating += 1;
+    rating += 1
   }
-  return Math.min(MaxRating, rating);
+  return Math.min(MaxRating, rating)
 }
 
 /**
@@ -167,36 +155,34 @@ function calculateSecurityRating(glassType: GlassTypeOutput | null): number {
  */
 function inferPrimarySolution(
   glassType: GlassTypeOutput | null,
-  availableSolutions: GlassSolutionOutput[]
+  availableSolutions: GlassSolutionOutput[],
 ): GlassSolutionOutput | null {
   if (!glassType) {
-    return null;
+    return null
   }
 
   // Priority 1: Use primary solution if defined
-  const primarySolution = glassType.solutions?.find(
-    (s) => s.isPrimary
-  )?.solution;
+  const primarySolution = glassType.solutions?.find((s) => s.isPrimary)?.solution
   if (primarySolution) {
-    return primarySolution;
+    return primarySolution
   }
 
   // Priority 2: Find solution with highest performance rating
   // Safety check: only reduce if array has elements
-  const solutions = glassType.solutions ?? [];
+  const solutions = glassType.solutions ?? []
   if (solutions.length > 0) {
     const bestSolution = solutions.reduce((best, current) => {
-      const bestRating = performanceToNumeric(best.performanceRating);
-      const currentRating = performanceToNumeric(current.performanceRating);
-      return currentRating > bestRating ? current : best;
-    })?.solution;
+      const bestRating = performanceToNumeric(best.performanceRating)
+      const currentRating = performanceToNumeric(current.performanceRating)
+      return currentRating > bestRating ? current : best
+    })?.solution
     if (bestSolution) {
-      return bestSolution;
+      return bestSolution
     }
   }
 
   // Fallback: return first available solution
-  return availableSolutions.length > 0 ? (availableSolutions[0] ?? null) : null;
+  return availableSolutions.length > 0 ? (availableSolutions[0] ?? null) : null
 }
 
 // ============================================================================
@@ -236,22 +222,22 @@ function inferPrimarySolution(
  */
 export function useSolutionInference(
   glassType: GlassTypeOutput | null,
-  availableSolutions: GlassSolutionOutput[]
+  availableSolutions: GlassSolutionOutput[],
 ): {
-  acousticRating: number;
-  inferredSolution: InferredSolution | null;
-  securityRating: number;
-  thermalRating: number;
+  acousticRating: number
+  inferredSolution: InferredSolution | null
+  securityRating: number
+  thermalRating: number
 } {
   const inferredSolution = useMemo(() => {
-    const primarySolution = inferPrimarySolution(glassType, availableSolutions);
+    const primarySolution = inferPrimarySolution(glassType, availableSolutions)
     if (!primarySolution) {
-      return null;
+      return null
     }
 
-    const securityRating = calculateSecurityRating(glassType);
-    const thermalRating = calculateThermalRating(glassType);
-    const acousticRating = calculateAcousticRating(glassType);
+    const securityRating = calculateSecurityRating(glassType)
+    const thermalRating = calculateThermalRating(glassType)
+    const acousticRating = calculateAcousticRating(glassType)
 
     return {
       acousticRating,
@@ -262,13 +248,13 @@ export function useSolutionInference(
       nameEs: primarySolution.nameEs,
       securityRating,
       thermalRating,
-    };
-  }, [glassType, availableSolutions]);
+    }
+  }, [glassType, availableSolutions])
 
   return {
     acousticRating: inferredSolution?.acousticRating ?? 3,
     inferredSolution,
     securityRating: inferredSolution?.securityRating ?? 3,
     thermalRating: inferredSolution?.thermalRating ?? 3,
-  };
+  }
 }

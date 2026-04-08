@@ -1,107 +1,101 @@
-"use client";
+'use client'
 
-import { AlertTriangle, Home, RotateCcw } from "lucide-react";
-import type { ReactNode } from "react";
-import { Component } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { AlertTriangle, Home, RotateCcw } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { Component } from 'react'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 
 type ErrorBoundaryProps = {
-  children: ReactNode;
-  fallback?: ReactNode;
-  className?: string;
-  showReload?: boolean;
-  showHome?: boolean;
-  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
+  children: ReactNode
+  fallback?: ReactNode
+  className?: string
+  showReload?: boolean
+  showHome?: boolean
+  onError?: (error: Error, errorInfo: React.ErrorInfo) => void
   /**
    * Optional navigation function for home button.
    * If not provided, falls back to window.location.href.
    * Prefer passing this prop to use Next.js router.
    */
-  onGoHome?: () => void;
+  onGoHome?: () => void
   /**
    * Optional reload function for reload button.
    * If not provided, falls back to window.location.reload.
    * Prefer passing this prop to use Next.js router.refresh().
    */
-  onReload?: () => void;
-};
+  onReload?: () => void
+}
 
 type ErrorBoundaryState = {
-  hasError: boolean;
-  error?: Error;
-};
+  hasError: boolean
+  error?: Error
+}
 
-export class ErrorBoundary extends Component<
-  ErrorBoundaryProps,
-  ErrorBoundaryState
-> {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false };
+    super(props)
+    this.state = { hasError: false }
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { error, hasError: true };
+    return { error, hasError: true }
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Call custom error handler if provided
-    this.props.onError?.(error, errorInfo);
+    this.props.onError?.(error, errorInfo)
   }
 
   handleReload = () => {
-    this.setState({ error: undefined, hasError: false });
+    this.setState({ error: undefined, hasError: false })
     // Use prop if provided, otherwise fall back to window.location
     // This is intentional for error boundaries - when React state is corrupted,
     // a full page reload is often the safest option
-    this.props.onReload?.() ?? window.location.reload();
-  };
+    this.props.onReload?.() ?? window.location.reload()
+  }
 
   handleGoHome = () => {
-    this.setState({ error: undefined, hasError: false });
+    this.setState({ error: undefined, hasError: false })
     // Use prop if provided (router.push("/")), otherwise fall back
-    this.props.onGoHome?.() ?? (window.location.href = "/");
-  };
+    if (!this.props.onGoHome) {
+      window.location.href = '/'
+    }
+  }
 
   handleRetry = () => {
-    this.setState({ error: undefined, hasError: false });
-  };
+    this.setState({ error: undefined, hasError: false })
+  }
 
   render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
-        return this.props.fallback;
+        return this.props.fallback
       }
 
       return (
         <div
           aria-live="assertive"
           className={cn(
-            "flex min-h-[400px] w-full items-center justify-center p-4",
-            this.props.className
+            'flex min-h-[400px] w-full items-center justify-center p-4',
+            this.props.className,
           )}
           role="alert"
         >
           <Card className="w-full max-w-md p-6 text-center">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
-              <AlertTriangle
-                aria-hidden="true"
-                className="h-8 w-8 text-destructive"
-              />
+              <AlertTriangle aria-hidden="true" className="h-8 w-8 text-destructive" />
             </div>
 
-            <h2 className="mt-4 font-semibold text-foreground text-lg">
-              Algo salió mal
-            </h2>
+            <h2 className="mt-4 font-semibold text-foreground text-lg">Algo salió mal</h2>
 
             <p className="mt-2 text-muted-foreground text-sm">
-              Lo sentimos, ocurrió un error inesperado. Puedes intentar recargar
-              la página o volver al inicio.
+              Lo sentimos, ocurrió un error inesperado. Puedes intentar recargar la página o volver
+              al inicio.
             </p>
 
-            {process.env.NODE_ENV === "development" && this.state.error && (
+            {process.env.NODE_ENV === 'development' && this.state.error && (
               <details className="mt-4 rounded border p-2 text-left">
                 <summary className="cursor-pointer font-medium text-xs">
                   Detalles del error (solo en desarrollo)
@@ -110,7 +104,7 @@ export class ErrorBoundary extends Component<
                   {this.state.error.message}
                   {this.state.error.stack && (
                     <>
-                      {"\n\n"}
+                      {'\n\n'}
                       {this.state.error.stack}
                     </>
                   )}
@@ -155,37 +149,31 @@ export class ErrorBoundary extends Component<
 
             {/* Hidden descriptions for screen readers */}
             <div className="sr-only">
-              <div id="error-retry-description">
-                Intentar ejecutar la operación nuevamente
-              </div>
-              <div id="error-reload-description">
-                Recargar completamente la página actual
-              </div>
-              <div id="error-home-description">
-                Navegar a la página de inicio de la aplicación
-              </div>
+              <div id="error-retry-description">Intentar ejecutar la operación nuevamente</div>
+              <div id="error-reload-description">Recargar completamente la página actual</div>
+              <div id="error-home-description">Navegar a la página de inicio de la aplicación</div>
             </div>
           </Card>
         </div>
-      );
+      )
     }
 
-    return this.props.children;
+    return this.props.children
   }
 }
 
 // Hook for functional components error boundaries
 export function withErrorBoundary<P extends object>(
   WrappedComponent: React.ComponentType<P>,
-  errorBoundaryProps?: Omit<ErrorBoundaryProps, "children">
+  errorBoundaryProps?: Omit<ErrorBoundaryProps, 'children'>,
 ) {
   const ComponentWithErrorBoundary = (props: P) => (
     <ErrorBoundary {...errorBoundaryProps}>
       <WrappedComponent {...props} />
     </ErrorBoundary>
-  );
+  )
 
-  ComponentWithErrorBoundary.displayName = `withErrorBoundary(${WrappedComponent.displayName || WrappedComponent.name})`;
+  ComponentWithErrorBoundary.displayName = `withErrorBoundary(${WrappedComponent.displayName || WrappedComponent.name})`
 
-  return ComponentWithErrorBoundary;
+  return ComponentWithErrorBoundary
 }

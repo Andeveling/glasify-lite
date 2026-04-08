@@ -17,35 +17,32 @@
  * - Receives suppliers from server (fetched outside Suspense)
  */
 
-"use client";
+'use client'
 
-import type { MaterialType } from "@prisma/generated/client";
-import Link from "next/link";
-import {
-  type FilterDefinition,
-  TableFilters,
-} from "@/app/_components/server-table/table-filters";
-import { TableSearch } from "@/app/_components/server-table/table-search";
-import { Button } from "@/components/ui/button";
+import type { MaterialType } from '@prisma/generated/client'
+import Link from 'next/link'
+import { type FilterDefinition, TableFilters } from '@/app/_components/server-table/table-filters'
+import { TableSearch } from '@/app/_components/server-table/table-search'
+import { Button } from '@/components/ui/button'
 
 /**
  * Supplier data type
  */
 type Supplier = {
-  id: string;
-  name: string;
-  materialType: MaterialType;
-};
+  id: string
+  name: string
+  materialType: MaterialType
+}
 
 type ModelsFiltersProps = {
   searchParams: {
-    search?: string;
-    status?: string;
-    profileSupplierId?: string;
-    page?: string;
-  };
-  suppliers: Supplier[];
-};
+    search?: string
+    status?: string
+    profileSupplierId?: string
+    page?: string
+  }
+  suppliers: Supplier[]
+}
 
 export function ModelsFilters({ searchParams, suppliers }: ModelsFiltersProps) {
   /**
@@ -53,36 +50,33 @@ export function ModelsFilters({ searchParams, suppliers }: ModelsFiltersProps) {
    */
   const filters: FilterDefinition[] = [
     {
-      defaultValue: "all",
-      id: "status",
-      label: "Estado",
+      defaultValue: 'all',
+      id: 'status',
+      label: 'Estado',
       options: [
-        { label: "Todos", value: "all" },
-        { label: "Borrador", value: "draft" },
-        { label: "Publicado", value: "published" },
+        { label: 'Todos', value: 'all' },
+        { label: 'Borrador', value: 'draft' },
+        { label: 'Publicado', value: 'published' },
       ],
-      type: "select",
+      type: 'select',
     },
     {
-      defaultValue: "all",
-      id: "profileSupplierId",
-      label: "Proveedor de Perfiles",
+      defaultValue: 'all',
+      id: 'profileSupplierId',
+      label: 'Proveedor de Perfiles',
       options: [
-        { label: "Todos", value: "all" },
+        { label: 'Todos', value: 'all' },
         ...suppliers.map((s) => ({ label: s.name, value: s.id })),
       ],
-      type: "select",
+      type: 'select',
     },
-  ];
+  ]
 
   return (
     <div className="flex items-end justify-between gap-4">
       {/* Search */}
       <div className="max-w-sm flex-1">
-        <TableSearch
-          defaultValue={searchParams.search}
-          placeholder="Buscar por nombre..."
-        />
+        <TableSearch defaultValue={searchParams.search} placeholder="Buscar por nombre..." />
       </div>
 
       {/* Filters */}
@@ -93,5 +87,5 @@ export function ModelsFilters({ searchParams, suppliers }: ModelsFiltersProps) {
         <Link href="/admin/models/new">Nuevo Modelo</Link>
       </Button>
     </div>
-  );
+  )
 }

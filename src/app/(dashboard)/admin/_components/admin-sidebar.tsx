@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Factory,
@@ -9,12 +9,12 @@ import {
   Settings,
   Sparkles,
   Wrench,
-} from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import type { FC } from "react";
-import { NavMain } from "@/components/nav-main";
-import { NavUser } from "@/components/nav-user";
+} from 'lucide-react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import type { FC } from 'react'
+import { NavMain } from '@/components/nav-main'
+import { NavUser } from '@/components/nav-user'
 import {
   Sidebar,
   SidebarContent,
@@ -25,14 +25,14 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
+} from '@/components/ui/sidebar'
 
 interface AdminSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user: {
-    name: string;
-    email: string;
-    avatar?: string;
-  };
+    name: string
+    email: string
+    avatar?: string
+  }
 }
 
 /**
@@ -46,74 +46,71 @@ interface AdminSidebarProps extends React.ComponentProps<typeof Sidebar> {
  * Uses Shadcn/ui sidebar primitives with responsive collapsible behavior.
  */
 export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
-  const pathname = usePathname();
+  const pathname = usePathname()
 
   // Navigation configuration (must be in Client Component to use Lucide icons)
   const navMain = [
     {
       icon: Settings,
-      title: "Dashboard",
-      url: "/admin",
+      title: 'Dashboard',
+      url: '/admin',
     },
     {
-      description: "Ventanas y puertas",
+      description: 'Ventanas y puertas',
       icon: Grid3x3,
-      title: "Modelos",
-      url: "/admin/models",
+      title: 'Modelos',
+      url: '/admin/models',
     },
     {
-      description: "Configuraciones de vidrio",
+      description: 'Configuraciones de vidrio',
       icon: GlassWater,
-      title: "Tipos de Cristal",
-      url: "/admin/glass-types",
+      title: 'Tipos de Cristal',
+      url: '/admin/glass-types',
     },
     {
-      description: "Servicios adicionales",
+      description: 'Servicios adicionales',
       icon: Wrench,
-      title: "Servicios",
-      url: "/admin/services",
+      title: 'Servicios',
+      url: '/admin/services',
     },
     {
-      description: "Gestión de cotizaciones",
+      description: 'Gestión de cotizaciones',
       icon: FileText,
-      title: "Cotizaciones",
-      url: "/admin/quotes",
+      title: 'Cotizaciones',
+      url: '/admin/quotes',
     },
-  ];
+  ]
 
   const navSuppliers = [
     {
-      description: "Fabricantes de perfiles",
+      description: 'Fabricantes de perfiles',
       icon: Factory,
-      title: "Proveedores de Perfiles",
-      url: "/admin/profile-suppliers",
+      title: 'Proveedores de Perfiles',
+      url: '/admin/profile-suppliers',
     },
     {
-      description: "Fabricantes de vidrio",
+      description: 'Fabricantes de vidrio',
       icon: Package,
-      title: "Proveedores de Vidrio",
-      url: "/admin/glass-suppliers",
+      title: 'Proveedores de Vidrio',
+      url: '/admin/glass-suppliers',
     },
-  ];
+  ]
 
   const navTaxonomy = [
     {
-      description: "Categorización por uso",
+      description: 'Categorización por uso',
       icon: Sparkles,
-      title: "Soluciones de Vidrio",
-      url: "/admin/glass-solutions",
+      title: 'Soluciones de Vidrio',
+      url: '/admin/glass-solutions',
     },
-  ];
+  ]
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
-            >
+            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
               <Link href="/admin">
                 <Sparkles className="!size-5" />
                 <span className="font-semibold text-base">Glasify Admin</span>
@@ -135,10 +132,9 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
             {navSuppliers.map((item) => {
               // Prevent top-level '/admin' from matching all child routes.
               // Only allow prefix matching for items with at least two segments (e.g. '/admin/profile-suppliers').
-              const segmentsCount = item.url.split("/").filter(Boolean).length;
+              const segmentsCount = item.url.split('/').filter(Boolean).length
               const isActive =
-                pathname === item.url ||
-                (segmentsCount > 1 && pathname.startsWith(`${item.url}/`));
+                pathname === item.url || (segmentsCount > 1 && pathname.startsWith(`${item.url}/`))
 
               return (
                 <SidebarMenuItem key={item.url}>
@@ -149,7 +145,7 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              );
+              )
             })}
           </SidebarMenu>
         </SidebarGroup>
@@ -159,10 +155,9 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
           <SidebarGroupLabel>Taxonomía</SidebarGroupLabel>
           <SidebarMenu>
             {navTaxonomy.map((item) => {
-              const segmentsCount = item.url.split("/").filter(Boolean).length;
+              const segmentsCount = item.url.split('/').filter(Boolean).length
               const isActive =
-                pathname === item.url ||
-                (segmentsCount > 1 && pathname.startsWith(`${item.url}/`));
+                pathname === item.url || (segmentsCount > 1 && pathname.startsWith(`${item.url}/`))
 
               return (
                 <SidebarMenuItem key={item.url}>
@@ -173,7 +168,7 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              );
+              )
             })}
           </SidebarMenu>
         </SidebarGroup>
@@ -181,12 +176,12 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
       <SidebarFooter>
         <NavUser
           user={{
-            avatar: user.avatar ?? "/avatars/default.jpg",
+            avatar: user.avatar ?? '/avatars/default.jpg',
             email: user.email,
             name: user.name,
           }}
         />
       </SidebarFooter>
     </Sidebar>
-  );
-};
+  )
+}

@@ -11,16 +11,16 @@
  * Pattern: Custom Hook - Single Responsibility (Form State Management)
  */
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 type UseGlassSupplierFormProps = {
-  mode: "create" | "edit";
-  open: boolean;
-  defaultValues?: FormValues & { id?: string };
-};
+  mode: 'create' | 'edit'
+  open: boolean
+  defaultValues?: FormValues & { id?: string }
+}
 
 // Create a schema with all required fields for the form (not API)
 const formSchema = z.object({
@@ -32,9 +32,9 @@ const formSchema = z.object({
   name: z.string(),
   notes: z.string().optional(),
   website: z.string().optional(),
-});
+})
 
-export type FormValues = z.infer<typeof formSchema>;
+export type FormValues = z.infer<typeof formSchema>
 
 /**
  * Use Glass Supplier Form Hook
@@ -47,24 +47,20 @@ export type FormValues = z.infer<typeof formSchema>;
  * @param defaultValues - Existing supplier data for edit mode
  * @returns form instance from React Hook Form
  */
-export function useGlassSupplierForm({
-  mode,
-  open,
-  defaultValues,
-}: UseGlassSupplierFormProps) {
+export function useGlassSupplierForm({ mode, open, defaultValues }: UseGlassSupplierFormProps) {
   const form = useForm<FormValues>({
     defaultValues: {
-      code: "",
-      contactEmail: "",
-      contactPhone: "",
-      country: "",
+      code: '',
+      contactEmail: '',
+      contactPhone: '',
+      country: '',
       isActive: true,
-      name: "",
-      notes: "",
-      website: "",
+      name: '',
+      notes: '',
+      website: '',
     },
     resolver: zodResolver(formSchema),
-  });
+  })
 
   /**
    * Reset form when dialog state changes
@@ -75,28 +71,28 @@ export function useGlassSupplierForm({
   useEffect(() => {
     if (open && defaultValues) {
       form.reset({
-        code: defaultValues.code ?? "",
-        contactEmail: defaultValues.contactEmail ?? "",
-        contactPhone: defaultValues.contactPhone ?? "",
-        country: defaultValues.country ?? "",
+        code: defaultValues.code ?? '',
+        contactEmail: defaultValues.contactEmail ?? '',
+        contactPhone: defaultValues.contactPhone ?? '',
+        country: defaultValues.country ?? '',
         isActive: defaultValues.isActive ?? true,
-        name: defaultValues.name ?? "",
-        notes: defaultValues.notes ?? "",
-        website: defaultValues.website ?? "",
-      });
-    } else if (open && mode === "create") {
+        name: defaultValues.name ?? '',
+        notes: defaultValues.notes ?? '',
+        website: defaultValues.website ?? '',
+      })
+    } else if (open && mode === 'create') {
       form.reset({
-        code: "",
-        contactEmail: "",
-        contactPhone: "",
-        country: "",
+        code: '',
+        contactEmail: '',
+        contactPhone: '',
+        country: '',
         isActive: true,
-        name: "",
-        notes: "",
-        website: "",
-      });
+        name: '',
+        notes: '',
+        website: '',
+      })
     }
-  }, [open, defaultValues, mode, form]);
+  }, [open, defaultValues, mode, form])
 
-  return { form };
+  return { form }
 }

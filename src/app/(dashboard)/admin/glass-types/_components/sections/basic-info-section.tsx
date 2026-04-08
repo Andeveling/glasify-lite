@@ -15,10 +15,10 @@
  * @module _components/sections/basic-info-section
  */
 
-"use client";
+'use client'
 
-import type { Control, FieldValues } from "react-hook-form";
-import { Card, CardContent } from "@/components/ui/card";
+import type { Control, FieldValues } from 'react-hook-form'
+import { Card, CardContent } from '@/components/ui/card'
 import {
   FormControl,
   FormDescription,
@@ -26,15 +26,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { FormCheckboxField } from "../form-fields/form-checkbox-field";
-import { FormNumberField } from "../form-fields/form-number-field";
-import { FormTextareaField } from "../form-fields/form-textarea-field";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { FormCheckboxField } from '../form-fields/form-checkbox-field'
+import { FormNumberField } from '../form-fields/form-number-field'
+import { FormTextareaField } from '../form-fields/form-textarea-field'
 
 type BasicInfoSectionProps = {
-  control: Control<FieldValues>;
-};
+  control: Control<FieldValues>
+}
 
 /**
  * Basic information section component
@@ -46,10 +46,10 @@ export function BasicInfoSection({ control }: BasicInfoSectionProps) {
         {/* Switch placed in the top-right cell */}
         <div
           style={{
-            alignSelf: "start",
+            alignSelf: 'start',
             gridColumnStart: 2,
             gridRowStart: 1,
-            justifySelf: "end",
+            justifySelf: 'end',
           }}
         >
           <FormCheckboxField
@@ -69,9 +69,7 @@ export function BasicInfoSection({ control }: BasicInfoSectionProps) {
               <FormControl>
                 <Input placeholder="Ej: Vidrio Templado 6mm" {...field} />
               </FormControl>
-              <FormDescription>
-                Nombre descriptivo del tipo de vidrio
-              </FormDescription>
+              <FormDescription>Nombre descriptivo del tipo de vidrio</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -127,5 +125,5 @@ export function BasicInfoSection({ control }: BasicInfoSectionProps) {
         />
       </CardContent>
     </Card>
-  );
+  )
 }

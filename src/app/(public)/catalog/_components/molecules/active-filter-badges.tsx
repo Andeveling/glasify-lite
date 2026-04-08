@@ -1,22 +1,22 @@
-"use client";
+'use client'
 
 import {
   buildActiveParameters,
   type CatalogSortOption,
-} from "@views/catalog/_utils/search-parameters.utils";
-import { X } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+} from '@views/catalog/_utils/search-parameters.utils'
+import { X } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 
 type ActiveSearchParametersProps = {
-  searchQuery: string;
-  selectedProfileSupplierName: string | null;
-  sortType: CatalogSortOption;
-  onRemoveSearchAction?: () => void;
-  onRemoveProfileSupplierAction?: () => void;
-  onRemoveSortAction?: () => void;
-  onClearAllAction?: () => void;
-};
+  searchQuery: string
+  selectedProfileSupplierName: string | null
+  sortType: CatalogSortOption
+  onRemoveSearchAction?: () => void
+  onRemoveProfileSupplierAction?: () => void
+  onRemoveSortAction?: () => void
+  onClearAllAction?: () => void
+}
 
 /**
  * ActiveSearchParameters Component
@@ -50,36 +50,30 @@ export function ActiveSearchParameters({
     profileSupplierName: selectedProfileSupplierName,
     searchQuery,
     sortType,
-  });
+  })
 
   // Map handlers to parameter keys
   const handlers: Record<string, (() => void) | undefined> = {
     profileSupplier: onRemoveProfileSupplierAction,
     search: onRemoveSearchAction,
     sort: onRemoveSortAction,
-  };
+  }
 
   // Don't render if no active parameters
   if (activeParameters.length === 0) {
-    return null;
+    return null
   }
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-muted-foreground text-xs">
-        Parámetros de búsqueda:
-      </span>
+      <span className="text-muted-foreground text-xs">Parámetros de búsqueda:</span>
 
       {activeParameters.map((param) => {
-        const Icon = param.icon;
-        const handleRemove = handlers[param.key];
+        const Icon = param.icon
+        const handleRemove = handlers[param.key]
 
         return (
-          <Badge
-            className="gap-1.5 pr-1 pl-2"
-            key={param.key}
-            variant="secondary"
-          >
+          <Badge className="gap-1.5 pr-1 pl-2" key={param.key} variant="secondary">
             <Icon className="size-3" />
             <span className="max-w-[200px] truncate">{param.label}</span>
             {handleRemove && (
@@ -93,7 +87,7 @@ export function ActiveSearchParameters({
               </button>
             )}
           </Badge>
-        );
+        )
       })}
 
       {/* Clear all button */}
@@ -109,5 +103,5 @@ export function ActiveSearchParameters({
         </Button>
       )}
     </div>
-  );
+  )
 }

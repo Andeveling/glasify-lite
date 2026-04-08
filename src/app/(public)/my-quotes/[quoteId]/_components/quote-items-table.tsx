@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 /**
  * QuoteItemsTable Component
@@ -10,13 +10,7 @@
  * Responsibility: Quote items tabular display with totals
  */
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Table,
   TableBody,
@@ -24,34 +18,29 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { formatCurrency } from "@/lib/format";
-import type { TenantConfigPublic } from "@/providers/tenant-config-provider";
-import type { QuoteDetailSchema } from "@/server/api/routers/quote/quote.schemas";
+} from '@/components/ui/table'
+import { formatCurrency } from '@/lib/format'
+import type { TenantConfigPublic } from '@/providers/tenant-config-provider'
+import type { QuoteDetailSchema } from '@/server/api/routers/quote/quote.schemas'
 
 type QuoteItemsTableProps = {
   /** Quote items to display */
-  items: QuoteDetailSchema["items"];
+  items: QuoteDetailSchema['items']
   /** Total amount */
-  total: number;
+  total: number
   /** Number of items for header description */
-  itemCount: number;
+  itemCount: number
   /** Tenant configuration for formatting */
-  tenantConfig: TenantConfigPublic;
-};
+  tenantConfig: TenantConfigPublic
+}
 
-export function QuoteItemsTable({
-  itemCount,
-  items,
-  tenantConfig,
-  total,
-}: QuoteItemsTableProps) {
+export function QuoteItemsTable({ itemCount, items, tenantConfig, total }: QuoteItemsTableProps) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Items de la cotización</CardTitle>
         <CardDescription>
-          {itemCount} {itemCount === 1 ? "item" : "items"}
+          {itemCount} {itemCount === 1 ? 'item' : 'items'}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -74,7 +63,7 @@ export function QuoteItemsTable({
                 <TableCell className="font-medium">{item.name}</TableCell>
                 <TableCell>{item.modelName}</TableCell>
                 <TableCell>{item.glassTypeName}</TableCell>
-                <TableCell>{item.solutionName ?? "—"}</TableCell>
+                <TableCell>{item.solutionName ?? '—'}</TableCell>
                 <TableCell>
                   {item.widthMm} × {item.heightMm}
                 </TableCell>
@@ -94,12 +83,10 @@ export function QuoteItemsTable({
         <div className="mt-4 flex justify-end">
           <div className="text-right">
             <p className="text-muted-foreground text-sm">Total</p>
-            <p className="font-bold text-2xl">
-              {formatCurrency(total, { context: tenantConfig })}
-            </p>
+            <p className="font-bold text-2xl">{formatCurrency(total, { context: tenantConfig })}</p>
           </div>
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

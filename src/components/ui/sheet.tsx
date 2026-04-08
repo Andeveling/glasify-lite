@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Close,
@@ -9,64 +9,64 @@ import {
   Root,
   Title,
   Trigger,
-} from "@radix-ui/react-dialog";
-import { XIcon } from "lucide-react";
-import type { ComponentProps } from "react";
+} from '@radix-ui/react-dialog'
+import { XIcon } from 'lucide-react'
+import type { ComponentProps } from 'react'
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils'
 
 function Sheet({ ...props }: ComponentProps<typeof Root>) {
-  return <Root data-slot="sheet" {...props} />;
+  return <Root data-slot="sheet" {...props} />
 }
 
 function SheetTrigger({ ...props }: ComponentProps<typeof Trigger>) {
-  return <Trigger data-slot="sheet-trigger" {...props} />;
+  return <Trigger data-slot="sheet-trigger" {...props} />
 }
 
 function SheetClose({ ...props }: ComponentProps<typeof Close>) {
-  return <Close data-slot="sheet-close" {...props} />;
+  return <Close data-slot="sheet-close" {...props} />
 }
 
 function SheetPortal({ ...props }: ComponentProps<typeof Portal>) {
-  return <Portal data-slot="sheet-portal" {...props} />;
+  return <Portal data-slot="sheet-portal" {...props} />
 }
 
 function SheetOverlay({ className, ...props }: ComponentProps<typeof Overlay>) {
   return (
     <Overlay
       className={cn(
-        "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=open]:animate-in",
-        className
+        'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=open]:animate-in',
+        className,
       )}
       data-slot="sheet-overlay"
       {...props}
     />
-  );
+  )
 }
 
 function SheetContent({
   className,
   children,
-  side = "right",
+  side = 'right',
   ...props
 }: ComponentProps<typeof Content> & {
-  side?: "top" | "right" | "bottom" | "left";
+  side?: 'top' | 'right' | 'bottom' | 'left'
 }) {
   return (
     <SheetPortal>
       <SheetOverlay />
       <Content
         className={cn(
-          "fixed z-50 flex flex-col gap-4 bg-background shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:duration-300 data-[state=open]:duration-500",
-          side === "right" &&
-            "data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm",
-          side === "left" &&
-            "data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm",
-          side === "top" &&
-            "data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top inset-x-0 top-0 h-auto border-b",
-          side === "bottom" &&
-            "data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 h-auto border-t",
-          className
+          'fixed z-50 flex flex-col gap-4 bg-background shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:duration-300 data-[state=open]:duration-500',
+          side === 'right' &&
+            'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm',
+          side === 'left' &&
+            'data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm',
+          side === 'top' &&
+            'data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top inset-x-0 top-0 h-auto border-b',
+          side === 'bottom' &&
+            'data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 h-auto border-t',
+          className,
         )}
         data-slot="sheet-content"
         {...props}
@@ -78,50 +78,47 @@ function SheetContent({
         </Close>
       </Content>
     </SheetPortal>
-  );
+  )
 }
 
-function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
+function SheetHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
-      className={cn("flex flex-col gap-1.5 p-4", className)}
+      className={cn('flex flex-col gap-1.5 p-4', className)}
       data-slot="sheet-header"
       {...props}
     />
-  );
+  )
 }
 
-function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
+function SheetFooter({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
-      className={cn("mt-auto flex flex-col gap-2 p-4", className)}
+      className={cn('mt-auto flex flex-col gap-2 p-4', className)}
       data-slot="sheet-footer"
       {...props}
     />
-  );
+  )
 }
 
 function SheetTitle({ className, ...props }: ComponentProps<typeof Title>) {
   return (
     <Title
-      className={cn("font-semibold text-foreground", className)}
+      className={cn('font-semibold text-foreground', className)}
       data-slot="sheet-title"
       {...props}
     />
-  );
+  )
 }
 
-function SheetDescription({
-  className,
-  ...props
-}: ComponentProps<typeof Description>) {
+function SheetDescription({ className, ...props }: ComponentProps<typeof Description>) {
   return (
     <Description
-      className={cn("text-muted-foreground text-sm", className)}
+      className={cn('text-muted-foreground text-sm', className)}
       data-slot="sheet-description"
       {...props}
     />
-  );
+  )
 }
 
 export {
@@ -133,4 +130,4 @@ export {
   SheetFooter,
   SheetTitle,
   SheetDescription,
-};
+}

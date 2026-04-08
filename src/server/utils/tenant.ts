@@ -6,19 +6,15 @@
  * @see /plan/refactor-manufacturer-to-tenant-config-1.md
  */
 
-import type {
-  Prisma,
-  PrismaClient,
-  TenantConfig,
-} from "@prisma/generated/client";
-import { db } from "../db";
+import type { Prisma, PrismaClient, TenantConfig } from '@prisma/generated/client'
+import { db } from '../db'
 
 // Simplified TransactionClient type for Prisma v7
 // Omits client-level methods, compatible with transaction clients
 type TransactionClient = Omit<
   PrismaClient,
-  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
->;
+  '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
+>
 
 /**
  * Get the singleton TenantConfig
@@ -31,19 +27,15 @@ type TransactionClient = Omit<
  * @throws {Error} If no TenantConfig exists in the database
  * @returns Promise<TenantConfig> The tenant configuration
  */
-export async function getTenantConfig(
-  client?: TransactionClient
-): Promise<TenantConfig> {
-  const prisma = client ?? db;
-  const config = await prisma.tenantConfig.findFirst();
+export async function getTenantConfig(client?: TransactionClient): Promise<TenantConfig> {
+  const prisma = client ?? db
+  const config = await prisma.tenantConfig.findFirst()
 
   if (!config) {
-    throw new Error(
-      "No TenantConfig found in database. Run migration script to create one."
-    );
+    throw new Error('No TenantConfig found in database. Run migration script to create one.')
   }
 
-  return config;
+  return config
 }
 
 /**
@@ -53,24 +45,20 @@ export async function getTenantConfig(
  * @param client Optional Prisma client (for transactions)
  * @returns Promise<Partial<TenantConfig>> Selected fields
  */
-export async function getTenantConfigSelect<
-  T extends Prisma.TenantConfigSelect,
->(
+export async function getTenantConfigSelect<T extends Prisma.TenantConfigSelect>(
   select: T,
-  client?: TransactionClient
+  client?: TransactionClient,
 ): Promise<Prisma.TenantConfigGetPayload<{ select: T }>> {
-  const prisma = client ?? db;
+  const prisma = client ?? db
   const config = await prisma.tenantConfig.findFirst({
     select,
-  });
+  })
 
   if (!config) {
-    throw new Error(
-      "No TenantConfig found in database. Run migration script to create one."
-    );
+    throw new Error('No TenantConfig found in database. Run migration script to create one.')
   }
 
-  return config;
+  return config
 }
 
 /**
@@ -82,15 +70,15 @@ export async function getTenantConfigSelect<
  */
 export async function updateTenantConfig(
   data: Prisma.TenantConfigUpdateInput,
-  client?: TransactionClient
+  client?: TransactionClient,
 ): Promise<TenantConfig> {
-  const prisma = client ?? db;
-  const existing = await getTenantConfig(prisma);
+  const prisma = client ?? db
+  const existing = await getTenantConfig(prisma)
 
   return prisma.tenantConfig.update({
     data,
     where: { id: existing.id },
-  });
+  })
 }
 
 /**
@@ -99,12 +87,10 @@ export async function updateTenantConfig(
  * @param client Optional Prisma client (for transactions)
  * @returns Promise<string> ISO 4217 currency code
  */
-export async function getTenantCurrency(
-  client?: TransactionClient
-): Promise<string> {
-  const config = await getTenantConfigSelect({ currency: true }, client);
+export async function getTenantCurrency(client?: TransactionClient): Promise<string> {
+  const config = await getTenantConfigSelect({ currency: true }, client)
 
-  return config.currency;
+  return config.currency
 }
 
 /**
@@ -113,13 +99,8 @@ export async function getTenantCurrency(
  * @param client Optional Prisma client (for transactions)
  * @returns Promise<number> Quote validity in days
  */
-export async function getQuoteValidityDays(
-  client?: TransactionClient
-): Promise<number> {
-  const config = await getTenantConfigSelect(
-    { quoteValidityDays: true },
-    client
-  );
+export async function getQuoteValidityDays(client?: TransactionClient): Promise<number> {
+  const config = await getTenantConfigSelect({ quoteValidityDays: true }, client)
 
-  return config.quoteValidityDays;
+  return config.quoteValidityDays
 }

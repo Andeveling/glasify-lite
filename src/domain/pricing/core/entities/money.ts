@@ -12,16 +12,16 @@
  * ```
  */
 
-import { Decimal } from "decimal.js";
-import { ROUND_MODE, ROUND_SCALE } from "../constants";
+import { Decimal } from 'decimal.js'
+import { ROUND_MODE, ROUND_SCALE } from '../constants'
 
 export class Money {
-  private readonly amount: Decimal;
+  private readonly amount: Decimal
 
   /** Decimal places for monetary values */
-  static readonly ROUND_SCALE = ROUND_SCALE;
+  static readonly ROUND_SCALE = ROUND_SCALE
   /** Rounding mode for monetary calculations */
-  static readonly ROUND_MODE = ROUND_MODE;
+  static readonly ROUND_MODE = ROUND_MODE
 
   /**
    * Create a Money instance from various input types
@@ -37,14 +37,11 @@ export class Money {
    * ```
    */
   constructor(value: Decimal | number | string) {
-    this.amount = new Decimal(value).toDecimalPlaces(
-      Money.ROUND_SCALE,
-      Money.ROUND_MODE
-    );
+    this.amount = new Decimal(value).toDecimalPlaces(Money.ROUND_SCALE, Money.ROUND_MODE)
 
     // Validate that the value is a finite number
     if (!this.amount.isFinite()) {
-      throw new Error("Money value must be a finite number");
+      throw new Error('Money value must be a finite number')
     }
   }
 
@@ -62,7 +59,7 @@ export class Money {
    * ```
    */
   add(other: Money): Money {
-    return new Money(this.amount.plus(other.amount));
+    return new Money(this.amount.plus(other.amount))
   }
 
   /**
@@ -79,7 +76,7 @@ export class Money {
    * ```
    */
   multiply(factor: Decimal | number | string): Money {
-    return new Money(this.amount.times(factor));
+    return new Money(this.amount.times(factor))
   }
 
   /**
@@ -97,11 +94,11 @@ export class Money {
    * ```
    */
   divide(divisor: Decimal | number | string): Money {
-    const divisorDecimal = new Decimal(divisor);
+    const divisorDecimal = new Decimal(divisor)
     if (divisorDecimal.isZero()) {
-      throw new Error("Cannot divide Money by zero");
+      throw new Error('Cannot divide Money by zero')
     }
-    return new Money(this.amount.dividedBy(divisorDecimal));
+    return new Money(this.amount.dividedBy(divisorDecimal))
   }
 
   /**
@@ -116,7 +113,7 @@ export class Money {
    * ```
    */
   toNumber(): number {
-    return this.amount.toNumber();
+    return this.amount.toNumber()
   }
 
   /**
@@ -126,6 +123,6 @@ export class Money {
    * @internal For use by other domain services only
    */
   toDecimal(): Decimal {
-    return this.amount;
+    return this.amount
   }
 }

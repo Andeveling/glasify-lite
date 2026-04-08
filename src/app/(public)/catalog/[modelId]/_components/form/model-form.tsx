@@ -1,41 +1,38 @@
-"use client";
+'use client'
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Palette } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { FormSection } from "@/components/form-section";
-import { Card } from "@/components/ui/card";
-import { Form } from "@/components/ui/form";
-import { useScrollIntoView } from "@/hooks/use-scroll-into-view";
-import { cn } from "@/lib/utils";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Palette } from 'lucide-react'
+import { useMemo, useRef, useState } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
+import { FormSection } from '@/components/form-section'
+import { Card } from '@/components/ui/card'
+import { Form } from '@/components/ui/form'
+import { useScrollIntoView } from '@/hooks/use-scroll-into-view'
+import { cn } from '@/lib/utils'
 import type {
   GlassSolutionOutput,
   GlassTypeOutput,
   ModelDetailOutput,
   ServiceOutput,
-} from "@/server/api/routers/catalog/catalog.schemas";
-import { useCartOperations } from "../../_hooks/use-cart-operations";
-import { useColorSelection } from "../../_hooks/use-color-selection";
-import { useGlassArea } from "../../_hooks/use-glass-area";
-import { usePriceBreakdown } from "../../_hooks/use-price-breakdown";
-import { usePriceCalculation } from "../../_hooks/use-price-calculation";
-import { useScrollResetForm } from "../../_hooks/use-scroll-reset-form";
-import { useSolutionInference } from "../../_hooks/use-solution-inference";
-import { prepareCartItemInput } from "../../_utils/cart-item-mapper";
-import {
-  createQuoteFormSchema,
-  type QuoteFormValues,
-} from "../../_utils/validation";
-import { ColorSelector } from "../color-selector";
-import { StickyPriceHeader } from "../sticky-price-header";
-import { AddedToCartActions } from "./added-to-cart-actions";
-import type { FormStepId } from "./form-steps-config";
-import { QuoteSummary } from "./quote-summary";
-import { DimensionsSection } from "./sections/dimensions-section";
-import { GlassTypeSelectorSection } from "./sections/glass-type-selector-section";
-import { ServicesSelectorSection } from "./sections/services-selector-section";
-import { VerticalScrollProgress } from "./vertical-scroll-progress";
+} from '@/server/api/routers/catalog/catalog.schemas'
+import { useCartOperations } from '../../_hooks/use-cart-operations'
+import { useColorSelection } from '../../_hooks/use-color-selection'
+import { useGlassArea } from '../../_hooks/use-glass-area'
+import { usePriceBreakdown } from '../../_hooks/use-price-breakdown'
+import { usePriceCalculation } from '../../_hooks/use-price-calculation'
+import { useScrollResetForm } from '../../_hooks/use-scroll-reset-form'
+import { useSolutionInference } from '../../_hooks/use-solution-inference'
+import { prepareCartItemInput } from '../../_utils/cart-item-mapper'
+import { createQuoteFormSchema, type QuoteFormValues } from '../../_utils/validation'
+import { ColorSelector } from '../color-selector'
+import { StickyPriceHeader } from '../sticky-price-header'
+import { AddedToCartActions } from './added-to-cart-actions'
+import type { FormStepId } from './form-steps-config'
+import { QuoteSummary } from './quote-summary'
+import { DimensionsSection } from './sections/dimensions-section'
+import { GlassTypeSelectorSection } from './sections/glass-type-selector-section'
+import { ServicesSelectorSection } from './sections/services-selector-section'
+import { VerticalScrollProgress } from './vertical-scroll-progress'
 
 // ============================================================================
 // Helpers
@@ -44,16 +41,11 @@ import { VerticalScrollProgress } from "./vertical-scroll-progress";
 /**
  * Get card className based on active form step
  */
-function getCardClassName(
-  activeStep: FormStepId,
-  currentStep: FormStepId
-): string {
+function getCardClassName(activeStep: FormStepId, currentStep: FormStepId): string {
   return cn(
-    "p-4 transition-all duration-300 sm:p-6",
-    activeStep === currentStep
-      ? "shadow-lg shadow-primary/20 ring-2 ring-primary"
-      : ""
-  );
+    'p-4 transition-all duration-300 sm:p-6',
+    activeStep === currentStep ? 'shadow-lg shadow-primary/20 ring-2 ring-primary' : '',
+  )
 }
 
 // ============================================================================
@@ -61,13 +53,13 @@ function getCardClassName(
 // ============================================================================
 
 type ModelFormProps = {
-  currency: string;
-  glassTypes: GlassTypeOutput[];
-  hasColors: boolean;
-  model: ModelDetailOutput;
-  services: ServiceOutput[];
-  solutions: GlassSolutionOutput[];
-};
+  currency: string
+  glassTypes: GlassTypeOutput[]
+  hasColors: boolean
+  model: ModelDetailOutput
+  services: ServiceOutput[]
+  solutions: GlassSolutionOutput[]
+}
 
 // ============================================================================
 // Component
@@ -81,31 +73,29 @@ export function ModelForm({
   services,
   solutions,
 }: ModelFormProps) {
-  const schema = useMemo(() => createQuoteFormSchema(model), [model]);
+  const schema = useMemo(() => createQuoteFormSchema(model), [model])
 
   // ✅ Hooks: Separated concerns (SRP)
-  const { addToCart } = useCartOperations();
-  const { handleColorChange, selectedColorId, colorSurchargePercentage } =
-    useColorSelection();
+  const { addToCart } = useCartOperations()
+  const { handleColorChange, selectedColorId, colorSurchargePercentage } = useColorSelection()
 
   // ✅ Track if item was just added to cart
-  const [justAddedToCart, setJustAddedToCart] = useState(false);
+  const [justAddedToCart, setJustAddedToCart] = useState(false)
 
   // ✅ Track active form step for visual focus
-  const [activeFormStep, setActiveFormStep] =
-    useState<FormStepId>("dimensions");
+  const [activeFormStep, setActiveFormStep] = useState<FormStepId>('dimensions')
 
   // ✅ Auto-scroll to success card when item is added
-  const successCardRef = useScrollIntoView(justAddedToCart);
+  const successCardRef = useScrollIntoView(justAddedToCart)
 
   // ✅ Ref for scroll progress tracking
-  const formContainerRef = useRef<HTMLDivElement>(null);
+  const formContainerRef = useRef<HTMLDivElement>(null)
 
   // ✅ Refs for each form section (Intersection Observer)
-  const dimensionsSectionRef = useRef<HTMLDivElement>(null);
-  const colorSectionRef = useRef<HTMLDivElement>(null);
-  const glassTypeSectionRef = useRef<HTMLDivElement>(null);
-  const servicesSectionRef = useRef<HTMLDivElement>(null);
+  const dimensionsSectionRef = useRef<HTMLDivElement>(null)
+  const colorSectionRef = useRef<HTMLDivElement>(null)
+  const glassTypeSectionRef = useRef<HTMLDivElement>(null)
+  const servicesSectionRef = useRef<HTMLDivElement>(null)
 
   const sectionRefs = useMemo(
     () => ({
@@ -114,42 +104,42 @@ export function ModelForm({
       glassType: glassTypeSectionRef,
       services: servicesSectionRef,
     }),
-    []
-  );
+    [],
+  )
 
   // ✅ UX Improvement: Pre-populate with minimum valid dimensions and first glass type
   const defaultValues = useMemo(
     () => ({
       additionalServices: [],
       colorId: undefined,
-      glassType: "",
+      glassType: '',
       height: model.minHeightMm,
       quantity: 1,
-      solution: "",
+      solution: '',
       width: model.minWidthMm,
     }),
-    [model.minWidthMm, model.minHeightMm]
-  );
+    [model.minWidthMm, model.minHeightMm],
+  )
 
   const form = useForm<QuoteFormValues>({
     defaultValues,
-    mode: "onChange",
+    mode: 'onChange',
     // @ts-expect-error - zodResolver with z.coerce has type inference issues
     resolver: zodResolver(schema),
-  });
+  })
 
   // Watch form values for price calculation
-  const width = useWatch({ control: form.control, name: "width" });
-  const height = useWatch({ control: form.control, name: "height" });
-  const glassType = useWatch({ control: form.control, name: "glassType" });
-  const quantity = useWatch({ control: form.control, name: "quantity" });
+  const width = useWatch({ control: form.control, name: 'width' })
+  const height = useWatch({ control: form.control, name: 'height' })
+  const glassType = useWatch({ control: form.control, name: 'glassType' })
+  const quantity = useWatch({ control: form.control, name: 'quantity' })
   const additionalServices = useWatch({
     control: form.control,
-    name: "additionalServices",
-  });
+    name: 'additionalServices',
+  })
 
   // ✅ Get selected glass type object
-  const selectedGlassType = glassTypes.find((gt) => gt.id === glassType);
+  const selectedGlassType = glassTypes.find((gt) => gt.id === glassType)
 
   // ✅ Calculate billable glass area using hook (SRP)
   const glassArea = useGlassArea({
@@ -159,28 +149,24 @@ export function ModelForm({
     },
     heightMm: Number(height) || 0,
     widthMm: Number(width) || 0,
-  });
+  })
 
   // ✅ Infer solution from glass type
-  const { inferredSolution } = useSolutionInference(
-    selectedGlassType ?? null,
-    solutions
-  );
+  const { inferredSolution } = useSolutionInference(selectedGlassType ?? null, solutions)
 
   // Calculate price in real-time with dimension validation
-  const { breakdown, calculatedPrice, error, isCalculating } =
-    usePriceCalculation({
-      additionalServices,
-      colorSurchargePercentage,
-      glassTypeId: glassType,
-      heightMm: Number(height) || 0,
-      maxHeightMm: model.maxHeightMm,
-      maxWidthMm: model.maxWidthMm,
-      minHeightMm: model.minHeightMm,
-      minWidthMm: model.minWidthMm,
-      modelId: model.id,
-      widthMm: Number(width) || 0,
-    });
+  const { breakdown, calculatedPrice, error, isCalculating } = usePriceCalculation({
+    additionalServices,
+    colorSurchargePercentage,
+    glassTypeId: glassType,
+    heightMm: Number(height) || 0,
+    maxHeightMm: model.maxHeightMm,
+    maxWidthMm: model.maxWidthMm,
+    minHeightMm: model.minHeightMm,
+    minWidthMm: model.minWidthMm,
+    modelId: model.id,
+    widthMm: Number(width) || 0,
+  })
 
   // ✅ Build detailed price breakdown using hook (SRP)
   const priceBreakdown = usePriceBreakdown({
@@ -189,7 +175,7 @@ export function ModelForm({
     model,
     selectedGlassType,
     services,
-  });
+  })
 
   // ✅ Prepare cart item data using pure function (SRP)
   const cartItemInput = useMemo(
@@ -219,35 +205,32 @@ export function ModelForm({
       quantity,
       selectedGlassType,
       width,
-    ]
-  );
+    ],
+  )
 
   // ✅ Form submit handler - Simplified using hook (SRP)
   const handleFormSubmit = () => {
-    const success = addToCart(cartItemInput, model.name);
+    const success = addToCart(cartItemInput, model.name)
 
     if (success) {
-      form.reset(defaultValues);
-      setJustAddedToCart(true);
+      form.reset(defaultValues)
+      setJustAddedToCart(true)
     }
-  };
+  }
 
   // ✅ Handler to configure another item
   const handleConfigureAnother = () => {
-    setJustAddedToCart(false);
-    handleColorChange(undefined, 0);
-    form.reset(defaultValues);
-    window.scrollTo({ behavior: "smooth", top: 0 });
-  };
+    setJustAddedToCart(false)
+    handleColorChange(undefined, 0)
+    form.reset(defaultValues)
+    window.scrollTo({ behavior: 'smooth', top: 0 })
+  }
 
   // ✅ Wrapper to integrate color selection with form (Adapter pattern)
-  const handleColorChangeWithForm = (
-    colorId: string | undefined,
-    surchargePercentage: number
-  ) => {
-    handleColorChange(colorId, surchargePercentage);
-    form.setValue("colorId", colorId);
-  };
+  const handleColorChangeWithForm = (colorId: string | undefined, surchargePercentage: number) => {
+    handleColorChange(colorId, surchargePercentage)
+    form.setValue('colorId', colorId)
+  }
 
   // ✅ UX Enhancement: Auto-reset form when user scrolls up after adding to cart
   useScrollResetForm({
@@ -255,7 +238,7 @@ export function ModelForm({
     onReset: handleConfigureAnother,
     scrollThreshold: 100,
     successCardRef,
-  });
+  })
 
   return (
     <Form {...form}>
@@ -303,7 +286,7 @@ export function ModelForm({
             {/* Right column: Form sections (2/3 width en desktop) */}
             <div className="w-full space-y-4 sm:space-y-6 md:w-2/3">
               <Card
-                className={getCardClassName(activeFormStep, "dimensions")}
+                className={getCardClassName(activeFormStep, 'dimensions')}
                 ref={dimensionsSectionRef}
               >
                 <DimensionsSection
@@ -317,25 +300,19 @@ export function ModelForm({
               </Card>
               {/* Color Selector - Only show if model has colors */}
               {hasColors && (
-                <Card
-                  className={getCardClassName(activeFormStep, "color")}
-                  ref={colorSectionRef}
-                >
+                <Card className={getCardClassName(activeFormStep, 'color')} ref={colorSectionRef}>
                   <FormSection
                     // description="Elige el color del perfil (aplica recargo al precio base)"
                     icon={Palette}
                     legend="Seleccione un Color"
                   >
-                    <ColorSelector
-                      modelId={model.id}
-                      onColorChange={handleColorChangeWithForm}
-                    />
+                    <ColorSelector modelId={model.id} onColorChange={handleColorChangeWithForm} />
                   </FormSection>
                 </Card>
               )}
               {/* Glass Type Selector with performance bars */}
               <Card
-                className={getCardClassName(activeFormStep, "glassType")}
+                className={getCardClassName(activeFormStep, 'glassType')}
                 ref={glassTypeSectionRef}
               >
                 <GlassTypeSelectorSection
@@ -348,9 +325,7 @@ export function ModelForm({
               {/* Services Section - Only show if services are available (Don't Make Me Think principle) */}
               <div ref={servicesSectionRef}>
                 {services.length > 0 && (
-                  <Card
-                    className={getCardClassName(activeFormStep, "services")}
-                  >
+                  <Card className={getCardClassName(activeFormStep, 'services')}>
                     <ServicesSelectorSection services={services} />
                   </Card>
                 )}
@@ -378,5 +353,5 @@ export function ModelForm({
         </div>
       </form>
     </Form>
-  );
+  )
 }

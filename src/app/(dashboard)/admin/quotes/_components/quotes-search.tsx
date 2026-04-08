@@ -12,48 +12,48 @@
  * - Spanish placeholder
  */
 
-"use client";
+'use client'
 
-import { Search, X } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Search, X } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 type QuotesSearchProps = {
-  currentSearch?: string;
-};
+  currentSearch?: string
+}
 
-const SEARCH_DEBOUNCE_MS = 300;
+const SEARCH_DEBOUNCE_MS = 300
 
-export function QuotesSearch({ currentSearch = "" }: QuotesSearchProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [searchValue, setSearchValue] = useState(currentSearch);
+export function QuotesSearch({ currentSearch = '' }: QuotesSearchProps) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [searchValue, setSearchValue] = useState(currentSearch)
 
   // Debounced URL update
   useEffect(() => {
     const timer = setTimeout(() => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(searchParams.toString())
 
       if (searchValue) {
-        params.set("search", searchValue);
+        params.set('search', searchValue)
       } else {
-        params.delete("search");
+        params.delete('search')
       }
 
       // Reset to page 1 when search changes
-      params.delete("page");
+      params.delete('page')
 
-      router.push(`?${params.toString()}`);
-    }, SEARCH_DEBOUNCE_MS);
+      router.push(`?${params.toString()}`)
+    }, SEARCH_DEBOUNCE_MS)
 
-    return () => clearTimeout(timer);
-  }, [searchValue, router, searchParams]);
+    return () => clearTimeout(timer)
+  }, [searchValue, router, searchParams])
 
   const handleClear = () => {
-    setSearchValue("");
-  };
+    setSearchValue('')
+  }
 
   return (
     <div className="relative w-full max-w-sm">
@@ -76,5 +76,5 @@ export function QuotesSearch({ currentSearch = "" }: QuotesSearchProps) {
         </Button>
       )}
     </div>
-  );
+  )
 }

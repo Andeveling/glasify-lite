@@ -11,19 +11,13 @@
  * - Spanish UI text
  */
 
-"use client";
+'use client'
 
-import type { CostType } from "@prisma/generated/client";
-import { Plus, Trash2 } from "lucide-react";
-import { useFieldArray, useFormContext } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import type { CostType } from '@prisma/generated/client'
+import { Plus, Trash2 } from 'lucide-react'
+import { useFieldArray, useFormContext } from 'react-hook-form'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   FormControl,
   FormDescription,
@@ -31,28 +25,28 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 
 type CostBreakdownItem = {
-  component: string;
-  costType: CostType;
-  unitCost: number;
-  notes?: string;
-};
+  component: string
+  costType: CostType
+  unitCost: number
+  notes?: string
+}
 
 type ModelCostBreakdownProps = {
-  modelId?: string;
-  readOnly?: boolean;
-};
+  modelId?: string
+  readOnly?: boolean
+}
 
 /**
  * Cost type labels (Spanish)
@@ -60,16 +54,16 @@ type ModelCostBreakdownProps = {
 // Map CostType enum to localized labels
 function getCostTypeLabel(type: CostType) {
   switch (type) {
-    case "fixed":
-      return "Fijo";
-    case "per_mm_height":
-      return "Por mm de alto";
-    case "per_mm_width":
-      return "Por mm de ancho";
-    case "per_sqm":
-      return "Por m²";
+    case 'fixed':
+      return 'Fijo'
+    case 'per_mm_height':
+      return 'Por mm de alto'
+    case 'per_mm_width':
+      return 'Por mm de ancho'
+    case 'per_sqm':
+      return 'Por m²'
     default:
-      return type;
+      return type
   }
 }
 
@@ -78,45 +72,42 @@ function getCostTypeLabel(type: CostType) {
  */
 function getCostTypeDescription(type: CostType) {
   switch (type) {
-    case "fixed":
-      return "Costo fijo independiente de las dimensiones";
-    case "per_mm_height":
-      return "Costo calculado por milímetro de altura";
-    case "per_mm_width":
-      return "Costo calculado por milímetro de ancho";
-    case "per_sqm":
-      return "Costo calculado por metro cuadrado";
+    case 'fixed':
+      return 'Costo fijo independiente de las dimensiones'
+    case 'per_mm_height':
+      return 'Costo calculado por milímetro de altura'
+    case 'per_mm_width':
+      return 'Costo calculado por milímetro de ancho'
+    case 'per_sqm':
+      return 'Costo calculado por metro cuadrado'
     default:
-      return "";
+      return ''
   }
 }
 
-export function ModelCostBreakdown({
-  readOnly = false,
-}: ModelCostBreakdownProps) {
-  const form = useFormContext();
+export function ModelCostBreakdown({ readOnly = false }: ModelCostBreakdownProps) {
+  const form = useFormContext()
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "costBreakdown",
-  });
+    name: 'costBreakdown',
+  })
 
   const handleAddComponent = () => {
     append({
-      component: "",
-      costType: "fixed",
-      notes: "",
+      component: '',
+      costType: 'fixed',
+      notes: '',
       unitCost: 0,
-    } satisfies CostBreakdownItem);
-  };
+    } satisfies CostBreakdownItem)
+  }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Desglose de Costos</CardTitle>
         <CardDescription>
-          Define los componentes de costo de este modelo (perfiles, herrajes,
-          mano de obra, etc.)
+          Define los componentes de costo de este modelo (perfiles, herrajes, mano de obra, etc.)
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -124,12 +115,7 @@ export function ModelCostBreakdown({
           <div className="py-8 text-center text-muted-foreground">
             <p>No hay componentes de costo definidos.</p>
             {!readOnly && (
-              <Button
-                className="mt-4"
-                onClick={handleAddComponent}
-                type="button"
-                variant="outline"
-              >
+              <Button className="mt-4" onClick={handleAddComponent} type="button" variant="outline">
                 <Plus className="mr-2 h-4 w-4" />
                 Agregar Componente
               </Button>
@@ -155,9 +141,7 @@ export function ModelCostBreakdown({
                               placeholder="ej. perfil_vertical, herrajes, mano_obra"
                             />
                           </FormControl>
-                          <FormDescription>
-                            Identificador del componente de costo
-                          </FormDescription>
+                          <FormDescription>Identificador del componente de costo</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -184,10 +168,10 @@ export function ModelCostBreakdown({
                               <SelectContent>
                                 {(
                                   [
-                                    "fixed",
-                                    "per_mm_width",
-                                    "per_mm_height",
-                                    "per_sqm",
+                                    'fixed',
+                                    'per_mm_width',
+                                    'per_mm_height',
+                                    'per_sqm',
                                   ] as CostType[]
                                 ).map((type) => (
                                   <SelectItem key={type} value={type}>
@@ -197,8 +181,7 @@ export function ModelCostBreakdown({
                               </SelectContent>
                             </Select>
                             <FormDescription>
-                              {field.value &&
-                                getCostTypeDescription(field.value as CostType)}
+                              {field.value && getCostTypeDescription(field.value as CostType)}
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
@@ -217,19 +200,13 @@ export function ModelCostBreakdown({
                                 {...field}
                                 disabled={readOnly}
                                 min="0"
-                                onChange={(e) =>
-                                  field.onChange(
-                                    Number.parseFloat(e.target.value)
-                                  )
-                                }
+                                onChange={(e) => field.onChange(Number.parseFloat(e.target.value))}
                                 placeholder="0.00"
                                 step="0.01"
                                 type="number"
                               />
                             </FormControl>
-                            <FormDescription>
-                              Costo en la moneda del fabricante
-                            </FormDescription>
+                            <FormDescription>Costo en la moneda del fabricante</FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -290,5 +267,5 @@ export function ModelCostBreakdown({
         )}
       </CardContent>
     </Card>
-  );
+  )
 }

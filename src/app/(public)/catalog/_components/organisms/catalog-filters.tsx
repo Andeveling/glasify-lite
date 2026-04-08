@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import { ActiveSearchParameters } from "@views/catalog/_components/molecules/active-filter-badges";
-import { ResultCount } from "@views/catalog/_components/molecules/result-count";
-import { useCatalogFilters } from "@views/catalog/_hooks/use-catalog";
-import type { CatalogSortOption } from "@views/catalog/_utils/search-parameters.utils";
+import { ActiveSearchParameters } from '@views/catalog/_components/molecules/active-filter-badges'
+import { ResultCount } from '@views/catalog/_components/molecules/result-count'
+import { useCatalogFilters } from '@views/catalog/_hooks/use-catalog'
+import type { CatalogSortOption } from '@views/catalog/_utils/search-parameters.utils'
 import {
   ArrowDownAZ,
   ArrowDownZA,
@@ -12,7 +12,7 @@ import {
   Filter,
   SortAsc,
   SortDesc,
-} from "lucide-react";
+} from 'lucide-react'
 import {
   Select,
   SelectContent,
@@ -21,22 +21,22 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select'
 
 type CatalogFiltersProps = {
   profileSuppliers?: Array<{
-    id: string;
-    name: string;
-  }>;
-  totalResults?: number;
-  showControls?: boolean;
-  showBadges?: boolean;
-  showResultCount?: boolean;
+    id: string
+    name: string
+  }>
+  totalResults?: number
+  showControls?: boolean
+  showBadges?: boolean
+  showResultCount?: boolean
   // Receive current search params as props to avoid multiple useSearchParams() calls
-  currentProfileSupplier?: string;
-  currentSort?: string;
-  currentSearchQuery?: string;
-};
+  currentProfileSupplier?: string
+  currentSort?: string
+  currentSearchQuery?: string
+}
 
 /**
  * Catalog Filters Component
@@ -69,8 +69,8 @@ export function CatalogFilters({
   showControls = true,
   showBadges = true,
   showResultCount = true,
-  currentProfileSupplier = "all",
-  currentSort = "name-asc",
+  currentProfileSupplier = 'all',
+  currentSort = 'name-asc',
   currentSearchQuery,
 }: CatalogFiltersProps) {
   // Delegate all logic to custom hook (SRP - Single Responsibility)
@@ -89,8 +89,8 @@ export function CatalogFilters({
       currentSearchQuery,
       currentSort,
     },
-    profileSuppliers
-  );
+    profileSuppliers,
+  )
 
   return (
     <div className="flex w-full flex-col gap-3">
@@ -104,10 +104,7 @@ export function CatalogFilters({
 
           {/* Profile Supplier filter */}
           {profileSuppliers.length > 0 && (
-            <Select
-              onValueChange={handleProfileSupplierChange}
-              value={currentProfileSupplier}
-            >
+            <Select onValueChange={handleProfileSupplierChange} value={currentProfileSupplier}>
               <SelectTrigger className="w-full gap-2 md:w-auto md:min-w-[180px]">
                 <Building2 className="size-4 opacity-70" />
                 <SelectValue placeholder="Proveedor" />
@@ -174,7 +171,7 @@ export function CatalogFilters({
             onRemoveProfileSupplierAction={handleRemoveProfileSupplier}
             onRemoveSearchAction={handleRemoveSearch}
             onRemoveSortAction={handleRemoveSort}
-            searchQuery={currentSearchQuery ?? ""}
+            searchQuery={currentSearchQuery ?? ''}
             selectedProfileSupplierName={selectedProfileSupplierName ?? null}
             sortType={currentSort as CatalogSortOption}
           />
@@ -184,5 +181,5 @@ export function CatalogFilters({
         {showResultCount && <ResultCount totalResults={totalResults} />}
       </div>
     </div>
-  );
+  )
 }

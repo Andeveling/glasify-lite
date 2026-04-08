@@ -1,10 +1,10 @@
-import { headers } from "next/headers";
-import { auth } from "@/server/auth";
+import { headers } from 'next/headers'
+import { auth } from '@/server/auth'
 
 type AdminOnlyProps = {
-  children: React.ReactNode;
-  fallback?: React.ReactNode;
-};
+  children: React.ReactNode
+  fallback?: React.ReactNode
+}
 
 /**
  * Server Component guard that renders children only for admin users
@@ -27,11 +27,11 @@ type AdminOnlyProps = {
 export async function AdminOnly({ children, fallback = null }: AdminOnlyProps) {
   const session = await auth.api.getSession({
     headers: await headers(),
-  });
+  })
 
-  if (session?.user?.role !== "admin") {
-    return <>{fallback}</>;
+  if (session?.user?.role !== 'admin') {
+    return <>{fallback}</>
   }
 
-  return <>{children}</>;
+  return <>{children}</>
 }

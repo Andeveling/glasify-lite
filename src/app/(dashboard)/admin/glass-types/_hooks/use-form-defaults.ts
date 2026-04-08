@@ -7,56 +7,54 @@
  * @module _hooks/use-form-defaults
  */
 
-import { useMemo } from "react";
+import { useMemo } from 'react'
 import type {
   CreateGlassTypeInput,
   GetGlassTypeByIdOutput,
   GlassTypeCharacteristicInput,
   GlassTypeSolutionInput,
-} from "@/lib/validations/admin/glass-type.schema";
+} from '@/lib/validations/admin/glass-type.schema'
 
-const DEFAULT_THICKNESS_MM = 6;
+const DEFAULT_THICKNESS_MM = 6
 
 /**
  * Helper type for form defaults with proper optional handling
  */
-type FormDefaults = Partial<CreateGlassTypeInput>;
+type FormDefaults = Partial<CreateGlassTypeInput>
 
 /**
  * Transform characteristics array from backend to form format
  */
 function transformCharacteristics(
-  characteristics: GetGlassTypeByIdOutput["characteristics"]
+  characteristics: GetGlassTypeByIdOutput['characteristics'],
 ): GlassTypeCharacteristicInput[] {
   return characteristics.map((c) => ({
     certification: c.certification ?? undefined,
     characteristicId: c.characteristicId,
     notes: c.notes ?? undefined,
     value: c.value ?? undefined,
-  }));
+  }))
 }
 
 /**
  * Transform solutions array from backend to form format
  */
 function transformSolutions(
-  solutions: GetGlassTypeByIdOutput["solutions"]
+  solutions: GetGlassTypeByIdOutput['solutions'],
 ): GlassTypeSolutionInput[] {
   return solutions.map((s) => ({
     isPrimary: s.isPrimary,
     notes: s.notes ?? undefined,
     performanceRating: s.performanceRating,
     solutionId: s.solutionId,
-  }));
+  }))
 }
 
 /**
  * Convert nullable number to optional number
  */
-function toOptionalNumber(
-  value: number | null | undefined
-): number | undefined {
-  return value !== null && value !== undefined ? Number(value) : undefined;
+function toOptionalNumber(value: number | null | undefined): number | undefined {
+  return value !== null && value !== undefined ? Number(value) : undefined
 }
 
 /**
@@ -65,13 +63,13 @@ function toOptionalNumber(
 function getEmptyDefaults(): FormDefaults {
   return {
     characteristics: [],
-    code: "",
+    code: '',
     isActive: true,
-    name: "",
+    name: '',
     pricePerSqm: 0,
     solutions: [],
     thicknessMm: DEFAULT_THICKNESS_MM,
-  };
+  }
 }
 
 /**
@@ -80,28 +78,26 @@ function getEmptyDefaults(): FormDefaults {
  * @param defaultValues - Optional glass type data from backend
  * @returns Form defaults with proper type conversions
  */
-export function useFormDefaults(
-  defaultValues?: GetGlassTypeByIdOutput
-): FormDefaults {
+export function useFormDefaults(defaultValues?: GetGlassTypeByIdOutput): FormDefaults {
   return useMemo(() => {
     if (!defaultValues) {
-      return getEmptyDefaults();
+      return getEmptyDefaults()
     }
 
     return {
       characteristics: transformCharacteristics(defaultValues.characteristics),
-      code: defaultValues.code ?? "",
+      code: defaultValues.code ?? '',
       description: defaultValues.description ?? undefined,
       isActive: defaultValues.isActive ?? true,
       lightTransmission: toOptionalNumber(defaultValues.lightTransmission),
       manufacturer: defaultValues.manufacturer ?? undefined,
-      name: defaultValues.name ?? "",
+      name: defaultValues.name ?? '',
       pricePerSqm: defaultValues.pricePerSqm ?? 0,
       series: defaultValues.series ?? undefined,
       solarFactor: toOptionalNumber(defaultValues.solarFactor),
       solutions: transformSolutions(defaultValues.solutions),
       thicknessMm: defaultValues.thicknessMm ?? DEFAULT_THICKNESS_MM,
       uValue: toOptionalNumber(defaultValues.uValue),
-    };
-  }, [defaultValues]);
+    }
+  }, [defaultValues])
 }

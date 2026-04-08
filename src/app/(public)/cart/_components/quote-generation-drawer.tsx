@@ -16,12 +16,12 @@
  * @module app/(public)/cart/_components/quote-generation-drawer
  */
 
-"use client";
+'use client'
 
-import { Loader2, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { Loader2, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
 import {
   Drawer,
   DrawerClose,
@@ -31,14 +31,14 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer";
-import { Form } from "@/components/ui/form";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Spinner } from "@/components/ui/spinner";
-import { useMediaQuery } from "@/hooks/use-media-query";
-import { useSession } from "@/lib/auth-client";
-import { useQuoteGenerationForm } from "../_hooks/use-quote-generation-form";
-import { QuoteFormFields } from "./quote-form-fields";
+} from '@/components/ui/drawer'
+import { Form } from '@/components/ui/form'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Spinner } from '@/components/ui/spinner'
+import { useMediaQuery } from '@/hooks/use-media-query'
+import { useSession } from '@/lib/auth-client'
+import { useQuoteGenerationForm } from '../_hooks/use-quote-generation-form'
+import { QuoteFormFields } from './quote-form-fields'
 
 // ============================================================================
 // Types
@@ -46,8 +46,8 @@ import { QuoteFormFields } from "./quote-form-fields";
 
 export type QuoteGenerationDrawerProps = {
   /** Drawer trigger button */
-  trigger: React.ReactNode;
-};
+  trigger: React.ReactNode
+}
 
 // ============================================================================
 // Component
@@ -60,42 +60,35 @@ export type QuoteGenerationDrawerProps = {
  * cart clearing, and redirection to quote detail on success.
  */
 export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const [isOpen, setIsOpen] = useState(false)
+  const isDesktop = useMediaQuery('(min-width: 768px)')
 
   // Session verification
-  const { data: session, error: sessionError } = useSession();
+  const { data: session, error: sessionError } = useSession()
 
   // Form hook with all logic encapsulated
-  const {
-    form,
-    isSubmitting,
-    isRedirecting,
-    cartItems,
-    cartSummary,
-    handleSubmit,
-    canSubmit,
-  } = useQuoteGenerationForm({
-    onClose: () => setIsOpen(false),
-  });
+  const { form, isSubmitting, isRedirecting, cartItems, cartSummary, handleSubmit, canSubmit } =
+    useQuoteGenerationForm({
+      onClose: () => setIsOpen(false),
+    })
 
   // Close drawer if session is lost while open
   useEffect(() => {
-    const hasValidSession = Boolean(session?.user) && !sessionError;
+    const hasValidSession = Boolean(session?.user) && !sessionError
 
     if (isOpen && !hasValidSession) {
-      setIsOpen(false);
-      toast.error("Sesión expirada. Por favor, inicia sesión nuevamente.");
+      setIsOpen(false)
+      toast.error('Sesión expirada. Por favor, inicia sesión nuevamente.')
     }
-  }, [session, sessionError, isOpen]);
+  }, [session, sessionError, isOpen])
 
   // Handle drawer open/close
   const handleOpenChange = (open: boolean) => {
-    setIsOpen(open);
+    setIsOpen(open)
     if (!open) {
-      form.reset();
+      form.reset()
     }
-  };
+  }
 
   return (
     <>
@@ -103,15 +96,13 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
       {isRedirecting && <RedirectingOverlay />}
 
       <Drawer
-        direction={isDesktop ? "right" : "bottom"}
+        direction={isDesktop ? 'right' : 'bottom'}
         onOpenChange={handleOpenChange}
         open={isOpen}
       >
         <DrawerTrigger asChild>{trigger}</DrawerTrigger>
 
-        <DrawerContent
-          className={isDesktop ? "h-full max-w-2xl" : "max-h-[90vh]"}
-        >
+        <DrawerContent className={isDesktop ? 'h-full max-w-2xl' : 'max-h-[90vh]'}>
           <DrawerHeader className="border-b">
             <div className="flex items-start justify-between">
               <div>
@@ -144,27 +135,18 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
           <DrawerFooter className="border-t">
             <div className="flex gap-2">
               <DrawerClose asChild>
-                <Button
-                  className="flex-1"
-                  disabled={isSubmitting}
-                  variant="outline"
-                >
+                <Button className="flex-1" disabled={isSubmitting} variant="outline">
                   Cancelar
                 </Button>
               </DrawerClose>
-              <Button
-                className="flex-1"
-                disabled={!canSubmit}
-                onClick={handleSubmit}
-                type="button"
-              >
+              <Button className="flex-1" disabled={!canSubmit} onClick={handleSubmit} type="button">
                 {isSubmitting ? (
                   <>
                     <Spinner />
                     Generando...
                   </>
                 ) : (
-                  "Generar Cotización"
+                  'Generar Cotización'
                 )}
               </Button>
             </div>
@@ -172,7 +154,7 @@ export function QuoteGenerationDrawer({ trigger }: QuoteGenerationDrawerProps) {
         </DrawerContent>
       </Drawer>
     </>
-  );
+  )
 }
 
 // ============================================================================
@@ -191,11 +173,9 @@ function RedirectingOverlay() {
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
         <div className="text-center">
           <p className="font-semibold text-lg">Cotización Creada</p>
-          <p className="text-muted-foreground text-sm">
-            Redirigiendo a tu cotización...
-          </p>
+          <p className="text-muted-foreground text-sm">Redirigiendo a tu cotización...</p>
         </div>
       </div>
     </div>
-  );
+  )
 }

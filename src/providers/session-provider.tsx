@@ -8,11 +8,11 @@
  * @module providers/session-provider
  */
 
-"use client";
+'use client'
 
 type SessionProviderProps = {
-  children: React.ReactNode;
-};
+  children: React.ReactNode
+}
 
 /**
  * Session Provider Component (Deprecated - kept for compatibility)
@@ -24,5 +24,5 @@ type SessionProviderProps = {
 export function SessionProvider({ children }: SessionProviderProps) {
   // Better Auth handles session state internally via nano-store
   // No external provider wrapper needed
-  return children;
+  return children
 }

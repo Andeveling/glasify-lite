@@ -4,13 +4,13 @@
  * Form field wrappers that use useFormContext() for cleaner code
  */
 
-"use client";
+'use client'
 
-import { format } from "@formkit/tempo";
-import { CalendarIcon } from "lucide-react";
-import { useFormContext } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import { format } from '@formkit/tempo'
+import { CalendarIcon } from 'lucide-react'
+import { useFormContext } from 'react-hook-form'
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
 import {
   FormControl,
   FormDescription,
@@ -18,30 +18,26 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/lib/utils'
 
 type BaseFieldProps = {
-  name: string;
-  label: string;
-  description?: string;
-  placeholder?: string;
-  required?: boolean;
-};
+  name: string
+  label: string
+  description?: string
+  placeholder?: string
+  required?: boolean
+}
 
 /**
  * Text Input Field
@@ -53,7 +49,7 @@ export function FormTextInput({
   placeholder,
   required = false,
 }: BaseFieldProps) {
-  const form = useFormContext();
+  const form = useFormContext()
 
   return (
     <FormField
@@ -62,31 +58,27 @@ export function FormTextInput({
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && "*"}
+            {label} {required && '*'}
           </FormLabel>
           <FormControl>
-            <Input
-              placeholder={placeholder}
-              {...field}
-              value={field.value ?? ""}
-            />
+            <Input placeholder={placeholder} {...field} value={field.value ?? ''} />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />
         </FormItem>
       )}
     />
-  );
+  )
 }
 
 /**
  * Number Input Field
  */
 type NumberFieldProps = BaseFieldProps & {
-  min?: number;
-  max?: number;
-  step?: number;
-};
+  min?: number
+  max?: number
+  step?: number
+}
 
 export function FormNumberInput({
   name,
@@ -98,7 +90,7 @@ export function FormNumberInput({
   max,
   step = 1,
 }: NumberFieldProps) {
-  const form = useFormContext();
+  const form = useFormContext()
 
   return (
     <FormField
@@ -107,7 +99,7 @@ export function FormNumberInput({
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && "*"}
+            {label} {required && '*'}
           </FormLabel>
           <FormControl>
             <Input
@@ -118,21 +110,17 @@ export function FormNumberInput({
               type="number"
               {...field}
               onBlur={(e) => {
-                const value = e.target.value;
+                const value = e.target.value
                 // On blur: validate and set final value (0 if empty, or parsed number)
-                field.onChange(value === "" ? 0 : Number(value));
-                field.onBlur();
+                field.onChange(value === '' ? 0 : Number(value))
+                field.onBlur()
               }}
               onChange={(e) => {
-                const value = e.target.value;
+                const value = e.target.value
                 // On change: allow empty string temporarily without validation
-                field.onChange(value === "" ? undefined : Number(value));
+                field.onChange(value === '' ? undefined : Number(value))
               }}
-              value={
-                field.value === undefined || field.value === null
-                  ? ""
-                  : field.value
-              }
+              value={field.value === undefined || field.value === null ? '' : field.value}
             />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
@@ -140,7 +128,7 @@ export function FormNumberInput({
         </FormItem>
       )}
     />
-  );
+  )
 }
 
 /**
@@ -150,8 +138,8 @@ export function FormNumberInput({
  * @param decimals - Number of decimal places (default: 2, use 4 for precise cost factors)
  */
 type CurrencyFieldProps = NumberFieldProps & {
-  decimals?: 0 | 1 | 2 | 3 | 4;
-};
+  decimals?: 0 | 1 | 2 | 3 | 4
+}
 
 export function FormCurrencyInput({
   name,
@@ -162,21 +150,21 @@ export function FormCurrencyInput({
   min = 0,
   decimals = 2,
 }: CurrencyFieldProps) {
-  const form = useFormContext();
+  const form = useFormContext()
 
   // Determine step value based on decimal precision (avoid float precision issues)
   const getStepValue = (decimalPlaces: number): string => {
-    const FOUR_DECIMALS = 4;
-    const TWO_DECIMALS = 2;
+    const FOUR_DECIMALS = 4
+    const TWO_DECIMALS = 2
 
     if (decimalPlaces === FOUR_DECIMALS) {
-      return "0.0001";
+      return '0.0001'
     }
     if (decimalPlaces === TWO_DECIMALS) {
-      return "0.01";
+      return '0.01'
     }
-    return "any";
-  };
+    return 'any'
+  }
 
   return (
     <FormField
@@ -185,7 +173,7 @@ export function FormCurrencyInput({
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && "*"}
+            {label} {required && '*'}
           </FormLabel>
           <FormControl>
             <div className="relative">
@@ -200,21 +188,17 @@ export function FormCurrencyInput({
                 type="number"
                 {...field}
                 onBlur={(e) => {
-                  const value = e.target.value;
+                  const value = e.target.value
                   // On blur: validate and set final value (0 if empty, or parsed number)
-                  field.onChange(value === "" ? 0 : Number(value));
-                  field.onBlur();
+                  field.onChange(value === '' ? 0 : Number(value))
+                  field.onBlur()
                 }}
                 onChange={(e) => {
-                  const value = e.target.value;
+                  const value = e.target.value
                   // On change: allow empty string temporarily without validation
-                  field.onChange(value === "" ? undefined : Number(value));
+                  field.onChange(value === '' ? undefined : Number(value))
                 }}
-                value={
-                  field.value === undefined || field.value === null
-                    ? ""
-                    : field.value
-                }
+                value={field.value === undefined || field.value === null ? '' : field.value}
               />
             </div>
           </FormControl>
@@ -223,7 +207,7 @@ export function FormCurrencyInput({
         </FormItem>
       )}
     />
-  );
+  )
 }
 
 /**
@@ -238,7 +222,7 @@ export function FormPercentageInput({
   min = 0,
   max = 100,
 }: NumberFieldProps) {
-  const form = useFormContext();
+  const form = useFormContext()
 
   return (
     <FormField
@@ -247,7 +231,7 @@ export function FormPercentageInput({
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && "*"}
+            {label} {required && '*'}
           </FormLabel>
           <FormControl>
             <div className="relative">
@@ -260,21 +244,17 @@ export function FormPercentageInput({
                 type="number"
                 {...field}
                 onBlur={(e) => {
-                  const value = e.target.value;
+                  const value = e.target.value
                   // On blur: validate and set final value (0 if empty, or parsed number)
-                  field.onChange(value === "" ? 0 : Number(value));
-                  field.onBlur();
+                  field.onChange(value === '' ? 0 : Number(value))
+                  field.onBlur()
                 }}
                 onChange={(e) => {
-                  const value = e.target.value;
+                  const value = e.target.value
                   // On change: allow empty string temporarily without validation
-                  field.onChange(value === "" ? undefined : Number(value));
+                  field.onChange(value === '' ? undefined : Number(value))
                 }}
-                value={
-                  field.value === undefined || field.value === null
-                    ? ""
-                    : field.value
-                }
+                value={field.value === undefined || field.value === null ? '' : field.value}
               />
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground">
                 %
@@ -286,15 +266,15 @@ export function FormPercentageInput({
         </FormItem>
       )}
     />
-  );
+  )
 }
 
 /**
  * Textarea Field
  */
 type TextareaFieldProps = BaseFieldProps & {
-  rows?: number;
-};
+  rows?: number
+}
 
 export function FormTextarea({
   name,
@@ -304,7 +284,7 @@ export function FormTextarea({
   required = false,
   rows = 3,
 }: TextareaFieldProps) {
-  const form = useFormContext();
+  const form = useFormContext()
 
   return (
     <FormField
@@ -313,35 +293,30 @@ export function FormTextarea({
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && "*"}
+            {label} {required && '*'}
           </FormLabel>
           <FormControl>
-            <Textarea
-              placeholder={placeholder}
-              rows={rows}
-              {...field}
-              value={field.value ?? ""}
-            />
+            <Textarea placeholder={placeholder} rows={rows} {...field} value={field.value ?? ''} />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />
         </FormItem>
       )}
     />
-  );
+  )
 }
 
 /**
  * Select Field
  */
 type SelectOption = {
-  label: string;
-  value: string;
-};
+  label: string
+  value: string
+}
 
 type SelectFieldProps = BaseFieldProps & {
-  options: SelectOption[];
-};
+  options: SelectOption[]
+}
 
 export function FormSelect({
   name,
@@ -351,7 +326,7 @@ export function FormSelect({
   required = false,
   options,
 }: SelectFieldProps) {
-  const form = useFormContext();
+  const form = useFormContext()
 
   return (
     <FormField
@@ -360,9 +335,9 @@ export function FormSelect({
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && "*"}
+            {label} {required && '*'}
           </FormLabel>
-          <Select onValueChange={field.onChange} value={field.value ?? ""}>
+          <Select onValueChange={field.onChange} value={field.value ?? ''}>
             <FormControl>
               <SelectTrigger>
                 <SelectValue placeholder={placeholder} />
@@ -381,7 +356,7 @@ export function FormSelect({
         </FormItem>
       )}
     />
-  );
+  )
 }
 
 /**
@@ -392,8 +367,8 @@ export function FormDateInput({
   label,
   description,
   required = false,
-}: Omit<BaseFieldProps, "placeholder">) {
-  const form = useFormContext();
+}: Omit<BaseFieldProps, 'placeholder'>) {
+  const form = useFormContext()
 
   return (
     <FormField
@@ -402,21 +377,21 @@ export function FormDateInput({
       render={({ field }) => (
         <FormItem className="flex flex-col">
           <FormLabel>
-            {label} {required && "*"}
+            {label} {required && '*'}
           </FormLabel>
           <Popover>
             <PopoverTrigger asChild>
               <FormControl>
                 <Button
                   className={cn(
-                    "w-full justify-start pl-3 text-left font-normal",
-                    !field.value && "text-muted-foreground"
+                    'w-full justify-start pl-3 text-left font-normal',
+                    !field.value && 'text-muted-foreground',
                   )}
                   variant="outline"
                 >
                   <CalendarIcon className="mr-2 size-4" />
                   {field.value ? (
-                    format(field.value, "DD/MM/YYYY", "es-CO")
+                    format(field.value, 'DD/MM/YYYY', 'es-CO')
                   ) : (
                     <span>Seleccionar fecha</span>
                   )}
@@ -437,5 +412,5 @@ export function FormDateInput({
         </FormItem>
       )}
     />
-  );
+  )
 }

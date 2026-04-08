@@ -8,7 +8,7 @@
  * Provide default/empty values for ProjectAddress entities
  */
 
-import type { ProjectAddress } from "@/app/(dashboard)/admin/quotes/_types/address.types";
+import type { ProjectAddress } from '@/app/(dashboard)/admin/quotes/_types/address.types'
 
 /**
  * Get empty ProjectAddress object for form initialization
@@ -25,7 +25,7 @@ export function getEmptyAddress(): Partial<ProjectAddress> {
     id: undefined,
     quoteId: null,
     label: null,
-    country: "Colombia", // Default to Colombia for most users
+    country: 'Colombia', // Default to Colombia for most users
     region: null,
     city: null,
     district: null,
@@ -36,7 +36,7 @@ export function getEmptyAddress(): Partial<ProjectAddress> {
     postalCode: null,
     createdAt: undefined,
     updatedAt: undefined,
-  };
+  }
 }
 
 /**
@@ -49,21 +49,19 @@ export function getEmptyAddress(): Partial<ProjectAddress> {
  * const empty = isAddressEmpty(getEmptyAddress()); // true
  * const notEmpty = isAddressEmpty({ city: 'Bogotá' }); // false
  */
-export function isAddressEmpty(
-  address: Partial<ProjectAddress> | null | undefined
-): boolean {
+export function isAddressEmpty(address: Partial<ProjectAddress> | null | undefined): boolean {
   if (!address) {
-    return true;
+    return true
   }
 
   // Check if at least one identifier field is present
-  const hasCity = Boolean(address.city);
-  const hasStreet = Boolean(address.street);
-  const hasReference = Boolean(address.reference);
+  const hasCity = Boolean(address.city)
+  const hasStreet = Boolean(address.street)
+  const hasReference = Boolean(address.reference)
 
-  const hasAnyIdentifier = hasCity || hasStreet || hasReference;
+  const hasAnyIdentifier = hasCity || hasStreet || hasReference
 
-  return !hasAnyIdentifier;
+  return !hasAnyIdentifier
 }
 
 /**
@@ -76,11 +74,9 @@ export function isAddressEmpty(
  * const hasCoords = hasCoordinates({ latitude: 4.7110, longitude: -74.0721 }); // true
  * const noCoords = hasCoordinates({ latitude: 4.7110, longitude: null }); // false
  */
-export function hasCoordinates(
-  address: Partial<ProjectAddress> | null | undefined
-): boolean {
+export function hasCoordinates(address: Partial<ProjectAddress> | null | undefined): boolean {
   if (!address) {
-    return false;
+    return false
   }
 
   return (
@@ -88,7 +84,7 @@ export function hasCoordinates(
     address.latitude !== undefined &&
     address.longitude !== null &&
     address.longitude !== undefined
-  );
+  )
 }
 
 /**
@@ -105,12 +101,12 @@ export function hasCoordinates(
  */
 export function mergeAddress(
   existing: Partial<ProjectAddress> | null | undefined,
-  updates: Partial<ProjectAddress>
+  updates: Partial<ProjectAddress>,
 ): Partial<ProjectAddress> {
-  const base = existing ?? getEmptyAddress();
+  const base = existing ?? getEmptyAddress()
 
   return {
     ...base,
     ...updates,
-  };
+  }
 }

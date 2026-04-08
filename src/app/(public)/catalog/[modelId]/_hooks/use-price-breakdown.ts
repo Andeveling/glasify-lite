@@ -3,25 +3,22 @@
  * Builds formatted price breakdown items from calculation results
  */
 
-import { useMemo } from "react";
-import type { PriceItemCalculationResult } from "@/domain/pricing/adapters/trpc/price-calculator.adapter";
+import { useMemo } from 'react'
+import type { PriceItemCalculationResult } from '@/domain/pricing/adapters/trpc/price-calculator.adapter'
 import type {
   GlassTypeOutput,
   ModelDetailOutput,
   ServiceOutput,
-} from "@/server/api/routers/catalog/catalog.schemas";
-import {
-  buildPriceBreakdown,
-  type PriceBreakdownItem,
-} from "../_utils/price-breakdown-builder";
+} from '@/server/api/routers/catalog/catalog.schemas'
+import { buildPriceBreakdown, type PriceBreakdownItem } from '../_utils/price-breakdown-builder'
 
 type UsePriceBreakdownParams = {
-  breakdown: PriceItemCalculationResult | undefined;
-  glassArea: number;
-  model: ModelDetailOutput;
-  selectedGlassType: GlassTypeOutput | undefined;
-  services: ServiceOutput[];
-};
+  breakdown: PriceItemCalculationResult | undefined
+  glassArea: number
+  model: ModelDetailOutput
+  selectedGlassType: GlassTypeOutput | undefined
+  services: ServiceOutput[]
+}
 
 /**
  * Format price breakdown for display
@@ -54,6 +51,6 @@ export function usePriceBreakdown({
         selectedGlassType,
         services,
       }),
-    [breakdown, glassArea, model, selectedGlassType, services]
-  );
+    [breakdown, glassArea, model, selectedGlassType, services],
+  )
 }

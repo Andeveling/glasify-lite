@@ -28,37 +28,37 @@
  * ```
  */
 
-"use client";
+'use client'
 
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation'
 
 type NavigateMethods = {
   /**
    * Navigate to a new page (adds to history stack)
    */
-  push: (href: string) => void;
+  push: (href: string) => void
   /**
    * Navigate to a new page (replaces current entry in history)
    */
-  replace: (href: string) => void;
+  replace: (href: string) => void
   /**
    * Go back in browser history
    */
-  back: () => void;
+  back: () => void
   /**
    * Reload the current page (full refresh)
    * Use sparingly - this bypasses the router entirely
    */
-  reload: () => void;
-};
+  reload: () => void
+}
 
 export function useNavigate(): NavigateMethods {
-  const router = useRouter();
+  const router = useRouter()
 
   return {
     push: (href: string) => router.push(href),
     replace: (href: string) => router.replace(href),
     back: () => router.back(),
     reload: () => window.location.reload(),
-  };
+  }
 }

@@ -11,39 +11,35 @@
  * Pattern: Custom Hook - Single Responsibility (Form State Management)
  */
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import type { MaterialType, ProfileSupplier } from "@prisma/generated/client";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { createProfileSupplierSchema } from "@/lib/validations/admin/profile-supplier.schema";
+import { zodResolver } from '@hookform/resolvers/zod'
+import type { MaterialType, ProfileSupplier } from '@prisma/generated/client'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { createProfileSupplierSchema } from '@/lib/validations/admin/profile-supplier.schema'
 
 export type FormValues = {
-  name: string;
-  materialType: MaterialType;
-  notes?: string;
-  isActive?: boolean;
-};
+  name: string
+  materialType: MaterialType
+  notes?: string
+  isActive?: boolean
+}
 
 type UseProfileSupplierFormProps = {
-  mode: "create" | "edit";
-  open: boolean;
-  defaultValues?: ProfileSupplier;
-};
+  mode: 'create' | 'edit'
+  open: boolean
+  defaultValues?: ProfileSupplier
+}
 
-export function useProfileSupplierForm({
-  mode,
-  open,
-  defaultValues,
-}: UseProfileSupplierFormProps) {
+export function useProfileSupplierForm({ mode, open, defaultValues }: UseProfileSupplierFormProps) {
   const form = useForm<FormValues>({
     defaultValues: {
       isActive: defaultValues?.isActive ?? true,
-      materialType: defaultValues?.materialType ?? "PVC",
-      name: defaultValues?.name ?? "",
-      notes: defaultValues?.notes ?? "",
+      materialType: defaultValues?.materialType ?? 'PVC',
+      name: defaultValues?.name ?? '',
+      notes: defaultValues?.notes ?? '',
     },
     resolver: zodResolver(createProfileSupplierSchema),
-  });
+  })
 
   /**
    * Reset form when dialog state changes
@@ -56,17 +52,17 @@ export function useProfileSupplierForm({
         isActive: defaultValues.isActive,
         materialType: defaultValues.materialType,
         name: defaultValues.name,
-        notes: defaultValues.notes ?? "",
-      });
-    } else if (open && mode === "create") {
+        notes: defaultValues.notes ?? '',
+      })
+    } else if (open && mode === 'create') {
       form.reset({
         isActive: true,
-        materialType: "PVC",
-        name: "",
-        notes: "",
-      });
+        materialType: 'PVC',
+        name: '',
+        notes: '',
+      })
     }
-  }, [open, mode, defaultValues, form]);
+  }, [open, mode, defaultValues, form])
 
-  return { form };
+  return { form }
 }

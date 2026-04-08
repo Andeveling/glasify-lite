@@ -19,25 +19,22 @@
  * - onCreateClick callback to parent for modal control
  */
 
-"use client";
+'use client'
 
-import { Plus } from "lucide-react";
-import {
-  type FilterDefinition,
-  TableFilters,
-} from "@/app/_components/server-table/table-filters";
-import { TableSearch } from "@/app/_components/server-table/table-search";
-import { Button } from "@/components/ui/button";
+import { Plus } from 'lucide-react'
+import { type FilterDefinition, TableFilters } from '@/app/_components/server-table/table-filters'
+import { TableSearch } from '@/app/_components/server-table/table-search'
+import { Button } from '@/components/ui/button'
 
 type ProfileSupplierFiltersProps = {
-  onCreateClick?: () => void;
+  onCreateClick?: () => void
   searchParams: {
-    isActive?: string;
-    materialType?: string;
-    page?: string;
-    search?: string;
-  };
-};
+    isActive?: string
+    materialType?: string
+    page?: string
+    search?: string
+  }
+}
 
 export function ProfileSupplierFilters({
   searchParams,
@@ -52,39 +49,36 @@ export function ProfileSupplierFilters({
    */
   const filters: FilterDefinition[] = [
     {
-      defaultValue: "all",
-      id: "materialType",
-      label: "Tipo de Material",
+      defaultValue: 'all',
+      id: 'materialType',
+      label: 'Tipo de Material',
       options: [
-        { label: "Todos", value: "all" },
-        { label: "PVC", value: "PVC" },
-        { label: "Aluminio", value: "ALUMINUM" },
-        { label: "Madera", value: "WOOD" },
-        { label: "Mixto", value: "MIXED" },
+        { label: 'Todos', value: 'all' },
+        { label: 'PVC', value: 'PVC' },
+        { label: 'Aluminio', value: 'ALUMINUM' },
+        { label: 'Madera', value: 'WOOD' },
+        { label: 'Mixto', value: 'MIXED' },
       ],
-      type: "select",
+      type: 'select',
     },
     {
-      defaultValue: "all",
-      id: "isActive",
-      label: "Estado",
+      defaultValue: 'all',
+      id: 'isActive',
+      label: 'Estado',
       options: [
-        { label: "Todos", value: "all" },
-        { label: "Activo", value: "active" },
-        { label: "Inactivo", value: "inactive" },
+        { label: 'Todos', value: 'all' },
+        { label: 'Activo', value: 'active' },
+        { label: 'Inactivo', value: 'inactive' },
       ],
-      type: "select",
+      type: 'select',
     },
-  ];
+  ]
 
   return (
     <div className="flex flex-wrap items-end justify-between gap-4">
       {/* Search - max width to prevent huge inputs */}
       <div className="max-w-sm flex-1">
-        <TableSearch
-          defaultValue={searchParams.search}
-          placeholder="Buscar por nombre..."
-        />
+        <TableSearch defaultValue={searchParams.search} placeholder="Buscar por nombre..." />
       </div>
 
       {/* Filters - reusable component that syncs with URL */}
@@ -96,5 +90,5 @@ export function ProfileSupplierFilters({
         Nuevo Proveedor
       </Button>
     </div>
-  );
+  )
 }

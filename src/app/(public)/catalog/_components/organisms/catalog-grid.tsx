@@ -1,31 +1,31 @@
-import { ModelCard } from "@views/catalog/_components/molecules/model-card";
-import { formatCurrency } from "@/lib/format";
+import { ModelCard } from '@views/catalog/_components/molecules/model-card'
+import { formatCurrency } from '@/lib/format'
 
 type Model = {
-  accessoryPrice: number | null;
-  basePrice: number;
-  compatibleGlassTypeIds: string[];
-  costPerMmHeight: number;
-  costPerMmWidth: number;
-  createdAt: Date;
-  id: string;
-  imageUrl: string | null;
+  accessoryPrice: number | null
+  basePrice: number
+  compatibleGlassTypeIds: string[]
+  costPerMmHeight: number
+  costPerMmWidth: number
+  createdAt: Date
+  id: string
+  imageUrl: string | null
   profileSupplier: {
-    id: string;
-    name: string;
-  } | null;
-  maxHeightMm: number;
-  maxWidthMm: number;
-  minHeightMm: number;
-  minWidthMm: number;
-  name: string;
-  status: string;
-  updatedAt: Date;
-};
+    id: string
+    name: string
+  } | null
+  maxHeightMm: number
+  maxWidthMm: number
+  minHeightMm: number
+  minWidthMm: number
+  name: string
+  status: string
+  updatedAt: Date
+}
 
 type CatalogGridProps = {
-  models: Model[];
-};
+  models: Model[]
+}
 
 /**
  * Generate mock highlighted solutions for demo purposes
@@ -35,39 +35,39 @@ function getMockHighlightedSolutions(modelId: string) {
   // Mock data - different solutions for different models
   const mockSolutions = [
     [
-      { icon: "Shield", nameEs: "Seguridad", rating: "excellent" as const },
+      { icon: 'Shield', nameEs: 'Seguridad', rating: 'excellent' as const },
       {
-        icon: "Snowflake",
-        nameEs: "Aislamiento Térmico",
-        rating: "very_good" as const,
+        icon: 'Snowflake',
+        nameEs: 'Aislamiento Térmico',
+        rating: 'very_good' as const,
       },
     ],
     [
       {
-        icon: "Volume2",
-        nameEs: "Aislamiento Acústico",
-        rating: "excellent" as const,
+        icon: 'Volume2',
+        nameEs: 'Aislamiento Acústico',
+        rating: 'excellent' as const,
       },
-      { icon: "Shield", nameEs: "Seguridad", rating: "good" as const },
+      { icon: 'Shield', nameEs: 'Seguridad', rating: 'good' as const },
     ],
     [
       {
-        icon: "Snowflake",
-        nameEs: "Aislamiento Térmico",
-        rating: "excellent" as const,
+        icon: 'Snowflake',
+        nameEs: 'Aislamiento Térmico',
+        rating: 'excellent' as const,
       },
-      { icon: "Sparkles", nameEs: "Decorativo", rating: "very_good" as const },
+      { icon: 'Sparkles', nameEs: 'Decorativo', rating: 'very_good' as const },
       {
-        icon: "Volume2",
-        nameEs: "Aislamiento Acústico",
-        rating: "good" as const,
+        icon: 'Volume2',
+        nameEs: 'Aislamiento Acústico',
+        rating: 'good' as const,
       },
     ],
-  ];
+  ]
 
   // Use model ID to pseudo-randomly assign solutions
-  const index = modelId.charCodeAt(0) % mockSolutions.length;
-  return mockSolutions[index];
+  const index = modelId.charCodeAt(0) % mockSolutions.length
+  return mockSolutions[index]
 }
 
 /**
@@ -111,5 +111,5 @@ export function CatalogGrid({ models }: CatalogGridProps) {
         ))}
       </ul>
     </div>
-  );
+  )
 }

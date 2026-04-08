@@ -7,30 +7,30 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { api } from "@/trpc/server-client";
-import { ColorForm } from "../../_components/color-form";
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { api } from '@/trpc/server-client'
+import { ColorForm } from '../../_components/color-form'
 
 export const metadata: Metadata = {
-  description: "Editar color del catálogo",
-  title: "Editar Color | Admin",
-};
+  description: 'Editar color del catálogo',
+  title: 'Editar Color | Admin',
+}
 
 type PageProps = {
-  params: Promise<{ id: string }>;
-};
+  params: Promise<{ id: string }>
+}
 
 export default async function EditColorPage({ params }: PageProps) {
-  const { id } = await params;
+  const { id } = await params
 
   // Fetch color data server-side
-  let color: Awaited<ReturnType<typeof api.admin.colors.getById>>;
+  let color: Awaited<ReturnType<typeof api.admin.colors.getById>>
   try {
-    color = await api.admin.colors.getById({ id });
+    color = await api.admin.colors.getById({ id })
   } catch {
     // Color not found - show 404
-    notFound();
+    notFound()
   }
 
   return (
@@ -38,9 +38,7 @@ export default async function EditColorPage({ params }: PageProps) {
       {/* Header */}
       <div>
         <h1 className="font-bold text-3xl tracking-tight">Editar Color</h1>
-        <p className="text-muted-foreground">
-          Modifica los datos del color "{color.name}"
-        </p>
+        <p className="text-muted-foreground">Modifica los datos del color "{color.name}"</p>
       </div>
 
       {/* Color Form */}
@@ -55,5 +53,5 @@ export default async function EditColorPage({ params }: PageProps) {
         mode="edit"
       />
     </div>
-  );
+  )
 }

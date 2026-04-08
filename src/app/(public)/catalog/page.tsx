@@ -1,17 +1,17 @@
-import { Suspense } from "react";
-import { CatalogHeader } from "./_components/molecules/catalog-header";
-import { CatalogContent } from "./_components/organisms/catalog-content";
-import { CatalogFilterBarWrapper } from "./_components/organisms/catalog-filter-bar-wrapper";
-import { CatalogFilterSkeleton } from "./_components/organisms/catalog-filter-skeleton";
-import { CatalogSkeleton } from "./_components/organisms/catalog-skeleton";
-import type { CatalogSearchParams } from "./_types/catalog-params";
-import { validateCatalogParams } from "./_types/catalog-params";
+import { Suspense } from 'react'
+import { CatalogHeader } from './_components/molecules/catalog-header'
+import { CatalogContent } from './_components/organisms/catalog-content'
+import { CatalogFilterBarWrapper } from './_components/organisms/catalog-filter-bar-wrapper'
+import { CatalogFilterSkeleton } from './_components/organisms/catalog-filter-skeleton'
+import { CatalogSkeleton } from './_components/organisms/catalog-skeleton'
+import type { CatalogSearchParams } from './_types/catalog-params'
+import { validateCatalogParams } from './_types/catalog-params'
 
-type SearchParams = Promise<CatalogSearchParams>;
+type SearchParams = Promise<CatalogSearchParams>
 
 type CatalogPageProps = {
-  searchParams: SearchParams;
-};
+  searchParams: SearchParams
+}
 
 /**
  * Catalog Page - Server Component with ISR
@@ -51,14 +51,13 @@ type CatalogPageProps = {
  * 2. All DB queries are moved to client components
  * 3. Build process guarantees DATABASE_URL availability
  */
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic'
 
 export default async function CatalogPage({ searchParams }: CatalogPageProps) {
-  const params = await searchParams;
+  const params = await searchParams
 
   // Validate and normalize parameters
-  const { searchQuery, page, manufacturerId, sort } =
-    validateCatalogParams(params);
+  const { searchQuery, page, manufacturerId, sort } = validateCatalogParams(params)
 
   return (
     <div className="min-h-screen">
@@ -72,7 +71,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           {/* Wrapped in Suspense to prevent blocking route */}
           <Suspense fallback={<CatalogFilterSkeleton />}>
             <CatalogFilterBarWrapper
-              currentProfileSupplier={manufacturerId ?? "all"}
+              currentProfileSupplier={manufacturerId ?? 'all'}
               currentSort={sort}
               searchQuery={searchQuery}
             />
@@ -92,5 +91,5 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
         </Suspense>
       </div>
     </div>
-  );
+  )
 }

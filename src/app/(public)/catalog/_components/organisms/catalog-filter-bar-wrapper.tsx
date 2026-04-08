@@ -8,15 +8,15 @@
  * @component Server Component
  */
 
-import type { CatalogSortOption } from "@views/catalog/_types/catalog-params";
-import { api } from "@/trpc/server-client";
-import { CatalogFilterBar } from "./catalog-filter-bar";
+import type { CatalogSortOption } from '@views/catalog/_types/catalog-params'
+import { api } from '@/trpc/server-client'
+import { CatalogFilterBar } from './catalog-filter-bar'
 
 type CatalogFilterBarWrapperProps = {
-  currentProfileSupplier: string;
-  currentSort: CatalogSortOption;
-  searchQuery?: string;
-};
+  currentProfileSupplier: string
+  currentSort: CatalogSortOption
+  searchQuery?: string
+}
 
 export async function CatalogFilterBarWrapper({
   currentProfileSupplier,
@@ -24,17 +24,16 @@ export async function CatalogFilterBarWrapper({
   searchQuery,
 }: CatalogFilterBarWrapperProps) {
   // Fetch profile suppliers for filter dropdown
-  const profileSuppliers = await api.catalog["list-manufacturers"]();
+  const profileSuppliers = await api.catalog['list-manufacturers']()
 
   // Fetch total count for results display (lightweight query)
-  const totalData = await api.catalog["list-models"]({
+  const totalData = await api.catalog['list-models']({
     limit: 1,
-    manufacturerId:
-      currentProfileSupplier === "all" ? undefined : currentProfileSupplier,
+    manufacturerId: currentProfileSupplier === 'all' ? undefined : currentProfileSupplier,
     page: 1,
     search: searchQuery,
     sort: currentSort,
-  });
+  })
 
   return (
     <CatalogFilterBar
@@ -44,5 +43,5 @@ export async function CatalogFilterBarWrapper({
       searchQuery={searchQuery}
       totalResults={totalData.total}
     />
-  );
+  )
 }

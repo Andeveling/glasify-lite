@@ -13,36 +13,36 @@
  * @module app/(public)/cart/_hooks/use-cart-price-sync
  */
 
-"use client";
+'use client'
 
-import { useCallback, useEffect, useRef } from "react";
-import { api } from "@/trpc/react";
-import type { CartItem } from "@/types/cart.types";
+import { useCallback, useEffect, useRef } from 'react'
+import { api } from '@/trpc/react'
+import type { CartItem } from '@/types/cart.types'
 
 // ============================================================================
 // Types
 // ============================================================================
 
 type PriceRecalculationResult = {
-  itemId: string;
-  newUnitPrice: number;
-  newSubtotal: number;
-  priceChanged: boolean;
-};
+  itemId: string
+  newUnitPrice: number
+  newSubtotal: number
+  priceChanged: boolean
+}
 
 type UseCartPriceSyncOptions = {
   /** Items to sync prices for */
-  items: CartItem[];
+  items: CartItem[]
 
   /** Callback when price is recalculated */
-  onPriceUpdate?: (result: PriceRecalculationResult) => void;
+  onPriceUpdate?: (result: PriceRecalculationResult) => void
 
   /** Debounce delay in milliseconds (default: 500) */
-  debounceMs?: number;
+  debounceMs?: number
 
   /** Whether to enable auto-sync (default: true) */
-  enabled?: boolean;
-};
+  enabled?: boolean
+}
 
 // ============================================================================
 // Hook Implementation
@@ -78,15 +78,15 @@ export function useCartPriceSync({
   debounceMs = 500,
   enabled = true,
 }: UseCartPriceSyncOptions) {
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const previousQuantitiesRef = useRef<Map<string, number>>(new Map());
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const previousQuantitiesRef = useRef<Map<string, number>>(new Map())
 
   // tRPC mutation for price calculation using quote.calculate-item
-  const calculatePriceMutation = api.quote["calculate-item"].useMutation();
+  const calculatePriceMutation = api.quote['calculate-item'].useMutation()
 
   // Track items in a ref to avoid dependency issues
-  const itemsRef = useRef(items);
-  itemsRef.current = items;
+  const itemsRef = useRef(items)
+  itemsRef.current = items
 
   /**
    * Recalculate price for a single item
@@ -105,20 +105,20 @@ export function useCartPriceSync({
             quantity: item.quantity, // Apply service to entire quantity
             serviceId,
           })),
-          unit: "unit", // Cart items are always per unit
+          unit: 'unit', // Cart items are always per unit
           widthMm: item.widthMm,
-        });
+        })
 
-        const newUnitPrice = priceResult.subtotal;
-        const newSubtotal = newUnitPrice * item.quantity;
-        const priceChanged = newUnitPrice !== item.unitPrice;
+        const newUnitPrice = priceResult.subtotal
+        const newSubtotal = newUnitPrice * item.quantity
+        const priceChanged = newUnitPrice !== item.unitPrice
 
         return {
           itemId: item.id,
           newSubtotal,
           newUnitPrice,
           priceChanged,
-        };
+        }
       } catch {
         // Fallback: use cached price, just recalculate subtotal
         return {
@@ -126,62 +126,59 @@ export function useCartPriceSync({
           newSubtotal: item.unitPrice * item.quantity,
           newUnitPrice: item.unitPrice,
           priceChanged: false,
-        };
+        }
       }
     },
-    [calculatePriceMutation]
-  );
+    [calculatePriceMutation],
+  )
 
   /**
    * Sync prices for all items (debounced)
    */
   const syncPrices = useCallback(() => {
     if (!enabled) {
-      return;
+      return
     }
 
     // Clear existing timeout
     if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+      clearTimeout(timeoutRef.current)
     }
 
     // Debounce price sync
     timeoutRef.current = setTimeout(() => {
       for (const item of itemsRef.current) {
-        const previousQuantity = previousQuantitiesRef.current.get(item.id);
+        const previousQuantity = previousQuantitiesRef.current.get(item.id)
 
         // Only recalculate if quantity changed
-        if (
-          previousQuantity !== undefined &&
-          previousQuantity !== item.quantity
-        ) {
+        if (previousQuantity !== undefined && previousQuantity !== item.quantity) {
           recalculateItemPrice(item).then((result) => {
             if (onPriceUpdate) {
-              onPriceUpdate(result);
+              onPriceUpdate(result)
             }
-          });
+          })
         }
 
         // Update tracked quantity
-        previousQuantitiesRef.current.set(item.id, item.quantity);
+        previousQuantitiesRef.current.set(item.id, item.quantity)
       }
-    }, debounceMs);
-  }, [enabled, debounceMs, recalculateItemPrice, onPriceUpdate]);
+    }, debounceMs)
+  }, [enabled, debounceMs, recalculateItemPrice, onPriceUpdate])
 
   /**
    * Auto-sync on items change
    */
   useEffect(() => {
     if (enabled) {
-      syncPrices();
+      syncPrices()
     }
 
     return () => {
       if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+        clearTimeout(timeoutRef.current)
       }
-    };
-  }, [enabled, syncPrices]); // Only depend on enabled and syncPrices, use ref for items
+    }
+  }, [enabled, syncPrices]) // Only depend on enabled and syncPrices, use ref for items
 
   /**
    * Initialize quantity tracking on mount and when items change
@@ -190,26 +187,26 @@ export function useCartPriceSync({
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: Dependencies intentionally exclude refs to prevent infinite loops
   useEffect(() => {
-    const currentItemIds = new Set(itemsRef.current.map((item) => item.id));
-    const trackedIds = Array.from(previousQuantitiesRef.current.keys());
+    const currentItemIds = new Set(itemsRef.current.map((item) => item.id))
+    const trackedIds = Array.from(previousQuantitiesRef.current.keys())
 
     // Add new items to tracking
     for (const item of itemsRef.current) {
       if (!previousQuantitiesRef.current.has(item.id)) {
-        previousQuantitiesRef.current.set(item.id, item.quantity);
+        previousQuantitiesRef.current.set(item.id, item.quantity)
       }
     }
 
     // Remove tracking for items no longer in the cart
     for (const trackedId of trackedIds) {
       if (!currentItemIds.has(trackedId)) {
-        previousQuantitiesRef.current.delete(trackedId);
+        previousQuantitiesRef.current.delete(trackedId)
       }
     }
-  }, [items]); // items dependency needed to detect cart changes for tracking
+  }, [items]) // items dependency needed to detect cart changes for tracking
 
   return {
     isSyncing: calculatePriceMutation.isPending,
     syncPrices,
-  };
+  }
 }

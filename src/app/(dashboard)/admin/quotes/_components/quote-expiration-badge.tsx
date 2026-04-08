@@ -10,25 +10,23 @@
  * - Warning variant (destructive)
  */
 
-"use client";
+'use client'
 
-import { AlertTriangle } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { AlertTriangle } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 
 type QuoteExpirationBadgeProps = {
-  validUntil: Date | null;
-};
+  validUntil: Date | null
+}
 
-export function QuoteExpirationBadge({
-  validUntil,
-}: QuoteExpirationBadgeProps) {
+export function QuoteExpirationBadge({ validUntil }: QuoteExpirationBadgeProps) {
   if (!validUntil) {
-    return null;
+    return null
   }
 
-  const isExpired = validUntil < new Date();
+  const isExpired = validUntil < new Date()
   if (!isExpired) {
-    return null;
+    return null
   }
 
   return (
@@ -36,5 +34,5 @@ export function QuoteExpirationBadge({
       <AlertTriangle className="mr-1 size-3" />
       Expirada
     </Badge>
-  );
+  )
 }

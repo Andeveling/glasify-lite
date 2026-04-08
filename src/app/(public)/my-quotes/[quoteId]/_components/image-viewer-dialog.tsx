@@ -14,67 +14,67 @@
  * @module ImageViewerDialog
  */
 
-"use client";
+'use client'
 
-import { X } from "lucide-react";
-import Image from "next/image";
-import { useEffect } from "react";
-import { WindowDiagram } from "@/components/quote/window-diagram";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { X } from 'lucide-react'
+import Image from 'next/image'
+import { useEffect } from 'react'
+import { WindowDiagram } from '@/components/quote/window-diagram'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import {
   Dialog,
   DialogClose,
   DialogContent,
   DialogOverlay,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { VisuallyHidden } from "@/components/ui/visually-hidden";
-import { getProductImageWithFallback } from "@/lib/utils/image-utils";
-import type { WindowType } from "@/types/window.types";
-import { DEFAULT_WINDOW_TYPE, WINDOW_TYPE_LABELS } from "@/types/window.types";
+} from '@/components/ui/dialog'
+import { VisuallyHidden } from '@/components/ui/visually-hidden'
+import { getProductImageWithFallback } from '@/lib/utils/image-utils'
+import type { WindowType } from '@/types/window.types'
+import { DEFAULT_WINDOW_TYPE, WINDOW_TYPE_LABELS } from '@/types/window.types'
 
 export type ImageViewerDialogProps = {
   /**
    * Dialog open state
    */
-  open: boolean;
+  open: boolean
 
   /**
    * Close handler
    */
-  onOpenChange: (open: boolean) => void;
+  onOpenChange: (open: boolean) => void
 
   /**
    * Product model name
    */
-  modelName: string;
+  modelName: string
 
   /**
    * Product image URL
    */
-  modelImageUrl: string | null;
+  modelImageUrl: string | null
 
   /**
    * Window type for fallback/info (optional, defaults to FIXED_SINGLE)
    */
-  windowType?: WindowType;
+  windowType?: WindowType
 
   /**
    * Product dimensions (formatted string)
    */
-  dimensions?: string;
+  dimensions?: string
 
   /**
    * Additional product specifications
    */
   specifications?: {
-    glassType?: string;
-    manufacturer?: string;
-    thickness?: string;
-    treatment?: string;
-  };
-};
+    glassType?: string
+    manufacturer?: string
+    thickness?: string
+    treatment?: string
+  }
+}
 
 /**
  * ImageViewerDialog Component
@@ -90,31 +90,30 @@ export function ImageViewerDialog({
   dimensions,
   specifications,
 }: ImageViewerDialogProps) {
-  const hasImage = Boolean(modelImageUrl);
+  const hasImage = Boolean(modelImageUrl)
   const optimizedImageUrl = hasImage
-    ? getProductImageWithFallback(modelImageUrl, windowType, "xl")
-    : null;
+    ? getProductImageWithFallback(modelImageUrl, windowType, 'xl')
+    : null
 
-  const windowTypeLabel =
-    WINDOW_TYPE_LABELS[windowType] ?? WINDOW_TYPE_LABELS[DEFAULT_WINDOW_TYPE];
+  const windowTypeLabel = WINDOW_TYPE_LABELS[windowType] ?? WINDOW_TYPE_LABELS[DEFAULT_WINDOW_TYPE]
 
   /**
    * Handle keyboard shortcuts
    */
   useEffect(() => {
     if (!open) {
-      return;
+      return
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onOpenChange(false);
+      if (event.key === 'Escape') {
+        onOpenChange(false)
       }
-    };
+    }
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [open, onOpenChange]);
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [open, onOpenChange])
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
@@ -177,22 +176,20 @@ export function ImageViewerDialog({
             <div className="grid gap-2 text-sm md:grid-cols-2 lg:grid-cols-3">
               {/* Window Type */}
               <div>
-                <span className="font-semibold">Tipo:</span>{" "}
-                <span>{windowTypeLabel}</span>
+                <span className="font-semibold">Tipo:</span> <span>{windowTypeLabel}</span>
               </div>
 
               {/* Dimensions */}
               {dimensions && (
                 <div>
-                  <span className="font-semibold">Dimensiones:</span>{" "}
-                  <span>{dimensions}</span>
+                  <span className="font-semibold">Dimensiones:</span> <span>{dimensions}</span>
                 </div>
               )}
 
               {/* Glass Type */}
               {specifications?.glassType && (
                 <div>
-                  <span className="font-semibold">Vidrio:</span>{" "}
+                  <span className="font-semibold">Vidrio:</span>{' '}
                   <span>{specifications.glassType}</span>
                 </div>
               )}
@@ -200,7 +197,7 @@ export function ImageViewerDialog({
               {/* Manufacturer */}
               {specifications?.manufacturer && (
                 <div>
-                  <span className="font-semibold">Fabricante:</span>{" "}
+                  <span className="font-semibold">Fabricante:</span>{' '}
                   <span>{specifications.manufacturer}</span>
                 </div>
               )}
@@ -208,7 +205,7 @@ export function ImageViewerDialog({
               {/* Thickness */}
               {specifications?.thickness && (
                 <div>
-                  <span className="font-semibold">Espesor:</span>{" "}
+                  <span className="font-semibold">Espesor:</span>{' '}
                   <span>{specifications.thickness}</span>
                 </div>
               )}
@@ -216,7 +213,7 @@ export function ImageViewerDialog({
               {/* Treatment */}
               {specifications?.treatment && (
                 <div>
-                  <span className="font-semibold">Tratamiento:</span>{" "}
+                  <span className="font-semibold">Tratamiento:</span>{' '}
                   <span>{specifications.treatment}</span>
                 </div>
               )}
@@ -225,5 +222,5 @@ export function ImageViewerDialog({
         </Card>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

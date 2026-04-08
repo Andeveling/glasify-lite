@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
-import { LogIn, Moon, Sun, User } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-import { SignInModal } from "@/components/signin-modal";
-import { Button } from "@/components/ui/button";
+import { LogIn, Moon, Sun, User } from 'lucide-react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useTheme } from 'next-themes'
+import { useEffect, useState } from 'react'
+import { SignInModal } from '@/components/signin-modal'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,37 +13,37 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu'
 
 export function GuestMenu() {
-  const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
-  const [showSignInModal, setShowSignInModal] = useState(false);
-  const searchParams = useSearchParams();
-  const router = useRouter();
+  const pathname = usePathname()
+  const { theme, setTheme } = useTheme()
+  const [showSignInModal, setShowSignInModal] = useState(false)
+  const searchParams = useSearchParams()
+  const router = useRouter()
 
   // Auto-open modal when ?signin=true is in URL
   useEffect(() => {
-    const shouldShowSignIn = searchParams.get("signin") === "true";
+    const shouldShowSignIn = searchParams.get('signin') === 'true'
     if (shouldShowSignIn) {
-      setShowSignInModal(true);
+      setShowSignInModal(true)
       // Clean up URL by removing signin param
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.delete("signin");
+      const newSearchParams = new URLSearchParams(searchParams)
+      newSearchParams.delete('signin')
       const newUrl = newSearchParams.toString()
         ? `${pathname}?${newSearchParams.toString()}`
-        : pathname;
-      router.replace(newUrl);
+        : pathname
+      router.replace(newUrl)
     }
-  }, [searchParams, router, pathname]);
+  }, [searchParams, router, pathname])
 
   const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
+    setTheme(theme === 'dark' ? 'light' : 'dark')
+  }
 
   const handleSignInClick = () => {
-    setShowSignInModal(true);
-  };
+    setShowSignInModal(true)
+  }
 
   return (
     <>
@@ -63,20 +63,17 @@ export function GuestMenu() {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={toggleTheme}>
-            {theme === "dark" ? (
+            {theme === 'dark' ? (
               <Sun className="mr-2 h-4 w-4" />
             ) : (
               <Moon className="mr-2 h-4 w-4" />
             )}
-            <span>Cambiar a {theme === "dark" ? "Claro" : "Oscuro"}</span>
+            <span>Cambiar a {theme === 'dark' ? 'Claro' : 'Oscuro'}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <SignInModal
-        onOpenChangeAction={setShowSignInModal}
-        open={showSignInModal}
-      />
+      <SignInModal onOpenChangeAction={setShowSignInModal} open={showSignInModal} />
     </>
-  );
+  )
 }

@@ -7,58 +7,58 @@
  * @module WindowDiagram
  */
 
-import { cn } from "@/lib/utils";
-import { getWindowDiagram } from "@/lib/utils/window-diagram-map";
-import type { WindowType } from "@/types/window.types";
+import { cn } from '@/lib/utils'
+import { getWindowDiagram } from '@/lib/utils/window-diagram-map'
+import type { WindowType } from '@/types/window.types'
 
 export type WindowDiagramProps = {
   /** Window type to render */
-  type: WindowType | string;
+  type: WindowType | string
 
   /** Size variant for the diagram */
-  size?: "sm" | "md" | "lg" | "xl";
+  size?: 'sm' | 'md' | 'lg' | 'xl'
 
   /** Additional CSS classes */
-  className?: string;
+  className?: string
 
   /** Override alt text for accessibility */
-  alt?: string;
+  alt?: string
 
   /** Whether to show a border around the diagram */
-  showBorder?: boolean;
+  showBorder?: boolean
 
   /** Background color */
-  background?: "transparent" | "white" | "gray";
-};
+  background?: 'transparent' | 'white' | 'gray'
+}
 
 /**
  * Size dimensions mapping
  */
 const SIZE_CLASSES = {
-  lg: "w-32 h-32", // 128px - detail view
-  md: "w-20 h-20", // 80px - list items
-  sm: "w-12 h-12", // 48px - compact view
-  xl: "w-48 h-48", // 192px - full view
-} as const;
+  lg: 'w-32 h-32', // 128px - detail view
+  md: 'w-20 h-20', // 80px - list items
+  sm: 'w-12 h-12', // 48px - compact view
+  xl: 'w-48 h-48', // 192px - full view
+} as const
 
 /**
  * Get pixel dimensions for a size variant
  */
-function getSizeDimensions(size: "sm" | "md" | "lg" | "xl"): {
-  width: number;
-  height: number;
+function getSizeDimensions(size: 'sm' | 'md' | 'lg' | 'xl'): {
+  width: number
+  height: number
 } {
   switch (size) {
-    case "sm":
-      return { height: 48, width: 48 };
-    case "md":
-      return { height: 80, width: 80 };
-    case "lg":
-      return { height: 128, width: 128 };
-    case "xl":
-      return { height: 192, width: 192 };
+    case 'sm':
+      return { height: 48, width: 48 }
+    case 'md':
+      return { height: 80, width: 80 }
+    case 'lg':
+      return { height: 128, width: 128 }
+    case 'xl':
+      return { height: 192, width: 192 }
     default:
-      return { height: 80, width: 80 };
+      return { height: 80, width: 80 }
   }
 }
 
@@ -66,10 +66,10 @@ function getSizeDimensions(size: "sm" | "md" | "lg" | "xl"): {
  * Background color classes
  */
 const BACKGROUND_CLASSES = {
-  gray: "bg-gray-50",
-  transparent: "bg-transparent",
-  white: "bg-white",
-} as const;
+  gray: 'bg-gray-50',
+  transparent: 'bg-transparent',
+  white: 'bg-white',
+} as const
 
 /**
  * WindowDiagram Component
@@ -94,23 +94,23 @@ const BACKGROUND_CLASSES = {
  */
 export function WindowDiagram({
   type,
-  size = "md",
+  size = 'md',
   className,
   alt,
   showBorder = false,
-  background = "transparent",
+  background = 'transparent',
 }: WindowDiagramProps) {
-  const diagram = getWindowDiagram(type);
-  const dimensions = getSizeDimensions(size);
+  const diagram = getWindowDiagram(type)
+  const dimensions = getSizeDimensions(size)
 
   return (
     <div
       className={cn(
-        "relative flex items-center justify-center",
+        'relative flex items-center justify-center',
         SIZE_CLASSES[size],
         BACKGROUND_CLASSES[background],
-        showBorder && "rounded-md border border-gray-200",
-        className
+        showBorder && 'rounded-md border border-gray-200',
+        className,
       )}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -125,7 +125,7 @@ export function WindowDiagram({
         width={dimensions.width}
       />
     </div>
-  );
+  )
 }
 
 /**
@@ -135,19 +135,15 @@ export function WindowDiagram({
  * Use with React Suspense boundaries.
  */
 export function WindowDiagramSkeleton({
-  size = "md",
+  size = 'md',
   className,
-}: Pick<WindowDiagramProps, "size" | "className">) {
+}: Pick<WindowDiagramProps, 'size' | 'className'>) {
   return (
     <output
       aria-busy="true"
-      className={cn(
-        "animate-pulse rounded-md bg-gray-200",
-        SIZE_CLASSES[size],
-        className
-      )}
+      className={cn('animate-pulse rounded-md bg-gray-200', SIZE_CLASSES[size], className)}
     >
       <span className="sr-only">Cargando diagrama...</span>
     </output>
-  );
+  )
 }

@@ -8,11 +8,11 @@
  * - Handles edit/delete actions via callbacks
  */
 
-"use client";
+'use client'
 
-import { Pencil, Trash2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Pencil, Trash2 } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
@@ -20,80 +20,72 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { ColorChip } from "./color-chip";
+} from '@/components/ui/table'
+import { ColorChip } from './color-chip'
 
 type SerializedColor = {
-  id: string;
-  name: string;
-  hexCode: string;
-  ralCode: string | null;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-};
+  id: string
+  name: string
+  hexCode: string
+  ralCode: string | null
+  isActive: boolean
+  createdAt: Date
+  updatedAt: Date
+}
 
 type ColorsTableProps = {
-  colors: SerializedColor[];
-  onEditAction: (id: string) => void;
-  onDeleteAction: (color: { id: string; name: string }) => void;
-};
+  colors: SerializedColor[]
+  onEditAction: (id: string) => void
+  onDeleteAction: (color: { id: string; name: string }) => void
+}
 
 // Time constants in milliseconds
-const MS_PER_MINUTE = 60_000;
-const MS_PER_HOUR = 3_600_000;
-const MS_PER_DAY = 86_400_000;
-const MINUTES_PER_HOUR = 60;
-const HOURS_PER_DAY = 24;
-const MAX_DAYS_FOR_RELATIVE_TIME = 30;
+const MS_PER_MINUTE = 60_000
+const MS_PER_HOUR = 3_600_000
+const MS_PER_DAY = 86_400_000
+const MINUTES_PER_HOUR = 60
+const HOURS_PER_DAY = 24
+const MAX_DAYS_FOR_RELATIVE_TIME = 30
 
 /**
  * Simple relative time formatter (without external dependencies)
  */
 function formatRelativeTime(date: Date): string {
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / MS_PER_MINUTE);
-  const diffHours = Math.floor(diffMs / MS_PER_HOUR);
-  const diffDays = Math.floor(diffMs / MS_PER_DAY);
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const diffMins = Math.floor(diffMs / MS_PER_MINUTE)
+  const diffHours = Math.floor(diffMs / MS_PER_HOUR)
+  const diffDays = Math.floor(diffMs / MS_PER_DAY)
 
   if (diffMins < 1) {
-    return "hace un momento";
+    return 'hace un momento'
   }
   if (diffMins < MINUTES_PER_HOUR) {
-    return `hace ${diffMins} min`;
+    return `hace ${diffMins} min`
   }
   if (diffHours < HOURS_PER_DAY) {
-    return `hace ${diffHours}h`;
+    return `hace ${diffHours}h`
   }
   if (diffDays < MAX_DAYS_FOR_RELATIVE_TIME) {
-    return `hace ${diffDays}d`;
+    return `hace ${diffDays}d`
   }
-  return date.toLocaleDateString("es-ES", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
+  return date.toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  })
 }
 
-export function ColorsTable({
-  colors,
-  onEditAction,
-  onDeleteAction,
-}: ColorsTableProps) {
+export function ColorsTable({ colors, onEditAction, onDeleteAction }: ColorsTableProps) {
   if (colors.length === 0) {
     return (
       <div className="flex min-h-[400px] items-center justify-center rounded-lg border border-dashed">
         <div className="text-center">
-          <p className="font-medium text-muted-foreground">
-            No se encontraron colores
-          </p>
-          <p className="mt-2 text-muted-foreground text-sm">
-            Crea tu primer color para comenzar
-          </p>
+          <p className="font-medium text-muted-foreground">No se encontraron colores</p>
+          <p className="mt-2 text-muted-foreground text-sm">Crea tu primer color para comenzar</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -118,14 +110,14 @@ export function ColorsTable({
               </TableCell>
               <TableCell className="font-medium">{color.name}</TableCell>
               <TableCell className="text-muted-foreground text-sm">
-                {color.ralCode ?? "—"}
+                {color.ralCode ?? '—'}
               </TableCell>
               <TableCell className="font-mono text-muted-foreground text-sm uppercase">
                 {color.hexCode}
               </TableCell>
               <TableCell>
-                <Badge variant={color.isActive ? "default" : "secondary"}>
-                  {color.isActive ? "Activo" : "Inactivo"}
+                <Badge variant={color.isActive ? 'default' : 'secondary'}>
+                  {color.isActive ? 'Activo' : 'Inactivo'}
                 </Badge>
               </TableCell>
               <TableCell className="text-muted-foreground text-sm">
@@ -133,18 +125,12 @@ export function ColorsTable({
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-2">
-                  <Button
-                    onClick={() => onEditAction(color.id)}
-                    size="sm"
-                    variant="ghost"
-                  >
+                  <Button onClick={() => onEditAction(color.id)} size="sm" variant="ghost">
                     <Pencil className="h-4 w-4" />
                     <span className="sr-only">Editar {color.name}</span>
                   </Button>
                   <Button
-                    onClick={() =>
-                      onDeleteAction({ id: color.id, name: color.name })
-                    }
+                    onClick={() => onDeleteAction({ id: color.id, name: color.name })}
                     size="sm"
                     variant="ghost"
                   >
@@ -158,5 +144,5 @@ export function ColorsTable({
         </TableBody>
       </Table>
     </div>
-  );
+  )
 }

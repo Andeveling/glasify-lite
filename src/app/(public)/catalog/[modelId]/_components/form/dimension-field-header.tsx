@@ -1,21 +1,21 @@
-import type { ReactNode } from "react";
-import { FormLabel } from "@/components/ui/form";
-import { ValidationIndicator } from "@/components/validation-indicator";
+import type { ReactNode } from 'react'
+import { FormLabel } from '@/components/ui/form'
+import { ValidationIndicator } from '@/components/validation-indicator'
 
 /**
  * Props for DimensionFieldHeader component
  * Interface Segregation Principle: Only what's needed for header rendering
  */
 type DimensionFieldHeaderProps = {
-  label: string;
-  labelClassName: string;
-  showInlineRangeHint: boolean;
-  min: number;
-  max: number;
-  showValidationIndicator: boolean;
-  isValid: boolean;
-  hasValue: boolean;
-};
+  label: string
+  labelClassName: string
+  showInlineRangeHint: boolean
+  min: number
+  max: number
+  showValidationIndicator: boolean
+  isValid: boolean
+  hasValue: boolean
+}
 
 /**
  * Header component for dimension fields
@@ -59,35 +59,31 @@ export function DimensionFieldHeader({
         <ValidationIndicator isValid={isValid} showIndicator={hasValue} />
       )}
     </div>
-  );
+  )
 }
 
 /**
  * Props for optional content wrapper
  */
 type OptionalContentProps = {
-  show: boolean;
-  children: ReactNode;
-  className?: string;
-};
+  show: boolean
+  children: ReactNode
+  className?: string
+}
 
 /**
  * Wrapper component for optional conditional content
  * Single Responsibility: Handles conditional rendering logic
  * Reduces repetitive {condition && <Component />} patterns
  */
-export function OptionalContent({
-  show,
-  children,
-  className,
-}: OptionalContentProps) {
+export function OptionalContent({ show, children, className }: OptionalContentProps) {
   if (!show) {
-    return null;
+    return null
   }
 
   if (className) {
-    return <div className={className}>{children}</div>;
+    return <div className={className}>{children}</div>
   }
 
-  return children;
+  return children
 }

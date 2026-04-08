@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { Suspense } from "react";
-import { SocialMediaLinks } from "@/app/_components/social-media-links";
+import Link from 'next/link'
+import { Suspense } from 'react'
+import { SocialMediaLinks } from '@/app/_components/social-media-links'
 
 export default function PublicFooter() {
   return (
@@ -12,18 +12,12 @@ export default function PublicFooter() {
             <h3 className="mb-4 font-semibold text-sm">Vitro Rojas</h3>
             <ul className="space-y-2 text-foreground/60 text-sm">
               <li>
-                <Link
-                  className="transition-colors hover:text-foreground"
-                  href="/catalog"
-                >
+                <Link className="transition-colors hover:text-foreground" href="/catalog">
                   Acerca de
                 </Link>
               </li>
               <li>
-                <Link
-                  className="transition-colors hover:text-foreground"
-                  href="/catalog"
-                >
+                <Link className="transition-colors hover:text-foreground" href="/catalog">
                   Documentación
                 </Link>
               </li>
@@ -35,10 +29,7 @@ export default function PublicFooter() {
             <h3 className="mb-4 font-semibold text-sm">Productos</h3>
             <ul className="space-y-2 text-foreground/60 text-sm">
               <li>
-                <Link
-                  className="transition-colors hover:text-foreground"
-                  href="/catalog"
-                >
+                <Link className="transition-colors hover:text-foreground" href="/catalog">
                   Catálogo completo
                 </Link>
               </li>
@@ -59,5 +50,5 @@ export default function PublicFooter() {
         </div>
       </div>
     </footer>
-  );
+  )
 }

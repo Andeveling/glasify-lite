@@ -5,12 +5,12 @@
  */
 
 /** Conversion factor from millimeters to meters */
-const MM_TO_METERS = 1000;
+const MM_TO_METERS = 1000
 
 export type GlassDiscounts = {
-  heightMm: number;
-  widthMm: number;
-};
+  heightMm: number
+  widthMm: number
+}
 
 /**
  * Calculate billable glass area in m² applying profile discounts
@@ -27,17 +27,17 @@ export type GlassDiscounts = {
 export function calculateGlassArea(
   widthMm: number,
   heightMm: number,
-  discounts: GlassDiscounts
+  discounts: GlassDiscounts,
 ): number {
   // Apply glass discounts (profiles take space)
-  const effectiveWidthMm = Math.max(widthMm - discounts.widthMm, 0);
-  const effectiveHeightMm = Math.max(heightMm - discounts.heightMm, 0);
+  const effectiveWidthMm = Math.max(widthMm - discounts.widthMm, 0)
+  const effectiveHeightMm = Math.max(heightMm - discounts.heightMm, 0)
 
-  const widthM = effectiveWidthMm / MM_TO_METERS;
-  const heightM = effectiveHeightMm / MM_TO_METERS;
+  const widthM = effectiveWidthMm / MM_TO_METERS
+  const heightM = effectiveHeightMm / MM_TO_METERS
 
   if (widthM > 0 && heightM > 0) {
-    return widthM * heightM;
+    return widthM * heightM
   }
-  return 0;
+  return 0
 }

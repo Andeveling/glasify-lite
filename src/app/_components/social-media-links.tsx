@@ -1,7 +1,7 @@
-import { unstable_cache } from "next/cache";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { db } from "@/server/db";
+import { unstable_cache } from 'next/cache'
+import Link from 'next/link'
+import { cn } from '@/lib/utils'
+import { db } from '@/server/db'
 
 type SocialMediaLinksProps = {
   /**
@@ -9,13 +9,13 @@ type SocialMediaLinksProps = {
    * - "default": Normal size (24px icons)
    * - "compact": Smaller size (20px icons)
    */
-  variant?: "default" | "compact";
+  variant?: 'default' | 'compact'
 
   /**
    * Optional className for container
    */
-  className?: string;
-};
+  className?: string
+}
 
 /**
  * SocialMediaLinks Component
@@ -45,47 +45,36 @@ type SocialMediaLinksProps = {
 const getTenantSocialMedia = unstable_cache(
   async () =>
     db.tenantConfig.findUnique({
-      where: { id: "1" },
+      where: { id: '1' },
       select: {
         facebookUrl: true,
         instagramUrl: true,
         linkedinUrl: true,
       },
     }),
-  ["tenant-social-media"],
+  ['tenant-social-media'],
   {
     revalidate: 3600, // Cache for 1 hour
-    tags: ["tenant-config"],
-  }
-);
+    tags: ['tenant-config'],
+  },
+)
 
-export async function SocialMediaLinks({
-  variant = "default",
-  className,
-}: SocialMediaLinksProps) {
+export async function SocialMediaLinks({ variant = 'default', className }: SocialMediaLinksProps) {
   // Fetch tenant config with caching
-  const tenantConfig = await getTenantSocialMedia();
+  const tenantConfig = await getTenantSocialMedia()
 
   // No config found or all URLs empty
   const hasAnySocialUrl =
-    tenantConfig?.facebookUrl ||
-    tenantConfig?.instagramUrl ||
-    tenantConfig?.linkedinUrl;
+    tenantConfig?.facebookUrl || tenantConfig?.instagramUrl || tenantConfig?.linkedinUrl
 
   if (!hasAnySocialUrl) {
-    return null;
+    return null
   }
 
-  const iconClass = cn(
-    "transition-colors",
-    variant === "compact" ? "h-5 w-5" : "h-6 w-6"
-  );
+  const iconClass = cn('transition-colors', variant === 'compact' ? 'h-5 w-5' : 'h-6 w-6')
 
   return (
-    <div
-      className={cn("flex items-center gap-4", className)}
-      data-testid="social-media-links"
-    >
+    <div className={cn('flex items-center gap-4', className)} data-testid="social-media-links">
       {tenantConfig.facebookUrl && (
         <Link
           aria-label="Facebook"
@@ -149,5 +138,5 @@ export async function SocialMediaLinks({
         </Link>
       )}
     </div>
-  );
+  )
 }

@@ -8,55 +8,55 @@
  * - La infraestructura implementa CÓMO (adapter)
  */
 
-import type { Quote, QuoteItem, QuoteStatus } from "@prisma/generated/client";
+import type { Quote, QuoteItem, QuoteStatus } from '@prisma/generated/client'
 
 /**
  * Filters para listar quotes
  */
 export type QuoteListFilters = {
-  userId?: string;
-  status?: QuoteStatus;
-  search?: string;
-  tenantId?: string;
-  cursor?: string;
-  limit?: number;
-};
+  userId?: string
+  status?: QuoteStatus
+  search?: string
+  tenantId?: string
+  cursor?: string
+  limit?: number
+}
 
 /**
  * Resultado paginado
  */
 export type PaginatedQuotes = {
-  quotes: Quote[];
-  totalCount: number;
-  nextCursor?: string;
-};
+  quotes: Quote[]
+  totalCount: number
+  nextCursor?: string
+}
 
 /**
  * Input para crear Quote
  */
 export type CreateQuoteInput = {
-  currency: string;
-  status: QuoteStatus;
-  validUntil: Date;
-  userId?: string;
-};
+  currency: string
+  status: QuoteStatus
+  validUntil: Date
+  userId?: string
+}
 
 /**
  * Input para crear QuoteItem
  */
 export type CreateQuoteItemInput = {
-  quoteId: string;
-  modelId: string;
-  glassTypeId: string;
-  widthMm: number;
-  heightMm: number;
-  quantity: number;
-  unit: "unit" | "sqm" | "ml";
-  subtotal: number;
-  roomLocation?: string | null;
-  imageUrl?: string | null;
-  modelColorId?: string | null;
-};
+  quoteId: string
+  modelId: string
+  glassTypeId: string
+  widthMm: number
+  heightMm: number
+  quantity: number
+  unit: 'unit' | 'sqm' | 'ml'
+  subtotal: number
+  roomLocation?: string | null
+  imageUrl?: string | null
+  modelColorId?: string | null
+}
 
 /**
  * QuoteRepository - Port (Interface)
@@ -68,55 +68,55 @@ export type QuoteRepository = {
   /**
    * Encuentra una quote por ID
    */
-  findById(id: string): Promise<Quote | null>;
+  findById(id: string): Promise<Quote | null>
 
   /**
    * Encuentra una quote por ID con sus items
    */
   findByIdWithItems(id: string): Promise<
     | (Quote & {
-        items: QuoteItem[];
+        items: QuoteItem[]
       })
     | null
-  >;
+  >
 
   /**
    * Crea una nueva quote
    */
-  create(input: CreateQuoteInput): Promise<Quote>;
+  create(input: CreateQuoteInput): Promise<Quote>
 
   /**
    * Actualiza el total de una quote
    */
-  updateTotal(id: string, total: number): Promise<Quote>;
+  updateTotal(id: string, total: number): Promise<Quote>
 
   /**
    * Actualiza el status de una quote
    */
-  updateStatus(id: string, status: QuoteStatus): Promise<Quote>;
+  updateStatus(id: string, status: QuoteStatus): Promise<Quote>
 
   /**
    * Lista quotes con filtros
    */
-  list(filters: QuoteListFilters): Promise<PaginatedQuotes>;
+  list(filters: QuoteListFilters): Promise<PaginatedQuotes>
 
   /**
    * Cuenta quotes con filtros
    */
-  count(filters: Omit<QuoteListFilters, "cursor" | "limit">): Promise<number>;
+  count(filters: Omit<QuoteListFilters, 'cursor' | 'limit'>): Promise<number>
 
   /**
    * Crea un QuoteItem
    */
-  createItem(input: CreateQuoteItemInput): Promise<QuoteItem>;
+  createItem(input: CreateQuoteItemInput): Promise<QuoteItem>
 
   /**
    * Lista items de una quote
    */
-  listItems(quoteId: string): Promise<QuoteItem[]>;
+  listItems(quoteId: string): Promise<QuoteItem[]>
 
   /**
    * Elimina un item de una quote
    */
-  deleteItem(itemId: string): Promise<void>;
-};
+  deleteItem(itemId: string): Promise<void>
+}

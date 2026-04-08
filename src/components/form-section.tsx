@@ -1,6 +1,6 @@
-import type { LucideIcon } from "lucide-react";
-import type { ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import type { LucideIcon } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { cn } from '@/lib/utils'
 import {
   FieldContent,
   FieldDescription,
@@ -9,22 +9,22 @@ import {
   FieldLegend,
   FieldSeparator,
   FieldSet,
-} from "./ui/field";
+} from './ui/field'
 
 type FormSectionProps = {
-  icon?: LucideIcon;
-  legend: string;
-  description?: string;
-  children: ReactNode;
-  errors?: Array<{ message?: string } | undefined>;
-  className?: string;
-  legendClassName?: string;
-  descriptionClassName?: string;
-  groupClassName?: string;
-  orientation?: "vertical" | "horizontal" | "responsive";
-  showSeparator?: boolean;
-  separatorText?: string;
-};
+  icon?: LucideIcon
+  legend: string
+  description?: string
+  children: ReactNode
+  errors?: Array<{ message?: string } | undefined>
+  className?: string
+  legendClassName?: string
+  descriptionClassName?: string
+  groupClassName?: string
+  orientation?: 'vertical' | 'horizontal' | 'responsive'
+  showSeparator?: boolean
+  separatorText?: string
+}
 
 /**
  * FormSection component for consistent form section layout.
@@ -41,7 +41,7 @@ export function FormSection({
   legendClassName,
   descriptionClassName,
   groupClassName,
-  orientation = "vertical",
+  orientation = 'vertical',
   showSeparator = false,
   separatorText,
 }: FormSectionProps) {
@@ -49,16 +49,12 @@ export function FormSection({
     <FieldSet className={className}>
       <FieldGroup className={groupClassName} data-orientation={orientation}>
         <div className="space-y-2">
-          <FieldLegend
-            className={cn("font-bold text-2xl tracking-tight", legendClassName)}
-          >
+          <FieldLegend className={cn('font-bold text-2xl tracking-tight', legendClassName)}>
             {Icon && <Icon className="mr-3 mb-1 inline size-6 text-primary" />}
             {legend}
           </FieldLegend>
           {description && (
-            <FieldDescription className={descriptionClassName}>
-              {description}
-            </FieldDescription>
+            <FieldDescription className={descriptionClassName}>{description}</FieldDescription>
           )}
         </div>
 
@@ -69,11 +65,9 @@ export function FormSection({
 
       {showSeparator && (
         <FieldSeparator>
-          {separatorText && (
-            <span className="font-medium text-xs">{separatorText}</span>
-          )}
+          {separatorText && <span className="font-medium text-xs">{separatorText}</span>}
         </FieldSeparator>
       )}
     </FieldSet>
-  );
+  )
 }

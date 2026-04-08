@@ -7,12 +7,12 @@
  * @see /plan/feature-branding-communication-1.md (US-009, US-010)
  */
 
-import { z } from "zod";
-import logger from "@/lib/logger";
-import { updateTenantConfigSchema } from "../../../schemas/tenant.schema";
-import { getTenantConfig, updateTenantConfig } from "../../../utils/tenant";
-import { updateBrandingSchema } from "../../schemas/branding.schema";
-import { adminProcedure, createTRPCRouter, publicProcedure } from "../../trpc";
+import { z } from 'zod'
+import logger from '@/lib/logger'
+import { updateTenantConfigSchema } from '../../../schemas/tenant.schema'
+import { getTenantConfig, updateTenantConfig } from '../../../utils/tenant'
+import { updateBrandingSchema } from '../../schemas/branding.schema'
+import { adminProcedure, createTRPCRouter, publicProcedure } from '../../trpc'
 
 export const tenantConfigRouter = createTRPCRouter({
   /**
@@ -33,8 +33,8 @@ export const tenantConfigRouter = createTRPCRouter({
    * - Non-sensitive information
    */
   getCurrency: publicProcedure.query(async () => {
-    const config = await getTenantConfig();
-    return config.currency;
+    const config = await getTenantConfig()
+    return config.currency
   }),
 
   /**
@@ -43,8 +43,8 @@ export const tenantConfigRouter = createTRPCRouter({
    * Remains publicProcedure - shown to users before they create quotes
    */
   getQuoteValidityDays: publicProcedure.query(async () => {
-    const config = await getTenantConfig();
-    return config.quoteValidityDays;
+    const config = await getTenantConfig()
+    return config.quoteValidityDays
   }),
 
   /**
@@ -72,13 +72,13 @@ export const tenantConfigRouter = createTRPCRouter({
         whatsappEnabled: true,
         whatsappNumber: true,
       },
-    });
+    })
 
     if (!config) {
-      throw new Error("Configuración de tenant no encontrada");
+      throw new Error('Configuración de tenant no encontrada')
     }
 
-    return config;
+    return config
   }),
 
   /**
@@ -86,80 +86,78 @@ export const tenantConfigRouter = createTRPCRouter({
    * Admin only - modifies branding settings
    * US-009: Configurar datos de branding del tenant
    */
-  updateBranding: adminProcedure
-    .input(updateBrandingSchema)
-    .mutation(async ({ ctx, input }) => {
-      const tenantId = "1"; // Singleton tenant ID
+  updateBranding: adminProcedure.input(updateBrandingSchema).mutation(async ({ ctx, input }) => {
+    const tenantId = '1' // Singleton tenant ID
 
-      logger.info("Updating branding configuration", {
-        changes: Object.keys(input),
-        input,
-        tenantId,
-        userId: ctx.session.user.id,
-      });
+    logger.info('Updating branding configuration', {
+      changes: Object.keys(input),
+      input,
+      tenantId,
+      userId: ctx.session.user.id,
+    })
 
-      // Build update data object - only include fields that are present in input
-      const updateData: {
-        facebookUrl?: string | null;
-        instagramUrl?: string | null;
-        linkedinUrl?: string | null;
-        logoUrl?: string | null;
-        primaryColor?: string;
-        secondaryColor?: string;
-        whatsappEnabled?: boolean;
-        whatsappNumber?: string | null;
-      } = {};
+    // Build update data object - only include fields that are present in input
+    const updateData: {
+      facebookUrl?: string | null
+      instagramUrl?: string | null
+      linkedinUrl?: string | null
+      logoUrl?: string | null
+      primaryColor?: string
+      secondaryColor?: string
+      whatsappEnabled?: boolean
+      whatsappNumber?: string | null
+    } = {}
 
-      // Social media URLs (convert empty strings to null)
-      if (input.facebookUrl !== undefined) {
-        updateData.facebookUrl = input.facebookUrl || null;
-      }
-      if (input.instagramUrl !== undefined) {
-        updateData.instagramUrl = input.instagramUrl || null;
-      }
-      if (input.linkedinUrl !== undefined) {
-        updateData.linkedinUrl = input.linkedinUrl || null;
-      }
+    // Social media URLs (convert empty strings to null)
+    if (input.facebookUrl !== undefined) {
+      updateData.facebookUrl = input.facebookUrl || null
+    }
+    if (input.instagramUrl !== undefined) {
+      updateData.instagramUrl = input.instagramUrl || null
+    }
+    if (input.linkedinUrl !== undefined) {
+      updateData.linkedinUrl = input.linkedinUrl || null
+    }
 
-      // Logo URL
-      if (input.logoUrl !== undefined) {
-        updateData.logoUrl = input.logoUrl || null;
-      }
+    // Logo URL
+    if (input.logoUrl !== undefined) {
+      updateData.logoUrl = input.logoUrl || null
+    }
 
-      // Colors (optional, for future use)
-      if (input.primaryColor !== undefined) {
-        updateData.primaryColor = input.primaryColor;
-      }
-      if (input.secondaryColor !== undefined) {
-        updateData.secondaryColor = input.secondaryColor;
-      }
+    // Colors (optional, for future use)
+    if (input.primaryColor !== undefined) {
+      updateData.primaryColor = input.primaryColor
+    }
+    if (input.secondaryColor !== undefined) {
+      updateData.secondaryColor = input.secondaryColor
+    }
 
-      // WhatsApp settings
-      if (input.whatsappEnabled !== undefined) {
-        updateData.whatsappEnabled = input.whatsappEnabled;
-      }
-      if (input.whatsappNumber !== undefined) {
-        updateData.whatsappNumber = input.whatsappNumber || null;
-      }
+    // WhatsApp settings
+    if (input.whatsappEnabled !== undefined) {
+      updateData.whatsappEnabled = input.whatsappEnabled
+    }
+    if (input.whatsappNumber !== undefined) {
+      updateData.whatsappNumber = input.whatsappNumber || null
+    }
 
-      logger.info("Prepared update data", {
-        tenantId,
-        updateData,
-        userId: ctx.session.user.id,
-      });
+    logger.info('Prepared update data', {
+      tenantId,
+      updateData,
+      userId: ctx.session.user.id,
+    })
 
-      const updated = await ctx.db.tenantConfig.update({
-        data: updateData,
-        where: { id: tenantId },
-      });
+    const updated = await ctx.db.tenantConfig.update({
+      data: updateData,
+      where: { id: tenantId },
+    })
 
-      logger.info("Branding configuration updated successfully", {
-        tenantId,
-        userId: ctx.session.user.id,
-      });
+    logger.info('Branding configuration updated successfully', {
+      tenantId,
+      userId: ctx.session.user.id,
+    })
 
-      return updated;
-    }),
+    return updated
+  }),
 
   /**
    * Upload logo file
@@ -172,6 +170,6 @@ export const tenantConfigRouter = createTRPCRouter({
     .input(z.object({ file: z.instanceof(File) }))
     .mutation(({ input: _input }) => {
       // TODO: Implement when logoUrl field is added to TenantConfig schema
-      throw new Error("Logo upload not yet implemented in schema");
+      throw new Error('Logo upload not yet implemented in schema')
     }),
-});
+})

@@ -6,6 +6,5 @@
  * application-specific business requirements.
  */
 
-// biome-ignore lint/performance/noBarrelFile: Domain layer public API boundary - intentional re-export pattern for clean architecture
-export { CalculateItemPrice } from "./calculate-item-price";
-export type { PriceCalculatorPort } from "./ports/price-calculator-port";
+export { CalculateItemPrice } from './calculate-item-price'
+export type { PriceCalculatorPort } from './ports/price-calculator-port'

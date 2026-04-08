@@ -1,12 +1,9 @@
-import type { LucideIcon } from "lucide-react";
-import { Home, Shield, Snowflake, Sparkles, Volume2, Zap } from "lucide-react";
-import { useMemo } from "react";
-import type { GlassTypeOutput } from "@/server/api/routers/catalog/catalog.schemas";
-import {
-  buildGlassFeatures,
-  calculatePerformanceRatings,
-} from "../_utils/glass-type.utils";
-import type { GlassTypeOption } from "./use-glass-type-options";
+import type { LucideIcon } from 'lucide-react'
+import { Home, Shield, Snowflake, Sparkles, Volume2, Zap } from 'lucide-react'
+import { useMemo } from 'react'
+import type { GlassTypeOutput } from '@/server/api/routers/catalog/catalog.schemas'
+import { buildGlassFeatures, calculatePerformanceRatings } from '../_utils/glass-type.utils'
+import type { GlassTypeOption } from './use-glass-type-options'
 
 /**
  * Custom Hook: useGlassTypesByTab
@@ -24,11 +21,11 @@ import type { GlassTypeOption } from "./use-glass-type-options";
 // ============================================================================
 
 export type GlassTab = {
-  icon: LucideIcon;
-  key: string;
-  label: string;
-  options: GlassTypeOption[];
-};
+  icon: LucideIcon
+  key: string
+  label: string
+  options: GlassTypeOption[]
+}
 
 // ============================================================================
 // Icon Mapping
@@ -42,58 +39,53 @@ function getSolutionIcon(iconName: string | null | undefined): LucideIcon {
     Sparkles,
     Volume2,
     Zap,
-  };
+  }
 
-  return iconName && iconMap[iconName] ? iconMap[iconName] : Home;
+  return iconName && iconMap[iconName] ? iconMap[iconName] : Home
 }
 
 // ============================================================================
 // Hook Implementation
 // ============================================================================
 
-export function useGlassTypesByTab(
-  glassTypes: GlassTypeOutput[],
-  basePrice?: number
-): GlassTab[] {
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex glass type grouping logic with deduplication, primary solution mapping, and fallback tabs. Necessary for proper glass solution categorization.
+export function useGlassTypesByTab(glassTypes: GlassTypeOutput[], basePrice?: number): GlassTab[] {
   const tabs = useMemo(() => {
     // Step 1: Map glass types to their PRIMARY solution only (deduplicate)
     const primarySolutionsMap = new Map<
       string,
       {
-        id: string;
-        key: string;
-        label: string;
-        icon: LucideIcon;
-        sortOrder: number;
-        glassTypes: GlassTypeOutput[];
+        id: string
+        key: string
+        label: string
+        icon: LucideIcon
+        sortOrder: number
+        glassTypes: GlassTypeOutput[]
       }
-    >();
+    >()
 
     // Track assigned glass types to avoid duplicates
-    const assignedGlassTypes = new Set<string>();
+    const assignedGlassTypes = new Set<string>()
 
     // Track glass types WITHOUT solutions for fallback tab
-    const glassTypesWithoutSolution: GlassTypeOutput[] = [];
+    const glassTypesWithoutSolution: GlassTypeOutput[] = []
 
     for (const glassType of glassTypes) {
       // Skip if already assigned to a tab
       if (assignedGlassTypes.has(glassType.id)) {
-        continue;
+        continue
       }
 
       // Find primary solution (or first solution if no primary)
       const primarySolution =
-        glassType.solutions?.find((s) => s.isPrimary) ??
-        glassType.solutions?.[0];
+        glassType.solutions?.find((s) => s.isPrimary) ?? glassType.solutions?.[0]
 
       // ✅ FIX: If no solution, add to fallback list instead of skipping
       if (!primarySolution) {
-        glassTypesWithoutSolution.push(glassType);
-        continue;
+        glassTypesWithoutSolution.push(glassType)
+        continue
       }
 
-      const solution = primarySolution.solution;
+      const solution = primarySolution.solution
 
       if (!primarySolutionsMap.has(solution.id)) {
         primarySolutionsMap.set(solution.id, {
@@ -103,26 +95,26 @@ export function useGlassTypesByTab(
           key: solution.key,
           label: solution.nameEs,
           sortOrder: solution.sortOrder,
-        });
+        })
       }
 
-      const solutionTab = primarySolutionsMap.get(solution.id);
+      const solutionTab = primarySolutionsMap.get(solution.id)
       if (solutionTab) {
-        solutionTab.glassTypes.push(glassType);
+        solutionTab.glassTypes.push(glassType)
       }
-      assignedGlassTypes.add(glassType.id);
+      assignedGlassTypes.add(glassType.id)
     }
 
     // ✅ FIX: Add fallback "General" tab for glass types without solutions
     if (glassTypesWithoutSolution.length > 0) {
-      primarySolutionsMap.set("general", {
+      primarySolutionsMap.set('general', {
         glassTypes: glassTypesWithoutSolution,
         icon: Home,
-        id: "general",
-        key: "general",
-        label: "General",
+        id: 'general',
+        key: 'general',
+        label: 'General',
         sortOrder: 999, // Show last
-      });
+      })
     }
 
     // Step 2: Convert to tabs array and sort by sortOrder
@@ -134,18 +126,15 @@ export function useGlassTypesByTab(
         const options = tab.glassTypes.map((glassType): GlassTypeOption => {
           // Get primary solution for this tab
           const primarySolution =
-            glassType.solutions?.find((s) => s.isPrimary) ??
-            glassType.solutions?.[0];
-          const solution = primarySolution?.solution;
+            glassType.solutions?.find((s) => s.isPrimary) ?? glassType.solutions?.[0]
+          const solution = primarySolution?.solution
 
-          const icon = getSolutionIcon(solution?.icon);
-          const title = solution?.nameEs ?? glassType.name;
-          const features = buildGlassFeatures(glassType);
-          const performanceRatings = calculatePerformanceRatings(glassType);
-          const performanceRating = primarySolution?.performanceRating;
-          const priceModifier = basePrice
-            ? glassType.pricePerSqm - basePrice
-            : 0;
+          const icon = getSolutionIcon(solution?.icon)
+          const title = solution?.nameEs ?? glassType.name
+          const features = buildGlassFeatures(glassType)
+          const performanceRatings = calculatePerformanceRatings(glassType)
+          const performanceRating = primarySolution?.performanceRating
+          const priceModifier = basePrice ? glassType.pricePerSqm - basePrice : 0
 
           return {
             acousticRating: performanceRatings.acoustic,
@@ -161,8 +150,8 @@ export function useGlassTypesByTab(
             thermalRating: performanceRatings.thermal,
             thicknessMm: glassType.thicknessMm,
             title,
-          };
-        });
+          }
+        })
 
         // Step 4: Sort options by performance rating and price
         const sortedOptions = options.sort((a, b) => {
@@ -172,31 +161,27 @@ export function useGlassTypesByTab(
             good: 3,
             standard: 2,
             veryGood: 4,
-          };
+          }
 
-          const weightA = a.performanceRating
-            ? (RatingWeights[a.performanceRating] ?? 0)
-            : 0;
-          const weightB = b.performanceRating
-            ? (RatingWeights[b.performanceRating] ?? 0)
-            : 0;
+          const weightA = a.performanceRating ? (RatingWeights[a.performanceRating] ?? 0) : 0
+          const weightB = b.performanceRating ? (RatingWeights[b.performanceRating] ?? 0) : 0
 
           if (weightB !== weightA) {
-            return weightB - weightA;
+            return weightB - weightA
           }
-          return a.pricePerSqm - b.pricePerSqm;
-        });
+          return a.pricePerSqm - b.pricePerSqm
+        })
 
         return {
           icon: tab.icon,
           key: tab.key,
           label: tab.label,
           options: sortedOptions,
-        };
-      });
+        }
+      })
 
-    return tabsArray;
-  }, [glassTypes, basePrice]);
+    return tabsArray
+  }, [glassTypes, basePrice])
 
-  return tabs;
+  return tabs
 }

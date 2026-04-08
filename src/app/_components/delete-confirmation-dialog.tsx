@@ -1,7 +1,7 @@
-"use client";
+'use client'
 
-import { Loader2, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { Loader2, Trash2 } from 'lucide-react'
+import { useState } from 'react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,8 +11,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
 
 /**
  * Delete Confirmation Dialog Component
@@ -37,29 +37,29 @@ import { Button } from "@/components/ui/button";
  */
 
 export type DependencyInfo = {
-  entity: string;
-  count: number;
-  message: string;
-};
+  entity: string
+  count: number
+  message: string
+}
 
 export type DeleteConfirmationDialogProps = {
   /** Dialog open state */
-  open: boolean;
+  open: boolean
   /** Callback when dialog state changes */
-  onOpenChange: (open: boolean) => void;
+  onOpenChange: (open: boolean) => void
   /** Entity type name (e.g., "modelo", "tipo de vidrio") */
-  entityName: string;
+  entityName: string
   /** Specific entity label/name (e.g., "Ventana Corrediza PVC") */
-  entityLabel: string;
+  entityLabel: string
   /** List of dependencies that would prevent deletion */
-  dependencies?: DependencyInfo[];
+  dependencies?: DependencyInfo[]
   /** Callback when delete is confirmed */
-  onConfirm: () => void | Promise<void>;
+  onConfirm: () => void | Promise<void>
   /** Loading state during delete operation */
-  loading?: boolean;
+  loading?: boolean
   /** Custom warning message (optional) */
-  warningMessage?: string;
-};
+  warningMessage?: string
+}
 
 export function DeleteConfirmationDialog({
   open,
@@ -71,24 +71,24 @@ export function DeleteConfirmationDialog({
   loading = false,
   warningMessage,
 }: DeleteConfirmationDialogProps) {
-  const [isConfirming, setIsConfirming] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false)
 
-  const hasDependencies = dependencies.length > 0;
-  const canDelete = !hasDependencies;
+  const hasDependencies = dependencies.length > 0
+  const canDelete = !hasDependencies
 
   const handleConfirm = async () => {
     if (!canDelete) {
-      return;
+      return
     }
 
-    setIsConfirming(true);
+    setIsConfirming(true)
     try {
-      await onConfirm();
-      onOpenChange(false);
+      await onConfirm()
+      onOpenChange(false)
     } finally {
-      setIsConfirming(false);
+      setIsConfirming(false)
     }
-  };
+  }
 
   return (
     <AlertDialog onOpenChange={onOpenChange} open={open}>
@@ -96,9 +96,7 @@ export function DeleteConfirmationDialog({
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
             <Trash2 className="size-5 text-destructive" />
-            {canDelete
-              ? `¿Eliminar ${entityName}?`
-              : `No se puede eliminar ${entityName}`}
+            {canDelete ? `¿Eliminar ${entityName}?` : `No se puede eliminar ${entityName}`}
           </AlertDialogTitle>
           <AlertDialogDescription className="space-y-3 text-left">
             <div>
@@ -108,8 +106,8 @@ export function DeleteConfirmationDialog({
                 </>
               ) : (
                 <>
-                  No puedes eliminar <strong>{entityLabel}</strong> porque tiene
-                  dependencias activas.
+                  No puedes eliminar <strong>{entityLabel}</strong> porque tiene dependencias
+                  activas.
                 </>
               )}
             </div>
@@ -127,8 +125,7 @@ export function DeleteConfirmationDialog({
                   ))}
                 </ul>
                 <div className="mt-3 text-muted-foreground text-xs">
-                  Elimina o actualiza estas dependencias antes de eliminar{" "}
-                  {entityLabel}.
+                  Elimina o actualiza estas dependencias antes de eliminar {entityLabel}.
                 </div>
               </div>
             )}
@@ -141,16 +138,13 @@ export function DeleteConfirmationDialog({
 
             {canDelete && !warningMessage && (
               <div className="text-muted-foreground text-sm">
-                Esta acción no se puede deshacer. El registro será eliminado
-                permanentemente.
+                Esta acción no se puede deshacer. El registro será eliminado permanentemente.
               </div>
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading || isConfirming}>
-            Cancelar
-          </AlertDialogCancel>
+          <AlertDialogCancel disabled={loading || isConfirming}>Cancelar</AlertDialogCancel>
           {canDelete && (
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -173,7 +167,7 @@ export function DeleteConfirmationDialog({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
+  )
 }
 
 /**
@@ -183,28 +177,22 @@ export function DeleteConfirmationDialog({
  * Use with DeleteConfirmationDialog component.
  */
 export type DeleteButtonProps = {
-  onClick: () => void;
-  disabled?: boolean;
-  variant?:
-    | "default"
-    | "destructive"
-    | "outline"
-    | "secondary"
-    | "ghost"
-    | "link";
-  size?: "default" | "sm" | "lg" | "icon";
-};
+  onClick: () => void
+  disabled?: boolean
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
+  size?: 'default' | 'sm' | 'lg' | 'icon'
+}
 
 export function DeleteButton({
   onClick,
   disabled = false,
-  variant = "destructive",
-  size = "sm",
+  variant = 'destructive',
+  size = 'sm',
 }: DeleteButtonProps) {
   return (
     <Button disabled={disabled} onClick={onClick} size={size} variant={variant}>
       <Trash2 className="mr-2 size-4" />
       Eliminar
     </Button>
-  );
+  )
 }

@@ -13,15 +13,15 @@
  * @module app/(public)/cart/_schemas/quote-generation.schema
  */
 
-import { isValidPhoneNumber } from "react-phone-number-input";
-import { z } from "zod";
+import { isValidPhoneNumber } from 'react-phone-number-input'
+import { z } from 'zod'
 
 // ============================================================================
 // Constants
 // ============================================================================
 
-const MAX_PROJECT_NAME_LENGTH = 100;
-const MAX_REFERENCE_LENGTH = 200;
+const MAX_PROJECT_NAME_LENGTH = 100
+const MAX_REFERENCE_LENGTH = 200
 
 // ============================================================================
 // Sub-schemas
@@ -42,20 +42,20 @@ export const deliveryAddressSchema = z.object({
   reference: z.string().nullish(),
   region: z.string().nullish(),
   street: z.string().nullish(),
-});
+})
 
-export type DeliveryAddressInput = z.infer<typeof deliveryAddressSchema>;
+export type DeliveryAddressInput = z.infer<typeof deliveryAddressSchema>
 
 /**
  * Phone validation with international format support
  */
 const phoneSchema = z
   .string()
-  .min(1, "El teléfono es obligatorio")
+  .min(1, 'El teléfono es obligatorio')
   .refine(
     (val) => isValidPhoneNumber(val),
-    "Formato de teléfono inválido. Usa formato internacional (+57...)"
-  );
+    'Formato de teléfono inválido. Usa formato internacional (+57...)',
+  )
 
 // ============================================================================
 // Main Schema
@@ -73,10 +73,7 @@ const phoneSchema = z
 export const quoteGenerationFormSchema = z
   .object({
     /** Optional project name for internal reference */
-    projectName: z
-      .string()
-      .max(MAX_PROJECT_NAME_LENGTH, "Nombre muy largo")
-      .optional(),
+    projectName: z.string().max(MAX_PROJECT_NAME_LENGTH, 'Nombre muy largo').optional(),
 
     /** Geocoded delivery address (required) */
     deliveryAddress: deliveryAddressSchema,
@@ -85,25 +82,20 @@ export const quoteGenerationFormSchema = z
     contactPhone: phoneSchema,
 
     /** Optional delivery reference/instructions */
-    deliveryReference: z
-      .string()
-      .max(MAX_REFERENCE_LENGTH, "Referencia muy larga")
-      .optional(),
+    deliveryReference: z.string().max(MAX_REFERENCE_LENGTH, 'Referencia muy larga').optional(),
   })
   .refine(
     (data) => {
       // Ensure address has at least city (core required field from geocoding)
-      return Boolean(data.deliveryAddress?.city);
+      return Boolean(data.deliveryAddress?.city)
     },
     {
-      message: "Selecciona una dirección válida con ciudad",
-      path: ["deliveryAddress"],
-    }
-  );
+      message: 'Selecciona una dirección válida con ciudad',
+      path: ['deliveryAddress'],
+    },
+  )
 
-export type QuoteGenerationFormValues = z.infer<
-  typeof quoteGenerationFormSchema
->;
+export type QuoteGenerationFormValues = z.infer<typeof quoteGenerationFormSchema>
 
 // ============================================================================
 // Transformation Utils
@@ -116,14 +108,13 @@ export type QuoteGenerationFormValues = z.infer<
  * for backward compatibility with existing Quote schema.
  */
 export function transformToActionInput(values: QuoteGenerationFormValues) {
-  const { deliveryAddress, contactPhone, projectName, deliveryReference } =
-    values;
+  const { deliveryAddress, contactPhone, projectName, deliveryReference } = values
 
   return {
     // Required fields derived from geocoded address
-    projectStreet: deliveryAddress.street ?? deliveryAddress.label ?? "",
-    projectCity: deliveryAddress.city ?? "",
-    projectState: deliveryAddress.region ?? "",
+    projectStreet: deliveryAddress.street ?? deliveryAddress.label ?? '',
+    projectCity: deliveryAddress.city ?? '',
+    projectState: deliveryAddress.region ?? '',
 
     // Optional fields
     projectName: projectName ?? undefined,
@@ -134,5 +125,5 @@ export function transformToActionInput(values: QuoteGenerationFormValues) {
       ...deliveryAddress,
       reference: deliveryReference ?? deliveryAddress.reference ?? null,
     },
-  };
+  }
 }

@@ -12,68 +12,68 @@
  * Features loading state with spinner when navigating to detail page.
  */
 
-"use client";
+'use client'
 
-import { Copy, Edit3, Eye } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
-import { formatCurrency } from "@/lib/format";
-import { cn, formatDate } from "@/lib/utils";
-import { useTenantConfig } from "@/providers/tenant-config-provider";
-import type { QuoteListItemSchema } from "@/server/api/routers/quote/quote.schemas";
-import { getStatusCTA } from "../_utils/status-config";
-import { QuoteStatusBadge } from "./quote-status-badge";
+import { Copy, Edit3, Eye } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState, useTransition } from 'react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Spinner } from '@/components/ui/spinner'
+import { formatCurrency } from '@/lib/format'
+import { cn, formatDate } from '@/lib/utils'
+import { useTenantConfig } from '@/providers/tenant-config-provider'
+import type { QuoteListItemSchema } from '@/server/api/routers/quote/quote.schemas'
+import { getStatusCTA } from '../_utils/status-config'
+import { QuoteStatusBadge } from './quote-status-badge'
 
 type QuoteListItemProps = {
-  quote: QuoteListItemSchema;
-};
+  quote: QuoteListItemSchema
+}
 
 export function QuoteListItem({ quote }: QuoteListItemProps) {
-  const tenantConfig = useTenantConfig();
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const [loadingAction, setLoadingAction] = useState<string | null>(null);
-  const cta = getStatusCTA(quote.status);
+  const tenantConfig = useTenantConfig()
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+  const [loadingAction, setLoadingAction] = useState<string | null>(null)
+  const cta = getStatusCTA(quote.status)
 
   // TODO: QuoteListItemSchema doesn't include items array yet
   // Will show preview once schema is updated with modelImageUrl and windowType
-  const hasItemsPreview = false; // Change to true when schema is updated
+  const hasItemsPreview = false // Change to true when schema is updated
 
   // Handle CTA actions
   const handleCTAClick = () => {
     if (!cta) {
-      return;
+      return
     }
 
-    setLoadingAction(cta.action);
+    setLoadingAction(cta.action)
 
     startTransition(() => {
       switch (cta.action) {
-        case "edit":
-          router.push(`/my-quotes/${quote.id}`);
-          break;
-        case "view":
-          router.push(`/my-quotes/${quote.id}`);
-          break;
-        case "duplicate":
+        case 'edit':
+          router.push(`/my-quotes/${quote.id}`)
+          break
+        case 'view':
+          router.push(`/my-quotes/${quote.id}`)
+          break
+        case 'duplicate':
           // TODO: Implement duplicate functionality in future US
-          router.push(`/my-quotes/${quote.id}`);
-          break;
-        case "resend":
+          router.push(`/my-quotes/${quote.id}`)
+          break
+        case 'resend':
           // TODO: Implement resend functionality in future US
-          router.push(`/my-quotes/${quote.id}`);
-          break;
+          router.push(`/my-quotes/${quote.id}`)
+          break
         default:
           // Unknown action - do nothing
-          setLoadingAction(null);
-          break;
+          setLoadingAction(null)
+          break
       }
-    });
-  };
+    })
+  }
 
   // Icon mapping for CTA actions
   const ctaIcon = {
@@ -81,18 +81,18 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
     edit: Edit3,
     resend: Eye,
     view: Eye,
-  };
+  }
 
-  const CTAIcon = cta ? ctaIcon[cta.action] : Eye;
+  const CTAIcon = cta ? ctaIcon[cta.action] : Eye
 
-  const isLoading = isPending && loadingAction !== null;
+  const isLoading = isPending && loadingAction !== null
 
   return (
     <Card
       className={cn(
-        "transition-all duration-200",
-        quote.isExpired && "opacity-60",
-        isLoading && "opacity-50 ring-2 ring-primary/20"
+        'transition-all duration-200',
+        quote.isExpired && 'opacity-60',
+        isLoading && 'opacity-50 ring-2 ring-primary/20',
       )}
       data-testid="quote-list-item"
     >
@@ -122,13 +122,11 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
 
           <div className="flex items-center gap-6 text-muted-foreground text-sm">
             <div>
-              <span className="font-medium">Creada:</span>{" "}
-              {formatDate(quote.createdAt)}
+              <span className="font-medium">Creada:</span> {formatDate(quote.createdAt)}
             </div>
             {quote.validUntil && (
               <div>
-                <span className="font-medium">Válida hasta:</span>{" "}
-                {formatDate(quote.validUntil)}
+                <span className="font-medium">Válida hasta:</span> {formatDate(quote.validUntil)}
               </div>
             )}
             <div>
@@ -162,12 +160,12 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
             ) : (
               <>
                 <CTAIcon className="mr-2 h-4 w-4" />
-                {cta?.label ?? "Ver detalles"}
+                {cta?.label ?? 'Ver detalles'}
               </>
             )}
           </Button>
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

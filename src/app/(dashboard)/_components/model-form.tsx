@@ -1,19 +1,13 @@
-"use client";
+'use client'
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import type { UseFormReturn } from "react-hook-form";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
+import type { UseFormReturn } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Form,
   FormControl,
@@ -22,26 +16,26 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Icons } from "@/components/ui/icons";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form'
+import { Icons } from '@/components/ui/icons'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { api } from "@/trpc/react";
+} from '@/components/ui/select'
+import { api } from '@/trpc/react'
 
 // Constants to avoid magic numbers
-const MIN_DIMENSION = 100;
-const MAX_DIMENSION = 5000;
-const MAX_NAME_LENGTH = 100;
-const MAX_PRICE = 999_999;
-const MAX_COST_PER_MM = 100;
-const DEFAULT_MIN_DIMENSION = 200;
-const DEFAULT_MAX_DIMENSION = 2000;
+const MIN_DIMENSION = 100
+const MAX_DIMENSION = 5000
+const MAX_NAME_LENGTH = 100
+const MAX_PRICE = 999_999
+const MAX_COST_PER_MM = 100
+const DEFAULT_MIN_DIMENSION = 200
+const DEFAULT_MAX_DIMENSION = 2000
 
 // Simplified Zod schema matching admin.model-upsert input schema
 const modelFormSchema = z
@@ -49,139 +43,103 @@ const modelFormSchema = z
     accessoryPrice: z.number().min(0).optional().nullable(),
     basePrice: z
       .number()
-      .min(0, "El precio base debe ser mayor o igual a 0")
-      .max(
-        MAX_PRICE,
-        `El precio base no debe exceder ${MAX_PRICE.toLocaleString()}`
-      ),
+      .min(0, 'El precio base debe ser mayor o igual a 0')
+      .max(MAX_PRICE, `El precio base no debe exceder ${MAX_PRICE.toLocaleString()}`),
     compatibleGlassTypeIds: z
-      .array(z.string().cuid("ID del tipo de cristal debe ser válido"))
-      .min(1, "Debe seleccionar al menos un tipo de cristal compatible"),
+      .array(z.string().cuid('ID del tipo de cristal debe ser válido'))
+      .min(1, 'Debe seleccionar al menos un tipo de cristal compatible'),
     costPerMmHeight: z
       .number()
-      .min(0, "El costo por mm de altura debe ser mayor o igual a 0")
-      .max(
-        MAX_COST_PER_MM,
-        `El costo por mm de altura no debe exceder ${MAX_COST_PER_MM}`
-      ),
+      .min(0, 'El costo por mm de altura debe ser mayor o igual a 0')
+      .max(MAX_COST_PER_MM, `El costo por mm de altura no debe exceder ${MAX_COST_PER_MM}`),
     costPerMmWidth: z
       .number()
-      .min(0, "El costo por mm de ancho debe ser mayor o igual a 0")
-      .max(
-        MAX_COST_PER_MM,
-        `El costo por mm de ancho no debe exceder ${MAX_COST_PER_MM}`
-      ),
+      .min(0, 'El costo por mm de ancho debe ser mayor o igual a 0')
+      .max(MAX_COST_PER_MM, `El costo por mm de ancho no debe exceder ${MAX_COST_PER_MM}`),
     id: z.string().cuid().optional(),
     maxHeightMm: z
       .number()
       .int()
-      .min(
-        MIN_DIMENSION,
-        `La altura máxima debe ser al menos ${MIN_DIMENSION}mm`
-      )
-      .max(
-        MAX_DIMENSION,
-        `La altura máxima no debe exceder ${MAX_DIMENSION}mm`
-      ),
+      .min(MIN_DIMENSION, `La altura máxima debe ser al menos ${MIN_DIMENSION}mm`)
+      .max(MAX_DIMENSION, `La altura máxima no debe exceder ${MAX_DIMENSION}mm`),
     maxWidthMm: z
       .number()
       .int()
-      .min(
-        MIN_DIMENSION,
-        `El ancho máximo debe ser al menos ${MIN_DIMENSION}mm`
-      )
+      .min(MIN_DIMENSION, `El ancho máximo debe ser al menos ${MIN_DIMENSION}mm`)
       .max(MAX_DIMENSION, `El ancho máximo no debe exceder ${MAX_DIMENSION}mm`),
     minHeightMm: z
       .number()
       .int()
-      .min(
-        MIN_DIMENSION,
-        `La altura mínima debe ser al menos ${MIN_DIMENSION}mm`
-      )
-      .max(
-        MAX_DIMENSION,
-        `La altura mínima no debe exceder ${MAX_DIMENSION}mm`
-      ),
+      .min(MIN_DIMENSION, `La altura mínima debe ser al menos ${MIN_DIMENSION}mm`)
+      .max(MAX_DIMENSION, `La altura mínima no debe exceder ${MAX_DIMENSION}mm`),
     minWidthMm: z
       .number()
       .int()
-      .min(
-        MIN_DIMENSION,
-        `El ancho mínimo debe ser al menos ${MIN_DIMENSION}mm`
-      )
+      .min(MIN_DIMENSION, `El ancho mínimo debe ser al menos ${MIN_DIMENSION}mm`)
       .max(MAX_DIMENSION, `El ancho mínimo no debe exceder ${MAX_DIMENSION}mm`),
     name: z
       .string()
-      .min(1, "El nombre del modelo es requerido")
-      .max(
-        MAX_NAME_LENGTH,
-        `El nombre no debe exceder ${MAX_NAME_LENGTH} caracteres`
-      ),
+      .min(1, 'El nombre del modelo es requerido')
+      .max(MAX_NAME_LENGTH, `El nombre no debe exceder ${MAX_NAME_LENGTH} caracteres`),
     profileSupplierId: z
       .string()
-      .cuid("ID del proveedor de perfiles debe ser válido")
+      .cuid('ID del proveedor de perfiles debe ser válido')
       .optional()
       .nullable(),
-    status: z.enum(["draft", "published"]),
+    status: z.enum(['draft', 'published']),
   })
   .refine((data) => data.minWidthMm < data.maxWidthMm, {
-    message: "El ancho mínimo debe ser menor al ancho máximo",
-    path: ["maxWidthMm"],
+    message: 'El ancho mínimo debe ser menor al ancho máximo',
+    path: ['maxWidthMm'],
   })
   .refine((data) => data.minHeightMm < data.maxHeightMm, {
-    message: "La altura mínima debe ser menor a la altura máxima",
-    path: ["maxHeightMm"],
-  });
+    message: 'La altura mínima debe ser menor a la altura máxima',
+    path: ['maxHeightMm'],
+  })
 
-type ModelFormData = z.infer<typeof modelFormSchema>;
+type ModelFormData = z.infer<typeof modelFormSchema>
 
 type ModelFormProps = {
-  modelData?: Partial<ModelFormData>;
-  onSuccess?: (result: {
-    modelId: string;
-    status: "draft" | "published";
-  }) => void;
-  onCancel?: () => void;
-};
+  modelData?: Partial<ModelFormData>
+  onSuccess?: (result: { modelId: string; status: 'draft' | 'published' }) => void
+  onCancel?: () => void
+}
 
-type ModelFormApi = UseFormReturn<ModelFormData, unknown, ModelFormData>;
+type ModelFormApi = UseFormReturn<ModelFormData, unknown, ModelFormData>
 
-type ModelFormControllerArgs = Pick<ModelFormProps, "modelData" | "onSuccess">;
+type ModelFormControllerArgs = Pick<ModelFormProps, 'modelData' | 'onSuccess'>
 
 // Mock data for development - in a real app this would come from the API
 const MOCK_GLASS_TYPES = [
-  { id: "cm1glass123456789abcdef01", name: "cristal Templado 6mm" },
-  { id: "cm1glass234567890bcdef012", name: "cristal Laminado 8mm" },
-  { id: "cm1glass345678901cdef0123", name: "Doble Vidriado Hermético" },
-];
+  { id: 'cm1glass123456789abcdef01', name: 'cristal Templado 6mm' },
+  { id: 'cm1glass234567890bcdef012', name: 'cristal Laminado 8mm' },
+  { id: 'cm1glass345678901cdef0123', name: 'Doble Vidriado Hermético' },
+]
 
-function useModelFormController({
-  modelData,
-  onSuccess,
-}: ModelFormControllerArgs) {
-  const [isLoading, setIsLoading] = useState(false);
+function useModelFormController({ modelData, onSuccess }: ModelFormControllerArgs) {
+  const [isLoading, setIsLoading] = useState(false)
 
   // Fetch profile suppliers from tRPC
   const { data: profileSuppliers, isLoading: isLoadingSuppliers } = api.admin[
-    "profile-supplier"
+    'profile-supplier'
   ].list.useQuery({
-    isActive: "active",
+    isActive: 'active',
     limit: 100,
     page: 1,
-    sortBy: "name",
-    sortOrder: "asc",
-  });
+    sortBy: 'name',
+    sortOrder: 'asc',
+  })
 
   // Use the actual admin.model-upsert mutation
-  const modelUpsertMutation = api.admin["model-upsert"].useMutation({
+  const modelUpsertMutation = api.admin['model-upsert'].useMutation({
     onError: () => {
-      setIsLoading(false);
+      setIsLoading(false)
     },
     onSuccess: (result) => {
-      setIsLoading(false);
-      onSuccess?.(result);
+      setIsLoading(false)
+      onSuccess?.(result)
     },
-  });
+  })
 
   // React Hook Form setup
   const form = useForm<ModelFormData, unknown, ModelFormData>({
@@ -196,24 +154,24 @@ function useModelFormController({
       maxWidthMm: modelData?.maxWidthMm ?? DEFAULT_MAX_DIMENSION,
       minHeightMm: modelData?.minHeightMm ?? DEFAULT_MIN_DIMENSION,
       minWidthMm: modelData?.minWidthMm ?? DEFAULT_MIN_DIMENSION,
-      name: modelData?.name ?? "",
+      name: modelData?.name ?? '',
       profileSupplierId: modelData?.profileSupplierId ?? null,
-      status: modelData?.status ?? "draft",
+      status: modelData?.status ?? 'draft',
     },
     resolver: zodResolver(modelFormSchema),
-  });
+  })
 
   const handleSubmit = form.handleSubmit(async (data: ModelFormData) => {
-    setIsLoading(true);
+    setIsLoading(true)
 
     try {
-      await modelUpsertMutation.mutateAsync(data);
+      await modelUpsertMutation.mutateAsync(data)
     } catch (_error) {
       // Error handling is done in the mutation callbacks
     }
-  });
+  })
 
-  const isEditing = Boolean(modelData?.id);
+  const isEditing = Boolean(modelData?.id)
 
   return {
     form,
@@ -222,32 +180,24 @@ function useModelFormController({
     isLoading,
     isLoadingSuppliers,
     profileSuppliers: profileSuppliers?.items ?? [],
-  };
+  }
 }
 
 export function ModelForm({ modelData, onSuccess, onCancel }: ModelFormProps) {
-  const {
-    form,
-    handleSubmit,
-    isEditing,
-    isLoading,
-    isLoadingSuppliers,
-    profileSuppliers,
-  } = useModelFormController({
-    modelData,
-    onSuccess,
-  });
+  const { form, handleSubmit, isEditing, isLoading, isLoadingSuppliers, profileSuppliers } =
+    useModelFormController({
+      modelData,
+      onSuccess,
+    })
 
   return (
     <Card className="w-full max-w-2xl">
       <CardHeader>
-        <CardTitle>
-          {isEditing ? "Editar Modelo" : "Crear Nuevo Modelo"}
-        </CardTitle>
+        <CardTitle>{isEditing ? 'Editar Modelo' : 'Crear Nuevo Modelo'}</CardTitle>
         <CardDescription>
           {isEditing
-            ? "Modifica los datos del modelo de cristal existente"
-            : "Ingresa los datos del nuevo modelo de cristal"}
+            ? 'Modifica los datos del modelo de cristal existente'
+            : 'Ingresa los datos del nuevo modelo de cristal'}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -270,24 +220,13 @@ export function ModelForm({ modelData, onSuccess, onCancel }: ModelFormProps) {
 
             {/* Form Actions */}
             <div className="flex gap-3 pt-6">
-              <Button
-                className="min-w-[120px]"
-                disabled={isLoading}
-                type="submit"
-              >
-                {isLoading && (
-                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                {isEditing ? "Actualizar" : "Crear"} Modelo
+              <Button className="min-w-[120px]" disabled={isLoading} type="submit">
+                {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
+                {isEditing ? 'Actualizar' : 'Crear'} Modelo
               </Button>
 
               {onCancel && (
-                <Button
-                  disabled={isLoading}
-                  onClick={onCancel}
-                  type="button"
-                  variant="outline"
-                >
+                <Button disabled={isLoading} onClick={onCancel} type="button" variant="outline">
                   Cancelar
                 </Button>
               )}
@@ -296,7 +235,7 @@ export function ModelForm({ modelData, onSuccess, onCancel }: ModelFormProps) {
         </Form>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 function BasicInfoSection({
@@ -304,9 +243,9 @@ function BasicInfoSection({
   isLoadingSuppliers,
   profileSuppliers,
 }: {
-  form: ModelFormApi;
-  isLoadingSuppliers: boolean;
-  profileSuppliers?: Array<{ id: string; name: string }>;
+  form: ModelFormApi
+  isLoadingSuppliers: boolean
+  profileSuppliers?: Array<{ id: string; name: string }>
 }) {
   return (
     <div className="space-y-4">
@@ -321,9 +260,7 @@ function BasicInfoSection({
             <FormControl>
               <Input placeholder="ej. cristal Templado 6mm" {...field} />
             </FormControl>
-            <FormDescription>
-              Nombre descriptivo del modelo de cristal
-            </FormDescription>
+            <FormDescription>Nombre descriptivo del modelo de cristal</FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -345,8 +282,8 @@ function BasicInfoSection({
                   <SelectValue
                     placeholder={
                       isLoadingSuppliers
-                        ? "Cargando proveedores..."
-                        : "Seleccionar proveedor (opcional)"
+                        ? 'Cargando proveedores...'
+                        : 'Seleccionar proveedor (opcional)'
                     }
                   />
                 </SelectTrigger>
@@ -401,7 +338,7 @@ function BasicInfoSection({
         )}
       />
     </div>
-  );
+  )
 }
 
 function GlassTypesSection({ form }: { form: ModelFormApi }) {
@@ -416,8 +353,7 @@ function GlassTypesSection({ form }: { form: ModelFormApi }) {
           <FormItem>
             <FormLabel>Tipos de Cristal</FormLabel>
             <FormDescription>
-              Selecciona los tipos de cristal compatibles con este modelo
-              (mínimo 1)
+              Selecciona los tipos de cristal compatibles con este modelo (mínimo 1)
             </FormDescription>
             <div className="grid grid-cols-1 gap-2">
               {MOCK_GLASS_TYPES.map((glassType) => (
@@ -431,10 +367,8 @@ function GlassTypesSection({ form }: { form: ModelFormApi }) {
                     onChange={(e) => {
                       const updatedValue = e.target.checked
                         ? [...field.value, glassType.id]
-                        : field.value.filter(
-                            (id: string) => id !== glassType.id
-                          );
-                      field.onChange(updatedValue);
+                        : field.value.filter((id: string) => id !== glassType.id)
+                      field.onChange(updatedValue)
                     }}
                     type="checkbox"
                   />
@@ -447,7 +381,7 @@ function GlassTypesSection({ form }: { form: ModelFormApi }) {
         )}
       />
     </div>
-  );
+  )
 }
 
 function DimensionsSection({ form }: { form: ModelFormApi }) {
@@ -537,7 +471,7 @@ function DimensionsSection({ form }: { form: ModelFormApi }) {
         />
       </div>
     </div>
-  );
+  )
 }
 
 function PricingSection({ form }: { form: ModelFormApi }) {
@@ -561,9 +495,7 @@ function PricingSection({ form }: { form: ModelFormApi }) {
                 onChange={(e) => field.onChange(Number(e.target.value))}
               />
             </FormControl>
-            <FormDescription>
-              Precio fijo base antes de cálculos por dimensión
-            </FormDescription>
+            <FormDescription>Precio fijo base antes de cálculos por dimensión</FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -627,19 +559,17 @@ function PricingSection({ form }: { form: ModelFormApi }) {
                 type="number"
                 {...field}
                 onChange={(e) => {
-                  const value = e.target.value;
-                  field.onChange(value === "" ? null : Number(value));
+                  const value = e.target.value
+                  field.onChange(value === '' ? null : Number(value))
                 }}
-                value={field.value ?? ""}
+                value={field.value ?? ''}
               />
             </FormControl>
-            <FormDescription>
-              Precio adicional por accesorios incluidos
-            </FormDescription>
+            <FormDescription>Precio adicional por accesorios incluidos</FormDescription>
             <FormMessage />
           </FormItem>
         )}
       />
     </div>
-  );
+  )
 }

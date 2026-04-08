@@ -17,156 +17,152 @@
  */
 export type CartItem = {
   /** Client-generated unique identifier (cuid) */
-  id: string;
+  id: string
 
   /** Reference to Model.id */
-  modelId: string;
+  modelId: string
 
   /** Denormalized model name for display */
-  modelName: string;
+  modelName: string
 
   /** Model image URL for display (optional) */
-  modelImageUrl?: string | null;
+  modelImageUrl?: string | null
 
   /** Reference to GlassType.id */
-  glassTypeId: string;
+  glassTypeId: string
 
   /** Denormalized glass type name for display */
-  glassTypeName: string;
+  glassTypeName: string
 
   /** Optional reference to GlassSolution.id */
-  solutionId?: string;
+  solutionId?: string
 
   /** Denormalized solution name for display */
-  solutionName?: string;
+  solutionName?: string
 
   /** Configured width in millimeters */
-  widthMm: number;
+  widthMm: number
 
   /** Configured height in millimeters */
-  heightMm: number;
+  heightMm: number
 
   /** Number of units (default: 1) */
-  quantity: number;
+  quantity: number
 
   /** Array of Service.id references */
-  additionalServiceIds: string[];
+  additionalServiceIds: string[]
 
   /** Optional reference to ModelColor.id */
-  colorId?: string;
+  colorId?: string
 
   /** Color surcharge percentage (snapshot from ModelColor at cart creation) */
-  colorSurchargePercentage?: number;
+  colorSurchargePercentage?: number
 
   /** User-editable name (auto-generated: "VEKA-001") */
-  name: string;
+  name: string
 
   /** Price per unit (calculated via tRPC) */
-  unitPrice: number;
+  unitPrice: number
 
   /** unitPrice * quantity */
-  subtotal: number;
+  subtotal: number
 
   /** ISO timestamp of when item was added */
-  createdAt: string;
+  createdAt: string
 
   dimensions: {
-    widthMm: number;
-    heightMm: number;
-  };
-};
+    widthMm: number
+    heightMm: number
+  }
+}
 
 /**
  * Cart state structure
  */
 export type CartState = {
   /** All items in the cart */
-  items: CartItem[];
+  items: CartItem[]
 
   /** Sum of all item subtotals */
-  total: number;
+  total: number
 
   /** Number of items in cart */
-  itemCount: number;
+  itemCount: number
 
   /** Whether cart is currently being modified */
-  isLoading: boolean;
+  isLoading: boolean
 
   /** Last update timestamp */
-  lastUpdated: string;
-};
+  lastUpdated: string
+}
 
 /**
  * Cart summary for display
  */
 export type CartSummary = {
   /** Total number of items */
-  itemCount: number;
+  itemCount: number
 
   /** Total price of all items */
-  total: number;
+  total: number
 
   /** Currency code (from manufacturer) */
-  currency: string;
+  currency: string
 
   /** Whether cart is empty */
-  isEmpty: boolean;
-};
+  isEmpty: boolean
+}
 
 /**
  * Cart item creation input (from form)
  */
 export type CreateCartItemInput = {
-  modelId: string;
-  modelName: string;
-  modelImageUrl?: string | null;
-  glassTypeId: string;
-  glassTypeName: string;
-  solutionId?: string;
-  solutionName?: string;
-  widthMm: number;
-  heightMm: number;
-  quantity?: number;
-  additionalServiceIds?: string[];
-  colorId?: string;
+  modelId: string
+  modelName: string
+  modelImageUrl?: string | null
+  glassTypeId: string
+  glassTypeName: string
+  solutionId?: string
+  solutionName?: string
+  widthMm: number
+  heightMm: number
+  quantity?: number
+  additionalServiceIds?: string[]
+  colorId?: string
   /** Color surcharge percentage (snapshot from ModelColor at cart creation) */
-  colorSurchargePercentage?: number;
-};
+  colorSurchargePercentage?: number
+}
 
 /**
  * Cart item update input
  */
 export type UpdateCartItemInput = {
   /** Item ID to update */
-  id: string;
+  id: string
 
   /** New name (optional) */
-  name?: string;
+  name?: string
 
   /** New quantity (optional) */
-  quantity?: number;
-};
+  quantity?: number
+}
 
 /**
  * Cart validation error
  */
 export type CartValidationError = {
   /** Error code */
-  code:
-    | "DUPLICATE_NAME"
-    | "CART_LIMIT_EXCEEDED"
-    | "INVALID_QUANTITY"
-    | "ITEM_NOT_FOUND";
+  code: 'DUPLICATE_NAME' | 'CART_LIMIT_EXCEEDED' | 'INVALID_QUANTITY' | 'ITEM_NOT_FOUND'
 
   /** Human-readable error message */
-  message: string;
+  message: string
 
   /** Field that caused the error */
-  field?: string;
+  field?: string
 
   /** Current value that failed validation */
-  value?: unknown;
-};
+  value?: unknown
+}
 
 /**
  * Constants for cart validation
@@ -185,14 +181,14 @@ export const CART_CONSTANTS = {
   MIN_QUANTITY: 1,
 
   /** SessionStorage key for cart data */
-  STORAGE_KEY: "glasify_cart",
-} as const;
+  STORAGE_KEY: 'glasify_cart',
+} as const
 
 /**
  * Cart storage data structure (persisted in sessionStorage)
  */
 export type CartStorageData = {
-  items: CartItem[];
-  version: number; // For future schema migrations
-  lastModified: string; // ISO timestamp
-};
+  items: CartItem[]
+  version: number // For future schema migrations
+  lastModified: string // ISO timestamp
+}

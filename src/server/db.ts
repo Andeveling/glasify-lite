@@ -1,5 +1,5 @@
-import { PrismaLibSql } from "@prisma/adapter-libsql";
-import { PrismaClient } from "@prisma/generated/client";
+import { PrismaLibSql } from '@prisma/adapter-libsql'
+import { PrismaClient } from '@prisma/generated/client'
 
 /**
  * Creates a Prisma client with libsql adapter for SQLite databases
@@ -16,36 +16,33 @@ import { PrismaClient } from "@prisma/generated/client";
  */
 const createPrismaClient = () => {
   // SQLite database file path (file:./prisma/dev.db or DATABASE_URL env)
-  const dbUrl = process.env.DATABASE_URL ?? "file:./prisma/dev.db";
+  const dbUrl = process.env.DATABASE_URL ?? 'file:./prisma/dev.db'
 
   // Create Prisma adapter with libsql config
-  const adapter = new PrismaLibSql({ url: dbUrl });
+  const adapter = new PrismaLibSql({ url: dbUrl })
 
   const client = new PrismaClient({
     adapter,
-    log:
-      process.env.NODE_ENV === "development"
-        ? ["query", "error", "warn"]
-        : ["error"],
-  });
+    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+  })
 
   // Log successful connection in development
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === 'development') {
     // biome-ignore lint/suspicious/noConsole: Development logging
-    console.log("[Prisma] Client created with libsql adapter");
+    console.log('[Prisma] Client created with libsql adapter')
   }
 
-  return client;
-};
+  return client
+}
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
+  prisma: PrismaClient | undefined
+}
 
 // Singleton pattern: reuse client across hot reloads in development
-export const db: PrismaClient = globalForPrisma.prisma ?? createPrismaClient();
+export const db: PrismaClient = globalForPrisma.prisma ?? createPrismaClient()
 
 // Store client in global scope to prevent multiple instances in development
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = db;
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = db
 }

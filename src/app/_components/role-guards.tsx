@@ -1,6 +1,6 @@
-import { headers } from "next/headers";
-import type { ReactNode } from "react";
-import { auth } from "@/server/auth";
+import { headers } from 'next/headers'
+import type { ReactNode } from 'react'
+import { auth } from '@/server/auth'
 
 /**
  * Admin Only Component
@@ -27,19 +27,19 @@ export async function AdminOnly({
   children,
   fallback,
 }: {
-  children: ReactNode;
-  fallback?: ReactNode;
+  children: ReactNode
+  fallback?: ReactNode
 }) {
   const session = await auth.api.getSession({
     headers: await headers(),
-  });
-  const isAdmin = session?.user?.role === "admin";
+  })
+  const isAdmin = session?.user?.role === 'admin'
 
   if (!isAdmin) {
-    return fallback ?? null;
+    return fallback ?? null
   }
 
-  return <>{children}</>;
+  return <>{children}</>
 }
 
 /**
@@ -65,20 +65,20 @@ export async function SellerOnly({
   children,
   fallback,
 }: {
-  children: ReactNode;
-  fallback?: ReactNode;
+  children: ReactNode
+  fallback?: ReactNode
 }) {
   const session = await auth.api.getSession({
     headers: await headers(),
-  });
-  const isSeller = session?.user?.role === "seller";
-  const isAdmin = session?.user?.role === "admin";
+  })
+  const isSeller = session?.user?.role === 'seller'
+  const isAdmin = session?.user?.role === 'admin'
 
   if (!(isSeller || isAdmin)) {
-    return fallback ?? null;
+    return fallback ?? null
   }
 
-  return <>{children}</>;
+  return <>{children}</>
 }
 
 /**
@@ -104,17 +104,17 @@ export async function AuthenticatedOnly({
   children,
   fallback,
 }: {
-  children: ReactNode;
-  fallback?: ReactNode;
+  children: ReactNode
+  fallback?: ReactNode
 }) {
   const session = await auth.api.getSession({
     headers: await headers(),
-  });
-  const isAuthenticated = !!session?.user;
+  })
+  const isAuthenticated = !!session?.user
 
   if (!isAuthenticated) {
-    return fallback ?? null;
+    return fallback ?? null
   }
 
-  return <>{children}</>;
+  return <>{children}</>
 }

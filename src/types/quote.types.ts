@@ -7,8 +7,8 @@
  * @module types/quote.types
  */
 
-import type { QuoteStatus } from "@prisma/generated/client";
-import type { CartItem } from "./cart.types";
+import type { QuoteStatus } from '@prisma/generated/client'
+import type { CartItem } from './cart.types'
 
 // ============================================================================
 // Quote Input Types
@@ -20,33 +20,33 @@ import type { CartItem } from "./cart.types";
  */
 export type QuoteProjectAddress = {
   /** Project name or identifier */
-  projectName: string;
+  projectName: string
 
   /** Street address */
-  projectStreet: string;
+  projectStreet: string
 
   /** City */
-  projectCity: string;
+  projectCity: string
 
   /** State/region */
-  projectState: string;
-};
+  projectState: string
+}
 
 /**
  * Delivery address with geocoding data (from client)
  */
 export type DeliveryAddressInput = {
-  city?: string | null;
-  country?: string | null;
-  district?: string | null;
-  label?: string | null;
-  latitude?: number | null;
-  longitude?: number | null;
-  postalCode?: string | null;
-  reference?: string | null;
-  region?: string | null;
-  street?: string | null;
-};
+  city?: string | null
+  country?: string | null
+  district?: string | null
+  label?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  postalCode?: string | null
+  reference?: string | null
+  region?: string | null
+  street?: string | null
+}
 
 /**
  * Input for generating quote from cart
@@ -55,24 +55,24 @@ export type DeliveryAddressInput = {
  */
 export type GenerateQuoteInput = {
   /** Cart items to convert to quote items */
-  cartItems: CartItem[];
+  cartItems: CartItem[]
 
   /** Project address information */
-  projectAddress: QuoteProjectAddress;
+  projectAddress: QuoteProjectAddress
 
   /** Optional contact phone */
-  contactPhone?: string;
+  contactPhone?: string
 
   /** Optional delivery address with geocoding data */
-  deliveryAddress?: DeliveryAddressInput;
+  deliveryAddress?: DeliveryAddressInput
 
   /**
    * @deprecated Manufacturer ID (deprecated field, kept for backward compatibility)
    * This field is no longer used for quote generation. Currency and validity
    * are now obtained from TenantConfig singleton.
    */
-  manufacturerId?: string;
-};
+  manufacturerId?: string
+}
 
 // ============================================================================
 // Quote Output Types (DTOs)
@@ -85,38 +85,38 @@ export type GenerateQuoteInput = {
  */
 export type QuoteItemDetail = {
   /** Quote item ID */
-  id: string;
+  id: string
 
   /** User-editable name from cart */
-  name: string;
+  name: string
 
   /** Model name */
-  modelName: string;
+  modelName: string
 
   /** Glass type name */
-  glassTypeName: string;
+  glassTypeName: string
 
   /** Glass solution name (if applicable) */
-  solutionName?: string;
+  solutionName?: string
 
   /** Width in millimeters */
-  widthMm: number;
+  widthMm: number
 
   /** Height in millimeters */
-  heightMm: number;
+  heightMm: number
 
   /** Number of units */
-  quantity: number;
+  quantity: number
 
   /** Price per unit at quote generation time */
-  unitPrice: number;
+  unitPrice: number
 
   /** Total price (unitPrice * quantity) */
-  subtotal: number;
+  subtotal: number
 
   /** Additional service names */
-  serviceNames: string[];
-};
+  serviceNames: string[]
+}
 
 /**
  * Full quote detail for display
@@ -125,47 +125,47 @@ export type QuoteItemDetail = {
  */
 export type QuoteDetail = {
   /** Quote ID */
-  id: string;
+  id: string
 
   /** Quote status */
-  status: QuoteStatus;
+  status: QuoteStatus
 
   /** Manufacturer name */
-  manufacturerName: string;
+  manufacturerName: string
 
   /** User email */
-  userEmail?: string;
+  userEmail?: string
 
   /** Quote creation date */
-  createdAt: Date;
+  createdAt: Date
 
   /** Quote validity end date (15 days from creation) */
-  validUntil: Date | null;
+  validUntil: Date | null
 
   /** Whether quote has expired */
-  isExpired: boolean;
+  isExpired: boolean
 
   /** Project address */
-  projectAddress: QuoteProjectAddress;
+  projectAddress: QuoteProjectAddress
 
   /** Contact phone */
-  contactPhone?: string;
+  contactPhone?: string
 
   /** Currency code */
-  currency: string;
+  currency: string
 
   /** Total price */
-  total: number;
+  total: number
 
   /** All quote items */
-  items: QuoteItemDetail[];
+  items: QuoteItemDetail[]
 
   /** Number of items */
-  itemCount: number;
+  itemCount: number
 
   /** Total units (sum of quantities) */
-  totalUnits: number;
-};
+  totalUnits: number
+}
 
 /**
  * Quote list item for quote history
@@ -174,32 +174,32 @@ export type QuoteDetail = {
  */
 export type QuoteListItem = {
   /** Quote ID */
-  id: string;
+  id: string
 
   /** Quote status */
-  status: QuoteStatus;
+  status: QuoteStatus
 
   /** Quote creation date */
-  createdAt: Date;
+  createdAt: Date
 
   /** Quote validity end date */
-  validUntil: Date | null;
+  validUntil: Date | null
 
   /** Whether quote has expired */
-  isExpired: boolean;
+  isExpired: boolean
 
   /** Project name */
-  projectName: string;
+  projectName: string
 
   /** Total price */
-  total: number;
+  total: number
 
   /** Currency code */
-  currency: string;
+  currency: string
 
   /** Number of items */
-  itemCount: number;
-};
+  itemCount: number
+}
 
 // ============================================================================
 // Quote Query Options
@@ -210,52 +210,52 @@ export type QuoteListItem = {
  */
 export type ListUserQuotesOptions = {
   /** User ID (from session) */
-  userId: string;
+  userId: string
 
   /** Filter by status */
-  status?: QuoteStatus;
+  status?: QuoteStatus
 
   /** Filter expired quotes */
-  includeExpired?: boolean;
+  includeExpired?: boolean
 
   /** Page number (1-indexed) */
-  page?: number;
+  page?: number
 
   /** Items per page */
-  limit?: number;
+  limit?: number
 
   /** Sort order */
-  sortBy?: "createdAt" | "validUntil" | "total";
+  sortBy?: 'createdAt' | 'validUntil' | 'total'
 
   /** Sort direction */
-  sortOrder?: "asc" | "desc";
-};
+  sortOrder?: 'asc' | 'desc'
+}
 
 /**
  * Paginated quote list response
  */
 export type QuoteListResponse = {
   /** Quotes for current page */
-  quotes: QuoteListItem[];
+  quotes: QuoteListItem[]
 
   /** Total number of quotes matching filters */
-  total: number;
+  total: number
 
   /** Current page number */
-  page: number;
+  page: number
 
   /** Items per page */
-  limit: number;
+  limit: number
 
   /** Total number of pages */
-  totalPages: number;
+  totalPages: number
 
   /** Whether there's a next page */
-  hasNextPage: boolean;
+  hasNextPage: boolean
 
   /** Whether there's a previous page */
-  hasPreviousPage: boolean;
-};
+  hasPreviousPage: boolean
+}
 
 // ============================================================================
 // Quote Validation
@@ -265,33 +265,32 @@ export type QuoteListResponse = {
  * Quote validation error codes
  */
 export const QuoteErrorCode = {
-  EmptyCart: "EMPTY_CART",
-  InvalidAddress: "INVALID_ADDRESS",
-  NotFound: "NOT_FOUND",
-  PriceCalculationFailed: "PRICE_CALCULATION_FAILED",
-  TransactionFailed: "TRANSACTION_FAILED",
-  Unauthorized: "UNAUTHORIZED",
-  Unknown: "UNKNOWN",
-} as const;
+  EmptyCart: 'EMPTY_CART',
+  InvalidAddress: 'INVALID_ADDRESS',
+  NotFound: 'NOT_FOUND',
+  PriceCalculationFailed: 'PRICE_CALCULATION_FAILED',
+  TransactionFailed: 'TRANSACTION_FAILED',
+  Unauthorized: 'UNAUTHORIZED',
+  Unknown: 'UNKNOWN',
+} as const
 
-export type QuoteErrorCode =
-  (typeof QuoteErrorCode)[keyof typeof QuoteErrorCode];
+export type QuoteErrorCode = (typeof QuoteErrorCode)[keyof typeof QuoteErrorCode]
 
 /**
  * Quote operation result (discriminated union)
  */
 export type QuoteOperationResult<T = void> =
   | {
-      success: true;
-      data: T;
+      success: true
+      data: T
     }
   | {
-      success: false;
+      success: false
       error: {
-        code: QuoteErrorCode;
-        message: string;
-      };
-    };
+        code: QuoteErrorCode
+        message: string
+      }
+    }
 
 // ============================================================================
 // Quote Constants
@@ -305,16 +304,16 @@ export const QUOTE_CONSTANTS = {
   DEFAULT_PAGE_SIZE: 20,
 
   /** Default sort order */
-  DEFAULT_SORT: "createdAt" as const,
+  DEFAULT_SORT: 'createdAt' as const,
 
   /** Default sort direction */
-  DEFAULT_SORT_ORDER: "desc" as const,
+  DEFAULT_SORT_ORDER: 'desc' as const,
 
   /** Maximum page size for quote list */
   MAX_PAGE_SIZE: 100,
   /** Quote validity period in days */
   VALIDITY_DAYS: 15,
-} as const;
+} as const
 
 // ============================================================================
 // Helper Types
@@ -324,28 +323,28 @@ export const QUOTE_CONSTANTS = {
  * Quote status display metadata
  */
 export type QuoteStatusMeta = {
-  label: string;
-  color: "default" | "secondary" | "success" | "warning" | "destructive";
-  description: string;
-};
+  label: string
+  color: 'default' | 'secondary' | 'success' | 'warning' | 'destructive'
+  description: string
+}
 
 /**
  * Quote status metadata map
  */
 export const QUOTE_STATUS_META: Record<QuoteStatus, QuoteStatusMeta> = {
   canceled: {
-    color: "destructive",
-    description: "Cotización cancelada",
-    label: "Cancelada",
+    color: 'destructive',
+    description: 'Cotización cancelada',
+    label: 'Cancelada',
   },
   draft: {
-    color: "default",
-    description: "Cotización en preparación",
-    label: "Borrador",
+    color: 'default',
+    description: 'Cotización en preparación',
+    label: 'Borrador',
   },
   sent: {
-    color: "secondary",
-    description: "Cotización enviada al cliente",
-    label: "Enviada",
+    color: 'secondary',
+    description: 'Cotización enviada al cliente',
+    label: 'Enviada',
   },
-};
+}

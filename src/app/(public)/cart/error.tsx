@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 /**
  * Error Boundary: Cart Page
@@ -9,13 +9,13 @@
  * @module app/(public)/cart/error
  */
 
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
 
 type CartErrorProps = {
-  error: Error & { digest?: string };
-  reset: () => void;
-};
+  error: Error & { digest?: string }
+  reset: () => void
+}
 
 /**
  * Cart page error boundary
@@ -24,25 +24,20 @@ type CartErrorProps = {
  * Shows Spanish error message and retry button.
  */
 export default function CartError({ error, reset }: CartErrorProps) {
-  const router = useRouter();
+  const router = useRouter()
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-6">
-        <h2 className="mb-4 font-semibold text-2xl text-destructive">
-          Error al cargar el carrito
-        </h2>
+        <h2 className="mb-4 font-semibold text-2xl text-destructive">Error al cargar el carrito</h2>
 
         <p className="mb-6 text-muted-foreground">
-          Ha ocurrido un error inesperado. Por favor, intenta recargar la
-          página.
+          Ha ocurrido un error inesperado. Por favor, intenta recargar la página.
         </p>
 
         {/* Show error digest if available (production) */}
         {error.digest && (
-          <p className="mb-4 text-muted-foreground text-sm">
-            Código de error: {error.digest}
-          </p>
+          <p className="mb-4 text-muted-foreground text-sm">Código de error: {error.digest}</p>
         )}
 
         <div className="flex gap-3">
@@ -50,11 +45,11 @@ export default function CartError({ error, reset }: CartErrorProps) {
             Recargar
           </Button>
 
-          <Button onClick={() => router.push("/")} variant="outline">
+          <Button onClick={() => router.push('/')} variant="outline">
             Volver al inicio
           </Button>
         </div>
       </div>
     </div>
-  );
+  )
 }

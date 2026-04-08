@@ -11,15 +11,15 @@
  * - Resets to page 1 when filters change
  */
 
-"use client";
+'use client'
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useCallback } from 'react'
 
 export function useServerFilters() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   /**
    * Updates a single filter parameter in URL
@@ -27,48 +27,47 @@ export function useServerFilters() {
    */
   const updateFilter = useCallback(
     (key: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(searchParams.toString())
 
       // Remove param if default value
-      if (value === "all" || value === "" || !value) {
-        params.delete(key);
+      if (value === 'all' || value === '' || !value) {
+        params.delete(key)
       } else {
-        params.set(key, value);
+        params.set(key, value)
       }
 
       // Reset to page 1 when filtering (except for page param itself)
-      if (key !== "page") {
-        params.delete("page");
+      if (key !== 'page') {
+        params.delete('page')
       }
 
       // Update URL (triggers server-side refetch)
-      router.push(`${pathname}?${params.toString()}`);
+      router.push(`${pathname}?${params.toString()}`)
     },
-    [pathname, router, searchParams]
-  );
+    [pathname, router, searchParams],
+  )
 
   /**
    * Gets current value of a filter from URL
    */
   const getFilterValue = useCallback(
-    (key: string, defaultValue = "all") =>
-      searchParams.get(key) ?? defaultValue,
-    [searchParams]
-  );
+    (key: string, defaultValue = 'all') => searchParams.get(key) ?? defaultValue,
+    [searchParams],
+  )
 
   /**
    * Updates page number in URL
    */
   const updatePage = useCallback(
     (page: number) => {
-      updateFilter("page", page.toString());
+      updateFilter('page', page.toString())
     },
-    [updateFilter]
-  );
+    [updateFilter],
+  )
 
   return {
     getFilterValue,
     updateFilter,
     updatePage,
-  };
+  }
 }

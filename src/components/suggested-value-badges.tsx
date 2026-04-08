@@ -1,13 +1,13 @@
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 type SuggestedValueBadgesProps = {
-  values: number[];
-  onSelect: (value: number) => void;
-  currentValue?: number;
-  unit?: string;
-  className?: string;
-};
+  values: number[]
+  onSelect: (value: number) => void
+  currentValue?: number
+  unit?: string
+  className?: string
+}
 
 /**
  * SuggestedValueBadges - Molecule component
@@ -29,7 +29,7 @@ export function SuggestedValueBadges({
   className,
   currentValue,
   onSelect,
-  unit = "mm",
+  unit = 'mm',
   values,
 }: SuggestedValueBadgesProps) {
   return (
@@ -37,29 +37,27 @@ export function SuggestedValueBadges({
       <p className="mb-2 text-muted-foreground text-xs">Valores sugeridos:</p>
       <div className="flex flex-wrap gap-1">
         {values.map((value) => {
-          const isSelected = currentValue === value;
+          const isSelected = currentValue === value
 
           return (
             <Button
               className={cn(
-                "m-0 h-6 min-w-[4rem] p-1 font-mono text-xs transition-all duration-200 hover:bg-primary/5",
-                isSelected &&
-                  "border-primary bg-primary/10 text-primary ring-2 ring-primary/20",
-                !isSelected &&
-                  "hover:border-primary/50 hover:bg-primary/5 hover:text-primary"
+                'm-0 h-6 min-w-[4rem] p-1 font-mono text-xs transition-all duration-200 hover:bg-primary/5',
+                isSelected && 'border-primary bg-primary/10 text-primary ring-2 ring-primary/20',
+                !isSelected && 'hover:border-primary/50 hover:bg-primary/5 hover:text-primary',
               )}
               key={value}
               onClick={() => onSelect(value)}
               size="sm"
               type="button"
-              variant={isSelected ? "default" : "outline"}
+              variant={isSelected ? 'default' : 'outline'}
             >
               {value}
               <span className="text-[0.7rem] opacity-70">{unit}</span>
             </Button>
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 }

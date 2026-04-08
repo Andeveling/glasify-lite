@@ -7,7 +7,7 @@
  * @component Client Component
  */
 
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from '@/components/ui/skeleton'
 
 export function PublicHeaderSkeleton() {
   return (
@@ -38,5 +38,5 @@ export function PublicHeaderSkeleton() {
         </div>
       </div>
     </header>
-  );
+  )
 }

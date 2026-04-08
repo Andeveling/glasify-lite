@@ -1,12 +1,12 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils'
 
 type GlasifyLogoProps = {
-  className?: string;
-};
+  className?: string
+}
 
 export function GlasifyLogo({ className }: GlasifyLogoProps) {
   return (
-    <div className={cn("flex items-center gap-3", className)}>
+    <div className={cn('flex items-center gap-3', className)}>
       <div className="flex size-11 items-center justify-center rounded-2xl border border-current/15 bg-current/10 backdrop-blur-sm">
         <svg
           aria-labelledby="glasify-logo-title"
@@ -21,22 +21,15 @@ export function GlasifyLogo({ className }: GlasifyLogoProps) {
             stroke="currentColor"
             strokeWidth="1.5"
           />
-          <path
-            d="M16 5v22M5 16h22"
-            stroke="currentColor"
-            strokeOpacity="0.35"
-            strokeWidth="1.5"
-          />
+          <path d="M16 5v22M5 16h22" stroke="currentColor" strokeOpacity="0.35" strokeWidth="1.5" />
         </svg>
       </div>
       <div className="space-y-0.5">
-        <p className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] opacity-70">
+        <p className="font-semibold text-[0.68rem] uppercase tracking-[0.2em] opacity-70">
           Workspace
         </p>
-        <span className="block text-xl font-semibold tracking-tight">
-          Glasify Lite
-        </span>
+        <span className="block font-semibold text-xl tracking-tight">Glasify Lite</span>
       </div>
     </div>
-  );
+  )
 }

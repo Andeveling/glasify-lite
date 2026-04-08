@@ -1,5 +1,5 @@
-import Image from "next/image";
-import { formatCurrency } from "@/lib/format";
+import Image from 'next/image'
+import { formatCurrency } from '@/lib/format'
 
 /**
  * Model Header Component
@@ -9,17 +9,17 @@ import { formatCurrency } from "@/lib/format";
 
 type ModelHeaderProps = {
   model: {
-    id: string;
-    name: string;
-    basePrice: number;
-    imageUrl?: string | null;
+    id: string
+    name: string
+    basePrice: number
+    imageUrl?: string | null
     profileSupplier?: {
-      id: string;
-      name: string;
-      materialType: string;
-    } | null;
-  };
-};
+      id: string
+      name: string
+      materialType: string
+    } | null
+  }
+}
 
 export function ModelHeader({ model }: ModelHeaderProps) {
   return (
@@ -38,9 +38,7 @@ export function ModelHeader({ model }: ModelHeaderProps) {
           </div>
         ) : (
           <div className="flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-lg border bg-muted/30 sm:h-32 sm:w-32">
-            <span className="text-center text-muted-foreground text-xs">
-              Sin imagen
-            </span>
+            <span className="text-center text-muted-foreground text-xs">Sin imagen</span>
           </div>
         )}
 
@@ -49,18 +47,15 @@ export function ModelHeader({ model }: ModelHeaderProps) {
           <h1 className="font-semibold text-2xl md:text-3xl">{model.name}</h1>
           {model.profileSupplier && (
             <p className="text-muted-foreground text-sm">
-              {model.profileSupplier.name} •{" "}
-              {model.profileSupplier.materialType}
+              {model.profileSupplier.name} • {model.profileSupplier.materialType}
             </p>
           )}
           <div className="flex items-baseline gap-2">
             <span className="text-muted-foreground text-sm">Precio base:</span>
-            <span className="font-semibold text-lg">
-              {formatCurrency(model.basePrice)}
-            </span>
+            <span className="font-semibold text-lg">{formatCurrency(model.basePrice)}</span>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }

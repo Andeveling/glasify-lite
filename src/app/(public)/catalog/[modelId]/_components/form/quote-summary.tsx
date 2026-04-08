@@ -1,39 +1,33 @@
-"use client";
+'use client'
 
-import {
-  AlertCircle,
-  CheckCircle,
-  Loader2,
-  ShoppingCart,
-  XCircle,
-} from "lucide-react";
-import { useFormContext } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { formatCurrency } from "@/lib/format";
-import { cn } from "@/lib/utils";
-import { useTenantConfig } from "@/providers/tenant-config-provider";
+import { AlertCircle, CheckCircle, Loader2, ShoppingCart, XCircle } from 'lucide-react'
+import { useFormContext } from 'react-hook-form'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { formatCurrency } from '@/lib/format'
+import { cn } from '@/lib/utils'
+import { useTenantConfig } from '@/providers/tenant-config-provider'
 
 type QuoteSummaryProps = {
-  basePrice: number;
-  calculatedPrice?: number;
-  error?: string;
-  isCalculating?: boolean;
-  justAddedToCart?: boolean;
-};
+  basePrice: number
+  calculatedPrice?: number
+  error?: string
+  isCalculating?: boolean
+  justAddedToCart?: boolean
+}
 
 /**
  * Field labels in Spanish for better UX
  */
 const FIELD_LABELS: Record<string, string> = {
-  additionalServices: "Servicios adicionales",
-  glassType: "Tipo de cristal",
-  height: "Alto",
-  quantity: "Cantidad",
-  solution: "Solución",
-  width: "Ancho",
-};
+  additionalServices: 'Servicios adicionales',
+  glassType: 'Tipo de cristal',
+  height: 'Alto',
+  quantity: 'Cantidad',
+  solution: 'Solución',
+  width: 'Ancho',
+}
 
 export function QuoteSummary({
   basePrice,
@@ -42,71 +36,71 @@ export function QuoteSummary({
   isCalculating,
   justAddedToCart = false,
 }: QuoteSummaryProps) {
-  const tenantConfig = useTenantConfig();
+  const tenantConfig = useTenantConfig()
   const {
     formState: { errors, isValid },
-  } = useFormContext();
+  } = useFormContext()
 
-  const displayPrice = calculatedPrice ?? basePrice;
-  const hasValidCalculation = calculatedPrice !== undefined && !error;
-  const hasFormErrors = Object.keys(errors).length > 0;
+  const displayPrice = calculatedPrice ?? basePrice
+  const hasValidCalculation = calculatedPrice !== undefined && !error
+  const hasFormErrors = Object.keys(errors).length > 0
 
   // ✅ Enhanced UX: Extract form errors for explicit display
   const getFormErrors = (): Array<{ field: string; message: string }> =>
     Object.entries(errors).map(([field, fieldError]) => ({
       field: FIELD_LABELS[field] || field,
-      message: fieldError?.message?.toString() || "Campo inválido",
-    }));
+      message: fieldError?.message?.toString() || 'Campo inválido',
+    }))
 
   // ✅ Enhanced UX: Dynamic state calculation
   const getCardState = () => {
     if (error || hasFormErrors) {
-      return "error";
+      return 'error'
     }
     if (hasValidCalculation && isValid) {
-      return "success";
+      return 'success'
     }
-    return "idle";
-  };
+    return 'idle'
+  }
 
   const getStatusContent = () => {
     // Priority 1: Form validation errors
     if (hasFormErrors) {
       return {
-        helperText: "Completa todos los campos requeridos correctamente",
+        helperText: 'Completa todos los campos requeridos correctamente',
         icon: <XCircle className="h-4 w-4 text-destructive" />,
-      };
+      }
     }
 
     // Priority 2: Calculation errors
     if (error) {
       return {
-        helperText: "Ajusta los valores para calcular el precio",
+        helperText: 'Ajusta los valores para calcular el precio',
         icon: <AlertCircle className="size-5 text-destructive" />,
-      };
+      }
     }
 
     // Priority 3: Calculating state
     if (isCalculating) {
       return {
-        helperText: "Calculando precio en tiempo real...",
+        helperText: 'Calculando precio en tiempo real...',
         icon: <Loader2 className="size-5 animate-spin text-primary" />,
-      };
+      }
     }
 
     // Priority 4: Success state
     if (hasValidCalculation && isValid) {
       return {
-        helperText: "Precio calculado según tus especificaciones",
+        helperText: 'Precio calculado según tus especificaciones',
         icon: <CheckCircle className="size-5 text-green-700" />,
-      };
+      }
     }
 
     return {
-      helperText: "El precio final se calculará según tus especificaciones",
+      helperText: 'El precio final se calculará según tus especificaciones',
       icon: null,
-    };
-  };
+    }
+  }
 
   const getPriceDisplay = () => {
     if (isCalculating) {
@@ -120,7 +114,7 @@ export function QuoteSummary({
             Precio actualizado en tiempo real...
           </span>
         </div>
-      );
+      )
     }
 
     if (error || hasFormErrors) {
@@ -128,59 +122,50 @@ export function QuoteSummary({
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <AlertCircle className="size-8 text-destructive" />
-            <span className="text-destructive text-lg">
-              {error || "Formulario incompleto"}
-            </span>
+            <span className="text-destructive text-lg">{error || 'Formulario incompleto'}</span>
           </div>
-          <span className="text-muted-foreground text-xs">
-            Revisa los errores a continuación
-          </span>
+          <span className="text-muted-foreground text-xs">Revisa los errores a continuación</span>
         </div>
-      );
+      )
     }
 
     return (
       <div className="flex flex-col gap-1">
         <span
           className={cn(
-            "font-bold text-3xl transition-colors",
-            hasValidCalculation ? "text-primary" : "text-foreground"
+            'font-bold text-3xl transition-colors',
+            hasValidCalculation ? 'text-primary' : 'text-foreground',
           )}
         >
           {formatCurrency(displayPrice, { context: tenantConfig })}
         </span>
         <span className="text-muted-foreground text-xs">
-          {hasValidCalculation ? "Precio calculado" : "Precio base estimado"}
+          {hasValidCalculation ? 'Precio calculado' : 'Precio base estimado'}
         </span>
       </div>
-    );
-  };
+    )
+  }
 
   const getButtonText = () => {
     if (justAddedToCart) {
-      return "Agregado al carrito";
+      return 'Agregado al carrito'
     }
     if (isCalculating) {
-      return "Calculando...";
+      return 'Calculando...'
     }
-    return "Agregar al carrito";
-  };
+    return 'Agregar al carrito'
+  }
 
-  const statusContent = getStatusContent();
-  const priceDisplay = getPriceDisplay();
-  const cardState = getCardState();
-  const formErrors = getFormErrors();
-  const canSubmit =
-    isValid &&
-    hasValidCalculation &&
-    !isCalculating &&
-    !error &&
-    !justAddedToCart;
+  const statusContent = getStatusContent()
+  const priceDisplay = getPriceDisplay()
+  const cardState = getCardState()
+  const formErrors = getFormErrors()
+  const canSubmit = isValid && hasValidCalculation && !isCalculating && !error && !justAddedToCart
 
   return (
     <Card
-      className={cn("border p-6 transition-all duration-200", {
-        "border-destructive/50 bg-destructive/5": cardState === "error",
+      className={cn('border p-6 transition-all duration-200', {
+        'border-destructive/50 bg-destructive/5': cardState === 'error',
       })}
       data-state={cardState}
     >
@@ -188,13 +173,11 @@ export function QuoteSummary({
         {/* Price and Status Row */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex-1">
-            <div className="flex items-center gap-3 text-4xl">
-              {priceDisplay}
-            </div>
+            <div className="flex items-center gap-3 text-4xl">{priceDisplay}</div>
           </div>
           <Button
-            className={cn("transition-all duration-200 sm:w-auto", {
-              "cursor-not-allowed opacity-50": !canSubmit,
+            className={cn('transition-all duration-200 sm:w-auto', {
+              'cursor-not-allowed opacity-50': !canSubmit,
             })}
             disabled={!canSubmit}
             size="lg"
@@ -207,9 +190,7 @@ export function QuoteSummary({
         <Separator />
         <div className="mt-2 flex items-center gap-2">
           {statusContent.icon}
-          <p className="text-muted-foreground text-xs">
-            {statusContent.helperText}
-          </p>
+          <p className="text-muted-foreground text-xs">{statusContent.helperText}</p>
         </div>
 
         {/* Error List - Only show when button is disabled due to form errors */}
@@ -248,14 +229,12 @@ export function QuoteSummary({
                 <p className="font-medium text-(--color-warning-foreground) text-sm">
                   Error de cálculo:
                 </p>
-                <p className="mt-1 text-(--color-warning-foreground)/80 text-sm">
-                  {error}
-                </p>
+                <p className="mt-1 text-(--color-warning-foreground)/80 text-sm">{error}</p>
               </div>
             </div>
           </div>
         )}
       </div>
     </Card>
-  );
+  )
 }

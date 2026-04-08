@@ -5,60 +5,55 @@
  * Follows Single Responsibility Principle - renders one model row
  */
 
-"use client";
+'use client'
 
-import type { MaterialType, ModelStatus } from "@prisma/generated/client";
-import { Pencil, Trash2 } from "lucide-react";
-import Link from "next/link";
-import { useCurrencyFormatter } from "@/app/_hooks/use-currency-formatter";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { TableCell, TableRow } from "@/components/ui/table";
+import type { MaterialType, ModelStatus } from '@prisma/generated/client'
+import { Pencil, Trash2 } from 'lucide-react'
+import Link from 'next/link'
+import { useCurrencyFormatter } from '@/app/_hooks/use-currency-formatter'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { TableCell, TableRow } from '@/components/ui/table'
 
 type ModelData = {
-  id: string;
-  name: string;
-  status: ModelStatus;
-  minWidthMm: number;
-  maxWidthMm: number;
-  minHeightMm: number;
-  maxHeightMm: number;
-  basePrice: number; // Already serialized
-  compatibleGlassTypeIds: string[];
+  id: string
+  name: string
+  status: ModelStatus
+  minWidthMm: number
+  maxWidthMm: number
+  minHeightMm: number
+  maxHeightMm: number
+  basePrice: number // Already serialized
+  compatibleGlassTypeIds: string[]
   profileSupplier: {
-    id: string;
-    name: string;
-    materialType: MaterialType;
-  } | null;
-};
+    id: string
+    name: string
+    materialType: MaterialType
+  } | null
+}
 
 type ModelTableRowProps = {
-  model: ModelData;
-  onDeleteClickAction: (id: string, name: string) => void;
-};
+  model: ModelData
+  onDeleteClickAction: (id: string, name: string) => void
+}
 
 const statusLabels: Record<ModelStatus, string> = {
-  draft: "Borrador",
-  published: "Publicado",
-};
+  draft: 'Borrador',
+  published: 'Publicado',
+}
 
-const getStatusVariant = (
-  status: ModelStatus
-): "default" | "secondary" | "outline" => {
-  if (status === "published") {
-    return "default";
+const getStatusVariant = (status: ModelStatus): 'default' | 'secondary' | 'outline' => {
+  if (status === 'published') {
+    return 'default'
   }
-  if (status === "draft") {
-    return "secondary";
+  if (status === 'draft') {
+    return 'secondary'
   }
-  return "outline";
-};
+  return 'outline'
+}
 
-export function ModelTableRow({
-  model,
-  onDeleteClickAction,
-}: ModelTableRowProps) {
-  const { formatPrice } = useCurrencyFormatter();
+export function ModelTableRow({ model, onDeleteClickAction }: ModelTableRowProps) {
+  const { formatPrice } = useCurrencyFormatter()
 
   return (
     <TableRow>
@@ -83,14 +78,10 @@ export function ModelTableRow({
         )}
       </TableCell>
       <TableCell>
-        <Badge variant="secondary">
-          {model.compatibleGlassTypeIds.length} tipos
-        </Badge>
+        <Badge variant="secondary">{model.compatibleGlassTypeIds.length} tipos</Badge>
       </TableCell>
       <TableCell>
-        <Badge variant={getStatusVariant(model.status)}>
-          {statusLabels[model.status]}
-        </Badge>
+        <Badge variant={getStatusVariant(model.status)}>{statusLabels[model.status]}</Badge>
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-2">
@@ -111,5 +102,5 @@ export function ModelTableRow({
         </div>
       </TableCell>
     </TableRow>
-  );
+  )
 }

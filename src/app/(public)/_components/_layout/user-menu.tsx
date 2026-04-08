@@ -1,12 +1,12 @@
-"use client";
+'use client'
 
-import { FileText, Loader2, LogOut, Moon, Sun, User } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
-import { useTransition } from "react";
-import { handleSignOut } from "@/app/_actions/auth.actions";
-import { Button } from "@/components/ui/button";
+import { FileText, Loader2, LogOut, Moon, Sun, User } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useTheme } from 'next-themes'
+import { useTransition } from 'react'
+import { handleSignOut } from '@/app/_actions/auth.actions'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,17 +14,17 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu'
 
 type UserMenuProps = {
-  userName?: string | null;
-  userEmail?: string | null;
-};
+  userName?: string | null
+  userEmail?: string | null
+}
 
 export function UserMenu({ userName, userEmail }: UserMenuProps) {
-  const router = useRouter();
-  const { theme, setTheme } = useTheme();
-  const [isPending, startTransition] = useTransition();
+  const router = useRouter()
+  const { theme, setTheme } = useTheme()
+  const [isPending, startTransition] = useTransition()
 
   /**
    * Handle sign out
@@ -35,45 +35,30 @@ export function UserMenu({ userName, userEmail }: UserMenuProps) {
    */
   const onSignOut = () => {
     startTransition(async () => {
-      await handleSignOut();
-      router.push("/catalog");
-    });
-  };
+      await handleSignOut()
+      router.push('/catalog')
+    })
+  }
 
   const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
+    setTheme(theme === 'dark' ? 'light' : 'dark')
+  }
 
-  const isLoading = isPending;
+  const isLoading = isPending
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          aria-label="Menú de usuario"
-          disabled={isLoading}
-          size="icon"
-          variant="outline"
-        >
-          {isLoading ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
-          ) : (
-            <User className="h-5 w-5" />
-          )}
+        <Button aria-label="Menú de usuario" disabled={isLoading} size="icon" variant="outline">
+          {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <User className="h-5 w-5" />}
           <span className="sr-only">Menú de usuario</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="font-medium text-sm leading-none">
-              {userName ?? "Usuario"}
-            </p>
-            {userEmail && (
-              <p className="text-muted-foreground text-xs leading-none">
-                {userEmail}
-              </p>
-            )}
+            <p className="font-medium text-sm leading-none">{userName ?? 'Usuario'}</p>
+            {userEmail && <p className="text-muted-foreground text-xs leading-none">{userEmail}</p>}
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -85,12 +70,8 @@ export function UserMenu({ userName, userEmail }: UserMenuProps) {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem disabled={isLoading} onClick={toggleTheme}>
-          {theme === "dark" ? (
-            <Sun className="mr-2 h-4 w-4" />
-          ) : (
-            <Moon className="mr-2 h-4 w-4" />
-          )}
-          <span>Cambiar a {theme === "dark" ? "Claro" : "Oscuro"}</span>
+          {theme === 'dark' ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
+          <span>Cambiar a {theme === 'dark' ? 'Claro' : 'Oscuro'}</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem disabled={isLoading} onClick={onSignOut}>
@@ -108,5 +89,5 @@ export function UserMenu({ userName, userEmail }: UserMenuProps) {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
 }

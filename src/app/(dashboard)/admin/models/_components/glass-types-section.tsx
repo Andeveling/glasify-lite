@@ -4,34 +4,22 @@
  * Multi-select for compatible glass types
  */
 
-"use client";
+'use client'
 
-import { useFormContext } from "react-hook-form";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import type { RouterOutputs } from "@/trpc/react";
+import { useFormContext } from 'react-hook-form'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import type { RouterOutputs } from '@/trpc/react'
 
-type GlassType = RouterOutputs["admin"]["glass-type"]["list"]["items"][number];
+type GlassType = RouterOutputs['admin']['glass-type']['list']['items'][number]
 
 type GlassTypesSectionProps = {
-  glassTypes: GlassType[];
-};
+  glassTypes: GlassType[]
+}
 
 export function GlassTypesSection({ glassTypes }: GlassTypesSectionProps) {
-  const form = useFormContext();
+  const form = useFormContext()
 
   return (
     <Card className="h-fit">
@@ -57,17 +45,12 @@ export function GlassTypesSection({ glassTypes }: GlassTypesSectionProps) {
                           <Checkbox
                             checked={field.value?.includes(glassType.id)}
                             onCheckedChange={(checked) => {
-                              const currentValue = field.value ?? [];
+                              const currentValue = field.value ?? []
                               return checked
-                                ? field.onChange([
-                                    ...currentValue,
-                                    glassType.id,
-                                  ])
+                                ? field.onChange([...currentValue, glassType.id])
                                 : field.onChange(
-                                    currentValue.filter(
-                                      (v: string) => v !== glassType.id
-                                    )
-                                  );
+                                    currentValue.filter((v: string) => v !== glassType.id),
+                                  )
                             }}
                           />
                         </FormControl>
@@ -75,9 +58,7 @@ export function GlassTypesSection({ glassTypes }: GlassTypesSectionProps) {
                           <FormLabel className="cursor-pointer font-normal">
                             {glassType.name}
                           </FormLabel>
-                          <p className="text-muted-foreground text-xs">
-                            {glassType.thicknessMm}mm
-                          </p>
+                          <p className="text-muted-foreground text-xs">{glassType.thicknessMm}mm</p>
                         </div>
                       </FormItem>
                     )}
@@ -90,5 +71,5 @@ export function GlassTypesSection({ glassTypes }: GlassTypesSectionProps) {
         />
       </CardContent>
     </Card>
-  );
+  )
 }

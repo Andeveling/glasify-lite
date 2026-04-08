@@ -19,42 +19,39 @@ export function encodeImage(_url: string): Promise<string | null> {
 
   // For now, return null to use fallback
   // TODO: Implement actual image fetching and encoding
-  return Promise.resolve(null);
+  return Promise.resolve(null)
 }
 
 /**
  * Truncate text to max length with ellipsis
  */
 export function truncateText(text: string, maxLength: number): string {
-  const ellipsisLength = 3;
+  const ellipsisLength = 3
 
   if (text.length <= maxLength) {
-    return text;
+    return text
   }
-  return `${text.slice(0, maxLength - ellipsisLength)}...`;
+  return `${text.slice(0, maxLength - ellipsisLength)}...`
 }
 
 /**
  * Calculate number of pages needed based on items count
  */
-export function calculatePageCount(
-  itemsCount: number,
-  itemsPerPage = 15
-): number {
-  return Math.ceil(itemsCount / itemsPerPage);
+export function calculatePageCount(itemsCount: number, itemsPerPage = 15): number {
+  return Math.ceil(itemsCount / itemsPerPage)
 }
 
 /**
  * Group items into pages for pagination
  */
 export function paginateItems<T>(items: T[], itemsPerPage = 15): T[][] {
-  const pages: T[][] = [];
+  const pages: T[][] = []
 
   for (let i = 0; i < items.length; i += itemsPerPage) {
-    pages.push(items.slice(i, i + itemsPerPage));
+    pages.push(items.slice(i, i + itemsPerPage))
   }
 
-  return pages;
+  return pages
 }
 
 /**
@@ -62,7 +59,7 @@ export function paginateItems<T>(items: T[], itemsPerPage = 15): T[][] {
  */
 export function formatDimensions(dimensions: string): string {
   // Ensure consistent formatting
-  return dimensions.trim();
+  return dimensions.trim()
 }
 
 /**
@@ -70,15 +67,15 @@ export function formatDimensions(dimensions: string): string {
  */
 export function getGlassTypeName(type: string): string {
   const typeMap: Record<string, string> = {
-    clear: "Claro",
-    frosted: "Esmerilado",
-    insulated: "Termo-acústico",
-    laminated: "Laminado",
-    tempered: "Templado",
-    tinted: "Polarizado",
-  };
+    clear: 'Claro',
+    frosted: 'Esmerilado',
+    insulated: 'Termo-acústico',
+    laminated: 'Laminado',
+    tempered: 'Templado',
+    tinted: 'Polarizado',
+  }
 
-  return typeMap[type.toLowerCase()] || type;
+  return typeMap[type.toLowerCase()] || type
 }
 
 /**
@@ -89,21 +86,21 @@ export function sanitizeText(text: string): string {
   return (
     text
       // biome-ignore lint/suspicious/noControlCharactersInRegex: Control characters removal is intentional for PDF security
-      .replace(/[\u0000-\u001F\u007F-\u009F]/g, "") // Remove control characters
+      .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
       .trim()
-  );
+  )
 }
 
 /**
  * Calculate tax amount from subtotal
  */
 export function calculateTax(subtotal: number, taxRate = 0.19): number {
-  return subtotal * taxRate;
+  return subtotal * taxRate
 }
 
 /**
  * Calculate total from subtotal and tax
  */
 export function calculateTotal(subtotal: number, tax: number): number {
-  return subtotal + tax;
+  return subtotal + tax
 }

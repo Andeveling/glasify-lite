@@ -10,33 +10,28 @@
  * @module app/(dashboard)/admin/services/_components/service-row-actions
  */
 
-"use client";
+'use client'
 
-import { Pencil, Power, PowerOff, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Pencil, Power, PowerOff, Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 type ServiceRowActionsProps = {
   /** Service ID */
-  serviceId: string;
+  serviceId: string
   /** Service name for accessibility */
-  serviceName: string;
+  serviceName: string
   /** Whether the service is currently active */
-  isActive: boolean;
+  isActive: boolean
   /** Whether actions are currently loading */
-  isLoading?: boolean;
+  isLoading?: boolean
   /** Callback when edit button is clicked */
-  onEditAction: (serviceId: string) => void;
+  onEditAction: (serviceId: string) => void
   /** Callback when toggle active button is clicked */
-  onToggleActiveAction: (serviceId: string, currentState: boolean) => void;
+  onToggleActiveAction: (serviceId: string, currentState: boolean) => void
   /** Callback when delete button is clicked */
-  onDeleteAction: (serviceId: string, serviceName: string) => void;
-};
+  onDeleteAction: (serviceId: string, serviceName: string) => void
+}
 
 /**
  * Service row actions component
@@ -105,12 +100,12 @@ export function ServiceRowActions({
                 <Power className="h-4 w-4 text-green-500" />
               )}
               <span className="sr-only">
-                {isActive ? "Desactivar" : "Activar"} {serviceName}
+                {isActive ? 'Desactivar' : 'Activar'} {serviceName}
               </span>
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>{isActive ? "Desactivar" : "Activar"} servicio</p>
+            <p>{isActive ? 'Desactivar' : 'Activar'} servicio</p>
           </TooltipContent>
         </Tooltip>
 
@@ -133,5 +128,5 @@ export function ServiceRowActions({
         </Tooltip>
       </TooltipProvider>
     </div>
-  );
+  )
 }

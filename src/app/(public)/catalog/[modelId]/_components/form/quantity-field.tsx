@@ -1,27 +1,21 @@
-import { Minus, Package, Plus } from "lucide-react";
-import type { Control, FieldValues, Path } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Minus, Package, Plus } from 'lucide-react'
+import type { Control, FieldValues, Path } from 'react-hook-form'
+import { Button } from '@/components/ui/button'
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
-} from "@/components/ui/input-group";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/input-group'
+import { cn } from '@/lib/utils'
 
 type QuantityFieldProps<T extends FieldValues> = {
-  control: Control<T>;
-  name: Path<T>;
-  min?: number;
-  max?: number;
-};
+  control: Control<T>
+  name: Path<T>
+  min?: number
+  max?: number
+}
 
 /**
  * QuantityField - Organism component
@@ -51,39 +45,39 @@ export function QuantityField<T extends FieldValues>({
       control={control}
       name={name}
       render={({ field }) => {
-        const currentValue = Number(field.value) || min;
-        const canDecrement = currentValue > min;
-        const canIncrement = currentValue < max;
+        const currentValue = Number(field.value) || min
+        const canDecrement = currentValue > min
+        const canIncrement = currentValue < max
 
         const handleDecrement = () => {
           if (canDecrement) {
-            field.onChange(currentValue - 1);
+            field.onChange(currentValue - 1)
           }
-        };
+        }
 
         const handleIncrement = () => {
           if (canIncrement) {
-            field.onChange(currentValue + 1);
+            field.onChange(currentValue + 1)
           }
-        };
+        }
 
         const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-          const value = e.target.value;
-          if (value === "") {
-            field.onChange("");
-            return;
+          const value = e.target.value
+          if (value === '') {
+            field.onChange('')
+            return
           }
-          const numValue = Number(value);
+          const numValue = Number(value)
           if (!Number.isNaN(numValue) && numValue >= min && numValue <= max) {
-            field.onChange(numValue);
+            field.onChange(numValue)
           }
-        };
+        }
 
         const _handlePresetClick = (preset: number) => {
           if (preset >= min && preset <= max) {
-            field.onChange(preset);
+            field.onChange(preset)
           }
-        };
+        }
 
         return (
           <FormItem className="mt-6 space-y-4">
@@ -98,10 +92,10 @@ export function QuantityField<T extends FieldValues>({
                 {/* Decrement Button */}
                 <Button
                   className={cn(
-                    "shrink-0 rounded-lg transition-all duration-200",
+                    'shrink-0 rounded-lg transition-all duration-200',
                     canDecrement
-                      ? "hover:bg-primary/10 hover:text-primary hover:shadow-md"
-                      : "cursor-not-allowed opacity-40"
+                      ? 'hover:bg-primary/10 hover:text-primary hover:shadow-md'
+                      : 'cursor-not-allowed opacity-40',
                   )}
                   disabled={!canDecrement}
                   onClick={handleDecrement}
@@ -124,7 +118,7 @@ export function QuantityField<T extends FieldValues>({
                     onChange={handleInputChange}
                     placeholder={String(min)}
                     type="number"
-                    value={field.value || ""}
+                    value={field.value || ''}
                   />
                   <InputGroupAddon align="inline-end">
                     <InputGroupText>Unidades</InputGroupText>
@@ -137,10 +131,10 @@ export function QuantityField<T extends FieldValues>({
                 {/* Increment Button */}
                 <Button
                   className={cn(
-                    "shrink-0 rounded-lg transition-all duration-200",
+                    'shrink-0 rounded-lg transition-all duration-200',
                     canIncrement
-                      ? "hover:bg-primary/10 hover:text-primary hover:shadow-md"
-                      : "cursor-not-allowed opacity-40"
+                      ? 'hover:bg-primary/10 hover:text-primary hover:shadow-md'
+                      : 'cursor-not-allowed opacity-40',
                   )}
                   disabled={!canIncrement}
                   onClick={handleIncrement}
@@ -156,8 +150,8 @@ export function QuantityField<T extends FieldValues>({
 
             <FormMessage />
           </FormItem>
-        );
+        )
       }}
     />
-  );
+  )
 }

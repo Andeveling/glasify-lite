@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 /**
  * Zod validation schemas for Color catalog management
@@ -6,14 +6,14 @@ import { z } from "zod";
  */
 
 // Validation constants
-const MAX_COLOR_NAME_LENGTH = 50;
-const RAL_CODE_PATTERN = /^RAL \d{4}$/;
-const HEX_CODE_PATTERN = /^#[0-9A-Fa-f]{6}$/;
+const MAX_COLOR_NAME_LENGTH = 50
+const RAL_CODE_PATTERN = /^RAL \d{4}$/
+const HEX_CODE_PATTERN = /^#[0-9A-Fa-f]{6}$/
 
 // Pagination and search limits
-const MAX_ITEMS_PER_PAGE = 100;
-const DEFAULT_ITEMS_PER_PAGE = 20;
-const MAX_SEARCH_LENGTH = 100;
+const MAX_ITEMS_PER_PAGE = 100
+const DEFAULT_ITEMS_PER_PAGE = 20
+const MAX_SEARCH_LENGTH = 100
 
 /**
  * Base color validation schema
@@ -22,7 +22,7 @@ const MAX_SEARCH_LENGTH = 100;
 const colorBaseSchema = z.object({
   name: z
     .string()
-    .min(1, { message: "El nombre del color es requerido" })
+    .min(1, { message: 'El nombre del color es requerido' })
     .max(MAX_COLOR_NAME_LENGTH, {
       message: `El nombre no puede exceder ${MAX_COLOR_NAME_LENGTH} caracteres`,
     })
@@ -31,7 +31,7 @@ const colorBaseSchema = z.object({
   ralCode: z
     .string()
     .regex(RAL_CODE_PATTERN, {
-      message: "Código RAL inválido. Formato esperado: RAL XXXX (ej: RAL 9010)",
+      message: 'Código RAL inválido. Formato esperado: RAL XXXX (ej: RAL 9010)',
     })
     .nullable()
     .optional(),
@@ -39,32 +39,32 @@ const colorBaseSchema = z.object({
   hexCode: z
     .string()
     .regex(HEX_CODE_PATTERN, {
-      message: "Formato hexadecimal inválido. Debe ser #RRGGBB (ej: #F3F3E9)",
+      message: 'Formato hexadecimal inválido. Debe ser #RRGGBB (ej: #F3F3E9)',
     })
     .transform((val) => val.toUpperCase()), // Normalize to uppercase
 
   isActive: z.boolean().default(true),
-});
+})
 
 /**
  * Color create schema
  * All fields required except ralCode (optional)
  */
-export const colorCreateSchema = colorBaseSchema;
+export const colorCreateSchema = colorBaseSchema
 
 /**
  * Color update schema
  * All fields optional for partial updates
  */
-export const colorUpdateSchema = colorBaseSchema.partial();
+export const colorUpdateSchema = colorBaseSchema.partial()
 
 /**
  * Color ID parameter schema
  * Used in getById, update, delete operations
  */
 export const colorIdSchema = z.object({
-  id: z.string().cuid({ message: "ID de color inválido" }),
-});
+  id: z.string().cuid({ message: 'ID de color inválido' }),
+})
 
 /**
  * Color list query schema
@@ -72,34 +72,29 @@ export const colorIdSchema = z.object({
  */
 export const colorListSchema = z.object({
   page: z.number().int().positive().default(1),
-  limit: z
-    .number()
-    .int()
-    .positive()
-    .max(MAX_ITEMS_PER_PAGE)
-    .default(DEFAULT_ITEMS_PER_PAGE),
+  limit: z.number().int().positive().max(MAX_ITEMS_PER_PAGE).default(DEFAULT_ITEMS_PER_PAGE),
   search: z
     .string()
     .max(MAX_SEARCH_LENGTH, {
-      message: "La búsqueda no puede exceder 100 caracteres",
+      message: 'La búsqueda no puede exceder 100 caracteres',
     })
     .optional(),
   isActive: z
-    .enum(["all", "active", "inactive"])
+    .enum(['all', 'active', 'inactive'])
     .optional()
-    .default("all")
+    .default('all')
     .transform((val) => {
-      if (val === "active") {
-        return true;
+      if (val === 'active') {
+        return true
       }
-      if (val === "inactive") {
-        return false;
+      if (val === 'inactive') {
+        return false
       }
-      return;
+      return
     }),
-  sortBy: z.enum(["name", "createdAt", "updatedAt"]).default("name"),
-  sortOrder: z.enum(["asc", "desc"]).default("asc"),
-});
+  sortBy: z.enum(['name', 'createdAt', 'updatedAt']).default('name'),
+  sortOrder: z.enum(['asc', 'desc']).default('asc'),
+})
 
 /**
  * Color usage check response schema
@@ -110,17 +105,17 @@ export const colorUsageSchema = z.object({
   quoteCount: z.number().int().min(0),
   canDelete: z.boolean(),
   canHardDelete: z.boolean(),
-});
+})
 
 // Type exports for use in tRPC procedures
-export type ColorCreateInput = z.infer<typeof colorCreateSchema>;
-export type ColorUpdateInput = z.infer<typeof colorUpdateSchema>;
-export type ColorIdInput = z.infer<typeof colorIdSchema>;
-export type ColorListInput = z.input<typeof colorListSchema>; // Before transform
-export type ColorListQuery = z.output<typeof colorListSchema>; // After transform
-export type ColorUsage = z.infer<typeof colorUsageSchema>;
+export type ColorCreateInput = z.infer<typeof colorCreateSchema>
+export type ColorUpdateInput = z.infer<typeof colorUpdateSchema>
+export type ColorIdInput = z.infer<typeof colorIdSchema>
+export type ColorListInput = z.input<typeof colorListSchema> // Before transform
+export type ColorListQuery = z.output<typeof colorListSchema> // After transform
+export type ColorUsage = z.infer<typeof colorUsageSchema>
 
 // Alias exports for backwards compatibility
-export type ColorCreate = ColorCreateInput;
-export type ColorUpdate = ColorUpdateInput;
-export type ColorId = ColorIdInput;
+export type ColorCreate = ColorCreateInput
+export type ColorUpdate = ColorUpdateInput
+export type ColorId = ColorIdInput

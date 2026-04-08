@@ -8,22 +8,22 @@
  * @server-side-only
  */
 
-import { format as tempoFormat } from "@formkit/tempo";
-import type { TenantConfig } from "@prisma/generated/client";
+import { format as tempoFormat } from '@formkit/tempo'
+import type { TenantConfig } from '@prisma/generated/client'
 
 /**
  * Formatting context from TenantConfig
  */
-type FormatContext = Pick<TenantConfig, "locale" | "timezone" | "currency">;
+type FormatContext = Pick<TenantConfig, 'locale' | 'timezone' | 'currency'>
 
 /**
  * Default format context (fallback when tenant config not available)
  */
 const DEFAULT_CONTEXT: FormatContext = {
-  currency: "COP",
-  locale: "es-CO",
-  timezone: "America/Bogota",
-};
+  currency: 'COP',
+  locale: 'es-CO',
+  timezone: 'America/Bogota',
+}
 
 /**
  * Get format context or use defaults
@@ -33,7 +33,7 @@ function getContext(context?: Partial<FormatContext> | null): FormatContext {
     currency: context?.currency ?? DEFAULT_CONTEXT.currency,
     locale: context?.locale ?? DEFAULT_CONTEXT.locale,
     timezone: context?.timezone ?? DEFAULT_CONTEXT.timezone,
-  };
+  }
 }
 
 // =============================================================================
@@ -53,17 +53,17 @@ function getContext(context?: Partial<FormatContext> | null): FormatContext {
  */
 function formatDate(
   date: Date | string,
-  formatStyle: string | { date?: string; time?: string } = { date: "medium" },
-  context?: Partial<FormatContext> | null
+  formatStyle: string | { date?: string; time?: string } = { date: 'medium' },
+  context?: Partial<FormatContext> | null,
 ): string {
-  const { locale, timezone } = getContext(context);
+  const { locale, timezone } = getContext(context)
 
   return tempoFormat({
     date,
     format: formatStyle as never,
     locale,
     tz: timezone,
-  });
+  })
 }
 
 /**
@@ -76,11 +76,8 @@ function formatDate(
  * // en-US: "Sunday, January 19, 2025"
  * ```
  */
-function formatDateFull(
-  date: Date | string,
-  context?: Partial<FormatContext> | null
-): string {
-  return formatDate(date, { date: "full" }, context);
+function formatDateFull(date: Date | string, context?: Partial<FormatContext> | null): string {
+  return formatDate(date, { date: 'full' }, context)
 }
 
 /**
@@ -93,11 +90,8 @@ function formatDateFull(
  * // en-US: "January 19, 2025"
  * ```
  */
-function formatDateLong(
-  date: Date | string,
-  context?: Partial<FormatContext> | null
-): string {
-  return formatDate(date, { date: "long" }, context);
+function formatDateLong(date: Date | string, context?: Partial<FormatContext> | null): string {
+  return formatDate(date, { date: 'long' }, context)
 }
 
 /**
@@ -110,11 +104,8 @@ function formatDateLong(
  * // en-US: "Jan 19, 2025"
  * ```
  */
-function formatDateMedium(
-  date: Date | string,
-  context?: Partial<FormatContext> | null
-): string {
-  return formatDate(date, { date: "medium" }, context);
+function formatDateMedium(date: Date | string, context?: Partial<FormatContext> | null): string {
+  return formatDate(date, { date: 'medium' }, context)
 }
 
 /**
@@ -127,11 +118,8 @@ function formatDateMedium(
  * // en-US: "1/19/2025"
  * ```
  */
-function formatDateShort(
-  date: Date | string,
-  context?: Partial<FormatContext> | null
-): string {
-  return formatDate(date, { date: "short" }, context);
+function formatDateShort(date: Date | string, context?: Partial<FormatContext> | null): string {
+  return formatDate(date, { date: 'short' }, context)
 }
 
 /**
@@ -146,11 +134,11 @@ function formatDateShort(
  */
 function formatDateTime(
   date: Date | string,
-  dateStyle: "full" | "long" | "medium" | "short" = "medium",
-  timeStyle: "full" | "long" | "medium" | "short" = "short",
-  context?: Partial<FormatContext> | null
+  dateStyle: 'full' | 'long' | 'medium' | 'short' = 'medium',
+  timeStyle: 'full' | 'long' | 'medium' | 'short' = 'short',
+  context?: Partial<FormatContext> | null,
 ): string {
-  return formatDate(date, { date: dateStyle, time: timeStyle }, context);
+  return formatDate(date, { date: dateStyle, time: timeStyle }, context)
 }
 
 /**
@@ -165,10 +153,10 @@ function formatDateTime(
  */
 function formatTime(
   date: Date | string,
-  style: "full" | "long" | "medium" | "short" = "short",
-  context?: Partial<FormatContext> | null
+  style: 'full' | 'long' | 'medium' | 'short' = 'short',
+  context?: Partial<FormatContext> | null,
 ): string {
-  return formatDate(date, { time: style }, context);
+  return formatDate(date, { time: style }, context)
 }
 
 /**
@@ -186,9 +174,9 @@ function formatTime(
 function formatDateCustom(
   date: Date | string,
   formatTokens: string,
-  context?: Partial<FormatContext> | null
+  context?: Partial<FormatContext> | null,
 ): string {
-  return formatDate(date, formatTokens, context);
+  return formatDate(date, formatTokens, context)
 }
 
 // =============================================================================
@@ -209,25 +197,25 @@ function formatDateCustom(
 function formatCurrency(
   amount: number,
   options?: {
-    decimals?: number;
-    context?: Partial<FormatContext> | null;
-  }
+    decimals?: number
+    context?: Partial<FormatContext> | null
+  },
 ): string {
-  const { currency, locale } = getContext(options?.context);
+  const { currency, locale } = getContext(options?.context)
   // Default: COP (0 decimals), USD/EUR (2 decimals)
   // Can be overridden with options.decimals for precision cases (e.g., pricing with 3-4 decimals)
-  const decimals = options?.decimals ?? (currency === "COP" ? 0 : 2);
+  const decimals = options?.decimals ?? (currency === 'COP' ? 0 : 2)
 
   try {
     return new Intl.NumberFormat(locale, {
       currency,
       maximumFractionDigits: decimals,
       minimumFractionDigits: decimals,
-      style: "currency",
-    }).format(amount);
+      style: 'currency',
+    }).format(amount)
   } catch {
     // Fallback if Intl fails
-    return `${currency} ${amount.toFixed(decimals)}`;
+    return `${currency} ${amount.toFixed(decimals)}`
   }
 }
 
@@ -241,22 +229,19 @@ function formatCurrency(
  * // en-US: "$1.5M"
  * ```
  */
-function formatCurrencyCompact(
-  amount: number,
-  context?: Partial<FormatContext> | null
-): string {
-  const { currency, locale } = getContext(context);
+function formatCurrencyCompact(amount: number, context?: Partial<FormatContext> | null): string {
+  const { currency, locale } = getContext(context)
 
   try {
     return new Intl.NumberFormat(locale, {
-      compactDisplay: "short",
+      compactDisplay: 'short',
       currency,
       maximumFractionDigits: 1,
-      notation: "compact",
-      style: "currency",
-    }).format(amount);
+      notation: 'compact',
+      style: 'currency',
+    }).format(amount)
   } catch {
-    return formatCurrency(amount, { context });
+    return formatCurrency(amount, { context })
   }
 }
 
@@ -277,20 +262,20 @@ function formatCurrencyCompact(
 function formatNumber(
   value: number,
   options?: {
-    decimals?: number;
-    context?: Partial<FormatContext> | null;
-  }
+    decimals?: number
+    context?: Partial<FormatContext> | null
+  },
 ): string {
-  const { locale } = getContext(options?.context);
-  const decimals = options?.decimals ?? 0;
+  const { locale } = getContext(options?.context)
+  const decimals = options?.decimals ?? 0
 
   try {
     return new Intl.NumberFormat(locale, {
       maximumFractionDigits: decimals,
       minimumFractionDigits: decimals,
-    }).format(value);
+    }).format(value)
   } catch {
-    return value.toFixed(decimals);
+    return value.toFixed(decimals)
   }
 }
 
@@ -306,22 +291,22 @@ function formatNumber(
 function formatPercent(
   value: number,
   options?: {
-    decimals?: number;
-    context?: Partial<FormatContext> | null;
-  }
+    decimals?: number
+    context?: Partial<FormatContext> | null
+  },
 ): string {
-  const percentMultiplier = 100;
-  const { locale } = getContext(options?.context);
-  const decimals = options?.decimals ?? 0;
+  const percentMultiplier = 100
+  const { locale } = getContext(options?.context)
+  const decimals = options?.decimals ?? 0
 
   try {
     return new Intl.NumberFormat(locale, {
       maximumFractionDigits: decimals,
       minimumFractionDigits: decimals,
-      style: "percent",
-    }).format(value);
+      style: 'percent',
+    }).format(value)
   } catch {
-    return `${(value * percentMultiplier).toFixed(decimals)}%`;
+    return `${(value * percentMultiplier).toFixed(decimals)}%`
   }
 }
 
@@ -341,19 +326,19 @@ function formatPercent(
 function formatDimensions(
   width: number,
   height: number,
-  context?: Partial<FormatContext> | null
+  context?: Partial<FormatContext> | null,
 ): string {
-  const { locale } = getContext(context);
+  const { locale } = getContext(context)
 
   try {
     const formatter = new Intl.NumberFormat(locale, {
       maximumFractionDigits: 0,
       minimumFractionDigits: 0,
-    });
+    })
 
-    return `${formatter.format(width)}mm × ${formatter.format(height)}mm`;
+    return `${formatter.format(width)}mm × ${formatter.format(height)}mm`
   } catch {
-    return `${width}mm × ${height}mm`;
+    return `${width}mm × ${height}mm`
   }
 }
 
@@ -366,11 +351,8 @@ function formatDimensions(
  * // "4,50 m²"
  * ```
  */
-function formatArea(
-  value: number,
-  context?: Partial<FormatContext> | null
-): string {
-  return `${formatNumber(value, { context, decimals: 2 })} m²`;
+function formatArea(value: number, context?: Partial<FormatContext> | null): string {
+  return `${formatNumber(value, { context, decimals: 2 })} m²`
 }
 
 /**
@@ -384,12 +366,9 @@ function formatArea(
  * // "10,5mm"
  * ```
  */
-function formatThickness(
-  value: number,
-  context?: Partial<FormatContext> | null
-): string {
-  const hasDecimals = value % 1 !== 0;
-  return `${formatNumber(value, { context, decimals: hasDecimals ? 1 : 0 })}mm`;
+function formatThickness(value: number, context?: Partial<FormatContext> | null): string {
+  const hasDecimals = value % 1 !== 0
+  return `${formatNumber(value, { context, decimals: hasDecimals ? 1 : 0 })}mm`
 }
 
 // =============================================================================
@@ -400,11 +379,11 @@ function formatThickness(
  * Tax configuration context (extends FormatContext with tax fields)
  */
 type TaxContext = FormatContext & {
-  taxName?: string | null;
-  taxRate?: number | null;
-  taxEnabled?: boolean;
-  taxDescription?: string | null;
-};
+  taxName?: string | null
+  taxRate?: number | null
+  taxEnabled?: boolean
+  taxDescription?: string | null
+}
 
 /**
  * Format tax label with name and percentage
@@ -424,23 +403,22 @@ type TaxContext = FormatContext & {
 function formatTaxLabel(context?: Partial<TaxContext> | null): string | null {
   // Validate all required fields exist
   if (!context?.taxEnabled) {
-    return null;
+    return null
   }
 
-  const taxName = context.taxName;
-  const taxRate = context.taxRate;
+  const taxName = context.taxName
+  const taxRate = context.taxRate
 
   if (taxName == null || taxRate == null) {
-    return null;
+    return null
   }
 
-  const percentMultiplier = 100;
-  const percentage = taxRate * percentMultiplier;
+  const percentMultiplier = 100
+  const percentage = taxRate * percentMultiplier
   // Show decimal only if needed (e.g., 7% not 7.00%, but 10.5% if applicable)
-  const formattedPercentage =
-    percentage % 1 === 0 ? percentage.toFixed(0) : percentage.toFixed(1);
+  const formattedPercentage = percentage % 1 === 0 ? percentage.toFixed(0) : percentage.toFixed(1)
 
-  return `${taxName} (${formattedPercentage}%)`;
+  return `${taxName} (${formattedPercentage}%)`
 }
 
 /**
@@ -458,15 +436,12 @@ function formatTaxLabel(context?: Partial<TaxContext> | null): string | null {
  * // 0
  * ```
  */
-function calculateTax(
-  subtotal: number,
-  context?: Partial<TaxContext> | null
-): number {
+function calculateTax(subtotal: number, context?: Partial<TaxContext> | null): number {
   if (!context?.taxEnabled || context.taxRate == null) {
-    return 0;
+    return 0
   }
 
-  return subtotal * context.taxRate;
+  return subtotal * context.taxRate
 }
 
 /**
@@ -481,11 +456,8 @@ function calculateTax(
  * // 100000
  * ```
  */
-function calculateTotalWithTax(
-  subtotal: number,
-  context?: Partial<TaxContext> | null
-): number {
-  return subtotal + calculateTax(subtotal, context);
+function calculateTotalWithTax(subtotal: number, context?: Partial<TaxContext> | null): number {
+  return subtotal + calculateTax(subtotal, context)
 }
 
 // =============================================================================
@@ -512,6 +484,6 @@ export {
   formatTaxLabel,
   calculateTax,
   calculateTotalWithTax,
-};
+}
 
-export type { FormatContext, TaxContext };
+export type { FormatContext, TaxContext }

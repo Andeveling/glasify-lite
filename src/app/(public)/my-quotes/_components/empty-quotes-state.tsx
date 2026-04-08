@@ -15,9 +15,9 @@
  * <EmptyQuotesState variant="no-results" onClearFilters={() => clearFilters()} />
  * ```
  */
-import { FileText, Search } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { FileText, Search } from 'lucide-react'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 import {
   Empty,
   EmptyContent,
@@ -25,7 +25,7 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@/components/ui/empty";
+} from '@/components/ui/empty'
 
 export type EmptyQuotesStateProps = {
   /**
@@ -33,19 +33,16 @@ export type EmptyQuotesStateProps = {
    * - 'no-quotes': User has no quotes yet
    * - 'no-results': Filters returned no results
    */
-  variant?: "no-quotes" | "no-results";
+  variant?: 'no-quotes' | 'no-results'
 
   /**
    * Callback to clear filters (required for 'no-results' variant)
    */
-  onClearFilters?: () => void;
-};
+  onClearFilters?: () => void
+}
 
-export function EmptyQuotesState({
-  variant = "no-quotes",
-  onClearFilters,
-}: EmptyQuotesStateProps) {
-  if (variant === "no-results") {
+export function EmptyQuotesState({ variant = 'no-quotes', onClearFilters }: EmptyQuotesStateProps) {
+  if (variant === 'no-results') {
     return (
       <Empty data-testid="empty-filtered-state">
         <EmptyHeader>
@@ -67,7 +64,7 @@ export function EmptyQuotesState({
           </EmptyContent>
         )}
       </Empty>
-    );
+    )
   }
 
   return (
@@ -78,8 +75,7 @@ export function EmptyQuotesState({
         </EmptyMedia>
         <EmptyTitle>No tienes cotizaciones aún</EmptyTitle>
         <EmptyDescription>
-          Explora nuestro catálogo y configura ventanas para generar tu primera
-          cotización
+          Explora nuestro catálogo y configura ventanas para generar tu primera cotización
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
@@ -88,5 +84,5 @@ export function EmptyQuotesState({
         </Button>
       </EmptyContent>
     </Empty>
-  );
+  )
 }

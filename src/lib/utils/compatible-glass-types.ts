@@ -15,14 +15,14 @@
  */
 export function parseCompatibleGlassTypeIds(value: string | null): string[] {
   if (!value) {
-    return [];
+    return []
   }
 
   try {
-    const parsed = JSON.parse(value);
-    return Array.isArray(parsed) ? parsed : [];
+    const parsed = JSON.parse(value)
+    return Array.isArray(parsed) ? parsed : []
   } catch {
-    return [];
+    return []
   }
 }
 
@@ -33,5 +33,5 @@ export function parseCompatibleGlassTypeIds(value: string | null): string[] {
  * @returns JSON string for DB storage (e.g., '["glass-1","glass-2"]')
  */
 export function stringifyCompatibleGlassTypeIds(ids: string[]): string {
-  return JSON.stringify(ids);
+  return JSON.stringify(ids)
 }

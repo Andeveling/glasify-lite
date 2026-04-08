@@ -1,10 +1,10 @@
-"use client";
+'use client'
 
-import { LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useTransition } from "react";
-import { handleSignOut } from "@/app/_actions/auth.actions";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { LogOut } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useTransition } from 'react'
+import { handleSignOut } from '@/app/_actions/auth.actions'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,26 +12,26 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu'
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar";
+} from '@/components/ui/sidebar'
 
 export function NavUser({
   user,
 }: {
   user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
+    name: string
+    email: string
+    avatar: string
+  }
 }) {
-  const router = useRouter();
-  const { isMobile } = useSidebar();
-  const [isPending, startTransition] = useTransition();
+  const router = useRouter()
+  const { isMobile } = useSidebar()
+  const [isPending, startTransition] = useTransition()
 
   /**
    * Handle sign out
@@ -42,10 +42,10 @@ export function NavUser({
    */
   const onSignOut = () => {
     startTransition(async () => {
-      await handleSignOut();
-      router.push("/catalog");
-    });
-  };
+      await handleSignOut()
+      router.push('/catalog')
+    })
+  }
 
   return (
     <SidebarMenu>
@@ -62,16 +62,14 @@ export function NavUser({
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-muted-foreground text-xs">
-                  {user.email}
-                </span>
+                <span className="truncate text-muted-foreground text-xs">{user.email}</span>
               </div>
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
+            side={isMobile ? 'bottom' : 'right'}
             sideOffset={4}
           >
             <DropdownMenuLabel className="p-0 font-normal">
@@ -82,9 +80,7 @@ export function NavUser({
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-muted-foreground text-xs">
-                    {user.email}
-                  </span>
+                  <span className="truncate text-muted-foreground text-xs">{user.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -96,12 +92,12 @@ export function NavUser({
                 type="button"
               >
                 <LogOut />
-                {isPending ? "Cerrando sesión..." : "Cerrar sesión"}
+                {isPending ? 'Cerrando sesión...' : 'Cerrar sesión'}
               </button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  );
+  )
 }

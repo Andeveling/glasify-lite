@@ -1,14 +1,14 @@
-import { Maximize2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import type { ModelDimensions } from "../_types/model.types";
+import { Maximize2 } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Card } from '@/components/ui/card'
+import type { ModelDimensions } from '../_types/model.types'
 
 type ModelDimensionsProps = {
-  dimensions: ModelDimensions;
-};
+  dimensions: ModelDimensions
+}
 
 // ✅ Move to module scope - created once, not on every render
-const EXCEPTIONAL_CAPACITY_THRESHOLD = 5000; // Large sliding doors (>5m)
+const EXCEPTIONAL_CAPACITY_THRESHOLD = 5000 // Large sliding doors (>5m)
 
 /**
  * Determines if a dimension capacity is exceptional
@@ -16,7 +16,7 @@ const EXCEPTIONAL_CAPACITY_THRESHOLD = 5000; // Large sliding doors (>5m)
  * @returns true if dimension exceeds exceptional capacity threshold
  */
 function isExceptionalCapacity(max: number): boolean {
-  return max > EXCEPTIONAL_CAPACITY_THRESHOLD;
+  return max > EXCEPTIONAL_CAPACITY_THRESHOLD
 }
 
 /**
@@ -29,10 +29,10 @@ function isExceptionalCapacity(max: number): boolean {
  * Performance: Helper function and threshold moved to module scope to prevent re-creation on re-renders
  */
 export function ModelDimensionsCard({ dimensions }: ModelDimensionsProps) {
-  const { minWidth, maxWidth, minHeight, maxHeight } = dimensions;
+  const { minWidth, maxWidth, minHeight, maxHeight } = dimensions
 
-  const hasExceptionalWidth = isExceptionalCapacity(maxWidth);
-  const hasExceptionalHeight = isExceptionalCapacity(maxHeight);
+  const hasExceptionalWidth = isExceptionalCapacity(maxWidth)
+  const hasExceptionalHeight = isExceptionalCapacity(maxHeight)
 
   return (
     <Card className="p-6">
@@ -87,12 +87,12 @@ export function ModelDimensionsCard({ dimensions }: ModelDimensionsProps) {
         {(hasExceptionalWidth || hasExceptionalHeight) && (
           <div className="rounded-md bg-muted/50 p-2 text-muted-foreground text-xs">
             <p>
-              💡 Este modelo soporta grandes dimensiones, ideal para puertas
-              corredizas y ventanales amplios.
+              💡 Este modelo soporta grandes dimensiones, ideal para puertas corredizas y ventanales
+              amplios.
             </p>
           </div>
         )}
       </div>
     </Card>
-  );
+  )
 }

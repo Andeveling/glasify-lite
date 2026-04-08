@@ -6,13 +6,13 @@
  */
 
 // ASCII code for letter 'A' (used for Excel column letter conversion)
-const ASCII_CODE_A = 65;
+const ASCII_CODE_A = 65
 
 // Number of letters in the alphabet
-const ALPHABET_LENGTH = 26;
+const ALPHABET_LENGTH = 26
 
 // Excel column width factor (characters to width units)
-const EXCEL_CHAR_WIDTH_FACTOR = 1.2;
+const EXCEL_CHAR_WIDTH_FACTOR = 1.2
 
 /**
  * Format number as Colombian Peso currency for Excel
@@ -20,7 +20,7 @@ const EXCEL_CHAR_WIDTH_FACTOR = 1.2;
 export function formatCurrencyForExcel(amount: number): number {
   // Excel will handle formatting with numberFormat
   // Just return the raw number
-  return Math.round(amount);
+  return Math.round(amount)
 }
 
 /**
@@ -30,7 +30,7 @@ export function formatCurrencyForExcel(amount: number): number {
  * getCurrencyFormula('D5', 'E5') // Returns: "=D5*E5"
  */
 export function getCurrencyFormula(cell1: string, cell2: string): string {
-  return `=${cell1}*${cell2}`;
+  return `=${cell1}*${cell2}`
 }
 
 /**
@@ -40,7 +40,7 @@ export function getCurrencyFormula(cell1: string, cell2: string): string {
  * getSubtotalFormula('F2', 'F10') // Returns: "=SUM(F2:F10)"
  */
 export function getSubtotalFormula(startCell: string, endCell: string): string {
-  return `=SUM(${startCell}:${endCell})`;
+  return `=SUM(${startCell}:${endCell})`
 }
 
 /**
@@ -50,7 +50,7 @@ export function getSubtotalFormula(startCell: string, endCell: string): string {
  * getTaxFormula('F15', 0.19) // Returns: "=F15*0.19"
  */
 export function getTaxFormula(subtotalCell: string, taxRate: number): string {
-  return `=${subtotalCell}*${taxRate}`;
+  return `=${subtotalCell}*${taxRate}`
 }
 
 /**
@@ -60,7 +60,7 @@ export function getTaxFormula(subtotalCell: string, taxRate: number): string {
  * getTotalFormula('F15', 'F16') // Returns: "=F15+F16"
  */
 export function getTotalFormula(subtotalCell: string, taxCell: string): string {
-  return `=${subtotalCell}+${taxCell}`;
+  return `=${subtotalCell}+${taxCell}`
 }
 
 /**
@@ -72,16 +72,15 @@ export function getTotalFormula(subtotalCell: string, taxCell: string): string {
  * getColumnLetter(26) // Returns: "AA"
  */
 export function getColumnLetter(index: number): string {
-  let column = "";
-  let idx = index;
+  let column = ''
+  let idx = index
 
   while (idx >= 0) {
-    column =
-      String.fromCharCode(ASCII_CODE_A + (idx % ALPHABET_LENGTH)) + column;
-    idx = Math.floor(idx / ALPHABET_LENGTH) - 1;
+    column = String.fromCharCode(ASCII_CODE_A + (idx % ALPHABET_LENGTH)) + column
+    idx = Math.floor(idx / ALPHABET_LENGTH) - 1
   }
 
-  return column;
+  return column
 }
 
 /**
@@ -92,9 +91,9 @@ export function getColumnLetter(index: number): string {
  * getCellReference(4, 2) // Returns: "C5"
  */
 export function getCellReference(rowIndex: number, colIndex: number): string {
-  const letter = getColumnLetter(colIndex);
-  const rowNumber = rowIndex + 1; // Excel rows are 1-based
-  return `${letter}${rowNumber}`;
+  const letter = getColumnLetter(colIndex)
+  const rowNumber = rowIndex + 1 // Excel rows are 1-based
+  return `${letter}${rowNumber}`
 }
 
 /**
@@ -107,11 +106,11 @@ export function getRangeReference(
   startRow: number,
   startCol: number,
   endRow: number,
-  endCol: number
+  endCol: number,
 ): string {
-  const startCell = getCellReference(startRow, startCol);
-  const endCell = getCellReference(endRow, endCol);
-  return `${startCell}:${endCell}`;
+  const startCell = getCellReference(startRow, startCol)
+  const endCell = getCellReference(endRow, endCol)
+  return `${startCell}:${endCell}`
 }
 
 /**
@@ -122,14 +121,10 @@ export function getRangeReference(
  * @param maxWidth - Maximum width
  * @returns Optimal column width
  */
-export function calculateColumnWidth(
-  content: string,
-  minWidth = 10,
-  maxWidth = 50
-): number {
+export function calculateColumnWidth(content: string, minWidth = 10, maxWidth = 50): number {
   // Approximate character width (1 char ≈ 1.2 width units in Excel)
-  const approximateWidth = content.length * EXCEL_CHAR_WIDTH_FACTOR;
-  return Math.max(minWidth, Math.min(approximateWidth, maxWidth));
+  const approximateWidth = content.length * EXCEL_CHAR_WIDTH_FACTOR
+  return Math.max(minWidth, Math.min(approximateWidth, maxWidth))
 }
 
 /**
@@ -137,27 +132,27 @@ export function calculateColumnWidth(
  * Removes formula injection attempts and special characters
  */
 export function sanitizeExcelText(text: string): string {
-  let sanitized = text;
+  let sanitized = text
 
   // Prevent formula injection
   if (
-    sanitized.startsWith("=") ||
-    sanitized.startsWith("+") ||
-    sanitized.startsWith("-") ||
-    sanitized.startsWith("@")
+    sanitized.startsWith('=') ||
+    sanitized.startsWith('+') ||
+    sanitized.startsWith('-') ||
+    sanitized.startsWith('@')
   ) {
-    sanitized = `'${sanitized}`;
+    sanitized = `'${sanitized}`
   }
 
   // biome-ignore lint/suspicious/noControlCharactersInRegex: Control characters removal is intentional for Excel security
-  return sanitized.replace(/[\u0000-\u001F\u007F-\u009F]/g, "").trim();
+  return sanitized.replace(/[\u0000-\u001F\u007F-\u009F]/g, '').trim()
 }
 
 /**
  * Format date for Excel
  */
 export function formatDateForExcel(date: string | Date): Date {
-  return typeof date === "string" ? new Date(date) : date;
+  return typeof date === 'string' ? new Date(date) : date
 }
 
 /**
@@ -167,11 +162,8 @@ export function formatDateForExcel(date: string | Date): Date {
  * @param unitPriceCell - Cell reference for unit price (e.g., "E5")
  * @returns Excel formula string
  */
-export function getItemSubtotalFormula(
-  quantityCell: string,
-  unitPriceCell: string
-): string {
-  return `=${quantityCell}*${unitPriceCell}`;
+export function getItemSubtotalFormula(quantityCell: string, unitPriceCell: string): string {
+  return `=${quantityCell}*${unitPriceCell}`
 }
 
 /**
@@ -180,10 +172,10 @@ export function getItemSubtotalFormula(
 export function applyNumberFormat(format: string, value: number): string {
   // This is just for documentation - Excel handles actual formatting
   // Return string representation for preview
-  if (format.includes("$")) {
-    return `$${value.toLocaleString("es-CO")}`;
+  if (format.includes('$')) {
+    return `$${value.toLocaleString('es-CO')}`
   }
-  return value.toLocaleString("es-CO");
+  return value.toLocaleString('es-CO')
 }
 
 /**
@@ -192,14 +184,14 @@ export function applyNumberFormat(format: string, value: number): string {
  */
 export function sanitizeWorksheetName(name: string, maxLength = 31): string {
   return name
-    .replace(/[/\\?*[\]]/g, "") // Remove invalid characters
+    .replace(/[/\\?*[\]]/g, '') // Remove invalid characters
     .slice(0, maxLength) // Limit length
-    .trim();
+    .trim()
 }
 
 /**
  * Get safe sheet name for Excel
  */
 export function getSafeSheetName(name: string): string {
-  return sanitizeWorksheetName(name);
+  return sanitizeWorksheetName(name)
 }

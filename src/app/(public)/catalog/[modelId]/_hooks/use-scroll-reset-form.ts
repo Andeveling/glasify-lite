@@ -1,15 +1,15 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react'
 
 type UseScrollResetFormOptions = {
   /** Whether the form was just submitted (item added to cart) */
-  isFormSubmitted: boolean;
+  isFormSubmitted: boolean
   /** Callback to reset the form state */
-  onReset: () => void;
+  onReset: () => void
   /** Success card ref to track its position */
-  successCardRef: React.RefObject<HTMLDivElement | null>;
+  successCardRef: React.RefObject<HTMLDivElement | null>
   /** Minimum scroll distance (in pixels) upward to trigger reset */
-  scrollThreshold?: number;
-};
+  scrollThreshold?: number
+}
 
 /**
  * Custom hook to detect upward scroll after form submission
@@ -45,32 +45,31 @@ export function useScrollResetForm({
   scrollThreshold = 100,
   successCardRef,
 }: UseScrollResetFormOptions) {
-  const lastScrollY = useRef(0);
-  const hasUserInteracted = useRef(false);
+  const lastScrollY = useRef(0)
+  const hasUserInteracted = useRef(false)
 
   useEffect(() => {
     // Only activate scroll detection when form is submitted
     if (!isFormSubmitted) {
-      hasUserInteracted.current = false;
-      return;
+      hasUserInteracted.current = false
+      return
     }
 
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const scrollDelta = lastScrollY.current - currentScrollY;
+      const currentScrollY = window.scrollY
+      const scrollDelta = lastScrollY.current - currentScrollY
 
       // Check if scrolling up (positive delta means upward scroll)
-      const isScrollingUp = scrollDelta > 0;
+      const isScrollingUp = scrollDelta > 0
 
       // Get success card position
-      const successCardElement = successCardRef.current;
+      const successCardElement = successCardRef.current
       if (!successCardElement) {
-        return;
+        return
       }
-      const X_BUFFER = 200;
-      const successCardTop =
-        successCardElement.getBoundingClientRect().top + window.scrollY;
-      const isAboveSuccessCard = currentScrollY < successCardTop - X_BUFFER; // 200px buffer
+      const X_BUFFER = 200
+      const successCardTop = successCardElement.getBoundingClientRect().top + window.scrollY
+      const isAboveSuccessCard = currentScrollY < successCardTop - X_BUFFER // 200px buffer
 
       // If user scrolls up past threshold and is above success card
       if (
@@ -80,24 +79,24 @@ export function useScrollResetForm({
         !hasUserInteracted.current
       ) {
         // Mark that we've detected the scroll pattern
-        hasUserInteracted.current = true;
-        const MS_DELAY = 100;
+        hasUserInteracted.current = true
+        const MS_DELAY = 100
         // Reset the form with a small delay for better UX
         setTimeout(() => {
-          onReset();
-        }, MS_DELAY);
+          onReset()
+        }, MS_DELAY)
       }
 
       // Update last scroll position
-      lastScrollY.current = currentScrollY;
-    };
+      lastScrollY.current = currentScrollY
+    }
 
     // Attach scroll listener
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true })
 
     // Cleanup
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [isFormSubmitted, onReset, scrollThreshold, successCardRef]);
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [isFormSubmitted, onReset, scrollThreshold, successCardRef])
 }

@@ -1,29 +1,29 @@
-"use client";
+'use client'
 
-import { Loader2 } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import { api } from "@/trpc/react";
-import { DashboardPeriod } from "@/types/dashboard";
-import { EmptyDashboardState } from "./empty-dashboard-state";
-import { GlassTypesChart } from "./glass-types-chart";
-import { MonetaryMetricsCards } from "./monetary-metrics-cards";
-import { PeriodSelector } from "./period-selector";
-import { PriceRangesChart } from "./price-ranges-chart";
-import { QuotesMetricsCards } from "./quotes-metrics-cards";
-import { QuotesTrendChart } from "./quotes-trend-chart";
-import { SupplierDistributionChart } from "./supplier-distribution-chart";
-import { TopModelsChart } from "./top-models-chart";
+import { Loader2 } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
+import { api } from '@/trpc/react'
+import { DashboardPeriod } from '@/types/dashboard'
+import { EmptyDashboardState } from './empty-dashboard-state'
+import { GlassTypesChart } from './glass-types-chart'
+import { MonetaryMetricsCards } from './monetary-metrics-cards'
+import { PeriodSelector } from './period-selector'
+import { PriceRangesChart } from './price-ranges-chart'
+import { QuotesMetricsCards } from './quotes-metrics-cards'
+import { QuotesTrendChart } from './quotes-trend-chart'
+import { SupplierDistributionChart } from './supplier-distribution-chart'
+import { TopModelsChart } from './top-models-chart'
 
 type DashboardContentProps = {
   /**
    * Tenant configuration for formatting (from server)
    */
   tenantConfig?: {
-    locale?: string;
-    currency?: string;
-    timezone?: string;
-  } | null;
-};
+    locale?: string
+    currency?: string
+    timezone?: string
+  } | null
+}
 
 /**
  * DashboardContent Component
@@ -44,12 +44,12 @@ type DashboardContentProps = {
  * - RBAC-aware data fetching
  */
 export function DashboardContent({ tenantConfig }: DashboardContentProps) {
-  const searchParams = useSearchParams();
-  const period = (searchParams.get("period") ?? DashboardPeriod.LAST_30_DAYS) as
-    | "7d"
-    | "30d"
-    | "90d"
-    | "year";
+  const searchParams = useSearchParams()
+  const period = (searchParams.get('period') ?? DashboardPeriod.LAST_30_DAYS) as
+    | '7d'
+    | '30d'
+    | '90d'
+    | 'year'
 
   // Fetch quote metrics
   const {
@@ -58,7 +58,7 @@ export function DashboardContent({ tenantConfig }: DashboardContentProps) {
     error: metricsError,
   } = api.dashboard.getQuotesMetrics.useQuery({
     period,
-  });
+  })
 
   // Fetch quote trend
   const {
@@ -67,7 +67,7 @@ export function DashboardContent({ tenantConfig }: DashboardContentProps) {
     error: trendError,
   } = api.dashboard.getQuotesTrend.useQuery({
     period,
-  });
+  })
 
   // Fetch catalog analytics
   const {
@@ -76,7 +76,7 @@ export function DashboardContent({ tenantConfig }: DashboardContentProps) {
     error: catalogError,
   } = api.dashboard.getCatalogAnalytics.useQuery({
     period,
-  });
+  })
 
   // Fetch monetary metrics
   const {
@@ -85,7 +85,7 @@ export function DashboardContent({ tenantConfig }: DashboardContentProps) {
     error: monetaryError,
   } = api.dashboard.getMonetaryMetrics.useQuery({
     period,
-  });
+  })
 
   // Fetch price ranges
   const {
@@ -94,23 +94,14 @@ export function DashboardContent({ tenantConfig }: DashboardContentProps) {
     error: priceRangesError,
   } = api.dashboard.getPriceRanges.useQuery({
     period,
-  });
+  })
 
   // Global loading state
   const isLoading =
-    metricsLoading ||
-    trendLoading ||
-    catalogLoading ||
-    monetaryLoading ||
-    priceRangesLoading;
+    metricsLoading || trendLoading || catalogLoading || monetaryLoading || priceRangesLoading
 
   // Global error state
-  const hasError =
-    metricsError ||
-    trendError ||
-    catalogError ||
-    monetaryError ||
-    priceRangesError;
+  const hasError = metricsError || trendError || catalogError || monetaryError || priceRangesError
 
   if (hasError) {
     return (
@@ -118,7 +109,7 @@ export function DashboardContent({ tenantConfig }: DashboardContentProps) {
         description="No se pudieron cargar los datos del dashboard. Por favor, intenta recargar la página."
         title="Error al cargar métricas"
       />
-    );
+    )
   }
 
   return (
@@ -126,9 +117,7 @@ export function DashboardContent({ tenantConfig }: DashboardContentProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-bold text-3xl tracking-tight">
-            Dashboard de Métricas
-          </h1>
+          <h1 className="font-bold text-3xl tracking-tight">Dashboard de Métricas</h1>
           <p className="text-muted-foreground">
             Análisis de rendimiento y estadísticas del negocio
           </p>
@@ -140,9 +129,7 @@ export function DashboardContent({ tenantConfig }: DashboardContentProps) {
       {isLoading && (
         <div className="flex items-center justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          <span className="ml-2 text-muted-foreground">
-            Cargando métricas...
-          </span>
+          <span className="ml-2 text-muted-foreground">Cargando métricas...</span>
         </div>
       )}
 
@@ -150,17 +137,9 @@ export function DashboardContent({ tenantConfig }: DashboardContentProps) {
       {!isLoading && metricsData && trendData && (
         <>
           <section className="space-y-4">
-            <h2 className="font-semibold text-xl">
-              Rendimiento de Cotizaciones
-            </h2>
-            <QuotesMetricsCards
-              metrics={metricsData}
-              tenantConfig={tenantConfig}
-            />
-            <QuotesTrendChart
-              data={trendData.data}
-              periodLabel={trendData.period}
-            />
+            <h2 className="font-semibold text-xl">Rendimiento de Cotizaciones</h2>
+            <QuotesMetricsCards metrics={metricsData} tenantConfig={tenantConfig} />
+            <QuotesTrendChart data={trendData.data} periodLabel={trendData.period} />
           </section>
 
           {/* Catalog Analytics Section (US2) */}
@@ -168,14 +147,8 @@ export function DashboardContent({ tenantConfig }: DashboardContentProps) {
             <section className="space-y-4">
               <h2 className="font-semibold text-xl">Análisis del Catálogo</h2>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <TopModelsChart
-                  data={catalogData.topModels}
-                  tenantConfig={tenantConfig}
-                />
-                <GlassTypesChart
-                  data={catalogData.topGlassTypes}
-                  tenantConfig={tenantConfig}
-                />
+                <TopModelsChart data={catalogData.topModels} tenantConfig={tenantConfig} />
+                <GlassTypesChart data={catalogData.topGlassTypes} tenantConfig={tenantConfig} />
                 <SupplierDistributionChart
                   data={catalogData.supplierDistribution}
                   tenantConfig={tenantConfig}
@@ -188,18 +161,12 @@ export function DashboardContent({ tenantConfig }: DashboardContentProps) {
           {monetaryData && priceRangesData && (
             <section className="space-y-4">
               <h2 className="font-semibold text-xl">Métricas Monetarias</h2>
-              <MonetaryMetricsCards
-                data={monetaryData}
-                tenantConfig={tenantConfig}
-              />
-              <PriceRangesChart
-                data={priceRangesData.ranges}
-                tenantConfig={tenantConfig}
-              />
+              <MonetaryMetricsCards data={monetaryData} tenantConfig={tenantConfig} />
+              <PriceRangesChart data={priceRangesData.ranges} tenantConfig={tenantConfig} />
             </section>
           )}
         </>
       )}
     </div>
-  );
+  )
 }

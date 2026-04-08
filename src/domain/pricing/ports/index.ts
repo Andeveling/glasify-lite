@@ -10,7 +10,7 @@ export type {
   PriceCalculationInput,
   PriceCalculationResult,
   PriceCalculatorPort,
-} from "./input/price-calculator.port";
+} from './input/price-calculator.port'
 
 /**
  * Output Ports (Repository/External Service Interfaces)

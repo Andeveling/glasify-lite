@@ -6,6 +6,11 @@
       "sourceType": "github",
       "computedHash": "a4c830509e85557b59339d8d93a4e243e9e59c686e7678854d39230e12c2a6dc"
     },
+    "biome": {
+      "source": "bobmatnyc/claude-mpm-skills",
+      "sourceType": "github",
+      "computedHash": "a2ab4299f4551f45529a0063a5fb05e2ea353cb10983c3111c52969d40b4ece6"
+    },
     "prisma-database-setup": {
       "source": "prisma/skills",
       "sourceType": "github",

@@ -11,9 +11,9 @@
  */
 
 type ModelFormLayoutProps = {
-  sidebar: React.ReactNode;
-  main: React.ReactNode;
-};
+  sidebar: React.ReactNode
+  main: React.ReactNode
+}
 
 export function ModelFormLayout({ sidebar, main }: ModelFormLayoutProps) {
   return (
@@ -24,5 +24,5 @@ export function ModelFormLayout({ sidebar, main }: ModelFormLayoutProps) {
       {/* Main content - Right column (2/3 width on desktop) */}
       <div className="space-y-6 lg:col-span-2">{main}</div>
     </div>
-  );
+  )
 }

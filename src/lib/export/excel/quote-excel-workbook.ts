@@ -6,9 +6,9 @@
  * 2. Items - Detailed item breakdown with formulas
  */
 
-import ExcelJS from "exceljs";
-import { formatTaxLabel } from "@/lib/format";
-import type { QuoteExcelData } from "@/types/export.types";
+import ExcelJS from 'exceljs'
+import { formatTaxLabel } from '@/lib/format'
+import type { QuoteExcelData } from '@/types/export.types'
 import {
   excelAlignments,
   excelBorders,
@@ -17,17 +17,17 @@ import {
   excelFonts,
   excelNumberFormats,
   excelRowHeights,
-} from "./excel-styles";
+} from './excel-styles'
 import {
   formatDateForExcel,
   getCellReference,
   getItemSubtotalFormula,
   getSubtotalFormula,
   sanitizeExcelText,
-} from "./excel-utils";
+} from './excel-utils'
 
 // Quote ID display length (first N characters)
-const QUOTE_ID_DISPLAY_LENGTH = 8;
+const QUOTE_ID_DISPLAY_LENGTH = 8
 
 /**
  * Add tax row to summary sheet if tax is configured
@@ -38,195 +38,193 @@ function addTaxRowToSummary(
   sheet: ExcelJS.Worksheet,
   data: QuoteExcelData,
   currentRow: number,
-  subtotalCellRef: string
+  subtotalCellRef: string,
 ): number {
   const taxLabel = formatTaxLabel({
     taxEnabled: data.totals.tax != null && data.totals.tax > 0,
     taxName: data.totals.taxName,
     taxRate: data.totals.taxRate ?? undefined,
-  });
+  })
 
   if (data.totals.tax == null || data.totals.tax <= 0 || !taxLabel) {
-    return 0;
+    return 0
   }
 
-  const taxRow = sheet.getRow(currentRow);
-  taxRow.getCell(1).value = `${taxLabel}:`;
-  taxRow.getCell(1).font = excelFonts.body;
+  const taxRow = sheet.getRow(currentRow)
+  taxRow.getCell(1).value = `${taxLabel}:`
+  taxRow.getCell(1).font = excelFonts.body
 
   // Use formula for tax calculation: =Subtotal*TaxRate
   if (data.totals.taxRate != null) {
     taxRow.getCell(2).value = {
       formula: `=${subtotalCellRef}*${data.totals.taxRate}`,
       result: data.totals.tax,
-    };
+    }
   } else {
-    taxRow.getCell(2).value = data.totals.tax;
+    taxRow.getCell(2).value = data.totals.tax
   }
 
-  taxRow.getCell(2).font = excelFonts.body;
-  taxRow.getCell(2).numFmt = excelNumberFormats.currency;
+  taxRow.getCell(2).font = excelFonts.body
+  taxRow.getCell(2).numFmt = excelNumberFormats.currency
 
-  return 1;
+  return 1
 }
 
 /**
  * Create complete Excel workbook for quote
  */
-export function createQuoteExcelWorkbook(
-  data: QuoteExcelData
-): ExcelJS.Workbook {
-  const workbook = new ExcelJS.Workbook();
+export function createQuoteExcelWorkbook(data: QuoteExcelData): ExcelJS.Workbook {
+  const workbook = new ExcelJS.Workbook()
 
   // Set workbook properties
-  workbook.creator = data.company.name;
-  workbook.created = new Date();
-  workbook.modified = new Date();
-  workbook.lastPrinted = new Date();
+  workbook.creator = data.company.name
+  workbook.created = new Date()
+  workbook.modified = new Date()
+  workbook.lastPrinted = new Date()
 
   // Create worksheets
-  createSummarySheet(workbook, data);
-  createItemsSheet(workbook, data);
+  createSummarySheet(workbook, data)
+  createItemsSheet(workbook, data)
 
-  return workbook;
+  return workbook
 }
 
 /**
  * Create Summary Sheet
  */
 function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
-  const sheet = workbook.addWorksheet("Resumen", {
+  const sheet = workbook.addWorksheet('Resumen', {
     properties: {
       defaultRowHeight: excelRowHeights.default,
     },
     views: [{ showGridLines: false }],
-  });
+  })
 
   // Set column widths
   sheet.columns = [
     { width: excelColumnWidths.summaryLabel },
     { width: excelColumnWidths.summaryValue },
-  ];
+  ]
 
-  let currentRow = 1;
+  let currentRow = 1
 
   // Header Section
-  const headerRow = sheet.getRow(currentRow);
-  headerRow.height = excelRowHeights.header;
-  headerRow.getCell(1).value = data.company.name;
-  headerRow.getCell(1).font = { ...excelFonts.header, size: 16 };
-  headerRow.getCell(1).fill = excelFills.header;
-  headerRow.getCell(1).alignment = excelAlignments.left;
-  sheet.mergeCells(currentRow, 1, currentRow, 2);
-  currentRow += 2;
+  const headerRow = sheet.getRow(currentRow)
+  headerRow.height = excelRowHeights.header
+  headerRow.getCell(1).value = data.company.name
+  headerRow.getCell(1).font = { ...excelFonts.header, size: 16 }
+  headerRow.getCell(1).fill = excelFills.header
+  headerRow.getCell(1).alignment = excelAlignments.left
+  sheet.mergeCells(currentRow, 1, currentRow, 2)
+  currentRow += 2
 
   // Quote Information
-  const quoteInfoRow = sheet.getRow(currentRow);
-  quoteInfoRow.height = excelRowHeights.sectionTitle;
-  quoteInfoRow.getCell(1).value = "Información de Cotización";
-  quoteInfoRow.getCell(1).font = excelFonts.sectionTitle;
-  quoteInfoRow.getCell(1).fill = excelFills.sectionTitle;
-  sheet.mergeCells(currentRow, 1, currentRow, 2);
-  currentRow++;
+  const quoteInfoRow = sheet.getRow(currentRow)
+  quoteInfoRow.height = excelRowHeights.sectionTitle
+  quoteInfoRow.getCell(1).value = 'Información de Cotización'
+  quoteInfoRow.getCell(1).font = excelFonts.sectionTitle
+  quoteInfoRow.getCell(1).fill = excelFills.sectionTitle
+  sheet.mergeCells(currentRow, 1, currentRow, 2)
+  currentRow++
 
   // Quote details
   const quoteDetails = [
-    ["Cotización #:", data.quote.id.slice(0, QUOTE_ID_DISPLAY_LENGTH)],
-    ["Proyecto:", sanitizeExcelText(data.quote.projectName)],
-    ["Estado:", data.quote.status === "draft" ? "Borrador" : data.quote.status],
-    ["Fecha de creación:", formatDateForExcel(data.quote.createdAt)],
-    ["Válida hasta:", formatDateForExcel(data.quote.validUntil)],
-    ["Total de ítems:", data.quote.itemCount],
-  ];
+    ['Cotización #:', data.quote.id.slice(0, QUOTE_ID_DISPLAY_LENGTH)],
+    ['Proyecto:', sanitizeExcelText(data.quote.projectName)],
+    ['Estado:', data.quote.status === 'draft' ? 'Borrador' : data.quote.status],
+    ['Fecha de creación:', formatDateForExcel(data.quote.createdAt)],
+    ['Válida hasta:', formatDateForExcel(data.quote.validUntil)],
+    ['Total de ítems:', data.quote.itemCount],
+  ]
 
   for (const [label, value] of quoteDetails) {
-    const row = sheet.getRow(currentRow);
-    row.getCell(1).value = label;
-    row.getCell(1).font = excelFonts.bold;
-    row.getCell(2).value = value;
-    row.getCell(2).font = excelFonts.body;
+    const row = sheet.getRow(currentRow)
+    row.getCell(1).value = label
+    row.getCell(1).font = excelFonts.bold
+    row.getCell(2).value = value
+    row.getCell(2).font = excelFonts.body
 
     if (value instanceof Date) {
-      row.getCell(2).numFmt = excelNumberFormats.dateLong;
+      row.getCell(2).numFmt = excelNumberFormats.dateLong
     }
 
-    currentRow++;
+    currentRow++
   }
 
-  currentRow++;
+  currentRow++
 
   // Customer Information
-  const customerInfoRow = sheet.getRow(currentRow);
-  customerInfoRow.height = excelRowHeights.sectionTitle;
-  customerInfoRow.getCell(1).value = "Información del Cliente";
-  customerInfoRow.getCell(1).font = excelFonts.sectionTitle;
-  customerInfoRow.getCell(1).fill = excelFills.sectionTitle;
-  sheet.mergeCells(currentRow, 1, currentRow, 2);
-  currentRow++;
+  const customerInfoRow = sheet.getRow(currentRow)
+  customerInfoRow.height = excelRowHeights.sectionTitle
+  customerInfoRow.getCell(1).value = 'Información del Cliente'
+  customerInfoRow.getCell(1).font = excelFonts.sectionTitle
+  customerInfoRow.getCell(1).fill = excelFills.sectionTitle
+  sheet.mergeCells(currentRow, 1, currentRow, 2)
+  currentRow++
 
   // Customer details
   const customerDetails = [
-    ["Nombre:", sanitizeExcelText(data.customer.name)],
-    ["Email:", data.customer.email || "-"],
-    ["Teléfono:", data.customer.phone || "-"],
-  ];
+    ['Nombre:', sanitizeExcelText(data.customer.name)],
+    ['Email:', data.customer.email || '-'],
+    ['Teléfono:', data.customer.phone || '-'],
+  ]
 
   for (const [label, value] of customerDetails) {
-    const row = sheet.getRow(currentRow);
-    row.getCell(1).value = label;
-    row.getCell(1).font = excelFonts.bold;
-    row.getCell(2).value = value;
-    row.getCell(2).font = excelFonts.body;
-    currentRow++;
+    const row = sheet.getRow(currentRow)
+    row.getCell(1).value = label
+    row.getCell(1).font = excelFonts.bold
+    row.getCell(2).value = value
+    row.getCell(2).font = excelFonts.body
+    currentRow++
   }
 
-  currentRow++;
+  currentRow++
 
   // Totals Section
-  const totalsRow = sheet.getRow(currentRow);
-  totalsRow.height = excelRowHeights.sectionTitle;
-  totalsRow.getCell(1).value = "Resumen de Costos";
-  totalsRow.getCell(1).font = excelFonts.sectionTitle;
-  totalsRow.getCell(1).fill = excelFills.sectionTitle;
-  sheet.mergeCells(currentRow, 1, currentRow, 2);
-  currentRow++;
+  const totalsRow = sheet.getRow(currentRow)
+  totalsRow.height = excelRowHeights.sectionTitle
+  totalsRow.getCell(1).value = 'Resumen de Costos'
+  totalsRow.getCell(1).font = excelFonts.sectionTitle
+  totalsRow.getCell(1).fill = excelFills.sectionTitle
+  sheet.mergeCells(currentRow, 1, currentRow, 2)
+  currentRow++
 
   // Subtotal
-  const subtotalRow = sheet.getRow(currentRow);
-  subtotalRow.getCell(1).value = "Subtotal:";
-  subtotalRow.getCell(1).font = excelFonts.body;
-  subtotalRow.getCell(2).value = data.totals.subtotal;
-  subtotalRow.getCell(2).font = excelFonts.body;
-  subtotalRow.getCell(2).numFmt = excelNumberFormats.currency;
-  const subtotalCellRef = `B${currentRow}`; // Store reference for tax formula
-  currentRow++;
+  const subtotalRow = sheet.getRow(currentRow)
+  subtotalRow.getCell(1).value = 'Subtotal:'
+  subtotalRow.getCell(1).font = excelFonts.body
+  subtotalRow.getCell(2).value = data.totals.subtotal
+  subtotalRow.getCell(2).font = excelFonts.body
+  subtotalRow.getCell(2).numFmt = excelNumberFormats.currency
+  const subtotalCellRef = `B${currentRow}` // Store reference for tax formula
+  currentRow++
 
   // Tax (if applicable) - Dynamic label based on tenant config
-  currentRow += addTaxRowToSummary(sheet, data, currentRow, subtotalCellRef);
+  currentRow += addTaxRowToSummary(sheet, data, currentRow, subtotalCellRef)
 
   // Discount (if applicable)
   if (data.totals.discount !== undefined && data.totals.discount > 0) {
-    const discountRow = sheet.getRow(currentRow);
-    discountRow.getCell(1).value = "Descuento:";
-    discountRow.getCell(1).font = excelFonts.body;
-    discountRow.getCell(2).value = -data.totals.discount;
-    discountRow.getCell(2).font = excelFonts.body;
-    discountRow.getCell(2).numFmt = excelNumberFormats.currency;
-    currentRow++;
+    const discountRow = sheet.getRow(currentRow)
+    discountRow.getCell(1).value = 'Descuento:'
+    discountRow.getCell(1).font = excelFonts.body
+    discountRow.getCell(2).value = -data.totals.discount
+    discountRow.getCell(2).font = excelFonts.body
+    discountRow.getCell(2).numFmt = excelNumberFormats.currency
+    currentRow++
   }
 
   // Total
-  const totalRow = sheet.getRow(currentRow);
-  totalRow.height = excelRowHeights.tableHeader;
-  totalRow.getCell(1).value = "TOTAL:";
-  totalRow.getCell(1).font = excelFonts.totalLabel;
-  totalRow.getCell(1).fill = excelFills.totalRow;
-  totalRow.getCell(2).value = data.totals.total;
-  totalRow.getCell(2).font = excelFonts.totalValue;
-  totalRow.getCell(2).fill = excelFills.totalRow;
-  totalRow.getCell(2).numFmt = excelNumberFormats.currency;
-  totalRow.getCell(1).border = excelBorders.thick;
-  totalRow.getCell(2).border = excelBorders.thick;
+  const totalRow = sheet.getRow(currentRow)
+  totalRow.height = excelRowHeights.tableHeader
+  totalRow.getCell(1).value = 'TOTAL:'
+  totalRow.getCell(1).font = excelFonts.totalLabel
+  totalRow.getCell(1).fill = excelFills.totalRow
+  totalRow.getCell(2).value = data.totals.total
+  totalRow.getCell(2).font = excelFonts.totalValue
+  totalRow.getCell(2).fill = excelFills.totalRow
+  totalRow.getCell(2).numFmt = excelNumberFormats.currency
+  totalRow.getCell(1).border = excelBorders.thick
+  totalRow.getCell(2).border = excelBorders.thick
 
   // Apply borders to summary sections
   applyBordersToRange(sheet, {
@@ -234,18 +232,18 @@ function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
     endRow: currentRow - 1,
     startCol: 1,
     startRow: 4,
-  });
+  })
 }
 
 /**
  * Create Items Sheet with detailed breakdown
  */
 function createItemsSheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
-  const sheet = workbook.addWorksheet("Ítems Detallados", {
+  const sheet = workbook.addWorksheet('Ítems Detallados', {
     properties: {
       defaultRowHeight: excelRowHeights.default,
     },
-  });
+  })
 
   // Set column widths
   sheet.columns = [
@@ -256,111 +254,107 @@ function createItemsSheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
     { width: excelColumnWidths.quantity }, // Cantidad
     { width: excelColumnWidths.unitPrice }, // Precio Unit.
     { width: excelColumnWidths.subtotal }, // Subtotal
-  ];
+  ]
 
   // Header Row
-  const headerRow = sheet.getRow(1);
-  headerRow.height = excelRowHeights.tableHeader;
+  const headerRow = sheet.getRow(1)
+  headerRow.height = excelRowHeights.tableHeader
   headerRow.values = [
-    "#",
-    "Producto",
-    "Descripción",
-    "Dimensiones",
-    "Cantidad",
-    "Precio Unitario",
-    "Subtotal",
-  ];
+    '#',
+    'Producto',
+    'Descripción',
+    'Dimensiones',
+    'Cantidad',
+    'Precio Unitario',
+    'Subtotal',
+  ]
 
   // Apply header styles
   for (let col = 1; col <= 7; col++) {
-    const cell = headerRow.getCell(col);
-    cell.font = excelFonts.tableHeader;
-    cell.fill = excelFills.tableHeader;
-    cell.alignment = excelAlignments.center;
-    cell.border = excelBorders.thin;
+    const cell = headerRow.getCell(col)
+    cell.font = excelFonts.tableHeader
+    cell.fill = excelFills.tableHeader
+    cell.alignment = excelAlignments.center
+    cell.border = excelBorders.thin
   }
 
   // Data Rows
-  let index = 0;
+  let index = 0
   for (const item of data.items) {
-    const rowNumber = index + 2; // Start at row 2 (row 1 is header)
-    const row = sheet.getRow(rowNumber);
-    row.height = excelRowHeights.tableRow;
+    const rowNumber = index + 2 // Start at row 2 (row 1 is header)
+    const row = sheet.getRow(rowNumber)
+    row.height = excelRowHeights.tableRow
 
     // Column values
-    row.getCell(1).value = item.itemNumber;
-    row.getCell(2).value = sanitizeExcelText(item.name);
-    row.getCell(3).value = item.productName
-      ? sanitizeExcelText(item.productName)
-      : "-";
-    row.getCell(4).value =
-      item.width && item.height ? `${item.width}x${item.height}m` : "-";
-    row.getCell(5).value = item.quantity;
-    row.getCell(6).value = item.unitPrice;
+    row.getCell(1).value = item.itemNumber
+    row.getCell(2).value = sanitizeExcelText(item.name)
+    row.getCell(3).value = item.productName ? sanitizeExcelText(item.productName) : '-'
+    row.getCell(4).value = item.width && item.height ? `${item.width}x${item.height}m` : '-'
+    row.getCell(5).value = item.quantity
+    row.getCell(6).value = item.unitPrice
 
     // Subtotal formula: quantity * unitPrice
-    const quantityCell = getCellReference(rowNumber - 1, 4);
-    const priceCell = getCellReference(rowNumber - 1, 5);
+    const quantityCell = getCellReference(rowNumber - 1, 4)
+    const priceCell = getCellReference(rowNumber - 1, 5)
     row.getCell(7).value = {
       formula: getItemSubtotalFormula(quantityCell, priceCell),
       result: item.subtotal,
-    };
-
-    // Apply styles
-    row.getCell(1).alignment = excelAlignments.center;
-    row.getCell(2).alignment = excelAlignments.left;
-    row.getCell(3).alignment = excelAlignments.left;
-    row.getCell(4).alignment = excelAlignments.center;
-    row.getCell(5).alignment = excelAlignments.center;
-    row.getCell(6).alignment = excelAlignments.right;
-    row.getCell(7).alignment = excelAlignments.right;
-
-    // Number formatting
-    row.getCell(6).numFmt = excelNumberFormats.currency;
-    row.getCell(7).numFmt = excelNumberFormats.currency;
-
-    // Alternating row colors
-    const fill =
-      index % 2 === 0 ? excelFills.tableRowOdd : excelFills.tableRowEven;
-    for (let col = 1; col <= 7; col++) {
-      row.getCell(col).fill = fill;
-      row.getCell(col).border = excelBorders.thin;
     }
 
-    index++;
+    // Apply styles
+    row.getCell(1).alignment = excelAlignments.center
+    row.getCell(2).alignment = excelAlignments.left
+    row.getCell(3).alignment = excelAlignments.left
+    row.getCell(4).alignment = excelAlignments.center
+    row.getCell(5).alignment = excelAlignments.center
+    row.getCell(6).alignment = excelAlignments.right
+    row.getCell(7).alignment = excelAlignments.right
+
+    // Number formatting
+    row.getCell(6).numFmt = excelNumberFormats.currency
+    row.getCell(7).numFmt = excelNumberFormats.currency
+
+    // Alternating row colors
+    const fill = index % 2 === 0 ? excelFills.tableRowOdd : excelFills.tableRowEven
+    for (let col = 1; col <= 7; col++) {
+      row.getCell(col).fill = fill
+      row.getCell(col).border = excelBorders.thin
+    }
+
+    index++
   }
 
   // Totals Row
-  const totalsRowNumber = data.items.length + 2;
-  const totalsRow = sheet.getRow(totalsRowNumber);
-  totalsRow.height = excelRowHeights.tableHeader;
+  const totalsRowNumber = data.items.length + 2
+  const totalsRow = sheet.getRow(totalsRowNumber)
+  totalsRow.height = excelRowHeights.tableHeader
 
-  sheet.mergeCells(totalsRowNumber, 1, totalsRowNumber, 6);
-  totalsRow.getCell(1).value = "SUBTOTAL:";
-  totalsRow.getCell(1).font = excelFonts.totalLabel;
-  totalsRow.getCell(1).alignment = excelAlignments.right;
-  totalsRow.getCell(1).fill = excelFills.totalsSection;
+  sheet.mergeCells(totalsRowNumber, 1, totalsRowNumber, 6)
+  totalsRow.getCell(1).value = 'SUBTOTAL:'
+  totalsRow.getCell(1).font = excelFonts.totalLabel
+  totalsRow.getCell(1).alignment = excelAlignments.right
+  totalsRow.getCell(1).fill = excelFills.totalsSection
 
   // Subtotal formula: SUM of all subtotals
-  const firstItemRow = getCellReference(1, 6); // G2
-  const lastItemRow = getCellReference(data.items.length, 6); // G[last]
+  const firstItemRow = getCellReference(1, 6) // G2
+  const lastItemRow = getCellReference(data.items.length, 6) // G[last]
   totalsRow.getCell(7).value = {
     formula: getSubtotalFormula(firstItemRow, lastItemRow),
     result: data.totals.subtotal,
-  };
-  totalsRow.getCell(7).font = excelFonts.totalValue;
-  totalsRow.getCell(7).numFmt = excelNumberFormats.currency;
-  totalsRow.getCell(7).fill = excelFills.totalsSection;
-  totalsRow.getCell(7).border = excelBorders.thick;
+  }
+  totalsRow.getCell(7).font = excelFonts.totalValue
+  totalsRow.getCell(7).numFmt = excelNumberFormats.currency
+  totalsRow.getCell(7).fill = excelFills.totalsSection
+  totalsRow.getCell(7).border = excelBorders.thick
 
   // Freeze header row
-  sheet.views = [{ state: "frozen", ySplit: 1 }];
+  sheet.views = [{ state: 'frozen', ySplit: 1 }]
 
   // Auto-filter
   sheet.autoFilter = {
     from: { column: 1, row: 1 },
     to: { column: 7, row: 1 },
-  };
+  }
 }
 
 /**
@@ -368,13 +362,13 @@ function createItemsSheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
  */
 function applyBordersToRange(
   sheet: ExcelJS.Worksheet,
-  range: { startRow: number; startCol: number; endRow: number; endCol: number }
+  range: { startRow: number; startCol: number; endRow: number; endCol: number },
 ) {
-  const { startRow, startCol, endRow, endCol } = range;
+  const { startRow, startCol, endRow, endCol } = range
   for (let row = startRow; row <= endRow; row++) {
     for (let col = startCol; col <= endCol; col++) {
-      const cell = sheet.getRow(row).getCell(col);
-      cell.border = excelBorders.thin;
+      const cell = sheet.getRow(row).getCell(col)
+      cell.border = excelBorders.thin
     }
   }
 }
@@ -383,7 +377,7 @@ function applyBordersToRange(
  * Write workbook to buffer for Server Action
  */
 export async function writeQuoteExcel(data: QuoteExcelData): Promise<Buffer> {
-  const workbook = createQuoteExcelWorkbook(data);
-  const buffer = await workbook.xlsx.writeBuffer();
-  return Buffer.from(buffer);
+  const workbook = createQuoteExcelWorkbook(data)
+  const buffer = await workbook.xlsx.writeBuffer()
+  return Buffer.from(buffer)
 }

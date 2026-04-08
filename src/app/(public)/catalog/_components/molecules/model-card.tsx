@@ -1,37 +1,37 @@
 /** biome-ignore-all lint/correctness/noUnusedFunctionParameters: Debemos implementar un cambio a futuro para hacer un rework ala card y que sea configurable desde el formulario de models */
-"use client";
+'use client'
 
-import { ProductImagePlaceholder } from "@views/catalog/_components/molecules/model-card-atoms";
-import Image from "next/image";
-import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
+import { ProductImagePlaceholder } from '@views/catalog/_components/molecules/model-card-atoms'
+import Image from 'next/image'
+import Link from 'next/link'
+import { Card, CardContent } from '@/components/ui/card'
 
 type ModelCardProps = {
-  id: string;
-  name: string;
-  profileSupplier?: string;
+  id: string
+  name: string
+  profileSupplier?: string
   range: {
-    width: [number, number];
-    height: [number, number];
-  };
-  basePrice: string;
+    width: [number, number]
+    height: [number, number]
+  }
+  basePrice: string
   /**
    * Optional URL to model design image
    * If provided, shows real image; otherwise shows placeholder
    */
-  imageUrl?: string | null;
+  imageUrl?: string | null
   compatibleGlassTypes: Array<{
-    id: string;
-    name: string;
-    type: string;
-  }>;
+    id: string
+    name: string
+    type: string
+  }>
   /** Highlighted glass solutions for this model */
   highlightedSolutions?: Array<{
-    icon?: string;
-    nameEs: string;
-    rating: "excellent" | "very_good" | "good" | "standard" | "basic";
-  }>;
-};
+    icon?: string
+    nameEs: string
+    rating: 'excellent' | 'very_good' | 'good' | 'standard' | 'basic'
+  }>
+}
 
 /**
  * ModelCard - Enhanced Presentational Component
@@ -44,13 +44,7 @@ type ModelCardProps = {
  * - Price (decision factor)
  * - Link to details
  */
-export function ModelCard({
-  id,
-  name,
-  basePrice,
-  imageUrl,
-  range,
-}: ModelCardProps) {
+export function ModelCard({ id, name, basePrice, imageUrl, range }: ModelCardProps) {
   // const minWidth = Math.round(range.width[0]);
   // const maxWidth = Math.round(range.width[1]);
   // const minHeight = Math.round(range.height[0]);
@@ -72,7 +66,7 @@ export function ModelCard({
               fill
               priority={false}
               sizes="(max-width: 768px) 100vw, 50vw"
-              src={imageUrl || "/placeholder.svg"}
+              src={imageUrl || '/placeholder.svg'}
             />
           ) : (
             <ProductImagePlaceholder productName={name} />
@@ -126,5 +120,5 @@ export function ModelCard({
         </CardContent>
       </Link>
     </Card>
-  );
+  )
 }

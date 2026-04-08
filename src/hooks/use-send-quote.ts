@@ -9,40 +9,40 @@
  * @module hooks/use-send-quote
  */
 
-"use client";
+'use client'
 
-import type { TRPCClientErrorLike } from "@trpc/client";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { toast } from "sonner";
-import type { AppRouter } from "@/server/api/root";
-import type { SendToVendorInput } from "@/server/api/routers/quote/quote.schemas";
-import { api } from "@/trpc/react";
+import type { TRPCClientErrorLike } from '@trpc/client'
+import { useRouter } from 'next/navigation'
+import { useState, useTransition } from 'react'
+import { toast } from 'sonner'
+import type { AppRouter } from '@/server/api/root'
+import type { SendToVendorInput } from '@/server/api/routers/quote/quote.schemas'
+import { api } from '@/trpc/react'
 
-type TRPCError = TRPCClientErrorLike<AppRouter>;
+type TRPCError = TRPCClientErrorLike<AppRouter>
 
 // Context type for optimistic updates - using 'any' to avoid complex type inference
 // The actual type is inferred from the query return value at runtime
 type UseSendQuoteContext = {
   // biome-ignore lint/suspicious/noExplicitAny: Complex tRPC query type, runtime type-safe
-  previousQuote?: any;
-};
+  previousQuote?: any
+}
 
 type UseSendQuoteOptions = {
   /**
    * Callback fired when mutation succeeds
    */
-  onSuccess?: (data: { id: string; sentAt: Date }) => void;
+  onSuccess?: (data: { id: string; sentAt: Date }) => void
   /**
    * Callback fired when mutation fails
    */
-  onError?: (error: TRPCError) => void;
+  onError?: (error: TRPCError) => void
   /**
    * Whether to redirect to quote detail page after success
    * @default true
    */
-  redirectOnSuccess?: boolean;
-};
+  redirectOnSuccess?: boolean
+}
 
 /**
  * Hook for sending draft quotes to vendor
@@ -65,120 +65,111 @@ type UseSendQuoteOptions = {
  * ```
  */
 export function useSendQuote(options: UseSendQuoteOptions = {}) {
-  const { onSuccess, onError, redirectOnSuccess = true } = options;
+  const { onSuccess, onError, redirectOnSuccess = true } = options
 
-  const router = useRouter();
-  const utils = api.useUtils();
-  const [isPending, startTransition] = useTransition();
-  const [optimisticQuoteId, setOptimisticQuoteId] = useState<string | null>(
-    null
-  );
+  const router = useRouter()
+  const utils = api.useUtils()
+  const [isPending, startTransition] = useTransition()
+  const [optimisticQuoteId, setOptimisticQuoteId] = useState<string | null>(null)
 
-  const mutation = api.quote["send-to-vendor"].useMutation<UseSendQuoteContext>(
-    {
-      onError: (error, input, context) => {
-        // Rollback optimistic update
-        if (context?.previousQuote) {
-          utils.quote["get-by-id"].setData(
-            { id: input.quoteId },
-            context.previousQuote
-          );
+  const mutation = api.quote['send-to-vendor'].useMutation<UseSendQuoteContext>({
+    onError: (error, input, context) => {
+      // Rollback optimistic update
+      if (context?.previousQuote) {
+        utils.quote['get-by-id'].setData({ id: input.quoteId }, context.previousQuote)
+      }
+
+      setOptimisticQuoteId(null)
+
+      // Dismiss loading toast
+      toast.dismiss(`send-quote-${input.quoteId}`)
+
+      // Show error toast with user-friendly message
+      const errorMessage = error.message || 'No se pudo enviar la cotización. Intenta nuevamente.'
+      toast.error('Error al enviar cotización', {
+        description: errorMessage,
+        duration: 5000,
+      })
+
+      // Call custom error handler
+      if (onError) {
+        onError(error)
+      }
+    },
+    onMutate: async (input) => {
+      // Cancel outgoing refetches to avoid overwriting optimistic update
+      await utils.quote['get-by-id'].cancel({ id: input.quoteId })
+
+      // Store quote ID for rollback
+      setOptimisticQuoteId(input.quoteId)
+
+      // Snapshot the previous value
+      const previousQuote = utils.quote['get-by-id'].getData({
+        id: input.quoteId,
+      })
+
+      // Optimistically update to 'sent' status
+      utils.quote['get-by-id'].setData({ id: input.quoteId }, (old) => {
+        if (!old) {
+          return old
         }
 
-        setOptimisticQuoteId(null);
-
-        // Dismiss loading toast
-        toast.dismiss(`send-quote-${input.quoteId}`);
-
-        // Show error toast with user-friendly message
-        const errorMessage =
-          error.message ||
-          "No se pudo enviar la cotización. Intenta nuevamente.";
-        toast.error("Error al enviar cotización", {
-          description: errorMessage,
-          duration: 5000,
-        });
-
-        // Call custom error handler
-        if (onError) {
-          onError(error);
+        return {
+          ...old,
+          contactPhone: input.contactPhone,
+          sentAt: new Date(),
+          status: 'sent' as const,
         }
-      },
-      onMutate: async (input) => {
-        // Cancel outgoing refetches to avoid overwriting optimistic update
-        await utils.quote["get-by-id"].cancel({ id: input.quoteId });
+      })
 
-        // Store quote ID for rollback
-        setOptimisticQuoteId(input.quoteId);
+      // Show loading toast
+      toast.loading('Enviando cotización...', {
+        id: `send-quote-${input.quoteId}`,
+      })
 
-        // Snapshot the previous value
-        const previousQuote = utils.quote["get-by-id"].getData({
-          id: input.quoteId,
-        });
+      return { previousQuote }
+    },
 
-        // Optimistically update to 'sent' status
-        utils.quote["get-by-id"].setData({ id: input.quoteId }, (old) => {
-          if (!old) {
-            return old;
-          }
+    onSettled: () => {
+      setOptimisticQuoteId(null)
+    },
 
-          return {
-            ...old,
-            contactPhone: input.contactPhone,
-            sentAt: new Date(),
-            status: "sent" as const,
-          };
-        });
+    onSuccess: (data, input) => {
+      setOptimisticQuoteId(null)
 
-        // Show loading toast
-        toast.loading("Enviando cotización...", {
-          id: `send-quote-${input.quoteId}`,
-        });
+      // Dismiss loading toast
+      toast.dismiss(`send-quote-${input.quoteId}`)
 
-        return { previousQuote };
-      },
+      // Show success toast
+      toast.success('¡Cotización enviada exitosamente!', {
+        description:
+          'Tu cotización ha sido enviada al fabricante. Recibirás respuesta en 24-48 horas.',
+        duration: 6000,
+      })
 
-      onSettled: () => {
-        setOptimisticQuoteId(null);
-      },
+      // Invalidate related queries to refetch fresh data
+      startTransition(async () => {
+        await Promise.all([
+          utils.quote['get-by-id'].invalidate({ id: input.quoteId }),
+          utils.quote['list-user-quotes'].invalidate(),
+        ])
+      })
 
-      onSuccess: (data, input) => {
-        setOptimisticQuoteId(null);
+      // Call custom success handler
+      if (onSuccess) {
+        onSuccess({
+          id: data.id,
+          sentAt: data.sentAt,
+        })
+      }
 
-        // Dismiss loading toast
-        toast.dismiss(`send-quote-${input.quoteId}`);
-
-        // Show success toast
-        toast.success("¡Cotización enviada exitosamente!", {
-          description:
-            "Tu cotización ha sido enviada al fabricante. Recibirás respuesta en 24-48 horas.",
-          duration: 6000,
-        });
-
-        // Invalidate related queries to refetch fresh data
-        startTransition(async () => {
-          await Promise.all([
-            utils.quote["get-by-id"].invalidate({ id: input.quoteId }),
-            utils.quote["list-user-quotes"].invalidate(),
-          ]);
-        });
-
-        // Call custom success handler
-        if (onSuccess) {
-          onSuccess({
-            id: data.id,
-            sentAt: data.sentAt,
-          });
-        }
-
-        // Redirect to quote detail page
-        if (redirectOnSuccess) {
-          router.push(`/dashboard/quotes/${data.id}`);
-          router.refresh();
-        }
-      },
-    }
-  );
+      // Redirect to quote detail page
+      if (redirectOnSuccess) {
+        router.push(`/dashboard/quotes/${data.id}`)
+        router.refresh()
+      }
+    },
+  })
 
   return {
     /**
@@ -217,10 +208,10 @@ export function useSendQuote(options: UseSendQuoteOptions = {}) {
      * Reset the mutation state
      */
     reset: mutation.reset,
-  };
+  }
 }
 
 /**
  * Type-safe input for useSendQuote mutation
  */
-export type SendQuoteInput = SendToVendorInput;
+export type SendQuoteInput = SendToVendorInput

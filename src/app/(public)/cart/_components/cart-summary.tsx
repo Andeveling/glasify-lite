@@ -16,30 +16,19 @@
  * @module app/(public)/cart/_components/cart-summary
  */
 
-"use client";
+'use client'
 
-import { ShoppingCart } from "lucide-react";
-import { useEffect, useState } from "react";
-import { SignInModal } from "@/components/signin-modal";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { useSession } from "@/lib/auth-client";
-import {
-  calculateTax,
-  calculateTotalWithTax,
-  formatCurrency,
-  formatTaxLabel,
-} from "@/lib/format";
-import { cn } from "@/lib/utils";
-import { useTenantConfig } from "@/providers/tenant-config-provider";
-import type { CartSummary as CartSummaryType } from "@/types/cart.types";
-import { QuoteGenerationDrawer } from "./quote-generation-drawer";
+import { ShoppingCart } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { SignInModal } from '@/components/signin-modal'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { useSession } from '@/lib/auth-client'
+import { calculateTax, calculateTotalWithTax, formatCurrency, formatTaxLabel } from '@/lib/format'
+import { cn } from '@/lib/utils'
+import { useTenantConfig } from '@/providers/tenant-config-provider'
+import type { CartSummary as CartSummaryType } from '@/types/cart.types'
+import { QuoteGenerationDrawer } from './quote-generation-drawer'
 
 // ============================================================================
 // Types
@@ -47,14 +36,14 @@ import { QuoteGenerationDrawer } from "./quote-generation-drawer";
 
 export type CartSummaryProps = {
   /** Cart summary data */
-  summary: CartSummaryType;
+  summary: CartSummaryType
 
   /** Whether quote generation is in progress */
-  isGenerating?: boolean;
+  isGenerating?: boolean
 
   /** Custom CSS class */
-  className?: string;
-};
+  className?: string
+}
 
 // ============================================================================
 // Component
@@ -70,26 +59,22 @@ export type CartSummaryProps = {
  * />
  * ```
  */
-export function CartSummary({
-  summary,
-  isGenerating = false,
-  className,
-}: CartSummaryProps) {
-  const tenantConfig = useTenantConfig();
-  const [showSignInModal, setShowSignInModal] = useState(false);
+export function CartSummary({ summary, isGenerating = false, className }: CartSummaryProps) {
+  const tenantConfig = useTenantConfig()
+  const [showSignInModal, setShowSignInModal] = useState(false)
 
   // ✅ Better Auth session hook with real-time updates
-  const { data: session, isPending: isSessionLoading, error } = useSession();
+  const { data: session, isPending: isSessionLoading, error } = useSession()
 
   // ✅ Track authentication state - force re-check on session changes
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   // ✅ Effect: Update auth state when session changes (handles logout/login)
   useEffect(() => {
     // Session is valid if user exists and no error
-    const hasValidSession = !!session?.user && !error;
-    setIsAuthenticated(hasValidSession);
-  }, [session, error]);
+    const hasValidSession = !!session?.user && !error
+    setIsAuthenticated(hasValidSession)
+  }, [session, error])
 
   /**
    * Handle "Generate Quote" button click
@@ -100,24 +85,24 @@ export function CartSummary({
    */
   const handleGenerateQuote = (event: React.MouseEvent<HTMLButtonElement>) => {
     // ✅ Real-time authentication check (not cached)
-    const hasValidSession = !!session?.user && !error;
+    const hasValidSession = !!session?.user && !error
 
     if (!hasValidSession) {
       // Prevent drawer from opening
-      event.preventDefault();
-      event.stopPropagation();
+      event.preventDefault()
+      event.stopPropagation()
 
       // Open sign-in modal for unauthenticated users
-      setShowSignInModal(true);
-      return;
+      setShowSignInModal(true)
+      return
     }
 
     // User is authenticated - drawer will open normally via trigger
-  };
+  }
 
   return (
     <>
-      <Card className={cn("sticky top-18", className)}>
+      <Card className={cn('sticky top-18', className)}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <ShoppingCart className="size-5" />
@@ -149,7 +134,7 @@ export function CartSummary({
           {tenantConfig.taxEnabled && tenantConfig.taxRate != null && (
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">
-                {formatTaxLabel(tenantConfig) ?? "Impuesto"}
+                {formatTaxLabel(tenantConfig) ?? 'Impuesto'}
               </span>
               <span className="font-medium">
                 {formatCurrency(calculateTax(summary.total, tenantConfig), {
@@ -168,20 +153,16 @@ export function CartSummary({
                   tenantConfig.taxEnabled
                     ? calculateTotalWithTax(summary.total, tenantConfig)
                     : summary.total,
-                  { context: tenantConfig }
+                  { context: tenantConfig },
                 )}
               </p>
               {/* Tax note - only show if tax is disabled */}
               {!tenantConfig.taxEnabled && (
-                <p className="text-muted-foreground text-xs">
-                  Impuestos no incluido
-                </p>
+                <p className="text-muted-foreground text-xs">Impuestos no incluido</p>
               )}
               {/* Tax description - show legal note if provided */}
               {tenantConfig.taxEnabled && tenantConfig.taxDescription && (
-                <p className="text-muted-foreground text-xs">
-                  {tenantConfig.taxDescription}
-                </p>
+                <p className="text-muted-foreground text-xs">{tenantConfig.taxDescription}</p>
               )}
             </div>
           </div>
@@ -198,7 +179,7 @@ export function CartSummary({
                 size="lg"
                 type="button"
               >
-                {isGenerating ? "Generando..." : "Generar cotización"}
+                {isGenerating ? 'Generando...' : 'Generar cotización'}
               </Button>
             }
           />
@@ -228,5 +209,5 @@ export function CartSummary({
         open={showSignInModal}
       />
     </>
-  );
+  )
 }

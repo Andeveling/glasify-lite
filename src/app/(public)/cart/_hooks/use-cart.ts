@@ -7,10 +7,10 @@
  * @module app/(public)/cart/_hooks/use-cart
  */
 
-"use client";
+'use client'
 
-import { createId } from "@paralleldrive/cuid2";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { createId } from '@paralleldrive/cuid2'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   calculateItemSubtotal,
   findCartItem,
@@ -18,16 +18,16 @@ import {
   removeCartItem,
   updateCartItem,
   validateCartLimit,
-} from "@/lib/utils/cart.utils";
-import { generateItemName } from "@/lib/utils/generate-item-name";
-import { useTenantConfig } from "@/providers/tenant-config-provider";
+} from '@/lib/utils/cart.utils'
+import { generateItemName } from '@/lib/utils/generate-item-name'
+import { useTenantConfig } from '@/providers/tenant-config-provider'
 import type {
   CartItem,
   CartSummary,
   CreateCartItemInput,
   UpdateCartItemInput,
-} from "@/types/cart.types";
-import { useCartStorage } from "./use-cart-storage";
+} from '@/types/cart.types'
+import { useCartStorage } from './use-cart-storage'
 
 // ============================================================================
 // Types
@@ -35,35 +35,35 @@ import { useCartStorage } from "./use-cart-storage";
 
 type UseCartReturn = {
   /** All cart items */
-  items: CartItem[];
+  items: CartItem[]
 
   /** Cart summary with totals */
-  summary: CartSummary;
+  summary: CartSummary
 
   /** Whether storage is hydrated */
-  hydrated: boolean;
+  hydrated: boolean
 
   /** Add new item to cart */
-  addItem: (input: CreateCartItemInput & { unitPrice: number }) => void;
+  addItem: (input: CreateCartItemInput & { unitPrice: number }) => void
 
   /** Update existing item */
-  updateItem: (id: string, updates: Omit<UpdateCartItemInput, "id">) => void;
+  updateItem: (id: string, updates: Omit<UpdateCartItemInput, 'id'>) => void
 
   /** Replace entire cart item (for complete updates including dimensions, glassType, etc.) */
-  replaceItem: (id: string, item: CartItem) => void;
+  replaceItem: (id: string, item: CartItem) => void
 
   /** Remove item from cart */
-  removeItem: (id: string) => void;
+  removeItem: (id: string) => void
 
   /** Restore a previously removed item */
-  restoreItem: (item: CartItem) => void;
+  restoreItem: (item: CartItem) => void
 
   /** Clear all items */
-  clearCart: () => void;
+  clearCart: () => void
 
   /** Get item by ID */
-  getItemById: (id: string) => CartItem | undefined;
-};
+  getItemById: (id: string) => CartItem | undefined
+}
 
 // ============================================================================
 // Hook Implementation
@@ -103,21 +103,16 @@ type UseCartReturn = {
  * ```
  */
 export function useCart(): UseCartReturn {
-  const {
-    items: storedItems,
-    saveItems,
-    clearItems,
-    isHydrated,
-  } = useCartStorage();
-  const { currency } = useTenantConfig();
-  const [items, setItems] = useState<CartItem[]>([]);
+  const { items: storedItems, saveItems, clearItems, isHydrated } = useCartStorage()
+  const { currency } = useTenantConfig()
+  const [items, setItems] = useState<CartItem[]>([])
 
   // Sync with storage on hydration
   useEffect(() => {
     if (isHydrated) {
-      setItems(storedItems);
+      setItems(storedItems)
     }
-  }, [isHydrated, storedItems]);
+  }, [isHydrated, storedItems])
 
   /**
    * Add item to cart with auto-generated name
@@ -125,21 +120,21 @@ export function useCart(): UseCartReturn {
   const addItem = useCallback(
     (input: CreateCartItemInput & { unitPrice: number }) => {
       // Validate cart limit
-      const limitValidation = validateCartLimit(items.length);
+      const limitValidation = validateCartLimit(items.length)
       if (!limitValidation.valid) {
-        const error = new Error(limitValidation.error);
-        throw error;
+        const error = new Error(limitValidation.error)
+        throw error
       }
 
       // Generate unique ID
-      const itemId = createId();
+      const itemId = createId()
 
       // Generate unique name
-      const itemName = generateItemName(input.modelName, items);
+      const itemName = generateItemName(input.modelName, items)
 
       // Calculate subtotal
-      const quantity = input.quantity ?? 1;
-      const subtotal = calculateItemSubtotal(input.unitPrice, quantity);
+      const quantity = input.quantity ?? 1
+      const subtotal = calculateItemSubtotal(input.unitPrice, quantity)
 
       // Create new cart item
       const newItem: CartItem = {
@@ -165,38 +160,38 @@ export function useCart(): UseCartReturn {
         subtotal,
         unitPrice: input.unitPrice,
         widthMm: input.widthMm,
-      };
+      }
 
       // Update state
-      const updatedItems = [...items, newItem];
-      setItems(updatedItems);
-      saveItems(updatedItems);
+      const updatedItems = [...items, newItem]
+      setItems(updatedItems)
+      saveItems(updatedItems)
     },
-    [items, saveItems]
-  );
+    [items, saveItems],
+  )
 
   /**
    * Update existing cart item
    */
   const updateItem = useCallback(
-    (id: string, updates: Omit<UpdateCartItemInput, "id">) => {
-      const item = findCartItem(items, id);
+    (id: string, updates: Omit<UpdateCartItemInput, 'id'>) => {
+      const item = findCartItem(items, id)
 
       if (!item) {
-        const error = new Error(`Item ${id} no encontrado en el carrito`);
-        throw error;
+        const error = new Error(`Item ${id} no encontrado en el carrito`)
+        throw error
       }
 
       // Apply updates
-      const updatedItem = updateCartItem(item, updates);
+      const updatedItem = updateCartItem(item, updates)
 
       // Update items array
-      const updatedItems = items.map((i) => (i.id === id ? updatedItem : i));
-      setItems(updatedItems);
-      saveItems(updatedItems);
+      const updatedItems = items.map((i) => (i.id === id ? updatedItem : i))
+      setItems(updatedItems)
+      saveItems(updatedItems)
     },
-    [items, saveItems]
-  );
+    [items, saveItems],
+  )
 
   /**
    * Replace entire cart item (for complete updates)
@@ -204,39 +199,39 @@ export function useCart(): UseCartReturn {
    */
   const replaceItem = useCallback(
     (id: string, newItem: CartItem) => {
-      const existingItem = findCartItem(items, id);
+      const existingItem = findCartItem(items, id)
 
       if (!existingItem) {
-        const error = new Error(`Item ${id} no encontrado en el carrito`);
-        throw error;
+        const error = new Error(`Item ${id} no encontrado en el carrito`)
+        throw error
       }
 
       // Replace entire item
-      const updatedItems = items.map((i) => (i.id === id ? newItem : i));
-      setItems(updatedItems);
-      saveItems(updatedItems);
+      const updatedItems = items.map((i) => (i.id === id ? newItem : i))
+      setItems(updatedItems)
+      saveItems(updatedItems)
     },
-    [items, saveItems]
-  );
+    [items, saveItems],
+  )
 
   /**
    * Remove item from cart
    */
   const removeItem = useCallback(
     (id: string) => {
-      const item = findCartItem(items, id);
+      const item = findCartItem(items, id)
 
       if (!item) {
-        const error = new Error(`Item ${id} no encontrado en el carrito`);
-        throw error;
+        const error = new Error(`Item ${id} no encontrado en el carrito`)
+        throw error
       }
 
-      const updatedItems = removeCartItem(items, id);
-      setItems(updatedItems);
-      saveItems(updatedItems);
+      const updatedItems = removeCartItem(items, id)
+      setItems(updatedItems)
+      saveItems(updatedItems)
     },
-    [items, saveItems]
-  );
+    [items, saveItems],
+  )
 
   /**
    * Restore a previously removed item
@@ -245,48 +240,46 @@ export function useCart(): UseCartReturn {
   const restoreItem = useCallback(
     (item: CartItem) => {
       // Check if item already exists
-      const existingItem = findCartItem(items, item.id);
+      const existingItem = findCartItem(items, item.id)
       if (existingItem) {
         // Item already in cart, just update it
-        const updatedItem = updateCartItem(existingItem, item);
-        const updatedItems = items.map((i) =>
-          i.id === item.id ? updatedItem : i
-        );
-        setItems(updatedItems);
-        saveItems(updatedItems);
-        return;
+        const updatedItem = updateCartItem(existingItem, item)
+        const updatedItems = items.map((i) => (i.id === item.id ? updatedItem : i))
+        setItems(updatedItems)
+        saveItems(updatedItems)
+        return
       }
 
       // Validate cart limit
-      const limitValidation = validateCartLimit(items.length);
+      const limitValidation = validateCartLimit(items.length)
       if (!limitValidation.valid) {
-        const error = new Error(limitValidation.error);
-        throw error;
+        const error = new Error(limitValidation.error)
+        throw error
       }
 
       // Add item back to cart at the end
-      const updatedItems = [...items, item];
-      setItems(updatedItems);
-      saveItems(updatedItems);
+      const updatedItems = [...items, item]
+      setItems(updatedItems)
+      saveItems(updatedItems)
     },
-    [items, saveItems]
-  );
+    [items, saveItems],
+  )
 
   /**
    * Clear entire cart
    */
   const clearCart = useCallback(() => {
-    setItems([]);
-    clearItems();
-  }, [clearItems]);
+    setItems([])
+    clearItems()
+  }, [clearItems])
 
   /**
    * Get item by ID
    */
   const getItemById = useCallback(
     (id: string): CartItem | undefined => findCartItem(items, id),
-    [items]
-  );
+    [items],
+  )
 
   /**
    * Cart summary (memoized)
@@ -294,8 +287,8 @@ export function useCart(): UseCartReturn {
    */
   const summary = useMemo(
     (): CartSummary => generateCartSummary(items, currency),
-    [items, currency]
-  );
+    [items, currency],
+  )
 
   return {
     addItem,
@@ -308,5 +301,5 @@ export function useCart(): UseCartReturn {
     restoreItem,
     summary,
     updateItem,
-  };
+  }
 }

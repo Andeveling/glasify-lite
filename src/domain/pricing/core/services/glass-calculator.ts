@@ -1,6 +1,6 @@
-import { MM_PER_METER } from "../constants";
-import type { Dimensions } from "../entities/dimensions";
-import type { Money } from "../entities/money";
+import { MM_PER_METER } from '../constants'
+import type { Dimensions } from '../entities/dimensions'
+import type { Money } from '../entities/money'
 
 /**
  * Input for glass cost calculation
@@ -9,25 +9,25 @@ export type GlassCostInput = {
   /**
    * Price per square meter of glass
    */
-  pricePerM2: Money;
+  pricePerM2: Money
 
   /**
    * Dimensions including width and height in millimeters
    */
-  dimensions: Dimensions;
+  dimensions: Dimensions
 
   /**
    * Profile discount to subtract from width (mm)
    * Typically the profile width that overlaps the glass
    */
-  profileDiscountWidthMm: number;
+  profileDiscountWidthMm: number
 
   /**
    * Profile discount to subtract from height (mm)
    * Typically the profile height that overlaps the glass
    */
-  profileDiscountHeightMm: number;
-};
+  profileDiscountHeightMm: number
+}
 
 /**
  * Calculate billable glass area in square meters
@@ -46,17 +46,17 @@ export type GlassCostInput = {
 function calculateBillableArea(
   dimensions: Dimensions,
   profileDiscountWidthMm: number,
-  profileDiscountHeightMm: number
+  profileDiscountHeightMm: number,
 ): number {
   // Use actual dimensions (not effective - glass doesn't care about minimums)
-  const billableWidthMm = dimensions.widthMm - profileDiscountWidthMm;
-  const billableHeightMm = dimensions.heightMm - profileDiscountHeightMm;
+  const billableWidthMm = dimensions.widthMm - profileDiscountWidthMm
+  const billableHeightMm = dimensions.heightMm - profileDiscountHeightMm
 
   // Calculate area in mm² then convert to m²
-  const areaInMm2 = billableWidthMm * billableHeightMm;
-  const areaInM2 = areaInMm2 / (MM_PER_METER * MM_PER_METER);
+  const areaInMm2 = billableWidthMm * billableHeightMm
+  const areaInM2 = areaInMm2 / (MM_PER_METER * MM_PER_METER)
 
-  return areaInM2;
+  return areaInM2
 }
 
 /**
@@ -72,22 +72,17 @@ function calculateBillableArea(
  * @returns Total glass cost
  */
 function calculateGlassCost(input: GlassCostInput): Money {
-  const {
-    pricePerM2,
-    dimensions,
-    profileDiscountWidthMm,
-    profileDiscountHeightMm,
-  } = input;
+  const { pricePerM2, dimensions, profileDiscountWidthMm, profileDiscountHeightMm } = input
 
   // Calculate billable area
   const areaInM2 = calculateBillableArea(
     dimensions,
     profileDiscountWidthMm,
-    profileDiscountHeightMm
-  );
+    profileDiscountHeightMm,
+  )
 
   // Multiply price by area
-  return pricePerM2.multiply(areaInM2);
+  return pricePerM2.multiply(areaInM2)
 }
 
 /**
@@ -104,4 +99,4 @@ function calculateGlassCost(input: GlassCostInput): Money {
 export const GlassCalculator = {
   calculateBillableArea,
   calculateGlassCost,
-} as const;
+} as const

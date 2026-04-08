@@ -33,108 +33,102 @@
  * @see REQ-001: Server-side filtering via URL params
  */
 
-"use client";
+'use client'
 
-import { X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useServerParams } from "@/hooks/use-server-params";
+} from '@/components/ui/select'
+import { useServerParams } from '@/hooks/use-server-params'
 
 /**
  * Filter option definition
  */
 export type FilterOption = {
-  value: string;
-  label: string;
-};
+  value: string
+  label: string
+}
 
 /**
  * Filter definition
  */
 export type FilterDefinition = {
-  id: string;
-  label: string;
-  type: "select";
-  options: FilterOption[];
-  defaultValue?: string;
-};
+  id: string
+  label: string
+  type: 'select'
+  options: FilterOption[]
+  defaultValue?: string
+}
 
 export type TableFiltersProps = {
   /** Filter definitions */
-  filters: FilterDefinition[];
+  filters: FilterDefinition[]
 
   /** Show clear all button */
-  showClearAll?: boolean;
-};
+  showClearAll?: boolean
+}
 
-export function TableFilters({
-  filters,
-  showClearAll = true,
-}: TableFiltersProps) {
-  const { getParam, updateParams, getAllParams } = useServerParams();
+export function TableFilters({ filters, showClearAll = true }: TableFiltersProps) {
+  const { getParam, updateParams, getAllParams } = useServerParams()
 
   /**
    * Check if any filter is active (not default value)
    */
   const hasActiveFilters = filters.some((filter) => {
-    const value = getParam(filter.id);
-    const defaultValue = filter.defaultValue ?? "all";
-    return value && value !== defaultValue;
-  });
+    const value = getParam(filter.id)
+    const defaultValue = filter.defaultValue ?? 'all'
+    return value && value !== defaultValue
+  })
 
   /**
    * Handle filter change
    */
   const handleFilterChange = (filterId: string, value: string) => {
-    const currentParams = getAllParams();
-    const updates: Record<string, string | undefined> = { ...currentParams };
+    const currentParams = getAllParams()
+    const updates: Record<string, string | undefined> = { ...currentParams }
 
     // Treat 'all' as empty filter (remove the parameter)
-    if (value && value !== "all") {
-      updates[filterId] = value;
+    if (value && value !== 'all') {
+      updates[filterId] = value
     } else {
-      delete updates[filterId];
+      delete updates[filterId]
     }
 
     // Reset to page 1 on filter change
-    updates.page = "1";
-    updateParams(updates);
-  }; /**
+    updates.page = '1'
+    updateParams(updates)
+  } /**
    * Clear all filters
    */
   const handleClearAll = () => {
-    const updates: Record<string, string | undefined> = {};
+    const updates: Record<string, string | undefined> = {}
 
     for (const filter of filters) {
-      updates[filter.id] = undefined;
+      updates[filter.id] = undefined
     }
 
-    updates.page = "1";
-    updateParams(updates);
-  };
+    updates.page = '1'
+    updateParams(updates)
+  }
 
   return (
     <div className="flex flex-wrap items-end gap-4">
       {/* Render each filter */}
       {filters.map((filter) => {
-        const value = getParam(filter.id) ?? filter.defaultValue ?? "all";
+        const value = getParam(filter.id) ?? filter.defaultValue ?? 'all'
 
         return (
           <div className="min-w-[180px] space-y-2" key={filter.id}>
             <Label htmlFor={filter.id}>{filter.label}</Label>
 
-            {filter.type === "select" && (
-              <Select
-                onValueChange={(val) => handleFilterChange(filter.id, val)}
-                value={value}
-              >
+            {filter.type === 'select' && (
+              <Select onValueChange={(val) => handleFilterChange(filter.id, val)} value={value}>
                 <SelectTrigger id={filter.id}>
                   <SelectValue />
                 </SelectTrigger>
@@ -148,7 +142,7 @@ export function TableFilters({
               </Select>
             )}
           </div>
-        );
+        )
       })}
 
       {/* Clear all button */}
@@ -159,5 +153,5 @@ export function TableFilters({
         </Button>
       )}
     </div>
-  );
+  )
 }

@@ -7,15 +7,15 @@
  * @module app/(dashboard)/admin/quotes/new/_components/admin-quote-creation-form
  */
 
-"use client";
+'use client'
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useCallback } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2, Plus } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useCallback } from 'react'
+import { useFieldArray, useForm } from 'react-hook-form'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Form,
   FormControl,
@@ -24,64 +24,60 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { api } from "@/trpc/react";
-import { createQuoteFromItemsAction } from "../../../_actions/create-quote.actions";
-import { QuoteItemRow } from "./quote-item-row";
+} from '@/components/ui/select'
+import { api } from '@/trpc/react'
+import { createQuoteFromItemsAction } from '../../../_actions/create-quote.actions'
+import { QuoteItemRow } from './quote-item-row'
 import {
   type AdminQuoteFormValues,
   adminQuoteFormSchema,
   getAdminQuoteFormDefaults,
-} from "./schemas/admin-quote-form.schema";
+} from './schemas/admin-quote-form.schema'
 
 // Catalog data constants
-const FIVE_MINUTES_MS = 300_000;
-const CATALOG_LIMIT = 100;
+const FIVE_MINUTES_MS = 300_000
+const CATALOG_LIMIT = 100
 
 /**
  * Hook to fetch catalog data for quote creation
  */
 function useQuoteCreationCatalogData() {
-  const { data: modelsData, isLoading: isLoadingModels } = api.catalog[
-    "list-models"
-  ].useQuery(
+  const { data: modelsData, isLoading: isLoadingModels } = api.catalog['list-models'].useQuery(
     {
       limit: CATALOG_LIMIT,
       page: 1,
-      sort: "name-asc",
+      sort: 'name-asc',
     },
     {
       staleTime: FIVE_MINUTES_MS,
-    }
-  );
+    },
+  )
 
   const { data: glassTypesData, isLoading: isLoadingGlassTypes } = api.admin[
-    "glass-type"
+    'glass-type'
   ].list.useQuery(
     {
       limit: CATALOG_LIMIT,
       page: 1,
-      sortBy: "name",
-      sortOrder: "asc",
+      sortBy: 'name',
+      sortOrder: 'asc',
     },
     {
       staleTime: FIVE_MINUTES_MS,
-    }
-  );
+    },
+  )
 
-  const { data: usersData, isLoading: isLoadingUsers } = api.user[
-    "list-all"
-  ].useQuery(undefined, {
+  const { data: usersData, isLoading: isLoadingUsers } = api.user['list-all'].useQuery(undefined, {
     staleTime: FIVE_MINUTES_MS,
-  });
+  })
 
   // Serialize Decimal fields to numbers
   const serializedGlassTypes = (glassTypesData?.items ?? []).map((gt) => ({
@@ -89,19 +85,17 @@ function useQuoteCreationCatalogData() {
     name: gt.name,
     thicknessMm: gt.thicknessMm,
     pricePerSqm:
-      typeof gt.pricePerSqm === "object" && gt.pricePerSqm !== null
+      typeof gt.pricePerSqm === 'object' && gt.pricePerSqm !== null
         ? (gt.pricePerSqm as { toNumber: () => number }).toNumber()
         : gt.pricePerSqm,
-  }));
+  }))
 
   return {
     glassTypes: serializedGlassTypes,
     isLoading: isLoadingModels || isLoadingGlassTypes || isLoadingUsers,
-    models: (modelsData?.items ?? []).filter(
-      (m: { status: string }) => m.status === "published"
-    ),
+    models: (modelsData?.items ?? []).filter((m: { status: string }) => m.status === 'published'),
     users: usersData ?? [],
-  };
+  }
 }
 
 /**
@@ -114,45 +108,44 @@ function useQuoteCreationCatalogData() {
  * - Server action submission via createQuoteFromItemsAction
  */
 export function AdminQuoteCreationForm() {
-  const router = useRouter();
+  const router = useRouter()
 
   // Form setup
   const form = useForm<AdminQuoteFormValues>({
     defaultValues: getAdminQuoteFormDefaults(),
     resolver: zodResolver(adminQuoteFormSchema),
-    mode: "onBlur",
-  });
+    mode: 'onBlur',
+  })
 
   // Field array for dynamic items
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "items",
-  });
+    name: 'items',
+  })
 
   // Catalog data
-  const { glassTypes, isLoading, models, users } =
-    useQuoteCreationCatalogData();
+  const { glassTypes, isLoading, models, users } = useQuoteCreationCatalogData()
 
   // Add new item
   const handleAddItem = useCallback(() => {
     append({
-      glassTypeId: "",
+      glassTypeId: '',
       heightMm: 1000,
-      modelId: "",
+      modelId: '',
       quantity: 1,
       widthMm: 1000,
-    });
-  }, [append]);
+    })
+  }, [append])
 
   // Remove item
   const handleRemoveItem = useCallback(
     (index: number) => {
       if (fields.length > 1) {
-        remove(index);
+        remove(index)
       }
     },
-    [fields.length, remove]
-  );
+    [fields.length, remove],
+  )
 
   // Submit handler
   const handleSubmit = form.handleSubmit(async (values) => {
@@ -174,20 +167,20 @@ export function AdminQuoteCreationForm() {
           projectStreet: values.projectAddress.projectStreet,
         },
         projectName: values.projectName,
-      });
+      })
 
-      router.push(`/admin/quotes/${quoteId}`);
+      router.push(`/admin/quotes/${quoteId}`)
     } catch {
       // Error handled by toast in createQuoteFromItemsAction
     }
-  });
+  })
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
-    );
+    )
   }
 
   return (
@@ -207,10 +200,7 @@ export function AdminQuoteCreationForm() {
                 <FormItem>
                   <FormLabel>Nombre del Proyecto</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Edificio Parismina - Torre B"
-                    />
+                    <Input {...field} placeholder="Edificio Parismina - Torre B" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -269,10 +259,7 @@ export function AdminQuoteCreationForm() {
                   <FormItem>
                     <FormLabel>Asignar a Cliente</FormLabel>
                     <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value ?? ""}
-                      >
+                      <Select onValueChange={field.onChange} value={field.value ?? ''}>
                         <SelectTrigger>
                           <SelectValue placeholder="Sin asignar (cotización propia)" />
                         </SelectTrigger>
@@ -281,7 +268,7 @@ export function AdminQuoteCreationForm() {
                           {users.map((user) => (
                             <SelectItem key={user.id} value={user.id}>
                               {user.name ?? user.email ?? user.id}
-                              {user.role !== "user" && ` (${user.role})`}
+                              {user.role !== 'user' && ` (${user.role})`}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -303,19 +290,12 @@ export function AdminQuoteCreationForm() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-lg">
-                  Ítems de la Cotización
-                </CardTitle>
+                <CardTitle className="text-lg">Ítems de la Cotización</CardTitle>
                 <p className="text-muted-foreground text-sm">
                   Agrega los modelos, vidrios y dimensiones para cada ítem
                 </p>
               </div>
-              <Button
-                onClick={handleAddItem}
-                size="sm"
-                type="button"
-                variant="outline"
-              >
+              <Button onClick={handleAddItem} size="sm" type="button" variant="outline">
                 <Plus className="mr-2 h-4 w-4" />
                 Agregar Ítem
               </Button>
@@ -347,9 +327,7 @@ export function AdminQuoteCreationForm() {
 
             {/* Validation error for items array */}
             {form.formState.errors.items?.root && (
-              <p className="text-destructive text-sm">
-                {form.formState.errors.items.root.message}
-              </p>
+              <p className="text-destructive text-sm">{form.formState.errors.items.root.message}</p>
             )}
           </CardContent>
         </Card>
@@ -359,17 +337,12 @@ export function AdminQuoteCreationForm() {
           <Button onClick={() => router.back()} type="button" variant="outline">
             Cancelar
           </Button>
-          <Button
-            disabled={form.formState.isSubmitting || !form.formState.isValid}
-            type="submit"
-          >
-            {form.formState.isSubmitting && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
+          <Button disabled={form.formState.isSubmitting || !form.formState.isValid} type="submit">
+            {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Crear Cotización
           </Button>
         </div>
       </form>
     </Form>
-  );
+  )
 }

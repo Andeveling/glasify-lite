@@ -1,44 +1,44 @@
-"use client";
+'use client'
 
-import { motion, useScroll, useSpring, useTransform } from "motion/react";
-import { useEffect, useMemo } from "react";
-import { cn } from "@/lib/utils";
-import { useActiveFormStep } from "../../_hooks/use-active-form-step";
-import { type FormStepId, getAvailableSteps } from "./form-steps-config";
+import { motion, useScroll, useSpring, useTransform } from 'motion/react'
+import { useEffect, useMemo } from 'react'
+import { cn } from '@/lib/utils'
+import { useActiveFormStep } from '../../_hooks/use-active-form-step'
+import { type FormStepId, getAvailableSteps } from './form-steps-config'
 
 // ============================================================================
 // Constants
 // ============================================================================
 
-const SPRING_STIFFNESS = 100;
-const SPRING_DAMPING = 30;
-const SPRING_REST_DELTA = 0.001;
-const DOT_SIZE = 10; // Size of step indicator dots in pixels
-const DOT_ACTIVE_SIZE = 14; // Active dot size
-const DOT_ACTIVE_SCALE = 1.8; // Scale multiplier for active dot
-const DOT_HOVER_SCALE = 2; // Scale on hover
-const DOT_INACTIVE_OPACITY = 2; // Opacity for pending dots
-const DOT_ACTIVE_OPACITY = 1.2; // Opacity for active/completed dots
-const ANIMATION_DURATION = 0.3;
-const PROGRESS_COLOR_STEP_1 = 0.33;
-const PROGRESS_COLOR_STEP_2 = 0.66;
+const SPRING_STIFFNESS = 100
+const SPRING_DAMPING = 30
+const SPRING_REST_DELTA = 0.001
+const DOT_SIZE = 10 // Size of step indicator dots in pixels
+const DOT_ACTIVE_SIZE = 14 // Active dot size
+const DOT_ACTIVE_SCALE = 1.8 // Scale multiplier for active dot
+const DOT_HOVER_SCALE = 2 // Scale on hover
+const DOT_INACTIVE_OPACITY = 2 // Opacity for pending dots
+const DOT_ACTIVE_OPACITY = 1.2 // Opacity for active/completed dots
+const ANIMATION_DURATION = 0.3
+const PROGRESS_COLOR_STEP_1 = 0.33
+const PROGRESS_COLOR_STEP_2 = 0.66
 
 // ============================================================================
 // Types
 // ============================================================================
 
 type VerticalScrollProgressProps = {
-  className?: string;
+  className?: string
   /** Container ref (form wrapper) */
-  containerRef: React.RefObject<HTMLDivElement | null>;
+  containerRef: React.RefObject<HTMLDivElement | null>
   /** Section refs for Intersection Observer tracking */
-  sectionRefs: Record<FormStepId, React.RefObject<HTMLDivElement | null>>;
+  sectionRefs: Record<FormStepId, React.RefObject<HTMLDivElement | null>>
   /** Callback to notify parent of active step changes */
-  onActiveStepChange?: (stepId: FormStepId) => void;
+  onActiveStepChange?: (stepId: FormStepId) => void
   /** Feature flags to determine which steps to show */
-  hasColors?: boolean;
-  hasServices?: boolean;
-};
+  hasColors?: boolean
+  hasServices?: boolean
+}
 
 // ============================================================================
 // Component
@@ -67,57 +67,55 @@ export function VerticalScrollProgress({
   // Filter steps based on feature availability
   const availableSteps = useMemo(
     () => getAvailableSteps({ hasColors, hasServices }),
-    [hasColors, hasServices]
-  );
+    [hasColors, hasServices],
+  )
 
   // Use Intersection Observer for accurate step detection
-  const activeStep = useActiveFormStep(sectionRefs);
+  const activeStep = useActiveFormStep(sectionRefs)
 
   // Notify parent when active step changes
   useEffect(() => {
     if (onActiveStepChange) {
-      onActiveStepChange(activeStep);
+      onActiveStepChange(activeStep)
     }
-  }, [activeStep, onActiveStepChange]);
+  }, [activeStep, onActiveStepChange])
 
   // Track scroll progress within the form container
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end end"],
-  });
+    offset: ['start start', 'end end'],
+  })
 
   // Transform scroll progress to colors (visual feedback) using hex colors
   const progressColor = useTransform(
     scrollYProgress,
     [0, PROGRESS_COLOR_STEP_1, PROGRESS_COLOR_STEP_2, 1],
     [
-      "#a855f7", // Primary purple
-      "#0ea5e9", // Cyan
-      "#10b981", // Emerald
-      "#ef4444", // Red
-    ]
-  );
+      '#a855f7', // Primary purple
+      '#0ea5e9', // Cyan
+      '#10b981', // Emerald
+      '#ef4444', // Red
+    ],
+  )
 
   // Get current step index
-  const currentStepIndex = availableSteps.findIndex(
-    (step) => step.id === activeStep
-  );
+  const currentStepIndex = availableSteps.findIndex((step) => step.id === activeStep)
 
   // Calculate discrete progress based on completed steps (as percentage 0-100)
-  const discreteProgress = (currentStepIndex + 1) / availableSteps.length;
+  const discreteProgress = (currentStepIndex + 1) / availableSteps.length
   const discreteHeight = useSpring(discreteProgress, {
     damping: SPRING_DAMPING,
     restDelta: SPRING_REST_DELTA,
     stiffness: SPRING_STIFFNESS,
-  });
+  })
 
   // console.log("Discrete Height:", discreteHeight);
 
   return (
     <div
       className={cn(
-        "sticky top-18 hidden h-[calc(100vh-12rem)] w-8 flex-col items-center py-8 md:flex",
-        className
+        'sticky top-18 hidden h-[calc(100vh-12rem)] w-8 flex-col items-center py-8 md:flex',
+        className,
       )}
     >
       {/* Background track - More visible for loading effect */}
@@ -135,25 +133,21 @@ export function VerticalScrollProgress({
       {/* Step indicators */}
       <div className="absolute inset-y-0 flex flex-col items-center justify-around py-8">
         {availableSteps.map((step, index) => {
-          const isActive = step.id === activeStep;
-          const isCompleted = index < currentStepIndex;
-          const isPending = !(isActive || isCompleted);
+          const isActive = step.id === activeStep
+          const isCompleted = index < currentStepIndex
+          const isPending = !(isActive || isCompleted)
 
           return (
             <motion.div
               animate={{
                 scale: isActive ? DOT_ACTIVE_SCALE : 1,
-                opacity:
-                  isActive || isCompleted
-                    ? DOT_ACTIVE_OPACITY
-                    : DOT_INACTIVE_OPACITY,
+                opacity: isActive || isCompleted ? DOT_ACTIVE_OPACITY : DOT_INACTIVE_OPACITY,
               }}
               className={cn(
-                "size-10 rounded-full border-2 transition-colors",
-                isActive &&
-                  "border-primary bg-primary shadow-lg shadow-primary/50",
-                isCompleted && "border-success bg-success",
-                isPending && "border-muted-foreground/30 bg-background"
+                'size-10 rounded-full border-2 transition-colors',
+                isActive && 'border-primary bg-primary shadow-lg shadow-primary/50',
+                isCompleted && 'border-success bg-success',
+                isPending && 'border-muted-foreground/30 bg-background',
               )}
               key={step.id}
               style={{
@@ -166,7 +160,7 @@ export function VerticalScrollProgress({
               {/* Tooltip on hover */}
               <span className="sr-only">{step.label}</span>
             </motion.div>
-          );
+          )
         })}
       </div>
 
@@ -182,5 +176,5 @@ export function VerticalScrollProgress({
         </motion.div>
       </div>
     </div>
-  );
+  )
 }

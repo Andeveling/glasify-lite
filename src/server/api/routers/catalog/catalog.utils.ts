@@ -1,7 +1,7 @@
 // src/server/api/routers/catalog/catalog.utils.ts
-import type { Decimal } from "decimal.js";
-import { Money } from "@/domain/pricing/core/entities/money";
-import { MarginCalculator } from "@/domain/pricing/core/services/margin-calculator";
+import type { Decimal } from 'decimal.js'
+import { Money } from '@/domain/pricing/core/entities/money'
+import { MarginCalculator } from '@/domain/pricing/core/services/margin-calculator'
 
 /**
  * Type representing a model with Decimal price fields from Prisma
@@ -10,12 +10,12 @@ import { MarginCalculator } from "@/domain/pricing/core/services/margin-calculat
  * so it needs to be converted to number or string.
  */
 type ModelWithDecimalFields = {
-  accessoryPrice?: Decimal | null;
-  basePrice: Decimal;
-  costPerMmHeight: Decimal;
-  costPerMmWidth: Decimal;
-  profitMarginPercentage?: Decimal | null;
-};
+  accessoryPrice?: Decimal | null
+  basePrice: Decimal
+  costPerMmHeight: Decimal
+  costPerMmWidth: Decimal
+  profitMarginPercentage?: Decimal | null
+}
 
 /**
  * Serializes Prisma Decimal fields to numbers for JSON transmission
@@ -42,21 +42,16 @@ type ModelWithDecimalFields = {
  * // serialized.basePrice includes profit margin (public sales price)
  * ```
  */
-export function serializeDecimalFields<T extends ModelWithDecimalFields>(
-  model: T
-) {
+export function serializeDecimalFields<T extends ModelWithDecimalFields>(model: T) {
   // Calculate final base price with profit margin using domain layer
-  const rawBasePrice = model.basePrice.toNumber();
-  const profitMargin = model.profitMarginPercentage?.toNumber() ?? 0;
+  const rawBasePrice = model.basePrice.toNumber()
+  const profitMargin = model.profitMarginPercentage?.toNumber() ?? 0
 
   // Use MarginCalculator from domain for correct margin calculation
   // Formula: salesPrice = cost / (1 - margin%)
-  const basePriceMoney = new Money(rawBasePrice);
-  const salesPriceMoney = MarginCalculator.calculateSalesPrice(
-    basePriceMoney,
-    profitMargin
-  );
-  const finalBasePrice = salesPriceMoney.toNumber();
+  const basePriceMoney = new Money(rawBasePrice)
+  const salesPriceMoney = MarginCalculator.calculateSalesPrice(basePriceMoney, profitMargin)
+  const finalBasePrice = salesPriceMoney.toNumber()
 
   return {
     ...model,
@@ -65,7 +60,7 @@ export function serializeDecimalFields<T extends ModelWithDecimalFields>(
     costPerMmHeight: model.costPerMmHeight.toNumber(),
     costPerMmWidth: model.costPerMmWidth.toNumber(),
     profitMarginPercentage: profitMargin, // Keep as number for reference
-  };
+  }
 }
 
 /**
@@ -77,5 +72,5 @@ export function serializeDecimalFields<T extends ModelWithDecimalFields>(
  * @returns Object with serialized Decimal fields
  */
 export function serializeModel<T extends ModelWithDecimalFields>(model: T) {
-  return serializeDecimalFields(model);
+  return serializeDecimalFields(model)
 }

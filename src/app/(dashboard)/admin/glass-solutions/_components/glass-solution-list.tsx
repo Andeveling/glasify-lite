@@ -1,27 +1,21 @@
-"use client";
+'use client'
 
-import { Pencil, Plus, Search, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
-import { DeleteConfirmationDialog } from "@/app/_components/delete-confirmation-dialog";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Pencil, Plus, Search, Trash2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select'
 import {
   Table,
   TableBody,
@@ -29,78 +23,76 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import type { GlassSolutionListOutput } from "@/lib/validations/admin/glass-solution.schema";
-import { api } from "@/trpc/react";
+} from '@/components/ui/table'
+import type { GlassSolutionListOutput } from '@/lib/validations/admin/glass-solution.schema'
+import { api } from '@/trpc/react'
 
 type GlassSolutionListProps = {
-  initialData: GlassSolutionListOutput;
-};
+  initialData: GlassSolutionListOutput
+}
 
 export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
-  const router = useRouter();
-  const utils = api.useUtils();
-  const [search, setSearch] = useState("");
-  const [isActive, setIsActive] = useState<"all" | "active" | "inactive">(
-    "all"
-  );
-  const [page, setPage] = useState(1);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const router = useRouter()
+  const utils = api.useUtils()
+  const [search, setSearch] = useState('')
+  const [isActive, setIsActive] = useState<'all' | 'active' | 'inactive'>('all')
+  const [page, setPage] = useState(1)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [solutionToDelete, setSolutionToDelete] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
+    id: string
+    name: string
+  } | null>(null)
 
-  const { data, isLoading } = api.admin["glass-solution"].list.useQuery(
+  const { data, isLoading } = api.admin['glass-solution'].list.useQuery(
     {
       isActive,
       limit: 20,
       page,
       search: search || undefined,
-      sortBy: "sortOrder",
-      sortOrder: "asc",
+      sortBy: 'sortOrder',
+      sortOrder: 'asc',
     },
     {
       initialData,
-    }
-  );
+    },
+  )
 
-  const deleteMutation = api.admin["glass-solution"].delete.useMutation({
+  const deleteMutation = api.admin['glass-solution'].delete.useMutation({
     onError: (error) => {
-      toast.error("Error al eliminar solución", {
+      toast.error('Error al eliminar solución', {
         description: error.message,
-      });
+      })
     },
     onSuccess: () => {
-      toast.success("Solución eliminada correctamente");
-      setDeleteDialogOpen(false);
-      setSolutionToDelete(null);
-      utils.admin["glass-solution"].list.invalidate().catch(undefined);
+      toast.success('Solución eliminada correctamente')
+      setDeleteDialogOpen(false)
+      setSolutionToDelete(null)
+      utils.admin['glass-solution'].list.invalidate().catch(undefined)
     },
-  });
+  })
 
   const handleCreateClick = () => {
-    router.push("/admin/glass-solutions/new");
-  };
+    router.push('/admin/glass-solutions/new')
+  }
 
   const handleEditClick = (id: string) => {
-    router.push(`/admin/glass-solutions/${id}`);
-  };
+    router.push(`/admin/glass-solutions/${id}`)
+  }
 
   const handleDeleteClick = (id: string, name: string) => {
-    setSolutionToDelete({ id, name });
-    setDeleteDialogOpen(true);
-  };
+    setSolutionToDelete({ id, name })
+    setDeleteDialogOpen(true)
+  }
 
   const handleConfirmDelete = async () => {
     if (!solutionToDelete) {
-      return;
+      return
     }
-    await deleteMutation.mutateAsync({ id: solutionToDelete.id });
-  };
+    await deleteMutation.mutateAsync({ id: solutionToDelete.id })
+  }
 
-  const solutions = data?.items ?? [];
-  const totalPages = data?.totalPages ?? 1;
+  const solutions = data?.items ?? []
+  const totalPages = data?.totalPages ?? 1
 
   return (
     <div className="space-y-6">
@@ -120,8 +112,8 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
                 className="pl-8"
                 id="search"
                 onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
+                  setSearch(e.target.value)
+                  setPage(1)
                 }}
                 placeholder="Buscar por clave, nombre..."
                 value={search}
@@ -135,8 +127,8 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
             </label>
             <Select
               onValueChange={(value) => {
-                setIsActive(value as "all" | "active" | "inactive");
-                setPage(1);
+                setIsActive(value as 'all' | 'active' | 'inactive')
+                setPage(1)
               }}
               value={isActive}
             >
@@ -190,10 +182,7 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
               )}
               {!isLoading && solutions.length === 0 && (
                 <TableRow>
-                  <TableCell
-                    className="text-center text-muted-foreground"
-                    colSpan={7}
-                  >
+                  <TableCell className="text-center text-muted-foreground" colSpan={7}>
                     No se encontraron soluciones
                   </TableCell>
                 </TableRow>
@@ -206,25 +195,17 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
                         {solution.key}
                       </Badge>
                     </TableCell>
-                    <TableCell className="font-medium">
-                      {solution.name}
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      {solution.nameEs || "-"}
-                    </TableCell>
+                    <TableCell className="font-medium">{solution.name}</TableCell>
+                    <TableCell className="text-sm">{solution.nameEs || '-'}</TableCell>
                     <TableCell>
                       <Badge variant="secondary">{solution.sortOrder}</Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="secondary">
-                        {solution._count.glassTypes}
-                      </Badge>
+                      <Badge variant="secondary">{solution._count.glassTypes}</Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant={solution.isActive ? "default" : "secondary"}
-                      >
-                        {solution.isActive ? "Activo" : "Inactivo"}
+                      <Badge variant={solution.isActive ? 'default' : 'secondary'}>
+                        {solution.isActive ? 'Activo' : 'Inactivo'}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
@@ -238,9 +219,7 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
                           <span className="sr-only">Editar</span>
                         </Button>
                         <Button
-                          onClick={() =>
-                            handleDeleteClick(solution.id, solution.name)
-                          }
+                          onClick={() => handleDeleteClick(solution.id, solution.name)}
                           size="icon"
                           variant="ghost"
                         >
@@ -284,7 +263,7 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
 
       <DeleteConfirmationDialog
         dependencies={[]}
-        entityLabel={solutionToDelete?.name ?? ""}
+        entityLabel={solutionToDelete?.name ?? ''}
         entityName="solución de vidrio"
         loading={deleteMutation.isPending}
         onConfirm={handleConfirmDelete}
@@ -292,5 +271,5 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
         open={deleteDialogOpen}
       />
     </div>
-  );
+  )
 }

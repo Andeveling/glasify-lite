@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from '@/components/ui/skeleton'
 
 /**
  * ModelCardSkeleton - Placeholder for ModelCard
@@ -23,5 +23,5 @@ export function ModelCardSkeleton() {
         <Skeleton className="mt-2 h-5 w-1/3" />
       </div>
     </div>
-  );
+  )
 }

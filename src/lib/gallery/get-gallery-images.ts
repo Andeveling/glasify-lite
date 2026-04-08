@@ -13,22 +13,22 @@
  * - Error handling with detailed diagnostics
  */
 
-import fs from "node:fs/promises";
-import path from "node:path";
+import fs from 'node:fs/promises'
+import path from 'node:path'
 
 import {
   ALLOWED_EXTENSIONS,
   DESIGNS_DIR_RELATIVE,
   FILENAME_SEPARATOR,
   PUBLIC_URL_BASE,
-} from "./constants";
-import type { GalleryError, GalleryImage } from "./types";
+} from './constants'
+import type { GalleryError, GalleryImage } from './types'
 
 /**
  * Regular expression to match file extensions
  * Matches: .svg, .png, .jpg, etc.
  */
-const FILE_EXTENSION_REGEX = /\.[^/.]+$/;
+const FILE_EXTENSION_REGEX = /\.[^/.]+$/
 
 /**
  * Convert kebab-case filename to Title Case display name
@@ -49,13 +49,13 @@ const FILE_EXTENSION_REGEX = /\.[^/.]+$/;
  */
 function formatImageName(filename: string): string {
   // Remove extension (e.g., "practicable.svg" → "practicable")
-  const nameWithoutExt = filename.replace(FILE_EXTENSION_REGEX, "");
+  const nameWithoutExt = filename.replace(FILE_EXTENSION_REGEX, '')
 
   // Split by hyphens and capitalize each word
   return nameWithoutExt
     .split(FILENAME_SEPARATOR)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
+    .join(' ')
 }
 
 /**
@@ -65,10 +65,8 @@ function formatImageName(filename: string): string {
  * @returns true if extension is allowed, false otherwise
  */
 function isAllowedExtension(filename: string): boolean {
-  const ext = path.extname(filename).toLowerCase();
-  return ALLOWED_EXTENSIONS.includes(
-    ext as (typeof ALLOWED_EXTENSIONS)[number]
-  );
+  const ext = path.extname(filename).toLowerCase()
+  return ALLOWED_EXTENSIONS.includes(ext as (typeof ALLOWED_EXTENSIONS)[number])
 }
 
 /**
@@ -89,43 +87,41 @@ function isAllowedExtension(filename: string): boolean {
  *
  * @returns Array of GalleryImage objects sorted by name, or error
  */
-export async function getGalleryImages(): Promise<
-  GalleryImage[] | GalleryError
-> {
+export async function getGalleryImages(): Promise<GalleryImage[] | GalleryError> {
   try {
     // Construct absolute path to designs directory
-    const designsDir = path.join(process.cwd(), DESIGNS_DIR_RELATIVE);
+    const designsDir = path.join(process.cwd(), DESIGNS_DIR_RELATIVE)
 
     // Attempt to read directory
-    let files: string[];
+    let files: string[]
     try {
-      files = await fs.readdir(designsDir);
+      files = await fs.readdir(designsDir)
     } catch (error) {
       // Directory doesn't exist or permission denied
-      const errorCode = (error as NodeJS.ErrnoException).code;
-      if (errorCode === "ENOENT") {
+      const errorCode = (error as NodeJS.ErrnoException).code
+      if (errorCode === 'ENOENT') {
         return {
-          code: "DIR_NOT_FOUND",
+          code: 'DIR_NOT_FOUND',
           details: { path: designsDir },
           message: `Designs directory not found at ${designsDir}`,
-        };
+        }
       }
-      if (errorCode === "EACCES") {
+      if (errorCode === 'EACCES') {
         return {
-          code: "READ_ERROR",
+          code: 'READ_ERROR',
           details: { errno: errorCode, path: designsDir },
           message: `Permission denied reading directory: ${designsDir}`,
-        };
+        }
       }
-      throw error;
+      throw error
     }
 
     // Filter files by allowed extensions
-    const validFiles = files.filter(isAllowedExtension);
+    const validFiles = files.filter(isAllowedExtension)
 
     // Return empty array if no valid images found
     if (validFiles.length === 0) {
-      return [];
+      return []
     }
 
     // Transform to GalleryImage objects
@@ -137,15 +133,15 @@ export async function getGalleryImages(): Promise<
         url: `${PUBLIC_URL_BASE}/${filename}`,
       }))
       // Sort alphabetically by display name for consistent UX
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .sort((a, b) => a.name.localeCompare(b.name))
 
-    return images;
+    return images
   } catch (error) {
     return {
-      code: "READ_ERROR",
+      code: 'READ_ERROR',
       details: { error },
-      message: `Failed to read gallery images: ${error instanceof Error ? error.message : "Unknown error"}`,
-    };
+      message: `Failed to read gallery images: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    }
   }
 }
 
@@ -161,17 +157,17 @@ export async function getGalleryImages(): Promise<
 export function isValidGalleryImageUrl(imageUrl: string): boolean {
   // Must start with gallery base path
   if (!imageUrl.startsWith(PUBLIC_URL_BASE)) {
-    return false;
+    return false
   }
 
   // Extract filename from URL
-  const filename = `${imageUrl}`.replace(`${PUBLIC_URL_BASE}/`, "");
+  const filename = `${imageUrl}`.replace(`${PUBLIC_URL_BASE}/`, '')
 
   // Check for path traversal attempts
-  if (filename.includes("..") || filename.includes("/")) {
-    return false;
+  if (filename.includes('..') || filename.includes('/')) {
+    return false
   }
 
   // Validate extension
-  return isAllowedExtension(filename);
+  return isAllowedExtension(filename)
 }

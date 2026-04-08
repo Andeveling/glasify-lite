@@ -1,9 +1,9 @@
-import { notFound } from "next/navigation";
-import { Suspense } from "react";
-import { BackLink } from "@/components/ui/back-link";
-import { api } from "@/trpc/server-client";
-import { ModelFormWrapper } from "./_components/form/model-form-wrapper";
-import { ModelFormSkeleton } from "./_components/model-form-skeleton";
+import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
+import { BackLink } from '@/components/ui/back-link'
+import { api } from '@/trpc/server-client'
+import { ModelFormWrapper } from './_components/form/model-form-wrapper'
+import { ModelFormSkeleton } from './_components/model-form-skeleton'
 
 /**
  * CRITICAL: Dynamic rendering required to prevent build failures
@@ -11,20 +11,18 @@ import { ModelFormSkeleton } from "./_components/model-form-skeleton";
  * This page uses PublicLayout which contains database queries.
  * Force dynamic rendering to prevent prerendering attempts.
  */
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic'
 
 type PageProps = {
-  params: Promise<{ modelId: string }>;
-};
+  params: Promise<{ modelId: string }>
+}
 
 async function ModelPageContent({ modelId }: { modelId: string }) {
   // Fetch model data (critical data - wrapped in Suspense)
-  const serverModel = await api.catalog["get-model-by-id"]({ modelId }).catch(
-    () => null
-  );
+  const serverModel = await api.catalog['get-model-by-id']({ modelId }).catch(() => null)
 
   if (!serverModel) {
-    notFound();
+    notFound()
   }
 
   // Render with Suspense boundaries for secondary data
@@ -41,15 +39,15 @@ async function ModelPageContent({ modelId }: { modelId: string }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 export default async function Page({ params }: PageProps) {
-  const { modelId } = await params;
+  const { modelId } = await params
 
   return (
     <Suspense fallback={<ModelFormSkeleton />}>
       <ModelPageContent modelId={modelId} />
     </Suspense>
-  );
+  )
 }

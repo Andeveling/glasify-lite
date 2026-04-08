@@ -1,7 +1,7 @@
-"use client";
+'use client'
 
-import { Shield, Snowflake, Volume2 } from "lucide-react";
-import { PerformanceBar } from "@/components/ui/performance-bar";
+import { Shield, Snowflake, Volume2 } from 'lucide-react'
+import { PerformanceBar } from '@/components/ui/performance-bar'
 
 /**
  * Glass Type Performance Component (Molecule)
@@ -18,16 +18,12 @@ import { PerformanceBar } from "@/components/ui/performance-bar";
  */
 
 type GlassTypePerformanceProps = {
-  acoustic: number;
-  security: number;
-  thermal: number;
-};
+  acoustic: number
+  security: number
+  thermal: number
+}
 
-export function GlassTypePerformance({
-  acoustic,
-  security,
-  thermal,
-}: GlassTypePerformanceProps) {
+export function GlassTypePerformance({ acoustic, security, thermal }: GlassTypePerformanceProps) {
   return (
     <div className="w-full space-y-2">
       <PerformanceBar
@@ -49,5 +45,5 @@ export function GlassTypePerformance({
         value={acoustic}
       />
     </div>
-  );
+  )
 }

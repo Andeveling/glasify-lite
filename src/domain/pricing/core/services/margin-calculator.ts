@@ -1,5 +1,5 @@
-import { PERCENTAGE_TO_DECIMAL } from "../constants";
-import type { Money } from "../entities/money";
+import { PERCENTAGE_TO_DECIMAL } from '../constants'
+import type { Money } from '../entities/money'
 
 /**
  * Input for model sales price calculation
@@ -9,14 +9,14 @@ export type ModelSalesPriceInput = {
    * Total model cost (profile + glass)
    * Services are NOT included - they are added AFTER margin
    */
-  modelCost: Money;
+  modelCost: Money
 
   /**
    * Profit margin percentage (0-100)
    * Example: 20 = 20% margin
    */
-  marginPercentage: number;
-};
+  marginPercentage: number
+}
 
 /**
  * Calculate sales price from cost and margin percentage
@@ -38,13 +38,13 @@ export type ModelSalesPriceInput = {
  */
 function calculateSalesPrice(cost: Money, marginPercentage: number): Money {
   // Convert percentage to decimal (20% → 0.20)
-  const marginDecimal = marginPercentage / PERCENTAGE_TO_DECIMAL;
+  const marginDecimal = marginPercentage / PERCENTAGE_TO_DECIMAL
 
   // Calculate divisor (1 - margin)
-  const divisor = 1 - marginDecimal;
+  const divisor = 1 - marginDecimal
 
   // Divide cost by (1 - margin)
-  return cost.divide(divisor);
+  return cost.divide(divisor)
 }
 
 /**
@@ -61,8 +61,8 @@ function calculateSalesPrice(cost: Money, marginPercentage: number): Money {
  * @returns Model sales price with margin applied
  */
 function calculateModelSalesPrice(input: ModelSalesPriceInput): Money {
-  const { modelCost, marginPercentage } = input;
-  return calculateSalesPrice(modelCost, marginPercentage);
+  const { modelCost, marginPercentage } = input
+  return calculateSalesPrice(modelCost, marginPercentage)
 }
 
 /**
@@ -80,4 +80,4 @@ function calculateModelSalesPrice(input: ModelSalesPriceInput): Money {
 export const MarginCalculator = {
   calculateSalesPrice,
   calculateModelSalesPrice,
-} as const;
+} as const

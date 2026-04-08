@@ -7,7 +7,7 @@
  * @component Client Component
  */
 
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from '@/components/ui/skeleton'
 
 export function CatalogFilterSkeleton() {
   return (
@@ -29,5 +29,5 @@ export function CatalogFilterSkeleton() {
         <Skeleton className="h-10 w-36" />
       </div>
     </div>
-  );
+  )
 }

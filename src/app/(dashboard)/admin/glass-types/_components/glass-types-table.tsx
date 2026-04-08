@@ -20,19 +20,19 @@
 /** biome-ignore-all assist/source/useSortedKeys: El problema era que Biome estaba reordenando alfabéticamente las propiedades del objeto de configuración de la mutación, poniendo onError antes de onMutate. TypeScript necesita que onMutate se defina primero para inferir el tipo del contexto que luego se usa en onError.
  */
 
-"use client";
+'use client'
 
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
-import { toast } from "sonner";
-import { DeleteConfirmationDialog } from "@/app/_components/delete-confirmation-dialog";
-import type { ServerTableColumn } from "@/app/_components/server-table";
-import { ServerTable } from "@/app/_components/server-table";
-import { TablePagination } from "@/app/_components/server-table/table-pagination";
-import { useTenantConfig } from "@/app/_hooks/use-tenant-config";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
+import Link from 'next/link'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog'
+import type { ServerTableColumn } from '@/app/_components/server-table'
+import { ServerTable } from '@/app/_components/server-table'
+import { TablePagination } from '@/app/_components/server-table/table-pagination'
+import { useTenantConfig } from '@/app/_hooks/use-tenant-config'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,87 +40,83 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { formatCurrency, formatThickness } from "@/lib/format";
-import { api } from "@/trpc/react";
+} from '@/components/ui/dropdown-menu'
+import { formatCurrency, formatThickness } from '@/lib/format'
+import { api } from '@/trpc/react'
 
 /**
  * Glass Type data type (from tRPC)
  */
 type GlassType = {
-  id: string;
-  name: string;
-  thicknessMm: number;
-  pricePerSqm: number;
-  sku: string | null;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  name: string
+  thicknessMm: number
+  pricePerSqm: number
+  sku: string | null
+  isActive: boolean
+  createdAt: Date
+  updatedAt: Date
   solutions: Array<{
-    isPrimary: boolean;
+    isPrimary: boolean
     solution: {
-      nameEs: string;
-    };
-  }>;
+      nameEs: string
+    }
+  }>
   _count: {
-    solutions: number;
-    characteristics: number;
-  };
-};
+    solutions: number
+    characteristics: number
+  }
+}
 
 type GlassTypesTableProps = {
   initialData: {
-    items: GlassType[];
-    total: number;
-    page: number;
-    totalPages: number;
-    limit: number;
-  };
+    items: GlassType[]
+    total: number
+    page: number
+    totalPages: number
+    limit: number
+  }
   searchParams: {
-    search?: string;
-    isActive?: string;
-    page?: string;
-  };
-};
+    search?: string
+    isActive?: string
+    page?: string
+  }
+}
 
 /**
  * Active status badge
  */
 function ActiveBadge({ isActive }: { isActive: boolean }) {
   return (
-    <Badge variant={isActive ? "default" : "secondary"}>
-      {isActive ? "Activo" : "Inactivo"}
-    </Badge>
-  );
+    <Badge variant={isActive ? 'default' : 'secondary'}>{isActive ? 'Activo' : 'Inactivo'}</Badge>
+  )
 }
 
 /**
  * Solutions display
  */
-function SolutionsBadges({ solutions }: { solutions: GlassType["solutions"] }) {
+function SolutionsBadges({ solutions }: { solutions: GlassType['solutions'] }) {
   if (solutions.length === 0) {
-    return <span className="text-muted-foreground text-sm">—</span>;
+    return <span className="text-muted-foreground text-sm">—</span>
   }
 
-  const primary = solutions.find((s) => s.isPrimary);
-  const displaySolution = primary ?? solutions[0];
+  const primary = solutions.find((s) => s.isPrimary)
+  const displaySolution = primary ?? solutions[0]
 
   if (!displaySolution) {
-    return <span className="text-muted-foreground text-sm">—</span>;
+    return <span className="text-muted-foreground text-sm">—</span>
   }
 
   return (
     <div className="flex flex-wrap items-center gap-1">
-      <Badge variant={displaySolution.isPrimary ? "default" : "secondary"}>
+      <Badge variant={displaySolution.isPrimary ? 'default' : 'secondary'}>
         {displaySolution.solution.nameEs}
       </Badge>
       {solutions.length > 1 && (
-        <span className="text-muted-foreground text-xs">
-          +{solutions.length - 1}
-        </span>
+        <span className="text-muted-foreground text-xs">+{solutions.length - 1}</span>
       )}
     </div>
-  );
+  )
 }
 
 /**
@@ -130,8 +126,8 @@ function ActionsMenu({
   glassType,
   onDelete,
 }: {
-  glassType: GlassType;
-  onDelete: (id: string, name: string) => void;
+  glassType: GlassType
+  onDelete: (id: string, name: string) => void
 }) {
   return (
     <DropdownMenu>
@@ -158,20 +154,17 @@ function ActionsMenu({
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
 }
 
-export function GlassTypesTable({
-  initialData,
-  searchParams,
-}: GlassTypesTableProps) {
-  const { formatContext } = useTenantConfig();
-  const utils = api.useUtils();
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+export function GlassTypesTable({ initialData, searchParams }: GlassTypesTableProps) {
+  const { formatContext } = useTenantConfig()
+  const utils = api.useUtils()
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [glassTypeToDelete, setGlassTypeToDelete] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
+    id: string
+    name: string
+  } | null>(null)
 
   // Delete mutation with optimistic updates
   // biome-ignore format: Order matters for TypeScript inference (onMutate must come before onError)
@@ -245,19 +238,19 @@ export function GlassTypesTable({
    * Handle delete click
    */
   const handleDeleteClick = (id: string, name: string) => {
-    setGlassTypeToDelete({ id, name });
-    setDeleteDialogOpen(true);
-  };
+    setGlassTypeToDelete({ id, name })
+    setDeleteDialogOpen(true)
+  }
 
   /**
    * Confirm delete
    */
   const handleConfirmDelete = async () => {
     if (!glassTypeToDelete) {
-      return;
+      return
     }
-    await deleteMutation.mutateAsync({ id: glassTypeToDelete.id });
-  };
+    await deleteMutation.mutateAsync({ id: glassTypeToDelete.id })
+  }
 
   /**
    * Column definitions
@@ -267,53 +260,48 @@ export function GlassTypesTable({
       cell: (item) => (
         <div>
           <div className="font-medium">{item.name}</div>
-          {item.sku && (
-            <div className="text-muted-foreground text-xs">SKU: {item.sku}</div>
-          )}
+          {item.sku && <div className="text-muted-foreground text-xs">SKU: {item.sku}</div>}
         </div>
       ),
-      header: "Nombre",
-      id: "name",
+      header: 'Nombre',
+      id: 'name',
       sortable: true,
     },
     {
-      align: "center",
+      align: 'center',
       cell: (item) => formatThickness(item.thicknessMm, formatContext),
-      header: "Espesor",
-      id: "thicknessMm",
+      header: 'Espesor',
+      id: 'thicknessMm',
       sortable: true,
     },
     {
-      cell: (item) =>
-        formatCurrency(item.pricePerSqm, { context: formatContext }),
-      header: "Precio/m²",
-      id: "pricePerSqm",
+      cell: (item) => formatCurrency(item.pricePerSqm, { context: formatContext }),
+      header: 'Precio/m²',
+      id: 'pricePerSqm',
       sortable: true,
     },
     {
       cell: (item) => <SolutionsBadges solutions={item.solutions} />,
-      header: "Soluciones",
-      id: "solutions",
+      header: 'Soluciones',
+      id: 'solutions',
       sortable: false,
     },
     {
-      align: "center",
+      align: 'center',
       cell: (item) => <ActiveBadge isActive={item.isActive} />,
-      header: "Estado",
-      id: "isActive",
+      header: 'Estado',
+      id: 'isActive',
       sortable: false,
     },
     {
-      align: "right",
-      cell: (item) => (
-        <ActionsMenu glassType={item} onDelete={handleDeleteClick} />
-      ),
-      header: "Acciones",
-      id: "actions",
+      align: 'right',
+      cell: (item) => <ActionsMenu glassType={item} onDelete={handleDeleteClick} />,
+      header: 'Acciones',
+      id: 'actions',
       sortable: false,
-      width: "80px",
+      width: '80px',
     },
-  ];
+  ]
 
   return (
     <>
@@ -332,7 +320,7 @@ export function GlassTypesTable({
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
         dependencies={[]}
-        entityLabel={glassTypeToDelete?.name ?? ""}
+        entityLabel={glassTypeToDelete?.name ?? ''}
         entityName="tipo de vidrio"
         loading={deleteMutation.isPending}
         onConfirm={handleConfirmDelete}
@@ -340,5 +328,5 @@ export function GlassTypesTable({
         open={deleteDialogOpen}
       />
     </>
-  );
+  )
 }

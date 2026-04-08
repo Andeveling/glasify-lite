@@ -16,53 +16,47 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from "next";
-import { api } from "@/trpc/server-client";
-import { GlassSupplierList } from "./_components/glass-supplier-list";
+import type { Metadata } from 'next'
+import { api } from '@/trpc/server-client'
+import { GlassSupplierList } from './_components/glass-supplier-list'
 
 export const metadata: Metadata = {
-  description:
-    "Gestiona los proveedores de vidrio y sus relaciones con tipos de vidrio",
-  title: "Proveedores de Vidrio | Admin",
-};
+  description: 'Gestiona los proveedores de vidrio y sus relaciones con tipos de vidrio',
+  title: 'Proveedores de Vidrio | Admin',
+}
 
 // Force dynamic rendering - requires database connection
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic'
 
 type SearchParams = Promise<{
-  country?: string;
-  isActive?: string;
-  page?: string;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-}>;
+  country?: string
+  isActive?: string
+  page?: string
+  search?: string
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
+}>
 
 type PageProps = {
-  searchParams: SearchParams;
-};
+  searchParams: SearchParams
+}
 
 export default async function GlassSuppliersPage({ searchParams }: PageProps) {
-  const params = await searchParams;
+  const params = await searchParams
 
   // Parse search params
-  const page = Number(params.page) || 1;
-  const search =
-    params.search && params.search !== "" ? params.search : undefined;
-  const country =
-    params.country && params.country !== "all" ? params.country : undefined;
-  const isActive = (
-    params.isActive && params.isActive !== "all" ? params.isActive : "all"
-  ) as "all" | "active" | "inactive";
-  const sortBy = (params.sortBy || "name") as
-    | "name"
-    | "code"
-    | "country"
-    | "createdAt";
-  const sortOrder = (params.sortOrder || "asc") as "asc" | "desc";
+  const page = Number(params.page) || 1
+  const search = params.search && params.search !== '' ? params.search : undefined
+  const country = params.country && params.country !== 'all' ? params.country : undefined
+  const isActive = (params.isActive && params.isActive !== 'all' ? params.isActive : 'all') as
+    | 'all'
+    | 'active'
+    | 'inactive'
+  const sortBy = (params.sortBy || 'name') as 'name' | 'code' | 'country' | 'createdAt'
+  const sortOrder = (params.sortOrder || 'asc') as 'asc' | 'desc'
 
   // Fetch data server-side with filters
-  const initialData = await api.admin["glass-supplier"].list({
+  const initialData = await api.admin['glass-supplier'].list({
     country,
     isActive,
     limit: 20,
@@ -70,7 +64,7 @@ export default async function GlassSuppliersPage({ searchParams }: PageProps) {
     search,
     sortBy,
     sortOrder,
-  });
+  })
 
   const searchParamsForClient = {
     country,
@@ -79,23 +73,18 @@ export default async function GlassSuppliersPage({ searchParams }: PageProps) {
     search,
     sortBy,
     sortOrder,
-  };
+  }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-bold text-3xl tracking-tight">
-          Proveedores de Vidrio
-        </h1>
+        <h1 className="font-bold text-3xl tracking-tight">Proveedores de Vidrio</h1>
         <p className="text-muted-foreground">
           Administra los fabricantes de vidrio y sus productos
         </p>
       </div>
 
-      <GlassSupplierList
-        initialData={initialData}
-        searchParams={searchParamsForClient}
-      />
+      <GlassSupplierList initialData={initialData} searchParams={searchParamsForClient} />
     </div>
-  );
+  )
 }

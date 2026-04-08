@@ -10,37 +10,37 @@
  * - Responsive grid layout
  */
 
-"use client";
+'use client'
 
-import type { QuoteListItem as QuoteItem } from "../_types/quote-list.types";
-import { QuoteListItem } from "./quote-list-item";
-import { QuotesEmptyState } from "./quotes-empty-state";
+import type { QuoteListItem as QuoteItem } from '../_types/quote-list.types'
+import { QuoteListItem } from './quote-list-item'
+import { QuotesEmptyState } from './quotes-empty-state'
 
 type QuoteListProps = {
   initialData: {
-    quotes: QuoteItem[];
-    total: number;
-    totalPages: number;
-    page: number;
-    limit: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-  };
+    quotes: QuoteItem[]
+    total: number
+    totalPages: number
+    page: number
+    limit: number
+    hasNextPage: boolean
+    hasPreviousPage: boolean
+  }
   searchParams: {
-    status?: string;
-    search?: string;
-    sortBy?: string;
-    sortOrder?: "asc" | "desc";
-    page?: number;
-  };
-};
+    status?: string
+    search?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
+    page?: number
+  }
+}
 
 export function QuoteList({ initialData }: QuoteListProps) {
-  const { quotes } = initialData;
+  const { quotes } = initialData
 
   // Empty state
   if (quotes.length === 0) {
-    return <QuotesEmptyState />;
+    return <QuotesEmptyState />
   }
 
   return (
@@ -49,5 +49,5 @@ export function QuoteList({ initialData }: QuoteListProps) {
         <QuoteListItem key={quote.id} quote={quote} />
       ))}
     </div>
-  );
+  )
 }

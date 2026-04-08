@@ -1,21 +1,21 @@
-"use client";
+'use client'
 
-import { Gem, Package, Ruler } from "lucide-react";
-import { motion, type Variants } from "motion/react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { useTenantConfig } from "@/app/_hooks/use-tenant-config";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { formatCurrency } from "@/lib/format";
-import { cn } from "@/lib/utils";
+import { Gem, Package, Ruler } from 'lucide-react'
+import { motion, type Variants } from 'motion/react'
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import { useTenantConfig } from '@/app/_hooks/use-tenant-config'
+import { Badge } from '@/components/ui/badge'
+import { Card } from '@/components/ui/card'
+import { formatCurrency } from '@/lib/format'
+import { cn } from '@/lib/utils'
 
 // ============================================================================
 // Animation Variants
 // ============================================================================
 
 // Animation constants
-const PULSE_SCALE_PEAK = 1.05;
+const PULSE_SCALE_PEAK = 1.05
 
 /**
  * Container animation: Slide down + fade in on mount
@@ -28,11 +28,11 @@ const containerVariants: Variants = {
     y: 0,
     transition: {
       duration: 0.3,
-      ease: "easeOut",
+      ease: 'easeOut',
       staggerChildren: 0.08, // Stagger badges appearance
     },
   },
-};
+}
 
 /**
  * Badge item animation: Fade + scale in sequence
@@ -44,10 +44,10 @@ const badgeVariants: Variants = {
     scale: 1,
     transition: {
       duration: 0.2,
-      ease: "easeOut",
+      ease: 'easeOut',
     },
   },
-};
+}
 
 /**
  * Discount badge: Subtle pulse to attract attention
@@ -59,55 +59,50 @@ const discountVariants: Variants = {
     scale: 1,
     transition: {
       duration: 0.3,
-      ease: "easeOut",
+      ease: 'easeOut',
     },
   },
   pulse: {
     scale: [1, PULSE_SCALE_PEAK, 1],
     transition: {
       duration: 0.6,
-      ease: "easeInOut",
+      ease: 'easeInOut',
       repeat: 2, // Pulse 3 times total
       repeatDelay: 0.3,
     },
   },
-};
+}
 
 // ============================================================================
 // Types
 // ============================================================================
 
-type PriceBreakdownCategory =
-  | "model"
-  | "glass"
-  | "service"
-  | "adjustment"
-  | "color";
+type PriceBreakdownCategory = 'model' | 'glass' | 'service' | 'adjustment' | 'color'
 
 type PriceBreakdownItem = {
-  amount: number;
-  category: PriceBreakdownCategory;
-  label: string;
-};
+  amount: number
+  category: PriceBreakdownCategory
+  label: string
+}
 
 type ConfigSummary = {
-  glassTypeName?: string;
-  heightMm?: number;
-  modelImageUrl?: string;
-  modelName: string;
-  solutionName?: string;
-  widthMm?: number;
-};
+  glassTypeName?: string
+  heightMm?: number
+  modelImageUrl?: string
+  modelName: string
+  solutionName?: string
+  widthMm?: number
+}
 
 type StickyPriceHeaderProps = {
-  basePrice: number;
-  breakdown: PriceBreakdownItem[];
-  className?: string;
-  configSummary: ConfigSummary;
-  currency?: string;
-  currentPrice: number;
-  withBreakdown?: boolean;
-};
+  basePrice: number
+  breakdown: PriceBreakdownItem[]
+  className?: string
+  configSummary: ConfigSummary
+  currency?: string
+  currentPrice: number
+  withBreakdown?: boolean
+}
 
 // ============================================================================
 // Helpers
@@ -118,21 +113,17 @@ type StickyPriceHeaderProps = {
  * Prevents hydration mismatch by disabling animations during SSR
  */
 function getVariants(isMounted: boolean, variants: Variants) {
-  return isMounted ? variants : undefined;
+  return isMounted ? variants : undefined
 }
 
 /**
  * Returns animation props for motion elements based on mount state
  */
-function getAnimationProps(
-  isMounted: boolean,
-  initial: string,
-  animate: string | string[]
-) {
+function getAnimationProps(isMounted: boolean, initial: string, animate: string | string[]) {
   return {
     animate: isMounted ? animate : undefined,
     initial: isMounted ? initial : undefined,
-  };
+  }
 }
 
 // ============================================================================
@@ -145,34 +136,29 @@ export function StickyPriceHeader({
   configSummary,
   currentPrice,
 }: StickyPriceHeaderProps) {
-  const { formatContext } = useTenantConfig();
-  const discount = basePrice - currentPrice;
-  const hasDiscount = discount > 0;
-  const showGlass = Boolean(configSummary.glassTypeName);
+  const { formatContext } = useTenantConfig()
+  const discount = basePrice - currentPrice
+  const hasDiscount = discount > 0
+  const showGlass = Boolean(configSummary.glassTypeName)
 
   // Disable animations during SSR to prevent hydration mismatch
-  const [isMounted, setIsMounted] = useState(false);
+  const [isMounted, setIsMounted] = useState(false)
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    setIsMounted(true)
+  }, [])
 
   // Format dimensions
-  const hasDimensions = configSummary.widthMm && configSummary.heightMm;
+  const hasDimensions = configSummary.widthMm && configSummary.heightMm
   const dimensionsText = hasDimensions
     ? `${configSummary.widthMm} × ${configSummary.heightMm} mm`
-    : "Sin dimensiones";
+    : 'Sin dimensiones'
 
   return (
     <motion.div
-      {...getAnimationProps(isMounted, "hidden", "visible")}
+      {...getAnimationProps(isMounted, 'hidden', 'visible')}
       variants={getVariants(isMounted, containerVariants)}
     >
-      <Card
-        className={cn(
-          "relative mt-0 p-4 md:sticky md:top-16 md:z-10",
-          className
-        )}
-      >
+      <Card className={cn('relative mt-0 p-4 md:sticky md:top-16 md:z-10', className)}>
         <div className="flex flex-col gap-4">
           {/* Top section: Model Image - 4:3 aspect ratio */}
           {configSummary.modelImageUrl && (
@@ -186,7 +172,7 @@ export function StickyPriceHeader({
                 fill
                 priority
                 sizes="(max-width: 768px) 100vw, 80vw"
-                src={configSummary.modelImageUrl || "/placeholder.svg"}
+                src={configSummary.modelImageUrl || '/placeholder.svg'}
               />
             </motion.div>
           )}
@@ -246,11 +232,8 @@ export function StickyPriceHeader({
             {/* Discount badge with pulse animation */}
             {hasDiscount && (
               <motion.div
-                {...getAnimationProps(isMounted, "hidden", [
-                  "visible",
-                  "pulse",
-                ])}
-                className={cn(showGlass && "sm:ml-auto")}
+                {...getAnimationProps(isMounted, 'hidden', ['visible', 'pulse'])}
+                className={cn(showGlass && 'sm:ml-auto')}
                 variants={getVariants(isMounted, discountVariants)}
               >
                 <Badge
@@ -266,14 +249,12 @@ export function StickyPriceHeader({
 
         {/* Screen reader announcement for price changes */}
         <div aria-atomic="true" aria-live="polite" className="sr-only">
-          Precio actualizado:{" "}
-          {formatCurrency(currentPrice, { context: formatContext })} para{" "}
+          Precio actualizado: {formatCurrency(currentPrice, { context: formatContext })} para{' '}
           {configSummary.modelName}
           {hasDimensions && `, dimensiones ${dimensionsText}`}
-          {configSummary.glassTypeName &&
-            `, Cristal ${configSummary.glassTypeName}`}
+          {configSummary.glassTypeName && `, Cristal ${configSummary.glassTypeName}`}
         </div>
       </Card>
     </motion.div>
-  );
+  )
 }

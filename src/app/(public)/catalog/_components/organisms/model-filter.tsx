@@ -1,29 +1,29 @@
-"use client";
+'use client'
 
-import { Filter, Search, X } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Filter, Search, X } from 'lucide-react'
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select'
 
 type FilterOptions = {
-  manufacturerId?: string;
-  type?: string;
-  q?: string;
-};
+  manufacturerId?: string
+  type?: string
+  q?: string
+}
 
 type ModelFilterProps = {
-  manufacturers: Array<{ id: string; name: string }>;
-  types: Array<{ value: string; label: string }>;
-  initialFilters?: FilterOptions;
-  onFilterChange: (filters: FilterOptions) => void;
-};
+  manufacturers: Array<{ id: string; name: string }>
+  types: Array<{ value: string; label: string }>
+  initialFilters?: FilterOptions
+  onFilterChange: (filters: FilterOptions) => void
+}
 
 export function ModelFilter({
   manufacturers,
@@ -31,99 +31,97 @@ export function ModelFilter({
   initialFilters = {},
   onFilterChange,
 }: ModelFilterProps) {
-  const [searchQuery, setSearchQuery] = useState(initialFilters.q || "");
+  const [searchQuery, setSearchQuery] = useState(initialFilters.q || '')
   const [selectedManufacturer, setSelectedManufacturer] = useState(
-    initialFilters.manufacturerId || "all"
-  );
-  const [selectedType, setSelectedType] = useState(
-    initialFilters.type || "all"
-  );
+    initialFilters.manufacturerId || 'all',
+  )
+  const [selectedType, setSelectedType] = useState(initialFilters.type || 'all')
 
   const hasActiveFilters = Boolean(
     searchQuery ||
-      (selectedManufacturer && selectedManufacturer !== "all") ||
-      (selectedType && selectedType !== "all")
-  );
+      (selectedManufacturer && selectedManufacturer !== 'all') ||
+      (selectedType && selectedType !== 'all'),
+  )
 
   const clearAllFilters = () => {
-    setSearchQuery("");
-    setSelectedManufacturer("all");
-    setSelectedType("all");
-    onFilterChange({});
-  };
+    setSearchQuery('')
+    setSelectedManufacturer('all')
+    setSelectedType('all')
+    onFilterChange({})
+  }
 
   const handleSearchChange = (value: string) => {
-    setSearchQuery(value);
+    setSearchQuery(value)
 
     // Auto-apply search as user types (debounced in parent component)
-    const filters: FilterOptions = {};
+    const filters: FilterOptions = {}
     if (value.trim()) {
-      filters.q = value.trim();
+      filters.q = value.trim()
     }
-    if (selectedManufacturer && selectedManufacturer !== "all") {
-      filters.manufacturerId = selectedManufacturer;
+    if (selectedManufacturer && selectedManufacturer !== 'all') {
+      filters.manufacturerId = selectedManufacturer
     }
-    if (selectedType && selectedType !== "all") {
-      filters.type = selectedType;
+    if (selectedType && selectedType !== 'all') {
+      filters.type = selectedType
     }
 
-    onFilterChange(filters);
-  };
+    onFilterChange(filters)
+  }
 
   const handleManufacturerChange = (value: string) => {
-    setSelectedManufacturer(value);
+    setSelectedManufacturer(value)
     // Apply filters immediately when select changes
-    const filters: FilterOptions = {};
+    const filters: FilterOptions = {}
     if (searchQuery.trim()) {
-      filters.q = searchQuery.trim();
+      filters.q = searchQuery.trim()
     }
-    if (value && value !== "all") {
-      filters.manufacturerId = value;
+    if (value && value !== 'all') {
+      filters.manufacturerId = value
     }
-    if (selectedType && selectedType !== "all") {
-      filters.type = selectedType;
+    if (selectedType && selectedType !== 'all') {
+      filters.type = selectedType
     }
-    onFilterChange(filters);
-  };
+    onFilterChange(filters)
+  }
 
   const handleTypeChange = (value: string) => {
-    setSelectedType(value);
-    const filters: FilterOptions = {};
+    setSelectedType(value)
+    const filters: FilterOptions = {}
     if (searchQuery.trim()) {
-      filters.q = searchQuery.trim();
+      filters.q = searchQuery.trim()
     }
-    if (selectedManufacturer && selectedManufacturer !== "all") {
-      filters.manufacturerId = selectedManufacturer;
+    if (selectedManufacturer && selectedManufacturer !== 'all') {
+      filters.manufacturerId = selectedManufacturer
     }
-    if (value && value !== "all") {
-      filters.type = value;
+    if (value && value !== 'all') {
+      filters.type = value
     }
-    onFilterChange(filters);
-  };
+    onFilterChange(filters)
+  }
 
   const _removeManufacturerFilter = () => {
-    setSelectedManufacturer("all");
-    const filters: FilterOptions = {};
+    setSelectedManufacturer('all')
+    const filters: FilterOptions = {}
     if (searchQuery.trim()) {
-      filters.q = searchQuery.trim();
+      filters.q = searchQuery.trim()
     }
-    if (selectedType && selectedType !== "all") {
-      filters.type = selectedType;
+    if (selectedType && selectedType !== 'all') {
+      filters.type = selectedType
     }
-    onFilterChange(filters);
-  };
+    onFilterChange(filters)
+  }
 
   const _removeTypeFilter = () => {
-    setSelectedType("all");
-    const filters: FilterOptions = {};
+    setSelectedType('all')
+    const filters: FilterOptions = {}
     if (searchQuery.trim()) {
-      filters.q = searchQuery.trim();
+      filters.q = searchQuery.trim()
     }
-    if (selectedManufacturer && selectedManufacturer !== "all") {
-      filters.manufacturerId = selectedManufacturer;
+    if (selectedManufacturer && selectedManufacturer !== 'all') {
+      filters.manufacturerId = selectedManufacturer
     }
-    onFilterChange(filters);
-  };
+    onFilterChange(filters)
+  }
 
   return (
     <div className="w-full space-y-4 rounded-lg border border-border bg-card p-4">
@@ -157,10 +155,7 @@ export function ModelFilter({
         </div>
 
         {/* Fabricante Filter */}
-        <Select
-          onValueChange={handleManufacturerChange}
-          value={selectedManufacturer}
-        >
+        <Select onValueChange={handleManufacturerChange} value={selectedManufacturer}>
           <SelectTrigger aria-label="Filtrar por fabricante">
             <SelectValue placeholder="Todos los manufacturer" />
           </SelectTrigger>
@@ -190,5 +185,5 @@ export function ModelFilter({
         </Select>
       </div>
     </div>
-  );
+  )
 }

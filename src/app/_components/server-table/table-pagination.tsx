@@ -24,33 +24,28 @@
  * @see REQ-001: Server-side pagination via URL params
  */
 
-"use client";
+'use client'
 
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useServerParams } from "@/hooks/use-server-params";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { useServerParams } from '@/hooks/use-server-params'
 
 export type TablePaginationProps = {
   /** Current page number (1-indexed) */
-  currentPage: number;
+  currentPage: number
 
   /** Total number of pages */
-  totalPages: number;
+  totalPages: number
 
   /** Total number of items (for display) */
-  totalItems: number;
+  totalItems: number
 
   /** Show first/last page buttons */
-  showFirstLast?: boolean;
+  showFirstLast?: boolean
 
   /** Show item count */
-  showItemCount?: boolean;
-};
+  showItemCount?: boolean
+}
 
 export function TablePagination({
   currentPage,
@@ -59,29 +54,28 @@ export function TablePagination({
   showFirstLast = true,
   showItemCount = true,
 }: TablePaginationProps) {
-  const { updateParam } = useServerParams();
+  const { updateParam } = useServerParams()
 
-  const hasPrevious = currentPage > 1;
-  const hasNext = currentPage < totalPages;
+  const hasPrevious = currentPage > 1
+  const hasNext = currentPage < totalPages
 
   /**
    * Navigate to specific page
    */
   const goToPage = (page: number) => {
     if (page < 1 || page > totalPages || page === currentPage) {
-      return;
+      return
     }
-    updateParam("page", page);
-  };
+    updateParam('page', page)
+  }
 
   return (
     <div className="flex w-full items-center justify-between">
       {/* Item count */}
       {showItemCount && (
         <div className="text-muted-foreground text-sm">
-          Total:{" "}
-          <span className="font-medium text-foreground">{totalItems}</span> item
-          {totalItems !== 1 ? "s" : ""}
+          Total: <span className="font-medium text-foreground">{totalItems}</span> item
+          {totalItems !== 1 ? 's' : ''}
         </div>
       )}
 
@@ -146,5 +140,5 @@ export function TablePagination({
         )}
       </div>
     </div>
-  );
+  )
 }

@@ -12,8 +12,8 @@
  * @module app/(public)/cart/page
  */
 
-import type { Metadata } from "next";
-import { CartPageContent } from "./_components/cart-page-content";
+import type { Metadata } from 'next'
+import { CartPageContent } from './_components/cart-page-content'
 
 // ============================================================================
 // Route Segment Config
@@ -29,7 +29,7 @@ import { CartPageContent } from "./_components/cart-page-content";
  *
  * @see https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic
  */
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic'
 
 // ============================================================================
 // Metadata
@@ -37,9 +37,9 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   description:
-    "Revisa y ajusta tus configuraciones de ventanas antes de generar una cotización formal",
-  title: "Carrito de Presupuesto",
-};
+    'Revisa y ajusta tus configuraciones de ventanas antes de generar una cotización formal',
+  title: 'Carrito de Presupuesto',
+}
 
 // ============================================================================
 // Page Component (Server Component)
@@ -51,5 +51,5 @@ export const metadata: Metadata = {
  * Renders the cart page with metadata and delegates interactivity to client component
  */
 export default function CartPage() {
-  return <CartPageContent />;
+  return <CartPageContent />
 }

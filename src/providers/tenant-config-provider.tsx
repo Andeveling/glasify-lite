@@ -7,9 +7,9 @@
  * @module providers/tenant-config-provider
  */
 
-"use client";
+'use client'
 
-import { createContext, useContext } from "react";
+import { createContext, useContext } from 'react'
 
 // ============================================================================
 // Types
@@ -21,38 +21,38 @@ import { createContext, useContext } from "react";
  */
 export type TenantConfigPublic = {
   /** ISO 4217 currency code (COP, USD, EUR, etc.) */
-  currency: string;
+  currency: string
   /** IETF BCP 47 locale (es-CO, en-US, etc.) */
-  locale: string;
+  locale: string
   /** IANA timezone (America/Bogota, etc.) */
-  timezone: string;
+  timezone: string
   /** Quote validity in days */
-  quoteValidityDays: number;
+  quoteValidityDays: number
   /** Tax configuration */
   /** Tax name (e.g., "IVA", "ITBMS") */
-  taxName?: string | null;
+  taxName?: string | null
   /** Tax rate as decimal (e.g., 0.19, 0.07) */
-  taxRate?: number | null;
+  taxRate?: number | null
   /** Whether tax is enabled */
-  taxEnabled?: boolean;
+  taxEnabled?: boolean
   /** Legal description for tax display */
-  taxDescription?: string | null;
-};
+  taxDescription?: string | null
+}
 
 // ============================================================================
 // Context
 // ============================================================================
 
-const TenantConfigContext = createContext<TenantConfigPublic | null>(null);
+const TenantConfigContext = createContext<TenantConfigPublic | null>(null)
 
 // ============================================================================
 // Provider
 // ============================================================================
 
 type TenantConfigProviderProps = {
-  children: React.ReactNode;
-  config: TenantConfigPublic;
-};
+  children: React.ReactNode
+  config: TenantConfigPublic
+}
 
 /**
  * TenantConfig Provider Component
@@ -95,15 +95,8 @@ type TenantConfigProviderProps = {
  * }
  * ```
  */
-export function TenantConfigProvider({
-  children,
-  config,
-}: TenantConfigProviderProps) {
-  return (
-    <TenantConfigContext.Provider value={config}>
-      {children}
-    </TenantConfigContext.Provider>
-  );
+export function TenantConfigProvider({ children, config }: TenantConfigProviderProps) {
+  return <TenantConfigContext.Provider value={config}>{children}</TenantConfigContext.Provider>
 }
 
 // ============================================================================
@@ -134,11 +127,11 @@ export function TenantConfigProvider({
  * ```
  */
 export function useTenantConfig(): TenantConfigPublic {
-  const context = useContext(TenantConfigContext);
+  const context = useContext(TenantConfigContext)
 
   if (!context) {
-    throw new Error("useTenantConfig must be used within TenantConfigProvider");
+    throw new Error('useTenantConfig must be used within TenantConfigProvider')
   }
 
-  return context;
+  return context
 }

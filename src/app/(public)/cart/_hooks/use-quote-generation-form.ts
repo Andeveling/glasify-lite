@@ -14,18 +14,18 @@
  * @module app/(public)/cart/_hooks/use-quote-generation-form
  */
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { generateQuoteFromCartAction } from "@/app/_actions/quote.actions";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
+import { useCallback, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { generateQuoteFromCartAction } from '@/app/_actions/quote.actions'
 import {
   type QuoteGenerationFormValues,
   quoteGenerationFormSchema,
   transformToActionInput,
-} from "../_schemas/quote-generation.schema";
-import { useCart } from "./use-cart";
+} from '../_schemas/quote-generation.schema'
+import { useCart } from './use-cart'
 
 // ============================================================================
 // Types
@@ -33,27 +33,27 @@ import { useCart } from "./use-cart";
 
 type UseQuoteGenerationFormOptions = {
   /** Callback when form submission starts */
-  onSubmitStart?: () => void;
+  onSubmitStart?: () => void
   /** Callback when drawer should close */
-  onClose?: () => void;
-};
+  onClose?: () => void
+}
 
 type UseQuoteGenerationFormReturn = {
   /** React Hook Form instance */
-  form: ReturnType<typeof useForm<QuoteGenerationFormValues>>;
+  form: ReturnType<typeof useForm<QuoteGenerationFormValues>>
   /** Whether form is being submitted */
-  isSubmitting: boolean;
+  isSubmitting: boolean
   /** Whether redirecting after success */
-  isRedirecting: boolean;
+  isRedirecting: boolean
   /** Cart items for summary display */
-  cartItems: ReturnType<typeof useCart>["items"];
+  cartItems: ReturnType<typeof useCart>['items']
   /** Cart summary (total, count) */
-  cartSummary: ReturnType<typeof useCart>["summary"];
+  cartSummary: ReturnType<typeof useCart>['summary']
   /** Form submission handler */
-  handleSubmit: () => Promise<void>;
+  handleSubmit: () => Promise<void>
   /** Whether form can be submitted */
-  canSubmit: boolean;
-};
+  canSubmit: boolean
+}
 
 // ============================================================================
 // Hook Implementation
@@ -70,21 +70,21 @@ type UseQuoteGenerationFormReturn = {
  * ```
  */
 export function useQuoteGenerationForm(
-  options: UseQuoteGenerationFormOptions = {}
+  options: UseQuoteGenerationFormOptions = {},
 ): UseQuoteGenerationFormReturn {
-  const { onSubmitStart, onClose } = options;
+  const { onSubmitStart, onClose } = options
 
-  const router = useRouter();
-  const { items: cartItems, clearCart, summary: cartSummary } = useCart();
+  const router = useRouter()
+  const { items: cartItems, clearCart, summary: cartSummary } = useCart()
 
   // Form state
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isRedirecting, setIsRedirecting] = useState(false)
 
   // Initialize form with schema validation
   const form = useForm<QuoteGenerationFormValues>({
     defaultValues: {
-      projectName: "",
+      projectName: '',
       deliveryAddress: {
         city: null,
         country: null,
@@ -97,82 +97,75 @@ export function useQuoteGenerationForm(
         region: null,
         street: null,
       },
-      contactPhone: "",
-      deliveryReference: "",
+      contactPhone: '',
+      deliveryReference: '',
     },
-    mode: "onBlur",
+    mode: 'onBlur',
     resolver: zodResolver(quoteGenerationFormSchema),
-  });
+  })
 
   // Computed: Can form be submitted
-  const hasCartItems = cartItems.length > 0;
-  const isBusy = isSubmitting || isRedirecting;
-  const canSubmit = hasCartItems && !isBusy;
+  const hasCartItems = cartItems.length > 0
+  const isBusy = isSubmitting || isRedirecting
+  const canSubmit = hasCartItems && !isBusy
 
   // Form submission handler
   const handleSubmit = useCallback(async () => {
     // Trigger validation
-    const isValid = await form.trigger();
+    const isValid = await form.trigger()
     if (!isValid) {
-      toast.error("Por favor corrige los errores del formulario");
-      return;
+      toast.error('Por favor corrige los errores del formulario')
+      return
     }
 
-    const values = form.getValues();
+    const values = form.getValues()
 
     await toast.promise(
       async () => {
-        setIsSubmitting(true);
-        onSubmitStart?.();
+        setIsSubmitting(true)
+        onSubmitStart?.()
 
         try {
           // Transform form values to action input (derive legacy fields)
-          const actionInput = transformToActionInput(values);
+          const actionInput = transformToActionInput(values)
 
-          const result = await generateQuoteFromCartAction(
-            actionInput,
-            cartItems
-          );
+          const result = await generateQuoteFromCartAction(actionInput, cartItems)
 
           if (result.success && result.quoteId) {
-            clearCart();
-            setIsRedirecting(true);
+            clearCart()
+            setIsRedirecting(true)
 
             // Close drawer
-            onClose?.();
+            onClose?.()
 
             // Small delay for UX (show success message)
-            const REDIRECT_DELAY_MS = 500;
-            await new Promise((resolve) =>
-              setTimeout(resolve, REDIRECT_DELAY_MS)
-            );
+            const REDIRECT_DELAY_MS = 500
+            await new Promise((resolve) => setTimeout(resolve, REDIRECT_DELAY_MS))
 
             // Redirect to quote detail
-            router.push(`/my-quotes/${result.quoteId}`);
+            router.push(`/my-quotes/${result.quoteId}`)
 
-            return result.quoteId;
+            return result.quoteId
           }
 
           // Handle error
-          form.setError("root", {
-            message: result.error ?? "Error al generar la cotización",
-          });
+          form.setError('root', {
+            message: result.error ?? 'Error al generar la cotización',
+          })
 
-          throw new Error(result.error ?? "Error al generar la cotización");
+          throw new Error(result.error ?? 'Error al generar la cotización')
         } finally {
-          setIsSubmitting(false);
+          setIsSubmitting(false)
         }
       },
       {
         error: (error) =>
-          error instanceof Error
-            ? error.message
-            : "Error al generar la cotización",
-        loading: "Generando cotización...",
-        success: "Cotización creada exitosamente. Redirigiendo...",
-      }
-    );
-  }, [form, cartItems, clearCart, router, onClose, onSubmitStart]);
+          error instanceof Error ? error.message : 'Error al generar la cotización',
+        loading: 'Generando cotización...',
+        success: 'Cotización creada exitosamente. Redirigiendo...',
+      },
+    )
+  }, [form, cartItems, clearCart, router, onClose, onSubmitStart])
 
   return {
     form,
@@ -182,5 +175,5 @@ export function useQuoteGenerationForm(
     cartSummary,
     handleSubmit,
     canSubmit,
-  };
+  }
 }

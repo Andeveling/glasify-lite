@@ -19,24 +19,24 @@
  * ```
  */
 
-import { MM_PER_METER } from "../constants";
+import { MM_PER_METER } from '../constants'
 
 export type DimensionsInput = {
   /** Width in millimeters */
-  widthMm: number;
+  widthMm: number
   /** Height in millimeters */
-  heightMm: number;
+  heightMm: number
   /** Minimum width included in base price (mm) */
-  minWidthMm: number;
+  minWidthMm: number
   /** Minimum height included in base price (mm) */
-  minHeightMm: number;
-};
+  minHeightMm: number
+}
 
 export class Dimensions {
-  readonly widthMm: number;
-  readonly heightMm: number;
-  readonly minWidthMm: number;
-  readonly minHeightMm: number;
+  readonly widthMm: number
+  readonly heightMm: number
+  readonly minWidthMm: number
+  readonly minHeightMm: number
 
   /**
    * Create a Dimensions instance
@@ -54,10 +54,10 @@ export class Dimensions {
    * ```
    */
   constructor(input: DimensionsInput) {
-    this.widthMm = input.widthMm;
-    this.heightMm = input.heightMm;
-    this.minWidthMm = input.minWidthMm;
-    this.minHeightMm = input.minHeightMm;
+    this.widthMm = input.widthMm
+    this.heightMm = input.heightMm
+    this.minWidthMm = input.minWidthMm
+    this.minHeightMm = input.minHeightMm
   }
 
   /**
@@ -80,7 +80,7 @@ export class Dimensions {
    * ```
    */
   getEffectiveWidth(): number {
-    return Math.max(this.widthMm - this.minWidthMm, 0);
+    return Math.max(this.widthMm - this.minWidthMm, 0)
   }
 
   /**
@@ -103,7 +103,7 @@ export class Dimensions {
    * ```
    */
   getEffectiveHeight(): number {
-    return Math.max(this.heightMm - this.minHeightMm, 0);
+    return Math.max(this.heightMm - this.minHeightMm, 0)
   }
 
   /**
@@ -124,6 +124,6 @@ export class Dimensions {
     return {
       widthM: this.widthMm / MM_PER_METER,
       heightM: this.heightMm / MM_PER_METER,
-    };
+    }
   }
 }

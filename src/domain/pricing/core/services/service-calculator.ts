@@ -1,26 +1,26 @@
-import Decimal from "decimal.js";
-import { SERVICE_QUANTITY_SCALE } from "../constants";
-import type { Dimensions } from "../entities/dimensions";
-import type { Money } from "../entities/money";
-import { type ServiceResult, ServiceUnit } from "../types";
+import Decimal from 'decimal.js'
+import { SERVICE_QUANTITY_SCALE } from '../constants'
+import type { Dimensions } from '../entities/dimensions'
+import type { Money } from '../entities/money'
+import { type ServiceResult, ServiceUnit } from '../types'
 
 /**
  * Input for service amount calculation
  */
 export type ServiceAmountInput = {
   /** Unique service identifier */
-  serviceId: string;
+  serviceId: string
   /** Service name */
-  name: string;
+  name: string
   /** Unit type for quantity calculation */
-  unit: ServiceUnit;
+  unit: ServiceUnit
   /** Rate per unit */
-  rate: Money;
+  rate: Money
   /** Minimum billing unit (optional) */
-  minimumBillingUnit?: number;
+  minimumBillingUnit?: number
   /** Override quantity for fixed services (optional) */
-  quantityOverride?: number;
-};
+  quantityOverride?: number
+}
 
 /**
  * Calculate fixed service quantity
@@ -32,7 +32,7 @@ export type ServiceAmountInput = {
  * @returns Fixed quantity (1 or override value)
  */
 function calculateFixedQuantity(quantityOverride?: number): number {
-  return quantityOverride ?? 1;
+  return quantityOverride ?? 1
 }
 
 /**
@@ -48,13 +48,11 @@ function calculateFixedQuantity(quantityOverride?: number): number {
  * @returns Area in m² (rounded to 2 decimals)
  */
 function calculateAreaQuantity(dimensions: Dimensions): number {
-  const meters = dimensions.toMeters();
-  const area = meters.widthM * meters.heightM;
+  const meters = dimensions.toMeters()
+  const area = meters.widthM * meters.heightM
 
   // Round to 2 decimals
-  return new Decimal(area)
-    .toDecimalPlaces(SERVICE_QUANTITY_SCALE, Decimal.ROUND_HALF_UP)
-    .toNumber();
+  return new Decimal(area).toDecimalPlaces(SERVICE_QUANTITY_SCALE, Decimal.ROUND_HALF_UP).toNumber()
 }
 
 /**
@@ -69,13 +67,13 @@ function calculateAreaQuantity(dimensions: Dimensions): number {
  * @returns Perimeter in linear meters (rounded to 2 decimals)
  */
 function calculatePerimeterQuantity(dimensions: Dimensions): number {
-  const meters = dimensions.toMeters();
-  const perimeter = 2 * (meters.widthM + meters.heightM);
+  const meters = dimensions.toMeters()
+  const perimeter = 2 * (meters.widthM + meters.heightM)
 
   // Round to 2 decimals
   return new Decimal(perimeter)
     .toDecimalPlaces(SERVICE_QUANTITY_SCALE, Decimal.ROUND_HALF_UP)
-    .toNumber();
+    .toNumber()
 }
 
 /**
@@ -88,14 +86,11 @@ function calculatePerimeterQuantity(dimensions: Dimensions): number {
  * @param minimumBillingUnit - Minimum quantity to bill (optional)
  * @returns Quantity or minimum (whichever is greater)
  */
-function applyMinimumBillingUnit(
-  quantity: number,
-  minimumBillingUnit?: number
-): number {
+function applyMinimumBillingUnit(quantity: number, minimumBillingUnit?: number): number {
   if (minimumBillingUnit === undefined || minimumBillingUnit === 0) {
-    return quantity;
+    return quantity
   }
-  return Math.max(quantity, minimumBillingUnit);
+  return Math.max(quantity, minimumBillingUnit)
 }
 
 /**
@@ -109,18 +104,18 @@ function applyMinimumBillingUnit(
 function calculateQuantity(
   unit: ServiceUnit,
   dimensions: Dimensions,
-  quantityOverride?: number
+  quantityOverride?: number,
 ): number {
   switch (unit) {
     case ServiceUnit.UNIT:
-      return calculateFixedQuantity(quantityOverride);
+      return calculateFixedQuantity(quantityOverride)
     case ServiceUnit.SQM:
-      return calculateAreaQuantity(dimensions);
+      return calculateAreaQuantity(dimensions)
     case ServiceUnit.ML:
-      return calculatePerimeterQuantity(dimensions);
+      return calculatePerimeterQuantity(dimensions)
     default:
       // This should never happen with proper types, but TypeScript requires it
-      throw new Error(`Unknown service unit: ${unit}`);
+      throw new Error(`Unknown service unit: ${unit}`)
   }
 }
 
@@ -138,19 +133,18 @@ function calculateQuantity(
  */
 function calculateServiceAmount(
   service: ServiceAmountInput,
-  dimensions: Dimensions
+  dimensions: Dimensions,
 ): ServiceResult {
-  const { serviceId, name, unit, rate, minimumBillingUnit, quantityOverride } =
-    service;
+  const { serviceId, name, unit, rate, minimumBillingUnit, quantityOverride } = service
 
   // Calculate base quantity
-  let quantity = calculateQuantity(unit, dimensions, quantityOverride);
+  let quantity = calculateQuantity(unit, dimensions, quantityOverride)
 
   // Apply minimum billing unit
-  quantity = applyMinimumBillingUnit(quantity, minimumBillingUnit);
+  quantity = applyMinimumBillingUnit(quantity, minimumBillingUnit)
 
   // Calculate amount (rate × quantity)
-  const amount = rate.multiply(quantity);
+  const amount = rate.multiply(quantity)
 
   return {
     serviceId,
@@ -158,7 +152,7 @@ function calculateServiceAmount(
     unit,
     quantity,
     amount: amount.toNumber(), // Convert Money to number for result
-  };
+  }
 }
 
 /**
@@ -183,4 +177,4 @@ export const ServiceCalculator = {
   calculatePerimeterQuantity,
   applyMinimumBillingUnit,
   calculateServiceAmount,
-} as const;
+} as const

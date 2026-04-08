@@ -5,88 +5,84 @@
  * This is the main entry point for calculating item prices in the domain layer.
  */
 
-import { AccessoryCalculator } from "../services/accessory-calculator";
-import { AdjustmentCalculator } from "../services/adjustment-calculator";
-import { GlassCalculator } from "../services/glass-calculator";
-import { MarginCalculator } from "../services/margin-calculator";
-import { ProfileCalculator } from "../services/profile-calculator";
-import type { ServiceAmountInput } from "../services/service-calculator";
-import { ServiceCalculator } from "../services/service-calculator";
-import type {
-  AdjustmentInput,
-  AdjustmentResult,
-  ServiceResult,
-} from "../types";
-import type { Dimensions } from "./dimensions";
-import { Money } from "./money";
+import { AccessoryCalculator } from '../services/accessory-calculator'
+import { AdjustmentCalculator } from '../services/adjustment-calculator'
+import { GlassCalculator } from '../services/glass-calculator'
+import { MarginCalculator } from '../services/margin-calculator'
+import { ProfileCalculator } from '../services/profile-calculator'
+import type { ServiceAmountInput } from '../services/service-calculator'
+import { ServiceCalculator } from '../services/service-calculator'
+import type { AdjustmentInput, AdjustmentResult, ServiceResult } from '../types'
+import type { Dimensions } from './dimensions'
+import { Money } from './money'
 
 /**
  * Model pricing configuration
  */
 export type ModelPrices = {
   /** Base price (minimum charge) */
-  basePrice: Money;
+  basePrice: Money
   /** Cost per millimeter of width beyond minimum */
-  costPerMmWidth: Money;
+  costPerMmWidth: Money
   /** Cost per millimeter of height beyond minimum */
-  costPerMmHeight: Money;
+  costPerMmHeight: Money
   /** Optional accessory price (e.g., handle, lock) */
-  accessoryPrice?: Money;
-};
+  accessoryPrice?: Money
+}
 
 /**
  * Glass pricing configuration
  */
 export type GlassPricing = {
   /** Price per square meter of glass */
-  pricePerSqm: Money;
+  pricePerSqm: Money
   /** Discount from width for billing (mm) */
-  discountWidthMm?: number;
+  discountWidthMm?: number
   /** Discount from height for billing (mm) */
-  discountHeightMm?: number;
-};
+  discountHeightMm?: number
+}
 
 /**
  * Input for complete price calculation
  */
 export type PriceCalculationInput = {
   /** Product dimensions */
-  dimensions: Dimensions;
+  dimensions: Dimensions
   /** Model pricing configuration */
-  modelPrices: ModelPrices;
+  modelPrices: ModelPrices
   /** Color surcharge multiplier (1.0 = no surcharge, 1.1 = 10% surcharge) */
-  colorMultiplier: number;
+  colorMultiplier: number
   /** Optional profit margin percentage (0-100) applied to model costs only */
-  profitMarginPercentage?: number;
+  profitMarginPercentage?: number
   /** Optional glass pricing configuration */
-  glass?: GlassPricing;
+  glass?: GlassPricing
   /** Optional services to include */
-  services?: ServiceAmountInput[];
+  services?: ServiceAmountInput[]
   /** Optional adjustments (positive or negative) */
-  adjustments?: AdjustmentInput[];
-};
+  adjustments?: AdjustmentInput[]
+}
 
 /**
  * Complete price calculation result
  */
 export type PriceCalculationResult = {
   /** Profile cost (base + dimensions + color surcharge) */
-  profileCost: Money;
+  profileCost: Money
   /** Glass cost (NOT affected by color surcharge) */
-  glassCost: Money;
+  glassCost: Money
   /** Accessory cost (with color surcharge if applicable) */
-  accessoryCost: Money;
+  accessoryCost: Money
   /** Model cost (profile + glass + accessory) - base for profit margin */
-  modelCost: Money;
+  modelCost: Money
   /** Model sales price (modelCost with profit margin applied) */
-  modelSalesPrice: Money;
+  modelSalesPrice: Money
   /** Service breakdown */
-  services: ServiceResult[];
+  services: ServiceResult[]
   /** Adjustment breakdown */
-  adjustments: AdjustmentResult[];
+  adjustments: AdjustmentResult[]
   /** Final subtotal (modelSalesPrice + services + adjustments) */
-  subtotal: Money;
-};
+  subtotal: Money
+}
 
 /**
  * PriceCalculation aggregate
@@ -131,7 +127,7 @@ export const PriceCalculation = {
       glass,
       services,
       adjustments,
-    } = input;
+    } = input
 
     // 1. Calculate profile cost (with color surcharge)
     const profileCost = ProfileCalculator.calculateProfileCost({
@@ -140,7 +136,7 @@ export const PriceCalculation = {
       costPerMmHeight: modelPrices.costPerMmHeight,
       dimensions,
       colorMultiplier,
-    });
+    })
 
     // 2. Calculate glass cost (NOT affected by color)
     const glassCost = glass
@@ -150,51 +146,43 @@ export const PriceCalculation = {
           profileDiscountWidthMm: glass.discountWidthMm ?? 0,
           profileDiscountHeightMm: glass.discountHeightMm ?? 0,
         })
-      : new Money(0);
+      : new Money(0)
 
     // 3. Calculate accessory cost (with color surcharge if present)
     const accessoryCost = modelPrices.accessoryPrice
-      ? AccessoryCalculator.calculateAccessoryCost(
-          modelPrices.accessoryPrice,
-          colorMultiplier
-        )
-      : new Money(0);
+      ? AccessoryCalculator.calculateAccessoryCost(modelPrices.accessoryPrice, colorMultiplier)
+      : new Money(0)
 
     // 4. Calculate model cost (profile + glass + accessory)
-    const modelCost = profileCost.add(glassCost).add(accessoryCost);
+    const modelCost = profileCost.add(glassCost).add(accessoryCost)
 
     // 5. Apply profit margin to model cost (NOT to services)
     const modelSalesPrice =
       profitMarginPercentage && profitMarginPercentage > 0
-        ? MarginCalculator.calculateSalesPrice(
-            modelCost,
-            profitMarginPercentage
-          )
-        : modelCost;
+        ? MarginCalculator.calculateSalesPrice(modelCost, profitMarginPercentage)
+        : modelCost
 
     // 6. Calculate services (NOT affected by color or margin)
     const serviceResults: ServiceResult[] = services
-      ? services.map((service) =>
-          ServiceCalculator.calculateServiceAmount(service, dimensions)
-        )
-      : [];
+      ? services.map((service) => ServiceCalculator.calculateServiceAmount(service, dimensions))
+      : []
 
     // 7. Calculate adjustments (positive or negative)
     const adjustmentResults: AdjustmentResult[] = adjustments
       ? AdjustmentCalculator.calculateAdjustments(adjustments, dimensions)
-      : [];
+      : []
 
     // 8. Calculate subtotal (modelSalesPrice + services + adjustments)
-    let subtotal = modelSalesPrice;
+    let subtotal = modelSalesPrice
 
     // Add service amounts
     for (const service of serviceResults) {
-      subtotal = subtotal.add(new Money(service.amount));
+      subtotal = subtotal.add(new Money(service.amount))
     }
 
     // Add adjustment amounts (can be negative)
     for (const adjustment of adjustmentResults) {
-      subtotal = subtotal.add(new Money(adjustment.amount));
+      subtotal = subtotal.add(new Money(adjustment.amount))
     }
 
     return {
@@ -206,6 +194,6 @@ export const PriceCalculation = {
       services: serviceResults,
       adjustments: adjustmentResults,
       subtotal,
-    };
+    }
   },
-};
+}

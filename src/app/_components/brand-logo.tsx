@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils'
 
 type BrandLogoProps = {
   /**
@@ -8,37 +8,37 @@ type BrandLogoProps = {
    * - "lg": 64px (hero, landing pages)
    * - "xl": 96px (large displays, full-width hero)
    */
-  size?: "sm" | "md" | "lg" | "xl";
+  size?: 'sm' | 'md' | 'lg' | 'xl'
 
   /**
    * Optional className for additional styling
    */
-  className?: string;
+  className?: string
 
   /**
    * Whether to display text alongside the logo
    * - true: shows "Vitro Rojas" next to logo
    * - false: logo only
    */
-  withText?: boolean;
+  withText?: boolean
 
   /**
    * Whether the logo should display as a link
    * - true: wraps in div (no-op for now)
    * - false: just the image
    */
-  href?: string;
-};
+  href?: string
+}
 
 /**
  * Text size classes aligned with logo size
  */
 const TEXT_SIZES = {
-  sm: "text-sm",
-  md: "text-base",
-  lg: "text-xl",
-  xl: "text-2xl",
-} as const;
+  sm: 'text-sm',
+  md: 'text-base',
+  lg: 'text-xl',
+  xl: 'text-2xl',
+} as const
 
 /**
  * BrandLogo Component
@@ -58,40 +58,32 @@ const TEXT_SIZES = {
  * // Mobile header, compact
  * <BrandLogo size="sm" withText />
  */
-export function BrandLogo({
-  size = "md",
-  className,
-  withText = false,
-  href,
-}: BrandLogoProps) {
-  const textSize = TEXT_SIZES[size];
+export function BrandLogo({ size = 'md', className, withText = false, href }: BrandLogoProps) {
+  const textSize = TEXT_SIZES[size]
 
   const content = (
-    <div
-      className={cn("flex items-center gap-2", className)}
-      data-testid="brand-logo"
-    >
+    <div className={cn('flex items-center gap-2', className)} data-testid="brand-logo">
       {withText && (
         <span
           className={cn(
-            "font-bold tracking-tight",
+            'font-bold tracking-tight',
             textSize,
             // Hide text on very small screens if size is sm
-            size === "sm" && "hidden sm:inline"
+            size === 'sm' && 'hidden sm:inline',
           )}
         >
           Vitro Rojas
         </span>
       )}
     </div>
-  );
+  )
 
   // If href provided, wrap in link (future enhancement)
   if (href) {
-    return content;
+    return content
   }
 
-  return content;
+  return content
 }
 
 /**
@@ -99,8 +91,8 @@ export function BrandLogo({
  * @example
  * <BrandLogoSmall />
  */
-export function BrandLogoSmall(props: Omit<BrandLogoProps, "size">) {
-  return <BrandLogo size="md" {...props} />;
+export function BrandLogoSmall(props: Omit<BrandLogoProps, 'size'>) {
+  return <BrandLogo size="md" {...props} />
 }
 
 /**
@@ -108,6 +100,6 @@ export function BrandLogoSmall(props: Omit<BrandLogoProps, "size">) {
  * @example
  * <BrandLogoLarge withText />
  */
-export function BrandLogoLarge(props: Omit<BrandLogoProps, "size">) {
-  return <BrandLogo size="lg" {...props} />;
+export function BrandLogoLarge(props: Omit<BrandLogoProps, 'size'>) {
+  return <BrandLogo size="lg" {...props} />
 }

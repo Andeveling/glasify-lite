@@ -6,13 +6,13 @@
  * @module admin/colors/_hooks/use-color-mutations
  */
 
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { api } from "@/trpc/react";
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+import { api } from '@/trpc/react'
 
 type UseColorMutationsOptions = {
-  onSuccessCallback?: () => void;
-};
+  onSuccessCallback?: () => void
+}
 
 /**
  * Manages create and update mutations for colors
@@ -20,51 +20,49 @@ type UseColorMutationsOptions = {
  * @param options - Configuration options (callbacks)
  * @returns Mutation objects and loading state
  */
-export function useColorMutations({
-  onSuccessCallback,
-}: UseColorMutationsOptions = {}) {
-  const router = useRouter();
-  const utils = api.useUtils();
+export function useColorMutations({ onSuccessCallback }: UseColorMutationsOptions = {}) {
+  const router = useRouter()
+  const utils = api.useUtils()
 
   const createMutation = api.admin.colors.create.useMutation({
     onError: (err) => {
-      toast.error("Error al crear color", {
+      toast.error('Error al crear color', {
         description: err.message,
-      });
+      })
     },
     onSettled: () => {
-      utils.admin.colors.list.invalidate().catch(undefined);
-      router.refresh();
+      utils.admin.colors.list.invalidate().catch(undefined)
+      router.refresh()
     },
     onSuccess: () => {
-      toast.success("Color creado correctamente");
-      router.push("/admin/colors");
-      onSuccessCallback?.();
+      toast.success('Color creado correctamente')
+      router.push('/admin/colors')
+      onSuccessCallback?.()
     },
-  });
+  })
 
   const updateMutation = api.admin.colors.update.useMutation({
     onError: (err) => {
-      toast.error("Error al actualizar color", {
+      toast.error('Error al actualizar color', {
         description: err.message,
-      });
+      })
     },
     onSettled: () => {
-      utils.admin.colors.list.invalidate().catch(undefined);
-      router.refresh();
+      utils.admin.colors.list.invalidate().catch(undefined)
+      router.refresh()
     },
     onSuccess: () => {
-      toast.success("Color actualizado correctamente");
-      router.push("/admin/colors");
-      onSuccessCallback?.();
+      toast.success('Color actualizado correctamente')
+      router.push('/admin/colors')
+      onSuccessCallback?.()
     },
-  });
+  })
 
-  const isLoading = createMutation.isPending || updateMutation.isPending;
+  const isLoading = createMutation.isPending || updateMutation.isPending
 
   return {
     createMutation,
     isLoading,
     updateMutation,
-  };
+  }
 }

@@ -6,31 +6,31 @@
 import type {
   GlassTypeOutput,
   ModelDetailOutput,
-} from "@/server/api/routers/catalog/catalog.schemas";
-import type { CreateCartItemInput } from "@/types/cart.types";
+} from '@/server/api/routers/catalog/catalog.schemas'
+import type { CreateCartItemInput } from '@/types/cart.types'
 
 export type CartItemInputWithPrice = CreateCartItemInput & {
-  unitPrice: number;
-};
+  unitPrice: number
+}
 
 type InferredSolution = {
-  id: string;
-  nameEs: string;
-} | null;
+  id: string
+  nameEs: string
+} | null
 
 type PrepareCartItemParams = {
-  additionalServiceIds: string[];
-  calculatedPrice: number | undefined;
-  colorId: string | undefined;
-  colorSurchargePercentage?: number; // Color surcharge from ModelColor
-  glassTypeId: string;
-  heightMm: number;
-  inferredSolution: InferredSolution;
-  model: ModelDetailOutput;
-  quantity: number;
-  selectedGlassType: GlassTypeOutput | undefined;
-  widthMm: number;
-};
+  additionalServiceIds: string[]
+  calculatedPrice: number | undefined
+  colorId: string | undefined
+  colorSurchargePercentage?: number // Color surcharge from ModelColor
+  glassTypeId: string
+  heightMm: number
+  inferredSolution: InferredSolution
+  model: ModelDetailOutput
+  quantity: number
+  selectedGlassType: GlassTypeOutput | undefined
+  widthMm: number
+}
 
 /**
  * Prepare cart item data from form values
@@ -70,7 +70,7 @@ export function prepareCartItemInput({
     colorId,
     colorSurchargePercentage,
     glassTypeId,
-    glassTypeName: selectedGlassType?.name ?? "",
+    glassTypeName: selectedGlassType?.name ?? '',
     heightMm,
     modelId: model.id,
     modelImageUrl: model.imageUrl,
@@ -80,5 +80,5 @@ export function prepareCartItemInput({
     solutionName: inferredSolution?.nameEs || undefined,
     unitPrice: calculatedPrice ?? model.basePrice,
     widthMm,
-  };
+  }
 }

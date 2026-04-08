@@ -1,13 +1,13 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: Using array index as key is acceptable here because skeleton items are purely presentational and do not require stable identity. */
 /** biome-ignore-all lint/style/noMagicNumbers: Magic numbers are used intentionally for animation delays and skeleton layout to match the design specification. */
-import { AdminContentContainer } from "@/app/(dashboard)/admin/_components/admin-content-container";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { AdminContentContainer } from '@/app/(dashboard)/admin/_components/admin-content-container'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 
 // Constants for skeleton counts matching dashboard layout
-const QUOTE_METRICS_COUNT = 4;
-const CATALOG_CHARTS_COUNT = 3;
-const MONETARY_CHARTS_COUNT = 3;
+const QUOTE_METRICS_COUNT = 4
+const CATALOG_CHARTS_COUNT = 3
+const MONETARY_CHARTS_COUNT = 3
 
 /**
  * Loading state for Admin Metrics Dashboard
@@ -34,7 +34,7 @@ export default function AdminMetricsDashboardLoading() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {Array.from(
               { length: QUOTE_METRICS_COUNT },
-              (_, i) => `quote-metric-skeleton-${i}`
+              (_, i) => `quote-metric-skeleton-${i}`,
             ).map((key) => (
               <Card key={key}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -66,7 +66,7 @@ export default function AdminMetricsDashboardLoading() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {Array.from(
               { length: CATALOG_CHARTS_COUNT },
-              (_, i) => `catalog-chart-skeleton-${i}`
+              (_, i) => `catalog-chart-skeleton-${i}`,
             ).map((key) => (
               <Card key={key}>
                 <CardHeader>
@@ -86,7 +86,7 @@ export default function AdminMetricsDashboardLoading() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {Array.from(
               { length: MONETARY_CHARTS_COUNT },
-              (_, i) => `monetary-chart-skeleton-${i}`
+              (_, i) => `monetary-chart-skeleton-${i}`,
             ).map((key) => (
               <Card key={key}>
                 <CardHeader>
@@ -101,5 +101,5 @@ export default function AdminMetricsDashboardLoading() {
         </section>
       </div>
     </AdminContentContainer>
-  );
+  )
 }

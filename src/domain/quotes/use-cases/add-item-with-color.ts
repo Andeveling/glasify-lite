@@ -15,37 +15,37 @@
  * - findModelColorByIds, createAdjustment, updateQuoteTotal
  */
 
-import type { QuoteRepository } from "../repositories/quote.repository";
+import type { QuoteRepository } from '../repositories/quote.repository'
 
 export type AddItemWithColorInput = {
-  quoteId?: string;
-  modelId: string;
-  glassTypeId: string;
-  widthMm: number;
-  heightMm: number;
-  colorId?: string;
-  roomLocation?: string;
+  quoteId?: string
+  modelId: string
+  glassTypeId: string
+  widthMm: number
+  heightMm: number
+  colorId?: string
+  roomLocation?: string
   services: Array<{
-    serviceId: string;
-    quantity?: number;
-  }>;
+    serviceId: string
+    quantity?: number
+  }>
   adjustments: Array<{
-    concept: string;
-    unit: "unit" | "percentage" | "sqm" | "ml";
-    value: number;
-    sign: "positive" | "negative";
-  }>;
-};
+    concept: string
+    unit: 'unit' | 'percentage' | 'sqm' | 'ml'
+    value: number
+    sign: 'positive' | 'negative'
+  }>
+}
 
 export type AddItemWithColorDependencies = {
-  quoteRepository: QuoteRepository;
-};
+  quoteRepository: QuoteRepository
+}
 
 export type AddItemWithColorResult = {
-  itemId: string;
-  quoteId: string;
-  subtotal: number;
-};
+  itemId: string
+  quoteId: string
+  subtotal: number
+}
 
 /**
  * Add item to quote (placeholder implementation)
@@ -58,9 +58,9 @@ export type AddItemWithColorResult = {
  */
 export function addItemWithColorUseCase(
   _input: AddItemWithColorInput,
-  _deps: AddItemWithColorDependencies
+  _deps: AddItemWithColorDependencies,
 ): Promise<AddItemWithColorResult> {
   throw new Error(
-    "addItemWithColorUseCase: En desarrollo (Phase D) - extender QuoteRepository primero"
-  );
+    'addItemWithColorUseCase: En desarrollo (Phase D) - extender QuoteRepository primero',
+  )
 }

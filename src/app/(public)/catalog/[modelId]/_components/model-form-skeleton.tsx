@@ -1,8 +1,8 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: Using array index as key is acceptable here because skeleton items are purely presentational and do not require stable identity. */
 /** biome-ignore-all lint/style/noMagicNumbers: Magic numbers are used intentionally for animation delays and skeleton layout to match the design specification. */
-import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ModelFormLayout } from "./model-form-layout";
+import { Card } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { ModelFormLayout } from './model-form-layout'
 
 export function ModelFormSkeleton() {
   const sidebar = (
@@ -22,7 +22,7 @@ export function ModelFormSkeleton() {
       {/* Add to cart button skeleton */}
       <Skeleton className="h-12 w-full" />
     </Card>
-  );
+  )
 
   const main = (
     <div className="space-y-6">
@@ -83,7 +83,7 @@ export function ModelFormSkeleton() {
         </div>
       </Card>
     </div>
-  );
+  )
 
-  return <ModelFormLayout main={main} sidebar={sidebar} />;
+  return <ModelFormLayout main={main} sidebar={sidebar} />
 }

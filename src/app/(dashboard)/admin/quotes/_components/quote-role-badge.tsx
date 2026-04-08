@@ -10,26 +10,26 @@
  * - Returns null for user role
  */
 
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { ROLE_BADGE_CONFIG } from "../_constants/quote-status.constants";
+import { Badge } from '@/components/ui/badge'
+import { ROLE_BADGE_CONFIG } from '../_constants/quote-status.constants'
 
 type QuoteRoleBadgeProps = {
-  role: "admin" | "seller" | "user";
-};
+  role: 'admin' | 'seller' | 'user'
+}
 
 export function QuoteRoleBadge({ role }: QuoteRoleBadgeProps) {
-  const config = ROLE_BADGE_CONFIG[role];
+  const config = ROLE_BADGE_CONFIG[role]
 
   // Don't show badge for regular users
   if (!config) {
-    return null;
+    return null
   }
 
   return (
     <Badge className="ml-2" variant={config.variant}>
       {config.label}
     </Badge>
-  );
+  )
 }

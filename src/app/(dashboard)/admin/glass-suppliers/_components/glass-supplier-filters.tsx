@@ -18,25 +18,22 @@
  * - onCreateClick callback to parent for modal control
  */
 
-"use client";
+'use client'
 
-import { Plus } from "lucide-react";
-import {
-  type FilterDefinition,
-  TableFilters,
-} from "@/app/_components/server-table/table-filters";
-import { TableSearch } from "@/app/_components/server-table/table-search";
-import { Button } from "@/components/ui/button";
+import { Plus } from 'lucide-react'
+import { type FilterDefinition, TableFilters } from '@/app/_components/server-table/table-filters'
+import { TableSearch } from '@/app/_components/server-table/table-search'
+import { Button } from '@/components/ui/button'
 
 type GlassSupplierFiltersProps = {
-  onCreateClickAction?: () => void;
+  onCreateClickAction?: () => void
   searchParams: {
-    country?: string;
-    isActive?: string;
-    page?: string;
-    search?: string;
-  };
-};
+    country?: string
+    isActive?: string
+    page?: string
+    search?: string
+  }
+}
 
 export function GlassSupplierFilters({
   searchParams,
@@ -51,17 +48,17 @@ export function GlassSupplierFilters({
    */
   const filters: FilterDefinition[] = [
     {
-      defaultValue: "all",
-      id: "isActive",
-      label: "Estado",
+      defaultValue: 'all',
+      id: 'isActive',
+      label: 'Estado',
       options: [
-        { label: "Todos", value: "all" },
-        { label: "Activo", value: "active" },
-        { label: "Inactivo", value: "inactive" },
+        { label: 'Todos', value: 'all' },
+        { label: 'Activo', value: 'active' },
+        { label: 'Inactivo', value: 'inactive' },
       ],
-      type: "select",
+      type: 'select',
     },
-  ];
+  ]
 
   return (
     <div className="flex flex-wrap items-end justify-between gap-4">
@@ -82,5 +79,5 @@ export function GlassSupplierFilters({
         Nuevo Proveedor
       </Button>
     </div>
-  );
+  )
 }

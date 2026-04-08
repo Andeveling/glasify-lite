@@ -5,9 +5,9 @@
  * Spanish message with icon
  */
 
-"use client";
+'use client'
 
-import { FileText } from "lucide-react";
+import { FileText } from 'lucide-react'
 
 export function QuotesEmptyState() {
   return (
@@ -20,5 +20,5 @@ export function QuotesEmptyState() {
         No se encontraron cotizaciones con los filtros aplicados.
       </p>
     </div>
-  );
+  )
 }

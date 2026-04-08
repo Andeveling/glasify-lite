@@ -17,7 +17,7 @@ import {
   Volume2,
   Wind,
   Zap,
-} from "lucide-react";
+} from 'lucide-react'
 
 /**
  * Icon name to component mapping
@@ -34,7 +34,7 @@ export const iconMap: Record<string, LucideIcon> = {
   Volume2,
   Wind,
   Zap,
-};
+}
 
 /**
  * Get icon component by name
@@ -42,7 +42,7 @@ export const iconMap: Record<string, LucideIcon> = {
  */
 export function getIconComponent(iconName: string | null): LucideIcon {
   if (!iconName) {
-    return Home;
+    return Home
   }
-  return iconMap[iconName] || Home;
+  return iconMap[iconName] || Home
 }

@@ -78,7 +78,9 @@ async function seedAdminUser(options: SeedAdminOptions) {
         });
         console.log(`✅ Updated existing user to admin: ${existingUser.email}`);
       } else {
-        console.log(`ℹ️  User already exists and is admin: ${existingUser.email}`);
+        console.log(
+          `ℹ️  User already exists and is admin: ${existingUser.email}`
+        );
       }
     } else {
       // Create new user with email+password via Better Auth
@@ -120,9 +122,9 @@ async function seedAdminUser(options: SeedAdminOptions) {
     }
 
     console.log("\n✨ Admin user ready!");
-    console.log(`   Login at /sign-in with email+password`);
+    console.log("   Login at /sign-in with email+password");
   } catch (error) {
-    console.error(`\n❌ Failed to seed admin user:`);
+    console.error("\n❌ Failed to seed admin user:");
     if (error instanceof Error) {
       console.error(`   ${error.message}`);
     } else {

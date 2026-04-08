@@ -1,28 +1,22 @@
-"use client";
+'use client'
 
-import { AlertTriangle } from "lucide-react";
-import Link from "next/link";
-import { useEffect } from "react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { AlertTriangle } from 'lucide-react'
+import Link from 'next/link'
+import { useEffect } from 'react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 type GlobalErrorProps = {
-  error: Error & { digest?: string };
-  reset: () => void;
-};
+  error: Error & { digest?: string }
+  reset: () => void
+}
 
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
   useEffect(() => {
     // Optional: Log error to external service
     // console.error("Global error:", error);
-  }, []);
+  }, [])
 
   return (
     <html lang="es">
@@ -36,14 +30,14 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 </div>
                 <CardTitle className="text-2xl">¡Algo salió mal!</CardTitle>
                 <CardDescription>
-                  Ha ocurrido un error inesperado en la aplicación. Nuestro
-                  equipo ha sido notificado.
+                  Ha ocurrido un error inesperado en la aplicación. Nuestro equipo ha sido
+                  notificado.
                 </CardDescription>
               </CardHeader>
 
               <CardContent className="space-y-6">
                 {/* Error Details for Development */}
-                {process.env.NODE_ENV === "development" && (
+                {process.env.NODE_ENV === 'development' && (
                   <Alert>
                     <AlertTriangle className="h-4 w-4" />
                     <AlertDescription>
@@ -51,14 +45,8 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                         <p className="font-semibold text-sm">
                           Detalles del Error (Solo en Desarrollo):
                         </p>
-                        <p className="break-all font-mono text-xs">
-                          {error.message}
-                        </p>
-                        {error.digest && (
-                          <p className="font-mono text-xs">
-                            ID: {error.digest}
-                          </p>
-                        )}
+                        <p className="break-all font-mono text-xs">{error.message}</p>
+                        {error.digest && <p className="font-mono text-xs">ID: {error.digest}</p>}
                       </div>
                     </AlertDescription>
                   </Alert>
@@ -77,13 +65,8 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 {/* Contact Support */}
                 <div className="text-center text-muted-foreground text-sm">
                   <p>
-                    Si el problema persiste, por favor{" "}
-                    <Button
-                      asChild
-                      className="h-auto p-0"
-                      size="sm"
-                      variant="link"
-                    >
+                    Si el problema persiste, por favor{' '}
+                    <Button asChild className="h-auto p-0" size="sm" variant="link">
                       <Link href="/catalog">contacta a soporte</Link>
                     </Button>
                     .
@@ -95,5 +78,5 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
         </div>
       </body>
     </html>
-  );
+  )
 }

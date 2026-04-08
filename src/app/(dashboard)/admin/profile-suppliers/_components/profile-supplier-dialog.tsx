@@ -18,12 +18,12 @@
  * - Cache invalidation after mutations
  */
 
-"use client";
+'use client'
 
-import type { MaterialType, ProfileSupplier } from "@prisma/generated/client";
-import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import type { MaterialType, ProfileSupplier } from '@prisma/generated/client'
+import { Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -31,7 +31,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -40,39 +40,36 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  MAX_NAME_LENGTH,
-  MIN_NAME_LENGTH,
-} from "@/lib/validations/admin/profile-supplier.schema";
-import { useProfileSupplierForm } from "../_hooks/use-profile-supplier-form";
-import { useProfileSupplierMutations } from "../_hooks/use-profile-supplier-mutations";
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { MAX_NAME_LENGTH, MIN_NAME_LENGTH } from '@/lib/validations/admin/profile-supplier.schema'
+import { useProfileSupplierForm } from '../_hooks/use-profile-supplier-form'
+import { useProfileSupplierMutations } from '../_hooks/use-profile-supplier-mutations'
 
 type ProfileSupplierDialogProps = {
-  mode: "create" | "edit";
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  defaultValues?: ProfileSupplier;
-};
+  mode: 'create' | 'edit'
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  defaultValues?: ProfileSupplier
+}
 
 /**
  * Material type options (Spanish labels)
  */
 const MATERIAL_TYPE_OPTIONS: { label: string; value: MaterialType }[] = [
-  { label: "PVC", value: "PVC" },
-  { label: "Aluminio", value: "ALUMINUM" },
-  { label: "Madera", value: "WOOD" },
-  { label: "Mixto", value: "MIXED" },
-];
+  { label: 'PVC', value: 'PVC' },
+  { label: 'Aluminio', value: 'ALUMINUM' },
+  { label: 'Madera', value: 'WOOD' },
+  { label: 'Mixto', value: 'MIXED' },
+]
 
 export function ProfileSupplierDialog({
   mode,
@@ -81,47 +78,40 @@ export function ProfileSupplierDialog({
   defaultValues,
 }: ProfileSupplierDialogProps) {
   // Custom hooks for separation of concerns
-  const { form } = useProfileSupplierForm({ defaultValues, mode, open });
+  const { form } = useProfileSupplierForm({ defaultValues, mode, open })
 
-  const { handleCreate, handleUpdate, isPending } = useProfileSupplierMutations(
-    {
-      onSuccess: () => {
-        onOpenChange(false);
-        form.reset();
-      },
-    }
-  );
+  const { handleCreate, handleUpdate, isPending } = useProfileSupplierMutations({
+    onSuccess: () => {
+      onOpenChange(false)
+      form.reset()
+    },
+  })
 
   // Handle form submission - routes to create or update
   const handleSubmit = (formData: Parameters<typeof handleCreate>[0]) => {
-    if (mode === "create") {
-      handleCreate(formData);
+    if (mode === 'create') {
+      handleCreate(formData)
     } else if (defaultValues?.id) {
-      handleUpdate(defaultValues.id, formData);
+      handleUpdate(defaultValues.id, formData)
     }
-  };
+  }
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {mode === "create"
-              ? "Nuevo Proveedor de Perfiles"
-              : "Editar Proveedor de Perfiles"}
+            {mode === 'create' ? 'Nuevo Proveedor de Perfiles' : 'Editar Proveedor de Perfiles'}
           </DialogTitle>
           <DialogDescription>
-            {mode === "create"
-              ? "Crea un nuevo proveedor de perfiles para ventanas y puertas"
-              : "Actualiza la información del proveedor de perfiles"}
+            {mode === 'create'
+              ? 'Crea un nuevo proveedor de perfiles para ventanas y puertas'
+              : 'Actualiza la información del proveedor de perfiles'}
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form
-            className="space-y-4"
-            onSubmit={form.handleSubmit(handleSubmit)}
-          >
+          <form className="space-y-4" onSubmit={form.handleSubmit(handleSubmit)}>
             {/* Supplier Name */}
             <FormField
               control={form.control}
@@ -139,8 +129,7 @@ export function ProfileSupplierDialog({
                     />
                   </FormControl>
                   <FormDescription>
-                    Mínimo {MIN_NAME_LENGTH} caracteres, máximo{" "}
-                    {MAX_NAME_LENGTH}
+                    Mínimo {MIN_NAME_LENGTH} caracteres, máximo {MAX_NAME_LENGTH}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -172,9 +161,7 @@ export function ProfileSupplierDialog({
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormDescription>
-                    Material principal del proveedor
-                  </FormDescription>
+                  <FormDescription>Material principal del proveedor</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -219,8 +206,7 @@ export function ProfileSupplierDialog({
                   <div className="space-y-1 leading-none">
                     <FormLabel>Proveedor Activo</FormLabel>
                     <FormDescription>
-                      El proveedor estará disponible para selección en
-                      cotizaciones
+                      El proveedor estará disponible para selección en cotizaciones
                     </FormDescription>
                   </div>
                 </FormItem>
@@ -238,12 +224,12 @@ export function ProfileSupplierDialog({
               </Button>
               <Button disabled={isPending} type="submit">
                 {isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
-                {mode === "create" ? "Crear Proveedor" : "Guardar Cambios"}
+                {mode === 'create' ? 'Crear Proveedor' : 'Guardar Cambios'}
               </Button>
             </DialogFooter>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

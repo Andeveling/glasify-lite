@@ -1,11 +1,11 @@
-import { AlertCircle, Check } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { AlertCircle, Check } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 type ValidationIndicatorProps = {
-  isValid: boolean;
-  showIndicator: boolean;
-  className?: string;
-};
+  isValid: boolean
+  showIndicator: boolean
+  className?: string
+}
 
 /**
  * ValidationIndicator - Molecule component
@@ -18,18 +18,12 @@ export function ValidationIndicator({
   className,
 }: ValidationIndicatorProps) {
   if (!showIndicator) {
-    return null;
+    return null
   }
 
   return isValid ? (
-    <Check
-      aria-label="Válido"
-      className={cn("h-4 w-4 text-success", className)}
-    />
+    <Check aria-label="Válido" className={cn('h-4 w-4 text-success', className)} />
   ) : (
-    <AlertCircle
-      aria-label="Inválido"
-      className={cn("h-4 w-4 text-destructive", className)}
-    />
-  );
+    <AlertCircle aria-label="Inválido" className={cn('h-4 w-4 text-destructive', className)} />
+  )
 }

@@ -1,24 +1,19 @@
-import type { LucideIcon } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
+import type { LucideIcon } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { cn } from '@/lib/utils'
 
 // ============================================================================
 // Types
 // ============================================================================
 
 type StatBadgeProps = {
-  className?: string;
-  icon: LucideIcon;
-  label: string;
-  tooltip?: string;
-  value: number; // 1-5 scale
-};
+  className?: string
+  icon: LucideIcon
+  label: string
+  tooltip?: string
+  value: number // 1-5 scale
+}
 
 // ============================================================================
 // Utilities
@@ -32,12 +27,12 @@ type StatBadgeProps = {
  */
 function getPerformanceColor(value: number): string {
   if (value >= 4) {
-    return "text-green-600 dark:text-green-400";
+    return 'text-green-600 dark:text-green-400'
   }
   if (value === 3) {
-    return "text-yellow-600 dark:text-yellow-400";
+    return 'text-yellow-600 dark:text-yellow-400'
   }
-  return "text-red-600 dark:text-red-400";
+  return 'text-red-600 dark:text-red-400'
 }
 
 /**
@@ -45,12 +40,12 @@ function getPerformanceColor(value: number): string {
  */
 function getPerformanceBg(value: number): string {
   if (value >= 4) {
-    return "bg-green-50 dark:bg-green-950/20";
+    return 'bg-green-50 dark:bg-green-950/20'
   }
   if (value === 3) {
-    return "bg-yellow-50 dark:bg-yellow-950/20";
+    return 'bg-yellow-50 dark:bg-yellow-950/20'
   }
-  return "bg-red-50 dark:bg-red-950/20";
+  return 'bg-red-50 dark:bg-red-950/20'
 }
 
 /**
@@ -62,15 +57,12 @@ function renderCircles(value: number): React.ReactNode {
       {Array.from({ length: 5 }).map((_, index) => (
         <div
           aria-hidden="true"
-          className={cn(
-            "h-1 w-1 rounded-full",
-            index < value ? "bg-current" : "bg-muted"
-          )}
-          key={index}
+          className={cn('h-1 w-1 rounded-full', index < value ? 'bg-current' : 'bg-muted')}
+          key={String(index)}
         />
       ))}
     </div>
-  );
+  )
 }
 
 // ============================================================================
@@ -113,24 +105,13 @@ function renderCircles(value: number): React.ReactNode {
  *   <StatBadge icon={Volume2} label="Acústico" value={4} />
  * </div>
  */
-export function StatBadge({
-  className,
-  icon: Icon,
-  label,
-  tooltip,
-  value,
-}: StatBadgeProps) {
-  const colorClass = getPerformanceColor(value);
-  const bgClass = getPerformanceBg(value);
+export function StatBadge({ className, icon: Icon, label, tooltip, value }: StatBadgeProps) {
+  const colorClass = getPerformanceColor(value)
+  const bgClass = getPerformanceBg(value)
 
   const badge = (
     <Badge
-      className={cn(
-        "flex items-center gap-1.5 px-2 py-1",
-        bgClass,
-        colorClass,
-        className
-      )}
+      className={cn('flex items-center gap-1.5 px-2 py-1', bgClass, colorClass, className)}
       variant="outline"
     >
       <Icon aria-hidden="true" className="h-3 w-3" />
@@ -140,7 +121,7 @@ export function StatBadge({
         {label}: {value} de 5
       </span>
     </Badge>
-  );
+  )
 
   if (tooltip) {
     return (
@@ -152,8 +133,8 @@ export function StatBadge({
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-    );
+    )
   }
 
-  return badge;
+  return badge
 }

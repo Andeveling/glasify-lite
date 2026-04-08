@@ -7,7 +7,7 @@
  * @module types/dashboard
  */
 
-import type { TenantConfig } from "@prisma/generated/client";
+import type { TenantConfig } from '@prisma/generated/client'
 
 // =============================================================================
 // ENUMS
@@ -17,26 +17,25 @@ import type { TenantConfig } from "@prisma/generated/client";
  * Period selection for temporal filtering
  */
 export const DashboardPeriod = {
-  CURRENT_YEAR: "year",
-  LAST_7_DAYS: "7d",
-  LAST_30_DAYS: "30d",
-  LAST_90_DAYS: "90d",
-} as const;
+  CURRENT_YEAR: 'year',
+  LAST_7_DAYS: '7d',
+  LAST_30_DAYS: '30d',
+  LAST_90_DAYS: '90d',
+} as const
 
-export type DashboardPeriodType =
-  (typeof DashboardPeriod)[keyof typeof DashboardPeriod];
+export type DashboardPeriodType = (typeof DashboardPeriod)[keyof typeof DashboardPeriod]
 
 /**
  * Chart rendering types
  */
 export const ChartType = {
-  AREA: "area",
-  BAR: "bar",
-  LINE: "line",
-  PIE: "pie",
-} as const;
+  AREA: 'area',
+  BAR: 'bar',
+  LINE: 'line',
+  PIE: 'pie',
+} as const
 
-export type ChartTypeValue = (typeof ChartType)[keyof typeof ChartType];
+export type ChartTypeValue = (typeof ChartType)[keyof typeof ChartType]
 
 // =============================================================================
 // QUOTE METRICS (US1)
@@ -59,31 +58,31 @@ export type ChartTypeValue = (typeof ChartType)[keyof typeof ChartType];
  * ```
  */
 export type QuoteMetrics = {
-  canceledQuotes: number;
-  conversionRate: number; // (sent / total) * 100, 0-1 decimal
-  draftQuotes: number;
-  percentageChange: number; // ((current - previous) / previous), 0-1 decimal
-  previousPeriodTotal: number;
-  sentQuotes: number;
-  totalQuotes: number;
-};
+  canceledQuotes: number
+  conversionRate: number // (sent / total) * 100, 0-1 decimal
+  draftQuotes: number
+  percentageChange: number // ((current - previous) / previous), 0-1 decimal
+  previousPeriodTotal: number
+  sentQuotes: number
+  totalQuotes: number
+}
 
 /**
  * Single data point for trend chart
  */
 export type TrendDataPoint = {
-  count: number;
-  date: string; // ISO 8601 format
-  label: string; // Pre-formatted date (e.g., "15 Ene") from formatDateShort
-};
+  count: number
+  date: string // ISO 8601 format
+  label: string // Pre-formatted date (e.g., "15 Ene") from formatDateShort
+}
 
 /**
  * Quote trend data for time-series visualization
  */
 export type QuotesTrendData = {
-  dataPoints: TrendDataPoint[];
-  period: DashboardPeriodType;
-};
+  dataPoints: TrendDataPoint[]
+  period: DashboardPeriodType
+}
 
 // =============================================================================
 // CATALOG ANALYTICS (US2)
@@ -93,43 +92,43 @@ export type QuotesTrendData = {
  * Top quoted model
  */
 export type TopModel = {
-  count: number;
-  modelId: string;
-  modelName: string;
-  percentage: number; // (count / totalItems) * 100, 0-1 decimal
-  supplierName: string | null;
-};
+  count: number
+  modelId: string
+  modelName: string
+  percentage: number // (count / totalItems) * 100, 0-1 decimal
+  supplierName: string | null
+}
 
 /**
  * Top glass type
  */
 export type TopGlassType = {
-  count: number;
-  glassTypeCode: string;
-  glassTypeId: string;
-  glassTypeName: string;
-  manufacturer: string | null;
-  percentage: number; // (count / totalItems) * 100, 0-1 decimal
-};
+  count: number
+  glassTypeCode: string
+  glassTypeId: string
+  glassTypeName: string
+  manufacturer: string | null
+  percentage: number // (count / totalItems) * 100, 0-1 decimal
+}
 
 /**
  * Supplier distribution aggregation
  */
 export type SupplierDistribution = {
-  count: number;
-  percentage: number;
-  supplierId: string | null; // null for models without supplier
-  supplierName: string;
-};
+  count: number
+  percentage: number
+  supplierId: string | null // null for models without supplier
+  supplierName: string
+}
 
 /**
  * Catalog analytics aggregation (top models, glass types, suppliers)
  */
 export type CatalogAnalytics = {
-  supplierDistribution: SupplierDistribution[];
-  topGlassTypes: TopGlassType[]; // Max 5
-  topModels: TopModel[]; // Max 5
-};
+  supplierDistribution: SupplierDistribution[]
+  topGlassTypes: TopGlassType[] // Max 5
+  topModels: TopModel[] // Max 5
+}
 
 // =============================================================================
 // MONETARY METRICS (US3)
@@ -151,32 +150,32 @@ export type CatalogAnalytics = {
  * ```
  */
 export type MonetaryMetrics = {
-  averageValue: number;
-  currency: string; // From TenantConfig
-  locale: string; // From TenantConfig
-  percentageChange: number;
-  previousPeriodTotal: number;
-  totalValue: number; // Sum of Quote.total (as number, not Decimal)
-};
+  averageValue: number
+  currency: string // From TenantConfig
+  locale: string // From TenantConfig
+  percentageChange: number
+  previousPeriodTotal: number
+  totalValue: number // Sum of Quote.total (as number, not Decimal)
+}
 
 /**
  * Price range bucket
  */
 export type PriceRange = {
-  count: number;
-  label: string; // Pre-formatted range (e.g., "$1M - $5M") from formatCurrency
-  max: number | null; // null for open-ended range (e.g., "10M+")
-  min: number;
-  percentage: number;
-};
+  count: number
+  label: string // Pre-formatted range (e.g., "$1M - $5M") from formatCurrency
+  max: number | null // null for open-ended range (e.g., "10M+")
+  min: number
+  percentage: number
+}
 
 /**
  * Price range distribution
  */
 export type PriceRangeDistribution = {
-  currency: string;
-  ranges: PriceRange[];
-};
+  currency: string
+  ranges: PriceRange[]
+}
 
 // =============================================================================
 // PERIOD COMPARISON (US4)
@@ -186,22 +185,22 @@ export type PriceRangeDistribution = {
  * Date range with human-readable label
  */
 export type DateRange = {
-  end: Date;
-  label: string; // Human-readable (e.g., "Últimos 30 días")
-  start: Date;
-};
+  end: Date
+  label: string // Human-readable (e.g., "Últimos 30 días")
+  start: Date
+}
 
 /**
  * Period comparison with percentage change
  */
 export type PeriodComparison = {
-  currentPeriod: DateRange;
-  currentValue: number;
-  isPositive: boolean; // true if increase, false if decrease
-  percentageChange: number; // 0-1 decimal
-  previousPeriod: DateRange;
-  previousValue: number;
-};
+  currentPeriod: DateRange
+  currentValue: number
+  isPositive: boolean // true if increase, false if decrease
+  percentageChange: number // 0-1 decimal
+  previousPeriod: DateRange
+  previousValue: number
+}
 
 // =============================================================================
 // CHART CONFIGURATION
@@ -211,13 +210,13 @@ export type PeriodComparison = {
  * Chart rendering configuration
  */
 export type ChartConfig = {
-  dataKey: string;
-  description?: string;
-  title: string;
-  type: ChartTypeValue;
-  xAxisKey?: string;
-  yAxisKey?: string;
-};
+  dataKey: string
+  description?: string
+  title: string
+  type: ChartTypeValue
+  xAxisKey?: string
+  yAxisKey?: string
+}
 
 // =============================================================================
 // CONTEXT & CONFIGURATION
@@ -232,8 +231,8 @@ export type ChartConfig = {
  * - Timezone handling
  */
 export type DashboardContext = {
-  tenantConfig: Pick<TenantConfig, "currency" | "locale" | "timezone">;
-};
+  tenantConfig: Pick<TenantConfig, 'currency' | 'locale' | 'timezone'>
+}
 
 // =============================================================================
 // UTILITY TYPES
@@ -244,16 +243,16 @@ export type DashboardContext = {
  */
 export type MetricCardData = {
   comparison?: {
-    isPositive: boolean;
-    percentage: number; // Formatted via formatPercent
-  };
-  label: string;
-  value: string; // Pre-formatted value using @lib/format
-};
+    isPositive: boolean
+    percentage: number // Formatted via formatPercent
+  }
+  label: string
+  value: string // Pre-formatted value using @lib/format
+}
 
 /**
  * Generic chart data point
  */
 export type ChartDataPoint = {
-  [key: string]: string | number;
-};
+  [key: string]: string | number
+}

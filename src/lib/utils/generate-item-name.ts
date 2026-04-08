@@ -10,20 +10,20 @@
  * @module lib/utils/generate-item-name
  */
 
-import type { CartItem } from "@/types/cart.types";
+import type { CartItem } from '@/types/cart.types'
 
 // ============================================================================
 // Constants
 // ============================================================================
 
-const MAX_PREFIX_LENGTH = 10;
-const SEQUENCE_PADDING = 3;
-const COLLISION_TIMESTAMP_LENGTH = 4;
-const FALLBACK_TIMESTAMP_LENGTH = 6;
-const MAX_NAME_LENGTH = 50;
+const MAX_PREFIX_LENGTH = 10
+const SEQUENCE_PADDING = 3
+const COLLISION_TIMESTAMP_LENGTH = 4
+const FALLBACK_TIMESTAMP_LENGTH = 6
+const MAX_NAME_LENGTH = 50
 
 // Regex for splitting model name into words
-const WORD_SEPARATOR_REGEX = /[\s\-_]/;
+const WORD_SEPARATOR_REGEX = /[\s\-_]/
 
 // ============================================================================
 // Name Generation
@@ -43,26 +43,26 @@ const WORD_SEPARATOR_REGEX = /[\s\-_]/;
  * extractModelPrefix("modelo-especial") → "MODELO"
  */
 export function extractModelPrefix(modelName: string): string {
-  if (!modelName || typeof modelName !== "string") {
-    return "ITEM";
+  if (!modelName || typeof modelName !== 'string') {
+    return 'ITEM'
   }
 
-  const cleaned = modelName.trim();
+  const cleaned = modelName.trim()
   if (cleaned.length === 0) {
-    return "ITEM";
+    return 'ITEM'
   }
 
   // Extract first word (stop at space, hyphen, underscore)
-  const firstWord = cleaned.split(WORD_SEPARATOR_REGEX)[0];
+  const firstWord = cleaned.split(WORD_SEPARATOR_REGEX)[0]
 
   if (!firstWord) {
-    return "ITEM";
+    return 'ITEM'
   }
 
   // Convert to uppercase and limit length
-  const prefix = firstWord.toUpperCase().slice(0, MAX_PREFIX_LENGTH);
+  const prefix = firstWord.toUpperCase().slice(0, MAX_PREFIX_LENGTH)
 
-  return prefix;
+  return prefix
 }
 
 /**
@@ -85,36 +85,32 @@ export function extractModelPrefix(modelName: string): string {
  * // Cart has other prefixes only
  * findNextSequence("GUARDIAN", cartItems) → "001"
  */
-export function findNextSequence(
-  prefix: string,
-  existingItems: CartItem[]
-): string {
-  if (!prefix || typeof prefix !== "string") {
-    return "001";
+export function findNextSequence(prefix: string, existingItems: CartItem[]): string {
+  if (!prefix || typeof prefix !== 'string') {
+    return '001'
   }
 
   if (!existingItems || existingItems.length === 0) {
-    return "001";
+    return '001'
   }
 
   // Pattern: {PREFIX}-{SEQUENCE}
-  const prefixPattern = new RegExp(`^${prefix}-(\\d+)$`, "i");
+  const prefixPattern = new RegExp(`^${prefix}-(\\d+)$`, 'i')
 
   // Find all items matching this prefix
   const matchingSequences = existingItems
     .map((item) => {
-      const match = item.name.match(prefixPattern);
-      return match?.[1] ? Number.parseInt(match[1], 10) : 0;
+      const match = item.name.match(prefixPattern)
+      return match?.[1] ? Number.parseInt(match[1], 10) : 0
     })
-    .filter((seq) => seq > 0);
+    .filter((seq) => seq > 0)
 
   // Find highest sequence number
-  const maxSequence =
-    matchingSequences.length > 0 ? Math.max(...matchingSequences) : 0;
+  const maxSequence = matchingSequences.length > 0 ? Math.max(...matchingSequences) : 0
 
   // Return next sequence (zero-padded to 3 digits)
-  const nextSequence = maxSequence + 1;
-  return nextSequence.toString().padStart(SEQUENCE_PADDING, "0");
+  const nextSequence = maxSequence + 1
+  return nextSequence.toString().padStart(SEQUENCE_PADDING, '0')
 }
 
 /**
@@ -134,31 +130,26 @@ export function findNextSequence(
  *
  * @throws Never - Always returns a valid name (fallback to "ITEM-XXX")
  */
-export function generateItemName(
-  modelName: string,
-  existingItems: CartItem[]
-): string {
+export function generateItemName(modelName: string, existingItems: CartItem[]): string {
   try {
-    const prefix = extractModelPrefix(modelName);
-    const sequence = findNextSequence(prefix, existingItems);
-    const generatedName = `${prefix}-${sequence}`;
+    const prefix = extractModelPrefix(modelName)
+    const sequence = findNextSequence(prefix, existingItems)
+    const generatedName = `${prefix}-${sequence}`
 
     // Final safety check: ensure name is unique
-    const isUnique = !existingItems.some((item) => item.name === generatedName);
+    const isUnique = !existingItems.some((item) => item.name === generatedName)
 
     if (!isUnique) {
       // Extremely unlikely: collision detected, append timestamp
-      const timestamp = Date.now()
-        .toString()
-        .slice(-COLLISION_TIMESTAMP_LENGTH);
-      return `${prefix}-${sequence}-${timestamp}`;
+      const timestamp = Date.now().toString().slice(-COLLISION_TIMESTAMP_LENGTH)
+      return `${prefix}-${sequence}-${timestamp}`
     }
 
-    return generatedName;
+    return generatedName
   } catch {
     // Fallback: use generic name with timestamp
-    const timestamp = Date.now().toString().slice(-FALLBACK_TIMESTAMP_LENGTH);
-    return `ITEM-${timestamp}`;
+    const timestamp = Date.now().toString().slice(-FALLBACK_TIMESTAMP_LENGTH)
+    return `ITEM-${timestamp}`
   }
 }
 
@@ -177,26 +168,26 @@ export function generateItemName(
 export function isNameUnique(
   name: string,
   existingItems: CartItem[],
-  excludeItemId?: string
+  excludeItemId?: string,
 ): boolean {
-  if (!name || typeof name !== "string") {
-    return false;
+  if (!name || typeof name !== 'string') {
+    return false
   }
 
-  const trimmedName = name.trim();
+  const trimmedName = name.trim()
   if (trimmedName.length === 0) {
-    return false;
+    return false
   }
 
   return !existingItems.some((item) => {
     // Skip if this is the item being updated
     if (excludeItemId && item.id === excludeItemId) {
-      return false;
+      return false
     }
 
     // Case-insensitive comparison
-    return item.name.toLowerCase() === trimmedName.toLowerCase();
-  });
+    return item.name.toLowerCase() === trimmedName.toLowerCase()
+  })
 }
 
 /**
@@ -210,25 +201,25 @@ export function isNameUnique(
 export function validateItemName(
   name: string,
   existingItems: CartItem[],
-  excludeItemId?: string
+  excludeItemId?: string,
 ): { valid: boolean; error?: string } {
-  if (!name || typeof name !== "string") {
-    return { error: "El nombre es requerido", valid: false };
+  if (!name || typeof name !== 'string') {
+    return { error: 'El nombre es requerido', valid: false }
   }
 
-  const trimmedName = name.trim();
+  const trimmedName = name.trim()
 
   if (trimmedName.length === 0) {
-    return { error: "El nombre no puede estar vacío", valid: false };
+    return { error: 'El nombre no puede estar vacío', valid: false }
   }
 
   if (trimmedName.length > MAX_NAME_LENGTH) {
-    return { error: "El nombre no puede exceder 50 caracteres", valid: false };
+    return { error: 'El nombre no puede exceder 50 caracteres', valid: false }
   }
 
   if (!isNameUnique(trimmedName, existingItems, excludeItemId)) {
-    return { error: "Ya existe un item con este nombre", valid: false };
+    return { error: 'Ya existe un item con este nombre', valid: false }
   }
 
-  return { valid: true };
+  return { valid: true }
 }

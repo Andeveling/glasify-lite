@@ -1,21 +1,16 @@
-"use client";
+'use client'
 
-import { Gem } from "lucide-react";
-import { motion } from "motion/react";
-import { useFormContext } from "react-hook-form";
-import { FormSection } from "@/components/form-section";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { RadioGroup } from "@/components/ui/radio-group";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { GlassTypeOutput } from "@/server/api/routers/catalog/catalog.schemas";
-import { GlassTypeCardSimple } from "./_components/glass-type-card-simple";
-import type { GlassTab } from "./_hooks/use-glass-types-by-tab";
-import { useGlassTypesByTab } from "./_hooks/use-glass-types-by-tab";
+import { Gem } from 'lucide-react'
+import { motion } from 'motion/react'
+import { useFormContext } from 'react-hook-form'
+import { FormSection } from '@/components/form-section'
+import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
+import { RadioGroup } from '@/components/ui/radio-group'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import type { GlassTypeOutput } from '@/server/api/routers/catalog/catalog.schemas'
+import { GlassTypeCardSimple } from './_components/glass-type-card-simple'
+import type { GlassTab } from './_hooks/use-glass-types-by-tab'
+import { useGlassTypesByTab } from './_hooks/use-glass-types-by-tab'
 
 /**
  * Glass Type Selector Section - Organizes glass types by solution tabs
@@ -28,13 +23,13 @@ import { useGlassTypesByTab } from "./_hooks/use-glass-types-by-tab";
  * - Hover effects: Scale and glow on tab hover
  */
 
-type TabsVariant = "full" | "simple" | "minimal";
+type TabsVariant = 'full' | 'simple' | 'minimal'
 
 type TabsVariantConfig = {
-  showBadge: boolean;
-  showIcon: boolean;
-  showFullLabel: boolean; // Full label on mobile vs abbreviated
-};
+  showBadge: boolean
+  showIcon: boolean
+  showFullLabel: boolean // Full label on mobile vs abbreviated
+}
 
 const TABS_VARIANT_CONFIGS: Record<TabsVariant, TabsVariantConfig> = {
   // Full: Icons + badges + full labels (default for retrocompatibility)
@@ -55,26 +50,26 @@ const TABS_VARIANT_CONFIGS: Record<TabsVariant, TabsVariantConfig> = {
     showIcon: false,
     showFullLabel: true,
   },
-};
+}
 
 /**
  * Framer Motion variants for animations
  */
-const BADGE_PULSE_SCALE = 1.15;
-const TAB_STAGGER_DELAY = 0.05;
+const BADGE_PULSE_SCALE = 1.15
+const TAB_STAGGER_DELAY = 0.05
 
 const tabTriggerVariants = {
   initial: { opacity: 0.6, y: -2 },
   animate: { opacity: 1, y: 0, transition: { duration: 0.2 } },
   hover: { scale: 1.05, transition: { duration: 0.15 } },
-};
+}
 
 const badgePulseVariants = {
   animate: {
     scale: [1, BADGE_PULSE_SCALE, 1],
     transition: { duration: 2, repeat: Number.POSITIVE_INFINITY, delay: 0.5 },
   },
-};
+}
 
 const tabContentVariants = {
   initial: { opacity: 0, y: 8 },
@@ -88,7 +83,7 @@ const tabContentVariants = {
     y: -8,
     transition: { duration: 0.2 },
   },
-};
+}
 
 const cardContainerVariants = {
   animate: {
@@ -97,7 +92,7 @@ const cardContainerVariants = {
       delayChildren: 0.1,
     },
   },
-};
+}
 
 const cardItemVariants = {
   initial: { opacity: 0, x: -12 },
@@ -106,17 +101,17 @@ const cardItemVariants = {
     x: 0,
     transition: { duration: 0.35 },
   },
-};
+}
 
 type GlassTypeSelectorSectionProps = {
-  basePrice?: number;
-  glassTypes: GlassTypeOutput[];
-  selectedSolutionId?: string;
+  basePrice?: number
+  glassTypes: GlassTypeOutput[]
+  selectedSolutionId?: string
   /** Variante de tabs (default: "full" para retrocompatibilidad) */
-  variant?: TabsVariant;
+  variant?: TabsVariant
   /** Configuración personalizada (sobrescribe la variante) */
-  customConfig?: Partial<TabsVariantConfig>;
-};
+  customConfig?: Partial<TabsVariantConfig>
+}
 
 /**
  * Helper: Find default tab based on selected solution
@@ -124,46 +119,46 @@ type GlassTypeSelectorSectionProps = {
 function findDefaultTab(
   tabs: GlassTab[],
   selectedSolutionId: string | undefined,
-  glassTypes: GlassTypeOutput[]
+  glassTypes: GlassTypeOutput[],
 ): string | undefined {
   if (!selectedSolutionId || tabs.length === 0) {
-    return tabs[0]?.key;
+    return tabs[0]?.key
   }
 
   const matchingTab = tabs.find((tab) =>
     tab.options.some((opt) =>
       glassTypes
         .find((gt) => gt.id === opt.id)
-        ?.solutions?.some((s) => s.solution.id === selectedSolutionId)
-    )
-  );
+        ?.solutions?.some((s) => s.solution.id === selectedSolutionId),
+    ),
+  )
 
-  return matchingTab?.key ?? tabs[0]?.key;
+  return matchingTab?.key ?? tabs[0]?.key
 }
 
 export function GlassTypeSelectorSection({
   basePrice,
   glassTypes,
   selectedSolutionId,
-  variant = "full",
+  variant = 'full',
   customConfig,
 }: GlassTypeSelectorSectionProps) {
-  const { control } = useFormContext();
+  const { control } = useFormContext()
 
   // Resolver configuración: custom > variant > default
   const config: TabsVariantConfig = {
     ...TABS_VARIANT_CONFIGS[variant],
     ...customConfig,
-  };
+  }
 
   // Hook handles grouping by solution
-  const tabs = useGlassTypesByTab(glassTypes, basePrice);
+  const tabs = useGlassTypesByTab(glassTypes, basePrice)
 
   // Find default tab (extracted to helper for clarity)
-  const defaultTab = findDefaultTab(tabs, selectedSolutionId, glassTypes);
+  const defaultTab = findDefaultTab(tabs, selectedSolutionId, glassTypes)
 
   if (tabs.length === 0) {
-    return null;
+    return null
   }
 
   return (
@@ -176,7 +171,7 @@ export function GlassTypeSelectorSection({
         {/* Tabs navigation - Large, visually prominent */}
         <TabsList className="mb-2 flex h-20 w-full flex-wrap justify-start gap-2 bg-transparent py-1.5">
           {tabs.map((tab, index) => {
-            const Icon = tab.icon;
+            const Icon = tab.icon
 
             return (
               <motion.div
@@ -200,9 +195,7 @@ export function GlassTypeSelectorSection({
                   ) : (
                     <>
                       <span className="hidden sm:inline">{tab.label}</span>
-                      <span className="sm:hidden">
-                        {tab.label.split(" ")[0]}
-                      </span>
+                      <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
                     </>
                   )}
 
@@ -218,7 +211,7 @@ export function GlassTypeSelectorSection({
                   )}
                 </TabsTrigger>
               </motion.div>
-            );
+            )
           })}
         </TabsList>
 
@@ -231,12 +224,7 @@ export function GlassTypeSelectorSection({
               <FormControl>
                 <div>
                   {tabs.map((tab) => (
-                    <TabsContent
-                      asChild
-                      className="space-y-2"
-                      key={tab.key}
-                      value={tab.key}
-                    >
+                    <TabsContent asChild className="space-y-2" key={tab.key} value={tab.key}>
                       <motion.div
                         animate="animate"
                         exit="exit"
@@ -282,5 +270,5 @@ export function GlassTypeSelectorSection({
         />
       </Tabs>
     </FormSection>
-  );
+  )
 }

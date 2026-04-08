@@ -7,15 +7,15 @@
  * @route /my-quotes/[quoteId]
  */
 
-import { TRPCError } from "@trpc/server";
-import { headers } from "next/headers";
-import { notFound, redirect } from "next/navigation";
-import { Suspense } from "react";
-import { Spinner } from "@/components/ui/spinner";
-import logger from "@/lib/logger";
-import { auth } from "@/server/auth";
-import { api } from "@/trpc/server-client";
-import { QuoteDetailView } from "./_components/quote-detail-view";
+import { TRPCError } from '@trpc/server'
+import { headers } from 'next/headers'
+import { notFound, redirect } from 'next/navigation'
+import { Suspense } from 'react'
+import { Spinner } from '@/components/ui/spinner'
+import logger from '@/lib/logger'
+import { auth } from '@/server/auth'
+import { api } from '@/trpc/server-client'
+import { QuoteDetailView } from './_components/quote-detail-view'
 
 /**
  * CRITICAL: Dynamic rendering required
@@ -23,72 +23,61 @@ import { QuoteDetailView } from "./_components/quote-detail-view";
  * This page uses headers() for authentication and PublicLayout with database queries.
  * Already dynamic due to headers() but explicit declaration prevents accidental removal.
  */
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic'
 
 type MyQuoteDetailPageProps = {
   params: Promise<{
-    quoteId: string;
-  }>;
-};
+    quoteId: string
+  }>
+}
 
-async function QuoteContent({
-  quoteId,
-  userId,
-}: {
-  quoteId: string;
-  userId: string;
-}) {
+async function QuoteContent({ quoteId, userId }: { quoteId: string; userId: string }) {
   try {
-    logger.info("[MyQuoteDetailPage] User accessing quote detail", {
+    logger.info('[MyQuoteDetailPage] User accessing quote detail', {
       quoteId,
       userId,
-    });
+    })
 
-    const quote = await api.quote["get-by-id"]({ id: quoteId });
+    const quote = await api.quote['get-by-id']({ id: quoteId })
 
-    return <QuoteDetailView isPublicView quote={quote} />;
+    return <QuoteDetailView isPublicView quote={quote} />
   } catch (error) {
     // If quote not found or access denied, show 404
-    if (error instanceof TRPCError && error.code === "NOT_FOUND") {
-      logger.warn("[MyQuoteDetailPage] Quote not found or access denied", {
+    if (error instanceof TRPCError && error.code === 'NOT_FOUND') {
+      logger.warn('[MyQuoteDetailPage] Quote not found or access denied', {
         error: error.message,
         quoteId,
         userId,
-      });
+      })
 
-      notFound();
+      notFound()
     }
 
-    logger.error("[MyQuoteDetailPage] Error loading quote", {
-      error: error instanceof Error ? error.message : "Unknown error",
+    logger.error('[MyQuoteDetailPage] Error loading quote', {
+      error: error instanceof Error ? error.message : 'Unknown error',
       quoteId,
       userId,
-    });
+    })
 
     // Re-throw other errors
-    throw error;
+    throw error
   }
 }
 
-export default async function MyQuoteDetailPage({
-  params,
-}: MyQuoteDetailPageProps) {
-  const { quoteId } = await params;
+export default async function MyQuoteDetailPage({ params }: MyQuoteDetailPageProps) {
+  const { quoteId } = await params
 
   // Check authentication OUTSIDE Suspense
   const session = await auth.api.getSession({
     headers: await headers(),
-  });
+  })
 
   if (!session?.user) {
-    logger.warn(
-      "[MyQuoteDetailPage] Unauthenticated user attempted to access quote",
-      {
-        redirectTo: "/api/auth/signin",
-      }
-    );
+    logger.warn('[MyQuoteDetailPage] Unauthenticated user attempted to access quote', {
+      redirectTo: '/api/auth/signin',
+    })
 
-    redirect("/api/auth/signin?callbackUrl=/my-quotes");
+    redirect('/api/auth/signin?callbackUrl=/my-quotes')
   }
 
   return (
@@ -103,5 +92,5 @@ export default async function MyQuoteDetailPage({
         <QuoteContent quoteId={quoteId} userId={session.user.id} />
       </Suspense>
     </div>
-  );
+  )
 }

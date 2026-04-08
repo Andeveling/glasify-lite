@@ -13,20 +13,18 @@
  * Pattern: Custom Hook - Single Responsibility (Mutation Logic)
  */
 
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { api } from "@/trpc/react";
-import type { FormValues } from "./use-service-form";
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+import { api } from '@/trpc/react'
+import type { FormValues } from './use-service-form'
 
 type UseServiceMutationsProps = {
-  onSuccess?: () => void;
-};
+  onSuccess?: () => void
+}
 
-export function useServiceMutations({
-  onSuccess,
-}: UseServiceMutationsProps = {}) {
-  const utils = api.useUtils();
-  const router = useRouter();
+export function useServiceMutations({ onSuccess }: UseServiceMutationsProps = {}) {
+  const utils = api.useUtils()
+  const router = useRouter()
 
   /**
    * Create mutation
@@ -39,26 +37,26 @@ export function useServiceMutations({
    */
   const createMutation = api.admin.service.create.useMutation({
     onMutate: () => {
-      toast.loading("Creando servicio...", { id: "create-service" });
+      toast.loading('Creando servicio...', { id: 'create-service' })
     },
     onError: (err) => {
-      toast.error("Error al crear servicio", {
+      toast.error('Error al crear servicio', {
         description: err.message,
-        id: "create-service",
-      });
+        id: 'create-service',
+      })
     },
     onSuccess: () => {
-      toast.success("Servicio creado correctamente", { id: "create-service" });
-      onSuccess?.();
+      toast.success('Servicio creado correctamente', { id: 'create-service' })
+      onSuccess?.()
     },
     onSettled: () => {
       // Two-step cache invalidation for SSR with force-dynamic
       // Step 1: Invalidate TanStack Query cache
-      utils.admin.service.list.invalidate();
+      utils.admin.service.list.invalidate()
       // Step 2: Refresh Next.js Server Component data
-      router.refresh();
+      router.refresh()
     },
-  });
+  })
 
   /**
    * Update mutation
@@ -67,40 +65,40 @@ export function useServiceMutations({
    */
   const updateMutation = api.admin.service.update.useMutation({
     onMutate: () => {
-      toast.loading("Actualizando servicio...", { id: "update-service" });
+      toast.loading('Actualizando servicio...', { id: 'update-service' })
     },
     onError: (err) => {
-      toast.error("Error al actualizar servicio", {
+      toast.error('Error al actualizar servicio', {
         description: err.message,
-        id: "update-service",
-      });
+        id: 'update-service',
+      })
     },
     onSuccess: () => {
-      toast.success("Servicio actualizado correctamente", {
-        id: "update-service",
-      });
-      onSuccess?.();
+      toast.success('Servicio actualizado correctamente', {
+        id: 'update-service',
+      })
+      onSuccess?.()
     },
     onSettled: () => {
       // Two-step cache invalidation for SSR with force-dynamic
-      utils.admin.service.list.invalidate();
-      router.refresh();
+      utils.admin.service.list.invalidate()
+      router.refresh()
     },
-  });
+  })
 
   /**
    * Submit handler for form
    * Routes to create or update based on mode
    */
   const handleCreate = (data: FormValues) => {
-    createMutation.mutate(data);
-  };
+    createMutation.mutate(data)
+  }
 
   const handleUpdate = (id: string, data: FormValues) => {
-    updateMutation.mutate({ id, data });
-  };
+    updateMutation.mutate({ id, data })
+  }
 
-  const isPending = createMutation.isPending || updateMutation.isPending;
+  const isPending = createMutation.isPending || updateMutation.isPending
 
   return {
     createMutation,
@@ -108,5 +106,5 @@ export function useServiceMutations({
     handleCreate,
     handleUpdate,
     isPending,
-  };
+  }
 }

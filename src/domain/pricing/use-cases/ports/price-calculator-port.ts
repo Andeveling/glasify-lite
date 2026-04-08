@@ -9,7 +9,7 @@
 import type {
   PriceCalculationInput,
   PriceCalculationResult,
-} from "../../core/entities/price-calculation";
+} from '../../core/entities/price-calculation'
 
 /**
  * Port type for price calculation operations
@@ -24,5 +24,5 @@ export type PriceCalculatorPort = {
    * @param input - Price calculation input with all required data
    * @returns Complete price breakdown with all components
    */
-  calculateItemPrice(input: PriceCalculationInput): PriceCalculationResult;
-};
+  calculateItemPrice(input: PriceCalculationInput): PriceCalculationResult
+}

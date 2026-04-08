@@ -8,57 +8,57 @@
  * @module StatusConfig
  */
 
-import type { Quote } from "@prisma/generated/client";
-import { FileText, type LucideIcon, Send, XCircle } from "lucide-react";
+import type { Quote } from '@prisma/generated/client'
+import { FileText, type LucideIcon, Send, XCircle } from 'lucide-react'
 
 /**
  * Quote status type from Prisma schema
  */
-export type QuoteStatus = Quote["status"];
+export type QuoteStatus = Quote['status']
 
 /**
  * Badge variant types (Shadcn/ui Badge component)
  */
-export type BadgeVariant = "default" | "secondary" | "destructive" | "outline";
+export type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline'
 
 /**
  * CTA action types
  */
-export type CTAAction = "edit" | "view" | "duplicate" | "resend";
+export type CTAAction = 'edit' | 'view' | 'duplicate' | 'resend'
 
 /**
  * Call-to-action configuration
  */
 export type StatusCTA = {
-  label: string;
-  action: CTAAction;
-};
+  label: string
+  action: CTAAction
+}
 
 /**
  * Complete status configuration
  */
 export type StatusConfig = {
   /** Display label in Spanish */
-  label: string;
+  label: string
 
   /** Lucide icon component */
-  icon: LucideIcon;
+  icon: LucideIcon
 
   /** Icon name (for testing) */
-  iconName: string;
+  iconName: string
 
   /** Explanatory tooltip text */
-  tooltip: string;
+  tooltip: string
 
   /** Badge color variant */
-  variant: BadgeVariant;
+  variant: BadgeVariant
 
   /** Alias for variant (legacy compatibility) */
-  color: BadgeVariant;
+  color: BadgeVariant
 
   /** Optional call-to-action button */
-  cta?: StatusCTA;
-};
+  cta?: StatusCTA
+}
 
 /**
  * Status configuration registry
@@ -68,56 +68,56 @@ export type StatusConfig = {
  */
 export const STATUS_CONFIG: Record<QuoteStatus, StatusConfig> = {
   canceled: {
-    color: "destructive", // Red - negative state
+    color: 'destructive', // Red - negative state
     cta: {
-      action: "duplicate",
-      label: "Duplicar",
+      action: 'duplicate',
+      label: 'Duplicar',
     },
     icon: XCircle,
-    iconName: "x-circle",
-    label: "Cancelada",
-    tooltip: "Esta cotización fue cancelada y no está activa.",
-    variant: "destructive",
+    iconName: 'x-circle',
+    label: 'Cancelada',
+    tooltip: 'Esta cotización fue cancelada y no está activa.',
+    variant: 'destructive',
   },
   draft: {
-    color: "secondary", // Yellow/Amber - pending action
+    color: 'secondary', // Yellow/Amber - pending action
     cta: {
-      action: "view",
-      label: "Ver detalles",
+      action: 'view',
+      label: 'Ver detalles',
     },
     icon: FileText,
-    iconName: "file-text",
-    label: "Borrador",
+    iconName: 'file-text',
+    label: 'Borrador',
     tooltip:
-      "Esta cotización fue generada desde el carrito y está lista para enviar. Revisa los detalles antes de enviarla.",
-    variant: "secondary",
+      'Esta cotización fue generada desde el carrito y está lista para enviar. Revisa los detalles antes de enviarla.',
+    variant: 'secondary',
   },
 
   sent: {
-    color: "default", // Blue - informational
+    color: 'default', // Blue - informational
     cta: {
-      action: "view",
-      label: "Ver detalles",
+      action: 'view',
+      label: 'Ver detalles',
     },
     icon: Send,
-    iconName: "send",
-    label: "Enviada",
-    tooltip: "Cotización enviada al cliente. Pendiente de respuesta.",
-    variant: "default",
+    iconName: 'send',
+    label: 'Enviada',
+    tooltip: 'Cotización enviada al cliente. Pendiente de respuesta.',
+    variant: 'default',
   },
-};
+}
 
 /**
  * Default status configuration for unknown/invalid status
  */
 const DEFAULT_STATUS_CONFIG: StatusConfig = {
-  color: "outline",
+  color: 'outline',
   icon: FileText,
-  iconName: "file-text",
-  label: "Desconocido",
-  tooltip: "Estado de cotización desconocido.",
-  variant: "outline",
-};
+  iconName: 'file-text',
+  label: 'Desconocido',
+  tooltip: 'Estado de cotización desconocido.',
+  variant: 'outline',
+}
 
 /**
  * Get complete status configuration
@@ -133,11 +133,11 @@ const DEFAULT_STATUS_CONFIG: StatusConfig = {
  * ```
  */
 export function getStatusConfig(status: QuoteStatus | string): StatusConfig {
-  if (!status || typeof status !== "string") {
-    return DEFAULT_STATUS_CONFIG;
+  if (!status || typeof status !== 'string') {
+    return DEFAULT_STATUS_CONFIG
   }
 
-  return STATUS_CONFIG[status as QuoteStatus] ?? DEFAULT_STATUS_CONFIG;
+  return STATUS_CONFIG[status as QuoteStatus] ?? DEFAULT_STATUS_CONFIG
 }
 
 /**
@@ -153,7 +153,7 @@ export function getStatusConfig(status: QuoteStatus | string): StatusConfig {
  * ```
  */
 export function getStatusLabel(status: QuoteStatus | string): string {
-  return getStatusConfig(status).label;
+  return getStatusConfig(status).label
 }
 
 /**
@@ -162,10 +162,8 @@ export function getStatusLabel(status: QuoteStatus | string): string {
  * @param status - Quote status
  * @returns Lucide icon component
  */
-export function getStatusIconComponent(
-  status: QuoteStatus | string
-): LucideIcon {
-  return getStatusConfig(status).icon;
+export function getStatusIconComponent(status: QuoteStatus | string): LucideIcon {
+  return getStatusConfig(status).icon
 }
 
 /**
@@ -181,7 +179,7 @@ export function getStatusIconComponent(
  * ```
  */
 export function getStatusIcon(status: QuoteStatus | string): string {
-  return getStatusConfig(status).iconName;
+  return getStatusConfig(status).iconName
 }
 
 /**
@@ -197,7 +195,7 @@ export function getStatusIcon(status: QuoteStatus | string): string {
  * ```
  */
 export function getStatusTooltip(status: QuoteStatus | string): string {
-  return getStatusConfig(status).tooltip;
+  return getStatusConfig(status).tooltip
 }
 
 /**
@@ -214,7 +212,7 @@ export function getStatusTooltip(status: QuoteStatus | string): string {
  * ```
  */
 export function getStatusColor(status: QuoteStatus | string): BadgeVariant {
-  return getStatusConfig(status).variant;
+  return getStatusConfig(status).variant
 }
 
 /**
@@ -229,10 +227,8 @@ export function getStatusColor(status: QuoteStatus | string): BadgeVariant {
  * // { label: 'Continuar editando', action: 'edit' }
  * ```
  */
-export function getStatusCTA(
-  status: QuoteStatus | string
-): StatusCTA | undefined {
-  return getStatusConfig(status).cta;
+export function getStatusCTA(status: QuoteStatus | string): StatusCTA | undefined {
+  return getStatusConfig(status).cta
 }
 
 /**
@@ -242,7 +238,7 @@ export function getStatusCTA(
  * @returns True if status is valid (draft, sent, or canceled)
  */
 export function isValidStatus(status: string): status is QuoteStatus {
-  return status in STATUS_CONFIG;
+  return status in STATUS_CONFIG
 }
 
 /**
@@ -251,5 +247,5 @@ export function isValidStatus(status: string): status is QuoteStatus {
  * @returns Array of all valid QuoteStatus values
  */
 export function getAllStatuses(): QuoteStatus[] {
-  return Object.keys(STATUS_CONFIG) as QuoteStatus[];
+  return Object.keys(STATUS_CONFIG) as QuoteStatus[]
 }

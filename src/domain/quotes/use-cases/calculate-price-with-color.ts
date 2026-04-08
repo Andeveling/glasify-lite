@@ -11,82 +11,82 @@
  * Usa repositories (ports) para acceso a datos.
  */
 
-import type { GlassType, Model, Service } from "@prisma/generated/client";
+import type { GlassType, Model, Service } from '@prisma/generated/client'
 import {
   validateDimensions,
   validateGlassTypeCompatibility,
   validateModelAvailability,
-} from "../services/quote-validator.service";
+} from '../services/quote-validator.service'
 
 /**
  * Input para calcular precio con color
  */
 export type CalculatePriceWithColorInput = {
-  modelId: string;
-  glassTypeId: string;
-  widthMm: number;
-  heightMm: number;
-  quantity: number;
-  unit: "unit" | "sqm" | "ml";
+  modelId: string
+  glassTypeId: string
+  widthMm: number
+  heightMm: number
+  quantity: number
+  unit: 'unit' | 'sqm' | 'ml'
   services: Array<{
-    serviceId: string;
-    quantity?: number;
-  }>;
+    serviceId: string
+    quantity?: number
+  }>
   adjustments: Array<{
-    concept: string;
-    sign: "positive" | "negative";
-    unit: "unit" | "sqm" | "ml";
-    value: number;
-  }>;
-  colorId?: string;
-};
+    concept: string
+    sign: 'positive' | 'negative'
+    unit: 'unit' | 'sqm' | 'ml'
+    value: number
+  }>
+  colorId?: string
+}
 
 /**
  * Service output en el breakdown
  */
 type ServiceBreakdown = {
-  serviceId: string;
-  unit: "unit" | "sqm" | "ml";
-  quantity: number;
-  amount: number;
-};
+  serviceId: string
+  unit: 'unit' | 'sqm' | 'ml'
+  quantity: number
+  amount: number
+}
 
 /**
  * Adjustment output en el breakdown
  */
 type AdjustmentBreakdown = {
-  concept: string;
-  amount: number;
-};
+  concept: string
+  amount: number
+}
 
 /**
  * Output del use-case
  */
 export type CalculatePriceWithColorOutput = {
-  basePrice: number;
-  colorSurcharge: number;
-  totalWithColor: number;
+  basePrice: number
+  colorSurcharge: number
+  totalWithColor: number
   breakdown: {
-    dimPrice: number;
-    accPrice: number;
-    color: number;
-    services: ServiceBreakdown[];
-    adjustments: AdjustmentBreakdown[];
-  };
-};
+    dimPrice: number
+    accPrice: number
+    color: number
+    services: ServiceBreakdown[]
+    adjustments: AdjustmentBreakdown[]
+  }
+}
 
 /**
  * Color con surcharge
  */
 type ModelColorWithData = {
-  surchargePercentage: number;
+  surchargePercentage: number
   color: {
-    id: string;
-    name: string;
-    hexCode: string;
-    isActive: boolean;
-  };
-};
+    id: string
+    name: string
+    hexCode: string
+    isActive: boolean
+  }
+}
 
 /**
  * Dependencies (ports) que necesita el use-case
@@ -95,63 +95,60 @@ export type CalculatePriceWithColorDeps = {
   // Repositories
   findModel: (id: string) => Promise<
     | (Model & {
-        profileSupplier?: { id: string; name: string } | null;
+        profileSupplier?: { id: string; name: string } | null
       })
     | null
-  >;
-  findGlassType: (id: string) => Promise<GlassType | null>;
-  findServices: (ids: string[]) => Promise<Service[]>;
-  findModelColor: (
-    modelId: string,
-    colorId: string
-  ) => Promise<ModelColorWithData | null>;
+  >
+  findGlassType: (id: string) => Promise<GlassType | null>
+  findServices: (ids: string[]) => Promise<Service[]>
+  findModelColor: (modelId: string, colorId: string) => Promise<ModelColorWithData | null>
 
   // Domain services - adaptador para transformar y calcular
   calculatePrice: (input: {
-    widthMm: number;
-    heightMm: number;
+    widthMm: number
+    heightMm: number
     modelPrices: {
-      basePrice: number;
-      costPerMmWidth: number;
-      costPerMmHeight: number;
-      minWidthMm: number;
-      minHeightMm: number;
-      accessoryPrice?: number;
-    };
-    colorSurchargePercentage?: number;
+      basePrice: number
+      costPerMmWidth: number
+      costPerMmHeight: number
+      minWidthMm: number
+      minHeightMm: number
+      accessoryPrice?: number
+    }
+    colorSurchargePercentage?: number
     glass?: {
-      pricePerSqm: number;
-      discountWidthMm?: number;
-      discountHeightMm?: number;
-    };
+      pricePerSqm: number
+      discountWidthMm?: number
+      discountHeightMm?: number
+    }
     services: Array<{
-      serviceId: string;
-      name: string;
-      unit: "unit" | "sqm" | "ml";
-      rate: number;
-      minimumBillingUnit?: number;
-      quantityOverride?: number;
-    }>;
+      serviceId: string
+      name: string
+      unit: 'unit' | 'sqm' | 'ml'
+      rate: number
+      minimumBillingUnit?: number
+      quantityOverride?: number
+    }>
     adjustments: Array<{
-      adjustmentId: string;
-      concept: string;
-      unit: "unit" | "sqm" | "ml";
-      value: number;
-      sign: "positive" | "negative";
-    }>;
+      adjustmentId: string
+      concept: string
+      unit: 'unit' | 'sqm' | 'ml'
+      value: number
+      sign: 'positive' | 'negative'
+    }>
   }) => {
-    dimPrice: number;
-    accPrice: number;
-    services: ServiceBreakdown[];
-    adjustments: AdjustmentBreakdown[];
-    subtotal: number;
-  };
-};
+    dimPrice: number
+    accPrice: number
+    services: ServiceBreakdown[]
+    adjustments: AdjustmentBreakdown[]
+    subtotal: number
+  }
+}
 
 /**
  * Divisor para porcentajes
  */
-const PERCENTAGE_DIVISOR = 100;
+const PERCENTAGE_DIVISOR = 100
 
 /**
  * CalculatePriceWithColorUseCase
@@ -161,53 +158,52 @@ const PERCENTAGE_DIVISOR = 100;
  */
 export async function calculatePriceWithColorUseCase(
   input: CalculatePriceWithColorInput,
-  deps: CalculatePriceWithColorDeps
+  deps: CalculatePriceWithColorDeps,
 ): Promise<CalculatePriceWithColorOutput> {
   // 1. Fetch y validar modelo
-  const model = await deps.findModel(input.modelId);
-  validateModelAvailability(model);
-  validateGlassTypeCompatibility(model, input.glassTypeId);
+  const model = await deps.findModel(input.modelId)
+  validateModelAvailability(model)
+  validateGlassTypeCompatibility(model, input.glassTypeId)
   validateDimensions(model, {
     widthMm: input.widthMm,
     heightMm: input.heightMm,
-  });
+  })
 
   // 2. Fetch glass type
-  const glassType = await deps.findGlassType(input.glassTypeId);
+  const glassType = await deps.findGlassType(input.glassTypeId)
   if (!glassType) {
-    throw new Error("Tipo de vidrio no encontrado");
+    throw new Error('Tipo de vidrio no encontrado')
   }
 
   // 3. Fetch services (si hay)
-  const serviceIds = input.services.map((s) => s.serviceId);
-  const services =
-    serviceIds.length > 0 ? await deps.findServices(serviceIds) : [];
+  const serviceIds = input.services.map((s) => s.serviceId)
+  const services = serviceIds.length > 0 ? await deps.findServices(serviceIds) : []
 
   // Validar que todos los servicios existen
   for (const serviceInput of input.services) {
-    const service = services.find((s) => s.id === serviceInput.serviceId);
+    const service = services.find((s) => s.id === serviceInput.serviceId)
     if (!service) {
-      throw new Error(`Servicio ${serviceInput.serviceId} no encontrado`);
+      throw new Error(`Servicio ${serviceInput.serviceId} no encontrado`)
     }
   }
 
   // 4. Transformar datos para el cálculo
   const domainServices = input.services.map((serviceInput) => {
-    const service = services.find((s) => s.id === serviceInput.serviceId);
+    const service = services.find((s) => s.id === serviceInput.serviceId)
     return {
       // biome-ignore lint/style/noNonNullAssertion: validated above
       serviceId: service!.id,
       // biome-ignore lint/style/noNonNullAssertion: validated above
       name: service!.name,
       // biome-ignore lint/style/noNonNullAssertion: validated above
-      unit: service!.unit as "unit" | "sqm" | "ml",
+      unit: service!.unit as 'unit' | 'sqm' | 'ml',
       // biome-ignore lint/style/noNonNullAssertion: validated above
       rate: service!.rate.toNumber(),
       // biome-ignore lint/style/noNonNullAssertion: validated above
       minimumBillingUnit: service!.minimumBillingUnit?.toNumber(),
       quantityOverride: serviceInput.quantity,
-    };
-  });
+    }
+  })
 
   const domainAdjustments = input.adjustments.map((adj) => ({
     adjustmentId: `adj-${performance.now()}-${Math.random()}`,
@@ -215,7 +211,7 @@ export async function calculatePriceWithColorUseCase(
     unit: adj.unit,
     value: adj.value,
     sign: adj.sign,
-  }));
+  }))
 
   // 5. Calcular precio base (sin color surcharge)
   const calculation = deps.calculatePrice({
@@ -237,30 +233,29 @@ export async function calculatePriceWithColorUseCase(
     },
     services: domainServices,
     adjustments: domainAdjustments,
-  });
+  })
 
   // 6. Calcular color surcharge si se proporciona colorId
-  let colorSurcharge = 0;
-  let colorSurchargePercentage = 0;
+  let colorSurcharge = 0
+  let colorSurchargePercentage = 0
 
   if (input.colorId) {
-    const modelColor = await deps.findModelColor(input.modelId, input.colorId);
+    const modelColor = await deps.findModelColor(input.modelId, input.colorId)
 
     if (!modelColor) {
-      throw new Error("Color no asignado a este modelo");
+      throw new Error('Color no asignado a este modelo')
     }
 
     if (!modelColor.color.isActive) {
-      throw new Error("Color no disponible");
+      throw new Error('Color no disponible')
     }
 
-    colorSurchargePercentage = modelColor.surchargePercentage;
+    colorSurchargePercentage = modelColor.surchargePercentage
     // Aplicar surcharge SOLO al dimPrice (precio del modelo)
-    colorSurcharge =
-      calculation.dimPrice * (colorSurchargePercentage / PERCENTAGE_DIVISOR);
+    colorSurcharge = calculation.dimPrice * (colorSurchargePercentage / PERCENTAGE_DIVISOR)
   }
 
-  const totalWithColor = calculation.subtotal + colorSurcharge;
+  const totalWithColor = calculation.subtotal + colorSurcharge
 
   return {
     basePrice: calculation.subtotal,
@@ -273,5 +268,5 @@ export async function calculatePriceWithColorUseCase(
       services: calculation.services,
       adjustments: calculation.adjustments,
     },
-  };
+  }
 }

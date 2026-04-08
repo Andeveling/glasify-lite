@@ -16,23 +16,23 @@
  * - RadioGroupItem hidden (sr-only), label provides visual UI
  */
 
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { RadioGroup } from "@/components/ui/radio-group";
-import { api } from "@/trpc/react";
-import { ColorChipOption } from "./_components/color-chip-option";
+import { useEffect, useState } from 'react'
+import { Badge } from '@/components/ui/badge'
+import { RadioGroup } from '@/components/ui/radio-group'
+import { api } from '@/trpc/react'
+import { ColorChipOption } from './_components/color-chip-option'
 
 // Constants
-const COLOR_CACHE_MINUTES = 5;
-const MINUTES_TO_MS = 60_000;
-const COLOR_STALE_TIME_MS = COLOR_CACHE_MINUTES * MINUTES_TO_MS;
-const GRID_BREAKPOINT = 6;
-const SKELETON_ITEM_COUNT = 3;
+const COLOR_CACHE_MINUTES = 5
+const MINUTES_TO_MS = 60_000
+const COLOR_STALE_TIME_MS = COLOR_CACHE_MINUTES * MINUTES_TO_MS
+const GRID_BREAKPOINT = 6
+const SKELETON_ITEM_COUNT = 3
 
 type ColorSelectorProps = {
-  modelId: string;
+  modelId: string
   /**
    * ⚠️ NEXT.JS WARNING (FALSE POSITIVE):
    * Next.js 15 shows warning about callback not being Server Action.
@@ -47,48 +47,43 @@ type ColorSelectorProps = {
    * - https://github.com/vercel/next.js/issues/54282
    * - This warning can be safely ignored for Client-to-Client callbacks
    */
-  onColorChange: (
-    colorId: string | undefined,
-    surchargePercentage: number
-  ) => void;
-};
+  onColorChange: (colorId: string | undefined, surchargePercentage: number) => void
+}
 
 /**
  * ColorSelector Component
  * Returns null if model has no colors assigned
  */
 export function ColorSelector({ modelId, onColorChange }: ColorSelectorProps) {
-  const [selectedColorId, setSelectedColorId] = useState<string | undefined>();
+  const [selectedColorId, setSelectedColorId] = useState<string | undefined>()
 
   // Fetch model colors
-  const { data, isLoading } = api.quote["get-model-colors-for-quote"].useQuery(
+  const { data, isLoading } = api.quote['get-model-colors-for-quote'].useQuery(
     { modelId },
     {
       staleTime: COLOR_STALE_TIME_MS, // 5 minutes (matches server cache)
-    }
-  );
+    },
+  )
 
   // Auto-select default color on mount
   useEffect(() => {
     if (data?.defaultColorId && !selectedColorId) {
-      setSelectedColorId(data.defaultColorId);
-      const defaultColor = data.colors.find(
-        (c) => c.color.id === data.defaultColorId
-      );
+      setSelectedColorId(data.defaultColorId)
+      const defaultColor = data.colors.find((c) => c.color.id === data.defaultColorId)
       if (defaultColor) {
-        onColorChange(data.defaultColorId, defaultColor.surchargePercentage);
+        onColorChange(data.defaultColorId, defaultColor.surchargePercentage)
       }
     }
-  }, [data, selectedColorId, onColorChange]);
+  }, [data, selectedColorId, onColorChange])
 
   // Handle color selection
   const handleColorSelect = (value: string) => {
-    const selectedColor = data?.colors.find((mc) => mc.color.id === value);
+    const selectedColor = data?.colors.find((mc) => mc.color.id === value)
     if (selectedColor) {
-      setSelectedColorId(value);
-      onColorChange(value, selectedColor.surchargePercentage);
+      setSelectedColorId(value)
+      onColorChange(value, selectedColor.surchargePercentage)
     }
-  };
+  }
 
   // Don't render if loading or no colors
   if (isLoading) {
@@ -104,14 +99,14 @@ export function ColorSelector({ modelId, onColorChange }: ColorSelectorProps) {
           ))}
         </div>
       </div>
-    );
+    )
   }
 
   if (!data?.hasColors) {
-    return null; // No color selector if model has no colors
+    return null // No color selector if model has no colors
   }
 
-  const useGrid = data.colors.length <= GRID_BREAKPOINT;
+  const useGrid = data.colors.length <= GRID_BREAKPOINT
 
   return (
     <div className="space-y-3">
@@ -120,8 +115,7 @@ export function ColorSelector({ modelId, onColorChange }: ColorSelectorProps) {
           Seleccione un Color
         </label>
         <Badge variant="secondary">
-          {data.colors.length}{" "}
-          {data.colors.length === 1 ? "opción" : "opciones"}
+          {data.colors.length} {data.colors.length === 1 ? 'opción' : 'opciones'}
         </Badge>
       </div>
 
@@ -129,8 +123,8 @@ export function ColorSelector({ modelId, onColorChange }: ColorSelectorProps) {
         aria-label="Selector de color"
         className={
           useGrid
-            ? "grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6"
-            : "flex gap-3 overflow-x-auto pb-2"
+            ? 'grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6'
+            : 'flex gap-3 overflow-x-auto pb-2'
         }
         id="color-selector"
         onValueChange={handleColorSelect}
@@ -147,5 +141,5 @@ export function ColorSelector({ modelId, onColorChange }: ColorSelectorProps) {
         ))}
       </RadioGroup>
     </div>
-  );
+  )
 }

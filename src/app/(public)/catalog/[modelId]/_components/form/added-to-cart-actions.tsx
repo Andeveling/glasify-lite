@@ -1,21 +1,16 @@
-"use client";
+'use client'
 
-import {
-  CheckCircle2,
-  LayoutGrid,
-  RotateCcw,
-  ShoppingCart,
-} from "lucide-react";
-import { motion } from "motion/react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { CheckCircle2, LayoutGrid, RotateCcw, ShoppingCart } from 'lucide-react'
+import { motion } from 'motion/react'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 
 type AddedToCartActionsProps = {
-  modelName: string;
-  onConfigureAnotherAction: () => void;
-  ref?: React.Ref<HTMLDivElement>;
-};
+  modelName: string
+  onConfigureAnotherAction: () => void
+  ref?: React.Ref<HTMLDivElement>
+}
 
 /**
  * Post-Add Actions Component
@@ -42,8 +37,8 @@ export function AddedToCartActions({
       ref={ref}
       transition={{
         duration: 0.4,
-        ease: "easeOut",
-        y: { damping: 15, stiffness: 100, type: "spring" },
+        ease: 'easeOut',
+        y: { damping: 15, stiffness: 100, type: 'spring' },
       }}
     >
       <Card className="border-1 border-accent/60 bg-accent p-6">
@@ -109,5 +104,5 @@ export function AddedToCartActions({
         </div>
       </Card>
     </motion.div>
-  );
+  )
 }

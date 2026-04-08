@@ -32,65 +32,53 @@
  * Public routes that don't require authentication
  * These routes are accessible to all users without auth checks
  */
-const PUBLIC_ROUTES = ["/", "/catalog", "/api/auth"] as const;
+const PUBLIC_ROUTES = ['/', '/catalog', '/api/auth'] as const
 
 /**
  * Protected routes that require authentication
  * Unauthenticated users will be redirected to catalog with signin modal
  */
-const PROTECTED_ROUTES = [
-  "/dashboard",
-  "/quotes",
-  "/quote",
-  "/my-quotes",
-] as const;
+const PROTECTED_ROUTES = ['/dashboard', '/quotes', '/quote', '/my-quotes'] as const
 
 /**
  * Admin-only routes (requires role: 'admin')
  * Non-admin users will be redirected to /my-quotes
  */
-const ADMIN_ONLY_ROUTES = [
-  "/dashboard/models",
-  "/dashboard/settings",
-  "/dashboard/tenant",
-] as const;
+const ADMIN_ONLY_ROUTES = ['/dashboard/models', '/dashboard/settings', '/dashboard/tenant'] as const
 
 /**
  * Seller or Admin routes (requires role: 'seller' | 'admin')
  * Regular users will be redirected to /my-quotes
  */
-const SELLER_OR_ADMIN_ROUTES = [
-  "/dashboard/quotes",
-  "/dashboard/users",
-] as const;
+const SELLER_OR_ADMIN_ROUTES = ['/dashboard/quotes', '/dashboard/users'] as const
 
 /**
  * Check if route is public and doesn't require authentication
  * Early return for public routes improves performance
  */
 export function isPublicRoute(pathname: string): boolean {
-  return PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
+  return PUBLIC_ROUTES.some((route) => pathname.startsWith(route))
 }
 
 /**
  * Check if route is protected and requires authentication
  */
 export function isProtectedRoute(pathname: string): boolean {
-  return PROTECTED_ROUTES.some((route) => pathname.startsWith(route));
+  return PROTECTED_ROUTES.some((route) => pathname.startsWith(route))
 }
 
 /**
  * Check if route is admin-only
  */
 export function isAdminOnlyRoute(pathname: string): boolean {
-  return ADMIN_ONLY_ROUTES.some((route) => pathname.startsWith(route));
+  return ADMIN_ONLY_ROUTES.some((route) => pathname.startsWith(route))
 }
 
 /**
  * Check if route requires seller or admin role
  */
 export function isSellerOrAdminRoute(pathname: string): boolean {
-  return SELLER_OR_ADMIN_ROUTES.some((route) => pathname.startsWith(route));
+  return SELLER_OR_ADMIN_ROUTES.some((route) => pathname.startsWith(route))
 }
 
 /**
@@ -99,45 +87,42 @@ export function isSellerOrAdminRoute(pathname: string): boolean {
  */
 export function shouldSkipMiddleware(pathname: string): boolean {
   return (
-    pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/_next/static") ||
-    pathname.startsWith("/_next/image") ||
-    pathname === "/favicon.ico"
-  );
+    pathname.startsWith('/api/auth') ||
+    pathname.startsWith('/_next/static') ||
+    pathname.startsWith('/_next/image') ||
+    pathname === '/favicon.ico'
+  )
 }
 
 /**
  * Check if pathname is dashboard home (with or without trailing slash)
  */
 export function isDashboardHome(pathname: string): boolean {
-  return pathname === "/dashboard" || pathname === "/dashboard/";
+  return pathname === '/dashboard' || pathname === '/dashboard/'
 }
 
 /**
  * User roles in RBAC system
  */
-export type UserRole = "admin" | "seller" | "user";
+export type UserRole = 'admin' | 'seller' | 'user'
 
 /**
  * Check if user has required role for route
  */
-export function hasRequiredRole(
-  userRole: UserRole | undefined,
-  pathname: string
-): boolean {
+export function hasRequiredRole(userRole: UserRole | undefined, pathname: string): boolean {
   if (isAdminOnlyRoute(pathname)) {
-    return userRole === "admin";
+    return userRole === 'admin'
   }
 
   if (isSellerOrAdminRoute(pathname)) {
-    return userRole === "admin" || userRole === "seller";
+    return userRole === 'admin' || userRole === 'seller'
   }
 
   // Protected routes require any authenticated user
   if (isProtectedRoute(pathname)) {
-    return !!userRole;
+    return !!userRole
   }
 
   // Public routes are accessible to everyone
-  return true;
+  return true
 }

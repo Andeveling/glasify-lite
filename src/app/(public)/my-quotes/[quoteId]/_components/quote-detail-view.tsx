@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 /**
  * QuoteDetailView Component (Refactored)
@@ -12,39 +12,28 @@
  * Uses centralized formatters from @lib/format with TenantConfig context.
  */
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { useTenantConfig } from "@/providers/tenant-config-provider";
-import type { QuoteDetailSchema } from "@/server/api/routers/quote/quote.schemas";
-import { QuoteDetailHeader } from "./quote-detail-header";
-import { type QuoteItemData, QuoteItemsGrid } from "./quote-items-grid";
-import { QuoteItemsTable } from "./quote-items-table";
-import { QuoteMainInfoCard } from "./quote-main-info-card";
-import { QuoteSentAlert } from "./quote-sent-alert";
-import { QuoteValidityNote } from "./quote-validity-note";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useTenantConfig } from '@/providers/tenant-config-provider'
+import type { QuoteDetailSchema } from '@/server/api/routers/quote/quote.schemas'
+import { QuoteDetailHeader } from './quote-detail-header'
+import { type QuoteItemData, QuoteItemsGrid } from './quote-items-grid'
+import { QuoteItemsTable } from './quote-items-table'
+import { QuoteMainInfoCard } from './quote-main-info-card'
+import { QuoteSentAlert } from './quote-sent-alert'
+import { QuoteValidityNote } from './quote-validity-note'
 
 type QuoteDetailViewProps = {
-  quote: QuoteDetailSchema;
+  quote: QuoteDetailSchema
   /** Whether this is the public user view (vs admin dashboard view) */
-  isPublicView?: boolean;
-};
+  isPublicView?: boolean
+}
 
-export function QuoteDetailView({
-  isPublicView = false,
-  quote,
-}: QuoteDetailViewProps) {
-  const tenantConfig = useTenantConfig();
+export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailViewProps) {
+  const tenantConfig = useTenantConfig()
 
   // Navigation configuration
-  const backLink = isPublicView ? "/my-quotes" : "/admin/quotes";
-  const backLabel = isPublicView
-    ? "Volver a mis cotizaciones"
-    : "Volver a cotizaciones";
+  const backLink = isPublicView ? '/my-quotes' : '/admin/quotes'
+  const backLabel = isPublicView ? 'Volver a mis cotizaciones' : 'Volver a cotizaciones'
 
   // Transform quote items for grid display
   const gridItems: QuoteItemData[] = quote.items.map((item) => ({
@@ -55,7 +44,7 @@ export function QuoteDetailView({
     modelImageUrl: item.modelImageUrl,
     modelName: item.modelName,
     width: item.widthMm ? Math.round(item.widthMm / 10) : null, // Convert mm to cm
-  }));
+  }))
 
   return (
     <div className="space-y-6">
@@ -78,9 +67,7 @@ export function QuoteDetailView({
         <Card>
           <CardHeader>
             <CardTitle>Vista de productos</CardTitle>
-            <CardDescription>
-              Haga clic en una imagen para ver detalles completos
-            </CardDescription>
+            <CardDescription>Haga clic en una imagen para ver detalles completos</CardDescription>
           </CardHeader>
           <CardContent>
             <QuoteItemsGrid eager items={gridItems} />
@@ -98,11 +85,8 @@ export function QuoteDetailView({
 
       {/* Validity note - only for public view */}
       {isPublicView && (
-        <QuoteValidityNote
-          tenantConfig={tenantConfig}
-          validUntil={quote.validUntil}
-        />
+        <QuoteValidityNote tenantConfig={tenantConfig} validUntil={quote.validUntil} />
       )}
     </div>
-  );
+  )
 }

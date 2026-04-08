@@ -18,49 +18,44 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from "next";
-import { api } from "@/trpc/server-client";
-import { ServicesContent } from "./_components/services-content";
+import type { Metadata } from 'next'
+import { api } from '@/trpc/server-client'
+import { ServicesContent } from './_components/services-content'
 
 export const metadata: Metadata = {
-  description:
-    "Administra los servicios y sus tarifas: instalación, transporte, acabados",
-  title: "Gestión de Servicios | Admin",
-};
+  description: 'Administra los servicios y sus tarifas: instalación, transporte, acabados',
+  title: 'Gestión de Servicios | Admin',
+}
 
 // Force dynamic rendering - requires database connection
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic'
 
 type SearchParams = Promise<{
-  isActive?: string;
-  page?: string;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-  type?: string;
-}>;
+  isActive?: string
+  page?: string
+  search?: string
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
+  type?: string
+}>
 
 type PageProps = {
-  searchParams: SearchParams;
-};
+  searchParams: SearchParams
+}
 
 export default async function ServicesPage({ searchParams }: PageProps) {
-  const params = await searchParams;
+  const params = await searchParams
 
   // Parse search params (outside Suspense)
-  const page = Number(params.page) || 1;
-  const search =
-    params.search && params.search !== "" ? params.search : undefined;
-  const type = params.type && params.type !== "all" ? params.type : undefined;
-  const isActive = (
-    params.isActive && params.isActive !== "all" ? params.isActive : "all"
-  ) as "all" | "active" | "inactive";
-  const sortBy = (params.sortBy || "name") as
-    | "name"
-    | "createdAt"
-    | "updatedAt"
-    | "rate";
-  const sortOrder = (params.sortOrder || "asc") as "asc" | "desc";
+  const page = Number(params.page) || 1
+  const search = params.search && params.search !== '' ? params.search : undefined
+  const type = params.type && params.type !== 'all' ? params.type : undefined
+  const isActive = (params.isActive && params.isActive !== 'all' ? params.isActive : 'all') as
+    | 'all'
+    | 'active'
+    | 'inactive'
+  const sortBy = (params.sortBy || 'name') as 'name' | 'createdAt' | 'updatedAt' | 'rate'
+  const sortOrder = (params.sortOrder || 'asc') as 'asc' | 'desc'
 
   // Fetch data OUTSIDE Suspense to avoid EventEmitter memory leak
   const initialData = await api.admin.service.list({
@@ -70,12 +65,8 @@ export default async function ServicesPage({ searchParams }: PageProps) {
     search,
     sortBy,
     sortOrder,
-    type: (type === "all" ? "all" : type) as
-      | "all"
-      | "area"
-      | "perimeter"
-      | "fixed",
-  });
+    type: (type === 'all' ? 'all' : type) as 'all' | 'area' | 'perimeter' | 'fixed',
+  })
 
   // Transform Decimal fields to number for Client Component serialization
   const serializedData = {
@@ -85,7 +76,7 @@ export default async function ServicesPage({ searchParams }: PageProps) {
       rate: service.rate.toNumber(),
       minimumBillingUnit: service.minimumBillingUnit?.toNumber() ?? null,
     })),
-  };
+  }
 
   const searchParamsForClient = {
     isActive,
@@ -94,7 +85,7 @@ export default async function ServicesPage({ searchParams }: PageProps) {
     sortBy,
     sortOrder,
     type,
-  };
+  }
 
   return (
     <div className="space-y-6">
@@ -102,16 +93,12 @@ export default async function ServicesPage({ searchParams }: PageProps) {
       <div>
         <h1 className="font-bold text-3xl tracking-tight">Servicios</h1>
         <p className="text-muted-foreground">
-          Gestiona los servicios adicionales para cotizaciones (instalación,
-          entrega, etc.)
+          Gestiona los servicios adicionales para cotizaciones (instalación, entrega, etc.)
         </p>
       </div>
 
       {/* Content with filters and table */}
-      <ServicesContent
-        initialData={serializedData}
-        searchParams={searchParamsForClient}
-      />
+      <ServicesContent initialData={serializedData} searchParams={searchParamsForClient} />
     </div>
-  );
+  )
 }

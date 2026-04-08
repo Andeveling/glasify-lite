@@ -1,8 +1,8 @@
-"use client";
+'use client'
 
-import { ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
 
 /**
  * Back Button Component
@@ -11,16 +11,16 @@ import { Button } from "@/components/ui/button";
  * Used in error pages to allow users to go back to previous page.
  */
 export function BackButton() {
-  const router = useRouter();
+  const router = useRouter()
 
   const handleBack = () => {
-    router.back();
-  };
+    router.back()
+  }
 
   return (
     <Button className="gap-2" onClick={handleBack} variant="ghost">
       <ArrowLeft className="h-4 w-4" />
       Página Anterior
     </Button>
-  );
+  )
 }

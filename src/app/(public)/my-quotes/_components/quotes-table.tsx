@@ -1,13 +1,13 @@
-"use client";
+'use client'
 
-import { MoreHorizontal } from "lucide-react";
-import Link from "next/link";
-import { TableFilters } from "@/app/_components/server-table/table-filters";
-import { TablePagination } from "@/app/_components/server-table/table-pagination";
-import { TableSearch } from "@/app/_components/server-table/table-search";
-import { useTenantConfig } from "@/app/_hooks/use-tenant-config";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { MoreHorizontal } from 'lucide-react'
+import Link from 'next/link'
+import { TableFilters } from '@/app/_components/server-table/table-filters'
+import { TablePagination } from '@/app/_components/server-table/table-pagination'
+import { TableSearch } from '@/app/_components/server-table/table-search'
+import { useTenantConfig } from '@/app/_hooks/use-tenant-config'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,37 +15,37 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { formatCurrency } from "@/lib/format";
+} from '@/components/ui/dropdown-menu'
+import { formatCurrency } from '@/lib/format'
 
-type QuoteStatus = "draft" | "sent" | "canceled";
+type QuoteStatus = 'draft' | 'sent' | 'canceled'
 
 type Quote = {
-  id: string;
-  projectName: string;
-  status: QuoteStatus;
-  total: number;
-  currency: string;
-  itemCount: number;
-  createdAt: Date;
-  isExpired: boolean;
-  validUntil: Date | null;
-  sentAt: Date | null;
-};
+  id: string
+  projectName: string
+  status: QuoteStatus
+  total: number
+  currency: string
+  itemCount: number
+  createdAt: Date
+  isExpired: boolean
+  validUntil: Date | null
+  sentAt: Date | null
+}
 
 type QuotesTableData = {
-  quotes: Quote[];
-  total: number;
-  page: number;
-  totalPages: number;
-  limit: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-};
+  quotes: Quote[]
+  total: number
+  page: number
+  totalPages: number
+  limit: number
+  hasNextPage: boolean
+  hasPreviousPage: boolean
+}
 
 type QuotesTableProps = {
-  data: QuotesTableData;
-};
+  data: QuotesTableData
+}
 
 /**
  * QuotesTable Component
@@ -60,7 +60,7 @@ type QuotesTableProps = {
  * Uses the established ServerTable pattern with reusable molecules.
  */
 export function QuotesTable({ data }: QuotesTableProps) {
-  const { formatContext } = useTenantConfig();
+  const { formatContext } = useTenantConfig()
   return (
     <div className="space-y-4">
       {/* Search and Filters - Mobile stacked, Desktop in row */}
@@ -75,26 +75,26 @@ export function QuotesTable({ data }: QuotesTableProps) {
           <TableFilters
             filters={[
               {
-                id: "status",
-                label: "Estado",
+                id: 'status',
+                label: 'Estado',
                 options: [
-                  { label: "Todos", value: "all" },
-                  { label: "Borrador", value: "draft" },
-                  { label: "Enviada", value: "sent" },
-                  { label: "Cancelada", value: "canceled" },
+                  { label: 'Todos', value: 'all' },
+                  { label: 'Borrador', value: 'draft' },
+                  { label: 'Enviada', value: 'sent' },
+                  { label: 'Cancelada', value: 'canceled' },
                 ],
-                type: "select",
+                type: 'select',
               },
               {
-                id: "sort",
-                label: "Ordenar por",
+                id: 'sort',
+                label: 'Ordenar por',
                 options: [
-                  { label: "Más recientes", value: "newest" },
-                  { label: "Más antiguas", value: "oldest" },
-                  { label: "Precio: Mayor a menor", value: "price-high" },
-                  { label: "Precio: Menor a mayor", value: "price-low" },
+                  { label: 'Más recientes', value: 'newest' },
+                  { label: 'Más antiguas', value: 'oldest' },
+                  { label: 'Precio: Mayor a menor', value: 'price-high' },
+                  { label: 'Precio: Menor a mayor', value: 'price-low' },
                 ],
-                type: "select",
+                type: 'select',
               },
             ]}
           />
@@ -104,15 +104,11 @@ export function QuotesTable({ data }: QuotesTableProps) {
       {/* Results Count */}
       <div className="text-muted-foreground text-sm">
         {data.total === 0 ? (
-          "No se encontraron cotizaciones"
+          'No se encontraron cotizaciones'
         ) : (
           <>
-            Mostrando{" "}
-            <span className="font-medium text-foreground">
-              {data.quotes.length}
-            </span>{" "}
-            de <span className="font-medium text-foreground">{data.total}</span>{" "}
-            cotizaciones
+            Mostrando <span className="font-medium text-foreground">{data.quotes.length}</span> de{' '}
+            <span className="font-medium text-foreground">{data.total}</span> cotizaciones
           </>
         )}
       </div>
@@ -123,42 +119,24 @@ export function QuotesTable({ data }: QuotesTableProps) {
           <table className="w-full">
             <thead className="bg-muted/50">
               <tr>
-                <th className="px-4 py-3 text-left font-medium text-sm">
-                  Proyecto
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-sm">
-                  Estado
-                </th>
-                <th className="px-4 py-3 text-right font-medium text-sm">
-                  Total
-                </th>
-                <th className="px-4 py-3 text-center font-medium text-sm">
-                  Items
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-sm">
-                  Fecha
-                </th>
-                <th className="px-4 py-3 text-right font-medium text-sm">
-                  Acciones
-                </th>
+                <th className="px-4 py-3 text-left font-medium text-sm">Proyecto</th>
+                <th className="px-4 py-3 text-left font-medium text-sm">Estado</th>
+                <th className="px-4 py-3 text-right font-medium text-sm">Total</th>
+                <th className="px-4 py-3 text-center font-medium text-sm">Items</th>
+                <th className="px-4 py-3 text-left font-medium text-sm">Fecha</th>
+                <th className="px-4 py-3 text-right font-medium text-sm">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y">
               {data.quotes.length === 0 ? (
                 <tr>
-                  <td
-                    className="px-4 py-8 text-center text-muted-foreground"
-                    colSpan={6}
-                  >
+                  <td className="px-4 py-8 text-center text-muted-foreground" colSpan={6}>
                     No hay cotizaciones para mostrar
                   </td>
                 </tr>
               ) : (
                 data.quotes.map((quote) => (
-                  <tr
-                    className="transition-colors hover:bg-muted/50"
-                    key={quote.id}
-                  >
+                  <tr className="transition-colors hover:bg-muted/50" key={quote.id}>
                     <td className="px-4 py-3">
                       <div>
                         <Link
@@ -167,9 +145,7 @@ export function QuotesTable({ data }: QuotesTableProps) {
                         >
                           {quote.projectName}
                         </Link>
-                        {quote.isExpired && (
-                          <p className="text-destructive text-xs">Vencida</p>
-                        )}
+                        {quote.isExpired && <p className="text-destructive text-xs">Vencida</p>}
                       </div>
                     </td>
                     <td className="px-4 py-3">
@@ -183,15 +159,10 @@ export function QuotesTable({ data }: QuotesTableProps) {
                     </td>
                     <td className="px-4 py-3 text-sm">
                       <div>
-                        <p>
-                          {new Date(quote.createdAt).toLocaleDateString(
-                            "es-ES"
-                          )}
-                        </p>
+                        <p>{new Date(quote.createdAt).toLocaleDateString('es-ES')}</p>
                         {quote.sentAt && (
                           <p className="text-muted-foreground text-xs">
-                            Enviada:{" "}
-                            {new Date(quote.sentAt).toLocaleDateString("es-ES")}
+                            Enviada: {new Date(quote.sentAt).toLocaleDateString('es-ES')}
                           </p>
                         )}
                       </div>
@@ -216,7 +187,7 @@ export function QuotesTable({ data }: QuotesTableProps) {
         />
       )}
     </div>
-  );
+  )
 }
 
 /**
@@ -226,18 +197,18 @@ function QuoteStatusBadge({ status }: { status: QuoteStatus }) {
   const config: Record<
     QuoteStatus,
     {
-      label: string;
-      variant: "default" | "secondary" | "destructive" | "outline";
+      label: string
+      variant: 'default' | 'secondary' | 'destructive' | 'outline'
     }
   > = {
-    canceled: { label: "Cancelada", variant: "destructive" },
-    draft: { label: "Borrador", variant: "secondary" },
-    sent: { label: "Enviada", variant: "default" },
-  };
+    canceled: { label: 'Cancelada', variant: 'destructive' },
+    draft: { label: 'Borrador', variant: 'secondary' },
+    sent: { label: 'Enviada', variant: 'default' },
+  }
 
-  const { label, variant } = config[status];
+  const { label, variant } = config[status]
 
-  return <Badge variant={variant}>{label}</Badge>;
+  return <Badge variant={variant}>{label}</Badge>
 }
 
 /**
@@ -269,5 +240,5 @@ function QuoteActionsMenu({ quoteId }: { quoteId: string }) {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
 }

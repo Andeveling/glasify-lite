@@ -1,42 +1,36 @@
-"use client";
+'use client'
 
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { CartesianGrid, Line, LineChart, XAxis } from 'recharts'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart";
-import { formatNumber } from "@/lib/format";
-import type { TrendDataPoint } from "@/types/dashboard";
-import { EmptyDashboardState } from "./empty-dashboard-state";
+} from '@/components/ui/chart'
+import { formatNumber } from '@/lib/format'
+import type { TrendDataPoint } from '@/types/dashboard'
+import { EmptyDashboardState } from './empty-dashboard-state'
 
 const chartConfig = {
   count: {
-    color: "var(--chart-1)",
-    label: "Cotizaciones",
+    color: 'var(--chart-1)',
+    label: 'Cotizaciones',
   },
-} satisfies ChartConfig;
+} satisfies ChartConfig
 
 type QuotesTrendChartProps = {
   /**
    * Trend data points from tRPC query
    * Each point has: date (ISO string), count (number), label (formatted string)
    */
-  data: TrendDataPoint[];
+  data: TrendDataPoint[]
 
   /**
    * Period label for chart title (e.g., "Últimos 30 días")
    */
-  periodLabel: string;
-};
+  periodLabel: string
+}
 
 /**
  * QuotesTrendChart Component
@@ -70,10 +64,10 @@ export function QuotesTrendChart({ data, periodLabel }: QuotesTrendChartProps) {
         description="No hay cotizaciones para mostrar en este período."
         title="Sin datos de tendencia"
       />
-    );
+    )
   }
 
-  const total = data.reduce((acc, curr) => acc + curr.count, 0);
+  const total = data.reduce((acc, curr) => acc + curr.count, 0)
 
   return (
     <Card className="py-4 sm:py-0">
@@ -92,10 +86,7 @@ export function QuotesTrendChart({ data, periodLabel }: QuotesTrendChartProps) {
         </div>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
-        <ChartContainer
-          className="aspect-auto h-[250px] w-full"
-          config={chartConfig}
-        >
+        <ChartContainer className="aspect-auto h-[250px] w-full" config={chartConfig}>
           <LineChart
             accessibilityLayer
             data={data}
@@ -112,11 +103,7 @@ export function QuotesTrendChart({ data, periodLabel }: QuotesTrendChartProps) {
               tickLine={false}
               tickMargin={8}
             />
-            <ChartTooltip
-              content={
-                <ChartTooltipContent className="w-[150px]" nameKey="count" />
-              }
-            />
+            <ChartTooltip content={<ChartTooltipContent className="w-[150px]" nameKey="count" />} />
             <Line
               dataKey="count"
               dot={false}
@@ -128,5 +115,5 @@ export function QuotesTrendChart({ data, periodLabel }: QuotesTrendChartProps) {
         </ChartContainer>
       </CardContent>
     </Card>
-  );
+  )
 }

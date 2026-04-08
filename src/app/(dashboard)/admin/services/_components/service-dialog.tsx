@@ -19,11 +19,11 @@
  * - Cache invalidation after mutations
  */
 
-"use client";
+'use client'
 
-import type { Service, ServiceType } from "@prisma/generated/client";
-import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import type { Service, ServiceType } from '@prisma/generated/client'
+import { Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -31,7 +31,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -40,53 +40,50 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import {
-  MAX_NAME_LENGTH,
-  MIN_NAME_LENGTH,
-} from "@/lib/validations/admin/service.schema";
-import { useServiceForm } from "../_hooks/use-service-form";
-import { useServiceMutations } from "../_hooks/use-service-mutations";
+} from '@/components/ui/select'
+import { MAX_NAME_LENGTH, MIN_NAME_LENGTH } from '@/lib/validations/admin/service.schema'
+import { useServiceForm } from '../_hooks/use-service-form'
+import { useServiceMutations } from '../_hooks/use-service-mutations'
 
 type ServiceDialogProps = {
-  mode: "create" | "edit";
-  open: boolean;
-  onOpenChangeAction: (open: boolean) => void;
-  defaultValues?: Service;
-};
+  mode: 'create' | 'edit'
+  open: boolean
+  onOpenChangeAction: (open: boolean) => void
+  defaultValues?: Service
+}
 
 /**
  * Service type options (Spanish labels)
  */
 const SERVICE_TYPE_OPTIONS: {
-  label: string;
-  value: ServiceType;
-  description: string;
+  label: string
+  value: ServiceType
+  description: string
 }[] = [
   {
-    description: "Precio fijo independiente de dimensiones",
-    label: "Fijo",
-    value: "fixed",
+    description: 'Precio fijo independiente de dimensiones',
+    label: 'Fijo',
+    value: 'fixed',
   },
   {
-    description: "Calculado por área del producto (m²)",
-    label: "Área",
-    value: "area",
+    description: 'Calculado por área del producto (m²)',
+    label: 'Área',
+    value: 'area',
   },
   {
-    description: "Calculado por perímetro del producto (ml)",
-    label: "Perímetro",
-    value: "perimeter",
+    description: 'Calculado por perímetro del producto (ml)',
+    label: 'Perímetro',
+    value: 'perimeter',
   },
-];
+]
 
 export function ServiceDialog({
   mode,
@@ -99,43 +96,38 @@ export function ServiceDialog({
     defaultValues,
     mode,
     open,
-  });
+  })
 
   const { handleCreate, handleUpdate, isPending } = useServiceMutations({
     onSuccess: () => {
-      onOpenChangeAction(false);
-      form.reset();
+      onOpenChangeAction(false)
+      form.reset()
     },
-  });
+  })
 
   // Handle form submission - routes to create or update
   const handleSubmit = (formData: Parameters<typeof handleCreate>[0]) => {
-    if (mode === "create") {
-      handleCreate(formData);
+    if (mode === 'create') {
+      handleCreate(formData)
     } else if (defaultValues?.id) {
-      handleUpdate(defaultValues.id, formData);
+      handleUpdate(defaultValues.id, formData)
     }
-  };
+  }
 
   return (
     <Dialog onOpenChange={onOpenChangeAction} open={open}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>
-            {mode === "create" ? "Nuevo Servicio" : "Editar Servicio"}
-          </DialogTitle>
+          <DialogTitle>{mode === 'create' ? 'Nuevo Servicio' : 'Editar Servicio'}</DialogTitle>
           <DialogDescription>
-            {mode === "create"
-              ? "Crea un nuevo servicio adicional para cotizaciones"
-              : "Actualiza la información del servicio"}
+            {mode === 'create'
+              ? 'Crea un nuevo servicio adicional para cotizaciones'
+              : 'Actualiza la información del servicio'}
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form
-            className="space-y-4"
-            onSubmit={form.handleSubmit(handleSubmit)}
-          >
+          <form className="space-y-4" onSubmit={form.handleSubmit(handleSubmit)}>
             {/* Service Name */}
             <FormField
               control={form.control}
@@ -153,8 +145,7 @@ export function ServiceDialog({
                     />
                   </FormControl>
                   <FormDescription>
-                    Mínimo {MIN_NAME_LENGTH} caracteres, máximo{" "}
-                    {MAX_NAME_LENGTH}
+                    Mínimo {MIN_NAME_LENGTH} caracteres, máximo {MAX_NAME_LENGTH}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -192,8 +183,8 @@ export function ServiceDialog({
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    Determina cómo se calcula el costo del servicio (la unidad
-                    se asigna automáticamente)
+                    Determina cómo se calcula el costo del servicio (la unidad se asigna
+                    automáticamente)
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -208,7 +199,7 @@ export function ServiceDialog({
             />
 
             {/* Minimum Billing Unit - Only visible for area/perimeter services */}
-            {(watchedType === "area" || watchedType === "perimeter") && (
+            {(watchedType === 'area' || watchedType === 'perimeter') && (
               <FormField
                 control={form.control}
                 name="minimumBillingUnit"
@@ -222,23 +213,18 @@ export function ServiceDialog({
                         disabled={isPending}
                         min="0.01"
                         onChange={(e) =>
-                          field.onChange(
-                            e.target.value
-                              ? Number.parseFloat(e.target.value)
-                              : null
-                          )
+                          field.onChange(e.target.value ? Number.parseFloat(e.target.value) : null)
                         }
                         placeholder="Ej: 1.0"
                         step="0.01"
                         type="number"
-                        value={field.value ?? ""}
+                        value={field.value ?? ''}
                       />
                     </FormControl>
                     <FormDescription>
-                      Cantidad mínima a cobrar (en{" "}
-                      {watchedType === "area" ? "m²" : "ml"}). Si el cálculo es
-                      menor, se cobra el mínimo. Ejemplo: Si mínimo = 1.0m² y
-                      área = 0.25m², se cobra 1.0m².
+                      Cantidad mínima a cobrar (en {watchedType === 'area' ? 'm²' : 'ml'}). Si el
+                      cálculo es menor, se cobra el mínimo. Ejemplo: Si mínimo = 1.0m² y área =
+                      0.25m², se cobra 1.0m².
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -259,9 +245,7 @@ export function ServiceDialog({
                       className="w-full"
                       disabled={isPending}
                       min="0.01"
-                      onChange={(e) =>
-                        field.onChange(Number.parseFloat(e.target.value))
-                      }
+                      onChange={(e) => field.onChange(Number.parseFloat(e.target.value))}
                       placeholder="0.00"
                       step="0.01"
                       type="number"
@@ -286,12 +270,12 @@ export function ServiceDialog({
               </Button>
               <Button disabled={isPending} type="submit">
                 {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {mode === "create" ? "Crear Servicio" : "Guardar Cambios"}
+                {mode === 'create' ? 'Crear Servicio' : 'Guardar Cambios'}
               </Button>
             </DialogFooter>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

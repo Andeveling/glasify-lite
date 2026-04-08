@@ -11,12 +11,12 @@
  * const { createAddress, updateAddress, deleteAddress } = useAddressMutations();
  */
 
-"use client";
+'use client'
 
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import type { ProjectAddressInput } from "@/app/(dashboard)/admin/quotes/_schemas/project-address.schema";
-import { api } from "@/trpc/react";
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+import type { ProjectAddressInput } from '@/app/(dashboard)/admin/quotes/_schemas/project-address.schema'
+import { api } from '@/trpc/react'
 
 /**
  * Hook for managing address mutations (create, update, delete)
@@ -41,11 +41,11 @@ import { api } from "@/trpc/react";
  * }
  */
 export function useAddressMutations(options?: {
-  onSuccess?: () => void;
-  onError?: (error: unknown) => void;
+  onSuccess?: () => void
+  onError?: (error: unknown) => void
 }) {
-  const router = useRouter();
-  const utils = api.useUtils();
+  const router = useRouter()
+  const utils = api.useUtils()
 
   /**
    * Create new address mutation
@@ -55,25 +55,25 @@ export function useAddressMutations(options?: {
       // Step 1: Invalidate query cache
       utils.address.invalidate().catch(() => {
         // Ignore cache invalidation errors
-      });
+      })
       utils.quote.invalidate().catch(() => {
         // Ignore cache invalidation errors
-      });
+      })
 
       // Step 2: Re-fetch server data (SSR pattern)
-      router.refresh();
+      router.refresh()
 
       // Step 3: User feedback
-      toast.success("Dirección de entrega guardada correctamente");
+      toast.success('Dirección de entrega guardada correctamente')
 
       // Step 4: Custom callback
-      options?.onSuccess?.();
+      options?.onSuccess?.()
     },
     onError: (error) => {
-      toast.error(error.message || "Error al guardar la dirección de entrega");
-      options?.onError?.(error);
+      toast.error(error.message || 'Error al guardar la dirección de entrega')
+      options?.onError?.(error)
     },
-  });
+  })
 
   /**
    * Update existing address mutation
@@ -83,27 +83,25 @@ export function useAddressMutations(options?: {
       // Step 1: Invalidate query cache
       utils.address.invalidate().catch(() => {
         // Ignore cache invalidation errors
-      });
+      })
       utils.quote.invalidate().catch(() => {
         // Ignore cache invalidation errors
-      });
+      })
 
       // Step 2: Re-fetch server data (SSR pattern)
-      router.refresh();
+      router.refresh()
 
       // Step 3: User feedback
-      toast.success("Dirección de entrega actualizada correctamente");
+      toast.success('Dirección de entrega actualizada correctamente')
 
       // Step 4: Custom callback
-      options?.onSuccess?.();
+      options?.onSuccess?.()
     },
     onError: (error) => {
-      toast.error(
-        error.message || "Error al actualizar la dirección de entrega"
-      );
-      options?.onError?.(error);
+      toast.error(error.message || 'Error al actualizar la dirección de entrega')
+      options?.onError?.(error)
     },
-  });
+  })
 
   /**
    * Delete address mutation
@@ -113,31 +111,30 @@ export function useAddressMutations(options?: {
       // Step 1: Invalidate query cache
       utils.address.invalidate().catch(() => {
         // Ignore cache invalidation errors
-      });
+      })
       utils.quote.invalidate().catch(() => {
         // Ignore cache invalidation errors
-      });
+      })
 
       // Step 2: Re-fetch server data (SSR pattern)
-      router.refresh();
+      router.refresh()
 
       // Step 3: User feedback
-      toast.success("Dirección de entrega eliminada correctamente");
+      toast.success('Dirección de entrega eliminada correctamente')
 
       // Step 4: Custom callback
-      options?.onSuccess?.();
+      options?.onSuccess?.()
     },
     onError: (error) => {
-      toast.error(error.message || "Error al eliminar la dirección de entrega");
-      options?.onError?.(error);
+      toast.error(error.message || 'Error al eliminar la dirección de entrega')
+      options?.onError?.(error)
     },
-  });
+  })
 
   return {
     // Create
     createAddress: (data: ProjectAddressInput) => createMutation.mutate(data),
-    createAddressAsync: (data: ProjectAddressInput) =>
-      createMutation.mutateAsync(data),
+    createAddressAsync: (data: ProjectAddressInput) => createMutation.mutateAsync(data),
     isCreating: createMutation.isPending,
     createError: createMutation.error,
 
@@ -156,15 +153,12 @@ export function useAddressMutations(options?: {
     deleteError: deleteMutation.error,
 
     // Combined states
-    isMutating:
-      createMutation.isPending ||
-      updateMutation.isPending ||
-      deleteMutation.isPending,
+    isMutating: createMutation.isPending || updateMutation.isPending || deleteMutation.isPending,
     hasError:
       Boolean(createMutation.error) ||
       Boolean(updateMutation.error) ||
       Boolean(deleteMutation.error),
-  };
+  }
 }
 
 /**
@@ -180,27 +174,24 @@ export function useAddressMutations(options?: {
  *   return <div>{address?.city}</div>;
  * }
  */
-export function useAddressQueries(params?: {
-  addressId?: string;
-  quoteId?: string;
-}) {
+export function useAddressQueries(params?: { addressId?: string; quoteId?: string }) {
   // Get address by ID
   const addressQuery = api.address.getById.useQuery(
-    { id: params?.addressId ?? "" },
+    { id: params?.addressId ?? '' },
     {
       enabled: Boolean(params?.addressId),
       staleTime: 60_000, // 1 minute
-    }
-  );
+    },
+  )
 
   // List addresses by quote
   const addressListQuery = api.address.listByQuote.useQuery(
-    { quoteId: params?.quoteId ?? "" },
+    { quoteId: params?.quoteId ?? '' },
     {
       enabled: Boolean(params?.quoteId),
       staleTime: 60_000, // 1 minute
-    }
-  );
+    },
+  )
 
   return {
     // Single address
@@ -218,5 +209,5 @@ export function useAddressQueries(params?: {
     // Combined states
     isLoading: addressQuery.isLoading || addressListQuery.isLoading,
     hasError: Boolean(addressQuery.error) || Boolean(addressListQuery.error),
-  };
+  }
 }

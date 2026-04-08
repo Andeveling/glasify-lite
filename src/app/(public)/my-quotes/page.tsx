@@ -1,11 +1,11 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { BackLink } from "@/components/ui/back-link";
-import logger from "@/lib/logger";
-import { auth } from "@/server/auth";
-import { api } from "@/trpc/server-client";
-import { EmptyQuotesState } from "./_components/empty-quotes-state";
-import { QuotesTable } from "./_components/quotes-table";
+import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { BackLink } from '@/components/ui/back-link'
+import logger from '@/lib/logger'
+import { auth } from '@/server/auth'
+import { api } from '@/trpc/server-client'
+import { EmptyQuotesState } from './_components/empty-quotes-state'
+import { QuotesTable } from './_components/quotes-table'
 
 /**
  * CRITICAL: Dynamic rendering required
@@ -13,16 +13,16 @@ import { QuotesTable } from "./_components/quotes-table";
  * This page uses headers() for authentication and PublicLayout with database queries.
  * Already dynamic due to headers() but explicit declaration prevents accidental removal.
  */
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic'
 
 type MyQuotesPageProps = {
   searchParams?: Promise<{
-    page?: string;
-    status?: string;
-    q?: string;
-    sort?: string;
-  }>;
-};
+    page?: string
+    status?: string
+    q?: string
+    sort?: string
+  }>
+}
 
 /**
  * My Quotes Page (Public - User's Own Quotes)
@@ -41,55 +41,45 @@ type MyQuotesPageProps = {
  *
  * @route /my-quotes
  */
-export default async function MyQuotesPage({
-  searchParams,
-}: MyQuotesPageProps) {
+export default async function MyQuotesPage({ searchParams }: MyQuotesPageProps) {
   // Check authentication
   const session = await auth.api.getSession({
     headers: await headers(),
-  });
+  })
 
   if (!session?.user) {
-    logger.warn(
-      "[MyQuotesPage] Unauthenticated user attempted to access quotes",
-      {
-        redirectTo: "/catalog",
-      }
-    );
+    logger.warn('[MyQuotesPage] Unauthenticated user attempted to access quotes', {
+      redirectTo: '/catalog',
+    })
 
     // Redirect to catalog instead of /api/auth/signin (no broken page)
-    redirect("/catalog");
+    redirect('/catalog')
   }
 
-  const params = await searchParams;
-  const page = Number(params?.page) || 1;
-  const status = params?.status as "draft" | "sent" | "canceled" | undefined;
-  const searchQuery = params?.q ?? undefined;
-  const sortBy = params?.sort as
-    | "newest"
-    | "oldest"
-    | "price-high"
-    | "price-low"
-    | undefined;
+  const params = await searchParams
+  const page = Number(params?.page) || 1
+  const status = params?.status as 'draft' | 'sent' | 'canceled' | undefined
+  const searchQuery = params?.q ?? undefined
+  const sortBy = params?.sort as 'newest' | 'oldest' | 'price-high' | 'price-low' | undefined
 
   // Map frontend sort values to backend format
   const getSortParams = (sortOption?: string) => {
     switch (sortOption) {
-      case "oldest":
-        return { sortBy: "createdAt" as const, sortOrder: "asc" as const };
-      case "price-high":
-        return { sortBy: "total" as const, sortOrder: "desc" as const };
-      case "price-low":
-        return { sortBy: "total" as const, sortOrder: "asc" as const };
+      case 'oldest':
+        return { sortBy: 'createdAt' as const, sortOrder: 'asc' as const }
+      case 'price-high':
+        return { sortBy: 'total' as const, sortOrder: 'desc' as const }
+      case 'price-low':
+        return { sortBy: 'total' as const, sortOrder: 'asc' as const }
       default:
-        return { sortBy: "createdAt" as const, sortOrder: "desc" as const };
+        return { sortBy: 'createdAt' as const, sortOrder: 'desc' as const }
     }
-  };
+  }
 
-  const { sortBy: backendSortBy, sortOrder } = getSortParams(sortBy);
+  const { sortBy: backendSortBy, sortOrder } = getSortParams(sortBy)
 
   // Fetch user's quotes with filters
-  const result = await api.quote["list-user-quotes"]({
+  const result = await api.quote['list-user-quotes']({
     includeExpired: false,
     limit: 10,
     page,
@@ -97,12 +87,10 @@ export default async function MyQuotesPage({
     sortBy: backendSortBy,
     sortOrder,
     status,
-  });
+  })
 
   // Check if filters are active
-  const hasActiveFilters = Boolean(
-    status || searchQuery || (sortBy && sortBy !== "newest")
-  );
+  const hasActiveFilters = Boolean(status || searchQuery || (sortBy && sortBy !== 'newest'))
 
   return (
     <div className="container mx-auto max-w-7xl py-8">
@@ -120,12 +108,10 @@ export default async function MyQuotesPage({
 
       {/* Show empty state or table */}
       {result.quotes.length === 0 ? (
-        <EmptyQuotesState
-          variant={hasActiveFilters ? "no-results" : "no-quotes"}
-        />
+        <EmptyQuotesState variant={hasActiveFilters ? 'no-results' : 'no-quotes'} />
       ) : (
         <QuotesTable data={result} />
       )}
     </div>
-  );
+  )
 }

@@ -1,8 +1,8 @@
-"use client";
+'use client'
 
-import { ChevronRight, Home } from "lucide-react";
-import { usePathname } from "next/navigation";
-import type { FC } from "react";
+import { ChevronRight, Home } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import type { FC } from 'react'
 
 import {
   Breadcrumb,
@@ -11,23 +11,23 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+} from '@/components/ui/breadcrumb'
 
 /**
  * Path segment to Spanish label mapping
  */
 const pathLabels: Record<string, string> = {
-  admin: "Admin",
-  edit: "Editar",
-  "glass-characteristics": "Características de Cristal",
-  "glass-solutions": "Soluciones de Cristal",
-  "glass-suppliers": "Proveedores de Cristal",
-  "glass-types": "Tipos de Cristal",
-  models: "Modelos",
-  new: "Nuevo",
-  "profile-suppliers": "Proveedores de Perfiles",
-  services: "Servicios",
-};
+  admin: 'Admin',
+  edit: 'Editar',
+  'glass-characteristics': 'Características de Cristal',
+  'glass-solutions': 'Soluciones de Cristal',
+  'glass-suppliers': 'Proveedores de Cristal',
+  'glass-types': 'Tipos de Cristal',
+  models: 'Modelos',
+  new: 'Nuevo',
+  'profile-suppliers': 'Proveedores de Perfiles',
+  services: 'Servicios',
+}
 
 /**
  * Admin Breadcrumbs Component
@@ -40,27 +40,27 @@ const pathLabels: Record<string, string> = {
  * Breadcrumbs: Home > Admin > Modelos > Nuevo
  */
 export const AdminBreadcrumbs: FC = () => {
-  const pathname = usePathname();
+  const pathname = usePathname()
 
   // Generate breadcrumb items from pathname
-  const pathSegments = pathname.split("/").filter(Boolean);
+  const pathSegments = pathname.split('/').filter(Boolean)
 
   // Don't show breadcrumbs on admin home
   if (pathSegments.length <= 1) {
-    return null;
+    return null
   }
 
   const breadcrumbItems = pathSegments.map((segment, index) => {
-    const href = `/${pathSegments.slice(0, index + 1).join("/")}`;
-    const label = pathLabels[segment] ?? segment;
-    const isLast = index === pathSegments.length - 1;
+    const href = `/${pathSegments.slice(0, index + 1).join('/')}`
+    const label = pathLabels[segment] ?? segment
+    const isLast = index === pathSegments.length - 1
 
     return {
       href,
       isLast,
       label,
-    };
-  });
+    }
+  })
 
   return (
     <Breadcrumb>
@@ -99,5 +99,5 @@ export const AdminBreadcrumbs: FC = () => {
         ))}
       </BreadcrumbList>
     </Breadcrumb>
-  );
-};
+  )
+}

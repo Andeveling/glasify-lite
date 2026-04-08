@@ -12,43 +12,43 @@
  * @module QuoteItemsGrid
  */
 
-"use client";
+'use client'
 
-import { useState } from "react";
-import { ImageViewerDialog } from "./image-viewer-dialog";
-import { QuoteItemImage } from "./quote-item-image";
+import { useState } from 'react'
+import { ImageViewerDialog } from './image-viewer-dialog'
+import { QuoteItemImage } from './quote-item-image'
 
 /**
  * Quote item data structure for grid
  */
 export type QuoteItemData = {
-  id: string;
-  modelName: string;
-  modelImageUrl: string | null;
-  width: number | null;
-  height: number | null;
-  glassType?: string;
-  manufacturer?: string;
-  thickness?: string;
-  treatment?: string;
-};
+  id: string
+  modelName: string
+  modelImageUrl: string | null
+  width: number | null
+  height: number | null
+  glassType?: string
+  manufacturer?: string
+  thickness?: string
+  treatment?: string
+}
 
 export type QuoteItemsGridProps = {
   /**
    * Quote items to display
    */
-  items: QuoteItemData[];
+  items: QuoteItemData[]
 
   /**
    * Disable lazy loading for above-fold items
    */
-  eager?: boolean;
+  eager?: boolean
 
   /**
    * Custom empty state message
    */
-  emptyMessage?: string;
-};
+  emptyMessage?: string
+}
 
 /**
  * QuoteItemsGrid Component
@@ -58,43 +58,40 @@ export type QuoteItemsGridProps = {
 export function QuoteItemsGrid({
   items,
   eager = false,
-  emptyMessage = "No hay elementos en esta cotización",
+  emptyMessage = 'No hay elementos en esta cotización',
 }: QuoteItemsGridProps) {
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null)
 
-  const selectedItem = items.find((item) => item.id === selectedItemId);
+  const selectedItem = items.find((item) => item.id === selectedItemId)
 
   /**
    * Handle thumbnail click
    */
   const handleItemClick = (itemId: string) => {
-    setSelectedItemId(itemId);
-    setLightboxOpen(true);
-  };
+    setSelectedItemId(itemId)
+    setLightboxOpen(true)
+  }
 
   /**
    * Handle lightbox close
    */
   const handleLightboxClose = (open: boolean) => {
-    setLightboxOpen(open);
+    setLightboxOpen(open)
     if (!open) {
-      setSelectedItemId(null);
+      setSelectedItemId(null)
     }
-  };
+  }
 
   /**
    * Format dimensions for display
    */
-  const formatDimensions = (
-    width: number | null,
-    height: number | null
-  ): string | undefined => {
+  const formatDimensions = (width: number | null, height: number | null): string | undefined => {
     if (!(width && height)) {
-      return;
+      return
     }
-    return `${width} × ${height} cm`;
-  };
+    return `${width} × ${height} cm`
+  }
 
   // Empty state
   if (items.length === 0) {
@@ -102,10 +99,10 @@ export function QuoteItemsGrid({
       <div className="flex min-h-[200px] items-center justify-center rounded-lg border-2 border-muted-foreground/20 border-dashed py-12">
         <p className="text-muted-foreground">{emptyMessage}</p>
       </div>
-    );
+    )
   }
 
-  const EAGER_LOAD_LIMIT = 4;
+  const EAGER_LOAD_LIMIT = 4
 
   return (
     <>
@@ -127,9 +124,7 @@ export function QuoteItemsGrid({
 
             {/* Product name */}
             <div className="min-h-10">
-              <p className="line-clamp-2 font-medium text-sm leading-tight">
-                {item.modelName}
-              </p>
+              <p className="line-clamp-2 font-medium text-sm leading-tight">{item.modelName}</p>
             </div>
 
             {/* Dimensions */}
@@ -159,7 +154,7 @@ export function QuoteItemsGrid({
         />
       )}
     </>
-  );
+  )
 }
 
 /**

@@ -8,12 +8,12 @@
  * - Handles edit/delete actions via callbacks
  */
 
-"use client";
+'use client'
 
-import type { ServiceType, ServiceUnit } from "@prisma/generated/client";
-import { Pencil, Trash2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import type { ServiceType, ServiceUnit } from '@prisma/generated/client'
+import { Pencil, Trash2 } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
@@ -21,60 +21,53 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { formatCurrency } from "@/lib/format";
+} from '@/components/ui/table'
+import { formatCurrency } from '@/lib/format'
 
 type SerializedService = {
-  id: string;
-  name: string;
-  type: ServiceType;
-  unit: ServiceUnit;
-  rate: number;
-  createdAt: Date;
-  updatedAt: Date;
-};
+  id: string
+  name: string
+  type: ServiceType
+  unit: ServiceUnit
+  rate: number
+  createdAt: Date
+  updatedAt: Date
+}
 
 type ServicesTableProps = {
-  services: SerializedService[];
-  onEditAction: (id: string) => void;
-  onDeleteAction: (service: { id: string; name: string }) => void;
-};
+  services: SerializedService[]
+  onEditAction: (id: string) => void
+  onDeleteAction: (service: { id: string; name: string }) => void
+}
 
 /**
  * Service type labels (Spanish)
  */
 const SERVICE_TYPE_LABELS: Record<ServiceType, string> = {
-  area: "Área",
-  fixed: "Fijo",
-  perimeter: "Perímetro",
-};
+  area: 'Área',
+  fixed: 'Fijo',
+  perimeter: 'Perímetro',
+}
 
 /**
  * Service unit display
  */
 const SERVICE_UNIT_DISPLAY: Record<ServiceUnit, string> = {
-  ml: "ml",
-  sqm: "m²",
-  unit: "unidad",
-};
+  ml: 'ml',
+  sqm: 'm²',
+  unit: 'unidad',
+}
 
 /**
  * Service type badge variants
  */
-const SERVICE_TYPE_VARIANTS: Record<
-  ServiceType,
-  "default" | "secondary" | "outline"
-> = {
-  area: "default",
-  fixed: "secondary",
-  perimeter: "outline",
-};
+const SERVICE_TYPE_VARIANTS: Record<ServiceType, 'default' | 'secondary' | 'outline'> = {
+  area: 'default',
+  fixed: 'secondary',
+  perimeter: 'outline',
+}
 
-export function ServicesTable({
-  services,
-  onEditAction,
-  onDeleteAction,
-}: ServicesTableProps) {
+export function ServicesTable({ services, onEditAction, onDeleteAction }: ServicesTableProps) {
   return (
     <div className="">
       <Table>
@@ -99,23 +92,15 @@ export function ServicesTable({
               <TableCell className="text-muted-foreground text-sm">
                 {SERVICE_UNIT_DISPLAY[service.unit]}
               </TableCell>
-              <TableCell className="text-right">
-                {formatCurrency(service.rate)}
-              </TableCell>
+              <TableCell className="text-right">{formatCurrency(service.rate)}</TableCell>
               <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-2">
-                  <Button
-                    onClick={() => onEditAction(service.id)}
-                    size="sm"
-                    variant="ghost"
-                  >
+                  <Button onClick={() => onEditAction(service.id)} size="sm" variant="ghost">
                     <Pencil className="h-4 w-4" />
                     <span className="sr-only">Editar</span>
                   </Button>
                   <Button
-                    onClick={() =>
-                      onDeleteAction({ id: service.id, name: service.name })
-                    }
+                    onClick={() => onDeleteAction({ id: service.id, name: service.name })}
                     size="sm"
                     variant="ghost"
                   >
@@ -129,5 +114,5 @@ export function ServicesTable({
         </TableBody>
       </Table>
     </div>
-  );
+  )
 }

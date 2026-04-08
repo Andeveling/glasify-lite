@@ -14,15 +14,15 @@
  * />
  */
 
-"use client";
+'use client'
 
-import { Check, ChevronsUpDown, Loader2, MapPin, Search } from "lucide-react";
-import { useState } from "react";
-import { COORDINATE_DISPLAY_DECIMAL_PLACES } from "@/app/(dashboard)/admin/quotes/_constants/geocoding.constants";
-import { useAddressAutocompleteWithSelection } from "@/app/(dashboard)/admin/quotes/_hooks/use-address-autocomplete";
-import type { ProjectAddressInput } from "@/app/(dashboard)/admin/quotes/_types/address.types";
-import { formatAddress } from "@/app/(dashboard)/admin/quotes/_utils/address-formatter";
-import { Button } from "@/components/ui/button";
+import { Check, ChevronsUpDown, Loader2, MapPin, Search } from 'lucide-react'
+import { useState } from 'react'
+import { COORDINATE_DISPLAY_DECIMAL_PLACES } from '@/app/(dashboard)/admin/quotes/_constants/geocoding.constants'
+import { useAddressAutocompleteWithSelection } from '@/app/(dashboard)/admin/quotes/_hooks/use-address-autocomplete'
+import type { ProjectAddressInput } from '@/app/(dashboard)/admin/quotes/_types/address.types'
+import { formatAddress } from '@/app/(dashboard)/admin/quotes/_utils/address-formatter'
+import { Button } from '@/components/ui/button'
 import {
   Command,
   CommandEmpty,
@@ -30,40 +30,36 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { cn } from '@/lib/utils'
 
 type DeliveryAddressPickerProps = {
   /**
    * Current selected address value
    */
-  value?: Partial<ProjectAddressInput> | null;
+  value?: Partial<ProjectAddressInput> | null
 
   /**
    * Callback when address is selected
    */
-  onChangeAction?: (address: Partial<ProjectAddressInput>) => void;
+  onChangeAction?: (address: Partial<ProjectAddressInput>) => void
 
   /**
    * Disabled state
    */
-  disabled?: boolean;
+  disabled?: boolean
 
   /**
    * Placeholder text
    */
-  placeholder?: string;
+  placeholder?: string
 
   /**
    * Error state
    */
-  error?: string;
-};
+  error?: string
+}
 
 /**
  * Address picker with autocomplete search
@@ -80,10 +76,10 @@ export function DeliveryAddressPicker({
   value,
   onChangeAction,
   disabled = false,
-  placeholder = "Buscar dirección...",
+  placeholder = 'Buscar dirección...',
   error,
 }: DeliveryAddressPickerProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   // Use autocomplete hook with selection
   const {
@@ -107,22 +103,22 @@ export function DeliveryAddressPicker({
         longitude: result.longitude,
         postalCode: result.address.postcode,
         region: result.address.state,
-      };
+      }
 
       // Call parent onChange
-      onChangeAction?.(address);
+      onChangeAction?.(address)
 
       // Close popover
-      setOpen(false);
+      setOpen(false)
 
       // Clear search query
-      setQuery("");
+      setQuery('')
     },
-  });
+  })
 
   // Display value in trigger button
-  const displayValue = value ? formatAddress(value) : placeholder;
-  const hasValue = Boolean(value?.city || value?.street || value?.reference);
+  const displayValue = value ? formatAddress(value) : placeholder
+  const hasValue = Boolean(value?.city || value?.street || value?.reference)
 
   return (
     <div className="w-full space-y-2">
@@ -131,9 +127,9 @@ export function DeliveryAddressPicker({
           <Button
             aria-expanded={open}
             className={cn(
-              "w-full justify-between",
-              !hasValue && "text-muted-foreground",
-              error && "border-destructive"
+              'w-full justify-between',
+              !hasValue && 'text-muted-foreground',
+              error && 'border-destructive',
             )}
             disabled={disabled}
             role="combobox"
@@ -182,12 +178,8 @@ export function DeliveryAddressPicker({
                 <CommandEmpty>
                   <div className="flex flex-col items-center gap-2 py-4">
                     <MapPin className="h-8 w-8 text-muted-foreground" />
-                    <p className="font-medium text-sm">
-                      No se encontraron direcciones
-                    </p>
-                    <p className="text-muted-foreground text-xs">
-                      Intenta con otra búsqueda
-                    </p>
+                    <p className="font-medium text-sm">No se encontraron direcciones</p>
+                    <p className="text-muted-foreground text-xs">Intenta con otra búsqueda</p>
                   </div>
                 </CommandEmpty>
               )}
@@ -200,9 +192,7 @@ export function DeliveryAddressPicker({
                       Error al buscar direcciones
                     </p>
                     <p className="text-muted-foreground text-xs">
-                      {typeof searchError === "string"
-                        ? searchError
-                        : "Intenta nuevamente"}
+                      {typeof searchError === 'string' ? searchError : 'Intenta nuevamente'}
                     </p>
                   </div>
                 </CommandEmpty>
@@ -220,19 +210,16 @@ export function DeliveryAddressPicker({
                     >
                       <Check
                         className={cn(
-                          "mr-2 h-4 w-4",
-                          "opacity-0" // Always hidden, using for spacing
+                          'mr-2 h-4 w-4',
+                          'opacity-0', // Always hidden, using for spacing
                         )}
                       />
                       <div className="flex flex-col">
-                        <span className="font-medium">
-                          {result.displayName}
-                        </span>
+                        <span className="font-medium">{result.displayName}</span>
                         {result.address.state && (
                           <span className="text-muted-foreground text-xs">
                             {result.address.state}
-                            {result.address.country &&
-                              `, ${result.address.country}`}
+                            {result.address.country && `, ${result.address.country}`}
                           </span>
                         )}
                       </div>
@@ -251,11 +238,10 @@ export function DeliveryAddressPicker({
       {/* Show coordinates if available */}
       {value?.latitude && value?.longitude && (
         <p className="text-muted-foreground text-xs">
-          Coordenadas:{" "}
-          {value.latitude.toFixed(COORDINATE_DISPLAY_DECIMAL_PLACES)},{" "}
+          Coordenadas: {value.latitude.toFixed(COORDINATE_DISPLAY_DECIMAL_PLACES)},{' '}
           {value.longitude.toFixed(COORDINATE_DISPLAY_DECIMAL_PLACES)}
         </p>
       )}
     </div>
-  );
+  )
 }

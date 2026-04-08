@@ -1,37 +1,34 @@
-"use client";
+'use client'
 
-import { Award, Layers, Ruler } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import type { Model } from "../_types/model.types";
-import {
-  formatPerformanceRating,
-  MATERIAL_PERFORMANCE,
-} from "../_utils/material-benefits";
+import { Award, Layers, Ruler } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Card } from '@/components/ui/card'
+import type { Model } from '../_types/model.types'
+import { formatPerformanceRating, MATERIAL_PERFORMANCE } from '../_utils/material-benefits'
 
 type ModelSpecificationsProps = {
-  model: Model;
-};
+  model: Model
+}
 
 /**
  * Displays technical specifications including material type,
  * performance ratings, and dimensional constraints
  */
 export function ModelSpecifications({ model }: ModelSpecificationsProps) {
-  const { profileSupplier, dimensions } = model;
+  const { profileSupplier, dimensions } = model
 
   // If no supplier, cannot display material-based specs
   if (!profileSupplier) {
-    return null;
+    return null
   }
 
-  const { materialType } = profileSupplier;
-  const performance = MATERIAL_PERFORMANCE[materialType];
+  const { materialType } = profileSupplier
+  const performance = MATERIAL_PERFORMANCE[materialType]
 
   // Format performance ratings to stars + labels
-  const thermalRating = formatPerformanceRating(performance.thermal);
-  const acousticRating = formatPerformanceRating(performance.acoustic);
-  const structuralRating = formatPerformanceRating(performance.structural);
+  const thermalRating = formatPerformanceRating(performance.thermal)
+  const acousticRating = formatPerformanceRating(performance.acoustic)
+  const structuralRating = formatPerformanceRating(performance.structural)
 
   return (
     <Card className="p-6">
@@ -71,9 +68,7 @@ export function ModelSpecifications({ model }: ModelSpecificationsProps) {
         <div className="border-t pt-3">
           <div className="mb-2 flex items-center gap-2">
             <Ruler className="h-4 w-4 text-muted-foreground" />
-            <span className="font-medium text-sm">
-              Capacidades Dimensionales
-            </span>
+            <span className="font-medium text-sm">Capacidades Dimensionales</span>
           </div>
           <dl className="grid grid-cols-2 gap-2 text-xs">
             <div>
@@ -92,7 +87,7 @@ export function ModelSpecifications({ model }: ModelSpecificationsProps) {
         </div>
       </div>
     </Card>
-  );
+  )
 }
 
 /**
@@ -104,25 +99,19 @@ function PerformanceRating({
   stars,
   rating,
 }: {
-  label: string;
-  stars: number;
-  rating: string;
+  label: string
+  stars: number
+  rating: string
 }) {
   return (
     <div className="flex items-center justify-between text-sm">
       <span className="text-muted-foreground">{label}</span>
       <div className="flex items-center gap-2">
-        <div
-          aria-label={`${stars} de 5 estrellas`}
-          className="flex gap-0.5"
-          role="img"
-        >
+        <div aria-label={`${stars} de 5 estrellas`} className="flex gap-0.5" role="img">
           {Array.from({ length: 5 }).map((_, i) => (
             <span
               aria-hidden="true"
-              className={
-                i < stars ? "text-yellow-500" : "text-muted-foreground/30"
-              }
+              className={i < stars ? 'text-yellow-500' : 'text-muted-foreground/30'}
               // biome-ignore lint/suspicious/noArrayIndexKey: Rating stars are static presentational elements that never reorder, making array index as key safe.
               key={i}
             >
@@ -133,5 +122,5 @@ function PerformanceRating({
         <span className="min-w-20 text-right text-xs">{rating}</span>
       </div>
     </div>
-  );
+  )
 }

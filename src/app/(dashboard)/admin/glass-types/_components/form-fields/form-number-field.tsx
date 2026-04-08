@@ -12,9 +12,9 @@
  * @module _components/form-fields/form-number-field
  */
 
-"use client";
+'use client'
 
-import type { Control, FieldPath, FieldValues } from "react-hook-form";
+import type { Control, FieldPath, FieldValues } from 'react-hook-form'
 import {
   FormControl,
   FormDescription,
@@ -22,21 +22,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 
 type FormNumberFieldProps<TFieldValues extends FieldValues> = {
-  control: Control<TFieldValues>;
-  name: FieldPath<TFieldValues>;
-  label: string;
-  placeholder?: string;
-  description?: string;
-  min?: number;
-  max?: number;
-  step?: number;
-  required?: boolean;
-  disabled?: boolean;
-};
+  control: Control<TFieldValues>
+  name: FieldPath<TFieldValues>
+  label: string
+  placeholder?: string
+  description?: string
+  min?: number
+  max?: number
+  step?: number
+  required?: boolean
+  disabled?: boolean
+}
 
 /**
  * Reusable number input field component
@@ -61,7 +61,7 @@ export function FormNumberField<TFieldValues extends FieldValues>({
         <FormItem>
           <FormLabel>
             {label}
-            {required && " *"}
+            {required && ' *'}
           </FormLabel>
           <FormControl>
             <Input
@@ -70,13 +70,13 @@ export function FormNumberField<TFieldValues extends FieldValues>({
               max={max}
               min={min}
               onChange={(e) => {
-                const value = e.target.value;
-                field.onChange(value === "" ? undefined : Number(value));
+                const value = e.target.value
+                field.onChange(value === '' ? undefined : Number(value))
               }}
               placeholder={placeholder}
               step={step}
               type="number"
-              value={field.value ?? ""}
+              value={field.value ?? ''}
             />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
@@ -84,5 +84,5 @@ export function FormNumberField<TFieldValues extends FieldValues>({
         </FormItem>
       )}
     />
-  );
+  )
 }

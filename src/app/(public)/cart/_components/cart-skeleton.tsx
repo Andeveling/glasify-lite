@@ -7,16 +7,16 @@
  * @module app/(public)/cart/_components/cart-skeleton
  */
 
-import { Skeleton } from "@/components/ui/skeleton";
-import { CART_ITEM_IMAGE_SIZE } from "../_constants/cart-item.constants";
+import { Skeleton } from '@/components/ui/skeleton'
+import { CART_ITEM_IMAGE_SIZE } from '../_constants/cart-item.constants'
 
 type CartSkeletonProps = {
   /**
    * Number of skeleton items to display
    * @default 3
    */
-  count?: number;
-};
+  count?: number
+}
 
 /**
  * Cart item skeleton loader
@@ -64,5 +64,5 @@ export function CartSkeleton({ count = 3 }: CartSkeletonProps) {
         </div>
       ))}
     </div>
-  );
+  )
 }

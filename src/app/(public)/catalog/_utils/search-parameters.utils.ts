@@ -32,35 +32,31 @@ import {
   Search,
   SortAsc,
   SortDesc,
-} from "lucide-react";
+} from 'lucide-react'
 
 // ============================================================================
 // Types
 // ============================================================================
 
-export type CatalogSortOption =
-  | "name-asc"
-  | "name-desc"
-  | "price-asc"
-  | "price-desc";
+export type CatalogSortOption = 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc'
 
 export type SearchParameter = {
-  key: string;
-  icon: LucideIcon;
-  label: string;
-  ariaLabel: string;
-};
+  key: string
+  icon: LucideIcon
+  label: string
+  ariaLabel: string
+}
 
 type SortConfiguration = {
-  icon: LucideIcon;
-  label: string;
-};
+  icon: LucideIcon
+  label: string
+}
 
 type BuildParametersInput = {
-  searchQuery?: string | null;
-  profileSupplierName?: string | null;
-  sortType?: CatalogSortOption | null;
-};
+  searchQuery?: string | null
+  profileSupplierName?: string | null
+  sortType?: CatalogSortOption | null
+}
 
 // ============================================================================
 // Constants
@@ -72,27 +68,26 @@ type BuildParametersInput = {
  * Maps sort types to their display labels and icons.
  * Follows Open/Closed Principle - extend by adding new entries.
  */
-export const SORT_CONFIGURATIONS: Record<CatalogSortOption, SortConfiguration> =
-  {
-    "name-asc": {
-      icon: ArrowDownAZ,
-      label: "A-Z",
-    },
-    "name-desc": {
-      icon: ArrowDownZA,
-      label: "Z-A",
-    },
-    "price-asc": {
-      icon: SortAsc,
-      label: "Precio ↑",
-    },
-    "price-desc": {
-      icon: SortDesc,
-      label: "Precio ↓",
-    },
-  } as const;
+export const SORT_CONFIGURATIONS: Record<CatalogSortOption, SortConfiguration> = {
+  'name-asc': {
+    icon: ArrowDownAZ,
+    label: 'A-Z',
+  },
+  'name-desc': {
+    icon: ArrowDownZA,
+    label: 'Z-A',
+  },
+  'price-asc': {
+    icon: SortAsc,
+    label: 'Precio ↑',
+  },
+  'price-desc': {
+    icon: SortDesc,
+    label: 'Precio ↓',
+  },
+} as const
 
-export const DEFAULT_SORT: CatalogSortOption = "name-asc";
+export const DEFAULT_SORT: CatalogSortOption = 'name-asc'
 
 // ============================================================================
 // Pure Functions
@@ -111,12 +106,12 @@ export const DEFAULT_SORT: CatalogSortOption = "name-asc";
  * ```
  */
 export function getSortConfiguration(
-  sortType: string | null | undefined
+  sortType: string | null | undefined,
 ): SortConfiguration | undefined {
   if (!sortType) {
-    return;
+    return
   }
-  return SORT_CONFIGURATIONS[sortType as CatalogSortOption];
+  return SORT_CONFIGURATIONS[sortType as CatalogSortOption]
 }
 
 /**
@@ -132,7 +127,7 @@ export function getSortConfiguration(
  * ```
  */
 export function isDefaultSort(sortType: string | null | undefined): boolean {
-  return !sortType || sortType === DEFAULT_SORT;
+  return !sortType || sortType === DEFAULT_SORT
 }
 
 /**
@@ -142,18 +137,18 @@ export function isDefaultSort(sortType: string | null | undefined): boolean {
  * @returns Search parameter or undefined if no query
  */
 export function buildSearchParameter(
-  searchQuery: string | null | undefined
+  searchQuery: string | null | undefined,
 ): SearchParameter | undefined {
   if (!searchQuery) {
-    return;
+    return
   }
 
   return {
     ariaLabel: `Quitar búsqueda: ${searchQuery}`,
     icon: Search,
-    key: "search",
+    key: 'search',
     label: searchQuery,
-  };
+  }
 }
 
 /**
@@ -163,18 +158,18 @@ export function buildSearchParameter(
  * @returns Search parameter or undefined if no profile supplier
  */
 export function buildProfileSupplierParameter(
-  profileSupplierName: string | null | undefined
+  profileSupplierName: string | null | undefined,
 ): SearchParameter | undefined {
   if (!profileSupplierName) {
-    return;
+    return
   }
 
   return {
     ariaLabel: `Quitar filtro de ${profileSupplierName}`,
     icon: Building2,
-    key: "profileSupplier",
+    key: 'profileSupplier',
     label: profileSupplierName,
-  };
+  }
 }
 
 /**
@@ -184,24 +179,24 @@ export function buildProfileSupplierParameter(
  * @returns Search parameter or undefined if default sort
  */
 export function buildSortParameter(
-  sortType: string | null | undefined
+  sortType: string | null | undefined,
 ): SearchParameter | undefined {
   // Don't show badge for default sort
   if (isDefaultSort(sortType)) {
-    return;
+    return
   }
 
-  const config = getSortConfiguration(sortType);
+  const config = getSortConfiguration(sortType)
   if (!config) {
-    return;
+    return
   }
 
   return {
     ariaLabel: `Quitar ordenamiento: ${config.label}`,
     icon: config.icon,
-    key: "sort",
+    key: 'sort',
     label: config.label,
-  };
+  }
 }
 
 /**
@@ -227,20 +222,16 @@ export function buildSortParameter(
  * // ]
  * ```
  */
-export function buildActiveParameters(
-  input: BuildParametersInput
-): SearchParameter[] {
-  const { searchQuery, profileSupplierName, sortType } = input;
+export function buildActiveParameters(input: BuildParametersInput): SearchParameter[] {
+  const { searchQuery, profileSupplierName, sortType } = input
 
   // Build parameters using individual builder functions
   const parameters = [
     buildSearchParameter(searchQuery),
     buildProfileSupplierParameter(profileSupplierName),
     buildSortParameter(sortType),
-  ];
+  ]
 
   // Filter out undefined values
-  return parameters.filter(
-    (param): param is SearchParameter => param !== undefined
-  );
+  return parameters.filter((param): param is SearchParameter => param !== undefined)
 }

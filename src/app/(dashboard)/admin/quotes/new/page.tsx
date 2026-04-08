@@ -8,13 +8,13 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from "next";
-import { AdminQuoteCreationForm } from "./_components/admin-quote-creation-form";
+import type { Metadata } from 'next'
+import { AdminQuoteCreationForm } from './_components/admin-quote-creation-form'
 
 export const metadata: Metadata = {
-  title: "Nueva Cotización | Admin",
-  description: "Crear una nueva cotización directamente desde el catálogo",
-};
+  title: 'Nueva Cotización | Admin',
+  description: 'Crear una nueva cotización directamente desde el catálogo',
+}
 
 export default function NewQuotePage() {
   return (
@@ -28,5 +28,5 @@ export default function NewQuotePage() {
 
       <AdminQuoteCreationForm />
     </div>
-  );
+  )
 }

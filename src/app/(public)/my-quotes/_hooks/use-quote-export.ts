@@ -5,53 +5,48 @@
  * Handles loading states, error handling, and file downloads.
  */
 
-"use client";
+'use client'
 
-import { useState, useTransition } from "react";
-import { toast } from "sonner";
-import {
-  exportQuoteExcel,
-  exportQuotePDF,
-} from "@/app/_actions/quote-export.actions";
-import type { ExportFormat } from "@/types/export.types";
+import { useState, useTransition } from 'react'
+import { toast } from 'sonner'
+import { exportQuoteExcel, exportQuotePDF } from '@/app/_actions/quote-export.actions'
+import type { ExportFormat } from '@/types/export.types'
 
 type UseQuoteExportOptions = {
   /** Callback invoked after successful export */
-  onSuccess?: (format: ExportFormat) => void;
+  onSuccess?: (format: ExportFormat) => void
 
   /** Callback invoked when export fails */
-  onError?: (error: string, format: ExportFormat) => void;
-};
+  onError?: (error: string, format: ExportFormat) => void
+}
 
 type UseQuoteExportReturn = {
   /** Export quote to PDF format */
-  exportPDF: (quoteId: string) => Promise<void>;
+  exportPDF: (quoteId: string) => Promise<void>
 
   /** Export quote to Excel format */
-  exportExcel: (quoteId: string) => Promise<void>;
+  exportExcel: (quoteId: string) => Promise<void>
 
   /** Whether PDF export is in progress */
-  isExportingPDF: boolean;
+  isExportingPDF: boolean
 
   /** Whether Excel export is in progress */
-  isExportingExcel: boolean;
+  isExportingExcel: boolean
 
   /** Whether any export is in progress */
-  isExporting: boolean;
-};
+  isExporting: boolean
+}
 
 /**
  * Hook for quote export functionality
  */
-export function useQuoteExport(
-  options: UseQuoteExportOptions = {}
-): UseQuoteExportReturn {
-  const { onSuccess, onError } = options;
+export function useQuoteExport(options: UseQuoteExportOptions = {}): UseQuoteExportReturn {
+  const { onSuccess, onError } = options
 
-  const [isPendingPDF, startPDFTransition] = useTransition();
-  const [isPendingExcel, startExcelTransition] = useTransition();
-  const [isDownloadingPDF, setIsDownloadingPDF] = useState(false);
-  const [isDownloadingExcel, setIsDownloadingExcel] = useState(false);
+  const [isPendingPDF, startPDFTransition] = useTransition()
+  const [isPendingExcel, startExcelTransition] = useTransition()
+  const [isDownloadingPDF, setIsDownloadingPDF] = useState(false)
+  const [isDownloadingExcel, setIsDownloadingExcel] = useState(false)
 
   /**
    * Download file from base64 data
@@ -59,126 +54,119 @@ export function useQuoteExport(
   const downloadFile = (data: string, filename: string, mimeType: string) => {
     try {
       // Convert base64 to blob
-      const byteCharacters = atob(data);
-      const byteNumbers = new Array(byteCharacters.length);
+      const byteCharacters = atob(data)
+      const byteNumbers = new Array(byteCharacters.length)
       for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
+        byteNumbers[i] = byteCharacters.charCodeAt(i)
       }
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: mimeType });
+      const byteArray = new Uint8Array(byteNumbers)
+      const blob = new Blob([byteArray], { type: mimeType })
 
       // Create download link
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = filename;
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = filename
 
       // Trigger download
-      document.body.appendChild(link);
-      link.click();
+      document.body.appendChild(link)
+      link.click()
 
       // Cleanup
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
     } catch (_error) {
-      throw new Error("Error al descargar el archivo");
+      throw new Error('Error al descargar el archivo')
     }
-  };
+  }
 
   /**
    * Export quote to PDF
    */
-  // biome-ignore lint/suspicious/useAwait: Async needed for Promise return type
   const exportPDF = async (quoteId: string): Promise<void> => {
-    setIsDownloadingPDF(true);
+    setIsDownloadingPDF(true)
 
     return new Promise((resolve) => {
-      // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex PDF export logic with error handling, file download, and success/error callbacks. Necessary for proper export flow.
       startPDFTransition(async () => {
         try {
           const result = await exportQuotePDF({
-            format: "pdf",
+            format: 'pdf',
             quoteId,
-          });
+          })
 
           if (!result.success) {
-            const errorMessage = result.error || "Error al exportar a PDF";
-            toast.error(errorMessage);
-            onError?.(errorMessage, "pdf");
-            resolve();
-            return;
+            const errorMessage = result.error || 'Error al exportar a PDF'
+            toast.error(errorMessage)
+            onError?.(errorMessage, 'pdf')
+            resolve()
+            return
           }
 
           // Download file
           if (result.data && result.filename && result.mimeType) {
-            downloadFile(result.data, result.filename, result.mimeType);
-            toast.success(`${result.filename} descargado exitosamente`);
-            onSuccess?.("pdf");
+            downloadFile(result.data, result.filename, result.mimeType)
+            toast.success(`${result.filename} descargado exitosamente`)
+            onSuccess?.('pdf')
           }
-          resolve();
+          resolve()
         } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : "Error desconocido";
-          toast.error("Error al exportar la cotización a PDF");
-          onError?.(errorMessage, "pdf");
-          resolve();
+          const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
+          toast.error('Error al exportar la cotización a PDF')
+          onError?.(errorMessage, 'pdf')
+          resolve()
         } finally {
-          setIsDownloadingPDF(false);
+          setIsDownloadingPDF(false)
         }
-      });
-    });
-  };
+      })
+    })
+  }
 
   /**
    * Export quote to Excel
    */
-  // biome-ignore lint/suspicious/useAwait: Async needed for Promise return type
   const exportExcel = async (quoteId: string): Promise<void> => {
-    setIsDownloadingExcel(true);
+    setIsDownloadingExcel(true)
 
     return new Promise((resolve) => {
-      // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex Excel export logic with error handling, file download, and success/error callbacks. Necessary for proper export flow.
       startExcelTransition(async () => {
         try {
           const result = await exportQuoteExcel({
-            format: "excel",
+            format: 'excel',
             quoteId,
-          });
+          })
 
           if (!result.success) {
-            const errorMessage = result.error || "Error al exportar a Excel";
-            toast.error(errorMessage);
-            onError?.(errorMessage, "excel");
-            resolve();
-            return;
+            const errorMessage = result.error || 'Error al exportar a Excel'
+            toast.error(errorMessage)
+            onError?.(errorMessage, 'excel')
+            resolve()
+            return
           }
 
           // Download file
           if (result.data && result.filename && result.mimeType) {
-            downloadFile(result.data, result.filename, result.mimeType);
-            toast.success(`${result.filename} descargado exitosamente`);
-            onSuccess?.("excel");
+            downloadFile(result.data, result.filename, result.mimeType)
+            toast.success(`${result.filename} descargado exitosamente`)
+            onSuccess?.('excel')
           }
-          resolve();
+          resolve()
         } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : "Error desconocido";
-          toast.error("Error al exportar la cotización a Excel");
-          onError?.(errorMessage, "excel");
-          resolve();
+          const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
+          toast.error('Error al exportar la cotización a Excel')
+          onError?.(errorMessage, 'excel')
+          resolve()
         } finally {
-          setIsDownloadingExcel(false);
+          setIsDownloadingExcel(false)
         }
-      });
-    });
-  };
+      })
+    })
+  }
 
   return {
     exportExcel,
     exportPDF,
-    isExporting:
-      isPendingPDF || isPendingExcel || isDownloadingPDF || isDownloadingExcel,
+    isExporting: isPendingPDF || isPendingExcel || isDownloadingPDF || isDownloadingExcel,
     isExportingExcel: isPendingExcel || isDownloadingExcel,
     isExportingPDF: isPendingPDF || isDownloadingPDF,
-  };
+  }
 }

@@ -1,27 +1,22 @@
-"use client";
+'use client'
 
-import type { LucideIcon } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
+import type { LucideIcon } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { cn } from '@/lib/utils'
 
 // ============================================================================
 // Types
 // ============================================================================
 
 type PerformanceBarProps = {
-  className?: string;
-  icon?: LucideIcon;
-  label?: string;
-  max?: number;
-  showLabel?: boolean;
-  tooltip?: string;
-  value: number;
-};
+  className?: string
+  icon?: LucideIcon
+  label?: string
+  max?: number
+  showLabel?: boolean
+  tooltip?: string
+  value: number
+}
 
 // ============================================================================
 // Component
@@ -67,17 +62,17 @@ type PerformanceBarProps = {
 export function PerformanceBar({
   className,
   icon: Icon,
-  label,
+  label: _label,
   max = 5,
-  showLabel = false,
+  showLabel: _showLabel = false,
   tooltip,
   value,
 }: PerformanceBarProps) {
-  const clampedValue = Math.max(0, Math.min(max, value));
-  const percentage = (clampedValue / max) * 100;
+  const clampedValue = Math.max(0, Math.min(max, value))
+  const percentage = (clampedValue / max) * 100
 
   return (
-    <div className={cn("flex items-center gap-2", className)}>
+    <div className={cn('flex items-center gap-2', className)}>
       {/* Icon with tooltip */}
       {Icon && (
         <TooltipProvider>
@@ -103,12 +98,12 @@ export function PerformanceBar({
             style={{
               backgroundColor:
                 percentage >= 80
-                  ? "oklch(var(--success))"
+                  ? 'oklch(var(--success))'
                   : percentage >= 60
-                    ? "oklch(var(--chart-4))"
+                    ? 'oklch(var(--chart-4))'
                     : percentage >= 40
-                      ? "oklch(var(--chart-5))"
-                      : "oklch(var(--destructive))",
+                      ? 'oklch(var(--chart-5))'
+                      : 'oklch(var(--destructive))',
               width: `${percentage}%`,
             }}
           />
@@ -119,5 +114,5 @@ export function PerformanceBar({
         {clampedValue}/{max}
       </span>
     </div>
-  );
+  )
 }

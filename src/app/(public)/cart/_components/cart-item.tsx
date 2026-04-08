@@ -15,23 +15,23 @@
  * @module app/(public)/cart/_components/cart-item
  */
 
-"use client";
+'use client'
 
-import { Check, Minus, Pencil, Plus, Trash2, X } from "lucide-react";
-import { memo, useState, useTransition } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { formatCurrency } from "@/lib/format";
-import { cn } from "@/lib/utils";
-import { useTenantConfig } from "@/providers/tenant-config-provider";
-import type { CartItem as CartItemType } from "@/types/cart.types";
-import { CART_CONSTANTS } from "@/types/cart.types";
-import { UI_TEXT } from "../_constants/cart-item.constants";
-import { adaptCartItemToEditFormat } from "../_utils/cart-item-edit.utils";
-import { CartItemEditModal } from "./cart-item-edit-modal";
-import { CartItemImage } from "./cart-item-image";
-import { DeleteCartItemDialog } from "./delete-cart-item-dialog";
+import { Check, Minus, Pencil, Plus, Trash2, X } from 'lucide-react'
+import { memo, useState, useTransition } from 'react'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { formatCurrency } from '@/lib/format'
+import { cn } from '@/lib/utils'
+import { useTenantConfig } from '@/providers/tenant-config-provider'
+import type { CartItem as CartItemType } from '@/types/cart.types'
+import { CART_CONSTANTS } from '@/types/cart.types'
+import { UI_TEXT } from '../_constants/cart-item.constants'
+import { adaptCartItemToEditFormat } from '../_utils/cart-item-edit.utils'
+import { CartItemEditModal } from './cart-item-edit-modal'
+import { CartItemImage } from './cart-item-image'
+import { DeleteCartItemDialog } from './delete-cart-item-dialog'
 
 // ============================================================================
 // Types
@@ -39,20 +39,20 @@ import { DeleteCartItemDialog } from "./delete-cart-item-dialog";
 
 export type CartItemProps = {
   /** Cart item data */
-  item: CartItemType;
+  item: CartItemType
 
   /** Callback when name is updated */
-  onUpdateName?: (itemId: string, newName: string) => void;
+  onUpdateName?: (itemId: string, newName: string) => void
 
   /** Callback when quantity is updated */
-  onUpdateQuantity?: (itemId: string, newQuantity: number) => void;
+  onUpdateQuantity?: (itemId: string, newQuantity: number) => void
 
   /** Callback when item is removed */
-  onRemove?: (itemId: string) => void;
+  onRemove?: (itemId: string) => void
 
   /** Whether updates are in progress */
-  isUpdating?: boolean;
-};
+  isUpdating?: boolean
+}
 
 // ============================================================================
 // Component
@@ -83,13 +83,13 @@ const CartItemComponent = ({
   onRemove,
   isUpdating = false,
 }: CartItemProps) => {
-  const tenantConfig = useTenantConfig();
-  const [editedName, setEditedName] = useState(item.name);
-  const [editMode, setEditMode] = useState(false);
-  const [nameError, setNameError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
+  const tenantConfig = useTenantConfig()
+  const [editedName, setEditedName] = useState(item.name)
+  const [editMode, setEditMode] = useState(false)
+  const [nameError, setNameError] = useState<string | null>(null)
+  const [isPending, startTransition] = useTransition()
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
 
   // ============================================================================
   // Handlers
@@ -99,102 +99,96 @@ const CartItemComponent = ({
    * Handle name save (blur or Enter key)
    */
   const handleNameSave = () => {
-    setEditMode(false);
-    setNameError(null);
+    setEditMode(false)
+    setNameError(null)
 
-    const trimmedName = editedName.trim();
+    const trimmedName = editedName.trim()
 
     // Validate name
     if (trimmedName.length === 0) {
-      setNameError("El nombre no puede estar vacío");
-      setEditedName(item.name); // Reset to original
-      return;
+      setNameError('El nombre no puede estar vacío')
+      setEditedName(item.name) // Reset to original
+      return
     }
 
     if (trimmedName.length > CART_CONSTANTS.MAX_NAME_LENGTH) {
-      setNameError(`Máximo ${CART_CONSTANTS.MAX_NAME_LENGTH} caracteres`);
-      setEditedName(item.name); // Reset to original
-      return;
+      setNameError(`Máximo ${CART_CONSTANTS.MAX_NAME_LENGTH} caracteres`)
+      setEditedName(item.name) // Reset to original
+      return
     }
 
     // Only call update if changed
     if (trimmedName !== item.name && onUpdateName) {
-      onUpdateName(item.id, trimmedName);
+      onUpdateName(item.id, trimmedName)
     }
-  };
+  }
 
   /**
    * Handle name cancel (Escape key)
    */
   const handleNameCancel = () => {
-    setEditMode(false);
-    setEditedName(item.name); // Reset to original
-    setNameError(null);
-  };
+    setEditMode(false)
+    setEditedName(item.name) // Reset to original
+    setNameError(null)
+  }
 
   /**
    * Handle quantity adjustment
    */
   const handleQuantityChange = (delta: number) => {
-    const newQuantity = item.quantity + delta;
+    const newQuantity = item.quantity + delta
 
     // Validate bounds
-    if (
-      newQuantity < CART_CONSTANTS.MIN_QUANTITY ||
-      newQuantity > CART_CONSTANTS.MAX_QUANTITY
-    ) {
-      return;
+    if (newQuantity < CART_CONSTANTS.MIN_QUANTITY || newQuantity > CART_CONSTANTS.MAX_QUANTITY) {
+      return
     }
 
     if (onUpdateQuantity) {
       // Use transition for smooth animation
       startTransition(() => {
-        onUpdateQuantity(item.id, newQuantity);
-      });
+        onUpdateQuantity(item.id, newQuantity)
+      })
     }
-  };
+  }
 
   /**
    * Handle item removal - show confirmation dialog
    */
   const handleRemove = () => {
-    setShowDeleteDialog(true);
-  };
+    setShowDeleteDialog(true)
+  }
 
   /**
    * Handle confirmed deletion
    */
   const handleConfirmDelete = () => {
     if (onRemove) {
-      onRemove(item.id);
+      onRemove(item.id)
     }
-  };
+  }
 
   // ============================================================================
   // Render
   // ============================================================================
 
-  const isInAction = isUpdating || isPending;
+  const isInAction = isUpdating || isPending
 
   return (
     <Card
       className={cn(
-        "grid grid-cols-1 gap-4 rounded-lg border p-4",
-        "transition-all duration-150 ease-in-out",
+        'grid grid-cols-1 gap-4 rounded-lg border p-4',
+        'transition-all duration-150 ease-in-out',
         // Updating animation: subtle opacity
-        isInAction && "opacity-70",
+        isInAction && 'opacity-70',
         // Default state
-        !isInAction && "scale-100 opacity-100",
-        "md:grid-cols-[auto_2fr_3fr_1fr_1fr_auto]"
+        !isInAction && 'scale-100 opacity-100',
+        'md:grid-cols-[auto_2fr_3fr_1fr_1fr_auto]',
       )}
       data-testid={`cart-item-${item.id}`}
     >
       {/* Column 0: Model Image */}
       <div className="hidden md:block">
-        <CartItemImage
-          modelImageUrl={item.modelImageUrl}
-          modelName={item.modelName}
-        />
+        <CartItemImage modelImageUrl={item.modelImageUrl} modelName={item.modelName} />
       </div>
 
       {/* Column 1: Name (editable) */}
@@ -211,13 +205,13 @@ const CartItemComponent = ({
                 onBlur={handleNameSave}
                 onChange={(e) => setEditedName(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleNameSave();
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    handleNameSave()
                   }
-                  if (e.key === "Escape") {
-                    e.preventDefault();
-                    handleNameCancel();
+                  if (e.key === 'Escape') {
+                    e.preventDefault()
+                    handleNameCancel()
                   }
                 }}
                 type="text"
@@ -246,9 +240,7 @@ const CartItemComponent = ({
                 <X className="size-4" />
               </Button>
             </div>
-            {nameError && (
-              <p className="text-destructive text-sm">{nameError}</p>
-            )}
+            {nameError && <p className="text-destructive text-sm">{nameError}</p>}
           </>
         ) : (
           <button
@@ -270,8 +262,7 @@ const CartItemComponent = ({
       {/* Column 2: Configuration details */}
       <div className="flex flex-col gap-1 text-sm">
         <p>
-          <span className="font-medium">Dimensiones:</span> {item.widthMm} ×{" "}
-          {item.heightMm} mm
+          <span className="font-medium">Dimensiones:</span> {item.widthMm} × {item.heightMm} mm
         </p>
         {item.solutionName && (
           <p>
@@ -280,8 +271,7 @@ const CartItemComponent = ({
         )}
         {item.additionalServiceIds.length > 0 && (
           <p>
-            <span className="font-medium">Servicios:</span>{" "}
-            {item.additionalServiceIds.length}
+            <span className="font-medium">Servicios:</span> {item.additionalServiceIds.length}
           </p>
         )}
         {/* Edit button */}
@@ -301,16 +291,11 @@ const CartItemComponent = ({
 
       {/* Column 3: Quantity controls */}
       <div className="flex flex-col items-start justify-center gap-2 md:items-center">
-        <fieldset
-          aria-label="Controles de cantidad"
-          className="flex items-center gap-1"
-        >
+        <fieldset aria-label="Controles de cantidad" className="flex items-center gap-1">
           <Button
             aria-label="Disminuir cantidad"
             className="size-8"
-            disabled={
-              item.quantity <= CART_CONSTANTS.MIN_QUANTITY || isUpdating
-            }
+            disabled={item.quantity <= CART_CONSTANTS.MIN_QUANTITY || isUpdating}
             onClick={() => handleQuantityChange(-1)}
             size="icon"
             type="button"
@@ -327,9 +312,7 @@ const CartItemComponent = ({
           <Button
             aria-label="Aumentar cantidad"
             className="size-8"
-            disabled={
-              item.quantity >= CART_CONSTANTS.MAX_QUANTITY || isUpdating
-            }
+            disabled={item.quantity >= CART_CONSTANTS.MAX_QUANTITY || isUpdating}
             onClick={() => handleQuantityChange(1)}
             size="icon"
             type="button"
@@ -339,8 +322,7 @@ const CartItemComponent = ({
           </Button>
         </fieldset>
         <span className="text-muted-foreground text-xs">
-          Precio unitario:{" "}
-          {formatCurrency(item.unitPrice, { context: tenantConfig })}
+          Precio unitario: {formatCurrency(item.unitPrice, { context: tenantConfig })}
         </span>
       </div>
 
@@ -385,8 +367,8 @@ const CartItemComponent = ({
         open={showEditModal}
       />
     </Card>
-  );
-};
+  )
+}
 
 /**
  * Memoized CartItem component for performance optimization
@@ -412,14 +394,14 @@ export const CartItem = memo(CartItemComponent, (prevProps, nextProps) => {
     prevProps.item.unitPrice !== nextProps.item.unitPrice ||
     prevProps.item.subtotal !== nextProps.item.subtotal
   ) {
-    return false; // Props changed, re-render
+    return false // Props changed, re-render
   }
 
   // Re-render if state props changed
   if (prevProps.isUpdating !== nextProps.isUpdating) {
-    return false; // Props changed, re-render
+    return false // Props changed, re-render
   }
 
   // Props are equal, skip re-render
-  return true;
-});
+  return true
+})

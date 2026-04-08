@@ -1,55 +1,49 @@
 // src/server/api/routers/catalog/catalog.schemas.ts
-import { z } from "zod";
+import { z } from 'zod'
 
 // Constants
-export const DEFAULT_PAGE_LIMIT = 20;
-export const MIN_PAGE_LIMIT = 1;
-export const MAX_PAGE_LIMIT = 100;
+export const DEFAULT_PAGE_LIMIT = 20
+export const MIN_PAGE_LIMIT = 1
+export const MAX_PAGE_LIMIT = 100
 
 // ========================================
 // INPUT SCHEMAS
 // ========================================
 
 export const listModelsInput = z.object({
-  limit: z
-    .number()
-    .min(MIN_PAGE_LIMIT)
-    .max(MAX_PAGE_LIMIT)
-    .default(DEFAULT_PAGE_LIMIT),
-  manufacturerId: z.cuid("ID del fabricante debe ser válido").optional(),
+  limit: z.number().min(MIN_PAGE_LIMIT).max(MAX_PAGE_LIMIT).default(DEFAULT_PAGE_LIMIT),
+  manufacturerId: z.cuid('ID del fabricante debe ser válido').optional(),
   page: z.number().min(1).default(1),
   search: z.string().optional(),
-  sort: z
-    .enum(["name-asc", "name-desc", "price-asc", "price-desc"])
-    .default("name-asc"),
-});
+  sort: z.enum(['name-asc', 'name-desc', 'price-asc', 'price-desc']).default('name-asc'),
+})
 
 export const getModelByIdInput = z.object({
-  modelId: z.cuid("ID del modelo debe ser válido"),
-});
+  modelId: z.cuid('ID del modelo debe ser válido'),
+})
 
 export const listServicesInput = z.object({
   // Services are now global, no longer tied to a specific manufacturer
-});
+})
 
 export const listGlassTypesInput = z.object({
-  glassTypeIds: z.array(z.cuid("ID del tipo de vidrio debe ser válido")),
-});
+  glassTypeIds: z.array(z.cuid('ID del tipo de vidrio debe ser válido')),
+})
 
 export const listGlassSolutionsInput = z
   .object({
-    modelId: z.cuid("ID del modelo debe ser válido").optional(),
+    modelId: z.cuid('ID del modelo debe ser válido').optional(),
   })
-  .optional();
+  .optional()
 
 export const getAvailableGlassTypesInput = z.object({
-  modelId: z.cuid("ID del modelo debe ser válido"),
-});
+  modelId: z.cuid('ID del modelo debe ser válido'),
+})
 
 export const validateGlassCompatibilityInput = z.object({
-  modelId: z.cuid("ID del modelo debe ser válido"),
-  glassTypeId: z.cuid("ID del tipo de vidrio debe ser válido"),
-});
+  modelId: z.cuid('ID del modelo debe ser válido'),
+  glassTypeId: z.cuid('ID del tipo de vidrio debe ser válido'),
+})
 
 // ========================================
 // OUTPUT SCHEMAS
@@ -60,7 +54,7 @@ export const manufacturerOutput = z.object({
   id: z.string(),
   name: z.string(),
   quoteValidityDays: z.number(),
-});
+})
 
 export const modelSummaryOutput = z.object({
   accessoryPrice: z.number().nullable(),
@@ -82,14 +76,14 @@ export const modelSummaryOutput = z.object({
       name: z.string(),
     })
     .nullable(),
-  status: z.enum(["draft", "published"]),
+  status: z.enum(['draft', 'published']),
   updatedAt: z.date(),
-});
+})
 
 export const listModelsOutput = z.object({
   items: z.array(modelSummaryOutput),
   total: z.number(),
-});
+})
 
 export const modelDetailOutput = z.object({
   accessoryPrice: z.number().nullable(),
@@ -110,37 +104,31 @@ export const modelDetailOutput = z.object({
   profileSupplier: z
     .object({
       id: z.string(),
-      materialType: z.enum(["PVC", "ALUMINUM", "WOOD", "MIXED"]),
+      materialType: z.enum(['PVC', 'ALUMINUM', 'WOOD', 'MIXED']),
       name: z.string(),
     })
     .nullable(),
-  status: z.enum(["draft", "published"]),
+  status: z.enum(['draft', 'published']),
   updatedAt: z.date(),
-});
+})
 
 export const serviceOutput = z.object({
   createdAt: z.date(),
   id: z.string(),
   name: z.string(),
   rate: z.number(),
-  type: z.enum(["area", "perimeter", "fixed"]),
-  unit: z.enum(["unit", "sqm", "ml"]),
+  type: z.enum(['area', 'perimeter', 'fixed']),
+  unit: z.enum(['unit', 'sqm', 'ml']),
   updatedAt: z.date(),
-});
+})
 
-export const listServicesOutput = z.array(serviceOutput);
+export const listServicesOutput = z.array(serviceOutput)
 
 // ========================================
 // GLASS SOLUTIONS SCHEMAS
 // ========================================
 
-export const performanceRating = z.enum([
-  "basic",
-  "standard",
-  "good",
-  "very_good",
-  "excellent",
-]);
+export const performanceRating = z.enum(['basic', 'standard', 'good', 'very_good', 'excellent'])
 
 // ========================================
 // GLASS SOLUTIONS
@@ -157,7 +145,7 @@ export const glassSolutionOutput = z.object({
   nameEs: z.string(),
   sortOrder: z.number(),
   updatedAt: z.date(),
-});
+})
 
 export const glassTypeSolutionOutput = z.object({
   createdAt: z.date(),
@@ -169,9 +157,9 @@ export const glassTypeSolutionOutput = z.object({
   solution: glassSolutionOutput,
   solutionId: z.string(),
   updatedAt: z.date(),
-});
+})
 
-export const listGlassSolutionsOutput = z.array(glassSolutionOutput);
+export const listGlassSolutionsOutput = z.array(glassSolutionOutput)
 
 // ========================================
 // GLASS CHARACTERISTICS
@@ -188,7 +176,7 @@ export const glassCharacteristicOutput = z.object({
   nameEs: z.string(),
   sortOrder: z.number(),
   updatedAt: z.date(),
-});
+})
 
 export const glassTypeCharacteristicOutput = z.object({
   certification: z.string().nullable().optional(),
@@ -199,7 +187,7 @@ export const glassTypeCharacteristicOutput = z.object({
   id: z.string(),
   notes: z.string().nullable().optional(),
   value: z.string().nullable(),
-});
+})
 
 export const glassTypeOutput = z.object({
   characteristics: z.array(glassTypeCharacteristicOutput).optional(), // Many-to-Many characteristics
@@ -218,9 +206,9 @@ export const glassTypeOutput = z.object({
   thicknessMm: z.number(),
   updatedAt: z.date(),
   uValue: z.number().nullable(),
-});
+})
 
-export const listGlassTypesOutput = z.array(glassTypeOutput);
+export const listGlassTypesOutput = z.array(glassTypeOutput)
 
 export const availableGlassTypeOutput = z.object({
   id: z.string(),
@@ -228,41 +216,35 @@ export const availableGlassTypeOutput = z.object({
   pricePerSqm: z.number(),
   thicknessMm: z.number(),
   description: z.string().nullable(),
-});
+})
 
-export const listAvailableGlassTypesOutput = z.array(availableGlassTypeOutput);
+export const listAvailableGlassTypesOutput = z.array(availableGlassTypeOutput)
 
 export const glassCompatibilityOutput = z.object({
   compatible: z.boolean(),
   message: z.string(),
-});
+})
 
 // ========================================
 // TYPE EXPORTS (para reutilizar en forms)
 // ========================================
 
-export type ListModelsInput = z.infer<typeof listModelsInput>;
-export type GetModelByIdInput = z.infer<typeof getModelByIdInput>;
-export type ListServicesInput = z.infer<typeof listServicesInput>;
-export type ListGlassTypesInput = z.infer<typeof listGlassTypesInput>;
-export type ModelSummaryOutput = z.infer<typeof modelSummaryOutput>;
-export type ModelDetailOutput = z.infer<typeof modelDetailOutput>;
-export type ServiceOutput = z.infer<typeof serviceOutput>;
-export type ListServicesOutput = z.infer<typeof listServicesOutput>;
-export type PerformanceRating = z.infer<typeof performanceRating>;
-export type GlassSolutionOutput = z.infer<typeof glassSolutionOutput>;
-export type GlassTypeSolutionOutput = z.infer<typeof glassTypeSolutionOutput>;
-export type ListGlassSolutionsOutput = z.infer<typeof listGlassSolutionsOutput>;
-export type GlassTypeOutput = z.infer<typeof glassTypeOutput>;
-export type ListGlassTypesOutput = z.infer<typeof listGlassTypesOutput>;
-export type GetAvailableGlassTypesInput = z.infer<
-  typeof getAvailableGlassTypesInput
->;
-export type AvailableGlassTypeOutput = z.infer<typeof availableGlassTypeOutput>;
-export type ListAvailableGlassTypesOutput = z.infer<
-  typeof listAvailableGlassTypesOutput
->;
-export type ValidateGlassCompatibilityInput = z.infer<
-  typeof validateGlassCompatibilityInput
->;
-export type GlassCompatibilityOutput = z.infer<typeof glassCompatibilityOutput>;
+export type ListModelsInput = z.infer<typeof listModelsInput>
+export type GetModelByIdInput = z.infer<typeof getModelByIdInput>
+export type ListServicesInput = z.infer<typeof listServicesInput>
+export type ListGlassTypesInput = z.infer<typeof listGlassTypesInput>
+export type ModelSummaryOutput = z.infer<typeof modelSummaryOutput>
+export type ModelDetailOutput = z.infer<typeof modelDetailOutput>
+export type ServiceOutput = z.infer<typeof serviceOutput>
+export type ListServicesOutput = z.infer<typeof listServicesOutput>
+export type PerformanceRating = z.infer<typeof performanceRating>
+export type GlassSolutionOutput = z.infer<typeof glassSolutionOutput>
+export type GlassTypeSolutionOutput = z.infer<typeof glassTypeSolutionOutput>
+export type ListGlassSolutionsOutput = z.infer<typeof listGlassSolutionsOutput>
+export type GlassTypeOutput = z.infer<typeof glassTypeOutput>
+export type ListGlassTypesOutput = z.infer<typeof listGlassTypesOutput>
+export type GetAvailableGlassTypesInput = z.infer<typeof getAvailableGlassTypesInput>
+export type AvailableGlassTypeOutput = z.infer<typeof availableGlassTypeOutput>
+export type ListAvailableGlassTypesOutput = z.infer<typeof listAvailableGlassTypesOutput>
+export type ValidateGlassCompatibilityInput = z.infer<typeof validateGlassCompatibilityInput>
+export type GlassCompatibilityOutput = z.infer<typeof glassCompatibilityOutput>

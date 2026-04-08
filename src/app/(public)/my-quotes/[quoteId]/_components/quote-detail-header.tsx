@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 /**
  * QuoteDetailHeader Component
@@ -10,21 +10,21 @@
  * Responsibility: Header navigation and actions only
  */
 
-import { BackLink } from "@/components/ui/back-link";
-import type { QuoteDetailSchema } from "@/server/api/routers/quote/quote.schemas";
-import { QuoteExportButtons } from "./quote-export-buttons";
-import { SendQuoteButton } from "./send-quote-button";
+import { BackLink } from '@/components/ui/back-link'
+import type { QuoteDetailSchema } from '@/server/api/routers/quote/quote.schemas'
+import { QuoteExportButtons } from './quote-export-buttons'
+import { SendQuoteButton } from './send-quote-button'
 
 type QuoteDetailHeaderProps = {
   /** Navigation link for back button */
-  backLink: string;
+  backLink: string
   /** Label text for back button */
-  backLabel: string;
+  backLabel: string
   /** Quote data for send button */
-  quote: QuoteDetailSchema;
+  quote: QuoteDetailSchema
   /** Whether this is the public user view */
-  isPublicView: boolean;
-};
+  isPublicView: boolean
+}
 
 export function QuoteDetailHeader({
   backLabel,
@@ -46,5 +46,5 @@ export function QuoteDetailHeader({
         <QuoteExportButtons quoteId={quote.id} size="sm" variant="full" />
       </div>
     </div>
-  );
+  )
 }

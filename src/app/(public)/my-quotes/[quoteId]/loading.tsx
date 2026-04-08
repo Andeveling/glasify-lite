@@ -14,7 +14,7 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: Using array index as key is acceptable here because skeleton items are purely presentational and do not require stable identity. */
 /** biome-ignore-all lint/style/noMagicNumbers: Magic numbers are used intentionally for animation delays and skeleton layout to match the design specification. */
 
-import { Spinner } from "@/components/ui/spinner";
+import { Spinner } from '@/components/ui/spinner'
 
 export default function QuoteDetailLoading() {
   return (
@@ -22,9 +22,7 @@ export default function QuoteDetailLoading() {
       {/* Header with animated spinner and pulse text */}
       <div className="mb-8 flex items-center justify-center gap-3">
         <Spinner className="size-6 text-primary" />
-        <p className="animate-pulse text-muted-foreground">
-          Cargando cotización...
-        </p>
+        <p className="animate-pulse text-muted-foreground">Cargando cotización...</p>
       </div>
 
       {/* Back button skeleton */}
@@ -102,7 +100,7 @@ export default function QuoteDetailLoading() {
               key={itemIndex}
               style={{
                 animationDelay: `${itemIndex * 100}ms`,
-                animationFillMode: "forwards",
+                animationFillMode: 'forwards',
               }}
             >
               {/* Item image with centered spinner */}
@@ -201,5 +199,5 @@ export default function QuoteDetailLoading() {
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -8,16 +8,16 @@
  * Represents all data collected through the 4-step wizard
  */
 export type WizardFormData = {
-  roomLocation: string;
-  width: number;
-  height: number;
-  colorId: string | null;
-  glassSolutionId: string | null;
-  selectedServices?: string[]; // Optional with default empty array
-  modelId: string;
-  currentStep: number;
-  lastUpdated: string;
-};
+  roomLocation: string
+  width: number
+  height: number
+  colorId: string | null
+  glassSolutionId: string | null
+  selectedServices?: string[] // Optional with default empty array
+  modelId: string
+  currentStep: number
+  lastUpdated: string
+}
 
 /**
  * Get default values for wizard form initialization
@@ -32,10 +32,10 @@ export function getWizardDefaults(modelId: string): WizardFormData {
     height: 0,
     lastUpdated: new Date().toISOString(),
     modelId,
-    roomLocation: "",
+    roomLocation: '',
     selectedServices: [],
     width: 0,
-  };
+  }
 }
 
 /**
@@ -46,10 +46,7 @@ export function getWizardDefaults(modelId: string): WizardFormData {
  * @param glassTypeId - Selected glass type ID (from glass solution)
  * @returns Payload for quote.add-item tRPC mutation
  */
-export function transformWizardToQuoteItem(
-  data: WizardFormData,
-  glassTypeId: string
-) {
+export function transformWizardToQuoteItem(data: WizardFormData, glassTypeId: string) {
   return {
     adjustments: [], // No adjustments in wizard flow
     colorId: data.colorId ?? undefined,
@@ -62,13 +59,13 @@ export function transformWizardToQuoteItem(
       quantity: 1, // Default quantity for wizard
       serviceId,
     })),
-    unit: "unit" as const, // Wizard always uses unit pricing
+    unit: 'unit' as const, // Wizard always uses unit pricing
     widthMm: data.width,
-  };
+  }
 }
 
 /**
  * Type for transformed quote item payload
  * Matches the input schema of quote.add-item procedure
  */
-export type QuoteItemPayload = ReturnType<typeof transformWizardToQuoteItem>;
+export type QuoteItemPayload = ReturnType<typeof transformWizardToQuoteItem>

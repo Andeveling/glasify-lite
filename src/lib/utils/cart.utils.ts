@@ -7,14 +7,14 @@
  * @module lib/utils/cart.utils
  */
 
-import type { CartItem, CartState, CartSummary } from "@/types/cart.types";
-import { CART_CONSTANTS } from "@/types/cart.types";
+import type { CartItem, CartState, CartSummary } from '@/types/cart.types'
+import { CART_CONSTANTS } from '@/types/cart.types'
 
 // ============================================================================
 // Constants
 // ============================================================================
 
-const PRICE_TOLERANCE = 0.01; // Tolerance for floating-point comparison
+const PRICE_TOLERANCE = 0.01 // Tolerance for floating-point comparison
 
 // ============================================================================
 // Cart Calculations
@@ -28,10 +28,10 @@ const PRICE_TOLERANCE = 0.01; // Tolerance for floating-point comparison
  */
 export function calculateCartTotal(items: CartItem[]): number {
   if (!items || items.length === 0) {
-    return 0;
+    return 0
   }
 
-  return items.reduce((total, item) => total + item.subtotal, 0);
+  return items.reduce((total, item) => total + item.subtotal, 0)
 }
 
 /**
@@ -42,10 +42,10 @@ export function calculateCartTotal(items: CartItem[]): number {
  */
 export function calculateItemCount(items: CartItem[]): number {
   if (!items || items.length === 0) {
-    return 0;
+    return 0
   }
 
-  return items.reduce((count, item) => count + item.quantity, 0);
+  return items.reduce((count, item) => count + item.quantity, 0)
 }
 
 /**
@@ -55,15 +55,12 @@ export function calculateItemCount(items: CartItem[]): number {
  * @param quantity - Number of units
  * @returns Subtotal (unitPrice * quantity)
  */
-export function calculateItemSubtotal(
-  unitPrice: number,
-  quantity: number
-): number {
+export function calculateItemSubtotal(unitPrice: number, quantity: number): number {
   if (unitPrice < 0 || quantity < 0) {
-    return 0;
+    return 0
   }
 
-  return unitPrice * quantity;
+  return unitPrice * quantity
 }
 
 /**
@@ -73,19 +70,16 @@ export function calculateItemSubtotal(
  * @param currency - ISO 4217 currency code (from TenantConfig)
  * @returns Cart summary with totals and metadata
  */
-export function generateCartSummary(
-  items: CartItem[],
-  currency: string
-): CartSummary {
-  const itemCount = calculateItemCount(items);
-  const total = calculateCartTotal(items);
+export function generateCartSummary(items: CartItem[], currency: string): CartSummary {
+  const itemCount = calculateItemCount(items)
+  const total = calculateCartTotal(items)
 
   return {
     currency,
     isEmpty: items.length === 0,
     itemCount,
     total,
-  };
+  }
 }
 
 // ============================================================================
@@ -99,28 +93,28 @@ export function generateCartSummary(
  * @returns Validation result with error message if invalid
  */
 export function validateQuantity(quantity: number): {
-  valid: boolean;
-  error?: string;
+  valid: boolean
+  error?: string
 } {
   if (!Number.isInteger(quantity)) {
-    return { error: "La cantidad debe ser un número entero", valid: false };
+    return { error: 'La cantidad debe ser un número entero', valid: false }
   }
 
   if (quantity < CART_CONSTANTS.MIN_QUANTITY) {
     return {
       error: `La cantidad mínima es ${CART_CONSTANTS.MIN_QUANTITY}`,
       valid: false,
-    };
+    }
   }
 
   if (quantity > CART_CONSTANTS.MAX_QUANTITY) {
     return {
       error: `La cantidad máxima es ${CART_CONSTANTS.MAX_QUANTITY}`,
       valid: false,
-    };
+    }
   }
 
-  return { valid: true };
+  return { valid: true }
 }
 
 /**
@@ -130,110 +124,104 @@ export function validateQuantity(quantity: number): {
  * @returns Validation result with error message if limit reached
  */
 export function validateCartLimit(currentItemCount: number): {
-  valid: boolean;
-  error?: string;
+  valid: boolean
+  error?: string
 } {
   if (currentItemCount >= CART_CONSTANTS.MAX_ITEMS) {
     return {
       error: `No puedes agregar más de ${CART_CONSTANTS.MAX_ITEMS} items al carrito`,
       valid: false,
-    };
+    }
   }
 
-  return { valid: true };
+  return { valid: true }
 }
 
 /**
  * Validate required string fields in cart item
  */
 function validateRequiredStringFields(cartItem: Partial<CartItem>): {
-  valid: boolean;
-  error?: string;
+  valid: boolean
+  error?: string
 } {
   const requiredStringFields: Array<keyof CartItem> = [
-    "id",
-    "modelId",
-    "modelName",
-    "glassTypeId",
-    "glassTypeName",
-    "name",
-    "createdAt",
-  ];
+    'id',
+    'modelId',
+    'modelName',
+    'glassTypeId',
+    'glassTypeName',
+    'name',
+    'createdAt',
+  ]
 
   for (const field of requiredStringFields) {
-    if (!cartItem[field] || typeof cartItem[field] !== "string") {
-      return { error: `Campo requerido: ${field}`, valid: false };
+    if (!cartItem[field] || typeof cartItem[field] !== 'string') {
+      return { error: `Campo requerido: ${field}`, valid: false }
     }
   }
 
-  return { valid: true };
+  return { valid: true }
 }
 
 /**
  * Validate required number fields in cart item
  */
 function validateRequiredNumberFields(cartItem: Partial<CartItem>): {
-  valid: boolean;
-  error?: string;
+  valid: boolean
+  error?: string
 } {
   const requiredNumberFields: Array<keyof CartItem> = [
-    "widthMm",
-    "heightMm",
-    "quantity",
-    "unitPrice",
-    "subtotal",
-  ];
+    'widthMm',
+    'heightMm',
+    'quantity',
+    'unitPrice',
+    'subtotal',
+  ]
 
   for (const field of requiredNumberFields) {
-    if (typeof cartItem[field] !== "number" || cartItem[field] === undefined) {
-      return { error: `Campo numérico requerido: ${field}`, valid: false };
+    if (typeof cartItem[field] !== 'number' || cartItem[field] === undefined) {
+      return { error: `Campo numérico requerido: ${field}`, valid: false }
     }
   }
 
-  return { valid: true };
+  return { valid: true }
 }
 
 /**
  * Validate cart item dimensions
  */
 function validateDimensions(cartItem: Partial<CartItem>): {
-  valid: boolean;
-  error?: string;
+  valid: boolean
+  error?: string
 } {
-  if (!cartItem.dimensions || typeof cartItem.dimensions !== "object") {
-    return { error: "Dimensiones requeridas", valid: false };
+  if (!cartItem.dimensions || typeof cartItem.dimensions !== 'object') {
+    return { error: 'Dimensiones requeridas', valid: false }
   }
 
-  if (
-    cartItem.dimensions.widthMm !== undefined &&
-    cartItem.dimensions.widthMm <= 0
-  ) {
-    return { error: "El ancho debe ser positivo", valid: false };
+  if (cartItem.dimensions.widthMm !== undefined && cartItem.dimensions.widthMm <= 0) {
+    return { error: 'El ancho debe ser positivo', valid: false }
   }
 
-  if (
-    cartItem.dimensions.heightMm !== undefined &&
-    cartItem.dimensions.heightMm <= 0
-  ) {
-    return { error: "El alto debe ser positivo", valid: false };
+  if (cartItem.dimensions.heightMm !== undefined && cartItem.dimensions.heightMm <= 0) {
+    return { error: 'El alto debe ser positivo', valid: false }
   }
 
-  return { valid: true };
+  return { valid: true }
 }
 
 /**
  * Validate cart item prices
  */
 function validatePrices(cartItem: Partial<CartItem>): {
-  valid: boolean;
-  error?: string;
+  valid: boolean
+  error?: string
 } {
   if (cartItem.unitPrice !== undefined && cartItem.unitPrice < 0) {
-    return { error: "El precio unitario no puede ser negativo", valid: false };
+    return { error: 'El precio unitario no puede ser negativo', valid: false }
   }
 
   if (cartItem.subtotal !== undefined && cartItem.subtotal < 0) {
-    return { error: "El subtotal no puede ser negativo", valid: false };
+    return { error: 'El subtotal no puede ser negativo', valid: false }
   }
 
   // Validate subtotal calculation
@@ -242,20 +230,17 @@ function validatePrices(cartItem: Partial<CartItem>): {
     cartItem.quantity !== undefined &&
     cartItem.subtotal !== undefined
   ) {
-    const expectedSubtotal = calculateItemSubtotal(
-      cartItem.unitPrice,
-      cartItem.quantity
-    );
+    const expectedSubtotal = calculateItemSubtotal(cartItem.unitPrice, cartItem.quantity)
     // Allow small floating-point difference
     if (Math.abs(cartItem.subtotal - expectedSubtotal) > PRICE_TOLERANCE) {
       return {
-        error: "El subtotal no coincide con precio × cantidad",
+        error: 'El subtotal no coincide con precio × cantidad',
         valid: false,
-      };
+      }
     }
   }
 
-  return { valid: true };
+  return { valid: true }
 }
 
 /**
@@ -267,51 +252,51 @@ function validatePrices(cartItem: Partial<CartItem>): {
  * @returns Validation result with error message if invalid
  */
 export function validateCartItem(item: unknown): {
-  valid: boolean;
-  error?: string;
+  valid: boolean
+  error?: string
 } {
-  if (!item || typeof item !== "object") {
-    return { error: "Item inválido", valid: false };
+  if (!item || typeof item !== 'object') {
+    return { error: 'Item inválido', valid: false }
   }
 
-  const cartItem = item as Partial<CartItem>;
+  const cartItem = item as Partial<CartItem>
 
   // Validate required string fields
-  const stringValidation = validateRequiredStringFields(cartItem);
+  const stringValidation = validateRequiredStringFields(cartItem)
   if (!stringValidation.valid) {
-    return stringValidation;
+    return stringValidation
   }
 
   // Validate required number fields
-  const numberValidation = validateRequiredNumberFields(cartItem);
+  const numberValidation = validateRequiredNumberFields(cartItem)
   if (!numberValidation.valid) {
-    return numberValidation;
+    return numberValidation
   }
 
   // Validate additionalServiceIds array
   if (!Array.isArray(cartItem.additionalServiceIds)) {
-    return { error: "additionalServiceIds debe ser un array", valid: false };
+    return { error: 'additionalServiceIds debe ser un array', valid: false }
   }
 
   // Validate dimensions
-  const dimensionsValidation = validateDimensions(cartItem);
+  const dimensionsValidation = validateDimensions(cartItem)
   if (!dimensionsValidation.valid) {
-    return dimensionsValidation;
+    return dimensionsValidation
   }
 
   // Validate quantity
-  const quantityValidation = validateQuantity(cartItem.quantity ?? 0);
+  const quantityValidation = validateQuantity(cartItem.quantity ?? 0)
   if (!quantityValidation.valid) {
-    return quantityValidation;
+    return quantityValidation
   }
 
   // Validate prices
-  const pricesValidation = validatePrices(cartItem);
+  const pricesValidation = validatePrices(cartItem)
   if (!pricesValidation.valid) {
-    return pricesValidation;
+    return pricesValidation
   }
 
-  return { valid: true };
+  return { valid: true }
 }
 
 // ============================================================================
@@ -327,24 +312,21 @@ export function validateCartItem(item: unknown): {
  */
 export function updateCartItem(
   item: CartItem,
-  updates: Partial<Pick<CartItem, "name" | "quantity">>
+  updates: Partial<Pick<CartItem, 'name' | 'quantity'>>,
 ): CartItem {
-  const updatedItem: CartItem = { ...item };
+  const updatedItem: CartItem = { ...item }
 
   if (updates.name !== undefined) {
-    updatedItem.name = updates.name;
+    updatedItem.name = updates.name
   }
 
   if (updates.quantity !== undefined) {
-    updatedItem.quantity = updates.quantity;
+    updatedItem.quantity = updates.quantity
     // Recalculate subtotal when quantity changes
-    updatedItem.subtotal = calculateItemSubtotal(
-      updatedItem.unitPrice,
-      updates.quantity
-    );
+    updatedItem.subtotal = calculateItemSubtotal(updatedItem.unitPrice, updates.quantity)
   }
 
-  return updatedItem;
+  return updatedItem
 }
 
 /**
@@ -354,11 +336,8 @@ export function updateCartItem(
  * @param itemId - Item ID to find
  * @returns Cart item if found, undefined otherwise
  */
-export function findCartItem(
-  items: CartItem[],
-  itemId: string
-): CartItem | undefined {
-  return items.find((item) => item.id === itemId);
+export function findCartItem(items: CartItem[], itemId: string): CartItem | undefined {
+  return items.find((item) => item.id === itemId)
 }
 
 /**
@@ -369,7 +348,7 @@ export function findCartItem(
  * @returns New cart items array without the removed item
  */
 export function removeCartItem(items: CartItem[], itemId: string): CartItem[] {
-  return items.filter((item) => item.id !== itemId);
+  return items.filter((item) => item.id !== itemId)
 }
 
 /**
@@ -382,13 +361,13 @@ export function removeCartItem(items: CartItem[], itemId: string): CartItem[] {
  */
 export function hasConsistentManufacturer(items: CartItem[]): boolean {
   if (items.length === 0) {
-    return true;
+    return true
   }
 
   // Extract manufacturer ID from first item's modelId
   // Assuming modelId contains manufacturer reference
   // This is a placeholder - actual implementation depends on data structure
-  return true; // TODO: Implement when manufacturer validation is needed
+  return true // TODO: Implement when manufacturer validation is needed
 }
 
 // ============================================================================
@@ -407,7 +386,7 @@ export function createEmptyCartState(): CartState {
     items: [],
     lastUpdated: new Date().toISOString(),
     total: 0,
-  };
+  }
 }
 
 /**
@@ -417,17 +396,14 @@ export function createEmptyCartState(): CartState {
  * @param items - New cart items
  * @returns Updated cart state
  */
-export function updateCartState(
-  state: CartState,
-  items: CartItem[]
-): CartState {
+export function updateCartState(state: CartState, items: CartItem[]): CartState {
   return {
     ...state,
     itemCount: calculateItemCount(items),
     items,
     lastUpdated: new Date().toISOString(),
     total: calculateCartTotal(items),
-  };
+  }
 }
 
 // ============================================================================
@@ -441,8 +417,8 @@ export function updateCartState(
  * @returns True if value is CartItem
  */
 export function isCartItem(value: unknown): value is CartItem {
-  const validation = validateCartItem(value);
-  return validation.valid;
+  const validation = validateCartItem(value)
+  return validation.valid
 }
 
 /**
@@ -453,8 +429,8 @@ export function isCartItem(value: unknown): value is CartItem {
  */
 export function isCartItemArray(value: unknown): value is CartItem[] {
   if (!Array.isArray(value)) {
-    return false;
+    return false
   }
 
-  return value.every(isCartItem);
+  return value.every(isCartItem)
 }

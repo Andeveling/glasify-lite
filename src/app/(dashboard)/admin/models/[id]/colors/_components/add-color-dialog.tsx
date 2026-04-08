@@ -15,27 +15,27 @@
  * - Two-step cache invalidation (invalidate + router.refresh)
  */
 
-"use client";
+'use client'
 
 // Local type definition to avoid Prisma import issues
 type Color = {
-  id: string;
-  name: string;
-  hexCode: string;
-  ralCode?: string | null;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-};
+  id: string
+  name: string
+  hexCode: string
+  ralCode?: string | null
+  isActive: boolean
+  createdAt: Date
+  updatedAt: Date
+}
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
-import { ColorChip } from "@/app/(dashboard)/admin/colors/_components/color-chip";
-import { Button } from "@/components/ui/button";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+import { ColorChip } from '@/app/(dashboard)/admin/colors/_components/color-chip'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -44,7 +44,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -53,32 +53,32 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import { api } from "@/trpc/react";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
+import { api } from '@/trpc/react'
 
 // Surcharge percentage constraints
-const MAX_SURCHARGE_PERCENTAGE = 100;
-const MIN_SURCHARGE_PERCENTAGE = 0;
+const MAX_SURCHARGE_PERCENTAGE = 100
+const MIN_SURCHARGE_PERCENTAGE = 0
 
 // Form validation schema
 const assignColorSchema = z.object({
-  colorId: z.string().min(1, "Debes seleccionar un color"),
+  colorId: z.string().min(1, 'Debes seleccionar un color'),
   surchargePercentage: z
     .number()
-    .min(MIN_SURCHARGE_PERCENTAGE, "El recargo debe ser mayor o igual a 0%")
-    .max(MAX_SURCHARGE_PERCENTAGE, "El recargo debe ser entre 0% y 100%"),
+    .min(MIN_SURCHARGE_PERCENTAGE, 'El recargo debe ser mayor o igual a 0%')
+    .max(MAX_SURCHARGE_PERCENTAGE, 'El recargo debe ser entre 0% y 100%'),
   isDefault: z.boolean(),
-});
+})
 
-type AssignColorInput = z.infer<typeof assignColorSchema>;
+type AssignColorInput = z.infer<typeof assignColorSchema>
 
 type AddColorDialogProps = {
-  modelId: string;
-  availableColors: Color[];
-  triggerLabel?: string;
-};
+  modelId: string
+  availableColors: Color[]
+  triggerLabel?: string
+}
 
 /**
  * Dialog for adding a color to a model
@@ -87,50 +87,48 @@ type AddColorDialogProps = {
 export function AddColorDialog({
   modelId,
   availableColors,
-  triggerLabel = "Agregar Color",
+  triggerLabel = 'Agregar Color',
 }: AddColorDialogProps) {
-  const [open, setOpen] = useState(false);
-  const [selectedColorId, setSelectedColorId] = useState<string>("");
-  const router = useRouter();
-  const utils = api.useUtils();
+  const [open, setOpen] = useState(false)
+  const [selectedColorId, setSelectedColorId] = useState<string>('')
+  const router = useRouter()
+  const utils = api.useUtils()
 
   const form = useForm<AssignColorInput>({
     resolver: zodResolver(assignColorSchema),
     defaultValues: {
-      colorId: "",
+      colorId: '',
       surchargePercentage: 0,
       isDefault: false,
     },
-  });
+  })
 
-  const assignMutation = api.admin["model-colors"].assign.useMutation({
+  const assignMutation = api.admin['model-colors'].assign.useMutation({
     onSuccess: () => {
-      toast.success("Color asignado correctamente");
-      utils.admin["model-colors"].listByModel.invalidate().catch(undefined);
-      utils.admin["model-colors"].getAvailableColors
-        .invalidate()
-        .catch(undefined);
-      router.refresh();
-      setOpen(false);
-      form.reset();
-      setSelectedColorId("");
+      toast.success('Color asignado correctamente')
+      utils.admin['model-colors'].listByModel.invalidate().catch(undefined)
+      utils.admin['model-colors'].getAvailableColors.invalidate().catch(undefined)
+      router.refresh()
+      setOpen(false)
+      form.reset()
+      setSelectedColorId('')
     },
     onError: (error) => {
-      toast.error(error.message || "Error al asignar color");
+      toast.error(error.message || 'Error al asignar color')
     },
-  });
+  })
 
   const onSubmit = (data: AssignColorInput) => {
     assignMutation.mutate({
       modelId,
       ...data,
-    });
-  };
+    })
+  }
 
   const handleColorSelect = (colorId: string) => {
-    setSelectedColorId(colorId);
-    form.setValue("colorId", colorId);
-  };
+    setSelectedColorId(colorId)
+    form.setValue('colorId', colorId)
+  }
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
@@ -165,21 +163,17 @@ export function AddColorDialog({
                           <button
                             className={`flex flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all hover:border-primary ${
                               selectedColorId === color.id
-                                ? "border-primary bg-primary/5"
-                                : "border-border"
+                                ? 'border-primary bg-primary/5'
+                                : 'border-border'
                             }`}
                             key={color.id}
                             onClick={() => handleColorSelect(color.id)}
                             type="button"
                           >
                             <ColorChip hexCode={color.hexCode} size="lg" />
-                            <span className="text-center font-medium text-xs">
-                              {color.name}
-                            </span>
+                            <span className="text-center font-medium text-xs">{color.name}</span>
                             {color.ralCode && (
-                              <span className="text-muted-foreground text-xs">
-                                {color.ralCode}
-                              </span>
+                              <span className="text-muted-foreground text-xs">{color.ralCode}</span>
                             )}
                           </button>
                         ))
@@ -205,9 +199,7 @@ export function AddColorDialog({
                         className="w-32"
                         max={100}
                         min={0}
-                        onChange={(e) =>
-                          field.onChange(Number.parseFloat(e.target.value) || 0)
-                        }
+                        onChange={(e) => field.onChange(Number.parseFloat(e.target.value) || 0)}
                         step={0.01}
                         type="number"
                       />
@@ -229,19 +221,13 @@ export function AddColorDialog({
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base">
-                      Establecer como Color por Defecto
-                    </FormLabel>
+                    <FormLabel className="text-base">Establecer como Color por Defecto</FormLabel>
                     <FormDescription>
-                      Este color se seleccionará automáticamente en nuevas
-                      cotizaciones
+                      Este color se seleccionará automáticamente en nuevas cotizaciones
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                 </FormItem>
               )}
@@ -257,12 +243,12 @@ export function AddColorDialog({
                 Cancelar
               </Button>
               <Button disabled={assignMutation.isPending} type="submit">
-                {assignMutation.isPending ? "Asignando..." : "Asignar Color"}
+                {assignMutation.isPending ? 'Asignando...' : 'Asignar Color'}
               </Button>
             </DialogFooter>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

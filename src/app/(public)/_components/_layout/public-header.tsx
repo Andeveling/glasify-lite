@@ -1,12 +1,12 @@
-import Link from "next/link";
-import { Suspense } from "react";
-import { BrandLogo } from "@/app/_components/brand-logo";
-import { CartIndicatorWrapper } from "@/app/_components/cart-indicator-wrapper";
-import { RoleBasedNav } from "@/app/_components/role-based-nav";
-import { SocialMediaLinks } from "@/app/_components/social-media-links";
-import { getServerSession } from "@/lib/server-auth";
-import { GuestMenu } from "./guest-menu";
-import { UserMenu } from "./user-menu";
+import Link from 'next/link'
+import { Suspense } from 'react'
+import { BrandLogo } from '@/app/_components/brand-logo'
+import { CartIndicatorWrapper } from '@/app/_components/cart-indicator-wrapper'
+import { RoleBasedNav } from '@/app/_components/role-based-nav'
+import { SocialMediaLinks } from '@/app/_components/social-media-links'
+import { getServerSession } from '@/lib/server-auth'
+import { GuestMenu } from './guest-menu'
+import { UserMenu } from './user-menu'
 
 /**
  * Public Header Component
@@ -22,7 +22,7 @@ import { UserMenu } from "./user-menu";
  * Next.js 16 caching and revalidation after logout/login
  */
 export default async function Header() {
-  const session = await getServerSession();
+  const session = await getServerSession()
 
   return (
     <header className="sticky top-0 z-50 border-border border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -30,10 +30,7 @@ export default async function Header() {
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
           {/* Logo y Navegación Principal */}
           <div className="flex items-center gap-8">
-            <Link
-              className="flex items-center transition-opacity hover:opacity-80"
-              href="/catalog"
-            >
+            <Link className="flex items-center transition-opacity hover:opacity-80" href="/catalog">
               <BrandLogo size="md" withText />
             </Link>
             {/* Role-Based Navigation: Shows appropriate links based on user role */}
@@ -44,18 +41,12 @@ export default async function Header() {
           <div className="flex items-center gap-3">
             <div className="mr-10">
               <Suspense fallback={<div className="hidden h-5 w-20 md:block" />}>
-                <SocialMediaLinks
-                  className="hidden md:flex"
-                  variant="compact"
-                />
+                <SocialMediaLinks className="hidden md:flex" variant="compact" />
               </Suspense>
             </div>
             <CartIndicatorWrapper variant="compact" />
             {session?.user ? (
-              <UserMenu
-                userEmail={session.user.email}
-                userName={session.user.name}
-              />
+              <UserMenu userEmail={session.user.email} userName={session.user.name} />
             ) : (
               <GuestMenu />
             )}
@@ -63,5 +54,5 @@ export default async function Header() {
         </div>
       </div>
     </header>
-  );
+  )
 }

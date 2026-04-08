@@ -12,30 +12,24 @@
  * - Delete confirmation dialog with referential integrity
  */
 
-"use client";
+'use client'
 
-import { Pencil, Plus, Search, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
-import { DeleteConfirmationDialog } from "@/app/_components/delete-confirmation-dialog";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Pencil, Plus, Search, Trash2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select'
 import {
   Table,
   TableBody,
@@ -43,125 +37,123 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { api } from "@/trpc/react";
+} from '@/components/ui/table'
+import { api } from '@/trpc/react'
 
 type SerializedGlassType = {
-  id: string;
-  name: string;
-  thicknessMm: number;
-  pricePerSqm: number; // Already converted from Decimal
-  uValue: number | null; // Already converted from Decimal
-  isTempered: boolean;
-  isLaminated: boolean;
-  isLowE: boolean;
-  isTripleGlazed: boolean;
-  sku: string | null;
-  description: string | null;
-  solarFactor: number | null; // Already converted from Decimal
-  lightTransmission: number | null; // Already converted from Decimal
-  isActive: boolean;
-  lastReviewDate: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  name: string
+  thicknessMm: number
+  pricePerSqm: number // Already converted from Decimal
+  uValue: number | null // Already converted from Decimal
+  isTempered: boolean
+  isLaminated: boolean
+  isLowE: boolean
+  isTripleGlazed: boolean
+  sku: string | null
+  description: string | null
+  solarFactor: number | null // Already converted from Decimal
+  lightTransmission: number | null // Already converted from Decimal
+  isActive: boolean
+  lastReviewDate: Date | null
+  createdAt: Date
+  updatedAt: Date
   _count: {
-    solutions: number;
-    characteristics: number;
-  };
+    solutions: number
+    characteristics: number
+  }
   solutions: Array<{
-    id: string;
-    createdAt: Date;
-    updatedAt: Date;
-    glassTypeId: string;
-    solutionId: string;
-    isPrimary: boolean;
-    performanceRating: string;
-    notes: string | null;
+    id: string
+    createdAt: Date
+    updatedAt: Date
+    glassTypeId: string
+    solutionId: string
+    isPrimary: boolean
+    performanceRating: string
+    notes: string | null
     solution: {
-      id: string;
-      key: string;
-      nameEs: string;
-    };
-  }>;
-};
+      id: string
+      key: string
+      nameEs: string
+    }
+  }>
+}
 
 type GlassTypeListProps = {
   initialData: {
-    items: SerializedGlassType[];
-    limit: number;
-    page: number;
-    total: number;
-    totalPages: number;
-  };
-};
+    items: SerializedGlassType[]
+    limit: number
+    page: number
+    total: number
+    totalPages: number
+  }
+}
 
 export function GlassTypeList({ initialData }: GlassTypeListProps) {
-  const router = useRouter();
-  const utils = api.useUtils();
-  const [search, setSearch] = useState("");
-  const [isActive, setIsActive] = useState<"all" | "active" | "inactive">(
-    "all"
-  );
-  const [page, setPage] = useState(1);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const router = useRouter()
+  const utils = api.useUtils()
+  const [search, setSearch] = useState('')
+  const [isActive, setIsActive] = useState<'all' | 'active' | 'inactive'>('all')
+  const [page, setPage] = useState(1)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [glassTypeToDelete, setGlassTypeToDelete] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
+    id: string
+    name: string
+  } | null>(null)
 
   // Query with filters
-  const { data, isLoading } = api.admin["glass-type"].list.useQuery(
+  const { data, isLoading } = api.admin['glass-type'].list.useQuery(
     {
       isActive,
       limit: 20,
       page,
       search: search || undefined,
-      sortBy: "name",
-      sortOrder: "asc",
+      sortBy: 'name',
+      sortOrder: 'asc',
     },
     {
       placeholderData: (previousData) => previousData,
-    }
-  );
+    },
+  )
 
   // Delete mutation
-  const deleteMutation = api.admin["glass-type"].delete.useMutation({
+  const deleteMutation = api.admin['glass-type'].delete.useMutation({
     onError: (error) => {
-      toast.error("Error al eliminar tipo de cristal", {
+      toast.error('Error al eliminar tipo de cristal', {
         description: error.message,
-      });
+      })
     },
     onSuccess: () => {
-      toast.success("Tipo de cristal eliminado correctamente");
-      setDeleteDialogOpen(false);
-      setGlassTypeToDelete(null);
-      utils.admin["glass-type"].list.invalidate().catch(undefined);
+      toast.success('Tipo de cristal eliminado correctamente')
+      setDeleteDialogOpen(false)
+      setGlassTypeToDelete(null)
+      utils.admin['glass-type'].list.invalidate().catch(undefined)
     },
-  });
+  })
 
   const handleCreateClick = () => {
-    router.push("/admin/glass-types/new");
-  };
+    router.push('/admin/glass-types/new')
+  }
 
   const handleEditClick = (id: string) => {
-    router.push(`/admin/glass-types/${id}`);
-  };
+    router.push(`/admin/glass-types/${id}`)
+  }
 
   const handleDeleteClick = (id: string, name: string) => {
-    setGlassTypeToDelete({ id, name });
-    setDeleteDialogOpen(true);
-  };
+    setGlassTypeToDelete({ id, name })
+    setDeleteDialogOpen(true)
+  }
 
   const handleConfirmDelete = async () => {
     if (!glassTypeToDelete) {
-      return;
+      return
     }
-    await deleteMutation.mutateAsync({ id: glassTypeToDelete.id });
-  };
+    await deleteMutation.mutateAsync({ id: glassTypeToDelete.id })
+  }
 
   // Use initial data on first render, then switch to query data
-  const glassTypes = data?.items ?? initialData.items;
-  const totalPages = data?.totalPages ?? initialData.totalPages;
+  const glassTypes = data?.items ?? initialData.items
+  const totalPages = data?.totalPages ?? initialData.totalPages
 
   return (
     <div className="space-y-6">
@@ -183,8 +175,8 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
                 className="pl-8"
                 id="search"
                 onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
+                  setSearch(e.target.value)
+                  setPage(1)
                 }}
                 placeholder="Buscar por nombre, SKU..."
                 value={search}
@@ -199,8 +191,8 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
             </label>
             <Select
               onValueChange={(value) => {
-                setIsActive(value as "all" | "active" | "inactive");
-                setPage(1);
+                setIsActive(value as 'all' | 'active' | 'inactive')
+                setPage(1)
               }}
               value={isActive}
             >
@@ -255,10 +247,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
               )}
               {!isLoading && glassTypes.length === 0 && (
                 <TableRow>
-                  <TableCell
-                    className="text-center text-muted-foreground"
-                    colSpan={6}
-                  >
+                  <TableCell className="text-center text-muted-foreground" colSpan={6}>
                     No se encontraron tipos de cristal
                   </TableCell>
                 </TableRow>
@@ -266,26 +255,22 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
               {!isLoading &&
                 glassTypes.map((glassType) => (
                   <TableRow key={glassType.id}>
-                    <TableCell className="font-medium">
-                      {glassType.name}
-                    </TableCell>
+                    <TableCell className="font-medium">{glassType.name}</TableCell>
                     <TableCell>
                       <Badge variant="outline">{glassType.thicknessMm}mm</Badge>
                     </TableCell>
                     <TableCell className="text-sm">
-                      ${Number(glassType.pricePerSqm).toLocaleString("es-CO")}
+                      ${Number(glassType.pricePerSqm).toLocaleString('es-CO')}
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
                         {glassType.solutions.length === 0 ? (
-                          <span className="text-muted-foreground text-sm">
-                            Sin soluciones
-                          </span>
+                          <span className="text-muted-foreground text-sm">Sin soluciones</span>
                         ) : (
                           glassType.solutions.map((sol) => (
                             <Badge
                               key={sol.solution.id}
-                              variant={sol.isPrimary ? "default" : "secondary"}
+                              variant={sol.isPrimary ? 'default' : 'secondary'}
                             >
                               {sol.solution.id}
                             </Badge>
@@ -294,10 +279,8 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant={glassType.isActive ? "default" : "secondary"}
-                      >
-                        {glassType.isActive ? "Activo" : "Inactivo"}
+                      <Badge variant={glassType.isActive ? 'default' : 'secondary'}>
+                        {glassType.isActive ? 'Activo' : 'Inactivo'}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
@@ -311,9 +294,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
                           <span className="sr-only">Editar</span>
                         </Button>
                         <Button
-                          onClick={() =>
-                            handleDeleteClick(glassType.id, glassType.name)
-                          }
+                          onClick={() => handleDeleteClick(glassType.id, glassType.name)}
                           size="icon"
                           variant="ghost"
                         >
@@ -359,7 +340,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
         dependencies={[]}
-        entityLabel={glassTypeToDelete?.name ?? ""}
+        entityLabel={glassTypeToDelete?.name ?? ''}
         entityName="tipo de cristal"
         loading={deleteMutation.isPending}
         onConfirm={handleConfirmDelete}
@@ -367,5 +348,5 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
         open={deleteDialogOpen}
       />
     </div>
-  );
+  )
 }

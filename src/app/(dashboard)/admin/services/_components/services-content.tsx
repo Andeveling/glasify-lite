@@ -10,27 +10,24 @@
  * - Render filters and list
  */
 
-"use client";
+'use client'
 
-import { useState } from "react";
-import { ServiceDialog } from "./service-dialog";
-import { ServicesFilters } from "./services-filters";
-import { ServicesList } from "./services-list";
+import { useState } from 'react'
+import { ServiceDialog } from './service-dialog'
+import { ServicesFilters } from './services-filters'
+import { ServicesList } from './services-list'
 
 type ServicesContentProps = {
-  initialData: Parameters<typeof ServicesList>[0]["initialData"];
-  searchParams: Parameters<typeof ServicesList>[0]["searchParams"];
-};
+  initialData: Parameters<typeof ServicesList>[0]['initialData']
+  searchParams: Parameters<typeof ServicesList>[0]['searchParams']
+}
 
-export function ServicesContent({
-  initialData,
-  searchParams,
-}: ServicesContentProps) {
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+export function ServicesContent({ initialData, searchParams }: ServicesContentProps) {
+  const [createDialogOpen, setCreateDialogOpen] = useState(false)
 
   const handleCreateClick = () => {
-    setCreateDialogOpen(true);
-  };
+    setCreateDialogOpen(true)
+  }
 
   return (
     <>
@@ -42,13 +39,10 @@ export function ServicesContent({
       />
 
       {/* Filters with create button */}
-      <ServicesFilters
-        onCreateClick={handleCreateClick}
-        searchParams={searchParams}
-      />
+      <ServicesFilters onCreateClick={handleCreateClick} searchParams={searchParams} />
 
       {/* Services List */}
       <ServicesList initialData={initialData} searchParams={searchParams} />
     </>
-  );
+  )
 }

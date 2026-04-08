@@ -1,57 +1,54 @@
-import { env } from "@/env";
-import { cn } from "@/lib/utils";
-import { BrandingProvider } from "@/providers/branding-provider";
-import { SessionProvider } from "@/providers/session-provider";
-import { TenantConfigProvider } from "@/providers/tenant-config-provider";
-import "@/styles/globals.css";
-import type { Metadata } from "next";
-import { Fira_Code, Geist, Inter, Lora } from "next/font/google";
-import Script from "next/script";
-import { ThemeProvider } from "next-themes";
-import { Suspense } from "react";
-import { Toaster } from "sonner";
-import { TRPCReactProvider } from "@/trpc/react";
-import { NavigationLoader } from "./_components/navigation-loader";
-import { ReactScan } from "./_components/react-scan";
+import { env } from '@/env'
+import { cn } from '@/lib/utils'
+import { BrandingProvider } from '@/providers/branding-provider'
+import { SessionProvider } from '@/providers/session-provider'
+import { TenantConfigProvider } from '@/providers/tenant-config-provider'
+import '@/styles/globals.css'
+import type { Metadata } from 'next'
+import { Fira_Code, Geist, Inter, Lora } from 'next/font/google'
+import Script from 'next/script'
+import { ThemeProvider } from 'next-themes'
+import { Suspense } from 'react'
+import { Toaster } from 'sonner'
+import { TRPCReactProvider } from '@/trpc/react'
+import { NavigationLoader } from './_components/navigation-loader'
+import { ReactScan } from './_components/react-scan'
 
 export const metadata: Metadata = {
   description:
-    "Cotización inteligente de productos de aluminio y pvc arquitectónico para fabricantes y distribuidores",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
-  title:
-    "Glasify Lite - Cotizador Inteligente de productos de aluminio y pvc arquitectónico",
-};
+    'Cotización inteligente de productos de aluminio y pvc arquitectónico para fabricantes y distribuidores',
+  icons: [{ rel: 'icon', url: '/favicon.ico' }],
+  title: 'Glasify Lite - Cotizador Inteligente de productos de aluminio y pvc arquitectónico',
+}
 
 // Remove dynamic rendering - now using build-time env vars instead of DB queries
 // This allows static page generation while maintaining tenant-specific config
 
 const geist = Geist({
-  display: "swap",
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
+  display: 'swap',
+  subsets: ['latin'],
+  variable: '--font-geist-sans',
+})
 
 const inter = Inter({
-  display: "swap",
-  subsets: ["latin"],
-  variable: "--font-inter-sans",
-});
+  display: 'swap',
+  subsets: ['latin'],
+  variable: '--font-inter-sans',
+})
 
 const lora = Lora({
-  display: "swap",
-  subsets: ["latin"],
-  variable: "--font-lora-serif",
-});
+  display: 'swap',
+  subsets: ['latin'],
+  variable: '--font-lora-serif',
+})
 
 const firaCode = Fira_Code({
-  display: "swap",
-  subsets: ["latin"],
-  variable: "--font-fira-code-mono",
-});
+  display: 'swap',
+  subsets: ['latin'],
+  variable: '--font-fira-code-mono',
+})
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   // Use build-time env vars instead of database fetch
   // This allows static generation while keeping tenant config
   const tenantConfig = {
@@ -64,21 +61,16 @@ export default function RootLayout({
     taxName: env.NEXT_PUBLIC_TENANT_TAX_NAME,
     taxRate: env.NEXT_PUBLIC_TENANT_TAX_RATE,
     timezone: env.NEXT_PUBLIC_TENANT_TIMEZONE,
-  };
+  }
 
   return (
     <html
-      className={cn(
-        geist.variable,
-        inter.variable,
-        lora.variable,
-        firaCode.variable
-      )}
+      className={cn(geist.variable, inter.variable, lora.variable, firaCode.variable)}
       lang="es"
       suppressHydrationWarning
     >
       <head>
-        {process.env.NODE_ENV === "development" && (
+        {process.env.NODE_ENV === 'development' && (
           <Script
             crossOrigin="anonymous"
             src="//unpkg.com/react-grab/dist/index.global.js"
@@ -94,9 +86,9 @@ export default function RootLayout({
         <BrandingProvider
           config={{
             businessName: tenantConfig.businessName,
-            logoUrl: "/favicon.ico",
-            primaryColor: "#3b82f6",
-            secondaryColor: "#1e40af",
+            logoUrl: '/favicon.ico',
+            primaryColor: '#3b82f6',
+            secondaryColor: '#1e40af',
           }}
         >
           <TenantConfigProvider
@@ -126,5 +118,5 @@ export default function RootLayout({
         </BrandingProvider>
       </body>
     </html>
-  );
+  )
 }

@@ -8,27 +8,24 @@
  * Este módulo ES la única parte que conoce tanto Prisma como los use-cases.
  */
 
-import { Dimensions } from "@domain/pricing/core/entities/dimensions";
-import { Money } from "@domain/pricing/core/entities/money";
-import type { PriceCalculationResult } from "@domain/pricing/core/entities/price-calculation";
-import type { ServiceUnit } from "@domain/pricing/core/types";
-import { CalculateItemPrice } from "@domain/pricing/use-cases/calculate-item-price";
-import type { PrismaClient } from "@prisma/generated/client";
+import { Dimensions } from '@domain/pricing/core/entities/dimensions'
+import { Money } from '@domain/pricing/core/entities/money'
+import type { PriceCalculationResult } from '@domain/pricing/core/entities/price-calculation'
+import type { ServiceUnit } from '@domain/pricing/core/types'
+import { CalculateItemPrice } from '@domain/pricing/use-cases/calculate-item-price'
+import type { PrismaClient } from '@prisma/generated/client'
 import {
   getQuoteValidityDays,
   getTenantConfigSelect,
   getTenantCurrency,
-} from "@/server/utils/tenant";
+} from '@/server/utils/tenant'
 
-import type { AddItemToQuoteDeps } from "../use-cases/add-item-to-quote";
-import type { CalculateItemPriceDeps } from "../use-cases/calculate-item-price";
-import type { CalculatePriceWithColorDeps } from "../use-cases/calculate-price-with-color";
-import type { GetQuoteByIdDeps } from "../use-cases/get-quote-by-id";
-import type {
-  ListUserQuotesDeps,
-  QuoteListFilters,
-} from "../use-cases/list-user-quotes";
-import type { SendQuoteToVendorDeps } from "../use-cases/send-quote-to-vendor";
+import type { AddItemToQuoteDeps } from '../use-cases/add-item-to-quote'
+import type { CalculateItemPriceDeps } from '../use-cases/calculate-item-price'
+import type { CalculatePriceWithColorDeps } from '../use-cases/calculate-price-with-color'
+import type { GetQuoteByIdDeps } from '../use-cases/get-quote-by-id'
+import type { ListUserQuotesDeps, QuoteListFilters } from '../use-cases/list-user-quotes'
+import type { SendQuoteToVendorDeps } from '../use-cases/send-quote-to-vendor'
 
 // =============================================================================
 // Internal Price Adaptation Functions (formerly in @/server/api/routers/quote/price-adapter)
@@ -36,47 +33,47 @@ import type { SendQuoteToVendorDeps } from "../use-cases/send-quote-to-vendor";
 // These functions transform between tRPC/Prisma formats and domain format.
 // Kept internal to this module to avoid circular dependencies with the server layer.
 
-const PERCENTAGE_DIVISOR = 100;
-const BASE_MULTIPLIER = 1.0;
+const PERCENTAGE_DIVISOR = 100
+const BASE_MULTIPLIER = 1.0
 
 // Type for the input that CalculateItemPrice.execute expects
-type DomainPriceInput = Parameters<typeof CalculateItemPrice.execute>[0];
+type DomainPriceInput = Parameters<typeof CalculateItemPrice.execute>[0]
 
 // Type for tRPC-style input used in the container
 type TrpcPriceInput = {
-  widthMm: number;
-  heightMm: number;
+  widthMm: number
+  heightMm: number
   modelPrices: {
-    basePrice: number;
-    costPerMmWidth: number;
-    costPerMmHeight: number;
-    minWidthMm: number;
-    minHeightMm: number;
-    accessoryPrice?: number;
-  };
-  colorSurchargePercentage?: number;
-  profitMarginPercentage?: number;
+    basePrice: number
+    costPerMmWidth: number
+    costPerMmHeight: number
+    minWidthMm: number
+    minHeightMm: number
+    accessoryPrice?: number
+  }
+  colorSurchargePercentage?: number
+  profitMarginPercentage?: number
   glass?: {
-    pricePerSqm: number;
-    discountWidthMm?: number;
-    discountHeightMm?: number;
-  };
+    pricePerSqm: number
+    discountWidthMm?: number
+    discountHeightMm?: number
+  }
   services?: Array<{
-    serviceId: string;
-    name: string;
-    unit: "unit" | "sqm" | "ml";
-    rate: number;
-    minimumBillingUnit?: number;
-    quantityOverride?: number;
-  }>;
+    serviceId: string
+    name: string
+    unit: 'unit' | 'sqm' | 'ml'
+    rate: number
+    minimumBillingUnit?: number
+    quantityOverride?: number
+  }>
   adjustments?: Array<{
-    adjustmentId: string;
-    concept: string;
-    unit: "unit" | "sqm" | "ml";
-    value: number;
-    sign: "positive" | "negative";
-  }>;
-};
+    adjustmentId: string
+    concept: string
+    unit: 'unit' | 'sqm' | 'ml'
+    value: number
+    sign: 'positive' | 'negative'
+  }>
+}
 
 /**
  * Transform tRPC input to domain PriceCalculationInput
@@ -87,7 +84,7 @@ function adaptTRPCToDomain(input: TrpcPriceInput): DomainPriceInput {
     heightMm: input.heightMm,
     minWidthMm: input.modelPrices.minWidthMm,
     minHeightMm: input.modelPrices.minHeightMm,
-  });
+  })
 
   const modelPrices = {
     basePrice: new Money(input.modelPrices.basePrice),
@@ -96,11 +93,11 @@ function adaptTRPCToDomain(input: TrpcPriceInput): DomainPriceInput {
     accessoryPrice: input.modelPrices.accessoryPrice
       ? new Money(input.modelPrices.accessoryPrice)
       : undefined,
-  };
+  }
 
   const colorMultiplier = input.colorSurchargePercentage
     ? BASE_MULTIPLIER + input.colorSurchargePercentage / PERCENTAGE_DIVISOR
-    : BASE_MULTIPLIER;
+    : BASE_MULTIPLIER
 
   const glass = input.glass
     ? {
@@ -108,7 +105,7 @@ function adaptTRPCToDomain(input: TrpcPriceInput): DomainPriceInput {
         discountWidthMm: input.glass.discountWidthMm,
         discountHeightMm: input.glass.discountHeightMm,
       }
-    : undefined;
+    : undefined
 
   const services = input.services?.map((s) => ({
     serviceId: s.serviceId,
@@ -117,15 +114,15 @@ function adaptTRPCToDomain(input: TrpcPriceInput): DomainPriceInput {
     rate: new Money(s.rate),
     minimumBillingUnit: s.minimumBillingUnit,
     quantityOverride: s.quantityOverride,
-  }));
+  }))
 
   const adjustments = input.adjustments?.map((adj) => ({
     adjustmentId: adj.adjustmentId,
     concept: adj.concept,
     unit: adj.unit as ServiceUnit,
     value: adj.value,
-    isPositive: adj.sign === "positive",
-  }));
+    isPositive: adj.sign === 'positive',
+  }))
 
   return {
     dimensions,
@@ -135,7 +132,7 @@ function adaptTRPCToDomain(input: TrpcPriceInput): DomainPriceInput {
     glass,
     services,
     adjustments,
-  };
+  }
 }
 
 /**
@@ -143,67 +140,66 @@ function adaptTRPCToDomain(input: TrpcPriceInput): DomainPriceInput {
  */
 function adaptDomainToTRPC(
   result: PriceCalculationResult,
-  colorSurchargePercentage?: number
+  colorSurchargePercentage?: number,
 ): {
-  dimPrice: number;
-  accPrice: number;
-  colorSurchargePercentage?: number;
-  colorSurchargeAmount?: number;
+  dimPrice: number
+  accPrice: number
+  colorSurchargePercentage?: number
+  colorSurchargeAmount?: number
   services: Array<{
-    serviceId: string;
-    unit: ServiceUnit;
-    quantity: number;
-    amount: number;
-  }>;
-  adjustments: Array<{ concept: string; amount: number }>;
-  subtotal: number;
+    serviceId: string
+    unit: ServiceUnit
+    quantity: number
+    amount: number
+  }>
+  adjustments: Array<{ concept: string; amount: number }>
+  subtotal: number
 } {
-  const dimPrice = result.profileCost.add(result.glassCost).toNumber();
+  const dimPrice = result.profileCost.add(result.glassCost).toNumber()
 
   const services = result.services.map((svc) => ({
     serviceId: svc.serviceId,
     unit: svc.unit,
     quantity: svc.quantity,
     amount: svc.amount,
-  }));
+  }))
 
   const adjustments = result.adjustments.map((adj) => ({
     concept: adj.concept,
     amount: adj.amount,
-  }));
+  }))
 
   const output: {
-    dimPrice: number;
-    accPrice: number;
-    colorSurchargePercentage?: number;
-    colorSurchargeAmount?: number;
+    dimPrice: number
+    accPrice: number
+    colorSurchargePercentage?: number
+    colorSurchargeAmount?: number
     services: Array<{
-      serviceId: string;
-      unit: ServiceUnit;
-      quantity: number;
-      amount: number;
-    }>;
-    adjustments: Array<{ concept: string; amount: number }>;
-    subtotal: number;
+      serviceId: string
+      unit: ServiceUnit
+      quantity: number
+      amount: number
+    }>
+    adjustments: Array<{ concept: string; amount: number }>
+    subtotal: number
   } = {
     dimPrice,
     accPrice: result.accessoryCost.toNumber(),
     services,
     adjustments,
     subtotal: result.subtotal.toNumber(),
-  };
-
-  if (colorSurchargePercentage !== undefined && colorSurchargePercentage > 0) {
-    output.colorSurchargePercentage = colorSurchargePercentage;
-    const multiplier =
-      BASE_MULTIPLIER + colorSurchargePercentage / PERCENTAGE_DIVISOR;
-    const profilePlusAccessory = result.profileCost.add(result.accessoryCost);
-    const surchargeMultiplier = 1 - 1 / multiplier;
-    const surchargeAmount = profilePlusAccessory.multiply(surchargeMultiplier);
-    output.colorSurchargeAmount = surchargeAmount.toNumber();
   }
 
-  return output;
+  if (colorSurchargePercentage !== undefined && colorSurchargePercentage > 0) {
+    output.colorSurchargePercentage = colorSurchargePercentage
+    const multiplier = BASE_MULTIPLIER + colorSurchargePercentage / PERCENTAGE_DIVISOR
+    const profilePlusAccessory = result.profileCost.add(result.accessoryCost)
+    const surchargeMultiplier = 1 - 1 / multiplier
+    const surchargeAmount = profilePlusAccessory.multiply(surchargeMultiplier)
+    output.colorSurchargeAmount = surchargeAmount.toNumber()
+  }
+
+  return output
 }
 
 /**
@@ -236,7 +232,7 @@ export function createAddItemToQuoteDeps(db: PrismaClient): AddItemToQuoteDeps {
       db.quote.create({
         data: {
           currency: input.currency,
-          status: "draft",
+          status: 'draft',
           validUntil: input.validUntil,
         },
       }),
@@ -266,7 +262,7 @@ export function createAddItemToQuoteDeps(db: PrismaClient): AddItemToQuoteDeps {
     listQuoteItems: (quoteId) =>
       db.quoteItem.findMany({
         where: { quoteId },
-        orderBy: { createdAt: "asc" },
+        orderBy: { createdAt: 'asc' },
       }),
 
     getTenantCurrency: () => getTenantCurrency(db),
@@ -293,7 +289,7 @@ export function createAddItemToQuoteDeps(db: PrismaClient): AddItemToQuoteDeps {
         services: input.services.map((s) => ({
           serviceId: s.id,
           name: s.name,
-          unit: s.unit as "unit" | "sqm" | "ml",
+          unit: s.unit as 'unit' | 'sqm' | 'ml',
           rate: s.rate.toNumber(),
           minimumBillingUnit: s.minimumBillingUnit?.toNumber(),
         })),
@@ -304,14 +300,11 @@ export function createAddItemToQuoteDeps(db: PrismaClient): AddItemToQuoteDeps {
           value: adj.value,
           sign: adj.sign,
         })),
-      };
+      }
 
-      const domainInput = adaptTRPCToDomain(adapterInput);
-      const domainResult = CalculateItemPrice.execute(domainInput);
-      const result = adaptDomainToTRPC(
-        domainResult,
-        input.colorSurchargePercentage
-      );
+      const domainInput = adaptTRPCToDomain(adapterInput)
+      const domainResult = CalculateItemPrice.execute(domainInput)
+      const result = adaptDomainToTRPC(domainResult, input.colorSurchargePercentage)
 
       return {
         subtotal: result.subtotal,
@@ -319,17 +312,15 @@ export function createAddItemToQuoteDeps(db: PrismaClient): AddItemToQuoteDeps {
         glassPrice: 0, // Incluido en dimPrice
         accPrice: result.accPrice,
         servicesTotal: result.services.reduce((sum, s) => sum + s.amount, 0),
-      };
+      }
     },
-  };
+  }
 }
 
 /**
  * Crea las dependencias para CalculateItemPrice use-case
  */
-export function createCalculateItemPriceDeps(
-  db: PrismaClient
-): CalculateItemPriceDeps {
+export function createCalculateItemPriceDeps(db: PrismaClient): CalculateItemPriceDeps {
   return {
     findModel: (id) =>
       db.model.findUnique({
@@ -348,11 +339,11 @@ export function createCalculateItemPriceDeps(
       }),
 
     calculatePrice: (input) => {
-      const domainInput = adaptTRPCToDomain(input);
-      const domainResult = CalculateItemPrice.execute(domainInput);
-      return adaptDomainToTRPC(domainResult, input.colorSurchargePercentage);
+      const domainInput = adaptTRPCToDomain(input)
+      const domainResult = CalculateItemPrice.execute(domainInput)
+      return adaptDomainToTRPC(domainResult, input.colorSurchargePercentage)
     },
-  };
+  }
 }
 
 /**
@@ -388,15 +379,15 @@ export function createGetQuoteByIdDeps(db: PrismaClient): GetQuoteByIdDeps {
       }),
 
     getTenantBusinessName: async () => {
-      const tenant = await getTenantConfigSelect({ businessName: true }, db);
-      return tenant.businessName;
+      const tenant = await getTenantConfigSelect({ businessName: true }, db)
+      return tenant.businessName
     },
 
     getTenantContactPhone: async () => {
-      const tenant = await getTenantConfigSelect({ contactPhone: true }, db);
-      return tenant.contactPhone;
+      const tenant = await getTenantConfigSelect({ contactPhone: true }, db)
+      return tenant.contactPhone
     },
-  };
+  }
 }
 
 /**
@@ -405,50 +396,50 @@ export function createGetQuoteByIdDeps(db: PrismaClient): GetQuoteByIdDeps {
 export function createListUserQuotesDeps(db: PrismaClient): ListUserQuotesDeps {
   return {
     listQuotes: async (filters: QuoteListFilters) => {
-      const skip = (filters.page - 1) * filters.limit;
+      const skip = (filters.page - 1) * filters.limit
 
       // Build where clause
       type WhereInput = {
-        userId?: string;
-        status?: typeof filters.status;
-        AND?: Record<string, unknown>[];
-      };
+        userId?: string
+        status?: typeof filters.status
+        AND?: Record<string, unknown>[]
+      }
 
       const where: WhereInput = {
         ...(filters.userId && { userId: filters.userId }),
         ...(filters.status && { status: filters.status }),
-      };
+      }
 
-      const andConditions: Record<string, unknown>[] = [];
+      const andConditions: Record<string, unknown>[] = []
 
       // Filter expired quotes if not including them
       if (!filters.includeExpired) {
         andConditions.push({
           OR: [{ validUntil: null }, { validUntil: { gte: new Date() } }],
-        });
+        })
       }
 
       // Search filter
       if (filters.search) {
         andConditions.push({
           OR: [
-            { projectName: { contains: filters.search, mode: "insensitive" } },
+            { projectName: { contains: filters.search, mode: 'insensitive' } },
             {
-              projectStreet: { contains: filters.search, mode: "insensitive" },
+              projectStreet: { contains: filters.search, mode: 'insensitive' },
             },
             {
               items: {
                 some: {
-                  name: { contains: filters.search, mode: "insensitive" },
+                  name: { contains: filters.search, mode: 'insensitive' },
                 },
               },
             },
           ],
-        });
+        })
       }
 
       if (andConditions.length > 0) {
-        where.AND = andConditions;
+        where.AND = andConditions
       }
 
       const [quotes, total] = await Promise.all([
@@ -462,7 +453,7 @@ export function createListUserQuotesDeps(db: PrismaClient): ListUserQuotesDeps {
           take: filters.limit,
         }),
         db.quote.count({ where }),
-      ]);
+      ])
 
       return {
         quotes: quotes.map((q) => ({
@@ -477,17 +468,15 @@ export function createListUserQuotesDeps(db: PrismaClient): ListUserQuotesDeps {
           itemCount: q._count.items,
         })),
         total,
-      };
+      }
     },
-  };
+  }
 }
 
 /**
  * Crea las dependencias para SendQuoteToVendor use-case
  */
-export function createSendQuoteToVendorDeps(
-  db: PrismaClient
-): SendQuoteToVendorDeps {
+export function createSendQuoteToVendorDeps(db: PrismaClient): SendQuoteToVendorDeps {
   return {
     findQuoteWithItemCount: async (id) => {
       const quote = await db.quote.findUnique({
@@ -495,23 +484,23 @@ export function createSendQuoteToVendorDeps(
         include: {
           _count: { select: { items: true } },
         },
-      });
+      })
 
       if (!quote) {
-        return null;
+        return null
       }
 
       return {
         ...quote,
         itemCount: quote._count.items,
-      };
+      }
     },
 
     updateQuoteToSent: async (id, contactPhone, sentAt) => {
       const updated = await db.quote.update({
         where: { id },
         data: {
-          status: "sent",
+          status: 'sent',
           sentAt,
           contactPhone,
         },
@@ -523,22 +512,20 @@ export function createSendQuoteToVendorDeps(
           total: true,
           currency: true,
         },
-      });
+      })
 
       return {
         ...updated,
         total: Number(updated.total),
-      };
+      }
     },
-  };
+  }
 }
 
 /**
  * Crea las dependencias para CalculatePriceWithColor use-case
  */
-export function createCalculatePriceWithColorDeps(
-  db: PrismaClient
-): CalculatePriceWithColorDeps {
+export function createCalculatePriceWithColorDeps(db: PrismaClient): CalculatePriceWithColorDeps {
   return {
     findModel: (id) =>
       db.model.findUnique({
@@ -565,10 +552,10 @@ export function createCalculatePriceWithColorDeps(
         include: {
           color: true,
         },
-      });
+      })
 
       if (!modelColor) {
-        return null;
+        return null
       }
 
       return {
@@ -579,15 +566,15 @@ export function createCalculatePriceWithColorDeps(
           hexCode: modelColor.color.hexCode,
           isActive: modelColor.color.isActive,
         },
-      };
+      }
     },
 
     calculatePrice: (input) => {
-      const domainInput = adaptTRPCToDomain(input);
-      const domainResult = CalculateItemPrice.execute(domainInput);
-      return adaptDomainToTRPC(domainResult);
+      const domainInput = adaptTRPCToDomain(input)
+      const domainResult = CalculateItemPrice.execute(domainInput)
+      return adaptDomainToTRPC(domainResult)
     },
-  };
+  }
 }
 
 /**
@@ -595,12 +582,12 @@ export function createCalculatePriceWithColorDeps(
  * TODO Phase D: Implementar después de extender QuoteRepository
  */
 export function createAddItemWithColorDeps(
-  _db: PrismaClient
+  _db: PrismaClient,
   // biome-ignore lint/suspicious/noExplicitAny: placeholder implementation
 ): any {
   throw new Error(
-    "createAddItemWithColorDeps: En desarrollo (Phase D) - extender QuoteRepository primero"
-  );
+    'createAddItemWithColorDeps: En desarrollo (Phase D) - extender QuoteRepository primero',
+  )
 }
 
 /**
@@ -621,8 +608,8 @@ export function createGetModelColorsForQuoteDeps(db: PrismaClient) {
           include: {
             color: true,
           },
-          orderBy: [{ isDefault: "desc" }, { color: { name: "asc" } }],
-        });
+          orderBy: [{ isDefault: 'desc' }, { color: { name: 'asc' } }],
+        })
 
         return modelColors.map((mc) => ({
           id: mc.id,
@@ -634,8 +621,8 @@ export function createGetModelColorsForQuoteDeps(db: PrismaClient) {
             hexCode: mc.color.hexCode,
             ralCode: mc.color.ralCode,
           },
-        }));
+        }))
       },
     },
-  };
+  }
 }

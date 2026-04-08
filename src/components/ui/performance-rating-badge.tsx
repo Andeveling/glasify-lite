@@ -1,19 +1,14 @@
-import { Star } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { Star } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 
-type PerformanceRating =
-  | "basic"
-  | "standard"
-  | "good"
-  | "very_good"
-  | "excellent";
+type PerformanceRating = 'basic' | 'standard' | 'good' | 'very_good' | 'excellent'
 
 type PerformanceRatingBadgeProps = {
-  className?: string;
-  rating: PerformanceRating;
-  showLabel?: boolean;
-};
+  className?: string
+  rating: PerformanceRating
+  showLabel?: boolean
+}
 
 /**
  * Configuration for performance rating display
@@ -22,39 +17,37 @@ type PerformanceRatingBadgeProps = {
 const ratingConfig: Record<
   PerformanceRating,
   {
-    color: string;
-    label: string;
-    stars: number;
+    color: string
+    label: string
+    stars: number
   }
 > = {
   basic: {
-    color: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
-    label: "Básico",
+    color: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+    label: 'Básico',
     stars: 1,
   },
   excellent: {
-    color: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300",
-    label: "Excelente",
+    color: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
+    label: 'Excelente',
     stars: 5,
   },
   good: {
-    color: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
-    label: "Bueno",
+    color: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
+    label: 'Bueno',
     stars: 3,
   },
   standard: {
-    color:
-      "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300",
-    label: "Estándar",
+    color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
+    label: 'Estándar',
     stars: 2,
   },
   very_good: {
-    color:
-      "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300",
-    label: "Muy Bueno",
+    color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300',
+    label: 'Muy Bueno',
     stars: 4,
   },
-};
+}
 
 /**
  * Performance Rating Badge Component (Atom)
@@ -107,16 +100,17 @@ export function PerformanceRatingBadge({
   rating,
   showLabel = false,
 }: PerformanceRatingBadgeProps) {
-  const config = ratingConfig[rating];
+  const config = ratingConfig[rating]
 
   return (
-    <Badge className={cn("gap-1", config.color, className)} variant="outline">
+    <Badge className={cn('gap-1', config.color, className)} variant="outline">
       <div className="flex items-center gap-0.5">
         {Array.from({ length: config.stars }).map((_, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: Stars are fixed-length (1-5) and never reordered
           <Star className="h-3 w-3 fill-current" key={i} />
         ))}
       </div>
       {showLabel && <span className="ml-1 text-xs">{config.label}</span>}
     </Badge>
-  );
+  )
 }

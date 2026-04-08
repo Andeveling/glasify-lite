@@ -1,5 +1,5 @@
-import type { Dimensions } from "../entities/dimensions";
-import type { Money } from "../entities/money";
+import type { Dimensions } from '../entities/dimensions'
+import type { Money } from '../entities/money'
 
 /**
  * Input for profile cost calculation
@@ -8,28 +8,28 @@ export type ProfileCostInput = {
   /**
    * Base price for the profile (minimum billable cost)
    */
-  basePrice: Money;
+  basePrice: Money
 
   /**
    * Cost per additional millimeter of width beyond minimum
    */
-  costPerMmWidth: Money;
+  costPerMmWidth: Money
 
   /**
    * Cost per additional millimeter of height beyond minimum
    */
-  costPerMmHeight: Money;
+  costPerMmHeight: Money
 
   /**
    * Dimensions including width, height, and their minimums
    */
-  dimensions: Dimensions;
+  dimensions: Dimensions
 
   /**
    * Color multiplier to apply to all costs (1 = no surcharge, 1.1 = 10% surcharge)
    */
-  colorMultiplier: number;
-};
+  colorMultiplier: number
+}
 
 /**
  * Calculate base cost with color surcharge
@@ -39,7 +39,7 @@ export type ProfileCostInput = {
  * @returns Base cost with color applied
  */
 function calculateBaseCost(basePrice: Money, colorMultiplier: number): Money {
-  return basePrice.multiply(colorMultiplier);
+  return basePrice.multiply(colorMultiplier)
 }
 
 /**
@@ -53,11 +53,11 @@ function calculateBaseCost(basePrice: Money, colorMultiplier: number): Money {
 function calculateWidthCost(
   costPerMmWidth: Money,
   extraWidthMm: number,
-  colorMultiplier: number
+  colorMultiplier: number,
 ): Money {
   // Apply color to per-mm cost, then multiply by millimeters
-  const perMmWithColor = costPerMmWidth.multiply(colorMultiplier);
-  return perMmWithColor.multiply(extraWidthMm);
+  const perMmWithColor = costPerMmWidth.multiply(colorMultiplier)
+  return perMmWithColor.multiply(extraWidthMm)
 }
 
 /**
@@ -71,11 +71,11 @@ function calculateWidthCost(
 function calculateHeightCost(
   costPerMmHeight: Money,
   extraHeightMm: number,
-  colorMultiplier: number
+  colorMultiplier: number,
 ): Money {
   // Apply color to per-mm cost, then multiply by millimeters
-  const perMmWithColor = costPerMmHeight.multiply(colorMultiplier);
-  return perMmWithColor.multiply(extraHeightMm);
+  const perMmWithColor = costPerMmHeight.multiply(colorMultiplier)
+  return perMmWithColor.multiply(extraHeightMm)
 }
 
 /**
@@ -103,33 +103,19 @@ function calculateHeightCost(
  * @returns Total profile cost with all surcharges applied
  */
 function calculateProfileCost(input: ProfileCostInput): Money {
-  const {
-    basePrice,
-    costPerMmWidth,
-    costPerMmHeight,
-    dimensions,
-    colorMultiplier,
-  } = input;
+  const { basePrice, costPerMmWidth, costPerMmHeight, dimensions, colorMultiplier } = input
 
   // Get extra millimeters (clamped to 0 if below minimum)
-  const extraWidthMm = dimensions.getEffectiveWidth();
-  const extraHeightMm = dimensions.getEffectiveHeight();
+  const extraWidthMm = dimensions.getEffectiveWidth()
+  const extraHeightMm = dimensions.getEffectiveHeight()
 
   // Calculate each component with color surcharge
-  const baseCost = calculateBaseCost(basePrice, colorMultiplier);
-  const widthCost = calculateWidthCost(
-    costPerMmWidth,
-    extraWidthMm,
-    colorMultiplier
-  );
-  const heightCost = calculateHeightCost(
-    costPerMmHeight,
-    extraHeightMm,
-    colorMultiplier
-  );
+  const baseCost = calculateBaseCost(basePrice, colorMultiplier)
+  const widthCost = calculateWidthCost(costPerMmWidth, extraWidthMm, colorMultiplier)
+  const heightCost = calculateHeightCost(costPerMmHeight, extraHeightMm, colorMultiplier)
 
   // Sum all components
-  return baseCost.add(widthCost).add(heightCost);
+  return baseCost.add(widthCost).add(heightCost)
 }
 
 /**
@@ -143,4 +129,4 @@ export const ProfileCalculator = {
   calculateWidthCost,
   calculateHeightCost,
   calculateProfileCost,
-} as const;
+} as const

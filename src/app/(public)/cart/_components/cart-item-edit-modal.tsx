@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 /**
  * Cart Item Edit Modal
@@ -13,21 +13,21 @@
  * - Accessibility improvements
  */
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from '@hookform/resolvers/zod'
 
 // Time constants
-const SECONDS_PER_MINUTE = 60;
-const MS_PER_SECOND = 1000;
-const MS_PER_MINUTE = SECONDS_PER_MINUTE * MS_PER_SECOND;
-const STALE_TIME_MINUTES = 5; // minutes to keep glass types cached
-const STALE_TIME_MS = STALE_TIME_MINUTES * MS_PER_MINUTE; // 5 minutes
-const FOCUS_DELAY_MS = 100; // delay used when focusing inputs after modal open
+const SECONDS_PER_MINUTE = 60
+const MS_PER_SECOND = 1000
+const MS_PER_MINUTE = SECONDS_PER_MINUTE * MS_PER_SECOND
+const STALE_TIME_MINUTES = 5 // minutes to keep glass types cached
+const STALE_TIME_MS = STALE_TIME_MINUTES * MS_PER_MINUTE // 5 minutes
+const FOCUS_DELAY_MS = 100 // delay used when focusing inputs after modal open
 
-import { Check, ChevronsUpDown } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-import { DimensionField } from "@/app/(public)/catalog/[modelId]/_components/form/dimension-field";
-import { Button } from "@/components/ui/button";
+import { Check, ChevronsUpDown } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { DimensionField } from '@/app/(public)/catalog/[modelId]/_components/form/dimension-field'
+import { Button } from '@/components/ui/button'
 import {
   Command,
   CommandEmpty,
@@ -35,7 +35,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from '@/components/ui/command'
 import {
   Dialog,
   DialogContent,
@@ -43,7 +43,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -51,144 +51,129 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Spinner } from "@/components/ui/spinner";
-import { formatCurrency } from "@/lib/format";
-import { cn } from "@/lib/utils";
-import { api } from "@/trpc/react";
-import {
-  MAX_DIMENSION,
-  MIN_DIMENSION,
-  UI_TEXT,
-} from "../_constants/cart-item.constants";
-import { useCartItemMutations } from "../_hooks/use-cart-item-mutations";
-import { cartItemEditSchema } from "../_schemas/cart-item-edit.schema";
+} from '@/components/ui/form'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Spinner } from '@/components/ui/spinner'
+import { formatCurrency } from '@/lib/format'
+import { cn } from '@/lib/utils'
+import { api } from '@/trpc/react'
+import { MAX_DIMENSION, MIN_DIMENSION, UI_TEXT } from '../_constants/cart-item.constants'
+import { useCartItemMutations } from '../_hooks/use-cart-item-mutations'
+import { cartItemEditSchema } from '../_schemas/cart-item-edit.schema'
 import {
   type CartItemWithRelations,
   getDefaultCartItemValues,
   transformEditData,
-} from "../_utils/cart-item-edit.utils";
+} from '../_utils/cart-item-edit.utils'
 
 /**
  * Form data type (itemId excluded, will be added before submission)
  */
 type CartItemEditFormData = {
-  widthMm: number;
-  heightMm: number;
-  glassTypeId: string;
-  name?: string;
-  roomLocation?: string;
-  quantity: number;
-};
+  widthMm: number
+  heightMm: number
+  glassTypeId: string
+  name?: string
+  roomLocation?: string
+  quantity: number
+}
 
 type CartItemEditModalProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  item: CartItemWithRelations;
-};
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  item: CartItemWithRelations
+}
 
 /**
  * Cart item edit modal component
  *
  * Enhanced version with DimensionField and Combobox for consistency with catalog UX
  */
-export function CartItemEditModal({
-  open,
-  onOpenChange,
-  item,
-}: CartItemEditModalProps) {
-  const { updateItem } = useCartItemMutations();
-  const firstInputRef = useRef<HTMLInputElement>(null);
-  const [openGlassCombobox, setOpenGlassCombobox] = useState(false);
+export function CartItemEditModal({ open, onOpenChange, item }: CartItemEditModalProps) {
+  const { updateItem } = useCartItemMutations()
+  const firstInputRef = useRef<HTMLInputElement>(null)
+  const [openGlassCombobox, setOpenGlassCombobox] = useState(false)
 
   // Local state for dimension sliders
-  const [localWidth, setLocalWidth] = useState(item.widthMm);
-  const [localHeight, setLocalHeight] = useState(item.heightMm);
+  const [localWidth, setLocalWidth] = useState(item.widthMm)
+  const [localHeight, setLocalHeight] = useState(item.heightMm)
 
   // Get current price
   const displayPrice =
-    typeof item.subtotal === "number"
+    typeof item.subtotal === 'number'
       ? item.subtotal
-      : (item.subtotal as { toNumber(): number }).toNumber();
+      : (item.subtotal as { toNumber(): number }).toNumber()
 
   // Fetch available glass types
-  const { data: availableGlassTypes, isLoading: isLoadingGlassTypes } =
-    api.catalog["get-available-glass-types"].useQuery(
-      { modelId: item.model.id },
-      { enabled: open, staleTime: STALE_TIME_MS }
-    );
+  const { data: availableGlassTypes, isLoading: isLoadingGlassTypes } = api.catalog[
+    'get-available-glass-types'
+  ].useQuery({ modelId: item.model.id }, { enabled: open, staleTime: STALE_TIME_MS })
 
   // Initialize form
   const form = useForm<CartItemEditFormData>({
     resolver: zodResolver(cartItemEditSchema.omit({ itemId: true })) as never,
     defaultValues: getDefaultCartItemValues(item),
-  });
+  })
 
   // Reset form when modal opens
   useEffect(() => {
     if (open) {
-      const defaults = getDefaultCartItemValues(item);
-      form.reset(defaults);
-      setLocalWidth(item.widthMm);
-      setLocalHeight(item.heightMm);
+      const defaults = getDefaultCartItemValues(item)
+      form.reset(defaults)
+      setLocalWidth(item.widthMm)
+      setLocalHeight(item.heightMm)
 
       setTimeout(() => {
-        firstInputRef.current?.focus();
-      }, FOCUS_DELAY_MS);
+        firstInputRef.current?.focus()
+      }, FOCUS_DELAY_MS)
     }
-  }, [open, item, form]);
+  }, [open, item, form])
 
   // Sync local dimension state with form
   useEffect(() => {
     const subscription = form.watch((value) => {
       if (value.widthMm) {
-        setLocalWidth(value.widthMm);
+        setLocalWidth(value.widthMm)
       }
       if (value.heightMm) {
-        setLocalHeight(value.heightMm);
+        setLocalHeight(value.heightMm)
       }
-    });
-    return () => subscription.unsubscribe();
-  }, [form]);
+    })
+    return () => subscription.unsubscribe()
+  }, [form])
 
   // Form submission
   const onSubmit = (data: CartItemEditFormData) => {
-    const input = transformEditData(item.id, data);
+    const input = transformEditData(item.id, data)
 
     // Get the new glass type name if glass type changed
     const newGlassTypeName =
       data.glassTypeId !== item.glassTypeId
         ? availableGlassTypes?.find((gt) => gt.id === data.glassTypeId)?.name
-        : undefined;
+        : undefined
 
     updateItem.mutate(
       { data: input, newGlassTypeName },
       {
         onSuccess: () => {
-          onOpenChange(false);
+          onOpenChange(false)
         },
-      }
-    );
-  };
+      },
+    )
+  }
 
-  const isPending = updateItem.isPending;
+  const isPending = updateItem.isPending
 
   // Dimension validation
-  const isValidDimension = (value: number) =>
-    value >= MIN_DIMENSION && value <= MAX_DIMENSION;
+  const isValidDimension = (value: number) => value >= MIN_DIMENSION && value <= MAX_DIMENSION
 
   return (
     <Dialog
       onOpenChange={(newOpen) => {
         if (isPending && !newOpen) {
-          return;
+          return
         }
-        onOpenChange(newOpen);
+        onOpenChange(newOpen)
       }}
       open={open}
     >
@@ -210,9 +195,7 @@ export function CartItemEditModal({
               {formatCurrency(displayPrice)}
             </span>
           </div>
-          <p className="mt-1 text-muted-foreground text-xs">
-            {UI_TEXT.PRICE_RECALC_NOTE}
-          </p>
+          <p className="mt-1 text-muted-foreground text-xs">{UI_TEXT.PRICE_RECALC_NOTE}</p>
         </div>
 
         <Form {...form}>
@@ -227,8 +210,8 @@ export function CartItemEditModal({
               min={MIN_DIMENSION}
               name="widthMm"
               onSliderChange={(values) => {
-                setLocalWidth(values[0] ?? MIN_DIMENSION);
-                form.setValue("widthMm", values[0] ?? MIN_DIMENSION);
+                setLocalWidth(values[0] ?? MIN_DIMENSION)
+                form.setValue('widthMm', values[0] ?? MIN_DIMENSION)
               }}
               suggestedValues={[]} // No suggested values in edit mode
               variant="compact" // Use compact variant for modal
@@ -244,8 +227,8 @@ export function CartItemEditModal({
               min={MIN_DIMENSION}
               name="heightMm"
               onSliderChange={(values) => {
-                setLocalHeight(values[0] ?? MIN_DIMENSION);
-                form.setValue("heightMm", values[0] ?? MIN_DIMENSION);
+                setLocalHeight(values[0] ?? MIN_DIMENSION)
+                form.setValue('heightMm', values[0] ?? MIN_DIMENSION)
               }}
               suggestedValues={[]} // No suggested values in edit mode
               variant="compact" // Use compact variant for modal
@@ -258,27 +241,22 @@ export function CartItemEditModal({
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>{UI_TEXT.GLASS_TYPE_LABEL}</FormLabel>
-                  <Popover
-                    onOpenChange={setOpenGlassCombobox}
-                    open={openGlassCombobox}
-                  >
+                  <Popover onOpenChange={setOpenGlassCombobox} open={openGlassCombobox}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
                           aria-expanded={openGlassCombobox}
                           className={cn(
-                            "w-full justify-between",
-                            !field.value && "text-muted-foreground"
+                            'w-full justify-between',
+                            !field.value && 'text-muted-foreground',
                           )}
                           disabled={isPending || isLoadingGlassTypes}
                           role="combobox"
                           variant="outline"
                         >
                           {field.value
-                            ? availableGlassTypes?.find(
-                                (type) => type.id === field.value
-                              )?.name
-                            : "Selecciona un tipo de vidrio"}
+                            ? availableGlassTypes?.find((type) => type.id === field.value)?.name
+                            : 'Selecciona un tipo de vidrio'}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </FormControl>
@@ -288,32 +266,26 @@ export function CartItemEditModal({
                         <CommandInput placeholder="Buscar vidrio..." />
                         <CommandList>
                           <CommandEmpty>
-                            {isLoadingGlassTypes
-                              ? "Cargando..."
-                              : "No se encontró vidrio."}
+                            {isLoadingGlassTypes ? 'Cargando...' : 'No se encontró vidrio.'}
                           </CommandEmpty>
                           <CommandGroup>
                             {availableGlassTypes?.map((glassType) => (
                               <CommandItem
                                 key={glassType.id}
                                 onSelect={() => {
-                                  form.setValue("glassTypeId", glassType.id);
-                                  setOpenGlassCombobox(false);
+                                  form.setValue('glassTypeId', glassType.id)
+                                  setOpenGlassCombobox(false)
                                 }}
                                 value={glassType.name}
                               >
                                 <Check
                                   className={cn(
-                                    "mr-2 h-4 w-4",
-                                    glassType.id === field.value
-                                      ? "opacity-100"
-                                      : "opacity-0"
+                                    'mr-2 h-4 w-4',
+                                    glassType.id === field.value ? 'opacity-100' : 'opacity-0',
                                   )}
                                 />
                                 <div className="flex flex-col">
-                                  <span className="font-medium">
-                                    {glassType.name}
-                                  </span>
+                                  <span className="font-medium">{glassType.name}</span>
                                   <span className="text-muted-foreground text-xs">
                                     ${glassType.pricePerSqm.toFixed(2)}/m²
                                   </span>
@@ -348,5 +320,5 @@ export function CartItemEditModal({
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

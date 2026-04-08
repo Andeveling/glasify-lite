@@ -10,32 +10,32 @@
  * Related: specs/001-admin-quotes-dashboard/spec.md
  */
 
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { Suspense } from "react";
-import { QuoteDetailView } from "@/app/(public)/my-quotes/[quoteId]/_components/quote-detail-view";
-import { Spinner } from "@/components/ui/spinner";
-import { api } from "@/trpc/server-client";
-import { UserContactInfo } from "./_components/user-contact-info";
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
+import { QuoteDetailView } from '@/app/(public)/my-quotes/[quoteId]/_components/quote-detail-view'
+import { Spinner } from '@/components/ui/spinner'
+import { api } from '@/trpc/server-client'
+import { UserContactInfo } from './_components/user-contact-info'
 
 export const metadata: Metadata = {
-  title: "Detalle de Cotización | Admin",
+  title: 'Detalle de Cotización | Admin',
   description:
-    "Vista detallada de cotización con información del creador, modelos, medidas y opciones de exportación",
-};
+    'Vista detallada de cotización con información del creador, modelos, medidas y opciones de exportación',
+}
 
 type PageProps = {
   params: Promise<{
-    quoteId: string;
-  }>;
-};
+    quoteId: string
+  }>
+}
 
 async function QuoteContent({ quoteId }: { quoteId: string }) {
   // Fetch quote data with user information
-  const quote = await api.quote["get-by-id"]({ id: quoteId });
+  const quote = await api.quote['get-by-id']({ id: quoteId })
 
   if (!quote) {
-    notFound();
+    notFound()
   }
 
   return (
@@ -46,11 +46,11 @@ async function QuoteContent({ quoteId }: { quoteId: string }) {
       {/* Full Quote Details with items, measurements, and export buttons */}
       <QuoteDetailView isPublicView={false} quote={quote} />
     </div>
-  );
+  )
 }
 
 export default async function AdminQuoteDetailPage({ params }: PageProps) {
-  const { quoteId } = await params;
+  const { quoteId } = await params
 
   return (
     <Suspense
@@ -62,5 +62,5 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
     >
       <QuoteContent quoteId={quoteId} />
     </Suspense>
-  );
+  )
 }

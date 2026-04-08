@@ -7,17 +7,17 @@
  * @module app/(public)/cart/_hooks/use-cart-storage
  */
 
-"use client";
+'use client'
 
-import { useCallback, useEffect, useState } from "react";
-import type { CartItem, CartStorageData } from "@/types/cart.types";
-import { CART_CONSTANTS } from "@/types/cart.types";
+import { useCallback, useEffect, useState } from 'react'
+import type { CartItem, CartStorageData } from '@/types/cart.types'
+import { CART_CONSTANTS } from '@/types/cart.types'
 
 // ============================================================================
 // Constants
 // ============================================================================
 
-const STORAGE_VERSION = 1;
+const STORAGE_VERSION = 1
 
 // ============================================================================
 // Storage Operations
@@ -32,37 +32,37 @@ const STORAGE_VERSION = 1;
  */
 export function loadCartFromStorage(): CartItem[] {
   // Client-side only
-  if (typeof window === "undefined") {
-    return [];
+  if (typeof window === 'undefined') {
+    return []
   }
 
   try {
-    const rawData = sessionStorage.getItem(CART_CONSTANTS.STORAGE_KEY);
+    const rawData = sessionStorage.getItem(CART_CONSTANTS.STORAGE_KEY)
 
     if (!rawData) {
-      return [];
+      return []
     }
 
-    const storageData: CartStorageData = JSON.parse(rawData) as CartStorageData;
+    const storageData: CartStorageData = JSON.parse(rawData) as CartStorageData
 
     // Version check (for future migrations)
     if (storageData.version !== STORAGE_VERSION) {
       // Clear outdated storage
-      clearCartStorage();
-      return [];
+      clearCartStorage()
+      return []
     }
 
     // Validate items array
     if (!Array.isArray(storageData.items)) {
-      clearCartStorage();
-      return [];
+      clearCartStorage()
+      return []
     }
 
-    return storageData.items;
+    return storageData.items
   } catch (_error) {
     // Clear corrupted storage
-    clearCartStorage();
-    return [];
+    clearCartStorage()
+    return []
   }
 }
 
@@ -77,8 +77,8 @@ export function loadCartFromStorage(): CartItem[] {
  */
 export function saveCartToStorage(items: CartItem[]): boolean {
   // Client-side only
-  if (typeof window === "undefined") {
-    return false;
+  if (typeof window === 'undefined') {
+    return false
   }
 
   try {
@@ -86,26 +86,26 @@ export function saveCartToStorage(items: CartItem[]): boolean {
       items,
       lastModified: new Date().toISOString(),
       version: STORAGE_VERSION,
-    };
+    }
 
-    const serialized = JSON.stringify(storageData);
-    sessionStorage.setItem(CART_CONSTANTS.STORAGE_KEY, serialized);
+    const serialized = JSON.stringify(storageData)
+    sessionStorage.setItem(CART_CONSTANTS.STORAGE_KEY, serialized)
 
     // Emit custom event to notify all useCartStorage hooks about the change
     window.dispatchEvent(
-      new CustomEvent("cart-updated", {
+      new CustomEvent('cart-updated', {
         detail: { items },
-      })
-    );
+      }),
+    )
 
-    return true;
+    return true
   } catch (error) {
     // Handle quota exceeded error
-    if (error instanceof DOMException && error.name === "QuotaExceededError") {
+    if (error instanceof DOMException && error.name === 'QuotaExceededError') {
       // sessionStorage quota exceeded - could implement user notification here
     }
 
-    return false;
+    return false
   }
 }
 
@@ -113,19 +113,19 @@ export function saveCartToStorage(items: CartItem[]): boolean {
  * Clear cart from sessionStorage
  */
 export function clearCartStorage(): void {
-  if (typeof window === "undefined") {
-    return;
+  if (typeof window === 'undefined') {
+    return
   }
 
   try {
-    sessionStorage.removeItem(CART_CONSTANTS.STORAGE_KEY);
+    sessionStorage.removeItem(CART_CONSTANTS.STORAGE_KEY)
 
     // Emit event to notify all hooks about cart clear
     window.dispatchEvent(
-      new CustomEvent("cart-updated", {
+      new CustomEvent('cart-updated', {
         detail: { items: [] },
-      })
-    );
+      }),
+    )
   } catch {
     // Silently fail - storage operations are non-critical
   }
@@ -156,64 +156,64 @@ export function clearCartStorage(): void {
  * ```
  */
 export function useCartStorage() {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [isHydrated, setIsHydrated] = useState(false);
+  const [items, setItems] = useState<CartItem[]>([])
+  const [isHydrated, setIsHydrated] = useState(false)
 
   // Hydrate from sessionStorage on mount
   useEffect(() => {
-    const loadedItems = loadCartFromStorage();
-    setItems(loadedItems);
-    setIsHydrated(true);
+    const loadedItems = loadCartFromStorage()
+    setItems(loadedItems)
+    setIsHydrated(true)
 
     // Listen for cart updates from other components
     const handleCartUpdate = (event: Event) => {
-      const customEvent = event as CustomEvent<{ items: CartItem[] }>;
-      setItems(customEvent.detail.items);
-    };
+      const customEvent = event as CustomEvent<{ items: CartItem[] }>
+      setItems(customEvent.detail.items)
+    }
 
-    window.addEventListener("cart-updated", handleCartUpdate);
+    window.addEventListener('cart-updated', handleCartUpdate)
 
     return () => {
-      window.removeEventListener("cart-updated", handleCartUpdate);
-    };
-  }, []);
+      window.removeEventListener('cart-updated', handleCartUpdate)
+    }
+  }, [])
 
   /**
    * Save items to storage and update state
    */
   const saveItems = useCallback((newItems: CartItem[]) => {
-    const success = saveCartToStorage(newItems);
+    const success = saveCartToStorage(newItems)
 
     if (success) {
-      setItems(newItems);
+      setItems(newItems)
     }
 
-    return success;
-  }, []);
+    return success
+  }, [])
 
   /**
    * Clear all items from storage and state
    */
   const clearItems = useCallback(() => {
-    clearCartStorage();
-    setItems([]);
-  }, []);
+    clearCartStorage()
+    setItems([])
+  }, [])
 
   /**
    * Get current storage size (for debugging/monitoring)
    */
   const getStorageSize = useCallback((): number => {
-    if (typeof window === "undefined") {
-      return 0;
+    if (typeof window === 'undefined') {
+      return 0
     }
 
     try {
-      const rawData = sessionStorage.getItem(CART_CONSTANTS.STORAGE_KEY);
-      return rawData ? new Blob([rawData]).size : 0;
+      const rawData = sessionStorage.getItem(CART_CONSTANTS.STORAGE_KEY)
+      return rawData ? new Blob([rawData]).size : 0
     } catch {
-      return 0;
+      return 0
     }
-  }, []);
+  }, [])
 
   return {
     clearItems,
@@ -221,7 +221,7 @@ export function useCartStorage() {
     isHydrated,
     items,
     saveItems,
-  };
+  }
 }
 
 // ============================================================================
@@ -245,6 +245,6 @@ export function useCartStorageListener(_callback: (items: CartItem[]) => void) {
 
     return () => {
       // Cleanup (currently no-op)
-    };
-  }, []);
+    }
+  }, [])
 }

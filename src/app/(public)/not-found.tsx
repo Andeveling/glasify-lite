@@ -1,26 +1,14 @@
-import {
-  AlertCircle,
-  BookOpen,
-  Home,
-  Search,
-  ShoppingCart,
-} from "lucide-react";
-import type { Metadata } from "next";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { BackButton } from "./_components/back-button";
+import { AlertCircle, BookOpen, Home, Search, ShoppingCart } from 'lucide-react'
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { BackButton } from './_components/back-button'
 
 export const metadata: Metadata = {
-  description: "La página que buscas no existe o ha sido movida",
-  title: "Página No Encontrada - Glasify",
-};
+  description: 'La página que buscas no existe o ha sido movida',
+  title: 'Página No Encontrada - Glasify',
+}
 
 export default function PublicNotFound() {
   return (
@@ -31,9 +19,7 @@ export default function PublicNotFound() {
             <div className="mb-4 flex justify-center">
               <AlertCircle className="h-16 w-16 text-muted-foreground" />
             </div>
-            <CardTitle className="font-bold text-3xl">
-              Página No Encontrada
-            </CardTitle>
+            <CardTitle className="font-bold text-3xl">Página No Encontrada</CardTitle>
             <CardDescription className="text-lg">
               Lo sentimos, la página que buscas no existe o ha sido movida.
             </CardDescription>
@@ -43,16 +29,14 @@ export default function PublicNotFound() {
             {/* Error message */}
             <div className="rounded-lg border border-border bg-muted/50 p-4 text-center">
               <p className="text-muted-foreground text-sm">
-                <strong>Error 404:</strong> El recurso solicitado no pudo ser
-                encontrado en nuestro servidor.
+                <strong>Error 404:</strong> El recurso solicitado no pudo ser encontrado en nuestro
+                servidor.
               </p>
             </div>
 
             {/* Navigation options */}
             <div className="space-y-4">
-              <h3 className="mb-4 text-center font-semibold text-lg">
-                ¿Qué te gustaría hacer?
-              </h3>
+              <h3 className="mb-4 text-center font-semibold text-lg">¿Qué te gustaría hacer?</h3>
 
               <div className="grid gap-3 md:grid-cols-2">
                 <Link href="/catalog">
@@ -61,9 +45,7 @@ export default function PublicNotFound() {
                       <Search className="h-5 w-5" />
                       <div className="text-center">
                         <div className="font-medium">Ver Catálogo</div>
-                        <div className="text-xs opacity-90">
-                          Explorar nuestros productos
-                        </div>
+                        <div className="text-xs opacity-90">Explorar nuestros productos</div>
                       </div>
                     </div>
                   </Button>
@@ -75,9 +57,7 @@ export default function PublicNotFound() {
                       <ShoppingCart className="h-5 w-5" />
                       <div className="text-center">
                         <div className="font-medium">Crear Cotización</div>
-                        <div className="text-xs opacity-90">
-                          Obtener presupuesto
-                        </div>
+                        <div className="text-xs opacity-90">Obtener presupuesto</div>
                       </div>
                     </div>
                   </Button>
@@ -106,7 +86,7 @@ export default function PublicNotFound() {
 
                 <div className="space-y-2 text-muted-foreground text-sm">
                   <p>
-                    Si llegaste aquí desde un enlace interno, por favor{" "}
+                    Si llegaste aquí desde un enlace interno, por favor{' '}
                     <a
                       className="text-primary underline hover:no-underline"
                       href="mailto:soporte@glasify.com"
@@ -116,13 +96,10 @@ export default function PublicNotFound() {
                   </p>
 
                   <p>
-                    También puedes{" "}
-                    <Link
-                      className="text-primary underline hover:no-underline"
-                      href="/catalog"
-                    >
+                    También puedes{' '}
+                    <Link className="text-primary underline hover:no-underline" href="/catalog">
                       explorar nuestro catálogo completo
-                    </Link>{" "}
+                    </Link>{' '}
                     para encontrar lo que buscas.
                   </p>
                 </div>
@@ -132,5 +109,5 @@ export default function PublicNotFound() {
         </Card>
       </div>
     </div>
-  );
+  )
 }

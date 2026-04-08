@@ -1,42 +1,39 @@
-import { useCallback } from "react";
-import type { Control, FieldValues, Path } from "react-hook-form";
-import { useFormContext } from "react-hook-form";
-import { DimensionInput } from "@/components/dimension-input";
-import { DimensionSlider } from "@/components/dimension-slider";
-import { SuggestedValueBadges } from "@/components/suggested-value-badges";
+import { useCallback } from 'react'
+import type { Control, FieldValues, Path } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
+import { DimensionInput } from '@/components/dimension-input'
+import { DimensionSlider } from '@/components/dimension-slider'
+import { SuggestedValueBadges } from '@/components/suggested-value-badges'
 import {
   FormControl,
   FormDescription,
   FormField,
   FormItem,
   FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form'
 import {
   type DimensionVariant,
   type DimensionVariantConfig,
   resolveVariantConfig,
   shouldShowInlineRangeHint,
-} from "./dimension-field-config";
-import {
-  DimensionFieldHeader,
-  OptionalContent,
-} from "./dimension-field-header";
+} from './dimension-field-config'
+import { DimensionFieldHeader, OptionalContent } from './dimension-field-header'
 
 type DimensionFieldProps<T extends FieldValues> = {
-  control: Control<T>;
-  name: Path<T>;
-  label: string;
-  min: number;
-  max: number;
-  localValue: number;
-  onSliderChange: (value: number[]) => void;
-  isValid: (value: number) => boolean;
-  suggestedValues: number[];
+  control: Control<T>
+  name: Path<T>
+  label: string
+  min: number
+  max: number
+  localValue: number
+  onSliderChange: (value: number[]) => void
+  isValid: (value: number) => boolean
+  suggestedValues: number[]
   /** Variante de visualización (default: "full" para retrocompatibilidad) */
-  variant?: DimensionVariant;
+  variant?: DimensionVariant
   /** Configuración personalizada (sobrescribe la variante) */
-  customConfig?: Partial<DimensionVariantConfig>;
-};
+  customConfig?: Partial<DimensionVariantConfig>
+}
 
 /**
  * DimensionField - Organism component con soporte de variantes
@@ -56,38 +53,36 @@ export function DimensionField<T extends FieldValues>({
   onSliderChange,
   isValid,
   suggestedValues,
-  variant = "full",
+  variant = 'full',
   customConfig,
 }: DimensionFieldProps<T>) {
-  const { trigger } = useFormContext();
+  const { trigger } = useFormContext()
 
   // Resolve configuration using extracted function (Dependency Inversion)
-  const config = resolveVariantConfig(variant, customConfig);
+  const config = resolveVariantConfig(variant, customConfig)
 
   // Determine dimension type based on label
-  const dimensionType = label.toLowerCase().includes("ancho")
-    ? "width"
-    : "height";
+  const dimensionType = label.toLowerCase().includes('ancho') ? 'width' : 'height'
 
   // Determine if inline range hint should be shown
-  const showInlineRangeHint = shouldShowInlineRangeHint(config);
+  const showInlineRangeHint = shouldShowInlineRangeHint(config)
 
   // Enhanced onChange handler that forces revalidation to prevent stale errors
   const handleInputChange = useCallback(
-    (inputValue: number | "", fieldOnChange: (val: number | "") => void) => {
-      fieldOnChange(inputValue);
+    (inputValue: number | '', fieldOnChange: (val: number | '') => void) => {
+      fieldOnChange(inputValue)
       // Force immediate revalidation to sync error state with current value
-      trigger(name);
+      trigger(name)
     },
-    [trigger, name]
-  );
+    [trigger, name],
+  )
 
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => {
-        const fieldIsValid = isValid(field.value);
+        const fieldIsValid = isValid(field.value)
 
         return (
           <FormItem className={config.spacingClassName}>
@@ -119,25 +114,19 @@ export function DimensionField<T extends FieldValues>({
             </OptionalContent>
 
             {/* Optional Slider */}
-            <OptionalContent
-              className="hidden sm:block"
-              show={config.showSlider}
-            >
+            <OptionalContent className="hidden sm:block" show={config.showSlider}>
               <DimensionSlider
                 max={max}
                 min={min}
                 onChange={onSliderChange}
                 step={10}
-                trackColor={fieldIsValid ? "muted" : "destructive"}
+                trackColor={fieldIsValid ? 'muted' : 'destructive'}
                 value={localValue}
               />
             </OptionalContent>
 
             {/* Optional Suggested Values */}
-            <OptionalContent
-              className="hidden lg:block"
-              show={config.showSuggestedValues}
-            >
+            <OptionalContent className="hidden lg:block" show={config.showSuggestedValues}>
               <SuggestedValueBadges
                 currentValue={field.value}
                 onSelect={(val) => handleInputChange(val, field.onChange)}
@@ -157,8 +146,8 @@ export function DimensionField<T extends FieldValues>({
               <FormMessage />
             </OptionalContent>
           </FormItem>
-        );
+        )
       }}
     />
-  );
+  )
 }

@@ -14,11 +14,11 @@
  * @module app/(public)/cart/_components/quote-form-fields
  */
 
-"use client";
+'use client'
 
-import type { UseFormReturn } from "react-hook-form";
-import { DeliveryAddressPicker } from "@/app/(dashboard)/admin/quotes/_components/delivery-address-picker";
-import type { ProjectAddressInput } from "@/app/(dashboard)/admin/quotes/_types/address.types";
+import type { UseFormReturn } from 'react-hook-form'
+import { DeliveryAddressPicker } from '@/app/(dashboard)/admin/quotes/_components/delivery-address-picker'
+import type { ProjectAddressInput } from '@/app/(dashboard)/admin/quotes/_types/address.types'
 import {
   FormControl,
   FormDescription,
@@ -26,13 +26,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { PhoneInput } from "@/components/ui/phone-input";
-import { Textarea } from "@/components/ui/textarea";
-import { formatCurrency } from "@/lib/format";
-import { useTenantConfig } from "@/providers/tenant-config-provider";
-import type { QuoteGenerationFormValues } from "../_schemas/quote-generation.schema";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { PhoneInput } from '@/components/ui/phone-input'
+import { Textarea } from '@/components/ui/textarea'
+import { formatCurrency } from '@/lib/format'
+import { useTenantConfig } from '@/providers/tenant-config-provider'
+import type { QuoteGenerationFormValues } from '../_schemas/quote-generation.schema'
 
 // ============================================================================
 // Types
@@ -40,21 +40,21 @@ import type { QuoteGenerationFormValues } from "../_schemas/quote-generation.sch
 
 type QuoteFormFieldsProps = {
   /** React Hook Form instance */
-  form: UseFormReturn<QuoteGenerationFormValues>;
+  form: UseFormReturn<QuoteGenerationFormValues>
   /** Whether form is disabled (submitting) */
-  isDisabled?: boolean;
+  isDisabled?: boolean
   /** Cart item count for summary */
-  cartItemCount: number;
+  cartItemCount: number
   /** Cart total for summary */
-  cartTotal: number;
-};
+  cartTotal: number
+}
 
 // ============================================================================
 // Constants
 // ============================================================================
 
-const MAX_PROJECT_NAME_LENGTH = 100;
-const MAX_REFERENCE_LENGTH = 200;
+const MAX_PROJECT_NAME_LENGTH = 100
+const MAX_REFERENCE_LENGTH = 200
 
 // ============================================================================
 // Component
@@ -81,16 +81,12 @@ export function QuoteFormFields({
   cartItemCount,
   cartTotal,
 }: QuoteFormFieldsProps) {
-  const tenantConfig = useTenantConfig();
+  const tenantConfig = useTenantConfig()
 
   return (
     <div className="space-y-4">
       {/* Cart Summary (read-only) */}
-      <CartSummaryCard
-        itemCount={cartItemCount}
-        tenantConfig={tenantConfig}
-        total={cartTotal}
-      />
+      <CartSummaryCard itemCount={cartItemCount} tenantConfig={tenantConfig} total={cartTotal} />
 
       {/* Project Name (optional) */}
       <FormField
@@ -107,9 +103,7 @@ export function QuoteFormFields({
                 {...field}
               />
             </FormControl>
-            <FormDescription>
-              Un nombre para identificar tu proyecto internamente
-            </FormDescription>
+            <FormDescription>Un nombre para identificar tu proyecto internamente</FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -129,7 +123,7 @@ export function QuoteFormFields({
                 disabled={isDisabled}
                 error={form.formState.errors.deliveryAddress?.message}
                 onChangeAction={(address: Partial<ProjectAddressInput>) => {
-                  field.onChange(address);
+                  field.onChange(address)
                 }}
                 placeholder="Buscar dirección..."
                 value={field.value}
@@ -160,9 +154,7 @@ export function QuoteFormFields({
                 {...field}
               />
             </FormControl>
-            <FormDescription>
-              Instrucciones adicionales para encontrar la ubicación
-            </FormDescription>
+            <FormDescription>Instrucciones adicionales para encontrar la ubicación</FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -178,11 +170,7 @@ export function QuoteFormFields({
               Teléfono de Contacto <span className="text-destructive">*</span>
             </FormLabel>
             <FormControl>
-              <PhoneInput
-                disabled={isDisabled}
-                placeholder="+57 300 123 4567"
-                {...field}
-              />
+              <PhoneInput disabled={isDisabled} placeholder="+57 300 123 4567" {...field} />
             </FormControl>
             <FormDescription>
               Número donde podemos contactarte para coordinar la entrega
@@ -199,7 +187,7 @@ export function QuoteFormFields({
         </div>
       )}
     </div>
-  );
+  )
 }
 
 // ============================================================================
@@ -207,37 +195,31 @@ export function QuoteFormFields({
 // ============================================================================
 
 type CartSummaryCardProps = {
-  itemCount: number;
-  total: number;
-  tenantConfig: ReturnType<typeof useTenantConfig>;
-};
+  itemCount: number
+  total: number
+  tenantConfig: ReturnType<typeof useTenantConfig>
+}
 
 /**
  * Cart Summary Card
  *
  * Displays a compact summary of cart contents
  */
-function CartSummaryCard({
-  itemCount,
-  total,
-  tenantConfig,
-}: CartSummaryCardProps) {
+function CartSummaryCard({ itemCount, total, tenantConfig }: CartSummaryCardProps) {
   return (
     <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
       <div className="flex items-center justify-between">
         <div>
           <p className="font-medium text-sm">Items en el carrito</p>
           <p className="text-muted-foreground text-xs">
-            {itemCount} {itemCount === 1 ? "producto" : "productos"}
+            {itemCount} {itemCount === 1 ? 'producto' : 'productos'}
           </p>
         </div>
         <div className="text-right">
           <p className="font-medium text-sm">Total</p>
-          <p className="font-bold text-lg">
-            {formatCurrency(total, { context: tenantConfig })}
-          </p>
+          <p className="font-bold text-lg">{formatCurrency(total, { context: tenantConfig })}</p>
         </div>
       </div>
     </div>
-  );
+  )
 }

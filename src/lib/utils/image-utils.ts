@@ -7,40 +7,39 @@
  * @module ImageUtils
  */
 
-import type { WindowType } from "@/types/window.types";
-import { getWindowDiagramPath } from "./window-diagram-map";
+import type { WindowType } from '@/types/window.types'
+import { getWindowDiagramPath } from './window-diagram-map'
 
 /**
  * Image size presets for product thumbnails
  */
-export type ImageSize = "sm" | "md" | "lg" | "xl";
+export type ImageSize = 'sm' | 'md' | 'lg' | 'xl'
 
 /**
  * Image size dimensions (width x height in pixels)
  */
-export const IMAGE_SIZES: Record<ImageSize, { width: number; height: number }> =
-  {
-    lg: { height: 320, width: 320 }, // Detail view
-    md: { height: 160, width: 160 }, // Grid thumbnail
-    sm: { height: 80, width: 80 }, // List item preview
-    xl: { height: 640, width: 640 }, // Lightbox/full view
-  };
+export const IMAGE_SIZES: Record<ImageSize, { width: number; height: number }> = {
+  lg: { height: 320, width: 320 }, // Detail view
+  md: { height: 160, width: 160 }, // Grid thumbnail
+  sm: { height: 80, width: 80 }, // List item preview
+  xl: { height: 640, width: 640 }, // Lightbox/full view
+}
 
 /**
  * CDN configuration (placeholder - update with actual CDN)
  */
-const CDN_BASE_URL = process.env.NEXT_PUBLIC_CDN_URL ?? "";
+const CDN_BASE_URL = process.env.NEXT_PUBLIC_CDN_URL ?? ''
 
 /**
  * Default placeholder image when no product image exists
  */
-const DEFAULT_PLACEHOLDER = "/images/placeholder-product.svg";
+const DEFAULT_PLACEHOLDER = '/images/placeholder-product.svg'
 
 /**
  * Image format preferences (modern formats first)
  */
-const SUPPORTED_FORMATS = ["webp", "avif", "png", "jpg", "jpeg"] as const;
-export type ImageFormat = (typeof SUPPORTED_FORMATS)[number];
+const SUPPORTED_FORMATS = ['webp', 'avif', 'png', 'jpg', 'jpeg'] as const
+export type ImageFormat = (typeof SUPPORTED_FORMATS)[number]
 
 /**
  * Get optimized image URL
@@ -62,32 +61,30 @@ export type ImageFormat = (typeof SUPPORTED_FORMATS)[number];
  */
 export function getOptimizedImageUrl(
   imageUrl: string | null | undefined,
-  size: ImageSize = "md",
-  format: ImageFormat = "webp"
+  size: ImageSize = 'md',
+  format: ImageFormat = 'webp',
 ): string {
   if (!imageUrl) {
-    return DEFAULT_PLACEHOLDER;
+    return DEFAULT_PLACEHOLDER
   }
 
   // If CDN is configured, use it
   if (CDN_BASE_URL) {
-    const dimensions = IMAGE_SIZES[size];
+    const dimensions = IMAGE_SIZES[size]
     const params = new URLSearchParams({
-      fit: "cover",
+      fit: 'cover',
       fmt: format,
       h: dimensions.height.toString(),
-      q: "85", // Quality 85%
+      q: '85', // Quality 85%
       w: dimensions.width.toString(),
-    });
+    })
 
-    const baseUrl = imageUrl.startsWith("http")
-      ? imageUrl
-      : `${CDN_BASE_URL}${imageUrl}`;
-    return `${baseUrl}?${params.toString()}`;
+    const baseUrl = imageUrl.startsWith('http') ? imageUrl : `${CDN_BASE_URL}${imageUrl}`
+    return `${baseUrl}?${params.toString()}`
   }
 
   // No CDN: return original URL
-  return imageUrl;
+  return imageUrl
 }
 
 /**
@@ -114,20 +111,20 @@ export function getOptimizedImageUrl(
 export function getProductImageWithFallback(
   productImageUrl: string | null | undefined,
   windowType?: WindowType | string | null,
-  size: ImageSize = "md"
+  size: ImageSize = 'md',
 ): string {
   // Priority 1: Product image
   if (productImageUrl) {
-    return getOptimizedImageUrl(productImageUrl, size);
+    return getOptimizedImageUrl(productImageUrl, size)
   }
 
   // Priority 2: Window diagram SVG
   if (windowType) {
-    return getWindowDiagramPath(windowType);
+    return getWindowDiagramPath(windowType)
   }
 
   // Priority 3: Default placeholder
-  return DEFAULT_PLACEHOLDER;
+  return DEFAULT_PLACEHOLDER
 }
 
 /**
@@ -137,7 +134,7 @@ export function getProductImageWithFallback(
  * @returns True if URL is external (starts with http/https)
  */
 export function isExternalImage(url: string): boolean {
-  return url.startsWith("http://") || url.startsWith("https://");
+  return url.startsWith('http://') || url.startsWith('https://')
 }
 
 /**
@@ -147,7 +144,7 @@ export function isExternalImage(url: string): boolean {
  * @returns True if URL ends with .svg
  */
 export function isSvgImage(url: string): boolean {
-  return url.toLowerCase().endsWith(".svg");
+  return url.toLowerCase().endsWith('.svg')
 }
 
 /**
@@ -167,40 +164,38 @@ export function isSvgImage(url: string): boolean {
  */
 export function generateSrcSet(
   imageUrl: string | null | undefined,
-  size: ImageSize = "md"
+  size: ImageSize = 'md',
 ): string | undefined {
   if (!imageUrl || isSvgImage(imageUrl)) {
-    return; // SVGs don't need srcset
+    return // SVGs don't need srcset
   }
 
-  const dimensions = IMAGE_SIZES[size];
+  const dimensions = IMAGE_SIZES[size]
 
   if (!CDN_BASE_URL) {
-    return; // No CDN, no optimization
+    return // No CDN, no optimization
   }
 
   const variants = [
-    { descriptor: "1x", scale: 1 },
-    { descriptor: "2x", scale: 2 },
-    { descriptor: "3x", scale: 3 },
-  ];
+    { descriptor: '1x', scale: 1 },
+    { descriptor: '2x', scale: 2 },
+    { descriptor: '3x', scale: 3 },
+  ]
 
   return variants
     .map(({ scale, descriptor }) => {
       const params = new URLSearchParams({
-        fit: "cover",
-        fmt: "webp",
+        fit: 'cover',
+        fmt: 'webp',
         h: (dimensions.height * scale).toString(),
-        q: "85",
+        q: '85',
         w: (dimensions.width * scale).toString(),
-      });
+      })
 
-      const baseUrl = imageUrl.startsWith("http")
-        ? imageUrl
-        : `${CDN_BASE_URL}${imageUrl}`;
-      return `${baseUrl}?${params.toString()} ${descriptor}`;
+      const baseUrl = imageUrl.startsWith('http') ? imageUrl : `${CDN_BASE_URL}${imageUrl}`
+      return `${baseUrl}?${params.toString()} ${descriptor}`
     })
-    .join(", ");
+    .join(', ')
 }
 
 /**
@@ -210,10 +205,10 @@ export function generateSrcSet(
  * @returns Width and height in pixels
  */
 export function getImageDimensions(size: ImageSize): {
-  width: number;
-  height: number;
+  width: number
+  height: number
 } {
-  return IMAGE_SIZES[size];
+  return IMAGE_SIZES[size]
 }
 
 /**
@@ -226,16 +221,16 @@ export function getImageDimensions(size: ImageSize): {
  * @param size - Image size preset
  * @returns Preload link props
  */
-export function getImagePreloadProps(imageUrl: string, size: ImageSize = "md") {
-  const dimensions = IMAGE_SIZES[size];
+export function getImagePreloadProps(imageUrl: string, size: ImageSize = 'md') {
+  const dimensions = IMAGE_SIZES[size]
 
   return {
-    as: "image",
+    as: 'image',
     href: getOptimizedImageUrl(imageUrl, size),
     imageSizes: `${dimensions.width}px`,
     imageSrcSet: generateSrcSet(imageUrl, size),
-    rel: "preload",
-  };
+    rel: 'preload',
+  }
 }
 
 /**
@@ -246,25 +241,25 @@ export function getImagePreloadProps(imageUrl: string, size: ImageSize = "md") {
  */
 export function isValidImageUrl(url: string | null | undefined): boolean {
   if (!url) {
-    return false;
+    return false
   }
 
   // Allow relative paths
-  if (url.startsWith("/")) {
-    return true;
+  if (url.startsWith('/')) {
+    return true
   }
 
   // Allow data URIs
-  if (url.startsWith("data:image/")) {
-    return true;
+  if (url.startsWith('data:image/')) {
+    return true
   }
 
   // Allow external URLs (http/https)
   try {
-    const parsed = new URL(url);
-    return parsed.protocol === "http:" || parsed.protocol === "https:";
+    const parsed = new URL(url)
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
   } catch {
-    return false;
+    return false
   }
 }
 
@@ -277,11 +272,8 @@ export function isValidImageUrl(url: string | null | undefined): boolean {
  * @param priority - Explicit priority override
  * @returns Loading strategy ('lazy' | 'eager')
  */
-export function getImageLoadingStrategy(
-  isAboveFold = false,
-  priority = false
-): "lazy" | "eager" {
-  return priority || isAboveFold ? "eager" : "lazy";
+export function getImageLoadingStrategy(isAboveFold = false, priority = false): 'lazy' | 'eager' {
+  return priority || isAboveFold ? 'eager' : 'lazy'
 }
 
 /**
@@ -299,22 +291,22 @@ export function getImageLoadingStrategy(
  */
 export function formatImageAltText(
   productName?: string | null,
-  windowType?: WindowType | string | null
+  windowType?: WindowType | string | null,
 ): string {
   if (!(productName || windowType)) {
-    return "Imagen de producto";
+    return 'Imagen de producto'
   }
 
-  const parts: string[] = [];
+  const parts: string[] = []
 
   if (productName) {
-    parts.push(productName);
+    parts.push(productName)
   }
 
   if (windowType) {
     // Import WindowType labels if needed
-    parts.push(`Tipo: ${windowType}`);
+    parts.push(`Tipo: ${windowType}`)
   }
 
-  return parts.join(" - ");
+  return parts.join(' - ')
 }

@@ -3,17 +3,14 @@
  * Reactive hook for calculating billable glass area with profile discounts
  */
 
-import { useMemo } from "react";
-import {
-  calculateGlassArea,
-  type GlassDiscounts,
-} from "../_utils/glass-area-calculator";
+import { useMemo } from 'react'
+import { calculateGlassArea, type GlassDiscounts } from '../_utils/glass-area-calculator'
 
 type UseGlassAreaParams = {
-  heightMm: number;
-  widthMm: number;
-  discounts: GlassDiscounts;
-};
+  heightMm: number
+  widthMm: number
+  discounts: GlassDiscounts
+}
 
 /**
  * Calculate glass area reactively when dimensions change
@@ -31,12 +28,8 @@ type UseGlassAreaParams = {
  *   }
  * });
  */
-export function useGlassArea({
-  discounts,
-  heightMm,
-  widthMm,
-}: UseGlassAreaParams): number {
-  const { widthMm: discountWidthMm, heightMm: discountHeightMm } = discounts;
+export function useGlassArea({ discounts, heightMm, widthMm }: UseGlassAreaParams): number {
+  const { widthMm: discountWidthMm, heightMm: discountHeightMm } = discounts
 
   return useMemo(
     () =>
@@ -44,6 +37,6 @@ export function useGlassArea({
         heightMm: discountHeightMm,
         widthMm: discountWidthMm,
       }),
-    [widthMm, heightMm, discountWidthMm, discountHeightMm]
-  );
+    [widthMm, heightMm, discountWidthMm, discountHeightMm],
+  )
 }

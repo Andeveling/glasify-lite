@@ -5,7 +5,7 @@
  * for PDF and Excel exports.
  */
 
-import type { ExportFormat } from "@/types/export.types";
+import type { ExportFormat } from '@/types/export.types'
 
 /**
  * Generate export filename with consistent format
@@ -22,25 +22,25 @@ import type { ExportFormat } from "@/types/export.types";
 export function generateExportFilename(
   projectName: string,
   date: Date,
-  format: ExportFormat
+  format: ExportFormat,
 ): string {
   // Sanitize project name
-  const sanitizedName = sanitizeProjectName(projectName);
+  const sanitizedName = sanitizeProjectName(projectName)
 
   // Format date as YYYY-MM-DD
-  const formattedDate = formatDateForFilename(date);
+  const formattedDate = formatDateForFilename(date)
 
   // Get file extension
-  const extension = getFileExtension(format);
+  const extension = getFileExtension(format)
 
   // Construct filename
-  return `Cotizacion_${sanitizedName}_${formattedDate}.${extension}`;
+  return `Cotizacion_${sanitizedName}_${formattedDate}.${extension}`
 }
 
 /**
  * Maximum length for sanitized project names
  */
-const MAX_PROJECT_NAME_LENGTH = 50;
+const MAX_PROJECT_NAME_LENGTH = 50
 
 /**
  * Sanitize project name for use in filename
@@ -50,39 +50,39 @@ const MAX_PROJECT_NAME_LENGTH = 50;
  * - Handles empty names
  */
 function sanitizeProjectName(name: string): string {
-  if (!name || name.trim() === "") {
-    return "Sin_Nombre";
+  if (!name || name.trim() === '') {
+    return 'Sin_Nombre'
   }
 
   return (
     name
       .trim()
       // Remove quotes, ampersands, and other special chars
-      .replace(/["&\\.]/g, "")
+      .replace(/["&\\.]/g, '')
       // Replace multiple spaces with single space
-      .replace(/\s+/g, " ")
+      .replace(/\s+/g, ' ')
       // Replace spaces with underscores
-      .replace(/\s/g, "_")
+      .replace(/\s/g, '_')
       // Remove any remaining non-alphanumeric chars (except underscores and accented chars)
-      .replace(/[^\w\u00C0-\u017F_]/g, "")
+      .replace(/[^\w\u00C0-\u017F_]/g, '')
       // Truncate to max length
       .slice(0, MAX_PROJECT_NAME_LENGTH)
       // Capitalize first letter of each word
-      .split("_")
+      .split('_')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join("_")
-  );
+      .join('_')
+  )
 }
 
 /**
  * Format date as YYYY-MM-DD for filename
  */
 function formatDateForFilename(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
 
-  return `${year}-${month}-${day}`;
+  return `${year}-${month}-${day}`
 }
 
 /**
@@ -90,23 +90,23 @@ function formatDateForFilename(date: Date): string {
  */
 function getFileExtension(format: ExportFormat): string {
   switch (format) {
-    case "pdf":
-      return "pdf";
-    case "excel":
-      return "xlsx";
+    case 'pdf':
+      return 'pdf'
+    case 'excel':
+      return 'xlsx'
     default:
-      return "pdf";
+      return 'pdf'
   }
 }
 
-const MAX_FILENAME_LENGTH = 255;
+const MAX_FILENAME_LENGTH = 255
 
 /**
  * Validate filename doesn't exceed system limits
  */
 export function validateFilename(filename: string): boolean {
   // Most filesystems support 255 chars
-  return filename.length <= MAX_FILENAME_LENGTH;
+  return filename.length <= MAX_FILENAME_LENGTH
 }
 
 /**
@@ -114,11 +114,11 @@ export function validateFilename(filename: string): boolean {
  */
 export function generateExportFilenameWithTimestamp(
   projectName: string,
-  format: ExportFormat
+  format: ExportFormat,
 ): string {
-  const sanitizedName = sanitizeProjectName(projectName);
-  const timestamp = Date.now();
-  const extension = getFileExtension(format);
+  const sanitizedName = sanitizeProjectName(projectName)
+  const timestamp = Date.now()
+  const extension = getFileExtension(format)
 
-  return `Cotizacion_${sanitizedName}_${timestamp}.${extension}`;
+  return `Cotizacion_${sanitizedName}_${timestamp}.${extension}`
 }

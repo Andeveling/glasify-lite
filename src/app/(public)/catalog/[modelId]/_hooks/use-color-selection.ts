@@ -3,16 +3,13 @@
  * Manages color selection state and surcharge percentage
  */
 
-import { useState } from "react";
+import { useState } from 'react'
 
 type UseColorSelectionReturn = {
-  colorSurchargePercentage: number;
-  handleColorChange: (
-    colorId: string | undefined,
-    surchargePercentage: number
-  ) => void;
-  selectedColorId: string | undefined;
-};
+  colorSurchargePercentage: number
+  handleColorChange: (colorId: string | undefined, surchargePercentage: number) => void
+  selectedColorId: string | undefined
+}
 
 /**
  * Handle color selection state
@@ -25,20 +22,17 @@ type UseColorSelectionReturn = {
  * <ColorSelector onColorChange={handleColorChange} />
  */
 export function useColorSelection(): UseColorSelectionReturn {
-  const [selectedColorId, setSelectedColorId] = useState<string | undefined>();
-  const [colorSurchargePercentage, setColorSurchargePercentage] = useState(0);
+  const [selectedColorId, setSelectedColorId] = useState<string | undefined>()
+  const [colorSurchargePercentage, setColorSurchargePercentage] = useState(0)
 
-  const handleColorChange = (
-    colorId: string | undefined,
-    surchargePercentage: number
-  ) => {
-    setSelectedColorId(colorId);
-    setColorSurchargePercentage(surchargePercentage);
-  };
+  const handleColorChange = (colorId: string | undefined, surchargePercentage: number) => {
+    setSelectedColorId(colorId)
+    setColorSurchargePercentage(surchargePercentage)
+  }
 
   return {
     colorSurchargePercentage,
     handleColorChange,
     selectedColorId,
-  };
+  }
 }

@@ -1,10 +1,10 @@
-import { headers } from "next/headers";
-import { auth } from "@/server/auth";
+import { headers } from 'next/headers'
+import { auth } from '@/server/auth'
 
 type SellerOnlyProps = {
-  children: React.ReactNode;
-  fallback?: React.ReactNode;
-};
+  children: React.ReactNode
+  fallback?: React.ReactNode
+}
 
 /**
  * Server Component guard that renders children for seller or admin users
@@ -24,17 +24,14 @@ type SellerOnlyProps = {
  * @param fallback - Optional content to render for regular users
  * @returns JSX element or null
  */
-export async function SellerOnly({
-  children,
-  fallback = null,
-}: SellerOnlyProps) {
+export async function SellerOnly({ children, fallback = null }: SellerOnlyProps) {
   const session = await auth.api.getSession({
     headers: await headers(),
-  });
+  })
 
-  if (!["admin", "seller"].includes(session?.user?.role || "")) {
-    return <>{fallback}</>;
+  if (!['admin', 'seller'].includes(session?.user?.role || '')) {
+    return <>{fallback}</>
   }
 
-  return <>{children}</>;
+  return <>{children}</>
 }

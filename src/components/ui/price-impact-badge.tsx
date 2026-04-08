@@ -1,21 +1,21 @@
-"use client";
+'use client'
 
-import { ArrowDown, ArrowUp } from "lucide-react";
-import { useTenantConfig } from "@/app/_hooks/use-tenant-config";
-import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/lib/format";
-import { cn } from "@/lib/utils";
+import { ArrowDown, ArrowUp } from 'lucide-react'
+import { useTenantConfig } from '@/app/_hooks/use-tenant-config'
+import { Badge } from '@/components/ui/badge'
+import { formatCurrency } from '@/lib/format'
+import { cn } from '@/lib/utils'
 
 // ============================================================================
 // Types
 // ============================================================================
 
 type PriceImpactBadgeProps = {
-  basePrice: number;
-  className?: string;
-  currency?: string;
-  priceModifier: number; // Positive = surcharge, Negative = discount
-};
+  basePrice: number
+  className?: string
+  currency?: string
+  priceModifier: number // Positive = surcharge, Negative = discount
+}
 
 // ============================================================================
 // Component
@@ -50,38 +50,35 @@ type PriceImpactBadgeProps = {
  * ```
  */
 export function PriceImpactBadge({
-  basePrice,
+  basePrice: _basePrice,
   className,
-  currency = "$",
+  currency = '$',
   priceModifier,
 }: PriceImpactBadgeProps) {
-  const { formatContext } = useTenantConfig();
+  const { formatContext } = useTenantConfig()
 
-  const isDiscount = priceModifier < 0;
-  const isSurcharge = priceModifier > 0;
-  const isNeutral = priceModifier === 0;
+  const isDiscount = priceModifier < 0
+  const isSurcharge = priceModifier > 0
+  const isNeutral = priceModifier === 0
 
-  const absoluteAmount = Math.abs(priceModifier);
-  const sign = isSurcharge ? "+" : "";
-  const Icon = isDiscount ? ArrowDown : isSurcharge ? ArrowUp : null;
+  const absoluteAmount = Math.abs(priceModifier)
+  const sign = isSurcharge ? '+' : ''
+  const Icon = isDiscount ? ArrowDown : isSurcharge ? ArrowUp : null
 
   // Color classes based on impact
   const colorClass = isDiscount
-    ? "bg-success/10 text-success border-success/20"
+    ? 'bg-success/10 text-success border-success/20'
     : isSurcharge
-      ? "bg-destructive/10 text-destructive border-destructive/20"
-      : "bg-muted text-muted-foreground border-muted";
+      ? 'bg-destructive/10 text-destructive border-destructive/20'
+      : 'bg-muted text-muted-foreground border-muted'
 
   // Don't render if neutral
   if (isNeutral) {
     return (
-      <Badge
-        className={cn("gap-1 text-xs", colorClass, className)}
-        variant="outline"
-      >
+      <Badge className={cn('gap-1 text-xs', colorClass, className)} variant="outline">
         Base
       </Badge>
-    );
+    )
   }
 
   return (
@@ -91,11 +88,7 @@ export function PriceImpactBadge({
           ? `Descuento de ${currency}${formatCurrency(absoluteAmount, { context: formatContext })}`
           : `Recargo de ${currency}${formatCurrency(absoluteAmount, { context: formatContext })}`
       }
-      className={cn(
-        "gap-1 font-medium text-xs tabular-nums",
-        colorClass,
-        className
-      )}
+      className={cn('gap-1 font-medium text-xs tabular-nums', colorClass, className)}
       variant="outline"
     >
       {Icon && <Icon aria-hidden="true" className="h-3 w-3" />}
@@ -104,5 +97,5 @@ export function PriceImpactBadge({
         {formatCurrency(absoluteAmount, { context: formatContext })}
       </span>
     </Badge>
-  );
+  )
 }

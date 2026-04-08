@@ -7,14 +7,14 @@
  * @see https://react-pdf.org/components
  */
 
-import { Document, Image, Page, Text, View } from "@react-pdf/renderer";
-import { formatCurrency, formatDateFull, formatTaxLabel } from "@/lib/format";
-import type { QuotePDFData } from "@/types/export.types";
-import { pdfColors, pdfStyles } from "./pdf-styles";
+import { Document, Image, Page, Text, View } from '@react-pdf/renderer'
+import { formatCurrency, formatDateFull, formatTaxLabel } from '@/lib/format'
+import type { QuotePDFData } from '@/types/export.types'
+import { pdfColors, pdfStyles } from './pdf-styles'
 
 type QuotePDFDocumentProps = {
-  data: QuotePDFData;
-};
+  data: QuotePDFData
+}
 
 /**
  * Main PDF Document Component
@@ -44,7 +44,7 @@ export function QuotePDFDocument({ data }: QuotePDFDocumentProps) {
         <PDFFooter data={data} />
       </Page>
     </Document>
-  );
+  )
 }
 
 /**
@@ -54,16 +54,10 @@ function PDFHeader({ data }: QuotePDFDocumentProps) {
   return (
     <View style={pdfStyles.header}>
       <View style={pdfStyles.headerLeft}>
-        {data.company.logoUrl && (
-          <Image src={data.company.logoUrl} style={pdfStyles.companyLogo} />
-        )}
+        {data.company.logoUrl && <Image src={data.company.logoUrl} style={pdfStyles.companyLogo} />}
         <Text style={pdfStyles.companyName}>{data.company.name}</Text>
-        {data.company.email && (
-          <Text style={pdfStyles.quoteDate}>{data.company.email}</Text>
-        )}
-        {data.company.phone && (
-          <Text style={pdfStyles.quoteDate}>{data.company.phone}</Text>
-        )}
+        {data.company.email && <Text style={pdfStyles.quoteDate}>{data.company.email}</Text>}
+        {data.company.phone && <Text style={pdfStyles.quoteDate}>{data.company.phone}</Text>}
       </View>
 
       <View style={pdfStyles.headerRight}>
@@ -77,7 +71,7 @@ function PDFHeader({ data }: QuotePDFDocumentProps) {
         </Text>
       </View>
     </View>
-  );
+  )
 }
 
 /**
@@ -121,7 +115,7 @@ function PDFProjectInfo({ data }: QuotePDFDocumentProps) {
         )}
       </View>
     </View>
-  );
+  )
 }
 
 /**
@@ -135,46 +129,26 @@ function PDFItemsTable({ data }: QuotePDFDocumentProps) {
       <View style={pdfStyles.table}>
         {/* Table Header */}
         <View style={pdfStyles.tableHeader}>
-          <Text style={[pdfStyles.tableHeaderCell, pdfStyles.colItem]}>
-            Producto
-          </Text>
-          <Text style={[pdfStyles.tableHeaderCell, pdfStyles.colDescription]}>
-            Descripción
-          </Text>
-          <Text style={[pdfStyles.tableHeaderCell, pdfStyles.colDimensions]}>
-            Dimensiones
-          </Text>
-          <Text style={[pdfStyles.tableHeaderCell, pdfStyles.colQuantity]}>
-            Cant.
-          </Text>
-          <Text style={[pdfStyles.tableHeaderCell, pdfStyles.colUnitPrice]}>
-            Precio Unit.
-          </Text>
-          <Text style={[pdfStyles.tableHeaderCell, pdfStyles.colSubtotal]}>
-            Subtotal
-          </Text>
+          <Text style={[pdfStyles.tableHeaderCell, pdfStyles.colItem]}>Producto</Text>
+          <Text style={[pdfStyles.tableHeaderCell, pdfStyles.colDescription]}>Descripción</Text>
+          <Text style={[pdfStyles.tableHeaderCell, pdfStyles.colDimensions]}>Dimensiones</Text>
+          <Text style={[pdfStyles.tableHeaderCell, pdfStyles.colQuantity]}>Cant.</Text>
+          <Text style={[pdfStyles.tableHeaderCell, pdfStyles.colUnitPrice]}>Precio Unit.</Text>
+          <Text style={[pdfStyles.tableHeaderCell, pdfStyles.colSubtotal]}>Subtotal</Text>
         </View>
 
         {/* Table Rows */}
         {data.items.map((item, index) => (
           <View
             key={item.id}
-            style={[
-              pdfStyles.tableRow,
-              ...(index % 2 === 1 ? [pdfStyles.tableRowEven] : []),
-            ]}
+            style={[pdfStyles.tableRow, ...(index % 2 === 1 ? [pdfStyles.tableRowEven] : [])]}
             wrap={false}
           >
             {/* Producto */}
             <View style={[pdfStyles.tableCell, pdfStyles.colItem]}>
               <Text style={pdfStyles.tableCellLeft}>{item.name}</Text>
               {item.product?.manufacturer && (
-                <Text
-                  style={[
-                    pdfStyles.tableCellLeft,
-                    { color: pdfColors.gray600, fontSize: 8 },
-                  ]}
-                >
+                <Text style={[pdfStyles.tableCellLeft, { color: pdfColors.gray600, fontSize: 8 }]}>
                   {item.product.manufacturer}
                 </Text>
               )}
@@ -194,8 +168,8 @@ function PDFItemsTable({ data }: QuotePDFDocumentProps) {
               {item.glass?.color && (
                 <View
                   style={{
-                    alignItems: "center",
-                    flexDirection: "row",
+                    alignItems: 'center',
+                    flexDirection: 'row',
                     marginTop: 2,
                   }}
                 >
@@ -203,7 +177,7 @@ function PDFItemsTable({ data }: QuotePDFDocumentProps) {
                     <View
                       style={{
                         backgroundColor: item.glass.colorHexCode,
-                        border: "1px solid #e5e7eb",
+                        border: '1px solid #e5e7eb',
                         borderRadius: 2,
                         height: 10,
                         marginRight: 4,
@@ -213,65 +187,38 @@ function PDFItemsTable({ data }: QuotePDFDocumentProps) {
                   )}
                   <Text style={[pdfStyles.tableCellLeft, { fontSize: 8 }]}>
                     Color: {item.glass.color}
-                    {item.glass.colorSurchargePercentage &&
-                    item.glass.colorSurchargePercentage > 0
+                    {item.glass.colorSurchargePercentage && item.glass.colorSurchargePercentage > 0
                       ? ` (+${item.glass.colorSurchargePercentage}%)`
-                      : ""}
+                      : ''}
                   </Text>
                 </View>
               )}
             </View>
 
             {/* Dimensiones */}
-            <Text
-              style={[
-                pdfStyles.tableCell,
-                pdfStyles.colDimensions,
-                pdfStyles.tableCellCenter,
-              ]}
-            >
-              {item.dimensions
-                ? `${item.dimensions.width}x${item.dimensions.height}`
-                : "-"}
+            <Text style={[pdfStyles.tableCell, pdfStyles.colDimensions, pdfStyles.tableCellCenter]}>
+              {item.dimensions ? `${item.dimensions.width}x${item.dimensions.height}` : '-'}
             </Text>
 
             {/* Cantidad */}
-            <Text
-              style={[
-                pdfStyles.tableCell,
-                pdfStyles.colQuantity,
-                pdfStyles.tableCellCenter,
-              ]}
-            >
+            <Text style={[pdfStyles.tableCell, pdfStyles.colQuantity, pdfStyles.tableCellCenter]}>
               {item.quantity}
             </Text>
 
             {/* Precio Unitario */}
-            <Text
-              style={[
-                pdfStyles.tableCell,
-                pdfStyles.colUnitPrice,
-                pdfStyles.tableCellRight,
-              ]}
-            >
+            <Text style={[pdfStyles.tableCell, pdfStyles.colUnitPrice, pdfStyles.tableCellRight]}>
               {formatCurrency(item.unitPrice, { context: data.formatting })}
             </Text>
 
             {/* Subtotal */}
-            <Text
-              style={[
-                pdfStyles.tableCell,
-                pdfStyles.colSubtotal,
-                pdfStyles.tableCellRight,
-              ]}
-            >
+            <Text style={[pdfStyles.tableCell, pdfStyles.colSubtotal, pdfStyles.tableCellRight]}>
               {formatCurrency(item.subtotal, { context: data.formatting })}
             </Text>
           </View>
         ))}
       </View>
     </View>
-  );
+  )
 }
 
 /**
@@ -283,7 +230,7 @@ function PDFTotals({ data }: QuotePDFDocumentProps) {
     taxEnabled: data.totals.tax != null && data.totals.tax > 0,
     taxName: data.totals.taxName,
     taxRate: data.totals.taxRate ?? undefined,
-  });
+  })
 
   return (
     <View style={pdfStyles.totalsSection}>
@@ -310,8 +257,7 @@ function PDFTotals({ data }: QuotePDFDocumentProps) {
         <View style={pdfStyles.totalsRow}>
           <Text style={pdfStyles.totalsLabel}>Descuento:</Text>
           <Text style={pdfStyles.totalsValue}>
-            -
-            {formatCurrency(data.totals.discount, { context: data.formatting })}
+            -{formatCurrency(data.totals.discount, { context: data.formatting })}
           </Text>
         </View>
       )}
@@ -324,7 +270,7 @@ function PDFTotals({ data }: QuotePDFDocumentProps) {
         </Text>
       </View>
     </View>
-  );
+  )
 }
 
 /**
@@ -341,29 +287,24 @@ function PDFFooter({ data }: QuotePDFDocumentProps) {
       )}
 
       <Text style={pdfStyles.footerText}>
-        Cotización válida hasta{" "}
-        {formatDateFull(data.quote.validUntil, data.formatting)}
+        Cotización válida hasta {formatDateFull(data.quote.validUntil, data.formatting)}
       </Text>
 
-      {data.company.address && (
-        <Text style={pdfStyles.footerText}>{data.company.address}</Text>
-      )}
+      {data.company.address && <Text style={pdfStyles.footerText}>{data.company.address}</Text>}
 
       <Text
-        render={({ pageNumber, totalPages }) =>
-          `Página ${pageNumber} de ${totalPages}`
-        }
+        render={({ pageNumber, totalPages }) => `Página ${pageNumber} de ${totalPages}`}
         style={pdfStyles.pageNumber}
       />
     </View>
-  );
+  )
 }
 
 /**
  * Render PDF to buffer for Server Action
  */
 export async function renderQuotePDF(data: QuotePDFData): Promise<Buffer> {
-  const { renderToBuffer } = await import("@react-pdf/renderer");
-  const pdf = <QuotePDFDocument data={data} />;
-  return await renderToBuffer(pdf);
+  const { renderToBuffer } = await import('@react-pdf/renderer')
+  const pdf = <QuotePDFDocument data={data} />
+  return await renderToBuffer(pdf)
 }

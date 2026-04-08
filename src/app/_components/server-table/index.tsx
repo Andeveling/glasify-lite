@@ -28,7 +28,7 @@
  * @see PAT-001: Server-first data tables
  */
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react'
 import {
   Table,
   TableBody,
@@ -36,80 +36,80 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table'
 
 /**
  * Column definition for table
  */
 export type ServerTableColumn<T> = {
   /** Column identifier (must match data key) */
-  id: string;
+  id: string
 
   /** Column header text */
-  header: string;
+  header: string
 
   /** Is this column sortable? */
-  sortable?: boolean;
+  sortable?: boolean
 
   /** Custom cell renderer */
-  cell?: (item: T) => ReactNode;
+  cell?: (item: T) => ReactNode
 
   /** Column alignment */
-  align?: "left" | "center" | "right";
+  align?: 'left' | 'center' | 'right'
 
   /** Column width (CSS value) */
-  width?: string;
-};
+  width?: string
+}
 
 /**
  * ServerTable props
  */
 export type ServerTableProps<T extends Record<string, unknown>> = {
   /** Array of data items to display */
-  data: T[];
+  data: T[]
 
   /** Column definitions */
-  columns: ServerTableColumn<T>[];
+  columns: ServerTableColumn<T>[]
 
   /** Placeholder text for search input */
-  searchPlaceholder?: string;
+  searchPlaceholder?: string
 
   /** Message to show when no data */
-  emptyMessage?: string;
+  emptyMessage?: string
 
   /** Show search input? */
-  showSearch?: boolean;
+  showSearch?: boolean
 
   /** Show pagination controls? */
-  showPagination?: boolean;
+  showPagination?: boolean
 
   /** Total count of items (for pagination) */
-  totalCount?: number;
+  totalCount?: number
 
   /** Current page (for pagination) */
-  currentPage?: number;
+  currentPage?: number
 
   /** Page size (for pagination) */
-  pageSize?: number;
+  pageSize?: number
 
   /** Custom row key extractor */
-  rowKey?: (item: T) => string;
+  rowKey?: (item: T) => string
 
   /** Custom empty state component */
-  emptyState?: ReactNode;
+  emptyState?: ReactNode
 
   /** Loading state */
-  isLoading?: boolean;
+  isLoading?: boolean
 
   /** Additional table class names */
-  className?: string;
-};
+  className?: string
+}
 
 /**
  * Default row key extractor
  */
 function defaultRowKey<T extends Record<string, unknown>>(item: T): string {
-  return (item.id as string) ?? JSON.stringify(item);
+  return (item.id as string) ?? JSON.stringify(item)
 }
 
 /**
@@ -117,42 +117,40 @@ function defaultRowKey<T extends Record<string, unknown>>(item: T): string {
  */
 function defaultCellRenderer<T extends Record<string, unknown>>(
   item: T,
-  column: ServerTableColumn<T>
+  column: ServerTableColumn<T>,
 ): ReactNode {
-  const value = item[column.id];
+  const value = item[column.id]
 
   // Handle null/undefined
   if (value === null || value === undefined) {
-    return <span className="text-muted-foreground">—</span>;
+    return <span className="text-muted-foreground">—</span>
   }
 
   // Handle boolean
-  if (typeof value === "boolean") {
-    return value ? "Sí" : "No";
+  if (typeof value === 'boolean') {
+    return value ? 'Sí' : 'No'
   }
 
   // Handle Date
   if (value instanceof Date) {
-    return value.toLocaleDateString("es-AR");
+    return value.toLocaleDateString('es-AR')
   }
 
   // Handle string/number
-  return String(value);
+  return String(value)
 }
 
 /**
  * Get alignment class from column alignment
  */
-function getAlignmentClass(
-  align?: "left" | "center" | "right"
-): string | undefined {
-  if (align === "center") {
-    return "text-center";
+function getAlignmentClass(align?: 'left' | 'center' | 'right'): string | undefined {
+  if (align === 'center') {
+    return 'text-center'
   }
-  if (align === "right") {
-    return "text-right";
+  if (align === 'right') {
+    return 'text-right'
   }
-  return;
+  return
 }
 
 /**
@@ -163,7 +161,7 @@ function getAlignmentClass(
 export function ServerTable<T extends Record<string, unknown>>({
   data,
   columns,
-  emptyMessage = "No se encontraron resultados",
+  emptyMessage = 'No se encontraron resultados',
   rowKey = defaultRowKey,
   emptyState,
   isLoading = false,
@@ -179,7 +177,7 @@ export function ServerTable<T extends Record<string, unknown>>({
           </div>
         </div>
       )
-    );
+    )
   }
 
   // Show loading skeleton
@@ -190,7 +188,7 @@ export function ServerTable<T extends Record<string, unknown>>({
           <p className="text-muted-foreground">Cargando...</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -214,13 +212,8 @@ export function ServerTable<T extends Record<string, unknown>>({
             {data.map((item) => (
               <TableRow key={rowKey(item)}>
                 {columns.map((column) => (
-                  <TableCell
-                    className={getAlignmentClass(column.align)}
-                    key={column.id}
-                  >
-                    {column.cell
-                      ? column.cell(item)
-                      : defaultCellRenderer(item, column)}
+                  <TableCell className={getAlignmentClass(column.align)} key={column.id}>
+                    {column.cell ? column.cell(item) : defaultCellRenderer(item, column)}
                   </TableCell>
                 ))}
               </TableRow>
@@ -229,5 +222,5 @@ export function ServerTable<T extends Record<string, unknown>>({
         </Table>
       </div>
     </div>
-  );
+  )
 }

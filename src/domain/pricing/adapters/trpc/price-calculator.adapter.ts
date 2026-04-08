@@ -10,69 +10,69 @@
  * Maintains 100% backward compatibility with existing `calculatePriceItem` function.
  */
 
-import { Decimal } from "decimal.js";
-import { Dimensions } from "@/domain/pricing/core/entities/dimensions";
-import { Money } from "@/domain/pricing/core/entities/money";
-import type { ServiceUnit } from "@/domain/pricing/core/types";
-import { CalculateItemPrice } from "@/domain/pricing/use-cases/calculate-item-price";
+import { Decimal } from 'decimal.js'
+import { Dimensions } from '@/domain/pricing/core/entities/dimensions'
+import { Money } from '@/domain/pricing/core/entities/money'
+import type { ServiceUnit } from '@/domain/pricing/core/types'
+import { CalculateItemPrice } from '@/domain/pricing/use-cases/calculate-item-price'
 
 /**
  * Legacy tRPC types for backward compatibility
  * These types maintain the existing API contract
  */
 export type PriceItemCalculationInput = {
-  widthMm: number;
-  heightMm: number;
+  widthMm: number
+  heightMm: number
   model: {
-    basePrice: Decimal | number;
-    costPerMmWidth: Decimal | number;
-    costPerMmHeight: Decimal | number;
-    accessoryPrice?: Decimal | number | null;
-  };
-  includeAccessory?: boolean;
-  colorSurchargePercentage?: number;
+    basePrice: Decimal | number
+    costPerMmWidth: Decimal | number
+    costPerMmHeight: Decimal | number
+    accessoryPrice?: Decimal | number | null
+  }
+  includeAccessory?: boolean
+  colorSurchargePercentage?: number
   glass?: {
-    pricePerSqm: Decimal | number;
-    discountWidthMm?: number;
-    discountHeightMm?: number;
-  };
+    pricePerSqm: Decimal | number
+    discountWidthMm?: number
+    discountHeightMm?: number
+  }
   services?: Array<{
-    serviceId: string;
-    type: "fixed" | "variable";
-    unit: string;
-    rate: Decimal | number;
-    minimumBillingUnit?: Decimal | number;
-    quantityOverride?: number;
-  }>;
+    serviceId: string
+    type: 'fixed' | 'variable'
+    unit: string
+    rate: Decimal | number
+    minimumBillingUnit?: Decimal | number
+    quantityOverride?: number
+  }>
   adjustments?: Array<{
-    concept: string;
-    unit: string;
-    sign: "positive" | "negative";
-    value: Decimal | number;
-  }>;
-};
+    concept: string
+    unit: string
+    sign: 'positive' | 'negative'
+    value: Decimal | number
+  }>
+}
 
 export type PriceItemCalculationResult = {
-  dimPrice: number;
-  accPrice: number;
-  colorSurchargePercentage?: number;
-  colorSurchargeAmount?: number;
+  dimPrice: number
+  accPrice: number
+  colorSurchargePercentage?: number
+  colorSurchargeAmount?: number
   services: Array<{
-    serviceId: string;
-    quantity: number;
-    amount: number;
-  }>;
+    serviceId: string
+    quantity: number
+    amount: number
+  }>
   adjustments: Array<{
-    concept: string;
-    amount: number;
-  }>;
-  subtotal: number;
-};
+    concept: string
+    amount: number
+  }>
+  subtotal: number
+}
 
 /**
  * Constants for percentage calculations
  */
-const PERCENTAGE_TO_DECIMAL = 100;
+const PERCENTAGE_TO_DECIMAL = 100
 
 /**
  * Convert tRPC input to domain input
@@ -90,7 +90,7 @@ function toDomainInput(input: PriceItemCalculationInput) {
     heightMm: input.heightMm,
     minWidthMm: 0, // Old API doesn't have minimums, use 0
     minHeightMm: 0,
-  });
+  })
 
   // Convert model prices to Money
   const modelPrices = {
@@ -101,11 +101,11 @@ function toDomainInput(input: PriceItemCalculationInput) {
       input.includeAccessory && input.model.accessoryPrice
         ? new Money(input.model.accessoryPrice)
         : undefined,
-  };
+  }
 
   // Convert color surcharge percentage to multiplier
-  const colorSurchargePercentage = input.colorSurchargePercentage ?? 0;
-  const colorMultiplier = 1 + colorSurchargePercentage / PERCENTAGE_TO_DECIMAL;
+  const colorSurchargePercentage = input.colorSurchargePercentage ?? 0
+  const colorMultiplier = 1 + colorSurchargePercentage / PERCENTAGE_TO_DECIMAL
 
   // Convert glass configuration
   const glass = input.glass
@@ -114,20 +114,17 @@ function toDomainInput(input: PriceItemCalculationInput) {
         discountWidthMm: input.glass.discountWidthMm ?? 0,
         discountHeightMm: input.glass.discountHeightMm ?? 0,
       }
-    : undefined;
+    : undefined
 
   // Convert services
   const services = input.services?.map((service) => {
     // Convert minimumBillingUnit to number if it's a Decimal
-    let minimumBillingUnit: number | undefined;
-    if (
-      service.minimumBillingUnit !== null &&
-      service.minimumBillingUnit !== undefined
-    ) {
+    let minimumBillingUnit: number | undefined
+    if (service.minimumBillingUnit !== null && service.minimumBillingUnit !== undefined) {
       minimumBillingUnit =
-        typeof service.minimumBillingUnit === "number"
+        typeof service.minimumBillingUnit === 'number'
           ? service.minimumBillingUnit
-          : new Decimal(service.minimumBillingUnit).toNumber();
+          : new Decimal(service.minimumBillingUnit).toNumber()
     }
 
     return {
@@ -137,8 +134,8 @@ function toDomainInput(input: PriceItemCalculationInput) {
       rate: new Money(service.rate),
       quantityOverride: service.quantityOverride,
       minimumBillingUnit,
-    };
-  });
+    }
+  })
 
   // Convert adjustments
   const adjustments = input.adjustments?.map((adjustment) => ({
@@ -146,12 +143,11 @@ function toDomainInput(input: PriceItemCalculationInput) {
     concept: adjustment.concept,
     unit: adjustment.unit as ServiceUnit,
     value:
-      typeof adjustment.value === "number" ||
-      typeof adjustment.value === "string"
+      typeof adjustment.value === 'number' || typeof adjustment.value === 'string'
         ? adjustment.value
         : adjustment.value.toNumber(),
-    isPositive: adjustment.sign !== "negative",
-  }));
+    isPositive: adjustment.sign !== 'negative',
+  }))
 
   return {
     dimensions,
@@ -160,7 +156,7 @@ function toDomainInput(input: PriceItemCalculationInput) {
     glass,
     services,
     adjustments,
-  };
+  }
 }
 
 /**
@@ -170,7 +166,7 @@ function toDomainInput(input: PriceItemCalculationInput) {
  */
 function toTrpcOutput(
   domainResult: ReturnType<typeof CalculateItemPrice.execute>,
-  input: PriceItemCalculationInput
+  input: PriceItemCalculationInput,
 ): PriceItemCalculationResult {
   // Map services (domain → tRPC format)
   const services = domainResult.services.map((service) => ({
@@ -178,42 +174,40 @@ function toTrpcOutput(
     unit: service.unit as ServiceUnit,
     quantity: service.quantity,
     amount: service.amount,
-  }));
+  }))
 
   // Map adjustments (domain → tRPC format)
   const adjustments = domainResult.adjustments.map((adjustment) => ({
     concept: adjustment.concept,
     amount: adjustment.amount,
-  }));
+  }))
 
   // Calculate dimPrice (profile + glass) for backward compatibility
-  const dimPrice =
-    domainResult.profileCost.toNumber() + domainResult.glassCost.toNumber();
+  const dimPrice = domainResult.profileCost.toNumber() + domainResult.glassCost.toNumber()
 
   // Calculate color surcharge amount if applicable
   // IMPORTANT: Only from profile cost (NOT accessory)
-  const colorSurchargePercentage = input.colorSurchargePercentage;
-  let colorSurchargeAmount: number | undefined;
+  const colorSurchargePercentage = input.colorSurchargePercentage
+  let colorSurchargeAmount: number | undefined
 
   if (colorSurchargePercentage && colorSurchargePercentage > 0) {
     // Calculate profile cost WITHOUT color surcharge
     const basePrice =
       input.model.basePrice instanceof Decimal
         ? input.model.basePrice.toNumber()
-        : Number(input.model.basePrice);
+        : Number(input.model.basePrice)
     const widthCost =
       (input.model.costPerMmWidth instanceof Decimal
         ? input.model.costPerMmWidth.toNumber()
-        : Number(input.model.costPerMmWidth)) * input.widthMm;
+        : Number(input.model.costPerMmWidth)) * input.widthMm
     const heightCost =
       (input.model.costPerMmHeight instanceof Decimal
         ? input.model.costPerMmHeight.toNumber()
-        : Number(input.model.costPerMmHeight)) * input.heightMm;
+        : Number(input.model.costPerMmHeight)) * input.heightMm
 
-    const profileCostBeforeColor = basePrice + widthCost + heightCost;
+    const profileCostBeforeColor = basePrice + widthCost + heightCost
     colorSurchargeAmount =
-      profileCostBeforeColor *
-      (colorSurchargePercentage / PERCENTAGE_TO_DECIMAL);
+      profileCostBeforeColor * (colorSurchargePercentage / PERCENTAGE_TO_DECIMAL)
   }
 
   return {
@@ -224,7 +218,7 @@ function toTrpcOutput(
     services,
     adjustments,
     subtotal: domainResult.subtotal.toNumber(),
-  };
+  }
 }
 
 /**
@@ -248,14 +242,14 @@ function toTrpcOutput(
  * ```
  */
 export function calculateItemPriceAdapter(
-  input: PriceItemCalculationInput
+  input: PriceItemCalculationInput,
 ): PriceItemCalculationResult {
   // Transform input
-  const domainInput = toDomainInput(input);
+  const domainInput = toDomainInput(input)
 
   // Execute domain use case
-  const domainResult = CalculateItemPrice.execute(domainInput);
+  const domainResult = CalculateItemPrice.execute(domainInput)
 
   // Transform result
-  return toTrpcOutput(domainResult, input);
+  return toTrpcOutput(domainResult, input)
 }

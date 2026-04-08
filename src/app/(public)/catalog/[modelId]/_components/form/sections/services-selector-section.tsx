@@ -1,64 +1,59 @@
 /** biome-ignore-all lint/correctness/noUnusedVariables: Debemos programar una issue para solicitar cambios en este componente de desaparecer el precio. ocultarlo */
-"use client";
+'use client'
 
-import { Maximize2, Package, Ruler, Wrench } from "lucide-react";
-import type { Control } from "react-hook-form";
-import { useFormContext } from "react-hook-form";
-import { FormSection } from "@/components/form-section";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { cn } from "@/lib/utils";
-import type { ServiceOutput } from "@/server/api/routers/catalog/catalog.schemas";
+import { Maximize2, Package, Ruler, Wrench } from 'lucide-react'
+import type { Control } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
+import { FormSection } from '@/components/form-section'
+import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
+import { cn } from '@/lib/utils'
+import type { ServiceOutput } from '@/server/api/routers/catalog/catalog.schemas'
 
 type ServicesSelectorSectionProps = {
-  services: ServiceOutput[];
-};
+  services: ServiceOutput[]
+}
 
 const SERVICE_TYPE_LABELS = {
-  area: "Superficie",
-  fixed: "Fijo",
-  perimeter: "Perímetro",
-} as const;
+  area: 'Superficie',
+  fixed: 'Fijo',
+  perimeter: 'Perímetro',
+} as const
 
 const SERVICE_UNIT_LABELS = {
-  ml: "metro lineal",
-  sqm: "m²",
-  unit: "unidad",
-} as const;
+  ml: 'metro lineal',
+  sqm: 'm²',
+  unit: 'unidad',
+} as const
 
 // Icon mapping based on ServiceUnit from schema
-function getServiceIcon(unit: ServiceOutput["unit"]) {
-  const iconClass = "size-10 shrink-0";
+function getServiceIcon(unit: ServiceOutput['unit']) {
+  const iconClass = 'size-10 shrink-0'
   switch (unit) {
-    case "sqm": // Surface area
-      return <Maximize2 className={iconClass} />;
-    case "ml": // Perimeter/linear meters
-      return <Ruler className={iconClass} />;
-    case "unit": // Fixed unit
-      return <Package className={iconClass} />;
+    case 'sqm': // Surface area
+      return <Maximize2 className={iconClass} />
+    case 'ml': // Perimeter/linear meters
+      return <Ruler className={iconClass} />
+    case 'unit': // Fixed unit
+      return <Package className={iconClass} />
     default:
-      return <Wrench className={iconClass} />;
+      return <Wrench className={iconClass} />
   }
 }
 
-function getServiceTypeLabel(type: ServiceOutput["type"]): string {
-  return SERVICE_TYPE_LABELS[type];
+function getServiceTypeLabel(type: ServiceOutput['type']): string {
+  return SERVICE_TYPE_LABELS[type]
 }
 
-function getServiceUnitLabel(unit: ServiceOutput["unit"]): string {
-  return SERVICE_UNIT_LABELS[unit];
+function getServiceUnitLabel(unit: ServiceOutput['unit']): string {
+  return SERVICE_UNIT_LABELS[unit]
 }
 
 type ServiceCardProps = {
-  control: Control;
-  service: ServiceOutput;
-};
+  control: Control
+  service: ServiceOutput
+}
 
 /**
  * ServiceCard - Horizontal layout with toggle switch
@@ -71,15 +66,15 @@ function ServiceCard({ control, service }: ServiceCardProps) {
       key={service.id}
       name="additionalServices"
       render={({ field }) => {
-        const isChecked = field.value?.includes(service.id) ?? false;
+        const isChecked = field.value?.includes(service.id) ?? false
 
         return (
           <FormItem>
             <Label
               className={cn(
-                "flex cursor-pointer items-center justify-between gap-4 rounded-lg border bg-card p-4 transition-all duration-200",
-                "hover:border-primary/50 hover:bg-accent/5",
-                isChecked && "border-primary/30 bg-primary/5"
+                'flex cursor-pointer items-center justify-between gap-4 rounded-lg border bg-card p-4 transition-all duration-200',
+                'hover:border-primary/50 hover:bg-accent/5',
+                isChecked && 'border-primary/30 bg-primary/5',
               )}
               htmlFor={`service-${service.id}`}
             >
@@ -87,17 +82,15 @@ function ServiceCard({ control, service }: ServiceCardProps) {
               <div className="flex flex-1 items-center gap-3">
                 <div
                   className={cn(
-                    "flex items-center justify-center rounded-md p-2 transition-colors",
-                    isChecked ? "bg-primary/10 text-primary" : "bg-muted"
+                    'flex items-center justify-center rounded-md p-2 transition-colors',
+                    isChecked ? 'bg-primary/10 text-primary' : 'bg-muted',
                   )}
                 >
                   {getServiceIcon(service.unit)}
                 </div>
 
                 <div className="flex-1 space-y-0.5">
-                  <h4 className="font-medium text-base leading-tight">
-                    {service.name}
-                  </h4>
+                  <h4 className="font-medium text-base leading-tight">{service.name}</h4>
                   <p className="text-muted-foreground text-sm">
                     {getServiceTypeLabel(service.type)}
                     {/* TODO: Se solicito que en algunos casos es mejor no mostrar */}
@@ -114,20 +107,20 @@ function ServiceCard({ control, service }: ServiceCardProps) {
                   className="scale-150"
                   id={`service-${service.id}`}
                   onCheckedChange={(checked) => {
-                    const currentValue = field.value || [];
+                    const currentValue = field.value || []
                     const newValue = checked
                       ? [...currentValue, service.id]
-                      : currentValue.filter((id: string) => id !== service.id);
-                    field.onChange(newValue);
+                      : currentValue.filter((id: string) => id !== service.id)
+                    field.onChange(newValue)
                   }}
                 />
               </FormControl>
             </Label>
           </FormItem>
-        );
+        )
       }}
     />
-  );
+  )
 }
 
 /**
@@ -142,10 +135,8 @@ function ServiceCard({ control, service }: ServiceCardProps) {
  * - **Contador de selección**: Badge mostrando servicios seleccionados
  * - **Estimación de costo**: Suma total de servicios seleccionados
  */
-export function ServicesSelectorSection({
-  services,
-}: ServicesSelectorSectionProps) {
-  const { control } = useFormContext();
+export function ServicesSelectorSection({ services }: ServicesSelectorSectionProps) {
+  const { control } = useFormContext()
 
   return (
     <FormSection
@@ -160,11 +151,7 @@ export function ServicesSelectorSection({
           <FormItem>
             <div className="space-y-3">
               {services.map((service) => (
-                <ServiceCard
-                  control={control}
-                  key={service.id}
-                  service={service}
-                />
+                <ServiceCard control={control} key={service.id} service={service} />
               ))}
             </div>
             <FormMessage />
@@ -172,5 +159,5 @@ export function ServicesSelectorSection({
         )}
       />
     </FormSection>
-  );
+  )
 }

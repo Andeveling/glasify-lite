@@ -1,4 +1,4 @@
-import type { Money } from "../entities/money";
+import type { Money } from '../entities/money'
 
 /**
  * Calculate accessory cost with color surcharge
@@ -16,11 +16,8 @@ import type { Money } from "../entities/money";
  * @param colorMultiplier - Color multiplier (1 = no surcharge, 1.1 = 10% surcharge)
  * @returns Accessory cost with color applied
  */
-function calculateAccessoryCost(
-  accessoryPrice: Money,
-  colorMultiplier: number
-): Money {
-  return accessoryPrice.multiply(colorMultiplier);
+function calculateAccessoryCost(accessoryPrice: Money, colorMultiplier: number): Money {
+  return accessoryPrice.multiply(colorMultiplier)
 }
 
 /**
@@ -36,4 +33,4 @@ function calculateAccessoryCost(
  */
 export const AccessoryCalculator = {
   calculateAccessoryCost,
-} as const;
+} as const

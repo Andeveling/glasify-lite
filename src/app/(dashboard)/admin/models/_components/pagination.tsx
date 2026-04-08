@@ -5,23 +5,19 @@
  * Follows Single Responsibility Principle - only handles pagination UI
  */
 
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button'
 
 type PaginationProps = {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-};
+  currentPage: number
+  totalPages: number
+  onPageChange: (page: number) => void
+}
 
-export function Pagination({
-  currentPage,
-  onPageChange,
-  totalPages,
-}: PaginationProps) {
+export function Pagination({ currentPage, onPageChange, totalPages }: PaginationProps) {
   if (totalPages <= 1) {
-    return null;
+    return null
   }
 
   return (
@@ -48,5 +44,5 @@ export function Pagination({
         </Button>
       </div>
     </div>
-  );
+  )
 }

@@ -13,7 +13,7 @@
  * @returns Formatted range string (e.g., "500 - 2000 mm")
  */
 export function formatRange(min: number, max: number): string {
-  return `${min} - ${max} mm`;
+  return `${min} - ${max} mm`
 }
 
 /**
@@ -23,11 +23,8 @@ export function formatRange(min: number, max: number): string {
  * @param itemsPerPage - Number of items per page
  * @returns Total number of pages
  */
-export function calculateTotalPages(
-  total: number,
-  itemsPerPage: number
-): number {
-  return Math.ceil(total / itemsPerPage);
+export function calculateTotalPages(total: number, itemsPerPage: number): number {
+  return Math.ceil(total / itemsPerPage)
 }
 
 /**
@@ -37,11 +34,8 @@ export function calculateTotalPages(
  * @param previousPage - Previous page in the sequence
  * @returns Whether to show ellipsis
  */
-export function shouldShowEllipsis(
-  currentPage: number,
-  previousPage: number | undefined
-): boolean {
-  return previousPage !== undefined && currentPage - previousPage > 1;
+export function shouldShowEllipsis(currentPage: number, previousPage: number | undefined): boolean {
+  return previousPage !== undefined && currentPage - previousPage > 1
 }
 
 /**
@@ -51,32 +45,32 @@ export function shouldShowEllipsis(
  * @returns Transformed model data for UI
  */
 export type RawModel = {
-  id: string;
-  name: string;
-  manufacturer: { id: string; name: string } | null;
-  basePrice: number;
-  minWidthMm: number;
-  maxWidthMm: number;
-  minHeightMm: number;
-  maxHeightMm: number;
-  compatibleGlassTypeIds: string[];
-};
+  id: string
+  name: string
+  manufacturer: { id: string; name: string } | null
+  basePrice: number
+  minWidthMm: number
+  maxWidthMm: number
+  minHeightMm: number
+  maxHeightMm: number
+  compatibleGlassTypeIds: string[]
+}
 
 export type DisplayModel = {
-  id: string;
-  name: string;
-  manufacturer?: string;
-  basePrice: string;
+  id: string
+  name: string
+  manufacturer?: string
+  basePrice: string
   range: {
-    width: [number, number];
-    height: [number, number];
-  };
+    width: [number, number]
+    height: [number, number]
+  }
   compatibleGlassTypes: Array<{
-    id: string;
-    name: string;
-    type: string;
-  }>;
-};
+    id: string
+    name: string
+    type: string
+  }>
+}
 
 /**
  * Transform raw model to display format
@@ -84,8 +78,8 @@ export type DisplayModel = {
  */
 export function transformModelForDisplay(
   model: RawModel,
-  formatCurrency: (amount: number) => string
-): Omit<DisplayModel, "compatibleGlassTypes"> {
+  formatCurrency: (amount: number) => string,
+): Omit<DisplayModel, 'compatibleGlassTypes'> {
   return {
     basePrice: formatCurrency(model.basePrice),
     id: model.id,
@@ -95,5 +89,5 @@ export function transformModelForDisplay(
       height: [model.minHeightMm, model.maxHeightMm],
       width: [model.minWidthMm, model.maxWidthMm],
     },
-  };
+  }
 }

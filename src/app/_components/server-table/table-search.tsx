@@ -24,88 +24,88 @@
  * @see https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations
  */
 
-"use client";
+'use client'
 
-import { Search, X } from "lucide-react";
-import { useRef, useTransition } from "react";
+import { Search, X } from 'lucide-react'
+import { useRef, useTransition } from 'react'
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from "@/components/ui/input-group";
-import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
-import { useServerParams } from "@/hooks/use-server-params";
+} from '@/components/ui/input-group'
+import { useDebouncedCallback } from '@/hooks/use-debounced-callback'
+import { useServerParams } from '@/hooks/use-server-params'
 
 export type TableSearchProps = {
   /** Placeholder text for search input */
-  placeholder?: string;
+  placeholder?: string
 
   /** Default search value from URL */
-  defaultValue?: string;
+  defaultValue?: string
 
   /** Debounce delay in milliseconds (default: 300ms) */
-  debounceMs?: number;
-};
+  debounceMs?: number
+}
 
 export function TableSearch({
-  placeholder = "Buscar...",
-  defaultValue = "",
+  placeholder = 'Buscar...',
+  defaultValue = '',
   debounceMs = 300,
 }: TableSearchProps) {
-  const { updateParams } = useServerParams();
-  const [isPending, startTransition] = useTransition();
-  const formRef = useRef<HTMLFormElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const { updateParams } = useServerParams()
+  const [isPending, startTransition] = useTransition()
+  const formRef = useRef<HTMLFormElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   /**
    * Debounced form submission handler
    */
   const debouncedSubmit = useDebouncedCallback((formData: FormData) => {
-    const searchValue = formData.get("search") as string;
+    const searchValue = formData.get('search') as string
 
     startTransition(() => {
       updateParams({
-        page: "1", // Reset to first page on search
+        page: '1', // Reset to first page on search
         search: searchValue.trim() || undefined, // Remove param if empty
-      });
-    });
-  }, debounceMs);
+      })
+    })
+  }, debounceMs)
 
   /**
    * Handle input change (debounced submission)
    */
   const handleInput = () => {
     if (!formRef.current) {
-      return;
+      return
     }
-    const formData = new FormData(formRef.current);
-    debouncedSubmit(formData);
-  };
+    const formData = new FormData(formRef.current)
+    debouncedSubmit(formData)
+  }
 
   /**
    * Clear search
    */
   const handleClear = () => {
     if (inputRef.current) {
-      inputRef.current.value = "";
-      inputRef.current.focus();
+      inputRef.current.value = ''
+      inputRef.current.focus()
     }
 
     // Clear form and trigger immediate update
     if (formRef.current) {
-      formRef.current.reset();
+      formRef.current.reset()
     }
 
     startTransition(() => {
       updateParams({
-        page: "1",
+        page: '1',
         search: undefined,
-      });
-    });
-  };
+      })
+    })
+  }
 
-  const showClearButton = defaultValue.length > 0 || inputRef.current?.value;
+  const showClearButton = defaultValue.length > 0 || inputRef.current?.value
 
   return (
     <form onSubmit={(e) => e.preventDefault()} ref={formRef}>
@@ -145,5 +145,5 @@ export function TableSearch({
         )}
       </InputGroup>
     </form>
-  );
+  )
 }

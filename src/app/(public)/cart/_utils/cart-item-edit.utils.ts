@@ -8,32 +8,32 @@
  * - Type adapters for client/server data compatibility
  */
 
-import type { CartItem } from "@/types/cart.types";
-import type { CartItemEditInput } from "../_schemas/cart-item-edit.schema";
+import type { CartItem } from '@/types/cart.types'
+import type { CartItemEditInput } from '../_schemas/cart-item-edit.schema'
 
 /**
  * Cart item with all required relations for editing
  */
 export type CartItemWithRelations = {
-  id: string;
-  widthMm: number;
-  heightMm: number;
-  glassTypeId: string;
-  name: string | null;
-  roomLocation: string | null;
-  quantity: number;
-  subtotal: number; // Current price of the item
+  id: string
+  widthMm: number
+  heightMm: number
+  glassTypeId: string
+  name: string | null
+  roomLocation: string | null
+  quantity: number
+  subtotal: number // Current price of the item
   model: {
-    id: string;
-    name: string;
-    imageUrl: string | null;
-  };
+    id: string
+    name: string
+    imageUrl: string | null
+  }
   glassType: {
-    id: string;
-    name: string;
-    pricePerM2: string;
-  };
-};
+    id: string
+    name: string
+    pricePerM2: string
+  }
+}
 
 /**
  * Convert client-side CartItem to CartItemWithRelations format
@@ -41,9 +41,7 @@ export type CartItemWithRelations = {
  * @param item - Client-side cart item from sessionStorage
  * @returns Cart item with relations structure for edit modal
  */
-export function adaptCartItemToEditFormat(
-  item: CartItem
-): CartItemWithRelations {
+export function adaptCartItemToEditFormat(item: CartItem): CartItemWithRelations {
   return {
     id: item.id,
     widthMm: item.widthMm,
@@ -61,9 +59,9 @@ export function adaptCartItemToEditFormat(
     glassType: {
       id: item.glassTypeId,
       name: item.glassTypeName,
-      pricePerM2: "0", // Price will be recalculated by backend
+      pricePerM2: '0', // Price will be recalculated by backend
     },
-  };
+  }
 }
 
 /**
@@ -73,8 +71,8 @@ export function adaptCartItemToEditFormat(
  * @returns Form default values matching schema
  */
 export function getDefaultCartItemValues(
-  item: CartItemWithRelations
-): Omit<CartItemEditInput, "itemId"> {
+  item: CartItemWithRelations,
+): Omit<CartItemEditInput, 'itemId'> {
   return {
     widthMm: item.widthMm,
     heightMm: item.heightMm,
@@ -82,7 +80,7 @@ export function getDefaultCartItemValues(
     name: item.name ?? undefined,
     roomLocation: item.roomLocation ?? undefined,
     quantity: item.quantity,
-  };
+  }
 }
 
 /**
@@ -94,7 +92,7 @@ export function getDefaultCartItemValues(
  */
 export function transformEditData(
   itemId: string,
-  formData: Omit<CartItemEditInput, "itemId">
+  formData: Omit<CartItemEditInput, 'itemId'>,
 ): CartItemEditInput {
   return {
     itemId,
@@ -104,5 +102,5 @@ export function transformEditData(
     name: formData.name,
     roomLocation: formData.roomLocation,
     quantity: formData.quantity,
-  };
+  }
 }

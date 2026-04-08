@@ -5,7 +5,7 @@
  * Provides better UX than generic "Loading..." text
  */
 
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -13,7 +13,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table'
 
 export function ModelTableSkeleton() {
   return (
@@ -31,13 +31,7 @@ export function ModelTableSkeleton() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {[
-          "skeleton-1",
-          "skeleton-2",
-          "skeleton-3",
-          "skeleton-4",
-          "skeleton-5",
-        ].map((key) => (
+        {['skeleton-1', 'skeleton-2', 'skeleton-3', 'skeleton-4', 'skeleton-5'].map((key) => (
           <TableRow key={key}>
             <TableCell>
               <Skeleton className="h-4 w-[180px]" />
@@ -73,5 +67,5 @@ export function ModelTableSkeleton() {
         ))}
       </TableBody>
     </Table>
-  );
+  )
 }

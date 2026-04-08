@@ -11,20 +11,20 @@
  * - Preserves filters/search/sort in URL
  */
 
-"use client";
+'use client'
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Button } from '@/components/ui/button'
 
 type QuotesPaginationProps = {
-  total: number;
-  totalPages: number;
-  page: number;
-  limit: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-};
+  total: number
+  totalPages: number
+  page: number
+  limit: number
+  hasNextPage: boolean
+  hasPreviousPage: boolean
+}
 
 export function QuotesPagination({
   total,
@@ -34,20 +34,20 @@ export function QuotesPagination({
   hasNextPage,
   hasPreviousPage,
 }: QuotesPaginationProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
   const handlePageChange = (newPage: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("page", String(newPage));
-    router.push(`?${params.toString()}`);
-  };
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('page', String(newPage))
+    router.push(`?${params.toString()}`)
+  }
 
-  const startItem = (page - 1) * limit + 1;
-  const endItem = Math.min(page * limit, total);
+  const startItem = (page - 1) * limit + 1
+  const endItem = Math.min(page * limit, total)
 
   if (total === 0) {
-    return null;
+    return null
   }
 
   return (
@@ -86,5 +86,5 @@ export function QuotesPagination({
         </Button>
       </div>
     </div>
-  );
+  )
 }

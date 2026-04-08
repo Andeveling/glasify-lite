@@ -1,14 +1,14 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { api } from "@/trpc/react";
-import { WhatsAppButton } from "./whatsapp-button";
+import { useEffect, useState } from 'react'
+import { api } from '@/trpc/react'
+import { WhatsAppButton } from './whatsapp-button'
 
 type WhatsAppButtonWrapperProps = {
-  message: string;
-  variant?: "floating" | "inline";
-  className?: string;
-};
+  message: string
+  variant?: 'floating' | 'inline'
+  className?: string
+}
 
 /**
  * WhatsApp Button Wrapper
@@ -24,28 +24,28 @@ type WhatsAppButtonWrapperProps = {
  */
 export function WhatsAppButtonWrapper({
   message,
-  variant = "inline",
+  variant = 'inline',
   className,
 }: WhatsAppButtonWrapperProps) {
   // Track client-side mount to prevent hydration mismatch
-  const [isMounted, setIsMounted] = useState(false);
+  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    setIsMounted(true)
+  }, [])
 
   const { data: branding } = api.tenantConfig.getBranding.useQuery(undefined, {
     // Only enable query after component is mounted on client
     enabled: isMounted,
-  });
+  })
 
   // During SSR and initial client render, return null to match
   if (!isMounted) {
-    return null;
+    return null
   }
 
   if (!(branding?.whatsappEnabled && branding?.whatsappNumber)) {
-    return null;
+    return null
   }
 
   return (
@@ -55,5 +55,5 @@ export function WhatsAppButtonWrapper({
       phoneNumber={branding.whatsappNumber}
       variant={variant}
     />
-  );
+  )
 }

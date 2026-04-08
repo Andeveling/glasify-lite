@@ -16,7 +16,7 @@ export type GalleryImage = {
    * Original filename including extension
    * @example "practicable.svg"
    */
-  filename: string;
+  filename: string
 
   /**
    * Human-readable display name derived from filename
@@ -24,15 +24,15 @@ export type GalleryImage = {
    * @example "practicable.svg" → "Practicable"
    * @example "doble-practicable-fijo.svg" → "Doble Practicable Fijo"
    */
-  name: string;
+  name: string
 
   /**
    * Public URL path for accessing the image
    * Relative to domain root, safe for `<img src>` and Next.js Image component
    * @example "/models/designs/practicable.svg"
    */
-  url: string;
-};
+  url: string
+}
 
 /**
  * Response from gallery.list-images tRPC procedure
@@ -41,20 +41,20 @@ export type GalleryImagesResponse = {
   /**
    * Array of available gallery images sorted alphabetically by name
    */
-  images: GalleryImage[];
+  images: GalleryImage[]
 
   /**
    * Total count of images discovered
    * Useful for UI pagination/virtualization if needed
    */
-  total: number;
+  total: number
 
   /**
    * Timestamp when gallery was last scanned
    * Used for caching validation
    */
-  scannedAt: Date;
-};
+  scannedAt: Date
+}
 
 /**
  * Configuration for gallery system
@@ -64,26 +64,26 @@ export type GalleryConfig = {
    * Absolute path to designs directory on filesystem
    * @example "/home/user/project/public/models/designs"
    */
-  designsDir: string;
+  designsDir: string
 
   /**
    * Public URL base path for images
    * @example "/models/designs"
    */
-  publicUrlBase: string;
+  publicUrlBase: string
 
   /**
    * Allowed file extensions (lowercase, with dot)
    * @example [".svg", ".png", ".jpg", ".jpeg", ".webp"]
    */
-  allowedExtensions: string[];
-};
+  allowedExtensions: string[]
+}
 
 /**
  * Error details for gallery operations
  */
 export type GalleryError = {
-  code: "DIR_NOT_FOUND" | "READ_ERROR" | "NO_IMAGES" | "INVALID_CONFIG";
-  message: string;
-  details?: Record<string, unknown>;
-};
+  code: 'DIR_NOT_FOUND' | 'READ_ERROR' | 'NO_IMAGES' | 'INVALID_CONFIG'
+  message: string
+  details?: Record<string, unknown>
+}

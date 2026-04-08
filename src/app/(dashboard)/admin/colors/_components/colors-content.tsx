@@ -10,45 +10,39 @@
  * - Render filters and list
  */
 
-"use client";
+'use client'
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { ColorsFilters } from "./colors-filters";
-import { ColorsList } from "./colors-list";
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { ColorsFilters } from './colors-filters'
+import { ColorsList } from './colors-list'
 
 type ColorsContentProps = {
-  initialData: Parameters<typeof ColorsList>[0]["initialData"];
-  searchParams: Parameters<typeof ColorsList>[0]["searchParams"];
-};
+  initialData: Parameters<typeof ColorsList>[0]['initialData']
+  searchParams: Parameters<typeof ColorsList>[0]['searchParams']
+}
 
-export function ColorsContent({
-  initialData,
-  searchParams,
-}: ColorsContentProps) {
-  const router = useRouter();
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+export function ColorsContent({ initialData, searchParams }: ColorsContentProps) {
+  const router = useRouter()
+  const [createDialogOpen, setCreateDialogOpen] = useState(false)
 
   const handleCreateClick = () => {
-    setCreateDialogOpen(true);
-  };
+    setCreateDialogOpen(true)
+  }
 
   // If create dialog is open, navigate to create page instead
   if (createDialogOpen) {
-    router.push("/admin/colors/new");
-    return null;
+    router.push('/admin/colors/new')
+    return null
   }
 
   return (
     <>
       {/* Filters with create button */}
-      <ColorsFilters
-        onCreateClickAction={handleCreateClick}
-        searchParams={searchParams}
-      />
+      <ColorsFilters onCreateClickAction={handleCreateClick} searchParams={searchParams} />
 
       {/* Colors List */}
       <ColorsList initialData={initialData} searchParams={searchParams} />
     </>
-  );
+  )
 }
