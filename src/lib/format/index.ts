@@ -9,12 +9,12 @@
  */
 
 import { format as tempoFormat } from '@formkit/tempo'
-import type { TenantConfig } from '@prisma/generated/client'
+import type { TenantConfigPublic } from '@/lib/schemas/tenant.config'
 
 /**
  * Formatting context from TenantConfig
  */
-type FormatContext = Pick<TenantConfig, 'locale' | 'timezone' | 'currency'>
+type FormatContext = Pick<TenantConfigPublic, 'locale' | 'timezone' | 'currency'>
 
 /**
  * Default format context (fallback when tenant config not available)
@@ -376,16 +376,6 @@ function formatThickness(value: number, context?: Partial<FormatContext> | null)
 // =============================================================================
 
 /**
- * Tax configuration context (extends FormatContext with tax fields)
- */
-type TaxContext = FormatContext & {
-  taxName?: string | null
-  taxRate?: number | null
-  taxEnabled?: boolean
-  taxDescription?: string | null
-}
-
-/**
  * Format tax label with name and percentage
  *
  * @example
@@ -400,7 +390,7 @@ type TaxContext = FormatContext & {
  * // null
  * ```
  */
-function formatTaxLabel(context?: Partial<TaxContext> | null): string | null {
+function formatTaxLabel(context?: Partial<TenantConfigPublic> | null): string | null {
   // Validate all required fields exist
   if (!context?.taxEnabled) {
     return null
@@ -436,7 +426,7 @@ function formatTaxLabel(context?: Partial<TaxContext> | null): string | null {
  * // 0
  * ```
  */
-function calculateTax(subtotal: number, context?: Partial<TaxContext> | null): number {
+function calculateTax(subtotal: number, context?: Partial<TenantConfigPublic> | null): number {
   if (!context?.taxEnabled || context.taxRate == null) {
     return 0
   }
@@ -456,7 +446,10 @@ function calculateTax(subtotal: number, context?: Partial<TaxContext> | null): n
  * // 100000
  * ```
  */
-function calculateTotalWithTax(subtotal: number, context?: Partial<TaxContext> | null): number {
+function calculateTotalWithTax(
+  subtotal: number,
+  context?: Partial<TenantConfigPublic> | null,
+): number {
   return subtotal + calculateTax(subtotal, context)
 }
 
@@ -486,4 +479,4 @@ export {
   calculateTotalWithTax,
 }
 
-export type { FormatContext, TaxContext }
+export type { FormatContext }
