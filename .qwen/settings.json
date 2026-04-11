@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sed *)",
+      "Bash(npx *)"
+    ]
+  },
+  "$version": 3
+}
