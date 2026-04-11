@@ -38,7 +38,7 @@ export const listUserQuotesInput = z.object({
   search: z.string().optional(),
   sortBy: z.enum(['createdAt', 'sentAt', 'validUntil', 'total']).default('createdAt'),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
-  status: z.enum(['draft', 'sent', 'canceled']).optional(),
+  status: z.enum(['draft', 'sent', 'accepted', 'rejected', 'canceled']).optional(),
 })
 
 export type ListUserQuotesInput = z.infer<typeof listUserQuotesInput>
@@ -147,9 +147,9 @@ export type CreateQuoteItemInput = z.infer<typeof createQuoteItemInput>
  */
 export const createQuoteFromItemsInput = z.object({
   /**
-   * Optional client ID. If not provided, quote is created unassigned.
+   * Required client ID for the quote.
    */
-  clientId: z.string().cuid().optional(),
+  clientId: z.string().cuid({ message: 'ID del cliente es requerido' }),
   items: z
     .array(createQuoteItemInput)
     .min(1, 'La cotización debe tener al menos un ítem')
@@ -187,7 +187,7 @@ export const quoteListItemSchema = z.object({
   itemCount: z.number().int().nonnegative(),
   projectName: z.string(),
   sentAt: z.date().nullable(),
-  status: z.enum(['draft', 'sent', 'canceled']),
+  status: z.enum(['draft', 'sent', 'accepted', 'rejected', 'canceled']),
   total: z.number().nonnegative(),
   validUntil: z.date().nullable(),
 })
@@ -233,6 +233,15 @@ export type QuoteItemDetailSchema = z.infer<typeof quoteItemDetailSchema>
  * Full quote detail
  */
 export const quoteDetailSchema = z.object({
+  client: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      email: z.string().nullable(),
+      phone: z.string().nullable(),
+      company: z.string().nullable(),
+    })
+    .nullable(),
   contactPhone: z.string().nullable(),
   createdAt: z.date(),
   currency: z.string(),
@@ -244,7 +253,7 @@ export const quoteDetailSchema = z.object({
   projectAddress: projectAddressOutputSchema, // Use output schema (allows empty strings)
   projectName: z.string(), // T030 [US7]: For admin detail page
   sentAt: z.date().nullable(),
-  status: z.enum(['draft', 'sent', 'canceled']),
+  status: z.enum(['draft', 'sent', 'accepted', 'rejected', 'canceled']),
   total: z.number().nonnegative(),
   totalUnits: z.number().int().nonnegative(),
   user: z
@@ -252,9 +261,9 @@ export const quoteDetailSchema = z.object({
       id: z.string(),
       name: z.string().nullable(),
       email: z.string().nullable(),
-      role: z.enum(['admin', 'seller', 'user']),
+      role: z.enum(['admin', 'seller']),
     })
-    .nullable(), // T030 [US7]: User contact info for admin dashboard
+    .nullable(), // Legacy field - kept for backward compatibility
   userEmail: z.string().optional(),
   validUntil: z.date().nullable(),
   vendorContactPhone: z.string().nullable(), // Tenant contact for US3
@@ -359,3 +368,37 @@ export const sendToVendorOutput = z.object({
 })
 
 export type SendToVendorOutput = z.infer<typeof sendToVendorOutput>
+
+// ============================================================================
+// Feature: Quote Status Update (Admin)
+// ============================================================================
+
+/**
+ * Update quote status input
+ *
+ * tRPC Mutation: quote['update-status']
+ *
+ * Allows admins to transition quotes:
+ * - SENT → ACCEPTED
+ * - SENT → REJECTED
+ * - SENT → CANCELED
+ */
+export const updateStatusInput = z.object({
+  quoteId: z.cuid({ message: 'ID de cotización inválido' }),
+  status: z.enum(['accepted', 'rejected', 'canceled'], {
+    error: 'Estado inválido. Solo se permite accepted, rejected o canceled',
+  }),
+})
+
+export type UpdateStatusInput = z.infer<typeof updateStatusInput>
+
+/**
+ * Update quote status output
+ */
+export const updateStatusOutput = z.object({
+  id: z.string().cuid(),
+  status: z.enum(['accepted', 'rejected', 'canceled']),
+  updatedAt: z.date(),
+})
+
+export type UpdateStatusOutput = z.infer<typeof updateStatusOutput>

@@ -98,19 +98,20 @@ async function calculateQuoteMetadata(
  * Create quote record
  *
  * @param tx - Prisma transaction client
- * @param userId - User ID
+ * @param clientId - Client ID
  * @param input - Quote input
  * @param metadata - Quote metadata (includes tax configuration)
  * @returns Created quote
  */
 async function createQuoteRecord(
   tx: Parameters<Parameters<PrismaClient['$transaction']>[0]>[0],
-  userId: string,
+  clientId: string,
   input: GenerateQuoteInput,
   metadata: QuoteMetadata,
 ) {
   return await tx.quote.create({
     data: {
+      clientId,
       contactPhone: input.contactPhone,
       currency: metadata.currency,
       projectCity: input.projectAddress.projectCity,
@@ -123,7 +124,6 @@ async function createQuoteRecord(
       taxName: metadata.taxName,
       taxRate: metadata.taxRate,
       total: metadata.total,
-      userId,
       validUntil: metadata.validUntil,
     },
   })
@@ -233,14 +233,14 @@ async function createQuoteItems(
  * 4. Locks prices at quote generation time (not cart add time)
  *
  * @param db - Prisma client instance
- * @param userId - Authenticated user ID (required for quote ownership)
+ * @param clientId - Client ID (required for quote ownership)
  * @param input - Cart items and project details
  * @returns Quote creation result with ID and metadata
  * @throws TRPCError - If cart empty or transaction fails
  *
  * @example
  * ```typescript
- * const result = await generateQuoteFromCart(prisma, 'user123', {
+ * const result = await generateQuoteFromCart(prisma, 'client123', {
  *   cartItems: [...],
  *   projectAddress: { ... },
  * });
@@ -248,17 +248,17 @@ async function createQuoteItems(
  */
 export async function generateQuoteFromCart(
   db: PrismaClient,
-  userId: string,
+  clientId: string,
   input: GenerateQuoteInput,
 ): Promise<GenerateQuoteResult> {
   const startTime = Date.now()
-  const correlationId = `quote-gen-${Date.now()}-${userId.slice(0, CORRELATION_ID_USER_PREFIX_LENGTH)}`
+  const correlationId = `quote-gen-${Date.now()}-${clientId.slice(0, CORRELATION_ID_USER_PREFIX_LENGTH)}`
 
   try {
     logger.info('[QuoteService] Starting quote generation', {
+      clientId,
       correlationId,
       itemCount: input.cartItems.length,
-      userId,
     })
 
     // Validation: Cart must not be empty
@@ -282,7 +282,7 @@ export async function generateQuoteFromCart(
       })
 
       // 2. Create quote record
-      const quote = await createQuoteRecord(tx, userId, input, metadata)
+      const quote = await createQuoteRecord(tx, clientId, input, metadata)
 
       logger.info('[QuoteService] Quote record created', {
         correlationId,

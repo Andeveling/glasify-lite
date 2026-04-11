@@ -10,7 +10,7 @@
  * Validates compatible glass types exist and are active
  */
 
-import type { Prisma } from '@prisma/generated/client'
+import type { GlassType, Model, Prisma, ProfileSupplier } from '@prisma/generated/client'
 import { TRPCError } from '@trpc/server'
 import logger from '@/lib/logger'
 import { stringifyCompatibleGlassTypeIds } from '@/lib/utils/compatible-glass-types'
@@ -24,9 +24,42 @@ import {
   updateCostBreakdownSchema,
   updateModelSchema,
 } from '@/lib/validations/admin/model.schema'
+import { modelUpsertInput, modelUpsertOutput } from './admin.schemas'
 import { adminProcedure, createTRPCRouter } from '@/server/api/trpc'
 import { createModelPriceHistory } from '@/server/services/model-price-history.service'
 import { canDeleteModel } from '@/server/services/referential-integrity.service'
+
+async function validateProfileSupplierExists(
+  tx: Prisma.TransactionClient,
+  profileSupplierId: string,
+): Promise<ProfileSupplier> {
+  const supplier = await tx.profileSupplier.findUnique({
+    where: { id: profileSupplierId },
+  })
+
+  if (!supplier) {
+    throw new Error('Proveedor de perfiles no encontrado')
+  }
+
+  return supplier
+}
+
+async function validateGlassTypesExist(
+  tx: Prisma.TransactionClient,
+  glassTypeIds: string[],
+): Promise<GlassType[]> {
+  const glassTypes = await tx.glassType.findMany({
+    where: {
+      id: { in: glassTypeIds },
+    },
+  })
+
+  if (glassTypes.length !== glassTypeIds.length) {
+    throw new Error('Uno o más tipos de vidrio no encontrados')
+  }
+
+  return glassTypes
+}
 
 /**
  * Helper: Build where clause for list query
@@ -585,5 +618,115 @@ export const modelRouter = createTRPCRouter({
       })
 
       return updatedCostBreakdown
+    }),
+
+  upsert: adminProcedure
+    .input(modelUpsertInput)
+    .output(modelUpsertOutput)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        logger.info('Starting model upsert', {
+          modelId: input.id,
+          name: input.name,
+          profileSupplierId: input.profileSupplierId,
+        })
+
+        if (input.minWidthMm >= input.maxWidthMm) {
+          throw new Error('Ancho mínimo debe ser menor al ancho máximo')
+        }
+        if (input.minHeightMm >= input.maxHeightMm) {
+          throw new Error('Alto mínimo debe ser menor al alto máximo')
+        }
+
+        const result = await ctx.db.$transaction(async (tx) => {
+          if (input.profileSupplierId) {
+            await validateProfileSupplierExists(tx, input.profileSupplierId)
+          }
+
+          await validateGlassTypesExist(tx, input.compatibleGlassTypeIds)
+
+          const modelData = {
+            accessoryPrice: input.accessoryPrice,
+            basePrice: input.basePrice,
+            compatibleGlassTypeIds: stringifyCompatibleGlassTypeIds(input.compatibleGlassTypeIds),
+            costPerMmHeight: input.costPerMmHeight,
+            costPerMmWidth: input.costPerMmWidth,
+            maxHeightMm: input.maxHeightMm,
+            maxWidthMm: input.maxWidthMm,
+            minHeightMm: input.minHeightMm,
+            minWidthMm: input.minWidthMm,
+            name: input.name,
+            profileSupplierId: input.profileSupplierId,
+            status: input.status,
+          }
+
+          let modelRecord: Model
+          let isCreating = false
+
+          if (input.id) {
+            const existingModel = await tx.model.findUnique({
+              where: { id: input.id },
+            })
+
+            if (!existingModel) {
+              throw new Error('Modelo no encontrado')
+            }
+
+            modelRecord = await tx.model.update({
+              data: modelData,
+              where: { id: input.id },
+            })
+          } else {
+            isCreating = true
+
+            const existingModel = await tx.model.findFirst({
+              where: {
+                name: input.name,
+                ...(input.profileSupplierId && {
+                  profileSupplierId: input.profileSupplierId,
+                }),
+              },
+            })
+
+            if (existingModel) {
+              throw new Error(`Ya existe un modelo con el nombre "${input.name}"`)
+            }
+
+            modelRecord = await tx.model.create({
+              data: modelData,
+            })
+          }
+
+          return {
+            message: isCreating
+              ? `Modelo "${input.name}" creado exitosamente`
+              : `Modelo "${input.name}" actualizado exitosamente`,
+            modelId: modelRecord.id,
+            status: modelRecord.status,
+          }
+        })
+
+        logger.info('Model upsert completed successfully', {
+          isUpdate: Boolean(input.id),
+          modelId: result.modelId,
+          name: input.name,
+          profileSupplierId: input.profileSupplierId,
+        })
+
+        return result
+      } catch (error) {
+        logger.error('Error during model upsert', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          modelId: input.id,
+          name: input.name,
+          profileSupplierId: input.profileSupplierId,
+        })
+
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : 'No se pudo guardar el modelo. Intente nuevamente.'
+        throw new Error(errorMessage)
+      }
     }),
 })

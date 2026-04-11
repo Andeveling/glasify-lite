@@ -22,6 +22,8 @@ import {
   listUserQuotesOutput,
   sendToVendorInput,
   sendToVendorOutput,
+  updateStatusInput,
+  updateStatusOutput,
 } from './quote.schemas'
 
 // Constants for percentage calculations
@@ -102,6 +104,7 @@ export const calculateItemOutput = z.object({
 })
 
 export const addItemInput = calculateItemInput.extend({
+  clientId: z.string().cuid({ error: 'ID del cliente es requerido' }),
   colorId: z.cuid({ error: 'ID del color debe ser válido' }).optional(), // T045: Color selection optional
   quoteId: z.cuid({ error: 'ID de la cotización debe ser válido' }).optional(),
   roomLocation: z.string().max(MAX_ROOM_LOCATION_LENGTH).optional(), // T008: Window location (wizard feature)
@@ -243,7 +246,7 @@ export const quoteRouter = createTRPCRouter({
           {
             quoteId: input.id,
             userId: ctx.session.user.id,
-            userRole: ctx.session.user.role as 'admin' | 'seller' | 'user',
+            userRole: ctx.session.user.role as 'admin' | 'seller',
           },
           deps,
         )
@@ -275,26 +278,27 @@ export const quoteRouter = createTRPCRouter({
     }),
 
   /**
-   * List ALL quotes with user information (Admin and Seller)
+   * List ALL quotes with client information (Admin and Seller)
    * Task: T020 [US1] - Updated for seller access
-   * Allows admins and sellers to view all quotes across all users
+   * Allows admins and sellers to view all quotes across all clients
    */
   'list-all': sellerOrAdminProcedure
     .input(
       z.object({
+        clientId: z.string().cuid().optional(), // Filter by specific client
         includeExpired: z.boolean().default(false),
         limit: z.number().int().min(1).max(MAX_LIMIT).default(DEFAULT_LIMIT),
         page: z.number().int().min(1).default(1),
         search: z.string().optional(),
         sortBy: z.enum(['createdAt', 'total', 'validUntil']).default('createdAt'),
         sortOrder: z.enum(['asc', 'desc']).default('desc'),
-        status: z.enum(['draft', 'sent', 'canceled']).optional(),
-        userId: z.string().cuid().optional(), // Filter by specific user
+        status: z.enum(['draft', 'sent', 'accepted', 'rejected', 'canceled']).optional(),
       }),
     )
     .query(async ({ ctx, input }) => {
       try {
         logger.info('[US1/US2] Admin/Seller fetching all quotes', {
+          clientId: input.clientId,
           includeExpired: input.includeExpired,
           limit: input.limit,
           page: input.page,
@@ -303,7 +307,6 @@ export const quoteRouter = createTRPCRouter({
           sortBy: input.sortBy,
           sortOrder: input.sortOrder,
           status: input.status,
-          userId: input.userId,
           viewerId: ctx.session.user.id,
         })
 
@@ -312,7 +315,7 @@ export const quoteRouter = createTRPCRouter({
         // Build where clause for admin filtering
         const baseWhere: Prisma.QuoteWhereInput = {
           ...(input.status && { status: input.status }),
-          ...(input.userId && { userId: input.userId }), // Optional filter by specific user
+          ...(input.clientId && { clientId: input.clientId }),
         }
 
         // Combine filters using AND
@@ -332,28 +335,29 @@ export const quoteRouter = createTRPCRouter({
               {
                 projectName: {
                   contains: input.search,
-                  mode: 'insensitive' as const,
                 },
               },
               {
                 projectStreet: {
                   contains: input.search,
-                  mode: 'insensitive' as const,
                 },
               },
               {
-                user: {
+                client: {
                   OR: [
                     {
                       name: {
                         contains: input.search,
-                        mode: 'insensitive' as const,
                       },
                     },
                     {
                       email: {
                         contains: input.search,
-                        mode: 'insensitive' as const,
+                      },
+                    },
+                    {
+                      company: {
+                        contains: input.search,
                       },
                     },
                   ],
@@ -364,7 +368,6 @@ export const quoteRouter = createTRPCRouter({
                   some: {
                     name: {
                       contains: input.search,
-                      mode: 'insensitive' as const,
                     },
                   },
                 },
@@ -378,19 +381,20 @@ export const quoteRouter = createTRPCRouter({
           ...(andConditions.length > 0 ? { AND: andConditions } : {}),
         }
 
-        // Execute query with pagination and user information
+        // Execute query with pagination and client information
         const [quotes, total] = await Promise.all([
           ctx.db.quote.findMany({
             include: {
               _count: {
                 select: { items: true },
               },
-              user: {
+              client: {
                 select: {
                   email: true,
                   id: true,
                   name: true,
-                  role: true,
+                  phone: true,
+                  company: true,
                 },
               },
             },
@@ -412,6 +416,15 @@ export const quoteRouter = createTRPCRouter({
           limit: input.limit,
           page: input.page,
           quotes: quotes.map((quote) => ({
+            client: quote.client
+              ? {
+                  company: quote.client.company,
+                  email: quote.client.email,
+                  id: quote.client.id,
+                  name: quote.client.name,
+                  phone: quote.client.phone,
+                }
+              : null,
             createdAt: quote.createdAt,
             currency: quote.currency,
             id: quote.id,
@@ -421,14 +434,6 @@ export const quoteRouter = createTRPCRouter({
             sentAt: quote.sentAt,
             status: quote.status,
             total: Number(quote.total),
-            user: quote.user
-              ? {
-                  email: quote.user.email,
-                  id: quote.user.id,
-                  name: quote.user.name,
-                  role: quote.user.role,
-                }
-              : null,
             validUntil: quote.validUntil,
           })),
           total,
@@ -908,11 +913,8 @@ export const quoteRouter = createTRPCRouter({
           }),
         )
 
-        // Get userId - either from clientId or use admin's userId
-        const userId = input.clientId ?? ctx.session.user.id
-
-        // Generate quote using existing service
-        const result = await generateQuoteFromCart(ctx.db, userId, {
+        // Generate quote using existing service with clientId
+        const result = await generateQuoteFromCart(ctx.db, input.clientId, {
           cartItems: calculatedItems,
           contactPhone: undefined,
           manufacturerId: undefined,
@@ -951,6 +953,76 @@ export const quoteRouter = createTRPCRouter({
             error instanceof Error
               ? error.message
               : 'Error al crear la cotización. Intente nuevamente.',
+        })
+      }
+    }),
+
+  /**
+   * Update quote status (Admin)
+   *
+   * Allows admins to transition quotes from SENT to ACCEPTED, REJECTED, or CANCELED.
+   * This is a terminal transition - once a quote is accepted/rejected/canceled,
+   * it cannot be changed again.
+   */
+  'update-status': adminProcedure
+    .input(updateStatusInput)
+    .output(updateStatusOutput)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        logger.info('Admin updating quote status', {
+          quoteId: input.quoteId,
+          status: input.status,
+          userId: ctx.session.user.id,
+        })
+
+        const quote = await ctx.db.quote.findUnique({
+          where: { id: input.quoteId },
+          select: { id: true, status: true },
+        })
+
+        if (!quote) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Cotización no encontrada',
+          })
+        }
+
+        // Enforce state machine: only allow SENT → ACCEPTED | REJECTED | CANCELED
+        if (quote.status !== 'sent') {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: `No se puede cambiar el estado. La cotización está en estado "${quote.status}". Solo se pueden aceptar o rechazar cotizaciones en estado "enviada".`,
+          })
+        }
+
+        const updated = await ctx.db.quote.update({
+          where: { id: input.quoteId },
+          data: { status: input.status },
+          select: { id: true, status: true, updatedAt: true },
+        })
+
+        logger.info('Quote status updated successfully', {
+          newStatus: input.status,
+          quoteId: input.quoteId,
+          previousStatus: 'sent',
+        })
+
+        return {
+          id: updated.id,
+          status: updated.status as 'accepted' | 'rejected' | 'canceled',
+          updatedAt: updated.updatedAt,
+        }
+      } catch (error) {
+        if (error instanceof TRPCError) {
+          throw error
+        }
+        logger.error('Error updating quote status', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          quoteId: input.quoteId,
+        })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Error al actualizar el estado de la cotización',
         })
       }
     }),

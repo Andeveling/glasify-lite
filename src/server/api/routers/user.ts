@@ -1,11 +1,15 @@
-import { UserRole } from '@prisma/generated/client'
-import { TRPCError } from '@trpc/server'
-import { z } from 'zod'
-import logger from '@/lib/logger'
-import { adminProcedure, createTRPCRouter, sellerOrAdminProcedure } from '../trpc'
+import { UserRole } from "@prisma/generated/client";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import logger from "@/lib/logger";
+import {
+  adminProcedure,
+  createTRPCRouter,
+  sellerOrAdminProcedure,
+} from "../trpc";
 
-const MIN_SEARCH_LENGTH = 3
-const MAX_SEARCH_LENGTH = 50
+const MIN_SEARCH_LENGTH = 3;
+const MAX_SEARCH_LENGTH = 50;
 
 /**
  * Zod Validation Schemas
@@ -21,7 +25,7 @@ const listUsersInput = z
     role: z.enum(UserRole).optional(),
     search: z.string().min(MIN_SEARCH_LENGTH).max(MAX_SEARCH_LENGTH).optional(),
   })
-  .optional()
+  .optional();
 
 /**
  * Update User Role Input Schema
@@ -33,9 +37,9 @@ const listUsersInput = z
 const updateUserRoleInput = z.object({
   role: z.enum(UserRole),
   userId: z.string().cuid({
-    error: 'ID de usuario inválido',
+    error: "ID de usuario inválido",
   }),
-})
+});
 
 /**
  * List Users Output Schema
@@ -47,9 +51,9 @@ const listUsersOutput = z.array(
     id: z.string(),
     name: z.string().nullable(),
     quoteCount: z.number(),
-    role: z.nativeEnum(UserRole),
+    role: z.enum(UserRole),
   }),
-)
+);
 
 /**
  * Update User Role Output Schema
@@ -57,8 +61,8 @@ const listUsersOutput = z.array(
 const updateUserRoleOutput = z.object({
   email: z.string().nullable(),
   id: z.string(),
-  role: z.nativeEnum(UserRole),
-})
+  role: z.enum(UserRole),
+});
 
 /**
  * User Management Router
@@ -92,17 +96,17 @@ export const userRouter = createTRPCRouter({
    * @input search - Optional search query (matches name or email)
    * @output Array of users with quote counts
    */
-  'list-all': sellerOrAdminProcedure
+  "list-all": sellerOrAdminProcedure
     .input(listUsersInput)
     .output(listUsersOutput)
     .query(async ({ ctx, input }) => {
       try {
-        logger.info('[US5] Listing all users', {
+        logger.info("[US5] Listing all users", {
           role: input?.role,
           search: input?.search,
           viewerId: ctx.session.user.id,
           viewerRole: ctx.session.user.role,
-        })
+        });
 
         // Build where clause with optional filters
         const where = {
@@ -112,23 +116,23 @@ export const userRouter = createTRPCRouter({
               {
                 name: {
                   contains: input.search,
-                  mode: 'insensitive' as const,
+                  mode: "insensitive" as const,
                 },
               },
               {
                 email: {
                   contains: input.search,
-                  mode: 'insensitive' as const,
+                  mode: "insensitive" as const,
                 },
               },
             ],
           }),
-        }
+        };
 
         // Fetch users with quote count
         const users = await ctx.db.user.findMany({
           orderBy: {
-            email: 'asc',
+            email: "asc",
           },
           select: {
             _count: {
@@ -142,7 +146,7 @@ export const userRouter = createTRPCRouter({
             role: true,
           },
           where,
-        })
+        });
 
         // Map to output format
         const usersWithQuoteCount = users.map((user) => ({
@@ -151,24 +155,24 @@ export const userRouter = createTRPCRouter({
           name: user.name,
           quoteCount: user._count.quotes,
           role: user.role,
-        }))
+        }));
 
-        logger.info('[US5] Users listed successfully', {
+        logger.info("[US5] Users listed successfully", {
           adminId: ctx.session.user.id,
           count: usersWithQuoteCount.length,
-        })
+        });
 
-        return usersWithQuoteCount
+        return usersWithQuoteCount;
       } catch (error) {
-        logger.error('[US5] Error listing users', {
+        logger.error("[US5] Error listing users", {
           adminId: ctx.session.user.id,
           error: error instanceof Error ? error.message : String(error),
-        })
+        });
 
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Error al listar usuarios',
-        })
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error al listar usuarios",
+        });
       }
     }),
 
@@ -187,47 +191,47 @@ export const userRouter = createTRPCRouter({
    * @input role - New role (admin, seller, user)
    * @output Updated user info (id, email, role, updatedAt)
    */
-  'update-role': adminProcedure
+  "update-role": adminProcedure
     .input(updateUserRoleInput)
     .output(updateUserRoleOutput)
     .mutation(async ({ ctx, input }) => {
       try {
-        logger.info('[US5] Updating user role', {
+        logger.info("[US5] Updating user role", {
           adminId: ctx.session.user.id,
           newRole: input.role,
           userId: input.userId,
-        })
+        });
 
         // Business Rule: Admin cannot demote self
-        if (input.userId === ctx.session.user.id && input.role !== 'admin') {
-          logger.warn('[US5] Admin attempted to demote self', {
+        if (input.userId === ctx.session.user.id && input.role !== "admin") {
+          logger.warn("[US5] Admin attempted to demote self", {
             adminId: ctx.session.user.id,
             newRole: input.role,
             userId: input.userId,
-          })
+          });
 
           throw new TRPCError({
-            code: 'FORBIDDEN',
-            message: 'No puedes cambiar tu propio rol de administrador',
-          })
+            code: "FORBIDDEN",
+            message: "No puedes cambiar tu propio rol de administrador",
+          });
         }
 
         // Fetch current user data for logging
         const currentUser = await ctx.db.user.findUnique({
           select: { email: true, role: true },
           where: { id: input.userId },
-        })
+        });
 
         if (!currentUser) {
-          logger.warn('[US5] User not found for role update', {
+          logger.warn("[US5] User not found for role update", {
             adminId: ctx.session.user.id,
             userId: input.userId,
-          })
+          });
 
           throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'Usuario no encontrado',
-          })
+            code: "NOT_FOUND",
+            message: "Usuario no encontrado",
+          });
         }
 
         // Update user role
@@ -239,36 +243,36 @@ export const userRouter = createTRPCRouter({
             role: true,
           },
           where: { id: input.userId },
-        })
+        });
 
         // Log role change for audit trail
-        logger.info('[US5] User role updated successfully', {
+        logger.info("[US5] User role updated successfully", {
           adminEmail: ctx.session.user.email,
           adminId: ctx.session.user.id,
           email: updatedUser.email,
           newRole: updatedUser.role,
           oldRole: currentUser.role,
           userId: input.userId,
-        })
+        });
 
-        return updatedUser
+        return updatedUser;
       } catch (error) {
         // Re-throw TRPCErrors
         if (error instanceof TRPCError) {
-          throw error
+          throw error;
         }
 
-        logger.error('[US5] Error updating user role', {
+        logger.error("[US5] Error updating user role", {
           adminId: ctx.session.user.id,
           error: error instanceof Error ? error.message : String(error),
           newRole: input.role,
           userId: input.userId,
-        })
+        });
 
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Error al actualizar el rol del usuario',
-        })
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error al actualizar el rol del usuario",
+        });
       }
     }),
-})
+});
