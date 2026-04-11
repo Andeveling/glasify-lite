@@ -59,6 +59,7 @@ const config: NextConfig = {
 
   // Turbopack configuration
   turbopack: {
+    root: "/home/andres/Proyectos/glasify-project/glasify-lite",
     rules: {
       "*.svg": ["@svgr/webpack"],
     },
