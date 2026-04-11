@@ -38,6 +38,8 @@ export type ServiceUnit = (typeof ServiceUnit)[keyof typeof ServiceUnit]
 export const QuoteStatus = {
   draft: 'draft',
   sent: 'sent',
+  accepted: 'accepted',
+  rejected: 'rejected',
   canceled: 'canceled'
 } as const
 
@@ -103,8 +105,7 @@ export type MaterialType = (typeof MaterialType)[keyof typeof MaterialType]
 
 export const UserRole = {
   admin: 'admin',
-  seller: 'seller',
-  user: 'user'
+  seller: 'seller'
 } as const
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]

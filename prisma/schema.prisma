@@ -44,7 +44,7 @@ model User {
   email         String?             @unique
   emailVerified Boolean             @default(false)
   image         String?
-  role          UserRole            @default(user)
+  role          UserRole            @default(admin)
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @updatedAt
   accounts      Account[]
@@ -53,6 +53,22 @@ model User {
   sessions      Session[]
 
   @@index([role])
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  phone     String?
+  company   String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  quotes    Quote[]
+
+  @@index([name])
+  @@index([company])
+  @@index([createdAt(sort: Desc)])
 }
 
 model VerificationToken {
@@ -268,6 +284,7 @@ model Service {
 model Quote {
   id                String          @id @default(cuid())
   userId            String?
+  clientId          String
   status            QuoteStatus     @default(draft)
   currency          String
   total             Decimal         @default(0)
@@ -294,6 +311,7 @@ model Quote {
   adjustments       Adjustment[]
   projectAddress    ProjectAddress?
   user              User?           @relation(fields: [userId], references: [id])
+  client            Client         @relation(fields: [clientId], references: [id])
   items             QuoteItem[]
 
   @@index([userId])
@@ -303,6 +321,8 @@ model Quote {
   @@index([projectName])
   @@index([status])
   @@index([createdAt(sort: Desc)])
+  @@index([clientId])
+  @@index([clientId, status])
 }
 
 model QuoteItem {
@@ -627,6 +647,8 @@ enum ServiceUnit {
 enum QuoteStatus {
   draft
   sent
+  accepted
+  rejected
   canceled
 }
 
@@ -672,5 +694,4 @@ enum MaterialType {
 enum UserRole {
   admin
   seller
-  user
 }

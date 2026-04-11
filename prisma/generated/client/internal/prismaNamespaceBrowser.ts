@@ -54,6 +54,7 @@ export const ModelName = {
   Account: 'Account',
   Session: 'Session',
   User: 'User',
+  Client: 'Client',
   VerificationToken: 'VerificationToken',
   Verification: 'Verification',
   TenantConfig: 'TenantConfig',
@@ -136,6 +137,20 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const ClientScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  company: 'company',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ClientScalarFieldEnum = (typeof ClientScalarFieldEnum)[keyof typeof ClientScalarFieldEnum]
 
 
 export const VerificationTokenScalarFieldEnum = {
@@ -286,6 +301,7 @@ export type ServiceScalarFieldEnum = (typeof ServiceScalarFieldEnum)[keyof typeo
 export const QuoteScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  clientId: 'clientId',
   status: 'status',
   currency: 'currency',
   total: 'total',
