@@ -38,10 +38,10 @@ export class PrismaQuoteRepository implements QuoteRepository {
   create(input: CreateQuoteInput) {
     return this.prisma.quote.create({
       data: {
+        clientId: input.clientId,
         currency: input.currency,
         status: input.status,
         validUntil: input.validUntil,
-        ...(input.userId && { userId: input.userId }),
       },
     })
   }
