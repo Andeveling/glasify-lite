@@ -13,6 +13,11 @@
  */
 
 import type { GlassType, Model, Quote, QuoteItem, Service } from '@prisma/generated/client'
+import * as E from 'fp-ts/Either'
+import { pipe } from 'fp-ts/function'
+import * as O from 'fp-ts/Option'
+import * as TE from 'fp-ts/TaskEither'
+import type { PricingRepo } from '../ports/pricing-repo'
 import {
   validateDimensions,
   validateGlassTypeCompatibility,
@@ -24,6 +29,7 @@ import {
  * Input para agregar un ítem a una quote
  */
 export type AddItemToQuoteInput = {
+  clientId: string
   quoteId?: string
   modelId: string
   glassTypeId: string
@@ -62,13 +68,12 @@ export type AddItemToQuoteOutput = {
 /**
  * Dependencies (ports) que necesita el use-case
  */
-export type AddItemToQuoteDeps = {
-  // Repositories
-  findModel: (id: string) => Promise<Model | null>
-  findGlassType: (id: string) => Promise<GlassType | null>
-  findServices: (ids: string[]) => Promise<Service[]>
+export type AddItemToQuoteDeps = Pick<
+  PricingRepo,
+  'findModel' | 'findGlassType' | 'findServices'
+> & {
   findQuote: (id: string) => Promise<Quote | null>
-  createQuote: (input: { currency: string; validUntil: Date }) => Promise<Quote>
+  createQuote: (input: { clientId: string; currency: string; validUntil: Date }) => Promise<Quote>
   createQuoteItem: (input: {
     quoteId: string
     modelId: string
@@ -81,12 +86,8 @@ export type AddItemToQuoteDeps = {
   }) => Promise<QuoteItem>
   updateQuoteTotal: (quoteId: string, total: number) => Promise<Quote>
   listQuoteItems: (quoteId: string) => Promise<QuoteItem[]>
-
-  // Config
   getTenantCurrency: () => Promise<string>
   getQuoteValidityDays: () => Promise<number>
-
-  // Domain services
   calculatePrice: (input: {
     widthMm: number
     heightMm: number
@@ -115,22 +116,61 @@ export async function addItemToQuote(
   input: AddItemToQuoteInput,
   deps: AddItemToQuoteDeps,
 ): Promise<AddItemToQuoteOutput> {
-  // 1. Fetch y validar modelo
-  const model = await deps.findModel(input.modelId)
-  validateModelAvailability(model)
-  validateGlassTypeCompatibility(model, input.glassTypeId)
-  validateDimensions(model, {
-    widthMm: input.widthMm,
-    heightMm: input.heightMm,
-  })
+  const eitherContext = await pipe(
+    TE.Do,
+    TE.bind('model', () =>
+      pipe(
+        TE.tryCatch(
+          () => deps.findModel(input.modelId),
+          () => new Error('Error fetching model'),
+        ),
+        TE.chain((model) =>
+          pipe(
+            O.fromNullable(model),
+            O.fold(
+              () => TE.left(new Error('Modelo no encontrado')),
+              (m) => {
+                validateModelAvailability(m)
+                validateGlassTypeCompatibility(m, input.glassTypeId)
+                validateDimensions(m, {
+                  widthMm: input.widthMm,
+                  heightMm: input.heightMm,
+                })
+                return TE.right(m)
+              },
+            ),
+          ),
+        ),
+      ),
+    ),
+    TE.bind('glassType', () =>
+      pipe(
+        TE.tryCatch(
+          () => deps.findGlassType(input.glassTypeId),
+          () => new Error('Error fetching glass type'),
+        ),
+        TE.chain((glassType) =>
+          pipe(
+            O.fromNullable(glassType),
+            O.fold(
+              () => TE.left(new Error('Tipo de vidrio no encontrado')),
+              (g: GlassType) => TE.right(g),
+            ),
+          ),
+        ),
+      ),
+    ),
+  )()
 
-  // 2. Fetch glass type
-  const glassType = await deps.findGlassType(input.glassTypeId)
-  if (!glassType) {
-    throw new Error('Tipo de vidrio no encontrado')
-  }
+  const validatedContext = pipe(
+    eitherContext,
+    E.getOrElseW((err: Error) => {
+      throw err
+    }),
+  )
 
-  // 3. Get or create quote
+  const { model, glassType } = validatedContext
+
   let quote: Quote
   if (input.quoteId) {
     const existingQuote = await deps.findQuote(input.quoteId)
@@ -145,14 +185,12 @@ export async function addItemToQuote(
     const validUntil = new Date()
     validUntil.setDate(validUntil.getDate() + validityDays)
 
-    quote = await deps.createQuote({ currency, validUntil })
+    quote = await deps.createQuote({ clientId: input.clientId, currency, validUntil })
   }
 
-  // 4. Fetch services (si hay)
   const services =
     input.services.length > 0 ? await deps.findServices(input.services.map((s) => s.serviceId)) : []
 
-  // 5. Calcular precio
   const calculation = deps.calculatePrice({
     widthMm: input.widthMm,
     heightMm: input.heightMm,
@@ -163,7 +201,6 @@ export async function addItemToQuote(
     colorSurchargePercentage: input.colorSurchargePercentage,
   })
 
-  // 6. Crear QuoteItem
   const quoteItem = await deps.createQuoteItem({
     quoteId: quote.id,
     modelId: input.modelId,
@@ -175,7 +212,6 @@ export async function addItemToQuote(
     roomLocation: input.roomLocation,
   })
 
-  // 7. Actualizar total de quote
   const quoteItems = await deps.listQuoteItems(quote.id)
   const newTotal = quoteItems.reduce((acc, item) => acc + Number(item.subtotal), 0)
   const updatedQuote = await deps.updateQuoteTotal(quote.id, newTotal)

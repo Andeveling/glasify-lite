@@ -15,5 +15,11 @@ export type { ModelSalesPriceInput } from './margin-calculator'
 export { MarginCalculator } from './margin-calculator'
 export type { ProfileCostInput } from './profile-calculator'
 export { ProfileCalculator } from './profile-calculator'
+export {
+  applyMinimumBillingUnit,
+  calculateAreaQuantity,
+  calculateFixedQuantity,
+  calculatePerimeterQuantity,
+} from './quantity-calculations'
 export type { ServiceAmountInput } from './service-calculator'
 export { ServiceCalculator } from './service-calculator'

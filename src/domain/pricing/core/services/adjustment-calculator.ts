@@ -10,7 +10,11 @@ import { ROUND_MODE, ROUND_SCALE } from '../constants'
 import type { Dimensions } from '../entities/dimensions'
 import type { AdjustmentInput, AdjustmentResult } from '../types'
 import { ServiceUnit } from '../types'
-import { ServiceCalculator } from './service-calculator'
+import {
+  calculateAreaQuantity,
+  calculateFixedQuantity,
+  calculatePerimeterQuantity,
+} from './quantity-calculations'
 
 /**
  * Calculate a single adjustment amount
@@ -25,16 +29,15 @@ export function calculateAdjustmentAmount(
   let quantity: number
   switch (unit) {
     case ServiceUnit.UNIT:
-      quantity = ServiceCalculator.calculateFixedQuantity()
+      quantity = calculateFixedQuantity()
       break
     case ServiceUnit.SQM:
-      quantity = ServiceCalculator.calculateAreaQuantity(dimensions)
+      quantity = calculateAreaQuantity(dimensions)
       break
     case ServiceUnit.ML:
-      quantity = ServiceCalculator.calculatePerimeterQuantity(dimensions)
+      quantity = calculatePerimeterQuantity(dimensions)
       break
     default:
-      // Fallback to 1 to be safe
       quantity = 1
   }
 

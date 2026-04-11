@@ -11,6 +11,11 @@
  */
 
 import type { GlassType, Model, Service } from '@prisma/generated/client'
+import * as E from 'fp-ts/Either'
+import { pipe } from 'fp-ts/function'
+import * as O from 'fp-ts/Option'
+import * as TE from 'fp-ts/TaskEither'
+import type { PriceCalculatorFn, PricingRepo } from '../ports/pricing-repo'
 import {
   validateColorSurcharge,
   validateDimensions,
@@ -66,52 +71,11 @@ export type CalculateItemPriceOutput = {
 /**
  * Dependencies (ports) que necesita el use-case
  */
-export type CalculateItemPriceDeps = {
-  // Repositories
-  findModel: (id: string) => Promise<
-    | (Model & {
-        profileSupplier?: { id: string; name: string } | null
-      })
-    | null
-  >
-  findGlassType: (id: string) => Promise<GlassType | null>
-  findServices: (ids: string[]) => Promise<Service[]>
-
-  // Domain services - adaptador para transformar y calcular
-  calculatePrice: (input: {
-    widthMm: number
-    heightMm: number
-    modelPrices: {
-      basePrice: number
-      costPerMmWidth: number
-      costPerMmHeight: number
-      minWidthMm: number
-      minHeightMm: number
-      accessoryPrice?: number
-    }
-    colorSurchargePercentage?: number
-    profitMarginPercentage?: number
-    glass?: {
-      pricePerSqm: number
-      discountWidthMm?: number
-      discountHeightMm?: number
-    }
-    services: Array<{
-      serviceId: string
-      name: string
-      unit: 'unit' | 'sqm' | 'ml'
-      rate: number
-      minimumBillingUnit?: number
-      quantityOverride?: number
-    }>
-    adjustments: Array<{
-      adjustmentId: string
-      concept: string
-      unit: 'unit' | 'sqm' | 'ml'
-      value: number
-      sign: 'positive' | 'negative'
-    }>
-  }) => CalculateItemPriceOutput
+export type CalculateItemPriceDeps = Pick<
+  PricingRepo,
+  'findModel' | 'findGlassType' | 'findServices'
+> & {
+  calculatePrice: PriceCalculatorFn
 }
 
 /**
@@ -125,52 +89,91 @@ export async function calculateItemPriceUseCase(
   input: CalculateItemPriceInput,
   deps: CalculateItemPriceDeps,
 ): Promise<CalculateItemPriceOutput> {
-  // 1. Validar cantidad y color surcharge (validaciones sin I/O)
   validateQuantity(input.quantity)
   validateColorSurcharge(input.colorSurchargePercentage)
 
-  // 2. Fetch y validar modelo
-  const model = await deps.findModel(input.modelId)
-  validateModelAvailability(model)
-  validateGlassTypeCompatibility(model, input.glassTypeId)
-  validateDimensions(model, {
-    widthMm: input.widthMm,
-    heightMm: input.heightMm,
-  })
+  const eitherContext = await pipe(
+    TE.Do,
+    TE.bind('model', () =>
+      pipe(
+        TE.tryCatch(
+          () => deps.findModel(input.modelId),
+          () => new Error('Error fetching model'),
+        ),
+        TE.chain((model) =>
+          pipe(
+            O.fromNullable(model),
+            O.fold(
+              () => TE.left(new Error('Modelo no encontrado')),
+              (m) => {
+                validateModelAvailability(m)
+                validateGlassTypeCompatibility(m, input.glassTypeId)
+                validateDimensions(m, {
+                  widthMm: input.widthMm,
+                  heightMm: input.heightMm,
+                })
+                return TE.right(m)
+              },
+            ),
+          ),
+        ),
+      ),
+    ),
+    TE.bind('glassType', () =>
+      pipe(
+        TE.tryCatch(
+          () => deps.findGlassType(input.glassTypeId),
+          () => new Error('Error fetching glass type'),
+        ),
+        TE.chain((glassType) =>
+          pipe(
+            O.fromNullable(glassType),
+            O.fold(
+              () => TE.left(new Error('Tipo de vidrio no encontrado')),
+              (g: GlassType) => TE.right(g),
+            ),
+          ),
+        ),
+      ),
+    ),
+    TE.bind('services', () => {
+      const serviceIds = input.services.map((s) => s.serviceId)
+      if (serviceIds.length === 0) {
+        return TE.right([])
+      }
+      return pipe(
+        TE.tryCatch(
+          () => deps.findServices(serviceIds),
+          () => new Error('Error fetching services'),
+        ),
+        TE.chain((services) => {
+          for (const serviceInput of input.services) {
+            const service = services.find((s) => s.id === serviceInput.serviceId)
+            if (!service) {
+              return TE.left(new Error(`Servicio ${serviceInput.serviceId} no encontrado`))
+            }
+          }
+          return TE.right(services)
+        }),
+      )
+    }),
+  )()
 
-  // 3. Fetch glass type
-  const glassType = await deps.findGlassType(input.glassTypeId)
-  if (!glassType) {
-    throw new Error('Tipo de vidrio no encontrado')
-  }
+  const validatedContext = pipe(
+    eitherContext,
+    E.getOrElseW((err: Error) => {
+      throw err
+    }),
+  )
 
-  // 4. Fetch services (si hay)
-  const serviceIds = input.services.map((s) => s.serviceId)
-  const services = serviceIds.length > 0 ? await deps.findServices(serviceIds) : []
-
-  // Validar que todos los servicios existen
-  for (const serviceInput of input.services) {
-    const service = services.find((s) => s.id === serviceInput.serviceId)
-    if (!service) {
-      throw new Error(`Servicio ${serviceInput.serviceId} no encontrado`)
-    }
-  }
-
-  // 5. Transformar datos para el cálculo
   const domainServices = input.services.map((serviceInput) => {
-    const service = services.find((s) => s.id === serviceInput.serviceId)
-    // Ya validamos arriba que existe
+    const service = validatedContext.services.find((s) => s.id === serviceInput.serviceId)!
     return {
-      // biome-ignore lint/style/noNonNullAssertion: validated above
-      serviceId: service!.id,
-      // biome-ignore lint/style/noNonNullAssertion: validated above
-      name: service!.name,
-      // biome-ignore lint/style/noNonNullAssertion: validated above
-      unit: service!.unit as 'unit' | 'sqm' | 'ml',
-      // biome-ignore lint/style/noNonNullAssertion: validated above
-      rate: service!.rate.toNumber(),
-      // biome-ignore lint/style/noNonNullAssertion: validated above
-      minimumBillingUnit: service!.minimumBillingUnit?.toNumber(),
+      serviceId: service.id,
+      name: service.name,
+      unit: service.unit as 'unit' | 'sqm' | 'ml',
+      rate: service.rate.toNumber(),
+      minimumBillingUnit: service.minimumBillingUnit?.toNumber(),
       quantityOverride: serviceInput.quantity,
     }
   })
@@ -183,8 +186,9 @@ export async function calculateItemPriceUseCase(
     sign: adj.sign,
   }))
 
-  // 6. Ejecutar cálculo de precio
-  const calculation = deps.calculatePrice({
+  const { model, glassType } = validatedContext
+
+  return deps.calculatePrice({
     widthMm: input.widthMm,
     heightMm: input.heightMm,
     modelPrices: {
@@ -205,6 +209,4 @@ export async function calculateItemPriceUseCase(
     services: domainServices,
     adjustments: domainAdjustments,
   })
-
-  return calculation
 }

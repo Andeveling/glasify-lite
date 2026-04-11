@@ -12,6 +12,11 @@
  */
 
 import type { GlassType, Model, Service } from '@prisma/generated/client'
+import * as E from 'fp-ts/Either'
+import { pipe } from 'fp-ts/function'
+import * as O from 'fp-ts/Option'
+import * as TE from 'fp-ts/TaskEither'
+import type { PriceCalculatorFn, PricingRepo, TrpcPriceInput } from '../ports/pricing-repo'
 import {
   validateDimensions,
   validateGlassTypeCompatibility,
@@ -91,52 +96,12 @@ type ModelColorWithData = {
 /**
  * Dependencies (ports) que necesita el use-case
  */
-export type CalculatePriceWithColorDeps = {
-  // Repositories
-  findModel: (id: string) => Promise<
-    | (Model & {
-        profileSupplier?: { id: string; name: string } | null
-      })
-    | null
-  >
-  findGlassType: (id: string) => Promise<GlassType | null>
-  findServices: (ids: string[]) => Promise<Service[]>
+export type CalculatePriceWithColorDeps = Pick<
+  PricingRepo,
+  'findModel' | 'findGlassType' | 'findServices'
+> & {
   findModelColor: (modelId: string, colorId: string) => Promise<ModelColorWithData | null>
-
-  // Domain services - adaptador para transformar y calcular
-  calculatePrice: (input: {
-    widthMm: number
-    heightMm: number
-    modelPrices: {
-      basePrice: number
-      costPerMmWidth: number
-      costPerMmHeight: number
-      minWidthMm: number
-      minHeightMm: number
-      accessoryPrice?: number
-    }
-    colorSurchargePercentage?: number
-    glass?: {
-      pricePerSqm: number
-      discountWidthMm?: number
-      discountHeightMm?: number
-    }
-    services: Array<{
-      serviceId: string
-      name: string
-      unit: 'unit' | 'sqm' | 'ml'
-      rate: number
-      minimumBillingUnit?: number
-      quantityOverride?: number
-    }>
-    adjustments: Array<{
-      adjustmentId: string
-      concept: string
-      unit: 'unit' | 'sqm' | 'ml'
-      value: number
-      sign: 'positive' | 'negative'
-    }>
-  }) => {
+  calculatePrice: (input: TrpcPriceInput) => {
     dimPrice: number
     accPrice: number
     services: ServiceBreakdown[]
@@ -160,47 +125,88 @@ export async function calculatePriceWithColorUseCase(
   input: CalculatePriceWithColorInput,
   deps: CalculatePriceWithColorDeps,
 ): Promise<CalculatePriceWithColorOutput> {
-  // 1. Fetch y validar modelo
-  const model = await deps.findModel(input.modelId)
-  validateModelAvailability(model)
-  validateGlassTypeCompatibility(model, input.glassTypeId)
-  validateDimensions(model, {
-    widthMm: input.widthMm,
-    heightMm: input.heightMm,
-  })
+  const eitherContext = await pipe(
+    TE.Do,
+    TE.bind('model', () =>
+      pipe(
+        TE.tryCatch(
+          () => deps.findModel(input.modelId),
+          () => new Error('Error fetching model'),
+        ),
+        TE.chain((model) =>
+          pipe(
+            O.fromNullable(model),
+            O.fold(
+              () => TE.left(new Error('Modelo no encontrado')),
+              (m) => {
+                validateModelAvailability(m)
+                validateGlassTypeCompatibility(m, input.glassTypeId)
+                validateDimensions(m, {
+                  widthMm: input.widthMm,
+                  heightMm: input.heightMm,
+                })
+                return TE.right(m)
+              },
+            ),
+          ),
+        ),
+      ),
+    ),
+    TE.bind('glassType', () =>
+      pipe(
+        TE.tryCatch(
+          () => deps.findGlassType(input.glassTypeId),
+          () => new Error('Error fetching glass type'),
+        ),
+        TE.chain((glassType) =>
+          pipe(
+            O.fromNullable(glassType),
+            O.fold(
+              () => TE.left(new Error('Tipo de vidrio no encontrado')),
+              (g: GlassType) => TE.right(g),
+            ),
+          ),
+        ),
+      ),
+    ),
+    TE.bind('services', () => {
+      const serviceIds = input.services.map((s) => s.serviceId)
+      if (serviceIds.length === 0) {
+        return TE.right([])
+      }
+      return pipe(
+        TE.tryCatch(
+          () => deps.findServices(serviceIds),
+          () => new Error('Error fetching services'),
+        ),
+        TE.chain((services) => {
+          for (const serviceInput of input.services) {
+            const service = services.find((s) => s.id === serviceInput.serviceId)
+            if (!service) {
+              return TE.left(new Error(`Servicio ${serviceInput.serviceId} no encontrado`))
+            }
+          }
+          return TE.right(services)
+        }),
+      )
+    }),
+  )()
 
-  // 2. Fetch glass type
-  const glassType = await deps.findGlassType(input.glassTypeId)
-  if (!glassType) {
-    throw new Error('Tipo de vidrio no encontrado')
-  }
+  const validatedContext = pipe(
+    eitherContext,
+    E.getOrElseW((err: Error) => {
+      throw err
+    }),
+  )
 
-  // 3. Fetch services (si hay)
-  const serviceIds = input.services.map((s) => s.serviceId)
-  const services = serviceIds.length > 0 ? await deps.findServices(serviceIds) : []
-
-  // Validar que todos los servicios existen
-  for (const serviceInput of input.services) {
-    const service = services.find((s) => s.id === serviceInput.serviceId)
-    if (!service) {
-      throw new Error(`Servicio ${serviceInput.serviceId} no encontrado`)
-    }
-  }
-
-  // 4. Transformar datos para el cálculo
   const domainServices = input.services.map((serviceInput) => {
-    const service = services.find((s) => s.id === serviceInput.serviceId)
+    const service = validatedContext.services.find((s) => s.id === serviceInput.serviceId)!
     return {
-      // biome-ignore lint/style/noNonNullAssertion: validated above
-      serviceId: service!.id,
-      // biome-ignore lint/style/noNonNullAssertion: validated above
-      name: service!.name,
-      // biome-ignore lint/style/noNonNullAssertion: validated above
-      unit: service!.unit as 'unit' | 'sqm' | 'ml',
-      // biome-ignore lint/style/noNonNullAssertion: validated above
-      rate: service!.rate.toNumber(),
-      // biome-ignore lint/style/noNonNullAssertion: validated above
-      minimumBillingUnit: service!.minimumBillingUnit?.toNumber(),
+      serviceId: service.id,
+      name: service.name,
+      unit: service.unit as 'unit' | 'sqm' | 'ml',
+      rate: service.rate.toNumber(),
+      minimumBillingUnit: service.minimumBillingUnit?.toNumber(),
       quantityOverride: serviceInput.quantity,
     }
   })
@@ -213,7 +219,8 @@ export async function calculatePriceWithColorUseCase(
     sign: adj.sign,
   }))
 
-  // 5. Calcular precio base (sin color surcharge)
+  const { model, glassType } = validatedContext
+
   const calculation = deps.calculatePrice({
     widthMm: input.widthMm,
     heightMm: input.heightMm,
@@ -225,7 +232,7 @@ export async function calculatePriceWithColorUseCase(
       minHeightMm: model.minHeightMm,
       accessoryPrice: model.accessoryPrice?.toNumber(),
     },
-    colorSurchargePercentage: 0, // Sin color inicialmente
+    colorSurchargePercentage: 0,
     glass: {
       pricePerSqm: glassType.pricePerSqm.toNumber(),
       discountWidthMm: model.glassDiscountWidthMm ?? undefined,
@@ -235,7 +242,6 @@ export async function calculatePriceWithColorUseCase(
     adjustments: domainAdjustments,
   })
 
-  // 6. Calcular color surcharge si se proporciona colorId
   let colorSurcharge = 0
   let colorSurchargePercentage = 0
 
@@ -251,8 +257,7 @@ export async function calculatePriceWithColorUseCase(
     }
 
     colorSurchargePercentage = modelColor.surchargePercentage
-    // Aplicar surcharge SOLO al dimPrice (precio del modelo)
-    colorSurcharge = calculation.dimPrice * (colorSurchargePercentage / PERCENTAGE_DIVISOR)
+    colorSurcharge = calculation.dimPrice * (colorSurchargePercentage / 100)
   }
 
   const totalWithColor = calculation.subtotal + colorSurcharge

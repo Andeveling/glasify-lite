@@ -1,25 +1,18 @@
-/**
- * Quote Container - Dependency Injection
- *
- * Provee las dependencias concretas para los use-cases de quotes.
- * Actúa como fábrica que ensambla las implementaciones de Prisma
- * con los use-cases agnósticos de framework.
- *
- * Este módulo ES la única parte que conoce tanto Prisma como los use-cases.
- */
-
 import { Dimensions } from '@domain/pricing/core/entities/dimensions'
 import { Money } from '@domain/pricing/core/entities/money'
 import type { PriceCalculationResult } from '@domain/pricing/core/entities/price-calculation'
 import type { ServiceUnit } from '@domain/pricing/core/types'
 import { CalculateItemPrice } from '@domain/pricing/use-cases/calculate-item-price'
 import type { PrismaClient } from '@prisma/generated/client'
+import { pipe } from 'fp-ts/function'
+import * as TE from 'fp-ts/TaskEither'
 import {
   getQuoteValidityDays,
   getTenantConfigSelect,
   getTenantCurrency,
 } from '@/server/utils/tenant'
 
+import type { PriceCalculatorFn, TrpcPriceInput } from '../ports/pricing-repo'
 import type { AddItemToQuoteDeps } from '../use-cases/add-item-to-quote'
 import type { CalculateItemPriceDeps } from '../use-cases/calculate-item-price'
 import type { CalculatePriceWithColorDeps } from '../use-cases/calculate-price-with-color'
@@ -27,57 +20,11 @@ import type { GetQuoteByIdDeps } from '../use-cases/get-quote-by-id'
 import type { ListUserQuotesDeps, QuoteListFilters } from '../use-cases/list-user-quotes'
 import type { SendQuoteToVendorDeps } from '../use-cases/send-quote-to-vendor'
 
-// =============================================================================
-// Internal Price Adaptation Functions (formerly in @/server/api/routers/quote/price-adapter)
-// =============================================================================
-// These functions transform between tRPC/Prisma formats and domain format.
-// Kept internal to this module to avoid circular dependencies with the server layer.
-
 const PERCENTAGE_DIVISOR = 100
 const BASE_MULTIPLIER = 1.0
 
-// Type for the input that CalculateItemPrice.execute expects
 type DomainPriceInput = Parameters<typeof CalculateItemPrice.execute>[0]
 
-// Type for tRPC-style input used in the container
-type TrpcPriceInput = {
-  widthMm: number
-  heightMm: number
-  modelPrices: {
-    basePrice: number
-    costPerMmWidth: number
-    costPerMmHeight: number
-    minWidthMm: number
-    minHeightMm: number
-    accessoryPrice?: number
-  }
-  colorSurchargePercentage?: number
-  profitMarginPercentage?: number
-  glass?: {
-    pricePerSqm: number
-    discountWidthMm?: number
-    discountHeightMm?: number
-  }
-  services?: Array<{
-    serviceId: string
-    name: string
-    unit: 'unit' | 'sqm' | 'ml'
-    rate: number
-    minimumBillingUnit?: number
-    quantityOverride?: number
-  }>
-  adjustments?: Array<{
-    adjustmentId: string
-    concept: string
-    unit: 'unit' | 'sqm' | 'ml'
-    value: number
-    sign: 'positive' | 'negative'
-  }>
-}
-
-/**
- * Transform tRPC input to domain PriceCalculationInput
- */
 function adaptTRPCToDomain(input: TrpcPriceInput): DomainPriceInput {
   const dimensions = new Dimensions({
     widthMm: input.widthMm,
@@ -203,8 +150,19 @@ function adaptDomainToTRPC(
 }
 
 /**
- * Crea las dependencias para AddItemToQuote use-case
+ * Composable price calculator pipeline.
+ *
+ * Wraps the tRPC adapter → domain calculation → adapter back
+ * into a single reusable function.
  */
+function makeCalculatePrice(): PriceCalculatorFn {
+  return (input: TrpcPriceInput) => {
+    const domainInput = adaptTRPCToDomain(input)
+    const domainResult = CalculateItemPrice.execute(domainInput)
+    return adaptDomainToTRPC(domainResult, input.colorSurchargePercentage)
+  }
+}
+
 export function createAddItemToQuoteDeps(db: PrismaClient): AddItemToQuoteDeps {
   return {
     findModel: (id) =>
@@ -231,6 +189,7 @@ export function createAddItemToQuoteDeps(db: PrismaClient): AddItemToQuoteDeps {
     createQuote: async (input) =>
       db.quote.create({
         data: {
+          clientId: input.clientId,
           currency: input.currency,
           status: 'draft',
           validUntil: input.validUntil,
@@ -338,11 +297,7 @@ export function createCalculateItemPriceDeps(db: PrismaClient): CalculateItemPri
         where: { id: { in: ids } },
       }),
 
-    calculatePrice: (input) => {
-      const domainInput = adaptTRPCToDomain(input)
-      const domainResult = CalculateItemPrice.execute(domainInput)
-      return adaptDomainToTRPC(domainResult, input.colorSurchargePercentage)
-    },
+    calculatePrice: makeCalculatePrice(),
   }
 }
 
@@ -370,6 +325,15 @@ export function createGetQuoteByIdDeps(db: PrismaClient): GetQuoteByIdDeps {
                   },
                 },
               },
+            },
+          },
+          client: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phone: true,
+              company: true,
             },
           },
           user: {
@@ -569,11 +533,7 @@ export function createCalculatePriceWithColorDeps(db: PrismaClient): CalculatePr
       }
     },
 
-    calculatePrice: (input) => {
-      const domainInput = adaptTRPCToDomain(input)
-      const domainResult = CalculateItemPrice.execute(domainInput)
-      return adaptDomainToTRPC(domainResult)
-    },
+    calculatePrice: makeCalculatePrice(),
   }
 }
 

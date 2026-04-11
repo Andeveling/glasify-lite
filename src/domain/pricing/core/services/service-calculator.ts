@@ -1,8 +1,12 @@
-import Decimal from 'decimal.js'
-import { SERVICE_QUANTITY_SCALE } from '../constants'
 import type { Dimensions } from '../entities/dimensions'
 import type { Money } from '../entities/money'
 import { type ServiceResult, ServiceUnit } from '../types'
+import {
+  applyMinimumBillingUnit,
+  calculateAreaQuantity,
+  calculateFixedQuantity,
+  calculatePerimeterQuantity,
+} from './quantity-calculations'
 
 /**
  * Input for service amount calculation
@@ -20,77 +24,6 @@ export type ServiceAmountInput = {
   minimumBillingUnit?: number
   /** Override quantity for fixed services (optional) */
   quantityOverride?: number
-}
-
-/**
- * Calculate fixed service quantity
- *
- * Fixed services default to quantity of 1, but can be overridden
- * (e.g., 10 screws, 4 hinges).
- *
- * @param quantityOverride - Override quantity (optional)
- * @returns Fixed quantity (1 or override value)
- */
-function calculateFixedQuantity(quantityOverride?: number): number {
-  return quantityOverride ?? 1
-}
-
-/**
- * Calculate area quantity in square meters
- *
- * Converts dimensions from mm to m and calculates area.
- * Rounds to SERVICE_QUANTITY_SCALE (2 decimals).
- *
- * Formula:
- * area = (widthMm / 1000) × (heightMm / 1000) m²
- *
- * @param dimensions - Glass dimensions
- * @returns Area in m² (rounded to 2 decimals)
- */
-function calculateAreaQuantity(dimensions: Dimensions): number {
-  const meters = dimensions.toMeters()
-  const area = meters.widthM * meters.heightM
-
-  // Round to 2 decimals
-  return new Decimal(area).toDecimalPlaces(SERVICE_QUANTITY_SCALE, Decimal.ROUND_HALF_UP).toNumber()
-}
-
-/**
- * Calculate perimeter quantity in linear meters
- *
- * Formula:
- * perimeter = 2 × (width + height) ml
- *
- * Rounds to SERVICE_QUANTITY_SCALE (2 decimals).
- *
- * @param dimensions - Glass dimensions
- * @returns Perimeter in linear meters (rounded to 2 decimals)
- */
-function calculatePerimeterQuantity(dimensions: Dimensions): number {
-  const meters = dimensions.toMeters()
-  const perimeter = 2 * (meters.widthM + meters.heightM)
-
-  // Round to 2 decimals
-  return new Decimal(perimeter)
-    .toDecimalPlaces(SERVICE_QUANTITY_SCALE, Decimal.ROUND_HALF_UP)
-    .toNumber()
-}
-
-/**
- * Apply minimum billing unit to quantity
- *
- * If quantity is below minimum, bill at minimum instead.
- * This is common for area and perimeter services (e.g., minimum 2m²).
- *
- * @param quantity - Calculated quantity
- * @param minimumBillingUnit - Minimum quantity to bill (optional)
- * @returns Quantity or minimum (whichever is greater)
- */
-function applyMinimumBillingUnit(quantity: number, minimumBillingUnit?: number): number {
-  if (minimumBillingUnit === undefined || minimumBillingUnit === 0) {
-    return quantity
-  }
-  return Math.max(quantity, minimumBillingUnit)
 }
 
 /**
