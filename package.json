@@ -104,6 +104,7 @@
     "cmdk": "^1.1.1",
     "decimal.js": "^10.6.0",
     "exceljs": "^4.4.0",
+    "fp-ts": "^2.16.11",
     "haversine-distance": "^1.2.4",
     "immer": "^11.1.4",
     "lucide-react": "0.562.0",

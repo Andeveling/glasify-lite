@@ -11,6 +11,11 @@
       "sourceType": "github",
       "computedHash": "a2ab4299f4551f45529a0063a5fb05e2ea353cb10983c3111c52969d40b4ece6"
     },
+    "fp-ts-pragmatic": {
+      "source": "sickn33/antigravity-awesome-skills",
+      "sourceType": "github",
+      "computedHash": "2597e9daff304b84af043252ff10051b2df3466464533732768a6e36048511db"
+    },
     "prisma-database-setup": {
       "source": "prisma/skills",
       "sourceType": "github",

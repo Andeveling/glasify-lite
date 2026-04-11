@@ -10,58 +10,64 @@ import SuperJson from 'superjson'
 import type { AppRouter } from '@/server/api/root'
 import { createQueryClient } from './query-client'
 
-let clientQueryClientSingleton: QueryClient | undefined
-const getQueryClient = () => {
-  if (typeof window === 'undefined') {
-    // Server: always make a new query client
-    return createQueryClient()
-  }
-  // Browser: use singleton pattern to keep the same query client
-  clientQueryClientSingleton ??= createQueryClient()
+const CLIENT_QUERY_CLIENT_SINGLETON: QueryClient | undefined = undefined
 
-  return clientQueryClientSingleton
+let clientQueryClientSingleton: QueryClient | undefined = CLIENT_QUERY_CLIENT_SINGLETON
+
+const getQueryClient = (): QueryClient => {
+  if (typeof window !== 'undefined') {
+    clientQueryClientSingleton ??= createQueryClient()
+    return clientQueryClientSingleton
+  }
+  return createQueryClient()
 }
 
 export const api = createTRPCReact<AppRouter>()
 
-/**
- * Inference helper for inputs.
- *
- * @example type HelloInput = RouterInputs['example']['hello']
- */
 export type RouterInputs = inferRouterInputs<AppRouter>
 
-/**
- * Inference helper for outputs.
- *
- * @example type HelloOutput = RouterOutputs['example']['hello']
- */
 export type RouterOutputs = inferRouterOutputs<AppRouter>
+
+const isDevelopment = process.env.NODE_ENV === 'development'
+
+const createLoggerLink = () =>
+  loggerLink({
+    enabled: (operation) =>
+      isDevelopment && operation.direction === 'down' && operation.result instanceof Error,
+  })
+
+const createHeaders = (): Headers => {
+  const headers = new Headers()
+  headers.set('x-trpc-source', 'nextjs-react')
+  return headers
+}
+
+const getApiBaseUrl = (): string => {
+  if (typeof window !== 'undefined') {
+    return window.location.origin
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`
+  }
+  const DEFAULT_PORT = 3000
+  return `http://localhost:${process.env.PORT ?? DEFAULT_PORT}`
+}
+
+const createTrpcClient = () =>
+  api.createClient({
+    links: [
+      createLoggerLink(),
+      httpBatchStreamLink({
+        headers: createHeaders,
+        transformer: SuperJson,
+        url: `${getApiBaseUrl()}/api/trpc`,
+      }),
+    ],
+  })
 
 export function TRPCReactProvider(props: { children: React.ReactNode }) {
   const queryClient = getQueryClient()
-
-  const [trpcClient] = useState(() =>
-    api.createClient({
-      links: [
-        loggerLink({
-          enabled: (op) =>
-            process.env.NODE_ENV === 'development'
-              ? op.direction === 'down' && op.result instanceof Error
-              : false,
-        }),
-        httpBatchStreamLink({
-          headers: () => {
-            const headers = new Headers()
-            headers.set('x-trpc-source', 'nextjs-react')
-            return headers
-          },
-          transformer: SuperJson,
-          url: `${getBaseUrl()}/api/trpc`,
-        }),
-      ],
-    }),
-  )
+  const [trpcClient] = useState(createTrpcClient)
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -70,24 +76,4 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
       </api.Provider>
     </QueryClientProvider>
   )
-}
-
-/**
- * Get the base URL for tRPC requests.
- *
- * NOTE: Using window.location.origin here is intentional and necessary.
- * This is NOT for navigation - it's for constructing HTTP request URLs
- * to the tRPC API endpoint. Unlike navigation which should use Next.js
- * router, HTTP requests need to know the actual origin to construct URLs.
- */
-function getBaseUrl() {
-  if (typeof window !== 'undefined') {
-    // Browser: get origin from window (e.g., "http://localhost:3000")
-    return window.location.origin
-  }
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`
-  }
-  const DefaultPort = 3000
-  return `http://localhost:${process.env.PORT ?? DefaultPort}`
 }

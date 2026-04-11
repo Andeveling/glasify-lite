@@ -3,7 +3,7 @@ import { Dimensions } from "@domain/pricing/core/entities/dimensions";
 import { Money } from "@domain/pricing/core/entities/money";
 import type { ServiceUnit } from "@domain/pricing/core/types";
 import { describe, expect, it } from "vitest";
-import { adaptTRPCToDomain } from "@/server/api/routers/quote/price-adapter";
+import { adaptTRPCToDomain } from "@/server/services/price-adapter";
 
 describe("adaptTRPCToDomain", () => {
   describe("Basic Adaptation", () => {

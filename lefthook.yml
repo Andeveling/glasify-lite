@@ -34,17 +34,17 @@ commit-msg:
 # - TypeScript type checking (tsc --noEmit)
 # - Biome linting sin auto-fix (para detectar errores)
 # - Prisma schema validation
-# 
+#
 # Si algún check falla, el push se cancela
 # ============================================================
 pre-push:
   parallel: false  # Ejecutar en secuencia para mejor output
   jobs:
     - name: typescript-check
-      run: pnpm tsc --noEmit --pretty
-      
+      run: pnpm tsx --noEmit --pretty
+
     - name: biome-check
       run: pnpm biome check --no-errors-on-unmatched src/
-      
+
     - name: prisma-validate
       run: pnpm prisma validate

@@ -1,6 +1,13 @@
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
+import { auth } from '@/server/auth'
 
-export default function Home() {
-  // Redirect to catalog page as the main entry point
-  redirect('/catalog')
+export default async function Home() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  })
+  if (session?.user) {
+    redirect('/admin')
+  }
+  redirect('/signin')
 }

@@ -347,4 +347,14 @@ export const QUOTE_STATUS_META: Record<QuoteStatus, QuoteStatusMeta> = {
     description: 'Cotización enviada al cliente',
     label: 'Enviada',
   },
+  accepted: {
+    color: 'success',
+    description: 'Cotización aceptada por el cliente',
+    label: 'Aceptada',
+  },
+  rejected: {
+    color: 'destructive',
+    description: 'Cotización rechazada por el cliente',
+    label: 'Rechazada',
+  },
 }
