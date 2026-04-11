@@ -1,7 +1,6 @@
 import type { UserRole } from '@prisma/generated/client'
 import { headers } from 'next/headers'
 import { auth } from '@/server/auth'
-import { NavigationMenu } from './navigation-menu'
 
 /**
  * Icon names for navigation
@@ -36,16 +35,15 @@ export type NavLink = {
  * This is the single source of truth for role-based navigation.
  *
  * Role Navigation Rules:
- * - Admin: Dashboard, Modelos, Cotizaciones, Configuración
- * - Seller: Mis Cotizaciones, Catálogo
- * - User: Catálogo, Mis Cotizaciones
- * - Unauthenticated: Catálogo, Cotizar
+ * - Admin: Dashboard only (internal B2B tool)
+ * - Seller: Cotizaciones (all quotes)
+ * - Unauthenticated: Sign In only
  *
  * @param role - User role from session (or undefined if not authenticated)
  * @returns Array of navigation links appropriate for the role
  */
 export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
-  // Admin navigation: Full access to dashboard and management
+  // Admin navigation: Internal B2B tool - dashboard and management only
   if (role === 'admin') {
     return [
       {
@@ -54,24 +52,10 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
         icon: 'LayoutDashboard',
         label: 'Dashboard',
       },
-      {
-        description: 'Explorar catálogo de productos',
-        href: '/catalog',
-        icon: 'Package',
-        label: 'Catálogo',
-        routes: ['/catalog'],
-      },
-      {
-        description: 'Ver mis cotizaciones',
-        href: '/my-quotes',
-        icon: 'FileText',
-        label: 'Mis Cotizaciones',
-        routes: ['/my-quotes'],
-      },
     ]
   }
 
-  // Seller navigation: Access to all quotes, users, and catalog (no models/settings)
+  // Seller navigation: Access to all quotes (client-scoped now via clientId)
   if (role === 'seller') {
     return [
       {
@@ -81,67 +65,11 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
         label: 'Cotizaciones',
         routes: ['/dashboard/quotes'],
       },
-      {
-        description: 'Explorar catálogo de productos',
-        href: '/catalog',
-        icon: 'Package',
-        label: 'Catálogo',
-        routes: ['/catalog'],
-      },
-      // {
-      //   description: "Descubrir soluciones de vidrio especializadas",
-      //   href: "/glasses/solutions",
-      //   icon: "Glasses",
-      //   label: "Soluciones",
-      //   routes: ["/glasses/solutions"],
-      // },
     ]
   }
 
-  // User (authenticated client) navigation: Catalog and own quotes
-  if (role === 'user') {
-    return [
-      {
-        description: 'Explorar catálogo de productos',
-        href: '/catalog',
-        icon: 'Package',
-        label: 'Catálogo',
-        routes: ['/catalog'],
-      },
-      // {
-      //   description: "Descubrir soluciones de vidrio especializadas",
-      //   href: "/glasses/solutions",
-      //   icon: "Glasses",
-      //   label: "Soluciones",
-      //   routes: ["/glasses/solutions"],
-      // },
-      {
-        description: 'Ver mis cotizaciones',
-        href: '/my-quotes',
-        icon: 'FileText',
-        label: 'Mis Cotizaciones',
-        routes: ['/my-quotes'],
-      },
-    ]
-  }
-
-  // Unauthenticated user navigation: Public routes only
-  return [
-    {
-      description: 'Explorar catálogo de productos',
-      href: '/catalog',
-      icon: 'Package',
-      label: 'Catálogo',
-      routes: ['/catalog'],
-    },
-    // {
-    //   description: "Descubrir soluciones de vidrio especializadas",
-    //   href: "/glasses/solutions",
-    //   icon: "Glasses",
-    //   label: "Soluciones",
-    //   routes: ["/glasses/solutions"],
-    // },
-  ]
+  // Unauthenticated user: redirect to signin
+  return []
 }
 
 /**
@@ -152,8 +80,7 @@ export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
  * and renders navigation appropriate for that role.
  *
  * This component is the entry point for role-based navigation.
- * It delegates to getNavLinksForRole() for link filtering logic
- * and NavigationMenu for UI rendering.
+ * It delegates to getNavLinksForRole() for link filtering logic.
  *
  * Benefits:
  * - Server-side session access (no client-side auth checks)
@@ -172,6 +99,18 @@ export async function RoleBasedNav({ className }: { className?: string }) {
   // Get navigation links based on user role
   const navLinks = getNavLinksForRole(userRole)
 
-  // Render navigation menu with filtered links
-  return <NavigationMenu className={className} links={navLinks} userRole={userRole} />
+  // Render minimal navigation - no public catalog anymore (B2B internal tool)
+  if (navLinks.length === 0) {
+    return null
+  }
+
+  return (
+    <nav className={className}>
+      {navLinks.map((link) => (
+        <a key={link.href} href={link.href}>
+          {link.label}
+        </a>
+      ))}
+    </nav>
+  )
 }
