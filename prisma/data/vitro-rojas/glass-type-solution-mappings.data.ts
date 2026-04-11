@@ -4,14 +4,10 @@
  * Define relationships between glass types and solutions with performance ratings.
  * Used by seeder to create GlassTypeSolution junction table records.
  *
- * Performance ratings based on international standards:
- * - EN 12600: Glass in building - Impact test
- * - ISO 717-1: Acoustics - Sound insulation
- * - ISO 10077: Thermal performance of windows/doors
- * - EN 356: Glass in building - Security glazing
+ * Data source: Vitro Rojas S.A. - Lista de precios oficial (Abril 2026)
  *
- * @version 1.0.0
- * @date 2025-01-28
+ * @version 2.0.0
+ * @date 2026-04-04
  */
 
 /**
@@ -43,11 +39,15 @@ export type GlassTypeSolutionMapping = {
  * - isPrimary: If this solution is the primary use case for this glass
  * - performanceRating: How well this glass performs for this solution
  *
- * Distribution across tabs:
- * - 🏠 Uso General: 2 types (VR_CLEAR6, VR_CLEAR8)
- * - 🛡️ Seguridad: 3 types (VR_LAM6, VR_LAM8, VR_TEMP6)
- * - ❄️ Aislamiento Térmico: 2 types (VR_DVH16, VR_DVH18)
- * - ✨ Decorativo: 4 types (VR_GRAY6, VR_BRONZE6, VR_REFL6, VR_LAMGRAY6)
+ * Vitro Rojas April 2026 pricing:
+ * - Vidrio Claro 6mm: $12 → general
+ * - Vidrio Gris 6mm: $14 → decorative
+ * - Vidrio Bronce 6mm: $14 → decorative
+ * - Vidrio Laminado Claro 6mm: $16 → security
+ * - Vidrio Laminado Gris 6mm: $18 → security + decorative
+ * - Vidrio Laminado Bronce 6mm: $18 → security + decorative
+ * - Vidrio Reflectivo 6mm: $20 → decorative
+ * - Vidrio Insulado (DVH): $40 → energy_efficiency
  */
 export const vitroRojasGlassTypeSolutionMappings: GlassTypeSolutionMapping[] = [
   // ==========================================
@@ -59,32 +59,26 @@ export const vitroRojasGlassTypeSolutionMappings: GlassTypeSolutionMapping[] = [
     performanceRating: "standard",
     solutionKey: "general",
   },
-  {
-    glassTypeCode: "VR_CLEAR8",
-    isPrimary: true,
-    performanceRating: "good",
-    solutionKey: "general",
-  },
 
   // ==========================================
   // SEGURIDAD (🛡️ Security)
   // ==========================================
   {
-    glassTypeCode: "VR_LAM6",
+    glassTypeCode: "VR_LAM_CLEAR6",
     isPrimary: true,
     performanceRating: "good",
     solutionKey: "security",
   },
   {
-    glassTypeCode: "VR_LAM8",
+    glassTypeCode: "VR_LAM_GRAY6",
     isPrimary: true,
     performanceRating: "very_good",
     solutionKey: "security",
   },
   {
-    glassTypeCode: "VR_TEMP6",
+    glassTypeCode: "VR_LAM_BRONZE6",
     isPrimary: true,
-    performanceRating: "good",
+    performanceRating: "very_good",
     solutionKey: "security",
   },
 
@@ -92,13 +86,7 @@ export const vitroRojasGlassTypeSolutionMappings: GlassTypeSolutionMapping[] = [
   // AISLAMIENTO TÉRMICO (❄️ Thermal Insulation)
   // ==========================================
   {
-    glassTypeCode: "VR_DVH16",
-    isPrimary: true,
-    performanceRating: "very_good",
-    solutionKey: "energy_efficiency",
-  },
-  {
-    glassTypeCode: "VR_DVH18",
+    glassTypeCode: "VR_INSUL21",
     isPrimary: true,
     performanceRating: "excellent",
     solutionKey: "energy_efficiency",
@@ -125,12 +113,6 @@ export const vitroRojasGlassTypeSolutionMappings: GlassTypeSolutionMapping[] = [
     performanceRating: "very_good",
     solutionKey: "decorative",
   },
-  {
-    glassTypeCode: "VR_LAMGRAY6",
-    isPrimary: true,
-    performanceRating: "excellent",
-    solutionKey: "decorative",
-  },
 
   // ==========================================
   // SECONDARY ASSIGNMENTS (Cross-category benefits)
@@ -138,13 +120,13 @@ export const vitroRojasGlassTypeSolutionMappings: GlassTypeSolutionMapping[] = [
 
   // Laminados también ofrecen beneficio decorativo (privacidad)
   {
-    glassTypeCode: "VR_LAM6",
+    glassTypeCode: "VR_LAM_GRAY6",
     isPrimary: false,
-    performanceRating: "standard",
+    performanceRating: "good",
     solutionKey: "decorative",
   },
   {
-    glassTypeCode: "VR_LAM8",
+    glassTypeCode: "VR_LAM_BRONZE6",
     isPrimary: false,
     performanceRating: "good",
     solutionKey: "decorative",
@@ -152,23 +134,9 @@ export const vitroRojasGlassTypeSolutionMappings: GlassTypeSolutionMapping[] = [
 
   // DVH también ofrece beneficio de seguridad (doble capa)
   {
-    glassTypeCode: "VR_DVH16",
-    isPrimary: false,
-    performanceRating: "standard",
-    solutionKey: "security",
-  },
-  {
-    glassTypeCode: "VR_DVH18",
+    glassTypeCode: "VR_INSUL21",
     isPrimary: false,
     performanceRating: "good",
-    solutionKey: "security",
-  },
-
-  // Laminado gris combina seguridad + decorativo
-  {
-    glassTypeCode: "VR_LAMGRAY6",
-    isPrimary: false,
-    performanceRating: "very_good",
     solutionKey: "security",
   },
 ];

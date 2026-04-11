@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { formatCurrency } from '@/lib/format'
 import { parseCompatibleGlassTypeIds } from '@/lib/utils/compatible-glass-types'
 import type { AdminQuoteItemValues } from './schemas/admin-quote-form.schema'
 
@@ -257,9 +258,9 @@ export function QuoteItemRow({ fields, glassTypes, index, models, onRemove }: Qu
         {itemPrice ? (
           <div className="text-right">
             <span className="text-muted-foreground text-xs">
-              ${itemPrice.unitPrice.toLocaleString()} c/u
+              {formatCurrency(itemPrice.unitPrice)} c/u
             </span>
-            <p className="font-medium">${itemPrice.subtotal.toLocaleString()}</p>
+            <p className="font-medium">{formatCurrency(itemPrice.subtotal)}</p>
           </div>
         ) : (
           <span className="text-muted-foreground text-sm">—</span>
