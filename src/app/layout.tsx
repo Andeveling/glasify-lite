@@ -12,7 +12,6 @@ import { Suspense } from 'react'
 import { Toaster } from 'sonner'
 import { TRPCReactProvider } from '@/trpc/react'
 import { NavigationLoader } from './_components/navigation-loader'
-import { ReactScan } from './_components/react-scan'
 
 export const metadata: Metadata = {
   description:
@@ -61,7 +60,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     taxName: env.NEXT_PUBLIC_TENANT_TAX_NAME,
     taxRate: env.NEXT_PUBLIC_TENANT_TAX_RATE,
     timezone: env.NEXT_PUBLIC_TENANT_TIMEZONE,
-  }
+	}
+  const {NODE_ENV} = env
 
   return (
     <html
@@ -70,10 +70,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       suppressHydrationWarning
     >
       <head>
-        {process.env.NODE_ENV === 'development' && (
+        {NODE_ENV === 'development' && (
           <Script
             crossOrigin="anonymous"
             src="//unpkg.com/react-grab/dist/index.global.js"
+            strategy="beforeInteractive"
+					/>
+				)}
+        {NODE_ENV === 'development' && (
+          <Script
+            crossOrigin="anonymous"
+            src="//unpkg.com/react-scan/dist/auto.global.js"
             strategy="beforeInteractive"
           />
         )}
@@ -82,7 +89,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Suspense fallback={null}>
           <NavigationLoader />
         </Suspense>
-        <ReactScan />
         <BrandingProvider
           config={{
             businessName: tenantConfig.businessName,
