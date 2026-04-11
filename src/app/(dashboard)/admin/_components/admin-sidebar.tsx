@@ -8,6 +8,7 @@ import {
   Package,
   Settings,
   Sparkles,
+  Users,
   Wrench,
 } from 'lucide-react'
 import Link from 'next/link'
@@ -35,26 +36,32 @@ interface AdminSidebarProps extends React.ComponentProps<typeof Sidebar> {
   }
 }
 
-/**
- * Admin Dashboard Sidebar
- *
- * Customized sidebar for admin catalog management with three navigation sections:
- * 1. Main navigation: Dashboard, Models, Glass Types, Services
- * 2. Suppliers: Profile Suppliers, Glass Suppliers
- * 3. Taxonomy: Glass Solutions, Glass Characteristics
- *
- * Uses Shadcn/ui sidebar primitives with responsive collapsible behavior.
- */
 export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
   const pathname = usePathname()
 
   // Navigation configuration (must be in Client Component to use Lucide icons)
+
   const navMain = [
     {
       icon: Settings,
       title: 'Dashboard',
       url: '/admin',
     },
+    {
+      description: 'Gestión de clientes',
+      icon: Users,
+      title: 'Clientes',
+      url: '/admin/clients',
+    },
+    {
+      description: 'Gestión de cotizaciones',
+      icon: FileText,
+      title: 'Cotizaciones',
+      url: '/admin/quotes',
+    },
+  ]
+
+  const navConfig = [
     {
       description: 'Ventanas y puertas',
       icon: Grid3x3,
@@ -72,18 +79,6 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
       icon: Wrench,
       title: 'Servicios',
       url: '/admin/services',
-    },
-    {
-      description: 'Gestión de clientes',
-      icon: FileText,
-      title: 'Clientes',
-      url: '/admin/clients',
-    },
-    {
-      description: 'Gestión de cotizaciones',
-      icon: FileText,
-      title: 'Cotizaciones',
-      url: '/admin/quotes',
     },
   ]
 
@@ -126,12 +121,13 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        {/* Main catalog entities */}
         <NavMain items={navMain} />
 
-        {/* Tenant management */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Configuraciones</SidebarGroupLabel>
+          <NavMain items={navConfig} />
+        </SidebarGroup>
 
-        {/* Supplier management */}
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
           <SidebarGroupLabel>Proveedores</SidebarGroupLabel>
           <SidebarMenu>

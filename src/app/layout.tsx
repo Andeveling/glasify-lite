@@ -60,8 +60,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     taxName: env.NEXT_PUBLIC_TENANT_TAX_NAME,
     taxRate: env.NEXT_PUBLIC_TENANT_TAX_RATE,
     timezone: env.NEXT_PUBLIC_TENANT_TIMEZONE,
-	}
-  const {NODE_ENV} = env
+  }
+  const { NODE_ENV } = env
 
   return (
     <html
@@ -75,8 +75,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             crossOrigin="anonymous"
             src="//unpkg.com/react-grab/dist/index.global.js"
             strategy="beforeInteractive"
-					/>
-				)}
+          />
+        )}
         {NODE_ENV === 'development' && (
           <Script
             crossOrigin="anonymous"
