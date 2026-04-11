@@ -59,9 +59,9 @@ export type AdminQuoteAddressValues = z.infer<typeof adminQuoteAddressSchema>
  */
 export const adminQuoteFormSchema = z.object({
   /**
-   * Optional client ID - if not provided, quote is created for admin
+   * Required client ID for the quote
    */
-  clientId: z.string().cuid().optional().nullable(),
+  clientId: z.string().cuid({ message: 'ID del cliente es requerido' }),
 
   /**
    * Dynamic items array - at least 1 item required
@@ -87,9 +87,9 @@ export type AdminQuoteFormValues = z.infer<typeof adminQuoteFormSchema>
 /**
  * Get default values for form initialization
  */
-export function getAdminQuoteFormDefaults(): AdminQuoteFormValues {
+export function getAdminQuoteFormDefaults(clientId = ''): AdminQuoteFormValues {
   return {
-    clientId: null,
+    clientId,
     items: [
       {
         glassTypeId: '',

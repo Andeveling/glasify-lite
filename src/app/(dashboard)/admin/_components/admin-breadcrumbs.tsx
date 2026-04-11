@@ -18,6 +18,7 @@ import {
  */
 const pathLabels: Record<string, string> = {
   admin: 'Admin',
+  clients: 'Clientes',
   edit: 'Editar',
   'glass-characteristics': 'Características de Cristal',
   'glass-solutions': 'Soluciones de Cristal',

@@ -31,6 +31,7 @@ const QUOTE_ID_DISPLAY_LENGTH = 8
  * @returns Quote ID if successful, throws error otherwise
  */
 export async function createQuoteFromItemsAction(input: {
+  clientId: string
   items: Array<{
     glassTypeId: string
     heightMm: number
@@ -45,7 +46,6 @@ export async function createQuoteFromItemsAction(input: {
     projectStreet: string
   }
   projectName: string
-  clientId?: string
 }): Promise<{ quoteId: string }> {
   try {
     // Create headers for tRPC context

@@ -3,12 +3,14 @@
  *
  * Admin page for creating quotes directly from catalog items.
  * Provides a form for selecting models, glass types, dimensions, and quantities.
+ * Requires clientId param - redirects to client selection if not provided.
  *
  * Route: /admin/quotes/new
  * Access: Admin only (protected by middleware)
  */
 
 import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 import { AdminQuoteCreationForm } from './_components/admin-quote-creation-form'
 
 export const metadata: Metadata = {
@@ -16,7 +18,19 @@ export const metadata: Metadata = {
   description: 'Crear una nueva cotización directamente desde el catálogo',
 }
 
-export default function NewQuotePage() {
+type SearchParams = Promise<{
+  clientId?: string
+}>
+
+export default async function NewQuotePage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams
+
+  // Redirect to client selection if no clientId provided
+  // The quoting workflow requires selecting a client first
+  if (!params.clientId) {
+    redirect('/admin/clients')
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -26,7 +40,7 @@ export default function NewQuotePage() {
         </p>
       </div>
 
-      <AdminQuoteCreationForm />
+      <AdminQuoteCreationForm clientId={params.clientId} />
     </div>
   )
 }

@@ -15,15 +15,15 @@ export type QuoteListItem = {
   sentAt: Date | null
   itemCount: number
   /**
-   * User who created the quote
-   * Null if user was deleted (onDelete: SetNull)
-   * email can be null per schema (User.email is nullable)
+   * Client associated with the quote
+   * Null if client was deleted or quote has no clientId
    */
-  user: {
+  client: {
     id: string
-    name: string | null
+    name: string
     email: string | null
-    role: 'admin' | 'seller' | 'user'
+    phone: string | null
+    company: string | null
   } | null
 }
 
@@ -37,15 +37,17 @@ export type QuoteListFilters = {
   sortOrder?: 'asc' | 'desc'
   page?: number
   limit?: number
+  clientId?: string
 }
 
 /**
- * User contact information for quote detail view (US7)
- * Note: contactPhone comes from Quote.contactPhone, not User.phone
+ * Client contact information for quote detail view
+ * Replaces UserContactInfo - shows client data instead of user
  */
-export type UserContactInfo = {
+export type ClientContactInfo = {
   id: string
-  name: string | null
+  name: string
   email: string | null
-  role: 'admin' | 'seller' | 'user'
+  phone: string | null
+  company: string | null
 }

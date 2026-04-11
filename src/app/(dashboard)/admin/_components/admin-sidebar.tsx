@@ -74,6 +74,12 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
       url: '/admin/services',
     },
     {
+      description: 'Gestión de clientes',
+      icon: FileText,
+      title: 'Clientes',
+      url: '/admin/clients',
+    },
+    {
       description: 'Gestión de cotizaciones',
       icon: FileText,
       title: 'Cotizaciones',

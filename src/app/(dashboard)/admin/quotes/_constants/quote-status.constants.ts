@@ -21,6 +21,16 @@ export const QUOTE_STATUS_CONFIG = {
     variant: 'outline' as const,
     icon: X,
   },
+  accepted: {
+    label: 'Aceptada',
+    variant: 'default' as const,
+    icon: Send,
+  },
+  rejected: {
+    label: 'Rechazada',
+    variant: 'destructive' as const,
+    icon: X,
+  },
 } satisfies Record<QuoteStatus, { label: string; variant: string; icon: typeof Clock }>
 
 /**
@@ -35,9 +45,5 @@ export const ROLE_BADGE_CONFIG = {
   seller: {
     label: 'Vendedor',
     variant: 'default' as const,
-  },
-  user: {
-    label: null, // Don't show badge for regular users
-    variant: null,
   },
 } as const

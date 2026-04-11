@@ -6,7 +6,7 @@
  *
  * Features:
  * - Project name, total, creation date
- * - User name display with role badge (US4)
+ * - Client name display (US4)
  * - Status and expiration badges (US2)
  * - Link to detail page
  * - Uses centralized formatters from @lib/format
@@ -21,7 +21,6 @@ import { formatCurrency, formatDateMedium } from '@/lib/format'
 import { useTenantConfig } from '@/providers/tenant-config-provider'
 import type { QuoteListItem as QuoteItem } from '../_types/quote-list.types'
 import { QuoteExpirationBadge } from './quote-expiration-badge'
-import { QuoteRoleBadge } from './quote-role-badge'
 import { QuoteStatusBadge } from './quote-status-badge'
 
 type QuoteListItemProps = {
@@ -31,7 +30,7 @@ type QuoteListItemProps = {
 export function QuoteListItem({ quote }: QuoteListItemProps) {
   const tenantConfig = useTenantConfig()
 
-  const userName = quote.user?.name || quote.user?.email || 'Usuario desconocido'
+  const clientName = quote.client?.name || quote.client?.email || 'Cliente desconocido'
   const formattedDate = formatDateMedium(quote.createdAt, tenantConfig)
   const formattedTotal = formatCurrency(quote.total, {
     context: tenantConfig,
@@ -58,10 +57,7 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
           </div>
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground text-sm">Cliente</span>
-            <div className="flex items-center truncate text-sm">
-              <span className="truncate">{userName}</span>
-              {quote.user && <QuoteRoleBadge role={quote.user.role} />}
-            </div>
+            <span className="truncate text-sm">{clientName}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground text-sm">Fecha</span>

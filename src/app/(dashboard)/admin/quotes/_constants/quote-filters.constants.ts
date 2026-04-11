@@ -10,6 +10,8 @@ export const FILTER_OPTIONS: Array<{
   { value: 'all', label: 'Todos los Estados' },
   { value: 'draft', label: 'Borradores' },
   { value: 'sent', label: 'Enviadas' },
+  { value: 'accepted', label: 'Aceptadas' },
+  { value: 'rejected', label: 'Rechazadas' },
   { value: 'canceled', label: 'Canceladas' },
 ]
 

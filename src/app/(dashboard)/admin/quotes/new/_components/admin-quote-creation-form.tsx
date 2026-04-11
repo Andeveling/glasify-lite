@@ -75,9 +75,17 @@ function useQuoteCreationCatalogData() {
     },
   )
 
-  const { data: usersData, isLoading: isLoadingUsers } = api.user['list-all'].useQuery(undefined, {
-    staleTime: FIVE_MINUTES_MS,
-  })
+  const { data: clientsData, isLoading: isLoadingClients } = api.admin.clients.list.useQuery(
+    {
+      limit: CATALOG_LIMIT,
+      page: 1,
+      sortBy: 'name',
+      sortOrder: 'asc',
+    },
+    {
+      staleTime: FIVE_MINUTES_MS,
+    },
+  )
 
   // Serialize Decimal fields to numbers
   const serializedGlassTypes = (glassTypesData?.items ?? []).map((gt) => ({
@@ -91,10 +99,10 @@ function useQuoteCreationCatalogData() {
   }))
 
   return {
+    clients: clientsData?.items ?? [],
     glassTypes: serializedGlassTypes,
-    isLoading: isLoadingModels || isLoadingGlassTypes || isLoadingUsers,
+    isLoading: isLoadingModels || isLoadingGlassTypes || isLoadingClients,
     models: (modelsData?.items ?? []).filter((m: { status: string }) => m.status === 'published'),
-    users: usersData ?? [],
   }
 }
 
@@ -104,15 +112,15 @@ function useQuoteCreationCatalogData() {
  * Features:
  * - Dynamic item array with add/remove
  * - Project info section
- * - Client assignment (optional)
+ * - Client assignment (required)
  * - Server action submission via createQuoteFromItemsAction
  */
-export function AdminQuoteCreationForm() {
+export function AdminQuoteCreationForm({ clientId }: { clientId: string }) {
   const router = useRouter()
 
-  // Form setup
+  // Form setup — clientId pre-populated from URL searchParam
   const form = useForm<AdminQuoteFormValues>({
-    defaultValues: getAdminQuoteFormDefaults(),
+    defaultValues: getAdminQuoteFormDefaults(clientId),
     resolver: zodResolver(adminQuoteFormSchema),
     mode: 'onBlur',
   })
@@ -124,7 +132,7 @@ export function AdminQuoteCreationForm() {
   })
 
   // Catalog data
-  const { glassTypes, isLoading, models, users } = useQuoteCreationCatalogData()
+  const { clients, glassTypes, isLoading, models } = useQuoteCreationCatalogData()
 
   // Add new item
   const handleAddItem = useCallback(() => {
@@ -149,10 +157,14 @@ export function AdminQuoteCreationForm() {
 
   // Submit handler
   const handleSubmit = form.handleSubmit(async (values) => {
+    if (!values.clientId) {
+      return
+    }
+
     try {
       // Transform form values to API format
       const { quoteId } = await createQuoteFromItemsAction({
-        clientId: values.clientId ?? undefined,
+        clientId: values.clientId,
         items: values.items.map((item) => ({
           glassTypeId: item.glassTypeId,
           heightMm: item.heightMm,
@@ -251,32 +263,29 @@ export function AdminQuoteCreationForm() {
                 )}
               />
 
-              {/* Client Assignment (optional) */}
+              {/* Client Assignment (required) */}
               <FormField
                 control={form.control}
                 name="clientId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Asignar a Cliente</FormLabel>
+                    <FormLabel>Cliente</FormLabel>
                     <FormControl>
                       <Select onValueChange={field.onChange} value={field.value ?? ''}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Sin asignar (cotización propia)" />
+                          <SelectValue placeholder="Seleccionar cliente" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="__none__">Sin asignar</SelectItem>
-                          {users.map((user) => (
-                            <SelectItem key={user.id} value={user.id}>
-                              {user.name ?? user.email ?? user.id}
-                              {user.role !== 'user' && ` (${user.role})`}
+                          {clients.map((client) => (
+                            <SelectItem key={client.id} value={client.id}>
+                              {client.name}
+                              {client.company && ` (${client.company})`}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormDescription>
-                      Opcional: Asigna esta cotización a un cliente existente
-                    </FormDescription>
+                    <FormDescription>Selecciona el cliente para esta cotización</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

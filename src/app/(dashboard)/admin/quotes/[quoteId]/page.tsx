@@ -13,10 +13,11 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
-import { QuoteDetailView } from '@/app/(public)/my-quotes/[quoteId]/_components/quote-detail-view'
+import { QuoteDetailView } from './_components/quote-detail-view'
 import { Spinner } from '@/components/ui/spinner'
 import { api } from '@/trpc/server-client'
-import { UserContactInfo } from './_components/user-contact-info'
+import { ClientContactInfo } from './_components/client-contact-info'
+import { QuoteActions } from './_components/quote-actions'
 
 export const metadata: Metadata = {
   title: 'Detalle de Cotización | Admin',
@@ -31,7 +32,7 @@ type PageProps = {
 }
 
 async function QuoteContent({ quoteId }: { quoteId: string }) {
-  // Fetch quote data with user information
+  // Fetch quote data with client information
   const quote = await api.quote['get-by-id']({ id: quoteId })
 
   if (!quote) {
@@ -40,8 +41,24 @@ async function QuoteContent({ quoteId }: { quoteId: string }) {
 
   return (
     <div className="space-y-6">
-      {/* User Contact Info Section (US7) - Admin only */}
-      <UserContactInfo contactPhone={quote.contactPhone} user={quote.user} />
+      {/* Client Contact Info Section - Admin only */}
+      <ClientContactInfo
+        client={
+          quote.client
+            ? {
+                id: quote.client.id,
+                name: quote.client.name,
+                email: quote.client.email,
+                phone: quote.client.phone,
+                company: quote.client.company,
+              }
+            : null
+        }
+        contactPhone={quote.contactPhone}
+      />
+
+      {/* Accept/Reject Actions for SENT quotes */}
+      {quote.status === 'sent' && <QuoteActions quoteId={quoteId} />}
 
       {/* Full Quote Details with items, measurements, and export buttons */}
       <QuoteDetailView isPublicView={false} quote={quote} />
