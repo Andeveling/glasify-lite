@@ -35,10 +35,10 @@ export type PaginatedQuotes = {
  * Input para crear Quote
  */
 export type CreateQuoteInput = {
+  clientId: string
   currency: string
   status: QuoteStatus
   validUntil: Date
-  userId?: string
 }
 
 /**

@@ -10,7 +10,7 @@
  * Usa repositories (ports) para acceso a datos.
  */
 
-import type { Quote, QuoteItem, QuoteStatus, User } from '@prisma/generated/client'
+import type { Client, Quote, QuoteItem, QuoteStatus, User } from '@prisma/generated/client'
 
 /**
  * Input para obtener una quote por ID
@@ -18,7 +18,7 @@ import type { Quote, QuoteItem, QuoteStatus, User } from '@prisma/generated/clie
 export type GetQuoteByIdInput = {
   quoteId: string
   userId: string
-  userRole: 'admin' | 'seller' | 'user'
+  userRole: 'admin' | 'seller'
 }
 
 /**
@@ -42,7 +42,14 @@ export type QuoteItemDetail = {
 /**
  * Output del use-case
  */
-export type GetQuoteByIdOutput = {
+export type getQuoteByIdOutput = {
+  client: {
+    id: string
+    name: string
+    email: string | null
+    phone: string | null
+    company: string | null
+  } | null
   id: string
   status: QuoteStatus
   currency: string
@@ -69,7 +76,7 @@ export type GetQuoteByIdOutput = {
     id: string
     name: string | null
     email: string | null
-    role: 'admin' | 'seller' | 'user'
+    role: 'admin' | 'seller'
   } | null
   userEmail?: string
 }
@@ -87,6 +94,7 @@ type QuoteWithItems = Quote & {
       }>
     }
   >
+  client: Pick<Client, 'id' | 'name' | 'email' | 'phone' | 'company'> | null
   user: Pick<User, 'id' | 'name' | 'email' | 'role'> | null
 }
 
@@ -124,7 +132,7 @@ export class AuthorizationError extends Error {
 export async function getQuoteByIdUseCase(
   input: GetQuoteByIdInput,
   deps: GetQuoteByIdDeps,
-): Promise<GetQuoteByIdOutput> {
+): Promise<getQuoteByIdOutput> {
   // 1. Fetch quote con detalles
   const quote = await deps.findQuoteWithDetails(input.quoteId)
 
@@ -168,6 +176,15 @@ export async function getQuoteByIdUseCase(
 
   // 6. Construir respuesta
   return {
+    client: quote.client
+      ? {
+          id: quote.client.id,
+          name: quote.client.name,
+          email: quote.client.email,
+          phone: quote.client.phone,
+          company: quote.client.company,
+        }
+      : null,
     id: quote.id,
     status: quote.status,
     currency: quote.currency,
@@ -195,7 +212,7 @@ export async function getQuoteByIdUseCase(
           id: quote.user.id,
           name: quote.user.name,
           email: quote.user.email,
-          role: quote.user.role as 'admin' | 'seller' | 'user',
+          role: quote.user.role as 'admin' | 'seller',
         }
       : null,
     userEmail: undefined,
