@@ -1,22 +1,25 @@
 /**
  * Quotes Search Component (US8 - T032)
  *
- * Client Component for searching quotes
- * Debounced input to reduce server load
+ * Client Component for searching quotes with debounced URL updates.
+ * Follows Next.js best practices for URL state management.
  *
  * Features:
  * - Searches by project name OR user name
- * - 300ms debounce
- * - Updates URL search params
+ * - 300ms debounce to reduce server load
+ * - URL state driven - search value syncs to URL
  * - Clear button
  * - Spanish placeholder
+ *
+ * Pattern: useCallback for createQueryString, useEffect for debounce,
+ * but NOT putting searchParams in useEffect deps to avoid infinite loop
  */
 
 'use client'
 
 import { Search, X } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -30,26 +33,46 @@ export function QuotesSearch({ currentSearch = '' }: QuotesSearchProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [searchValue, setSearchValue] = useState(currentSearch)
+  const isFirstRender = useRef(true)
 
-  // Debounced URL update
+  // Sync local state from URL only on mount
+  // biome-ignore lint: intentionally skipping searchValue dep - we only want mount behavior
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const params = new URLSearchParams(searchParams.toString())
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      if (!searchValue && searchParams.get('search')) {
+        setSearchValue(searchParams.get('search') ?? '')
+      }
+    }
+  }, [searchParams])
 
-      if (searchValue) {
-        params.set('search', searchValue)
+  // Create query string function - stable reference via useCallback
+  const createQueryString = useCallback(
+    (value: string) => {
+      const params = new URLSearchParams(searchParams.toString())
+      if (value) {
+        params.set('search', value)
       } else {
         params.delete('search')
       }
+      params.delete('page') // Reset to page 1 when search changes
+      return params.toString()
+    },
+    [searchParams],
+  )
 
-      // Reset to page 1 when search changes
-      params.delete('page')
+  // Debounced URL update - only depends on searchValue, NOT searchParams
+  // This breaks the infinite loop: searchParams change → re-render → effect doesn't re-run
+  useEffect(() => {
+    if (isFirstRender.current) return
 
-      router.push(`?${params.toString()}`)
+    const timer = setTimeout(() => {
+      const queryString = createQueryString(searchValue)
+      router.push(`?${queryString}`)
     }, SEARCH_DEBOUNCE_MS)
 
     return () => clearTimeout(timer)
-  }, [searchValue, router, searchParams])
+  }, [searchValue, router, createQueryString])
 
   const handleClear = () => {
     setSearchValue('')
