@@ -1,17 +1,10 @@
-/**
- * Quote Detail View Component
- *
- * Displays full quote details including items, measurements, and totals.
- * Used in admin quote detail page.
- *
- * @module app/(dashboard)/admin/quotes/[quoteId]/_components/quote-detail-view
- */
-
 'use client'
 
-import type { QuoteDetailSchema } from '@/server/api/routers/quote/quote.schemas'
-import { formatCurrency } from '@/lib/format'
-import { QuoteStatusBadge } from '../../_components/quote-status-badge'
+import { Plus } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { QuoteItemWizard } from '@/components/admin/quote-item-wizard'
+import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
@@ -20,6 +13,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { formatCurrency } from '@/lib/format'
+import type { QuoteDetailSchema } from '@/server/api/routers/quote/quote.schemas'
+import { api } from '@/trpc/react'
+import { QuoteStatusBadge } from '../../_components/quote-status-badge'
 
 type QuoteDetailViewProps = {
   isPublicView?: boolean
@@ -27,6 +24,16 @@ type QuoteDetailViewProps = {
 }
 
 export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailViewProps) {
+  const router = useRouter()
+  const [wizardOpen, setWizardOpen] = useState(false)
+  const utils = api.useUtils()
+
+  const handleWizardSuccess = () => {
+    setWizardOpen(false)
+    void utils.quote['get-by-id'].invalidate({ id: quote.id })
+    router.refresh()
+  }
+
   const formatContext = {
     currency: quote.currency,
     locale: 'es-PA',
@@ -43,7 +50,15 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
             Cotización #{quote.id.slice(-8).toUpperCase()}
           </p>
         </div>
-        <QuoteStatusBadge status={quote.status} />
+        <div className="flex items-center gap-4">
+          <QuoteStatusBadge status={quote.status} />
+          {!isPublicView && (
+            <Button onClick={() => setWizardOpen(true)} size="sm">
+              <Plus className="mr-2 size-4" />
+              Agregar ítem
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Project Address */}
@@ -112,6 +127,17 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
         </p>
         {quote.isExpired && <span className="text-destructive">Esta cotización ha expirado</span>}
       </div>
+
+      {/* Add Item Wizard */}
+      {quote.client && (
+        <QuoteItemWizard
+          clientId={quote.client.id}
+          open={wizardOpen}
+          quoteId={quote.id}
+          onOpenChange={setWizardOpen}
+          onSuccess={handleWizardSuccess}
+        />
+      )}
     </div>
   )
 }

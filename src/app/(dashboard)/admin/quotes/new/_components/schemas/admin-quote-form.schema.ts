@@ -90,15 +90,7 @@ export type AdminQuoteFormValues = z.infer<typeof adminQuoteFormSchema>
 export function getAdminQuoteFormDefaults(clientId = ''): AdminQuoteFormValues {
   return {
     clientId,
-    items: [
-      {
-        glassTypeId: '',
-        heightMm: 1000,
-        modelId: '',
-        quantity: 1,
-        widthMm: 1000,
-      },
-    ],
+    items: [],
     projectAddress: {
       projectCity: '',
       projectName: '',

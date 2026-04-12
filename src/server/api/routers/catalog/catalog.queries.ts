@@ -1,4 +1,5 @@
 // src/server/api/routers/catalog/catalog.queries.ts
+import { z } from 'zod'
 import logger from '@/lib/logger'
 import { parseCompatibleGlassTypeIds } from '@/lib/utils/compatible-glass-types'
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc'
@@ -19,6 +20,24 @@ import {
   validateGlassCompatibilityInput,
 } from './catalog.schemas'
 import { serializeDecimalFields } from './catalog.utils'
+
+const filterModelsByDimensionsInput = z.object({
+  widthMm: z.number().int().positive().max(6000),
+  heightMm: z.number().int().positive().max(6000),
+})
+
+const filterModelsByDimensionsOutput = z.array(
+  z.object({
+    id: z.string(),
+    name: z.string(),
+    imageUrl: z.string().nullable(),
+    basePrice: z.number(),
+    minWidthMm: z.number(),
+    maxWidthMm: z.number(),
+    minHeightMm: z.number(),
+    maxHeightMm: z.number(),
+  }),
+)
 
 export const catalogQueries = createTRPCRouter({
   /**
@@ -591,6 +610,71 @@ export const catalogQueries = createTRPCRouter({
         })
 
         throw new Error('No se pudo validar la compatibilidad del vidrio. Intente nuevamente.')
+      }
+    }),
+
+  /**
+   * Filter models by dimensions
+   * Returns models that can accommodate the given width and height in mm
+   * @public
+   */
+  'filter-models-by-dimensions': publicProcedure
+    .input(filterModelsByDimensionsInput)
+    .output(filterModelsByDimensionsOutput)
+    .query(async ({ ctx, input }) => {
+      try {
+        logger.info('Filtering models by dimensions', {
+          heightMm: input.heightMm,
+          widthMm: input.widthMm,
+        })
+
+        const models = await ctx.db.model.findMany({
+          where: {
+            status: 'published',
+            minWidthMm: { lte: input.widthMm },
+            maxWidthMm: { gte: input.widthMm },
+            minHeightMm: { lte: input.heightMm },
+            maxHeightMm: { gte: input.heightMm },
+          },
+          select: {
+            id: true,
+            name: true,
+            imageUrl: true,
+            basePrice: true,
+            minWidthMm: true,
+            maxWidthMm: true,
+            minHeightMm: true,
+            maxHeightMm: true,
+          },
+          orderBy: { name: 'asc' },
+        })
+
+        const result = models.map((m) => ({
+          id: m.id,
+          name: m.name,
+          imageUrl: m.imageUrl,
+          basePrice: m.basePrice.toNumber(),
+          minWidthMm: m.minWidthMm,
+          maxWidthMm: m.maxWidthMm,
+          minHeightMm: m.minHeightMm,
+          maxHeightMm: m.maxHeightMm,
+        }))
+
+        logger.info('Successfully filtered models by dimensions', {
+          count: result.length,
+          heightMm: input.heightMm,
+          widthMm: input.widthMm,
+        })
+
+        return result
+      } catch (error) {
+        logger.error('Error filtering models by dimensions', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          heightMm: input.heightMm,
+          widthMm: input.widthMm,
+        })
+
+        throw new Error('No se pudieron filtrar los modelos por dimensiones. Intente nuevamente.')
       }
     }),
 })

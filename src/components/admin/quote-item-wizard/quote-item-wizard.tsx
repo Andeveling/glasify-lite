@@ -108,7 +108,7 @@ function QuoteItemWizard({
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent
-        className="max-w-[85vw] lg:max-w-6xl xl:max-w-7xl max-h-[95vh] overflow-y-auto"
+        className="max-w-[60vw] lg:max-w-6xl xl:max-w-7xl max-h-[95vh] overflow-y-auto"
         onInteractOutside={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
       >

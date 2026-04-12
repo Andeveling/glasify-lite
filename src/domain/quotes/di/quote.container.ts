@@ -538,16 +538,12 @@ export function createCalculatePriceWithColorDeps(db: PrismaClient): CalculatePr
 }
 
 /**
- * Crea las dependencias para AddItemWithColor use-case (placeholder)
- * TODO Phase D: Implementar después de extender QuoteRepository
+ * Crea las dependencias para AddItemWithColor use-case
  */
-export function createAddItemWithColorDeps(
-  _db: PrismaClient,
-  // biome-ignore lint/suspicious/noExplicitAny: placeholder implementation
-): any {
-  throw new Error(
-    'createAddItemWithColorDeps: En desarrollo (Phase D) - extender QuoteRepository primero',
-  )
+export function createAddItemWithColorDeps(db: PrismaClient) {
+  return {
+    db,
+  }
 }
 
 /**

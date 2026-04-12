@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(sed *)",
-      "Bash(npx *)"
+      "Bash(npx *)",
+      "Bash(git diff *)"
     ]
   },
   "$version": 3

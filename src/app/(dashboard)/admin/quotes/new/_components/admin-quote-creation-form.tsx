@@ -1,19 +1,8 @@
-/**
- * Admin Quote Creation Form
- *
- * Client component for creating quotes directly from catalog items.
- * Uses React Hook Form with useFieldArray for dynamic item management.
- *
- * @module app/(dashboard)/admin/quotes/new/_components/admin-quote-creation-form
- */
-
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useCallback } from 'react'
-import { useFieldArray, useForm } from 'react-hook-form'
+import { QuoteItemWizard } from '@/components/admin/quote-item-wizard'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -33,159 +22,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { api } from '@/trpc/react'
-import { createQuoteFromItemsAction } from '../../../_actions/create-quote.actions'
+import { useAdminQuoteCreation } from '../_hooks/use-admin-quote-creation'
 import { QuoteItemRow } from './quote-item-row'
-import {
-  type AdminQuoteFormValues,
-  adminQuoteFormSchema,
-  getAdminQuoteFormDefaults,
-} from './schemas/admin-quote-form.schema'
 
-// Catalog data constants
-const FIVE_MINUTES_MS = 300_000
-const CATALOG_LIMIT = 100
-
-/**
- * Hook to fetch catalog data for quote creation
- */
-function useQuoteCreationCatalogData() {
-  const { data: modelsData, isLoading: isLoadingModels } = api.catalog['list-models'].useQuery(
-    {
-      limit: CATALOG_LIMIT,
-      page: 1,
-      sort: 'name-asc',
-    },
-    {
-      staleTime: FIVE_MINUTES_MS,
-    },
-  )
-
-  const { data: glassTypesData, isLoading: isLoadingGlassTypes } = api.admin[
-    'glass-type'
-  ].list.useQuery(
-    {
-      limit: CATALOG_LIMIT,
-      page: 1,
-      sortBy: 'name',
-      sortOrder: 'asc',
-    },
-    {
-      staleTime: FIVE_MINUTES_MS,
-    },
-  )
-
-  const { data: clientsData, isLoading: isLoadingClients } = api.admin.clients.list.useQuery(
-    {
-      limit: CATALOG_LIMIT,
-      page: 1,
-      sortBy: 'name',
-      sortOrder: 'asc',
-    },
-    {
-      staleTime: FIVE_MINUTES_MS,
-    },
-  )
-
-  // Serialize Decimal fields to numbers
-  const serializedGlassTypes = (glassTypesData?.items ?? []).map((gt) => ({
-    id: gt.id,
-    name: gt.name,
-    thicknessMm: gt.thicknessMm,
-    pricePerSqm:
-      typeof gt.pricePerSqm === 'object' && gt.pricePerSqm !== null
-        ? (gt.pricePerSqm as { toNumber: () => number }).toNumber()
-        : gt.pricePerSqm,
-  }))
-
-  return {
-    clients: clientsData?.items ?? [],
-    glassTypes: serializedGlassTypes,
-    isLoading: isLoadingModels || isLoadingGlassTypes || isLoadingClients,
-    models: (modelsData?.items ?? []).filter((m: { status: string }) => m.status === 'published'),
-  }
-}
-
-/**
- * Admin Quote Creation Form Component
- *
- * Features:
- * - Dynamic item array with add/remove
- * - Project info section
- * - Client assignment (required)
- * - Server action submission via createQuoteFromItemsAction
- */
 export function AdminQuoteCreationForm({ clientId }: { clientId: string }) {
   const router = useRouter()
-
-  // Form setup — clientId pre-populated from URL searchParam
-  const form = useForm<AdminQuoteFormValues>({
-    defaultValues: getAdminQuoteFormDefaults(clientId),
-    resolver: zodResolver(adminQuoteFormSchema),
-    mode: 'onBlur',
-  })
-
-  // Field array for dynamic items
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: 'items',
-  })
-
-  // Catalog data
-  const { clients, glassTypes, isLoading, models } = useQuoteCreationCatalogData()
-
-  // Add new item
-  const handleAddItem = useCallback(() => {
-    append({
-      glassTypeId: '',
-      heightMm: 1000,
-      modelId: '',
-      quantity: 1,
-      widthMm: 1000,
-    })
-  }, [append])
-
-  // Remove item
-  const handleRemoveItem = useCallback(
-    (index: number) => {
-      if (fields.length > 1) {
-        remove(index)
-      }
-    },
-    [fields.length, remove],
-  )
-
-  // Submit handler
-  const handleSubmit = form.handleSubmit(async (values) => {
-    if (!values.clientId) {
-      return
-    }
-
-    try {
-      // Transform form values to API format
-      const { quoteId } = await createQuoteFromItemsAction({
-        clientId: values.clientId,
-        items: values.items.map((item) => ({
-          glassTypeId: item.glassTypeId,
-          heightMm: item.heightMm,
-          modelId: item.modelId,
-          quantity: item.quantity,
-          widthMm: item.widthMm,
-        })),
-        projectAddress: {
-          projectCity: values.projectAddress.projectCity,
-          projectName: values.projectAddress.projectName,
-          projectState: values.projectAddress.projectState,
-          projectStreet: values.projectAddress.projectStreet,
-        },
-        projectName: values.projectName,
-      })
-
-      router.push(`/admin/quotes/${quoteId}`)
-    } catch {
-      // Error handled by toast in createQuoteFromItemsAction
-    }
-  })
+  const {
+    form,
+    fields,
+    handleSubmit,
+    wizardOpen,
+    setWizardOpen,
+    handleDraftConfirm,
+    clients,
+    glassTypes,
+    models,
+    isLoading,
+    handleRemoveItem,
+  } = useAdminQuoteCreation(clientId)
 
   if (isLoading) {
     return (
@@ -198,13 +52,11 @@ export function AdminQuoteCreationForm({ clientId }: { clientId: string }) {
   return (
     <Form {...form}>
       <form className="space-y-6" onSubmit={handleSubmit}>
-        {/* Project Info */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Información del Proyecto</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Project Name */}
             <FormField
               control={form.control}
               name="projectName"
@@ -219,7 +71,6 @@ export function AdminQuoteCreationForm({ clientId }: { clientId: string }) {
               )}
             />
 
-            {/* Address Grid */}
             <div className="grid gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
@@ -263,7 +114,6 @@ export function AdminQuoteCreationForm({ clientId }: { clientId: string }) {
                 )}
               />
 
-              {/* Client Assignment (required) */}
               <FormField
                 control={form.control}
                 name="clientId"
@@ -294,7 +144,6 @@ export function AdminQuoteCreationForm({ clientId }: { clientId: string }) {
           </CardContent>
         </Card>
 
-        {/* Items Section */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -304,14 +153,13 @@ export function AdminQuoteCreationForm({ clientId }: { clientId: string }) {
                   Agrega los modelos, vidrios y dimensiones para cada ítem
                 </p>
               </div>
-              <Button onClick={handleAddItem} size="sm" type="button" variant="outline">
+              <Button onClick={() => setWizardOpen(true)} size="sm" type="button" variant="outline">
                 <Plus className="mr-2 h-4 w-4" />
                 Agregar Ítem
               </Button>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Header Row */}
             <div className="hidden text-muted-foreground text-sm md:grid md:grid-cols-13 md:gap-4">
               <div className="md:col-span-4">Modelo</div>
               <div className="md:col-span-3">Tipo de Vidrio</div>
@@ -322,7 +170,6 @@ export function AdminQuoteCreationForm({ clientId }: { clientId: string }) {
               <div className="md:col-span-1" />
             </div>
 
-            {/* Item Rows */}
             {fields.map((field, index) => (
               <QuoteItemRow
                 fields={fields}
@@ -334,14 +181,12 @@ export function AdminQuoteCreationForm({ clientId }: { clientId: string }) {
               />
             ))}
 
-            {/* Validation error for items array */}
             {form.formState.errors.items?.root && (
               <p className="text-destructive text-sm">{form.formState.errors.items.root.message}</p>
             )}
           </CardContent>
         </Card>
 
-        {/* Submit */}
         <div className="flex items-center justify-between gap-4">
           <Button onClick={() => router.back()} type="button" variant="outline">
             Cancelar
@@ -351,6 +196,14 @@ export function AdminQuoteCreationForm({ clientId }: { clientId: string }) {
             Crear Cotización
           </Button>
         </div>
+
+        <QuoteItemWizard
+          clientId={clientId}
+          mode="draft"
+          onDraftConfirm={handleDraftConfirm}
+          onOpenChange={setWizardOpen}
+          open={wizardOpen}
+        />
       </form>
     </Form>
   )

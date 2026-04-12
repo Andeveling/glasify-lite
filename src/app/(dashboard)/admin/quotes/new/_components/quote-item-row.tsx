@@ -1,14 +1,3 @@
-/**
- * Quote Item Row Component
- *
- * Renders a single row in the quote items array with model, glass type,
- * dimensions, quantity selectors, and calculated price display.
- * Used within useFieldArray.
- * Includes glass type compatibility filtering based on selected model.
- *
- * @module app/(dashboard)/admin/quotes/new/_components/quote-item-row
- */
-
 'use client'
 
 import { Trash2 } from 'lucide-react'
