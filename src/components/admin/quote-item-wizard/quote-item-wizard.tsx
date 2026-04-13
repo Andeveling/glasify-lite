@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import type { z } from 'zod'
 import { Button } from '@/components/ui/button'
@@ -75,13 +75,20 @@ function QuoteItemWizard({
   })
 
   const stepper = useWizardStepper(TOTAL_STEPS, STEP_FIELDS, form)
+  const stepperRef = useRef(stepper)
+  const formRef = useRef(form)
+
+  useEffect(() => {
+    stepperRef.current = stepper
+    formRef.current = form
+  })
 
   useEffect(() => {
     if (!open) {
-      form.reset()
-      stepper.reset()
+      formRef.current.reset()
+      stepperRef.current.reset()
     }
-  }, [open, form, stepper])
+  }, [open])
 
   const handleSuccess = () => {
     onOpenChange(false)

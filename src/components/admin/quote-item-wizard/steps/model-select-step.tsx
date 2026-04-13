@@ -2,7 +2,8 @@
 
 import { Check } from 'lucide-react'
 import Image from 'next/image'
-import { useFormContext } from 'react-hook-form'
+import { useCallback } from 'react'
+import { useFormContext, useWatch } from 'react-hook-form'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { formatCurrency, formatNumber } from '@/lib/format'
@@ -20,11 +21,27 @@ function formatRange(
   return `Ancho: ${fmt(minWidth)}–${fmt(maxWidth)} mm / Alto: ${fmt(minHeight)}–${fmt(maxHeight)} mm`
 }
 
+function ModelCardSkeleton() {
+  return (
+    <Card>
+      <CardContent className="p-0">
+        <Skeleton className="aspect-video w-full rounded-t-lg" />
+        <div className="p-3 space-y-2">
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-4 w-1/2" />
+          <Skeleton className="h-3 w-full" />
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
 function ModelSelectStep() {
   const form = useFormContext<WizardFormValues>()
-  const widthMm = form.watch('widthMm')
-  const heightMm = form.watch('heightMm')
-  const selectedModelId = form.watch('modelId')
+
+  const widthMm = useWatch({ control: form.control, name: 'widthMm' })
+  const heightMm = useWatch({ control: form.control, name: 'heightMm' })
+  const selectedModelId = useWatch({ control: form.control, name: 'modelId' })
 
   const {
     data: models,
@@ -33,14 +50,25 @@ function ModelSelectStep() {
     refetch,
   } = api.catalog['filter-models-by-dimensions'].useQuery(
     { heightMm: heightMm ?? 0, widthMm: widthMm ?? 0 },
-    { enabled: !!widthMm && !!heightMm },
+    { enabled: Boolean(widthMm && heightMm) },
   )
 
-  const handleSelectModel = (modelId: string) => {
-    form.setValue('modelId', modelId, { shouldValidate: true })
-    form.setValue('configuredWidthMm', widthMm ?? 0, { shouldValidate: true })
-    form.setValue('configuredHeightMm', heightMm ?? 0, { shouldValidate: true })
-  }
+  const handleSelectModel = useCallback(
+    (modelId: string) => {
+      form.setValue('modelId', modelId, { shouldValidate: true })
+      form.setValue('configuredWidthMm', widthMm ?? 0, { shouldValidate: true })
+      form.setValue('configuredHeightMm', heightMm ?? 0, { shouldValidate: true })
+    },
+    [form, widthMm, heightMm],
+  )
+
+  const handleCardClick = useCallback(
+    (modelId: string) => (e: React.MouseEvent) => {
+      e.preventDefault()
+      handleSelectModel(modelId)
+    },
+    [handleSelectModel],
+  )
 
   if (!widthMm || !heightMm) {
     return (
@@ -51,38 +79,12 @@ function ModelSelectStep() {
   }
 
   if (isLoading) {
+    const skeletonKeys = ['skeleton-1', 'skeleton-2', 'skeleton-3'] as const
     return (
       <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
-        <Card>
-          <CardContent className="p-0">
-            <Skeleton className="aspect-video w-full rounded-t-lg" />
-            <div className="p-3 space-y-2">
-              <Skeleton className="h-4 w-3/4" />
-              <Skeleton className="h-4 w-1/2" />
-              <Skeleton className="h-3 w-full" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-0">
-            <Skeleton className="aspect-video w-full rounded-t-lg" />
-            <div className="p-3 space-y-2">
-              <Skeleton className="h-4 w-3/4" />
-              <Skeleton className="h-4 w-1/2" />
-              <Skeleton className="h-3 w-full" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-0">
-            <Skeleton className="aspect-video w-full rounded-t-lg" />
-            <div className="p-3 space-y-2">
-              <Skeleton className="h-4 w-3/4" />
-              <Skeleton className="h-4 w-1/2" />
-              <Skeleton className="h-3 w-full" />
-            </div>
-          </CardContent>
-        </Card>
+        {skeletonKeys.map((key) => (
+          <ModelCardSkeleton key={key} />
+        ))}
       </div>
     )
   }
@@ -118,19 +120,11 @@ function ModelSelectStep() {
                 ? 'ring-2 ring-primary border-primary bg-primary/5 shadow-md'
                 : 'hover:border-primary/40 hover:scale-[1.01]'
             }`}
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              handleSelectModel(model.id)
-            }}
+            onClick={handleCardClick(model.id)}
             role="button"
             tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                handleSelectModel(model.id)
-              }
-            }}
+            aria-pressed={isSelected}
+            aria-label={`${model.name} - ${formatCurrency(model.basePrice)}`}
           >
             {isSelected && (
               <div className="absolute top-2 right-2 z-10 flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground shadow-sm">
@@ -139,23 +133,28 @@ function ModelSelectStep() {
               </div>
             )}
             <CardContent className="p-0">
-              <div className="relative aspect-video w-full bg-muted/50 overflow-hidden">
+              <div className="relative aspect-video w-full overflow-hidden bg-muted/50">
                 {model.imageUrl ? (
-                  <Image alt={model.name} className="object-cover" fill src={model.imageUrl} />
+                  <Image
+                    alt={`Modelo ${model.name}`}
+                    className="object-cover"
+                    fill
+                    src={model.imageUrl}
+                  />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <WindowSvgPlaceholder className="w-16 h-16 opacity-40" />
+                    <WindowSvgPlaceholder className="h-16 w-16 opacity-40" />
                   </div>
                 )}
               </div>
-              <div className="p-3.5 space-y-2">
+              <div className="space-y-2 p-3.5">
                 <div className="flex items-start justify-between gap-2">
-                  <h4 className="font-semibold text-sm leading-tight line-clamp-2">{model.name}</h4>
+                  <h4 className="line-clamp-2 text-sm font-semibold leading-tight">{model.name}</h4>
                 </div>
-                <p className="text-primary font-bold text-lg leading-tight">
+                <p className="text-lg font-bold leading-tight text-primary">
                   {formatCurrency(model.basePrice)}
                 </p>
-                <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <span className="font-mono">
                     {formatRange(
                       model.minWidthMm,
