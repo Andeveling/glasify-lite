@@ -1171,7 +1171,7 @@ La página de ejemplo muestra patrón de formulario con: selección de estilo, o
 
 5. **Conversión a cotización**
    - Click "Crear Cotización" en `/cart`
-   - Si no autenticado → Redirect a `/signin?callbackUrl=/cart`
+   - Si no autenticado → Redirect a `/sign-in?callbackUrl=/cart`
    - Login con Google OAuth
    - Redirect de vuelta a `/cart`
    - Quote creada automáticamente con estado `draft`
@@ -2050,9 +2050,9 @@ async function handleCreateQuote() {
 
 ### Autenticación
 
-- **Google OAuth**: `/api/auth/signin/google`
+- **Google OAuth**: `/api/auth/sign-in/google`
 - **Session Check**: `await auth()` en Server Components/Actions
-- **Protected Routes**: Middleware redirige a `/signin` si no autenticado
+- **Protected Routes**: Middleware redirige a `/sign-in` si no autenticado
 - **Role-Based**: Admin procedures verifican `session.user.role === 'admin'`
 
 ## Anexo D — Esquema de base de datos (DDL) — Postgres (borrador)
@@ -2818,4 +2818,3 @@ Para contribuciones, seguir [Development Guidelines](../.serena/memories/develop
 **Fin del PRD v1.5**  
 **Última actualización**: 2025-10-12  
 **Versión del documento**: 1.5.0
-

@@ -2,7 +2,7 @@
 
 ## Descripción General
 
-Migración de la página completa de Sign In (`/signin`) a un modal ligero que mejora significativamente la UX siguiendo los principios de "Don't Make Me Think".
+Migración de la página completa de Sign In (`/sign-in`) a un modal ligero que mejora significativamente la UX siguiendo los principios de "Don't Make Me Think".
 
 ### Antes 🔴
 - Página completa dedicada al login
@@ -22,7 +22,7 @@ Migración de la página completa de Sign In (`/signin`) a un modal ligero que m
 
 ### 1. `<SignInModal />` - Modal Reutilizable
 
-**Ubicación**: `src/components/signin-modal.tsx`
+**Ubicación**: `src/components/sign-in-modal.tsx`
 
 **Props**:
 ```typescript
@@ -63,7 +63,7 @@ const { isOpen, open, close, toggle, setIsOpen } = useSignInModal();
 'use client';
 
 import { useSignInModal } from '@/hooks/use-signin-modal';
-import { SignInModal } from '@/components/signin-modal';
+import { SignInModal } from '@/components/sign-in-modal';
 
 export function MyComponent() {
   const { isOpen, open, close } = useSignInModal();
@@ -81,10 +81,10 @@ export function MyComponent() {
 
 ### 3. **`<SignInPageClient />`** - Fallback Page
 
-**Ubicación**: `src/app/(auth)/signin/_components/signin-page-client.tsx`
+**Ubicación**: `src/app/(auth)/sign-in/_components/sign-in-page-client.tsx`
 
 **Propósito**: 
-- Mantener `/signin` como ruta válida (para SEO, bookmarks, email links)
+- Mantener `/sign-in` como ruta válida (para SEO, bookmarks, email links)
 - Abre el modal automáticamente
 - Redirige a `/catalog` al cerrar
 
@@ -92,7 +92,7 @@ export function MyComponent() {
 
 **Comportamiento**:
 ```
-/signin → Modal abre automáticamente → Cerrar modal → Redirect /catalog
+/sign-in → Modal abre automáticamente → Cerrar modal → Redirect /catalog
 ```
 
 ---
@@ -102,13 +102,13 @@ export function MyComponent() {
 **Archivo**: `src/app/(public)/_components/_layout/guest-menu.tsx`
 
 **Cambios**:
-- ❌ Removido `<Link href="/signin">`
+- ❌ Removido `<Link href="/sign-in">`
 - ✅ Agregado estado local para modal
 - ✅ Click en "Iniciar Sesión" → Abre modal
 
 **Antes**:
 ```tsx
-<Link href="/signin">Iniciar Sesión</Link>
+<Link href="/sign-in">Iniciar Sesión</Link>
 ```
 
 **Ahora**:
@@ -168,7 +168,7 @@ GuestMenu (Client Component)
 | Estado     | Trigger                             | Acción                     |
 | ---------- | ----------------------------------- | -------------------------- |
 | **Abrir**  | Click "Iniciar Sesión" en GuestMenu | `setShowSignInModal(true)` |
-| **Abrir**  | Navegar a `/signin` directamente    | `useState(true)` en mount  |
+| **Abrir**  | Navegar a `/sign-in` directamente    | `useState(true)` en mount  |
 | **Cerrar** | Click X / ESC / Click fuera         | `onOpenChange(false)`      |
 | **Cerrar** | Login exitoso                       | Google OAuth redirect      |
 
@@ -182,7 +182,7 @@ GuestMenu (Client Component)
 'use client';
 
 import { useState } from 'react';
-import { SignInModal } from '@/components/signin-modal';
+import { SignInModal } from '@/components/sign-in-modal';
 
 export function MyFeature() {
   const [showModal, setShowModal] = useState(false);
@@ -211,7 +211,7 @@ export function MyFeature() {
 'use client';
 
 import { useState } from 'react';
-import { SignInModal } from '@/components/signin-modal';
+import { SignInModal } from '@/components/sign-in-modal';
 
 export function CartSummary() {
   const [showSignIn, setShowSignIn] = useState(false);
@@ -236,11 +236,11 @@ export function CartSummary() {
 
 ---
 
-## Mantenimiento de Ruta `/signin`
+## Mantenimiento de Ruta `/sign-in`
 
 ### Por Qué Mantenerla
 
-1. **SEO**: Google puede haber indexado `/signin`
+1. **SEO**: Google puede haber indexado `/sign-in`
 2. **Bookmarks**: Usuarios pueden tener bookmarked
 3. **Email Links**: Links de emails antiguos siguen funcionando
 4. **Deep Links**: Aplicaciones externas pueden apuntar aquí
@@ -249,15 +249,15 @@ export function CartSummary() {
 
 **Usuario No Autenticado**:
 ```
-GET /signin → SignInPage → SignInPageClient → Modal abre automáticamente
+GET /sign-in → SignInPage → SignInPageClient → Modal abre automáticamente
 ```
 
 **Usuario Ya Autenticado**:
 ```
-GET /signin → auth() → redirect('/auth/callback') → Dashboard o My Quotes
+GET /sign-in → auth() → redirect('/auth/callback') → Dashboard o My Quotes
 ```
 
-**Modal Cerrado en `/signin`**:
+**Modal Cerrado en `/sign-in`**:
 ```
 Modal close → router.push('/catalog')
 ```
@@ -287,7 +287,7 @@ Modal close → router.push('/catalog')
 ### E2E Tests Sugeridos
 
 ```typescript
-// e2e/auth/signin-modal.spec.ts
+// e2e/auth/sign-in-modal.spec.ts
 
 import { expect, test } from '@playwright/test';
 
@@ -307,7 +307,7 @@ test.describe('Sign In Modal', () => {
   });
 
   test('closes modal on ESC key', async ({ page }) => {
-    await page.goto('/signin');
+    await page.goto('/sign-in');
     
     await expect(page.getByRole('dialog')).toBeVisible();
     
@@ -318,7 +318,7 @@ test.describe('Sign In Modal', () => {
   });
 
   test('shows loading state on Google sign in', async ({ page }) => {
-    await page.goto('/signin');
+    await page.goto('/sign-in');
     
     const googleButton = page.getByRole('button', { name: /google/i });
     await googleButton.click();
@@ -533,8 +533,8 @@ const handleGoogleSignIn = async () => {
 - ✅ Creado `<SignInModal />` component reutilizable
 - ✅ Creado `useSignInModal()` custom hook
 - ✅ Actualizado `GuestMenu` para usar modal
-- ✅ Creado `<SignInPageClient />` fallback para `/signin`
-- ✅ Mantenida ruta `/signin` como fallback (SEO/bookmarks)
+- ✅ Creado `<SignInPageClient />` fallback para `/sign-in`
+- ✅ Mantenida ruta `/sign-in` como fallback (SEO/bookmarks)
 - ✅ Implementado Google OAuth en modal
 - ✅ Preparado para magic links futuros (email input)
 - ✅ Aplicados principios "Don't Make Me Think"

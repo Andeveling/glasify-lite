@@ -7,6 +7,7 @@ import type { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Form } from '@/components/ui/form'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { useWizardStepper } from '@/hooks/use-wizard-stepper'
 import type { QuoteItemDetailSchema } from '@/server/api/routers/quote/quote.schemas'
 import { RunningSummary } from './running-summary'
@@ -124,42 +125,55 @@ function QuoteItemWizard({
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent
-        className="max-w-[60vw] lg:max-w-6xl xl:max-w-7xl max-h-[95vh] overflow-y-auto"
+        className="max-w-[90vw] lg:max-w-6xl xl:max-w-7xl h-[90vh] p-0 flex flex-col overflow-hidden"
         onInteractOutside={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
       >
-        <DialogHeader>
-          <DialogTitle>{editItem ? 'Editar ítem' : 'Agregar ítem'}</DialogTitle>
+        <DialogHeader className="px-6 pt-6 pb-4 border-b border-border/50">
+          <DialogTitle className="text-xl font-semibold">
+            {editItem ? 'Editar ítem' : 'Agregar ítem'}
+          </DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
-          <form className="space-y-6">
-            <StepIndicator
-              currentStep={stepper.currentStep}
-              totalSteps={TOTAL_STEPS}
-              visitedSteps={stepper.visitedSteps}
-            />
+          <form className="flex flex-col flex-1 overflow-hidden">
+            <div className="px-6">
+              <StepIndicator
+                currentStep={stepper.currentStep}
+                totalSteps={TOTAL_STEPS}
+                visitedSteps={stepper.visitedSteps}
+              />
+            </div>
 
-            <div className="flex flex-col lg:flex-row gap-6">
-              <div className="flex-1 min-w-0">{renderStep()}</div>
-              <aside className="w-full lg:w-64 shrink-0">
-                <div className="lg:sticky lg:top-0">
-                  <RunningSummary />
-                </div>
+            <div className="flex flex-1 gap-6 px-6 overflow-hidden">
+              <ScrollArea className="flex-1 pb-6">{renderStep()}</ScrollArea>
+              <aside className="w-80 shrink-0">
+                <ScrollArea className="h-full pb-6">
+                  <div className="sticky top-0">
+                    <RunningSummary />
+                  </div>
+                </ScrollArea>
               </aside>
             </div>
 
-            <div className="flex justify-between gap-4">
-              {!stepper.isFirstStep && (
-                <Button onClick={stepper.goBack} type="button" variant="outline">
-                  Volver
-                </Button>
-              )}
-              {!stepper.isLastStep && (
-                <Button className="ml-auto" onClick={() => void stepper.goNext()} type="button">
-                  Siguiente
-                </Button>
-              )}
+            <div className="sticky bottom-0 z-10 border-t border-border/50 bg-background/95 backdrop-blur-sm px-6 py-4">
+              <div className="flex justify-between gap-4">
+                {!stepper.isFirstStep && (
+                  <Button onClick={stepper.goBack} type="button" variant="outline" size="lg">
+                    Volver
+                  </Button>
+                )}
+                {!stepper.isLastStep && (
+                  <Button
+                    className="ml-auto"
+                    onClick={() => void stepper.goNext()}
+                    type="button"
+                    size="lg"
+                  >
+                    Siguiente
+                  </Button>
+                )}
+              </div>
             </div>
           </form>
         </Form>

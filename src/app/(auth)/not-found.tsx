@@ -28,7 +28,7 @@ export default function AuthNotFound() {
 
           <div className="space-y-3">
             <Button asChild className="w-full">
-              <Link href="/signin">
+              <Link href="/sign-in">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Volver al inicio de sesión
               </Link>

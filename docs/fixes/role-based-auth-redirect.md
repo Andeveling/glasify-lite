@@ -92,7 +92,7 @@ export default async function AuthCallbackPage() {
   const session = await auth();
 
   if (!session?.user) {
-    redirect('/signin');  // No autenticado
+    redirect('/sign-in');  // No autenticado
   }
 
   if (session.user.role === 'admin') {
@@ -125,7 +125,7 @@ export default function AuthCallbackLayout({ children }) {
 
 ### 4. SignIn Form Update
 
-**Archivo**: `src/app/(auth)/_components/signin-form.tsx`
+**Archivo**: `src/app/(auth)/_components/sign-in-form.tsx`
 
 **Cambio**: `callbackUrl` ahora apunta a `/auth/callback`
 
@@ -158,7 +158,7 @@ if (isAuthRoute && isLoggedIn && !isAuthCallback) {
 ```
 
 **Comportamiento**:
-- Si usuario autenticado intenta acceder a `/signin` → redirige a `/auth/callback`
+- Si usuario autenticado intenta acceder a `/sign-in` → redirige a `/auth/callback`
 - `/auth/callback` determina si es admin o user y redirige apropiadamente
 
 ---
@@ -190,12 +190,12 @@ graph TD
     A[Usuario hace clic en "Google"] --> B[signIn con callbackUrl=/auth/callback]
     B --> C[Google OAuth]
     C --> D{Login exitoso?}
-    D -->|No| E[Vuelve a /signin]
+    D -->|No| E[Vuelve a /sign-in]
     D -->|Sí| F[NextAuth crea sesión]
     F --> G[Callback asigna role en sesión]
     G --> H[Redirige a /auth/callback]
     H --> I{Usuario autenticado?}
-    I -->|No| J[Redirige a /signin]
+    I -->|No| J[Redirige a /sign-in]
     I -->|Sí| K{Es admin?}
     K -->|Sí| L[Redirige a /dashboard]
     K -->|No| M[Redirige a /my-quotes]
@@ -206,7 +206,7 @@ graph TD
 ```mermaid
 graph TD
     A[Usuario va a /dashboard o /my-quotes] --> B{Está autenticado?}
-    B -->|No| C[Middleware → /signin?callbackUrl=X]
+    B -->|No| C[Middleware → /sign-in?callbackUrl=X]
     B -->|Sí| D[Permite acceso]
     C --> E[Login exitoso]
     E --> F[Redirige a callbackUrl original]
@@ -312,14 +312,14 @@ import { expect, test } from '@playwright/test';
 test.describe('Role-based redirect after login', () => {
   test('admin user redirects to dashboard', async ({ page }) => {
     // TODO: Mock Google OAuth with admin email
-    await page.goto('/signin');
+    await page.goto('/sign-in');
     // ... login flow
     await expect(page).toHaveURL('/dashboard');
   });
 
   test('regular user redirects to my-quotes', async ({ page }) => {
     // TODO: Mock Google OAuth with regular email
-    await page.goto('/signin');
+    await page.goto('/sign-in');
     // ... login flow
     await expect(page).toHaveURL('/my-quotes');
   });

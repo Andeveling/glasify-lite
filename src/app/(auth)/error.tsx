@@ -70,7 +70,7 @@ export default function AuthError({
   }
 
   const handleTrySignIn = () => {
-    router.push('/signin')
+    router.push('/sign-in')
   }
 
   const shouldShowRetry = errorType !== 'session' && errorType !== 'auth'

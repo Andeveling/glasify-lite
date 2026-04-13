@@ -41,17 +41,17 @@
   --color-text-muted: #71717A;
   --color-text-disabled: #52525B;
 
-  --color-primary: #36F4A4;
+  --color-primary: #44fdab;
   --color-primary-foreground: #000000;
   --color-accent: #D4F9E0;
   --color-accent-soft: #C1FBD4;
 
-  --color-success: #36F4A4;
+  --color-success: #44fdab;
   --color-warning: #F4D136;
   --color-destructive: #FF6B6B;
   --color-info: #6BB4FF;
 
-  --font-display: "NeueHaasGrotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: "Space Grotesk", "NeueHaasGrotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-sans: "Inter", Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
@@ -64,7 +64,7 @@
   --shadow-subtle: rgba(0,0,0,0.1) 0px 0px 0px 1px, rgba(0,0,0,0.1) 0px 2px 2px, rgba(0,0,0,0.1) 0px 4px 4px, rgba(0,0,0,0.1) 0px 8px 8px;
   --shadow-elevated: rgba(0,0,0,0.1) 0px 0px 0px 1px, rgba(0,0,0,0.1) 0px 2px 4px, rgba(0,0,0,0.1) 0px 4px 8px, rgba(0,0,0,0.1) 0px 8px 16px, rgba(255,255,255,0.03) 0px 1px 0px inset;
   --shadow-high: rgba(0,0,0,0.25) 0px 25px 50px -12px;
-  --shadow-focus: 0px 0px 0px 2px #36F4A4;
+  --shadow-focus: 0px 0px 0px 2px #44fdab;
 
   --tracking-display: 0.04em;
   --tracking-heading: 0.02em;

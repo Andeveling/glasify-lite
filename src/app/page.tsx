@@ -9,5 +9,5 @@ export default async function Home() {
   if (session?.user) {
     redirect('/admin')
   }
-  redirect('/signin')
+  redirect('/sign-in')
 }

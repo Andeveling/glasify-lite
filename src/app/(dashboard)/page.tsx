@@ -294,7 +294,7 @@ export default async function DashboardPage() {
   })
 
   if (!session?.user) {
-    redirect('/signin')
+    redirect('/sign-in')
   }
 
   // Get tenant configuration for date formatting

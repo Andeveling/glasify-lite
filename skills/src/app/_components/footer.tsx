@@ -91,7 +91,7 @@ export function Footer({ variant = 'full', className }: FooterProps) {
               </Link>
               <Link
                 className="block text-muted-foreground text-sm hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"
-                href="/signin"
+                href="/sign-in"
               >
                 Panel Administrativo
               </Link>

@@ -9,6 +9,7 @@ import { formatCurrency, formatNumber } from 'skills/src/lib/format'
 import { api } from 'skills/src/trpc/react'
 import { WindowSvgPlaceholder } from '../window-svg-placeholder'
 import type { WizardFormValues } from '../wizard-form-schema'
+import { useWatch } from 'react-hook-form'
 
 function formatRange(
   minWidth: number,
@@ -21,10 +22,10 @@ function formatRange(
 }
 
 function ModelSelectStep() {
-  const form = useFormContext<WizardFormValues>()
-  const widthMm = form.watch('widthMm')
-  const heightMm = form.watch('heightMm')
-  const selectedModelId = form.watch('modelId')
+	const form = useFormContext<WizardFormValues>()
+	const widthMm = useWatch({ control: form.control, name: 'widthMm' })
+	const heightMm = useWatch({ control: form.control, name: 'heightMm' })
+	const selectedModelId = useWatch({ control: form.control, name: 'modelId' })
 
   const {
     data: models,

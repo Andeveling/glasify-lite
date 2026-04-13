@@ -164,7 +164,7 @@ src/app/
 ```typescript
 test('callback redirects without showing auth layout', async ({ page }) => {
   // Mock OAuth login
-  await page.goto('/signin');
+  await page.goto('/sign-in');
   await page.click('text=Continuar con Google');
   
   // Should redirect without showing purple background
@@ -184,7 +184,7 @@ test('callback redirects without showing auth layout', async ({ page }) => {
 
 **`(folder)/`** → Route group, hereda layouts
 - Útil para: Compartir layouts entre rutas relacionadas
-- Ejemplo: `(auth)/signin`, `(auth)/signup`
+- Ejemplo: `(auth)/sign-in`, `(auth)/signup`
 
 **`folder/`** → Ruta normal
 - Útil para: Rutas que NO deben heredar el layout del grupo

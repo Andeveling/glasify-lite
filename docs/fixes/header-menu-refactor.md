@@ -27,7 +27,7 @@
 **Ubicación**: `src/app/(public)/_components/_layout/guest-menu.tsx`
 
 **Características**:
-- ✅ Opción "Iniciar Sesión" con `Link` a `/signin`
+- ✅ Opción "Iniciar Sesión" con `Link` a `/sign-in`
 - ✅ Toggle de tema (Light/Dark) integrado
 - ✅ Client Component para interactividad del tema
 - ✅ Diseño simple y directo
@@ -181,7 +181,7 @@ describe('UserMenu', () => {
 });
 
 describe('GuestMenu', () => {
-  it('should navigate to /signin when clicked');
+  it('should navigate to /sign-in when clicked');
   it('should toggle theme when clicked');
 });
 ```
@@ -190,7 +190,7 @@ describe('GuestMenu', () => {
 ```typescript
 test('authenticated user can access my-quotes from menu', async ({ page }) => {
   // Login
-  await page.goto('/signin');
+  await page.goto('/sign-in');
   await page.click('[aria-label="Continuar con Google"]');
   
   // Open user menu

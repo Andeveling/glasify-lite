@@ -16,7 +16,7 @@ export default async function SettingsPage() {
   })
 
   if (!session?.user) {
-    redirect('/signin')
+    redirect('/sign-in')
   }
 
   return (

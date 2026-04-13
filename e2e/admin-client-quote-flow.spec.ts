@@ -64,7 +64,9 @@ test.describe("Admin Client → Quote E2E Flow", () => {
 
       // Wait for the form to appear
       await page.waitForURL("**/admin/clients/new", { timeout: 10_000 });
-      await expect(page.locator("h1:has-text('Crear Nuevo Cliente')")).toBeVisible();
+      await expect(
+        page.locator("h1:has-text('Crear Nuevo Cliente')"),
+      ).toBeVisible();
 
       // Fill client form
       await page.fill('input[id="name"]', clientName);
@@ -90,7 +92,7 @@ test.describe("Admin Client → Quote E2E Flow", () => {
       // ── Step 4: Select the client we just created ─────────────────────────
       // The client selector dropdown should contain our client
       const clientSelectTrigger = page.locator(
-        '[data-slot="select-trigger"]:has-text("Sin asignar")'
+        '[data-slot="select-trigger"]:has-text("Sin asignar")',
       );
       await clientSelectTrigger.click();
 
@@ -102,7 +104,7 @@ test.describe("Admin Client → Quote E2E Flow", () => {
 
       // Verify client is now selected
       await expect(
-        clientSelectTrigger.locator(`text=${clientName}`)
+        clientSelectTrigger.locator(`text=${clientName}`),
       ).toBeVisible();
 
       // ── Step 5: Fill project info ─────────────────────────────────────────
@@ -116,12 +118,12 @@ test.describe("Admin Client → Quote E2E Flow", () => {
       await page.click('button:has-text("Agregar Ítem")');
 
       // Wait for the item row to appear
-      await page.waitForSelector('[data-slot="select-trigger"]', { timeout: 5000 });
+      await page.waitForSelector('[data-slot="select-trigger"]', {
+        timeout: 5000,
+      });
 
       // Select a model (first available option)
-      const modelTrigger = page.locator(
-        '[data-slot="select-trigger"]'
-      ).first();
+      const modelTrigger = page.locator('[data-slot="select-trigger"]').first();
       await modelTrigger.click();
       await page.waitForSelector("[role='option']", { timeout: 5000 });
       const firstModel = page.locator("[role='option']").first();
@@ -213,7 +215,7 @@ test.describe("Admin Client → Quote E2E Flow", () => {
       await page.goto("/admin/clients");
 
       // Should redirect to signin
-      await page.waitForURL(/\/signin/, { timeout: 10_000 });
+      await page.waitForURL(/\/sign-in/, { timeout: 10_000 });
       await expect(page.locator('input[id="signin-email"]')).toBeVisible();
     },
   );
@@ -240,7 +242,9 @@ test.describe("Admin Client → Quote E2E Flow", () => {
       await page.waitForLoadState("networkidle");
 
       // Select client
-      const selectTrigger = page.locator('[data-slot="select-trigger"]:has-text("Sin asignar")');
+      const selectTrigger = page.locator(
+        '[data-slot="select-trigger"]:has-text("Sin asignar")',
+      );
       await selectTrigger.click();
       await page.waitForSelector("[role='option']", { timeout: 5000 });
       await page.click(`[role="option"]:has-text("${clientName}")`);
@@ -251,7 +255,9 @@ test.describe("Admin Client → Quote E2E Flow", () => {
 
       // Add item
       await page.click('button:has-text("Agregar Ítem")');
-      await page.waitForSelector('[data-slot="select-trigger"]', { timeout: 5000 });
+      await page.waitForSelector('[data-slot="select-trigger"]', {
+        timeout: 5000,
+      });
 
       const modelTrigger = page.locator('[data-slot="select-trigger"]').first();
       await modelTrigger.click();
@@ -272,7 +278,9 @@ test.describe("Admin Client → Quote E2E Flow", () => {
       await page.waitForLoadState("networkidle");
 
       // Select same client again
-      const selectTrigger2 = page.locator('[data-slot="select-trigger"]:has-text("Sin asignar")');
+      const selectTrigger2 = page.locator(
+        '[data-slot="select-trigger"]:has-text("Sin asignar")',
+      );
       await selectTrigger2.click();
       await page.waitForSelector("[role='option']", { timeout: 5000 });
       await page.click(`[role="option"]:has-text("${clientName}")`);
@@ -282,9 +290,13 @@ test.describe("Admin Client → Quote E2E Flow", () => {
       await page.fill('input[id="projectCity"]', "Ciudad Dos");
 
       await page.click('button:has-text("Agregar Ítem")');
-      await page.waitForSelector('[data-slot="select-trigger"]', { timeout: 5000 });
+      await page.waitForSelector('[data-slot="select-trigger"]', {
+        timeout: 5000,
+      });
 
-      const modelTrigger2 = page.locator('[data-slot="select-trigger"]').first();
+      const modelTrigger2 = page
+        .locator('[data-slot="select-trigger"]')
+        .first();
       await modelTrigger2.click();
       await page.waitForSelector("[role='option']", { timeout: 5000 });
       await page.locator("[role='option']").first().click();

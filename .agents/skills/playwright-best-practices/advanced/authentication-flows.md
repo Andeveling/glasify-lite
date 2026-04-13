@@ -151,7 +151,7 @@ test('enforces password requirements on reset', async ({ page }) => {
 
 ```typescript
 test('redirects to signin after session expires', async ({ page, context }) => {
-  await page.goto('/signin');
+  await page.goto('/sign-in');
   await page.getByLabel('Email').fill('user@test.com');
   await page.getByLabel('Password').fill('Password!');
   await page.getByRole('button', { name: 'Sign in' }).click();
@@ -165,7 +165,7 @@ test('redirects to signin after session expires', async ({ page, context }) => {
   }
 
   await page.goto('/profile');
-  await expect(page).toHaveURL(/\/signin/);
+  await expect(page).toHaveURL(/\/sign-in/);
   await expect(page.getByText(/session.*expired|sign in again/i)).toBeVisible();
 });
 ```
@@ -235,7 +235,7 @@ test('persists session with remember me enabled', async ({ browser }) => {
   const ctx1 = await browser.newContext();
   const page1 = await ctx1.newPage();
 
-  await page1.goto('/signin');
+  await page1.goto('/sign-in');
   await page1.getByLabel('Email').fill('user@test.com');
   await page1.getByLabel('Password').fill('Password!');
   await page1.getByLabel('Keep me signed in').check();
@@ -264,7 +264,7 @@ test('session-only login does not persist across browser restarts', async ({ bro
   const ctx1 = await browser.newContext();
   const page1 = await ctx1.newPage();
 
-  await page1.goto('/signin');
+  await page1.goto('/sign-in');
   await page1.getByLabel('Email').fill('user@test.com');
   await page1.getByLabel('Password').fill('Password!');
   // Leave "Remember me" unchecked
@@ -285,7 +285,7 @@ test('session-only login does not persist across browser restarts', async ({ bro
   await page2.goto('/home');
 
   // Should redirect to login since session was not persisted
-  await expect(page2).toHaveURL(/\/signin/);
+  await expect(page2).toHaveURL(/\/sign-in/);
 
   await ctx2.close();
 });
@@ -306,14 +306,14 @@ test('logs out and clears session', async ({ page, context }) => {
   await page.getByRole('button', { name: /account|menu/i }).click();
   await page.getByRole('menuitem', { name: 'Sign out' }).click();
 
-  await expect(page).toHaveURL('/signin');
+  await expect(page).toHaveURL('/sign-in');
 
   const cookies = await context.cookies();
   const sessionCookies = cookies.filter((c) => c.name.includes('session') || c.name.includes('token'));
   expect(sessionCookies).toHaveLength(0);
 
   await page.goto('/home');
-  await expect(page).toHaveURL(/\/signin/);
+  await expect(page).toHaveURL(/\/sign-in/);
 });
 ```
 
@@ -338,7 +338,7 @@ test('logs out from all devices', async ({ page }) => {
   await page.getByRole('dialog').getByRole('button', { name: 'Confirm' }).click();
 
   expect(logoutAllCalled).toBe(true);
-  await expect(page).toHaveURL(/\/signin/);
+  await expect(page).toHaveURL(/\/sign-in/);
 });
 ```
 

@@ -109,7 +109,7 @@ type QuoteGenerationDrawerProps = {
 
 **Lógica de autenticación**:
 - **Autenticado**: Muestra drawer trigger
-- **No autenticado**: Muestra botón que redirige a `/api/auth/signin?callbackUrl=/cart`
+- **No autenticado**: Muestra botón que redirige a `/api/auth/sign-in?callbackUrl=/cart`
 
 **Beneficios**:
 - ✅ Usuario autenticado ve drawer inmediatamente
@@ -131,7 +131,7 @@ export default async function QuoteGenerationPage() {
   if (session?.user) {
     redirect('/cart');
   } else {
-    redirect('/api/auth/signin?callbackUrl=/cart');
+    redirect('/api/auth/sign-in?callbackUrl=/cart');
   }
 }
 ```
@@ -151,7 +151,7 @@ export default async function QuoteGenerationPage() {
 ```
 1. Usuario en /cart
 2. Click "Generar cotización"
-3. Check auth → redirect a /signin (si no auth)
+3. Check auth → redirect a /sign-in (si no auth)
 4. Redirect de vuelta a /quote/new
 5. Página completa se carga
 6. Form se renderiza
@@ -166,7 +166,7 @@ Total: 4-5 navegaciones de página
 ### Flujo Nuevo ✅
 ```
 1. Usuario en /cart
-2. Click "Generar cotización" (si no auth → /signin → vuelve a /cart)
+2. Click "Generar cotización" (si no auth → /sign-in → vuelve a /cart)
 3. Drawer se abre (animación suave)
 4. Form ya visible (no loading)
 5. Usuario llena form

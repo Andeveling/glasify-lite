@@ -40,7 +40,7 @@ export default function NotFound() {
                 </Button>{' '}
                 o{' '}
                 <Button asChild className="h-auto p-0" size="sm" variant="link">
-                  <Link href="/signin">inicia sesión</Link>
+                  <Link href="/sign-in">inicia sesión</Link>
                 </Button>
                 .
               </p>

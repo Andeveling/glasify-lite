@@ -90,27 +90,51 @@ function ConfirmStep({ mode, quoteId, onSuccess, onDraftConfirm }: ConfirmStepPr
   const values = useWatch({ control: form.control })
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardContent className="p-4 space-y-3">
-          <SummaryRow label="Dimensiones" value={`${values.widthMm} × ${values.heightMm} mm`} />
-          <SummaryRow
-            label="Configurado"
-            value={`${values.configuredWidthMm} × ${values.configuredHeightMm} mm`}
-          />
-          <SummaryRow label="Cantidad" value={String(values.quantity)} />
-          <SummaryRow label="Ambiente" value={values.roomLocation ?? '—'} />
-          <SummaryRow label="Modelo" value={values.modelId || '—'} />
-          <SummaryRow label="Color" value={values.colorId ?? 'Sin color'} />
-          <SummaryRow label="Vidrio" value={values.glassTypeId || '—'} />
-          <SummaryRow
-            label="Servicios"
-            value={
-              (values.serviceIds?.length ?? 0) > 0
-                ? `${values.serviceIds?.length} servicios`
-                : 'Sin servicios'
-            }
-          />
+    <div className="space-y-6 max-w-2xl">
+      <div>
+        <h2 className="text-lg font-semibold text-foreground mb-2">Confirmar ítem</h2>
+        <p className="text-sm text-muted-foreground">
+          Revisá los datos antes de agregar el ítem a la cotización
+        </p>
+      </div>
+
+      <Card className="border-border/50">
+        <CardContent className="p-5 space-y-4">
+          <div className="space-y-3">
+            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              Dimensiones y cantidad
+            </h4>
+            <div className="space-y-2">
+              <SummaryRow label="Dimensiones" value={`${values.widthMm} × ${values.heightMm} mm`} />
+              <SummaryRow
+                label="Configurado"
+                value={`${values.configuredWidthMm} × ${values.configuredHeightMm} mm`}
+              />
+              <SummaryRow label="Cantidad" value={String(values.quantity)} />
+              {values.roomLocation && <SummaryRow label="Ambiente" value={values.roomLocation} />}
+            </div>
+          </div>
+
+          <div className="h-px bg-border/50" />
+
+          <div className="space-y-3">
+            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              Configuración
+            </h4>
+            <div className="space-y-2">
+              <SummaryRow label="Modelo" value={values.modelId || '—'} />
+              <SummaryRow label="Color" value={values.colorId ?? 'Sin color'} />
+              <SummaryRow label="Vidrio" value={values.glassTypeId || '—'} />
+              <SummaryRow
+                label="Servicios"
+                value={
+                  (values.serviceIds?.length ?? 0) > 0
+                    ? `${values.serviceIds?.length} servicios`
+                    : 'Sin servicios'
+                }
+              />
+            </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -127,7 +151,7 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between text-sm">
       <span className="text-muted-foreground">{label}</span>
-      <span className="font-medium">{value}</span>
+      <span className="font-semibold text-foreground">{value}</span>
     </div>
   )
 }
