@@ -257,7 +257,7 @@ export async function seedGlassSolutionsFromFile(fileName: string): Promise<{
   let seeded = 0;
   let skipped = 0;
 
-  const { PrismaClient } = await import("@prisma/generated/client");
+  const { PrismaClient } = await import("../generated/client");
   const { PrismaLibSql } = await import("@prisma/adapter-libsql");
 
   const adapter = new PrismaLibSql({

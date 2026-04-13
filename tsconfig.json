@@ -27,8 +27,8 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@prisma/generated/client": ["./prisma/generated/client/client.ts"],
-      "@prisma/generated/client/runtime/library": [
+      "@db/generated/client": ["./prisma/generated/client/client.ts"],
+      "@db/generated/client/runtime/library": [
         "./prisma/generated/client/internal/prismaNamespace.ts"
       ],
       "@/*": ["./src/*"],
