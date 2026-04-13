@@ -67,11 +67,19 @@ Account/Session models use `@map()` for legacy NextAuth compatibility. Don't rem
 ```
 prisma/
 ├── schema.prisma              # Schema fuente
-├── generated/client/           # Prisma client generado
-├── seed-cli.ts                # Seed orchestrator
-├── seeders/                    # Individual seeders
-├── data/presets/              # Seed presets por cliente
-│   └── vitro-rojas-panama/   # Client data
+├── generated/client/           # Prisma client generado (READ ONLY)
+├── migrations/                 # Versioned migration history
+├── migrations-scripts/        # One-off migration utilities
+├── seeders/                   # Individual seeders
+├── seed-cli.ts                # Seed orchestrator CLI entry point
+├── factories/                 # Test data generators
+├── data/
+│   ├── catalog/               # Reference catalog data
+│   ├── clients/               # Per-client reference data
+│   │   └── vitro-rojas/       # Client: Vitro Rojas Panama
+│   └── presets/               # Seed presets per client
+├── check-user.ts              # Utility: lookup user by email
+└── test-password.ts           # Utility: test password hashing
 src/
 ├── server/
 │   ├── db.ts                  # Prisma client singleton

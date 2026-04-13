@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "wiki/CLAUDE.md",
+                "file": "wiki/30-clients/01-vitro-rojas/profile.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CLAUDE"
+              "title": "profile"
             }
           }
         ]
@@ -183,12 +183,13 @@
   },
   "active": "962ceb261743cc67",
   "lastOpenFiles": [
-    "CLAUDE.md",
+    "wiki/00-glassify/pricing-formula.md",
+    "wiki/30-clients/01-vitro-rojas/profile.md",
+    "wiki/30-clients/01-vitro-rojas/presets.md",
     "wiki/CLAUDE.md",
+    "CLAUDE.md",
     "index.md",
     "log.md",
-    "wiki/30-clients/01-vitro-rojas/presets.md",
-    "wiki/30-clients/01-vitro-rojas/presets.md",
     "wiki/30-clients/01-vitro-rojas/vitro-rojas-sa-corte.md",
     "wiki/30-clients/01-vitro-rojas/vitro-rojas-tabla-comparativa.md",
     "wiki/30-clients/01-vitro-rojas/gestion-transporte.md",
@@ -208,7 +209,6 @@
     "wiki/00-glassify/note-format-convention.md",
     "wiki/00-glassify/wikilink-convention.md",
     "wiki/00-glassify/routes.md",
-    "wiki/00-glassify/roadmap.md",
     "wiki/20-manufacturers",
     "wiki/30-clients/01-vitro-rojas",
     "log.md.tmp.1359392.1776105944404",
