@@ -5,8 +5,10 @@ import { parseCompatibleGlassTypeIds } from '@/lib/utils/compatible-glass-types'
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc'
 import {
   getAvailableGlassTypesInput,
+  getGlassTypeByIdInput,
   getModelByIdInput,
   glassCompatibilityOutput,
+  glassTypeDetailOutput,
   listAvailableGlassTypesOutput,
   listGlassSolutionsInput,
   listGlassSolutionsOutput,
@@ -555,6 +557,81 @@ export const catalogQueries = createTRPCRouter({
         })
 
         throw new Error('No se pudieron cargar los tipos de vidrio. Intente nuevamente.')
+      }
+    }),
+
+  /**
+   * Get a single glass type by ID
+   * Used by RunningSummary to display glass type details
+   * @public
+   */
+  'get-glass-type-by-id': publicProcedure
+    .input(getGlassTypeByIdInput)
+    .output(glassTypeDetailOutput)
+    .query(async ({ ctx, input }) => {
+      try {
+        logger.info('Getting glass type by ID', { glassTypeId: input.glassTypeId })
+
+        const glassType = await ctx.db.glassType.findUnique({
+          where: { id: input.glassTypeId },
+          select: {
+            characteristics: {
+              include: {
+                characteristic: true,
+              },
+              orderBy: { characteristic: { name: 'asc' } },
+            },
+            code: true,
+            createdAt: true,
+            description: true,
+            id: true,
+            isActive: true,
+            isSeeded: true,
+            manufacturer: true,
+            name: true,
+            pricePerSqm: true,
+            seedVersion: true,
+            series: true,
+            solutions: {
+              include: {
+                solution: true,
+              },
+              orderBy: [{ isPrimary: 'desc' }, { solution: { sortOrder: 'asc' } }],
+            },
+            thicknessMm: true,
+            updatedAt: true,
+            uValue: true,
+          },
+        })
+
+        if (!glassType) {
+          logger.warn('Glass type not found', { glassTypeId: input.glassTypeId })
+          throw new Error('El tipo de vidrio no existe.')
+        }
+
+        const serialized = {
+          ...glassType,
+          pricePerSqm: glassType.pricePerSqm.toNumber(),
+          uValue: glassType.uValue?.toNumber() ?? null,
+        }
+
+        logger.info('Successfully retrieved glass type', {
+          glassTypeId: input.glassTypeId,
+          glassTypeName: glassType.name,
+        })
+
+        return serialized
+      } catch (error) {
+        logger.error('Error getting glass type by ID', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          glassTypeId: input.glassTypeId,
+        })
+
+        if (error instanceof Error && error.message.includes('no existe')) {
+          throw error
+        }
+
+        throw new Error('No se pudo cargar el tipo de vidrio. Intente nuevamente.')
       }
     }),
 

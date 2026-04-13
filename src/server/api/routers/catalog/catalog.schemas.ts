@@ -36,6 +36,10 @@ export const listGlassSolutionsInput = z
   })
   .optional()
 
+export const getGlassTypeByIdInput = z.object({
+  glassTypeId: z.cuid('ID del tipo de vidrio debe ser válido'),
+})
+
 export const getAvailableGlassTypesInput = z.object({
   modelId: z.cuid('ID del modelo debe ser válido'),
 })
@@ -218,6 +222,8 @@ export const availableGlassTypeOutput = z.object({
   description: z.string().nullable(),
 })
 
+export const glassTypeDetailOutput = glassTypeOutput
+
 export const listAvailableGlassTypesOutput = z.array(availableGlassTypeOutput)
 
 export const glassCompatibilityOutput = z.object({
@@ -245,6 +251,7 @@ export type GlassTypeOutput = z.infer<typeof glassTypeOutput>
 export type ListGlassTypesOutput = z.infer<typeof listGlassTypesOutput>
 export type GetAvailableGlassTypesInput = z.infer<typeof getAvailableGlassTypesInput>
 export type AvailableGlassTypeOutput = z.infer<typeof availableGlassTypeOutput>
+export type GlassTypeDetailOutput = z.infer<typeof glassTypeDetailOutput>
 export type ListAvailableGlassTypesOutput = z.infer<typeof listAvailableGlassTypesOutput>
 export type ValidateGlassCompatibilityInput = z.infer<typeof validateGlassCompatibilityInput>
 export type GlassCompatibilityOutput = z.infer<typeof glassCompatibilityOutput>
