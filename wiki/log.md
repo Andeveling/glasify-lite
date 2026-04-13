@@ -4,6 +4,26 @@
 
 ---
 
+### Brief document ingested
+- **Source**: `docs/brief.md` (copied to `wiki/wiki/00-glassify/brief.md`)
+- **What changed**: 
+  - Creado `brief.md` en wiki (summary page del documento)
+  - Creado `ecosistema-participantes.md` en `20-manufacturers/`
+  - Creado `ia-arquitectura.md` en `00-glassify/`
+  - Creado `roadmap.md` en `00-glassify/`
+  - Creado `kpis-metricas.md` en `00-glassify/`
+  - Actualizado `wiki/index.md` con nuevas páginas
+- **Action**: Original permanece en `docs/brief.md` (source)
+
+---
+
+### DesignTemplate System spec
+- **Source**: `docs/superpowers/specs/2026-04-12-design-template-system.md` (copied to `raw/superpowers/specs/`)
+- **What changed**: Creado `wiki/wiki/40-design/design-template-system.md`
+- **Action**: `docs/superpowers/` eliminado
+
+---
+
 ### Client Preset: Vitro Rojas Panama
 - **Source**: `docs/seeders/vitro-rojas-panama.md` (copied to `raw/seeders/vitro-rojas-panama.md`)
 - **What changed**: Creado `wiki/wiki/30-clients/vitro-rojas-panama.md`

@@ -77,6 +77,7 @@ Exporta PDF/Excel o envía directamente al cliente
 
 ## Related pages
 
+- [[brief]] — Brief completo del proyecto
 - [[tech-stack]]
 - [[routes]]
 - [[entities]]

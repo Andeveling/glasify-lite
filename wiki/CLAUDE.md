@@ -1,7 +1,7 @@
 # LLM Wiki
 
 
-A personal knowledge base maintained by Claude Code.
+A personal knowledge base maintained by Agents AI.
 Based on Andrej Karpathy's LLM Wiki pattern.
 
 
@@ -17,7 +17,7 @@ Claude maintains the wiki. The human curates sources, asks questions, and guides
 
 ```
 raw/          -- source documents (immutable -- never modify these)
-wiki/         -- markdown pages maintained by Claude
+wiki/         -- markdown pages maintained by AI Agents
 wiki/index.md -- table of contents for the entire wiki
 wiki/log.md   -- append-only record of all operations
 ```
