@@ -35,9 +35,7 @@ function GlassTypeCard({ glassType, isSelected, onSelect, formatContext }: Glass
         <div className="flex-1 space-y-1">
           <p className="font-semibold text-foreground">{glassType.name}</p>
           {glassType.description && (
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {glassType.description}
-            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed">{glassType.description}</p>
           )}
         </div>
         <div className="text-right ml-4 space-y-1">

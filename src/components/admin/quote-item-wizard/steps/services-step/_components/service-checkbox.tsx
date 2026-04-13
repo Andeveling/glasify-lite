@@ -41,9 +41,7 @@ function ServiceCheckbox({ service, isSelected, onToggle, formatContext }: Servi
         />
         <div className="flex-1 space-y-1">
           <p className="font-semibold text-foreground">{service.name}</p>
-          {service.type && (
-            <p className="text-muted-foreground text-sm">Tipo: {service.type}</p>
-          )}
+          {service.type && <p className="text-muted-foreground text-sm">Tipo: {service.type}</p>}
         </div>
         <div className="text-right ml-4 space-y-1">
           <p className="text-sm font-semibold text-foreground">

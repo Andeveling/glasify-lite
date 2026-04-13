@@ -1,7 +1,7 @@
 'use client'
 
 import { Badge } from '@/components/ui/badge'
-import { formatCurrency, formatPercent } from '@/lib/format'
+import { formatPercent } from '@/lib/format'
 
 interface ColorSelectorProps {
   colors: Array<{

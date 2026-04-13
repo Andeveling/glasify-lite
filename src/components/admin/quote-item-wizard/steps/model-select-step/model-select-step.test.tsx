@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { mockValidFormValues, mockModels } from '../__test-utils__/mock-data'
+import { mockModels, mockValidFormValues } from '../__test-utils__/mock-data'
 import { renderWithFormContext } from '../__test-utils__/test-wrapper'
 import { ModelSelectStep } from '../model-select-step'
 

@@ -38,7 +38,14 @@ function formatRange(
   return `Ancho: ${fmt(minWidth)}–${fmt(maxWidth)} mm / Alto: ${fmt(minHeight)}–${fmt(maxHeight)} mm`
 }
 
-function ModelCard({ model, isSelected, onSelect, formatContext, configuredWidthMm, configuredHeightMm }: ModelCardProps) {
+function ModelCard({
+  model,
+  isSelected,
+  onSelect,
+  formatContext,
+  configuredWidthMm,
+  configuredHeightMm,
+}: ModelCardProps) {
   return (
     <Card
       className={`group relative cursor-pointer overflow-hidden border transition-all duration-200 hover:shadow-lg ${
@@ -74,9 +81,7 @@ function ModelCard({ model, isSelected, onSelect, formatContext, configuredWidth
           )}
         </div>
         <div className="space-y-2.5 p-4">
-          <h4 className="line-clamp-2 text-base font-semibold leading-tight">
-            {model.name}
-          </h4>
+          <h4 className="line-clamp-2 text-base font-semibold leading-tight">{model.name}</h4>
           <p className="text-xl font-bold leading-tight text-primary">
             {formatCurrency(model.basePrice, { context: formatContext })}
           </p>

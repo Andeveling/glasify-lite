@@ -1,28 +1,37 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { render, type RenderOptions } from '@testing-library/react'
-import { useForm, FormProvider, type DefaultValues } from 'react-hook-form'
+import { type RenderOptions, render } from '@testing-library/react'
+import { type DefaultValues, FormProvider, useForm } from 'react-hook-form'
 import { vi } from 'vitest'
 
 import type { WizardFormValues } from '../../wizard-form-schema'
 import {
-  mockValidFormValues,
-  mockModels,
-  mockGlassTypes,
   mockColorsData,
+  mockGlassTypes,
+  mockModels,
   mockServices,
+  mockValidFormValues,
 } from './mock-data'
 
 function createMockApi() {
   return {
     catalog: {
       'filter-models-by-dimensions': {
-        useQuery: vi.fn().mockReturnValue({ data: mockModels, error: null, isLoading: false, refetch: vi.fn() }),
+        useQuery: vi
+          .fn()
+          .mockReturnValue({ data: mockModels, error: null, isLoading: false, refetch: vi.fn() }),
       },
       'get-available-glass-types': {
-        useQuery: vi.fn().mockReturnValue({ data: mockGlassTypes, error: null, isLoading: false, refetch: vi.fn() }),
+        useQuery: vi.fn().mockReturnValue({
+          data: mockGlassTypes,
+          error: null,
+          isLoading: false,
+          refetch: vi.fn(),
+        }),
       },
       'list-services': {
-        useQuery: vi.fn().mockReturnValue({ data: mockServices, error: null, isLoading: false, refetch: vi.fn() }),
+        useQuery: vi
+          .fn()
+          .mockReturnValue({ data: mockServices, error: null, isLoading: false, refetch: vi.fn() }),
       },
     },
     quote: {
@@ -34,7 +43,12 @@ function createMockApi() {
         }),
       },
       'get-model-colors-for-quote': {
-        useQuery: vi.fn().mockReturnValue({ data: mockColorsData, error: null, isLoading: false, refetch: vi.fn() }),
+        useQuery: vi.fn().mockReturnValue({
+          data: mockColorsData,
+          error: null,
+          isLoading: false,
+          refetch: vi.fn(),
+        }),
       },
     },
     tenantConfig: {
@@ -86,7 +100,11 @@ interface TestWrapperProps {
   queryClient?: QueryClient
 }
 
-function TestWrapper({ children, defaultValues = mockValidFormValues, queryClient }: TestWrapperProps) {
+function TestWrapper({
+  children,
+  defaultValues = mockValidFormValues,
+  queryClient,
+}: TestWrapperProps) {
   const form = useForm<WizardFormValues>({
     defaultValues,
   })
@@ -94,9 +112,7 @@ function TestWrapper({ children, defaultValues = mockValidFormValues, queryClien
 
   return (
     <QueryClientProvider client={qc}>
-      <FormProvider {...form}>
-        {children}
-      </FormProvider>
+      <FormProvider {...form}>{children}</FormProvider>
     </QueryClientProvider>
   )
 }

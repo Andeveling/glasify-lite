@@ -1,7 +1,6 @@
 'use client'
 
 import { useTenantConfig } from '@/app/_hooks/use-tenant-config'
-import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/trpc/react'
 
 import { ModelCard } from './_components/model-card'
@@ -10,7 +9,8 @@ import { useModelSelection } from './use-model-selection'
 
 function ModelSelectStep() {
   const { formatContext } = useTenantConfig()
-  const { widthMm, heightMm, selectedModelId, handleSelectModel, hasDimensions } = useModelSelection()
+  const { widthMm, heightMm, selectedModelId, handleSelectModel, hasDimensions } =
+    useModelSelection()
 
   const {
     data: models,

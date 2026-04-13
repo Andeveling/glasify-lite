@@ -1,5 +1,5 @@
-import type { FormatContext } from '@/lib/format'
 import { vi } from 'vitest'
+import type { FormatContext } from '@/lib/format'
 
 const defaultFormatContext: FormatContext = {
   currency: 'COP',

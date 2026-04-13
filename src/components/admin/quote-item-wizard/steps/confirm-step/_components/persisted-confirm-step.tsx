@@ -10,7 +10,7 @@ import type { WizardFormValues } from '../../../../wizard-form-schema'
 import { useQuoteItemSubmission } from '../use-quote-item-submission'
 
 function PersistedConfirmStep({ quoteId, onSuccess }: { quoteId: string; onSuccess: () => void }) {
-  const form = useFormContext<WizardFormValues>()
+  const _form = useFormContext<WizardFormValues>()
   const { buildPayload } = useQuoteItemSubmission()
 
   const mutation = api.quote['add-item'].useMutation({

@@ -2,12 +2,7 @@ import { vi } from 'vitest'
 
 import type { RouterOutputs } from '@/trpc/react'
 
-import {
-  mockColorsData,
-  mockGlassTypes,
-  mockModels,
-  mockServices,
-} from './mock-data'
+import { mockColorsData, mockGlassTypes, mockModels, mockServices } from './mock-data'
 
 interface MockTrpcOptions {
   catalogFilterModels?: RouterOutputs['catalog']['filter-models-by-dimensions']
@@ -28,20 +23,20 @@ function createMockTrpcReact(options: MockTrpcOptions = {}) {
     quoteGetColors = mockColorsData,
   } = options
 
-  const mockUseQuery = vi.fn((input: unknown, opts?: { enabled?: boolean }) => {
+  const _mockUseQuery = vi.fn((input: unknown, opts?: { enabled?: boolean }) => {
     const enabled = opts?.enabled ?? true
     if (!enabled) {
       return { data: undefined, error: null, isLoading: false, refetch: vi.fn() }
     }
 
-    const procedurePath = (input as Record<string, unknown>)
+    const procedurePath = input as Record<string, unknown>
     if (procedurePath && typeof procedurePath === 'object') {
     }
 
     return { data: undefined, error: null, isLoading: false, refetch: vi.fn() }
   })
 
-  const mockUseMutation = vi.fn((opts?: { onSuccess?: () => void }) => ({
+  const _mockUseMutation = vi.fn((_opts?: { onSuccess?: () => void }) => ({
     error: quoteAddItemError,
     isPending: quoteAddItemPending,
     mutateAsync: quoteAddItemError
@@ -52,7 +47,7 @@ function createMockTrpcReact(options: MockTrpcOptions = {}) {
   const mockApi = {
     catalog: {
       'filter-models-by-dimensions': {
-        useQuery: (input: unknown, opts?: { enabled?: boolean }) => {
+        useQuery: (_input: unknown, opts?: { enabled?: boolean }) => {
           const enabled = opts?.enabled ?? true
           if (!enabled) {
             return { data: undefined, error: null, isLoading: false, refetch: vi.fn() }
@@ -66,7 +61,7 @@ function createMockTrpcReact(options: MockTrpcOptions = {}) {
         },
       },
       'get-available-glass-types': {
-        useQuery: (input: unknown, opts?: { enabled?: boolean }) => {
+        useQuery: (_input: unknown, opts?: { enabled?: boolean }) => {
           const enabled = opts?.enabled ?? true
           if (!enabled) {
             return { data: undefined, error: null, isLoading: false, refetch: vi.fn() }
@@ -90,7 +85,7 @@ function createMockTrpcReact(options: MockTrpcOptions = {}) {
     },
     quote: {
       'add-item': {
-        useMutation: (opts?: { onSuccess?: () => void }) => ({
+        useMutation: (_opts?: { onSuccess?: () => void }) => ({
           error: quoteAddItemError,
           isPending: quoteAddItemPending,
           mutateAsync: quoteAddItemError
