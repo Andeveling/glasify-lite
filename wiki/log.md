@@ -6,8 +6,14 @@
 
 ### Client Preset: Vitro Rojas Panama
 - **Source**: `docs/seeders/vitro-rojas-panama.md` (copied to `raw/seeders/vitro-rojas-panama.md`)
-- **What changed**: Creado `wiki/wiki/30-clients/vitro-rojas-panama.md` con summary page
+- **What changed**: Creado `wiki/wiki/30-clients/vitro-rojas-panama.md`
 - **Action**: `docs/seeders/` eliminado
+
+### Correction: Pricing info in Vitro Rojas
+- **Issue**: Raw doc decía "USD/m²" pero el sistema usa basePrice + costPerMm
+- **Verification**: Leído `src/domain/pricing/` — formula es:
+  - profileCost = basePrice + (costPerMmWidth × extraWidth) + (costPerMmHeight × extraHeight)
+- **Action**: Actualizado wiki page para corregir el pricing,注明不再使用平方米计价
 
 ---
 

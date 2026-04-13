@@ -57,7 +57,7 @@ const glassSolutionSchema = z.object({
     .max(MAX_KEY_LENGTH)
     .regex(
       /^[a-z][a-z0-9_]*$/,
-      "Key must be lowercase snake_case (e.g., thermal_insulation)"
+      "Key must be lowercase snake_case (e.g., thermal_insulation)",
     ),
   name: z.string().min(MIN_NAME_LENGTH).max(MAX_NAME_LENGTH),
   nameEs: z.string().min(MIN_NAME_LENGTH).max(MAX_NAME_LENGTH),
@@ -105,7 +105,7 @@ export type GlassSolutionInput = z.infer<typeof glassSolutionSchema>;
  */
 export function createGlassSolution(
   input: GlassSolutionInput,
-  options: FactoryOptions = {}
+  options: FactoryOptions = {},
 ): FactoryResult<GlassSolutionInput> {
   // Phase 1: Zod schema validation
   if (!options.skipValidation) {
@@ -157,7 +157,7 @@ export function createGlassSolution(
     "y",
   ];
   const hasSpanishIndicator = spanishIndicators.some((indicator) =>
-    input.description.toLowerCase().includes(indicator)
+    input.description.toLowerCase().includes(indicator),
   );
   if (!hasSpanishIndicator) {
     errors.push({
@@ -257,9 +257,13 @@ export async function seedGlassSolutionsFromFile(fileName: string): Promise<{
   let seeded = 0;
   let skipped = 0;
 
-  // Dynamically import Prisma client
-  const { PrismaClient } = await import("@prisma/client");
-  const prisma = new PrismaClient();
+  const { PrismaClient } = await import("@prisma/generated/client");
+  const { PrismaLibSql } = await import("@prisma/adapter-libsql");
+
+  const adapter = new PrismaLibSql({
+    url: process.env.DATABASE_URL || "file:./prisma/dev.db",
+  });
+  const prisma = new PrismaClient({ adapter });
 
   try {
     for (const solution of solutions) {

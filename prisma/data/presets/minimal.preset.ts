@@ -1,31 +1,9 @@
-/**
- * Minimal Preset - Basic Seed Configuration
- *
- * Use case: Quick testing, CI/CD pipelines, minimal viable product
- *
- * Contains:
- * - 3 essential glass types (simple, tempered, DVH)
- * - 2 active profile suppliers (PVC and Aluminum)
- * - 2 basic window models (sliding and casement)
- * - 3 core services (installation, sealing, removal)
- * - 3 glass solutions (security, thermal, general)
- *
- * @version 1.0.0
- */
-
 import type { GlassSolutionInput } from "../../factories/glass-solution.factory";
 import type { GlassTypeInput } from "../../factories/glass-type.factory";
 import type { ModelInput } from "../../factories/model.factory";
 import type { ProfileSupplierInput } from "../../factories/profile-supplier.factory";
 import type { ServiceInput } from "../../factories/service.factory";
 
-// ==========================================
-// GLASS TYPES (3 essential)
-// ==========================================
-
-/**
- * Essential glass types for minimal setup
- */
 export const minimalGlassTypes: GlassTypeInput[] = [
   {
     code: "MIN_SIMPLE4",
@@ -45,13 +23,6 @@ export const minimalGlassTypes: GlassTypeInput[] = [
   },
 ];
 
-// ==========================================
-// PROFILE SUPPLIERS (2 active)
-// ==========================================
-
-/**
- * Essential profile suppliers
- */
 export const minimalProfileSuppliers: ProfileSupplierInput[] = [
   {
     isActive: true,
@@ -67,13 +38,6 @@ export const minimalProfileSuppliers: ProfileSupplierInput[] = [
   },
 ];
 
-// ==========================================
-// MODELS (2 basic)
-// ==========================================
-
-/**
- * Essential window models
- */
 export const minimalModels: ModelInput[] = [
   {
     accessoryPrice: 65_000,
@@ -111,13 +75,6 @@ export const minimalModels: ModelInput[] = [
   },
 ];
 
-// ==========================================
-// SERVICES (3 core)
-// ==========================================
-
-/**
- * Essential services
- */
 export const minimalServices: ServiceInput[] = [
   {
     name: "Instalación Estándar",
@@ -139,13 +96,6 @@ export const minimalServices: ServiceInput[] = [
   },
 ];
 
-// ==========================================
-// GLASS SOLUTIONS (3 essential)
-// ==========================================
-
-/**
- * Essential glass solutions
- */
 export const minimalGlassSolutions: GlassSolutionInput[] = [
   {
     description: "Protección contra impactos, rotura y acceso no autorizado",
@@ -173,13 +123,6 @@ export const minimalGlassSolutions: GlassSolutionInput[] = [
   },
 ];
 
-// ==========================================
-// PRESET EXPORT
-// ==========================================
-
-/**
- * Minimal preset configuration
- */
 export const minimalPreset = {
   description: "Configuración mínima para pruebas rápidas y CI/CD",
   glassSolutions: minimalGlassSolutions,
