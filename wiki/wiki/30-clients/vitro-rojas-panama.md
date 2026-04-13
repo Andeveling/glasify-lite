@@ -16,11 +16,9 @@ author: Andres
 
 ---
 
-## Sistema de Precios (Precisión)
+## Sistema de Precios
 
-**⚠️ IMPORTANTE**: El documento original en `raw/` contenía información incorrecta sobre pricing.
-
-### Cómo funciona el pricing real
+### Cómo funciona el pricing real dentro de Glasify
 
 ```
 profileCost = basePrice 
