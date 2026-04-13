@@ -1,4 +1,4 @@
-# Pricing Formula
+# Pricing Formula Glasify
 
 **Summary**: Fórmula de cálculo de precio por ítem — perfil + vidrio + servicios.
 

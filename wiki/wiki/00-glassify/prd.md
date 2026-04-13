@@ -79,6 +79,5 @@ Exporta PDF/Excel o envía directamente al cliente
 
 - [[brief]] — Brief completo del proyecto
 - [[tech-stack]]
-- [[routes]]
 - [[entities]]
 - [[pricing-formula]]

@@ -81,6 +81,5 @@ Content with [[wiki-links]].
 
 - [[prd]]
 - [[tech-stack]]
-- [[routes]]
 - [[entities]]
 - [[pricing-formula]]
