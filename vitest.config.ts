@@ -10,7 +10,7 @@ export default defineConfig({
       "@app": resolve(__dirname, "./src/app"),
       "@server": resolve(__dirname, "./src/server"),
       "@styles": resolve(__dirname, "./src/styles"),
-      "@trpc": resolve(__dirname, "./src/trpc"),
+      "@/trpc": resolve(__dirname, "./src/trpc"),
       "@ui": resolve(__dirname, "./src/components/ui"),
       "@views/auth": resolve(__dirname, "./src/app/(auth)"),
       "@views/catalog": resolve(__dirname, "./src/app/(public)/catalog"),

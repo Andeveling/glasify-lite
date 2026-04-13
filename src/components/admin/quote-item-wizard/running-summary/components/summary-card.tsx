@@ -1,55 +1,25 @@
 'use client'
 
-import { useFormContext, useWatch } from 'react-hook-form'
-import { useTenantConfig } from '@/app/_hooks/use-tenant-config'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { formatCurrency, formatNumber } from '@/lib/format'
-import { api } from '@/trpc/react'
-import type { WizardFormValues } from './wizard-form-schema'
+import { useRunningSummaryData } from '../hooks/use-running-summary-data'
+import { calculatePriceBreakdown } from '../utils/price-calculations'
+import { SummaryRow } from './summary-row'
 
-function RunningSummary() {
-  const form = useFormContext<WizardFormValues>()
-  const { formatContext } = useTenantConfig()
+export function SummaryCard() {
+  const { watchedFields, modelData, colorData, glassTypeData, selectedServices, formatContext } =
+    useRunningSummaryData()
 
-  const widthMm = useWatch({ control: form.control, name: 'widthMm' })
-  const heightMm = useWatch({ control: form.control, name: 'heightMm' })
-  const quantity = useWatch({ control: form.control, name: 'quantity' })
-  const modelId = useWatch({ control: form.control, name: 'modelId' })
-  const colorId = useWatch({ control: form.control, name: 'colorId' })
-  const glassTypeId = useWatch({ control: form.control, name: 'glassTypeId' })
-  const serviceIds = useWatch({ control: form.control, name: 'serviceIds' })
-  const roomLocation = useWatch({ control: form.control, name: 'roomLocation' })
+  const { widthMm, heightMm, quantity, roomLocation } = watchedFields
 
-  const { data: modelData } = api.catalog['get-model-by-id'].useQuery(
-    { modelId },
-    { enabled: !!modelId && modelId.length > 0 },
+  const { areaM2, subtotalPerUnit, total } = calculatePriceBreakdown(
+    watchedFields,
+    modelData,
+    glassTypeData,
+    colorData,
+    selectedServices,
   )
-
-  const { data: colorData } = api.catalog['get-color-by-id'].useQuery(
-    { colorId: colorId ?? '' },
-    { enabled: !!colorId && colorId.length > 0 },
-  )
-
-  const { data: glassTypeData } = api.catalog['get-glass-type-by-id'].useQuery(
-    { glassTypeId },
-    { enabled: !!glassTypeId && glassTypeId.length > 0 },
-  )
-
-  const { data: servicesData } = api.catalog['list-services'].useQuery({})
-
-  const selectedServices = servicesData?.filter((s) => serviceIds?.includes(s.id)) ?? []
-
-  const areaM2 = widthMm && heightMm ? (widthMm * heightMm) / 1_000_000 : 0
-
-  const basePrice = modelData?.basePrice ?? 0
-  const glassPrice = glassTypeData ? glassTypeData.pricePerSqm * areaM2 : 0
-  const colorSurcharge =
-    colorData && modelData ? (modelData.basePrice * colorData.surchargePercentage) / 100 : 0
-  const servicesTotal = selectedServices.reduce((sum, s) => sum + s.rate, 0)
-
-  const subtotalPerUnit = basePrice + glassPrice + colorSurcharge + servicesTotal
-  const total = subtotalPerUnit * (quantity ?? 1)
 
   return (
     <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
@@ -171,14 +141,3 @@ function RunningSummary() {
     </Card>
   )
 }
-
-function SummaryRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-start justify-between gap-3 text-sm">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="font-medium text-foreground text-right">{value}</span>
-    </div>
-  )
-}
-
-export { RunningSummary }

@@ -122,7 +122,7 @@ function ModelSelectStep() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-4">
       <div>
         <h2 className="text-lg font-semibold text-foreground mb-2">Seleccioná un modelo</h2>
         <p className="text-sm text-muted-foreground">
