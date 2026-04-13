@@ -1,8 +1,8 @@
-export { parsePattern, hasAtLeastOneMovable, isValidPattern } from './parse-pattern';
+export { hasAtLeastOneMovable, isValidPattern, parsePattern } from './parse-pattern'
 export type {
-  PanelType,
-  PanelDescriptor,
-  FrameConfig,
-  DesignTemplateConfig,
   DesignRenderProps,
-} from './types';
+  DesignTemplateConfig,
+  FrameConfig,
+  PanelDescriptor,
+  PanelType,
+} from './types'

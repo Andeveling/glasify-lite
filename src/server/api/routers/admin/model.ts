@@ -24,10 +24,10 @@ import {
   updateCostBreakdownSchema,
   updateModelSchema,
 } from '@/lib/validations/admin/model.schema'
-import { modelUpsertInput, modelUpsertOutput } from './admin.schemas'
 import { adminProcedure, createTRPCRouter } from '@/server/api/trpc'
 import { createModelPriceHistory } from '@/server/services/model-price-history.service'
 import { canDeleteModel } from '@/server/services/referential-integrity.service'
+import { modelUpsertInput, modelUpsertOutput } from './admin.schemas'
 
 async function validateProfileSupplierExists(
   tx: Prisma.TransactionClient,

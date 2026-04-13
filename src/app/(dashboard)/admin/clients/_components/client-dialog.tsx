@@ -9,9 +9,9 @@
 'use client'
 
 import { useState } from 'react'
-import { ClientForm } from './client-form'
-import type { ClientUpdateInput } from '../_schemas/client-form.schema'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import type { ClientUpdateInput } from '../_schemas/client-form.schema'
+import { ClientForm } from './client-form'
 
 type ClientDialogProps = {
   mode: 'create' | 'edit'

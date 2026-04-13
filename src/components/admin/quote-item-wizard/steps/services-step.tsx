@@ -1,11 +1,11 @@
 'use client'
 
 import { useFormContext } from 'react-hook-form'
+import { useTenantConfig } from '@/app/_hooks/use-tenant-config'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { api } from '@/trpc/react'
 import { formatCurrency } from '@/lib/format'
-import { useTenantConfig } from '@/app/_hooks/use-tenant-config'
+import { api } from '@/trpc/react'
 import type { WizardFormValues } from '../wizard-form-schema'
 
 function ServicesStep() {
@@ -67,7 +67,9 @@ function ServicesStep() {
                   )}
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-medium">{formatCurrency(service.rate, { context: formatContext })}</p>
+                  <p className="text-sm font-medium">
+                    {formatCurrency(service.rate, { context: formatContext })}
+                  </p>
                   <p className="text-muted-foreground text-xs">por {service.unit}</p>
                 </div>
               </CardContent>

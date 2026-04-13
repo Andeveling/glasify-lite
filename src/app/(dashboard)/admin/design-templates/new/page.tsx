@@ -1,6 +1,6 @@
+import { ArrowLeft } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DesignTemplateForm } from '../_components/design-template-form'
 

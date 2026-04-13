@@ -1,6 +1,7 @@
 'use client'
 
-import type { RouterOutputs } from '@/trpc/react'
+import { DesignRenderer } from '@/components/design'
+import { Badge } from '@/components/ui/badge'
 import {
   Table,
   TableBody,
@@ -9,9 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
-import { DesignRenderer } from '@/components/design'
 import type { DesignTemplateConfig } from '@/domain/design'
+import type { RouterOutputs } from '@/trpc/react'
 import { TemplateActions } from './template-actions'
 
 type DesignTemplateItem = RouterOutputs['admin']['design-template']['list']['items'][number]

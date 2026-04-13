@@ -20,10 +20,7 @@ import { adminProcedure, createTRPCRouter } from '@/server/api/trpc'
 function buildWhereClause(input: { search?: string }): Prisma.DesignTemplateWhereInput {
   const where: Prisma.DesignTemplateWhereInput = {}
   if (input.search) {
-    where.OR = [
-      { name: { contains: input.search } },
-      { pattern: { contains: input.search } },
-    ]
+    where.OR = [{ name: { contains: input.search } }, { pattern: { contains: input.search } }]
   }
   return where
 }
@@ -56,7 +53,10 @@ export const designTemplateRouter = createTRPCRouter({
         userId: ctx.session?.user.id,
         error: error instanceof Error ? error.message : String(error),
       })
-      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Error al obtener las plantillas de diseño' })
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Error al obtener las plantillas de diseño',
+      })
     }
   }),
 
@@ -79,7 +79,10 @@ export const designTemplateRouter = createTRPCRouter({
         templateId: input.id,
         error: error instanceof Error ? error.message : String(error),
       })
-      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Error al obtener la plantilla de diseño' })
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Error al obtener la plantilla de diseño',
+      })
     }
   }),
 
@@ -95,7 +98,10 @@ export const designTemplateRouter = createTRPCRouter({
         userId: ctx.session?.user.id,
         error: error instanceof Error ? error.message : String(error),
       })
-      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Error al obtener las plantillas' })
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Error al obtener las plantillas',
+      })
     }
   }),
 
@@ -106,7 +112,10 @@ export const designTemplateRouter = createTRPCRouter({
       })
 
       if (existing) {
-        throw new TRPCError({ code: 'CONFLICT', message: 'Ya existe una plantilla con este nombre' })
+        throw new TRPCError({
+          code: 'CONFLICT',
+          message: 'Ya existe una plantilla con este nombre',
+        })
       }
 
       const template = await ctx.db.designTemplate.create({
@@ -129,15 +138,25 @@ export const designTemplateRouter = createTRPCRouter({
       return template
     } catch (error) {
       if (error instanceof TRPCError) throw error
-      if (error instanceof Error && 'code' in error && (error as { code: string }).code === 'P2002') {
-        throw new TRPCError({ code: 'CONFLICT', message: 'Ya existe una plantilla con este nombre' })
+      if (
+        error instanceof Error &&
+        'code' in error &&
+        (error as { code: string }).code === 'P2002'
+      ) {
+        throw new TRPCError({
+          code: 'CONFLICT',
+          message: 'Ya existe una plantilla con este nombre',
+        })
       }
       logger.error('Failed to create design template', {
         userId: ctx.session?.user.id,
         input,
         error: error instanceof Error ? error.message : String(error),
       })
-      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Error al crear la plantilla de diseño' })
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Error al crear la plantilla de diseño',
+      })
     }
   }),
 
@@ -156,11 +175,16 @@ export const designTemplateRouter = createTRPCRouter({
             where: { name: data.name },
           })
           if (duplicate) {
-            throw new TRPCError({ code: 'CONFLICT', message: 'Ya existe una plantilla con este nombre' })
+            throw new TRPCError({
+              code: 'CONFLICT',
+              message: 'Ya existe una plantilla con este nombre',
+            })
           }
         }
 
-        const frameConfig = data.frameConfig ? JSON.stringify(data.frameConfig) : existing.frameConfig
+        const frameConfig = data.frameConfig
+          ? JSON.stringify(data.frameConfig)
+          : existing.frameConfig
 
         const template = await ctx.db.designTemplate.update({
           where: { id },
@@ -186,7 +210,10 @@ export const designTemplateRouter = createTRPCRouter({
           templateId: input.id,
           error: error instanceof Error ? error.message : String(error),
         })
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Error al actualizar la plantilla de diseño' })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Error al actualizar la plantilla de diseño',
+        })
       }
     }),
 
@@ -223,7 +250,10 @@ export const designTemplateRouter = createTRPCRouter({
         templateId: input.id,
         error: error instanceof Error ? error.message : String(error),
       })
-      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Error al eliminar la plantilla de diseño' })
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Error al eliminar la plantilla de diseño',
+      })
     }
   }),
 })

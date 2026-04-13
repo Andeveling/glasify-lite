@@ -13,11 +13,11 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
-import { QuoteDetailView } from './_components/quote-detail-view'
 import { Spinner } from '@/components/ui/spinner'
 import { api } from '@/trpc/server-client'
 import { ClientContactInfo } from './_components/client-contact-info'
 import { QuoteActions } from './_components/quote-actions'
+import { QuoteDetailView } from './_components/quote-detail-view'
 
 export const metadata: Metadata = {
   title: 'Detalle de Cotización | Admin',

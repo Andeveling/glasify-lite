@@ -1,8 +1,8 @@
 'use client'
 
 import { createContext, useContext } from 'react'
-import { TenantConfigSchema } from '@/lib/schemas/tenant.config'
 import type { TenantConfigPublic } from '@/lib/schemas/tenant.config'
+import { TenantConfigSchema } from '@/lib/schemas/tenant.config'
 
 const TenantConfigContext = createContext<TenantConfigPublic | null>(null)
 

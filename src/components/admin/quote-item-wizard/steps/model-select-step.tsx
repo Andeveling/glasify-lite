@@ -1,8 +1,8 @@
 'use client'
 
+import { Check } from 'lucide-react'
 import Image from 'next/image'
 import { useFormContext } from 'react-hook-form'
-import { Check } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { formatCurrency, formatNumber } from '@/lib/format'

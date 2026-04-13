@@ -22,9 +22,6 @@ export function DesignTemplatesList({ initialData }: DesignTemplatesListProps) {
   })
 
   return (
-    <DesignTemplatesTable
-      items={data.items}
-      onDelete={(id) => deleteMutation.mutate({ id })}
-    />
+    <DesignTemplatesTable items={data.items} onDelete={(id) => deleteMutation.mutate({ id })} />
   )
 }

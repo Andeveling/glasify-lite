@@ -6,7 +6,10 @@ const PATTERN_REGEX = /^[XO]+$/
 export const frameConfigSchema = z.object({
   thickness: z.number().int().positive().min(2).max(12).default(4),
   profileStyle: z.enum(['simple', 'double', 'premium']).default('simple'),
-  profileColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  profileColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
 })
 
 export const designTemplateBaseSchema = z.object({

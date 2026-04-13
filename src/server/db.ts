@@ -1,6 +1,6 @@
 import { PrismaLibSql } from '@prisma/adapter-libsql'
-import { PrismaClient } from '@prisma/generated/client'
 import type { Prisma } from '@prisma/generated/client'
+import { PrismaClient } from '@prisma/generated/client'
 
 const DEFAULT_DATABASE_URL = 'file:./prisma/dev.db'
 const DEV_LOG_LEVELS: Prisma.LogLevel[] = ['query', 'error', 'warn']

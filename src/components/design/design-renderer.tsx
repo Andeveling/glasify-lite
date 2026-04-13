@@ -1,8 +1,8 @@
 'use client'
 
 import { useMemo } from 'react'
-import { parsePattern } from '@/domain/design'
 import type { DesignRenderProps } from '@/domain/design'
+import { parsePattern } from '@/domain/design'
 import { cn } from '@/lib/utils'
 
 const DEFAULT_FRAME_COLOR = '#e6e6e6'
@@ -62,14 +62,7 @@ function DesignRenderer({
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <marker
-            id="arrowhead"
-            markerWidth="6"
-            markerHeight="4"
-            refX="5"
-            refY="2"
-            orient="auto"
-          >
+          <marker id="arrowhead" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
             <path d="M 0 0 L 6 2 L 0 4 Z" fill={frameColor} />
           </marker>
         </defs>
@@ -170,8 +163,22 @@ function DesignRenderer({
               stroke={frameColor}
               strokeWidth={1}
             />
-            <line x1={innerX} y1={height - 8} x2={innerX} y2={height} stroke={frameColor} strokeWidth={1} />
-            <line x1={innerX + innerWidth} y1={height - 8} x2={innerX + innerWidth} y2={height} stroke={frameColor} strokeWidth={1} />
+            <line
+              x1={innerX}
+              y1={height - 8}
+              x2={innerX}
+              y2={height}
+              stroke={frameColor}
+              strokeWidth={1}
+            />
+            <line
+              x1={innerX + innerWidth}
+              y1={height - 8}
+              x2={innerX + innerWidth}
+              y2={height}
+              stroke={frameColor}
+              strokeWidth={1}
+            />
             <text
               x={innerX + innerWidth / 2}
               y={height - 8}
@@ -192,7 +199,14 @@ function DesignRenderer({
               strokeWidth={1}
             />
             <line x1={0} y1={innerY} x2={8} y2={innerY} stroke={frameColor} strokeWidth={1} />
-            <line x1={0} y1={innerY + innerHeight} x2={8} y2={innerY + innerHeight} stroke={frameColor} strokeWidth={1} />
+            <line
+              x1={0}
+              y1={innerY + innerHeight}
+              x2={8}
+              y2={innerY + innerHeight}
+              stroke={frameColor}
+              strokeWidth={1}
+            />
             <text
               x={4}
               y={innerY + innerHeight / 2}

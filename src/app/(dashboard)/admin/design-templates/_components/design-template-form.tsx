@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useMemo } from 'react'
+import { DesignRenderer } from '@/components/design'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -14,11 +15,16 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import type { DesignTemplateUpdateInput } from '@/lib/validations/design-template'
-import { DesignRenderer } from '@/components/design'
 import type { DesignTemplateConfig, FrameConfig } from '@/domain/design'
+import type { DesignTemplateUpdateInput } from '@/lib/validations/design-template'
 import { useDesignTemplateForm } from '../_hooks/use-design-template-form'
 
 type DesignTemplateFormProps = {
@@ -68,7 +74,9 @@ export function DesignTemplateForm({ mode, defaultValues }: DesignTemplateFormPr
           {/* Form fields */}
           <Card>
             <CardHeader>
-              <CardTitle>{mode === 'create' ? 'Crear Plantilla de Diseño' : 'Editar Plantilla'}</CardTitle>
+              <CardTitle>
+                {mode === 'create' ? 'Crear Plantilla de Diseño' : 'Editar Plantilla'}
+              </CardTitle>
               <CardDescription>
                 Define el patrón de paneles y la configuración visual del marco
               </CardDescription>
@@ -109,9 +117,7 @@ export function DesignTemplateForm({ mode, defaultValues }: DesignTemplateFormPr
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormDescription>
-                      X = panel móvil, O = panel fijo
-                    </FormDescription>
+                    <FormDescription>X = panel móvil, O = panel fijo</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -168,9 +174,7 @@ export function DesignTemplateForm({ mode, defaultValues }: DesignTemplateFormPr
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">Flechas de apertura</FormLabel>
-                        <FormDescription>
-                          Mostrar flechas en paneles móviles
-                        </FormDescription>
+                        <FormDescription>Mostrar flechas en paneles móviles</FormDescription>
                       </div>
                       <FormControl>
                         <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -186,9 +190,7 @@ export function DesignTemplateForm({ mode, defaultValues }: DesignTemplateFormPr
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">Manillas</FormLabel>
-                        <FormDescription>
-                          Mostrar manillas en paneles móviles
-                        </FormDescription>
+                        <FormDescription>Mostrar manillas en paneles móviles</FormDescription>
                       </div>
                       <FormControl>
                         <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -208,10 +210,7 @@ export function DesignTemplateForm({ mode, defaultValues }: DesignTemplateFormPr
             </CardHeader>
             <CardContent className="flex items-center justify-center rounded-lg border border-dashed p-8">
               <div className="w-full max-w-xs">
-                <DesignRenderer
-                  template={templateConfig}
-                  size={{ width: 280, height: 210 }}
-                />
+                <DesignRenderer template={templateConfig} size={{ width: 280, height: 210 }} />
               </div>
             </CardContent>
           </Card>

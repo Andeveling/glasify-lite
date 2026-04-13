@@ -6,10 +6,10 @@
 
 'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import type { RouterOutputs } from '@/trpc/react'
 import { DesignRenderer } from '@/components/design'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import type { DesignTemplateConfig } from '@/domain/design'
+import type { RouterOutputs } from '@/trpc/react'
 import { FormSelect, FormTextInput } from './form-fields'
 
 type ProfileSupplier = RouterOutputs['admin']['profile-supplier']['list']['items'][number]

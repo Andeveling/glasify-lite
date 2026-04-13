@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { Edit, MoreHorizontal, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,7 +21,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import type { RouterOutputs } from '@/trpc/react'
-import { Edit, MoreHorizontal, Trash2 } from 'lucide-react'
 
 type DesignTemplateItem = RouterOutputs['admin']['design-template']['list']['items'][number]
 
@@ -43,7 +43,9 @@ export function TemplateActions({ template, onDelete }: TemplateActionsProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => router.push(`/admin/design-templates/${template.id}/edit`)}>
+          <DropdownMenuItem
+            onClick={() => router.push(`/admin/design-templates/${template.id}/edit`)}
+          >
             <Edit className="mr-2 h-4 w-4" />
             Editar
           </DropdownMenuItem>

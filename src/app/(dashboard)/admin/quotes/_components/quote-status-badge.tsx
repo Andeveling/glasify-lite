@@ -12,9 +12,9 @@
 
 'use client'
 
+import type { QuoteStatus } from '@prisma/generated/client'
 import { Badge } from '@/components/ui/badge'
 import { QUOTE_STATUS_CONFIG } from '../_constants/quote-status.constants'
-import type { QuoteStatus } from '@prisma/generated/client'
 
 type QuoteStatusBadgeProps = {
   status: QuoteStatus
