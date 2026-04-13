@@ -1,0 +1,404 @@
+/**
+ * Quote Schemas - Zod validation schemas for quote operations
+ *
+ * These schemas define the contracts for quote-related tRPC procedures.
+ * Follows the same pattern as catalog.schemas.ts
+ *
+ * @module server/api/routers/quote/quote.schemas
+ */
+
+import { z } from 'zod'
+
+// ============================================================================
+// Constants
+// ============================================================================
+
+const MAX_PAGE_SIZE = 100
+const DEFAULT_PAGE_SIZE = 20
+const MAX_PROJECT_NAME_LENGTH = 100
+const MAX_ADDRESS_LENGTH = 200
+const MAX_PHONE_LENGTH = 20
+const MAX_CART_ITEMS = 20
+const MAX_QUOTE_ITEMS = 50
+const CURRENCY_CODE_LENGTH = 3
+
+// ============================================================================
+// Input Schemas - Queries
+// ============================================================================
+
+/**
+ * List user quotes input
+ *
+ * tRPC Query: quote['list-user-quotes']
+ */
+export const listUserQuotesInput = z.object({
+  includeExpired: z.boolean().default(false),
+  limit: z.number().int().positive().max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE),
+  page: z.number().int().positive().default(1),
+  search: z.string().optional(),
+  sortBy: z.enum(['createdAt', 'sentAt', 'validUntil', 'total']).default('createdAt'),
+  sortOrder: z.enum(['asc', 'desc']).default('desc'),
+  status: z.enum(['draft', 'sent', 'accepted', 'rejected', 'canceled']).optional(),
+})
+
+export type ListUserQuotesInput = z.infer<typeof listUserQuotesInput>
+
+/**
+ * Get single quote by ID
+ *
+ * tRPC Query: quote['get-by-id']
+ */
+export const getQuoteByIdInput = z.object({
+  id: z.string().cuid('ID de cotización debe ser válido'),
+})
+
+export type GetQuoteByIdInput = z.infer<typeof getQuoteByIdInput>
+
+// ============================================================================
+// Input Schemas - Mutations
+// ============================================================================
+
+/**
+ * Project address for quote generation
+ */
+/**
+ * Project address schema for INPUT (quote generation)
+ * All fields are required when creating a new quote
+ */
+export const projectAddressSchema = z.object({
+  projectCity: z.string().min(1, 'Ciudad es requerida').max(MAX_ADDRESS_LENGTH),
+  projectName: z.string().min(1, 'Nombre del proyecto es requerido').max(MAX_PROJECT_NAME_LENGTH),
+  projectState: z.string().min(1, 'Estado/región es requerido').max(MAX_ADDRESS_LENGTH),
+  projectStreet: z.string().min(1, 'Dirección es requerida').max(MAX_ADDRESS_LENGTH),
+})
+
+export type ProjectAddressSchema = z.infer<typeof projectAddressSchema>
+
+/**
+ * Project address schema for OUTPUT (reading quotes)
+ * Fields can be empty strings for backward compatibility with old quotes
+ */
+export const projectAddressOutputSchema = z.object({
+  projectCity: z.string(),
+  projectName: z.string(),
+  projectPostalCode: z.string().optional(),
+  projectState: z.string(),
+  projectStreet: z.string(),
+})
+
+export type ProjectAddressOutputSchema = z.infer<typeof projectAddressOutputSchema>
+
+/**
+ * Cart item for quote generation
+ */
+export const cartItemForQuoteSchema = z.object({
+  additionalServiceIds: z.array(z.cuid()),
+  glassTypeId: z.string().cuid(),
+  glassTypeName: z.string(),
+  heightMm: z.number().int().positive(),
+  modelId: z.cuid(),
+  modelName: z.string(),
+  name: z.string(),
+  quantity: z.number().int().positive(),
+  solutionId: z.cuid().optional(),
+  solutionName: z.string().optional(),
+  unitPrice: z.number().nonnegative(),
+  widthMm: z.number().int().positive(),
+})
+
+export type CartItemForQuoteSchema = z.infer<typeof cartItemForQuoteSchema>
+
+/**
+ * Generate quote from cart
+ *
+ * Server Action: generateQuoteFromCartAction
+ */
+export const generateQuoteFromCartInput = z.object({
+  cartItems: z
+    .array(cartItemForQuoteSchema)
+    .min(1, 'El carrito debe contener al menos un item')
+    .max(MAX_CART_ITEMS, 'El carrito no puede tener más de 20 items'),
+  contactPhone: z.string().max(MAX_PHONE_LENGTH).optional(),
+  manufacturerId: z.string().cuid('ID del fabricante debe ser válido'),
+  projectAddress: projectAddressSchema,
+})
+
+export type GenerateQuoteFromCartInput = z.infer<typeof generateQuoteFromCartInput>
+
+/**
+ * Admin quote creation - item input
+ * Simplified item structure for admin quote creation
+ */
+export const createQuoteItemInput = z.object({
+  glassTypeId: z.string().cuid({ message: 'ID del tipo de vidrio inválido' }),
+  heightMm: z.number().int().positive({ message: 'Alto debe ser mayor a 0 mm' }),
+  modelId: z.string().cuid({ message: 'ID del modelo inválido' }),
+  quantity: z.number().int().positive({ message: 'Cantidad debe ser mayor a 0' }),
+  widthMm: z.number().int().positive({ message: 'Ancho debe ser mayor a 0 mm' }),
+})
+
+export type CreateQuoteItemInput = z.infer<typeof createQuoteItemInput>
+
+/**
+ * Admin quote creation input
+ *
+ * tRPC Mutation: quote['create-quote-from-items']
+ * Access: adminProcedure only
+ */
+export const createQuoteFromItemsInput = z.object({
+  /**
+   * Required client ID for the quote.
+   */
+  clientId: z.string().cuid({ message: 'ID del cliente es requerido' }),
+  items: z
+    .array(createQuoteItemInput)
+    .min(1, 'La cotización debe tener al menos un ítem')
+    .max(MAX_QUOTE_ITEMS, 'La cotización no puede tener más de 50 ítems'),
+  projectAddress: projectAddressSchema,
+  projectName: z.string().min(1, 'Nombre del proyecto es requerido').max(MAX_PROJECT_NAME_LENGTH),
+})
+
+export type CreateQuoteFromItemsInput = z.infer<typeof createQuoteFromItemsInput>
+
+/**
+ * Admin quote creation output
+ */
+export const createQuoteFromItemsOutput = z.object({
+  itemCount: z.number().int().nonnegative(),
+  quoteId: z.string().cuid(),
+  total: z.number().nonnegative(),
+  validUntil: z.date(),
+})
+
+export type CreateQuoteFromItemsOutput = z.infer<typeof createQuoteFromItemsOutput>
+
+// ============================================================================
+// Output Schemas
+// ============================================================================
+
+/**
+ * Quote list item (lightweight for list view)
+ */
+export const quoteListItemSchema = z.object({
+  createdAt: z.date(),
+  currency: z.string(),
+  id: z.cuid(),
+  isExpired: z.boolean(),
+  itemCount: z.number().int().nonnegative(),
+  projectName: z.string(),
+  sentAt: z.date().nullable(),
+  status: z.enum(['draft', 'sent', 'accepted', 'rejected', 'canceled']),
+  total: z.number().nonnegative(),
+  validUntil: z.date().nullable(),
+})
+
+export type QuoteListItemSchema = z.infer<typeof quoteListItemSchema>
+
+/**
+ * Paginated quotes list response
+ */
+export const listUserQuotesOutput = z.object({
+  hasNextPage: z.boolean(),
+  hasPreviousPage: z.boolean(),
+  limit: z.number().int().positive(),
+  page: z.number().int().positive(),
+  quotes: z.array(quoteListItemSchema),
+  total: z.number().int().nonnegative(),
+  totalPages: z.number().int().nonnegative(),
+})
+
+export type ListUserQuotesOutput = z.infer<typeof listUserQuotesOutput>
+
+/**
+ * Quote item detail (for quote detail view)
+ */
+export const quoteItemDetailSchema = z.object({
+  glassTypeName: z.string(),
+  heightMm: z.number().int().positive(),
+  id: z.cuid(),
+  modelImageUrl: z.string().nullable(),
+  modelName: z.string(),
+  name: z.string(),
+  quantity: z.number().int().positive(),
+  serviceNames: z.array(z.string()),
+  solutionName: z.string().optional(),
+  subtotal: z.number().nonnegative(),
+  unitPrice: z.number().nonnegative(),
+  widthMm: z.number().int().positive(),
+})
+
+export type QuoteItemDetailSchema = z.infer<typeof quoteItemDetailSchema>
+
+/**
+ * Full quote detail
+ */
+export const quoteDetailSchema = z.object({
+  client: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      email: z.string().nullable(),
+      phone: z.string().nullable(),
+      company: z.string().nullable(),
+    })
+    .nullable(),
+  contactPhone: z.string().nullable(),
+  createdAt: z.date(),
+  currency: z.string(),
+  id: z.string().cuid(),
+  isExpired: z.boolean(),
+  itemCount: z.number().int().nonnegative(),
+  items: z.array(quoteItemDetailSchema),
+  manufacturerName: z.string(),
+  projectAddress: projectAddressOutputSchema, // Use output schema (allows empty strings)
+  projectName: z.string(), // T030 [US7]: For admin detail page
+  sentAt: z.date().nullable(),
+  status: z.enum(['draft', 'sent', 'accepted', 'rejected', 'canceled']),
+  total: z.number().nonnegative(),
+  totalUnits: z.number().int().nonnegative(),
+  user: z
+    .object({
+      id: z.string(),
+      name: z.string().nullable(),
+      email: z.string().nullable(),
+      role: z.enum(['admin', 'seller']),
+    })
+    .nullable(), // Legacy field - kept for backward compatibility
+  userEmail: z.string().optional(),
+  validUntil: z.date().nullable(),
+  vendorContactPhone: z.string().nullable(), // Tenant contact for US3
+})
+
+export type QuoteDetailSchema = z.infer<typeof quoteDetailSchema>
+
+/**
+ * Get quote by ID output
+ */
+export const getQuoteByIdOutput = quoteDetailSchema
+
+export type GetQuoteByIdOutput = z.infer<typeof getQuoteByIdOutput>
+
+/**
+ * Generate quote response
+ */
+export const generateQuoteFromCartOutput = z.discriminatedUnion('success', [
+  z.object({
+    data: z.object({
+      quoteId: z.string().cuid(),
+    }),
+    success: z.literal(true),
+  }),
+  z.object({
+    error: z.object({
+      code: z.enum([
+        'EMPTY_CART',
+        'INVALID_ADDRESS',
+        'PRICE_CALCULATION_FAILED',
+        'TRANSACTION_FAILED',
+        'UNAUTHORIZED',
+        'UNKNOWN',
+      ]),
+      message: z.string(),
+    }),
+    success: z.literal(false),
+  }),
+])
+
+export type GenerateQuoteFromCartOutput = z.infer<typeof generateQuoteFromCartOutput>
+
+// ============================================================================
+// Feature 005: Send Quote to Vendor
+// ============================================================================
+
+/**
+ * Send quote to vendor input
+ *
+ * tRPC Mutation: quote['send-to-vendor']
+ *
+ * Validates contact information before sending quote.
+ * Phone must be in international format (E.164 compliant).
+ *
+ * @example
+ * ```typescript
+ * // Valid Colombian phone
+ * { quoteId: 'cuid123', contactPhone: '+573001234567' }
+ *
+ * // Valid US phone
+ * { quoteId: 'cuid123', contactPhone: '+12025551234', contactEmail: 'user@example.com' }
+ * ```
+ */
+export const sendToVendorInput = z.object({
+  contactEmail: z.email('Correo electrónico inválido').optional(),
+  contactPhone: z
+    .string()
+    .regex(
+      /^\+?[1-9]\d{9,14}$/,
+      'Formato de teléfono inválido. Debe incluir código de país (ej: +57 300 123 4567)',
+    ),
+  quoteId: z.cuid('ID de cotización inválido'),
+})
+
+export type SendToVendorInput = z.infer<typeof sendToVendorInput>
+
+/**
+ * Send quote to vendor output
+ *
+ * Returns updated quote with 'sent' status and submission timestamp.
+ *
+ * @example
+ * ```typescript
+ * {
+ *   id: 'cuid123',
+ *   status: 'sent',
+ *   sentAt: new Date('2025-10-13T12:00:00Z'),
+ *   contactPhone: '+573001234567',
+ *   contactEmail: 'user@example.com',
+ *   total: 1500000,
+ *   currency: 'COP'
+ * }
+ * ```
+ */
+export const sendToVendorOutput = z.object({
+  contactEmail: z.string().optional(),
+  currency: z.string().length(CURRENCY_CODE_LENGTH),
+  id: z.cuid(),
+  sentAt: z.date(),
+  status: z.literal('sent'),
+  total: z.number().nonnegative(),
+})
+
+export type SendToVendorOutput = z.infer<typeof sendToVendorOutput>
+
+// ============================================================================
+// Feature: Quote Status Update (Admin)
+// ============================================================================
+
+/**
+ * Update quote status input
+ *
+ * tRPC Mutation: quote['update-status']
+ *
+ * Allows admins to transition quotes:
+ * - SENT → ACCEPTED
+ * - SENT → REJECTED
+ * - SENT → CANCELED
+ */
+export const updateStatusInput = z.object({
+  quoteId: z.cuid({ message: 'ID de cotización inválido' }),
+  status: z.enum(['accepted', 'rejected', 'canceled'], {
+    error: 'Estado inválido. Solo se permite accepted, rejected o canceled',
+  }),
+})
+
+export type UpdateStatusInput = z.infer<typeof updateStatusInput>
+
+/**
+ * Update quote status output
+ */
+export const updateStatusOutput = z.object({
+  id: z.string().cuid(),
+  status: z.enum(['accepted', 'rejected', 'canceled']),
+  updatedAt: z.date(),
+})
+
+export type UpdateStatusOutput = z.infer<typeof updateStatusOutput>
