@@ -1,0 +1,238 @@
+{
+  "main": {
+    "id": "c6b018acf456fd92",
+    "type": "split",
+    "children": [
+      {
+        "id": "f02ceb9997a90fc1",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "8c49be474248f6dd",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "CLAUDE.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "CLAUDE"
+            }
+          },
+          {
+            "id": "0ce842f12887a148",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "log.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "log"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "6ff8a45dea9e8cf7",
+    "type": "split",
+    "children": [
+      {
+        "id": "de3b5cb5971f218f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "09291e92ec5b8e53",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Explorador de archivos"
+            }
+          },
+          {
+            "id": "c3723d39ba6170cd",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Buscar"
+            }
+          },
+          {
+            "id": "a154c76cf2bbb75b",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Marcadores"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "996af49d928d5162",
+    "type": "split",
+    "children": [
+      {
+        "id": "920e31f77b60ce22",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9b4a21d922cc676a",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Enlaces entrantes"
+            }
+          },
+          {
+            "id": "a29e47510d0a15b3",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Enlaces salientes"
+            }
+          },
+          {
+            "id": "6d54816b351ee5c4",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Etiquetas"
+            }
+          },
+          {
+            "id": "bd90432db2d42c01",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "Todas las propiedades"
+            }
+          },
+          {
+            "id": "a7824a988784ed6e",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Bienvenido.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Esquema de Bienvenido"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Abrir selector rápido": false,
+      "graph:Abrir vista gráfica": false,
+      "canvas:Crear nuevo lienzo": false,
+      "daily-notes:Abrir la nota de hoy": false,
+      "templates:Insertar plantilla": false,
+      "command-palette:Abrir paleta de comandos": false,
+      "bases:Crear nueva base": false
+    }
+  },
+  "active": "0ce842f12887a148",
+  "lastOpenFiles": [
+    "log.md.tmp.1359392.1776104931919",
+    "index.md.tmp.1359392.1776104928552",
+    "raw/seeders/vitro-rojas-panama.md",
+    "wiki/30-clients/vitro-rojas-panama.md",
+    "wiki/30-clients/vitro-rojas-panama.md.tmp.1359392.1776104922905",
+    "wiki/30-clients",
+    "raw/seeders",
+    "index.md",
+    "wiki/CLAUDE.md",
+    "wiki/00-glassify/pricing-formula.md",
+    "AGENTS.md",
+    "wiki/00-glassify/entities.md",
+    "log.md.tmp.1359392.1776104702113",
+    "wiki/00-glassify/entities.md.tmp.1359392.1776104694620",
+    "wiki/00-glassify/tech-stack.md",
+    "wiki/00-glassify/prd.md",
+    "wiki/CLAUDE.md.tmp.1359392.1776104123422",
+    "wiki/00-glassify/pricing-formula.md.tmp.1359392.1776104123167",
+    "wiki/00-glassify/entities.md.tmp.1359392.1776104122904",
+    "wiki/00-glassify/routes.md",
+    "wiki/00-glassify/routes.md.tmp.1359392.1776104122676",
+    "CLAUDE.md",
+    "log.md",
+    "Home.md",
+    "00-glassify/prd.md",
+    "20-manufacturers/alumina/_index.md",
+    "10-glass-knowledge/_index.md",
+    "30-clients/vidrios-la-equidad/_index.md",
+    "40-decisions/_index.md",
+    "00-glassify/_index.md",
+    "docs/brief.md",
+    "docs/context/general/glasses.info.md",
+    "00-glassify/wikilink-convention.md",
+    "00-glassify/note-format-convention.md",
+    "docs/github-copilot-cli/specify.md",
+    "30-clients/vitro-rojas/specs/_index.md"
+  ]
+}

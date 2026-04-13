@@ -3,7 +3,9 @@
     "allow": [
       "Bash(sed *)",
       "Bash(npx *)",
-      "Bash(git diff *)"
+      "Bash(git diff *)",
+      "Bash(mv *)",
+      "mcp__engram__mem_session_summary"
     ]
   },
   "$version": 3
