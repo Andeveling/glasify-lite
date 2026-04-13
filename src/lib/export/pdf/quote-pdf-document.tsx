@@ -7,10 +7,10 @@
  * @see https://react-pdf.org/components
  */
 
-import { Document, Image, Page, Text, View } from '@react-pdf/renderer'
-import { formatCurrency, formatDateFull, formatTaxLabel } from '@/lib/format'
-import type { QuotePDFData } from '@/types/export.types'
-import { pdfColors, pdfStyles } from './pdf-styles'
+import { Document, Image, Page, Text, View } from "@react-pdf/renderer"
+import { formatCurrency, formatDateFull, formatTaxLabel } from "@/lib/format"
+import type { QuotePDFData } from "@/types/export.types"
+import { pdfColors, pdfStyles } from "./pdf-styles"
 
 type QuotePDFDocumentProps = {
   data: QuotePDFData
@@ -168,8 +168,8 @@ function PDFItemsTable({ data }: QuotePDFDocumentProps) {
               {item.glass?.color && (
                 <View
                   style={{
-                    alignItems: 'center',
-                    flexDirection: 'row',
+                    alignItems: "center",
+                    flexDirection: "row",
                     marginTop: 2,
                   }}
                 >
@@ -177,7 +177,7 @@ function PDFItemsTable({ data }: QuotePDFDocumentProps) {
                     <View
                       style={{
                         backgroundColor: item.glass.colorHexCode,
-                        border: '1px solid #e5e7eb',
+                        border: "1px solid #e5e7eb",
                         borderRadius: 2,
                         height: 10,
                         marginRight: 4,
@@ -189,7 +189,7 @@ function PDFItemsTable({ data }: QuotePDFDocumentProps) {
                     Color: {item.glass.color}
                     {item.glass.colorSurchargePercentage && item.glass.colorSurchargePercentage > 0
                       ? ` (+${item.glass.colorSurchargePercentage}%)`
-                      : ''}
+                      : ""}
                   </Text>
                 </View>
               )}
@@ -197,7 +197,7 @@ function PDFItemsTable({ data }: QuotePDFDocumentProps) {
 
             {/* Dimensiones */}
             <Text style={[pdfStyles.tableCell, pdfStyles.colDimensions, pdfStyles.tableCellCenter]}>
-              {item.dimensions ? `${item.dimensions.width}x${item.dimensions.height}` : '-'}
+              {item.dimensions ? `${item.dimensions.width}x${item.dimensions.height}` : "-"}
             </Text>
 
             {/* Cantidad */}
@@ -304,7 +304,7 @@ function PDFFooter({ data }: QuotePDFDocumentProps) {
  * Render PDF to buffer for Server Action
  */
 export async function renderQuotePDF(data: QuotePDFData): Promise<Buffer> {
-  const { renderToBuffer } = await import('@react-pdf/renderer')
+  const { renderToBuffer } = await import("@react-pdf/renderer")
   const pdf = <QuotePDFDocument data={data} />
   return await renderToBuffer(pdf)
 }

@@ -1,4 +1,4 @@
-import type { FormatContext } from '@/app/_hooks/use-tenant-config'
+import type { FormatContext } from "@/app/_hooks/use-tenant-config"
 
 export interface WatchedFields {
   widthMm: number | undefined

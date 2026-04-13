@@ -7,13 +7,13 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from 'next'
+import type { Metadata } from "next"
 
-import { GlassSolutionForm } from '../_components/glass-solution-form'
+import { GlassSolutionForm } from "../_components/glass-solution-form"
 
 export const metadata: Metadata = {
-  description: 'Crear nueva solución de cristal',
-  title: 'Nueva Solución de cristal | Admin',
+  description: "Crear nueva solución de cristal",
+  title: "Nueva Solución de cristal | Admin",
 }
 
 export default function NewGlassSolutionPage() {

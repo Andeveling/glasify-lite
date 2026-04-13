@@ -5,7 +5,7 @@ import type {
   PriceBreakdown,
   ServiceData,
   WatchedFields,
-} from '../types'
+} from "../types"
 
 export function calculateAreaM2(widthMm: number, heightMm: number): number {
   return (widthMm * heightMm) / 1_000_000
@@ -43,7 +43,7 @@ export function calculateTotal(subtotalPerUnit: number, quantity: number): numbe
 }
 
 export function calculatePriceBreakdown(
-  watchedFields: Pick<WatchedFields, 'widthMm' | 'heightMm' | 'quantity'>,
+  watchedFields: Pick<WatchedFields, "widthMm" | "heightMm" | "quantity">,
   modelData: ModelData | undefined,
   glassTypeData: GlassTypeData | undefined,
   colorData: ColorData | undefined,

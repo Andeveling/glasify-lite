@@ -12,14 +12,14 @@
  * - getWarehouseLocation: Get configured warehouse location
  */
 
-import { TRPCError } from '@trpc/server'
-import { transportationCostSchema } from '@/app/(dashboard)/admin/quotes/_schemas/project-address.schema'
-import logger from '@/lib/logger'
+import { TRPCError } from "@trpc/server"
+import { transportationCostSchema } from "@/app/(dashboard)/admin/quotes/_schemas/project-address.schema"
+import logger from "@/lib/logger"
 import {
   calculateTransportationCost,
   extractWarehouseLocation,
-} from '@/server/services/transportation.service'
-import { adminProcedure, createTRPCRouter } from '../trpc'
+} from "@/server/services/transportation.service"
+import { adminProcedure, createTRPCRouter } from "../trpc"
 
 /**
  * Transportation Router
@@ -38,7 +38,7 @@ export const transportationRouter = createTRPCRouter({
    */
   calculateCost: adminProcedure.input(transportationCostSchema).query(async ({ ctx, input }) => {
     try {
-      logger.info('Calculating transportation cost', {
+      logger.info("Calculating transportation cost", {
         userId: ctx.session.user.id,
         deliveryLatitude: input.deliveryLatitude,
         deliveryLongitude: input.deliveryLongitude,
@@ -49,8 +49,8 @@ export const transportationRouter = createTRPCRouter({
 
       if (!tenantConfig) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Configuración del sistema no encontrada',
+          code: "NOT_FOUND",
+          message: "Configuración del sistema no encontrada",
         })
       }
 
@@ -62,7 +62,7 @@ export const transportationRouter = createTRPCRouter({
         input.deliveryCity,
       )
 
-      logger.info('Transportation cost calculated', {
+      logger.info("Transportation cost calculated", {
         userId: ctx.session.user.id,
         totalCost: cost.cost.totalCost,
         distance: cost.distance.kilometers,
@@ -70,7 +70,7 @@ export const transportationRouter = createTRPCRouter({
 
       return cost
     } catch (error) {
-      logger.error('Transportation cost calculation failed', {
+      logger.error("Transportation cost calculation failed", {
         error: error instanceof Error ? error.message : String(error),
         userId: ctx.session.user.id,
       })
@@ -78,14 +78,14 @@ export const transportationRouter = createTRPCRouter({
       // Transform service errors to user-friendly messages
       if (error instanceof Error) {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
+          code: "INTERNAL_SERVER_ERROR",
           message: error.message,
         })
       }
 
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al calcular costo de transporte',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al calcular costo de transporte",
       })
     }
   }),
@@ -101,7 +101,7 @@ export const transportationRouter = createTRPCRouter({
    */
   getWarehouseLocation: adminProcedure.query(async ({ ctx }) => {
     try {
-      logger.info('Getting warehouse location', {
+      logger.info("Getting warehouse location", {
         userId: ctx.session.user.id,
       })
 
@@ -110,8 +110,8 @@ export const transportationRouter = createTRPCRouter({
 
       if (!tenantConfig) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Configuración del sistema no encontrada',
+          code: "NOT_FOUND",
+          message: "Configuración del sistema no encontrada",
         })
       }
 
@@ -119,20 +119,20 @@ export const transportationRouter = createTRPCRouter({
       const warehouse = extractWarehouseLocation(tenantConfig)
 
       if (!warehouse) {
-        logger.warn('Warehouse location not configured', {
+        logger.warn("Warehouse location not configured", {
           userId: ctx.session.user.id,
         })
         return null
       }
 
-      logger.info('Warehouse location retrieved', {
+      logger.info("Warehouse location retrieved", {
         userId: ctx.session.user.id,
         city: warehouse.city,
       })
 
       return warehouse
     } catch (error) {
-      logger.error('Failed to get warehouse location', {
+      logger.error("Failed to get warehouse location", {
         error: error instanceof Error ? error.message : String(error),
         userId: ctx.session.user.id,
       })

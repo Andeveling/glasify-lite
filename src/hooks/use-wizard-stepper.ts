@@ -1,7 +1,7 @@
-'use client'
+"use client"
 
-import { useCallback, useState } from 'react'
-import type { UseFormReturn } from 'react-hook-form'
+import { useCallback, useState } from "react"
+import type { UseFormReturn } from "react-hook-form"
 
 export function useWizardStepper<T extends Record<string, unknown>>(
   totalSteps: number,

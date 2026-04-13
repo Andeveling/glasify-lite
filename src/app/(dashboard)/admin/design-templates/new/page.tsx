@@ -1,11 +1,11 @@
-import { ArrowLeft } from 'lucide-react'
-import type { Metadata } from 'next'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { DesignTemplateForm } from '../_components/design-template-form'
+import { ArrowLeft } from "lucide-react"
+import type { Metadata } from "next"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { DesignTemplateForm } from "../_components/design-template-form"
 
 export const metadata: Metadata = {
-  title: 'Nueva Plantilla de Diseño | Admin',
+  title: "Nueva Plantilla de Diseño | Admin",
 }
 
 export default function NewDesignTemplatePage() {

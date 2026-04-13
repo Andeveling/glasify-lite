@@ -1,10 +1,10 @@
-'use client'
+"use client"
 
-import { useRouter } from 'next/navigation'
-import { useMemo } from 'react'
-import { DesignRenderer } from '@/components/design'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useRouter } from "next/navigation"
+import { useMemo } from "react"
+import { DesignRenderer } from "@/components/design"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Form,
   FormControl,
@@ -13,34 +13,34 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
-import type { DesignTemplateConfig, FrameConfig } from '@/domain/design'
-import type { DesignTemplateUpdateInput } from '@/lib/validations/design-template'
-import { useDesignTemplateForm } from '../_hooks/use-design-template-form'
+} from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
+import type { DesignTemplateConfig, FrameConfig } from "@/domain/design"
+import type { DesignTemplateUpdateInput } from "@/lib/validations/design-template"
+import { useDesignTemplateForm } from "../_hooks/use-design-template-form"
 
 type DesignTemplateFormProps = {
-  mode: 'create' | 'edit'
+  mode: "create" | "edit"
   defaultValues?: DesignTemplateUpdateInput & { id: string }
 }
 
 const PRESET_PATTERNS = [
-  { value: 'X', label: 'X — 1 hoja móvil' },
-  { value: 'O', label: 'O — 1 hoja fija' },
-  { value: 'XX', label: 'XX — 2 hojas móviles' },
-  { value: 'XO', label: 'XO — Móvil + Fija' },
-  { value: 'OX', label: 'OX — Fija + Móvil' },
-  { value: 'XXO', label: 'XXO — 2 móviles + 1 fija' },
-  { value: 'OXX', label: 'OXX — 1 fija + 2 móviles' },
-  { value: 'XOX', label: 'XOX — Móvil + Fija + Móvil' },
+  { value: "X", label: "X — 1 hoja móvil" },
+  { value: "O", label: "O — 1 hoja fija" },
+  { value: "XX", label: "XX — 2 hojas móviles" },
+  { value: "XO", label: "XO — Móvil + Fija" },
+  { value: "OX", label: "OX — Fija + Móvil" },
+  { value: "XXO", label: "XXO — 2 móviles + 1 fija" },
+  { value: "OXX", label: "OXX — 1 fija + 2 móviles" },
+  { value: "XOX", label: "XOX — Móvil + Fija + Móvil" },
 ]
 
 export function DesignTemplateForm({ mode, defaultValues }: DesignTemplateFormProps) {
@@ -50,15 +50,15 @@ export function DesignTemplateForm({ mode, defaultValues }: DesignTemplateFormPr
     mode,
   })
 
-  const pattern = form.watch('pattern') ?? 'XX'
-  const frameConfig = form.watch('frameConfig') as FrameConfig
-  const showArrows = form.watch('showArrows')
-  const showHandles = form.watch('showHandles')
+  const pattern = form.watch("pattern") ?? "XX"
+  const frameConfig = form.watch("frameConfig") as FrameConfig
+  const showArrows = form.watch("showArrows")
+  const showHandles = form.watch("showHandles")
 
   const templateConfig: DesignTemplateConfig = useMemo(
     () => ({
-      id: defaultValues?.id ?? 'preview',
-      name: form.watch('name') ?? 'Preview',
+      id: defaultValues?.id ?? "preview",
+      name: form.watch("name") ?? "Preview",
       pattern,
       frameConfig,
       showArrows,
@@ -75,7 +75,7 @@ export function DesignTemplateForm({ mode, defaultValues }: DesignTemplateFormPr
           <Card>
             <CardHeader>
               <CardTitle>
-                {mode === 'create' ? 'Crear Plantilla de Diseño' : 'Editar Plantilla'}
+                {mode === "create" ? "Crear Plantilla de Diseño" : "Editar Plantilla"}
               </CardTitle>
               <CardDescription>
                 Define el patrón de paneles y la configuración visual del marco
@@ -226,7 +226,7 @@ export function DesignTemplateForm({ mode, defaultValues }: DesignTemplateFormPr
             Cancelar
           </Button>
           <Button disabled={isLoading} type="submit">
-            {isLoading ? 'Guardando...' : mode === 'create' ? 'Crear Plantilla' : 'Guardar Cambios'}
+            {isLoading ? "Guardando..." : mode === "create" ? "Crear Plantilla" : "Guardar Cambios"}
           </Button>
         </div>
       </form>

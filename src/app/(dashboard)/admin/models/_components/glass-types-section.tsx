@@ -4,15 +4,15 @@
  * Multi-select for compatible glass types
  */
 
-'use client'
+"use client"
 
-import { useFormContext } from 'react-hook-form'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import type { RouterOutputs } from '@/trpc/react'
+import { useFormContext } from "react-hook-form"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import type { RouterOutputs } from "@/trpc/react"
 
-type GlassType = RouterOutputs['admin']['glass-type']['list']['items'][number]
+type GlassType = RouterOutputs["admin"]["glass-type"]["list"]["items"][number]
 
 type GlassTypesSectionProps = {
   glassTypes: GlassType[]

@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from "zod"
 
 /**
  * Hex color regex: #RRGGBB or #RGB
@@ -27,7 +27,7 @@ const socialUrlSchema = z
   .refine(
     (val) => {
       // Allow empty strings or undefined
-      if (!val || val === '') {
+      if (!val || val === "") {
         return true
       }
 
@@ -42,7 +42,7 @@ const socialUrlSchema = z
       return socialUrlRegex.test(val)
     },
     {
-      message: 'URL debe ser de Facebook, Instagram o LinkedIn, o vacía',
+      message: "URL debe ser de Facebook, Instagram o LinkedIn, o vacía",
     },
   )
 
@@ -56,7 +56,7 @@ const whatsappNumberSchema = z
   .refine(
     (val) => {
       // Allow empty strings or undefined
-      if (!val || val === '') {
+      if (!val || val === "") {
         return true
       }
 
@@ -64,7 +64,7 @@ const whatsappNumberSchema = z
       return e164PhoneRegex.test(val)
     },
     {
-      message: 'Número WhatsApp inválido. Use formato internacional: +507-1234-5678',
+      message: "Número WhatsApp inválido. Use formato internacional: +507-1234-5678",
     },
   )
 
@@ -81,12 +81,12 @@ const logoSchema = z
   .refine(
     (val) => {
       // Allow empty strings or undefined
-      if (!val || val === '') {
+      if (!val || val === "") {
         return true
       }
 
       // Allow local paths (start with /)
-      if (val.startsWith('/')) {
+      if (val.startsWith("/")) {
         return true
       }
 
@@ -99,7 +99,7 @@ const logoSchema = z
       }
     },
     {
-      message: 'Debe ser una URL válida o una ruta local (ej: /uploads/logo.svg)',
+      message: "Debe ser una URL válida o una ruta local (ej: /uploads/logo.svg)",
     },
   )
 
@@ -111,24 +111,24 @@ const logoSchema = z
  * US-010: Botón de WhatsApp en catálogo y cotización
  */
 export const updateBrandingSchema = z.object({
-  facebookUrl: socialUrlSchema.default(''),
-  instagramUrl: socialUrlSchema.default(''),
-  linkedinUrl: socialUrlSchema.default(''),
-  logoUrl: logoSchema.default(''),
+  facebookUrl: socialUrlSchema.default(""),
+  instagramUrl: socialUrlSchema.default(""),
+  linkedinUrl: socialUrlSchema.default(""),
+  logoUrl: logoSchema.default(""),
   primaryColor: z
     .string()
     .regex(hexColorRegex, {
-      message: 'Color debe estar en formato hexadecimal (#RRGGBB)',
+      message: "Color debe estar en formato hexadecimal (#RRGGBB)",
     })
     .optional(),
   secondaryColor: z
     .string()
     .regex(hexColorRegex, {
-      message: 'Color debe estar en formato hexadecimal (#RRGGBB)',
+      message: "Color debe estar en formato hexadecimal (#RRGGBB)",
     })
     .optional(),
   whatsappEnabled: z.boolean().default(false),
-  whatsappNumber: whatsappNumberSchema.default(''),
+  whatsappNumber: whatsappNumberSchema.default(""),
 })
 
 export type UpdateBrandingInput = z.infer<typeof updateBrandingSchema>

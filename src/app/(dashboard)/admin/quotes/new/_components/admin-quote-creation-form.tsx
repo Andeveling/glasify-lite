@@ -1,10 +1,10 @@
-'use client'
+"use client"
 
-import { Loader2, Plus } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { QuoteItemWizard } from '@/components/admin/quote-item-wizard'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Loader2, Plus } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { QuoteItemWizard } from "@/components/admin/quote-item-wizard"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Form,
   FormControl,
@@ -13,17 +13,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { useAdminQuoteCreation } from '../_hooks/use-admin-quote-creation'
-import { QuoteItemRow } from './quote-item-row'
+} from "@/components/ui/select"
+import { useAdminQuoteCreation } from "../_hooks/use-admin-quote-creation"
+import { QuoteItemRow } from "./quote-item-row"
 
 export function AdminQuoteCreationForm({ clientId }: { clientId: string }) {
   const router = useRouter()
@@ -121,7 +121,7 @@ export function AdminQuoteCreationForm({ clientId }: { clientId: string }) {
                   <FormItem>
                     <FormLabel>Cliente</FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                      <Select onValueChange={field.onChange} value={field.value ?? ""}>
                         <SelectTrigger>
                           <SelectValue placeholder="Seleccionar cliente" />
                         </SelectTrigger>

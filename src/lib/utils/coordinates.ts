@@ -12,7 +12,7 @@ import {
   MAX_LONGITUDE,
   MIN_LATITUDE,
   MIN_LONGITUDE,
-} from '@/app/(dashboard)/admin/quotes/_constants/geocoding.constants'
+} from "@/app/(dashboard)/admin/quotes/_constants/geocoding.constants"
 
 /**
  * Coordinate pair type
@@ -101,8 +101,8 @@ export function parseCoordinates(
     return null
   }
 
-  const lat = typeof latitude === 'number' ? latitude : latitude.toNumber()
-  const lon = typeof longitude === 'number' ? longitude : longitude.toNumber()
+  const lat = typeof latitude === "number" ? latitude : latitude.toNumber()
+  const lon = typeof longitude === "number" ? longitude : longitude.toNumber()
 
   validateCoordinates(lat, lon)
 

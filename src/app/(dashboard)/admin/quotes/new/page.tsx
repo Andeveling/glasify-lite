@@ -9,13 +9,13 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from 'next'
-import { redirect } from 'next/navigation'
-import { AdminQuoteCreationForm } from './_components/admin-quote-creation-form'
+import type { Metadata } from "next"
+import { redirect } from "next/navigation"
+import { AdminQuoteCreationForm } from "./_components/admin-quote-creation-form"
 
 export const metadata: Metadata = {
-  title: 'Nueva Cotización | Admin',
-  description: 'Crear una nueva cotización directamente desde el catálogo',
+  title: "Nueva Cotización | Admin",
+  description: "Crear una nueva cotización directamente desde el catálogo",
 }
 
 type SearchParams = Promise<{
@@ -28,7 +28,7 @@ export default async function NewQuotePage({ searchParams }: { searchParams: Sea
   // Redirect to client selection if no clientId provided
   // The quoting workflow requires selecting a client first
   if (!params.clientId) {
-    redirect('/admin/clients')
+    redirect("/admin/clients")
   }
 
   return (

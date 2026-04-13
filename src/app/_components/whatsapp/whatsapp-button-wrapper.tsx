@@ -1,12 +1,12 @@
-'use client'
+"use client"
 
-import { useEffect, useState } from 'react'
-import { api } from '@/trpc/react'
-import { WhatsAppButton } from './whatsapp-button'
+import { useEffect, useState } from "react"
+import { api } from "@/trpc/react"
+import { WhatsAppButton } from "./whatsapp-button"
 
 type WhatsAppButtonWrapperProps = {
   message: string
-  variant?: 'floating' | 'inline'
+  variant?: "floating" | "inline"
   className?: string
 }
 
@@ -24,7 +24,7 @@ type WhatsAppButtonWrapperProps = {
  */
 export function WhatsAppButtonWrapper({
   message,
-  variant = 'inline',
+  variant = "inline",
   className,
 }: WhatsAppButtonWrapperProps) {
   // Track client-side mount to prevent hydration mismatch

@@ -7,7 +7,7 @@
  * @module types/dashboard
  */
 
-import type { TenantConfig } from '@prisma/generated/client'
+import type { TenantConfig } from "@prisma/generated/client"
 
 // =============================================================================
 // ENUMS
@@ -17,10 +17,10 @@ import type { TenantConfig } from '@prisma/generated/client'
  * Period selection for temporal filtering
  */
 export const DashboardPeriod = {
-  CURRENT_YEAR: 'year',
-  LAST_7_DAYS: '7d',
-  LAST_30_DAYS: '30d',
-  LAST_90_DAYS: '90d',
+  CURRENT_YEAR: "year",
+  LAST_7_DAYS: "7d",
+  LAST_30_DAYS: "30d",
+  LAST_90_DAYS: "90d",
 } as const
 
 export type DashboardPeriodType = (typeof DashboardPeriod)[keyof typeof DashboardPeriod]
@@ -29,10 +29,10 @@ export type DashboardPeriodType = (typeof DashboardPeriod)[keyof typeof Dashboar
  * Chart rendering types
  */
 export const ChartType = {
-  AREA: 'area',
-  BAR: 'bar',
-  LINE: 'line',
-  PIE: 'pie',
+  AREA: "area",
+  BAR: "bar",
+  LINE: "line",
+  PIE: "pie",
 } as const
 
 export type ChartTypeValue = (typeof ChartType)[keyof typeof ChartType]
@@ -231,7 +231,7 @@ export type ChartConfig = {
  * - Timezone handling
  */
 export type DashboardContext = {
-  tenantConfig: Pick<TenantConfig, 'currency' | 'locale' | 'timezone'>
+  tenantConfig: Pick<TenantConfig, "currency" | "locale" | "timezone">
 }
 
 // =============================================================================

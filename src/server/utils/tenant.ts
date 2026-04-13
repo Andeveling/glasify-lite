@@ -6,14 +6,14 @@
  * @see /plan/refactor-manufacturer-to-tenant-config-1.md
  */
 
-import type { Prisma, PrismaClient, TenantConfig } from '@prisma/generated/client'
-import { db } from '../db'
+import type { Prisma, PrismaClient, TenantConfig } from "@prisma/generated/client"
+import { db } from "../db"
 
 // Simplified TransactionClient type for Prisma v7
 // Omits client-level methods, compatible with transaction clients
 type TransactionClient = Omit<
   PrismaClient,
-  '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
+  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
 >
 
 /**
@@ -32,7 +32,7 @@ export async function getTenantConfig(client?: TransactionClient): Promise<Tenan
   const config = await prisma.tenantConfig.findFirst()
 
   if (!config) {
-    throw new Error('No TenantConfig found in database. Run migration script to create one.')
+    throw new Error("No TenantConfig found in database. Run migration script to create one.")
   }
 
   return config
@@ -55,7 +55,7 @@ export async function getTenantConfigSelect<T extends Prisma.TenantConfigSelect>
   })
 
   if (!config) {
-    throw new Error('No TenantConfig found in database. Run migration script to create one.')
+    throw new Error("No TenantConfig found in database. Run migration script to create one.")
   }
 
   return config

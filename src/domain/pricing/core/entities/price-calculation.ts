@@ -5,16 +5,16 @@
  * This is the main entry point for calculating item prices in the domain layer.
  */
 
-import { AccessoryCalculator } from '../services/accessory-calculator'
-import { AdjustmentCalculator } from '../services/adjustment-calculator'
-import { GlassCalculator } from '../services/glass-calculator'
-import { MarginCalculator } from '../services/margin-calculator'
-import { ProfileCalculator } from '../services/profile-calculator'
-import type { ServiceAmountInput } from '../services/service-calculator'
-import { ServiceCalculator } from '../services/service-calculator'
-import type { AdjustmentInput, AdjustmentResult, ServiceResult } from '../types'
-import type { Dimensions } from './dimensions'
-import { Money } from './money'
+import { AccessoryCalculator } from "../services/accessory-calculator"
+import { AdjustmentCalculator } from "../services/adjustment-calculator"
+import { GlassCalculator } from "../services/glass-calculator"
+import { MarginCalculator } from "../services/margin-calculator"
+import { ProfileCalculator } from "../services/profile-calculator"
+import type { ServiceAmountInput } from "../services/service-calculator"
+import { ServiceCalculator } from "../services/service-calculator"
+import type { AdjustmentInput, AdjustmentResult, ServiceResult } from "../types"
+import type { Dimensions } from "./dimensions"
+import { Money } from "./money"
 
 /**
  * Model pricing configuration

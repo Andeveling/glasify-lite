@@ -1,6 +1,6 @@
-import Decimal from 'decimal.js'
-import { SERVICE_QUANTITY_SCALE } from '../constants'
-import type { Dimensions } from '../entities/dimensions'
+import Decimal from "decimal.js"
+import { SERVICE_QUANTITY_SCALE } from "../constants"
+import type { Dimensions } from "../entities/dimensions"
 
 export function calculateFixedQuantity(quantityOverride?: number): number {
   return quantityOverride ?? 1

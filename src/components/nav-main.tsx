@@ -1,8 +1,8 @@
-'use client'
+"use client"
 
-import type { LucideIcon } from 'lucide-react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import type { LucideIcon } from "lucide-react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar'
+} from "@/components/ui/sidebar"
 
 export function NavMain({
   items,
@@ -23,14 +23,14 @@ export function NavMain({
 }) {
   const pathname = usePathname()
   const { state, isMobile } = useSidebar()
-  const isCollapsed = state === 'collapsed' && !isMobile
+  const isCollapsed = state === "collapsed" && !isMobile
 
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
           {items.map((item) => {
-            const segmentsCount = item.url.split('/').filter(Boolean).length
+            const segmentsCount = item.url.split("/").filter(Boolean).length
             const isActive =
               pathname === item.url || (segmentsCount > 1 && pathname.startsWith(`${item.url}/`))
 

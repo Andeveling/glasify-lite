@@ -18,25 +18,25 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from 'next'
-import { api } from '@/trpc/server-client'
-import { ColorsContent } from './_components/colors-content'
+import type { Metadata } from "next"
+import { api } from "@/trpc/server-client"
+import { ColorsContent } from "./_components/colors-content"
 
 export const metadata: Metadata = {
   description:
-    'Administra los colores disponibles para ventanas y puertas, configura recargos y asociaciones con modelos',
-  title: 'Gestión de Colores | Admin',
+    "Administra los colores disponibles para ventanas y puertas, configura recargos y asociaciones con modelos",
+  title: "Gestión de Colores | Admin",
 }
 
 // Force dynamic rendering - requires database connection
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 type SearchParams = Promise<{
   isActive?: string
   page?: string
   search?: string
   sortBy?: string
-  sortOrder?: 'asc' | 'desc'
+  sortOrder?: "asc" | "desc"
 }>
 
 type PageProps = {
@@ -48,13 +48,13 @@ export default async function ColorsPage({ searchParams }: PageProps) {
 
   // Parse search params (outside Suspense)
   const page = Number(params.page) || 1
-  const search = params.search && params.search !== '' ? params.search : undefined
-  const isActive = (params.isActive && params.isActive !== 'all' ? params.isActive : 'all') as
-    | 'all'
-    | 'active'
-    | 'inactive'
-  const sortBy = (params.sortBy || 'name') as 'name' | 'createdAt' | 'updatedAt'
-  const sortOrder = (params.sortOrder || 'asc') as 'asc' | 'desc'
+  const search = params.search && params.search !== "" ? params.search : undefined
+  const isActive = (params.isActive && params.isActive !== "all" ? params.isActive : "all") as
+    | "all"
+    | "active"
+    | "inactive"
+  const sortBy = (params.sortBy || "name") as "name" | "createdAt" | "updatedAt"
+  const sortOrder = (params.sortOrder || "asc") as "asc" | "desc"
 
   // Fetch data OUTSIDE Suspense to avoid EventEmitter memory leak
   const initialData = await api.admin.colors.list({

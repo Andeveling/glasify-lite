@@ -1,9 +1,9 @@
-'use client'
+"use client"
 
-import { FileCheck, FileText, FileX, Send } from 'lucide-react'
-import { formatPercent } from '@/lib/format'
-import type { QuoteMetrics } from '@/types/dashboard'
-import { MetricCard } from './metric-card'
+import { FileCheck, FileText, FileX, Send } from "lucide-react"
+import { formatPercent } from "@/lib/format"
+import type { QuoteMetrics } from "@/types/dashboard"
+import { MetricCard } from "./metric-card"
 
 // Conversion constant for decimal to percentage display
 const PERCENTAGE_MULTIPLIER = 100

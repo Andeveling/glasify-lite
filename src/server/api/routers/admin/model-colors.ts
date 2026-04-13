@@ -15,16 +15,16 @@
  * - Removing default color auto-promotes next available color
  */
 
-import { TRPCError } from '@trpc/server'
-import { z } from 'zod'
-import logger from '@/lib/logger'
+import { TRPCError } from "@trpc/server"
+import { z } from "zod"
+import logger from "@/lib/logger"
 import {
   modelColorAssignSchema,
   modelColorIdSchema,
   modelColorUpdateSurchargeSchema,
   modelIdSchema,
-} from '@/lib/validations/model-color'
-import { adminProcedure, createTRPCRouter } from '@/server/api/trpc'
+} from "@/lib/validations/model-color"
+import { adminProcedure, createTRPCRouter } from "@/server/api/trpc"
 
 // Business constants
 const MAX_SURCHARGE_PERCENTAGE = 100
@@ -50,12 +50,12 @@ export const modelColorsRouter = createTRPCRouter({
           color: true,
         },
         orderBy: [
-          { isDefault: 'desc' }, // Default first
-          { color: { name: 'asc' } }, // Then alphabetically
+          { isDefault: "desc" }, // Default first
+          { color: { name: "asc" } }, // Then alphabetically
         ],
       })
 
-      logger.info('Model colors list retrieved', {
+      logger.info("Model colors list retrieved", {
         userId: ctx.session?.user.id,
         modelId: input.modelId,
         count: modelColors.length,
@@ -63,14 +63,14 @@ export const modelColorsRouter = createTRPCRouter({
 
       return modelColors
     } catch (error) {
-      logger.error('Failed to list model colors', {
+      logger.error("Failed to list model colors", {
         error,
         userId: ctx.session?.user.id,
         modelId: input.modelId,
       })
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al obtener los colores del modelo',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al obtener los colores del modelo",
       })
     }
   }),
@@ -97,10 +97,10 @@ export const modelColorsRouter = createTRPCRouter({
             notIn: assignedIds,
           },
         },
-        orderBy: { name: 'asc' },
+        orderBy: { name: "asc" },
       })
 
-      logger.info('Available colors retrieved', {
+      logger.info("Available colors retrieved", {
         userId: ctx.session?.user.id,
         modelId: input.modelId,
         count: availableColors.length,
@@ -108,14 +108,14 @@ export const modelColorsRouter = createTRPCRouter({
 
       return availableColors
     } catch (error) {
-      logger.error('Failed to get available colors', {
+      logger.error("Failed to get available colors", {
         error,
         userId: ctx.session?.user.id,
         modelId: input.modelId,
       })
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al obtener colores disponibles',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al obtener colores disponibles",
       })
     }
   }),
@@ -134,8 +134,8 @@ export const modelColorsRouter = createTRPCRouter({
 
       if (!model) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Modelo no encontrado',
+          code: "NOT_FOUND",
+          message: "Modelo no encontrado",
         })
       }
 
@@ -147,15 +147,15 @@ export const modelColorsRouter = createTRPCRouter({
 
       if (!color) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Color no encontrado',
+          code: "NOT_FOUND",
+          message: "Color no encontrado",
         })
       }
 
       if (!color.isActive) {
         throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'No se puede asignar un color inactivo',
+          code: "BAD_REQUEST",
+          message: "No se puede asignar un color inactivo",
         })
       }
 
@@ -190,7 +190,7 @@ export const modelColorsRouter = createTRPCRouter({
         })
       })
 
-      logger.info('Color assigned to model', {
+      logger.info("Color assigned to model", {
         userId: ctx.session?.user.id,
         modelId: input.modelId,
         colorId: input.colorId,
@@ -202,10 +202,10 @@ export const modelColorsRouter = createTRPCRouter({
       return modelColor
     } catch (error) {
       // Handle unique constraint violation (color already assigned)
-      if (error instanceof Error && 'code' in error && error.code === 'P2002') {
+      if (error instanceof Error && "code" in error && error.code === "P2002") {
         throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Este color ya está asignado al modelo',
+          code: "CONFLICT",
+          message: "Este color ya está asignado al modelo",
         })
       }
 
@@ -214,15 +214,15 @@ export const modelColorsRouter = createTRPCRouter({
         throw error
       }
 
-      logger.error('Failed to assign color to model', {
+      logger.error("Failed to assign color to model", {
         error,
         userId: ctx.session?.user.id,
         input,
       })
 
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al asignar color al modelo',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al asignar color al modelo",
       })
     }
   }),
@@ -245,7 +245,7 @@ export const modelColorsRouter = createTRPCRouter({
           },
         })
 
-        logger.info('Model color surcharge updated', {
+        logger.info("Model color surcharge updated", {
           userId: ctx.session?.user.id,
           modelColorId: input.id,
           modelName: updated.model.name,
@@ -255,22 +255,22 @@ export const modelColorsRouter = createTRPCRouter({
 
         return updated
       } catch (error) {
-        if (error instanceof Error && 'code' in error && error.code === 'P2025') {
+        if (error instanceof Error && "code" in error && error.code === "P2025") {
           throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'Asignación de color no encontrada',
+            code: "NOT_FOUND",
+            message: "Asignación de color no encontrada",
           })
         }
 
-        logger.error('Failed to update surcharge', {
+        logger.error("Failed to update surcharge", {
           error,
           userId: ctx.session?.user.id,
           input,
         })
 
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Error al actualizar recargo de color',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error al actualizar recargo de color",
         })
       }
     }),
@@ -289,8 +289,8 @@ export const modelColorsRouter = createTRPCRouter({
 
       if (!modelColor) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Asignación de color no encontrada',
+          code: "NOT_FOUND",
+          message: "Asignación de color no encontrada",
         })
       }
 
@@ -312,7 +312,7 @@ export const modelColorsRouter = createTRPCRouter({
         })
       })
 
-      logger.info('Default color set for model', {
+      logger.info("Default color set for model", {
         userId: ctx.session?.user.id,
         modelColorId: input.id,
         modelId: modelColor.modelId,
@@ -325,15 +325,15 @@ export const modelColorsRouter = createTRPCRouter({
         throw error
       }
 
-      logger.error('Failed to set default color', {
+      logger.error("Failed to set default color", {
         error,
         userId: ctx.session?.user.id,
         input,
       })
 
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al establecer color por defecto',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al establecer color por defecto",
       })
     }
   }),
@@ -356,8 +356,8 @@ export const modelColorsRouter = createTRPCRouter({
 
       if (!modelColor) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Asignación de color no encontrada',
+          code: "NOT_FOUND",
+          message: "Asignación de color no encontrada",
         })
       }
 
@@ -372,7 +372,7 @@ export const modelColorsRouter = createTRPCRouter({
         if (modelColor.isDefault) {
           const nextColor = await tx.modelColor.findFirst({
             where: { modelId: modelColor.modelId },
-            orderBy: { createdAt: 'asc' },
+            orderBy: { createdAt: "asc" },
           })
 
           if (nextColor) {
@@ -384,7 +384,7 @@ export const modelColorsRouter = createTRPCRouter({
         }
       })
 
-      logger.info('Color unassigned from model', {
+      logger.info("Color unassigned from model", {
         userId: ctx.session?.user.id,
         modelColorId: input.id,
         modelId: modelColor.modelId,
@@ -398,15 +398,15 @@ export const modelColorsRouter = createTRPCRouter({
         throw error
       }
 
-      logger.error('Failed to unassign color', {
+      logger.error("Failed to unassign color", {
         error,
         userId: ctx.session?.user.id,
         input,
       })
 
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al desasignar color del modelo',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al desasignar color del modelo",
       })
     }
   }),
@@ -438,8 +438,8 @@ export const modelColorsRouter = createTRPCRouter({
 
         if (!model) {
           throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'Modelo no encontrado',
+            code: "NOT_FOUND",
+            message: "Modelo no encontrado",
           })
         }
 
@@ -468,7 +468,7 @@ export const modelColorsRouter = createTRPCRouter({
           return created
         })
 
-        logger.info('Bulk color assignment completed', {
+        logger.info("Bulk color assignment completed", {
           userId: ctx.session?.user.id,
           modelId: input.modelId,
           assignedCount: result.count,
@@ -481,15 +481,15 @@ export const modelColorsRouter = createTRPCRouter({
           throw error
         }
 
-        logger.error('Failed to bulk assign colors', {
+        logger.error("Failed to bulk assign colors", {
           error,
           userId: ctx.session?.user.id,
           input,
         })
 
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Error al asignar colores en lote',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error al asignar colores en lote",
         })
       }
     }),

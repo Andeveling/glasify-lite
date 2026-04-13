@@ -11,8 +11,8 @@
  * Usa repositories (ports) para acceso a datos.
  */
 
-import type { Quote, QuoteStatus } from '@prisma/generated/client'
-import { validateQuoteStatus } from '../services/quote-validator.service'
+import type { Quote, QuoteStatus } from "@prisma/generated/client"
+import { validateQuoteStatus } from "../services/quote-validator.service"
 
 /**
  * Input para enviar quote al vendedor
@@ -29,7 +29,7 @@ export type SendQuoteToVendorInput = {
  */
 export type SendQuoteToVendorOutput = {
   id: string
-  status: 'sent'
+  status: "sent"
   sentAt: Date
   contactPhone: string
   contactEmail?: string
@@ -68,41 +68,41 @@ export type SendQuoteToVendorDeps = {
  * Errores de negocio
  */
 export class QuoteNotFoundError extends Error {
-  code = 'NOT_FOUND' as const
+  code = "NOT_FOUND" as const
 
   constructor() {
-    super('Cotización no encontrada.')
-    this.name = 'QuoteNotFoundError'
+    super("Cotización no encontrada.")
+    this.name = "QuoteNotFoundError"
   }
 }
 
 export class QuoteUnauthorizedError extends Error {
-  code = 'FORBIDDEN' as const
+  code = "FORBIDDEN" as const
 
   constructor() {
-    super('No tienes permiso para enviar esta cotización.')
-    this.name = 'QuoteUnauthorizedError'
+    super("No tienes permiso para enviar esta cotización.")
+    this.name = "QuoteUnauthorizedError"
   }
 }
 
 export class QuoteAlreadySentError extends Error {
-  code = 'BAD_REQUEST' as const
+  code = "BAD_REQUEST" as const
   sentAt: Date | null
 
   constructor(sentAt: Date | null) {
-    const dateStr = sentAt?.toLocaleDateString('es-CO') ?? 'anteriormente'
+    const dateStr = sentAt?.toLocaleDateString("es-CO") ?? "anteriormente"
     super(`Esta cotización ya fue enviada el ${dateStr}.`)
-    this.name = 'QuoteAlreadySentError'
+    this.name = "QuoteAlreadySentError"
     this.sentAt = sentAt
   }
 }
 
 export class QuoteEmptyError extends Error {
-  code = 'BAD_REQUEST' as const
+  code = "BAD_REQUEST" as const
 
   constructor() {
-    super('No puedes enviar una cotización vacía. Agrega al menos un producto.')
-    this.name = 'QuoteEmptyError'
+    super("No puedes enviar una cotización vacía. Agrega al menos un producto.")
+    this.name = "QuoteEmptyError"
   }
 }
 
@@ -131,7 +131,7 @@ export async function sendQuoteToVendorUseCase(
 
   // 4. Validar estado (debe ser 'draft')
   try {
-    validateQuoteStatus(quote.status, 'enviar')
+    validateQuoteStatus(quote.status, "enviar")
   } catch {
     throw new QuoteAlreadySentError(quote.sentAt)
   }
@@ -147,7 +147,7 @@ export async function sendQuoteToVendorUseCase(
 
   return {
     id: updatedQuote.id,
-    status: 'sent',
+    status: "sent",
     sentAt: updatedQuote.sentAt ?? now,
     contactPhone: updatedQuote.contactPhone ?? input.contactPhone,
     contactEmail: input.contactEmail,

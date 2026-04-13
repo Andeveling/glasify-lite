@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from "zod"
 
 /**
  * Zod validation schemas for Color catalog management
@@ -22,7 +22,7 @@ const MAX_SEARCH_LENGTH = 100
 const colorBaseSchema = z.object({
   name: z
     .string()
-    .min(1, { message: 'El nombre del color es requerido' })
+    .min(1, { message: "El nombre del color es requerido" })
     .max(MAX_COLOR_NAME_LENGTH, {
       message: `El nombre no puede exceder ${MAX_COLOR_NAME_LENGTH} caracteres`,
     })
@@ -31,7 +31,7 @@ const colorBaseSchema = z.object({
   ralCode: z
     .string()
     .regex(RAL_CODE_PATTERN, {
-      message: 'Código RAL inválido. Formato esperado: RAL XXXX (ej: RAL 9010)',
+      message: "Código RAL inválido. Formato esperado: RAL XXXX (ej: RAL 9010)",
     })
     .nullable()
     .optional(),
@@ -39,7 +39,7 @@ const colorBaseSchema = z.object({
   hexCode: z
     .string()
     .regex(HEX_CODE_PATTERN, {
-      message: 'Formato hexadecimal inválido. Debe ser #RRGGBB (ej: #F3F3E9)',
+      message: "Formato hexadecimal inválido. Debe ser #RRGGBB (ej: #F3F3E9)",
     })
     .transform((val) => val.toUpperCase()), // Normalize to uppercase
 
@@ -63,7 +63,7 @@ export const colorUpdateSchema = colorBaseSchema.partial()
  * Used in getById, update, delete operations
  */
 export const colorIdSchema = z.object({
-  id: z.string().cuid({ message: 'ID de color inválido' }),
+  id: z.string().cuid({ message: "ID de color inválido" }),
 })
 
 /**
@@ -76,24 +76,24 @@ export const colorListSchema = z.object({
   search: z
     .string()
     .max(MAX_SEARCH_LENGTH, {
-      message: 'La búsqueda no puede exceder 100 caracteres',
+      message: "La búsqueda no puede exceder 100 caracteres",
     })
     .optional(),
   isActive: z
-    .enum(['all', 'active', 'inactive'])
+    .enum(["all", "active", "inactive"])
     .optional()
-    .default('all')
+    .default("all")
     .transform((val) => {
-      if (val === 'active') {
+      if (val === "active") {
         return true
       }
-      if (val === 'inactive') {
+      if (val === "inactive") {
         return false
       }
       return
     }),
-  sortBy: z.enum(['name', 'createdAt', 'updatedAt']).default('name'),
-  sortOrder: z.enum(['asc', 'desc']).default('asc'),
+  sortBy: z.enum(["name", "createdAt", "updatedAt"]).default("name"),
+  sortOrder: z.enum(["asc", "desc"]).default("asc"),
 })
 
 /**

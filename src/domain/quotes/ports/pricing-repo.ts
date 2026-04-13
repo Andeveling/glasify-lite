@@ -1,6 +1,6 @@
-import type { GlassType, Model, Service } from '@prisma/generated/client'
+import type { GlassType, Model, Service } from "@prisma/generated/client"
 
-import type { CalculateItemPriceOutput } from '../use-cases/calculate-item-price'
+import type { CalculateItemPriceOutput } from "../use-cases/calculate-item-price"
 
 /**
  * TrpcPriceInput — shared adapter input type.
@@ -27,7 +27,7 @@ export type TrpcPriceInput = {
   services?: Array<{
     serviceId: string
     name: string
-    unit: 'unit' | 'sqm' | 'ml'
+    unit: "unit" | "sqm" | "ml"
     rate: number
     minimumBillingUnit?: number
     quantityOverride?: number
@@ -35,9 +35,9 @@ export type TrpcPriceInput = {
   adjustments?: Array<{
     adjustmentId: string
     concept: string
-    unit: 'unit' | 'sqm' | 'ml'
+    unit: "unit" | "sqm" | "ml"
     value: number
-    sign: 'positive' | 'negative'
+    sign: "positive" | "negative"
   }>
 }
 
@@ -51,7 +51,7 @@ export type PriceCalculationResult = {
   colorSurchargeAmount?: number
   services: Array<{
     serviceId: string
-    unit: 'unit' | 'sqm' | 'ml'
+    unit: "unit" | "sqm" | "ml"
     quantity: number
     amount: number
   }>

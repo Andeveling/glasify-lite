@@ -1,15 +1,15 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import type { UseFormReturn } from 'react-hook-form'
-import { useForm } from 'react-hook-form'
+import { zodResolver } from "@hookform/resolvers/zod"
+import type { UseFormReturn } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import {
   type ColorCreateInput,
   type ColorUpdateInput,
   colorCreateSchema,
-} from '@/lib/validations/color'
-import { useColorMutations } from './use-color-mutations'
+} from "@/lib/validations/color"
+import { useColorMutations } from "./use-color-mutations"
 
 type UseColorFormOptions = {
-  mode: 'create' | 'edit'
+  mode: "create" | "edit"
   defaultValues?: ColorUpdateInput & { id: string }
   onSuccessCallback?: () => void
 }
@@ -33,17 +33,17 @@ export function useColorForm({ mode, defaultValues, onSuccessCallback }: UseColo
 
   const form = useForm<FormValues>({
     defaultValues: (defaultValues ?? {
-      hexCode: '#000000',
+      hexCode: "#000000",
       isActive: true,
-      name: '',
+      name: "",
       ralCode: null,
     }) as FormValues,
-    mode: 'onChange',
+    mode: "onChange",
     resolver: zodResolver(colorCreateSchema) as never,
   })
 
   const onSubmit = (data: FormValues) => {
-    if (mode === 'create') {
+    if (mode === "create") {
       createMutation.mutate(data)
     } else if (defaultValues) {
       updateMutation.mutate({

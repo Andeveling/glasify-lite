@@ -6,7 +6,7 @@
  * consistency and accuracy.
  */
 
-import { Decimal } from 'decimal.js'
+import { Decimal } from "decimal.js"
 
 /**
  * Conversion factor from millimeters to meters

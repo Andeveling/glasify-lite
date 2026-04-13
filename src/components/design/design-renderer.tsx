@@ -1,21 +1,21 @@
-'use client'
+"use client"
 
-import { useMemo } from 'react'
-import type { DesignRenderProps } from '@/domain/design'
-import { parsePattern } from '@/domain/design'
-import { cn } from '@/lib/utils'
+import { useMemo } from "react"
+import type { DesignRenderProps } from "@/domain/design"
+import { parsePattern } from "@/domain/design"
+import { cn } from "@/lib/utils"
 
-const DEFAULT_FRAME_COLOR = '#e6e6e6'
-const DEFAULT_GLASS_COLOR = '#87CEEB'
+const DEFAULT_FRAME_COLOR = "#e6e6e6"
+const DEFAULT_GLASS_COLOR = "#87CEEB"
 const GLASS_OPACITY = 0.6
 const DEFAULT_SIZE = { width: 280, height: 210 }
 const FRAME_PADDING = 8
 
 function getFrameThickness(style: string): number {
   switch (style) {
-    case 'double':
+    case "double":
       return 6
-    case 'premium':
+    case "premium":
       return 8
     default:
       return 4
@@ -57,10 +57,13 @@ function DesignRenderer({
 
     return (
       <svg
-        className={cn('w-full h-auto', className)}
+        className={cn("w-full h-auto", className)}
         viewBox={`0 0 ${width} ${height}`}
         xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-label={template.name}
       >
+        <title>{template.name}</title>
         <defs>
           <marker id="arrowhead" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
             <path d="M 0 0 L 6 2 L 0 4 Z" fill={frameColor} />
@@ -120,7 +123,7 @@ function DesignRenderer({
               )}
 
               {/* Handle (only on movable panels) */}
-              {template.showHandles && panel.type === 'movable' && (
+              {template.showHandles && panel.type === "movable" && (
                 <>
                   <ellipse
                     cx={panel.index % 2 === 0 ? x + 6 : x + panelWidth - 6}
@@ -135,7 +138,7 @@ function DesignRenderer({
               )}
 
               {/* Opening arrow (only on movable panels) */}
-              {template.showArrows && panel.type === 'movable' && (
+              {template.showArrows && panel.type === "movable" && (
                 <line
                   x1={x + panelWidth * 0.3}
                   y1={innerY + innerHeight * 0.7}

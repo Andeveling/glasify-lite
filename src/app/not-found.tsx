@@ -1,8 +1,8 @@
-import { FileQuestion } from 'lucide-react'
-import Link from 'next/link'
-import { BackButton } from '@/components/back-button'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { FileQuestion } from "lucide-react"
+import Link from "next/link"
+import { BackButton } from "@/components/back-button"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function NotFound() {
   return (
@@ -34,11 +34,11 @@ export default function NotFound() {
             {/* Additional Help */}
             <div className="text-center text-muted-foreground text-sm">
               <p>
-                ¿Necesitas ayuda?{' '}
+                ¿Necesitas ayuda?{" "}
                 <Button asChild className="h-auto p-0" size="sm" variant="link">
                   <Link href="/catalog">Explora nuestro catálogo</Link>
-                </Button>{' '}
-                o{' '}
+                </Button>{" "}
+                o{" "}
                 <Button asChild className="h-auto p-0" size="sm" variant="link">
                   <Link href="/sign-in">inicia sesión</Link>
                 </Button>

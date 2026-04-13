@@ -12,8 +12,8 @@
  * ```
  */
 
-import { Decimal } from 'decimal.js'
-import { ROUND_MODE, ROUND_SCALE } from '../constants'
+import { Decimal } from "decimal.js"
+import { ROUND_MODE, ROUND_SCALE } from "../constants"
 
 export class Money {
   private readonly amount: Decimal
@@ -41,7 +41,7 @@ export class Money {
 
     // Validate that the value is a finite number
     if (!this.amount.isFinite()) {
-      throw new Error('Money value must be a finite number')
+      throw new Error("Money value must be a finite number")
     }
   }
 
@@ -96,7 +96,7 @@ export class Money {
   divide(divisor: Decimal | number | string): Money {
     const divisorDecimal = new Decimal(divisor)
     if (divisorDecimal.isZero()) {
-      throw new Error('Cannot divide Money by zero')
+      throw new Error("Cannot divide Money by zero")
     }
     return new Money(this.amount.dividedBy(divisorDecimal))
   }

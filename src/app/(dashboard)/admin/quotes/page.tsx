@@ -15,24 +15,24 @@
  * Related: specs/001-admin-quotes-dashboard/spec.md
  */
 
-import type { Metadata } from 'next'
-import { api } from '@/trpc/server-client'
-import { QuoteList } from './_components/quote-list'
-import { QuoteSortControls } from './_components/quote-sort-controls'
-import { QuotesFilters } from './_components/quotes-filters'
-import { QuotesPagination } from './_components/quotes-pagination'
-import { QuotesSearch } from './_components/quotes-search'
+import type { Metadata } from "next"
+import { api } from "@/trpc/server-client"
+import { QuoteList } from "./_components/quote-list"
+import { QuoteSortControls } from "./_components/quote-sort-controls"
+import { QuotesFilters } from "./_components/quotes-filters"
+import { QuotesPagination } from "./_components/quotes-pagination"
+import { QuotesSearch } from "./_components/quotes-search"
 
 export const metadata: Metadata = {
-  title: 'Cotizaciones | Admin',
-  description: 'Gestiona todas las cotizaciones del sistema',
+  title: "Cotizaciones | Admin",
+  description: "Gestiona todas las cotizaciones del sistema",
 }
 
 type SearchParams = Promise<{
   status?: string
   search?: string
   sortBy?: string
-  sortOrder?: 'asc' | 'desc'
+  sortOrder?: "asc" | "desc"
   page?: string
 }>
 
@@ -46,15 +46,15 @@ export default async function AdminQuotesPage({ searchParams }: PageProps) {
   // Parse search params with defaults
   const page = Number(params.page) || 1
   const status =
-    params.status && params.status !== 'all'
-      ? (params.status as 'draft' | 'sent' | 'canceled')
+    params.status && params.status !== "all"
+      ? (params.status as "draft" | "sent" | "canceled")
       : undefined
   const search = params.search || undefined
-  const sortBy = (params.sortBy || 'createdAt') as 'createdAt' | 'total' | 'validUntil'
-  const sortOrder = (params.sortOrder || 'desc') as 'asc' | 'desc'
+  const sortBy = (params.sortBy || "createdAt") as "createdAt" | "total" | "validUntil"
+  const sortOrder = (params.sortOrder || "desc") as "asc" | "desc"
 
   // Fetch quotes data (uses sellerOrAdminProcedure - admin sees ALL quotes)
-  const quotesData = await api.quote['list-all']({
+  const quotesData = await api.quote["list-all"]({
     status,
     search,
     sortBy,
@@ -78,7 +78,7 @@ export default async function AdminQuotesPage({ searchParams }: PageProps) {
 
       {/* Filters and Sort Controls (US3 - T021, US5 - T027) */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <QuotesFilters currentStatus={params.status || 'all'} />
+        <QuotesFilters currentStatus={params.status || "all"} />
         <QuoteSortControls currentSortBy={sortBy} currentSortOrder={sortOrder} />
       </div>
 

@@ -1,9 +1,9 @@
-import type { VariantProps } from 'class-variance-authority'
-import { cva } from 'class-variance-authority'
-import { ArrowLeft, ChevronLeft } from 'lucide-react'
-import Link from 'next/link'
-import { Button, type buttonVariants } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import type { VariantProps } from "class-variance-authority"
+import { cva } from "class-variance-authority"
+import { ArrowLeft, ChevronLeft } from "lucide-react"
+import Link from "next/link"
+import { Button, type buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 /**
  * BackLink - Atomic Component
@@ -24,21 +24,21 @@ import { cn } from '@/lib/utils'
  * <BackLink href="/quotes" variant="outline">Volver a cotizaciones</BackLink>
  */
 
-const backLinkVariants = cva('inline-flex items-center gap-2', {
+const backLinkVariants = cva("inline-flex items-center gap-2", {
   defaultVariants: {
-    icon: 'arrow',
-    variant: 'ghost',
+    icon: "arrow",
+    variant: "ghost",
   },
   variants: {
     icon: {
-      arrow: '',
-      chevron: '',
-      none: '',
+      arrow: "",
+      chevron: "",
+      none: "",
     },
     variant: {
-      ghost: '',
-      link: '',
-      outline: '',
+      ghost: "",
+      link: "",
+      outline: "",
     },
   },
 })
@@ -49,11 +49,11 @@ export type BackLinkProps = {
   /** Link text content */
   children: React.ReactNode
   /** Icon variant to display */
-  icon?: 'arrow' | 'chevron' | 'none'
+  icon?: "arrow" | "chevron" | "none"
   /** Button variant style */
-  variant?: 'ghost' | 'outline' | 'link'
+  variant?: "ghost" | "outline" | "link"
   /** Button size */
-  size?: VariantProps<typeof buttonVariants>['size']
+  size?: VariantProps<typeof buttonVariants>["size"]
   /** Additional CSS classes */
   className?: string
 }
@@ -62,11 +62,11 @@ export function BackLink({
   children,
   className,
   href,
-  icon = 'arrow',
-  size = 'sm',
-  variant = 'ghost',
+  icon = "arrow",
+  size = "sm",
+  variant = "ghost",
 }: BackLinkProps) {
-  const IconComponent = icon === 'chevron' ? ChevronLeft : icon === 'arrow' ? ArrowLeft : null
+  const IconComponent = icon === "chevron" ? ChevronLeft : icon === "arrow" ? ArrowLeft : null
 
   return (
     <Button

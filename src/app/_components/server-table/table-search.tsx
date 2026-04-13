@@ -24,18 +24,18 @@
  * @see https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations
  */
 
-'use client'
+"use client"
 
-import { Search, X } from 'lucide-react'
-import { useRef, useTransition } from 'react'
+import { Search, X } from "lucide-react"
+import { useRef, useTransition } from "react"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from '@/components/ui/input-group'
-import { useDebouncedCallback } from '@/hooks/use-debounced-callback'
-import { useServerParams } from '@/hooks/use-server-params'
+} from "@/components/ui/input-group"
+import { useDebouncedCallback } from "@/hooks/use-debounced-callback"
+import { useServerParams } from "@/hooks/use-server-params"
 
 export type TableSearchProps = {
   /** Placeholder text for search input */
@@ -49,8 +49,8 @@ export type TableSearchProps = {
 }
 
 export function TableSearch({
-  placeholder = 'Buscar...',
-  defaultValue = '',
+  placeholder = "Buscar...",
+  defaultValue = "",
   debounceMs = 300,
 }: TableSearchProps) {
   const { updateParams } = useServerParams()
@@ -62,11 +62,11 @@ export function TableSearch({
    * Debounced form submission handler
    */
   const debouncedSubmit = useDebouncedCallback((formData: FormData) => {
-    const searchValue = formData.get('search') as string
+    const searchValue = formData.get("search") as string
 
     startTransition(() => {
       updateParams({
-        page: '1', // Reset to first page on search
+        page: "1", // Reset to first page on search
         search: searchValue.trim() || undefined, // Remove param if empty
       })
     })
@@ -88,7 +88,7 @@ export function TableSearch({
    */
   const handleClear = () => {
     if (inputRef.current) {
-      inputRef.current.value = ''
+      inputRef.current.value = ""
       inputRef.current.focus()
     }
 
@@ -99,7 +99,7 @@ export function TableSearch({
 
     startTransition(() => {
       updateParams({
-        page: '1',
+        page: "1",
         search: undefined,
       })
     })

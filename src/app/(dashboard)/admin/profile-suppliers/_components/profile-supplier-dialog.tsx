@@ -18,12 +18,12 @@
  * - Cache invalidation after mutations
  */
 
-'use client'
+"use client"
 
-import type { MaterialType, ProfileSupplier } from '@prisma/generated/client'
-import { Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
+import type { MaterialType, ProfileSupplier } from "@prisma/generated/client"
+import { Loader2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Dialog,
   DialogContent,
@@ -31,7 +31,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -40,22 +40,22 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { MAX_NAME_LENGTH, MIN_NAME_LENGTH } from '@/lib/validations/admin/profile-supplier.schema'
-import { useProfileSupplierForm } from '../_hooks/use-profile-supplier-form'
-import { useProfileSupplierMutations } from '../_hooks/use-profile-supplier-mutations'
+} from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+import { MAX_NAME_LENGTH, MIN_NAME_LENGTH } from "@/lib/validations/admin/profile-supplier.schema"
+import { useProfileSupplierForm } from "../_hooks/use-profile-supplier-form"
+import { useProfileSupplierMutations } from "../_hooks/use-profile-supplier-mutations"
 
 type ProfileSupplierDialogProps = {
-  mode: 'create' | 'edit'
+  mode: "create" | "edit"
   open: boolean
   onOpenChange: (open: boolean) => void
   defaultValues?: ProfileSupplier
@@ -65,10 +65,10 @@ type ProfileSupplierDialogProps = {
  * Material type options (Spanish labels)
  */
 const MATERIAL_TYPE_OPTIONS: { label: string; value: MaterialType }[] = [
-  { label: 'PVC', value: 'PVC' },
-  { label: 'Aluminio', value: 'ALUMINUM' },
-  { label: 'Madera', value: 'WOOD' },
-  { label: 'Mixto', value: 'MIXED' },
+  { label: "PVC", value: "PVC" },
+  { label: "Aluminio", value: "ALUMINUM" },
+  { label: "Madera", value: "WOOD" },
+  { label: "Mixto", value: "MIXED" },
 ]
 
 export function ProfileSupplierDialog({
@@ -89,7 +89,7 @@ export function ProfileSupplierDialog({
 
   // Handle form submission - routes to create or update
   const handleSubmit = (formData: Parameters<typeof handleCreate>[0]) => {
-    if (mode === 'create') {
+    if (mode === "create") {
       handleCreate(formData)
     } else if (defaultValues?.id) {
       handleUpdate(defaultValues.id, formData)
@@ -101,12 +101,12 @@ export function ProfileSupplierDialog({
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {mode === 'create' ? 'Nuevo Proveedor de Perfiles' : 'Editar Proveedor de Perfiles'}
+            {mode === "create" ? "Nuevo Proveedor de Perfiles" : "Editar Proveedor de Perfiles"}
           </DialogTitle>
           <DialogDescription>
-            {mode === 'create'
-              ? 'Crea un nuevo proveedor de perfiles para ventanas y puertas'
-              : 'Actualiza la información del proveedor de perfiles'}
+            {mode === "create"
+              ? "Crea un nuevo proveedor de perfiles para ventanas y puertas"
+              : "Actualiza la información del proveedor de perfiles"}
           </DialogDescription>
         </DialogHeader>
 
@@ -224,7 +224,7 @@ export function ProfileSupplierDialog({
               </Button>
               <Button disabled={isPending} type="submit">
                 {isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
-                {mode === 'create' ? 'Crear Proveedor' : 'Guardar Cambios'}
+                {mode === "create" ? "Crear Proveedor" : "Guardar Cambios"}
               </Button>
             </DialogFooter>
           </form>

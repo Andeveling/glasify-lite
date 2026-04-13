@@ -1,28 +1,28 @@
-'use client'
+"use client"
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2 } from 'lucide-react'
-import Link from 'next/link'
-import { type Resolver, useForm } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
-import { Form } from '@/components/ui/form'
-import { useModelCatalogData } from '../_hooks/use-model-catalog-data'
-import { useModelMutations } from '../_hooks/use-model-mutations'
-import { modelFormSchema } from '../_schemas/model-form.schema'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Loader2 } from "lucide-react"
+import Link from "next/link"
+import { type Resolver, useForm } from "react-hook-form"
+import { Button } from "@/components/ui/button"
+import { Form } from "@/components/ui/form"
+import { useModelCatalogData } from "../_hooks/use-model-catalog-data"
+import { useModelMutations } from "../_hooks/use-model-mutations"
+import { modelFormSchema } from "../_schemas/model-form.schema"
 import {
   getModelFormDefaults,
   type ModelFormValues,
   transformModelFormValues,
-} from '../_utils/model-form.utils'
-import { BasicInfoSection } from './basic-info-section'
-import { CostNotesSection } from './cost-notes-section'
-import { DimensionsSection } from './dimensions-section'
-import { GlassTypesSection } from './glass-types-section'
-import { ImageGallerySectionComponent } from './image-gallery-section'
-import { PricingSection } from './pricing-section'
+} from "../_utils/model-form.utils"
+import { BasicInfoSection } from "./basic-info-section"
+import { CostNotesSection } from "./cost-notes-section"
+import { DimensionsSection } from "./dimensions-section"
+import { GlassTypesSection } from "./glass-types-section"
+import { ImageGallerySectionComponent } from "./image-gallery-section"
+import { PricingSection } from "./pricing-section"
 
 type ModelFormProps = {
-  mode: 'create' | 'edit'
+  mode: "create" | "edit"
   initialData?: Partial<ModelFormValues>
   modelId?: string
 }
@@ -34,13 +34,13 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
   const form = useForm<ModelFormValues>({
     defaultValues: getModelFormDefaults(initialData),
     resolver: zodResolver(modelFormSchema) as Resolver<ModelFormValues>,
-    mode: 'onBlur',
+    mode: "onBlur",
   })
 
   const handleSubmit = (values: ModelFormValues) => {
     const transformedValues = transformModelFormValues(values)
 
-    if (mode === 'create') {
+    if (mode === "create") {
       createModel(transformedValues)
     } else if (modelId) {
       updateModel({
@@ -77,7 +77,7 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
           <div className="text-red-600 text-sm">
             <ul className="list-disc space-y-1 pl-5">
               {Object.entries(form.formState.errors).map(([field, error]) => (
-                <li key={field}>{error?.message ?? 'Error'}</li>
+                <li key={field}>{error?.message ?? "Error"}</li>
               ))}
             </ul>
           </div>
@@ -87,7 +87,7 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
             </Button>
             <Button disabled={isLoading} type="submit">
               {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
-              {mode === 'create' ? 'Crear Modelo' : 'Actualizar Modelo'}
+              {mode === "create" ? "Crear Modelo" : "Actualizar Modelo"}
             </Button>
           </div>
         </div>

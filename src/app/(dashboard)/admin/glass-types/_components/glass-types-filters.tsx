@@ -19,13 +19,13 @@
  * - Receives suppliers from server (fetched outside Suspense)
  */
 
-'use client'
+"use client"
 
-import { Plus } from 'lucide-react'
-import Link from 'next/link'
-import { type FilterDefinition, TableFilters } from '@/app/_components/server-table/table-filters'
-import { TableSearch } from '@/app/_components/server-table/table-search'
-import { Button } from '@/components/ui/button'
+import { Plus } from "lucide-react"
+import Link from "next/link"
+import { type FilterDefinition, TableFilters } from "@/app/_components/server-table/table-filters"
+import { TableSearch } from "@/app/_components/server-table/table-search"
+import { Button } from "@/components/ui/button"
 
 /**
  * Supplier data type
@@ -52,38 +52,38 @@ export function GlassTypesFilters({ searchParams, suppliers }: GlassTypesFilters
    */
   const filters: FilterDefinition[] = [
     {
-      defaultValue: 'all',
-      id: 'purpose',
-      label: 'Propósito',
+      defaultValue: "all",
+      id: "purpose",
+      label: "Propósito",
       options: [
-        { label: 'Todos', value: 'all' },
-        { label: 'General', value: 'general' },
-        { label: 'Aislamiento', value: 'insulation' },
-        { label: 'Seguridad', value: 'security' },
-        { label: 'Decorativo', value: 'decorative' },
+        { label: "Todos", value: "all" },
+        { label: "General", value: "general" },
+        { label: "Aislamiento", value: "insulation" },
+        { label: "Seguridad", value: "security" },
+        { label: "Decorativo", value: "decorative" },
       ],
-      type: 'select',
+      type: "select",
     },
     {
-      defaultValue: 'all',
-      id: 'glassSupplierId',
-      label: 'Proveedor de Vidrio',
+      defaultValue: "all",
+      id: "glassSupplierId",
+      label: "Proveedor de Vidrio",
       options: [
-        { label: 'Todos', value: 'all' },
+        { label: "Todos", value: "all" },
         ...suppliers.map((s) => ({ label: s.name, value: s.id })),
       ],
-      type: 'select',
+      type: "select",
     },
     {
-      defaultValue: 'all',
-      id: 'isActive',
-      label: 'Estado',
+      defaultValue: "all",
+      id: "isActive",
+      label: "Estado",
       options: [
-        { label: 'Todos', value: 'all' },
-        { label: 'Activo', value: 'active' },
-        { label: 'Inactivo', value: 'inactive' },
+        { label: "Todos", value: "all" },
+        { label: "Activo", value: "active" },
+        { label: "Inactivo", value: "inactive" },
       ],
-      type: 'select',
+      type: "select",
     },
   ]
 

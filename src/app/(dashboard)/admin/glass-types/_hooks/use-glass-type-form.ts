@@ -6,20 +6,20 @@
  * @module _hooks/use-glass-type-form
  */
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import type { Resolver } from 'react-hook-form'
-import { useForm } from 'react-hook-form'
-import type { z } from 'zod'
+import { zodResolver } from "@hookform/resolvers/zod"
+import type { Resolver } from "react-hook-form"
+import { useForm } from "react-hook-form"
+import type { z } from "zod"
 import {
   type CreateGlassTypeInput,
   createGlassTypeSchema,
   type GetGlassTypeByIdOutput,
-} from '@/lib/validations/admin/glass-type.schema'
-import { useFormDefaults } from './use-form-defaults'
-import { useGlassTypeMutations } from './use-glass-type-mutations'
+} from "@/lib/validations/admin/glass-type.schema"
+import { useFormDefaults } from "./use-form-defaults"
+import { useGlassTypeMutations } from "./use-glass-type-mutations"
 
 type UseGlassTypeFormOptions = {
-  mode: 'create' | 'edit'
+  mode: "create" | "edit"
   defaultValues?: GetGlassTypeByIdOutput
   onSuccessCallback?: () => void
 }
@@ -50,7 +50,7 @@ export function useGlassTypeForm({
   // Note: Explicit resolver typing avoids Zod/RHF type conflicts with .default()
   const form = useForm<FormData>({
     defaultValues: formDefaults as FormData,
-    mode: 'onChange',
+    mode: "onChange",
     resolver: zodResolver(createGlassTypeSchema) as Resolver<FormData>,
   })
 
@@ -58,7 +58,7 @@ export function useGlassTypeForm({
     // Cast to input type for API (type is compatible after validation)
     const inputData = data as unknown as CreateGlassTypeInput
 
-    if (mode === 'create') {
+    if (mode === "create") {
       createMutation.mutate(inputData)
     } else if (defaultValues) {
       updateMutation.mutate({

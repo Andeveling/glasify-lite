@@ -6,11 +6,11 @@
  * @module admin/clients/_hooks/use-client-mutations
  */
 
-'use client'
+"use client"
 
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
-import { api } from '@/trpc/react'
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { api } from "@/trpc/react"
 
 type UseClientMutationsOptions = {
   onSuccessCallback?: () => void
@@ -28,7 +28,7 @@ export function useClientMutations({ onSuccessCallback }: UseClientMutationsOpti
 
   const createMutation = api.admin.clients.create.useMutation({
     onError: (err) => {
-      toast.error('Error al crear cliente', {
+      toast.error("Error al crear cliente", {
         description: err.message,
       })
     },
@@ -37,15 +37,15 @@ export function useClientMutations({ onSuccessCallback }: UseClientMutationsOpti
       router.refresh()
     },
     onSuccess: () => {
-      toast.success('Cliente creado correctamente')
-      router.push('/admin/clients')
+      toast.success("Cliente creado correctamente")
+      router.push("/admin/clients")
       onSuccessCallback?.()
     },
   })
 
   const updateMutation = api.admin.clients.update.useMutation({
     onError: (err) => {
-      toast.error('Error al actualizar cliente', {
+      toast.error("Error al actualizar cliente", {
         description: err.message,
       })
     },
@@ -54,15 +54,15 @@ export function useClientMutations({ onSuccessCallback }: UseClientMutationsOpti
       router.refresh()
     },
     onSuccess: () => {
-      toast.success('Cliente actualizado correctamente')
-      router.push('/admin/clients')
+      toast.success("Cliente actualizado correctamente")
+      router.push("/admin/clients")
       onSuccessCallback?.()
     },
   })
 
   const deleteMutation = api.admin.clients.delete.useMutation({
     onError: (err) => {
-      toast.error('Error al eliminar cliente', {
+      toast.error("Error al eliminar cliente", {
         description: err.message,
       })
       // Invalidate list to refresh data after error
@@ -72,7 +72,7 @@ export function useClientMutations({ onSuccessCallback }: UseClientMutationsOpti
       router.refresh()
     },
     onSuccess: () => {
-      toast.success('Cliente eliminado correctamente')
+      toast.success("Cliente eliminado correctamente")
       utils.admin.clients.list.invalidate().catch(undefined)
       onSuccessCallback?.()
     },

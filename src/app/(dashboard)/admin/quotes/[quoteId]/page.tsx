@@ -10,19 +10,19 @@
  * Related: specs/001-admin-quotes-dashboard/spec.md
  */
 
-import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import { Suspense } from 'react'
-import { Spinner } from '@/components/ui/spinner'
-import { api } from '@/trpc/server-client'
-import { ClientContactInfo } from './_components/client-contact-info'
-import { QuoteActions } from './_components/quote-actions'
-import { QuoteDetailView } from './_components/quote-detail-view'
+import type { Metadata } from "next"
+import { notFound } from "next/navigation"
+import { Suspense } from "react"
+import { Spinner } from "@/components/ui/spinner"
+import { api } from "@/trpc/server-client"
+import { ClientContactInfo } from "./_components/client-contact-info"
+import { QuoteActions } from "./_components/quote-actions"
+import { QuoteDetailView } from "./_components/quote-detail-view"
 
 export const metadata: Metadata = {
-  title: 'Detalle de Cotización | Admin',
+  title: "Detalle de Cotización | Admin",
   description:
-    'Vista detallada de cotización con información del creador, modelos, medidas y opciones de exportación',
+    "Vista detallada de cotización con información del creador, modelos, medidas y opciones de exportación",
 }
 
 type PageProps = {
@@ -33,7 +33,7 @@ type PageProps = {
 
 async function QuoteContent({ quoteId }: { quoteId: string }) {
   // Fetch quote data with client information
-  const quote = await api.quote['get-by-id']({ id: quoteId })
+  const quote = await api.quote["get-by-id"]({ id: quoteId })
 
   if (!quote) {
     notFound()
@@ -58,7 +58,7 @@ async function QuoteContent({ quoteId }: { quoteId: string }) {
       />
 
       {/* Accept/Reject Actions for SENT quotes */}
-      {quote.status === 'sent' && <QuoteActions quoteId={quoteId} />}
+      {quote.status === "sent" && <QuoteActions quoteId={quoteId} />}
 
       {/* Full Quote Details with items, measurements, and export buttons */}
       <QuoteDetailView isPublicView={false} quote={quote} />

@@ -4,10 +4,10 @@
  * Width/height limits and glass discounts
  */
 
-'use client'
+"use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { FormNumberInput } from './form-fields'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { FormNumberInput } from "./form-fields"
 
 export function DimensionsSection() {
   return (

@@ -11,11 +11,11 @@
  * - Preserves filters/search/sort in URL
  */
 
-'use client'
+"use client"
 
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { Button } from '@/components/ui/button'
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { Button } from "@/components/ui/button"
 
 type QuotesPaginationProps = {
   total: number
@@ -39,7 +39,7 @@ export function QuotesPagination({
 
   const handlePageChange = (newPage: number) => {
     const params = new URLSearchParams(searchParams.toString())
-    params.set('page', String(newPage))
+    params.set("page", String(newPage))
     router.push(`?${params.toString()}`)
   }
 

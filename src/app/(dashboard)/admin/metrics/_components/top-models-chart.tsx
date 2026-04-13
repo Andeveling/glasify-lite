@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 /**
  * Top Models Chart Component
@@ -6,12 +6,12 @@
  * with supplier labels and percentage tooltips
  */
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { type ChartConfig, ChartContainer, ChartTooltip } from '@/components/ui/chart'
-import { formatPercent } from '@/lib/format'
-import type { TopModel } from '@/types/dashboard'
-import { EmptyDashboardState } from './empty-dashboard-state'
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { type ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart"
+import { formatPercent } from "@/lib/format"
+import type { TopModel } from "@/types/dashboard"
+import { EmptyDashboardState } from "./empty-dashboard-state"
 
 const PERCENTAGE_MULTIPLIER = 100
 const MAX_LABEL_LENGTH = 35
@@ -25,8 +25,8 @@ const BAR_RADIUS_RIGHT: [number, number, number, number] = [
 
 const chartConfig = {
   count: {
-    color: 'var(--chart-1)',
-    label: 'Cotizaciones',
+    color: "var(--chart-1)",
+    label: "Cotizaciones",
   },
 } satisfies ChartConfig
 
@@ -49,7 +49,7 @@ export function TopModelsChart({ data, tenantConfig }: TopModelsChartProps) {
   // Transform data for recharts
   const chartData = data.map((item) => ({
     count: item.count,
-    name: `${item.modelName} ${item.supplierName ? `(${item.supplierName})` : ''}`,
+    name: `${item.modelName} ${item.supplierName ? `(${item.supplierName})` : ""}`,
     percentage: item.percentage * PERCENTAGE_MULTIPLIER,
   }))
 

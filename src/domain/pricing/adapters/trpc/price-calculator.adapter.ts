@@ -10,11 +10,11 @@
  * Maintains 100% backward compatibility with existing `calculatePriceItem` function.
  */
 
-import { Decimal } from 'decimal.js'
-import { Dimensions } from '@/domain/pricing/core/entities/dimensions'
-import { Money } from '@/domain/pricing/core/entities/money'
-import type { ServiceUnit } from '@/domain/pricing/core/types'
-import { CalculateItemPrice } from '@/domain/pricing/use-cases/calculate-item-price'
+import { Decimal } from "decimal.js"
+import { Dimensions } from "@/domain/pricing/core/entities/dimensions"
+import { Money } from "@/domain/pricing/core/entities/money"
+import type { ServiceUnit } from "@/domain/pricing/core/types"
+import { CalculateItemPrice } from "@/domain/pricing/use-cases/calculate-item-price"
 
 /**
  * Legacy tRPC types for backward compatibility
@@ -38,7 +38,7 @@ export type PriceItemCalculationInput = {
   }
   services?: Array<{
     serviceId: string
-    type: 'fixed' | 'variable'
+    type: "fixed" | "variable"
     unit: string
     rate: Decimal | number
     minimumBillingUnit?: Decimal | number
@@ -47,7 +47,7 @@ export type PriceItemCalculationInput = {
   adjustments?: Array<{
     concept: string
     unit: string
-    sign: 'positive' | 'negative'
+    sign: "positive" | "negative"
     value: Decimal | number
   }>
 }
@@ -122,7 +122,7 @@ function toDomainInput(input: PriceItemCalculationInput) {
     let minimumBillingUnit: number | undefined
     if (service.minimumBillingUnit !== null && service.minimumBillingUnit !== undefined) {
       minimumBillingUnit =
-        typeof service.minimumBillingUnit === 'number'
+        typeof service.minimumBillingUnit === "number"
           ? service.minimumBillingUnit
           : new Decimal(service.minimumBillingUnit).toNumber()
     }
@@ -143,10 +143,10 @@ function toDomainInput(input: PriceItemCalculationInput) {
     concept: adjustment.concept,
     unit: adjustment.unit as ServiceUnit,
     value:
-      typeof adjustment.value === 'number' || typeof adjustment.value === 'string'
+      typeof adjustment.value === "number" || typeof adjustment.value === "string"
         ? adjustment.value
         : adjustment.value.toNumber(),
-    isPositive: adjustment.sign !== 'negative',
+    isPositive: adjustment.sign !== "negative",
   }))
 
   return {

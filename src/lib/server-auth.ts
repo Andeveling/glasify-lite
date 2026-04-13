@@ -7,11 +7,11 @@
  * @module lib/server-auth
  */
 
-import 'server-only'
+import "server-only"
 
-import { headers } from 'next/headers'
-import { cache } from 'react'
-import { auth } from '@/server/auth'
+import { headers } from "next/headers"
+import { cache } from "react"
+import { auth } from "@/server/auth"
 
 /**
  * Get current session with proper caching for Next.js 16

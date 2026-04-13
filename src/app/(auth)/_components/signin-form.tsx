@@ -1,15 +1,15 @@
-'use client'
+"use client"
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Eye, EyeOff, Lock, Mail } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useCallback, useState } from 'react'
-import type { Control } from 'react-hook-form'
-import { useForm, useWatch } from 'react-hook-form'
-import { z } from 'zod'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Eye, EyeOff, Lock, Mail } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useCallback, useState } from "react"
+import type { Control } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
+import { z } from "zod"
 
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -17,20 +17,20 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
-import { Spinner } from '@/components/ui/spinner'
-import { signIn } from '@/lib/auth-client'
+} from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
+import { Spinner } from "@/components/ui/spinner"
+import { signIn } from "@/lib/auth-client"
 
 const MIN_PASSWORD_LENGTH = 8
 
 const signInFormSchema = z.object({
-  email: z.string().min(1, 'El email es requerido').email('Ingresa un email válido'),
+  email: z.string().min(1, "El email es requerido").email("Ingresa un email válido"),
   password: z
     .string()
-    .min(1, 'La contraseña es requerida')
+    .min(1, "La contraseña es requerida")
     .min(
       MIN_PASSWORD_LENGTH,
       `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres`,
@@ -51,7 +51,7 @@ type EmailInputProps = {
 }
 
 function EmailInput({ control, disabled }: EmailInputProps) {
-  const email = useWatch({ control, name: 'email' })
+  const email = useWatch({ control, name: "email" })
 
   return (
     <InputGroup>
@@ -66,8 +66,8 @@ function EmailInput({ control, disabled }: EmailInputProps) {
         id="signin-email"
         placeholder="tu@ejemplo.com"
         type="email"
-        value={email ?? ''}
-        {...control.register('email')}
+        value={email ?? ""}
+        {...control.register("email")}
       />
     </InputGroup>
   )
@@ -80,7 +80,7 @@ type PasswordInputProps = {
 
 function PasswordInput({ control, disabled }: PasswordInputProps) {
   const [isVisible, setIsVisible] = useState(false)
-  const password = useWatch({ control, name: 'password' })
+  const password = useWatch({ control, name: "password" })
 
   const toggleVisibility = useCallback(() => {
     setIsVisible((prev) => !prev)
@@ -98,9 +98,9 @@ function PasswordInput({ control, disabled }: PasswordInputProps) {
         disabled={disabled}
         id="signin-password"
         placeholder="••••••••"
-        type={isVisible ? 'text' : 'password'}
-        value={password ?? ''}
-        {...control.register('password')}
+        type={isVisible ? "text" : "password"}
+        value={password ?? ""}
+        {...control.register("password")}
       />
       <InputGroupAddon align="inline-end">
         <button
@@ -122,11 +122,11 @@ export default function SignInForm({ isLoading = false, error }: SignInFormProps
 
   const form = useForm<SignInFormValues>({
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
       rememberMe: false,
     },
-    mode: 'onBlur',
+    mode: "onBlur",
     resolver: zodResolver(signInFormSchema),
   })
 
@@ -140,16 +140,16 @@ export default function SignInForm({ isLoading = false, error }: SignInFormProps
       })
 
       if (result?.error) {
-        form.setError('root', {
-          message: 'Email o contraseña incorrectos',
+        form.setError("root", {
+          message: "Email o contraseña incorrectos",
         })
         return
       }
 
-      router.push('/admin')
+      router.push("/admin")
     } catch {
-      form.setError('root', {
-        message: 'Error al iniciar sesión. Intenta nuevamente.',
+      form.setError("root", {
+        message: "Error al iniciar sesión. Intenta nuevamente.",
       })
     } finally {
       setIsCredentialsLoading(false)
@@ -193,12 +193,12 @@ export default function SignInForm({ isLoading = false, error }: SignInFormProps
             <Field>
               <div className="flex items-center gap-2.5">
                 <Checkbox
-                  checked={form.watch('rememberMe')}
+                  checked={form.watch("rememberMe")}
                   className="size-4"
                   disabled={isSubmitDisabled}
                   id="signin-remember"
                   onCheckedChange={(checked) => {
-                    form.setValue('rememberMe', Boolean(checked), {
+                    form.setValue("rememberMe", Boolean(checked), {
                       shouldValidate: true,
                     })
                   }}
@@ -228,7 +228,7 @@ export default function SignInForm({ isLoading = false, error }: SignInFormProps
               Iniciando sesión...
             </>
           ) : (
-            'Iniciar Sesión'
+            "Iniciar Sesión"
           )}
         </Button>
       </CardFooter>
@@ -236,4 +236,4 @@ export default function SignInForm({ isLoading = false, error }: SignInFormProps
   )
 }
 
-export { signInFormSchema, type SignInFormValues }
+export { type SignInFormValues, signInFormSchema }

@@ -1,6 +1,6 @@
-'use client'
+"use client"
 
-import { Check } from 'lucide-react'
+import { Check } from "lucide-react"
 
 interface StepIndicatorProps {
   totalSteps: number
@@ -8,7 +8,7 @@ interface StepIndicatorProps {
   visitedSteps?: Set<number>
 }
 
-const STEP_LABELS = ['Dimensiones', 'Modelo', 'Material', 'Servicios', 'Confirmar'] as const
+const STEP_LABELS = ["Dimensiones", "Modelo", "Material", "Servicios", "Confirmar"] as const
 
 export function StepIndicator({
   totalSteps,
@@ -29,22 +29,22 @@ export function StepIndicator({
                 <div
                   className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all duration-200 ${
                     isActive
-                      ? 'border-primary bg-primary/10 text-primary ring-4 ring-primary/20'
+                      ? "border-primary bg-primary/10 text-primary ring-4 ring-primary/20"
                       : isCompleted
-                        ? 'border-primary bg-primary text-primary-foreground'
-                        : 'border-border bg-muted/50 text-muted-foreground'
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-muted/50 text-muted-foreground"
                   }`}
-                  aria-current={isActive ? 'step' : undefined}
+                  aria-current={isActive ? "step" : undefined}
                 >
                   {isCompleted ? <Check className="h-5 w-5" /> : <span>{idx + 1}</span>}
                 </div>
                 <span
                   className={`text-xs font-medium transition-colors ${
                     isActive
-                      ? 'text-foreground'
+                      ? "text-foreground"
                       : isCompleted
-                        ? 'text-muted-foreground'
-                        : 'text-muted-foreground/50'
+                        ? "text-muted-foreground"
+                        : "text-muted-foreground/50"
                   }`}
                 >
                   {STEP_LABELS[idx]}
@@ -53,7 +53,7 @@ export function StepIndicator({
               {idx < totalSteps - 1 && (
                 <div
                   className={`h-[2px] w-12 mt-[-20px] transition-colors ${
-                    isCompleted ? 'bg-primary' : 'bg-border'
+                    isCompleted ? "bg-primary" : "bg-border"
                   }`}
                 />
               )}

@@ -1,23 +1,23 @@
-'use client'
+"use client"
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useRef } from 'react'
-import { useForm } from 'react-hook-form'
-import type { z } from 'zod'
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Form } from '@/components/ui/form'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { useWizardStepper } from '@/hooks/use-wizard-stepper'
-import type { QuoteItemDetailSchema } from '@/server/api/routers/quote/quote.schemas'
-import { RunningSummary } from './running-summary'
-import { StepIndicator } from './step-indicator'
-import { ConfirmStep } from './steps/confirm-step'
-import { DimensionsStep } from './steps/dimensions-step'
-import { MaterialGlassStep } from './steps/material-glass-step'
-import { ModelSelectStep } from './steps/model-select-step'
-import { ServicesStep } from './steps/services-step'
-import { STEP_FIELDS, type WizardFormValues, wizardFormSchema } from './wizard-form-schema'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useEffect, useRef } from "react"
+import { useForm } from "react-hook-form"
+import type { z } from "zod"
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Form } from "@/components/ui/form"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { useWizardStepper } from "@/hooks/use-wizard-stepper"
+import type { QuoteItemDetailSchema } from "@/server/api/routers/quote/quote.schemas"
+import { RunningSummary } from "./running-summary"
+import { StepIndicator } from "./step-indicator"
+import { ConfirmStep } from "./steps/confirm-step"
+import { DimensionsStep } from "./steps/dimensions-step"
+import { MaterialGlassStep } from "./steps/material-glass-step"
+import { ModelSelectStep } from "./steps/model-select-step"
+import { ServicesStep } from "./steps/services-step"
+import { STEP_FIELDS, type WizardFormValues, wizardFormSchema } from "./wizard-form-schema"
 
 interface QuoteItemWizardProps {
   quoteId?: string
@@ -26,7 +26,7 @@ interface QuoteItemWizardProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSuccess?: () => void
-  mode?: 'draft' | 'persisted'
+  mode?: "draft" | "persisted"
   onDraftConfirm?: (item: WizardFormValues) => void
 }
 
@@ -34,18 +34,18 @@ const TOTAL_STEPS = 5
 
 function mapEditItemToDefaults(
   item: QuoteItemDetailSchema,
-): Omit<WizardFormValues, 'roomLocation'> & { roomLocation?: string } {
+): Omit<WizardFormValues, "roomLocation"> & { roomLocation?: string } {
   return {
     widthMm: item.widthMm,
     heightMm: item.heightMm,
     quantity: item.quantity,
-    modelId: '',
+    modelId: "",
     configuredWidthMm: item.widthMm,
     configuredHeightMm: item.heightMm,
     colorId: undefined,
-    glassTypeId: '',
+    glassTypeId: "",
     serviceIds: [],
-    roomLocation: '',
+    roomLocation: "",
   }
 }
 
@@ -55,7 +55,7 @@ function QuoteItemWizard({
   open,
   onOpenChange,
   onSuccess,
-  mode = 'persisted',
+  mode = "persisted",
   onDraftConfirm,
 }: QuoteItemWizardProps) {
   const form = useForm<z.input<typeof wizardFormSchema>, unknown, WizardFormValues>({
@@ -66,11 +66,11 @@ function QuoteItemWizard({
           serviceIds: [] as string[],
           widthMm: 0,
           heightMm: 0,
-          modelId: '',
+          modelId: "",
           configuredWidthMm: 0,
           configuredHeightMm: 0,
-          glassTypeId: '',
-          roomLocation: '',
+          glassTypeId: "",
+          roomLocation: "",
         },
     resolver: zodResolver(wizardFormSchema),
   })
@@ -131,7 +131,7 @@ function QuoteItemWizard({
       >
         <DialogHeader className="px-6 pt-6 pb-4 border-b border-border/50">
           <DialogTitle className="text-xl font-semibold">
-            {editItem ? 'Editar ítem' : 'Agregar ítem'}
+            {editItem ? "Editar ítem" : "Agregar ítem"}
           </DialogTitle>
         </DialogHeader>
 

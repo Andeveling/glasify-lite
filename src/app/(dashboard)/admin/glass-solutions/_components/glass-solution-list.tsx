@@ -1,21 +1,21 @@
-'use client'
+"use client"
 
-import { Pencil, Plus, Search, Trash2 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
+import { Pencil, Plus, Search, Trash2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { toast } from "sonner"
+import { DeleteConfirmationDialog } from "@/app/_components/delete-confirmation-dialog"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from "@/components/ui/select"
 import {
   Table,
   TableBody,
@@ -23,9 +23,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import type { GlassSolutionListOutput } from '@/lib/validations/admin/glass-solution.schema'
-import { api } from '@/trpc/react'
+} from "@/components/ui/table"
+import type { GlassSolutionListOutput } from "@/lib/validations/admin/glass-solution.schema"
+import { api } from "@/trpc/react"
 
 type GlassSolutionListProps = {
   initialData: GlassSolutionListOutput
@@ -34,8 +34,8 @@ type GlassSolutionListProps = {
 export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
   const router = useRouter()
   const utils = api.useUtils()
-  const [search, setSearch] = useState('')
-  const [isActive, setIsActive] = useState<'all' | 'active' | 'inactive'>('all')
+  const [search, setSearch] = useState("")
+  const [isActive, setIsActive] = useState<"all" | "active" | "inactive">("all")
   const [page, setPage] = useState(1)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [solutionToDelete, setSolutionToDelete] = useState<{
@@ -43,36 +43,36 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
     name: string
   } | null>(null)
 
-  const { data, isLoading } = api.admin['glass-solution'].list.useQuery(
+  const { data, isLoading } = api.admin["glass-solution"].list.useQuery(
     {
       isActive,
       limit: 20,
       page,
       search: search || undefined,
-      sortBy: 'sortOrder',
-      sortOrder: 'asc',
+      sortBy: "sortOrder",
+      sortOrder: "asc",
     },
     {
       initialData,
     },
   )
 
-  const deleteMutation = api.admin['glass-solution'].delete.useMutation({
+  const deleteMutation = api.admin["glass-solution"].delete.useMutation({
     onError: (error) => {
-      toast.error('Error al eliminar solución', {
+      toast.error("Error al eliminar solución", {
         description: error.message,
       })
     },
     onSuccess: () => {
-      toast.success('Solución eliminada correctamente')
+      toast.success("Solución eliminada correctamente")
       setDeleteDialogOpen(false)
       setSolutionToDelete(null)
-      utils.admin['glass-solution'].list.invalidate().catch(undefined)
+      utils.admin["glass-solution"].list.invalidate().catch(undefined)
     },
   })
 
   const handleCreateClick = () => {
-    router.push('/admin/glass-solutions/new')
+    router.push("/admin/glass-solutions/new")
   }
 
   const handleEditClick = (id: string) => {
@@ -127,7 +127,7 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
             </label>
             <Select
               onValueChange={(value) => {
-                setIsActive(value as 'all' | 'active' | 'inactive')
+                setIsActive(value as "all" | "active" | "inactive")
                 setPage(1)
               }}
               value={isActive}
@@ -196,7 +196,7 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
                       </Badge>
                     </TableCell>
                     <TableCell className="font-medium">{solution.name}</TableCell>
-                    <TableCell className="text-sm">{solution.nameEs || '-'}</TableCell>
+                    <TableCell className="text-sm">{solution.nameEs || "-"}</TableCell>
                     <TableCell>
                       <Badge variant="secondary">{solution.sortOrder}</Badge>
                     </TableCell>
@@ -204,8 +204,8 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
                       <Badge variant="secondary">{solution._count.glassTypes}</Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={solution.isActive ? 'default' : 'secondary'}>
-                        {solution.isActive ? 'Activo' : 'Inactivo'}
+                      <Badge variant={solution.isActive ? "default" : "secondary"}>
+                        {solution.isActive ? "Activo" : "Inactivo"}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
@@ -263,7 +263,7 @@ export function GlassSolutionList({ initialData }: GlassSolutionListProps) {
 
       <DeleteConfirmationDialog
         dependencies={[]}
-        entityLabel={solutionToDelete?.name ?? ''}
+        entityLabel={solutionToDelete?.name ?? ""}
         entityName="solución de vidrio"
         loading={deleteMutation.isPending}
         onConfirm={handleConfirmDelete}

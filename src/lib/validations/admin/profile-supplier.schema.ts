@@ -7,7 +7,7 @@
  * Material types: PVC, ALUMINUM, WOOD, MIXED
  */
 
-import { z } from 'zod'
+import { z } from "zod"
 import {
   activeFilterSchema,
   longText,
@@ -16,7 +16,7 @@ import {
   searchQuerySchema,
   sortOrderSchema,
   spanishText,
-} from '../shared.schema'
+} from "../shared.schema"
 
 /**
  * Constants
@@ -28,7 +28,7 @@ export const MAX_NAME_LENGTH = 100
  * Material Type Enum
  * Matches Prisma enum MaterialType
  */
-export const materialTypeEnum = z.enum(['PVC', 'ALUMINUM', 'WOOD', 'MIXED'])
+export const materialTypeEnum = z.enum(["PVC", "ALUMINUM", "WOOD", "MIXED"])
 
 export type MaterialType = z.infer<typeof materialTypeEnum>
 
@@ -37,15 +37,15 @@ export type MaterialType = z.infer<typeof materialTypeEnum>
  * Shared fields for create/update operations
  */
 const baseProfileSupplierSchema = z.object({
-  isActive: z.boolean().default(true).describe('Whether this supplier is active for selection'),
+  isActive: z.boolean().default(true).describe("Whether this supplier is active for selection"),
 
-  materialType: materialTypeEnum.describe('Type of material the supplier provides'),
+  materialType: materialTypeEnum.describe("Type of material the supplier provides"),
   name: spanishText
     .min(MIN_NAME_LENGTH, `El nombre debe tener al menos ${MIN_NAME_LENGTH} caracteres`)
     .max(MAX_NAME_LENGTH, `El nombre no puede exceder ${MAX_NAME_LENGTH} caracteres`)
-    .describe('Supplier name (e.g., Rehau, Deceuninck, Azembla)'),
+    .describe("Supplier name (e.g., Rehau, Deceuninck, Azembla)"),
 
-  notes: optionalSpanishText.pipe(longText).describe('Additional notes about the supplier'),
+  notes: optionalSpanishText.pipe(longText).describe("Additional notes about the supplier"),
 })
 
 /**
@@ -62,7 +62,7 @@ export type CreateProfileSupplierInput = z.infer<typeof createProfileSupplierSch
  */
 export const updateProfileSupplierSchema = z.object({
   data: baseProfileSupplierSchema.partial(),
-  id: z.string().cuid('ID inválido'),
+  id: z.string().cuid("ID inválido"),
 })
 
 export type UpdateProfileSupplierInput = z.infer<typeof updateProfileSupplierSchema>
@@ -80,16 +80,16 @@ export type UpdateProfileSupplierInput = z.infer<typeof updateProfileSupplierSch
 export const listProfileSuppliersSchema = z.object({
   // Pagination
   ...paginationSchema.shape,
-  isActive: activeFilterSchema.optional().describe('Filter by active status'),
+  isActive: activeFilterSchema.optional().describe("Filter by active status"),
 
   // Filters
-  materialType: materialTypeEnum.optional().describe('Filter by material type'),
+  materialType: materialTypeEnum.optional().describe("Filter by material type"),
 
   // Search
-  search: searchQuerySchema.optional().describe('Search by supplier name'),
+  search: searchQuerySchema.optional().describe("Search by supplier name"),
 
   // Sorting
-  sortBy: z.enum(['name', 'materialType', 'createdAt']).default('name'),
+  sortBy: z.enum(["name", "materialType", "createdAt"]).default("name"),
   sortOrder: sortOrderSchema,
 })
 
@@ -100,7 +100,7 @@ export type ListProfileSuppliersInput = z.infer<typeof listProfileSuppliersSchem
  * Used for GET /api/trpc/admin/profile-supplier.getById
  */
 export const getProfileSupplierByIdSchema = z.object({
-  id: z.string().cuid('ID inválido'),
+  id: z.string().cuid("ID inválido"),
 })
 
 export type GetProfileSupplierByIdInput = z.infer<typeof getProfileSupplierByIdSchema>
@@ -110,7 +110,7 @@ export type GetProfileSupplierByIdInput = z.infer<typeof getProfileSupplierByIdS
  * Used for DELETE /api/trpc/admin/profile-supplier.delete
  */
 export const deleteProfileSupplierSchema = z.object({
-  id: z.string().cuid('ID inválido'),
+  id: z.string().cuid("ID inválido"),
 })
 
 export type DeleteProfileSupplierInput = z.infer<typeof deleteProfileSupplierSchema>

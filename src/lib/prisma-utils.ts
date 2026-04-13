@@ -3,7 +3,7 @@
  * Helper functions for working with Prisma types in Client/Server boundary
  */
 
-import type { Decimal } from 'decimal.js'
+import type { Decimal } from "decimal.js"
 
 /**
  * Safely convert Prisma Decimal to number
@@ -21,12 +21,12 @@ import type { Decimal } from 'decimal.js'
  */
 export function safeDecimalToNumber(value: Decimal | number): number {
   // Already a number primitive
-  if (typeof value === 'number') {
+  if (typeof value === "number") {
     return value
   }
 
   // Decimal object with toNumber() method
-  if (value && typeof value === 'object' && 'toNumber' in value) {
+  if (value && typeof value === "object" && "toNumber" in value) {
     return value.toNumber()
   }
 

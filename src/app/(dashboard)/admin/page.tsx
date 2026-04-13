@@ -1,15 +1,15 @@
-import type { Metadata } from 'next'
-import { AdminContentContainer } from '@/app/(dashboard)/admin/_components/admin-content-container'
-import { db } from '@/server/db'
-import { DashboardContent } from './metrics/_components/dashboard-content'
+import type { Metadata } from "next"
+import { AdminContentContainer } from "@/app/(dashboard)/admin/_components/admin-content-container"
+import { db } from "@/server/db"
+import { DashboardContent } from "./metrics/_components/dashboard-content"
 
 export const metadata: Metadata = {
-  description: 'Panel de control del administrador con estadísticas y acciones rápidas',
-  title: 'Dashboard Administrativo | Glasify Lite',
+  description: "Panel de control del administrador con estadísticas y acciones rápidas",
+  title: "Dashboard Administrativo | Glasify Lite",
 }
 
 // Force dynamic rendering - requires database connection
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 /**
  * Admin Dashboard Home Page

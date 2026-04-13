@@ -14,7 +14,7 @@ import {
   PriceCalculation,
   type PriceCalculationInput,
   type PriceCalculationResult,
-} from '../core/entities/price-calculation'
+} from "../core/entities/price-calculation"
 
 /**
  * Minimum allowed color multiplier
@@ -39,17 +39,17 @@ const MIN_COLOR_MULTIPLIER = 1.0
 function execute(input: PriceCalculationInput): PriceCalculationResult {
   // Validate width
   if (input.dimensions.widthMm <= 0) {
-    throw new Error('Width must be greater than 0')
+    throw new Error("Width must be greater than 0")
   }
 
   // Validate height
   if (input.dimensions.heightMm <= 0) {
-    throw new Error('Height must be greater than 0')
+    throw new Error("Height must be greater than 0")
   }
 
   // Validate color multiplier
   if (input.colorMultiplier < MIN_COLOR_MULTIPLIER) {
-    throw new Error('Color multiplier must be at least 1.0')
+    throw new Error("Color multiplier must be at least 1.0")
   }
 
   // Delegate to domain aggregate

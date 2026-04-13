@@ -14,20 +14,20 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from 'next'
-import { api } from '@/trpc/server-client'
-import { ClientsContent } from './_components/clients-content'
+import type { Metadata } from "next"
+import { api } from "@/trpc/server-client"
+import { ClientsContent } from "./_components/clients-content"
 
 export const metadata: Metadata = {
-  title: 'Clientes | Admin',
-  description: 'Gestiona todos los clientes del sistema de cotizaciones',
+  title: "Clientes | Admin",
+  description: "Gestiona todos los clientes del sistema de cotizaciones",
 }
 
 type SearchParams = Promise<{
   page?: string
   search?: string
   sortBy?: string
-  sortOrder?: 'asc' | 'desc'
+  sortOrder?: "asc" | "desc"
 }>
 
 type PageProps = {
@@ -39,9 +39,9 @@ export default async function AdminClientsPage({ searchParams }: PageProps) {
 
   // Parse search params with defaults
   const page = Number(params.page) || 1
-  const search = params.search && params.search !== '' ? params.search : undefined
-  const sortBy = (params.sortBy || 'createdAt') as 'name' | 'company' | 'createdAt' | 'updatedAt'
-  const sortOrder = (params.sortOrder || 'desc') as 'asc' | 'desc'
+  const search = params.search && params.search !== "" ? params.search : undefined
+  const sortBy = (params.sortBy || "createdAt") as "name" | "company" | "createdAt" | "updatedAt"
+  const sortOrder = (params.sortOrder || "desc") as "asc" | "desc"
 
   // Fetch clients data (uses adminProcedure - admin sees ALL clients)
   const clientsData = await api.admin.clients.list({

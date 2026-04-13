@@ -1,6 +1,6 @@
-import { headers } from 'next/headers'
-import type { ReactNode } from 'react'
-import { auth } from '@/server/auth'
+import { headers } from "next/headers"
+import type { ReactNode } from "react"
+import { auth } from "@/server/auth"
 
 /**
  * Admin Only Component
@@ -33,7 +33,7 @@ export async function AdminOnly({
   const session = await auth.api.getSession({
     headers: await headers(),
   })
-  const isAdmin = session?.user?.role === 'admin'
+  const isAdmin = session?.user?.role === "admin"
 
   if (!isAdmin) {
     return fallback ?? null
@@ -71,8 +71,8 @@ export async function SellerOnly({
   const session = await auth.api.getSession({
     headers: await headers(),
   })
-  const isSeller = session?.user?.role === 'seller'
-  const isAdmin = session?.user?.role === 'admin'
+  const isSeller = session?.user?.role === "seller"
+  const isAdmin = session?.user?.role === "admin"
 
   if (!(isSeller || isAdmin)) {
     return fallback ?? null

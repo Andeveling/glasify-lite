@@ -24,11 +24,11 @@
  * @see REQ-001: Server-side pagination via URL params
  */
 
-'use client'
+"use client"
 
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { useServerParams } from '@/hooks/use-server-params'
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { useServerParams } from "@/hooks/use-server-params"
 
 export type TablePaginationProps = {
   /** Current page number (1-indexed) */
@@ -66,7 +66,7 @@ export function TablePagination({
     if (page < 1 || page > totalPages || page === currentPage) {
       return
     }
-    updateParam('page', page)
+    updateParam("page", page)
   }
 
   return (
@@ -75,7 +75,7 @@ export function TablePagination({
       {showItemCount && (
         <div className="text-muted-foreground text-sm">
           Total: <span className="font-medium text-foreground">{totalItems}</span> item
-          {totalItems !== 1 ? 's' : ''}
+          {totalItems !== 1 ? "s" : ""}
         </div>
       )}
 

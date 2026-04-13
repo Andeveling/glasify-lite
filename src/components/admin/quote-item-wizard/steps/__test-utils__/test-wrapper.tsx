@@ -1,26 +1,26 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { type RenderOptions, render } from '@testing-library/react'
-import { type DefaultValues, FormProvider, useForm } from 'react-hook-form'
-import { vi } from 'vitest'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { type RenderOptions, render } from "@testing-library/react"
+import { type DefaultValues, FormProvider, useForm } from "react-hook-form"
+import { vi } from "vitest"
 
-import type { WizardFormValues } from '../../wizard-form-schema'
+import type { WizardFormValues } from "../../wizard-form-schema"
 import {
   mockColorsData,
   mockGlassTypes,
   mockModels,
   mockServices,
   mockValidFormValues,
-} from './mock-data'
+} from "./mock-data"
 
 function createMockApi() {
   return {
     catalog: {
-      'filter-models-by-dimensions': {
+      "filter-models-by-dimensions": {
         useQuery: vi
           .fn()
           .mockReturnValue({ data: mockModels, error: null, isLoading: false, refetch: vi.fn() }),
       },
-      'get-available-glass-types': {
+      "get-available-glass-types": {
         useQuery: vi.fn().mockReturnValue({
           data: mockGlassTypes,
           error: null,
@@ -28,21 +28,21 @@ function createMockApi() {
           refetch: vi.fn(),
         }),
       },
-      'list-services': {
+      "list-services": {
         useQuery: vi
           .fn()
           .mockReturnValue({ data: mockServices, error: null, isLoading: false, refetch: vi.fn() }),
       },
     },
     quote: {
-      'add-item': {
+      "add-item": {
         useMutation: vi.fn().mockReturnValue({
           error: null,
           isPending: false,
-          mutateAsync: vi.fn().mockResolvedValue({ id: 'quote-item-1' }),
+          mutateAsync: vi.fn().mockResolvedValue({ id: "quote-item-1" }),
         }),
       },
-      'get-model-colors-for-quote': {
+      "get-model-colors-for-quote": {
         useQuery: vi.fn().mockReturnValue({
           data: mockColorsData,
           error: null,
@@ -54,7 +54,7 @@ function createMockApi() {
     tenantConfig: {
       get: {
         useQuery: vi.fn().mockReturnValue({
-          data: { currency: 'COP', locale: 'es-CO', timezone: 'America/Bogota' },
+          data: { currency: "COP", locale: "es-CO", timezone: "America/Bogota" },
           error: null,
           isLoading: false,
         }),
@@ -65,21 +65,21 @@ function createMockApi() {
 
 const mockApi = createMockApi()
 
-vi.mock('@/trpc/react', async () => {
-  const { vi } = await import('vitest')
+vi.mock("@/trpc/react", async () => {
+  const { vi } = await import("vitest")
   return {
     api: (globalThis as Record<string, unknown>).__mockApi,
     createTRPCReact: vi.fn(),
   }
 })
 
-vi.mock('@/app/_hooks/use-tenant-config', async () => {
+vi.mock("@/app/_hooks/use-tenant-config", async () => {
   return {
     useTenantConfig: vi.fn().mockReturnValue({
-      formatContext: { currency: 'COP', locale: 'es-CO', timezone: 'America/Bogota' },
+      formatContext: { currency: "COP", locale: "es-CO", timezone: "America/Bogota" },
       hasError: false,
       isLoading: false,
-      tenantConfig: { currency: 'COP', locale: 'es-CO', timezone: 'America/Bogota' },
+      tenantConfig: { currency: "COP", locale: "es-CO", timezone: "America/Bogota" },
     }),
   }
 })
@@ -119,7 +119,7 @@ function TestWrapper({
 
 function renderWithFormContext(
   ui: React.ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'> & {
+  options?: Omit<RenderOptions, "wrapper"> & {
     defaultValues?: DefaultValues<WizardFormValues>
     queryClient?: QueryClient
   },
@@ -146,4 +146,4 @@ function renderWithFormContext(
   }
 }
 
-export { renderWithFormContext, TestWrapper, createTestQueryClient, mockApi, createMockApi }
+export { createMockApi, createTestQueryClient, mockApi, renderWithFormContext, TestWrapper }

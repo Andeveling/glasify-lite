@@ -1,11 +1,11 @@
 // biome-ignore-all lint/performance/noNamespaceImport: Shadcn UI generated component
-'use client'
+"use client"
 
-import { CheckIcon, ChevronsUpDown } from 'lucide-react'
-import React from 'react'
-import * as RPNInput from 'react-phone-number-input'
-import flags from 'react-phone-number-input/flags'
-import { Button } from '@/components/ui/button'
+import { CheckIcon, ChevronsUpDown } from "lucide-react"
+import React from "react"
+import * as RPNInput from "react-phone-number-input"
+import flags from "react-phone-number-input/flags"
+import { Button } from "@/components/ui/button"
 import {
   Command,
   CommandEmpty,
@@ -13,19 +13,19 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { cn } from '@/lib/utils'
-import 'react-phone-number-input/style.css'
+} from "@/components/ui/command"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { cn } from "@/lib/utils"
+import "react-phone-number-input/style.css"
 
 // ============================================================================
 // Types
 // ============================================================================
 
-type PhoneInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'> &
-  Omit<RPNInput.Props<typeof RPNInput.default>, 'onChange'> & {
-    onChange?: (value: RPNInput.Value | '') => void
+type PhoneInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value"> &
+  Omit<RPNInput.Props<typeof RPNInput.default>, "onChange"> & {
+    onChange?: (value: RPNInput.Value | "") => void
   }
 
 type CountrySelectOption = {
@@ -54,7 +54,7 @@ const InputComponent = React.memo(
   React.forwardRef<HTMLInputElement, InputComponentProps>(({ className, ...props }, ref) => (
     <input
       className={cn(
-        'w-full rounded-s-none rounded-e-lg bg-primary-base px-2 outline-none',
+        "w-full rounded-s-none rounded-e-lg bg-primary-base px-2 outline-none",
         className,
       )}
       {...props}
@@ -62,7 +62,7 @@ const InputComponent = React.memo(
     />
   )),
 )
-InputComponent.displayName = 'InputComponent'
+InputComponent.displayName = "InputComponent"
 
 /**
  * Flag component that displays the country flag icon.
@@ -77,7 +77,7 @@ const FlagComponent = React.memo(({ country, countryName }: RPNInput.FlagProps) 
     </span>
   )
 })
-FlagComponent.displayName = 'FlagComponent'
+FlagComponent.displayName = "FlagComponent"
 
 /**
  * Country selector dropdown component.
@@ -97,7 +97,7 @@ const CountrySelect = React.memo(({ disabled, value, onChange, options }: Countr
         <Button
           aria-label="Seleccionar país"
           className={cn(
-            'flex justify-center gap-1 rounded-s-lg rounded-e-none bg-primary-base px-3',
+            "flex justify-center gap-1 rounded-s-lg rounded-e-none bg-primary-base px-3",
           )}
           disabled={disabled}
           type="button"
@@ -107,7 +107,7 @@ const CountrySelect = React.memo(({ disabled, value, onChange, options }: Countr
             <FlagComponent country={value} countryName={value} />
           </div>
           <ChevronsUpDown
-            className={cn('-mr-2 h-4 w-4 opacity-50', disabled ? 'hidden' : 'opacity-100')}
+            className={cn("-mr-2 h-4 w-4 opacity-50", disabled ? "hidden" : "opacity-100")}
           />
         </Button>
       </PopoverTrigger>
@@ -135,8 +135,8 @@ const CountrySelect = React.memo(({ disabled, value, onChange, options }: Countr
                       )}
                       <CheckIcon
                         className={cn(
-                          'ml-auto h-4 w-4',
-                          option.value === value ? 'opacity-100' : 'opacity-0',
+                          "ml-auto h-4 w-4",
+                          option.value === value ? "opacity-100" : "opacity-0",
                         )}
                       />
                     </CommandItem>
@@ -149,7 +149,7 @@ const CountrySelect = React.memo(({ disabled, value, onChange, options }: Countr
     </Popover>
   )
 })
-CountrySelect.displayName = 'CountrySelect'
+CountrySelect.displayName = "CountrySelect"
 
 // ============================================================================
 // Main Component
@@ -184,7 +184,7 @@ const PhoneInput = React.forwardRef<React.ElementRef<typeof RPNInput.default>, P
      */
     const handleChange = React.useCallback(
       (value: RPNInput.Value | undefined) => {
-        onChange?.(value || '')
+        onChange?.(value || "")
       },
       [onChange],
     )
@@ -192,9 +192,9 @@ const PhoneInput = React.forwardRef<React.ElementRef<typeof RPNInput.default>, P
     return (
       <RPNInput.default
         className={cn(
-          'h-12 w-full min-w-0 rounded-md border border-input bg-transparent py-1 text-base shadow-xs outline-none transition-[color,box-shadow] selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30',
-          'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
-          'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
+          "h-12 w-full min-w-0 rounded-md border border-input bg-transparent py-1 text-base shadow-xs outline-none transition-[color,box-shadow] selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30",
+          "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+          "aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
           className,
         )}
         countrySelectComponent={CountrySelect}
@@ -207,11 +207,11 @@ const PhoneInput = React.forwardRef<React.ElementRef<typeof RPNInput.default>, P
     )
   },
 )
-PhoneInput.displayName = 'PhoneInput'
+PhoneInput.displayName = "PhoneInput"
 
 // ============================================================================
 // Exports
 // ============================================================================
 
-export { PhoneInput }
 export type { PhoneInputProps }
+export { PhoneInput }

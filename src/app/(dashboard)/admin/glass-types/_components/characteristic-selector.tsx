@@ -18,15 +18,15 @@
  * Used in: glass-type-form.tsx (Create/Edit Glass Types)
  */
 
-'use client'
+"use client"
 
-import { Plus } from 'lucide-react'
-import { useCallback, useMemo } from 'react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
-import type { CreateGlassTypeInput } from '@/lib/validations/admin/glass-type.schema'
-import { api } from '@/trpc/react'
-import { CharacteristicFieldItem } from './characteristic-field-item'
+import { Plus } from "lucide-react"
+import { useCallback, useMemo } from "react"
+import { useFieldArray, useFormContext } from "react-hook-form"
+import { Button } from "@/components/ui/button"
+import type { CreateGlassTypeInput } from "@/lib/validations/admin/glass-type.schema"
+import { api } from "@/trpc/react"
+import { CharacteristicFieldItem } from "./characteristic-field-item"
 
 /**
  * Characteristic Selector Component
@@ -35,19 +35,19 @@ export function CharacteristicSelector() {
   const form = useFormContext<CreateGlassTypeInput>()
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: 'characteristics',
+    name: "characteristics",
   })
 
   // Fetch active characteristics via tRPC
   // Note: glassCharacteristic router will be created in future tasks (US7)
   // For now, use empty array or fetch via Server Component prop
-  const { data: characteristicsData, isLoading } = api.admin['glass-solution'].list.useQuery(
+  const { data: characteristicsData, isLoading } = api.admin["glass-solution"].list.useQuery(
     {
-      isActive: 'active',
+      isActive: "active",
       limit: 100,
       page: 1,
-      sortBy: 'sortOrder',
-      sortOrder: 'asc',
+      sortBy: "sortOrder",
+      sortOrder: "asc",
     },
     {
       // Temporarily disabled until glass-characteristic router is created
@@ -67,7 +67,7 @@ export function CharacteristicSelector() {
   const handleAddCharacteristic = useCallback(() => {
     append({
       certification: undefined,
-      characteristicId: '',
+      characteristicId: "",
       notes: undefined,
       value: undefined,
     })

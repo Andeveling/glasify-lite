@@ -5,13 +5,13 @@
  * Wired to the update-status tRPC mutation.
  */
 
-'use client'
+"use client"
 
-import { Check, X } from 'lucide-react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { api } from '@/trpc/react'
+import { Check, X } from "lucide-react"
+import { useState } from "react"
+import { toast } from "sonner"
+import { Button } from "@/components/ui/button"
+import { api } from "@/trpc/react"
 
 type QuoteActionsProps = {
   quoteId: string
@@ -20,15 +20,15 @@ type QuoteActionsProps = {
 export function QuoteActions({ quoteId }: QuoteActionsProps) {
   const [isUpdating, setIsUpdating] = useState(false)
 
-  const updateStatus = api.quote['update-status'].useMutation({
+  const updateStatus = api.quote["update-status"].useMutation({
     onSuccess: () => {
-      toast.success('Estado actualizado', {
-        description: 'La cotización ha sido actualizada exitosamente',
+      toast.success("Estado actualizado", {
+        description: "La cotización ha sido actualizada exitosamente",
       })
       setIsUpdating(false)
     },
     onError: (error) => {
-      toast.error('Error al actualizar estado', {
+      toast.error("Error al actualizar estado", {
         description: error.message,
       })
       setIsUpdating(false)
@@ -37,12 +37,12 @@ export function QuoteActions({ quoteId }: QuoteActionsProps) {
 
   const handleAccept = () => {
     setIsUpdating(true)
-    updateStatus.mutate({ quoteId, status: 'accepted' })
+    updateStatus.mutate({ quoteId, status: "accepted" })
   }
 
   const handleReject = () => {
     setIsUpdating(true)
-    updateStatus.mutate({ quoteId, status: 'rejected' })
+    updateStatus.mutate({ quoteId, status: "rejected" })
   }
 
   return (

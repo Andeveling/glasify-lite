@@ -7,12 +7,12 @@
  * @module _components/characteristic-field-item
  */
 
-'use client'
+"use client"
 
-import { Trash2 } from 'lucide-react'
-import { memo, useTransition } from 'react'
-import { useFormContext } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
+import { Trash2 } from "lucide-react"
+import { memo, useTransition } from "react"
+import { useFormContext } from "react-hook-form"
+import { Button } from "@/components/ui/button"
 import {
   FormControl,
   FormDescription,
@@ -20,17 +20,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import type { CreateGlassTypeInput } from '@/lib/validations/admin/glass-type.schema'
+} from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+import type { CreateGlassTypeInput } from "@/lib/validations/admin/glass-type.schema"
 
 type Characteristic = {
   id: string
@@ -112,8 +112,8 @@ export const CharacteristicFieldItem = memo(function CharacteristicFieldItemComp
               </Select>
               <FormDescription>
                 {characteristics.length === 0
-                  ? 'Primero debes crear características en el módulo de administración'
-                  : 'Selecciona una característica técnica del vidrio'}
+                  ? "Primero debes crear características en el módulo de administración"
+                  : "Selecciona una característica técnica del vidrio"}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -132,7 +132,7 @@ export const CharacteristicFieldItem = memo(function CharacteristicFieldItemComp
                   {...field}
                   disabled={isPending}
                   placeholder="Ej: 6.38mm, 4+4mm, etc."
-                  value={field.value ?? ''}
+                  value={field.value ?? ""}
                 />
               </FormControl>
               <FormDescription>
@@ -156,7 +156,7 @@ export const CharacteristicFieldItem = memo(function CharacteristicFieldItemComp
                 {...field}
                 disabled={isPending}
                 placeholder="Ej: EN 12150, EN 14449, etc."
-                value={field.value ?? ''}
+                value={field.value ?? ""}
               />
             </FormControl>
             <FormDescription>Referencia de certificación técnica si aplica</FormDescription>
@@ -178,7 +178,7 @@ export const CharacteristicFieldItem = memo(function CharacteristicFieldItemComp
                 {...field}
                 disabled={isPending}
                 placeholder="Notas adicionales sobre esta característica..."
-                value={field.value ?? ''}
+                value={field.value ?? ""}
               />
             </FormControl>
             <FormMessage />

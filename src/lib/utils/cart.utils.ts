@@ -7,8 +7,8 @@
  * @module lib/utils/cart.utils
  */
 
-import type { CartItem, CartState, CartSummary } from '@/types/cart.types'
-import { CART_CONSTANTS } from '@/types/cart.types'
+import type { CartItem, CartState, CartSummary } from "@/types/cart.types"
+import { CART_CONSTANTS } from "@/types/cart.types"
 
 // ============================================================================
 // Constants
@@ -97,7 +97,7 @@ export function validateQuantity(quantity: number): {
   error?: string
 } {
   if (!Number.isInteger(quantity)) {
-    return { error: 'La cantidad debe ser un número entero', valid: false }
+    return { error: "La cantidad debe ser un número entero", valid: false }
   }
 
   if (quantity < CART_CONSTANTS.MIN_QUANTITY) {
@@ -145,17 +145,17 @@ function validateRequiredStringFields(cartItem: Partial<CartItem>): {
   error?: string
 } {
   const requiredStringFields: Array<keyof CartItem> = [
-    'id',
-    'modelId',
-    'modelName',
-    'glassTypeId',
-    'glassTypeName',
-    'name',
-    'createdAt',
+    "id",
+    "modelId",
+    "modelName",
+    "glassTypeId",
+    "glassTypeName",
+    "name",
+    "createdAt",
   ]
 
   for (const field of requiredStringFields) {
-    if (!cartItem[field] || typeof cartItem[field] !== 'string') {
+    if (!cartItem[field] || typeof cartItem[field] !== "string") {
       return { error: `Campo requerido: ${field}`, valid: false }
     }
   }
@@ -171,15 +171,15 @@ function validateRequiredNumberFields(cartItem: Partial<CartItem>): {
   error?: string
 } {
   const requiredNumberFields: Array<keyof CartItem> = [
-    'widthMm',
-    'heightMm',
-    'quantity',
-    'unitPrice',
-    'subtotal',
+    "widthMm",
+    "heightMm",
+    "quantity",
+    "unitPrice",
+    "subtotal",
   ]
 
   for (const field of requiredNumberFields) {
-    if (typeof cartItem[field] !== 'number' || cartItem[field] === undefined) {
+    if (typeof cartItem[field] !== "number" || cartItem[field] === undefined) {
       return { error: `Campo numérico requerido: ${field}`, valid: false }
     }
   }
@@ -194,16 +194,16 @@ function validateDimensions(cartItem: Partial<CartItem>): {
   valid: boolean
   error?: string
 } {
-  if (!cartItem.dimensions || typeof cartItem.dimensions !== 'object') {
-    return { error: 'Dimensiones requeridas', valid: false }
+  if (!cartItem.dimensions || typeof cartItem.dimensions !== "object") {
+    return { error: "Dimensiones requeridas", valid: false }
   }
 
   if (cartItem.dimensions.widthMm !== undefined && cartItem.dimensions.widthMm <= 0) {
-    return { error: 'El ancho debe ser positivo', valid: false }
+    return { error: "El ancho debe ser positivo", valid: false }
   }
 
   if (cartItem.dimensions.heightMm !== undefined && cartItem.dimensions.heightMm <= 0) {
-    return { error: 'El alto debe ser positivo', valid: false }
+    return { error: "El alto debe ser positivo", valid: false }
   }
 
   return { valid: true }
@@ -217,11 +217,11 @@ function validatePrices(cartItem: Partial<CartItem>): {
   error?: string
 } {
   if (cartItem.unitPrice !== undefined && cartItem.unitPrice < 0) {
-    return { error: 'El precio unitario no puede ser negativo', valid: false }
+    return { error: "El precio unitario no puede ser negativo", valid: false }
   }
 
   if (cartItem.subtotal !== undefined && cartItem.subtotal < 0) {
-    return { error: 'El subtotal no puede ser negativo', valid: false }
+    return { error: "El subtotal no puede ser negativo", valid: false }
   }
 
   // Validate subtotal calculation
@@ -234,7 +234,7 @@ function validatePrices(cartItem: Partial<CartItem>): {
     // Allow small floating-point difference
     if (Math.abs(cartItem.subtotal - expectedSubtotal) > PRICE_TOLERANCE) {
       return {
-        error: 'El subtotal no coincide con precio × cantidad',
+        error: "El subtotal no coincide con precio × cantidad",
         valid: false,
       }
     }
@@ -255,8 +255,8 @@ export function validateCartItem(item: unknown): {
   valid: boolean
   error?: string
 } {
-  if (!item || typeof item !== 'object') {
-    return { error: 'Item inválido', valid: false }
+  if (!item || typeof item !== "object") {
+    return { error: "Item inválido", valid: false }
   }
 
   const cartItem = item as Partial<CartItem>
@@ -275,7 +275,7 @@ export function validateCartItem(item: unknown): {
 
   // Validate additionalServiceIds array
   if (!Array.isArray(cartItem.additionalServiceIds)) {
-    return { error: 'additionalServiceIds debe ser un array', valid: false }
+    return { error: "additionalServiceIds debe ser un array", valid: false }
   }
 
   // Validate dimensions
@@ -312,7 +312,7 @@ export function validateCartItem(item: unknown): {
  */
 export function updateCartItem(
   item: CartItem,
-  updates: Partial<Pick<CartItem, 'name' | 'quantity'>>,
+  updates: Partial<Pick<CartItem, "name" | "quantity">>,
 ): CartItem {
   const updatedItem: CartItem = { ...item }
 

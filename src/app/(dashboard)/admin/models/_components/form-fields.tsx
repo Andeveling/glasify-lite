@@ -4,13 +4,13 @@
  * Form field wrappers that use useFormContext() for cleaner code
  */
 
-'use client'
+"use client"
 
-import { format } from '@formkit/tempo'
-import { CalendarIcon } from 'lucide-react'
-import { useFormContext } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
+import { format } from "@formkit/tempo"
+import { CalendarIcon } from "lucide-react"
+import { useFormContext } from "react-hook-form"
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
 import {
   FormControl,
   FormDescription,
@@ -18,18 +18,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { cn } from '@/lib/utils'
+} from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+import { cn } from "@/lib/utils"
 
 type BaseFieldProps = {
   name: string
@@ -58,10 +58,10 @@ export function FormTextInput({
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && '*'}
+            {label} {required && "*"}
           </FormLabel>
           <FormControl>
-            <Input placeholder={placeholder} {...field} value={field.value ?? ''} />
+            <Input placeholder={placeholder} {...field} value={field.value ?? ""} />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />
@@ -99,7 +99,7 @@ export function FormNumberInput({
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && '*'}
+            {label} {required && "*"}
           </FormLabel>
           <FormControl>
             <Input
@@ -112,15 +112,15 @@ export function FormNumberInput({
               onBlur={(e) => {
                 const value = e.target.value
                 // On blur: validate and set final value (0 if empty, or parsed number)
-                field.onChange(value === '' ? 0 : Number(value))
+                field.onChange(value === "" ? 0 : Number(value))
                 field.onBlur()
               }}
               onChange={(e) => {
                 const value = e.target.value
                 // On change: allow empty string temporarily without validation
-                field.onChange(value === '' ? undefined : Number(value))
+                field.onChange(value === "" ? undefined : Number(value))
               }}
-              value={field.value === undefined || field.value === null ? '' : field.value}
+              value={field.value === undefined || field.value === null ? "" : field.value}
             />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
@@ -158,12 +158,12 @@ export function FormCurrencyInput({
     const TWO_DECIMALS = 2
 
     if (decimalPlaces === FOUR_DECIMALS) {
-      return '0.0001'
+      return "0.0001"
     }
     if (decimalPlaces === TWO_DECIMALS) {
-      return '0.01'
+      return "0.01"
     }
-    return 'any'
+    return "any"
   }
 
   return (
@@ -173,7 +173,7 @@ export function FormCurrencyInput({
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && '*'}
+            {label} {required && "*"}
           </FormLabel>
           <FormControl>
             <div className="relative">
@@ -190,15 +190,15 @@ export function FormCurrencyInput({
                 onBlur={(e) => {
                   const value = e.target.value
                   // On blur: validate and set final value (0 if empty, or parsed number)
-                  field.onChange(value === '' ? 0 : Number(value))
+                  field.onChange(value === "" ? 0 : Number(value))
                   field.onBlur()
                 }}
                 onChange={(e) => {
                   const value = e.target.value
                   // On change: allow empty string temporarily without validation
-                  field.onChange(value === '' ? undefined : Number(value))
+                  field.onChange(value === "" ? undefined : Number(value))
                 }}
-                value={field.value === undefined || field.value === null ? '' : field.value}
+                value={field.value === undefined || field.value === null ? "" : field.value}
               />
             </div>
           </FormControl>
@@ -231,7 +231,7 @@ export function FormPercentageInput({
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && '*'}
+            {label} {required && "*"}
           </FormLabel>
           <FormControl>
             <div className="relative">
@@ -246,15 +246,15 @@ export function FormPercentageInput({
                 onBlur={(e) => {
                   const value = e.target.value
                   // On blur: validate and set final value (0 if empty, or parsed number)
-                  field.onChange(value === '' ? 0 : Number(value))
+                  field.onChange(value === "" ? 0 : Number(value))
                   field.onBlur()
                 }}
                 onChange={(e) => {
                   const value = e.target.value
                   // On change: allow empty string temporarily without validation
-                  field.onChange(value === '' ? undefined : Number(value))
+                  field.onChange(value === "" ? undefined : Number(value))
                 }}
-                value={field.value === undefined || field.value === null ? '' : field.value}
+                value={field.value === undefined || field.value === null ? "" : field.value}
               />
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground">
                 %
@@ -293,10 +293,10 @@ export function FormTextarea({
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && '*'}
+            {label} {required && "*"}
           </FormLabel>
           <FormControl>
-            <Textarea placeholder={placeholder} rows={rows} {...field} value={field.value ?? ''} />
+            <Textarea placeholder={placeholder} rows={rows} {...field} value={field.value ?? ""} />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />
@@ -335,9 +335,9 @@ export function FormSelect({
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && '*'}
+            {label} {required && "*"}
           </FormLabel>
-          <Select onValueChange={field.onChange} value={field.value ?? ''}>
+          <Select onValueChange={field.onChange} value={field.value ?? ""}>
             <FormControl>
               <SelectTrigger>
                 <SelectValue placeholder={placeholder} />
@@ -367,7 +367,7 @@ export function FormDateInput({
   label,
   description,
   required = false,
-}: Omit<BaseFieldProps, 'placeholder'>) {
+}: Omit<BaseFieldProps, "placeholder">) {
   const form = useFormContext()
 
   return (
@@ -377,21 +377,21 @@ export function FormDateInput({
       render={({ field }) => (
         <FormItem className="flex flex-col">
           <FormLabel>
-            {label} {required && '*'}
+            {label} {required && "*"}
           </FormLabel>
           <Popover>
             <PopoverTrigger asChild>
               <FormControl>
                 <Button
                   className={cn(
-                    'w-full justify-start pl-3 text-left font-normal',
-                    !field.value && 'text-muted-foreground',
+                    "w-full justify-start pl-3 text-left font-normal",
+                    !field.value && "text-muted-foreground",
                   )}
                   variant="outline"
                 >
                   <CalendarIcon className="mr-2 size-4" />
                   {field.value ? (
-                    format(field.value, 'DD/MM/YYYY', 'es-CO')
+                    format(field.value, "DD/MM/YYYY", "es-CO")
                   ) : (
                     <span>Seleccionar fecha</span>
                   )}

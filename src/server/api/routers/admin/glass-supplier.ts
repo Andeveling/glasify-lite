@@ -8,18 +8,18 @@
  * Includes referential integrity check for deletions
  */
 
-import type { Prisma } from '@prisma/generated/client'
-import { TRPCError } from '@trpc/server'
-import logger from '@/lib/logger'
+import type { Prisma } from "@prisma/generated/client"
+import { TRPCError } from "@trpc/server"
+import logger from "@/lib/logger"
 import {
   createGlassSupplierSchema,
   deleteGlassSupplierSchema,
   getGlassSupplierByIdSchema,
   listGlassSuppliersSchema,
   updateGlassSupplierSchema,
-} from '@/lib/validations/admin/glass-supplier.schema'
-import { adminProcedure, createTRPCRouter } from '@/server/api/trpc'
-import { canDeleteGlassSupplier } from '@/server/services/referential-integrity.service'
+} from "@/lib/validations/admin/glass-supplier.schema"
+import { adminProcedure, createTRPCRouter } from "@/server/api/trpc"
+import { canDeleteGlassSupplier } from "@/server/services/referential-integrity.service"
 
 /**
  * Helper: Build where clause for list query
@@ -37,19 +37,19 @@ function buildWhereClause(input: {
       {
         name: {
           contains: input.search,
-          mode: 'insensitive',
+          mode: "insensitive",
         },
       },
       {
         code: {
           contains: input.search,
-          mode: 'insensitive',
+          mode: "insensitive",
         },
       },
       {
         country: {
           contains: input.search,
-          mode: 'insensitive',
+          mode: "insensitive",
         },
       },
     ]
@@ -59,7 +59,7 @@ function buildWhereClause(input: {
   if (input.country) {
     where.country = {
       equals: input.country,
-      mode: 'insensitive',
+      mode: "insensitive",
     }
   }
 
@@ -74,11 +74,11 @@ function buildWhereClause(input: {
 /**
  * Helper: Convert isActive filter string to boolean for Prisma
  */
-function parseIsActiveFilter(isActive?: 'all' | 'active' | 'inactive'): boolean | null {
-  if (!isActive || isActive === 'all') {
+function parseIsActiveFilter(isActive?: "all" | "active" | "inactive"): boolean | null {
+  if (!isActive || isActive === "all") {
     return null
   }
-  return isActive === 'active'
+  return isActive === "active"
 }
 
 /**
@@ -86,25 +86,25 @@ function parseIsActiveFilter(isActive?: 'all' | 'active' | 'inactive'): boolean 
  */
 function buildOrderByClause(
   sortBy: string,
-  sortOrder: 'asc' | 'desc',
+  sortOrder: "asc" | "desc",
 ): Prisma.GlassSupplierOrderByWithRelationInput {
   const orderBy: Prisma.GlassSupplierOrderByWithRelationInput = {}
 
   switch (sortBy) {
-    case 'name':
+    case "name":
       orderBy.name = sortOrder
       break
-    case 'code':
+    case "code":
       orderBy.code = sortOrder
       break
-    case 'country':
+    case "country":
       orderBy.country = sortOrder
       break
-    case 'createdAt':
+    case "createdAt":
       orderBy.createdAt = sortOrder
       break
     default:
-      orderBy.name = 'asc' // Default sort
+      orderBy.name = "asc" // Default sort
   }
 
   return orderBy
@@ -128,8 +128,8 @@ export const glassSupplierRouter = createTRPCRouter({
 
     if (existingByName) {
       throw new TRPCError({
-        code: 'CONFLICT',
-        message: 'Ya existe un proveedor de vidrio con este nombre',
+        code: "CONFLICT",
+        message: "Ya existe un proveedor de vidrio con este nombre",
       })
     }
 
@@ -141,8 +141,8 @@ export const glassSupplierRouter = createTRPCRouter({
 
       if (existingByCode) {
         throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Ya existe un proveedor de vidrio con este código',
+          code: "CONFLICT",
+          message: "Ya existe un proveedor de vidrio con este código",
         })
       }
     }
@@ -151,7 +151,7 @@ export const glassSupplierRouter = createTRPCRouter({
       data: input,
     })
 
-    logger.info('Glass supplier created', {
+    logger.info("Glass supplier created", {
       code: glassSupplier.code,
       country: glassSupplier.country,
       supplierId: glassSupplier.id,
@@ -177,8 +177,8 @@ export const glassSupplierRouter = createTRPCRouter({
 
     if (!existing) {
       throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Proveedor de vidrio no encontrado',
+        code: "NOT_FOUND",
+        message: "Proveedor de vidrio no encontrado",
       })
     }
 
@@ -187,7 +187,7 @@ export const glassSupplierRouter = createTRPCRouter({
 
     if (!integrityCheck.canDelete) {
       throw new TRPCError({
-        code: 'CONFLICT',
+        code: "CONFLICT",
         message: integrityCheck.message,
       })
     }
@@ -196,7 +196,7 @@ export const glassSupplierRouter = createTRPCRouter({
       where: { id: input.id },
     })
 
-    logger.warn('Glass supplier deleted', {
+    logger.warn("Glass supplier deleted", {
       supplierId: input.id,
       supplierName: existing.name,
       userId: ctx.session.user.id,
@@ -218,12 +218,12 @@ export const glassSupplierRouter = createTRPCRouter({
 
     if (!glassSupplier) {
       throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Proveedor de vidrio no encontrado',
+        code: "NOT_FOUND",
+        message: "Proveedor de vidrio no encontrado",
       })
     }
 
-    logger.info('Glass supplier retrieved', {
+    logger.info("Glass supplier retrieved", {
       supplierId: input.id,
       supplierName: glassSupplier.name,
       userId: ctx.session.user.id,
@@ -258,7 +258,7 @@ export const glassSupplierRouter = createTRPCRouter({
       where,
     })
 
-    logger.info('Glass suppliers listed', {
+    logger.info("Glass suppliers listed", {
       filters: { ...restFilters, isActive },
       limit,
       page,
@@ -291,8 +291,8 @@ export const glassSupplierRouter = createTRPCRouter({
 
     if (!existing) {
       throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Proveedor de vidrio no encontrado',
+        code: "NOT_FOUND",
+        message: "Proveedor de vidrio no encontrado",
       })
     }
 
@@ -304,8 +304,8 @@ export const glassSupplierRouter = createTRPCRouter({
 
       if (duplicate) {
         throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Ya existe un proveedor con este nombre',
+          code: "CONFLICT",
+          message: "Ya existe un proveedor con este nombre",
         })
       }
     }
@@ -318,8 +318,8 @@ export const glassSupplierRouter = createTRPCRouter({
 
       if (duplicate) {
         throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Ya existe un proveedor con este código',
+          code: "CONFLICT",
+          message: "Ya existe un proveedor con este código",
         })
       }
     }
@@ -329,7 +329,7 @@ export const glassSupplierRouter = createTRPCRouter({
       where: { id },
     })
 
-    logger.info('Glass supplier updated', {
+    logger.info("Glass supplier updated", {
       changes: data,
       supplierId: glassSupplier.id,
       supplierName: glassSupplier.name,

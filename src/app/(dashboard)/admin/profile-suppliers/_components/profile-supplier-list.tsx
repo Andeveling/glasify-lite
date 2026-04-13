@@ -25,17 +25,17 @@
  */
 /** biome-ignore-all assist/source/useSortedKeys: TypeScript necesita que onMutate se defina primero para inferir el tipo del contexto que luego se usa en onError. */
 
-'use client'
+"use client"
 
-import type { MaterialType, ProfileSupplier } from '@prisma/generated/client'
-import { Pencil, Trash2 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog'
-import { TablePagination } from '@/app/_components/server-table/table-pagination'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import type { MaterialType, ProfileSupplier } from "@prisma/generated/client"
+import { Pencil, Trash2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { toast } from "sonner"
+import { DeleteConfirmationDialog } from "@/app/_components/delete-confirmation-dialog"
+import { TablePagination } from "@/app/_components/server-table/table-pagination"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Table,
   TableBody,
@@ -43,9 +43,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { api } from '@/trpc/react'
-import { ProfileSupplierEmpty } from './profile-supplier-empty'
+} from "@/components/ui/table"
+import { api } from "@/trpc/react"
+import { ProfileSupplierEmpty } from "./profile-supplier-empty"
 
 type ProfileSupplierListProps = {
   initialData: {
@@ -62,7 +62,7 @@ type ProfileSupplierListProps = {
     page?: string
     search?: string
     sortBy?: string
-    sortOrder?: 'asc' | 'desc'
+    sortOrder?: "asc" | "desc"
   }
 }
 
@@ -71,10 +71,10 @@ type ProfileSupplierListProps = {
  * Used for badges and UI display
  */
 const MATERIAL_TYPE_LABELS: Record<MaterialType, string> = {
-  ALUMINUM: 'Aluminio',
-  MIXED: 'Mixto',
-  PVC: 'PVC',
-  WOOD: 'Madera',
+  ALUMINUM: "Aluminio",
+  MIXED: "Mixto",
+  PVC: "PVC",
+  WOOD: "Madera",
 }
 
 /**
@@ -83,12 +83,12 @@ const MATERIAL_TYPE_LABELS: Record<MaterialType, string> = {
  */
 const MATERIAL_TYPE_VARIANTS: Record<
   MaterialType,
-  'default' | 'secondary' | 'outline' | 'destructive'
+  "default" | "secondary" | "outline" | "destructive"
 > = {
-  ALUMINUM: 'default',
-  MIXED: 'outline',
-  PVC: 'secondary',
-  WOOD: 'destructive',
+  ALUMINUM: "default",
+  MIXED: "outline",
+  PVC: "secondary",
+  WOOD: "destructive",
 }
 
 export function ProfileSupplierList({
@@ -105,26 +105,26 @@ export function ProfileSupplierList({
   } | null>(null)
 
   // Delete mutation with optimistic UI
-  const deleteMutation = api.admin['profile-supplier'].delete.useMutation({
+  const deleteMutation = api.admin["profile-supplier"].delete.useMutation({
     onMutate: async (variables) => {
       // Cancel any outgoing refetches
-      await utils.admin['profile-supplier'].list.cancel()
+      await utils.admin["profile-supplier"].list.cancel()
 
       // Snapshot the previous value
-      const previousData = utils.admin['profile-supplier'].list.getData()
+      const previousData = utils.admin["profile-supplier"].list.getData()
 
       // Optimistically remove the item from cache
       if (previousData) {
-        utils.admin['profile-supplier'].list.setData(
+        utils.admin["profile-supplier"].list.setData(
           // Match the input parameters of the current query
           {
-            isActive: searchParams.isActive as 'all' | 'active' | 'inactive' | undefined,
+            isActive: searchParams.isActive as "all" | "active" | "inactive" | undefined,
             limit: initialData.limit,
             materialType: searchParams.materialType as MaterialType | undefined,
             page: Number(searchParams.page) || 1,
             search: searchParams.search,
-            sortBy: (searchParams.sortBy || 'name') as 'name' | 'createdAt' | 'materialType',
-            sortOrder: (searchParams.sortOrder || 'asc') as 'asc' | 'desc',
+            sortBy: (searchParams.sortBy || "name") as "name" | "createdAt" | "materialType",
+            sortOrder: (searchParams.sortOrder || "asc") as "asc" | "desc",
           },
           (old) => {
             if (!old) {
@@ -140,7 +140,7 @@ export function ProfileSupplierList({
       }
 
       // Show immediate feedback
-      toast.loading('Eliminando proveedor...', { id: 'delete-supplier' })
+      toast.loading("Eliminando proveedor...", { id: "delete-supplier" })
 
       // Return context with snapshot for rollback
       return { previousData }
@@ -148,35 +148,35 @@ export function ProfileSupplierList({
     onError: (error, _variables, context) => {
       // Rollback to previous data on error
       if (context?.previousData) {
-        utils.admin['profile-supplier'].list.setData(
+        utils.admin["profile-supplier"].list.setData(
           {
-            isActive: searchParams.isActive as 'all' | 'active' | 'inactive' | undefined,
+            isActive: searchParams.isActive as "all" | "active" | "inactive" | undefined,
             limit: initialData.limit,
             materialType: searchParams.materialType as MaterialType | undefined,
             page: Number(searchParams.page) || 1,
             search: searchParams.search,
-            sortBy: (searchParams.sortBy || 'name') as 'name' | 'createdAt' | 'materialType',
-            sortOrder: (searchParams.sortOrder || 'asc') as 'asc' | 'desc',
+            sortBy: (searchParams.sortBy || "name") as "name" | "createdAt" | "materialType",
+            sortOrder: (searchParams.sortOrder || "asc") as "asc" | "desc",
           },
           context.previousData,
         )
       }
 
-      toast.error('Error al eliminar proveedor', {
+      toast.error("Error al eliminar proveedor", {
         description: error.message,
-        id: 'delete-supplier',
+        id: "delete-supplier",
       })
     },
     onSuccess: () => {
-      toast.success('Proveedor eliminado correctamente', {
-        id: 'delete-supplier',
+      toast.success("Proveedor eliminado correctamente", {
+        id: "delete-supplier",
       })
       setDeleteDialogOpen(false)
       setSupplierToDelete(null)
     },
     onSettled: () => {
       // Invalidate cache and refresh server data
-      utils.admin['profile-supplier'].list.invalidate().catch(() => {
+      utils.admin["profile-supplier"].list.invalidate().catch(() => {
         // Ignore cache invalidation errors - page refresh will handle state update
       })
       router.refresh()
@@ -199,8 +199,8 @@ export function ProfileSupplierList({
   // Check if there are filters active
   const hasFilters = Boolean(
     searchParams?.search ||
-      (searchParams?.materialType && searchParams.materialType !== 'all') ||
-      (searchParams?.isActive && searchParams.isActive !== 'all'),
+      (searchParams?.materialType && searchParams.materialType !== "all") ||
+      (searchParams?.isActive && searchParams.isActive !== "all"),
   )
 
   return (
@@ -232,12 +232,12 @@ export function ProfileSupplierList({
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={supplier.isActive ? 'default' : 'secondary'}>
-                        {supplier.isActive ? 'Activo' : 'Inactivo'}
+                      <Badge variant={supplier.isActive ? "default" : "secondary"}>
+                        {supplier.isActive ? "Activo" : "Inactivo"}
                       </Badge>
                     </TableCell>
                     <TableCell className="max-w-[200px] truncate text-muted-foreground text-sm">
-                      {supplier.notes || '-'}
+                      {supplier.notes || "-"}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
@@ -274,7 +274,7 @@ export function ProfileSupplierList({
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
         dependencies={[]}
-        entityLabel={supplierToDelete?.name ?? ''}
+        entityLabel={supplierToDelete?.name ?? ""}
         entityName="proveedor"
         loading={deleteMutation.isPending}
         onConfirm={handleDeleteConfirm}

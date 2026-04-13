@@ -4,16 +4,16 @@
  * Model name, status, profile supplier, and design template selection
  */
 
-'use client'
+"use client"
 
-import { DesignRenderer } from '@/components/design'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import type { DesignTemplateConfig } from '@/domain/design'
-import type { RouterOutputs } from '@/trpc/react'
-import { FormSelect, FormTextInput } from './form-fields'
+import { DesignRenderer } from "@/components/design"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import type { DesignTemplateConfig } from "@/domain/design"
+import type { RouterOutputs } from "@/trpc/react"
+import { FormSelect, FormTextInput } from "./form-fields"
 
-type ProfileSupplier = RouterOutputs['admin']['profile-supplier']['list']['items'][number]
-type DesignTemplate = RouterOutputs['admin']['design-template']['listAll'][number]
+type ProfileSupplier = RouterOutputs["admin"]["profile-supplier"]["list"]["items"][number]
+type DesignTemplate = RouterOutputs["admin"]["design-template"]["listAll"][number]
 
 type BasicInfoSectionProps = {
   suppliers: ProfileSupplier[]
@@ -21,8 +21,8 @@ type BasicInfoSectionProps = {
 }
 
 const STATUS_OPTIONS = [
-  { label: 'Borrador', value: 'draft' },
-  { label: 'Publicado', value: 'published' },
+  { label: "Borrador", value: "draft" },
+  { label: "Publicado", value: "published" },
 ]
 
 export function BasicInfoSection({ suppliers, templates }: BasicInfoSectionProps) {

@@ -1,21 +1,21 @@
-'use client'
+"use client"
 
-import { Trash2 } from 'lucide-react'
-import { useMemo } from 'react'
-import { useFormContext, useWatch } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+import { Trash2 } from "lucide-react"
+import { useMemo } from "react"
+import { useFormContext, useWatch } from "react-hook-form"
+import { Button } from "@/components/ui/button"
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { formatCurrency } from '@/lib/format'
-import { parseCompatibleGlassTypeIds } from '@/lib/utils/compatible-glass-types'
-import type { AdminQuoteItemValues } from './schemas/admin-quote-form.schema'
+} from "@/components/ui/select"
+import { formatCurrency } from "@/lib/format"
+import { parseCompatibleGlassTypeIds } from "@/lib/utils/compatible-glass-types"
+import type { AdminQuoteItemValues } from "./schemas/admin-quote-form.schema"
 
 type QuoteItemRowProps = {
   fields: {
@@ -135,7 +135,7 @@ export function QuoteItemRow({ fields, glassTypes, index, models, onRemove }: Qu
           <FormItem className="md:col-span-4">
             <FormLabel>Modelo</FormLabel>
             <FormControl>
-              <Select onValueChange={field.onChange} value={field.value || ''}>
+              <Select onValueChange={field.onChange} value={field.value || ""}>
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar modelo" />
                 </SelectTrigger>
@@ -161,7 +161,7 @@ export function QuoteItemRow({ fields, glassTypes, index, models, onRemove }: Qu
           <FormItem className="md:col-span-3">
             <FormLabel>Tipo de Vidrio</FormLabel>
             <FormControl>
-              <Select onValueChange={field.onChange} value={field.value || ''}>
+              <Select onValueChange={field.onChange} value={field.value || ""}>
                 <SelectTrigger>
                   <SelectValue placeholder="Vidrio" />
                 </SelectTrigger>
@@ -192,7 +192,7 @@ export function QuoteItemRow({ fields, glassTypes, index, models, onRemove }: Qu
                 min={1}
                 onChange={(e) => field.onChange(Number(e.target.value))}
                 type="number"
-                value={field.value || ''}
+                value={field.value || ""}
               />
             </FormControl>
             <FormMessage />
@@ -213,7 +213,7 @@ export function QuoteItemRow({ fields, glassTypes, index, models, onRemove }: Qu
                 min={1}
                 onChange={(e) => field.onChange(Number(e.target.value))}
                 type="number"
-                value={field.value || ''}
+                value={field.value || ""}
               />
             </FormControl>
             <FormMessage />
@@ -234,7 +234,7 @@ export function QuoteItemRow({ fields, glassTypes, index, models, onRemove }: Qu
                 min={1}
                 onChange={(e) => field.onChange(Number(e.target.value))}
                 type="number"
-                value={field.value || ''}
+                value={field.value || ""}
               />
             </FormControl>
             <FormMessage />

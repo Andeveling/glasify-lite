@@ -12,19 +12,19 @@
  * totalCost = baseRate + (distanceKm * perKmRate)
  */
 
-import type { TenantConfig } from '@prisma/generated/client'
+import type { TenantConfig } from "@prisma/generated/client"
 import {
   DISTANCE_PRECISION_DIVISOR,
   DISTANCE_PRECISION_MULTIPLIER,
   EARTH_RADIUS_METERS,
   TRANSPORTATION_MAX_DISTANCE_KM,
-} from '@/app/(dashboard)/admin/quotes/_constants/geocoding.constants'
+} from "@/app/(dashboard)/admin/quotes/_constants/geocoding.constants"
 import type {
   TransportationCost,
   WarehouseLocation,
-} from '@/app/(dashboard)/admin/quotes/_types/address.types'
-import logger from '@/lib/logger'
-import { haversineDistance } from '@/lib/utils/coordinates'
+} from "@/app/(dashboard)/admin/quotes/_types/address.types"
+import logger from "@/lib/logger"
+import { haversineDistance } from "@/lib/utils/coordinates"
 
 /**
  * Calculate transportation cost from warehouse to delivery location
@@ -59,7 +59,7 @@ export function calculateTransportationCost(
 
     if (!warehouse) {
       throw new Error(
-        'La ubicación del almacén no está configurada. Por favor, configure las coordenadas del almacén en la configuración del sistema.',
+        "La ubicación del almacén no está configurada. Por favor, configure las coordenadas del almacén en la configuración del sistema.",
       )
     }
 
@@ -73,7 +73,7 @@ export function calculateTransportationCost(
 
     // Validate distance is within reasonable range
     if (distanceKm > TRANSPORTATION_MAX_DISTANCE_KM) {
-      logger.warn('Transportation distance exceeds maximum', {
+      logger.warn("Transportation distance exceeds maximum", {
         distanceKm,
         maxDistanceKm: TRANSPORTATION_MAX_DISTANCE_KM,
         warehouse: warehouse.city,
@@ -93,9 +93,9 @@ export function calculateTransportationCost(
     const totalCost = baseRate + distanceCost
 
     // Format display text
-    const displayText = `${warehouse.city} → ${deliveryCity ?? 'Destino'} (${Math.round(distanceKm)} km)`
+    const displayText = `${warehouse.city} → ${deliveryCity ?? "Destino"} (${Math.round(distanceKm)} km)`
 
-    logger.info('Transportation cost calculated', {
+    logger.info("Transportation cost calculated", {
       warehouse: warehouse.city,
       delivery: deliveryCity,
       distanceKm:
@@ -130,7 +130,7 @@ export function calculateTransportationCost(
       },
     }
   } catch (error) {
-    logger.error('Transportation cost calculation error', {
+    logger.error("Transportation cost calculation error", {
       deliveryLatitude,
       deliveryLongitude,
       deliveryCity,

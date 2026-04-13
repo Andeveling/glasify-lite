@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from "@/lib/utils"
 
 type GlasifyLogoProps = {
   className?: string
@@ -6,7 +6,7 @@ type GlasifyLogoProps = {
 
 export function GlasifyLogo({ className }: GlasifyLogoProps) {
   return (
-    <div className={cn('flex items-center gap-3', className)}>
+    <div className={cn("flex items-center gap-3", className)}>
       <div className="flex size-11 items-center justify-center rounded-2xl border border-current/15 bg-current/10 backdrop-blur-sm">
         <svg
           aria-labelledby="glasify-logo-title"

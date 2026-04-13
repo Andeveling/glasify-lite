@@ -1,14 +1,14 @@
-import { PrismaLibSql } from '@prisma/adapter-libsql'
-import type { Prisma } from '@prisma/generated/client'
-import { PrismaClient } from '@prisma/generated/client'
+import { PrismaLibSql } from "@prisma/adapter-libsql"
+import type { Prisma } from "@prisma/generated/client"
+import { PrismaClient } from "@prisma/generated/client"
 
-const DEFAULT_DATABASE_URL = 'file:./prisma/dev.db'
-const DEV_LOG_LEVELS: Prisma.LogLevel[] = ['query', 'error', 'warn']
-const PROD_LOG_LEVELS: Prisma.LogLevel[] = ['error']
-const DEV_LOG_MESSAGE = '[Prisma] Client created with libsql adapter'
-const GLOBAL_PRISMA_KEY = 'prisma' as const
+const DEFAULT_DATABASE_URL = "file:./prisma/dev.db"
+const DEV_LOG_LEVELS: Prisma.LogLevel[] = ["query", "error", "warn"]
+const PROD_LOG_LEVELS: Prisma.LogLevel[] = ["error"]
+const DEV_LOG_MESSAGE = "[Prisma] Client created with libsql adapter"
+const GLOBAL_PRISMA_KEY = "prisma" as const
 
-const isDevelopment = process.env.NODE_ENV === 'development'
+const isDevelopment = process.env.NODE_ENV === "development"
 
 const getDatabaseUrl = (): string => process.env.DATABASE_URL ?? DEFAULT_DATABASE_URL
 

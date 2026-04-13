@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import {
   Activity,
@@ -64,13 +64,13 @@ import {
   Waves,
   Wind,
   Zap,
-} from 'lucide-react'
-import { useState } from 'react'
-import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { cn } from '@/lib/utils'
+} from "lucide-react"
+import { useState } from "react"
+import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { cn } from "@/lib/utils"
 
 // Iconos curados para soluciones de vidrio (40 opciones relevantes)
 const GLASS_SOLUTION_ICONS: {
@@ -78,72 +78,72 @@ const GLASS_SOLUTION_ICONS: {
   icon: LucideIcon
   category: string
 }[] = [
-  { category: 'Seguridad', icon: ShieldCheck, name: 'ShieldCheck' },
-  { category: 'Seguridad', icon: Shield, name: 'Shield' },
-  { category: 'Seguridad', icon: ShieldAlert, name: 'ShieldAlert' },
-  { category: 'Estructura', icon: Layers, name: 'Layers' },
-  { category: 'Estructura', icon: Layers2, name: 'Layers2' },
-  { category: 'Estructura', icon: Layers3, name: 'Layers3' },
-  { category: 'Aislamiento', icon: Snowflake, name: 'Snowflake' },
-  { category: 'Resistencia', icon: Flame, name: 'Flame' },
-  { category: 'Protección', icon: Droplet, name: 'Droplet' },
-  { category: 'Solar', icon: Sun, name: 'Sun' },
-  { category: 'Oscurecimiento', icon: Moon, name: 'Moon' },
-  { category: 'Decorativo', icon: Sparkles, name: 'Sparkles' },
-  { category: 'Energía', icon: Zap, name: 'Zap' },
-  { category: 'Visibilidad', icon: Eye, name: 'Eye' },
-  { category: 'Privacidad', icon: EyeOff, name: 'EyeOff' },
-  { category: 'Seguridad', icon: Lock, name: 'Lock' },
-  { category: 'Acceso', icon: Unlock, name: 'Unlock' },
-  { category: 'Residencial', icon: Home, name: 'Home' },
-  { category: 'Comercial', icon: Building, name: 'Building' },
-  { category: 'Comercial', icon: Building2, name: 'Building2' },
-  { category: 'Industrial', icon: Warehouse, name: 'Warehouse' },
-  { category: 'Industrial', icon: Factory, name: 'Factory' },
-  { category: 'Ventilación', icon: Wind, name: 'Wind' },
-  { category: 'Protección', icon: CloudRain, name: 'CloudRain' },
-  { category: 'Temperatura', icon: Thermometer, name: 'Thermometer' },
-  { category: 'Temperatura', icon: ThermometerSun, name: 'ThermometerSun' },
+  { category: "Seguridad", icon: ShieldCheck, name: "ShieldCheck" },
+  { category: "Seguridad", icon: Shield, name: "Shield" },
+  { category: "Seguridad", icon: ShieldAlert, name: "ShieldAlert" },
+  { category: "Estructura", icon: Layers, name: "Layers" },
+  { category: "Estructura", icon: Layers2, name: "Layers2" },
+  { category: "Estructura", icon: Layers3, name: "Layers3" },
+  { category: "Aislamiento", icon: Snowflake, name: "Snowflake" },
+  { category: "Resistencia", icon: Flame, name: "Flame" },
+  { category: "Protección", icon: Droplet, name: "Droplet" },
+  { category: "Solar", icon: Sun, name: "Sun" },
+  { category: "Oscurecimiento", icon: Moon, name: "Moon" },
+  { category: "Decorativo", icon: Sparkles, name: "Sparkles" },
+  { category: "Energía", icon: Zap, name: "Zap" },
+  { category: "Visibilidad", icon: Eye, name: "Eye" },
+  { category: "Privacidad", icon: EyeOff, name: "EyeOff" },
+  { category: "Seguridad", icon: Lock, name: "Lock" },
+  { category: "Acceso", icon: Unlock, name: "Unlock" },
+  { category: "Residencial", icon: Home, name: "Home" },
+  { category: "Comercial", icon: Building, name: "Building" },
+  { category: "Comercial", icon: Building2, name: "Building2" },
+  { category: "Industrial", icon: Warehouse, name: "Warehouse" },
+  { category: "Industrial", icon: Factory, name: "Factory" },
+  { category: "Ventilación", icon: Wind, name: "Wind" },
+  { category: "Protección", icon: CloudRain, name: "CloudRain" },
+  { category: "Temperatura", icon: Thermometer, name: "Thermometer" },
+  { category: "Temperatura", icon: ThermometerSun, name: "ThermometerSun" },
   {
-    category: 'Temperatura',
+    category: "Temperatura",
     icon: ThermometerSnowflake,
-    name: 'ThermometerSnowflake',
+    name: "ThermometerSnowflake",
   },
-  { category: 'Acústico', icon: Music, name: 'Music' },
-  { category: 'Sonido', icon: Volume2, name: 'Volume2' },
-  { category: 'Insonorización', icon: VolumeX, name: 'VolumeX' },
-  { category: 'Forma', icon: Square, name: 'Square' },
-  { category: 'Forma', icon: Circle, name: 'Circle' },
-  { category: 'Forma', icon: Diamond, name: 'Diamond' },
-  { category: 'Forma', icon: Hexagon, name: 'Hexagon' },
-  { category: 'Decorativo', icon: Star, name: 'Star' },
-  { category: 'Color', icon: Palette, name: 'Palette' },
-  { category: 'Contraste', icon: Contrast, name: 'Contrast' },
-  { category: 'Control Solar', icon: SunDim, name: 'SunDim' },
-  { category: 'Textura', icon: Waves, name: 'Waves' },
-  { category: 'Patrón', icon: Grid3x3, name: 'Grid3x3' },
-  { category: 'Herramienta', icon: Hammer, name: 'Hammer' },
-  { category: 'Líquido', icon: GlassWater, name: 'GlassWater' },
-  { category: 'Óptico', icon: Aperture, name: 'Aperture' },
-  { category: 'Medición', icon: Ruler, name: 'Ruler' },
-  { category: 'Iluminación', icon: Lightbulb, name: 'Lightbulb' },
-  { category: 'Inspección', icon: Scan, name: 'Scan' },
-  { category: 'Control', icon: ClipboardCheck, name: 'ClipboardCheck' },
-  { category: 'Validación', icon: CheckCircle2, name: 'CheckCircle2' },
-  { category: 'Advertencia', icon: AlertTriangle, name: 'AlertTriangle' },
-  { category: 'Empaque', icon: Box, name: 'Box' },
-  { category: 'Empaque', icon: Boxes, name: 'Boxes' },
-  { category: 'Empaque', icon: Package, name: 'Package' },
-  { category: 'Identificación', icon: Fingerprint, name: 'Fingerprint' },
-  { category: 'Medición', icon: Gauge, name: 'Gauge' },
-  { category: 'Actividad', icon: Activity, name: 'Activity' },
-  { category: 'Rendimiento', icon: TrendingUp, name: 'TrendingUp' },
-  { category: 'Precisión', icon: Target, name: 'Target' },
-  { category: 'Calidad', icon: Award, name: 'Award' },
-  { category: 'Certificación', icon: BadgeCheck, name: 'BadgeCheck' },
-  { category: 'Enfoque', icon: Crosshair, name: 'Crosshair' },
-  { category: 'Compacto', icon: Minimize2, name: 'Minimize2' },
-  { category: 'Expandido', icon: Maximize2, name: 'Maximize2' },
+  { category: "Acústico", icon: Music, name: "Music" },
+  { category: "Sonido", icon: Volume2, name: "Volume2" },
+  { category: "Insonorización", icon: VolumeX, name: "VolumeX" },
+  { category: "Forma", icon: Square, name: "Square" },
+  { category: "Forma", icon: Circle, name: "Circle" },
+  { category: "Forma", icon: Diamond, name: "Diamond" },
+  { category: "Forma", icon: Hexagon, name: "Hexagon" },
+  { category: "Decorativo", icon: Star, name: "Star" },
+  { category: "Color", icon: Palette, name: "Palette" },
+  { category: "Contraste", icon: Contrast, name: "Contrast" },
+  { category: "Control Solar", icon: SunDim, name: "SunDim" },
+  { category: "Textura", icon: Waves, name: "Waves" },
+  { category: "Patrón", icon: Grid3x3, name: "Grid3x3" },
+  { category: "Herramienta", icon: Hammer, name: "Hammer" },
+  { category: "Líquido", icon: GlassWater, name: "GlassWater" },
+  { category: "Óptico", icon: Aperture, name: "Aperture" },
+  { category: "Medición", icon: Ruler, name: "Ruler" },
+  { category: "Iluminación", icon: Lightbulb, name: "Lightbulb" },
+  { category: "Inspección", icon: Scan, name: "Scan" },
+  { category: "Control", icon: ClipboardCheck, name: "ClipboardCheck" },
+  { category: "Validación", icon: CheckCircle2, name: "CheckCircle2" },
+  { category: "Advertencia", icon: AlertTriangle, name: "AlertTriangle" },
+  { category: "Empaque", icon: Box, name: "Box" },
+  { category: "Empaque", icon: Boxes, name: "Boxes" },
+  { category: "Empaque", icon: Package, name: "Package" },
+  { category: "Identificación", icon: Fingerprint, name: "Fingerprint" },
+  { category: "Medición", icon: Gauge, name: "Gauge" },
+  { category: "Actividad", icon: Activity, name: "Activity" },
+  { category: "Rendimiento", icon: TrendingUp, name: "TrendingUp" },
+  { category: "Precisión", icon: Target, name: "Target" },
+  { category: "Calidad", icon: Award, name: "Award" },
+  { category: "Certificación", icon: BadgeCheck, name: "BadgeCheck" },
+  { category: "Enfoque", icon: Crosshair, name: "Crosshair" },
+  { category: "Compacto", icon: Minimize2, name: "Minimize2" },
+  { category: "Expandido", icon: Maximize2, name: "Maximize2" },
 ]
 
 type IconSelectorProps = {
@@ -153,7 +153,7 @@ type IconSelectorProps = {
 }
 
 export function IconSelector({ value, onChangeAction, disabled }: IconSelectorProps) {
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState("")
 
   const filteredIcons = GLASS_SOLUTION_ICONS.filter(({ name }) =>
     name.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -180,9 +180,9 @@ export function IconSelector({ value, onChangeAction, disabled }: IconSelectorPr
               <div className="flex flex-col items-center gap-1" key={name}>
                 <Label
                   className={cn(
-                    'flex cursor-pointer flex-col items-center gap-1 rounded-md border-2 p-3 transition-colors hover:border-primary hover:bg-accent',
-                    value === name && 'border-primary bg-accent',
-                    disabled && 'cursor-not-allowed opacity-50',
+                    "flex cursor-pointer flex-col items-center gap-1 rounded-md border-2 p-3 transition-colors hover:border-primary hover:bg-accent",
+                    value === name && "border-primary bg-accent",
+                    disabled && "cursor-not-allowed opacity-50",
                   )}
                   htmlFor={`icon-${name}`}
                 >

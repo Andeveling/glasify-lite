@@ -1,9 +1,9 @@
-'use client'
+"use client"
 
-import { TrendingDown, TrendingUp } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { formatCurrency, formatPercent } from '@/lib/format'
-import type { MonetaryMetrics } from '@/types/dashboard'
+import { TrendingDown, TrendingUp } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { formatCurrency, formatPercent } from "@/lib/format"
+import type { MonetaryMetrics } from "@/types/dashboard"
 
 type MonetaryMetricsCardsProps = {
   /**
@@ -49,7 +49,7 @@ export function MonetaryMetricsCards({ data, tenantConfig }: MonetaryMetricsCard
 
   const isPositiveTrend = percentageChange >= 0
   const TrendIcon = isPositiveTrend ? TrendingUp : TrendingDown
-  const trendColor = isPositiveTrend ? 'text-green-600' : 'text-red-600'
+  const trendColor = isPositiveTrend ? "text-green-600" : "text-red-600"
 
   return (
     <div className="grid gap-4 md:grid-cols-2">

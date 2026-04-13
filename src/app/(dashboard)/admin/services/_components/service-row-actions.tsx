@@ -10,11 +10,11 @@
  * @module app/(dashboard)/admin/services/_components/service-row-actions
  */
 
-'use client'
+"use client"
 
-import { Pencil, Power, PowerOff, Trash2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Pencil, Power, PowerOff, Trash2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 type ServiceRowActionsProps = {
   /** Service ID */
@@ -100,12 +100,12 @@ export function ServiceRowActions({
                 <Power className="h-4 w-4 text-green-500" />
               )}
               <span className="sr-only">
-                {isActive ? 'Desactivar' : 'Activar'} {serviceName}
+                {isActive ? "Desactivar" : "Activar"} {serviceName}
               </span>
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>{isActive ? 'Desactivar' : 'Activar'} servicio</p>
+            <p>{isActive ? "Desactivar" : "Activar"} servicio</p>
           </TooltipContent>
         </Tooltip>
 

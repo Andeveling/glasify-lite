@@ -5,9 +5,9 @@
  * Follows Single Responsibility Principle - only handles pagination UI
  */
 
-'use client'
+"use client"
 
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button"
 
 type PaginationProps = {
   currentPage: number

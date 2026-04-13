@@ -8,7 +8,7 @@
  * - La infraestructura implementa CÓMO (adapter)
  */
 
-import type { Quote, QuoteItem, QuoteStatus } from '@prisma/generated/client'
+import type { Quote, QuoteItem, QuoteStatus } from "@prisma/generated/client"
 
 /**
  * Filters para listar quotes
@@ -51,7 +51,7 @@ export type CreateQuoteItemInput = {
   widthMm: number
   heightMm: number
   quantity: number
-  unit: 'unit' | 'sqm' | 'ml'
+  unit: "unit" | "sqm" | "ml"
   subtotal: number
   roomLocation?: string | null
   imageUrl?: string | null
@@ -103,7 +103,7 @@ export type QuoteRepository = {
   /**
    * Cuenta quotes con filtros
    */
-  count(filters: Omit<QuoteListFilters, 'cursor' | 'limit'>): Promise<number>
+  count(filters: Omit<QuoteListFilters, "cursor" | "limit">): Promise<number>
 
   /**
    * Crea un QuoteItem

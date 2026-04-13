@@ -13,19 +13,19 @@
  * Access: Admin only (adminProcedure)
  */
 
-import { ArrowLeft } from 'lucide-react'
-import type { Metadata } from 'next'
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { safeDecimalToNumber } from '@/lib/prisma-utils'
-import { api } from '@/trpc/server-client'
-import { AddColorDialog } from './_components/add-color-dialog'
-import { ModelColorsList } from './_components/model-colors-list'
+import { ArrowLeft } from "lucide-react"
+import type { Metadata } from "next"
+import Link from "next/link"
+import { notFound } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { safeDecimalToNumber } from "@/lib/prisma-utils"
+import { api } from "@/trpc/server-client"
+import { AddColorDialog } from "./_components/add-color-dialog"
+import { ModelColorsList } from "./_components/model-colors-list"
 
 // Force dynamic rendering - requires database connection
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 type PageProps = {
   params: Promise<{ id: string }>
@@ -35,15 +35,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { id } = await params
 
   try {
-    const model = await api.admin.model['get-by-id']({ id })
+    const model = await api.admin.model["get-by-id"]({ id })
     return {
       title: `Colores - ${model.name} | Glasify Admin`,
       description: `Configuración de colores para el modelo ${model.name}`,
     }
   } catch {
     return {
-      title: 'Colores del Modelo | Glasify Admin',
-      description: 'Configuración de colores para modelo',
+      title: "Colores del Modelo | Glasify Admin",
+      description: "Configuración de colores para modelo",
     }
   }
 }
@@ -53,10 +53,10 @@ export default async function ModelColorsPage({ params }: PageProps) {
 
   try {
     // Fetch model details
-    const model = await api.admin.model['get-by-id']({ id: modelId })
+    const model = await api.admin.model["get-by-id"]({ id: modelId })
 
     // Fetch assigned colors
-    const modelColorsRaw = await api.admin['model-colors'].listByModel({
+    const modelColorsRaw = await api.admin["model-colors"].listByModel({
       modelId,
     })
 
@@ -73,7 +73,7 @@ export default async function ModelColorsPage({ params }: PageProps) {
     )
 
     // Fetch available colors for assignment
-    const availableColors = await api.admin['model-colors'].getAvailableColors({
+    const availableColors = await api.admin["model-colors"].getAvailableColors({
       modelId,
     })
 
@@ -117,7 +117,7 @@ export default async function ModelColorsPage({ params }: PageProps) {
               <span className="font-semibold">
                 {modelColors.find(
                   (mc: { isDefault: boolean; color: { name: string } }) => mc.isDefault,
-                )?.color.name || 'Ninguno'}
+                )?.color.name || "Ninguno"}
               </span>
             </div>
           </CardContent>

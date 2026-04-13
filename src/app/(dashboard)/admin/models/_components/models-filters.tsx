@@ -17,13 +17,13 @@
  * - Receives suppliers from server (fetched outside Suspense)
  */
 
-'use client'
+"use client"
 
-import type { MaterialType } from '@prisma/generated/client'
-import Link from 'next/link'
-import { type FilterDefinition, TableFilters } from '@/app/_components/server-table/table-filters'
-import { TableSearch } from '@/app/_components/server-table/table-search'
-import { Button } from '@/components/ui/button'
+import type { MaterialType } from "@prisma/generated/client"
+import Link from "next/link"
+import { type FilterDefinition, TableFilters } from "@/app/_components/server-table/table-filters"
+import { TableSearch } from "@/app/_components/server-table/table-search"
+import { Button } from "@/components/ui/button"
 
 /**
  * Supplier data type
@@ -50,25 +50,25 @@ export function ModelsFilters({ searchParams, suppliers }: ModelsFiltersProps) {
    */
   const filters: FilterDefinition[] = [
     {
-      defaultValue: 'all',
-      id: 'status',
-      label: 'Estado',
+      defaultValue: "all",
+      id: "status",
+      label: "Estado",
       options: [
-        { label: 'Todos', value: 'all' },
-        { label: 'Borrador', value: 'draft' },
-        { label: 'Publicado', value: 'published' },
+        { label: "Todos", value: "all" },
+        { label: "Borrador", value: "draft" },
+        { label: "Publicado", value: "published" },
       ],
-      type: 'select',
+      type: "select",
     },
     {
-      defaultValue: 'all',
-      id: 'profileSupplierId',
-      label: 'Proveedor de Perfiles',
+      defaultValue: "all",
+      id: "profileSupplierId",
+      label: "Proveedor de Perfiles",
       options: [
-        { label: 'Todos', value: 'all' },
+        { label: "Todos", value: "all" },
         ...suppliers.map((s) => ({ label: s.name, value: s.id })),
       ],
-      type: 'select',
+      type: "select",
     },
   ]
 

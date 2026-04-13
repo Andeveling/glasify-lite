@@ -18,34 +18,34 @@
  * Used in: glass-type-form.tsx (Create/Edit Glass Types)
  */
 
-'use client'
+"use client"
 
-import { Plus } from 'lucide-react'
-import { useCallback, useMemo } from 'react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
-import type { CreateGlassTypeInput } from '@/lib/validations/admin/glass-type.schema'
-import { api } from '@/trpc/react'
-import { SolutionFieldItem } from './solution-field-item'
+import { Plus } from "lucide-react"
+import { useCallback, useMemo } from "react"
+import { useFieldArray, useFormContext } from "react-hook-form"
+import { Button } from "@/components/ui/button"
+import type { CreateGlassTypeInput } from "@/lib/validations/admin/glass-type.schema"
+import { api } from "@/trpc/react"
+import { SolutionFieldItem } from "./solution-field-item"
 
 // Define PerformanceRating enum locally to match Prisma schema
 const PerformanceRating = {
-  basic: 'basic',
-  excellent: 'excellent',
-  good: 'good',
-  standard: 'standard',
-  very_good: 'very_good',
+  basic: "basic",
+  excellent: "excellent",
+  good: "good",
+  standard: "standard",
+  very_good: "very_good",
 } as const
 
 /**
  * Performance rating display labels (memoized constant)
  */
 const PERFORMANCE_LABELS: Record<string, string> = {
-  basic: 'Básico',
-  excellent: 'Excelente',
-  good: 'Bueno',
-  standard: 'Estándar',
-  very_good: 'Muy Bueno',
+  basic: "Básico",
+  excellent: "Excelente",
+  good: "Bueno",
+  standard: "Estándar",
+  very_good: "Muy Bueno",
 }
 
 /**
@@ -55,16 +55,16 @@ export function SolutionSelector() {
   const form = useFormContext<CreateGlassTypeInput>()
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: 'solutions',
+    name: "solutions",
   })
 
   // Fetch active solutions via tRPC
-  const { data: solutionsData, isLoading } = api.admin['glass-solution'].list.useQuery({
-    isActive: 'active',
+  const { data: solutionsData, isLoading } = api.admin["glass-solution"].list.useQuery({
+    isActive: "active",
     limit: 100,
     page: 1,
-    sortBy: 'sortOrder',
-    sortOrder: 'asc',
+    sortBy: "sortOrder",
+    sortOrder: "asc",
   })
 
   // Memoize solutions array to prevent unnecessary re-renders
@@ -78,7 +78,7 @@ export function SolutionSelector() {
       isPrimary: false,
       notes: undefined,
       performanceRating: PerformanceRating.standard,
-      solutionId: '',
+      solutionId: "",
     })
   }, [append])
 
@@ -88,12 +88,12 @@ export function SolutionSelector() {
    */
   const handleSetPrimary = useCallback(
     (index: number) => {
-      const currentValues = form.getValues('solutions')
+      const currentValues = form.getValues("solutions")
       const updatedValues = currentValues.map((solution, idx) => ({
         ...solution,
         isPrimary: idx === index,
       }))
-      form.setValue('solutions', updatedValues)
+      form.setValue("solutions", updatedValues)
     },
     [form],
   )

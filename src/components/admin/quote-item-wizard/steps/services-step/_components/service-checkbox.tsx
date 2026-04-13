@@ -1,8 +1,8 @@
-'use client'
+"use client"
 
-import { Card, CardContent } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
-import { formatCurrency } from '@/lib/format'
+import { Card, CardContent } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
+import { formatCurrency } from "@/lib/format"
 
 interface ServiceCheckboxProps {
   formatContext: { locale: string }
@@ -22,8 +22,8 @@ function ServiceCheckbox({ service, isSelected, onToggle, formatContext }: Servi
     <Card
       className={`cursor-pointer border transition-all duration-200 hover:shadow-md ${
         isSelected
-          ? 'border-primary bg-primary/5 ring-2 ring-primary/20 shadow-md'
-          : 'border-border/50 hover:border-primary/30'
+          ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-md"
+          : "border-border/50 hover:border-primary/30"
       }`}
       onClick={() => onToggle(service.id)}
       role="button"

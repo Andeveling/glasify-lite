@@ -1,11 +1,11 @@
-'use client'
+"use client"
 
-import { AlertTriangle, Home, RotateCcw } from 'lucide-react'
-import type { ReactNode } from 'react'
-import { Component } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { cn } from '@/lib/utils'
+import { AlertTriangle, Home, RotateCcw } from "lucide-react"
+import type { ReactNode } from "react"
+import { Component } from "react"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
 
 type ErrorBoundaryProps = {
   children: ReactNode
@@ -60,7 +60,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     this.setState({ error: undefined, hasError: false })
     // Use prop if provided (router.push("/")), otherwise fall back
     if (!this.props.onGoHome) {
-      window.location.href = '/'
+      window.location.href = "/"
     }
   }
 
@@ -78,7 +78,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         <div
           aria-live="assertive"
           className={cn(
-            'flex min-h-[400px] w-full items-center justify-center p-4',
+            "flex min-h-[400px] w-full items-center justify-center p-4",
             this.props.className,
           )}
           role="alert"
@@ -95,7 +95,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               al inicio.
             </p>
 
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {process.env.NODE_ENV === "development" && this.state.error && (
               <details className="mt-4 rounded border p-2 text-left">
                 <summary className="cursor-pointer font-medium text-xs">
                   Detalles del error (solo en desarrollo)
@@ -104,7 +104,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                   {this.state.error.message}
                   {this.state.error.stack && (
                     <>
-                      {'\n\n'}
+                      {"\n\n"}
                       {this.state.error.stack}
                     </>
                   )}
@@ -165,7 +165,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 // Hook for functional components error boundaries
 export function withErrorBoundary<P extends object>(
   WrappedComponent: React.ComponentType<P>,
-  errorBoundaryProps?: Omit<ErrorBoundaryProps, 'children'>,
+  errorBoundaryProps?: Omit<ErrorBoundaryProps, "children">,
 ) {
   const ComponentWithErrorBoundary = (props: P) => (
     <ErrorBoundary {...errorBoundaryProps}>

@@ -1,14 +1,14 @@
-'use client'
+"use client"
 
-import { Loader2 } from 'lucide-react'
-import { useFormContext, useWatch } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { api } from '@/trpc/react'
-import type { WizardFormValues } from '../wizard-form-schema'
+import { Loader2 } from "lucide-react"
+import { useFormContext, useWatch } from "react-hook-form"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { api } from "@/trpc/react"
+import type { WizardFormValues } from "../wizard-form-schema"
 
 interface ConfirmStepProps {
-  mode: 'draft' | 'persisted'
+  mode: "draft" | "persisted"
   quoteId?: string
   onSuccess: () => void
   onDraftConfirm?: (item: WizardFormValues) => void
@@ -17,7 +17,7 @@ interface ConfirmStepProps {
 function PersistedConfirmStep({ quoteId, onSuccess }: { quoteId: string; onSuccess: () => void }) {
   const form = useFormContext<WizardFormValues>()
 
-  const mutation = api.quote['add-item'].useMutation({
+  const mutation = api.quote["add-item"].useMutation({
     onSuccess: () => {
       onSuccess()
     },
@@ -27,7 +27,7 @@ function PersistedConfirmStep({ quoteId, onSuccess }: { quoteId: string; onSucce
     const values = form.getValues()
     const payload = {
       adjustments: [],
-      clientId: '',
+      clientId: "",
       colorId: values.colorId ?? undefined,
       glassTypeId: values.glassTypeId,
       heightMm: values.heightMm,
@@ -38,9 +38,9 @@ function PersistedConfirmStep({ quoteId, onSuccess }: { quoteId: string; onSucce
       services: (values.serviceIds ?? []).map((serviceId: string) => ({
         quantity: 1,
         serviceId,
-        unit: 'unit' as const,
+        unit: "unit" as const,
       })),
-      unit: 'unit' as const,
+      unit: "unit" as const,
       widthMm: values.widthMm,
     }
 
@@ -122,15 +122,15 @@ function ConfirmStep({ mode, quoteId, onSuccess, onDraftConfirm }: ConfirmStepPr
               Configuración
             </h4>
             <div className="space-y-2">
-              <SummaryRow label="Modelo" value={values.modelId || '—'} />
-              <SummaryRow label="Color" value={values.colorId ?? 'Sin color'} />
-              <SummaryRow label="Vidrio" value={values.glassTypeId || '—'} />
+              <SummaryRow label="Modelo" value={values.modelId || "—"} />
+              <SummaryRow label="Color" value={values.colorId ?? "Sin color"} />
+              <SummaryRow label="Vidrio" value={values.glassTypeId || "—"} />
               <SummaryRow
                 label="Servicios"
                 value={
                   (values.serviceIds?.length ?? 0) > 0
                     ? `${values.serviceIds?.length} servicios`
-                    : 'Sin servicios'
+                    : "Sin servicios"
                 }
               />
             </div>
@@ -138,7 +138,7 @@ function ConfirmStep({ mode, quoteId, onSuccess, onDraftConfirm }: ConfirmStepPr
         </CardContent>
       </Card>
 
-      {mode === 'persisted' && quoteId ? (
+      {mode === "persisted" && quoteId ? (
         <PersistedConfirmStep onSuccess={onSuccess} quoteId={quoteId} />
       ) : (
         <DraftConfirmStep onDraftConfirm={onDraftConfirm} onSuccess={onSuccess} />

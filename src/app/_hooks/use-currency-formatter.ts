@@ -5,10 +5,10 @@
  * Respects tenant's currency and locale settings
  */
 
-'use client'
+"use client"
 
-import { formatCurrency } from '@/lib/format'
-import { useTenantConfig } from '@/providers/tenant-config-provider'
+import { formatCurrency } from "@/lib/format"
+import { useTenantConfig } from "@/providers/tenant-config-provider"
 
 export function useCurrencyFormatter() {
   const tenantConfig = useTenantConfig()

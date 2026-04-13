@@ -26,13 +26,13 @@
  * ✅ Dependency Inversion: Depends on hooks abstraction, not implementation
  */
 
-'use client'
+"use client"
 
-import type { Service, ServiceType, ServiceUnit } from '@prisma/generated/client'
-import { useState } from 'react'
-import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog'
-import { TablePagination } from '@/app/_components/server-table/table-pagination'
-import { Badge } from '@/components/ui/badge'
+import type { Service, ServiceType, ServiceUnit } from "@prisma/generated/client"
+import { useState } from "react"
+import { DeleteConfirmationDialog } from "@/app/_components/delete-confirmation-dialog"
+import { TablePagination } from "@/app/_components/server-table/table-pagination"
+import { Badge } from "@/components/ui/badge"
 import {
   Table,
   TableBody,
@@ -41,12 +41,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { formatCurrency } from '@/lib/format'
-import { useServiceActions } from '../_hooks/use-service-actions'
-import { ServiceDialog } from './service-dialog'
-import { ServiceRowActions } from './service-row-actions'
-import { ServicesEmpty } from './services-empty'
+} from "@/components/ui/table"
+import { formatCurrency } from "@/lib/format"
+import { useServiceActions } from "../_hooks/use-service-actions"
+import { ServiceDialog } from "./service-dialog"
+import { ServiceRowActions } from "./service-row-actions"
+import { ServicesEmpty } from "./services-empty"
 
 type SerializedService = {
   id: string
@@ -73,7 +73,7 @@ type ServicesListProps = {
     page?: string
     search?: string
     sortBy?: string
-    sortOrder?: 'asc' | 'desc'
+    sortOrder?: "asc" | "desc"
     type?: string
   }
 }
@@ -83,9 +83,9 @@ type ServicesListProps = {
  * Used for badges and UI display
  */
 const SERVICE_TYPE_LABELS: Record<ServiceType, string> = {
-  area: 'Área',
-  fixed: 'Fijo',
-  perimeter: 'Perímetro',
+  area: "Área",
+  fixed: "Fijo",
+  perimeter: "Perímetro",
 }
 
 /**
@@ -93,19 +93,19 @@ const SERVICE_TYPE_LABELS: Record<ServiceType, string> = {
  * Used for column display
  */
 const SERVICE_UNIT_LABELS: Record<ServiceUnit, string> = {
-  ml: 'ml',
-  sqm: 'm²',
-  unit: 'unidad',
+  ml: "ml",
+  sqm: "m²",
+  unit: "unidad",
 }
 
 /**
  * Service type badge variants
  * Visual distinction for different service types
  */
-const SERVICE_TYPE_VARIANTS: Record<ServiceType, 'default' | 'secondary' | 'outline'> = {
-  area: 'default',
-  fixed: 'secondary',
-  perimeter: 'outline',
+const SERVICE_TYPE_VARIANTS: Record<ServiceType, "default" | "secondary" | "outline"> = {
+  area: "default",
+  fixed: "secondary",
+  perimeter: "outline",
 }
 
 export function ServicesList({ initialData, searchParams }: ServicesListProps) {
@@ -151,8 +151,8 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
       ...service,
       createdAt: service.createdAt ?? new Date(),
       isActive: service.isActive ?? true,
-      minimumBillingUnit: mockMinimumBillingUnit as Service['minimumBillingUnit'],
-      rate: mockDecimal as Service['rate'],
+      minimumBillingUnit: mockMinimumBillingUnit as Service["minimumBillingUnit"],
+      rate: mockDecimal as Service["rate"],
       updatedAt: service.updatedAt ?? new Date(),
     })
     setEditDialogOpen(true)
@@ -182,8 +182,8 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
   // Check if there are filters active
   const hasFilters = Boolean(
     searchParams?.search ||
-      (searchParams?.type && searchParams.type !== 'all') ||
-      (searchParams?.isActive && searchParams.isActive !== 'all'),
+      (searchParams?.type && searchParams.type !== "all") ||
+      (searchParams?.isActive && searchParams.isActive !== "all"),
   )
 
   // Check if any action is loading
@@ -261,7 +261,7 @@ export function ServicesList({ initialData, searchParams }: ServicesListProps) {
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
         dependencies={[]}
-        entityLabel={serviceToDelete?.name ?? ''}
+        entityLabel={serviceToDelete?.name ?? ""}
         entityName="servicio"
         loading={deleteService.isPending}
         onConfirm={handleDeleteConfirm}

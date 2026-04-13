@@ -1,20 +1,20 @@
-import { Slot } from '@radix-ui/react-slot'
-import { cva, type VariantProps } from 'class-variance-authority'
-import { Separator } from '@/components/ui/separator'
-import { cn } from '@/lib/utils'
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+import { Separator } from "@/components/ui/separator"
+import { cn } from "@/lib/utils"
 
 const buttonGroupVariants = cva(
   "flex w-fit items-stretch has-[>[data-slot=button-group]]:gap-2 [&>*]:focus-visible:relative [&>*]:focus-visible:z-10 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-md [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1",
   {
     defaultVariants: {
-      orientation: 'horizontal',
+      orientation: "horizontal",
     },
     variants: {
       orientation: {
         horizontal:
-          '[&>*:not(:first-child)]:rounded-l-none [&>*:not(:first-child)]:border-l-0 [&>*:not(:last-child)]:rounded-r-none',
+          "[&>*:not(:first-child)]:rounded-l-none [&>*:not(:first-child)]:border-l-0 [&>*:not(:last-child)]:rounded-r-none",
         vertical:
-          'flex-col [&>*:not(:first-child)]:rounded-t-none [&>*:not(:first-child)]:border-t-0 [&>*:not(:last-child)]:rounded-b-none',
+          "flex-col [&>*:not(:first-child)]:rounded-t-none [&>*:not(:first-child)]:border-t-0 [&>*:not(:last-child)]:rounded-b-none",
       },
     },
   },
@@ -24,7 +24,7 @@ function ButtonGroup({
   className,
   orientation,
   ...props
-}: React.ComponentProps<'div'> & VariantProps<typeof buttonGroupVariants>) {
+}: React.ComponentProps<"div"> & VariantProps<typeof buttonGroupVariants>) {
   return (
     // biome-ignore lint/a11y/useSemanticElements: Fieldset breaks component props types; role="group" is semantically appropriate for button groupings
     <div
@@ -41,10 +41,10 @@ function ButtonGroupText({
   className,
   asChild = false,
   ...props
-}: React.ComponentProps<'div'> & {
+}: React.ComponentProps<"div"> & {
   asChild?: boolean
 }) {
-  const Comp = asChild ? Slot : 'div'
+  const Comp = asChild ? Slot : "div"
 
   return (
     <Comp
@@ -59,13 +59,13 @@ function ButtonGroupText({
 
 function ButtonGroupSeparator({
   className,
-  orientation = 'vertical',
+  orientation = "vertical",
   ...props
 }: React.ComponentProps<typeof Separator>) {
   return (
     <Separator
       className={cn(
-        '!m-0 relative self-stretch bg-input data-[orientation=vertical]:h-auto',
+        "!m-0 relative self-stretch bg-input data-[orientation=vertical]:h-auto",
         className,
       )}
       data-slot="button-group-separator"

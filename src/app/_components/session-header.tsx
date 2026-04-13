@@ -13,9 +13,9 @@
  * @module app/_components/session-header
  */
 
-import { headers } from 'next/headers'
-import { AppSidebar } from '@/components/app-sidebar'
-import { auth } from '@/server/auth'
+import { headers } from "next/headers"
+import { AppSidebar } from "@/components/app-sidebar"
+import { auth } from "@/server/auth"
 
 /**
  * SessionHeader: Fetches session and renders Sidebar with current user
@@ -36,9 +36,9 @@ export async function SessionHeader() {
       user={
         session?.user
           ? {
-              name: session.user.name || 'Usuario',
-              email: session.user.email || '',
-              avatar: session.user.image || '/avatars/shadcn.jpg',
+              name: session.user.name || "Usuario",
+              email: session.user.email || "",
+              avatar: session.user.image || "/avatars/shadcn.jpg",
             }
           : null
       }

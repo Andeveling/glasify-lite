@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: Using array index as key is acceptable here because skeleton items are purely presentational and do not require stable identity. */
 /** biome-ignore-all lint/style/noMagicNumbers: Magic numbers are used intentionally for animation delays and skeleton layout to match the design specification. */
-import { generateStableKeyedArray } from '@/app/_utils/generate-keys.util'
-import { Skeleton } from '@/components/ui/skeleton'
+import { generateStableKeyedArray } from "@/app/_utils/generate-keys.util"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const NAV_SKELETON_COUNT = 6
 const STATS_CARD_COUNT = 4
@@ -10,10 +10,10 @@ const TABLE_ROW_COUNT = 8
 const TABLE_CELL_COUNT = 5
 
 export default function DashboardLoading() {
-  const navItems = generateStableKeyedArray(NAV_SKELETON_COUNT, 'nav-skeleton')
-  const statsCards = generateStableKeyedArray(STATS_CARD_COUNT, 'stats-card')
-  const tableHeaders = generateStableKeyedArray(TABLE_HEADER_COUNT, 'table-header')
-  const tableRows = generateStableKeyedArray(TABLE_ROW_COUNT, 'table-row')
+  const navItems = generateStableKeyedArray(NAV_SKELETON_COUNT, "nav-skeleton")
+  const statsCards = generateStableKeyedArray(STATS_CARD_COUNT, "stats-card")
+  const tableHeaders = generateStableKeyedArray(TABLE_HEADER_COUNT, "table-header")
+  const tableRows = generateStableKeyedArray(TABLE_ROW_COUNT, "table-row")
 
   return (
     <div className="flex h-screen bg-background">

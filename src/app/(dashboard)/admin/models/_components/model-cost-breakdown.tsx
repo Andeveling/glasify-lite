@@ -11,13 +11,13 @@
  * - Spanish UI text
  */
 
-'use client'
+"use client"
 
-import type { CostType } from '@prisma/generated/client'
-import { Plus, Trash2 } from 'lucide-react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import type { CostType } from "@prisma/generated/client"
+import { Plus, Trash2 } from "lucide-react"
+import { useFieldArray, useFormContext } from "react-hook-form"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   FormControl,
   FormDescription,
@@ -25,16 +25,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
+} from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
 
 type CostBreakdownItem = {
   component: string
@@ -54,14 +54,14 @@ type ModelCostBreakdownProps = {
 // Map CostType enum to localized labels
 function getCostTypeLabel(type: CostType) {
   switch (type) {
-    case 'fixed':
-      return 'Fijo'
-    case 'per_mm_height':
-      return 'Por mm de alto'
-    case 'per_mm_width':
-      return 'Por mm de ancho'
-    case 'per_sqm':
-      return 'Por m²'
+    case "fixed":
+      return "Fijo"
+    case "per_mm_height":
+      return "Por mm de alto"
+    case "per_mm_width":
+      return "Por mm de ancho"
+    case "per_sqm":
+      return "Por m²"
     default:
       return type
   }
@@ -72,16 +72,16 @@ function getCostTypeLabel(type: CostType) {
  */
 function getCostTypeDescription(type: CostType) {
   switch (type) {
-    case 'fixed':
-      return 'Costo fijo independiente de las dimensiones'
-    case 'per_mm_height':
-      return 'Costo calculado por milímetro de altura'
-    case 'per_mm_width':
-      return 'Costo calculado por milímetro de ancho'
-    case 'per_sqm':
-      return 'Costo calculado por metro cuadrado'
+    case "fixed":
+      return "Costo fijo independiente de las dimensiones"
+    case "per_mm_height":
+      return "Costo calculado por milímetro de altura"
+    case "per_mm_width":
+      return "Costo calculado por milímetro de ancho"
+    case "per_sqm":
+      return "Costo calculado por metro cuadrado"
     default:
-      return ''
+      return ""
   }
 }
 
@@ -90,14 +90,14 @@ export function ModelCostBreakdown({ readOnly = false }: ModelCostBreakdownProps
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: 'costBreakdown',
+    name: "costBreakdown",
   })
 
   const handleAddComponent = () => {
     append({
-      component: '',
-      costType: 'fixed',
-      notes: '',
+      component: "",
+      costType: "fixed",
+      notes: "",
       unitCost: 0,
     } satisfies CostBreakdownItem)
   }
@@ -168,10 +168,10 @@ export function ModelCostBreakdown({ readOnly = false }: ModelCostBreakdownProps
                               <SelectContent>
                                 {(
                                   [
-                                    'fixed',
-                                    'per_mm_width',
-                                    'per_mm_height',
-                                    'per_sqm',
+                                    "fixed",
+                                    "per_mm_width",
+                                    "per_mm_height",
+                                    "per_sqm",
                                   ] as CostType[]
                                 ).map((type) => (
                                   <SelectItem key={type} value={type}>

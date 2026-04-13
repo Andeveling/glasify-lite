@@ -8,11 +8,11 @@
 /**
  * Nominatim API Configuration
  */
-export const GEOCODING_API_URL = 'https://nominatim.openstreetmap.org'
+export const GEOCODING_API_URL = "https://nominatim.openstreetmap.org"
 export const GEOCODING_API_TIMEOUT_MS = 5000 // 5 seconds
 export const GEOCODING_RATE_LIMIT_PER_SECOND = 1 // Nominatim usage policy
-export const GEOCODING_USER_AGENT = 'Glasify-Lite/1.0'
-export const GEOCODING_DEFAULT_LANGUAGE = 'es'
+export const GEOCODING_USER_AGENT = "Glasify-Lite/1.0"
+export const GEOCODING_DEFAULT_LANGUAGE = "es"
 export const GEOCODING_DEFAULT_LIMIT = 5
 export const GEOCODING_MAX_LIMIT = 10
 
@@ -43,7 +43,7 @@ export const MAX_POSTAL_CODE_LENGTH = 20
 export const DEFAULT_MAP_ZOOM = 13
 export const MIN_MAP_ZOOM = 3
 export const MAX_MAP_ZOOM = 18
-export const MAP_MARKER_COLOR = '#3B82F6' // Primary blue
+export const MAP_MARKER_COLOR = "#3B82F6" // Primary blue
 
 /**
  * Transportation Configuration

@@ -1,13 +1,13 @@
-import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
-import { auth } from '@/server/auth'
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
+import { auth } from "@/server/auth"
 
 export default async function Home() {
   const session = await auth.api.getSession({
     headers: await headers(),
   })
   if (session?.user) {
-    redirect('/admin')
+    redirect("/admin")
   }
-  redirect('/sign-in')
+  redirect("/sign-in")
 }

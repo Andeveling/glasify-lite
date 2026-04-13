@@ -1,19 +1,19 @@
-import { Plus } from 'lucide-react'
-import type { Metadata } from 'next'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { api } from '@/trpc/server-client'
-import { DesignTemplatesList } from './_components/design-templates-list'
+import { Plus } from "lucide-react"
+import type { Metadata } from "next"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { api } from "@/trpc/server-client"
+import { DesignTemplatesList } from "./_components/design-templates-list"
 
 export const metadata: Metadata = {
-  description: 'Administra las plantillas de diseño para visualización de modelos de ventanas',
-  title: 'Plantillas de Diseño | Admin',
+  description: "Administra las plantillas de diseño para visualización de modelos de ventanas",
+  title: "Plantillas de Diseño | Admin",
 }
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 export default async function DesignTemplatesPage() {
-  const initialData = await api.admin['design-template'].list({
+  const initialData = await api.admin["design-template"].list({
     limit: 20,
     page: 1,
   })

@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 /**
  * Glass Types Chart Component
@@ -6,8 +6,8 @@
  * with codes, manufacturers, and percentage legend
  */
 
-import { TrendingUp } from 'lucide-react'
-import { Cell, Legend, Pie, PieChart } from 'recharts'
+import { TrendingUp } from "lucide-react"
+import { Cell, Legend, Pie, PieChart } from "recharts"
 import {
   Card,
   CardContent,
@@ -15,46 +15,46 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { type ChartConfig, ChartContainer, ChartTooltip } from '@/components/ui/chart'
-import { formatNumber, formatPercent } from '@/lib/format'
-import type { TopGlassType } from '@/types/dashboard'
-import { EmptyDashboardState } from './empty-dashboard-state'
+} from "@/components/ui/card"
+import { type ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart"
+import { formatNumber, formatPercent } from "@/lib/format"
+import type { TopGlassType } from "@/types/dashboard"
+import { EmptyDashboardState } from "./empty-dashboard-state"
 
 const PERCENTAGE_MULTIPLIER = 100
 
 // Color palette for pie chart slices
 const COLORS = [
-  'var(--chart-1)',
-  'var(--chart-2)',
-  'var(--chart-3)',
-  'var(--chart-4)',
-  'var(--chart-5)',
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
 ]
 
 const chartConfig = {
   count: {
-    label: 'Uso',
+    label: "Uso",
   },
   glassTypeId1: {
-    color: 'var(--chart-1)',
-    label: 'cristal 1',
+    color: "var(--chart-1)",
+    label: "cristal 1",
   },
   glassTypeId2: {
-    color: 'var(--chart-2)',
-    label: 'cristal 2',
+    color: "var(--chart-2)",
+    label: "cristal 2",
   },
   glassTypeId3: {
-    color: 'var(--chart-3)',
-    label: 'cristal 3',
+    color: "var(--chart-3)",
+    label: "cristal 3",
   },
   glassTypeId4: {
-    color: 'var(--chart-4)',
-    label: 'cristal 4',
+    color: "var(--chart-4)",
+    label: "cristal 4",
   },
   glassTypeId5: {
-    color: 'var(--chart-5)',
-    label: 'cristal 5',
+    color: "var(--chart-5)",
+    label: "cristal 5",
   },
 } satisfies ChartConfig
 
@@ -77,7 +77,7 @@ export function GlassTypesChart({ data, tenantConfig }: GlassTypesChartProps) {
   // Transform data for recharts
   const chartData = data.map((item) => ({
     count: item.count,
-    manufacturer: item.manufacturer ?? 'Sin fabricante',
+    manufacturer: item.manufacturer ?? "Sin fabricante",
     name: `${item.glassTypeName} (${item.glassTypeCode})`,
     percentage: item.percentage * PERCENTAGE_MULTIPLIER,
   }))
@@ -144,12 +144,12 @@ export function GlassTypesChart({ data, tenantConfig }: GlassTypesChartProps) {
                 const item = chartData.find((d) => d.name === value)
                 return (
                   <span className="text-xs">
-                    {value} -{' '}
+                    {value} -{" "}
                     {item
                       ? formatPercent(item.percentage / PERCENTAGE_MULTIPLIER, {
                           context: tenantConfig,
                         })
-                      : ''}
+                      : ""}
                   </span>
                 )
               }}
@@ -157,7 +157,7 @@ export function GlassTypesChart({ data, tenantConfig }: GlassTypesChartProps) {
               iconSize={12}
               iconType="circle"
               verticalAlign="bottom"
-              wrapperStyle={{ fontSize: '12px' }}
+              wrapperStyle={{ fontSize: "12px" }}
             />
           </PieChart>
         </ChartContainer>

@@ -1,13 +1,13 @@
-'use client'
+"use client"
 
-import SignInForm from '@/app/(auth)/_components/sign-in-form'
+import SignInForm from "@/app/(auth)/_components/sign-in-form"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog"
 
 // ============================================================================
 // Types

@@ -1,18 +1,18 @@
 /** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: TODO: Refactorizar */
 
-import type { Prisma } from '@prisma/generated/client'
-import { TRPCError } from '@trpc/server'
-import { z } from 'zod'
-import logger from '@/lib/logger'
+import type { Prisma } from "@prisma/generated/client"
+import { TRPCError } from "@trpc/server"
+import { z } from "zod"
+import logger from "@/lib/logger"
 import {
   adminProcedure,
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
   sellerOrAdminProcedure,
-} from '@/server/api/trpc'
-import { sendQuoteNotification } from '@/server/services/email'
-import { getTenantConfigSelect } from '@/server/utils/tenant'
+} from "@/server/api/trpc"
+import { sendQuoteNotification } from "@/server/services/email"
+import { getTenantConfigSelect } from "@/server/utils/tenant"
 import {
   createQuoteFromItemsInput,
   createQuoteFromItemsOutput,
@@ -24,7 +24,7 @@ import {
   sendToVendorOutput,
   updateStatusInput,
   updateStatusOutput,
-} from './quote.schemas'
+} from "./quote.schemas"
 
 // Constants for percentage calculations
 const _PERCENTAGE_DIVISOR = 100
@@ -46,25 +46,25 @@ const MAX_ROOM_LOCATION_LENGTH = 100
 // Input schemas
 export const calculateItemServiceInput = z.object({
   quantity: z.number().optional(),
-  serviceId: z.string().cuid({ error: 'ID del servicio debe ser válido' }),
+  serviceId: z.string().cuid({ error: "ID del servicio debe ser válido" }),
 })
 
 export const calculateItemAdjustmentInput = z.object({
-  concept: z.string().min(1, { error: 'El concepto del ajuste es requerido' }),
-  sign: z.enum(['positive', 'negative']),
-  unit: z.enum(['unit', 'sqm', 'ml']),
-  value: z.number().min(0, { error: 'El valor debe ser mayor o igual a 0' }),
+  concept: z.string().min(1, { error: "El concepto del ajuste es requerido" }),
+  sign: z.enum(["positive", "negative"]),
+  unit: z.enum(["unit", "sqm", "ml"]),
+  value: z.number().min(0, { error: "El valor debe ser mayor o igual a 0" }),
 })
 
 export const calculateItemInput = z.object({
   adjustments: z.array(calculateItemAdjustmentInput),
-  glassTypeId: z.cuid({ error: 'ID del tipo de vidrio debe ser válido' }),
-  heightMm: z.number().int().min(1, { error: 'Alto debe ser mayor a 0 mm' }),
-  modelId: z.string().cuid({ error: 'ID del modelo debe ser válido' }),
+  glassTypeId: z.cuid({ error: "ID del tipo de vidrio debe ser válido" }),
+  heightMm: z.number().int().min(1, { error: "Alto debe ser mayor a 0 mm" }),
+  modelId: z.string().cuid({ error: "ID del modelo debe ser válido" }),
   quantity: z.number(),
   services: z.array(calculateItemServiceInput),
-  unit: z.enum(['unit', 'sqm', 'ml']),
-  widthMm: z.number().int().min(1, { error: 'Ancho debe ser mayor a 0 mm' }),
+  unit: z.enum(["unit", "sqm", "ml"]),
+  widthMm: z.number().int().min(1, { error: "Ancho debe ser mayor a 0 mm" }),
   /**
    * Optional color surcharge percentage (0-100)
    * Applied to profile costs only (basePrice + dimensions + accessories)
@@ -72,10 +72,10 @@ export const calculateItemInput = z.object({
   colorSurchargePercentage: z
     .number()
     .min(MIN_SURCHARGE_PERCENTAGE, {
-      error: 'Recargo debe ser mayor o igual a 0%',
+      error: "Recargo debe ser mayor o igual a 0%",
     })
     .max(MAX_SURCHARGE_PERCENTAGE, {
-      error: 'Recargo debe ser menor o igual a 100%',
+      error: "Recargo debe ser menor o igual a 100%",
     })
     .optional(),
 })
@@ -85,7 +85,7 @@ export const calculateItemServiceOutput = z.object({
   amount: z.number(),
   quantity: z.number(),
   serviceId: z.string(),
-  unit: z.enum(['unit', 'sqm', 'ml']),
+  unit: z.enum(["unit", "sqm", "ml"]),
 })
 
 export const calculateItemAdjustmentOutput = z.object({
@@ -104,9 +104,9 @@ export const calculateItemOutput = z.object({
 })
 
 export const addItemInput = calculateItemInput.extend({
-  clientId: z.string().cuid({ error: 'ID del cliente es requerido' }),
-  colorId: z.cuid({ error: 'ID del color debe ser válido' }).optional(), // T045: Color selection optional
-  quoteId: z.cuid({ error: 'ID de la cotización debe ser válido' }).optional(),
+  clientId: z.string().cuid({ error: "ID del cliente es requerido" }),
+  colorId: z.cuid({ error: "ID del color debe ser válido" }).optional(), // T045: Color selection optional
+  quoteId: z.cuid({ error: "ID de la cotización debe ser válido" }).optional(),
   roomLocation: z.string().max(MAX_ROOM_LOCATION_LENGTH).optional(), // T008: Window location (wizard feature)
 })
 
@@ -118,15 +118,15 @@ export const addItemOutput = z.object({
 
 export const submitInput = z.object({
   contact: z.object({
-    address: z.string().min(1, { error: 'Dirección es requerida' }),
-    phone: z.string().min(1, { error: 'Teléfono es requerido' }),
+    address: z.string().min(1, { error: "Dirección es requerida" }),
+    phone: z.string().min(1, { error: "Teléfono es requerido" }),
   }),
-  quoteId: z.string().cuid({ error: 'ID de la cotización debe ser válido' }),
+  quoteId: z.string().cuid({ error: "ID de la cotización debe ser válido" }),
 })
 
 export const submitOutput = z.object({
   quoteId: z.string(),
-  status: z.literal('sent'),
+  status: z.literal("sent"),
 })
 
 export const quoteRouter = createTRPCRouter({
@@ -134,12 +134,12 @@ export const quoteRouter = createTRPCRouter({
    * Add item to quote
    * TASK-D01: Refactored to use addItemWithColorUseCase (placeholder)
    */
-  'add-item': publicProcedure
+  "add-item": publicProcedure
     .input(addItemInput)
     .output(addItemOutput)
     .mutation(async ({ ctx, input }) => {
       try {
-        logger.info('Adding item to quote', {
+        logger.info("Adding item to quote", {
           dimensions: { heightMm: input.heightMm, widthMm: input.widthMm },
           modelId: input.modelId,
           quoteId: input.quoteId,
@@ -148,15 +148,15 @@ export const quoteRouter = createTRPCRouter({
         // TODO Phase D: Implement full use-case after extending QuoteRepository
         // For now, use legacy transaction logic
         const { addItemWithColorUseCase } = await import(
-          '@domain/quotes/use-cases/add-item-with-color'
+          "@domain/quotes/use-cases/add-item-with-color"
         )
-        const { createAddItemWithColorDeps } = await import('@domain/quotes/di/quote.container')
+        const { createAddItemWithColorDeps } = await import("@domain/quotes/di/quote.container")
 
         const deps = createAddItemWithColorDeps(ctx.db)
 
         const result = await addItemWithColorUseCase(input, deps)
 
-        logger.info('Item added to quote successfully', {
+        logger.info("Item added to quote successfully", {
           itemId: result.itemId,
           quoteId: result.quoteId,
           subtotal: result.subtotal,
@@ -164,8 +164,8 @@ export const quoteRouter = createTRPCRouter({
 
         return result
       } catch (error) {
-        logger.error('Error adding item to quote', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error adding item to quote", {
+          error: error instanceof Error ? error.message : "Unknown error",
           modelId: input.modelId,
           quoteId: input.quoteId,
         })
@@ -173,7 +173,7 @@ export const quoteRouter = createTRPCRouter({
         const errorMessage =
           error instanceof Error
             ? error.message
-            : 'No se pudo agregar el ítem a la cotización. Intente nuevamente.'
+            : "No se pudo agregar el ítem a la cotización. Intente nuevamente."
         throw new Error(errorMessage)
       }
     }),
@@ -182,17 +182,17 @@ export const quoteRouter = createTRPCRouter({
    * Calculate item price
    * TASK-C02: Refactored to use calculateItemPriceUseCase
    */
-  'calculate-item': publicProcedure
+  "calculate-item": publicProcedure
     .input(calculateItemInput)
     .output(calculateItemOutput)
     .mutation(async ({ ctx, input }) => {
       const { calculateItemPriceUseCase } = await import(
-        '@domain/quotes/use-cases/calculate-item-price'
+        "@domain/quotes/use-cases/calculate-item-price"
       )
-      const { createCalculateItemPriceDeps } = await import('@domain/quotes/di/quote.container')
+      const { createCalculateItemPriceDeps } = await import("@domain/quotes/di/quote.container")
 
       try {
-        logger.info('Starting item price calculation', {
+        logger.info("Starting item price calculation", {
           dimensions: { heightMm: input.heightMm, widthMm: input.widthMm },
           modelId: input.modelId,
         })
@@ -200,22 +200,22 @@ export const quoteRouter = createTRPCRouter({
         const deps = createCalculateItemPriceDeps(ctx.db)
         const result = await calculateItemPriceUseCase(input, deps)
 
-        logger.info('Item price calculation completed', {
+        logger.info("Item price calculation completed", {
           modelId: input.modelId,
           subtotal: result.subtotal,
         })
 
         return result
       } catch (error) {
-        logger.error('Error calculating item price', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error calculating item price", {
+          error: error instanceof Error ? error.message : "Unknown error",
           modelId: input.modelId,
         })
 
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
+          code: "INTERNAL_SERVER_ERROR",
           message:
-            error instanceof Error ? error.message : 'No se pudo calcular el precio del ítem.',
+            error instanceof Error ? error.message : "No se pudo calcular el precio del ítem.",
         })
       }
     }),
@@ -225,17 +225,17 @@ export const quoteRouter = createTRPCRouter({
    * Task: T068 [P] [US5]
    * TASK-C03: Refactored to use getQuoteByIdUseCase
    */
-  'get-by-id': protectedProcedure
+  "get-by-id": protectedProcedure
     .input(getQuoteByIdInput)
     .output(getQuoteByIdOutput)
     .query(async ({ ctx, input }) => {
       const { getQuoteByIdUseCase, AuthorizationError } = await import(
-        '@domain/quotes/use-cases/get-quote-by-id'
+        "@domain/quotes/use-cases/get-quote-by-id"
       )
-      const { createGetQuoteByIdDeps } = await import('@domain/quotes/di/quote.container')
+      const { createGetQuoteByIdDeps } = await import("@domain/quotes/di/quote.container")
 
       try {
-        logger.info('[US5] Fetching quote by ID', {
+        logger.info("[US5] Fetching quote by ID", {
           quoteId: input.id,
           userId: ctx.session.user.id,
           userRole: ctx.session.user.role,
@@ -246,12 +246,12 @@ export const quoteRouter = createTRPCRouter({
           {
             quoteId: input.id,
             userId: ctx.session.user.id,
-            userRole: ctx.session.user.role as 'admin' | 'seller',
+            userRole: ctx.session.user.role as "admin" | "seller",
           },
           deps,
         )
 
-        logger.info('[US5] Quote fetched successfully', {
+        logger.info("[US5] Quote fetched successfully", {
           itemCount: result.itemCount,
           quoteId: input.id,
         })
@@ -265,14 +265,14 @@ export const quoteRouter = createTRPCRouter({
           })
         }
 
-        logger.error('[US5] Error fetching quote', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("[US5] Error fetching quote", {
+          error: error instanceof Error ? error.message : "Unknown error",
           quoteId: input.id,
         })
 
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'No se pudo cargar la cotización. Intente nuevamente.',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "No se pudo cargar la cotización. Intente nuevamente.",
         })
       }
     }),
@@ -282,7 +282,7 @@ export const quoteRouter = createTRPCRouter({
    * Task: T020 [US1] - Updated for seller access
    * Allows admins and sellers to view all quotes across all clients
    */
-  'list-all': sellerOrAdminProcedure
+  "list-all": sellerOrAdminProcedure
     .input(
       z.object({
         clientId: z.string().cuid().optional(), // Filter by specific client
@@ -290,14 +290,14 @@ export const quoteRouter = createTRPCRouter({
         limit: z.number().int().min(1).max(MAX_LIMIT).default(DEFAULT_LIMIT),
         page: z.number().int().min(1).default(1),
         search: z.string().optional(),
-        sortBy: z.enum(['createdAt', 'total', 'validUntil']).default('createdAt'),
-        sortOrder: z.enum(['asc', 'desc']).default('desc'),
-        status: z.enum(['draft', 'sent', 'accepted', 'rejected', 'canceled']).optional(),
+        sortBy: z.enum(["createdAt", "total", "validUntil"]).default("createdAt"),
+        sortOrder: z.enum(["asc", "desc"]).default("desc"),
+        status: z.enum(["draft", "sent", "accepted", "rejected", "canceled"]).optional(),
       }),
     )
     .query(async ({ ctx, input }) => {
       try {
-        logger.info('[US1/US2] Admin/Seller fetching all quotes', {
+        logger.info("[US1/US2] Admin/Seller fetching all quotes", {
           clientId: input.clientId,
           includeExpired: input.includeExpired,
           limit: input.limit,
@@ -430,7 +430,7 @@ export const quoteRouter = createTRPCRouter({
             id: quote.id,
             isExpired: quote.validUntil ? quote.validUntil < new Date() : false,
             itemCount: quote._count.items,
-            projectName: quote.projectName ?? 'Sin nombre',
+            projectName: quote.projectName ?? "Sin nombre",
             sentAt: quote.sentAt,
             status: quote.status,
             total: Number(quote.total),
@@ -440,7 +440,7 @@ export const quoteRouter = createTRPCRouter({
           totalPages,
         }
 
-        logger.info('[US1] Admin quotes fetched successfully', {
+        logger.info("[US1] Admin quotes fetched successfully", {
           adminId: ctx.session.user.id,
           count: quotes.length,
           page: input.page,
@@ -449,15 +449,15 @@ export const quoteRouter = createTRPCRouter({
 
         return result
       } catch (error) {
-        logger.error('[US1] Error fetching all quotes', {
+        logger.error("[US1] Error fetching all quotes", {
           adminId: ctx.session.user.id,
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
           input,
         })
 
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'No se pudieron cargar las cotizaciones. Intente nuevamente.',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "No se pudieron cargar las cotizaciones. Intente nuevamente.",
         })
       }
     }),
@@ -471,15 +471,15 @@ export const quoteRouter = createTRPCRouter({
    * Task: T068 [P] [US5]
    * TASK-C04: Refactored to use listUserQuotesUseCase
    */
-  'list-user-quotes': protectedProcedure
+  "list-user-quotes": protectedProcedure
     .input(listUserQuotesInput)
     .output(listUserQuotesOutput)
     .query(async ({ ctx, input }) => {
-      const { listUserQuotesUseCase } = await import('@domain/quotes/use-cases/list-user-quotes')
-      const { createListUserQuotesDeps } = await import('@domain/quotes/di/quote.container')
+      const { listUserQuotesUseCase } = await import("@domain/quotes/use-cases/list-user-quotes")
+      const { createListUserQuotesDeps } = await import("@domain/quotes/di/quote.container")
 
       try {
-        logger.info('[US5] Fetching user quotes', {
+        logger.info("[US5] Fetching user quotes", {
           includeExpired: input.includeExpired,
           limit: input.limit,
           page: input.page,
@@ -491,7 +491,7 @@ export const quoteRouter = createTRPCRouter({
         const result = await listUserQuotesUseCase(
           {
             userId: ctx.session.user.id,
-            userRole: ctx.session.user.role as 'admin' | 'seller' | 'user',
+            userRole: ctx.session.user.role as "admin" | "seller" | "user",
             page: input.page,
             limit: input.limit,
             sortBy: input.sortBy,
@@ -503,7 +503,7 @@ export const quoteRouter = createTRPCRouter({
           deps,
         )
 
-        logger.info('[US5] User quotes fetched successfully', {
+        logger.info("[US5] User quotes fetched successfully", {
           count: result.quotes.length,
           page: result.page,
           total: result.total,
@@ -511,14 +511,14 @@ export const quoteRouter = createTRPCRouter({
 
         return result
       } catch (error) {
-        logger.error('[US5] Error fetching user quotes', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("[US5] Error fetching user quotes", {
+          error: error instanceof Error ? error.message : "Unknown error",
           userId: ctx.session.user.id,
         })
 
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'No se pudieron cargar las cotizaciones. Intente nuevamente.',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "No se pudieron cargar las cotizaciones. Intente nuevamente.",
         })
       }
     }),
@@ -531,7 +531,7 @@ export const quoteRouter = createTRPCRouter({
    * Send draft quote to vendor for professional review
    * TASK-C05: Refactored to use sendQuoteToVendorUseCase
    */
-  'send-to-vendor': protectedProcedure
+  "send-to-vendor": protectedProcedure
     .input(sendToVendorInput)
     .output(sendToVendorOutput)
     .mutation(async ({ ctx, input }) => {
@@ -541,11 +541,11 @@ export const quoteRouter = createTRPCRouter({
         QuoteUnauthorizedError,
         QuoteAlreadySentError,
         QuoteEmptyError,
-      } = await import('@domain/quotes/use-cases/send-quote-to-vendor')
-      const { createSendQuoteToVendorDeps } = await import('@domain/quotes/di/quote.container')
+      } = await import("@domain/quotes/use-cases/send-quote-to-vendor")
+      const { createSendQuoteToVendorDeps } = await import("@domain/quotes/di/quote.container")
 
       try {
-        logger.info('Sending quote to vendor', {
+        logger.info("Sending quote to vendor", {
           quoteId: input.quoteId,
           userId: ctx.session.user.id,
         })
@@ -561,37 +561,37 @@ export const quoteRouter = createTRPCRouter({
           deps,
         )
 
-        logger.info('Quote sent to vendor successfully', {
+        logger.info("Quote sent to vendor successfully", {
           quoteId: result.id,
           sentAt: result.sentAt,
         })
 
         return result
       } catch (error) {
-        logger.error('Error sending quote to vendor', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error sending quote to vendor", {
+          error: error instanceof Error ? error.message : "Unknown error",
           quoteId: input.quoteId,
         })
 
         // Map domain errors to tRPC errors
         if (error instanceof QuoteNotFoundError) {
-          throw new TRPCError({ code: 'NOT_FOUND', message: error.message })
+          throw new TRPCError({ code: "NOT_FOUND", message: error.message })
         }
         if (error instanceof QuoteUnauthorizedError) {
-          throw new TRPCError({ code: 'FORBIDDEN', message: error.message })
+          throw new TRPCError({ code: "FORBIDDEN", message: error.message })
         }
         if (error instanceof QuoteAlreadySentError) {
-          throw new TRPCError({ code: 'BAD_REQUEST', message: error.message })
+          throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
         }
         if (error instanceof QuoteEmptyError) {
-          throw new TRPCError({ code: 'BAD_REQUEST', message: error.message })
+          throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
         }
         if (error instanceof TRPCError) {
           throw error
         }
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: error instanceof Error ? error.message : 'Error inesperado',
+          code: "INTERNAL_SERVER_ERROR",
+          message: error instanceof Error ? error.message : "Error inesperado",
         })
       }
     }),
@@ -601,7 +601,7 @@ export const quoteRouter = createTRPCRouter({
     .output(submitOutput)
     .mutation(async ({ ctx, input }) => {
       try {
-        logger.info('Submitting quote', {
+        logger.info("Submitting quote", {
           contact: input.contact,
           quoteId: input.quoteId,
         })
@@ -621,15 +621,15 @@ export const quoteRouter = createTRPCRouter({
           })
 
           if (!quote) {
-            throw new Error('Cotización no encontrada')
+            throw new Error("Cotización no encontrada")
           }
 
-          if (quote.status !== 'draft') {
-            throw new Error('Solo se pueden enviar cotizaciones en estado borrador')
+          if (quote.status !== "draft") {
+            throw new Error("Solo se pueden enviar cotizaciones en estado borrador")
           }
 
           if (quote.items.length === 0) {
-            throw new Error('La cotización debe tener al menos un ítem')
+            throw new Error("La cotización debe tener al menos un ítem")
           }
 
           // Update quote status and contact info
@@ -637,7 +637,7 @@ export const quoteRouter = createTRPCRouter({
             data: {
               contactAddress: input.contact.address,
               contactPhone: input.contact.phone,
-              status: 'sent',
+              status: "sent",
             },
             include: {
               items: {
@@ -676,45 +676,45 @@ export const quoteRouter = createTRPCRouter({
                 },
                 manufacturerEmail,
               )
-              logger.info('Quote notification sent successfully', {
+              logger.info("Quote notification sent successfully", {
                 quoteId: input.quoteId,
                 recipientEmail: manufacturerEmail,
               })
             } catch (emailError) {
-              logger.warn('Failed to send quote notification email', {
-                error: emailError instanceof Error ? emailError.message : 'Unknown error',
+              logger.warn("Failed to send quote notification email", {
+                error: emailError instanceof Error ? emailError.message : "Unknown error",
                 quoteId: input.quoteId,
                 recipientEmail: manufacturerEmail,
               })
               // Don't fail the transaction if email fails - quote is still submitted
             }
           } else {
-            logger.warn('No manufacturer email found for quote notification', {
+            logger.warn("No manufacturer email found for quote notification", {
               quoteId: input.quoteId,
             })
           }
 
           return {
             quoteId: input.quoteId,
-            status: 'sent' as const,
+            status: "sent" as const,
           }
         })
 
-        logger.info('Quote submitted successfully', {
+        logger.info("Quote submitted successfully", {
           quoteId: input.quoteId,
         })
 
         return result
       } catch (error) {
-        logger.error('Error submitting quote', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error submitting quote", {
+          error: error instanceof Error ? error.message : "Unknown error",
           quoteId: input.quoteId,
         })
 
         const errorMessage =
           error instanceof Error
             ? error.message
-            : 'No se pudo enviar la cotización. Intente nuevamente.'
+            : "No se pudo enviar la cotización. Intente nuevamente."
         throw new Error(errorMessage)
       }
     }),
@@ -729,32 +729,32 @@ export const quoteRouter = createTRPCRouter({
    * Get model colors for quote
    * TASK-D02: Refactored to use getModelColorsForQuoteUseCase (placeholder)
    */
-  'get-model-colors-for-quote': publicProcedure
+  "get-model-colors-for-quote": publicProcedure
     .input(
       z.object({
-        modelId: z.string().cuid({ error: 'ID del modelo debe ser válido' }),
+        modelId: z.string().cuid({ error: "ID del modelo debe ser válido" }),
       }),
     )
     .query(async ({ ctx, input }) => {
       try {
-        logger.info('Fetching model colors for quote', {
+        logger.info("Fetching model colors for quote", {
           modelId: input.modelId,
         })
 
         // TODO Phase D: Implement full use-case after extending QuoteRepository
         // For now, use legacy query logic
         const { getModelColorsForQuoteUseCase } = await import(
-          '@domain/quotes/use-cases/get-model-colors-for-quote'
+          "@domain/quotes/use-cases/get-model-colors-for-quote"
         )
         const { createGetModelColorsForQuoteDeps } = await import(
-          '@domain/quotes/di/quote.container'
+          "@domain/quotes/di/quote.container"
         )
 
         const deps = createGetModelColorsForQuoteDeps(ctx.db)
 
         const result = await getModelColorsForQuoteUseCase(input, deps)
 
-        logger.info('Model colors fetched for quote', {
+        logger.info("Model colors fetched for quote", {
           colorCount: result.colors.length,
           defaultColorId: result.defaultColorId,
           modelId: input.modelId,
@@ -762,13 +762,13 @@ export const quoteRouter = createTRPCRouter({
 
         return result
       } catch (error) {
-        logger.error('Error fetching model colors for quote', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error fetching model colors for quote", {
+          error: error instanceof Error ? error.message : "Unknown error",
           modelId: input.modelId,
         })
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Error al obtener los colores del modelo',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error al obtener los colores del modelo",
         })
       }
     }),
@@ -777,22 +777,22 @@ export const quoteRouter = createTRPCRouter({
    * T044: Calculate Price with Color
    * TASK-C06: Refactored to use calculatePriceWithColorUseCase
    */
-  'calculate-price-with-color': publicProcedure
+  "calculate-price-with-color": publicProcedure
     .input(
       calculateItemInput.extend({
-        colorId: z.string().cuid({ error: 'ID del color debe ser válido' }).optional(),
+        colorId: z.string().cuid({ error: "ID del color debe ser válido" }).optional(),
       }),
     )
     .query(async ({ ctx, input }) => {
       const { calculatePriceWithColorUseCase } = await import(
-        '@domain/quotes/use-cases/calculate-price-with-color'
+        "@domain/quotes/use-cases/calculate-price-with-color"
       )
       const { createCalculatePriceWithColorDeps } = await import(
-        '@domain/quotes/di/quote.container'
+        "@domain/quotes/di/quote.container"
       )
 
       try {
-        logger.info('Calculating price with color', {
+        logger.info("Calculating price with color", {
           colorId: input.colorId,
           modelId: input.modelId,
         })
@@ -800,7 +800,7 @@ export const quoteRouter = createTRPCRouter({
         const deps = createCalculatePriceWithColorDeps(ctx.db)
         const result = await calculatePriceWithColorUseCase(input, deps)
 
-        logger.info('Price calculated with color', {
+        logger.info("Price calculated with color", {
           colorId: input.colorId,
           colorSurcharge: result.colorSurcharge,
           modelId: input.modelId,
@@ -812,13 +812,13 @@ export const quoteRouter = createTRPCRouter({
         if (error instanceof TRPCError) {
           throw error
         }
-        logger.error('Error calculating price with color', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error calculating price with color", {
+          error: error instanceof Error ? error.message : "Unknown error",
           modelId: input.modelId,
         })
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Error al calcular el precio con color',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error al calcular el precio con color",
         })
       }
     }),
@@ -831,18 +831,18 @@ export const quoteRouter = createTRPCRouter({
    *
    * Access: adminProcedure only
    */
-  'create-quote-from-items': adminProcedure
+  "create-quote-from-items": adminProcedure
     .input(createQuoteFromItemsInput)
     .output(createQuoteFromItemsOutput)
     .mutation(async ({ ctx, input }) => {
       try {
-        logger.info('Admin creating quote from items', {
+        logger.info("Admin creating quote from items", {
           clientId: input.clientId,
           itemCount: input.items.length,
           projectName: input.projectName,
         })
 
-        const { generateQuoteFromCart } = await import('./quote.service')
+        const { generateQuoteFromCart } = await import("./quote.service")
 
         // Transform items to cart item format with calculated prices
         const calculatedItems = await Promise.all(
@@ -867,14 +867,14 @@ export const quoteRouter = createTRPCRouter({
 
               if (!model) {
                 throw new TRPCError({
-                  code: 'BAD_REQUEST',
+                  code: "BAD_REQUEST",
                   message: `Modelo no encontrado: ${item.modelId}`,
                 })
               }
 
               if (!glassType) {
                 throw new TRPCError({
-                  code: 'BAD_REQUEST',
+                  code: "BAD_REQUEST",
                   message: `Tipo de vidrio no encontrado: ${item.glassTypeId}`,
                 })
               }
@@ -926,7 +926,7 @@ export const quoteRouter = createTRPCRouter({
           },
         })
 
-        logger.info('Admin quote created successfully', {
+        logger.info("Admin quote created successfully", {
           clientId: input.clientId,
           itemCount: result.itemCount,
           quoteId: result.quoteId,
@@ -943,16 +943,16 @@ export const quoteRouter = createTRPCRouter({
         if (error instanceof TRPCError) {
           throw error
         }
-        logger.error('Error creating quote from items', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error creating quote from items", {
+          error: error instanceof Error ? error.message : "Unknown error",
           itemCount: input.items.length,
         })
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
+          code: "INTERNAL_SERVER_ERROR",
           message:
             error instanceof Error
               ? error.message
-              : 'Error al crear la cotización. Intente nuevamente.',
+              : "Error al crear la cotización. Intente nuevamente.",
         })
       }
     }),
@@ -964,12 +964,12 @@ export const quoteRouter = createTRPCRouter({
    * This is a terminal transition - once a quote is accepted/rejected/canceled,
    * it cannot be changed again.
    */
-  'update-status': adminProcedure
+  "update-status": adminProcedure
     .input(updateStatusInput)
     .output(updateStatusOutput)
     .mutation(async ({ ctx, input }) => {
       try {
-        logger.info('Admin updating quote status', {
+        logger.info("Admin updating quote status", {
           quoteId: input.quoteId,
           status: input.status,
           userId: ctx.session.user.id,
@@ -982,15 +982,15 @@ export const quoteRouter = createTRPCRouter({
 
         if (!quote) {
           throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'Cotización no encontrada',
+            code: "NOT_FOUND",
+            message: "Cotización no encontrada",
           })
         }
 
         // Enforce state machine: only allow SENT → ACCEPTED | REJECTED | CANCELED
-        if (quote.status !== 'sent') {
+        if (quote.status !== "sent") {
           throw new TRPCError({
-            code: 'BAD_REQUEST',
+            code: "BAD_REQUEST",
             message: `No se puede cambiar el estado. La cotización está en estado "${quote.status}". Solo se pueden aceptar o rechazar cotizaciones en estado "enviada".`,
           })
         }
@@ -1001,28 +1001,28 @@ export const quoteRouter = createTRPCRouter({
           select: { id: true, status: true, updatedAt: true },
         })
 
-        logger.info('Quote status updated successfully', {
+        logger.info("Quote status updated successfully", {
           newStatus: input.status,
           quoteId: input.quoteId,
-          previousStatus: 'sent',
+          previousStatus: "sent",
         })
 
         return {
           id: updated.id,
-          status: updated.status as 'accepted' | 'rejected' | 'canceled',
+          status: updated.status as "accepted" | "rejected" | "canceled",
           updatedAt: updated.updatedAt,
         }
       } catch (error) {
         if (error instanceof TRPCError) {
           throw error
         }
-        logger.error('Error updating quote status', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error updating quote status", {
+          error: error instanceof Error ? error.message : "Unknown error",
           quoteId: input.quoteId,
         })
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Error al actualizar el estado de la cotización',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error al actualizar el estado de la cotización",
         })
       }
     }),

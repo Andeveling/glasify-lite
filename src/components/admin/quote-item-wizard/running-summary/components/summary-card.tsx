@@ -1,11 +1,11 @@
-'use client'
+"use client"
 
-import { Card, CardContent } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import { formatCurrency, formatNumber } from '@/lib/format'
-import { useRunningSummaryData } from '../hooks/use-running-summary-data'
-import { calculatePriceBreakdown } from '../utils/price-calculations'
-import { SummaryRow } from './summary-row'
+import { Card, CardContent } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { formatCurrency, formatNumber } from "@/lib/format"
+import { useRunningSummaryData } from "../hooks/use-running-summary-data"
+import { calculatePriceBreakdown } from "../utils/price-calculations"
+import { SummaryRow } from "./summary-row"
 
 export function SummaryCard() {
   const { watchedFields, modelData, colorData, glassTypeData, selectedServices, formatContext } =
@@ -34,7 +34,7 @@ export function SummaryCard() {
               value={
                 widthMm && heightMm
                   ? `${formatNumber(widthMm, { context: formatContext })} × ${formatNumber(heightMm, { context: formatContext })} mm`
-                  : '—'
+                  : "—"
               }
             />
             <SummaryRow
@@ -42,12 +42,12 @@ export function SummaryCard() {
               value={
                 areaM2 > 0
                   ? `${formatNumber(areaM2, { context: formatContext, decimals: 2 })} m²`
-                  : '—'
+                  : "—"
               }
             />
             <SummaryRow
               label="Cantidad"
-              value={quantity ? formatNumber(quantity, { context: formatContext }) : '—'}
+              value={quantity ? formatNumber(quantity, { context: formatContext }) : "—"}
             />
             {roomLocation && <SummaryRow label="Ubicación" value={roomLocation} />}
           </div>

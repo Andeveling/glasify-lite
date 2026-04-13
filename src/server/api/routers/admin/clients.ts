@@ -8,10 +8,10 @@
  * Implements delete protection: prevents deletion if client has quotes
  */
 
-import type { Prisma } from '@prisma/generated/client'
-import { TRPCError } from '@trpc/server'
-import logger from '@/lib/logger'
-import { adminProcedure, createTRPCRouter } from '@/server/api/trpc'
+import type { Prisma } from "@prisma/generated/client"
+import { TRPCError } from "@trpc/server"
+import logger from "@/lib/logger"
+import { adminProcedure, createTRPCRouter } from "@/server/api/trpc"
 
 // Validation constants
 const MAX_NAME_LENGTH = 100
@@ -24,34 +24,34 @@ const DEFAULT_PAGE_SIZE = 20
 
 // Input schemas
 const clientIdSchema = z.object({
-  id: z.string().cuid({ message: 'ID de cliente inválido' }),
+  id: z.string().cuid({ message: "ID de cliente inválido" }),
 })
 
 const clientCreateSchema = z.object({
   name: z
     .string()
-    .min(1, { message: 'El nombre es requerido' })
+    .min(1, { message: "El nombre es requerido" })
     .max(MAX_NAME_LENGTH, { message: `El nombre no puede exceder ${MAX_NAME_LENGTH} caracteres` })
     .trim(),
   email: z
     .string()
-    .email({ message: 'Correo electrónico inválido' })
+    .email({ message: "Correo electrónico inválido" })
     .max(MAX_EMAIL_LENGTH)
     .optional()
     .nullable(),
   phone: z
     .string()
-    .max(MAX_PHONE_LENGTH, { message: 'El teléfono no puede exceder 20 caracteres' })
+    .max(MAX_PHONE_LENGTH, { message: "El teléfono no puede exceder 20 caracteres" })
     .optional()
     .nullable(),
   company: z
     .string()
-    .max(MAX_COMPANY_LENGTH, { message: 'La empresa no puede exceder 100 caracteres' })
+    .max(MAX_COMPANY_LENGTH, { message: "La empresa no puede exceder 100 caracteres" })
     .optional()
     .nullable(),
   notes: z
     .string()
-    .max(MAX_NOTES_LENGTH, { message: 'Las notas no pueden exceder 500 caracteres' })
+    .max(MAX_NOTES_LENGTH, { message: "Las notas no pueden exceder 500 caracteres" })
     .optional()
     .nullable(),
 })
@@ -63,13 +63,13 @@ const clientListSchema = z.object({
   limit: z.number().int().positive().max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE),
   search: z
     .string()
-    .max(100, { message: 'La búsqueda no puede exceder 100 caracteres' })
+    .max(100, { message: "La búsqueda no puede exceder 100 caracteres" })
     .optional(),
-  sortBy: z.enum(['name', 'company', 'createdAt', 'updatedAt']).default('createdAt'),
-  sortOrder: z.enum(['asc', 'desc']).default('desc'),
+  sortBy: z.enum(["name", "company", "createdAt", "updatedAt"]).default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
 })
 
-import { z } from 'zod'
+import { z } from "zod"
 
 type ClientCreateInput = z.infer<typeof clientCreateSchema>
 type ClientUpdateInput = z.infer<typeof clientUpdateSchema>
@@ -125,7 +125,7 @@ export const clientsRouter = createTRPCRouter({
         take: input.limit,
       })
 
-      logger.info('Clients list retrieved', {
+      logger.info("Clients list retrieved", {
         userId: ctx.session.user.id,
         count: clients.length,
         total,
@@ -141,13 +141,13 @@ export const clientsRouter = createTRPCRouter({
         totalPages,
       }
     } catch (error) {
-      logger.error('Failed to list clients', {
+      logger.error("Failed to list clients", {
         userId: ctx.session.user.id,
         error: error instanceof Error ? error.message : String(error),
       })
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al obtener la lista de clientes',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al obtener la lista de clientes",
       })
     }
   }),
@@ -168,12 +168,12 @@ export const clientsRouter = createTRPCRouter({
 
       if (!client) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Cliente no encontrado',
+          code: "NOT_FOUND",
+          message: "Cliente no encontrado",
         })
       }
 
-      logger.info('Client retrieved', {
+      logger.info("Client retrieved", {
         userId: ctx.session.user.id,
         clientId: input.id,
       })
@@ -184,15 +184,15 @@ export const clientsRouter = createTRPCRouter({
         throw error
       }
 
-      logger.error('Failed to get client', {
+      logger.error("Failed to get client", {
         userId: ctx.session.user.id,
         clientId: input.id,
         error: error instanceof Error ? error.message : String(error),
       })
 
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al obtener el cliente',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al obtener el cliente",
       })
     }
   }),
@@ -212,7 +212,7 @@ export const clientsRouter = createTRPCRouter({
         },
       })
 
-      logger.info('Client created', {
+      logger.info("Client created", {
         userId: ctx.session.user.id,
         clientId: client.id,
         clientName: client.name,
@@ -220,15 +220,15 @@ export const clientsRouter = createTRPCRouter({
 
       return client
     } catch (error) {
-      logger.error('Failed to create client', {
+      logger.error("Failed to create client", {
         userId: ctx.session.user.id,
         input,
         error: error instanceof Error ? error.message : String(error),
       })
 
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al crear el cliente',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al crear el cliente",
       })
     }
   }),
@@ -248,8 +248,8 @@ export const clientsRouter = createTRPCRouter({
 
         if (!existing) {
           throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'Cliente no encontrado',
+            code: "NOT_FOUND",
+            message: "Cliente no encontrado",
           })
         }
 
@@ -258,7 +258,7 @@ export const clientsRouter = createTRPCRouter({
           data,
         })
 
-        logger.info('Client updated', {
+        logger.info("Client updated", {
           userId: ctx.session.user.id,
           clientId: id,
           changes: data,
@@ -270,15 +270,15 @@ export const clientsRouter = createTRPCRouter({
           throw error
         }
 
-        logger.error('Failed to update client', {
+        logger.error("Failed to update client", {
           userId: ctx.session.user.id,
           clientId: input.id,
           error: error instanceof Error ? error.message : String(error),
         })
 
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Error al actualizar el cliente',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error al actualizar el cliente",
         })
       }
     }),
@@ -295,7 +295,7 @@ export const clientsRouter = createTRPCRouter({
 
       if (quoteCount > 0) {
         throw new TRPCError({
-          code: 'PRECONDITION_FAILED',
+          code: "PRECONDITION_FAILED",
           message: `No se puede eliminar. El cliente tiene ${quoteCount} cotización(es) asociada(s)`,
         })
       }
@@ -306,8 +306,8 @@ export const clientsRouter = createTRPCRouter({
 
       if (!client) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Cliente no encontrado',
+          code: "NOT_FOUND",
+          message: "Cliente no encontrado",
         })
       }
 
@@ -315,29 +315,29 @@ export const clientsRouter = createTRPCRouter({
         where: { id: input.id },
       })
 
-      logger.info('Client deleted', {
+      logger.info("Client deleted", {
         userId: ctx.session.user.id,
         clientId: input.id,
       })
 
       return {
         success: true,
-        message: 'Cliente eliminado exitosamente',
+        message: "Cliente eliminado exitosamente",
       }
     } catch (error) {
       if (error instanceof TRPCError) {
         throw error
       }
 
-      logger.error('Failed to delete client', {
+      logger.error("Failed to delete client", {
         userId: ctx.session.user.id,
         clientId: input.id,
         error: error instanceof Error ? error.message : String(error),
       })
 
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al eliminar el cliente',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al eliminar el cliente",
       })
     }
   }),

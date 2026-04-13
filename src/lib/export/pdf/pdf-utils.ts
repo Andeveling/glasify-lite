@@ -67,12 +67,12 @@ export function formatDimensions(dimensions: string): string {
  */
 export function getGlassTypeName(type: string): string {
   const typeMap: Record<string, string> = {
-    clear: 'Claro',
-    frosted: 'Esmerilado',
-    insulated: 'Termo-acústico',
-    laminated: 'Laminado',
-    tempered: 'Templado',
-    tinted: 'Polarizado',
+    clear: "Claro",
+    frosted: "Esmerilado",
+    insulated: "Termo-acústico",
+    laminated: "Laminado",
+    tempered: "Templado",
+    tinted: "Polarizado",
   }
 
   return typeMap[type.toLowerCase()] || type
@@ -86,7 +86,7 @@ export function sanitizeText(text: string): string {
   return (
     text
       // biome-ignore lint/suspicious/noControlCharactersInRegex: Control characters removal is intentional for PDF security
-      .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
+      .replace(/[\u0000-\u001F\u007F-\u009F]/g, "") // Remove control characters
       .trim()
   )
 }

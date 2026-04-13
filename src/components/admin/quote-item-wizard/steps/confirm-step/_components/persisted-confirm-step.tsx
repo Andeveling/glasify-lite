@@ -1,19 +1,19 @@
-'use client'
+"use client"
 
-import { Loader2 } from 'lucide-react'
-import { useFormContext } from 'react-hook-form'
+import { Loader2 } from "lucide-react"
+import { useFormContext } from "react-hook-form"
 
-import { Button } from '@/components/ui/button'
-import { api } from '@/trpc/react'
-import type { WizardFormValues } from '../../../../wizard-form-schema'
+import { Button } from "@/components/ui/button"
+import { api } from "@/trpc/react"
+import type { WizardFormValues } from "../../../../wizard-form-schema"
 
-import { useQuoteItemSubmission } from '../use-quote-item-submission'
+import { useQuoteItemSubmission } from "../use-quote-item-submission"
 
 function PersistedConfirmStep({ quoteId, onSuccess }: { quoteId: string; onSuccess: () => void }) {
   const _form = useFormContext<WizardFormValues>()
   const { buildPayload } = useQuoteItemSubmission()
 
-  const mutation = api.quote['add-item'].useMutation({
+  const mutation = api.quote["add-item"].useMutation({
     onSuccess: () => {
       onSuccess()
     },

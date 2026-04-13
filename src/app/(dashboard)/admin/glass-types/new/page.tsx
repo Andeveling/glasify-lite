@@ -7,13 +7,13 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from 'next'
-import { Skeleton } from '@/components/ui/skeleton'
-import { GlassTypeForm } from '../_components/glass-type-form'
+import type { Metadata } from "next"
+import { Skeleton } from "@/components/ui/skeleton"
+import { GlassTypeForm } from "../_components/glass-type-form"
 
 export const metadata: Metadata = {
-  description: 'Crear un nuevo tipo de cristal con sus soluciones y características',
-  title: 'Nuevo Tipo de Cristal | Admin',
+  description: "Crear un nuevo tipo de cristal con sus soluciones y características",
+  title: "Nuevo Tipo de Cristal | Admin",
 }
 
 export default function NewGlassTypePage() {

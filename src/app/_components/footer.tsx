@@ -1,9 +1,9 @@
-import { Mail, MapPin, Package, Phone } from 'lucide-react'
-import Link from 'next/link'
-import { cn } from '@/lib/utils'
+import { Mail, MapPin, Package, Phone } from "lucide-react"
+import Link from "next/link"
+import { cn } from "@/lib/utils"
 
 type FooterProps = {
-  variant?: 'full' | 'minimal'
+  variant?: "full" | "minimal"
   className?: string
 }
 
@@ -11,10 +11,10 @@ type FooterProps = {
 // Update this annually or use a more dynamic approach after hydration
 const CURRENT_YEAR = 2024
 
-export function Footer({ variant = 'full', className }: FooterProps) {
-  if (variant === 'minimal') {
+export function Footer({ variant = "full", className }: FooterProps) {
+  if (variant === "minimal") {
     return (
-      <footer className={cn('border-t bg-background px-4 py-6', className)}>
+      <footer className={cn("border-t bg-background px-4 py-6", className)}>
         <div className="container mx-auto text-center">
           <div className="flex items-center justify-center space-x-2 text-muted-foreground text-sm">
             <Package aria-hidden="true" className="h-4 w-4 text-primary" />
@@ -28,7 +28,7 @@ export function Footer({ variant = 'full', className }: FooterProps) {
   }
 
   return (
-    <footer className={cn('border-t bg-background', className)}>
+    <footer className={cn("border-t bg-background", className)}>
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Brand Section */}

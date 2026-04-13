@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 /**
  * Settings Suppliers Content Component
@@ -9,8 +9,8 @@
  * @see /plan/refactor-manufacturer-to-tenant-config-1.md (TASK-037)
  */
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import type { MaterialType } from '@prisma/generated/client'
+import { zodResolver } from "@hookform/resolvers/zod"
+import type { MaterialType } from "@prisma/generated/client"
 import {
   Building2,
   Loader2,
@@ -20,13 +20,13 @@ import {
   ToggleLeft,
   ToggleRight,
   Trash2,
-} from 'lucide-react'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+} from "lucide-react"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -34,7 +34,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -43,15 +43,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from "@/components/ui/select"
 import {
   Table,
   TableBody,
@@ -59,38 +59,38 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { Textarea } from '@/components/ui/textarea'
+} from "@/components/ui/table"
+import { Textarea } from "@/components/ui/textarea"
 import {
   type CreateProfileSupplierInput,
   createProfileSupplierSchema,
   type UpdateProfileSupplierInput,
   updateProfileSupplierSchema,
-} from '@/server/schemas/supplier.schema'
-import type { RouterOutputs } from '@/trpc/react'
-import { api } from '@/trpc/react'
+} from "@/server/schemas/supplier.schema"
+import type { RouterOutputs } from "@/trpc/react"
+import { api } from "@/trpc/react"
 
 /**
  * Material Type Options for forms
  */
 const MATERIAL_TYPE_OPTIONS: { label: string; value: MaterialType }[] = [
-  { label: 'PVC', value: 'PVC' },
-  { label: 'Aluminio', value: 'ALUMINUM' },
-  { label: 'Madera', value: 'WOOD' },
-  { label: 'Mixto', value: 'MIXED' },
+  { label: "PVC", value: "PVC" },
+  { label: "Aluminio", value: "ALUMINUM" },
+  { label: "Madera", value: "WOOD" },
+  { label: "Mixto", value: "MIXED" },
 ]
 
 /**
  * Material Type Labels for display
  */
 const MATERIAL_TYPE_LABELS: Record<MaterialType, string> = {
-  ALUMINUM: 'Aluminio',
-  MIXED: 'Mixto',
-  PVC: 'PVC',
-  WOOD: 'Madera',
+  ALUMINUM: "Aluminio",
+  MIXED: "Mixto",
+  PVC: "PVC",
+  WOOD: "Madera",
 }
 
-type SupplierFormMode = 'create' | 'edit'
+type SupplierFormMode = "create" | "edit"
 
 type SupplierFormData = {
   id?: string
@@ -98,36 +98,36 @@ type SupplierFormData = {
 }
 
 type SettingsSuppliersContentProps = {
-  initialData: RouterOutputs['admin']['profile-supplier']['list']
+  initialData: RouterOutputs["admin"]["profile-supplier"]["list"]
 }
 
 export function SettingsSuppliersContent({ initialData }: SettingsSuppliersContentProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [formMode, setFormMode] = useState<SupplierFormMode>('create')
+  const [formMode, setFormMode] = useState<SupplierFormMode>("create")
   const [selectedSupplier, setSelectedSupplier] = useState<SupplierFormData | null>(null)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [materialTypeFilter, setMaterialTypeFilter] = useState<MaterialType | 'ALL'>('ALL')
-  const [isActiveFilter, setIsActiveFilter] = useState<'ALL' | 'ACTIVE' | 'INACTIVE'>('ALL')
+  const [searchQuery, setSearchQuery] = useState("")
+  const [materialTypeFilter, setMaterialTypeFilter] = useState<MaterialType | "ALL">("ALL")
+  const [isActiveFilter, setIsActiveFilter] = useState<"ALL" | "ACTIVE" | "INACTIVE">("ALL")
 
   const utils = api.useUtils()
 
   // Fetch suppliers with filters
-  let filterActiveStatus: 'all' | 'active' | 'inactive' = 'all'
-  if (isActiveFilter === 'ACTIVE') {
-    filterActiveStatus = 'active'
-  } else if (isActiveFilter === 'INACTIVE') {
-    filterActiveStatus = 'inactive'
+  let filterActiveStatus: "all" | "active" | "inactive" = "all"
+  if (isActiveFilter === "ACTIVE") {
+    filterActiveStatus = "active"
+  } else if (isActiveFilter === "INACTIVE") {
+    filterActiveStatus = "inactive"
   }
 
-  const { data, isLoading } = api.admin['profile-supplier'].list.useQuery(
+  const { data, isLoading } = api.admin["profile-supplier"].list.useQuery(
     {
       isActive: filterActiveStatus,
       limit: 100,
-      materialType: materialTypeFilter === 'ALL' ? undefined : materialTypeFilter,
+      materialType: materialTypeFilter === "ALL" ? undefined : materialTypeFilter,
       page: 1,
       search: searchQuery || undefined,
-      sortBy: 'name',
-      sortOrder: 'asc',
+      sortBy: "name",
+      sortOrder: "asc",
     },
     {
       initialData,
@@ -138,34 +138,34 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
   const suppliers = data?.items ?? []
 
   // Create mutation
-  const createMutation = api.admin['profile-supplier'].create.useMutation({
+  const createMutation = api.admin["profile-supplier"].create.useMutation({
     onError: (err: { message?: string }) => {
-      toast.error('Error al crear proveedor', {
-        description: err.message || 'Ocurrió un error inesperado',
+      toast.error("Error al crear proveedor", {
+        description: err.message || "Ocurrió un error inesperado",
       })
     },
     onSuccess: () => {
-      toast.success('Proveedor creado', {
-        description: 'El proveedor se creó correctamente',
+      toast.success("Proveedor creado", {
+        description: "El proveedor se creó correctamente",
       })
-      utils.admin['profile-supplier'].list.invalidate()
+      utils.admin["profile-supplier"].list.invalidate()
       setIsDialogOpen(false)
       form.reset()
     },
   })
 
   // Update mutation
-  const updateMutation = api.admin['profile-supplier'].update.useMutation({
+  const updateMutation = api.admin["profile-supplier"].update.useMutation({
     onError: (err: { message?: string }) => {
-      toast.error('Error al actualizar proveedor', {
-        description: err.message || 'Ocurrió un error inesperado',
+      toast.error("Error al actualizar proveedor", {
+        description: err.message || "Ocurrió un error inesperado",
       })
     },
     onSuccess: () => {
-      toast.success('Proveedor actualizado', {
-        description: 'Los cambios se guardaron correctamente',
+      toast.success("Proveedor actualizado", {
+        description: "Los cambios se guardaron correctamente",
       })
-      utils.admin['profile-supplier'].list.invalidate()
+      utils.admin["profile-supplier"].list.invalidate()
       setIsDialogOpen(false)
       setSelectedSupplier(null)
       form.reset()
@@ -173,30 +173,30 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
   })
 
   // Delete mutation
-  const deleteMutation = api.admin['profile-supplier'].delete.useMutation({
+  const deleteMutation = api.admin["profile-supplier"].delete.useMutation({
     onError: (err: { message?: string }) => {
-      toast.error('Error al eliminar proveedor', {
-        description: err.message || 'No se puede eliminar un proveedor con modelos asociados',
+      toast.error("Error al eliminar proveedor", {
+        description: err.message || "No se puede eliminar un proveedor con modelos asociados",
       })
     },
     onSuccess: () => {
-      toast.success('Proveedor eliminado', {
-        description: 'El proveedor se eliminó correctamente',
+      toast.success("Proveedor eliminado", {
+        description: "El proveedor se eliminó correctamente",
       })
-      utils.admin['profile-supplier'].list.invalidate()
+      utils.admin["profile-supplier"].list.invalidate()
     },
   })
 
   // Toggle active status
-  const toggleActiveMutation = api.admin['profile-supplier'].update.useMutation({
+  const toggleActiveMutation = api.admin["profile-supplier"].update.useMutation({
     onError: (err: { message?: string }) => {
-      toast.error('Error al cambiar estado', {
-        description: err.message || 'Ocurrió un error inesperado',
+      toast.error("Error al cambiar estado", {
+        description: err.message || "Ocurrió un error inesperado",
       })
     },
     onSuccess: () => {
-      toast.success('Estado actualizado')
-      utils.admin['profile-supplier'].list.invalidate()
+      toast.success("Estado actualizado")
+      utils.admin["profile-supplier"].list.invalidate()
     },
   })
 
@@ -204,31 +204,31 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
   const form = useForm<CreateProfileSupplierInput | UpdateProfileSupplierInput>({
     defaultValues: {
       isActive: true,
-      materialType: 'PVC' as MaterialType,
-      name: '',
-      notes: '',
+      materialType: "PVC" as MaterialType,
+      name: "",
+      notes: "",
     },
     resolver: zodResolver(
-      formMode === 'create' ? createProfileSupplierSchema : updateProfileSupplierSchema,
+      formMode === "create" ? createProfileSupplierSchema : updateProfileSupplierSchema,
     ),
   })
 
   // Handle create dialog open
   const handleCreateClick = () => {
-    setFormMode('create')
+    setFormMode("create")
     setSelectedSupplier(null)
     form.reset({
       isActive: true,
-      materialType: 'PVC',
-      name: '',
-      notes: '',
+      materialType: "PVC",
+      name: "",
+      notes: "",
     })
     setIsDialogOpen(true)
   }
 
   // Handle edit dialog open
   const handleEditClick = (supplier: (typeof suppliers)[0]) => {
-    setFormMode('edit')
+    setFormMode("edit")
     setSelectedSupplier({
       data: {
         isActive: supplier.isActive,
@@ -242,16 +242,16 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
       isActive: supplier.isActive,
       materialType: supplier.materialType,
       name: supplier.name,
-      notes: supplier.notes ?? '',
+      notes: supplier.notes ?? "",
     })
     setIsDialogOpen(true)
   }
 
   // Handle form submission
   const handleFormSubmit = (formData: CreateProfileSupplierInput | UpdateProfileSupplierInput) => {
-    const notes = formData.notes === null || formData.notes === '' ? undefined : formData.notes
+    const notes = formData.notes === null || formData.notes === "" ? undefined : formData.notes
 
-    if (formMode === 'create') {
+    if (formMode === "create") {
       createMutation.mutate({
         isActive: formData.isActive ?? true,
         materialType: formData.materialType as MaterialType,
@@ -330,7 +330,7 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
           Tipo de Material
         </label>
         <Select
-          onValueChange={(value) => setMaterialTypeFilter(value as MaterialType | 'ALL')}
+          onValueChange={(value) => setMaterialTypeFilter(value as MaterialType | "ALL")}
           value={materialTypeFilter}
         >
           <SelectTrigger id="materialType">
@@ -353,7 +353,7 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
           Estado
         </label>
         <Select
-          onValueChange={(value) => setIsActiveFilter(value as 'ALL' | 'ACTIVE' | 'INACTIVE')}
+          onValueChange={(value) => setIsActiveFilter(value as "ALL" | "ACTIVE" | "INACTIVE")}
           value={isActiveFilter}
         >
           <SelectTrigger id="isActive">
@@ -372,8 +372,8 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
         <CardHeader>
           <CardTitle>Proveedores</CardTitle>
           <CardDescription>
-            {suppliers.length}{' '}
-            {suppliers.length === 1 ? 'proveedor encontrado' : 'proveedores encontrados'}
+            {suppliers.length}{" "}
+            {suppliers.length === 1 ? "proveedor encontrado" : "proveedores encontrados"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -388,8 +388,8 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
               <Building2 className="size-12 text-muted-foreground" />
               <p className="text-muted-foreground">No se encontraron proveedores</p>
               <p className="text-muted-foreground text-sm">
-                {searchQuery || materialTypeFilter !== 'ALL' || isActiveFilter !== 'ALL'
-                  ? 'Intenta ajustar los filtros'
+                {searchQuery || materialTypeFilter !== "ALL" || isActiveFilter !== "ALL"
+                  ? "Intenta ajustar los filtros"
                   : 'Crea tu primer proveedor haciendo clic en "Nuevo Proveedor"'}
               </p>
             </div>
@@ -414,12 +414,12 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
                       <Badge variant="outline">{MATERIAL_TYPE_LABELS[supplier.materialType]}</Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={supplier.isActive ? 'default' : 'secondary'}>
-                        {supplier.isActive ? 'Activo' : 'Inactivo'}
+                      <Badge variant={supplier.isActive ? "default" : "secondary"}>
+                        {supplier.isActive ? "Activo" : "Inactivo"}
                       </Badge>
                     </TableCell>
                     <TableCell className="max-w-[200px] truncate text-muted-foreground text-sm">
-                      {supplier.notes || '-'}
+                      {supplier.notes || "-"}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
@@ -466,12 +466,12 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {formMode === 'create' ? 'Nuevo Proveedor' : 'Editar Proveedor'}
+              {formMode === "create" ? "Nuevo Proveedor" : "Editar Proveedor"}
             </DialogTitle>
             <DialogDescription>
-              {formMode === 'create'
-                ? 'Crea un nuevo proveedor de perfiles'
-                : 'Actualiza la información del proveedor'}
+              {formMode === "create"
+                ? "Crea un nuevo proveedor de perfiles"
+                : "Actualiza la información del proveedor"}
             </DialogDescription>
           </DialogHeader>
 
@@ -531,7 +531,7 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
                       <Textarea
                         placeholder="Información adicional sobre el proveedor..."
                         {...field}
-                        value={field.value ?? ''}
+                        value={field.value ?? ""}
                       />
                     </FormControl>
                     <FormDescription>Notas o información adicional</FormDescription>
@@ -571,7 +571,7 @@ export function SettingsSuppliersContent({ initialData }: SettingsSuppliersConte
                   {(createMutation.isPending || updateMutation.isPending) && (
                     <Loader2 className="mr-2 size-4 animate-spin" />
                   )}
-                  {formMode === 'create' ? 'Crear' : 'Guardar'}
+                  {formMode === "create" ? "Crear" : "Guardar"}
                 </Button>
               </DialogFooter>
             </form>

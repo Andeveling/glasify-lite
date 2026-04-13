@@ -11,12 +11,12 @@
  * const { results, isLoading, query, setQuery } = useAddressAutocomplete();
  */
 
-'use client'
+"use client"
 
-import { useState } from 'react'
-import type { GeocodingResult } from '@/app/(dashboard)/admin/quotes/_types/address.types'
-import { useDebounce } from '@/hooks/use-debounce-value'
-import { api } from '@/trpc/react'
+import { useState } from "react"
+import type { GeocodingResult } from "@/app/(dashboard)/admin/quotes/_types/address.types"
+import { useDebounce } from "@/hooks/use-debounce-value"
+import { api } from "@/trpc/react"
 
 const DEBOUNCE_DELAY_MS = 300
 const MIN_QUERY_LENGTH = 3
@@ -46,7 +46,7 @@ export function useAddressAutocomplete(options?: {
   minQueryLength?: number
   debounceMs?: number
 }) {
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState("")
 
   // Debounce query to reduce API calls
   const debouncedQuery = useDebounce(query, options?.debounceMs ?? DEBOUNCE_DELAY_MS)

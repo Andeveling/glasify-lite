@@ -1,19 +1,19 @@
-import type { Metadata } from 'next'
-import { Suspense } from 'react'
-import { api } from '@/trpc/server-client'
-import { GlassSolutionList } from './_components/glass-solution-list'
+import type { Metadata } from "next"
+import { Suspense } from "react"
+import { api } from "@/trpc/server-client"
+import { GlassSolutionList } from "./_components/glass-solution-list"
 
 export const metadata: Metadata = {
-  description: 'Gestiona las soluciones base para tipos de cristal',
-  title: 'Soluciones de cristal | Admin',
+  description: "Gestiona las soluciones base para tipos de cristal",
+  title: "Soluciones de cristal | Admin",
 }
 
 export default async function GlassSolutionsPage() {
-  const initialData = await api.admin['glass-solution'].list({
+  const initialData = await api.admin["glass-solution"].list({
     limit: 20,
     page: 1,
-    sortBy: 'sortOrder',
-    sortOrder: 'asc',
+    sortBy: "sortOrder",
+    sortOrder: "asc",
   })
 
   return (

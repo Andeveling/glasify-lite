@@ -13,15 +13,15 @@
  * - Respects TenantConfig for currency and locale
  */
 
-'use client'
+"use client"
 
-import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { formatCurrency, formatDateMedium } from '@/lib/format'
-import { useTenantConfig } from '@/providers/tenant-config-provider'
-import type { QuoteListItem as QuoteItem } from '../_types/quote-list.types'
-import { QuoteExpirationBadge } from './quote-expiration-badge'
-import { QuoteStatusBadge } from './quote-status-badge'
+import Link from "next/link"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { formatCurrency, formatDateMedium } from "@/lib/format"
+import { useTenantConfig } from "@/providers/tenant-config-provider"
+import type { QuoteListItem as QuoteItem } from "../_types/quote-list.types"
+import { QuoteExpirationBadge } from "./quote-expiration-badge"
+import { QuoteStatusBadge } from "./quote-status-badge"
 
 type QuoteListItemProps = {
   quote: QuoteItem
@@ -30,7 +30,7 @@ type QuoteListItemProps = {
 export function QuoteListItem({ quote }: QuoteListItemProps) {
   const tenantConfig = useTenantConfig()
 
-  const clientName = quote.client?.name || quote.client?.email || 'Cliente desconocido'
+  const clientName = quote.client?.name || quote.client?.email || "Cliente desconocido"
   const formattedDate = formatDateMedium(quote.createdAt, tenantConfig)
   const formattedTotal = formatCurrency(quote.total, {
     context: tenantConfig,
@@ -42,7 +42,7 @@ export function QuoteListItem({ quote }: QuoteListItemProps) {
         <CardHeader>
           <div className="flex items-start justify-between gap-2">
             <CardTitle className="line-clamp-1 text-base">
-              {quote.projectName || 'Sin nombre'}
+              {quote.projectName || "Sin nombre"}
             </CardTitle>
             <div className="flex shrink-0 gap-1">
               <QuoteStatusBadge status={quote.status} />

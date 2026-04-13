@@ -3,8 +3,8 @@
  * Manages logo file selection, preview, and validation
  */
 
-import { useState } from 'react'
-import { validateLogoFile } from '../_utils/branding-form.utils'
+import { useState } from "react"
+import { validateLogoFile } from "../_utils/branding-form.utils"
 
 export function useLogoUpload(initialLogoUrl: string | null) {
   const [logoPreview, setLogoPreview] = useState<string | null>(initialLogoUrl || null)

@@ -7,14 +7,14 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import { api } from '@/trpc/server-client'
-import { ColorForm } from '../../_components/color-form'
+import type { Metadata } from "next"
+import { notFound } from "next/navigation"
+import { api } from "@/trpc/server-client"
+import { ColorForm } from "../../_components/color-form"
 
 export const metadata: Metadata = {
-  description: 'Editar color del catálogo',
-  title: 'Editar Color | Admin',
+  description: "Editar color del catálogo",
+  title: "Editar Color | Admin",
 }
 
 type PageProps = {

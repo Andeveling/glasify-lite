@@ -10,16 +10,16 @@
  * - Render filters and list
  */
 
-'use client'
+"use client"
 
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { ColorsFilters } from './colors-filters'
-import { ColorsList } from './colors-list'
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { ColorsFilters } from "./colors-filters"
+import { ColorsList } from "./colors-list"
 
 type ColorsContentProps = {
-  initialData: Parameters<typeof ColorsList>[0]['initialData']
-  searchParams: Parameters<typeof ColorsList>[0]['searchParams']
+  initialData: Parameters<typeof ColorsList>[0]["initialData"]
+  searchParams: Parameters<typeof ColorsList>[0]["searchParams"]
 }
 
 export function ColorsContent({ initialData, searchParams }: ColorsContentProps) {
@@ -32,7 +32,7 @@ export function ColorsContent({ initialData, searchParams }: ColorsContentProps)
 
   // If create dialog is open, navigate to create page instead
   if (createDialogOpen) {
-    router.push('/admin/colors/new')
+    router.push("/admin/colors/new")
     return null
   }
 

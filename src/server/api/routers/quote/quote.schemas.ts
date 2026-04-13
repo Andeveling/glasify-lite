@@ -7,7 +7,7 @@
  * @module server/api/routers/quote/quote.schemas
  */
 
-import { z } from 'zod'
+import { z } from "zod"
 
 // ============================================================================
 // Constants
@@ -36,9 +36,9 @@ export const listUserQuotesInput = z.object({
   limit: z.number().int().positive().max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE),
   page: z.number().int().positive().default(1),
   search: z.string().optional(),
-  sortBy: z.enum(['createdAt', 'sentAt', 'validUntil', 'total']).default('createdAt'),
-  sortOrder: z.enum(['asc', 'desc']).default('desc'),
-  status: z.enum(['draft', 'sent', 'accepted', 'rejected', 'canceled']).optional(),
+  sortBy: z.enum(["createdAt", "sentAt", "validUntil", "total"]).default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+  status: z.enum(["draft", "sent", "accepted", "rejected", "canceled"]).optional(),
 })
 
 export type ListUserQuotesInput = z.infer<typeof listUserQuotesInput>
@@ -49,7 +49,7 @@ export type ListUserQuotesInput = z.infer<typeof listUserQuotesInput>
  * tRPC Query: quote['get-by-id']
  */
 export const getQuoteByIdInput = z.object({
-  id: z.string().cuid('ID de cotización debe ser válido'),
+  id: z.string().cuid("ID de cotización debe ser válido"),
 })
 
 export type GetQuoteByIdInput = z.infer<typeof getQuoteByIdInput>
@@ -66,10 +66,10 @@ export type GetQuoteByIdInput = z.infer<typeof getQuoteByIdInput>
  * All fields are required when creating a new quote
  */
 export const projectAddressSchema = z.object({
-  projectCity: z.string().min(1, 'Ciudad es requerida').max(MAX_ADDRESS_LENGTH),
-  projectName: z.string().min(1, 'Nombre del proyecto es requerido').max(MAX_PROJECT_NAME_LENGTH),
-  projectState: z.string().min(1, 'Estado/región es requerido').max(MAX_ADDRESS_LENGTH),
-  projectStreet: z.string().min(1, 'Dirección es requerida').max(MAX_ADDRESS_LENGTH),
+  projectCity: z.string().min(1, "Ciudad es requerida").max(MAX_ADDRESS_LENGTH),
+  projectName: z.string().min(1, "Nombre del proyecto es requerido").max(MAX_PROJECT_NAME_LENGTH),
+  projectState: z.string().min(1, "Estado/región es requerido").max(MAX_ADDRESS_LENGTH),
+  projectStreet: z.string().min(1, "Dirección es requerida").max(MAX_ADDRESS_LENGTH),
 })
 
 export type ProjectAddressSchema = z.infer<typeof projectAddressSchema>
@@ -116,10 +116,10 @@ export type CartItemForQuoteSchema = z.infer<typeof cartItemForQuoteSchema>
 export const generateQuoteFromCartInput = z.object({
   cartItems: z
     .array(cartItemForQuoteSchema)
-    .min(1, 'El carrito debe contener al menos un item')
-    .max(MAX_CART_ITEMS, 'El carrito no puede tener más de 20 items'),
+    .min(1, "El carrito debe contener al menos un item")
+    .max(MAX_CART_ITEMS, "El carrito no puede tener más de 20 items"),
   contactPhone: z.string().max(MAX_PHONE_LENGTH).optional(),
-  manufacturerId: z.string().cuid('ID del fabricante debe ser válido'),
+  manufacturerId: z.string().cuid("ID del fabricante debe ser válido"),
   projectAddress: projectAddressSchema,
 })
 
@@ -130,11 +130,11 @@ export type GenerateQuoteFromCartInput = z.infer<typeof generateQuoteFromCartInp
  * Simplified item structure for admin quote creation
  */
 export const createQuoteItemInput = z.object({
-  glassTypeId: z.string().cuid({ message: 'ID del tipo de vidrio inválido' }),
-  heightMm: z.number().int().positive({ message: 'Alto debe ser mayor a 0 mm' }),
-  modelId: z.string().cuid({ message: 'ID del modelo inválido' }),
-  quantity: z.number().int().positive({ message: 'Cantidad debe ser mayor a 0' }),
-  widthMm: z.number().int().positive({ message: 'Ancho debe ser mayor a 0 mm' }),
+  glassTypeId: z.string().cuid({ message: "ID del tipo de vidrio inválido" }),
+  heightMm: z.number().int().positive({ message: "Alto debe ser mayor a 0 mm" }),
+  modelId: z.string().cuid({ message: "ID del modelo inválido" }),
+  quantity: z.number().int().positive({ message: "Cantidad debe ser mayor a 0" }),
+  widthMm: z.number().int().positive({ message: "Ancho debe ser mayor a 0 mm" }),
 })
 
 export type CreateQuoteItemInput = z.infer<typeof createQuoteItemInput>
@@ -149,13 +149,13 @@ export const createQuoteFromItemsInput = z.object({
   /**
    * Required client ID for the quote.
    */
-  clientId: z.string().cuid({ message: 'ID del cliente es requerido' }),
+  clientId: z.string().cuid({ message: "ID del cliente es requerido" }),
   items: z
     .array(createQuoteItemInput)
-    .min(1, 'La cotización debe tener al menos un ítem')
-    .max(MAX_QUOTE_ITEMS, 'La cotización no puede tener más de 50 ítems'),
+    .min(1, "La cotización debe tener al menos un ítem")
+    .max(MAX_QUOTE_ITEMS, "La cotización no puede tener más de 50 ítems"),
   projectAddress: projectAddressSchema,
-  projectName: z.string().min(1, 'Nombre del proyecto es requerido').max(MAX_PROJECT_NAME_LENGTH),
+  projectName: z.string().min(1, "Nombre del proyecto es requerido").max(MAX_PROJECT_NAME_LENGTH),
 })
 
 export type CreateQuoteFromItemsInput = z.infer<typeof createQuoteFromItemsInput>
@@ -187,7 +187,7 @@ export const quoteListItemSchema = z.object({
   itemCount: z.number().int().nonnegative(),
   projectName: z.string(),
   sentAt: z.date().nullable(),
-  status: z.enum(['draft', 'sent', 'accepted', 'rejected', 'canceled']),
+  status: z.enum(["draft", "sent", "accepted", "rejected", "canceled"]),
   total: z.number().nonnegative(),
   validUntil: z.date().nullable(),
 })
@@ -253,7 +253,7 @@ export const quoteDetailSchema = z.object({
   projectAddress: projectAddressOutputSchema, // Use output schema (allows empty strings)
   projectName: z.string(), // T030 [US7]: For admin detail page
   sentAt: z.date().nullable(),
-  status: z.enum(['draft', 'sent', 'accepted', 'rejected', 'canceled']),
+  status: z.enum(["draft", "sent", "accepted", "rejected", "canceled"]),
   total: z.number().nonnegative(),
   totalUnits: z.number().int().nonnegative(),
   user: z
@@ -261,7 +261,7 @@ export const quoteDetailSchema = z.object({
       id: z.string(),
       name: z.string().nullable(),
       email: z.string().nullable(),
-      role: z.enum(['admin', 'seller']),
+      role: z.enum(["admin", "seller"]),
     })
     .nullable(), // Legacy field - kept for backward compatibility
   userEmail: z.string().optional(),
@@ -281,7 +281,7 @@ export type GetQuoteByIdOutput = z.infer<typeof getQuoteByIdOutput>
 /**
  * Generate quote response
  */
-export const generateQuoteFromCartOutput = z.discriminatedUnion('success', [
+export const generateQuoteFromCartOutput = z.discriminatedUnion("success", [
   z.object({
     data: z.object({
       quoteId: z.string().cuid(),
@@ -291,12 +291,12 @@ export const generateQuoteFromCartOutput = z.discriminatedUnion('success', [
   z.object({
     error: z.object({
       code: z.enum([
-        'EMPTY_CART',
-        'INVALID_ADDRESS',
-        'PRICE_CALCULATION_FAILED',
-        'TRANSACTION_FAILED',
-        'UNAUTHORIZED',
-        'UNKNOWN',
+        "EMPTY_CART",
+        "INVALID_ADDRESS",
+        "PRICE_CALCULATION_FAILED",
+        "TRANSACTION_FAILED",
+        "UNAUTHORIZED",
+        "UNKNOWN",
       ]),
       message: z.string(),
     }),
@@ -328,14 +328,14 @@ export type GenerateQuoteFromCartOutput = z.infer<typeof generateQuoteFromCartOu
  * ```
  */
 export const sendToVendorInput = z.object({
-  contactEmail: z.email('Correo electrónico inválido').optional(),
+  contactEmail: z.email("Correo electrónico inválido").optional(),
   contactPhone: z
     .string()
     .regex(
       /^\+?[1-9]\d{9,14}$/,
-      'Formato de teléfono inválido. Debe incluir código de país (ej: +57 300 123 4567)',
+      "Formato de teléfono inválido. Debe incluir código de país (ej: +57 300 123 4567)",
     ),
-  quoteId: z.cuid('ID de cotización inválido'),
+  quoteId: z.cuid("ID de cotización inválido"),
 })
 
 export type SendToVendorInput = z.infer<typeof sendToVendorInput>
@@ -363,7 +363,7 @@ export const sendToVendorOutput = z.object({
   currency: z.string().length(CURRENCY_CODE_LENGTH),
   id: z.cuid(),
   sentAt: z.date(),
-  status: z.literal('sent'),
+  status: z.literal("sent"),
   total: z.number().nonnegative(),
 })
 
@@ -384,9 +384,9 @@ export type SendToVendorOutput = z.infer<typeof sendToVendorOutput>
  * - SENT → CANCELED
  */
 export const updateStatusInput = z.object({
-  quoteId: z.cuid({ message: 'ID de cotización inválido' }),
-  status: z.enum(['accepted', 'rejected', 'canceled'], {
-    error: 'Estado inválido. Solo se permite accepted, rejected o canceled',
+  quoteId: z.cuid({ message: "ID de cotización inválido" }),
+  status: z.enum(["accepted", "rejected", "canceled"], {
+    error: "Estado inválido. Solo se permite accepted, rejected o canceled",
   }),
 })
 
@@ -397,7 +397,7 @@ export type UpdateStatusInput = z.infer<typeof updateStatusInput>
  */
 export const updateStatusOutput = z.object({
   id: z.string().cuid(),
-  status: z.enum(['accepted', 'rejected', 'canceled']),
+  status: z.enum(["accepted", "rejected", "canceled"]),
   updatedAt: z.date(),
 })
 

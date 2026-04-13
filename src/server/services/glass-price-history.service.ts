@@ -12,7 +12,7 @@
  * - Consider if price history is still needed for glass types (vs just models)
  */
 
-import logger from '@/lib/logger'
+import logger from "@/lib/logger"
 
 /**
  * @deprecated - Use TenantGlassTypePrice instead
@@ -44,7 +44,7 @@ export function createGlassTypePriceHistory(
   change: GlassTypePriceChange,
 ): Promise<GlassTypePriceHistoryRecord> {
   logger.warn(
-    'createGlassTypePriceHistory called but GlassTypePriceHistory model no longer exists',
+    "createGlassTypePriceHistory called but GlassTypePriceHistory model no longer exists",
     {
       glassTypeId: change.glassTypeId,
     },
@@ -56,7 +56,7 @@ export function createGlassTypePriceHistory(
     createdBy: change.createdBy,
     effectiveFrom: new Date(),
     glassTypeId: change.glassTypeId,
-    id: 'deprecated',
+    id: "deprecated",
     pricePerSqm: change.pricePerSqm,
     reason: change.reason ?? null,
   })
@@ -69,7 +69,7 @@ export function getGlassTypePriceHistory(
   glassTypeId: string,
   limit = 10,
 ): Promise<GlassTypePriceHistoryRecord[]> {
-  logger.warn('getGlassTypePriceHistory called but GlassTypePriceHistory model no longer exists', {
+  logger.warn("getGlassTypePriceHistory called but GlassTypePriceHistory model no longer exists", {
     glassTypeId,
     limit,
   })
@@ -89,7 +89,7 @@ export function hasPriceChanged(currentPrice: number, updatedPrice: number): boo
 export function getLatestGlassTypePrice(
   glassTypeId: string,
 ): Promise<GlassTypePriceHistoryRecord | null> {
-  logger.warn('getLatestGlassTypePrice called but GlassTypePriceHistory model no longer exists', {
+  logger.warn("getLatestGlassTypePrice called but GlassTypePriceHistory model no longer exists", {
     glassTypeId,
   })
   return Promise.resolve(null)

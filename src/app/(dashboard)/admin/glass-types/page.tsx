@@ -19,28 +19,28 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from 'next'
-import { Suspense } from 'react'
-import { Skeleton } from '@/components/ui/skeleton'
-import { api } from '@/trpc/server-client'
-import { GlassTypesFilters } from './_components/glass-types-filters'
-import { GlassTypesTable } from './_components/glass-types-table'
+import type { Metadata } from "next"
+import { Suspense } from "react"
+import { Skeleton } from "@/components/ui/skeleton"
+import { api } from "@/trpc/server-client"
+import { GlassTypesFilters } from "./_components/glass-types-filters"
+import { GlassTypesTable } from "./_components/glass-types-table"
 
 export const metadata: Metadata = {
   description:
-    'Administra tipos de vidrio: espesores, características técnicas, precios y compatibilidad',
-  title: 'Gestión de Tipos de Vidrio | Admin',
+    "Administra tipos de vidrio: espesores, características técnicas, precios y compatibilidad",
+  title: "Gestión de Tipos de Vidrio | Admin",
 }
 
 // Force dynamic rendering - requires database connection
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 type SearchParams = Promise<{
   isActive?: string
   page?: string
   search?: string
   sortBy?: string
-  sortOrder?: 'asc' | 'desc'
+  sortOrder?: "asc" | "desc"
 }>
 
 type PageProps = {
@@ -71,18 +71,18 @@ async function GlassTypesTableContent({
   sortOrder,
 }: {
   page: number
-  isActive: 'all' | 'active' | 'inactive'
+  isActive: "all" | "active" | "inactive"
   search?: string
   sortBy: string
-  sortOrder: 'asc' | 'desc'
+  sortOrder: "asc" | "desc"
 }) {
   // Fetch glass types data (heavy query inside Suspense)
-  const initialData = await api.admin['glass-type'].list({
+  const initialData = await api.admin["glass-type"].list({
     isActive,
     limit: 20,
     page,
     search,
-    sortBy: sortBy as 'name' | 'thicknessMm' | 'pricePerSqm' | 'createdAt',
+    sortBy: sortBy as "name" | "thicknessMm" | "pricePerSqm" | "createdAt",
     sortOrder,
   })
 
@@ -116,21 +116,21 @@ export default async function GlassTypesPage({ searchParams }: PageProps) {
 
   // Parse search params (outside Suspense)
   const page = Number(params.page) || 1
-  const isActive = (params.isActive && params.isActive !== 'all' ? params.isActive : 'all') as
-    | 'all'
-    | 'active'
-    | 'inactive'
+  const isActive = (params.isActive && params.isActive !== "all" ? params.isActive : "all") as
+    | "all"
+    | "active"
+    | "inactive"
   const search = params.search || undefined
-  const sortBy = params.sortBy || 'name'
-  const sortOrder = (params.sortOrder || 'asc') as 'asc' | 'desc'
+  const sortBy = params.sortBy || "name"
+  const sortOrder = (params.sortOrder || "asc") as "asc" | "desc"
 
   // Fetch suppliers for filter dropdown (lightweight query outside Suspense)
-  const suppliersData = await api.admin['glass-supplier'].list({
-    isActive: 'active',
+  const suppliersData = await api.admin["glass-supplier"].list({
+    isActive: "active",
     limit: 100,
     page: 1,
-    sortBy: 'name',
-    sortOrder: 'asc',
+    sortBy: "name",
+    sortOrder: "asc",
   })
 
   return (

@@ -5,16 +5,16 @@
  * provided per-unit value. Reuses ServiceCalculator quantity logic for
  * area/perimeter/unit calculations to keep behaviour consistent.
  */
-import Decimal from 'decimal.js'
-import { ROUND_MODE, ROUND_SCALE } from '../constants'
-import type { Dimensions } from '../entities/dimensions'
-import type { AdjustmentInput, AdjustmentResult } from '../types'
-import { ServiceUnit } from '../types'
+import Decimal from "decimal.js"
+import { ROUND_MODE, ROUND_SCALE } from "../constants"
+import type { Dimensions } from "../entities/dimensions"
+import type { AdjustmentInput, AdjustmentResult } from "../types"
+import { ServiceUnit } from "../types"
 import {
   calculateAreaQuantity,
   calculateFixedQuantity,
   calculatePerimeterQuantity,
-} from './quantity-calculations'
+} from "./quantity-calculations"
 
 /**
  * Calculate a single adjustment amount

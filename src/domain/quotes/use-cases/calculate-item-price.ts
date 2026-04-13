@@ -10,19 +10,19 @@
  * Usa repositories (ports) para acceso a datos.
  */
 
-import type { GlassType, Model, Service } from '@prisma/generated/client'
-import * as E from 'fp-ts/Either'
-import { pipe } from 'fp-ts/function'
-import * as O from 'fp-ts/Option'
-import * as TE from 'fp-ts/TaskEither'
-import type { PriceCalculatorFn, PricingRepo } from '../ports/pricing-repo'
+import type { GlassType, Model, Service } from "@prisma/generated/client"
+import * as E from "fp-ts/Either"
+import { pipe } from "fp-ts/function"
+import * as O from "fp-ts/Option"
+import * as TE from "fp-ts/TaskEither"
+import type { PriceCalculatorFn, PricingRepo } from "../ports/pricing-repo"
 import {
   validateColorSurcharge,
   validateDimensions,
   validateGlassTypeCompatibility,
   validateModelAvailability,
   validateQuantity,
-} from '../services/quote-validator.service'
+} from "../services/quote-validator.service"
 
 /**
  * Input para calcular precio de un ítem
@@ -33,15 +33,15 @@ export type CalculateItemPriceInput = {
   widthMm: number
   heightMm: number
   quantity: number
-  unit: 'unit' | 'sqm' | 'ml'
+  unit: "unit" | "sqm" | "ml"
   services: Array<{
     serviceId: string
     quantity?: number
   }>
   adjustments: Array<{
     concept: string
-    sign: 'positive' | 'negative'
-    unit: 'unit' | 'sqm' | 'ml'
+    sign: "positive" | "negative"
+    unit: "unit" | "sqm" | "ml"
     value: number
   }>
   colorSurchargePercentage?: number
@@ -57,7 +57,7 @@ export type CalculateItemPriceOutput = {
   colorSurchargeAmount?: number
   services: Array<{
     serviceId: string
-    unit: 'unit' | 'sqm' | 'ml'
+    unit: "unit" | "sqm" | "ml"
     quantity: number
     amount: number
   }>
@@ -73,7 +73,7 @@ export type CalculateItemPriceOutput = {
  */
 export type CalculateItemPriceDeps = Pick<
   PricingRepo,
-  'findModel' | 'findGlassType' | 'findServices'
+  "findModel" | "findGlassType" | "findServices"
 > & {
   calculatePrice: PriceCalculatorFn
 }
@@ -94,17 +94,17 @@ export async function calculateItemPriceUseCase(
 
   const eitherContext = await pipe(
     TE.Do,
-    TE.bind('model', () =>
+    TE.bind("model", () =>
       pipe(
         TE.tryCatch(
           () => deps.findModel(input.modelId),
-          () => new Error('Error fetching model'),
+          () => new Error("Error fetching model"),
         ),
         TE.chain((model) =>
           pipe(
             O.fromNullable(model),
             O.fold(
-              () => TE.left(new Error('Modelo no encontrado')),
+              () => TE.left(new Error("Modelo no encontrado")),
               (m) => {
                 validateModelAvailability(m)
                 validateGlassTypeCompatibility(m, input.glassTypeId)
@@ -119,24 +119,24 @@ export async function calculateItemPriceUseCase(
         ),
       ),
     ),
-    TE.bind('glassType', () =>
+    TE.bind("glassType", () =>
       pipe(
         TE.tryCatch(
           () => deps.findGlassType(input.glassTypeId),
-          () => new Error('Error fetching glass type'),
+          () => new Error("Error fetching glass type"),
         ),
         TE.chain((glassType) =>
           pipe(
             O.fromNullable(glassType),
             O.fold(
-              () => TE.left(new Error('Tipo de vidrio no encontrado')),
+              () => TE.left(new Error("Tipo de vidrio no encontrado")),
               (g: GlassType) => TE.right(g),
             ),
           ),
         ),
       ),
     ),
-    TE.bind('services', () => {
+    TE.bind("services", () => {
       const serviceIds = input.services.map((s) => s.serviceId)
       if (serviceIds.length === 0) {
         return TE.right([])
@@ -144,7 +144,7 @@ export async function calculateItemPriceUseCase(
       return pipe(
         TE.tryCatch(
           () => deps.findServices(serviceIds),
-          () => new Error('Error fetching services'),
+          () => new Error("Error fetching services"),
         ),
         TE.chain((services) => {
           for (const serviceInput of input.services) {
@@ -171,7 +171,7 @@ export async function calculateItemPriceUseCase(
     return {
       serviceId: service.id,
       name: service.name,
-      unit: service.unit as 'unit' | 'sqm' | 'ml',
+      unit: service.unit as "unit" | "sqm" | "ml",
       rate: service.rate.toNumber(),
       minimumBillingUnit: service.minimumBillingUnit?.toNumber(),
       quantityOverride: serviceInput.quantity,

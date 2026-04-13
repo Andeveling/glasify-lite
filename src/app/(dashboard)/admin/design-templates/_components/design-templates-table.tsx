@@ -1,7 +1,7 @@
-'use client'
+"use client"
 
-import { DesignRenderer } from '@/components/design'
-import { Badge } from '@/components/ui/badge'
+import { DesignRenderer } from "@/components/design"
+import { Badge } from "@/components/ui/badge"
 import {
   Table,
   TableBody,
@@ -9,12 +9,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import type { DesignTemplateConfig } from '@/domain/design'
-import type { RouterOutputs } from '@/trpc/react'
-import { TemplateActions } from './template-actions'
+} from "@/components/ui/table"
+import type { DesignTemplateConfig } from "@/domain/design"
+import type { RouterOutputs } from "@/trpc/react"
+import { TemplateActions } from "./template-actions"
 
-type DesignTemplateItem = RouterOutputs['admin']['design-template']['list']['items'][number]
+type DesignTemplateItem = RouterOutputs["admin"]["design-template"]["list"]["items"][number]
 
 type DesignTemplatesTableProps = {
   items: DesignTemplateItem[]
@@ -23,9 +23,9 @@ type DesignTemplatesTableProps = {
 
 function parseFrameConfig(raw: string) {
   try {
-    return JSON.parse(raw) as { thickness: number; profileStyle: 'simple' | 'double' | 'premium' }
+    return JSON.parse(raw) as { thickness: number; profileStyle: "simple" | "double" | "premium" }
   } catch {
-    return { thickness: 4, profileStyle: 'simple' as const }
+    return { thickness: 4, profileStyle: "simple" as const }
   }
 }
 

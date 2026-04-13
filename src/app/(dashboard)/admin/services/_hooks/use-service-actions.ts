@@ -11,11 +11,11 @@
  * @module app/(dashboard)/admin/services/_hooks/use-service-actions
  */
 
-'use client'
+"use client"
 
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
-import { api } from '@/trpc/react'
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { api } from "@/trpc/react"
 
 type UseServiceActionsParams = {
   /** Current search parameters for cache invalidation */
@@ -24,7 +24,7 @@ type UseServiceActionsParams = {
     page?: string
     search?: string
     sortBy?: string
-    sortOrder?: 'asc' | 'desc'
+    sortOrder?: "asc" | "desc"
     type?: string
   }
   /** Current pagination limit for cache invalidation */
@@ -71,17 +71,17 @@ export function useServiceActions({
 
   // Helper to build query input for cache operations
   const buildQueryInput = () => ({
-    isActive: searchParams.isActive as 'all' | 'active' | 'inactive' | undefined,
+    isActive: searchParams.isActive as "all" | "active" | "inactive" | undefined,
     limit,
     page: Number(searchParams.page) || 1,
     search: searchParams.search,
-    sortBy: (searchParams.sortBy || 'name') as 'name' | 'createdAt' | 'updatedAt' | 'rate',
-    sortOrder: (searchParams.sortOrder || 'asc') as 'asc' | 'desc',
-    type: (searchParams.type !== 'all' ? searchParams.type : undefined) as
-      | 'all'
-      | 'area'
-      | 'perimeter'
-      | 'fixed'
+    sortBy: (searchParams.sortBy || "name") as "name" | "createdAt" | "updatedAt" | "rate",
+    sortOrder: (searchParams.sortOrder || "asc") as "asc" | "desc",
+    type: (searchParams.type !== "all" ? searchParams.type : undefined) as
+      | "all"
+      | "area"
+      | "perimeter"
+      | "fixed"
       | undefined,
   })
 
@@ -111,7 +111,7 @@ export function useServiceActions({
       }
 
       // Show immediate feedback
-      toast.loading('Eliminando servicio...', { id: 'delete-service' })
+      toast.loading("Eliminando servicio...", { id: "delete-service" })
 
       return { previousData }
     },
@@ -121,14 +121,14 @@ export function useServiceActions({
         utils.admin.service.list.setData(buildQueryInput(), context.previousData)
       }
 
-      toast.error('Error al eliminar servicio', {
+      toast.error("Error al eliminar servicio", {
         description: error.message,
-        id: 'delete-service',
+        id: "delete-service",
       })
     },
     onSuccess: () => {
-      toast.success('Servicio eliminado correctamente', {
-        id: 'delete-service',
+      toast.success("Servicio eliminado correctamente", {
+        id: "delete-service",
       })
       onSuccessAction?.()
     },
@@ -166,8 +166,8 @@ export function useServiceActions({
       }
 
       // Show immediate feedback
-      const action = variables.isActive ? 'Activando' : 'Desactivando'
-      toast.loading(`${action} servicio...`, { id: 'toggle-service' })
+      const action = variables.isActive ? "Activando" : "Desactivando"
+      toast.loading(`${action} servicio...`, { id: "toggle-service" })
 
       return { previousData }
     },
@@ -177,15 +177,15 @@ export function useServiceActions({
         utils.admin.service.list.setData(buildQueryInput(), context.previousData)
       }
 
-      toast.error('Error al cambiar estado del servicio', {
+      toast.error("Error al cambiar estado del servicio", {
         description: error.message,
-        id: 'toggle-service',
+        id: "toggle-service",
       })
     },
     onSuccess: (_data, variables) => {
-      const action = variables.isActive ? 'activado' : 'desactivado'
+      const action = variables.isActive ? "activado" : "desactivado"
       toast.success(`Servicio ${action} correctamente`, {
-        id: 'toggle-service',
+        id: "toggle-service",
       })
       onSuccessAction?.()
     },

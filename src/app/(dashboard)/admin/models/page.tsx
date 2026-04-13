@@ -24,16 +24,16 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from 'next'
-import { Suspense } from 'react'
-import { Skeleton } from '@/components/ui/skeleton'
-import { api } from '@/trpc/server-client'
-import { ModelsFilters } from './_components/models-filters'
-import { ModelsTable } from './_components/models-table'
+import type { Metadata } from "next"
+import { Suspense } from "react"
+import { Skeleton } from "@/components/ui/skeleton"
+import { api } from "@/trpc/server-client"
+import { ModelsFilters } from "./_components/models-filters"
+import { ModelsTable } from "./_components/models-table"
 
 export const metadata: Metadata = {
-  description: 'Administra los modelos de ventanas y puertas con sus dimensiones y precios',
-  title: 'Modelos | Admin',
+  description: "Administra los modelos de ventanas y puertas con sus dimensiones y precios",
+  title: "Modelos | Admin",
 }
 
 // MIGRATED: Removed export const revalidate = 30 (incompatible with Cache Components)
@@ -47,7 +47,7 @@ type SearchParams = Promise<{
   page?: string
   search?: string
   sortBy?: string
-  sortOrder?: 'asc' | 'desc'
+  sortOrder?: "asc" | "desc"
 }>
 
 type PageProps = {
@@ -84,11 +84,11 @@ async function ModelsTableContent({
   sortOrder,
 }: {
   page: number
-  status: 'all' | 'draft' | 'published'
+  status: "all" | "draft" | "published"
   profileSupplierId?: string
   search?: string
   sortBy: string
-  sortOrder: 'asc' | 'desc'
+  sortOrder: "asc" | "desc"
 }) {
   // Fetch models data (heavy query inside Suspense)
   const initialData = await api.admin.model.list({
@@ -96,7 +96,7 @@ async function ModelsTableContent({
     page,
     profileSupplierId,
     search,
-    sortBy: sortBy as 'name' | 'createdAt' | 'updatedAt' | 'basePrice',
+    sortBy: sortBy as "name" | "createdAt" | "updatedAt" | "basePrice",
     sortOrder,
     status,
   })
@@ -121,7 +121,7 @@ async function ModelsTableContent({
         page,
         profileSupplierId,
         search,
-        sortBy: sortBy as 'name' | 'createdAt' | 'updatedAt' | 'basePrice',
+        sortBy: sortBy as "name" | "createdAt" | "updatedAt" | "basePrice",
         sortOrder,
         status,
       }}
@@ -134,25 +134,25 @@ export default async function ModelsPage({ searchParams }: PageProps) {
 
   // Parse search params (outside Suspense)
   const page = Number(params.page) || 1
-  const status = (params.status && params.status !== 'all' ? params.status : 'all') as
-    | 'all'
-    | 'draft'
-    | 'published'
+  const status = (params.status && params.status !== "all" ? params.status : "all") as
+    | "all"
+    | "draft"
+    | "published"
   const profileSupplierId =
-    params.profileSupplierId && params.profileSupplierId !== 'all'
+    params.profileSupplierId && params.profileSupplierId !== "all"
       ? params.profileSupplierId
       : undefined
   const search = params.search || undefined
-  const sortBy = params.sortBy || 'createdAt'
-  const sortOrder = (params.sortOrder || 'desc') as 'asc' | 'desc'
+  const sortBy = params.sortBy || "createdAt"
+  const sortOrder = (params.sortOrder || "desc") as "asc" | "desc"
 
   // Fetch suppliers for filter dropdown (lightweight query outside Suspense)
-  const suppliersData = await api.admin['profile-supplier'].list({
-    isActive: 'active',
+  const suppliersData = await api.admin["profile-supplier"].list({
+    isActive: "active",
     limit: 100,
     page: 1,
-    sortBy: 'name',
-    sortOrder: 'asc',
+    sortBy: "name",
+    sortOrder: "asc",
   })
 
   return (

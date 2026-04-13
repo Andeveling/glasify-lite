@@ -3,37 +3,37 @@
  * Fetches profile suppliers and glass types with 5-minute stale time
  */
 
-import { api } from '@/trpc/react'
+import { api } from "@/trpc/react"
 
 const FIVE_MINUTES_MS = 300_000
 const CATALOG_LIMIT = 100
 
 export function useModelCatalogData() {
-  const { data: suppliersData } = api.admin['profile-supplier'].list.useQuery(
+  const { data: suppliersData } = api.admin["profile-supplier"].list.useQuery(
     {
       limit: CATALOG_LIMIT,
       page: 1,
-      sortBy: 'name',
-      sortOrder: 'asc',
+      sortBy: "name",
+      sortOrder: "asc",
     },
     {
       staleTime: FIVE_MINUTES_MS,
     },
   )
 
-  const { data: glassTypesData } = api.admin['glass-type'].list.useQuery(
+  const { data: glassTypesData } = api.admin["glass-type"].list.useQuery(
     {
       limit: CATALOG_LIMIT,
       page: 1,
-      sortBy: 'name',
-      sortOrder: 'asc',
+      sortBy: "name",
+      sortOrder: "asc",
     },
     {
       staleTime: FIVE_MINUTES_MS,
     },
   )
 
-  const { data: templatesData } = api.admin['design-template'].listAll.useQuery(undefined, {
+  const { data: templatesData } = api.admin["design-template"].listAll.useQuery(undefined, {
     staleTime: FIVE_MINUTES_MS,
   })
 

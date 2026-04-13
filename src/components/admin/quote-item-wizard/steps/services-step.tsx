@@ -1,33 +1,33 @@
-'use client'
+"use client"
 
-import { useFormContext } from 'react-hook-form'
-import { useTenantConfig } from '@/app/_hooks/use-tenant-config'
-import { Card, CardContent } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Skeleton } from '@/components/ui/skeleton'
-import { formatCurrency } from '@/lib/format'
-import { api } from '@/trpc/react'
-import type { WizardFormValues } from '../wizard-form-schema'
+import { useFormContext } from "react-hook-form"
+import { useTenantConfig } from "@/app/_hooks/use-tenant-config"
+import { Card, CardContent } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Skeleton } from "@/components/ui/skeleton"
+import { formatCurrency } from "@/lib/format"
+import { api } from "@/trpc/react"
+import type { WizardFormValues } from "../wizard-form-schema"
 
 function ServicesStep() {
   const form = useFormContext<WizardFormValues>()
-  const selectedServiceIds = form.watch('serviceIds')
+  const selectedServiceIds = form.watch("serviceIds")
   const { formatContext } = useTenantConfig()
 
-  const { data: services, isLoading } = api.catalog['list-services'].useQuery({})
+  const { data: services, isLoading } = api.catalog["list-services"].useQuery({})
 
   const handleToggleService = (serviceId: string) => {
     const current = selectedServiceIds ?? []
     if (current.includes(serviceId)) {
       form.setValue(
-        'serviceIds',
+        "serviceIds",
         current.filter((id) => id !== serviceId),
         {
           shouldValidate: true,
         },
       )
     } else {
-      form.setValue('serviceIds', [...current, serviceId], { shouldValidate: true })
+      form.setValue("serviceIds", [...current, serviceId], { shouldValidate: true })
     }
   }
 
@@ -77,8 +77,8 @@ function ServicesStep() {
                 key={service.id}
                 className={`cursor-pointer border transition-all duration-200 hover:shadow-md ${
                   isSelected
-                    ? 'border-primary bg-primary/5 ring-2 ring-primary/20 shadow-md'
-                    : 'border-border/50 hover:border-primary/30'
+                    ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-md"
+                    : "border-border/50 hover:border-primary/30"
                 }`}
                 onClick={() => handleToggleService(service.id)}
                 role="button"

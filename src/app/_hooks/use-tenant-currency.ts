@@ -5,9 +5,9 @@
  * Provides locale-aware currency formatting
  */
 
-'use client'
+"use client"
 
-import { api } from '@/trpc/react'
+import { api } from "@/trpc/react"
 
 const SECONDS_IN_MINUTE = 60
 const MILLISECONDS_IN_SECOND = 1000
@@ -21,8 +21,8 @@ export function useTenantCurrency() {
     staleTime: CURRENCY_CACHE_TIME_MS,
   })
 
-  const currency = tenantConfig?.currency ?? 'COP'
-  const locale = tenantConfig?.locale ?? 'es-CO'
+  const currency = tenantConfig?.currency ?? "COP"
+  const locale = tenantConfig?.locale ?? "es-CO"
 
   return {
     currency,

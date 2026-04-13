@@ -1,4 +1,4 @@
-import type { QuoteStatus } from '@prisma/generated/client'
+import type { QuoteStatus } from "@prisma/generated/client"
 
 /**
  * Lightweight DTO for quote list view
@@ -33,8 +33,8 @@ export type QuoteListItem = {
 export type QuoteListFilters = {
   status?: QuoteStatus
   search?: string
-  sortBy?: 'createdAt' | 'total' | 'validUntil'
-  sortOrder?: 'asc' | 'desc'
+  sortBy?: "createdAt" | "total" | "validUntil"
+  sortOrder?: "asc" | "desc"
   page?: number
   limit?: number
   clientId?: string

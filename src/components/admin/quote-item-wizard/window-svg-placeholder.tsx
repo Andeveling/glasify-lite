@@ -1,7 +1,7 @@
-'use client'
+"use client"
 
-import type * as React from 'react'
-import { cn } from '@/lib/utils'
+import type * as React from "react"
+import { cn } from "@/lib/utils"
 
 interface WindowSvgPlaceholderProps {
   width?: number
@@ -13,7 +13,7 @@ function WindowSvgPlaceholder({ width = 180, height = 120, className }: WindowSv
   return (
     <svg
       aria-hidden="true"
-      className={cn('text-muted-foreground', className)}
+      className={cn("text-muted-foreground", className)}
       height={height}
       viewBox={`0 0 ${width} ${height}`}
       width={width}

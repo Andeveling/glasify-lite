@@ -10,10 +10,10 @@
  * - Warning variant (destructive)
  */
 
-'use client'
+"use client"
 
-import { AlertTriangle } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { AlertTriangle } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 
 type QuoteExpirationBadgeProps = {
   validUntil: Date | null

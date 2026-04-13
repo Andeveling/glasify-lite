@@ -11,12 +11,12 @@
  * const { createAddress, updateAddress, deleteAddress } = useAddressMutations();
  */
 
-'use client'
+"use client"
 
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
-import type { ProjectAddressInput } from '@/app/(dashboard)/admin/quotes/_schemas/project-address.schema'
-import { api } from '@/trpc/react'
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import type { ProjectAddressInput } from "@/app/(dashboard)/admin/quotes/_schemas/project-address.schema"
+import { api } from "@/trpc/react"
 
 /**
  * Hook for managing address mutations (create, update, delete)
@@ -64,13 +64,13 @@ export function useAddressMutations(options?: {
       router.refresh()
 
       // Step 3: User feedback
-      toast.success('Dirección de entrega guardada correctamente')
+      toast.success("Dirección de entrega guardada correctamente")
 
       // Step 4: Custom callback
       options?.onSuccess?.()
     },
     onError: (error) => {
-      toast.error(error.message || 'Error al guardar la dirección de entrega')
+      toast.error(error.message || "Error al guardar la dirección de entrega")
       options?.onError?.(error)
     },
   })
@@ -92,13 +92,13 @@ export function useAddressMutations(options?: {
       router.refresh()
 
       // Step 3: User feedback
-      toast.success('Dirección de entrega actualizada correctamente')
+      toast.success("Dirección de entrega actualizada correctamente")
 
       // Step 4: Custom callback
       options?.onSuccess?.()
     },
     onError: (error) => {
-      toast.error(error.message || 'Error al actualizar la dirección de entrega')
+      toast.error(error.message || "Error al actualizar la dirección de entrega")
       options?.onError?.(error)
     },
   })
@@ -120,13 +120,13 @@ export function useAddressMutations(options?: {
       router.refresh()
 
       // Step 3: User feedback
-      toast.success('Dirección de entrega eliminada correctamente')
+      toast.success("Dirección de entrega eliminada correctamente")
 
       // Step 4: Custom callback
       options?.onSuccess?.()
     },
     onError: (error) => {
-      toast.error(error.message || 'Error al eliminar la dirección de entrega')
+      toast.error(error.message || "Error al eliminar la dirección de entrega")
       options?.onError?.(error)
     },
   })
@@ -177,7 +177,7 @@ export function useAddressMutations(options?: {
 export function useAddressQueries(params?: { addressId?: string; quoteId?: string }) {
   // Get address by ID
   const addressQuery = api.address.getById.useQuery(
-    { id: params?.addressId ?? '' },
+    { id: params?.addressId ?? "" },
     {
       enabled: Boolean(params?.addressId),
       staleTime: 60_000, // 1 minute
@@ -186,7 +186,7 @@ export function useAddressQueries(params?: { addressId?: string; quoteId?: strin
 
   // List addresses by quote
   const addressListQuery = api.address.listByQuote.useQuery(
-    { quoteId: params?.quoteId ?? '' },
+    { quoteId: params?.quoteId ?? "" },
     {
       enabled: Boolean(params?.quoteId),
       staleTime: 60_000, // 1 minute

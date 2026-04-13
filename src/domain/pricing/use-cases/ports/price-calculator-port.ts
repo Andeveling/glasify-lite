@@ -9,7 +9,7 @@
 import type {
   PriceCalculationInput,
   PriceCalculationResult,
-} from '../../core/entities/price-calculation'
+} from "../../core/entities/price-calculation"
 
 /**
  * Port type for price calculation operations

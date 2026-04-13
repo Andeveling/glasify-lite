@@ -1,7 +1,7 @@
-'use client'
+"use client"
 
-import { Card, CardContent } from '@/components/ui/card'
-import { formatCurrency, formatThickness } from '@/lib/format'
+import { Card, CardContent } from "@/components/ui/card"
+import { formatCurrency, formatThickness } from "@/lib/format"
 
 interface GlassTypeCardProps {
   formatContext: { locale: string }
@@ -22,8 +22,8 @@ function GlassTypeCard({ glassType, isSelected, onSelect, formatContext }: Glass
       key={glassType.id}
       className={`cursor-pointer border transition-all duration-200 hover:shadow-md ${
         isSelected
-          ? 'ring-2 ring-primary border-primary bg-primary/5 shadow-md'
-          : 'border-border/50 hover:border-primary/30'
+          ? "ring-2 ring-primary border-primary bg-primary/5 shadow-md"
+          : "border-border/50 hover:border-primary/30"
       }`}
       onClick={() => onSelect(glassType.id)}
       role="button"

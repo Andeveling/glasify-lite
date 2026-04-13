@@ -6,15 +6,15 @@
  * (e.g., quote creation form).
  */
 
-'use client'
+"use client"
 
-import { useState } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import type { ClientUpdateInput } from '../_schemas/client-form.schema'
-import { ClientForm } from './client-form'
+import { useState } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import type { ClientUpdateInput } from "../_schemas/client-form.schema"
+import { ClientForm } from "./client-form"
 
 type ClientDialogProps = {
-  mode: 'create' | 'edit'
+  mode: "create" | "edit"
   defaultValues?: ClientUpdateInput & { id: string }
   onOpenChange: (open: boolean) => void
   open: boolean
@@ -34,7 +34,7 @@ export function ClientDialog({ mode, defaultValues, onOpenChange, open }: Client
     <Dialog onOpenChange={handleOpenChange} open={open}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{mode === 'create' ? 'Nuevo Cliente' : 'Editar Cliente'}</DialogTitle>
+          <DialogTitle>{mode === "create" ? "Nuevo Cliente" : "Editar Cliente"}</DialogTitle>
         </DialogHeader>
         <ClientForm key={formKey} defaultValues={defaultValues} mode={mode} />
       </DialogContent>

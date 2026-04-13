@@ -7,14 +7,14 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import { api } from '@/trpc/server-client'
-import { ClientForm } from '../../_components/client-form'
+import type { Metadata } from "next"
+import { notFound } from "next/navigation"
+import { api } from "@/trpc/server-client"
+import { ClientForm } from "../../_components/client-form"
 
 export const metadata: Metadata = {
-  description: 'Editar cliente del sistema de cotizaciones',
-  title: 'Editar Cliente | Admin',
+  description: "Editar cliente del sistema de cotizaciones",
+  title: "Editar Cliente | Admin",
 }
 
 type PageProps = {

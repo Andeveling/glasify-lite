@@ -25,14 +25,14 @@
  * @see REQ-001: URL-based table state
  */
 
-import { z } from 'zod'
+import { z } from "zod"
 
 /**
  * Default pagination constants
  */
 const DEFAULT_PAGE = 1
 const DEFAULT_PAGE_SIZE = 20
-const DEFAULT_SORT_ORDER = 'desc'
+const DEFAULT_SORT_ORDER = "desc"
 
 /**
  * Base table parameters schema
@@ -47,7 +47,7 @@ const baseTableParamsSchema = z.object({
 
   // Sorting
   sortBy: z.string().optional(),
-  sortOrder: z.enum(['asc', 'desc']).default(DEFAULT_SORT_ORDER),
+  sortOrder: z.enum(["asc", "desc"]).default(DEFAULT_SORT_ORDER),
 })
 
 /**
@@ -166,7 +166,7 @@ export function buildSearchParams(
   const searchParams = new URLSearchParams()
 
   for (const [key, value] of Object.entries(params)) {
-    if (value !== undefined && value !== null && value !== '') {
+    if (value !== undefined && value !== null && value !== "") {
       searchParams.set(key, String(value))
     }
   }

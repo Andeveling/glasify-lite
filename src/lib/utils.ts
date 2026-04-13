@@ -1,6 +1,6 @@
-import { format as tempoFormat } from '@formkit/tempo'
-import { type ClassValue, clsx } from 'clsx'
-import { twMerge } from 'tailwind-merge'
+import { format as tempoFormat } from "@formkit/tempo"
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -15,19 +15,19 @@ export function cn(...inputs: ClassValue[]) {
  */
 export function formatDate(
   date: Date | string,
-  locale = 'es-CO',
-  _timezone = 'America/Bogota',
+  locale = "es-CO",
+  _timezone = "America/Bogota",
 ): string {
   try {
-    const dateObj = typeof date === 'string' ? new Date(date) : date
+    const dateObj = typeof date === "string" ? new Date(date) : date
 
     if (Number.isNaN(dateObj.getTime())) {
-      return 'Fecha inválida'
+      return "Fecha inválida"
     }
 
     // Use Tempo for consistent date formatting with tenant config
-    return tempoFormat(dateObj, 'DD/MM/YYYY', locale)
+    return tempoFormat(dateObj, "DD/MM/YYYY", locale)
   } catch (_error) {
-    return 'Fecha inválida'
+    return "Fecha inválida"
   }
 }

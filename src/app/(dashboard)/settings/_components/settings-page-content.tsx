@@ -1,6 +1,6 @@
-'use client'
+"use client"
 
-import { zodResolver } from '@hookform/resolvers/zod'
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Bell,
   CreditCard,
@@ -13,11 +13,11 @@ import {
   Shield,
   Smartphone,
   User,
-} from 'lucide-react'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+} from "lucide-react"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Form,
   FormControl,
@@ -26,20 +26,20 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
-import { Switch } from '@/components/ui/switch'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Textarea } from '@/components/ui/textarea'
+} from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
+import { Switch } from "@/components/ui/switch"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Textarea } from "@/components/ui/textarea"
 
 const PROFILE_BIO_MAX_LENGTH = 160
 const PROFILE_NAME_MIN_LENGTH = 2
@@ -62,7 +62,7 @@ const profileFormSchema = z.object({
       `La biografía no puede exceder ${PROFILE_BIO_MAX_LENGTH} caracteres`,
     )
     .optional(),
-  email: z.string().email('Ingresa un email válido').min(1, 'El email es requerido'),
+  email: z.string().email("Ingresa un email válido").min(1, "El email es requerido"),
   name: z
     .string()
     .min(
@@ -77,7 +77,7 @@ const profileFormSchema = z.object({
     .string()
     .optional()
     .refine((val) => !val || PHONE_NUMBER_REGEX.test(val), {
-      message: 'Formato de teléfono inválido',
+      message: "Formato de teléfono inválido",
     }),
 })
 
@@ -86,7 +86,7 @@ const notificationFormSchema = z.object({
   marketingEmails: z.boolean(),
   newQuoteAlert: z.boolean(),
   pushNotifications: z.boolean(),
-  reportFrequency: z.enum(['daily', 'weekly', 'monthly']),
+  reportFrequency: z.enum(["daily", "weekly", "monthly"]),
   statusUpdateAlert: z.boolean(),
 })
 
@@ -111,15 +111,15 @@ const businessFormSchema = z.object({
       BUSINESS_NAME_MAX_LENGTH,
       `El nombre de la empresa no puede exceder ${BUSINESS_NAME_MAX_LENGTH} caracteres`,
     ),
-  currency: z.enum(['ARS', 'USD', 'EUR']),
+  currency: z.enum(["ARS", "USD", "EUR"]),
   defaultMargin: z
     .number()
-    .min(BUSINESS_MARGIN_MIN, 'El margen no puede ser negativo')
+    .min(BUSINESS_MARGIN_MIN, "El margen no puede ser negativo")
     .max(BUSINESS_MARGIN_MAX, `El margen no puede superar el ${BUSINESS_MARGIN_MAX}%`),
   taxId: z
     .string()
-    .min(1, 'El CUIT/CUIL es requerido')
-    .regex(/^[0-9-]+$/, 'Formato de CUIT/CUIL inválido'),
+    .min(1, "El CUIT/CUIL es requerido")
+    .regex(/^[0-9-]+$/, "Formato de CUIT/CUIL inválido"),
   timezone: z.string(),
 })
 
@@ -130,10 +130,10 @@ type BusinessFormValues = z.infer<typeof businessFormSchema>
 function ProfileSettings() {
   const form = useForm<ProfileFormValues>({
     defaultValues: {
-      bio: 'Administrador del sistema de cotizaciones Glasify',
-      email: 'admin@glasify.com',
-      name: 'Administrador Glasify',
-      phone: '+54 11 1234-5678',
+      bio: "Administrador del sistema de cotizaciones Glasify",
+      email: "admin@glasify.com",
+      name: "Administrador Glasify",
+      phone: "+54 11 1234-5678",
     },
     resolver: zodResolver(profileFormSchema),
   })
@@ -241,7 +241,7 @@ function NotificationSettings() {
       marketingEmails: false,
       newQuoteAlert: true,
       pushNotifications: false,
-      reportFrequency: 'weekly',
+      reportFrequency: "weekly",
       statusUpdateAlert: true,
     },
     resolver: zodResolver(notificationFormSchema),
@@ -410,12 +410,12 @@ function NotificationSettings() {
 function BusinessSettings() {
   const form = useForm<BusinessFormValues>({
     defaultValues: {
-      address: 'Av. Corrientes 1234, CABA, Argentina',
-      companyName: 'Glasify Solutions SRL',
-      currency: 'ARS',
+      address: "Av. Corrientes 1234, CABA, Argentina",
+      companyName: "Glasify Solutions SRL",
+      currency: "ARS",
       defaultMargin: DEFAULT_BUSINESS_MARGIN,
-      taxId: '30-12345678-9',
-      timezone: 'America/Argentina/Buenos_Aires',
+      taxId: "30-12345678-9",
+      timezone: "America/Argentina/Buenos_Aires",
     },
     resolver: zodResolver(businessFormSchema),
   })

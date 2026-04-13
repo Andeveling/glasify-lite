@@ -28,7 +28,7 @@
  * @see PAT-001: Server-first data tables
  */
 
-import type { ReactNode } from 'react'
+import type { ReactNode } from "react"
 import {
   Table,
   TableBody,
@@ -36,7 +36,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from "@/components/ui/table"
 
 /**
  * Column definition for table
@@ -55,7 +55,7 @@ export type ServerTableColumn<T> = {
   cell?: (item: T) => ReactNode
 
   /** Column alignment */
-  align?: 'left' | 'center' | 'right'
+  align?: "left" | "center" | "right"
 
   /** Column width (CSS value) */
   width?: string
@@ -127,13 +127,13 @@ function defaultCellRenderer<T extends Record<string, unknown>>(
   }
 
   // Handle boolean
-  if (typeof value === 'boolean') {
-    return value ? 'Sí' : 'No'
+  if (typeof value === "boolean") {
+    return value ? "Sí" : "No"
   }
 
   // Handle Date
   if (value instanceof Date) {
-    return value.toLocaleDateString('es-AR')
+    return value.toLocaleDateString("es-AR")
   }
 
   // Handle string/number
@@ -143,12 +143,12 @@ function defaultCellRenderer<T extends Record<string, unknown>>(
 /**
  * Get alignment class from column alignment
  */
-function getAlignmentClass(align?: 'left' | 'center' | 'right'): string | undefined {
-  if (align === 'center') {
-    return 'text-center'
+function getAlignmentClass(align?: "left" | "center" | "right"): string | undefined {
+  if (align === "center") {
+    return "text-center"
   }
-  if (align === 'right') {
-    return 'text-right'
+  if (align === "right") {
+    return "text-right"
   }
   return
 }
@@ -161,7 +161,7 @@ function getAlignmentClass(align?: 'left' | 'center' | 'right'): string | undefi
 export function ServerTable<T extends Record<string, unknown>>({
   data,
   columns,
-  emptyMessage = 'No se encontraron resultados',
+  emptyMessage = "No se encontraron resultados",
   rowKey = defaultRowKey,
   emptyState,
   isLoading = false,

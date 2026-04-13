@@ -1,4 +1,4 @@
-import type { PanelDescriptor } from './types'
+import type { PanelDescriptor } from "./types"
 
 const PATTERN_REGEX = /^[XO]+$/
 
@@ -14,13 +14,13 @@ export function parsePattern(pattern: string): PanelDescriptor[] {
 
   return Array.from({ length: panels }, (_, index) => ({
     index,
-    type: pattern[index] === 'X' ? 'movable' : 'fixed',
+    type: pattern[index] === "X" ? "movable" : "fixed",
     ratio,
   }))
 }
 
 export function hasAtLeastOneMovable(pattern: string): boolean {
-  return pattern.includes('X')
+  return pattern.includes("X")
 }
 
 export function isValidPattern(pattern: string): boolean {

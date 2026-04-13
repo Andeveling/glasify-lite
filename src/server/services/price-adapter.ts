@@ -12,14 +12,14 @@
  * - "positive"/"negative" sign → isPositive boolean
  */
 
-import { Dimensions } from '@domain/pricing/core/entities/dimensions'
-import { Money } from '@domain/pricing/core/entities/money'
+import { Dimensions } from "@domain/pricing/core/entities/dimensions"
+import { Money } from "@domain/pricing/core/entities/money"
 import type {
   PriceCalculationInput,
   PriceCalculationResult,
-} from '@domain/pricing/core/entities/price-calculation'
-import type { ServiceAmountInput } from '@domain/pricing/core/services/service-calculator'
-import type { AdjustmentInput, ServiceUnit } from '@domain/pricing/core/types'
+} from "@domain/pricing/core/entities/price-calculation"
+import type { ServiceAmountInput } from "@domain/pricing/core/services/service-calculator"
+import type { AdjustmentInput, ServiceUnit } from "@domain/pricing/core/types"
 
 /**
  * tRPC input shape for model prices
@@ -62,7 +62,7 @@ type TRPCAdjustment = {
   concept: string
   unit: ServiceUnit
   value: number
-  sign: 'positive' | 'negative'
+  sign: "positive" | "negative"
 }
 
 /**
@@ -168,7 +168,7 @@ export function adaptTRPCToDomain(input: TRPCPriceInput): PriceCalculationInput 
         concept: adj.concept,
         unit: adj.unit,
         value: adj.value,
-        isPositive: adj.sign === 'positive',
+        isPositive: adj.sign === "positive",
       }))
     : undefined
 

@@ -83,7 +83,7 @@ export type GalleryConfig = {
  * Error details for gallery operations
  */
 export type GalleryError = {
-  code: 'DIR_NOT_FOUND' | 'READ_ERROR' | 'NO_IMAGES' | 'INVALID_CONFIG'
+  code: "DIR_NOT_FOUND" | "READ_ERROR" | "NO_IMAGES" | "INVALID_CONFIG"
   message: string
   details?: Record<string, unknown>
 }

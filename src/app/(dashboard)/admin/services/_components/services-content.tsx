@@ -10,16 +10,16 @@
  * - Render filters and list
  */
 
-'use client'
+"use client"
 
-import { useState } from 'react'
-import { ServiceDialog } from './service-dialog'
-import { ServicesFilters } from './services-filters'
-import { ServicesList } from './services-list'
+import { useState } from "react"
+import { ServiceDialog } from "./service-dialog"
+import { ServicesFilters } from "./services-filters"
+import { ServicesList } from "./services-list"
 
 type ServicesContentProps = {
-  initialData: Parameters<typeof ServicesList>[0]['initialData']
-  searchParams: Parameters<typeof ServicesList>[0]['searchParams']
+  initialData: Parameters<typeof ServicesList>[0]["initialData"]
+  searchParams: Parameters<typeof ServicesList>[0]["searchParams"]
 }
 
 export function ServicesContent({ initialData, searchParams }: ServicesContentProps) {

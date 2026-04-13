@@ -1,10 +1,10 @@
-import { vi } from 'vitest'
-import type { FormatContext } from '@/lib/format'
+import { vi } from "vitest"
+import type { FormatContext } from "@/lib/format"
 
 const defaultFormatContext: FormatContext = {
-  currency: 'COP',
-  locale: 'es-CO',
-  timezone: 'America/Bogota',
+  currency: "COP",
+  locale: "es-CO",
+  timezone: "America/Bogota",
 }
 
 function createMockUseTenantConfig(context?: Partial<FormatContext>) {
@@ -23,5 +23,5 @@ function createMockUseTenantConfig(context?: Partial<FormatContext>) {
   }
 }
 
-export { createMockUseTenantConfig, defaultFormatContext }
 export type { FormatContext }
+export { createMockUseTenantConfig, defaultFormatContext }

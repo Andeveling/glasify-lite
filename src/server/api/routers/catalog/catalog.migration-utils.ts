@@ -5,7 +5,7 @@
  * @deprecated These utilities will be removed in v2.0 along with the purpose field
  */
 
-import type { GlassPurpose, GlassTypeSolution } from '@prisma/generated/client'
+import type { GlassPurpose, GlassTypeSolution } from "@prisma/generated/client"
 
 /**
  * Maps deprecated GlassPurpose enum values to GlassSolution keys
@@ -18,13 +18,13 @@ import type { GlassPurpose, GlassTypeSolution } from '@prisma/generated/client'
  */
 export function mapPurposeToSolutionKey(purpose: GlassPurpose): string {
   const mapping: Record<GlassPurpose, string> = {
-    decorative: 'decorative',
-    general: 'general',
-    insulation: 'thermal_insulation',
-    security: 'security',
+    decorative: "decorative",
+    general: "general",
+    insulation: "thermal_insulation",
+    security: "security",
   }
 
-  return mapping[purpose] ?? 'general'
+  return mapping[purpose] ?? "general"
 }
 
 /**
@@ -60,7 +60,7 @@ export function ensureGlassHasSolutions<
     nameEs: string
     icon: string
   }>,
-): T['solutions'] {
+): T["solutions"] {
   // If glass already has solutions, return them
   if (glassType.solutions && glassType.solutions.length > 0) {
     return glassType.solutions
@@ -72,37 +72,37 @@ export function ensureGlassHasSolutions<
 
   if (!fallbackSolution) {
     // Ultimate fallback: return general solution
-    const generalSolution = availableSolutions.find((s) => s.key === 'general')
+    const generalSolution = availableSolutions.find((s) => s.key === "general")
     if (!generalSolution) {
       // No solutions available at all - return empty array
-      return [] as T['solutions']
+      return [] as T["solutions"]
     }
 
     return [
       {
-        glassTypeId: '',
-        id: 'fallback-general',
+        glassTypeId: "",
+        id: "fallback-general",
         isPrimary: true,
-        notes: 'Fallback from purpose field (general)',
-        performanceRating: 'standard',
+        notes: "Fallback from purpose field (general)",
+        performanceRating: "standard",
         solution: generalSolution,
         solutionId: generalSolution.id,
       },
-    ] as T['solutions']
+    ] as T["solutions"]
   }
 
   // Return synthetic solution based on purpose
   return [
     {
-      glassTypeId: '',
+      glassTypeId: "",
       id: `fallback-${solutionKey}`,
       isPrimary: true,
       notes: `Fallback from purpose field (${glassType.purpose})`,
-      performanceRating: 'standard',
+      performanceRating: "standard",
       solution: fallbackSolution,
       solutionId: fallbackSolution.id,
     },
-  ] as T['solutions']
+  ] as T["solutions"]
 }
 
 /**
@@ -117,5 +117,5 @@ export function isUsingFallbackSolutions(solutions: Array<{ id: string }> | unde
   if (!solutions || solutions.length === 0) {
     return false
   }
-  return solutions.some((s) => s.id.startsWith('fallback-'))
+  return solutions.some((s) => s.id.startsWith("fallback-"))
 }

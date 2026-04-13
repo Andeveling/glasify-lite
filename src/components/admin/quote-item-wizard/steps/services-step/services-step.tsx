@@ -1,17 +1,17 @@
-'use client'
+"use client"
 
-import { useTenantConfig } from '@/app/_hooks/use-tenant-config'
-import { Skeleton } from '@/components/ui/skeleton'
-import { api } from '@/trpc/react'
+import { useTenantConfig } from "@/app/_hooks/use-tenant-config"
+import { Skeleton } from "@/components/ui/skeleton"
+import { api } from "@/trpc/react"
 
-import { ServiceCheckbox } from './_components/service-checkbox'
-import { useServiceSelection } from './use-service-selection'
+import { ServiceCheckbox } from "./_components/service-checkbox"
+import { useServiceSelection } from "./use-service-selection"
 
 function ServicesStep() {
   const { formatContext } = useTenantConfig()
   const { selectedServiceIds, handleToggleService } = useServiceSelection()
 
-  const { data: services, isLoading } = api.catalog['list-services'].useQuery({})
+  const { data: services, isLoading } = api.catalog["list-services"].useQuery({})
 
   if (isLoading) {
     return (

@@ -1,5 +1,5 @@
-import { PERCENTAGE_TO_DECIMAL } from '../constants'
-import type { Money } from '../entities/money'
+import { PERCENTAGE_TO_DECIMAL } from "../constants"
+import type { Money } from "../entities/money"
 
 /**
  * Input for model sales price calculation

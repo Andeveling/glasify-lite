@@ -6,9 +6,9 @@
  * @module admin/colors/_hooks/use-color-mutations
  */
 
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
-import { api } from '@/trpc/react'
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { api } from "@/trpc/react"
 
 type UseColorMutationsOptions = {
   onSuccessCallback?: () => void
@@ -26,7 +26,7 @@ export function useColorMutations({ onSuccessCallback }: UseColorMutationsOption
 
   const createMutation = api.admin.colors.create.useMutation({
     onError: (err) => {
-      toast.error('Error al crear color', {
+      toast.error("Error al crear color", {
         description: err.message,
       })
     },
@@ -35,15 +35,15 @@ export function useColorMutations({ onSuccessCallback }: UseColorMutationsOption
       router.refresh()
     },
     onSuccess: () => {
-      toast.success('Color creado correctamente')
-      router.push('/admin/colors')
+      toast.success("Color creado correctamente")
+      router.push("/admin/colors")
       onSuccessCallback?.()
     },
   })
 
   const updateMutation = api.admin.colors.update.useMutation({
     onError: (err) => {
-      toast.error('Error al actualizar color', {
+      toast.error("Error al actualizar color", {
         description: err.message,
       })
     },
@@ -52,8 +52,8 @@ export function useColorMutations({ onSuccessCallback }: UseColorMutationsOption
       router.refresh()
     },
     onSuccess: () => {
-      toast.success('Color actualizado correctamente')
-      router.push('/admin/colors')
+      toast.success("Color actualizado correctamente")
+      router.push("/admin/colors")
       onSuccessCallback?.()
     },
   })

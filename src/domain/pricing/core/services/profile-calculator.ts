@@ -1,5 +1,5 @@
-import type { Dimensions } from '../entities/dimensions'
-import type { Money } from '../entities/money'
+import type { Dimensions } from "../entities/dimensions"
+import type { Money } from "../entities/money"
 
 /**
  * Input for profile cost calculation

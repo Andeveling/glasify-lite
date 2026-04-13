@@ -1,12 +1,12 @@
-'use client'
+"use client"
 
-import { Check } from 'lucide-react'
-import Image from 'next/image'
+import { Check } from "lucide-react"
+import Image from "next/image"
 
-import { Card, CardContent } from '@/components/ui/card'
-import { formatCurrency, formatNumber } from '@/lib/format'
+import { Card, CardContent } from "@/components/ui/card"
+import { formatCurrency, formatNumber } from "@/lib/format"
 
-import { WindowSvgPlaceholder } from '../../../window-svg-placeholder'
+import { WindowSvgPlaceholder } from "../../../window-svg-placeholder"
 
 interface ModelCardProps {
   configuredHeightMm: number
@@ -50,8 +50,8 @@ function ModelCard({
     <Card
       className={`group relative cursor-pointer overflow-hidden border transition-all duration-200 hover:shadow-lg ${
         isSelected
-          ? 'ring-2 ring-primary border-primary bg-primary/5 shadow-lg'
-          : 'border-border/50 hover:border-primary/30 hover:scale-[1.01]'
+          ? "ring-2 ring-primary border-primary bg-primary/5 shadow-lg"
+          : "border-border/50 hover:border-primary/30 hover:scale-[1.01]"
       }`}
       onClick={() => onSelect(model.id)}
       role="button"
@@ -102,4 +102,4 @@ function ModelCard({
   )
 }
 
-export { ModelCard, formatRange }
+export { formatRange, ModelCard }

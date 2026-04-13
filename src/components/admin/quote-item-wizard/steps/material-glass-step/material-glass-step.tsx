@@ -1,13 +1,13 @@
-'use client'
+"use client"
 
-import { useTenantConfig } from '@/app/_hooks/use-tenant-config'
-import { FormMessage } from '@/components/ui/form'
-import { Skeleton } from '@/components/ui/skeleton'
-import { api } from '@/trpc/react'
+import { useTenantConfig } from "@/app/_hooks/use-tenant-config"
+import { FormMessage } from "@/components/ui/form"
+import { Skeleton } from "@/components/ui/skeleton"
+import { api } from "@/trpc/react"
 
-import { ColorSelector } from './_components/color-selector'
-import { GlassTypeCard } from './_components/glass-type-card'
-import { useMaterialSelection } from './use-material-selection'
+import { ColorSelector } from "./_components/color-selector"
+import { GlassTypeCard } from "./_components/glass-type-card"
+import { useMaterialSelection } from "./use-material-selection"
 
 function MaterialGlassStep() {
   const { formatContext } = useTenantConfig()
@@ -21,11 +21,11 @@ function MaterialGlassStep() {
   } = useMaterialSelection()
 
   const { data: colorsData, isLoading: isLoadingColors } = api.quote[
-    'get-model-colors-for-quote'
+    "get-model-colors-for-quote"
   ].useQuery({ modelId }, { enabled: hasModel })
 
   const { data: glassTypes, isLoading: isLoadingGlassTypes } = api.catalog[
-    'get-available-glass-types'
+    "get-available-glass-types"
   ].useQuery({ modelId }, { enabled: hasModel })
 
   if (!hasModel) {

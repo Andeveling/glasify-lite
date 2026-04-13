@@ -1,5 +1,5 @@
 // src/server/api/routers/catalog/catalog.schemas.ts
-import { z } from 'zod'
+import { z } from "zod"
 
 // Constants
 export const DEFAULT_PAGE_LIMIT = 20
@@ -12,14 +12,14 @@ export const MAX_PAGE_LIMIT = 100
 
 export const listModelsInput = z.object({
   limit: z.number().min(MIN_PAGE_LIMIT).max(MAX_PAGE_LIMIT).default(DEFAULT_PAGE_LIMIT),
-  manufacturerId: z.cuid('ID del fabricante debe ser válido').optional(),
+  manufacturerId: z.cuid("ID del fabricante debe ser válido").optional(),
   page: z.number().min(1).default(1),
   search: z.string().optional(),
-  sort: z.enum(['name-asc', 'name-desc', 'price-asc', 'price-desc']).default('name-asc'),
+  sort: z.enum(["name-asc", "name-desc", "price-asc", "price-desc"]).default("name-asc"),
 })
 
 export const getModelByIdInput = z.object({
-  modelId: z.cuid('ID del modelo debe ser válido'),
+  modelId: z.cuid("ID del modelo debe ser válido"),
 })
 
 export const listServicesInput = z.object({
@@ -27,26 +27,26 @@ export const listServicesInput = z.object({
 })
 
 export const listGlassTypesInput = z.object({
-  glassTypeIds: z.array(z.cuid('ID del tipo de vidrio debe ser válido')),
+  glassTypeIds: z.array(z.cuid("ID del tipo de vidrio debe ser válido")),
 })
 
 export const listGlassSolutionsInput = z
   .object({
-    modelId: z.cuid('ID del modelo debe ser válido').optional(),
+    modelId: z.cuid("ID del modelo debe ser válido").optional(),
   })
   .optional()
 
 export const getGlassTypeByIdInput = z.object({
-  glassTypeId: z.cuid('ID del tipo de vidrio debe ser válido'),
+  glassTypeId: z.cuid("ID del tipo de vidrio debe ser válido"),
 })
 
 export const getAvailableGlassTypesInput = z.object({
-  modelId: z.cuid('ID del modelo debe ser válido'),
+  modelId: z.cuid("ID del modelo debe ser válido"),
 })
 
 export const validateGlassCompatibilityInput = z.object({
-  modelId: z.cuid('ID del modelo debe ser válido'),
-  glassTypeId: z.cuid('ID del tipo de vidrio debe ser válido'),
+  modelId: z.cuid("ID del modelo debe ser válido"),
+  glassTypeId: z.cuid("ID del tipo de vidrio debe ser válido"),
 })
 
 // ========================================
@@ -80,7 +80,7 @@ export const modelSummaryOutput = z.object({
       name: z.string(),
     })
     .nullable(),
-  status: z.enum(['draft', 'published']),
+  status: z.enum(["draft", "published"]),
   updatedAt: z.date(),
 })
 
@@ -108,11 +108,11 @@ export const modelDetailOutput = z.object({
   profileSupplier: z
     .object({
       id: z.string(),
-      materialType: z.enum(['PVC', 'ALUMINUM', 'WOOD', 'MIXED']),
+      materialType: z.enum(["PVC", "ALUMINUM", "WOOD", "MIXED"]),
       name: z.string(),
     })
     .nullable(),
-  status: z.enum(['draft', 'published']),
+  status: z.enum(["draft", "published"]),
   updatedAt: z.date(),
 })
 
@@ -121,8 +121,8 @@ export const serviceOutput = z.object({
   id: z.string(),
   name: z.string(),
   rate: z.number(),
-  type: z.enum(['area', 'perimeter', 'fixed']),
-  unit: z.enum(['unit', 'sqm', 'ml']),
+  type: z.enum(["area", "perimeter", "fixed"]),
+  unit: z.enum(["unit", "sqm", "ml"]),
   updatedAt: z.date(),
 })
 
@@ -132,7 +132,7 @@ export const listServicesOutput = z.array(serviceOutput)
 // GLASS SOLUTIONS SCHEMAS
 // ========================================
 
-export const performanceRating = z.enum(['basic', 'standard', 'good', 'very_good', 'excellent'])
+export const performanceRating = z.enum(["basic", "standard", "good", "very_good", "excellent"])
 
 // ========================================
 // GLASS SOLUTIONS

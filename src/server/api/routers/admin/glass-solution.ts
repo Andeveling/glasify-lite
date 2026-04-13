@@ -8,35 +8,35 @@
  * Includes referential integrity check for deletions
  */
 
-import type { Prisma } from '@prisma/generated/client'
-import { TRPCError } from '@trpc/server'
-import logger from '@/lib/logger'
+import type { Prisma } from "@prisma/generated/client"
+import { TRPCError } from "@trpc/server"
+import logger from "@/lib/logger"
 import {
   createGlassSolutionSchema,
   deleteGlassSolutionSchema,
   getGlassSolutionByIdSchema,
   listGlassSolutionsSchema,
   updateGlassSolutionSchema,
-} from '@/lib/validations/admin/glass-solution.schema'
-import { adminProcedure, createTRPCRouter } from '@/server/api/trpc'
-import { canDeleteGlassSolution } from '@/server/services/referential-integrity.service'
+} from "@/lib/validations/admin/glass-solution.schema"
+import { adminProcedure, createTRPCRouter } from "@/server/api/trpc"
+import { canDeleteGlassSolution } from "@/server/services/referential-integrity.service"
 
 /**
  * Helper: Generate URL-friendly slug from key
  * Converts snake_case keys to kebab-case slugs
  */
 function generateSlugFromKey(key: string): string {
-  return key.replace(/_/g, '-')
+  return key.replace(/_/g, "-")
 }
 
 /**
  * Helper: Convert isActive filter string to boolean for Prisma
  */
-function parseIsActiveFilter(isActive?: 'all' | 'active' | 'inactive'): boolean | null {
-  if (!isActive || isActive === 'all') {
+function parseIsActiveFilter(isActive?: "all" | "active" | "inactive"): boolean | null {
+  if (!isActive || isActive === "all") {
     return null
   }
-  return isActive === 'active'
+  return isActive === "active"
 }
 
 /**
@@ -54,19 +54,19 @@ function buildWhereClause(input: {
       {
         key: {
           contains: input.search,
-          mode: 'insensitive',
+          mode: "insensitive",
         },
       },
       {
         name: {
           contains: input.search,
-          mode: 'insensitive',
+          mode: "insensitive",
         },
       },
       {
         nameEs: {
           contains: input.search,
-          mode: 'insensitive',
+          mode: "insensitive",
         },
       },
     ]
@@ -85,25 +85,25 @@ function buildWhereClause(input: {
  */
 function buildOrderByClause(
   sortBy: string,
-  sortOrder: 'asc' | 'desc',
+  sortOrder: "asc" | "desc",
 ): Prisma.GlassSolutionOrderByWithRelationInput {
   const orderBy: Prisma.GlassSolutionOrderByWithRelationInput = {}
 
   switch (sortBy) {
-    case 'key':
+    case "key":
       orderBy.key = sortOrder
       break
-    case 'name':
+    case "name":
       orderBy.name = sortOrder
       break
-    case 'sortOrder':
+    case "sortOrder":
       orderBy.sortOrder = sortOrder
       break
-    case 'createdAt':
+    case "createdAt":
       orderBy.createdAt = sortOrder
       break
     default:
-      orderBy.sortOrder = 'asc' // Default sort by priority
+      orderBy.sortOrder = "asc" // Default sort by priority
   }
 
   return orderBy
@@ -127,8 +127,8 @@ export const glassSolutionRouter = createTRPCRouter({
 
     if (existingByKey) {
       throw new TRPCError({
-        code: 'CONFLICT',
-        message: 'Ya existe una solución con esta clave',
+        code: "CONFLICT",
+        message: "Ya existe una solución con esta clave",
       })
     }
 
@@ -139,7 +139,7 @@ export const glassSolutionRouter = createTRPCRouter({
       },
     })
 
-    logger.info('Glass solution created', {
+    logger.info("Glass solution created", {
       solutionId: glassSolution.id,
       solutionKey: glassSolution.key,
       solutionName: glassSolution.nameEs,
@@ -164,8 +164,8 @@ export const glassSolutionRouter = createTRPCRouter({
 
     if (!existing) {
       throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Solución de vidrio no encontrada',
+        code: "NOT_FOUND",
+        message: "Solución de vidrio no encontrada",
       })
     }
 
@@ -174,7 +174,7 @@ export const glassSolutionRouter = createTRPCRouter({
 
     if (!integrityCheck.canDelete) {
       throw new TRPCError({
-        code: 'CONFLICT',
+        code: "CONFLICT",
         message: integrityCheck.message,
       })
     }
@@ -183,7 +183,7 @@ export const glassSolutionRouter = createTRPCRouter({
       where: { id: input.id },
     })
 
-    logger.warn('Glass solution deleted', {
+    logger.warn("Glass solution deleted", {
       solutionId: input.id,
       solutionKey: existing.key,
       solutionName: existing.nameEs,
@@ -213,12 +213,12 @@ export const glassSolutionRouter = createTRPCRouter({
 
     if (!glassSolution) {
       throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Solución de vidrio no encontrada',
+        code: "NOT_FOUND",
+        message: "Solución de vidrio no encontrada",
       })
     }
 
-    logger.info('Glass solution retrieved', {
+    logger.info("Glass solution retrieved", {
       solutionId: input.id,
       solutionKey: glassSolution.key,
       userId: ctx.session.user.id,
@@ -260,7 +260,7 @@ export const glassSolutionRouter = createTRPCRouter({
       where,
     })
 
-    logger.info('Glass solutions listed', {
+    logger.info("Glass solutions listed", {
       filters: { ...restFilters, isActive },
       limit,
       page,
@@ -293,8 +293,8 @@ export const glassSolutionRouter = createTRPCRouter({
 
     if (!existing) {
       throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Solución de vidrio no encontrada',
+        code: "NOT_FOUND",
+        message: "Solución de vidrio no encontrada",
       })
     }
 
@@ -306,8 +306,8 @@ export const glassSolutionRouter = createTRPCRouter({
 
       if (duplicate) {
         throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Ya existe una solución con esta clave',
+          code: "CONFLICT",
+          message: "Ya existe una solución con esta clave",
         })
       }
     }
@@ -321,7 +321,7 @@ export const glassSolutionRouter = createTRPCRouter({
       where: { id },
     })
 
-    logger.info('Glass solution updated', {
+    logger.info("Glass solution updated", {
       changes: data,
       solutionId: glassSolution.id,
       solutionKey: glassSolution.key,

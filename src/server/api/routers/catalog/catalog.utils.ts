@@ -1,7 +1,7 @@
 // src/server/api/routers/catalog/catalog.utils.ts
-import type { Decimal } from 'decimal.js'
-import { Money } from '@/domain/pricing/core/entities/money'
-import { MarginCalculator } from '@/domain/pricing/core/services/margin-calculator'
+import type { Decimal } from "decimal.js"
+import { Money } from "@/domain/pricing/core/entities/money"
+import { MarginCalculator } from "@/domain/pricing/core/services/margin-calculator"
 
 /**
  * Type representing a model with Decimal price fields from Prisma

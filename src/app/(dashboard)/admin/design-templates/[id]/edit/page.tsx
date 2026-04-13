@@ -1,14 +1,14 @@
-import { ArrowLeft } from 'lucide-react'
-import type { Metadata } from 'next'
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import type { RouterOutputs } from '@/trpc/react'
-import { api } from '@/trpc/server-client'
-import { DesignTemplateForm } from '../../_components/design-template-form'
+import { ArrowLeft } from "lucide-react"
+import type { Metadata } from "next"
+import Link from "next/link"
+import { notFound } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import type { RouterOutputs } from "@/trpc/react"
+import { api } from "@/trpc/server-client"
+import { DesignTemplateForm } from "../../_components/design-template-form"
 
 export const metadata: Metadata = {
-  title: 'Editar Plantilla de Diseño | Admin',
+  title: "Editar Plantilla de Diseño | Admin",
 }
 
 type PageProps = {
@@ -19,16 +19,16 @@ function parseFrameConfig(raw: string) {
   try {
     return JSON.parse(raw)
   } catch {
-    return { thickness: 4, profileStyle: 'simple' }
+    return { thickness: 4, profileStyle: "simple" }
   }
 }
 
 export default async function EditDesignTemplatePage({ params }: PageProps) {
   const { id } = await params
 
-  let template: RouterOutputs['admin']['design-template']['getById']
+  let template: RouterOutputs["admin"]["design-template"]["getById"]
   try {
-    template = await api.admin['design-template'].getById({ id })
+    template = await api.admin["design-template"].getById({ id })
   } catch {
     notFound()
   }

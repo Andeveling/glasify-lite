@@ -1,10 +1,10 @@
-'use client'
+"use client"
 
-import { Plus } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { QuoteItemWizard } from '@/components/admin/quote-item-wizard'
-import { Button } from '@/components/ui/button'
+import { Plus } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { QuoteItemWizard } from "@/components/admin/quote-item-wizard"
+import { Button } from "@/components/ui/button"
 import {
   Table,
   TableBody,
@@ -12,11 +12,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { formatCurrency } from '@/lib/format'
-import type { QuoteDetailSchema } from '@/server/api/routers/quote/quote.schemas'
-import { api } from '@/trpc/react'
-import { QuoteStatusBadge } from '../../_components/quote-status-badge'
+} from "@/components/ui/table"
+import { formatCurrency } from "@/lib/format"
+import type { QuoteDetailSchema } from "@/server/api/routers/quote/quote.schemas"
+import { api } from "@/trpc/react"
+import { QuoteStatusBadge } from "../../_components/quote-status-badge"
 
 type QuoteDetailViewProps = {
   isPublicView?: boolean
@@ -30,14 +30,14 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
 
   const handleWizardSuccess = () => {
     setWizardOpen(false)
-    void utils.quote['get-by-id'].invalidate({ id: quote.id })
+    void utils.quote["get-by-id"].invalidate({ id: quote.id })
     router.refresh()
   }
 
   const formatContext = {
     currency: quote.currency,
-    locale: 'es-PA',
-    timezone: 'America/Panama',
+    locale: "es-PA",
+    timezone: "America/Panama",
   }
 
   return (
@@ -65,7 +65,7 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
       <div className="rounded-lg border p-4">
         <h3 className="font-medium text-sm">Dirección del Proyecto</h3>
         <p className="text-muted-foreground mt-1 text-sm">
-          {quote.projectAddress.projectStreet}, {quote.projectAddress.projectCity},{' '}
+          {quote.projectAddress.projectStreet}, {quote.projectAddress.projectCity},{" "}
           {quote.projectAddress.projectState}
         </p>
       </div>
@@ -120,9 +120,9 @@ export function QuoteDetailView({ isPublicView = false, quote }: QuoteDetailView
       {/* Metadata */}
       <div className="flex justify-between text-muted-foreground text-xs">
         <p>
-          Creada: {new Date(quote.createdAt).toLocaleDateString('es-CO')}
+          Creada: {new Date(quote.createdAt).toLocaleDateString("es-CO")}
           {quote.validUntil && (
-            <span> • Válida hasta: {new Date(quote.validUntil).toLocaleDateString('es-CO')}</span>
+            <span> • Válida hasta: {new Date(quote.validUntil).toLocaleDateString("es-CO")}</span>
           )}
         </p>
         {quote.isExpired && <span className="text-destructive">Esta cotización ha expirado</span>}

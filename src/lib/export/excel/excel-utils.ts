@@ -72,7 +72,7 @@ export function getTotalFormula(subtotalCell: string, taxCell: string): string {
  * getColumnLetter(26) // Returns: "AA"
  */
 export function getColumnLetter(index: number): string {
-  let column = ''
+  let column = ""
   let idx = index
 
   while (idx >= 0) {
@@ -136,23 +136,23 @@ export function sanitizeExcelText(text: string): string {
 
   // Prevent formula injection
   if (
-    sanitized.startsWith('=') ||
-    sanitized.startsWith('+') ||
-    sanitized.startsWith('-') ||
-    sanitized.startsWith('@')
+    sanitized.startsWith("=") ||
+    sanitized.startsWith("+") ||
+    sanitized.startsWith("-") ||
+    sanitized.startsWith("@")
   ) {
     sanitized = `'${sanitized}`
   }
 
   // biome-ignore lint/suspicious/noControlCharactersInRegex: Control characters removal is intentional for Excel security
-  return sanitized.replace(/[\u0000-\u001F\u007F-\u009F]/g, '').trim()
+  return sanitized.replace(/[\u0000-\u001F\u007F-\u009F]/g, "").trim()
 }
 
 /**
  * Format date for Excel
  */
 export function formatDateForExcel(date: string | Date): Date {
-  return typeof date === 'string' ? new Date(date) : date
+  return typeof date === "string" ? new Date(date) : date
 }
 
 /**
@@ -172,10 +172,10 @@ export function getItemSubtotalFormula(quantityCell: string, unitPriceCell: stri
 export function applyNumberFormat(format: string, value: number): string {
   // This is just for documentation - Excel handles actual formatting
   // Return string representation for preview
-  if (format.includes('$')) {
-    return `$${value.toLocaleString('es-CO')}`
+  if (format.includes("$")) {
+    return `$${value.toLocaleString("es-CO")}`
   }
-  return value.toLocaleString('es-CO')
+  return value.toLocaleString("es-CO")
 }
 
 /**
@@ -184,7 +184,7 @@ export function applyNumberFormat(format: string, value: number): string {
  */
 export function sanitizeWorksheetName(name: string, maxLength = 31): string {
   return name
-    .replace(/[/\\?*[\]]/g, '') // Remove invalid characters
+    .replace(/[/\\?*[\]]/g, "") // Remove invalid characters
     .slice(0, maxLength) // Limit length
     .trim()
 }

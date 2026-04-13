@@ -1,14 +1,14 @@
-import { AlertTriangle, BarChart3, FileText, Home, Package, Settings, Shield } from 'lucide-react'
-import type { Metadata } from 'next'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { BackButton } from './_components/back-button'
+import { AlertTriangle, BarChart3, FileText, Home, Package, Settings, Shield } from "lucide-react"
+import type { Metadata } from "next"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { BackButton } from "./_components/back-button"
 
 export const metadata: Metadata = {
   description:
-    'La página de administración que buscas no existe o no tienes permisos para acceder a ella',
-  title: 'Página No Encontrada - Panel de Administración | Glasify',
+    "La página de administración que buscas no existe o no tienes permisos para acceder a ella",
+  title: "Página No Encontrada - Panel de Administración | Glasify",
 }
 
 export default function DashboardNotFound() {
@@ -119,7 +119,7 @@ export default function DashboardNotFound() {
 
                 <div className="space-y-2 text-muted-foreground text-sm">
                   <p>
-                    Si crees que esto es un error del sistema,{' '}
+                    Si crees que esto es un error del sistema,{" "}
                     <a
                       className="text-primary underline hover:no-underline"
                       href="mailto:admin@glasify.com"
@@ -129,7 +129,7 @@ export default function DashboardNotFound() {
                   </p>
 
                   <p>
-                    Para problemas de acceso o permisos, verifica tu{' '}
+                    Para problemas de acceso o permisos, verifica tu{" "}
                     <Link
                       className="text-primary underline hover:no-underline"
                       href="/admin/settings"
@@ -153,7 +153,7 @@ export default function DashboardNotFound() {
                     <div className="flex justify-between">
                       <span>Timestamp:</span>
                       <span className="font-mono" suppressHydrationWarning>
-                        {typeof window !== 'undefined' ? new Date().toLocaleString('es-AR') : '---'}
+                        {typeof window !== "undefined" ? new Date().toLocaleString("es-AR") : "---"}
                       </span>
                     </div>
                   </div>

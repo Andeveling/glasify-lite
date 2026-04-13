@@ -1,18 +1,18 @@
-'use client'
+"use client"
 
-import { Loader2 } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
-import { api } from '@/trpc/react'
-import { DashboardPeriod } from '@/types/dashboard'
-import { EmptyDashboardState } from './empty-dashboard-state'
-import { GlassTypesChart } from './glass-types-chart'
-import { MonetaryMetricsCards } from './monetary-metrics-cards'
-import { PeriodSelector } from './period-selector'
-import { PriceRangesChart } from './price-ranges-chart'
-import { QuotesMetricsCards } from './quotes-metrics-cards'
-import { QuotesTrendChart } from './quotes-trend-chart'
-import { SupplierDistributionChart } from './supplier-distribution-chart'
-import { TopModelsChart } from './top-models-chart'
+import { Loader2 } from "lucide-react"
+import { useSearchParams } from "next/navigation"
+import { api } from "@/trpc/react"
+import { DashboardPeriod } from "@/types/dashboard"
+import { EmptyDashboardState } from "./empty-dashboard-state"
+import { GlassTypesChart } from "./glass-types-chart"
+import { MonetaryMetricsCards } from "./monetary-metrics-cards"
+import { PeriodSelector } from "./period-selector"
+import { PriceRangesChart } from "./price-ranges-chart"
+import { QuotesMetricsCards } from "./quotes-metrics-cards"
+import { QuotesTrendChart } from "./quotes-trend-chart"
+import { SupplierDistributionChart } from "./supplier-distribution-chart"
+import { TopModelsChart } from "./top-models-chart"
 
 type DashboardContentProps = {
   /**
@@ -45,11 +45,11 @@ type DashboardContentProps = {
  */
 export function DashboardContent({ tenantConfig }: DashboardContentProps) {
   const searchParams = useSearchParams()
-  const period = (searchParams.get('period') ?? DashboardPeriod.LAST_30_DAYS) as
-    | '7d'
-    | '30d'
-    | '90d'
-    | 'year'
+  const period = (searchParams.get("period") ?? DashboardPeriod.LAST_30_DAYS) as
+    | "7d"
+    | "30d"
+    | "90d"
+    | "year"
 
   // Fetch quote metrics
   const {

@@ -21,10 +21,10 @@
  * - Scrollable content (max-h-[70vh])
  */
 
-'use client'
+"use client"
 
-import { Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Loader2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -32,7 +32,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -41,17 +41,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { PhoneInput } from '@/components/ui/phone-input'
-import { Switch } from '@/components/ui/switch'
-import { Textarea } from '@/components/ui/textarea'
-import type { FormValues } from '../_hooks/use-glass-supplier-form'
-import { useGlassSupplierForm } from '../_hooks/use-glass-supplier-form'
-import { useGlassSupplierMutations } from '../_hooks/use-glass-supplier-mutations'
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { PhoneInput } from "@/components/ui/phone-input"
+import { Switch } from "@/components/ui/switch"
+import { Textarea } from "@/components/ui/textarea"
+import type { FormValues } from "../_hooks/use-glass-supplier-form"
+import { useGlassSupplierForm } from "../_hooks/use-glass-supplier-form"
+import { useGlassSupplierMutations } from "../_hooks/use-glass-supplier-mutations"
 
 type GlassSupplierDialogProps = {
-  mode: 'create' | 'edit'
+  mode: "create" | "edit"
   open: boolean
   onOpenChangeAction: (open: boolean) => void
   defaultValues?: FormValues & { id?: string }
@@ -75,7 +75,7 @@ export function GlassSupplierDialog({
 
   // Handle form submission - routes to create or update
   const handleSubmit = (formData: FormValues) => {
-    if (mode === 'create') {
+    if (mode === "create") {
       handleCreate(formData)
     } else if (defaultValues?.id) {
       handleUpdate(defaultValues.id, formData)
@@ -87,12 +87,12 @@ export function GlassSupplierDialog({
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {mode === 'create' ? 'Crear Proveedor de Vidrio' : 'Editar Proveedor de Vidrio'}
+            {mode === "create" ? "Crear Proveedor de Vidrio" : "Editar Proveedor de Vidrio"}
           </DialogTitle>
           <DialogDescription>
-            {mode === 'create'
-              ? 'Complete los detalles para crear un nuevo proveedor.'
-              : 'Actualice los detalles del proveedor.'}
+            {mode === "create"
+              ? "Complete los detalles para crear un nuevo proveedor."
+              : "Actualice los detalles del proveedor."}
           </DialogDescription>
         </DialogHeader>
 
@@ -114,7 +114,7 @@ export function GlassSupplierDialog({
                             {...field}
                             disabled={isPending}
                             placeholder="Ej: Guardian, Saint-Gobain"
-                            value={field.value ?? ''}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -132,7 +132,7 @@ export function GlassSupplierDialog({
                             {...field}
                             disabled={isPending}
                             placeholder="Ej: GRD, SGB"
-                            value={field.value ?? ''}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -151,7 +151,7 @@ export function GlassSupplierDialog({
                           {...field}
                           disabled={isPending}
                           placeholder="Ej: México, Estados Unidos"
-                          value={field.value ?? ''}
+                          value={field.value ?? ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -176,7 +176,7 @@ export function GlassSupplierDialog({
                             disabled={isPending}
                             placeholder="https://www.ejemplo.com"
                             type="url"
-                            value={field.value ?? ''}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -195,7 +195,7 @@ export function GlassSupplierDialog({
                             disabled={isPending}
                             placeholder="ventas@ejemplo.com"
                             type="email"
-                            value={field.value ?? ''}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -215,7 +215,7 @@ export function GlassSupplierDialog({
                           defaultCountry="MX"
                           disabled={isPending}
                           placeholder="Ingresa el número telefónico"
-                          value={field.value ?? ''}
+                          value={field.value ?? ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -240,7 +240,7 @@ export function GlassSupplierDialog({
                           disabled={isPending}
                           placeholder="Notas adicionales sobre el proveedor"
                           rows={3}
-                          value={field.value ?? ''}
+                          value={field.value ?? ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -281,7 +281,7 @@ export function GlassSupplierDialog({
                 </Button>
                 <Button disabled={isPending} type="submit">
                   {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {mode === 'create' ? 'Crear Proveedor' : 'Guardar Cambios'}
+                  {mode === "create" ? "Crear Proveedor" : "Guardar Cambios"}
                 </Button>
               </DialogFooter>
             </form>

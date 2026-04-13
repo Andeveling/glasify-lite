@@ -1,9 +1,9 @@
-'use client'
+"use client"
 
-import { ArrowDown, ArrowUp, Minus } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { formatNumber } from '@/lib/format'
-import { cn } from '@/lib/utils'
+import { ArrowDown, ArrowUp, Minus } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { formatNumber } from "@/lib/format"
+import { cn } from "@/lib/utils"
 
 type MetricCardProps = {
   /**
@@ -82,7 +82,7 @@ export function MetricCard({
   }
 
   return (
-    <Card className={cn('transition-shadow hover:shadow-md', className)}>
+    <Card className={cn("transition-shadow hover:shadow-md", className)}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="font-medium text-sm">{title}</CardTitle>
         {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
@@ -94,9 +94,9 @@ export function MetricCard({
             {hasTrend && (
               <>
                 <span
-                  className={cn('flex items-center gap-1 font-medium', {
-                    'text-emerald-600 dark:text-emerald-400': isPositive,
-                    'text-red-600 dark:text-red-400': isNegative,
+                  className={cn("flex items-center gap-1 font-medium", {
+                    "text-emerald-600 dark:text-emerald-400": isPositive,
+                    "text-red-600 dark:text-red-400": isNegative,
                   })}
                 >
                   <TrendIcon className="h-3 w-3" />

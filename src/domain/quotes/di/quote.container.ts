@@ -1,24 +1,24 @@
-import { Dimensions } from '@domain/pricing/core/entities/dimensions'
-import { Money } from '@domain/pricing/core/entities/money'
-import type { PriceCalculationResult } from '@domain/pricing/core/entities/price-calculation'
-import type { ServiceUnit } from '@domain/pricing/core/types'
-import { CalculateItemPrice } from '@domain/pricing/use-cases/calculate-item-price'
-import type { PrismaClient } from '@prisma/generated/client'
-import { pipe } from 'fp-ts/function'
-import * as TE from 'fp-ts/TaskEither'
+import { Dimensions } from "@domain/pricing/core/entities/dimensions"
+import { Money } from "@domain/pricing/core/entities/money"
+import type { PriceCalculationResult } from "@domain/pricing/core/entities/price-calculation"
+import type { ServiceUnit } from "@domain/pricing/core/types"
+import { CalculateItemPrice } from "@domain/pricing/use-cases/calculate-item-price"
+import type { PrismaClient } from "@prisma/generated/client"
+import { pipe } from "fp-ts/function"
+import * as TE from "fp-ts/TaskEither"
 import {
   getQuoteValidityDays,
   getTenantConfigSelect,
   getTenantCurrency,
-} from '@/server/utils/tenant'
+} from "@/server/utils/tenant"
 
-import type { PriceCalculatorFn, TrpcPriceInput } from '../ports/pricing-repo'
-import type { AddItemToQuoteDeps } from '../use-cases/add-item-to-quote'
-import type { CalculateItemPriceDeps } from '../use-cases/calculate-item-price'
-import type { CalculatePriceWithColorDeps } from '../use-cases/calculate-price-with-color'
-import type { GetQuoteByIdDeps } from '../use-cases/get-quote-by-id'
-import type { ListUserQuotesDeps, QuoteListFilters } from '../use-cases/list-user-quotes'
-import type { SendQuoteToVendorDeps } from '../use-cases/send-quote-to-vendor'
+import type { PriceCalculatorFn, TrpcPriceInput } from "../ports/pricing-repo"
+import type { AddItemToQuoteDeps } from "../use-cases/add-item-to-quote"
+import type { CalculateItemPriceDeps } from "../use-cases/calculate-item-price"
+import type { CalculatePriceWithColorDeps } from "../use-cases/calculate-price-with-color"
+import type { GetQuoteByIdDeps } from "../use-cases/get-quote-by-id"
+import type { ListUserQuotesDeps, QuoteListFilters } from "../use-cases/list-user-quotes"
+import type { SendQuoteToVendorDeps } from "../use-cases/send-quote-to-vendor"
 
 const PERCENTAGE_DIVISOR = 100
 const BASE_MULTIPLIER = 1.0
@@ -68,7 +68,7 @@ function adaptTRPCToDomain(input: TrpcPriceInput): DomainPriceInput {
     concept: adj.concept,
     unit: adj.unit as ServiceUnit,
     value: adj.value,
-    isPositive: adj.sign === 'positive',
+    isPositive: adj.sign === "positive",
   }))
 
   return {
@@ -191,7 +191,7 @@ export function createAddItemToQuoteDeps(db: PrismaClient): AddItemToQuoteDeps {
         data: {
           clientId: input.clientId,
           currency: input.currency,
-          status: 'draft',
+          status: "draft",
           validUntil: input.validUntil,
         },
       }),
@@ -221,7 +221,7 @@ export function createAddItemToQuoteDeps(db: PrismaClient): AddItemToQuoteDeps {
     listQuoteItems: (quoteId) =>
       db.quoteItem.findMany({
         where: { quoteId },
-        orderBy: { createdAt: 'asc' },
+        orderBy: { createdAt: "asc" },
       }),
 
     getTenantCurrency: () => getTenantCurrency(db),
@@ -248,7 +248,7 @@ export function createAddItemToQuoteDeps(db: PrismaClient): AddItemToQuoteDeps {
         services: input.services.map((s) => ({
           serviceId: s.id,
           name: s.name,
-          unit: s.unit as 'unit' | 'sqm' | 'ml',
+          unit: s.unit as "unit" | "sqm" | "ml",
           rate: s.rate.toNumber(),
           minimumBillingUnit: s.minimumBillingUnit?.toNumber(),
         })),
@@ -387,14 +387,14 @@ export function createListUserQuotesDeps(db: PrismaClient): ListUserQuotesDeps {
       if (filters.search) {
         andConditions.push({
           OR: [
-            { projectName: { contains: filters.search, mode: 'insensitive' } },
+            { projectName: { contains: filters.search, mode: "insensitive" } },
             {
-              projectStreet: { contains: filters.search, mode: 'insensitive' },
+              projectStreet: { contains: filters.search, mode: "insensitive" },
             },
             {
               items: {
                 some: {
-                  name: { contains: filters.search, mode: 'insensitive' },
+                  name: { contains: filters.search, mode: "insensitive" },
                 },
               },
             },
@@ -464,7 +464,7 @@ export function createSendQuoteToVendorDeps(db: PrismaClient): SendQuoteToVendor
       const updated = await db.quote.update({
         where: { id },
         data: {
-          status: 'sent',
+          status: "sent",
           sentAt,
           contactPhone,
         },
@@ -564,7 +564,7 @@ export function createGetModelColorsForQuoteDeps(db: PrismaClient) {
           include: {
             color: true,
           },
-          orderBy: [{ isDefault: 'desc' }, { color: { name: 'asc' } }],
+          orderBy: [{ isDefault: "desc" }, { color: { name: "asc" } }],
         })
 
         return modelColors.map((mc) => ({

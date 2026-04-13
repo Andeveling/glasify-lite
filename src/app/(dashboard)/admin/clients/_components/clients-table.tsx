@@ -8,10 +8,10 @@
  * - Handles edit/delete actions via callbacks
  */
 
-'use client'
+"use client"
 
-import { FileText, Pencil, Trash2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { FileText, Pencil, Trash2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import {
   Table,
   TableBody,
@@ -19,7 +19,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from "@/components/ui/table"
 
 type ClientWithQuoteCount = {
   id: string
@@ -57,7 +57,7 @@ function formatRelativeTime(date: Date): string {
   const diffDays = Math.floor(diffMs / MS_PER_DAY)
 
   if (diffMins < 1) {
-    return 'hace un momento'
+    return "hace un momento"
   }
   if (diffMins < MINUTES_PER_HOUR) {
     return `hace ${diffMins} min`
@@ -68,10 +68,10 @@ function formatRelativeTime(date: Date): string {
   if (diffDays < MAX_DAYS_FOR_RELATIVE_TIME) {
     return `hace ${diffDays}d`
   }
-  return date.toLocaleDateString('es-ES', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
+  return date.toLocaleDateString("es-ES", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
   })
 }
 
@@ -111,10 +111,10 @@ export function ClientsTable({
             <TableRow key={client.id}>
               <TableCell className="font-medium">{client.name}</TableCell>
               <TableCell className="text-muted-foreground text-sm">
-                {client.company ?? '—'}
+                {client.company ?? "—"}
               </TableCell>
-              <TableCell className="text-muted-foreground text-sm">{client.email ?? '—'}</TableCell>
-              <TableCell className="text-muted-foreground text-sm">{client.phone ?? '—'}</TableCell>
+              <TableCell className="text-muted-foreground text-sm">{client.email ?? "—"}</TableCell>
+              <TableCell className="text-muted-foreground text-sm">{client.phone ?? "—"}</TableCell>
               <TableCell className="text-muted-foreground text-sm">
                 {client._count.quotes}
               </TableCell>

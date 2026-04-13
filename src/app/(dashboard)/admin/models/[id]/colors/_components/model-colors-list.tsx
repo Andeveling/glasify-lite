@@ -15,7 +15,7 @@
  * - Toast notifications for user feedback
  */
 
-'use client'
+"use client"
 
 // Local type definitions to avoid Prisma import issues
 type Color = {
@@ -40,19 +40,19 @@ type ModelColor = {
   color: Color
 }
 
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { safeDecimalToNumber } from '@/lib/prisma-utils'
-import { api } from '@/trpc/react'
-import { ModelColorRow } from './model-color-row'
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { safeDecimalToNumber } from "@/lib/prisma-utils"
+import { api } from "@/trpc/react"
+import { ModelColorRow } from "./model-color-row"
 
 type ModelColorWithColor = ModelColor & {
   color: Color
 }
 
 // Serialized version for Client Component (Decimal -> number)
-type SerializedModelColorWithColor = Omit<ModelColorWithColor, 'surchargePercentage'> & {
+type SerializedModelColorWithColor = Omit<ModelColorWithColor, "surchargePercentage"> & {
   surchargePercentage: number
 }
 
@@ -70,7 +70,7 @@ export function ModelColorsList({ modelId, initialColors }: ModelColorsListProps
   const utils = api.useUtils()
 
   // Query for real-time data (fallback to initialColors)
-  const { data: modelColorsRaw } = api.admin['model-colors'].listByModel.useQuery({ modelId })
+  const { data: modelColorsRaw } = api.admin["model-colors"].listByModel.useQuery({ modelId })
 
   // Serialize Decimal to number for display
   const modelColors =
@@ -80,39 +80,39 @@ export function ModelColorsList({ modelId, initialColors }: ModelColorsListProps
     })) ?? initialColors
 
   // Update surcharge mutation
-  const updateSurchargeMutation = api.admin['model-colors'].updateSurcharge.useMutation({
+  const updateSurchargeMutation = api.admin["model-colors"].updateSurcharge.useMutation({
     onError: (error) => {
-      toast.error(error.message || 'Error al actualizar recargo')
+      toast.error(error.message || "Error al actualizar recargo")
     },
     onSuccess: () => {
-      toast.success('Recargo actualizado')
-      utils.admin['model-colors'].listByModel.invalidate().catch(undefined)
+      toast.success("Recargo actualizado")
+      utils.admin["model-colors"].listByModel.invalidate().catch(undefined)
       router.refresh()
     },
   })
 
   // Set default mutation
-  const setDefaultMutation = api.admin['model-colors'].setDefault.useMutation({
+  const setDefaultMutation = api.admin["model-colors"].setDefault.useMutation({
     onSuccess: () => {
-      toast.success('Color establecido como predeterminado')
-      utils.admin['model-colors'].listByModel.invalidate().catch(undefined)
+      toast.success("Color establecido como predeterminado")
+      utils.admin["model-colors"].listByModel.invalidate().catch(undefined)
       router.refresh()
     },
     onError: (error) => {
-      toast.error(error.message || 'Error al establecer color por defecto')
+      toast.error(error.message || "Error al establecer color por defecto")
     },
   })
 
   // Unassign mutation
-  const unassignMutation = api.admin['model-colors'].unassign.useMutation({
+  const unassignMutation = api.admin["model-colors"].unassign.useMutation({
     onSuccess: () => {
-      toast.success('Color eliminado del modelo')
-      utils.admin['model-colors'].listByModel.invalidate().catch(undefined)
-      utils.admin['model-colors'].getAvailableColors.invalidate().catch(undefined)
+      toast.success("Color eliminado del modelo")
+      utils.admin["model-colors"].listByModel.invalidate().catch(undefined)
+      utils.admin["model-colors"].getAvailableColors.invalidate().catch(undefined)
       router.refresh()
     },
     onError: (error) => {
-      toast.error(error.message || 'Error al eliminar color')
+      toast.error(error.message || "Error al eliminar color")
     },
   })
 

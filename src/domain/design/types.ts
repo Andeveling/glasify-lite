@@ -1,4 +1,4 @@
-export type PanelType = 'movable' | 'fixed'
+export type PanelType = "movable" | "fixed"
 
 export interface PanelDescriptor {
   index: number
@@ -8,7 +8,7 @@ export interface PanelDescriptor {
 
 export interface FrameConfig {
   thickness: number
-  profileStyle: 'simple' | 'double' | 'premium'
+  profileStyle: "simple" | "double" | "premium"
   profileColor?: string
 }
 

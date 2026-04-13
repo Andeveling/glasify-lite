@@ -30,7 +30,7 @@
  * @see TECH-002: tRPC procedures for list/filter/sort
  */
 
-import type { Prisma } from '@prisma/generated/client'
+import type { Prisma } from "@prisma/generated/client"
 
 /**
  * Search configuration for building WHERE clauses
@@ -74,7 +74,7 @@ export type FilterParams = {
  */
 export type SortParams = {
   sortBy?: string
-  sortOrder?: 'asc' | 'desc'
+  sortOrder?: "asc" | "desc"
 }
 
 /**
@@ -84,7 +84,7 @@ function buildSearchClause(search: string, searchFields: string[]): Record<strin
   return searchFields.map((field) => ({
     [field]: {
       contains: search,
-      mode: 'insensitive' as Prisma.QueryMode,
+      mode: "insensitive" as Prisma.QueryMode,
     },
   }))
 }
@@ -100,7 +100,7 @@ function buildExactFilters(
 
   for (const [filterKey, dbField] of Object.entries(exactConfig)) {
     const value = filters[filterKey]
-    if (value !== undefined && value !== null && value !== '') {
+    if (value !== undefined && value !== null && value !== "") {
       exactFilters[dbField] = value
     }
   }
@@ -207,9 +207,9 @@ export function buildTableWhereClause<T extends Record<string, unknown>>(
  */
 export function buildTableOrderByClause<T extends Record<string, unknown>>(
   sort: SortParams,
-  defaultSort: { sortBy: string; sortOrder: 'asc' | 'desc' } = {
-    sortBy: 'createdAt',
-    sortOrder: 'desc',
+  defaultSort: { sortBy: string; sortOrder: "asc" | "desc" } = {
+    sortBy: "createdAt",
+    sortOrder: "desc",
   },
 ): T {
   const { sortBy = defaultSort.sortBy, sortOrder = defaultSort.sortOrder } = sort

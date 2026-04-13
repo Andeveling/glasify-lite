@@ -9,11 +9,11 @@
  * - Always visible during table loading
  */
 
-'use client'
+"use client"
 
-import { Plus } from 'lucide-react'
-import { TableSearch } from '@/app/_components/server-table/table-search'
-import { Button } from '@/components/ui/button'
+import { Plus } from "lucide-react"
+import { TableSearch } from "@/app/_components/server-table/table-search"
+import { Button } from "@/components/ui/button"
 
 type ClientsFiltersProps = {
   searchParams: {

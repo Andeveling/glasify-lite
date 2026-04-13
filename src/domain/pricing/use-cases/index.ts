@@ -6,5 +6,5 @@
  * application-specific business requirements.
  */
 
-export { CalculateItemPrice } from './calculate-item-price'
-export type { PriceCalculatorPort } from './ports/price-calculator-port'
+export { CalculateItemPrice } from "./calculate-item-price"
+export type { PriceCalculatorPort } from "./ports/price-calculator-port"

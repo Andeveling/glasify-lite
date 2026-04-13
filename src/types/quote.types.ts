@@ -7,8 +7,8 @@
  * @module types/quote.types
  */
 
-import type { QuoteStatus } from '@prisma/generated/client'
-import type { CartItem } from './cart.types'
+import type { QuoteStatus } from "@prisma/generated/client"
+import type { CartItem } from "./cart.types"
 
 // ============================================================================
 // Quote Input Types
@@ -225,10 +225,10 @@ export type ListUserQuotesOptions = {
   limit?: number
 
   /** Sort order */
-  sortBy?: 'createdAt' | 'validUntil' | 'total'
+  sortBy?: "createdAt" | "validUntil" | "total"
 
   /** Sort direction */
-  sortOrder?: 'asc' | 'desc'
+  sortOrder?: "asc" | "desc"
 }
 
 /**
@@ -265,13 +265,13 @@ export type QuoteListResponse = {
  * Quote validation error codes
  */
 export const QuoteErrorCode = {
-  EmptyCart: 'EMPTY_CART',
-  InvalidAddress: 'INVALID_ADDRESS',
-  NotFound: 'NOT_FOUND',
-  PriceCalculationFailed: 'PRICE_CALCULATION_FAILED',
-  TransactionFailed: 'TRANSACTION_FAILED',
-  Unauthorized: 'UNAUTHORIZED',
-  Unknown: 'UNKNOWN',
+  EmptyCart: "EMPTY_CART",
+  InvalidAddress: "INVALID_ADDRESS",
+  NotFound: "NOT_FOUND",
+  PriceCalculationFailed: "PRICE_CALCULATION_FAILED",
+  TransactionFailed: "TRANSACTION_FAILED",
+  Unauthorized: "UNAUTHORIZED",
+  Unknown: "UNKNOWN",
 } as const
 
 export type QuoteErrorCode = (typeof QuoteErrorCode)[keyof typeof QuoteErrorCode]
@@ -304,10 +304,10 @@ export const QUOTE_CONSTANTS = {
   DEFAULT_PAGE_SIZE: 20,
 
   /** Default sort order */
-  DEFAULT_SORT: 'createdAt' as const,
+  DEFAULT_SORT: "createdAt" as const,
 
   /** Default sort direction */
-  DEFAULT_SORT_ORDER: 'desc' as const,
+  DEFAULT_SORT_ORDER: "desc" as const,
 
   /** Maximum page size for quote list */
   MAX_PAGE_SIZE: 100,
@@ -324,7 +324,7 @@ export const QUOTE_CONSTANTS = {
  */
 export type QuoteStatusMeta = {
   label: string
-  color: 'default' | 'secondary' | 'success' | 'warning' | 'destructive'
+  color: "default" | "secondary" | "success" | "warning" | "destructive"
   description: string
 }
 
@@ -333,28 +333,28 @@ export type QuoteStatusMeta = {
  */
 export const QUOTE_STATUS_META: Record<QuoteStatus, QuoteStatusMeta> = {
   canceled: {
-    color: 'destructive',
-    description: 'Cotización cancelada',
-    label: 'Cancelada',
+    color: "destructive",
+    description: "Cotización cancelada",
+    label: "Cancelada",
   },
   draft: {
-    color: 'default',
-    description: 'Cotización en preparación',
-    label: 'Borrador',
+    color: "default",
+    description: "Cotización en preparación",
+    label: "Borrador",
   },
   sent: {
-    color: 'secondary',
-    description: 'Cotización enviada al cliente',
-    label: 'Enviada',
+    color: "secondary",
+    description: "Cotización enviada al cliente",
+    label: "Enviada",
   },
   accepted: {
-    color: 'success',
-    description: 'Cotización aceptada por el cliente',
-    label: 'Aceptada',
+    color: "success",
+    description: "Cotización aceptada por el cliente",
+    label: "Aceptada",
   },
   rejected: {
-    color: 'destructive',
-    description: 'Cotización rechazada por el cliente',
-    label: 'Rechazada',
+    color: "destructive",
+    description: "Cotización rechazada por el cliente",
+    label: "Rechazada",
   },
 }

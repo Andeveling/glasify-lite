@@ -7,12 +7,12 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from 'next'
-import { ClientForm } from '../_components/client-form'
+import type { Metadata } from "next"
+import { ClientForm } from "../_components/client-form"
 
 export const metadata: Metadata = {
-  description: 'Crear un nuevo cliente para el sistema de cotizaciones',
-  title: 'Nuevo Cliente | Admin',
+  description: "Crear un nuevo cliente para el sistema de cotizaciones",
+  title: "Nuevo Cliente | Admin",
 }
 
 export default function NewClientPage() {

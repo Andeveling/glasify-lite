@@ -1,9 +1,9 @@
-import { Dimensions } from '@domain/pricing/core/entities/dimensions'
-import { Money } from '@domain/pricing/core/entities/money'
-import type { PriceCalculationResult } from '@domain/pricing/core/entities/price-calculation'
-import type { ServiceUnit } from '@domain/pricing/core/types'
-import { CalculateItemPrice } from '@domain/pricing/use-cases/calculate-item-price'
-import type { Model, PrismaClient, Service } from '@prisma/generated/client'
+import { Dimensions } from "@domain/pricing/core/entities/dimensions"
+import { Money } from "@domain/pricing/core/entities/money"
+import type { PriceCalculationResult } from "@domain/pricing/core/entities/price-calculation"
+import type { ServiceUnit } from "@domain/pricing/core/types"
+import { CalculateItemPrice } from "@domain/pricing/use-cases/calculate-item-price"
+import type { Model, PrismaClient, Service } from "@prisma/generated/client"
 
 export type AddItemWithColorInput = {
   clientId: string
@@ -22,9 +22,9 @@ export type AddItemWithColorInput = {
   }>
   adjustments: Array<{
     concept: string
-    unit: 'unit' | 'sqm' | 'ml'
+    unit: "unit" | "sqm" | "ml"
     value: number
-    sign: 'positive' | 'negative'
+    sign: "positive" | "negative"
   }>
 }
 
@@ -45,7 +45,7 @@ function calculateItemPriceDomain(
   colorSurchargePercentage: number | undefined,
   glassTypePricePerSqm: number,
   services: Service[],
-  adjustments: AddItemWithColorInput['adjustments'],
+  adjustments: AddItemWithColorInput["adjustments"],
 ): PriceCalculationResult {
   const dimensions = new Dimensions({
     widthMm,
@@ -82,7 +82,7 @@ function calculateItemPriceDomain(
     concept: adj.concept,
     unit: adj.unit as ServiceUnit,
     value: adj.value,
-    isPositive: adj.sign === 'positive',
+    isPositive: adj.sign === "positive",
   }))
 
   return CalculateItemPrice.execute({
@@ -107,7 +107,7 @@ export async function addItemWithColorUseCase(
   })
 
   if (!model) {
-    throw new Error('Modelo no encontrado')
+    throw new Error("Modelo no encontrado")
   }
 
   let colorSnapshot: {
@@ -156,17 +156,17 @@ export async function addItemWithColorUseCase(
       })
 
       if (!existingQuote) {
-        throw new Error('Cotización no encontrada')
+        throw new Error("Cotización no encontrada")
       }
 
-      if (existingQuote.status !== 'draft') {
-        throw new Error('Solo se pueden agregar ítems a cotizaciones en estado borrador')
+      if (existingQuote.status !== "draft") {
+        throw new Error("Solo se pueden agregar ítems a cotizaciones en estado borrador")
       }
 
       quoteId = existingQuote.id
     } else {
       const tenant = await tx.tenantConfig.findFirst({})
-      const currency = tenant?.currency ?? 'COP'
+      const currency = tenant?.currency ?? "COP"
       const validityDays = tenant?.quoteValidityDays ?? 15
 
       const validUntil = new Date()
@@ -176,7 +176,7 @@ export async function addItemWithColorUseCase(
         data: {
           clientId: input.clientId,
           currency,
-          status: 'draft',
+          status: "draft",
           validUntil,
         },
       })
@@ -189,7 +189,7 @@ export async function addItemWithColorUseCase(
     })
 
     if (!glassType) {
-      throw new Error('Tipo de vidrio no encontrado')
+      throw new Error("Tipo de vidrio no encontrado")
     }
 
     const services: Service[] = []

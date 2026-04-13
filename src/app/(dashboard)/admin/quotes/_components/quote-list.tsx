@@ -10,11 +10,11 @@
  * - Responsive grid layout
  */
 
-'use client'
+"use client"
 
-import type { QuoteListItem as QuoteItem } from '../_types/quote-list.types'
-import { QuoteListItem } from './quote-list-item'
-import { QuotesEmptyState } from './quotes-empty-state'
+import type { QuoteListItem as QuoteItem } from "../_types/quote-list.types"
+import { QuoteListItem } from "./quote-list-item"
+import { QuotesEmptyState } from "./quotes-empty-state"
 
 type QuoteListProps = {
   initialData: {
@@ -30,7 +30,7 @@ type QuoteListProps = {
     status?: string
     search?: string
     sortBy?: string
-    sortOrder?: 'asc' | 'desc'
+    sortOrder?: "asc" | "desc"
     page?: number
   }
 }

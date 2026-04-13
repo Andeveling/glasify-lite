@@ -1,41 +1,41 @@
-'use client'
+"use client"
 
-import { useCallback } from 'react'
-import { useFormContext, useWatch } from 'react-hook-form'
-import { useTenantConfig } from '@/app/_hooks/use-tenant-config'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
-import { FormMessage } from '@/components/ui/form'
-import { Skeleton } from '@/components/ui/skeleton'
-import { formatCurrency, formatPercent, formatThickness } from '@/lib/format'
-import { api } from '@/trpc/react'
-import type { WizardFormValues } from '../wizard-form-schema'
+import { useCallback } from "react"
+import { useFormContext, useWatch } from "react-hook-form"
+import { useTenantConfig } from "@/app/_hooks/use-tenant-config"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
+import { FormMessage } from "@/components/ui/form"
+import { Skeleton } from "@/components/ui/skeleton"
+import { formatCurrency, formatPercent, formatThickness } from "@/lib/format"
+import { api } from "@/trpc/react"
+import type { WizardFormValues } from "../wizard-form-schema"
 
 function MaterialGlassStep() {
   const form = useFormContext<WizardFormValues>()
-  const modelId = useWatch({ control: form.control, name: 'modelId' })
-  const selectedColorId = useWatch({ control: form.control, name: 'colorId' })
-  const selectedGlassTypeId = useWatch({ control: form.control, name: 'glassTypeId' })
+  const modelId = useWatch({ control: form.control, name: "modelId" })
+  const selectedColorId = useWatch({ control: form.control, name: "colorId" })
+  const selectedGlassTypeId = useWatch({ control: form.control, name: "glassTypeId" })
   const { formatContext } = useTenantConfig()
 
   const { data: colorsData, isLoading: isLoadingColors } = api.quote[
-    'get-model-colors-for-quote'
+    "get-model-colors-for-quote"
   ].useQuery({ modelId }, { enabled: Boolean(modelId) })
 
   const { data: glassTypes, isLoading: isLoadingGlassTypes } = api.catalog[
-    'get-available-glass-types'
+    "get-available-glass-types"
   ].useQuery({ modelId }, { enabled: Boolean(modelId) })
 
   const handleColorSelect = useCallback(
     (colorId: string) => {
-      form.setValue('colorId', selectedColorId === colorId ? undefined : colorId)
+      form.setValue("colorId", selectedColorId === colorId ? undefined : colorId)
     },
     [form, selectedColorId],
   )
 
   const handleGlassTypeSelect = useCallback(
     (glassTypeId: string) => {
-      form.setValue('glassTypeId', glassTypeId, { shouldValidate: true })
+      form.setValue("glassTypeId", glassTypeId, { shouldValidate: true })
     },
     [form],
   )
@@ -70,18 +70,18 @@ function MaterialGlassStep() {
                 <button
                   key={color.id}
                   className={`flex flex-col items-center gap-2 transition-all ${
-                    isSelected ? 'opacity-100' : 'opacity-70 hover:opacity-100'
+                    isSelected ? "opacity-100" : "opacity-70 hover:opacity-100"
                   }`}
                   onClick={() => handleColorSelect(color.id)}
                   type="button"
                   aria-pressed={isSelected}
-                  aria-label={`${color.color.name}${color.surchargePercentage > 0 ? `, recargo ${formatPercent(color.surchargePercentage / 100, { context: formatContext })}` : ''}`}
+                  aria-label={`${color.color.name}${color.surchargePercentage > 0 ? `, recargo ${formatPercent(color.surchargePercentage / 100, { context: formatContext })}` : ""}`}
                 >
                   <div
                     className={`size-12 rounded-full border-2 transition-all ${
                       isSelected
-                        ? 'ring-4 ring-primary/20 border-primary scale-110'
-                        : 'border-border hover:border-primary/50'
+                        ? "ring-4 ring-primary/20 border-primary scale-110"
+                        : "border-border hover:border-primary/50"
                     }`}
                     style={{ backgroundColor: color.color.hexCode }}
                   />
@@ -122,8 +122,8 @@ function MaterialGlassStep() {
                   key={glassType.id}
                   className={`cursor-pointer border transition-all duration-200 hover:shadow-md ${
                     isSelected
-                      ? 'ring-2 ring-primary border-primary bg-primary/5 shadow-md'
-                      : 'border-border/50 hover:border-primary/30'
+                      ? "ring-2 ring-primary border-primary bg-primary/5 shadow-md"
+                      : "border-border/50 hover:border-primary/30"
                   }`}
                   onClick={() => handleGlassTypeSelect(glassType.id)}
                   role="button"

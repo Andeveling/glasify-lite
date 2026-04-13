@@ -1,8 +1,8 @@
-import { FileX, PackageOpen, Search, Users } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { FileX, PackageOpen, Search, Users } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
-type EmptyStateIcon = 'package' | 'search' | 'file' | 'users'
+type EmptyStateIcon = "package" | "search" | "file" | "users"
 
 type EmptyStateProps = {
   className?: string
@@ -12,7 +12,7 @@ type EmptyStateProps = {
   action?: {
     label: string
     onClick: () => void
-    variant?: 'default' | 'outline' | 'secondary' | 'ghost'
+    variant?: "default" | "outline" | "secondary" | "ghost"
   }
   children?: React.ReactNode
 }
@@ -26,7 +26,7 @@ const iconMap = {
 
 export function EmptyState({
   className,
-  icon = 'package',
+  icon = "package",
   title,
   description,
   action,
@@ -38,7 +38,7 @@ export function EmptyState({
     <output
       aria-label={`Estado vacío: ${title}`}
       className={cn(
-        'flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center',
+        "flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center",
         className,
       )}
     >
@@ -55,7 +55,7 @@ export function EmptyState({
           aria-describedby="empty-state-description"
           className="mt-4"
           onClick={action.onClick}
-          variant={action.variant || 'default'}
+          variant={action.variant || "default"}
         >
           {action.label}
         </Button>

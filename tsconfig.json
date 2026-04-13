@@ -27,10 +27,6 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@db/generated/client": ["./prisma/generated/client/client.ts"],
-      "@db/generated/client/runtime/library": [
-        "./prisma/generated/client/internal/prismaNamespace.ts"
-      ],
       "@/*": ["./src/*"],
       "@server/*": ["./src/server/*"],
       "@styles/*": ["./src/styles/*"],

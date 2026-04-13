@@ -17,18 +17,18 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from 'next'
-import { api } from '@/trpc/server-client'
-import { ProfileSupplierContent } from './_components/profile-supplier-content'
+import type { Metadata } from "next"
+import { api } from "@/trpc/server-client"
+import { ProfileSupplierContent } from "./_components/profile-supplier-content"
 
 export const metadata: Metadata = {
   description:
-    'Administra los proveedores de perfiles de ventanas y puertas (PVC, Aluminio, Madera, Mixtos)',
-  title: 'Gestión de Proveedores de Perfiles | Admin',
+    "Administra los proveedores de perfiles de ventanas y puertas (PVC, Aluminio, Madera, Mixtos)",
+  title: "Gestión de Proveedores de Perfiles | Admin",
 }
 
 // Force dynamic rendering - requires database connection
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 type SearchParams = Promise<{
   isActive?: string
@@ -36,7 +36,7 @@ type SearchParams = Promise<{
   page?: string
   search?: string
   sortBy?: string
-  sortOrder?: 'asc' | 'desc'
+  sortOrder?: "asc" | "desc"
 }>
 
 type PageProps = {
@@ -48,21 +48,21 @@ export default async function ProfileSuppliersPage({ searchParams }: PageProps) 
 
   // Parse search params (outside Suspense)
   const page = Number(params.page) || 1
-  const search = params.search && params.search !== '' ? params.search : undefined
+  const search = params.search && params.search !== "" ? params.search : undefined
   const materialType =
-    params.materialType && params.materialType !== 'all' ? params.materialType : undefined
-  const isActive = (params.isActive && params.isActive !== 'all' ? params.isActive : 'all') as
-    | 'all'
-    | 'active'
-    | 'inactive'
-  const sortBy = (params.sortBy || 'name') as 'name' | 'createdAt' | 'materialType'
-  const sortOrder = (params.sortOrder || 'asc') as 'asc' | 'desc'
+    params.materialType && params.materialType !== "all" ? params.materialType : undefined
+  const isActive = (params.isActive && params.isActive !== "all" ? params.isActive : "all") as
+    | "all"
+    | "active"
+    | "inactive"
+  const sortBy = (params.sortBy || "name") as "name" | "createdAt" | "materialType"
+  const sortOrder = (params.sortOrder || "asc") as "asc" | "desc"
 
   // Fetch data OUTSIDE Suspense to avoid EventEmitter memory leak
-  const initialData = await api.admin['profile-supplier'].list({
+  const initialData = await api.admin["profile-supplier"].list({
     isActive,
     limit: 20,
-    materialType: materialType as 'PVC' | 'ALUMINUM' | 'WOOD' | 'MIXED' | undefined,
+    materialType: materialType as "PVC" | "ALUMINUM" | "WOOD" | "MIXED" | undefined,
     page,
     search,
     sortBy,

@@ -12,24 +12,24 @@
  * - Delete confirmation dialog with referential integrity
  */
 
-'use client'
+"use client"
 
-import { Pencil, Plus, Search, Trash2 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
+import { Pencil, Plus, Search, Trash2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { toast } from "sonner"
+import { DeleteConfirmationDialog } from "@/app/_components/delete-confirmation-dialog"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from "@/components/ui/select"
 import {
   Table,
   TableBody,
@@ -37,8 +37,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { api } from '@/trpc/react'
+} from "@/components/ui/table"
+import { api } from "@/trpc/react"
 
 type SerializedGlassType = {
   id: string
@@ -92,8 +92,8 @@ type GlassTypeListProps = {
 export function GlassTypeList({ initialData }: GlassTypeListProps) {
   const router = useRouter()
   const utils = api.useUtils()
-  const [search, setSearch] = useState('')
-  const [isActive, setIsActive] = useState<'all' | 'active' | 'inactive'>('all')
+  const [search, setSearch] = useState("")
+  const [isActive, setIsActive] = useState<"all" | "active" | "inactive">("all")
   const [page, setPage] = useState(1)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [glassTypeToDelete, setGlassTypeToDelete] = useState<{
@@ -102,14 +102,14 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
   } | null>(null)
 
   // Query with filters
-  const { data, isLoading } = api.admin['glass-type'].list.useQuery(
+  const { data, isLoading } = api.admin["glass-type"].list.useQuery(
     {
       isActive,
       limit: 20,
       page,
       search: search || undefined,
-      sortBy: 'name',
-      sortOrder: 'asc',
+      sortBy: "name",
+      sortOrder: "asc",
     },
     {
       placeholderData: (previousData) => previousData,
@@ -117,22 +117,22 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
   )
 
   // Delete mutation
-  const deleteMutation = api.admin['glass-type'].delete.useMutation({
+  const deleteMutation = api.admin["glass-type"].delete.useMutation({
     onError: (error) => {
-      toast.error('Error al eliminar tipo de cristal', {
+      toast.error("Error al eliminar tipo de cristal", {
         description: error.message,
       })
     },
     onSuccess: () => {
-      toast.success('Tipo de cristal eliminado correctamente')
+      toast.success("Tipo de cristal eliminado correctamente")
       setDeleteDialogOpen(false)
       setGlassTypeToDelete(null)
-      utils.admin['glass-type'].list.invalidate().catch(undefined)
+      utils.admin["glass-type"].list.invalidate().catch(undefined)
     },
   })
 
   const handleCreateClick = () => {
-    router.push('/admin/glass-types/new')
+    router.push("/admin/glass-types/new")
   }
 
   const handleEditClick = (id: string) => {
@@ -191,7 +191,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
             </label>
             <Select
               onValueChange={(value) => {
-                setIsActive(value as 'all' | 'active' | 'inactive')
+                setIsActive(value as "all" | "active" | "inactive")
                 setPage(1)
               }}
               value={isActive}
@@ -260,7 +260,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
                       <Badge variant="outline">{glassType.thicknessMm}mm</Badge>
                     </TableCell>
                     <TableCell className="text-sm">
-                      ${Number(glassType.pricePerSqm).toLocaleString('es-CO')}
+                      ${Number(glassType.pricePerSqm).toLocaleString("es-CO")}
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
@@ -270,7 +270,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
                           glassType.solutions.map((sol) => (
                             <Badge
                               key={sol.solution.id}
-                              variant={sol.isPrimary ? 'default' : 'secondary'}
+                              variant={sol.isPrimary ? "default" : "secondary"}
                             >
                               {sol.solution.id}
                             </Badge>
@@ -279,8 +279,8 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={glassType.isActive ? 'default' : 'secondary'}>
-                        {glassType.isActive ? 'Activo' : 'Inactivo'}
+                      <Badge variant={glassType.isActive ? "default" : "secondary"}>
+                        {glassType.isActive ? "Activo" : "Inactivo"}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
@@ -340,7 +340,7 @@ export function GlassTypeList({ initialData }: GlassTypeListProps) {
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
         dependencies={[]}
-        entityLabel={glassTypeToDelete?.name ?? ''}
+        entityLabel={glassTypeToDelete?.name ?? ""}
         entityName="tipo de cristal"
         loading={deleteMutation.isPending}
         onConfirm={handleConfirmDelete}

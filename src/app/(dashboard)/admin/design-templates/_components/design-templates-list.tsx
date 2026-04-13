@@ -1,23 +1,23 @@
-'use client'
+"use client"
 
-import type { RouterOutputs } from '@/trpc/react'
-import { api } from '@/trpc/react'
-import { DesignTemplatesTable } from './design-templates-table'
+import type { RouterOutputs } from "@/trpc/react"
+import { api } from "@/trpc/react"
+import { DesignTemplatesTable } from "./design-templates-table"
 
 type DesignTemplatesListProps = {
-  initialData: RouterOutputs['admin']['design-template']['list']
+  initialData: RouterOutputs["admin"]["design-template"]["list"]
 }
 
 export function DesignTemplatesList({ initialData }: DesignTemplatesListProps) {
-  const { data } = api.admin['design-template'].list.useQuery(
+  const { data } = api.admin["design-template"].list.useQuery(
     { page: initialData.page, limit: initialData.limit },
     { initialData },
   )
 
   const utils = api.useUtils()
-  const deleteMutation = api.admin['design-template'].delete.useMutation({
+  const deleteMutation = api.admin["design-template"].delete.useMutation({
     onSuccess: () => {
-      void utils.admin['design-template'].list.invalidate()
+      void utils.admin["design-template"].list.invalidate()
     },
   })
 

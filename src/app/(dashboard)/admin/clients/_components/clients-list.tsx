@@ -19,16 +19,16 @@
  * - Delete confirmation dialog
  */
 
-'use client'
+"use client"
 
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog'
-import { TablePagination } from '@/app/_components/server-table/table-pagination'
-import { api } from '@/trpc/react'
-import { ClientsEmpty } from './clients-empty'
-import { ClientsTable } from './clients-table'
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { toast } from "sonner"
+import { DeleteConfirmationDialog } from "@/app/_components/delete-confirmation-dialog"
+import { TablePagination } from "@/app/_components/server-table/table-pagination"
+import { api } from "@/trpc/react"
+import { ClientsEmpty } from "./clients-empty"
+import { ClientsTable } from "./clients-table"
 
 type ClientWithQuoteCount = {
   id: string
@@ -56,7 +56,7 @@ type ClientsListProps = {
     page?: string
     search?: string
     sortBy?: string
-    sortOrder?: 'asc' | 'desc'
+    sortOrder?: "asc" | "desc"
   }
 }
 
@@ -82,12 +82,12 @@ export function ClientsList({ initialData, searchParams }: ClientsListProps) {
             limit: initialData.limit,
             page: Number(searchParams.page) || 1,
             search: searchParams.search,
-            sortBy: (searchParams.sortBy || 'createdAt') as
-              | 'name'
-              | 'company'
-              | 'createdAt'
-              | 'updatedAt',
-            sortOrder: (searchParams.sortOrder || 'desc') as 'asc' | 'desc',
+            sortBy: (searchParams.sortBy || "createdAt") as
+              | "name"
+              | "company"
+              | "createdAt"
+              | "updatedAt",
+            sortOrder: (searchParams.sortOrder || "desc") as "asc" | "desc",
           },
           (old) => {
             if (!old) {
@@ -102,7 +102,7 @@ export function ClientsList({ initialData, searchParams }: ClientsListProps) {
         )
       }
 
-      toast.loading('Eliminando cliente...', { id: 'delete-client' })
+      toast.loading("Eliminando cliente...", { id: "delete-client" })
 
       return { previousData }
     },
@@ -113,19 +113,19 @@ export function ClientsList({ initialData, searchParams }: ClientsListProps) {
             limit: initialData.limit,
             page: Number(searchParams.page) || 1,
             search: searchParams.search,
-            sortBy: (searchParams.sortBy || 'createdAt') as
-              | 'name'
-              | 'company'
-              | 'createdAt'
-              | 'updatedAt',
-            sortOrder: (searchParams.sortOrder || 'desc') as 'asc' | 'desc',
+            sortBy: (searchParams.sortBy || "createdAt") as
+              | "name"
+              | "company"
+              | "createdAt"
+              | "updatedAt",
+            sortOrder: (searchParams.sortOrder || "desc") as "asc" | "desc",
           },
           context.previousData,
         )
       }
-      toast.error('Error al eliminar cliente', {
+      toast.error("Error al eliminar cliente", {
         description: error.message,
-        id: 'delete-client',
+        id: "delete-client",
       })
     },
     onSettled: () => {
@@ -133,7 +133,7 @@ export function ClientsList({ initialData, searchParams }: ClientsListProps) {
       router.refresh()
     },
     onSuccess: () => {
-      toast.success('Cliente eliminado correctamente', { id: 'delete-client' })
+      toast.success("Cliente eliminado correctamente", { id: "delete-client" })
     },
   })
 
@@ -180,7 +180,7 @@ export function ClientsList({ initialData, searchParams }: ClientsListProps) {
     quoteCount > 0
       ? [
           {
-            entity: 'Cotización',
+            entity: "Cotización",
             count: quoteCount,
             message: `${quoteCount} cotización(es) asociada(s)`,
           },
@@ -191,7 +191,7 @@ export function ClientsList({ initialData, searchParams }: ClientsListProps) {
     <>
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
-        entityLabel={clientToDelete?.name ?? ''}
+        entityLabel={clientToDelete?.name ?? ""}
         entityName="cliente"
         loading={deleteMutation.isPending}
         onConfirm={handleDeleteConfirm}

@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 /**
  * Price Ranges Chart Component
@@ -6,12 +6,12 @@
  * with count and percentage tooltips
  */
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { type ChartConfig, ChartContainer, ChartTooltip } from '@/components/ui/chart'
-import { formatCurrency, formatCurrencyCompact, formatPercent } from '@/lib/format'
-import type { PriceRange } from '@/types/dashboard'
-import { EmptyDashboardState } from './empty-dashboard-state'
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { type ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart"
+import { formatCurrency, formatCurrencyCompact, formatPercent } from "@/lib/format"
+import type { PriceRange } from "@/types/dashboard"
+import { EmptyDashboardState } from "./empty-dashboard-state"
 
 const BORDER_RADIUS_VALUE = 4
 const BAR_RADIUS_RIGHT: [number, number, number, number] = [
@@ -23,8 +23,8 @@ const BAR_RADIUS_RIGHT: [number, number, number, number] = [
 
 const chartConfig = {
   count: {
-    color: 'var(--chart-2)',
-    label: 'Cotizaciones',
+    color: "var(--chart-2)",
+    label: "Cotizaciones",
   },
 } satisfies ChartConfig
 
@@ -81,7 +81,7 @@ export function PriceRangesChart({ data, tenantConfig }: PriceRangesChartProps) 
   const chartData = data.map((item) => {
     // Format range label using formatCurrencyCompact
     const minFormatted = formatCurrencyCompact(item.min, tenantConfig)
-    const maxFormatted = item.max ? formatCurrencyCompact(item.max, tenantConfig) : '+'
+    const maxFormatted = item.max ? formatCurrencyCompact(item.max, tenantConfig) : "+"
     const rangeLabel = item.max
       ? `${minFormatted} - ${maxFormatted}`
       : `${minFormatted}${maxFormatted}`
@@ -134,7 +134,7 @@ export function PriceRangesChart({ data, tenantConfig }: PriceRangesChartProps) 
                 })
                 const maxFormatted = tooltipData.max
                   ? formatCurrency(tooltipData.max, { context: tenantConfig })
-                  : '+'
+                  : "+"
                 const detailedRange = tooltipData.max
                   ? `${minFormatted} - ${maxFormatted}`
                   : `${minFormatted}${maxFormatted}`

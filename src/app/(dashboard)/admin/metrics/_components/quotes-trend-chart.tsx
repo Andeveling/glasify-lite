@@ -1,21 +1,21 @@
-'use client'
+"use client"
 
-import { CartesianGrid, Line, LineChart, XAxis } from 'recharts'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { CartesianGrid, Line, LineChart, XAxis } from "recharts"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from '@/components/ui/chart'
-import { formatNumber } from '@/lib/format'
-import type { TrendDataPoint } from '@/types/dashboard'
-import { EmptyDashboardState } from './empty-dashboard-state'
+} from "@/components/ui/chart"
+import { formatNumber } from "@/lib/format"
+import type { TrendDataPoint } from "@/types/dashboard"
+import { EmptyDashboardState } from "./empty-dashboard-state"
 
 const chartConfig = {
   count: {
-    color: 'var(--chart-1)',
-    label: 'Cotizaciones',
+    color: "var(--chart-1)",
+    label: "Cotizaciones",
   },
 } satisfies ChartConfig
 

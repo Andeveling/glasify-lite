@@ -8,11 +8,11 @@
  * - Handles edit/delete actions via callbacks
  */
 
-'use client'
+"use client"
 
-import { Pencil, Trash2 } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Pencil, Trash2 } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Table,
   TableBody,
@@ -20,8 +20,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { ColorChip } from './color-chip'
+} from "@/components/ui/table"
+import { ColorChip } from "./color-chip"
 
 type SerializedColor = {
   id: string
@@ -58,7 +58,7 @@ function formatRelativeTime(date: Date): string {
   const diffDays = Math.floor(diffMs / MS_PER_DAY)
 
   if (diffMins < 1) {
-    return 'hace un momento'
+    return "hace un momento"
   }
   if (diffMins < MINUTES_PER_HOUR) {
     return `hace ${diffMins} min`
@@ -69,10 +69,10 @@ function formatRelativeTime(date: Date): string {
   if (diffDays < MAX_DAYS_FOR_RELATIVE_TIME) {
     return `hace ${diffDays}d`
   }
-  return date.toLocaleDateString('es-ES', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
+  return date.toLocaleDateString("es-ES", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
   })
 }
 
@@ -110,14 +110,14 @@ export function ColorsTable({ colors, onEditAction, onDeleteAction }: ColorsTabl
               </TableCell>
               <TableCell className="font-medium">{color.name}</TableCell>
               <TableCell className="text-muted-foreground text-sm">
-                {color.ralCode ?? '—'}
+                {color.ralCode ?? "—"}
               </TableCell>
               <TableCell className="font-mono text-muted-foreground text-sm uppercase">
                 {color.hexCode}
               </TableCell>
               <TableCell>
-                <Badge variant={color.isActive ? 'default' : 'secondary'}>
-                  {color.isActive ? 'Activo' : 'Inactivo'}
+                <Badge variant={color.isActive ? "default" : "secondary"}>
+                  {color.isActive ? "Activo" : "Inactivo"}
                 </Badge>
               </TableCell>
               <TableCell className="text-muted-foreground text-sm">

@@ -8,8 +8,8 @@
  * Format ProjectAddress entities for display in UI
  */
 
-import { COORDINATE_DISPLAY_DECIMAL_PLACES } from '@/app/(dashboard)/admin/quotes/_constants/geocoding.constants'
-import { validateCoordinates } from '@/lib/utils/coordinates'
+import { COORDINATE_DISPLAY_DECIMAL_PLACES } from "@/app/(dashboard)/admin/quotes/_constants/geocoding.constants"
+import { validateCoordinates } from "@/lib/utils/coordinates"
 
 /**
  * Address-like type for formatting (accepts both server and client types)
@@ -43,7 +43,7 @@ type FormattableAddress = {
  */
 export function formatAddress(address: FormattableAddress | null | undefined): string {
   if (!address) {
-    return 'Sin dirección'
+    return "Sin dirección"
   }
 
   // Collect all non-null address components in hierarchical order
@@ -72,9 +72,9 @@ export function formatAddress(address: FormattableAddress | null | undefined): s
   }
 
   // Join with commas and space
-  const formatted = components.join(', ')
+  const formatted = components.join(", ")
 
-  return formatted || 'Sin dirección'
+  return formatted || "Sin dirección"
 }
 
 /**
@@ -93,7 +93,7 @@ export function formatAddress(address: FormattableAddress | null | undefined): s
  */
 export function formatAddressWithLabel(address: FormattableAddress | null | undefined): string {
   if (!address) {
-    return 'Sin dirección'
+    return "Sin dirección"
   }
 
   const formatted = formatAddress(address)
@@ -136,10 +136,10 @@ export function parseCoordinates(
 
   // Convert Prisma Decimal to number if needed
   const latitude =
-    typeof address.latitude === 'number' ? address.latitude : Number(address.latitude)
+    typeof address.latitude === "number" ? address.latitude : Number(address.latitude)
 
   const longitude =
-    typeof address.longitude === 'number' ? address.longitude : Number(address.longitude)
+    typeof address.longitude === "number" ? address.longitude : Number(address.longitude)
 
   // Validate coordinate ranges
   try {
@@ -166,11 +166,11 @@ export function formatCoordinates(
   longitude: number | null | undefined,
 ): string {
   if (latitude === null || latitude === undefined) {
-    return 'Sin coordenadas'
+    return "Sin coordenadas"
   }
 
   if (longitude === null || longitude === undefined) {
-    return 'Sin coordenadas'
+    return "Sin coordenadas"
   }
 
   return `${latitude.toFixed(COORDINATE_DISPLAY_DECIMAL_PLACES)}, ${longitude.toFixed(COORDINATE_DISPLAY_DECIMAL_PLACES)}`

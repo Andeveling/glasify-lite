@@ -6,9 +6,9 @@
  * 2. Items - Detailed item breakdown with formulas
  */
 
-import ExcelJS from 'exceljs'
-import { formatTaxLabel } from '@/lib/format'
-import type { QuoteExcelData } from '@/types/export.types'
+import ExcelJS from "exceljs"
+import { formatTaxLabel } from "@/lib/format"
+import type { QuoteExcelData } from "@/types/export.types"
 import {
   excelAlignments,
   excelBorders,
@@ -17,14 +17,14 @@ import {
   excelFonts,
   excelNumberFormats,
   excelRowHeights,
-} from './excel-styles'
+} from "./excel-styles"
 import {
   formatDateForExcel,
   getCellReference,
   getItemSubtotalFormula,
   getSubtotalFormula,
   sanitizeExcelText,
-} from './excel-utils'
+} from "./excel-utils"
 
 // Quote ID display length (first N characters)
 const QUOTE_ID_DISPLAY_LENGTH = 8
@@ -93,7 +93,7 @@ export function createQuoteExcelWorkbook(data: QuoteExcelData): ExcelJS.Workbook
  * Create Summary Sheet
  */
 function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
-  const sheet = workbook.addWorksheet('Resumen', {
+  const sheet = workbook.addWorksheet("Resumen", {
     properties: {
       defaultRowHeight: excelRowHeights.default,
     },
@@ -121,7 +121,7 @@ function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
   // Quote Information
   const quoteInfoRow = sheet.getRow(currentRow)
   quoteInfoRow.height = excelRowHeights.sectionTitle
-  quoteInfoRow.getCell(1).value = 'Información de Cotización'
+  quoteInfoRow.getCell(1).value = "Información de Cotización"
   quoteInfoRow.getCell(1).font = excelFonts.sectionTitle
   quoteInfoRow.getCell(1).fill = excelFills.sectionTitle
   sheet.mergeCells(currentRow, 1, currentRow, 2)
@@ -129,12 +129,12 @@ function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
 
   // Quote details
   const quoteDetails = [
-    ['Cotización #:', data.quote.id.slice(0, QUOTE_ID_DISPLAY_LENGTH)],
-    ['Proyecto:', sanitizeExcelText(data.quote.projectName)],
-    ['Estado:', data.quote.status === 'draft' ? 'Borrador' : data.quote.status],
-    ['Fecha de creación:', formatDateForExcel(data.quote.createdAt)],
-    ['Válida hasta:', formatDateForExcel(data.quote.validUntil)],
-    ['Total de ítems:', data.quote.itemCount],
+    ["Cotización #:", data.quote.id.slice(0, QUOTE_ID_DISPLAY_LENGTH)],
+    ["Proyecto:", sanitizeExcelText(data.quote.projectName)],
+    ["Estado:", data.quote.status === "draft" ? "Borrador" : data.quote.status],
+    ["Fecha de creación:", formatDateForExcel(data.quote.createdAt)],
+    ["Válida hasta:", formatDateForExcel(data.quote.validUntil)],
+    ["Total de ítems:", data.quote.itemCount],
   ]
 
   for (const [label, value] of quoteDetails) {
@@ -156,7 +156,7 @@ function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
   // Customer Information
   const customerInfoRow = sheet.getRow(currentRow)
   customerInfoRow.height = excelRowHeights.sectionTitle
-  customerInfoRow.getCell(1).value = 'Información del Cliente'
+  customerInfoRow.getCell(1).value = "Información del Cliente"
   customerInfoRow.getCell(1).font = excelFonts.sectionTitle
   customerInfoRow.getCell(1).fill = excelFills.sectionTitle
   sheet.mergeCells(currentRow, 1, currentRow, 2)
@@ -164,9 +164,9 @@ function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
 
   // Customer details
   const customerDetails = [
-    ['Nombre:', sanitizeExcelText(data.customer.name)],
-    ['Email:', data.customer.email || '-'],
-    ['Teléfono:', data.customer.phone || '-'],
+    ["Nombre:", sanitizeExcelText(data.customer.name)],
+    ["Email:", data.customer.email || "-"],
+    ["Teléfono:", data.customer.phone || "-"],
   ]
 
   for (const [label, value] of customerDetails) {
@@ -183,7 +183,7 @@ function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
   // Totals Section
   const totalsRow = sheet.getRow(currentRow)
   totalsRow.height = excelRowHeights.sectionTitle
-  totalsRow.getCell(1).value = 'Resumen de Costos'
+  totalsRow.getCell(1).value = "Resumen de Costos"
   totalsRow.getCell(1).font = excelFonts.sectionTitle
   totalsRow.getCell(1).fill = excelFills.sectionTitle
   sheet.mergeCells(currentRow, 1, currentRow, 2)
@@ -191,7 +191,7 @@ function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
 
   // Subtotal
   const subtotalRow = sheet.getRow(currentRow)
-  subtotalRow.getCell(1).value = 'Subtotal:'
+  subtotalRow.getCell(1).value = "Subtotal:"
   subtotalRow.getCell(1).font = excelFonts.body
   subtotalRow.getCell(2).value = data.totals.subtotal
   subtotalRow.getCell(2).font = excelFonts.body
@@ -205,7 +205,7 @@ function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
   // Discount (if applicable)
   if (data.totals.discount !== undefined && data.totals.discount > 0) {
     const discountRow = sheet.getRow(currentRow)
-    discountRow.getCell(1).value = 'Descuento:'
+    discountRow.getCell(1).value = "Descuento:"
     discountRow.getCell(1).font = excelFonts.body
     discountRow.getCell(2).value = -data.totals.discount
     discountRow.getCell(2).font = excelFonts.body
@@ -216,7 +216,7 @@ function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
   // Total
   const totalRow = sheet.getRow(currentRow)
   totalRow.height = excelRowHeights.tableHeader
-  totalRow.getCell(1).value = 'TOTAL:'
+  totalRow.getCell(1).value = "TOTAL:"
   totalRow.getCell(1).font = excelFonts.totalLabel
   totalRow.getCell(1).fill = excelFills.totalRow
   totalRow.getCell(2).value = data.totals.total
@@ -239,7 +239,7 @@ function createSummarySheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
  * Create Items Sheet with detailed breakdown
  */
 function createItemsSheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
-  const sheet = workbook.addWorksheet('Ítems Detallados', {
+  const sheet = workbook.addWorksheet("Ítems Detallados", {
     properties: {
       defaultRowHeight: excelRowHeights.default,
     },
@@ -260,13 +260,13 @@ function createItemsSheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
   const headerRow = sheet.getRow(1)
   headerRow.height = excelRowHeights.tableHeader
   headerRow.values = [
-    '#',
-    'Producto',
-    'Descripción',
-    'Dimensiones',
-    'Cantidad',
-    'Precio Unitario',
-    'Subtotal',
+    "#",
+    "Producto",
+    "Descripción",
+    "Dimensiones",
+    "Cantidad",
+    "Precio Unitario",
+    "Subtotal",
   ]
 
   // Apply header styles
@@ -288,8 +288,8 @@ function createItemsSheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
     // Column values
     row.getCell(1).value = item.itemNumber
     row.getCell(2).value = sanitizeExcelText(item.name)
-    row.getCell(3).value = item.productName ? sanitizeExcelText(item.productName) : '-'
-    row.getCell(4).value = item.width && item.height ? `${item.width}x${item.height}m` : '-'
+    row.getCell(3).value = item.productName ? sanitizeExcelText(item.productName) : "-"
+    row.getCell(4).value = item.width && item.height ? `${item.width}x${item.height}m` : "-"
     row.getCell(5).value = item.quantity
     row.getCell(6).value = item.unitPrice
 
@@ -330,7 +330,7 @@ function createItemsSheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
   totalsRow.height = excelRowHeights.tableHeader
 
   sheet.mergeCells(totalsRowNumber, 1, totalsRowNumber, 6)
-  totalsRow.getCell(1).value = 'SUBTOTAL:'
+  totalsRow.getCell(1).value = "SUBTOTAL:"
   totalsRow.getCell(1).font = excelFonts.totalLabel
   totalsRow.getCell(1).alignment = excelAlignments.right
   totalsRow.getCell(1).fill = excelFills.totalsSection
@@ -348,7 +348,7 @@ function createItemsSheet(workbook: ExcelJS.Workbook, data: QuoteExcelData) {
   totalsRow.getCell(7).border = excelBorders.thick
 
   // Freeze header row
-  sheet.views = [{ state: 'frozen', ySplit: 1 }]
+  sheet.views = [{ state: "frozen", ySplit: 1 }]
 
   // Auto-filter
   sheet.autoFilter = {

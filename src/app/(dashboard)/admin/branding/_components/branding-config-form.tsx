@@ -1,11 +1,11 @@
-'use client'
+"use client"
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Upload, X } from 'lucide-react'
-import Image from 'next/image'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Upload, X } from "lucide-react"
+import Image from "next/image"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -14,18 +14,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Switch } from '@/components/ui/switch'
-import { useBrandingMutation } from '../_hooks/use-branding-mutation'
-import { useLogoUpload } from '../_hooks/use-logo-upload'
-import { brandingFormSchema } from '../_schemas/branding-form.schema'
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Switch } from "@/components/ui/switch"
+import { useBrandingMutation } from "../_hooks/use-branding-mutation"
+import { useLogoUpload } from "../_hooks/use-logo-upload"
+import { brandingFormSchema } from "../_schemas/branding-form.schema"
 import {
   type BrandingFormValues,
   type BrandingInitialData,
   getBrandingFormDefaults,
   uploadLogoFile,
-} from '../_utils/branding-form.utils'
+} from "../_utils/branding-form.utils"
 
 type BrandingConfigFormProps = {
   initialData: BrandingInitialData
@@ -44,7 +44,7 @@ export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
 
   const handleRemoveLogoWithForm = () => {
     handleRemoveLogo()
-    form.setValue('logoUrl', '')
+    form.setValue("logoUrl", "")
   }
 
   const onSubmit = async (data: BrandingFormValues) => {
@@ -57,18 +57,18 @@ export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
 
       // Prepare branding data - send all fields (empty strings are allowed)
       const brandingData = {
-        facebookUrl: data.facebookUrl || '',
-        instagramUrl: data.instagramUrl || '',
-        linkedinUrl: data.linkedinUrl || '',
-        logoUrl: logoUrl || '',
+        facebookUrl: data.facebookUrl || "",
+        instagramUrl: data.instagramUrl || "",
+        linkedinUrl: data.linkedinUrl || "",
+        logoUrl: logoUrl || "",
         whatsappEnabled: Boolean(data.whatsappEnabled),
-        whatsappNumber: data.whatsappNumber || '',
+        whatsappNumber: data.whatsappNumber || "",
       }
 
       await updateBranding(brandingData)
     } catch (error) {
-      toast.error('Error', {
-        description: error instanceof Error ? error.message : 'Error desconocido',
+      toast.error("Error", {
+        description: error instanceof Error ? error.message : "Error desconocido",
       })
     }
   }
@@ -265,7 +265,7 @@ export function BrandingConfigForm({ initialData }: BrandingConfigFormProps) {
             Cancelar
           </Button>
           <Button disabled={isPending} type="submit">
-            {isPending ? 'Guardando...' : 'Guardar Cambios'}
+            {isPending ? "Guardando..." : "Guardar Cambios"}
           </Button>
         </div>
       </form>

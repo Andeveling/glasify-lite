@@ -4,14 +4,14 @@
  * Implementa QuoteRepository usando Prisma como ORM.
  */
 
-import type { PrismaClient } from '@prisma/generated/client'
+import type { PrismaClient } from "@prisma/generated/client"
 import type {
   CreateQuoteInput,
   CreateQuoteItemInput,
   PaginatedQuotes,
   QuoteListFilters,
   QuoteRepository,
-} from '@/domain/quotes/repositories/quote.repository'
+} from "@/domain/quotes/repositories/quote.repository"
 
 export class PrismaQuoteRepository implements QuoteRepository {
   private readonly prisma: PrismaClient
@@ -53,7 +53,7 @@ export class PrismaQuoteRepository implements QuoteRepository {
     })
   }
 
-  updateStatus(id: string, status: CreateQuoteInput['status']) {
+  updateStatus(id: string, status: CreateQuoteInput["status"]) {
     return this.prisma.quote.update({
       where: { id },
       data: { status },
@@ -73,7 +73,7 @@ export class PrismaQuoteRepository implements QuoteRepository {
         where,
         take: limit + 1,
         ...(cursor && { cursor: { id: cursor }, skip: 1 }),
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
       }),
       this.prisma.quote.count({ where }),
     ])
@@ -89,7 +89,7 @@ export class PrismaQuoteRepository implements QuoteRepository {
     }
   }
 
-  count(filters: Omit<QuoteListFilters, 'cursor' | 'limit'>) {
+  count(filters: Omit<QuoteListFilters, "cursor" | "limit">) {
     const { userId, status } = filters
 
     const where = {
@@ -119,7 +119,7 @@ export class PrismaQuoteRepository implements QuoteRepository {
   listItems(quoteId: string) {
     return this.prisma.quoteItem.findMany({
       where: { quoteId },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { createdAt: "asc" },
     })
   }
 

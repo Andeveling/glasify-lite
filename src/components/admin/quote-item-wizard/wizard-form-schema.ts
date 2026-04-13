@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from "zod"
 
 const wizardFormSchema = z.object({
   widthMm: z.number().int().positive().max(6000),
@@ -14,12 +14,12 @@ const wizardFormSchema = z.object({
 })
 
 const STEP_FIELDS: Record<number, (keyof z.infer<typeof wizardFormSchema>)[]> = {
-  0: ['widthMm', 'heightMm', 'quantity'],
-  1: ['modelId', 'configuredWidthMm', 'configuredHeightMm'],
-  2: ['glassTypeId'],
-  3: ['serviceIds'],
+  0: ["widthMm", "heightMm", "quantity"],
+  1: ["modelId", "configuredWidthMm", "configuredHeightMm"],
+  2: ["glassTypeId"],
+  3: ["serviceIds"],
   4: [],
 }
 
-export { wizardFormSchema, STEP_FIELDS }
+export { STEP_FIELDS, wizardFormSchema }
 export type WizardFormValues = z.infer<typeof wizardFormSchema>

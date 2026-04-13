@@ -5,7 +5,7 @@
  * Purpose: Zod validation for ProjectAddress input
  */
 
-import { z } from 'zod'
+import { z } from "zod"
 import {
   GEOCODING_DEFAULT_LANGUAGE,
   GEOCODING_DEFAULT_LIMIT,
@@ -22,7 +22,7 @@ import {
   MAX_STREET_LENGTH,
   MIN_LATITUDE,
   MIN_LONGITUDE,
-} from '../_constants/geocoding.constants'
+} from "../_constants/geocoding.constants"
 
 /**
  * ProjectAddress input schema with validation rules
@@ -53,7 +53,7 @@ export const projectAddressSchema = z
       return data.city || data.street || data.reference
     },
     {
-      message: 'Al menos uno de los siguientes campos es requerido: ciudad, dirección o referencia',
+      message: "Al menos uno de los siguientes campos es requerido: ciudad, dirección o referencia",
     },
   )
   .refine(
@@ -64,7 +64,7 @@ export const projectAddressSchema = z
       return hasLatitude === hasLongitude
     },
     {
-      message: 'Latitud y longitud deben estar ambos presentes o ambos ausentes',
+      message: "Latitud y longitud deben estar ambos presentes o ambos ausentes",
     },
   )
 
@@ -77,7 +77,7 @@ export type ProjectAddressInput = z.infer<typeof projectAddressSchema>
  * Geocoding search input schema
  */
 export const geocodingSearchSchema = z.object({
-  query: z.string().min(1, 'La consulta de búsqueda es requerida'),
+  query: z.string().min(1, "La consulta de búsqueda es requerida"),
   limit: z
     .number()
     .int()
@@ -94,11 +94,11 @@ export const geocodingSearchSchema = z.object({
 export const transportationCostSchema = z.object({
   deliveryLatitude: z
     .number()
-    .min(MIN_LATITUDE, 'Latitud inválida')
-    .max(MAX_LATITUDE, 'Latitud inválida'),
+    .min(MIN_LATITUDE, "Latitud inválida")
+    .max(MAX_LATITUDE, "Latitud inválida"),
   deliveryLongitude: z
     .number()
-    .min(MIN_LONGITUDE, 'Longitud inválida')
-    .max(MAX_LONGITUDE, 'Longitud inválida'),
+    .min(MIN_LONGITUDE, "Longitud inválida")
+    .max(MAX_LONGITUDE, "Longitud inválida"),
   deliveryCity: z.string().optional(),
 })

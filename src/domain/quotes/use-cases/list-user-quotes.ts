@@ -10,18 +10,18 @@
  * Usa repositories (ports) para acceso a datos.
  */
 
-import type { QuoteStatus } from '@prisma/generated/client'
+import type { QuoteStatus } from "@prisma/generated/client"
 
 /**
  * Input para listar quotes de usuario
  */
 export type ListUserQuotesInput = {
   userId: string
-  userRole: 'admin' | 'seller' | 'user'
+  userRole: "admin" | "seller" | "user"
   page: number
   limit: number
-  sortBy: 'createdAt' | 'sentAt' | 'validUntil' | 'total'
-  sortOrder: 'asc' | 'desc'
+  sortBy: "createdAt" | "sentAt" | "validUntil" | "total"
+  sortOrder: "asc" | "desc"
   status?: QuoteStatus
   search?: string
   includeExpired: boolean
@@ -67,7 +67,7 @@ export type QuoteListFilters = {
   page: number
   limit: number
   sortBy: string
-  sortOrder: 'asc' | 'desc'
+  sortOrder: "asc" | "desc"
 }
 
 /**
@@ -104,7 +104,7 @@ export async function listUserQuotesUseCase(
   deps: ListUserQuotesDeps,
 ): Promise<ListUserQuotesOutput> {
   // 1. Aplicar filtro de rol (admin ve todo, otros ven solo propias)
-  const userIdFilter = input.userRole === 'admin' ? undefined : input.userId
+  const userIdFilter = input.userRole === "admin" ? undefined : input.userId
 
   // 2. Construir filtros para repositorio
   const filters: QuoteListFilters = {
@@ -136,7 +136,7 @@ export async function listUserQuotesUseCase(
     sentAt: quote.sentAt,
     validUntil: quote.validUntil,
     isExpired: quote.validUntil ? quote.validUntil < new Date() : false,
-    projectName: quote.projectName ?? 'Sin nombre',
+    projectName: quote.projectName ?? "Sin nombre",
     itemCount: quote.itemCount,
   }))
 

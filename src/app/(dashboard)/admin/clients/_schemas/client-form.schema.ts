@@ -5,7 +5,7 @@
  * Mirrors the constraints defined in the tRPC router (admin/clients.ts).
  */
 
-import { z } from 'zod'
+import { z } from "zod"
 
 const MAX_NAME_LENGTH = 100
 const MAX_EMAIL_LENGTH = 100
@@ -20,7 +20,7 @@ const MAX_NOTES_LENGTH = 500
 const clientBaseSchema = z.object({
   name: z
     .string()
-    .min(1, { message: 'El nombre es requerido' })
+    .min(1, { message: "El nombre es requerido" })
     .max(MAX_NAME_LENGTH, {
       message: `El nombre no puede exceder ${MAX_NAME_LENGTH} caracteres`,
     })
@@ -28,13 +28,13 @@ const clientBaseSchema = z.object({
 
   email: z
     .string()
-    .email({ message: 'Correo electrónico inválido' })
+    .email({ message: "Correo electrónico inválido" })
     .max(MAX_EMAIL_LENGTH, {
       message: `El correo no puede exceder ${MAX_EMAIL_LENGTH} caracteres`,
     })
     .optional()
     .nullable()
-    .transform((val) => (val === '' ? null : val)),
+    .transform((val) => (val === "" ? null : val)),
 
   phone: z
     .string()
@@ -43,7 +43,7 @@ const clientBaseSchema = z.object({
     })
     .optional()
     .nullable()
-    .transform((val) => (val === '' ? null : val)),
+    .transform((val) => (val === "" ? null : val)),
 
   company: z
     .string()
@@ -52,7 +52,7 @@ const clientBaseSchema = z.object({
     })
     .optional()
     .nullable()
-    .transform((val) => (val === '' ? null : val)),
+    .transform((val) => (val === "" ? null : val)),
 
   notes: z
     .string()
@@ -61,7 +61,7 @@ const clientBaseSchema = z.object({
     })
     .optional()
     .nullable()
-    .transform((val) => (val === '' ? null : val)),
+    .transform((val) => (val === "" ? null : val)),
 })
 
 /**
@@ -81,7 +81,7 @@ export const clientUpdateSchema = clientBaseSchema.partial()
  * Used in getById, update, delete operations
  */
 export const clientIdSchema = z.object({
-  id: z.string().cuid({ message: 'ID de cliente inválido' }),
+  id: z.string().cuid({ message: "ID de cliente inválido" }),
 })
 
 // Type exports

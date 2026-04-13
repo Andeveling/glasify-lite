@@ -12,9 +12,9 @@
  * @module _components/form-fields/form-select-field
  */
 
-'use client'
+"use client"
 
-import type { Control, FieldPath, FieldValues } from 'react-hook-form'
+import type { Control, FieldPath, FieldValues } from "react-hook-form"
 import {
   FormControl,
   FormDescription,
@@ -22,14 +22,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
+} from "@/components/ui/form"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from "@/components/ui/select"
 
 type SelectOption = {
   value: string
@@ -54,7 +54,7 @@ export function FormSelectField<TFieldValues extends FieldValues>({
   control,
   name,
   label,
-  placeholder = 'Selecciona una opción',
+  placeholder = "Selecciona una opción",
   description,
   options,
   required = false,
@@ -68,7 +68,7 @@ export function FormSelectField<TFieldValues extends FieldValues>({
         <FormItem>
           <FormLabel>
             {label}
-            {required && ' *'}
+            {required && " *"}
           </FormLabel>
           <Select disabled={disabled} onValueChange={field.onChange} value={field.value}>
             <FormControl>

@@ -12,18 +12,18 @@
  * Usa repositories (ports) para acceso a datos.
  */
 
-import type { GlassType, Model, Quote, QuoteItem, Service } from '@prisma/generated/client'
-import * as E from 'fp-ts/Either'
-import { pipe } from 'fp-ts/function'
-import * as O from 'fp-ts/Option'
-import * as TE from 'fp-ts/TaskEither'
-import type { PricingRepo } from '../ports/pricing-repo'
+import type { GlassType, Model, Quote, QuoteItem, Service } from "@prisma/generated/client"
+import * as E from "fp-ts/Either"
+import { pipe } from "fp-ts/function"
+import * as O from "fp-ts/Option"
+import * as TE from "fp-ts/TaskEither"
+import type { PricingRepo } from "../ports/pricing-repo"
 import {
   validateDimensions,
   validateGlassTypeCompatibility,
   validateModelAvailability,
   validateQuoteStatus,
-} from '../services/quote-validator.service'
+} from "../services/quote-validator.service"
 
 /**
  * Input para agregar un ítem a una quote
@@ -43,8 +43,8 @@ export type AddItemToQuoteInput = {
   }>
   adjustments: Array<{
     concept: string
-    sign: 'positive' | 'negative'
-    unit: 'unit' | 'sqm' | 'ml'
+    sign: "positive" | "negative"
+    unit: "unit" | "sqm" | "ml"
     value: number
   }>
   colorSurchargePercentage?: number
@@ -70,7 +70,7 @@ export type AddItemToQuoteOutput = {
  */
 export type AddItemToQuoteDeps = Pick<
   PricingRepo,
-  'findModel' | 'findGlassType' | 'findServices'
+  "findModel" | "findGlassType" | "findServices"
 > & {
   findQuote: (id: string) => Promise<Quote | null>
   createQuote: (input: { clientId: string; currency: string; validUntil: Date }) => Promise<Quote>
@@ -94,7 +94,7 @@ export type AddItemToQuoteDeps = Pick<
     model: Model
     glassType: GlassType
     services: Service[]
-    adjustments: AddItemToQuoteInput['adjustments']
+    adjustments: AddItemToQuoteInput["adjustments"]
     colorSurchargePercentage?: number
   }) => {
     subtotal: number
@@ -118,17 +118,17 @@ export async function addItemToQuote(
 ): Promise<AddItemToQuoteOutput> {
   const eitherContext = await pipe(
     TE.Do,
-    TE.bind('model', () =>
+    TE.bind("model", () =>
       pipe(
         TE.tryCatch(
           () => deps.findModel(input.modelId),
-          () => new Error('Error fetching model'),
+          () => new Error("Error fetching model"),
         ),
         TE.chain((model) =>
           pipe(
             O.fromNullable(model),
             O.fold(
-              () => TE.left(new Error('Modelo no encontrado')),
+              () => TE.left(new Error("Modelo no encontrado")),
               (m) => {
                 validateModelAvailability(m)
                 validateGlassTypeCompatibility(m, input.glassTypeId)
@@ -143,17 +143,17 @@ export async function addItemToQuote(
         ),
       ),
     ),
-    TE.bind('glassType', () =>
+    TE.bind("glassType", () =>
       pipe(
         TE.tryCatch(
           () => deps.findGlassType(input.glassTypeId),
-          () => new Error('Error fetching glass type'),
+          () => new Error("Error fetching glass type"),
         ),
         TE.chain((glassType) =>
           pipe(
             O.fromNullable(glassType),
             O.fold(
-              () => TE.left(new Error('Tipo de vidrio no encontrado')),
+              () => TE.left(new Error("Tipo de vidrio no encontrado")),
               (g: GlassType) => TE.right(g),
             ),
           ),
@@ -175,9 +175,9 @@ export async function addItemToQuote(
   if (input.quoteId) {
     const existingQuote = await deps.findQuote(input.quoteId)
     if (!existingQuote) {
-      throw new Error('Cotización no encontrada')
+      throw new Error("Cotización no encontrada")
     }
-    validateQuoteStatus(existingQuote.status, 'agregar ítems')
+    validateQuoteStatus(existingQuote.status, "agregar ítems")
     quote = existingQuote
   } else {
     const currency = await deps.getTenantCurrency()

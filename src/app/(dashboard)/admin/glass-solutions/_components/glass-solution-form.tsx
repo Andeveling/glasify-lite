@@ -1,14 +1,14 @@
-'use client'
+"use client"
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Form,
   FormControl,
@@ -17,9 +17,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import {
   createGlassSolutionSchema,
   MAX_KEY_LENGTH,
@@ -28,13 +28,13 @@ import {
   MIN_KEY_LENGTH,
   MIN_NAME_LENGTH,
   MIN_SORT_ORDER,
-} from '@/lib/validations/admin/glass-solution.schema'
-import { api } from '@/trpc/react'
+} from "@/lib/validations/admin/glass-solution.schema"
+import { api } from "@/trpc/react"
 
-import { IconSelector } from './icon-selector'
+import { IconSelector } from "./icon-selector"
 
 type GlassSolutionFormProps = {
-  mode: 'create' | 'edit'
+  mode: "create" | "edit"
   defaultValues?: {
     id: string
     key: string
@@ -68,40 +68,40 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
       description: defaultValues?.description ?? undefined,
       icon: defaultValues?.icon ?? undefined,
       isActive: defaultValues?.isActive ?? true,
-      key: defaultValues?.key ?? '',
-      name: defaultValues?.name ?? '',
-      nameEs: defaultValues?.nameEs ?? '',
+      key: defaultValues?.key ?? "",
+      name: defaultValues?.name ?? "",
+      nameEs: defaultValues?.nameEs ?? "",
       sortOrder: defaultValues?.sortOrder ?? 0,
     },
     resolver: zodResolver(createGlassSolutionSchema),
   })
 
-  const createMutation = api.admin['glass-solution'].create.useMutation({
+  const createMutation = api.admin["glass-solution"].create.useMutation({
     onError: (err: { message?: string }) => {
-      toast.error('Error al crear solución', {
-        description: err.message || 'Ocurrió un error inesperado',
+      toast.error("Error al crear solución", {
+        description: err.message || "Ocurrió un error inesperado",
       })
     },
     onSuccess: () => {
-      toast.success('Solución creada', {
-        description: 'La solución se creó correctamente',
+      toast.success("Solución creada", {
+        description: "La solución se creó correctamente",
       })
-      router.push('/admin/glass-solutions')
+      router.push("/admin/glass-solutions")
       router.refresh()
     },
   })
 
-  const updateMutation = api.admin['glass-solution'].update.useMutation({
+  const updateMutation = api.admin["glass-solution"].update.useMutation({
     onError: (err: { message?: string }) => {
-      toast.error('Error al actualizar solución', {
-        description: err.message || 'Ocurrió un error inesperado',
+      toast.error("Error al actualizar solución", {
+        description: err.message || "Ocurrió un error inesperado",
       })
     },
     onSuccess: () => {
-      toast.success('Solución actualizada', {
-        description: 'Los cambios se guardaron correctamente',
+      toast.success("Solución actualizada", {
+        description: "Los cambios se guardaron correctamente",
       })
-      router.push('/admin/glass-solutions')
+      router.push("/admin/glass-solutions")
       router.refresh()
     },
   })
@@ -117,7 +117,7 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
       sortOrder: formData.sortOrder ?? 0,
     }
 
-    if (mode === 'create') {
+    if (mode === "create") {
       createMutation.mutate(cleanedData)
     } else if (defaultValues?.id) {
       updateMutation.mutate({
@@ -133,12 +133,12 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
     <Card>
       <CardHeader>
         <CardTitle>
-          {mode === 'create' ? 'Nueva Solución de Vidrio' : 'Editar Solución de Vidrio'}
+          {mode === "create" ? "Nueva Solución de Vidrio" : "Editar Solución de Vidrio"}
         </CardTitle>
         <CardDescription>
-          {mode === 'create'
-            ? 'Crea una nueva solución base para tipos de vidrio'
-            : 'Actualiza la información de la solución de vidrio'}
+          {mode === "create"
+            ? "Crea una nueva solución base para tipos de vidrio"
+            : "Actualiza la información de la solución de vidrio"}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -155,14 +155,14 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
                     <FormLabel>Clave Técnica *</FormLabel>
                     <FormControl>
                       <Input
-                        disabled={isPending || mode === 'edit'}
+                        disabled={isPending || mode === "edit"}
                         maxLength={MAX_KEY_LENGTH}
                         placeholder="Ej: tempered, laminated, insulated"
                         {...field}
                       />
                     </FormControl>
                     <FormDescription>
-                      Identificador único en snake_case ({MIN_KEY_LENGTH}-{MAX_KEY_LENGTH}{' '}
+                      Identificador único en snake_case ({MIN_KEY_LENGTH}-{MAX_KEY_LENGTH}{" "}
                       caracteres). No editable después de crear.
                     </FormDescription>
                     <FormMessage />
@@ -275,7 +275,7 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
                         placeholder="Descripción técnica de la solución..."
                         rows={4}
                         {...field}
-                        value={field.value ?? ''}
+                        value={field.value ?? ""}
                       />
                     </FormControl>
                     <FormDescription>Descripción técnica o notas internas</FormDescription>
@@ -314,7 +314,7 @@ export function GlassSolutionForm({ mode, defaultValues }: GlassSolutionFormProp
             <div className="flex gap-4">
               <Button disabled={isPending} type="submit">
                 {isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
-                {mode === 'create' ? 'Crear Solución' : 'Guardar Cambios'}
+                {mode === "create" ? "Crear Solución" : "Guardar Cambios"}
               </Button>
               <Button
                 disabled={isPending}

@@ -8,12 +8,12 @@
  * - Handles edit/delete actions via callbacks
  */
 
-'use client'
+"use client"
 
-import type { ServiceType, ServiceUnit } from '@prisma/generated/client'
-import { Pencil, Trash2 } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import type { ServiceType, ServiceUnit } from "@prisma/generated/client"
+import { Pencil, Trash2 } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Table,
   TableBody,
@@ -21,8 +21,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { formatCurrency } from '@/lib/format'
+} from "@/components/ui/table"
+import { formatCurrency } from "@/lib/format"
 
 type SerializedService = {
   id: string
@@ -44,27 +44,27 @@ type ServicesTableProps = {
  * Service type labels (Spanish)
  */
 const SERVICE_TYPE_LABELS: Record<ServiceType, string> = {
-  area: 'Área',
-  fixed: 'Fijo',
-  perimeter: 'Perímetro',
+  area: "Área",
+  fixed: "Fijo",
+  perimeter: "Perímetro",
 }
 
 /**
  * Service unit display
  */
 const SERVICE_UNIT_DISPLAY: Record<ServiceUnit, string> = {
-  ml: 'ml',
-  sqm: 'm²',
-  unit: 'unidad',
+  ml: "ml",
+  sqm: "m²",
+  unit: "unidad",
 }
 
 /**
  * Service type badge variants
  */
-const SERVICE_TYPE_VARIANTS: Record<ServiceType, 'default' | 'secondary' | 'outline'> = {
-  area: 'default',
-  fixed: 'secondary',
-  perimeter: 'outline',
+const SERVICE_TYPE_VARIANTS: Record<ServiceType, "default" | "secondary" | "outline"> = {
+  area: "default",
+  fixed: "secondary",
+  perimeter: "outline",
 }
 
 export function ServicesTable({ services, onEditAction, onDeleteAction }: ServicesTableProps) {

@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 /**
  * Tenant Configuration Settings Page
@@ -11,14 +11,14 @@
  * @see /plan/refactor-manufacturer-to-tenant-config-1.md (TASK-036)
  */
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2 } from 'lucide-react'
-import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Loader2 } from "lucide-react"
+import { useEffect } from "react"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Form,
   FormControl,
@@ -27,60 +27,60 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
+} from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
 import {
   type UpdateTenantConfigInput,
   updateTenantConfigSchema,
-} from '@/server/schemas/tenant.schema'
-import { api } from '@/trpc/react'
+} from "@/server/schemas/tenant.schema"
+import { api } from "@/trpc/react"
 
 /**
  * Common currency codes for Latin America
  */
 const CURRENCY_OPTIONS = [
-  { label: 'Peso Colombiano (COP)', value: 'COP' },
-  { label: 'Dólar Estadounidense (USD)', value: 'USD' },
-  { label: 'Euro (EUR)', value: 'EUR' },
-  { label: 'Peso Mexicano (MXN)', value: 'MXN' },
-  { label: 'Peso Argentino (ARS)', value: 'ARS' },
-  { label: 'Peso Chileno (CLP)', value: 'CLP' },
+  { label: "Peso Colombiano (COP)", value: "COP" },
+  { label: "Dólar Estadounidense (USD)", value: "USD" },
+  { label: "Euro (EUR)", value: "EUR" },
+  { label: "Peso Mexicano (MXN)", value: "MXN" },
+  { label: "Peso Argentino (ARS)", value: "ARS" },
+  { label: "Peso Chileno (CLP)", value: "CLP" },
 ] as const
 
 /**
  * Common locales for Latin America
  */
 const LOCALE_OPTIONS = [
-  { label: 'Español - Colombia (es-CO)', value: 'es-CO' },
-  { label: 'Español - México (es-MX)', value: 'es-MX' },
-  { label: 'Español - Argentina (es-AR)', value: 'es-AR' },
-  { label: 'Español - Chile (es-CL)', value: 'es-CL' },
-  { label: 'English - US (en-US)', value: 'en-US' },
+  { label: "Español - Colombia (es-CO)", value: "es-CO" },
+  { label: "Español - México (es-MX)", value: "es-MX" },
+  { label: "Español - Argentina (es-AR)", value: "es-AR" },
+  { label: "Español - Chile (es-CL)", value: "es-CL" },
+  { label: "English - US (en-US)", value: "en-US" },
 ] as const
 
 /**
  * Common IANA timezones for Latin America
  */
 const TIMEZONE_OPTIONS = [
-  { label: 'America/Bogota (COT, UTC-5)', value: 'America/Bogota' },
+  { label: "America/Bogota (COT, UTC-5)", value: "America/Bogota" },
   {
-    label: 'America/Mexico_City (CST/CDT, UTC-6)',
-    value: 'America/Mexico_City',
+    label: "America/Mexico_City (CST/CDT, UTC-6)",
+    value: "America/Mexico_City",
   },
   {
-    label: 'America/Argentina/Buenos_Aires (ART, UTC-3)',
-    value: 'America/Argentina/Buenos_Aires',
+    label: "America/Argentina/Buenos_Aires (ART, UTC-3)",
+    value: "America/Argentina/Buenos_Aires",
   },
-  { label: 'America/Santiago (CLT/CLST, UTC-4)', value: 'America/Santiago' },
-  { label: 'America/New_York (EST/EDT, UTC-5)', value: 'America/New_York' },
+  { label: "America/Santiago (CLT/CLST, UTC-4)", value: "America/Santiago" },
+  { label: "America/New_York (EST/EDT, UTC-5)", value: "America/New_York" },
 ] as const
 
 export default function TenantConfigPage() {
@@ -90,13 +90,13 @@ export default function TenantConfigPage() {
   // Update mutation
   const updateMutation = api.tenantConfig.update.useMutation({
     onError: (err) => {
-      toast.error('Error al actualizar la configuración', {
-        description: err.message || 'Ocurrió un error inesperado',
+      toast.error("Error al actualizar la configuración", {
+        description: err.message || "Ocurrió un error inesperado",
       })
     },
     onSuccess: () => {
-      toast.success('Configuración actualizada', {
-        description: 'Los cambios se guardaron correctamente',
+      toast.success("Configuración actualizada", {
+        description: "Los cambios se guardaron correctamente",
       })
     },
   })
@@ -104,14 +104,14 @@ export default function TenantConfigPage() {
   // React Hook Form
   const form = useForm<UpdateTenantConfigInput>({
     defaultValues: {
-      businessAddress: '',
-      businessName: '',
-      contactEmail: '',
-      contactPhone: '',
-      currency: 'COP',
-      locale: 'es-CO',
+      businessAddress: "",
+      businessName: "",
+      contactEmail: "",
+      contactPhone: "",
+      currency: "COP",
+      locale: "es-CO",
       quoteValidityDays: 15,
-      timezone: 'America/Bogota',
+      timezone: "America/Bogota",
     },
     resolver: zodResolver(updateTenantConfigSchema),
   })
@@ -120,10 +120,10 @@ export default function TenantConfigPage() {
   useEffect(() => {
     if (tenantConfig) {
       form.reset({
-        businessAddress: tenantConfig.businessAddress ?? '',
+        businessAddress: tenantConfig.businessAddress ?? "",
         businessName: tenantConfig.businessName,
-        contactEmail: tenantConfig.contactEmail ?? '',
-        contactPhone: tenantConfig.contactPhone ?? '',
+        contactEmail: tenantConfig.contactEmail ?? "",
+        contactPhone: tenantConfig.contactPhone ?? "",
         currency: tenantConfig.currency,
         locale: tenantConfig.locale,
         quoteValidityDays: tenantConfig.quoteValidityDays,
@@ -198,7 +198,7 @@ export default function TenantConfigPage() {
                         placeholder="contacto@tuempresa.com"
                         type="email"
                         {...field}
-                        value={field.value ?? ''}
+                        value={field.value ?? ""}
                       />
                     </FormControl>
                     <FormDescription>Correo de contacto para clientes</FormDescription>
@@ -220,7 +220,7 @@ export default function TenantConfigPage() {
                         placeholder="+57 300 123 4567"
                         type="tel"
                         {...field}
-                        value={field.value ?? ''}
+                        value={field.value ?? ""}
                       />
                     </FormControl>
                     <FormDescription>Número de contacto para clientes</FormDescription>
@@ -241,7 +241,7 @@ export default function TenantConfigPage() {
                         disabled={isLoading}
                         placeholder="Calle 123 #45-67, Bogotá, Colombia"
                         {...field}
-                        value={field.value ?? ''}
+                        value={field.value ?? ""}
                       />
                     </FormControl>
                     <FormDescription>Dirección física del negocio</FormDescription>

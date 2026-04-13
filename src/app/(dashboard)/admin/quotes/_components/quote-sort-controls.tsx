@@ -10,26 +10,26 @@
  * - Spanish labels
  */
 
-'use client'
+"use client"
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from "next/navigation"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { SORT_OPTIONS } from '../_constants/quote-filters.constants'
+} from "@/components/ui/select"
+import { SORT_OPTIONS } from "../_constants/quote-filters.constants"
 
 type QuoteSortControlsProps = {
   currentSortBy?: string
-  currentSortOrder?: 'asc' | 'desc'
+  currentSortOrder?: "asc" | "desc"
 }
 
 export function QuoteSortControls({
-  currentSortBy = 'createdAt',
-  currentSortOrder = 'desc',
+  currentSortBy = "createdAt",
+  currentSortOrder = "desc",
 }: QuoteSortControlsProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -39,9 +39,9 @@ export function QuoteSortControls({
     const option = SORT_OPTIONS.find((opt) => opt.value === value)
 
     if (option) {
-      params.set('sortBy', option.sortBy)
-      params.set('sortOrder', option.sortOrder)
-      params.delete('page') // Reset to page 1
+      params.set("sortBy", option.sortBy)
+      params.set("sortOrder", option.sortOrder)
+      params.delete("page") // Reset to page 1
       router.push(`?${params.toString()}`)
     }
   }

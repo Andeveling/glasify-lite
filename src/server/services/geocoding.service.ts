@@ -20,12 +20,12 @@ import {
   GEOCODING_API_URL,
   GEOCODING_DEFAULT_LANGUAGE,
   MILLISECONDS_TO_SECONDS_DIVISOR,
-} from '@/app/(dashboard)/admin/quotes/_constants/geocoding.constants'
+} from "@/app/(dashboard)/admin/quotes/_constants/geocoding.constants"
 import type {
   GeocodingResponse,
   GeocodingResult,
-} from '@/app/(dashboard)/admin/quotes/_types/address.types'
-import logger from '@/lib/logger'
+} from "@/app/(dashboard)/admin/quotes/_types/address.types"
+import logger from "@/lib/logger"
 
 /**
  * Nominatim API response structure
@@ -79,15 +79,15 @@ export async function searchAddress(
     // Build API URL with query parameters
     const searchParams = new URLSearchParams({
       q: query,
-      format: 'json',
+      format: "json",
       limit: String(limit),
-      addressdetails: '1', // Include detailed address components
-      'accept-language': acceptLanguage,
+      addressdetails: "1", // Include detailed address components
+      "accept-language": acceptLanguage,
     })
 
     const url = `${GEOCODING_API_URL}/search?${searchParams.toString()}`
 
-    logger.info('Geocoding API request', {
+    logger.info("Geocoding API request", {
       url,
       query,
       limit,
@@ -102,7 +102,7 @@ export async function searchAddress(
       // Make API request with User-Agent header (required by Nominatim)
       const response = await fetch(url, {
         headers: {
-          'User-Agent': 'Glasify-Lite/1.0 (Contact: admin@glasify.com)',
+          "User-Agent": "Glasify-Lite/1.0 (Contact: admin@glasify.com)",
         },
         signal: controller.signal,
       })
@@ -120,7 +120,7 @@ export async function searchAddress(
 
       const queryTime = Math.round(performance.now() - startTime)
 
-      logger.info('Geocoding API response', {
+      logger.info("Geocoding API response", {
         query,
         totalResults: results.length,
         queryTime,
@@ -134,8 +134,8 @@ export async function searchAddress(
     } catch (error) {
       clearTimeout(timeoutId)
 
-      if (error instanceof Error && error.name === 'AbortError') {
-        logger.error('Geocoding API timeout', {
+      if (error instanceof Error && error.name === "AbortError") {
+        logger.error("Geocoding API timeout", {
           query,
           timeout: GEOCODING_API_TIMEOUT_MS,
         })
@@ -149,14 +149,14 @@ export async function searchAddress(
   } catch (error) {
     const queryTime = Math.round(performance.now() - startTime)
 
-    logger.error('Geocoding API error', {
+    logger.error("Geocoding API error", {
       query,
       error: error instanceof Error ? error.message : String(error),
       queryTime,
     })
 
     throw new Error(
-      `Error al buscar dirección: ${error instanceof Error ? error.message : 'Error desconocido'}`,
+      `Error al buscar dirección: ${error instanceof Error ? error.message : "Error desconocido"}`,
     )
   }
 }

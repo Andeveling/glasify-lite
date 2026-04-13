@@ -10,15 +10,15 @@
  * @module app/_actions/quote.actions
  */
 
-"use server";
+"use server"
 
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import logger from "@/lib/logger";
-import { generateQuoteFromCart } from "@/server/api/routers/quote/quote.service";
-import { auth } from "@/server/auth";
-import { db } from "@/server/db";
-import type { CartItem } from "@/types/cart.types";
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
+import logger from "@/lib/logger"
+import { generateQuoteFromCart } from "@/server/api/routers/quote/quote.service"
+import { auth } from "@/server/auth"
+import { db } from "@/server/db"
+import type { CartItem } from "@/types/cart.types"
 
 // ============================================================================
 // Types
@@ -28,17 +28,17 @@ import type { CartItem } from "@/types/cart.types";
  * Delivery address with geocoding data (from client form)
  */
 type DeliveryAddressInput = {
-  city?: string | null;
-  country?: string | null;
-  district?: string | null;
-  label?: string | null;
-  latitude?: number | null;
-  longitude?: number | null;
-  postalCode?: string | null;
-  reference?: string | null;
-  region?: string | null;
-  street?: string | null;
-};
+  city?: string | null
+  country?: string | null
+  district?: string | null
+  label?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  postalCode?: string | null
+  reference?: string | null
+  region?: string | null
+  street?: string | null
+}
 
 /**
  * Quote generation form input (from React Hook Form)
@@ -48,22 +48,22 @@ type DeliveryAddressInput = {
  * backward compatibility with existing Quote schema.
  */
 type QuoteGenerationFormInput = {
-  projectName?: string;
-  projectStreet?: string;
-  projectCity?: string;
-  projectState?: string;
-  contactPhone?: string;
-  deliveryAddress?: DeliveryAddressInput;
-};
+  projectName?: string
+  projectStreet?: string
+  projectCity?: string
+  projectState?: string
+  contactPhone?: string
+  deliveryAddress?: DeliveryAddressInput
+}
 
 /**
  * Quote generation result
  */
 type QuoteGenerationResult = {
-  success: boolean;
-  quoteId?: string;
-  error?: string;
-};
+  success: boolean
+  quoteId?: string
+  error?: string
+}
 
 // ============================================================================
 // Server Actions
@@ -98,76 +98,73 @@ export async function generateQuoteFromCartAction(
   formInput: QuoteGenerationFormInput,
   cartItems: CartItem[],
 ): Promise<QuoteGenerationResult> {
-  const startTime = Date.now();
-  const correlationId = `quote-action-${Date.now()}`;
+  const startTime = Date.now()
+  const correlationId = `quote-action-${Date.now()}`
 
   try {
     // 1. Authentication check
     const session = await auth.api.getSession({
       headers: await headers(),
-    });
+    })
 
     if (!session?.user?.id) {
       logger.warn("[QuoteAction] Unauthorized quote generation attempt", {
         correlationId,
-      });
+      })
 
       return {
         error: "Debes iniciar sesión para generar una cotización",
         success: false,
-      };
+      }
     }
 
-    const userId = session.user.id;
+    const userId = session.user.id
 
     logger.info("[QuoteAction] Starting quote generation", {
       correlationId,
       itemCount: cartItems.length,
       userId,
-    });
+    })
 
     // 2. Validation: Cart must not be empty
     if (!cartItems || cartItems.length === 0) {
       logger.warn("[QuoteAction] Empty cart detected", {
         correlationId,
         userId,
-      });
+      })
 
       return {
-        error:
-          "El carrito está vacío. Agrega items antes de generar una cotización.",
+        error: "El carrito está vacío. Agrega items antes de generar una cotización.",
         success: false,
-      };
+      }
     }
 
     // 3. Validate first cart item exists (for error handling)
-    const firstCartItem = cartItems[0];
+    const firstCartItem = cartItems[0]
     if (!firstCartItem) {
       logger.error("[QuoteAction] Cart is empty after validation", {
         correlationId,
-      });
+      })
 
       return {
         error: "El carrito está vacío. Por favor intenta nuevamente.",
         success: false,
-      };
+      }
     }
 
     // 4. Derive project address fields from geocoded address if not provided
     // This ensures backward compatibility with existing Quote schema
-    const deliveryAddress = formInput.deliveryAddress;
+    const deliveryAddress = formInput.deliveryAddress
     const projectAddress = {
-      projectCity:
-        formInput.projectCity || deliveryAddress?.city || "Sin ciudad",
+      projectCity: formInput.projectCity || deliveryAddress?.city || "Sin ciudad",
       projectName: formInput.projectName ?? "Sin nombre",
-      projectState:
-        formInput.projectState || deliveryAddress?.region || "Sin estado",
+      projectState: formInput.projectState || deliveryAddress?.region || "Sin estado",
       projectStreet:
         formInput.projectStreet ||
         deliveryAddress?.street ||
         deliveryAddress?.label ||
         "Sin dirección",
-    };
+    }
 
     // 5. Call quote service to generate quote
     const result = await generateQuoteFromCart(db, userId, {
@@ -175,25 +172,25 @@ export async function generateQuoteFromCartAction(
       contactPhone: formInput.contactPhone,
       deliveryAddress,
       projectAddress,
-    });
+    })
 
     logger.info("[QuoteAction] Quote generation completed successfully", {
       correlationId,
       duration: `${Date.now() - startTime}ms`,
       quoteId: result.quoteId,
       userId,
-    });
+    })
 
     return {
       quoteId: result.quoteId,
       success: true,
-    };
+    }
   } catch (error) {
     logger.error("[QuoteAction] Quote generation failed", {
       correlationId,
       duration: `${Date.now() - startTime}ms`,
       error: error instanceof Error ? error.message : "Unknown error",
-    });
+    })
 
     return {
       error:
@@ -201,7 +198,7 @@ export async function generateQuoteFromCartAction(
           ? error.message
           : "Error al generar la cotización. Por favor intenta nuevamente.",
       success: false,
-    };
+    }
   }
 }
 
@@ -222,13 +219,13 @@ export async function generateQuoteFromCartAction(
 export async function redirectToQuoteGenerationAction(): Promise<void> {
   const session = await auth.api.getSession({
     headers: await headers(),
-  });
+  })
 
   if (!session?.user?.id) {
     // Redirect to sign-in with callback to quote generation page
-    redirect("/api/auth/sign-in?callbackUrl=/quote/new");
+    redirect("/api/auth/sign-in?callbackUrl=/quote/new")
   }
 
   // User is authenticated, redirect to quote generation page
-  redirect("/quote/new");
+  redirect("/quote/new")
 }

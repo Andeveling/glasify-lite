@@ -1,6 +1,6 @@
-'use client'
+"use client"
 
-import { motion } from 'motion/react'
+import { motion } from "motion/react"
 
 /**
  * WhatsappIcon - Ícono animado para el botón CTA de WhatsApp
@@ -15,9 +15,9 @@ export function WhatsappIcon() {
       focusable="false"
       height="64"
       initial={{ scale: 0.7, opacity: 0 }}
-      style={{ display: 'block' }}
+      style={{ display: "block" }}
       transition={{
-        type: 'spring',
+        type: "spring",
         stiffness: 300,
         damping: 18,
         delay: 0.15,
@@ -26,7 +26,7 @@ export function WhatsappIcon() {
       whileHover={{
         scale: 1.1,
         rotate: -5,
-        filter: 'drop-shadow(0 0 12px rgba(37, 211, 102, 0.5))',
+        filter: "drop-shadow(0 0 12px rgba(37, 211, 102, 0.5))",
       }}
       whileTap={{ scale: 0.92, rotate: 0 }}
       width="64"

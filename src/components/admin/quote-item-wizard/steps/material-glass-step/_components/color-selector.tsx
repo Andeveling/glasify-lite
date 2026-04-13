@@ -1,7 +1,7 @@
-'use client'
+"use client"
 
-import { Badge } from '@/components/ui/badge'
-import { formatPercent } from '@/lib/format'
+import { Badge } from "@/components/ui/badge"
+import { formatPercent } from "@/lib/format"
 
 interface ColorSelectorProps {
   colors: Array<{
@@ -23,18 +23,18 @@ function ColorSelector({ colors, selectedColorId, onToggle, formatContext }: Col
           <button
             key={color.id}
             className={`flex flex-col items-center gap-2 transition-all ${
-              isSelected ? 'opacity-100' : 'opacity-70 hover:opacity-100'
+              isSelected ? "opacity-100" : "opacity-70 hover:opacity-100"
             }`}
             onClick={() => onToggle(color.id)}
             type="button"
             aria-pressed={isSelected}
-            aria-label={`${color.color.name}${color.surchargePercentage > 0 ? `, recargo ${formatPercent(color.surchargePercentage / 100, { context: formatContext })}` : ''}`}
+            aria-label={`${color.color.name}${color.surchargePercentage > 0 ? `, recargo ${formatPercent(color.surchargePercentage / 100, { context: formatContext })}` : ""}`}
           >
             <div
               className={`size-12 rounded-full border-2 transition-all ${
                 isSelected
-                  ? 'ring-4 ring-primary/20 border-primary scale-110'
-                  : 'border-border hover:border-primary/50'
+                  ? "ring-4 ring-primary/20 border-primary scale-110"
+                  : "border-border hover:border-primary/50"
               }`}
               style={{ backgroundColor: color.color.hexCode }}
             />

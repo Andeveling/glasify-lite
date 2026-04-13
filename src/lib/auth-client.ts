@@ -1,7 +1,7 @@
-'use client'
+"use client"
 
-import { createAuthClient } from 'better-auth/react'
-import { env } from '@/env'
+import { createAuthClient } from "better-auth/react"
+import { env } from "@/env"
 
 /**
  * Better Auth client for client-side authentication operations

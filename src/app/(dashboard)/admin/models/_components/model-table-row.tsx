@@ -5,15 +5,15 @@
  * Follows Single Responsibility Principle - renders one model row
  */
 
-'use client'
+"use client"
 
-import type { MaterialType, ModelStatus } from '@prisma/generated/client'
-import { Pencil, Trash2 } from 'lucide-react'
-import Link from 'next/link'
-import { useCurrencyFormatter } from '@/app/_hooks/use-currency-formatter'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { TableCell, TableRow } from '@/components/ui/table'
+import type { MaterialType, ModelStatus } from "@prisma/generated/client"
+import { Pencil, Trash2 } from "lucide-react"
+import Link from "next/link"
+import { useCurrencyFormatter } from "@/app/_hooks/use-currency-formatter"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { TableCell, TableRow } from "@/components/ui/table"
 
 type ModelData = {
   id: string
@@ -38,18 +38,18 @@ type ModelTableRowProps = {
 }
 
 const statusLabels: Record<ModelStatus, string> = {
-  draft: 'Borrador',
-  published: 'Publicado',
+  draft: "Borrador",
+  published: "Publicado",
 }
 
-const getStatusVariant = (status: ModelStatus): 'default' | 'secondary' | 'outline' => {
-  if (status === 'published') {
-    return 'default'
+const getStatusVariant = (status: ModelStatus): "default" | "secondary" | "outline" => {
+  if (status === "published") {
+    return "default"
   }
-  if (status === 'draft') {
-    return 'secondary'
+  if (status === "draft") {
+    return "secondary"
   }
-  return 'outline'
+  return "outline"
 }
 
 export function ModelTableRow({ model, onDeleteClickAction }: ModelTableRowProps) {

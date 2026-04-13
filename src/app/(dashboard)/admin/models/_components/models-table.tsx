@@ -19,20 +19,20 @@
  * - Type-safe with Zod validation
  */
 
-'use client'
+"use client"
 
-import type { MaterialType, ModelStatus } from '@prisma/generated/client'
-import { MoreHorizontal, Palette, Pencil, Trash2 } from 'lucide-react'
-import Link from 'next/link'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog'
-import type { ServerTableColumn } from '@/app/_components/server-table'
-import { ServerTable } from '@/app/_components/server-table'
-import { TablePagination } from '@/app/_components/server-table/table-pagination'
-import { useTenantConfig } from '@/app/_hooks/use-tenant-config'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import type { MaterialType, ModelStatus } from "@prisma/generated/client"
+import { MoreHorizontal, Palette, Pencil, Trash2 } from "lucide-react"
+import Link from "next/link"
+import { useState } from "react"
+import { toast } from "sonner"
+import { DeleteConfirmationDialog } from "@/app/_components/delete-confirmation-dialog"
+import type { ServerTableColumn } from "@/app/_components/server-table"
+import { ServerTable } from "@/app/_components/server-table"
+import { TablePagination } from "@/app/_components/server-table/table-pagination"
+import { useTenantConfig } from "@/app/_hooks/use-tenant-config"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,10 +40,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { formatCurrency } from '@/lib/format'
-import type { RouterOutputs } from '@/trpc/react'
-import { api } from '@/trpc/react'
+} from "@/components/ui/dropdown-menu"
+import { formatCurrency } from "@/lib/format"
+import type { RouterOutputs } from "@/trpc/react"
+import { api } from "@/trpc/react"
 
 /**
  * Model data type (from tRPC)
@@ -79,11 +79,11 @@ type ModelsTableProps = {
   }
   searchParams: {
     page: number
-    status: 'all' | 'draft' | 'published'
+    status: "all" | "draft" | "published"
     profileSupplierId?: string
     search?: string
-    sortBy: 'name' | 'createdAt' | 'updatedAt' | 'basePrice'
-    sortOrder: 'asc' | 'desc'
+    sortBy: "name" | "createdAt" | "updatedAt" | "basePrice"
+    sortOrder: "asc" | "desc"
   }
 }
 
@@ -91,8 +91,8 @@ type ModelsTableProps = {
  * Status badge component
  */
 function StatusBadge({ status }: { status: ModelStatus }) {
-  const variant = status === 'published' ? 'default' : 'secondary'
-  const label = status === 'published' ? 'Publicado' : 'Borrador'
+  const variant = status === "published" ? "default" : "secondary"
+  const label = status === "published" ? "Publicado" : "Borrador"
 
   return <Badge variant={variant}>{label}</Badge>
 }
@@ -176,7 +176,7 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
 
   // Context type for optimistic update snapshot
   type DeleteModelContext = {
-    previousData?: RouterOutputs['admin']['model']['list']
+    previousData?: RouterOutputs["admin"]["model"]["list"]
   }
 
   // Delete mutation with optimistic updates
@@ -256,7 +256,7 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
     const deletePromise = deleteMutation.mutateAsync({ id: modelToDelete.id })
 
     toast.promise(deletePromise, {
-      error: (error: Error) => error.message || 'No se pudo eliminar el modelo',
+      error: (error: Error) => error.message || "No se pudo eliminar el modelo",
       loading: `Eliminando ${modelToDelete.name}...`,
       success: `${modelToDelete.name} eliminado correctamente`,
     })
@@ -279,44 +279,44 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
   const columns: ServerTableColumn<Model>[] = [
     {
       cell: (model) => model.name,
-      header: 'Nombre',
-      id: 'name',
+      header: "Nombre",
+      id: "name",
       sortable: true,
     },
     {
       cell: (model) => <StatusBadge status={model.status} />,
-      header: 'Estado',
-      id: 'status',
+      header: "Estado",
+      id: "status",
       sortable: true,
     },
     {
-      cell: (model) => (model.profileSupplier ? model.profileSupplier.name : '—'),
-      header: 'Proveedor',
-      id: 'profileSupplier',
+      cell: (model) => (model.profileSupplier ? model.profileSupplier.name : "—"),
+      header: "Proveedor",
+      id: "profileSupplier",
       sortable: false,
     },
     {
       cell: (model) => formatCurrency(model.basePrice, { context: formatContext }),
-      header: 'Precio Base',
-      id: 'basePrice',
+      header: "Precio Base",
+      id: "basePrice",
       sortable: true,
     },
     {
-      align: 'center',
+      align: "center",
       cell: (model) => `${model.minWidthMm}-${model.maxWidthMm}mm`,
-      header: 'Ancho',
-      id: 'width',
+      header: "Ancho",
+      id: "width",
       sortable: false,
     },
     {
-      align: 'center',
+      align: "center",
       cell: (model) => `${model.minHeightMm}-${model.maxHeightMm}mm`,
-      header: 'Alto',
-      id: 'height',
+      header: "Alto",
+      id: "height",
       sortable: false,
     },
     {
-      align: 'center',
+      align: "center",
       cell: (model) => {
         const colorCount = model._count.modelColors
         return (
@@ -329,23 +329,23 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
             ) : (
               <Badge className="cursor-pointer hover:opacity-80" variant="default">
                 <Palette className="mr-1 h-3 w-3" />
-                {colorCount} {colorCount === 1 ? 'color' : 'colores'}
+                {colorCount} {colorCount === 1 ? "color" : "colores"}
               </Badge>
             )}
           </Link>
         )
       },
-      header: 'Colores',
-      id: 'colors',
+      header: "Colores",
+      id: "colors",
       sortable: false,
     },
     {
-      align: 'right',
+      align: "right",
       cell: (model) => <ActionsMenu model={model} onDelete={handleDeleteClick} />,
-      header: 'Acciones',
-      id: 'actions',
+      header: "Acciones",
+      id: "actions",
       sortable: false,
-      width: '80px',
+      width: "80px",
     },
   ]
 
@@ -365,7 +365,7 @@ export function ModelsTable({ initialData, searchParams }: ModelsTableProps) {
 
       <DeleteConfirmationDialog
         dependencies={[]}
-        entityLabel={modelToDelete?.name ?? ''}
+        entityLabel={modelToDelete?.name ?? ""}
         entityName="modelo"
         loading={deleteMutation.isPending}
         onConfirm={handleConfirmDelete}

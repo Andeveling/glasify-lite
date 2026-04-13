@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import {
   Factory,
@@ -11,12 +11,12 @@ import {
   Sparkles,
   Users,
   Wrench,
-} from 'lucide-react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import type { FC } from 'react'
-import { NavMain } from '@/components/nav-main'
-import { NavUser } from '@/components/nav-user'
+} from "lucide-react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import type { FC } from "react"
+import { NavMain } from "@/components/nav-main"
+import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
@@ -27,7 +27,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar'
+} from "@/components/ui/sidebar"
 
 interface AdminSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user: {
@@ -45,71 +45,71 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
   const navMain = [
     {
       icon: Settings,
-      title: 'Dashboard',
-      url: '/admin',
+      title: "Dashboard",
+      url: "/admin",
     },
     {
-      description: 'Gestión de clientes',
+      description: "Gestión de clientes",
       icon: Users,
-      title: 'Clientes',
-      url: '/admin/clients',
+      title: "Clientes",
+      url: "/admin/clients",
     },
     {
-      description: 'Gestión de cotizaciones',
+      description: "Gestión de cotizaciones",
       icon: FileText,
-      title: 'Cotizaciones',
-      url: '/admin/quotes',
+      title: "Cotizaciones",
+      url: "/admin/quotes",
     },
   ]
 
   const navConfig = [
     {
-      description: 'Ventanas y puertas',
+      description: "Ventanas y puertas",
       icon: Grid3x3,
-      title: 'Modelos',
-      url: '/admin/models',
+      title: "Modelos",
+      url: "/admin/models",
     },
     {
-      description: 'Plantillas de visualización',
+      description: "Plantillas de visualización",
       icon: LayoutTemplate,
-      title: 'Plantillas de Diseño',
-      url: '/admin/design-templates',
+      title: "Plantillas de Diseño",
+      url: "/admin/design-templates",
     },
     {
-      description: 'Configuraciones de vidrio',
+      description: "Configuraciones de vidrio",
       icon: GlassWater,
-      title: 'Tipos de Cristal',
-      url: '/admin/glass-types',
+      title: "Tipos de Cristal",
+      url: "/admin/glass-types",
     },
     {
-      description: 'Servicios adicionales',
+      description: "Servicios adicionales",
       icon: Wrench,
-      title: 'Servicios',
-      url: '/admin/services',
+      title: "Servicios",
+      url: "/admin/services",
     },
   ]
 
   const navSuppliers = [
     {
-      description: 'Fabricantes de perfiles',
+      description: "Fabricantes de perfiles",
       icon: Factory,
-      title: 'Proveedores de Perfiles',
-      url: '/admin/profile-suppliers',
+      title: "Proveedores de Perfiles",
+      url: "/admin/profile-suppliers",
     },
     {
-      description: 'Fabricantes de vidrio',
+      description: "Fabricantes de vidrio",
       icon: Package,
-      title: 'Proveedores de Vidrio',
-      url: '/admin/glass-suppliers',
+      title: "Proveedores de Vidrio",
+      url: "/admin/glass-suppliers",
     },
   ]
 
   const navTaxonomy = [
     {
-      description: 'Categorización por uso',
+      description: "Categorización por uso",
       icon: Sparkles,
-      title: 'Soluciones de Vidrio',
-      url: '/admin/glass-solutions',
+      title: "Soluciones de Vidrio",
+      url: "/admin/glass-solutions",
     },
   ]
 
@@ -139,7 +139,7 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
           <SidebarGroupLabel>Proveedores</SidebarGroupLabel>
           <SidebarMenu>
             {navSuppliers.map((item) => {
-              const segmentsCount = item.url.split('/').filter(Boolean).length
+              const segmentsCount = item.url.split("/").filter(Boolean).length
               const isActive =
                 pathname === item.url || (segmentsCount > 1 && pathname.startsWith(`${item.url}/`))
 
@@ -162,7 +162,7 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
           <SidebarGroupLabel>Taxonomía</SidebarGroupLabel>
           <SidebarMenu>
             {navTaxonomy.map((item) => {
-              const segmentsCount = item.url.split('/').filter(Boolean).length
+              const segmentsCount = item.url.split("/").filter(Boolean).length
               const isActive =
                 pathname === item.url || (segmentsCount > 1 && pathname.startsWith(`${item.url}/`))
 
@@ -183,7 +183,7 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
       <SidebarFooter>
         <NavUser
           user={{
-            avatar: user.avatar ?? '/avatars/default.jpg',
+            avatar: user.avatar ?? "/avatars/default.jpg",
             email: user.email,
             name: user.name,
           }}

@@ -1,6 +1,6 @@
-import { MM_PER_METER } from '../constants'
-import type { Dimensions } from '../entities/dimensions'
-import type { Money } from '../entities/money'
+import { MM_PER_METER } from "../constants"
+import type { Dimensions } from "../entities/dimensions"
+import type { Money } from "../entities/money"
 
 /**
  * Input for glass cost calculation

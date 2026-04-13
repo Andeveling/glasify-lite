@@ -8,24 +8,24 @@ import {
   Plus,
   TrendingUp,
   Users,
-} from 'lucide-react'
-import type { Metadata } from 'next'
-import { headers } from 'next/headers'
-import Link from 'next/link'
-import { redirect } from 'next/navigation'
-import { Suspense } from 'react'
-import { generateStableKeyedArray } from '@/app/_utils/generate-keys.util'
-import StatsCard from '@/app/(dashboard)/_components/stats-card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { formatDate } from '@/lib/utils'
-import { auth } from '@/server/auth'
-import { getTenantConfig } from '@/server/utils/tenant'
+} from "lucide-react"
+import type { Metadata } from "next"
+import { headers } from "next/headers"
+import Link from "next/link"
+import { redirect } from "next/navigation"
+import { Suspense } from "react"
+import { generateStableKeyedArray } from "@/app/_utils/generate-keys.util"
+import StatsCard from "@/app/(dashboard)/_components/stats-card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { formatDate } from "@/lib/utils"
+import { auth } from "@/server/auth"
+import { getTenantConfig } from "@/server/utils/tenant"
 
 export const metadata: Metadata = {
-  description: 'Panel de control para la gestión de vidrios y cotizaciones',
-  title: 'Dashboard - Glasify',
+  description: "Panel de control para la gestión de vidrios y cotizaciones",
+  title: "Dashboard - Glasify",
 }
 
 // Mock data for dashboard stats
@@ -57,60 +57,60 @@ const DASHBOARD_STATS = {
 const RECENT_QUOTES = [
   {
     amount: 450_000,
-    createdAt: '2024-01-15T10:30:00Z',
-    customer: 'Juan Pérez',
-    id: 'cm1quote123',
+    createdAt: "2024-01-15T10:30:00Z",
+    customer: "Juan Pérez",
+    id: "cm1quote123",
     items: 3,
-    status: 'submitted' as const,
+    status: "submitted" as const,
   },
   {
     amount: 320_000,
-    createdAt: '2024-01-14T16:45:00Z',
-    customer: 'María González',
-    id: 'cm1quote234',
+    createdAt: "2024-01-14T16:45:00Z",
+    customer: "María González",
+    id: "cm1quote234",
     items: 2,
-    status: 'pending' as const,
+    status: "pending" as const,
   },
   {
     amount: 0,
-    createdAt: '2024-01-13T09:15:00Z',
-    customer: 'Carlos Rodríguez',
-    id: 'cm1quote345',
+    createdAt: "2024-01-13T09:15:00Z",
+    customer: "Carlos Rodríguez",
+    id: "cm1quote345",
     items: 5,
-    status: 'calculating' as const,
+    status: "calculating" as const,
   },
   {
     amount: 150_000,
-    createdAt: '2024-01-12T14:20:00Z',
-    customer: 'Ana Martínez',
-    id: 'cm1quote456',
+    createdAt: "2024-01-12T14:20:00Z",
+    customer: "Ana Martínez",
+    id: "cm1quote456",
     items: 1,
-    status: 'completed' as const,
+    status: "completed" as const,
   },
 ]
 
 const STATUS_CONFIG = {
   calculating: {
     icon: Calculator,
-    label: 'Calculando',
-    variant: 'outline' as const,
+    label: "Calculando",
+    variant: "outline" as const,
   },
   cancelled: {
     icon: AlertCircle,
-    label: 'Cancelada',
-    variant: 'destructive' as const,
+    label: "Cancelada",
+    variant: "destructive" as const,
   },
   completed: {
     icon: CheckCircle,
-    label: 'Completada',
-    variant: 'default' as const,
+    label: "Completada",
+    variant: "default" as const,
   },
-  draft: { icon: FileText, label: 'Borrador', variant: 'secondary' as const },
-  pending: { icon: Clock, label: 'Pendiente', variant: 'outline' as const },
+  draft: { icon: FileText, label: "Borrador", variant: "secondary" as const },
+  pending: { icon: Clock, label: "Pendiente", variant: "outline" as const },
   submitted: {
     icon: CheckCircle,
-    label: 'Enviada',
-    variant: 'default' as const,
+    label: "Enviada",
+    variant: "default" as const,
   },
 }
 
@@ -144,10 +144,10 @@ function DashboardStats() {
         value={stats.models.total.toString()}
       />
       <StatsCard
-        description={`Promedio diario: ${new Intl.NumberFormat('es-AR', {
-          currency: 'ARS',
+        description={`Promedio diario: ${new Intl.NumberFormat("es-AR", {
+          currency: "ARS",
           maximumFractionDigits: 0,
-          style: 'currency',
+          style: "currency",
         }).format(stats.revenue.daily)}`}
         icon={TrendingUp}
         title="Ingresos Mensuales"
@@ -156,10 +156,10 @@ function DashboardStats() {
           label: `+${stats.revenue.trend}% este mes`,
           value: stats.revenue.trend,
         }}
-        value={new Intl.NumberFormat('es-AR', {
-          currency: 'ARS',
+        value={new Intl.NumberFormat("es-AR", {
+          currency: "ARS",
           maximumFractionDigits: 0,
-          style: 'currency',
+          style: "currency",
         }).format(stats.revenue.monthly)}
       />
       <StatsCard
@@ -180,12 +180,12 @@ function DashboardStats() {
 function RecentQuotes() {
   const formatCurrency = (amount: number) => {
     if (amount === 0) {
-      return '—'
+      return "—"
     }
-    return new Intl.NumberFormat('es-AR', {
-      currency: 'ARS',
+    return new Intl.NumberFormat("es-AR", {
+      currency: "ARS",
       maximumFractionDigits: 0,
-      style: 'currency',
+      style: "currency",
     }).format(amount)
   }
 
@@ -216,8 +216,8 @@ function RecentQuotes() {
                   <div>
                     <p className="font-medium text-sm">{quote.customer}</p>
                     <p className="text-muted-foreground text-xs">
-                      {quote.items} ítem{quote.items !== 1 ? 's' : ''} •{' '}
-                      {formatDate(quote.createdAt, 'es-CO', 'America/Bogota')}
+                      {quote.items} ítem{quote.items !== 1 ? "s" : ""} •{" "}
+                      {formatDate(quote.createdAt, "es-CO", "America/Bogota")}
                     </p>
                   </div>
                 </div>
@@ -294,7 +294,7 @@ export default async function DashboardPage() {
   })
 
   if (!session?.user) {
-    redirect('/sign-in')
+    redirect("/sign-in")
   }
 
   // Get tenant configuration for date formatting
@@ -314,7 +314,7 @@ export default async function DashboardPage() {
       <Suspense
         fallback={
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {generateStableKeyedArray(DASHBOARD_STAT_SKELETON_COUNT, 'dashboard-stats').map(
+            {generateStableKeyedArray(DASHBOARD_STAT_SKELETON_COUNT, "dashboard-stats").map(
               (item) => (
                 <div className="h-32 animate-pulse rounded-lg bg-muted" key={item.key} />
               ),

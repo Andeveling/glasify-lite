@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 /**
  * Image Gallery Item Component
@@ -10,7 +10,7 @@
  * - Handles click to select
  */
 
-import Image from 'next/image'
+import Image from "next/image"
 
 type ImageGalleryItemProps = {
   /**
@@ -43,7 +43,7 @@ export function ImageGalleryItem({ url, name, isSelected, onSelect }: ImageGalle
       aria-label={`Seleccionar imagen: ${name}`}
       aria-pressed={isSelected}
       className={`relative aspect-square overflow-hidden rounded-md border-2 transition-all hover:border-primary/50 ${
-        isSelected ? 'border-primary ring-2 ring-primary/30' : 'border-border hover:bg-accent'
+        isSelected ? "border-primary ring-2 ring-primary/30" : "border-border hover:bg-accent"
       }`}
       onClick={onSelect}
       type="button"

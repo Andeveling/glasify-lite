@@ -1,8 +1,8 @@
-'use client'
+"use client"
 
-import { createContext, useContext } from 'react'
-import type { TenantConfigPublic } from '@/lib/schemas/tenant.config'
-import { TenantConfigSchema } from '@/lib/schemas/tenant.config'
+import { createContext, useContext } from "react"
+import type { TenantConfigPublic } from "@/lib/schemas/tenant.config"
+import { TenantConfigSchema } from "@/lib/schemas/tenant.config"
 
 const TenantConfigContext = createContext<TenantConfigPublic | null>(null)
 
@@ -15,7 +15,7 @@ export function TenantConfigProvider({ children, config }: TenantConfigProviderP
   const parsed = TenantConfigSchema.safeParse(config)
   if (!parsed.success) {
     throw new Error(
-      `TenantConfigProvider: invalid config\n${parsed.error.issues.map((i) => `  - ${i.path.join('.')}: ${i.message}`).join('\n')}`,
+      `TenantConfigProvider: invalid config\n${parsed.error.issues.map((i) => `  - ${i.path.join(".")}: ${i.message}`).join("\n")}`,
     )
   }
   return <TenantConfigContext.Provider value={parsed.data}>{children}</TenantConfigContext.Provider>
@@ -24,10 +24,10 @@ export function TenantConfigProvider({ children, config }: TenantConfigProviderP
 export function useTenantConfig(): TenantConfigPublic {
   const context = useContext(TenantConfigContext)
   if (!context) {
-    throw new Error('useTenantConfig must be used within TenantConfigProvider')
+    throw new Error("useTenantConfig must be used within TenantConfigProvider")
   }
   return context
 }
 
-export { TenantConfigSchema }
 export type { TenantConfigPublic }
+export { TenantConfigSchema }

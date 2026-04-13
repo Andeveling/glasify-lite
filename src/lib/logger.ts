@@ -24,8 +24,8 @@ type Logger = {
 }
 
 // Check if we're on the server and in development mode
-const isServer = typeof window === 'undefined'
-const isDevelopment = process.env.NODE_ENV !== 'production'
+const isServer = typeof window === "undefined"
+const isDevelopment = process.env.NODE_ENV !== "production"
 
 /**
  * Format timestamp for log entries
@@ -55,25 +55,25 @@ const logger: Logger = {
   debug: (message: string, meta?: Record<string, unknown>) => {
     if (isServer && isDevelopment) {
       // biome-ignore lint/suspicious/noConsole: Debug logging in development
-      console.debug(formatLog('debug', message, meta))
+      console.debug(formatLog("debug", message, meta))
     }
   },
   error: (message: string, meta?: Record<string, unknown>) => {
     if (isServer) {
       // biome-ignore lint/suspicious/noConsole: Error logging
-      console.error(formatLog('error', message, meta))
+      console.error(formatLog("error", message, meta))
     }
   },
   info: (message: string, meta?: Record<string, unknown>) => {
     if (isServer) {
       // biome-ignore lint/suspicious/noConsole: Info logging
-      console.log(formatLog('info', message, meta))
+      console.log(formatLog("info", message, meta))
     }
   },
   warn: (message: string, meta?: Record<string, unknown>) => {
     if (isServer) {
       // biome-ignore lint/suspicious/noConsole: Warning logging
-      console.warn(formatLog('warn', message, meta))
+      console.warn(formatLog("warn", message, meta))
     }
   },
 }

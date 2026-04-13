@@ -31,9 +31,9 @@
  * @see PERF-003: Debounce search inputs by 300ms
  */
 
-'use client'
+"use client"
 
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from "react"
 
 /**
  * Generic callback type that can accept any arguments and return any value

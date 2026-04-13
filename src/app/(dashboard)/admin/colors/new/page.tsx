@@ -7,12 +7,12 @@
  * Access: Admin only (protected by middleware)
  */
 
-import type { Metadata } from 'next'
-import { ColorForm } from '../_components/color-form'
+import type { Metadata } from "next"
+import { ColorForm } from "../_components/color-form"
 
 export const metadata: Metadata = {
-  description: 'Crear un nuevo color para el catálogo de modelos',
-  title: 'Nuevo Color | Admin',
+  description: "Crear un nuevo color para el catálogo de modelos",
+  title: "Nuevo Color | Admin",
 }
 
 export default function NewColorPage() {

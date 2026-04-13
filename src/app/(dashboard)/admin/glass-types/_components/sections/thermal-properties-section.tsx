@@ -11,11 +11,11 @@
  * @module _components/sections/thermal-properties-section
  */
 
-'use client'
+"use client"
 
-import type { Control, FieldValues } from 'react-hook-form'
-import { Card, CardContent } from '@/components/ui/card'
-import { FormNumberField } from '../form-fields/form-number-field'
+import type { Control, FieldValues } from "react-hook-form"
+import { Card, CardContent } from "@/components/ui/card"
+import { FormNumberField } from "../form-fields/form-number-field"
 
 type ThermalPropertiesSectionProps = {
   control: Control<FieldValues>

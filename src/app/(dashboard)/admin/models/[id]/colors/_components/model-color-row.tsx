@@ -14,7 +14,7 @@
  * - Optimistic updates with rollback on error
  */
 
-'use client'
+"use client"
 
 // Local type definitions to avoid Prisma import issues
 type Color = {
@@ -39,14 +39,14 @@ type ModelColor = {
   color: Color
 }
 
-import { Trash2 } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { ColorChip } from '@/app/(dashboard)/admin/colors/_components/color-chip'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { TableCell, TableRow } from '@/components/ui/table'
+import { Trash2 } from "lucide-react"
+import { useEffect, useState } from "react"
+import { ColorChip } from "@/app/(dashboard)/admin/colors/_components/color-chip"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { TableCell, TableRow } from "@/components/ui/table"
 
 // Surcharge management constants
 const SURCHARGE_DEBOUNCE_MS = 500
@@ -58,7 +58,7 @@ type ModelColorWithColor = ModelColor & {
 }
 
 // Serialized version for Client Component (Decimal -> number)
-type SerializedModelColorWithColor = Omit<ModelColorWithColor, 'surchargePercentage'> & {
+type SerializedModelColorWithColor = Omit<ModelColorWithColor, "surchargePercentage"> & {
   surchargePercentage: number
 }
 
@@ -126,7 +126,7 @@ export function ModelColorRow({
   }
 
   return (
-    <TableRow className={isUpdating ? 'opacity-50' : ''}>
+    <TableRow className={isUpdating ? "opacity-50" : ""}>
       {/* Color Preview */}
       <TableCell>
         <ColorChip hexCode={modelColor.color.hexCode} size="md" />
@@ -136,7 +136,7 @@ export function ModelColorRow({
       <TableCell className="font-medium">{modelColor.color.name}</TableCell>
 
       {/* RAL Code */}
-      <TableCell className="text-muted-foreground">{modelColor.color.ralCode ?? '—'}</TableCell>
+      <TableCell className="text-muted-foreground">{modelColor.color.ralCode ?? "—"}</TableCell>
 
       {/* Hex Code */}
       <TableCell className="font-mono text-sm">{modelColor.color.hexCode}</TableCell>
@@ -168,7 +168,7 @@ export function ModelColorRow({
             onCheckedChange={() => onDefaultChange(modelColor.id)}
           />
           <Label className="cursor-pointer text-sm" htmlFor={`default-${modelColor.id}`}>
-            {modelColor.isDefault ? 'Por defecto' : 'Establecer'}
+            {modelColor.isDefault ? "Por defecto" : "Establecer"}
           </Label>
         </div>
       </TableCell>

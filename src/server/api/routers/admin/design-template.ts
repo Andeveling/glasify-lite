@@ -6,16 +6,16 @@
  * used by the DesignRenderer to generate SVG visualizations.
  */
 
-import type { Prisma } from '@prisma/generated/client'
-import { TRPCError } from '@trpc/server'
-import logger from '@/lib/logger'
+import type { Prisma } from "@prisma/generated/client"
+import { TRPCError } from "@trpc/server"
+import logger from "@/lib/logger"
 import {
   designTemplateCreateSchema,
   designTemplateIdSchema,
   designTemplateListSchema,
   designTemplateUpdateSchema,
-} from '@/lib/validations/design-template'
-import { adminProcedure, createTRPCRouter } from '@/server/api/trpc'
+} from "@/lib/validations/design-template"
+import { adminProcedure, createTRPCRouter } from "@/server/api/trpc"
 
 function buildWhereClause(input: { search?: string }): Prisma.DesignTemplateWhereInput {
   const where: Prisma.DesignTemplateWhereInput = {}
@@ -41,7 +41,7 @@ export const designTemplateRouter = createTRPCRouter({
         take: input.limit,
       })
 
-      logger.info('Design templates list retrieved', {
+      logger.info("Design templates list retrieved", {
         userId: ctx.session?.user.id,
         count: items.length,
         total,
@@ -49,13 +49,13 @@ export const designTemplateRouter = createTRPCRouter({
 
       return { items, total, page: input.page, limit: input.limit, totalPages }
     } catch (error) {
-      logger.error('Failed to list design templates', {
+      logger.error("Failed to list design templates", {
         userId: ctx.session?.user.id,
         error: error instanceof Error ? error.message : String(error),
       })
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al obtener las plantillas de diseño',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al obtener las plantillas de diseño",
       })
     }
   }),
@@ -68,20 +68,20 @@ export const designTemplateRouter = createTRPCRouter({
       })
 
       if (!template) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Plantilla de diseño no encontrada' })
+        throw new TRPCError({ code: "NOT_FOUND", message: "Plantilla de diseño no encontrada" })
       }
 
       return template
     } catch (error) {
       if (error instanceof TRPCError) throw error
-      logger.error('Failed to get design template', {
+      logger.error("Failed to get design template", {
         userId: ctx.session?.user.id,
         templateId: input.id,
         error: error instanceof Error ? error.message : String(error),
       })
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al obtener la plantilla de diseño',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al obtener la plantilla de diseño",
       })
     }
   }),
@@ -89,18 +89,18 @@ export const designTemplateRouter = createTRPCRouter({
   listAll: adminProcedure.query(async ({ ctx }) => {
     try {
       const items = await ctx.db.designTemplate.findMany({
-        orderBy: { name: 'asc' },
+        orderBy: { name: "asc" },
         select: { id: true, name: true, pattern: true },
       })
       return items
     } catch (error) {
-      logger.error('Failed to list all design templates', {
+      logger.error("Failed to list all design templates", {
         userId: ctx.session?.user.id,
         error: error instanceof Error ? error.message : String(error),
       })
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al obtener las plantillas',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al obtener las plantillas",
       })
     }
   }),
@@ -113,8 +113,8 @@ export const designTemplateRouter = createTRPCRouter({
 
       if (existing) {
         throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Ya existe una plantilla con este nombre',
+          code: "CONFLICT",
+          message: "Ya existe una plantilla con este nombre",
         })
       }
 
@@ -128,7 +128,7 @@ export const designTemplateRouter = createTRPCRouter({
         },
       })
 
-      logger.info('Design template created', {
+      logger.info("Design template created", {
         userId: ctx.session?.user.id,
         templateId: template.id,
         name: template.name,
@@ -140,22 +140,22 @@ export const designTemplateRouter = createTRPCRouter({
       if (error instanceof TRPCError) throw error
       if (
         error instanceof Error &&
-        'code' in error &&
-        (error as { code: string }).code === 'P2002'
+        "code" in error &&
+        (error as { code: string }).code === "P2002"
       ) {
         throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Ya existe una plantilla con este nombre',
+          code: "CONFLICT",
+          message: "Ya existe una plantilla con este nombre",
         })
       }
-      logger.error('Failed to create design template', {
+      logger.error("Failed to create design template", {
         userId: ctx.session?.user.id,
         input,
         error: error instanceof Error ? error.message : String(error),
       })
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al crear la plantilla de diseño',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al crear la plantilla de diseño",
       })
     }
   }),
@@ -167,7 +167,7 @@ export const designTemplateRouter = createTRPCRouter({
         const { id, ...data } = input
         const existing = await ctx.db.designTemplate.findUnique({ where: { id } })
         if (!existing) {
-          throw new TRPCError({ code: 'NOT_FOUND', message: 'Plantilla de diseño no encontrada' })
+          throw new TRPCError({ code: "NOT_FOUND", message: "Plantilla de diseño no encontrada" })
         }
 
         if (data.name && data.name !== existing.name) {
@@ -176,8 +176,8 @@ export const designTemplateRouter = createTRPCRouter({
           })
           if (duplicate) {
             throw new TRPCError({
-              code: 'CONFLICT',
-              message: 'Ya existe una plantilla con este nombre',
+              code: "CONFLICT",
+              message: "Ya existe una plantilla con este nombre",
             })
           }
         }
@@ -197,7 +197,7 @@ export const designTemplateRouter = createTRPCRouter({
           },
         })
 
-        logger.info('Design template updated', {
+        logger.info("Design template updated", {
           userId: ctx.session?.user.id,
           templateId: id,
         })
@@ -205,14 +205,14 @@ export const designTemplateRouter = createTRPCRouter({
         return template
       } catch (error) {
         if (error instanceof TRPCError) throw error
-        logger.error('Failed to update design template', {
+        logger.error("Failed to update design template", {
           userId: ctx.session?.user.id,
           templateId: input.id,
           error: error instanceof Error ? error.message : String(error),
         })
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Error al actualizar la plantilla de diseño',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error al actualizar la plantilla de diseño",
         })
       }
     }),
@@ -225,34 +225,34 @@ export const designTemplateRouter = createTRPCRouter({
       })
 
       if (!template) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Plantilla de diseño no encontrada' })
+        throw new TRPCError({ code: "NOT_FOUND", message: "Plantilla de diseño no encontrada" })
       }
 
       if (template._count.models > 0) {
         throw new TRPCError({
-          code: 'PRECONDITION_FAILED',
+          code: "PRECONDITION_FAILED",
           message: `No se puede eliminar. Plantilla usada en ${template._count.models} modelo(s)`,
         })
       }
 
       await ctx.db.designTemplate.delete({ where: { id: input.id } })
 
-      logger.info('Design template deleted', {
+      logger.info("Design template deleted", {
         userId: ctx.session?.user.id,
         templateId: input.id,
       })
 
-      return { success: true, message: 'Plantilla eliminada exitosamente' }
+      return { success: true, message: "Plantilla eliminada exitosamente" }
     } catch (error) {
       if (error instanceof TRPCError) throw error
-      logger.error('Failed to delete design template', {
+      logger.error("Failed to delete design template", {
         userId: ctx.session?.user.id,
         templateId: input.id,
         error: error instanceof Error ? error.message : String(error),
       })
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al eliminar la plantilla de diseño',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al eliminar la plantilla de diseño",
       })
     }
   }),

@@ -7,16 +7,16 @@
  * @see /specs/011-admin-catalog-management/ (User Story 10)
  */
 
-'use client'
+"use client"
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import type { Service, ServiceType, ServiceUnit } from '@prisma/generated/client'
-import { Loader2 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { zodResolver } from "@hookform/resolvers/zod"
+import type { Service, ServiceType, ServiceUnit } from "@prisma/generated/client"
+import { Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Form,
   FormControl,
@@ -25,24 +25,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from "@/components/ui/select"
 import {
   createServiceSchema,
   MAX_NAME_LENGTH,
   MIN_NAME_LENGTH,
-} from '@/lib/validations/admin/service.schema'
-import { api } from '@/trpc/react'
+} from "@/lib/validations/admin/service.schema"
+import { api } from "@/trpc/react"
 
 type ServiceFormProps = {
-  mode: 'create' | 'edit'
+  mode: "create" | "edit"
   defaultValues?: Service
 }
 
@@ -62,19 +62,19 @@ const SERVICE_TYPE_OPTIONS: {
   description: string
 }[] = [
   {
-    description: 'Precio fijo independiente de dimensiones',
-    label: 'Fijo',
-    value: 'fixed',
+    description: "Precio fijo independiente de dimensiones",
+    label: "Fijo",
+    value: "fixed",
   },
   {
-    description: 'Calculado por área del producto (m²)',
-    label: 'Área',
-    value: 'area',
+    description: "Calculado por área del producto (m²)",
+    label: "Área",
+    value: "area",
   },
   {
-    description: 'Calculado por perímetro del producto (ml)',
-    label: 'Perímetro',
-    value: 'perimeter',
+    description: "Calculado por perímetro del producto (ml)",
+    label: "Perímetro",
+    value: "perimeter",
   },
 ]
 
@@ -84,38 +84,38 @@ export function ServiceForm({ mode, defaultValues }: ServiceFormProps) {
   // React Hook Form
   const form = useForm<FormValues>({
     defaultValues: {
-      name: defaultValues?.name ?? '',
+      name: defaultValues?.name ?? "",
       rate: defaultValues?.rate?.toNumber() ?? 0,
-      type: defaultValues?.type ?? 'fixed',
-      unit: defaultValues?.unit ?? 'unit',
+      type: defaultValues?.type ?? "fixed",
+      unit: defaultValues?.unit ?? "unit",
     },
     resolver: zodResolver(createServiceSchema),
   })
 
   // Auto-assign unit based on service type
   const handleTypeChange = (type: ServiceType) => {
-    form.setValue('type', type)
+    form.setValue("type", type)
 
     // Map type to unit automatically
     const typeToUnitMap: Record<ServiceType, ServiceUnit> = {
-      area: 'sqm',
-      fixed: 'unit',
-      perimeter: 'ml',
+      area: "sqm",
+      fixed: "unit",
+      perimeter: "ml",
     }
 
-    form.setValue('unit', typeToUnitMap[type])
+    form.setValue("unit", typeToUnitMap[type])
   }
 
   // Create mutation
   const createMutation = api.admin.service.create.useMutation({
     onError: (err) => {
-      toast.error('Error al crear servicio', {
+      toast.error("Error al crear servicio", {
         description: err.message,
       })
     },
     onSuccess: () => {
-      toast.success('Servicio creado correctamente')
-      router.push('/admin/services')
+      toast.success("Servicio creado correctamente")
+      router.push("/admin/services")
       router.refresh()
     },
   })
@@ -123,20 +123,20 @@ export function ServiceForm({ mode, defaultValues }: ServiceFormProps) {
   // Update mutation
   const updateMutation = api.admin.service.update.useMutation({
     onError: (err) => {
-      toast.error('Error al actualizar servicio', {
+      toast.error("Error al actualizar servicio", {
         description: err.message,
       })
     },
     onSuccess: () => {
-      toast.success('Servicio actualizado correctamente')
-      router.push('/admin/services')
+      toast.success("Servicio actualizado correctamente")
+      router.push("/admin/services")
       router.refresh()
     },
   })
 
   // Handle form submission
   const handleSubmit = (formData: FormValues) => {
-    if (mode === 'create') {
+    if (mode === "create") {
       createMutation.mutate(formData)
     } else if (defaultValues?.id) {
       updateMutation.mutate({
@@ -151,11 +151,11 @@ export function ServiceForm({ mode, defaultValues }: ServiceFormProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{mode === 'create' ? 'Nuevo Servicio' : 'Editar Servicio'}</CardTitle>
+        <CardTitle>{mode === "create" ? "Nuevo Servicio" : "Editar Servicio"}</CardTitle>
         <CardDescription>
-          {mode === 'create'
-            ? 'Crea un nuevo servicio adicional para cotizaciones'
-            : 'Actualiza la información del servicio'}
+          {mode === "create"
+            ? "Crea un nuevo servicio adicional para cotizaciones"
+            : "Actualiza la información del servicio"}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -262,11 +262,11 @@ export function ServiceForm({ mode, defaultValues }: ServiceFormProps) {
             <div className="flex gap-4">
               <Button disabled={isPending} type="submit">
                 {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {mode === 'create' ? 'Crear Servicio' : 'Guardar Cambios'}
+                {mode === "create" ? "Crear Servicio" : "Guardar Cambios"}
               </Button>
               <Button
                 disabled={isPending}
-                onClick={() => router.push('/admin/services')}
+                onClick={() => router.push("/admin/services")}
                 type="button"
                 variant="outline"
               >

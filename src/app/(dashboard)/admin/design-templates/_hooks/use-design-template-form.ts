@@ -1,15 +1,15 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import type { UseFormReturn } from 'react-hook-form'
-import { useForm } from 'react-hook-form'
+import { zodResolver } from "@hookform/resolvers/zod"
+import type { UseFormReturn } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import {
   type DesignTemplateCreateInput,
   type DesignTemplateUpdateInput,
   designTemplateCreateSchema,
-} from '@/lib/validations/design-template'
-import { useDesignTemplateMutations } from './use-design-template-mutations'
+} from "@/lib/validations/design-template"
+import { useDesignTemplateMutations } from "./use-design-template-mutations"
 
 type UseDesignTemplateFormOptions = {
-  mode: 'create' | 'edit'
+  mode: "create" | "edit"
   defaultValues?: DesignTemplateUpdateInput & { id: string }
   onSuccessCallback?: () => void
 }
@@ -31,18 +31,18 @@ export function useDesignTemplateForm({
 
   const form = useForm<FormValues>({
     defaultValues: (defaultValues ?? {
-      pattern: 'XX',
-      name: '',
-      frameConfig: { thickness: 4, profileStyle: 'simple' },
+      pattern: "XX",
+      name: "",
+      frameConfig: { thickness: 4, profileStyle: "simple" },
       showArrows: true,
       showHandles: true,
     }) as FormValues,
-    mode: 'onChange',
+    mode: "onChange",
     resolver: zodResolver(designTemplateCreateSchema) as never,
   })
 
   const onSubmit = (data: FormValues) => {
-    if (mode === 'create') {
+    if (mode === "create") {
       createMutation.mutate(data)
     } else if (defaultValues) {
       updateMutation.mutate({

@@ -1,12 +1,12 @@
-import type { Dimensions } from '../entities/dimensions'
-import type { Money } from '../entities/money'
-import { type ServiceResult, ServiceUnit } from '../types'
+import type { Dimensions } from "../entities/dimensions"
+import type { Money } from "../entities/money"
+import { type ServiceResult, ServiceUnit } from "../types"
 import {
   applyMinimumBillingUnit,
   calculateAreaQuantity,
   calculateFixedQuantity,
   calculatePerimeterQuantity,
-} from './quantity-calculations'
+} from "./quantity-calculations"
 
 /**
  * Input for service amount calculation

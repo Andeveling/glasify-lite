@@ -18,12 +18,12 @@
  * - onCreateClick callback to parent for navigation
  */
 
-'use client'
+"use client"
 
-import { Plus } from 'lucide-react'
-import { type FilterDefinition, TableFilters } from '@/app/_components/server-table/table-filters'
-import { TableSearch } from '@/app/_components/server-table/table-search'
-import { Button } from '@/components/ui/button'
+import { Plus } from "lucide-react"
+import { type FilterDefinition, TableFilters } from "@/app/_components/server-table/table-filters"
+import { TableSearch } from "@/app/_components/server-table/table-search"
+import { Button } from "@/components/ui/button"
 
 type ColorsFiltersProps = {
   searchParams: {
@@ -44,15 +44,15 @@ export function ColorsFilters({ searchParams, onCreateClickAction }: ColorsFilte
    */
   const filters: FilterDefinition[] = [
     {
-      defaultValue: 'all',
-      id: 'isActive',
-      label: 'Estado',
+      defaultValue: "all",
+      id: "isActive",
+      label: "Estado",
       options: [
-        { label: 'Todos', value: 'all' },
-        { label: 'Activo', value: 'active' },
-        { label: 'Inactivo', value: 'inactive' },
+        { label: "Todos", value: "all" },
+        { label: "Activo", value: "active" },
+        { label: "Inactivo", value: "inactive" },
       ],
-      type: 'select',
+      type: "select",
     },
   ]
 

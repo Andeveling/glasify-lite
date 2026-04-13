@@ -8,10 +8,10 @@
  * User Story: US5 - Access and view quote history
  */
 
-import { FileText } from 'lucide-react'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { FileText } from "lucide-react"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 
 export function EmptyQuotesState() {
   return (

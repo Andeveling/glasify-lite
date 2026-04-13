@@ -4,10 +4,10 @@
  * Notes and last cost review date
  */
 
-'use client'
+"use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { FormDateInput, FormTextarea } from './form-fields'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { FormDateInput, FormTextarea } from "./form-fields"
 
 export function CostNotesSection() {
   return (

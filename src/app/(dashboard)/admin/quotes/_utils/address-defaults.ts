@@ -8,7 +8,7 @@
  * Provide default/empty values for ProjectAddress entities
  */
 
-import type { ProjectAddress } from '@/app/(dashboard)/admin/quotes/_types/address.types'
+import type { ProjectAddress } from "@/app/(dashboard)/admin/quotes/_types/address.types"
 
 /**
  * Get empty ProjectAddress object for form initialization
@@ -25,7 +25,7 @@ export function getEmptyAddress(): Partial<ProjectAddress> {
     id: undefined,
     quoteId: null,
     label: null,
-    country: 'Colombia', // Default to Colombia for most users
+    country: "Colombia", // Default to Colombia for most users
     region: null,
     city: null,
     district: null,

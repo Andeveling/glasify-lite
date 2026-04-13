@@ -16,14 +16,14 @@
  * - URL-based state management via server params
  */
 
-'use client'
+"use client"
 
-import { Pencil, Trash2 } from 'lucide-react'
-import { useState } from 'react'
-import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog'
-import { TablePagination } from '@/app/_components/server-table/table-pagination'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Pencil, Trash2 } from "lucide-react"
+import { useState } from "react"
+import { DeleteConfirmationDialog } from "@/app/_components/delete-confirmation-dialog"
+import { TablePagination } from "@/app/_components/server-table/table-pagination"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Table,
   TableBody,
@@ -31,13 +31,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import type { GlassSupplierListOutput } from '@/lib/validations/admin/glass-supplier.schema'
-import type { FormValues } from '../_hooks/use-glass-supplier-form'
-import { useGlassSupplierMutations } from '../_hooks/use-glass-supplier-mutations'
-import { GlassSupplierDialog } from './glass-supplier-dialog'
-import { GlassSupplierEmpty } from './glass-supplier-empty'
-import { GlassSupplierFilters } from './glass-supplier-filters'
+} from "@/components/ui/table"
+import type { GlassSupplierListOutput } from "@/lib/validations/admin/glass-supplier.schema"
+import type { FormValues } from "../_hooks/use-glass-supplier-form"
+import { useGlassSupplierMutations } from "../_hooks/use-glass-supplier-mutations"
+import { GlassSupplierDialog } from "./glass-supplier-dialog"
+import { GlassSupplierEmpty } from "./glass-supplier-empty"
+import { GlassSupplierFilters } from "./glass-supplier-filters"
 
 type GlassSupplierListProps = {
   initialData: GlassSupplierListOutput
@@ -53,7 +53,7 @@ type GlassSupplierListProps = {
 
 export function GlassSupplierList({ initialData, searchParams }: GlassSupplierListProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create')
+  const [dialogMode, setDialogMode] = useState<"create" | "edit">("create")
   const [selectedSupplier, setSelectedSupplier] = useState<
     (FormValues & { id: string }) | undefined
   >(undefined)
@@ -66,15 +66,15 @@ export function GlassSupplierList({ initialData, searchParams }: GlassSupplierLi
   } | null>(null)
 
   const handleCreateClick = () => {
-    setDialogMode('create')
+    setDialogMode("create")
     setSelectedSupplier(undefined)
     setDialogOpen(true)
   }
 
   const handleEditClick = (
-    supplier: (FormValues & { id: string }) | GlassSupplierListOutput['items'][number],
+    supplier: (FormValues & { id: string }) | GlassSupplierListOutput["items"][number],
   ) => {
-    setDialogMode('edit')
+    setDialogMode("edit")
     setSelectedSupplier(supplier as FormValues & { id: string })
     setDialogOpen(true)
   }
@@ -103,7 +103,7 @@ export function GlassSupplierList({ initialData, searchParams }: GlassSupplierLi
   const totalPages = initialData.totalPages ?? 1
   const page = initialData.page ?? 1
   const hasFilters = Boolean(
-    searchParams.search || (searchParams.isActive && searchParams.isActive !== 'all'),
+    searchParams.search || (searchParams.isActive && searchParams.isActive !== "all"),
   )
 
   return (
@@ -147,8 +147,8 @@ export function GlassSupplierList({ initialData, searchParams }: GlassSupplierLi
                       <span className="text-muted-foreground text-sm">—</span>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={supplier.isActive ? 'default' : 'secondary'}>
-                        {supplier.isActive ? 'Activo' : 'Inactivo'}
+                      <Badge variant={supplier.isActive ? "default" : "secondary"}>
+                        {supplier.isActive ? "Activo" : "Inactivo"}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
@@ -196,7 +196,7 @@ export function GlassSupplierList({ initialData, searchParams }: GlassSupplierLi
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
         dependencies={[]}
-        entityLabel={supplierToDelete?.name ?? ''}
+        entityLabel={supplierToDelete?.name ?? ""}
         entityName="proveedor de vidrio"
         loading={deleteMutation.isPending}
         onConfirm={handleConfirmDelete}

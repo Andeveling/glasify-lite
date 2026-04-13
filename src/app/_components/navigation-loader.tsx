@@ -5,11 +5,11 @@
  * Uses Framer Motion for smooth animations
  */
 
-'use client'
+"use client"
 
-import { AnimatePresence, motion } from 'motion/react'
-import { usePathname } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from "motion/react"
+import { usePathname } from "next/navigation"
+import { useEffect, useRef, useState } from "react"
 
 const LOADER_DISPLAY_DURATION_MS = 800
 const MILLISECONDS_PER_SECOND = 1000
@@ -20,12 +20,12 @@ const SHIMMER_DURATION_SECONDS = 0.8
 const OPACITY_TRANSITION_DURATION = 0.2
 
 // Progress bar animation keyframes
-const PROGRESS_WIDTH_KEYFRAMES = ['0%', '70%', '90%', '100%']
-const PROGRESS_POSITION_KEYFRAMES = ['0%', '0%', '0%', '0%']
+const PROGRESS_WIDTH_KEYFRAMES = ["0%", "70%", "90%", "100%"]
+const PROGRESS_POSITION_KEYFRAMES = ["0%", "0%", "0%", "0%"]
 
 // Shimmer animation constants
-const SHIMMER_START_POSITION = '-100%'
-const SHIMMER_END_POSITION = '200%'
+const SHIMMER_START_POSITION = "-100%"
+const SHIMMER_END_POSITION = "200%"
 
 // Framer Motion easing curve values
 const EASING_START = 0.4
@@ -88,8 +88,8 @@ export function NavigationLoader() {
               x: PROGRESS_POSITION_KEYFRAMES,
             }}
             className="h-full bg-linear-to-r from-primary via-primary/80 to-primary"
-            exit={{ opacity: 0, width: '100%' }}
-            initial={{ width: '0%', x: '0%' }}
+            exit={{ opacity: 0, width: "100%" }}
+            initial={{ width: "0%", x: "0%" }}
             transition={{
               duration: LOADER_DURATION_SECONDS,
               ease: EASING_CURVE,
@@ -104,7 +104,7 @@ export function NavigationLoader() {
             initial={{ x: SHIMMER_START_POSITION }}
             transition={{
               duration: SHIMMER_DURATION_SECONDS,
-              ease: 'linear',
+              ease: "linear",
               repeat: Number.POSITIVE_INFINITY,
             }}
           />

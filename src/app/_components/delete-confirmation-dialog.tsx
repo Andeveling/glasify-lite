@@ -1,7 +1,7 @@
-'use client'
+"use client"
 
-import { Loader2, Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { Loader2, Trash2 } from "lucide-react"
+import { useState } from "react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,8 +11,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
+} from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
 
 /**
  * Delete Confirmation Dialog Component
@@ -179,15 +179,15 @@ export function DeleteConfirmationDialog({
 export type DeleteButtonProps = {
   onClick: () => void
   disabled?: boolean
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
-  size?: 'default' | 'sm' | 'lg' | 'icon'
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
+  size?: "default" | "sm" | "lg" | "icon"
 }
 
 export function DeleteButton({
   onClick,
   disabled = false,
-  variant = 'destructive',
-  size = 'sm',
+  variant = "destructive",
+  size = "sm",
 }: DeleteButtonProps) {
   return (
     <Button disabled={disabled} onClick={onClick} size={size} variant={variant}>

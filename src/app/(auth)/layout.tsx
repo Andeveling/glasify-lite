@@ -1,5 +1,5 @@
-import Link from 'next/link'
-import { BackLink } from '@/components/ui/back-link'
+import Link from "next/link"
+import { BackLink } from "@/components/ui/back-link"
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -7,12 +7,12 @@
  * @see /plan/feature-branding-communication-1.md (US-009, US-010)
  */
 
-import { z } from 'zod'
-import logger from '@/lib/logger'
-import { updateTenantConfigSchema } from '../../../schemas/tenant.schema'
-import { getTenantConfig, updateTenantConfig } from '../../../utils/tenant'
-import { updateBrandingSchema } from '../../schemas/branding.schema'
-import { adminProcedure, createTRPCRouter, publicProcedure } from '../../trpc'
+import { z } from "zod"
+import logger from "@/lib/logger"
+import { updateTenantConfigSchema } from "../../../schemas/tenant.schema"
+import { getTenantConfig, updateTenantConfig } from "../../../utils/tenant"
+import { updateBrandingSchema } from "../../schemas/branding.schema"
+import { adminProcedure, createTRPCRouter, publicProcedure } from "../../trpc"
 
 export const tenantConfigRouter = createTRPCRouter({
   /**
@@ -75,7 +75,7 @@ export const tenantConfigRouter = createTRPCRouter({
     })
 
     if (!config) {
-      throw new Error('Configuración de tenant no encontrada')
+      throw new Error("Configuración de tenant no encontrada")
     }
 
     return config
@@ -87,9 +87,9 @@ export const tenantConfigRouter = createTRPCRouter({
    * US-009: Configurar datos de branding del tenant
    */
   updateBranding: adminProcedure.input(updateBrandingSchema).mutation(async ({ ctx, input }) => {
-    const tenantId = '1' // Singleton tenant ID
+    const tenantId = "1" // Singleton tenant ID
 
-    logger.info('Updating branding configuration', {
+    logger.info("Updating branding configuration", {
       changes: Object.keys(input),
       input,
       tenantId,
@@ -140,7 +140,7 @@ export const tenantConfigRouter = createTRPCRouter({
       updateData.whatsappNumber = input.whatsappNumber || null
     }
 
-    logger.info('Prepared update data', {
+    logger.info("Prepared update data", {
       tenantId,
       updateData,
       userId: ctx.session.user.id,
@@ -151,7 +151,7 @@ export const tenantConfigRouter = createTRPCRouter({
       where: { id: tenantId },
     })
 
-    logger.info('Branding configuration updated successfully', {
+    logger.info("Branding configuration updated successfully", {
       tenantId,
       userId: ctx.session.user.id,
     })
@@ -170,6 +170,6 @@ export const tenantConfigRouter = createTRPCRouter({
     .input(z.object({ file: z.instanceof(File) }))
     .mutation(({ input: _input }) => {
       // TODO: Implement when logoUrl field is added to TenantConfig schema
-      throw new Error('Logo upload not yet implemented in schema')
+      throw new Error("Logo upload not yet implemented in schema")
     }),
 })

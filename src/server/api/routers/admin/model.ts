@@ -10,10 +10,10 @@
  * Validates compatible glass types exist and are active
  */
 
-import type { GlassType, Model, Prisma, ProfileSupplier } from '@prisma/generated/client'
-import { TRPCError } from '@trpc/server'
-import logger from '@/lib/logger'
-import { stringifyCompatibleGlassTypeIds } from '@/lib/utils/compatible-glass-types'
+import type { GlassType, Model, Prisma, ProfileSupplier } from "@prisma/generated/client"
+import { TRPCError } from "@trpc/server"
+import logger from "@/lib/logger"
+import { stringifyCompatibleGlassTypeIds } from "@/lib/utils/compatible-glass-types"
 import {
   addCostBreakdownSchema,
   createModelSchema,
@@ -23,11 +23,11 @@ import {
   listModelsSchema,
   updateCostBreakdownSchema,
   updateModelSchema,
-} from '@/lib/validations/admin/model.schema'
-import { adminProcedure, createTRPCRouter } from '@/server/api/trpc'
-import { createModelPriceHistory } from '@/server/services/model-price-history.service'
-import { canDeleteModel } from '@/server/services/referential-integrity.service'
-import { modelUpsertInput, modelUpsertOutput } from './admin.schemas'
+} from "@/lib/validations/admin/model.schema"
+import { adminProcedure, createTRPCRouter } from "@/server/api/trpc"
+import { createModelPriceHistory } from "@/server/services/model-price-history.service"
+import { canDeleteModel } from "@/server/services/referential-integrity.service"
+import { modelUpsertInput, modelUpsertOutput } from "./admin.schemas"
 
 async function validateProfileSupplierExists(
   tx: Prisma.TransactionClient,
@@ -38,7 +38,7 @@ async function validateProfileSupplierExists(
   })
 
   if (!supplier) {
-    throw new Error('Proveedor de perfiles no encontrado')
+    throw new Error("Proveedor de perfiles no encontrado")
   }
 
   return supplier
@@ -55,7 +55,7 @@ async function validateGlassTypesExist(
   })
 
   if (glassTypes.length !== glassTypeIds.length) {
-    throw new Error('Uno o más tipos de vidrio no encontrados')
+    throw new Error("Uno o más tipos de vidrio no encontrados")
   }
 
   return glassTypes
@@ -66,7 +66,7 @@ async function validateGlassTypesExist(
  */
 function buildWhereClause(input: {
   search?: string
-  status?: 'all' | 'draft' | 'published'
+  status?: "all" | "draft" | "published"
   profileSupplierId?: string
 }): Prisma.ModelWhereInput {
   const where: Prisma.ModelWhereInput = {}
@@ -75,12 +75,12 @@ function buildWhereClause(input: {
   if (input.search) {
     where.name = {
       contains: input.search,
-      mode: 'insensitive',
+      mode: "insensitive",
     }
   }
 
   // Filter by status
-  if (input.status && input.status !== 'all') {
+  if (input.status && input.status !== "all") {
     where.status = input.status
   }
 
@@ -97,18 +97,18 @@ function buildWhereClause(input: {
  */
 function buildOrderByClause(
   sortBy: string,
-  sortOrder: 'asc' | 'desc',
+  sortOrder: "asc" | "desc",
 ): Prisma.ModelOrderByWithRelationInput {
   const orderBy: Prisma.ModelOrderByWithRelationInput = {}
 
   switch (sortBy) {
-    case 'name':
+    case "name":
       orderBy.name = sortOrder
       break
-    case 'basePrice':
+    case "basePrice":
       orderBy.basePrice = sortOrder
       break
-    case 'updatedAt':
+    case "updatedAt":
       orderBy.updatedAt = sortOrder
       break
     default:
@@ -128,7 +128,7 @@ export const modelRouter = createTRPCRouter({
    *
    * Adds a new cost component to a model's cost breakdown
    */
-  'add-cost-breakdown': adminProcedure
+  "add-cost-breakdown": adminProcedure
     .input(addCostBreakdownSchema)
     .mutation(async ({ ctx, input }) => {
       const { modelId, data } = input
@@ -140,13 +140,13 @@ export const modelRouter = createTRPCRouter({
       })
 
       if (!model) {
-        logger.warn('Model not found for cost breakdown addition', {
+        logger.warn("Model not found for cost breakdown addition", {
           modelId,
           userId: ctx.session.user.id,
         })
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Modelo no encontrado',
+          code: "NOT_FOUND",
+          message: "Modelo no encontrado",
         })
       }
 
@@ -158,7 +158,7 @@ export const modelRouter = createTRPCRouter({
         },
       })
 
-      logger.info('Cost breakdown component added', {
+      logger.info("Cost breakdown component added", {
         component: costBreakdown.component,
         costBreakdownId: costBreakdown.id,
         costType: costBreakdown.costType,
@@ -194,14 +194,14 @@ export const modelRouter = createTRPCRouter({
       const foundIds = glassTypes.map((gt) => gt.id)
       const missingIds = input.compatibleGlassTypeIds.filter((id) => !foundIds.includes(id))
 
-      logger.warn('Invalid glass type IDs in model creation', {
+      logger.warn("Invalid glass type IDs in model creation", {
         missingIds,
         userId: ctx.session.user.id,
       })
 
       throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: `Tipos de vidrio no encontrados: ${missingIds.join(', ')}`,
+        code: "BAD_REQUEST",
+        message: `Tipos de vidrio no encontrados: ${missingIds.join(", ")}`,
       })
     }
 
@@ -210,14 +210,14 @@ export const modelRouter = createTRPCRouter({
     if (inactiveGlassTypes.length > 0) {
       const inactiveIds = inactiveGlassTypes.map((gt) => gt.id)
 
-      logger.warn('Inactive glass types in model creation', {
+      logger.warn("Inactive glass types in model creation", {
         inactiveIds,
         userId: ctx.session.user.id,
       })
 
       throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: `Los siguientes tipos de vidrio están inactivos: ${inactiveIds.join(', ')}`,
+        code: "BAD_REQUEST",
+        message: `Los siguientes tipos de vidrio están inactivos: ${inactiveIds.join(", ")}`,
       })
     }
 
@@ -232,7 +232,7 @@ export const modelRouter = createTRPCRouter({
       },
     })
 
-    logger.info('Model created', {
+    logger.info("Model created", {
       compatibleGlassTypeIds: input.compatibleGlassTypeIds,
       modelId: model.id,
       modelName: model.name,
@@ -256,14 +256,14 @@ export const modelRouter = createTRPCRouter({
     })
 
     if (!existingModel) {
-      logger.warn('Model not found for deletion', {
+      logger.warn("Model not found for deletion", {
         modelId: input.id,
         userId: ctx.session.user.id,
       })
 
       throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'El modelo no existe o ya fue eliminado',
+        code: "NOT_FOUND",
+        message: "El modelo no existe o ya fue eliminado",
       })
     }
 
@@ -271,14 +271,14 @@ export const modelRouter = createTRPCRouter({
     const integrityCheck = await canDeleteModel(input.id)
 
     if (!integrityCheck.canDelete) {
-      logger.warn('Model deletion blocked - referential integrity', {
+      logger.warn("Model deletion blocked - referential integrity", {
         dependencies: integrityCheck.dependencies,
         modelId: input.id,
         userId: ctx.session.user.id,
       })
 
       throw new TRPCError({
-        code: 'CONFLICT',
+        code: "CONFLICT",
         message: integrityCheck.message,
       })
     }
@@ -288,7 +288,7 @@ export const modelRouter = createTRPCRouter({
       where: { id: input.id },
     })
 
-    logger.info('Model deleted', {
+    logger.info("Model deleted", {
       modelId: deletedModel.id,
       modelName: deletedModel.name,
       userId: ctx.session.user.id,
@@ -303,7 +303,7 @@ export const modelRouter = createTRPCRouter({
    *
    * Removes a cost component from a model's cost breakdown
    */
-  'delete-cost-breakdown': adminProcedure
+  "delete-cost-breakdown": adminProcedure
     .input(deleteCostBreakdownSchema)
     .mutation(async ({ ctx, input }) => {
       const costBreakdown = await ctx.db.modelCostBreakdown.findUnique({
@@ -319,13 +319,13 @@ export const modelRouter = createTRPCRouter({
       })
 
       if (!costBreakdown) {
-        logger.warn('Cost breakdown component not found for deletion', {
+        logger.warn("Cost breakdown component not found for deletion", {
           costBreakdownId: input.id,
           userId: ctx.session.user.id,
         })
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Componente de costo no encontrado',
+          code: "NOT_FOUND",
+          message: "Componente de costo no encontrado",
         })
       }
 
@@ -333,7 +333,7 @@ export const modelRouter = createTRPCRouter({
         where: { id: input.id },
       })
 
-      logger.info('Cost breakdown component deleted', {
+      logger.info("Cost breakdown component deleted", {
         component: costBreakdown.component,
         costBreakdownId: costBreakdown.id,
         modelId: costBreakdown.model.id,
@@ -350,17 +350,17 @@ export const modelRouter = createTRPCRouter({
    *
    * Returns detailed model information including cost breakdown and price history
    */
-  'get-by-id': adminProcedure.input(getModelByIdSchema).query(async ({ ctx, input }) => {
+  "get-by-id": adminProcedure.input(getModelByIdSchema).query(async ({ ctx, input }) => {
     const model = await ctx.db.model.findUnique({
       include: {
         costBreakdown: {
           orderBy: {
-            createdAt: 'asc',
+            createdAt: "asc",
           },
         },
         priceHistory: {
           orderBy: {
-            createdAt: 'desc',
+            createdAt: "desc",
           },
           take: 10, // Last 10 price changes
         },
@@ -376,17 +376,17 @@ export const modelRouter = createTRPCRouter({
     })
 
     if (!model) {
-      logger.warn('Model not found', {
+      logger.warn("Model not found", {
         modelId: input.id,
         userId: ctx.session.user.id,
       })
       throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Modelo no encontrado',
+        code: "NOT_FOUND",
+        message: "Modelo no encontrado",
       })
     }
 
-    logger.info('Model retrieved', {
+    logger.info("Model retrieved", {
       modelId: model.id,
       userId: ctx.session.user.id,
     })
@@ -432,7 +432,7 @@ export const modelRouter = createTRPCRouter({
 
     const totalPages = Math.ceil(total / limit)
 
-    logger.info('Models listed', {
+    logger.info("Models listed", {
       count: items.length,
       filters: { profileSupplierId, search, status },
       page,
@@ -470,13 +470,13 @@ export const modelRouter = createTRPCRouter({
     })
 
     if (!currentModel) {
-      logger.warn('Model not found for update', {
+      logger.warn("Model not found for update", {
         modelId: id,
         userId: ctx.session.user.id,
       })
       throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Modelo no encontrado',
+        code: "NOT_FOUND",
+        message: "Modelo no encontrado",
       })
     }
 
@@ -501,8 +501,8 @@ export const modelRouter = createTRPCRouter({
         )
 
         throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: `Tipos de vidrio no encontrados: ${missingGlassTypeIds.join(', ')}`,
+          code: "BAD_REQUEST",
+          message: `Tipos de vidrio no encontrados: ${missingGlassTypeIds.join(", ")}`,
         })
       }
 
@@ -510,8 +510,8 @@ export const modelRouter = createTRPCRouter({
       if (inactiveGlassTypes.length > 0) {
         const inactiveIds = inactiveGlassTypes.map((gt) => gt.id)
         throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: `Los siguientes tipos de vidrio están inactivos: ${inactiveIds.join(', ')}`,
+          code: "BAD_REQUEST",
+          message: `Los siguientes tipos de vidrio están inactivos: ${inactiveIds.join(", ")}`,
         })
       }
     }
@@ -549,17 +549,17 @@ export const modelRouter = createTRPCRouter({
         costPerMmWidth: updatedModel.costPerMmWidth.toNumber(),
         createdBy: ctx.session.user.id,
         modelId: updatedModel.id,
-        reason: 'Actualización manual desde panel de administración',
+        reason: "Actualización manual desde panel de administración",
       })
 
-      logger.info('Model price history created', {
+      logger.info("Model price history created", {
         modelId: updatedModel.id,
         newBasePrice: updatedModel.basePrice.toString(),
         userId: ctx.session.user.id,
       })
     }
 
-    logger.info('Model updated', {
+    logger.info("Model updated", {
       modelId: updatedModel.id,
       priceChanged,
       userId: ctx.session.user.id,
@@ -574,7 +574,7 @@ export const modelRouter = createTRPCRouter({
    *
    * Updates an existing cost component in a model's cost breakdown
    */
-  'update-cost-breakdown': adminProcedure
+  "update-cost-breakdown": adminProcedure
     .input(updateCostBreakdownSchema)
     .mutation(async ({ ctx, input }) => {
       const { id, data } = input
@@ -593,13 +593,13 @@ export const modelRouter = createTRPCRouter({
       })
 
       if (!existingCostBreakdown) {
-        logger.warn('Cost breakdown component not found for update', {
+        logger.warn("Cost breakdown component not found for update", {
           costBreakdownId: id,
           userId: ctx.session.user.id,
         })
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Componente de costo no encontrado',
+          code: "NOT_FOUND",
+          message: "Componente de costo no encontrado",
         })
       }
 
@@ -609,7 +609,7 @@ export const modelRouter = createTRPCRouter({
         where: { id },
       })
 
-      logger.info('Cost breakdown component updated', {
+      logger.info("Cost breakdown component updated", {
         component: updatedCostBreakdown.component,
         costBreakdownId: updatedCostBreakdown.id,
         modelId: existingCostBreakdown.model.id,
@@ -625,17 +625,17 @@ export const modelRouter = createTRPCRouter({
     .output(modelUpsertOutput)
     .mutation(async ({ ctx, input }) => {
       try {
-        logger.info('Starting model upsert', {
+        logger.info("Starting model upsert", {
           modelId: input.id,
           name: input.name,
           profileSupplierId: input.profileSupplierId,
         })
 
         if (input.minWidthMm >= input.maxWidthMm) {
-          throw new Error('Ancho mínimo debe ser menor al ancho máximo')
+          throw new Error("Ancho mínimo debe ser menor al ancho máximo")
         }
         if (input.minHeightMm >= input.maxHeightMm) {
-          throw new Error('Alto mínimo debe ser menor al alto máximo')
+          throw new Error("Alto mínimo debe ser menor al alto máximo")
         }
 
         const result = await ctx.db.$transaction(async (tx) => {
@@ -670,7 +670,7 @@ export const modelRouter = createTRPCRouter({
             })
 
             if (!existingModel) {
-              throw new Error('Modelo no encontrado')
+              throw new Error("Modelo no encontrado")
             }
 
             modelRecord = await tx.model.update({
@@ -707,7 +707,7 @@ export const modelRouter = createTRPCRouter({
           }
         })
 
-        logger.info('Model upsert completed successfully', {
+        logger.info("Model upsert completed successfully", {
           isUpdate: Boolean(input.id),
           modelId: result.modelId,
           name: input.name,
@@ -716,8 +716,8 @@ export const modelRouter = createTRPCRouter({
 
         return result
       } catch (error) {
-        logger.error('Error during model upsert', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error during model upsert", {
+          error: error instanceof Error ? error.message : "Unknown error",
           modelId: input.id,
           name: input.name,
           profileSupplierId: input.profileSupplierId,
@@ -726,7 +726,7 @@ export const modelRouter = createTRPCRouter({
         const errorMessage =
           error instanceof Error
             ? error.message
-            : 'No se pudo guardar el modelo. Intente nuevamente.'
+            : "No se pudo guardar el modelo. Intente nuevamente."
         throw new Error(errorMessage)
       }
     }),

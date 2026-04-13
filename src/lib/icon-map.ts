@@ -17,7 +17,7 @@ import {
   Volume2,
   Wind,
   Zap,
-} from 'lucide-react'
+} from "lucide-react"
 
 /**
  * Icon name to component mapping

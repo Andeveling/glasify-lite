@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from "zod"
 
 /**
  * Zod validation schemas for ModelColor assignment management
@@ -14,8 +14,8 @@ const MAX_SURCHARGE = 100
  * Used when assigning a color to a model
  */
 export const modelColorAssignSchema = z.object({
-  modelId: z.string().cuid({ message: 'ID de modelo inválido' }),
-  colorId: z.string().cuid({ message: 'ID de color inválido' }),
+  modelId: z.string().cuid({ message: "ID de modelo inválido" }),
+  colorId: z.string().cuid({ message: "ID de color inválido" }),
   surchargePercentage: z
     .number()
     .min(MIN_SURCHARGE, {
@@ -33,7 +33,7 @@ export const modelColorAssignSchema = z.object({
  * Used when updating only the surcharge percentage
  */
 export const modelColorUpdateSurchargeSchema = z.object({
-  id: z.string().cuid({ message: 'ID de asignación inválido' }),
+  id: z.string().cuid({ message: "ID de asignación inválido" }),
   surchargePercentage: z
     .number()
     .min(MIN_SURCHARGE, {
@@ -50,7 +50,7 @@ export const modelColorUpdateSurchargeSchema = z.object({
  * Used in listByModel, getAvailableColors operations
  */
 export const modelIdSchema = z.object({
-  modelId: z.string().cuid({ message: 'ID de modelo inválido' }),
+  modelId: z.string().cuid({ message: "ID de modelo inválido" }),
 })
 
 /**
@@ -58,7 +58,7 @@ export const modelIdSchema = z.object({
  * Used in setDefault, unassign operations
  */
 export const modelColorIdSchema = z.object({
-  id: z.string().cuid({ message: 'ID de asignación inválido' }),
+  id: z.string().cuid({ message: "ID de asignación inválido" }),
 })
 
 /**
@@ -66,11 +66,11 @@ export const modelColorIdSchema = z.object({
  * Used for quick setup when creating/configuring a model
  */
 export const modelColorBulkAssignSchema = z.object({
-  modelId: z.string().cuid({ message: 'ID de modelo inválido' }),
+  modelId: z.string().cuid({ message: "ID de modelo inválido" }),
   assignments: z
     .array(
       z.object({
-        colorId: z.string().cuid({ message: 'ID de color inválido' }),
+        colorId: z.string().cuid({ message: "ID de color inválido" }),
         surchargePercentage: z
           .number()
           .min(MIN_SURCHARGE, {
@@ -82,7 +82,7 @@ export const modelColorBulkAssignSchema = z.object({
           .transform((val) => Number(val.toFixed(2))),
       }),
     )
-    .min(1, { message: 'Debe asignar al menos un color' }),
+    .min(1, { message: "Debe asignar al menos un color" }),
 })
 
 // Type exports for use in tRPC procedures

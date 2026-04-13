@@ -1,10 +1,10 @@
-'use client'
+"use client"
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { Button } from '@/components/ui/button'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useEffect } from "react"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -21,10 +21,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { PhoneInput } from '@/components/ui/phone-input'
-import { useSession } from '@/lib/auth-client'
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { PhoneInput } from "@/components/ui/phone-input"
+import { useSession } from "@/lib/auth-client"
 
 /**
  * Contact information schema matching backend validation
@@ -32,8 +32,8 @@ import { useSession } from '@/lib/auth-client'
  * Email: Automatically filled from session, not editable
  */
 const contactSchema = z.object({
-  contactEmail: z.email('Correo electrónico inválido'),
-  contactPhone: z.string().min(1, 'El teléfono es requerido'),
+  contactEmail: z.email("Correo electrónico inválido"),
+  contactPhone: z.string().min(1, "El teléfono es requerido"),
 })
 
 type ContactFormValues = z.infer<typeof contactSchema>
@@ -71,12 +71,12 @@ export function ContactInfoModal({
   isLoading = false,
 }: ContactInfoModalProps) {
   const { data: session } = useSession()
-  const userEmail = session?.user?.email ?? ''
+  const userEmail = session?.user?.email ?? ""
 
   const form = useForm<ContactFormValues>({
     defaultValues: {
       contactEmail: userEmail,
-      contactPhone: defaultValues?.contactPhone ?? '',
+      contactPhone: defaultValues?.contactPhone ?? "",
     },
     resolver: zodResolver(contactSchema),
   })
@@ -84,7 +84,7 @@ export function ContactInfoModal({
   // Update email when session changes or modal opens
   useEffect(() => {
     if (open && userEmail) {
-      form.setValue('contactEmail', userEmail)
+      form.setValue("contactEmail", userEmail)
     }
   }, [open, userEmail, form])
 
@@ -165,7 +165,7 @@ export function ContactInfoModal({
                 Cancelar
               </Button>
               <Button disabled={isLoading} type="submit">
-                {isLoading ? 'Enviando...' : 'Enviar Cotización'}
+                {isLoading ? "Enviando..." : "Enviar Cotización"}
               </Button>
             </DialogFooter>
           </form>

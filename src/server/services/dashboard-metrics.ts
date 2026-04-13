@@ -2,7 +2,7 @@
  * Dashboard Metrics Service - Pure business logic
  */
 
-import { formatDateShort } from '@/lib/format'
+import { formatDateShort } from "@/lib/format"
 import type {
   DashboardPeriodType,
   DateRange,
@@ -11,7 +11,7 @@ import type {
   TopGlassType,
   TopModel,
   TrendDataPoint,
-} from '@/types/dashboard'
+} from "@/types/dashboard"
 
 const DAYS_IN_WEEK = 7
 const DAYS_IN_MONTH = 30
@@ -32,15 +32,15 @@ export function getPeriodDateRange(period: DashboardPeriodType): DateRange {
   const start = new Date()
   let label: string
 
-  if (period === '7d') {
+  if (period === "7d") {
     start.setDate(start.getDate() - DAYS_IN_WEEK)
-    label = 'Últimos 7 días'
-  } else if (period === '30d') {
+    label = "Últimos 7 días"
+  } else if (period === "30d") {
     start.setDate(start.getDate() - DAYS_IN_MONTH)
-    label = 'Últimos 30 días'
-  } else if (period === '90d') {
+    label = "Últimos 30 días"
+  } else if (period === "90d") {
     start.setDate(start.getDate() - DAYS_IN_QUARTER)
-    label = 'Últimos 90 días'
+    label = "Últimos 90 días"
   } else {
     start.setFullYear(end.getFullYear(), 0, 1)
     label = `Año ${end.getFullYear()}`
@@ -114,7 +114,7 @@ export function aggregateQuotesByDate(
 
   // Aggregate existing quotes
   for (const quote of quotes) {
-    const dateKey = quote.createdAt.toISOString().split('T')[0] // YYYY-MM-DD
+    const dateKey = quote.createdAt.toISOString().split("T")[0] // YYYY-MM-DD
     if (dateKey) {
       countsByDate.set(dateKey, (countsByDate.get(dateKey) ?? 0) + 1)
     }
@@ -128,7 +128,7 @@ export function aggregateQuotesByDate(
   const currentDate = new Date(dateRange.start)
 
   for (let i = 0; i <= daysDiff; i++) {
-    const dateKey = currentDate.toISOString().split('T')[0]
+    const dateKey = currentDate.toISOString().split("T")[0]
 
     if (dateKey) {
       result.push({
@@ -326,7 +326,7 @@ export function getSupplierDistribution(
 
   for (const item of quoteItems) {
     const supplierId = item.model.profileSupplier?.id ?? null
-    const supplierName = item.model.profileSupplier?.name ?? 'Sin fabricante'
+    const supplierName = item.model.profileSupplier?.name ?? "Sin fabricante"
 
     const existing = countsBySupplier.get(supplierId)
     if (existing) {
@@ -420,10 +420,10 @@ export function calculateMonetaryMetrics(quotes: Array<{ total: { toNumber: () =
 export function groupQuotesByPriceRange(
   quotes: Array<{ total: { toNumber: () => number } }>,
   ranges: Array<{ label: string; max: number | null; min: number }> = [
-    { label: '0 - 1M', max: 1_000_000, min: 0 },
-    { label: '1M - 5M', max: 5_000_000, min: 1_000_000 },
-    { label: '5M - 10M', max: 10_000_000, min: 5_000_000 },
-    { label: '10M+', max: null, min: 10_000_000 },
+    { label: "0 - 1M", max: 1_000_000, min: 0 },
+    { label: "1M - 5M", max: 5_000_000, min: 1_000_000 },
+    { label: "5M - 10M", max: 10_000_000, min: 5_000_000 },
+    { label: "10M+", max: null, min: 10_000_000 },
   ],
 ): Array<{ count: number; label: string; max: number | null; min: number }> {
   // Initialize counts

@@ -1,13 +1,13 @@
-import { vi } from 'vitest'
+import { vi } from "vitest"
 
-import type { RouterOutputs } from '@/trpc/react'
+import type { RouterOutputs } from "@/trpc/react"
 
-import { mockColorsData, mockGlassTypes, mockModels, mockServices } from './mock-data'
+import { mockColorsData, mockGlassTypes, mockModels, mockServices } from "./mock-data"
 
 interface MockTrpcOptions {
-  catalogFilterModels?: RouterOutputs['catalog']['filter-models-by-dimensions']
-  catalogGetGlassTypes?: RouterOutputs['catalog']['get-available-glass-types']
-  catalogListServices?: RouterOutputs['catalog']['list-services']
+  catalogFilterModels?: RouterOutputs["catalog"]["filter-models-by-dimensions"]
+  catalogGetGlassTypes?: RouterOutputs["catalog"]["get-available-glass-types"]
+  catalogListServices?: RouterOutputs["catalog"]["list-services"]
   quoteGetColors?: typeof mockColorsData
   quoteAddItemError?: Error | null
   quoteAddItemPending?: boolean
@@ -30,7 +30,7 @@ function createMockTrpcReact(options: MockTrpcOptions = {}) {
     }
 
     const procedurePath = input as Record<string, unknown>
-    if (procedurePath && typeof procedurePath === 'object') {
+    if (procedurePath && typeof procedurePath === "object") {
     }
 
     return { data: undefined, error: null, isLoading: false, refetch: vi.fn() }
@@ -41,12 +41,12 @@ function createMockTrpcReact(options: MockTrpcOptions = {}) {
     isPending: quoteAddItemPending,
     mutateAsync: quoteAddItemError
       ? vi.fn().mockRejectedValue(quoteAddItemError)
-      : vi.fn().mockResolvedValue({ id: 'quote-item-1' }),
+      : vi.fn().mockResolvedValue({ id: "quote-item-1" }),
   }))
 
   const mockApi = {
     catalog: {
-      'filter-models-by-dimensions': {
+      "filter-models-by-dimensions": {
         useQuery: (_input: unknown, opts?: { enabled?: boolean }) => {
           const enabled = opts?.enabled ?? true
           if (!enabled) {
@@ -60,7 +60,7 @@ function createMockTrpcReact(options: MockTrpcOptions = {}) {
           }
         },
       },
-      'get-available-glass-types': {
+      "get-available-glass-types": {
         useQuery: (_input: unknown, opts?: { enabled?: boolean }) => {
           const enabled = opts?.enabled ?? true
           if (!enabled) {
@@ -74,7 +74,7 @@ function createMockTrpcReact(options: MockTrpcOptions = {}) {
           }
         },
       },
-      'list-services': {
+      "list-services": {
         useQuery: () => ({
           data: catalogListServices,
           error: null,
@@ -84,16 +84,16 @@ function createMockTrpcReact(options: MockTrpcOptions = {}) {
       },
     },
     quote: {
-      'add-item': {
+      "add-item": {
         useMutation: (_opts?: { onSuccess?: () => void }) => ({
           error: quoteAddItemError,
           isPending: quoteAddItemPending,
           mutateAsync: quoteAddItemError
             ? vi.fn().mockRejectedValue(quoteAddItemError)
-            : vi.fn().mockResolvedValue({ id: 'quote-item-1' }),
+            : vi.fn().mockResolvedValue({ id: "quote-item-1" }),
         }),
       },
-      'get-model-colors-for-quote': {
+      "get-model-colors-for-quote": {
         useQuery: () => ({
           data: quoteGetColors,
           error: null,
@@ -106,9 +106,9 @@ function createMockTrpcReact(options: MockTrpcOptions = {}) {
       get: {
         useQuery: () => ({
           data: {
-            currency: 'COP',
-            locale: 'es-CO',
-            timezone: 'America/Bogota',
+            currency: "COP",
+            locale: "es-CO",
+            timezone: "America/Bogota",
           },
           error: null,
           isLoading: false,
@@ -123,5 +123,5 @@ function createMockTrpcReact(options: MockTrpcOptions = {}) {
   }
 }
 
-export { createMockTrpcReact }
 export type { MockTrpcOptions }
+export { createMockTrpcReact }

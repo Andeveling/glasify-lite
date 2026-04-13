@@ -1,8 +1,8 @@
-'use client'
+"use client"
 
-import { Edit, MoreHorizontal, Trash2 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { Edit, MoreHorizontal, Trash2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,17 +12,17 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
+} from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import type { RouterOutputs } from '@/trpc/react'
+} from "@/components/ui/dropdown-menu"
+import type { RouterOutputs } from "@/trpc/react"
 
-type DesignTemplateItem = RouterOutputs['admin']['design-template']['list']['items'][number]
+type DesignTemplateItem = RouterOutputs["admin"]["design-template"]["list"]["items"][number]
 
 type TemplateActionsProps = {
   template: DesignTemplateItem

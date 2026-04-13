@@ -7,13 +7,13 @@
  * @module app/(dashboard)/admin/_actions/create-quote.actions
  */
 
-'use server'
+"use server"
 
-import { revalidatePath } from 'next/cache'
-import { headers } from 'next/headers'
-import { toast } from 'sonner'
-import { appRouter } from '@/server/api/root'
-import { createCallerFactory, createTRPCContext } from '@/server/api/trpc'
+import { revalidatePath } from "next/cache"
+import { headers } from "next/headers"
+import { toast } from "sonner"
+import { appRouter } from "@/server/api/root"
+import { createCallerFactory, createTRPCContext } from "@/server/api/trpc"
 
 // Create caller factory
 const createCaller = createCallerFactory(appRouter)
@@ -50,7 +50,7 @@ export async function createQuoteFromItemsAction(input: {
   try {
     // Create headers for tRPC context
     const heads = new Headers(await headers())
-    heads.set('x-trpc-source', 'server-action')
+    heads.set("x-trpc-source", "server-action")
 
     // Create tRPC context
     const ctx = await createTRPCContext({
@@ -59,19 +59,19 @@ export async function createQuoteFromItemsAction(input: {
 
     // Create caller and call mutation
     const caller = createCaller(ctx)
-    const result = await caller.quote['create-quote-from-items'](input)
+    const result = await caller.quote["create-quote-from-items"](input)
 
     // Revalidate the quotes list
-    revalidatePath('/admin/quotes')
+    revalidatePath("/admin/quotes")
 
-    toast.success('Cotización creada exitosamente', {
+    toast.success("Cotización creada exitosamente", {
       description: `Cotización #${result.quoteId.slice(0, QUOTE_ID_DISPLAY_LENGTH)} creada con ${result.itemCount} ítems`,
     })
 
     return { quoteId: result.quoteId }
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error al crear la cotización'
-    toast.error('Error al crear cotización', { description: message })
+    const message = error instanceof Error ? error.message : "Error al crear la cotización"
+    toast.error("Error al crear cotización", { description: message })
     throw error
   }
 }

@@ -1,6 +1,6 @@
-import type { Prisma } from '@prisma/generated/client'
-import logger from '@/lib/logger'
-import { db } from '@/server/db'
+import type { Prisma } from "@prisma/generated/client"
+import logger from "@/lib/logger"
+import { db } from "@/server/db"
 
 /**
  * Model Price History Service
@@ -65,7 +65,7 @@ function toPriceHistoryRecord(
 export async function createModelPriceHistory(
   change: ModelPriceChange,
 ): Promise<PriceHistoryRecord> {
-  logger.info('Creating model price history record', {
+  logger.info("Creating model price history record", {
     basePrice: change.basePrice,
     createdBy: change.createdBy,
     modelId: change.modelId,
@@ -84,14 +84,14 @@ export async function createModelPriceHistory(
       },
     })
 
-    logger.info('Model price history record created successfully', {
+    logger.info("Model price history record created successfully", {
       id: priceHistory.id,
       modelId: change.modelId,
     })
 
     return toPriceHistoryRecord(priceHistory)
   } catch (error) {
-    logger.error('Failed to create model price history record', {
+    logger.error("Failed to create model price history record", {
       error,
       modelId: change.modelId,
     })
@@ -107,23 +107,23 @@ export async function getModelPriceHistory(
   modelId: string,
   limit = 10,
 ): Promise<PriceHistoryRecord[]> {
-  logger.info('Fetching model price history', { limit, modelId })
+  logger.info("Fetching model price history", { limit, modelId })
 
   try {
     const history = await db.modelPriceHistory.findMany({
-      orderBy: { effectiveFrom: 'desc' },
+      orderBy: { effectiveFrom: "desc" },
       take: limit,
       where: { modelId },
     })
 
-    logger.info('Model price history fetched successfully', {
+    logger.info("Model price history fetched successfully", {
       modelId,
       recordCount: history.length,
     })
 
     return history.map(toPriceHistoryRecord)
   } catch (error) {
-    logger.error('Failed to fetch model price history', {
+    logger.error("Failed to fetch model price history", {
       error,
       modelId,
     })
@@ -159,22 +159,22 @@ export function hasPriceChanged(
  * Useful for comparing against current model price
  */
 export async function getLatestModelPrice(modelId: string): Promise<PriceHistoryRecord | null> {
-  logger.info('Fetching latest model price', { modelId })
+  logger.info("Fetching latest model price", { modelId })
 
   try {
     const latestPrice = await db.modelPriceHistory.findFirst({
-      orderBy: { effectiveFrom: 'desc' },
+      orderBy: { effectiveFrom: "desc" },
       where: { modelId },
     })
 
-    logger.info('Latest model price fetched', {
+    logger.info("Latest model price fetched", {
       found: !!latestPrice,
       modelId,
     })
 
     return latestPrice ? toPriceHistoryRecord(latestPrice) : null
   } catch (error) {
-    logger.error('Failed to fetch latest model price', {
+    logger.error("Failed to fetch latest model price", {
       error,
       modelId,
     })

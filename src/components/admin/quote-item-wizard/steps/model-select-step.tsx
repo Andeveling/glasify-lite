@@ -1,16 +1,16 @@
-'use client'
+"use client"
 
-import { Check } from 'lucide-react'
-import Image from 'next/image'
-import { useCallback } from 'react'
-import { useFormContext, useWatch } from 'react-hook-form'
-import { useTenantConfig } from '@/app/_hooks/use-tenant-config'
-import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { formatCurrency, formatNumber } from '@/lib/format'
-import { api } from '@/trpc/react'
-import { WindowSvgPlaceholder } from '../window-svg-placeholder'
-import type { WizardFormValues } from '../wizard-form-schema'
+import { Check } from "lucide-react"
+import Image from "next/image"
+import { useCallback } from "react"
+import { useFormContext, useWatch } from "react-hook-form"
+import { useTenantConfig } from "@/app/_hooks/use-tenant-config"
+import { Card, CardContent } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
+import { formatCurrency, formatNumber } from "@/lib/format"
+import { api } from "@/trpc/react"
+import { WindowSvgPlaceholder } from "../window-svg-placeholder"
+import type { WizardFormValues } from "../wizard-form-schema"
 
 function formatRange(
   minWidth: number,
@@ -42,25 +42,25 @@ function ModelSelectStep() {
   const form = useFormContext<WizardFormValues>()
   const { formatContext } = useTenantConfig()
 
-  const widthMm = useWatch({ control: form.control, name: 'widthMm' })
-  const heightMm = useWatch({ control: form.control, name: 'heightMm' })
-  const selectedModelId = useWatch({ control: form.control, name: 'modelId' })
+  const widthMm = useWatch({ control: form.control, name: "widthMm" })
+  const heightMm = useWatch({ control: form.control, name: "heightMm" })
+  const selectedModelId = useWatch({ control: form.control, name: "modelId" })
 
   const {
     data: models,
     isLoading,
     error,
     refetch,
-  } = api.catalog['filter-models-by-dimensions'].useQuery(
+  } = api.catalog["filter-models-by-dimensions"].useQuery(
     { heightMm: heightMm ?? 0, widthMm: widthMm ?? 0 },
     { enabled: Boolean(widthMm && heightMm) },
   )
 
   const handleSelectModel = useCallback(
     (modelId: string) => {
-      form.setValue('modelId', modelId, { shouldValidate: true })
-      form.setValue('configuredWidthMm', widthMm ?? 0, { shouldValidate: true })
-      form.setValue('configuredHeightMm', heightMm ?? 0, { shouldValidate: true })
+      form.setValue("modelId", modelId, { shouldValidate: true })
+      form.setValue("configuredWidthMm", widthMm ?? 0, { shouldValidate: true })
+      form.setValue("configuredHeightMm", heightMm ?? 0, { shouldValidate: true })
     },
     [form, widthMm, heightMm],
   )
@@ -84,7 +84,7 @@ function ModelSelectStep() {
   }
 
   if (isLoading) {
-    const skeletonKeys = ['skeleton-1', 'skeleton-2', 'skeleton-3'] as const
+    const skeletonKeys = ["skeleton-1", "skeleton-2", "skeleton-3"] as const
     return (
       <div className="space-y-6">
         <div>
@@ -126,7 +126,7 @@ function ModelSelectStep() {
       <div>
         <h2 className="text-lg font-semibold text-foreground mb-2">Seleccioná un modelo</h2>
         <p className="text-sm text-muted-foreground">
-          {models.length} {models.length === 1 ? 'modelo disponible' : 'modelos disponibles'} para
+          {models.length} {models.length === 1 ? "modelo disponible" : "modelos disponibles"} para
           estas dimensiones
         </p>
       </div>
@@ -138,8 +138,8 @@ function ModelSelectStep() {
               key={model.id}
               className={`group relative cursor-pointer overflow-hidden border transition-all duration-200 hover:shadow-lg ${
                 isSelected
-                  ? 'ring-2 ring-primary border-primary bg-primary/5 shadow-lg'
-                  : 'border-border/50 hover:border-primary/30 hover:scale-[1.01]'
+                  ? "ring-2 ring-primary border-primary bg-primary/5 shadow-lg"
+                  : "border-border/50 hover:border-primary/30 hover:scale-[1.01]"
               }`}
               onClick={handleCardClick(model.id)}
               role="button"

@@ -1,16 +1,16 @@
-'use client'
+"use client"
 
-import { useWatch } from 'react-hook-form'
+import { useWatch } from "react-hook-form"
 
-import { Card, CardContent } from '@/components/ui/card'
-import type { WizardFormValues } from '../../wizard-form-schema'
+import { Card, CardContent } from "@/components/ui/card"
+import type { WizardFormValues } from "../../wizard-form-schema"
 
-import { ConfirmSummaryRow } from './_components/confirm-summary-row'
-import { DraftConfirmStep } from './_components/draft-confirm-step'
-import { PersistedConfirmStep } from './_components/persisted-confirm-step'
+import { ConfirmSummaryRow } from "./_components/confirm-summary-row"
+import { DraftConfirmStep } from "./_components/draft-confirm-step"
+import { PersistedConfirmStep } from "./_components/persisted-confirm-step"
 
 interface ConfirmStepProps {
-  mode: 'draft' | 'persisted'
+  mode: "draft" | "persisted"
   quoteId?: string
   onSuccess: () => void
   onDraftConfirm?: (item: WizardFormValues) => void
@@ -57,15 +57,15 @@ function ConfirmStep({ mode, quoteId, onSuccess, onDraftConfirm }: ConfirmStepPr
               Configuración
             </h4>
             <div className="space-y-2">
-              <ConfirmSummaryRow label="Modelo" value={values.modelId || '—'} />
-              <ConfirmSummaryRow label="Color" value={values.colorId ?? 'Sin color'} />
-              <ConfirmSummaryRow label="Vidrio" value={values.glassTypeId || '—'} />
+              <ConfirmSummaryRow label="Modelo" value={values.modelId || "—"} />
+              <ConfirmSummaryRow label="Color" value={values.colorId ?? "Sin color"} />
+              <ConfirmSummaryRow label="Vidrio" value={values.glassTypeId || "—"} />
               <ConfirmSummaryRow
                 label="Servicios"
                 value={
                   (values.serviceIds?.length ?? 0) > 0
                     ? `${values.serviceIds?.length} servicios`
-                    : 'Sin servicios'
+                    : "Sin servicios"
                 }
               />
             </div>
@@ -73,7 +73,7 @@ function ConfirmStep({ mode, quoteId, onSuccess, onDraftConfirm }: ConfirmStepPr
         </CardContent>
       </Card>
 
-      {mode === 'persisted' && quoteId ? (
+      {mode === "persisted" && quoteId ? (
         <PersistedConfirmStep onSuccess={onSuccess} quoteId={quoteId} />
       ) : (
         <DraftConfirmStep onDraftConfirm={onDraftConfirm} onSuccess={onSuccess} />
@@ -82,5 +82,5 @@ function ConfirmStep({ mode, quoteId, onSuccess, onDraftConfirm }: ConfirmStepPr
   )
 }
 
-export { ConfirmStep }
 export type { ConfirmStepProps }
+export { ConfirmStep }

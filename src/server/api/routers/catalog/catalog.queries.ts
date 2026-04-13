@@ -1,8 +1,8 @@
 // src/server/api/routers/catalog/catalog.queries.ts
-import { z } from 'zod'
-import logger from '@/lib/logger'
-import { parseCompatibleGlassTypeIds } from '@/lib/utils/compatible-glass-types'
-import { createTRPCRouter, publicProcedure } from '@/server/api/trpc'
+import { z } from "zod"
+import logger from "@/lib/logger"
+import { parseCompatibleGlassTypeIds } from "@/lib/utils/compatible-glass-types"
+import { createTRPCRouter, publicProcedure } from "@/server/api/trpc"
 import {
   getAvailableGlassTypesInput,
   getGlassTypeByIdInput,
@@ -20,8 +20,8 @@ import {
   listServicesOutput,
   modelDetailOutput,
   validateGlassCompatibilityInput,
-} from './catalog.schemas'
-import { serializeDecimalFields } from './catalog.utils'
+} from "./catalog.schemas"
+import { serializeDecimalFields } from "./catalog.utils"
 
 const filterModelsByDimensionsInput = z.object({
   widthMm: z.number().int().positive().max(6000),
@@ -46,12 +46,12 @@ export const catalogQueries = createTRPCRouter({
    * Get a single model by ID
    * @public
    */
-  'get-model-by-id': publicProcedure
+  "get-model-by-id": publicProcedure
     .input(getModelByIdInput)
     .output(modelDetailOutput)
     .query(async ({ ctx, input }) => {
       try {
-        logger.info('Getting model by ID', { modelId: input.modelId })
+        logger.info("Getting model by ID", { modelId: input.modelId })
 
         const model = await ctx.db.model.findUnique({
           select: {
@@ -83,15 +83,15 @@ export const catalogQueries = createTRPCRouter({
           },
           where: {
             id: input.modelId,
-            status: 'published',
+            status: "published",
           },
         })
 
         if (!model) {
-          logger.warn('Model not found or not published', {
+          logger.warn("Model not found or not published", {
             modelId: input.modelId,
           })
-          throw new Error('El modelo solicitado no existe o no está disponible.')
+          throw new Error("El modelo solicitado no existe o no está disponible.")
         }
 
         const serializedModel = serializeDecimalFields(model)
@@ -99,7 +99,7 @@ export const catalogQueries = createTRPCRouter({
         // Parse compatibleGlassTypeIds from JSON string to array
         const compatibleGlassTypeIds = parseCompatibleGlassTypeIds(model.compatibleGlassTypeIds)
 
-        logger.info('Successfully retrieved model', {
+        logger.info("Successfully retrieved model", {
           modelId: input.modelId,
           modelName: model.name,
         })
@@ -109,16 +109,16 @@ export const catalogQueries = createTRPCRouter({
           compatibleGlassTypeIds,
         }
       } catch (error) {
-        logger.error('Error getting model by ID', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error getting model by ID", {
+          error: error instanceof Error ? error.message : "Unknown error",
           modelId: input.modelId,
         })
 
-        if (error instanceof Error && error.message.includes('no existe o no está disponible')) {
+        if (error instanceof Error && error.message.includes("no existe o no está disponible")) {
           throw error
         }
 
-        throw new Error('No se pudo cargar el modelo. Intente nuevamente.')
+        throw new Error("No se pudo cargar el modelo. Intente nuevamente.")
       }
     }),
 
@@ -127,13 +127,13 @@ export const catalogQueries = createTRPCRouter({
    * Used for solution selector UI
    * @public
    */
-  'list-glass-solutions': publicProcedure
+  "list-glass-solutions": publicProcedure
     .input(listGlassSolutionsInput)
     .output(listGlassSolutionsOutput)
     .query(async ({ ctx, input }) => {
       try {
         const params = input ?? {}
-        logger.info('Listing glass solutions', { modelId: params.modelId })
+        logger.info("Listing glass solutions", { modelId: params.modelId })
 
         // If modelId is provided, filter solutions by compatible glass types
         if (params.modelId) {
@@ -144,7 +144,7 @@ export const catalogQueries = createTRPCRouter({
           })
 
           if (!model) {
-            throw new Error('Modelo no encontrado')
+            throw new Error("Modelo no encontrado")
           }
 
           // Parse JSON string to array for Prisma in: query
@@ -152,7 +152,7 @@ export const catalogQueries = createTRPCRouter({
 
           // Get solutions that have at least one glass type compatible with this model
           const solutions = await ctx.db.glassSolution.findMany({
-            orderBy: { sortOrder: 'asc' },
+            orderBy: { sortOrder: "asc" },
             where: {
               AND: [
                 { isActive: true },
@@ -169,7 +169,7 @@ export const catalogQueries = createTRPCRouter({
             },
           })
 
-          logger.info('Successfully retrieved filtered glass solutions', {
+          logger.info("Successfully retrieved filtered glass solutions", {
             count: solutions.length,
             modelId: params.modelId,
           })
@@ -179,22 +179,22 @@ export const catalogQueries = createTRPCRouter({
 
         // No filter: return all active solutions
         const solutions = await ctx.db.glassSolution.findMany({
-          orderBy: { sortOrder: 'asc' },
+          orderBy: { sortOrder: "asc" },
           where: { isActive: true },
         })
 
-        logger.info('Successfully retrieved glass solutions', {
+        logger.info("Successfully retrieved glass solutions", {
           count: solutions.length,
         })
 
         return solutions
       } catch (error) {
-        logger.error('Error listing glass solutions', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error listing glass solutions", {
+          error: error instanceof Error ? error.message : "Unknown error",
           modelId: input?.modelId,
         })
 
-        throw new Error('No se pudieron cargar las soluciones de vidrio. Intente nuevamente.')
+        throw new Error("No se pudieron cargar las soluciones de vidrio. Intente nuevamente.")
       }
     }),
 
@@ -208,23 +208,23 @@ export const catalogQueries = createTRPCRouter({
    *
    * @public
    */
-  'list-glass-types': publicProcedure
+  "list-glass-types": publicProcedure
     .input(listGlassTypesInput)
     .output(listGlassTypesOutput)
     .query(async ({ ctx, input }) => {
       try {
-        logger.info('Listing glass types by IDs', {
+        logger.info("Listing glass types by IDs", {
           count: input.glassTypeIds.length,
         })
 
         const glassTypes = await ctx.db.glassType.findMany({
-          orderBy: { name: 'asc' },
+          orderBy: { name: "asc" },
           select: {
             characteristics: {
               include: {
                 characteristic: true,
               },
-              orderBy: { characteristic: { name: 'asc' } },
+              orderBy: { characteristic: { name: "asc" } },
             },
             code: true,
             createdAt: true,
@@ -241,7 +241,7 @@ export const catalogQueries = createTRPCRouter({
               include: {
                 solution: true,
               },
-              orderBy: [{ isPrimary: 'desc' }, { solution: { sortOrder: 'asc' } }],
+              orderBy: [{ isPrimary: "desc" }, { solution: { sortOrder: "asc" } }],
             },
             thicknessMm: true,
             updatedAt: true,
@@ -259,17 +259,17 @@ export const catalogQueries = createTRPCRouter({
           uValue: glassType.uValue?.toNumber() ?? null,
         }))
 
-        logger.info('Successfully retrieved glass types', {
+        logger.info("Successfully retrieved glass types", {
           count: serializedGlassTypes.length,
         })
 
         return serializedGlassTypes
       } catch (error) {
-        logger.error('Error listing glass types', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error listing glass types", {
+          error: error instanceof Error ? error.message : "Unknown error",
         })
 
-        throw new Error('No se pudieron cargar los tipos de vidrio. Intente nuevamente.')
+        throw new Error("No se pudieron cargar los tipos de vidrio. Intente nuevamente.")
       }
     }),
 
@@ -279,12 +279,12 @@ export const catalogQueries = createTRPCRouter({
    * Following "Don't Make Me Think" principle - avoid showing empty options
    * @public
    */
-  'list-manufacturers': publicProcedure.query(async ({ ctx }) => {
+  "list-manufacturers": publicProcedure.query(async ({ ctx }) => {
     try {
-      logger.info('Listing profile suppliers with published models for filter')
+      logger.info("Listing profile suppliers with published models for filter")
 
       const profileSuppliers = await ctx.db.profileSupplier.findMany({
-        orderBy: { name: 'asc' },
+        orderBy: { name: "asc" },
         select: {
           id: true,
           name: true,
@@ -295,7 +295,7 @@ export const catalogQueries = createTRPCRouter({
             {
               models: {
                 some: {
-                  status: 'published',
+                  status: "published",
                 },
               },
             },
@@ -303,17 +303,17 @@ export const catalogQueries = createTRPCRouter({
         },
       })
 
-      logger.info('Successfully retrieved profile suppliers with published models', {
+      logger.info("Successfully retrieved profile suppliers with published models", {
         count: profileSuppliers.length,
       })
 
       return profileSuppliers
     } catch (error) {
       // Log the full error details for debugging
-      logger.error('Error listing profile suppliers', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        errorName: error instanceof Error ? error.name : 'Unknown',
-        errorStack: error instanceof Error ? error.stack : 'No stack trace',
+      logger.error("Error listing profile suppliers", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        errorName: error instanceof Error ? error.name : "Unknown",
+        errorStack: error instanceof Error ? error.stack : "No stack trace",
         errorDetails: JSON.stringify(error, null, 2),
       })
 
@@ -322,7 +322,7 @@ export const catalogQueries = createTRPCRouter({
         throw error
       }
 
-      throw new Error('No se pudieron cargar los proveedores de perfiles. Intente nuevamente.')
+      throw new Error("No se pudieron cargar los proveedores de perfiles. Intente nuevamente.")
     }
   }),
 
@@ -330,12 +330,12 @@ export const catalogQueries = createTRPCRouter({
    * List models with pagination, filtering, and sorting
    * @public
    */
-  'list-models': publicProcedure
+  "list-models": publicProcedure
     .input(listModelsInput)
     .output(listModelsOutput)
     .query(async ({ ctx, input }) => {
       try {
-        logger.info('Listing models', {
+        logger.info("Listing models", {
           limit: input.limit,
           page: input.page,
           profileSupplierId: input.manufacturerId,
@@ -351,25 +351,25 @@ export const catalogQueries = createTRPCRouter({
           ...(input.search && {
             name: {
               contains: input.search,
-              mode: 'insensitive' as const,
+              mode: "insensitive" as const,
             },
           }),
-          status: 'published' as const,
+          status: "published" as const,
         }
 
         // Build orderBy clause
         const orderByClause = (() => {
           switch (input.sort) {
-            case 'name-asc':
-              return { name: 'asc' as const }
-            case 'name-desc':
-              return { name: 'desc' as const }
-            case 'price-asc':
-              return { basePrice: 'asc' as const }
-            case 'price-desc':
-              return { basePrice: 'desc' as const }
+            case "name-asc":
+              return { name: "asc" as const }
+            case "name-desc":
+              return { name: "desc" as const }
+            case "price-asc":
+              return { basePrice: "asc" as const }
+            case "price-desc":
+              return { basePrice: "desc" as const }
             default:
-              return { name: 'asc' as const }
+              return { name: "asc" as const }
           }
         })()
 
@@ -420,7 +420,7 @@ export const catalogQueries = createTRPCRouter({
           }
         })
 
-        logger.info('Successfully retrieved models', {
+        logger.info("Successfully retrieved models", {
           count: serializedModels.length,
           manufacturerId: input.manufacturerId,
           page: input.page,
@@ -433,12 +433,12 @@ export const catalogQueries = createTRPCRouter({
           total,
         }
       } catch (error) {
-        logger.error('Error listing models', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error listing models", {
+          error: error instanceof Error ? error.message : "Unknown error",
           manufacturerId: input.manufacturerId,
         })
 
-        throw new Error('No se pudieron cargar los modelos. Intente nuevamente.')
+        throw new Error("No se pudieron cargar los modelos. Intente nuevamente.")
       }
     }),
 
@@ -446,15 +446,15 @@ export const catalogQueries = createTRPCRouter({
    * List services by manufacturer for parametrization form
    * @public
    */
-  'list-services': publicProcedure
+  "list-services": publicProcedure
     .input(listServicesInput)
     .output(listServicesOutput)
     .query(async ({ ctx }) => {
       try {
-        logger.info('Listing services')
+        logger.info("Listing services")
 
         const services = await ctx.db.service.findMany({
-          orderBy: { name: 'asc' },
+          orderBy: { name: "asc" },
           select: {
             createdAt: true,
             id: true,
@@ -472,17 +472,17 @@ export const catalogQueries = createTRPCRouter({
           rate: service.rate.toNumber(),
         }))
 
-        logger.info('Successfully retrieved services', {
+        logger.info("Successfully retrieved services", {
           count: serializedServices.length,
         })
 
         return serializedServices
       } catch (error) {
-        logger.error('Error listing services', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error listing services", {
+          error: error instanceof Error ? error.message : "Unknown error",
         })
 
-        throw new Error('No se pudieron cargar los servicios. Intente nuevamente.')
+        throw new Error("No se pudieron cargar los servicios. Intente nuevamente.")
       }
     }),
 
@@ -490,12 +490,12 @@ export const catalogQueries = createTRPCRouter({
    * Get available glass types for a model
    * @public
    */
-  'get-available-glass-types': publicProcedure
+  "get-available-glass-types": publicProcedure
     .input(getAvailableGlassTypesInput)
     .output(listAvailableGlassTypesOutput)
     .query(async ({ ctx, input }) => {
       try {
-        logger.info('Fetching glass types for model', {
+        logger.info("Fetching glass types for model", {
           modelId: input.modelId,
         })
 
@@ -510,7 +510,7 @@ export const catalogQueries = createTRPCRouter({
         })
 
         if (!model) {
-          throw new Error('Modelo no encontrado')
+          throw new Error("Modelo no encontrado")
         }
 
         // Parse JSON string to array for Prisma in: query
@@ -531,7 +531,7 @@ export const catalogQueries = createTRPCRouter({
             description: true,
           },
           orderBy: {
-            pricePerSqm: 'asc', // Cheapest first
+            pricePerSqm: "asc", // Cheapest first
           },
         })
 
@@ -544,19 +544,19 @@ export const catalogQueries = createTRPCRouter({
           description: gt.description,
         }))
 
-        logger.info('Successfully fetched glass types for model', {
+        logger.info("Successfully fetched glass types for model", {
           modelId: input.modelId,
           count: serializedGlassTypes.length,
         })
 
         return serializedGlassTypes
       } catch (error) {
-        logger.error('Error fetching glass types for model', {
+        logger.error("Error fetching glass types for model", {
           modelId: input.modelId,
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
         })
 
-        throw new Error('No se pudieron cargar los tipos de vidrio. Intente nuevamente.')
+        throw new Error("No se pudieron cargar los tipos de vidrio. Intente nuevamente.")
       }
     }),
 
@@ -565,12 +565,12 @@ export const catalogQueries = createTRPCRouter({
    * Used by RunningSummary to display glass type details
    * @public
    */
-  'get-glass-type-by-id': publicProcedure
+  "get-glass-type-by-id": publicProcedure
     .input(getGlassTypeByIdInput)
     .output(glassTypeDetailOutput)
     .query(async ({ ctx, input }) => {
       try {
-        logger.info('Getting glass type by ID', { glassTypeId: input.glassTypeId })
+        logger.info("Getting glass type by ID", { glassTypeId: input.glassTypeId })
 
         const glassType = await ctx.db.glassType.findUnique({
           where: { id: input.glassTypeId },
@@ -579,7 +579,7 @@ export const catalogQueries = createTRPCRouter({
               include: {
                 characteristic: true,
               },
-              orderBy: { characteristic: { name: 'asc' } },
+              orderBy: { characteristic: { name: "asc" } },
             },
             code: true,
             createdAt: true,
@@ -596,7 +596,7 @@ export const catalogQueries = createTRPCRouter({
               include: {
                 solution: true,
               },
-              orderBy: [{ isPrimary: 'desc' }, { solution: { sortOrder: 'asc' } }],
+              orderBy: [{ isPrimary: "desc" }, { solution: { sortOrder: "asc" } }],
             },
             thicknessMm: true,
             updatedAt: true,
@@ -605,8 +605,8 @@ export const catalogQueries = createTRPCRouter({
         })
 
         if (!glassType) {
-          logger.warn('Glass type not found', { glassTypeId: input.glassTypeId })
-          throw new Error('El tipo de vidrio no existe.')
+          logger.warn("Glass type not found", { glassTypeId: input.glassTypeId })
+          throw new Error("El tipo de vidrio no existe.")
         }
 
         const serialized = {
@@ -615,23 +615,23 @@ export const catalogQueries = createTRPCRouter({
           uValue: glassType.uValue?.toNumber() ?? null,
         }
 
-        logger.info('Successfully retrieved glass type', {
+        logger.info("Successfully retrieved glass type", {
           glassTypeId: input.glassTypeId,
           glassTypeName: glassType.name,
         })
 
         return serialized
       } catch (error) {
-        logger.error('Error getting glass type by ID', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error getting glass type by ID", {
+          error: error instanceof Error ? error.message : "Unknown error",
           glassTypeId: input.glassTypeId,
         })
 
-        if (error instanceof Error && error.message.includes('no existe')) {
+        if (error instanceof Error && error.message.includes("no existe")) {
           throw error
         }
 
-        throw new Error('No se pudo cargar el tipo de vidrio. Intente nuevamente.')
+        throw new Error("No se pudo cargar el tipo de vidrio. Intente nuevamente.")
       }
     }),
 
@@ -639,12 +639,12 @@ export const catalogQueries = createTRPCRouter({
    * Validate if a glass type is compatible with a model
    * @public
    */
-  'validate-glass-compatibility': publicProcedure
+  "validate-glass-compatibility": publicProcedure
     .input(validateGlassCompatibilityInput)
     .output(glassCompatibilityOutput)
     .query(async ({ ctx, input }) => {
       try {
-        logger.info('Validating glass compatibility', {
+        logger.info("Validating glass compatibility", {
           modelId: input.modelId,
           glassTypeId: input.glassTypeId,
         })
@@ -660,14 +660,14 @@ export const catalogQueries = createTRPCRouter({
         })
 
         if (!model) {
-          throw new Error('Modelo no encontrado')
+          throw new Error("Modelo no encontrado")
         }
 
         // Parse JSON string to array and check compatibility
         const compatibleGlassTypeIds = parseCompatibleGlassTypeIds(model.compatibleGlassTypeIds)
         const compatible = compatibleGlassTypeIds.includes(input.glassTypeId)
 
-        logger.info('Glass compatibility validation result', {
+        logger.info("Glass compatibility validation result", {
           modelId: input.modelId,
           glassTypeId: input.glassTypeId,
           compatible,
@@ -676,17 +676,17 @@ export const catalogQueries = createTRPCRouter({
         return {
           compatible,
           message: compatible
-            ? 'Este vidrio es compatible'
-            : 'Este vidrio no es compatible con el modelo',
+            ? "Este vidrio es compatible"
+            : "Este vidrio no es compatible con el modelo",
         }
       } catch (error) {
-        logger.error('Error validating glass compatibility', {
+        logger.error("Error validating glass compatibility", {
           modelId: input.modelId,
           glassTypeId: input.glassTypeId,
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
         })
 
-        throw new Error('No se pudo validar la compatibilidad del vidrio. Intente nuevamente.')
+        throw new Error("No se pudo validar la compatibilidad del vidrio. Intente nuevamente.")
       }
     }),
 
@@ -695,19 +695,19 @@ export const catalogQueries = createTRPCRouter({
    * Returns models that can accommodate the given width and height in mm
    * @public
    */
-  'filter-models-by-dimensions': publicProcedure
+  "filter-models-by-dimensions": publicProcedure
     .input(filterModelsByDimensionsInput)
     .output(filterModelsByDimensionsOutput)
     .query(async ({ ctx, input }) => {
       try {
-        logger.info('Filtering models by dimensions', {
+        logger.info("Filtering models by dimensions", {
           heightMm: input.heightMm,
           widthMm: input.widthMm,
         })
 
         const models = await ctx.db.model.findMany({
           where: {
-            status: 'published',
+            status: "published",
             minWidthMm: { lte: input.widthMm },
             maxWidthMm: { gte: input.widthMm },
             minHeightMm: { lte: input.heightMm },
@@ -723,7 +723,7 @@ export const catalogQueries = createTRPCRouter({
             minHeightMm: true,
             maxHeightMm: true,
           },
-          orderBy: { name: 'asc' },
+          orderBy: { name: "asc" },
         })
 
         const result = models.map((m) => ({
@@ -737,7 +737,7 @@ export const catalogQueries = createTRPCRouter({
           maxHeightMm: m.maxHeightMm,
         }))
 
-        logger.info('Successfully filtered models by dimensions', {
+        logger.info("Successfully filtered models by dimensions", {
           count: result.length,
           heightMm: input.heightMm,
           widthMm: input.widthMm,
@@ -745,13 +745,13 @@ export const catalogQueries = createTRPCRouter({
 
         return result
       } catch (error) {
-        logger.error('Error filtering models by dimensions', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        logger.error("Error filtering models by dimensions", {
+          error: error instanceof Error ? error.message : "Unknown error",
           heightMm: input.heightMm,
           widthMm: input.widthMm,
         })
 
-        throw new Error('No se pudieron filtrar los modelos por dimensiones. Intente nuevamente.')
+        throw new Error("No se pudieron filtrar los modelos por dimensiones. Intente nuevamente.")
       }
     }),
 })

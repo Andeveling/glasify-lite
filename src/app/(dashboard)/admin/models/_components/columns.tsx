@@ -4,16 +4,16 @@
  * Column definitions for TanStack Table with sorting, filtering, and actions
  */
 
-'use client'
+"use client"
 
-import type { MaterialType, ModelStatus } from '@prisma/generated/client'
-import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
-import Link from 'next/link'
-import { useCurrencyFormatter } from '@/app/_hooks/use-currency-formatter'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
+import type { MaterialType, ModelStatus } from "@prisma/generated/client"
+import type { ColumnDef } from "@tanstack/react-table"
+import { ArrowUpDown, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
+import Link from "next/link"
+import { useCurrencyFormatter } from "@/app/_hooks/use-currency-formatter"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,7 +21,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from "@/components/ui/dropdown-menu"
 
 export type Model = {
   id: string
@@ -41,12 +41,12 @@ export type Model = {
 }
 
 const statusLabels: Record<ModelStatus, string> = {
-  draft: 'Borrador',
-  published: 'Publicado',
+  draft: "Borrador",
+  published: "Publicado",
 }
 
-const getStatusVariant = (status: ModelStatus): 'default' | 'secondary' =>
-  status === 'published' ? 'default' : 'secondary'
+const getStatusVariant = (status: ModelStatus): "default" | "secondary" =>
+  status === "published" ? "default" : "secondary"
 
 // Helper component for price formatting
 function PriceCell({ price }: { price: number }) {
@@ -71,18 +71,18 @@ export const createColumns = (
       <Checkbox
         aria-label="Seleccionar todo"
         checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
       />
     ),
-    id: 'select',
+    id: "select",
   },
   {
-    accessorKey: 'name',
-    cell: ({ row }) => <div className="font-medium">{row.getValue('name')}</div>,
+    accessorKey: "name",
+    cell: ({ row }) => <div className="font-medium">{row.getValue("name")}</div>,
     header: ({ column }) => (
-      <Button onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')} variant="ghost">
+      <Button onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} variant="ghost">
         Nombre
         <ArrowUpDown className="ml-2 size-4" />
       </Button>
@@ -91,8 +91,8 @@ export const createColumns = (
   {
     cell: () => <Badge variant="outline">Sin SKU</Badge>,
     enableSorting: false,
-    header: 'SKU',
-    id: 'sku',
+    header: "SKU",
+    id: "sku",
   },
   {
     cell: ({ row }) => {
@@ -109,21 +109,21 @@ export const createColumns = (
       )
     },
     enableSorting: false,
-    header: 'Dimensiones',
-    id: 'dimensions',
+    header: "Dimensiones",
+    id: "dimensions",
   },
   {
-    accessorKey: 'basePrice',
-    cell: ({ row }) => <PriceCell price={row.getValue('basePrice')} />,
+    accessorKey: "basePrice",
+    cell: ({ row }) => <PriceCell price={row.getValue("basePrice")} />,
     header: ({ column }) => (
-      <Button onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')} variant="ghost">
+      <Button onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} variant="ghost">
         Precio Base
         <ArrowUpDown className="ml-2 size-4" />
       </Button>
     ),
   },
   {
-    accessorFn: (row) => row.profileSupplier?.id ?? '',
+    accessorFn: (row) => row.profileSupplier?.id ?? "",
     cell: ({ row }) => {
       const supplier = row.original.profileSupplier
       return (
@@ -133,8 +133,8 @@ export const createColumns = (
       )
     },
     enableSorting: false,
-    header: 'Proveedor',
-    id: 'profileSupplierId',
+    header: "Proveedor",
+    id: "profileSupplierId",
   },
   {
     cell: ({ row }) => {
@@ -142,17 +142,17 @@ export const createColumns = (
       return <Badge variant="secondary">{count} tipos</Badge>
     },
     enableSorting: false,
-    header: 'Tipos Compatibles',
-    id: 'glassTypes',
+    header: "Tipos Compatibles",
+    id: "glassTypes",
   },
   {
-    accessorKey: 'status',
+    accessorKey: "status",
     cell: ({ row }) => {
-      const status = row.getValue('status') as ModelStatus
+      const status = row.getValue("status") as ModelStatus
       return <Badge variant={getStatusVariant(status)}>{statusLabels[status]}</Badge>
     },
     header: ({ column }) => (
-      <Button onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')} variant="ghost">
+      <Button onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} variant="ghost">
         Estado
         <ArrowUpDown className="ml-2 size-4" />
       </Button>
@@ -194,6 +194,6 @@ export const createColumns = (
       )
     },
     enableHiding: false,
-    id: 'actions',
+    id: "actions",
   },
 ]

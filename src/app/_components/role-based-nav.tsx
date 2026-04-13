@@ -1,18 +1,18 @@
-import type { UserRole } from '@prisma/generated/client'
-import { headers } from 'next/headers'
-import { auth } from '@/server/auth'
+import type { UserRole } from "@prisma/generated/client"
+import { headers } from "next/headers"
+import { auth } from "@/server/auth"
 
 /**
  * Icon names for navigation
  * Serializable string literals that can pass from Server to Client Components
  */
 export type IconName =
-  | 'LayoutDashboard'
-  | 'Package'
-  | 'FileText'
-  | 'Settings'
-  | 'Calculator'
-  | 'Glasses'
+  | "LayoutDashboard"
+  | "Package"
+  | "FileText"
+  | "Settings"
+  | "Calculator"
+  | "Glasses"
 
 /**
  * Navigation Item Type
@@ -44,26 +44,26 @@ export type NavLink = {
  */
 export function getNavLinksForRole(role: UserRole | undefined): NavLink[] {
   // Admin navigation: Internal B2B tool - dashboard and management only
-  if (role === 'admin') {
+  if (role === "admin") {
     return [
       {
-        description: 'Resumen y estadísticas del negocio',
-        href: '/admin',
-        icon: 'LayoutDashboard',
-        label: 'Dashboard',
+        description: "Resumen y estadísticas del negocio",
+        href: "/admin",
+        icon: "LayoutDashboard",
+        label: "Dashboard",
       },
     ]
   }
 
   // Seller navigation: Access to all quotes (client-scoped now via clientId)
-  if (role === 'seller') {
+  if (role === "seller") {
     return [
       {
-        description: 'Ver todas las cotizaciones de clientes',
-        href: '/dashboard/quotes',
-        icon: 'FileText',
-        label: 'Cotizaciones',
-        routes: ['/dashboard/quotes'],
+        description: "Ver todas las cotizaciones de clientes",
+        href: "/dashboard/quotes",
+        icon: "FileText",
+        label: "Cotizaciones",
+        routes: ["/dashboard/quotes"],
       },
     ]
   }

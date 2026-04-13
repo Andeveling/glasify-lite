@@ -1,5 +1,5 @@
-import { headers } from 'next/headers'
-import { auth } from '@/server/auth'
+import { headers } from "next/headers"
+import { auth } from "@/server/auth"
 
 type SellerOrAdminOnlyProps = {
   children: React.ReactNode
@@ -33,7 +33,7 @@ export async function SellerOrAdminOnly({ children, fallback = null }: SellerOrA
   })
   const role = session?.user?.role
 
-  if (role !== 'admin' && role !== 'seller') {
+  if (role !== "admin" && role !== "seller") {
     return <>{fallback}</>
   }
 

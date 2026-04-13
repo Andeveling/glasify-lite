@@ -1,8 +1,8 @@
-'use client'
+"use client"
 
-import type { LucideIcon } from 'lucide-react'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import type { LucideIcon } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { cn } from "@/lib/utils"
 
 // ============================================================================
 // Types
@@ -72,7 +72,7 @@ export function PerformanceBar({
   const percentage = (clampedValue / max) * 100
 
   return (
-    <div className={cn('flex items-center gap-2', className)}>
+    <div className={cn("flex items-center gap-2", className)}>
       {/* Icon with tooltip */}
       {Icon && (
         <TooltipProvider>
@@ -98,12 +98,12 @@ export function PerformanceBar({
             style={{
               backgroundColor:
                 percentage >= 80
-                  ? 'oklch(var(--success))'
+                  ? "oklch(var(--success))"
                   : percentage >= 60
-                    ? 'oklch(var(--chart-4))'
+                    ? "oklch(var(--chart-4))"
                     : percentage >= 40
-                      ? 'oklch(var(--chart-5))'
-                      : 'oklch(var(--destructive))',
+                      ? "oklch(var(--chart-5))"
+                      : "oklch(var(--destructive))",
               width: `${percentage}%`,
             }}
           />

@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 /**
  * Image Gallery Section Component
@@ -13,11 +13,11 @@
  * Manages both display and form state
  */
 
-import Image from 'next/image'
-import { useController, useFormContext } from 'react-hook-form'
-import { Skeleton } from '@/components/ui/skeleton'
-import { api } from '@/trpc/react'
-import { ImageGalleryItem } from './image-gallery-item'
+import Image from "next/image"
+import { useController, useFormContext } from "react-hook-form"
+import { Skeleton } from "@/components/ui/skeleton"
+import { api } from "@/trpc/react"
+import { ImageGalleryItem } from "./image-gallery-item"
 
 type ImageGallerySectionProps = {
   /**
@@ -67,9 +67,9 @@ function GalleryGridSkeleton() {
  * The component automatically connects to the form's `imageUrl` field
  */
 export function ImageGallerySectionComponent({
-  name = 'imageUrl',
-  label = 'Imagen del Modelo',
-  description = 'Selecciona una imagen de la galería disponible',
+  name = "imageUrl",
+  label = "Imagen del Modelo",
+  description = "Selecciona una imagen de la galería disponible",
 }: ImageGallerySectionProps) {
   // Connect to react-hook-form using useController for proper field registration
   const { control } = useFormContext()
@@ -83,7 +83,7 @@ export function ImageGallerySectionComponent({
   // Fetch gallery images from tRPC
   // Note: tRPC returns GalleryImage[] | GalleryError, but query guarantees empty array on error
   // so we can safely treat data as an array after the error check
-  const { data: rawData = [], isLoading, error } = api.admin.gallery['list-images'].useQuery()
+  const { data: rawData = [], isLoading, error } = api.admin.gallery["list-images"].useQuery()
 
   // Type assertion: we know it's always an array due to router implementation
   const images: typeof rawData = Array.isArray(rawData) ? rawData : []

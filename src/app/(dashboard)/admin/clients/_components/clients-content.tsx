@@ -10,16 +10,16 @@
  * - Render filters and list
  */
 
-'use client'
+"use client"
 
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { ClientsFilters } from './clients-filters'
-import { ClientsList } from './clients-list'
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { ClientsFilters } from "./clients-filters"
+import { ClientsList } from "./clients-list"
 
 type ClientsContentProps = {
-  initialData: Parameters<typeof ClientsList>[0]['initialData']
-  searchParams: Parameters<typeof ClientsList>[0]['searchParams']
+  initialData: Parameters<typeof ClientsList>[0]["initialData"]
+  searchParams: Parameters<typeof ClientsList>[0]["searchParams"]
 }
 
 export function ClientsContent({ initialData, searchParams }: ClientsContentProps) {
@@ -28,7 +28,7 @@ export function ClientsContent({ initialData, searchParams }: ClientsContentProp
 
   useEffect(() => {
     if (createDialogOpen) {
-      router.push('/admin/clients/new')
+      router.push("/admin/clients/new")
     }
   }, [createDialogOpen, router])
 

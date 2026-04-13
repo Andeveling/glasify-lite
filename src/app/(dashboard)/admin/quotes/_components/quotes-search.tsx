@@ -13,19 +13,19 @@
  * Pattern: form submit → router.replace → no useEffect loops
  */
 
-'use client'
+"use client"
 
-import { Search, X } from 'lucide-react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Search, X } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 type QuotesSearchProps = {
   currentSearch?: string
 }
 
-export function QuotesSearch({ currentSearch = '' }: QuotesSearchProps) {
+export function QuotesSearch({ currentSearch = "" }: QuotesSearchProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [searchValue, setSearchValue] = useState(currentSearch)
@@ -35,22 +35,22 @@ export function QuotesSearch({ currentSearch = '' }: QuotesSearchProps) {
     const params = new URLSearchParams(searchParams.toString())
 
     if (searchValue.trim()) {
-      params.set('search', searchValue.trim())
+      params.set("search", searchValue.trim())
     } else {
-      params.delete('search')
+      params.delete("search")
     }
 
-    params.delete('page')
+    params.delete("page")
 
     const queryString = params.toString()
-    const newUrl = queryString ? `?${queryString}` : '/admin/quotes'
+    const newUrl = queryString ? `?${queryString}` : "/admin/quotes"
 
     router.replace(newUrl)
   }
 
   const handleClear = () => {
-    setSearchValue('')
-    router.replace('/admin/quotes')
+    setSearchValue("")
+    router.replace("/admin/quotes")
   }
 
   return (

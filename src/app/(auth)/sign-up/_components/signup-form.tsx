@@ -1,11 +1,11 @@
-'use client'
+"use client"
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { Button } from '@/components/ui/button'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -13,10 +13,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Icons } from '@/components/ui/icons'
-import { Input } from '@/components/ui/input'
-import { authClient } from '@/lib/auth-client'
+} from "@/components/ui/form"
+import { Icons } from "@/components/ui/icons"
+import { Input } from "@/components/ui/input"
+import { authClient } from "@/lib/auth-client"
 
 // Constants
 const MIN_PASSWORD_LENGTH = 6
@@ -26,20 +26,20 @@ const signUpFormSchema = z
   .object({
     name: z
       .string()
-      .min(1, 'El nombre es requerido')
-      .min(2, 'El nombre debe tener al menos 2 caracteres'),
-    email: z.string().min(1, 'El email es requerido').email('Ingresa un email válido'),
+      .min(1, "El nombre es requerido")
+      .min(2, "El nombre debe tener al menos 2 caracteres"),
+    email: z.string().min(1, "El email es requerido").email("Ingresa un email válido"),
     password: z
       .string()
-      .min(1, 'La contraseña es requerida')
+      .min(1, "La contraseña es requerida")
       .min(
         MIN_PASSWORD_LENGTH,
         `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres`,
       ),
-    confirmPassword: z.string().min(1, 'Confirma tu contraseña'),
+    confirmPassword: z.string().min(1, "Confirma tu contraseña"),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: 'Las contraseñas no coinciden',
+    message: "Las contraseñas no coinciden",
   })
 
 type SignUpFormValues = z.infer<typeof signUpFormSchema>
@@ -56,11 +56,11 @@ export default function SignUpForm({ isLoading = false, error }: SignUpFormProps
   // React Hook Form with Zod resolver as single source of truth
   const form = useForm<SignUpFormValues>({
     defaultValues: {
-      name: '',
-      email: '',
-      password: '',
+      name: "",
+      email: "",
+      password: "",
     },
-    mode: 'onBlur',
+    mode: "onBlur",
     resolver: zodResolver(signUpFormSchema),
   })
 
@@ -83,17 +83,17 @@ export default function SignUpForm({ isLoading = false, error }: SignUpFormProps
       })
 
       if (signUpError) {
-        form.setError('root', {
-          message: signUpError.message || 'Error al crear la cuenta',
+        form.setError("root", {
+          message: signUpError.message || "Error al crear la cuenta",
         })
         return
       }
 
       // Redirect to admin on success
-      router.push('/admin')
+      router.push("/admin")
     } catch {
-      form.setError('root', {
-        message: 'Error al crear la cuenta. Intenta nuevamente.',
+      form.setError("root", {
+        message: "Error al crear la cuenta. Intenta nuevamente.",
       })
     } finally {
       setIsSubmitLoading(false)
@@ -196,4 +196,4 @@ export default function SignUpForm({ isLoading = false, error }: SignUpFormProps
 }
 
 // Export the schema for reuse in server-side validation if needed
-export { signUpFormSchema, type SignUpFormValues }
+export { type SignUpFormValues, signUpFormSchema }

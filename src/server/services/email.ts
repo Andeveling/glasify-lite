@@ -1,6 +1,6 @@
-import type { Quote } from '@prisma/generated/client'
-import logger from '@/lib/logger'
-import { getTenantConfig } from '../utils/tenant'
+import type { Quote } from "@prisma/generated/client"
+import logger from "@/lib/logger"
+import { getTenantConfig } from "../utils/tenant"
 
 type EmailTemplate = {
   subject: string
@@ -30,11 +30,11 @@ type QuoteEmailData = {
  * @returns Formatted currency string
  */
 const formatCurrency = (amount: number | string, currency: string, locale: string) => {
-  const numericAmount = typeof amount === 'string' ? Number.parseFloat(amount) : amount
+  const numericAmount = typeof amount === "string" ? Number.parseFloat(amount) : amount
 
   return new Intl.NumberFormat(locale, {
     currency,
-    style: 'currency',
+    style: "currency",
   }).format(numericAmount)
 }
 
@@ -49,12 +49,12 @@ const createQuoteEmailTemplate = async (data: QuoteEmailData): Promise<EmailTemp
   const totalFormatted = formatCurrency(quote.total.toString(), quote.currency, tenantConfig.locale)
   const validUntilFormatted = quote.validUntil
     ? new Intl.DateTimeFormat(tenantConfig.locale, {
-        dateStyle: 'long',
+        dateStyle: "long",
       }).format(quote.validUntil)
-    : 'No especificada'
+    : "No especificada"
 
   const itemCount = quote.items.length
-  const itemsText = itemCount === 1 ? 'ítem' : 'ítems'
+  const itemsText = itemCount === 1 ? "ítem" : "ítems"
 
   const body = `
 Estimado/a,
@@ -97,16 +97,16 @@ const sendEmailMock = async (options: SendEmailOptions): Promise<boolean> => {
   const mockEmail = {
     body: template.body,
     quoteId,
-    status: 'sent' as const,
+    status: "sent" as const,
     subject: template.subject,
     timestamp: new Date().toISOString(),
     to,
   }
 
   // Log to console in development (this would be replaced with actual email sending)
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === "development") {
     /* eslint-disable no-console */
-    logger.info('📧 Mock Email Sent:', {
+    logger.info("📧 Mock Email Sent:", {
       quoteId: mockEmail.quoteId,
       subject: mockEmail.subject,
       to: mockEmail.to,
@@ -140,9 +140,9 @@ export const sendQuoteNotification = async (
 
     return success
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       /* eslint-disable no-console */
-      logger.error('❌ Error sending quote notification:', {
+      logger.error("❌ Error sending quote notification:", {
         error: error instanceof Error ? error.message : String(error),
       })
       /* eslint-enable no-console */

@@ -7,12 +7,12 @@
  * @module _components/solution-field-item
  */
 
-'use client'
+"use client"
 
-import { Trash2 } from 'lucide-react'
-import { memo, useTransition } from 'react'
-import { useFormContext } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
+import { Trash2 } from "lucide-react"
+import { memo, useTransition } from "react"
+import { useFormContext } from "react-hook-form"
+import { Button } from "@/components/ui/button"
 import {
   FormControl,
   FormDescription,
@@ -20,17 +20,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+} from "@/components/ui/form"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import type { CreateGlassTypeInput } from '@/lib/validations/admin/glass-type.schema'
+} from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+import type { CreateGlassTypeInput } from "@/lib/validations/admin/glass-type.schema"
 
 type Solution = {
   id: string
@@ -159,13 +159,13 @@ export const SolutionFieldItem = memo(function SolutionFieldItemComponent({
               <RadioGroup
                 disabled={isPending}
                 onValueChange={(value) => {
-                  if (value === 'true') {
+                  if (value === "true") {
                     startTransition(() => {
                       onSetPrimary(index)
                     })
                   }
                 }}
-                value={field.value ? 'true' : 'false'}
+                value={field.value ? "true" : "false"}
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem id={`primary-${index}`} value="true" />
@@ -195,7 +195,7 @@ export const SolutionFieldItem = memo(function SolutionFieldItemComponent({
                 {...field}
                 disabled={isPending}
                 placeholder="Notas adicionales sobre esta solución..."
-                value={field.value ?? ''}
+                value={field.value ?? ""}
               />
             </FormControl>
             <FormMessage />

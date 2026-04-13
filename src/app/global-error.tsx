@@ -1,11 +1,11 @@
-'use client'
+"use client"
 
-import { AlertTriangle } from 'lucide-react'
-import Link from 'next/link'
-import { useEffect } from 'react'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { AlertTriangle } from "lucide-react"
+import Link from "next/link"
+import { useEffect } from "react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 type GlobalErrorProps = {
   error: Error & { digest?: string }
@@ -37,7 +37,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
 
               <CardContent className="space-y-6">
                 {/* Error Details for Development */}
-                {process.env.NODE_ENV === 'development' && (
+                {process.env.NODE_ENV === "development" && (
                   <Alert>
                     <AlertTriangle className="h-4 w-4" />
                     <AlertDescription>
@@ -65,7 +65,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 {/* Contact Support */}
                 <div className="text-center text-muted-foreground text-sm">
                   <p>
-                    Si el problema persiste, por favor{' '}
+                    Si el problema persiste, por favor{" "}
                     <Button asChild className="h-auto p-0" size="sm" variant="link">
                       <Link href="/catalog">contacta a soporte</Link>
                     </Button>

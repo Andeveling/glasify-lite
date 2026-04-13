@@ -25,16 +25,16 @@
  * ✅ Simplificado: Enfocado en presentación, no state management
  */
 
-'use client'
+"use client"
 
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { DeleteConfirmationDialog } from '@/app/_components/delete-confirmation-dialog'
-import { TablePagination } from '@/app/_components/server-table/table-pagination'
-import { api } from '@/trpc/react'
-import { ColorsEmpty } from './colors-empty'
-import { ColorsTable } from './colors-table'
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { toast } from "sonner"
+import { DeleteConfirmationDialog } from "@/app/_components/delete-confirmation-dialog"
+import { TablePagination } from "@/app/_components/server-table/table-pagination"
+import { api } from "@/trpc/react"
+import { ColorsEmpty } from "./colors-empty"
+import { ColorsTable } from "./colors-table"
 
 type SerializedColor = {
   id: string
@@ -59,7 +59,7 @@ type ColorsListProps = {
     page?: string
     search?: string
     sortBy?: string
-    sortOrder?: 'asc' | 'desc'
+    sortOrder?: "asc" | "desc"
   }
 }
 
@@ -85,12 +85,12 @@ export function ColorsList({ initialData, searchParams }: ColorsListProps) {
       if (previousData) {
         utils.admin.colors.list.setData(
           {
-            isActive: (searchParams.isActive || 'all') as 'all' | 'active' | 'inactive',
+            isActive: (searchParams.isActive || "all") as "all" | "active" | "inactive",
             limit: initialData.limit,
             page: Number(searchParams.page) || 1,
             search: searchParams.search,
-            sortBy: (searchParams.sortBy || 'name') as 'name' | 'createdAt' | 'updatedAt',
-            sortOrder: (searchParams.sortOrder || 'asc') as 'asc' | 'desc',
+            sortBy: (searchParams.sortBy || "name") as "name" | "createdAt" | "updatedAt",
+            sortOrder: (searchParams.sortOrder || "asc") as "asc" | "desc",
           },
           (old) => {
             if (!old) {
@@ -106,7 +106,7 @@ export function ColorsList({ initialData, searchParams }: ColorsListProps) {
       }
 
       // Show immediate feedback
-      toast.loading('Eliminando color...', { id: 'delete-color' })
+      toast.loading("Eliminando color...", { id: "delete-color" })
 
       // Return context with snapshot for rollback
       return { previousData }
@@ -116,19 +116,19 @@ export function ColorsList({ initialData, searchParams }: ColorsListProps) {
       if (context?.previousData) {
         utils.admin.colors.list.setData(
           {
-            isActive: (searchParams.isActive || 'all') as 'all' | 'active' | 'inactive',
+            isActive: (searchParams.isActive || "all") as "all" | "active" | "inactive",
             limit: initialData.limit,
             page: Number(searchParams.page) || 1,
             search: searchParams.search,
-            sortBy: (searchParams.sortBy || 'name') as 'name' | 'createdAt' | 'updatedAt',
-            sortOrder: (searchParams.sortOrder || 'asc') as 'asc' | 'desc',
+            sortBy: (searchParams.sortBy || "name") as "name" | "createdAt" | "updatedAt",
+            sortOrder: (searchParams.sortOrder || "asc") as "asc" | "desc",
           },
           context.previousData,
         )
       }
-      toast.error('Error al eliminar color', {
+      toast.error("Error al eliminar color", {
         description: error.message,
-        id: 'delete-color',
+        id: "delete-color",
       })
     },
     onSettled: () => {
@@ -136,7 +136,7 @@ export function ColorsList({ initialData, searchParams }: ColorsListProps) {
       router.refresh()
     },
     onSuccess: () => {
-      toast.success('Color eliminado correctamente', { id: 'delete-color' })
+      toast.success("Color eliminado correctamente", { id: "delete-color" })
     },
   })
 
@@ -175,7 +175,7 @@ export function ColorsList({ initialData, searchParams }: ColorsListProps) {
     <>
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
-        entityLabel={colorToDelete?.name ?? ''}
+        entityLabel={colorToDelete?.name ?? ""}
         entityName="color"
         loading={deleteMutation.isPending}
         onConfirm={handleDeleteConfirm}

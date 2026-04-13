@@ -10,18 +10,18 @@
  * Handles Many-to-Many relationships: solutions, characteristics
  */
 
-import type { Prisma } from '@prisma/generated/client'
-import { TRPCError } from '@trpc/server'
-import logger from '@/lib/logger'
+import type { Prisma } from "@prisma/generated/client"
+import { TRPCError } from "@trpc/server"
+import logger from "@/lib/logger"
 import {
   createGlassTypeSchema,
   deleteGlassTypeSchema,
   getGlassTypeByIdOutputSchema,
   listGlassTypesSchema,
   updateGlassTypeSchema,
-} from '@/lib/validations/admin/glass-type.schema'
-import { adminProcedure, createTRPCRouter } from '@/server/api/trpc'
-import { canDeleteGlassType } from '@/server/services/referential-integrity.service'
+} from "@/lib/validations/admin/glass-type.schema"
+import { adminProcedure, createTRPCRouter } from "@/server/api/trpc"
+import { canDeleteGlassType } from "@/server/services/referential-integrity.service"
 
 /**
  * Helper: Build where clause for list query
@@ -41,19 +41,19 @@ function buildWhereClause(input: {
       {
         name: {
           contains: input.search,
-          mode: 'insensitive',
+          mode: "insensitive",
         },
       },
       {
         code: {
           contains: input.search,
-          mode: 'insensitive',
+          mode: "insensitive",
         },
       },
       {
         description: {
           contains: input.search,
-          mode: 'insensitive',
+          mode: "insensitive",
         },
       },
     ]
@@ -94,28 +94,28 @@ function buildWhereClause(input: {
  */
 function buildOrderByClause(
   sortBy: string,
-  sortOrder: 'asc' | 'desc',
+  sortOrder: "asc" | "desc",
 ): Prisma.GlassTypeOrderByWithRelationInput {
   const orderBy: Prisma.GlassTypeOrderByWithRelationInput = {}
 
   switch (sortBy) {
-    case 'name':
+    case "name":
       orderBy.name = sortOrder
       break
-    case 'code':
+    case "code":
       orderBy.code = sortOrder
       break
-    case 'thicknessMm':
+    case "thicknessMm":
       orderBy.thicknessMm = sortOrder
       break
-    case 'manufacturer':
+    case "manufacturer":
       orderBy.manufacturer = sortOrder
       break
-    case 'createdAt':
+    case "createdAt":
       orderBy.createdAt = sortOrder
       break
     default:
-      orderBy.name = 'asc' // Default sort
+      orderBy.name = "asc" // Default sort
   }
 
   return orderBy
@@ -125,14 +125,14 @@ function buildOrderByClause(
  * Helper: Parse isActive filter value to boolean or undefined
  */
 function parseIsActiveFilter(isActive?: string): boolean | undefined {
-  return isActive === 'active' ? true : undefined
+  return isActive === "active" ? true : undefined
 }
 
 /**
  * Helper: Validate solutions for update/create operations
  */
 async function validateSolutions(
-  db: typeof import('@/server/db').db,
+  db: typeof import("@/server/db").db,
   solutions: Array<{ solutionId: string }> | undefined,
 ): Promise<void> {
   if (!solutions || solutions.length === 0) {
@@ -146,15 +146,15 @@ async function validateSolutions(
 
   if (foundSolutions.length !== solutionIds.length) {
     throw new TRPCError({
-      code: 'NOT_FOUND',
-      message: 'Una o más soluciones no fueron encontradas',
+      code: "NOT_FOUND",
+      message: "Una o más soluciones no fueron encontradas",
     })
   }
 
   const inactiveSolution = foundSolutions.find((s) => !s.isActive)
   if (inactiveSolution) {
     throw new TRPCError({
-      code: 'BAD_REQUEST',
+      code: "BAD_REQUEST",
       message: `La solución "${inactiveSolution.nameEs}" está inactiva`,
     })
   }
@@ -164,7 +164,7 @@ async function validateSolutions(
  * Helper: Validate characteristics for update/create operations
  */
 async function validateCharacteristics(
-  db: typeof import('@/server/db').db,
+  db: typeof import("@/server/db").db,
   characteristics: Array<{ characteristicId: string }> | undefined,
 ): Promise<void> {
   if (!characteristics || characteristics.length === 0) {
@@ -178,15 +178,15 @@ async function validateCharacteristics(
 
   if (foundCharacteristics.length !== characteristicIds.length) {
     throw new TRPCError({
-      code: 'NOT_FOUND',
-      message: 'Una o más características no fueron encontradas',
+      code: "NOT_FOUND",
+      message: "Una o más características no fueron encontradas",
     })
   }
 
   const inactiveCharacteristic = foundCharacteristics.find((c) => !c.isActive)
   if (inactiveCharacteristic) {
     throw new TRPCError({
-      code: 'BAD_REQUEST',
+      code: "BAD_REQUEST",
       message: `La característica "${inactiveCharacteristic.nameEs}" está inactiva`,
     })
   }
@@ -210,8 +210,8 @@ export const glassTypeRouter = createTRPCRouter({
 
     if (existingByName) {
       throw new TRPCError({
-        code: 'CONFLICT',
-        message: 'Ya existe un tipo de vidrio con este nombre',
+        code: "CONFLICT",
+        message: "Ya existe un tipo de vidrio con este nombre",
       })
     }
 
@@ -258,7 +258,7 @@ export const glassTypeRouter = createTRPCRouter({
       },
     })
 
-    logger.info('Glass type created', {
+    logger.info("Glass type created", {
       characteristicsCount: characteristics.length,
       glassTypeId: glassType.id,
       glassTypeName: glassType.name,
@@ -285,8 +285,8 @@ export const glassTypeRouter = createTRPCRouter({
 
     if (!existing) {
       throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Tipo de vidrio no encontrado',
+        code: "NOT_FOUND",
+        message: "Tipo de vidrio no encontrado",
       })
     }
 
@@ -295,7 +295,7 @@ export const glassTypeRouter = createTRPCRouter({
 
     if (!integrityCheck.canDelete) {
       throw new TRPCError({
-        code: 'CONFLICT',
+        code: "CONFLICT",
         message: integrityCheck.message,
       })
     }
@@ -305,7 +305,7 @@ export const glassTypeRouter = createTRPCRouter({
       where: { id: input.id },
     })
 
-    logger.warn('Glass type deleted', {
+    logger.warn("Glass type deleted", {
       glassTypeId: input.id,
       glassTypeName: existing.name,
       userId: ctx.session.user.id,
@@ -347,7 +347,7 @@ export const glassTypeRouter = createTRPCRouter({
             },
             orderBy: {
               characteristic: {
-                sortOrder: 'asc',
+                sortOrder: "asc",
               },
             },
           },
@@ -365,11 +365,11 @@ export const glassTypeRouter = createTRPCRouter({
             },
             orderBy: [
               {
-                isPrimary: 'desc',
+                isPrimary: "desc",
               },
               {
                 solution: {
-                  sortOrder: 'asc',
+                  sortOrder: "asc",
                 },
               },
             ],
@@ -380,8 +380,8 @@ export const glassTypeRouter = createTRPCRouter({
 
       if (!glassType) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Tipo de vidrio no encontrado',
+          code: "NOT_FOUND",
+          message: "Tipo de vidrio no encontrado",
         })
       }
 
@@ -394,7 +394,7 @@ export const glassTypeRouter = createTRPCRouter({
         uValue: glassType.uValue?.toNumber() ?? null,
       }
 
-      logger.info('Glass type retrieved', {
+      logger.info("Glass type retrieved", {
         glassTypeId: input.id,
         glassTypeName: glassType.name,
         userId: ctx.session.user.id,
@@ -444,11 +444,11 @@ export const glassTypeRouter = createTRPCRouter({
           },
           orderBy: [
             {
-              isPrimary: 'desc',
+              isPrimary: "desc",
             },
             {
               solution: {
-                sortOrder: 'asc',
+                sortOrder: "asc",
               },
             },
           ],
@@ -462,7 +462,7 @@ export const glassTypeRouter = createTRPCRouter({
 
     const totalPages = Math.ceil(total / limit)
 
-    logger.info('Glass types listed', {
+    logger.info("Glass types listed", {
       itemCount: items.length,
       page,
       total,
@@ -495,8 +495,8 @@ export const glassTypeRouter = createTRPCRouter({
 
     if (!existing) {
       throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Tipo de vidrio no encontrado',
+        code: "NOT_FOUND",
+        message: "Tipo de vidrio no encontrado",
       })
     }
 
@@ -510,8 +510,8 @@ export const glassTypeRouter = createTRPCRouter({
 
       if (existingByName) {
         throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Ya existe un tipo de vidrio con este nombre',
+          code: "CONFLICT",
+          message: "Ya existe un tipo de vidrio con este nombre",
         })
       }
     }
@@ -583,7 +583,7 @@ export const glassTypeRouter = createTRPCRouter({
       where: { id },
     })
 
-    logger.info('Glass type updated', {
+    logger.info("Glass type updated", {
       characteristicsReplaced: characteristics !== undefined,
       glassTypeId: glassType.id,
       glassTypeName: glassType.name,

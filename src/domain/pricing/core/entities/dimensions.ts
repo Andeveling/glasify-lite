@@ -19,7 +19,7 @@
  * ```
  */
 
-import { MM_PER_METER } from '../constants'
+import { MM_PER_METER } from "../constants"
 
 export type DimensionsInput = {
   /** Width in millimeters */

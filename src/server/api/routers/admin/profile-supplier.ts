@@ -8,18 +8,18 @@
  * Includes referential integrity check for deletions
  */
 
-import type { Prisma } from '@prisma/generated/client'
-import { TRPCError } from '@trpc/server'
-import logger from '@/lib/logger'
+import type { Prisma } from "@prisma/generated/client"
+import { TRPCError } from "@trpc/server"
+import logger from "@/lib/logger"
 import {
   createProfileSupplierSchema,
   deleteProfileSupplierSchema,
   getProfileSupplierByIdSchema,
   listProfileSuppliersSchema,
   updateProfileSupplierSchema,
-} from '@/lib/validations/admin/profile-supplier.schema'
-import { adminProcedure, createTRPCRouter } from '@/server/api/trpc'
-import { canDeleteProfileSupplier } from '@/server/services/referential-integrity.service'
+} from "@/lib/validations/admin/profile-supplier.schema"
+import { adminProcedure, createTRPCRouter } from "@/server/api/trpc"
+import { canDeleteProfileSupplier } from "@/server/services/referential-integrity.service"
 
 /**
  * Helper: Build where clause for list query
@@ -27,7 +27,7 @@ import { canDeleteProfileSupplier } from '@/server/services/referential-integrit
 function buildWhereClause(input: {
   search?: string
   materialType?: string
-  isActive?: 'all' | 'active' | 'inactive'
+  isActive?: "all" | "active" | "inactive"
 }): Prisma.ProfileSupplierWhereInput {
   const where: Prisma.ProfileSupplierWhereInput = {}
 
@@ -35,7 +35,7 @@ function buildWhereClause(input: {
   if (input.search) {
     where.name = {
       contains: input.search,
-      mode: 'insensitive',
+      mode: "insensitive",
     }
   }
 
@@ -45,8 +45,8 @@ function buildWhereClause(input: {
   }
 
   // Filter by active status
-  if (input.isActive && input.isActive !== 'all') {
-    where.isActive = input.isActive === 'active'
+  if (input.isActive && input.isActive !== "all") {
+    where.isActive = input.isActive === "active"
   }
 
   return where
@@ -57,22 +57,22 @@ function buildWhereClause(input: {
  */
 function buildOrderByClause(
   sortBy: string,
-  sortOrder: 'asc' | 'desc',
+  sortOrder: "asc" | "desc",
 ): Prisma.ProfileSupplierOrderByWithRelationInput {
   const orderBy: Prisma.ProfileSupplierOrderByWithRelationInput = {}
 
   switch (sortBy) {
-    case 'name':
+    case "name":
       orderBy.name = sortOrder
       break
-    case 'materialType':
+    case "materialType":
       orderBy.materialType = sortOrder
       break
-    case 'createdAt':
+    case "createdAt":
       orderBy.createdAt = sortOrder
       break
     default:
-      orderBy.name = 'asc' // Default sort
+      orderBy.name = "asc" // Default sort
   }
 
   return orderBy
@@ -96,8 +96,8 @@ export const profileSupplierRouter = createTRPCRouter({
 
     if (existing) {
       throw new TRPCError({
-        code: 'CONFLICT',
-        message: 'Ya existe un proveedor con este nombre',
+        code: "CONFLICT",
+        message: "Ya existe un proveedor con este nombre",
       })
     }
 
@@ -105,7 +105,7 @@ export const profileSupplierRouter = createTRPCRouter({
       data: input,
     })
 
-    logger.info('Profile supplier created', {
+    logger.info("Profile supplier created", {
       materialType: profileSupplier.materialType,
       supplierId: profileSupplier.id,
       supplierName: profileSupplier.name,
@@ -130,8 +130,8 @@ export const profileSupplierRouter = createTRPCRouter({
 
     if (!existing) {
       throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Proveedor de perfiles no encontrado',
+        code: "NOT_FOUND",
+        message: "Proveedor de perfiles no encontrado",
       })
     }
 
@@ -140,7 +140,7 @@ export const profileSupplierRouter = createTRPCRouter({
 
     if (!integrityCheck.canDelete) {
       throw new TRPCError({
-        code: 'CONFLICT',
+        code: "CONFLICT",
         message: integrityCheck.message,
       })
     }
@@ -149,7 +149,7 @@ export const profileSupplierRouter = createTRPCRouter({
       where: { id: input.id },
     })
 
-    logger.warn('Profile supplier deleted', {
+    logger.warn("Profile supplier deleted", {
       supplierId: input.id,
       supplierName: existing.name,
       userId: ctx.session.user.id,
@@ -171,12 +171,12 @@ export const profileSupplierRouter = createTRPCRouter({
 
     if (!profileSupplier) {
       throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Proveedor de perfiles no encontrado',
+        code: "NOT_FOUND",
+        message: "Proveedor de perfiles no encontrado",
       })
     }
 
-    logger.info('Profile supplier retrieved', {
+    logger.info("Profile supplier retrieved", {
       supplierId: input.id,
       supplierName: profileSupplier.name,
       userId: ctx.session.user.id,
@@ -207,7 +207,7 @@ export const profileSupplierRouter = createTRPCRouter({
       where,
     })
 
-    logger.info('Profile suppliers listed', {
+    logger.info("Profile suppliers listed", {
       filters,
       limit,
       page,
@@ -240,8 +240,8 @@ export const profileSupplierRouter = createTRPCRouter({
 
     if (!existing) {
       throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Proveedor de perfiles no encontrado',
+        code: "NOT_FOUND",
+        message: "Proveedor de perfiles no encontrado",
       })
     }
 
@@ -253,8 +253,8 @@ export const profileSupplierRouter = createTRPCRouter({
 
       if (duplicate) {
         throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Ya existe un proveedor con este nombre',
+          code: "CONFLICT",
+          message: "Ya existe un proveedor con este nombre",
         })
       }
     }
@@ -264,7 +264,7 @@ export const profileSupplierRouter = createTRPCRouter({
       where: { id },
     })
 
-    logger.info('Profile supplier updated', {
+    logger.info("Profile supplier updated", {
       changes: data,
       supplierId: profileSupplier.id,
       supplierName: profileSupplier.name,

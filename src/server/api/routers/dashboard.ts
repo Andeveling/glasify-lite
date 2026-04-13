@@ -3,8 +3,8 @@
  * Provides metrics and analytics for dashboard views
  */
 
-import { z } from 'zod'
-import logger from '@/lib/logger'
+import { z } from "zod"
+import logger from "@/lib/logger"
 import {
   aggregateQuotesByDate,
   calculateMonetaryMetrics,
@@ -14,8 +14,8 @@ import {
   getSupplierDistribution,
   getTopModels,
   groupQuotesByPriceRange,
-} from '@/server/services/dashboard-metrics'
-import { createTRPCRouter, protectedProcedure } from '../trpc'
+} from "@/server/services/dashboard-metrics"
+import { createTRPCRouter, protectedProcedure } from "../trpc"
 
 // Time conversion constants
 const SECONDS_PER_MINUTE = 60
@@ -28,7 +28,7 @@ const MS_PER_DAY = MS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS
  * Dashboard period input schema
  */
 const dashboardPeriodInput = z.object({
-  period: z.enum(['7d', '30d', '90d', 'year']).default('30d'),
+  period: z.enum(["7d", "30d", "90d", "year"]).default("30d"),
 })
 
 /**
@@ -52,7 +52,7 @@ export const dashboardRouter = createTRPCRouter({
 
         // RBAC: Admin sees all, seller sees only own via quote.userId
         const quoteWhere =
-          session.user.role === 'admin'
+          session.user.role === "admin"
             ? { createdAt: { gte: dateRange.start, lte: dateRange.end } }
             : {
                 createdAt: { gte: dateRange.start, lte: dateRange.end },
@@ -94,7 +94,7 @@ export const dashboardRouter = createTRPCRouter({
         const topGlassTypes = getGlassTypeDistribution(quoteItems)
         const supplierDistribution = getSupplierDistribution(quoteItems)
 
-        logger.info('Catalog analytics calculated', {
+        logger.info("Catalog analytics calculated", {
           period,
           role: session.user.role,
           supplierCount: supplierDistribution.length,
@@ -110,7 +110,7 @@ export const dashboardRouter = createTRPCRouter({
           topModels,
         }
       } catch (error) {
-        logger.error('Error calculating catalog analytics', {
+        logger.error("Error calculating catalog analytics", {
           error,
           userId: ctx.session.user.id,
         })
@@ -134,7 +134,7 @@ export const dashboardRouter = createTRPCRouter({
 
         // RBAC: Admin sees all, seller sees only own
         const whereFilter =
-          session.user.role === 'admin'
+          session.user.role === "admin"
             ? { createdAt: { gte: dateRange.start, lte: dateRange.end } }
             : {
                 createdAt: { gte: dateRange.start, lte: dateRange.end },
@@ -159,7 +159,7 @@ export const dashboardRouter = createTRPCRouter({
         previousStart.setTime(previousStart.getTime() - periodLength)
 
         const previousWhere =
-          session.user.role === 'admin'
+          session.user.role === "admin"
             ? { createdAt: { gte: previousStart, lte: previousEnd } }
             : {
                 createdAt: { gte: previousStart, lte: previousEnd },
@@ -189,7 +189,7 @@ export const dashboardRouter = createTRPCRouter({
           },
         })
 
-        logger.info('Monetary metrics calculated', {
+        logger.info("Monetary metrics calculated", {
           averageValue: currentMetrics.averageValue,
           percentageChange,
           period,
@@ -201,14 +201,14 @@ export const dashboardRouter = createTRPCRouter({
 
         return {
           averageValue: currentMetrics.averageValue,
-          currency: tenantConfig?.currency ?? 'COP',
-          locale: tenantConfig?.locale ?? 'es-CO',
+          currency: tenantConfig?.currency ?? "COP",
+          locale: tenantConfig?.locale ?? "es-CO",
           percentageChange,
           previousPeriodTotal: previousMetrics.totalValue,
           totalValue: currentMetrics.totalValue,
         }
       } catch (error) {
-        logger.error('Error calculating monetary metrics', {
+        logger.error("Error calculating monetary metrics", {
           error,
           userId: ctx.session.user.id,
         })
@@ -230,7 +230,7 @@ export const dashboardRouter = createTRPCRouter({
 
       // RBAC: Admin sees all, seller sees only own
       const whereFilter =
-        session.user.role === 'admin'
+        session.user.role === "admin"
           ? { createdAt: { gte: dateRange.start, lte: dateRange.end } }
           : {
               createdAt: { gte: dateRange.start, lte: dateRange.end },
@@ -262,7 +262,7 @@ export const dashboardRouter = createTRPCRouter({
         },
       })
 
-      logger.info('Price range distribution calculated', {
+      logger.info("Price range distribution calculated", {
         period,
         ranges: rangesWithPercentage.length,
         role: session.user.role,
@@ -271,11 +271,11 @@ export const dashboardRouter = createTRPCRouter({
       })
 
       return {
-        currency: tenantConfig?.currency ?? 'COP',
+        currency: tenantConfig?.currency ?? "COP",
         ranges: rangesWithPercentage,
       }
     } catch (error) {
-      logger.error('Error calculating price ranges', {
+      logger.error("Error calculating price ranges", {
         error,
         userId: ctx.session.user.id,
       })
@@ -296,7 +296,7 @@ export const dashboardRouter = createTRPCRouter({
 
       // RBAC: Admin sees all, seller sees only own
       const whereFilter =
-        session.user.role === 'admin'
+        session.user.role === "admin"
           ? { createdAt: { gte: dateRange.start, lte: dateRange.end } }
           : {
               createdAt: { gte: dateRange.start, lte: dateRange.end },
@@ -313,9 +313,9 @@ export const dashboardRouter = createTRPCRouter({
 
       // Count by status
       const total = quotes.length
-      const draft = quotes.filter((q) => q.status === 'draft').length
-      const sent = quotes.filter((q) => q.status === 'sent').length
-      const canceled = quotes.filter((q) => q.status === 'canceled').length
+      const draft = quotes.filter((q) => q.status === "draft").length
+      const sent = quotes.filter((q) => q.status === "sent").length
+      const canceled = quotes.filter((q) => q.status === "canceled").length
 
       // Get previous period for comparison
       const prevPeriodLength = Math.floor(
@@ -327,7 +327,7 @@ export const dashboardRouter = createTRPCRouter({
       prevEnd.setDate(prevEnd.getDate() - 1)
 
       const prevWhere =
-        session.user.role === 'admin'
+        session.user.role === "admin"
           ? { createdAt: { gte: prevStart, lte: prevEnd } }
           : {
               createdAt: { gte: prevStart, lte: prevEnd },
@@ -345,7 +345,7 @@ export const dashboardRouter = createTRPCRouter({
         total,
       })
 
-      logger.info('Dashboard metrics calculated', {
+      logger.info("Dashboard metrics calculated", {
         metrics: {
           conversionRate: metrics.conversionRate,
           total: metrics.totalQuotes,
@@ -357,7 +357,7 @@ export const dashboardRouter = createTRPCRouter({
 
       return metrics
     } catch (error) {
-      logger.error('Error calculating dashboard metrics', {
+      logger.error("Error calculating dashboard metrics", {
         error,
         userId: ctx.session.user.id,
       })
@@ -385,7 +385,7 @@ export const dashboardRouter = createTRPCRouter({
 
       // RBAC: Admin sees all, seller sees only own
       const whereFilter =
-        session.user.role === 'admin'
+        session.user.role === "admin"
           ? { createdAt: { gte: dateRange.start, lte: dateRange.end } }
           : {
               createdAt: { gte: dateRange.start, lte: dateRange.end },
@@ -412,7 +412,7 @@ export const dashboardRouter = createTRPCRouter({
       // formatDateShort from @lib/format will use tenant timezone/locale
       const trendData = aggregateQuotesByDate(quotes, dateRange, tenantConfig)
 
-      logger.info('Dashboard trend data calculated', {
+      logger.info("Dashboard trend data calculated", {
         dataPoints: trendData.length,
         period,
         role: session.user.role,
@@ -425,7 +425,7 @@ export const dashboardRouter = createTRPCRouter({
         period: dateRange.label,
       }
     } catch (error) {
-      logger.error('Error calculating quote trend', {
+      logger.error("Error calculating quote trend", {
         error,
         userId: ctx.session.user.id,
       })

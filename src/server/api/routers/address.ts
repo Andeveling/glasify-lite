@@ -15,11 +15,11 @@
  * - listByQuote: List addresses for a quote
  */
 
-import { TRPCError } from '@trpc/server'
-import { z } from 'zod'
-import { projectAddressSchema } from '@/app/(dashboard)/admin/quotes/_schemas/project-address.schema'
-import logger from '@/lib/logger'
-import { adminProcedure, createTRPCRouter } from '../trpc'
+import { TRPCError } from "@trpc/server"
+import { z } from "zod"
+import { projectAddressSchema } from "@/app/(dashboard)/admin/quotes/_schemas/project-address.schema"
+import logger from "@/lib/logger"
+import { adminProcedure, createTRPCRouter } from "../trpc"
 
 /**
  * Address Router
@@ -39,7 +39,7 @@ export const addressRouter = createTRPCRouter({
    */
   create: adminProcedure.input(projectAddressSchema).mutation(async ({ ctx, input }) => {
     try {
-      logger.info('Creating project address', {
+      logger.info("Creating project address", {
         userId: ctx.session.user.id,
         quoteId: input.quoteId,
       })
@@ -61,7 +61,7 @@ export const addressRouter = createTRPCRouter({
         },
       })
 
-      logger.info('Project address created successfully', {
+      logger.info("Project address created successfully", {
         userId: ctx.session.user.id,
         addressId: address.id,
         quoteId: address.quoteId,
@@ -69,14 +69,14 @@ export const addressRouter = createTRPCRouter({
 
       return address
     } catch (error) {
-      logger.error('Failed to create project address', {
+      logger.error("Failed to create project address", {
         error: error instanceof Error ? error.message : String(error),
         userId: ctx.session.user.id,
       })
 
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al crear la dirección de entrega',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al crear la dirección de entrega",
       })
     }
   }),
@@ -94,13 +94,13 @@ export const addressRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string().cuid({
-          message: 'ID de dirección inválido',
+          message: "ID de dirección inválido",
         }),
       }),
     )
     .query(async ({ ctx, input }) => {
       try {
-        logger.info('Getting project address by ID', {
+        logger.info("Getting project address by ID", {
           userId: ctx.session.user.id,
           addressId: input.id,
         })
@@ -112,19 +112,19 @@ export const addressRouter = createTRPCRouter({
 
         if (!address) {
           throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'Dirección no encontrada',
+            code: "NOT_FOUND",
+            message: "Dirección no encontrada",
           })
         }
 
-        logger.info('Project address retrieved successfully', {
+        logger.info("Project address retrieved successfully", {
           userId: ctx.session.user.id,
           addressId: address.id,
         })
 
         return address
       } catch (error) {
-        logger.error('Failed to get project address', {
+        logger.error("Failed to get project address", {
           error: error instanceof Error ? error.message : String(error),
           userId: ctx.session.user.id,
           addressId: input.id,
@@ -135,8 +135,8 @@ export const addressRouter = createTRPCRouter({
         }
 
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Error al obtener la dirección de entrega',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error al obtener la dirección de entrega",
         })
       }
     }),
@@ -154,14 +154,14 @@ export const addressRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string().cuid({
-          message: 'ID de dirección inválido',
+          message: "ID de dirección inválido",
         }),
         data: projectAddressSchema.partial(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        logger.info('Updating project address', {
+        logger.info("Updating project address", {
           userId: ctx.session.user.id,
           addressId: input.id,
         })
@@ -182,22 +182,22 @@ export const addressRouter = createTRPCRouter({
           },
         })
 
-        logger.info('Project address updated successfully', {
+        logger.info("Project address updated successfully", {
           userId: ctx.session.user.id,
           addressId: address.id,
         })
 
         return address
       } catch (error) {
-        logger.error('Failed to update project address', {
+        logger.error("Failed to update project address", {
           error: error instanceof Error ? error.message : String(error),
           userId: ctx.session.user.id,
           addressId: input.id,
         })
 
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Error al actualizar la dirección de entrega',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error al actualizar la dirección de entrega",
         })
       }
     }),
@@ -215,13 +215,13 @@ export const addressRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string().cuid({
-          message: 'ID de dirección inválido',
+          message: "ID de dirección inválido",
         }),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        logger.info('Deleting project address', {
+        logger.info("Deleting project address", {
           userId: ctx.session.user.id,
           addressId: input.id,
         })
@@ -230,22 +230,22 @@ export const addressRouter = createTRPCRouter({
           where: { id: input.id },
         })
 
-        logger.info('Project address deleted successfully', {
+        logger.info("Project address deleted successfully", {
           userId: ctx.session.user.id,
           addressId: input.id,
         })
 
         return { success: true }
       } catch (error) {
-        logger.error('Failed to delete project address', {
+        logger.error("Failed to delete project address", {
           error: error instanceof Error ? error.message : String(error),
           userId: ctx.session.user.id,
           addressId: input.id,
         })
 
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Error al eliminar la dirección de entrega',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error al eliminar la dirección de entrega",
         })
       }
     }),
@@ -263,23 +263,23 @@ export const addressRouter = createTRPCRouter({
     .input(
       z.object({
         quoteId: z.string().cuid({
-          message: 'ID de cotización inválido',
+          message: "ID de cotización inválido",
         }),
       }),
     )
     .query(async ({ ctx, input }) => {
       try {
-        logger.info('Listing project addresses by quote', {
+        logger.info("Listing project addresses by quote", {
           userId: ctx.session.user.id,
           quoteId: input.quoteId,
         })
 
         const addresses = await ctx.db.projectAddress.findMany({
           where: { quoteId: input.quoteId },
-          orderBy: { createdAt: 'desc' },
+          orderBy: { createdAt: "desc" },
         })
 
-        logger.info('Project addresses listed successfully', {
+        logger.info("Project addresses listed successfully", {
           userId: ctx.session.user.id,
           quoteId: input.quoteId,
           count: addresses.length,
@@ -287,15 +287,15 @@ export const addressRouter = createTRPCRouter({
 
         return addresses
       } catch (error) {
-        logger.error('Failed to list project addresses', {
+        logger.error("Failed to list project addresses", {
           error: error instanceof Error ? error.message : String(error),
           userId: ctx.session.user.id,
           quoteId: input.quoteId,
         })
 
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Error al listar las direcciones de entrega',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error al listar las direcciones de entrega",
         })
       }
     }),

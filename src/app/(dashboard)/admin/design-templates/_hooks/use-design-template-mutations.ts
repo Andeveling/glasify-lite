@@ -1,12 +1,12 @@
-'use client'
+"use client"
 
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 import type {
   DesignTemplateCreateInput,
   DesignTemplateUpdateInput,
-} from '@/lib/validations/design-template'
-import { api } from '@/trpc/react'
+} from "@/lib/validations/design-template"
+import { api } from "@/trpc/react"
 
 type UseDesignTemplateMutationsOptions = {
   onSuccessCallback?: () => void
@@ -19,13 +19,13 @@ export function useDesignTemplateMutations({
   const utils = api.useUtils()
 
   const invalidate = () => {
-    void utils.admin['design-template'].list.invalidate()
-    void utils.admin['design-template'].listAll.invalidate()
+    void utils.admin["design-template"].list.invalidate()
+    void utils.admin["design-template"].listAll.invalidate()
   }
 
-  const createMutation = api.admin['design-template'].create.useMutation({
+  const createMutation = api.admin["design-template"].create.useMutation({
     onError: (err) => {
-      toast.error('Error al crear la plantilla', {
+      toast.error("Error al crear la plantilla", {
         description: err.message,
       })
     },
@@ -34,15 +34,15 @@ export function useDesignTemplateMutations({
       router.refresh()
     },
     onSuccess: () => {
-      toast.success('Plantilla de diseño creada')
-      router.push('/admin/design-templates')
+      toast.success("Plantilla de diseño creada")
+      router.push("/admin/design-templates")
       onSuccessCallback?.()
     },
   })
 
-  const updateMutation = api.admin['design-template'].update.useMutation({
+  const updateMutation = api.admin["design-template"].update.useMutation({
     onError: (err) => {
-      toast.error('Error al actualizar la plantilla', {
+      toast.error("Error al actualizar la plantilla", {
         description: err.message,
       })
     },
@@ -51,15 +51,15 @@ export function useDesignTemplateMutations({
       router.refresh()
     },
     onSuccess: () => {
-      toast.success('Plantilla de diseño actualizada')
-      router.push('/admin/design-templates')
+      toast.success("Plantilla de diseño actualizada")
+      router.push("/admin/design-templates")
       onSuccessCallback?.()
     },
   })
 
-  const deleteMutation = api.admin['design-template'].delete.useMutation({
+  const deleteMutation = api.admin["design-template"].delete.useMutation({
     onError: (err) => {
-      toast.error('Error al eliminar la plantilla', {
+      toast.error("Error al eliminar la plantilla", {
         description: err.message,
       })
     },
@@ -68,7 +68,7 @@ export function useDesignTemplateMutations({
       router.refresh()
     },
     onSuccess: () => {
-      toast.success('Plantilla eliminada')
+      toast.success("Plantilla eliminada")
     },
   })
 

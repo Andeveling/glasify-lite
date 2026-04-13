@@ -11,16 +11,16 @@
  * - Hard delete if no references exist
  */
 
-import type { Prisma } from '@prisma/generated/client'
-import { TRPCError } from '@trpc/server'
-import logger from '@/lib/logger'
+import type { Prisma } from "@prisma/generated/client"
+import { TRPCError } from "@trpc/server"
+import logger from "@/lib/logger"
 import {
   colorCreateSchema,
   colorIdSchema,
   colorListSchema,
   colorUpdateSchema,
-} from '@/lib/validations/color'
-import { adminProcedure, createTRPCRouter } from '@/server/api/trpc'
+} from "@/lib/validations/color"
+import { adminProcedure, createTRPCRouter } from "@/server/api/trpc"
 
 /**
  * Helper: Build where clause for list query
@@ -32,7 +32,7 @@ function buildWhereClause(input: { search?: string; isActive?: boolean }): Prism
   if (input.search) {
     where.name = {
       contains: input.search,
-      mode: 'insensitive',
+      mode: "insensitive",
     }
   }
 
@@ -79,7 +79,7 @@ export const colorsRouter = createTRPCRouter({
         take: input.limit,
       })
 
-      logger.info('Colors list retrieved', {
+      logger.info("Colors list retrieved", {
         userId: ctx.session?.user.id,
         count: colors.length,
         total,
@@ -95,13 +95,13 @@ export const colorsRouter = createTRPCRouter({
         totalPages,
       }
     } catch (error) {
-      logger.error('Failed to list colors', {
+      logger.error("Failed to list colors", {
         userId: ctx.session?.user.id,
         error: error instanceof Error ? error.message : String(error),
       })
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al obtener la lista de colores',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al obtener la lista de colores",
       })
     }
   }),
@@ -136,12 +136,12 @@ export const colorsRouter = createTRPCRouter({
 
       if (!color) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Color no encontrado',
+          code: "NOT_FOUND",
+          message: "Color no encontrado",
         })
       }
 
-      logger.info('Color retrieved', {
+      logger.info("Color retrieved", {
         userId: ctx.session?.user.id,
         colorId: input.id,
       })
@@ -152,15 +152,15 @@ export const colorsRouter = createTRPCRouter({
         throw error
       }
 
-      logger.error('Failed to get color', {
+      logger.error("Failed to get color", {
         userId: ctx.session?.user.id,
         colorId: input.id,
         error: error instanceof Error ? error.message : String(error),
       })
 
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al obtener el color',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al obtener el color",
       })
     }
   }),
@@ -183,8 +183,8 @@ export const colorsRouter = createTRPCRouter({
 
       if (existing) {
         throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Ya existe un color con este nombre y código hexadecimal',
+          code: "CONFLICT",
+          message: "Ya existe un color con este nombre y código hexadecimal",
         })
       }
 
@@ -197,7 +197,7 @@ export const colorsRouter = createTRPCRouter({
         },
       })
 
-      logger.info('Color created', {
+      logger.info("Color created", {
         userId: ctx.session?.user.id,
         colorId: color.id,
         colorName: color.name,
@@ -211,22 +211,22 @@ export const colorsRouter = createTRPCRouter({
       }
 
       // Handle Prisma unique constraint violation
-      if (error instanceof Error && 'code' in error && error.code === 'P2002') {
+      if (error instanceof Error && "code" in error && error.code === "P2002") {
         throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Ya existe un color con este nombre y código hexadecimal',
+          code: "CONFLICT",
+          message: "Ya existe un color con este nombre y código hexadecimal",
         })
       }
 
-      logger.error('Failed to create color', {
+      logger.error("Failed to create color", {
         userId: ctx.session?.user.id,
         input,
         error: error instanceof Error ? error.message : String(error),
       })
 
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al crear el color',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al crear el color",
       })
     }
   }),
@@ -248,8 +248,8 @@ export const colorsRouter = createTRPCRouter({
 
         if (!existing) {
           throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'Color no encontrado',
+            code: "NOT_FOUND",
+            message: "Color no encontrado",
           })
         }
 
@@ -269,8 +269,8 @@ export const colorsRouter = createTRPCRouter({
 
           if (duplicateCheck) {
             throw new TRPCError({
-              code: 'CONFLICT',
-              message: 'Ya existe un color con este nombre y código hexadecimal',
+              code: "CONFLICT",
+              message: "Ya existe un color con este nombre y código hexadecimal",
             })
           }
         }
@@ -280,7 +280,7 @@ export const colorsRouter = createTRPCRouter({
           data,
         })
 
-        logger.info('Color updated', {
+        logger.info("Color updated", {
           userId: ctx.session?.user.id,
           colorId: id,
           changes: data,
@@ -292,15 +292,15 @@ export const colorsRouter = createTRPCRouter({
           throw error
         }
 
-        logger.error('Failed to update color', {
+        logger.error("Failed to update color", {
           userId: ctx.session?.user.id,
           colorId: input.id,
           error: error instanceof Error ? error.message : String(error),
         })
 
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Error al actualizar el color',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error al actualizar el color",
         })
       }
     }),
@@ -328,15 +328,15 @@ export const colorsRouter = createTRPCRouter({
 
       if (!color) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Color no encontrado',
+          code: "NOT_FOUND",
+          message: "Color no encontrado",
         })
       }
 
       // Tier 1: Prevent deletion if used in quotes (hard constraint)
       if (color._count.quoteItems > 0) {
         throw new TRPCError({
-          code: 'PRECONDITION_FAILED',
+          code: "PRECONDITION_FAILED",
           message: `No se puede eliminar. Color usado en ${color._count.quoteItems} cotización(es)`,
         })
       }
@@ -348,7 +348,7 @@ export const colorsRouter = createTRPCRouter({
           data: { isActive: false },
         })
 
-        logger.info('Color soft deleted (used in models)', {
+        logger.info("Color soft deleted (used in models)", {
           userId: ctx.session?.user.id,
           colorId: input.id,
           modelCount: color._count.modelColors,
@@ -356,7 +356,7 @@ export const colorsRouter = createTRPCRouter({
 
         return {
           success: true,
-          action: 'soft_delete' as const,
+          action: "soft_delete" as const,
           message: `Color desactivado. Usado en ${color._count.modelColors} modelo(s)`,
           color: updated,
         }
@@ -367,15 +367,15 @@ export const colorsRouter = createTRPCRouter({
         where: { id: input.id },
       })
 
-      logger.info('Color hard deleted (no references)', {
+      logger.info("Color hard deleted (no references)", {
         userId: ctx.session?.user.id,
         colorId: input.id,
       })
 
       return {
         success: true,
-        action: 'hard_delete' as const,
-        message: 'Color eliminado exitosamente',
+        action: "hard_delete" as const,
+        message: "Color eliminado exitosamente",
         color: null,
       }
     } catch (error) {
@@ -383,15 +383,15 @@ export const colorsRouter = createTRPCRouter({
         throw error
       }
 
-      logger.error('Failed to delete color', {
+      logger.error("Failed to delete color", {
         userId: ctx.session?.user.id,
         colorId: input.id,
         error: error instanceof Error ? error.message : String(error),
       })
 
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al eliminar el color',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al eliminar el color",
       })
     }
   }),
@@ -416,8 +416,8 @@ export const colorsRouter = createTRPCRouter({
 
       if (!color) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Color no encontrado',
+          code: "NOT_FOUND",
+          message: "Color no encontrado",
         })
       }
 
@@ -435,15 +435,15 @@ export const colorsRouter = createTRPCRouter({
         throw error
       }
 
-      logger.error('Failed to check color usage', {
+      logger.error("Failed to check color usage", {
         userId: ctx.session?.user.id,
         colorId: input.id,
         error: error instanceof Error ? error.message : String(error),
       })
 
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error al verificar el uso del color',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error al verificar el uso del color",
       })
     }
   }),

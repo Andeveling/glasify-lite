@@ -10,11 +10,11 @@
  * - Handles missing client gracefully
  */
 
-'use client'
+"use client"
 
-import { Building2, Mail, Phone, User } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import type { ClientContactInfo as ClientInfoType } from '../../_types/quote-list.types'
+import { Building2, Mail, Phone, User } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import type { ClientContactInfo as ClientInfoType } from "../../_types/quote-list.types"
 
 type ClientContactInfoProps = {
   client: ClientInfoType | null
@@ -39,7 +39,7 @@ export function ClientContactInfo({ client, contactPhone }: ClientContactInfoPro
     )
   }
 
-  const displayName = client.name || client.company || 'Cliente sin nombre'
+  const displayName = client.name || client.company || "Cliente sin nombre"
 
   return (
     <Card>

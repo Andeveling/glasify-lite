@@ -10,7 +10,7 @@
  * @module lib/utils/generate-item-name
  */
 
-import type { CartItem } from '@/types/cart.types'
+import type { CartItem } from "@/types/cart.types"
 
 // ============================================================================
 // Constants
@@ -43,20 +43,20 @@ const WORD_SEPARATOR_REGEX = /[\s\-_]/
  * extractModelPrefix("modelo-especial") → "MODELO"
  */
 export function extractModelPrefix(modelName: string): string {
-  if (!modelName || typeof modelName !== 'string') {
-    return 'ITEM'
+  if (!modelName || typeof modelName !== "string") {
+    return "ITEM"
   }
 
   const cleaned = modelName.trim()
   if (cleaned.length === 0) {
-    return 'ITEM'
+    return "ITEM"
   }
 
   // Extract first word (stop at space, hyphen, underscore)
   const firstWord = cleaned.split(WORD_SEPARATOR_REGEX)[0]
 
   if (!firstWord) {
-    return 'ITEM'
+    return "ITEM"
   }
 
   // Convert to uppercase and limit length
@@ -86,16 +86,16 @@ export function extractModelPrefix(modelName: string): string {
  * findNextSequence("GUARDIAN", cartItems) → "001"
  */
 export function findNextSequence(prefix: string, existingItems: CartItem[]): string {
-  if (!prefix || typeof prefix !== 'string') {
-    return '001'
+  if (!prefix || typeof prefix !== "string") {
+    return "001"
   }
 
   if (!existingItems || existingItems.length === 0) {
-    return '001'
+    return "001"
   }
 
   // Pattern: {PREFIX}-{SEQUENCE}
-  const prefixPattern = new RegExp(`^${prefix}-(\\d+)$`, 'i')
+  const prefixPattern = new RegExp(`^${prefix}-(\\d+)$`, "i")
 
   // Find all items matching this prefix
   const matchingSequences = existingItems
@@ -110,7 +110,7 @@ export function findNextSequence(prefix: string, existingItems: CartItem[]): str
 
   // Return next sequence (zero-padded to 3 digits)
   const nextSequence = maxSequence + 1
-  return nextSequence.toString().padStart(SEQUENCE_PADDING, '0')
+  return nextSequence.toString().padStart(SEQUENCE_PADDING, "0")
 }
 
 /**
@@ -170,7 +170,7 @@ export function isNameUnique(
   existingItems: CartItem[],
   excludeItemId?: string,
 ): boolean {
-  if (!name || typeof name !== 'string') {
+  if (!name || typeof name !== "string") {
     return false
   }
 
@@ -203,22 +203,22 @@ export function validateItemName(
   existingItems: CartItem[],
   excludeItemId?: string,
 ): { valid: boolean; error?: string } {
-  if (!name || typeof name !== 'string') {
-    return { error: 'El nombre es requerido', valid: false }
+  if (!name || typeof name !== "string") {
+    return { error: "El nombre es requerido", valid: false }
   }
 
   const trimmedName = name.trim()
 
   if (trimmedName.length === 0) {
-    return { error: 'El nombre no puede estar vacío', valid: false }
+    return { error: "El nombre no puede estar vacío", valid: false }
   }
 
   if (trimmedName.length > MAX_NAME_LENGTH) {
-    return { error: 'El nombre no puede exceder 50 caracteres', valid: false }
+    return { error: "El nombre no puede exceder 50 caracteres", valid: false }
   }
 
   if (!isNameUnique(trimmedName, existingItems, excludeItemId)) {
-    return { error: 'Ya existe un item con este nombre', valid: false }
+    return { error: "Ya existe un item con este nombre", valid: false }
   }
 
   return { valid: true }

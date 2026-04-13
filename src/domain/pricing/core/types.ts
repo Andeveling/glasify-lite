@@ -5,18 +5,18 @@
  * domain. They are framework-independent and can be used in any context.
  */
 
-import type { Decimal } from 'decimal.js'
+import type { Decimal } from "decimal.js"
 
 /**
  * Service unit types for quantity calculation
  */
 export const ServiceUnit = {
   /** Fixed quantity (1 unit, or quantityOverride) */
-  UNIT: 'unit',
+  UNIT: "unit",
   /** Square meters (width × height in m²) */
-  SQM: 'sqm',
+  SQM: "sqm",
   /** Linear meters (perimeter in ml) */
-  ML: 'ml',
+  ML: "ml",
 } as const
 
 export type ServiceUnit = (typeof ServiceUnit)[keyof typeof ServiceUnit]

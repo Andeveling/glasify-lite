@@ -1,10 +1,10 @@
-'use client'
+"use client"
 
-import { Info } from 'lucide-react'
-import { Fragment } from 'react'
-import { useTenantConfig } from '@/app/_hooks/use-tenant-config'
-import { Button } from '@/components/ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Info } from "lucide-react"
+import { Fragment } from "react"
+import { useTenantConfig } from "@/app/_hooks/use-tenant-config"
+import { Button } from "@/components/ui/button"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import {
   Table,
   TableBody,
@@ -12,15 +12,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { formatCurrency } from '@/lib/format'
-import { cn } from '@/lib/utils'
+} from "@/components/ui/table"
+import { formatCurrency } from "@/lib/format"
+import { cn } from "@/lib/utils"
 
 // ============================================================================
 // Types
 // ============================================================================
 
-type PriceBreakdownCategory = 'model' | 'glass' | 'service' | 'adjustment'
+type PriceBreakdownCategory = "model" | "glass" | "service" | "adjustment"
 
 type PriceBreakdownItem = {
   amount: number
@@ -101,21 +101,21 @@ export function PriceBreakdownPopover({
 
   // Category labels in Spanish
   const categoryLabels: Record<PriceBreakdownCategory, string> = {
-    adjustment: 'Ajustes',
-    glass: 'Vidrio',
-    model: 'Producto',
-    service: 'Servicios',
+    adjustment: "Ajustes",
+    glass: "Vidrio",
+    model: "Producto",
+    service: "Servicios",
   }
 
   // Category order for display
-  const categoryOrder: PriceBreakdownCategory[] = ['model', 'glass', 'service', 'adjustment']
+  const categoryOrder: PriceBreakdownCategory[] = ["model", "glass", "service", "adjustment"]
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
           aria-label="Ver desglose de precio"
-          className={cn('h-8 w-8 p-0', className)}
+          className={cn("h-8 w-8 p-0", className)}
           size="icon"
           type="button"
           variant="ghost"
@@ -161,8 +161,8 @@ export function PriceBreakdownPopover({
                         <TableCell className="pl-6 text-sm">{item.label}</TableCell>
                         <TableCell
                           className={cn(
-                            'text-right text-sm',
-                            item.amount < 0 && 'text-green-600 dark:text-green-400',
+                            "text-right text-sm",
+                            item.amount < 0 && "text-green-600 dark:text-green-400",
                           )}
                         >
                           {formatCurrency(item.amount, {

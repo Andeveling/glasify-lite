@@ -10,7 +10,7 @@
  * Usa repositories (ports) para acceso a datos.
  */
 
-import type { Client, Quote, QuoteItem, QuoteStatus, User } from '@prisma/generated/client'
+import type { Client, Quote, QuoteItem, QuoteStatus, User } from "@prisma/generated/client"
 
 /**
  * Input para obtener una quote por ID
@@ -18,7 +18,7 @@ import type { Client, Quote, QuoteItem, QuoteStatus, User } from '@prisma/genera
 export type GetQuoteByIdInput = {
   quoteId: string
   userId: string
-  userRole: 'admin' | 'seller'
+  userRole: "admin" | "seller"
 }
 
 /**
@@ -76,7 +76,7 @@ export type getQuoteByIdOutput = {
     id: string
     name: string | null
     email: string | null
-    role: 'admin' | 'seller'
+    role: "admin" | "seller"
   } | null
   userEmail?: string
 }
@@ -94,8 +94,8 @@ type QuoteWithItems = Quote & {
       }>
     }
   >
-  client: Pick<Client, 'id' | 'name' | 'email' | 'phone' | 'company'> | null
-  user: Pick<User, 'id' | 'name' | 'email' | 'role'> | null
+  client: Pick<Client, "id" | "name" | "email" | "phone" | "company"> | null
+  user: Pick<User, "id" | "name" | "email" | "role"> | null
 }
 
 /**
@@ -114,11 +114,11 @@ export type GetQuoteByIdDeps = {
  * Error para autorización
  */
 export class AuthorizationError extends Error {
-  code: 'NOT_FOUND' | 'FORBIDDEN'
+  code: "NOT_FOUND" | "FORBIDDEN"
 
-  constructor(message: string, code: 'NOT_FOUND' | 'FORBIDDEN') {
+  constructor(message: string, code: "NOT_FOUND" | "FORBIDDEN") {
     super(message)
-    this.name = 'AuthorizationError'
+    this.name = "AuthorizationError"
     this.code = code
   }
 }
@@ -137,15 +137,15 @@ export async function getQuoteByIdUseCase(
   const quote = await deps.findQuoteWithDetails(input.quoteId)
 
   if (!quote) {
-    throw new AuthorizationError('Cotización no encontrada', 'NOT_FOUND')
+    throw new AuthorizationError("Cotización no encontrada", "NOT_FOUND")
   }
 
   // 2. Validar permisos (ownership check)
   const isOwner = quote.userId === input.userId
-  const isAdmin = input.userRole === 'admin'
+  const isAdmin = input.userRole === "admin"
 
   if (!(isOwner || isAdmin)) {
-    throw new AuthorizationError('No tienes permiso para acceder a esta cotización', 'FORBIDDEN')
+    throw new AuthorizationError("No tienes permiso para acceder a esta cotización", "FORBIDDEN")
   }
 
   // 3. Obtener datos del tenant
@@ -196,12 +196,12 @@ export async function getQuoteByIdUseCase(
     contactPhone: quote.contactPhone,
     manufacturerName: businessName,
     vendorContactPhone: contactPhone,
-    projectName: quote.projectName ?? 'Sin nombre',
+    projectName: quote.projectName ?? "Sin nombre",
     projectAddress: {
-      projectName: quote.projectName ?? 'Sin nombre',
-      projectStreet: quote.projectStreet ?? '',
-      projectCity: quote.projectCity ?? '',
-      projectState: quote.projectState ?? '',
+      projectName: quote.projectName ?? "Sin nombre",
+      projectStreet: quote.projectStreet ?? "",
+      projectCity: quote.projectCity ?? "",
+      projectState: quote.projectState ?? "",
       projectPostalCode: quote.projectPostalCode ?? undefined,
     },
     itemCount: quote.items.length,
@@ -212,7 +212,7 @@ export async function getQuoteByIdUseCase(
           id: quote.user.id,
           name: quote.user.name,
           email: quote.user.email,
-          role: quote.user.role as 'admin' | 'seller',
+          role: quote.user.role as "admin" | "seller",
         }
       : null,
     userEmail: undefined,
