@@ -18,7 +18,6 @@
     "moduleResolution": "Bundler",
     "jsx": "react-jsx",
     "types": ["vitest/globals", "@testing-library/jest-dom"],
-    "typeRoots": ["node_modules/@types"],
     "plugins": [
       {
         "name": "next"
@@ -27,6 +26,7 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
+      "@prisma/generated/client": ["./prisma/generated/client/client.ts"],
       "@/*": ["./src/*"],
       "@server/*": ["./src/server/*"],
       "@styles/*": ["./src/styles/*"],
