@@ -49,6 +49,21 @@
 - Consideraciones de pricing y restricciones dimensionales
 
 **Cambios en index:**
-- Actualizada sección 30-clients para reflejar estructura real
-- Eliminados enlaces a páginas que no existen (stubs planeados)
+- Actualizada seccion 30-clients para reflejar estructura real
+- Eliminados enlaces a paginas que no existen (stubs planeados)
 - Agregados enlaces a profile.md y presets.md con rutas correctas
+
+---
+
+### Nuevo: Calculo de Precios en PYMES LATAM
+
+**Archivo creado**: `wiki/wiki/20-manufacturers/calculo-precios-pymes-latam.md`
+
+**Contenido**: Dominio de calculo de precios en talleres y fabricas de ventanas en LATAM. Tres metodos documentados:
+1. Precio por m2 (el mas comun para cotizaciones rapidas)
+2. Desglose por componentes (perfil + vidrio + accesorios + mano de obra + margen)
+3. Tablas de precio unitario estandar (para empresas constructoras)
+
+Tambien cubre: variables clave (tamano, apertura, vidrio, aislamiento, acabados) y flujo tipico en talleres.
+
+**Relacionado**: Conecta con [[pricing-formula]] (como Glasify implementa estos metodos) y [[ecosistema-participantes]] (contexto de fabricantes).

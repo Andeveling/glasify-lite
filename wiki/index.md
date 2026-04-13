@@ -17,8 +17,7 @@
 - [[glass-solutions]] — Glass solutions (thermal, acoustic, security)
 
 ### 20-manufacturers
-- [[profile-suppliers]] — Profile suppliers (Rehau, Deceuninck, etc.)
-- [[glass-suppliers]] — Glass suppliers
+- [[calculo-precios-pymes-latam]] — Metodos de calculo de precios en talleres y fabricas de ventanas LATAM (m2, desglose por componentes, tablas unitarias)
 - [[ecosistema-participantes]] — Ecosistema completo (fabricantes, ventanas, clientes)
 
 ### 40-design

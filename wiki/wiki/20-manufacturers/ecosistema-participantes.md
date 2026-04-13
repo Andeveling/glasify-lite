@@ -28,7 +28,7 @@ Empresas que fabrican el producto terminado:
 - **Colombiana de PVC S.A.S.** (Cali, Colombia) — Validar flujo comercial real, catálogo PVC
 - **SuperVentanas S.A.S.** (Bogotá, Colombia) — Mercado capitalino, variación de precios urbana
 - **VentPro S.A.S.** (Medellín, Colombia) — Eje industrial, ventanas mixtas PVC/aluminio
-- **[[presets]]** (Ciudad de Panamá) — Primer cliente confirmado, validación internacional
+- **Vitro Rojas Panama:** [[presets]] (Ciudad de Panamá) — Primer cliente confirmado, validación internacional
 
 ## Clientes Finales
 
