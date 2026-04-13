@@ -1,12 +1,12 @@
 import type { SeedPreset } from "../../seeders/seed-orchestrator";
-import { vitroRojasColors } from "../vitro-rojas/colors.data";
-import { vitroRojasGlassSolutions } from "../vitro-rojas/glass-solutions.data";
-import { vitroRojasGlassTypeSolutionMappings } from "../vitro-rojas/glass-type-solution-mappings.data";
-import { vitroRojasGlassTypes } from "../vitro-rojas/glass-types.data";
-import { vitroRojasCasementModels } from "../vitro-rojas/models-casement.data";
-import { vitroRojasSlidingModels } from "../vitro-rojas/models-sliding.data";
-import { vitroRojasProfileSuppliers } from "../vitro-rojas/profile-suppliers.data";
-import { vitroRojasServices } from "../vitro-rojas/services.data";
+import { vitroRojasColors } from "../clients/vitro-rojas/colors.data";
+import { vitroRojasGlassSolutions } from "../clients/vitro-rojas/glass-solutions.data";
+import { vitroRojasGlassTypeSolutionMappings } from "../clients/vitro-rojas/glass-type-solution-mappings.data";
+import { vitroRojasGlassTypes } from "../clients/vitro-rojas/glass-types.data";
+import { vitroRojasCasementModels } from "../clients/vitro-rojas/models-casement.data";
+import { vitroRojasSlidingModels } from "../clients/vitro-rojas/models-sliding.data";
+import { vitroRojasProfileSuppliers } from "../clients/vitro-rojas/profile-suppliers.data";
+import { vitroRojasServices } from "../clients/vitro-rojas/services.data";
 
 export const vitroRojasPanamaPreset: SeedPreset = {
   description:

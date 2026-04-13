@@ -11,7 +11,7 @@
  */
 
 import { stringifyCompatibleGlassTypeIds } from "../../src/lib/utils/compatible-glass-types";
-import type { GlassTypeSolutionMapping } from "../data/vitro-rojas/glass-type-solution-mappings.data";
+import type { GlassTypeSolutionMapping } from "../data/clients/vitro-rojas/glass-type-solution-mappings.data";
 import type { GlassSolutionInput } from "../factories/glass-solution.factory";
 import { createGlassSolution } from "../factories/glass-solution.factory";
 import type { GlassTypeInput } from "../factories/glass-type.factory";

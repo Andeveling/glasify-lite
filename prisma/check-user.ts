@@ -1,4 +1,12 @@
-// @ts-nocheck
+/**
+ * Check User Utility
+ * 
+ * Purpose: Lookup a user by email and display their account details.
+ * When to use: Debug user authentication issues, verify account status.
+ * Prerequisites: Database must be accessible, user email must be known.
+ * 
+ * @ts-nocheck
+ */
 import { db } from "../src/server/db";
 
 async function check() {
