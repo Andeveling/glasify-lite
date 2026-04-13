@@ -33,8 +33,13 @@ export function useModelCatalogData() {
     },
   )
 
+  const { data: templatesData } = api.admin['design-template'].listAll.useQuery(undefined, {
+    staleTime: FIVE_MINUTES_MS,
+  })
+
   return {
     glassTypes: glassTypesData?.items ?? [],
     suppliers: suppliersData?.items ?? [],
+    templates: templatesData ?? [],
   }
 }

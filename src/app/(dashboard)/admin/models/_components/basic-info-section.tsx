@@ -1,19 +1,23 @@
 /**
  * Basic Information Section
  *
- * Model name, status, and profile supplier selection
+ * Model name, status, profile supplier, and design template selection
  */
 
 'use client'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import type { RouterOutputs } from '@/trpc/react'
+import { DesignRenderer } from '@/components/design'
+import type { DesignTemplateConfig } from '@/domain/design'
 import { FormSelect, FormTextInput } from './form-fields'
 
 type ProfileSupplier = RouterOutputs['admin']['profile-supplier']['list']['items'][number]
+type DesignTemplate = RouterOutputs['admin']['design-template']['listAll'][number]
 
 type BasicInfoSectionProps = {
   suppliers: ProfileSupplier[]
+  templates: DesignTemplate[]
 }
 
 const STATUS_OPTIONS = [
@@ -21,10 +25,15 @@ const STATUS_OPTIONS = [
   { label: 'Publicado', value: 'published' },
 ]
 
-export function BasicInfoSection({ suppliers }: BasicInfoSectionProps) {
+export function BasicInfoSection({ suppliers, templates }: BasicInfoSectionProps) {
   const supplierOptions = suppliers.map((supplier) => ({
     label: supplier.name,
     value: supplier.id,
+  }))
+
+  const templateOptions = templates.map((t) => ({
+    label: `${t.name} (${t.pattern})`,
+    value: t.id,
   }))
 
   return (
@@ -60,6 +69,16 @@ export function BasicInfoSection({ suppliers }: BasicInfoSectionProps) {
           options={supplierOptions}
           placeholder="Selecciona proveedor"
         />
+
+        <div className="md:col-span-2">
+          <FormSelect
+            description="Plantilla de diseño para visualización del modelo"
+            label="Plantilla de Diseño"
+            name="designTemplateId"
+            options={templateOptions}
+            placeholder="Sin plantilla (usa imagen)"
+          />
+        </div>
       </CardContent>
     </Card>
   )

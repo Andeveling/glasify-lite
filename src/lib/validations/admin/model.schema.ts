@@ -101,6 +101,13 @@ const baseModelSchema = z
       .nonnegative('El costo por mm de ancho no puede ser negativo')
       .describe('Additional cost per millimeter of width'),
 
+    designTemplateId: z
+      .string()
+      .cuid('ID de plantilla inválido')
+      .optional()
+      .nullable()
+      .describe('Design template ID for SVG visualization'),
+
     glassDiscountHeightMm: z
       .number()
       .int('El descuento de alto debe ser un número entero')

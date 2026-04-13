@@ -75,6 +75,11 @@ export type Verification = Prisma.VerificationModel
  */
 export type TenantConfig = Prisma.TenantConfigModel
 /**
+ * Model DesignTemplate
+ * 
+ */
+export type DesignTemplate = Prisma.DesignTemplateModel
+/**
  * Model ProfileSupplier
  * 
  */

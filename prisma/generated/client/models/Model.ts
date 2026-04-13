@@ -76,6 +76,7 @@ export type ModelMinAggregateOutputType = {
   profitMarginPercentage: runtime.Decimal | null
   profileSupplierId: string | null
   imageUrl: string | null
+  designTemplateId: string | null
 }
 
 export type ModelMaxAggregateOutputType = {
@@ -100,6 +101,7 @@ export type ModelMaxAggregateOutputType = {
   profitMarginPercentage: runtime.Decimal | null
   profileSupplierId: string | null
   imageUrl: string | null
+  designTemplateId: string | null
 }
 
 export type ModelCountAggregateOutputType = {
@@ -124,6 +126,7 @@ export type ModelCountAggregateOutputType = {
   profitMarginPercentage: number
   profileSupplierId: number
   imageUrl: number
+  designTemplateId: number
   _all: number
 }
 
@@ -178,6 +181,7 @@ export type ModelMinAggregateInputType = {
   profitMarginPercentage?: true
   profileSupplierId?: true
   imageUrl?: true
+  designTemplateId?: true
 }
 
 export type ModelMaxAggregateInputType = {
@@ -202,6 +206,7 @@ export type ModelMaxAggregateInputType = {
   profitMarginPercentage?: true
   profileSupplierId?: true
   imageUrl?: true
+  designTemplateId?: true
 }
 
 export type ModelCountAggregateInputType = {
@@ -226,6 +231,7 @@ export type ModelCountAggregateInputType = {
   profitMarginPercentage?: true
   profileSupplierId?: true
   imageUrl?: true
+  designTemplateId?: true
   _all?: true
 }
 
@@ -337,6 +343,7 @@ export type ModelGroupByOutputType = {
   profitMarginPercentage: runtime.Decimal | null
   profileSupplierId: string | null
   imageUrl: string | null
+  designTemplateId: string | null
   _count: ModelCountAggregateOutputType | null
   _avg: ModelAvgAggregateOutputType | null
   _sum: ModelSumAggregateOutputType | null
@@ -384,7 +391,9 @@ export type ModelWhereInput = {
   profitMarginPercentage?: Prisma.DecimalNullableFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   profileSupplierId?: Prisma.StringNullableFilter<"Model"> | string | null
   imageUrl?: Prisma.StringNullableFilter<"Model"> | string | null
+  designTemplateId?: Prisma.StringNullableFilter<"Model"> | string | null
   profileSupplier?: Prisma.XOR<Prisma.ProfileSupplierNullableScalarRelationFilter, Prisma.ProfileSupplierWhereInput> | null
+  designTemplate?: Prisma.XOR<Prisma.DesignTemplateNullableScalarRelationFilter, Prisma.DesignTemplateWhereInput> | null
   modelColors?: Prisma.ModelColorListRelationFilter
   costBreakdown?: Prisma.ModelCostBreakdownListRelationFilter
   priceHistory?: Prisma.ModelPriceHistoryListRelationFilter
@@ -413,7 +422,9 @@ export type ModelOrderByWithRelationInput = {
   profitMarginPercentage?: Prisma.SortOrderInput | Prisma.SortOrder
   profileSupplierId?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  designTemplateId?: Prisma.SortOrderInput | Prisma.SortOrder
   profileSupplier?: Prisma.ProfileSupplierOrderByWithRelationInput
+  designTemplate?: Prisma.DesignTemplateOrderByWithRelationInput
   modelColors?: Prisma.ModelColorOrderByRelationAggregateInput
   costBreakdown?: Prisma.ModelCostBreakdownOrderByRelationAggregateInput
   priceHistory?: Prisma.ModelPriceHistoryOrderByRelationAggregateInput
@@ -445,7 +456,9 @@ export type ModelWhereUniqueInput = Prisma.AtLeast<{
   profitMarginPercentage?: Prisma.DecimalNullableFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   profileSupplierId?: Prisma.StringNullableFilter<"Model"> | string | null
   imageUrl?: Prisma.StringNullableFilter<"Model"> | string | null
+  designTemplateId?: Prisma.StringNullableFilter<"Model"> | string | null
   profileSupplier?: Prisma.XOR<Prisma.ProfileSupplierNullableScalarRelationFilter, Prisma.ProfileSupplierWhereInput> | null
+  designTemplate?: Prisma.XOR<Prisma.DesignTemplateNullableScalarRelationFilter, Prisma.DesignTemplateWhereInput> | null
   modelColors?: Prisma.ModelColorListRelationFilter
   costBreakdown?: Prisma.ModelCostBreakdownListRelationFilter
   priceHistory?: Prisma.ModelPriceHistoryListRelationFilter
@@ -474,6 +487,7 @@ export type ModelOrderByWithAggregationInput = {
   profitMarginPercentage?: Prisma.SortOrderInput | Prisma.SortOrder
   profileSupplierId?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  designTemplateId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ModelCountOrderByAggregateInput
   _avg?: Prisma.ModelAvgOrderByAggregateInput
   _max?: Prisma.ModelMaxOrderByAggregateInput
@@ -506,6 +520,7 @@ export type ModelScalarWhereWithAggregatesInput = {
   profitMarginPercentage?: Prisma.DecimalNullableWithAggregatesFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   profileSupplierId?: Prisma.StringNullableWithAggregatesFilter<"Model"> | string | null
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Model"> | string | null
+  designTemplateId?: Prisma.StringNullableWithAggregatesFilter<"Model"> | string | null
 }
 
 export type ModelCreateInput = {
@@ -530,6 +545,7 @@ export type ModelCreateInput = {
   profitMarginPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   imageUrl?: string | null
   profileSupplier?: Prisma.ProfileSupplierCreateNestedOneWithoutModelsInput
+  designTemplate?: Prisma.DesignTemplateCreateNestedOneWithoutModelsInput
   modelColors?: Prisma.ModelColorCreateNestedManyWithoutModelInput
   costBreakdown?: Prisma.ModelCostBreakdownCreateNestedManyWithoutModelInput
   priceHistory?: Prisma.ModelPriceHistoryCreateNestedManyWithoutModelInput
@@ -558,6 +574,7 @@ export type ModelUncheckedCreateInput = {
   profitMarginPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   profileSupplierId?: string | null
   imageUrl?: string | null
+  designTemplateId?: string | null
   modelColors?: Prisma.ModelColorUncheckedCreateNestedManyWithoutModelInput
   costBreakdown?: Prisma.ModelCostBreakdownUncheckedCreateNestedManyWithoutModelInput
   priceHistory?: Prisma.ModelPriceHistoryUncheckedCreateNestedManyWithoutModelInput
@@ -586,6 +603,7 @@ export type ModelUpdateInput = {
   profitMarginPercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileSupplier?: Prisma.ProfileSupplierUpdateOneWithoutModelsNestedInput
+  designTemplate?: Prisma.DesignTemplateUpdateOneWithoutModelsNestedInput
   modelColors?: Prisma.ModelColorUpdateManyWithoutModelNestedInput
   costBreakdown?: Prisma.ModelCostBreakdownUpdateManyWithoutModelNestedInput
   priceHistory?: Prisma.ModelPriceHistoryUpdateManyWithoutModelNestedInput
@@ -614,6 +632,7 @@ export type ModelUncheckedUpdateInput = {
   profitMarginPercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   profileSupplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  designTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   modelColors?: Prisma.ModelColorUncheckedUpdateManyWithoutModelNestedInput
   costBreakdown?: Prisma.ModelCostBreakdownUncheckedUpdateManyWithoutModelNestedInput
   priceHistory?: Prisma.ModelPriceHistoryUncheckedUpdateManyWithoutModelNestedInput
@@ -642,6 +661,7 @@ export type ModelCreateManyInput = {
   profitMarginPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   profileSupplierId?: string | null
   imageUrl?: string | null
+  designTemplateId?: string | null
 }
 
 export type ModelUpdateManyMutationInput = {
@@ -689,6 +709,7 @@ export type ModelUncheckedUpdateManyInput = {
   profitMarginPercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   profileSupplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  designTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ModelListRelationFilter = {
@@ -723,6 +744,7 @@ export type ModelCountOrderByAggregateInput = {
   profitMarginPercentage?: Prisma.SortOrder
   profileSupplierId?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  designTemplateId?: Prisma.SortOrder
 }
 
 export type ModelAvgOrderByAggregateInput = {
@@ -761,6 +783,7 @@ export type ModelMaxOrderByAggregateInput = {
   profitMarginPercentage?: Prisma.SortOrder
   profileSupplierId?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  designTemplateId?: Prisma.SortOrder
 }
 
 export type ModelMinOrderByAggregateInput = {
@@ -785,6 +808,7 @@ export type ModelMinOrderByAggregateInput = {
   profitMarginPercentage?: Prisma.SortOrder
   profileSupplierId?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  designTemplateId?: Prisma.SortOrder
 }
 
 export type ModelSumOrderByAggregateInput = {
@@ -804,6 +828,48 @@ export type ModelSumOrderByAggregateInput = {
 export type ModelScalarRelationFilter = {
   is?: Prisma.ModelWhereInput
   isNot?: Prisma.ModelWhereInput
+}
+
+export type ModelCreateNestedManyWithoutDesignTemplateInput = {
+  create?: Prisma.XOR<Prisma.ModelCreateWithoutDesignTemplateInput, Prisma.ModelUncheckedCreateWithoutDesignTemplateInput> | Prisma.ModelCreateWithoutDesignTemplateInput[] | Prisma.ModelUncheckedCreateWithoutDesignTemplateInput[]
+  connectOrCreate?: Prisma.ModelCreateOrConnectWithoutDesignTemplateInput | Prisma.ModelCreateOrConnectWithoutDesignTemplateInput[]
+  createMany?: Prisma.ModelCreateManyDesignTemplateInputEnvelope
+  connect?: Prisma.ModelWhereUniqueInput | Prisma.ModelWhereUniqueInput[]
+}
+
+export type ModelUncheckedCreateNestedManyWithoutDesignTemplateInput = {
+  create?: Prisma.XOR<Prisma.ModelCreateWithoutDesignTemplateInput, Prisma.ModelUncheckedCreateWithoutDesignTemplateInput> | Prisma.ModelCreateWithoutDesignTemplateInput[] | Prisma.ModelUncheckedCreateWithoutDesignTemplateInput[]
+  connectOrCreate?: Prisma.ModelCreateOrConnectWithoutDesignTemplateInput | Prisma.ModelCreateOrConnectWithoutDesignTemplateInput[]
+  createMany?: Prisma.ModelCreateManyDesignTemplateInputEnvelope
+  connect?: Prisma.ModelWhereUniqueInput | Prisma.ModelWhereUniqueInput[]
+}
+
+export type ModelUpdateManyWithoutDesignTemplateNestedInput = {
+  create?: Prisma.XOR<Prisma.ModelCreateWithoutDesignTemplateInput, Prisma.ModelUncheckedCreateWithoutDesignTemplateInput> | Prisma.ModelCreateWithoutDesignTemplateInput[] | Prisma.ModelUncheckedCreateWithoutDesignTemplateInput[]
+  connectOrCreate?: Prisma.ModelCreateOrConnectWithoutDesignTemplateInput | Prisma.ModelCreateOrConnectWithoutDesignTemplateInput[]
+  upsert?: Prisma.ModelUpsertWithWhereUniqueWithoutDesignTemplateInput | Prisma.ModelUpsertWithWhereUniqueWithoutDesignTemplateInput[]
+  createMany?: Prisma.ModelCreateManyDesignTemplateInputEnvelope
+  set?: Prisma.ModelWhereUniqueInput | Prisma.ModelWhereUniqueInput[]
+  disconnect?: Prisma.ModelWhereUniqueInput | Prisma.ModelWhereUniqueInput[]
+  delete?: Prisma.ModelWhereUniqueInput | Prisma.ModelWhereUniqueInput[]
+  connect?: Prisma.ModelWhereUniqueInput | Prisma.ModelWhereUniqueInput[]
+  update?: Prisma.ModelUpdateWithWhereUniqueWithoutDesignTemplateInput | Prisma.ModelUpdateWithWhereUniqueWithoutDesignTemplateInput[]
+  updateMany?: Prisma.ModelUpdateManyWithWhereWithoutDesignTemplateInput | Prisma.ModelUpdateManyWithWhereWithoutDesignTemplateInput[]
+  deleteMany?: Prisma.ModelScalarWhereInput | Prisma.ModelScalarWhereInput[]
+}
+
+export type ModelUncheckedUpdateManyWithoutDesignTemplateNestedInput = {
+  create?: Prisma.XOR<Prisma.ModelCreateWithoutDesignTemplateInput, Prisma.ModelUncheckedCreateWithoutDesignTemplateInput> | Prisma.ModelCreateWithoutDesignTemplateInput[] | Prisma.ModelUncheckedCreateWithoutDesignTemplateInput[]
+  connectOrCreate?: Prisma.ModelCreateOrConnectWithoutDesignTemplateInput | Prisma.ModelCreateOrConnectWithoutDesignTemplateInput[]
+  upsert?: Prisma.ModelUpsertWithWhereUniqueWithoutDesignTemplateInput | Prisma.ModelUpsertWithWhereUniqueWithoutDesignTemplateInput[]
+  createMany?: Prisma.ModelCreateManyDesignTemplateInputEnvelope
+  set?: Prisma.ModelWhereUniqueInput | Prisma.ModelWhereUniqueInput[]
+  disconnect?: Prisma.ModelWhereUniqueInput | Prisma.ModelWhereUniqueInput[]
+  delete?: Prisma.ModelWhereUniqueInput | Prisma.ModelWhereUniqueInput[]
+  connect?: Prisma.ModelWhereUniqueInput | Prisma.ModelWhereUniqueInput[]
+  update?: Prisma.ModelUpdateWithWhereUniqueWithoutDesignTemplateInput | Prisma.ModelUpdateWithWhereUniqueWithoutDesignTemplateInput[]
+  updateMany?: Prisma.ModelUpdateManyWithWhereWithoutDesignTemplateInput | Prisma.ModelUpdateManyWithWhereWithoutDesignTemplateInput[]
+  deleteMany?: Prisma.ModelScalarWhereInput | Prisma.ModelScalarWhereInput[]
 }
 
 export type ModelCreateNestedManyWithoutProfileSupplierInput = {
@@ -916,6 +982,115 @@ export type ModelUpdateOneRequiredWithoutModelColorsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ModelUpdateToOneWithWhereWithoutModelColorsInput, Prisma.ModelUpdateWithoutModelColorsInput>, Prisma.ModelUncheckedUpdateWithoutModelColorsInput>
 }
 
+export type ModelCreateWithoutDesignTemplateInput = {
+  id?: string
+  name: string
+  status?: $Enums.ModelStatus
+  minWidthMm: number
+  maxWidthMm: number
+  minHeightMm: number
+  maxHeightMm: number
+  basePrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPerMmWidth: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPerMmHeight: runtime.Decimal | runtime.DecimalJsLike | number | string
+  accessoryPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  compatibleGlassTypeIds: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  glassDiscountHeightMm?: number
+  glassDiscountWidthMm?: number
+  costNotes?: string | null
+  lastCostReviewDate?: Date | string | null
+  profitMarginPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  imageUrl?: string | null
+  profileSupplier?: Prisma.ProfileSupplierCreateNestedOneWithoutModelsInput
+  modelColors?: Prisma.ModelColorCreateNestedManyWithoutModelInput
+  costBreakdown?: Prisma.ModelCostBreakdownCreateNestedManyWithoutModelInput
+  priceHistory?: Prisma.ModelPriceHistoryCreateNestedManyWithoutModelInput
+  quoteItems?: Prisma.QuoteItemCreateNestedManyWithoutModelInput
+}
+
+export type ModelUncheckedCreateWithoutDesignTemplateInput = {
+  id?: string
+  name: string
+  status?: $Enums.ModelStatus
+  minWidthMm: number
+  maxWidthMm: number
+  minHeightMm: number
+  maxHeightMm: number
+  basePrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPerMmWidth: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPerMmHeight: runtime.Decimal | runtime.DecimalJsLike | number | string
+  accessoryPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  compatibleGlassTypeIds: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  glassDiscountHeightMm?: number
+  glassDiscountWidthMm?: number
+  costNotes?: string | null
+  lastCostReviewDate?: Date | string | null
+  profitMarginPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  profileSupplierId?: string | null
+  imageUrl?: string | null
+  modelColors?: Prisma.ModelColorUncheckedCreateNestedManyWithoutModelInput
+  costBreakdown?: Prisma.ModelCostBreakdownUncheckedCreateNestedManyWithoutModelInput
+  priceHistory?: Prisma.ModelPriceHistoryUncheckedCreateNestedManyWithoutModelInput
+  quoteItems?: Prisma.QuoteItemUncheckedCreateNestedManyWithoutModelInput
+}
+
+export type ModelCreateOrConnectWithoutDesignTemplateInput = {
+  where: Prisma.ModelWhereUniqueInput
+  create: Prisma.XOR<Prisma.ModelCreateWithoutDesignTemplateInput, Prisma.ModelUncheckedCreateWithoutDesignTemplateInput>
+}
+
+export type ModelCreateManyDesignTemplateInputEnvelope = {
+  data: Prisma.ModelCreateManyDesignTemplateInput | Prisma.ModelCreateManyDesignTemplateInput[]
+}
+
+export type ModelUpsertWithWhereUniqueWithoutDesignTemplateInput = {
+  where: Prisma.ModelWhereUniqueInput
+  update: Prisma.XOR<Prisma.ModelUpdateWithoutDesignTemplateInput, Prisma.ModelUncheckedUpdateWithoutDesignTemplateInput>
+  create: Prisma.XOR<Prisma.ModelCreateWithoutDesignTemplateInput, Prisma.ModelUncheckedCreateWithoutDesignTemplateInput>
+}
+
+export type ModelUpdateWithWhereUniqueWithoutDesignTemplateInput = {
+  where: Prisma.ModelWhereUniqueInput
+  data: Prisma.XOR<Prisma.ModelUpdateWithoutDesignTemplateInput, Prisma.ModelUncheckedUpdateWithoutDesignTemplateInput>
+}
+
+export type ModelUpdateManyWithWhereWithoutDesignTemplateInput = {
+  where: Prisma.ModelScalarWhereInput
+  data: Prisma.XOR<Prisma.ModelUpdateManyMutationInput, Prisma.ModelUncheckedUpdateManyWithoutDesignTemplateInput>
+}
+
+export type ModelScalarWhereInput = {
+  AND?: Prisma.ModelScalarWhereInput | Prisma.ModelScalarWhereInput[]
+  OR?: Prisma.ModelScalarWhereInput[]
+  NOT?: Prisma.ModelScalarWhereInput | Prisma.ModelScalarWhereInput[]
+  id?: Prisma.StringFilter<"Model"> | string
+  name?: Prisma.StringFilter<"Model"> | string
+  status?: Prisma.EnumModelStatusFilter<"Model"> | $Enums.ModelStatus
+  minWidthMm?: Prisma.IntFilter<"Model"> | number
+  maxWidthMm?: Prisma.IntFilter<"Model"> | number
+  minHeightMm?: Prisma.IntFilter<"Model"> | number
+  maxHeightMm?: Prisma.IntFilter<"Model"> | number
+  basePrice?: Prisma.DecimalFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPerMmWidth?: Prisma.DecimalFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPerMmHeight?: Prisma.DecimalFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accessoryPrice?: Prisma.DecimalNullableFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  compatibleGlassTypeIds?: Prisma.StringFilter<"Model"> | string
+  createdAt?: Prisma.DateTimeFilter<"Model"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Model"> | Date | string
+  glassDiscountHeightMm?: Prisma.IntFilter<"Model"> | number
+  glassDiscountWidthMm?: Prisma.IntFilter<"Model"> | number
+  costNotes?: Prisma.StringNullableFilter<"Model"> | string | null
+  lastCostReviewDate?: Prisma.DateTimeNullableFilter<"Model"> | Date | string | null
+  profitMarginPercentage?: Prisma.DecimalNullableFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  profileSupplierId?: Prisma.StringNullableFilter<"Model"> | string | null
+  imageUrl?: Prisma.StringNullableFilter<"Model"> | string | null
+  designTemplateId?: Prisma.StringNullableFilter<"Model"> | string | null
+}
+
 export type ModelCreateWithoutProfileSupplierInput = {
   id?: string
   name: string
@@ -937,6 +1112,7 @@ export type ModelCreateWithoutProfileSupplierInput = {
   lastCostReviewDate?: Date | string | null
   profitMarginPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   imageUrl?: string | null
+  designTemplate?: Prisma.DesignTemplateCreateNestedOneWithoutModelsInput
   modelColors?: Prisma.ModelColorCreateNestedManyWithoutModelInput
   costBreakdown?: Prisma.ModelCostBreakdownCreateNestedManyWithoutModelInput
   priceHistory?: Prisma.ModelPriceHistoryCreateNestedManyWithoutModelInput
@@ -964,6 +1140,7 @@ export type ModelUncheckedCreateWithoutProfileSupplierInput = {
   lastCostReviewDate?: Date | string | null
   profitMarginPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   imageUrl?: string | null
+  designTemplateId?: string | null
   modelColors?: Prisma.ModelColorUncheckedCreateNestedManyWithoutModelInput
   costBreakdown?: Prisma.ModelCostBreakdownUncheckedCreateNestedManyWithoutModelInput
   priceHistory?: Prisma.ModelPriceHistoryUncheckedCreateNestedManyWithoutModelInput
@@ -995,33 +1172,6 @@ export type ModelUpdateManyWithWhereWithoutProfileSupplierInput = {
   data: Prisma.XOR<Prisma.ModelUpdateManyMutationInput, Prisma.ModelUncheckedUpdateManyWithoutProfileSupplierInput>
 }
 
-export type ModelScalarWhereInput = {
-  AND?: Prisma.ModelScalarWhereInput | Prisma.ModelScalarWhereInput[]
-  OR?: Prisma.ModelScalarWhereInput[]
-  NOT?: Prisma.ModelScalarWhereInput | Prisma.ModelScalarWhereInput[]
-  id?: Prisma.StringFilter<"Model"> | string
-  name?: Prisma.StringFilter<"Model"> | string
-  status?: Prisma.EnumModelStatusFilter<"Model"> | $Enums.ModelStatus
-  minWidthMm?: Prisma.IntFilter<"Model"> | number
-  maxWidthMm?: Prisma.IntFilter<"Model"> | number
-  minHeightMm?: Prisma.IntFilter<"Model"> | number
-  maxHeightMm?: Prisma.IntFilter<"Model"> | number
-  basePrice?: Prisma.DecimalFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  costPerMmWidth?: Prisma.DecimalFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  costPerMmHeight?: Prisma.DecimalFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  accessoryPrice?: Prisma.DecimalNullableFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  compatibleGlassTypeIds?: Prisma.StringFilter<"Model"> | string
-  createdAt?: Prisma.DateTimeFilter<"Model"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Model"> | Date | string
-  glassDiscountHeightMm?: Prisma.IntFilter<"Model"> | number
-  glassDiscountWidthMm?: Prisma.IntFilter<"Model"> | number
-  costNotes?: Prisma.StringNullableFilter<"Model"> | string | null
-  lastCostReviewDate?: Prisma.DateTimeNullableFilter<"Model"> | Date | string | null
-  profitMarginPercentage?: Prisma.DecimalNullableFilter<"Model"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  profileSupplierId?: Prisma.StringNullableFilter<"Model"> | string | null
-  imageUrl?: Prisma.StringNullableFilter<"Model"> | string | null
-}
-
 export type ModelCreateWithoutQuoteItemsInput = {
   id?: string
   name: string
@@ -1044,6 +1194,7 @@ export type ModelCreateWithoutQuoteItemsInput = {
   profitMarginPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   imageUrl?: string | null
   profileSupplier?: Prisma.ProfileSupplierCreateNestedOneWithoutModelsInput
+  designTemplate?: Prisma.DesignTemplateCreateNestedOneWithoutModelsInput
   modelColors?: Prisma.ModelColorCreateNestedManyWithoutModelInput
   costBreakdown?: Prisma.ModelCostBreakdownCreateNestedManyWithoutModelInput
   priceHistory?: Prisma.ModelPriceHistoryCreateNestedManyWithoutModelInput
@@ -1071,6 +1222,7 @@ export type ModelUncheckedCreateWithoutQuoteItemsInput = {
   profitMarginPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   profileSupplierId?: string | null
   imageUrl?: string | null
+  designTemplateId?: string | null
   modelColors?: Prisma.ModelColorUncheckedCreateNestedManyWithoutModelInput
   costBreakdown?: Prisma.ModelCostBreakdownUncheckedCreateNestedManyWithoutModelInput
   priceHistory?: Prisma.ModelPriceHistoryUncheckedCreateNestedManyWithoutModelInput
@@ -1114,6 +1266,7 @@ export type ModelUpdateWithoutQuoteItemsInput = {
   profitMarginPercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileSupplier?: Prisma.ProfileSupplierUpdateOneWithoutModelsNestedInput
+  designTemplate?: Prisma.DesignTemplateUpdateOneWithoutModelsNestedInput
   modelColors?: Prisma.ModelColorUpdateManyWithoutModelNestedInput
   costBreakdown?: Prisma.ModelCostBreakdownUpdateManyWithoutModelNestedInput
   priceHistory?: Prisma.ModelPriceHistoryUpdateManyWithoutModelNestedInput
@@ -1141,6 +1294,7 @@ export type ModelUncheckedUpdateWithoutQuoteItemsInput = {
   profitMarginPercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   profileSupplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  designTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   modelColors?: Prisma.ModelColorUncheckedUpdateManyWithoutModelNestedInput
   costBreakdown?: Prisma.ModelCostBreakdownUncheckedUpdateManyWithoutModelNestedInput
   priceHistory?: Prisma.ModelPriceHistoryUncheckedUpdateManyWithoutModelNestedInput
@@ -1168,6 +1322,7 @@ export type ModelCreateWithoutCostBreakdownInput = {
   profitMarginPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   imageUrl?: string | null
   profileSupplier?: Prisma.ProfileSupplierCreateNestedOneWithoutModelsInput
+  designTemplate?: Prisma.DesignTemplateCreateNestedOneWithoutModelsInput
   modelColors?: Prisma.ModelColorCreateNestedManyWithoutModelInput
   priceHistory?: Prisma.ModelPriceHistoryCreateNestedManyWithoutModelInput
   quoteItems?: Prisma.QuoteItemCreateNestedManyWithoutModelInput
@@ -1195,6 +1350,7 @@ export type ModelUncheckedCreateWithoutCostBreakdownInput = {
   profitMarginPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   profileSupplierId?: string | null
   imageUrl?: string | null
+  designTemplateId?: string | null
   modelColors?: Prisma.ModelColorUncheckedCreateNestedManyWithoutModelInput
   priceHistory?: Prisma.ModelPriceHistoryUncheckedCreateNestedManyWithoutModelInput
   quoteItems?: Prisma.QuoteItemUncheckedCreateNestedManyWithoutModelInput
@@ -1238,6 +1394,7 @@ export type ModelUpdateWithoutCostBreakdownInput = {
   profitMarginPercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileSupplier?: Prisma.ProfileSupplierUpdateOneWithoutModelsNestedInput
+  designTemplate?: Prisma.DesignTemplateUpdateOneWithoutModelsNestedInput
   modelColors?: Prisma.ModelColorUpdateManyWithoutModelNestedInput
   priceHistory?: Prisma.ModelPriceHistoryUpdateManyWithoutModelNestedInput
   quoteItems?: Prisma.QuoteItemUpdateManyWithoutModelNestedInput
@@ -1265,6 +1422,7 @@ export type ModelUncheckedUpdateWithoutCostBreakdownInput = {
   profitMarginPercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   profileSupplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  designTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   modelColors?: Prisma.ModelColorUncheckedUpdateManyWithoutModelNestedInput
   priceHistory?: Prisma.ModelPriceHistoryUncheckedUpdateManyWithoutModelNestedInput
   quoteItems?: Prisma.QuoteItemUncheckedUpdateManyWithoutModelNestedInput
@@ -1292,6 +1450,7 @@ export type ModelCreateWithoutPriceHistoryInput = {
   profitMarginPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   imageUrl?: string | null
   profileSupplier?: Prisma.ProfileSupplierCreateNestedOneWithoutModelsInput
+  designTemplate?: Prisma.DesignTemplateCreateNestedOneWithoutModelsInput
   modelColors?: Prisma.ModelColorCreateNestedManyWithoutModelInput
   costBreakdown?: Prisma.ModelCostBreakdownCreateNestedManyWithoutModelInput
   quoteItems?: Prisma.QuoteItemCreateNestedManyWithoutModelInput
@@ -1319,6 +1478,7 @@ export type ModelUncheckedCreateWithoutPriceHistoryInput = {
   profitMarginPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   profileSupplierId?: string | null
   imageUrl?: string | null
+  designTemplateId?: string | null
   modelColors?: Prisma.ModelColorUncheckedCreateNestedManyWithoutModelInput
   costBreakdown?: Prisma.ModelCostBreakdownUncheckedCreateNestedManyWithoutModelInput
   quoteItems?: Prisma.QuoteItemUncheckedCreateNestedManyWithoutModelInput
@@ -1362,6 +1522,7 @@ export type ModelUpdateWithoutPriceHistoryInput = {
   profitMarginPercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileSupplier?: Prisma.ProfileSupplierUpdateOneWithoutModelsNestedInput
+  designTemplate?: Prisma.DesignTemplateUpdateOneWithoutModelsNestedInput
   modelColors?: Prisma.ModelColorUpdateManyWithoutModelNestedInput
   costBreakdown?: Prisma.ModelCostBreakdownUpdateManyWithoutModelNestedInput
   quoteItems?: Prisma.QuoteItemUpdateManyWithoutModelNestedInput
@@ -1389,6 +1550,7 @@ export type ModelUncheckedUpdateWithoutPriceHistoryInput = {
   profitMarginPercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   profileSupplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  designTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   modelColors?: Prisma.ModelColorUncheckedUpdateManyWithoutModelNestedInput
   costBreakdown?: Prisma.ModelCostBreakdownUncheckedUpdateManyWithoutModelNestedInput
   quoteItems?: Prisma.QuoteItemUncheckedUpdateManyWithoutModelNestedInput
@@ -1416,6 +1578,7 @@ export type ModelCreateWithoutModelColorsInput = {
   profitMarginPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   imageUrl?: string | null
   profileSupplier?: Prisma.ProfileSupplierCreateNestedOneWithoutModelsInput
+  designTemplate?: Prisma.DesignTemplateCreateNestedOneWithoutModelsInput
   costBreakdown?: Prisma.ModelCostBreakdownCreateNestedManyWithoutModelInput
   priceHistory?: Prisma.ModelPriceHistoryCreateNestedManyWithoutModelInput
   quoteItems?: Prisma.QuoteItemCreateNestedManyWithoutModelInput
@@ -1443,6 +1606,7 @@ export type ModelUncheckedCreateWithoutModelColorsInput = {
   profitMarginPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   profileSupplierId?: string | null
   imageUrl?: string | null
+  designTemplateId?: string | null
   costBreakdown?: Prisma.ModelCostBreakdownUncheckedCreateNestedManyWithoutModelInput
   priceHistory?: Prisma.ModelPriceHistoryUncheckedCreateNestedManyWithoutModelInput
   quoteItems?: Prisma.QuoteItemUncheckedCreateNestedManyWithoutModelInput
@@ -1486,6 +1650,7 @@ export type ModelUpdateWithoutModelColorsInput = {
   profitMarginPercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileSupplier?: Prisma.ProfileSupplierUpdateOneWithoutModelsNestedInput
+  designTemplate?: Prisma.DesignTemplateUpdateOneWithoutModelsNestedInput
   costBreakdown?: Prisma.ModelCostBreakdownUpdateManyWithoutModelNestedInput
   priceHistory?: Prisma.ModelPriceHistoryUpdateManyWithoutModelNestedInput
   quoteItems?: Prisma.QuoteItemUpdateManyWithoutModelNestedInput
@@ -1513,9 +1678,114 @@ export type ModelUncheckedUpdateWithoutModelColorsInput = {
   profitMarginPercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   profileSupplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  designTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   costBreakdown?: Prisma.ModelCostBreakdownUncheckedUpdateManyWithoutModelNestedInput
   priceHistory?: Prisma.ModelPriceHistoryUncheckedUpdateManyWithoutModelNestedInput
   quoteItems?: Prisma.QuoteItemUncheckedUpdateManyWithoutModelNestedInput
+}
+
+export type ModelCreateManyDesignTemplateInput = {
+  id?: string
+  name: string
+  status?: $Enums.ModelStatus
+  minWidthMm: number
+  maxWidthMm: number
+  minHeightMm: number
+  maxHeightMm: number
+  basePrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPerMmWidth: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPerMmHeight: runtime.Decimal | runtime.DecimalJsLike | number | string
+  accessoryPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  compatibleGlassTypeIds: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  glassDiscountHeightMm?: number
+  glassDiscountWidthMm?: number
+  costNotes?: string | null
+  lastCostReviewDate?: Date | string | null
+  profitMarginPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  profileSupplierId?: string | null
+  imageUrl?: string | null
+}
+
+export type ModelUpdateWithoutDesignTemplateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumModelStatusFieldUpdateOperationsInput | $Enums.ModelStatus
+  minWidthMm?: Prisma.IntFieldUpdateOperationsInput | number
+  maxWidthMm?: Prisma.IntFieldUpdateOperationsInput | number
+  minHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
+  maxHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
+  basePrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPerMmWidth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPerMmHeight?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accessoryPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  compatibleGlassTypeIds?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  glassDiscountHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
+  glassDiscountWidthMm?: Prisma.IntFieldUpdateOperationsInput | number
+  costNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastCostReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profitMarginPercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profileSupplier?: Prisma.ProfileSupplierUpdateOneWithoutModelsNestedInput
+  modelColors?: Prisma.ModelColorUpdateManyWithoutModelNestedInput
+  costBreakdown?: Prisma.ModelCostBreakdownUpdateManyWithoutModelNestedInput
+  priceHistory?: Prisma.ModelPriceHistoryUpdateManyWithoutModelNestedInput
+  quoteItems?: Prisma.QuoteItemUpdateManyWithoutModelNestedInput
+}
+
+export type ModelUncheckedUpdateWithoutDesignTemplateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumModelStatusFieldUpdateOperationsInput | $Enums.ModelStatus
+  minWidthMm?: Prisma.IntFieldUpdateOperationsInput | number
+  maxWidthMm?: Prisma.IntFieldUpdateOperationsInput | number
+  minHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
+  maxHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
+  basePrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPerMmWidth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPerMmHeight?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accessoryPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  compatibleGlassTypeIds?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  glassDiscountHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
+  glassDiscountWidthMm?: Prisma.IntFieldUpdateOperationsInput | number
+  costNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastCostReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profitMarginPercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  profileSupplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  modelColors?: Prisma.ModelColorUncheckedUpdateManyWithoutModelNestedInput
+  costBreakdown?: Prisma.ModelCostBreakdownUncheckedUpdateManyWithoutModelNestedInput
+  priceHistory?: Prisma.ModelPriceHistoryUncheckedUpdateManyWithoutModelNestedInput
+  quoteItems?: Prisma.QuoteItemUncheckedUpdateManyWithoutModelNestedInput
+}
+
+export type ModelUncheckedUpdateManyWithoutDesignTemplateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumModelStatusFieldUpdateOperationsInput | $Enums.ModelStatus
+  minWidthMm?: Prisma.IntFieldUpdateOperationsInput | number
+  maxWidthMm?: Prisma.IntFieldUpdateOperationsInput | number
+  minHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
+  maxHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
+  basePrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPerMmWidth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPerMmHeight?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accessoryPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  compatibleGlassTypeIds?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  glassDiscountHeightMm?: Prisma.IntFieldUpdateOperationsInput | number
+  glassDiscountWidthMm?: Prisma.IntFieldUpdateOperationsInput | number
+  costNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastCostReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profitMarginPercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  profileSupplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ModelCreateManyProfileSupplierInput = {
@@ -1539,6 +1809,7 @@ export type ModelCreateManyProfileSupplierInput = {
   lastCostReviewDate?: Date | string | null
   profitMarginPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   imageUrl?: string | null
+  designTemplateId?: string | null
 }
 
 export type ModelUpdateWithoutProfileSupplierInput = {
@@ -1562,6 +1833,7 @@ export type ModelUpdateWithoutProfileSupplierInput = {
   lastCostReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profitMarginPercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  designTemplate?: Prisma.DesignTemplateUpdateOneWithoutModelsNestedInput
   modelColors?: Prisma.ModelColorUpdateManyWithoutModelNestedInput
   costBreakdown?: Prisma.ModelCostBreakdownUpdateManyWithoutModelNestedInput
   priceHistory?: Prisma.ModelPriceHistoryUpdateManyWithoutModelNestedInput
@@ -1589,6 +1861,7 @@ export type ModelUncheckedUpdateWithoutProfileSupplierInput = {
   lastCostReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profitMarginPercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  designTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   modelColors?: Prisma.ModelColorUncheckedUpdateManyWithoutModelNestedInput
   costBreakdown?: Prisma.ModelCostBreakdownUncheckedUpdateManyWithoutModelNestedInput
   priceHistory?: Prisma.ModelPriceHistoryUncheckedUpdateManyWithoutModelNestedInput
@@ -1616,6 +1889,7 @@ export type ModelUncheckedUpdateManyWithoutProfileSupplierInput = {
   lastCostReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profitMarginPercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  designTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -1698,7 +1972,9 @@ export type ModelSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   profitMarginPercentage?: boolean
   profileSupplierId?: boolean
   imageUrl?: boolean
+  designTemplateId?: boolean
   profileSupplier?: boolean | Prisma.Model$profileSupplierArgs<ExtArgs>
+  designTemplate?: boolean | Prisma.Model$designTemplateArgs<ExtArgs>
   modelColors?: boolean | Prisma.Model$modelColorsArgs<ExtArgs>
   costBreakdown?: boolean | Prisma.Model$costBreakdownArgs<ExtArgs>
   priceHistory?: boolean | Prisma.Model$priceHistoryArgs<ExtArgs>
@@ -1728,7 +2004,9 @@ export type ModelSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   profitMarginPercentage?: boolean
   profileSupplierId?: boolean
   imageUrl?: boolean
+  designTemplateId?: boolean
   profileSupplier?: boolean | Prisma.Model$profileSupplierArgs<ExtArgs>
+  designTemplate?: boolean | Prisma.Model$designTemplateArgs<ExtArgs>
 }, ExtArgs["result"]["model"]>
 
 export type ModelSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1753,7 +2031,9 @@ export type ModelSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   profitMarginPercentage?: boolean
   profileSupplierId?: boolean
   imageUrl?: boolean
+  designTemplateId?: boolean
   profileSupplier?: boolean | Prisma.Model$profileSupplierArgs<ExtArgs>
+  designTemplate?: boolean | Prisma.Model$designTemplateArgs<ExtArgs>
 }, ExtArgs["result"]["model"]>
 
 export type ModelSelectScalar = {
@@ -1778,11 +2058,13 @@ export type ModelSelectScalar = {
   profitMarginPercentage?: boolean
   profileSupplierId?: boolean
   imageUrl?: boolean
+  designTemplateId?: boolean
 }
 
-export type ModelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "status" | "minWidthMm" | "maxWidthMm" | "minHeightMm" | "maxHeightMm" | "basePrice" | "costPerMmWidth" | "costPerMmHeight" | "accessoryPrice" | "compatibleGlassTypeIds" | "createdAt" | "updatedAt" | "glassDiscountHeightMm" | "glassDiscountWidthMm" | "costNotes" | "lastCostReviewDate" | "profitMarginPercentage" | "profileSupplierId" | "imageUrl", ExtArgs["result"]["model"]>
+export type ModelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "status" | "minWidthMm" | "maxWidthMm" | "minHeightMm" | "maxHeightMm" | "basePrice" | "costPerMmWidth" | "costPerMmHeight" | "accessoryPrice" | "compatibleGlassTypeIds" | "createdAt" | "updatedAt" | "glassDiscountHeightMm" | "glassDiscountWidthMm" | "costNotes" | "lastCostReviewDate" | "profitMarginPercentage" | "profileSupplierId" | "imageUrl" | "designTemplateId", ExtArgs["result"]["model"]>
 export type ModelInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   profileSupplier?: boolean | Prisma.Model$profileSupplierArgs<ExtArgs>
+  designTemplate?: boolean | Prisma.Model$designTemplateArgs<ExtArgs>
   modelColors?: boolean | Prisma.Model$modelColorsArgs<ExtArgs>
   costBreakdown?: boolean | Prisma.Model$costBreakdownArgs<ExtArgs>
   priceHistory?: boolean | Prisma.Model$priceHistoryArgs<ExtArgs>
@@ -1791,15 +2073,18 @@ export type ModelInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
 }
 export type ModelIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   profileSupplier?: boolean | Prisma.Model$profileSupplierArgs<ExtArgs>
+  designTemplate?: boolean | Prisma.Model$designTemplateArgs<ExtArgs>
 }
 export type ModelIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   profileSupplier?: boolean | Prisma.Model$profileSupplierArgs<ExtArgs>
+  designTemplate?: boolean | Prisma.Model$designTemplateArgs<ExtArgs>
 }
 
 export type $ModelPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Model"
   objects: {
     profileSupplier: Prisma.$ProfileSupplierPayload<ExtArgs> | null
+    designTemplate: Prisma.$DesignTemplatePayload<ExtArgs> | null
     modelColors: Prisma.$ModelColorPayload<ExtArgs>[]
     costBreakdown: Prisma.$ModelCostBreakdownPayload<ExtArgs>[]
     priceHistory: Prisma.$ModelPriceHistoryPayload<ExtArgs>[]
@@ -1844,6 +2129,7 @@ export type $ModelPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     profitMarginPercentage: runtime.Decimal | null
     profileSupplierId: string | null
     imageUrl: string | null
+    designTemplateId: string | null
   }, ExtArgs["result"]["model"]>
   composites: {}
 }
@@ -2239,6 +2525,7 @@ readonly fields: ModelFieldRefs;
 export interface Prisma__ModelClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   profileSupplier<T extends Prisma.Model$profileSupplierArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Model$profileSupplierArgs<ExtArgs>>): Prisma.Prisma__ProfileSupplierClient<runtime.Types.Result.GetResult<Prisma.$ProfileSupplierPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  designTemplate<T extends Prisma.Model$designTemplateArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Model$designTemplateArgs<ExtArgs>>): Prisma.Prisma__DesignTemplateClient<runtime.Types.Result.GetResult<Prisma.$DesignTemplatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   modelColors<T extends Prisma.Model$modelColorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Model$modelColorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ModelColorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   costBreakdown<T extends Prisma.Model$costBreakdownArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Model$costBreakdownArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ModelCostBreakdownPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   priceHistory<T extends Prisma.Model$priceHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Model$priceHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ModelPriceHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2293,6 +2580,7 @@ export interface ModelFieldRefs {
   readonly profitMarginPercentage: Prisma.FieldRef<"Model", 'Decimal'>
   readonly profileSupplierId: Prisma.FieldRef<"Model", 'String'>
   readonly imageUrl: Prisma.FieldRef<"Model", 'String'>
+  readonly designTemplateId: Prisma.FieldRef<"Model", 'String'>
 }
     
 
@@ -2703,6 +2991,25 @@ export type Model$profileSupplierArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   include?: Prisma.ProfileSupplierInclude<ExtArgs> | null
   where?: Prisma.ProfileSupplierWhereInput
+}
+
+/**
+ * Model.designTemplate
+ */
+export type Model$designTemplateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DesignTemplate
+   */
+  select?: Prisma.DesignTemplateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DesignTemplate
+   */
+  omit?: Prisma.DesignTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DesignTemplateInclude<ExtArgs> | null
+  where?: Prisma.DesignTemplateWhereInput
 }
 
 /**

@@ -3,6 +3,7 @@
 import { useFormContext, useWatch } from 'react-hook-form'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { formatDimensions } from '@/lib/format'
 import type { WizardFormValues } from './wizard-form-schema'
 
 function RunningSummary() {
@@ -25,9 +26,7 @@ function RunningSummary() {
         {widthMm && heightMm && (
           <div className="space-y-1">
             <p className="text-muted-foreground text-xs">Dimensiones</p>
-            <p className="font-medium">
-              {widthMm} × {heightMm} mm
-            </p>
+            <p className="font-medium font-mono text-sm">{formatDimensions(widthMm, heightMm)}</p>
           </div>
         )}
 

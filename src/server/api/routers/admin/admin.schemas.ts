@@ -8,6 +8,11 @@ export const modelUpsertInput = z.object({
     .min(1, 'Debe seleccionar al menos un tipo de vidrio compatible'),
   costPerMmHeight: z.number().min(0, 'Costo por mm de alto debe ser mayor o igual a 0'),
   costPerMmWidth: z.number().min(0, 'Costo por mm de ancho debe ser mayor o igual a 0'),
+  designTemplateId: z
+    .string()
+    .cuid('ID de plantilla de diseño debe ser válido')
+    .optional()
+    .nullable(),
   id: z.cuid().optional(),
   maxHeightMm: z.number().int().min(1, 'Alto máximo debe ser mayor a 0 mm'),
   maxWidthMm: z.number().int().min(1, 'Ancho máximo debe ser mayor a 0 mm'),

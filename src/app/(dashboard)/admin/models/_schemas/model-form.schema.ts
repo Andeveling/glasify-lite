@@ -13,6 +13,7 @@ export const modelFormSchema = z.object({
   costNotes: z.string().optional().nullable(),
   costPerMmHeight: z.number().min(0).optional().nullable(),
   costPerMmWidth: z.number().min(0).optional().nullable(),
+  designTemplateId: z.string().optional().nullable(),
   glassDiscountHeightMm: z.number().int().min(0).default(0),
   glassDiscountWidthMm: z.number().int().min(0).default(0),
   imageUrl: z

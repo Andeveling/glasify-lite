@@ -146,6 +146,25 @@ model TenantConfig {
   @@index([currency])
 }
 
+model DesignTemplate {
+  id              String   @id @default(cuid())
+  /// Nombre legible: "Corredera 2 hojas", "Fija + Corredera"
+  name            String   @unique
+  /// Patrón de paneles: X=móvil, O=fijo (ej: "XX", "XO", "OX", "XXO")
+  pattern         String
+  /// Configuración visual del frame: JSON string { thickness, profileStyle }
+  frameConfig     String
+  /// Mostrar flechas de apertura en paneles X
+  showArrows      Boolean  @default(true)
+  /// Mostrar handles en paneles X
+  showHandles     Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  models          Model[]
+
+  @@index([name])
+}
+
 model ProfileSupplier {
   id           String       @id @default(cuid())
   /// Supplier name (Rehau, Deceuninck, Azembla, etc.)
@@ -204,7 +223,9 @@ model Model {
   profitMarginPercentage Decimal?
   profileSupplierId      String?
   imageUrl               String?              @default("")
+  designTemplateId       String?
   profileSupplier        ProfileSupplier?     @relation(fields: [profileSupplierId], references: [id])
+  designTemplate         DesignTemplate?      @relation(fields: [designTemplateId], references: [id])
   modelColors            ModelColor[]
   costBreakdown          ModelCostBreakdown[]
   priceHistory           ModelPriceHistory[]
@@ -247,6 +268,8 @@ model GlassType {
   series            String?
   /// Price per square meter for this glass type
   pricePerSqm       Decimal
+  /// Hex color for visualization (#RRGGBB). Default: "#87CEEB" (azul claro)
+  colorHex          String     @default("#87CEEB")
   characteristics   GlassTypeCharacteristic[]
   solutions         GlassTypeSolution[]
   quoteItems        QuoteItem[]

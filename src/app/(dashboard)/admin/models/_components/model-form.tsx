@@ -28,7 +28,7 @@ type ModelFormProps = {
 }
 
 export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
-  const { suppliers, glassTypes } = useModelCatalogData()
+  const { suppliers, glassTypes, templates } = useModelCatalogData()
   const { createModel, updateModel, isCreating, isUpdating } = useModelMutations()
 
   const form = useForm<ModelFormValues>({
@@ -59,7 +59,7 @@ export function ModelForm({ mode, initialData, modelId }: ModelFormProps) {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Left Column - Basic Info (spans 2 columns on large screens) */}
           <div className="space-y-6 lg:col-span-2">
-            <BasicInfoSection suppliers={suppliers} />
+            <BasicInfoSection suppliers={suppliers} templates={templates} />
             <ImageGallerySectionComponent />
             <DimensionsSection />
             <PricingSection />

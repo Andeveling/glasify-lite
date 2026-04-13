@@ -4,11 +4,14 @@ import { useFormContext } from 'react-hook-form'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/trpc/react'
+import { formatCurrency } from '@/lib/format'
+import { useTenantConfig } from '@/app/_hooks/use-tenant-config'
 import type { WizardFormValues } from '../wizard-form-schema'
 
 function ServicesStep() {
   const form = useFormContext<WizardFormValues>()
   const selectedServiceIds = form.watch('serviceIds')
+  const { formatContext } = useTenantConfig()
 
   const { data: services, isLoading } = api.catalog['list-services'].useQuery({})
 
@@ -64,7 +67,7 @@ function ServicesStep() {
                   )}
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-medium">${service.rate.toLocaleString()}</p>
+                  <p className="text-sm font-medium">{formatCurrency(service.rate, { context: formatContext })}</p>
                   <p className="text-muted-foreground text-xs">por {service.unit}</p>
                 </div>
               </CardContent>

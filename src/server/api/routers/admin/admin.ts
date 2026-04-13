@@ -1,5 +1,6 @@
 import { clientsRouter } from '@/server/api/routers/admin/clients'
 import { colorsRouter } from '@/server/api/routers/admin/colors'
+import { designTemplateRouter } from '@/server/api/routers/admin/design-template'
 import { galleryRouter } from '@/server/api/routers/admin/gallery'
 import { glassSolutionRouter } from '@/server/api/routers/admin/glass-solution'
 import { glassSupplierRouter } from '@/server/api/routers/admin/glass-supplier'
@@ -13,6 +14,7 @@ import { createTRPCRouter } from '@/server/api/trpc'
 export const adminRouter = createTRPCRouter({
   clients: clientsRouter,
   colors: colorsRouter,
+  'design-template': designTemplateRouter,
   gallery: galleryRouter,
   'glass-solution': glassSolutionRouter,
   'glass-supplier': glassSupplierRouter,

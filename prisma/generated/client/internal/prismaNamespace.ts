@@ -391,6 +391,7 @@ export const ModelName = {
   VerificationToken: 'VerificationToken',
   Verification: 'Verification',
   TenantConfig: 'TenantConfig',
+  DesignTemplate: 'DesignTemplate',
   ProfileSupplier: 'ProfileSupplier',
   Manufacturer: 'Manufacturer',
   Model: 'Model',
@@ -425,7 +426,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "account" | "session" | "user" | "client" | "verificationToken" | "verification" | "tenantConfig" | "profileSupplier" | "manufacturer" | "model" | "glassType" | "service" | "quote" | "quoteItem" | "quoteItemService" | "adjustment" | "modelCostBreakdown" | "modelPriceHistory" | "glassSolution" | "glassTypeSolution" | "glassSupplier" | "glassCharacteristic" | "glassTypeCharacteristic" | "color" | "modelColor" | "projectAddress"
+    modelProps: "account" | "session" | "user" | "client" | "verificationToken" | "verification" | "tenantConfig" | "designTemplate" | "profileSupplier" | "manufacturer" | "model" | "glassType" | "service" | "quote" | "quoteItem" | "quoteItemService" | "adjustment" | "modelCostBreakdown" | "modelPriceHistory" | "glassSolution" | "glassTypeSolution" | "glassSupplier" | "glassCharacteristic" | "glassTypeCharacteristic" | "color" | "modelColor" | "projectAddress"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -944,6 +945,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.TenantConfigCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.TenantConfigCountAggregateOutputType> | number
+        }
+      }
+    }
+    DesignTemplate: {
+      payload: Prisma.$DesignTemplatePayload<ExtArgs>
+      fields: Prisma.DesignTemplateFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DesignTemplateFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignTemplatePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DesignTemplateFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignTemplatePayload>
+        }
+        findFirst: {
+          args: Prisma.DesignTemplateFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignTemplatePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DesignTemplateFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignTemplatePayload>
+        }
+        findMany: {
+          args: Prisma.DesignTemplateFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignTemplatePayload>[]
+        }
+        create: {
+          args: Prisma.DesignTemplateCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignTemplatePayload>
+        }
+        createMany: {
+          args: Prisma.DesignTemplateCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DesignTemplateCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignTemplatePayload>[]
+        }
+        delete: {
+          args: Prisma.DesignTemplateDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignTemplatePayload>
+        }
+        update: {
+          args: Prisma.DesignTemplateUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignTemplatePayload>
+        }
+        deleteMany: {
+          args: Prisma.DesignTemplateDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DesignTemplateUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DesignTemplateUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignTemplatePayload>[]
+        }
+        upsert: {
+          args: Prisma.DesignTemplateUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignTemplatePayload>
+        }
+        aggregate: {
+          args: Prisma.DesignTemplateAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDesignTemplate>
+        }
+        groupBy: {
+          args: Prisma.DesignTemplateGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DesignTemplateGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DesignTemplateCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DesignTemplateCountAggregateOutputType> | number
         }
       }
     }
@@ -2505,6 +2580,20 @@ export const TenantConfigScalarFieldEnum = {
 export type TenantConfigScalarFieldEnum = (typeof TenantConfigScalarFieldEnum)[keyof typeof TenantConfigScalarFieldEnum]
 
 
+export const DesignTemplateScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  pattern: 'pattern',
+  frameConfig: 'frameConfig',
+  showArrows: 'showArrows',
+  showHandles: 'showHandles',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DesignTemplateScalarFieldEnum = (typeof DesignTemplateScalarFieldEnum)[keyof typeof DesignTemplateScalarFieldEnum]
+
+
 export const ProfileSupplierScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -2551,7 +2640,8 @@ export const ModelScalarFieldEnum = {
   lastCostReviewDate: 'lastCostReviewDate',
   profitMarginPercentage: 'profitMarginPercentage',
   profileSupplierId: 'profileSupplierId',
-  imageUrl: 'imageUrl'
+  imageUrl: 'imageUrl',
+  designTemplateId: 'designTemplateId'
 } as const
 
 export type ModelScalarFieldEnum = (typeof ModelScalarFieldEnum)[keyof typeof ModelScalarFieldEnum]
@@ -2574,7 +2664,8 @@ export const GlassTypeScalarFieldEnum = {
   manufacturer: 'manufacturer',
   seedVersion: 'seedVersion',
   series: 'series',
-  pricePerSqm: 'pricePerSqm'
+  pricePerSqm: 'pricePerSqm',
+  colorHex: 'colorHex'
 } as const
 
 export type GlassTypeScalarFieldEnum = (typeof GlassTypeScalarFieldEnum)[keyof typeof GlassTypeScalarFieldEnum]
@@ -3065,6 +3156,7 @@ export type GlobalOmitConfig = {
   verificationToken?: Prisma.VerificationTokenOmit
   verification?: Prisma.VerificationOmit
   tenantConfig?: Prisma.TenantConfigOmit
+  designTemplate?: Prisma.DesignTemplateOmit
   profileSupplier?: Prisma.ProfileSupplierOmit
   manufacturer?: Prisma.ManufacturerOmit
   model?: Prisma.ModelOmit

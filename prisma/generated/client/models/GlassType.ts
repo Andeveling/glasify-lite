@@ -60,6 +60,7 @@ export type GlassTypeMinAggregateOutputType = {
   seedVersion: string | null
   series: string | null
   pricePerSqm: runtime.Decimal | null
+  colorHex: string | null
 }
 
 export type GlassTypeMaxAggregateOutputType = {
@@ -80,6 +81,7 @@ export type GlassTypeMaxAggregateOutputType = {
   seedVersion: string | null
   series: string | null
   pricePerSqm: runtime.Decimal | null
+  colorHex: string | null
 }
 
 export type GlassTypeCountAggregateOutputType = {
@@ -100,6 +102,7 @@ export type GlassTypeCountAggregateOutputType = {
   seedVersion: number
   series: number
   pricePerSqm: number
+  colorHex: number
   _all: number
 }
 
@@ -138,6 +141,7 @@ export type GlassTypeMinAggregateInputType = {
   seedVersion?: true
   series?: true
   pricePerSqm?: true
+  colorHex?: true
 }
 
 export type GlassTypeMaxAggregateInputType = {
@@ -158,6 +162,7 @@ export type GlassTypeMaxAggregateInputType = {
   seedVersion?: true
   series?: true
   pricePerSqm?: true
+  colorHex?: true
 }
 
 export type GlassTypeCountAggregateInputType = {
@@ -178,6 +183,7 @@ export type GlassTypeCountAggregateInputType = {
   seedVersion?: true
   series?: true
   pricePerSqm?: true
+  colorHex?: true
   _all?: true
 }
 
@@ -285,6 +291,7 @@ export type GlassTypeGroupByOutputType = {
   seedVersion: string | null
   series: string | null
   pricePerSqm: runtime.Decimal
+  colorHex: string
   _count: GlassTypeCountAggregateOutputType | null
   _avg: GlassTypeAvgAggregateOutputType | null
   _sum: GlassTypeSumAggregateOutputType | null
@@ -328,6 +335,7 @@ export type GlassTypeWhereInput = {
   seedVersion?: Prisma.StringNullableFilter<"GlassType"> | string | null
   series?: Prisma.StringNullableFilter<"GlassType"> | string | null
   pricePerSqm?: Prisma.DecimalFilter<"GlassType"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: Prisma.StringFilter<"GlassType"> | string
   characteristics?: Prisma.GlassTypeCharacteristicListRelationFilter
   solutions?: Prisma.GlassTypeSolutionListRelationFilter
   quoteItems?: Prisma.QuoteItemListRelationFilter
@@ -351,6 +359,7 @@ export type GlassTypeOrderByWithRelationInput = {
   seedVersion?: Prisma.SortOrderInput | Prisma.SortOrder
   series?: Prisma.SortOrderInput | Prisma.SortOrder
   pricePerSqm?: Prisma.SortOrder
+  colorHex?: Prisma.SortOrder
   characteristics?: Prisma.GlassTypeCharacteristicOrderByRelationAggregateInput
   solutions?: Prisma.GlassTypeSolutionOrderByRelationAggregateInput
   quoteItems?: Prisma.QuoteItemOrderByRelationAggregateInput
@@ -377,6 +386,7 @@ export type GlassTypeWhereUniqueInput = Prisma.AtLeast<{
   seedVersion?: Prisma.StringNullableFilter<"GlassType"> | string | null
   series?: Prisma.StringNullableFilter<"GlassType"> | string | null
   pricePerSqm?: Prisma.DecimalFilter<"GlassType"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: Prisma.StringFilter<"GlassType"> | string
   characteristics?: Prisma.GlassTypeCharacteristicListRelationFilter
   solutions?: Prisma.GlassTypeSolutionListRelationFilter
   quoteItems?: Prisma.QuoteItemListRelationFilter
@@ -400,6 +410,7 @@ export type GlassTypeOrderByWithAggregationInput = {
   seedVersion?: Prisma.SortOrderInput | Prisma.SortOrder
   series?: Prisma.SortOrderInput | Prisma.SortOrder
   pricePerSqm?: Prisma.SortOrder
+  colorHex?: Prisma.SortOrder
   _count?: Prisma.GlassTypeCountOrderByAggregateInput
   _avg?: Prisma.GlassTypeAvgOrderByAggregateInput
   _max?: Prisma.GlassTypeMaxOrderByAggregateInput
@@ -428,6 +439,7 @@ export type GlassTypeScalarWhereWithAggregatesInput = {
   seedVersion?: Prisma.StringNullableWithAggregatesFilter<"GlassType"> | string | null
   series?: Prisma.StringNullableWithAggregatesFilter<"GlassType"> | string | null
   pricePerSqm?: Prisma.DecimalWithAggregatesFilter<"GlassType"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: Prisma.StringWithAggregatesFilter<"GlassType"> | string
 }
 
 export type GlassTypeCreateInput = {
@@ -448,6 +460,7 @@ export type GlassTypeCreateInput = {
   seedVersion?: string | null
   series?: string | null
   pricePerSqm: runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: string
   characteristics?: Prisma.GlassTypeCharacteristicCreateNestedManyWithoutGlassTypeInput
   solutions?: Prisma.GlassTypeSolutionCreateNestedManyWithoutGlassTypeInput
   quoteItems?: Prisma.QuoteItemCreateNestedManyWithoutGlassTypeInput
@@ -471,6 +484,7 @@ export type GlassTypeUncheckedCreateInput = {
   seedVersion?: string | null
   series?: string | null
   pricePerSqm: runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: string
   characteristics?: Prisma.GlassTypeCharacteristicUncheckedCreateNestedManyWithoutGlassTypeInput
   solutions?: Prisma.GlassTypeSolutionUncheckedCreateNestedManyWithoutGlassTypeInput
   quoteItems?: Prisma.QuoteItemUncheckedCreateNestedManyWithoutGlassTypeInput
@@ -494,6 +508,7 @@ export type GlassTypeUpdateInput = {
   seedVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   series?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pricePerSqm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: Prisma.StringFieldUpdateOperationsInput | string
   characteristics?: Prisma.GlassTypeCharacteristicUpdateManyWithoutGlassTypeNestedInput
   solutions?: Prisma.GlassTypeSolutionUpdateManyWithoutGlassTypeNestedInput
   quoteItems?: Prisma.QuoteItemUpdateManyWithoutGlassTypeNestedInput
@@ -517,6 +532,7 @@ export type GlassTypeUncheckedUpdateInput = {
   seedVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   series?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pricePerSqm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: Prisma.StringFieldUpdateOperationsInput | string
   characteristics?: Prisma.GlassTypeCharacteristicUncheckedUpdateManyWithoutGlassTypeNestedInput
   solutions?: Prisma.GlassTypeSolutionUncheckedUpdateManyWithoutGlassTypeNestedInput
   quoteItems?: Prisma.QuoteItemUncheckedUpdateManyWithoutGlassTypeNestedInput
@@ -540,6 +556,7 @@ export type GlassTypeCreateManyInput = {
   seedVersion?: string | null
   series?: string | null
   pricePerSqm: runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: string
 }
 
 export type GlassTypeUpdateManyMutationInput = {
@@ -560,6 +577,7 @@ export type GlassTypeUpdateManyMutationInput = {
   seedVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   series?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pricePerSqm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type GlassTypeUncheckedUpdateManyInput = {
@@ -580,6 +598,7 @@ export type GlassTypeUncheckedUpdateManyInput = {
   seedVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   series?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pricePerSqm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type GlassTypeCountOrderByAggregateInput = {
@@ -600,6 +619,7 @@ export type GlassTypeCountOrderByAggregateInput = {
   seedVersion?: Prisma.SortOrder
   series?: Prisma.SortOrder
   pricePerSqm?: Prisma.SortOrder
+  colorHex?: Prisma.SortOrder
 }
 
 export type GlassTypeAvgOrderByAggregateInput = {
@@ -628,6 +648,7 @@ export type GlassTypeMaxOrderByAggregateInput = {
   seedVersion?: Prisma.SortOrder
   series?: Prisma.SortOrder
   pricePerSqm?: Prisma.SortOrder
+  colorHex?: Prisma.SortOrder
 }
 
 export type GlassTypeMinOrderByAggregateInput = {
@@ -648,6 +669,7 @@ export type GlassTypeMinOrderByAggregateInput = {
   seedVersion?: Prisma.SortOrder
   series?: Prisma.SortOrder
   pricePerSqm?: Prisma.SortOrder
+  colorHex?: Prisma.SortOrder
 }
 
 export type GlassTypeSumOrderByAggregateInput = {
@@ -723,6 +745,7 @@ export type GlassTypeCreateWithoutQuoteItemsInput = {
   seedVersion?: string | null
   series?: string | null
   pricePerSqm: runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: string
   characteristics?: Prisma.GlassTypeCharacteristicCreateNestedManyWithoutGlassTypeInput
   solutions?: Prisma.GlassTypeSolutionCreateNestedManyWithoutGlassTypeInput
 }
@@ -745,6 +768,7 @@ export type GlassTypeUncheckedCreateWithoutQuoteItemsInput = {
   seedVersion?: string | null
   series?: string | null
   pricePerSqm: runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: string
   characteristics?: Prisma.GlassTypeCharacteristicUncheckedCreateNestedManyWithoutGlassTypeInput
   solutions?: Prisma.GlassTypeSolutionUncheckedCreateNestedManyWithoutGlassTypeInput
 }
@@ -783,6 +807,7 @@ export type GlassTypeUpdateWithoutQuoteItemsInput = {
   seedVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   series?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pricePerSqm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: Prisma.StringFieldUpdateOperationsInput | string
   characteristics?: Prisma.GlassTypeCharacteristicUpdateManyWithoutGlassTypeNestedInput
   solutions?: Prisma.GlassTypeSolutionUpdateManyWithoutGlassTypeNestedInput
 }
@@ -805,6 +830,7 @@ export type GlassTypeUncheckedUpdateWithoutQuoteItemsInput = {
   seedVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   series?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pricePerSqm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: Prisma.StringFieldUpdateOperationsInput | string
   characteristics?: Prisma.GlassTypeCharacteristicUncheckedUpdateManyWithoutGlassTypeNestedInput
   solutions?: Prisma.GlassTypeSolutionUncheckedUpdateManyWithoutGlassTypeNestedInput
 }
@@ -827,6 +853,7 @@ export type GlassTypeCreateWithoutSolutionsInput = {
   seedVersion?: string | null
   series?: string | null
   pricePerSqm: runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: string
   characteristics?: Prisma.GlassTypeCharacteristicCreateNestedManyWithoutGlassTypeInput
   quoteItems?: Prisma.QuoteItemCreateNestedManyWithoutGlassTypeInput
 }
@@ -849,6 +876,7 @@ export type GlassTypeUncheckedCreateWithoutSolutionsInput = {
   seedVersion?: string | null
   series?: string | null
   pricePerSqm: runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: string
   characteristics?: Prisma.GlassTypeCharacteristicUncheckedCreateNestedManyWithoutGlassTypeInput
   quoteItems?: Prisma.QuoteItemUncheckedCreateNestedManyWithoutGlassTypeInput
 }
@@ -887,6 +915,7 @@ export type GlassTypeUpdateWithoutSolutionsInput = {
   seedVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   series?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pricePerSqm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: Prisma.StringFieldUpdateOperationsInput | string
   characteristics?: Prisma.GlassTypeCharacteristicUpdateManyWithoutGlassTypeNestedInput
   quoteItems?: Prisma.QuoteItemUpdateManyWithoutGlassTypeNestedInput
 }
@@ -909,6 +938,7 @@ export type GlassTypeUncheckedUpdateWithoutSolutionsInput = {
   seedVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   series?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pricePerSqm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: Prisma.StringFieldUpdateOperationsInput | string
   characteristics?: Prisma.GlassTypeCharacteristicUncheckedUpdateManyWithoutGlassTypeNestedInput
   quoteItems?: Prisma.QuoteItemUncheckedUpdateManyWithoutGlassTypeNestedInput
 }
@@ -931,6 +961,7 @@ export type GlassTypeCreateWithoutCharacteristicsInput = {
   seedVersion?: string | null
   series?: string | null
   pricePerSqm: runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: string
   solutions?: Prisma.GlassTypeSolutionCreateNestedManyWithoutGlassTypeInput
   quoteItems?: Prisma.QuoteItemCreateNestedManyWithoutGlassTypeInput
 }
@@ -953,6 +984,7 @@ export type GlassTypeUncheckedCreateWithoutCharacteristicsInput = {
   seedVersion?: string | null
   series?: string | null
   pricePerSqm: runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: string
   solutions?: Prisma.GlassTypeSolutionUncheckedCreateNestedManyWithoutGlassTypeInput
   quoteItems?: Prisma.QuoteItemUncheckedCreateNestedManyWithoutGlassTypeInput
 }
@@ -991,6 +1023,7 @@ export type GlassTypeUpdateWithoutCharacteristicsInput = {
   seedVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   series?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pricePerSqm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: Prisma.StringFieldUpdateOperationsInput | string
   solutions?: Prisma.GlassTypeSolutionUpdateManyWithoutGlassTypeNestedInput
   quoteItems?: Prisma.QuoteItemUpdateManyWithoutGlassTypeNestedInput
 }
@@ -1013,6 +1046,7 @@ export type GlassTypeUncheckedUpdateWithoutCharacteristicsInput = {
   seedVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   series?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pricePerSqm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  colorHex?: Prisma.StringFieldUpdateOperationsInput | string
   solutions?: Prisma.GlassTypeSolutionUncheckedUpdateManyWithoutGlassTypeNestedInput
   quoteItems?: Prisma.QuoteItemUncheckedUpdateManyWithoutGlassTypeNestedInput
 }
@@ -1084,6 +1118,7 @@ export type GlassTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   seedVersion?: boolean
   series?: boolean
   pricePerSqm?: boolean
+  colorHex?: boolean
   characteristics?: boolean | Prisma.GlassType$characteristicsArgs<ExtArgs>
   solutions?: boolean | Prisma.GlassType$solutionsArgs<ExtArgs>
   quoteItems?: boolean | Prisma.GlassType$quoteItemsArgs<ExtArgs>
@@ -1108,6 +1143,7 @@ export type GlassTypeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   seedVersion?: boolean
   series?: boolean
   pricePerSqm?: boolean
+  colorHex?: boolean
 }, ExtArgs["result"]["glassType"]>
 
 export type GlassTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1128,6 +1164,7 @@ export type GlassTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   seedVersion?: boolean
   series?: boolean
   pricePerSqm?: boolean
+  colorHex?: boolean
 }, ExtArgs["result"]["glassType"]>
 
 export type GlassTypeSelectScalar = {
@@ -1148,9 +1185,10 @@ export type GlassTypeSelectScalar = {
   seedVersion?: boolean
   series?: boolean
   pricePerSqm?: boolean
+  colorHex?: boolean
 }
 
-export type GlassTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "thicknessMm" | "createdAt" | "updatedAt" | "uValue" | "description" | "isActive" | "lastReviewDate" | "lightTransmission" | "solarFactor" | "code" | "isSeeded" | "manufacturer" | "seedVersion" | "series" | "pricePerSqm", ExtArgs["result"]["glassType"]>
+export type GlassTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "thicknessMm" | "createdAt" | "updatedAt" | "uValue" | "description" | "isActive" | "lastReviewDate" | "lightTransmission" | "solarFactor" | "code" | "isSeeded" | "manufacturer" | "seedVersion" | "series" | "pricePerSqm" | "colorHex", ExtArgs["result"]["glassType"]>
 export type GlassTypeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   characteristics?: boolean | Prisma.GlassType$characteristicsArgs<ExtArgs>
   solutions?: boolean | Prisma.GlassType$solutionsArgs<ExtArgs>
@@ -1221,6 +1259,10 @@ export type $GlassTypePayload<ExtArgs extends runtime.Types.Extensions.InternalA
      * Price per square meter for this glass type
      */
     pricePerSqm: runtime.Decimal
+    /**
+     * Hex color for visualization (#RRGGBB). Default: "#87CEEB" (azul claro)
+     */
+    colorHex: string
   }, ExtArgs["result"]["glassType"]>
   composites: {}
 }
@@ -1664,6 +1706,7 @@ export interface GlassTypeFieldRefs {
   readonly seedVersion: Prisma.FieldRef<"GlassType", 'String'>
   readonly series: Prisma.FieldRef<"GlassType", 'String'>
   readonly pricePerSqm: Prisma.FieldRef<"GlassType", 'Decimal'>
+  readonly colorHex: Prisma.FieldRef<"GlassType", 'String'>
 }
     
 

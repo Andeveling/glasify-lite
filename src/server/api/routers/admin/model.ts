@@ -651,6 +651,7 @@ export const modelRouter = createTRPCRouter({
             compatibleGlassTypeIds: stringifyCompatibleGlassTypeIds(input.compatibleGlassTypeIds),
             costPerMmHeight: input.costPerMmHeight,
             costPerMmWidth: input.costPerMmWidth,
+            designTemplateId: input.designTemplateId,
             maxHeightMm: input.maxHeightMm,
             maxWidthMm: input.maxWidthMm,
             minHeightMm: input.minHeightMm,

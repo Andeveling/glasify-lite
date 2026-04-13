@@ -176,6 +176,6 @@
   "overrides": {
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
-    "baseline-browser-mapping": "^2.9.13"
+    "baseline-browser-mapping": "^2.10.15"
   }
 }

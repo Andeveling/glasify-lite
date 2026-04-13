@@ -5,6 +5,7 @@ import {
   FileText,
   GlassWater,
   Grid3x3,
+  LayoutTemplate,
   Package,
   Settings,
   Sparkles,
@@ -67,6 +68,12 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
       icon: Grid3x3,
       title: 'Modelos',
       url: '/admin/models',
+    },
+    {
+      description: 'Plantillas de visualización',
+      icon: LayoutTemplate,
+      title: 'Plantillas de Diseño',
+      url: '/admin/design-templates',
     },
     {
       description: 'Configuraciones de vidrio',

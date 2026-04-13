@@ -55,6 +55,7 @@ export default async function EditModelPage({ params }: EditModelPageProps) {
     costNotes: model.costNotes ?? undefined,
     costPerMmHeight: model.costPerMmHeight.toNumber(),
     costPerMmWidth: model.costPerMmWidth.toNumber(),
+    designTemplateId: (model as { designTemplateId?: string | null }).designTemplateId ?? undefined,
     glassDiscountHeightMm: model.glassDiscountHeightMm,
     glassDiscountWidthMm: model.glassDiscountWidthMm,
     id: model.id,

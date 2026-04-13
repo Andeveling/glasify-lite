@@ -2,11 +2,23 @@
 
 import Image from 'next/image'
 import { useFormContext } from 'react-hook-form'
+import { Check } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { formatCurrency, formatNumber } from '@/lib/format'
 import { api } from '@/trpc/react'
 import { WindowSvgPlaceholder } from '../window-svg-placeholder'
 import type { WizardFormValues } from '../wizard-form-schema'
+
+function formatRange(
+  minWidth: number,
+  maxWidth: number,
+  minHeight: number,
+  maxHeight: number,
+): string {
+  const fmt = (n: number) => formatNumber(n)
+  return `Ancho: ${fmt(minWidth)}–${fmt(maxWidth)} mm / Alto: ${fmt(minHeight)}–${fmt(maxHeight)} mm`
+}
 
 function ModelSelectStep() {
   const form = useFormContext<WizardFormValues>()
@@ -101,13 +113,31 @@ function ModelSelectStep() {
         return (
           <Card
             key={model.id}
-            className={`cursor-pointer transition-all hover:shadow-md hover:scale-[1.02] ${
+            className={`group relative cursor-pointer overflow-hidden transition-all hover:shadow-md ${
               isSelected
-                ? 'ring-2 ring-primary border-primary shadow-lg scale-[1.02]'
-                : 'hover:border-primary/40'
+                ? 'ring-2 ring-primary border-primary bg-primary/5 shadow-md'
+                : 'hover:border-primary/40 hover:scale-[1.01]'
             }`}
-            onClick={() => handleSelectModel(model.id)}
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              handleSelectModel(model.id)
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                handleSelectModel(model.id)
+              }
+            }}
           >
+            {isSelected && (
+              <div className="absolute top-2 right-2 z-10 flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground shadow-sm">
+                <Check className="h-3 w-3" />
+                <span>Seleccionado</span>
+              </div>
+            )}
             <CardContent className="p-0">
               <div className="relative aspect-video w-full bg-muted/50 overflow-hidden">
                 {model.imageUrl ? (
@@ -118,14 +148,23 @@ function ModelSelectStep() {
                   </div>
                 )}
               </div>
-              <div className="p-3 space-y-1.5">
-                <h4 className="font-semibold text-sm leading-tight line-clamp-2">{model.name}</h4>
-                <p className="font-bold text-primary text-base">
-                  ${model.basePrice.toLocaleString()}
+              <div className="p-3.5 space-y-2">
+                <div className="flex items-start justify-between gap-2">
+                  <h4 className="font-semibold text-sm leading-tight line-clamp-2">{model.name}</h4>
+                </div>
+                <p className="text-primary font-bold text-lg leading-tight">
+                  {formatCurrency(model.basePrice)}
                 </p>
-                <p className="text-muted-foreground text-xs leading-tight">
-                  {model.minWidthMm}–{model.maxWidthMm} × {model.minHeightMm}–{model.maxHeightMm} mm
-                </p>
+                <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
+                  <span className="font-mono">
+                    {formatRange(
+                      model.minWidthMm,
+                      model.maxWidthMm,
+                      model.minHeightMm,
+                      model.maxHeightMm,
+                    )}
+                  </span>
+                </div>
               </div>
             </CardContent>
           </Card>

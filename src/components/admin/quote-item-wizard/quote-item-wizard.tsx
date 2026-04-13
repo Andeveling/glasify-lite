@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import type { z } from 'zod'
@@ -43,7 +44,7 @@ function mapEditItemToDefaults(
     colorId: undefined,
     glassTypeId: '',
     serviceIds: [],
-    roomLocation: undefined,
+    roomLocation: '',
   }
 }
 
@@ -68,11 +69,19 @@ function QuoteItemWizard({
           configuredWidthMm: 0,
           configuredHeightMm: 0,
           glassTypeId: '',
+          roomLocation: '',
         },
     resolver: zodResolver(wizardFormSchema),
   })
 
   const stepper = useWizardStepper(TOTAL_STEPS, STEP_FIELDS, form)
+
+  useEffect(() => {
+    if (!open) {
+      form.reset()
+      stepper.reset()
+    }
+  }, [open, form, stepper])
 
   const handleSuccess = () => {
     onOpenChange(false)
