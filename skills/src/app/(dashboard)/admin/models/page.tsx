@@ -1,29 +1,3 @@
-/**
- * Models List Page (US9 - T083)
- *
- * Server Component with Suspense boundaries for streaming
- * Pattern based on /catalog/page.tsx for consistent behavior
- *
- * Architecture:
- * - Reads filters from URL search params (Promise in Next.js 15)
- * - Lightweight queries (suppliers) outside Suspense
- * - Heavy query (models list) inside Suspense
- * - Template literal key for proper re-suspension
- *
- * Scalability:
- * - No limit on dataset size (server filters before returning)
- * - Pagination server-side (20 items per page by default)
- * - Deep linking support (filters in URL)
- *
- * Performance:
- * - force-dynamic ensures searchParams changes trigger re-renders
- * - Suspense with specific key values for reliable updates
- * - Optimized query separation
- *
- * Route: /admin/models
- * Access: Admin only (protected by middleware)
- */
-
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -35,11 +9,6 @@ export const metadata: Metadata = {
   description: 'Administra los modelos de ventanas y puertas con sus dimensiones y precios',
   title: 'Modelos | Admin',
 }
-
-// MIGRATED: Removed export const revalidate = 30 (incompatible with Cache Components)
-// Note: Admin routes are dynamic by default - no ISR needed
-// TODO: If caching is needed, use "use cache" + cacheLife() after build verification
-// Previous behavior: 30-second ISR with background revalidation
 
 type SearchParams = Promise<{
   status?: string
@@ -146,7 +115,6 @@ export default async function ModelsPage({ searchParams }: PageProps) {
   const sortBy = params.sortBy || 'createdAt'
   const sortOrder = (params.sortOrder || 'desc') as 'asc' | 'desc'
 
-  // Fetch suppliers for filter dropdown (lightweight query outside Suspense)
   const suppliersData = await api.admin['profile-supplier'].list({
     isActive: 'active',
     limit: 100,
@@ -157,7 +125,6 @@ export default async function ModelsPage({ searchParams }: PageProps) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h1 className="font-bold text-3xl tracking-tight">Modelos</h1>
         <p className="text-muted-foreground">
@@ -165,7 +132,6 @@ export default async function ModelsPage({ searchParams }: PageProps) {
         </p>
       </div>
 
-      {/* Filters outside Suspense - always visible */}
       <ModelsFilters
         searchParams={{
           page: String(page),
@@ -176,7 +142,6 @@ export default async function ModelsPage({ searchParams }: PageProps) {
         suppliers={suppliersData.items}
       />
 
-      {/* Table content inside Suspense - streaming */}
       <Suspense
         fallback={<ModelsTableSkeleton />}
         key={`${search}-${page}-${status}-${profileSupplierId}-${sortBy}-${sortOrder}`}

@@ -35,7 +35,7 @@ export default function AuthNotFound() {
             </Button>
 
             <Button asChild className="w-full" variant="outline">
-              <Link href="/catalog">Explorar catálogo</Link>
+              <Link href="/admin">Ir al panel de administración</Link>
             </Button>
           </div>
 

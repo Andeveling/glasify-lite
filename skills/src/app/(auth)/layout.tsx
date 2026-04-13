@@ -75,7 +75,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
         <div className="absolute z-20 flex items-center font-medium text-lg">
-          <Link className="flex items-center space-x-2" href="/catalog">
+          <Link className="flex items-center space-x-2" href="/admin">
             <span className="font-bold text-8xl">Glasify</span>
           </Link>
         </div>
@@ -148,7 +148,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px]">
           {/* Mobile branding */}
           <div className="flex flex-col space-y-2 text-center lg:hidden">
-            <Link className="mx-auto" href="/catalog">
+            <Link className="mx-auto" href="/admin">
               <span className="font-bold text-2xl">Glasify</span>
             </Link>
             <p className="text-muted-foreground text-sm">Cotizador inteligente de vidrios</p>
@@ -158,8 +158,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
           {/* Back to catalog link */}
           <p className="px-8 text-center text-muted-foreground text-sm">
-            <BackLink href="/catalog" icon="none" variant="link">
-              Volver al catálogo
+            <BackLink href="/admin" icon="none" variant="link">
+              Ir al panel de admin
             </BackLink>
           </p>
         </div>

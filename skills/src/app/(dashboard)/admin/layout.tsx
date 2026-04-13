@@ -42,7 +42,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   })
 
   if (!session?.user || session.user.role !== 'admin') {
-    redirect('/catalog')
+    redirect('/admin')
   }
 
   return (
