@@ -7,6 +7,7 @@ import { useChatSession } from "@/app/_components/chat-session-manager"
 import { useModelAssistantChat } from "@/app/_hooks/use-model-assistant-chat"
 import { useSessionList } from "@/app/_hooks/use-session-list"
 import { Attachment, Attachments } from "@/components/ai-elements/attachments"
+import { CodeBlock } from "@/components/ai-elements/code-block"
 import {
   Conversation,
   ConversationContent,
@@ -26,15 +27,14 @@ import {
   PromptInputSubmit,
   PromptInputTextarea,
 } from "@/components/ai-elements/prompt-input"
+import {
+  Tool,
+  ToolContent,
+  ToolHeader,
+  ToolOutput,
+  type ToolPart,
+} from "@/components/ai-elements/tool"
 import { AssistantSessionSidebar } from "./_components/assistant-session-sidebar"
-
-interface ToolCallPart {
-  type: string
-  toolName?: string
-  state?: string
-  input?: unknown
-  output?: unknown
-}
 
 function isTextPart(part: { type: string }): part is { type: "text"; text: string } {
   return part.type === "text"
@@ -49,20 +49,27 @@ export default function AssistantPage() {
     sessionId,
     isCreatingSession,
     isAuthenticated,
-    session,
+    session: _session,
     createSession,
     setActiveSessionId,
   } = useChatSession()
 
-  const { messages, status, sendMessage, regenerate, retry, isLoading, error } =
-    useModelAssistantChat({ sessionId })
+  const {
+    messages,
+    status,
+    sendMessage,
+    regenerate,
+    retry: _retry,
+    isLoading,
+    error,
+  } = useModelAssistantChat({ sessionId })
 
   const { sessions, isLoading: isLoadingSessions, deleteSession, refresh } = useSessionList()
 
-  const [input, setInput] = useState("")
+  const [_input, setInput] = useState("")
   const [files, setFiles] = useState<(FileUIPart & { id: string })[]>([])
 
-  const handleFilesChange = useCallback((newFiles: (FileUIPart & { id: string })[]) => {
+  const _handleFilesChange = useCallback((newFiles: (FileUIPart & { id: string })[]) => {
     setFiles(newFiles)
   }, [])
 
@@ -182,17 +189,39 @@ export default function AssistantPage() {
                             }
 
                             if (isToolPart(part)) {
-                              const toolPart = part as unknown as ToolCallPart
-                              const toolName =
-                                toolPart.type === "dynamic-tool"
-                                  ? (toolPart.toolName ?? "unknown")
-                                  : toolPart.type.replace("tool-", "")
+                              // @ts-expect-error UIMessage parts have type: string which doesn't auto-discriminate ToolHeaderProps union
+                              const { type, state, toolName, input, output, errorText } =
+                                part as ToolPart
 
                               return (
                                 <Message from={message.role} key={`${message.id}-${partIndex}`}>
-                                  <MessageContent>
-                                    <MessageResponse>{`[Tool: ${toolName}]`}</MessageResponse>
-                                  </MessageContent>
+                                  <Tool defaultOpen={state === "output-available"}>
+                                    {/* @ts-expect-error same discriminator issue */}
+                                    <ToolHeader
+                                      type={type}
+                                      state={state}
+                                      toolName={type === "dynamic-tool" ? toolName : undefined}
+                                    />
+                                    <ToolContent>
+                                      {input != null && (
+                                        <CodeBlock
+                                          code={JSON.stringify(input, null, 2)}
+                                          language="json"
+                                        />
+                                      )}
+                                      {(output || errorText) && (
+                                        <ToolOutput
+                                          output={
+                                            <CodeBlock
+                                              code={JSON.stringify(output ?? null, null, 2)}
+                                              language="json"
+                                            />
+                                          }
+                                          errorText={errorText}
+                                        />
+                                      )}
+                                    </ToolContent>
+                                  </Tool>
                                 </Message>
                               )
                             }
