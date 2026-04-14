@@ -1,22 +1,76 @@
 import { headers } from "next/headers"
 import { type NextRequest, NextResponse } from "next/server"
+import type { UIMessage } from "ai"
 import { z } from "zod"
 import logger from "@/lib/logger"
-import { getModeExecutor, isExecutableMode } from "@/server/ai/agents/model-assistant.executor"
-import type { RoutedIntent } from "@/server/ai/agents/model-assistant.router"
+import {
+  createModelCreationStreamText,
+  createModelCalibrationStreamText,
+  createQuoteStreamText,
+  getModeExecutor,
+  createStreamTextResult,
+} from "@/server/ai/agents/model-assistant.executor"
 import { IntentMode, isConfident, routeIntent } from "@/server/ai/agents/model-assistant.router"
 import { auth } from "@/server/auth"
 import { getModelAssistantSession } from "@/server/services/model-assistant-session.service"
 
-const sendMessageSchema = z.object({
-  sessionId: z.string().min(1),
-  message: z.string().min(1),
-})
+const uiMessageSchema = z
+  .object({
+    id: z.string().min(1).optional(),
+    role: z.string().min(1),
+    parts: z.array(z.object({ type: z.string() }).passthrough()),
+  })
+  .passthrough()
 
-const CREATE_QUOTE_STUB = {
-  message:
-    "La función de cotización asistida aún no está disponible. Puedo ayudarte a crear o calibrar el modelo primero.",
-  mode: IntentMode.CREATE_QUOTE,
+const sendMessageSchema = z
+  .object({
+    sessionId: z.string().min(1).optional(),
+    id: z.string().min(1).optional(),
+    message: z.union([z.string().min(1), uiMessageSchema]).optional(),
+    messages: z.array(uiMessageSchema).optional(),
+    trigger: z.string().optional(),
+    messageId: z.string().optional(),
+  })
+  .superRefine((value, ctx) => {
+    if (!value.sessionId && !value.id) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["sessionId"],
+        message: "sessionId o id es requerido",
+      })
+    }
+
+    if (!value.message && (!value.messages || value.messages.length === 0)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["message"],
+        message: "message o messages es requerido",
+      })
+    }
+  })
+
+function extractTextFromUIMessage(message: UIMessage) {
+  return message.parts
+    .filter(
+      (part): part is Extract<UIMessage["parts"][number], { type: "text" }> => part.type === "text",
+    )
+    .map((part) => part.text)
+    .join("\n")
+    .trim()
+}
+
+function extractLatestUserMessageText(messages: UIMessage[]) {
+  const latestUserMessage = [...messages].reverse().find((message) => message.role === "user")
+  return latestUserMessage ? extractTextFromUIMessage(latestUserMessage) : ""
+}
+
+function toStreamResponse(
+  result: ReturnType<typeof createStreamTextResult>,
+  originalMessages?: UIMessage[],
+) {
+  return originalMessages?.length
+    ? result.toUIMessageStreamResponse({ originalMessages })
+    : result.toUIMessageStreamResponse()
 }
 
 function getDisambiguationResponse() {
@@ -26,6 +80,12 @@ function getDisambiguationResponse() {
     mode: "unknown" as const,
   }
 }
+
+const STREAMABLE_MODES = new Set([
+  IntentMode.CREATE_MODEL,
+  IntentMode.CALIBRATE_MODEL,
+  IntentMode.CREATE_QUOTE,
+])
 
 export async function POST(request: NextRequest) {
   try {
@@ -47,7 +107,25 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { sessionId, message } = parsed.data
+    const sessionId = parsed.data.sessionId ?? parsed.data.id
+
+    if (!sessionId) {
+      return NextResponse.json({ error: "Datos inválidos" }, { status: 400 })
+    }
+
+    const originalMessages = parsed.data.messages as UIMessage[] | undefined
+    const message =
+      typeof parsed.data.message === "string"
+        ? parsed.data.message
+        : parsed.data.message
+          ? extractTextFromUIMessage(parsed.data.message as UIMessage)
+          : originalMessages
+            ? extractLatestUserMessageText(originalMessages)
+            : ""
+
+    if (!message) {
+      return NextResponse.json({ error: "Mensaje inválido" }, { status: 400 })
+    }
 
     const assistantSession = await getModelAssistantSession(sessionId)
     if (!assistantSession) {
@@ -56,36 +134,42 @@ export async function POST(request: NextRequest) {
 
     const intent = await routeIntent(message)
 
-    let response: { response: string; mode: string; intent: { mode: string; confidence: number } }
-
     if (!isConfident(intent)) {
       const disambiguation = getDisambiguationResponse()
-      response = {
-        response: disambiguation.message,
-        mode: disambiguation.mode,
-        intent: {
-          mode: intent.mode,
-          confidence: intent.confidence,
-        },
-      }
-    } else if (!isExecutableMode(intent.mode)) {
-      response = {
-        response: CREATE_QUOTE_STUB.message,
-        mode: intent.mode,
-        intent: {
-          mode: intent.mode,
-          confidence: intent.confidence,
-        },
-      }
-    } else {
+      const result = createStreamTextResult(disambiguation.message, intent)
+      return toStreamResponse(result, originalMessages)
+    }
+
+    if (!STREAMABLE_MODES.has(intent.mode)) {
       const executor = getModeExecutor(intent.mode)
-      response = await executor.execute(message, intent, {
+      const response = await executor.execute(message, intent, {
         sessionId,
         mode: assistantSession.mode,
         currentStep: assistantSession.currentStep,
         currentModelId: assistantSession.currentModelId,
       })
+      const result = createStreamTextResult(response.response, intent)
+      return toStreamResponse(result, originalMessages)
     }
+
+    const sessionContext = {
+      sessionId,
+      mode: assistantSession.mode,
+      currentStep: assistantSession.currentStep,
+      currentModelId: assistantSession.currentModelId,
+    }
+
+    const streamTextOptions = {
+      userMessage: message,
+      sessionContext,
+    }
+
+    const result =
+      intent.mode === IntentMode.CREATE_MODEL
+        ? createModelCreationStreamText(streamTextOptions)
+        : intent.mode === IntentMode.CALIBRATE_MODEL
+          ? createModelCalibrationStreamText(streamTextOptions)
+          : createQuoteStreamText(streamTextOptions)
 
     logger.info("Model assistant message processed", {
       sessionId,
@@ -96,11 +180,7 @@ export async function POST(request: NextRequest) {
       confidence: intent.confidence,
     })
 
-    return NextResponse.json({
-      response: response.response,
-      mode: response.mode,
-      intent: response.intent,
-    })
+    return toStreamResponse(result, originalMessages)
   } catch (error) {
     logger.error("Error processing model assistant message", {
       error: error instanceof Error ? error.message : String(error),
