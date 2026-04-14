@@ -60,6 +60,7 @@ export const env = {
 
   // AI model configuration
   MINIMAX_API_KEY: getEnv("MINIMAX_API_KEY"),
+  MINIMAX_TEXT_MODEL: getEnv("MINIMAX_TEXT_MODEL", "MiniMax-M2.7"),
   MINIMAX_TEXT_MODEL_SPEED: getEnv("MINIMAX_TEXT_MODEL_SPEED", "MiniMax-M2.7-highspeed"),
 
   // Server-side variables

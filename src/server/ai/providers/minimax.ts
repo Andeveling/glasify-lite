@@ -2,7 +2,7 @@ import { createMinimax } from "vercel-minimax-ai-provider"
 import { env } from "@/env"
 
 export function getMinimaxModelId(): string {
-  return env.MINIMAX_TEXT_MODEL_SPEED || "MiniMax-M2.7-highspeed"
+  return env.MINIMAX_TEXT_MODEL || "MiniMax-M2.7"
 }
 
 export function createMinimaxProvider() {
