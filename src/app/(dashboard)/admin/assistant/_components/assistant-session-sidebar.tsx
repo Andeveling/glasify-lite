@@ -70,8 +70,8 @@ export function AssistantSessionSidebar({
                   role="button"
                   tabIndex={0}
                   className={cn(
-                    "w-full text-left px-3 py-2 text-sm group flex items-start justify-between gap-2 hover:bg-accent transition-colors cursor-pointer",
-                    activeSessionId === session.id && "bg-accent",
+                    "w-full text-left px-3 py-2 text-sm group flex items-start justify-between gap-2 hover:bg-primary/60 transition-colors cursor-pointer",
+                    activeSessionId === session.id && "bg-primary/80",
                   )}
                   onClick={() => onSelectSession(session.id)}
                   onKeyDown={(e) => {

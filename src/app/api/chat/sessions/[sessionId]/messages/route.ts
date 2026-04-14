@@ -5,13 +5,9 @@ import type { UIMessage } from "ai"
 import { z } from "zod"
 import logger from "@/lib/logger"
 import {
-  createModelCreationStreamText,
-  createModelCalibrationStreamText,
-  createQuoteStreamText,
-  getModeExecutor,
-  createStreamTextResult,
+  buildContextPrompt,
+  createModelAssistantStreamText,
 } from "@/server/ai/agents/model-assistant.executor"
-import { IntentMode, isConfident, routeIntent } from "@/server/ai/agents/model-assistant.router"
 import { auth } from "@/server/auth"
 import {
   saveMessage,
@@ -68,29 +64,6 @@ function extractLatestUserMessageText(messages: UIMessage[]) {
   const latestUserMessage = [...messages].reverse().find((message) => message.role === "user")
   return latestUserMessage ? extractTextFromUIMessage(latestUserMessage) : ""
 }
-
-function toStreamResponse(
-  result: ReturnType<typeof createStreamTextResult>,
-  originalMessages?: UIMessage[],
-) {
-  return originalMessages?.length
-    ? result.toUIMessageStreamResponse({ originalMessages })
-    : result.toUIMessageStreamResponse()
-}
-
-function getDisambiguationResponse() {
-  return {
-    message:
-      "Para ayudarte mejor, necesito saber si quieres crear un modelo nuevo o calibrar uno existente. ¿Qué te gustaría hacer?",
-    mode: "unknown" as const,
-  }
-}
-
-const STREAMABLE_MODES = new Set([
-  IntentMode.CREATE_MODEL,
-  IntentMode.CALIBRATE_MODEL,
-  IntentMode.CREATE_QUOTE,
-])
 
 type RouteParams = { params: Promise<{ sessionId: string }> }
 
@@ -171,26 +144,6 @@ export async function POST(request: NextRequest) {
       void saveMessage(sessionId, userUiMessage).catch(() => {})
     }
 
-    const intent = await routeIntent(message)
-
-    if (!isConfident(intent)) {
-      const disambiguation = getDisambiguationResponse()
-      const result = createStreamTextResult(disambiguation.message, intent)
-      return toStreamResponse(result, originalMessages)
-    }
-
-    if (!STREAMABLE_MODES.has(intent.mode)) {
-      const executor = getModeExecutor(intent.mode)
-      const response = await executor.execute(message, intent, {
-        sessionId,
-        mode: assistantSession.mode,
-        currentStep: assistantSession.currentStep,
-        currentModelId: assistantSession.currentModelId,
-      })
-      const result = createStreamTextResult(response.response, intent)
-      return toStreamResponse(result, originalMessages)
-    }
-
     const sessionContext = {
       sessionId,
       mode: assistantSession.mode,
@@ -198,38 +151,29 @@ export async function POST(request: NextRequest) {
       currentModelId: assistantSession.currentModelId,
     }
 
-    const streamTextOptions = {
+    const result = createModelAssistantStreamText({
       userMessage: message,
       sessionContext,
-    }
-
-    const result =
-      intent.mode === IntentMode.CREATE_MODEL
-        ? createModelCreationStreamText(streamTextOptions)
-        : intent.mode === IntentMode.CALIBRATE_MODEL
-          ? createModelCalibrationStreamText(streamTextOptions)
-          : createQuoteStreamText(streamTextOptions)
+    })
 
     logger.info("Model assistant message processed", {
       sessionId,
       assistantMode: assistantSession.mode,
       currentStep: assistantSession.currentStep,
       messageLength: message.length,
-      intentMode: intent.mode,
-      confidence: intent.confidence,
     })
 
-    void result.text
-      .then((text) =>
-        saveMessage(sessionId, {
-          id: randomUUID(),
-          role: "assistant",
-          parts: [{ type: "text", text }],
-        }),
-      )
-      .catch(() => {})
+    void Promise.resolve(result.text).then((text) =>
+      saveMessage(sessionId, {
+        id: randomUUID(),
+        role: "assistant",
+        parts: [{ type: "text", text }],
+      }).catch(() => {}),
+    )
 
-    return toStreamResponse(result, originalMessages)
+    return originalMessages?.length
+      ? result.toUIMessageStreamResponse({ originalMessages })
+      : result.toUIMessageStreamResponse()
   } catch (error) {
     logger.error("Error processing model assistant message", {
       error: error instanceof Error ? error.message : String(error),
