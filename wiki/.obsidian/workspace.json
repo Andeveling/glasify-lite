@@ -184,14 +184,19 @@
   },
   "active": "962ceb261743cc67",
   "lastOpenFiles": [
-    "wiki/30-clients/01-vitro-rojas/calibracion-precios.md",
-    "wiki/30-clients/01-vitro-rojas/onboarding-calibracion.md",
     "wiki/30-clients/01-vitro-rojas/flujo-cotizacion.md",
+    "wiki/30-clients/01-vitro-rojas/calibracion-precios.md",
+    "wiki/20-manufacturers/sistemas-pvc-referencia.md",
+    "wiki/20-manufacturers/ecosistema-participantes.md",
+    "wiki/30-clients/01-vitro-rojas/onboarding-calibracion.md",
+    "wiki/log.md",
+    "wiki/index.md",
+    "wiki/10-glass-knowledge/glosario-ventanas.md",
+    "wiki/10-glass-knowledge",
     "wiki/30-clients/01-vitro-rojas/profile.md",
     "wiki/30-clients/01-vitro-rojas/presets.md",
     "wiki/20-manufacturers/calculo-precios-pymes-latam.md",
     "page-name.md",
-    "wiki/20-manufacturers/ecosistema-participantes.md",
     "wiki/00-glassify/pricing-formula.md",
     "wiki/CLAUDE.md",
     "CLAUDE.md",
@@ -206,10 +211,6 @@
     "wiki/30-clients/01-vitro-rojas/dise-os-inkscape-vitro-rojas.md",
     "wiki/30-clients/01-vitro-rojas/dashboard-admin-cotizaciones.md",
     "wiki/30-clients/01-vitro-rojas/configuracion-multi-tenant.md",
-    "wiki/30-clients/01-vitro-rojas/branding-comunicacion.md",
-    "wiki/30-clients/01-vitro-rojas/servicios-incluidos-opcionales.md",
-    "wiki/30-clients/01-vitro-rojas/wizard-cotizacion.md",
-    "wiki/30-clients/01-vitro-rojas/simplificacion-direccion.md",
     "wiki/20-manufacturers",
     "wiki/30-clients/01-vitro-rojas",
     "log.md.tmp.1359392.1776105944404",
@@ -218,7 +219,6 @@
     "wiki/40-design",
     "raw/superpowers/specs",
     "raw/superpowers",
-    "log.md.tmp.1359392.1776105354753",
-    "wiki/30-clients/vitro-rojas-panama.md.tmp.1359392.1776105348731"
+    "log.md.tmp.1359392.1776105354753"
   ]
 }

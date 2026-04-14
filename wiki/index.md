@@ -15,6 +15,7 @@
 ### 10-glass-knowledge
 - [[glass-types]] — Glass types and classifications
 - [[glass-solutions]] — Glass solutions (thermal, acoustic, security)
+- [[glosario-ventanas]] — Glosario esencial de terminos de ventanas (elementos estructurales, materiales, tipos de apertura, conceptos tecnicos)
 
 ### 20-manufacturers
 - [[calculo-precios-pymes-latam]] — Metodos de calculo de precios en talleres y fabricas de ventanas LATAM (m2, desglose por componentes, tablas unitarias)

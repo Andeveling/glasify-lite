@@ -108,3 +108,17 @@ Tambien cubre: variables clave (tamano, apertura, vidrio, aislamiento, acabados)
 - Alternativa: modo directo sin ventanas de referencia (si Juan conoce MO con precision)
 - Roadmap de implementacion en 4 fases (MVP, UX, multi-modelo, inteligencia de negocio)
 - Tabla comparativa: sin wizard vs con wizard (20 min vs 4 horas de configuracion)
+
+### Creacion: glosario de ventanas
+
+**Carpeta creada**: `wiki/wiki/10-glass-knowledge/` (no existia, mentioned in CLAUDE.md pero nunca creada)
+
+**Archivo creado**: `wiki/wiki/10-glass-knowledge/glosario-ventanas.md`
+- Elementos estructurales: vanos, marco, hoja, travesano, montante, divisor
+- Componentes funcionales: vidrio, doble acristalamiento, herrajes, bisagras, cierre, burletes
+- Tipos de apertura: abatible, corrediza, proyectante, oscilobatiente, fija
+- Materiales: PVC, aluminio, madera
+- Conceptos tecnicos: aislamiento termico/acustico, transmitancia termica (valor U), hermeticidad, puente termico
+- Otros terminos: antepecho, alfeizar, dintel, jambas
+
+**Actualizado**: `wiki/index.md` — agregado enlace en seccion 10-glass-knowledge
