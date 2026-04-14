@@ -20,17 +20,35 @@ export type DesignTemplateModel = runtime.Types.Result.DefaultSelection<Prisma.$
 
 export type AggregateDesignTemplate = {
   _count: DesignTemplateCountAggregateOutputType | null
+  _avg: DesignTemplateAvgAggregateOutputType | null
+  _sum: DesignTemplateSumAggregateOutputType | null
   _min: DesignTemplateMinAggregateOutputType | null
   _max: DesignTemplateMaxAggregateOutputType | null
+}
+
+export type DesignTemplateAvgAggregateOutputType = {
+  traverseCount: number | null
+}
+
+export type DesignTemplateSumAggregateOutputType = {
+  traverseCount: number | null
 }
 
 export type DesignTemplateMinAggregateOutputType = {
   id: string | null
   name: string | null
+  type: string | null
   pattern: string | null
+  openingType: string | null
+  traverseCount: number | null
+  traverseStyle: string | null
   frameConfig: string | null
+  frameColor: string | null
+  glassColor: string | null
+  handleStyle: string | null
   showArrows: boolean | null
   showHandles: boolean | null
+  showLock: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -38,10 +56,18 @@ export type DesignTemplateMinAggregateOutputType = {
 export type DesignTemplateMaxAggregateOutputType = {
   id: string | null
   name: string | null
+  type: string | null
   pattern: string | null
+  openingType: string | null
+  traverseCount: number | null
+  traverseStyle: string | null
   frameConfig: string | null
+  frameColor: string | null
+  glassColor: string | null
+  handleStyle: string | null
   showArrows: boolean | null
   showHandles: boolean | null
+  showLock: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -49,23 +75,47 @@ export type DesignTemplateMaxAggregateOutputType = {
 export type DesignTemplateCountAggregateOutputType = {
   id: number
   name: number
+  type: number
   pattern: number
+  openingType: number
+  traverseCount: number
+  traverseStyle: number
   frameConfig: number
+  frameColor: number
+  glassColor: number
+  handleStyle: number
   showArrows: number
   showHandles: number
+  showLock: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
 
+export type DesignTemplateAvgAggregateInputType = {
+  traverseCount?: true
+}
+
+export type DesignTemplateSumAggregateInputType = {
+  traverseCount?: true
+}
+
 export type DesignTemplateMinAggregateInputType = {
   id?: true
   name?: true
+  type?: true
   pattern?: true
+  openingType?: true
+  traverseCount?: true
+  traverseStyle?: true
   frameConfig?: true
+  frameColor?: true
+  glassColor?: true
+  handleStyle?: true
   showArrows?: true
   showHandles?: true
+  showLock?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -73,10 +123,18 @@ export type DesignTemplateMinAggregateInputType = {
 export type DesignTemplateMaxAggregateInputType = {
   id?: true
   name?: true
+  type?: true
   pattern?: true
+  openingType?: true
+  traverseCount?: true
+  traverseStyle?: true
   frameConfig?: true
+  frameColor?: true
+  glassColor?: true
+  handleStyle?: true
   showArrows?: true
   showHandles?: true
+  showLock?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -84,10 +142,18 @@ export type DesignTemplateMaxAggregateInputType = {
 export type DesignTemplateCountAggregateInputType = {
   id?: true
   name?: true
+  type?: true
   pattern?: true
+  openingType?: true
+  traverseCount?: true
+  traverseStyle?: true
   frameConfig?: true
+  frameColor?: true
+  glassColor?: true
+  handleStyle?: true
   showArrows?: true
   showHandles?: true
+  showLock?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -131,6 +197,18 @@ export type DesignTemplateAggregateArgs<ExtArgs extends runtime.Types.Extensions
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: DesignTemplateAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: DesignTemplateSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: DesignTemplateMinAggregateInputType
@@ -161,6 +239,8 @@ export type DesignTemplateGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   _count?: DesignTemplateCountAggregateInputType | true
+  _avg?: DesignTemplateAvgAggregateInputType
+  _sum?: DesignTemplateSumAggregateInputType
   _min?: DesignTemplateMinAggregateInputType
   _max?: DesignTemplateMaxAggregateInputType
 }
@@ -168,13 +248,23 @@ export type DesignTemplateGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
 export type DesignTemplateGroupByOutputType = {
   id: string
   name: string
-  pattern: string
+  type: string
+  pattern: string | null
+  openingType: string | null
+  traverseCount: number | null
+  traverseStyle: string | null
   frameConfig: string
-  showArrows: boolean
-  showHandles: boolean
+  frameColor: string | null
+  glassColor: string | null
+  handleStyle: string | null
+  showArrows: boolean | null
+  showHandles: boolean | null
+  showLock: boolean | null
   createdAt: Date
   updatedAt: Date
   _count: DesignTemplateCountAggregateOutputType | null
+  _avg: DesignTemplateAvgAggregateOutputType | null
+  _sum: DesignTemplateSumAggregateOutputType | null
   _min: DesignTemplateMinAggregateOutputType | null
   _max: DesignTemplateMaxAggregateOutputType | null
 }
@@ -200,10 +290,18 @@ export type DesignTemplateWhereInput = {
   NOT?: Prisma.DesignTemplateWhereInput | Prisma.DesignTemplateWhereInput[]
   id?: Prisma.StringFilter<"DesignTemplate"> | string
   name?: Prisma.StringFilter<"DesignTemplate"> | string
-  pattern?: Prisma.StringFilter<"DesignTemplate"> | string
+  type?: Prisma.StringFilter<"DesignTemplate"> | string
+  pattern?: Prisma.StringNullableFilter<"DesignTemplate"> | string | null
+  openingType?: Prisma.StringNullableFilter<"DesignTemplate"> | string | null
+  traverseCount?: Prisma.IntNullableFilter<"DesignTemplate"> | number | null
+  traverseStyle?: Prisma.StringNullableFilter<"DesignTemplate"> | string | null
   frameConfig?: Prisma.StringFilter<"DesignTemplate"> | string
-  showArrows?: Prisma.BoolFilter<"DesignTemplate"> | boolean
-  showHandles?: Prisma.BoolFilter<"DesignTemplate"> | boolean
+  frameColor?: Prisma.StringNullableFilter<"DesignTemplate"> | string | null
+  glassColor?: Prisma.StringNullableFilter<"DesignTemplate"> | string | null
+  handleStyle?: Prisma.StringNullableFilter<"DesignTemplate"> | string | null
+  showArrows?: Prisma.BoolNullableFilter<"DesignTemplate"> | boolean | null
+  showHandles?: Prisma.BoolNullableFilter<"DesignTemplate"> | boolean | null
+  showLock?: Prisma.BoolNullableFilter<"DesignTemplate"> | boolean | null
   createdAt?: Prisma.DateTimeFilter<"DesignTemplate"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DesignTemplate"> | Date | string
   models?: Prisma.ModelListRelationFilter
@@ -212,10 +310,18 @@ export type DesignTemplateWhereInput = {
 export type DesignTemplateOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  pattern?: Prisma.SortOrder
+  type?: Prisma.SortOrder
+  pattern?: Prisma.SortOrderInput | Prisma.SortOrder
+  openingType?: Prisma.SortOrderInput | Prisma.SortOrder
+  traverseCount?: Prisma.SortOrderInput | Prisma.SortOrder
+  traverseStyle?: Prisma.SortOrderInput | Prisma.SortOrder
   frameConfig?: Prisma.SortOrder
-  showArrows?: Prisma.SortOrder
-  showHandles?: Prisma.SortOrder
+  frameColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  glassColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  handleStyle?: Prisma.SortOrderInput | Prisma.SortOrder
+  showArrows?: Prisma.SortOrderInput | Prisma.SortOrder
+  showHandles?: Prisma.SortOrderInput | Prisma.SortOrder
+  showLock?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   models?: Prisma.ModelOrderByRelationAggregateInput
@@ -227,10 +333,18 @@ export type DesignTemplateWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.DesignTemplateWhereInput | Prisma.DesignTemplateWhereInput[]
   OR?: Prisma.DesignTemplateWhereInput[]
   NOT?: Prisma.DesignTemplateWhereInput | Prisma.DesignTemplateWhereInput[]
-  pattern?: Prisma.StringFilter<"DesignTemplate"> | string
+  type?: Prisma.StringFilter<"DesignTemplate"> | string
+  pattern?: Prisma.StringNullableFilter<"DesignTemplate"> | string | null
+  openingType?: Prisma.StringNullableFilter<"DesignTemplate"> | string | null
+  traverseCount?: Prisma.IntNullableFilter<"DesignTemplate"> | number | null
+  traverseStyle?: Prisma.StringNullableFilter<"DesignTemplate"> | string | null
   frameConfig?: Prisma.StringFilter<"DesignTemplate"> | string
-  showArrows?: Prisma.BoolFilter<"DesignTemplate"> | boolean
-  showHandles?: Prisma.BoolFilter<"DesignTemplate"> | boolean
+  frameColor?: Prisma.StringNullableFilter<"DesignTemplate"> | string | null
+  glassColor?: Prisma.StringNullableFilter<"DesignTemplate"> | string | null
+  handleStyle?: Prisma.StringNullableFilter<"DesignTemplate"> | string | null
+  showArrows?: Prisma.BoolNullableFilter<"DesignTemplate"> | boolean | null
+  showHandles?: Prisma.BoolNullableFilter<"DesignTemplate"> | boolean | null
+  showLock?: Prisma.BoolNullableFilter<"DesignTemplate"> | boolean | null
   createdAt?: Prisma.DateTimeFilter<"DesignTemplate"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DesignTemplate"> | Date | string
   models?: Prisma.ModelListRelationFilter
@@ -239,15 +353,25 @@ export type DesignTemplateWhereUniqueInput = Prisma.AtLeast<{
 export type DesignTemplateOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  pattern?: Prisma.SortOrder
+  type?: Prisma.SortOrder
+  pattern?: Prisma.SortOrderInput | Prisma.SortOrder
+  openingType?: Prisma.SortOrderInput | Prisma.SortOrder
+  traverseCount?: Prisma.SortOrderInput | Prisma.SortOrder
+  traverseStyle?: Prisma.SortOrderInput | Prisma.SortOrder
   frameConfig?: Prisma.SortOrder
-  showArrows?: Prisma.SortOrder
-  showHandles?: Prisma.SortOrder
+  frameColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  glassColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  handleStyle?: Prisma.SortOrderInput | Prisma.SortOrder
+  showArrows?: Prisma.SortOrderInput | Prisma.SortOrder
+  showHandles?: Prisma.SortOrderInput | Prisma.SortOrder
+  showLock?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.DesignTemplateCountOrderByAggregateInput
+  _avg?: Prisma.DesignTemplateAvgOrderByAggregateInput
   _max?: Prisma.DesignTemplateMaxOrderByAggregateInput
   _min?: Prisma.DesignTemplateMinOrderByAggregateInput
+  _sum?: Prisma.DesignTemplateSumOrderByAggregateInput
 }
 
 export type DesignTemplateScalarWhereWithAggregatesInput = {
@@ -256,10 +380,18 @@ export type DesignTemplateScalarWhereWithAggregatesInput = {
   NOT?: Prisma.DesignTemplateScalarWhereWithAggregatesInput | Prisma.DesignTemplateScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"DesignTemplate"> | string
   name?: Prisma.StringWithAggregatesFilter<"DesignTemplate"> | string
-  pattern?: Prisma.StringWithAggregatesFilter<"DesignTemplate"> | string
+  type?: Prisma.StringWithAggregatesFilter<"DesignTemplate"> | string
+  pattern?: Prisma.StringNullableWithAggregatesFilter<"DesignTemplate"> | string | null
+  openingType?: Prisma.StringNullableWithAggregatesFilter<"DesignTemplate"> | string | null
+  traverseCount?: Prisma.IntNullableWithAggregatesFilter<"DesignTemplate"> | number | null
+  traverseStyle?: Prisma.StringNullableWithAggregatesFilter<"DesignTemplate"> | string | null
   frameConfig?: Prisma.StringWithAggregatesFilter<"DesignTemplate"> | string
-  showArrows?: Prisma.BoolWithAggregatesFilter<"DesignTemplate"> | boolean
-  showHandles?: Prisma.BoolWithAggregatesFilter<"DesignTemplate"> | boolean
+  frameColor?: Prisma.StringNullableWithAggregatesFilter<"DesignTemplate"> | string | null
+  glassColor?: Prisma.StringNullableWithAggregatesFilter<"DesignTemplate"> | string | null
+  handleStyle?: Prisma.StringNullableWithAggregatesFilter<"DesignTemplate"> | string | null
+  showArrows?: Prisma.BoolNullableWithAggregatesFilter<"DesignTemplate"> | boolean | null
+  showHandles?: Prisma.BoolNullableWithAggregatesFilter<"DesignTemplate"> | boolean | null
+  showLock?: Prisma.BoolNullableWithAggregatesFilter<"DesignTemplate"> | boolean | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"DesignTemplate"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"DesignTemplate"> | Date | string
 }
@@ -267,10 +399,18 @@ export type DesignTemplateScalarWhereWithAggregatesInput = {
 export type DesignTemplateCreateInput = {
   id?: string
   name: string
-  pattern: string
+  type?: string
+  pattern?: string | null
+  openingType?: string | null
+  traverseCount?: number | null
+  traverseStyle?: string | null
   frameConfig: string
-  showArrows?: boolean
-  showHandles?: boolean
+  frameColor?: string | null
+  glassColor?: string | null
+  handleStyle?: string | null
+  showArrows?: boolean | null
+  showHandles?: boolean | null
+  showLock?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   models?: Prisma.ModelCreateNestedManyWithoutDesignTemplateInput
@@ -279,10 +419,18 @@ export type DesignTemplateCreateInput = {
 export type DesignTemplateUncheckedCreateInput = {
   id?: string
   name: string
-  pattern: string
+  type?: string
+  pattern?: string | null
+  openingType?: string | null
+  traverseCount?: number | null
+  traverseStyle?: string | null
   frameConfig: string
-  showArrows?: boolean
-  showHandles?: boolean
+  frameColor?: string | null
+  glassColor?: string | null
+  handleStyle?: string | null
+  showArrows?: boolean | null
+  showHandles?: boolean | null
+  showLock?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   models?: Prisma.ModelUncheckedCreateNestedManyWithoutDesignTemplateInput
@@ -291,10 +439,18 @@ export type DesignTemplateUncheckedCreateInput = {
 export type DesignTemplateUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  pattern?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  openingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  traverseCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  traverseStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   frameConfig?: Prisma.StringFieldUpdateOperationsInput | string
-  showArrows?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  showHandles?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frameColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  glassColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handleStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showArrows?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  showHandles?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  showLock?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   models?: Prisma.ModelUpdateManyWithoutDesignTemplateNestedInput
@@ -303,10 +459,18 @@ export type DesignTemplateUpdateInput = {
 export type DesignTemplateUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  pattern?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  openingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  traverseCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  traverseStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   frameConfig?: Prisma.StringFieldUpdateOperationsInput | string
-  showArrows?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  showHandles?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frameColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  glassColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handleStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showArrows?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  showHandles?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  showLock?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   models?: Prisma.ModelUncheckedUpdateManyWithoutDesignTemplateNestedInput
@@ -315,10 +479,18 @@ export type DesignTemplateUncheckedUpdateInput = {
 export type DesignTemplateCreateManyInput = {
   id?: string
   name: string
-  pattern: string
+  type?: string
+  pattern?: string | null
+  openingType?: string | null
+  traverseCount?: number | null
+  traverseStyle?: string | null
   frameConfig: string
-  showArrows?: boolean
-  showHandles?: boolean
+  frameColor?: string | null
+  glassColor?: string | null
+  handleStyle?: string | null
+  showArrows?: boolean | null
+  showHandles?: boolean | null
+  showLock?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -326,10 +498,18 @@ export type DesignTemplateCreateManyInput = {
 export type DesignTemplateUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  pattern?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  openingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  traverseCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  traverseStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   frameConfig?: Prisma.StringFieldUpdateOperationsInput | string
-  showArrows?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  showHandles?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frameColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  glassColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handleStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showArrows?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  showHandles?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  showLock?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -337,10 +517,18 @@ export type DesignTemplateUpdateManyMutationInput = {
 export type DesignTemplateUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  pattern?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  openingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  traverseCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  traverseStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   frameConfig?: Prisma.StringFieldUpdateOperationsInput | string
-  showArrows?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  showHandles?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frameColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  glassColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handleStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showArrows?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  showHandles?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  showLock?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -348,21 +536,41 @@ export type DesignTemplateUncheckedUpdateManyInput = {
 export type DesignTemplateCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   pattern?: Prisma.SortOrder
+  openingType?: Prisma.SortOrder
+  traverseCount?: Prisma.SortOrder
+  traverseStyle?: Prisma.SortOrder
   frameConfig?: Prisma.SortOrder
+  frameColor?: Prisma.SortOrder
+  glassColor?: Prisma.SortOrder
+  handleStyle?: Prisma.SortOrder
   showArrows?: Prisma.SortOrder
   showHandles?: Prisma.SortOrder
+  showLock?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type DesignTemplateAvgOrderByAggregateInput = {
+  traverseCount?: Prisma.SortOrder
 }
 
 export type DesignTemplateMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   pattern?: Prisma.SortOrder
+  openingType?: Prisma.SortOrder
+  traverseCount?: Prisma.SortOrder
+  traverseStyle?: Prisma.SortOrder
   frameConfig?: Prisma.SortOrder
+  frameColor?: Prisma.SortOrder
+  glassColor?: Prisma.SortOrder
+  handleStyle?: Prisma.SortOrder
   showArrows?: Prisma.SortOrder
   showHandles?: Prisma.SortOrder
+  showLock?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -370,17 +578,41 @@ export type DesignTemplateMaxOrderByAggregateInput = {
 export type DesignTemplateMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   pattern?: Prisma.SortOrder
+  openingType?: Prisma.SortOrder
+  traverseCount?: Prisma.SortOrder
+  traverseStyle?: Prisma.SortOrder
   frameConfig?: Prisma.SortOrder
+  frameColor?: Prisma.SortOrder
+  glassColor?: Prisma.SortOrder
+  handleStyle?: Prisma.SortOrder
   showArrows?: Prisma.SortOrder
   showHandles?: Prisma.SortOrder
+  showLock?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type DesignTemplateSumOrderByAggregateInput = {
+  traverseCount?: Prisma.SortOrder
 }
 
 export type DesignTemplateNullableScalarRelationFilter = {
   is?: Prisma.DesignTemplateWhereInput | null
   isNot?: Prisma.DesignTemplateWhereInput | null
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
+export type NullableBoolFieldUpdateOperationsInput = {
+  set?: boolean | null
 }
 
 export type DesignTemplateCreateNestedOneWithoutModelsInput = {
@@ -402,10 +634,18 @@ export type DesignTemplateUpdateOneWithoutModelsNestedInput = {
 export type DesignTemplateCreateWithoutModelsInput = {
   id?: string
   name: string
-  pattern: string
+  type?: string
+  pattern?: string | null
+  openingType?: string | null
+  traverseCount?: number | null
+  traverseStyle?: string | null
   frameConfig: string
-  showArrows?: boolean
-  showHandles?: boolean
+  frameColor?: string | null
+  glassColor?: string | null
+  handleStyle?: string | null
+  showArrows?: boolean | null
+  showHandles?: boolean | null
+  showLock?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -413,10 +653,18 @@ export type DesignTemplateCreateWithoutModelsInput = {
 export type DesignTemplateUncheckedCreateWithoutModelsInput = {
   id?: string
   name: string
-  pattern: string
+  type?: string
+  pattern?: string | null
+  openingType?: string | null
+  traverseCount?: number | null
+  traverseStyle?: string | null
   frameConfig: string
-  showArrows?: boolean
-  showHandles?: boolean
+  frameColor?: string | null
+  glassColor?: string | null
+  handleStyle?: string | null
+  showArrows?: boolean | null
+  showHandles?: boolean | null
+  showLock?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -440,10 +688,18 @@ export type DesignTemplateUpdateToOneWithWhereWithoutModelsInput = {
 export type DesignTemplateUpdateWithoutModelsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  pattern?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  openingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  traverseCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  traverseStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   frameConfig?: Prisma.StringFieldUpdateOperationsInput | string
-  showArrows?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  showHandles?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frameColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  glassColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handleStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showArrows?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  showHandles?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  showLock?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -451,10 +707,18 @@ export type DesignTemplateUpdateWithoutModelsInput = {
 export type DesignTemplateUncheckedUpdateWithoutModelsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  pattern?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  openingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  traverseCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  traverseStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   frameConfig?: Prisma.StringFieldUpdateOperationsInput | string
-  showArrows?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  showHandles?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frameColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  glassColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handleStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showArrows?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  showHandles?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  showLock?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -493,10 +757,18 @@ export type DesignTemplateCountOutputTypeCountModelsArgs<ExtArgs extends runtime
 export type DesignTemplateSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  type?: boolean
   pattern?: boolean
+  openingType?: boolean
+  traverseCount?: boolean
+  traverseStyle?: boolean
   frameConfig?: boolean
+  frameColor?: boolean
+  glassColor?: boolean
+  handleStyle?: boolean
   showArrows?: boolean
   showHandles?: boolean
+  showLock?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   models?: boolean | Prisma.DesignTemplate$modelsArgs<ExtArgs>
@@ -506,10 +778,18 @@ export type DesignTemplateSelect<ExtArgs extends runtime.Types.Extensions.Intern
 export type DesignTemplateSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  type?: boolean
   pattern?: boolean
+  openingType?: boolean
+  traverseCount?: boolean
+  traverseStyle?: boolean
   frameConfig?: boolean
+  frameColor?: boolean
+  glassColor?: boolean
+  handleStyle?: boolean
   showArrows?: boolean
   showHandles?: boolean
+  showLock?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["designTemplate"]>
@@ -517,10 +797,18 @@ export type DesignTemplateSelectCreateManyAndReturn<ExtArgs extends runtime.Type
 export type DesignTemplateSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  type?: boolean
   pattern?: boolean
+  openingType?: boolean
+  traverseCount?: boolean
+  traverseStyle?: boolean
   frameConfig?: boolean
+  frameColor?: boolean
+  glassColor?: boolean
+  handleStyle?: boolean
   showArrows?: boolean
   showHandles?: boolean
+  showLock?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["designTemplate"]>
@@ -528,15 +816,23 @@ export type DesignTemplateSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
 export type DesignTemplateSelectScalar = {
   id?: boolean
   name?: boolean
+  type?: boolean
   pattern?: boolean
+  openingType?: boolean
+  traverseCount?: boolean
+  traverseStyle?: boolean
   frameConfig?: boolean
+  frameColor?: boolean
+  glassColor?: boolean
+  handleStyle?: boolean
   showArrows?: boolean
   showHandles?: boolean
+  showLock?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DesignTemplateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "pattern" | "frameConfig" | "showArrows" | "showHandles" | "createdAt" | "updatedAt", ExtArgs["result"]["designTemplate"]>
+export type DesignTemplateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "type" | "pattern" | "openingType" | "traverseCount" | "traverseStyle" | "frameConfig" | "frameColor" | "glassColor" | "handleStyle" | "showArrows" | "showHandles" | "showLock" | "createdAt" | "updatedAt", ExtArgs["result"]["designTemplate"]>
 export type DesignTemplateInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   models?: boolean | Prisma.DesignTemplate$modelsArgs<ExtArgs>
   _count?: boolean | Prisma.DesignTemplateCountOutputTypeDefaultArgs<ExtArgs>
@@ -552,25 +848,57 @@ export type $DesignTemplatePayload<ExtArgs extends runtime.Types.Extensions.Inte
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     /**
-     * Nombre legible: "Corredera 2 hojas", "Fija + Corredera"
+     * Nombre legible: "Corredera 2 hojas", "Fija + Corredera", "Puerta 3 vidrios"
      */
     name: string
     /**
-     * Patrón de paneles: X=móvil, O=fijo (ej: "XX", "XO", "OX", "XXO")
+     * Tipo: window (corredera) o door (abatible)
      */
-    pattern: string
+    type: string
+    /**
+     * Patrón de paneles: X=móvil, O=fijo (ej: "XX", "XO", "OX", "XXO") — solo para type=window
+     */
+    pattern: string | null
+    /**
+     * Orientación y dirección de apertura: left_interior | right_interior | left_exterior | right_exterior — solo para type=door
+     */
+    openingType: string | null
+    /**
+     * Número de travesaños decorativos (0-4) — solo para type=door
+     */
+    traverseCount: number | null
+    /**
+     * Estilo de travesaños: horizontal | vertical | grid — solo para type=door
+     */
+    traverseStyle: string | null
     /**
      * Configuración visual del frame: JSON string { thickness, profileStyle }
      */
     frameConfig: string
     /**
-     * Mostrar flechas de apertura en paneles X
+     * Color del marco — solo para type=door
      */
-    showArrows: boolean
+    frameColor: string | null
     /**
-     * Mostrar handles en paneles X
+     * Color del vidrio — solo para type=door
      */
-    showHandles: boolean
+    glassColor: string | null
+    /**
+     * Estilo de manija: lever | knob | pull — solo para type=door
+     */
+    handleStyle: string | null
+    /**
+     * Mostrar flechas de apertura en paneles X — solo para type=window
+     */
+    showArrows: boolean | null
+    /**
+     * Mostrar handles en paneles X — solo para type=window
+     */
+    showHandles: boolean | null
+    /**
+     * Mostrar cerradura — solo para type=door
+     */
+    showLock: boolean | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["designTemplate"]>
@@ -999,10 +1327,18 @@ export interface Prisma__DesignTemplateClient<T, Null = never, ExtArgs extends r
 export interface DesignTemplateFieldRefs {
   readonly id: Prisma.FieldRef<"DesignTemplate", 'String'>
   readonly name: Prisma.FieldRef<"DesignTemplate", 'String'>
+  readonly type: Prisma.FieldRef<"DesignTemplate", 'String'>
   readonly pattern: Prisma.FieldRef<"DesignTemplate", 'String'>
+  readonly openingType: Prisma.FieldRef<"DesignTemplate", 'String'>
+  readonly traverseCount: Prisma.FieldRef<"DesignTemplate", 'Int'>
+  readonly traverseStyle: Prisma.FieldRef<"DesignTemplate", 'String'>
   readonly frameConfig: Prisma.FieldRef<"DesignTemplate", 'String'>
+  readonly frameColor: Prisma.FieldRef<"DesignTemplate", 'String'>
+  readonly glassColor: Prisma.FieldRef<"DesignTemplate", 'String'>
+  readonly handleStyle: Prisma.FieldRef<"DesignTemplate", 'String'>
   readonly showArrows: Prisma.FieldRef<"DesignTemplate", 'Boolean'>
   readonly showHandles: Prisma.FieldRef<"DesignTemplate", 'Boolean'>
+  readonly showLock: Prisma.FieldRef<"DesignTemplate", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"DesignTemplate", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"DesignTemplate", 'DateTime'>
 }

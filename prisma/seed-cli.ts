@@ -3,11 +3,9 @@
  * Seed CLI - Command-line interface for database seeding
  *
  * Usage:
- *   pnpm seed --preset=minimal
- *   pnpm seed --preset=demo-client
- *   pnpm seed --preset=full-catalog
- *   pnpm seed --preset=minimal --verbose
- *   pnpm seed --preset=demo-client --skip-validation
+ *   pnpm tsx prisma/seed-cli.ts --preset=minimal
+ *   pnpm tsx prisma/seed-cli.ts --preset=vitro-rojas-panama
+ *   pnpm tsx prisma/seed-cli.ts --preset=vitro-rojas-panama --verbose
  *
  * @version 1.0.0
  */
@@ -15,29 +13,16 @@
 
 import { parseArgs } from "node:util";
 import { db } from "../src/server/db";
-import { demoClientPreset } from "./data/presets/demo-client.preset";
-import { fullCatalogPreset } from "./data/presets/full-catalog.preset";
-// Import presets (NO BARRELS - direct imports)
 import { minimalPreset } from "./data/presets/minimal.preset";
-import { vidriosLaEquidadColombiaPreset } from "./data/presets/vidrios-la-equidad-colombia.preset";
 import { vitroRojasPanamaPreset } from "./data/presets/vitro-rojas-panama.preset";
-import type { SeedPreset } from "./seeders/seed-orchestrator";
 import { SeedOrchestrator } from "./seeders/seed-orchestrator";
+import type { SeedPreset } from "./seeders/seed-orchestrator";
 
-/**
- * Available presets registry
- */
 const PRESETS: Record<string, SeedPreset> = {
-  "demo-client": demoClientPreset,
-  "full-catalog": fullCatalogPreset,
   minimal: minimalPreset,
-  "vidrios-la-equidad-colombia": vidriosLaEquidadColombiaPreset,
   "vitro-rojas-panama": vitroRojasPanamaPreset,
 };
 
-/**
- * CLI configuration
- */
 type CliOptions = {
   preset: string;
   verbose: boolean;
@@ -46,9 +31,6 @@ type CliOptions = {
   help: boolean;
 };
 
-/**
- * Parse command-line arguments
- */
 function parseCliArgs(): CliOptions {
   const { values } = parseArgs({
     options: {
@@ -88,37 +70,23 @@ function parseCliArgs(): CliOptions {
   };
 }
 
-/**
- * Print CLI help
- */
-function printHelp(): void {
-  // TODO: Implement help message (currently unused)
-}
-
-/**
- * Validate preset name
- */
 function validatePreset(presetName: string): void {
   const availablePresets = Object.keys(PRESETS);
-
   if (!availablePresets.includes(presetName)) {
+    console.error(`Unknown preset: ${presetName}. Available: ${availablePresets.join(", ")}`);
     process.exit(1);
   }
 }
 
-/**
- * Main seed function
- */
 async function main(): Promise<void> {
   const options = parseCliArgs();
 
-  // Show help and exit
   if (options.help) {
-    printHelp();
+    console.log("Usage: pnpm tsx prisma/seed-cli.ts --preset=<name>");
+    console.log("Available presets:", Object.keys(PRESETS).join(", "));
     process.exit(0);
   }
 
-  // Validate preset
   validatePreset(options.preset);
 
   const preset = PRESETS[options.preset];
@@ -127,17 +95,14 @@ async function main(): Promise<void> {
   }
 
   try {
-    // Create orchestrator
     const orchestrator = new SeedOrchestrator(db, {
       continueOnError: options.continueOnError,
       skipValidation: options.skipValidation,
       verbose: options.verbose,
     });
 
-    // Run seeding
     const stats = await orchestrator.seedWithPreset(preset);
 
-    // Exit with appropriate code
     if (stats.totalFailed > 0) {
       process.exit(1);
     }
@@ -149,7 +114,6 @@ async function main(): Promise<void> {
   }
 }
 
-// Run CLI
 main().catch((_error) => {
   process.exit(1);
 });

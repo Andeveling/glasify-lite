@@ -148,21 +148,38 @@ model TenantConfig {
 
 model DesignTemplate {
   id              String   @id @default(cuid())
-  /// Nombre legible: "Corredera 2 hojas", "Fija + Corredera"
+  /// Nombre legible: "Corredera 2 hojas", "Fija + Corredera", "Puerta 3 vidrios"
   name            String   @unique
-  /// Patrón de paneles: X=móvil, O=fijo (ej: "XX", "XO", "OX", "XXO")
-  pattern         String
+  /// Tipo: window (corredera) o door (abatible)
+  type            String   @default("window")
+  /// Patrón de paneles: X=móvil, O=fijo (ej: "XX", "XO", "OX", "XXO") — solo para type=window
+  pattern         String?
+  /// Orientación y dirección de apertura: left_interior | right_interior | left_exterior | right_exterior — solo para type=door
+  openingType     String?
+  /// Número de travesaños decorativos (0-4) — solo para type=door
+  traverseCount   Int?
+  /// Estilo de travesaños: horizontal | vertical | grid — solo para type=door
+  traverseStyle   String?
   /// Configuración visual del frame: JSON string { thickness, profileStyle }
   frameConfig     String
-  /// Mostrar flechas de apertura en paneles X
-  showArrows      Boolean  @default(true)
-  /// Mostrar handles en paneles X
-  showHandles     Boolean  @default(true)
+  /// Color del marco — solo para type=door
+  frameColor      String?
+  /// Color del vidrio — solo para type=door
+  glassColor      String?
+  /// Estilo de manija: lever | knob | pull — solo para type=door
+  handleStyle     String?
+  /// Mostrar flechas de apertura en paneles X — solo para type=window
+  showArrows      Boolean?
+  /// Mostrar handles en paneles X — solo para type=window
+  showHandles     Boolean?
+  /// Mostrar cerradura — solo para type=door
+  showLock        Boolean?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   models          Model[]
 
   @@index([name])
+  @@index([type])
 }
 
 model ProfileSupplier {

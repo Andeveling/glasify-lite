@@ -2658,10 +2658,18 @@ export type TenantConfigScalarFieldEnum = (typeof TenantConfigScalarFieldEnum)[k
 export const DesignTemplateScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  type: 'type',
   pattern: 'pattern',
+  openingType: 'openingType',
+  traverseCount: 'traverseCount',
+  traverseStyle: 'traverseStyle',
   frameConfig: 'frameConfig',
+  frameColor: 'frameColor',
+  glassColor: 'glassColor',
+  handleStyle: 'handleStyle',
   showArrows: 'showArrows',
   showHandles: 'showHandles',
+  showLock: 'showLock',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
