@@ -1,9 +1,11 @@
 "use client"
 
 import { Bot, CopyIcon, RefreshCcwIcon } from "lucide-react"
-import { type FormEvent, Fragment, useState } from "react"
-import { useChatSession } from "@/app/_components/chat-session-manager"
+import { type FormEvent, Fragment, useCallback, useState } from "react"
+import { useSessionList } from "@/app/_hooks/use-session-list"
 import { useModelAssistantChat } from "@/app/_hooks/use-model-assistant-chat"
+import { useChatSession } from "@/app/_components/chat-session-manager"
+import { AssistantSessionSidebar } from "./_components/assistant-session-sidebar"
 import {
   Conversation,
   ConversationContent,
@@ -48,9 +50,20 @@ function isToolPart(part: UIMessage["parts"][number]) {
 }
 
 export default function AssistantPage() {
-  const { sessionId, isCreatingSession, isAuthenticated, session } = useChatSession()
+  const {
+    sessionId,
+    isCreatingSession,
+    isAuthenticated,
+    session,
+    createSession,
+    setActiveSessionId,
+  } = useChatSession()
+
   const { messages, status, sendMessage, regenerate, retry, isLoading, error } =
     useModelAssistantChat({ sessionId })
+
+  const { sessions, isLoading: isLoadingSessions, deleteSession, refresh } = useSessionList()
+
   const [input, setInput] = useState("")
   const { files, remove, clear, inputRef, handleFileChange } = usePromptInputAttachments()
 
@@ -62,6 +75,28 @@ export default function AssistantPage() {
     }
   }
 
+  const handleSelectSession = useCallback(
+    (selectedSessionId: string) => {
+      setActiveSessionId(selectedSessionId)
+    },
+    [setActiveSessionId],
+  )
+
+  const handleNewSession = useCallback(async () => {
+    await createSession()
+    await refresh()
+  }, [createSession, refresh])
+
+  const handleDeleteSession = useCallback(
+    async (sessionIdToDelete: string) => {
+      await deleteSession(sessionIdToDelete)
+      if (sessionIdToDelete === sessionId) {
+        await createSession()
+      }
+    },
+    [deleteSession, sessionId, createSession],
+  )
+
   if (!isAuthenticated) {
     return (
       <div className="flex h-full items-center justify-center">
@@ -70,155 +105,167 @@ export default function AssistantPage() {
     )
   }
 
-  if (isCreatingSession || !sessionId) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <p className="text-muted-foreground">Preparando el asistente...</p>
-      </div>
-    )
-  }
-
   const hasAssistantParts = messages.some((m) => m.role === "assistant" && m.parts.length > 0)
   const showTypingIndicator = isLoading && !hasAssistantParts
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex flex-col h-full max-w-4xl mx-auto w-full p-4">
-        <div className="flex items-center gap-2 mb-4">
-          <Bot className="size-6" />
-          <h1 className="text-xl font-semibold">Asistente de Modelos</h1>
-        </div>
+    <div className="flex h-full overflow-hidden">
+      <AssistantSessionSidebar
+        sessions={sessions}
+        activeSessionId={sessionId}
+        isLoading={isLoadingSessions}
+        onSelectSession={handleSelectSession}
+        onNewSession={handleNewSession}
+        onDeleteSession={handleDeleteSession}
+      />
 
-        <div className="flex-1 rounded-lg border overflow-hidden flex flex-col">
-          <Conversation>
-            {session && (
-              <ConversationContextBar
-                mode={session.mode}
-                currentStep={session.currentStep}
-                currentModelId={session.currentModelId}
-              />
-            )}
-            <ConversationContent>
-              {messages.length === 0 && !showTypingIndicator ? (
-                <ConversationEmptyState
-                  icon={<Bot className="size-12" />}
-                  title="Asistente de Modelos"
-                  description="Creá o calibrá modelos de ventanas y puertas. ¿Qué te gustaría hacer?"
-                />
-              ) : (
-                <>
-                  {showTypingIndicator && (
-                    <Message from="assistant">
-                      <TypingIndicator isAnimating={true} />
-                    </Message>
-                  )}
-                  {messages.map((message, messageIndex) => (
-                    <Fragment key={message.id}>
-                      {message.parts.map((part, partIndex) => {
-                        if (isTextPart(part)) {
-                          const isLastMessage = messageIndex === messages.length - 1
-
-                          return (
-                            <Fragment key={`${message.id}-${partIndex}`}>
-                              <Message from={message.role}>
-                                <MessageContent>
-                                  <MessageResponse>{part.text}</MessageResponse>
-                                </MessageContent>
-                              </Message>
-                              {message.role === "assistant" && isLastMessage && (
-                                <MessageActions>
-                                  <MessageAction onClick={() => regenerate()} label="Reintentar">
-                                    <RefreshCcwIcon className="size-3" />
-                                  </MessageAction>
-                                  <MessageAction
-                                    onClick={() => navigator.clipboard.writeText(part.text)}
-                                    label="Copiar"
-                                  >
-                                    <CopyIcon className="size-3" />
-                                  </MessageAction>
-                                </MessageActions>
-                              )}
-                            </Fragment>
-                          )
-                        }
-
-                        if (isToolPart(part)) {
-                          const toolPart = part as ToolCallPart
-                          const toolName =
-                            toolPart.type === "dynamic-tool"
-                              ? (toolPart.toolName ?? "unknown")
-                              : toolPart.type.replace("tool-", "")
-                          const state =
-                            toolPart.state === "output-available"
-                              ? "output-available"
-                              : toolPart.state === "input-streaming"
-                                ? "input-streaming"
-                                : "input-available"
-
-                          return (
-                            <Message from={message.role} key={`${message.id}-${partIndex}`}>
-                              <MessageContent>
-                                <ToolCallCard
-                                  toolName={toolName}
-                                  state={state}
-                                  input={toolPart.input as Record<string, unknown> | undefined}
-                                  output={
-                                    toolPart.state === "output-available" && toolPart.output
-                                      ? (toolPart.output as Record<string, unknown>)
-                                      : undefined
-                                  }
-                                />
-                              </MessageContent>
-                            </Message>
-                          )
-                        }
-
-                        return null
-                      })}
-                    </Fragment>
-                  ))}
-                </>
-              )}
-            </ConversationContent>
-            <ConversationScrollButton />
-          </Conversation>
-
-          <div className="border-t">
-            <AttachmentPreview files={files} onRemove={remove} />
-            {error && <MessageErrorInline message={error.message} onRetry={retry} />}
+      <div className="flex flex-col flex-1 min-w-0 p-4">
+        {isCreatingSession || !sessionId ? (
+          <div className="flex h-full items-center justify-center">
+            <p className="text-muted-foreground">Preparando el asistente...</p>
           </div>
+        ) : (
+          <div className="flex flex-col h-full max-w-4xl mx-auto w-full">
+            <div className="flex items-center gap-2 mb-4">
+              <Bot className="size-6" />
+              <h1 className="text-xl font-semibold">Asistente de Modelos</h1>
+            </div>
 
-          <PromptInput
-            value={input}
-            onSubmit={handleSubmit}
-            className="mt-4 mb-4 w-full max-w-2xl mx-auto"
-          >
-            <input
-              ref={inputRef}
-              type="file"
-              multiple
-              className="hidden"
-              onChange={handleFileChange}
-              accept="image/*,.pdf,.doc,.docx"
-            />
-            <PromptInputTextarea
-              value={input}
-              placeholder="Escribí tu mensaje..."
-              onChange={(e) => setInput(e.currentTarget.value)}
-              disabled={status === "submitted" || status === "streaming"}
-              className="pr-12"
-            />
-            <PromptInputSubmit
-              status={status === "submitted" || status === "streaming" ? "streaming" : "ready"}
-              disabled={
-                (!input.trim() && files.length === 0) ||
-                status === "submitted" ||
-                status === "streaming"
-              }
-              className="absolute bottom-1 right-1"
-            />
-          </PromptInput>
-        </div>
+            <div className="flex-1 rounded-lg border overflow-hidden flex flex-col">
+              <Conversation>
+                {session && (
+                  <ConversationContextBar
+                    mode={session.mode}
+                    currentStep={session.currentStep}
+                    currentModelId={session.currentModelId}
+                  />
+                )}
+                <ConversationContent>
+                  {messages.length === 0 && !showTypingIndicator ? (
+                    <ConversationEmptyState
+                      icon={<Bot className="size-12" />}
+                      title="Asistente de Modelos"
+                      description="Creá o calibrá modelos de ventanas y puertas. ¿Qué te gustaría hacer?"
+                    />
+                  ) : (
+                    <>
+                      {showTypingIndicator && (
+                        <Message from="assistant">
+                          <TypingIndicator isAnimating={true} />
+                        </Message>
+                      )}
+                      {messages.map((message, messageIndex) => (
+                        <Fragment key={message.id}>
+                          {message.parts.map((part, partIndex) => {
+                            if (isTextPart(part)) {
+                              const isLastMessage = messageIndex === messages.length - 1
+
+                              return (
+                                <Fragment key={`${message.id}-${partIndex}`}>
+                                  <Message from={message.role}>
+                                    <MessageContent>
+                                      <MessageResponse>{part.text}</MessageResponse>
+                                    </MessageContent>
+                                  </Message>
+                                  {message.role === "assistant" && isLastMessage && (
+                                    <MessageActions>
+                                      <MessageAction
+                                        onClick={() => regenerate()}
+                                        label="Reintentar"
+                                      >
+                                        <RefreshCcwIcon className="size-3" />
+                                      </MessageAction>
+                                      <MessageAction
+                                        onClick={() => navigator.clipboard.writeText(part.text)}
+                                        label="Copiar"
+                                      >
+                                        <CopyIcon className="size-3" />
+                                      </MessageAction>
+                                    </MessageActions>
+                                  )}
+                                </Fragment>
+                              )
+                            }
+
+                            if (isToolPart(part)) {
+                              const toolPart = part as ToolCallPart
+                              const toolName =
+                                toolPart.type === "dynamic-tool"
+                                  ? (toolPart.toolName ?? "unknown")
+                                  : toolPart.type.replace("tool-", "")
+                              const state =
+                                toolPart.state === "output-available"
+                                  ? "output-available"
+                                  : toolPart.state === "input-streaming"
+                                    ? "input-streaming"
+                                    : "input-available"
+
+                              return (
+                                <Message from={message.role} key={`${message.id}-${partIndex}`}>
+                                  <MessageContent>
+                                    <ToolCallCard
+                                      toolName={toolName}
+                                      state={state}
+                                      input={toolPart.input as Record<string, unknown> | undefined}
+                                      output={
+                                        toolPart.state === "output-available" && toolPart.output
+                                          ? (toolPart.output as Record<string, unknown>)
+                                          : undefined
+                                      }
+                                    />
+                                  </MessageContent>
+                                </Message>
+                              )
+                            }
+
+                            return null
+                          })}
+                        </Fragment>
+                      ))}
+                    </>
+                  )}
+                </ConversationContent>
+                <ConversationScrollButton />
+              </Conversation>
+
+              <div className="border-t">
+                <AttachmentPreview files={files} onRemove={remove} />
+                {error && <MessageErrorInline message={error.message} onRetry={retry} />}
+              </div>
+
+              <PromptInput
+                value={input}
+                onSubmit={handleSubmit}
+                className="mt-4 mb-4 w-full max-w-2xl mx-auto"
+              >
+                <input
+                  ref={inputRef}
+                  type="file"
+                  multiple
+                  className="hidden"
+                  onChange={handleFileChange}
+                  accept="image/*,.pdf,.doc,.docx"
+                />
+                <PromptInputTextarea
+                  value={input}
+                  placeholder="Escribí tu mensaje..."
+                  onChange={(e) => setInput(e.currentTarget.value)}
+                  disabled={status === "submitted" || status === "streaming"}
+                  className="pr-12"
+                />
+                <PromptInputSubmit
+                  status={status === "submitted" || status === "streaming" ? "streaming" : "ready"}
+                  disabled={
+                    (!input.trim() && files.length === 0) ||
+                    status === "submitted" ||
+                    status === "streaming"
+                  }
+                  className="absolute bottom-1 right-1"
+                />
+              </PromptInput>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
