@@ -4,6 +4,7 @@
  * Admin CRUD operations for DesignTemplate management.
  * DesignTemplates define window panel patterns (XX, XO, OX, XXO, etc.)
  * used by the DesignRenderer to generate SVG visualizations.
+ * Now unified to support both window and door types.
  */
 
 import type { Prisma } from "@prisma/generated/client"
@@ -17,10 +18,13 @@ import {
 } from "@/lib/validations/design-template"
 import { adminProcedure, createTRPCRouter } from "@/server/api/trpc"
 
-function buildWhereClause(input: { search?: string }): Prisma.DesignTemplateWhereInput {
+function buildWhereClause(input: { search?: string; type?: string }): Prisma.DesignTemplateWhereInput {
   const where: Prisma.DesignTemplateWhereInput = {}
   if (input.search) {
     where.OR = [{ name: { contains: input.search } }, { pattern: { contains: input.search } }]
+  }
+  if (input.type) {
+    where.type = input.type
   }
   return where
 }
@@ -35,7 +39,7 @@ export const designTemplateRouter = createTRPCRouter({
 
       const items = await ctx.db.designTemplate.findMany({
         where,
-        include: { _count: { select: { models: true } } },
+        select: { id: true, name: true, type: true, pattern: true, frameConfig: true, createdAt: true, updatedAt: true, _count: { select: { models: true } } },
         orderBy: { [input.sortBy]: input.sortOrder },
         skip,
         take: input.limit,
@@ -90,7 +94,7 @@ export const designTemplateRouter = createTRPCRouter({
     try {
       const items = await ctx.db.designTemplate.findMany({
         orderBy: { name: "asc" },
-        select: { id: true, name: true, pattern: true },
+        select: { id: true, name: true, type: true, pattern: true },
       })
       return items
     } catch (error) {
@@ -121,10 +125,24 @@ export const designTemplateRouter = createTRPCRouter({
       const template = await ctx.db.designTemplate.create({
         data: {
           name: input.name,
-          pattern: input.pattern,
+          type: input.type,
           frameConfig: JSON.stringify(input.frameConfig),
-          showArrows: input.showArrows,
-          showHandles: input.showHandles,
+          // Window-specific fields
+          ...(input.type === "window" && {
+            pattern: input.pattern,
+            showArrows: input.showArrows,
+            showHandles: input.showHandles,
+          }),
+          // Door-specific fields
+          ...(input.type === "door" && {
+            openingType: input.openingType,
+            traverseCount: input.traverseCount,
+            traverseStyle: input.traverseStyle,
+            frameColor: input.frameColor,
+            glassColor: input.glassColor,
+            handleStyle: input.handleStyle,
+            showLock: input.showLock,
+          }),
         },
       })
 
@@ -132,7 +150,7 @@ export const designTemplateRouter = createTRPCRouter({
         userId: ctx.session?.user.id,
         templateId: template.id,
         name: template.name,
-        pattern: template.pattern,
+        type: template.type,
       })
 
       return template
@@ -186,15 +204,44 @@ export const designTemplateRouter = createTRPCRouter({
           ? JSON.stringify(data.frameConfig)
           : existing.frameConfig
 
+        // Base fields
+        const updateData: Prisma.DesignTemplateUpdateInput = {
+          name: data.name ?? existing.name,
+          frameConfig,
+        }
+
+        // Type-specific fields with existing as fallback
+        if (data.type === "window" || (!data.type && existing.type === "window")) {
+          const isWindow = data.type === "window"
+          updateData.type = existing.type
+          updateData.pattern = isWindow ? (data.pattern ?? existing.pattern) : null
+          updateData.showArrows = isWindow ? (data.showArrows ?? existing.showArrows) : null
+          updateData.showHandles = isWindow ? (data.showHandles ?? existing.showHandles) : null
+          updateData.openingType = null
+          updateData.traverseCount = null
+          updateData.traverseStyle = null
+          updateData.frameColor = null
+          updateData.glassColor = null
+          updateData.handleStyle = null
+          updateData.showLock = null
+        } else if (data.type === "door" || (!data.type && existing.type === "door")) {
+          const isDoor = data.type === "door"
+          updateData.type = existing.type
+          updateData.openingType = isDoor ? (data.openingType ?? existing.openingType) : null
+          updateData.traverseCount = isDoor ? (data.traverseCount ?? existing.traverseCount) : null
+          updateData.traverseStyle = isDoor ? (data.traverseStyle ?? existing.traverseStyle) : null
+          updateData.frameColor = isDoor ? (data.frameColor ?? existing.frameColor) : null
+          updateData.glassColor = isDoor ? (data.glassColor ?? existing.glassColor) : null
+          updateData.handleStyle = isDoor ? (data.handleStyle ?? existing.handleStyle) : null
+          updateData.showLock = isDoor ? (data.showLock ?? existing.showLock) : null
+          updateData.pattern = null
+          updateData.showArrows = null
+          updateData.showHandles = null
+        }
+
         const template = await ctx.db.designTemplate.update({
           where: { id },
-          data: {
-            name: data.name ?? existing.name,
-            pattern: data.pattern ?? existing.pattern,
-            frameConfig,
-            showArrows: data.showArrows ?? existing.showArrows,
-            showHandles: data.showHandles ?? existing.showHandles,
-          },
+          data: updateData,
         })
 
         logger.info("Design template updated", {

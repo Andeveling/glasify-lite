@@ -1,9 +1,5 @@
 import { z } from "zod"
 import { db } from "@/server/db"
-import {
-  parseModelAssistantSessionContext,
-  serializeModelAssistantSessionContext,
-} from "@/server/services/model-assistant.service"
 
 export const ModelAssistantMode = {
   CREATE_MODEL: "create_model",
@@ -13,39 +9,63 @@ export const ModelAssistantMode = {
 
 export type ModelAssistantMode = (typeof ModelAssistantMode)[keyof typeof ModelAssistantMode]
 
-export const modelAssistantSessionContextSchema = z.union([
-  z.object({
-    name: z.string(),
-    designTemplateId: z.string(),
-    profileSupplierId: z.string(),
-    dimensions: z.object({
-      minWidthMm: z.number(),
-      maxWidthMm: z.number(),
-      minHeightMm: z.number(),
-      maxHeightMm: z.number(),
-    }),
-    glassTypeIds: z.array(z.string()),
-  }),
-  z.object({
-    modelId: z.string(),
-    supplierId: z.string(),
-    barLengthMeters: z.number(),
-    profiles: z.array(
-      z.object({
-        name: z.string(),
-        meters: z.number(),
-      }),
-    ),
-    accessories: z.array(
-      z.object({
-        name: z.string(),
-        quantity: z.number(),
-      }),
-    ),
-  }),
-])
+const sessionDimensionsSchema = z.object({
+  minWidthMm: z.number(),
+  maxWidthMm: z.number(),
+  minHeightMm: z.number(),
+  maxHeightMm: z.number(),
+})
+
+const sessionProfileSchema = z.object({
+  name: z.string(),
+  meters: z.number(),
+})
+
+const sessionAccessorySchema = z.object({
+  name: z.string(),
+  quantity: z.number(),
+})
+
+export const modelAssistantSessionContextSchema = z
+  .object({
+    name: z.string().optional(),
+    designTemplateId: z.string().optional(),
+    profileSupplierId: z.string().optional(),
+    dimensions: sessionDimensionsSchema.optional(),
+    glassTypeIds: z.array(z.string()).optional(),
+    modelId: z.string().optional(),
+    supplierId: z.string().optional(),
+    barLengthMeters: z.number().optional(),
+    profiles: z.array(sessionProfileSchema).optional(),
+    accessories: z.array(sessionAccessorySchema).optional(),
+  })
+  .passthrough()
 
 export type ModelAssistantSessionContext = z.infer<typeof modelAssistantSessionContextSchema>
+
+function serializeModelAssistantSessionContext(context: ModelAssistantSessionContext): string {
+  return JSON.stringify(context)
+}
+
+function parseModelAssistantSessionContext(value: string): ModelAssistantSessionContext | null {
+  try {
+    const parsed = JSON.parse(value) as unknown
+
+    if (
+      !parsed ||
+      typeof parsed !== "object" ||
+      Array.isArray(parsed) ||
+      Object.keys(parsed).length === 0
+    ) {
+      return null
+    }
+
+    const result = modelAssistantSessionContextSchema.safeParse(parsed)
+    return result.success ? result.data : null
+  } catch {
+    return null
+  }
+}
 
 export type CreateSessionInput = {
   userId: string
@@ -93,7 +113,7 @@ export async function getModelAssistantSession(sessionId: string) {
     mode: session.mode as ModelAssistantMode,
     currentModelId: session.currentModelId,
     currentStep: session.currentStep,
-    context: session.contextJson ? parseModelAssistantSessionContext(session.contextJson) : null,
+    context: parseModelAssistantSessionContext(session.contextJson),
     createdAt: session.createdAt,
     updatedAt: session.updatedAt,
   }
@@ -129,10 +149,34 @@ export async function updateModelAssistantSession(input: UpdateSessionInput) {
     mode: session.mode as ModelAssistantMode,
     currentModelId: session.currentModelId,
     currentStep: session.currentStep,
-    context: session.contextJson ? parseModelAssistantSessionContext(session.contextJson) : null,
+    context: parseModelAssistantSessionContext(session.contextJson),
     createdAt: session.createdAt,
     updatedAt: session.updatedAt,
   }
+}
+
+export async function listModelAssistantSessionsByUser(userId: string) {
+  const sessions = await db.modelAssistantSession.findMany({
+    where: { userId },
+    orderBy: { updatedAt: "desc" },
+    select: {
+      id: true,
+      mode: true,
+      currentStep: true,
+      currentModelId: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  })
+
+  return sessions.map((s) => ({
+    id: s.id,
+    mode: s.mode as ModelAssistantMode,
+    currentStep: s.currentStep,
+    currentModelId: s.currentModelId,
+    createdAt: s.createdAt,
+    updatedAt: s.updatedAt,
+  }))
 }
 
 export async function deleteModelAssistantSession(sessionId: string) {
