@@ -70,13 +70,40 @@ vi.mock("@/server/ai/tools/catalog-tools", () => ({
 }))
 
 vi.mock("@/server/ai/providers/minimax", () => ({
-  createMinimaxProvider: vi.fn(),
-  getMinimaxModelId: vi.fn(),
+  createMinimaxProvider: vi.fn().mockReturnValue({
+    languageModel: vi.fn().mockReturnValue({}),
+  }),
+  getMinimaxModelId: vi.fn().mockReturnValue("minimax-model"),
 }))
+
+const {
+  createModelCreationStreamText,
+  createModelCalibrationStreamText,
+  createQuoteStreamText,
+} = vi.hoisted(() => {
+  const createMockResult = (text) => {
+    const result = { text, toUIMessageStreamResponse: () => new Response() }
+    return {
+      then: (resolve) => resolve(result),
+      catch: () => result,
+      finally: () => result,
+    }
+  }
+
+  return {
+    createModelCreationStreamText: vi.fn(() => createMockResult("Voy a ayudarte a crear el modelo")),
+    createModelCalibrationStreamText: vi.fn(() => createMockResult("Voy a ayudarte a calibrar el modelo")),
+    createQuoteStreamText: vi.fn(() => createMockResult("Voy a ayudarte a crear la cotización")),
+  }
+})
 
 vi.mock("@/server/ai/agents/model-assistant.executor", () => ({
   getModeExecutor: vi.fn(),
   isExecutableMode: vi.fn(),
+  createModelCreationStreamText,
+  createModelCalibrationStreamText,
+  createQuoteStreamText,
+  createStreamTextResult: vi.fn(),
 }))
 
 const mockSession = {
@@ -119,18 +146,10 @@ describe("Model Assistant Agent Execution", () => {
     beforeEach(async () => {
       const { auth } = await import("@/server/auth")
       const { getModelAssistantSession } = await import("@/server/services/model-assistant-session.service")
-      const { getModeExecutor, isExecutableMode } = await import("@/server/ai/agents/model-assistant.executor")
 
       vi.mocked(auth.api.getSession).mockResolvedValue(mockSession)
       vi.mocked(getModelAssistantSession).mockResolvedValue(mockAssistantSession)
-      vi.mocked(isExecutableMode).mockReturnValue(true)
-      vi.mocked(getModeExecutor).mockReturnValue({
-        execute: vi.fn().mockResolvedValue({
-          response: "Voy a ayudarte a crear el modelo. ¿Cuál es el nombre del modelo?",
-          mode: "create_model",
-          intent: { mode: "create_model", confidence: 0.92 },
-        }),
-      })
+      createModelCreationStreamText.mockClear()
     })
 
     it("should execute create_model agent with user message", async () => {
@@ -171,7 +190,6 @@ describe("Model Assistant Agent Execution", () => {
     beforeEach(async () => {
       const { auth } = await import("@/server/auth")
       const { getModelAssistantSession } = await import("@/server/services/model-assistant-session.service")
-      const { getModeExecutor, isExecutableMode } = await import("@/server/ai/agents/model-assistant.executor")
 
       vi.mocked(auth.api.getSession).mockResolvedValue(mockSession)
       vi.mocked(getModelAssistantSession).mockResolvedValue({
@@ -179,14 +197,7 @@ describe("Model Assistant Agent Execution", () => {
         mode: "calibrate_model" as const,
         currentModelId: "model-123",
       })
-      vi.mocked(isExecutableMode).mockReturnValue(true)
-      vi.mocked(getModeExecutor).mockReturnValue({
-        execute: vi.fn().mockResolvedValue({
-          response: "Voy a ayudarte a calibrar el modelo. ¿Cuál es el modelo?",
-          mode: "calibrate_model",
-          intent: { mode: "calibrate_model", confidence: 0.88 },
-        }),
-      })
+      createModelCalibrationStreamText.mockClear()
     })
 
     it("should execute calibrate_model agent with user message", async () => {
@@ -223,21 +234,20 @@ describe("Model Assistant Agent Execution", () => {
     })
   })
 
-  describe("create_quote mode (stub)", () => {
+  describe("create_quote mode (streaming)", () => {
     beforeEach(async () => {
       const { auth } = await import("@/server/auth")
       const { getModelAssistantSession } = await import("@/server/services/model-assistant-session.service")
-      const { isExecutableMode } = await import("@/server/ai/agents/model-assistant.executor")
 
       vi.mocked(auth.api.getSession).mockResolvedValue(mockSession)
       vi.mocked(getModelAssistantSession).mockResolvedValue({
         ...mockAssistantSession,
         mode: "create_quote" as const,
       })
-      vi.mocked(isExecutableMode).mockReturnValue(false)
+      createQuoteStreamText.mockClear()
     })
 
-    it("should return planned-feature acknowledgment for create_quote", async () => {
+    it("should execute create_quote agent via streaming", async () => {
       const { routeIntent, isConfident, IntentMode } = await import("@/server/ai/agents/model-assistant.router")
 
       const intent: RoutedIntent = {
@@ -263,7 +273,7 @@ describe("Model Assistant Agent Execution", () => {
 
       expect(response.status).toBe(200)
       expect(data.mode).toBe("create_quote")
-      expect(data.response).toContain("no está disponible")
+      expect(data.response).toContain("cotización")
     })
   })
 

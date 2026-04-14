@@ -44,9 +44,49 @@ vi.mock("@/server/services/model-assistant-session.service", () => ({
   },
 }))
 
+const {
+  createModelCreationStreamText,
+  createModelCalibrationStreamText,
+  createQuoteStreamText,
+  createStreamTextResult,
+  mockToUIMessageStreamResponse,
+} = vi.hoisted(() => {
+  const mockToUIMessageStreamResponse = vi.fn(() => new Response())
+
+  const createMockResult = (text) => {
+    const inner = { text }
+    return {
+      text,
+      toUIMessageStreamResponse: mockToUIMessageStreamResponse,
+      then: (resolve) => resolve(inner),
+      catch: () => inner,
+      finally: () => inner,
+    }
+  }
+
+  return {
+    createModelCreationStreamText: vi.fn(() => createMockResult("AI response")),
+    createModelCalibrationStreamText: vi.fn(() => createMockResult("AI response calibrate")),
+    createQuoteStreamText: vi.fn(() => createMockResult("AI response quote")),
+    createStreamTextResult: vi.fn(() => createMockResult("disambiguation text")),
+    mockToUIMessageStreamResponse,
+  }
+})
+
 vi.mock("@/server/ai/agents/model-assistant.executor", () => ({
   getModeExecutor: vi.fn(),
   isExecutableMode: vi.fn(),
+  createModelCreationStreamText,
+  createModelCalibrationStreamText,
+  createQuoteStreamText,
+  createStreamTextResult,
+}))
+
+vi.mock("@/server/ai/providers/minimax", () => ({
+  createMinimaxProvider: vi.fn().mockReturnValue({
+    languageModel: vi.fn().mockReturnValue({}),
+  }),
+  getMinimaxModelId: vi.fn().mockReturnValue("minimax-model"),
 }))
 
 const mockAssistantSession = {
@@ -120,6 +160,10 @@ describe("POST /api/chat/sessions/[sessionId]/messages", () => {
           intent: { mode: "create_model", confidence: 0.92 },
         }),
       })
+
+      createModelCreationStreamText.mockClear()
+      createModelCalibrationStreamText.mockClear()
+      createQuoteStreamText.mockClear()
     })
 
     it("returns disambiguation response for low confidence intent", async () => {
@@ -210,7 +254,7 @@ describe("POST /api/chat/sessions/[sessionId]/messages", () => {
       expect(data.intent.confidence).toBe(0.88)
     })
 
-    it("returns create_quote stub for high confidence create_quote intent", async () => {
+    it("returns create_quote streaming response for high confidence create_quote intent", async () => {
       const quoteIntent: RoutedIntent = {
         mode: IntentMode.CREATE_QUOTE,
         confidence: 0.85,
@@ -218,9 +262,6 @@ describe("POST /api/chat/sessions/[sessionId]/messages", () => {
 
       vi.mocked(routeIntent).mockResolvedValue(quoteIntent)
       vi.mocked(isConfident).mockReturnValue(true)
-
-      const { isExecutableMode } = await import("@/server/ai/agents/model-assistant.executor")
-      vi.mocked(isExecutableMode).mockReturnValue(false)
 
       const { POST } = await import("@/app/api/chat/sessions/[sessionId]/messages/route")
 
@@ -234,10 +275,182 @@ describe("POST /api/chat/sessions/[sessionId]/messages", () => {
 
       expect(response.status).toBe(200)
       const data = await response.json()
-      expect(data.response).toContain("no está disponible")
+      expect(data.response).toContain("AI response quote")
       expect(data.mode).toBe("create_quote")
       expect(data.intent.mode).toBe("create_quote")
       expect(data.intent.confidence).toBe(0.85)
+    })
+  })
+
+  describe("SSE streaming", () => {
+    beforeEach(async () => {
+      const { auth } = await import("@/server/auth")
+      const { getModelAssistantSession } = await import(
+        "@/server/services/model-assistant-session.service"
+      )
+
+      vi.mocked(auth.api.getSession).mockResolvedValue({
+        session: {
+          id: "session-1",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          expiresAt: new Date(),
+          userId: "user-1",
+          token: "token-123",
+        },
+        user: {
+          id: "user-1",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          email: "test@example.com",
+          emailVerified: true,
+          name: "Test User",
+          role: "admin",
+        },
+      })
+      vi.mocked(getModelAssistantSession).mockResolvedValue(mockAssistantSession)
+
+      createModelCreationStreamText.mockClear()
+      createModelCalibrationStreamText.mockClear()
+      createQuoteStreamText.mockClear()
+      createStreamTextResult.mockClear()
+      mockToUIMessageStreamResponse.mockClear()
+    })
+
+    it("calls toUIMessageStreamResponse for create_model when Accept: text/event-stream", async () => {
+      vi.mocked(routeIntent).mockResolvedValue({
+        mode: IntentMode.CREATE_MODEL,
+        confidence: 0.92,
+      })
+      vi.mocked(isConfident).mockReturnValue(true)
+
+      const { POST } = await import(
+        "@/app/api/chat/sessions/[sessionId]/messages/route"
+      )
+
+      const request = new NextRequest(
+        "http://localhost/api/chat/sessions/sess-123/messages",
+        {
+          method: "POST",
+          body: JSON.stringify({ sessionId: "sess-123", message: "crear ventana corrediza" }),
+          headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
+        },
+      )
+
+      const response = await POST(request)
+
+      expect(createModelCreationStreamText).toHaveBeenCalledOnce()
+      expect(mockToUIMessageStreamResponse).toHaveBeenCalledOnce()
+      expect(response.status).toBe(200)
+    })
+
+    it("calls toUIMessageStreamResponse for calibrate_model when Accept: text/event-stream", async () => {
+      vi.mocked(routeIntent).mockResolvedValue({
+        mode: IntentMode.CALIBRATE_MODEL,
+        confidence: 0.88,
+      })
+      vi.mocked(isConfident).mockReturnValue(true)
+
+      const { POST } = await import(
+        "@/app/api/chat/sessions/[sessionId]/messages/route"
+      )
+
+      const request = new NextRequest(
+        "http://localhost/api/chat/sessions/sess-123/messages",
+        {
+          method: "POST",
+          body: JSON.stringify({ sessionId: "sess-123", message: "calibrar VC Panama" }),
+          headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
+        },
+      )
+
+      const response = await POST(request)
+
+      expect(createModelCalibrationStreamText).toHaveBeenCalledOnce()
+      expect(mockToUIMessageStreamResponse).toHaveBeenCalledOnce()
+      expect(response.status).toBe(200)
+    })
+
+    it("calls toUIMessageStreamResponse for create_quote when Accept: text/event-stream", async () => {
+      vi.mocked(routeIntent).mockResolvedValue({
+        mode: IntentMode.CREATE_QUOTE,
+        confidence: 0.85,
+      })
+      vi.mocked(isConfident).mockReturnValue(true)
+
+      const { POST } = await import(
+        "@/app/api/chat/sessions/[sessionId]/messages/route"
+      )
+
+      const request = new NextRequest(
+        "http://localhost/api/chat/sessions/sess-123/messages",
+        {
+          method: "POST",
+          body: JSON.stringify({ sessionId: "sess-123", message: "cotizame 10 ventanas VC Panama" }),
+          headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
+        },
+      )
+
+      const response = await POST(request)
+
+      expect(createQuoteStreamText).toHaveBeenCalledOnce()
+      expect(mockToUIMessageStreamResponse).toHaveBeenCalledOnce()
+      expect(response.status).toBe(200)
+    })
+
+    it("calls toUIMessageStreamResponse for disambiguation when low confidence with Accept: text/event-stream", async () => {
+      vi.mocked(routeIntent).mockResolvedValue({
+        mode: IntentMode.CREATE_MODEL,
+        confidence: 0.3,
+      })
+      vi.mocked(isConfident).mockReturnValue(false)
+
+      const { POST } = await import(
+        "@/app/api/chat/sessions/[sessionId]/messages/route"
+      )
+
+      const request = new NextRequest(
+        "http://localhost/api/chat/sessions/sess-123/messages",
+        {
+          method: "POST",
+          body: JSON.stringify({ sessionId: "sess-123", message: "ayuda" }),
+          headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
+        },
+      )
+
+      const response = await POST(request)
+
+      expect(createStreamTextResult).toHaveBeenCalledOnce()
+      expect(mockToUIMessageStreamResponse).toHaveBeenCalledOnce()
+      expect(response.status).toBe(200)
+    })
+
+    it("does NOT call toUIMessageStreamResponse when Accept header is absent", async () => {
+      vi.mocked(routeIntent).mockResolvedValue({
+        mode: IntentMode.CREATE_MODEL,
+        confidence: 0.92,
+      })
+      vi.mocked(isConfident).mockReturnValue(true)
+
+      const { POST } = await import(
+        "@/app/api/chat/sessions/[sessionId]/messages/route"
+      )
+
+      const request = new NextRequest(
+        "http://localhost/api/chat/sessions/sess-123/messages",
+        {
+          method: "POST",
+          body: JSON.stringify({ sessionId: "sess-123", message: "crear ventana" }),
+          headers: { "Content-Type": "application/json" },
+        },
+      )
+
+      const response = await POST(request)
+
+      expect(mockToUIMessageStreamResponse).not.toHaveBeenCalled()
+      expect(response.status).toBe(200)
+      const data = await response.json()
+      expect(data.response).toContain("AI response")
     })
   })
 
