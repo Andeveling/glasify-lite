@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { api } from "@/trpc/server-client"
-import { DesignTemplatesList } from "./_components/design-templates-list"
+import { DesignTemplatesClient } from "./_components/design-templates-client"
 
 export const metadata: Metadata = {
   description: "Administra las plantillas de diseño para visualización de modelos de ventanas",
@@ -34,7 +34,7 @@ export default async function DesignTemplatesPage() {
           </Link>
         </Button>
       </div>
-      <DesignTemplatesList initialData={initialData} />
+      <DesignTemplatesClient initialData={initialData} />
     </div>
   )
 }

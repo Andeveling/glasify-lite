@@ -1,6 +1,7 @@
 "use client"
 
 import {
+  Bot,
   Factory,
   FileText,
   GlassWater,
@@ -59,6 +60,12 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
       icon: FileText,
       title: "Cotizaciones",
       url: "/admin/quotes",
+    },
+    {
+      description: "Asistente de modelos IA",
+      icon: Bot,
+      title: "Asistente",
+      url: "/admin/assistant",
     },
   ]
 

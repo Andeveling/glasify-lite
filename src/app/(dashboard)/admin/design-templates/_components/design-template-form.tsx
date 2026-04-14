@@ -50,21 +50,32 @@ export function DesignTemplateForm({ mode, defaultValues }: DesignTemplateFormPr
     mode,
   })
 
+  const name = form.watch("name")
+  const type = form.watch("type")
   const pattern = form.watch("pattern") ?? "XX"
   const frameConfig = form.watch("frameConfig") as FrameConfig
   const showArrows = form.watch("showArrows")
   const showHandles = form.watch("showHandles")
 
+  // Door fields
+  const openingType = form.watch("openingType")
+  const traverseCount = form.watch("traverseCount")
+  const traverseStyle = form.watch("traverseStyle")
+  const handleStyle = form.watch("handleStyle")
+  const showLock = form.watch("showLock")
+  const frameColor = form.watch("frameColor")
+  const glassColor = form.watch("glassColor")
+
   const templateConfig: DesignTemplateConfig = useMemo(
     () => ({
       id: defaultValues?.id ?? "preview",
-      name: form.watch("name") ?? "Preview",
+      name: name ?? "Preview",
       pattern,
       frameConfig,
       showArrows,
       showHandles,
     }),
-    [pattern, frameConfig, showArrows, showHandles, defaultValues?.id, form],
+    [name, pattern, frameConfig, showArrows, showHandles, defaultValues?.id],
   )
 
   return (
@@ -82,6 +93,30 @@ export function DesignTemplateForm({ mode, defaultValues }: DesignTemplateFormPr
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* ── SECCIÓN 1: Tipo de apertura ── */}
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tipo de apertura *</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecciona el tipo" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="window">Ventana</SelectItem>
+                        <SelectItem value="door">Puerta</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* ── Nombre (común a ambos tipos) ── */}
               <FormField
                 control={form.control}
                 name="name"
@@ -97,39 +132,222 @@ export function DesignTemplateForm({ mode, defaultValues }: DesignTemplateFormPr
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="pattern"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Patrón de paneles *</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecciona un patrón" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {PRESET_PATTERNS.map((p) => (
-                          <SelectItem key={p.value} value={p.value}>
-                            {p.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>X = panel móvil, O = panel fijo</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {/* ── SECCIÓN 2A: Campos para ventana ── */}
+              {type === "window" && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="pattern"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Patrón de paneles *</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecciona un patrón" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {PRESET_PATTERNS.map((p) => (
+                              <SelectItem key={p.value} value={p.value}>
+                                {p.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>X = panel móvil, O = panel fijo</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="showArrows"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-base">Flechas de apertura</FormLabel>
+                            <FormDescription>Mostrar flechas en paneles móviles</FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="showHandles"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-base">Manillas</FormLabel>
+                            <FormDescription>Mostrar manillas en paneles móviles</FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* ── SECCIÓN 2B: Campos para puerta ── */}
+              {type === "door" && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="openingType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tipo de apertura *</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="left_interior">Interior izquierda</SelectItem>
+                            <SelectItem value="right_interior">Interior derecha</SelectItem>
+                            <SelectItem value="left_exterior">Exterior izquierda</SelectItem>
+                            <SelectItem value="right_exterior">Exterior derecha</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="traverseCount"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>N° traverses</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              min={0}
+                              max={4}
+                              {...field}
+                              onChange={(e) => field.onChange(Number(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="traverseStyle"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Estilo traverse</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="horizontal">Horizontal</SelectItem>
+                              <SelectItem value="vertical">Vertical</SelectItem>
+                              <SelectItem value="grid">Cuadrícula</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="frameColor"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Color del marco</FormLabel>
+                          <FormControl>
+                            <Input type="color" className="h-10 w-full" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="glassColor"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Color del vidrio</FormLabel>
+                          <FormControl>
+                            <Input type="color" className="h-10 w-full" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="handleStyle"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Estilo de manilla</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="lever">Palanca</SelectItem>
+                            <SelectItem value="knob">Botón</SelectItem>
+                            <SelectItem value="pull">Asa</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="showLock"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">Cerradura</FormLabel>
+                          <FormDescription>Mostrar cerradura en la puerta</FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
+
+              {/* ── FrameConfig: común a ambos tipos ── */}
               <FormField
                 control={form.control}
                 name="frameConfig.profileStyle"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Estilo del perfil</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue />
@@ -165,40 +383,6 @@ export function DesignTemplateForm({ mode, defaultValues }: DesignTemplateFormPr
                   </FormItem>
                 )}
               />
-
-              <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="showArrows"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <div className="space-y-0.5">
-                        <FormLabel className="text-base">Flechas de apertura</FormLabel>
-                        <FormDescription>Mostrar flechas en paneles móviles</FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch checked={field.value} onCheckedChange={field.onChange} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="showHandles"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <div className="space-y-0.5">
-                        <FormLabel className="text-base">Manillas</FormLabel>
-                        <FormDescription>Mostrar manillas en paneles móviles</FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch checked={field.value} onCheckedChange={field.onChange} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
             </CardContent>
           </Card>
 
@@ -206,12 +390,55 @@ export function DesignTemplateForm({ mode, defaultValues }: DesignTemplateFormPr
           <Card>
             <CardHeader>
               <CardTitle>Vista previa</CardTitle>
-              <CardDescription>Así se verá el diseño con la configuración actual</CardDescription>
+              <CardDescription>
+                {type === "window"
+                  ? "Así se verá el diseño con la configuración actual"
+                  : "Vista previa de puerta (en desarrollo)"}
+              </CardDescription>
             </CardHeader>
             <CardContent className="flex items-center justify-center rounded-lg border border-dashed p-8">
-              <div className="w-full max-w-xs">
-                <DesignRenderer template={templateConfig} size={{ width: 280, height: 210 }} />
-              </div>
+              {type === "window" ? (
+                <div className="w-full max-w-xs">
+                  <DesignRenderer template={templateConfig} size={{ width: 280, height: 210 }} />
+                </div>
+              ) : (
+                <div className="flex w-full flex-col items-center justify-center gap-3 text-center text-muted-foreground">
+                  <div className="flex h-48 w-full max-w-xs flex-col items-center justify-center rounded-lg border bg-muted/50">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="48"
+                      height="48"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="opacity-40"
+                    >
+                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                      <polyline points="9 22 9 12 15 12 15 22" />
+                    </svg>
+                    <p className="mt-2 text-sm">Preview de puerta</p>
+                    <p className="text-xs">DoorRenderer en desarrollo</p>
+                  </div>
+                  {/* Door config summary */}
+                  <div className="w-full max-w-xs space-y-1 rounded-lg border bg-muted/30 p-3 text-left text-xs">
+                    <p>
+                      <strong>Apertura:</strong> {openingType ?? "—"}
+                    </p>
+                    <p>
+                      <strong>Traverses:</strong> {traverseCount ?? 0} × {traverseStyle ?? "—"}
+                    </p>
+                    <p>
+                      <strong>Manilla:</strong> {handleStyle ?? "—"}
+                    </p>
+                    <p>
+                      <strong>Cerradura:</strong> {showLock ? "Sí" : "No"}
+                    </p>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

@@ -31,10 +31,21 @@ export function BasicInfoSection({ suppliers, templates }: BasicInfoSectionProps
     value: supplier.id,
   }))
 
-  const templateOptions = templates.map((t) => ({
-    label: `${t.name} (${t.pattern})`,
-    value: t.id,
-  }))
+  const windowTemplates = templates.filter((t) => t.type === "window")
+  const doorTemplates = templates.filter((t) => t.type === "door")
+
+  const templateOptions = [
+    { label: "— Ventanas —", value: "", disabled: true },
+    ...windowTemplates.map((t) => ({
+      label: `${t.name} (${t.pattern || "X"})`,
+      value: t.id,
+    })),
+    { label: "— Puertas —", value: "", disabled: true },
+    ...doorTemplates.map((t) => ({
+      label: `${t.name} [Puerta]`,
+      value: t.id,
+    })),
+  ]
 
   return (
     <Card>
