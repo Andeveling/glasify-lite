@@ -174,3 +174,8 @@ export type ModelColor = Prisma.ModelColorModel
  * 
  */
 export type ProjectAddress = Prisma.ProjectAddressModel
+/**
+ * Model ModelAssistantSession
+ * 
+ */
+export type ModelAssistantSession = Prisma.ModelAssistantSessionModel

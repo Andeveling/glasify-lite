@@ -77,7 +77,8 @@ export const ModelName = {
   GlassTypeCharacteristic: 'GlassTypeCharacteristic',
   Color: 'Color',
   ModelColor: 'ModelColor',
-  ProjectAddress: 'ProjectAddress'
+  ProjectAddress: 'ProjectAddress',
+  ModelAssistantSession: 'ModelAssistantSession'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -548,6 +549,20 @@ export const ProjectAddressScalarFieldEnum = {
 } as const
 
 export type ProjectAddressScalarFieldEnum = (typeof ProjectAddressScalarFieldEnum)[keyof typeof ProjectAddressScalarFieldEnum]
+
+
+export const ModelAssistantSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  mode: 'mode',
+  currentModelId: 'currentModelId',
+  currentStep: 'currentStep',
+  contextJson: 'contextJson',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ModelAssistantSessionScalarFieldEnum = (typeof ModelAssistantSessionScalarFieldEnum)[keyof typeof ModelAssistantSessionScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -718,3 +718,16 @@ enum UserRole {
   admin
   seller
 }
+
+model ModelAssistantSession {
+  id             String   @id @default(cuid())
+  userId         String
+  mode           String   // "create_model" | "calibrate_model" | "create_quote"
+  currentModelId String?  @map("current_model_id")
+  currentStep    String   @default("initial")
+  contextJson    String   @default("{}")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([userId])
+}

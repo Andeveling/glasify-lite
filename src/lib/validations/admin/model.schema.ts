@@ -126,8 +126,12 @@ const baseModelSchema = z
 
     imageUrl: z
       .union([
-        z.string().url("La URL de la imagen debe ser válida"), // Absolute URLs
-        z.string().regex(/^\/[^\s]*$/, "La ruta de la imagen debe comenzar con /"), // Relative paths starting with /
+        z
+          .string()
+          .url("La URL de la imagen debe ser válida"), // Absolute URLs
+        z
+          .string()
+          .regex(/^\/[^\s]*$/, "La ruta de la imagen debe comenzar con /"), // Relative paths starting with /
         z.literal(""), // Empty string
         z.null(),
         z.undefined(),
@@ -279,6 +283,18 @@ export const deleteModelSchema = z.object({
 })
 
 export type DeleteModelInput = z.infer<typeof deleteModelSchema>
+
+export const cloneModelSchema = z.object({
+  newName: spanishText
+    .min(MIN_NAME_LENGTH, `El nombre debe tener al menos ${MIN_NAME_LENGTH} caracteres`)
+    .max(MAX_NAME_LENGTH, `El nombre no puede exceder ${MAX_NAME_LENGTH} caracteres`),
+  newProfileSupplierId: z.string().cuid("ID de proveedor inválido"),
+  sourceModelId: z.string().cuid("ID de modelo inválido"),
+})
+
+export const publishModelSchema = z.object({
+  modelId: z.string().cuid("ID de modelo inválido"),
+})
 
 /**
  * Cost Breakdown Schemas

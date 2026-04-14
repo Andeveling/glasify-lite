@@ -16,15 +16,22 @@ import logger from "@/lib/logger"
 import { stringifyCompatibleGlassTypeIds } from "@/lib/utils/compatible-glass-types"
 import {
   addCostBreakdownSchema,
+  cloneModelSchema,
   createModelSchema,
   deleteCostBreakdownSchema,
   deleteModelSchema,
   getModelByIdSchema,
   listModelsSchema,
+  publishModelSchema,
   updateCostBreakdownSchema,
   updateModelSchema,
 } from "@/lib/validations/admin/model.schema"
 import { adminProcedure, createTRPCRouter } from "@/server/api/trpc"
+import {
+  buildModelClonePayload,
+  ensureModelCanBePublished,
+  parseCloneSourceModel,
+} from "@/server/services/model-assistant.service"
 import { createModelPriceHistory } from "@/server/services/model-price-history.service"
 import { canDeleteModel } from "@/server/services/referential-integrity.service"
 import { modelUpsertInput, modelUpsertOutput } from "./admin.schemas"
@@ -75,7 +82,6 @@ function buildWhereClause(input: {
   if (input.search) {
     where.name = {
       contains: input.search,
-      mode: "insensitive",
     }
   }
 
@@ -526,11 +532,11 @@ export const modelRouter = createTRPCRouter({
         data.costPerMmHeight.toString() !== currentModel.costPerMmHeight.toString())
 
     // Update model (serialize compatibleGlassTypeIds for SQLite storage if present)
-    const updateData = {
-      ...data,
-      ...(data.compatibleGlassTypeIds && {
-        compatibleGlassTypeIds: stringifyCompatibleGlassTypeIds(data.compatibleGlassTypeIds),
-      }),
+    const updateData = { ...data } as Prisma.ModelUpdateInput
+
+    if (data.compatibleGlassTypeIds) {
+      ;(updateData as { compatibleGlassTypeIds?: string }).compatibleGlassTypeIds =
+        stringifyCompatibleGlassTypeIds(data.compatibleGlassTypeIds)
     }
 
     const updatedModel = await ctx.db.model.update({
@@ -730,4 +736,52 @@ export const modelRouter = createTRPCRouter({
         throw new Error(errorMessage)
       }
     }),
+
+  clone: adminProcedure.input(cloneModelSchema).mutation(async ({ ctx, input }) => {
+    const sourceModel = await ctx.db.model.findUnique({
+      where: { id: input.sourceModelId },
+    })
+
+    if (!sourceModel) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "Modelo no encontrado" })
+    }
+
+    const cloneData = buildModelClonePayload({
+      input,
+      sourceModel: parseCloneSourceModel(sourceModel),
+    })
+
+    const model = await ctx.db.model.create({
+      data: cloneData,
+    })
+
+    return model
+  }),
+
+  publish: adminProcedure.input(publishModelSchema).mutation(async ({ ctx, input }) => {
+    const model = await ctx.db.model.findUnique({
+      include: {
+        _count: {
+          select: {
+            costBreakdown: true,
+          },
+        },
+      },
+      where: { id: input.modelId },
+    })
+
+    if (!model) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "Modelo no encontrado" })
+    }
+
+    ensureModelCanBePublished({
+      costBreakdownCount: model._count.costBreakdown,
+      modelName: model.name,
+    })
+
+    return ctx.db.model.update({
+      data: { status: "published" },
+      where: { id: input.modelId },
+    })
+  }),
 })

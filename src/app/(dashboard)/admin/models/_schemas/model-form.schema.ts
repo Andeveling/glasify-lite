@@ -19,7 +19,9 @@ export const modelFormSchema = z.object({
   imageUrl: z
     .union([
       z.url("URL de imagen debe ser válida"), // Absolute URLs
-      z.string().regex(/^\/[^\s]*$/, "La ruta de la imagen debe comenzar con /"), // Relative paths starting with /
+      z
+        .string()
+        .regex(/^\/[^\s]*$/, "La ruta de la imagen debe comenzar con /"), // Relative paths starting with /
       z.literal(""), // Empty string
       z.null(),
       z.undefined(),

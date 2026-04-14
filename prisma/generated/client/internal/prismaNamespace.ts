@@ -410,7 +410,8 @@ export const ModelName = {
   GlassTypeCharacteristic: 'GlassTypeCharacteristic',
   Color: 'Color',
   ModelColor: 'ModelColor',
-  ProjectAddress: 'ProjectAddress'
+  ProjectAddress: 'ProjectAddress',
+  ModelAssistantSession: 'ModelAssistantSession'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -426,7 +427,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "account" | "session" | "user" | "client" | "verificationToken" | "verification" | "tenantConfig" | "designTemplate" | "profileSupplier" | "manufacturer" | "model" | "glassType" | "service" | "quote" | "quoteItem" | "quoteItemService" | "adjustment" | "modelCostBreakdown" | "modelPriceHistory" | "glassSolution" | "glassTypeSolution" | "glassSupplier" | "glassCharacteristic" | "glassTypeCharacteristic" | "color" | "modelColor" | "projectAddress"
+    modelProps: "account" | "session" | "user" | "client" | "verificationToken" | "verification" | "tenantConfig" | "designTemplate" | "profileSupplier" | "manufacturer" | "model" | "glassType" | "service" | "quote" | "quoteItem" | "quoteItemService" | "adjustment" | "modelCostBreakdown" | "modelPriceHistory" | "glassSolution" | "glassTypeSolution" | "glassSupplier" | "glassCharacteristic" | "glassTypeCharacteristic" | "color" | "modelColor" | "projectAddress" | "modelAssistantSession"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2428,6 +2429,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ModelAssistantSession: {
+      payload: Prisma.$ModelAssistantSessionPayload<ExtArgs>
+      fields: Prisma.ModelAssistantSessionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ModelAssistantSessionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModelAssistantSessionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ModelAssistantSessionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModelAssistantSessionPayload>
+        }
+        findFirst: {
+          args: Prisma.ModelAssistantSessionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModelAssistantSessionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ModelAssistantSessionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModelAssistantSessionPayload>
+        }
+        findMany: {
+          args: Prisma.ModelAssistantSessionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModelAssistantSessionPayload>[]
+        }
+        create: {
+          args: Prisma.ModelAssistantSessionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModelAssistantSessionPayload>
+        }
+        createMany: {
+          args: Prisma.ModelAssistantSessionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ModelAssistantSessionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModelAssistantSessionPayload>[]
+        }
+        delete: {
+          args: Prisma.ModelAssistantSessionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModelAssistantSessionPayload>
+        }
+        update: {
+          args: Prisma.ModelAssistantSessionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModelAssistantSessionPayload>
+        }
+        deleteMany: {
+          args: Prisma.ModelAssistantSessionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ModelAssistantSessionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ModelAssistantSessionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModelAssistantSessionPayload>[]
+        }
+        upsert: {
+          args: Prisma.ModelAssistantSessionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModelAssistantSessionPayload>
+        }
+        aggregate: {
+          args: Prisma.ModelAssistantSessionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateModelAssistantSession>
+        }
+        groupBy: {
+          args: Prisma.ModelAssistantSessionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ModelAssistantSessionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ModelAssistantSessionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ModelAssistantSessionCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2921,6 +2996,20 @@ export const ProjectAddressScalarFieldEnum = {
 export type ProjectAddressScalarFieldEnum = (typeof ProjectAddressScalarFieldEnum)[keyof typeof ProjectAddressScalarFieldEnum]
 
 
+export const ModelAssistantSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  mode: 'mode',
+  currentModelId: 'currentModelId',
+  currentStep: 'currentStep',
+  contextJson: 'contextJson',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ModelAssistantSessionScalarFieldEnum = (typeof ModelAssistantSessionScalarFieldEnum)[keyof typeof ModelAssistantSessionScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -3176,6 +3265,7 @@ export type GlobalOmitConfig = {
   color?: Prisma.ColorOmit
   modelColor?: Prisma.ModelColorOmit
   projectAddress?: Prisma.ProjectAddressOmit
+  modelAssistantSession?: Prisma.ModelAssistantSessionOmit
 }
 
 /* Types for Logging */

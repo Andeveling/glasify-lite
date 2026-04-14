@@ -58,6 +58,10 @@ export const env = {
     "NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL"
   ),
 
+  // AI model configuration
+  MINIMAX_API_KEY: getEnv("MINIMAX_API_KEY"),
+  MINIMAX_TEXT_MODEL_SPEED: getEnv("MINIMAX_TEXT_MODEL_SPEED", "MiniMax-M2.7-highspeed"),
+
   // Server-side variables
   ADMIN_EMAIL: getEnv("ADMIN_EMAIL"),
   BASE_URL: getEnv("BASE_URL"),
