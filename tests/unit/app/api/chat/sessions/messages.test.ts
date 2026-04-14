@@ -22,6 +22,7 @@ vi.mock("@/lib/logger", () => ({
 
 vi.mock("@/server/services/model-assistant-session.service", () => ({
   getModelAssistantSession: vi.fn(),
+  updateModelAssistantSession: vi.fn().mockResolvedValue({ id: "sess-123" }),
 }))
 
 vi.mock("@/server/services/model-assistant-message.service", () => ({
@@ -32,10 +33,11 @@ vi.mock("@/server/services/model-assistant-message.service", () => ({
 const { createModelAssistantStreamText, mockToUIMessageStreamResponse } = vi.hoisted(() => {
   const mockToUIMessageStreamResponse = vi.fn(() => new Response())
 
-  const createMockStreamResult = () => {
+  const createMockStreamResult = (sessionUpdates = {}) => {
     const textPromise = Promise.resolve("AI response")
     return {
       text: textPromise,
+      sessionUpdates,
       toUIMessageStreamResponse: mockToUIMessageStreamResponse,
     }
   }
@@ -217,6 +219,40 @@ describe("POST /api/chat/sessions/[sessionId]/messages", () => {
             currentModelId: "model-abc",
             currentStep: "pricing",
           }),
+        }),
+      )
+    })
+
+    it("calls updateModelAssistantSession with sessionUpdates when executor returns them", async () => {
+      const { updateModelAssistantSession } = await import(
+        "@/server/services/model-assistant-session.service"
+      )
+
+      const sessionUpdates = {
+        currentStep: "model_created",
+        currentModelId: "model-abc",
+      }
+      createModelAssistantStreamText.mockReturnValueOnce({
+        text: Promise.resolve("Modelo creado"),
+        sessionUpdates,
+        toUIMessageStreamResponse: mockToUIMessageStreamResponse,
+      })
+
+      const { POST } = await import("@/app/api/chat/sessions/[sessionId]/messages/route")
+
+      const mockRequest = new NextRequest("http://localhost/api/chat/sessions/sess-123/messages", {
+        method: "POST",
+        body: JSON.stringify({ sessionId: "sess-123", message: "crear el modelo" }),
+        headers: { "Content-Type": "application/json" },
+      })
+
+      await POST(mockRequest)
+
+      expect(updateModelAssistantSession).toHaveBeenCalledWith(
+        expect.objectContaining({
+          sessionId: "sess-123",
+          currentStep: "model_created",
+          currentModelId: "model-abc",
         }),
       )
     })

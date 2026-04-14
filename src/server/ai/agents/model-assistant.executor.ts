@@ -9,6 +9,23 @@ export interface SessionContext {
   currentModelId?: string | null
 }
 
+export interface SessionUpdates {
+  currentStep?: string
+  currentModelId?: string
+  context?: Partial<{
+    name: string
+    designTemplateId: string
+    profileSupplierId: string
+    dimensions: { minWidthMm: number; maxWidthMm: number; minHeightMm: number; maxHeightMm: number }
+    glassTypeIds: string[]
+    modelId: string
+    supplierId: string
+    barLengthMeters: number
+    profiles: Array<{ name: string; meters: number }>
+    accessories: Array<{ name: string; quantity: number }>
+  }>
+}
+
 const ASSISTANT_INSTRUCTIONS = `You are Glasify Assistant, an AI helper for managing window and door models.
 
 You can help with the following tasks — detect the user's intent from their message:
@@ -63,15 +80,26 @@ interface StreamTextOptions {
   sessionContext?: SessionContext
 }
 
+// TODO: wire tools to call onSessionUpdate callback to populate sessionUpdates
+// Currently tools execute but don't report what changed. After implementing
+// tool result interception, populate sessionUpdates.currentModelId, currentStep, etc.
 export function createModelAssistantStreamText({ userMessage, sessionContext }: StreamTextOptions) {
   const provider = createMinimaxProvider()
   const modelId = getMinimaxModelId()
   const augmentedPrompt = buildContextPrompt(userMessage, sessionContext)
 
-  return streamText({
+  const streamResult = streamText({
     model: provider.languageModel(modelId),
     system: ASSISTANT_INSTRUCTIONS,
     prompt: augmentedPrompt,
     tools: modelCreationTools,
   })
+
+  const textPromise = Promise.resolve(streamResult.text)
+
+  return {
+    text: textPromise,
+    sessionUpdates: {} as SessionUpdates,
+    toUIMessageStreamResponse: streamResult.toUIMessageStreamResponse.bind(streamResult),
+  }
 }

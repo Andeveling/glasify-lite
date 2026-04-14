@@ -6,6 +6,7 @@ import { auth } from "@/server/auth"
 import {
   createModelAssistantSession,
   listModelAssistantSessionsByUser,
+  modelAssistantSessionContextSchema,
   type ModelAssistantMode,
 } from "@/server/services/model-assistant-session.service"
 
@@ -14,6 +15,7 @@ const createSessionSchema = z.object({
   mode: z.enum(["create_model", "calibrate_model", "create_quote"]),
   currentModelId: z.string().optional(),
   currentStep: z.string().optional(),
+  context: modelAssistantSessionContextSchema.optional(),
 })
 
 export async function GET(_request: NextRequest) {
@@ -67,13 +69,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { userId, mode, currentModelId, currentStep } = parsed.data
+    const { userId, mode, currentModelId, currentStep, context } = parsed.data
 
     const result = await createModelAssistantSession({
       userId,
       mode: mode as (typeof ModelAssistantMode)[keyof typeof ModelAssistantMode],
       currentModelId,
       currentStep,
+      context,
     })
 
     logger.info("Model assistant session created", {

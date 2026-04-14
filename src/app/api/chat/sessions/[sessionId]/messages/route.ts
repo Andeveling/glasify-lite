@@ -13,7 +13,10 @@ import {
   getMessagesBySession,
   saveMessage,
 } from "@/server/services/model-assistant-message.service"
-import { getModelAssistantSession } from "@/server/services/model-assistant-session.service"
+import {
+  getModelAssistantSession,
+  updateModelAssistantSession,
+} from "@/server/services/model-assistant-session.service"
 
 const uiMessageSchema = z
   .object({
@@ -163,13 +166,23 @@ export async function POST(request: NextRequest) {
       messageLength: message.length,
     })
 
-    void Promise.resolve(result.text).then((text) =>
-      saveMessage(sessionId, {
-        id: randomUUID(),
-        role: "assistant",
-        parts: [{ type: "text", text }],
-      }).catch(() => {}),
-    )
+    // Await text first, then save message and persist session updates
+    const [text, sessionUpdates] = await Promise.all([
+      result.text,
+      Promise.resolve(result.sessionUpdates),
+    ])
+
+    await saveMessage(sessionId, {
+      id: randomUUID(),
+      role: "assistant",
+      parts: [{ type: "text", text }],
+    }).catch(() => {})
+
+    if (sessionUpdates && (sessionUpdates.currentStep || sessionUpdates.currentModelId || sessionUpdates.context)) {
+      await updateModelAssistantSession({ sessionId, ...sessionUpdates }).catch((err) =>
+        logger.error("Failed to persist session updates", { error: err instanceof Error ? err.message : String(err) }),
+      )
+    }
 
     return originalMessages?.length
       ? result.toUIMessageStreamResponse({ originalMessages })

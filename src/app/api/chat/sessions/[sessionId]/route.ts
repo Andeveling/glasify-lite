@@ -6,6 +6,7 @@ import { auth } from "@/server/auth"
 import {
   deleteModelAssistantSession,
   getModelAssistantSession,
+  modelAssistantSessionContextSchema,
   type ModelAssistantMode,
   updateModelAssistantSession,
 } from "@/server/services/model-assistant-session.service"
@@ -13,22 +14,7 @@ import {
 const updateSessionSchema = z.object({
   currentModelId: z.string().optional(),
   currentStep: z.string().optional(),
-  context: z
-    .object({
-      name: z.string().optional(),
-      designTemplateId: z.string().optional(),
-      profileSupplierId: z.string().optional(),
-      dimensions: z
-        .object({
-          minWidthMm: z.number(),
-          maxWidthMm: z.number(),
-          minHeightMm: z.number(),
-          maxHeightMm: z.number(),
-        })
-        .optional(),
-      glassTypeIds: z.array(z.string()).optional(),
-    })
-    .optional(),
+  context: modelAssistantSessionContextSchema.optional(),
 })
 
 type RouteParams = { params: Promise<{ sessionId: string }> }
@@ -124,21 +110,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       sessionId,
       currentModelId,
       currentStep,
-      context:
-        context as (typeof ModelAssistantMode)[keyof typeof ModelAssistantMode] extends "create_model"
-          ? {
-              name: string
-              designTemplateId: string
-              profileSupplierId: string
-              dimensions: {
-                minWidthMm: number
-                maxWidthMm: number
-                minHeightMm: number
-                maxHeightMm: number
-              }
-              glassTypeIds: string[]
-            }
-          : never | undefined,
+      context,
     })
 
     logger.info("Model assistant session updated", {

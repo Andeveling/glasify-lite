@@ -50,6 +50,33 @@ describe("Chat Sessions API", () => {
 
       expect(result.id).toBe("sess-456")
     })
+
+    it("creates a session with full context including modelId, supplierId, barLengthMeters, profiles and accessories", async () => {
+      const { createModelAssistantSession } = await import("@/server/services/model-assistant-session.service")
+      const { createModelAssistantSession: mockCreate } = vi.mocked({ createModelAssistantSession })
+
+      mockCreate.mockResolvedValue({ id: "sess-789" })
+
+      const fullContext = {
+        name: "Ventana Corrediza",
+        modelId: "model-abc",
+        supplierId: "supplier-xyz",
+        barLengthMeters: 2.5,
+        profiles: [{ name: "Marco", meters: 5 }],
+        accessories: [{ name: "Clip", quantity: 10 }],
+      }
+
+      const result = await mockCreate({
+        userId: "user-1",
+        mode: ModelAssistantMode.CREATE_MODEL,
+        context: fullContext,
+      })
+
+      expect(result.id).toBe("sess-789")
+      expect(mockCreate).toHaveBeenCalledWith(
+        expect.objectContaining({ context: fullContext }),
+      )
+    })
   })
 
   describe("GET /api/chat/sessions/[sessionId]", () => {
@@ -112,6 +139,43 @@ describe("Chat Sessions API", () => {
       })
 
       expect(result.currentStep).toBe("select_template")
+    })
+
+    it("updates session with full context including modelId, supplierId, barLengthMeters, profiles and accessories", async () => {
+      const { updateModelAssistantSession } = await import("@/server/services/model-assistant-session.service")
+      const { updateModelAssistantSession: mockUpdate } = vi.mocked({ updateModelAssistantSession })
+
+      const mockSession = {
+        id: "sess-123",
+        userId: "user-1",
+        mode: "create_model" as const,
+        currentModelId: null,
+        currentStep: "initial",
+        context: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
+
+      const fullContext = {
+        name: "Ventana Corrediza",
+        modelId: "model-abc",
+        supplierId: "supplier-xyz",
+        barLengthMeters: 2.5,
+        profiles: [{ name: "Marco", meters: 5 }],
+        accessories: [{ name: "Clip", quantity: 10 }],
+      }
+
+      mockUpdate.mockResolvedValue({ ...mockSession, context: fullContext })
+
+      const result = await mockUpdate({
+        sessionId: "sess-123",
+        context: fullContext,
+      })
+
+      expect(mockUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({ context: fullContext }),
+      )
+      expect(result.context).toEqual(fullContext)
     })
   })
 })
