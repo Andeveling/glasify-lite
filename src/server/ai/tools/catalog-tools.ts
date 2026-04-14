@@ -18,7 +18,7 @@ const listDesignTemplatesInputSchema = z.object({
 })
 
 const getDesignTemplateInputSchema = z.object({
-  id: z.string().cuid().describe("Design template ID"),
+  id: z.cuid().describe("Design template ID"),
 })
 
 const listProfileSuppliersInputSchema = z.object({
@@ -32,7 +32,7 @@ const listProfileSuppliersInputSchema = z.object({
 })
 
 const getProfileSupplierInputSchema = z.object({
-  id: z.string().cuid().describe("Profile supplier ID"),
+  id: z.cuid().describe("Profile supplier ID"),
 })
 
 const listGlassTypesInputSchema = z.object({
@@ -46,7 +46,7 @@ const listGlassTypesInputSchema = z.object({
 })
 
 const getGlassTypeInputSchema = z.object({
-  id: z.string().cuid().describe("Glass type ID"),
+  id: z.cuid().describe("Glass type ID"),
 })
 
 type ListDesignTemplatesInput = z.infer<typeof listDesignTemplatesInputSchema>
