@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { UseFormReturn } from "react-hook-form"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import { useEffect } from "react"
 import {
   type DesignTemplateCreateInput,
@@ -85,41 +85,48 @@ export function useDesignTemplateForm({
     resolver: zodResolver(designTemplateCreateSchema) as never,
   })
 
+  // Watch only the type field - isolated subscription, no re-render on other fields
+  const type = useWatch({ control: form.control, name: "type" })
+
   // Reset form to correct defaults when type changes
   useEffect(() => {
-    const subscription = form.watch((values) => {
-      const currentType = values.type
-      if (!currentType) return
+    if (!type) return
 
-      // Only reset if the fields for the other type are empty to avoid overwriting user input
-      if (currentType === "window") {
-        form.setValue("pattern", "XX", { shouldValidate: false })
-        form.setValue("showArrows", true, { shouldValidate: false })
-        form.setValue("showHandles", true, { shouldValidate: false })
-        // Clear door fields
-        form.setValue("openingType", "right_interior" as const, { shouldValidate: false, shouldDirty: false })
-        form.setValue("traverseCount", 2, { shouldValidate: false, shouldDirty: false })
-        form.setValue("traverseStyle", "horizontal" as const, { shouldValidate: false, shouldDirty: false })
-        form.setValue("handleStyle", "lever" as const, { shouldValidate: false, shouldDirty: false })
-        form.setValue("showLock", true, { shouldValidate: false, shouldDirty: false })
-        form.setValue("frameColor", "#ffffff", { shouldValidate: false, shouldDirty: false })
-        form.setValue("glassColor", "#1a1a1a", { shouldValidate: false, shouldDirty: false })
-      } else if (currentType === "door") {
-        // Clear window fields
-        form.setValue("pattern", "XX", { shouldValidate: false, shouldDirty: false })
-        form.setValue("showArrows", true, { shouldValidate: false, shouldDirty: false })
-        form.setValue("showHandles", true, { shouldValidate: false, shouldDirty: false })
-        form.setValue("openingType", "right_interior", { shouldValidate: false })
-        form.setValue("traverseCount", 2, { shouldValidate: false })
-        form.setValue("traverseStyle", "horizontal", { shouldValidate: false })
-        form.setValue("handleStyle", "lever", { shouldValidate: false })
-        form.setValue("showLock", true, { shouldValidate: false })
-        form.setValue("frameColor", "#ffffff", { shouldValidate: false })
-        form.setValue("glassColor", "#1a1a1a", { shouldValidate: false })
-      }
-    })
-    return () => subscription.unsubscribe()
-  }, [form])
+    if (type === "window") {
+      form.setValue("pattern", "XX", { shouldValidate: false })
+      form.setValue("showArrows", true, { shouldValidate: false })
+      form.setValue("showHandles", true, { shouldValidate: false })
+      // Clear door fields
+      form.setValue("openingType", "right_interior" as const, {
+        shouldValidate: false,
+        shouldDirty: false,
+      })
+      form.setValue("traverseCount", 2, { shouldValidate: false, shouldDirty: false })
+      form.setValue("traverseStyle", "horizontal" as const, {
+        shouldValidate: false,
+        shouldDirty: false,
+      })
+      form.setValue("handleStyle", "lever" as const, {
+        shouldValidate: false,
+        shouldDirty: false,
+      })
+      form.setValue("showLock", true, { shouldValidate: false, shouldDirty: false })
+      form.setValue("frameColor", "#ffffff", { shouldValidate: false, shouldDirty: false })
+      form.setValue("glassColor", "#1a1a1a", { shouldValidate: false, shouldDirty: false })
+    } else if (type === "door") {
+      // Clear window fields
+      form.setValue("pattern", "XX", { shouldValidate: false, shouldDirty: false })
+      form.setValue("showArrows", true, { shouldValidate: false, shouldDirty: false })
+      form.setValue("showHandles", true, { shouldValidate: false, shouldDirty: false })
+      form.setValue("openingType", "right_interior", { shouldValidate: false })
+      form.setValue("traverseCount", 2, { shouldValidate: false })
+      form.setValue("traverseStyle", "horizontal", { shouldValidate: false })
+      form.setValue("handleStyle", "lever", { shouldValidate: false })
+      form.setValue("showLock", true, { shouldValidate: false })
+      form.setValue("frameColor", "#ffffff", { shouldValidate: false })
+      form.setValue("glassColor", "#1a1a1a", { shouldValidate: false })
+    }
+  }, [type, form])
 
   const onSubmit = (data: FormValues) => {
     if (mode === "create") {
