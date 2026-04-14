@@ -5,10 +5,8 @@ import logger from "@/lib/logger"
 import { auth } from "@/server/auth"
 import {
   createModelAssistantSession,
-  deleteModelAssistantSession,
-  getModelAssistantSession,
+  listModelAssistantSessionsByUser,
   type ModelAssistantMode,
-  updateModelAssistantSession,
 } from "@/server/services/model-assistant-session.service"
 
 const createSessionSchema = z.object({
@@ -17,6 +15,28 @@ const createSessionSchema = z.object({
   currentModelId: z.string().optional(),
   currentStep: z.string().optional(),
 })
+
+export async function GET(_request: NextRequest) {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    })
+
+    if (!session) {
+      return NextResponse.json({ error: "No autenticado" }, { status: 401 })
+    }
+
+    const sessions = await listModelAssistantSessionsByUser(session.user.id)
+
+    return NextResponse.json({ sessions })
+  } catch (error) {
+    logger.error("Error listing model assistant sessions", {
+      error: error instanceof Error ? error.message : String(error),
+    })
+
+    return NextResponse.json({ error: "Error al listar las sesiones" }, { status: 500 })
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {

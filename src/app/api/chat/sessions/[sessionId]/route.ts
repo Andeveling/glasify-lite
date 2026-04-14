@@ -4,6 +4,7 @@ import { z } from "zod"
 import logger from "@/lib/logger"
 import { auth } from "@/server/auth"
 import {
+  deleteModelAssistantSession,
   getModelAssistantSession,
   type ModelAssistantMode,
   updateModelAssistantSession,
@@ -57,6 +58,42 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     })
 
     return NextResponse.json({ error: "Error al obtener la sesión" }, { status: 500 })
+  }
+}
+
+export async function DELETE(_request: NextRequest, { params }: RouteParams) {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    })
+
+    if (!session) {
+      return NextResponse.json({ error: "No autenticado" }, { status: 401 })
+    }
+
+    const { sessionId } = await params
+
+    const existing = await getModelAssistantSession(sessionId)
+
+    if (!existing) {
+      return NextResponse.json({ error: "Sesión no encontrada" }, { status: 404 })
+    }
+
+    if (existing.userId !== session.user.id) {
+      return NextResponse.json({ error: "Sin autorización" }, { status: 403 })
+    }
+
+    await deleteModelAssistantSession(sessionId)
+
+    logger.info("Model assistant session deleted", { sessionId })
+
+    return new NextResponse(null, { status: 204 })
+  } catch (error) {
+    logger.error("Error deleting model assistant session", {
+      error: error instanceof Error ? error.message : String(error),
+    })
+
+    return NextResponse.json({ error: "Error al eliminar la sesión" }, { status: 500 })
   }
 }
 
