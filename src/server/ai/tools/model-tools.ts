@@ -1,7 +1,7 @@
-import type { Model } from "@prisma/generated/client"
-import { z } from "zod"
-import { appRouter } from "@/server/api/root"
-import { createCallerFactory, createTRPCContext } from "@/server/api/trpc"
+import type { Model } from "@prisma/generated/client";
+import { z } from "zod";
+import { appRouter } from "@/server/api/root";
+import { createCallerFactory, createTRPCContext } from "@/server/api/trpc";
 
 export const MODEL_TOOL_NAMES = {
   CREATE_MODEL: "create_model",
@@ -10,49 +10,70 @@ export const MODEL_TOOL_NAMES = {
   PUBLISH_MODEL: "publish_model",
   LIST_MODELS: "list_models",
   GET_MODEL: "get_model",
-} as const
+} as const;
 
 const createModelInputSchema = z.object({
   name: z.string().describe("Model name (e.g., Ventana Corrediza PVC)"),
   designTemplateId: z
-    .string()
     .cuid()
     .optional()
     .nullable()
     .describe("Design template ID for SVG visualization"),
   profileSupplierId: z
-    .string()
     .cuid()
     .optional()
     .nullable()
     .describe("Profile supplier (manufacturer) ID"),
-  minWidthMm: z.number().int().min(100).max(10000).describe("Minimum width in millimeters"),
-  maxWidthMm: z.number().int().min(100).max(10000).describe("Maximum width in millimeters"),
-  minHeightMm: z.number().int().min(100).max(10000).describe("Minimum height in millimeters"),
-  maxHeightMm: z.number().int().min(100).max(10000).describe("Maximum height in millimeters"),
+  minWidthMm: z
+    .number()
+    .int()
+    .min(100)
+    .max(10000)
+    .describe("Minimum width in millimeters"),
+  maxWidthMm: z
+    .number()
+    .int()
+    .min(100)
+    .max(10000)
+    .describe("Maximum width in millimeters"),
+  minHeightMm: z
+    .number()
+    .int()
+    .min(100)
+    .max(10000)
+    .describe("Minimum height in millimeters"),
+  maxHeightMm: z
+    .number()
+    .int()
+    .min(100)
+    .max(10000)
+    .describe("Maximum height in millimeters"),
   compatibleGlassTypeIds: z
-    .array(z.string().cuid())
+    .array(z.cuid())
     .min(1)
     .describe("Array of compatible GlassType IDs"),
-  basePrice: z.number().nonnegative().describe("Base price in tenant currency"),
+  basePrice: z.number().min(0).describe("Base price in tenant currency"),
   costPerMmWidth: z
     .number()
-    .nonnegative()
+    .min(0)
     .default(0)
     .describe("Additional cost per millimeter of width"),
   costPerMmHeight: z
     .number()
-    .nonnegative()
+    .min(0)
     .default(0)
     .describe("Additional cost per millimeter of height"),
   accessoryPrice: z
     .number()
-    .nonnegative()
+    .min(0)
     .optional()
     .nullable()
     .describe("Optional flat accessory fee"),
-  status: z.enum(["draft", "published"]).default("draft").describe("Model status"),
-})
+  status: z
+    .enum(["draft", "published"])
+    .default("draft")
+    .describe("Model status"),
+});
 
 const updateModelInputSchema = z.object({
   id: z.string().cuid().describe("Model ID to update"),
@@ -65,85 +86,101 @@ const updateModelInputSchema = z.object({
     minHeightMm: z.number().int().min(100).max(10000).optional(),
     maxHeightMm: z.number().int().min(100).max(10000).optional(),
     compatibleGlassTypeIds: z.array(z.string().cuid()).min(1).optional(),
-    basePrice: z.number().nonnegative().optional(),
-    costPerMmWidth: z.number().nonnegative().optional(),
-    costPerMmHeight: z.number().nonnegative().optional(),
-    accessoryPrice: z.number().nonnegative().optional().nullable(),
+    basePrice: z.number().min(0).optional(),
+    costPerMmWidth: z.number().min(0).optional(),
+    costPerMmHeight: z.number().min(0).optional(),
+    accessoryPrice: z.number().min(0).optional().nullable(),
   }),
-})
+});
 
 const cloneModelInputSchema = z.object({
   sourceModelId: z.string().cuid().describe("ID of the source model to clone"),
   newName: z.string().min(2).max(100).describe("Name for the new cloned model"),
-  newProfileSupplierId: z.string().cuid().describe("New profile supplier ID for the cloned model"),
-})
+  newProfileSupplierId: z
+    .string()
+    .cuid()
+    .describe("New profile supplier ID for the cloned model"),
+});
 
 const publishModelInputSchema = z.object({
   modelId: z.string().cuid().describe("ID of the model to publish"),
-})
+});
 
 const listModelsInputSchema = z.object({
   search: z.string().optional().describe("Search by model name"),
-  status: z.enum(["all", "draft", "published"]).default("all").describe("Filter by status"),
-  profileSupplierId: z.string().cuid().optional().describe("Filter by profile supplier"),
+  status: z
+    .enum(["all", "draft", "published"])
+    .default("all")
+    .describe("Filter by status"),
+  profileSupplierId: z
+    .string()
+    .cuid()
+    .optional()
+    .describe("Filter by profile supplier"),
   page: z.number().int().positive().default(1).describe("Page number"),
-  limit: z.number().int().positive().max(100).default(20).describe("Items per page"),
-})
+  limit: z
+    .number()
+    .int()
+    .positive()
+    .max(100)
+    .default(20)
+    .describe("Items per page"),
+});
 
 const getModelInputSchema = z.object({
   id: z.string().cuid().describe("Model ID"),
-})
+});
 
-type CreateModelInput = z.infer<typeof createModelInputSchema>
-type UpdateModelInput = z.infer<typeof updateModelInputSchema>
-type CloneModelInput = z.infer<typeof cloneModelInputSchema>
-type PublishModelInput = z.infer<typeof publishModelInputSchema>
-type ListModelsInput = z.infer<typeof listModelsInputSchema>
-type GetModelInput = z.infer<typeof getModelInputSchema>
+type CreateModelInput = z.infer<typeof createModelInputSchema>;
+type UpdateModelInput = z.infer<typeof updateModelInputSchema>;
+type CloneModelInput = z.infer<typeof cloneModelInputSchema>;
+type PublishModelInput = z.infer<typeof publishModelInputSchema>;
+type ListModelsInput = z.infer<typeof listModelsInputSchema>;
+type GetModelInput = z.infer<typeof getModelInputSchema>;
 
 interface ModelAssistantTool {
-  name: string
-  description: string
-  parameters: z.ZodType<unknown>
+  name: string;
+  description: string;
+  parameters: z.ZodType<unknown>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  execute: (input: any) => Promise<any>
+  execute: (input: any) => Promise<any>;
 }
 
 async function createTRPCaller() {
-  const heads = new Headers()
-  heads.set("x-trpc-source", "ai-tool")
-  const ctx = await createTRPCContext({ headers: heads })
-  return createCallerFactory(appRouter)(ctx)
+  const heads = new Headers();
+  heads.set("x-trpc-source", "ai-tool");
+  const ctx = await createTRPCContext({ headers: heads });
+  return createCallerFactory(appRouter)(ctx);
 }
 
 export async function createModelTool(input: CreateModelInput) {
-  const caller = await createTRPCaller()
-  return caller.admin.model.create(input)
+  const caller = await createTRPCaller();
+  return caller.admin.model.create(input);
 }
 
 export async function updateModelTool(input: UpdateModelInput) {
-  const caller = await createTRPCaller()
-  return caller.admin.model.update(input)
+  const caller = await createTRPCaller();
+  return caller.admin.model.update(input);
 }
 
 export async function cloneModelTool(input: CloneModelInput) {
-  const caller = await createTRPCaller()
-  return caller.admin.model.clone(input)
+  const caller = await createTRPCaller();
+  return caller.admin.model.clone(input);
 }
 
 export async function publishModelTool(input: PublishModelInput) {
-  const caller = await createTRPCaller()
-  return caller.admin.model.publish(input)
+  const caller = await createTRPCaller();
+  return caller.admin.model.publish(input);
 }
 
 export async function listModelsTool(input: ListModelsInput) {
-  const caller = await createTRPCaller()
-  return caller.admin.model.list(input)
+  const caller = await createTRPCaller();
+  return caller.admin.model.list(input);
 }
 
 export async function getModelTool(input: GetModelInput) {
-  const caller = await createTRPCaller()
-  return caller.admin.model["get-by-id"](input)
+  const caller = await createTRPCaller();
+  return caller.admin.model["get-by-id"](input);
 }
 
 export function getModelTools(): ModelAssistantTool[] {
@@ -185,9 +222,10 @@ export function getModelTools(): ModelAssistantTool[] {
     },
     {
       name: MODEL_TOOL_NAMES.GET_MODEL,
-      description: "Gets a single model by ID, including all its details and cost breakdowns.",
+      description:
+        "Gets a single model by ID, including all its details and cost breakdowns.",
       parameters: getModelInputSchema,
       execute: getModelTool,
     },
-  ]
+  ];
 }
