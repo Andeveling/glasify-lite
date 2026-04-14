@@ -62,9 +62,7 @@ function DoorRenderer({
     const glassHeight = height - FRAME_PADDING * 2 - frameThickness * 2
 
     const handleSide = hingeSide === "left" ? "right" : "left"
-    const handleX = handleSide === "left"
-      ? glassX + 10
-      : glassX + glassWidth - 10 - HANDLE_WIDTH
+    const handleX = handleSide === "left" ? glassX + 10 : glassX + glassWidth - 10 - HANDLE_WIDTH
 
     const traversalLines: Array<{ x1: number; y1: number; x2: number; y2: number }> = []
 
@@ -191,12 +189,7 @@ function DoorRenderer({
         )}
 
         {template.handleStyle === "knob" && (
-          <circle
-            cx={handleX + HANDLE_WIDTH / 2}
-            cy={glassY + glassHeight / 2}
-            r={8}
-            fill={fc}
-          />
+          <circle cx={handleX + HANDLE_WIDTH / 2} cy={glassY + glassHeight / 2} r={8} fill={fc} />
         )}
 
         {template.handleStyle === "pull" && (

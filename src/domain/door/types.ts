@@ -1,4 +1,8 @@
-export type DoorOpeningType = "left_interior" | "right_interior" | "left_exterior" | "right_exterior"
+export type DoorOpeningType =
+  | "left_interior"
+  | "right_interior"
+  | "left_exterior"
+  | "right_exterior"
 
 export type TraverseStyle = "horizontal" | "vertical" | "grid"
 

@@ -1,15 +1,15 @@
 "use client"
 
+import type { FileUIPart } from "ai"
 import { Bot, CopyIcon, RefreshCcwIcon } from "lucide-react"
 import { type FormEvent, Fragment, useCallback, useState } from "react"
-import { useSessionList } from "@/app/_hooks/use-session-list"
-import { useModelAssistantChat } from "@/app/_hooks/use-model-assistant-chat"
 import { useChatSession } from "@/app/_components/chat-session-manager"
-import { AssistantSessionSidebar } from "./_components/assistant-session-sidebar"
+import { useModelAssistantChat } from "@/app/_hooks/use-model-assistant-chat"
+import { useSessionList } from "@/app/_hooks/use-session-list"
+import { Attachment, Attachments } from "@/components/ai-elements/attachments"
 import {
   Conversation,
   ConversationContent,
-  ConversationContextBar,
   ConversationEmptyState,
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation"
@@ -18,20 +18,15 @@ import {
   MessageAction,
   MessageActions,
   MessageContent,
-  MessageErrorInline,
   MessageResponse,
-  ToolCallCard,
-  TypingIndicator,
 } from "@/components/ai-elements/message"
 import {
   PromptInput,
   type PromptInputMessage,
   PromptInputSubmit,
   PromptInputTextarea,
-  usePromptInputAttachments,
-  AttachmentPreview,
 } from "@/components/ai-elements/prompt-input"
-import type { UIMessage } from "ai"
+import { AssistantSessionSidebar } from "./_components/assistant-session-sidebar"
 
 interface ToolCallPart {
   type: string
@@ -41,11 +36,11 @@ interface ToolCallPart {
   output?: unknown
 }
 
-function isTextPart(part: UIMessage["parts"][number]): part is { type: "text"; text: string } {
+function isTextPart(part: { type: string }): part is { type: "text"; text: string } {
   return part.type === "text"
 }
 
-function isToolPart(part: UIMessage["parts"][number]) {
+function isToolPart(part: { type: string }) {
   return part.type.startsWith("tool-") || part.type === "dynamic-tool"
 }
 
@@ -65,13 +60,17 @@ export default function AssistantPage() {
   const { sessions, isLoading: isLoadingSessions, deleteSession, refresh } = useSessionList()
 
   const [input, setInput] = useState("")
-  const { files, remove, clear, inputRef, handleFileChange } = usePromptInputAttachments()
+  const [files, setFiles] = useState<(FileUIPart & { id: string })[]>([])
+
+  const handleFilesChange = useCallback((newFiles: (FileUIPart & { id: string })[]) => {
+    setFiles(newFiles)
+  }, [])
 
   const handleSubmit = async (message: PromptInputMessage, _event: FormEvent) => {
-    if (message.text.trim() || files.length > 0) {
+    if (message.text.trim() || message.files.length > 0) {
       await sendMessage({ text: message.text })
       setInput("")
-      clear()
+      setFiles([])
     }
   }
 
@@ -132,14 +131,7 @@ export default function AssistantPage() {
             </div>
 
             <div className="flex-1 rounded-lg border overflow-hidden flex flex-col">
-              <Conversation>
-                {session && (
-                  <ConversationContextBar
-                    mode={session.mode}
-                    currentStep={session.currentStep}
-                    currentModelId={session.currentModelId}
-                  />
-                )}
+              <Conversation key={sessionId}>
                 <ConversationContent>
                   {messages.length === 0 && !showTypingIndicator ? (
                     <ConversationEmptyState
@@ -151,7 +143,9 @@ export default function AssistantPage() {
                     <>
                       {showTypingIndicator && (
                         <Message from="assistant">
-                          <TypingIndicator isAnimating={true} />
+                          <MessageContent>
+                            <MessageResponse>...</MessageResponse>
+                          </MessageContent>
                         </Message>
                       )}
                       {messages.map((message, messageIndex) => (
@@ -188,31 +182,16 @@ export default function AssistantPage() {
                             }
 
                             if (isToolPart(part)) {
-                              const toolPart = part as ToolCallPart
+                              const toolPart = part as unknown as ToolCallPart
                               const toolName =
                                 toolPart.type === "dynamic-tool"
                                   ? (toolPart.toolName ?? "unknown")
                                   : toolPart.type.replace("tool-", "")
-                              const state =
-                                toolPart.state === "output-available"
-                                  ? "output-available"
-                                  : toolPart.state === "input-streaming"
-                                    ? "input-streaming"
-                                    : "input-available"
 
                               return (
                                 <Message from={message.role} key={`${message.id}-${partIndex}`}>
                                   <MessageContent>
-                                    <ToolCallCard
-                                      toolName={toolName}
-                                      state={state}
-                                      input={toolPart.input as Record<string, unknown> | undefined}
-                                      output={
-                                        toolPart.state === "output-available" && toolPart.output
-                                          ? (toolPart.output as Record<string, unknown>)
-                                          : undefined
-                                      }
-                                    />
+                                    <MessageResponse>{`[Tool: ${toolName}]`}</MessageResponse>
                                   </MessageContent>
                                 </Message>
                               )
@@ -228,41 +207,38 @@ export default function AssistantPage() {
                 <ConversationScrollButton />
               </Conversation>
 
-              <div className="border-t">
-                <AttachmentPreview files={files} onRemove={remove} />
-                {error && <MessageErrorInline message={error.message} onRetry={retry} />}
-              </div>
+              {files.length > 0 && (
+                <div className="border-t p-2">
+                  <Attachments variant="list">
+                    {files.map((file) => (
+                      <Attachment key={file.id} data={file} />
+                    ))}
+                  </Attachments>
+                </div>
+              )}
 
-              <PromptInput
-                value={input}
-                onSubmit={handleSubmit}
-                className="mt-4 mb-4 w-full max-w-2xl mx-auto"
-              >
-                <input
-                  ref={inputRef}
-                  type="file"
-                  multiple
-                  className="hidden"
-                  onChange={handleFileChange}
-                  accept="image/*,.pdf,.doc,.docx"
-                />
-                <PromptInputTextarea
-                  value={input}
-                  placeholder="Escribí tu mensaje..."
-                  onChange={(e) => setInput(e.currentTarget.value)}
-                  disabled={status === "submitted" || status === "streaming"}
-                  className="pr-12"
-                />
-                <PromptInputSubmit
-                  status={status === "submitted" || status === "streaming" ? "streaming" : "ready"}
-                  disabled={
-                    (!input.trim() && files.length === 0) ||
-                    status === "submitted" ||
-                    status === "streaming"
-                  }
-                  className="absolute bottom-1 right-1"
-                />
-              </PromptInput>
+              {error && (
+                <div className="border-t px-4 py-2 text-sm text-destructive">
+                  Error: {error.message}
+                </div>
+              )}
+
+              <div className="border-t p-4">
+                <PromptInput onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
+                  <PromptInputTextarea
+                    placeholder="Escribí tu mensaje..."
+                    disabled={status === "submitted" || status === "streaming"}
+                    className="pr-12"
+                  />
+                  <PromptInputSubmit
+                    status={
+                      status === "submitted" || status === "streaming" ? "streaming" : "ready"
+                    }
+                    disabled={status === "submitted" || status === "streaming"}
+                    className="absolute bottom-1 right-1"
+                  />
+                </PromptInput>
+              </div>
             </div>
           </div>
         )}

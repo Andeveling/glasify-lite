@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import type { RouterOutputs } from "@/trpc/react"
 import { Button } from "@/components/ui/button"
+import type { RouterOutputs } from "@/trpc/react"
 import { DesignTemplatesList } from "./design-templates-list"
 
 type FilterType = "all" | "window" | "door"

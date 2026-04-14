@@ -12,7 +12,11 @@ type DesignTemplatesListProps = {
   onFilterChange?: (filter: FilterType) => void
 }
 
-export function DesignTemplatesList({ initialData, filter = "all", onFilterChange }: DesignTemplatesListProps) {
+export function DesignTemplatesList({
+  initialData,
+  filter = "all",
+  onFilterChange,
+}: DesignTemplatesListProps) {
   const { data } = api.admin["design-template"].list.useQuery(
     { page: initialData.page, limit: initialData.limit },
     { initialData },
@@ -34,10 +38,5 @@ export function DesignTemplatesList({ initialData, filter = "all", onFilterChang
     deleteMutation.mutate({ id })
   }
 
-  return (
-    <DesignTemplatesTable
-      items={filteredItems}
-      onDelete={handleDelete}
-    />
-  )
+  return <DesignTemplatesTable items={filteredItems} onDelete={handleDelete} />
 }

@@ -1,11 +1,11 @@
 "use client"
 
+import { Bot, MessageSquarePlus, Trash2 } from "lucide-react"
 import type { AssistantSessionSummary } from "@/app/_hooks/use-session-list"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
 import type { ModelAssistantMode } from "@/server/services/model-assistant-session.service"
-import { Bot, MessageSquarePlus, Trash2 } from "lucide-react"
 
 const MODE_LABELS: Record<ModelAssistantMode, string> = {
   create_model: "Crear modelo",
@@ -22,6 +22,14 @@ function formatSessionDate(dateStr: string): string {
     minute: "2-digit",
   }).format(date)
 }
+
+function formatSessionLabel(session: AssistantSessionSummary): string {
+  const baseLabel = MODE_LABELS[session.mode]
+  const suffix = session.currentStep || session.currentModelId
+
+  return suffix ? `${baseLabel} · ${suffix}` : baseLabel
+}
+
 interface AssistantSessionSidebarProps {
   sessions: AssistantSessionSummary[]
   activeSessionId: string | null
@@ -66,20 +74,16 @@ export function AssistantSessionSidebar({
           <ul className="py-1">
             {sessions.map((session) => (
               <li key={session.id}>
-                <div
-                  role="button"
-                  tabIndex={0}
+                <button
+                  type="button"
                   className={cn(
                     "w-full text-left px-3 py-2 text-sm group flex items-start justify-between gap-2 hover:bg-primary/60 transition-colors cursor-pointer",
                     activeSessionId === session.id && "bg-primary/80",
                   )}
                   onClick={() => onSelectSession(session.id)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") onSelectSession(session.id)
-                  }}
                 >
                   <div className="flex flex-col gap-0.5 min-w-0">
-                    <span className="font-medium truncate">{MODE_LABELS[session.mode]}</span>
+                    <span className="font-medium truncate">{formatSessionLabel(session)}</span>
                     <span className="text-xs text-muted-foreground">
                       {formatSessionDate(session.updatedAt)}
                     </span>
@@ -96,7 +100,7 @@ export function AssistantSessionSidebar({
                   >
                     <Trash2 className="size-3" />
                   </Button>
-                </div>
+                </button>
               </li>
             ))}
           </ul>

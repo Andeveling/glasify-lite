@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto"
+import type { UIMessage } from "ai"
 import { headers } from "next/headers"
 import { type NextRequest, NextResponse } from "next/server"
-import type { UIMessage } from "ai"
 import { z } from "zod"
 import logger from "@/lib/logger"
 import {
@@ -10,8 +10,8 @@ import {
 } from "@/server/ai/agents/model-assistant.executor"
 import { auth } from "@/server/auth"
 import {
-  saveMessage,
   getMessagesBySession,
+  saveMessage,
 } from "@/server/services/model-assistant-message.service"
 import { getModelAssistantSession } from "@/server/services/model-assistant-session.service"
 

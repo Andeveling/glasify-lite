@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect } from "react"
 import { useChat } from "@ai-sdk/react"
-import { DefaultChatTransport } from "ai"
 import type { UIMessage } from "ai"
+import { DefaultChatTransport } from "ai"
+import { useEffect } from "react"
 
 type ChatStatus = "submitted" | "streaming" | "ready" | "error"
 

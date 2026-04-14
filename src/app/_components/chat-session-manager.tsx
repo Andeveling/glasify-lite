@@ -81,11 +81,53 @@ export function useChatSession({ defaultMode = "create_model" }: UseChatSessionO
     [fetchSession],
   )
 
+  const activateMostRecentSession = useCallback(async () => {
+    if (!session?.user?.id) {
+      return false
+    }
+
+    try {
+      const response = await fetch("/api/chat/sessions")
+
+      if (!response.ok) {
+        return false
+      }
+
+      const data = (await response.json()) as {
+        sessions?: Array<{ id: string }>
+      }
+
+      const [latestSession] = data.sessions ?? []
+
+      if (!latestSession) {
+        return false
+      }
+
+      setActiveSessionId(latestSession.id)
+      return true
+    } catch {
+      return false
+    }
+  }, [session?.user?.id, setActiveSessionId])
+
   useEffect(() => {
     if (session?.user?.id && !sessionId && !isCreatingSession) {
-      createSession(defaultMode)
+      void (async () => {
+        const activated = await activateMostRecentSession()
+
+        if (!activated) {
+          await createSession(defaultMode)
+        }
+      })()
     }
-  }, [session?.user?.id, sessionId, isCreatingSession, createSession, defaultMode])
+  }, [
+    session?.user?.id,
+    sessionId,
+    isCreatingSession,
+    createSession,
+    defaultMode,
+    activateMostRecentSession,
+  ])
 
   useEffect(() => {
     if (sessionId) {

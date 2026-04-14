@@ -1,13 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useEffect } from "react"
 import type { UseFormReturn } from "react-hook-form"
 import { useForm, useWatch } from "react-hook-form"
-import { useEffect } from "react"
 import {
   type DesignTemplateCreateInput,
   type DesignTemplateUpdateInput,
   designTemplateCreateSchema,
-  windowSchema,
-  doorSchema,
+  type doorSchema,
+  type windowSchema,
 } from "@/lib/validations/design-template"
 import { useDesignTemplateMutations } from "./use-design-template-mutations"
 

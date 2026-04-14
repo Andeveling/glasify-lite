@@ -44,8 +44,14 @@ export const doorSchema = z.object({
   traverseCount: z.number().int().min(0).max(4).default(2),
   traverseStyle: z.enum(["horizontal", "vertical", "grid"]).default("horizontal"),
   frameConfig: frameConfigSchema,
-  frameColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).default("#ffffff"),
-  glassColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).default("#1a1a1a"),
+  frameColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .default("#ffffff"),
+  glassColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .default("#1a1a1a"),
   handleStyle: z.enum(["lever", "knob", "pull"]).default("lever"),
   showLock: z.boolean().default(true),
 })

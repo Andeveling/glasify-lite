@@ -33,7 +33,11 @@ function TypeBadge({ type }: { type: "window" | "door" }) {
   return (
     <Badge
       variant={type === "window" ? "secondary" : "outline"}
-      className={type === "door" ? "border-purple-500 text-purple-600 dark:text-purple-400" : "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"}
+      className={
+        type === "door"
+          ? "border-purple-500 text-purple-600 dark:text-purple-400"
+          : "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+      }
     >
       {type === "window" ? "Ventana" : "Puerta"}
     </Badge>

@@ -18,7 +18,10 @@ import {
 } from "@/lib/validations/design-template"
 import { adminProcedure, createTRPCRouter } from "@/server/api/trpc"
 
-function buildWhereClause(input: { search?: string; type?: string }): Prisma.DesignTemplateWhereInput {
+function buildWhereClause(input: {
+  search?: string
+  type?: string
+}): Prisma.DesignTemplateWhereInput {
   const where: Prisma.DesignTemplateWhereInput = {}
   if (input.search) {
     where.OR = [{ name: { contains: input.search } }, { pattern: { contains: input.search } }]
@@ -39,7 +42,16 @@ export const designTemplateRouter = createTRPCRouter({
 
       const items = await ctx.db.designTemplate.findMany({
         where,
-        select: { id: true, name: true, type: true, pattern: true, frameConfig: true, createdAt: true, updatedAt: true, _count: { select: { models: true } } },
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          pattern: true,
+          frameConfig: true,
+          createdAt: true,
+          updatedAt: true,
+          _count: { select: { models: true } },
+        },
         orderBy: { [input.sortBy]: input.sortOrder },
         skip,
         take: input.limit,

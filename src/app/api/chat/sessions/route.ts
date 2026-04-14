@@ -28,7 +28,16 @@ export async function GET(_request: NextRequest) {
 
     const sessions = await listModelAssistantSessionsByUser(session.user.id)
 
-    return NextResponse.json({ sessions })
+    return NextResponse.json({
+      sessions: sessions.map((item) => ({
+        id: item.id,
+        mode: item.mode,
+        currentStep: item.currentStep,
+        currentModelId: item.currentModelId,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+      })),
+    })
   } catch (error) {
     logger.error("Error listing model assistant sessions", {
       error: error instanceof Error ? error.message : String(error),
