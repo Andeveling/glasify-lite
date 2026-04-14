@@ -76,16 +76,16 @@ const createModelInputSchema = z.object({
 });
 
 const updateModelInputSchema = z.object({
-  id: z.string().cuid().describe("Model ID to update"),
+  id: z.cuid().describe("Model ID to update"),
   data: z.object({
     name: z.string().optional(),
-    designTemplateId: z.string().cuid().optional().nullable(),
-    profileSupplierId: z.string().cuid().optional().nullable(),
+    designTemplateId: z.cuid().optional().nullable(),
+    profileSupplierId: z.cuid().optional().nullable(),
     minWidthMm: z.number().int().min(100).max(10000).optional(),
     maxWidthMm: z.number().int().min(100).max(10000).optional(),
     minHeightMm: z.number().int().min(100).max(10000).optional(),
     maxHeightMm: z.number().int().min(100).max(10000).optional(),
-    compatibleGlassTypeIds: z.array(z.string().cuid()).min(1).optional(),
+    compatibleGlassTypeIds: z.array(z.cuid()).min(1).optional(),
     basePrice: z.number().min(0).optional(),
     costPerMmWidth: z.number().min(0).optional(),
     costPerMmHeight: z.number().min(0).optional(),
@@ -94,16 +94,15 @@ const updateModelInputSchema = z.object({
 });
 
 const cloneModelInputSchema = z.object({
-  sourceModelId: z.string().cuid().describe("ID of the source model to clone"),
+  sourceModelId: z.cuid().describe("ID of the source model to clone"),
   newName: z.string().min(2).max(100).describe("Name for the new cloned model"),
   newProfileSupplierId: z
-    .string()
     .cuid()
     .describe("New profile supplier ID for the cloned model"),
 });
 
 const publishModelInputSchema = z.object({
-  modelId: z.string().cuid().describe("ID of the model to publish"),
+  modelId: z.cuid().describe("ID of the model to publish"),
 });
 
 const listModelsInputSchema = z.object({
@@ -113,7 +112,6 @@ const listModelsInputSchema = z.object({
     .default("all")
     .describe("Filter by status"),
   profileSupplierId: z
-    .string()
     .cuid()
     .optional()
     .describe("Filter by profile supplier"),
@@ -128,7 +126,7 @@ const listModelsInputSchema = z.object({
 });
 
 const getModelInputSchema = z.object({
-  id: z.string().cuid().describe("Model ID"),
+  id: z.cuid().describe("Model ID"),
 });
 
 type CreateModelInput = z.infer<typeof createModelInputSchema>;
