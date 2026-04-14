@@ -1,11 +1,11 @@
 "use client"
 
-import { Bot, MessageSquarePlus, Trash2 } from "lucide-react"
+import type { AssistantSessionSummary } from "@/app/_hooks/use-session-list"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
-import type { AssistantSessionSummary } from "@/app/_hooks/use-session-list"
 import type { ModelAssistantMode } from "@/server/services/model-assistant-session.service"
+import { Bot, MessageSquarePlus, Trash2 } from "lucide-react"
 
 const MODE_LABELS: Record<ModelAssistantMode, string> = {
   create_model: "Crear modelo",

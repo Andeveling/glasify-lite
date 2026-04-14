@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { useMemo } from "react"
+import { useWatch } from "react-hook-form"
 import { DesignRenderer } from "@/components/design"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -43,6 +44,86 @@ const PRESET_PATTERNS = [
   { value: "XOX", label: "XOX — Móvil + Fija + Móvil" },
 ]
 
+function DesignTemplatePreview({
+  control,
+  defaultValuesId,
+}: {
+  control: ReturnType<typeof useDesignTemplateForm>["form"]["control"]
+  defaultValuesId?: string
+}) {
+  const name = useWatch({ control, name: "name" })
+  const type = useWatch({ control, name: "type" })
+  const pattern = useWatch({ control, name: "pattern" })
+  const frameConfig = useWatch({ control, name: "frameConfig" }) as FrameConfig | undefined
+  const showArrows = useWatch({ control, name: "showArrows" })
+  const showHandles = useWatch({ control, name: "showHandles" })
+  const openingType = useWatch({ control, name: "openingType" })
+  const traverseCount = useWatch({ control, name: "traverseCount" })
+  const traverseStyle = useWatch({ control, name: "traverseStyle" })
+  const handleStyle = useWatch({ control, name: "handleStyle" })
+  const showLock = useWatch({ control, name: "showLock" })
+  const frameColor = useWatch({ control, name: "frameColor" })
+  const glassColor = useWatch({ control, name: "glassColor" })
+
+  const templateConfig: DesignTemplateConfig = useMemo(
+    () => ({
+      id: defaultValuesId ?? "preview",
+      name: name ?? "Preview",
+      pattern: pattern ?? "XX",
+      frameConfig: frameConfig ?? { thickness: 4, profileStyle: "simple" },
+      showArrows: showArrows ?? true,
+      showHandles: showHandles ?? true,
+    }),
+    [name, pattern, frameConfig, showArrows, showHandles, defaultValuesId],
+  )
+
+  if (type === "window") {
+    return (
+      <div className="w-full max-w-xs">
+        <DesignRenderer template={templateConfig} size={{ width: 280, height: 210 }} />
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex w-full flex-col items-center justify-center gap-3 text-center text-muted-foreground">
+      <div className="flex h-48 w-full max-w-xs flex-col items-center justify-center rounded-lg border bg-muted/50">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="opacity-40"
+        >
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <polyline points="9 22 9 12 15 12 15 22" />
+        </svg>
+        <p className="mt-2 text-sm">Preview de puerta</p>
+        <p className="text-xs">DoorRenderer en desarrollo</p>
+      </div>
+      <div className="w-full max-w-xs space-y-1 rounded-lg border bg-muted/30 p-3 text-left text-xs">
+        <p>
+          <strong>Apertura:</strong> {openingType ?? "—"}
+        </p>
+        <p>
+          <strong>Traverses:</strong> {traverseCount ?? 0} × {traverseStyle ?? "—"}
+        </p>
+        <p>
+          <strong>Manilla:</strong> {handleStyle ?? "—"}
+        </p>
+        <p>
+          <strong>Cerradura:</strong> {showLock ? "Sí" : "No"}
+        </p>
+      </div>
+    </div>
+  )
+}
+
 export function DesignTemplateForm({ mode, defaultValues }: DesignTemplateFormProps) {
   const router = useRouter()
   const { form, onSubmit, isLoading } = useDesignTemplateForm({
@@ -50,33 +131,7 @@ export function DesignTemplateForm({ mode, defaultValues }: DesignTemplateFormPr
     mode,
   })
 
-  const name = form.watch("name")
   const type = form.watch("type")
-  const pattern = form.watch("pattern") ?? "XX"
-  const frameConfig = form.watch("frameConfig") as FrameConfig
-  const showArrows = form.watch("showArrows")
-  const showHandles = form.watch("showHandles")
-
-  // Door fields
-  const openingType = form.watch("openingType")
-  const traverseCount = form.watch("traverseCount")
-  const traverseStyle = form.watch("traverseStyle")
-  const handleStyle = form.watch("handleStyle")
-  const showLock = form.watch("showLock")
-  const frameColor = form.watch("frameColor")
-  const glassColor = form.watch("glassColor")
-
-  const templateConfig: DesignTemplateConfig = useMemo(
-    () => ({
-      id: defaultValues?.id ?? "preview",
-      name: name ?? "Preview",
-      pattern,
-      frameConfig,
-      showArrows,
-      showHandles,
-    }),
-    [name, pattern, frameConfig, showArrows, showHandles, defaultValues?.id],
-  )
 
   return (
     <Form {...form}>
@@ -397,48 +452,7 @@ export function DesignTemplateForm({ mode, defaultValues }: DesignTemplateFormPr
               </CardDescription>
             </CardHeader>
             <CardContent className="flex items-center justify-center rounded-lg border border-dashed p-8">
-              {type === "window" ? (
-                <div className="w-full max-w-xs">
-                  <DesignRenderer template={templateConfig} size={{ width: 280, height: 210 }} />
-                </div>
-              ) : (
-                <div className="flex w-full flex-col items-center justify-center gap-3 text-center text-muted-foreground">
-                  <div className="flex h-48 w-full max-w-xs flex-col items-center justify-center rounded-lg border bg-muted/50">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="48"
-                      height="48"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="opacity-40"
-                    >
-                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                      <polyline points="9 22 9 12 15 12 15 22" />
-                    </svg>
-                    <p className="mt-2 text-sm">Preview de puerta</p>
-                    <p className="text-xs">DoorRenderer en desarrollo</p>
-                  </div>
-                  {/* Door config summary */}
-                  <div className="w-full max-w-xs space-y-1 rounded-lg border bg-muted/30 p-3 text-left text-xs">
-                    <p>
-                      <strong>Apertura:</strong> {openingType ?? "—"}
-                    </p>
-                    <p>
-                      <strong>Traverses:</strong> {traverseCount ?? 0} × {traverseStyle ?? "—"}
-                    </p>
-                    <p>
-                      <strong>Manilla:</strong> {handleStyle ?? "—"}
-                    </p>
-                    <p>
-                      <strong>Cerradura:</strong> {showLock ? "Sí" : "No"}
-                    </p>
-                  </div>
-                </div>
-              )}
+              <DesignTemplatePreview control={form.control} defaultValuesId={defaultValues?.id} />
             </CardContent>
           </Card>
         </div>
