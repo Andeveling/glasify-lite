@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto"
 import { headers } from "next/headers"
 import { type NextRequest, NextResponse } from "next/server"
 import type { UIMessage } from "ai"
@@ -12,6 +13,10 @@ import {
 } from "@/server/ai/agents/model-assistant.executor"
 import { IntentMode, isConfident, routeIntent } from "@/server/ai/agents/model-assistant.router"
 import { auth } from "@/server/auth"
+import {
+  saveMessage,
+  getMessagesBySession,
+} from "@/server/services/model-assistant-message.service"
 import { getModelAssistantSession } from "@/server/services/model-assistant-session.service"
 
 const uiMessageSchema = z
@@ -87,6 +92,31 @@ const STREAMABLE_MODES = new Set([
   IntentMode.CREATE_QUOTE,
 ])
 
+type RouteParams = { params: Promise<{ sessionId: string }> }
+
+export async function GET(_request: NextRequest, { params }: RouteParams) {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    })
+
+    if (!session) {
+      return NextResponse.json({ error: "No autenticado" }, { status: 401 })
+    }
+
+    const { sessionId } = await params
+    const messages = await getMessagesBySession(sessionId)
+
+    return NextResponse.json({ messages })
+  } catch (error) {
+    logger.error("Error fetching model assistant messages", {
+      error: error instanceof Error ? error.message : String(error),
+    })
+
+    return NextResponse.json({ error: "Error al obtener los mensajes" }, { status: 500 })
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const session = await auth.api.getSession({
@@ -130,6 +160,15 @@ export async function POST(request: NextRequest) {
     const assistantSession = await getModelAssistantSession(sessionId)
     if (!assistantSession) {
       return NextResponse.json({ error: "Sesión no encontrada" }, { status: 404 })
+    }
+
+    const userUiMessage =
+      typeof parsed.data.message !== "string" && parsed.data.message
+        ? (parsed.data.message as UIMessage)
+        : undefined
+
+    if (userUiMessage?.id) {
+      void saveMessage(sessionId, userUiMessage).catch(() => {})
     }
 
     const intent = await routeIntent(message)
@@ -179,6 +218,16 @@ export async function POST(request: NextRequest) {
       intentMode: intent.mode,
       confidence: intent.confidence,
     })
+
+    void result.text
+      .then((text) =>
+        saveMessage(sessionId, {
+          id: randomUUID(),
+          role: "assistant",
+          parts: [{ type: "text", text }],
+        }),
+      )
+      .catch(() => {})
 
     return toStreamResponse(result, originalMessages)
   } catch (error) {

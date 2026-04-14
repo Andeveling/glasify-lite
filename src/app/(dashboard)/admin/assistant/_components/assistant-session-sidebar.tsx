@@ -66,13 +66,17 @@ export function AssistantSessionSidebar({
           <ul className="py-1">
             {sessions.map((session) => (
               <li key={session.id}>
-                <button
-                  type="button"
+                <div
+                  role="button"
+                  tabIndex={0}
                   className={cn(
-                    "w-full text-left px-3 py-2 text-sm group flex items-start justify-between gap-2 hover:bg-accent transition-colors",
+                    "w-full text-left px-3 py-2 text-sm group flex items-start justify-between gap-2 hover:bg-accent transition-colors cursor-pointer",
                     activeSessionId === session.id && "bg-accent",
                   )}
                   onClick={() => onSelectSession(session.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") onSelectSession(session.id)
+                  }}
                 >
                   <div className="flex flex-col gap-0.5 min-w-0">
                     <span className="font-medium truncate">{MODE_LABELS[session.mode]}</span>
@@ -92,7 +96,7 @@ export function AssistantSessionSidebar({
                   >
                     <Trash2 className="size-3" />
                   </Button>
-                </button>
+                </div>
               </li>
             ))}
           </ul>

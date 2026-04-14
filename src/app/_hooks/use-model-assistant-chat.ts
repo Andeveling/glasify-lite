@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import type { UIMessage } from "ai"
@@ -36,6 +37,23 @@ export function useModelAssistantChat({ sessionId }: UseModelAssistantChatOption
       },
     }),
   })
+
+  useEffect(() => {
+    if (!sessionId) return
+
+    const controller = new AbortController()
+
+    fetch(`/api/chat/sessions/${sessionId}/messages`, { signal: controller.signal })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { messages: UIMessage[] } | null) => {
+        if (data?.messages && data.messages.length > 0) {
+          setMessages(data.messages)
+        }
+      })
+      .catch(() => {})
+
+    return () => controller.abort()
+  }, [sessionId, setMessages])
 
   const sendMessage = async (input: { text: string }) => {
     if (!sessionId) {

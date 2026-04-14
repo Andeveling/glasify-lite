@@ -78,7 +78,8 @@ export const ModelName = {
   Color: 'Color',
   ModelColor: 'ModelColor',
   ProjectAddress: 'ProjectAddress',
-  ModelAssistantSession: 'ModelAssistantSession'
+  ModelAssistantSession: 'ModelAssistantSession',
+  ModelAssistantMessage: 'ModelAssistantMessage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -571,6 +572,18 @@ export const ModelAssistantSessionScalarFieldEnum = {
 } as const
 
 export type ModelAssistantSessionScalarFieldEnum = (typeof ModelAssistantSessionScalarFieldEnum)[keyof typeof ModelAssistantSessionScalarFieldEnum]
+
+
+export const ModelAssistantMessageScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  messageId: 'messageId',
+  role: 'role',
+  partsJson: 'partsJson',
+  createdAt: 'createdAt'
+} as const
+
+export type ModelAssistantMessageScalarFieldEnum = (typeof ModelAssistantMessageScalarFieldEnum)[keyof typeof ModelAssistantMessageScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -73,6 +73,14 @@ export function useChatSession({ defaultMode = "create_model" }: UseChatSessionO
     [session?.user?.id, defaultMode],
   )
 
+  const setActiveSessionId = useCallback(
+    (sid: string) => {
+      setSessionId(sid)
+      fetchSession(sid)
+    },
+    [fetchSession],
+  )
+
   useEffect(() => {
     if (session?.user?.id && !sessionId && !isCreatingSession) {
       createSession(defaultMode)
@@ -89,6 +97,7 @@ export function useChatSession({ defaultMode = "create_model" }: UseChatSessionO
     sessionId,
     isCreatingSession,
     createSession,
+    setActiveSessionId,
     isAuthenticated: !!session?.user,
     session: chatSession,
   }

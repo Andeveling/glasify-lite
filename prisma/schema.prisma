@@ -746,5 +746,21 @@ model ModelAssistantSession {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  messages ModelAssistantMessage[]
+
   @@index([userId])
+}
+
+model ModelAssistantMessage {
+  id        String   @id @default(cuid())
+  sessionId String   @map("session_id")
+  messageId String   @map("message_id")
+  role      String
+  partsJson String   @default("[]") @map("parts_json")
+  createdAt DateTime @default(now())
+
+  session ModelAssistantSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("model_assistant_message")
 }

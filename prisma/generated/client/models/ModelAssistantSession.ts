@@ -206,6 +206,7 @@ export type ModelAssistantSessionWhereInput = {
   contextJson?: Prisma.StringFilter<"ModelAssistantSession"> | string
   createdAt?: Prisma.DateTimeFilter<"ModelAssistantSession"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ModelAssistantSession"> | Date | string
+  messages?: Prisma.ModelAssistantMessageListRelationFilter
 }
 
 export type ModelAssistantSessionOrderByWithRelationInput = {
@@ -217,6 +218,7 @@ export type ModelAssistantSessionOrderByWithRelationInput = {
   contextJson?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  messages?: Prisma.ModelAssistantMessageOrderByRelationAggregateInput
 }
 
 export type ModelAssistantSessionWhereUniqueInput = Prisma.AtLeast<{
@@ -231,6 +233,7 @@ export type ModelAssistantSessionWhereUniqueInput = Prisma.AtLeast<{
   contextJson?: Prisma.StringFilter<"ModelAssistantSession"> | string
   createdAt?: Prisma.DateTimeFilter<"ModelAssistantSession"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ModelAssistantSession"> | Date | string
+  messages?: Prisma.ModelAssistantMessageListRelationFilter
 }, "id">
 
 export type ModelAssistantSessionOrderByWithAggregationInput = {
@@ -270,6 +273,7 @@ export type ModelAssistantSessionCreateInput = {
   contextJson?: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  messages?: Prisma.ModelAssistantMessageCreateNestedManyWithoutSessionInput
 }
 
 export type ModelAssistantSessionUncheckedCreateInput = {
@@ -281,6 +285,7 @@ export type ModelAssistantSessionUncheckedCreateInput = {
   contextJson?: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  messages?: Prisma.ModelAssistantMessageUncheckedCreateNestedManyWithoutSessionInput
 }
 
 export type ModelAssistantSessionUpdateInput = {
@@ -292,6 +297,7 @@ export type ModelAssistantSessionUpdateInput = {
   contextJson?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messages?: Prisma.ModelAssistantMessageUpdateManyWithoutSessionNestedInput
 }
 
 export type ModelAssistantSessionUncheckedUpdateInput = {
@@ -303,6 +309,7 @@ export type ModelAssistantSessionUncheckedUpdateInput = {
   contextJson?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messages?: Prisma.ModelAssistantMessageUncheckedUpdateManyWithoutSessionNestedInput
 }
 
 export type ModelAssistantSessionCreateManyInput = {
@@ -371,6 +378,114 @@ export type ModelAssistantSessionMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
+export type ModelAssistantSessionScalarRelationFilter = {
+  is?: Prisma.ModelAssistantSessionWhereInput
+  isNot?: Prisma.ModelAssistantSessionWhereInput
+}
+
+export type ModelAssistantSessionCreateNestedOneWithoutMessagesInput = {
+  create?: Prisma.XOR<Prisma.ModelAssistantSessionCreateWithoutMessagesInput, Prisma.ModelAssistantSessionUncheckedCreateWithoutMessagesInput>
+  connectOrCreate?: Prisma.ModelAssistantSessionCreateOrConnectWithoutMessagesInput
+  connect?: Prisma.ModelAssistantSessionWhereUniqueInput
+}
+
+export type ModelAssistantSessionUpdateOneRequiredWithoutMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.ModelAssistantSessionCreateWithoutMessagesInput, Prisma.ModelAssistantSessionUncheckedCreateWithoutMessagesInput>
+  connectOrCreate?: Prisma.ModelAssistantSessionCreateOrConnectWithoutMessagesInput
+  upsert?: Prisma.ModelAssistantSessionUpsertWithoutMessagesInput
+  connect?: Prisma.ModelAssistantSessionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ModelAssistantSessionUpdateToOneWithWhereWithoutMessagesInput, Prisma.ModelAssistantSessionUpdateWithoutMessagesInput>, Prisma.ModelAssistantSessionUncheckedUpdateWithoutMessagesInput>
+}
+
+export type ModelAssistantSessionCreateWithoutMessagesInput = {
+  id?: string
+  userId: string
+  mode: string
+  currentModelId?: string | null
+  currentStep?: string
+  contextJson?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ModelAssistantSessionUncheckedCreateWithoutMessagesInput = {
+  id?: string
+  userId: string
+  mode: string
+  currentModelId?: string | null
+  currentStep?: string
+  contextJson?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ModelAssistantSessionCreateOrConnectWithoutMessagesInput = {
+  where: Prisma.ModelAssistantSessionWhereUniqueInput
+  create: Prisma.XOR<Prisma.ModelAssistantSessionCreateWithoutMessagesInput, Prisma.ModelAssistantSessionUncheckedCreateWithoutMessagesInput>
+}
+
+export type ModelAssistantSessionUpsertWithoutMessagesInput = {
+  update: Prisma.XOR<Prisma.ModelAssistantSessionUpdateWithoutMessagesInput, Prisma.ModelAssistantSessionUncheckedUpdateWithoutMessagesInput>
+  create: Prisma.XOR<Prisma.ModelAssistantSessionCreateWithoutMessagesInput, Prisma.ModelAssistantSessionUncheckedCreateWithoutMessagesInput>
+  where?: Prisma.ModelAssistantSessionWhereInput
+}
+
+export type ModelAssistantSessionUpdateToOneWithWhereWithoutMessagesInput = {
+  where?: Prisma.ModelAssistantSessionWhereInput
+  data: Prisma.XOR<Prisma.ModelAssistantSessionUpdateWithoutMessagesInput, Prisma.ModelAssistantSessionUncheckedUpdateWithoutMessagesInput>
+}
+
+export type ModelAssistantSessionUpdateWithoutMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  mode?: Prisma.StringFieldUpdateOperationsInput | string
+  currentModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentStep?: Prisma.StringFieldUpdateOperationsInput | string
+  contextJson?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ModelAssistantSessionUncheckedUpdateWithoutMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  mode?: Prisma.StringFieldUpdateOperationsInput | string
+  currentModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentStep?: Prisma.StringFieldUpdateOperationsInput | string
+  contextJson?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type ModelAssistantSessionCountOutputType
+ */
+
+export type ModelAssistantSessionCountOutputType = {
+  messages: number
+}
+
+export type ModelAssistantSessionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  messages?: boolean | ModelAssistantSessionCountOutputTypeCountMessagesArgs
+}
+
+/**
+ * ModelAssistantSessionCountOutputType without action
+ */
+export type ModelAssistantSessionCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ModelAssistantSessionCountOutputType
+   */
+  select?: Prisma.ModelAssistantSessionCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ModelAssistantSessionCountOutputType without action
+ */
+export type ModelAssistantSessionCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ModelAssistantMessageWhereInput
+}
 
 
 export type ModelAssistantSessionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -382,6 +497,8 @@ export type ModelAssistantSessionSelect<ExtArgs extends runtime.Types.Extensions
   contextJson?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  messages?: boolean | Prisma.ModelAssistantSession$messagesArgs<ExtArgs>
+  _count?: boolean | Prisma.ModelAssistantSessionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["modelAssistantSession"]>
 
 export type ModelAssistantSessionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -418,10 +535,18 @@ export type ModelAssistantSessionSelectScalar = {
 }
 
 export type ModelAssistantSessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "mode" | "currentModelId" | "currentStep" | "contextJson" | "createdAt" | "updatedAt", ExtArgs["result"]["modelAssistantSession"]>
+export type ModelAssistantSessionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  messages?: boolean | Prisma.ModelAssistantSession$messagesArgs<ExtArgs>
+  _count?: boolean | Prisma.ModelAssistantSessionCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type ModelAssistantSessionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type ModelAssistantSessionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $ModelAssistantSessionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ModelAssistantSession"
-  objects: {}
+  objects: {
+    messages: Prisma.$ModelAssistantMessagePayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     userId: string
@@ -825,6 +950,7 @@ readonly fields: ModelAssistantSessionFieldRefs;
  */
 export interface Prisma__ModelAssistantSessionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  messages<T extends Prisma.ModelAssistantSession$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ModelAssistantSession$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ModelAssistantMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -879,6 +1005,10 @@ export type ModelAssistantSessionFindUniqueArgs<ExtArgs extends runtime.Types.Ex
    */
   omit?: Prisma.ModelAssistantSessionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ModelAssistantSessionInclude<ExtArgs> | null
+  /**
    * Filter, which ModelAssistantSession to fetch.
    */
   where: Prisma.ModelAssistantSessionWhereUniqueInput
@@ -897,6 +1027,10 @@ export type ModelAssistantSessionFindUniqueOrThrowArgs<ExtArgs extends runtime.T
    */
   omit?: Prisma.ModelAssistantSessionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ModelAssistantSessionInclude<ExtArgs> | null
+  /**
    * Filter, which ModelAssistantSession to fetch.
    */
   where: Prisma.ModelAssistantSessionWhereUniqueInput
@@ -914,6 +1048,10 @@ export type ModelAssistantSessionFindFirstArgs<ExtArgs extends runtime.Types.Ext
    * Omit specific fields from the ModelAssistantSession
    */
   omit?: Prisma.ModelAssistantSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ModelAssistantSessionInclude<ExtArgs> | null
   /**
    * Filter, which ModelAssistantSession to fetch.
    */
@@ -963,6 +1101,10 @@ export type ModelAssistantSessionFindFirstOrThrowArgs<ExtArgs extends runtime.Ty
    */
   omit?: Prisma.ModelAssistantSessionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ModelAssistantSessionInclude<ExtArgs> | null
+  /**
    * Filter, which ModelAssistantSession to fetch.
    */
   where?: Prisma.ModelAssistantSessionWhereInput
@@ -1011,6 +1153,10 @@ export type ModelAssistantSessionFindManyArgs<ExtArgs extends runtime.Types.Exte
    */
   omit?: Prisma.ModelAssistantSessionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ModelAssistantSessionInclude<ExtArgs> | null
+  /**
    * Filter, which ModelAssistantSessions to fetch.
    */
   where?: Prisma.ModelAssistantSessionWhereInput
@@ -1053,6 +1199,10 @@ export type ModelAssistantSessionCreateArgs<ExtArgs extends runtime.Types.Extens
    * Omit specific fields from the ModelAssistantSession
    */
   omit?: Prisma.ModelAssistantSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ModelAssistantSessionInclude<ExtArgs> | null
   /**
    * The data needed to create a ModelAssistantSession.
    */
@@ -1099,6 +1249,10 @@ export type ModelAssistantSessionUpdateArgs<ExtArgs extends runtime.Types.Extens
    * Omit specific fields from the ModelAssistantSession
    */
   omit?: Prisma.ModelAssistantSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ModelAssistantSessionInclude<ExtArgs> | null
   /**
    * The data needed to update a ModelAssistantSession.
    */
@@ -1166,6 +1320,10 @@ export type ModelAssistantSessionUpsertArgs<ExtArgs extends runtime.Types.Extens
    */
   omit?: Prisma.ModelAssistantSessionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ModelAssistantSessionInclude<ExtArgs> | null
+  /**
    * The filter to search for the ModelAssistantSession to update in case it exists.
    */
   where: Prisma.ModelAssistantSessionWhereUniqueInput
@@ -1192,6 +1350,10 @@ export type ModelAssistantSessionDeleteArgs<ExtArgs extends runtime.Types.Extens
    */
   omit?: Prisma.ModelAssistantSessionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ModelAssistantSessionInclude<ExtArgs> | null
+  /**
    * Filter which ModelAssistantSession to delete.
    */
   where: Prisma.ModelAssistantSessionWhereUniqueInput
@@ -1212,6 +1374,30 @@ export type ModelAssistantSessionDeleteManyArgs<ExtArgs extends runtime.Types.Ex
 }
 
 /**
+ * ModelAssistantSession.messages
+ */
+export type ModelAssistantSession$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ModelAssistantMessage
+   */
+  select?: Prisma.ModelAssistantMessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ModelAssistantMessage
+   */
+  omit?: Prisma.ModelAssistantMessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ModelAssistantMessageInclude<ExtArgs> | null
+  where?: Prisma.ModelAssistantMessageWhereInput
+  orderBy?: Prisma.ModelAssistantMessageOrderByWithRelationInput | Prisma.ModelAssistantMessageOrderByWithRelationInput[]
+  cursor?: Prisma.ModelAssistantMessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ModelAssistantMessageScalarFieldEnum | Prisma.ModelAssistantMessageScalarFieldEnum[]
+}
+
+/**
  * ModelAssistantSession without action
  */
 export type ModelAssistantSessionDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1223,4 +1409,8 @@ export type ModelAssistantSessionDefaultArgs<ExtArgs extends runtime.Types.Exten
    * Omit specific fields from the ModelAssistantSession
    */
   omit?: Prisma.ModelAssistantSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ModelAssistantSessionInclude<ExtArgs> | null
 }

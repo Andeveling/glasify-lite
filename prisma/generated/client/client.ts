@@ -179,3 +179,8 @@ export type ProjectAddress = Prisma.ProjectAddressModel
  * 
  */
 export type ModelAssistantSession = Prisma.ModelAssistantSessionModel
+/**
+ * Model ModelAssistantMessage
+ * 
+ */
+export type ModelAssistantMessage = Prisma.ModelAssistantMessageModel
