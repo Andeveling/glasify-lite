@@ -12,11 +12,7 @@ type DesignTemplatesListProps = {
   onFilterChange?: (filter: FilterType) => void
 }
 
-export function DesignTemplatesList({
-  initialData,
-  filter = "all",
-  onFilterChange,
-}: DesignTemplatesListProps) {
+export function DesignTemplatesList({ initialData, filter = "all" }: DesignTemplatesListProps) {
   const { data } = api.admin["design-template"].list.useQuery(
     { page: initialData.page, limit: initialData.limit },
     { initialData },

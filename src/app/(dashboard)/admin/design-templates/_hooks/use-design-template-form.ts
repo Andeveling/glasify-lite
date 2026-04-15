@@ -28,7 +28,7 @@ const defaultWindowValues: z.infer<typeof windowSchema> = {
   showHandles: true,
 }
 
-const defaultDoorValues: z.infer<typeof doorSchema> = {
+const _defaultDoorValues: z.infer<typeof doorSchema> = {
   type: "door",
   name: "",
   openingType: "right_interior",

@@ -2,10 +2,6 @@
 
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import type {
-  DesignTemplateCreateInput,
-  DesignTemplateUpdateInput,
-} from "@/lib/validations/design-template"
 import { api } from "@/trpc/react"
 
 type UseDesignTemplateMutationsOptions = {
