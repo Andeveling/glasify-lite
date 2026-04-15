@@ -26,31 +26,28 @@ vi.mock("@/server/services/model-assistant-session.service", () => ({
 }))
 
 vi.mock("@/server/services/model-assistant-message.service", () => ({
-  saveMessage: vi.fn().mockResolvedValue(undefined),
   getMessagesBySession: vi.fn().mockResolvedValue([]),
 }))
 
-const { createModelAssistantStreamText, mockToUIMessageStreamResponse } = vi.hoisted(() => {
-  const mockToUIMessageStreamResponse = vi.fn(() => new Response())
+const { createAgentStreamMock, mockStreamResponse } = vi.hoisted(() => {
+  const mockStreamResponse = vi.fn(() => new Response())
 
-  const createMockStreamResult = (sessionUpdates = {}) => {
-    const textPromise = Promise.resolve("AI response")
+  const createAgentStreamMock = (sessionUpdates = {}) => {
+    const waitForCompletion = vi.fn(() => Promise.resolve(sessionUpdates))
     return {
-      text: textPromise,
-      sessionUpdates,
-      toUIMessageStreamResponse: mockToUIMessageStreamResponse,
+      streamResponse: mockStreamResponse(),
+      waitForCompletion,
     }
   }
 
   return {
-    createModelAssistantStreamText: vi.fn(() => createMockStreamResult()),
-    mockToUIMessageStreamResponse,
+    createAgentStreamMock: vi.fn((opts) => createAgentStreamMock(opts)),
+    mockStreamResponse,
   }
 })
 
-vi.mock("@/server/ai/agents/model-assistant.executor", () => ({
-  buildContextPrompt: vi.fn((msg) => msg),
-  createModelAssistantStreamText,
+vi.mock("@/server/ai/agents/model-assistant.agents", () => ({
+  createAgentStream: createAgentStreamMock,
 }))
 
 vi.mock("@/server/ai/providers/minimax", () => ({
@@ -58,6 +55,10 @@ vi.mock("@/server/ai/providers/minimax", () => ({
     languageModel: vi.fn().mockReturnValue({}),
   }),
   getMinimaxModelId: vi.fn().mockReturnValue("minimax-model"),
+}))
+
+vi.mock("@/server/ai/agents/model-assistant.tools", () => ({
+  modelCreationTools: [],
 }))
 
 const mockAuthenticatedSession = {
@@ -127,11 +128,10 @@ describe("POST /api/chat/sessions/[sessionId]/messages", () => {
       vi.mocked(auth.api.getSession).mockResolvedValue(mockAuthenticatedSession)
       vi.mocked(getModelAssistantSession).mockResolvedValue(mockAssistantSession)
 
-      createModelAssistantStreamText.mockClear()
-      mockToUIMessageStreamResponse.mockClear()
+      createAgentStreamMock.mockClear()
     })
 
-    it("calls createModelAssistantStreamText with the user message and session context", async () => {
+    it("calls createAgentStream with the user message and session context", async () => {
       const { POST } = await import("@/app/api/chat/sessions/[sessionId]/messages/route")
 
       const mockRequest = new NextRequest("http://localhost/api/chat/sessions/sess-123/messages", {
@@ -142,8 +142,8 @@ describe("POST /api/chat/sessions/[sessionId]/messages", () => {
 
       await POST(mockRequest)
 
-      expect(createModelAssistantStreamText).toHaveBeenCalledOnce()
-      expect(createModelAssistantStreamText).toHaveBeenCalledWith(
+      expect(createAgentStreamMock).toHaveBeenCalledOnce()
+      expect(createAgentStreamMock).toHaveBeenCalledWith(
         expect.objectContaining({
           userMessage: "crear una ventana corrediza",
           sessionContext: expect.objectContaining({
@@ -154,7 +154,7 @@ describe("POST /api/chat/sessions/[sessionId]/messages", () => {
       )
     })
 
-    it("calls toUIMessageStreamResponse and returns 200", async () => {
+    it("returns 200 on successful stream", async () => {
       const { POST } = await import("@/app/api/chat/sessions/[sessionId]/messages/route")
 
       const mockRequest = new NextRequest("http://localhost/api/chat/sessions/sess-123/messages", {
@@ -165,30 +165,7 @@ describe("POST /api/chat/sessions/[sessionId]/messages", () => {
 
       const response = await POST(mockRequest)
 
-      expect(mockToUIMessageStreamResponse).toHaveBeenCalledOnce()
       expect(response.status).toBe(200)
-    })
-
-    it("passes originalMessages to toUIMessageStreamResponse when provided", async () => {
-      const { POST } = await import("@/app/api/chat/sessions/[sessionId]/messages/route")
-
-      const messages = [
-        { id: "msg-1", role: "user", parts: [{ type: "text", text: "hola" }] },
-        { id: "msg-2", role: "assistant", parts: [{ type: "text", text: "hola!" }] },
-        { id: "msg-3", role: "user", parts: [{ type: "text", text: "crear ventana" }] },
-      ]
-
-      const mockRequest = new NextRequest("http://localhost/api/chat/sessions/sess-123/messages", {
-        method: "POST",
-        body: JSON.stringify({ sessionId: "sess-123", messages }),
-        headers: { "Content-Type": "application/json" },
-      })
-
-      await POST(mockRequest)
-
-      expect(mockToUIMessageStreamResponse).toHaveBeenCalledWith(
-        expect.objectContaining({ originalMessages: messages }),
-      )
     })
 
     it("uses session context with currentModelId when set", async () => {
@@ -212,7 +189,7 @@ describe("POST /api/chat/sessions/[sessionId]/messages", () => {
 
       await POST(mockRequest)
 
-      expect(createModelAssistantStreamText).toHaveBeenCalledWith(
+      expect(createAgentStreamMock).toHaveBeenCalledWith(
         expect.objectContaining({
           sessionContext: expect.objectContaining({
             mode: "calibrate_model",
@@ -223,7 +200,7 @@ describe("POST /api/chat/sessions/[sessionId]/messages", () => {
       )
     })
 
-    it("calls updateModelAssistantSession with sessionUpdates when executor returns them", async () => {
+    it("calls updateModelAssistantSession with sessionUpdates when agent resolves them", async () => {
       const { updateModelAssistantSession } = await import(
         "@/server/services/model-assistant-session.service"
       )
@@ -232,10 +209,9 @@ describe("POST /api/chat/sessions/[sessionId]/messages", () => {
         currentStep: "model_created",
         currentModelId: "model-abc",
       }
-      createModelAssistantStreamText.mockReturnValueOnce({
-        text: Promise.resolve("Modelo creado"),
-        sessionUpdates,
-        toUIMessageStreamResponse: mockToUIMessageStreamResponse,
+      createAgentStreamMock.mockReturnValueOnce({
+        streamResponse: new Response(),
+        waitForCompletion: vi.fn().mockResolvedValue(sessionUpdates),
       })
 
       const { POST } = await import("@/app/api/chat/sessions/[sessionId]/messages/route")

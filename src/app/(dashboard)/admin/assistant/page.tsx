@@ -211,11 +211,13 @@ export default function AssistantPage() {
                                       )}
                                       {(output || errorText) && (
                                         <ToolOutput
-                                          output={
-                                            <CodeBlock
-                                              code={JSON.stringify(output ?? null, null, 2)}
-                                              language="json"
-                                            />
+                                          output={output}
+                                          toolName={
+                                            type === "dynamic-tool"
+                                              ? toolName
+                                              : type.startsWith("tool-")
+                                                ? type.slice(5)
+                                                : undefined
                                           }
                                           errorText={errorText}
                                         />

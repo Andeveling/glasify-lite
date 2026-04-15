@@ -54,26 +54,25 @@ vi.mock("@/server/ai/providers/minimax", () => ({
   getMinimaxModelId: vi.fn().mockReturnValue("minimax-model"),
 }))
 
-const { createModelAssistantStreamText, mockToUIMessageStreamResponse } = vi.hoisted(() => {
-  const mockToUIMessageStreamResponse = vi.fn(() => new Response())
+const { createAgentStreamMock, mockStreamResponse } = vi.hoisted(() => {
+  const mockStreamResponse = vi.fn(() => new Response())
 
-  const createMockStreamResult = () => {
-    const textPromise = Promise.resolve("Voy a ayudarte con tu solicitud")
+  const createAgentStreamMock = (sessionUpdates = {}) => {
+    const waitForCompletion = vi.fn(() => Promise.resolve(sessionUpdates))
     return {
-      text: textPromise,
-      toUIMessageStreamResponse: mockToUIMessageStreamResponse,
+      streamResponse: mockStreamResponse(),
+      waitForCompletion,
     }
   }
 
   return {
-    createModelAssistantStreamText: vi.fn(() => createMockStreamResult()),
-    mockToUIMessageStreamResponse,
+    createAgentStreamMock: vi.fn((opts) => createAgentStreamMock(opts)),
+    mockStreamResponse,
   }
 })
 
-vi.mock("@/server/ai/agents/model-assistant.executor", () => ({
-  buildContextPrompt: vi.fn((msg) => msg),
-  createModelAssistantStreamText,
+vi.mock("@/server/ai/agents/model-assistant.agents", () => ({
+  createAgentStream: createAgentStreamMock,
 }))
 
 const mockAuthenticatedSession = {
@@ -138,8 +137,8 @@ describe("Model Assistant Agent Execution (Unified)", () => {
       const response = await POST(mockRequest)
 
       expect(response.status).toBe(200)
-      expect(createModelAssistantStreamText).toHaveBeenCalledOnce()
-      expect(createModelAssistantStreamText).toHaveBeenCalledWith(
+      expect(createAgentStreamMock).toHaveBeenCalledOnce()
+      expect(createAgentStreamMock).toHaveBeenCalledWith(
         expect.objectContaining({
           userMessage: "crear una ventana corrediza 2 hojas con perfil Extralum",
         }),
@@ -177,8 +176,8 @@ describe("Model Assistant Agent Execution (Unified)", () => {
       const response = await POST(mockRequest)
 
       expect(response.status).toBe(200)
-      expect(createModelAssistantStreamText).toHaveBeenCalledOnce()
-      expect(createModelAssistantStreamText).toHaveBeenCalledWith(
+      expect(createAgentStreamMock).toHaveBeenCalledOnce()
+      expect(createAgentStreamMock).toHaveBeenCalledWith(
         expect.objectContaining({
           sessionContext: expect.objectContaining({
             mode: "calibrate_model",
@@ -200,7 +199,7 @@ describe("Model Assistant Agent Execution (Unified)", () => {
       vi.mocked(getModelAssistantSession).mockResolvedValue(mockAssistantSession)
     })
 
-    it("routes ambiguous message to unified agent without disambiguation overhead", async () => {
+    it("routes ambiguous message to unified agent", async () => {
       const { POST } = await import("@/app/api/chat/sessions/[sessionId]/messages/route")
 
       const mockRequest = new NextRequest("http://localhost/api/chat/sessions/sess-123/messages", {
@@ -212,21 +211,7 @@ describe("Model Assistant Agent Execution (Unified)", () => {
       const response = await POST(mockRequest)
 
       expect(response.status).toBe(200)
-      expect(createModelAssistantStreamText).toHaveBeenCalledOnce()
-    })
-
-    it("always calls toUIMessageStreamResponse regardless of message type", async () => {
-      const { POST } = await import("@/app/api/chat/sessions/[sessionId]/messages/route")
-
-      const mockRequest = new NextRequest("http://localhost/api/chat/sessions/sess-123/messages", {
-        method: "POST",
-        body: JSON.stringify({ sessionId: "sess-123", message: "cotizame 10 ventanas VC Panama" }),
-        headers: { "Content-Type": "application/json" },
-      })
-
-      await POST(mockRequest)
-
-      expect(mockToUIMessageStreamResponse).toHaveBeenCalledOnce()
+      expect(createAgentStreamMock).toHaveBeenCalledOnce()
     })
   })
 })

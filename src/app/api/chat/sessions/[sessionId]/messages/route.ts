@@ -1,18 +1,12 @@
-import { randomUUID } from "node:crypto"
 import type { UIMessage } from "ai"
 import { headers } from "next/headers"
 import { type NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 import logger from "@/lib/logger"
-import {
-  buildContextPrompt,
-  createModelAssistantStreamText,
-} from "@/server/ai/agents/model-assistant.executor"
+import { createAgentStream } from "@/server/ai/agents/model-assistant.agents"
+import { modelCreationTools } from "@/server/ai/agents/model-assistant.tools"
 import { auth } from "@/server/auth"
-import {
-  getMessagesBySession,
-  saveMessage,
-} from "@/server/services/model-assistant-message.service"
+import { getMessagesBySession } from "@/server/services/model-assistant-message.service"
 import {
   getModelAssistantSession,
   updateModelAssistantSession,
@@ -138,15 +132,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Sesión no encontrada" }, { status: 404 })
     }
 
-    const userUiMessage =
-      typeof parsed.data.message !== "string" && parsed.data.message
-        ? (parsed.data.message as UIMessage)
-        : undefined
-
-    if (userUiMessage?.id) {
-      void saveMessage(sessionId, userUiMessage).catch(() => {})
-    }
-
     const sessionContext = {
       sessionId,
       mode: assistantSession.mode,
@@ -154,9 +139,10 @@ export async function POST(request: NextRequest) {
       currentModelId: assistantSession.currentModelId,
     }
 
-    const result = createModelAssistantStreamText({
+    const result = createAgentStream({
       userMessage: message,
       sessionContext,
+      tools: modelCreationTools,
     })
 
     logger.info("Model assistant message processed", {
@@ -166,17 +152,8 @@ export async function POST(request: NextRequest) {
       messageLength: message.length,
     })
 
-    // Await text first, then save message and persist session updates
-    const [text, sessionUpdates] = await Promise.all([
-      result.text,
-      Promise.resolve(result.sessionUpdates),
-    ])
-
-    await saveMessage(sessionId, {
-      id: randomUUID(),
-      role: "assistant",
-      parts: [{ type: "text", text }],
-    }).catch(() => {})
+    // After the stream is consumed, waitForCompletion resolves with sessionUpdates
+    const sessionUpdates = await result.waitForCompletion()
 
     if (sessionUpdates && (sessionUpdates.currentStep || sessionUpdates.currentModelId || sessionUpdates.context)) {
       await updateModelAssistantSession({ sessionId, ...sessionUpdates }).catch((err) =>
@@ -184,9 +161,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    return originalMessages?.length
-      ? result.toUIMessageStreamResponse({ originalMessages })
-      : result.toUIMessageStreamResponse()
+    return result.streamResponse
   } catch (error) {
     logger.error("Error processing model assistant message", {
       error: error instanceof Error ? error.message : String(error),

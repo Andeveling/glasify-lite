@@ -16,6 +16,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { cn } from "@/lib/utils"
 
 import { CodeBlock } from "./code-block"
+import { toolRendererRegistry, type ToolRenderer } from "./tool-registry"
 
 export type ToolProps = ComponentProps<typeof Collapsible>
 
@@ -122,19 +123,42 @@ export const ToolInput = ({ className, input, ...props }: ToolInputProps) => (
 export type ToolOutputProps = ComponentProps<"div"> & {
   output: ToolPart["output"]
   errorText: ToolPart["errorText"]
+  renderers?: Record<string, ToolRenderer>
+  toolName?: string
 }
 
-export const ToolOutput = ({ className, output, errorText, ...props }: ToolOutputProps) => {
+export const ToolOutput = ({
+  className,
+  output,
+  errorText,
+  renderers,
+  toolName,
+  ...props
+}: ToolOutputProps) => {
   if (!(output || errorText)) {
     return null
   }
 
-  let Output = <div>{output as ReactNode}</div>
+  // Renderer discovery order:
+  // 1. Local renderers prop override
+  // 2. Global registry lookup by toolName
+  // 3. Default JSON/CodeBlock fallback
+  let Output: ReactNode
 
-  if (typeof output === "object" && !isValidElement(output)) {
-    Output = <CodeBlock code={JSON.stringify(output, null, 2)} language="json" />
-  } else if (typeof output === "string") {
-    Output = <CodeBlock code={output} language="json" />
+  if (toolName && renderers?.[toolName]) {
+    Output = renderers[toolName](output)
+  } else if (toolName && toolRendererRegistry.has(toolName)) {
+    const renderer = toolRendererRegistry.get(toolName)
+    Output = renderer ? renderer(output) : null
+  } else {
+    // Default fallback — JSON rendering
+    if (typeof output === "object" && !isValidElement(output)) {
+      Output = <CodeBlock code={JSON.stringify(output, null, 2)} language="json" />
+    } else if (typeof output === "string") {
+      Output = <CodeBlock code={output} language="json" />
+    } else {
+      Output = <div>{output as ReactNode}</div>
+    }
   }
 
   return (
