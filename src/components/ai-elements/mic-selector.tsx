@@ -57,7 +57,6 @@ export const useAudioDevices = () => {
         caughtError instanceof Error ? caughtError.message : "Failed to get audio devices"
 
       setError(message)
-      console.error("Error getting audio devices:", message)
     } finally {
       setLoading(false)
     }
@@ -90,7 +89,6 @@ export const useAudioDevices = () => {
         caughtError instanceof Error ? caughtError.message : "Failed to get audio devices"
 
       setError(message)
-      console.error("Error getting audio devices:", message)
     } finally {
       setLoading(false)
     }
@@ -159,6 +157,7 @@ export const MicSelector = ({
     if (open && !hasPermission && !loading) {
       loadDevices()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, hasPermission, loading, loadDevices])
 
   const contextValue = useMemo(
@@ -171,7 +170,7 @@ export const MicSelector = ({
       value,
       width,
     }),
-    [devices, onOpenChange, onValueChange, open, setWidth, value, width],
+    [devices, onOpenChange, onValueChange, open, value, width],
   )
 
   return (

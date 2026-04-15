@@ -43,8 +43,8 @@ function ModelCard({
   isSelected,
   onSelect,
   formatContext,
-  configuredWidthMm,
-  configuredHeightMm,
+  _configuredWidthMm,
+  _configuredHeightMm,
 }: ModelCardProps) {
   return (
     <Card

@@ -32,5 +32,5 @@ declare global {
   var __toolRendererRegistry: ToolRendererRegistry | undefined
 }
 
-export const toolRendererRegistry: ToolRendererRegistry =
-  globalThis.__toolRendererRegistry ??= createToolRendererRegistry()
+export const toolRendererRegistry: ToolRendererRegistry = (globalThis.__toolRendererRegistry ??=
+  createToolRendererRegistry())

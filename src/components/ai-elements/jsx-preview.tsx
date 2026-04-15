@@ -169,7 +169,7 @@ export const JSXPreview = memo(
         setError,
         setLastGoodJsx,
       }),
-      [bindings, components, error, isStreaming, jsx, onError, processedJsx, setError],
+      [bindings, components, error, isStreaming, jsx, onError, processedJsx],
     )
 
     return (
@@ -197,7 +197,8 @@ export const JSXPreviewContent = memo(({ className, ...props }: JSXPreviewConten
   useEffect(() => {
     errorReportedRef.current = null
     setHadError(false)
-  }, [processedJsx])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleError = useCallback(
     (err: Error) => {

@@ -23,9 +23,9 @@ function getFrameThickness(style: string): number {
 }
 
 function getInnerDimensions(
-  width: number,
-  height: number,
-  thickness: number,
+  _width: number,
+  _height: number,
+  _thickness: number,
 ): { innerWidth: number; innerHeight: number; innerX: number; innerY: number } {
   const innerX = FRAME_PADDING
   const innerY = FRAME_PADDING
@@ -41,7 +41,7 @@ function DesignRenderer({
   dimensions,
   size = DEFAULT_SIZE,
   showDimensions = false,
-  className,
+  className: _className,
 }: DesignRenderProps & { className?: string }) {
   const svgContent = useMemo(() => {
     const { width, height } = size
@@ -124,17 +124,15 @@ function DesignRenderer({
 
               {/* Handle (only on movable panels) */}
               {template.showHandles && panel.type === "movable" && (
-                <>
-                  <ellipse
-                    cx={panel.index % 2 === 0 ? x + 6 : x + panelWidth - 6}
-                    cy={innerY + innerHeight / 2}
-                    rx={3}
-                    ry={10}
-                    fill={frameColor}
-                    stroke={frameColor}
-                    strokeWidth={0.5}
-                  />
-                </>
+                <ellipse
+                  cx={panel.index % 2 === 0 ? x + 6 : x + panelWidth - 6}
+                  cy={innerY + innerHeight / 2}
+                  rx={3}
+                  ry={10}
+                  fill={frameColor}
+                  stroke={frameColor}
+                  strokeWidth={0.5}
+                />
               )}
 
               {/* Opening arrow (only on movable panels) */}
@@ -224,7 +222,7 @@ function DesignRenderer({
         )}
       </svg>
     )
-  }, [template, frameColor, glassColor, dimensions, showDimensions, size, className])
+  }, [template, frameColor, glassColor, dimensions, showDimensions, size])
 
   return svgContent
 }

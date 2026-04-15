@@ -16,7 +16,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { cn } from "@/lib/utils"
 
 import { CodeBlock } from "./code-block"
-import { toolRendererRegistry, type ToolRenderer } from "./tool-registry"
+import { type ToolRenderer, toolRendererRegistry } from "./tool-registry"
 
 export type ToolProps = ComponentProps<typeof Collapsible>
 

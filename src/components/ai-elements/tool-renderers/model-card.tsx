@@ -24,9 +24,7 @@ export const ModelCard = (output: unknown) => {
       {models.map((model) => (
         <Card
           key={model.id}
-          className={cn(
-            "flex flex-col gap-2 py-4 transition-colors hover:bg-muted/50",
-          )}
+          className={cn("flex flex-col gap-2 py-4 transition-colors hover:bg-muted/50")}
         >
           <CardHeader className="px-4 py-0">
             <CardTitle className="text-base">{model.name}</CardTitle>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo } from "react"
-import type { DoorRenderProps, DoorTemplateConfig } from "@/domain/door"
+import type { DoorRenderProps } from "@/domain/door"
 import { cn } from "@/lib/utils"
 
 const GLASS_OPACITY = 0.7
@@ -34,10 +34,6 @@ function getArcDirection(openingType: string): "cw" | "ccw" {
   return "ccw"
 }
 
-function isInterior(openingType: string): boolean {
-  return openingType.includes("interior")
-}
-
 function DoorRenderer({
   template,
   frameColor,
@@ -53,7 +49,6 @@ function DoorRenderer({
     const frameThickness = getFrameThickness(template.frameConfig.profileStyle)
 
     const hingeSide = getHingeSide(template.openingType)
-    const interior = isInterior(template.openingType)
     const arcDirection = getArcDirection(template.openingType)
 
     const glassX = FRAME_PADDING + frameThickness
@@ -86,8 +81,6 @@ function DoorRenderer({
           const cx = hingeSide === "left" ? glassX : glassX + glassWidth
           const cy = glassY + glassHeight / 2
           const r = glassHeight * 0.7
-          const startAngle = hingeSide === "left" ? 90 : 90
-          const endAngle = hingeSide === "left" ? 0 : 180
 
           if (arcDirection === "cw") {
             return `M ${cx} ${cy - r} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`

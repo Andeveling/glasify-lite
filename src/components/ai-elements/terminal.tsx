@@ -165,7 +165,8 @@ export const TerminalContent = ({ className, children, ...props }: TerminalConte
     if (autoScroll && containerRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight
     }
-  }, [output, autoScroll])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoScroll])
 
   return (
     <div
