@@ -143,23 +143,23 @@ export async function POST(request: NextRequest) {
       currentModelId: assistantSession.currentModelId,
     }
 
-    const userMessageIdForPersist =
+    const userMessageId =
       typeof parsed.data.message !== "string" && parsed.data.message
         ? (parsed.data.message as UIMessage).id
         : undefined
 
-    // Persist user message BEFORE returning stream (fire and forget)
-    if (userMessageIdForPersist) {
-      void saveMessage(sessionId, {
-        id: userMessageIdForPersist,
-        role: "user",
-        parts: [{ type: "text", text: message }],
-      }).catch((err) =>
-        logger.error("Failed to persist user message", {
-          error: err instanceof Error ? err.message : String(err),
-        }),
-      )
+    const userMessage: UIMessage = {
+      id: userMessageId ?? randomUUID(),
+      role: "user",
+      parts: [{ type: "text", text: message }],
     }
+
+    // Persist user message server-side (fire and forget)
+    void saveMessage(sessionId, userMessage).catch((err) =>
+      logger.error("Failed to persist user message", {
+        error: err instanceof Error ? err.message : String(err),
+      }),
+    )
 
     const result = createAgentStream({
       userMessage: message,
@@ -174,9 +174,11 @@ export async function POST(request: NextRequest) {
       messageLength: message.length,
     })
 
-    // Wait for completion in background (does not block the stream response)
-    result.waitForCompletion().then(async (sessionUpdates) => {
+    // Persist session updates and assistant message after stream completes
+    result.waitForCompletion().then(async (updates) => {
       try {
+        const { assistantMessage, ...sessionUpdates } = updates
+
         if (
           sessionUpdates &&
           (sessionUpdates.currentStep || sessionUpdates.currentModelId || sessionUpdates.context)
@@ -184,8 +186,17 @@ export async function POST(request: NextRequest) {
           await updateModelAssistantSession({ sessionId, ...sessionUpdates })
           logger.info("Session updates persisted", { sessionId, sessionUpdates })
         }
+
+        if (assistantMessage?.text) {
+          await saveMessage(sessionId, {
+            id: randomUUID(),
+            role: "assistant",
+            parts: [{ type: "text", text: assistantMessage.text }],
+          })
+          logger.info("Assistant message persisted", { sessionId })
+        }
       } catch (err) {
-        logger.error("Failed to persist session updates", {
+        logger.error("Failed to persist post-stream data", {
           error: err instanceof Error ? err.message : String(err),
         })
       }

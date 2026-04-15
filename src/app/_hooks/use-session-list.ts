@@ -1,7 +1,8 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import type { ModelAssistantMode } from "@/server/services/model-assistant-session.service"
+import { SESSION_LIST_KEY } from "./session-query-keys"
 
 export interface AssistantSessionSummary {
   id: string
@@ -12,62 +13,59 @@ export interface AssistantSessionSummary {
   updatedAt: string
 }
 
+async function fetchSessions(): Promise<AssistantSessionSummary[]> {
+  const response = await fetch("/api/chat/sessions")
+  if (!response.ok) {
+    throw new Error(`Failed to fetch sessions: ${response.status}`)
+  }
+  const data = await response.json()
+  return (data.sessions ?? []) as AssistantSessionSummary[]
+}
+
+async function deleteSessionRequest(sessionId: string): Promise<void> {
+  const response = await fetch(`/api/chat/sessions/${sessionId}`, { method: "DELETE" })
+  if (!response.ok && response.status !== 204) {
+    throw new Error(`Failed to delete session: ${response.status}`)
+  }
+}
+
 export function useSessionList() {
-  const [sessions, setSessions] = useState<AssistantSessionSummary[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const queryClient = useQueryClient()
 
-  const fetchSessions = useCallback(async () => {
-    setIsLoading(true)
-    setError(null)
+  const {
+    data: sessions = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: SESSION_LIST_KEY,
+    queryFn: fetchSessions,
+  })
 
-    try {
-      const response = await fetch("/api/chat/sessions")
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch sessions: ${response.status}`)
-      }
-
-      const data = await response.json()
-      setSessions(data.sessions ?? [])
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al cargar sesiones")
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
-
-  const deleteSession = useCallback(
-    async (sessionId: string) => {
-      const previous = sessions
-      setSessions((prev) => prev.filter((s) => s.id !== sessionId))
-
-      try {
-        const response = await fetch(`/api/chat/sessions/${sessionId}`, {
-          method: "DELETE",
-        })
-
-        if (!response.ok && response.status !== 204) {
-          setSessions(previous)
-          throw new Error(`Failed to delete session: ${response.status}`)
-        }
-      } catch (err) {
-        setSessions(previous)
-        setError(err instanceof Error ? err.message : "Error al eliminar la sesión")
+  const deleteMutation = useMutation({
+    mutationFn: deleteSessionRequest,
+    onMutate: async (sessionId) => {
+      await queryClient.cancelQueries({ queryKey: SESSION_LIST_KEY })
+      const previous = queryClient.getQueryData<AssistantSessionSummary[]>(SESSION_LIST_KEY)
+      queryClient.setQueryData<AssistantSessionSummary[]>(SESSION_LIST_KEY, (old) =>
+        (old ?? []).filter((s) => s.id !== sessionId),
+      )
+      return { previous }
+    },
+    onError: (_err, _sessionId, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(SESSION_LIST_KEY, context.previous)
       }
     },
-    [sessions],
-  )
-
-  useEffect(() => {
-    fetchSessions()
-  }, [fetchSessions])
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: SESSION_LIST_KEY })
+    },
+  })
 
   return {
     sessions,
     isLoading,
-    error,
-    refresh: fetchSessions,
-    deleteSession,
+    error: error ? (error instanceof Error ? error.message : "Error al cargar sesiones") : null,
+    refresh: () => queryClient.invalidateQueries({ queryKey: SESSION_LIST_KEY }),
+    deleteSession: (sessionId: string) => deleteMutation.mutateAsync(sessionId),
   }
 }

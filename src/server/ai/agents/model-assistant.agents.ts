@@ -107,19 +107,24 @@ export function extractSessionUpdates(
   return updates
 }
 
+type AssistantMessageCapture = {
+  text: string
+}
+
 export function createAgentStream(opts: {
   userMessage: string
   sessionContext?: SessionContext
   tools: ModelCreationTools
 }): {
   streamResponse: Response
-  waitForCompletion: () => Promise<SessionUpdates>
+  waitForCompletion: () => Promise<SessionUpdates & { assistantMessage?: AssistantMessageCapture }>
 } {
   const { userMessage, sessionContext, tools } = opts
   const augmentedPrompt = buildContextPrompt(userMessage, sessionContext)
   const agent = createModelAssistantAgent(tools)
 
   const toolResultsMap = new Map<string, { name: string; output: unknown }>()
+  let finalAssistantText = ""
 
   const streamResponse = createAgentUIStreamResponse({
     agent: agent as unknown as Agent,
@@ -130,16 +135,25 @@ export function createAgentStream(opts: {
         parts: [{ type: "text" as const, text: augmentedPrompt }],
       },
     ],
-    onStepFinish: ({ toolResults }) => {
+    onStepFinish: ({ toolResults, text, finishReason }) => {
       for (const tr of toolResults) {
         toolResultsMap.set(tr.toolName, { name: tr.toolName, output: tr.output })
+      }
+      if (finishReason === "stop" && text) {
+        finalAssistantText = text
       }
     },
   })
 
   return {
     streamResponse: streamResponse as unknown as Response,
-    waitForCompletion: () => Promise.resolve(extractSessionUpdates(toolResultsMap)),
+    waitForCompletion: () => {
+      const sessionUpdates = extractSessionUpdates(toolResultsMap)
+      return Promise.resolve({
+        ...sessionUpdates,
+        assistantMessage: finalAssistantText ? { text: finalAssistantText } : undefined,
+      })
+    },
   }
 }
 

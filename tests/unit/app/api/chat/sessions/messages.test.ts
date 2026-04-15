@@ -27,6 +27,7 @@ vi.mock("@/server/services/model-assistant-session.service", () => ({
 
 vi.mock("@/server/services/model-assistant-message.service", () => ({
   getMessagesBySession: vi.fn().mockResolvedValue([]),
+  saveMessage: vi.fn().mockResolvedValue(undefined),
 }))
 
 const { createAgentStreamMock, mockStreamResponse } = vi.hoisted(() => {

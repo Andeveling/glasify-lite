@@ -1,8 +1,11 @@
 "use client"
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useCallback, useEffect, useState } from "react"
 import { useSession } from "@/lib/auth-client"
 import type { ModelAssistantMode } from "@/server/services/model-assistant-session.service"
+import { SESSION_LIST_KEY } from "@/app/_hooks/session-query-keys"
+import type { AssistantSessionSummary } from "@/app/_hooks/use-session-list"
 
 interface ChatSessionInfo {
   mode: ModelAssistantMode
@@ -10,137 +13,121 @@ interface ChatSessionInfo {
   currentModelId: string | null
 }
 
+interface CreateSessionPayload {
+  userId: string
+  mode: ModelAssistantMode
+}
+
 interface UseChatSessionOptions {
   defaultMode?: ModelAssistantMode
 }
 
-export function useChatSession({ defaultMode = "create_model" }: UseChatSessionOptions = {}) {
-  const { data: session } = useSession()
-  const [sessionId, setSessionId] = useState<string | null>(null)
-  const [isCreatingSession, setIsCreatingSession] = useState(false)
-  const [chatSession, setChatSession] = useState<ChatSessionInfo | null>(null)
+async function fetchSessionById(sessionId: string): Promise<ChatSessionInfo> {
+  const response = await fetch(`/api/chat/sessions/${sessionId}`)
+  if (!response.ok) {
+    throw new Error(`Failed to fetch session: ${response.status}`)
+  }
+  const data = await response.json()
+  return {
+    mode: data.mode,
+    currentStep: data.currentStep,
+    currentModelId: data.currentModelId,
+  } as ChatSessionInfo
+}
 
-  const fetchSession = useCallback(async (sid: string) => {
-    try {
-      const response = await fetch(`/api/chat/sessions/${sid}`)
-      if (response.ok) {
-        const data = await response.json()
-        setChatSession({
-          mode: data.mode,
-          currentStep: data.currentStep,
-          currentModelId: data.currentModelId,
-        })
-      }
-    } catch {
-      // Session fetch failed silently
-    }
-  }, [])
+async function fetchSessionList(): Promise<AssistantSessionSummary[]> {
+  const response = await fetch("/api/chat/sessions")
+  if (!response.ok) {
+    throw new Error(`Failed to fetch sessions: ${response.status}`)
+  }
+  const data = await response.json()
+  return (data.sessions ?? []) as AssistantSessionSummary[]
+}
+
+async function createSessionRequest(payload: CreateSessionPayload): Promise<string> {
+  const response = await fetch("/api/chat/sessions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+  if (!response.ok) {
+    throw new Error(`Failed to create session: ${response.status}`)
+  }
+  const data = await response.json()
+  return data.sessionId as string
+}
+
+export function useChatSession({ defaultMode = "create_model" }: UseChatSessionOptions = {}) {
+  const { data: authSession } = useSession()
+  const queryClient = useQueryClient()
+  const [sessionId, setSessionId] = useState<string | null>(null)
+  const [bootstrapped, setBootstrapped] = useState(false)
+
+  const { data: sessionList = [] } = useQuery({
+    queryKey: SESSION_LIST_KEY,
+    queryFn: fetchSessionList,
+    enabled: !!authSession?.user?.id && !bootstrapped,
+  })
+
+  const sessionQuery = useQuery({
+    queryKey: ["chat-session", sessionId],
+    queryFn: () => fetchSessionById(sessionId!),
+    enabled: !!sessionId,
+  })
+
+  const createSessionMutation = useMutation({
+    mutationFn: createSessionRequest,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: SESSION_LIST_KEY })
+    },
+  })
 
   const createSession = useCallback(
     async (mode: ModelAssistantMode = defaultMode) => {
-      if (!session?.user?.id) {
+      if (!authSession?.user?.id) {
         throw new Error("User not authenticated")
       }
-
-      setIsCreatingSession(true)
-
-      try {
-        const response = await fetch("/api/chat/sessions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId: session.user.id,
-            mode,
-          }),
-        })
-
-        if (!response.ok) {
-          throw new Error(`Failed to create session: ${response.status}`)
-        }
-
-        const data = await response.json()
-        setSessionId(data.sessionId)
-        setChatSession({
-          mode,
-          currentStep: "initial",
-          currentModelId: null,
-        })
-        return data.sessionId
-      } finally {
-        setIsCreatingSession(false)
-      }
+      const newSessionId = await createSessionMutation.mutateAsync({
+        userId: authSession.user.id,
+        mode,
+      })
+      setSessionId(newSessionId)
+      setBootstrapped(true)
+      return newSessionId
     },
-    [session?.user?.id, defaultMode],
+    [authSession?.user?.id, defaultMode, createSessionMutation],
   )
 
-  const setActiveSessionId = useCallback(
-    (sid: string) => {
-      setSessionId(sid)
-      fetchSession(sid)
-    },
-    [fetchSession],
-  )
-
-  const activateMostRecentSession = useCallback(async () => {
-    if (!session?.user?.id) {
-      return false
-    }
-
-    try {
-      const response = await fetch("/api/chat/sessions")
-
-      if (!response.ok) {
-        return false
-      }
-
-      const data = (await response.json()) as {
-        sessions?: Array<{ id: string }>
-      }
-
-      const [latestSession] = data.sessions ?? []
-
-      if (!latestSession) {
-        return false
-      }
-
-      setActiveSessionId(latestSession.id)
-      return true
-    } catch {
-      return false
-    }
-  }, [session?.user?.id, setActiveSessionId])
+  const setActiveSessionId = useCallback((sid: string) => {
+    setSessionId(sid)
+    setBootstrapped(true)
+  }, [])
 
   useEffect(() => {
-    if (session?.user?.id && !sessionId && !isCreatingSession) {
-      void (async () => {
-        const activated = await activateMostRecentSession()
+    if (!authSession?.user?.id || bootstrapped || createSessionMutation.isPending) return
 
-        if (!activated) {
-          await createSession(defaultMode)
-        }
-      })()
+    const [latestSession] = sessionList
+    if (latestSession) {
+      setSessionId(latestSession.id)
+      setBootstrapped(true)
+    } else if (sessionList !== undefined) {
+      void createSession(defaultMode)
     }
   }, [
-    session?.user?.id,
-    sessionId,
-    isCreatingSession,
+    authSession?.user?.id,
+    bootstrapped,
+    createSessionMutation.isPending,
+    sessionList,
     createSession,
     defaultMode,
-    activateMostRecentSession,
   ])
-
-  useEffect(() => {
-    if (sessionId) {
-      fetchSession(sessionId)
-    }
-  }, [sessionId, fetchSession])
 
   return {
     sessionId,
-    isCreatingSession,
+    isCreatingSession: createSessionMutation.isPending,
     createSession,
     setActiveSessionId,
-    isAuthenticated: !!session?.user,
-    session: chatSession,
+    isAuthenticated: !!authSession?.user,
+    session: sessionQuery.data ?? null,
   }
 }

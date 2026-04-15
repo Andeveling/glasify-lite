@@ -1,9 +1,10 @@
 "use client"
 
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useChat } from "@ai-sdk/react"
 import type { UIMessage } from "ai"
 import { DefaultChatTransport } from "ai"
-import { useCallback, useEffect, useRef } from "react"
+import { useCallback, useEffect } from "react"
 
 type ChatStatus = "submitted" | "streaming" | "ready" | "error"
 
@@ -11,24 +12,29 @@ interface UseModelAssistantChatOptions {
   sessionId: string | null
 }
 
-async function persistMessage(sessionId: string, message: UIMessage): Promise<void> {
-  try {
-    const response = await fetch(`/api/chat/sessions/${sessionId}/messages/persist`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message }),
-    })
-    if (!response.ok) {
-      console.error("[useModelAssistantChat] Failed to persist message:", response.status)
-    }
-  } catch (err) {
-    console.error("[useModelAssistantChat] Error persisting message:", err)
+function chatMessagesKey(sessionId: string) {
+  return ["chat-messages", sessionId] as const
+}
+
+async function fetchMessages(sessionId: string): Promise<UIMessage[]> {
+  const response = await fetch(`/api/chat/sessions/${sessionId}/messages`)
+  if (!response.ok) {
+    throw new Error(`Failed to fetch messages: ${response.status}`)
   }
+  const data = await response.json()
+  return (data.messages ?? []) as UIMessage[]
 }
 
 export function useModelAssistantChat({ sessionId }: UseModelAssistantChatOptions) {
+  const queryClient = useQueryClient()
   const apiUrl = sessionId ? `/api/chat/sessions/${sessionId}/messages` : "/api/chat/sessions"
-  const messagesRef = useRef<UIMessage[]>([])
+
+  const { data: initialMessages } = useQuery({
+    queryKey: chatMessagesKey(sessionId!),
+    queryFn: () => fetchMessages(sessionId!),
+    enabled: !!sessionId,
+    staleTime: Number.POSITIVE_INFINITY,
+  })
 
   const {
     messages,
@@ -39,6 +45,7 @@ export function useModelAssistantChat({ sessionId }: UseModelAssistantChatOption
     status,
   } = useChat({
     id: sessionId ?? undefined,
+    messages: initialMessages,
     transport: new DefaultChatTransport({
       api: apiUrl,
       prepareSendMessagesRequest: ({ id, messages, trigger, messageId }) => {
@@ -52,31 +59,14 @@ export function useModelAssistantChat({ sessionId }: UseModelAssistantChatOption
         }
       },
     }),
-    onFinish: ({ message }) => {
-      if (sessionId && message.role === "assistant") {
-        void persistMessage(sessionId, message)
-      }
-    },
   })
 
-  messagesRef.current = messages as UIMessage[]
-
+  // Sync query cache with live useChat messages after streaming
   useEffect(() => {
-    if (!sessionId) return
-
-    const controller = new AbortController()
-
-    fetch(`/api/chat/sessions/${sessionId}/messages`, { signal: controller.signal })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data: { messages: UIMessage[] } | null) => {
-        if (data?.messages && data.messages.length > 0 && messagesRef.current.length === 0) {
-          setMessages(data.messages)
-        }
-      })
-      .catch(() => {})
-
-    return () => controller.abort()
-  }, [sessionId, setMessages])
+    if (sessionId && status === "ready" && messages.length > 0) {
+      queryClient.setQueryData(chatMessagesKey(sessionId), messages)
+    }
+  }, [sessionId, status, messages, queryClient])
 
   const sendMessage = useCallback(
     async (input: { text: string }) => {
@@ -94,7 +84,6 @@ export function useModelAssistantChat({ sessionId }: UseModelAssistantChatOption
   )
 
   const regenerate = useCallback(async () => {
-    if (messagesRef.current.length < 2) return
     await chatRegenerate()
   }, [chatRegenerate])
 
