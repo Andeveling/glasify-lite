@@ -131,7 +131,7 @@ export default function AssistantPage() {
             <p className="text-muted-foreground">Preparando el asistente...</p>
           </div>
         ) : (
-          <div className="flex flex-col h-full max-w-4xl mx-auto w-full">
+          <div className="flex flex-col h-full max-w-7xl mx-auto w-full">
             <div className="flex items-center gap-2 mb-4">
               <Bot className="size-6" />
               <h1 className="text-xl font-semibold">Asistente de Modelos</h1>
