@@ -143,10 +143,23 @@ export async function POST(request: NextRequest) {
       currentModelId: assistantSession.currentModelId,
     }
 
-    const userMessageId =
+    const userMessageIdForPersist =
       typeof parsed.data.message !== "string" && parsed.data.message
         ? (parsed.data.message as UIMessage).id
         : undefined
+
+    // Persist user message BEFORE returning stream (fire and forget)
+    if (userMessageIdForPersist) {
+      void saveMessage(sessionId, {
+        id: userMessageIdForPersist,
+        role: "user",
+        parts: [{ type: "text", text: message }],
+      }).catch((err) =>
+        logger.error("Failed to persist user message", {
+          error: err instanceof Error ? err.message : String(err),
+        }),
+      )
+    }
 
     const result = createAgentStream({
       userMessage: message,
@@ -161,49 +174,24 @@ export async function POST(request: NextRequest) {
       messageLength: message.length,
     })
 
-    // Consume the stream fully to extract response text and session updates
-    const [sessionUpdates, assistantText] = await Promise.all([
-      result.waitForCompletion(),
-      result.getFullText(),
-    ])
-
-    // Persist user message
-    if (userMessageId) {
-      void saveMessage(sessionId, {
-        id: userMessageId,
-        role: "user",
-        parts: [{ type: "text", text: message }],
-      }).catch((err) =>
-        logger.error("Failed to persist user message", {
-          error: err instanceof Error ? err.message : String(err),
-        }),
-      )
-    }
-
-    // Persist assistant response
-    if (assistantText) {
-      void saveMessage(sessionId, {
-        id: randomUUID(),
-        role: "assistant",
-        parts: [{ type: "text", text: assistantText }],
-      }).catch((err) =>
-        logger.error("Failed to persist assistant message", {
-          error: err instanceof Error ? err.message : String(err),
-        }),
-      )
-    }
-
-    if (
-      sessionUpdates &&
-      (sessionUpdates.currentStep || sessionUpdates.currentModelId || sessionUpdates.context)
-    ) {
-      await updateModelAssistantSession({ sessionId, ...sessionUpdates }).catch((err) =>
+    // Wait for completion in background (does not block the stream response)
+    result.waitForCompletion().then(async (sessionUpdates) => {
+      try {
+        if (
+          sessionUpdates &&
+          (sessionUpdates.currentStep || sessionUpdates.currentModelId || sessionUpdates.context)
+        ) {
+          await updateModelAssistantSession({ sessionId, ...sessionUpdates })
+          logger.info("Session updates persisted", { sessionId, sessionUpdates })
+        }
+      } catch (err) {
         logger.error("Failed to persist session updates", {
           error: err instanceof Error ? err.message : String(err),
-        }),
-      )
-    }
+        })
+      }
+    })
 
+    // Return stream IMMEDIATELY — client must receive chunks in real-time
     return result.streamResponse
   } catch (error) {
     logger.error("Error processing model assistant message", {

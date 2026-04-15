@@ -1,7 +1,7 @@
-import { type Agent, createAgentUIStream, createUIMessageStreamResponse, ToolLoopAgent } from "ai"
+import { randomUUID } from "node:crypto"
+import { type Agent, createAgentUIStreamResponse, ToolLoopAgent } from "ai"
 import type { ModelCreationTools } from "@/server/ai/agents/model-assistant.tools"
 import { createMinimaxProvider, getMinimaxModelId } from "@/server/ai/providers/minimax"
-import { randomUUID } from "node:crypto"
 
 type SessionUpdates = {
   currentStep?: string
@@ -107,119 +107,39 @@ export function extractSessionUpdates(
   return updates
 }
 
-interface AgentStreamResult {
-  streamResponse: Response
-  waitForCompletion: () => Promise<SessionUpdates>
-  getFullText: () => Promise<string>
-}
-
 export function createAgentStream(opts: {
   userMessage: string
   sessionContext?: SessionContext
   tools: ModelCreationTools
-}): AgentStreamResult {
+}): {
+  streamResponse: Response
+  waitForCompletion: () => Promise<SessionUpdates>
+} {
   const { userMessage, sessionContext, tools } = opts
   const augmentedPrompt = buildContextPrompt(userMessage, sessionContext)
   const agent = createModelAssistantAgent(tools)
 
   const toolResultsMap = new Map<string, { name: string; output: unknown }>()
-  let completionResolver: (updates: SessionUpdates) => void
-  let fullTextResolver: (text: string) => void
 
-  const completionPromise = new Promise<SessionUpdates>((resolve) => {
-    completionResolver = resolve
-  })
-  const fullTextPromise = new Promise<string>((resolve) => {
-    fullTextResolver = resolve
-  })
-
-  const agentStreamPromise = createAgentUIStream({
+  const streamResponse = createAgentUIStreamResponse({
     agent: agent as unknown as Agent,
     uiMessages: [
       {
         id: randomUUID(),
         role: "user",
-        parts: [{ type: "text", text: augmentedPrompt }],
+        parts: [{ type: "text" as const, text: augmentedPrompt }],
       },
     ],
-    onStepFinish: ({
-      toolResults,
-    }: {
-      toolResults: Array<{ toolName: string; output: unknown }>
-    }) => {
+    onStepFinish: ({ toolResults }) => {
       for (const tr of toolResults) {
         toolResultsMap.set(tr.toolName, { name: tr.toolName, output: tr.output })
       }
     },
   })
 
-  let textAccumulator = ""
-
-  const streamResponse = createUIMessageStreamResponse({
-    stream: new ReadableStream({
-      async start(controller) {
-        try {
-          const agentStream = await agentStreamPromise
-          const [branchA, branchB] = agentStream.tee()
-
-          // Consumer: extract text from branch B
-          const consumeBranchB = async () => {
-            try {
-              const reader = branchB.getReader()
-              while (true) {
-                const { done, value } = await reader.read()
-                if (done) break
-                const text = typeof value === "string" ? value : new TextDecoder().decode(value)
-                textAccumulator += text
-              }
-            } catch {
-              // ignore
-            }
-          }
-
-          // Forward branch A to client, wait for both branches before resolving
-          let pumpFinished = false
-          let consumeFinished = false
-
-          const checkDone = () => {
-            if (pumpFinished && consumeFinished) {
-              fullTextResolver?.(textAccumulator)
-              completionResolver?.(extractSessionUpdates(toolResultsMap))
-              controller.close()
-            }
-          }
-
-          const reader = branchA.getReader()
-          const pump = () =>
-            reader.read().then(({ done, value }) => {
-              if (done) {
-                pumpFinished = true
-                checkDone()
-                return
-              }
-              controller.enqueue(value)
-              pump()
-            })
-
-          consumeBranchB().then(() => {
-            consumeFinished = true
-            checkDone()
-          })
-
-          pump()
-        } catch {
-          controller.close()
-          fullTextResolver?.("")
-          completionResolver?.({})
-        }
-      },
-    }),
-  }) as unknown as Response
-
   return {
-    streamResponse,
-    waitForCompletion: () => completionPromise,
-    getFullText: () => fullTextPromise,
+    streamResponse: streamResponse as unknown as Response,
+    waitForCompletion: () => Promise.resolve(extractSessionUpdates(toolResultsMap)),
   }
 }
 
