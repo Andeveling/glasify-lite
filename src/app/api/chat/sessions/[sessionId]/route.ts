@@ -7,7 +7,6 @@ import {
   deleteModelAssistantSession,
   getModelAssistantSession,
   modelAssistantSessionContextSchema,
-  type ModelAssistantMode,
   updateModelAssistantSession,
 } from "@/server/services/model-assistant-session.service"
 

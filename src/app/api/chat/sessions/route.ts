@@ -6,8 +6,8 @@ import { auth } from "@/server/auth"
 import {
   createModelAssistantSession,
   listModelAssistantSessionsByUser,
-  modelAssistantSessionContextSchema,
   type ModelAssistantMode,
+  modelAssistantSessionContextSchema,
 } from "@/server/services/model-assistant-session.service"
 
 const createSessionSchema = z.object({

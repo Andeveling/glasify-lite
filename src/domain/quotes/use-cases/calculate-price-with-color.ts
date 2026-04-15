@@ -11,12 +11,12 @@
  * Usa repositories (ports) para acceso a datos.
  */
 
-import type { GlassType, Model, Service } from "@prisma/generated/client"
+import type { GlassType } from "@prisma/generated/client"
 import * as E from "fp-ts/Either"
 import { pipe } from "fp-ts/function"
 import * as O from "fp-ts/Option"
 import * as TE from "fp-ts/TaskEither"
-import type { PriceCalculatorFn, PricingRepo, TrpcPriceInput } from "../ports/pricing-repo"
+import type { PricingRepo, TrpcPriceInput } from "../ports/pricing-repo"
 import {
   validateDimensions,
   validateGlassTypeCompatibility,
@@ -113,7 +113,7 @@ export type CalculatePriceWithColorDeps = Pick<
 /**
  * Divisor para porcentajes
  */
-const PERCENTAGE_DIVISOR = 100
+const _PERCENTAGE_DIVISOR = 100
 
 /**
  * CalculatePriceWithColorUseCase

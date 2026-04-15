@@ -1,7 +1,5 @@
 import type { GlassType, Model, Service } from "@prisma/generated/client"
 
-import type { CalculateItemPriceOutput } from "../use-cases/calculate-item-price"
-
 /**
  * TrpcPriceInput — shared adapter input type.
  * All price calculation use-cases accept this shape.

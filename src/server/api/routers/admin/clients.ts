@@ -71,9 +71,9 @@ const clientListSchema = z.object({
 
 import { z } from "zod"
 
-type ClientCreateInput = z.infer<typeof clientCreateSchema>
-type ClientUpdateInput = z.infer<typeof clientUpdateSchema>
-type ClientListInput = z.infer<typeof clientListSchema>
+type _ClientCreateInput = z.infer<typeof clientCreateSchema>
+type _ClientUpdateInput = z.infer<typeof clientUpdateSchema>
+type _ClientListInput = z.infer<typeof clientListSchema>
 
 /**
  * Helper: Build where clause for list query

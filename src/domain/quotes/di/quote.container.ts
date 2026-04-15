@@ -4,8 +4,6 @@ import type { PriceCalculationResult } from "@domain/pricing/core/entities/price
 import type { ServiceUnit } from "@domain/pricing/core/types"
 import { CalculateItemPrice } from "@domain/pricing/use-cases/calculate-item-price"
 import type { PrismaClient } from "@prisma/generated/client"
-import { pipe } from "fp-ts/function"
-import * as TE from "fp-ts/TaskEither"
 import {
   getQuoteValidityDays,
   getTenantConfigSelect,

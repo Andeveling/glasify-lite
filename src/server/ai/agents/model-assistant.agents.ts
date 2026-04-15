@@ -1,6 +1,7 @@
-import { ToolLoopAgent, createAgentUIStream, createUIMessageStreamResponse, type Agent } from "ai"
-import { createMinimaxProvider, getMinimaxModelId } from "@/server/ai/providers/minimax"
+import { type Agent, createAgentUIStream, createUIMessageStreamResponse, ToolLoopAgent } from "ai"
 import type { ModelCreationTools } from "@/server/ai/agents/model-assistant.tools"
+import { createMinimaxProvider, getMinimaxModelId } from "@/server/ai/providers/minimax"
+import { randomUUID } from "node:crypto"
 
 type SessionUpdates = {
   currentStep?: string
@@ -92,11 +93,7 @@ export function extractSessionUpdates(
   const updates: SessionUpdates = {}
 
   for (const [, entry] of results) {
-    if (
-      entry.name === "createModel" &&
-      typeof entry.output === "object" &&
-      entry.output !== null
-    ) {
+    if (entry.name === "createModel" && typeof entry.output === "object" && entry.output !== null) {
       const output = entry.output as { id?: string }
       if (output.id) {
         updates.currentModelId = output.id
@@ -113,6 +110,7 @@ export function extractSessionUpdates(
 interface AgentStreamResult {
   streamResponse: Response
   waitForCompletion: () => Promise<SessionUpdates>
+  getFullText: () => Promise<string>
 }
 
 export function createAgentStream(opts: {
@@ -126,14 +124,24 @@ export function createAgentStream(opts: {
 
   const toolResultsMap = new Map<string, { name: string; output: unknown }>()
   let completionResolver: (updates: SessionUpdates) => void
+  let fullTextResolver: (text: string) => void
+
   const completionPromise = new Promise<SessionUpdates>((resolve) => {
     completionResolver = resolve
+  })
+  const fullTextPromise = new Promise<string>((resolve) => {
+    fullTextResolver = resolve
   })
 
   const agentStreamPromise = createAgentUIStream({
     agent: agent as unknown as Agent,
-    uiMessages: [],
-    options: { prompt: augmentedPrompt },
+    uiMessages: [
+      {
+        id: randomUUID(),
+        role: "user",
+        parts: [{ type: "text", text: augmentedPrompt }],
+      },
+    ],
     onStepFinish: ({
       toolResults,
     }: {
@@ -145,28 +153,64 @@ export function createAgentStream(opts: {
     },
   })
 
+  let textAccumulator = ""
+
   const streamResponse = createUIMessageStreamResponse({
     stream: new ReadableStream({
       async start(controller) {
         try {
           const agentStream = await agentStreamPromise
-          const reader = agentStream.getReader()
+          const [branchA, branchB] = agentStream.tee()
 
+          // Consumer: extract text from branch B
+          const consumeBranchB = async () => {
+            try {
+              const reader = branchB.getReader()
+              while (true) {
+                const { done, value } = await reader.read()
+                if (done) break
+                const text = typeof value === "string" ? value : new TextDecoder().decode(value)
+                textAccumulator += text
+              }
+            } catch {
+              // ignore
+            }
+          }
+
+          // Forward branch A to client, wait for both branches before resolving
+          let pumpFinished = false
+          let consumeFinished = false
+
+          const checkDone = () => {
+            if (pumpFinished && consumeFinished) {
+              fullTextResolver?.(textAccumulator)
+              completionResolver?.(extractSessionUpdates(toolResultsMap))
+              controller.close()
+            }
+          }
+
+          const reader = branchA.getReader()
           const pump = () =>
             reader.read().then(({ done, value }) => {
               if (done) {
-                controller.close()
-                completionResolver!(extractSessionUpdates(toolResultsMap))
+                pumpFinished = true
+                checkDone()
                 return
               }
               controller.enqueue(value)
               pump()
             })
 
+          consumeBranchB().then(() => {
+            consumeFinished = true
+            checkDone()
+          })
+
           pump()
         } catch {
           controller.close()
-          completionResolver!({})
+          fullTextResolver?.("")
+          completionResolver?.({})
         }
       },
     }),
@@ -175,6 +219,7 @@ export function createAgentStream(opts: {
   return {
     streamResponse,
     waitForCompletion: () => completionPromise,
+    getFullText: () => fullTextPromise,
   }
 }
 

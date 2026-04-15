@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto"
 import type { UIMessage } from "ai"
 import { headers } from "next/headers"
 import { type NextRequest, NextResponse } from "next/server"
@@ -6,7 +7,10 @@ import logger from "@/lib/logger"
 import { createAgentStream } from "@/server/ai/agents/model-assistant.agents"
 import { modelCreationTools } from "@/server/ai/agents/model-assistant.tools"
 import { auth } from "@/server/auth"
-import { getMessagesBySession } from "@/server/services/model-assistant-message.service"
+import {
+  getMessagesBySession,
+  saveMessage,
+} from "@/server/services/model-assistant-message.service"
 import {
   getModelAssistantSession,
   updateModelAssistantSession,
@@ -139,6 +143,11 @@ export async function POST(request: NextRequest) {
       currentModelId: assistantSession.currentModelId,
     }
 
+    const userMessageId =
+      typeof parsed.data.message !== "string" && parsed.data.message
+        ? (parsed.data.message as UIMessage).id
+        : undefined
+
     const result = createAgentStream({
       userMessage: message,
       sessionContext,
@@ -152,12 +161,46 @@ export async function POST(request: NextRequest) {
       messageLength: message.length,
     })
 
-    // After the stream is consumed, waitForCompletion resolves with sessionUpdates
-    const sessionUpdates = await result.waitForCompletion()
+    // Consume the stream fully to extract response text and session updates
+    const [sessionUpdates, assistantText] = await Promise.all([
+      result.waitForCompletion(),
+      result.getFullText(),
+    ])
 
-    if (sessionUpdates && (sessionUpdates.currentStep || sessionUpdates.currentModelId || sessionUpdates.context)) {
+    // Persist user message
+    if (userMessageId) {
+      void saveMessage(sessionId, {
+        id: userMessageId,
+        role: "user",
+        parts: [{ type: "text", text: message }],
+      }).catch((err) =>
+        logger.error("Failed to persist user message", {
+          error: err instanceof Error ? err.message : String(err),
+        }),
+      )
+    }
+
+    // Persist assistant response
+    if (assistantText) {
+      void saveMessage(sessionId, {
+        id: randomUUID(),
+        role: "assistant",
+        parts: [{ type: "text", text: assistantText }],
+      }).catch((err) =>
+        logger.error("Failed to persist assistant message", {
+          error: err instanceof Error ? err.message : String(err),
+        }),
+      )
+    }
+
+    if (
+      sessionUpdates &&
+      (sessionUpdates.currentStep || sessionUpdates.currentModelId || sessionUpdates.context)
+    ) {
       await updateModelAssistantSession({ sessionId, ...sessionUpdates }).catch((err) =>
-        logger.error("Failed to persist session updates", { error: err instanceof Error ? err.message : String(err) }),
+        logger.error("Failed to persist session updates", {
+          error: err instanceof Error ? err.message : String(err),
+        }),
       )
     }
 

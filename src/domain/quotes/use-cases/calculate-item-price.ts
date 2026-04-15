@@ -10,7 +10,7 @@
  * Usa repositories (ports) para acceso a datos.
  */
 
-import type { GlassType, Model, Service } from "@prisma/generated/client"
+import type { GlassType } from "@prisma/generated/client"
 import * as E from "fp-ts/Either"
 import { pipe } from "fp-ts/function"
 import * as O from "fp-ts/Option"
