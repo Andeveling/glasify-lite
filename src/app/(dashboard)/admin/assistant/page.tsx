@@ -1,5 +1,9 @@
 "use client"
 
+import { useChat } from "@ai-sdk/react"
+import { DefaultChatTransport, isFileUIPart, isTextUIPart } from "ai"
+import { Bot, Pointer } from "lucide-react"
+import { useState } from "react"
 import {
 	Attachment,
 	AttachmentPreview,
@@ -13,6 +17,7 @@ import {
 	ConversationScrollButton,
 } from "@/components/ai-elements/conversation"
 import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message"
+import { Persona, type PersonaState } from "@/components/ai-elements/persona"
 import type { PromptInputMessage } from "@/components/ai-elements/prompt-input"
 import {
 	PromptInput,
@@ -28,47 +33,31 @@ import {
 	PromptInputSubmit,
 	PromptInputTextarea,
 	PromptInputTools,
-	usePromptInputAttachments,
 } from "@/components/ai-elements/prompt-input"
-import { useChat } from "@ai-sdk/react"
-import { DefaultChatTransport, isFileUIPart, isTextUIPart } from "ai"
-import { Bot } from "lucide-react"
+import { WaitingDots } from "./_components/WaitingDots"
 
-function PromptInputAttachmentsDisplay() {
-  const attachments = usePromptInputAttachments()
 
-  if (attachments.files.length === 0) {
-    return null
-  }
 
-  return (
-    <Attachments variant="inline">
-      {attachments.files.map((attachment) => (
-        <Attachment
-          data={attachment}
-          key={attachment.id}
-          onRemove={() => attachments.remove(attachment.id)}
-        >
-          <AttachmentPreview />
-          <AttachmentRemove />
-        </Attachment>
-      ))}
-    </Attachments>
-  )
-}
 
 export default function AssistantPage() {
   const { messages, status, error, sendMessage } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
     }),
-  })
+	})
+
+
+	const [currentState, setCurrentState] = useState<PersonaState>("idle");
+
 
   const onSubmit = (message: PromptInputMessage) => {
-    if (!message.text && !message.files?.length) return
-    sendMessage(message)
+		if (!message.text && !message.files?.length) return
+    setCurrentState("thinking")
+    sendMessage(message).then(() => setCurrentState("idle"))
     return Promise.resolve()
-  }
+	}
+
+  const seeDots = status === "submitted" || status === "streaming"
 
   return (
     <div className="flex h-full flex-col p-4">
@@ -88,7 +77,8 @@ export default function AssistantPage() {
               />
             ) : (
               messages.map((message) => (
-                <Message key={message.id} from={message.role}>
+								<Message key={message.id} from={message.role}>
+
                   <MessageContent>
                     <MessageResponse>
                       {message.parts
@@ -109,8 +99,14 @@ export default function AssistantPage() {
                   </MessageContent>
                 </Message>
               ))
-            )}
-          </ConversationContent>
+						)}
+						<div className="flex justify-between">
+							<Persona className="size-14 animate-pulse" state={currentState} variant="glint" />
+							{seeDots	 && <WaitingDots />}
+					</div>
+					</ConversationContent>
+
+
           <ConversationScrollButton />
         </Conversation>
 
@@ -122,7 +118,6 @@ export default function AssistantPage() {
           <PromptInputProvider>
             <PromptInput globalDrop multiple onSubmit={onSubmit}>
               <PromptInputHeader>
-                <PromptInputAttachmentsDisplay />
               </PromptInputHeader>
               <PromptInputBody>
                 <PromptInputTextarea placeholder="Escribí tu mensaje..." />
