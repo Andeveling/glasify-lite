@@ -4,7 +4,7 @@ import {
 	Attachment,
 	AttachmentPreview,
 	AttachmentRemove,
-	Attachments,
+	Attachments
 } from "@/components/ai-elements/attachments"
 import {
 	Conversation,
@@ -31,7 +31,7 @@ import {
 	usePromptInputAttachments,
 } from "@/components/ai-elements/prompt-input"
 import { useChat } from "@ai-sdk/react"
-import { DefaultChatTransport } from "ai"
+import { DefaultChatTransport, isFileUIPart, isTextUIPart } from "ai"
 import { Bot } from "lucide-react"
 
 function PromptInputAttachmentsDisplay() {
@@ -90,26 +90,22 @@ export default function AssistantPage() {
               messages.map((message) => (
                 <Message key={message.id} from={message.role}>
                   <MessageContent>
-                    {message.parts.map((part, index) => {
-                      if (part.type === "text") {
-                        return (
-                          <MessageResponse key={`${message.id}-part-${index}`}>
-                            {(part as { text: string }).text}
-                          </MessageResponse>
-                        )
-                      }
-                      if ((part.type as string) === "image") {
-                        return (
-                          <img
-                            key={`${message.id}-part-${index}`}
-                            src={(part as unknown as { image: string }).image}
-                            alt=""
-                            className="max-h-60 rounded-md object-contain"
-                          />
-                        )
-                      }
-                      return null
-                    })}
+                    <MessageResponse>
+                      {message.parts
+                        .filter(isTextUIPart)
+                        .map((part) => part.text)
+                        .join("")}
+                    </MessageResponse>
+                    <Attachments variant="grid">
+                      {message.parts.filter(isFileUIPart).map((part, index) => (
+                        <Attachment
+                          key={`${message.id}-attachment-${index}`}
+                          data={{ ...part, id: `${message.id}-attachment-${index}` }}
+                        >
+                          <AttachmentPreview />
+                        </Attachment>
+                      ))}
+                    </Attachments>
                   </MessageContent>
                 </Message>
               ))
