@@ -1,48 +1,59 @@
 "use client"
 
-import { Bot } from "lucide-react"
-import { useChat } from "@ai-sdk/react"
-import { DefaultChatTransport } from "ai"
 import {
-  Conversation,
-  ConversationContent,
-  ConversationEmptyState,
-  ConversationScrollButton,
+	Attachment,
+	AttachmentPreview,
+	AttachmentRemove,
+	Attachments,
+} from "@/components/ai-elements/attachments"
+import {
+	Conversation,
+	ConversationContent,
+	ConversationEmptyState,
+	ConversationScrollButton,
 } from "@/components/ai-elements/conversation"
 import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message"
+import type { PromptInputMessage } from "@/components/ai-elements/prompt-input"
 import {
-  PromptInput,
-  PromptInputProvider,
-  PromptInputSubmit,
-  PromptInputTextarea,
+	PromptInput,
+	PromptInputActionAddAttachments,
+	PromptInputActionAddScreenshot,
+	PromptInputActionMenu,
+	PromptInputActionMenuContent,
+	PromptInputActionMenuTrigger,
+	PromptInputBody,
+	PromptInputFooter,
+	PromptInputHeader,
+	PromptInputProvider,
+	PromptInputSubmit,
+	PromptInputTextarea,
+	PromptInputTools,
+	usePromptInputAttachments,
 } from "@/components/ai-elements/prompt-input"
-import { useCallback, useState } from "react"
+import { useChat } from "@ai-sdk/react"
+import { DefaultChatTransport } from "ai"
+import { Bot } from "lucide-react"
 
-function ChatInput({ onSend }: { onSend: (text: string) => Promise<void> }) {
-  const [isLoading, setIsLoading] = useState(false)
+function PromptInputAttachmentsDisplay() {
+  const attachments = usePromptInputAttachments()
 
-  const handleSubmit = useCallback(
-    async (message: { text: string; files: any[] }) => {
-      if (!message.text.trim()) return
-      setIsLoading(true)
-      try {
-        await onSend(message.text)
-      } finally {
-        setIsLoading(false)
-      }
-    },
-    [onSend],
-  )
+  if (attachments.files.length === 0) {
+    return null
+  }
 
   return (
-    <PromptInput onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto relative">
-      <PromptInputTextarea placeholder="Escribí tu mensaje..." className="pr-12" />
-      <PromptInputSubmit
-        status={isLoading ? "streaming" : "ready"}
-        disabled={isLoading}
-        className="absolute bottom-1 right-1"
-      />
-    </PromptInput>
+    <Attachments variant="inline">
+      {attachments.files.map((attachment) => (
+        <Attachment
+          data={attachment}
+          key={attachment.id}
+          onRemove={() => attachments.remove(attachment.id)}
+        >
+          <AttachmentPreview />
+          <AttachmentRemove />
+        </Attachment>
+      ))}
+    </Attachments>
   )
 }
 
@@ -53,14 +64,11 @@ export default function AssistantPage() {
     }),
   })
 
-  const handleSend = useCallback(
-    async (text: string) => {
-      await sendMessage({ text })
-    },
-    [sendMessage],
-  )
-
-  const isLoading = status === "submitted" || status === "streaming"
+  const onSubmit = (message: PromptInputMessage) => {
+    if (!message.text && !message.files?.length) return
+    sendMessage(message)
+    return Promise.resolve()
+  }
 
   return (
     <div className="flex h-full flex-col p-4">
@@ -82,12 +90,26 @@ export default function AssistantPage() {
               messages.map((message) => (
                 <Message key={message.id} from={message.role}>
                   <MessageContent>
-                    <MessageResponse>
-                      {message.parts
-                        .filter((part) => part.type === "text")
-                        .map((part) => (part as { type: "text"; text: string }).text)
-                        .join("")}
-                    </MessageResponse>
+                    {message.parts.map((part, index) => {
+                      if (part.type === "text") {
+                        return (
+                          <MessageResponse key={`${message.id}-part-${index}`}>
+                            {(part as { text: string }).text}
+                          </MessageResponse>
+                        )
+                      }
+                      if ((part.type as string) === "image") {
+                        return (
+                          <img
+                            key={`${message.id}-part-${index}`}
+                            src={(part as unknown as { image: string }).image}
+                            alt=""
+                            className="max-h-60 rounded-md object-contain"
+                          />
+                        )
+                      }
+                      return null
+                    })}
                   </MessageContent>
                 </Message>
               ))
@@ -102,7 +124,26 @@ export default function AssistantPage() {
 
         <div className="border-t p-4">
           <PromptInputProvider>
-            <ChatInput onSend={handleSend} />
+            <PromptInput globalDrop multiple onSubmit={onSubmit}>
+              <PromptInputHeader>
+                <PromptInputAttachmentsDisplay />
+              </PromptInputHeader>
+              <PromptInputBody>
+                <PromptInputTextarea placeholder="Escribí tu mensaje..." />
+              </PromptInputBody>
+              <PromptInputFooter>
+                <PromptInputTools>
+                  <PromptInputActionMenu>
+                    <PromptInputActionMenuTrigger />
+                    <PromptInputActionMenuContent>
+                      <PromptInputActionAddAttachments />
+                      <PromptInputActionAddScreenshot />
+                    </PromptInputActionMenuContent>
+                  </PromptInputActionMenu>
+                </PromptInputTools>
+                <PromptInputSubmit status={status} />
+              </PromptInputFooter>
+            </PromptInput>
           </PromptInputProvider>
         </div>
       </div>

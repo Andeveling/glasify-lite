@@ -1,17 +1,39 @@
-import { createAgentStream } from "@/server/ai/agents/model-assistant.agents"
-import { modelCreationTools } from "@/server/ai/agents/model-assistant.tools"
+import {
+  convertToModelMessages,
+  ToolLoopAgent,
+  tool,
+  type UIMessage,
+} from "ai";
+import { minimax } from "vercel-minimax-ai-provider";
+import { z } from "zod";
 
-export const maxDuration = 60
+export const maxDuration = 30;
+
+const mockTool = tool({
+  description: "Returns a mock response for testing",
+  inputSchema: z.object({
+    message: z.string().describe("The message to echo back"),
+  }),
+  execute: async ({ message }) => {
+    return { echo: message, timestamp: Date.now() };
+  },
+});
 
 export async function POST(req: Request) {
-  const { messages }: { messages: any[] } = await req.json()
+  const { messages }: { messages: UIMessage[] } = await req.json();
 
-  const userMessage = messages[messages.length - 1]?.content ?? ""
+  const agent = new ToolLoopAgent({
+    model: minimax("MiniMax-M2.7"),
+    instructions:
+      "Eres un asistente amigable que ayuda al usuario, cuando te pida que uses la tool de mock usala.",
+    tools: {
+      mock: mockTool,
+    },
+  });
 
-  const { streamResponse } = createAgentStream({
-    userMessage,
-    tools: modelCreationTools,
-  })
+  const result = await agent.stream({
+    messages: await convertToModelMessages(messages),
+  });
 
-  return streamResponse
+  return result.toUIMessageStreamResponse();
 }
