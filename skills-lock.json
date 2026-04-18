@@ -21,6 +21,11 @@
       "sourceType": "well-known",
       "computedHash": "c20fe20eb84bb56fd5a96eae6e36c5fd8d38f989818a4944f8a08140fe5e7a5b"
     },
+    "chat-sdk": {
+      "source": "vercel/chat",
+      "sourceType": "github",
+      "computedHash": "9557e5abbf2f3e75ae1eefb891c7f2503a47ee15fdae94c5421b9ecdb2252efe"
+    },
     "deploy-to-vercel": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",
