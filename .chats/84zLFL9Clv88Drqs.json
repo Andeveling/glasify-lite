@@ -1,0 +1,36 @@
+[
+  {
+    "parts": [
+      {
+        "type": "text",
+        "text": "Hola"
+      }
+    ],
+    "id": "Y8mgIpXMqrmI9TWo",
+    "role": "user"
+  },
+  {
+    "id": "msg-Q3MxzAE8uTLQKIdA",
+    "role": "assistant",
+    "parts": [
+      {
+        "type": "step-start"
+      },
+      {
+        "type": "reasoning",
+        "text": "El usuario me ha saludado con \"Hola\". Esto es simplemente un saludo, así que debo responder de manera amigable y presentarme. No necesito usar ninguna herramienta en este caso, solo responder al saludo.",
+        "providerMetadata": {
+          "anthropic": {
+            "signature": "9a2a8b7ff1e909f0102790cababfab6d8519d2a1a437095aabde8b4f2ccb99f9"
+          }
+        },
+        "state": "done"
+      },
+      {
+        "type": "text",
+        "text": "¡Hola! 👋 Bienvenido/a, soy tu asistente amigable. ¿En qué puedo ayudarte hoy?",
+        "state": "done"
+      }
+    ]
+  }
+]

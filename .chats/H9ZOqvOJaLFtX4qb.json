@@ -1,0 +1,36 @@
+[
+  {
+    "parts": [
+      {
+        "type": "text",
+        "text": "Hola"
+      }
+    ],
+    "id": "saJJdH3JXEHDkvf0",
+    "role": "user"
+  },
+  {
+    "id": "msg-s34rbzoDKlkHV3fo",
+    "role": "assistant",
+    "parts": [
+      {
+        "type": "step-start"
+      },
+      {
+        "type": "reasoning",
+        "text": "El usuario me ha saludado. Voy a responder de manera amigable y esperar a que me pida algo o me haga alguna pregunta.",
+        "providerMetadata": {
+          "anthropic": {
+            "signature": "3c24e12334553cc0e05ee93e9cd99cfe2528ffcca9baff663907fa8caccbd5a9"
+          }
+        },
+        "state": "done"
+      },
+      {
+        "type": "text",
+        "text": "¡Hola! 👋 ¿Cómo estás? Soy tu asistente友好. ¿En qué puedo ayudarte hoy?",
+        "state": "done"
+      }
+    ]
+  }
+]
