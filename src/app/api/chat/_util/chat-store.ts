@@ -30,3 +30,5 @@ function getChatFile(id: string): string {
 export async function loadChat(id: string): Promise<UIMessage[]> {
   return JSON.parse(await readFile(getChatFile(id), "utf-8"));
 }
+
+export function deleteChat(id: string) {}
