@@ -7,7 +7,7 @@ import {
 } from "ai";
 import { minimax } from "vercel-minimax-ai-provider";
 import { z } from "zod";
-import { loadChat, saveChat } from "./_util/chat-store";
+import { loadChat, saveChat, deleteChat } from "./_util/chat-store";
 
 export const maxDuration = 30;
 
