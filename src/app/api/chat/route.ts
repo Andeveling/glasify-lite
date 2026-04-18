@@ -6,7 +6,6 @@ import {
 } from "ai";
 import { minimax } from "vercel-minimax-ai-provider";
 import { z } from "zod";
-import logger from "skills/src/lib/logger";
 
 export const maxDuration = 30;
 
@@ -20,7 +19,7 @@ const mockTool = tool({
   },
 });
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   const {
     messages,
     id,
@@ -29,9 +28,7 @@ export async function POST(req: Request) {
     id: string;
     trigger: string;
     messages: UIMessage[];
-  } = await req.json();
-
-  console.log(id, trigger);	
+  } = await request.json();
 
   const agent = new ToolLoopAgent({
     model: minimax("MiniMax-M2.7"),
