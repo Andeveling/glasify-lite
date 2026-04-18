@@ -3,9 +3,11 @@ import {
   ToolLoopAgent,
   tool,
   type UIMessage,
+  createIdGenerator,
 } from "ai";
 import { minimax } from "vercel-minimax-ai-provider";
 import { z } from "zod";
+import { loadChat, saveChat } from "./_util/chat-store";
 
 export const maxDuration = 30;
 
@@ -20,6 +22,8 @@ const mockTool = tool({
 });
 
 export async function POST(request: Request) {
+  const body = await request.json();
+
   const {
     messages,
     id,
@@ -28,7 +32,7 @@ export async function POST(request: Request) {
     id: string;
     trigger: string;
     messages: UIMessage[];
-  } = await request.json();
+  } = body;
 
   const agent = new ToolLoopAgent({
     model: minimax("MiniMax-M2.7"),
@@ -43,5 +47,14 @@ export async function POST(request: Request) {
     messages: await convertToModelMessages(messages),
   });
 
-  return result.toUIMessageStreamResponse();
+  return result.toUIMessageStreamResponse({
+    originalMessages: messages,
+    generateMessageId: createIdGenerator({
+      prefix: "msg",
+      size: 16,
+    }),
+    onFinish: ({ messages }) => {
+      saveChat({ chatId: id, messages });
+    },
+  });
 }
