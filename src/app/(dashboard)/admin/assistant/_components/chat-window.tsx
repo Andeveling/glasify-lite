@@ -1,6 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
+import type { UIMessage } from "ai";
 import { DefaultChatTransport, isFileUIPart, isTextUIPart } from "ai";
 import { Bot } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -37,11 +38,57 @@ import {
   PromptInputTextarea,
   PromptInputTools,
 } from "@/components/ai-elements/prompt-input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { api } from "@/trpc/react";
 import { useChatSessions } from "../_hooks/use-chat-sessions";
 import { useChatUIStore } from "../_store/chat-slice";
 import { WaitingDots } from "./WaitingDots";
-import { ScrollArea } from "skills/src/components/ui/scroll-area";
+
+type MessageListProps = {
+  messages: UIMessage[];
+};
+
+function MessageList({ messages }: MessageListProps) {
+  if (messages.length === 0) {
+    return (
+      <ConversationEmptyState
+        icon={<Bot className="size-12" />}
+        title="Asistente IA"
+        description="Esta sesión está vacía."
+      />
+    );
+  }
+
+  return (
+    <>
+      {messages.map((message) => (
+        <Message key={message.id} from={message.role}>
+          <MessageContent>
+            <MessageResponse>
+              {message.parts
+                .filter(isTextUIPart)
+                .map((part) => part.text)
+                .join("")}
+            </MessageResponse>
+            <Attachments variant="grid">
+              {message.parts.filter(isFileUIPart).map((part, index) => (
+                <Attachment
+                  key={`${message.id}-attachment-${index}`}
+                  data={{
+                    ...part,
+                    id: `${message.id}-attachment-${index}`,
+                  }}
+                >
+                  <AttachmentPreview />
+                </Attachment>
+              ))}
+            </Attachments>
+          </MessageContent>
+        </Message>
+      ))}
+    </>
+  );
+}
 
 export function ChatWindow() {
   const { sessions } = useChatSessions();
@@ -148,53 +195,19 @@ export function ChatWindow() {
       </div>
 
       <Conversation>
-        <ConversationContent>
-          {messages.length === 0 ? (
-            <ConversationEmptyState
-              icon={<Bot className="size-12" />}
-              title="Asistente IA"
-              description={
-                selectedId
-                  ? "Esta sesión está vacía."
-                  : "Seleccioná una sesión o creá una nueva."
-              }
-            />
-          ) : (
-            messages.map((message) => (
-              <Message key={message.id} from={message.role}>
-                <MessageContent>
-                  <MessageResponse>
-                    {message.parts
-                      .filter(isTextUIPart)
-                      .map((part) => part.text)
-                      .join("")}
-                  </MessageResponse>
-                  <Attachments variant="grid">
-                    {message.parts.filter(isFileUIPart).map((part, index) => (
-                      <Attachment
-                        key={`${message.id}-attachment-${index}`}
-                        data={{
-                          ...part,
-                          id: `${message.id}-attachment-${index}`,
-                        }}
-                      >
-                        <AttachmentPreview />
-                      </Attachment>
-                    ))}
-                  </Attachments>
-                </MessageContent>
-              </Message>
-            ))
-          )}
-          <div className="flex justify-between">
-            <Persona
-              className="size-14 animate-pulse"
-              state={currentState}
-              variant="glint"
-            />
-            {isGenerating && <WaitingDots />}
-          </div>
-        </ConversationContent>
+        <ScrollArea className="h-full">
+          <ConversationContent>
+            <MessageList messages={messages} />
+            <div className="flex justify-between">
+              <Persona
+                className="size-14 animate-pulse"
+                state={currentState}
+                variant="glint"
+              />
+              {isGenerating && <WaitingDots />}
+            </div>
+          </ConversationContent>
+        </ScrollArea>
         <ConversationScrollButton />
       </Conversation>
 
