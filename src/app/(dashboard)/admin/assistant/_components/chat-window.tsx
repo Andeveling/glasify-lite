@@ -1,19 +1,20 @@
-"use client";
+"use client"
 
-import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, isFileUIPart, isTextUIPart } from "ai";
-import { Bot } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import { Attachment, AttachmentPreview, Attachments } from "@/components/ai-elements/attachments";
+import { useChat } from "@ai-sdk/react"
+import { DefaultChatTransport, isFileUIPart, isTextUIPart } from "ai"
+import { Bot } from "lucide-react"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { api } from "@/trpc/react"
+import { Attachment, AttachmentPreview, Attachments } from "@/components/ai-elements/attachments"
 import {
   Conversation,
   ConversationContent,
   ConversationEmptyState,
   ConversationScrollButton,
-} from "@/components/ai-elements/conversation";
-import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message";
-import { Persona, type PersonaState } from "@/components/ai-elements/persona";
-import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
+} from "@/components/ai-elements/conversation"
+import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message"
+import { Persona, type PersonaState } from "@/components/ai-elements/persona"
+import type { PromptInputMessage } from "@/components/ai-elements/prompt-input"
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -28,55 +29,91 @@ import {
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
-} from "@/components/ai-elements/prompt-input";
-import type { ChatSessionMetadata } from "../_store/chat-slice";
-import { useChatUIStore } from "../_store/chat-slice";
-import { WaitingDots } from "./WaitingDots";
+} from "@/components/ai-elements/prompt-input"
+import { useChatSessions } from "../_hooks/use-chat-sessions"
+import { useChatUIStore } from "../_store/chat-slice"
+import { WaitingDots } from "./WaitingDots"
 
-interface ChatWindowProps {
-  sessions: ChatSessionMetadata[];
-}
+export function ChatWindow() {
+  const { sessions } = useChatSessions()
+  const { selectedId, setSelectedId } = useChatUIStore()
+  const utils = api.useUtils()
+  const [currentState, setCurrentState] = useState<PersonaState>("idle")
 
-export function ChatWindow({ sessions }: ChatWindowProps) {
-  const { selectedId } = useChatUIStore();
-  const [currentState, setCurrentState] = useState<PersonaState>("idle");
+  const pendingMessageRef = useRef<PromptInputMessage | null>(null)
+  const skipLoadRef = useRef(false)
+  const sendMessageRef = useRef<typeof sendMessage | null>(null)
+
+  const createSession = api.admin.chat.create.useMutation({
+    onSuccess: ({ id }) => {
+      setSelectedId(id)
+      void utils.admin.chat.list.invalidate()
+    },
+  })
 
   const { messages, status, error, sendMessage, stop, setMessages } = useChat({
     id: selectedId,
     transport: new DefaultChatTransport({
       api: "/api/chat",
     }),
-  });
+    onFinish: () => {
+      void utils.admin.chat.list.invalidate()
+    },
+  })
 
-  const isGenerating = status === "submitted" || status === "streaming";
+  useEffect(() => {
+    sendMessageRef.current = sendMessage
+  }, [sendMessage])
+
+  const isGenerating = status === "submitted" || status === "streaming"
 
   const loadChat = useCallback(
     async (id: string) => {
-      const res = await fetch(`/api/chat/${id}`);
+      const res = await fetch(`/api/chat/${id}`)
       if (res.ok) {
-        const data = await res.json();
-        setMessages(data);
+        const data = await res.json()
+        setMessages(data)
       }
     },
     [setMessages],
-  );
+  )
 
   useEffect(() => {
     if (selectedId) {
-      loadChat(selectedId);
+      if (skipLoadRef.current) {
+        skipLoadRef.current = false
+        return
+      }
+      loadChat(selectedId)
     } else {
-      setMessages([]);
+      setMessages([])
     }
-  }, [selectedId, loadChat, setMessages]);
+  }, [selectedId, loadChat, setMessages])
+
+  useEffect(() => {
+    if (!selectedId || !pendingMessageRef.current) return
+    const msg = pendingMessageRef.current
+    pendingMessageRef.current = null
+    setCurrentState("thinking")
+    sendMessageRef.current?.(msg).then(() => setCurrentState("idle"))
+  }, [selectedId])
 
   const onSubmit = (message: PromptInputMessage) => {
-    if (!message.text && !message.files?.length) return;
-    setCurrentState("thinking");
-    sendMessage(message).then(() => setCurrentState("idle"));
-    return Promise.resolve();
-  };
+    if (!message.text && !message.files?.length) return
 
-  const selectedSession = sessions.find((s) => s.id === selectedId);
+    if (!selectedId) {
+      pendingMessageRef.current = message
+      skipLoadRef.current = true
+      createSession.mutate()
+      return Promise.resolve()
+    }
+
+    setCurrentState("thinking")
+    sendMessage(message).then(() => setCurrentState("idle"))
+    return Promise.resolve()
+  }
+
+  const selectedSession = sessions.find((s) => s.id === selectedId)
 
   return (
     <div className="flex-1 flex flex-col rounded-lg border overflow-hidden">
@@ -162,5 +199,5 @@ export function ChatWindow({ sessions }: ChatWindowProps) {
         </PromptInputProvider>
       </div>
     </div>
-  );
+  )
 }

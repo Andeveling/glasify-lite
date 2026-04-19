@@ -1,27 +1,25 @@
-"use client";
+"use client"
 
-import { Loader2, MessageSquare, Plus, RefreshCw, Trash2 } from "lucide-react";
-import type { ChatSessionMetadata } from "../_store/chat-slice";
-import { useChatUIStore } from "../_store/chat-slice";
+import { Loader2, MessageSquare, Plus, RefreshCw, Trash2 } from "lucide-react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+import { useChatSessions } from "../_hooks/use-chat-sessions"
+import { useChatUIStore } from "../_store/chat-slice"
 
-interface SessionListProps {
-  sessions: ChatSessionMetadata[];
-  onCreate: () => void;
-  onDelete: (id: string) => void;
-  isLoading?: boolean;
-  isFetching?: boolean;
-  isError?: boolean;
-}
-
-export function SessionList({
-  sessions,
-  onCreate,
-  onDelete,
-  isLoading,
-  isFetching,
-  isError,
-}: SessionListProps) {
-  const { selectedId, setSelectedId } = useChatUIStore();
+export function SessionList() {
+  const { sessions, createChat, handleDelete, isLoading, isFetching, isError } = useChatSessions()
+  const { selectedId, setSelectedId } = useChatUIStore()
 
   const formatDate = (ts: number) =>
     new Date(ts).toLocaleDateString("es-AR", {
@@ -29,13 +27,13 @@ export function SessionList({
       month: "short",
       hour: "2-digit",
       minute: "2-digit",
-    });
+    })
 
   return (
     <aside className="w-64 shrink-0 flex flex-col gap-2">
       <button
         type="button"
-        onClick={onCreate}
+        onClick={createChat}
         className="flex items-center gap-2 rounded-lg border bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
       >
         <Plus className="size-4" />
@@ -53,9 +51,7 @@ export function SessionList({
             <span className="text-sm">Error al cargar sesiones</span>
           </div>
         ) : sessions.length === 0 ? (
-          <p className="p-4 text-center text-sm text-muted-foreground">
-            No hay sesiones
-          </p>
+          <p className="p-4 text-center text-sm text-muted-foreground">No hay sesiones</p>
         ) : (
           <>
             <ul className="p-1">
@@ -64,9 +60,12 @@ export function SessionList({
                   <button
                     type="button"
                     onClick={() => setSelectedId(session.id)}
-                    className={`w-full text-left rounded-md px-3 py-2 text-sm transition-colors ${
-                      selectedId === session.id ? "bg-muted" : "hover:bg-muted/50"
-                    }`}
+                    className={cn(
+                      "w-full text-left rounded-md px-3 py-2 text-sm transition-colors",
+                      selectedId === session.id
+                        ? "bg-muted border-l-2 border-primary pl-[10px]"
+                        : "hover:bg-muted/50 border-l-2 border-transparent pl-[10px]",
+                    )}
                   >
                     <div className="flex items-center gap-2 truncate">
                       <MessageSquare className="size-4 shrink-0 text-muted-foreground" />
@@ -77,17 +76,36 @@ export function SessionList({
                       <span>{formatDate(session.updatedAt)}</span>
                     </div>
                   </button>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDelete(session.id);
-                    }}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 p-1 hover:text-destructive transition-opacity"
-                    title="Eliminar sesión"
-                  >
-                    <Trash2 className="size-3" />
-                  </button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <button
+                        type="button"
+                        onClick={(e) => e.stopPropagation()}
+                        className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 p-1 hover:text-destructive transition-opacity"
+                        title="Eliminar sesión"
+                      >
+                        <Trash2 className="size-3" />
+                      </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>¿Eliminar esta sesión?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Se eliminará permanentemente la sesión{" "}
+                          <strong>&ldquo;{session.preview}&rdquo;</strong> y todos sus mensajes. Esta acción no se puede deshacer.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                          className={buttonVariants({ variant: "destructive" })}
+                          onClick={() => handleDelete(session.id)}
+                        >
+                          Eliminar
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </li>
               ))}
             </ul>
@@ -101,5 +119,5 @@ export function SessionList({
         )}
       </div>
     </aside>
-  );
+  )
 }
