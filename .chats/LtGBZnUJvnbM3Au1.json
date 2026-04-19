@@ -1,0 +1,36 @@
+[
+  {
+    "parts": [
+      {
+        "type": "text",
+        "text": "Hola"
+      }
+    ],
+    "id": "VXfnKWkHyphi6wY9",
+    "role": "user"
+  },
+  {
+    "id": "msg-jwWAC8XXHeEikHzp",
+    "role": "assistant",
+    "parts": [
+      {
+        "type": "step-start"
+      },
+      {
+        "type": "reasoning",
+        "text": "El usuario me ha saludado con \"Hola\". Es un saludo simple, así que debo responder de manera amigable y ofrecer mi ayuda.",
+        "providerMetadata": {
+          "anthropic": {
+            "signature": "01da4766009f1c3371bbba6a344508d78c4dd5051e5682b5ec9069e37c570d99"
+          }
+        },
+        "state": "done"
+      },
+      {
+        "type": "text",
+        "text": "¡Hola! 👋 ¿Cómo estás? Soy tu asistente virtual. ¿En qué puedo ayudarte hoy?",
+        "state": "done"
+      }
+    ]
+  }
+]
