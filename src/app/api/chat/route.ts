@@ -1,51 +1,16 @@
-import {
-  convertToModelMessages,
-  ToolLoopAgent,
-  tool,
-  type UIMessage,
-  createIdGenerator,
-} from "ai";
-import { minimax } from "vercel-minimax-ai-provider";
-import { z } from "zod";
-import { loadChat, saveChat, deleteChat } from "./_util/chat-store";
+import { createIdGenerator, type UIMessage } from "ai"
+import { createAgent, streamAgent } from "@/lib/chat"
+import { deleteChat, listChats, saveChat } from "./_util/chat-store"
 
-export const maxDuration = 30;
-
-const mockTool = tool({
-  description: "Returns a mock response for testing",
-  inputSchema: z.object({
-    message: z.string().describe("The message to echo back"),
-  }),
-  execute: async ({ message }) => {
-    return { echo: message, timestamp: Date.now() };
-  },
-});
+export const maxDuration = 30
 
 export async function POST(request: Request) {
-  const body = await request.json();
+  const body = await request.json()
 
-  const {
-    messages,
-    id,
-    trigger,
-  }: {
-    id: string;
-    trigger: string;
-    messages: UIMessage[];
-  } = body;
+  const { messages, id }: { id: string; messages: UIMessage[] } = body
 
-  const agent = new ToolLoopAgent({
-    model: minimax("MiniMax-M2.7"),
-    instructions:
-      "Eres un asistente amigable que ayuda al usuario, cuando te pida que uses la tool de mock usala.",
-    tools: {
-      mock: mockTool,
-    },
-  });
-
-  const result = await agent.stream({
-    messages: await convertToModelMessages(messages),
-  });
+  const agent = createAgent()
+  const result = await streamAgent({ messages, agent })
 
   return result.toUIMessageStreamResponse({
     originalMessages: messages,
@@ -54,7 +19,20 @@ export async function POST(request: Request) {
       size: 16,
     }),
     onFinish: ({ messages }) => {
-      saveChat({ chatId: id, messages });
+      saveChat({ chatId: id, messages })
     },
-  });
+  })
+}
+
+export async function GET() {
+  const chats = await listChats()
+  return Response.json(chats)
+}
+
+export async function DELETE(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const id = searchParams.get("id")
+  if (!id) return new Response("Missing id", { status: 400 })
+  const result = await deleteChat(id)
+  return Response.json(result)
 }

@@ -1,0 +1,36 @@
+[
+  {
+    "parts": [
+      {
+        "type": "text",
+        "text": "Hola"
+      }
+    ],
+    "id": "doLbGGBsJgDrLrLd",
+    "role": "user"
+  },
+  {
+    "id": "msg-74ewSVFeylsu9sLX",
+    "role": "assistant",
+    "parts": [
+      {
+        "type": "step-start"
+      },
+      {
+        "type": "reasoning",
+        "text": "El usuario me ha saludado. Soy un asistente amigable que ayuda al usuario. Debo responder de manera amigable y ofrecer mi ayuda.",
+        "providerMetadata": {
+          "anthropic": {
+            "signature": "d9ec5a9403221ff4e80323728e6d94137f71cc0f61d23852b4decd5c1582d6f8"
+          }
+        },
+        "state": "done"
+      },
+      {
+        "type": "text",
+        "text": "¡Hola! 👋 ¿Cómo estás? Soy tu asistente virtual. Estoy aquí para ayudarte en lo que necesites. \n\n¿Hay algo en lo que pueda colaborarte hoy?",
+        "state": "done"
+      }
+    ]
+  }
+]
