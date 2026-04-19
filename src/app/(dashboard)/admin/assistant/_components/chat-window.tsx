@@ -101,7 +101,7 @@ export function ChatWindow() {
   const sendMessageRef = useRef<typeof sendMessage | null>(null);
 
   const chatById = api.admin.chat.byId.useQuery(
-    { id: selectedId },
+    { id: selectedId! },
     {
       enabled: !!selectedId && !skipLoadRef.current,
     },
