@@ -92,7 +92,8 @@ export function SessionList() {
                         <AlertDialogTitle>¿Eliminar esta sesión?</AlertDialogTitle>
                         <AlertDialogDescription>
                           Se eliminará permanentemente la sesión{" "}
-                          <strong>&ldquo;{session.preview}&rdquo;</strong> y todos sus mensajes. Esta acción no se puede deshacer.
+                          <strong>&ldquo;{session.preview}&rdquo;</strong> y todos sus mensajes.
+                          Esta acción no se puede deshacer.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>

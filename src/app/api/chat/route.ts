@@ -1,6 +1,6 @@
 import { createIdGenerator, type UIMessage } from "ai"
 import { createAgent, streamAgent } from "@/lib/chat"
-import { deleteChat, listChats, saveChat } from "@/lib/chat/chat-store"
+import { saveChat } from "@/lib/chat/chat-store"
 
 export const maxDuration = 30
 
@@ -22,17 +22,4 @@ export async function POST(request: Request) {
       saveChat({ chatId: id, messages })
     },
   })
-}
-
-export async function GET() {
-  const chats = await listChats()
-  return Response.json(chats)
-}
-
-export async function DELETE(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const id = searchParams.get("id")
-  if (!id) return new Response("Missing id", { status: 400 })
-  const result = await deleteChat(id)
-  return Response.json(result)
 }
