@@ -1,84 +1,200 @@
 "use client"
 
 import { useChat } from "@ai-sdk/react"
-import { DefaultChatTransport, isFileUIPart, isTextUIPart } from "ai"
-import { Bot, Pointer } from "lucide-react"
-import { useState } from "react"
+import { DefaultChatTransport, isFileUIPart, isTextUIPart, type UIMessage } from "ai"
+import { Bot, MessageSquare, Plus, Trash2 } from "lucide-react"
+import { useCallback, useEffect, useState } from "react"
+import { Attachment, AttachmentPreview, Attachments } from "@/components/ai-elements/attachments"
 import {
-	Attachment,
-	AttachmentPreview,
-	AttachmentRemove,
-	Attachments
-} from "@/components/ai-elements/attachments"
-import {
-	Conversation,
-	ConversationContent,
-	ConversationEmptyState,
-	ConversationScrollButton,
+  Conversation,
+  ConversationContent,
+  ConversationEmptyState,
+  ConversationScrollButton,
 } from "@/components/ai-elements/conversation"
 import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message"
 import { Persona, type PersonaState } from "@/components/ai-elements/persona"
 import type { PromptInputMessage } from "@/components/ai-elements/prompt-input"
 import {
-	PromptInput,
-	PromptInputActionAddAttachments,
-	PromptInputActionAddScreenshot,
-	PromptInputActionMenu,
-	PromptInputActionMenuContent,
-	PromptInputActionMenuTrigger,
-	PromptInputBody,
-	PromptInputFooter,
-	PromptInputHeader,
-	PromptInputProvider,
-	PromptInputSubmit,
-	PromptInputTextarea,
-	PromptInputTools,
+  PromptInput,
+  PromptInputActionAddAttachments,
+  PromptInputActionAddScreenshot,
+  PromptInputActionMenu,
+  PromptInputActionMenuContent,
+  PromptInputActionMenuTrigger,
+  PromptInputBody,
+  PromptInputFooter,
+  PromptInputHeader,
+  PromptInputProvider,
+  PromptInputSubmit,
+  PromptInputTextarea,
+  PromptInputTools,
 } from "@/components/ai-elements/prompt-input"
 import { WaitingDots } from "./_components/WaitingDots"
 
-
-
+interface ChatSessionMetadata {
+  id: string
+  preview: string
+  messageCount: number
+  createdAt: number
+  updatedAt: number
+}
 
 export default function AssistantPage() {
+  const [sessions, setSessions] = useState<ChatSessionMetadata[]>([])
+  const [selectedId, setSelectedId] = useState<string | undefined>(undefined)
+  const [chatMessages, setChatMessages] = useState<UIMessage[]>([])
+  const [currentState, setCurrentState] = useState<PersonaState>("idle")
+
   const { messages, status, error, sendMessage } = useChat({
-    transport: new DefaultChatTransport({
-      api: "/api/chat",
-    }),
-	})
+    id: selectedId,
+    messages: chatMessages,
+  })
 
+  const loadSessions = useCallback(async () => {
+    const res = await fetch("/api/chat")
+    if (res.ok) {
+      const data: ChatSessionMetadata[] = await res.json()
+      setSessions(data)
+    }
+  }, [])
 
-	const [currentState, setCurrentState] = useState<PersonaState>("idle");
+  const loadChat = useCallback(async (id: string) => {
+    const res = await fetch(`/api/chat/${id}`)
+    if (res.ok) {
+      const data: UIMessage[] = await res.json()
+      setChatMessages(data)
+    }
+  }, [])
 
+  const createChat = useCallback(async () => {
+    const res = await fetch("/api/chat", { method: "POST" })
+    if (res.ok) {
+      const { id }: { id: string } = await res.json()
+      setSelectedId(id)
+      setChatMessages([])
+      await loadSessions()
+    }
+  }, [loadSessions])
+
+  const deleteChat = useCallback(
+    async (id: string) => {
+      if (!confirm("¿Eliminar esta sesión?")) return
+      const res = await fetch(`/api/chat?id=${id}`, { method: "DELETE" })
+      if (res.ok) {
+        if (selectedId === id) {
+          setSelectedId(undefined)
+          setChatMessages([])
+        }
+        await loadSessions()
+      }
+    },
+    [selectedId, loadSessions],
+  )
+
+  useEffect(() => {
+    loadSessions()
+  }, [loadSessions])
+
+  useEffect(() => {
+    if (selectedId) {
+      loadChat(selectedId)
+    }
+  }, [selectedId, loadChat])
 
   const onSubmit = (message: PromptInputMessage) => {
-		if (!message.text && !message.files?.length) return
+    if (!message.text && !message.files?.length) return
     setCurrentState("thinking")
     sendMessage(message).then(() => setCurrentState("idle"))
     return Promise.resolve()
-	}
+  }
 
   const seeDots = status === "submitted" || status === "streaming"
 
-  return (
-    <div className="flex h-full flex-col p-4">
-      <div className="mb-4 flex items-center gap-2">
-        <Bot className="size-6" />
-        <h1 className="text-xl font-semibold">Asistente</h1>
-      </div>
+  const formatDate = (ts: number) =>
+    new Date(ts).toLocaleDateString("es-AR", {
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
 
-      <div className="flex-1 rounded-lg border overflow-hidden flex flex-col">
+  return (
+    <div className="flex h-full gap-4 p-4">
+      <aside className="w-64 shrink-0 flex flex-col gap-2">
+        <button
+          type="button"
+          onClick={createChat}
+          className="flex items-center gap-2 rounded-lg border bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+        >
+          <Plus className="size-4" />
+          Nuevo chat
+        </button>
+
+        <div className="flex-1 overflow-y-auto rounded-lg border">
+          {sessions.length === 0 ? (
+            <p className="p-4 text-center text-sm text-muted-foreground">No hay sesiones</p>
+          ) : (
+            <ul className="p-1">
+              {sessions.map((session) => (
+                <li key={session.id} className="group relative">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedId(session.id)}
+                    className={`w-full text-left rounded-md px-3 py-2 text-sm transition-colors ${
+                      selectedId === session.id ? "bg-muted" : "hover:bg-muted/50"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 truncate">
+                      <MessageSquare className="size-4 shrink-0 text-muted-foreground" />
+                      <span className="truncate">{session.preview}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>{session.messageCount} msgs</span>
+                      <span>{formatDate(session.updatedAt)}</span>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      deleteChat(session.id)
+                    }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 p-1 hover:text-destructive transition-opacity"
+                    title="Eliminar sesión"
+                  >
+                    <Trash2 className="size-3" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </aside>
+
+      <div className="flex-1 flex flex-col rounded-lg border overflow-hidden">
+        <div className="flex items-center gap-2 border-b px-4 py-3">
+          <Bot className="size-5" />
+          <h1 className="font-semibold">Asistente</h1>
+          {selectedId && (
+            <span className="ml-auto text-xs text-muted-foreground">
+              {sessions.find((s) => s.id === selectedId)?.preview ?? selectedId}
+            </span>
+          )}
+        </div>
+
         <Conversation>
           <ConversationContent>
             {messages.length === 0 ? (
               <ConversationEmptyState
                 icon={<Bot className="size-12" />}
                 title="Asistente IA"
-                description="Escribí un mensaje para comenzar la conversación."
+                description={
+                  selectedId ? "Esta sesión está vacía." : "Seleccioná una sesión o creá una nueva."
+                }
               />
             ) : (
               messages.map((message) => (
-								<Message key={message.id} from={message.role}>
-
+                <Message key={message.id} from={message.role}>
                   <MessageContent>
                     <MessageResponse>
                       {message.parts
@@ -99,14 +215,12 @@ export default function AssistantPage() {
                   </MessageContent>
                 </Message>
               ))
-						)}
-						<div className="flex justify-between">
-							<Persona className="size-14 animate-pulse" state={currentState} variant="glint" />
-							{seeDots	 && <WaitingDots />}
-					</div>
-					</ConversationContent>
-
-
+            )}
+            <div className="flex justify-between">
+              <Persona className="size-14 animate-pulse" state={currentState} variant="glint" />
+              {seeDots && <WaitingDots />}
+            </div>
+          </ConversationContent>
           <ConversationScrollButton />
         </Conversation>
 
@@ -117,8 +231,7 @@ export default function AssistantPage() {
         <div className="border-t p-4">
           <PromptInputProvider>
             <PromptInput globalDrop multiple onSubmit={onSubmit}>
-              <PromptInputHeader>
-              </PromptInputHeader>
+              <PromptInputHeader />
               <PromptInputBody>
                 <PromptInputTextarea placeholder="Escribí tu mensaje..." />
               </PromptInputBody>
