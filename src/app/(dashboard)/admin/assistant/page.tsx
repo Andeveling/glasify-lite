@@ -7,8 +7,6 @@ import { useChatSessions } from "./_hooks/use-chat-sessions";
 export default function AssistantPage() {
   const {
     sessions,
-    selectedId,
-    setSelectedId,
     createChat,
     handleDelete,
     isLoading,
@@ -16,21 +14,17 @@ export default function AssistantPage() {
     isError,
   } = useChatSessions();
 
-  const selectedSession = sessions.find((s) => s.id === selectedId);
-
   return (
     <div className="flex h-full gap-4 p-4">
       <SessionList
         sessions={sessions}
-        selectedId={selectedId}
-        onSelect={setSelectedId}
         onCreate={createChat}
         onDelete={handleDelete}
         isLoading={isLoading}
         isFetching={isFetching}
         isError={isError}
       />
-      <ChatWindow selectedId={selectedId} session={selectedSession} />
+      <ChatWindow sessions={sessions} />
     </div>
   );
 }

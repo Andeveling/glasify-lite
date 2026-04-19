@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { useChat } from "@ai-sdk/react"
-import { DefaultChatTransport, isFileUIPart, isTextUIPart } from "ai"
-import { Bot } from "lucide-react"
-import { useCallback, useEffect, useState } from "react"
-import { Attachment, AttachmentPreview, Attachments } from "@/components/ai-elements/attachments"
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport, isFileUIPart, isTextUIPart } from "ai";
+import { Bot } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Attachment, AttachmentPreview, Attachments } from "@/components/ai-elements/attachments";
 import {
   Conversation,
   ConversationContent,
   ConversationEmptyState,
   ConversationScrollButton,
-} from "@/components/ai-elements/conversation"
-import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message"
-import { Persona, type PersonaState } from "@/components/ai-elements/persona"
-import type { PromptInputMessage } from "@/components/ai-elements/prompt-input"
+} from "@/components/ai-elements/conversation";
+import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message";
+import { Persona, type PersonaState } from "@/components/ai-elements/persona";
+import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -28,51 +28,55 @@ import {
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
-} from "@/components/ai-elements/prompt-input"
-import type { ChatSessionMetadata } from "../_hooks/use-chat-sessions"
-import { WaitingDots } from "./WaitingDots"
+} from "@/components/ai-elements/prompt-input";
+import type { ChatSessionMetadata } from "../_store/chat-slice";
+import { useChatUIStore } from "../_store/chat-slice";
+import { WaitingDots } from "./WaitingDots";
 
 interface ChatWindowProps {
-  selectedId?: string
-  session?: ChatSessionMetadata
+  sessions: ChatSessionMetadata[];
 }
 
-export function ChatWindow({ selectedId, session }: ChatWindowProps) {
-  const [currentState, setCurrentState] = useState<PersonaState>("idle")
+export function ChatWindow({ sessions }: ChatWindowProps) {
+  const { selectedId } = useChatUIStore();
+  const [currentState, setCurrentState] = useState<PersonaState>("idle");
+
   const { messages, status, error, sendMessage, stop, setMessages } = useChat({
     id: selectedId,
     transport: new DefaultChatTransport({
       api: "/api/chat",
     }),
-  })
+  });
 
-  const isGenerating = status === "submitted" || status === "streaming"
+  const isGenerating = status === "submitted" || status === "streaming";
 
   const loadChat = useCallback(
     async (id: string) => {
-      const res = await fetch(`/api/chat/${id}`)
+      const res = await fetch(`/api/chat/${id}`);
       if (res.ok) {
-        const data = await res.json()
-        setMessages(data)
+        const data = await res.json();
+        setMessages(data);
       }
     },
     [setMessages],
-  )
+  );
 
   useEffect(() => {
     if (selectedId) {
-      loadChat(selectedId)
+      loadChat(selectedId);
     } else {
-      setMessages([])
+      setMessages([]);
     }
-  }, [selectedId, loadChat, setMessages])
+  }, [selectedId, loadChat, setMessages]);
 
   const onSubmit = (message: PromptInputMessage) => {
-    if (!message.text && !message.files?.length) return
-    setCurrentState("thinking")
-    sendMessage(message).then(() => setCurrentState("idle"))
-    return Promise.resolve()
-  }
+    if (!message.text && !message.files?.length) return;
+    setCurrentState("thinking");
+    sendMessage(message).then(() => setCurrentState("idle"));
+    return Promise.resolve();
+  };
+
+  const selectedSession = sessions.find((s) => s.id === selectedId);
 
   return (
     <div className="flex-1 flex flex-col rounded-lg border overflow-hidden">
@@ -81,7 +85,7 @@ export function ChatWindow({ selectedId, session }: ChatWindowProps) {
         <h1 className="font-semibold">Asistente</h1>
         {selectedId && (
           <span className="ml-auto text-xs text-muted-foreground">
-            {session?.preview ?? selectedId}
+            {selectedSession?.preview ?? selectedId}
           </span>
         )}
       </div>
@@ -158,5 +162,5 @@ export function ChatWindow({ selectedId, session }: ChatWindowProps) {
         </PromptInputProvider>
       </div>
     </div>
-  )
+  );
 }

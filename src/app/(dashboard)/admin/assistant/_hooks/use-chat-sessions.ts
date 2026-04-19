@@ -1,28 +1,27 @@
-"use client";
+import { useCallback } from "react";
 
-import { useCallback, useEffect, useState } from "react";
-
-import type { RouterOutputs } from "@/trpc/react";
+import type { ChatSessionMetadata } from "../_store/chat-slice";
 import { api } from "@/trpc/react";
+import { useChatUIStore } from "../_store/chat-slice";
 
-export type ChatSessionMetadata = RouterOutputs["admin"]["chat"]["list"][number];
+export type { ChatSessionMetadata };
 
 export function useChatSessions() {
   const utils = api.useUtils();
+  const { selectedId, setSelectedId } = useChatUIStore();
+
   const {
     data: sessionList = [],
     isLoading,
     isFetching,
     isError,
   } = api.admin.chat.list.useQuery();
+
   const deleteSession = api.admin.chat.delete.useMutation({
     onSuccess: () => {
       void utils.admin.chat.list.invalidate();
     },
   });
-
-  const [sessions, setSessions] = useState<ChatSessionMetadata[]>([]);
-  const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
 
   const createChat = useCallback(async () => {
     const res = await fetch("/api/chat", { method: "POST" });
@@ -31,7 +30,7 @@ export function useChatSessions() {
       setSelectedId(id);
       void utils.admin.chat.list.invalidate();
     }
-  }, [utils]);
+  }, [utils, setSelectedId]);
 
   const handleDelete = useCallback(
     async (id: string) => {
@@ -41,17 +40,11 @@ export function useChatSessions() {
         setSelectedId(undefined);
       }
     },
-    [selectedId, deleteSession],
+    [selectedId, deleteSession, setSelectedId],
   );
 
-  useEffect(() => {
-    if (sessionList) {
-      setSessions(sessionList);
-    }
-  }, [sessionList]);
-
   return {
-    sessions,
+    sessions: sessionList,
     selectedId,
     setSelectedId,
     createChat,

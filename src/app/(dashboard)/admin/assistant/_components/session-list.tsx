@@ -1,12 +1,11 @@
 "use client";
 
 import { Loader2, MessageSquare, Plus, RefreshCw, Trash2 } from "lucide-react";
-import type { ChatSessionMetadata } from "../_hooks/use-chat-sessions";
+import type { ChatSessionMetadata } from "../_store/chat-slice";
+import { useChatUIStore } from "../_store/chat-slice";
 
 interface SessionListProps {
   sessions: ChatSessionMetadata[];
-  selectedId?: string;
-  onSelect: (id: string) => void;
   onCreate: () => void;
   onDelete: (id: string) => void;
   isLoading?: boolean;
@@ -16,14 +15,14 @@ interface SessionListProps {
 
 export function SessionList({
   sessions,
-  selectedId,
-  onSelect,
   onCreate,
   onDelete,
   isLoading,
   isFetching,
   isError,
 }: SessionListProps) {
+  const { selectedId, setSelectedId } = useChatUIStore();
+
   const formatDate = (ts: number) =>
     new Date(ts).toLocaleDateString("es-AR", {
       day: "numeric",
@@ -64,7 +63,7 @@ export function SessionList({
                 <li key={session.id} className="group relative">
                   <button
                     type="button"
-                    onClick={() => onSelect(session.id)}
+                    onClick={() => setSelectedId(session.id)}
                     className={`w-full text-left rounded-md px-3 py-2 text-sm transition-colors ${
                       selectedId === session.id ? "bg-muted" : "hover:bg-muted/50"
                     }`}
