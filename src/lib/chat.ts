@@ -1,9 +1,4 @@
-import {
-  convertToModelMessages,
-  type InferAgentUIMessage,
-  ToolLoopAgent,
-  type UIMessage,
-} from "ai"
+import { convertToModelMessages, type InferAgentUIMessage, ToolLoopAgent, type UIMessage } from "ai"
 import { minimax } from "vercel-minimax-ai-provider"
 import { mockTool } from "./agents/_tools/mock"
 

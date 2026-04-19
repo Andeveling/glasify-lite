@@ -1,12 +1,7 @@
-import type {
-  GlassType,
-  Model,
-  Prisma,
-  ProfileSupplier,
-} from "@prisma/generated/client";
-import { TRPCError } from "@trpc/server";
-import logger from "@/lib/logger";
-import { stringifyCompatibleGlassTypeIds } from "@/lib/utils/compatible-glass-types";
+import type { GlassType, Model, Prisma, ProfileSupplier } from "@prisma/generated/client"
+import { TRPCError } from "@trpc/server"
+import logger from "@/lib/logger"
+import { stringifyCompatibleGlassTypeIds } from "@/lib/utils/compatible-glass-types"
 import {
   addCostBreakdownSchema,
   cloneModelSchema,
@@ -18,12 +13,12 @@ import {
   publishModelSchema,
   updateCostBreakdownSchema,
   updateModelSchema,
-} from "@/lib/validations/admin/model.schema";
-import { adminProcedure, createTRPCRouter } from "@/server/api/trpc";
+} from "@/lib/validations/admin/model.schema"
+import { adminProcedure, createTRPCRouter } from "@/server/api/trpc"
 
-import { createModelPriceHistory } from "@/server/services/model-price-history.service";
-import { canDeleteModel } from "@/server/services/referential-integrity.service";
-import { modelUpsertInput, modelUpsertOutput } from "./admin.schemas";
+import { createModelPriceHistory } from "@/server/services/model-price-history.service"
+import { canDeleteModel } from "@/server/services/referential-integrity.service"
+import { modelUpsertInput, modelUpsertOutput } from "./admin.schemas"
 
 async function validateProfileSupplierExists(
   tx: Prisma.TransactionClient,
@@ -31,13 +26,13 @@ async function validateProfileSupplierExists(
 ): Promise<ProfileSupplier> {
   const supplier = await tx.profileSupplier.findUnique({
     where: { id: profileSupplierId },
-  });
+  })
 
   if (!supplier) {
-    throw new Error("Proveedor de perfiles no encontrado");
+    throw new Error("Proveedor de perfiles no encontrado")
   }
 
-  return supplier;
+  return supplier
 }
 
 async function validateGlassTypesExist(
@@ -48,43 +43,43 @@ async function validateGlassTypesExist(
     where: {
       id: { in: glassTypeIds },
     },
-  });
+  })
 
   if (glassTypes.length !== glassTypeIds.length) {
-    throw new Error("Uno o más tipos de vidrio no encontrados");
+    throw new Error("Uno o más tipos de vidrio no encontrados")
   }
 
-  return glassTypes;
+  return glassTypes
 }
 
 /**
  * Helper: Build where clause for list query
  */
 function buildWhereClause(input: {
-  search?: string;
-  status?: "all" | "draft" | "published";
-  profileSupplierId?: string;
+  search?: string
+  status?: "all" | "draft" | "published"
+  profileSupplierId?: string
 }): Prisma.ModelWhereInput {
-  const where: Prisma.ModelWhereInput = {};
+  const where: Prisma.ModelWhereInput = {}
 
   // Search by name
   if (input.search) {
     where.name = {
       contains: input.search,
-    };
+    }
   }
 
   // Filter by status
   if (input.status && input.status !== "all") {
-    where.status = input.status;
+    where.status = input.status
   }
 
   // Filter by profile supplier
   if (input.profileSupplierId) {
-    where.profileSupplierId = input.profileSupplierId;
+    where.profileSupplierId = input.profileSupplierId
   }
 
-  return where;
+  return where
 }
 
 /**
@@ -94,23 +89,23 @@ function buildOrderByClause(
   sortBy: string,
   sortOrder: "asc" | "desc",
 ): Prisma.ModelOrderByWithRelationInput {
-  const orderBy: Prisma.ModelOrderByWithRelationInput = {};
+  const orderBy: Prisma.ModelOrderByWithRelationInput = {}
 
   switch (sortBy) {
     case "name":
-      orderBy.name = sortOrder;
-      break;
+      orderBy.name = sortOrder
+      break
     case "basePrice":
-      orderBy.basePrice = sortOrder;
-      break;
+      orderBy.basePrice = sortOrder
+      break
     case "updatedAt":
-      orderBy.updatedAt = sortOrder;
-      break;
+      orderBy.updatedAt = sortOrder
+      break
     default:
-      orderBy.createdAt = sortOrder;
+      orderBy.createdAt = sortOrder
   }
 
-  return orderBy;
+  return orderBy
 }
 
 /**
@@ -126,23 +121,23 @@ export const modelRouter = createTRPCRouter({
   "add-cost-breakdown": adminProcedure
     .input(addCostBreakdownSchema)
     .mutation(async ({ ctx, input }) => {
-      const { modelId, data } = input;
+      const { modelId, data } = input
 
       // Verify model exists
       const model = await ctx.db.model.findUnique({
         select: { id: true, name: true },
         where: { id: modelId },
-      });
+      })
 
       if (!model) {
         logger.warn("Model not found for cost breakdown addition", {
           modelId,
           userId: ctx.session.user.id,
-        });
+        })
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Modelo no encontrado",
-        });
+        })
       }
 
       // Create cost breakdown component
@@ -151,7 +146,7 @@ export const modelRouter = createTRPCRouter({
           ...data,
           modelId,
         },
-      });
+      })
 
       logger.info("Cost breakdown component added", {
         component: costBreakdown.component,
@@ -160,9 +155,9 @@ export const modelRouter = createTRPCRouter({
         modelId: model.id,
         modelName: model.name,
         userId: ctx.session.user.id,
-      });
+      })
 
-      return costBreakdown;
+      return costBreakdown
     }),
   /**
    * Create Model
@@ -170,78 +165,72 @@ export const modelRouter = createTRPCRouter({
    *
    * Creates a new model and validates compatible glass types
    */
-  create: adminProcedure
-    .input(createModelSchema)
-    .mutation(async ({ ctx, input }) => {
-      // Validate all compatible glass types exist and are active
-      const glassTypes = await ctx.db.glassType.findMany({
-        select: {
-          id: true,
-          isActive: true,
+  create: adminProcedure.input(createModelSchema).mutation(async ({ ctx, input }) => {
+    // Validate all compatible glass types exist and are active
+    const glassTypes = await ctx.db.glassType.findMany({
+      select: {
+        id: true,
+        isActive: true,
+      },
+      where: {
+        id: {
+          in: input.compatibleGlassTypeIds,
         },
-        where: {
-          id: {
-            in: input.compatibleGlassTypeIds,
-          },
-        },
-      });
+      },
+    })
 
-      // Check if all IDs were found
-      if (glassTypes.length !== input.compatibleGlassTypeIds.length) {
-        const foundIds = glassTypes.map((gt) => gt.id);
-        const missingIds = input.compatibleGlassTypeIds.filter(
-          (id) => !foundIds.includes(id),
-        );
+    // Check if all IDs were found
+    if (glassTypes.length !== input.compatibleGlassTypeIds.length) {
+      const foundIds = glassTypes.map((gt) => gt.id)
+      const missingIds = input.compatibleGlassTypeIds.filter((id) => !foundIds.includes(id))
 
-        logger.warn("Invalid glass type IDs in model creation", {
-          missingIds,
-          userId: ctx.session.user.id,
-        });
-
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: `Tipos de vidrio no encontrados: ${missingIds.join(", ")}`,
-        });
-      }
-
-      // Check if all are active
-      const inactiveGlassTypes = glassTypes.filter((gt) => !gt.isActive);
-      if (inactiveGlassTypes.length > 0) {
-        const inactiveIds = inactiveGlassTypes.map((gt) => gt.id);
-
-        logger.warn("Inactive glass types in model creation", {
-          inactiveIds,
-          userId: ctx.session.user.id,
-        });
-
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: `Los siguientes tipos de vidrio están inactivos: ${inactiveIds.join(", ")}`,
-        });
-      }
-
-      // Create model (serialize compatibleGlassTypeIds for SQLite storage)
-      const model = await ctx.db.model.create({
-        data: {
-          ...input,
-          compatibleGlassTypeIds: stringifyCompatibleGlassTypeIds(
-            input.compatibleGlassTypeIds,
-          ),
-        },
-        include: {
-          profileSupplier: true,
-        },
-      });
-
-      logger.info("Model created", {
-        compatibleGlassTypeIds: input.compatibleGlassTypeIds,
-        modelId: model.id,
-        modelName: model.name,
+      logger.warn("Invalid glass type IDs in model creation", {
+        missingIds,
         userId: ctx.session.user.id,
-      });
+      })
 
-      return model;
-    }),
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: `Tipos de vidrio no encontrados: ${missingIds.join(", ")}`,
+      })
+    }
+
+    // Check if all are active
+    const inactiveGlassTypes = glassTypes.filter((gt) => !gt.isActive)
+    if (inactiveGlassTypes.length > 0) {
+      const inactiveIds = inactiveGlassTypes.map((gt) => gt.id)
+
+      logger.warn("Inactive glass types in model creation", {
+        inactiveIds,
+        userId: ctx.session.user.id,
+      })
+
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: `Los siguientes tipos de vidrio están inactivos: ${inactiveIds.join(", ")}`,
+      })
+    }
+
+    // Create model (serialize compatibleGlassTypeIds for SQLite storage)
+    const model = await ctx.db.model.create({
+      data: {
+        ...input,
+        compatibleGlassTypeIds: stringifyCompatibleGlassTypeIds(input.compatibleGlassTypeIds),
+      },
+      include: {
+        profileSupplier: true,
+      },
+    })
+
+    logger.info("Model created", {
+      compatibleGlassTypeIds: input.compatibleGlassTypeIds,
+      modelId: model.id,
+      modelName: model.name,
+      userId: ctx.session.user.id,
+    })
+
+    return model
+  }),
 
   /**
    * Delete Model
@@ -249,56 +238,54 @@ export const modelRouter = createTRPCRouter({
    *
    * Deletes model after checking referential integrity
    */
-  delete: adminProcedure
-    .input(deleteModelSchema)
-    .mutation(async ({ ctx, input }) => {
-      // Check if model exists
-      const existingModel = await ctx.db.model.findUnique({
-        select: { id: true, name: true },
-        where: { id: input.id },
-      });
+  delete: adminProcedure.input(deleteModelSchema).mutation(async ({ ctx, input }) => {
+    // Check if model exists
+    const existingModel = await ctx.db.model.findUnique({
+      select: { id: true, name: true },
+      where: { id: input.id },
+    })
 
-      if (!existingModel) {
-        logger.warn("Model not found for deletion", {
-          modelId: input.id,
-          userId: ctx.session.user.id,
-        });
-
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "El modelo no existe o ya fue eliminado",
-        });
-      }
-
-      // Check referential integrity
-      const integrityCheck = await canDeleteModel(input.id);
-
-      if (!integrityCheck.canDelete) {
-        logger.warn("Model deletion blocked - referential integrity", {
-          dependencies: integrityCheck.dependencies,
-          modelId: input.id,
-          userId: ctx.session.user.id,
-        });
-
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: integrityCheck.message,
-        });
-      }
-
-      // Delete model (cascade deletes costBreakdown and priceHistory)
-      const deletedModel = await ctx.db.model.delete({
-        where: { id: input.id },
-      });
-
-      logger.info("Model deleted", {
-        modelId: deletedModel.id,
-        modelName: deletedModel.name,
+    if (!existingModel) {
+      logger.warn("Model not found for deletion", {
+        modelId: input.id,
         userId: ctx.session.user.id,
-      });
+      })
 
-      return { success: true };
-    }),
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "El modelo no existe o ya fue eliminado",
+      })
+    }
+
+    // Check referential integrity
+    const integrityCheck = await canDeleteModel(input.id)
+
+    if (!integrityCheck.canDelete) {
+      logger.warn("Model deletion blocked - referential integrity", {
+        dependencies: integrityCheck.dependencies,
+        modelId: input.id,
+        userId: ctx.session.user.id,
+      })
+
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: integrityCheck.message,
+      })
+    }
+
+    // Delete model (cascade deletes costBreakdown and priceHistory)
+    const deletedModel = await ctx.db.model.delete({
+      where: { id: input.id },
+    })
+
+    logger.info("Model deleted", {
+      modelId: deletedModel.id,
+      modelName: deletedModel.name,
+      userId: ctx.session.user.id,
+    })
+
+    return { success: true }
+  }),
 
   /**
    * Delete Cost Breakdown Component
@@ -319,22 +306,22 @@ export const modelRouter = createTRPCRouter({
           },
         },
         where: { id: input.id },
-      });
+      })
 
       if (!costBreakdown) {
         logger.warn("Cost breakdown component not found for deletion", {
           costBreakdownId: input.id,
           userId: ctx.session.user.id,
-        });
+        })
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Componente de costo no encontrado",
-        });
+        })
       }
 
       await ctx.db.modelCostBreakdown.delete({
         where: { id: input.id },
-      });
+      })
 
       logger.info("Cost breakdown component deleted", {
         component: costBreakdown.component,
@@ -342,9 +329,9 @@ export const modelRouter = createTRPCRouter({
         modelId: costBreakdown.model.id,
         modelName: costBreakdown.model.name,
         userId: ctx.session.user.id,
-      });
+      })
 
-      return { success: true };
+      return { success: true }
     }),
 
   /**
@@ -353,51 +340,49 @@ export const modelRouter = createTRPCRouter({
    *
    * Returns detailed model information including cost breakdown and price history
    */
-  "get-by-id": adminProcedure
-    .input(getModelByIdSchema)
-    .query(async ({ ctx, input }) => {
-      const model = await ctx.db.model.findUnique({
-        include: {
-          costBreakdown: {
-            orderBy: {
-              createdAt: "asc",
-            },
-          },
-          priceHistory: {
-            orderBy: {
-              createdAt: "desc",
-            },
-            take: 10, // Last 10 price changes
-          },
-          profileSupplier: {
-            select: {
-              id: true,
-              materialType: true,
-              name: true,
-            },
+  "get-by-id": adminProcedure.input(getModelByIdSchema).query(async ({ ctx, input }) => {
+    const model = await ctx.db.model.findUnique({
+      include: {
+        costBreakdown: {
+          orderBy: {
+            createdAt: "asc",
           },
         },
-        where: { id: input.id },
-      });
+        priceHistory: {
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 10, // Last 10 price changes
+        },
+        profileSupplier: {
+          select: {
+            id: true,
+            materialType: true,
+            name: true,
+          },
+        },
+      },
+      where: { id: input.id },
+    })
 
-      if (!model) {
-        logger.warn("Model not found", {
-          modelId: input.id,
-          userId: ctx.session.user.id,
-        });
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Modelo no encontrado",
-        });
-      }
-
-      logger.info("Model retrieved", {
-        modelId: model.id,
+    if (!model) {
+      logger.warn("Model not found", {
+        modelId: input.id,
         userId: ctx.session.user.id,
-      });
+      })
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Modelo no encontrado",
+      })
+    }
 
-      return model;
-    }),
+    logger.info("Model retrieved", {
+      modelId: model.id,
+      userId: ctx.session.user.id,
+    })
+
+    return model
+  }),
   /**
    * List Models
    * GET /api/trpc/admin.model.list
@@ -405,18 +390,10 @@ export const modelRouter = createTRPCRouter({
    * Returns paginated list of models with filtering and sorting
    */
   list: adminProcedure.input(listModelsSchema).query(async ({ ctx, input }) => {
-    const {
-      limit,
-      page,
-      search,
-      sortBy,
-      sortOrder,
-      status,
-      profileSupplierId,
-    } = input;
+    const { limit, page, search, sortBy, sortOrder, status, profileSupplierId } = input
 
-    const where = buildWhereClause({ profileSupplierId, search, status });
-    const orderBy = buildOrderByClause(sortBy, sortOrder);
+    const where = buildWhereClause({ profileSupplierId, search, status })
+    const orderBy = buildOrderByClause(sortBy, sortOrder)
 
     // Execute count and find queries in parallel
     const [total, items] = await Promise.all([
@@ -441,9 +418,9 @@ export const modelRouter = createTRPCRouter({
         take: limit,
         where,
       }),
-    ]);
+    ])
 
-    const totalPages = Math.ceil(total / limit);
+    const totalPages = Math.ceil(total / limit)
 
     logger.info("Models listed", {
       count: items.length,
@@ -451,7 +428,7 @@ export const modelRouter = createTRPCRouter({
       page,
       total,
       userId: ctx.session.user.id,
-    });
+    })
 
     return {
       items,
@@ -459,7 +436,7 @@ export const modelRouter = createTRPCRouter({
       page,
       total,
       totalPages,
-    };
+    }
   }),
 
   /**
@@ -468,128 +445,118 @@ export const modelRouter = createTRPCRouter({
    *
    * Updates model and creates price history if pricing changes
    */
-  update: adminProcedure
-    .input(updateModelSchema)
-    .mutation(async ({ ctx, input }) => {
-      const { data, id } = input;
+  update: adminProcedure.input(updateModelSchema).mutation(async ({ ctx, input }) => {
+    const { data, id } = input
 
-      // Fetch current model to check for price changes
-      const currentModel = await ctx.db.model.findUnique({
-        select: {
-          basePrice: true,
-          costPerMmHeight: true,
-          costPerMmWidth: true,
-          id: true,
-        },
-        where: { id },
-      });
+    // Fetch current model to check for price changes
+    const currentModel = await ctx.db.model.findUnique({
+      select: {
+        basePrice: true,
+        costPerMmHeight: true,
+        costPerMmWidth: true,
+        id: true,
+      },
+      where: { id },
+    })
 
-      if (!currentModel) {
-        logger.warn("Model not found for update", {
-          modelId: id,
-          userId: ctx.session.user.id,
-        });
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Modelo no encontrado",
-        });
-      }
-
-      // Validate compatible glass types if provided
-      if (
-        data.compatibleGlassTypeIds &&
-        data.compatibleGlassTypeIds.length > 0
-      ) {
-        const glassTypes = await ctx.db.glassType.findMany({
-          select: {
-            id: true,
-            isActive: true,
-          },
-          where: {
-            id: {
-              in: data.compatibleGlassTypeIds,
-            },
-          },
-        });
-
-        if (glassTypes.length !== data.compatibleGlassTypeIds.length) {
-          const foundIds = glassTypes.map((gt) => gt.id);
-          const missingGlassTypeIds = data.compatibleGlassTypeIds.filter(
-            (glassTypeId) => !foundIds.includes(glassTypeId),
-          );
-
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: `Tipos de vidrio no encontrados: ${missingGlassTypeIds.join(", ")}`,
-          });
-        }
-
-        const inactiveGlassTypes = glassTypes.filter((gt) => !gt.isActive);
-        if (inactiveGlassTypes.length > 0) {
-          const inactiveIds = inactiveGlassTypes.map((gt) => gt.id);
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: `Los siguientes tipos de vidrio están inactivos: ${inactiveIds.join(", ")}`,
-          });
-        }
-      }
-
-      // Check if pricing fields changed (compare Decimal values)
-      const priceChanged =
-        (data.basePrice !== undefined &&
-          data.basePrice.toString() !== currentModel.basePrice.toString()) ||
-        (data.costPerMmWidth !== undefined &&
-          data.costPerMmWidth.toString() !==
-            currentModel.costPerMmWidth.toString()) ||
-        (data.costPerMmHeight !== undefined &&
-          data.costPerMmHeight.toString() !==
-            currentModel.costPerMmHeight.toString());
-
-      // Update model (serialize compatibleGlassTypeIds for SQLite storage if present)
-      const updateData = { ...data } as Prisma.ModelUpdateInput;
-
-      if (data.compatibleGlassTypeIds) {
-        (
-          updateData as { compatibleGlassTypeIds?: string }
-        ).compatibleGlassTypeIds = stringifyCompatibleGlassTypeIds(
-          data.compatibleGlassTypeIds,
-        );
-      }
-
-      const updatedModel = await ctx.db.model.update({
-        data: updateData,
-        include: {
-          profileSupplier: true,
-        },
-        where: { id },
-      });
-
-      // Create price history entry if price changed
-      if (priceChanged) {
-        await createModelPriceHistory({
-          basePrice: updatedModel.basePrice.toNumber(),
-          costPerMmHeight: updatedModel.costPerMmHeight.toNumber(),
-          costPerMmWidth: updatedModel.costPerMmWidth.toNumber(),
-          createdBy: ctx.session.user.id,
-          modelId: updatedModel.id,
-          reason: "Actualización manual desde panel de administración",
-        });
-
-        logger.info("Model price history created", {
-          modelId: updatedModel.id,
-          newBasePrice: updatedModel.basePrice.toString(),
-          userId: ctx.session.user.id,
-        });
-      }
-
-      logger.info("Model updated", {
-        modelId: updatedModel.id,
-        priceChanged,
+    if (!currentModel) {
+      logger.warn("Model not found for update", {
+        modelId: id,
         userId: ctx.session.user.id,
-      });
+      })
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Modelo no encontrado",
+      })
+    }
 
-      return updatedModel;
-    }),
+    // Validate compatible glass types if provided
+    if (data.compatibleGlassTypeIds && data.compatibleGlassTypeIds.length > 0) {
+      const glassTypes = await ctx.db.glassType.findMany({
+        select: {
+          id: true,
+          isActive: true,
+        },
+        where: {
+          id: {
+            in: data.compatibleGlassTypeIds,
+          },
+        },
+      })
+
+      if (glassTypes.length !== data.compatibleGlassTypeIds.length) {
+        const foundIds = glassTypes.map((gt) => gt.id)
+        const missingGlassTypeIds = data.compatibleGlassTypeIds.filter(
+          (glassTypeId) => !foundIds.includes(glassTypeId),
+        )
+
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Tipos de vidrio no encontrados: ${missingGlassTypeIds.join(", ")}`,
+        })
+      }
+
+      const inactiveGlassTypes = glassTypes.filter((gt) => !gt.isActive)
+      if (inactiveGlassTypes.length > 0) {
+        const inactiveIds = inactiveGlassTypes.map((gt) => gt.id)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Los siguientes tipos de vidrio están inactivos: ${inactiveIds.join(", ")}`,
+        })
+      }
+    }
+
+    // Check if pricing fields changed (compare Decimal values)
+    const priceChanged =
+      (data.basePrice !== undefined &&
+        data.basePrice.toString() !== currentModel.basePrice.toString()) ||
+      (data.costPerMmWidth !== undefined &&
+        data.costPerMmWidth.toString() !== currentModel.costPerMmWidth.toString()) ||
+      (data.costPerMmHeight !== undefined &&
+        data.costPerMmHeight.toString() !== currentModel.costPerMmHeight.toString())
+
+    // Update model (serialize compatibleGlassTypeIds for SQLite storage if present)
+    const updateData = { ...data } as Prisma.ModelUpdateInput
+
+    if (data.compatibleGlassTypeIds) {
+      ;(updateData as { compatibleGlassTypeIds?: string }).compatibleGlassTypeIds =
+        stringifyCompatibleGlassTypeIds(data.compatibleGlassTypeIds)
+    }
+
+    const updatedModel = await ctx.db.model.update({
+      data: updateData,
+      include: {
+        profileSupplier: true,
+      },
+      where: { id },
+    })
+
+    // Create price history entry if price changed
+    if (priceChanged) {
+      await createModelPriceHistory({
+        basePrice: updatedModel.basePrice.toNumber(),
+        costPerMmHeight: updatedModel.costPerMmHeight.toNumber(),
+        costPerMmWidth: updatedModel.costPerMmWidth.toNumber(),
+        createdBy: ctx.session.user.id,
+        modelId: updatedModel.id,
+        reason: "Actualización manual desde panel de administración",
+      })
+
+      logger.info("Model price history created", {
+        modelId: updatedModel.id,
+        newBasePrice: updatedModel.basePrice.toString(),
+        userId: ctx.session.user.id,
+      })
+    }
+
+    logger.info("Model updated", {
+      modelId: updatedModel.id,
+      priceChanged,
+      userId: ctx.session.user.id,
+    })
+
+    return updatedModel
+  }),
 
   /**
    * Update Cost Breakdown Component
@@ -600,7 +567,7 @@ export const modelRouter = createTRPCRouter({
   "update-cost-breakdown": adminProcedure
     .input(updateCostBreakdownSchema)
     .mutation(async ({ ctx, input }) => {
-      const { id, data } = input;
+      const { id, data } = input
 
       // Verify cost breakdown exists
       const existingCostBreakdown = await ctx.db.modelCostBreakdown.findUnique({
@@ -613,24 +580,24 @@ export const modelRouter = createTRPCRouter({
           },
         },
         where: { id },
-      });
+      })
 
       if (!existingCostBreakdown) {
         logger.warn("Cost breakdown component not found for update", {
           costBreakdownId: id,
           userId: ctx.session.user.id,
-        });
+        })
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Componente de costo no encontrado",
-        });
+        })
       }
 
       // Update cost breakdown
       const updatedCostBreakdown = await ctx.db.modelCostBreakdown.update({
         data,
         where: { id },
-      });
+      })
 
       logger.info("Cost breakdown component updated", {
         component: updatedCostBreakdown.component,
@@ -638,9 +605,9 @@ export const modelRouter = createTRPCRouter({
         modelId: existingCostBreakdown.model.id,
         modelName: existingCostBreakdown.model.name,
         userId: ctx.session.user.id,
-      });
+      })
 
-      return updatedCostBreakdown;
+      return updatedCostBreakdown
     }),
 
   upsert: adminProcedure
@@ -652,28 +619,26 @@ export const modelRouter = createTRPCRouter({
           modelId: input.id,
           name: input.name,
           profileSupplierId: input.profileSupplierId,
-        });
+        })
 
         if (input.minWidthMm >= input.maxWidthMm) {
-          throw new Error("Ancho mínimo debe ser menor al ancho máximo");
+          throw new Error("Ancho mínimo debe ser menor al ancho máximo")
         }
         if (input.minHeightMm >= input.maxHeightMm) {
-          throw new Error("Alto mínimo debe ser menor al alto máximo");
+          throw new Error("Alto mínimo debe ser menor al alto máximo")
         }
 
         const result = await ctx.db.$transaction(async (tx) => {
           if (input.profileSupplierId) {
-            await validateProfileSupplierExists(tx, input.profileSupplierId);
+            await validateProfileSupplierExists(tx, input.profileSupplierId)
           }
 
-          await validateGlassTypesExist(tx, input.compatibleGlassTypeIds);
+          await validateGlassTypesExist(tx, input.compatibleGlassTypeIds)
 
           const modelData = {
             accessoryPrice: input.accessoryPrice,
             basePrice: input.basePrice,
-            compatibleGlassTypeIds: stringifyCompatibleGlassTypeIds(
-              input.compatibleGlassTypeIds,
-            ),
+            compatibleGlassTypeIds: stringifyCompatibleGlassTypeIds(input.compatibleGlassTypeIds),
             costPerMmHeight: input.costPerMmHeight,
             costPerMmWidth: input.costPerMmWidth,
             designTemplateId: input.designTemplateId,
@@ -684,26 +649,26 @@ export const modelRouter = createTRPCRouter({
             name: input.name,
             profileSupplierId: input.profileSupplierId,
             status: input.status,
-          };
+          }
 
-          let modelRecord: Model;
-          let isCreating = false;
+          let modelRecord: Model
+          let isCreating = false
 
           if (input.id) {
             const existingModel = await tx.model.findUnique({
               where: { id: input.id },
-            });
+            })
 
             if (!existingModel) {
-              throw new Error("Modelo no encontrado");
+              throw new Error("Modelo no encontrado")
             }
 
             modelRecord = await tx.model.update({
               data: modelData,
               where: { id: input.id },
-            });
+            })
           } else {
-            isCreating = true;
+            isCreating = true
 
             const existingModel = await tx.model.findFirst({
               where: {
@@ -712,17 +677,15 @@ export const modelRouter = createTRPCRouter({
                   profileSupplierId: input.profileSupplierId,
                 }),
               },
-            });
+            })
 
             if (existingModel) {
-              throw new Error(
-                `Ya existe un modelo con el nombre "${input.name}"`,
-              );
+              throw new Error(`Ya existe un modelo con el nombre "${input.name}"`)
             }
 
             modelRecord = await tx.model.create({
               data: modelData,
-            });
+            })
           }
 
           return {
@@ -731,78 +694,74 @@ export const modelRouter = createTRPCRouter({
               : `Modelo "${input.name}" actualizado exitosamente`,
             modelId: modelRecord.id,
             status: modelRecord.status,
-          };
-        });
+          }
+        })
 
         logger.info("Model upsert completed successfully", {
           isUpdate: Boolean(input.id),
           modelId: result.modelId,
           name: input.name,
           profileSupplierId: input.profileSupplierId,
-        });
+        })
 
-        return result;
+        return result
       } catch (error) {
         logger.error("Error during model upsert", {
           error: error instanceof Error ? error.message : "Unknown error",
           modelId: input.id,
           name: input.name,
           profileSupplierId: input.profileSupplierId,
-        });
+        })
 
         const errorMessage =
           error instanceof Error
             ? error.message
-            : "No se pudo guardar el modelo. Intente nuevamente.";
-        throw new Error(errorMessage);
+            : "No se pudo guardar el modelo. Intente nuevamente."
+        throw new Error(errorMessage)
       }
     }),
 
-  clone: adminProcedure
-    .input(cloneModelSchema)
-    .mutation(async ({ ctx, input }) => {
-      const sourceModel = await ctx.db.model.findUnique({
-        where: { id: input.sourceModelId },
-      });
+  clone: adminProcedure.input(cloneModelSchema).mutation(async ({ ctx, input }) => {
+    const sourceModel = await ctx.db.model.findUnique({
+      where: { id: input.sourceModelId },
+    })
 
-      if (!sourceModel) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Modelo no encontrado",
-        });
-      }
+    if (!sourceModel) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Modelo no encontrado",
+      })
+    }
 
-      const model = await ctx.db.model.create({
-        data: cloneData,
-      });
+    const model = await ctx.db.model.create({
+      data: cloneData,
+    })
 
-      return model;
-    }),
+    return model
+  }),
 
-  publish: adminProcedure
-    .input(publishModelSchema)
-    .mutation(async ({ ctx, input }) => {
-      const model = await ctx.db.model.findUnique({
-        include: {
-          _count: {
-            select: {
-              costBreakdown: true,
-            },
+  publish: adminProcedure.input(publishModelSchema).mutation(async ({ ctx, input }) => {
+    const model = await ctx.db.model.findUnique({
+      include: {
+        _count: {
+          select: {
+            costBreakdown: true,
           },
         },
-        where: { id: input.modelId },
-      });
+      },
+      where: { id: input.modelId },
+    })
 
-      if (!model) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Modelo no encontrado",
-        });
-      }
+    if (!model) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Modelo no encontrado",
+      })
+    }
 
-      return ctx.db.model.update({
-        data: { status: "published" },
-        where: { id: input.modelId },
-      });
-    }),
-});
+    return ctx.db.model.update({
+      data: { status: "published" },
+      where: { id: input.modelId },
+    })
+  }),
+})
