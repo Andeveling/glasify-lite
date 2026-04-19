@@ -1,16 +1,11 @@
-import { convertToModelMessages, ToolLoopAgent, tool, type UIMessage } from "ai"
+import {
+  convertToModelMessages,
+  type InferAgentUIMessage,
+  ToolLoopAgent,
+  type UIMessage,
+} from "ai"
 import { minimax } from "vercel-minimax-ai-provider"
-import { z } from "zod"
-
-const mockTool = tool({
-  description: "Returns a mock response for testing",
-  inputSchema: z.object({
-    message: z.string().describe("The message to echo back"),
-  }),
-  execute: async ({ message }) => {
-    return { echo: message, timestamp: Date.now() }
-  },
-})
+import { mockTool } from "./agents/_tools/mock"
 
 const SYSTEM_INSTRUCTIONS =
   "Eres un asistente amigable que ayuda al usuario, cuando te pida que uses la tool de mock usala."
@@ -41,3 +36,5 @@ export async function streamAgent({
     messages: await convertToModelMessages(messages),
   })
 }
+
+export type GlasifyAgent = InferAgentUIMessage<ReturnType<typeof createAgent>>

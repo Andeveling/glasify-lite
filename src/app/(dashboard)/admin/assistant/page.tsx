@@ -55,13 +55,15 @@ interface ChatSessionMetadata {
 export default function AssistantPage() {
   const [sessions, setSessions] = useState<ChatSessionMetadata[]>([]);
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
-  const [chatMessages, setChatMessages] = useState<UIMessage[]>([]);
   const [currentState, setCurrentState] = useState<PersonaState>("idle");
 
-  const { messages, status, error, sendMessage } = useChat({
-    id: selectedId,
-    messages: chatMessages,
-  });
+  const { messages, status, error, sendMessage, regenerate, retry, stop } =
+    useChat({
+      id: selectedId,
+      transport: new DefaultChatTransport({
+        api: "/api/chat",
+      }),
+    });
 
   const loadSessions = useCallback(async () => {
     const res = await fetch("/api/chat");
@@ -71,20 +73,11 @@ export default function AssistantPage() {
     }
   }, []);
 
-  const loadChat = useCallback(async (id: string) => {
-    const res = await fetch(`/api/chat/${id}`);
-    if (res.ok) {
-      const data: UIMessage[] = await res.json();
-      setChatMessages(data);
-    }
-  }, []);
-
   const createChat = useCallback(async () => {
     const res = await fetch("/api/chat", { method: "POST" });
     if (res.ok) {
       const { id }: { id: string } = await res.json();
       setSelectedId(id);
-      setChatMessages([]);
       await loadSessions();
     }
   }, [loadSessions]);
@@ -96,7 +89,6 @@ export default function AssistantPage() {
       if (res.ok) {
         if (selectedId === id) {
           setSelectedId(undefined);
-          setChatMessages([]);
         }
         await loadSessions();
       }
@@ -108,12 +100,6 @@ export default function AssistantPage() {
     loadSessions();
   }, [loadSessions]);
 
-  useEffect(() => {
-    if (selectedId) {
-      loadChat(selectedId);
-    }
-  }, [selectedId, loadChat]);
-
   const onSubmit = (message: PromptInputMessage) => {
     if (!message.text && !message.files?.length) return;
     setCurrentState("thinking");
@@ -121,7 +107,18 @@ export default function AssistantPage() {
     return Promise.resolve();
   };
 
-  const seeDots = status === "submitted" || status === "streaming";
+  const onRegenerate = () => {
+    setCurrentState("thinking");
+    regenerate().then(() => setCurrentState("idle"));
+  };
+
+  const onRetry = () => {
+    setCurrentState("thinking");
+    retry().then(() => setCurrentState("idle"));
+  };
+
+  const isGenerating = status === "submitted" || status === "streaming";
+  const canManageMessage = isGenerating || messages.length > 0;
 
   const formatDate = (ts: number) =>
     new Date(ts).toLocaleDateString("es-AR", {
@@ -244,7 +241,7 @@ export default function AssistantPage() {
                 state={currentState}
                 variant="glint"
               />
-              {seeDots && <WaitingDots />}
+              {isGenerating && <WaitingDots />}
             </div>
           </ConversationContent>
           <ConversationScrollButton />
@@ -273,7 +270,10 @@ export default function AssistantPage() {
                     </PromptInputActionMenuContent>
                   </PromptInputActionMenu>
                 </PromptInputTools>
-                <PromptInputSubmit status={status} />
+                <PromptInputSubmit
+                  status={status}
+                  onStop={isGenerating ? stop : undefined}
+                />
               </PromptInputFooter>
             </PromptInput>
           </PromptInputProvider>
