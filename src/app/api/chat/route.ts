@@ -1,6 +1,6 @@
 import { createIdGenerator, type UIMessage } from "ai"
 import { createAgent, streamAgent } from "@/lib/chat"
-import { deleteChat, listChats, saveChat } from "./_util/chat-store"
+import { deleteChat, listChats, saveChat } from "@/lib/chat/chat-store"
 
 export const maxDuration = 30
 

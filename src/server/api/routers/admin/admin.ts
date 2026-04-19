@@ -1,3 +1,4 @@
+import { chatRouter } from "@/server/api/routers/admin/chat"
 import { clientsRouter } from "@/server/api/routers/admin/clients"
 import { colorsRouter } from "@/server/api/routers/admin/colors"
 import { designTemplateRouter } from "@/server/api/routers/admin/design-template"
@@ -12,6 +13,7 @@ import { serviceRouter } from "@/server/api/routers/admin/service"
 import { createTRPCRouter } from "@/server/api/trpc"
 
 export const adminRouter = createTRPCRouter({
+  chat: chatRouter,
   clients: clientsRouter,
   colors: colorsRouter,
   "design-template": designTemplateRouter,
