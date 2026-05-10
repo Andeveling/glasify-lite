@@ -14,12 +14,19 @@ import {
 } from "@/components/ui/alert-dialog"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { useChatSessions } from "../_hooks/use-chat-sessions"
-import { useChatUIStore } from "../_store/chat-slice"
+import { useChatContext } from "../_context/chat-context"
 
 export function SessionList() {
-  const { sessions, createChat, handleDelete, isLoading, isFetching, isError } = useChatSessions()
-  const { selectedId, setSelectedId } = useChatUIStore()
+  const {
+    createChat,
+    deleteChat,
+    hasSessionListError,
+    isFetchingSessions,
+    isLoadingSessions,
+    selectedId,
+    sessions,
+    setSelectedId,
+  } = useChatContext()
 
   const formatDate = (ts: number) =>
     new Date(ts).toLocaleDateString("es-AR", {
@@ -41,12 +48,12 @@ export function SessionList() {
       </button>
 
       <div className="flex-1 overflow-y-auto rounded-lg border">
-        {isLoading ? (
+        {isLoadingSessions ? (
           <div className="flex flex-col items-center justify-center p-8 gap-2 text-muted-foreground">
             <Loader2 className="size-6 animate-spin" />
             <span className="text-sm">Cargando sesiones...</span>
           </div>
-        ) : isError ? (
+        ) : hasSessionListError ? (
           <div className="flex flex-col items-center justify-center p-4 gap-2 text-destructive">
             <span className="text-sm">Error al cargar sesiones</span>
           </div>
@@ -100,7 +107,7 @@ export function SessionList() {
                         <AlertDialogCancel>Cancelar</AlertDialogCancel>
                         <AlertDialogAction
                           className={buttonVariants({ variant: "destructive" })}
-                          onClick={() => handleDelete(session.id)}
+                          onClick={() => deleteChat(session.id)}
                         >
                           Eliminar
                         </AlertDialogAction>
@@ -110,7 +117,7 @@ export function SessionList() {
                 </li>
               ))}
             </ul>
-            {isFetching && (
+            {isFetchingSessions && (
               <div className="flex items-center justify-center p-2 gap-1 text-xs text-muted-foreground border-t">
                 <RefreshCw className="size-3 animate-spin" />
                 <span>Actualizando...</span>
