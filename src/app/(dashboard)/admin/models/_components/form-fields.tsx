@@ -24,7 +24,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
@@ -309,9 +311,14 @@ export function FormTextarea({
 /**
  * Select Field
  */
-type SelectOption = {
-  label: string
-  value: string
+export type SelectOption =
+  | { label: string; value: string }
+  | { label: string; groupLabel: true }
+
+function isGroupLabel(
+  option: SelectOption,
+): option is { label: string; groupLabel: true } {
+  return "groupLabel" in option
 }
 
 type SelectFieldProps = BaseFieldProps & {
@@ -344,11 +351,54 @@ export function FormSelect({
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {options.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
+              {(() => {
+                const groups: {
+                  header: { label: string; groupLabel: true }
+                  items: { label: string; value: string }[]
+                }[] = []
+                let currentGroup: {
+                  header: { label: string; groupLabel: true }
+                  items: { label: string; value: string }[]
+                } | null = null
+                const ungrouped: { label: string; value: string }[] = []
+
+                for (const option of options) {
+                  if (isGroupLabel(option)) {
+                    if (currentGroup) {
+                      groups.push(currentGroup)
+                    }
+                    currentGroup = { header: option, items: [] }
+                  } else if (currentGroup) {
+                    currentGroup.items.push(option)
+                  } else {
+                    ungrouped.push(option)
+                  }
+                }
+
+                if (currentGroup) {
+                  groups.push(currentGroup)
+                }
+
+                return (
+                  <>
+                    {ungrouped.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                    {groups.map((group, gi) => (
+                      <SelectGroup key={gi}>
+                        <SelectLabel>{group.header.label}</SelectLabel>
+                        {group.items.map((item) => (
+                          <SelectItem key={item.value} value={item.value}>
+                            {item.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    ))}
+                  </>
+                )
+              })()}
             </SelectContent>
           </Select>
           {description && <FormDescription>{description}</FormDescription>}

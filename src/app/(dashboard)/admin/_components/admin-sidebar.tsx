@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Bot,
@@ -12,12 +12,12 @@ import {
   Sparkles,
   Users,
   Wrench,
-} from "lucide-react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import type { FC } from "react"
-import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import type { FC } from "react";
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -28,18 +28,18 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 interface AdminSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user: {
-    name: string
-    email: string
-    avatar?: string
-  }
+    name: string;
+    email: string;
+    avatar?: string;
+  };
 }
 
 export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   // Navigation configuration (must be in Client Component to use Lucide icons)
 
@@ -61,13 +61,7 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
       title: "Cotizaciones",
       url: "/admin/quotes",
     },
-    {
-      description: "Asistente de modelos IA",
-      icon: Bot,
-      title: "Asistente",
-      url: "/admin/assistant",
-    },
-  ]
+  ];
 
   const navConfig = [
     {
@@ -94,7 +88,7 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
       title: "Servicios",
       url: "/admin/services",
     },
-  ]
+  ];
 
   const navSuppliers = [
     {
@@ -109,7 +103,7 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
       title: "Proveedores de Vidrio",
       url: "/admin/glass-suppliers",
     },
-  ]
+  ];
 
   const navTaxonomy = [
     {
@@ -118,14 +112,17 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
       title: "Soluciones de Vidrio",
       url: "/admin/glass-solutions",
     },
-  ]
+  ];
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
+            <SidebarMenuButton
+              asChild
+              className="data-[slot=sidebar-menu-button]:!p-1.5"
+            >
               <Link href="/admin">
                 <Sparkles className="!size-5" />
                 <span className="font-semibold text-base">Glasify Admin</span>
@@ -146,9 +143,10 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
           <SidebarGroupLabel>Proveedores</SidebarGroupLabel>
           <SidebarMenu>
             {navSuppliers.map((item) => {
-              const segmentsCount = item.url.split("/").filter(Boolean).length
+              const segmentsCount = item.url.split("/").filter(Boolean).length;
               const isActive =
-                pathname === item.url || (segmentsCount > 1 && pathname.startsWith(`${item.url}/`))
+                pathname === item.url ||
+                (segmentsCount > 1 && pathname.startsWith(`${item.url}/`));
 
               return (
                 <SidebarMenuItem key={item.url}>
@@ -159,7 +157,7 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              )
+              );
             })}
           </SidebarMenu>
         </SidebarGroup>
@@ -169,9 +167,10 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
           <SidebarGroupLabel>Taxonomía</SidebarGroupLabel>
           <SidebarMenu>
             {navTaxonomy.map((item) => {
-              const segmentsCount = item.url.split("/").filter(Boolean).length
+              const segmentsCount = item.url.split("/").filter(Boolean).length;
               const isActive =
-                pathname === item.url || (segmentsCount > 1 && pathname.startsWith(`${item.url}/`))
+                pathname === item.url ||
+                (segmentsCount > 1 && pathname.startsWith(`${item.url}/`));
 
               return (
                 <SidebarMenuItem key={item.url}>
@@ -182,7 +181,7 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              )
+              );
             })}
           </SidebarMenu>
         </SidebarGroup>
@@ -197,5 +196,5 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ user, ...props }) => {
         />
       </SidebarFooter>
     </Sidebar>
-  )
-}
+  );
+};

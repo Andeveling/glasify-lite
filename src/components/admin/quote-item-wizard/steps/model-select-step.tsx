@@ -1,6 +1,6 @@
 "use client"
 
-import { Check } from "lucide-react"
+import { ArrowUpDown, Check, Ruler } from "lucide-react"
 import Image from "next/image"
 import { useCallback } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
@@ -11,17 +11,6 @@ import { formatCurrency, formatNumber } from "@/lib/format"
 import { api } from "@/trpc/react"
 import { WindowSvgPlaceholder } from "../window-svg-placeholder"
 import type { WizardFormValues } from "../wizard-form-schema"
-
-function formatRange(
-  minWidth: number,
-  maxWidth: number,
-  minHeight: number,
-  maxHeight: number,
-  context?: { locale: string },
-): string {
-  const fmt = (n: number) => formatNumber(n, context ? { context } : undefined)
-  return `Ancho: ${fmt(minWidth)}–${fmt(maxWidth)} mm / Alto: ${fmt(minHeight)}–${fmt(maxHeight)} mm`
-}
 
 function ModelCardSkeleton() {
   return (
@@ -175,16 +164,19 @@ function ModelSelectStep() {
                   <p className="text-xl font-bold leading-tight text-primary">
                     {formatCurrency(model.basePrice, { context: formatContext })}
                   </p>
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <span className="font-mono">
-                      {formatRange(
-                        model.minWidthMm,
-                        model.maxWidthMm,
-                        model.minHeightMm,
-                        model.maxHeightMm,
-                        { locale: formatContext.locale },
-                      )}
-                    </span>
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2 text-sm">
+                      <ArrowUpDown className="h-4 w-4 text-muted-foreground/70" />
+                      <span className="font-medium">
+                        {formatNumber(model.minWidthMm)}–{formatNumber(model.maxWidthMm)} mm
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Ruler className="h-4 w-4 text-muted-foreground/70" />
+                      <span className="font-medium">
+                        {formatNumber(model.minHeightMm)}–{formatNumber(model.maxHeightMm)} mm
+                      </span>
+                    </div>
                   </div>
                 </div>
               </CardContent>

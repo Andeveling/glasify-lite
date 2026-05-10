@@ -80,11 +80,11 @@ function ServicesStep() {
                     ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-md"
                     : "border-border/50 hover:border-primary/30"
                 }`}
-                onClick={() => handleToggleService(service.id)}
                 role="button"
                 tabIndex={0}
                 aria-pressed={isSelected}
                 aria-label={`Servicio: ${service.name}`}
+                onClick={() => handleToggleService(service.id)}
               >
                 <CardContent className="p-4 flex flex-row items-start gap-4">
                   <Checkbox

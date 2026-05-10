@@ -32,13 +32,13 @@ export function BasicInfoSection({ suppliers, templates }: BasicInfoSectionProps
   const windowTemplates = templates.filter((t) => t.type === "window")
   const doorTemplates = templates.filter((t) => t.type === "door")
 
-  const templateOptions = [
-    { label: "— Ventanas —", value: "", disabled: true },
+  const templateOptions: import("./form-fields").SelectOption[] = [
+    { label: "— Ventanas —", groupLabel: true },
     ...windowTemplates.map((t) => ({
       label: `${t.name} (${t.pattern || "X"})`,
       value: t.id,
     })),
-    { label: "— Puertas —", value: "", disabled: true },
+    { label: "— Puertas —", groupLabel: true },
     ...doorTemplates.map((t) => ({
       label: `${t.name} [Puerta]`,
       value: t.id,
